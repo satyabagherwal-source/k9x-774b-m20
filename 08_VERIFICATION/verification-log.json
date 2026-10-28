@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-H7PV",
-    "timestamp": "2026-10-27T13:40:56.275Z",
-    "repository": "koderover/zadig",
-    "learningId": "learn-github-koderover-zadig",
-    "contentHash": "0288616a70f8707c0d35c49309c682ef3a1a37b24dae8744e1735d1bbed1791b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-HBV5",
-    "timestamp": "2026-10-27T13:41:01.649Z",
-    "repository": "Open-Source-Legal/OpenContracts",
-    "learningId": "learn-github-open-source-legal-opencontracts",
-    "contentHash": "620ef9119e36cf5703e824cd8629bfe043fb791cb50cc8436b292dcb23a28d61",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-QHU1",
-    "timestamp": "2026-10-27T13:48:09.289Z",
-    "repository": "taiga-family/taiga-ui",
-    "learningId": "learn-github-taiga-family-taiga-ui",
-    "contentHash": "db458172af5054ca13510744d13d828f8f8e76f7796c3868b05d3e7ccd77b45f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-QK5P",
     "timestamp": "2026-10-27T13:48:12.301Z",
     "repository": "aio-libs/aiohttp",
@@ -7492,6 +7447,51 @@
     "contentHash": "315f257de9758ddee97063aa7f1f8658976f2ffe076962336a493b86519dbb8c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-KRZ2",
+    "timestamp": "2026-10-28T16:19:20.606Z",
+    "repository": "u-root/u-root",
+    "learningId": "learn-github-u-root-u-root",
+    "contentHash": "39eea9f70deaa46ded912eb0afbe459b7fe87eb82438bf2be24679ae5b435dfc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-KW1C",
+    "timestamp": "2026-10-28T16:19:25.872Z",
+    "repository": "callstack/agent-device",
+    "learningId": "learn-github-callstack-agent-device",
+    "contentHash": "6860af672a50d9e40c513f255ac57f7fe0732bb30db95fb26b936fa4b3b2e2f7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-KX9X",
+    "timestamp": "2026-10-28T16:19:27.477Z",
+    "repository": "sentence-transformers/all-mpnet-base-v2",
+    "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
+    "contentHash": "a5331c4f8ade384adb85e6f908581cb37c75b1c7a89859ef1a5f6d3554c1f6f6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

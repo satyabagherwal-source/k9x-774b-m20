@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/callstack-agent-device-learnings.md`  
 > **Source**: github ([https://github.com/callstack/agent-device](https://github.com/callstack/agent-device))  
-> **Source Version**: `b396bd00`  
+> **Source Version**: `3537dc54`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T21:01:37.519Z  
+> **Timestamp**: 2026-10-28T16:19:25.250Z  
 > **Learning ID**: `learn-github-callstack-agent-device`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/callstack-agent-device-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/callstack/agent-device](https://github.com/callstack/agent-device))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T21:01:36.750Z  
+> **Harvest Timestamp**: 2026-10-28T16:19:25.242Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Mobile app automation and verification for AI coding agents. CLI, MCP server, and typed Node.js API for iOS, Android, HarmonyOS, TV, web, macOS, and Linux.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5166 stars
+- **Stars / Engagement**: 5173 stars
 
 ---
 
@@ -1709,1178 +1709,806 @@ function remapPresentedIndexes(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5b61e8a9` (2026-10-26)
-**Commit Message**: chore(deps): clear undici, fast-uri, vite and zod security alerts (#3966)
+### Incident Patch 1: `ff8029e9` (2026-10-28)
+**Commit Message**: fix(mutation): measure each kernel against the tests that import it (#3994)
 
-* chore(deps): clear undici, fast-uri, vite and zod security alerts
+* fix(mutation): measure each kernel against the tests that import it
 
-Move the exact undici pins and the bundled build to 7.30.1 (GHSA-xjj6-f33q-929c).
-Raise the fast-uri override to 3.1.9, the vite floor to ^8.2.4, and add scoped
-zod overrides to 4.6.6+ in both the root workspace and the test app's own
-workspace root. @limrun/api hard-pins undici 7.29.1, so an exact scoped
-undici@7 override is required. @expo/cli hard-declares zod ^3.25.76, so the
-test app scopes zod@3 and zod@4 to the patched floor; its bundled usage
-(z.object/string/enum, safeParse, error.issues) verifies clean under 4.6.7.
+The weekly kernel-errors shard outran its 22-minute step (run 40164641005):
+its scope was every test that transitively reaches errors.ts, 1,471 files,
+and it grew by 75 in one week. Every shard replays the whole scope in its
+dry run, so adding shards could not bound it.
 
-* chore(deps): raise the vite floor past 8.3.2 and prove the zod override
+A test now owns a kernel only when its own code, or the test support code
+it imports, imports one of its mutated sources, directly or through a
+barrel re-export, and only when the mutation
+lane can collect it: the apple-runner project's tests need that project's
+setup, so they join MUTATION_EXCLUDED_TESTS. The weekly scope and the PR
+lane's derived selection read that one rule. The Stryker config comment
+changes with it, so the report's config hash marks the scope change.
 
-GHSA advisories flag vite 8.3.0-8.3.2, so ^8.2.4 could reintroduce them on
-lock regeneration; ^8.3.5 keeps every permitted resolution patched.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Add the test-app security check the zod@3 override needs: it pins the lock
-to a single zod resolution at or above the 4.6.6 advisory floor and loads
-@expo/cli's DevToolsPlugin and MCP extension schemas under the overridden
-zod 4, covering the safeParse and error.issues surfaces its callers use.
+* chore(gates): cap each kernel's mutation scope in the unit suite
 
-* test(d
+A unit-suite test fails the PR that grows a kernel's owned tests past
+MAX_MUTATION_TEST_SCOPE_FILES, instead of the next weekly sweep timing out.
+The cap comes from the weekly shard 
 
-**File**: `examples/test-app/pnpm-lock.yaml` (modified, +7/-10)
+**File**: `.github/workflows/mutation-affected.yml` (modified, +2/-2)
 ```diff
-@@ -19,6 +19,8 @@ overrides:
-   js-yaml@4: ^4.3.1
-   nanoid@3: ^3.3.18
-   '@babel/core@7': ^7.29.6
-+  zod@3: ^4.6.6
-+  zod@4: ^4.6.6
+@@ -18,8 +18,8 @@ name: Mutation Harness Canary
+ # On a harness diff the matrix is the canary (`LANE_CANARY`, selected by
+ # observed end-to-end runtime within the job budget — lane sources own no kernel,
+ # so derivation alone would select nothing) plus any kernel that same diff
+-# reaches through the import graph (scripts/mutation/ownership.ts): a kernel
+-# source, or a test that reaches one. Selected modules are sharded like the
++# owns (scripts/mutation/ownership.ts): a kernel source, or a test that
++# imports one. Selected modules are sharded like the
+ # weekly sweep, so the PR's wall clock is one module rather than their sum.
  
- patchedDependencies:
-   image-size@1.2.1: 6544266162325551c6f85c53ca52e5b3b25ccf96127a57a4ebcc3553e89584bb
-@@ -2828,11 +2830,8 @@ packages:
-     resolution: {integrity: sha512-7dSzzRQ++CKnNI/krKnYRV7JKKPUXMEh61soaHKg9mrWEhzFWhFnxPxGl+69cD1Ou63C13NUPCnmIcrvqCuM6w==}
-     engines: {node: '>=12'}
- 
--  zod@3.25.76:
--    resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
--
--  zod@4.4.3:
--    resolution: {integrity: sha512-ytENFjIJFl2UwYglde2jchW2Hwm4GJFLDiSXWdTrJQBIN9Fcyp7n4DhxJEiWNAJMV1/BqWfW/kkg71UDcHJyTQ==}
-+  zod@4.6.7:
-+    resolution: {integrity: sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg==}
- 
- snapshots:
- 
-@@ -3397,7 +3396,7 @@ snapshots:
-       toqr: 0.1.1
-       wrap-ansi: 7.0.0
-       ws: 8.21.0
--      zod: 3.25.76
-+      zod: 4.6.7
-     optionalDependencies:
-       expo-router: 58.0.4(69824bbec4895ab7808c7feacb129849)
-       react-native: 0.88.0-rc.0(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.0(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.14)(react@19.2.3)(supports-color@8.1.1)
-@@ -4529,7 +4528,7 @@ snapshots:
-       '@expo/config': 58.0.0(supports-color@8.1.1)(typescript@6.0.3)
-       cosmiconfig: 9.0.2(typescript@6.0.3)
-       env-paths: 2.2.1
--      zod: 4.4.3
-+      zod: 4.6.7
-     transitivePeerDependencies:
-       - typescript
- 
-@@ -6048,6 +6047,4 @@ snapshots:
-       y18n: 5.0.8
-       yargs-parser: 21.1.1
- 
--  zod@3.25.76: {}
--
--  zod@4.4.3: {}
-+  zod@4.6.7: {}
+ on:
 ```
 
-**File**: `examples/test-app/pnpm-workspace.yaml` (modified, +6/-2)
+**File**: `scripts/__tests__/mutation-scope-budget.test.ts` (added, +20/-0)
 ```diff
-@@ -5,8 +5,10 @@
- # lockfile drift back to vulnerable transitive versions (see PR #649). Keeping
- # them here ensures they actually apply. These pin transitive deps to versions
- # that clear Dependabot security alerts; ws/brace-expansion/js-yaml/@babel/core/
--# compression/source-map-js are scoped to the vulnerable major so unrelated
--# majors elsewhere in the tree stay untouched.
-+# compression/source-map-js/zod are scoped to the vulnerable major so unrelated
-+# majors elsewhere in the tree stay untouched. zod is scoped per major because
-+# @expo/cli hard-declares zod ^3.25.76 while expo-build-disk-cache uses zod ^4;
-+# both majors are below the patched floor 4.6.6.
- overrides:
-   '@xmldom/xmldom': 0.8.15
-   browserslist: ^4.28.7
-@@ -22,5 +24,7 @@ overrides:
-   js-yaml@4: ^4.3.1
-   nanoid@3: ^3.3.18
-   '@babel/core@7': ^7.29.6
-+  zod@3: ^4.6.6
-+  zod@4: ^4.6.6
- patchedDependencies:
-   image-size@1.2.1: patches/image-size@1.2.1.patch
+@@ -0,0 +1,20 @@
++import path from 'node:path';
++import { expect, test } from 'vitest';
++import { KERNEL_MODULES, MAX_MUTATION_TEST_SCOPE_FILES } from '../mutation/modules.ts';
++import { mutationTestScopes } from '../mutation/ownership.ts';
++
++const repoRoot = path.resolve(import.meta.dirname, '../..');
++
++test('every kernel mutation scope fits one weekly shard', { timeout: 30_000 }, () => {
++  const scopes = mutationTestScopes(repoRoot);
++  const oversized = KERNEL_MODULES.map((module) => ({
++    module: module.id,
++    testFiles: scopes.get(module.id)?.length ?? 0,
++  })).filter((scope) => scope.testFiles > MAX_MUTATION_TEST_SCOPE_FILES);
++  expect(
++    oversized,
++    `A kernel's owned tests exceed MAX_MUTATION_TEST_SCOPE_FILES (${MAX_MUTATION_TEST_SCOPE_FILES}). ` +
++      'Every shard replays the whole scope, so more shards do not help. Split the kernel in ' +
++      'scripts/mutation/modules.ts, or import it from fewer tests.',
++  ).toEqual([]);
++});
 ```
 
-**File**: `package.json` (modified, +2/-2)
+**File**: `scripts/mutation/envelope.test.ts` (modified, +2/-4)
 ```diff
-@@ -356,8 +356,8 @@
-     "tar-stream": "^3.2.0",
-     "tsdown": "^0.22.14",
-     "typescript": "^7.0.2",
--    "undici": "7.29.1",
--    "vite": "^8.2.1",
-+    "undici": "7.30.1",
-+    "vite": "^8.3.5",
-     "vitest": "5.0.4",
-     "yaml": "^2.9.0",
-     "yauzl": "^3.4.0",
+@@ -429,15 +429,13 @@ test('a non-zero Stryker exit fails even when it wrote a report', () => {
+     fs.mkdirSync(path.join(root, 'bin'));
+     fs.symlinkSync(path.join(repoRoot, 'node_modules'), path.join(root, 'node_modules'));
+     fs.writeFileSync(path.join(root, 'stryker.config.json'), '{}');
+-    fs.writeFileSync(
+-      path.join(root, 'vitest.config.ts'),
+-      `export default { test: { projects: [{ test: { name: 'unit-core', include: ['src/**/*.test.ts'] } }] } };`,
+-    );
+     fs.writeFileSync(path.join(root, 'packages/kernel/src/errors.ts'), 'export const value = 1;');
+     fs.writeFileSync(
+       path.join(root, 'src/consumer.test.ts'),
+       "import { value } from '../packages/kernel/src/errors'; console.log(value);",
+     );
++    // Ownership reads the tracked import graph.
++    runCmdSync('git', ['add', 'src', 'packages'], { cwd: root });
+     fs.writeFileSync(
+       path.join(root, 'bin/pnpm'),
+       `#!/bin/sh
 ```
 
-**File**: `packages/maestro/package.json` (modified, +1/-1)
+**File**: `scripts/mutation/modules.ts` (modified, +13/-1)
 ```diff
-@@ -33,7 +33,7 @@
-     }
+@@ -98,6 +98,18 @@ export const KERNEL_MODULES: readonly KernelModule[] = [
    },
-   "devDependencies": {
--    "undici": "7.29.1",
-+    "undici": "7.30.1",
-     "yaml": "^2.9.0"
-   }
- }
-```
-
-**File**: `packages/provision-kit/package.json` (modified, +1/-1)
-```diff
-@@ -45,6 +45,6 @@
-   },
-   "devDependencies": {
-     "ipaddr.js": "^2.5.0",
--    "undici": "7.29.1"
-+    "undici": "7.30.1"
-   }
- }
-```
-
-**File**: `pnpm-lock.yaml` (modified, +233/-64)
-```diff
-@@ -6,11 +6,13 @@ settings:
+ ];
  
- overrides:
-   brace-expansion@5: ^5.0.12
--  fast-uri: 3.1.7
-+  fast-uri: 3.1.9
-   postcss: 8.5.23
-   qs@6: ^6.16.0
-   react-router: 7.18.2
-   react-router-dom: 7.18.2
-+  undici@7: 7.30.1
-+  zod@4: ^4.6.6
- 
- patchedDependencies:
-   ast-v8-to-istanbul@1.0.7: 8f07585d066beb92a665ea78ec8bef87af3af32de9076c9e23122fbabd9fb475
-@@ -129,7 +131,7 @@ importers:
-         version: 1.3.0(eslint@10.9.1(supports-color@7.2.0))(oxlint@1.79.0)(supports-color@7.2.0)(typescript@7.0.2)
-       '@statelyai/graph':
-         specifier: 2.4.0
--        version: 2.4.0(zod@4.4.3)
-+        version: 2.4.0(zod@4.6.7)
-       '@stryker-mutator/api':
-         specifier: 10.0.0
-         version: 10.0.0
-@@ -162,7 +164,7 @@ importers:
-         version: 5.0.4(vitest@5.0.4)
-       ai:
-         specifier: ^7.0.68
--        version: 7.0.68(zod@4.4.3)
-+        version: 7.0.68(zod@4.6.7)
-       eslint-plugin-no-only-tests:
-         specifier: ^3.4.0
-         version: 3.4.0
-@@ -206,14 +208,14 @@ importers:
-         specifier: ^7.0.2
-         version: 7.0.2
-       undici:
--        specifier: 7.29.1
--        version: 7.29.1
-+        specifier: 7.30.1
-+        version: 7.30.1
-       vite:
--        specifier: ^8.2.1
--        version: 8.2.1(@types/node@22.20.1)(yaml@2.9.0)
-+        specifier: ^8.3.5
-+        version: 8.3.5(@types/node@22.20.1)(yaml@2.9.0)
-       vitest:
-         specifier: 5.0.4
--        version: 5.0.4(@types/node@22.20.1)(@vitest/coverage-v8@5.0.4)(vite@8.2.1(@types/node@22.20.1)(yaml@2.9.0))
-+        version: 5.0.4(@types/node@22.20.1)(@vitest/coverage-v8@5.0.4)(vite@8.3.5(@types/node@22.20.1)(yaml@2.9.0))
-       yaml:
-         specifier: ^2.9.0
-         version: 2.9.0
-@@ -364,7 +366,7 @@ importers:
-         version: 0.146.0
-       vitest:
-         specifier: 5.0.4
--        version: 5.0.4(@types/node@22.20.1)(@vitest/coverage-v8@5.0.4)(vite@8.2.1(@types/node@22.20.1)(yaml@2.9.0))
-+        version: 5.0.4(@types/node@22.20.1)(@vitest/coverage-v8@5.0.4)(vite@8.3.5(@types/node@22.20.1)(yaml@2.9.0))
-       yaml:
-         specifier: ^2.9.0
-         version: 2.9.0
-@@ -459,8 +461,8 @@ importers:
-         version: link:../selectors
-     devDependencies:
-       undici:
--        specifier: 7.29.1
--        version: 7.29.1
-+        specifier: 7.30.1
-+        version: 7.30.1
-       yaml:
-         specifier: ^2.9.0
-         version: 2.9.0
-@@ -684,8 +686,8 @@ importers:
-         specifier: ^2.5.0
-         version: 2.5.0
-       undici:
--        specifier: 7.29.1
--        version: 7.29.1
-+        specifier: 7.30.1
-+        version: 7.30.1
- 
-   packages/proxy:
-     devDependencies:
-@@ -874,13 +876,13 @@ packages:
-     resolution: {integrity: sha512-x4fAXDqCtYzB/M5vsIQLYcyrzpJuaRgcIwDSw+lpTMMbgH19fU3ds75GSlHNLzfx6Z5yL4Z9+EMr0GJcqVy9QA==}
-     engines: {node: '>=22'}
-     peerDependencies:
--      zod: ^3.25.76 || ^4.1.8
-+      zod: ^4.6.6
- 
-   '@ai-sdk/provider-utils@5.0.27':
-     resolution: {integrity: sha512-EzAn4pdgG5g0xXtH6lE2zyNmfjDQIDjATkfqzuidEI35g++hh4+07vnjzkT/RmGmIClPZiRj/Q2GMPV2V7mkHw==}
-     engines: {node: '>=22'}
-     peerDependencies:
--      zod: ^3.25.76 || ^4.1.8
-+      zod: ^4.6.6
- 
-   '@ai-sdk/provider@4.0.7':
-     resolution: {integrity: sha512-6or44XprPzKbr8zkmzosowSE0pxkvJcoojBL+mCZvPUt3kvXp3XSNqeVun9golb1acEfSo6yaEBRT18h2VU+1Q==}
-@@ -1535,6 +1537,9 @@ packages:
-   '@oxc-project/types@0.146.0':
-     resolution: {integrity: sha512-XC0QsnnhVe7sLIWmYmdPw7x5P0h4W8vUU3Nv1ySgWXtvCz8NizoAEpGXA0sOYoJQV2Rl13LgURAHQ5cI5ILCSA==}
- 
-+  '@oxc-project/types@0.155.0':
-+    resolution: {integrity: sha512-SeE8JPwW1xs1tHeNycjUtUBdhorRa8o4jlvjwk49R7/Z291i+4DQa7JJIgOm/TaYQZx+QrPQbVJ/9c8dMIZN8Q==}
++/**
++ * The most test files one kernel's mutation scope may hold. Every shard of a
++ * module replays its whole scope in Stryker's dry run before the first mutant,
++ * so this bounds a shard however many shards the module declares. Measured on
++ * ubuntu-latest (weekly run 40164641005): a 684-file scope dry-ran in 4–7 min
++ * and its shards finished in 9–19 min of the 22-minute step; a 1,471-file scope
++ * dry-ran in 8–11 min and a shard outran the step. The unit suite enforces it
++ * (`scripts/__tests__/mutation-scope-budget.test.ts`), so the PR that grows a
++ * scope past it fails instead of the next weekly sweep.
++ */
++export const MAX_MUTATION_TEST_SCOPE_FILES = 600;
 +
-   '@oxfmt/binding-android-arm-eabi@0.67.0':
-     resolution: {integrity: sha512-2olh3ioEmc4gRzQm7jxyB1b/PFBoFvTq8KdgYySeNpysDtA6DEg2Mvya4/I6flhL7G0eOrE8RD7JCNCIMhE16Q==}
-     engines: {node: ^20.19.0 || >=22.12.0}
-@@ -1786,96 +1791,192 @@ packages:
-   '@quansync/fs@1.0.0':
-     resolution: {integrity: sha512-4TJ3DFtlf1L5LDMaM6CanJ/0lckGNtJcMjQ1NAV6zDmA0tEHKZtxNKin8EgPaVX1YzljbxckyT2tJrpQKAtngQ==}
+ export const ALL_MODULE_IDS: readonly ModuleId[] = KERNEL_MODULES.map((module) => module.id);
  
-+  '@rolldown/binding-android-arm-eabi@1.2.15':
-+    resolution: {integrity: sha512-aLcgK9gIJ3YRvrrtfSBbRa27F5WrpiTaPulnFpsHPxpUHgFlSgnU4854MHwoRGEBhfRJDWCS2WQ7lIjskE9Olw==}
-+    engines: {node: ^20.19.0 || >=22.12.0}
-+    cpu: [arm]
-+    os: [android]
-+
-   '@rolldown/binding-android-arm-eabi@1.2.5':
-     resolution: {integrity: sha512-DLe/i+l8ynIBY7XEQ191TeZvCoowIGa18R+dIV30GW7DiOtp74i/xX8hs8GUjW5ARV7VZuie3d6AumSmCwbeRA==}
-     engines: {node: ^20.19.0 || >=22.12.0}
-     cpu: [arm]
-     os: [android]
+ export function moduleById(id: ModuleId): KernelModule {
+@@ -119,7 +131,7 @@ export function mutateGlobs(ids: readonly ModuleId[] = ALL_MODULE_IDS): string[]
  
-+  '@rolldown/binding-android-arm64@1.2.15':
-+    resolution: {integrity: sha512-xD7DdZCrbThKuxNg7ooQmvp07ys4J/pnSEMTG3/OdOWl6daC67m/Q4fL78sRHMxTH/N4fGUbYhcPM0MF5WFHkg==}
-+    engines: {node: ^20.19.0 || >=22.12.0}
-+    cpu: [arm64]
-+    os: [android]
-+
-   '@rolldown/binding-android-arm64@1.2.5':
-     resolution: {integrity: sha512-zXcwKlQApYAOELHd8PwKDFkagYF9Wy4e0RJ+0qnzl9Pjnpj75TEG8ufv40p2J7kCEfwZAsNiuzRIyNNMWT38ig==}
-     engines: {node
-```
-
-**File**: `pnpm-workspace.yaml` (modified, +6/-1)
-```diff
-@@ -11,10 +11,15 @@ minimumReleaseAgeExclude:
-   - '@limrun/api@0.64.1'
- overrides:
-   brace-expansion@5: '^5.0.12'
--  fast-uri: 3.1.7
-+  fast-uri: 3.1.9
-   postcss: 8.5.23
-   qs@6: ^6.16.0
-   react-router: 7.18.2
-   react-router-dom: 7.18.2
-+  # @limrun/api hard-pins undici 7.29.1, even in its newest release. The exact
-+  # scoped override raises it to the patched 7.30.1 (GHSA-xjj6-f33q-929c).
-+  # Update the root, maestro, and provision-kit exact pins with this override.
-+  undici@7: 7.30.1
-+  zod@4: ^4.6.6
- patchedDependencies:
-   ast-v8-to-istanbul@1.0.7: patches/ast-v8-to-istanbul@1.0.7.patch
-```
-
----
-
-### Incident Patch 2: `581357bc` (2026-10-26)
-**Commit Message**: fix(ios): open the sole-screen gesture route on a full-screen iPad app (#3918)
-
-* fix(ios): open the sole-screen gesture route on a full-screen iPad app
-
-A deep app tree makes XCTest's windows query fail with kAXErrorIllegalArgument,
-and the synthesized-gesture route that recovers from it accepted only an iPhone:
-the runner refused to name a screen it could not prove the app filled, so every
-tap, long press, scroll, swipe, and back fallback on a hostile-tree iPad app
-failed. iPad hosts run the same hostile trees as iPhone hosts.
-
-RunnerApplicationFillsScreen now answers that proof in-process: it compares the
-AXRuntime primary app's frame against the system app's frame, the same
-comparison the Simulator snapshot bridge refuses a windowed capture on
-(app-window-not-full-screen, ADR 0004). Neither read walks the app's tree. The
-sole-screen rule keeps one owner (RunnerResolveSoleScreen) and opens on an iPad
-only while the evidence says fills-screen; a windowed or Stage Manager app, and
-any unknown, keeps requiring a resolved window.
-
-The back fallback point now derives from the screen's own top safe-area inset
-instead of a frame-height fraction, which sat below the iPad's navigation ba
-
-**File**: `.github/actions/setup-apple-runner-build/action.yml` (modified, +1/-1)
-```diff
-@@ -42,7 +42,7 @@ runs:
-       id: source-hash
-       run: |
-         set -euo pipefail
--        echo "value=${{ hashFiles('apple/runner/**', 'apple/snapshot-presentation/**') }}" >> "$GITHUB_OUTPUT"
-+        echo "value=${{ hashFiles('apple/runner/**', 'apple/snapshot-presentation/**', 'apple/snapshot-bridge/ForegroundApplicationGeometry.h') }}" >> "$GITHUB_OUTPUT"
-       shell: bash
- 
-     - name: Resolve Apple runner cache schema
-```
-
-**File**: `.github/workflows/xctest-nightly.yml` (modified, +78/-6)
-```diff
-@@ -20,9 +20,30 @@ concurrency:
- 
- jobs:
-   full-suite:
--    name: iOS Runner Full XCTest Suite
-+    name: iOS Runner Full XCTest Suite (${{ matrix.leg.name }})
-     runs-on: macos-26
-     timeout-minutes: 45
-+    strategy:
-+      fail-fast: false
-+      matrix:
-+        leg:
-+          # Both legs share the toolchain, the runner build cache, and the artifact steps above.
-+          # The full suite runs on an iPhone, where the sole-screen rule is decided by the idiom
-+          # alone. The iPad leg boots an iPad and runs only the sole-screen tests: the iPad half
-+          # of the rule — the route opens only while the in-process full-screen evidence proves
-+          # the app fills its screen — can execute nowhere else, and the evidence line that probe
-+          # prints is what turns a revert to idiom-only routing red instead of silently green.
-+          # `name-prefix` is what each leg asserts the booted simulator's name starts with: the
-+          # boot action falls back to any simulator when the preferred name is missing, so a
-+          # renamed or absent device model must fail the leg that depends on its idiom.
-+          - name: iPhone full suite
-+            device-name: iPhone 17 Pro
-+            name-prefix: iPhone
-+            lane: nightly
-+          - name: iPad sole-screen evidence
-+            device-name: iPad Pro 11-inch (M5)
-+            name-prefix: iPad
-+            lane: nightly-ipad
-     env:
-       # Must match apple.yml. The runtime version rides in the derived-data cache key, and
-       # AGENT_DEVICE_XCUITEST_INCLUDE_UNIT_TESTS is BOTH an input to the cache's build-variant
-@@ -38,7 +59,7 @@ jobs:
-       AGENT_DEVICE_IOS_RUNNER_DERIVED_PATH: ${{ github.workspace }}/.tmp/ios-runner-derived
-       RESULT_BUNDLE_PATH: ${{ github.workspace }}/.tmp/xctest-nightly/RunnerTests.xcresult
-       RESULT_SUMMARY_PATH: ${{ github.workspace }}/.tmp/xctest-nightly/test-results-summary.json
--      XCTEST_LANE: nightly
-+      XCTEST_LANE: ${{ matrix.leg.lane }}
-     steps:
-       - name: Checkout
-         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-@@ -67,7 +88,31 @@ jobs:
-         uses: ./.github/actions/boot-ios-test-simulator
-         with:
-           runtime-version: ${{ env.IOS_RUNTIME_VERSION }}
--          preferred-device-name: iPhone 17 Pro
-+          preferred-device-name: ${{ matrix.leg.device-name }}
-+
-+      # The boot action falls back to any simulator when the preferred name is missing, so each
-+      # leg proves it booted the family it claims: the full-suite leg's coverage is iPhone-only at
-+      # the idiom, and the iPad leg's evidence line can only come from an iPad. A renamed or
-+      # removed device model on the image fails here instead of quietly testing the wrong idiom.
-+      - name: Assert the booted simulator's family
-+        run: |
-+          set -euo pipefail
-+          node -e '
-+            const { execFileSync } = require("node:child_process");
-+            const [udid, prefix] = process.argv.slice(1);
-+            const payload = JSON.parse(
-+              execFileSync("xcrun", ["simctl", "list", "devices", "-j"], { maxBuffer: 64 * 1024 * 1024 }).toString(),
-+            );
-+            const device = Object.values(payload.devices ?? {})
-+              .flat()
-+              .find((entry) => entry.udid === udid);
-+            if (!device?.name?.startsWith(prefix)) {
-+              console.error(`Booted ${device?.name ?? udid}; this leg needs a simulator named "${prefix}…"`);
-+              process.exit(1);
-+            }
-+            console.log(`Booted ${device.name}`);
-+          ' '${{ steps.ios-simulator.outputs.simulator-udid }}' '${{ matrix.leg.name-prefix }}'
-+        shell: bash
- 
-       # Same command as apple.yml's targeted step minus every `-only-testing:` flag, so the
-       # xctestrun's own test plan decides what runs — with one exception.
-@@ -84,6 +129,7 @@ jobs:
-       # A typo in that identifier silently re-arms the hang, so
-       # `pnpm check:xctest-selection` validates `-skip-testing:` exactly like `-only-testing:`.
-       - name: Run the full iOS runner XCTest suite
-+        if: matrix.leg.lane == 'nightly'
-         run: |
-           set -euo pipefail
-           XCTESTRUN_PATH="$(find "$AGENT_DEVICE_IOS_RUNNER_DERIVED_PATH/Build/Products" -maxdepth 1 -name '*.xctestrun' -print -quit)"
-@@ -102,6 +148,31 @@ jobs:
-             }
-           '
- 
-+      # The iPad leg runs a named selection: the smallest set that can execute the off-phone half of
-+      # the sole-screen rule — the admission boundary itself, one hostile-tree command that must
-+      # reach synthesis, and `back`'s route witness while the fallback's inset source is changing.
-+      # Geometry and error cases live in the host-runnable evidence matrix instead. `xcodebuild`
-+      # exits 0 when a selection matches nothing, so the reporter below asserts the executed count
-+      # against this lane's reach (`XCTEST_LANE=nightly-ipad`, derived by chec
-```
-
-**File**: `apple/runner/AgentDeviceRunner/AgentDeviceRunner.xcodeproj/project.pbxproj` (modified, +13/-0)
-```diff
-@@ -436,6 +436,14 @@
- 					CODE_SIGN_STYLE = Automatic;
- 					CURRENT_PROJECT_VERSION = 1;
- 					DEVELOPMENT_TEAM = 2S799L9W4M;
-+					// The shared full-screen rule lives in apple/snapshot-bridge beside the runner
-+					// project. The first path resolves it in a checkout; the second resolves it in
-+					// an installed npm package, where the project sits under dist/ and the header
-+					// ships at the package root. The unused entry is inert.
-+					HEADER_SEARCH_PATHS = (
-+						"$(SRCROOT)/../../snapshot-bridge",
-+						"$(SRCROOT)/../../../../apple/snapshot-bridge",
-+					);
- 					GENERATE_INFOPLIST_FILE = YES;
- 					IPHONEOS_DEPLOYMENT_TARGET = 15.6;
- 					MACOSX_DEPLOYMENT_TARGET = 13.0;
-@@ -462,6 +470,11 @@
- 					CODE_SIGN_STYLE = Automatic;
- 					CURRENT_PROJECT_VERSION = 1;
- 					DEVELOPMENT_TEAM = 2S799L9W4M;
-+					// Keep HEADER_SEARCH_PATHS in step with the Debug configuration above.
-+					HEADER_SEARCH_PATHS = (
-+						"$(SRCROOT)/../../snapshot-bridge",
-+						"$(SRCROOT)/../../../../apple/snapshot-bridge",
-+					);
- 					GENERATE_INFOPLIST_FILE = YES;
- 					IPHONEOS_DEPLOYMENT_TARGET = 15.6;
- 					MACOSX_DEPLOYMENT_TARGET = 13.0;
-```
-
-**File**: `apple/runner/AgentDeviceRunner/AgentDeviceRunner/AgentDeviceRunnerAppFixtures.m` (modified, +13/-1)
-```diff
-@@ -621,11 +621,23 @@ - (void)viewDidLoad {
-       bar.items = @[item];
-       [self.view addSubview:bar];
-     } else {
-+      // The control must sit under the point the runner's top-leading fallback aims at, whose
-+      // bounds are known: x lands at most 44 from the frame's leading edge, y at
-+      // clamp(safeTopInset + 22, 56, 96). Anchoring to the view's leading (not the safe-area's)
-+      // keeps the button under x=44 on a landscape iPhone, where the side inset would otherwise
-+      // start a safe-area anchor past it; the safe-area top plus 12 with a 64-pt height spans the
-+      // whole clamped y range for every inset an iPhone or iPad reports.
-       UIButton *back = [UIButton buttonWithType:UIButtonTypeSystem];
--      back.frame = CGRectMake(12, 62, 88, 44);
-+      back.translatesAutoresizingMaskIntoConstraints = NO;
-       [back setTitle:@"Go back" forState:UIControlStateNormal];
-       [back addTarget:self action:@selector(navigationBackPressed) forControlEvents:UIControlEventTouchUpInside];
-       [self.view addSubview:back];
-+      [NSLayoutConstraint activateConstraints:@[
-+        [back.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:12],
-+        [back.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor constant:12],
-+        [back.widthAnchor constraintEqualToConstant:88],
-+        [back.heightAnchor constraintEqualToConstant:64],
-+      ]];
-     }
-   }
- 
-```
-
-**File**: `apple/runner/AgentDeviceRunner/AgentDeviceRunnerUITests/RunnerAppScreenCapture.swift` (modified, +4/-3)
-```diff
-@@ -133,11 +133,12 @@ extension RunnerTests {
-   }
- 
-   /// Samples the same sole-screen route that synthesized gestures use when the app tree refuses
--  /// its window. This route cannot name a screen on an iPad or a multi-screen iPhone.
--  func captureSoleAppScreen() -> Result<CapturedAppScreen, RunnerAppScreenCaptureFailure> {
-+  /// its window. On an iPad the route opens only while the app provably fills its sole screen, so
-+  /// a windowed app keeps refusing instead of sampling the wrong frame.
-+  func captureSoleAppScreen(app: XCUIApplication) -> Result<CapturedAppScreen, RunnerAppScreenCaptureFailure> {
-     var screen: AnyObject?
-     var displayID: UInt = 0
--    guard RunnerResolveSoleScreen(&screen, &displayID) == nil,
-+    guard RunnerResolveSoleScreen(app, &screen, &displayID) == nil,
-       let captureScreen = screen as? XCUIScreen
-     else {
-       return .failure(.unresolvedScreen)
-```
-
-**File**: `apple/runner/AgentDeviceRunner/AgentDeviceRunnerUITests/RunnerSynthesizedGesture.m` (modified, +1/-1)
-```diff
-@@ -333,7 +333,7 @@ static RunnerTapSynthesisStatus RunnerTrySynthesizeTap(
-   NSUInteger displayID = 0;
-   // A nil window is the caller's sole-screen route: the app tree could not name its window.
-   NSString *displayError = resolvedWindow == nil
--    ? RunnerResolveSoleScreenDisplayID(&displayID)
-+    ? RunnerResolveSoleScreenDisplayID(application, &displayID)
-     : RunnerResolveWindowDisplayID(resolvedWindow, &displayID);
-   if (displayError != nil) return displayError;
-   NSInteger interfaceOrientation =
-```
-
-**File**: `apple/runner/AgentDeviceRunner/AgentDeviceRunnerUITests/RunnerTests+Navigation.swift` (modified, +35/-6)
-```diff
-@@ -179,18 +179,44 @@ extension RunnerTests {
-     return candidate.midY >= window.minY && candidate.midY <= maxY
-   }
- 
--  static func topLeadingNavigationFallbackPoint(in frame: CGRect) -> CGPoint? {
-+  /// The point the top-leading `back` fallback aims at: the leading slot of the bar that sits
-+  /// directly under the top inset of the frame the tap lands in. A fraction of the frame height
-+  /// cannot serve both families — an iPhone 17 Pro measures a 59-pt inset with its bar at y 62-116,
-+  /// while an iPad Pro 11" measures 32 with its bar at y 32-86, where the iPhone's height-derived 96
-+  /// lands below the bar. `22` is half of UIKit's standard 44-pt top bar. The bounds keep a runtime
-+  /// that reports no inset inside a plausible bar, and a large inset from leaving it.
-+  static func topLeadingNavigationFallbackPoint(
-+    in frame: CGRect,
-+    topSafeAreaInset: CGFloat
-+  ) -> CGPoint? {
-     guard SnapshotGeometry.isPositiveFinite(frame) else {
-       return nil
-     }
-     // Aim at the standard leading navigation slot, bounded for compact and tablet widths.
-     let xOffset = min(max(frame.width * 0.08, 28), 44)
--    // Sit below the status/dynamic-island region, inside the bar's leading control: on a 402x874
--    // iPhone the bar spans y 62-116 and its back control 62-106.
--    let yOffset = min(max(frame.height * 0.1, 56), 96)
-+    let yOffset = min(max(topSafeAreaInset + 22, 56), 96)
-     return CGPoint(x: frame.minX + xOffset, y: frame.minY + yOffset)
-   }
- 
-+  /// The screen's top inset, read in-process from the runner's own window scene. The status-bar /
-+  /// Dynamic Island band is a screen-level fact, so the runner's full-screen host window reports the
-+  /// one the target app sees — and unlike any element frame it answers on a tree XCTest cannot
-+  /// serialize. The largest top inset among the scene's windows wins: an alert or keyboard window
-+  /// reports none, and the window that carries the band is the one to ask.
-+  private func screenTopSafeAreaInset() -> CGFloat {
-+    #if os(iOS)
-+      let insets = UIApplication.shared.connectedScenes
-+        .compactMap { $0 as? UIWindowScene }
-+        .flatMap(\.windows)
-+        .map(\.safeAreaInsets.top)
-+      let inset = insets.max() ?? 0
-+      NSLog("AGENT_DEVICE_RUNNER_BACK_FALLBACK_TOP_INSET read=%.1f windows=%zd", inset, insets.count)
-+      return inset
-+    #else
-+      return 0
-+    #endif
-+  }
-+
-   @MainActor
-   private func tapTopLeadingNavigationFallback(
-     app: XCUIApplication,
-@@ -201,7 +227,10 @@ extension RunnerTests {
-       app: app,
-       policy: synthesizedGesturePolicy(.coordinateTap),
-       windowQueryRejected: windowQueryRejected
--    ), let point = Self.topLeadingNavigationFallbackPoint(in: context.referenceFrame) else {
-+    ), let point = Self.topLeadingNavigationFallbackPoint(
-+      in: context.referenceFrame,
-+      topSafeAreaInset: screenTopSafeAreaInset()
-+    ) else {
-       return .unavailable
-     }
-     let before = captureNavigationFallbackVisualState(app: app, context: context)
-@@ -238,7 +267,7 @@ extension RunnerTests {
-     return Self.navigationFallbackSample(
-       resolvingApp: {
-         context.resolvedWindow == nil
--          ? self.captureSoleAppScreen()
-+          ? self.captureSoleAppScreen(app: app)
-           : self.captureResolvedAppScreen(app: app)
-       },
-       systemSurface: { self.captureResolvedAppScreen(app: self.springboard) },
-```
-
-**File**: `apple/runner/AgentDeviceRunner/AgentDeviceRunnerUITests/RunnerTests+SynthesizedInteraction.swift` (modified, +12/-8)
-```diff
-@@ -343,8 +343,8 @@ extension RunnerTests {
-   }
- 
-   /// The viewport the portable gesture planner lays pointer paths in: the frame of the synthesized
--  /// context its record is routed through, so a tree with no window on an iPhone with one screen
--  /// plans on that screen, the same route a synthesized tap or scroll takes.
-+  /// context its record is routed through, so a tree with no window whose app provably fills its
-+  /// sole screen plans on that screen, the same route a synthesized tap or scroll takes.
-   @MainActor
-   func gestureViewportFrame(app: XCUIApplication) -> CGRect {
- #if os(iOS)
-@@ -518,14 +518,18 @@ extension RunnerTests {
- 
- 
- #if os(iOS)
--  /// The reference frame of the sole-screen route, read without the app's accessibility tree: on an
--  /// iPhone with one screen a full-screen app's window is that screen. A deep app tree makes the
--  /// windows query fail with `kAXErrorIllegalArgument`, and without this route every synthesized
--  /// tap and scroll on such a screen failed even though synthesis itself needs no tree. Anything
--  /// that can show an app in part of a screen (iPad, more than one screen) keeps requiring a window.
-+  /// The reference frame of the sole-screen route, read without the app's accessibility tree: when
-+  /// the app provably fills the device's only screen, its window is that screen. A deep app tree
-+  /// makes the windows query fail with `kAXErrorIllegalArgument`, and without this route every
-+  /// synthesized tap and scroll on such a screen failed even though synthesis itself needs no tree.
-+  /// `RunnerResolveSoleScreen` owns which devices prove that — an iPhone always, an iPad only while
-+  /// the app fills the screen — so this reads the same answer the record's routing takes, and
-+  /// anything else (a windowed iPad, a multi-screen foldable) keeps requiring a window.
-   @MainActor
-   func soleScreenReferenceFrame(app: XCUIApplication) -> CGRect? {
--    guard UIDevice.current.userInterfaceIdiom == .phone else {
-+    var resolvedScreen: AnyObject?
-+    var resolvedDisplayID: UInt = 0
-+    guard RunnerResolveSoleScreen(app, &resolvedScreen, &resolvedDisplayID) == nil else {
-       return nil
-     }
-     let frame = soleDisplayFrame(
-```
-
----
-
-### Incident Patch 3: `f3949c8b` (2026-10-26)
-**Commit Message**: fix(ios): fold and capture an iPhone Duo in a scoped simulator set (#3970)
-
-* fix(ios): fold and capture an iPhone Duo in a scoped simulator set
-
-devicectl resolves a simulator only in Xcode's default device set, so a
-Simlock-style scoped set had no hinge readback and no panel table, and fold
-refused it with unsupported-device-scope. Both facts come from the guest
-(dtdeviceinfod), so the fold helper now reads them itself through simctl
---set spawn: 'hinge' takes one CoreMotion CMAngleManager sample for every
-simulator, and 'panels' returns the CADisplay/BLSBacklight panel table in
-CoreDevice's shape for scoped simulators. Hinge reads are spaced one second
-apart so a moving hinge cannot look settled.
-
-* fix(ios): never read a short guest panel table as single-panel evidence
-
-The fold helper now counts every integrated panel it sees, readable or not.
-A short table with two or more panels refuses capture with
-capture-panel-unidentified instead of capturing simctl's implicit display;
-a helper that cannot run stays unresolved, as an unanswered CoreDevice does.
-
-* fix(ios): space guest hinge reads inside the helper and resolve it once per fold
-
-A host-side sleep between hinge reads spent
-
-**File**: `apple/fold-helper/Fold.m` (modified, +160/-11)
-```diff
-@@ -1,8 +1,12 @@
-+#import <CoreGraphics/CoreGraphics.h>
- #import <Foundation/Foundation.h>
-+#import <dlfcn.h>
- #import <mach/mach_time.h>
- #import <math.h>
-+#import <objc/message.h>
- 
--// Private simulator HID entry points; the host verifies the resulting hinge independently.
-+// Private simulator HID entry points. `set` only dispatches; `hinge` and `panels` only observe, so
-+// the host verifies a pose with a separate process that never sends HID.
- extern CFDataRef IOCFSerialize(CFTypeRef object, CFOptionFlags options);
- extern CFTypeRef IOHIDEventCreateVendorDefinedEvent(CFAllocatorRef allocator, uint64_t timestamp,
-     uint32_t usagePage, uint32_t usage, uint32_t version, const uint8_t *data,
-@@ -80,18 +84,163 @@ static BOOL runFrames(CFTypeRef client, NSArray *frames) {
-   }
- }
- 
-+static int runSet(NSString *argument) {
-+  NSArray *frames = readFrames(argument);
-+  if (!frames) {
-+    fprintf(stderr, "Expected a pose or 2-64 {atMs,angle} keyframes spanning 0 to at most 60000ms\n");
-+    return 2;
-+  }
-+  CFTypeRef client = IOHIDEventSystemClientCreate(kCFAllocatorDefault);
-+  if (!client) return 1;
-+  BOOL dispatched = runFrames(client, frames);
-+  CFRelease(client);
-+  if (!dispatched) fprintf(stderr, "Unable to create simulator HID event\n");
-+  return dispatched ? 0 : 1;
-+}
-+
-+static BOOL responds(id target, SEL selector) {
-+  return target != nil && [target respondsToSelector:selector];
-+}
-+
-+static id sendObject(id target, SEL selector) {
-+  return responds(target, selector) ? ((id (*)(id, SEL))objc_msgSend)(target, selector) : nil;
-+}
-+
-+static id sendObjectWith(id target, SEL selector, id argument) {
-+  return responds(target, selector) ? ((id (*)(id, SEL, id))objc_msgSend)(target, selector, argument) : nil;
-+}
-+
-+static BOOL printJSON(NSDictionary *payload) {
-+  NSData *data = [NSJSONSerialization dataWithJSONObject:payload options:0 error:NULL];
-+  if (!data) return NO;
-+  fwrite(data.bytes, 1, data.length, stdout);
-+  fputc('\n', stdout);
-+  return YES;
-+}
-+
-+// One fresh CoreMotion observation, the source devicectl's hinge-angle stream relays. The manager
-+// delivers the current angle on subscription and then each change, so after `windowMs` the latest
-+// sample is where the hinge is now. A window spaces two reads of a moving hinge apart in time.
-+static int readHinge(NSString *windowArgument) {
-+  NSInteger windowMs = windowArgument ? windowArgument.integerValue : 0;
-+  if (windowArgument && (windowMs < 0 || windowMs > 5000 ||
-+      ![[@(windowMs) stringValue] isEqualToString:windowArgument])) {
-+    fprintf(stderr, "Expected a hinge read window from 0 to 5000ms\n");
-+    return 2;
-+  }
-+  dlopen("/System/Library/Frameworks/CoreMotion.framework/CoreMotion", RTLD_NOW);
-+  Class managerClass = NSClassFromString(@"CMAngleManager");
-+  SEL start = @selector(startAngleUpdatesToQueue:handler:);
-+  if (!managerClass || !responds(managerClass, @selector(isAvailable)) ||
-+      !((BOOL (*)(id, SEL))objc_msgSend)(managerClass, @selector(isAvailable)) ||
-+      ![managerClass instancesRespondToSelector:start]) {
-+    fprintf(stderr, "CMAngleManager is not available in this simulator runtime\n");
-+    return 3;
-+  }
-+  id manager = [managerClass new];
-+  NSOperationQueue *queue = [NSOperationQueue new];
-+  queue.maxConcurrentOperationCount = 1;
-+  dispatch_semaphore_t sampled = dispatch_semaphore_create(0);
-+  __block BOOL received = NO;
-+  __block double angle = NAN;
-+  __block BOOL valid = NO;
-+  // The handler's second argument is not an object; the block declares only the sample.
-+  void (^handler)(id) = ^(id sample) {
-+    if (!responds(sample, @selector(angleDegrees))) return;
-+    angle = ((float (*)(id, SEL))objc_msgSend)(sample, @selector(angleDegrees));
-+    valid = responds(sample, @selector(isAngleValid)) &&
-+        ((BOOL (*)(id, SEL))objc_msgSend)(sample, @selector(isAngleValid));
-+    if (!received) dispatch_semaphore_signal(sampled);
-+    received = YES;
-+  };
-+  ((void (*)(id, SEL, NSOperationQueue *, id))objc_msgSend)(manager, start, queue, handler);
-+  long timedOut = dispatch_semaphore_wait(sampled, dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC));
-+  if (!timedOut && windowMs > 0) [NSThread sleepForTimeInterval:windowMs / 1000.0];
-+  if (responds(manager, @selector(stopAngleUpdates))) {
-+    ((void (*)(id, SEL))objc_msgSend)(manager, @selector(stopAngleUpdates));
-+  }
-+  [queue waitUntilAllOperationsAreFinished];
-+  if (timedOut) {
-+    fprintf(stderr, "CMAngleManager delivered no hinge sample within 3 seconds\n");
-+    return 4;
-+  }
-+  return printJSON(@{@"version": @1, @"angleDegrees": @(angle), @"angleValid": @(valid)}) ? 0 : 1;
-+}
-+
-+// BacklightServices BLSBacklightState, named as CoreDevice's BacklightState union names it.
-+static NSString *backlightStateName(long state) {
-+  switch (state) {
-+    case 0: return @"off";
-+    case 1: return @"inactiveOn";
-+    case 2: return @"activeOn";
-+    case 3: return @"activeDimmed";
-+    default: return @"unknown";
-+  }
-+}
-+
-+/
-```
-
-**File**: `docs/adr/0025-foldable-apple-panels.md` (modified, +62/-15)
-```diff
-@@ -7,6 +7,7 @@ The pose-settle amendment is dated 2026-09-21 under #2730.
- The touch-overlay export diagnosis was corrected on 2026-09-22 under #2707.
- The Android emulator pose amendment is dated 2026-10-10.
- The no-panel refusal correction (#3761) is dated 2026-10-18.
-+The guest readback amendment is dated 2026-10-26.
- This ADR covers iPhone Duo (iOS 27.1, `iPhone19,4`) and Apple devices with more than one integrated CoreDevice display.
- The amendment below also covers foldable Android emulators.
- 
-@@ -20,27 +21,27 @@ Only inference answers the second question.
- 
- | Situation | Behavior |
- | --- | --- |
--| iOS simulator capture through `simctl` | First resolve the CoreDevice display table. Capture the panel that the system currently lights. |
-+| iOS simulator capture through `simctl` | First resolve the panel table: CoreDevice in the default device set, the guest helper in a scoped set. Capture the panel that the system currently lights. |
- | Runner fallback after an eligible `simctl` failure | Follow the target app's window and capture the display that hosts it. Use the facts that the runner reports. Only a failure the fallback policy (`shouldFallbackToRunner`) accepts reaches the runner; other failures rethrow. |
- | More than one integrated panel | Pass `--display=<panel name>` on every `simctl io screenshot`. Never use the implicit default. |
- | Zero or multiple lit panels with a `primary` panel | Name the `primary` panel. Emit `apple_display_capture_ambiguous`. Report pose as `unknown`. |
- | No sole lit panel and no `primary` panel | Refuse with `COMMAND_FAILED` and `details.reason: capture-panel-unidentified`. Never choose a panel by array order. |
- | One integrated panel | Preserve pre-panel behavior exactly: no display flag, no pose, unchanged scale probe. |
- | Density normalization | Use the captured panel's `pointScale`. For runner fallback, use that capture's reported pixels-per-point. |
- | Pose report | From panel power alone, report only `closed`, `fully-open`, or `unknown`, never a narrower pose. `fold` reports an exact pose only after hinge readings verify it. |
--| Pose request | `agent-device fold <closed\|half-open\|open>` sends private HID inside the simulator. Then it reads the hinge angle back from CoreDevice until the angle agrees. For `half-open`, two consecutive readings must agree. If the readings never agree, refuse the pose. |
-+| Pose request | `agent-device fold <closed\|half-open\|open>` sends private HID inside the simulator. Then it reads the hinge angle back inside the simulator until the angle agrees. For `half-open`, two consecutive readings must agree. If the readings never agree, refuse the pose. |
- | The first hinge read returns no sample | Refuse with `fold-pose-dispatched-unverified`. Panel power does not verify the pose. |
- | The hinge reaches `half-open` but keeps moving | Refuse with `fold-pose-unsettled` and the observed and previous angles. An angle inside the open interval is an observed category, not a pose that the hinge holds. |
- | External display | It is not a panel. It creates neither multi-screen classification nor a pose. |
--| CoreDevice cannot answer | Return unresolved inventory. Preserve single-panel capture. An absent host feature is not a capture failure. |
-+| The panel table cannot be read | Return unresolved inventory. Preserve single-panel capture. An absent host feature is not a capture failure. |
- 
- ## Contracts
- 
- `packages/platform-apple/src/core/display-inventory.ts` owns the panel model.
--It is the only reader of CoreDevice display information.
-+It is the only reader of panel tables, and it selects the source.
- 
- - **Authority.**
--  `xcrun devicectl device info displays --json-output` (`jsonVersion` 5) is the only screen authority.
-+  `xcrun devicectl device info displays --json-output` (`jsonVersion` 5) is the screen authority in the default device set.
-   It reports these per-panel values:
-   - `name`, also accepted by `simctl io --display`.
-   - `displayId`.
-@@ -52,6 +53,14 @@ It is the only reader of CoreDevice display information.
-   - `active`.
-   - `backlightState`.
-   It works for simulators with `reality: simulated` and physical devices.
-+  It resolves a simulator only in the default device set.
-+  For a simulator in a scoped set, the fold helper's `panels` mode is the screen authority.
-+  It emits the same entry shape from the guest sources that `dtdeviceinfod` relays to CoreDevice: `CADisplay` and `BLSBacklight`.
-+  The guest lists every integrated panel and omits only the facts it cannot read.
-+- **Completeness.**
-+  Both sources list one entry per integrated panel. A panel that the parser drops is not single-panel evidence.
-+  If two or more integrated entries exist and not all parse, the device is multi-panel without a capture panel. Capture refuses with `capture-panel-unidentified`.
-+  If the source cannot answer, the inventory is unresolved.
- - **Panel power.**
-   `backlightState` is authoritative. `active` is only a fallbac
-```
-
-**File**: `docs/adr/README.md` (modified, +1/-1)
-```diff
-@@ -26,7 +26,7 @@
- | [0022 Daemon — Platform Runtime Coupling Audit and Ownership Ratchets](0022-daemon-platform-runtime-coupling.md) | daemon imports of root `platform-runtime-*` modules, the coupling ban that replaces R76 edge classification, the R75 session-authority ratchet, entry-to-platform hop routes and roles |
- | [0023 End-State Entry-to-Platform Hop Trace](0023-end-state-hop-trace.md) | the definition of hop counts, ordered `press`/Android and dual-arm `snapshot`/iOS chains, per-hop roles, and the deletion test for numbers in ADR 0019 and ADR 0022 |
- | [0024 Screen Recording — One Coordinator, Two Facts (Proposed)](0024-screen-recording-provable-signal.md) | `record start`/`stop` lifecycle, separate export-exists / recorder-stopped facts, backend stop-and-collect contract, coordinator recovery, the ADR 0019 §5 amendment, and the failed-finish cleanup fix |
--| [0025 Foldable Apple Panels — Capture the Lit Panel](0025-foldable-apple-panels.md) | iPhone Duo outer/inner panels, CoreDevice display info as sole screen authority, black-panel capture from `simctl`'s implicit display default, derived (never asserted) pose, `fold` pose control, and the Android emulator posture amendment |
-+| [0025 Foldable Apple Panels — Capture the Lit Panel](0025-foldable-apple-panels.md) | iPhone Duo outer/inner panels, the screen authority (CoreDevice display info in the default set, the guest panel read in a scoped set), black-panel capture from `simctl`'s implicit display default, derived (never asserted) pose, `fold` pose control with guest hinge and scoped-set panel readback, and the Android emulator posture amendment |
- | [0026 Scroll Clip Authority — Ownership Is the Parent Edge](0026-scroll-clip-authority.md) | iOS scroll indicators and the visible band, parent-edge ownership instead of ancestor traversal, permitted node removal from interactive snapshots, and ejection dispositions |
- | [0027 Descriptor Root Size vs Eager-Closure Budget](0027-descriptor-root-vs-eager-closure-budget.md) | accepted: the eager-closure budget permits only a statement-neutral hub split (containment + added-module novelty + flat top-level-statement weight); `packages/command-registry/src/registry.ts` may be split |
- | [0028 Capability-Family Cell Vocabulary — One Runtime Source (Proposed)](0028-capability-family-cell-vocabulary.md) | capability operation family additions, `UnavailablePlatformRuntimeFacts` / `UNAVAILABLE_CELLS`, `INTERACTOR_OPERATIONS`, and the reason for repeated changes across eight packages |
-```
-
-**File**: `docs/agents/device-foldable.md` (modified, +5/-6)
-```diff
-@@ -2,25 +2,24 @@
- 
- Before you change capture behavior on a multi-panel device, read ADR 0025.
- To list the panels, run `xcrun devicectl device info displays --device <udid>`.
-+In a scoped set, run `xcrun simctl --set <set> spawn <udid> ~/.agent-device/fold-helper/<key>/fold-helper panels`.
- 
--- Panels: the command lists each integrated panel with `backlightState`. Only the lit panel permits capture.
-+- Panels: the list shows each integrated panel with `backlightState`. Only the lit panel permits capture.
-   A capture of the dark panel exits 0 and writes an all-black PNG.
- - Input routing: after each pose change, verify a fresh control.
-   A successful synthesis acknowledgement does not prove a hit.
-   Examine the runner and simulator `testmanagerd`/BackBoard logs for display identity and delivery.
-   The resolved app window owns gesture coordinates and its target screen.
- - Pose: `agent-device fold closed|half-open|open` sends private HID inside the simulator.
--  It tries to read the hinge back through `devicectl device motion hinge-angle`.
--  Device Hub and host Accessibility permission are not required.
-+  The same helper reads the hinge back in `hinge` mode.
-   After a fold, take another snapshot. Folds invalidate refs and coordinates.
-   Verify locally with Device Hub stopped and the simulator booted through `simctl boot`.
--  Test these items:
-+  Test these items in the default set and with `--ios-simulator-device-set`:
-   - All three poses.
-   - Capture of the active panel.
-   - An app interaction.
-   Until GHA supports the runtime, Duo coverage remains local.
--  devicectl 651.13.5 has no `device motion`. There, `fold` reports `fold-pose-dispatched-unverified`.
--  To examine the pose, compare the lit panel from the panel list.
-+  After a fresh boot, a closed hinge can keep the inner panel lit for more than 30 seconds.
-   The lit panel is evidence only. It cannot separate `half-open` from `open`.
- - Touch overlays export at the captured track size.
-   The compositor checks its output size and non-black content against the raw capture.
-```
-
-**File**: `packages/command-registry/src/timeout-policy.ts` (modified, +3/-1)
-```diff
-@@ -64,7 +64,9 @@ export const COMPOSITE_TIMEOUT_POLICIES = {
  /**
-  * Covers the fold route's worst-case ledger (display inventory, fold-helper preparation, HID
-  * dispatch, hinge settle reads, final display inventory) plus the daemon-result margin. Proven by
-- * the ledger test: `test/integration/provider-scenarios/ios-fold.test.ts`.
-+ * the ledger test for a default-set simulator: `test/integration/provider-scenarios/ios-fold.test.ts`.
-+ * A scoped-set simulator reads its two display inventories through the guest helper, at most 15s
-+ * each instead of 5s, and still fits.
+  * The module a lane-tooling change proves itself against. Keep this to a real
+- * end-to-end sweep whose observed related-test scope fits the 30-minute job
++ * end-to-end sweep whose observed owned-test scope fits the 30-minute job
+  * budget; mutant count alone does not capture replay cost.
   */
- const FOLD_REQUEST_TIMEOUT_MS = 255_000;
- 
+ export const LANE_CANARY: ModuleId = 'snapshot-occlusion';
 ```
 
-**File**: `packages/daemon/src/execution/__tests__/fold-runtime.test.ts` (modified, +0/-33)
+**File**: `scripts/mutation/ownership.test.ts` (modified, +78/-20)
 ```diff
-@@ -171,39 +171,6 @@ test('rejects an unavailable exact-owner fact before binding', async () => {
-   });
+@@ -1,15 +1,19 @@
+ import assert from 'node:assert/strict';
+ import path from 'node:path';
+ import { test } from 'node:test';
++import fs from 'node:fs';
++import { mkdtempForTestSync } from '@agent-device/test-kit';
++import { runCmdSync } from '@agent-device/host-kit/command';
+ import { fileURLToPath } from 'node:url';
+ import { KERNEL_MODULES } from './modules.ts';
+ import {
+   derivedAffectedModules,
++  importedBy,
+   isTestFile,
+   mutatedSources,
++  mutationTestFiles,
+   ownedTestFiles,
+   ownershipDeriver,
+-  reachableFrom,
+ } from './ownership.ts';
+ 
+ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+@@ -31,30 +35,84 @@ test('a kernel is owned by the mirrored test that imports it directly', () => {
+   );
  });
  
--// The scoped-set refusal is a real route outcome, not just a narrowed binding: a scoped session's
--// `setFoldPose` fact refuses on admission, so the wire error carries the typed reason and the fact's
--// own hint, and the device is never bound or posed. The hint is a sentinel the route could never
--// compose, so the assertion proves propagation without re-typing production's wording.
--test('refuses a scoped simulator set on the route with the typed reason, never binding', async () => {
--  const scopedDevice: DeviceInfo = { ...testDevice, simulatorSetPath: '/tmp/scoped-set' };
--  const scopeRefusal = {
--    available: false,
--    reason: 'unsupported-device-scope',
--    hint: 'SCOPED-SET-HINT-SENTINEL',
--  } as const;
--  const harness = runtimeHarness(scopeRefusal, vi.fn(), scopedDevice);
--
--  const resolved = await resolveBoundFoldRuntime({
--    platformServices: daemonPlatformServicesFixture(),
--    device: scopedDevice,
--    positionals: ['half-open'],
--    inspectFacts: harness.inspectFacts,
--    bindDevice: harness.bindDevice,
--  });
--
--  expect(resolved.ok).toBe(false);
--  if (resolved.ok || resolved.response.ok) throw new Error('the scoped-set fact admitted fold');
--  expect(resolved.response.error).toMatchObject({
--    code: 'UNSUPPORTED_OPERATION',
--    message: 'fold is not supported on this device',
--    hint: 'SCOPED-SET-HINT-SENTINEL',
--    details: { reason: 'unsupported-device-scope' },
--  });
--  expect(harness.bindDevice).not.toHaveBeenCalled();
--  expect(harness.setFoldPose).not.toHaveBeenCalled();
--});
--
- test('passes the validated timed intent to the admitted fold owner', async () => {
-   const setFoldPose = vi.fn(async (): Promise<SetFoldPoseResult> => ({
-     pose: 'half-open',
-```
-
-**File**: `packages/platform-apple/src/core/__tests__/display-inventory.test.ts` (modified, +166/-0)
-```diff
-@@ -15,6 +15,9 @@ vi.mock('../tool-provider.ts', async (importOriginal) => {
-     runXcrun: vi.fn(async () => ({ exitCode: 0, stdout: '', stderr: '' })),
-   };
+-// The omission that hand-listed ownership could not see: this test asserts over
+-// normalizeError without importing packages/kernel/src/errors.ts itself.
+-test('a kernel is owned by tests that reach it indirectly', () => {
+-  const deriver = ownershipDeriver(repoRoot);
++// Reach is not ownership: nearly every test reaches the error kernel, and a
++// reach-based scope is the whole suite. This test exercises edge detection only
++// through the back runtime, so it does not measure scroll-edge-state.
++test('a test that only reaches a kernel through other modules does not own it', () => {
++  const testFile = 'packages/daemon/src/execution/__tests__/back-runtime.test.ts';
++  assert.ok(!ownershipDeriver(repoRoot).ownersOf(testFile).includes('scroll-edge-state'));
++  assert.ok(!mutationTestFiles(['scroll-edge-state'], repoRoot).includes(testFile));
++});
++
++test('a file absent from the tracked graph imports nothing', () => {
++  assert.deepEqual([...importedBy('src/untracked-fixture.ts', repoRoot)], []);
++});
++
++test('a mutation scope holds no test another Vitest project owns', () => {
++  // The apple-runner suites need that project's host setup, which Stryker's run does not install.
+   assert.ok(
+-    deriver.ownersOf('src/__tests__/daemon-error.test.ts').includes('kernel-errors'),
+-    'daemon-error.test.ts exercises normalizeError but does not own kernel-errors',
++    !mutationTestFiles(['kernel-errors'], repoRoot).some((file) =>
++      file.startsWith('packages/platform-apple/src/runner/'),
++    ),
+   );
+   assert.ok(
+-    deriver
+-      .ownersOf('packages/daemon/src/execution/__tests__/back-runtime.test.ts')
+-      .includes('scroll-edge-state'),
+-    'back-runtime.test.ts exercises edge detection but does not own scroll-edge-state',
++    !isTestFile('packages/platform-apple/src/runner/__tests__/index-dispatch-disclosure.test.ts'),
+   );
  });
-+vi.mock('../../foldable/fold-helper-cache.ts', () => ({
-+  ensureFoldHelperBinary: vi.fn(async () => ({ path: '/cache/fold-helper' })),
-+}));
- vi.mock('@agent-device/host-kit/diagnostics', async (importOriginal) => {
-   const actual = await importOriginal<typeof import('@agent-device/host-kit/diagnostics')>();
-   return { ...actual, emitDiagnostic: vi.fn() };
-@@ -35,6 +38,7 @@ import {
-   parseCoreDeviceDisplays,
-   readPanelPower,
-   resolveAppleCaptureDisplay,
-+  queryAppleDisplayInventory,
-   resolveAppleCaptureTarget,
-   type AppleDeviceDisplay,
- } from '../display-inventory.ts';
-@@ -47,6 +51,7 @@ import { runXcrun } from '../tool-provider.ts';
- import { readHostTextFile } from '@agent-device/host-kit/host-file';
- import { runSimctlForDevice } from '../simctl.ts';
- import { emitDiagnostic } from '@agent-device/host-kit/diagnostics';
-+import { ensureFoldHelperBinary } from '../../foldable/fold-helper-cache.ts';
- import { IOS_TEST_SIMULATOR } from './apple-core-stub-helpers.ts';
  
- const mockRunSimctlForDevice = vi.mocked(runSimctlForDevice);
-@@ -668,3 +673,164 @@ describe('captureSimulatorScreenshotWithFallback runner fallback', () => {
-     assert.deepEqual(sourceScales, [outerPanel.pointScale]);
-   });
+-test('reachability includes its query root when the file is absent from the tracked graph', () => {
+-  assert.deepEqual(
+-    [...reachableFrom('src/untracked-fixture.ts', repoRoot)],
+-    ['src/untracked-fixture.ts'],
++test('a test that takes a kernel through a barrel re-export owns it', () => {
++  // `@agent-device/ad-script` re-exports the codec this test exercises.
++  assert.ok(
++    mutationTestFiles(['target-annotation-serde'], repoRoot).includes(
++      'packages/selectors/src/target-evidence.test.ts',
++    ),
+   );
  });
+ 
+-test('ownership is complete: every test reaching a kernel owns it', () => {
++test('a test that runs a kernel through its test support code owns it', () => {
++  // `capture()` in scroll-edge-state-fixtures.ts calls the kernel; this test imports only it.
++  const testFile =
++    'packages/capture-kit/src/snapshot/__tests__/scroll-edge-state-target-resolution.test.ts';
++  assert.ok(ownershipDeriver(repoRoot).ownersOf(testFile).includes('scroll-edge-state'));
++  assert.ok(mutationTestFiles(['scroll-edge-state'], repoRoot).includes(testFile));
++});
 +
-+describe('scoped simulator panel table', () => {
-+  const scopedDuo = {
-+    ...IOS_TEST_SIMULATOR,
-+    id: 'scoped-duo',
-+    simulatorSetPath: '/tmp/scoped-set',
-+  };
-+  /** Verbatim fold helper `panels` output for an open iPhone Duo in a scoped set. */
-+  const GUEST_PANELS_OPEN = JSON.stringify({
-+    version: 1,
-+    displays: [
-+      {
-+        primary: true,
-+        currentOrientation: 'rot0',
-+        pointScale: 3,
-+        backlightState: 'off',
-+        nativeSize: [1398, 2034],
-+        type: { integrated: {} },
-+        name: 'LCD',
-+        displayId: 1,
-+      },
-+      {
-+        primary: false,
-+        currentOrientation: 'rot90',
-+        pointScale: 3,
-+        backlightState: 'activeOn',
-+        nativeSize: [2007, 2853],
-+        type: { integrated: {} },
-+        name: 'LCD-1',
-+        displayId: 3,
-+      },
-+    ],
-+  });
-+
-+  beforeEach(() => {
-+    mockRunXcrun.mockClear();
-+    mockEmitDiagnostic.mockClear();
-+    mockRunSimctlForDevice.mockReset();
-+    mockRunSimctlForDevice.mockResolvedValue({ exitCode: 0, stdout: '', stderr: '' });
-+  });
-+
-+  test('reads the lit panel from the guest helper, never from CoreDevice', async () => {
-+    mockRunSimctlForDevice.mockResolvedValueOnce({
-+      exitCode: 0,
-+      stdout: `${GUEST_PANELS_OPEN}\n`,
-+      stderr: '',
-+    });
-+
-+    const display = await resolveAppleCaptureDisplay(scopedDuo);
-+
-+    assert.equal(display?.name, 'LCD-1');
-+    assert.deepEqual(mockRunSimctlForDevice.mock.calls[0]?.slice(0, 2), [
-+      scopedDuo,
-+      ['spawn', 'scoped-duo', '/cache/fold-helper', 'panels'],
-+    ]);
-+    assert.equal(mockRunXcrun.mock.calls.length, 0);
-+  });
-+
-+  test('reads with the fold helper the caller already opened', async () => {
-+    vi.mocked(ensureFoldHelperBinary).mockClear();
-+    const readPanelPayload = vi.fn(async () => ({
-+      result: { displays: (JSON.parse(GUEST_PANELS_OPEN) as { displays: unknown[] }).displays },
-+    }));
-+    const foldHelper = { setPose: vi.fn(), readHingeAngle: vi.fn(), readPanelPayload };
-+
-+    const inventory = await queryAppleDisplayInventory(scopedDuo, { foldHelper });
-+
-+    assert.equal(inventory.activeDisplay?.name, 'LCD-1');
-+    assert.equal(readPanelPayload.mock.calls.length, 1);
-+    assert.equal(vi.mocked(ensureFoldHelperBinary).mock.calls.length, 0);
-+    assert.equal(mockRunSimctlForDevice.mock.calls.length, 0);
-+  });
-+
-+  test('applies the same rule to a CoreDevice table whose second panel does not parse', async () => {
-+    const [outer, inner] = IPHONE_DUO_CLOSED.result.displays;
-+    const { displayId: _displayId, ...innerWithoutId } = inner!;
-+    mockReadHostTextFile.mockResolvedValue(
-+      JSON.stringify({ result: { displays: [outer, innerWithoutId] } }),
++test('barrel re-exports reach the module each imported name comes from, and only that one', () => {
++  const root = fs.realpathSync(mkdtempForTestSync('mutation-barrels-'));
++  try {
++    runCmdSync('git', ['init', '--quiet', root]);
++    const write = (file: string, source: string) => {
++      fs.mkdirSync(path.dirname(path.join(root, file)), { recursive: true });
++      fs.writeFileSync(path.join(root, file), source);
++    };
++    write('package.json', JSON.stringify({ name: 'barrel-fixture', type: 'module' }));
++    write('src/kernel.ts', 'export const value = 1;');
++    write('src/other.ts', 'export const unrelated = 2;');
++    write('src/renamed.ts', "export { value as renamed } from './kernel.ts';");
++    write('src/star.ts', "export * from './other.ts';\nexport * from './kernel.ts';");
++    write('src/forwarded.ts', "import { value } from './kernel.ts';\nexport { value };");
++    write(
++      'src/__tests__/helper.ts',
++      "import { value } from '../kernel.ts';\nexport const run = () => value;",
 +    );
-+
-+    await assert.rejects(resolveAppleCaptureTarget(IOS_TEST_SIMULATOR), (error: unknown) => {
-+      assert.ok(error instanceof AppError);
-+      assert.equal(error.details?.reason, 'capture-panel-unidentified');
-+      return true;
-+    });
-+  });
-+
-+  test('treats a blank set path as the default set, as simctl does', async () => {
-+    mockReadHostTextFile.mockResolvedValue(JSON.stringify(IPHONE_DUO_CLOSED));
-+
-+    await resolveAppleCaptureDisplay({ ...scopedDuo, simulatorSetPath: '   ' });
-+
-+    assert.equal(mockRunSimctlForDevice.mock.calls.length, 0);
-+    assert.ok(mockRunXcrun.mock.calls.some(([args]) => args.includes('displays')));
-+  });
-+
-+  /** The open-Duo guest table, keeping `keep` panels and dropping the native size of `broken`. */
-+  function guestPanels(broken: number, keep = 2): string {
-+    const payload =
++    write('src/renamed.test.ts', "import { renamed } from './renamed.ts';");
++    write('src/star.test.ts', "import { value } from './star.ts';");
++    write('src/star-other.test.ts', "import { unrelated } from './star.ts';");
++    write('s
 ```
 
-**File**: `packages/platform-apple/src/core/__tests__/hinge-angle.test.ts` (removed, +0/-74)
+**File**: `scripts/mutation/ownership.ts` (modified, +188/-75)
 ```diff
-@@ -1,74 +0,0 @@
--import { beforeEach, expect, test, vi } from 'vitest';
--
--vi.mock('../tool-provider.ts', async (importOriginal) => {
--  const actual = await importOriginal<typeof import('../tool-provider.ts')>();
--  return { ...actual, runXcrun: vi.fn(async () => ({ exitCode: 0, stdout: '', stderr: '' })) };
--});
--
--import { parseHingeAngleSample, readAppleHingeAngle } from '../hinge-angle.ts';
--import { runXcrun } from '../tool-provider.ts';
--import { IOS_TEST_SIMULATOR } from './apple-core-stub-helpers.ts';
--
--const mockRunXcrun = vi.mocked(runXcrun);
--
--/** Verbatim stream output from a comma-decimal host, including the self-abort devicectl ends on. */
--const STREAM_OUTPUT = `Hinge angle monitoring started. 1 seconds remaining:
--• +0,000s : Angle:180,0°  Mech:180,0°  Velocity:+0,0°/s  AngleValid:Y  VelocityValid:N  Range:0-180°
--ERROR: Command timeout of 5.0 seconds exceeded. Assuming command got stuck and aborting.
--`;
--
--beforeEach(() => {
--  mockRunXcrun.mockReset();
--});
--
--test('parses the human sample line under comma and dot decimal locales', () => {
--  expect(parseHingeAngleSample(STREAM_OUTPUT)).toBe(180);
--  // A hinge moving during the stream prints several samples; the last one is where it is now.
--  expect(
--    parseHingeAngleSample(
--      '• +0,000s : Angle:175,1°  Mech:175,1°\n• +2,100s : Angle:140,0°  Mech:140,0°\n• +4,000s : Angle:130,0°  Mech:130,0°\n',
--    ),
--  ).toBe(130);
--  expect(parseHingeAngleSample('• +0.000s : Angle:  0.0°  Mech:  0.0°')).toBe(0);
--  expect(parseHingeAngleSample('• +0,000s : Angle: 95,7°  Mech: 95,7°')).toBe(95.7);
--  expect(parseHingeAngleSample('Hinge angle monitoring started.')).toBeUndefined();
--});
--
--test('bounds the stream with the smallest devicectl timeout and reads the sample it printed', async () => {
--  // Exit code 2 is the deadline devicectl set for itself, not a failure of the read.
--  mockRunXcrun.mockResolvedValueOnce({ exitCode: 2, stdout: STREAM_OUTPUT, stderr: '' });
--
--  await expect(readAppleHingeAngle(IOS_TEST_SIMULATOR)).resolves.toBe(180);
--
--  expect(mockRunXcrun).toHaveBeenCalledWith(
--    [
--      'devicectl',
--      'device',
--      'motion',
--      'hinge-angle',
--      '--device',
--      IOS_TEST_SIMULATOR.id,
--      '--session-timeout',
--      '1',
--      '--timeout',
--      '5',
--    ],
--    expect.objectContaining({ allowFailure: true, timeoutMs: 20_000 }),
+@@ -1,34 +1,29 @@
+-// Which kernel module a changed file belongs to, DERIVED — never hand-listed.
++// Which tests measure a kernel module, DERIVED — never hand-listed.
+ //
+-// A mutation score is a statement about the tests that kill the mutants, so a
+-// selection is only honest if it follows *those* tests. An enumerated list of
+-// test files cannot state that: it silently omits tests that
+-// exercise a kernel indirectly (`src/__tests__/daemon-error.test.ts` reaches
+-// `normalizeError` through `src/daemon.ts`), and nothing fails when a new test
+-// is added. So ownership is computed from the static import graph instead: a test
+-// file owns every kernel module whose mutated sources it can reach.
++// A mutation score is a statement about the tests that kill the mutants, so the
++// scope has to follow the tests that exercise the kernel on purpose: the ones
++// that import one of its mutated sources. An enumerated list cannot state that
++// (a new test silently stays out), and transitive reach states something else:
++// `packages/kernel/src/errors.ts` is reachable from nearly every test in the
++// repository, so a reach-based scope is the whole suite. That scope grows with
++// every unrelated test and no shard count bounds it, because every shard replays
++// the full scope in its dry run — the weekly kernel-errors shard went from 1,396
++// to 1,471 related files in one week and outran its job (weekly run 40164641005).
+ //
+-// The derivation is deliberately a superset — reaching a kernel is cheaper to
+-// prove than killing its mutants, so an unrelated diff can select a module and
+-// pay for a report. False positives cost runner minutes; a false negative would
+-// leave a kernel whose tests changed unmeasured.
+-//
+-// Non-test source changes outside the registry are NOT owned: they can only move
+-// a score through the tests that reach the kernel, and the weekly full sweep is
+-// what re-measures the whole surface. The derived claim is narrower on purpose —
+-// kernel sources plus the tests that exercise them.
++// So a test owns a kernel when its own code, or the test support code it
++// imports, has an executable (value or dynamic) import of one of the kernel's
++// mutated sources, directly or through a barrel's re-export. A mutant that only
++// a distant test can kill shows up as a survivor in the kernel's own tests —
++// work for a test-strengthening PR, never a silent pass. The scope the weekly
++// sweep runs and the PR lane's derived selection read this one rule.
+ 
+ import fs from 'node:fs';
+ import path from 'node:path';
+-import { genBFS, type Graph } from '@statelyai/graph';
+-import {
+-  readWorkspacePackages,
+-  workspaceSpecifierTargets,
+-} from '../layering/package-boundaries.ts';
++import { workspaceSpecifierTargets } from '../layering/package-boundaries.ts';
+ import { resolveImportEdges } from '../layering/model.ts';
+ import { listTrackedTypeScriptFiles } from '../layering/tracked-sources.ts';
+-import { walkFiles } from '../lib/walk-files.ts';
+-import { ALL_EDGES, importGraphFromResolvedEdges } from '../depgraph/import-graph.ts';
++import { parseSync } from 'oxc-parser';
++import { edgeKind, EXECUTABLE_EDGES } from '../depgraph/import-graph.ts';
+ import {
+   affectedModules,
+   isKernelTestFile,
+@@ -37,54 +32,162 @@ import {
+   type ModuleId,
+   type KernelModule,
+ } from './modules.ts';
+-import { expandMutateFiles } from './test-scope.ts';
++import { expandMutateFiles, threadHostileTestFiles } from './test-scope.ts';
++import { MUTATION_EXCLUDED_TESTS } from '../../vitest.config.ts';
+ 
+-/** Test files the mutation lane can attribute to a kernel at all. */
++/**
++ * Test files the mutation lane can attribute to a kernel at all: the unit roots, minus every test
++ * the lane must not collect (`MUTATION_EXCLUDED_TESTS`, which includes other projects' tests).
++ */
+ export function isTestFile(filePath: string): boolean {
+-  return isKernelTestFile(filePath);
++  const file = normalizePath(filePath);
++  return (
++    isKernelTestFile(file) &&
++    !MUTATION_EXCLUDED_TESTS.some((excluded) => path.matchesGlob(file, excluded))
++  );
+ }
+ 
+-/**
+- * Workspace package specifiers resolved through the shared exports-map reader
+- * (scripts/layering/package-boundaries.ts) — never hand-listed. Without this
+- * the graph walk stops at every `@agent-device/*` edge and a kernel living in
+- * `packages/` silently loses all of its owned tests.
+- */
+-let cachedExportTargets: { repoRoot: string; targets: Map<string, string> } | undefined;
++type ImportedModule = { target: string; spec: string; symbols: readonly string[] };
+ 
+-function exportTargetsFor(repoRoot: string): Map<string, string> {
+-  if (cachedExportTargets?.repoRoot !== repoRoot) {
+-    cachedExportTargets = { repoRoot, targets: workspaceSpecifierTargets(repoRoot) };
+-  }
+-  return cachedExportTargets.targets;
++/** One `export … from` entry: the name taken from `spec`, and the name it is exported as. */
++type Reexport = { spec: string; imported: string | typeof AL
+```
+
+**File**: `scripts/mutation/run.ts` (modified, +14/-31)
+```diff
+@@ -40,15 +40,10 @@ import {
+   type ShardSpec,
+ } from './modules.ts';
+ import { shardFiles, type Shard } from './sharding.ts';
+-import { derivedAffectedModules } from './ownership.ts';
++import { derivedAffectedModules, mutationTestFiles } from './ownership.ts';
+ import { renderReport, type Provenance } from './report.ts';
+ import { mergeReports, summarizeReport, type ModuleScore, type StrykerReport } from './score.ts';
+-import {
+-  expandMutateFiles,
+-  relatedTestFiles,
+-  TEST_SCOPE_ENV,
+-  writeTestScope,
+-} from './test-scope.ts';
++import { expandMutateFiles, TEST_SCOPE_ENV, writeTestScope } from './test-scope.ts';
+ 
+ const repoRoot = runCmdSync('git', ['rev-parse', '--show-toplevel']).stdout.trim();
+ 
+@@ -244,18 +239,14 @@ function changedFiles(base: string): string[] {
+   return result.stdout.split('\n').filter(Boolean);
+ }
+ 
+-async function mutationTestScope(
+-  modules: readonly ModuleId[],
+-  sources: readonly string[],
+-  options: Args,
+-) {
++function mutationTestScope(modules: readonly ModuleId[], options: Args) {
+   const pilot = options.scopeProbe || Boolean(options.scopeIndex);
+   if (pilot)
+     assertCoveragePolicy(JSON.parse(fs.readFileSync(path.join(repoRoot, CONFIG_PATH), 'utf8')));
+   const index: CoverageScope | undefined = options.scopeIndex
+     ? JSON.parse(fs.readFileSync(path.resolve(repoRoot, options.scopeIndex), 'utf8'))
+     : undefined;
+-  const candidates = await relatedTestFiles(sources, repoRoot);
++  const candidates = mutationTestFiles(modules, repoRoot);
+   const identity = pilot
+     ? {
+         module: modules[0]!,
+@@ -267,21 +258,17 @@ async function mutationTestScope(
+   const testFiles = options.scopeIndex
+     ? scopedTestFiles(index!, identity!, candidates)
+     : candidates;
+-  if (!testFiles.length) throw new Error(`No related mutation tests for ${modules.join(', ')}`);
++  if (!testFiles.length) throw new Error(`No owned mutation tests for ${modules.join(', ')}`);
+   return { candidates, identity, index, testFiles };
+ }
+ 
+ async function mutationSourceScope(modules: readonly ModuleId[], shard: Shard | undefined) {
+   const globs = mutateGlobs(modules);
+   const all = expandMutateFiles(globs, repoRoot);
+-  if (!shard) return { mutate: globs, sources: all, sourceCount: all.length };
++  if (!shard) return { mutate: globs, sourceCount: all.length };
+   const config = JSON.parse(fs.readFileSync(path.join(repoRoot, CONFIG_PATH), 'utf8'));
+   const mutate = await shardFiles(all, shard, repoRoot, config.mutator?.excludedMutations ?? []);
+-  return {
+-    mutate,
+-    sources: [...new Set(mutate.map((file) => file.split(':')[0]!))],
+-    sourceCount: mutate.length,
+-  };
++  return { mutate, sourceCount: mutate.length };
+ }
+ 
+ function finishScopeProbe(
+@@ -329,19 +316,15 @@ async function runStryker(
+     fs.rmSync(capturePath, { force: true });
+     fs.rmSync(path.join(repoRoot, COVERAGE_SCOPE_PATH), { force: true });
+   }
+-  // The suite Stryker replays per mutant is derived from Vitest's module graph
+-  // over the mutated files, not hand-listed; see scripts/mutation/test-scope.ts.
+-  const { mutate, sources, sourceCount } = await mutationSourceScope(modules, shard);
++  // The suite Stryker replays per mutant is each module's owned tests, derived
++  // from the import graph rather than hand-listed; see scripts/mutation/ownership.ts.
++  const { mutate, sourceCount } = await mutationSourceScope(modules, shard);
+   const scopePath = path.join(repoRoot, TEST_SCOPE_PATH);
+-  const { candidates, identity, index, testFiles } = await mutationTestScope(
+-    modules,
+-    sources,
+-    options,
 -  );
++  const { candidates, identity, index, testFiles } = mutationTestScope(modules, options);
+   writeTestScope(testFiles, scopePath);
+   process.stdout.write(
+     `mutation: ${modules.join(', ')}${shard ? ` shard ${shard.index}/${shard.count}` : ''} -> ` +
+-      `${sourceCount} source(s), ${testFiles.length} related test file(s)\n`,
++      `${sourceCount} source(s), ${testFiles.length} owned test file(s)\n`,
+   );
+ 
+   // Stryker's `--mutate` takes one comma-separated value, not repeated args.
+@@ -380,7 +363,7 @@ async function runStryker(
+   if (identity && scopeFingerprint(repoRoot) !== identity.fingerprint)
+     throw new Error('Execution inputs changed during the scoped mutation run');
+   return {
+-    mode: index ? 'coverage' : 'related',
++    mode: index ? 'coverage' : 'owned',
+     candidates: candidates.length,
+     selected: testFiles.length,
+     producerMs: index?.producerMs ?? null,
+@@ -411,7 +394,7 @@ type Stage = 'setup' | 'select' | 'stryker' | 'report' | 'score' | 'complete';
+  */
+ const UNKNOWN_PROVENANCE: Provenance = { strykerVersion: 'unknown', configHash: 'unknown' };
+ type ScopeMeasurement = {
+-  mode: 'probe' | 'coverage' | 'related';
++  mode: 'probe' | 'coverage' | 'owned';
+   candidates: number;
+   selected: number;
+   producerMs: number | null;
+```
+
+**File**: `scripts/mutation/test-scope.test.ts` (modified, +0/-30)
+```diff
+@@ -5,7 +5,6 @@ import { mkdtempForTestSync } from '@agent-device/test-kit';
+ import { test } from 'node:test';
+ import {
+   expandMutateFiles,
+-  relatedTestFiles,
+   readTestScope,
+   TEST_SCOPE_ENV,
+   threadHostileTestFiles,
+@@ -35,35 +34,6 @@ test('the thread-hostile exclusion is derived from imports, not listed', () => {
+   assert.ok(files.every((file) => file.endsWith('.test.ts')));
+ });
+ 
+-test('related scope discovery follows indirect imports without executing tests', async () => {
+-  const root = fs.realpathSync(mkdtempForTestSync('mutation-scope-'));
+-  try {
+-    fs.mkdirSync(path.join(root, 'src'));
+-    fs.writeFileSync(
+-      path.join(root, 'package.json'),
+-      JSON.stringify({ name: 'scope-fixture', type: 'module' }),
+-    );
+-    fs.symlinkSync(path.join(repoRoot, 'node_modules'), path.join(root, 'node_modules'));
+-    const marker = path.join(root, 'executed');
+-    fs.writeFileSync(
+-      path.join(root, 'vitest.config.ts'),
+-      `export default { test: { projects: [{ test: { name: 'unit-core', include: ['src/**/*.test.ts'] } }] } };`,
+-    );
+-    fs.writeFileSync(path.join(root, 'src/kernel.ts'), 'export const value = 1;');
+-    fs.writeFileSync(path.join(root, 'src/consumer.ts'), "export { value } from './kernel';");
+-    fs.writeFileSync(
+-      path.join(root, 'src/consumer.test.ts'),
+-      `import { value } from './consumer'; import { writeFileSync } from 'node:fs'; writeFileSync(${JSON.stringify(marker)}, String(value)); throw new Error('discovery must not execute tests');`,
+-    );
+-    fs.writeFileSync(path.join(root, 'src/unrelated.test.ts'), "throw new Error('unrelated');");
+-    assert.deepEqual(await relatedTestFiles(['src/kernel.ts'], root, []), ['src/consumer.test.ts']);
+-    assert.equal(fs.existsSync(marker), false, 'scope discovery executed the test module');
+-    assert.deepEqual(await relatedTestFiles(['src/kernel.ts'], root, ['src/consumer.test.ts']), []);
+-  } finally {
+-    fs.rmSync(root, { recursive: true, force: true });
+-  }
 -});
 -
--test('refuses a stream that printed no sample, naming the toolchain gap', async () => {
--  mockRunXcrun.mockResolvedValueOnce({
--    exitCode: 1,
--    stdout: '',
--    stderr: 'ERROR: Hinge angle monitoring is not available on this device.',
--  });
+ test('a missing scope file is rejected and an empty scope file reads as an empty list', () => {
+   const root = fs.realpathSync(mkdtempForTestSync('mutation-empty-scope-'));
+   const previous = process.env[TEST_SCOPE_ENV];
+```
+
+---
+
+### Incident Patch 2: `0b49de4d` (2026-10-28)
+**Commit Message**: fix(test-app): keep the inert surface control above the settings fold (#3993)
+
+Adding the Snapshot depth section (#3786) pushed the Inert surface card
+into the band the iOS 26 floating tab bar covers on a 402x874 phone, so
+open-inert-surface stopped being visible after the Settings tab tap:
+agent-device refuses invisible targets, its differential legs went red
+every night since 10-18 (settle-after-tap step 5, tap-retry-if-no-change
+step 3), while Maestro's presence-based check kept passing.
+
+The settle flow's own guard rejects an inserted scroll and pins the
+assert on this control, so the fixture restores the reachability the
+flows were written against: the inert card is the second section, ahead
+of the growth that followed it. Local snapshot before: the settings tree
+ended at 'Open accessory setup lab' with '[content below scroll-area
+hidden]'; after: open-inert-surface resolves at (201, 609) and the tap
+navigates to the inert screen.
+
+Co-authored-by: Claude Code <[REDACTED_EMAIL]>
+
+**File**: `examples/test-app/src/screens/SettingsScreen.tsx` (modified, +15/-11)
+```diff
+@@ -76,6 +76,21 @@ export function SettingsScreen(props: SettingsScreenProps) {
+         />
+       </SectionCard>
+ 
++      {/* The differential flows assert and tap this control straight after the
++          Settings tab, and their settle guard rejects any inserted scroll, so
++          this card stays the second section: every later section lands under
++          the fold's floating tab bar on a 402x874 phone. */}
++      <SectionCard
++        subtitle="Open a surface where a tap provably changes nothing on screen."
++        title="Inert surface"
++      >
++        <ActionButton
++          label="Open inert surface"
++          onPress={props.onOpenInertSurface}
++          testID="open-inert-surface"
++        />
++      </SectionCard>
++
+       <SectionCard subtitle="Inspect visible and raw snapshot depth." title="Snapshot depth">
+         <ActionButton
+           label="Open snapshot depth lab"
+@@ -95,17 +110,6 @@ export function SettingsScreen(props: SettingsScreenProps) {
+         />
+       </SectionCard>
+ 
+-      <SectionCard
+-        subtitle="Open a surface where a tap provably changes nothing on screen."
+-        title="Inert surface"
+-      >
+-        <ActionButton
+-          label="Open inert surface"
+-          onPress={props.onOpenInertSurface}
+-          testID="open-inert-surface"
+-        />
+-      </SectionCard>
 -
--  await expect(readAppleHingeAngle(IOS_TEST_SIMULATOR)).rejects.toMatchObject({
--    code: 'COMMAND_FAILED',
--    details: expect.objectContaining({
--      reason: 'fold-hinge-angle-no-sample',
--      hint: expect.stringContaining('hinge-angle'),
--    }),
--  });
--});
+       <SectionCard
+         subtitle="Inspect native accessibility snapshots for semantic content inside a WebView."
+         title="WebView accessibility"
+```
+
+---
+
+### Incident Patch 3: `3537dc54` (2026-10-28)
+**Commit Message**: fix(open): refuse --launch-console on a provider-owned device before the relaunch close (#3938)
+
+A provider-owned iOS simulator has the same device shape as a local one, so
+open --relaunch --launch-console passed the existing shape check, closed the
+running app, and only then failed. The provider branch of the lifecycle
+binding now refuses launch-console with UNSUPPORTED_OPERATION and the typed
+reason launch-console-owner-unadmitted before it resolves an interactor, so
+no close or launch runs.
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `packages/command-registry/src/flag-definitions-target.ts` (modified, +2/-1)
+```diff
+@@ -363,7 +363,8 @@ export const TARGET_FLAG_DEFINITIONS: readonly FlagDefinition[] = [
+     names: ['--launch-console'],
+     type: 'string',
+     usageLabel: '--launch-console <path>',
+-    usageDescription: 'open: capture the initial iOS simulator launch console window to a file',
++    usageDescription:
++      'open: capture the initial local iOS simulator launch console window to a file',
+     projectConfig: false,
+     recorded: false,
+   },
+```
+
+**File**: `packages/contracts/src/application-lifecycle-interaction.test.ts` (modified, +28/-0)
+```diff
+@@ -5,6 +5,7 @@ import type { OpenApplicationInput } from './application-lifecycle-runtime.ts';
+ import {
+   bindDirectApplicationLifecycle,
+   bindLocalApplicationLifecycleInteractor,
++  bindProviderApplicationLifecycleInteractor,
+   invokeApplicationOpen,
+ } from './application-lifecycle-interaction.ts';
+ 
+@@ -165,3 +166,30 @@ test.each([
+     }),
+   ).rejects.toThrow(message);
+ });
++
++test('provider interactor resolution refuses launch-console before a relaunch close', async () => {
++  const calls: string[] = [];
++  const binding = bindProviderApplicationLifecycleInteractor({
++    device: IOS_SIMULATOR,
++    signal: new AbortController().signal,
++    resolveInteractor: () => {
++      calls.push('resolve');
++      return interactorWithOpen();
++    },
++  });
++  const lifecycle = bindDirectApplicationLifecycle({
++    binding,
++    owner: 'provider',
++    openTargetIdentity: 'bundle-id',
++    closeBeforeRelaunch: true,
++  });
++  await expect(
++    lifecycle.openApplication(
++      openInput({ relaunch: true, execution: { launchConsole: '/tmp/app.log' } }),
++    ),
++  ).rejects.toMatchObject({
++    code: 'UNSUPPORTED_OPERATION',
++    details: { reason: 'launch-console-owner-unadmitted', deviceId: IOS_SIMULATOR.id },
++  });
++  expect(calls).toEqual([]);
++});
+```
+
+**File**: `packages/contracts/src/application-lifecycle-interaction.ts` (modified, +11/-0)
+```diff
+@@ -87,6 +87,17 @@ function bindApplicationLifecycleInteractor(
+     resolveInteractor: async (execution, appBundleId) => {
+       const runner = applicationLifecycleRunnerContext(execution, appBundleId, signal);
+       if (ownership === 'local') return await params.resolveLocalInteractor(device, runner);
++      if (execution.launchConsole) {
++        throw new AppError(
++          'UNSUPPORTED_OPERATION',
++          '--launch-console is supported only for a local iOS simulator app launch',
++          {
++            reason: 'launch-console-owner-unadmitted',
++            deviceId: device.id,
++            hint: 'Remove --launch-console, or use a local iOS simulator for launch output.',
++          },
++        );
++      }
+       const interactor = ownership.resolveInteractor(runner);
+       if (interactor) return interactor;
+       throw new AppError(
+```
+
+**File**: `src/commands/management/app.ts` (modified, +2/-2)
+```diff
+@@ -45,7 +45,7 @@ const openCommandMetadata = defineFieldCommandMetadata(
+     ),
+     activity: stringField('Android activity name.'),
+     launchConsole: stringField(
+-      'File path on the daemon host for the stdout and stderr of the initial app launch. iOS simulator direct app launches only; not for URL opens.',
++      'File path on the daemon host for the stdout and stderr of the initial app launch. Local iOS simulator direct app launches only; not for URL opens.',
+     ),
+     launchArgs: stringArrayField(
+       'Launch arguments forwarded verbatim to the platform launch command.',
+@@ -199,7 +199,7 @@ export const openCommandFacet = defineCommandFacet({
+   text: {
+     summary: 'Open an app, deep link or URL, save replays',
+     cliDetail:
+-      'Use --platform to bind URL/deep-link opens to the target platform. For iOS simulator initial stdout/stderr, put --launch-console <path> on this open command, for example agent-device open "Agent Device Tester" --platform ios --launch-console artifacts/launch-console.log. Expo Go/dev-client shells accept host + URL, for example agent-device open "Expo Go" exp://127.0.0.1:8081 --platform ios. macOS also supports --surface app|frontmost-app|desktop|menubar. --metro-host/--metro-port/--bundle-url choose the app\'s Metro server and save that address for later metro reload calls in the same session. A fresh open without Metro hints clears an older same-name binding; close also clears it. --launch-url supplies the app\'s launch URL; it does not select the reload server. On an iOS simulator without --launch-url, open connects a detected Expo development client through its expo-development-client URL. The app must declare a single exp+<slug> scheme that no other installed app owns. If detection is inconclusive, the app opens normally. Bare React Native apps receive their server settings before launch. On an iOS simulator, when --launch-url raises an "Open in <App>?" prompt that keeps open from seeing the app, open accepts it if the URL scheme belongs to the session app (data.launchConfirmation: "accepted"); if the scheme belongs to another installed app, the prompt stays on screen and open fails with details.reason launch_confirmation_foreign_app; if the scheme owner cannot be resolved because no single installed app owns it or the lookup failed, the prompt stays on screen and open returns with data.launchConfirmation: "unanswered", launchConfirmationReason url-owner-unresolved, and a warning; a prompt that is seen but not recognized is reported the same way with launchConfirmationReason alert-unrecognized and its own warning; for url-owner-unresolved, answer the prompt with alert accept; for alert-unrecognized, read the alert with alert get first, because it can be the app\'s own alert (such as a permission prompt) rather than a translated launch confirmation, and answer with alert accept only when it is the launch confirmation; when agent-device cannot read whether a prompt is up at all (the alert read, the accept, or the runner itself failed, including after a re-hand of the URL), open stays green, reports no launchConfirmation plus data.launchConfirmationProbeFailure naming the failed step (alert-read, alert-accept, or runner), and appends a warning that says to check with alert get. The prompt is read whenever open cannot see the app afterwards, including on a slow host where the app\'s target discovery fails on its own deadline. When an accept leaves the app provably not running, open hands the same URL over once more and reads again; still not running, it fails with details.reason launch_confirmation_unanswered. A recognized prompt still visible after a failed accept also fails with this reason, even if the app is running behind it; answer it with alert accept or alert dismiss. A simulator openurl that CoreSimulator never answers fails within 20s with details.reason ios-simulator-openurl-timeout. Only the English prompt title with Cancel and Open buttons is recognized, so on a Simulator set to another language the prompt stays on screen. A prompt that appears after open has already seen the app is not answered; use alert accept. A device another session is holding refuses at once; add --wait <ms> to block up to that budget for it and only then fail with DEVICE_IN_USE naming the owning session.',
++      'Use --platform to bind URL/deep-link opens to the target platform. For local iOS simulator initial stdout/stderr, put --launch-console <path> on this open command, for example agent-device open "Agent Device Tester" --platform ios --launch-console artifacts/launch-console.log. Expo Go/dev-client shells accept host + URL, for example agent-device open "Expo Go" exp://127.0.0.1:8081 --platform ios. macOS also supports --surface app|frontmost-app|desktop|menubar. --metro-host/--metro-port/--bundle-url choose the app\'s Metro server and save that address for later metro reload calls in the same session. A fresh open without Metro hints clears an older same-name 
+```
+
+**File**: `test/integration/provider-scenarios/provider-device-runtime.fixtures.ts` (modified, +8/-28)
+```diff
+@@ -19,8 +19,7 @@ import {
+ } from '@agent-device/contracts/application-lifecycle-runtime';
+ import {
+   bindProviderApplicationLifecycleInteractor,
+-  invokeApplicationClose,
+-  invokeApplicationOpen,
++  bindDirectApplicationLifecycle,
+ } from '@agent-device/contracts/application-lifecycle-interaction';
+ import { keyboardRuntimeOperationFacts } from '@agent-device/contracts/keyboard-runtime';
+ import { bindProviderSnapshotInteractor } from '@agent-device/contracts/snapshot-runtime';
+@@ -201,39 +200,20 @@ function providerScenarioApplicationLifecycle(
+     signal,
+     resolveInteractor: (runner) => runtime.getInteractor(device, runner),
+   });
++  const direct = bindDirectApplicationLifecycle({
++    binding,
++    owner: 'scenario-provider',
++    openTargetIdentity: 'bundle-id',
++    closeBeforeRelaunch: true,
++  });
+   return Object.freeze({
++    ...direct,
+     resolveOpenTarget: async (input) => ({
+       ...(input.target?.includes('.') ? { appBundleId: input.target } : {}),
+       ...(input.target === undefined ? {} : { appName: input.target }),
+     }),
+-    prepareApplicationOpen: async () => undefined,
+-    openApplication: async (input) => {
+-      if (input.relaunch && input.target) {
+-        await invokeApplicationClose({
+-          device,
+-          interactor: await binding.resolveInteractor(input.execution, input.appBundleId),
+-          positionals: [input.appBundleId ?? input.target],
+-        });
+-      }
+-      await invokeApplicationOpen({
+-        device,
+-        interactor: await binding.resolveInteractor(input.execution, input.appBundleId),
+-        positionals: input.positionals,
+-        appBundleId: input.appBundleId,
+-        execution: input.execution,
+-      });
+-      return { appBundleId: input.appBundleId, timing: {} };
+-    },
+     applyRuntimeHints: async () => undefined,
+     clearRuntimeHints: async () => undefined,
+-    closeApplication: async (input) => {
+-      await invokeApplicationClose({
+-        device,
+-        interactor: await binding.resolveInteractor(input.execution, input.appBundleId),
+-        positionals: input.positionals,
+-      });
+-    },
+-    finalizeApplicationClose: async () => ({}),
+     prepareAppleRunner: async () => {
+       throw new AppError('UNSUPPORTED_OPERATION', 'Fake provider does not prepare Apple runners.');
+     },
+```
+
+**File**: `test/integration/provider-scenarios/provider-device-runtime.test.ts` (modified, +32/-0)
+```diff
+@@ -89,6 +89,38 @@ test('provider-owned iOS simulators relaunch without local CoreSimulator refresh
+   );
+ });
+ 
++test('provider-owned relaunch refuses launch-console without closing the running app', async () => {
++  await withProviderScenarioResource(
++    async () => await createFakeProviderWorld('ios'),
++    async ({ daemon, runtime }) => {
++      const lease = await allocateIosFakeProviderLease(daemon);
++      const flags = iosLeaseFlags(lease.leaseId);
++      const options = { meta: iosLeaseMeta(lease.leaseId) };
++      assertRpcOk(await daemon.callCommand('open', ['com.example.demo'], flags, options));
++      const before = runtime.calls.length;
++      const error = assertRpcError(
++        await daemon.callCommand(
++          'open',
++          ['com.example.demo'],
++          { ...flags, relaunch: true, launchConsole: '/tmp/app.log' },
++          options,
++        ),
++        500,
++        'UNSUPPORTED_OPERATION',
++        /local iOS simulator/,
++      );
++      assert.equal(
++        (error.details as Record<string, unknown>).reason,
++        'launch-console-owner-unadmitted',
++      );
++      assert.deepEqual(
++        runtime.calls.slice(before).filter((call) => call.type === 'open' || call.type === 'close'),
++        [],
++      );
++    },
++  );
++});
++
+ test('provider lease allocation is refused when no registered runtime claims the provider', async () => {
+   const daemon = await createProviderScenarioHarness({
+     providerRuntimeIds: [FAKE_PROVIDER],
+```
+
+**File**: `website/docs/docs/client-api.md` (modified, +2/-2)
+```diff
+@@ -66,8 +66,8 @@ This example opens an app, takes a snapshot, interacts, handles typed errors, an
+ 
+ `client.devices.capabilities()` returns `{ device, availableCommands }`, using the same capability matrix as the CLI. Use it to check which command names the selected target supports.
+ 
+-For direct iOS simulator app launches, `client.apps.open({ app, platform: 'ios', launchConsole: './artifacts/app.console.log' })` captures launch-time
+-stdout/stderr. The option mirrors `open --launch-console` and is not valid for URL opens or non-simulator targets.
++For direct local iOS simulator app launches, `client.apps.open({ app, platform: 'ios', launchConsole: './artifacts/app.console.log' })` captures launch-time
++stdout/stderr. The option mirrors `open --launch-console` and is not valid for URL opens, provider-owned simulators, or non-simulator targets.
+ 
+ `client.sessions.stateDir()` mirrors `session state-dir` and returns the resolved daemon state directory without starting
+ or contacting the daemon. Pass `{ stateDir }` to resolve an explicit override the same way the CLI resolves `--state-dir`.
+```
+
+**File**: `website/docs/docs/commands.md` (modified, +1/-1)
+```diff
+@@ -98,7 +98,7 @@ Open apps and links:
+ - `open [app|url] [url]` boots the selected device when needed and opens the target in a session. `open <url>` opens deep links on Android and iOS, and `open <app> <url>` opens a deep link in that app on iOS. See [Desktop targets](#desktop-targets) for macOS activation behavior.
+ - On iOS devices, `http(s)://` URLs open in Safari when no app is active. Custom-scheme URLs need an active app in the session.
+ - `open <app> --wait <ms>` waits up to that budget for a device another session holds, then fails with `DEVICE_IN_USE`. The wait extends the command's timeout, so you don't need a longer `--timeout`. A claim held by another workspace's daemon is not waited for; `open` returns its recovery command at once. Device-mutating commands like `install` and `reinstall` never wait either: a claim held by another session fails them at once, and when the caller sends a workspace, another workspace's claim under the same session name fails too. See [Sessions](/docs/sessions#wait-for-a-slow-or-busy-device).
+-- `open <app> --launch-console <path>` captures launch-time stdout/stderr for iOS simulator app launches. It is not valid for URL opens or other targets.
++- `open <app> --launch-console <path>` captures launch-time stdout/stderr for local iOS simulator app launches. It is not valid for URL opens or other targets.
+ - `open --platform macos --surface app|frontmost-app|desktop|menubar` selects the macOS session surface; `app` is the default when you name an app. See [Desktop targets](#desktop-targets). `--save-script` records the surface so `replay` reopens it; with no surface given, replay opens an app session.
+ - Android React Native: `open --relaunch` needs an installed package name. Install or reinstall the APK first; `open <apk|aab> --relaunch` is rejected. For Metro-backed JS changes, run `metro reload` before reaching for `open <app> --relaunch`.
+ - Android (adb): an intent target such as `open settings` records the package that opened as `appBundleId`. `open settings --relaunch` stops and restarts that app. If the intent matches more than one activity, `--relaunch` fails.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4002** (2026-10-27): refactor(contracts): share unsupported interactor factory (@thymikee)
-- **PR #4000** (2026-10-27): refactor(android): centralize session error encoding (@thymikee)
-- **PR #3999** (2026-10-27): refactor(runtime): share host command runner construction (@thymikee)
-- **PR #3998** (2026-10-27): refactor(apple): share simulator status-bar diagnostics (@thymikee)
-- **PR #3996** (2026-10-27): refactor: reuse canonical device identity projections (@thymikee)
-- **PR #3989** (2026-10-27): chore(ios): keep only API and constraint comments in the AX snapshot bridge (@thymikee)
+- **PR #4014** (2026-10-28): fix(fill): redact the read-back of a sensitive fill (@thymikee)
+- **PR #4011** (2026-10-28): docs(mutation): state the file-name rule that marks test support code (@thymikee)
+- **PR #4010** (2026-10-28): docs: point stable test suites to e2e (@thymikee)
+- **PR #4008** (2026-10-28): fix(apple): type a text-entry-trait element as a text input in the simulator AX tree (@kacperkapusciak)
+- **PR #4006** (2026-10-28): fix(ios): match alert labels through the OS prompt strings of the preferred languages (@kazutoyo)
+- **PR #4003** (2026-10-28): refactor(apple): share coordinate drag execution (@thymikee)
 
 ---
 
@@ -2900,43 +2528,30 @@ A host-side sleep between hinge reads spent
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): clear undici, fast-uri, vite and zod security alerts (#3966)
+## X. mutation): measure each kernel against the tests that import it (#3994)
 
 **RULE**:
-When implementing operations in `examples/test-app/pnpm-lock.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/agent-device. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/mutation-affected.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/agent-device. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5b61e8a9`: deps): clear undici, fast-uri, vite and zod security alerts (#3966). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ff8029e9`: mutation): measure each kernel against the tests that import it (#3994). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/test-app/pnpm-lock.yaml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/mutation-affected.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  zod@3: ^4.6.6
-  zod@4: ^4.6.6
-  zod@4.6.7:
-    resolution: {integrity: sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg==}
-      zod: 4.6.7
-      zod: 4.6.7
-  zod@4.6.7: {}
+# owns (scripts/mutation/ownership.ts): a kernel source, or a test that
+# imports one. Selected modules are sharded like the
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  zod@3.25.76:
-    resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
-
-  zod@4.4.3:
-    resolution: {integrity: sha512-ytENFjIJFl2UwYglde2jchW2Hwm4GJFLDiSXWdTrJQBIN9Fcyp7n4DhxJEiWNAJMV1/BqWfW/kkg71UDcHJyTQ==}
-      zod: 3.25.76
-      zod: 4.4.3
-  zod@3.25.76: {}
-
-  zod@4.4.3: {}
+# reaches through the import graph (scripts/mutation/ownership.ts): a kernel
+# source, or a test that reaches one. Selected modules are sharded like the
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5b61e8a9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ff8029e9` are properly handled with clean fallback behavior.

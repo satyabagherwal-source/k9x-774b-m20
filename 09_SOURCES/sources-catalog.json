@@ -1105,8 +1105,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
     "sourceVersion": "hf-sentence-transformers-all-mpnet-base-v2",
     "license": "Open-Source",
-    "contentHash": "6db5ac895194aab90a29cb788102a802298dc199c36a3149d45db13eca23823c",
-    "lastHarvestedAt": "2026-10-25T22:31:56.769Z",
+    "contentHash": "a5331c4f8ade384adb85e6f908581cb37c75b1c7a89859ef1a5f6d3554c1f6f6",
+    "lastHarvestedAt": "2026-10-28T16:19:27.481Z",
     "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2"
   },
   "hf-baai-bge-reranker-v2-m3": {
@@ -6043,10 +6043,10 @@
     "repository": "u-root/u-root",
     "platform": "github",
     "sourceUrl": "https://github.com/u-root/u-root",
-    "sourceVersion": "f62b68e4",
+    "sourceVersion": "91846b7c",
     "license": "BSD-3-Clause",
-    "contentHash": "f98f59afddebd27ca7499bd29a723380367dbf36db47126dee6128059e3aee5a",
-    "lastHarvestedAt": "2026-10-24T19:58:45.723Z",
+    "contentHash": "39eea9f70deaa46ded912eb0afbe459b7fe87eb82438bf2be24679ae5b435dfc",
+    "lastHarvestedAt": "2026-10-28T16:19:20.609Z",
     "learningId": "learn-github-u-root-u-root"
   },
   "shoutem-ui": {
@@ -6103,10 +6103,10 @@
     "repository": "callstack/agent-device",
     "platform": "github",
     "sourceUrl": "https://github.com/callstack/agent-device",
-    "sourceVersion": "b396bd00",
+    "sourceVersion": "3537dc54",
     "license": "MIT",
-    "contentHash": "d74e8b5090e398011f2026f94a86aa80c98fb5e04d7d9771d59b47d0cbee2950",
-    "lastHarvestedAt": "2026-10-27T21:01:37.974Z",
+    "contentHash": "6860af672a50d9e40c513f255ac57f7fe0732bb30db95fb26b936fa4b3b2e2f7",
+    "lastHarvestedAt": "2026-10-28T16:19:25.876Z",
     "learningId": "learn-github-callstack-agent-device"
   },
   "open-policy-agent-opa": {

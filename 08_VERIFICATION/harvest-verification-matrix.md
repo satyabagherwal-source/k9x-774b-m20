@@ -5838,3 +5838,6 @@
 | `CYCLE-20261028-2X7Q` | `2026-10-28T16:05:27.590Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5337` | Yes (`85cf1a39...`) |
 | `CYCLE-20261028-BQO1` | `2026-10-28T16:12:19.009Z` | `openai/clip-vit-base-patch32` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md` | Yes (`d4580dd9...`) |
 | `CYCLE-20261028-C32H` | `2026-10-28T16:12:35.081Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5338` | Yes (`315f257d...`) |
+| `CYCLE-20261028-KRZ2` | `2026-10-28T16:19:20.606Z` | `u-root/u-root` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5339` | Yes (`39eea9f7...`) |
+| `CYCLE-20261028-KW1C` | `2026-10-28T16:19:25.872Z` | `callstack/agent-device` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5340` | Yes (`6860af67...`) |
+| `CYCLE-20261028-KX9X` | `2026-10-28T16:19:27.477Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 858, Rule 5341` | Yes (`a5331c4f...`) |

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T16:12:35.092Z",
-  "total_cycles_completed": 5815,
-  "total_learnings_persisted": 5815,
-  "total_rules_promoted": 5290,
+  "last_updated": "2026-10-28T16:19:27.486Z",
+  "total_cycles_completed": 5818,
+  "total_learnings_persisted": 5818,
+  "total_rules_promoted": 5294,
   "history": [
-    {
-      "timestamp": "2026-10-28T01:49:33.395Z",
-      "repository": "jialinyyzz/humanizer",
-      "learningId": "learn-huggingface-jialinyyzz-humanizer",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T01:58:34.820Z",
-      "repository": "autotrust/JEV-27B-VL",
-      "learningId": "learn-huggingface-autotrust-jev-27b-vl",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T01:58:36.537Z",
-      "repository": "CrossPaste/crosspaste-desktop",
-      "learningId": "learn-github-crosspaste-crosspaste-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T01:58:39.185Z",
       "repository": "skyhook-io/radar",
@@ -1403,6 +1382,27 @@
       "repository": "trinodb/trino",
       "learningId": "learn-github-trinodb-trino",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T16:19:20.615Z",
+      "repository": "u-root/u-root",
+      "learningId": "learn-github-u-root-u-root",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T16:19:25.881Z",
+      "repository": "callstack/agent-device",
+      "learningId": "learn-github-callstack-agent-device",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T16:19:27.486Z",
+      "repository": "sentence-transformers/all-mpnet-base-v2",
+      "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T16:12:34.999Z",
+  "last_updated": "2026-10-28T16:19:27.404Z",
   "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5378,8 +5378,8 @@
       "slug": "callstack-agent-device",
       "platform": "github",
       "source_url": "https://github.com/callstack/agent-device",
-      "source_version": "b396bd00",
-      "content_hash": "d74e8b5090e398011f2026f94a86aa80c98fb5e04d7d9771d59b47d0cbee2950",
+      "source_version": "3537dc54",
+      "content_hash": "6860af672a50d9e40c513f255ac57f7fe0732bb30db95fb26b936fa4b3b2e2f7",
       "dossier_path": "07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
       "promoted_rules": [
@@ -5412,6 +5412,11 @@
           "number": 5008,
           "title": "deps): clear undici, fast-uri, vite and zod security alerts (#3966)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5340,
+          "title": "mutation): measure each kernel against the tests that import it (#3994)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5419,7 +5424,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T21:01:37.893Z",
+      "verified_at": "2026-10-28T16:19:25.780Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27458,10 +27463,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
       "source_version": "hf-sentence-transformers-all-mpnet-base-v2",
-      "content_hash": "6db5ac895194aab90a29cb788102a802298dc199c36a3149d45db13eca23823c",
+      "content_hash": "a5331c4f8ade384adb85e6f908581cb37c75b1c7a89859ef1a5f6d3554c1f6f6",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md",
       "promoted_rules": [
+        {
+          "number": 858,
+          "title": "The Attention-Masked Mean Pooling Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 930,
           "title": "Vector Space Masked Mean Pooling Invariant",
@@ -27470,6 +27480,11 @@
         {
           "number": 931,
           "title": "Relative Position Embedding Truncation & Offset Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5341,
+          "title": "The L2 Normalization Post-Processing Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -27490,7 +27505,7 @@
         "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv3y996e",
         "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv4czt14"
       ],
-      "verified_at": "2026-10-25T22:31:56.683Z",
+      "verified_at": "2026-10-28T16:19:27.385Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53393,8 +53408,8 @@
       "slug": "u-root-u-root",
       "platform": "github",
       "source_url": "https://github.com/u-root/u-root",
-      "source_version": "f62b68e4",
-      "content_hash": "f98f59afddebd27ca7499bd29a723380367dbf36db47126dee6128059e3aee5a",
+      "source_version": "91846b7c",
+      "content_hash": "39eea9f70deaa46ded912eb0afbe459b7fe87eb82438bf2be24679ae5b435dfc",
       "dossier_path": "07_PROJECT_LEARNING/u-root-u-root-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/u-root-u-root-learnings.md",
       "promoted_rules": [
@@ -53417,6 +53432,11 @@
           "number": 3933,
           "title": "pkg/fdsrv: fix FD leaks, double-close, client DoS, and use context.Context",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5339,
+          "title": "pkg/boot/kexec: honour #address-cells and #size-cells in the FDT memory map",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53424,7 +53444,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T19:58:45.681Z",
+      "verified_at": "2026-10-28T16:19:20.515Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -77566,14 +77586,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 858,
       "title": "The Attention-Masked Mean Pooling Invariant",
-      "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-      "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+      "source_url": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
+      "source_version": "hf-sentence-transformers-all-mpnet-base-v2",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-28T11:52:40.526Z"
+      "verified_at": "2026-10-28T16:19:27.385Z"
     },
     "rule-859": {
       "learning_id": "rule-859",
@@ -144992,6 +145012,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T16:12:34.977Z"
+    },
+    "rule-5339": {
+      "learning_id": "rule-5339",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5339,
+      "title": "pkg/boot/kexec: honour #address-cells and #size-cells in the FDT memory map",
+      "source_url": "https://github.com/u-root/u-root",
+      "source_version": "91846b7c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T16:19:20.515Z"
+    },
+    "rule-5340": {
+      "learning_id": "rule-5340",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5340,
+      "title": "mutation): measure each kernel against the tests that import it (#3994)",
+      "source_url": "https://github.com/callstack/agent-device",
+      "source_version": "3537dc54",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T16:19:25.780Z"
+    },
+    "rule-5341": {
+      "learning_id": "rule-5341",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5341,
+      "title": "The L2 Normalization Post-Processing Invariant",
+      "source_url": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
+      "source_version": "hf-sentence-transformers-all-mpnet-base-v2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T16:19:27.385Z"
     }
   },
   "aliases": {

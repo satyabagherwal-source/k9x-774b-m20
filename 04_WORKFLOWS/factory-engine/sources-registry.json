@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T16:12:37.630Z",
-    "lastVerified": "2026-10-28T16:12:37.630Z",
+    "lastChecked": "2026-10-28T16:19:30.118Z",
+    "lastVerified": "2026-10-28T16:19:30.118Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -97,9 +97,9 @@
   "gravitl-netmaker": {
     "name": "netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
-    "lastChecked": "2026-10-28T13:10:00.842Z",
+    "lastChecked": "2026-10-28T16:19:29.617Z",
     "revisionIdentifier": "f20acf34",
-    "lastVerified": "2026-10-28T13:10:00.842Z"
+    "lastVerified": "2026-10-28T16:19:29.617Z"
   },
   "mintplex-labs-anything-llm": {
     "name": "Mintplex-Labs/anything-llm",
@@ -193,8 +193,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T15:50:41.963Z",
-    "lastVerified": "2026-10-28T15:50:41.963Z",
+    "lastChecked": "2026-10-28T16:19:30.108Z",
+    "lastVerified": "2026-10-28T16:19:30.108Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -4824,5 +4824,70 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "u-root-u-root": {
+    "name": "u-root/u-root",
+    "officialUrl": "https://github.com/u-root/u-root",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-28T16:19:19.827Z",
+    "lastVerified": "2026-10-28T16:19:19.827Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-u-root-u-root",
+    "contentHash": "39eea9f70deaa46ded912eb0afbe459b7fe87eb82438bf2be24679ae5b435dfc",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-sentence-transformers-all-mpnet-base-v2": {
+    "name": "sentence-transformers/all-mpnet-base-v2",
+    "officialUrl": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T16:19:17.716Z",
+    "lastVerified": "2026-10-28T16:19:17.716Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
+    "contentHash": "a5331c4f8ade384adb85e6f908581cb37c75b1c7a89859ef1a5f6d3554c1f6f6",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "callstack-agent-device": {
+    "name": "callstack/agent-device",
+    "officialUrl": "https://github.com/callstack/agent-device",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-28T16:19:25.242Z",
+    "lastVerified": "2026-10-28T16:19:25.242Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-callstack-agent-device",
+    "contentHash": "6860af672a50d9e40c513f255ac57f7fe0732bb30db95fb26b936fa4b3b2e2f7",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 9,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "dnscontrol-dnscontrol": {
+    "name": "dnscontrol",
+    "officialUrl": "https://github.com/DNSControl/dnscontrol",
+    "lastChecked": "2026-10-28T16:19:22.687Z",
+    "revisionIdentifier": "148c2d48",
+    "lastVerified": "2026-10-28T16:19:22.687Z"
+  },
+  "apache-zookeeper": {
+    "name": "zookeeper",
+    "officialUrl": "https://github.com/apache/zookeeper",
+    "lastChecked": "2026-10-28T16:19:27.720Z",
+    "revisionIdentifier": "858c8d77",
+    "lastVerified": "2026-10-28T16:19:27.720Z"
   }
 }

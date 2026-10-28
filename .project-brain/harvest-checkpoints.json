@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T16:12:35.097Z",
+  "last_updated": "2026-10-28T16:19:27.490Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1460,14 +1460,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
-      "content_hash": "6db5ac895194aab90a29cb788102a802298dc199c36a3149d45db13eca23823c",
-      "verified_at": "2026-10-25T22:31:56.778Z",
+      "content_hash": "a5331c4f8ade384adb85e6f908581cb37c75b1c7a89859ef1a5f6d3554c1f6f6",
+      "verified_at": "2026-10-28T16:19:27.489Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T22:31:56.778Z"
+      "last_updated": "2026-10-28T16:19:27.489Z"
     },
     "BAAI/bge-reranker-v2-m3": {
       "repository": "BAAI/bge-reranker-v2-m3",
@@ -9186,14 +9186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-u-root-u-root",
-      "content_hash": "f98f59afddebd27ca7499bd29a723380367dbf36db47126dee6128059e3aee5a",
-      "verified_at": "2026-10-24T19:58:45.732Z",
+      "content_hash": "39eea9f70deaa46ded912eb0afbe459b7fe87eb82438bf2be24679ae5b435dfc",
+      "verified_at": "2026-10-28T16:19:20.618Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-24T19:58:45.732Z"
+      "last_updated": "2026-10-28T16:19:20.618Z"
     },
     "shoutem/ui": {
       "repository": "shoutem/ui",
@@ -9276,14 +9276,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-callstack-agent-device",
-      "content_hash": "d74e8b5090e398011f2026f94a86aa80c98fb5e04d7d9771d59b47d0cbee2950",
-      "verified_at": "2026-10-27T21:01:37.982Z",
+      "content_hash": "6860af672a50d9e40c513f255ac57f7fe0732bb30db95fb26b936fa4b3b2e2f7",
+      "verified_at": "2026-10-28T16:19:25.884Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T21:01:37.982Z"
+      "last_updated": "2026-10-28T16:19:25.884Z"
     },
     "open-policy-agent/opa": {
       "repository": "open-policy-agent/opa",
