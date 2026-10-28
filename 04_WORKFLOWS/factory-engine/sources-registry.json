@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T05:24:48.273Z",
-    "lastVerified": "2026-10-28T05:24:48.273Z",
+    "lastChecked": "2026-10-28T05:31:00.781Z",
+    "lastVerified": "2026-10-28T05:31:00.781Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -169,9 +169,9 @@
   "dathere-qsv": {
     "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
-    "lastChecked": "2026-10-28T04:55:10.034Z",
+    "lastChecked": "2026-10-28T05:30:59.875Z",
     "revisionIdentifier": "acf15714",
-    "lastVerified": "2026-10-28T04:55:10.034Z"
+    "lastVerified": "2026-10-28T05:30:59.875Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1394,5 +1394,77 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "metalbear-co-mirrord": {
+    "name": "metalbear-co/mirrord",
+    "officialUrl": "https://github.com/metalbear-co/mirrord",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T05:30:49.823Z",
+    "lastVerified": "2026-10-28T05:30:49.823Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-metalbear-co-mirrord",
+    "contentHash": "4cb21338bfb23c3afb3b557dafd5d2c821e2fc1e3322bf4999e95b4990ba65f4",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-apple-lensvlm-9b": {
+    "name": "apple/LensVLM-9B",
+    "officialUrl": "https://huggingface.co/apple/LensVLM-9B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T05:30:47.711Z",
+    "lastVerified": "2026-10-28T05:30:47.711Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-apple-lensvlm-9b",
+    "contentHash": "83ebd5ce62ae3d185d70145187ad5405c248147277c49ddc0c76e242340aa8a2",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "streetwriters-notesnook": {
+    "name": "notesnook",
+    "officialUrl": "https://github.com/streetwriters/notesnook",
+    "lastChecked": "2026-10-28T05:30:49.849Z",
+    "revisionIdentifier": "7a183013",
+    "lastVerified": "2026-10-28T05:30:49.849Z"
+  },
+  "moby-buildkit": {
+    "name": "moby/buildkit",
+    "officialUrl": "https://github.com/moby/buildkit",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-28T05:30:57.728Z",
+    "lastVerified": "2026-10-28T05:30:57.728Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-moby-buildkit",
+    "contentHash": "9bb261cd6543cbaf7e7570e6a6d89f5225e7e77392fccf73711a0ddf44612262",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "projectdiscovery-nuclei": {
+    "name": "nuclei",
+    "officialUrl": "https://github.com/projectdiscovery/nuclei",
+    "lastChecked": "2026-10-28T05:30:54.835Z",
+    "revisionIdentifier": "26ce6d2e",
+    "lastVerified": "2026-10-28T05:30:54.835Z"
+  },
+  "zilliztech-claude-context": {
+    "name": "claude-context",
+    "officialUrl": "https://github.com/zilliztech/claude-context",
+    "lastChecked": "2026-10-28T05:30:57.357Z",
+    "revisionIdentifier": "6fc318b4",
+    "lastVerified": "2026-10-28T05:30:57.357Z"
   }
 }

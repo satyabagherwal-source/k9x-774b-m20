@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source**: github ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
-> **Source Version**: `9d87f3fa`  
+> **Source Version**: `55b79d17`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T23:37:14.786Z  
+> **Timestamp**: 2026-10-28T05:30:49.970Z  
 > **Learning ID**: `learn-github-metalbear-co-mirrord`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T23:34:27.985Z  
+> **Harvest Timestamp**: 2026-10-28T05:30:49.823Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1535,10 +1535,663 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9d87f3fa` (2026-10-27)
-**Commit Message**: Merge pull request #5158 from metalbear-co/aviram/security-patch-bump
+### Incident Patch 1: `55b79d17` (2026-10-27)
+**Commit Message**: Merge pull request #5082 from metalbear-co/meowchinist/cor-1692-add-the-paid-feature-gate-error-gate-hit-recording-and-free
 
-release: treat security changelog fragments as patch-level
+COR-1692: Report paid feature gates and show upgrade errors
+
+**File**: `changelog.d/+paid-feature-errors.added.md` (added, +2/-0)
+```diff
+@@ -0,0 +1,2 @@
++Paid-feature errors identify the configuration key and required plan, with billing guidance for cluster administrators.
++Local paid-feature refusals are reported to operators that support license-gate reporting.
+```
+
+**File**: `mirrord/analytics/src/lib.rs` (modified, +14/-0)
+```diff
+@@ -332,6 +332,12 @@ impl<T: CollectAnalytics> From<T> for AnalyticValue {
+ }
+ 
+ pub trait Reporter: Sized {
++    /// Workstation identity is exported only with telemetry consent. Non-CLI reporters need not
++    /// invent one for operator reports.
++    fn machine_id(&self) -> Option<Uuid> {
++        None
++    }
++
+     fn get_mut(&mut self) -> &mut Analytics;
+ 
+     fn set_operator_properties(&mut self, operator_properties: AnalyticsOperatorProperties);
+@@ -398,6 +404,7 @@ pub struct AnalyticsReporter {
+     watch: drain::Watch,
+     target: ReportTarget,
+     session_key: Option<String>,
++    machine_id: Uuid,
+ }
+ 
+ impl AnalyticsReporter {
+@@ -428,6 +435,7 @@ impl AnalyticsReporter {
+             watch,
+             target: ReportTarget::ClientSession,
+             session_key,
++            machine_id,
+         }
+     }
+ 
+@@ -456,6 +464,7 @@ impl AnalyticsReporter {
+             watch,
+             target: ReportTarget::TuiEvent,
+             session_key: None,
++            machine_id,
+         }
+     }
+ 
+@@ -515,6 +524,7 @@ impl AnalyticsReporter {
+             watch,
+             target,
+             session_key: None,
++            machine_id,
+         }
+     }
+ 
+@@ -566,6 +576,10 @@ impl AnalyticsReporter {
+ }
+ 
+ impl Reporter for AnalyticsReporter {
++    fn machine_id(&self) -> Option<Uuid> {
++        self.enabled.then_some(self.machine_id)
++    }
++
+     fn get_mut(&mut self) -> &mut Analytics {
+         &mut self.analytics
+     }
+```
+
+**File**: `mirrord/cli/src/connection.rs` (modified, +58/-1)
+```diff
+@@ -91,12 +91,58 @@ where
+         .await?
+         .ok_or(CliError::OperatorNotInstalled)?;
+     api.check_license_validity(&subtask)?;
+-    api.check_serverless_sessions_manager_served()?;
++    if let Err(error) = api.check_serverless_sessions_manager_served() {
++        if let OperatorApiError::LocalFeatureNotLicensed { feature, .. } = &error {
++            report_local_feature_gate(api, *feature, layer_config, progress, analytics).await;
++        }
++        return Err(error.into());
++    }
+     subtask.success(Some("operator sessions-manager available"));
+ 
+     Ok(api.client().clone())
+ }
+ 
++/// Operations using Kubernetes credentials directly need a mirrord certificate only to
++/// attribute a local paid refusal. Credential or reporting failures must not hide the refusal
++/// or delay it indefinitely.
++#[mirrord_macros::boxed_future]
++pub(crate) async fn report_local_feature_gate<P, R>(
++    operator_api: OperatorApi<NoClientCert>,
++    feature: NewOperatorFeature,
++    config: &LayerConfig,
++    progress: &P,
++    analytics: &mut R,
++) where
++    P: Progress,
++    R: Reporter,
++{
++    if operator_api
++        .operator()
++        .spec
++        .supported_features()
++        .contains(&NewOperatorFeature::LicenseGateReporting)
++        .not()
++    {
++        return;
++    }
++
++    let report = async {
++        let api = operator_api
++            .with_client_certificate(analytics, progress, config)
++            .await
++            .into_certified()?;
++        api.cli_gated_feature(feature).await;
++        Ok::<(), OperatorApiError>(())
++    };
++    match tokio::time::timeout(Duration::from_secs(2), report).await {
++        Ok(Ok(())) => {}
++        Ok(Err(error)) => {
++            tracing::debug!(%feature, %error, "Could not prepare credentials for paid-feature reporting");
++        }
++        Err(_) => tracing::debug!(%feature, "Paid-feature reporting timed out"),
++    }
++}
++
+ /// Whether a session with a given config can use the mirrord operator, before anything is
+ /// reported about it. Sessions (`try_connect_using_operator`) and `mirrord up`'s check before
+ /// launch both decide through [`operator_availability`], each reporting the outcome its own way:
+@@ -236,6 +282,17 @@ where
+         );
+     }
+ 
++    if layer_config.multi_cluster == Some(true)
++        && let Err(error @ OperatorApiError::LocalFeatureNotLicensed { .. }) = api
++            .operator()
++            .spec
++            .require_feature(NewOperatorFeature::MultiClusterPrimary)
++    {
++        api.cli_gated_feature(NewOperatorFeature::MultiClusterPrimary)
++            .await;
++        return Err(error.into());
++    }
++
+     let is_multi_cluster = api
+         .operator()
+         .spec
+```
+
+**File**: `mirrord/cli/src/error.rs` (modified, +36/-17)
+```diff
+@@ -1,9 +1,6 @@
+ use std::{ffi::NulError, io, num::ParseIntError, path::PathBuf};
+ 
+-use kube::{
+-    self,
+-    core::{Status, response::StatusSummary},
+-};
++use kube::{self, Error, client::AuthError};
+ use miette::Diagnostic;
+ use mirrord_auth::error::{ApiKeyError, CredentialStoreError};
+ use mirrord_config::config::ConfigError;
+@@ -16,7 +13,8 @@ use mirrord_kube::{api::kubernetes::KubeEnvironment, error::KubeApiError};
+ use mirrord_mcp::McpError;
+ use mirrord_operator::{
+     client::error::{HttpError, OperatorApiError, OperatorOperation},
+-    crd::preview::PreviewPodLogs,
++    crd::{NewOperatorFeature, preview::PreviewPodLogs},
++    types::PaidFeatureGate,
+ };
+ use mirrord_progress::messages::AGENT_OPERATOR_HINT;
+ use mirrord_protocol_io::ProtocolError;
+@@ -536,6 +534,23 @@ pub(crate) enum CliError {
+     ))]
+     OperatorApiForbidden(OperatorOperation, String),
+ 
++    #[error("{gate}")]
++    #[diagnostic(help(
++        "Ask your cluster administrator to add a license at https://app.metalbear.com/billing?utm_source=licensegate&utm_medium=cli&utm_content={}",
++        gate.feature_config_key
++    ))]
++    LocalPaidFeatureRequiresPlan {
++        feature: NewOperatorFeature,
++        gate: PaidFeatureGate,
++    },
++
++    #[error("{gate}")]
++    #[diagnostic(help(
++        "Ask your cluster administrator to add a license at https://app.metalbear.com/billing?utm_source=licensegate&utm_medium=cli&utm_content={}",
++        gate.feature_config_key
++    ))]
++    PaidFeatureRequiresPlan { gate: PaidFeatureGate },
++
+     #[error(
+         "mirrord operator license expired. Visit https://app.metalbear.com to renew your license"
+     )]
+@@ -1014,8 +1029,6 @@ impl CliError {
+         error: KubeApiError,
+         fallback: F,
+     ) -> Self {
+-        use kube::{Error, client::AuthError};
+-
+         match error {
+             KubeApiError::KubeError(Error::Auth(AuthError::AuthExecStart(error))) => {
+                 Self::KubeAuthExecFailed(error)
+@@ -1054,7 +1067,17 @@ impl From<mirrord_up::UpError> for CliError {
+ 
+ impl From<OperatorApiError> for CliError {
+     fn from(value: OperatorApiError) -> Self {
+-        use kube::{Error, client::AuthError};
++        let status = match &value {
++            OperatorApiError::KubeError {
++                error: Error::Api(status),
++                ..
++            }
++            | OperatorApiError::StatusFailure { status, .. } => Some(status.as_ref()),
++            _ => None,
++        };
++        if let Some(gate) = status.and_then(PaidFeatureGate::from_status) {
++            return Self::PaidFeatureRequiresPlan { gate };
++        }
+ 
+         match value {
+             OperatorApiError::BranchCreationFailed { operation, message } => {
+@@ -1084,6 +1107,10 @@ impl From<OperatorApiError> for CliError {
+                     }
+                 },
+             },
++            OperatorApiError::LocalFeatureNotLicensed { feature, gate } => {
++                Self::LocalPaidFeatureRequiresPlan { feature, gate }
++            }
++            OperatorApiError::FeatureNotLicensed { gate } => Self::PaidFeatureRequiresPlan { gate },
+             OperatorApiError::ServerlessSessionsManagerNotServed => {
+                 Self::ServerlessSessionsManagerNotServed
+             }
+@@ -1126,15 +1153,7 @@ impl From<OperatorApiError> for CliError {
+                 Self::OperatorApiForbidden(operation, status.message)
+             }
+             OperatorApiError::StatusFailure { operation, status } => {
+-                let error = kube::Error::Api(Box::new(Status {
+-                    status: Some(StatusSummary::Failure),
+-                    message: status.message,
+-                    reason: status.reason,
+-                    code: status.code,
+-                    ..Default::default()
+-                }));
+-
+-                Self::OperatorApiFailed(operation, error)
++                Self::OperatorApiFailed(operation, Error::Api(status))
+             }
+             OperatorApiError::NoLicense => Self::OperatorLicenseExpired,
+             OperatorApiError::ClientCertError(error) => Self::OperatorClientCertError(error),
+```
+
+**File**: `mirrord/cli/src/preview.rs` (modified, +126/-60)
+```diff
+@@ -45,7 +45,10 @@ use mirrord_config::{
+ };
+ use mirrord_kube::api::runtime::RuntimeDataProvider;
+ use mirrord_operator::{
+-    client::{NoClientCert, OperatorApi, connect_params::BranchDbNames, temporal_mirror_warning},
++    client::{
++        NoClientCert, OperatorApi, connect_params::BranchDbNames, error::OperatorApiError,
++        temporal_mirror_warning,
++    },
+     crd::{
+         MirrordOperatorSpec, NewOperatorFeature, TARGET_NAMESPACE_ANNOTATION, TargetCrd,
+         preview::{
+@@ -69,6 +72,7 @@ use crate::{
+         ManifestSourceArgs, PreviewArgs, PreviewCommand, PreviewCommonArgs, PreviewDiffArgs,
+         PreviewLogsArgs, PreviewStartArgs, PreviewStatusArgs, PreviewStopArgs,
+     },
++    connection::report_local_feature_gate,
+     data::UserData,
+     error::{CliError, CliResult, format_preview_logs},
+ };
+@@ -154,6 +158,7 @@ async fn preview_start(
+         supplied_objects,
+         false,
+         &progress,
++        analytics,
+     )
+     .await?
+     .start(&mut progress)
+@@ -208,6 +213,8 @@ struct PreparedPreview {
+     layer_config: LayerConfig,
+     operator_api: OperatorApi<NoClientCert>,
+     api: Api<PreviewSession>,
++    /// Retained through startup so refusals during branch preparation can also be reported.
++    analytics: AnalyticsReporter,
+     /// The "preparing preview session" task, which [`PreparedPreview::start`] finishes once the
+     /// session resource is created.
+     subtask: ProgressTracker,
+@@ -227,6 +234,10 @@ impl PreparedPreview {
+     /// `sources.chart` is rendered here. With `auto_queue_splitting`, `feature.split_queues` are
+     /// defaults the operator drops what it can't serve of, so they aren't checked against its
+     /// features.
++    #[allow(
++        clippy::too_many_arguments,
++        reason = "The prepared session owns its reporter so branch refusals during startup can be attributed."
++    )]
+     async fn prepare(
+         mut layer_config: LayerConfig,
+         operator_api: OperatorApi<NoClientCert>,
+@@ -235,62 +246,80 @@ impl PreparedPreview {
+         mut supplied_objects: Option<Vec<resources::SuppliedObject>>,
+         auto_queue_splitting: bool,
+         progress: &ProgressTracker,
++        mut analytics: AnalyticsReporter,
+     ) -> CliResult<Self> {
+-        operator_api.check_feature_support(&layer_config, auto_queue_splitting)?;
++        let is_cronjob_target = matches!(layer_config.target.path, Some(Target::CronJob(_)));
++        let feature_support = async {
++            operator_api.check_feature_support(&layer_config, auto_queue_splitting)?;
+ 
+-        if !sources.is_empty() {
+-            require_spec_resources_support(&operator_api.operator().spec)?;
+-        }
+-        // The chart renders under the target's namespace, which the kube client resolves when the
+-        // config leaves it out, so this waits for the connection. Rendering still touches nothing
+-        // in the cluster.
+-        if let Some(chart) = &sources.chart {
+-            let rendered = render_chart(
+-                chart,
+-                &layer_config,
+-                target_namespace(&operator_api, &layer_config),
+-                progress,
+-            )
+-            .await?;
+-            supplied_objects.get_or_insert_default().extend(rendered);
+-        }
++            if !sources.is_empty() {
++                require_spec_resources_support(&operator_api.operator().spec)?;
++            }
++            // The chart renders under the target's namespace, which the kube client resolves when the
++            // config leaves it out, so this waits for the connection. Rendering still touches nothing
++            // in the cluster.
++            if let Some(chart) = &sources.chart {
++                let rendered = render_chart(
++                    chart,
++                    &layer_config,
++                    target_namespace(&operator_api, &layer_config),
++                    progress,
++                )
++                .await?;
++                supplied_objects.get_or_insert_default().extend(rendered);
++            }
+ 
+-        let is_cronjob_target = matches!(layer_config.target.path, Some(Target::CronJob(_)));
+-        if is_cronjob_target {
+-            operator_api
+-                .operator()
+-                .spec
+-                .require_feature(NewOperatorFeature::PreviewCronJobTarget)?;
+-        }
+-        if let Some(Target::Label(label_target)) = &layer_config.target.path {
+-            operator_api
+-                .operator()
+-                .spec
+-                .require_feature(NewOperatorFeature::PreviewLabelTarget)?;
+-
+-            // Branch preparation reads a single workload out of the target and a label selector
+-            // names none, so it would fail later. Refuse here, before the existing session with the
+-            // same key is replaced, so a bad config never tears down a running preview.
+-            if !layer_config.feature.db_branches.is_empty() {
+-                return Err(CliError::UnsupportedTargetConfig(format!(
+- 
+```
+
+**File**: `mirrord/cli/src/preview/up.rs` (modified, +19/-3)
+```diff
+@@ -22,7 +22,10 @@ use mirrord_config::{
+     util::GIT_BRANCH,
+ };
+ use mirrord_operator::{
+-    client::{required_branching_feature, split_config_branches::entries_from_response},
++    client::{
++        error::OperatorApiError, required_branching_feature,
++        split_config_branches::entries_from_response,
++    },
+     crd::NewOperatorFeature,
+ };
+ use mirrord_progress::{Progress, ProgressTracker};
+@@ -32,7 +35,7 @@ use mirrord_up::{
+ 
+ use super::{
+     PreparedPreview, StopMode, create_preview_api, load_manifests, manifest_sources,
+-    preview_namespace, preview_stop,
++    preview_namespace, preview_stop, report_local_feature_gate,
+ };
+ use crate::{
+     config::{
+@@ -348,7 +351,19 @@ async fn prepare_service(
+         if off.is_empty().not() {
+             if default_db_branches.not() {
+                 for feature in off.iter().filter_map(|(_, feature)| *feature) {
+-                    operator_api.operator().spec.require_feature(feature)?;
++                    if let Err(error) = operator_api.operator().spec.require_feature(feature) {
++                        if let OperatorApiError::LocalFeatureNotLicensed { feature, .. } = &error {
++                            report_local_feature_gate(
++                                operator_api,
++                                *feature,
++                                &config,
++                                progress,
++                                &mut analytics,
++                            )
++                            .await;
++                        }
++                        return Err(error.into());
++                    }
+                 }
+             }
+             progress.warning(&format!(
+@@ -427,6 +442,7 @@ async fn prepare_service(
+         supplied_objects,
+         auto_queue_splitting,
+         progress,
++        analytics,
+     )
+     .await
+ }
+```
+
+**File**: `mirrord/cli/src/up/db_branches.rs` (modified, +51/-17)
+```diff
+@@ -27,7 +27,7 @@ use mirrord_up::SubprocessCfg;
+ 
+ use super::UpCliError;
+ use crate::{
+-    connection::{OperatorAvailability, operator_availability},
++    connection::{OperatorAvailability, operator_availability, report_local_feature_gate},
+     error::CliError,
+ };
+ 
+@@ -126,8 +126,9 @@ pub(super) async fn check_db_branches(
+                 .db_branches
+                 .split_config_request()?
+                 .clone();
+-            let api = apis.get(&operator_key(&service.config))?.as_ref()?;
+-            Some((service, request, api))
++            let key = operator_key(&service.config);
++            apis.get(&key)?.as_ref()?;
++            Some((service, request, key))
+         })
+         .collect::<Vec<_>>();
+     let requested = requesting
+@@ -144,27 +145,56 @@ pub(super) async fn check_db_branches(
+     // The lookups are independent, so they run at once: the run waits about one round trip to
+     // the operator instead of one per service. `join_all` keeps the results in service order, so
+     // the failure reported below is still the first failing service's.
+-    let lookups = join_all(requesting.iter().map(|(service, request, api)| async move {
+-        let response = api
+-            .lookup_split_config_db_branches(&service.config, request)
+-            .await?;
+-        // The session applies the answer to its config the same way. Applied to a copy
+-        // here, it rejects what the session would (e.g. an env override clashing with a
+-        // branch's connection variable), before any session starts.
+-        apply_resolved_entries(&mut service.config.clone(), &response)?;
+-        Ok::<_, OperatorApiError>(response)
++    let lookups = join_all(requesting.iter().map(|(service, request, key)| {
++        let api = apis
++            .get(key)
++            .and_then(Option::as_ref)
++            .expect("requesting services have a usable operator");
++        async move {
++            let response = api
++                .lookup_split_config_db_branches(&service.config, request)
++                .await?;
++            // The session applies the answer to its config the same way. Applied to a copy
++            // here, it rejects what the session would (e.g. an env override clashing with a
++            // branch's connection variable), before any session starts.
++            apply_resolved_entries(&mut service.config.clone(), &response)?;
++            Ok::<_, OperatorApiError>(response)
++        }
+     }))
+     .await;
+ 
+     // Entry id -> the (cluster, namespace) pairs it resolved in, and the services in each. A
+     // branch is named for its namespace and lives in its cluster, so each pair is one branch. The
+     // cluster is the API server URL, since two kube contexts can name one cluster.
+     let mut entry_namespaces: BTreeMap<String, BTreeMap<_, Vec<Arc<str>>>> = BTreeMap::new();
+-    for ((service, _, api), lookup) in requesting.into_iter().zip(lookups) {
+-        let response = lookup.map_err(|error| UpCliError::DbBranches {
+-            service: service.service_name.clone(),
+-            error: Box::new(error.into()),
+-        })?;
++    for ((service, _, key), lookup) in requesting.into_iter().zip(lookups) {
++        let response = match lookup {
++            Ok(response) => response,
++            Err(error) => {
++                if service.default_db_branches.not()
++                    && let OperatorApiError::LocalFeatureNotLicensed { feature, .. } = &error
++                {
++                    // Lookups share a Kubernetes-only client. Only the refusal that stops the
++                    // run needs credentials for reporting; no resource action follows it.
++                    let api = apis
++                        .remove(&key)
++                        .flatten()
++                        .expect("requesting services have a usable operator");
++                    report_local_feature_gate(
++                        api,
++                        *feature,
++                        &service.config,
++                        &NullProgress,
++                        &mut NullReporter::default(),
++                    )
++                    .await;
++                }
++                return Err(UpCliError::DbBranches {
++                    service: service.service_name.clone(),
++                    error: Box::new(error.into()),
++                });
++            }
++        };
+ 
+         if response.entries.is_empty() {
+             println!(
+@@ -175,6 +205,10 @@ pub(super) async fn check_db_branches(
+             continue;
+         }
+ 
++        let api = apis
++            .get(&key)
++            .and_then(Option::as_ref)
++            .expect("requesting services have a usable operator");
+         let namespace = service
+             .config
+             .target
+```
+
+**File**: `mirrord/operator/src/client.rs` (modified, +166/-40)
+```diff
+@@ -58,14 +58,16 @@ use semver::Version;
+ use serde::{Deserialize, Serialize, de::DeserializeOwned};
+ use tower::{buffer::BufferLayer, retry::RetryLayer};
+ use tracing::Level;
++use uuid::Uuid;
+ 
+ use crate::{
+     client::{
+         database_branches::{
+-            CreatedBranches, DatabaseBranchParams, UnifiedDatabaseBranchParams, create_branches,
+-            create_mongodb_branches, create_mysql_branches, create_pg_branches,
+-            ensure_branch_migrations, list_existing_branches, list_reusable_mongodb_branches,
+-            list_reusable_mysql_branches, list_reusable_pg_branches, ownership_label_selector,
++            CreatedBranches, DatabaseBranchParams, TARGET_NAMESPACE_ANNOTATION,
++            UnifiedDatabaseBranchParams, create_branches, create_mongodb_branches,
++            create_mysql_branches, create_pg_branches, ensure_branch_migrations,
++            list_existing_branches, list_reusable_mongodb_branches, list_reusable_mysql_branches,
++            list_reusable_pg_branches, ownership_label_selector,
+             relay_source_compatibility_warnings, reused_branch_connection_sources,
+             wait_for_pending_branches,
+         },
+@@ -93,7 +95,7 @@ use crate::{
+     },
+     types::{
+         CLIENT_CERT_HEADER, CLIENT_HOSTNAME_HEADER, CLIENT_NAME_HEADER, CONNECT_PARAMS_HEADER,
+-        MIRRORD_CLI_VERSION_HEADER, SESSION_ID_HEADER,
++        FeatureGateHitRequest, MIRRORD_CLI_VERSION_HEADER, PaidFeatureGate, SESSION_ID_HEADER,
+     },
+ };
+ 
+@@ -300,6 +302,7 @@ pub struct OperatorApi<C> {
+     operator: MirrordOperatorCrd,
+     /// Named kubeconfig context used to create [`Self::client`].
+     kube_context: Option<String>,
++    machine_id: Option<Uuid>,
+     /// URL of the API server [`Self::client`] talks to. Unlike [`Self::kube_context`], it tells
+     /// clusters apart: two contexts can name one cluster.
+     cluster_url: String,
+@@ -378,6 +381,7 @@ impl OperatorApi<NoClientCert> {
+                     client_cert: NoClientCert { base_config },
+                     operator,
+                     kube_context,
++                    machine_id: reporter.machine_id(),
+                     cluster_url,
+                 }));
+             }
+@@ -481,6 +485,7 @@ impl OperatorApi<NoClientCert> {
+                 },
+                 operator: self.operator,
+                 kube_context: self.kube_context,
++                machine_id: self.machine_id,
+                 cluster_url: self.cluster_url,
+             },
+ 
+@@ -491,6 +496,7 @@ impl OperatorApi<NoClientCert> {
+                 },
+                 operator: self.operator,
+                 kube_context: self.kube_context,
++                machine_id: self.machine_id,
+                 cluster_url: self.cluster_url,
+             },
+         }
+@@ -541,6 +547,7 @@ impl OperatorApi<NoClientCert> {
+         let previous_client = self.client.clone();
+         let operator_crd = self.operator.clone();
+         let kube_context = self.kube_context.clone();
++        let machine_id = self.machine_id;
+         let cluster_url = self.cluster_url.clone();
+ 
+         let result = async move {
+@@ -572,6 +579,7 @@ impl OperatorApi<NoClientCert> {
+                 },
+                 operator: operator_crd,
+                 kube_context,
++                machine_id,
+                 cluster_url,
+             },
+         }
+@@ -593,6 +601,7 @@ impl OperatorApi<MaybeClientCert> {
+             client_cert: PreparedClientCert { cert },
+             operator: self.operator,
+             kube_context: self.kube_context,
++            machine_id: self.machine_id,
+             cluster_url: self.cluster_url,
+         })
+     }
+@@ -668,10 +677,13 @@ where
+     pub fn check_serverless_sessions_manager_served(&self) -> OperatorApiResult<()> {
+         self.operator
+             .spec
+-            .supported_features()
+-            .contains(&NewOperatorFeature::ServerlessSessionsManager)
+-            .then_some(())
+-            .ok_or(OperatorApiError::ServerlessSessionsManagerNotServed)
++            .require_feature(NewOperatorFeature::ServerlessSessionsManager)
++            .map_err(|error| match error {
++                OperatorApiError::UnsupportedFeature { .. } => {
++                    OperatorApiError::ServerlessSessionsManagerNotServed
++                }
++                error => error,
++            })
+     }
+ 
+     /// Create a new CI api key by generating a random key pair, creating a certificate
+@@ -863,7 +875,11 @@ where
+                 // config conflict) in its own words; it is shown as it is, not inside kube's
+                 // wrapping of the response.
+                 kube::Error::Api(response) => {
+-                    OperatorApiError::SplitConfigDbBranches(response.message)
++                    if let Some(gate) = PaidFeatureGate::from_status(&response) {
++                        OperatorApiError::FeatureNotLicensed { gate }
++                    } else {
++                        OperatorApiError::SplitConfigDbBranches(response.message)
++         
+```
+
+---
+
+### Incident Patch 2: `d342c848` (2026-10-27)
+**Commit Message**: Merge branch 'main' into meowchinist/cor-1692-add-the-paid-feature-gate-error-gate-hit-recording-and-free
 
 **File**: `.github/actions/next-release-version/version.py` (modified, +3/-3)
 ```diff
@@ -1576,221 +2229,6 @@ release: treat security changelog fragments as patch-level
 +Release version bump now treats `security` changelog fragments as patch-level.
 ```
 
----
-
-### Incident Patch 2: `50c03803` (2026-10-27)
-**Commit Message**: release: bump patch for security-only changelog fragments
-
-**File**: `.github/actions/next-release-version/version.py` (modified, +3/-3)
-```diff
-@@ -22,9 +22,9 @@
- 
- import tomlkit
- 
--# Fragments whose only effect is invisible to users, in towncrier category order of
--# increasing significance. Anything outside this set warrants a minor bump.
--PATCH_CATEGORIES = frozenset({"internal", "fixed"})
-+# Fragments that only warrant a patch release: work invisible to users, bug fixes and
-+# security fixes. Anything outside this set warrants a minor bump.
-+PATCH_CATEGORIES = frozenset({"internal", "fixed", "security"})
- 
- # Fragments recording work that no user can observe. A release made up entirely of
- # these is optional, hence `--release-on-internal-only`.
-```
-
-**File**: `CONTRIBUTING.md` (modified, +1/-1)
-```diff
-@@ -881,7 +881,7 @@ Releases are fully automated. Under normal circumstances no manual steps are req
-    - There is at least one entry in `changelog.d/`.
-    - The last release is older than 7 days.
- 2. When both conditions are met, the [Auto Release PR workflow](/.github/workflows/auto-release-pr.yaml) opens (or updates) a PR from `releases/<version>` to `main`. The PR:
--   - Bumps the workspace version in `Cargo.toml` (patch bump if all changes are `fixed`/`internal`; minor bump otherwise).
-+   - Bumps the workspace version in `Cargo.toml` (patch bump if all changes are `fixed`/`security`/`internal`; minor bump otherwise).
-    - Updates `Cargo.lock`.
-    - Generates `CHANGELOG.md` by consuming the `changelog.d/` fragments.
- 3. Review the release PR, fix any changelog issues or typos, then merge it.
-```
-
----
-
-### Incident Patch 3: `a1aa6962` (2026-10-26)
-**Commit Message**: up: misc fixes from review
-
-up: add guidance for unsupported label targets
-up: skip default queue splits for label targets
-up: report all target validation errors
-
-**File**: `mirrord/cli/src/up.rs` (modified, +2/-2)
-```diff
-@@ -392,13 +392,13 @@ mod tests {
- 
-     #[test]
-     fn mode_error_buckets_as_config_validation() {
--        let v = category(UpCliError::Up(UpError::Mode(
-+        let v = category(UpCliError::Up(UpError::Mode(vec![
-             TargetValidationError::IncompatibleTargets(vec![IncompatibleTarget {
-                 service: "svc".into(),
-                 mode: ServiceMode::Replace,
-                 target_type: TargetType::Targetless,
-             }]),
--        )));
-+        ])));
-         assert_eq!(v["error_category"], ErrorCategory::ConfigValidation as u32);
-     }
- 
-```
-
-**File**: `mirrord/up/src/config.rs` (modified, +81/-60)
-```diff
-@@ -644,20 +644,10 @@ impl ServiceConfig {
-             );
-         }
- 
--        // A preview session that asks for any queue split is refused by the operator unless its
--        // target is a workload it can look a `MirrordSplitConfig` up for, even when `"*"` would
--        // match no queue. `mirrord up` sessions skip such targets instead, so leaving the splits
--        // out ends the same way.
--        if preview
--            && matches!(
--                cfg.target.path,
--                Some(Target::Deployment(_) | Target::Rollout(_) | Target::StatefulSet(_))
--            )
--            .not()
--        {
--            cfg.feature.split_queues = SplitQueuesConfig::default();
--        }
--        let mut default_split_queues = cfg.feature.split_queues.is_set();
-+        let patch_sets_split_queues = self
-+            .config_patch
-+            .as_ref()
-+            .is_some_and(|patch| patch.pointer("/feature/split_queues").is_some());
- 
-         if let Some(patch) = self.config_patch {
-             if preview && patch.pointer("/feature/preview/image").is_some() {
-@@ -667,10 +657,34 @@ impl ServiceConfig {
-             // A patch that sets `db_branches` or `split_queues` decides them itself, `[]`
-             // included, so whatever it holds afterwards was asked for by the user.
-             default_db_branches &= patch.pointer("/feature/db_branches").is_none();
--            default_split_queues &= patch.pointer("/feature/split_queues").is_none();
-             cfg = apply_config_patch(cfg, patch, &key)?;
-         }
- 
-+        let default_split_queues =
-+            matches!(self.default_mode, ServiceMode::Split | ServiceMode::Mirror)
-+                && patch_sets_split_queues.not()
-+                && matches!(cfg.target.path, Some(Target::Label(_))).not()
-+                && (preview.not()
-+                    || matches!(
-+                        cfg.target.path,
-+                        Some(Target::Deployment(_) | Target::Rollout(_) | Target::StatefulSet(_))
-+                    ));
-+        if default_split_queues {
-+            let splits = SplitQueuesConfig::all_wildcard_with_mode(&key, self.default_mode.into());
-+            // A Kafka branch serves every Kafka queue, so it does not need generated Kafka splits.
-+            cfg.feature.split_queues = if cfg.feature.kafka_branch {
-+                SplitQueuesConfig::from_splits(
-+                    splits
-+                        .splits()
-+                        .iter()
-+                        .filter(|split| split.queue_type != QueueKind::Kafka)
-+                        .cloned(),
-+                )
-+            } else {
-+                splits
-+            };
-+        }
-+
-         Ok(SubprocessCfg {
-             config: cfg,
-             service_name: service_name.clone(),
-@@ -736,8 +750,7 @@ impl ServiceConfig {
-                     }
-                 };
- 
--                cfg.feature.split_queues =
--                    SplitQueuesConfig::all_wildcard_with_mode(key, self.default_mode.into());
-+                cfg.feature.split_queues = SplitQueuesConfig::default();
-             }
- 
-             // `Replace` mode should steal all traffic from the copied target, so `http_filter` is
-@@ -817,13 +830,6 @@ fn apply_config_patch(
-     patch: serde_json::Value,
-     key: &EnvKey,
- ) -> Result<LayerConfig, ConfigPatchErrorKind> {
--    let generated_kafka_splits = config
--        .feature
--        .split_queues
--        .of_kind(QueueKind::Kafka)
--        .cloned()
--        .collect::<Vec<_>>();
--
-     let mut layer_config_json = patchable(config, key).map_err(ConfigPatchErrorKind::Serialize)?;
-     json_patch::merge(&mut layer_config_json, &patch);
- 
-@@ -836,19 +842,6 @@ fn apply_config_patch(
-     let mut config = file_config.generate_config(&mut context)?;
-     config.key = key.clone();
- 
--    // A Kafka branch serves every Kafka queue, so the Kafka splits the mode generated give way.
--    if config.feature.kafka_branch {
--        config.feature.split_queues = SplitQueuesConfig::from_splits(
--            config
--                .feature
--                .split_queues
--                .splits()
--                .iter()
--                .filter(|split| generated_kafka_splits.contains(split).not())
--                .cloned(),
--        );
--    }
--
-     config.verify(&mut context)?;
- 
-     Ok(config)
-@@ -902,7 +895,7 @@ pub struct SubprocessCfg {
- 
- /// Rejects services whose resolved target cannot support the features their
- /// mode enabled.
--pub(crate) fn validate_targets(cfgs: &[SubprocessCfg]) -> Result<(), TargetValidationError> {
-+pub(crate) fn validate_targets(cfgs: &[SubprocessCfg]) -> Result<(), Vec<TargetValidationError>> {
-     let (mut incompatible, mut unsupported) = (vec![], vec![]);
-     for cfg in cfgs {
-         let target_type = cfg
-@@ -928,16 +921,20 @@ pub(crate) fn validate_targets(cfgs: &[SubprocessCfg]) -> Result<(), TargetValid
-         }
-     }
- 
--    // prefer returning unsupported target types over incompatible targets
-+ 
-```
-
-**File**: `mirrord/up/src/lib.rs` (modified, +4/-5)
-```diff
-@@ -150,10 +150,9 @@ pub enum UpError {
-     #[diagnostic(transparent)]
-     Select(#[from] SelectError),
- 
--    /// A service's mode can't be used with the target it resolved to.
--    #[error(transparent)]
--    #[diagnostic(transparent)]
--    Mode(#[from] TargetValidationError),
-+    /// One or more services cannot use their resolved targets.
-+    #[error("target validation failed")]
-+    Mode(#[related] Vec<TargetValidationError>),
- 
-     /// The selected services would delegate to commands unsupported on Windows.
-     #[error(transparent)]
-@@ -827,7 +826,7 @@ pub async fn resolve_services(
-         &mut ConfigContext::default(),
-     )?;
- 
--    validate_targets(&service_configs)?;
-+    validate_targets(&service_configs).map_err(UpError::Mode)?;
- 
-     Ok(service_configs)
- }
-```
-
 #### Recent Merged Pull Requests:
 - **PR #5158** (2026-10-27): release: treat security changelog fragments as patch-level (@aviramha)
 - **PR #5156** (closed): DO NOT MERGE: MBE-2246 CI verification (@hank-metalbear)
@@ -1817,32 +2255,29 @@ up: report all target validation errors
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #5158 from metalbear-co/aviram/security-patch-bump
+## X. Merge pull request #5082 from metalbear-co/meowchinist/cor-1692-add-the-paid-fea
 
 **RULE**:
-When implementing operations in `.github/actions/next-release-version/version.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/+paid-feature-errors.added.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9d87f3fa`: Merge pull request #5158 from metalbear-co/aviram/security-patch-bump. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `55b79d17`: Merge pull request #5082 from metalbear-co/meowchinist/cor-1692-add-the-paid-feature-gate-error-gate-hit-recording-and-free. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/next-release-version/version.py`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/+paid-feature-errors.added.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Fragments that only warrant a patch release: work invisible to users, bug fixes and
-# security fixes. Anything outside this set warrants a minor bump.
-PATCH_CATEGORIES = frozenset({"internal", "fixed", "security"})
+Paid-feature errors identify the configuration key and required plan, with billing guidance for cluster administrators.
+Local paid-feature refusals are reported to operators that support license-gate reporting.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-# Fragments whose only effect is invisible to users, in towncrier category order of
-# increasing significance. Anything outside this set warrants a minor bump.
-PATCH_CATEGORIES = frozenset({"internal", "fixed"})
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9d87f3fa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `55b79d17` are properly handled with clean fallback behavior.

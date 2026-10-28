@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T05:24:45.745Z",
-  "total_cycles_completed": 5679,
-  "total_learnings_persisted": 5679,
-  "total_rules_promoted": 5124,
+  "last_updated": "2026-10-28T05:30:58.247Z",
+  "total_cycles_completed": 5682,
+  "total_learnings_persisted": 5682,
+  "total_rules_promoted": 5129,
   "history": [
-    {
-      "timestamp": "2026-10-27T19:38:45.058Z",
-      "repository": "chakra-ui/zag",
-      "learningId": "learn-github-chakra-ui-zag",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T19:38:45.415Z",
-      "repository": "tokio-rs/tokio",
-      "learningId": "learn-github-tokio-rs-tokio",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T19:38:52.383Z",
-      "repository": "k3s-io/k3s",
-      "learningId": "learn-github-k3s-io-k3s",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T19:49:17.838Z",
       "repository": "ant-design/pro-components",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-28T05:24:45.745Z",
       "repository": "langchain4j/langchain4j",
       "learningId": "learn-github-langchain4j-langchain4j",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T05:30:50.362Z",
+      "repository": "metalbear-co/mirrord",
+      "learningId": "learn-github-metalbear-co-mirrord",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T05:30:56.062Z",
+      "repository": "apple/LensVLM-9B",
+      "learningId": "learn-huggingface-apple-lensvlm-9b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T05:30:58.247Z",
+      "repository": "moby/buildkit",
+      "learningId": "learn-github-moby-buildkit",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

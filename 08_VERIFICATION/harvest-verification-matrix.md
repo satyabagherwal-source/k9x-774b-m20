@@ -5702,3 +5702,6 @@
 | `CYCLE-20261028-6MRU` | `2026-10-28T05:24:29.514Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md` | Yes (`b61fc693...`) |
 | `CYCLE-20261028-6RWY` | `2026-10-28T05:24:36.178Z` | `feathersjs/feathers` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5185` | Yes (`cf2877bc...`) |
 | `CYCLE-20261028-6ZAG` | `2026-10-28T05:24:45.736Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5186` | Yes (`bbf12fb8...`) |
+| `CYCLE-20261028-ESMR` | `2026-10-28T05:30:50.355Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5187` | Yes (`4cb21338...`) |
+| `CYCLE-20261028-EX13` | `2026-10-28T05:30:56.055Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1574, Rule 1037, Rule 5188` | Yes (`83ebd5ce...`) |
+| `CYCLE-20261028-EYPT` | `2026-10-28T05:30:58.241Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5189` | Yes (`9bb261cd...`) |

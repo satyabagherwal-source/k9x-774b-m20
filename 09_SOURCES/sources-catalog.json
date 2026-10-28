@@ -405,8 +405,8 @@
     "sourceUrl": "https://huggingface.co/apple/LensVLM-9B",
     "sourceVersion": "hf-apple-lensvlm-9b",
     "license": "Open-Source",
-    "contentHash": "0534eeb6d4a2cd0a9bd54758746eb62ca8fe0c44b737c128e8e3e2025a09ee9c",
-    "lastHarvestedAt": "2026-10-25T12:56:44.974Z",
+    "contentHash": "83ebd5ce62ae3d185d70145187ad5405c248147277c49ddc0c76e242340aa8a2",
+    "lastHarvestedAt": "2026-10-28T05:30:56.058Z",
     "learningId": "learn-huggingface-apple-lensvlm-9b"
   },
   "hf-altworld-hemmingway-1": {
@@ -2113,10 +2113,10 @@
     "repository": "moby/buildkit",
     "platform": "github",
     "sourceUrl": "https://github.com/moby/buildkit",
-    "sourceVersion": "892eaeac",
+    "sourceVersion": "6d392427",
     "license": "Apache-2.0",
-    "contentHash": "cf87bb451bb64770a8fec9a20afb8cfeb89eecfd55eee39b92b192792ec0bf62",
-    "lastHarvestedAt": "2026-10-27T11:34:12.057Z",
+    "contentHash": "9bb261cd6543cbaf7e7570e6a6d89f5225e7e77392fccf73711a0ddf44612262",
+    "lastHarvestedAt": "2026-10-28T05:30:58.243Z",
     "learningId": "learn-github-moby-buildkit"
   },
   "microsoft-agent-governance-toolkit": {
@@ -3013,10 +3013,10 @@
     "repository": "metalbear-co/mirrord",
     "platform": "github",
     "sourceUrl": "https://github.com/metalbear-co/mirrord",
-    "sourceVersion": "9d87f3fa",
+    "sourceVersion": "55b79d17",
     "license": "MIT",
-    "contentHash": "ce862687cd8417c169b2e67af0995a8666ecfeb200a0ebdf7c614ea4ec1b69b3",
-    "lastHarvestedAt": "2026-10-27T23:37:15.267Z",
+    "contentHash": "4cb21338bfb23c3afb3b557dafd5d2c821e2fc1e3322bf4999e95b4990ba65f4",
+    "lastHarvestedAt": "2026-10-28T05:30:50.358Z",
     "learningId": "learn-github-metalbear-co-mirrord"
   },
   "openkruise-kruise": {

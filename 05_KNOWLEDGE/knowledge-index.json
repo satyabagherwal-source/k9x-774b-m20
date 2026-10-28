@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T05:24:45.675Z",
+  "last_updated": "2026-10-28T05:30:58.197Z",
   "total_verified_learnings": 1156,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -16602,7 +16602,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/apple/LensVLM-9B",
       "source_version": "hf-apple-lensvlm-9b",
-      "content_hash": "0534eeb6d4a2cd0a9bd54758746eb62ca8fe0c44b737c128e8e3e2025a09ee9c",
+      "content_hash": "83ebd5ce62ae3d185d70145187ad5405c248147277c49ddc0c76e242340aa8a2",
       "dossier_path": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "promoted_rules": [
@@ -16688,6 +16688,11 @@
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
+          "number": 1037,
+          "title": "Pad Token Consistency",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
           "number": 1085,
           "title": "**Special‑Token Uniqueness Across Modalities**",
           "status": "PROMOTED_AND_VERIFIED"
@@ -16758,6 +16763,11 @@
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
+          "number": 1574,
+          "title": "Consistent Numerical Precision Across Modalities",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
           "number": 2116,
           "title": "Consistent Numerical Precision Across Sub‑Modules",
           "status": "PROMOTED_AND_VERIFIED"
@@ -16796,6 +16806,11 @@
           "number": 4297,
           "title": "Unique and Non‑Overlapping Special Token IDs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5188,
+          "title": "Cache Policy Discipline",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16816,7 +16831,7 @@
         "learn-huggingface-hf-apple-lensvlm-9b-mv45grmj",
         "learn-huggingface-hf-apple-lensvlm-9b-mv4iqnex"
       ],
-      "verified_at": "2026-10-25T12:56:44.904Z",
+      "verified_at": "2026-10-28T05:30:55.994Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36293,8 +36308,8 @@
       "slug": "metalbear-co-mirrord",
       "platform": "github",
       "source_url": "https://github.com/metalbear-co/mirrord",
-      "source_version": "9d87f3fa",
-      "content_hash": "ce862687cd8417c169b2e67af0995a8666ecfeb200a0ebdf7c614ea4ec1b69b3",
+      "source_version": "55b79d17",
+      "content_hash": "4cb21338bfb23c3afb3b557dafd5d2c821e2fc1e3322bf4999e95b4990ba65f4",
       "dossier_path": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "promoted_rules": [
@@ -36327,6 +36342,11 @@
           "number": 5056,
           "title": "Merge pull request #5158 from metalbear-co/aviram/security-patch-bump",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5187,
+          "title": "Merge pull request #5082 from metalbear-co/meowchinist/cor-1692-add-the-paid-fea",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36334,7 +36354,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T23:37:15.192Z",
+      "verified_at": "2026-10-28T05:30:50.297Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37645,8 +37665,8 @@
       "slug": "moby-buildkit",
       "platform": "github",
       "source_url": "https://github.com/moby/buildkit",
-      "source_version": "892eaeac",
-      "content_hash": "cf87bb451bb64770a8fec9a20afb8cfeb89eecfd55eee39b92b192792ec0bf62",
+      "source_version": "6d392427",
+      "content_hash": "9bb261cd6543cbaf7e7570e6a6d89f5225e7e77392fccf73711a0ddf44612262",
       "dossier_path": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "promoted_rules": [
@@ -37674,6 +37694,11 @@
           "number": 4712,
           "title": "runcexecutor: stop tty resize loop before closing pty",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5189,
+          "title": "Merge pull request #7318 from infosiftr/expose-history",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37681,7 +37706,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T11:34:11.984Z",
+      "verified_at": "2026-10-28T05:30:58.186Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -79278,15 +79303,15 @@
       "learning_id": "rule-1037",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1037,
-      "title": "Pad Token Consistency Rule (Harvested from Cloudflare/clef)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Pad Token Consistency",
+      "source_url": "https://huggingface.co/apple/LensVLM-9B",
+      "source_version": "hf-apple-lensvlm-9b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.816Z"
+      "verified_at": "2026-10-28T05:30:55.994Z"
     },
     "rule-1038": {
       "learning_id": "rule-1038",
@@ -86782,15 +86807,15 @@
       "learning_id": "rule-1574",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1574,
-      "title": "Consistent Numerical Precision Across Modalities (Harvested from Cloudflare/clef-flash)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Consistent Numerical Precision Across Modalities",
+      "source_url": "https://huggingface.co/apple/LensVLM-9B",
+      "source_version": "hf-apple-lensvlm-9b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.821Z"
+      "verified_at": "2026-10-28T05:30:55.994Z"
     },
     "rule-1575": {
       "learning_id": "rule-1575",
@@ -141990,6 +142015,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T05:24:45.662Z"
+    },
+    "rule-5187": {
+      "learning_id": "rule-5187",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5187,
+      "title": "Merge pull request #5082 from metalbear-co/meowchinist/cor-1692-add-the-paid-fea",
+      "source_url": "https://github.com/metalbear-co/mirrord",
+      "source_version": "55b79d17",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T05:30:50.297Z"
+    },
+    "rule-5188": {
+      "learning_id": "rule-5188",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5188,
+      "title": "Cache Policy Discipline",
+      "source_url": "https://huggingface.co/apple/LensVLM-9B",
+      "source_version": "hf-apple-lensvlm-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T05:30:55.994Z"
+    },
+    "rule-5189": {
+      "learning_id": "rule-5189",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5189,
+      "title": "Merge pull request #7318 from infosiftr/expose-history",
+      "source_url": "https://github.com/moby/buildkit",
+      "source_version": "6d392427",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T05:30:58.186Z"
     }
   },
   "aliases": {

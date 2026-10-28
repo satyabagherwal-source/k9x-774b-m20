@@ -5711,3 +5711,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-supersoniclabs-julia-1` | `https://huggingface.co/SupersonicLabs/Julia-1` | `hf-superso` | Multi-dimensional audit evidence | 2026-10-28T05:24:29.517Z |
 | `learn-github-feathersjs-feathers` | `https://github.com/feathersjs/feathers` | `cd5e59b9` | Multi-dimensional audit evidence | 2026-10-28T05:24:36.182Z |
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `c36ae6f8` | Multi-dimensional audit evidence | 2026-10-28T05:24:45.740Z |
+| `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `55b79d17` | Multi-dimensional audit evidence | 2026-10-28T05:30:50.358Z |
+| `learn-huggingface-apple-lensvlm-9b` | `https://huggingface.co/apple/LensVLM-9B` | `hf-apple-l` | Multi-dimensional audit evidence | 2026-10-28T05:30:56.058Z |
+| `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `6d392427` | Multi-dimensional audit evidence | 2026-10-28T05:30:58.243Z |
