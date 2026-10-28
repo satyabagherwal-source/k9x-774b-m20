@@ -1365,8 +1365,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
     "sourceVersion": "hf-openbmb-minicpm-v-4.7-35b-a3b",
     "license": "Open-Source",
-    "contentHash": "74d3ceb26ae2fc6486b330d81216cfdeaf887fb65fe9b7564c46357ce4baa7a0",
-    "lastHarvestedAt": "2026-10-25T10:53:10.005Z",
+    "contentHash": "9c22f92de4ee3f619e3535df8669c9990ac92489c74ea0abcb1f94230596f22f",
+    "lastHarvestedAt": "2026-10-28T22:26:37.028Z",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b"
   },
   "hf-openbmb-minicpm-v-4.7-1b": {
@@ -2203,10 +2203,10 @@
     "repository": "higress-group/higress",
     "platform": "github",
     "sourceUrl": "https://github.com/higress-group/higress",
-    "sourceVersion": "36f2f1ac",
+    "sourceVersion": "bde990b4",
     "license": "Apache-2.0",
-    "contentHash": "6e30f340a3aeb059e44281a9d1732007940768abc0d047a1395e3ec07e856c9d",
-    "lastHarvestedAt": "2026-10-22T18:17:49.279Z",
+    "contentHash": "8b0e97e55a4e468785d7e5978c9e6dbeaa8e998e931182be8c8a3d9f7346d69e",
+    "lastHarvestedAt": "2026-10-28T22:26:41.372Z",
     "learningId": "learn-github-higress-group-higress"
   },
   "openziti-zrok": {
@@ -7163,10 +7163,10 @@
     "repository": "t8y2/dbx",
     "platform": "github",
     "sourceUrl": "https://github.com/t8y2/dbx",
-    "sourceVersion": "1766aca2",
+    "sourceVersion": "fa36c67d",
     "license": "Apache-2.0",
-    "contentHash": "4ce550ba608d1fb57eafd1744ea30d8e8e87b8830acc427d298e53173fc1b0ac",
-    "lastHarvestedAt": "2026-10-28T04:42:05.914Z",
+    "contentHash": "ec3e92cbe4553450c73ae6141ef41d535a97107e761e1aed0c40dd5c60e8d14d",
+    "lastHarvestedAt": "2026-10-28T22:26:48.374Z",
     "learningId": "learn-github-t8y2-dbx"
   },
   "ouch-org-ouch": {
@@ -7823,10 +7823,10 @@
     "repository": "astral-sh/uv",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/uv",
-    "sourceVersion": "f75ea631",
+    "sourceVersion": "1330634e",
     "license": "Apache-2.0",
-    "contentHash": "53db82dd5c199b79f25a16445567e0408c309cfc3c00f52fa22b5141b2c0732c",
-    "lastHarvestedAt": "2026-10-27T20:04:46.222Z",
+    "contentHash": "80b06260d9d135515622e50fe11ebc45219928653dbbda433ca0931c507ee31f",
+    "lastHarvestedAt": "2026-10-28T22:26:32.104Z",
     "learningId": "learn-github-astral-sh-uv"
   },
   "thaw-app-thaw": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T22:14:08.006Z",
+  "last_updated": "2026-10-28T22:26:48.319Z",
   "total_verified_learnings": 1159,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3552,8 +3552,8 @@
       "slug": "astral-sh-uv",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/uv",
-      "source_version": "f75ea631",
-      "content_hash": "53db82dd5c199b79f25a16445567e0408c309cfc3c00f52fa22b5141b2c0732c",
+      "source_version": "1330634e",
+      "content_hash": "80b06260d9d135515622e50fe11ebc45219928653dbbda433ca0931c507ee31f",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "promoted_rules": [
@@ -3611,6 +3611,11 @@
           "number": 4981,
           "title": "Let `--no-package` and `--script` take precedence over `UV_INIT_BUILD_BACKEND` (",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5426,
+          "title": "Distinguish pre-existing issues in code quality reviews (#22973)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3618,7 +3623,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T20:04:46.171Z",
+      "verified_at": "2026-10-28T22:26:32.046Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30017,8 +30022,8 @@
       "slug": "higress-group-higress",
       "platform": "github",
       "source_url": "https://github.com/higress-group/higress",
-      "source_version": "36f2f1ac",
-      "content_hash": "6e30f340a3aeb059e44281a9d1732007940768abc0d047a1395e3ec07e856c9d",
+      "source_version": "bde990b4",
+      "content_hash": "8b0e97e55a4e468785d7e5978c9e6dbeaa8e998e931182be8c8a3d9f7346d69e",
       "dossier_path": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "promoted_rules": [
@@ -30031,6 +30036,11 @@
           "number": 3688,
           "title": "docs: fix spelling errors in plugin READMEs and comments (#5054)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5430,
+          "title": "mcp-server): optionally preserve upstream discovery instructions (#5263)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -30038,7 +30048,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T18:17:49.198Z",
+      "verified_at": "2026-10-28T22:26:41.314Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50867,8 +50877,8 @@
       "slug": "t8y2-dbx",
       "platform": "github",
       "source_url": "https://github.com/t8y2/dbx",
-      "source_version": "1766aca2",
-      "content_hash": "4ce550ba608d1fb57eafd1744ea30d8e8e87b8830acc427d298e53173fc1b0ac",
+      "source_version": "fa36c67d",
+      "content_hash": "ec3e92cbe4553450c73ae6141ef41d535a97107e761e1aed0c40dd5c60e8d14d",
       "dossier_path": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "promoted_rules": [
@@ -50926,6 +50936,11 @@
           "number": 5176,
           "title": "ci): limit arm linux build parallelism to avoid runner oom",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5431,
+          "title": "redis): fetch full page on first load more when overflow buffer holds partial it",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50933,7 +50948,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T04:42:05.836Z",
+      "verified_at": "2026-10-28T22:26:48.308Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65067,7 +65082,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
       "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
-      "content_hash": "74d3ceb26ae2fc6486b330d81216cfdeaf887fb65fe9b7564c46357ce4baa7a0",
+      "content_hash": "9c22f92de4ee3f619e3535df8669c9990ac92489c74ea0abcb1f94230596f22f",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
       "promoted_rules": [
@@ -65220,6 +65235,21 @@
           "number": 4251,
           "title": "Lookahead Top-K Expert Scheduling with Locked KV Boundaries",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5427,
+          "title": "[MoE Router Normalization Rule]",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5428,
+          "title": "[Vision Token Compression Rule]",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5429,
+          "title": "[BFloat16 Precision Rule]",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -65227,7 +65257,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T10:53:09.943Z",
+      "verified_at": "2026-10-28T22:26:36.971Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -146702,6 +146732,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T22:14:07.995Z"
+    },
+    "rule-5426": {
+      "learning_id": "rule-5426",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5426,
+      "title": "Distinguish pre-existing issues in code quality reviews (#22973)",
+      "source_url": "https://github.com/astral-sh/uv",
+      "source_version": "1330634e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T22:26:32.046Z"
+    },
+    "rule-5427": {
+      "learning_id": "rule-5427",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5427,
+      "title": "[MoE Router Normalization Rule]",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T22:26:36.971Z"
+    },
+    "rule-5428": {
+      "learning_id": "rule-5428",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5428,
+      "title": "[Vision Token Compression Rule]",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T22:26:36.971Z"
+    },
+    "rule-5429": {
+      "learning_id": "rule-5429",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5429,
+      "title": "[BFloat16 Precision Rule]",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T22:26:36.971Z"
+    },
+    "rule-5430": {
+      "learning_id": "rule-5430",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5430,
+      "title": "mcp-server): optionally preserve upstream discovery instructions (#5263)",
+      "source_url": "https://github.com/higress-group/higress",
+      "source_version": "bde990b4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T22:26:41.314Z"
+    },
+    "rule-5431": {
+      "learning_id": "rule-5431",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5431,
+      "title": "redis): fetch full page on first load more when overflow buffer holds partial it",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "fa36c67d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T22:26:48.308Z"
     }
   },
   "aliases": {

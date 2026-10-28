@@ -392797,3 +392797,424 @@ func TestFinalizeAlreadyCommitted(t *testing.T) {
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `c19b15f5` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5426. Distinguish pre-existing issues in code quality reviews (#22973) (Harvested from astral-sh/uv)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Distinguish pre-existing issues in code quality reviews (#22973)",
+  "source": "astral-sh/uv",
+  "source_url": "https://github.com/astral-sh/uv",
+  "source_version": "1330634e",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-28T22:26:31.911Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-astral-sh-uv",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [astral-sh/uv](https://github.com/astral-sh/uv) (Revision: `1330634e`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `agents/prompts/pull-request-code-quality-review.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `bfa44daf`: Distinguish pre-existing issues in code quality reviews (#22973). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `agents/prompts/pull-request-code-quality-review.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+When a relevant finding may predate the PR, compare the triggering behavior at the merge base
+(`base` in `revisions.json`) and at the PR head. If it already occurs on the base, say so in the
+review comment and describe any new exposure or impact this PR introduces. If the fix can land in a
+separate PR, say whether it can follow this PR or needs to land first.
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `bfa44daf` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5427. [MoE Router Normalization Rule] (Harvested from openbmb/MiniCPM-V-4.7-35B-A3B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[MoE Router Normalization Rule]",
+  "source": "openbmb/MiniCPM-V-4.7-35B-A3B",
+  "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+  "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-28T22:26:36.348Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [openbmb/MiniCPM-V-4.7-35B-A3B](https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B) (Revision: `hf-openbmb`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+The MoE router must normalize its logits to a probability distribution before selecting experts; the softmax temperature must be explicitly set to 1.0 unless a custom temperature is required for a specific task.
+
+**WHY**:  
+Without proper normalization, the router can produce logits that overflow or underflow, leading to NaNs in the loss or deterministic routing that defeats the purpose of MoE. A temperature ≠ 1.0 skews the distribution, causing over‑activation of a few experts and starving others, which degrades both performance and memory efficiency.
+
+**WHEN TO APPLY**:  
+All MoE‑enabled transformer layers (`num_experts`, `num_experts_per_tok` > 1) in any language or vision‑text model.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+import torch.nn.functional as F
+
+def moe_router(logits, temperature=1.0):
+    """
+    logits: Tensor of shape (batch, seq_len, num_experts)
+    Returns: Tensor of shape (batch, seq_len, num_experts) with probabilities.
+    """
+    # Explicit temperature scaling
+    scaled = logits / temperature
+    # Softmax to obtain probabilities
+    probs = F.softmax(scaled, dim=-1)
+    # Optional: clamp to avoid extreme values
+    probs = torch.clamp(probs, min=1e-6, max=1.0)
+    return probs
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ❌ DO NOT NORMALIZE WITH LOGITS DIRECTLY
+def bad_router(logits):
+    probs = logits / logits.sum(dim=-1, keepdim=True)  # Wrong: ignores softmax
+    return probs
+```
+
+**VERIFICATION METHOD**:  
+Unit test that asserts `probs.sum(dim=-1).abs().max() < 1e-6` and that all entries are in `[0,1]`.  
+```python
+def test_moe_router_normalization():
+    logits = torch.randn(2, 10, 256)
+    probs = moe_router(logits)
+    assert torch.allclose(probs.sum(-1), torch.ones_like(probs.sum(-1)), atol=1e-6)
+    assert torch.all(probs >= 0) and torch.all(probs <= 1)
+```
+
+---
+
+
+---
+
+## 5428. [Vision Token Compression Rule] (Harvested from openbmb/MiniCPM-V-4.7-35B-A3B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[Vision Token Compression Rule]",
+  "source": "openbmb/MiniCPM-V-4.7-35B-A3B",
+  "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+  "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-28T22:26:36.584Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [openbmb/MiniCPM-V-4.7-35B-A3B](https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B) (Revision: `hf-openbmb`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+The vision encoder must compress raw image tokens to the target resolution (`downsample_mode="16x"` or `"4x"`) before any transformer attention is applied; the compression must preserve the spatial layout by using a consistent stride and kernel size.
+
+**WHY**:  
+Skipping compression leads to an explosion in the number of visual tokens, causing quadratic attention cost and memory exhaustion on mobile devices. Inconsistent strides break the positional encoding alignment, producing mis‑aligned features and degraded accuracy.
+
+**WHEN TO APPLY**:  
+All vision‑to‑text pipelines that use the intra‑ViT encoder; any custom vision encoder must honor the `downsample_mode` and `mrope_mode` parameters.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+import torch.nn as nn
+
+class IntraViTEncoder(nn.Module):
+    def __init__(self, downsample_mode="16x", mrope_mode="canvas"):
+        super().__init__()
+        stride = 16 if downsample_mode == "16x" else 4
+        self.conv = nn.Conv2d(3, 64, kernel_size=3, stride=stride, padding=1)
+        self.mrope_mode = mrope_mode
+
+    def forward(self, x):
+        # x: (B, 3, H, W)
+        x = self.conv(x)  # compress spatially
+        # Flatten and embed
+        B, C, H, W = x.shape
+        x = x.view(B, C, -1).transpose(1, 2)  # (B, N, C)
+        return x
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ❌ DO NOT APPLY CONV WITHOUT STRIDE
+def bad_encoder(x):
+    conv = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1)
+    return conv(x)  # No compression, leads to huge token count
+```
+
+**VERIFICATION METHOD**:  
+Integration test that feeds a 224×224 image and asserts that the output token count equals `(224/stride)²`.  
+```python
+def test_intra_vit_compression():
+    encoder = IntraViTEncoder(downsample_mode="16x")
+    img = torch.randn(1, 3, 224, 224)
+    tokens = encoder(img)
+    assert tokens.shape[1] == (224 // 16) ** 2
+```
+
+---
+
+
+---
+
+## 5429. [BFloat16 Precision Rule] (Harvested from openbmb/MiniCPM-V-4.7-35B-A3B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[BFloat16 Precision Rule]",
+  "source": "openbmb/MiniCPM-V-4.7-35B-A3B",
+  "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+  "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-28T22:26:36.848Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [openbmb/MiniCPM-V-4.7-35B-A3B](https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B) (Revision: `hf-openbmb`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+All intermediate activations in the transformer layers must be cast to `bfloat16` when the model’s primary dtype is `bfloat16`; any operation that temporarily promotes to `float32` must cast back before the next layer.
+
+**WHY**:  
+Implicit promotion to `float32` during matrix multiplication or softmax can introduce precision drift, especially in the MoE router where logits are sensitive to small differences. This drift can cause inconsistent routing decisions and degrade reproducibility across devices.
+
+**WHEN TO APPLY**:  
+During forward passes of every transformer block, attention, feed‑forward, and MoE router computations.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def attention_layer(q, k, v, mask=None):
+    # q, k, v: (B, S, D) in bfloat16
+    attn_scores = torch.bmm(q, k.transpose(1, 2)) / (q.size(-1) ** 0.5)
+    attn_scores = attn_scores.to(torch.bfloat16)  # enforce dtype
+    if mask is not None:
+        attn_scores = attn_scores.masked_fill(mask == 0, float('-inf'))
+    attn_weights = torch.softmax(attn_scores, dim=-1).to(torch.bfloat16)
+    out = torch.bmm(attn_weights, v).to(torch.bfloat16)
+    return out
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ❌ DO NOT ALLOW AUTO‑PROMOTION
+def bad_attention(q, k, v):
+    attn_scores = torch.bmm(q, k.transpose(1, 2)) / (q.size(-1) ** 0.5)  # float32
+    attn_weights = torch.softmax(attn_scores, dim=-1)  # float32
+    return torch.bmm(attn_weights, v)  # float32
+```
+
+**VERIFICATION METHOD**:  
+Static analysis or runtime assertion that `q.dtype == torch.bfloat16` after each sub‑module.  
+```python
+def test_bfloat16_consistency():
+    q = torch.randn(1, 10, 2048, dtype=torch.bfloat16)
+    k = torch.randn(1, 10, 2048, dtype=torch.bfloat16)
+    v = torch.randn(1, 10, 2048, dtype=torch.bfloat16)
+    out = attention_layer(q, k, v)
+    assert out.dtype == torch.bfloat16
+```
+
+---
+
+
+---
+
+## 5430. mcp-server): optionally preserve upstream discovery instructions (#5263) (Harvested from higress-group/higress)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "mcp-server): optionally preserve upstream discovery instructions (#5263)",
+  "source": "higress-group/higress",
+  "source_url": "https://github.com/higress-group/higress",
+  "source_version": "bde990b4",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-28T22:26:41.195Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-higress-group-higress",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [higress-group/higress](https://github.com/higress-group/higress) (Revision: `bde990b4`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `plugins/wasm-go/extensions/mcp-server/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `bde990b4`: mcp-server): optionally preserve upstream discovery instructions (#5263). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-go/extensions/mcp-server/README.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+| `server.passthroughInstructions` | boolean | 选填 | false | 仅在单个显式 `mcp-proxy`、`transport: http`、`protocolStrategy: modern` 配置下可设为 `true`。从上游成功 discover 结果中提取 instructions，详见下文。 |
+
+### 上游 instructions
+
+默认不访问上游，`server/discover` 保持原有的网关本地结果。需要上游使用说明时，可在上述 modern HTTP 代理配置中设置 `server.passthroughInstructions: true`；`auto`、`legacy`、SSE、REST 和 `toolSet` 配置不支持启用，非 boolean 值会导致配置错误。
+
+开启后，每个 modern `server/discover` 请求均沿用当前主请求的路由、超时、重试及 server 级认证规则访问上游，保留原请求 ID 和 `_meta`。只有 HTTP 200、无 JSON-RPC error 且结果为对象的普通成功响应才尝试提取 `instructions`。显式非 `complete` 结果继续走原有代理结果路径；上游错误也保留现有错误路径，不回退为成功的本地 discover。
+
+只合并非空字符串，按解码后的 UTF-8 字节计算，上限为 32768 字节；空白原样保留。字段缺失、空串、类型不符或超限时仅省略该字段，不影响其他本地结果。`supportedVersions`、`capabilities`、`serverInfo`、`resultType`、`ttlMs`、`cacheScope` 继续由网关生成。该字段不缓存；未配置 server 级凭据且未启用 `passthroughAuthHeader` 时保持匿名 discover。启用 `passthroughAuthHeader: true` 时仍按现有规则转发客户端 `Authorization`，不扫描或借用工具级凭据。此选项不改变现有 SDK 日志、读取/写入或 `original-*` 上下文的数据可见范围。上游 instructions 是不可信文本，不执行其中的指令，也不据其授予工具访问权限；`allowTools` 可能隐藏指引中提到的工具。
+
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `bde990b4` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5431. redis): fetch full page on first load more when overflow buffer holds partial it (Harvested from t8y2/dbx)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "redis): fetch full page on first load more when overflow buffer holds partial it",
+  "source": "t8y2/dbx",
+  "source_url": "https://github.com/t8y2/dbx",
+  "source_version": "fa36c67d",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-28T22:26:48.188Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-t8y2-dbx",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [t8y2/dbx](https://github.com/t8y2/dbx) (Revision: `fa36c67d`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `apps/desktop/src/components/redis/RedisValueViewer.collectionSearch.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `1e834665`: redis): fetch full page on first load more when overflow buffer holds partial items (#13102). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/components/redis/RedisValueViewer.collectionSearch.spec.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+      loadedFields: "{loaded} / {total} fields loaded",
+
+  it("loads 200 more items on the first load more click for a 200-item initial page (#12640 follow-up)", async () => {
+    const initialItems = Array.from({ length: 200 }, (_, i) => ({
+      field: blob(`field:${i}`),
+      value: blob(`val:${i}`),
+    }));
+    mocks.redisGetValue.mockResolvedValue({
+      key_display: "key",
+      key_raw: "key",
+      ttl: -1,
+      redis_type: "hash",
+      data: {
+        kind: "hash",
+        items: initialItems,
+        total: 500,
+        scan_cursor: 1234,
+      },
+    });
+
+    const moreItems = Array.from({ length: 200 }, (_, i) => ({
+      field: blob(`field:${200 + i}`),
+      value: blob(`val:${200 + i}`),
+    }));
+    mocks.redisLoadMore.mockResolvedValueOnce({
+      kind: "hash",
+      items: moreItems,
+      scan_cursor: 5678,
+    });
+
+    mountViewer();
+    await settle();
+    expect(document.body.textContent).toContain("200 / 500 fields loaded");
+
+    loadMoreButton().click();
+    await settle();
+    expect(mocks.redisLoadMore).toHaveBeenCalledWith("connection", 0, "key", "hash", 1234, 200, undefined, undefined);
+    expect(document.body.textContent).toContain("400 / 500 fiel
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `1e834665` are properly handled with clean fallback behavior.

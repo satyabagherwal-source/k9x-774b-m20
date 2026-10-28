@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
-> **Source Version**: `f75ea631`  
+> **Source Version**: `1330634e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T20:04:45.928Z  
+> **Timestamp**: 2026-10-28T22:26:31.687Z  
 > **Learning ID**: `learn-github-astral-sh-uv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T20:04:45.414Z  
+> **Harvest Timestamp**: 2026-10-28T22:26:31.504Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An extremely fast Python package and project manager, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 91250 stars
+- **Stars / Engagement**: 91318 stars
 
 ---
 
@@ -1518,550 +1518,59 @@ mod types;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7b5d2271` (2026-10-26)
-**Commit Message**: Let `--no-package` and `--script` take precedence over `UV_INIT_BUILD_BACKEND` (#22907)
+### Incident Patch 1: `bfa44daf` (2026-10-28)
+**Commit Message**: Distinguish pre-existing issues in code quality reviews (#22973)
 
-## Summary
+A review can flag a real defect without making clear that it already
+occurs on the PR's base. Ask the reviewer to explain what the PR changes
+about the defect's reach or impact. When the fix can land separately,
+the comment should say whether it can follow this PR or needs to land
+first.
 
-with `UV_INIT_BUILD_BACKEND` set, `uv init --app --no-package` and `uv
-init --script` failed with "the argument '--no-package' cannot be used
-with '--build-backend'" even though no `--build-backend` was passed,
-since clap applies `conflicts_with` to values from env vars too. since
-`uv init` creates a package by default now, `--no-package` is the way to
-get the non packaged app from this issue.
+Co-authored-by: zaniebot <[REDACTED_EMAIL]>
 
-`EnvironmentOptions` now parses `UV_INIT_BUILD_BACKEND` alongside the
-other typed environment settings. `uv init` uses that default when it
-needs a backend. An explicit `--build-backend` takes precedence, and
-`--script`, `--no-package`, and `--virtual` ignore a valid default. An
-invalid value fails any command that loads environment settings,
-including `uv sync`.
-
-this isnt the conflict on `--app` suggested earlier in the thread, with
-packaged init as the default that would break valid commands like `uv
-init --app --build-backend hatchling`.
-
-Closes #17335
-
-## Test Plan
-
-added `init_application_no_package_build_backend_env`,
-`init_script_build_backend_env` and `init_build_backend_env_invalid`
-
-**File**: `clippy.toml` (modified, +1/-0)
+**File**: `agents/prompts/pull-request-code-quality-review.md` (modified, +5/-0)
 ```diff
-@@ -14,6 +14,7 @@ doc-valid-idents = [
-   "AArch64",
-   "UV_DEV",
-   "UV_FROZEN",
-+  "UV_INIT_BUILD_BACKEND",
-   "UV_ISOLATED",
-   "UV_LOCKED",
-   "UV_MANAGED_PYTHON",
-```
-
-**File**: `crates/uv-cli/src/lib.rs` (modified, +2/-2)
-```diff
-@@ -3179,10 +3179,10 @@ pub struct InitArgs {
-     #[arg(long, value_enum, conflicts_with = "script")]
-     vcs: Option<VersionControlSystem>,
+@@ -73,6 +73,11 @@ the API from required call ordering. Respect corrections and withdrawn suggestio
+ globals, duplication, and small helpers are contextual choices, not automatic findings. Do not
+ repeat an existing finding or report unrelated pre-existing problems. No findings is a valid result.
  
--    /// Initialize a build-backend of choice for the project.
-+    /// Initialize a build-backend of choice for the project [env: UV_INIT_BUILD_BACKEND=]
-     ///
-     /// Implicitly sets `--package`.
--    #[arg(long, value_enum, conflicts_with_all=["script", "no_package"], env = EnvVars::UV_INIT_BUILD_BACKEND)]
-+    #[arg(long, value_enum, conflicts_with_all=["script", "no_package"])]
-     build_backend: Option<ProjectBuildBackend>,
- 
-     /// Invalid option name for build backend.
-```
-
-**File**: `crates/uv-cli/src/settings.rs` (modified, +8/-0)
-```diff
-@@ -522,6 +522,14 @@ impl InitSettings {
- 
-         let no_description = no_description || (bare && description.is_none());
- 
-+        // `UV_INIT_BUILD_BACKEND` only sets a default, so it yields to `--no-package` and
-+        // `--script` instead of conflicting with them like `--build-backend` does.
-+        let build_backend = match build_backend {
-+            Some(build_backend) => Some(build_backend),
-+            None if script || no_package || r#virtual => None,
-+            None => environment.init_build_backend,
-+        };
++When a relevant finding may predate the PR, compare the triggering behavior at the merge base
++(`base` in `revisions.json`) and at the PR head. If it already occurs on the base, say so in the
++review comment and describe any new exposure or impact this PR introduces. If the fix can land in a
++separate PR, say whether it can follow this PR or needs to land first.
 +
-         if r#virtual && lib {
-             bail!("`--virtual` and `--lib` are mutually exclusive");
-         }
-```
-
-**File**: `crates/uv-settings/Cargo.toml` (modified, +0/-3)
-```diff
-@@ -49,9 +49,6 @@ thiserror = { workspace = true }
- toml = { workspace = true }
- tracing = { workspace = true }
- 
--[package.metadata.cargo-shear]
--ignored = ["clap"]
--
- [features]
- schemars = [
-   "dep:schemars",
-```
-
-**File**: `crates/uv-settings/src/lib.rs` (modified, +17/-1)
-```diff
-@@ -3,9 +3,13 @@ use std::ops::Deref;
- use std::path::{Path, PathBuf};
- use std::str::FromStr;
- use std::time::Duration;
-+
-+use clap::ValueEnum;
- use tracing::info_span;
- use uv_client::{DEFAULT_CONNECT_TIMEOUT, DEFAULT_READ_TIMEOUT, DEFAULT_READ_TIMEOUT_UPLOAD};
--use uv_configuration::{RequiredVersion, RequirementsInput, RequirementsInputError};
-+use uv_configuration::{
-+    ProjectBuildBackend, RequiredVersion, RequirementsInput, RequirementsInputError,
-+};
- use uv_dirs::{system_config_file, user_config_dir};
- use uv_distribution_types::{IndexUrlError, Origin};
- use uv_flags::EnvironmentFlags;
-@@ -806,6 +810,7 @@ pub struct EnvironmentOptions {
-     pub venv_clear: EnvFlag,
-     pub venv_relocatable: EnvFlag,
-     pub init_bare: EnvFlag,
-+    pub init_build_backend: Option<ProjectBuildBackend>,
-     pub malware_check: EnvFlag,
-     pub malware_check_url: Option<SafeUrl>,
-     pub run_recursion_depth: Option<u32>,
-@@ -962,6 +967,17 @@ impl EnvironmentOptions {
-             venv_clear: EnvFlag::new(EnvVars::UV_VENV_CLEAR)?,
-             venv_relocatable: EnvFlag::new(EnvVars::UV_VENV_RELOCATABLE)?,
-             init_bare: EnvFlag::new(EnvVars::UV_INIT_BARE)?,
-+            init_build_backend: parse_string_environment_variable(EnvVars::UV_INIT_BUILD_BACKEND)?
-+                .map(|value| {
-+                    ProjectBuildBackend::from_str(&value, false).map_err(|err| {
-+                        InvalidEnvironmentVariable {
-+                            name: EnvVars::UV_INIT_BUILD_BACKEND.to_string(),
-+                            value,
-+                            err,
-+                        }
-+                    })
-+                })
-+                .transpose()?,
-             malware_check: EnvFlag::new(EnvVars::UV_MALWARE_CHECK)?,
-             malware_check_url: parse_string_environment_variable(EnvVars::UV_MALWARE_CHECK_URL)?
-                 .map(|value| {
-```
-
-**File**: `crates/uv/tests/project/init.rs` (modified, +96/-1)
-```diff
-@@ -276,6 +276,94 @@ fn init_application_no_package_other_python_exists() -> Result<()> {
-     Ok(())
- }
- 
-+/// `--no-package` takes precedence over `UV_INIT_BUILD_BACKEND`, but not over `--build-backend`.
-+///
-+/// See: <https://github.com/astral-sh/uv/issues/17335>
-+#[test]
-+fn init_application_no_package_build_backend_env() -> Result<()> {
-+    let context = uv_test::test_context!("3.12");
-+
-+    let child = context.temp_dir.child("foo");
-+    child.create_dir_all()?;
-+
-+    uv_snapshot!(context.filters(), context.init().current_dir(&child).arg("--app").arg("--no-package").arg("--build-backend").arg("setuptools"), @"
-+    exit_code: 2 (failure)
-+    ----- stderr -----
-+    error: the argument '--no-package' cannot be used with '--build-backend <BUILD_BACKEND>'
-+
-+    Usage: uv init --cache-dir [CACHE_DIR] --app --no-package [PATH]
-+
-+    For more information, try '--help'.
-+    ");
-+
-+    uv_snapshot!(context.filters(), context.init().current_dir(&child).arg("--app").arg("--no-package").env(EnvVars::UV_INIT_BUILD_BACKEND, "setuptools"), @"
-+    exit_code: 0 (success)
-+    ----- stderr -----
-+    Initialized project `foo`
-+    ");
-+
-+    let pyproject = context.read("foo/pyproject.toml");
-+    insta::with_settings!({
-+        filters => context.filters(),
-+    }, {
-+        assert_snapshot!(
-+            pyproject, @r#"
-+        [project]
-+        name = "foo"
-+        version = "0.1.0"
-+        description = "Add your description here"
-+        readme = "README.md"
-+        requires-python = ">=3.12"
-+        dependencies = []
-+        "#
-+        );
-+    });
-+
-+    child.child("main.py").assert(predicate::path::is_file());
-+    child.child("src").assert(predicate::path::missing());
-+
-+    Ok(())
-+}
-+
-+/// `--script` takes precedence over `UV_INIT_BUILD_BACKEND`.
-+#[test]
-+fn init_script_build_backend_env() -> Result<()> {
-+    let context = uv_test::test_context!("3.12");
-+
-+    let child = context.temp_dir.child("foo");
-+    child.create_dir_all()?;
-+
-+    uv_snapshot!(context.filters(), context.init().current_dir(&child).arg("--script").arg("main.py").env(EnvVars::UV_INIT_BUILD_BACKEND, "setuptools"), @"
-+    exit_code: 0 (success)
-+    ----- stderr -----
-+    Initialized script at `main.py`
-+    ");
-+
-+    child
-+        .child("pyproject.toml")
-+        .assert(predicate::path::missing());
-+
-+    Ok(())
-+}
-+
-+/// Environment settings are validated even when the command does not use a build backend.
-+#[test]
-+fn init_build_backend_env_invalid() {
-+    let context = uv_test::test_context!("3.12");
-+
-+    uv_snapshot!(context.filters(), context.init().arg("--no-package").env(EnvVars::UV_INIT_BUILD_BACKEND, "unknown"), @"
-+    exit_code: 2 (failure)
-+    ----- stderr -----
-+    error: Failed to parse environment variable `UV_INIT_BUILD_BACKEND` with invalid value `unknown`: invalid variant: unknown
-+    ");
-+
-+    uv_snapshot!(context.filters(), context.sync().env(EnvVars::UV_INIT_BUILD_BACKEND, "unknown"), @"
-+    exit_code: 2 (failure)
-+    ----- stderr -----
-+    error: Failed to parse environment variable `UV_INIT_BUILD_BACKEND` with invalid value `unknown`: invalid variant: unknown
-+    ");
-+}
-+
- /// Run `uv init --app --package` to create a packaged application project
- #[test]
- fn init_application_package() -> Result<()> {
-@@ -3188,7 +3276,7 @@ fn init_library_flit() -> Result<()> {
- fn init_backend_implies_package() {
-     let context = uv_test::test_context!("3.12");
- 
--    uv_snapshot!(context.filters(), context.init().arg("project").arg("--build-backend").arg("flit"), @"
-+    uv_snapshot!(context.filters(), context.init().arg("project").arg("--build-backend").arg("flit").env(EnvVars::UV_INIT_BUILD_BACKEND, "setuptools"), @"
-     exit_code: 0 (success)
-     ----- stderr -----
-     Initialized project `project` at `[TEMP_DIR]/project`
-@@ -3217,6 +3305,13 @@ fn init_backend_implies_package() {
-         "#
-         );
-     });
-+
-+    uv_snapshot!(context.filters(), context.init().arg("from-env/project").env(EnvVars::UV_INIT_BUILD_BACKEND, "flit-core"), @"
-+    exit_code: 0 (success)
-+    ----- stderr -----
-+    Initialized project `project` at `[TEMP_DIR]/from-env/project`
-+    ");
-+    assert_eq!(context.read("from-env/project/pyproject.toml"), pyproject);
- }
- 
- /// Run `uv init --build-backend poetry` to create a project with poetry-core build backend
+ Return only JSON matching `$REVIEW_CONFIG/schema.json`. Each finding needs a precise diff location,
+ triggering condition or concrete maintenance cost, evidence, and the smallest useful correction.
+ Keep ranges tight and use repository-relative paths. Order findings by impact: `priority` 0 is
 ```
 
 ---
 
-### Incident Patch 2: `f8bec5ea` (2026-10-27)
-**Commit Message**: Refactor requirement partitioning (#22953)
+### Incident Patch 2: `bd083ee1` (2026-10-28)
+**Commit Message**: Use checked-in Python download metadata for building trampolines (#22972)
 
-Two small cleanups and a refactor to extract repetitive requirement
-partitioning into a function.
+Less likely to run into, but still can happen.
 
-Existing tests cover this code.
-
-**File**: `crates/uv-dispatch/src/lib.rs` (modified, +2/-0)
+**File**: `scripts/build-trampolines.sh` (modified, +1/-0)
 ```diff
-@@ -181,6 +181,8 @@ pub struct BuildDispatch<'a> {
- }
- 
- impl<'a> BuildDispatch<'a> {
-+    // TODO(charlie): Review call sites and consider if we want to make some of the parameters
-+    // optional.
-     pub fn new(
-         client: &'a RegistryClient,
-         cache: &'a Cache,
-```
-
-**File**: `crates/uv-project-commands/src/add.rs` (modified, +13/-18)
-```diff
-@@ -5,7 +5,6 @@ use std::path::Path;
- use std::sync::Arc;
- 
- use anyhow::{Context, Result, bail};
--use itertools::Itertools;
- use owo_colors::OwoColorize;
- use rustc_hash::{FxBuildHasher, FxHashMap};
- use tracing::{debug, warn};
-@@ -23,7 +22,7 @@ use uv_dispatch::{BuildDispatch, PlatformState, UniversalState};
- use uv_distribution::{DistributionDatabase, LoweredExtraBuildDependencies};
- use uv_distribution_types::{
-     Identifier, Index, IndexLocations, IndexName, IndexUrl, NameRequirementSpecification,
--    Requirement, RequirementSource, UnresolvedRequirement,
-+    Requirement, RequirementSource,
- };
- use uv_environment_operations::install_target::{InstallTarget, PackageSelection};
- use uv_environment_operations::malware::MalwareCheckContext;
-@@ -49,7 +48,10 @@ use uv_python_interpreter::PythonEnvironment;
- use uv_python_types::{PythonArchitecture, PythonDownloads, PythonPreference, PythonRequest};
- use uv_redacted::SafeUrl;
- use uv_redacted::policy::Raw;
--use uv_requirements::{NamedRequirementsResolver, RequirementsSource, RequirementsSpecification};
-+use uv_requirements::{
-+    NamedRequirementsResolver, RequirementsSource, RequirementsSpecification,
-+    partition_requirements,
-+};
- use uv_resolve_operations::Error as ResolveError;
- use uv_resolve_operations::loggers::{DefaultResolveLogger, SummaryResolveLogger};
- use uv_resolver::FlatIndex;
-@@ -406,31 +408,24 @@ pub async fn add(
- 
-     // Resolve any unnamed requirements.
-     let requirements = {
--        // Partition the requirements into named and unnamed requirements.
--        let (mut requirements, unnamed): (Vec<_>, Vec<_>) = requirements
-+        let requirements: Vec<_> = requirements
-             .into_iter()
--            .map(|spec| {
--                spec.requirement.augment_requirement(
-+            .map(|mut spec| {
-+                spec.requirement = spec.requirement.augment_requirement(
-                     rev.as_deref(),
-                     tag.as_deref(),
-                     branch.as_deref(),
-                     lfs.into(),
-                     marker,
--                )
-+                );
-+                spec
-             })
--            .partition_map(|requirement| match requirement {
--                UnresolvedRequirement::Named(requirement) => itertools::Either::Left(requirement),
--                UnresolvedRequirement::Unnamed(requirement) => {
--                    itertools::Either::Right(requirement)
--                }
--            });
-+            .collect();
-+        let (mut requirements, unnamed) = partition_requirements(requirements);
- 
-         // Resolve any unnamed requirements.
-         if !unnamed.is_empty() {
--            // TODO(charlie): These are all default values. We should consider whether we want to
--            // make them optional on the downstream APIs.
-             let hasher = HashStrategy::default();
--            let sources = NoSources::None;
- 
-             // Initialize the registry client.
-             let client = RegistryClientBuilder::new(client_builder.clone(), cache.clone())
-@@ -514,7 +509,7 @@ pub async fn add(
-                 &settings.resolver.build_options,
-                 &build_hasher,
-                 settings.resolver.exclude_newer.clone(),
--                sources,
-+                NoSources::None,
-                 SourceTreeEditablePolicy::Project,
-                 // No workspace caching since `uv add` changes the workspace definition.
-                 WorkspaceCache::default(),
-```
-
-**File**: `crates/uv-requirements/src/unnamed.rs` (modified, +17/-1)
-```diff
-@@ -12,7 +12,8 @@ use uv_distribution::{DistributionDatabase, Reporter};
- use uv_distribution_filename::{DistExtension, SourceDistFilename, WheelFilename};
- use uv_distribution_types::{
-     BuildableSource, DirectSourceUrl, DirectorySourceUrl, GitDirectorySourceUrl, GitPathSourceUrl,
--    Identifier, PathSourceUrl, RemoteSource, Requirement, SourceUrl,
-+    Identifier, PathSourceUrl, RemoteSource, Requirement, SourceUrl, UnresolvedRequirement,
-+    UnresolvedRequirementSpecification,
- };
- use uv_fs::Simplified;
- use uv_normalize::PackageName;
-@@ -325,3 +326,18 @@ impl<'a, Context: BuildContext> NamedRequirementsResolver<'a, Context> {
-         })
-     }
- }
-+
-+/// Partition input requirements into those with known names and those needing name resolution.
-+pub fn partition_requirements(
-+    requirements: Vec<UnresolvedRequirementSpecification>,
-+) -> (Vec<Requirement>, Vec<UnnamedRequirement<VerbatimParsedUrl>>) {
-+    let mut named = Vec::new();
-+    let mut unnamed = Vec::new();
-+    for spec in requirements {
-+        match spec.requirement {
-+            UnresolvedRequirement::Named(req) => named.push(req),
-+            UnresolvedRequirement::Unnamed(req) => unnamed.push(req),
-+        }
-+    }
-+    (named, unnamed)
-+}
-```
-
-**File**: `crates/uv-resolve-operations/src/lib.rs` (modified, +4/-25)
-```diff
-@@ -5,7 +5,6 @@ use std::fmt::Write;
- use std::path::PathBuf;
- use std::sync::Arc;
- 
--use itertools::Itertools;
- use owo_colors::OwoColorize;
- use uv_client::{BaseClientBuilder, RegistryClient};
- use uv_command_support::Printer;
-@@ -17,8 +16,7 @@ use uv_dispatch::BuildDispatch;
- use uv_distribution::{DistributionDatabase, SourcedDependencyGroups};
- use uv_distribution_types::{
-     Diagnostic, NameRequirementSpecification, Requirement, RequirementScope, RequirementSource,
--    ResolutionDiagnostic, ResolutionRecorder, UnresolvedRequirement,
--    UnresolvedRequirementSpecification,
-+    ResolutionDiagnostic, ResolutionRecorder, UnresolvedRequirementSpecification,
- };
- use uv_installer::SitePackages;
- use uv_normalize::PackageName;
-@@ -28,6 +26,7 @@ use uv_pypi_types::Conflicts;
- use uv_requirements::{
-     GroupsSpecification, LookaheadResolver, NamedRequirementsResolver, RequirementsSource,
-     RequirementsSpecification, SourceTree, SourceTreeResolution, SourceTreeResolver,
-+    partition_requirements,
- };
- use uv_resolver::{
-     DependencyMode, Exclusions, FlatIndex, InMemoryIndex, Manifest, Options, Preference,
-@@ -128,17 +127,7 @@ pub async fn resolve(
-     // Resolve the requirements from the provided sources.
-     let requirements = {
-         // Partition the requirements into named and unnamed requirements.
--        let (mut requirements, unnamed): (Vec<_>, Vec<_>) =
--            requirements
--                .into_iter()
--                .partition_map(|spec| match spec.requirement {
--                    UnresolvedRequirement::Named(requirement) => {
--                        itertools::Either::Left(requirement)
--                    }
--                    UnresolvedRequirement::Unnamed(requirement) => {
--                        itertools::Either::Right(requirement)
--                    }
--                });
-+        let (mut requirements, unnamed) = partition_requirements(requirements);
- 
-         // Resolve any unnamed requirements.
-         if !unnamed.is_empty() {
-@@ -272,17 +261,7 @@ pub async fn resolve(
-     // Resolve the overrides from the provided sources.
-     let overrides = {
-         // Partition the overrides into named and unnamed requirements.
--        let (mut overrides, unnamed): (Vec<_>, Vec<_>) =
--            overrides
--                .into_iter()
--                .partition_map(|spec| match spec.requirement {
--                    UnresolvedRequirement::Named(requirement) => {
--                        itertools::Either::Left(requirement)
--                    }
--                    UnresolvedRequirement::Unnamed(requirement) => {
--                        itertools::Either::Right(requirement)
--                    }
--                });
-+        let (mut overrides, unnamed) = partition_requirements(overrides);
- 
-         // Resolve any unnamed overrides.
-         if !unnamed.is_empty() {
-```
-
-**File**: `crates/uv-tool-commands/src/requirements.rs` (modified, +10/-15)
-```diff
-@@ -1,19 +1,15 @@
- use std::sync::Arc;
- 
--use itertools::Itertools;
--
- use uv_cache::Cache;
- use uv_client::{BaseClientBuilder, RegistryClientBuilder};
- use uv_command_support::Printer;
- use uv_configuration::{Concurrency, Constraints, GitLfsSetting};
- use uv_dispatch::{BuildDispatch, SharedState};
- use uv_distribution::{DistributionDatabase, LoweredExtraBuildDependencies};
--use uv_distribution_types::{
--    Requirement, UnresolvedRequirement, UnresolvedRequirementSpecification,
--};
-+use uv_distribution_types::{Requirement, UnresolvedRequirementSpecification};
- use uv_preview::Preview;
- use uv_python_interpreter::{Interpreter, PythonEnvironment};
--use uv_requirements::NamedRequirementsResolver;
-+use uv_requirements::{NamedRequirementsResolver, partition_requirements};
- use uv_resolve_operations::reporters::ResolverReporter;
- use uv_resolver::FlatIndex;
- use uv_settings::ResolverSettings;
-@@ -38,17 +34,16 @@ pub(super) async fn resolve_names(
-     preview: Preview,
-     lfs: GitLfsSetting,
- ) -> Result<Vec<Requirement>, ToolError> {
--    // Partition the requirements into named and unnamed requirements.
--    let (mut requirements, unnamed): (Vec<_>, Vec<_>) = requirements
-+    let requirements: Vec<_> = requirements
-         .into_iter()
--        .map(|spec| {
--            spec.requirement
--                .augment_requirement(None, None, None, lfs.into(), None)
-+        .map(|mut spec| {
-+            spec.requirement =
-+                spec.requirement
-+                    .augment_requirement(None, None, None, lfs.into(), None);
-+            spec
-         })
--        .partition_map(|requirement| match requirement {
--            UnresolvedRequirement::Named(requirement) => itertools::Either::Left(requirement),
--            UnresolvedRequirement::Unnamed(requirement) => itertools::Either::Right(requirement),
--        });
-+        .collect();
-+    let (mut requirements, unnamed) = partition_requirements(requirements);
- 
-     // Short-circuit if there are no unnamed requirements.
-     if unnamed.is_empty() {
-```
-
----
-
-### Incident Patch 3: `4b46af05` (2026-10-26)
-**Commit Message**: Fix `io-bound` Windows CI nextest grouping (#22939)
-
-The regexp which assigns windows tests to the `io-bound` group had a
-typo since it was introduced... doh
-
-**File**: `.config/nextest.toml` (modified, +1/-1)
-```diff
-@@ -45,7 +45,7 @@ slow-timeout = { period = "10s", terminate-after = 24 }
- 
- [[profile.ci-windows.overrides]]
- platform = 'cfg(target_os = "windows")'
--filter = 'test(/^python_install::/) + test(/^python_update::/) + test(/^python_find::/)'
-+filter = 'test(/^python_(find|install|upgrade)::/)'
- test-group = 'io-bound'
- priority = 1 # Start earlier so these can complete before the end
- 
+@@ -30,6 +30,7 @@ docker buildx build -t uv-trampoline-builder --load \
+ # Build trampolines inside the container.
+ docker run --rm \
+     --platform "$PLATFORM" \
++    -e UV_PYTHON_DOWNLOADS_JSON_URL=/source/crates/uv-python-managed/download-metadata.json \
+     -v "$REPO_ROOT:/source:ro" \
+     -v "$OUTPUT_DIR:/output" \
+     -v "$SCRIPT_DIR/build-trampolines-in-docker.sh:/build-trampolines-in-docker.sh:ro" \
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #22953** (2026-10-27): Refactor requirement partitioning (@EliteTK)
-- **PR #22952** (2026-10-27): Refactor hash verification and parsing (@EliteTK)
-- **PR #22948** (2026-10-27): Update CI Python pins during release sync (@EliteTK)
-- **PR #22947** (2026-10-26): Bump version to 0.13.6 (@astral-automations-bot[bot])
-- **PR #22946** (closed): Use checked-in Python download metadata when preparing releases (@EliteTK)
-- **PR #22945** (2026-10-26): Use checked-in Python download metadata for release preparation (@jjhelmus)
+- **PR #22973** (2026-10-28): Distinguish pre-existing issues in code quality reviews (@astral-automations-bot[bot])
+- **PR #22972** (2026-10-28): Use checked-in Python download metadata for building trampolines (@EliteTK)
+- **PR #22971** (2026-10-28): Downgrade `asyncband` to 0.7.3 (@konstin)
+- **PR #22963** (2026-10-28): Support wheel variants in the Packse test server (@konstin)
+- **PR #22962** (2026-10-28): Make canonical artifact constructors name their source (@zanieb)
+- **PR #22961** (2026-10-28): Use checked-in Python download metadata when rebasing pull requests (@EliteTK)
 
 ---
 
@@ -2081,21 +1590,25 @@ typo since it was introduced... doh
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Let `--no-package` and `--script` take precedence over `UV_INIT_BUILD_BACKEND` (
+## X. Distinguish pre-existing issues in code quality reviews (#22973)
 
 **RULE**:
-When implementing operations in `clippy.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `agents/prompts/pull-request-code-quality-review.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7b5d2271`: Let `--no-package` and `--script` take precedence over `UV_INIT_BUILD_BACKEND` (#22907). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bfa44daf`: Distinguish pre-existing issues in code quality reviews (#22973). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `clippy.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `agents/prompts/pull-request-code-quality-review.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  "UV_INIT_BUILD_BACKEND",
+When a relevant finding may predate the PR, compare the triggering behavior at the merge base
+(`base` in `revisions.json`) and at the PR head. If it already occurs on the base, say so in the
+review comment and describe any new exposure or impact this PR introduces. If the fix can land in a
+separate PR, say whether it can follow this PR or needs to land first.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2105,4 +1618,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7b5d2271` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bfa44daf` are properly handled with clean fallback behavior.

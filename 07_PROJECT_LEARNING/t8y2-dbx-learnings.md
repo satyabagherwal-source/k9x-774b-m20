@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source**: github ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
-> **Source Version**: `1766aca2`  
+> **Source Version**: `fa36c67d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T04:42:05.436Z  
+> **Timestamp**: 2026-10-28T22:26:47.966Z  
 > **Learning ID**: `learn-github-t8y2-dbx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T04:42:05.430Z  
+> **Harvest Timestamp**: 2026-10-28T22:26:47.961Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 27952 stars
+- **Stars / Engagement**: 28035 stars
 
 ---
 
@@ -1988,11 +1988,17 @@ func (b *Binary) GetValues() []byte {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #13674** (2026-10-27): **[Bug] 横向标签分组栏的当前分组不明显**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  通用；MySQL、Oracle 分组场景可复现。  ### 问题描述 / Problem description  1. 打开属于不同分组的多个标签页。 2. 启用横向标签分组，使用单行或双行布局。 3. 在不同分组的标签之间切换。  实际结果：多个分组都带彩色背景、标记和底线，当前分组与非焦点分组差异较小，难以快速确认当前所在分组。相同分组色时尤其明显。  期望结果：单行和双行统一采用淡底聚焦样式，当前分组保留彩色浅底和明确底线；非焦点分组取消彩色底，保留 30% 透明度的主题色底线，弱化文字、图标、展开箭头和数量徽标，保留淡色身份标记。折叠数量徽标增加 0.6px 分组主题色描边，使折叠状态更容易辨认。悬停应有轻量反馈。  ### 支持信息 / Support information  - 源码版本：0.6.58。 - 反馈来自桌面界面；本地在 macOS arm64 浏览器中加载实际组件及完整 Web 应用验证。 - 未采集应用内完整支持信息。  ### 优先级 / Priority  P2 普通 · 按排期处理。  ### 补充信息 / Additional information  单行完整 Web 应用预览中的分组栏：  ![单行分组淡底聚焦](https://raw.githubusercontent.com/zipg/dbx/f4e9e28ddfa63a2bfb1c87acfde58582930207a0/collapsed-count-ring-06.png)  双行完整 Web 应用预览中的分组栏：  ![双行分组淡底聚焦](https://raw.githubusercontent.com/zipg/dbx/4da4593f1fa72c68ee7f8c930b2e73624c85b427/two-row-faint-line.png) 
+- **Issue #13755** (2026-10-28): **[Bug] DB2 查询结果表删除字段值后显示为 0 而非 NULL**
+  *Symptoms*: # 问题描述  在 DBX 的查询结果表中直接删除 DB2 数据库某字段的值后，该字段（`CIFSEQ`，类型 `int`）显示为 `0`。  在与其他数据库的结果表中删除字段值时，该字段显示为 `NULL`。期望 DB2 的删除行为也显示为 `NULL`。  # 环境信息  - 数据库：IBM DB2 - 表：`APPLET_USER` - 字段：`CIFSEQ`（类型：`int`） - DBX 版本：未提供 - 操作系统：未提供 - DB2 版本：未提供  # 复现步骤  1. 在 DBX 中连接 DB2 数据库。 2. 执行查询并显示 `APPLET_USER` 表数据。 3. 在查询结果表中直接删除 `CIFSEQ` 字段的值。 4. 观察删除后的字段值显示。  # 实际行为  删除值后，`CIFSEQ` 字段显示为 `0`。  # 期望行为  删除值后，`CIFSEQ` 字段显示为 `NULL`，与其他数据库结果表中的行为保持一致。  # 截图说明  - 图 1：DB2 查询结果表中 `CIFSEQ` 字段原值为 `639522`。 - 图 2：在 DB2 查询结果表中删除 `CIFSEQ` 字段值后，该字段显示为 `0`（红框标注）。 - 图 3：另一数据库连接的查询结果表中，删除 `CIFSEQ` 字段值后显示为 `NULL`（红框标注）。  # 补充信息  - 截图中的手机号已脱敏。 - 日志、DBX 版本、DB2 版本等信息未提供。  ## 附件  ![DBX issue image 1](https://dl.dbxio.com/issue-feedback/2026/10/051c5762-8b2a-461d-8c75-dcc9925905cd/1-8dbb53d9-e4a0-40e5-9322-171e8732301e.jpg)  ![DBX issue image 2](https://dl.dbxio.com/issue-feedback/2026/10/051c5762-8b2a-461d-8c75-dcc9925905cd/2-7ded8e63-20d7-40e1-ad9c-ebb528d1fcd5.jpg)  ![DBX issue image 3](https://dl.dbxio.com/issue-feedback/2026/10/051c5762-8b2a-461d-8c75-dcc9925905cd/3-e3e4535a-3914-402b-9531-3e655929105b.png)  ---  _此 Issue 通过 DBX 官网匿名反馈入口提交，发布前已由提交者确认。_
+  **Post-Mortem & Fix Analysis**:
+  > /claim
+  > ✅ @MomentarySixthSense 已认领 #13755，开始处理吧！
 
-- **Issue #13672** (2026-10-27): **fix(windows): keep the 8 MiB main-thread stack on legacy builds (0xC00000FD)**
-  *Symptoms*: ## 变更说明 / Change Description  修复 #13671：Windows 7 SP1 / Server 2012 R2 的 legacy 离线包在 0.6.56+ 点击数据库连接（MySQL / Oracle 11 / 达梦 8 均可复现）即崩溃，WER 异常码 `c00000fd`（STATUS_STACK_OVERFLOW），0.6.55 正常。  根因：`.cargo/config.toml` 用 `-C link-arg=/STACK:8388608` 把标准 Windows 包的主线程栈从 1 MiB 提到 8 MiB（#9415 引入），但 **Cargo 在设置 `RUSTFLAGS` 环境变量时会忽略 config 的 target rustflags**。Win7 / Server 2012 R2 构建为了静态 CRT 设置了 `RUSTFLAGS`，因此 legacy 包 PE 仍是链接器默认的 1 MiB 主线程栈；#13448（0.6.56 的 Oracle/OceanBase PL/SQL 调试）重构连接 / transport 层后建连调用栈变深，1 MiB 栈被撑爆。标准 Windows 包没有设置 env RUSTFLAGS，仍是 8 MiB，所以不受影响。  本 PR：  - 在所有链接 Windows PE 的构建里重复 `-C link-arg=/STACK:8388608`：release 的 Win7 app / dbx-web、CI 的 Win7 / 标准 / DuckDB 构建、SQL Server 2000 Win7 测试构建，以及 agents-release 中显式设置 RUSTFLAGS 的 DuckDB Win7 驱动； - `.cargo/config.toml` 增加 `[target.x86_64-win7-windows-msvc]` 的同一 link arg，保证本地构建与 CI 一致； - `assert-win7-pe-compat.ps1` 解析 PE 头校验 `SizeOfStackReserve >= 8 MiB`，低于阈值构建直接失败，防止再次静默回归； - `ci-workflow.test.mjs` 增加两条守卫测试，锁定上述 RUSTFLAGS 与审计逻辑。  ## 变更类型 / Change Type  - [x] Bug 修复 / Bug fix - [x] CI / 构建 / CI or build  ## 涉及前端 / Frontend Changes  - [ ] 本 PR 涉及前端改动，已附截图/录屏（无前端改动 / no frontend changes）  ## 验证 / Validation  - [x] `node --test .github/scripts/ci-workflow.test.mjs` 通过（37 passed） - [x] 4 个 workflow YAML 解析通过（ci / release / sqlserver2000-windows-user-test / agents-release） - [ ] 建议发布前在 Win7 SP1 / Server 2012 R2 实机用 legacy 包点击连接复测（本 PR 无 Windows 实机环境） - 发版后可在 Windows 上验证：`dumpbin /headers DBX.exe | findstr /i "stack reserve"` 应
+- **Issue #13754** (2026-10-28): **[Bug] 关闭分组标签页会强制展开窗口剩余第一个分组的标签页**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  无特定版本  ### 问题描述 / Problem description  https://github.com/user-attachments/assets/7c0e006c-4dc5-49a8-88f8-52f5565d1b0e 关闭分组标签页会强制展开窗口剩余第一个分组的标签页，需求：关闭分组标签页不影响其他分组标签页的折叠和展开状态  ### 支持信息 / Support information  DBX 版本: v0.6.58 运行环境: 桌面端 操作系统: Windows 11 (10.0.26300.9711) 系统架构: x86_64 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36 Edg/155.0.0.0 数据库类型: jdbc, mysql, oracle, plugin, sqlserver 本地驱动版本: hive 0.1.61, oracle 0.1.76 AI 供应商: DeepSeek, OpenAI  ### 优先级（是否紧急） / Priority (urgency)  🟡 P2 普通 · 按排期处理 / Normal · Schedule as appropriate  ### 补充信息 / Additional information  _No response_
+  **Post-Mortem & Fix Analysis**:
+  > /claim
+  > ✅ @ayang875 已认领 #13754，开始处理吧！
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2009,344 +2015,632 @@ func (b *Binary) GetValues() []byte {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `33f3b593` (2026-10-28)
-**Commit Message**: fix(ci): limit arm linux build parallelism to avoid runner oom
+### Incident Patch 1: `1e834665` (2026-10-28)
+**Commit Message**: fix(redis): fetch full page on first load more when overflow buffer holds partial items (#13102)
 
-**File**: `.github/workflows/release.yml` (modified, +5/-0)
+* fix(redis): fetch full page when collection overflow buffer has partial items (#12640)
+
+When a Redis HSCAN/SSCAN returns elements with an overshoot (e.g. 201
+items for COUNT 200), the initial page takes 200 items and buffers the
+extra 1 item in a scoped overflow session with a non-zero server
+followup cursor.
+
+Previously, the first subsequent load-more call immediately returned
+the buffered partial page without continuing to scan the server, causing
+the collection view to only increment by 1 item (200 -> 201) rather than
+loading a full page of 200 items (200 -> 400).
+
+When buffered items are taken from the overflow session and do not reach
+the requested count, and the server still has a non-zero continuation
+cursor, transition immediately to scanning the server for the remaining
+needed items and return a full page.
+
+* fix(redis): retain unscoped overflow until fill scan succeeds
+
+---------
+
+Co-authored-by: zipg <[REDACTED_EMAIL]>
+
+**File**: `apps/desktop/src/components/redis/RedisValueViewer.collectionSearch.spec.ts` (modified, +39/-0)
 ```diff
-@@ -282,6 +282,11 @@ jobs:
-         uses: tauri-apps/tauri-action@v0
-         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-+          # Standard ARM runners have 16 GB RAM; parallel rustc of the heavy
-+          # workspace crates (dbx-core, dbx-mcp) plus linking peaks past what
-+          # the pool now tolerates and the runner is killed with a shutdown
-+          # signal. Fewer parallel codegen units keep peak memory in bounds.
-+          CARGO_BUILD_JOBS: ${{ (matrix.platform == 'ubuntu-22.04-arm' && '2') || '' }}
-           APPLE_SIGNING_IDENTITY: ${{ startsWith(matrix.platform, 'macos') && secrets.APPLE_SIGNING_IDENTITY || '' }}
-           APPLE_ID: ${{ startsWith(matrix.platform, 'macos') && secrets.APPLE_ID || '' }}
-           APPLE_PASSWORD: ${{ startsWith(matrix.platform, 'macos') && secrets.APPLE_PASSWORD || '' }}
+@@ -160,6 +160,7 @@ const testI18nMessages = {
+       items: "{count} items",
+       loadedMembers: "{loaded} / {total} members loaded",
+       loadedItems: "{loaded} / {total} items loaded",
++      loadedFields: "{loaded} / {total} fields loaded",
+       loadMoreKeys: "Load more",
+       fields: "{count} fields",
+       ttlSecond: "{count}s",
+@@ -704,4 +705,42 @@ describe("Redis collection member search", () => {
+     await settle();
+     expect(mocks.toast).toHaveBeenCalledWith("Collection cursor is invalid, expired, or belongs to a different connection/database", 3000);
+   });
++
++  it("loads 200 more items on the first load more click for a 200-item initial page (#12640 follow-up)", async () => {
++    const initialItems = Array.from({ length: 200 }, (_, i) => ({
++      field: blob(`field:${i}`),
++      value: blob(`val:${i}`),
++    }));
++    mocks.redisGetValue.mockResolvedValue({
++      key_display: "key",
++      key_raw: "key",
++      ttl: -1,
++      redis_type: "hash",
++      data: {
++        kind: "hash",
++        items: initialItems,
++        total: 500,
++        scan_cursor: 1234,
++      },
++    });
++
++    const moreItems = Array.from({ length: 200 }, (_, i) => ({
++      field: blob(`field:${200 + i}`),
++      value: blob(`val:${200 + i}`),
++    }));
++    mocks.redisLoadMore.mockResolvedValueOnce({
++      kind: "hash",
++      items: moreItems,
++      scan_cursor: 5678,
++    });
++
++    mountViewer();
++    await settle();
++    expect(document.body.textContent).toContain("200 / 500 fields loaded");
++
++    loadMoreButton().click();
++    await settle();
++    expect(mocks.redisLoadMore).toHaveBeenCalledWith("connection", 0, "key", "hash", 1234, 200, undefined, undefined);
++    expect(document.body.textContent).toContain("400 / 500 fields loaded");
++  });
+ });
 ```
 
----
-
-### Incident Patch 2: `a6cec2fb` (2026-10-28)
-**Commit Message**: fix(nix): correct pnpm deps hash drifted by renovate
-
-**File**: `flake.nix` (modified, +1/-1)
+**File**: `crates/dbx-driver-redis/src/lib.rs` (modified, +324/-21)
 ```diff
-@@ -203,7 +203,7 @@
-             fetcherVersion = 4;
-             # Update with the hash reported by a failed fixed-output build:
-             #   nix build .#dbx-pnpm-deps 2>&1 | grep 'got:'
--            hash = "sha256-nE4eTmngG7Qc0zeQa2qqTl3Mch51RMnXczdH2rRJiAY=";
-+            hash = "sha256-lBkJNxk39G07brqQs2+W+jnoKd7Gi511VpxBq0A95kE=";
-           };
- 
-           # ── Step 2: vendor Cargo dependencies ───────────────────────────── #
-```
-
----
-
-### Incident Patch 3: `6ea903e3` (2026-10-27)
-**Commit Message**: fix(sqlserver): keep T-SQL control-flow batches whole on generic JDBC
-
-**File**: `crates/dbx-core/src/data/sql_file_import.rs` (modified, +9/-1)
-```diff
-@@ -2497,7 +2497,15 @@ async fn sql_file_import_target(state: &AppState, connection_id: &str, database:
+@@ -8,7 +8,7 @@ use redis::{
+ };
+ use serde::{Deserialize, Serialize};
+ use std::{
+-    collections::HashMap,
++    collections::{HashMap, HashSet},
+     fs,
+     future::Future,
+     sync::{Arc, OnceLock},
+@@ -5319,25 +5319,61 @@ where
+     C: ConnectionLike + Send + Sync + Unpin,
+ {
+     let count = count.max(1);
+-    if let Some(page) = take_hash_overflow_page(scope, key, cursor, count, filter_query).await {
+-        return Ok(page);
++    let (buffered_cursor, mut items) = match take_hash_overflow_page(scope, key, cursor, count, filter_query).await {
++        Some((next, items)) => {
++            let has_more_buffered = {
++                let sessions = collection_overflow_sessions().lock().await;
++                match sessions.entries.get(&cursor).map(|s| &s.items) {
++                    Some(RedisCollectionOverflowItems::Hash(items)) => !items.is_empty(),
++                    _ => false,
++                }
++            };
++            let page_bytes: usize = items.iter().map(hash_item_page_bytes).sum();
++            if items.len() >= count || next == 0 || has_more_buffered || page_bytes >= COLLECTION_PAGE_MAX_BYTES {
++                return Ok((next, items));
++            }
++            (next, items)
++        }
++        None => (cursor, Vec::new()),
++    };
++
++    let (scan_cursor, previous_session) = if buffered_cursor == cursor {
++        take_collection_scan_cursor(scope, key, cursor, RedisCollectionOverflowKind::Hash, filter_query).await?
++    } else {
++        (buffered_cursor, None)
++    };
++
++    if cursor != 0 && scan_cursor == 0 {
++        return Ok((0, items));
+     }
+-    let (scan_cursor, previous_session) =
+-        take_collection_scan_cursor(scope, key, cursor, RedisCollectionOverflowKind::Hash, filter_query).await?;
++
++    let needed = count.saturating_sub(items.len()).max(1);
+     let scanned = if let Some(query) = filter_query {
+-        hscan_filtered_page_raw(con, key, scan_cursor, count, query).await
++        hscan_filtered_page_raw(con, key, scan_cursor, needed, query).await
      } else {
-         SqlCompatibilityMode::NotApplicable
+-        hscan_page_raw(con, key, scan_cursor, count, None).await
++        hscan_page_raw(con, key, scan_cursor, needed, None).await
      };
--    Some(SqlFileImportTarget { db_type: config.db_type, driver_profile: config.driver_profile, compatibility_mode })
-+    Some(SqlFileImportTarget {
-+        // Split with the connection's statement-splitting dialect, not its
-+        // routing `db_type`: a JDBC SQL Server connection keeps control-flow
-+        // batches whole (#13514), a JDBC Oracle connection keeps PL/SQL units
-+        // whole. The rest of the import still routes on the raw `db_type`.
-+        db_type: crate::query::statement_split_database_type(&config),
-+        driver_profile: config.driver_profile,
-+        compatibility_mode,
-+    })
- }
- 
- #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-```
-
-**File**: `crates/dbx-core/src/query/mod.rs` (modified, +53/-4)
-```diff
-@@ -886,9 +886,14 @@ async fn connection_statement_split_database_type(state: &AppState, connection_i
- /// A generic JDBC connection to Oracle runs PL/SQL through the JDBC plugin, so its
- /// script is split with the Oracle rules. The plain `Jdbc` profile would cut every
- /// routine body at its first inner semicolon and replace the object with the fragment.
--fn statement_split_database_type(config: &ConnectionConfig) -> DatabaseType {
-+/// A JDBC connection to SQL Server runs T-SQL through the JDBC plugin, so its script
-+/// keeps top-level control-flow batches whole (#13514). Both mappings only change
-+/// statement-splitting semantics; the connection's `db_type` still routes the query.
-+pub fn statement_split_database_type(config: &ConnectionConfig) -> DatabaseType {
-     if crate::schema::is_oracle_external_driver_config(config) {
-         DatabaseType::Oracle
-+    } else if crate::schema::is_sqlserver_external_driver_config(config) {
-+        DatabaseType::SqlServer
-     } else {
-         config.db_type
-     }
-@@ -6799,6 +6804,10 @@ pub async fn execute_in_manual_transaction_with_options(
- 
-     let db_type = connection_database_type(state, &connection_id).await;
-     let compatibility_mode = connection_sql_compatibility_mode(state, &pool_key, db_type).await;
-+    // Split with the connection's statement-splitting dialect, not its routing
-+    // `db_type`: a JDBC SQL Server connection keeps control-flow batches whole
-+    // (#13514) while still executing through the generic external-driver path.
-+    let split_db_type = connection_statement_split_database_type(state, &connection_id).await;
-     let statements = if let Some(bound) = options.bound_statements.as_ref() {
-         if db_type != Some(DatabaseType::OceanbaseOracle) {
-             return Err("Bound BLOB saves are only supported for OceanBase Oracle.".into());
-@@ -6810,12 +6819,12 @@ pub async fn execute_in_manual_transaction_with_options(
-         dbx_types::types::validate_blob_bound_statements(&previews, bound)?;
-         previews
-     } else {
--        db_type.map_or_else(
-+        split_db_type.map_or_else(
-             || split_sql_statements(sql),
--            |db_type| {
-+            |split_db_type| {
-                 crate::sql::split_sql_statements_for_database_with_compatibility(
-                     sql,
--                    db_type,
-+                    split_db_type,
-                     compatibility_mode.as_deref(),
-                 )
-             },
-@@ -10889,6 +10898,46 @@ for line in sys.stdin:
-         assert_eq!(statement_split_database_type(&other), DatabaseType::Jdbc);
-     }
- 
-+    // #13514: a generic JDBC connection to SQL Server splits with the SQL Server
-+    // rules, so the reported TRY/CATCH script keeps its batch whole while the
-+    // leading `SET` stays its own statement. Other JDBC configs stay on the
-+    // plain `Jdbc` profile.
-+    #[test]
-+    fn jdbc_sqlserver_execution_plan_keeps_control_flow_batches_whole() {
-+        let mut sqlserver = test_connection_config(DatabaseType::Jdbc);
-+        sqlserver.connection_string = Some("jdbc:sqlserver://127.0.0.1:1433;databaseName=demo".to_string());
-+        assert_eq!(statement_split_database_type(&sqlserver), DatabaseType::SqlServer);
+-    let (next_cursor, mut items) = match scanned {
 +
-+        let sql = "SET XACT_ABORT ON;\n\
-+                   BEGIN TRY\n\
-+                   BEGIN TRANSACTION;\n\
-+                   UPDATE dbo.Documents SET Deleted = 0 WHERE Deleted = 1;\n\
-+                   COMMIT TRANSACTION;\n\
-+                   END TRY\n\
-+                   BEGIN CATCH\n\
-+                   IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;\n\
-+                   THROW;\n\
-+                   END CATCH;";
-+        let block = &sql[sql.find("BEGIN TRY").unwrap()..];
++    let (next_cursor, scanned_items) = match scanned {
+         Ok(page) => page,
+         Err(error) => {
+-            if let Some(session) = previous_session {
++            if let Some(mut session) = previous_session {
++                if !items.is_empty() {
++                    session.items = RedisCollectionOverflowItems::Hash(items);
++                }
+                 collection_overflow_sessions().lock().await.reinsert(cursor, session);
+             }
+             return Err(error);
+         }
+     };
 +
-+        let plan = query_execution_plan(sql, Some(statement_split_database_type(&sqlserver)), false);
-+        assert_eq!(plan.statements, vec!["SET XACT_ABORT ON".to_string(), block.to_string()]);
-+
-+        let mut other = test_connection_config(DatabaseType::Jdbc);
-+        other.connection_string = Some("jdbc:h2:mem:test".to_string());
-+        let plan = query_execution_plan("SELECT 1; SELECT 2;", Some(statement_split_database_type(&other)), false);
-+        assert_eq!(plan.statements, vec!["SELECT 1", "SELECT 2"]);
-+
-+        let mut postgres = test_connection_config(DatabaseType::Jdbc);
-+        postgres.connection_string = Some("jdbc:postgresql://127.0.0.1:5432/demo".to_string());
-+        assert_eq!(statement_split_database_type(&postgres), DatabaseType::Jdbc);
-+
-+        let mut jtds = test_connection_config(DatabaseType::Jdbc);
-+        jtds.connection_string = Some("jdbc:jtds:sqlserver://127.0.0.1:1433/demo".to_string());
-+        jtds.jdbc_driver_class = Some("net.sourceforge.jtds.jdbc.Driver".to_string());
-+        assert_eq!(statement_split_database_type(&jtds), DatabaseType::SqlServer);
++    let mut seen: HashSet<String> = items.iter().map(|item| item.field.raw_base64.clone()).collect();
++    for item in scanned_items {
++        if seen.insert(item.field.raw_base64.clone()) {
++            items.push(item);
++        }
 +    }
 +
-     #[test]
-     fn ordinary_agent_execution_plan_still_splits_semicolon_statements() {
-         let plan = query_execution_plan(
-```
-
-**File**: `crates/dbx-core/src/schema/mod.rs` (modified, +74/-13)
-```diff
-@@ -3292,19 +3292,20 @@ mod tests {
-         filter_table_infos, filter_visible_schema_names, finalize_object_source, gaussdb_m_indexes_sql,
-         gaussdb_m_view_object_source_sql, gbase8a_object_statistics_sql, is_agent_postgres_metadata_fallback_config,
-         is_mysql_external_driver_config, is_oracle_external_driver_config, is_retryable_metadata_error,
--        metadata_error_action, metadata_name_or_comment_matches, mysql_auto_increment_from_query_result,
--        mysql_auto_increment_metadata_sql, mysql_database_list_timeout, mysql_external_driver_ddl_from_query_result,
--        mysql_external_driver_ddl_sql, mysql_object_source_ddl_column_index, mysql_object_source_sql,
--        mysql_table_list_source_for_config, mysql_table_metadata_catalog, normalize_information_schema_table_type,
--        oracle_columns_from_query_result, oracle_columns_sql, oracle_columns_sql_for_resolved_owner,
--        oracle_completion_synonyms_sql, oracle_current_schema_from_query_result,
--        oracle_object_statistics_dba_segments_sql, oracle_object_statistics_from_query_result,
--        oracle_object_statistics_rows_only_sql, oracle_object_statistics_sql,
--        oracle_object_statistics_user_segments_sql, oracle_synonym_target_from_query_result, oracle_synonym_target_sql,
--        oracle_table_comment_sql, oracle_table_comments_sql, presto_like_columns_from_query_result,
--        presto_like_information_schema_columns_sql, presto_like_information_schema_tables_sql,
--        presto_like_tables_from_query_result, reference_key_columns_from_indexes, reference_keys_from_indexes,
--        replace_metadata_runtime, should_append_oracle_style_comment_ddl, should_query_oracle_columns_via_sql_first,
-+        is_sqlserver_external_driver_config, metadata_error_action, metadata_name_or_comment_matches,
-+        mysql_auto_increment_from_query_result, mysql_auto_increment_metadata_sql, mysql_database_list_timeout,
-+        mysql_external_driver_ddl_from_query_result, mysql_external_driver_ddl_sql,
-+        mysql_object_source_ddl_column_index, mysql_object_source_sql, mysql_table_list_source_for_config,
-+        mysql_table_metadata_catalog, normalize_information_schema_table_type, oracle_columns_from_query_result,
-+        oracle_columns_sql, oracle_columns_sql_for_resolved_owner, oracle_completion_synonyms_sql,
-+        oracle_current_schema_from_query_result, oracle_object_statistics_dba_segments_sql,
-+        oracle_object_statistics_from_query_result, oracle_object_statistics_rows_only_sql,
-+        oracle_object_statistics_sql, oracle_object_statistics_user_segments_sql,
-+        oracle_synonym_target_from_query_result, oracle_synonym_target_sql, oracle_table_comment_sql,
-+        oracle_table_comments_sql, presto_like_columns_from_query_result, presto_like_information_schema_columns_sql,
-+        presto_like_information_schema_tables_sql, presto_like_tables_from_query_result,
-+        reference_key_columns_from_indexes, reference_keys_from_indexes, replace_metadata_runtime,
-+        should_append_oracle_style_comment_ddl, should_query_oracle_columns_via_sql_first,
-         single_table_comment_from_query_result, table_comments_from_query_result, table_name_filter_matches,
-         tdengine_table_comment_like_pattern, tdengine_table_comment_sql, tdengine_table_comments_sql,
-         uses_mongodb_agent_collection_listing, visible_schema_filter, ExternalDriverStatisticsDialect,
-@@ -3879,6 +3880,35 @@ done
-         assert!(!is_oracle_external_driver_config(&config));
+     let page_len = budgeted_page_len(&items, count, hash_item_page_bytes);
+     let next_cursor = store_hash_overflow_page(scope, key, &mut items, page_len, next_cursor, filter_query).await;
+     Ok((next_cursor, items))
+@@ -5355,25 +5391,61 @@ where
+     C: ConnectionLike + Send + Sync + Unpin,
+ {
+     let count = count.max(1);
+-    if let Some(page) = take_set_overflow_page(scope, key, cursor, count, filter_query).await {
+-        return Ok(page);
++    let (buffered_cursor, mut items) = match take_set_overflow_page(scope, key, cursor, count, filter_query).await {
++        Some((next, items)) => {
++            let has_more_buffered = {
++                let sessions = collection_overflow_sessions().lock().await;
++                match sessions.entries.get(&cursor).map(|s| &s.items) {
++                    Some(RedisCollectionOverflowItems::Set(items)) => !items.is_empty(),
++                    _ => false,
++                }
++            };
++            let page_bytes: usize = items.iter().map(set_item_page_bytes).sum();
++            if items.len() >= count || next == 0 || has_more_buffered || page_bytes >= COLLECTION_PAGE_MAX_BYTES {
++                return Ok((next, items));
++            }
++            (next, items)
++        }
++        None => (cursor, Vec::new()),
++    };
++
++    let (scan_cursor, previous_session) = if buffered_cursor == cursor {
++        take_collection_scan_cursor(scope, key, cursor, RedisCollectionOverflowKind::Set, filter_query).await?
++    } else {
++        (buffered_cursor, None)
++    };
++
++    if cursor != 0 && scan_cursor == 0 {
++        return Ok((0, items));
      }
- 
-+    #[test]
-+    fn sqlserver_external_driver_detection_only_accepts_standard_jdbc_signals() {
-+        let mut config = test_connection_config(DatabaseType::Jdbc);
-+        config.connection_string = Some(" jdbc:sqlserver://127.0.0.1:1433;databaseName=demo ".to_string());
-+        assert!(is_sqlserver_external_driver_config(&config));
+-    let (scan_cursor, previous_session) =
+-        take_collection_scan_cursor(scope, key, cursor, RedisCollectionOverflowKind::Set, filter_query).await?;
 +
-+        config.connection_string = Some("jdbc:jtds:sqlserver://127.0.0.1:1433/demo".to_string());
-+        assert!(is_sqlserver_external_driver_config(&config));
-+
-+        config.connection_string = Some("jdbc:jtds:sqlserver://127.0.0.1:1433/demo".to_string());
-+        config.jdbc_driver_class = Some("com.mysql.cj.jdbc.Driver".to_string());
-+        assert!(!is_sqlserver_external_driver_config(&config));
-+
-+        config.connection_string = None;
-+        config.jdbc_driver_class = Some(" com.microsoft.sqlserver.jdbc.SQLServerDriver ".to_string());
-+        assert!(is_sqlserver_external_driver_config(&config));
-+
-+        config.jdbc_driver_class = Some("net.sourceforge.jtds.jdbc.Driver".to_string());
-+        assert!(is_sqlserver_external_driver_config(&config));
-+
-+        config.connection_string = Some("jdbc:postgresql://127.0.0.1:5432/demo".to_string());
-+        config.jdbc_driver_class = Some("com.microsoft.sqlserver.jdbc.SQLServerDriver".to_string());
-+        assert!(!is_sqlserver_external_driver_config(&config));
-+
-+        config.db_type = DatabaseType::SqlServer;
-+        config.connection_string = N
++    let needed = count.saturating_sub(items.len()).max(1);
+     let scanned = if let Some(query) = filter_query {
+-        sscan_filtered_page_raw(con, key, scan_cursor, count, query).await
++        sscan_filtered
 ```
 
-**File**: `crates/dbx-mcp/src/backend.rs` (modified, +9/-1)
+---
+
+### Incident Patch 2: `af7c5531` (2026-10-28)
+**Commit Message**: build: clean desktop output before bundling frontend assets (#13095)
+
+Resolve the output directory relative to the cleanup script and remove previous dist assets before Vite starts. Cover working-directory independence and repeated execution.
+
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
+Co-authored-by: zipg <[REDACTED_EMAIL]>
+
+**File**: `README.md` (modified, +2/-0)
 ```diff
-@@ -1403,7 +1403,15 @@ impl DbxBackend for LocalBackend {
-     ) -> dbx_core::sql::SqlExecutionPlan {
-         let is_sqlserver_agent =
-             dbx_core::query::connection_pool_is_sqlserver_agent(self.state.as_ref(), &connection.id, database).await;
--        dbx_core::query::query_execution_plan(sql, Some(connection.db_type), is_sqlserver_agent)
-+        // Split with the connection's statement-splitting dialect, not its
-+        // routing `db_type`: a JDBC SQL Server connection keeps control-flow
-+        // batches whole (#13514), a JDBC Oracle connection keeps PL/SQL units
-+        // whole, matching the core's own execution plan.
-+        dbx_core::query::query_execution_plan(
-+            sql,
-+            Some(dbx_core::query::statement_split_database_type(connection)),
-+            is_sqlserver_agent,
-+        )
-     }
+@@ -633,6 +633,8 @@ make package
  
-     async fn add_connection_for_mcp(&self, config: ConnectionConfig) -> Result<ConnectionConfig, String> {
+ The installer will be in `src-tauri/target/release/bundle/`.
+ 
++`pnpm build` explicitly removes the previous root `dist/` directory before running Vite, so desktop packaging starts with fresh frontend output.
++
+ ## Tech Stack
+ 
+ | Layer     | Technology                                                                                                                                                                                                       |
 ```
 
-**File**: `crates/dbx-sql-core/src/sql.rs` (modified, +471/-0)
+**File**: `README.zh-CN.md` (modified, +2/-0)
 ```diff
-@@ -211,6 +211,13 @@ struct SqlDialectProfile {
-     supports_firebird_routine_blocks: bool,
-     supports_go_batch_separator: bool,
-     keeps_sqlserver_module_batch_at_cursor: bool,
-+    /// Whether a top-level T-SQL control-flow batch (`IF`/`WHILE` with a block
-+    /// body or `ELSE`, or a top-level `BEGIN ... END` block) stays whole in the
-+    /// `;`-statement splitter. The SQL Server profile needs it because T-SQL
-+    /// does not end a block at a semicolon; the generic JDBC profile must not
-+    /// lose it, or the backend re-splits the TRY/CATCH batches the editor
-+    /// already kept together (#13514).
-+    keeps_sqlserver_control_flow_batches: bool,
-     preserves_tdsql_leading_directives: bool,
-     requires_whitespace_after_line_comment_dashes: bool,
-     supports_psql_control_commands: bool,
-@@ -236,6 +243,7 @@ impl Default for SqlDialectProfile {
-             supports_firebird_routine_blocks: false,
-             supports_go_batch_separator: false,
-             keeps_sqlserver_module_batch_at_cursor: false,
-+            keeps_sqlserver_control_flow_batches: false,
-             preserves_tdsql_leading_directives: false,
-             requires_whitespace_after_line_comment_dashes: false,
-             supports_psql_control_commands: false,
-@@ -397,6 +405,7 @@ impl SqlDialectProfile {
-         Self {
-             supports_go_batch_separator: true,
-             keeps_sqlserver_module_batch_at_cursor: true,
-+            keeps_sqlserver_control_flow_batches: true,
-             supports_nested_block_comments: true,
-             ..Self::default()
-         }
-@@ -978,6 +987,60 @@ impl SqlStatementSplitter {
-                         if firebird_routine_block_is_complete(&self.buffer) {
-                             self.push_current_statement(&mut statements);
-                         }
-+                    } else if keeps_sqlserver_control_flow_batch(self.options, &self.buffer) {
-+                        // T-SQL does not end a control-flow batch at a semicolon
-+                        // (#9336, #13051, #13514): the inner `;` stays in the
-+                        // batch and the statement ends after the block's final
-+                        // `END [TRY]`.
-+                        self.buffer.push(ch);
-+                        if sqlserver_control_flow_batch_is_complete(&self.buffer) {
-+                            // A final `END` without its own `;` shares the
-+                            // fragment with the next statement; the boundary
-+                            // sits right after that `END` instead (TS parity).
-+                            // An `END` directly followed by this `;` keeps the
-+                            // historical shape: the batch ends here with its
-+                            // terminating semicolon.
-+                            let body_end = self.buffer.len() - ch.len_utf8();
-+                            let body = self.buffer[..body_end].to_string();
-+                            let mut boundaries = Vec::new();
-+                            let mut cursor = 0usize;
-+                            while let Some(relative) = sqlserver_control_flow_batch_boundary(&body[cursor..]) {
-+                                if cursor + relative >= body.len() {
-+                                    break;
-+                                }
-+                                cursor += relative;
-+                                boundaries.push(cursor);
-+                            }
-+                            if boundaries.is_empty() {
-+                                self.push_current_statement(&mut statements);
-+                            } else {
-+                                let mut piece_from = 0usize;
-+                                for boundary_end in &boundaries {
-+                                    self.buffer.clear();
-+                                    self.buffer.push_str(&body[piece_from..*boundary_end]);
-+                                    self.push_current_statement(&mut statements);
-+                                    piece_from = *boundary_end;
-+                                }
-+                                let trailing = &body[piece_from..];
-+                                if !trailing.trim().is_empty() {
-+                                    self.buffer.clear();
-+                                    self.buffer.push_str(trailing);
-+                                    if keeps_sqlserver_control_flow_batch(self.options, trailing) {
-+                                        // A new batch in the remainder keeps the
-+                                        // terminating `;` when complete and this
-+                                        // `;` when it is still mid-typing.
-+                                        self.buffer.push(ch);
-+                                        if sqlserver_control_flow_batch_is_complete(trailing) {
-+                                            self.push_current_statement(&mut statements);
-+                                        }
-+ 
+@@ -587,6 +587,8 @@ make package
+ 
+ 安装包输出在 `src-tauri/target/release/bundle/` 目录。
+ 
++`pnpm build` 会在运行 Vite 前显式清理根目录的 `dist/`，确保桌面打包使用重新生成的前端资源。
++
+ ## 技术栈
+ 
+ | 层级   | 技术                                                                                                                                                                                                             |
+```
+
+**File**: `package.json` (modified, +1/-1)
+```diff
+@@ -28,7 +28,7 @@
+     "check:connection-types": "node scripts/sync-connection-types.mjs --check",
+     "pretypecheck": "pnpm generate:connection-types",
+     "typecheck": "vue-tsc --noEmit --project apps/desktop/tsconfig.json",
+-    "build": "vite build --config apps/desktop/vite.config.ts",
++    "build": "node scripts/clean-desktop-dist.mjs && vite build --config apps/desktop/vite.config.ts",
+     "build:docs-export": "vite build --config apps/desktop/vite.docs-export.config.ts",
+     "build:checked": "pnpm typecheck && pnpm build",
+     "check": "node scripts/run-check.mjs",
+```
+
+**File**: `scripts/clean-desktop-dist.mjs` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++import { rm } from "node:fs/promises";
++import { fileURLToPath } from "node:url";
++
++const distDirectory = fileURLToPath(new URL("../dist", import.meta.url));
++await rm(distDirectory, { recursive: true, force: true });
+```
+
+**File**: `scripts/clean-desktop-dist.test.mjs` (added, +32/-0)
+```diff
+@@ -0,0 +1,32 @@
++import assert from "node:assert/strict";
++import { execFile } from "node:child_process";
++import { access, copyFile, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
++import { tmpdir } from "node:os";
++import path from "node:path";
++import { test } from "node:test";
++import { promisify } from "node:util";
++
++const execFileAsync = promisify(execFile);
++
++test("cleans only the script's desktop dist directory, even from another cwd", async (t) => {
++  const root = await mkdtemp(path.join(tmpdir(), "dbx-clean-desktop-dist-"));
++  t.after(() => rm(root, { recursive: true, force: true }));
++  const scripts = path.join(root, "scripts");
++  const dist = path.join(root, "dist");
++  const assets = path.join(dist, "assets");
++  const other = path.join(root, "other");
++  await mkdir(scripts);
++  await mkdir(assets, { recursive: true });
++  await mkdir(path.join(other, "dist"), { recursive: true });
++  await copyFile(new URL("./clean-desktop-dist.mjs", import.meta.url), path.join(scripts, "clean-desktop-dist.mjs"));
++  await writeFile(path.join(assets, "stale.js"), "stale");
++  const unrelated = path.join(other, "dist", "keep.txt");
++  await writeFile(unrelated, "keep");
++
++  const run = () => execFileAsync(process.execPath, [path.join(scripts, "clean-desktop-dist.mjs")], { cwd: other });
++  await run();
++  await assert.rejects(access(dist), { code: "ENOENT" });
++  assert.equal(await readFile(unrelated, "utf8"), "keep");
++  await run();
++  assert.equal(await readFile(unrelated, "utf8"), "keep");
++});
+```
+
+---
+
+### Incident Patch 3: `e3a46a49` (2026-10-28)
+**Commit Message**: fix(editor): bound wheel zoom and show percentage feedback (#13759)
+
+Co-authored-by: L494264Tt <[REDACTED_EMAIL]>
+Co-authored-by: zipg <[REDACTED_EMAIL]>
+
+**File**: `apps/desktop/src/components/editor/QueryEditor.vue` (modified, +9/-1)
+```diff
+@@ -87,7 +87,7 @@ import { resolveSqlSingleQuoteKeyAction } from "@/lib/sql/sqlQuoteCaret";
+ import { formatMongoShellText } from "@/lib/mongo/mongoFormatter";
+ import { detectAndFormatElasticsearchRequests } from "@/lib/elasticsearch/elasticsearchFormatter";
+ import { useConnectionStore } from "@/stores/connectionStore";
+-import { useSettingsStore } from "@/stores/settingsStore";
++import { DEFAULT_EDITOR_SETTINGS, useSettingsStore } from "@/stores/settingsStore";
+ import { useTheme } from "@/composables/useTheme";
+ import { useToast } from "@/composables/useToast";
+ import { buildSelectStarExpansion, selectStarResultColumnsMatch } from "@/lib/sql/sqlCompletion";
+@@ -611,6 +611,7 @@ const zoomCommitScheduler = createEditorZoomCommitScheduler((fontSize) => {
+   settingsStore.updateEditorSettings({ fontSize });
+ });
+ const wheelZoom = createEditorWheelZoomController();
++const EDITOR_ZOOM_TOAST_MS = 1500;
+ 
+ const queryEditorAppearanceSettings = computed(() => {
+   const settings = settingsStore.editorSettings;
+@@ -685,6 +686,7 @@ function applyLiveFontSize(size: number) {
+   // frame so that CSS variable changes remain smooth on every wheel tick,
+   // while the CodeMirror measure → syncGutters path keeps gutters aligned.
+   scheduleFontThemeReconfig(next, settingsStore.editorSettings.fontFamily);
++  toast(`${Math.round((next / DEFAULT_EDITOR_SETTINGS.fontSize) * 100)}%`, EDITOR_ZOOM_TOAST_MS);
+ }
+ 
+ function scheduleFontSizeCommit(size: number) {
+@@ -3048,11 +3050,17 @@ onDeactivated(pauseQueryEditorBackgroundWork);
+ 
+ onMounted(() => {
+   if (typeof window === "undefined") return;
++  window.addEventListener("keydown", wheelZoom.recordModifiers, true);
++  window.addEventListener("keyup", wheelZoom.recordModifiers, true);
++  window.addEventListener("blur", wheelZoom.reset);
+   documentState.attach();
+   warmActiveTabConnection();
+ });
+ 
+ onBeforeUnmount(() => {
++  window.removeEventListener("keydown", wheelZoom.recordModifiers, true);
++  window.removeEventListener("keyup", wheelZoom.recordModifiers, true);
++  window.removeEventListener("blur", wheelZoom.reset);
+   pauseQueryEditorBackgroundWork();
+   documentState.dispose();
+   pointerInteractions.dispose();
+```
+
+**File**: `apps/desktop/src/components/editor/__tests__/QueryEditor.zoom.integration.spec.ts` (added, +91/-0)
+```diff
+@@ -0,0 +1,91 @@
++// @vitest-environment happy-dom
++
++import { createApp, h } from "vue";
++import { createPinia, setActivePinia } from "pinia";
++import { createI18n } from "vue-i18n";
++import { EditorView } from "@codemirror/view";
++import { afterEach, describe, expect, it, vi } from "vitest";
++import QueryEditor from "../QueryEditor.vue";
++import { useSettingsStore } from "@/stores/settingsStore";
++import { useConnectionStore } from "@/stores/connectionStore";
++import { useToast } from "@/composables/useToast";
++
++const cleanups: Array<() => void> = [];
++afterEach(() => {
++  for (const cleanup of cleanups.splice(0).reverse()) cleanup();
++  useToast().dismissToast();
++  vi.restoreAllMocks();
++});
++
++async function mountEditor() {
++  const pinia = createPinia();
++  setActivePinia(pinia);
++  const settings = useSettingsStore();
++  settings.editorSettings.showExecutionTargetPicker = false;
++  settings.editorSettings.fontSize = 13;
++  settings.editorSettings.uiScale = 1;
++  useConnectionStore();
++  const host = document.createElement("div");
++  document.body.append(host);
++  const app = createApp({ render: () => h(QueryEditor, { modelValue: "SELECT 1;", tabId: "zoom-query", autoFocus: false, hideExecutionControls: true }) });
++  app.use(pinia);
++  app.use(createI18n({ legacy: false, locale: "en", messages: { en: {} }, missingWarn: false, fallbackWarn: false }));
++  app.mount(host);
++  cleanups.push(() => {
++    app.unmount();
++    host.remove();
++  });
++  await vi.waitFor(() => expect(host.querySelector(".cm-editor")).not.toBeNull());
++  const view = EditorView.findFromDOM(host.querySelector(".cm-editor") as HTMLElement)!;
++  const root = host.querySelector<HTMLElement>("[data-query-editor-root]")!;
++  return { settings, view, fontSize: () => root.style.getPropertyValue("--dbx-editor-font-size") };
++}
++
++function wheel(view: EditorView, timeStamp: number, init: WheelEventInit) {
++  const event = new WheelEvent("wheel", { bubbles: true, cancelable: true, ...init });
++  // happy-dom's WheelEvent does not yet inherit MouseEvent's modifier fields.
++  Object.defineProperties(event, {
++    timeStamp: { value: timeStamp },
++    ctrlKey: { value: init.ctrlKey ?? false },
++    metaKey: { value: init.metaKey ?? false },
++  });
++  view.contentDOM.dispatchEvent(event);
++  return event;
++}
++
++describe("QueryEditor wheel zoom", () => {
++  it.each(["Control", "Meta"])("bounds fractional %s + wheel input, reports the percentage and saves the font size", async (key) => {
++    const { settings, view, fontSize } = await mountEditor();
++    const modifiers = { ctrlKey: key === "Control", metaKey: key === "Meta" };
++    // The key can be pressed outside the editor before the pointer enters it.
++    document.dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true, ...modifiers }));
++    const event = wheel(view, 100, { deltaY: -100.5, ...modifiers });
++    expect(event.defaultPrevented).toBe(true);
++    expect(fontSize()).toBe("13.65px");
++    expect(useToast().message.value).toBe("105%");
++    expect(view.state.doc.toString()).toBe("SELECT 1;");
++    expect(settings.editorSettings.uiScale).toBe(1);
++    await vi.waitFor(() => expect(settings.editorSettings.fontSize).toBe(13.65));
++
++    wheel(view, 200, { deltaY: 100.5, ...modifiers });
++    expect(fontSize()).toBe("13px");
++    expect(useToast().message.value).toBe("100%");
++    await vi.waitFor(() => expect(settings.editorSettings.fontSize).toBe(13));
++  });
++
++  it("leaves plain scrolling alone and preserves pinch scaling after key release and window blur", async () => {
++    const { view, fontSize } = await mountEditor();
++    expect(wheel(view, 100, { deltaY: -120 }).defaultPrevented).toBe(false);
++    expect(fontSize()).toBe("13px");
++
++    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Control", ctrlKey: true, bubbles: true }));
++    document.dispatchEvent(new KeyboardEvent("keyup", { key: "Control", bubbles: true }));
++    wheel(view, 500, { deltaY: -100 * Math.log(1.2), ctrlKey: true });
++    expect(fontSize()).toBe("15.6px");
++
++    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Control", ctrlKey: true, bubbles: true }));
++    window.dispatchEvent(new Event("blur"));
++    wheel(view, 900, { deltaY: -100 * Math.log(1.2), ctrlKey: true });
++    expect(fontSize()).toBe("18.72px");
++  });
++});
+```
+
+**File**: `apps/desktop/src/lib/__tests__/editor/editorZoom.spec.ts` (modified, +55/-2)
+```diff
+@@ -73,11 +73,56 @@ describe("createEditorWheelZoomGestureGuard", () => {
+ });
+ 
+ describe("createEditorWheelZoomController", () => {
+-  it("keeps mouse-notch zoom on the existing curve", () => {
++  it("limits a mouse notch to a five percent scale change", () => {
+     const zoom = createEditorWheelZoomController();
+     const event = { timeStamp: 10, ctrlKey: true, metaKey: false, deltaX: 0, deltaY: 120, deltaMode: 0 };
+ 
+-    expect(zoom.nextFontSize(16, event)).toBe(fontSizeFromWheelDelta(16, 120));
++    expect(zoom.nextFontSize(16, event)).toBe(15.24);
++  });
++
++  it.each([
++    [-100, 0],
++    [-120, 0],
++    [-1000, 0],
++    [-3, 1],
++    [-1, 2],
++  ])("bounds wheel delta %s in mode %s to the same percentage step", (deltaY, deltaMode) => {
++    const zoom = createEditorWheelZoomController();
++    expect(zoom.nextFontSize(16, { ...pinchWheel(10, deltaY), deltaMode })).toBe(16.8);
++  });
++
++  it.each(["ctrlKey", "metaKey"] as const)("does not mistake a physical %s with fractional wheel delta for a pinch", (modifier) => {
++    const zoom = createEditorWheelZoomController();
++    zoom.recordModifiers({ ctrlKey: modifier === "ctrlKey", metaKey: modifier === "metaKey" });
++    expect(zoom.nextFontSize(16, { ...pinchWheel(10, -100.5), ctrlKey: modifier === "ctrlKey", metaKey: modifier === "metaKey" })).toBe(16.8);
++  });
++
++  it("does not promote a fractional plain scroll when Control is pressed mid-gesture", () => {
++    const zoom = createEditorWheelZoomController();
++    expect(zoom.nextFontSize(16, pinchWheel(10, -10.5, false))).toBeNull();
++    zoom.recordModifiers({ ctrlKey: true, metaKey: false });
++    expect(zoom.nextFontSize(16, pinchWheel(30, -10.5))).toBeNull();
++    expect(zoom.nextFontSize(16, pinchWheel(211, -100.5))).toBe(16.8);
++  });
++
++  it("restores pinch scaling after the physical modifier is released or the window loses focus", () => {
++    const zoom = createEditorWheelZoomController();
++    zoom.recordModifiers({ ctrlKey: true, metaKey: false });
++    zoom.recordModifiers({ ctrlKey: false, metaKey: false });
++    expect(zoom.nextFontSize(11, pinchWheel(1, -100 * Math.log(2)))).toBe(22);
++    zoom.recordModifiers({ ctrlKey: true, metaKey: false });
++    zoom.reset();
++    expect(zoom.nextFontSize(11, pinchWheel(2, -100 * Math.log(2)))).toBe(22);
++  });
++
++  it("reverses wheel steps without rounding drift and preserves the font limits", () => {
++    const zoom = createEditorWheelZoomController();
++    expect(zoom.nextFontSize(16, pinchWheel(10, -120))).toBe(16.8);
++    expect(zoom.nextFontSize(16.8, pinchWheel(20, 120))).toBe(16);
++    zoom.rebase();
++    expect(zoom.nextFontSize(24, pinchWheel(30, -120))).toBe(24);
++    zoom.rebase();
++    expect(zoom.nextFontSize(10, pinchWheel(40, 120))).toBe(10);
+   });
+ 
+   it("maps a trackpad pinch through Chromium's exp(-deltaY / 100) scale", () => {
+@@ -109,3 +154,11 @@ describe("createEditorWheelZoomController", () => {
+     expect(zoom.nextFontSize(14, pinchWheel(431, -1.5))).toBeGreaterThan(14);
+   });
+ });
++
++describe("fontSizeFromWheelDelta", () => {
++  it("keeps small pixel movements gradual and ignores zero vertical delta", () => {
++    expect(fontSizeFromWheelDelta(16, 0)).toBe(16);
++    expect(fontSizeFromWheelDelta(16, -10)).toBeGreaterThan(16);
++    expect(fontSizeFromWheelDelta(16, -10)).toBeLessThan(16.1);
++  });
++});
+```
+
+**File**: `apps/desktop/src/lib/editor/editorZoom.ts` (modified, +27/-8)
+```diff
+@@ -1,9 +1,13 @@
+ export const EDITOR_MIN_FONT_SIZE = 10;
+ export const EDITOR_MAX_FONT_SIZE = 24;
+-const WHEEL_FONT_ZOOM_SENSITIVITY = 0.0015;
++const WHEEL_FONT_ZOOM_STEP = 1.05;
++const WHEEL_PIXELS_PER_STEP = 100;
++const WHEEL_LINES_PER_STEP = 3;
++const DOM_DELTA_LINE = 1;
++const DOM_DELTA_PAGE = 2;
+ /**
+  * Chromium turns a trackpad pinch into wheel events whose scale is
+- * `exp(-deltaY / 100)`. Mouse notches stay on the coarser curve above.
++ * `exp(-deltaY / 100)`. Physical Ctrl/Cmd + wheel uses bounded percentage steps.
+  */
+ const PINCH_WHEEL_ZOOM_SENSITIVITY = 0.01;
+ const WHEEL_GESTURE_IDLE_MS = 180;
+@@ -41,7 +45,7 @@ export function createEditorWheelZoomGestureGuard(idleMs = WHEEL_GESTURE_IDLE_MS
+   let gestureId = 0;
+ 
+   return {
+-    accepts(event: WheelZoomModifierEvent) {
++    accepts(event: WheelZoomModifierEvent, allowPinch = true) {
+       const hasModifier = event.metaKey || event.ctrlKey;
+       const eventTime = Number.isFinite(event.timeStamp) ? event.timeStamp : 0;
+       if (eventTime < lastEventTime || eventTime - lastEventTime > idleMs) {
+@@ -55,7 +59,7 @@ export function createEditorWheelZoomGestureGuard(idleMs = WHEEL_GESTURE_IDLE_MS
+         if (plainScrollEvents === 0) plainScrollStartedAt = eventTime;
+         plainScrollEvents += 1;
+         plainScrollDistance += Math.abs(event.deltaY ?? 0);
+-      } else if (!startedWithModifier && isSyntheticPinchWheel(event)) {
++      } else if (!startedWithModifier && allowPinch && isSyntheticPinchWheel(event)) {
+         const prefixMs = plainScrollStartedAt === null ? Number.POSITIVE_INFINITY : eventTime - plainScrollStartedAt;
+         if (plainScrollEvents > 0 && plainScrollDistance <= PINCH_PREFIX_DISTANCE && prefixMs <= PINCH_PREFIX_SCROLL_MS) {
+           startedWithModifier = true;
+@@ -96,8 +100,16 @@ function clampEditorFontSizeExact(value: number): number {
+   return Math.min(EDITOR_MAX_FONT_SIZE, Math.max(EDITOR_MIN_FONT_SIZE, value));
+ }
+ 
++function wheelFontZoomFactor(deltaY: number, deltaMode = 0): number {
++  const unitsPerStep = deltaMode === DOM_DELTA_LINE ? WHEEL_LINES_PER_STEP : deltaMode === DOM_DELTA_PAGE ? 1 : WHEEL_PIXELS_PER_STEP;
++  // Device scroll speed and event coalescing must not turn one wheel event into
++  // a jump to the font-size limit. Keep high-resolution input gradual below a notch.
++  const steps = Math.max(-1, Math.min(1, deltaY / unitsPerStep));
++  return WHEEL_FONT_ZOOM_STEP ** -steps;
++}
++
+ export function fontSizeFromWheelDelta(currentFontSize: number, deltaY: number): number {
+-  return clampEditorFontSize(currentFontSize * Math.exp(-deltaY * WHEEL_FONT_ZOOM_SENSITIVITY));
++  return clampEditorFontSize(currentFontSize * wheelFontZoomFactor(deltaY));
+ }
+ 
+ export function fontSizeFromGestureScale(startFontSize: number, scale: number): number {
+@@ -108,10 +120,14 @@ export function createEditorWheelZoomController(idleMs = WHEEL_GESTURE_IDLE_MS)
+   const guard = createEditorWheelZoomGestureGuard(idleMs);
+   let exactFontSize: number | null = null;
+   let appliedGestureId = -1;
++  let physicalModifierPressed = false;
+ 
+   return {
++    recordModifiers(event: Pick<KeyboardEvent, "ctrlKey" | "metaKey">) {
++      physicalModifierPressed = event.ctrlKey || event.metaKey;
++    },
+     nextFontSize(currentFontSize: number, event: EditorWheelZoomEvent): number | null {
+-      if (!guard.accepts(event)) {
++      if (!guard.accepts(event, !physicalModifierPressed)) {
+         exactFontSize = null;
+         appliedGestureId = guard.currentGestureId();
+         return null;
+@@ -122,8 +138,10 @@ export function createEditorWheelZoomController(idleMs = WHEEL_GESTURE_IDLE_MS)
+         exact = currentFontSize;
+         appliedGestureId = gestureId;
+       }
+-      const sensitivity = isSyntheticPinchWheel(event) ? PINCH_WHEEL_ZOOM_SENSITIVITY : WHEEL_FONT_ZOOM_SENSITIVITY;
+-      exact = clampEditorFontSizeExact(exact * Math.exp(-event.deltaY * sensitivity));
++      // A mouse wheel can also report fractional pixels (e.g. Windows scaling).
++      // A real keyboard modifier distinguishes that input from synthetic Ctrl pinch.
++      const factor = !physicalModifierPressed && isSyntheticPinchWheel(event) ? Math.exp(-event.deltaY * PINCH_WHEEL_ZOOM_SENSITIVITY) : wheelFontZoomFactor(event.deltaY, event.deltaMode);
++      exact = clampEditorFontSizeExact(exact * factor);
+       exactFontSize = exact;
+       return clampEditorFontSize(exact);
+     },
+@@ -139,6 +157,7 @@ export function createEditorWheelZoomController(idleMs = WHEEL_GESTURE_IDLE_MS)
+       guard.reset();
+       exactFontSize = null;
+       appliedGestureId = -1;
++      physicalModifierPressed = false;
+     },
+   };
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13735** (closed): ci(win7): measure rustc phase memory during dbx codegen (@luojiyin1987)
-- **PR #13718** (closed): ci(win7): measure half registry memory ceiling (@luojiyin1987)
-- **PR #13710** (closed): ci(win7): measure core prebuild scheduling and page reads (@luojiyin1987)
-- **PR #13696** (closed): chore(deps): update actions/github-script action to v9 - autoclosed (@renovate[bot])
-- **PR #13695** (2026-10-27): fix(grid): allow resizing the metadata info column in transpose view (@lxk955)
-- **PR #13694** (2026-10-27): fix(transfer): unify CTE classid type to oid for openGauss precheck (@FrankChan8)
+- **PR #13810** (2026-10-28): feat(updates): show shared changelog in update center (@spiritlord)
+- **PR #13809** (2026-10-28): docs: explain connecting to a self-hosted sqld server (@bercedev)
+- **PR #13807** (2026-10-28): fix(deps): update dependency com.google.cloud:google-cloud-spanner-jdbc to v2.47.0 (@renovate[bot])
+- **PR #13805** (2026-10-28): fix(export): recover the manual queue after unacknowledged cancellation (@efeire)
+- **PR #13804** (2026-10-28): fix(ci): bound release dependency acquisition across Ubuntu runners (@efeire)
+- **PR #13803** (2026-10-28): fix(opengauss): derive identifier quotes from the compatibility mode (@Tong-bit-art)
 
 ---
 
@@ -2366,25 +2660,58 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): limit arm linux build parallelism to avoid runner oom
+## X. redis): fetch full page on first load more when overflow buffer holds partial it
 
 **RULE**:
-When implementing operations in `.github/workflows/release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/desktop/src/components/redis/RedisValueViewer.collectionSearch.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `33f3b593`: ci): limit arm linux build parallelism to avoid runner oom. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1e834665`: redis): fetch full page on first load more when overflow buffer holds partial items (#13102). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/components/redis/RedisValueViewer.collectionSearch.spec.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-          # Standard ARM runners have 16 GB RAM; parallel rustc of the heavy
-          # workspace crates (dbx-core, dbx-mcp) plus linking peaks past what
-          # the pool now tolerates and the runner is killed with a shutdown
-          # signal. Fewer parallel codegen units keep peak memory in bounds.
-          CARGO_BUILD_JOBS: ${{ (matrix.platform == 'ubuntu-22.04-arm' && '2') || '' }}
+      loadedFields: "{loaded} / {total} fields loaded",
+
+  it("loads 200 more items on the first load more click for a 200-item initial page (#12640 follow-up)", async () => {
+    const initialItems = Array.from({ length: 200 }, (_, i) => ({
+      field: blob(`field:${i}`),
+      value: blob(`val:${i}`),
+    }));
+    mocks.redisGetValue.mockResolvedValue({
+      key_display: "key",
+      key_raw: "key",
+      ttl: -1,
+      redis_type: "hash",
+      data: {
+        kind: "hash",
+        items: initialItems,
+        total: 500,
+        scan_cursor: 1234,
+      },
+    });
+
+    const moreItems = Array.from({ length: 200 }, (_, i) => ({
+      field: blob(`field:${200 + i}`),
+      value: blob(`val:${200 + i}`),
+    }));
+    mocks.redisLoadMore.mockResolvedValueOnce({
+      kind: "hash",
+      items: moreItems,
+      scan_cursor: 5678,
+    });
+
+    mountViewer();
+    await settle();
+    expect(document.body.textContent).toContain("200 / 500 fields loaded");
+
+    loadMoreButton().click();
+    await settle();
+    expect(mocks.redisLoadMore).toHaveBeenCalledWith("connection", 0, "key", "hash", 1234, 200, undefined, undefined);
+    expect(document.body.textContent).toContain("400 / 500 fiel
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2394,4 +2721,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `33f3b593` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1e834665` are properly handled with clean fallback behavior.

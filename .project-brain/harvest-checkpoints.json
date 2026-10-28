@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T22:14:08.060Z",
+  "last_updated": "2026-10-28T22:26:48.381Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2126,14 +2126,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-      "content_hash": "74d3ceb26ae2fc6486b330d81216cfdeaf887fb65fe9b7564c46357ce4baa7a0",
-      "verified_at": "2026-10-25T10:53:10.044Z",
+      "content_hash": "9c22f92de4ee3f619e3535df8669c9990ac92489c74ea0abcb1f94230596f22f",
+      "verified_at": "2026-10-28T22:26:37.034Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T10:53:10.044Z"
+      "last_updated": "2026-10-28T22:26:37.034Z"
     },
     "openbmb/MiniCPM-V-4.7-1B": {
       "repository": "openbmb/MiniCPM-V-4.7-1B",
@@ -3441,14 +3441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-higress-group-higress",
-      "content_hash": "6e30f340a3aeb059e44281a9d1732007940768abc0d047a1395e3ec07e856c9d",
-      "verified_at": "2026-10-22T18:17:49.292Z",
+      "content_hash": "8b0e97e55a4e468785d7e5978c9e6dbeaa8e998e931182be8c8a3d9f7346d69e",
+      "verified_at": "2026-10-28T22:26:41.378Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T18:17:49.292Z"
+      "last_updated": "2026-10-28T22:26:41.378Z"
     },
     "openziti/zrok": {
       "repository": "openziti/zrok",
@@ -10791,14 +10791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-t8y2-dbx",
-      "content_hash": "4ce550ba608d1fb57eafd1744ea30d8e8e87b8830acc427d298e53173fc1b0ac",
-      "verified_at": "2026-10-28T04:42:05.922Z",
+      "content_hash": "ec3e92cbe4553450c73ae6141ef41d535a97107e761e1aed0c40dd5c60e8d14d",
+      "verified_at": "2026-10-28T22:26:48.380Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T04:42:05.922Z"
+      "last_updated": "2026-10-28T22:26:48.380Z"
     },
     "ouch-org/ouch": {
       "repository": "ouch-org/ouch",
@@ -11766,14 +11766,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-uv",
-      "content_hash": "53db82dd5c199b79f25a16445567e0408c309cfc3c00f52fa22b5141b2c0732c",
-      "verified_at": "2026-10-27T20:04:46.229Z",
+      "content_hash": "80b06260d9d135515622e50fe11ebc45219928653dbbda433ca0931c507ee31f",
+      "verified_at": "2026-10-28T22:26:32.110Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T20:04:46.229Z"
+      "last_updated": "2026-10-28T22:26:32.110Z"
     },
     "thaw-app/Thaw": {
       "repository": "thaw-app/Thaw",

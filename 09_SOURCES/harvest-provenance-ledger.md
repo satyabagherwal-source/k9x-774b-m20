@@ -5970,3 +5970,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autotrust-jev-35b` | `https://huggingface.co/autotrust/JEV-35B` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-28T22:13:58.450Z |
 | `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `73b53109` | Multi-dimensional audit evidence | 2026-10-28T22:14:01.336Z |
 | `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `c19b15f5` | Multi-dimensional audit evidence | 2026-10-28T22:14:08.053Z |
+| `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `1330634e` | Multi-dimensional audit evidence | 2026-10-28T22:26:32.104Z |
+| `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-28T22:26:37.028Z |
+| `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `bde990b4` | Multi-dimensional audit evidence | 2026-10-28T22:26:41.372Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `fa36c67d` | Multi-dimensional audit evidence | 2026-10-28T22:26:48.374Z |

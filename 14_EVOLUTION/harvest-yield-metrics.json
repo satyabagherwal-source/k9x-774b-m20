@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T22:14:08.057Z",
-  "total_cycles_completed": 5938,
-  "total_learnings_persisted": 5938,
-  "total_rules_promoted": 5388,
+  "last_updated": "2026-10-28T22:26:48.378Z",
+  "total_cycles_completed": 5942,
+  "total_learnings_persisted": 5942,
+  "total_rules_promoted": 5394,
   "history": [
-    {
-      "timestamp": "2026-10-28T12:39:58.534Z",
-      "repository": "google-t5/t5-small",
-      "learningId": "learn-huggingface-google-t5-t5-small",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T12:46:43.082Z",
-      "repository": "amazon/chronos-2",
-      "learningId": "learn-huggingface-amazon-chronos-2",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T12:56:57.979Z",
-      "repository": "Comfy-Org/MiniMax-H3",
-      "learningId": "learn-huggingface-comfy-org-minimax-h3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T12:57:06.557Z",
-      "repository": "wcandillon/react-native-skia",
-      "learningId": "learn-github-wcandillon-react-native-skia",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T13:03:31.522Z",
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-28T22:14:08.057Z",
       "repository": "moby/buildkit",
       "learningId": "learn-github-moby-buildkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T22:26:32.108Z",
+      "repository": "astral-sh/uv",
+      "learningId": "learn-github-astral-sh-uv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T22:26:37.031Z",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T22:26:41.375Z",
+      "repository": "higress-group/higress",
+      "learningId": "learn-github-higress-group-higress",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T22:26:48.378Z",
+      "repository": "t8y2/dbx",
+      "learningId": "learn-github-t8y2-dbx",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

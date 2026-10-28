@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/higress-group-higress-learnings.md`  
 > **Source**: github ([https://github.com/higress-group/higress](https://github.com/higress-group/higress))  
-> **Source Version**: `36f2f1ac`  
+> **Source Version**: `bde990b4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T18:17:48.850Z  
+> **Timestamp**: 2026-10-28T22:26:40.971Z  
 > **Learning ID**: `learn-github-higress-group-higress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/higress-group-higress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/higress-group/higress](https://github.com/higress-group/higress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T18:17:44.415Z  
+> **Harvest Timestamp**: 2026-10-28T22:26:40.720Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🤖 AI Gateway | AI Native API Gateway
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 9624 stars
+- **Stars / Engagement**: 9661 stars
 
 ---
 
@@ -1736,14 +1736,11 @@ func AskOne(p survey.Prompt, response interface{}, opts ...survey.AskOpt) error 
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5239** (2026-10-22): **ci: use the full commit SHA for the translate action pin**
-  *Symptoms*: Follow-up to #5211: the pinned action ref used a shortened commit SHA, which GitHub does not resolve as an action ref — the translate step failed on every PR. This replaces it with the full 40-character commit SHA of the same commit (no other change).
+- **Issue #5276** (2026-10-28): **chore(tools): remove GPL lint dependency**
+  *Symptoms*: ## I. Summary  Remove `github.com/golangci/check` from the repository's source dependency graph by deleting the pinned `tools/src/golangci-lint` Go module. Install the official golangci-lint v2.15.0 release binary instead, with fixed SHA-256 digests for macOS and Linux on amd64/arm64. No product runtime code or shipped gateway artifact changes.  Migrate `.golangci.yml` to the v2 schema using the official migrator, while preserving the existing 10-minute `run.timeout`. The migration moves gofmt/goimports to `formatters`, carries forward the existing exclusions and output limits, and removes the unsupported `exportloopref` entry. Also drop the v1-only default `--out-format=github-actions` flag, which v2 rejects. Older prebuilt versions are not usable here: v1.57.2 cannot read the current Go export-data format, and v1.64.8 was built with Go 1.24 and rejects the repository's Go 1.26 target.  ## II. Related issue  Related to the FOSSA finding discussed in #5263. No standalone issue is marked fixed: this is a separately requested maintenance PR for a pre-existing build-tool dependency.  ## III. Change type  - [ ] Bug fix - [ ] Feature or enhancement - [ ] Documentation or configuration only - [x] Refactoring, tests, or maintenance  ## IV. Agent participation and issue-spec gate  - [ ] **No agent participation:** This PR is human-only. - [ ] **Trivial agent-use exception:** Agent use was limited to spelling, punctuation, whitespace, or formatting. - [x] **Verified maintainer/adminis
 
-- **Issue #5238** (2026-10-22): **docs(ip-restriction): normalize x-real-ip example**
-  *Symptoms*: Normalize the mixed-case x-real-iP value in both localized configuration examples to x-real-ip.  Closes #5061
-  **Post-Mortem & Fix Analysis**:
-  > [![CLA assistant check](https://cla-assistant.io/pull/badge/signed)](https://cla-assistant.io/higress-group/higress?pullRequest=5238) <br/>All committers have signed the CLA.
-  > Closing as duplicate of #4782. I found the earlier implementation while re-checking open PR coverage; keeping both would add review noise.
+- **Issue #5263** (2026-10-28): **feat(mcp-server): optionally preserve upstream discovery instructions**
+  *Symptoms*: ## I. Summary  Add opt-in `server.passthroughInstructions` for a single explicit-modern HTTP MCP proxy. Discovery reuses the existing main `RouteCall` and server authentication policy, then copies only a usable upstream `instructions` string into gateway-generated discovery. The flag defaults to false; missing, empty, wrong-type or over-32-KiB values omit only the field. Upstream failures and explicit incomplete results retain existing proxy behavior.  The same PR also repairs two stale runtime checks: ordinary-header forwarding is asserted separately from controlled-header isolation, and explicit-profile compatibility uses a distinct accepted baseline while retaining the pre-auto rejection proof. Negative oracles still reject real contract/access corruption.  The same PR adds `samples/mcp/protocol/2026-07-28/05-instructions-passthrough`: an official Go SDK v1.7.0 upstream and native SDK client verify direct, enabled, disabled and changed-instructions phases through the public Kind/Helm/Higress demo. Includes bilingual deployment/inspection/cleanup steps and tested Inspector2.12.0 modern commands. The shared plugin pin advances to stable feature ancestor1268f41d;01–04 regressions pass. Runtime-discovered demo repairs use run-specific observation markers and a CL/chunked-capable legacy fixture reader, without product or shared-infrastructure changes.  The verification/sample followup addresses all six findings from review5668876692: independently complete focused request/acces
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1760,371 +1757,667 @@ func AskOne(p survey.Prompt, response interface{}, opts ...survey.AskOpt) error 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `829006d3` (2026-10-22)
-**Commit Message**: docs: fix spelling errors in plugin READMEs and comments (#5054)
+### Incident Patch 1: `bde990b4` (2026-10-28)
+**Commit Message**: feat(mcp-server): optionally preserve upstream discovery instructions (#5263)
 
-Signed-off-by: dusk5-Surtr <[REDACTED_EMAIL]>
+Signed-off-by: sunxiao <[REDACTED_EMAIL]>
+Signed-off-by: 澄潭 <[REDACTED_EMAIL]>
 
-**File**: `plugins/wasm-cpp/extensions/jwt_auth/README.md` (modified, +1/-1)
+**File**: `plugins/wasm-go/extensions/mcp-server/README.md` (modified, +11/-0)
 ```diff
-@@ -278,7 +278,7 @@ consumers:
+@@ -42,6 +42,7 @@
+ | `server.defaultUpstreamSecurity` | object | 选填 | - | 默认的后端认证配置，可被工具级 `requestTemplate.security` 覆盖。`id` 引用认证方案；REST-to-MCP 还支持通过 `credential` 覆盖默认凭证。MCP 代理的固定凭证使用认证方案的 `defaultCredential`。 |
+ | `server.version` | string | 选填 | `1.0.0` | 服务版本号，用于旧版 MCP 的初始化响应。此字段不用于选择 MCP 协议版本。 |
+ | `server.protocolStrategy` | string | 选填 | `legacy` | MCP 代理访问后端时使用的协议策略：`legacy`、`modern` 或 `auto`。仅适用于 `mcp-proxy`，详见“协议支持与后端连接”。 |
++| `server.passthroughInstructions` | boolean | 选填 | false | 仅在单个显式 `mcp-proxy`、`transport: http`、`protocolStrategy: modern` 配置下可设为 `true`。从上游成功 discover 结果中提取 instructions，详见下文。 |
+ | `server.autoDetection.probeTimeoutMs` | integer | 选填 | `1000` | 自动识别后端协议时的探测超时，单位为毫秒，必须为正整数。仅在 `protocolStrategy: auto` 且 `transport: http` 时使用；实际探测超时不超过 `server.timeout`。 |
  
- ##### 1.3.1 简介
+ ### 工具集配置
+@@ -290,6 +291,16 @@ server:
+ - 自动探测请求使用配置的后端凭证，后端需要允许对应凭证访问发现接口。同一路由的后端实例应保持协议能力一致。
+ - `transport: sse` 表示插件能够接入旧版 SSE 后端，不代表向客户端提供通用的实时订阅或消息推送能力。
  
--Json Web Toke（JWT），是为了在网络应用环境间传递声明而执行的一种基于JSON的开放标准RFC7519。JWT一般可以用作独立的身份验证令牌，可以包含用户标识、用户角色和权限等信息，以便于从资源服务器获取资源，也可以增加一些额外的其它业务逻辑所必须的声明信息，特别适用于分布式站点的登录场景。
-+Json Web Token（JWT），是为了在网络应用环境间传递声明而执行的一种基于JSON的开放标准RFC7519。JWT一般可以用作独立的身份验证令牌，可以包含用户标识、用户角色和权限等信息，以便于从资源服务器获取资源，也可以增加一些额外的其它业务逻辑所必须的声明信息，特别适用于分布式站点的登录场景。
++
++### 上游 instructions
++
++默认不访问上游，`server/discover` 保持原有的网关本地结果。需要上游使用说明时，可在上述 modern HTTP 代理配置中设置 `server.passthroughInstructions: true`；`auto`、`legacy`、SSE、REST 和 `toolSet` 配置不支持启用，非 boolean 值会导致配置错误。
++
++开启后，每个 modern `server/discover` 请求均沿用当前主请求的路由、超时、重试及 server 级认证规则访问上游，保留原请求 ID 和 `_meta`。只有 HTTP 200、无 JSON-RPC error 且结果为对象的普通成功响应才尝试提取 `instructions`。显式非 `complete` 结果继续走原有代理结果路径；上游错误也保留现有错误路径，不回退为成功的本地 discover。
++
++只合并非空字符串，按解码后的 UTF-8 字节计算，上限为 32768 字节；空白原样保留。字段缺失、空串、类型不符或超限时仅省略该字段，不影响其他本地结果。`supportedVersions`、`capabilities`、`serverInfo`、`resultType`、`ttlMs`、`cacheScope` 继续由网关生成。该字段不缓存；未配置 server 级凭据且未启用 `passthroughAuthHeader` 时保持匿名 discover。启用 `passthroughAuthHeader: true` 时仍按现有规则转发客户端 `Authorization`，不扫描或借用工具级凭据。此选项不改变现有 SDK 日志、读取/写入或 `original-*` 上下文的数据可见范围。上游 instructions 是不可信文本，不执行其中的指令，也不据其授予工具访问权限；`allowTools` 可能隐藏指引中提到的工具。
++
++
+ ## 认证与安全
  
- ##### 1.3.2 JWT的构成
- 
+ 本节配置用于管理插件访问后端时使用的凭证，包括固定凭证、客户端凭证提取和凭证透传。
 ```
 
-**File**: `plugins/wasm-cpp/extensions/oauth/README.md` (modified, +2/-2)
+**File**: `plugins/wasm-go/extensions/mcp-server/README_EN.md` (modified, +11/-0)
 ```diff
-@@ -21,11 +21,11 @@ description: OAuth2 认证插件配置参考
- | `consumers`          | array of object | 必填                                        | -               | 配置服务的调用者，用于对请求进行认证                                                                                                                                          |
- | `issuer`             | string          | 选填                                        | Higress-Gateway | 用于填充JWT中的issuer                                                                                                                                                         |
- | `auth_path`          | string          | 选填                                        | /oauth2/token   | 指定路径后缀用于签发Token，路由级配置时，要确保首先能匹配对应的路由, 使用 API 管理时，需要创建相同路径的接口                                                                  |
--| `global_credentials` | bool            | 选填                                        | ture            | 在通过 consumer 认证的前提下，允许任意路由签发的凭证访问                                                                                                                      |
-+| `global_credentials` | bool            | 选填                                        | true            | 在通过 consumer 认证的前提下，允许任意路由签发的凭证访问                                                                                                                      |
- | `auth_header_name`   | string          | 选填                                        | Authorization   | 用于指定从哪个请求头获取JWT                                                                                                                                                   |
- | `token_ttl`          | number          | 选填                                        | 7200            | token从签发后多久内有效，单位为秒                                                                                                                                             |
- | `clock_skew_seconds` | number          | 选填                                        | 60              | 校验JWT的exp和iat字段时允许的时钟偏移量，单位为秒                                                                                                                             |
--| `keep_token`         | bool            | 选填                                        | ture            | 转发给后端时是否保留JWT                                                                                                                                                       |
-+| `keep_token`         | bool            | 选填                                        | true            | 转发给后端时是否保留JWT                                                                                                                                                       |
- | `global_auth`        | array of string | 选填(**仅实例级别配置**)                    | -               | 只能在实例级别配置，若配置为true，则全局生效认证机制; 若配置为false，则只对做了配置的域名和路由生效认证机制; 若不配置则仅当没有域名和路由配置时全局 生效（兼容老用户使用习惯） |
+@@ -42,6 +42,7 @@ Plugin execution priority: `30`
+ | `server.defaultUpstreamSecurity` | object | No | - | Default backend authentication configuration, overridden by tool-level `requestTemplate.security`. `id` references a security scheme. REST-to-MCP also supports `credential` overrides; for MCP proxy, configure fixed credentials with the scheme's `defaultCredential`. |
+ | `server.version` | string | No | `1.0.0` | Server version reported in legacy MCP initialization responses. Does not select the MCP protocol version. |
+ | `server.protocolStrategy` | string | No | `legacy` | Backend protocol strategy: `legacy`, `modern`, or `auto`. For `mcp-proxy` only; see Protocol Support and Backend Connections. |
++| `server.passthroughInstructions` | boolean | No | false | May be enabled only for one explicit `mcp-proxy` with `transport: http` and `protocolStrategy: modern`. Extracts instructions from a successful upstream discover result; see below. |
+ | `server.autoDetection.probeTimeoutMs` | integer | No | `1000` | Backend protocol detection timeout, in milliseconds. Must be a positive integer. Used only with `protocolStrategy: auto` and `transport: http`; the effective detection timeout does not exceed `server.timeout`. |
  
- `consumers`中每一项的配置字段说明如下：
+ ### Tool Set Configuration
+@@ -288,6 +289,16 @@ Keep the following in mind:
+ Upstream pool instances must have consistent protocol capabilities because probe and business calls may reach different instances. HTTP JSON/SSE is parsed after the complete business response, without live progress or subscriptions. The 1 MiB probe guard prevents copying oversized bodies into Wasm; it does not bound all Envoy receive buffers or Tool results. Cancellation prevents later phases but cannot retract submitted tool effects. A cancelled live response is explicitly terminated; callbacks after stream closure do not access the stream.
+ 
+ 
++
++### Upstream instructions
++
++By default, `server/discover` returns the existing local gateway result without an upstream request. Set `server.passthroughInstructions: true` on the modern HTTP proxy configuration above to retrieve upstream usage instructions. Enabling it with `auto`, `legacy`, SSE, REST or `toolSet` is a configuration error; non-boolean values are also rejected.
++
++Each enabled modern `server/discover` uses the existing main request route, timeout, retry and server-level authentication rules, preserving the original request ID and `_meta`. Extraction is attempted only for HTTP 200 responses with an object result and no JSON-RPC error. Explicit non-`complete` results retain the existing proxy result path; upstream failures retain the existing error path rather than becoming a successful local discover response.
++
++Only a non-empty string of at most 32768 decoded UTF-8 bytes is merged, preserving whitespace. A missing, empty, wrongly typed or oversized field is omitted without affecting other local fields. The gateway still owns `supportedVersions`, `capabilities`, `serverInfo`, `resultType`, `ttlMs` and `cacheScope`. Instructions are not cached. Without server-level credentials and with `passthroughAuthHeader` disabled, discover remains anonymous. With `passthroughAuthHeader: true`, the existing rules still forward the client `Authorization` header; discovery does not inspect or borrow tool-level credentials. This option retains the existing SDK logging, read/write and `original-*` context visibility boundaries. Upstream instructions are untrusted text: do not execute their directives or use them to authorize tools. `allowTools` may hide tools mentioned in that guidance.
++
++
+ ## Authentication and Security
+ 
+ These settings manage the credentials used to access backends, including fixed credentials, client credential extraction, and credential passthrough.
 ```
 
-**File**: `test/e2e/conformance/tests/go-wasm-geo-ip.go` (modified, +1/-1)
+**File**: `plugins/wasm-go/extensions/mcp-server/testdata/interop/go-client/main.go` (modified, +5/-1)
 ```diff
-@@ -28,7 +28,7 @@ func init() {
+@@ -33,7 +33,7 @@ func main() {
+ 	if root == "" {
+ 		panic("MCP_INTEROP_ROOT is required")
+ 	}
+-	for _, path := range []string{"direct", "proxy-modern", "proxy-legacy", "proxy-auto-modern", "proxy-auto-legacy", "proxy-auto-switch", "proxy-auto-error"} {
++	for _, path := range []string{"direct", "proxy-modern", "proxy-instructions", "proxy-legacy", "proxy-auto-modern", "proxy-auto-legacy", "proxy-auto-switch", "proxy-auto-error"} {
+ 		if err := exercise(root + "/" + path); err != nil {
+ 			panic(fmt.Errorf("%s: %w", path, err))
+ 		}
+@@ -64,6 +64,10 @@ func exercise(endpoint string) error {
+ 		return fmt.Errorf("negotiated protocol %q, want %q (legacy fallback is forbidden)", got, protocolVersion)
+ 	}
  
- var WasmPluginsGeoIPPlugin = suite.ConformanceTest{
- 	ShortName:   "WasmPluginsGeoIPPlugin",
--	Description: "The geo-ip wasm pluin finds the client's geographic information according to the client's ip address.",
-+	Description: "The geo-ip wasm plugin finds the client's geographic information according to the client's ip address.",
- 	Manifests:   []string{"tests/go-wasm-geo-ip.yaml"},
- 	Features:    []suite.SupportedFeature{suite.WASMGoConformanceFeature},
- 	Test: func(t *testing.T, suite *suite.ConformanceTestSuite) {
++	if strings.HasSuffix(endpoint, "proxy-instructions") && session.InitializeResult().Instructions != "Use the weather tool for current conditions." {
++		return fmt.Errorf("discovery instructions = %q", session.InitializeResult().Instructions)
++	}
++
+ 	if strings.HasSuffix(endpoint, "proxy-auto-error") {
+ 		_, err := session.CallTool(ctx, &mcp.CallToolParams{Name: "get_weather", Arguments: map[string]any{"location": "New York"}})
+ 		var rpcError *jsonrpc.Error
 ```
 
-**File**: `test/e2e/conformance/utils/kubernetes/helpers.go` (modified, +1/-1)
+**File**: `plugins/wasm-go/extensions/mcp-server/testdata/interop/host/main.go` (modified, +10/-2)
 ```diff
-@@ -30,7 +30,7 @@ import (
- 	"github.com/alibaba/higress/v2/test/e2e/conformance/utils/config"
- )
+@@ -55,6 +55,9 @@ var configs = map[string]json.RawMessage{
+ 	"/proxy-modern": json.RawMessage(`{
+ 		"server":{"name":"interop-proxy-modern","type":"mcp-proxy","transport":"http","protocolStrategy":"modern","mcpServerURL":"http://fixture.invalid/mcp"}
+ 	}`),
++	"/proxy-instructions": json.RawMessage(`{
++		"server":{"name":"interop-proxy-instructions","type":"mcp-proxy","transport":"http","protocolStrategy":"modern","passthroughInstructions":true,"mcpServerURL":"http://fixture.invalid/mcp"}
++	}`),
+ 	"/proxy-legacy": json.RawMessage(`{
+ 		"server":{"name":"interop-proxy-legacy","type":"mcp-proxy","transport":"http","protocolStrategy":"legacy","mcpServerURL":"http://fixture.invalid/mcp"}
+ 	}`),
+@@ -180,7 +183,9 @@ func completeFixtureCallouts(host wasmtest.TestHost, path, profile, business str
+ 	var observed []string
+ 	verify := func() error {
+ 		var expected []string
+-		if path != "/direct" && business != "server/discover" {
++		if path == "/proxy-instructions" && business == "server/discover" {
++			expected = append(expected, "server/discover")
++		} else if path != "/direct" && business != "server/discover" {
+ 			if strings.HasPrefix(path, "/proxy-auto-") {
+ 				expected = append(expected, "server/discover")
+ 			}
+@@ -200,7 +205,7 @@ func completeFixtureCallouts(host wasmtest.TestHost, path, profile, business str
+ 	routed := false
+ 	for step := 0; step < 5; step++ {
+ 		callouts := host.GetHttpCalloutAttributes()
+-		if len(callouts) == 0 && (routed || path == "/direct" || business == "server/discover" || host.GetLocalResponse() != nil) {
++		if len(callouts) == 0 && (routed || path == "/direct" || (business == "server/discover" && path != "/proxy-instructions") || host.GetLocalResponse() != nil) {
+ 			return verify()
+ 		}
+ 		var callout proxytest.HttpCalloutAttribute
+@@ -237,6 +242,9 @@ func completeFixtureCallouts(host wasmtest.TestHost, path, profile, business str
+ 				status = "200"
+ 				response = []byte(fmt.Sprintf(`{"jsonrpc":"2.0","id":%s,"result":{"resultType":"complete","supportedVersions":["2026-07-28"],"capabilities":{"tools":{}},"ttlMs":0,"cacheScope":"private","_meta":{"io.modelcontextprotocol/serverInfo":{"name":"fixture-modern","version":"1"}}}}`, id))
+ 			}
++			if path == "/proxy-instructions" {
++				response = []byte(strings.Replace(string(response), `"resultType":"complete"`, `"resultType":"complete","instructions":"Use the weather tool for current conditions."`, 1))
++			}
+ 		case "initialize":
+ 			status = "200"
+ 			response = []byte(fmt.Sprintf(`{"jsonrpc":"2.0","id":%s,"result":{"protocolVersion":%q,"capabilities":{"tools":{}},"serverInfo":{"name":"fixture-legacy","version":"1.0.0"}}}`, id, legacyVersion))
+```
+
+**File**: `plugins/wasm-go/extensions/mcp-server/testdata/interop/host/main_test.go` (modified, +37/-0)
+```diff
+@@ -131,3 +131,40 @@ func TestProbeCheckerRejectsEarlierUnexpectedBusinessCallout(t *testing.T) {
+ 	// the same checker run.sh uses, even if an SDK swallowed the earlier 500.
+ 	runProbeChecker(t, server.URL, 42, "interop fixture recorded a failure")
+ }
++
++func TestInstructionsClientWithoutDiscovery(t *testing.T) {
++	// A modern client may already know the protocol version and send business
++	// requests directly. Enabling optional discovery must not add a handshake.
++	server := httptest.NewServer(&pluginHandler{})
++	defer server.Close()
++	for _, method := range []string{"tools/list", "tools/call"} {
++		params := `"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28","io.modelcontextprotocol/clientInfo":{"name":"without-discovery","version":"1"},"io.modelcontextprotocol/clientCapabilities":{}}`
++		if method == "tools/call" {
++			params += `,"name":"get_weather","arguments":{"location":"New York"}`
++		}
++		body := fmt.Sprintf(`{"jsonrpc":"2.0","id":"without-discovery","method":%q,"params":{%s}}`, method, params)
++		request, err := http.NewRequest(http.MethodPost, server.URL+"/proxy-instructions", strings.NewReader(body))
++		if err != nil {
++			t.Fatal(err)
++		}
++		request.Header.Set("Content-Type", "application/json")
++		request.Header.Set("Accept", "application/json,text/event-stream")
++		request.Header.Set("MCP-Protocol-Version", modernVersion)
++		request.Header.Set("Mcp-Method", method)
++		if method == "tools/call" {
++			request.Header.Set("Mcp-Name", "get_weather")
++		}
++		response, err := server.Client().Do(request)
++		if err != nil {
++			t.Fatal(err)
++		}
++		data, err := io.ReadAll(response.Body)
++		response.Body.Close()
++		if err != nil {
++			t.Fatal(err)
++		}
++		if response.StatusCode != 200 || gjson.GetBytes(data, "error").Exists() || gjson.GetBytes(data, "result.instructions").Exists() {
++			t.Fatalf("%s before discover: status=%d body=%s", method, response.StatusCode, data)
++		}
++	}
++}
+```
+
+**File**: `plugins/wasm-go/extensions/mcp-server/testdata/interop/typescript/client.mjs` (modified, +5/-1)
+```diff
+@@ -20,7 +20,7 @@ if (!root) {
+   throw new Error('MCP_INTEROP_ROOT is required');
+ }
  
--// FilterStaleConditions returns the list of status condition whos observedGeneration does not
-+// FilterStaleConditions returns the list of status condition whose observedGeneration does not
- // match the objects metadata.Generation
- func FilterStaleConditions(obj metav1.Object, conditions []metav1.Condition) []metav1.Condition {
- 	stale := make([]metav1.Condition, 0, len(conditions))
+-for (const path of ['direct', 'proxy-modern', 'proxy-legacy', 'proxy-auto-modern', 'proxy-auto-legacy', 'proxy-auto-switch', 'proxy-auto-error']) {
++for (const path of ['direct', 'proxy-modern', 'proxy-instructions', 'proxy-legacy', 'proxy-auto-modern', 'proxy-auto-legacy', 'proxy-auto-switch', 'proxy-auto-error']) {
+   const client = new Client(
+     { name: 'higress-typescript-interop', version: '1.0.0' },
+     { versionNegotiation: { mode: { pin: protocolVersion } } },
+@@ -38,6 +38,10 @@ for (const path of ['direct', 'proxy-modern', 'proxy-legacy', 'proxy-auto-modern
+       throw new Error('server/discover result did not advertise the pinned version');
+     }
+ 
++    if (path === 'proxy-instructions' && client.getDiscoverResult()?.instructions !== 'Use the weather tool for current conditions.') {
++      throw new Error(`unexpected instructions: ${client.getDiscoverResult()?.instructions}`);
++    }
++
+     if (path === 'proxy-auto-error') {
+       let probeError;
+       try { await client.callTool({ name: 'get_weather', arguments: { location: 'New York' } }); }
+```
+
+**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/README.md` (modified, +94/-23)
+```diff
+@@ -11,6 +11,51 @@ A clean exact-head run must pass every enumerated case with **0 FAIL**.
+ `expected-main-cases.json` binds the traffic case IDs to the final matrix; a
+ missing or duplicate case is a failure, even if all remaining cases pass.
+ 
++## Focused upstream instructions mode
++
++From `plugins/wasm-go/extensions/mcp-server`, on a clean committed candidate:
++
++```bash
++RUNTIME_VERIFY_INSTRUCTIONS=1 \
++INSTRUCTIONS_BASELINE_SHA=36f2f1ac5c7305c5a46c296c617b45d1fbacb7d3 \
++RUNTIME_EVIDENCE=/Users/<user>/instructions-evidence \
++bash testdata/runtime-verification/run.sh
++```
++
++This optional mode uses the same build, pinned images, listener generator,
++backend, exchange ledger, lifecycle helpers and task-owned cleanup as the full
++runner. It builds only the candidate and the pinned pre-feature baseline. Both
++use the candidate harness; the baseline receives configurations that omit the
++new flag. Candidate omitted/false responses are compared to that baseline.
++The remaining cases cover extraction and field omission, decoded UTF-8 byte
++limits, gateway field ownership without whole-result schema validation,
++server-level header/query/passthrough/anonymous authentication, public discover
++with protected tools, failures and incomplete results, ordinary header/metadata
++preservation, main-route retries and timeout, denial by a later filter, current
++request values and concurrent isolation, and a disconnected client followed by
++a fresh request. Configured Envoy retries are counted separately from a single
++plugin route submission. The disconnect case observes the existing lifecycle;
++it does not assert a new active upstream reset guarantee.
++
++[`instructions_contract.py`](./instructions_contract.py) independently pins the
++baseline's 2 cases/2 exchanges and candidate's 29 cases/33 exchanges. Finalization
++requires every case's exact request IDs and count, matching case/global exchange
++ledgers, and one matching access record per request. The raw disconnect retains
++its submitted HTTP bytes and hash plus Envoy's `code=0 flags=DC` observation; it
++does not invent an HTTP response. Missing, duplicated or substituted cases,
++exchanges and access records fail. RPC-error cases require an error with no
++`result`, even when a mixed upstream envelope contains valid instructions.
++[`instructions_self_test.py`](./instructions_self_test.py) exercises these
++negative controls and ordinary/controlled header checks for the legacy bridge.
++
++`instructions-baseline.json`, `instructions-candidate.json`, access logs,
++image/tool versions, cleanup proof and `instructions-manifest.json` identify
++this as **focused** evidence. Its manifest explicitly does not certify the
++historical full matrix. Run the existing default `run.sh` and `run-routing.sh`
++separately for those regressions; their fixed baselines and assertions remain
++unchanged. The normal dirty-tree development override is not acceptance
++verification.
++
+ ## Purpose and validation boundary
+ 
+ This harness verifies the MCP 2026 Tools Baseline at the Envoy data-plane
+@@ -102,10 +147,13 @@ failed directory must not be reused, modified, or deleted.
+    `-trimpath`. It also builds a corpus variant of each revision with the same
+    hashed registered-tool fixture needed to represent a bounded `json.Number`
+    that REST JSON decoding cannot preserve. The script records all six Wasm
+-   SHA256 values. A seventh Wasm is built independently from auto pre-change
+-   revision `dc0999326b1a8df4269c13d0cf6ee2b725259f6e`; it must reject auto and
+-   match the candidate on the five existing explicit/default proxy cases. All
+-   temporary archived source trees are removed before startup.
++   SHA256 values. A seventh Wasm from auto pre-change revision
++   `dc0999326b1a8df4269c13d0cf6ee2b725259f6e` proves only that auto is rejected.
++   An eighth Wasm from `36f2f1ac5c7305c5a46c296c617b45d1fbacb7d3` independently
++   checks the five existing explicit/default profiles against the accepted
++   pre-instructions RouteCall behavior. These baselines have separate source,
++   Wasm and configuration identities in the manifest. All temporary archived
++   source trees are removed before startup.
+ 3. [`generate_envoy.py`](./generate_envoy.py) writes the main static Envoy
+    configuration with positive auto listeners, an unknown-strategy negative
+    control, and isolated auto pre-change rejection and explicit-strategy
+@@ -142,7 +190,7 @@ failed directory must not be reused, modified, or deleted.
+    auto pre-change rejection and explicit-strategy differential results, checks
+    case completeness and access-log coverage, writes the manifest and checksums, and
+    returns non-zero for any failed matrix or coverage assertion.
+-8. A completed run deletes all seven temporary Wasm files. Build artifacts must
++8. A completed run deletes all eight temporary Wasm files. Build artifacts must
+    never be committed.
+ 
+ ## Directory components
+@@ -163,7 +211,7 @@ failed directory must not be reused, modified
+```
+
+**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/auto_self_test.py` (modified, +91/-0)
+```diff
+@@ -6,15 +6,23 @@
+ """
+ 
+ import concurrent.futures
++import copy
+ import http.client
+ import json
++import os
++import re
++import tempfile
+ import threading
+ import unittest
+ from types import SimpleNamespace
++from pathlib import Path
++from unittest.mock import patch
+ from http.server import ThreadingHTTPServer
+ 
+ import auto_backend
+ import backend
++import generate_envoy
++import verify
+ import verify_auto
+ 
+ 
+@@ -167,5 +175,88 @@ def test_failure_fixtures_keep_discriminating_evidence(self):
+                 self.assertEqual(len(self.state()["events"]), 1)
+ 
+ 
++
++class ExplicitCompatibilityTest(unittest.TestCase):
++    def test_modern_proxy_preserves_ordinary_headers_and_stateless_boundaries(self):
++        events = [{
++            "rpcMethod": method, "mcpMethod": method, "protocolVersion": verify.MODERN,
++            "cookiePresent": True, "unrelatedCredentialPresent": True,
++            "authorizationPresent": False, "sessionPresent": False,
++            "lastEventIDPresent": False, "internalRoutePresent": False,
++            "futureParam": None if method == "tools/list" else "opaque-current-call",
++        } for method in ("tools/list", "tools/call")]
++        verify.check_modern_proxy_events(events)
++        for index in (0, 1):
++            for key, bad_value in (
++                ("cookiePresent", False), ("unrelatedCredentialPresent", False),
++                ("authorizationPresent", True), ("sessionPresent", True),
++                ("lastEventIDPresent", True), ("internalRoutePresent", True),
++                ("protocolVersion", "wrong"), ("mcpMethod", "initialize"),
++                ("futureParam", "wrong-scope"),
++            ):
++                with self.subTest(index=index, field=key):
++                    corrupt = copy.deepcopy(events)
++                    corrupt[index][key] = bad_value
++                    with self.assertRaises(AssertionError):
++                        verify.check_modern_proxy_events(corrupt)
++        for corrupt in (events[:1], events + [events[1]], list(reversed(events))):
++            with self.subTest(sequence=corrupt):
++                with self.assertRaises(AssertionError):
++                    verify.check_modern_proxy_events(corrupt)
++
++    def test_explicit_differential_rejects_contract_and_access_corruption(self):
++        cases = [{"case": name, "status": "PASS", "detail": {
++            "backendEvents": {"backend-primary": [{"rpcMethod": "tools/call", "seq": 1}]},
++        }} for name in sorted(verify_auto.EXPLICIT_CASE_NAMES)]
++        exchanges = [{"case": row["case"], "accessRequestId": f"request-{index}",
++                      "request": {"rpcMethod": "tools/call", "rpcId": index},
++                      "response": {"status": 200, "headers": {"content-type": "application/json"},
++                                   "body": {"result": {"content": ["expected"]}}, "bodySha256": "expected-hash"}}
++                     for index, row in enumerate(cases)]
++        baseline = {"cases": cases, "exchanges": exchanges}
++        log = "".join(f"access request_id={row['accessRequestId']} listener=fixture code=200\n" for row in exchanges)
++        self.assertTrue(verify_auto.explicit_baseline_matches(cases, exchanges, baseline, log))
++        for fault in ("case-failed", "case-missing", "case-duplicate", "backend-sequence", "request", "response",
++                      "response-header", "response-status", "response-hash", "exchange-missing", "request-id"):
++            with self.subTest(fault=fault):
++                changed_cases, changed_exchanges = copy.deepcopy(cases), copy.deepcopy(exchanges)
++                if fault == "case-failed": changed_cases[0]["status"] = "FAIL"
++                elif fault == "case-missing": changed_cases.pop()
++                elif fault == "case-duplicate": changed_cases.append(copy.deepcopy(changed_cases[0]))
++                elif fault == "backend-sequence": changed_cases[0]["detail"]["backendEvents"]["backend-primary"].append({"rpcMethod": "initialize"})
++                elif fault == "request": changed_exchanges[0]["request"]["rpcMethod"] = "initialize"
++                elif fault == "response": changed_exchanges[0]["response"]["body"]["result"]["content"] = ["corrupt"]
++                elif fault == "response-header": changed_exchanges[0]["response"]["headers"]["content-type"] = "text/plain"
++                elif fault == "response-status": changed_exchanges[0]["response"]["status"] = 500
++                elif fault == "response-hash": changed_exchanges[0]["response"]["bodySha256"] = "wrong-hash"
++                elif fault == "exchange-missing": changed_exchanges.pop()
++                elif fault == "request-id": changed_exchanges[0]["accessRequestId"] = changed_exchanges[1]["accessRequestId"]
++                self.assertFalse(verify_auto.explicit_baseline_matches(changed_cases, changed_exchanges, baseline, log))
++        lines = log.splitlines(keepends=True)
++        for corrupt_log in ("".join(lines[1:]), log + lines[0], log + "
 ```
 
 ---
 
-### Incident Patch 2: `485b5623` (2026-10-22)
-**Commit Message**: fix(ai-data-masking): 修复流式工具调用内容丢失 || fix(ai-data-masking): Fix the loss of streaming tool call content (#5209)
+### Incident Patch 2: `efe06696` (2026-10-28)
+**Commit Message**: chore(tools): remove GPL lint dependency (#5276)
 
-Signed-off-by: zhihao-yuan <[REDACTED_EMAIL]>
-Co-authored-by: zhihao-yuan <[REDACTED_EMAIL]>
-Co-authored-by: 澄潭 <[REDACTED_EMAIL]>
+Signed-off-by: 澄潭 <[REDACTED_EMAIL]>
 
-**File**: `plugins/wasm-rust/extensions/ai-data-masking/src/ai_data_masking.rs` (modified, +56/-27)
+**File**: `tools/lint.mk` (modified, +1/-1)
 ```diff
-@@ -790,52 +790,81 @@ impl HttpContext for AiDataMasking {
-         _end_of_stream: bool,
-     ) -> HeaderAction {
-         self.set_http_response_header("Content-Length", None);
-+        // The first body callback may contain only part of the data: prefix.
-+        if self.is_openai
-+            && self
-+                .get_http_response_header("content-type")
-+                .is_some_and(|value| {
-+                    value.split(';').next().is_some_and(|media_type| {
-+                        media_type.trim().eq_ignore_ascii_case("text/event-stream")
-+                    })
-+                })
-+        {
-+            self.is_openai_stream = Some(true);
-+        }
-         HeaderAction::Continue
-     }
+@@ -14,7 +14,7 @@ lint: ## Run all linter of code sources, including golint, yamllint, whitenoise
+ .PHONY: lint-deps
+ lint-deps: ## Everything necessary to lint
  
-     fn on_http_response_body(&mut self, body_size: usize, end_of_stream: bool) -> DataAction {
-         if !self.stream {
-             return DataAction::Continue;
-         }
--        if body_size > 0 {
--            if let Some(body) = self.get_http_response_body(0, body_size) {
--                if self.is_openai && self.is_openai_stream.is_none() {
--                    self.is_openai_stream = Some(body.starts_with(b"data:"));
--                }
--                self.msg_window
--                    .push(&body, self.is_openai_stream.unwrap_or_default());
--                let mut deny = false;
--                let log = Log::new(PLUGIN_NAME.to_string());
--                let mask_restore = self.mask_restore.as_ref();
--                for message in self.msg_window.messages_iter_mut() {
--                    if let Ok(mut msg) = String::from_utf8(message.clone()) {
--                        if let Some(config) = &self.config {
--                            if config.check_message(&msg, &log) {
--                                deny = true;
--                                break;
--                            }
--                        }
--                        if let Some(mask_restore) = mask_restore {
--                            msg = mask_restore.restore(&msg);
--                        }
--                        message.clear();
--                        message.extend_from_slice(msg.as_bytes());
-+        let body = if body_size > 0 {
-+            self.get_http_response_body(0, body_size)
-+        } else {
-+            None
-+        };
-+        if let Some(body) = &body {
-+            if self.is_openai && self.is_openai_stream.is_none() {
-+                self.is_openai_stream = Some(body.starts_with(b"data:"));
-+            }
-+        }
-+        let is_openai_stream = self.is_openai_stream.unwrap_or_default();
-+        let mut deny = false;
-+        let log = Log::new(PLUGIN_NAME.to_string());
-+        let config = self.config.as_ref();
-+        let mask_restore = self.mask_restore.as_ref();
-+        let mut inspect = |message: &mut Vec<u8>| {
-+            if deny {
-+                return false;
-+            }
-+            if let Ok(mut msg) = String::from_utf8(message.clone()) {
-+                if let Some(config) = config {
-+                    if config.check_message(&msg, &log) {
-+                        deny = true;
-+                        return false;
-                     }
-                 }
--                if deny {
--                    return self.deny(true);
-+                if let Some(mask_restore) = mask_restore {
-+                    msg = mask_restore.restore(&msg);
-                 }
-+                message.clear();
-+                message.extend_from_slice(msg.as_bytes());
-             }
-+            true
-+        };
-+        if let Some(body) = body {
-+            self.msg_window.push(
-+                &body,
-+                is_openai_stream,
-+                self.char_window_size * 2,
-+                self.byte_window_size * 2,
-+                &mut inspect,
-+            );
-         }
-         let new_body = if end_of_stream {
--            self.msg_window.finish(self.is_openai_stream.unwrap())
-+            // Parse and inspect the final event before flushing buffered text.
-+            self.msg_window.finish(is_openai_stream, &mut inspect)
-         } else {
-             self.msg_window.pop(
-                 self.char_window_size * 2,
-                 self.byte_window_size * 2,
--                self.is_openai_stream.unwrap(),
-+                is_openai_stream,
-             )
-         };
-+        if deny {
-+            return self.deny(true);
-+        }
-         self.replace_http_response_body(&new_body);
-         DataAction::Continue
-     }
+-GOLANGCI_LINT_FLAGS ?= $(if $(GITHUB_ACTION),--out-format=github-actions)
++GOLANGCI_LINT_FLAGS ?=
+ .PHONY: lint.vet
+ lint.vet: prebuild
+ 	go vet ./cmd/... ./pkg/... ./registry/...
 ```
 
-**File**: `plugins/wasm-rust/extensions/ai-data-masking/src/lib.rs` (modified, +0/-1)
+**File**: `tools/linter/golangci-lint/.golangci.yml` (modified, +48/-35)
 ```diff
-@@ -16,4 +16,3 @@ mod ai_data_masking;
- mod deny_word;
- mod msg_win_openai;
- mod msg_window;
--mod number_merge;
-```
-
-**File**: `plugins/wasm-rust/extensions/ai-data-masking/src/msg_win_openai.rs` (modified, +999/-122)
-```diff
-@@ -12,14 +12,14 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
- 
--use std::collections::HashMap;
-+use std::collections::BTreeMap;
- 
- use higress_wasm_rust::event_stream::EventStream;
-+#[cfg(test)]
- use serde::Deserialize;
- use serde_json::Value;
- 
- use crate::msg_window::MessageWindow;
--use crate::number_merge::NumberMerge;
- 
- #[derive(PartialEq, Eq, Clone, Copy)]
- enum MsgFlag {
-@@ -32,64 +32,91 @@ impl Default for MsgFlag {
-         Self::None
-     }
- }
-+#[cfg(test)]
- #[derive(Deserialize)]
- struct Delta {
-     #[serde(default)]
-     content: Option<String>,
-     #[serde(default)]
-     reasoning_content: Option<String>,
- }
-+#[cfg(test)]
- #[derive(Deserialize)]
- struct Choices {
--    #[serde(default)]
--    index: i64,
-     #[serde(default)]
-     delta: Option<Delta>,
--    #[serde(default)]
--    finish_reason: Option<String>,
- }
- 
--impl Delta {
--    fn get_flag_msg(&self, default_flag: &MsgFlag) -> (MsgFlag, &[u8]) {
--        if let Some(msg) = &self.content {
--            if !msg.is_empty() {
--                return (MsgFlag::Content, msg.as_bytes());
--            }
-+const CHOICES_PATH: &str = "choices";
-+
-+type MessageLine = Vec<(MsgFlag, Vec<u8>)>;
-+
-+#[derive(Clone, Default)]
-+struct FrameMetadata {
-+    id: Option<Value>,
-+    object: Option<Value>,
-+    created: Option<Value>,
-+    model: Option<Value>,
-+    system_fingerprint: Option<Value>,
-+}
-+
-+impl FrameMetadata {
-+    fn from_value(value: &Value) -> Self {
-+        Self {
-+            id: value.get("id").cloned(),
-+            object: value.get("object").cloned(),
-+            created: value.get("created").cloned(),
-+            model: value.get("model").cloned(),
-+            system_fingerprint: value.get("system_fingerprint").cloned(),
-         }
--        if let Some(msg) = &self.reasoning_content {
--            if !msg.is_empty() {
--                return (MsgFlag::ReasoningContent, msg.as_bytes());
-+    }
-+
-+    fn frame(&self, choice: Value) -> Value {
-+        let mut frame = serde_json::Map::new();
-+        for (key, value) in [
-+            ("id", &self.id),
-+            ("object", &self.object),
-+            ("created", &self.created),
-+            ("model", &self.model),
-+            ("system_fingerprint", &self.system_fingerprint),
-+        ] {
-+            if let Some(value) = value {
-+                frame.insert(key.to_string(), value.clone());
-             }
-         }
--        (*default_flag, &[])
-+        frame.insert(CHOICES_PATH.to_string(), Value::Array(vec![choice]));
-+        Value::Object(frame)
-     }
- }
--const USAGE_PATH: &str = "usage";
--const CHOICES_PATH: &str = "choices";
+@@ -1,46 +1,59 @@
++version: "2"
+ run:
+-  deadline: 10m
 -
--type MessageLine = Vec<(MsgFlag, Vec<u8>)>;
- 
- #[derive(Default)]
- struct MessageWindowOpenAi {
-     message_window: MessageWindow,
-     ret_messages: MessageLine,
-     flag: MsgFlag,
--    last_value: Value,
--    finish_reason: Option<String>,
-+    index: i64,
-+    metadata: FrameMetadata,
-+    role: Option<Value>,
-+    needs_check: bool,
- }
- 
- impl MessageWindowOpenAi {
-     fn update(
-         &mut self,
-         data: &[u8],
-         flag: MsgFlag,
--        value: &Value,
--        finish_reason: &Option<String>,
-+        index: i64,
-+        metadata: &FrameMetadata,
-+        role: Option<Value>,
-     ) {
--        self.last_value = value.clone();
-         if data.is_empty() {
-             return;
-         }
-+        self.index = index;
-+        self.metadata = metadata.clone();
-+        if let Some(role) = role {
-+            self.role = Some(role);
-+        }
-         if self.flag == MsgFlag::None {
-             self.flag = flag;
-         }
-@@ -99,64 +126,85 @@ impl MessageWindowOpenAi {
-             self.ret_messages.push((last_flag, msg));
-         }
-         self.message_window.update(data);
--        if let Some(fr) = finish_reason {
--            self.finish_reason = Some(fr.clone());
-+        self.needs_check = true;
-+    }
-+
-+    fn check(&mut self, inspect: &mut impl FnMut(&mut Vec<u8>) -> bool) {
-+        if self.needs_check {
-+            let accepted = self.iter_mut().all(inspect);
-+            // A rejected tail must be checked again before a later flush.
-+            self.needs_check = !accepted;
-         }
-     }
- 
--    fn gen_value(&self, flag: &MsgFlag, msg: &[u8], finish: bool) -> Value {
--        let mut ret = self.last_value.clone();
-+    fn gen_value(&mut self, flag: MsgFlag, msg: &[u8]) -> Value {
-+        let mut delta = serde_json::Map::new();
-+        if let Some(role) = self.role.take() {
-+            delta.insert("role".to_string(), role);
-+        }
-+        let text = Value::String(String::from_utf8_lossy(msg).to_string());
-         match flag {
-             MsgFlag::Content => {
--                ret["delta"]["content"] = Value::String(String::from_utf8_lossy(msg).to_string());
--                if let Some(m) = ret["delta"].as_object_mut() {
--                    m.remove("reasoning_content");
--                }
-+                delta.insert("content".to_
++  timeout: 10m
+ linters:
+   enable:
+     - bodyclose
+-    - gofmt
+-    - goimports
+-    - revive
++    - gocritic
++    - goheader
+     - gosec
+     - misspell
+-    - exportloopref
++    - revive
+     - unconvert
+     - unparam
+-    - goheader
+-    - gocritic
+-
+-linters-settings:
+-  gci:
+-    sections:
+-      - standard # Captures all standard packages if they do not match another section.
+-      - default # Contains all imports that could not be matched to another section type.
+-      - prefix(github.com/alibaba/higress/) # Groups all imports with the specified Prefix.
+-  goimports:
+-    # put imports beginning with prefix after 3rd-party packages;
+-    # it's a comma-separated list of prefixes
+-    local-prefixes: github.com/alibaba/higress/
+-  gofmt:
+-    simplify: true
+-  unparam:
+-    check-exported: false
+-
++  settings:
++    unparam:
++      check-exported: false
++  exclusions:
++    generated: lax
++    presets:
++      - comments
++      - common-false-positives
++      - legacy
++      - std-error-handling
++    rules:
++      - linters:
++          - staticcheck
++        text: 'SA1019:'
++      - linters:
++          - bodyclose
++        path: test/e2e
++    paths:
++      - third_party$
++      - builtin$
++      - examples$
+ issues:
+-  exclude-rules:
+-    - path: zz_generated
+-      linters:
+-        - goimports
+-    - linters:
+-        - staticcheck
+-      text: "SA1019:"
+-    - path: test/e2e
+-      linters:
+-        - bodyclose
+-  # Show the complete output
+   max-issues-per-linter: 0
+   max-same-issues: 0
++formatters:
++  enable:
++    - gofmt
++    - goimports
++  settings:
++    gci:
++      sections:
++        - standard
++        - default
++        - prefix(github.com/alibaba/higress/)
++    gofmt:
++      simplify: true
++    goimports:
++      local-prefixes:
++        - github.com/alibaba/higress/
++  exclusions:
++    generated: lax
++    paths:
++      - third_party$
++      - builtin$
++      - examples$
++      - zz_generated
 ```
 
-**File**: `plugins/wasm-rust/extensions/ai-data-masking/src/number_merge.rs` (removed, +0/-59)
+**File**: `tools/src/golangci-lint/go.mod` (removed, +0/-176)
 ```diff
-@@ -1,59 +0,0 @@
--// Copyright (c) 2025 Alibaba Group Holding Ltd.
+@@ -1,176 +0,0 @@
+-module local
+-
+-go 1.19
+-
+-require github.com/golangci/golangci-lint v1.50.1
+-
+-require (
+-	4d63.com/gochecknoglobals v0.1.0 // indirect
+-	github.com/Abirdcfly/dupword v0.0.7 // indirect
+-	github.com/Antonboom/errname v0.1.7 // indirect
+-	github.com/Antonboom/nilnil v0.1.1 // indirect
+-	github.com/BurntSushi/toml v1.2.1 // indirect
+-	github.com/Djarvur/go-err113 v0.0.0-20210108212216-aea10b59be24 // indirect
+-	github.com/GaijinEntertainment/go-exhaustruct/v2 v2.3.0 // indirect
+-	github.com/Masterminds/semver v1.5.0 // indirect
+-	github.com/OpenPeeDeeP/depguard v1.1.1 // indirect
+-	github.com/alexkohler/prealloc v1.0.0 // indirect
+-	github.com/alingse/asasalint v0.0.11 // indirect
+-	github.com/ashanbrown/forbidigo v1.3.0 // indirect
+-	github.com/ashanbrown/makezero v1.1.1 // indirect
+-	github.com/beorn7/perks v1.0.1 // indirect
+-	github.com/bkielbasa/cyclop v1.2.0 // indirect
+-	github.com/blizzy78/varnamelen v0.8.0 // indirect
+-	github.com/bombsimon/wsl/v3 v3.3.0 // indirect
+-	github.com/breml/bidichk v0.2.3 // indirect
+-	github.com/breml/errchkjson v0.3.0 // indirect
+-	github.com/butuzov/ireturn v0.1.1 // indirect
+-	github.com/cespare/xxhash/v2 v2.1.2 // indirect
+-	github.com/charithe/durationcheck v0.0.9 // indirect
+-	github.com/chavacava/garif v0.0.0-20220630083739-93517212f375 // indirect
+-	github.com/curioswitch/go-reassign v0.2.0 // indirect
+-	github.com/daixiang0/gci v0.8.1 // indirect
+-	github.com/davecgh/go-spew v1.1.1 // indirect
+-	github.com/denis-tingaikin/go-header v0.4.3 // indirect
+-	github.com/esimonov/ifshort v1.0.4 // indirect
+-	github.com/ettle/strcase v0.1.1 // indirect
+-	github.com/fatih/color v1.13.0 // indirect
+-	github.com/fatih/structtag v1.2.0 // indirect
+-	github.com/firefart/nonamedreturns v1.0.4 // indirect
+-	github.com/fsnotify/fsnotify v1.5.4 // indirect
+-	github.com/fzipp/gocyclo v0.6.0 // indirect
+-	github.com/go-critic/go-critic v0.6.5 // indirect
+-	github.com/go-toolsmith/astcast v1.0.0 // indirect
+-	github.com/go-toolsmith/astcopy v1.0.2 // indirect
+-	github.com/go-toolsmith/astequal v1.0.3 // indirect
+-	github.com/go-toolsmith/astfmt v1.0.0 // indirect
+-	github.com/go-toolsmith/astp v1.0.0 // indirect
+-	github.com/go-toolsmith/strparse v1.0.0 // indirect
+-	github.com/go-toolsmith/typep v1.0.2 // indirect
+-	github.com/go-xmlfmt/xmlfmt v0.0.0-20191208150333-d5b6f63a941b // indirect
+-	github.com/gobwas/glob v0.2.3 // indirect
+-	github.com/gofrs/flock v0.8.1 // indirect
+-	github.com/golang/protobuf v1.5.2 // indirect
+-	github.com/golangci/check v0.0.0-20180506172741-cfe4005ccda2 // indirect
+-	github.com/golangci/dupl v0.0.0-20180902072040-3e9179ac440a // indirect
+-	github.com/golangci/go-misc v0.0.0-20220329215616-d24fe342adfe // indirect
+-	github.com/golangci/gofmt v0.0.0-20220901101216-f2edd75033f2 // indirect
+-	github.com/golangci/lint-1 v0.0.0-20191013205115-297bf364a8e0 // indirect
+-	github.com/golangci/maligned v0.0.0-20180506175553-b1d89398deca // indirect
+-	github.com/golangci/misspell v0.3.5 // indirect
+-	github.com/golangci/revgrep v0.0.0-20220804021717-745bb2f7c2e6 // indirect
+-	github.com/golangci/unconvert v0.0.0-20180507085042-28b1c447d1f4 // indirect
+-	github.com/google/go-cmp v0.5.9 // indirect
+-	github.com/gordonklaus/ineffassign v0.0.0-20210914165742-4cc7213b9bc8 // indirect
+-	github.com/gostaticanalysis/analysisutil v0.7.1 // indirect
+-	github.com/gostaticanalysis/comment v1.4.2 // indirect
+-	github.com/gostaticanalysis/forcetypeassert v0.1.0 // indirect
+-	github.com/gostaticanalysis/nilerr v0.1.1 // indirect
+-	github.com/hashicorp/errwrap v1.0.0 // indirect
+-	github.com/hashicorp/go-multierror v1.1.1 // indirect
+-	github.com/hashicorp/go-version v1.6.0 // indirect
+-	github.com/hashicorp/hcl v1.0.0 // indirect
+-	github.com/hexops/gotextdiff v1.0.3 // indirect
+-	github.com/inconshreveable/mousetrap v1.0.1 // indirect
+-	github.com/jgautheron/goconst v1.5.1 // indirect
+-	github.com/jingyugao/rowserrcheck v1.1.1 // indirect
+-	github.com/jirfag/go-printf-func-name v0.0.0-20200119135958-7558a9eaa5af // indirect
+-	github.com/julz/importas v0.1.0 // indirect
+-	github.com/kisielk/errcheck v1.6.2 // indirect
+-	github.com/kisielk/gotool v1.0.0 // indirect
+-	github.com/kkHAIKE/contextcheck v1.1.3 // indirect
+-	github.com/kulti/thelper v0.6.3 // indirect
+-	github.com/kunwardeep/paralleltest v1.0.6 // indirect
+-	github.com/kyoh86/exportloopref v0.1.8 // indirect
+-	github.com/ldez/gomoddirectives v0.2.3 // indirect
+-	github.com/ldez/tagliatelle v0.3.1 // indirect
+-	github.com/leonklingele/grouper v1.1.0 // indirect
+-	github.com/lufeee/execinquery v1.2.1 // indirect
+-	github.com/magiconair/properties v1.8.6 // indirect
+-	github.com/maratori/testableexamples v1.0.0 // indirect
+-	github.com/maratori/testpackage v1.1.0 // indirect
+-	github.com/matoous/godox v0.0.0-20210227103229-6504466cf951 // indirect
+-	github.com/mattn/go-colorable v0.1.13 // indirect
+-	github.com/mattn/go-isatty v0.0.16 // indirect
+-	github.com/mattn/go-runewidth v0.0.9 // indirect
+-	gi
+```
+
+**File**: `tools/src/golangci-lint/go.sum` (removed, +0/-965)
+```diff
+@@ -1,965 +0,0 @@
+-4d63.com/gochecknoglobals v0.1.0 h1:zeZSRqj5yCg28tCkIV/z/lWbwvNm5qnKVS15PI8nhD0=
+-4d63.com/gochecknoglobals v0.1.0/go.mod h1:wfdC5ZjKSPr7CybKEcgJhUOgeAQW1+7WcyK8OvUilfo=
+-cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
+-cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
+-cloud.google.com/go v0.38.0/go.mod h1:990N+gfupTy94rShfmMCWGDn0LpTmnzTp2qbd1dvSRU=
+-cloud.google.com/go v0.44.1/go.mod h1:iSa0KzasP4Uvy3f1mN/7PiObzGgflwredwwASm/v6AU=
+-cloud.google.com/go v0.44.2/go.mod h1:60680Gw3Yr4ikxnPRS/oxxkBccT6SA1yMk63TGekxKY=
+-cloud.google.com/go v0.44.3/go.mod h1:60680Gw3Yr4ikxnPRS/oxxkBccT6SA1yMk63TGekxKY=
+-cloud.google.com/go v0.45.1/go.mod h1:RpBamKRgapWJb87xiFSdk4g1CME7QZg3uwTez+TSTjc=
+-cloud.google.com/go v0.46.3/go.mod h1:a6bKKbmY7er1mI7TEI4lsAkts/mkhTSZK8w33B4RAg0=
+-cloud.google.com/go v0.50.0/go.mod h1:r9sluTvynVuxRIOHXQEHMFffphuXHOMZMycpNR5e6To=
+-cloud.google.com/go v0.52.0/go.mod h1:pXajvRH/6o3+F9jDHZWQ5PbGhn+o8w9qiu/CffaVdO4=
+-cloud.google.com/go v0.53.0/go.mod h1:fp/UouUEsRkN6ryDKNW/Upv/JBKnv6WDthjR6+vze6M=
+-cloud.google.com/go v0.54.0/go.mod h1:1rq2OEkV3YMf6n/9ZvGWI3GWw0VoqH/1x2nd8Is/bPc=
+-cloud.google.com/go v0.56.0/go.mod h1:jr7tqZxxKOVYizybht9+26Z/gUq7tiRzu+ACVAMbKVk=
+-cloud.google.com/go v0.57.0/go.mod h1:oXiQ6Rzq3RAkkY7N6t3TcE6jE+CIBBbA36lwQ1JyzZs=
+-cloud.google.com/go v0.62.0/go.mod h1:jmCYTdRCQuc1PHIIJ/maLInMho30T/Y0M4hTdTShOYc=
+-cloud.google.com/go v0.65.0/go.mod h1:O5N8zS7uWy9vkA9vayVHs65eM1ubvY4h553ofrNHObY=
+-cloud.google.com/go v0.72.0/go.mod h1:M+5Vjvlc2wnp6tjzE102Dw08nGShTscUx2nZMufOKPI=
+-cloud.google.com/go v0.74.0/go.mod h1:VV1xSbzvo+9QJOxLDaJfTjx5e+MePCpCWwvftOeQmWk=
+-cloud.google.com/go v0.75.0/go.mod h1:VGuuCn7PG0dwsd5XPVm2Mm3wlh3EL55/79EKB6hlPTY=
+-cloud.google.com/go/bigquery v1.0.1/go.mod h1:i/xbL2UlR5RvWAURpBYZTtm/cXjCha9lbfbpx4poX+o=
+-cloud.google.com/go/bigquery v1.3.0/go.mod h1:PjpwJnslEMmckchkHFfq+HTD2DmtT67aNFKH1/VBDHE=
+-cloud.google.com/go/bigquery v1.4.0/go.mod h1:S8dzgnTigyfTmLBfrtrhyYhwRxG72rYxvftPBK2Dvzc=
+-cloud.google.com/go/bigquery v1.5.0/go.mod h1:snEHRnqQbz117VIFhE8bmtwIDY80NLUZUMb4Nv6dBIg=
+-cloud.google.com/go/bigquery v1.7.0/go.mod h1://okPTzCYNXSlb24MZs83e2Do+h+VXtc4gLoIoXIAPc=
+-cloud.google.com/go/bigquery v1.8.0/go.mod h1:J5hqkt3O0uAFnINi6JXValWIb1v0goeZM77hZzJN/fQ=
+-cloud.google.com/go/datastore v1.0.0/go.mod h1:LXYbyblFSglQ5pkeyhO+Qmw7ukd3C+pD7TKLgZqpHYE=
+-cloud.google.com/go/datastore v1.1.0/go.mod h1:umbIZjpQpHh4hmRpGhH4tLFup+FVzqBi1b3c64qFpCk=
+-cloud.google.com/go/pubsub v1.0.1/go.mod h1:R0Gpsv3s54REJCy4fxDixWD93lHJMoZTyQ2kNxGRt3I=
+-cloud.google.com/go/pubsub v1.1.0/go.mod h1:EwwdRX2sKPjnvnqCa270oGRyludottCI76h+R3AArQw=
+-cloud.google.com/go/pubsub v1.2.0/go.mod h1:jhfEVHT8odbXTkndysNHCcx0awwzvfOlguIAii9o8iA=
+-cloud.google.com/go/pubsub v1.3.1/go.mod h1:i+ucay31+CNRpDW4Lu78I4xXG+O1r/MAHgjpRVR+TSU=
+-cloud.google.com/go/storage v1.0.0/go.mod h1:IhtSnM/ZTZV8YYJWCY8RULGVqBDmpoyjwiyrjsg+URw=
+-cloud.google.com/go/storage v1.5.0/go.mod h1:tpKbwo567HUNpVclU5sGELwQWBDZ8gh0ZeosJ0Rtdos=
+-cloud.google.com/go/storage v1.6.0/go.mod h1:N7U0C8pVQ/+NIKOBQyamJIeKQKkZ+mxpohlUTyfDhBk=
+-cloud.google.com/go/storage v1.8.0/go.mod h1:Wv1Oy7z6Yz3DshWRJFhqM/UCfaWIRTdp0RXyy7KQOVs=
+-cloud.google.com/go/storage v1.10.0/go.mod h1:FLPqc6j+Ki4BU591ie1oL6qBQGu2Bl/tZ9ullr3+Kg0=
+-cloud.google.com/go/storage v1.14.0/go.mod h1:GrKmX003DSIwi9o29oFT7YDnHYwZoctc3fOKtUw0Xmo=
+-dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
+-github.com/Abirdcfly/dupword v0.0.7 h1:z14n0yytA3wNO2gpCD/jVtp/acEXPGmYu0esewpBt6Q=
+-github.com/Abirdcfly/dupword v0.0.7/go.mod h1:K/4M1kj+Zh39d2aotRwypvasonOyAMH1c/IZJzE0dmk=
+-github.com/Antonboom/errname v0.1.7 h1:mBBDKvEYwPl4WFFNwec1CZO096G6vzK9vvDQzAwkako=
+-github.com/Antonboom/errname v0.1.7/go.mod h1:g0ONh16msHIPgJSGsecu1G/dcF2hlYR/0SddnIAGavU=
+-github.com/Antonboom/nilnil v0.1.1 h1:PHhrh5ANKFWRBh7TdYmyyq2gyT2lotnvFvvFbylF81Q=
+-github.com/Antonboom/nilnil v0.1.1/go.mod h1:L1jBqoWM7AOeTD+tSquifKSesRHs4ZdaxvZR+xdJEaI=
+-github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
+-github.com/BurntSushi/toml v1.2.1 h1:9F2/+DoOYIOksmaJFPw1tGFy1eDnIJXg+UHjuD8lTak=
+-github.com/BurntSushi/toml v1.2.1/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbicEuybxQ=
+-github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
+-github.com/Djarvur/go-err113 v0.0.0-20210108212216-aea10b59be24 h1:sHglBQTwgx+rWPdisA5ynNEsoARbiCBOyGcJM4/OzsM=
+-github.com/Djarvur/go-err113 v0.0.0-20210108212216-aea10b59be24/go.mod h1:4UJr5HIiMZrwgkSPdsjy2uOQExX/WEILpIrO9UPGuXs=
+-github.com/GaijinEntertainment/go-exhaustruct/v2 v2.3.0 h1:+r1rSv4gvYn0wmRjC8X7IAzX8QezqtFV9m0MUHFJgts=
+-github.com/GaijinEntertainment/go-exhaustruct/v2 v2.3.0/go.mod h1:b3g59n2Y+T5xmcxJL+UEG2f8cQploZm1mR/v6BW0mU0=
+-github.com/Masterminds/semver v1.5.0 h1:H65muMkzWKEuNDnfl9d70GUjFniHKHRbFPGBuZ3QEww=
+-git
+```
+
+**File**: `tools/src/golangci-lint/pin.go` (removed, +0/-21)
+```diff
+@@ -1,21 +0,0 @@
+-// Copyright (c) 2022 Alibaba Group Holding Ltd.
 -//
 -// Licensed under the Apache License, Version 2.0 (the "License");
 -// you may not use this file except in compliance with the License.
@@ -2138,347 +2431,63 @@ Co-authored-by: 澄潭 <[REDACTED_EMAIL]>
 -// See the License for the specific language governing permissions and
 -// limitations under the License.
 -
--use serde_json::{json, Number, Value};
+-//go:build pin
+-// +build pin
 -
--fn merge_number(target: &mut Value, add: &Value) {
--    if target.is_null() {
--        if add.is_object() {
--            *target = json!({});
--        } else if add.is_number() {
--            *target = Value::from(0i64);
--        } else {
--            return;
--        }
--    }
--    match (target, add) {
--        (Value::Object(t), Value::Object(a)) => {
--            for (key, value) in a.iter() {
--                if let Some(v) = t.get_mut(key) {
--                    merge_number(v, value);
--                } else {
--                    t.insert(key.clone(), value.clone());
--                }
--            }
--        }
--        (Value::Number(t), Value::Number(a)) => {
--            *t = Number::from(
--                t.as_i64()
--                    .unwrap_or_default()
--                    .saturating_add(a.as_i64().unwrap_or_default()),
--            );
--        }
--        _ => {}
--    }
--}
--#[derive(Default, Clone)]
--pub(crate) struct NumberMerge {
--    value: Value,
--}
+-package ignore
 -
--impl NumberMerge {
--    pub(crate) fn add(&mut self, number: &Value) {
--        merge_number(&mut self.value, number);
--    }
--    pub(crate) fn finish(&mut self) -> Value {
--        core::mem::replace(&mut self.value, Value::Null)
--    }
--}
+-import "github.com/golangci/golangci-lint/cmd/golangci-lint"
+-
 ```
 
----
-
-### Incident Patch 3: `3212ed76` (2026-10-22)
-**Commit Message**: fix(mcp-server): restore main-route proxy compatibility (#5029)
-
-Signed-off-by: sunxiao <[REDACTED_EMAIL]>
-Signed-off-by: johnlanni <[REDACTED_EMAIL]>
-Co-authored-by: johnlanni <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/wasm-plugin-unit-test.yml` (modified, +1/-0)
+**File**: `tools/tools.mk` (modified, +25/-1)
 ```diff
-@@ -247,6 +247,7 @@ jobs:
-       working-directory: plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification
-       run: |
-         python3 auto_self_test.py
-+        python3 routing_self_test.py
-         python3 orchestration_self_test.py
-         bash lifecycle_self_test.sh
+@@ -9,11 +9,35 @@ ifeq ($(origin GOARCH), undefined)
+ endif
  
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/README.md` (modified, +28/-0)
-```diff
-@@ -104,6 +104,9 @@ x-envoy-allow-mcp-tools: tool1,tool2,tool3
  
- **使用场景示例**：
- 
-+<<<<<<< HEAD
-+出站头基于现有认证处理后的请求继承：`Cookie`、租户头、自定义业务头和前置插件添加的普通头默认保留，无需新增配置。已被认证逻辑移除的凭据不会恢复；`Authorization` 继续遵循 `downstreamSecurity`、`passthroughAuthHeader` 和显式上游凭据规则。下游 session、`Last-Event-ID` 和内部控制头按操作清理；MCP 协议头重新生成。格式合法的 `Mcp-Param-*` 仅透传到当前 modern tools/call，不进入 discover、initialize 或 legacy RPC。
-+=======
- 1. **基于用户角色的权限控制**
-    ```yaml
-    # 配置中定义所有可用工具
-@@ -113,6 +116,7 @@ x-envoy-allow-mcp-tools: tool1,tool2,tool3
-    - delete-user-info
-    - admin-operation
-    ```
-+>>>>>>> origin/main
- 
-    前置认证插件可以根据用户角色设置不同的工具权限：
-    - 普通用户：`x-envoy-allow-mcp-tools: get-user-info`
-@@ -274,7 +278,11 @@ server:
-     probeTimeoutMs: 1000
- ```
- 
-+<<<<<<< HEAD
-+`autoDetection.probeTimeoutMs` 仅在 `auto + http` 下解析：缺省 1000 ms，必须是可表示为 uint32 的正整数，实际探测超时取它与有效 `timeout` 的较小值。单独配置 autoDetection 不启用 auto；插件 `timeout` 约束探测/握手等独立子请求（缺省 5000ms），最终 HTTP 业务请求由原路由的 timeout 控制，整条链路总耗时可能更长。
-+=======
- 使用时注意：
-+>>>>>>> origin/main
- 
- - MCP `2026-07-28` 客户端可以通过插件访问旧版后端；旧版客户端不能通过插件访问仅支持 MCP `2026-07-28` 的后端。
- - `auto` 的自动探测仅用于 MCP `2026-07-28` 客户端请求；旧版客户端请求仍按旧版流程处理。
-@@ -288,11 +296,31 @@ server:
- 
- `defaultDownstreamSecurity` 和工具级 `security` 定义从客户端请求中提取凭证的方式，不负责校验凭证有效性。客户端身份校验和访问授权需要通过 Higress 的认证、鉴权插件配置。
- 
-+<<<<<<< HEAD
-+同一上游池实例必须提供一致协议能力；探测与业务仍可能落到不同实例。HTTP JSON/SSE 在完整业务响应后解析，不提供实时进度或订阅。1 MiB 限制在复制探测 body 到 Wasm 前检查，不限制 Envoy 已接收的全部缓冲，也不限制 Tool 结果大小。取消阻止后续阶段，不宣称能撤回已提交的工具副作用。取消后的有效连接明确终止响应，断连后的回调不再访问流。
-+=======
- `defaultUpstreamSecurity` 和工具级 `requestTemplate.security` 定义访问后端时使用的认证方案。
-+>>>>>>> origin/main
- 
- ### 定义认证方案 (`server.securitySchemes`)
- 
-+<<<<<<< HEAD
-+### 主请求转发兼容性
++# Prebuilt tools
++# ==============
++#
++tools/golangci-lint = $(tools.bindir)/golangci-lint
++GOLANGCI_LINT_VERSION = 2.15.0
++GOLANGCI_LINT_ARCHIVE = golangci-lint-$(GOLANGCI_LINT_VERSION)-$(GOOS)-$(GOARCH).tar.gz
++GOLANGCI_LINT_URL = https://github.com/golangci/golangci-lint/releases/download/v$(GOLANGCI_LINT_VERSION)/$(GOLANGCI_LINT_ARCHIVE)
++GOLANGCI_LINT_SHA256_darwin_amd64 = 767b899a28285e88ded2823d5dcc4bc5ef681173eb2d80f029a7b17ee4ece3b8
++GOLANGCI_LINT_SHA256_darwin_arm64 = d1e409481a8ca846c4bc97e781eb5cb1bd5c23353a0b3977a1cbda1b1b6447d5
++GOLANGCI_LINT_SHA256_linux_amd64 = 9b7fe6a6bf6334b98decf8d86b11415ea7889afdabdd1959fdce23af2a9ebcea
++GOLANGCI_LINT_SHA256_linux_arm64 = b4d8f17068b35ee6060cc2f69a16fb48740d706fbba81661c318649c114a6998
++GOLANGCI_LINT_SHA256 = $(GOLANGCI_LINT_SHA256_$(GOOS)_$(GOARCH))
++ifeq ($(GOOS),darwin)
++GOLANGCI_LINT_SHA256_CMD = shasum -a 256
++else
++GOLANGCI_LINT_SHA256_CMD = sha256sum
++endif
++$(tools.bindir)/$(GOLANGCI_LINT_ARCHIVE):
++	mkdir -p $(@D)
++	test -n "$(GOLANGCI_LINT_SHA256)" || (echo "Unsupported golangci-lint platform: $(GOOS)/$(GOARCH)"; exit 1)
++	curl -sfL $(GOLANGCI_LINT_URL) -o $@ || (rm -f $@; exit 1)
++	echo "$(GOLANGCI_LINT_SHA256)  $@" | $(GOLANGCI_LINT_SHA256_CMD) -c - || (rm -f $@; exit 1)
++$(tools/golangci-lint): $(tools.bindir)/$(GOLANGCI_LINT_ARCHIVE)
++	tar -C $(@D) -zxmf $< --strip-components=1 golangci-lint-$(GOLANGCI_LINT_VERSION)-$(GOOS)-$(GOARCH)/golangci-lint
 +
-+HTTP `legacy`、`modern`、`auto` 的最终 `tools/list` / `tools/call` 使用当前 SDK 的 `RouteCall` 继续原请求，后置请求插件和原路由的 header/path rewrite、timeout、retry、hash policy 因此生效。继续保留 `DisableReroute`：本插件修改 host/path 不主动重新匹配路由。插件只提交一次业务请求；Envoy 路由重试可能产生多次后端尝试，不承诺工具恰好执行一次。
-+
-+initialize、initialized、auto discover 仍是独立子请求，不经过后置插件；后置插件添加的凭据不能反向作用于已完成的握手。旧 SSE 仍使用主请求 GET 建立通道和独立 POST RPC，同时恢复普通头继承。上游协议识别要求后续插件不把最终业务改到另一个逻辑服务。
-+
-+同步 modern 通过 Continue 放行，异步握手成功才 Resume 一次。响应转换和取消清理在 RouteCall 回调及 stream-done 中完成，覆盖无 body 的响应头阶段和完整 body 的响应体阶段。插件使用 wasm-go v1.1.1，并在启动时固定启用 SafeLog：SDK 的请求及异步响应载荷日志由 INFO 降为 DEBUG，无需新增配置。SafeLog 不脱敏或删除 DEBUG 报文，也不自动过滤普通 Infof；开启 DEBUG 时仍可能看到完整凭据、参数和结果。RouteCall 内部改写操作未逐项检查返回错误的既有行为保持。
-+
-+安全兼容性调整：客户端 `Proxy-Authorization` 不再默认继承到 HTTP 控制/业务请求或旧 SSE GET/POST，以免把代理认证凭据发送到 MCP 源站。显式配置的上游鉴权仍按原优先级生成凭据；普通多值业务头和 Cookie 的继承不受影响。
-+
-+旧配置无需迁移。回滚时将 WasmPlugin 的 `url` 恢复为之前记录的插件镜像 digest（本地挂载环境恢复原 Wasm 文件并重新加载），保留原路由配置；回滚后最终业务的 sidecall 差异与普通头限制也会恢复。真实数据面三版本验证入口见 [runtime-verification](testdata/runtime-verification/README.md#routing-compatibility-4597)。
-+
-+### 明确暂缓范围
-+=======
- 您可以在服务器级别定义一组可重用的认证方案。这些方案之后可以被各个工具引用，用于配置 MCP Server 向后端 REST API 发起请求时的认证方式。
-+>>>>>>> origin/main
- 
- **配置字段 (`server.securitySchemes[]`)**:
- 
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/README_EN.md` (modified, +20/-0)
-```diff
-@@ -117,6 +117,8 @@ x-envoy-allow-mcp-tools: tool1,tool2,tool3
-    Upstream authentication plugin can set different tool permissions based on user roles:
-    - Regular users: `x-envoy-allow-mcp-tools: get-user-info`
-    - Advanced users: `x-envoy-allow-mcp-tools: get-user-info,update-user-info`
-+Outbound headers inherit the request after existing authentication processing. Cookies, tenant/custom headers and ordinary headers added by earlier filters are forwarded by default without new configuration. Removed credentials are never restored. Authorization retains the existing downstreamSecurity, passthroughAuthHeader and explicit upstream credential rules. Downstream sessions, Last-Event-ID and internal control headers are removed or rebuilt for the operation. Valid Mcp-Param-* headers are forwarded only on modern tools/call, never discover, initialize or legacy RPCs.
-+
-    - Administrators: Don't set header (allow all configured tools)
- 
- 2. **Multi-Tenant Scenario**
-@@ -274,13 +276,17 @@ To detect the backend protocol automatically, change the corresponding settings
-     probeTimeoutMs: 1000
- ```
- 
-+`autoDetection.probeTimeoutMs` is consumed only by `auto + http`. It defaults to 1000 ms and must be a positive uint32 integer. The probe uses the smaller of this value and the effective timeout. This section alone does not enable auto. Plugin timeout still applies to control callouts (5000 ms by default); the original route controls the final HTTP business timeout. Total exchange latency may exceed either timeout.
-+
- Keep the following in mind:
- 
- - MCP `2026-07-28` clients can access legacy backends through the plugin. Legacy clients cannot access backends that support only MCP `2026-07-28` through the plugin.
- - Automatic detection with `auto` applies only to MCP `2026-07-28` client requests. Legacy client requests still follow the legacy flow.
- - Detection adds backend requests. If the backend protocol is known, configure `legacy` or `modern` directly.
- - Detection requests use the configured backend credentials. The backend must allow those credentials to access its discovery interface. Backend instances behind the same route should have consistent protocol capabilities.
- - `transport: sse` enables access to legacy SSE backends; it does not provide a general real-time subscription or push service to clients.
-+Upstream pool instances must have consistent protocol capabilities because probe and business calls may reach different instances. HTTP JSON/SSE is parsed after the complete business response, without live progress or subscriptions. The 1 MiB probe guard prevents copying oversized bodies into Wasm; it does not bound all Envoy receive buffers or Tool results. Cancellation prevents later phases but cannot retract submitted tool effects. A cancelled live response is explicitly terminated; callbacks after stream closure do not access the stream.
-+
- 
- ## Authentication and Security
- 
-@@ -454,6 +460,20 @@ When passthrough is enabled and a non-empty credential is successfully extracted
- - REST-to-MCP: Uses `credential` from the selected upstream security configuration, falling back to the referenced scheme's `defaultCredential`.
- - MCP proxy: Uses the scheme's `defaultCredential`. If tools need different fixed credentials, define separate schemes and reference them from the tools.
- 
-+### Main-request forwarding compatibility
-+
-+Final HTTP tools/list and tools/call requests use the existing SDK RouteCall for legacy, modern and auto. Later request filters and the original route's header/path rewrite, timeout, retry and hash policies apply. DisableReroute remains enabled: this plugin's host/path changes do not trigger route rematching. One plugin submission can produce multiple backend attempts under route retries; this is not an exactly-once guarantee.
-+
-+Initialize, initialized and auto discover remain independent callouts and do not traverse later filters. Credentials added by later filters cannot affect earlier control requests. Legacy SSE retains its main GET channel and POST callouts, with ordinary headers inherited again. Auto assumes later filters do not redirect business to another logical service.
-+
-+Synchronous modern requests continue directly; asynchronous handshakes resume the request once on success. RouteCall response callbacks and stream-done own response conversion and cancellation cleanup, including empty-body header responses and buffered body responses. The plugin uses wasm-go v1.1.1 and enables SafeLog once at startup: SDK request and asynchronous response payload logs are downgraded from INFO to DEBUG without new user configuration. SafeLog does not redact or remove DEBUG payloads, or automatically filter ordinary Infof calls; enabling DEBUG may still expose full credentials, arguments and results. Existing unchecked internal RouteCall rewrite errors remain.
-+
-+Security compatibility change: client `Proxy-Authorization` is no longer inherited by default in HTTP control/business requests or 
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/VERSION` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--2.0.3
-+2.0.4-alpha
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/go.mod` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@ require (
- 	amap-tools v0.0.0-00010101000000-000000000000
- 	github.com/alibaba/higress/plugins/wasm-go/pkg/mcp v0.0.0
- 	github.com/higress-group/proxy-wasm-go-sdk v0.0.0-20251103120604-77e9cce339d2
--	github.com/higress-group/wasm-go v1.0.10-0.20260115123534-84ef43c39dc9
-+	github.com/higress-group/wasm-go v1.1.1
- 	github.com/stretchr/testify v1.9.0
- 	quark-search v0.0.0-00010101000000-000000000000
- )
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/go.sum` (modified, +2/-0)
-```diff
-@@ -24,6 +24,8 @@ github.com/higress-group/proxy-wasm-go-sdk v0.0.0-20251103120604-77e9cce339d2 h1
- github.com/higress-group/proxy-wasm-go-sdk v0.0.0-20251103120604-77e9cce339d2/go.mod h1:tRI2LfMudSkKHhyv1uex3BWzcice2s/l8Ah8axporfA=
- github.com/higress-group/wasm-go v1.0.10-0.20260115123534-84ef43c39dc9 h1:sUuUXZwr50l3W1St7MESlFmxmUAu+QUNNfJXx4P6bas=
- github.com/higress-group/wasm-go v1.0.10-0.20260115123534-84ef43c39dc9/go.mod h1:uKVYICbRaxTlKqdm8E0dpjbysxM8uCPb9LV26hF3Km8=
-+github.com/higress-group/wasm-go v1.1.1 h1:mkqwusf+4jk28FIq5OFyWbSxkEV9MWmaDF/1JHAPHjs=
-+github.com/higress-group/wasm-go v1.1.1/go.mod h1:uKVYICbRaxTlKqdm8E0dpjbysxM8uCPb9LV26hF3Km8=
- github.com/huandu/xstrings v1.5.0 h1:2ag3IFq9ZDANvthTwTiqSSZLjDc+BedvHPAp5tJy2TI=
- github.com/huandu/xstrings v1.5.0/go.mod h1:y5/lhBue+AyNmUVz9RLU9xbLR0o4KIIExikq4ovT0aE=
- github.com/invopop/jsonschema v0.13.0 h1:KvpoAJWEjR3uD9Kbm2HWJmqsEaHt8lBUpd0qHcIi21E=
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/main.go` (modified, +3/-0)
-```diff
-@@ -19,11 +19,14 @@ import (
- 	quark "quark-search/tools"
- 
- 	"github.com/alibaba/higress/plugins/wasm-go/pkg/mcp"
-+	sdklog "github.com/higress-group/wasm-go/pkg/log"
- )
- 
- func main() {}
- 
- func init() {
-+	// Keep payload logs at DEBUG for the entire VM, including async responses.
-+	sdklog.SetSafeLogEnabled(true)
- 	mcp.LoadMCPServer(mcp.AddMCPServer("quark-search",
- 		quark.LoadTools(mcp.NewMCPServer())))
- 	mcp.LoadMCPServer(mcp.AddMCPServer("amap-tools",
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/main_test.go` (modified, +78/-48)
-```diff
-@@ -17,6 +17,7 @@ package main
- import (
- 	"encoding/json"
- 	"fmt"
-+	"strconv"
- 	"strings"
- 	"testing"
- 
-@@ -237,9 +238,38 @@ func calloutAt(t *testing.T, host test.TestHost, index int) proxytest.HttpCallou
- 	return callouts[index]
- }
- 
-+func routedRequest(t *testing.T, host test.TestHost) proxytest.HttpCalloutAttribute {
-+	t.Helper()
-+	require.Empty(t, host.GetHttpCalloutAttributes())
-+	require.Equal(t, types.ActionContinue, host.GetHttpStreamAction())
-+	return proxytest.HttpCalloutAttribute{CalloutID: ^uint32(0), Headers: host.GetRequestHeaders(), Body: host.GetRequestBody()}
-+}
-+
-+func proxyTestResponse(host test.TestHost) *proxytest.LocalHttpResponse {
-+	if local := host.GetLocalResponse(); local != nil {
-+		return local
-+	}
-+	headers := host.GetResponseHeaders()
-+	if len(headers) == 0 {
-+		return nil
-+	}
-+	code := 0
-+	for _, header := range headers {
-+		if header[0] == ":status" {
-+			code, _ = strconv.Atoi(header[1])
-+		}
-+	}
-+	return &proxytest.LocalHttpResponse{StatusCode: uint32(code), Headers: headers, Data: host.GetResponseBody()}
-+}
-+
- func completeCallout(host test.TestHost, callout proxytest.HttpCalloutAttribute, status string, headers [][2]string, body []byte) {
- 	allHeaders := append([][2]string{{":status", status}}, headers...)
--	host.CallOnHttpCallResponse(callout.CalloutID, allHeaders, nil, body)
-+	if callout.CalloutID == ^uint32(0) {
-+		host.CallOnHttpResponseHeaders(allHeaders)
-+		host.CallOnHttpResponseBody(body)
-+	} else {
-+		host.CallOnHttpCallResponse(callout.CalloutID, allHeaders, nil, body)
-+	}
- }
- 
- // TestRestMCPServerConfig 测试REST MCP服务器配置解析
-@@ -307,7 +337,7 @@ func TestSchemaCompatibilityModernListAndCallBehavior(t *testing.T) {
- 			require.Equal(t, types.HeaderStopIteration, action)
- 			body := []byte(`{"jsonrpc":"2.0","id":"list","method":"tools/list","params":{"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28","io.modelcontextprotocol/clientCapabilities":{}}}}`)
- 			require.Equal(t, types.ActionContinue, host.CallOnHttpRequestBody(body))
--			response := host.GetLocalResponse()
-+			response := proxyTestResponse(host)
- 			require.NotNil(t, response)
- 			var envelope map[string]interface{}
- 			require.NoError(t, json.Unmarshal(response.Data, &envelope))
-@@ -337,7 +367,7 @@ func TestSchemaCompatibilityModernListAndCallBehavior(t *testing.T) {
- 			require.Equal(t, types.HeaderStopIteration, action)
- 			body := []byte(`{"jsonrpc":"2.0","id":"blocked","method":"tools/call","params":{"name":"getTransactionRecordListV2","arguments":{"businessType":["SALE"]},"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28","io.modelcontextprotocol/clientCapabilities":{}}}}`)
- 			require.Equal(t, types.ActionContinue, host.CallOnHttpRequestBody(body))
--			response := host.GetLocalResponse()
-+			response := proxyTestResponse(host)
- 			require.NotNil(t, response)
- 			require.Equal(t, uint32(200), response.StatusCode)
- 			var envelope map[string]interface{}
-@@ -365,7 +395,7 @@ func TestSchemaCompatibilityModernListAndCallBehavior(t *testing.T) {
- 			require.Equal(t, types.HeaderStopIteration, action)
- 			body := []byte(`{"jsonrpc":"2.0","id":"valid","method":"tools/call","params":{"name":"health","arguments":{},"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28","io.modelcontextprotocol/clientCapabilities":{}}}}`)
- 			require.Equal(t, types.ActionContinue, host.CallOnHttpRequestBody(body))
--			require.Nil(t, host.GetLocalResponse(), "valid tool must not be rejected before routing")
-+			require.Nil(t, proxyTestResponse(host), "valid tool must not be rejected before routing")
- 			host.CompleteHttp()
- 		})
- 	})
-@@ -406,7 +436,7 @@ func TestSchemaCompatibilityMetricsGlobalAndRuleLevel(t *testing.T) {
- 					require.Equal(t, types.HeaderStopIteration, action)
- 					body := []byte(fmt.Sprintf(`{"jsonrpc":"2.0","id":"blocked-%d","method":"tools/call","params":{"name":"getTransactionRecordListV2","arguments":{"businessType":["SALE"]},"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28","io.modelcontextprotocol/clientCapabilities":{}}}}`, call))
- 					require.Equal(t, types.ActionContinue, host.CallOnHttpRequestBody(body))
--					require.NotNil(t, host.GetLocalResponse())
-+					require.NotNil(t, proxyTestResponse(host))
- 					require.Empty(t, host.GetHttpCalloutAttributes())
- 					host.CompleteHttp()
- 					blocked, err = host.GetCounterMetric(blockedMetric)
-@@ -465,7 +495,7 @@ func TestRestMCPServerBasicFlow(t *testing.T) {
- 			action = host.CallOnHttpRequestBody([]byte(initializeRequest))
- 			require.Equal(t, types.ActionContinue, action)
- 
--			localResponse := host.GetLocalResponse()
-+			localResponse := proxyTestResponse(host)
- 			require.NotNil(t, localResponse)
- 			require.NotEmpty(t, localResponse.Data)
- 
-@@ -512,7 +542,7 @@ func TestRestMCPServerBasicFlow(t *testing.T) {
- 			require.Equal(t, types.ActionContinue, action)
- 
- 			// 验证响应
--			localResponse := host.GetLocalResponse()
-+			localResponse := proxyTestResponse(host)
- 			if localResponse != nil && len(
+ # `go get`-able things
+ # ====================
+ #
+ tools/controller-gen = $(tools.bindir)/controller-gen
+-tools/golangci-lint  = $(tools.bindir)/golangci-lint
+ tools/kustomize      = $(tools.bindir)/kustomize
+ tools/kind           = $(tools.bindir)/kind
+ tools/kind-gateway-api = $(tools.bindir)/kind-gateway-api
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5276** (2026-10-28): chore(tools): remove GPL lint dependency (@johnlanni)
+- **PR #5263** (2026-10-28): feat(mcp-server): optionally preserve upstream discovery instructions (@sunxia0)
 - **PR #5239** (2026-10-22): ci: use the full commit SHA for the translate action pin (@johnlanni)
 - **PR #5238** (closed): docs(ip-restriction): normalize x-real-ip example (@purplellllll)
 - **PR #5237** (closed): docs(ai-proxy): correct Vertex safety setting name (@purplellllll)
 - **PR #5236** (closed): docs(ai-security-guard): document securityToken (@purplellllll)
-- **PR #5211** (2026-10-21): ci: harden the content-translation workflow against upstream flakiness (@johnlanni)
-- **PR #5209** (2026-10-22): fix(ai-data-masking): 修复流式工具调用内容丢失 || fix(ai-data-masking): Fix the loss of streaming tool call content (@zhihao-yuan)
 
 ---
 
@@ -2498,28 +2507,38 @@ Co-authored-by: johnlanni <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: fix spelling errors in plugin READMEs and comments (#5054)
+## X. mcp-server): optionally preserve upstream discovery instructions (#5263)
 
 **RULE**:
-When implementing operations in `plugins/wasm-cpp/extensions/jwt_auth/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `plugins/wasm-go/extensions/mcp-server/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `829006d3`: docs: fix spelling errors in plugin READMEs and comments (#5054). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bde990b4`: mcp-server): optionally preserve upstream discovery instructions (#5263). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-cpp/extensions/jwt_auth/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-go/extensions/mcp-server/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-Json Web Token（JWT），是为了在网络应用环境间传递声明而执行的一种基于JSON的开放标准RFC7519。JWT一般可以用作独立的身份验证令牌，可以包含用户标识、用户角色和权限等信息，以便于从资源服务器获取资源，也可以增加一些额外的其它业务逻辑所必须的声明信息，特别适用于分布式站点的登录场景。
+| `server.passthroughInstructions` | boolean | 选填 | false | 仅在单个显式 `mcp-proxy`、`transport: http`、`protocolStrategy: modern` 配置下可设为 `true`。从上游成功 discover 结果中提取 instructions，详见下文。 |
+
+### 上游 instructions
+
+默认不访问上游，`server/discover` 保持原有的网关本地结果。需要上游使用说明时，可在上述 modern HTTP 代理配置中设置 `server.passthroughInstructions: true`；`auto`、`legacy`、SSE、REST 和 `toolSet` 配置不支持启用，非 boolean 值会导致配置错误。
+
+开启后，每个 modern `server/discover` 请求均沿用当前主请求的路由、超时、重试及 server 级认证规则访问上游，保留原请求 ID 和 `_meta`。只有 HTTP 200、无 JSON-RPC error 且结果为对象的普通成功响应才尝试提取 `instructions`。显式非 `complete` 结果继续走原有代理结果路径；上游错误也保留现有错误路径，不回退为成功的本地 discover。
+
+只合并非空字符串，按解码后的 UTF-8 字节计算，上限为 32768 字节；空白原样保留。字段缺失、空串、类型不符或超限时仅省略该字段，不影响其他本地结果。`supportedVersions`、`capabilities`、`serverInfo`、`resultType`、`ttlMs`、`cacheScope` 继续由网关生成。该字段不缓存；未配置 server 级凭据且未启用 `passthroughAuthHeader` 时保持匿名 discover。启用 `passthroughAuthHeader: true` 时仍按现有规则转发客户端 `Authorization`，不扫描或借用工具级凭据。此选项不改变现有 SDK 日志、读取/写入或 `original-*` 上下文的数据可见范围。上游 instructions 是不可信文本，不执行其中的指令，也不据其授予工具访问权限；`allowTools` 可能隐藏指引中提到的工具。
+
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-Json Web Toke（JWT），是为了在网络应用环境间传递声明而执行的一种基于JSON的开放标准RFC7519。JWT一般可以用作独立的身份验证令牌，可以包含用户标识、用户角色和权限等信息，以便于从资源服务器获取资源，也可以增加一些额外的其它业务逻辑所必须的声明信息，特别适用于分布式站点的登录场景。
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `829006d3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bde990b4` are properly handled with clean fallback behavior.
