@@ -5722,3 +5722,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-28T05:59:55.304Z |
 | `learn-huggingface-orcarouter-orcasaq-2-27b` | `https://huggingface.co/orcarouter/OrcaSAQ-2-27B` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-28T06:11:52.933Z |
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `7344c579` | Multi-dimensional audit evidence | 2026-10-28T06:11:54.582Z |
+| `learn-huggingface-taichuai-zdtaichu5-0-9b` | `https://huggingface.co/TaichuAI/ZDTaichu5.0-9B` | `hf-taichua` | Multi-dimensional audit evidence | 2026-10-28T06:18:32.088Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `22ae5780` | Multi-dimensional audit evidence | 2026-10-28T06:18:38.796Z |

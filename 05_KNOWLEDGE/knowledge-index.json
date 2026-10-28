@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T06:11:54.516Z",
+  "last_updated": "2026-10-28T06:18:38.731Z",
   "total_verified_learnings": 1156,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -27732,7 +27732,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
       "source_version": "hf-taichuai-zdtaichu5.0-9b",
-      "content_hash": "bce98ef75b41a905a600f60d6b8e58a8217569edce3660097e86f109907fa02b",
+      "content_hash": "eefd7ab9c826a2778bdf86c59170afc2455ec92448cac46b784325258790b653",
       "dossier_path": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "promoted_rules": [
@@ -27777,6 +27777,11 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv4ja6oo",
           "verified_at": "2026-10-12T00:48:35.257Z"
+        },
+        {
+          "number": 757,
+          "title": "**BOS/EOS Token Alignment Rule**",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1024,
@@ -27922,6 +27927,16 @@
           "number": 4321,
           "title": "**Context Length Guard Rule**",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5204,
+          "title": "**Multimodal Token Uniqueness Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5205,
+          "title": "**Consistent Downsample Ratio Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -27942,7 +27957,7 @@
         "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv45zyde",
         "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv4ja6oo"
       ],
-      "verified_at": "2026-10-25T13:57:11.409Z",
+      "verified_at": "2026-10-28T06:18:32.009Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42173,8 +42188,8 @@
       "slug": "paradedb-paradedb",
       "platform": "github",
       "source_url": "https://github.com/paradedb/paradedb",
-      "source_version": "97bc1c66",
-      "content_hash": "822b62064d08fce75bd6e484371d2f8dff66c676c5fae114732b0fba9182309f",
+      "source_version": "22ae5780",
+      "content_hash": "d9c88797b866f855097487e2d538bb254baccac0945149b961deeb276069dda3",
       "dossier_path": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "promoted_rules": [
@@ -42212,6 +42227,11 @@
           "number": 4896,
           "title": "apply backpressure across immutable merge layers (#6880)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5206,
+          "title": "ci: restore Cohere index build metrics in baselines and comments (#7061)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42219,7 +42239,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T16:24:56.929Z",
+      "verified_at": "2026-10-28T06:18:38.718Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -75458,15 +75478,15 @@
       "learning_id": "rule-757",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 757,
-      "title": "**BOS/EOS Token Alignment Rule** (Harvested from TaichuAI/ZDTaichu5.0-9B)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "**BOS/EOS Token Alignment Rule**",
+      "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+      "source_version": "hf-taichuai-zdtaichu5.0-9b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.813Z"
+      "verified_at": "2026-10-28T06:18:32.009Z"
     },
     "rule-758": {
       "learning_id": "rule-758",
@@ -142328,6 +142348,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T06:11:54.503Z"
+    },
+    "rule-5204": {
+      "learning_id": "rule-5204",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5204,
+      "title": "**Multimodal Token Uniqueness Rule**",
+      "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+      "source_version": "hf-taichuai-zdtaichu5.0-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T06:18:32.009Z"
+    },
+    "rule-5205": {
+      "learning_id": "rule-5205",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5205,
+      "title": "**Consistent Downsample Ratio Rule**",
+      "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+      "source_version": "hf-taichuai-zdtaichu5.0-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T06:18:32.009Z"
+    },
+    "rule-5206": {
+      "learning_id": "rule-5206",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5206,
+      "title": "ci: restore Cohere index build metrics in baselines and comments (#7061)",
+      "source_url": "https://github.com/paradedb/paradedb",
+      "source_version": "22ae5780",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T06:18:38.718Z"
     }
   },
   "aliases": {

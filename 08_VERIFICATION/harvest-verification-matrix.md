@@ -5713,3 +5713,5 @@
 | `CYCLE-20261028-G71H` | `2026-10-28T05:59:55.301Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5198, Rule 5199, Rule 5200` | Yes (`ef93c3cc...`) |
 | `CYCLE-20261028-VKRL` | `2026-10-28T06:11:52.929Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 969, Rule 5201, Rule 5202` | Yes (`f60ba0cb...`) |
 | `CYCLE-20261028-VM1E` | `2026-10-28T06:11:54.578Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5203` | Yes (`f3e15ce0...`) |
+| `CYCLE-20261028-44R8` | `2026-10-28T06:18:32.084Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5204, Rule 5205, Rule 757` | Yes (`eefd7ab9...`) |
+| `CYCLE-20261028-49XK` | `2026-10-28T06:18:38.792Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5206` | Yes (`d9c88797...`) |

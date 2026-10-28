@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T06:11:54.587Z",
-  "total_cycles_completed": 5690,
-  "total_learnings_persisted": 5690,
-  "total_rules_promoted": 5144,
+  "last_updated": "2026-10-28T06:18:38.801Z",
+  "total_cycles_completed": 5692,
+  "total_learnings_persisted": 5692,
+  "total_rules_promoted": 5148,
   "history": [
-    {
-      "timestamp": "2026-10-27T20:01:11.931Z",
-      "repository": "AgileRL/AgileRL",
-      "learningId": "learn-github-agilerl-agilerl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T20:01:14.894Z",
-      "repository": "alikon-art/DeterminFlow",
-      "learningId": "learn-github-alikon-art-determinflow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T20:01:17.012Z",
       "repository": "sunbigfly/ppt-agent-skills",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-28T06:11:54.587Z",
       "repository": "databendlabs/databend",
       "learningId": "learn-github-databendlabs-databend",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T06:18:32.093Z",
+      "repository": "TaichuAI/ZDTaichu5.0-9B",
+      "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T06:18:38.801Z",
+      "repository": "paradedb/paradedb",
+      "learningId": "learn-github-paradedb-paradedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
