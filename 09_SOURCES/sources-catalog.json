@@ -665,8 +665,8 @@
     "sourceUrl": "https://huggingface.co/google/embeddinggemma-2",
     "sourceVersion": "hf-google-embeddinggemma-2",
     "license": "Open-Source",
-    "contentHash": "bdf99c8b950059bf820285aedb96a0f57757e03c163e45baa1178552e5b687e8",
-    "lastHarvestedAt": "2026-10-25T16:41:15.727Z",
+    "contentHash": "5326aa75d022e2dd201273f40eacb947b02a0053bd2b45de6b5de6fddc2036ee",
+    "lastHarvestedAt": "2026-10-28T19:31:55.526Z",
     "learningId": "learn-huggingface-google-embeddinggemma-2"
   },
   "hf-unsloth-embeddinggemma-2-gguf": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "3a38840c",
+    "sourceVersion": "8ed43f1f",
     "license": "BSD-3-Clause",
-    "contentHash": "ec4182434da72188e7dae0b864fbaf72a8cb99cd4aa349876734704ee8971807",
-    "lastHarvestedAt": "2026-10-27T21:18:40.526Z",
+    "contentHash": "733db5923a1482eed79f03cfe624a5019f1f23a11bf449924984474a586bcec9",
+    "lastHarvestedAt": "2026-10-28T19:31:55.582Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -6263,10 +6263,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/limbo",
-    "sourceVersion": "e02cfcd7",
+    "sourceVersion": "b0563444",
     "license": "MIT",
-    "contentHash": "0721d572230a6ac84edeedfebc2346e44f47e8a83e8d4fb6d5c8d13da4646b64",
-    "lastHarvestedAt": "2026-10-27T13:35:20.635Z",
+    "contentHash": "dc280eae6f46aac6750cab824fe4bdbb0b878794e02ab80d73eb1bcaa8c74a36",
+    "lastHarvestedAt": "2026-10-28T19:32:01.164Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "carbon-design-system-carbon": {
@@ -7123,20 +7123,20 @@
     "repository": "necolas/react-native-web",
     "platform": "github",
     "sourceUrl": "https://github.com/necolas/react-native-web",
-    "sourceVersion": "6a995615",
+    "sourceVersion": "b7ebd988",
     "license": "MIT",
-    "contentHash": "b10e4babd4d4511a52a23d5aef1d0649e0c6837c63d100313159215111e2adca",
-    "lastHarvestedAt": "2026-10-28T00:19:33.644Z",
+    "contentHash": "ebc89de9d3d809ff18137ae87b4f38613b3fb24ad91a652c7aa1494d60125b7a",
+    "lastHarvestedAt": "2026-10-28T19:31:50.062Z",
     "learningId": "learn-github-necolas-react-native-web"
   },
   "zvec-ai-zvec-grep": {
     "repository": "zvec-ai/zvec-grep",
     "platform": "github",
     "sourceUrl": "https://github.com/zvec-ai/zvec-grep",
-    "sourceVersion": "4def5663",
+    "sourceVersion": "6e71bbb4",
     "license": "Apache-2.0",
-    "contentHash": "76fb01dea7637c4ce9fb75160c6019eb83b0f6594aa481b88cf24c8f49467401",
-    "lastHarvestedAt": "2026-10-27T16:38:20.271Z",
+    "contentHash": "0c23f62d255b62bafab7faf462846a12a33ae20d3b591a5f37a2b58580951aa5",
+    "lastHarvestedAt": "2026-10-28T19:31:45.611Z",
     "learningId": "learn-github-zvec-ai-zvec-grep"
   },
   "jetbrains-kotlinconf-app": {

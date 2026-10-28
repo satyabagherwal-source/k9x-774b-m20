@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  
 > **Source**: github ([https://github.com/zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep))  
-> **Source Version**: `4def5663`  
+> **Source Version**: `6e71bbb4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T16:38:19.845Z  
+> **Timestamp**: 2026-10-28T19:31:44.983Z  
 > **Learning ID**: `learn-github-zvec-ai-zvec-grep`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T16:38:18.597Z  
+> **Harvest Timestamp**: 2026-10-28T19:31:44.787Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Local-first search across your workspace, built for humans and AI agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4190 stars
+- **Stars / Engagement**: 4200 stars
 
 ---
 
@@ -1118,1410 +1118,1162 @@ def render_report(report: dict[str, Any]) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3ee5cbe3` (2026-10-26)
-**Commit Message**: feat(ci): build Rust npm packages for Windows ARM64 (#266)
+### Incident Patch 1: `ae7054b4` (2026-10-28)
+**Commit Message**: fix(daemon): replace legacy servers before Rust startup (#304)
 
-* feat(ci): build Rust npm packages for Windows ARM64
+* fix(daemon): replace legacy servers before Rust startup
 
-* fix(ci): use Clang for Windows ARM64 model runtimes
+* fix(daemon): guard legacy migration identity and endpoints
 
-* fix(ci): preserve MSVC flags with the Clang CL frontend
+Use graceful-only shutdown during automatic migration so stale records cannot fall back to signaling unrelated processes. Check OS process start times, preflight different target addresses, and resolve legacy localhost endpoints across both loopback families.
 
-* fix(ci): enable C++ exceptions for Windows ARM64 wrappers
+Add process-level regressions for reused PIDs, unreachable shutdown, occupied targets, IPv6 migration, and ambiguous localhost endpoints.
 
-* feat(ci): package Windows ARM64 with the prebuilt zvec SDK
+* test(daemon): accept contact timeouts for unreachable legacy servers
 
-* fix(ci): use the installed Visual Studio on Windows ARM64
+Windows can reach the HTTP deadline before a closed loopback port returns connection refused. Accept either contact failure while still requiring migration to fail, the legacy process to stay healthy, and its record to remain unchanged.
 
-* build: use r2 llama SDKs for Windows ARM64 and CUDA
-
-* build: keep CUDA SDK at r1 with Windows ARM64 CPU support
-
-* docs: describe Windows ARM64 prebuilt SDK packaging
-
----------
-
-Co-authored-by: feihongxu0824 <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/rust-package-build.yml` (modified, +32/-4)
+**File**: `rust/README.md` (modified, +16/-0)
 ```diff
-@@ -15,14 +15,14 @@ permissions:
+@@ -177,6 +177,22 @@ It rotates at 10 MiB and keeps five numbered backups by default. The global
+ (`info` or `debug`); restart the daemon after changing them. Bootstrap failures
+ are written to `<home>/daemon/bootstrap.log`.
  
- env:
-   CARGO_TERM_COLOR: always
--  # Every release target has a pinned SDK. Drift must fail, not rebuild CUDA.
-+  # Every release target has a pinned SDK. Drift must fail, not rebuild llama.cpp.
-   LLAMA_CPP_BUILD_MODE: prebuilt
- 
- jobs:
-   native:
-     name: Build ${{ inputs.target }}
-     runs-on: ${{ inputs.runner }}
--    timeout-minutes: ${{ (inputs.target == 'darwin-x64' || inputs.target == 'linux-x64-gnu' || inputs.target == 'win32-x64-msvc') && 180 || 90 }}
-+    timeout-minutes: ${{ (inputs.target == 'darwin-x64' || inputs.target == 'linux-x64-gnu' || inputs.target == 'win32-x64-msvc' || inputs.target == 'win32-arm64-msvc') && 180 || 90 }}
-     defaults:
-       run:
-         working-directory: rust
-@@ -33,6 +33,7 @@ jobs:
-       - uses: actions/setup-node@v6
-         with:
-           node-version: 24
-+          architecture: ${{ runner.arch == 'ARM64' && 'arm64' || 'x64' }}
-       - name: Configure native build parallelism
-         shell: node {0}
-         run: |
-@@ -49,6 +50,7 @@ jobs:
-         if: runner.os == 'Windows'
-         with:
-           python-version: "3.12"
-+          architecture: ${{ runner.arch == 'ARM64' && 'arm64' || 'x64' }}
-       - name: Use a short Windows Cargo home
-         if: runner.os == 'Windows'
-         shell: python
-@@ -66,8 +68,9 @@ jobs:
-         if: runner.os == 'Windows'
-         uses: ilammy/msvc-dev-cmd@v1
-         with:
--          arch: x64
--          vsversion: "2022"
-+          arch: ${{ inputs.target == 'win32-arm64-msvc' && 'arm64' || 'x64' }}
-+          # ARM64 follows the runner image's installed Visual Studio version.
-+          vsversion: ${{ inputs.target == 'win32-x64-msvc' && '2022' || '' }}
-       - name: Install Linux build dependencies
-         if: runner.os == 'Linux' && inputs.target != 'linux-x64-gnu'
-         run: |
-@@ -77,11 +80,24 @@ jobs:
-         id: rust-version
-         shell: bash
-         run: echo "channel=$(sed -n 's/^channel = "\(.*\)"/\1/p' rust-toolchain.toml)" >> "$GITHUB_OUTPUT"
-+      - name: Select the native Windows ARM64 Rust host
-+        if: inputs.target == 'win32-arm64-msvc'
-+        run: rustup set default-host aarch64-pc-windows-msvc
-       - name: Install the pinned Rust toolchain, including rustup if missing
-         # Linux x64 compiles in Docker, but host packaging still uses cargo metadata.
-         uses: dtolnay/rust-toolchain@686976e191b89faba57d3206551f0f330d8cb249 # stable
-         with:
-           toolchain: ${{ steps.rust-version.outputs.channel }}
-+      - name: Verify native Windows toolchains
-+        if: runner.os == 'Windows'
-+        env:
-+          EXPECTED_ARCH: ${{ inputs.target == 'win32-arm64-msvc' && 'arm64' || 'x64' }}
-+          EXPECTED_HOST: ${{ inputs.target == 'win32-arm64-msvc' && 'aarch64-pc-windows-msvc' || 'x86_64-pc-windows-msvc' }}
-+        run: |
-+          node -e "if (process.arch !== process.env.EXPECTED_ARCH) throw new Error('unexpected Node architecture: ' + process.arch)"
-+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-+          $hostLine = rustc -vV | Select-String '^host: '
-+          if ($hostLine.ToString() -ne "host: $env:EXPECTED_HOST") { throw "Unexpected Rust host: $hostLine" }
-       - name: Restore Cargo build state
-         id: cargo-cache
-         uses: actions/cache/restore@v5
-@@ -112,6 +128,18 @@ jobs:
-         with:
-           path: rust/target/ort-cuda12/
-           key: rust-ort-cuda12-v1-${{ inputs.target }}-${{ hashFiles('rust/scripts/cuda/prepare-onnxruntime.py') }}
-+      - name: Restore the Windows ARM64 ONNX Runtime
-+        if: inputs.target == 'win32-arm64-msvc'
-+        uses: actions/cache@v5
-+        with:
-+          path: rust/target/ort-prebuilt/
-+          key: rust-ort-windows-v2-${{ inputs.target }}-${{ hashFiles('rust/Cargo.lock', 'rust/scripts/prepare-onnxruntime-windows.py') }}
-+      - name: Prepare the verified Windows ARM64 ONNX Runtime
-+        if: inputs.target == 'win32-arm64-msvc'
-+        run: |
-+          python scripts/test-prepare-onnxruntime-windows.py
-+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-+          python scripts/prepare-onnxruntime-windows.py --target aarch64-pc-windows-msvc
-       - name: Restore the Intel macOS ONNX Runtime
-         if: inputs.target == 'darwin-x64'
-         id: ort-cache
-```
-
-**File**: `.github/workflows/rust-publish.yml` (modified, +9/-2)
-```diff
-@@ -19,6 +19,7 @@ on:
-           - all
-           - linux-x64-gnu
-           - win32-x64-msvc
-+          - win32-arm64-msvc
-           - linux-arm64-gnu
-           - darwin-arm64
-           - darwin-x64
-@@ -76,6 +77,7 @@ jobs:
-             { target: 'linux-x64-gnu', runner: 'ubuntu-24.04', gpu_runner: 'gpu-linux-t4' },
-             { target: 'linux-arm64-gnu', runner: 'ubuntu-24.04-arm', gpu_runner: '' },
-             { target: 'win32-x64-msvc', runner: 'windows-2022', gpu_runner: 'gpu-windows-t4' },
-+            { target: 'win32-arm64-msvc', runner: 'windows-11-arm', gpu_runner: '' },
-           ];
-           if (!['all', ...platforms.map(p => p.target)].includes(platform)) {
-             throw new Error(`Unknown build platform: ${platform}`);
-@@ -252,10 +254,12 @@ jobs:
-       - uses: actions/setup-node@v6
-         with:
-           node-version: 24
-+          architecture: ${{ runner.arch == 'ARM64' && 'arm64' || 'x64' }}
-       - uses: actions/setup-python@v6
-         if: runner.os == 'Windows'
-         with:
-           python-version: "3.12"
-+          architecture: ${{ runner.arch == 'ARM64' && 'arm64' || 'x64' }}
-       - name: Install the release npm version
-         run: npm install --global npm@11.21.0
-       - uses: actions/download-artifact@v8
-@@ -295,7 +299,7 @@ jobs:
-                 --model-cache /model-cache --logs /work/cpu-logs
-             '
-       - name: Install and exercise the downloaded artifacts without Windows CUDA libraries
--        if: runner.os == 'Windows'
-+        if: matrix.target == 'win32-x64-msvc'
-         shell: pwsh
-         run: |
-           # Hosted CPU images may include toolkit paths; do not let them satisfy DLL dependencies.
-@@ -313,7 +317,7 @@ jobs:
-         run: |
-           mkdir -p cpu-logs "${RUNNER_TEMP}/zvec-grep-model-cache"
-           sudo chown -R "$(id -u):$(id -g)" cpu-logs "${RUNNER_TEMP}/zvec-grep-model-cache"
--      - name: Install and exercise the macOS and Linux ARM64 artifacts
-+      - name: Install and exercise the non-CUDA platform artifacts
-         if: ${{ !matrix.cuda_package }}
-         run: npm run release:artifact-smoke -- --expect-cpu
-       - name: Retain CPU artifact execution evidence
-@@ -389,13 +393,16 @@ jobs:
-             runner: ubuntu-24.04-arm
-           - target: win32-x64-msvc
-             runner: windows-2022
-+          - target: win32-arm64-msvc
-+            runner: windows-11-arm
-     steps:
-       - uses: actions/checkout@v6
-         with:
-           persist-credentials: false
-       - uses: actions/setup-node@v6
-         with:
-           node-version: 24
-+          architecture: ${{ runner.arch == 'ARM64' && 'arm64' || 'x64' }}
-       - name: Install the release npm version
-         run: npm install --global npm@11.21.0
-       - uses: actions/download-artifact@v8
-```
-
-**File**: `rust/Cargo.lock` (modified, +2/-2)
-```diff
-@@ -1667,7 +1667,7 @@ checksum = "47d9d19d1d6efa0109d2f65ff4c85cddd50bd572e5a00127ab10987290bcefae"
- [[package]]
- name = "llama-cpp-2"
- version = "0.1.154"
--source = "git+https://github.com/zvec-ai/llama-cpp-rs.git?rev=0e2d4b520af769de221c1bf98bbbf1b2accf4ddc#0e2d4b520af769de221c1bf98bbbf1b2accf4ddc"
-+source = "git+https://github.com/zvec-ai/llama-cpp-rs.git?rev=660cb4008b36aaefe9f98a590ba3b712b3a95087#660cb4008b36aaefe9f98a590ba3b712b3a95087"
- dependencies = [
-  "encoding_rs",
-  "enumflags2",
-@@ -1680,7 +1680,7 @@ dependencies = [
- [[package]]
- name = "llama-cpp-sys-2"
- version = "0.1.154"
--source = "git+https://github.com/zvec-ai/llama-cpp-rs.git?rev=0e2d4b520af769de221c1bf98bbbf1b2accf4ddc#0e2d4b520af769de221c1bf98bbbf1b2accf4ddc"
-+source = "git+https://github.com/zvec-ai/llama-cpp-rs.git?rev=660cb4008b36aaefe9f98a590ba3b712b3a95087#660cb4008b36aaefe9f98a590ba3b712b3a95087"
- dependencies = [
-  "bindgen",
-  "cc",
-```
-
-**File**: `rust/Cargo.toml` (modified, +2/-2)
-```diff
-@@ -13,8 +13,8 @@ publish = false
- 
- [workspace.dependencies]
- # Keep the safe API and the C5 FFI boundary on the same pinned native ABI.
--llama-cpp-2 = { git = "https://github.com/zvec-ai/llama-cpp-rs.git", rev = "0e2d4b520af769de221c1bf98bbbf1b2accf4ddc", default-features = false }
--llama-cpp-sys-2 = { git = "https://github.com/zvec-ai/llama-cpp-rs.git", rev = "0e2d4b520af769de221c1bf98bbbf1b2accf4ddc", default-features = false }
-+llama-cpp-2 = { git = "https://github.com/zvec-ai/llama-cpp-rs.git", rev = "660cb4008b36aaefe9f98a590ba3b712b3a95087", default-features = false }
-+llama-cpp-sys-2 = { git = "https://github.com/zvec-ai/llama-cpp-rs.git", rev = "660cb4008b36aaefe9f98a590ba3b712b3a95087", default-features = false }
- async-trait = "0.1.89"
- axum = "0.8"
- bytes = "1.12.1"
-```
-
-**File**: `rust/README.md` (modified, +23/-11)
-```diff
-@@ -481,11 +481,13 @@ bash scripts/check.sh
- ## Native and CUDA builds
- 
- The safe llama API and the C5 FFI boundary share the same pinned
--`zvec-ai/llama-cpp-rs` revision (`0e2d4b520af769de221c1bf98bbbf1b2accf4ddc`).
-+`zvec-ai/llama-cpp-rs` revision (`660cb4008b36aaefe9f98a590ba3b712b3a95087`),
-+from branch `prebuilt/0.1.154-cpu-r2`.
- Its sys crate automatically selects a SHA256-pinned SDK when target, features
--and native options match: `zvec-0.1.154-cpu-r1` for CPU-only Linux/Windows x64,
--and `zvec-0.1.154-r1` for the existing five release configurations, including
--CUDA-enabled Linux/Windows x64. Matching builds reuse native
-+and native options match: `zvec-0.1.154-cpu-r2` for CPU-only Linux x64 and
-+Windows x64/ARM64, and `zvec-0.1.154-r1` for the existing five release configurations,
-+including CUDA-enabled Linux/Windows x64. This pin adds Windows ARM64 CPU support
-+without introducing the CUDA r2 architecture upgrade. Matching builds reuse native
- libraries and bindings without executing bindgen, CMake, C++ or CUDA compilation;
- Rust application code still compiles normally. CPU-only x64 builds download only
- the static CPU SDK, not the CUDA SDK; CUDA builds retain the shared core, CPU
-@@ -559,7 +561,8 @@ Source-mode CUDA 12.4 on Windows requires MSVC 14.38 before running
- `scripts/cuda/build-fallback.py`. Matching SDK builds copy that plugin directly,
- so neither a second CMake build nor the fallback toolchain is needed.
- 
--Publish CI requires prebuilt SDKs on all five targets; CUDA Rust CI also requires
-+Publish CI requires prebuilt llama SDKs on all six targets, including the
-+Windows ARM64 static CPU SDK. CUDA Rust CI also requires
- prebuilt mode instead of recompiling only for its T4 GPU. Linux publish builds
- run on Ubuntu 24.04 without a CUDA compiler. Runtime libraries, driver checks,
- link audits and real CPU/GPU inference gates remain required. Runtime staging
-@@ -756,7 +759,7 @@ contains exactly the target executable. It cannot be combined with
- `--binary`, `--lib-dir`, or `--cpu-only`. All payload files are checksummed.
- 
- The `Publish Rust packages` workflow builds the selected published native targets
--(all five by default) on matching CPU runners. It runs only through manual
-+(all six by default) on matching CPU runners. It runs only through manual
- dispatch. With `publish` left at its default `false`, it produces downloadable
- candidates without publishing to npm. Each CPU artifact-verification runner installs
- its platform and meta tarballs, then runs `zg --version`, checks managed-rg,
-@@ -773,8 +776,8 @@ requested GPU jobs then verify the exact collected tarballs, including CLI,
- managed-rg, and daemon IPC checks on every selected platform.
- 
- The packaging workflow's manual `platform` input defaults to `all`. Select any
--of `darwin-arm64`, `darwin-x64`, `linux-x64-gnu`, `linux-arm64-gnu`, or
--`win32-x64-msvc` for an individual build. For example, to validate Linux x64:
-+of `darwin-arm64`, `darwin-x64`, `linux-x64-gnu`, `linux-arm64-gnu`,
-+`win32-x64-msvc`, or `win32-arm64-msvc` for an individual build. For example, to validate Linux x64:
- 
- ```sh
- gh workflow run rust-publish.yml --ref <branch> \
-@@ -867,9 +870,18 @@ and is covered by the existing `rust/target/release` cache. ONNX Runtime is
- cached separately; both shared libraries are included in the npm payload.
- The Intel release targets macOS 14 and later.
- 
-+Windows ARM64 builds and tests natively on `windows-11-arm` with ARM64 Node,
-+Rust, and MSVC. zvec-rust 0.8.0 automatically downloads its Windows ARM64
-+prebuilt SDK and stages `zvec_c_api.dll` for packaging; no local zvec source
-+build is needed. ONNX Runtime uses the SHA-256-verified ARM64 DirectML archive
-+from the locked dependency's distribution manifest. llama-cpp-rs selects the
-+SHA-256-pinned Windows ARM64 static CPU SDK from `zvec-0.1.154-cpu-r2`, without
-+running bindgen, CMake or a C++ compiler. No Clang/Ninja overrides are needed. npm selects
-+`@zvec/zvec-grep-win32-arm64-msvc` for ARM64 Node on Windows.
++The instance record at `<home>/daemon/instance.lock` carries
++`daemonProtocolVersion: 1`. Status checks and daemon-backed CLI requests reject
++live legacy daemons without this field, including Node.js daemons; `auto` mode
++does not silently fall back to direct execution. Run `zg --server on` with the
++same home and any required token file to stop the legacy daemon and start Rust.
++The stdio bootstrap performs the same replacement automatically. Concurrent
++starts serialize shutdown and startup. Automatic migration only requests graceful
++shutdown: an unreachable endpoint, HTTP rejection, or exit timeout preserves the
++process instead of sending termination signals. OS process start times are checked
++against the instance record to reject reused PIDs. When changing listening addresses,
++the target is checked before stopping the old service. Legacy `localhost` endpoints
++are probed on both IPv4 and IPv6; ambiguous healthy endpoints block migration.
++Other protocol versions are rejected without replacement;
++use a compatible client or explicitly stop that daemon first. Index format
++compatibility remains separate and may require `zg --index --rebuild`.
 +
- For a complete all-platform run, download the `rust-release-<version>` artifact
- from the successful workflow run
--and unzip it. It contains five base platform tarballs, seven CUDA component
-+and unzip it. It contains six base platform tarballs, seven CUDA component
- tarballs, the meta tarball,
- `SHA256SUMS`, `release.json` with the source commit, and platform-specific install
- commands. For example, on an ARM64 Mac:
-@@ -899,7 +911,7 @@ Failure blocks npm publication; the candidate artifact is kept for diagnosis.
- 
- To publish, update the Rust workspace version, tag the release commit on `main`
- as `rust-v<version>`, and manually run the workflow with `publish` enabled. The
--publishing repository must have an npm trusted publisher configured for all 13
-+publishing repository must have an npm trusted publisher configured for all 14
- packages with both **Allow npm publish** and the independent **Allow npm
- dist-tag** permission enabled, or provide an eligibl
+ Terminal searches default to human-readable output with full source previews;
+ piped output is compact. `--compact` forces compact output, and
+ `--preview=full` explicitly requests full previews even in compact output.
 ```
 
-**File**: `rust/npm/README.md` (modified, +22/-9)
+**File**: `rust/crates/zg-daemon/src/controller.rs` (modified, +185/-47)
 ```diff
-@@ -6,7 +6,7 @@ x64. `platforms.json` is the single source of truth for package
- names and npm `os`, `cpu`, and `libc` selectors.
- 
- The current published targets are macOS ARM64/x64, Linux x64/ARM64 with glibc,
--and Windows x64.
-+and Windows x64/ARM64.
- 
- After installation, the meta package retains the existing runtime paths. CUDA
- files are present only after successful plugin installation:
-@@ -28,8 +28,8 @@ The Linux x64 base package's `plugins.json` references `-ggml-cuda13`, `-ggml-cu
- `-ort-cuda-part1` and `-ort-cuda-part2` packages. Windows x64 references
- `-ggml-cuda13`, `-ggml-cuda12` and `-ort-cuda`. These suffixes extend the base
- platform package name. macOS, Linux ARM64 and deliberate CPU-only builds remain
--single native packages. A default all-platform release contains 13 tarballs:
--five base packages, seven runtime components and the meta package.
-+single native packages. A default all-platform release contains 14 tarballs:
-+six base packages, seven runtime components and the meta package.
- 
- The base package retains the executable and CPU/core libraries, including
- zvec's embedded Jieba dictionary; no external dictionary files are required.
-@@ -123,14 +123,15 @@ Published target/backend support is:
- | Linux x64 glibc (Ubuntu 24.04 baseline) | CPU + CUDA 13.1, CUDA 12.4 fallback | CPU + CUDA 12 |
- | Linux ARM64 glibc | CPU | CPU |
- | Windows x64 | CPU + CUDA 13.1, CUDA 12.4 fallback | CPU + CUDA 12 |
-+| Windows ARM64 | CPU | CPU + DirectML |
- 
- A deliberate CPU-only Windows build retains DirectML. The published Windows
- CUDA bundle uses the official ONNX Runtime 1.28.0 CUDA 12 provider and does not
- claim DirectML support. ORT requires CUDA 12 runtime/cuBLAS and cuDNN 9 even
- when GGUF uses CUDA 13; the two runtime families can coexist. NVIDIA driver,
- CUDA runtime, cuBLAS and cuDNN remain host dependencies, not bundled libraries.
- macOS keeps its existing ONNX CPU routing because of CoreML regressions.
--Linux musl, Windows ARM64, CUDA on ARM64/macOS and Vulkan packages are not in
-+Linux musl, CUDA on ARM64/macOS and Vulkan packages are not in
- the release matrix.
- 
- The CUDA 13.1 primary GGUF plugin uses
-@@ -226,19 +227,20 @@ Release order:
-    CUDA targets also force a registry plugin installation and verify its hashes
-    and core identity; CPU fallback must not hide a plugin-fetch failure.
- 6. Promote native `latest` tags and then the meta `latest` tag in a separate job,
--   only after all five registry install/update/rollback jobs pass.
-+   only after all six registry install/update/rollback jobs pass.
- 
- `.github/workflows/rust-publish.yml` builds and packs the selected targets once on
- their native runners in parallel, collects the candidates into a downloadable
- artifact, then checks real installation, CLI startup, managed-rg and daemon IPC.
- The workflow runs only through manual dispatch and does not publish unless
- `publish` is enabled. The manual
--`platform` input defaults to `all`; each of the five target names can be selected
-+`platform` input defaults to `all`; each of the six target names can be selected
- individually.
- `publish=true` requires `platform=all`; a subset is a validation-only candidate,
- not a complete release. Manual runs with `publish=false, cuda=false` use ordinary CPU runners;
--they do not allocate GPUs or publish packages. All five package builds require
--the pinned llama-cpp-rs prebuilt SDK. Linux/Windows x64 still produce CUDA-capable
-+they do not allocate GPUs or publish packages. All six package builds require
-+the pinned llama-cpp-rs prebuilt SDK, including the Windows ARM64 static CPU
-+SDK. Linux/Windows x64 still produce CUDA-capable
- bundles, but neither the 13.1 primary nor 12.4 fallback is compiled in zg CI.
- All packaging builds stay on ordinary CPU runners, including when `cuda=true`
- or `publish=true`. Manual `cuda=true` runs add separate Linux/Windows x64 GPU
-@@ -256,6 +258,17 @@ CoreML and zvec SDK are built from
- pinned sources, cached, and bundled with the native package. The Intel release
- targets macOS 14 and later.
- 
-+Windows ARM64 uses `windows-11-arm` with ARM64 Node, Rust, and MSVC. It uses
-+zvec-rust 0.8.0's automatically selected Windows ARM64 prebuilt SDK instead of
-+building zvec from source. The shared DLL is staged by zvec-rust-build and
-+bundled in `@zvec/zvec-grep-win32-arm64-msvc`. ONNX Runtime uses the locked
-+ARM64 DirectML distribution with SHA-256 verification and a separate cache.
-+llama-cpp-rs selects the SHA-256-pinned Windows ARM64 static CPU SDK from
-+`zvec-0.1.154-cpu-r2`, without running bindgen, CMake, or a C++ compiler.
-+No Clang/Ninja overrides are needed during packaging. The installed artifacts
-+receive the same CLI, managed-rg, and direct/server daemon IPC checks as the
-+other non-CUDA targets.
+@@ -30,6 +30,52 @@ const STARTUP_FILE: &str = "startup.lock";
+ const START_TIMEOUT: Duration = Duration::from_secs(10);
+ const HTTP_TIMEOUT: Duration = Duration::from_secs(2);
+ const SIGNAL_GRACE: Duration = Duration::from_secs(2);
++const DAEMON_PROTOCOL_VERSION: u32 = 1;
 +
- Build jobs select Cargo/CMake parallelism from the runner's available CPUs and
- total memory, budgeting 3 GiB per job and capping concurrency at 8. The Linux
- builder receives the same limits. This is a conservative 
-```
-
-**File**: `rust/npm/meta/install.test.cjs` (modified, +7/-0)
-```diff
-@@ -126,6 +126,13 @@ test("selects one published platform and rejects unsupported libc", () => {
-   );
- });
- 
-+test("selects the ARM64 Windows optional dependency from the release manifest", () => {
-+  const manifest = JSON.parse(readFileSync(join(__dirname, "..", "platforms.json"), "utf8"));
-+  const selected = selectPlatform(manifest.platforms, "win32", "arm64");
-+  assert.equal(selected.package, "@zvec/zvec-grep-win32-arm64-msvc");
-+  assert.equal(selected.binary, "zg.exe");
-+});
-+
- function componentFixture(target = "linux-x64-gnu") {
-   const paths = fixture();
-   const platform = require("../platforms.json").platforms.find((candidate) => candidate.target === target);
-```
-
-**File**: `rust/npm/platforms.json` (modified, +7/-0)
-```diff
-@@ -80,6 +80,13 @@
-           "payload": "lib/onnxruntime_providers_cuda.dll"
-         }
-       ]
-+    },
-+    {
-+      "target": "win32-arm64-msvc",
-+      "package": "@zvec/zvec-grep-win32-arm64-msvc",
-+      "os": "win32",
-+      "cpu": "arm64",
-+      "binary": "zg.exe"
-     }
-   ]
- }
-```
-
----
-
-### Incident Patch 2: `3a8e513d` (2026-10-26)
-**Commit Message**: fix(rust): restore query term highlighting in search results (#293)
-
-* fix(rust): restore query term highlighting in search results
-
-Search rendering has only colored headings since the initial Rust workspace import (b1d0ce9a83). Highlight visible source previews and managed rg content using the Node.js phrase and token rules, while preserving Unicode source text and the existing color policy.
-
-* test(rust): expect query highlighting in colored config output
-
-The config CLI integration test kept a plain-text source assertion under --color always. Query highlighting inserts ANSI sequences between the line prefix and matched term, causing the same assertion to fail on all three CI platforms. Assert the highlighted term while retaining the no-color output check.
-
-* fix(rust): highlight managed rg results with actual match ranges
-
-Display queries discard regex options, pattern files and multiple Unicode patterns. Record exact match ranges with the search matcher, transport them with context results, and paint those source spans in the CLI. Keep phrase and token highlighting for indexed queries.
-
-**File**: `rust/README.md` (modified, +5/-0)
-```diff
-@@ -406,6 +406,11 @@ Restart older resident daemons when updating the CLI; replies without
- `content_range` are rejected during deserialization. Direct and server rendering
- consume the same engine contract.
- 
-+Managed rg results also provide optional `match_ranges` in decoded UTF-8 source
-+coordinates. Terminal highlighting uses these actual matches, preserving regex,
-+case, whole-word, and pattern-file semantics. Empty ranges are omitted; older
-+replies without this field remain readable.
-+
- Public search reports `freshness: fresh` or `freshness: possibly_stale`.
- `results: served_from_current_index` describes where results came from, with
- `background_refresh` reported separately. A provider that only reports current
-```
-
-**File**: `rust/crates/zg-cli/src/highlight.rs` (added, +221/-0)
-```diff
-@@ -0,0 +1,221 @@
-+use std::borrow::Cow;
-+
-+use grep::{
-+    matcher::Matcher,
-+    regex::{RegexMatcher, RegexMatcherBuilder},
-+};
-+
-+#[derive(Default)]
-+pub(crate) struct QueryHighlighter {
-+    matchers: Vec<RegexMatcher>,
++#[derive(Clone, Copy, Eq, PartialEq)]
++enum StopMode {
++    Graceful,
++    Terminate,
 +}
 +
-+impl QueryHighlighter {
-+    pub fn new(query: &str, enabled: bool) -> Self {
-+        if !enabled {
-+            return Self::default();
-+        }
-+        let query = query.trim();
-+        let mut terms = Vec::new();
-+        if query.encode_utf16().count() > 1 {
-+            terms.push(query);
-+        }
-+        // Keep the phrase and token rules aligned with the Node.js CLI.
-+        let Ok(tokenizer) = RegexMatcher::new(r"[A-Za-z_~][A-Za-z0-9_~]*|[0-9]+(?:\.[0-9]+)?")
-+        else {
-+            return Self::default();
++struct DaemonProcess {
++    pid: u32,
++    started_at: u64,
++}
++
++impl DaemonProcess {
++    fn from_record(record: &DaemonInstanceRecord) -> Result<Option<Self>, DaemonError> {
++        let Some(started_at) = with_process(record.pid, sysinfo::Process::start_time) else {
++            return Ok(None);
 +        };
-+        let _ = tokenizer.find_iter(query.as_bytes(), |found| {
-+            let term = &query[found.start()..found.end()];
-+            if term.len() >= 2 && !is_ignored_term(term) {
-+                terms.push(term);
-+            }
-+            true
-+        });
-+        terms.sort_unstable();
-+        terms.dedup();
-+        Self {
-+            matchers: terms
-+                .into_iter()
-+                .filter_map(|term| {
-+                    RegexMatcherBuilder::new()
-+                        .fixed_strings(true)
-+                        .case_insensitive(true)
-+                        .build(term)
-+                        .ok()
-+                })
-+                .collect(),
++        // The record timestamps lock acquisition, after process creation. A
++        // newer OS start time proves PID reuse; zero means identity is unknown.
++        // Second-resolution times alone cannot prove ownership, so automatic
++        // migration never falls back to process signals, even after this check.
++        if started_at == 0 || started_at > record.started_at / 1_000 {
++            return Err(DaemonError::ProcessIdentityMismatch { pid: record.pid });
 +        }
++        Ok(Some(Self {
++            pid: record.pid,
++            started_at,
++        }))
 +    }
 +
-+    pub fn highlight<'a>(&self, value: &'a str) -> Cow<'a, str> {
-+        let mut ranges = Vec::new();
-+        for matcher in &self.matchers {
-+            if matcher
-+                .find_iter(value.as_bytes(), |found| {
-+                    ranges.push((found.start(), found.end()));
-+                    true
-+                })
-+                .is_err()
-+            {
-+                return Cow::Borrowed(value);
-+            }
-+        }
-+        highlight_ranges(value, ranges)
++    fn is_alive(&self) -> bool {
++        with_process(self.pid, sysinfo::Process::start_time) == Some(self.started_at)
 +    }
-+}
 +
-+pub(crate) fn highlight_ranges(
-+    value: &str,
-+    ranges: impl IntoIterator<Item = (usize, usize)>,
-+) -> Cow<'_, str> {
-+    let mut ranges: Vec<_> = ranges
-+        .into_iter()
-+        .map(|(start, end)| (start, end.min(value.len())))
-+        .filter(|&(start, end)| {
-+            start < end && value.is_char_boundary(start) && value.is_char_boundary(end)
++    fn signal(&self, signal: Signal) -> Result<(), DaemonError> {
++        with_process(self.pid, |process| {
++            if process.start_time() != self.started_at {
++                return Err(DaemonError::ProcessIdentityMismatch { pid: self.pid });
++            }
++            process.kill_with(signal).unwrap_or_else(|| process.kill());
++            Ok(())
 +        })
-+        .collect();
-+    if ranges.is_empty() {
-+        return Cow::Borrowed(value);
++        .unwrap_or(Ok(()))
 +    }
-+    ranges.sort_unstable();
-+    let mut merged: Vec<(usize, usize)> = Vec::new();
-+    for (start, end) in ranges {
-+        if let Some(previous) = merged.last_mut()
-+            && start <= previous.1
-+        {
-+            previous.1 = previous.1.max(end);
-+        } else {
-+            merged.push((start, end));
-+        }
-+    }
-+    let mut output = String::new();
-+    let mut cursor = 0;
-+    for (start, end) in merged {
-+        output.push_str(&value[cursor..start]);
-+        output.push_str("\x1b[1;33m");
-+        output.push_str(&value[start..end]);
-+        output.push_str("\x1b[0m");
-+        cursor = end;
-+    }
-+    output.push_str(&value[cursor..]);
-+    Cow::Owned(output)
 +}
-+
-+fn is_ignored_term(term: &str) -> bool {
-+    matches!(
-+        term.to_ascii_lowercase().as_str(),
-+        "a" | "an"
-+            | "and"
-+            | "are"
-+            | "as"
-+            | "by"
-+            | "class"
-+            | "enum"
-+            | "find"
-+            | "for"
-+            | "from"
-+            | "function"
-+            | "how"
-+            | "in"
-+            | "interface"
-+            | "is"
-+            | "method"
-+            | "of"
-+            | "on"
-+            | "or"
-+            | "struct"
-+            | "the"
-+            | "to"
-+            | "type"
-+            | "what"
-+            | "where"
-+    )
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    #[test]
-+    fn source_ranges_merge_and_clip_without_splitting_utf8() {
-+        assert_eq!(
-+            highlight_ranges("前needle后", [(6, 9), (3, 8), (0, 1), (9, usize::MAX)]),
-+            "前\x1b[1;33mneedle后\x1b[0m"
-+        );
-+        assert_eq!(
-+            highlight_ranges("前", [(0, 1), (1, 2), (3, 3), (usize::MAX, usize::MAX)]),
-+            "前"
-+        );
-+    }
-+
-+    #[test]
-+    fn query_terms_follow_phrase_token_and_overlap_rules() {
-+        for (query, source, expected) in [
-+            (
-+                "find ImportantSymbol",
-+                "prefix IMPORTANTsymbol here",
-+                "prefix \x1b[1;33mIMPORTANTsymbol\x1b[0m here",
-+            ),
-+            (
-+                "find needle",
-+                "find needle and needle",
-+                "\x1b[1;33mfind needle\x1b[0m and \x1b[1;33mneedle\x1b[0m",
-+            ),
-+            ("abcd cdef", "abcdef", "\x1b[1;33mabcdef\x1b[0m"),
-+            (
-+                "needle needles",
-+                "needlesneedle",
-+                "\x1b[1;33mneedlesneedle\x1b[0m",
-+            ),
-+            (
-+              
-```
-
-**File**: `rust/crates/zg-cli/src/lib.rs` (modified, +1/-0)
-```diff
-@@ -1,6 +1,7 @@
- //! Command-line parsing, validation, request construction, and terminal rendering.
  
- mod authorization;
-+mod highlight;
- mod install;
- mod jsonc;
- mod managed_rg;
-```
-
-**File**: `rust/crates/zg-cli/src/path_lookup.rs` (modified, +1/-0)
-```diff
-@@ -405,6 +405,7 @@ mod tests {
-                     end_byte_column: 18,
-                 }),
-                 content_range: range,
-+                match_ranges: Vec::new(),
-                 content: content.into(),
-                 outline: None,
-                 content_role: Some(ContextContentRole::Source),
-```
-
-**File**: `rust/crates/zg-cli/src/render.rs` (modified, +175/-27)
-```diff
-@@ -12,7 +12,10 @@ use zg_engine::api::context::{
-     },
- };
- 
--use crate::output_path;
-+use crate::{
-+    highlight::{QueryHighlighter, highlight_ranges},
-+    output_path,
-+};
- 
- /// Writes only native file paths, separated by newlines or NUL bytes.
- ///
-@@ -41,9 +44,18 @@ pub fn write_file_paths(
- /// # Errors
- ///
- /// Returns the underlying writer error.
--pub fn write_context_result(mut writer: impl Write, result: &ContextResult) -> io::Result<()> {
-+pub fn write_context_result(writer: impl Write, result: &ContextResult) -> io::Result<()> {
-+    write_rg_context_result(writer, result, false, |value| value)
-+}
-+
-+fn write_rg_context_result(
-+    mut writer: impl Write,
-+    result: &ContextResult,
-+    color: bool,
-+    heading: impl Fn(String) -> String,
-+) -> io::Result<()> {
-     if result.items.is_empty() {
--        writeln!(writer, "No matches.")?;
-+        writeln!(writer, "{}", heading("No matches.".into()))?;
-         return Ok(());
-     }
-     let mut previous_path: Option<&Path> = None;
-@@ -52,18 +64,52 @@ pub fn write_context_result(mut writer: impl Write, result: &ContextResult) -> i
-             if previous_path.is_some() {
-                 writeln!(writer)?;
-             }
--            writeln!(writer, "{}", output_path(&item.relative_path).display())?;
-+            writeln!(
-+                writer,
-+                "{}",
-+                heading(output_path(&item.relative_path).display().to_string())
-+            )?;
-             previous_path = Some(item.relative_path.as_path());
-         }
-+        let content = item.content.trim_end();
-+        let content = if color {
-+            highlight_ranges(content, lexical_content_ranges(item))
-+        } else {
-+            content.into()
-+        };
-         if let Some(first) = item.content_range.start_line() {
--            writeln!(writer, "  {first}: {}", item.content.trim_end())?;
-+            writeln!(writer, "  {first}: {content}")?;
-         } else {
--            writeln!(writer, "  {}", item.content.trim_end())?;
-+            writeln!(writer, "  {content}")?;
-         }
-     }
-     Ok(())
+ #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+ #[serde(rename_all = "camelCase")]
+@@ -45,6 +91,8 @@ struct DaemonInstanceRecord {
+     ready: bool,
+     #[serde(default = "legacy_full_toolset")]
+     mcp_toolset: String,
++    #[serde(default, skip_serializing_if = "Option::is_none")]
++    daemon_protocol_version: Option<u32>,
  }
  
-+fn lexical_content_ranges(item: &ContextItem) -> impl Iterator<Item = (usize, usize)> + '_ {
-+    item.match_ranges.iter().filter_map(|range| {
-+        let ContentRange::Text {
-+            start_byte_offset: content_start,
-+            ..
-+        } = item.content_range
-+        else {
-+            return None;
-+        };
-+        let ContentRange::Text {
-+            start_byte_offset,
-+            end_byte_offset,
-+            ..
-+        } = range
-+        else {
-+            return None;
-+        };
-+        Some((
-+            start_byte_offset.checked_sub(content_start)?,
-+            end_byte_offset.checked_sub(content_start)?,
-+        ))
-+    })
-+}
-+
- /// Writes Node-compatible indexed-search status to the caller's diagnostic stream.
- /// # Errors
- /// Returns the underlying writer error.
-@@ -116,6 +162,7 @@ pub fn write_context_with_options(
-     use zg_engine::api::context::result::ContextSource;
-     let color = options.color == ColorMode::Always
-         || (options.color == ColorMode::Auto && terminal && std::env::var_os("NO_COLOR").is_none());
-+    let highlighter = QueryHighlighter::new(&result.query, color);
-     let heading = |value: String| {
-         if color {
-             format!("\x1b[1;36m{value}\x1b[0m")
-@@ -125,27 +172,11 @@ pub fn write_context_with_options(
-     };
-     if options.human {
-         writeln!(writer, "{}: {:?}", heading("Context".into()), result.source)?;
--        writeln!(writer, "Query: {}", result.query)?;
-+        writeln!(writer, "Query: {}", highlighter.highlight(&result.query))?;
-         writeln!(writer, "Hits: {}", result.items.len())?;
-     }
-     if result.source == ContextSource::Rg {
--        if color {
--            let mut buffer = Vec::new();
--            write_context_result(&mut buffer, result)?;
--            for line in String::from_utf8_lossy(&buffer).lines() {
--                writeln!(
--                    writer,
--                    "{}",
--                    if line.starts_with("  ") {
--                        line.to_owned()
--                    } else {
--                        heading(line.to_owned())
--                    }
--                )?;
--            }
--            return Ok(());
--        }
--        return write_context_result(writer, result);
-+        return write_rg_context_result(writer, result, color, heading);
-     }
-     if result.items.is_empty() {
-         return writeln!(writer, "No matches.");
-@@ -173,7 +204,7 @@ pub fn write_context_with_options(
-             )
+ #[derive(Clone, Debug, Default, Eq, PartialEq)]
+@@ -75,7 +123,11 @@ impl StartupLock {
+         let daemon_dir = daemon_dir(home);
+         create_private_dir(&daemon_dir)?;
+         let path = daemon_dir.join(STARTUP_FILE);
+-        let deadline = tokio::time::Instant::now() + START_TIMEOUT;
++        // A competing bootstrap may be draining a legacy daemon before spawning.
++        let deadline = tokio::time::Instant::now()
++            + crate::default_stop_timeout()
++            + SIGNAL_GRACE * 2
++            + START_TIMEOUT;
+         loop {
+             let record = StartupRecord {
+                 pid: std::process::id(),
+@@ -184,6 +236,7 @@ impl InstanceLock {
+             listen: config.listen.to_string(),
+             ready: false,
+             mcp_toolset: config.mcp_toolset.unwrap_or_default().to_string(),
++            daemon_protocol_version: Some(DAEMON_PROTOCOL_VERSION),
          };
-         writeln!(writer, "{}", heading(label))?;
--        write_item_preview(&mut writer, item, options)?;
-+        write_item_preview(&mut writer, item, options, &highlighter)?;
-         if options.trace {
-             if let Some(score) = item.score {
-                 writeln!(writer, "score: {score:.4}")?;
-@@ -194,6 +225,7 @@ fn write_item_preview(
-     mut writer: impl Write,
-   
-```
-
-**File**: `rust/crates/zg-engine/src/api/context.rs` (modified, +3/-0)
-```diff
-@@ -492,6 +492,9 @@ pub mod result {
-         pub excerpt_range: Option<ContentRange>,
-         /// Exact source coordinates of `content`, independent of the entity and matched ranges.
-         pub content_range: ContentRange,
-+        /// Individual lexical matches in decoded source coordinates, independent of context lines.
-+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
-+        pub match_ranges: Vec<ContentRange>,
-         pub content: String,
-         /// Optional structural context supplied with the retrieved source.
-         #[serde(default, skip_serializing_if = "Option::is_none")]
-```
-
-**File**: `rust/crates/zg-engine/src/lexical/mod.rs` (modified, +42/-0)
-```diff
-@@ -797,6 +797,11 @@ impl MatchSink<'_> {
-             crate::utils::text_range_from_offsets(text, line_starts, content_start, content_end)
-                 .map_err(io::Error::other)?,
-         )?;
-+        let match_ranges = self
-+            .match_ranges(text, line_starts, content_start, content_end)?
-+            .into_iter()
-+            .map(map_range)
-+            .collect::<io::Result<Vec<_>>>()?;
-         self.count += 1;
-         self.results.push(LexicalMatch {
-             rank: 0,
-@@ -805,10 +810,46 @@ impl MatchSink<'_> {
-             range,
-             excerpt_range: None,
-             content_range,
-+            match_ranges,
-             content: text[content_start..content_end].to_owned(),
-         });
-         Ok(true)
-     }
-+
-+    fn match_ranges(
-+        &self,
-+        text: &str,
-+        line_starts: &[usize],
-+        start: usize,
-+        end: usize,
-+    ) -> io::Result<Vec<TextRange>> {
-+        if self.options.invert_match {
-+            return Ok(Vec::new());
-+        }
-+        let mut matches = Vec::new();
-+        // Keep the original haystack so anchors and word boundaries retain their search meaning.
-+        self.matcher
-+            .find_iter_at(text.as_bytes(), start, |found| {
-+                if found.start() >= end {
-+                    return false;
-+                }
-+                if found.start() < found.end()
-+                    && text.is_char_boundary(found.start())
-+                    && text.is_char_boundary(found.end())
-+                {
-+                    matches.push(found);
-+                }
-+                found.end() <= end
-+            })
-+            .map_err(io::Error::other)?;
-+        matches
-+            .into_iter()
-+            .map(|found| {
-+                crate::utils::text_range_from_offsets(text, line_starts, found.start(), found.end())
-+                    .map_err(io::Error::other)
-+            })
-+            .collect()
-+    }
+         // Register before publishing so a contender in this process never
+         // sees our record without its token; dropping the guard on failure
+@@ -316,6 +369,7 @@ fn retryable_replace_error(error: &std::io::Error) -> bool {
  }
  
- fn trim_line_terminator(bytes: &[u8]) -> &[u8] {
-@@ -1388,6 +1429,7 @@ mod tests {
-                 start + text[start..end].trim_end_matches("\r\n").len(),
-             )
-             .expect("visible source range"),
-+            match_ranges: Vec::new(),
-             content: text[start..end].trim_end_matches("\r\n").to_owned(),
-         }];
-         request.options.matching.after_context = 0;
-```
-
-**File**: `rust/crates/zg-engine/src/lexical/types.rs` (modified, +1/-0)
-```diff
-@@ -46,6 +46,7 @@ pub(crate) struct LexicalMatch {
-     pub excerpt_range: Option<TextRange>,
-     /// Source coordinates of the returned lines, which may extend beyond the match.
-     pub content_range: TextRange,
-+    pub match_ranges: Vec<TextRange>,
-     pub content: String,
- }
- 
-```
-
----
-
-### Incident Patch 3: `130ac1ad` (2026-10-26)
-**Commit Message**: fix(rust): prefer explicit server options over environment values (#294)
-
-* test(rust): capture server option precedence cases
-
-Capture the existing Node results and document the existing grammar difference.
-Load the single case table through zg-testkit and check both invalid difference
-field combinations. This commit keeps the existing Rust behavior.
-
-* fix(rust): prefer explicit server options over environment values
-
-Keep environment defaults on ServerArgs and remove them from five child fields.
-Preserve the precedence between competing explicit values and the server grammar.
-
-Use the oracle fixture for all seven option/action pairs. Check child case IDs,
-results and exit status so an empty child run cannot pass. The regression fails
-on the seven intended cases before the repair and passes all 56 afterward.
-
-* test(rust): limit the server option difference to home and token file
-
-**File**: `rust/Cargo.lock` (modified, +1/-0)
-```diff
-@@ -4279,6 +4279,7 @@ dependencies = [
-  "uuid",
-  "winapi-util",
-  "zg-engine",
-+ "zg-testkit",
- ]
- 
- [[package]]
-```
-
-**File**: `rust/compat/allowed-differences.toml` (modified, +6/-0)
-```diff
-@@ -1,6 +1,12 @@
- # TypeScript/Rust differences are forbidden unless listed here with an owner,
- # reason and removal condition.
- 
-+[[difference]]
-+id = "cli-server-options-before-action"
-+owner = "CLI"
-+reason = "Rust already accepts server options before the action. TypeScript requires the action first. For --home and --token-file, Rust keeps an explicit value after the action ahead of one before the action, then uses the environment value or default. The server-option-precedence fixture records the TypeScript parse errors and the expected Rust values for those options."
-+removal_condition = "TypeScript accepts the same server argument forms and precedence, or the TypeScript compatibility layer is retired."
-+
- [[difference]]
- id = "cli-managed-rg-files"
- owner = "CLI/engine"
-```
-
-**File**: `rust/compat/cli/server-option-precedence.json` (added, +1339/-0)
-```diff
-@@ -0,0 +1,1339 @@
-+{
-+  "schema_version": 1,
-+  "source_revision": "72067296b8b4acf3fba876df1656c8defd60867b",
-+  "cases": [
-+    {
-+      "id": "on/--home/before/both",
-+      "action": "on",
-+      "option": "--home",
-+      "form": "before",
-+      "condition": "both",
-+      "argv": [
-+        "zg",
-+        "--server",
-+        "--home",
-+        "before-action",
-+        "on"
-+      ],
-+      "env": {
-+        "ZVEC_GREP_HOME": "environment-home",
-+        "ZVEC_GREP_SERVER_TOKEN_FILE": "environment-token"
-+      },
-+      "node_result": {
-+        "kind": "parse_error",
-+        "message": "zg --server requires on, off, status, run, or --stdio"
-+      },
-+      "allowed_differences": [
-+        "cli-server-options-before-action"
-+      ],
-+      "expected_rust": {
-+        "kind": "selected",
-+        "value": "before-action"
-+      }
-+    },
-+    {
-+      "id": "on/--home/after/both",
-+      "action": "on",
-+      "option": "--home",
-+      "form": "after",
-+      "condition": "both",
-+      "argv": [
-+        "zg",
-+        "--server",
-+        "on",
-+        "--home",
-+        "after-action"
-+      ],
-+      "env": {
-+        "ZVEC_GREP_HOME": "environment-home",
-+        "ZVEC_GREP_SERVER_TOKEN_FILE": "environment-token"
-+      },
-+      "node_result": {
-+        "kind": "selected",
-+        "value": "after-action"
-+      }
-+    },
-+    {
-+      "id": "on/--home/both/both",
-+      "action": "on",
-+      "option": "--home",
-+      "form": "both",
-+      "condition": "both",
-+      "argv": [
-+        "zg",
-+        "--server",
-+        "--home",
-+        "before-action",
-+        "on",
-+        "--home",
-+        "after-action"
-+      ],
-+      "env": {
-+        "ZVEC_GREP_HOME": "environment-home",
-+        "ZVEC_GREP_SERVER_TOKEN_FILE": "environment-token"
-+      },
-+      "node_result": {
-+        "kind": "parse_error",
-+        "message": "zg --server requires on, off, status, run, or --stdio"
-+      },
-+      "allowed_differences": [
-+        "cli-server-options-before-action"
-+      ],
-+      "expected_rust": {
-+        "kind": "selected",
-+        "value": "after-action"
-+      }
-+    },
-+    {
-+      "id": "on/--home/none/both",
-+      "action": "on",
-+      "option": "--home",
-+      "form": "none",
-+      "condition": "both",
-+      "argv": [
-+        "zg",
-+        "--server",
-+        "on"
-+      ],
-+      "env": {
-+        "ZVEC_GREP_HOME": "environment-home",
-+        "ZVEC_GREP_SERVER_TOKEN_FILE": "environment-token"
-+      },
-+      "node_result": {
-+        "kind": "selected",
-+        "value": "environment-home"
-+      }
-+    },
-+    {
-+      "id": "run/--home/before/both",
-+      "action": "run",
-+      "option": "--home",
-+      "form": "before",
-+      "condition": "both",
-+      "argv": [
-+        "zg",
-+        "--server",
-+        "--home",
-+        "before-action",
-+        "run"
-+      ],
-+      "env": {
-+        "ZVEC_GREP_HOME": "environment-home",
-+        "ZVEC_GREP_SERVER_TOKEN_FILE": "environment-token"
-+      },
-+      "node_result": {
-+        "kind": "parse_error",
-+        "message": "zg --server requires on, off, status, run, or --stdio"
-+      },
-+      "allowed_differences": [
-+        "cli-server-options-before-action"
-+      ],
-+      "expected_rust": {
-+        "kind": "selected",
-+        "value": "before-action"
-+      }
-+    },
-+    {
-+      "id": "run/--home/after/both",
-+      "action": "run",
-+      "option": "--home",
-+      "form": "after",
-+      "condition": "both",
-+      "argv": [
-+        "zg",
-+        "--server",
-+        "run",
-+        "--home",
-+        "after-action"
-+      ],
-+      "env": {
-+        "ZVEC_GREP_HOME": "environment-home",
-+        "ZVEC_GREP_SERVER_TOKEN_FILE": "environment-token"
-+      },
-+      "node_result": {
-+        "kind": "selected",
-+        "value": "after-action"
-+      }
-+    },
-+    {
-+      "id": "run/--home/both/both",
-+      "action": "run",
-+      "option": "--home",
-+      "form": "both",
-+      "condition": "both",
-+      "argv": [
-+        "zg",
-+        "--server",
-+        "--home",
-+        "before-action",
-+        "run",
-+        "--home",
-+        "after-action"
-+      ],
-+      "env": {
-+        "ZVEC_GREP_HOME": "environment-home",
-+        "ZVEC_GREP_SERVER_TOKEN_FILE": "environment-token"
-+      },
-+      "node_result": {
-+        "kind": "parse_error",
-+        "message": "zg --server requires on, off, status, run, or --stdio"
-+      },
-+      "allowed_differences": [
-+        "cli-server-options-before-action"
-+      ],
-+      "expected_rust": {
-+        "kind": "selected",
-+        "value": "after-action"
-+      }
-+    },
-+    {
-+      "id": "run/--home/none/both",
-+      "action": "run",
-+      "option": "--home",
-+      "form": "none",
-+      "condition": "both",
-+      "argv": [
-+        "zg",
-+        "--server",
-+        "run"
-+      ],
-+      "env": {
-+        "ZVEC_GREP_HOME": "environment-home",
-+        "ZVEC_GREP_SERVER_TOKEN_FILE": "environment-token"
-+      },
-+      "node_re
-```
-
-**File**: `rust/compat/schema/server-option-precedence.schema.json` (added, +60/-0)
-```diff
-@@ -0,0 +1,60 @@
-+{
-+  "$schema": "https://json-schema.org/draft/2020-12/schema",
-+  "$id": "https://github.com/zvec-ai/zvec-grep/compat/schema/server-option-precedence.schema.json",
-+  "title": "Server option precedence oracle cases",
-+  "type": "object",
-+  "additionalProperties": false,
-+  "required": ["schema_version", "source_revision", "cases"],
-+  "properties": {
-+    "schema_version": { "const": 1 },
-+    "source_revision": { "type": "string" },
-+    "cases": {
-+      "type": "array",
-+      "items": { "$ref": "#/$defs/case" }
-+    }
-+  },
-+  "$defs": {
-+    "result": {
-+      "oneOf": [
-+        {
-+          "type": "object", "additionalProperties": false,
-+          "required": ["kind", "value"],
-+          "properties": { "kind": { "const": "selected" }, "value": { "type": "string" } }
-+        },
-+        {
-+          "type": "object", "additionalProperties": false,
-+          "required": ["kind"],
-+          "properties": { "kind": { "const": "unset" } }
-+        },
-+        {
-+          "type": "object", "additionalProperties": false,
-+          "required": ["kind", "message"],
-+          "properties": { "kind": { "const": "parse_error" }, "message": { "type": "string" } }
-+        }
-+      ]
-+    },
-+    "case": {
-+      "type": "object",
-+      "additionalProperties": false,
-+      "required": ["id", "action", "option", "form", "condition", "argv", "env", "node_result"],
-+      "properties": {
-+        "id": { "type": "string" },
-+        "action": { "type": "string" },
-+        "option": { "type": "string" },
-+        "form": { "type": "string" },
-+        "condition": { "type": "string" },
-+        "argv": { "type": "array", "items": { "type": "string" } },
-+        "env": { "type": "object", "additionalProperties": { "type": "string" } },
-+        "node_result": { "$ref": "#/$defs/result" },
-+        "allowed_differences": { "type": "array", "items": { "type": "string" } },
-+        "expected_rust": { "$ref": "#/$defs/result" }
-+      },
-+      "if": {
-+        "required": ["allowed_differences"],
-+        "properties": { "allowed_differences": { "minItems": 1 } }
-+      },
-+      "then": { "required": ["expected_rust"] },
-+      "else": { "not": { "required": ["expected_rust"] } }
-+    }
-+  }
-+}
-```
-
-**File**: `rust/crates/zg-cli/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -26,6 +26,7 @@ winapi-util = "0.1.11"
- [dev-dependencies]
- tempfile.workspace = true
- toml.workspace = true
-+zg-testkit = { path = "../zg-testkit" }
- 
- [lints]
- workspace = true
-```
-
-**File**: `rust/crates/zg-cli/src/lib.rs` (modified, +157/-5)
-```diff
-@@ -651,25 +651,25 @@ pub enum ServerAction {
- pub struct ServerStartArgs {
-     #[arg(long)]
-     pub listen: Option<String>,
--    #[arg(long, env = "ZVEC_GREP_HOME")]
-+    #[arg(long)]
-     pub home: Option<PathBuf>,
-     #[arg(long, env = "ZVEC_GREP_MCP_TOOLSET", value_enum)]
-     pub mcp_toolset: Option<McpToolset>,
--    #[arg(long = "token-file", env = "ZVEC_GREP_SERVER_TOKEN_FILE")]
-+    #[arg(long = "token-file")]
-     pub token_file: Option<PathBuf>,
- }
- 
- #[derive(Clone, Debug, Args)]
- pub struct ServerStopArgs {
--    #[arg(long, env = "ZVEC_GREP_HOME")]
-+    #[arg(long)]
-     pub home: Option<PathBuf>,
--    #[arg(long = "token-file", env = "ZVEC_GREP_SERVER_TOKEN_FILE")]
-+    #[arg(long = "token-file")]
-     pub token_file: Option<PathBuf>,
- }
- 
- #[derive(Clone, Debug, Args)]
- pub struct ServerStatusArgs {
--    #[arg(long, env = "ZVEC_GREP_HOME")]
-+    #[arg(long)]
-     pub home: Option<PathBuf>,
-     #[arg(long = "check-ready")]
-     pub check_ready: bool,
-@@ -2106,6 +2106,158 @@ mod tests {
-         }
+ /// Starts the configured daemon process or returns the existing ready process.
++/// A legacy daemon without a protocol version is stopped before replacement.
+ ///
+ /// # Errors
+ ///
+@@ -324,14 +378,17 @@ pub async fn start_server(
+     executable: &Path,
+     config: &ServerConfig,
+ ) -> Result<DaemonStatus, DaemonError> {
+-    if let Some(current) = existing_server(config).await? {
+-        return Ok(current);
++    match existing_server(config).await {
++        Ok(Some(current)) => return Ok(current),
++        Ok(None) | Err(DaemonError::LegacyDaemon { .. }) => {}
++        Err(error) => return Err(error),
      }
  
-+    fn server_option_expected(case: &zg_testkit::ServerOptionCase) -> Option<PathBuf> {
-+        match case.expected_rust.as_ref().unwrap_or(&case.node_result) {
-+            zg_testkit::ServerOptionResult::Selected { value } => Some(value.into()),
-+            zg_testkit::ServerOptionResult::Unset => None,
-+            zg_testkit::ServerOptionResult::ParseError { message } => {
-+                panic!("case {} needs a difference entry: {message}", case.id)
-+            }
-+        }
-+    }
-+
-+    fn server_option_actual(
-+        case: &zg_testkit::ServerOptionCase,
-+    ) -> Result<Option<PathBuf>, String> {
-+        Cli::try_parse_from(&case.argv)
-+            .map_err(|error| error.to_string())
-+            .and_then(|cli| {
-+                cli.into_plan(std::env::temp_dir())
-+                    .map_err(|error| error.to_string())
-+            })
-+            .and_then(|plan| match plan {
-+                CliPlan::Server(super::ServerPlan::On(args) | super::ServerPlan::Run(args)) => {
-+                    Ok(if case.option == "--home" {
-+                        args.home
-+                    } else {
-+                        args.token_file
-+                    })
-+                }
-+                CliPlan::Server(super::ServerPlan::Off(args)) => Ok(if case.option == "--home" {
-+                    args.home
-+                } else {
-+                    args.token_file
-+                }),
-+                CliPlan::Server(super::ServerPlan::Status(args)) => Ok(args.home),
-+                _ => Err("unexpected plan".to_owned()),
-+            })
-+    }
-+
-+    fn check_server_option_child(
-+        output: &std::process::Output,
-+        cases: &[&zg_testkit::ServerOptionCase],
-+    ) -> Vec<String> {
-+        let mut failures = Vec::new();
-+        let mut seen = std::collections::BTreeSet::new();
-+        for line in String::from_utf8_lossy(&output.stdout).lines() {
-+            let Some((_, json)) = line.split_once("SERVER_OPTION_CASE ") else {
-+                continue;
-+            };
-+            let Ok(record) = serde_json::from_str::<serde_json::Value>(json) else {
-+                failures.push("invalid case record".to_owned());
-+                continue;
-+            };
-+            let Some(id) = record["case"].as_str() else {
-+                failures.push("missing case ID".to_owned());
-+                continue;
-+            };
-+            let Some(case) = cases.iter().find(|case| case.id == id) else {
-+                failures.push(format!("unexpected case: {id}"));
-+                continue;
-+            };
-+            if !seen.insert(id.to_owned()) {
-+                failures.push(format!("duplicate case: {id}"));
-+            }
-+            let expected = server_option_expected(case);
-+            if record["expected"] != serde_json::json!(expected)
-+                || record["actual"] != serde_json::json!({"Ok": expected})
-+                || record["passed"] != true
-+            {
-+                failures.push(format!("case failed: {id}"));
-+            }
-+        }
-+        for case in cases {
-+            if !seen.contains(&case.id) {
-+                failures.push(format!("missing case: {}", case.id));
-+            }
-+        }
-+        if !output.status.success() {
-+            failures.push(format!("child status: {}", output.status));
-+        }
-+        failures
-+    }
-+
-+    fn run_server_option_children(child: &str, fixture: &zg_testkit::ServerOptionCases) {
-+        let executable = std::env::current_exe().expect("test executable");
-+        let mut failures = Vec::new();
-+        for condition in ["both", "home", "absent"] {
-+            let cases: Vec<_> = fixture
-+                .cases
-+                .iter()
-+                .filter(|case| case.condition == condition)
-+                .collect();
-+            assert!(!cases.is_empty(), "empty child condition: {condition}");
-+            assert!(cases.iter().all(|case| case.env == cases[0].env));
+     // The status check above is intentionally only a fast path. This
+     // cross-process claim closes the check/spawn race for concurrent stdio
+     // bootstrap processes. The winner alone may spawn; waiters re-check state
+-    // after the claim is released and reuse the ready daemon.
++    // after the claim is released and reuse the ready daemon. Legacy shutdown
++    // also runs under this claim so only its winner may replace the old process.
+     let startup = StartupLock::acquire(&config.home).await?;
+     let result = start_server_with_lock(executable, config).await;
+     let release = startup.release().await;
+@@ -363,11 +420,28 @@ async fn start_server_with_lock(
+     executable: &Path,
+     config: &ServerConfig,
+ ) -> Result<DaemonStatus, DaemonError> {
++    let token = crate::resolve_token(config.token_file.as_deref())?;
++    if let Some(record) = read_running_instance(&config.home).await?
++        && record.daemon_protocol_version.is_none()
++    {
++        // A different target can be checked while the legacy service is still
 + 
 ```
 
-**File**: `rust/crates/zg-testkit/src/fixture.rs` (modified, +4/-0)
+**File**: `rust/crates/zg-daemon/src/lib.rs` (modified, +20/-0)
 ```diff
-@@ -43,6 +43,10 @@ pub enum FixtureError {
-         path: String,
-         source: serde_json::Error,
-     },
+@@ -114,6 +114,20 @@ pub enum DaemonError {
+     MissingHome,
+     #[error("zvec-grep server is already running with PID {pid}")]
+     AlreadyRunning { pid: u32 },
 +    #[error(
-+        "invalid fixture {path}, case {case_id}: expected_rust is required exactly when allowed_differences is not empty"
++        "legacy zvec-grep daemon (PID {pid}) has no daemonProtocolVersion and cannot serve this client; run `zg --server on` with the same --home to replace it"
 +    )]
-+    InvalidCase { path: String, case_id: String },
-     #[error("unsupported fixture schema version {actual}; expected {expected}")]
-     UnsupportedVersion { actual: u32, expected: u32 },
- }
++    LegacyDaemon { pid: u32 },
++    #[error(
++        "zvec-grep daemon (PID {pid}) uses daemonProtocolVersion {actual}, but this client requires {expected}; use a compatible client or explicitly stop the daemon before restarting"
++    )]
++    ProtocolMismatch {
++        pid: u32,
++        actual: u32,
++        expected: u32,
++    },
++    #[error("server shutdown request failed with HTTP {status}; daemon was not terminated")]
++    ShutdownRejected { status: u16 },
+     #[error(
+         "zvec-grep server is already running with MCP toolset {active:?}; run `zg --server off` before changing toolsets"
+     )]
+@@ -128,6 +142,12 @@ pub enum DaemonError {
+     RefuseCurrentProcess,
+     #[error("zvec-grep server instance changed while stopping; refusing to signal PID {pid}")]
+     InstanceChanged { pid: u32 },
++    #[error(
++        "cannot verify daemon process identity for PID {pid}: the OS start time does not match the instance record; refusing to stop the process"
++    )]
++    ProcessIdentityMismatch { pid: u32 },
++    #[error("cannot identify a unique healthy daemon at {address}; no shutdown request was sent")]
++    UnverifiedEndpoint { address: String },
+     #[error("invalid daemon instance record at {0}")]
+     InvalidRecord(PathBuf),
+     #[error(
 ```
 
-**File**: `rust/crates/zg-testkit/src/lib.rs` (modified, +4/-0)
+**File**: `rust/crates/zg-daemon/src/stdio.rs` (modified, +3/-0)
 ```diff
-@@ -2,6 +2,10 @@
+@@ -101,6 +101,9 @@ where
+             _ = monitor.tick() => {
+                 let current = match server_status(home).await {
+                     Ok(current) => current,
++                    Err(error @ (DaemonError::LegacyDaemon { .. } | DaemonError::ProtocolMismatch { .. })) => {
++                        break Err(error);
++                    }
+                     Err(error) => {
+                         warn!(%error, "daemon status temporarily unavailable during MCP relay");
+                         DaemonStatus::default()
+```
+
+**File**: `rust/crates/zg/tests/server_lifecycle.rs` (modified, +2/-0)
+```diff
+@@ -5,6 +5,8 @@ mod workspaces;
  
- mod fixture;
- mod mcp;
-+mod server_options;
+ #[path = "server_lifecycle/positional_queries.rs"]
+ mod positional_queries;
++#[path = "server_lifecycle/protocol_upgrade.rs"]
++mod protocol_upgrade;
  
- pub use fixture::{CliCompatibilityCase, FixtureError, load_cli_case};
- pub use mcp::{McpSearchPresentationCase, load_mcp_search_cases};
-+pub use server_options::{
-+    ServerOptionCase, ServerOptionCases, ServerOptionResult, load_server_option_cases,
-+};
+ use std::{
+     error::Error,
+```
+
+**File**: `rust/crates/zg/tests/server_lifecycle/migration_safety.rs` (added, +238/-0)
+```diff
+@@ -0,0 +1,238 @@
++use super::*;
++
++#[test]
++fn reused_pid_is_not_terminated_by_automatic_migration() -> Result<(), Box<dyn Error>> {
++    let _permit = server_test_permit();
++    let binary = PathBuf::from(env!("CARGO_BIN_EXE_zg"));
++    let unrelated_home = TempDir::new()?;
++    // A real process owned by another home stands in for an unrelated process
++    // that inherited the PID from a crashed legacy daemon.
++    let (mut unrelated, _) = start_server(&binary, &unrelated_home, "agent", None, |_| {})?;
++    for args in [vec!["--server", "on"], vec!["--server", "--stdio"]] {
++        let home = TempDir::new()?;
++        let mut guard = ServerGuard {
++            binary: binary.clone(),
++            home: home.path().to_owned(),
++            listen: format!("127.0.0.1:{}", available_port()?),
++            token_file: None,
++            active: true,
++        };
++        let mut stale = instance_record(unrelated_home.path())?;
++        let fields = stale.as_object_mut().ok_or("instance record object")?;
++        fields.remove("daemonProtocolVersion");
++        fields.remove("listen");
++        stale["startedAt"] = json!(1);
++        stale["updatedAt"] = json!(1);
++        stale["serverUrl"] = json!(format!("http://{}/mcp", guard.listen));
++        std::fs::create_dir(home.path().join("daemon"))?;
++        write_record(home.path(), &stale)?;
++        let output = cli(&guard, &args)
++            .args(["--listen", &guard.listen])
++            .stdin(Stdio::null())
++            .output()?;
++        let survived = assert_healthy(&unrelated.listen).is_ok();
++        // Do not let cleanup signal the PID under test through the stale record.
++        if instance_record(home.path())?["pid"] == stale["pid"] {
++            guard.active = false;
++        }
++        assert!(
++            survived,
++            "migration terminated an unrelated process: {output:?}"
++        );
++        assert!(
++            !output.status.success(),
++            "unverified owner must block migration"
++        );
++        assert_eq!(instance_record(home.path())?, stale);
++    }
++    assert_command_success(&unrelated.stop()?);
++    Ok(())
++}
++
++#[test]
++fn occupied_configured_target_preserves_the_legacy_daemon() -> Result<(), Box<dyn Error>> {
++    let _permit = server_test_permit();
++    let binary = PathBuf::from(env!("CARGO_BIN_EXE_zg"));
++    let home = TempDir::new()?;
++    let (mut guard, _) = start_server(&binary, &home, "agent", None, |_| {})?;
++    let legacy = legacy_record(home.path())?;
++    let occupied = TcpListener::bind("127.0.0.1:0")?;
++    let config_home = home.path().join(".zvec-grep");
++    std::fs::create_dir(&config_home)?;
++    std::fs::write(
++        config_home.join("config.json"),
++        serde_json::to_vec(&json!({
++            "version": 1, "server": { "host": "127.0.0.1", "port": occupied.local_addr()?.port() }
++        }))?,
++    )?;
++    let output = cli(&guard, &["--server", "on"]).output()?;
++    assert_failure(&output, "is already in use");
++    assert!(
++        assert_healthy(&guard.listen).is_ok(),
++        "migration stopped the healthy old daemon"
++    );
++    assert_eq!(instance_record(home.path())?, legacy);
++    assert_command_success(&guard.stop()?);
++    Ok(())
++}
++
++#[test]
++fn unreachable_legacy_endpoint_does_not_force_termination() -> Result<(), Box<dyn Error>> {
++    let _permit = server_test_permit();
++    let binary = PathBuf::from(env!("CARGO_BIN_EXE_zg"));
++    let home = TempDir::new()?;
++    let (mut guard, _) = start_server(&binary, &home, "agent", None, |_| {})?;
++    let original = instance_record(home.path())?;
++    let mut legacy = legacy_record(home.path())?;
++    let unavailable = format!("127.0.0.1:{}", available_port()?);
++    legacy["serverUrl"] = json!(format!("http://{unavailable}/mcp"));
++    write_record(home.path(), &legacy)?;
++    let output = cli(&guard, &["--server", "on", "--listen", &unavailable]).output()?;
++    let survived = assert_healthy(&guard.listen).is_ok();
++    let after = instance_record(home.path())?;
++    if survived {
++        write_record(home.path(), &original)?;
++    }
++    assert!(
++        survived,
++        "migration must not signal a process when shutdown is unreachable"
++    );
++    assert!(!output.status.success(), "unexpected success: {output:?}");
++    // A closed loopback port can reach the HTTP deadline on Windows instead
++    // of immediately refusing the connection. Both are failed contact attempts.
++    let stderr = String::from_utf8_lossy(&output.stderr);
++    assert!(
++        stderr.contains("daemon I/O failed")
++            || stderr.contains("timed out waiting for zvec-grep server to contact"),
++        "expected a connection failure or contact timeout: {output:?}"
++    );
++    assert_eq!(after, legacy);
++    assert_command_success(&guard.stop()?);
++    Ok(())
++}
++
++struct DecoyServer {
++    stop: Arc<AtomicBool>,
++    shutdown_requests: Arc<AtomicUsize>,
++    thread: Option<JoinHandle<()>>,
++}
++
++impl DecoyServer {
++    fn 
+```
+
+**File**: `rust/crates/zg/tests/server_lifecycle/protocol_upgrade.rs` (added, +266/-0)
+```diff
+@@ -0,0 +1,266 @@
++use super::*;
++
++#[path = "migration_safety.rs"]
++mod migration_safety;
++
++fn instance_record(home: &Path) -> Result<serde_json::Value, Box<dyn Error>> {
++    Ok(serde_json::from_slice(&std::fs::read(
++        home.join("daemon").join("instance.lock"),
++    )?)?)
++}
++
++fn write_record(home: &Path, record: &serde_json::Value) -> Result<(), Box<dyn Error>> {
++    std::fs::write(
++        home.join("daemon").join("instance.lock"),
++        serde_json::to_vec(record)?,
++    )?;
++    Ok(())
++}
++
++fn legacy_record(home: &Path) -> Result<serde_json::Value, Box<dyn Error>> {
++    let mut record = instance_record(home)?;
++    assert_eq!(record["daemonProtocolVersion"], 1);
++    let fields = record.as_object_mut().ok_or("instance record object")?;
++    // Keep a real process and shutdown endpoint, but publish the Node.js record
++    // shape. This exercises migration without requiring Node.js on the runner.
++    fields.remove("daemonProtocolVersion");
++    fields.remove("listen");
++    write_record(home, &record)?;
++    Ok(record)
++}
++
++fn cli(guard: &ServerGuard, args: &[&str]) -> Command {
++    let mut command = Command::new(&guard.binary);
++    command
++        .args(args)
++        .arg("--home")
++        .arg(&guard.home)
++        .current_dir(&guard.home)
++        .env("HOME", &guard.home)
++        .env("USERPROFILE", &guard.home)
++        .env_remove("ZVEC_GREP_SERVER_TOKEN")
++        .env_remove("ZVEC_GREP_SERVER_TOKEN_FILE")
++        .env_remove("ZVEC_GREP_MCP_TOOLSET");
++    command
++}
++
++fn assert_failure(output: &Output, message: &str) {
++    assert!(!output.status.success(), "unexpected success: {output:?}");
++    assert!(
++        String::from_utf8_lossy(&output.stderr).contains(message),
++        "expected {message}: {output:?}"
++    );
++}
++
++fn assert_healthy(listen: &str) -> Result<(), Box<dyn Error>> {
++    let mut stream = TcpStream::connect(listen)?;
++    stream.set_read_timeout(Some(Duration::from_secs(5)))?;
++    write!(
++        stream,
++        "GET /healthz HTTP/1.1\r\nHost: {listen}\r\nConnection: close\r\n\r\n"
++    )?;
++    assert!(read_http_response(&mut stream)?.starts_with("HTTP/1.1 200"));
++    Ok(())
++}
++
++#[test]
++fn legacy_checks_fail_without_requests_or_direct_fallback_and_off_still_works()
++-> Result<(), Box<dyn Error>> {
++    let _permit = server_test_permit();
++    let binary = PathBuf::from(env!("CARGO_BIN_EXE_zg"));
++    let home = TempDir::new()?;
++    let (mut guard, _) = start_server(&binary, &home, "agent", None, |_| {})?;
++    let legacy = legacy_record(home.path())?;
++
++    for args in [
++        vec!["--server", "status"],
++        vec!["--server", "status", "--check-ready"],
++        vec!["--status", "--mode", "auto"],
++        vec!["--status", "--mode", "server"],
++    ] {
++        let output = cli(&guard, &args).output()?;
++        assert_failure(&output, "legacy zvec-grep daemon");
++        assert_failure(&output, "zg --server on");
++        assert_eq!(instance_record(home.path())?, legacy);
++    }
++    assert_healthy(&guard.listen)?;
++    assert_command_success(&cli(&guard, &["--status", "--mode", "direct"]).output()?);
++    assert_command_success(&guard.stop()?);
++    assert!(!home.path().join("daemon").join("instance.lock").exists());
++
++    // A stale legacy record is stopped state, not a compatibility error.
++    write_record(home.path(), &legacy)?;
++    let stopped = cli(&guard, &["--server", "status"]).output()?;
++    assert_command_success(&stopped);
++    assert!(String::from_utf8_lossy(&stopped.stdout).contains("Server: stopped"));
++    guard.active = true;
++    assert_command_success(&cli(&guard, &["--server", "on", "--listen", &guard.listen]).output()?);
++    assert_eq!(instance_record(home.path())?["daemonProtocolVersion"], 1);
++    assert_command_success(&guard.stop()?);
++    Ok(())
++}
++
++#[test]
++fn concurrent_starts_replace_one_legacy_daemon_and_reuse_the_new_protocol()
++-> Result<(), Box<dyn Error>> {
++    let _permit = server_test_permit();
++    let binary = PathBuf::from(env!("CARGO_BIN_EXE_zg"));
++    let home = TempDir::new()?;
++    let token_file = home.path().join("token.txt");
++    std::fs::write(
++        &token_file,
++        "migration-token-012345678901234567890123456789",
++    )?;
++    let (mut guard, _) = start_server(&binary, &home, "full", Some(&token_file), |command| {
++        command
++            .env_remove("ZVEC_GREP_SERVER_TOKEN")
++            .env_remove("ZVEC_GREP_SERVER_TOKEN_FILE");
++    })?;
++    let legacy = legacy_record(home.path())?;
++    let mut children = Vec::new();
++    for _ in 0..4 {
++        children.push(
++            cli(
++                &guard,
++                &[
++                    "--server",
++                    "on",
++                    "--listen",
++                    &guard.listen,
++                    "--mcp-toolset",
++                    "agent",
++                ],
++            )
++            .arg("--token-file")
++            .arg(&token_file)
++            .stdout(Stdio::piped())
+
+```
+
+---
+
+### Incident Patch 2: `3c2936aa` (2026-10-28)
+**Commit Message**: fix(bench): install ripgrep in OpenCode task containers (#305)
+
+**File**: `benchmarks/swe-qa-bench/tests/test_opencode.py` (modified, +5/-1)
+```diff
+@@ -70,7 +70,9 @@ async def test_install_retries_transient_nonzero_failures(self) -> None:
+         ) as sleep:
+             await agent.install(object())
+ 
+-        self.assertEqual(len(agent.root_commands), 1)
++        self.assertEqual(len(agent.root_commands), 2)
++        self.assertEqual(agent.root_commands[0], "apt-get update && apt-get install -y curl")
++        self.assertIn("/usr/local/bin/rg", agent.root_commands[1])
+         self.assertEqual(len(agent.agent_commands), 3)
+         self.assertEqual(sleep.await_count, 2)
+         command = agent.agent_commands[0]
+@@ -97,6 +99,7 @@ async def test_snapshot_captured_in_finally_without_hiding_run_failure(self) ->
+                 agent = ResilientOpenCode(logs_dir=Path(temp), collect_session_usage=True)
+                 context = AgentContext()
+                 with (
++                    patch.object(agent, "_verify_ripgrep", new=AsyncMock()),
+                     patch.object(OpenCode, "run", new=AsyncMock(side_effect=error)),
+                     patch.object(agent, "exec_as_agent", new=AsyncMock()) as export,
+                 ):
+@@ -116,6 +119,7 @@ async def test_export_failure_marks_incomplete_and_preserves_execution_error(sel
+             agent = ResilientOpenCode(logs_dir=Path(temp), collect_session_usage=True)
+             context = AgentContext()
+             with (
++                patch.object(agent, "_verify_ripgrep", new=AsyncMock()),
+                 patch.object(OpenCode, "run", new=AsyncMock(side_effect=ValueError("original"))),
+                 patch.object(agent, "exec_as_agent", new=AsyncMock(side_effect=TimeoutError())),
+                 self.assertRaisesRegex(ValueError, "original"),
+```
+
+**File**: `benchmarks/swe-qa-bench/tests/test_ripgrep.py` (added, +137/-0)
+```diff
+@@ -0,0 +1,137 @@
++from __future__ import annotations
++
++import json
++from pathlib import Path
++import subprocess
++import tempfile
++from types import SimpleNamespace
++import unittest
++from unittest.mock import AsyncMock, patch
++
++from harbor.agents.installed.base import NonZeroAgentExitCodeError
++from harbor.agents.installed.opencode import OpenCode
++from harbor.models.agent.context import AgentContext
++
++from zg_bench.agents.opencode import ResilientOpenCode
++from zg_bench.agents import ripgrep
++
++
++def ready_evidence() -> dict:
++    return dict(schema_version=1, status="ready", version=ripgrep.RIPGREP_VERSION,
++                command_path=ripgrep.RIPGREP_PATH, real_path=ripgrep.RIPGREP_PATH,
++                binary_sha256=ripgrep.RIPGREP_BINARY_SHA256,
++                search_output=ripgrep.RIPGREP_SEARCH_OUTPUT,
++                uid=0, gid=0, user="root", cwd="/app", path="/usr/local/bin:/usr/bin",
++                version_output="ripgrep 14.1.1\nfeatures:-simd-accel,+pcre2")
++
++
++class RipgrepContractTests(unittest.TestCase):
++    def test_install_checks_archive_and_binary_before_installing(self):
++        command = ripgrep.ripgrep_install_command()
++        self.assertLess(command.index(ripgrep.RIPGREP_ARCHIVE_SHA256), command.index("tar -xzf"))
++        self.assertLess(command.index(ripgrep.RIPGREP_BINARY_SHA256), command.index("install -m"))
++        self.assertIn("--retry 3", command)
++        self.assertNotIn("apt-get", command)
++        subprocess.run(["bash", "-n", "-c", command], check=True)
++        subprocess.run(["bash", "-n", "-c", ripgrep.ripgrep_preflight_command()], check=True)
++
++    def test_stale_binary_wrong_path_or_failed_search_fail_closed(self):
++        ripgrep.validate_ripgrep_preflight(ready_evidence())
++        for key, value in (
++            ("binary_sha256", "0" * 64), ("version", "14.1.0"),
++            ("command_path", "/tmp/rg"), ("real_path", "/tmp/rg"),
++            ("status", "failed"), ("search_output", ""), ("cwd", ""),
++            ("uid", None), ("path", ""),
++        ):
++            with self.subTest(key=key), self.assertRaises(RuntimeError):
++                ripgrep.validate_ripgrep_preflight(ready_evidence() | {key: value})
++
++    def test_unfrozen_hashes_cannot_install(self):
++        with patch.object(ripgrep, "RIPGREP_ARCHIVE_SHA256", "unknown"):
++            with self.assertRaises(ValueError):
++                ripgrep.ripgrep_install_command()
++
++
++class RipgrepLifecycleTests(unittest.IsolatedAsyncioTestCase):
++    async def test_ready_probe_precedes_model_and_preserves_context(self):
++        with tempfile.TemporaryDirectory() as temp:
++            agent = ResilientOpenCode(logs_dir=Path(temp))
++            context = AgentContext()
++            events = []
++
++            async def probe(*args, **kwargs):
++                events.append("probe")
++                self.assertNotIn("user", kwargs)
++                self.assertNotIn("cwd", kwargs)
++                self.assertNotIn("env", kwargs)
++                self.assertIn(". ~/.nvm/nvm.sh", kwargs["command"])
++                return SimpleNamespace(stdout=json.dumps(ready_evidence()))
++
++            async def model(*args, **kwargs):
++                events.append("model")
++                self.assertEqual(args[0], "unchanged question")
++
++            with (patch.object(agent, "exec_as_agent", new=AsyncMock(side_effect=probe)),
++                  patch.object(OpenCode, "run", new=AsyncMock(side_effect=model))):
++                await agent.run("unchanged question", object(), context)
++            self.assertEqual(events, ["probe", "model"])
++            evidence = json.loads((Path(temp) / ripgrep.RIPGREP_PREFLIGHT_FILENAME).read_text())
++            self.assertEqual(evidence["status"], "ready")
++            self.assertEqual(evidence["archive_sha256"], ripgrep.RIPGREP_ARCHIVE_SHA256)
++            self.assertGreaterEqual(evidence["preflight_wall_seconds"], 0)
++            self.assertTrue(context.is_empty())
++
++    async def test_invalid_or_missing_rg_never_starts_model_or_usage_export(self):
++        for response in (
++            ready_evidence() | {"binary_sha256": "0" * 64},
++            {"status": "failed", "error": {"name": "ENOENT"}},
++            [],
++        ):
++            with self.subTest(response=response), tempfile.TemporaryDirectory() as temp:
++                agent = ResilientOpenCode(logs_dir=Path(temp), collect_session_usage=True)
++                with (
++                    patch.object(agent, "exec_as_agent", new=AsyncMock(
++                        return_value=SimpleNamespace(stdout=json.dumps(response)))) as execute,
++                    patch.object(OpenCode, "run", new=AsyncMock()) as model,
++                    self.assertRaises(RuntimeError),
++                ):
++                    await agent.run("test", object(), AgentContext())
++                model.assert_not_awaited()
++                execute.assert_awaited_once()
++                evidence = json.loads((Path(temp) / ripgrep.RIPGRE
+```
+
+**File**: `benchmarks/swe-qa-bench/zg_bench/agents/opencode.py` (modified, +39/-0)
+```diff
+@@ -13,6 +13,11 @@
+ from harbor.models.agent.context import AgentContext
+ 
+ from zg_bench.agents.opencode_usage import USAGE_SQL, summarize_session_usage
++from zg_bench.agents.ripgrep import (
++    RIPGREP_ARCHIVE_SHA256, RIPGREP_ARCHIVE_URL, RIPGREP_PREFLIGHT_FILENAME,
++    parse_ripgrep_preflight, ripgrep_install_command, ripgrep_preflight_command,
++    validate_ripgrep_preflight,
++)
+ 
+ _INSTALL_ATTEMPTS = 3
+ _USAGE_CAPTURE_TIMEOUT_SECONDS = 30
+@@ -60,11 +65,40 @@ def __init__(self, *args, collect_session_usage: bool = False, **kwargs):
+         self._usage_capture_complete = False
+         self._usage_capture_error: str | None = None
+         self._usage_collection_wall_seconds = 0.0
++        self._ripgrep_install_wall_seconds = 0.0
++
++    async def _verify_ripgrep(self, environment: BaseEnvironment) -> None:
++        started = time.monotonic()
++        evidence = {"schema_version": 1, "status": "failed"}
++        try:
++            result = await self.exec_as_agent(
++                environment, command=ripgrep_preflight_command(), timeout_sec=30,
++            )
++            evidence = parse_ripgrep_preflight(result.stdout)
++            validate_ripgrep_preflight(evidence)
++        except BaseException as exc:
++            evidence["status"] = "failed"
++            evidence["validation_error"] = type(exc).__name__
++            raise
++        finally:
++            evidence.update(
++                archive_url=RIPGREP_ARCHIVE_URL,
++                archive_sha256=RIPGREP_ARCHIVE_SHA256,
++                install_wall_seconds=self._ripgrep_install_wall_seconds,
++                preflight_wall_seconds=time.monotonic() - started,
++            )
++            self.logs_dir.mkdir(parents=True, exist_ok=True)
++            (self.logs_dir / RIPGREP_PREFLIGHT_FILENAME).write_text(
++                json.dumps(evidence, indent=2, sort_keys=True) + "\n"
++            )
+ 
+     @override
+     async def run(
+         self, instruction: str, environment: BaseEnvironment, context: AgentContext
+     ) -> None:
++        # Before creating any model session; descendants inherit this unchanged
++        # container filesystem and OpenCode's original environment.
++        await self._verify_ripgrep(environment)
+         if not self._collect_session_usage:
+             await super().run(instruction, environment, context)
+             return
+@@ -148,6 +182,11 @@ async def install(self, environment: BaseEnvironment) -> None:
+             command="apt-get update && apt-get install -y curl",
+             env={"DEBIAN_FRONTEND": "noninteractive"},
+         )
++        rg_started = time.monotonic()
++        try:
++            await self.exec_as_root(environment, command=ripgrep_install_command())
++        finally:
++            self._ripgrep_install_wall_seconds = time.monotonic() - rg_started
+ 
+         version_spec = f"@{self._version}" if self._version else "@latest"
+         package_spec = shlex.quote(f"opencode-ai{version_spec}")
+```
+
+**File**: `benchmarks/swe-qa-bench/zg_bench/agents/ripgrep.py` (added, +121/-0)
+```diff
+@@ -0,0 +1,121 @@
++"""The single pinned ripgrep intervention shared by every OpenCode arm."""
++from __future__ import annotations
++
++import json
++import shlex
++
++RIPGREP_VERSION = "14.1.1"
++RIPGREP_PATH = "/usr/local/bin/rg"
++RIPGREP_ARCHIVE = f"ripgrep-{RIPGREP_VERSION}-x86_64-unknown-linux-musl.tar.gz"
++RIPGREP_ARCHIVE_URL = (
++    f"https://github.com/BurntSushi/ripgrep/releases/download/{RIPGREP_VERSION}/"
++    + RIPGREP_ARCHIVE
++)
++# Official release checksum and the rg member of that verified archive.
++# Verified against the official .tar.gz.sha256 asset on 2026-10-27.
++RIPGREP_ARCHIVE_SHA256 = "4cf9f2741e6c465ffdb7c26f38056a59e2a2544b51f7cc128ef28337eeae4d8e"
++RIPGREP_BINARY_SHA256 = "f401154e2393f9002ac77e419f9ee5521c18f4f8cd3e32293972f493ba06fce7"
++RIPGREP_PREFLIGHT_FILENAME = "ripgrep-preflight.json"
++RIPGREP_SEARCH_OUTPUT = "2:rg-preflight-needle-42"
++
++
++def _require_frozen_hashes() -> None:
++    for digest in (RIPGREP_ARCHIVE_SHA256, RIPGREP_BINARY_SHA256):
++        if len(digest) != 64 or any(c not in "0123456789abcdef" for c in digest):
++            raise ValueError("ripgrep release hashes have not been verified and frozen")
++
++
++def ripgrep_install_command() -> str:
++    """Install into the task container, without changing the Agent's PATH."""
++    _require_frozen_hashes()
++    member = RIPGREP_ARCHIVE.removesuffix(".tar.gz") + "/rg"
++    return (
++        "set -euo pipefail; "
++        'test "$(uname -s)" = Linux; test "$(uname -m)" = x86_64; '
++        'rg_install_tmp="$(mktemp -d)"; '
++        "trap 'rm -rf -- \"$rg_install_tmp\"' EXIT; "
++        "curl --fail --location --silent --show-error "
++        "--retry 3 --retry-all-errors --retry-delay 2 "
++        "--connect-timeout 10 --max-time 90 --retry-max-time 180 "
++        f"{shlex.quote(RIPGREP_ARCHIVE_URL)} "
++        '--output "$rg_install_tmp/archive.tar.gz"; '
++        f"printf '%s  %s\\n' {shlex.quote(RIPGREP_ARCHIVE_SHA256)} "
++        '"$rg_install_tmp/archive.tar.gz" | sha256sum --check --status; '
++        'tar -xzf "$rg_install_tmp/archive.tar.gz" -C "$rg_install_tmp" '
++        f"--strip-components=1 {shlex.quote(member)}; "
++        f"printf '%s  %s\\n' {shlex.quote(RIPGREP_BINARY_SHA256)} "
++        '"$rg_install_tmp/rg" | sha256sum --check --status; '
++        f'install -m 0755 "$rg_install_tmp/rg" {shlex.quote(RIPGREP_PATH)}; '
++        f"{shlex.quote(RIPGREP_PATH)} --version"
++    )
++
++
++def ripgrep_preflight_command() -> str:
++    """Use the same nvm initialization, user, cwd and PATH as OpenCode.run.
++
++    The probe creates only a temporary fixture, outside the task repository.
++    Its JSON includes only selected environment facts, never credentials.
++    Validation occurs in Python so a failed probe is still preserved verbatim.
++    """
++    script = r"""
++const fs = require('fs'), os = require('os'), path = require('path');
++const crypto = require('crypto'), cp = require('child_process');
++const result = {schema_version: 1, status: 'failed', uid: process.getuid(),
++  gid: process.getgid(), user: os.userInfo().username, cwd: process.cwd(),
++  path: process.env.PATH};
++let fixture;
++function run(file, args) {
++  const value = cp.spawnSync(file, args, {encoding: 'utf8'});
++  if (value.error || value.status !== 0) {
++    const error = new Error('ripgrep probe command failed');
++    error.command = [file, ...args]; error.exit_status = value.status;
++    error.stderr = value.stderr || ''; throw error;
++  }
++  return value.stdout.trimEnd();
++}
++try {
++  result.command_path = run('bash', ['-c', 'command -v rg']);
++  result.real_path = fs.realpathSync(result.command_path);
++  result.version_output = run('rg', ['--version']);
++  result.version = result.version_output.split('\n')[0].split(' ')[1];
++  result.binary_sha256 = crypto.createHash('sha256')
++    .update(fs.readFileSync(result.real_path)).digest('hex');
++  fixture = fs.mkdtempSync(path.join(os.tmpdir(), 'zg-rg-preflight-'));
++  const file = path.join(fixture, 'fixture.txt');
++  fs.writeFileSync(file, 'unrelated\nrg-preflight-needle-42\n');
++  result.search_output = run('rg', ['--no-config', '--color', 'never', '-n',
++    '--fixed-strings', '--', 'rg-preflight-needle-42', file]);
++  result.status = 'ready';
++} catch (error) {
++  result.error = {name: error.name, command: error.command,
++    exit_status: error.exit_status, stderr: error.stderr};
++} finally {
++  if (fixture) fs.rmSync(fixture, {recursive: true, force: true});
++}
++process.stdout.write(JSON.stringify(result) + '\n');
++"""
++    return "set -eo pipefail; . ~/.nvm/nvm.sh; node -e " + shlex.quote(script)
++
++
++def validate_ripgrep_preflight(value: dict) -> None:
++    _require_frozen_hashes()
++    expected = {
++        "schema_version": 1, "status": "ready", "version": RIPGREP_VERSION,
++        "command_path": RIPGREP_PATH, "real_path": RIPGREP_PATH,
++        "binary_sha256": RIPGREP_BINARY_SHA256,
++        "search_output": RIPGREP_SEARCH_OUTPUT,
++    }
++    if any(value.get(key) != item for key, item in expe
+```
+
+---
+
+### Incident Patch 3: `b7bc8973` (2026-10-28)
+**Commit Message**: fix(packaging): build Linux npm releases on Ubuntu 20.04 (#302)
+
+**File**: `.github/workflows/rust-package-build.yml` (modified, +30/-21)
+```diff
+@@ -71,11 +71,6 @@ jobs:
+           arch: ${{ inputs.target == 'win32-arm64-msvc' && 'arm64' || 'x64' }}
+           # ARM64 follows the runner image's installed Visual Studio version.
+           vsversion: ${{ inputs.target == 'win32-x64-msvc' && '2022' || '' }}
+-      - name: Install Linux build dependencies
+-        if: runner.os == 'Linux' && inputs.target != 'linux-x64-gnu'
+-        run: |
+-          sudo apt-get update
+-          sudo apt-get install -y clang libclang-dev cmake ninja-build pkg-config
+       - name: Read the pinned Rust toolchain
+         id: rust-version
+         shell: bash
+@@ -84,7 +79,7 @@ jobs:
+         if: inputs.target == 'win32-arm64-msvc'
+         run: rustup set default-host aarch64-pc-windows-msvc
+       - name: Install the pinned Rust toolchain, including rustup if missing
+-        # Linux x64 compiles in Docker, but host packaging still uses cargo metadata.
++        # Linux compiles in Docker, but host packaging still uses cargo metadata.
+         uses: dtolnay/rust-toolchain@686976e191b89faba57d3206551f0f330d8cb249 # stable
+         with:
+           toolchain: ${{ steps.rust-version.outputs.channel }}
+@@ -109,8 +104,8 @@ jobs:
+             ${{ runner.os == 'Windows' && env.CARGO_HOME || '~/.cargo' }}/git/db/
+             rust/target/release/
+           # Per-commit keys would exhaust the 10 GB repository cache quota and evict Rust CI caches.
+-          # Refresh Linux x64 once so its immutable cache includes container downloads.
+-          key: rust-release-${{ inputs.target == 'linux-x64-gnu' && 'v4' || 'v3' }}-${{ inputs.target }}-${{ inputs.runner }}-${{ hashFiles('rust/Cargo.lock', 'rust/rust-toolchain.toml') }}
++          # Isolate Ubuntu 20.04 output from older host/container build caches.
++          key: rust-release-${{ runner.os == 'Linux' && 'v5-ubuntu20.04' || 'v3' }}-${{ inputs.target }}-${{ inputs.runner }}-${{ hashFiles('rust/Cargo.lock', 'rust/rust-toolchain.toml') }}
+       - name: Cache the pinned llama native SDK
+         uses: actions/cache@v5
+         with:
+@@ -130,39 +125,50 @@ jobs:
+       - name: Preserve the Intel macOS deployment target
+         if: inputs.target == 'darwin-x64'
+         run: echo "MACOSX_DEPLOYMENT_TARGET=14.0" >> "$GITHUB_ENV"
+-      - name: Build the Linux Rust builder without a CUDA compiler
+-        if: inputs.target == 'linux-x64-gnu'
++      - name: Build the Ubuntu 20.04 Rust builder without a CUDA compiler
++        if: runner.os == 'Linux'
+         working-directory: ${{ github.workspace }}
+         run: >-
+-          docker build --platform linux/amd64
++          docker build --platform ${{ inputs.target == 'linux-arm64-gnu' && 'linux/arm64' || 'linux/amd64' }}
+           --file rust/scripts/cuda/cuda-builder.Dockerfile
+-          --build-arg CUDA_IMAGE=ubuntu:24.04
++          --build-arg CUDA_IMAGE=ubuntu:20.04
++          --build-arg RUST_VERSION=${{ steps.rust-version.outputs.channel }}
+           --tag zvec-grep-cuda-builder .
+-      - name: Build the Linux CPU/CUDA bundle
+-        if: inputs.target == 'linux-x64-gnu'
++      - name: Build the Linux release on glibc 2.31
++        if: runner.os == 'Linux'
+         working-directory: ${{ github.workspace }}
+         run: |
+           mkdir -p "$HOME/.cargo/registry" "$HOME/.cargo/git"
+-          docker run --rm --platform linux/amd64 \
++          docker run --rm --platform ${{ inputs.target == 'linux-arm64-gnu' && 'linux/arm64' || 'linux/amd64' }} \
+             --volume "${GITHUB_WORKSPACE}:/work:ro" \
+             --volume "${GITHUB_WORKSPACE}/rust/target:/work-target" \
+             --volume "$HOME/.cargo/registry:/root/.cargo/registry" \
+             --volume "$HOME/.cargo/git:/root/.cargo/git" \
+             --env CARGO_TARGET_DIR=/work-target \
+             --env CARGO_BUILD_JOBS --env CMAKE_BUILD_PARALLEL_LEVEL \
+             --env LLAMA_CPP_BUILD_MODE=prebuilt --env LLAMA_CPP_RUNTIME_CACHE=/work-target/llama-runtimes \
+-            zvec-grep-cuda-builder \
+-            bash scripts/cuda/build.sh --primary-only
++            --env RELEASE_TARGET=${{ inputs.target }} \
++            zvec-grep-cuda-builder bash -euo pipefail -c '
++              test "$(getconf GNU_LIBC_VERSION)" = "glibc 2.31"
++              if [[ "$RELEASE_TARGET" == linux-x64-gnu ]]; then
++                bash scripts/cuda/build.sh --primary-only
++              else
++                cargo build --locked --release --package zg
++              fi
++            '
+       - name: Audit the Linux prebuilt CUDA 13 and CUDA 12 bundle
+         if: inputs.target == 'linux-x64-gnu'
+         working-directory: ${{ github.workspace }}
+         run: |
+           docker run --rm --platform linux/amd64 \
+             --volume "${GITHUB_WORKSPACE}:/work:ro" \
+             --volume "${GITHUB_WORKSPACE}/rust/target:/work-target" \
+-            zvec-grep-cuda-builder bash scripts/cuda/check.sh /work-target/release/zg-cuda-staging
++            zvec-grep-cuda-builder bash -euo pipefail -c '
++              bash scripts/cuda/c
+```
+
+**File**: `.github/workflows/rust-publish.yml` (modified, +13/-9)
+```diff
+@@ -276,27 +276,31 @@ jobs:
+         with:
+           path: ${{ runner.temp }}/zvec-grep-model-cache
+           key: cuda-cli-models-v1-${{ runner.os }}-${{ hashFiles('rust/crates/zg-engine/src/models/catalog/**', 'rust/scripts/cuda/e2e.py') }}
+-      - name: Install and exercise the downloaded artifacts without Linux CUDA libraries
+-        if: matrix.target == 'linux-x64-gnu'
++      - name: Install and exercise Linux artifacts on Ubuntu 20.04 without CUDA libraries
++        if: runner.os == 'Linux'
+         shell: bash
+         working-directory: ${{ github.workspace }}
+         run: |
+           mkdir -p cpu-logs "${RUNNER_TEMP}/zvec-grep-model-cache"
+           node_root="$(node -p 'require("node:path").dirname(require("node:path").dirname(process.execPath))')"
+           # Only Node and the downloaded artifacts are mounted; no CUDA image or GPU access.
+-          docker run --rm --platform linux/amd64 \
++          docker run --rm --platform ${{ matrix.target == 'linux-arm64-gnu' && 'linux/arm64' || 'linux/amd64' }} \
+             --volume "${GITHUB_WORKSPACE}:/work" \
+             --volume "${node_root}:/opt/node:ro" \
+             --volume "${RUNNER_TEMP}/zvec-grep-model-cache:/model-cache" \
+             --workdir /work/rust --env DEBIAN_FRONTEND=noninteractive \
++            --env RELEASE_TARGET=${{ matrix.target }} \
+             --env PATH=/opt/node/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
+-            ubuntu:24.04 bash -euo pipefail -c '
++            ubuntu:20.04 bash -euo pipefail -c '
+               apt-get update -qq
+               apt-get install --yes --no-install-recommends python3 ca-certificates libstdc++6 >/dev/null
++              test "$(getconf GNU_LIBC_VERSION)" = "glibc 2.31"
+               npm run release:artifact-smoke -- --expect-cpu
+-              python3 scripts/cuda/e2e.py --cpu-only \
+-                --bundle dist/npm/release/artifact-smoke/prefix/lib/node_modules/@zvec/zvec-grep \
+-                --model-cache /model-cache --logs /work/cpu-logs
++              if [[ "$RELEASE_TARGET" == linux-x64-gnu ]]; then
++                python3 scripts/cuda/e2e.py --cpu-only \
++                  --bundle dist/npm/release/artifact-smoke/prefix/lib/node_modules/@zvec/zvec-grep \
++                  --model-cache /model-cache --logs /work/cpu-logs
++              fi
+             '
+       - name: Install and exercise the downloaded artifacts without Windows CUDA libraries
+         if: matrix.target == 'win32-x64-msvc'
+@@ -311,14 +315,14 @@ jobs:
+             --bundle dist/npm/release/artifact-smoke/prefix/node_modules/@zvec/zvec-grep `
+             --model-cache "$env:RUNNER_TEMP/zvec-grep-model-cache" --logs ../cpu-logs
+       - name: Restore Linux model cache and log ownership
+-        if: ${{ always() && matrix.target == 'linux-x64-gnu' }}
++        if: ${{ always() && runner.os == 'Linux' }}
+         shell: bash
+         working-directory: ${{ github.workspace }}
+         run: |
+           mkdir -p cpu-logs "${RUNNER_TEMP}/zvec-grep-model-cache"
+           sudo chown -R "$(id -u):$(id -g)" cpu-logs "${RUNNER_TEMP}/zvec-grep-model-cache"
+       - name: Install and exercise the non-CUDA platform artifacts
+-        if: ${{ !matrix.cuda_package }}
++        if: ${{ !matrix.cuda_package && runner.os != 'Linux' }}
+         run: npm run release:artifact-smoke -- --expect-cpu
+       - name: Retain CPU artifact execution evidence
+         if: ${{ always() }}
+```
+
+**File**: `rust/CONTRIBUTING.md` (modified, +11/-7)
+```diff
+@@ -155,6 +155,9 @@ package-level validation. It runs only through manual dispatch. Runs with both
+ without allocating GPUs or publishing
+ to npm. Compilation always stays on CPU runners, including when `cuda=true` or
+ `publish=true`; Linux/Windows x64 still build the default CUDA-capable bundles.
++Linux x64 and ARM64 release builds use Ubuntu 20.04 containers on native runners
++and audit the executable and bundled libraries against glibc 2.31. The host
++runner's Ubuntu version does not set the release package's compatibility baseline.
+ Set `cuda=true,publish=false` to add GPU validation without publishing.
+ Separate GPU jobs download the exact native npm artifacts from the same run and
+ invoke `.github/actions/cuda-cli-e2e`, without recompiling native code or repacking. Publication
+@@ -180,12 +183,13 @@ behavior on the real CPU host. An isolated loopback registry serves only this
+ run's CUDA archives: any CUDA metadata/tarball request (even a failed optional
+ attempt), installed plugin or populated plugin cache fails CPU validation.
+ `cpu-downloads.json` retains the request evidence; no public registry is used.
+-They verify CLI and daemon IPC. Linux/Windows x64 then
++They verify CLI and daemon IPC. Linux x64 and ARM64 install and exercise the
++artifacts in plain Ubuntu 20.04 containers. Linux/Windows x64 then
+ run `scripts/cuda/e2e.py --cpu-only` against the installed meta
+ package. This checks both explicit `--device cpu` and default automatic CPU
+-fallback for real GGUF/ONNX indexing and vector queries. Linux uses a plain
+-Ubuntu 24.04 container; Windows excludes toolkit paths. Both require CUDA host
+-libraries to be unavailable and retain `cpu-artifact-evidence-*` logs on failure.
++fallback for real GGUF/ONNX indexing and vector queries. Windows excludes toolkit
++paths. Both x64 model checks require CUDA host libraries to be unavailable and
++retain `cpu-artifact-evidence-*` logs on failure.
+ CPU artifact validation runs even when `publish=false`; failure blocks npm
+ publication, while the downloaded candidate remains available for diagnosis.
+ 
+@@ -294,9 +298,9 @@ Run `python3 scripts/test-prepare-onnxruntime.py` for offline deployment checks
+ and `python3 scripts/test-check-glibc.py` for the compatibility checker tests.
+ The ORT CI gate loads Linux x64/ARM64 CPU cores on glibc 2.31 and audits their
+ ELF imports, including the x64 CUDA provider. `scripts/check-glibc.py <payload>`
+-can audit a complete ELF package too. Full CLI glibc 2.31 certification still
+-requires compatible builds of the executable and every other native dependency;
+-the ORT-only gate does not certify those separately maintained SDKs.
++can also audit a complete ELF package. The release workflow builds Linux x64/ARM64
++packages on Ubuntu 20.04, applies this audit to the executable and bundled native
++libraries, and verifies the installed artifacts on that baseline.
+ 
+ Dispatch Rust CI with `ort_validation=true` to validate all six catalog ONNX
+ graphs on Linux x64/ARM64 and compare official ORT 1.21/1.28 q4 CPU throughput.
+```
+
+**File**: `rust/README.md` (modified, +14/-10)
+```diff
+@@ -592,8 +592,8 @@ so neither a second CMake build nor the fallback toolchain is needed.
+ Publish CI requires prebuilt llama SDKs on all six targets, including the
+ Windows ARM64 static CPU SDK. CUDA Rust CI also requires
+ prebuilt mode instead of recompiling only for its T4 GPU. Linux publish builds
+-run on Ubuntu 24.04 without a CUDA compiler. Runtime libraries, driver checks,
+-link audits and real CPU/GPU inference gates remain required. Runtime staging
++run in Ubuntu 20.04 containers without a CUDA compiler. Runtime libraries,
++driver checks, link audits and real CPU/GPU inference gates remain required. Runtime staging
+ reads the current Cargo invocation's `GGML_BACKENDS_DIR`, not the newest directory
+ under `target/build`; only runtime libraries, not SDK import archives or bindings,
+ are packaged. CUDA 13.1 distribution builds use
+@@ -843,8 +843,8 @@ also get the CPU model/fallback checks. A GPU failure does not block CPU checks
+ or candidate retention, but all required CPU/GPU checks must pass before npm
+ publication. A downloadable candidate is not proof of runtime validation.
+ CPU runners compile Rust and assemble the default CUDA-capable bundles using
+-the pinned native SDK. Linux x64 uses an Ubuntu 24.04 builder without nvcc;
+-Linux ARM64 uses its native runner. Windows needs the Rust/MSVC linker but
++the pinned native SDK. Linux x64 and ARM64 use Ubuntu 20.04 containers on native
++runners, without nvcc. Windows needs the Rust/MSVC linker but
+ does not install CUDA compilers for packaging. Ordinary PR CI
+ does not compile CUDA packages. `rust-ci.yml` is the single entry point for
+ workspace and real-model verification. Push/PR runs use ordinary runners on
+@@ -855,7 +855,8 @@ build per model.
+ For manual runs, `cuda_verify=true` enables `zg/cuda` from the first compilation,
+ requiring the matching prebuilt SDK, but compilation, workspace tests, all three
+ CPU model checks and build-cache uploads still run on ordinary CPU runners.
+-Linux uses the Ubuntu 24.04 builder without GPU access or CUDA runtime libraries;
++These Linux workspace tests use an Ubuntu 24.04 builder without GPU access or
++CUDA runtime libraries; the npm release build uses Ubuntu 20.04 as described above.
+ Windows uses `windows-2022`, matching the GPU image's OS generation.
+ Before the test harness copies any libraries, CUDA jobs run `cargo build --features cuda`
+ and exercise the original `target/debug/zg` with GGUF/ONNX CPU index and query.
+@@ -881,11 +882,14 @@ unchanged. Quality, default tests and CUDA builds have separate build caches.
+ select `linux` or `windows` to limit test platforms. Optional `ref` selects the
+ reviewed source; otherwise the workflow's selected commit is used. All jobs
+ check out the same resolved SHA. This workflow does no npm packaging or publishing.
+-Official ORT 1.21 Linux x64/ARM64 runtimes are audited against glibc 2.31,
+-including loading the CPU core in Ubuntu 20.04 containers. This is an ORT
+-compatibility gate, not a claim that the full CLI or unrelated native SDKs
+-already support glibc 2.31; the existing full-package build baseline remains
+-Ubuntu 24.04 until those dependencies and the executable are rebuilt and audited.
++Linux x64/ARM64 npm releases compile the CLI in Ubuntu 20.04 containers,
++reuse the pinned native SDKs, and audit the executable and bundled libraries
++against glibc 2.31. Downloaded npm artifacts are installed and exercised on
++Ubuntu 20.04, including CPU GGUF/ONNX inference for the x64 bundle without
++CUDA installed. Host runners may use newer Ubuntu images; they do not set the
++release binary's glibc baseline. CUDA acceleration still requires compatible
++NVIDIA drivers and CUDA/cuDNN host libraries. The separate ORT CI gate also
++audits official ORT 1.21 x64/ARM64 runtimes and loads them on Ubuntu 20.04.
+ Packaging selects Cargo/CMake parallelism from available CPUs and total memory
+ with a conservative 3 GiB per-job budget, a minimum of 1 and a maximum of 8.
+ The same limits are passed into the Linux builder. This is a resource
+```
+
+**File**: `rust/npm/README.md` (modified, +2/-2)
+```diff
+@@ -120,8 +120,8 @@ Published target/backend support is:
+ | --- | --- | --- |
+ | macOS ARM64 | CPU + Metal | CPU (CoreML deliberately not selected) |
+ | macOS x64 (14+) | CPU + Metal where available | CPU (CoreML deliberately not selected) |
+-| Linux x64 glibc (Ubuntu 24.04 baseline) | CPU + CUDA 13.1, CUDA 12.4 fallback | CPU + CUDA 12 |
+-| Linux ARM64 glibc | CPU | CPU |
++| Linux x64 glibc (Ubuntu 20.04 / glibc 2.31 baseline) | CPU + CUDA 13.1, CUDA 12.4 fallback | CPU + CUDA 12 |
++| Linux ARM64 glibc (Ubuntu 20.04 / glibc 2.31 baseline) | CPU | CPU |
+ | Windows x64 | CPU + CUDA 13.1, CUDA 12.4 fallback | CPU + CUDA 12 |
+ | Windows ARM64 | CPU | CPU + DirectML |
+ 
+```
+
+**File**: `rust/scripts/check-glibc.py` (modified, +1/-1)
+```diff
+@@ -17,7 +17,7 @@ def required_versions(symbols):
+         if needs:
+             requirement = re.search(r"Name: (GLIBC_\S+)\s+Flags: (.*?)\s+Version:", line)
+             if requirement and "WEAK" not in requirement[2].upper().split():
+-                version = requirement[1].removeprefix("GLIBC_")
++                version = requirement[1][len("GLIBC_"):]
+                 if not re.fullmatch(r"[0-9]+(?:\.[0-9]+)+", version):
+                     raise RuntimeError(f"Cannot establish a glibc baseline for {requirement[1]}")
+                 versions.add(tuple(map(int, version.split("."))))
+```
+
+**File**: `rust/scripts/cuda/cuda-builder.Dockerfile` (modified, +4/-2)
+```diff
+@@ -4,9 +4,11 @@ FROM ${CUDA_IMAGE}
+ ARG DEBIAN_FRONTEND=noninteractive
+ ARG RUST_VERSION=1.98.0
+ 
+-# CUDA is already supplied by the pinned image. Build tools come from Ubuntu;
++# CUDA, when needed, is supplied by the pinned image. Build tools come from Ubuntu;
+ # NVIDIA repository metadata is not needed and may be mid-mirror-sync.
+-RUN set -- -o Dir::Etc::sourcelist=sources.list.d/ubuntu.sources -o Dir::Etc::sourceparts=- \
++RUN sources=sources.list \
++    && if [ -f /etc/apt/sources.list.d/ubuntu.sources ]; then sources=sources.list.d/ubuntu.sources; fi \
++    && set -- -o Dir::Etc::sourcelist="$sources" -o Dir::Etc::sourceparts=- \
+         -o APT::Update::Error-Mode=any -o Acquire::Retries=3 \
+     && apt-get "$@" update \
+     && apt-get "$@" install --yes --no-install-recommends \
+```
+
+**File**: `rust/scripts/cuda/e2e.py` (modified, +2/-2)
+```diff
+@@ -38,7 +38,7 @@ def cargo_environment(binary, environment):
+         if not entry:
+             continue
+         directory = Path(entry.strip('"')).resolve()
+-        if directory.is_relative_to(profile) or any(
++        if (directory == profile or profile in directory.parents) or any(
+                 path.is_file() for pattern in project_libraries for path in directory.glob(pattern)):
+             continue
+         paths.append(entry)
+@@ -322,7 +322,7 @@ def main():
+         entry = metadata.get("bin", {})
+         entry = entry if isinstance(entry, str) else entry.get("zg")
+         binary = (bundle / (entry or f"bin/{'zg.exe' if os.name == 'nt' else 'zg'}")).resolve()
+-        if not binary.is_relative_to(bundle):
++        if binary != bundle and bundle not in binary.parents:
+             parser.error("packaged CLI must be inside the installed package")
+         lib_dir = bundle / "lib"
+         if not lib_dir.is_dir():
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #305** (2026-10-28): fix(bench): install pinned ripgrep in OpenCode containers (@Cuiyus)
+- **PR #304** (2026-10-28): fix(daemon): replace legacy servers before Rust startup (@egolearner)
+- **PR #302** (2026-10-28): fix(packaging): build Linux npm releases on Ubuntu 20.04 (@egolearner)
 - **PR #300** (2026-10-27): build(rust): use glibc 2.31 llama SDKs (@feihongxu0824)
 - **PR #299** (2026-10-27): fix(ort): pin official 1.21 runtimes and verify glibc 2.31 (@feihongxu0824)
 - **PR #294** (2026-10-26): fix(rust): prefer explicit server options over environment values (@AntonioRossi)
-- **PR #293** (2026-10-26): fix(rust): restore query term highlighting in search results (@egolearner)
-- **PR #292** (2026-10-26): fix(cli): clarify index setup prompt and silence cancellation errors (@egolearner)
-- **PR #290** (2026-10-23): ci(rust): reuse upstream zvec SDK resolution on Intel macOS (@egolearner)
 
 ---
 
@@ -2541,47 +2293,43 @@ on the seven intended cases before the repair and passes all 56 afterward.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): build Rust npm packages for Windows ARM64 (#266)
+## X. daemon): replace legacy servers before Rust startup (#304)
 
 **RULE**:
-When implementing operations in `.github/workflows/rust-package-build.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rust/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3ee5cbe3`: ci): build Rust npm packages for Windows ARM64 (#266). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ae7054b4`: daemon): replace legacy servers before Rust startup (#304). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/rust-package-build.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  # Every release target has a pinned SDK. Drift must fail, not rebuild llama.cpp.
-    timeout-minutes: ${{ (inputs.target == 'darwin-x64' || inputs.target == 'linux-x64-gnu' || inputs.target == 'win32-x64-msvc' || inputs.target == 'win32-arm64-msvc') && 180 || 90 }}
-          architecture: ${{ runner.arch == 'ARM64' && 'arm64' || 'x64' }}
-          architecture: ${{ runner.arch == 'ARM64' && 'arm64' || 'x64' }}
-          arch: ${{ inputs.target == 'win32-arm64-msvc' && 'arm64' || 'x64' }}
-          # ARM64 follows the runner image's installed Visual Studio version.
-          vsversion: ${{ inputs.target == 'win32-x64-msvc' && '2022' || '' }}
-      - name: Select the native Windows ARM64 Rust host
-        if: inputs.target == 'win32-arm64-msvc'
-        run: rustup set default-host aarch64-pc-windows-msvc
-      - name: Verify native Windows toolchains
-        if: runner.os == 'Windows'
-        env:
-          EXPECTED_ARCH: ${{ inputs.target == 'win32-arm64-msvc' && 'arm64' || 'x64' }}
-          EXPECTED_HOST: ${{ inputs.target == 'win32-arm64-msvc' && 'aarch64-pc-windows-msvc' || 'x86_64-pc-windows-msvc' }}
-        run: |
-          node -e "if (process.arch !== process.env.EXPECTED_
+The instance record at `<home>/daemon/instance.lock` carries
+`daemonProtocolVersion: 1`. Status checks and daemon-backed CLI requests reject
+live legacy daemons without this field, including Node.js daemons; `auto` mode
+does not silently fall back to direct execution. Run `zg --server on` with the
+same home and any required token file to stop the legacy daemon and start Rust.
+The stdio bootstrap performs the same replacement automatically. Concurrent
+starts serialize shutdown and startup. Automatic migration only requests graceful
+shutdown: an unreachable endpoint, HTTP rejection, or exit timeout preserves the
+process instead of sending termination signals. OS process start times are checked
+against the instance record to reject reused PIDs. When changing listening addresses,
+the target is checked before stopping the old service. Legacy `localhost` endpoints
+are probed on both IPv4 and IPv6; ambiguous healthy endpoints block migration.
+Other protocol versions are rejected without replacement;
+use a compatible client or explicitly stop that daemon first. Index format
+compatibility remains separate and may require `zg --index --rebuild`.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  # Every release target has a pinned SDK. Drift must fail, not rebuild CUDA.
-    timeout-minutes: ${{ (inputs.target == 'darwin-x64' || inputs.target == 'linux-x64-gnu' || inputs.target == 'win32-x64-msvc') && 180 || 90 }}
-          arch: x64
-          vsversion: "2022"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3ee5cbe3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ae7054b4` are properly handled with clean fallback behavior.

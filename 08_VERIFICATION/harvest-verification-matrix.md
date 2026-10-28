@@ -5900,3 +5900,8 @@
 | `CYCLE-20261028-XP7Z` | `2026-10-28T19:17:21.263Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5378` | Yes (`213d8b8d...`) |
 | `CYCLE-20261028-XSDZ` | `2026-10-28T19:17:25.367Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5379` | Yes (`7085872d...`) |
 | `CYCLE-20261028-6S3U` | `2026-10-28T19:24:24.906Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md` | Yes (`d12a51cd...`) |
+| `CYCLE-20261028-G85J` | `2026-10-28T19:31:45.607Z` | `zvec-ai/zvec-grep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5380` | Yes (`0c23f62d...`) |
+| `CYCLE-20261028-GBL6` | `2026-10-28T19:31:50.058Z` | `necolas/react-native-web` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/necolas-react-native-web-learnings.md` | Yes (`ebc89de9...`) |
+| `CYCLE-20261028-GFSY` | `2026-10-28T19:31:55.522Z` | `google/embeddinggemma-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1870, Rule 537, Rule 5381` | Yes (`5326aa75...`) |
+| `CYCLE-20261028-GFUI` | `2026-10-28T19:31:55.578Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5381` | Yes (`733db592...`) |
+| `CYCLE-20261028-GK5L` | `2026-10-28T19:32:01.161Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5382` | Yes (`dc280eae...`) |

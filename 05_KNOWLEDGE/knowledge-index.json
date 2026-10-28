@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T19:24:24.824Z",
+  "last_updated": "2026-10-28T19:32:01.089Z",
   "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -39607,8 +39607,8 @@
       "slug": "necolas-react-native-web",
       "platform": "github",
       "source_url": "https://github.com/necolas/react-native-web",
-      "source_version": "6a995615",
-      "content_hash": "b10e4babd4d4511a52a23d5aef1d0649e0c6837c63d100313159215111e2adca",
+      "source_version": "b7ebd988",
+      "content_hash": "ebc89de9d3d809ff18137ae87b4f38613b3fb24ad91a652c7aa1494d60125b7a",
       "dossier_path": "07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
       "promoted_rules": [
@@ -39638,7 +39638,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T00:19:33.569Z",
+      "verified_at": "2026-10-28T19:31:49.934Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51032,8 +51032,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "3a38840c",
-      "content_hash": "ec4182434da72188e7dae0b864fbaf72a8cb99cd4aa349876734704ee8971807",
+      "source_version": "8ed43f1f",
+      "content_hash": "733db5923a1482eed79f03cfe624a5019f1f23a11bf449924984474a586bcec9",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -51126,6 +51126,11 @@
           "number": 5014,
           "title": "ipn/ipnlocal: check the tailscaled socket on every serve unix dial",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5381,
+          "title": "tstest/natlab: add basic SSDP and UPnP support (#21823)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51133,7 +51138,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T21:18:40.464Z",
+      "verified_at": "2026-10-28T19:31:55.475Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53195,13 +53200,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-turso",
+      "slug": "tursodatabase-limbo",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/turso",
-      "source_version": "5a269c3c",
-      "content_hash": "df728f2fcfabe5db630d388a04114c4b88aaaec73267129b83f6bb4e75911ad6",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "b0563444",
+      "content_hash": "dc280eae6f46aac6750cab824fe4bdbb0b878794e02ab80d73eb1bcaa8c74a36",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
       "promoted_rules": [
         {
           "number": 2188,
@@ -53267,6 +53272,11 @@
           "number": 5173,
           "title": "Merge 'postgres: preserve not-null constraints in pg_dump' from Pedro Muniz",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5382,
+          "title": "Merge 'build(deps): bump undici from 8.11.2 to 8.12.3 in /bindings/javascript' f",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53274,7 +53284,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T04:28:32.699Z",
+      "verified_at": "2026-10-28T19:32:01.071Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57298,8 +57308,8 @@
       "slug": "zvec-ai-zvec-grep",
       "platform": "github",
       "source_url": "https://github.com/zvec-ai/zvec-grep",
-      "source_version": "4def5663",
-      "content_hash": "76fb01dea7637c4ce9fb75160c6019eb83b0f6594aa481b88cf24c8f49467401",
+      "source_version": "6e71bbb4",
+      "content_hash": "0c23f62d255b62bafab7faf462846a12a33ae20d3b591a5f37a2b58580951aa5",
       "dossier_path": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "promoted_rules": [
@@ -57352,6 +57362,11 @@
           "number": 4901,
           "title": "ci): build Rust npm packages for Windows ARM64 (#266)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5380,
+          "title": "daemon): replace legacy servers before Rust startup (#304)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -57359,7 +57374,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T16:38:20.196Z",
+      "verified_at": "2026-10-28T19:31:45.516Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -145801,6 +145816,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T19:17:25.280Z"
+    },
+    "rule-5380": {
+      "learning_id": "rule-5380",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5380,
+      "title": "daemon): replace legacy servers before Rust startup (#304)",
+      "source_url": "https://github.com/zvec-ai/zvec-grep",
+      "source_version": "6e71bbb4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T19:31:45.516Z"
+    },
+    "rule-5381": {
+      "learning_id": "rule-5381",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5381,
+      "title": "tstest/natlab: add basic SSDP and UPnP support (#21823)",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "8ed43f1f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T19:31:55.475Z"
+    },
+    "rule-5382": {
+      "learning_id": "rule-5382",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5382,
+      "title": "Merge 'build(deps): bump undici from 8.11.2 to 8.12.3 in /bindings/javascript' f",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "b0563444",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T19:32:01.071Z"
     }
   },
   "aliases": {

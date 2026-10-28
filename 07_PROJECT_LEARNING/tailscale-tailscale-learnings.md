@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `3a38840c`  
+> **Source Version**: `8ed43f1f`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T21:18:40.159Z  
+> **Timestamp**: 2026-10-28T19:31:54.940Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T21:18:39.666Z  
+> **Harvest Timestamp**: 2026-10-28T19:31:54.803Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38175 stars
+- **Stars / Engagement**: 38240 stars
 
 ---
 
@@ -821,761 +821,580 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3a38840c` (2026-10-27)
-**Commit Message**: ipn/ipnlocal: check the tailscaled socket on every serve unix dial
+### Incident Patch 1: `8ed43f1f` (2026-10-28)
+**Commit Message**: tstest/natlab: add basic SSDP and UPnP support (#21823)
 
-The unix-socket reverse proxy checked its backend against the tailscaled
-socket only when the handler was built, but each backend connection
-re-resolved the path from scratch. A backend that was benign at config
-time could later be replaced with a symlink to the tailscaled socket by
-anyone able to write to its directory, and the next dial followed it.
-The proxy dials as root, so the same swap could redirect a serve or
-funnel backend at any root-only unix socket on the host.
+This bare-bones implementation of a UPnP server covers only what
+the Tailscale client needs in order to successfully create a
+new mapping.
 
-Move the check to the dial itself, in a dialServeUnixSocket method
-shared by the HTTP transport, the h2c transport and the TCP-forward
-handler, all of which previously dialed unix on their own. It refuses
-tailscaled's socket with ErrProxyToTailscaledSocket immediately before
-connecting.
+A new flag is introduced for the test control server so that UPnP
+can continue to be disabled in all tests except natlab.
 
-On Linux 5.6 and newer, the dial pins the resolved socket inode with
-openat2(2): an O_PATH descriptor opened with RESOLVE_NO_MAGICLINKS,
-and RESOLVE_BENEATH under the socket's parent directory where the path
-allows it, or by whole path otherwise. The pinned file is checked
-against the tailscaled socket, and the connection is made to the pinned
-file through /pro
+Updates #21713
 
-**File**: `ipn/ipnlocal/serve.go` (modified, +56/-19)
+Change-Id: I57779e07c6a628a12bb30dccabd94f7bb21270c4
+Signed-off-by: Francois Marier <[REDACTED_EMAIL]>
+
+**File**: `tstest/integration/testcontrol/testcontrol.go` (modified, +7/-1)
 ```diff
-@@ -80,8 +80,11 @@ const (
- // current etag of a resource.
- var ErrETagMismatch = errors.New("etag mismatch")
+@@ -124,6 +124,10 @@ type Server struct {
+ 	// for service updates. If empty, the default is "true".
+ 	CollectServices opt.Bool
  
--// ErrProxyToTailscaledSocket is returned when attempting to proxy
--// to the tailscaled socket itself, which would create a loop.
-+// ErrProxyToTailscaledSocket is returned when attempting to proxy to the
-+// tailscaled socket itself. The LocalAPI authorizes a unix-socket caller by
-+// the peer credentials of the dialing process, which would be tailscaled
-+// running as root, so such a proxy would hand a remote client a
-+// root-authorized LocalAPI.
- var ErrProxyToTailscaledSocket = errors.New("cannot proxy to tailscaled socket")
++	// OverrideDisableUPnP, if true, stops the server from sending the
++	// [nodecap.DisableUPnP] capability to every node.
++	OverrideDisableUPnP bool
++
+ 	// ExplicitBaseURL or HTTPTestServer must be set.
+ 	ExplicitBaseURL string           // e.g. "http://127.0.0.1:1234" with no trailing URL
+ 	HTTPTestServer  *httptest.Server // if non-nil, used to get BaseURL
+@@ -1657,7 +1661,9 @@ func (s *Server) MapResponse(req *tailcfg.MapRequest) (res *tailcfg.MapResponse,
+ 	s.mu.Unlock()
  
- var serveHTTPContextKey ctxkey.Key[*serveHTTPContext]
-@@ -699,27 +702,20 @@ func (b *LocalBackend) tcpHandlerForServeTCP(tcph ipn.TCPPortHandlerView, dport
- 		return func(conn net.Conn) error {
- 			defer conn.Close()
- 			conn = b.meteredConnForService(conn, forVIPService)
--			// Never forward to tailscaled's own socket: the local API
--			// authorizes a unix-socket caller by the peer credentials of the
--			// dialing process, which here is tailscaled itself, so a forward
--			// would hand a remote peer a root-authorized local API.
--			socketPath, isUnix := strings.CutPrefix(backDst, "unix:")
--			if isUnix && b.isTailscaledSocket(socketPath) {
--				b.logf("localbackend: refusing TCP proxy on port %v (from %v) to the tailscaled socket %q", dport, srcAddr, socketPath)
--				return ErrProxyToTailscaledSocket
--			}
- 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
- 			var backConn net.Conn
- 			var err error
--			if isUnix {
--				var d net.Dialer
--				backConn, err = d.DialContext(ctx, "unix", socketPath)
-+			if socketPath, isUnix := strings.CutPrefix(backDst, "unix:"); isUnix {
-+				backConn, err = b.dialServeUnixSocket(ctx, socketPath)
- 			} else {
- 				backConn, err = b.dialer.SystemDial(ctx, "tcp", backDst)
- 			}
- 			cancel()
- 			if err != nil {
--				b.logf("localbackend: failed to TCP proxy port %v (from %v) to %s: %v", dport, srcAddr, backDst, err)
-+				// dialServeUnixSocket already logged a refusal; don't double-log.
-+				if !errors.Is(err, ErrProxyToTailscaledSocket) {
-+					b.logf("localbackend: failed to TCP proxy port %v (from %v) to %s: %v", dport, srcAddr, backDst, err)
-+				}
- 				return nil
- 			}
- 			defer backConn.Close()
-@@ -1033,6 +1029,49 @@ func (rp *reverseProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
- 	p.ServeHTTP(w, r)
+ 	node.CapMap = nodeCapMap
+-	node.Capabilities = append(node.Capabilities, nodecap.DisableUPnP)
++	if !s.OverrideDisableUPnP {
++		node.Capabilities = append(node.Capabilities, nodecap.DisableUPnP)
++	}
+ 	if sshPolicy != nil {
+ 		mak.Set(&node.CapMap, nodecap.SSH, nil)
+ 	}
+```
+
+**File**: `tstest/natlab/vmtest/connectivity_test.go` (modified, +19/-1)
+```diff
+@@ -123,6 +123,22 @@ func easyPxP(e *vmtest.Env) *vmtest.Node {
+ 			fmt.Sprintf("192.168.%d.1/24", n), vnet.EasyNAT, vnet.PCP, vnet.NATPMP))
  }
  
-+// dialServeUnixSocket dials a unix-socket serve/funnel backend. It returns
-+// ErrProxyToTailscaledSocket if the backend is tailscaled's own socket,
-+// which would give the caller a root-authorized LocalAPI.
-+//
-+// The configured path can be replaced by anyone who can write to its
-+// directory, so the socket is re-checked on every dial, not only at
-+// config time. dialServeUnixSocketSafe avoids re-resolving the path
-+// where the platform allows it. On the remaining dials,
-+// refuseIfConnectedToTailscaledSocket re-checks the connected peer.
-+func (b *LocalBackend) dialServeUnixSocket(ctx context.Context, socketPath string) (net.Conn, error) {
-+	if b.isTailscaledSocket(socketPath) {
-+		b.logf("serve: refusing to proxy to the tailscaled socket %q", socketPath)
-+		return nil, ErrProxyToTailscaledSocket
-+	}
-+	conn, err := b.dialServeUnixSocketSafe(ctx, socketPath)
-+	if err != nil {
-+		return nil, err
-+	}
-+	if err := b.refuseIfConnectedToTailscaledSocket(conn); err != nil {
-+		conn.Close()
-+		return nil, err
-+	}
-+	return conn, nil
++func easyUPnP(e *vmtest.Env) *vmtest.Node {
++	n := e.NumNodes()
++	return e.AddNode(fmt.Sprintf("node-%d", n),
++		e.AddNetwork(
++			fmt.Sprintf("2.%d.%d.%d", n, n, n), // public IP
++			fmt.Sprintf("192.168.%d.1/24", n), vnet.EasyNAT, vnet.UPnP))
 +}
 +
-+// refuseIfConnectedToTailscaledSocket returns ErrProxyToTailscaledSocket
-+// if conn is a unix connection to the tailscaled socket. The peer address
-+// is the path the listening socket was bound to, not the path that was
-+// dialed, so the check still sees the tailscaled socket through a symlink
-+// swapped in before the dial. This check is best-effort: connections
-+// that have no determinable peer name are allowed.
-+func (b *LocalBackend) refuseIfConnectedToTailscaledSocket(conn net.Conn) error {
-+	ua, ok := conn.RemoteAddr().(*net.UnixAddr)
-+	if !ok || ua.Name == "" {
-+		return nil
-+	}
-+	if ua.Name == b.sys.SocketPath || b.isTailscaledSocket(ua.Name) {
-+		b.logf("serve: refusing connected unix backend peer %q: it is the tailscaled socket", ua.Name)
-+		return ErrProxyToTailscaledSocket
-+	}
-+	return nil
++func hardUPnP(e *vmtest.Env) *vmtest.Node {
++	n := e.NumNodes()
++	return e.AddNode(fmt.Sprintf("node-%d", n),
++		e.AddNetwork(
++			fmt.Sprintf("2.%d.%d.%d", n, n, n), // public IP
++			fmt.Sprintf("10.7.%d.1/24", n), vnet.HardNAT, vnet.UPnP))
 +}
 +
- // getTransport returns the Transport used for regular (non-GRPC) requests
- // to the backend. The Transport gets created lazily, at most once.
- func (rp *reverseProxy) getTransport() *http.Transport {
-@@ -1042,8 +1081,7 @@ func (rp *reverseProxy) getTransport() *http.Transport {
- 		dial := rp.lb.dialer.SystemDial
- 		if rp.socketPath != "" {
- 			dial = func(ctx context.Context, _, _ string) (net.Conn, error) {
--				var d net.Dialer
--				return d.DialContext(ctx, "unix", rp.socketPath)
-+				return rp.lb.dialServeUnixSocket(ctx, rp.socketPath)
+ func hardPCP(e *vmtest.Env) *vmtest.Node {
+ 	n := e.NumNodes()
+ 	return e.AddNode(fmt.Sprintf("node-%d", n),
+@@ -326,15 +342,17 @@ var types = []nodeType{
+ 	{"easyPCP", easyPCP},
+ 	{"easyPMP", easyPMP},
+ 	{"easyPxP", easyPxP},
++	{"easyUPnP", easyUPnP},
+ 	{"hardPCP", hardPCP},
+ 	{"hardPMP", hardPMP},
+ 	{"hardPxP", hardPxP},
++	{"hardUPnP", hardUPnP},
+ 	{"one2one", one2one},
+ 	{"sameLAN", sameLAN},
+ 	{"cgnat", cgnat},
+ }
+ 
+-var pair = flag.String("pair", "", "comma-separated pair of types to test (easy, easyAF, hard, easyPCP, easyPMP, easyPxP, hardPCP, hardPMP, hardPxP, one2one, sameLAN)")
++var pair = flag.String("pair", "", "comma-separated pair of types to test (easy, easyAF, hard, easyPCP, easyPMP, easyPxP, easyUPnP, hardPCP, hardPMP, hardPxP, hardUPnP, one2one, sameLAN)")
+ 
+ func TestPair(t *testing.T) {
+ 	t1, t2, ok := strings.Cut(*pair, ",")
+```
+
+**File**: `tstest/natlab/vnet/portmapper.go` (added, +136/-0)
+```diff
+@@ -0,0 +1,136 @@
++// Copyright (c) Tailscale Inc & contributors
++// SPDX-License-Identifier: BSD-3-Clause
++
++package vnet
++
++import (
++	"bytes"
++	"encoding/xml"
++	"fmt"
++	"io"
++	"net/http"
++	"net/netip"
++)
++
++// router's UPnP HTTP server, as advertised in its SSDP responses
++const upnpHTTPPort = 5000
++
++const upnpServer = "natlab/1.0 UPnP/1.1 natlab-igd/1.0"
++
++// minimal UPnP root device description
++const upnpRootDesc = `<?xml version="1.0"?>
++<root xmlns="urn:schemas-upnp-org:device-1-0">
++  <specVersion><major>1</major><minor>1</minor></specVersion>
++  <device>
++    <deviceType>urn:schemas-upnp-org:device:InternetGatewayDevice:2</deviceType>
++    <friendlyName>natlab router</friendlyName>
++    <UDN>uuid:00000000-0000-0000-0000-000000000000</UDN>
++    <serviceList>
++      <service>
++        <serviceType>urn:schemas-upnp-org:service:WANIPConnection:2</serviceType>
++        <serviceId>urn:upnp-org:serviceId:WANIPConn1</serviceId>
++        <controlURL>/ctl/IPConn</controlURL>
++      </service>
++    </serviceList>
++  </device>
++</root>
++`
++
++func (n *network) handleSSDPRequest(req UDPPacket) {
++	if !n.svcs.Contains(UPnP) {
++		return
++	}
++	if !bytes.HasPrefix(req.Payload, []byte("M-SEARCH ")) {
++		n.logf("vnet: ignoring SSDP packet that isn't an M-SEARCH % 02x", req.Payload)
++		return
++	}
++	res := fmt.Appendf(nil, "HTTP/1.1 200 OK\r\n"+
++		"CACHE-CONTROL: max-age=1800\r\n"+
++		"EXT:\r\n"+
++		"LOCATION: http://%v/rootDesc.xml\r\n"+
++		"SERVER: "+upnpServer+"\r\n"+
++		"ST: urn:schemas-upnp-org:device:InternetGatewayDevice:2\r\n"+
++		"USN: uuid:00000000-0000-0000-0000-000000000000::urn:schemas-upnp-org:device:InternetGatewayDevice:2\r\n"+
++		"BOOTID.UPNP.ORG: 1\r\n"+
++		"\r\n",
++		netip.AddrPortFrom(n.lanIP4.Addr(), upnpHTTPPort))
++	n.WriteUDPPacketNoNAT(UDPPacket{
++		Src:     req.Dst,
++		Dst:     req.Src,
++		Payload: res,
++	})
++}
++
++func (n *network) upnpHandler() http.Handler {
++	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		w.Header().Set("Server", upnpServer)
++		switch {
++		case r.Method == "GET" && r.URL.Path == "/rootDesc.xml":
++			w.Header().Set("Content-Type", `text/xml; charset="utf-8"`)
++			io.WriteString(w, upnpRootDesc)
++		case r.Method == "POST" && r.URL.Path == "/ctl/IPConn":
++			n.handleUPnPControl(w, r)
++		default:
++			http.NotFound(w, r)
++		}
++	})
++}
++
++// TODO(fmarier): return SOAP errors instead of plain HTTP errors
++func (n *network) handleUPnPControl(w http.ResponseWriter, r *http.Request) {
++	var env struct {
++		Body struct {
++			Action struct {
++				XMLName        xml.Name
++				InternalClient netip.Addr `xml:"NewInternalClient"`
++				InternalPort   uint16     `xml:"NewInternalPort"`
++				ExternalPort   uint16     `xml:"NewExternalPort"`
++				LeaseDuration  uint32     `xml:"NewLeaseDuration"`
++			} `xml:",any"`
++		}
++	}
++	if err := xml.NewDecoder(r.Body).Decode(&env); err != nil {
++		n.logf("UPnP control request with invalid XML: %v", err)
++		http.Error(w, err.Error(), http.StatusBadRequest)
++		return
++	}
++	action := env.Body.Action
++	name := action.XMLName.Local
++
++	var out string
++	switch name {
++	case "GetExternalIPAddress":
++		out = fmt.Sprintf("<NewExternalIPAddress>%v</NewExternalIPAddress>", n.wanIP4)
++	case "AddAnyPortMapping":
++		if !action.InternalClient.IsValid() {
++			n.logf("UPnP map request without a valid NewInternalClient")
++			http.Error(w, "missing NewInternalClient", http.StatusBadRequest)
++			return
++		}
++		if action.InternalPort == 0 {
++			n.logf("UPnP map request for %v without a NewInternalPort", action.InternalClient)
++			http.Error(w, "missing NewInternalPort", http.StatusBadRequest)
++			return
++		}
++		// TODO(fmarier): reject wildcard value (0) in ExternalPort
++		// TODO(fmarier): spec says NewLeaseDuration of 0 needs to be treated as 604800 seconds
++		gotPort, ok := n.doPortMap(action.InternalClient, action.InternalPort, action.ExternalPort, int(action.LeaseDuration), UPnP)
++		if !ok {
++			n.logf("UPnP map request for %v:%d failed", action.InternalClient, action.InternalPort)
++			http.Error(w, "port mapping failed", http.StatusInternalServerError)
++			return
++		}
++		out = fmt.Sprintf("<NewReservedPort>%d</NewReservedPort>", gotPort)
++	default:
++		// TODO(fmarier): handle portmap releases (DeletePortMapping)
++		n.logf("TODO: handle UPnP action %q", name)
++		http.Error(w, "unsupported action", http.StatusInternalServerError)
++		return
++	}
++
++	w.Header().Set("Content-Type", `text/xml; charset="utf-8"`)
++	fmt.Fprintf(w, `<?xml version="1.0"?>`+
++		`<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">`+
++		`<s:Body><u:%sResponse xmlns:u="urn:schemas-upnp-org:service:WANIPConnection:2">%s</u:%sResponse></s:Body></s:Envelope>`,
++		name, out, name)
++}
+```
+
+**File**: `tstest/natlab/vnet/vnet.go` (modified, +30/-11)
+```diff
+@@ -548,6 +548,17 @@ func (n *network) acceptTCP(r *tcp.ForwarderRequest) {
+ 		return
+ 	}
+ 
++	if destPort == upnpHTTPPort && destIP == n.lanIP4.Addr() && n.svcs.Contains(UPnP) {
++		r.Complete(false)
++		tc := gonet.NewTCPConn(&wq, ep)
++		context.AfterFunc(n.s.shutdownCtx, func() { tc.Close() })
++		hs := &http.Server{Handler: n.upnpHandler()}
++		n.s.wg.Go(func() {
++			hs.Serve(netutil.NewOneConnListener(tc, nil))
++		})
++		return
++	}
++
+ 	var targetDial string
+ 	if n.s.derpIPs.Contains(destIP) {
+ 		targetDial = destIP.String() + ":" + strconv.Itoa(int(destPort))
+@@ -1046,8 +1057,9 @@ func New(c *Config) (*Server, error) {
+ 		shutdownCancel: cancel,
+ 
+ 		control: &testcontrol.Server{
+-			DERPMap:         derpMap,
+-			ExplicitBaseURL: "http://" + controlHostname,
++			DERPMap:             derpMap,
++			ExplicitBaseURL:     "http://" + controlHostname,
++			OverrideDisableUPnP: true,
+ 		},
+ 		fakeACME: acmetest.New("http://acme.example"),
+ 
+@@ -1904,8 +1916,8 @@ func (n *network) HandleEthernetPacketForRouter(ep EthernetPacket) {
+ 		return
+ 	}
+ 
+-	if toForward && n.s.shouldInterceptTCP(packet) {
+-		if (flow.dst.Is4() && n.breakWAN4) ||
++	if n.shouldInterceptTCP(packet) {
++		if (toForward && flow.dst.Is4() && n.breakWAN4) ||
+ 			(n.blackholeControl && fakeControl.Match(flow.dst)) {
+ 			// Blackhole the packet.
+ 			return
+@@ -2123,10 +2135,12 @@ func (n *network) handleUDPPacketForRouter(ep EthernetPacket, udp *layers.UDP, t
+ 		return
+ 	}
+ 
+-	if udp.DstPort == ssdpPort {
+-		// We handle NAT-PMP and PCP, but not UPnP yet.
+-		// TODO(bradfitz): handle? marginal utility so far.
+-		// Don't log about it being unknown.
++	if dstIP == n.lanIP4.Addr() && udp.DstPort == ssdpPort {
++		n.handleSSDPRequest(UDPPacket{
++			Src:     netip.AddrPortFrom(srcIP, uint16(udp.SrcPort)),
++			Dst:     netip.AddrPortFrom(dstIP, uint16(udp.DstPort)),
++			Payload: udp.Payload,
++		})
+ 		return
+ 	}
+ 
+@@ -2454,7 +2468,7 @@ func isMDNSQuery(pkt gopacket.Packet) bool {
+ 	return ok && udp.SrcPort == 5353 && udp.DstPort == 5353
+ }
+ 
+-func (s *Server) shouldInterceptTCP(pkt gopacket.Packet) bool {
++func (n *network) shouldInterceptTCP(pkt gopacket.Packet) bool {
+ 	tcp, ok := pkt.Layer(layers.LayerTypeTCP).(*layers.TCP)
+ 	if !ok {
+ 		return false
+@@ -2479,16 +2493,19 @@ func (s *Server) shouldInterceptTCP(pkt gopacket.Packet) bool {
  			}
  		}
- 
-@@ -1073,8 +1111,7 @@ func (rp *reverseProxy) getH2CTransport() http.RoundTripper {
- 			Protocols
-```
-
-**File**: `ipn/ipnlocal/serve_test.go` (modified, +35/-0)
-```diff
-@@ -2301,3 +2301,38 @@ func TestSetServeConfigRejectsTailscaledSocket(t *testing.T) {
- 		t.Fatal("setServeConfigLocked accepted a forward to the tailscaled socket; want it refused")
+ 		if fakeProxyControlplane.Match(flow.dst) {
+-			return s.blendReality
++			return n.s.blendReality
+ 		}
+-		if s.derpIPs.Contains(flow.dst) {
++		if n.s.derpIPs.Contains(flow.dst) {
+ 			return true
+ 		}
  	}
- }
-+
-+// TestReverseProxyRechecksTailscaledSocketPerDial verifies that a unix
-+// backend that becomes a symlink to the tailscaled socket after the
-+// handler was built is refused at dial time.
-+func TestReverseProxyRechecksTailscaledSocketPerDial(t *testing.T) {
-+	b := newTestBackend(t)
-+	sock := mkTempSocket(t)
-+	b.sys.SocketPath = sock
-+	benign := mkTempSocket(t)
-+
-+	// Benign at config time, so the handler is built.
-+	h, err := b.proxyHandlerForBackend("unix:" + benign)
-+	if err != nil {
-+		t.Fatalf("proxyHandlerForBackend(benign) = %v; want handler", err)
-+	}
-+	rp, ok := h.(*reverseProxy)
-+	if !ok {
-+		t.Fatalf("handler is %T; want *reverseProxy", h)
-+	}
-+	if _, err := rp.lb.dialServeUnixSocket(t.Context(), rp.socketPath); errors.Is(err, ErrProxyToTailscaledSocket) {
-+		t.Fatalf("dial to the benign path was refused as the tailscaled socket")
-+	}
-+
-+	// The path is swapped for a symlink to the tailscaled socket after the
-+	// handler exists; the next dial must catch it.
-+	if err := os.Remove(benign); err != nil {
-+		t.Fatal(err)
-+	}
-+	if err := os.Symlink(sock, benign); err != nil {
-+		t.Fatal(err)
-+	}
-+	if _, err := rp.lb.dialServeUnixSocket(t.Context(), rp.socketPath); !errors.Is(err, ErrProxyToTailscaledSocket) {
-+		t.Fatalf("dial after the symlink swap = %v; want ErrProxyToTailscaledSocket", err)
-+	}
-+}
-```
-
-**File**: `ipn/ipnlocal/serve_unix_linux.go` (added, +101/-0)
-```diff
-@@ -0,0 +1,101 @@
-+// Copyright (c) Tailscale Inc & contributors
-+// SPDX-License-Identifier: BSD-3-Clause
-+
-+//go:build linux && !ts_omit_serve
-+
-+package ipnlocal
-+
-+import (
-+	"context"
-+	"net"
-+	"path/filepath"
-+	"strconv"
-+
-+	"golang.org/x/sys/unix"
-+)
-+
-+// dialServeUnixSocketSafe dials socketPath. Where the platform allows
-+// it, it connects to a pinned descriptor instead of the path, so that
-+// swapping the path cannot retarget the connect. It returns
-+// ErrProxyToTailscaledSocket if the dialed socket is tailscaled's own.
-+// When no descriptor can be pinned, it dials the path directly.
-+func (b *LocalBackend) dialServeUnixSocketSafe(ctx context.Context, socketPath string) (net.Conn, error) {
-+	if fd, ok := pinUnixSocketPath(socketPath); ok {
-+		defer unix.Close(fd)
-+
-+		// Check the inode held by the pin, which is the inode the
-+		// connect below uses.
-+		if b.isTailscaledSocketFd(fd) {
-+			b.logf("serve: refusing to proxy to the tailscaled socket %q", socketPath)
-+			return nil, ErrProxyToTailscaledSocket
-+		}
-+		conn, err := dialPinnedUnixSocket(ctx, fd)
-+		if err == nil {
-+			return conn, nil
-+		}
-+		// No usable /proc, or the pinned socket is gone. The peer is
-+		// re-checked by the caller.
-+		b.logf("serve: dialing %q by path: connecting through the pinned descriptor failed: %v", socketPath, err)
-+	}
-+	var d net.Dialer
-+	return d.DialContext(ctx, "unix", socketPath)
-+}
-+
-+// pinUnixSocketPath returns an O_PATH descriptor referring to the file
-+// that socketPath resolves to, or ok=false if the kernel or the path do
-+// not support it (openat2(2), Linux 5.6 and newer). The resolution never
-+// follows magic links, and is restricted to the socket's parent directory
-+// when possible.
-+func pinUnixSocketPath(socketPath string) (fd int, ok bool) {
-+	if dir, base := filepath.Split(filepath.Clean(socketPath)); dir != "" && base != "." && base != ".." && base != "/" {
-+		if dirFD, err := unix.Open(dir, unix.O_PATH|unix.O_DIRECTORY|unix.O_CLOEXEC, 0); err == nil {
-+			defer unix.Close(dirFD)
-+			if fd, err := unix.Openat2(dirFD, base, &unix.OpenHow{
-+				Flags: unix.O_PATH | unix.O_CLOEXEC,
-+				Resolve: unix.RESOLVE_BENEATH |
-+					unix.RESOLVE_NO_MAGICLINKS,
-+			}); err == nil {
-+				return fd, true
-+			}
-+		}
-+	}
-+	fd, err := unix.Openat2(unix.AT_FDCWD, socketPath, &unix.OpenHow{
-+		Flags:   unix.O_PATH | unix.O_CLOEXEC,
-+		Resolve: unix.RESOLVE_NO_MAGICLINKS,
-+	})
-+	if err != nil {
-+		return -1, false
-+	}
-+	return fd, true
-+}
-+
-+// dialPinnedUnixSocket connects to the unix listener referred to by the
-+// O_PATH descriptor fd, via its /proc/self/fd name, so that the connect
-+// uses the pinned file and not the socket path.
-+func dialPinnedUnixSocket(ctx context.Context, fd int) (net.Conn, error) {
-+	var d net.Dialer
-+	return d.DialContext(ctx, "unix", "/proc/self/fd/"+strconv.Itoa(fd))
-+}
-+
-+// isTailscaledSocketFd reports whether fd and the tailscaled socket
-+// (b.sys.SocketPath) refer to the same file, compared by device and inode.
-+// tailscaled's socket path is stat'ed on each call, so the directory holding
-+// it must not be writable by the attacker for this to be meaningful.
-+//
-+// st_dev and st_ino are filesystem-provided, and FUSE and some network
-+// filesystems can report zero or duplicate values. A match made that
-+// way still refuses the dial, so such values need no special handling.
-+func (b *LocalBackend) isTailscaledSocketFd(fd int) bool {
-+	socketPath := b.sys.SocketPath
-+	if socketPath == "" {
-+		return false
-+	}
-+	var self, pinned unix.Stat_t
-+	if err := unix.Stat(socketPath, &self); err != nil {
-+		return false
-+	}
-+	if err := unix.Fstat(fd, &pinned); err != nil {
-+		return false
-+	}
-+	return self.Dev == pinned.Dev && self.Ino == pinned.Ino
-+}
-```
-
-**File**: `ipn/ipnlocal/serve_unix_linux_test.go` (added, +181/-0)
-```diff
-@@ -0,0 +1,181 @@
-+// Copyright (c) Tailscale Inc & contributors
-+// SPDX-License-Identifier: BSD-3-Clause
-+
-+//go:build linux && !ts_omit_serve
-+
-+package ipnlocal
-+
-+import (
-+	"bytes"
-+	"context"
-+	"io"
-+	"os"
-+	"path/filepath"
-+	"strconv"
-+	"syscall"
-+	"testing"
-+
-+	"golang.org/x/sys/unix"
-+)
-+
-+// openat2Supported reports whether the kernel supports openat2(2)
-+// (Linux 5.6 and newer).
-+func openat2Supported() bool {
-+	fd, err := unix.Openat2(unix.AT_FDCWD, "/", &unix.OpenHow{Flags: unix.O_PATH | unix.O_CLOEXEC})
-+	if err == nil {
-+		unix.Close(fd)
+ 	if tcp.DstPort == TestDriverPort && fakeTestAgent.Match(flow.dst) {
+ 		// Connection from cmd/tta.
+ 		return true
+ 	}
++	if tcp.DstPort == upnpHTTPPort && flow.dst == n.lanIP4.Addr() {
 +		return true
 +	}
-+	return false
-+}
-+
-+// TestPinUnixSocketPathResistsSymlinkSwap checks that replacing the dial
-+// path with a symlink after pinning does not change the pinned descriptor,
-+// and that a later pin of the swapped path refers to the tailscaled socket.
-+func TestPinUnixSocketPathResistsSymlinkSwap(t *testing.T) {
-+	if !openat2Supported() {
-+		t.Skip("kernel does not support openat2(2); the dial falls back to the pre/post checks")
-+	}
-+
-+	dir := unixSocketTestDir(t)
-+	tsSock := filepath.Join(dir, "tailscaled.sock")
-+	mustListenUnix(t, tsSock)
-+	backend := filepath.Join(dir, "backend.sock")
-+	serveUnixEchoListener(t, backend)
-+
-+	b := newTestBackend(t)
-+	b.sys.SocketPath = tsSock
-+
-+	// Backend behind a sibling symlink.
-+	alias := filepath.Join(dir, "alias.sock")
-+	if err := os.Symlink("backend.sock", alias); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	fd, ok := pinUnixSocketPath(alias)
-+	if !ok {
-+		t.Fatalf("pinUnixSocketPath(%q) did not pin", alias)
-+	}
-+	defer unix.Close(fd)
-+
-+	if b.isTailscaledSocketFd(fd) {
-+		t.Fatal("pin of the benign alias matches the tailscaled socket")
-+	}
-+
-+	// Replace the path with a symlink to the tailscaled socket after the pin.
-+	if err := os.Remove(alias); err != nil {
-+		t.Fatal(err)
-+	}
-+	if err := os.Symlink("tailscaled.sock", alias); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	// The pinned descriptor is unchanged...
-+	if b.isTailscaledSocketFd(fd) {
-+		t.Fatal("pin followed the swap onto the tailscaled socket")
-+	}
-+	// ...and the connect through it reaches the benign backend, not the
-+	// socket the path now leads to.
-+	c, err := dialPinnedUnixSocket(context.Background(), fd)
-+	if err != nil {
-+		t.Fatalf("dial through the pinned descriptor: %v", err)
-+	}
-+	defer c.Close()
-+	msg := []byte("hello backend")
-+	if _, err := c.Write(msg); err != nil {
-+		t.Fatal(err)
-+	}
-+	got := make([]byte, len(msg))
-+	if _, err := io.ReadFull(c, got); err != nil {
-+		t.Fatal(err)
-+	}
-+	if !bytes.Equal(got, msg) {
-+		t.Fatalf("echo through pin = %q; want %q", got, msg)
-+	}
-+
-+	// A new pin of the swapped path is the tailscaled socket.
-+	fd, ok = pinUnixSocketPath(alias)
-+	if !ok {
-+		t.Fatalf("pinUnixSocketPath(%q) on the swapped path did not pin", alias)
-+	}
-+	defer unix.Close(fd)
-+	if !b.isTailscaledSocketFd(fd) {
-+		t.Fatal("pin of the swapped alias is not the tailscaled socket")
-+	}
-+}
-+
-+// TestPinUnixSocketPathAbsoluteSymlinkBackend checks that a backend behind
-+// an absolute symlink, which RESOLVE_BENEATH cannot resolve, is still
-+// pinned and dialable.
-+func TestPinUnixSocketPathAbsoluteSymlinkBackend(t *testing.T) {
-+	if !openat2Supported() {
-+		t.Skip("kernel does not support openat2(2); the dial falls back to the pre/post checks")
-+	}
-+
-+	dir := unixSocketTestDir(t)
-+	backend := filepath.Join(dir, "backend.sock")
-+	serveUnixEchoListener(t, backend)
-+
-+	alias := filepath.Join(dir, "alias.sock")
-+	if err := os.Symlink(backend, alias); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	fd, ok := pinUnixSocketPath(alias)
-+	if !ok {
-+		t.Fatalf("pinUnixSocketPath(%q) did not pin", alias)
-+	}
-+	defer unix.Close(fd)
-+
-+	c, err := dialPinnedUnixSocket(context.Background(), fd)
-+	if err != nil {
-+		t.Fatalf("dial through the pinned descriptor: %v", err)
-+	}
-+	defer c.Close()
-+	msg := []byte("hello backend")
-+	if _, err := c.Write(msg); err != nil {
-+		t.Fatal(err)
-+	}
-+	got := make([]byte, len(msg))
-+	if _, err := io.ReadFull(c, got); err != nil {
-+		t.Fatal(err)
-+	}
-+	if !bytes.Equal(got, msg) {
-+		t.Fatalf("echo through pin = %q; want %q", got, msg)
-+	}
-+}
-+
-+// TestPinUnixSocketPathRefusesMagicLinks checks that a path that is a magic
-+// link (here, /proc/self/fd of the listener) is not pinned.
-+func TestPinUnixSocketPathRefusesMagicLinks(t *testing.T) {
-+	if !openat2Supported() {
-+		t.Skip("kernel does not support openat2(2); the dial falls back to the pre/post checks")
-+	}
-+
-+	dir := unixSocketTestDir(t)
-+	tsSock := filepath.Join(dir, "tailscaled.sock")
-+	ln := mustListenUnix(t, tsSock)
-+
-+	sc, ok := ln.(syscall.Conn)
-+	if !ok {
-+		t.Fatalf("%T does not expose its descriptor", ln)
-+	}
-+	rc, err := sc.SyscallConn()
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	var lnFD int
-+	if err := rc.Control(func(fd uintptr) { lnFD = int(fd) }); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	magic := filepath.Join(dir, "magic.sock")
-+	if err := os.Symlink("/proc/self/fd/"+strconv.Itoa(lnFD), magic); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	if fd, ok := pinUnixSocketPath(mag
-```
-
-**File**: `ipn/ipnlocal/serve_unix_other.go` (added, +19/-0)
-```diff
-@@ -0,0 +1,19 @@
-+// Copyright (c) Tailscale Inc & contributors
-+// SPDX-License-Identifier: BSD-3-Clause
-+
-+//go:build !linux && !ts_omit_serve
-+
-+package ipnlocal
-+
-+import (
-+	"context"
-+	"net"
-+)
-+
-+// dialServeUnixSocketSafe dials socketPath directly. This platform has no
-+// openat2(2) equivalent, so swapping the path can still retarget the
-+// connect. The caller re-checks the connected peer.
-+func (b *LocalBackend) dialServeUnixSocketSafe(ctx context.Context, socketPath string) (net.Conn, error) {
-+	var d net.Dialer
-+	return d.DialContext(ctx, "unix", socketPath)
-+}
-```
-
-**File**: `ipn/ipnlocal/serve_unix_test.go` (modified, +135/-1)
-```diff
-@@ -1,11 +1,13 @@
- // Copyright (c) Tailscale Inc & contributors
- // SPDX-License-Identifier: BSD-3-Clause
- 
--//go:build unix
-+//go:build unix && !ts_omit_serve
- 
- package ipnlocal
- 
- import (
-+	"bytes"
-+	"context"
- 	"errors"
- 	"fmt"
- 	"io"
-@@ -320,3 +322,135 @@ func TestTCPForwardUnixSocket(t *testing.T) {
- 		t.Fatal("handler did not finish in time")
- 	}
+ 	return false
  }
-+
-+// unixSocketTestDir returns a directory for creating unix sockets, on a
-+// path short enough for sockaddr_un's sun_path limit.
-+func unixSocketTestDir(t *testing.T) string {
-+	t.Helper()
-+	dir, err := os.MkdirTemp("/tmp", "ts-serve-unix-*")
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	t.Cleanup(func() { os.RemoveAll(dir) })
-+	return dir
-+}
-+
-+// mustListenUnix binds a unix listener at path, removing any existing file
-+// there first (mkTempSocket leaves a regular file behind).
-+func mustListenUnix(t *testing.T, path string) net.Listener {
-+	t.Helper()
-+	if err := os.Remove(path); err != nil && !os.IsNotExist(err) {
-+		t.Fatal(err)
-+	}
-+	ln, err := net.Listen("unix", path)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	t.Cleanup(func() { ln.Close(); os.Remove(path) })
-+	return ln
-+}
-+
-+// serveUnixEchoListener binds an echoing unix listener at path.
-+func serveUnixEchoListener(t *testing.T, path string) {
-+	t.Helper()
-+	ln := mustListenUnix(t, path)
-+	go func() {
-+		for {
-+			c, err := ln.Accept()
-+			if err != nil {
-+				return
-+			}
-+			go func() {
-+				defer c.Close()
-+				io.Copy(c, c)
-+			}()
-+		}
-+	}()
-+}
-+
-+// TestRefuseIfConnectedToTailscaledSocket verifies the post-dial peer
-+// check: the peer of a unix connection is named by the path its listener
-+// was bound to, not the path dialed, so a connection to the tailscaled
-+// socket is refused, including one made through a symlink
-+func TestRefuseIfConnectedToTailscaledSocket(t *testing.T) {
-+	dir := unixSocketTestDir(t)
-+	tsSock := filepath.Join(dir, "tailscaled.sock")
-+	mustListenUnix(t, tsSock)
-+
-+	b := newTestBackend(t)
-+	b.sys.SocketPath = tsSock
-+
-+	// Skip if this platform does not name path-bound peers.
-+	c, err := net.Dial("unix", tsSock)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	defer c.Close()
-+	ua, ok := c.RemoteAddr().(*net.UnixAddr)
-+	if !ok || ua.Name == "" {
-+		t.Skipf("platform does not name unix socket peers (RemoteAddr = %v)", c.RemoteAddr())
-+	}
-+
-+	if err := b.refuseIfConnectedToTailscaledSocket(c); !errors.Is(err, ErrProxyToTailscaledSocket) {
-+		t.Fatalf("refuseIfConnectedToTailscaledSocket(tailscaled peer) = %v; want ErrProxyToTailscaledSocket", err)
-+	}
-+
-+	// A connection through a symlink still names the bound path.
-+	alias := filepath.Join(dir, "alias.sock")
-+	if err := os.Symlink(tsSock, alias); err != nil {
-+		t.Fatal(err)
-+	}
-+	c, err = net.Dial("unix", alias)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	defer c.Close()
-+	if err := b.refuseIfConnectedToTailscaledSocket(c); !errors.Is(err, ErrProxyToTailscaledSocket) {
-+		t.Fatalf("refuseIfConnectedToTailscaledSocket(symlinked tailscaled peer) = %v; want ErrProxyToTailscaledSocket", err)
-+	}
-+
-+	// A connection to any other socket is left alone.
-+	benign := filepath.Join(dir, "benign.sock")
-+	mustListenUnix(t, benign)
-+	c, err = net.Dial("unix", benign)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	defer c.Close()
-+	if err := b.refuseIfConnectedToTailscaledSocket(c); err != nil {
-+		t.Fatalf("refuseIfConnectedToTailscaledSocket(benign peer) = %v; want nil", err)
-+	}
-+}
-+
-+// TestDialServeUnixSocketServesBenignBackend dials a benign unix backend
-+// end to end through dialServeUnixSocket and checks that traffic flows.
-+func TestDialServeUnixSocketServesBenignBackend(t *testing.T) {
-+	dir := unixSocketTestDir(t)
-+	// The backend is behind a symlink, as a serve config may reference it.
-+	backend := filepath.Join(dir, "backend.sock")
-+	serveUnixEchoListener(t, backend)
-+	alias := filepath.Join(dir, "alias.sock")
-+	if err := os.Symlink(backend, alias); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	b := newTestBackend(t)
-+
-+	conn, err := b.dialServeUnixSocket(context.Background(), alias)
-+	if err != nil {
-+		t.Fatalf("dialServeUnixSocket(%q) = %v; want connection", alias, err)
-+	}
-+	defer conn.Close()
-+
-+	msg := []byte("hello backend")
-+	if _, err := conn.Write(msg); err != nil {
-+		t.Fatal(err)
-+	}
-+	got := make([]byte, len(msg))
-+	if _, err := io.ReadFull(conn, got); err != nil {
-+		t.Fatal(err)
-+	}
-+	if !bytes.Equal(got, msg) {
-+		t.Fatalf("echo = %q; want %q", got, msg)
-+	}
-+}
+ 
+@@ -2939,6 +2956,7 @@ func (n *network) handleNATPMPRequest(req UDPPacket) {
+ 		lifetimeSec := binary.BigEndian.Uint32(req.Payload[8:12])
+ 		gotPort, ok := n.doPortMap(req.Src.Addr(), internalPort, wantExtPort, int(lifetimeSec), NATPMP)
+ 		if !ok {
++			// TODO(fmarier): handle portmap releases properly
+ 			n.logf("NAT-PMP map request for %v:%d failed", req.Src.Addr(), internalPort)
+ 			return
+ 		}
+@@ -3034,6 +3052,7 @@ func (n *network) handlePCPRequest(req UDPPacket) {
+ 		// TODO(fmarier): pass the nonce into doPortmap so that it can be checked on renewals/deletions
+ 		gotPort, ok := n.doPortMap(req.Src.Addr(), internalPort, wantExtPort, int(lifetimeSec), PCP)
+ 		if !ok {
++			// TODO(fmarier): handle portmap releases
+ 			n.logf("PCP map request for %v:%d failed", req.Src.Addr(), internalPort)
+ 			return
+ 		}
 ```
 
 ---
 
-### Incident Patch 2: `822061d8` (2026-10-27)
-**Commit Message**: ipn/ipnlocal: reset alwayson override before reconciling prefs (#21998)
+### Incident Patch 2: `ea3b9f24` (2026-10-28)
+**Commit Message**: wgengine/magicsock: implement conn.MultiSocketBind (#21971)
 
-https://github.com/tailscale/tailscale/commit/09982e1918f27c740320a4879bbafdd9f379733a
-introduced an alwayson override reset before applying policy settings
-during Start.
-A prefs reconciliation refactor in
-https://github.com/tailscale/tailscale/commit/cb7b49941eae3a933c4c5b7dc56398bce24d7e08
-changed the ordering so that Start reconciled prefs before clearing the
-override. If the user disconnected with a reason, reconciliation would
-preserve WantRunning=false, and Start could retain that stale value
-after the override was cleared.
-https://github.com/tailscale/tailscale/commit/f4aea70f7a199e5ac155e225fe7ad4de374e9dea
-added cached netmap startup, so processing the cached netmap can
-reconcile the current prefs to WantRunning=true while Start still holds
-a local prefs snapshot with WantRunning=false. Start can then notify the
-frontend with the stale value even though the backend is transitioning
-to Running with WantRunning=true.
+* wgengine/magicsock: implement conn.MultiSocketBind
 
-This resets the alwayson override before reconciling prefs, restoring
-the original Start ordering and ensuring that the prefs used throughout
-Start reflect the effective alwayson policy
+Bind a group of UDP sockets sharing one local port per address family. A
+flow index is plumbed through the send path to pick which socket a batch
+leaves from.
 
-U
+Group size is fixed at Options.UDPSockets for the life of the Conn. In
+case rebind comes short, the group is padded out with conns that block
+until closed.
 
-**File**: `ipn/ipnlocal/local.go` (modified, +3/-2)
+No caller sets Options.UDPSockets yet, every group holds a single socket
+and this is inert.
+
+Additionally, add test coverage for the now exercised net/sockopts paths.
+
+Updates tailscale/corp#48168
+
+Signed-off-by: Alex Valiushko <[REDACTED_EMAIL]>
+Change-Id: I253646c753fa46e2efd0ad2158d24c416a6a6964
+
+**File**: `flake.nix` (modified, +1/-1)
 ```diff
-@@ -3202,6 +3202,9 @@ func (b *LocalBackend) startLocked(opts ipn.Options) error {
- 		prefsChanged = true
- 		prefsChangedWhy = append(prefsChangedWhy, "opts.UpdatePrefs")
- 	}
-+	// Reset the always-on override whenever Start is called.
-+	b.resetAlwaysOnOverrideLocked()
-+
- 	// Apply any syspolicy overrides, resolve exit node ID, etc.
- 	// As of 2025-07-03, this is primarily needed in two cases:
- 	//  - when opts.UpdatePrefs is not nil
-@@ -3241,8 +3244,6 @@ func (b *LocalBackend) startLocked(opts ipn.Options) error {
- 	}
- 	prefs := newPrefs.View()
- 
--	// Reset the always-on override whenever Start is called.
--	b.resetAlwaysOnOverrideLocked()
- 	b.setAtomicValuesFromPrefsLocked(prefs)
- 	b.updateNoSNATExitNodeWarning(prefs)
- 
+@@ -173,4 +173,4 @@
+     });
+   };
+ }
+-# nix-direnv cache busting line: sha256-lC6oLZoxHpGRk+UUTRqw48hkJZNHje0EwcMaG8mfDEY=
+\ No newline at end of file
++# nix-direnv cache busting line: sha256-/EHX7MAi3vR9BZBjmOO+3CS3jFnSikBMANtYUrTTLY4=
+\ No newline at end of file
 ```
 
-**File**: `ipn/ipnlocal/local_test.go` (modified, +39/-0)
+**File**: `flakehashes.json` (modified, +2/-2)
 ```diff
-@@ -415,6 +415,45 @@ func TestLazyMachineKeyGeneration(t *testing.T) {
- 	time.Sleep(500 * time.Millisecond)
+@@ -4,7 +4,7 @@
+     "sri": "sha256-sdlgTLTkdhTvGCeQTwAsR+Do8rNwBzBUp5QPc09BPgI="
+   },
+   "vendor": {
+-    "goModSum": "sha256-8/LNXdfr/G7JZWAEb4BRWjwjxwmoW5CmsV1Y2IGl5Vk=",
+-    "sri": "sha256-lC6oLZoxHpGRk+UUTRqw48hkJZNHje0EwcMaG8mfDEY="
++    "goModSum": "sha256-lPDyb4m5g0z4qVpFvHWkFrJuU+mxCzz4rkP9oYA4h/E=",
++    "sri": "sha256-/EHX7MAi3vR9BZBjmOO+3CS3jFnSikBMANtYUrTTLY4="
+   }
  }
- 
-+func TestStartResetsAlwaysOnOverrideBeforeReconcilingPrefs(t *testing.T) {
-+	var polc policytest.Config
-+	polc.Set(pkey.AlwaysOn, true)
+```
+
+**File**: `go.mod` (modified, +1/-1)
+```diff
+@@ -126,7 +126,7 @@ require (
+ 	github.com/tailscale/ts-gokrazy v0.0.0-20260630224145-b83088f2e52e
+ 	github.com/tailscale/web-client-prebuilt v0.0.0-20260917222731-e0ed2d0d0fea
+ 	github.com/tailscale/wf v0.0.0-20240214030419-6fbb0a674ee6
+-	github.com/tailscale/wireguard-go v0.0.0-20260928213353-e61b6b78110b
++	github.com/tailscale/wireguard-go v0.0.0-20261002162406-18e99eba5393
+ 	github.com/tailscale/xnet v0.0.0-20240729143630-8497ac4dab2e
+ 	github.com/tc-hib/winres v0.3.1
+ 	github.com/tcnksm/go-httpstat v0.2.0
+```
+
+**File**: `go.sum` (modified, +2/-2)
+```diff
+@@ -1154,8 +1154,8 @@ github.com/tailscale/web-client-prebuilt v0.0.0-20260917222731-e0ed2d0d0fea h1:a
+ github.com/tailscale/web-client-prebuilt v0.0.0-20260917222731-e0ed2d0d0fea/go.mod h1:agQPE6y6ldqCOui2gkIh7ZMztTkIQKH049tv8siLuNQ=
+ github.com/tailscale/wf v0.0.0-20240214030419-6fbb0a674ee6 h1:l10Gi6w9jxvinoiq15g8OToDdASBni4CyJOdHY1Hr8M=
+ github.com/tailscale/wf v0.0.0-20240214030419-6fbb0a674ee6/go.mod h1:ZXRML051h7o4OcI0d3AaILDIad/Xw0IkXaHM17dic1Y=
+-github.com/tailscale/wireguard-go v0.0.0-20260928213353-e61b6b78110b h1:roJhpZBsUsZayIDsfSSrgGKUNJjOPXXs1Ul/C/z7C0g=
+-github.com/tailscale/wireguard-go v0.0.0-20260928213353-e61b6b78110b/go.mod h1:rUelGmuK4UnSJYM5gl5Mknp6YbwwcL8+VAPMhNYe+jg=
++github.com/tailscale/wireguard-go v0.0.0-20261002162406-18e99eba5393 h1:LruJ3jY1QZZLV9Lwxkws7Jav2ILFGZpyQXVqeb6nvzM=
++github.com/tailscale/wireguard-go v0.0.0-20261002162406-18e99eba5393/go.mod h1:rUelGmuK4UnSJYM5gl5Mknp6YbwwcL8+VAPMhNYe+jg=
+ github.com/tailscale/xnet v0.0.0-20240729143630-8497ac4dab2e h1:zOGKqN5D5hHhiYUp091JqK7DPCqSARyUfduhGUY8Bek=
+ github.com/tailscale/xnet v0.0.0-20240729143630-8497ac4dab2e/go.mod h1:orPd6JZXXRyuDusYilywte7k094d7dycXXU5YnWsrwg=
+ github.com/tc-hib/winres v0.3.1 h1:CwRjEGrKdbi5CvZ4ID+iyVhgyfatxFoizjPhzez9Io4=
+```
+
+**File**: `net/sockopts/sockopts_test.go` (added, +89/-0)
+```diff
+@@ -0,0 +1,89 @@
++// Copyright (c) Tailscale Inc & contributors
++// SPDX-License-Identifier: BSD-3-Clause
 +
-+	sys := tsd.NewSystem()
-+	sys.PolicyClient.Set(polc)
++package sockopts
 +
-+	b := newTestLocalBackendWithSys(t, sys)
-+	b.ForTest().SetControlClientGetter(func(opts controlclient.Options) (controlclient.Client, error) {
-+		return newClient(t, opts), nil
-+	})
-+	b.ForTest().SetPrefs(&ipn.Prefs{
-+		ControlURL:  "https://localhost:1/",
-+		WantRunning: false,
-+	})
++import (
++	"errors"
++	"net"
++	"testing"
 +
-+	// Simulate a user disconnecting while AlwaysOn.OverrideWithReason is
-+	// enabled. The override prevents Always-On from immediately setting
-+	// WantRunning back to true.
-+	b.mu.Lock()
-+	b.overrideAlwaysOn = true
-+	b.mu.Unlock()
++	"tailscale.com/types/nettype"
++)
 +
-+	if err := b.Start(ipn.Options{}); err != nil {
-+		t.Fatalf("Start: %v", err)
++// udpConns returns n bound UDP sockets, closed when the test ends.
++func udpConns(t *testing.T, n int) []nettype.PacketConn {
++	t.Helper()
++	pconns := make([]nettype.PacketConn, n)
++	for i := range pconns {
++		uc, err := net.ListenUDP("udp4", nil)
++		if err != nil {
++			t.Fatalf("listen udp4: %v", err)
++		}
++		t.Cleanup(func() { uc.Close() })
++		pconns[i] = uc
 +	}
-+
-+	if got := b.Prefs().WantRunning(); !got {
-+		t.Errorf("WantRunning = false after Start with Always-On enabled; want true")
-+	}
-+
-+	b.mu.Lock()
-+	overrideAlwaysOn := b.overrideAlwaysOn
-+	b.mu.Unlock()
-+	if overrideAlwaysOn {
-+		t.Error("overrideAlwaysOn remains set after Start")
-+	}
++	return pconns
 +}
 +
- func TestZeroExitNodeViaLocalAPI(t *testing.T) {
- 	lb := newTestLocalBackend(t)
- 	user := &ipnauth.TestActor{}
++func TestControlEach(t *testing.T) {
++	t.Run("empty", func(t *testing.T) {
++		var calls int
++		err := ControlEach(nil, func(uintptr) error { calls++; return nil })
++		if !errors.Is(err, ErrNoSocket) {
++			t.Errorf("err = %v, want it to wrap %v", err, ErrNoSocket)
++		}
++		if calls != 0 {
++			t.Errorf("fn called %d times, want 0", calls)
++		}
++	})
++
++	t.Run("nosocket", func(t *testing.T) {
++		type noSocketConn struct{ nettype.PacketConn } // mask syscall.Conn
++		const sockets = 3
++		for bad := range sockets {
++			pconns := udpConns(t, sockets)
++			pconns[bad] = noSocketConn{}
++			var calls int
++			err := ControlEach(pconns, func(uintptr) error { calls++; return nil })
++			if !errors.Is(err, ErrNoSocket) {
++				t.Errorf("bad=%d: err = %v, want it to wrap %v", bad, err, ErrNoSocket)
++			}
++			if calls != 0 {
++				t.Errorf("bad=%d: fn called %d times, want 0", bad, calls)
++			}
++		}
++	})
++
++	t.Run("eachsocket", func(t *testing.T) {
++		const sockets = 4
++		pconns := udpConns(t, sockets)
++		wantErr := errors.New("boom")
++		// failAt == sockets doesn't fail.
++		for failAt := range sockets + 1 {
++			var calls int
++			err := ControlEach(pconns, func(uintptr) error {
++				defer func() { calls++ }()
++				if calls == failAt {
++					return wantErr
++				}
++				return nil
++			})
++			if calls != sockets {
++				t.Errorf("failAt=%d: fn called %d times, want %d", failAt, calls, sockets)
++			}
++			if failAt == sockets {
++				if err != nil {
++					t.Errorf("all sockets succeeded, but err = %v", err)
++				}
++				continue
++			}
++			if !errors.Is(err, wantErr) {
++				t.Errorf("failAt=%d: err = %v, want it to wrap %v", failAt, err, wantErr)
++			}
++			if errors.Is(err, ErrNoSocket) {
++				t.Errorf("failAt=%d: err = %v, want it not to match %v", failAt, err, ErrNoSocket)
++			}
++		}
++	})
++}
+```
+
+**File**: `shell.nix` (modified, +1/-1)
+```diff
+@@ -16,4 +16,4 @@
+ ) {
+   src =  ./.;
+ }).shellNix
+-# nix-direnv cache busting line: sha256-lC6oLZoxHpGRk+UUTRqw48hkJZNHje0EwcMaG8mfDEY=
+\ No newline at end of file
++# nix-direnv cache busting line: sha256-/EHX7MAi3vR9BZBjmOO+3CS3jFnSikBMANtYUrTTLY4=
+\ No newline at end of file
+```
+
+**File**: `wgengine/magicsock/blockforever_conn.go` (modified, +3/-5)
+```diff
+@@ -8,7 +8,6 @@ import (
+ 	"net"
+ 	"net/netip"
+ 	"sync"
+-	"syscall"
+ 	"time"
+ 
+ 	"tailscale.com/syncs"
+@@ -51,7 +50,6 @@ func (c *blockForeverConn) Close() error {
+ 	return nil
+ }
+ 
+-func (c *blockForeverConn) SetDeadline(t time.Time) error         { return errors.New("unimplemented") }
+-func (c *blockForeverConn) SetReadDeadline(t time.Time) error     { return errors.New("unimplemented") }
+-func (c *blockForeverConn) SetWriteDeadline(t time.Time) error    { return errors.New("unimplemented") }
+-func (c *blockForeverConn) SyscallConn() (syscall.RawConn, error) { return nil, errUnsupportedConnType }
++func (c *blockForeverConn) SetDeadline(t time.Time) error      { return errors.New("unimplemented") }
++func (c *blockForeverConn) SetReadDeadline(t time.Time) error  { return errors.New("unimplemented") }
++func (c *blockForeverConn) SetWriteDeadline(t time.Time) error { return errors.New("unimplemented") }
+```
+
+**File**: `wgengine/magicsock/endpoint.go` (modified, +2/-2)
+```diff
+@@ -1109,7 +1109,7 @@ var (
+ 	errPingTooBig  = errors.New("ping size too big")
+ )
+ 
+-func (de *endpoint) send(buffs [][]byte, offset int) error {
++func (de *endpoint) send(flow int, buffs [][]byte, offset int) error {
+ 	de.mu.Lock()
+ 	if de.expired {
+ 		de.mu.Unlock()
+@@ -1148,7 +1148,7 @@ func (de *endpoint) send(buffs [][]byte, offset int) error {
+ 	}
+ 	var err error
+ 	if hasUDPTransport && udpAddr.ap.IsValid() {
+-		_, err = de.c.sendUDPBatch(udpAddr, buffs, offset)
++		_, err = de.c.sendUDPBatch(flow, udpAddr, buffs, offset)
+ 
+ 		// If the error is known to indicate that the endpoint is no longer
+ 		// usable, clear the endpoint statistics so that the next send will
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22006** (2026-10-27): net/netmon,net/netns: cache Windows default interface indices (@nickkhyl)
 - **PR #22002** (2026-10-27): Raggi/104release (@raggi)
 - **PR #21999** (2026-10-27): ipn/ipnlocal: check the tailscaled socket on every serve unix dial (@raggi)
 - **PR #21998** (2026-10-27): ipn/ipnlocal: reset alwayson override before reconciling prefs (@kari-ts)
 - **PR #21992** (closed): ipn/ipnlocal: recheck the tailscaled socket on every serve unix dial (@samj-ts)
 - **PR #21982** (2026-10-27): ssh/tailssh: parse UIDs consistently in isRootUser() (@fmarier)
-- **PR #21980** (2026-10-27): derp/derphttp: bound response body read on non-101 upgrade response (@pawel-ts)
 
 ---
 
@@ -1595,63 +1414,34 @@ U
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ipn/ipnlocal: check the tailscaled socket on every serve unix dial
+## X. tstest/natlab: add basic SSDP and UPnP support (#21823)
 
 **RULE**:
-When implementing operations in `ipn/ipnlocal/serve.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tstest/integration/testcontrol/testcontrol.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3a38840c`: ipn/ipnlocal: check the tailscaled socket on every serve unix dial. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8ed43f1f`: tstest/natlab: add basic SSDP and UPnP support (#21823). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ipn/ipnlocal/serve.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tstest/integration/testcontrol/testcontrol.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// ErrProxyToTailscaledSocket is returned when attempting to proxy to the
-// tailscaled socket itself. The LocalAPI authorizes a unix-socket caller by
-// the peer credentials of the dialing process, which would be tailscaled
-// running as root, so such a proxy would hand a remote client a
-// root-authorized LocalAPI.
-			if socketPath, isUnix := strings.CutPrefix(backDst, "unix:"); isUnix {
-				backConn, err = b.dialServeUnixSocket(ctx, socketPath)
-				// dialServeUnixSocket already logged a refusal; don't double-log.
-				if !errors.Is(err, ErrProxyToTailscaledSocket) {
-					b.logf("localbackend: failed to TCP proxy port %v (from %v) to %s: %v", dport, srcAddr, backDst, err)
-				}
-// dialServeUnixSocket dials a unix-socket serve/funnel backend. It returns
-// ErrProxyToTailscaledSocket if the backend is tailscaled's own socket,
-// which would give the caller a root-authorized LocalAPI.
-//
-// The configured path can be replaced by anyone who can write to its
-// directory, so the socket is re-checked on every dial, not only at
-// config time. dialServeUnixSocketSafe avoids re-resolving the path
-// where the platform allows it. On the remaining dials,
-// refuseIfConnectedToTailscaledSoc
+	// OverrideDisableUPnP, if true, stops the server from sending the
+	// [nodecap.DisableUPnP] capability to every node.
+	OverrideDisableUPnP bool
+
+	if !s.OverrideDisableUPnP {
+		node.Capabilities = append(node.Capabilities, nodecap.DisableUPnP)
+	}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// ErrProxyToTailscaledSocket is returned when attempting to proxy
-// to the tailscaled socket itself, which would create a loop.
-			// Never forward to tailscaled's own socket: the local API
-			// authorizes a unix-socket caller by the peer credentials of the
-			// dialing process, which here is tailscaled itself, so a forward
-			// would hand a remote peer a root-authorized local API.
-			socketPath, isUnix := strings.CutPrefix(backDst, "unix:")
-			if isUnix && b.isTailscaledSocket(socketPath) {
-				b.logf("localbackend: refusing TCP proxy on port %v (from %v) to the tailscaled socket %q", dport, srcAddr, socketPath)
-				return ErrProxyToTailscaledSocket
-			}
-			if isUnix {
-				var d net.Dialer
-				backConn, err = d.DialContext(ctx, "unix", socketPath)
-				b.logf("localbackend: failed to TCP proxy port %v (from %v) to %s: %v", dport, srcAddr, backDst, err)
-				var d net.Dialer
-				return d.DialContext(ctx, "unix", rp.socketPath)
+	node.Capabilities = append(node.Capabilities, nodecap.DisableUPnP)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3a38840c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8ed43f1f` are properly handled with clean fallback behavior.

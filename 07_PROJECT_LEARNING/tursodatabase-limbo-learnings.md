@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
-> **Source Version**: `e02cfcd7`  
+> **Source Version**: `b0563444`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T13:35:20.234Z  
+> **Timestamp**: 2026-10-28T19:32:00.557Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T13:35:19.821Z  
+> **Harvest Timestamp**: 2026-10-28T19:32:00.549Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25068 stars
+- **Stars / Engagement**: 25077 stars
 
 ---
 
@@ -1376,11 +1376,11 @@ async fn main() -> Result<(), Error> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10884** (2026-10-27): **postgres/parser: merge the two function_name functions**
-  *Symptoms*: Main does not compile: `postgres/parser/translator.rs` defines `function_name` twice.  ``` error[E0428]: the name `function_name` is defined multiple times ```  Two PRs merged today each added one:  - 552a94fc9c (`auth.uid()`, `auth.email()`, `auth.jwt()`) lets those three `auth.` functions through. - 1005e89263 (reject quoted function names with uppercase letters) rejects `"LOWER"`.  Each built on its own; together they don't. This PR keeps one `function_name` that does both: `auth.` functions are returned first, then the name is resolved and checked for a schema and for uppercase letters.  **Testing**  - `cargo check -p turso_pg_parser` passes. - Both behaviors already have tests on main (`auth-functions.sqltest`, and the uppercase cases in `functions.sqltest`); CI runs them.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+- **Issue #10970** (2026-10-28): **build(deps): bump undici from 8.11.2 to 8.12.3 in /bindings/javascript**
+  *Symptoms*: Bumps [undici](https://github.com/nodejs/undici) from 8.11.2 to 8.12.3. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/nodejs/undici/releases">undici's releases</a>.</em></p> <blockquote> <h2>v8.12.3</h2> <h2>What's Changed</h2> <ul> <li>ci: use Python 3.14 for the WPT server on macOS by <a href="https://github.com/mrityunjay-pandey"><code>@​mrityunjay-pandey</code></a> in <a href="https://redirect.github.com/nodejs/undici/pull/6029">nodejs/undici#6029</a></li> <li>build(deps-dev): bump neostandard from 0.13.0 to 0.14.0 by <a href="https://github.com/dependabot"><code>@​dependabot</code></a>[bot] in <a href="https://redirect.github.com/nodejs/undici/pull/6006">nodejs/undici#6006</a></li> <li>build(deps-dev): bump eslint from 9.39.4 to 10.12.0 by <a href="https://github.com/dependabot"><code>@​dependabot</code></a>[bot] in <a href="https://redirect.github.com/nodejs/undici/pull/5967">nodejs/undici#5967</a></li> <li>docs: document the options of interceptors.cache() by <a href="https://github.com/qodelicious"><code>@​qodelicious</code></a> in <a href="https://redirect.github.com/nodejs/undici/pull/6050">nodejs/undici#6050</a></li> <li>fix(h2): replace a connection that stops responding after a stream timeout by <a href="https://github.com/mcollina"><code>@​mcollina</code></a> in <a href="https://redirect.github.com/nodejs/undici/pull/6052">nodejs/undici#6052</a></li> <li>fix(pool): keep caller async context for queued requests by <a h
 
-- **Issue #10875** (2026-10-27): **postgres: implement current_schemas from the session search path**
-  *Symptoms*: ## Description  Implement `current_schemas(boolean)` from the session's parsed search path. Return existing schema names in order, omit duplicates, and include implicit `pg_catalog` when requested. Preserve explicit catalog placement, return NULL for a NULL argument, and escape schema names in PostgreSQL array text syntax.  ## Motivation and context  pg_dump stops at `SELECT pg_catalog.current_schemas(false)` because the function is missing. Reading the session search path makes the result follow configuration changes, transaction rollback, and dropped schemas.  With this function implemented, pg_dump proceeds to the separate unsupported `COPY ... TO stdout` operation. Temporary PostgreSQL schemas and per-user schema privileges remain outside the current frontend's model.  ## Description of AI Usage  Codex implemented the function, regression coverage, and documentation under the author's direction, compared behavior against PostgreSQL, and prepared this PR. 
+- **Issue #10969** (2026-10-28): **build(deps): bump launch-editor from 2.14.1 to 2.14.2 in /examples/react-native**
+  *Symptoms*: Bumps [launch-editor](https://github.com/vitejs/launch-editor) from 2.14.1 to 2.14.2. <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/vitejs/launch-editor/commit/b5334895a00f8000ef3b6a46f2aa9e1a62eb27b4"><code>b533489</code></a> v2.14.2</li> <li><a href="https://github.com/vitejs/launch-editor/commit/f13cd835d4b8e860b1d4d080ad8a490cc2463679"><code>f13cd83</code></a> fix: check file existence after path resolution (<a href="https://redirect.github.com/vitejs/launch-editor/issues/157">#157</a>)</li> <li><a href="https://github.com/vitejs/launch-editor/commit/f6e6701bb1f16f2dd242b321374f1b6cca6eb6d4"><code>f6e6701</code></a> fix: ensure filenames passed to editors are not considered as flags (<a href="https://redirect.github.com/vitejs/launch-editor/issues/156">#156</a>)</li> <li><a href="https://github.com/vitejs/launch-editor/commit/3c2f9bf2ff8fe63d056a8f9cc52d825b66ca79fc"><code>3c2f9bf</code></a> fix: reject paths containing <code>%</code> on windows (<a href="https://redirect.github.com/vitejs/launch-editor/issues/155">#155</a>)</li> <li><a href="https://github.com/vitejs/launch-editor/commit/ecdfce1f9ec56a9c08f225f27d8047f3cf9690b1"><code>ecdfce1</code></a> refactor: extract <code>constructWindowsLaunchCommand</code> (<a href="https://redirect.github.com/vitejs/launch-editor/issues/154">#154</a>)</li> <li><a href="https://github.com/vitejs/launch-editor/commit/24d5d8442a022a83c9c9c486b18a3bc4236cf45a"><code>24d5d84</code></a> fix: correctly show e
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1397,512 +1397,157 @@ async fn main() -> Result<(), Error> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8c29f3e6` (2026-10-27)
-**Commit Message**: Merge 'core/json: match SQLite's null document and null path handling' from 
+### Incident Patch 1: `ccebb425` (2026-10-28)
+**Commit Message**: Merge 'build(deps): bump undici from 8.11.2 to 8.12.3 in /bindings/javascript' from app/dependabot
 
-## Update: rebased onto `main` (2026-10-15)
+Bumps [undici](https://github.com/nodejs/undici) from 8.11.2 to 8.12.3.
+<details> <summary>Release notes</summary> <p><em>Sourced from <a
+href="https://github.com/nodejs/undici/releases">undici's
+releases</a>.</em></p> <blockquote> <h2>v8.12.3</h2> <h2>What's
+Changed</h2> <ul> <li>ci: use Python 3.14 for the WPT server on macOS by
+<a href="https://github.com/mrityunjay-pandey"><code>@​mrityunjay-
+pandey</code></a> in <a href="https://redirect.github.com/nodejs/undici/
+pull/6029">nodejs/undici#6029</a></li> <li>build(deps-dev): bump
+neostandard from 0.13.0 to 0.14.0 by <a
+href="https://github.com/dependabot"><code>@​dependabot</code></a>[bot]
+in <a href="https://redirect.github.com/nodejs/undici/pull/6006">nodejs/
+undici#6006</a></li> <li>build(deps-dev): bump eslint from 9.39.4 to
+10.12.0 by <a
+href="https://github.com/dependabot"><code>@​dependabot</code></a>[bot]
+in <a href="https://redirect.github.com/nodejs/undici/pull/5967">nodejs/
+undici#5967</a></li> <li>docs: document the options of
+interceptors.cache() by <a
+href="https://github.com/qodelicious"><code>@​qodelicious</code></a
 
-`main` now has `json_edit_path()`, which already drops a
-`json_set()`/`json_insert()`/`json_replace()` pair whose path is SQL
-NULL without reading its value, and only checks for a BLOB value once
-the path is known to start with `$`. I took `main`'s version of those
-loops, so the `json_set()` ordering caveat below no longer applies. What
-this PR still adds:
-
-* the JSON `null` document result (first commit, unchanged);
-* a SQL NULL document returns SQL NULL before any path or value is read,
-in all the mutators;
-* `json_remove()`/`jsonb_remove()` return SQL NULL when one of their
-paths is SQL NULL.
-
-The second commit message is updated to match. Re-run after the rebase:
-`cargo test -p turso_core --lib -- json` (180 passed, including
-`test_null_path_drops_pair_without_reading_value`) and `cargo fmt -p
-turso_core --check` (clean). The conformance suite and clippy were not
-re-run for this rebase.
-
----
-
-The JSON mutators (`json_set`, `json_insert`, `json_replace`,
-`json_remove` and the `jsonb_` variants) did not follow SQLite's
-handling of a JSON `null` document or of
-
-**File**: `core/json/mod.rs` (modified, +23/-2)
+**File**: `bindings/javascript/yarn.lock` (modified, +3/-3)
 ```diff
-@@ -394,6 +394,9 @@ where
-     let first_arg = args.next().ok_or_else(|| {
-         crate::LimboError::InternalError("args should not be empty after length check".to_string())
-     })?;
-+    if matches!(first_arg.as_value_ref(), ValueRef::Null) {
-+        return Ok(Value::Null);
-+    }
-     let mut json = json_cache.get_or_insert_with(first_arg, make_jsonb_fn)?;
+@@ -3368,9 +3368,9 @@ __metadata:
+   linkType: hard
  
-     // TODO: when `array_chunks` is stabilized we can chunk by 2 here
-@@ -417,7 +420,7 @@ where
+ "undici@npm:^8.4.1":
+-  version: 8.11.2
+-  resolution: "undici@npm:8.11.2"
+-  checksum: 10c0/106f6991178fb7562fd90cdec7993c5f807a9428682306091f0c4b27fc474ec291f868e29972c6252988bf061ad193df943b3b99e775be157a28d92bbb95699d
++  version: 8.12.3
++  resolution: "undici@npm:8.12.3"
++  checksum: 10c0/714919e62b4160eea195fb35c7f5c4907235741e47bfde8a014ac58f6d24df13434e23400d7f48e2c455fd2b259d27f07fce514f04a5b4e99936ba62cbc4bb71
+   languageName: node
+   linkType: hard
  
-     let el_type = json.element_type()?;
- 
--    json_string_to_db_type(json, el_type, OutputVariant::String)
-+    json_document_to_db_type(json, el_type, OutputVariant::String)
- }
- 
- pub fn jsonb_set<I, E, V>(args: I, json_cache: &JsonCacheCell) -> crate::Result<Value>
-@@ -435,6 +438,9 @@ where
-     let first_arg = args.next().ok_or_else(|| {
-         crate::LimboError::InternalError("args should not be empty after length check".to_string())
-     })?;
-+    if matches!(first_arg.as_value_ref(), ValueRef::Null) {
-+        return Ok(Value::Null);
-+    }
-     let mut json = json_cache.get_or_insert_with(first_arg, make_jsonb_fn)?;
- 
-     // TODO: when `array_chunks` is stabilized we can chunk by 2 here
-@@ -456,7 +462,7 @@ where
- 
-     let el_type = json.element_type()?;
- 
--    json_string_to_db_type(json, el_type, OutputVariant::Binary)
-+    json_document_to_db_type(json, el_type, OutputVariant::Binary)
- }
- 
- /// Implements the -> operator. Always returns a proper JSON value.
-@@ -850,6 +856,21 @@ fn json_edit_path<'a>(
-     json_path_from_db_value(path, true)
- }
- 
-+pub fn json_document_to_db_type(
-+    json: Jsonb,
-+    element_type: ElementType,
-+    output: OutputVariant,
-+) -> crate::Result<Value> {
-+    if element_type == ElementType::NULL {
-+        return if matches!(output, OutputVariant::Binary) {
-+            Ok(Value::Blob(json.data()))
-+        } else {
-+            Ok(Value::Text(Text::json("null".to_string())))
-+        };
-+    }
-+    json_string_to_db_type(json, element_type, output)
-+}
-+
- pub fn json_error_position(json: impl AsValueRef) -> crate::Result<Value> {
-     match json.as_value_ref() {
-         ValueRef::Text(t) => {
-```
-
-**File**: `core/json/ops.rs` (modified, +294/-40)
-```diff
-@@ -1,11 +1,11 @@
- use super::{
--    convert_dbtype_to_jsonb, curry_convert_dbtype_to_jsonb, json_edit_path,
--    json_path_from_db_value, json_string_to_db_type,
-+    convert_dbtype_to_jsonb, curry_convert_dbtype_to_jsonb, json_document_to_db_type,
-+    json_edit_path, json_path_from_db_value, json_path_text,
-     jsonb::{DeleteOperation, InsertOperation, ReplaceOperation},
-     Conv, JsonCacheCell, OutputVariant,
- };
- use crate::{
--    types::{AsValueRef, Text, Value},
-+    types::{AsValueRef, Value},
-     ValueRef,
- };
- 
-@@ -39,14 +39,7 @@ pub fn json_patch(
- 
-     let element_type = target.element_type()?;
- 
--    // A JSON null patch result stays JSON here: SQLite returns the
--    // text 'null', while json_string_to_db_type would map it to SQL
--    // NULL the way extraction does.
--    if element_type == super::jsonb::ElementType::NULL {
--        return Ok(Value::Text(Text::json("null".to_string())));
--    }
--
--    json_string_to_db_type(target, element_type, OutputVariant::String)
-+    json_document_to_db_type(target, element_type, OutputVariant::String)
- }
- 
- pub fn jsonb_patch(
-@@ -74,14 +67,7 @@ pub fn jsonb_patch(
- 
-     let element_type = target.element_type()?;
- 
--    // A JSON null patch result stays JSON here: SQLite returns the
--    // JSONB null blob, while json_string_to_db_type would map it to
--    // SQL NULL the way extraction does.
--    if element_type == super::jsonb::ElementType::NULL {
--        return Ok(Value::Blob(target.data()));
--    }
--
--    json_string_to_db_type(target, element_type, OutputVariant::Binary)
-+    json_document_to_db_type(target, element_type, OutputVariant::Binary)
- }
- 
- pub fn json_remove<I, E, V>(args: I, json_cache: &JsonCacheCell) -> crate::Result<Value>
-@@ -99,22 +85,24 @@ where
-     let first_arg = args.next().ok_or_else(|| {
-         crate::LimboError::InternalError("args should not be empty after length check".to_string())
-     })?;
-+    if matches!(first_arg.as_value_ref(), ValueRef::Null) {
-+        return Ok(Value::Null);
-+    }
-     let mut json = json_cache.get_or_insert_with(first_arg, make_jsonb_fn)?;
-     for arg in args {
--        if let ValueRef::Text(s) = arg.as_value_ref() {
--            if s.as_str() == "$" {
--                return Ok(Value::Null);
--            }
--        }
--        if let Some(path) = json_path_from_db_value(&arg, true)? {
--            let mut op = DeleteOperation::new();
--            let _ = json.operate_on_path(&path, &mut op);
-+        if json_path_text(arg.as_value_ref()).as_deref() == Some("$") {
-+            return Ok(Value::Null);
-         }
-+        let Some(path) = json_path_from_db_value(&arg, true)? else {
-+            return Ok(Value::Null);
-+        };
-+        let mut op = DeleteOperation::new();
-+        let _ = json.operate_on_path(&path, &mut op);
-     }
- 
-     let el_type = json.element_type()?;
- 
--    json_string_to_db_type(json, el_type, OutputVariant::String)
-+    json_document_to_db_type(json, el_type, OutputVariant::String)
- }
- 
- pub fn jsonb_remove<I, E, V>(args: I, json_cache: &JsonCacheCell) -> crate::Result<Value>
-@@ -132,17 +120,19 @@ where
-     let first_arg = args.next().ok_or_else(|| {
-         crate::LimboError::InternalError("args should not be empty after length check".to_string())
-     })?;
-+    if matches!(first_arg.as_value_ref(), ValueRef::Null) {
-+        return Ok(Value::Null);
-+    }
-     let mut json = json_cache.get_or_insert_with(first_arg, make_jsonb_fn)?;
-     for arg in args {
--        if let ValueRef::Text(s) = arg.as_value_ref() {
--            if s.as_str() == "$" {
--                return Ok(Value::Null);
--            }
--        }
--        if let Some(path) = json_path_from_db_value(&arg, true)? {
--            let mut op = DeleteOperation::new();
--            let _ = json.operate_on_path(&path, &mut op);
-+        if json_path_text(arg.as_value_ref()).as_deref() == Some("$") {
-+            return Ok(Value::Null);
-         }
-+        let Some(path) = json_path_from_db_value(&arg, true)? else {
-+            return Ok(Value::Null);
-+        };
-+        let mut op = DeleteOperation::new();
-+        let _ = json.operate_on_path(&path, &mut op);
-     }
- 
-     Ok(Value::Blob(json.data()))
-@@ -163,6 +153,9 @@ where
-     let first_arg = args.next().ok_or_else(|| {
-         crate::LimboError::InternalError("args should not be empty after length check".to_string())
-     })?;
-+    if matches!(first_arg.as_value_ref(), ValueRef::Null) {
-+        return Ok(Value::Null);
-+    }
-     let mut json = json_cache.get_or_insert_with(first_arg, make_jsonb_fn)?;
-     // TODO: when `array_chunks` is stabilized we can chunk by 2 here
-     while args.len() > 1 {
-@@ -184,7 +177,7 @@ where
- 
-     let el_type = json.element_type()?;
- 
--    json_string_to_db_type(json, el_type, super::OutputVariant::String)
-+    json_document_to_db_type(json, el_type, OutputVariant::String)
- }
- 
- pub fn jsonb_replace<I, E, V>(args: I, json_cache: &JsonCacheCell) -> crate::Result<Value>
-@@ -202,6 +195,9 @@ where
-     let 
 ```
 
 ---
 
-### Incident Patch 2: `212ebc87` (2026-10-27)
-**Commit Message**: Merge 'core/translate: report expression index columns as cid -2 with NULL name in index_info pragmas' from app/turso-github-handyman
+### Incident Patch 2: `d3bff3e6` (2026-10-28)
+**Commit Message**: Merge 'build(deps): bump rustls from 0.23.45 to 0.23.46' from app/dependabot
 
-## Problem
+Bumps [rustls](https://github.com/rustls/rustls) from 0.23.45 to
+0.23.46. <details> <summary>Commits</summary> <ul> <li><a href="https://
+github.com/rustls/rustls/commit/f04804fa13341a9b1dc02b5d1dd8a746f2c4b7fb
+"><code>f04804f</code></a> Delay saving KX hint until handshake
+confirmation</li> <li><a href="https://github.com/rustls/rustls/commit/0
+49d39b975ef5c39f546a10fa03d420dcf053510"><code>049d39b</code></a> Bump
+version to 0.23.46</li> <li><a href="https://github.com/rustls/rustls/co
+mmit/6d0ba089d6d446959d113bdad43042780949ba48"><code>6d0ba08</code></a>
+Eliminate secret from impl Debug for
+<code>ServerSessionValue</code></li> <li><a href="https://github.com/rus
+tls/rustls/commit/2b82b8141ae090fa193a9961705598b81d3aae9c"><code>2b82b8
+1</code></a> unbuffered: update TLS 1.3 traffic keys before exhausting
+them</li> <li><a href="https://github.com/rustls/rustls/commit/74343e704
+7d7179b9bd7e67cef543b6c490518a1"><code>74343e7</code></a> conn: update
+TLS 1.3 traffic keys within fragmented writes</li> <li><a href="https://
+github.com/rustls/rustls/commit/795eea719e9491ee45aae38acc62a60a98969fbe
+"><code>795eea
 
-```sql
-CREATE TABLE t(a, b, c, d);
-CREATE INDEX i_expr ON t(substr(b,1,1));
-SELECT seqno, cid, quote(name), key FROM pragma_index_xinfo('i_expr');
--- Turso:
--- 0|-1|'substr (b, 1, 1)'|1
--- 1|-1|''|0
--- SQLite:
--- 0|-2|NULL|1
--- 1|-1|NULL|0
-```
-
-`PRAGMA index_info` has the same bug for the expression column.
-
-Both pragmas printed `IndexColumn::pos_in_table` and `name` directly.
-For an expression column, `pos_in_table` is `EXPR_INDEX_SENTINEL`
-(`usize::MAX`), which prints as `-1`. The name is the expression text.
-The rowid row of `index_xinfo` also had `''` as its name instead of
-NULL.
-
-The issue also says the output changed after an unrelated `ALTER TABLE
-... DROP COLUMN`. That no longer happens on main, but the values were
-wrong before and after the `ALTER`.
-
-## Fix
-
-Like SQLite, an expression column gets cid `-2` and a NULL name. The
-rowid row of `index_xinfo` gets a NULL name.
-
-`emit_index_column_cid_and_name` writes the cid and name for both
-pragmas. If `pos_in_table == EXPR_INDEX_SENTINEL`, it writes `-2` and
-NULL. Otherwise it write
-
-**File**: `core/translate/pragma.rs` (modified, +16/-6)
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -15,7 +15,7 @@ use super::integrity_check::{
- use crate::function::Func;
- use crate::namespace::{NamespaceId, NamespaceRef};
- use crate::pragma::pragma_for;
--use crate::schema::{BTreeTable, Index, Schema, Table};
-+use crate::schema::{BTreeTable, Index, IndexColumn, Schema, Table, EXPR_INDEX_SENTINEL};
- use crate::storage::encryption::{CipherMode, EncryptionKey};
- use crate::storage::pager::AutoVacuumMode;
- use crate::storage::pager::Pager;
-@@ -1136,8 +1136,7 @@ fn query_pragma(
-                     )? {
-                         for (seqno, col) in index.columns.iter().enumerate() {
-                             program.emit_int(seqno as i64, base_reg);
--                            program.emit_int(col.pos_in_table as i64, base_reg + 1);
--                            program.emit_string8(col.name.clone(), base_reg + 2);
-+                            emit_index_column_cid_and_name(program, col, base_reg + 1);
-                             program.emit_result_row(base_reg, 3);
-                         }
-                     }
-@@ -1182,8 +1181,7 @@ fn query_pragma(
-                                 .unwrap_or_else(|| "BINARY".to_string());
+@@ -5438,9 +5438,9 @@ dependencies = [
  
-                             program.emit_int(seqno as i64, base_reg);
--                            program.emit_int(col.pos_in_table as i64, base_reg + 1);
--                            program.emit_string8(col.name.clone(), base_reg + 2);
-+                            emit_index_column_cid_and_name(program, col, base_reg + 1);
-                             program.emit_int(desc as i64, base_reg + 3);
-                             program.emit_string8(coll, base_reg + 4);
-                             program.emit_int(1, base_reg + 5); // key column
-@@ -1195,7 +1193,7 @@ fn query_pragma(
-                             let seqno = index.columns.len();
-                             program.emit_int(seqno as i64, base_reg);
-                             program.emit_int(-1, base_reg + 1);
--                            program.emit_string8(String::new(), base_reg + 2);
-+                            program.emit_null(base_reg + 2, None);
-                             program.emit_int(0, base_reg + 3);
-                             program.emit_string8("BINARY".to_string(), base_reg + 4);
-                             program.emit_int(0, base_reg + 5); // not a key column
-@@ -1957,6 +1955,18 @@ fn without_rowid_primary_key_index(table: &BTreeTable) -> Result<Option<Index>>
-     Ok(Some(index))
- }
- 
-+/// Emits the `cid` and `name` of PRAGMA index_info / index_xinfo. Like SQLite,
-+/// an expression column has cid -2 and a NULL name.
-+fn emit_index_column_cid_and_name(program: &mut ProgramBuilder, col: &IndexColumn, dest: usize) {
-+    if col.pos_in_table == EXPR_INDEX_SENTINEL {
-+        program.emit_int(-2, dest);
-+        program.emit_null(dest + 1, None);
-+    } else {
-+        program.emit_int(col.pos_in_table as i64, dest);
-+        program.emit_string8(col.name.clone(), dest + 1);
-+    }
-+}
-+
- /// 0-based index of `column` within `primary_key_columns`, if present.
- fn column_pk_index(
-     column: &crate::schema::Column,
-```
-
-**File**: `docs/sql-reference/pragmas.mdx` (modified, +2/-0)
-```diff
-@@ -178,6 +178,8 @@ PRAGMA index_info(index-name);
- -- 0     | 2   | email
- ```
- 
-+An expression column (for example `CREATE INDEX i ON t(lower(name))`) has `cid` -2 and a NULL `name`.
-+
- The PRIMARY KEY of a `WITHOUT ROWID` table is reported as an index named `sqlite_autoindex_<table>_1`. Passing the table's name to `index_info` or `index_xinfo` also describes that index.
- 
- ### index_xinfo
-```
-
-**File**: `sqlite/conformance/sqlite-sqltests/pragma/index_info.sqltest` (modified, +26/-0)
-```diff
-@@ -112,3 +112,29 @@ expect {
-     pk|0|0|z
-     0|0|z
- }
-+
-+@cross-check-integrity
-+test pragma-index-info-expression-column {
-+    CREATE TABLE t(a, b, c, d);
-+    CREATE INDEX i_expr ON t(substr(b,1,1), a);
-+    SELECT seqno, cid, quote(name) FROM pragma_index_info('i_expr');
-+    ALTER TABLE t DROP COLUMN d;
-+    ALTER TABLE t RENAME COLUMN a TO z;
-+    PRAGMA index_info('i_expr');
-+}
-+expect {
-+    0|-2|NULL
-+    1|0|'a'
-+    0|-2|
-+    1|0|z
-+}
-+
-+@cross-check-integrity
-+test pragma-index-info-virtual-generated-column {
-+    CREATE TABLE t(a, b, g AS (a*2));
-+    CREATE INDEX i ON t(g);
-+    PRAGMA index_info('i');
-+}
-+expect {
-+    0|2|g
-+}
-```
-
-**File**: `sqlite/conformance/sqlite-sqltests/pragma/index_xinfo.sqltest` (modified, +34/-0)
-```diff
-@@ -115,3 +115,37 @@ expect {
-     0|0|id|0|BINARY|1
-     1|1|v|0|BINARY|0
- }
-+
-+@cross-check-integrity
-+test pragma-index-xinfo-expression-column {
-+    CREATE TABLE t(a, b, c, d);
-+    CREATE INDEX i_expr ON t(substr(b,1,1), a);
-+    SELECT seqno, cid, quote(name), key FROM pragma_index_xinfo('i_expr');
-+    ALTER TABLE t DROP COLUMN d;
-+    SELECT seqno, cid, quote(name), key FROM pragma_index_xinfo('i_expr');
-+    ALTER TABLE t RENAME COLUMN a TO z;
-+    PRAGMA index_xinfo('i_expr');
-+}
-+expect {
-+    0|-2|NULL|1
-+    1|0|'a'|1
-+    2|-1|NULL|0
-+    0|-2|NULL|1
-+    1|0|'a'|1
-+    2|-1|NULL|0
-+    0|-2||0|BINARY|1
-+    1|0|z|0|BINARY|1
-+    2|-1||0|BINARY|0
-+}
-+
-+@cross-check-integrity
-+test pragma-index-xinfo-virtual-generated-column {
-+    CREATE TABLE t(a, b, g AS (a*2));
-+    CREATE INDEX i ON t(g COLLATE NOCASE DESC, g*2);
-+    SELECT seqno, cid, quote(name), desc, coll, key FROM pragma_index_xinfo('i');
-+}
-+expect {
-+    0|2|'g'|1|NOCASE|1
-+    1|-2|NULL|0|BINARY|1
-+    2|-1|NULL|0|BINARY|0
-+}
+ [[package]]
+ name = "rustls"
+-version = "0.23.45"
++version = "0.23.46"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "0d41d731c7d2f962d1ccc364cec258de3c0e93b38c2fb3ba97ac74513048d634"
++checksum = "48e13bd8c0e9365c43cfa5c9e8f9ad49d3c8444926c9aac819e0e4dc503c8fdf"
+ dependencies = [
+  "aws-lc-rs",
+  "log",
 ```
 
 ---
 
-### Incident Patch 3: `89e24b3d` (2026-10-27)
-**Commit Message**: Merge 'core/json: return no rows from json_each/json_tree with a NULL path' from Yunus Ozen
+### Incident Patch 3: `b84291bb` (2026-10-28)
+**Commit Message**: Merge 'build(deps): bump launch-editor from 2.14.1 to 2.14.2 in /examples/react-native' from app/dependabot
 
-`json_each(json, NULL)` and `json_tree(json, NULL)` failed with `root
-path should be text`. SQLite parses the JSON first and then returns an
-empty result when the path is NULL, the same as for a NULL JSON
-argument.
+Bumps [launch-editor](https://github.com/vitejs/launch-editor) from
+2.14.1 to 2.14.2. <details> <summary>Commits</summary> <ul> <li><a
+href="https://github.com/vitejs/launch-editor/commit/b5334895a00f8000ef3
+b6a46f2aa9e1a62eb27b4"><code>b533489</code></a> v2.14.2</li> <li><a
+href="https://github.com/vitejs/launch-editor/commit/f13cd835d4b8e860b1d
+4d080ad8a490cc2463679"><code>f13cd83</code></a> fix: check file
+existence after path resolution (<a
+href="https://redirect.github.com/vitejs/launch-
+editor/issues/157">#157</a>)</li> <li><a
+href="https://github.com/vitejs/launch-editor/commit/f6e6701bb1f16f2dd24
+2b321374f1b6cca6eb6d4"><code>f6e6701</code></a> fix: ensure filenames
+passed to editors are not considered as flags (<a
+href="https://redirect.github.com/vitejs/launch-
+editor/issues/156">#156</a>)</li> <li><a
+href="https://github.com/vitejs/launch-editor/commit/3c2f9bf2ff8fe63d056
+a8f9cc52d825b66ca79fc"><code>3c2f9bf</code></a> fix: reject paths
+containing <code>%</code> on windows (<a
+href="https://redirect.github.com/vitejs/launch-
+editor/issues/155">#155</a>)</li> <li><a
 
-`JsonEachCursor::filter` now returns no rows for a NULL path right after
-the JSON is converted, so malformed JSON with a NULL path is still a
-`malformed JSON` error, like in SQLite. A non-text, non-NULL path keeps
-erroring as before.
-
-New `json-each-null-path.sqltest` covers json_each, json_tree, a NULL
-path coming from a join, and malformed JSON with a NULL path. The
-existing `json_tree` and `json_tree_columns` tests still pass.
-
-Fixes #9838
-
-I used Claude Code to make the change and write the tests, following the
-code pointer in the issue. I reviewed the diff and ran the tests myself,
-and compared the results with sqlite3.
-
-Closes #9877
-
-**File**: `core/json/vtab.rs` (modified, +5/-0)
+**File**: `examples/react-native/package-lock.json` (modified, +6/-6)
 ```diff
-@@ -252,6 +252,11 @@ impl InternalVirtualTableCursor for JsonEachCursor {
-         }
-         let root_path = match args.get(1) {
-             None => Cow::Borrowed("$"),
-+            // Like SQLite, a NULL path is an empty result once the JSON has parsed.
-+            Some(Value::Null) => {
-+                convert_dbtype_to_jsonb(&args[0], Conv::Strict)?;
-+                return Ok(false);
-+            }
-             Some(path) => json_path_text(path.as_value_ref()).ok_or_else(|| {
-                 LimboError::InvalidArgument("root path should be text".to_owned())
-             })?,
-```
-
-**File**: `sqlite/conformance/sqlite-sqltests/json/json-each-null-path.sqltest` (added, +33/-0)
-```diff
-@@ -0,0 +1,33 @@
-+@database :memory:
-+
-+# A NULL PATH makes json_each and json_tree return no rows, the same as a
-+# NULL JSON argument. The JSON is still parsed first, so malformed JSON is
-+# an error even with a NULL path.
-+
-+test json-each-null-path-is-empty {
-+    SELECT count(*) FROM json_each('[1,2]', NULL);
-+}
-+expect {
-+    0
-+}
-+
-+test json-tree-null-path-is-empty {
-+    SELECT count(*) FROM json_tree('[1,2]', NULL);
-+}
-+expect {
-+    0
-+}
-+
-+test json-each-null-path-from-join {
-+    SELECT count(*) FROM (SELECT NULL AS p) JOIN json_each('[1,2]', p);
-+}
-+expect {
-+    0
-+}
-+
-+test json-each-null-path-still-parses-json {
-+    SELECT count(*) FROM json_each('not json', NULL);
-+}
-+expect error {
-+    .*malformed JSON.*
-+}
+@@ -42,7 +42,7 @@
+     },
+     "../../bindings/react-native": {
+       "name": "@tursodatabase/sync-react-native",
+-      "version": "0.8.0",
++      "version": "0.9.0-pre.1",
+       "license": "MIT",
+       "dependencies": {
+         "@babel/runtime": "^7.25.0"
+@@ -8428,14 +8428,14 @@
+       }
+     },
+     "node_modules/launch-editor": {
+-      "version": "2.14.1",
+-      "resolved": "https://registry.npmjs.org/launch-editor/-/launch-editor-2.14.1.tgz",
+-      "integrity": "sha512-QWBrQsMpH7gPr965dsKD/3cKWiNoTjpATQf++Xq63N6sKRGMwlVXz41O1IZTMfZQgBctD/K5Zt06+/I6pP6+HA==",
++      "version": "2.14.2",
++      "resolved": "https://registry.npmjs.org/launch-editor/-/launch-editor-2.14.2.tgz",
++      "integrity": "sha512-NHJEb30MGBCkmZXLZwz25t37QR4aY03ZzPYUJXOJaOa92uWwExI9SBQUuIznBYc1xkD7cJNGX7oc3Nl3sq2kQQ==",
+       "devOptional": true,
+       "license": "MIT",
+       "dependencies": {
+         "picocolors": "^1.1.1",
+-        "shell-quote": "^1.8.4"
++        "shell-quote": "^1.10.0"
+       }
+     },
+     "node_modules/leven": {
+@@ -11635,7 +11635,7 @@
+       "version": "5.9.3",
+       "resolved": "https://registry.npmjs.org/typescript/-/typescript-5.9.3.tgz",
+       "integrity": "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==",
+-      "dev": true,
++      "devOptional": true,
+       "license": "Apache-2.0",
+       "bin": {
+         "tsc": "bin/tsc",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10884** (2026-10-27): postgres/parser: merge the two function_name functions (@jussisaurio)
-- **PR #10875** (2026-10-27): postgres: implement current_schemas from the session search path (@pedrocarlo)
-- **PR #10874** (2026-10-27): core/translate: fill existing rows for ADD COLUMN with a non-constant default in tursopg (@turso-github-handyman[bot])
-- **PR #10869** (closed): core: rewrite views when renaming their table (@abrahamperz)
-- **PR #10868** (2026-10-26): postgres: expose sequence parameters through pg_sequence (@pedrocarlo)
-- **PR #10861** (2026-10-27): core/translate: run nondeterministic WHERE terms once per row (@Raviikumar001)
+- **PR #10970** (2026-10-28): build(deps): bump undici from 8.11.2 to 8.12.3 in /bindings/javascript (@dependabot[bot])
+- **PR #10969** (2026-10-28): build(deps): bump launch-editor from 2.14.1 to 2.14.2 in /examples/react-native (@dependabot[bot])
+- **PR #10964** (2026-10-28): Match SQLite formatting for empty json_pretty containers (@deepak-swami007)
+- **PR #10963** (2026-10-28): Skip erroring constant projections when WHERE is false (@deepak-swami007)
+- **PR #10960** (2026-10-28): core/translate: keep an index method's LIMIT off aggregate and DISTINCT queries (@cmolocznik)
+- **PR #10950** (2026-10-28): core/json: classify BLOB arguments as JSONB the way SQLite does (@turso-github-handyman[bot])
 
 ---
 
@@ -1922,51 +1567,32 @@ Closes #9877
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'core/json: match SQLite's null document and null path handling' from
+## X. Merge 'build(deps): bump undici from 8.11.2 to 8.12.3 in /bindings/javascript' f
 
 **RULE**:
-When implementing operations in `core/json/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `bindings/javascript/yarn.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8c29f3e6`: Merge 'core/json: match SQLite's null document and null path handling' from. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ccebb425`: Merge 'build(deps): bump undici from 8.11.2 to 8.12.3 in /bindings/javascript' from app/dependabot. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/json/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `bindings/javascript/yarn.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    if matches!(first_arg.as_value_ref(), ValueRef::Null) {
-        return Ok(Value::Null);
-    }
-    json_document_to_db_type(json, el_type, OutputVariant::String)
-    if matches!(first_arg.as_value_ref(), ValueRef::Null) {
-        return Ok(Value::Null);
-    }
-    json_document_to_db_type(json, el_type, OutputVariant::Binary)
-pub fn json_document_to_db_type(
-    json: Jsonb,
-    element_type: ElementType,
-    output: OutputVariant,
-) -> crate::Result<Value> {
-    if element_type == ElementType::NULL {
-        return if matches!(output, OutputVariant::Binary) {
-            Ok(Value::Blob(json.data()))
-        } else {
-            Ok(Value::Text(Text::json("null".to_string())))
-        };
-    }
-    json_string_to_db_type(json, element_type, output)
-}
-
+  version: 8.12.3
+  resolution: "undici@npm:8.12.3"
+  checksum: 10c0/714919e62b4160eea195fb35c7f5c4907235741e47bfde8a014ac58f6d24df13434e23400d7f48e2c455fd2b259d27f07fce514f04a5b4e99936ba62cbc4bb71
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    json_string_to_db_type(json, el_type, OutputVariant::String)
-    json_string_to_db_type(json, el_type, OutputVariant::Binary)
+  version: 8.11.2
+  resolution: "undici@npm:8.11.2"
+  checksum: 10c0/106f6991178fb7562fd90cdec7993c5f807a9428682306091f0c4b27fc474ec291f868e29972c6252988bf061ad193df943b3b99e775be157a28d92bbb95699d
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8c29f3e6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ccebb425` are properly handled with clean fallback behavior.

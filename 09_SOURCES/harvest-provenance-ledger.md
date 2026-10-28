@@ -5909,3 +5909,8 @@ Every entry in this ledger must capture:
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `a113cf0d` | Multi-dimensional audit evidence | 2026-10-28T19:17:21.267Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `6f2ed958` | Multi-dimensional audit evidence | 2026-10-28T19:17:25.370Z |
 | `learn-huggingface-autotrust-gev-26b-decide` | `https://huggingface.co/autotrust/GEV-26B-Decide` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-28T19:24:24.910Z |
+| `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `6e71bbb4` | Multi-dimensional audit evidence | 2026-10-28T19:31:45.611Z |
+| `learn-github-necolas-react-native-web` | `https://github.com/necolas/react-native-web` | `b7ebd988` | Multi-dimensional audit evidence | 2026-10-28T19:31:50.062Z |
+| `learn-huggingface-google-embeddinggemma-2` | `https://huggingface.co/google/embeddinggemma-2` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-28T19:31:55.526Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `8ed43f1f` | Multi-dimensional audit evidence | 2026-10-28T19:31:55.582Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `b0563444` | Multi-dimensional audit evidence | 2026-10-28T19:32:01.164Z |

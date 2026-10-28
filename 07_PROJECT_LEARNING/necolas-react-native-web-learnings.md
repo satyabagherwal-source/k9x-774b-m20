@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/necolas-react-native-web-learnings.md`  
 > **Source**: github ([https://github.com/necolas/react-native-web](https://github.com/necolas/react-native-web))  
-> **Source Version**: `6a995615`  
+> **Source Version**: `b7ebd988`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T00:19:33.229Z  
+> **Timestamp**: 2026-10-28T19:31:49.786Z  
 > **Learning ID**: `learn-github-necolas-react-native-web`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/necolas-react-native-web-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/necolas/react-native-web](https://github.com/necolas/react-native-web))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T00:19:33.222Z  
+> **Harvest Timestamp**: 2026-10-28T19:31:49.779Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cross-platform React UI packages
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 22156 stars
+- **Stars / Engagement**: 22157 stars
 
 ---
 
@@ -541,14 +541,14 @@ export default TextInputState;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2929** (2026-10-28): **useWindowDimensions and useColorScheme cause a hydration mismatch on server-rendered pages**
+  *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  This issue is a follow-up to #2799. It is one specific SSR problem, with a repro.  The problem is old (#566 added `Dimensions.set` as a best guess for it in 2017, and #1688 describes it with Next.js), but it is more common now: since SDK 58, new Expo projects render their web pages on the server by default (the default template's `web.output` went from `'static'` to `'server'`, expo/expo#50129).  ### Describe the issue  A page renders on the server and then hydrates in the browser. Its render uses `useWindowDimensions()` or `useColorScheme()`.  - The server has no window. It renders with `0x0` and `"light"`, or with the values given to `Dimensions.set`. - In the browser, the first render reads the real window and color scheme, for example `1024x768` and `"dark"`.  Thus the first client render does not match the server HTML. React shows error #418 ("Hydration failed because the server rendered text didn't match the client"). React then renders the root again on the client and discards the server HTML.  ### Expected behavior  The first client render matches the server HTML, so hydration succeeds. After hydration, the hooks change to the real values.  ### Steps to reproduce  1. Clone the repro and run `bun install`. 2. Run `bun run build`. The app uses Expo Router with `web.output: 'server'`. 3. Run `bun run serve`. 4. Open http://localhost:8081 with the console open. Use a window that is not 0x
+
 - **Issue #2925** (2026-10-22): **Scroll not working on the example app home**
   *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  ### Describe the issue  Yesterday while running the example app saw the scroll is notworking on the homescreen  ### Expected behavior  Scroll should work  ### Steps to reproduce  1. cd into packages/react-native-web-examples 2. try scroll, not working on brave browser  ### Test case  https://github.com/necolas/react-native-web/tree/master/packages/react-native-web-examples  ### Additional comments  _No response_
   **Post-Mortem & Fix Analysis**:
   > @zoontek, also, the demo apps should not be in the packages folder. Are we planning for migrations?  I heavily rely on react native web infact I was planning to take a fork and start work on it as per my project requirements, great I saw you guys took up the task and maintain it again  I have a good list of things that can be improved in the repo, which I found during my recent audit on few of my projects
   > @raajnadar Yes, it's planned. We have a roadmap, I will do it when needed.
-
-- **Issue #2914** (2026-10-21): **`preprocess.js`: broken `if` queries**
-  *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  ### Describe the issue  In next `if` queries there are errors leading to wrong code, instead of `&&` there are present `,` (commas)  https://github.com/necolas/react-native-web/blob/e5534a137952f2ecd78e96f05e2bfd80dfc5861b/packages/react-native-web/src/exports/StyleSheet/preprocess.js#L143  https://github.com/necolas/react-native-web/blob/e5534a137952f2ecd78e96f05e2bfd80dfc5861b/packages/react-native-web/src/exports/StyleSheet/preprocess.js#L157   ### Expected behavior  must be `&&`  ### Steps to reproduce  Use direct links from description  ### Test case  https://github.com/necolas/react-native-web/blob/e5534a137952f2ecd78e96f05e2bfd80dfc5861b/packages/react-native-web/src/exports/StyleSheet/preprocess.js#L143  ### Additional comments  _No response_
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -565,301 +565,1006 @@ export default TextInputState;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `58334dc6` (2026-10-27)
-**Commit Message**: Add "type" prop for elements rendered as <button> (#2930)
+### Incident Patch 1: `c913fe89` (2026-10-28)
+**Commit Message**: [fix] Animated.loop blocks FlatList onEndReached (#2934)
 
-**File**: `packages/react-native-web-docs/src/pages/docs/components/text.md` (modified, +4/-0)
+**File**: `packages/react-native-web/src/vendor/react-native/Animated/nodes/AnimatedValue.js` (modified, +0/-8)
 ```diff
-@@ -100,6 +100,10 @@ Set whether the view can receive keyboard focus.
- Set the test selector label (via `data-testid`).
- {% endcall %}
+@@ -12,7 +12,6 @@
  
-+{% call macro.prop('type', '?("button" | "reset" | "submit")') %}
-+If the element renders as a `<button>`, this prop sets its [type](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#type). Defaults to `"button"`. Use `"submit"` to submit a parent `<form>`.
-+{% endcall %}
-+
- ---
+ import AnimatedInterpolation from './AnimatedInterpolation';
+ import AnimatedWithChildren from './AnimatedWithChildren';
+-import InteractionManager from '../../../../modules/InteractionManager';
+ import NativeAnimatedHelper from '../NativeAnimatedHelper';
  
- ## Examples
+ import type AnimatedNode from './AnimatedNode';
+@@ -239,10 +238,6 @@ class AnimatedValue extends AnimatedWithChildren {
+    * See https://reactnative.dev/docs/animatedvalue#animate
+    */
+   animate(animation: Animation, callback: ?EndCallback): void {
+-    let handle = null;
+-    if (animation.__isInteraction) {
+-      handle = InteractionManager.createInteractionHandle();
+-    }
+     const previousAnimation = this._animation;
+     this._animation && this._animation.stop();
+     this._animation = animation;
+@@ -254,9 +249,6 @@ class AnimatedValue extends AnimatedWithChildren {
+       },
+       result => {
+         this._animation = null;
+-        if (handle !== null) {
+-          InteractionManager.clearInteractionHandle(handle);
+-        }
+         callback && callback(result);
+       },
+       previousAnimation,
 ```
 
-**File**: `packages/react-native-web-docs/src/pages/docs/components/view.md` (modified, +4/-0)
-```diff
-@@ -98,6 +98,10 @@ Set whether the view can receive keyboard focus.
- Set the test selector label (via `data-testid`).
- {% endcall %}
- 
-+{% call macro.prop('type', '?("button" | "reset" | "submit")') %}
-+If the element renders as a `<button>`, this prop sets its [type](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#type). Defaults to `"button"`. Use `"submit"` to submit a parent `<form>`.
-+{% endcall %}
-+
- ---
- 
- ## Examples
-```
+---
 
-**File**: `packages/react-native-web/src/exports/Button/index.js` (modified, +13/-3)
-```diff
-@@ -20,12 +20,21 @@ type ButtonProps = {|
-   onPress?: ?(e: any) => void,
-   ref?: React.Ref<React.ElementRef<typeof TouchableOpacity>>,
-   testID?: ?string,
--  title: string
-+  title: string,
-+  type?: ?('button' | 'reset' | 'submit')
- |};
- 
- const Button = (props: ButtonProps): React.Node => {
--  const { accessibilityLabel, color, disabled, onPress, ref, testID, title } =
--    props;
-+  const {
-+    accessibilityLabel,
-+    color,
-+    disabled,
-+    onPress,
-+    ref,
-+    testID,
-+    title,
-+    type
-+  } = props;
- 
-   return (
-     <TouchableOpacity
-@@ -41,6 +50,7 @@ const Button = (props: ButtonProps): React.Node => {
-         disabled && styles.buttonDisabled
-       ]}
-       testID={testID}
-+      type={type}
-     >
-       <Text style={[styles.text, disabled && styles.textDisabled]}>
-         {title}
-```
+### Incident Patch 2: `b7ebd988` (2026-10-28)
+**Commit Message**: Fix snapshots indent
 
-**File**: `packages/react-native-web/src/exports/Text/index.js` (modified, +2/-1)
+**File**: `packages/dom-event-testing-library/src/__tests__/index-test.js` (modified, +44/-44)
 ```diff
-@@ -36,7 +36,8 @@ const forwardPropsList = {
-   ...forwardedProps.styleProps,
-   href: true,
-   lang: true,
--  pointerEvents: true
-+  pointerEvents: true,
-+  type: true
- };
- 
- const pickProps = (props: { ... }) => pick(props, forwardPropsList);
-```
-
-**File**: `packages/react-native-web/src/exports/TouchableWithoutFeedback/index.js` (modified, +4/-2)
-```diff
-@@ -39,7 +39,8 @@ export type Props = Readonly<{|
-   onPressOut?: PressResponderConfig['onPressEnd'],
-   ref?: React.Ref<any>,
-   rejectResponderTermination?: ?boolean,
--  testID?: ViewProps['testID']
-+  testID?: ViewProps['testID'],
-+  type?: ViewProps['type']
- |}>;
- 
- const forwardPropsList = {
-@@ -56,7 +57,8 @@ const forwardPropsList = {
-   onBlur: true,
-   onFocus: true,
-   onLayout: true,
--  testID: true
-+  testID: true,
-+  type: true
- };
- 
- const pickProps = (props: Props) => pick(props, forwardPropsList);
-```
-
-**File**: `packages/react-native-web/src/exports/View/__tests__/index-test.js` (modified, +12/-0)
-```diff
-@@ -300,4 +300,16 @@ describe('components/View', () => {
-       expect(container.firstChild).toMatchSnapshot();
-     });
+@@ -40,30 +40,30 @@ describe('createEventTarget', () => {
+     const target = createEventTarget(node);
+     expect(target.node).toEqual(node);
+     expect(Object.keys(target)).toMatchInlineSnapshot(`
+-      [
+-        "node",
+-        "blur",
+-        "click",
+-        "contextmenu",
+-        "error",
+-        "focus",
+-        "keydown",
+-        "keyup",
+-        "load",
+-        "pointercancel",
+-        "pointerdown",
+-        "pointerhover",
+-        "pointermove",
+-        "pointerover",
+-        "pointerout",
+-        "pointerup",
+-        "scroll",
+-        "select",
+-        "selectionchange",
+-        "tap",
+-        "virtualclick",
+-        "setBoundingClientRect",
+-      ]
++     [
++       "node",
++       "blur",
++       "click",
++       "contextmenu",
++       "error",
++       "focus",
++       "keydown",
++       "keyup",
++       "load",
++       "pointercancel",
++       "pointerdown",
++       "pointerhover",
++       "pointermove",
++       "pointerover",
++       "pointerout",
++       "pointerup",
++       "scroll",
++       "select",
++       "selectionchange",
++       "tap",
++       "virtualclick",
++       "setBoundingClientRect",
++     ]
+     `);
    });
-+
-+  describe('prop "type"', () => {
-+    test('default is "button" when role is "button"', () => {
-+      const { container } = render(<View role="button" />);
-+      expect(container.firstChild.getAttribute('type')).toBe('button');
-+    });
-+
-+    test('value is set when role is "button"', () => {
-+      const { container } = render(<View role="button" type="submit" />);
-+      expect(container.firstChild.getAttribute('type')).toBe('submit');
-+    });
-+  });
+ 
+@@ -332,29 +332,29 @@ describe('createEventTarget', () => {
+   test('.setBoundingClientRect()', () => {
+     const target = createEventTarget(node);
+     expect(node.getBoundingClientRect()).toMatchInlineSnapshot(`
+-      {
+-        "bottom": 0,
+-        "height": 0,
+-        "left": 0,
+-        "right": 0,
+-        "top": 0,
+-        "width": 0,
+-        "x": 0,
+-        "y": 0,
+-      }
++     {
++       "bottom": 0,
++       "height": 0,
++       "left": 0,
++       "right": 0,
++       "top": 0,
++       "width": 0,
++       "x": 0,
++       "y": 0,
++     }
+     `);
+     target.setBoundingClientRect({ x: 10, y: 20, width: 100, height: 200 });
+     expect(node.getBoundingClientRect()).toMatchInlineSnapshot(`
+-      {
+-        "bottom": 220,
+-        "height": 200,
+-        "left": 10,
+-        "right": 110,
+-        "top": 20,
+-        "width": 100,
+-        "x": 10,
+-        "y": 20,
+-      }
++     {
++       "bottom": 220,
++       "height": 200,
++       "left": 10,
++       "right": 110,
++       "top": 20,
++       "width": 100,
++       "x": 10,
++       "y": 20,
++     }
+     `);
+   });
  });
 ```
 
-**File**: `packages/react-native-web/src/exports/View/index.js` (modified, +2/-1)
+**File**: `packages/react-native-web/src/exports/AppRegistry/__tests__/index-test.node.js` (modified, +136/-136)
 ```diff
-@@ -38,7 +38,8 @@ const forwardPropsList = {
-   lang: true,
-   onScroll: true,
-   onWheel: true,
--  pointerEvents: true
-+  pointerEvents: true,
-+  type: true
- };
+@@ -32,56 +32,56 @@ describe('AppRegistry', () => {
+         ReactDOMServer.renderToStaticMarkup(getStyleElement());
  
- const pickProps = (props: { ... }) => pick(props, forwardPropsList);
+       expect(element).toMatchInlineSnapshot(`
+-        <AppContainer
+-          rootTag={{}}
+-        >
+-          <NoopComponent />
+-        </AppContainer>
++       <AppContainer
++         rootTag={{}}
++       >
++         <NoopComponent />
++       </AppContainer>
+       `);
+       expect(styleElement).toMatchInlineSnapshot(`
+-        "<style id="react-native-stylesheet">[stylesheet-group="0"]{}
+-        @supports (color:accentcolor){:host,:root{--rnw-accentcolor:accentcolor;}}
+-        @supports (color:accentcolortext){:host,:root{--rnw-accentcolortext:accentcolortext;}}
+-        @supports (color:buttonborder){:host,:root{--rnw-buttonborder:buttonborder;}}
+-        @supports (color:mark){:host,:root{--rnw-mark:mark;}}
+-        @supports (color:marktext){:host,:root{--rnw-marktext:marktext;}}
+-        @supports (color:selecteditem){:host,:root{--rnw-selecteditem:selecteditem;}}
+-        @supports (color:selecteditemtext){:host,:root{--rnw-selecteditemtext:selecteditemtext;}}
+-        body{margin:0;}
+-        button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0;}
+-        html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:rgba(0,0,0,0);}
+-        input::-webkit-search-cancel-button,input::-webkit-search-decoration,input::-webkit-search-results-button,input::-webkit-search-results-decoration{display:none;}
+-        [stylesheet-group="1"]{}
+-        .css-text-146c3p1{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:rgba(0,0,0,1.00);display:inline;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;list-style:none;margin:0px;padding:0px;position:relative;text-align:start;text-decoration:none;white-space:pre-wrap;word-wrap:break-word;}
+-        .css-textHasAncestor-1jxf684{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:inherit;display:inline;font:inherit;list-style:none;margin:0px;padding:0px;position:relative;text-align:inherit;text-decoration:none;white-space:inherit;word-wrap:break-word;}
+-        .css-view-g5y9jx{align-content:flex-start;align-items:stretch;background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;display:flex;flex-basis:auto;flex-direction:column;flex-shrink:0;list-style:none;margin:0px;min-height:0px;min-width:0px;padding:0px;position:relative;text-decoration:none;z-index:0;}
+-        [stylesheet-group="2"]{}
+-        .r-display-krxsd3{display:-webkit-box;}
+-        .r-display-xoduu5{display:inline-flex;}
+-        .r-flex-13awgt0{flex:1;}
+-        .r-overflow-1qsk4np{overflow-x:clip;overflow-y:clip;}
+-        .r-overflow-1udh08x{overflow-x:hidden;overflow-y:hidden;}
+-        [stylesheet-group="3"]{}
+-        .r-WebkitBoxOrient-8akbws{-webkit-box-orient:vertical;}
+-        .r-bottom-1p0dtai{bottom:0px;}
+-        .r-cursor-1loqt21{cursor:pointer;}
+-        .r-left-1d2f490{left:0px;}
+-        .r-maxWidth-dnmrzs{max-width:100%;}
+-        .r-pointerEvents-105ug2t{pointer-events:auto!important;}
+-        .r-pointerEvents-12vffkv>* {pointer-events:auto;}
+-        .r-pointerEvents-12vffkv{pointer-events:none!important;}
+-        .r-pointerEvents-633pao>* {pointer-events:none;}
+-        .r-pointerEvents-633pao{pointer-events:none!important;}
+-        .r-pointerEvents-ah5dr5>* {pointer-events:none;}
+-        .r-pointerEvents-ah5dr5{pointer-events:auto!important;}
+-        .r-position-u8s1d{position:absolute;}
+-        .r-right-zchlnj{right:0px;}
+-        .r-textOverflow-1udbk01{text-overflow:ellipsis;}
+-        .r-top-ipm5af{top:0px;}
+-        .r-userSelect-1xnzce8{-webkit-user-select:text;user-select:text;}
+-        .r-userSelect-lrvibr{-webkit-user-select:none;user-select:none;}
+-        .r-whiteSpace-3s2u2q{white-space:nowrap;}
+-        .r-wordWrap-1iln25a{word-wrap:normal;}</style>"
++       "<style id="react-native-stylesheet">[stylesheet-group="0"]{}
++       @supports (color:accentcolor){:host,:root{--rnw-accentcolor:accentcolor;}}
++       @supports (color:accentcolortext){:host,:root{--rnw-accentcolortext:accentcolortext;}}
++       @supports (color:buttonborder){:host,:root{--rnw-buttonborder:buttonborder;}}
++       @supports (color:mark){:host,:root{--rnw-mark:mark;}}
++       @supports (color:marktext){:host,:root{--rnw-marktext:marktext;}}
++       @supports (color:selecteditem){:host,:root{--rnw-selecteditem:selecteditem;}}
++       @supports (color:selecteditemtext){:host,:root{--rnw-selecteditemtext:selecteditemtext;}}
++       body{margin:0;}
++       button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0;}
++       html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:rgba(0,0,0,0);}
++       input::-webkit-search-cancel-button,input::-webkit-search-decoration,input::-webkit-search-results-button,input::-webkit-search-results-decoration{display:none;}
++       [stylesheet-group="1"]{}
++       .css-text-14
 ```
 
-**File**: `packages/react-native-web/src/exports/View/types.js` (modified, +1/-0)
+**File**: `packages/react-native-web/src/exports/Dimensions/__tests__/index-test.js` (modified, +12/-12)
 ```diff
-@@ -253,6 +253,7 @@ export type ViewProps = {
-   // unstable
-   href?: ?string,
-   hrefAttrs?: ?{ download?: ?boolean, rel?: ?string, target?: ?string },
-+  type?: ?('button' | 'reset' | 'submit'),
-   // @deprecated
-   focusable?: ?boolean,
-   pointerEvents?: 'box-none' | 'none' | 'box-only' | 'auto',
+@@ -12,20 +12,20 @@ describe('apis/Dimensions', () => {
+     const handler = jest.fn();
+     Dimensions.addEventListener('change', handler);
+     expect(Dimensions.get('screen')).toMatchInlineSnapshot(`
+-      {
+-        "fontScale": 1,
+-        "height": 0,
+-        "scale": 1,
+-        "width": 0,
+-      }
++     {
++       "fontScale": 1,
++       "height": 0,
++       "scale": 1,
++       "width": 0,
++     }
+     `);
+     expect(Dimensions.get('window')).toMatchInlineSnapshot(`
+-      {
+-        "fontScale": 1,
+-        "height": 768,
+-        "scale": 1,
+-        "width": 1024,
+-      }
++     {
++       "fontScale": 1,
++       "height": 768,
++       "scale": 1,
++       "width": 1024,
++     }
+     `);
+     expect(handler).toHaveBeenCalledTimes(0);
+   });
 ```
 
----
-
-### Incident Patch 2: `e4e364cd` (2026-10-27)
-**Commit Message**: [fix] useResponderEvents: negotiate from a common ancestor with no responder ancestors (#2917)
-
-**File**: `packages/react-native-web/src/modules/useResponderEvents/__tests__/index-test.js` (modified, +0/-26)
+**File**: `packages/react-native-web/src/exports/StyleSheet/__tests__/compiler-createReactDOMStyle-test.js` (modified, +45/-45)
 ```diff
-@@ -2224,24 +2224,6 @@ describe('useResponderEvents', () => {
-     test('negotiate from first common ancestor when there are siblings', () => {
-       const pointerType = 'touch';
-       let eventLog = [];
--      const grandParentCallbacks = {
--        onStartShouldSetResponderCapture() {
--          eventLog.push('grandParent: onStartShouldSetResponderCapture');
--          return false;
--        },
--        onStartShouldSetResponder() {
--          eventLog.push('grandParent: onStartShouldSetResponder');
--          return false;
--        },
--        onMoveShouldSetResponderCapture() {
--          eventLog.push('grandParent: onMoveShouldSetResponderCapture');
--          return false;
--        },
--        onMoveShouldSetResponder() {
--          eventLog.push('grandParent: onMoveShouldSetResponder');
--          return false;
--        }
--      };
-       const parentCallbacks = {
-         onStartShouldSetResponderCapture() {
-           eventLog.push('parent: onStartShouldSetResponderCapture');
-@@ -2307,7 +2289,6 @@ describe('useResponderEvents', () => {
-       };
+@@ -45,30 +45,30 @@ describe('compiler/createReactDOMStyle', () => {
+     };
  
-       const Component = () => {
--        useResponderEvents(grandParentRef, grandParentCallbacks);
-         useResponderEvents(parentRef, parentCallbacks);
-         useResponderEvents(targetRef, targetCallbacks);
-         useResponderEvents(siblingRef, siblingCallbacks);
-@@ -2331,7 +2312,6 @@ describe('useResponderEvents', () => {
-       });
-       expect(getResponderNode()).toBe(targetRef.current);
-       expect(eventLog).toEqual([
--        'grandParent: onStartShouldSetResponderCapture',
-         'parent: onStartShouldSetResponderCapture',
-         'target: onStartShouldSetResponderCapture',
-         'target: onStartShouldSetResponder',
-@@ -2347,10 +2327,8 @@ describe('useResponderEvents', () => {
-       expect(getResponderNode()).toBe(targetRef.current);
-       // negotiates from first common ancestor of current responder and sibling (i.e., parent)
-       expect(eventLog).toEqual([
--        'grandParent: onStartShouldSetResponderCapture',
-         'parent: onStartShouldSetResponderCapture',
-         'parent: onStartShouldSetResponder',
--        'grandParent: onStartShouldSetResponder',
-         'target: onResponderStart'
-       ]);
-       eventLog = [];
-@@ -2362,10 +2340,8 @@ describe('useResponderEvents', () => {
-       expect(getResponderNode()).toBe(targetRef.current);
-       // negotiates from first common ancestor
-       expect(eventLog).toEqual([
--        'grandParent: onMoveShouldSetResponderCapture',
-         'parent: onMoveShouldSetResponderCapture',
-         'parent: onMoveShouldSetResponder',
--        'grandParent: onMoveShouldSetResponder',
-         'target: onResponderMove'
-       ]);
-       eventLog = [];
-@@ -2377,10 +2353,8 @@ describe('useResponderEvents', () => {
-       expect(getResponderNode()).toBe(targetRef.current);
-       // negotiates from first common ancestor
-       expect(eventLog).toEqual([
--        'grandParent: onMoveShouldSetResponderCapture',
-         'parent: onMoveShouldSetResponderCapture',
-         'parent: onMoveShouldSetResponder',
--        'grandParent: onMoveShouldSetResponder',
-         'target: onResponderMove'
-       ]);
-     });
-```
-
-**File**: `packages/react-native-web/src/modules/useResponderEvents/utils.js` (modified, +2/-2)
-```diff
-@@ -121,8 +121,8 @@ export function getLowestCommonAncestor(
-     if (itemA === itemB) {
-       return itemA;
-     }
--    itemA = pathA[indexA++];
--    itemB = pathB[indexB++];
-+    itemA = pathA[++indexA];
-+    itemB = pathB[++indexB];
-   }
-   return null;
- }
-```
-
----
-
-### Incident Patch 3: `f3d89de7` (2026-10-27)
-**Commit Message**: [fix] TextInput multiline defaults to 1 row (#2861)
-
-**File**: `packages/react-native-web/src/exports/TextInput/__tests__/index-test.js` (modified, +6/-0)
-```diff
-@@ -305,6 +305,12 @@ describe('components/TextInput', () => {
-       const textarea = findTextArea(container);
-       expect(textarea.getAttribute('rows')).toEqual('3');
-     });
-+
-+    test('with "multiline" defaults to 1 row', () => {
-+      const { container } = render(<TextInput multiline />);
-+      const textarea = findTextArea(container);
-+      expect(textarea.getAttribute('rows')).toEqual('1');
-+    });
+     expect(createReactDOMStyle(style, true)).toMatchInlineSnapshot(`
+-      {
+-        "borderBottomColor": "rgba(255,255,255,1.00)",
+-        "borderBottomStyle": "solid",
+-        "borderBottomWidth": "1px",
+-        "borderLeftStyle": "solid",
+-        "borderLeftWidth": "0px",
+-        "borderRightStyle": "solid",
+-        "borderRightWidth": "0px",
+-        "borderTopStyle": "solid",
+-        "borderTopWidth": "0px",
+-        "boxSizing": "border-box",
+-        "marginBottom": "25px",
+-        "marginLeft": "10px",
+-        "marginRight": "10px",
+-        "marginTop": "50px",
+-        "overflowX": "hidden",
+-        "overflowY": "hidden",
+-        "overscrollBehaviorX": "contain",
+-        "overscrollBehaviorY": "contain",
+-        "paddingBottom": "10px",
+-        "paddingLeft": "50px",
+-        "paddingRight": "25px",
+-        "paddingTop": "10px",
+-      }
++     {
++       "borderBottomColor": "rgba(255,255,255,1.00)",
++       "borderBottomStyle": "solid",
++       "borderBottomWidth": "1px",
++       "borderLeftStyle": "solid",
++       "borderLeftWidth": "0px",
++       "borderRightStyle": "solid",
++       "borderRightWidth": "0px",
++       "borderTopStyle": "solid",
++       "borderTopWidth": "0px",
++       "boxSizing": "border-box",
++       "marginBottom": "25px",
++       "marginLeft": "10px",
++       "marginRight": "10px",
++       "marginTop": "50px",
++       "overflowX": "hidden",
++       "overflowY": "hidden",
++       "overscrollBehaviorX": "contain",
++       "overscrollBehaviorY": "contain",
++       "paddingBottom": "10px",
++       "paddingLeft": "50px",
++       "paddingRight": "25px",
++       "paddingTop": "10px",
++     }
+     `);
    });
  
-   test('prop "onBlur"', () => {
+@@ -140,57 +140,57 @@ describe('compiler/createReactDOMStyle', () => {
+     test('general case', () => {
+       expect(createReactDOMStyle({ fontFamily: 'Georgia, Times, serif' }))
+         .toMatchInlineSnapshot(`
+-        {
+-          "fontFamily": "Georgia, Times, serif",
+-        }
++       {
++         "fontFamily": "Georgia, Times, serif",
++       }
+       `);
+     });
+ 
+     test('"monospace"', () => {
+       expect(createReactDOMStyle({ fontFamily: 'monospace' }))
+         .toMatchInlineSnapshot(`
+-        {
+-          "fontFamily": "monospace,monospace",
+-        }
++       {
++         "fontFamily": "monospace,monospace",
++       }
+       `);
+     });
+ 
+     test('"System"', () => {
+       expect(createReactDOMStyle({ fontFamily: 'System' }))
+         .toMatchInlineSnapshot(`
+-        {
+-          "fontFamily": "-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif",
+-        }
++       {
++         "fontFamily": "-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif",
++       }
+       `);
+       expect(createReactDOMStyle({ font: '14px System' }))
+         .toMatchInlineSnapshot(`
+-        {
+-          "font": "14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif",
+-        }
++       {
++         "font": "14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif",
++       }
+       `);
+     });
+ 
+     test('"Noto, System"', () => {
+       expect(createReactDOMStyle({ fontFamily: 'Noto, System' }))
+         .toMatchInlineSnapshot(`
+-        {
+-          "fontFamily": "Noto,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif",
+-        }
++       {
++         "fontFamily": "Noto,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif",
++       }
+       `);
+       expect(createReactDOMStyle({ font: '14px Noto, System' }))
+         .toMatchInlineSnapshot(`
+-        {
+-          "font": "14px Noto, -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif",
+-        }
++       {
++         "font": "14px Noto, -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif",
++       }
+       `);
+     });
+ 
+     test('"Noto, BlinkMacSystemFont"', () => {
+       expect(createReactDOMStyle({ fontFamily: 'Noto, BlinkMacSystemFont' }))
+         .toMatchInlineSnapshot(`
+-        {
+-          "fontFamily": "Noto,BlinkMacSystemFont",
+-        }
++       {
++         "fontFamily": "Noto,BlinkMacSystemFont",
++       }
+       `);
+     });
+   });
 ```
 
-**File**: `packages/react-native-web/src/exports/TextInput/index.js` (modified, +1/-1)
+**File**: `packages/react-native-web/src/exports/StyleSheet/__tests__/compiler-test.js` (modified, +192/-192)
 ```diff
-@@ -404,7 +404,7 @@ const TextInput = (props: {
-   supportedProps.onKeyDown = handleKeyDown;
-   supportedProps.onSelect = handleSelectionChange;
-   supportedProps.readOnly = readOnly === true || editable === false;
--  supportedProps.rows = multiline ? (rows ?? numberOfLines) : 1;
-+  supportedProps.rows = multiline ? (rows ?? numberOfLines ?? 1) : 1;
-   supportedProps.spellCheck = spellCheck ?? autoCorrect;
-   supportedProps.style = [
-     { '--placeholderTextColor': placeholderTextColor },
+@@ -30,145 +30,145 @@ describe('StyleSheet/compile', () => {
+       });
+ 
+       expect(result).toMatchInlineSnapshot(`
+-        [
+-          {
+-            "$$css": true,
+-            "$$css$localize": true,
+-            "animationDirection": "r-animationDirection-1wgwto7",
+-            "animationKeyframes": "r-animationKeyframes-zacbmr",
+-            "fontFamily": "r-fontFamily-1qd0xha",
+-            "insetInlineStart": [
+-              "r-insetInlineStart-1xn1m1p",
+-              "r-insetInlineStart-1y2vi53",
+-            ],
+-            "marginBlockEnd": "r-marginBlockEnd-1xf1q1v",
+-            "marginInline": "r-marginInline-lcslpx",
+-            "marginInlineEnd": [
+-              "r-marginInlineEnd-n2wkgt",
+-              "r-marginInlineEnd-r7lizz",
+-            ],
+-            "marginInlineStart": [
+-              "r-marginInlineStart-hjq6k0",
+-              "r-marginInlineStart-1iwt575",
+-            ],
+-            "placeholderTextColor": "r-placeholderTextColor-1418aci",
+-            "pointerEvents": "r-pointerEvents-ah5dr5",
+-            "scrollbarWidth": "r-scrollbarWidth-2eszeu",
+-            "textAlign": [
+-              "r-textAlign-fdjqy7",
+-              "r-textAlign-1ff274t",
+-            ],
+-            "transform": "r-transform-d7xd9i",
+-          },
+-          [
+-            [
+-              [
+-                ".r-animationDirection-1wgwto7{animation-direction:alternate,alternate-reverse;}",
+-              ],
+-              3,
+-            ],
+-            [
+-              [
+-                ".r-animationKeyframes-zacbmr{animation-name:r-animation-8jhqzh,r-animation-5azpl5;}",
+-                "@keyframes r-animation-8jhqzh{0%{top:0px;}50%{top:5px;}100%{top:10px;}}",
+-                "@keyframes r-animation-5azpl5{from{left:0px;}to{left:10px;}}",
+-              ],
+-              3,
+-            ],
+-            [
+-              [
+-                ".r-fontFamily-1qd0xha{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}",
+-              ],
+-              3,
+-            ],
+-            [
+-              [
+-                ".r-insetInlineStart-1xn1m1p{left:12.34%;}",
+-              ],
+-              2.2,
+-            ],
+-            [
+-              [
+-                ".r-insetInlineStart-1y2vi53{right:12.34%;}",
+-              ],
+-              2.2,
+-            ],
+-            [
+-              [
+-                ".r-marginBlockEnd-1xf1q1v{margin-bottom:5px;}",
+-              ],
+-              2.2,
+-            ],
+-            [
+-              [
+-                ".r-marginInline-lcslpx{margin-left:10px;margin-right:10px;}",
+-              ],
+-              2.1,
+-            ],
+-            [
+-              [
+-                ".r-marginInlineEnd-n2wkgt{margin-right:2px;}",
+-              ],
+-              2.2,
+-            ],
+-            [
+-              [
+-                ".r-marginInlineEnd-r7lizz{margin-left:2px;}",
+-              ],
+-              2.2,
+-            ],
+-            [
+-              [
+-                ".r-marginInlineStart-hjq6k0{margin-left:1px;}",
+-              ],
+-              2.2,
+-            ],
+-            [
+-              [
+-                ".r-marginInlineStart-1iwt575{margin-right:1px;}",
+-              ],
+-              2.2,
+-            ],
+-            [
+-              [
+-                ".r-placeholderTextColor-1418aci::placeholder{color:rgba(128,128,128,1.00);opacity:1;}",
+-              ],
+-              3,
+-            ],
+-            [
+-              [
+-                ".r-pointerEvents-ah5dr5>* {pointer-events:none;}",
+-                ".r-pointerEvents-ah5dr5{pointer-events:auto!important;}",
+-              ],
+-              3,
+-            ],
+-            [
+-              [
+-                ".r-scrollbarWidth-2eszeu::-webkit-scrollbar{display:none}",
+-                ".r-scrollbarWidth-2eszeu{scrollbar-width:none;}",
+-              ],
+-              3,
+-            ],
+-            [
+-              [
+-                ".r-textAlign-fdjqy7{text-align:left;}",
+-              ],
+-              3,
+-            ],
+-            [
+-              [
+-                ".r-textAlign-1ff274t{text-align:right;}",
+-              ],
+-              3,
+-            ],
+-            [
+-              [
+-                ".r-transform-d7xd9i{transform:translateX(50px) scale(-1);}",
+-              ],
+-              3,
+-            ],
+-          ],
+-        ]
++       [
++         {
++           "$$css": true,
++           "$$css$localize": true,
++           "animationDirection": "r-animationDirection-1wgwto7",
++           "animationKeyframes": "r-animationKeyframes-zacbmr",
++           "fontFamily": "r-fontFamily-1qd0xha",
++           "insetInlineStart": [
++             "r-insetInlineStart-1xn1m1p",
++             "r-insetInlineStart-1y2vi53",
++           ],
++           "marginBlockEnd": "r-marginBlockEnd-1xf1q1v",
++           "marginInline": "r-marginInline-lcslpx",
++           "marginInlineEnd": [
++             "r-marginInlineEnd-n2wkgt"
+```
+
+**File**: `packages/react-native-web/src/exports/StyleSheet/__tests__/dom-createOrderedCSSStyleSheet-test.js` (modified, +47/-47)
+```diff
+@@ -23,27 +23,27 @@ describe('createOrderedCSSStyleSheet', () => {
+     test('insertion order for same group', () => {
+       const sheet = createOrderedCSSStyleSheet();
+ 
+-      expect(sheet.getTextContent()).toMatchInlineSnapshot('""');
++      expect(sheet.getTextContent()).toMatchInlineSnapshot(`""`);
+ 
+       sheet.insert('.a {}', 0);
+       expect(sheet.getTextContent()).toMatchInlineSnapshot(`
+-        "[stylesheet-group="0"]{}
+-        .a {}"
++       "[stylesheet-group="0"]{}
++       .a {}"
+       `);
+ 
+       sheet.insert('.b {}', 0);
+       expect(sheet.getTextContent()).toMatchInlineSnapshot(`
+-        "[stylesheet-group="0"]{}
+-        .a {}
+-        .b {}"
++       "[stylesheet-group="0"]{}
++       .a {}
++       .b {}"
+       `);
+ 
+       sheet.insert('.c {}', 0);
+       expect(sheet.getTextContent()).toMatchInlineSnapshot(`
+-        "[stylesheet-group="0"]{}
+-        .a {}
+-        .b {}
+-        .c {}"
++       "[stylesheet-group="0"]{}
++       .a {}
++       .b {}
++       .c {}"
+       `);
+     });
+ 
+@@ -55,8 +55,8 @@ describe('createOrderedCSSStyleSheet', () => {
+       sheet.insert('.a {}', 0);
+ 
+       expect(sheet.getTextContent()).toMatchInlineSnapshot(`
+-        "[stylesheet-group="0"]{}
+-        .a {}"
++       "[stylesheet-group="0"]{}
++       .a {}"
+       `);
+     });
+ 
+@@ -68,10 +68,10 @@ describe('createOrderedCSSStyleSheet', () => {
+       sheet.insert('.a {}', 0);
+ 
+       expect(sheet.getTextContent()).toMatchInlineSnapshot(`
+-        "[stylesheet-group="0"]{}
+-        .a {}
+-        .b {}
+-        .c {}"
++       "[stylesheet-group="0"]{}
++       .a {}
++       .b {}
++       .c {}"
+       `);
+     });
+ 
+@@ -90,24 +90,24 @@ describe('createOrderedCSSStyleSheet', () => {
+       sheet.insert('.twenty-point2 {}', 20.2);
+ 
+       expect(sheet.getTextContent()).toMatchInlineSnapshot(`
+-        "[stylesheet-group="1"]{}
+-        .one {}
+-        [stylesheet-group="2.2"]{}
+-        .two {}
+-        [stylesheet-group="3"]{}
+-        .three {}
+-        [stylesheet-group="4"]{}
+-        .four-1 {}
+-        .four-2 {}
+-        [stylesheet-group="9.9"]{}
+-        .nine-1 {}
+-        .nine-2 {}
+-        [stylesheet-group="10"]{}
+-        .ten {}
+-        [stylesheet-group="20"]{}
+-        .twenty {}
+-        [stylesheet-group="20.2"]{}
+-        .twenty-point2 {}"
++       "[stylesheet-group="1"]{}
++       .one {}
++       [stylesheet-group="2.2"]{}
++       .two {}
++       [stylesheet-group="3"]{}
++       .three {}
++       [stylesheet-group="4"]{}
++       .four-1 {}
++       .four-2 {}
++       [stylesheet-group="9.9"]{}
++       .nine-1 {}
++       .nine-2 {}
++       [stylesheet-group="10"]{}
++       .ten {}
++       [stylesheet-group="20"]{}
++       .twenty {}
++       [stylesheet-group="20.2"]{}
++       .twenty-point2 {}"
+       `);
+     });
+   });
+@@ -135,14 +135,14 @@ describe('createOrderedCSSStyleSheet', () => {
+       element.appendChild(document.createTextNode(textContent));
+       const clientSheet = createOrderedCSSStyleSheet(element.sheet);
+       expect(clientSheet.getTextContent()).toMatchInlineSnapshot(`
+-        "[stylesheet-group="1"] {}
+-        .one {width: 10px;}
+-        [stylesheet-group="2"] {}
+-        .two-1 {height: 20px;}
+-        .two-2 {color: red;}
+-        @keyframes anim { 
+-          0% {opacity: 1;} 
+-        }"
++       "[stylesheet-group="1"] {}
++       .one {width: 10px;}
++       [stylesheet-group="2"] {}
++       .two-1 {height: 20px;}
++       .two-2 {color: red;}
++       @keyframes anim { 
++         0% {opacity: 1;} 
++       }"
+       `);
+     });
+ 
+@@ -158,11 +158,11 @@ describe('createOrderedCSSStyleSheet', () => {
+       const clientSheet = createOrderedCSSStyleSheet(element.sheet);
+       clientSheet.insert('.c { color: red }', 0);
+       expect(clientSheet.getTextContent()).toMatchInlineSnapshot(`
+-        "[stylesheet-group='0'] {}
+-        .a {color: red;}
+-        .c { color: red }
+-        [stylesheet-group='1'] {}
+-        .b {color: red;}"
++       "[stylesheet-group='0'] {}
++       .a {color: red;}
++       .c { color: red }
++       [stylesheet-group='1'] {}
++       .b {color: red;}"
+       `);
+     });
+ 
+```
+
+**File**: `packages/react-native-web/src/exports/StyleSheet/__tests__/dom-test.node.js` (modified, +26/-26)
+```diff
+@@ -13,36 +13,36 @@ describe('createSheet', () => {
+     expect(typeof sheet.insert).toBe('function');
+     expect(sheet.id).toMatchInlineSnapshot(`"react-native-stylesheet"`);
+     expect(sheet.getTextContent()).toMatchInlineSnapshot(`
+-      "[stylesheet-group="0"]{}
+-      @supports (color:accentcolor){:host,:root{--rnw-accentcolor:accentcolor;}}
+-      @supports (color:accentcolortext){:host,:root{--rnw-accentcolortext:accentcolortext;}}
+-      @supports (color:buttonborder){:host,:root{--rnw-buttonborder:buttonborder;}}
+-      @supports (color:mark){:host,:root{--rnw-mark:mark;}}
+-      @supports (color:marktext){:host,:root{--rnw-marktext:marktext;}}
+-      @supports (color:selecteditem){:host,:root{--rnw-selecteditem:selecteditem;}}
+-      @supports (color:selecteditemtext){:host,:root{--rnw-selecteditemtext:selecteditemtext;}}
+-      body{margin:0;}
+-      button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0;}
+-      html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:rgba(0,0,0,0);}
+-      input::-webkit-search-cancel-button,input::-webkit-search-decoration,input::-webkit-search-results-button,input::-webkit-search-results-decoration{display:none;}"
++     "[stylesheet-group="0"]{}
++     @supports (color:accentcolor){:host,:root{--rnw-accentcolor:accentcolor;}}
++     @supports (color:accentcolortext){:host,:root{--rnw-accentcolortext:accentcolortext;}}
++     @supports (color:buttonborder){:host,:root{--rnw-buttonborder:buttonborder;}}
++     @supports (color:mark){:host,:root{--rnw-mark:mark;}}
++     @supports (color:marktext){:host,:root{--rnw-marktext:marktext;}}
++     @supports (color:selecteditem){:host,:root{--rnw-selecteditem:selecteditem;}}
++     @supports (color:selecteditemtext){:host,:root{--rnw-selecteditemtext:selecteditemtext;}}
++     body{margin:0;}
++     button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0;}
++     html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:rgba(0,0,0,0);}
++     input::-webkit-search-cancel-button,input::-webkit-search-decoration,input::-webkit-search-results-button,input::-webkit-search-results-decoration{display:none;}"
+     `);
+ 
+     sheet.insert('.test { opacity: 0 }', 1);
+     expect(sheet.getTextContent()).toMatchInlineSnapshot(`
+-      "[stylesheet-group="0"]{}
+-      @supports (color:accentcolor){:host,:root{--rnw-accentcolor:accentcolor;}}
+-      @supports (color:accentcolortext){:host,:root{--rnw-accentcolortext:accentcolortext;}}
+-      @supports (color:buttonborder){:host,:root{--rnw-buttonborder:buttonborder;}}
+-      @supports (color:mark){:host,:root{--rnw-mark:mark;}}
+-      @supports (color:marktext){:host,:root{--rnw-marktext:marktext;}}
+-      @supports (color:selecteditem){:host,:root{--rnw-selecteditem:selecteditem;}}
+-      @supports (color:selecteditemtext){:host,:root{--rnw-selecteditemtext:selecteditemtext;}}
+-      body{margin:0;}
+-      button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0;}
+-      html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:rgba(0,0,0,0);}
+-      input::-webkit-search-cancel-button,input::-webkit-search-decoration,input::-webkit-search-results-button,input::-webkit-search-results-decoration{display:none;}
+-      [stylesheet-group="1"]{}
+-      .test { opacity: 0 }"
++     "[stylesheet-group="0"]{}
++     @supports (color:accentcolor){:host,:root{--rnw-accentcolor:accentcolor;}}
++     @supports (color:accentcolortext){:host,:root{--rnw-accentcolortext:accentcolortext;}}
++     @supports (color:buttonborder){:host,:root{--rnw-buttonborder:buttonborder;}}
++     @supports (color:mark){:host,:root{--rnw-mark:mark;}}
++     @supports (color:marktext){:host,:root{--rnw-marktext:marktext;}}
++     @supports (color:selecteditem){:host,:root{--rnw-selecteditem:selecteditem;}}
++     @supports (color:selecteditemtext){:host,:root{--rnw-selecteditemtext:selecteditemtext;}}
++     body{margin:0;}
++     button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0;}
++     html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:rgba(0,0,0,0);}
++     input::-webkit-search-cancel-button,input::-webkit-search-decoration,input::-webkit-search-results-button,input::-webkit-search-results-decoration{display:none;}
++     [stylesheet-group="1"]{}
++     .test { opacity: 0 }"
+     `);
+   });
+ });
+```
+
+**File**: `packages/react-native-web/src/exports/StyleSheet/__tests__/index-test.js` (modified, +166/-166)
+```diff
+@@ -11,60 +11,60 @@ describe('StyleSheet', () => {
+   // test this first because subsequent 'create' calls will change the snapshot
+   test('getSheet', () => {
+     expect(StyleSheet.getSheet()).toMatchInlineSnapshot(`
+-      {
+-        "id": "react-native-stylesheet",
+-        "textContent": "[stylesheet-group="0"]{}
+-      @supports (color:accentcolor){:host,:root{--rnw-accentcolor:accentcolor;}}
+-      @supports (color:accentcolortext){:host,:root{--rnw-accentcolortext:accentcolortext;}}
+-      @supports (color:buttonborder){:host,:root{--rnw-buttonborder:buttonborder;}}
+-      @supports (color:mark){:host,:root{--rnw-mark:mark;}}
+-      @supports (color:marktext){:host,:root{--rnw-marktext:marktext;}}
+-      @supports (color:selecteditem){:host,:root{--rnw-selecteditem:selecteditem;}}
+-      @supports (color:selecteditemtext){:host,:root{--rnw-selecteditemtext:selecteditemtext;}}
+-      body{margin:0;}
+-      button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0;}
+-      html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:rgba(0,0,0,0);}
+-      input::-webkit-search-cancel-button,input::-webkit-search-decoration,input::-webkit-search-results-button,input::-webkit-search-results-decoration{display:none;}
+-      [stylesheet-group="3"]{}
+-      .r-bottom-1p0dtai{bottom:0px;}
+-      .r-left-1d2f490{left:0px;}
+-      .r-position-u8s1d{position:absolute;}
+-      .r-right-zchlnj{right:0px;}
+-      .r-top-ipm5af{top:0px;}",
+-      }
++     {
++       "id": "react-native-stylesheet",
++       "textContent": "[stylesheet-group="0"]{}
++     @supports (color:accentcolor){:host,:root{--rnw-accentcolor:accentcolor;}}
++     @supports (color:accentcolortext){:host,:root{--rnw-accentcolortext:accentcolortext;}}
++     @supports (color:buttonborder){:host,:root{--rnw-buttonborder:buttonborder;}}
++     @supports (color:mark){:host,:root{--rnw-mark:mark;}}
++     @supports (color:marktext){:host,:root{--rnw-marktext:marktext;}}
++     @supports (color:selecteditem){:host,:root{--rnw-selecteditem:selecteditem;}}
++     @supports (color:selecteditemtext){:host,:root{--rnw-selecteditemtext:selecteditemtext;}}
++     body{margin:0;}
++     button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0;}
++     html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:rgba(0,0,0,0);}
++     input::-webkit-search-cancel-button,input::-webkit-search-decoration,input::-webkit-search-results-button,input::-webkit-search-results-decoration{display:none;}
++     [stylesheet-group="3"]{}
++     .r-bottom-1p0dtai{bottom:0px;}
++     .r-left-1d2f490{left:0px;}
++     .r-position-u8s1d{position:absolute;}
++     .r-right-zchlnj{right:0px;}
++     .r-top-ipm5af{top:0px;}",
++     }
+     `);
+   });
+ 
+   test('absoluteFill', () => {
+     expect(StyleSheet.absoluteFill).toMatchInlineSnapshot(`
+-      {
+-        "bottom": 0,
+-        "left": 0,
+-        "position": "absolute",
+-        "right": 0,
+-        "top": 0,
+-      }
++     {
++       "bottom": 0,
++       "left": 0,
++       "position": "absolute",
++       "right": 0,
++       "top": 0,
++     }
+     `);
+   });
+ 
+   describe('create', () => {
+     test('returns original style objects', () => {
+       const style = StyleSheet.create({ root: { position: 'absolute' } });
+       expect(style.root).toMatchInlineSnapshot(`
+-        {
+-          "position": "absolute",
+-        }
++       {
++         "position": "absolute",
++       }
+       `);
+     });
+ 
+     test('e2e resolves to classname', () => {
+       const style = StyleSheet.create({ root: { position: 'absolute' } });
+       expect(StyleSheet(style.root)).toMatchInlineSnapshot(`
+-        [
+-          "r-position-u8s1d",
+-          null,
+-          "",
+-        ]
++       [
++         "r-position-u8s1d",
++         null,
++         "",
++       ]
+       `);
+     });
+ 
+@@ -81,11 +81,11 @@ describe('StyleSheet', () => {
+         }
+       });
+       expect(StyleSheet(style.root)).toMatchInlineSnapshot(`
+-        [
+-          "r-boxShadow-o3ayyy r-textShadow-1x2q051",
+-          null,
+-          "",
+-        ]
++       [
++         "r-boxShadow-o3ayyy r-textShadow-1x2q051",
++         null,
++         "",
++       ]
+       `);
+     });
+   });
+@@ -94,10 +94,10 @@ describe('StyleSheet', () => {
+     test('should merge style objects', () => {
+       const style = StyleSheet.flatten([{ opacity: 1 }, { order: 2 }]);
+       expect(style).toMatchInlineSnapshot(`
+-        {
+-          "opacity": 1,
+-          "order": 2,
+-        }
++       {
++         "opacity": 1,
++         "order": 2,
++       }
+       `);
+     });
+ 
+@@ -107,10 +107,10 @@ describe('StyleSheet', () => {
+         { backgroundColor: '#023c69', order: null }
+       ]);
+       expect(style).toMatchInlineSnapshot(`
+-        {
+-          "backgroundColor": "#023c69",
+-          "order": null,
+-        }
++       {
++         "backgroundColor": "#023c69",
++         "order": null,
++       }
+       `);
+     });
+ 
+@@ -120,9 +120,9 @@ describe('StyleSheet', () => {
+         { backgroundColor
+```
+
+---
+
+### Incident Patch 3: `3360a986` (2026-10-28)
+**Commit Message**: [fix] Inverted list with onRefresh renders cells upside-down (#2935)
+
+**File**: `packages/react-native-web/src/exports/ScrollView/__tests__/__snapshots__/index-test.js.snap` (modified, +7/-8)
+```diff
+@@ -24,16 +24,15 @@ exports[`components/ScrollView prop "centerContent" without 1`] = `
+ 
+ exports[`components/ScrollView prop "refreshControl" with 1`] = `
+ <div
+-  id="refresh-control"
++  class="css-view-g5y9jx r-flexDirection-eqz5dr r-flexGrow-16y2uox r-flexShrink-1wbh5a2 r-overflowX-11yh6sk r-overflowY-1rnoaur r-transform-agouwx"
++  style="background-color: rgb(255, 0, 0);"
+ >
+   <div
+-    class="css-view-g5y9jx r-flexDirection-eqz5dr r-flexGrow-16y2uox r-flexShrink-1wbh5a2 r-overflowX-11yh6sk r-overflowY-1rnoaur r-transform-agouwx"
+-    style="background-color: rgb(255, 0, 0);"
+-  >
+-    <div
+-      class="css-view-g5y9jx"
+-    />
+-  </div>
++    id="refresh-control"
++  />
++  <div
++    class="css-view-g5y9jx"
++  />
+ </div>
+ `;
+ 
+```
+
+**File**: `packages/react-native-web/src/exports/ScrollView/index.js` (modified, +2/-11)
+```diff
+@@ -651,21 +651,12 @@ class ScrollView extends React.Component<ScrollViewProps> {
+       'ScrollViewClass must not be undefined'
+     );
+ 
+-    const scrollView = (
++    return (
+       <ScrollViewClass {...props} ref={this._setScrollNodeRef}>
++        {refreshControl}
+         {contentContainer}
+       </ScrollViewClass>
+     );
+-
+-    if (refreshControl) {
+-      return React.cloneElement(
+-        refreshControl,
+-        { style: props.style },
+-        scrollView
+-      );
+-    }
+-
+-    return scrollView;
+   }
+ 
+   _handleContentOnLayout = (e: Object) => {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2930** (2026-10-27): Add "type" prop for elements rendered as <button> (@zoontek)
-- **PR #2923** (2026-10-22): Update AccessibilityInfo to match the React Native API (@zoontek)
-- **PR #2919** (2026-10-21): [fix] Linking: register listeners once and remove by subscription (@zoontek)
-- **PR #2918** (2026-10-20): Replace CodeSandbox embeds with self-hosted examples (@zoontek)
-- **PR #2917** (2026-10-27): [fix] useResponderEvents: negotiate from a common ancestor with no responder ancestors (@Pduhard)
-- **PR #2915** (2026-10-21): Fix comma operator discarding shadow/textShadow options in preprocess (@charan-rathore)
+- **PR #2937** (2026-10-28): [feat] Support fontVariant stylistic sets (@zoontek)
+- **PR #2936** (2026-10-28): [feat] Add PlatformColor (@zoontek)
+- **PR #2935** (2026-10-28): [fix] Inverted list with onRefresh renders cells upside-down (@zoontek)
+- **PR #2934** (2026-10-28): [fix] Animated.loop blocks FlatList onEndReached (@zoontek)
+- **PR #2933** (2026-10-28): Fix useWindowDimensions hydration mismatch (@zoontek)
+- **PR #2932** (2026-10-28): [feat] Add Appearance.setColorScheme (@zoontek)
 
 ---
 
@@ -873,37 +1578,3 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Add "type" prop for elements rendered as <button> (#2930)
-
-**RULE**:
-When implementing operations in `packages/react-native-web-docs/src/pages/docs/components/text.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in necolas/react-native-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `58334dc6`: Add "type" prop for elements rendered as <button> (#2930). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-web-docs/src/pages/docs/components/text.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```javascript
-// Verified production-grade fix pattern:
-{% call macro.prop('type', '?("button" | "reset" | "submit")') %}
-If the element renders as a `<button>`, this prop sets its [type](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#type). Defaults to `"button"`. Use `"submit"` to submit a parent `<form>`.
-{% endcall %}
-
-```
-
-**NEGATIVE CONSTRAINT**:
-```javascript
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `58334dc6` are properly handled with clean fallback behavior.

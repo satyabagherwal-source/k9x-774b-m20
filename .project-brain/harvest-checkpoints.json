@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T19:24:24.927Z",
+  "last_updated": "2026-10-28T19:32:01.174Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -830,14 +830,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-embeddinggemma-2",
-      "content_hash": "bdf99c8b950059bf820285aedb96a0f57757e03c163e45baa1178552e5b687e8",
-      "verified_at": "2026-10-25T16:41:15.735Z",
+      "content_hash": "5326aa75d022e2dd201273f40eacb947b02a0053bd2b45de6b5de6fddc2036ee",
+      "verified_at": "2026-10-28T19:31:55.535Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T16:41:15.735Z"
+      "last_updated": "2026-10-28T19:31:55.535Z"
     },
     "unsloth/embeddinggemma-2-GGUF": {
       "repository": "unsloth/embeddinggemma-2-GGUF",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "ec4182434da72188e7dae0b864fbaf72a8cb99cd4aa349876734704ee8971807",
-      "verified_at": "2026-10-27T21:18:40.533Z",
+      "content_hash": "733db5923a1482eed79f03cfe624a5019f1f23a11bf449924984474a586bcec9",
+      "verified_at": "2026-10-28T19:31:55.594Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T21:18:40.533Z"
+      "last_updated": "2026-10-28T19:31:55.594Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "df728f2fcfabe5db630d388a04114c4b88aaaec73267129b83f6bb4e75911ad6",
-      "verified_at": "2026-10-28T04:28:32.792Z",
+      "content_hash": "dc280eae6f46aac6750cab824fe4bdbb0b878794e02ab80d73eb1bcaa8c74a36",
+      "verified_at": "2026-10-28T19:32:01.173Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T04:28:32.792Z"
+      "last_updated": "2026-10-28T19:32:01.173Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -10731,14 +10731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-necolas-react-native-web",
-      "content_hash": "b10e4babd4d4511a52a23d5aef1d0649e0c6837c63d100313159215111e2adca",
-      "verified_at": "2026-10-28T00:19:33.652Z",
+      "content_hash": "ebc89de9d3d809ff18137ae87b4f38613b3fb24ad91a652c7aa1494d60125b7a",
+      "verified_at": "2026-10-28T19:31:50.070Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T00:19:33.652Z"
+      "last_updated": "2026-10-28T19:31:50.070Z"
     },
     "zvec-ai/zvec-grep": {
       "repository": "zvec-ai/zvec-grep",
@@ -10746,14 +10746,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zvec-ai-zvec-grep",
-      "content_hash": "76fb01dea7637c4ce9fb75160c6019eb83b0f6594aa481b88cf24c8f49467401",
-      "verified_at": "2026-10-27T16:38:20.279Z",
+      "content_hash": "0c23f62d255b62bafab7faf462846a12a33ae20d3b591a5f37a2b58580951aa5",
+      "verified_at": "2026-10-28T19:31:45.619Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T16:38:20.279Z"
+      "last_updated": "2026-10-28T19:31:45.619Z"
     },
     "JetBrains/kotlinconf-app": {
       "repository": "JetBrains/kotlinconf-app",
