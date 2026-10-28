@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T06:35:55.819Z",
-  "total_cycles_completed": 5696,
-  "total_learnings_persisted": 5696,
-  "total_rules_promoted": 5152,
+  "last_updated": "2026-10-28T06:42:07.511Z",
+  "total_cycles_completed": 5697,
+  "total_learnings_persisted": 5697,
+  "total_rules_promoted": 5155,
   "history": [
-    {
-      "timestamp": "2026-10-27T20:04:49.933Z",
-      "repository": "stakater/Reloader",
-      "learningId": "learn-github-stakater-reloader",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T20:11:41.004Z",
       "repository": "pixeltable/pixeltable",
@@ -1403,6 +1396,13 @@
       "repository": "akhilaaa3/Jev-Omni",
       "learningId": "learn-huggingface-akhilaaa3-jev-omni",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T06:42:07.511Z",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

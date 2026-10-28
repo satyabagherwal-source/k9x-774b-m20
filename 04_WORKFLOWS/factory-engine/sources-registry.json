@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T06:35:58.344Z",
-    "lastVerified": "2026-10-28T06:35:58.344Z",
+    "lastChecked": "2026-10-28T06:42:12.101Z",
+    "lastVerified": "2026-10-28T06:42:12.101Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -169,9 +169,9 @@
   "dathere-qsv": {
     "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
-    "lastChecked": "2026-10-28T06:11:50.992Z",
+    "lastChecked": "2026-10-28T06:42:12.096Z",
     "revisionIdentifier": "acf15714",
-    "lastVerified": "2026-10-28T06:11:50.992Z"
+    "lastVerified": "2026-10-28T06:42:12.096Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -224,9 +224,9 @@
   "microsoft-agent-governance-toolkit": {
     "name": "agent-governance-toolkit",
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
-    "lastChecked": "2026-10-28T03:04:33.478Z",
+    "lastChecked": "2026-10-28T06:42:07.078Z",
     "revisionIdentifier": "9bfdd5f4",
-    "lastVerified": "2026-10-28T03:04:33.478Z"
+    "lastVerified": "2026-10-28T06:42:07.078Z"
   },
   "pathwaycom-llm-app": {
     "name": "llm-app",
@@ -1879,5 +1879,50 @@
     "lastChecked": "2026-10-28T06:31:14.844Z",
     "revisionIdentifier": "6e4ce04b",
     "lastVerified": "2026-10-28T06:31:14.844Z"
+  },
+  "sharkdp-hyperfine": {
+    "name": "hyperfine",
+    "officialUrl": "https://github.com/sharkdp/hyperfine",
+    "lastChecked": "2026-10-28T06:41:56.991Z",
+    "revisionIdentifier": "c5161524",
+    "lastVerified": "2026-10-28T06:41:56.991Z"
+  },
+  "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b": {
+    "name": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+    "officialUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T06:41:59.521Z",
+    "lastVerified": "2026-10-28T06:41:59.521Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
+    "contentHash": "be16c01a1943ed1a16c46dc7752bca5b0b5a3424bb7dba155e5f3fecb6d81570",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "welldone-software-why-did-you-render": {
+    "name": "why-did-you-render",
+    "officialUrl": "https://github.com/welldone-software/why-did-you-render",
+    "lastChecked": "2026-10-28T06:42:01.943Z",
+    "revisionIdentifier": "3ec3512d",
+    "lastVerified": "2026-10-28T06:42:01.943Z"
+  },
+  "goodrain-rainbond": {
+    "name": "rainbond",
+    "officialUrl": "https://github.com/goodrain/rainbond",
+    "lastChecked": "2026-10-28T06:42:04.561Z",
+    "revisionIdentifier": "8d5895f1",
+    "lastVerified": "2026-10-28T06:42:04.561Z"
+  },
+  "caviraoss-longmemory": {
+    "name": "LongMemory",
+    "officialUrl": "https://github.com/CaviraOSS/LongMemory",
+    "lastChecked": "2026-10-28T06:42:09.434Z",
+    "revisionIdentifier": "8badf44d48d0d72a07e1ea3daf1ecbd76ae1a357",
+    "lastVerified": "2026-10-28T06:42:09.434Z"
   }
 }

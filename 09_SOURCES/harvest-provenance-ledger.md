@@ -5728,3 +5728,4 @@ Every entry in this ledger must capture:
 | `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `54548685` | Multi-dimensional audit evidence | 2026-10-28T06:24:44.633Z |
 | `learn-github-openreplay-openreplay` | `https://github.com/openreplay/openreplay` | `2be0a4f8` | Multi-dimensional audit evidence | 2026-10-28T06:24:49.820Z |
 | `learn-huggingface-akhilaaa3-jev-omni` | `https://huggingface.co/akhilaaa3/Jev-Omni` | `hf-akhilaa` | Multi-dimensional audit evidence | 2026-10-28T06:35:55.815Z |
+| `learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-10-28T06:42:07.507Z |

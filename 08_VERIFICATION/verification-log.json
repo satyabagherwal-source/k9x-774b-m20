@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-NOCN",
-    "timestamp": "2026-10-27T10:58:00.071Z",
-    "repository": "go-kratos/kratos",
-    "learningId": "learn-github-go-kratos-kratos",
-    "contentHash": "20ceb7493f20fc5988ae1f98e03a58659ded240b6a353ffdcb78a7f8a3b26723",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-NQC0",
     "timestamp": "2026-10-27T10:58:02.640Z",
     "repository": "rustls/rustls",
@@ -7492,6 +7477,21 @@
     "contentHash": "f340b2848415c1a5859df4a077158dd89abb9af20d6be9878b59acd253aa53da",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-YGWH",
+    "timestamp": "2026-10-28T06:42:07.505Z",
+    "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
+    "contentHash": "be16c01a1943ed1a16c46dc7752bca5b0b5a3424bb7dba155e5f3fecb6d81570",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

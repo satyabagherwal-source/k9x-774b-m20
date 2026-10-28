@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T06:35:55.822Z",
+  "last_updated": "2026-10-28T06:42:07.513Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -605,14 +605,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-      "content_hash": "1758a10a102349b138684fb042fbc03a1cde7a50f824905a84d899f3659952c3",
-      "verified_at": "2026-10-25T14:31:43.517Z",
+      "content_hash": "be16c01a1943ed1a16c46dc7752bca5b0b5a3424bb7dba155e5f3fecb6d81570",
+      "verified_at": "2026-10-28T06:42:07.513Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T14:31:43.517Z"
+      "last_updated": "2026-10-28T06:42:07.513Z"
     },
     "inclusionAI/Ming-Image-0.1-Design": {
       "repository": "inclusionAI/Ming-Image-0.1-Design",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T06:35:55.733Z",
+  "last_updated": "2026-10-28T06:42:07.469Z",
   "total_verified_learnings": 1156,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -28619,7 +28619,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
       "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
-      "content_hash": "1758a10a102349b138684fb042fbc03a1cde7a50f824905a84d899f3659952c3",
+      "content_hash": "be16c01a1943ed1a16c46dc7752bca5b0b5a3424bb7dba155e5f3fecb6d81570",
       "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
       "promoted_rules": [
@@ -28750,8 +28750,8 @@
         },
         {
           "number": 1563,
-          "title": "JSON Configuration Integrity Rule",
-          "status": "PROMOTED_AND_VERIFIED"
+          "title": "JSON Configuration Integrity",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1564,
@@ -28807,6 +28807,16 @@
           "number": 4344,
           "title": "**Strict EOS Token List Enforcement**",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": "EXISTING",
+          "title": "Tokenizer Special‑Token Consistency",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 5211,
+          "title": "Layer‑Type Uniqueness in Vision Encoder",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -28827,7 +28837,7 @@
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv46fo61",
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv4jpnc5"
       ],
-      "verified_at": "2026-10-25T14:31:43.438Z",
+      "verified_at": "2026-10-28T06:42:07.461Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -86769,14 +86779,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1563,
       "title": "JSON Configuration Integrity",
-      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
-      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+      "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T02:54:58.008Z"
+      "verified_at": "2026-10-28T06:42:07.461Z"
     },
     "rule-1564": {
       "learning_id": "rule-1564",
@@ -142466,6 +142476,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T06:35:55.722Z"
+    },
+    "rule-5211": {
+      "learning_id": "rule-5211",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5211,
+      "title": "Layer‑Type Uniqueness in Vision Encoder",
+      "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T06:42:07.461Z"
     }
   },
   "aliases": {

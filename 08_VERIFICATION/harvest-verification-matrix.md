@@ -5719,3 +5719,4 @@
 | `CYCLE-20261028-C47K` | `2026-10-28T06:24:44.624Z` | `Kuddev/pebrel` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5207` | Yes (`5d4f8c4a...`) |
 | `CYCLE-20261028-C87T` | `2026-10-28T06:24:49.817Z` | `openreplay/openreplay` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5208` | Yes (`71088bd7...`) |
 | `CYCLE-20261028-QI3P` | `2026-10-28T06:35:55.813Z` | `akhilaaa3/Jev-Omni` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5209, Rule 5210` | Yes (`f340b284...`) |
+| `CYCLE-20261028-YGWH` | `2026-10-28T06:42:07.505Z` | `XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1563, Rule EXISTING, Rule 5211` | Yes (`be16c01a...`) |
