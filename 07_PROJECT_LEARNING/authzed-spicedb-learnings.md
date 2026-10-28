@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source**: github ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
-> **Source Version**: `7e7420c3`  
+> **Source Version**: `759295c3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T12:14:39.855Z  
+> **Timestamp**: 2026-10-28T00:05:57.685Z  
 > **Learning ID**: `learn-github-authzed-spicedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T12:14:39.480Z  
+> **Harvest Timestamp**: 2026-10-28T00:05:57.679Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open Source, Google Zanzibar-inspired database for scalably storing and querying fine-grained authorization data
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 7175 stars
+- **Stars / Engagement**: 7176 stars
 
 ---
 
@@ -63,6 +63,314 @@ func NewTLog(t testing.TB) io.Writer {
 	t.Helper()
 	return &TLogger{TB: t}
 }
+
+```
+
+### Core Architecture Module: `internal/checkbaseline/engine.go`
+```
+package checkbaseline
+
+import (
+	"context"
+	"fmt"
+	"runtime"
+	"slices"
+	"time"
+
+	"github.com/authzed/spicedb/internal/caveats"
+	"github.com/authzed/spicedb/internal/dispatch"
+	dispatchgraph "github.com/authzed/spicedb/internal/dispatch/graph"
+	"github.com/authzed/spicedb/internal/graph/computed"
+	"github.com/authzed/spicedb/pkg/cache"
+	caveattypes "github.com/authzed/spicedb/pkg/caveats/types"
+	"github.com/authzed/spicedb/pkg/datalayer"
+	"github.com/authzed/spicedb/pkg/datastore"
+	v1 "github.com/authzed/spicedb/pkg/proto/dispatch/v1"
+	"github.com/authzed/spicedb/pkg/query"
+	"github.com/authzed/spicedb/pkg/schema/v2"
+	"github.com/authzed/spicedb/pkg/tuple"
+)
+
+type Engine interface {
+	Name() string
+	Preparation() Sample
+	Check(context.Context, Case) (Decision, error)
+	Close() error
+}
+
+var (
+	_ Engine = (*classicEngine)(nil)
+	_ Engine = (*plannerEngine)(nil)
+)
+
+type classicEngine struct {
+	prepared   Sample
+	dl         datalayer.DataLayer
+	revision   datastore.RevisionWithSchemaHash
+	dispatcher dispatch.Dispatcher
+	policy     Policy
+}
+
+func (e *classicEngine) Preparation() Sample { return e.prepared }
+func (*classicEngine) Name() string          { return "classic" }
+func (e *classicEngine) Close() error        { return e.dispatcher.Close() }
+func (e *classicEngine) Check(ctx context.Context, c Case) (Decision, error) {
+	q := c.Query
+	result, _, err := computed.ComputeCheck(datalayer.ContextWithDataLayer(ctx, e.dl), e.dispatcher, caveattypes.Default.TypeSet, computed.CheckParameters{
+		ResourceType: tuple.RelationReference{ObjectType: q.ResourceType, Relation: q.Permission}, Subject: tuple.ObjectAndRelation{ObjectType: q.SubjectType, ObjectID: q.SubjectID, Relation: q.SubjectRelation}, CaveatContext: c.Context, AtRevision: e.revision.Revision, MaximumDepth: c.ClassicDepth, SchemaHash: datalayer.SchemaHash(e.revision.SchemaHash), DebugOption: computed.NoDebugging,
+	}, q.ResourceID, e.policy.ClassicChunkSize)
+	if err != nil {
+		return Decision{Outcome: Error, ErrorClass: err.Error()}, err
+	}
+	d := Decision{Outcome: Deny}
+	switch result.Membership {
+	case v1.ResourceCheckResult_MEMBER:
+		d.Outcome = Allow
+	case v1.ResourceCheckResult_CAVEATED_MEMBER:
+		d.Outcome = Conditional
+		d.MissingContext = slices.Sorted(slices.Values(result.MissingExprFields))
+	}
+	return d, nil
+}
+
+type plannerEngine struct {
+	prepared Sample
+	dl       datalayer.DataLayer
+	revision datastore.RevisionWithSchemaHash
+	plans    map[string]query.Iterator
+}
+
+func (e *plannerEngine) Preparation() Sample { return e.prepared }
+func (*plannerEngine) Name() string          { return "qp" }
+func (*plannerEngine) Close() error          { return nil }
+func (e *plannerEngine) Check(ctx context.Context, c Case) (Decision, error) {
+	q := c.Query
+	reader := e.dl.SnapshotReader(e.revision.Revision, datalayer.SchemaHash(e.revision.SchemaHash))
+	runner := caveats.NewCaveatRunner(caveattypes.Default.TypeSet)
+	qctx := query.NewLocalContext(ctx, query.WithRevisionedReader(reader), query.WithCaveatRunner(runner), query.WithCaveatContext(c.Context), query.WithMaxRecursionDepth(c.QPDepth), query.WithCheckExecution(query.CheckExecutionOptions{TargetedRecursion: true, BaseFirstExclusion: true, StrictSubjectMatching: true, ExhaustiveIntersectionArrows: true, StopAfterDirectMatch: true, CoalesceDirectWildcards: true, UnfilteredSingleTypeReads: true, BroadSingleUsersetReads: true}))
+	it := e.plans[q.ResourceType+"#"+q.Permission]
+	path, err := qctx.Check(it, query.NewObject(q.ResourceType, q.ResourceID), query.ObjectAndRelation{ObjectType: q.SubjectType, ObjectID: q.SubjectID, Relation: q.SubjectRelation})
+	if err != nil {
+		return Decision{Outcome: Error, ErrorClass: err.Error()}, err
+	}
+	if path == nil {
+		return Decision{Outcome: Deny}, nil
+	}
+	if path.Caveat == nil {
+		return Decision{Outcome: Allow}, nil
+	}
+	sr, err := reader.ReadSchema(ctx)
+	if err != nil {
+		return Decision{}, err
+	}
+	res, err := runner.RunCaveatExpression(ctx, path.Caveat, c.Context, sr, caveats.RunCaveatExpressionNoDebugging)
+	if err != nil {
+		return Decision{}, err
+	}
+	if res.IsPartial() {
+		missing, err := res.MissingVarNames()
+		slices.Sort(missing)
+		return Decision{Outcome: Conditional, MissingContext: missing}, err
+	}
+	if res.Value() {
+		return Decision{Outcome: Allow}, nil
+	}
+	return Decision{Outcome: Deny}, nil
+}
+
+func PrepareEngines(ctx context.Context, dl datalayer.DataLayer, rev datastore.RevisionWithSchemaHash, s *schema.Schema, cases []Case, p Policy) ([]Engine, error) {
+	var before, after runtime.MemStats
+	runtime.ReadMemStats(&before)
+	start := time.Now()
+	params := dispatchgraph.DispatcherParameters{
+		ConcurrencyLimits:      dispatchgraph.SharedConcurrencyLimits(p.ClassicConcurrency),
+		DispatchChunkSize:      p.ClassicChunkSize,
+		TypeSet:                caveattypes.Default.TypeSet,
+		RelationshipChunkCache: cache.NoopCache[cache.StringKey, any](),
+	}
+	d, err := dispatchgraph.NewLocalOnlyDispatcher(params)
+	if err != nil {
+		return nil, err
+	}
+	classicNS := time.Since(start).Nanoseconds()
+	runtime.ReadMemStats(&after)
+	classicPrep := Sample{NSPerOp: float64(classicNS), BytesPerOp: float64(after.TotalAlloc - before.TotalAlloc), AllocsPerOp: float64(after.Mallocs - before.Mallocs), Iterations: 1}
+	runtime.ReadMemStats(&before)
+	start = time.Now()
+	qp := &plannerEngine{dl: dl, revision: rev, plans: map[string]query.Iterator{}}
+	for _, c := range cases {
+		key := c.Query.ResourceType + "#" + c.Query.Permission
+		if _, ok := qp.plans[key]; ok {
+			continue
+		}
+		outline, err := query.BuildOutlineFromSchema(s, c.Query.ResourceType, c.Query.Permission, query.WithSchemaExecutionOrder(), query.WithDeferredCaveats())
+		if err != nil {
+			_ = d.Close()
+			return nil, fmt.Errorf("%s: %w", key, err)
+		}
+		it, err := outline.Compile()
+		if err != nil {
+			_ = d.Close()
+			return nil, err
+		}
+		qp.plans[key] = it
+	}
+	qpNS := time.Since(start).Nanoseconds()
+	runtime.ReadMemStats(&after)
+	qp.prepared = Sample{NSPerOp: float64(qpNS), BytesPerOp: float64(after.TotalAlloc - before.TotalAlloc), AllocsPerOp: float64(after.Mallocs - before.Mallocs), Iterations: 1}
+	return []Engine{&classicEngine{dl: dl, revision: rev, dispatcher: d, policy: p, prepared: classicPrep}, qp}, nil
+}
+
+```
+
+### Core Architecture Module: `internal/checkbaseline/report/render.py`
+```
+#!/usr/bin/env python3
+"""Render local checkbaseline JSON as a portable, offline HTML report."""
+
+import argparse
+import json
+import math
+from pathlib import Path
+
+
+def summarize(values):
+    values = sorted(values)
+    if not values:
+        return None
+    if any(not math.isfinite(v) for v in values):
+        raise ValueError("non-finite measurement")
+
+    def q(f):
+        i = (len(values) - 1) * f
+        lo = int(i)
+        hi = min(lo + 1, len(values) - 1)
+        return values[lo] + (values[hi] - values[lo]) * (i - lo)
+
+    return dict(n=len(values), low=values[0], q1=q(0.25), median=q(0.5), q3=q(0.75), high=values[-1])
+
+
+def paired_ratio(classic, qp):
+    if len(classic) != len(qp):
+        raise ValueError("unpaired samples")
+    return summarize([b / a for a, b in zip(classic, qp, strict=True) if a > 0])
+
+
+def safe_json(data):
+    return (
+        json.dumps(data, separators=(",", ":"), allow_nan=False)
+        .replace("<", "\\u003c")
+        .replace(">", "\\u003e")
+        .replace("&", "\\u0026")
+    )
+
+
+def work_totals(work):
+    events = work.get("Events") or []
+    loads = [e for e in events if e["Operation"] in ("query", "reverse")]
+    return dict(
+        loads=len(loads),
+        rows=sum(e["Rows"] for e in loads),
+        payload=sum(e["Bytes"] for e in loads),
+        schema=sum(
+            e["Operation"] not in ("query", "reverse", "caveat-leaf", "caveat-expression", "schema-load")
+            for e in events
+        ),
+        caveats=sum(e["Operation"] == "caveat-leaf" for e in events),
+        batch=max([e["Batch"] for e in loads], default=0),
+    )
+
+
+def compact(artifact):
+    if artifact["Version"] != 1:
+        raise ValueError("unsupported artifact version")
+    rows = []
+    for result in artifact["Results"]:
+        engines = []
+        for e in result["Engines"]:
+            samples = e.get("Samples") or []
+            work = [work_totals(w) for w in e["Work"]]
+            metrics = {
+                key: summarize([w[key] for w in work])
+                for key in ("loads", "rows", "payload", "schema", "caveats", "batch")
+            }
+            metrics["schemaLoads"] = (
+                summarize([sum(e["Operation"] == "schema-load" for e in w.get("Events") or []) for w in e["Work"]])
+                if artifact["Provenance"].get("schema_load_instrumentation")
+                else None
+            )
+            metrics.update(
+                time=summarize([s["NSPerOp"] / 1000 for s in samples]),
+                allocations=summarize([s["AllocsPerOp"] for s in samples]),
+                memory=summarize([s["BytesPerOp"] for s in samples]),
+            )
+            prep = e.get("Preparation") or {}
+            metrics.update(
+                prepareTime=summarize([prep.get("NSPerOp", 0) / 1000]),
+                prepareMemory=summarize([prep.get("BytesPerOp", 0)]),
+            )
+            events = (e["Work"][0].get("Events") or []) if e["Work"] else []
+            engines.append(
+                dict(
+                    name=e["Name"],
+                    metrics=metrics,
+                    decision=e["Decision"],
+                    error=e.get("Error"),
+                    preparation=e.get("Preparation"),
+                    samples=samples,
+                    observations=e.get("Observations"),
+                    trace=[{k: v for k, v in event.items() if k != "Relationships"} for event in events[:60]],
+                    traceCount=len(events),
+                    work=work,
+                )
+            )
+        ratio = None
+        if result["Valid"] and result["Status"] == "relationship work matched":
+            ratio = paired_ratio(
+                [s["NSPerOp"] for s in engines[0]["samples"]], [s["NSPerOp"] for s in engines[1]["samples"]]
+            )
+        rows.append(
+            dict(
+                dataset=result["Dataset"],
+                case=result["Case"],
+                profile=result["Profile"],
+                valid=result["Valid"],
+                status=result["Status"],
+                differences=result.get("Differences") or [],
+                engines=engines,
+                ratio=ratio,
+            )
+        )
+    return dict(
+        created=artifact["Created"],
+        provenance=artifact["Provenance"],
+        policy=artifact["Policy"],
+        repetitions=artifact["Repetitions"],
+        samples=artifact["Samples"],
+        omissions=artifact.get("Omissions") or [],
+        rows=rows,
+    )
+
+
+def render(artifact):
+    return (
+        Path(__file__).with_name("template.html").read_text().replace("__REPORT_DATA__", safe_json(compact(artifact)))
+    )
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("input", type=Path)
+    parser.add_argument("output", type=Path)
+    args = parser.parse_args()
+    with args.input.open() as f:
+        artifact = json.load(f)
+    args.output.write_text(render(artifact))
+    print(f"Wrote {args.output}: {len(artifact['Results'])} comparisons")
+
+
+if __name__ == "__main__":
+    main()
 
 ```
 
@@ -772,119 +1080,6 @@ func inputMessagesForService[S any](
 
 ```
 
-### Core Architecture Module: `internal/services/v1/reflectionutil.go`
-```
-package v1
-
-import (
-	"context"
-
-	caveattypes "github.com/authzed/spicedb/pkg/caveats/types"
-	"github.com/authzed/spicedb/pkg/datalayer"
-	"github.com/authzed/spicedb/pkg/datastore"
-	"github.com/authzed/spicedb/pkg/diff"
-	"github.com/authzed/spicedb/pkg/middleware/consistency"
-	core "github.com/authzed/spicedb/pkg/proto/core/v1"
-	"github.com/authzed/spicedb/pkg/schemadsl/compiler"
-	"github.com/authzed/spicedb/pkg/schemadsl/input"
-)
-
-func loadCurrentSchema(ctx context.Context) (*diff.DiffableSchema, datastore.Revision, datalayer.SchemaHash, error) {
-	dl := datalayer.MustFromContext(ctx)
-
-	atRevision, schemaHash, _, err := consistency.RevisionFromContext(ctx)
-	if err != nil {
-		return nil, nil, "", err
-	}
-
-	reader := dl.SnapshotReader(atRevision, schemaHash)
-
-	sr, err := reader.ReadSchema(ctx)
-	if err != nil {
-		return nil, atRevision, "", err
-	}
-
-	namespacesAndRevs, err := sr.ListAllTypeDefinitions(ctx)
-	if err != nil {
-		return nil, atRevision, "", err
-	}
-
-	caveatsAndRevs, err := sr.ListAllCaveatDefinitions(ctx)
-	if err != nil {
-		return nil, atRevision, "", err
-	}
-
-	namespaces := make([]*core.NamespaceDefinition, 0, len(namespacesAndRevs))
-	for _, namespaceAndRev := range namespacesAndRevs {
-		namespaces = append(namespaces, namespaceAndRev.Definition)
-	}
-
-	caveats := make([]*core.CaveatDefinition, 0, len(caveatsAndRevs))
-	for _, caveatAndRev := range caveatsAndRevs {
-		caveats = append(caveats, caveatAndRev.Definition)
-	}
-
-	return &diff.DiffableSchema{
-		ObjectDefinitions: namespaces,
-		CaveatDefinitions: caveats,
-	}, atRevision, schemaHash, nil
-}
-
-func schemaDiff(ctx context.Context, comparisonSchemaString string, caveatTypeSet *caveattypes.TypeSet) (*diff.SchemaDiff, *diff.DiffableSchema, *diff.DiffableSchema, error) {
-	existingSchema, _, _, err := loadCurrentSchema(ctx)
-	if err != nil {
-		return nil, nil, nil, err
-	}
-
-	// Compile the comparison schema.
-	compiled, err := compiler.Compile(compiler.InputSchema{
-		Source:       input.Source("schema"),
-		SchemaString: comparisonSchemaString,
-	}, compiler.AllowUnprefixedObjectType(), compiler.CaveatTypeSet(caveatTypeSet))
-	if err != nil {
-		return nil, nil, nil, err
-	}
-
-	comparisonSchema := diff.NewDiffableSchemaFromCompiledSchema(compiled)
-
-	diff, err := diff.DiffSchemas(*existingSchema, comparisonSchema, caveatTypeSet)
-	if err != nil {
-		return nil, nil, nil, err
-	}
-
-	// Return the diff.
-	return diff, existingSchema, &comparisonSchema, nil
-}
-
-```
-
-### Core Architecture Module: `internal/services/v1/watchutil.go`
-```
-package v1
-
-import (
-	v1 "github.com/authzed/authzed-go/proto/authzed/api/v1"
-
-	"github.com/authzed/spicedb/pkg/datastore"
-)
-
-func convertWatchKindToContent(kinds []v1.WatchKind) datastore.WatchContent {
-	res := datastore.WatchRelationships
-	for _, kind := range kinds {
-		switch kind {
-		case v1.WatchKind_WATCH_KIND_INCLUDE_RELATIONSHIP_UPDATES:
-			res |= datastore.WatchRelationships
-		case v1.WatchKind_WATCH_KIND_INCLUDE_SCHEMA_UPDATES:
-			res |= datastore.WatchSchema
-		case v1.WatchKind_WATCH_KIND_INCLUDE_CHECKPOINTS:
-			res |= datastore.WatchCheckpoints
-		}
-	}
-	return res
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -912,930 +1107,372 @@ func convertWatchKindToContent(kinds []v1.WatchKind) datastore.WatchContent {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b2897b2e` (2026-10-26)
-**Commit Message**: fix(cache): expire dispatch cache entries a fixed TTL after they are written
+### Incident Patch 1: `a7df6724` (2026-09-29)
+**Commit Message**: fix(checkbaseline): satisfy mutex and SQL row analyzers
 
-Since the move to Otter, caches used a sliding TTL: every read pushed an
-entry's expiration out by another TTL, so an entry read more often than the
-TTL never expired. Ristretto, the previous default, expired entries a fixed
-TTL after they were set.
-
-Dispatch results can go stale without their cache key changing, for example
-when a relationship they depend on expires. On MySQL, where the revision only
-advances on writes, an expired relationship could therefore keep granting a
-permission indefinitely, even with fully_consistent, until the next write.
-
-Caches now expire entries a fixed TTL after they are written. Caches whose
-values cannot go stale while their key is unchanged can opt back into the
-sliding TTL with RefreshTTLOnAccess; the namespace cache and the full
-relation cache's access counter do.
-
-Fixes #3431
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `internal/checkbaseline/postgres.go` (modified, +5/-3)
 ```diff
-@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
- 
- ## [Unreleased]
- ### Fixed
-+- Caching: dispatch, cluster dispatch, relationship chunk and full relation cache entries again expire one TTL after they are written, as they did before v1.54.0. Since the move to Otter, every read pushed an entry's expiration out by another TTL, so a result that was read more often than the TTL never expired. On MySQL, where the revision only advances on writes, an expired relationship could then keep granting a permission indefinitely, even with `fully_consistent`, until the next write. The namespace cache, whose entries cannot go stale, still extends its TTL on reads. (https://github.com/authzed/spicedb/issues/3431)
- - Schema validation: schemas that transitively include wildcard subjects are now consistently rejected, even when unrelated definitions reuse the same relation names. (https://github.com/authzed/spicedb/pull/3421)
- - CockroachDB: the GC window is now derived from the zone configuration that applies to SpiceDB's relationship table instead of the cluster-wide `RANGE default`. SpiceDB reads `SHOW ZONE CONFIGURATION FROM TABLE relation_tuple` (or `relation_tuple_with_integrity`), for which CockroachDB resolves table, database and `RANGE default` precedence, and caps `--datastore-gc-window` at that TTL. Previously a database configured with `ALTER DATABASE ... CONFIGURE ZONE USING gc.ttlseconds = 86400` on a cluster with the default 4h `RANGE default` rejected revisions older than 4h as stale, and a database configured below a longer `RANGE default` kept a window wider than the data's real TTL, so reads past it failed with CockroachDB's GC threshold error instead of being rejected as stale. If the table's zone configuration cannot be read, the `RANGE default` value is used as before. A single-digit `gc.ttlseconds` is now also parsed correctly.
- 
-```
-
-**File**: `internal/datastore/proxy/fullrelationcache/counter.go` (modified, +2/-0)
-```diff
-@@ -40,6 +40,8 @@ func NewAccessCounter(maxCost int64, window time.Duration) (AccessCounter, error
- 	c, err := cache.NewStandardCache[counterKey, *atomic.Uint64](&cache.Config{
- 		MaxCost:    maxCost,
- 		DefaultTTL: window,
-+		// Touch reads the counter, so each Touch restarts the window.
-+		RefreshTTLOnAccess: true,
- 	})
- 	if err != nil {
- 		return nil, err
-```
-
-**File**: `pkg/cache/cache.go` (modified, +10/-2)
-```diff
-@@ -40,15 +40,23 @@ type Config struct {
- 	MaxCost int64
- 
- 	// DefaultTTL configures a default deadline on the lifetime of any keys set
--	// to the cache.
-+	// to the cache. The deadline is measured from when the key was last set;
-+	// reads do not extend it unless RefreshTTLOnAccess is true.
- 	DefaultTTL time.Duration
-+
-+	// RefreshTTLOnAccess, if true, extends a key's deadline by DefaultTTL on
-+	// every read as well as on every set, so a key that is read more often than
-+	// DefaultTTL never expires. Only enable it for caches whose values cannot
-+	// become stale while their key is unchanged.
-+	RefreshTTLOnAccess bool
- }
- 
- func (c *Config) MarshalZerologObject(e *zerolog.Event) {
- 	maxCost := spiceerrors.MustSafecast[uint64](c.MaxCost)
- 	e.
- 		Str("maxCost", humanize.IBytes(maxCost)).
--		Dur("defaultTTL", c.DefaultTTL)
-+		Dur("defaultTTL", c.DefaultTTL).
-+		Bool("refreshTTLOnAccess", c.RefreshTTLOnAccess)
- }
- 
- // Cache defines an interface for a generic cache. Method semantics follow
-```
-
-**File**: `pkg/cache/cache_otter.go` (modified, +5/-1)
-```diff
-@@ -83,7 +83,11 @@ func newOtterCache[K KeyString, V any](name string, config *Config) (*otterCache
- 		StatsRecorder: counter,
- 	}
- 	if config.DefaultTTL > 0 {
--		opts.ExpiryCalculator = otter.ExpiryAccessing[string, valueAndCost[V]](config.DefaultTTL)
-+		if config.RefreshTTLOnAccess {
-+			opts.ExpiryCalculator = otter.ExpiryAccessing[string, valueAndCost[V]](config.DefaultTTL)
-+		} else {
-+			opts.ExpiryCalculator = otter.ExpiryWriting[string, valueAndCost[V]](config.DefaultTTL)
-+		}
- 	}
- 
- 	cache, err := otter.New(opts)
-```
-
-**File**: `pkg/cache/cache_test.go` (modified, +89/-0)
-```diff
-@@ -205,3 +205,92 @@ func TestCacheWithMetrics(t *testing.T) {
- 		})
- 	})
- }
-+
-+func TestTTLExpiration(t *testing.T) {
-+	const ttl = 1 * time.Minute
-+
-+	newCache := func(t *testing.T, refreshOnAccess bool) Cache[StringKey, string] {
-+		c, err := NewOtterCache[StringKey, string]("test-otter", &Config{
-+			MaxCost:            1000,
-+			DefaultTTL:         ttl,
-+			RefreshTTLOnAccess: refreshOnAccess,
-+		})
-+		//nolint:testifylint  // we're in a goroutine
-+		if !assert.NoError(t, err) {
-+			t.FailNow()
-+		}
-+		t.Cleanup(c.Close)
-+		return c
-+	}
-+
-+	t.Run("expires after the TTL", func(t *testing.T) {
-+		synctest.Test(t, func(t *testing.T) {
-+			c := newCache(t, false)
-+			assert.True(t, c.Set(StringKey("key"), "value", 10))
-+
-+			time.Sleep(ttl - time.Second)
-+			_, found := c.Get(StringKey("key"))
-+			assert.True(t, found, "expected key to be present before the TTL elapsed")
-+
-+			time.Sleep(2 * time.Second)
-+			_, found = c.Get(StringKey("key"))
-+			assert.False(t, found, "expected key to have expired after the TTL")
-+		})
-+	})
-+
-+	t.Run("reads do not extend the TTL", func(t *testing.T) {
-+		synctest.Test(t, func(t *testing.T) {
-+			c := newCache(t, false)
-+			assert.True(t, c.Set(StringKey("key"), "value", 10))
-+
-+			// Read the key every 10 seconds, so a sliding TTL would never lapse.
-+			// A key read steadily must still expire one TTL after it was set.
-+			for elapsed := 10 * time.Second; elapsed < ttl; elapsed += 10 * time.Second {
-+				time.Sleep(10 * time.Second)
-+				_, found := c.Get(StringKey("key"))
-+				assert.True(t, found, "expected key to be present %s after it was set", elapsed)
+@@ -180,14 +180,16 @@ func openBaselineBackend(ctx context.Context, cfg AuditConfig) (*baselineBackend
+ 		var k, v string
+ 		if err = rows.Scan(&k, &v); err != nil {
+ 			rows.Close()
++			if rows.Err() != nil {
++				return nil, errors.Join(err, rows.Err())
 +			}
-+
-+			time.Sleep(10 * time.Second)
-+			_, found := c.Get(StringKey("key"))
-+			assert.False(t, found, "expected key to have expired despite being read")
-+		})
-+	})
-+
-+	t.Run("setting a key restarts its TTL", func(t *testing.T) {
-+		synctest.Test(t, func(t *testing.T) {
-+			c := newCache(t, false)
-+			assert.True(t, c.Set(StringKey("key"), "first", 10))
-+
-+			time.Sleep(ttl / 2)
-+			assert.True(t, c.Set(StringKey("key"), "second", 10))
-+
-+			time.Sleep(ttl/2 + time.Second)
-+			value, found := c.Get(StringKey("key"))
-+			assert.True(t, found, "expected key to be present one TTL after its first set")
-+			assert.Equal(t, "second", value)
-+
-+			time.Sleep(ttl / 2)
-+			_, found = c.Get(StringKey("key"))
-+			assert.False(t, found, "expected key to have expired one TTL after its last set")
-+		})
-+	})
-+
-+	t.Run("RefreshTTLOnAccess extends the TTL on reads", func(t *testing.T) {
-+		synctest.Test(t, func(t *testing.T) {
-+			c := newCache(t, true)
-+			assert.True(t, c.Set(StringKey("key"), "value", 10))
-+
-+			for range 5 {
-+				time.Sleep(ttl / 2)
-+				_, found := c.Get(StringKey("key"))
-+				assert.True(t, found, "expected a read to keep the key alive")
-+			}
-+
-+			// Once the reads stop, the key expires one TTL after the last one.
-+			time.Sleep(ttl + time.Second)
-+			_, found := c.Get(StringKey("key"))
-+			assert.False(t, found, "expected key to have expired once reads stopped")
-+		})
-+	})
-+}
-```
-
-**File**: `pkg/cache/memory_limiter_integration_test.go` (modified, +1/-1)
-```diff
-@@ -77,7 +77,7 @@ func TestCacheFillingDoesNotTripMemoryLimiter(t *testing.T) {
- 			// live heap (dominated by the dispatch caches) is what the memory limiter sees.
- 			"GOGC": envOr("SPICEDB_GOGC", "25"),
- 			// A long quantization window with staleness gives dispatch cache
--			// entries a sliding TTL of roughly 2 x (5m x 1.1) = 11m, so nothing
-+			// entries a TTL of roughly 2 x (5m x 1.1) = 11m, so nothing
- 			// expires during the run and the caches reach their budgets.
- 			"SPICEDB_DATASTORE_REVISION_QUANTIZATION_INTERVAL":              "5m",
- 			"SPICEDB_DATASTORE_REVISION_QUANTIZATION_MAX_STALENESS_PERCENT": "10",
-```
-
-**File**: `pkg/cmd/server/cacheconfig.go` (modified, +16/-4)
-```diff
-@@ -37,6 +37,8 @@ type CacheConfig struct {
- 	Metrics     bool          `debugmap:"visible"`
- 	Enabled     bool          `debugmap:"visible"`
- 	defaultTTL  time.Duration `debugmap:"visible"`
-+	// refreshTTLOnAccess makes reads extend an entry's TTL; see cache.Config.
-+	refreshTTLOnAccess bool `debugmap:"visible"`
- }
- 
- // WithRevisionParameters configures a cache such that all entries are given a TTL
-@@ -55,6 +57,14 @@ func (cc *CacheConfig) WithRevisionParameters(
- 	return cc
- }
- 
-+// WithTTLRefreshedOnAccess configures a cache such that reading an entry extends
-+// its TTL. Only use it for caches whose values cannot become stale while their
-+// key is unchanged, such as schema keyed by revision.
-+func (cc *CacheConfig) WithTTLRefreshedOnAccess() *CacheConfig {
-+	cc.refreshTTLOnAccess = true
-+	return cc
-+}
-+
- // CompleteCache translates the CLI cache config into a cache. If metrics are
- // enabled for the cache, its metrics are registered with the given registerer.
- func CompleteCache[K cache.KeyString, V any](registerer prometheus.Registerer, cc *CacheConfig) (cache.Cache[K, V], error) {
-@@ -69,14 +79,16 @@ func CompleteCache[K cache.KeyString, V any](registerer prometheus.Registerer, c
- 
- 	if cc.Metrics {
- 		return cache.NewStandardCacheWithMetrics[K, V](registerer, cc.Name, &cache.Config{
--			MaxCost:    intMaxCost,
--			DefaultTTL: cc.defaultTTL,
-+			MaxCost:            intMaxCost,
-+			DefaultTTL:         cc.defaultTTL,
-+			RefreshTTLOnAccess: cc.refreshTTLOnAccess,
- 		})
+ 			return nil, err
+ 		}
+ 		settings[k] = v
  	}
- 
- 	return cache.NewStandardCache[K, V](&cache.Config{
--		MaxCost:    intMaxCost,
--		DefaultTTL: cc.defaultTTL,
-+		MaxCost:            intMaxCost,
-+		DefaultTTL:         cc.defaultTTL,
-+		RefreshTTLOnAccess: cc.refreshTTLOnAccess,
- 	})
- }
- 
+-	err = rows.Err()
+ 	rows.Close()
+-	if err != nil {
+-		return nil, err
++	if rows.Err() != nil {
++		return nil, rows.Err()
+ 	}
+ 	encoded, _ := json.Marshal(settings)
+ 	b := &baselineBackend{ds: ds, close: cleanup, metadata: map[string]string{"backend": "postgres", "backend_version": version, "backend_settings": string(encoded)}}
 ```
 
-**File**: `pkg/cmd/server/cacheconfig_test.go` (modified, +53/-0)
+**File**: `internal/checkbaseline/reader.go` (modified, +2/-2)
 ```diff
-@@ -2,11 +2,15 @@ package server
- 
- import (
- 	"testing"
-+	"testing/synctest"
- 	"time"
- 
-+	"github.com/prometheus/client_golang/prometheus"
-+	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- 
- 	"github.com/authzed/spicedb/internal/datastore/dsfortesting"
-+	"github.com/authzed/spicedb/pkg/cache"
- 	"github.com/authzed/spicedb/pkg/cmd/util"
- )
- 
-@@ -176,6 +180,55 @@ func TestRevisionKeyedCachesExpire(t *testing.T) {
- 		require.Positive(t, cacheConfig.defaultTTL,
- 			"the %s cache is keyed by revision and must be given a TTL", name)
- 	}
-+
-+	// Schema at a revision never changes, so namespace cache reads may extend
-+	// the TTL. A dispatch result can go stale without its key changing (for
-+	// example, when a relationship it depends on expires), so reads of the
-+	// dispatch caches must not keep an entry alive past its TTL.
-+	require.True(t, c.NamespaceCacheConfig.refreshTTLOnAccess,
-+		"the namespace cache should extend its TTL on access")
-+	require.False(t, c.DispatchCacheConfig.refreshTTLOnAccess,
-+		"the dispatch cache must not extend its TTL on access")
-+	require.False(t, c.ClusterDispatchCacheConfig.refreshTTLOnAccess,
-+		"the cluster dispatch cache must not extend its TTL on access")
-+}
-+
-+func TestCompleteCacheTTLOnAccess(t *testing.T) {
-+	const ttl = 1 * time.Minute
-+
-+	for _, tc := range []struct {
-+		name            string
-+		refreshOnAccess bool
-+		expectFound     bool
-+	}{
-+		{"fixed TTL expires despite reads", false, false},
-+		{"TTL refreshed on access survives reads", true, true},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			synctest.Test(t, func(t *testing.T) {
-+				cc := &CacheConfig{Name: "test", Enabled: true, MaxCost: "1MiB", defaultTTL: ttl}
-+				if tc.refreshOnAccess {
-+					cc = cc.WithTTLRefreshedOnAccess()
-+				}
-+
-+				c, err := CompleteCache[cache.StringKey, string](prometheus.NewRegistry(), cc)
-+				//nolint:testifylint  // we're in a goroutine
-+				if !assert.NoError(t, err) {
-+					return
-+				}
-+				defer c.Close()
-+
-+				assert.True(t, c.Set(cache.StringKey("key"), "value", 10))
-+				for range 4 {
-+					time.Sleep(ttl / 2)
-+					_, _ = c.Get(cache.StringKey("key"))
-+				}
-+
-+				_, found := c.Get(cache.StringKey("key"))
-+				assert.Equal(t, tc.expectFound, found)
-+			})
-+		})
-+	}
+@@ -29,8 +29,8 @@ type Work struct {
  }
+ type Recorder struct {
+ 	mu     sync.Mutex
+-	work   Work
+-	sealed bool
++	work   Work // GUARDED_BY(mu)
++	sealed bool // GUARDED_BY(mu)
+ }
+ type recorderKey struct{}
  
- func TestCacheRetainsEntries(t *testing.T) {
 ```
 
 ---
 
-### Incident Patch 2: `7e7420c3` (2026-10-27)
-**Commit Message**: fix(tls): reload certificate authorities when they rotate on disk (#3296)
+### Incident Patch 2: `dae0832c` (2026-09-29)
+**Commit Message**: fix(query): preserve caveats and expiration across relation variants
 
-Signed-off-by: Oleksii Udovychenko <[REDACTED_EMAIL]>
-Co-authored-by: Oleksii Udovychenko <[REDACTED_EMAIL]>
-Co-authored-by: Tanner Stirrat <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `pkg/query/datastore.go` (modified, +58/-19)
 ```diff
-@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
- 
- ## [Unreleased]
- ### Fixed
-+- Dispatch and telemetry: CA bundles read from disk via `--dispatch-upstream-ca-path` and the telemetry client's CA path are now re-read on every outbound TLS handshake, so a rotated certificate authority is picked up without a process restart. Previously the CA pool was set once at startup and stayed fixed for the life of the process, causing handshakes to fail with "certificate signed by unknown authority" after the old CA was retired. (https://github.com/authzed/spicedb/pull/3296)
- - Caching: dispatch, cluster dispatch, relationship chunk and full relation cache entries again expire one TTL after they are written, as they did before v1.54.0. Since the move to Otter, every read pushed an entry's expiration out by another TTL, so a result that was read more often than the TTL never expired. On MySQL, where the revision only advances on writes, an expired relationship could then keep granting a permission indefinitely, even with `fully_consistent`, until the next write. The namespace cache, whose entries cannot go stale, still extends its TTL on reads. (https://github.com/authzed/spicedb/issues/3431)
- - Schema validation: schemas that transitively include wildcard subjects are now consistently rejected, even when unrelated definitions reuse the same relation names. (https://github.com/authzed/spicedb/pull/3421)
- - CockroachDB: the GC window is now derived from the zone configuration that applies to SpiceDB's relationship table instead of the cluster-wide `RANGE default`. SpiceDB reads `SHOW ZONE CONFIGURATION FROM TABLE relation_tuple` (or `relation_tuple_with_integrity`), for which CockroachDB resolves table, database and `RANGE default` precedence, and caps `--datastore-gc-window` at that TTL. Previously a database configured with `ALTER DATABASE ... CONFIGURE ZONE USING gc.ttlseconds = 86400` on a cluster with the default 4h `RANGE default` rejected revisions older than 4h as stale, and a database configured below a longer `RANGE default` kept a window wider than the data's real TTL, so reads past it failed with CockroachDB's GC threshold error instead of being rejected as stale. If the table's zone configuration cannot be read, the `RANGE default` value is used as before. A single-digit `gc.ttlseconds` is now also parsed correctly.
-```
-
-**File**: `internal/dispatch/combined/ca_rotation_integration_test.go` (added, +241/-0)
-```diff
-@@ -0,0 +1,241 @@
-+//go:build image
-+
-+package combined_test
-+
-+import (
-+	"bytes"
-+	"context"
-+	"crypto/ecdsa"
-+	"crypto/elliptic"
-+	"crypto/rand"
-+	"crypto/x509"
-+	"crypto/x509/pkix"
-+	"encoding/pem"
-+	"fmt"
-+	"math/big"
-+	"os"
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+	"github.com/testcontainers/testcontainers-go"
-+	"github.com/testcontainers/testcontainers-go/network"
-+	"google.golang.org/grpc"
-+	"google.golang.org/grpc/credentials/insecure"
-+
-+	v1 "github.com/authzed/authzed-go/proto/authzed/api/v1"
-+	"github.com/authzed/authzed-go/v1"
-+	"github.com/authzed/grpcutil"
-+
-+	"github.com/authzed/spicedb/pkg/testutil/sdbtestcontainer"
-+)
-+
-+const (
-+	// sdbNetworkAlias is the name the node dispatches to, so it is also the name
-+	// the serving certificate has to be issued for.
-+	sdbNetworkAlias = "sdb"
-+
-+	caPath          = "/certs/ca.crt"
-+	servingCertPath = "/certs/tls.crt"
-+	servingKeyPath  = "/certs/tls.key"
-+
-+	rotationSchema = `definition user {}
-+
-+definition group {
-+	relation member: user
-+}
-+
-+definition document {
-+	relation viewer: group#member
-+	permission view = viewer
-+}`
-+)
-+
-+// TestDispatchFollowsCARotation rotates the certificate authority a running
-+// node uses to verify its dispatch peers, and asserts dispatch recovers without
-+// a restart.
-+//
-+// The node dispatches to itself over the cluster gRPC port, so one container
-+// covers both sides of the handshake: the serving certificate comes from
-+// --dispatch-cluster-tls-cert-path and the trust bundle from
-+// --dispatch-upstream-ca-path, exactly as an operator mounts them from one
-+// secret.
-+func TestDispatchFollowsCARotation(t *testing.T) {
-+	image := envOr("SPICEDB_IMAGE", "authzed/spicedb:ci")
-+
-+	ctx, cancel := context.WithTimeout(t.Context(), 10*time.Minute)
-+	defer cancel()
-+
-+	net, err := network.New(ctx)
-+	require.NoError(t, err)
-+	t.Cleanup(func() { _ = net.Remove(t.Context()) })
-+
-+	authority := newTestAuthority(t, "old")
-+	certPEM, keyPEM := authority.issueServingCert(t, sdbNetworkAlias)
-+
-+	spicedb, err := sdbtestcontainer.Run(ctx, image,
-+		sdbtestcontainer.WithBootstrapSchema(rotationSchema),
-+		sdbtestcontainer.WithBootstrapRelationships(
-+			"group:everyone#member@user:alice",
-+			"document:firstdoc#viewer@group:everyone#member",
-+		),
-+		network.WithNetwork([]string{sdbNetworkAlias}, net),
-+		testcontainers.WithFiles(
-+			testcontainers.ContainerFile{Reader: bytes.NewReader(authority.bundlePEM(t)), ContainerFilePath: caPath, FileMode: 0o644},
-+			testcontainers.ContainerFile{Reader: bytes.NewReader(certPEM), ContainerFilePath: servingCertPath, FileMode: 0o644},
-+			testcontainers.ContainerFile{Reader: bytes.NewReader(keyPEM), ContainerFilePath: servingKeyPath, FileMode: 0o644},
-+		),
-+		testcontainers.WithEnv(map[string]string{
-+			// Dispatch to ourselves over TLS on the cluster port, so every
-+			// subproblem crosses a real handshake against the trust bundle.
-+			"SPICEDB_DISPATCH_CLUSTER_ENABLED":       "true",
-+			"SPICEDB_DISPATCH_CLUSTER_TLS_CERT_PATH": servingCertPath,
-+			"SPICEDB_DISPATCH_CLUSTER_TLS_KEY_PATH":  servingKeyPath,
-+			"SPICEDB_DISPATCH_UPSTREAM_ADDR":         sdbNetworkAlias + ":50053",
-+			"SPICEDB_DISPATCH_UPSTREAM_CA_PATH":      caPath,
-+			// Rotation only takes effect on a new connection, and the dispatch
-+			// client holds one open. A short max age has the server retire it
-+			// promptly, which is what an operator gets from the 30s default.
-+			"SPICEDB_DISPATCH_CLUSTER_MAX_CONN_AGE": "5s",
-+			// Without this a repeated check is answered from cache and never
-+			// dispatches, so the probe below would stop observing the handshake.
-+			"SPICEDB_DISPATCH_CACHE_ENABLED":         "false",
-+			"SPICEDB_DISPATCH_CLUSTER_CACHE_ENABLED": "false",
-+		}),
-+	)
-+	require.NoError(t, err)
-+	t.Cleanup(func() { _ = spicedb.Terminate(t.Context()) })
-+
-+	client, err := authzed.NewClient(spicedb.GRPCEndpoint(),
-+		grpcutil.WithInsecureBearerToken(spicedb.PresharedKey()),
-+		grpc.WithTransportCredentials(insecure.NewCredentials()),
-+	)
-+	require.NoError(t, err)
-+
-+	// The dispatch client waits for its connection to be ready, so a check made
-+	// while the handshake is failing blocks until its own deadline. The timeout
-+	// therefore sets how long each probe below takes to report a broken cluster.
-+	check := func(timeout time.Duration) error {
-+		checkCtx, cancelCheck := context.WithTimeout(ctx, timeout)
-+		defer cancelCheck()
-+
-+		resp, err := client.CheckPermission(checkCtx, &v1.CheckPermissionRequest{
-+			Consistency: &v1.Consistency{
-+				Requirement: &v1.Consistency_FullyConsistent{FullyConsistent: true},
-+			},
-+			Resource:   &v1.ObjectReference{ObjectType: "document", ObjectId: "firstdoc"},
-+			Permission: "view",
-+			Subject:    &v1.SubjectReference{Object: &v1.ObjectReference{ObjectType: "user", ObjectId: "alice"}},
-+		})
-+		if err != nil {
-+			return err
-+		}
-+		if resp.Permissionship != v1.CheckPermissionResponse_PERMISSIONSHIP_HAS
-```
-
-**File**: `internal/dispatch/combined/combined.go` (modified, +7/-2)
-```diff
-@@ -1,6 +1,7 @@
- package combined
- 
- import (
-+	"crypto/tls"
- 	"fmt"
- 	"time"
- 
-@@ -20,6 +21,7 @@ import (
- 	caveattypes "github.com/authzed/spicedb/pkg/caveats/types"
- 	v1 "github.com/authzed/spicedb/pkg/proto/dispatch/v1"
- 	"github.com/authzed/spicedb/pkg/query"
-+	"github.com/authzed/spicedb/pkg/x509util"
- )
- 
- // Option is a function-style option for configuring a combined Dispatcher.
-@@ -249,11 +251,14 @@ func NewDispatcher(options ...Option) (dispatch.Dispatcher, error) {
- 	} else {
- 		// If an upstream is specified, create a cluster dispatcher.
- 		if opts.upstreamCAPath != "" {
--			customCertOpt, err := grpcutil.WithCustomCerts(grpcutil.VerifyCA, opts.upstreamCAPath)
-+			// Read at handshake time so that rotating the CA on disk does not
-+			// require restarting every node in the dispatch cluster.
-+			caPool, err := x509util.NewCAPool(opts.upstreamCAPath)
- 			if err != nil {
- 				return nil, err
- 			}
--			opts.grpcDialOpts = append(opts.grpcDialOpts, customCertOpt)
-+			creds := x509util.NewReloadingTLSCreds(caPool, &tls.Config{MinVersion: tls.VersionTLS12})
-+			opts.grpcDialOpts = append(opts.grpcDialOpts, grpc.WithTransportCredentials(creds))
- 			opts.grpcDialOpts = append(opts.grpcDialOpts, grpcutil.WithBearerToken(opts.grpcPresharedKey))
- 		} else {
- 			opts.grpcDialOpts = append(opts.grpcDialOpts, grpcutil.WithInsecureBearerToken(opts.grpcPresharedKey))
-```
-
-**File**: `internal/dispatch/combined/combined_test.go` (modified, +1/-1)
-```diff
-@@ -162,7 +162,7 @@ func TestNewDispatcher_WithUpstream(t *testing.T) {
- }
- 
- // TestNewDispatcher_UpstreamCAPathMissing exercises the TLS branch by pointing
--// UpstreamCAPath at a non-existent file; grpcutil.WithCustomCerts will error.
-+// UpstreamCAPath at a non-existent file, which fails when the CA is read.
- func TestNewDispatcher_UpstreamCAPathMissing(t *testing.T) {
- 	_, err := NewDispatcher(
- 		UpstreamAddr("localhost:0"),
-```
-
-**File**: `internal/telemetry/ca_rotation_test.go` (added, +200/-0)
-```diff
-@@ -0,0 +1,200 @@
-+package telemetry
-+
-+import (
-+	"crypto/ecdsa"
-+	"crypto/elliptic"
-+	"crypto/rand"
-+	"crypto/tls"
-+	"crypto/x509"
-+	"crypto/x509/pkix"
-+	"encoding/pem"
-+	"log"
-+	"math/big"
-+	"net"
-+	"net/http"
-+	"os"
-+	"path/filepath"
-+	"strings"
-+	"sync"
-+	"testing"
-+	"time"
-+
-+	"github.com/prometheus/client_golang/prometheus"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+// TestRemoteReporterFollowsCARotation asserts that the reporter keeps reaching
-+// its endpoint after the CA override is rotated on disk, which it cannot do
-+// while the pool is captured in the transport's TLSClientConfig.
-+func TestRemoteReporterFollowsCARotation(t *testing.T) {
-+	caPath := filepath.Join(t.TempDir(), "ca.crt")
-+
-+	authority := newTestCA(t, "old")
-+	writeCABundle(t, caPath, authority)
-+
-+	sink := newTLSSink(t, authority.issueServingCert(t))
-+
-+	registry := prometheus.NewRegistry()
-+	gauge := prometheus.NewGauge(prometheus.GaugeOpts{Name: "test_metric", Help: "A test metric"})
-+	gauge.Set(42)
-+	registry.MustRegister(gauge)
-+
-+	// The endpoint is on loopback, so sub-minute intervals are allowed and the
-+	// reporter pushes without a startup delay.
-+	reporter, err := RemoteReporter(registry, sink.url, caPath, time.Second)
-+	require.NoError(t, err)
-+
-+	done := make(chan error, 1)
-+	go func() { done <- reporter(t.Context()) }()
-+	t.Cleanup(func() { <-done })
-+
-+	require.Eventually(t, func() bool { return sink.reports() > 0 }, 15*time.Second, 100*time.Millisecond,
-+		"the reporter should reach the endpoint with the authority it started with")
-+
-+	// Serve a certificate from a new authority without publishing it. The
-+	// handshake has to start failing here, otherwise the recovery below would
-+	// pass whether or not the trust bundle is ever re-read.
-+	rotated := newTestCA(t, "new")
-+	sink.setCert(rotated.issueServingCert(t))
-+
-+	require.Eventually(t, func() bool { return strings.Contains(sink.handshakeErrors(), "TLS handshake error") },
-+		15*time.Second, 100*time.Millisecond,
-+		"the reporter should reject a certificate from an authority that is not in the bundle")
-+
-+	writeCABundle(t, caPath, rotated)
-+	before := sink.reports()
-+
-+	require.Eventually(t, func() bool { return sink.reports() > before }, 45*time.Second, 100*time.Millisecond,
-+		"the reporter should reach the endpoint again once the rotated authority is published")
-+}
-+
-+// tlsSink is an HTTPS endpoint that counts the reports it receives and whose
-+// serving certificate can be swapped while it is running. It is also the
-+// server's error log, so the test can observe rejected handshakes.
-+type tlsSink struct {
-+	url string
-+
-+	mu         sync.Mutex
-+	cert       tls.Certificate // GUARDED_BY(mu)
-+	received   int             // GUARDED_BY(mu)
-+	serverLogs strings.Builder // GUARDED_BY(mu)
-+}
-+
-+func newTLSSink(t *testing.T, cert tls.Certificate) *tlsSink {
-+	t.Helper()
-+
-+	sink := &tlsSink{cert: cert}
-+
-+	listener, err := net.Listen("tcp", "127.0.0.1:0")
-+	require.NoError(t, err)
-+
-+	server := &http.Server{
-+		Handler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-+			sink.mu.Lock()
-+			sink.received++
-+			sink.mu.Unlock()
-+			w.WriteHeader(http.StatusOK)
-+		}),
-+		TLSConfig:         &tls.Config{GetCertificate: sink.getCertificate, MinVersion: tls.VersionTLS12},
-+		ErrorLog:          log.New(sink, "", 0),
-+		ReadHeaderTimeout: 5 * time.Second,
-+	}
-+	// Without this the reporter reuses a pooled connection and never re-dials,
-+	// so a rotated certificate would not be presented to it.
-+	server.SetKeepAlivesEnabled(false)
-+
-+	go func() { _ = server.ServeTLS(listener, "", "") }()
-+	t.Cleanup(func() { _ = server.Close() })
-+
-+	sink.url = "https://" + listener.Addr().String()
-+	return sink
-+}
-+
-+func (s *tlsSink) getCertificate(*tls.ClientHelloInfo) (*tls.Certificate, error) {
-+	s.mu.Lock()
-+	defer s.mu.Unlock()
-+	return &s.cert, nil
-+}
-+
-+func (s *tlsSink) setCert(cert tls.Certificate) {
-+	s.mu.Lock()
-+	defer s.mu.Unlock()
-+	s.cert = cert
-+}
-+
-+func (s *tlsSink) reports() int {
-+	s.mu.Lock()
-+	defer s.mu.Unlock()
-+	return s.received
-+}
-+
-+func (s *tlsSink) handshakeErrors() string {
-+	s.mu.Lock()
-+	defer s.mu.Unlock()
-+	return s.serverLogs.String()
-+}
-+
-+func (s *tlsSink) Write(p []byte) (int, error) {
-+	s.mu.Lock()
-+	defer s.mu.Unlock()
-+	return s.serverLogs.Write(p)
-+}
-+
-+// testCA is a generated certificate authority that can sign serving certificates.
-+type testCA struct {
-+	cert *x509.Certificate
-+	key  *ecdsa.PrivateKey
-+}
-+
-+func newTestCA(t *testing.T, org string) *testCA {
-+	t.Helper()
-+
-+	key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
-+	require.NoError(t, err)
-+
-+	template := &x509.Certificate{
-+		SerialNumber:          big.NewInt(time.Now().UnixNano()),
-+		Subject:               pkix.Name{Organization: []string{org}},
-+		NotBefore:             time.Now().Add(-time.Minute),
-+		NotAfter:              time.Now().Add(time.Hour),
-+		IsCA:                  true,
-+		KeyUsage:              x509.KeyUsageCertSign | x509.KeyUsageDigit
-```
-
-**File**: `internal/telemetry/reporter.go` (modified, +3/-8)
-```diff
-@@ -143,19 +143,14 @@ func RemoteReporter(
- 
- 	client := &http.Client{}
- 	if caOverridePath != "" {
--		pool, err := x509util.CustomCertPool(caOverridePath)
-+		caPool, err := x509util.NewCAPool(caOverridePath)
- 		if err != nil {
- 			return nil, fmt.Errorf("invalid custom cert pool path `%s`: %w", caOverridePath, err)
- 		}
- 
--		t := &http.Transport{
--			TLSClientConfig: &tls.Config{
--				RootCAs:    pool,
--				MinVersion: tls.VersionTLS12,
--			},
-+		client.Transport = &http.Transport{
-+			DialTLSContext: caPool.DialTLSContext(&tls.Config{MinVersion: tls.VersionTLS12}),
- 		}
--
--		client.Transport = t
+@@ -77,12 +77,13 @@ func (r *DatastoreIterator) checkNormalImpl(ctx *Context, resource Object, subje
  	}
  
- 	return func(ctx context.Context) error {
-```
-
-**File**: `pkg/cmd/util/util.go` (modified, +9/-5)
-```diff
-@@ -161,15 +161,19 @@ func (c *GRPCServerConfig) clientCreds() (credentials.TransportCredentials, erro
- 	case c.TLSCertPath == "" && c.TLSKeyPath == "":
- 		return insecure.NewCredentials(), nil
- 	case c.TLSCertPath != "" && c.TLSKeyPath != "":
--		var err error
- 		var pool *x509.CertPool
- 		if c.ClientCAPath != "" {
--			pool, err = x509util.CustomCertPool(c.ClientCAPath)
-+			caPool, err := x509util.NewCAPool(c.ClientCAPath)
-+			if err != nil {
-+				return nil, err
-+			}
-+			pool = caPool.CertPool()
- 		} else {
-+			var err error
- 			pool, err = x509.SystemCertPool()
--		}
--		if err != nil {
--			return nil, err
-+			if err != nil {
-+				return nil, err
-+			}
- 		}
+ 	resourceType := ObjectType{Type: r.base.DefinitionName()}
+-	pathSeq, err := ctx.Reader.CheckRelationships(ctx,
++	pathSeq, err := ctx.Reader.CheckRelationships(
++		ctx,
+ 		resourceType,
+ 		resource.ObjectID,
+ 		r.base.RelationName(),
+ 		subject,
+-		r.base.Caveat() != "", r.base.Expiration(),
++		r.relationHasCaveats(), r.relationHasExpiration(),
+ 	)
+ 	if err != nil {
+ 		return nil, err
+@@ -117,12 +118,13 @@ func (r *DatastoreIterator) checkWildcardImpl(ctx *Context, resource Object, sub
+ 	}
  
- 		return credentials.NewTLS(&tls.Config{RootCAs: pool, MinVersion: tls.VersionTLS12}), nil
+ 	resourceType := ObjectType{Type: r.base.DefinitionName()}
+-	pathSeq, err := ctx.Reader.CheckRelationships(ctx,
++	pathSeq, err := ctx.Reader.CheckRelationships(
++		ctx,
+ 		resourceType,
+ 		resource.ObjectID,
+ 		r.base.RelationName(),
+ 		wildcardSubject,
+-		r.base.Caveat() != "", r.base.Expiration(),
++		r.relationHasCaveats(), r.relationHasExpiration(),
+ 	)
+ 	if err != nil {
+ 		return nil, err
+@@ -155,11 +157,12 @@ func (r *DatastoreIterator) iterSubjectsNormalImpl(ctx *Context, resource Object
+ 
+ 	// If pagination is not configured, do the simple eager collection
+ 	if ctx.PaginationLimit == nil {
+-		pathSeq, err := ctx.Reader.QuerySubjects(ctx,
++		pathSeq, err := ctx.Reader.QuerySubjects(
++			ctx,
+ 			resource,
+ 			r.base.RelationName(),
+ 			subjectType,
+-			r.base.Caveat() != "", r.base.Expiration(),
++			r.relationHasCaveats(), r.relationHasExpiration(),
+ 			QueryPage{},
+ 		)
+ 		if err != nil {
+@@ -180,11 +183,12 @@ func (r *DatastoreIterator) iterSubjectsNormalImpl(ctx *Context, resource Object
+ 		cursor := ctx.GetPaginationCursor(iteratorID)
+ 
+ 		for {
+-			pathSeq, err := ctx.Reader.QuerySubjects(ctx,
++			pathSeq, err := ctx.Reader.QuerySubjects(
++				ctx,
+ 				resource,
+ 				r.base.RelationName(),
+ 				subjectType,
+-				r.base.Caveat() != "", r.base.Expiration(),
++				r.relationHasCaveats(), r.relationHasExpiration(),
+ 				QueryPage{Limit: ctx.PaginationLimit, Cursor: cursor},
+ 			)
+ 			if err != nil {
+@@ -238,12 +242,13 @@ func (r *DatastoreIterator) iterSubjectsWildcardImpl(ctx *Context, resource Obje
+ 	}
+ 
+ 	resourceType := ObjectType{Type: r.base.DefinitionName()}
+-	return ctx.Reader.CheckRelationships(ctx,
++	return ctx.Reader.CheckRelationships(
++		ctx,
+ 		resourceType,
+ 		resource.ObjectID,
+ 		r.base.RelationName(),
+ 		wildcardSubject,
+-		r.base.Caveat() != "", r.base.Expiration(),
++		r.relationHasCaveats(), r.relationHasExpiration(),
+ 	)
+ }
+ 
+@@ -272,11 +277,12 @@ func (r *DatastoreIterator) IterResourcesImpl(ctx *Context, subject ObjectAndRel
+ 	}
+ 
+ 	if ctx.PaginationLimit == nil {
+-		pathSeq, err := ctx.Reader.QueryResources(ctx,
++		pathSeq, err := ctx.Reader.QueryResources(
++			ctx,
+ 			r.base.DefinitionName(),
+ 			r.base.RelationName(),
+ 			subject,
+-			r.base.Caveat() != "", r.base.Expiration(),
++			r.relationHasCaveats(), r.relationHasExpiration(),
+ 			QueryPage{},
+ 		)
+ 		if err != nil {
+@@ -295,11 +301,12 @@ func (r *DatastoreIterator) IterResourcesImpl(ctx *Context, subject ObjectAndRel
+ 		cursor := ctx.GetPaginationCursor(iteratorID)
+ 
+ 		for {
+-			pathSeq, err := ctx.Reader.QueryResources(ctx,
++			pathSeq, err := ctx.Reader.QueryResources(
++				ctx,
+ 				r.base.DefinitionName(),
+ 				r.base.RelationName(),
+ 				subject,
+-				r.base.Caveat() != "", r.base.Expiration(),
++				r.relationHasCaveats(), r.relationHasExpiration(),
+ 				QueryPage{Limit: ctx.PaginationLimit, Cursor: cursor},
+ 			)
+ 			if err != nil {
+@@ -352,11 +359,12 @@ func (r *DatastoreIterator) iterResourcesWildcardImpl(ctx *Context, subject Obje
+ 	}
+ 
+ 	if ctx.PaginationLimit == nil {
+-		pathSeq, err := ctx.Reader.QueryResources(ctx,
++		pathSeq, err := ctx.Reader.QueryResources(
++			ctx,
+ 			r.base.DefinitionName(),
+ 			r.base.RelationName(),
+ 			wildcardSubject,
+-			r.base.Caveat() != "", r.base.Expiration(),
++			r.relationHasCaveats(), r.relationHasExpiration(),
+ 			QueryPage{},
+ 		)
+ 		if err != nil {
+@@ -376,11 +384,12 @@ func (r *DatastoreIterator) iterResourcesWildcardImpl(ctx *Context, subject Obje
+ 		cursor := ctx.GetPaginationCursor(iteratorID)
+ 
+ 		for {
+-			pathSeq, err := ctx.Reader.QueryResources(ctx,
++			pathSeq, err := ctx.Reader.QueryResources(
++				ctx,
+ 				r.base.DefinitionName(),
+ 				r.base.RelationName(),
+ 				wildcardSubject,
+-				r.base.Caveat() != "", r.base.Expiration(),
++				r.relationHasCaveats(), r.relationHasExpiration(),
+ 				QueryPage{Limit: ctx.PaginationLimit, Cursor: cursor},
+ 			)
+ 			if err != nil {
+@@ -433,7 +442,7 @@ func (r *DatastoreIterator) Explain() Explain {
+ 	return Explain{
+ 		Info: fmt.Sprintf("Datastore(%s:%s -> %s:%s, caveat: %v, expiration: %v)",
+ 			r.base.DefinitionName(), r.base.RelationName(), r.base.Type(), relationName,
+-			r.base.Caveat() != "", r.base.Expiration()),
++			r.relationHasCaveats(), r.relationHasExpiration()),
+ 	}
+ }
+ 
+@@ -560,3 +569,33 @@ func deserializeDatastore(body io.Reader, key CanonicalKey, dctx *DeserializeCon
+ 	ds.canonicalKey = key
+ 	return ds, nil
+
 ```
 
-**File**: `pkg/x509util/capool.go` (added, +164/-0)
+**File**: `pkg/query/datastore_traits_test.go` (added, +91/-0)
 ```diff
-@@ -0,0 +1,164 @@
-+package x509util
+@@ -0,0 +1,91 @@
++package query
 +
 +import (
-+	"bytes"
 +	"context"
-+	"crypto/tls"
-+	"crypto/x509"
-+	"net"
-+	"slices"
-+	"sync"
++	"testing"
 +	"time"
 +
-+	"google.golang.org/grpc/credentials"
++	"github.com/stretchr/testify/require"
 +
-+	log "github.com/authzed/spicedb/internal/logging"
++	"github.com/authzed/spicedb/pkg/datalayer"
++	"github.com/authzed/spicedb/pkg/datastore"
++	"github.com/authzed/spicedb/pkg/datastore/options"
++	core "github.com/authzed/spicedb/pkg/proto/core/v1"
++	"github.com/authzed/spicedb/pkg/schema/v2"
++	"github.com/authzed/spicedb/pkg/schemadsl/compiler"
++	"github.com/authzed/spicedb/pkg/schemadsl/input"
++	"github.com/authzed/spicedb/pkg/tuple"
 +)
 +
-+const defaultCAReloadInterval = 10 * time.Second
-+
-+// CAPool holds the certificate authorities read from a path and re-reads them
-+// when the contents of that path change. Unlike CertWatcher it runs no
-+// background goroutine: the path is re-read on demand, at most once per
-+// interval.
-+type CAPool struct {
-+	path     string
-+	interval time.Duration
-+
-+	mu       sync.Mutex
-+	pool     *x509.CertPool // GUARDED_BY(mu)
-+	contents [][]byte       // GUARDED_BY(mu)
-+	lastRead time.Time      // GUARDED_BY(mu)
++// Honor projection options just as the datastore does: a trait skipped here
++// cannot be recovered by the iterator after the relationship is read.
++type traitProjectionReader struct {
++	datalayer.RevisionedReader
++	relationship tuple.Relationship
 +}
 +
-+// NewCAPool returns a new CAPool for the certificate authorities at caPath,
-+// which may be a single PEM file or a directory of them. The path is read
-+// eagerly, so a missing or malformed bundle is reported here rather than at the
-+// first handshake.
-+func NewCAPool(caPath string) (*CAPool, error) {
-+	contents, err := readCertFiles(caPath)
-+	if err != nil {
-+		return nil, err
++func (r *traitProjectionReader) QueryRelationships(_ context.Context, _ datastore.RelationshipsFilter, opts ...options.QueryOptionsOption) (datastore.RelationshipIterator, error) {
++	projection := options.NewQueryOptionsWithOptions(opts...)
++	rel := r.relationship
++	if projection.SkipCaveats {
++		rel.OptionalCaveat = nil
 +	}
-+
-+	pool, err := certPoolFromPEM(contents)
-+	if err != nil {
-+		return nil, err
++	if projection.SkipExpiration {
++		rel.OptionalExpiration = nil
 +	}
-+
-+	return &CAPool{
-+		path:     caPath,
-+		interval: defaultCAReloadInterval,
-+		pool:     pool,
-+		contents: contents,
-+		lastRead: time.Now(),
-+	}, nil
++	return func(yield func(tuple.Relationship, error) bool) { yield(rel, nil) }, nil
 +}
 +
-+// WithReloadInterval sets the minimum time between reads of the path and
-+// returns the CAPool pointer
-+func (p *CAPool) WithReloadInterval(interval time.Duration) *CAPool {
-+	p.mu.Lock()
-+	defer p.mu.Unlock()
-+	p.interval = interval
-+	return p
-+}
-+
-+// CertPool returns the current authorities, re-reading the path if the reload
-+// interval has elapsed. A failed re-read keeps the previously loaded
-+// authorities, so a bundle that is briefly absent or truncated partway through
-+// a rotation does not empty the trust store.
-+func (p *CAPool) CertPool() *x509.CertPool {
-+	p.mu.Lock()
-+	defer p.mu.Unlock()
-+
-+	now := time.Now()
-+	if now.Sub(p.lastRead) < p.interval {
-+		return p.pool
-+	}
-+	p.lastRead = now
-+
-+	contents, err := readCertFiles(p.path)
-+	if err != nil {
-+		log.Warn().Err(err).Str("path", p.path).Msg("failed to re-read certificate authorities")
-+		return p.pool
-+	}
-+
-+	if slices.EqualFunc(p.contents, contents, bytes.Equal) {
-+		return p.pool
-+	}
-+
-+	pool, err := certPoolFromPEM(contents)
-+	if err != nil {
-+		log.Warn().Err(err).Str("path", p.path).Msg("failed to parse re-read certificate authorities")
-+		return p.pool
-+	}
-+
-+	log.Info().Str("path", p.path).Msg("reloaded certificate authorities")
-+	p.pool = pool
-+	p.contents = contents
-+	return p.pool
-+}
-+
-+// DialTLSContext returns a dial function that verifies the server against the
-+// current authorities. It satisfies http.Transport.DialTLSContext, which is
-+// called per connection, unlike TLSClientConfig.
-+func (p *CAPool) DialTLSContext(base *tls.Config) func(ctx context.Context, network, addr string) (net.Conn, error) {
-+	return func(ctx context.Context, network, addr string) (net.Conn, error) {
-+		cfg := base.Clone()
-+		cfg.RootCAs = p.CertPool()
-+		return (&tls.Dialer{Config: cfg}).DialContext(ctx, network, addr)
++func TestDatastorePreservesMixedTraits(t *testing.T) {
++	compiled, err := compiler.Compile(compiler.InputSchema{Source: input.Source("test"), SchemaString: `use expiration
++caveat condition(ok bool) { ok }
++definition user {}
++definition document {
++ relation viewer: user | user with condition | user with expiration | user with condition and expiration
++}`}, compiler.AllowUnprefixedObjectType())
++	require.NoError(t, err)
++	s, err := schema.BuildSchemaFromDefinitions(compiled.ObjectDefinitions, compiled.CaveatDefinitions)
++	require.NoError(t, err)
++	base, err := s.ResolveBaseRelation("document", "viewer", "user", tuple.Ellipsis, "", false, false)
++	require.NoError(t, err)
++	for _, tc := range []struct {
++		name               string
++		caveat, expiration bool
++	}{
++		{"plain", false, false}, {"caveated", true, false}, {"expiring", false, true}, {"both", true, true},
++	} {
++		for _, operation := range []string{"check", "subjects"} {
++			t.Run(tc.name+"/"+operation, func(t *testing.T) {
++				rel := tuple.MustParse("document:doc#viewer@user:alice")
++				if tc.caveat {
++					rel.OptionalCaveat = &core.ContextualizedCaveat{CaveatName: "condition"}
++				}
++				if tc.expiration {
++					expires := time.Now().Add(-time.Hour)
++					rel.OptionalExpiration = &expires
++				}
++				ctx := NewLocalContext(t.Context(), WithRevisionedReader(&traitProjectionReader{relationship: rel}))
++				it := NewDatastoreIterator(base)
++				var path *Path
++				if operation == "check" {
++					path, err = it.CheckImpl(ctx, NewObject("document", "doc"), NewObject("user", "alice").WithEllipses())
++					require.NoError(t, err)
++				} else {
++					seq, err := it.IterSubjectsImpl(ctx, NewObject("document", "doc"), ObjectType{})
++					require.NoError(t, err)
++					paths, err := CollectAll(seq)
++					require.NoError(t, err)
++					require.Len(t, paths, 1)
++					path = paths[0]
++				}
++				require.NotNil(t, path)
++				require.Equal(t, tc.caveat, path.Caveat != nil)
++				if tc.caveat {
++					require.Equal(t, "condition", path.Caveat.GetCaveat().CaveatName)
++				}
++				require.Equal(t, rel.OptionalExpiration, path.Expiration)
++				require.Equal(t, tc.expiration, path.IsExpired())
++			})
++		}
 +	}
 +}
+```
+
+**File**: `pkg/query/queryopt/caveat_pushdown.go` (modified, +13/-1)
+```diff
+@@ -1,6 +1,9 @@
+ package queryopt
+ 
+-import "github.com/authzed/spicedb/pkg/query"
++import (
++	"github.com/authzed/spicedb/pkg/query"
++	"github.com/authzed/spicedb/pkg/schema/v2"
++)
+ 
+ func init() {
+ 	MustRegisterOptimization(Optimizer{
+@@ -112,6 +115,15 @@ func caveatPushdownInner(outline query.Outline, originalID query.OutlineNodeID)
+ func outlineContainsCaveat(outline query.Outline, caveatName string) bool {
+ 	if outline.Type == query.DatastoreIteratorType {
+ 		if outline.Args != nil && outline.Args.Relation != nil {
++			// A leaf's physical query can return every trait variant of its
++			// parent relation. Preserve evaluation on all such paths.
++			if parent, ok := outline.Args.Relation.Parent().(*schema.Relation); ok {
++				for _, br := range parent.BaseRelations() {
++					if br.Caveat() == caveatName {
++						return true
++					}
++				}
++			}
+ 			if outline.Args.Relation.Caveat() == caveatName {
+ 				return true
+ 			}
+```
+
+**File**: `pkg/query/queryopt/caveat_pushdown_test.go` (modified, +24/-0)
+```diff
+@@ -8,6 +8,9 @@ import (
+ 	core "github.com/authzed/spicedb/pkg/proto/core/v1"
+ 	"github.com/authzed/spicedb/pkg/query"
+ 	"github.com/authzed/spicedb/pkg/schema/v2"
++	"github.com/authzed/spicedb/pkg/schemadsl/compiler"
++	"github.com/authzed/spicedb/pkg/schemadsl/input"
++	"github.com/authzed/spicedb/pkg/tuple"
+ )
+ 
+ // dsOutline returns a DatastoreIteratorType outline whose BaseRelation carries
+@@ -256,3 +259,24 @@ func TestOutlineContainsCaveat(t *testing.T) {
+ 		require.Equal(t, query.CaveatIteratorType, innerResult.SubOutlines[1].Type)
+ 	})
+ }
 +
-+// reloadingCreds resolves its trust store from a CAPool on every handshake and
-+// delegates the handshake itself to the standard TLS credentials.
-+type reloadingCreds struct {
-+	ca   *CAPool
-+	base *tls.Config
++func TestCaveatPushdownPreservesMixedTraitBranch(t *testing.T) {
++	compiled, err := compiler.Compile(compiler.InputSchema{Source: input.Source("test"), SchemaString: `caveat test_caveat(ok bool) { ok }
++definition user {}
++definition document {
++ relation viewer: user | user with test_caveat
++}`}, compiler.AllowUnprefixedObjectType())
++	require.NoError(t, err)
++	s, err := schema.BuildSchemaFromDefinitions(compiled.ObjectDefinitions, compiled.CaveatDefinitions)
++	require.NoError(t, err)
++	base, err := s.ResolveBaseRelation("document", "viewer", "user", tuple.Ellipsis, "", false, false)
++	require.NoError(t, err)
++	mixed := query.Outline{Type: query.DatastoreIteratorType, Args: &query.IteratorArgs{Relation: base}}
++	result := applyPushdown(caveatOutline("test_caveat", unionOutline(mixed, dsOutline("test_caveat"))))
++	require.Equal(t, query.UnionIteratorType, result.Type)
++	require.Len(t, result.SubOutlines, 2)
++	for _, branch := range result.SubOutlines {
++		require.Equal(t, query.CaveatIteratorType, branch.Type)
++		require.Equal(t, "test_caveat", branch.Args.Caveat.CaveatName)
++	}
 +}
-+
-+var _ credentials.TransportCredentials = (*reloadingCreds)(nil)
-+
-+// NewReloadingTLSCreds returns credentials that verify peers against the
-+// authorities in ca, picking up a rotation of those authorities without a
-+// restart. base supplies the rest of the TLS configuration; its RootCAs and
-+// ClientCAs are ignored.
-+func NewReloadingTLSCreds(ca *CAPool, base *tls.Config) credentials.TransportCredentials {
-+	return &reloadingCreds{ca: ca, base: base.Clone()}
-+}
-+
-+func (c *reloadingCreds) clientConfig() *tls.Config {
-+	cfg := c.base.Clone()
-+	cfg.RootCAs = c.ca.CertPool()
-+	return cfg
-+}
-+
-+func (c *reloadingCreds) serverConfig() *tls.Config {
-+	cfg := c.base.Clone()
-+	cfg.ClientCAs = c.ca.CertPool()
-+	return cfg
-+}
-+
-+func (c *reloadingCreds) ClientHandshake(ctx context.Context, authority string, rawConn net.Conn) (net.Conn, credentials.AuthInfo, error) {
-+	return credentials.NewTLS(c.clientConfig()).ClientHandshake(ctx, authority, rawConn)
-+}
-+
-+func (c *reloadingCreds) ServerHandshake(rawConn net.Conn) (net.Conn, credentials.AuthInfo, error) {
-+	return credentials.NewTLS(c.serverConfig()).ServerHandshake(rawConn)
-+}
-+
-+func (c *reloadingCreds) Info() credentials.ProtocolInfo {
-+	return credentials.NewTLS(c.base).Info()
-+}
-+
-+// Clone returns credentials backed by the same CAPool, so that both share one
-+// view of the trust store.
-+func (c *reloadingCreds) Clone() credentials.TransportCredentials {
-+	return &reloadingCreds{ca: c.ca, base: c.base.Clone()}
-+}
-+
-+func (c *reloadingCreds) OverrideServerName(name string) error {
-+	c.base.S
 ```
 
 #### Recent Merged Pull Requests:
@@ -1864,28 +1501,34 @@ Co-authored-by: Tanner Stirrat <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cache): expire dispatch cache entries a fixed TTL after they are written
+## X. checkbaseline): satisfy mutex and SQL row analyzers
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in authzed/spicedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/checkbaseline/postgres.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in authzed/spicedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b2897b2e`: cache): expire dispatch cache entries a fixed TTL after they are written. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a7df6724`: checkbaseline): satisfy mutex and SQL row analyzers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/checkbaseline/postgres.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- Caching: dispatch, cluster dispatch, relationship chunk and full relation cache entries again expire one TTL after they are written, as they did before v1.54.0. Since the move to Otter, every read pushed an entry's expiration out by another TTL, so a result that was read more often than the TTL never expired. On MySQL, where the revision only advances on writes, an expired relationship could then keep granting a permission indefinitely, even with `fully_consistent`, until the next write. The namespace cache, whose entries cannot go stale, still extends its TTL on reads. (https://github.com/authzed/spicedb/issues/3431)
+			if rows.Err() != nil {
+				return nil, errors.Join(err, rows.Err())
+			}
+	if rows.Err() != nil {
+		return nil, rows.Err()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	err = rows.Err()
+	if err != nil {
+		return nil, err
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b2897b2e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a7df6724` are properly handled with clean fallback behavior.

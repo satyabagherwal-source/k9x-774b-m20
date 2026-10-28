@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261026-YGIG",
-    "timestamp": "2026-10-26T02:26:50.008Z",
-    "repository": "bvaughn/react-virtualized",
-    "learningId": "learn-github-bvaughn-react-virtualized",
-    "contentHash": "c0301313a2e02670a6c78c48fcf5c9db6781559bacc5ae0207991ba0917caed0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-YMWP",
-    "timestamp": "2026-10-26T02:26:58.297Z",
-    "repository": "serpapi/google-search-results-nodejs",
-    "learningId": "learn-github-serpapi-google-search-results-nodejs",
-    "contentHash": "95dbb19054e430dc6adfd8a9812e55e1fa4895725a698a5d981beeaea0a21584",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-7L0S",
-    "timestamp": "2026-10-26T02:33:55.756Z",
-    "repository": "serpapi/google-search-results-python",
-    "learningId": "learn-github-serpapi-google-search-results-python",
-    "contentHash": "d1ac3b52a8f4d6ead7f8d70248c4ddbf9be40902f754232b37059bb4ff69f8f6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-LF86",
-    "timestamp": "2026-10-26T02:44:41.430Z",
-    "repository": "yattee/yattee",
-    "learningId": "learn-github-yattee-yattee",
-    "contentHash": "afa15f5183743991888148815800793f3fe7894e14543744272d6a8966fab85f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261026-TCSY",
     "timestamp": "2026-10-26T02:50:51.538Z",
     "repository": "assistant-ui/assistant-ui",
@@ -7490,6 +7430,66 @@
     "repository": "apple/foundationdb",
     "learningId": "learn-github-apple-foundationdb",
     "contentHash": "f2938dfb7266ca12b65fccf7339bb15b096374d163e4914b5dab0351382efc0a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-SVBO",
+    "timestamp": "2026-10-28T00:05:51.636Z",
+    "repository": "flox/flox",
+    "learningId": "learn-github-flox-flox",
+    "contentHash": "d215a78f59ea570b54eb7f3732aa8b83ed0207fc0c3f1dcfeac0d37f98c79863",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-T0AH",
+    "timestamp": "2026-10-28T00:05:58.073Z",
+    "repository": "authzed/spicedb",
+    "learningId": "learn-github-authzed-spicedb",
+    "contentHash": "9ffc0209b7ae867a50cb47be25812331ba0cbd99130b2feb77ae6e28d8b4a66b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-T255",
+    "timestamp": "2026-10-28T00:06:00.473Z",
+    "repository": "RustCrypto/hashes",
+    "learningId": "learn-github-rustcrypto-hashes",
+    "contentHash": "def25cb24481f513f26578543d021720a2b6765f237d6be46fc5691e7f2961c3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-T5Q1",
+    "timestamp": "2026-10-28T00:06:05.113Z",
+    "repository": "arangodb/arangodb",
+    "learningId": "learn-github-arangodb-arangodb",
+    "contentHash": "4bfe01815f7385ece1612375b784826be7b016ef4f6d4facee2d4389ff63c3b5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

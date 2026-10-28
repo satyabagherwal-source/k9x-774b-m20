@@ -5598,3 +5598,7 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `6b124303` | Multi-dimensional audit evidence | 2026-10-27T23:52:42.372Z |
 | `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `52965b80` | Multi-dimensional audit evidence | 2026-10-27T23:59:19.274Z |
 | `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `1f6fd502` | Multi-dimensional audit evidence | 2026-10-27T23:59:30.632Z |
+| `learn-github-flox-flox` | `https://github.com/flox/flox` | `339bbab0` | Multi-dimensional audit evidence | 2026-10-28T00:05:51.639Z |
+| `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `759295c3` | Multi-dimensional audit evidence | 2026-10-28T00:05:58.076Z |
+| `learn-github-rustcrypto-hashes` | `https://github.com/RustCrypto/hashes` | `23d8e40e` | Multi-dimensional audit evidence | 2026-10-28T00:06:00.476Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `fc353927` | Multi-dimensional audit evidence | 2026-10-28T00:06:05.116Z |

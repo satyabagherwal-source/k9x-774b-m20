@@ -2503,10 +2503,10 @@
     "repository": "authzed/spicedb",
     "platform": "github",
     "sourceUrl": "https://github.com/authzed/spicedb",
-    "sourceVersion": "7e7420c3",
+    "sourceVersion": "759295c3",
     "license": "Apache-2.0",
-    "contentHash": "a111294c47f299622dccacd64b906d6085f23d0eb983956b2b76113af30c8594",
-    "lastHarvestedAt": "2026-10-27T12:14:40.382Z",
+    "contentHash": "9ffc0209b7ae867a50cb47be25812331ba0cbd99130b2feb77ae6e28d8b4a66b",
+    "lastHarvestedAt": "2026-10-28T00:05:58.076Z",
     "learningId": "learn-github-authzed-spicedb"
   },
   "hashicorp-boundary": {
@@ -3053,10 +3053,10 @@
     "repository": "RustCrypto/hashes",
     "platform": "github",
     "sourceUrl": "https://github.com/RustCrypto/hashes",
-    "sourceVersion": "7bd9889c",
+    "sourceVersion": "23d8e40e",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "71911fbae88a69f741783603a5806c9ed3c57811a104bd415e0ef4d9546dbc44",
-    "lastHarvestedAt": "2026-10-24T19:28:36.263Z",
+    "contentHash": "def25cb24481f513f26578543d021720a2b6765f237d6be46fc5691e7f2961c3",
+    "lastHarvestedAt": "2026-10-28T00:06:00.476Z",
     "learningId": "learn-github-rustcrypto-hashes"
   },
   "onlook-dev-onlook": {
@@ -3253,10 +3253,10 @@
     "repository": "flox/flox",
     "platform": "github",
     "sourceUrl": "https://github.com/flox/flox",
-    "sourceVersion": "0e1822c8",
+    "sourceVersion": "339bbab0",
     "license": "GPL-2.0",
-    "contentHash": "bf41708cb15021cbb4eeb0e2cb62a06b2b0c8c5b26d12cee535e0252e73c3a4c",
-    "lastHarvestedAt": "2026-10-25T12:56:43.529Z",
+    "contentHash": "d215a78f59ea570b54eb7f3732aa8b83ed0207fc0c3f1dcfeac0d37f98c79863",
+    "lastHarvestedAt": "2026-10-28T00:05:51.639Z",
     "learningId": "learn-github-flox-flox"
   },
   "wix-react-native-navigation": {
@@ -5013,10 +5013,10 @@
     "repository": "arangodb/arangodb",
     "platform": "github",
     "sourceUrl": "https://github.com/arangodb/arangodb",
-    "sourceVersion": "21c7f844",
+    "sourceVersion": "fc353927",
     "license": "NOASSERTION",
-    "contentHash": "99bf7b8f80b676790bf8c3bfb4bed99918dded7a33ad7cdc168e91b65fa6faaf",
-    "lastHarvestedAt": "2026-10-27T11:27:34.819Z",
+    "contentHash": "4bfe01815f7385ece1612375b784826be7b016ef4f6d4facee2d4389ff63c3b5",
+    "lastHarvestedAt": "2026-10-28T00:06:05.116Z",
     "learningId": "learn-github-arangodb-arangodb"
   },
   "chakra-ui-ark": {

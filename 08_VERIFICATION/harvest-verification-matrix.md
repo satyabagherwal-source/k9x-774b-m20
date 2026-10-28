@@ -5589,3 +5589,7 @@
 | `CYCLE-20261027-BYBK` | `2026-10-27T23:52:42.368Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5038` | Yes (`d4a3d7dc...`) |
 | `CYCLE-20261027-KGKN` | `2026-10-27T23:59:19.271Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5063` | Yes (`a38fda49...`) |
 | `CYCLE-20261027-KPC5` | `2026-10-27T23:59:30.629Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5064` | Yes (`f2938dfb...`) |
+| `CYCLE-20261028-SVBO` | `2026-10-28T00:05:51.636Z` | `flox/flox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5065` | Yes (`d215a78f...`) |
+| `CYCLE-20261028-T0AH` | `2026-10-28T00:05:58.073Z` | `authzed/spicedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5066` | Yes (`9ffc0209...`) |
+| `CYCLE-20261028-T255` | `2026-10-28T00:06:00.473Z` | `RustCrypto/hashes` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5067` | Yes (`def25cb2...`) |
+| `CYCLE-20261028-T5Q1` | `2026-10-28T00:06:05.113Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5068` | Yes (`4bfe0181...`) |

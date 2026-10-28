@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T23:59:30.547Z",
+  "last_updated": "2026-10-28T00:06:05.068Z",
   "total_verified_learnings": 1154,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2759,8 +2759,8 @@
       "slug": "arangodb-arangodb",
       "platform": "github",
       "source_url": "https://github.com/arangodb/arangodb",
-      "source_version": "21c7f844",
-      "content_hash": "99bf7b8f80b676790bf8c3bfb4bed99918dded7a33ad7cdc168e91b65fa6faaf",
+      "source_version": "fc353927",
+      "content_hash": "4bfe01815f7385ece1612375b784826be7b016ef4f6d4facee2d4389ff63c3b5",
       "dossier_path": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "promoted_rules": [
@@ -2798,6 +2798,11 @@
           "number": 4711,
           "title": "client build-id across packages and introduce TAR.GZ dbg package (#23537)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5068,
+          "title": "Merge pull request #23545 from arangodb/bug-fix/cor-1209/crash-on-license-activa",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2805,7 +2810,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T11:27:34.745Z",
+      "verified_at": "2026-10-28T00:06:05.057Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -3714,8 +3719,8 @@
       "slug": "authzed-spicedb",
       "platform": "github",
       "source_url": "https://github.com/authzed/spicedb",
-      "source_version": "7e7420c3",
-      "content_hash": "a111294c47f299622dccacd64b906d6085f23d0eb983956b2b76113af30c8594",
+      "source_version": "759295c3",
+      "content_hash": "9ffc0209b7ae867a50cb47be25812331ba0cbd99130b2feb77ae6e28d8b4a66b",
       "dossier_path": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "promoted_rules": [
@@ -3738,6 +3743,11 @@
           "number": 4737,
           "title": "cache): expire dispatch cache entries a fixed TTL after they are written",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5066,
+          "title": "checkbaseline): satisfy mutex and SQL row analyzers",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3745,7 +3755,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:14:40.290Z",
+      "verified_at": "2026-10-28T00:05:58.000Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -12346,8 +12356,8 @@
       "slug": "flox-flox",
       "platform": "github",
       "source_url": "https://github.com/flox/flox",
-      "source_version": "0e1822c8",
-      "content_hash": "bf41708cb15021cbb4eeb0e2cb62a06b2b0c8c5b26d12cee535e0252e73c3a4c",
+      "source_version": "339bbab0",
+      "content_hash": "d215a78f59ea570b54eb7f3732aa8b83ed0207fc0c3f1dcfeac0d37f98c79863",
       "dossier_path": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "promoted_rules": [
@@ -12365,6 +12375,11 @@
           "number": 3716,
           "title": "security): distrust four compromised CA roots in cacert bundle",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5065,
+          "title": "nix): link bundled nix and git against brotli 1.2.1",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12372,7 +12387,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T12:56:43.461Z",
+      "verified_at": "2026-10-28T00:05:51.578Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45317,8 +45332,8 @@
       "slug": "rustcrypto-hashes",
       "platform": "github",
       "source_url": "https://github.com/RustCrypto/hashes",
-      "source_version": "7bd9889c",
-      "content_hash": "71911fbae88a69f741783603a5806c9ed3c57811a104bd415e0ef4d9546dbc44",
+      "source_version": "23d8e40e",
+      "content_hash": "def25cb24481f513f26578543d021720a2b6765f237d6be46fc5691e7f2961c3",
       "dossier_path": "07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
       "promoted_rules": [
@@ -45331,6 +45346,11 @@
           "number": 2628,
           "title": "ripemd: fix comment in RIPEMD-128 implementation (#931)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5067,
+          "title": "sha3: fix docs for Sha3_512 (#939)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45338,7 +45358,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T19:28:36.209Z",
+      "verified_at": "2026-10-28T00:06:00.412Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -139596,6 +139616,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T23:59:30.523Z"
+    },
+    "rule-5065": {
+      "learning_id": "rule-5065",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5065,
+      "title": "nix): link bundled nix and git against brotli 1.2.1",
+      "source_url": "https://github.com/flox/flox",
+      "source_version": "339bbab0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T00:05:51.578Z"
+    },
+    "rule-5066": {
+      "learning_id": "rule-5066",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5066,
+      "title": "checkbaseline): satisfy mutex and SQL row analyzers",
+      "source_url": "https://github.com/authzed/spicedb",
+      "source_version": "759295c3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T00:05:58.000Z"
+    },
+    "rule-5067": {
+      "learning_id": "rule-5067",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5067,
+      "title": "sha3: fix docs for Sha3_512 (#939)",
+      "source_url": "https://github.com/RustCrypto/hashes",
+      "source_version": "23d8e40e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T00:06:00.412Z"
+    },
+    "rule-5068": {
+      "learning_id": "rule-5068",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5068,
+      "title": "Merge pull request #23545 from arangodb/bug-fix/cor-1209/crash-on-license-activa",
+      "source_url": "https://github.com/arangodb/arangodb",
+      "source_version": "fc353927",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T00:06:05.057Z"
     }
   },
   "aliases": {
