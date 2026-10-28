@@ -19639,5 +19639,17 @@
     "downloads": 93,
     "qualityScore": 1713,
     "discoveredAt": "2026-10-28T03:35:41.175Z"
+  },
+  {
+    "name": "prithivMLmods/Gender-Classifier-Mini",
+    "fullName": "prithivMLmods/Gender-Classifier-Mini",
+    "url": "https://huggingface.co/prithivMLmods/Gender-Classifier-Mini",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: prithivMLmods/Gender-Classifier-Mini (18 likes, 9089104 downloads)",
+    "likes": 18,
+    "downloads": 9089104,
+    "qualityScore": 2180,
+    "discoveredAt": "2026-10-28T08:41:44.252Z"
   }
 ]

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T08:26:45.760Z",
-  "total_cycles_completed": 5709,
-  "total_learnings_persisted": 5709,
-  "total_rules_promoted": 5182,
+  "last_updated": "2026-10-28T09:10:48.532Z",
+  "total_cycles_completed": 5711,
+  "total_learnings_persisted": 5711,
+  "total_rules_promoted": 5187,
   "history": [
-    {
-      "timestamp": "2026-10-27T20:45:24.864Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T20:45:27.344Z",
-      "repository": "MaterializeInc/materialize",
-      "learningId": "learn-github-materializeinc-materialize",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T20:52:46.371Z",
       "repository": "tw93/Pake",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-28T08:26:45.760Z",
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
       "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T08:45:46.953Z",
+      "repository": "prithivMLmods/Gender-Classifier-Mini",
+      "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T09:10:48.532Z",
+      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

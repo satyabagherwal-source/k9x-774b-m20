@@ -4652,3 +4652,7 @@ https://github.com/michael-denyer/pstack-claude
 # --- Automatically Discovered by AI Scout Engine [2026-10-28T03:37:49.082Z] ---
 # [HUGGINGFACE-AI-MODELS] tencent/Hy-SimulMT-30B-A3B-FP8 (1713 score) - Verified Hugging Face Model: tencent/Hy-SimulMT-30B-A3B-FP8 (162 likes, 93 downl
 https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-28T08:43:52.463Z] ---
+# [HUGGINGFACE-AI-MODELS] prithivMLmods/Gender-Classifier-Mini (2180 score) - Verified Hugging Face Model: prithivMLmods/Gender-Classifier-Mini (18 likes, 908
+https://huggingface.co/prithivMLmods/Gender-Classifier-Mini

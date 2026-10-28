@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-PKEU",
-    "timestamp": "2026-10-27T11:27:27.894Z",
-    "repository": "siderolabs/talos",
-    "learningId": "learn-github-siderolabs-talos",
-    "contentHash": "3571762e234de7f067ed549f2719731a90fafc26e0c9b21404d3a9aeb2c1779c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-PP7R",
-    "timestamp": "2026-10-27T11:27:34.119Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "5882a7fada5d72dee877ae164a8703b95083b7720c50a59e29660372ea3fd246",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-PPR4",
     "timestamp": "2026-10-27T11:27:34.816Z",
     "repository": "arangodb/arangodb",
@@ -7490,6 +7460,36 @@
     "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
     "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
     "contentHash": "8506fdd0db8733908485b14c3aec4127f0fe6db5c3360a377897596a23e5af02",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-DHS2",
+    "timestamp": "2026-10-28T08:45:46.946Z",
+    "repository": "prithivMLmods/Gender-Classifier-Mini",
+    "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini",
+    "contentHash": "9c9dadd3556a5f1291b8ac6629ba27cbe7176c32b9921e7d16a4d502add3d3aa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-9OEK",
+    "timestamp": "2026-10-28T09:10:48.524Z",
+    "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+    "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+    "contentHash": "2941bb42fa4a2612f7cb020b555692ca80a83682e90726165f6adc7d41c943b7",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

@@ -555,8 +555,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
     "sourceVersion": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "c9835d77ccf4ae974762b1586e0f7950f88836a8ad6d6a2176eb28ca60e31e53",
-    "lastHarvestedAt": "2026-10-25T15:09:59.202Z",
+    "contentHash": "2941bb42fa4a2612f7cb020b555692ca80a83682e90726165f6adc7d41c943b7",
+    "lastHarvestedAt": "2026-10-28T09:10:48.528Z",
     "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf"
   },
   "hf-alissonerdx-bfs-best-face-swap": {
@@ -11398,5 +11398,15 @@
     "contentHash": "99608b7009081586baa1bb11f06f5f43568801ae61e393ba1eb87564b6ce4d3a",
     "lastHarvestedAt": "2026-10-28T03:43:07.055Z",
     "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8"
+  },
+  "hf-prithivmlmods-gender-classifier-mini": {
+    "repository": "prithivMLmods/Gender-Classifier-Mini",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/prithivMLmods/Gender-Classifier-Mini",
+    "sourceVersion": "hf-prithivmlmods-gender-classifier-mini",
+    "license": "Open-Source",
+    "contentHash": "9c9dadd3556a5f1291b8ac6629ba27cbe7176c32b9921e7d16a4d502add3d3aa",
+    "lastHarvestedAt": "2026-10-28T08:45:46.949Z",
+    "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini"
   }
 }

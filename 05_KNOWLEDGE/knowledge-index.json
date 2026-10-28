@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T08:26:45.676Z",
-  "total_verified_learnings": 1156,
+  "last_updated": "2026-10-28T09:10:48.439Z",
+  "total_verified_learnings": 1157,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -25392,7 +25392,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
       "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-      "content_hash": "c9835d77ccf4ae974762b1586e0f7950f88836a8ad6d6a2176eb28ca60e31e53",
+      "content_hash": "2941bb42fa4a2612f7cb020b555692ca80a83682e90726165f6adc7d41c943b7",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -25513,6 +25513,21 @@
           "number": 4363,
           "title": "Uncensored Model Safety Boundary Enforcement",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5241,
+          "title": "Byte-Alignment and Memory-Mapped Page Offset Invariant for Heterogeneous Quantized Tensors",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5242,
+          "title": "Grouped Quantization Block Integrity and Out-of-Range Dequantization Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5243,
+          "title": "Context Length Sliding Window Memory Budget Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -25533,7 +25548,7 @@
         "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv472vwd",
         "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv4kczwh"
       ],
-      "verified_at": "2026-10-25T15:09:59.132Z",
+      "verified_at": "2026-10-28T09:10:48.425Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -143003,6 +143018,114 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T08:26:45.658Z"
+    },
+    "learn-huggingface-prithivmlmods-gender-classifier-mini": {
+      "learning_id": "learn-huggingface-prithivmlmods-gender-classifier-mini",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "prithivMLmods/Gender-Classifier-Mini",
+      "repository": "prithivMLmods/Gender-Classifier-Mini",
+      "slug": "hf-prithivmlmods-gender-classifier-mini",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/prithivMLmods/Gender-Classifier-Mini",
+      "source_version": "hf-prithivmlmods-gender-classifier-mini",
+      "content_hash": "9c9dadd3556a5f1291b8ac6629ba27cbe7176c32b9921e7d16a4d502add3d3aa",
+      "dossier_path": "07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 5239,
+          "title": "Invariant Configuration-Bound Head Deserialization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5240,
+          "title": "Dimension-Guarded Softmax Reduction Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-28T08:45:46.860Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-5239": {
+      "learning_id": "rule-5239",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5239,
+      "title": "Invariant Configuration-Bound Head Deserialization",
+      "source_url": "https://huggingface.co/prithivMLmods/Gender-Classifier-Mini",
+      "source_version": "hf-prithivmlmods-gender-classifier-mini",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T08:45:46.860Z"
+    },
+    "rule-5240": {
+      "learning_id": "rule-5240",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5240,
+      "title": "Dimension-Guarded Softmax Reduction Invariant",
+      "source_url": "https://huggingface.co/prithivMLmods/Gender-Classifier-Mini",
+      "source_version": "hf-prithivmlmods-gender-classifier-mini",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T08:45:46.860Z"
+    },
+    "rule-5241": {
+      "learning_id": "rule-5241",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5241,
+      "title": "Byte-Alignment and Memory-Mapped Page Offset Invariant for Heterogeneous Quantized Tensors",
+      "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T09:10:48.425Z"
+    },
+    "rule-5242": {
+      "learning_id": "rule-5242",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5242,
+      "title": "Grouped Quantization Block Integrity and Out-of-Range Dequantization Guard",
+      "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T09:10:48.425Z"
+    },
+    "rule-5243": {
+      "learning_id": "rule-5243",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5243,
+      "title": "Context Length Sliding Window Memory Budget Invariant",
+      "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T09:10:48.425Z"
     }
   },
   "aliases": {
