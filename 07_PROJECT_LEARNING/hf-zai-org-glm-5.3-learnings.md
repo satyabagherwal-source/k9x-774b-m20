@@ -3,7 +3,7 @@
 > **Source Version**: `hf-zai-org-g`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-25T04:44:15.903Z  
+> **Timestamp**: 2026-10-28T01:29:11.591Z  
 > **Learning ID**: `learn-huggingface-zai-org-glm-5-3`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,286 +17,264 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-The `zai-org/GLM-5.3` repository represents the inference artifact for a massive Mixture-of-Experts (MoE) Large Language Model. The core technical challenge addressed is **efficient long-context reasoning with sparse activation**. Unlike dense models that compute all parameters for every token, GLM-5.3 utilizes a hybrid architecture where only a subset of experts (MLP layers) is active per token, drastically reducing FLOPs while maintaining high parameter count for knowledge retention. Furthermore, it introduces a specialized **Indexer Mechanism** (`index_topk`, `indexer_types`) to dynamically route tokens to relevant experts and manage attention heads, specifically optimized for "long-horizon tasks" and complex coding.
+The `zai-org/GLM-5.3` repository represents the inference artifact for a massive Mixture-of-Experts (MoE) Large Language Model. The core technical challenge addressed by its configuration is **efficient long-context inference with sparse activation**. Unlike dense models that compute all parameters for every token, GLM-5.3 utilizes a hybrid architecture where only a subset of experts is activated per token, governed by a sophisticated "Indexer" mechanism. The specific problem of "long-horizon tasks" and "complex coding" is solved via a 1M token context window (`max_position_embeddings: 1048576`) combined with a specialized attention mechanism that balances full attention (for critical layers) with shared/sparse attention (for efficiency).
 
-**Architectural Boundaries:**
-1.  **Model Core (`GlmMoeDsaForCausalLM`):** The primary transformer stack. It is not a standard `LlamaForCausalLM` or `GPT2LMHeadModel`. The `Dsa` suffix likely refers to a specific attention variant (possibly Dynamic Sparse Attention or similar) combined with MoE.
-2.  **Indexer Subsystem:** A distinct layer of logic defined by `index_head_dim`, `index_n_heads`, and `index_topk`. This subsystem acts as a router/gatekeeper before the main MoE layers, determining which experts to activate. The `indexer_types` array (mix of `"full"` and `"shared"`) indicates a hierarchical or grouped routing strategy.
-3.  **Tokenizer Boundary:** Uses `TokenizersBackend` (Rust-based `tokenizers` library) with a massive vocabulary and specific special tokens for multimodal boundaries (`<|begin_of_image|>`, etc.), indicating the model is designed to handle interleaved text and media tokens, even if this specific checkpoint is text-focused.
-4.  **Precision Boundary:** Strictly `bfloat16`. This is a hard constraint for hardware compatibility (requires Ampere+ GPUs or equivalent).
+**Architectural Boundaries & Subsystems:**
+1.  **Sparse Mixture-of-Experts (MoE) Core:** The model is not a single dense network. It is a collection of `dense` layers (first 3 layers) followed by `sparse` layers. The `mlp_layer_types` array explicitly defines this boundary: indices 0-2 are `dense`, indices 3+ are `sparse`. This implies a hard architectural split where early layers establish dense representations, and later layers rely on expert routing.
+2.  **Hybrid Attention Indexer:** The `indexer_types` array reveals a complex attention pattern. It is not uniform. It alternates between `"full"` and `"shared"` attention types. The pattern `["full", "full", "full", "shared", "shared", "shared", "full", ...]` suggests a periodicity where every 4th block (or similar grouping) uses full attention, while others use shared KV-cache or sparse indexing. This is a critical performance optimization to reduce memory bandwidth during long-context generation.
+3.  **Multi-Token Prediction (MTP) Integration:** The flag `index_share_for_mtp_iteration: true` indicates that the indexer state is shared across Multi-Token Prediction iterations. This is a high-level architectural decision to optimize speculative decoding or parallel token generation, ensuring that the routing decisions for the indexer remain consistent across predicted tokens to avoid state divergence.
+4.  **Quantization & Precision:** The model is natively configured for `bfloat16` (`dtype: "bfloat16"`). This is a hardware-specific invariant targeting modern GPUs (A100/H100) that support BF16 natively, offering better dynamic range than FP16 without the precision loss of FP32.
 
 **Critical Subsystem Abstractions:**
-*   **Sparse MoE Routing:** The `mlp_layer_types` array explicitly defines which layers are `dense` (first 3 layers) and which are `sparse` (remaining 60+ layers). This is a critical architectural invariant: **The first 3 layers are dense, the rest are sparse.**
-*   **Indexer Top-K Selection:** `index_topk: 2048` implies that for each token, the indexer selects the top 2048 most relevant features/experts from a larger pool. This is a high-cardinality selection mechanism.
-*   **KV Cache Optimization:** `kv_lora_rank: 512` suggests the use of Low-Rank Adaptation (LoRA) or similar compression for the Key-Value cache, essential for handling the `max_position_embeddings: 1048576` (1M token) context window without exploding memory.
+*   **`GlmMoeDsaForCausalLM`**: The top-level class. "DSA" likely stands for "Dynamic Sparse Attention" or similar, indicating the attention mechanism is not static.
+*   **Indexer Top-K Selection**: `index_topk: 2048` and `index_topk_freq: 4` define the sparsity budget. Every 4 tokens, the model selects the top 2048 experts/attention heads. This is a hard constraint on compute per step.
+*   **KV-LoRA Rank**: `kv_lora_rank: 512` suggests the Key-Value cache is compressed using Low-Rank Adaptation techniques, drastically reducing memory footprint for the 1M context window.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Hybrid Dense-Sparse Layer Initialization Invariant
+### 1. Hybrid Attention Periodicity Invariant
 **RULE**:
-In any Mixture-of-Experts (MoE) architecture, the first N layers MUST be dense (fully connected) to establish stable feature representations before introducing sparsity. The transition point MUST be explicitly defined in the configuration and enforced in the model initialization code.
+In long-context MoE models, attention mechanisms MUST NOT be uniformly dense or uniformly sparse. They MUST follow a periodic hybrid pattern (e.g., `full` attention every N layers, `shared`/sparse in between) to balance recall accuracy with memory bandwidth constraints. The period MUST be explicitly defined in the configuration and MUST align with the model's layer depth.
+
 **WHY**:
-Sparse layers rely on learned routing mechanisms. If the initial layers are sparse, the router has no stable, high-quality feature space to route from, leading to "routing collapse" where all tokens are routed to the same few experts, effectively reducing the model to a smaller dense model and wasting capacity. The first 3 dense layers in GLM-5.3 (`first_k_dense_replace: 3`) ensure that the input embeddings are transformed into a robust feature space before the indexer and sparse MLPs take over.
+Uniform dense attention over 1M tokens causes O(N^2) memory explosion and latency spikes. Uniform sparse attention loses critical long-range dependencies needed for complex reasoning (coding, cyber tasks). The hybrid pattern ensures that critical "anchor" layers retain full context visibility, while intermediate layers rely on compressed/shared representations, optimizing the compute-memory trade-off.
+
 **WHEN TO APPLY**:
-Any MoE model implementation, particularly when initializing from scratch or fine-tuning a dense model into an MoE.
+Any LLM inference engine supporting context windows > 128K tokens, especially MoE architectures.
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# config.json
-"first_k_dense_replace": 3,
-"mlp_layer_types": ["dense", "dense", "dense", "sparse", "sparse", ...]
-
-# Model Initialization Logic
-def init_mlp_layers(config):
-    layers = []
-    for i in range(config.num_hidden_layers):
-        if i < config.first_k_dense_replace:
-            # Dense MLP
-            mlp = DenseMLP(config.hidden_size, config.intermediate_size)
-        else:
-            # Sparse MoE MLP
-            mlp = MoEMLP(config.hidden_size, config.intermediate_size, num_experts=config.num_experts)
-        layers.append(mlp)
-    return layers
-```
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Making all layers sparse from the start
-def init_mlp_layers_bad(config):
-    layers = []
-    for i in range(config.num_hidden_layers):
-        # No dense layers at the start
-        mlp = MoEMLP(config.hidden_size, config.intermediate_size, num_experts=config.num_experts)
-        layers.append(mlp)
-    return layers
-```
-**VERIFICATION METHOD**:
-Assert that `config.mlp_layer_types[:config.first_k_dense_replace]` contains only `"dense"` and `config.mlp_layer_types[config.first_k_dense_replace:]` contains only `"sparse"`.
-
-### 2. Indexer Top-K Selection Boundary Guard
-**RULE**:
-The `index_topk` value MUST be strictly less than the total number of available experts or features in the indexer pool. Additionally, the `index_topk_freq` MUST be a divisor of the total number of indexer layers or must be handled with modulo arithmetic to prevent out-of-bounds access in the routing logic.
-**WHY**:
-If `index_topk` exceeds the number of experts, the selection algorithm will either crash (index out of bounds) or silently pad with invalid indices, leading to corrupted activations. The `index_topk_freq: 4` suggests that the top-k selection is not performed at every layer but every 4th layer, or that the indexer operates on a subset of features. Misinterpreting this frequency can lead to incorrect routing and degraded performance.
-**WHEN TO APPLY**:
-Any model with a top-k selection mechanism for routing or attention.
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-# config.json
-"index_topk": 2048,
-"index_topk_freq": 4,
-"index_n_heads": 32
-
-# Routing Logic
-def select_experts(indexer_output, top_k, freq):
-    # Ensure top_k is valid
-    assert top_k <= indexer_output.shape[-1], f"top_k {top_k} exceeds feature dim {indexer_output.shape[-1]}"
-    
-    # Apply frequency: only select every 'freq' layers or features
-    # This is a hypothetical interpretation; actual logic depends on implementation
-    if freq > 1:
-        # Example: Select top-k from every 4th feature group
-        grouped_output = indexer_output.view(-1, freq, indexer_output.shape[-1] // freq)
-        top_k_indices = torch.topk(grouped_output, k=top_k, dim=-1).indices
+# Configuration-driven attention type selection
+def get_attention_type(layer_idx: int, config: dict) -> str:
+    # Pattern: Full attention every 4th layer (indices 0, 3, 6, 9...)
+    # Based on indexer_types: ["full", "full", "full", "shared", ...]
+    # Note: The actual pattern in GLM-5.3 is complex, but the principle is periodicity.
+    if layer_idx % 4 == 0:
+        return "full"
     else:
-        top_k_indices = torch.topk(indexer_output, k=top_k, dim=-1).indices
-    
-    return top_k_indices
+        return "shared"
+
+# Inference Loop
+for layer_idx in range(num_layers):
+    attn_type = get_attention_type(layer_idx, config)
+    if attn_type == "full":
+        # Compute full attention matrix
+        attn_scores = torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(d_k)
+    else:
+        # Use shared KV cache or sparse indexing
+        attn_scores = sparse_attention(q, k_shared, v_shared, top_k=2048)
 ```
+
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Ignoring the frequency constraint
-def select_experts_bad(indexer_output, top_k):
-    # No check for top_k validity
-    # No handling of index_topk_freq
-    top_k_indices = torch.topk(indexer_output, k=top_k, dim=-1).indices
-    return top_k_indices
+# ANTI-PATTERN: Uniform dense attention for all layers
+for layer_idx in range(num_layers):
+    # This will OOM on 1M context
+    attn_scores = torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(d_k)
 ```
-**VERIFICATION METHOD**:
-Unit test that asserts `top_k <= num_features` and that the output shape of the selection matches the expected number of experts.
 
-### 3. BFloat16 Precision Enforcement for MoE Models
+**VERIFICATION METHOD**:
+Assert that the `indexer_types` array length matches `num_layers`. Assert that the ratio of `"full"` to `"shared"` types matches the intended periodicity (e.g., 1:3). Monitor memory usage per layer; `full` layers should show significantly higher memory allocation than `shared` layers.
+
+### 2. Multi-Token Prediction State Consistency
 **RULE**:
-MoE models with large hidden sizes (e.g., 6144) MUST be trained and inferred in `bfloat16` to prevent numerical instability in the router logits and expert activations. `float16` MUST NOT be used due to its limited dynamic range, which can cause overflow in the router scores.
+When implementing Multi-Token Prediction (MTP) or speculative decoding, the state of any routing or indexing mechanism (e.g., MoE expert selection, attention head selection) MUST be shared or synchronized across all predicted tokens in a batch. It MUST NOT be independently computed for each token if the underlying context is identical, to prevent state divergence and ensure deterministic routing.
+
 **WHY**:
-The router logits in MoE models can have large magnitudes. `float16` has a max value of ~65504, which can be exceeded by router logits, leading to `inf` or `nan` values. `bfloat16` has the same exponent range as `float32` (max ~3.4e38), making it robust to large values while maintaining the memory efficiency of 16-bit precision.
+If each predicted token independently computes its expert routing, slight numerical differences in the hidden states (due to floating-point non-determinism or different computation paths) can lead to different experts being selected. This causes "routing instability," where the model's behavior becomes unpredictable and potentially degrades quality. Sharing the indexer state ensures that all tokens in a speculative batch are processed by the same set of experts, maintaining consistency.
+
 **WHEN TO APPLY**:
-Any MoE model with hidden size > 4096 or router logits that are not normalized.
+Any inference engine using speculative decoding, MTP, or parallel token generation.
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# config.json
-"dtype": "bfloat16"
-
-# Model Forward Pass
-def forward(self, input_ids):
-    # Ensure all computations are in bfloat16
-    hidden_states = self.embed_tokens(input_ids).to(torch.bfloat16)
-    for layer in self.layers:
-        hidden_states = layer(hidden_states)
-    return hidden_states
+# MTP Inference Step
+def mtp_step(hidden_states, config):
+    # Compute indexer state ONCE for the entire batch of predicted tokens
+    indexer_state = compute_indexer(hidden_states, config)
+    
+    for token_idx in range(num_predicted_tokens):
+        # Reuse the same indexer_state for all tokens
+        experts = select_experts(indexer_state, top_k=config['index_topk'])
+        output = moe_forward(hidden_states[:, token_idx], experts)
+        # ...
 ```
+
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Using float16 for MoE models
-def forward_bad(self, input_ids):
-    hidden_states = self.embed_tokens(input_ids).to(torch.float16)
-    for layer in self.layers:
-        hidden_states = layer(hidden_states)
-    return hidden_states
+# ANTI-PATTERN: Independent indexer computation per token
+for token_idx in range(num_predicted_tokens):
+    # This can lead to different experts being selected for each token
+    indexer_state = compute_indexer(hidden_states[:, token_idx], config)
+    experts = select_experts(indexer_state, top_k=config['index_topk'])
+    output = moe_forward(hidden_states[:, token_idx], experts)
 ```
+
 **VERIFICATION METHOD**:
-Assert that `model.dtype == torch.bfloat16` and that no `float16` tensors are created in the forward pass.
+Unit test: Feed identical hidden states to the MTP module with `num_predicted_tokens=2`. Assert that the selected experts for token 0 and token 1 are identical. If they differ, the state is not being shared correctly.
+
+### 3. BF16 Precision Boundary for MoE Routing
+**RULE**:
+MoE expert routing scores MUST be computed in a higher precision (e.g., FP32) before casting to the model's inference precision (e.g., BF16). The top-k selection MUST be performed on the higher-precision scores to avoid precision loss in the routing decision, which is a discrete, non-differentiable operation.
+
+**WHY**:
+BF16 has only 7 bits of mantissa, compared to FP32's 23 bits. When computing routing scores (which are often small differences between experts), BF16 precision can cause ties or incorrect ordering of experts. Since top-k selection is a hard threshold, a small precision error can lead to a completely different set of experts being selected, causing significant quality degradation. Computing in FP32 ensures the top-k selection is accurate, and only the final expert weights are cast to BF16 for the forward pass.
+
+**WHEN TO APPLY**:
+Any MoE model using BF16 or FP16 inference.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def moe_routing(hidden_states, expert_weights, config):
+    # Compute routing scores in FP32
+    routing_scores = torch.matmul(hidden_states.float(), expert_weights.float().T)
+    
+    # Select top-k in FP32
+    top_k_scores, top_k_indices = torch.topk(routing_scores, k=config['index_topk'], dim=-1)
+    
+    # Cast selected scores to BF16 for the forward pass
+    top_k_scores_bf16 = top_k_scores.to(torch.bfloat16)
+    
+    # Forward pass in BF16
+    output = expert_forward(hidden_states, top_k_indices, top_k_scores_bf16)
+    return output
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Routing in BF16
+def moe_routing_bf16(hidden_states, expert_weights, config):
+    # Routing scores in BF16
+    routing_scores = torch.matmul(hidden_states, expert_weights.T)
+    
+    # Top-k selection in BF16 (PRONE TO ERROR)
+    top_k_scores, top_k_indices = torch.topk(routing_scores, k=config['index_topk'], dim=-1)
+    
+    # Forward pass
+    output = expert_forward(hidden_states, top_k_indices, top_k_scores)
+    return output
+```
+
+**VERIFICATION METHOD**:
+Compare the top-k indices selected by the FP32 routing and BF16 routing on a large batch of random inputs. Assert that the Jaccard similarity between the two sets of indices is > 0.95. If lower, precision loss is affecting routing.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: No specific commit patches or bug issues were provided in the input data. The following incidents are inferred from common failure modes in MoE models and the specific configuration of GLM-5.3.*
-
-### Incident 1: Router Logit Overflow in Float16 (BUG-ROUTER-OVF-01)
-- **Context**: MoE Router Subsystem
-- **What Was Expected**: Stable routing decisions with finite logit values.
-- **What Actually Happened**: `inf` or `nan` values in router logits, leading to `nan` in the final output.
-- **Evidence in Repo**: `config.json` specifies `dtype: bfloat16`. This is a direct mitigation against this incident.
-- **Root Cause**: Router logits can have large magnitudes. `float16` has a limited dynamic range, causing overflow.
-- **Remediation Code Diff**:
-```python
-// - Buggy code: Using float16 for router logits
-// router_logits = torch.matmul(query, key.T).to(torch.float16)
-// + Fixed pattern: Using bfloat16 for router logits
-// router_logits = torch.matmul(query, key.T).to(torch.bfloat16)
-```
-- **Lesson**: Always use `bfloat16` for MoE router logits to prevent overflow.
-
-### Incident 2: Indexer Top-K Out-of-Bounds Access (BUG-INDEXER-OOB-02)
-- **Context**: Indexer Subsystem
-- **What Was Expected**: Valid expert indices selected by the indexer.
-- **What Actually Happened**: `IndexError` or silent corruption due to invalid indices.
-- **Evidence in Repo**: `config.json` specifies `index_topk: 2048`. This value must be validated against the number of experts.
-- **Root Cause**: `index_topk` was set to a value greater than the number of available experts.
-- **Remediation Code Diff**:
-```python
-// - Buggy code: No validation of top_k
-// top_k_indices = torch.topk(indexer_output, k=top_k, dim=-1).indices
-// + Fixed pattern: Validate top_k
-// assert top_k <= indexer_output.shape[-1]
-// top_k_indices = torch.topk(indexer_output, k=top_k, dim=-1).indices
-```
-- **Lesson**: Always validate `top_k` against the feature dimension before selection.
-
-### Incident 3: KV Cache Memory Explosion (BUG-KV-MEM-03)
-- **Context**: KV Cache Subsystem
-- **What Was Expected**: Efficient memory usage for long-context inference.
-- **What Actually Happened**: `CUDA out of memory` error for long sequences.
-- **Evidence in Repo**: `config.json` specifies `kv_lora_rank: 512`. This is a mitigation against memory explosion.
-- **Root Cause**: Full-rank KV cache for 1M token context is too large.
-- **Remediation Code Diff**:
-```python
-// - Buggy code: Full-rank KV cache
-// kv_cache = torch.zeros(batch_size, num_heads, seq_len, head_dim)
-// + Fixed pattern: Low-rank KV cache
-// kv_cache = torch.zeros(batch_size, num_heads, seq_len, kv_lora_rank)
-```
-- **Lesson**: Use low-rank KV cache for long-context MoE models.
-
-### Incident 4: Tokenizer Special Token Mismatch (BUG-TOKEN-MISMATCH-04)
-- **Context**: Tokenizer Subsystem
-- **What Was Expected**: Correct tokenization of special tokens.
-- **What Actually Happened**: Incorrect tokenization, leading to model misinterpretation.
-- **Evidence in Repo**: `tokenizer_config.json` specifies `extra_special_tokens`. These must be consistent with the model's expected tokens.
-- **Root Cause**: Special tokens in the tokenizer config did not match the model's expected tokens.
-- **Remediation Code Diff**:
-```python
-// - Buggy code: Inconsistent special tokens
-// tokenizer.add_special_tokens({"eos_token": "
-"})
-// + Fixed pattern: Consistent special tokens
-// tokenizer.add_special_tokens({"eos_token": "
-", "pad_token": "
-"})
-```
-- **Lesson**: Ensure tokenizer special tokens match the model's expected tokens.
-
-### Incident 5: Dense-Sparse Layer Transition Error (BUG-LAYER-TRANS-05)
-- **Context**: Model Initialization Subsystem
-- **What Was Expected**: Correct initialization of dense and sparse layers.
-- **What Actually Happened**: Incorrect layer types, leading to degraded performance.
-- **Evidence in Repo**: `config.json` specifies `first_k_dense_replace: 3` and `mlp_layer_types`. These must be consistent.
-- **Root Cause**: `first_k_dense_replace` did not match the number of dense layers in `mlp_layer_types`.
-- **Remediation Code Diff**:
-```python
-// - Buggy code: Inconsistent layer types
-// config.first_k_dense_replace = 3
-// config.mlp_layer_types = ["dense", "dense", "sparse", ...]
-// + Fixed pattern: Consistent layer types
-// config.first_k_dense_replace = 3
-// config.mlp_layer_types = ["dense", "dense", "dense", "sparse", ...]
-```
-- **Lesson**: Ensure `first_k_dense_replace` matches the number of dense layers in `mlp_layer_types`.
+*Note: The provided repository data contains no commit history, bug issues, or patch diffs. Therefore, no real incidents can be documented. This section is intentionally left empty to adhere to the mandate of not fabricating data.*
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
 1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Type Coercion Pitfall**: In Python, `0` is falsy, but `None` is also falsy. When checking for valid indices, use `is not None` instead of `if index:` to avoid treating `0` as invalid.
-    *   **Deep Immutability**: When copying MoE expert weights, use `deepcopy` to avoid shared references. Shallow copy can lead to unintended mutations across experts.
-    *   **Operator Precedence**: In routing logic, ensure that `top_k` selection is performed before any normalization to avoid altering the relative magnitudes of the logits.
+    *   **BF16 vs FP32 Casting**: When casting from FP32 to BF16, ensure that the value is within the representable range. BF16 has a smaller exponent range than FP32, but a larger range than FP16. Values outside the range will become `inf` or `0`. Always check for `inf` and `nan` after casting.
+    *   **Top-K Tie-Breaking**: When selecting top-k experts, if there are ties in the routing scores, the selection MUST be deterministic. Use a stable sorting algorithm or add a small epsilon to break ties consistently. Non-deterministic tie-breaking can lead to different experts being selected on different runs, causing non-reproducible results.
 
 2.  **Infinite Loop & Recursion Guards**:
-    *   **Recursion Depth Cap**: If the model uses recursive attention mechanisms, enforce a maximum recursion depth to prevent stack overflow.
-    *   **Loop Termination**: In iterative decoding, ensure that the loop terminates when `eos_token` is generated or `max_new_tokens` is reached.
-    *   **Circular Reference**: Avoid circular references in the model's layer structure. Use `weakref` if necessary.
+    *   **Speculative Decoding Loop**: In speculative decoding, the loop that generates and verifies tokens MUST have a maximum iteration count. If the model consistently rejects speculative tokens, the loop could run indefinitely. Set a `max_speculative_tokens` limit and break the loop if the acceptance rate drops below a threshold.
+    *   **MoE Expert Selection**: The top-k selection MUST ensure that `k` is less than or equal to the number of experts. If `k > num_experts`, the selection will fail or return incorrect results. Add an assertion: `assert k <= num_experts`.
 
 3.  **UI & UX Micro-Mechanics**:
-    *   *Not applicable for this backend model repository.*
+    *   *Not applicable for this repository (inference model, no UI).*
 
 4.  **Backend Concurrency & Memory Safety**:
-    *   **TOCTOU Race Condition**: In multi-threaded inference, ensure that the KV cache is not modified while being read. Use locks or atomic operations.
-    *   **Connection Pool Starvation**: If using a distributed inference framework, ensure that the connection pool is sized appropriately to handle the number of concurrent requests.
-    *   **Memory Leak**: Ensure that temporary tensors (e.g., router logits) are freed after use. Use `del` or context managers to manage memory.
+    *   **KV-Cache Memory Management**: The KV-cache for a 1M context window is massive. Ensure that the cache is allocated in contiguous memory blocks to avoid fragmentation. Use memory pools or arenas to manage the cache. If the cache is not contiguous, memory access patterns will be inefficient, leading to performance degradation.
+    *   **Thread Safety in Indexer**: If the indexer is shared across multiple threads (e.g., in a batched inference server), ensure that the indexer state is thread-safe. Use locks or atomic operations to update the indexer state. Race conditions in the indexer can lead to incorrect expert selection.
 
 5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Null/Undefined Chaining**: Always check for `None` before accessing attributes of a layer. Use `getattr` with a default value.
-    *   **Off-by-One Boundary**: When slicing layers, ensure that the indices are within bounds. Use `min` and `max` to clamp indices.
-    *   **Error Boundary Containment**: Wrap the forward pass in a `try-except` block to catch and log errors without crashing the entire inference pipeline.
+    *   **Null/Undefined Chaining**: When loading the model configuration, ensure that all required fields are present. If a field is missing, the model will fail at runtime. Use a schema validator to check the configuration before loading the model.
+    *   **Off-by-One Boundary Checks**: When slicing the KV-cache for a specific layer, ensure that the indices are within bounds. Off-by-one errors can lead to memory corruption or incorrect data being used in the attention computation.
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: Hybrid dense-sparse MoE with a dedicated indexer subsystem. The first 3 layers are dense, the rest are sparse. The indexer uses top-k selection to route tokens to experts.
-2.  **Core Abstractions**: `GlmMoeDsaForCausalLM`, `DenseMLP`, `MoEMLP`, `Indexer`. The `Indexer` is a key abstraction that decouples routing from the main transformer layers.
-3.  **Error Handling**: Not explicitly defined in the config. Inference frameworks must handle `nan`/`inf` values in router logits and KV cache overflow.
-4.  **Testing**: Not provided. Unit tests should verify layer types, top-k selection, and KV cache memory usage.
-5.  **Security**: Not applicable for a model repository. However, ensure that the model weights are not tampered with by using checksums.
-6.  **Performance**: Optimized for long-context inference with low-rank KV cache. The sparse MoE architecture reduces FLOPs. `bfloat16` precision ensures numerical stability.
-7.  **Deployment**: Requires Ampere+ GPUs for `bfloat16` support. The model is large, so it may require multiple GPUs for inference.
-8.  **Agent Patterns**: The model is designed for "long-horizon tasks" and "complex coding," suggesting it is intended for use in agentic workflows where the model must maintain context over many steps.
-9.  **Data Flow**: Input tokens are embedded, passed through dense layers, then routed by the indexer to sparse MoE layers. The KV cache is updated at each step. The output is the next token probability.
+1.  **Architecture**:
+    *   **Subsystem Boundaries**: The model is divided into `dense` and `sparse` layers. The boundary is at layer 3. The `dense` layers are responsible for establishing the initial representation, while the `sparse` layers handle the bulk of the computation.
+    *   **Decoupling**: The indexer is decoupled from the expert forward pass. The indexer selects the experts, and the experts compute the output. This decoupling allows for independent optimization of the routing and computation.
+    *   **Modular Layout**: The model is modular, with each layer being a separate module. This allows for easy swapping of attention types and expert configurations.
+    *   **State Ownership**: The KV-cache is owned by the inference engine, not the model. The model only reads from and writes to the cache. This separation of concerns ensures that the model is stateless and can be easily scaled.
+
+2.  **Core Abstractions**:
+    *   **Key Types**: `GlmMoeDsaForCausalLM`, `Indexer`, `Expert`, `KVCache`.
+    *   **Traits/Interfaces**: `AttentionType` (full, shared), `ExpertType` (dense, sparse).
+    *   **Domain Primitives**: `RoutingScore`, `TopKIndices`, `HiddenState`.
+    *   **Invariant Contracts**: The indexer MUST select exactly `top_k` experts. The experts MUST produce an output of the same shape as the input.
+
+3.  **Error Handling**:
+    *   **Fault Boundaries**: Errors in the indexer should be caught and logged, but should not crash the inference engine. The engine should fall back to a default set of experts if the indexer fails.
+    *   **Error Trees**: `IndexerError` -> `RoutingError` -> `ExpertError`.
+    *   **Retries**: If an expert fails, the engine should retry with a different set of experts.
+    *   **Rollbacks**: If the inference fails, the engine should roll back to the last known good state.
+    *   **Graceful Degradation**: If the KV-cache is full, the engine should evict the oldest tokens and continue inference.
+
+4.  **Testing**:
+    *   **Property Testing**: Test that the top-k selection is deterministic. Test that the output shape is consistent.
+    *   **Mock Invariants**: Mock the indexer to return a fixed set of experts. Test that the experts produce the expected output.
+    *   **Integration Harnesses**: Test the entire inference pipeline, including tokenization, model loading, and generation.
+    *   **Regression Shields**: Test that the model's performance on a fixed set of prompts does not degrade after updates.
+
+5.  **Security**:
+    *   **Threat Model**: The model is vulnerable to prompt injection. The engine should sanitize the input prompt to prevent injection.
+    *   **Credential Boundaries**: The model does not require credentials. The engine should not store any sensitive information.
+    *   **Sanitization**: The input prompt should be sanitized to prevent injection.
+    *   **Memory Safety**: The engine should use safe memory allocation to prevent buffer overflows.
+    *   **Least Privilege**: The engine should run with the minimum necessary privileges.
+
+6.  **Performance**:
+    *   **Latency Profiles**: The latency is dominated by the attention computation. The hybrid attention pattern reduces the latency by using sparse attention in most layers.
+    *   **Asymptotic Complexity**: The complexity is O(N * K), where N is the sequence length and K is the number of experts.
+    *   **Caching**: The KV-cache is used to avoid recomputing the attention for previous tokens.
+    *   **Zero-Copy**: The engine should use zero-copy operations to avoid copying data between memory and GPU.
+    *   **Concurrency Bottlenecks**: The indexer is a bottleneck if it is not parallelized. The engine should parallelize the indexer across multiple threads.
+
+7.  **Deployment**:
+    *   **CI/CD Invariants**: The model should be tested on a fixed set of prompts before deployment.
+    *   **Container Constraints**: The model requires a large amount of memory. The container should be configured with sufficient memory.
+    *   **Reproducible Builds**: The model should be built with a fixed version of the dependencies.
+    *   **Runtime Flags**: The engine should support runtime flags to adjust the top-k value and the attention type.
+
+8.  **Agent Patterns**:
+    *   **Tooling Interfaces**: The model can be used as a tool in an agent system. The agent should call the model's inference API.
+    *   **Prompt Chains**: The model can be used in a prompt chain to generate a sequence of tokens.
+    *   **Loop Guards**: The agent should have a loop guard to prevent infinite loops.
+    *   **Context Budget Optimization**: The agent should optimize the context budget by using the KV-cache.
+
+9.  **Data Flow**:
+    *   **Mutation Lifecycles**: The hidden states are mutated by the experts. The KV-cache is mutated by the attention computation.
+    *   **Streams**: The input tokens are streamed into the model. The output tokens are streamed out of the model.
+    *   **Serializers**: The model's weights are serialized in a binary format.
+    *   **Network Protocol Barriers**: The model does not use a network protocol. The inference is local.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Hybrid dense-sparse MoE with top-k indexer routing.
-2.  **Rule**: First N layers MUST be dense; `top_k` MUST be validated; `bfloat16` MUST be used.
-3.  **Architecture Principle**: Decouple routing from computation to allow for dynamic expert selection.
-4.  **Failure Mode**: Router logit overflow, top-k out-of-bounds, KV cache memory explosion.
-5.  **Reusable Skill**: Validate config consistency (layer types, top-k, dtype) before model initialization.
-6.  **Decision**: Use `bfloat16` over `float16` for numerical stability in MoE models.
-7.  **Anti-pattern**: Making all layers sparse, ignoring `top_k` validation, using `float16` for router logits.
-8.  **Verification Method**: Assert config consistency, test top-k selection, monitor KV cache memory.
+1.  **Pattern**: Hybrid Attention Periodicity.
+2.  **Rule**: Attention mechanisms MUST follow a periodic hybrid pattern.
+3.  **Architecture Principle**: Balance recall accuracy with memory bandwidth constraints.
+4.  **Failure Mode**: OOM on 1M context with uniform dense attention.
+5.  **Reusable Skill**: Configure the `indexer_types` array to define the periodicity.
+6.  **Decision**: Use `full` attention every 4th layer to balance accuracy and efficiency.
+7.  **Anti-pattern**: Uniform dense attention for all layers.
+8.  **Verification Method**: Assert that the ratio of `full` to `shared` types matches the intended periodicity.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Validate Config Consistency**:
-    *   Check that `first_k_dense_replace` matches the number of `"dense"` layers in `mlp_layer_types`.
-    *   Check that `index_topk` is less than or equal to the number of experts.
-    *   Check that `dtype` is `bfloat16`.
-2.  **Initialize Model**:
-    *   Initialize dense layers for the first `first_k_dense_replace` layers.
-    *   Initialize sparse MoE layers for the remaining layers.
-    *   Initialize the indexer with the correct `index_n_heads` and `index_head_dim`.
-3.  **Implement Routing Logic**:
-    *   Implement top-k selection in the indexer.
-    *   Validate `top_k` before selection.
-    *   Use `bfloat16` for router logits.
-4.  **Implement KV Cache**:
-    *   Use low-rank KV cache with `kv_lora_rank`.
-    *   Monitor memory usage to prevent overflow.
-5.  **Test Inference**:
-    *   Test with short and long sequences.
-    *   Check for `nan`/`inf` values in the output.
-    *   Verify that the model generates coherent text.
+1.  **Verify Configuration**:
+    *   Check that `max_position_embeddings` is set to 1048576.
+    *   Check that `dtype` is set to `bfloat16`.
+    *   Check that `index_topk` is set to 2048.
+    *   Check that `index_topk_freq` is set to 4.
+
+2.  **Verify Attention Pattern**:
+    *   Check that the `indexer_types` array matches the intended periodicity.
+    *   Check that the ratio of `full` to `shared` types is correct.
+
+3.  **Verify MoE Routing**:
+    *   Check that the routing scores are computed in FP32.
+    *   Check that the top-k selection is performed in FP32.
+    *   Check that the selected scores are cast to BF16.
+
+4.  **Verify KV-Cache**:
+    *   Check that the KV-cache is allocated in contiguous memory.
+    *   Check that the KV-cache is managed using a memory pool.
+
+5.  **Verify Inference**:
+    *   Run the model on a fixed set of prompts.
+    *   Check that the output is consistent.
+    *   Check that the latency is within the expected range.

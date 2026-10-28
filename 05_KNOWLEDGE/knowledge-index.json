@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T01:22:24.266Z",
+  "last_updated": "2026-10-28T01:29:18.425Z",
   "total_verified_learnings": 1154,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5495,8 +5495,8 @@
       "slug": "carbon-design-system-carbon-components-svelte",
       "platform": "github",
       "source_url": "https://github.com/carbon-design-system/carbon-components-svelte",
-      "source_version": "c980ccd4",
-      "content_hash": "218a2c8bcc1841faf17e4f72ed1dfb41c5a041c450153c4497b262937dfa6210",
+      "source_version": "52889ec2",
+      "content_hash": "bfb63e7c78765dae2f8d19b3186190ed7d6eeccaa09e9310fb201ac574d9dc67",
       "dossier_path": "07_PROJECT_LEARNING/carbon-design-system-carbon-components-svelte-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/carbon-design-system-carbon-components-svelte-learnings.md",
       "promoted_rules": [
@@ -5574,6 +5574,11 @@
           "number": 4759,
           "title": "types): type the four remaining `any` contexts",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5097,
+          "title": "data-table): keep the header in view when virtualize scrolls",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5581,7 +5586,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:46:32.515Z",
+      "verified_at": "2026-10-28T01:29:02.259Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28804,7 +28809,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/zai-org/GLM-5.3",
       "source_version": "hf-zai-org-glm-5.3",
-      "content_hash": "700603ba3dcd07968a86aee49678fc8085893f400779a8e7487311477ee75f6a",
+      "content_hash": "915ffb33572768cc1eefdb803ff59a6f76c13b02b08f44eac3c25502bba56bb6",
       "dossier_path": "07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md",
       "promoted_rules": [
@@ -28857,6 +28862,21 @@
           "number": 4051,
           "title": "BFloat16 Precision Enforcement for MoE Models",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5098,
+          "title": "Hybrid Attention Periodicity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5099,
+          "title": "Multi-Token Prediction State Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5100,
+          "title": "BF16 Precision Boundary for MoE Routing",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -28876,7 +28896,7 @@
         "learn-huggingface-hf-zai-org-glm-5-3-mv413j49",
         "learn-huggingface-hf-zai-org-glm-5-3-mv4f1uxu"
       ],
-      "verified_at": "2026-10-25T04:44:16.325Z",
+      "verified_at": "2026-10-28T01:29:12.417Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34029,8 +34049,8 @@
       "slug": "linkwarden-linkwarden",
       "platform": "github",
       "source_url": "https://github.com/linkwarden/linkwarden",
-      "source_version": "952ac454",
-      "content_hash": "369f8fe225f2a6ca387b478d4f923bd63db0a177736bc7a328bdb2b4d2cf9d91",
+      "source_version": "eff7c6b7",
+      "content_hash": "25c41a158cd8fec799a7e5a24eec270796aa35280c355ff0aaaf0b00422475e6",
       "dossier_path": "07_PROJECT_LEARNING/linkwarden-linkwarden-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/linkwarden-linkwarden-learnings.md",
       "promoted_rules": [
@@ -34045,7 +34065,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T09:12:48.180Z",
+      "verified_at": "2026-10-28T01:29:08.554Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54795,8 +54815,8 @@
       "slug": "ytsaurus-ytsaurus",
       "platform": "github",
       "source_url": "https://github.com/ytsaurus/ytsaurus",
-      "source_version": "1ec33547",
-      "content_hash": "7c23e515703ca38ac50da84d31321193b78488a49b83b10425c8dab85d11ba3b",
+      "source_version": "c5a758f0",
+      "content_hash": "1968815bb3f19c5a219baeadb5cc2b65ca29fd859240b1eaa6c149a85c591af6",
       "dossier_path": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "promoted_rules": [
@@ -54839,6 +54859,11 @@
           "number": 4766,
           "title": "Split TestSchedulerRowLevelSecurityCommands and TestUserJobMonitoring into two p",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5101,
+          "title": "argmin/argmax with composite crash in YTQL",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54846,7 +54871,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:50:30.404Z",
+      "verified_at": "2026-10-28T01:29:18.411Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -140224,6 +140249,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T01:22:24.253Z"
+    },
+    "rule-5097": {
+      "learning_id": "rule-5097",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5097,
+      "title": "data-table): keep the header in view when virtualize scrolls",
+      "source_url": "https://github.com/carbon-design-system/carbon-components-svelte",
+      "source_version": "52889ec2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:29:02.259Z"
+    },
+    "rule-5098": {
+      "learning_id": "rule-5098",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5098,
+      "title": "Hybrid Attention Periodicity Invariant",
+      "source_url": "https://huggingface.co/zai-org/GLM-5.3",
+      "source_version": "hf-zai-org-glm-5.3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:29:12.417Z"
+    },
+    "rule-5099": {
+      "learning_id": "rule-5099",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5099,
+      "title": "Multi-Token Prediction State Consistency",
+      "source_url": "https://huggingface.co/zai-org/GLM-5.3",
+      "source_version": "hf-zai-org-glm-5.3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:29:12.417Z"
+    },
+    "rule-5100": {
+      "learning_id": "rule-5100",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5100,
+      "title": "BF16 Precision Boundary for MoE Routing",
+      "source_url": "https://huggingface.co/zai-org/GLM-5.3",
+      "source_version": "hf-zai-org-glm-5.3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:29:12.417Z"
+    },
+    "rule-5101": {
+      "learning_id": "rule-5101",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5101,
+      "title": "argmin/argmax with composite crash in YTQL",
+      "source_url": "https://github.com/ytsaurus/ytsaurus",
+      "source_version": "c5a758f0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:29:18.411Z"
     }
   },
   "aliases": {

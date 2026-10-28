@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T01:22:24.334Z",
-  "total_cycles_completed": 5602,
-  "total_learnings_persisted": 5602,
-  "total_rules_promoted": 5021,
+  "last_updated": "2026-10-28T01:29:18.493Z",
+  "total_cycles_completed": 5606,
+  "total_learnings_persisted": 5606,
+  "total_rules_promoted": 5026,
   "history": [
-    {
-      "timestamp": "2026-10-27T16:31:33.791Z",
-      "repository": "TanStack/query",
-      "learningId": "learn-github-tanstack-query",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T16:31:38.535Z",
-      "repository": "gocd/gocd",
-      "learningId": "learn-github-gocd-gocd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T16:31:38.718Z",
-      "repository": "keybase/client",
-      "learningId": "learn-github-keybase-client",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T16:31:45.493Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T16:38:20.276Z",
       "repository": "zvec-ai/zvec-grep",
@@ -1403,6 +1375,34 @@
       "repository": "BAAI/bge-large-en-v1.5",
       "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T01:29:02.341Z",
+      "repository": "carbon-design-system/carbon-components-svelte",
+      "learningId": "learn-github-carbon-design-system-carbon-components-svelte",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T01:29:08.661Z",
+      "repository": "linkwarden/linkwarden",
+      "learningId": "learn-github-linkwarden-linkwarden",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T01:29:12.501Z",
+      "repository": "zai-org/GLM-5.3",
+      "learningId": "learn-huggingface-zai-org-glm-5-3",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T01:29:18.493Z",
+      "repository": "ytsaurus/ytsaurus",
+      "learningId": "learn-github-ytsaurus-ytsaurus",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T00:32:49.298Z",
+  "last_updated": "2026-10-28T01:29:08.659Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3115,6 +3115,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-starrocks-starrocks"
+    },
+    {
+      "id": "CD-RZ1V",
+      "directive_title": "Merge pull request #1878 from linkwarden/hot-fix",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "linkwarden/linkwarden",
+      "source_commit": "eff7c6b7",
+      "date_staged": "2026-10-28",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-linkwarden-linkwarden"
     }
   ]
 }

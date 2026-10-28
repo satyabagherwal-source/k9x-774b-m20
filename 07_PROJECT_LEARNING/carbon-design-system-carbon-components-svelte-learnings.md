@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/carbon-design-system-carbon-components-svelte-learnings.md`  
 > **Source**: github ([https://github.com/carbon-design-system/carbon-components-svelte](https://github.com/carbon-design-system/carbon-components-svelte))  
-> **Source Version**: `c980ccd4`  
+> **Source Version**: `52889ec2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T12:46:32.159Z  
+> **Timestamp**: 2026-10-28T01:29:01.913Z  
 > **Learning ID**: `learn-github-carbon-design-system-carbon-components-svelte`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/carbon-design-system-carbon-components-svelte-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/carbon-design-system/carbon-components-svelte](https://github.com/carbon-design-system/carbon-components-svelte))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T12:46:30.605Z  
+> **Harvest Timestamp**: 2026-10-28T01:29:00.725Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1059,11 +1059,11 @@ export declare function observeModalClose(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5140** (2026-10-27): **fix(date-picker): match the locale's month names in the input pattern**
-  *Symptoms*: Stacked on #5139. With `locale="fr"` and `dateFormat="j M Y"`, the derived `pattern` used `\w+` for the month, which rejects "10 févr. 2026" (accents, periods, "1月"). `F`, `M`, `D` and `l` now match an alternation of the locale's names, so the input accepts exactly what the parser reads.    ---  | Before | After | | --- | --- | | ![Before](https://gist.githubusercontent.com/metonym/a4cfc1e285beeb0f7e8f60f5e0c02fa0/raw/a9c1cbcc6c92fe05e1ed3916fcc7838fcdedea99/fr-before.png) | ![After](https://gist.githubusercontent.com/metonym/a4cfc1e285beeb0f7e8f60f5e0c02fa0/raw/1521378a40f33cce4935fbd51e1b43dfe47f36bc/fr-after.png) |  
+- **Issue #5198** (2026-10-28): **fix(data-table): keep the header in view when virtualize scrolls**
+  *Symptoms*: A virtualized DataTable without `stickyHeader` scrolls its wrapper and sets `position: sticky` on the header, as the docs promise. The header still scrolled away. Upstream's `overflow-x: auto` on `.bx--data-table-content` makes that inner div a scroll container too, and a sticky box sticks to its nearest one. The div never scrolls vertically, so the header stuck to nothing.  Mark the wrapper with `bx--data-table-virtual` and drop the inner div's overflow under it. The wrapper already scrolls on both axes.  Scrolled to row 20:  | Change | Before | After | | :--- | :--- | :--- | | White | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5198/white-before.png"> | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5198/white-after.png"> | | Gray 100 | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5198/g100-before.png"> | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5198/g100-after.png"> |  
 
-- **Issue #5139** (2026-10-27): **fix(date-picker): accept a time in the derived input pattern**
-  *Symptoms*: With `dateFormat="m/d/Y H:i"`, the derived `pattern` kept `H` and `i` as literal letters, so native validation rejected "02/10/2026 14:30". The hour, minute and second tokens now match one or two digits, and `K` matches any non-digit run so names like "p. m." pass.   ---  | Before | After | | --- | --- | | ![Before](https://gist.githubusercontent.com/metonym/a4cfc1e285beeb0f7e8f60f5e0c02fa0/raw/3943711f33a13a2d9955eda3bd51017f553270f9/time-pattern-before.png) | ![After](https://gist.githubusercontent.com/metonym/a4cfc1e285beeb0f7e8f60f5e0c02fa0/raw/038a847f782ade49ea75bc1b489dfa7166ff2686/time-pattern-after.png) | 
+- **Issue #5197** (2026-10-28): **fix(data-table): size the selection column under fixedLayout**
+  *Symptoms*: With `fixedLayout`, the browser takes column widths from the header row. In a radio or non-batch selectable table, the selection header cell had no class and so no width. When the other headers filled the table, the checkboxes landed on the next column. Give the header cell the same `bx--table-column-checkbox` and `bx--table-column-radio` classes as its body cells.  A 300px wide table with 12rem and 8rem columns:  | Change | Before | After | | :--- | :--- | :--- | | White | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5197/white-before.png"> | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5197/white-after.png"> | | Gray 100 | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5197/g100-before.png"> | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5197/g100-after.png"> |  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1080,637 +1080,342 @@ export declare function observeModalClose(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `518ba1d7` (2026-10-26)
-**Commit Message**: fix(types): type the four remaining `any` contexts
+### Incident Patch 1: `bc2f18a0` (2026-10-27)
+**Commit Message**: fix(data-table): keep the header in view when virtualize scrolls
 
-ComboButton's menu placement, InputGroup's form size, SidePanel's
-section level and the overflow chip's `items` were `any` stores in
-their generated context types. sveld's next release reports such
-types, so annotate them.
+Without `stickyHeader`, the wrapper around the table scrolls and the
+`thead` is `position: sticky`. Carbon's `overflow-x: auto` on
+`.bx--data-table-content` also makes that inner div a scroll container
+on both axes, so the header stuck to a box that never scrolls and moved
+away with the rows.
 
-**File**: `scripts/svelte-types-baseline.json` (modified, +1/-1)
+Stop the inner div from scrolling when the wrapper does, as the docs
+describe.
+
+**File**: `css/vendor/carbon-components/scss/components/data-table/_data-table.scss` (modified, +24/-0)
 ```diff
-@@ -13,7 +13,7 @@
-   "Checkbox/InlineCheckbox.svelte": 3,
-   "CodeSnippet/CodeSnippet.svelte": 2,
-   "ComboBox/ComboBox.svelte": 38,
--  "ComboButton/ComboButton.svelte": 5,
-+  "ComboButton/ComboButton.svelte": 4,
-   "ComposedModal/ComposedModal.svelte": 2,
-   "ConfirmModal/ConfirmModal.svelte": 3,
-   "ContainedList/ContainedListItem.svelte": 1,
-```
-
-**File**: `src/ComboButton/ComboButton.svelte` (modified, +1/-0)
-```diff
-@@ -133,6 +133,7 @@
- 
-   let triggerRef = null;
- 
-+  /** @type {import("svelte/store").Writable<null | HTMLDivElement>} */
-   const placementGroup = writable(null);
-   setContext(MENU_PLACEMENT_CONTEXT_KEY, placementGroup);
-   $: placementGroup.set(ref);
-```
-
-**File**: `src/InputGroup/InputGroup.svelte` (modified, +1/-0)
-```diff
-@@ -73,6 +73,7 @@
-   const ownSize = writable(normalizeSize(size, FIELD_SIZE_ALIASES));
-   $: ownSize.set(normalizeSize(size, FIELD_SIZE_ALIASES));
- 
-+  /** @type {import("svelte/store").Readable<undefined | "xs" | "sm" | "md" | "xl">} */
-   const sharedSize = derived(
-     [ownSize, formSize],
-     ([$ownSize, $formSize]) => $ownSize ?? $formSize,
-```
-
-**File**: `src/SidePanel/SidePanel.svelte` (modified, +1/-0)
-```diff
-@@ -240,6 +240,7 @@
- 
-   // The title is one level below the enclosing `Section`, or an `h2`.
-   const parentSection = getContext("carbon:Section") ?? readable(1);
-+  /** @type {import("svelte/store").Writable<number>} */
-   const sectionLevel = writable(Math.min($parentSection + 1, 6));
-   $: sectionLevel.set(Math.min($parentSection + 1, 6));
-   setContext("carbon:Section", sectionLevel);
-```
-
-**File**: `src/UserAvatarGroup/UserAvatarGroupOverflow.svelte` (modified, +1/-0)
-```diff
-@@ -22,6 +22,7 @@
-   // `size`. The chip's tooltip joins the group's tooltip handoff through
-   // the `TooltipGroup` context, which this does not shadow.
-   setContext("carbon:UserAvatarGroup", {
-+    /** @type {import("svelte/store").Readable<Array<{ id: string; name: string; node?: HTMLElement }>>} */
-     items: readable([]),
-     max: readable(0),
-     /** @type {import("svelte/store").Readable<import("./UserAvatarGroup.svelte").UserAvatarGroupProps["size"]>} */
-```
-
----
-
-### Incident Patch 2: `a7610a04` (2026-10-26)
-**Commit Message**: fix(types): accept `undefined` on props that default to it
-
-299 props default to `undefined` but typed their JSDoc without it, so
-their scripts failed strict null checks, and under
-`exactOptionalPropertyTypes` a consumer couldn't pass `size={undefined}`.
-Their `@type` now includes `undefined`: `size?: "sm" | "md"` becomes
-`size?: "sm" | "md" | undefined`. Without `exactOptionalPropertyTypes`
-the two are the same type. Props that feed a group's context
-(CheckboxGroup, RadioButtonGroup, TileGroup, SelectableTileGroup) are
-left for a separate change, since the context's type would widen too.
-1,390 errors to 1,162.
-
-**File**: `scripts/svelte-types-baseline.json` (modified, +82/-122)
-```diff
-@@ -1,163 +1,126 @@
- {
--  "Accordion/Accordion.svelte": 3,
--  "Accordion/AccordionItem.svelte": 6,
--  "Accordion/AccordionSkeleton.svelte": 1,
-+  "Accordion/Accordion.svelte": 2,
-+  "Accordion/AccordionItem.svelte": 5,
-   "ActionSet/ActionSet.svelte": 4,
--  "AILabel/AILabel.svelte": 2,
-+  "AILabel/AILabel.svelte": 1,
-   "AILabel/Decorator.svelte": 1,
--  "BadgeIndicator/BadgeIndicator.svelte": 1,
--  "BigNumber/BigNumber.svelte": 11,
-+  "BigNumber/BigNumber.svelte": 7,
-   "Bleed/Bleed.svelte": 1,
--  "Box/Box.svelte": 2,
--  "Breadcrumb/BreadcrumbItem.svelte": 3,
--  "Breakpoint/Breakpoint.svelte": 2,
--  "Button/Button.svelte": 13,
--  "Button/ButtonSkeleton.svelte": 2,
--  "Card/Card.svelte": 6,
-+  "Breadcrumb/BreadcrumbItem.svelte": 2,
-+  "Button/Button.svelte": 9,
-+  "Card/Card.svelte": 5,
-   "Carousel/Carousel.svelte": 2,
--  "Chat/ChatButton.svelte": 1,
--  "Chat/ChatButtonSkeleton.svelte": 1,
--  "Checkbox/Checkbox.svelte": 7,
-+  "Checkbox/Checkbox.svelte": 6,
-   "Checkbox/CheckboxGroup.svelte": 6,
-   "Checkbox/InlineCheckbox.svelte": 3,
--  "CodeSnippet/CodeSnippet.svelte": 4,
--  "ComboBox/ComboBox.svelte": 42,
--  "ComboBox/ComboBoxSkeleton.svelte": 1,
--  "ComboButton/ComboButton.svelte": 6,
--  "ComposedModal/ComposedModal.svelte": 6,
--  "ComposedModal/ModalFooter.svelte": 3,
--  "ConfirmModal/ConfirmModal.svelte": 5,
--  "ContainedList/ContainedListItem.svelte": 3,
--  "ContentSwitcher/ContentSwitcher.svelte": 3,
--  "ContentSwitcher/ContentSwitcherSkeleton.svelte": 1,
-+  "CodeSnippet/CodeSnippet.svelte": 2,
-+  "ComboBox/ComboBox.svelte": 38,
-+  "ComboButton/ComboButton.svelte": 5,
-+  "ComposedModal/ComposedModal.svelte": 5,
-+  "ConfirmModal/ConfirmModal.svelte": 3,
-+  "ContainedList/ContainedListItem.svelte": 2,
-+  "ContentSwitcher/ContentSwitcher.svelte": 2,
-   "ContentSwitcher/Switch.svelte": 2,
-   "ContextMenu/ContextMenu.svelte": 13,
-   "ContextMenu/ContextMenuOption.svelte": 20,
--  "CopyButton/CopyButton.svelte": 4,
--  "CopyInput/CopyInput.svelte": 4,
--  "CopyInput/CopyInputSkeleton.svelte": 1,
--  "DataTable/DataTable.svelte": 127,
--  "DataTable/DataTableSkeleton.svelte": 3,
--  "DataTable/Table.svelte": 3,
--  "DataTable/Toolbar.svelte": 2,
-+  "CopyButton/CopyButton.svelte": 3,
-+  "DataTable/DataTable.svelte": 121,
-+  "DataTable/DataTableSkeleton.svelte": 2,
-   "DataTable/ToolbarBatchActions.svelte": 6,
-   "DataTable/ToolbarColumnVisibility.svelte": 2,
-   "DataTable/ToolbarContent.svelte": 3,
-   "DataTable/ToolbarDensity.svelte": 1,
-   "DataTable/ToolbarMenu.svelte": 3,
-   "DataTable/ToolbarSearch.svelte": 18,
-   "DatePicker/DatePicker.svelte": 59,
--  "DatePicker/DatePickerInput.svelte": 11,
--  "DatePicker/DatePickerSkeleton.svelte": 2,
-+  "DatePicker/DatePickerInput.svelte": 8,
-   "Dialog/Dialog.svelte": 4,
-   "Disclosure/Disclosure.svelte": 3,
--  "Dropdown/Dropdown.svelte": 21,
--  "Dropdown/DropdownSkeleton.svelte": 1,
--  "EmptyState/EmptyState.svelte": 2,
-+  "Dropdown/Dropdown.svelte": 16,
-+  "EmptyState/EmptyState.svelte": 1,
-   "FileUploader/FileDownloadItem.svelte": 2,
-   "FileUploader/FileUploader.svelte": 5,
--  "FileUploader/FileUploaderButton.svelte": 6,
-+  "FileUploader/FileUploaderButton.svelte": 5,
-   "FileUploader/FileUploaderDropContainer.svelte": 6,
--  "Form/Form.svelte": 1,
--  "FormHelperText/FormHelperText.svelte": 2,
-   "FormItem/FormItem.svelte": 4,
--  "FormLabel/FormLabel.svelte": 2,
--  "FormRequirement/FormRequirement.svelte": 1,
--  "Grid/Column.svelte": 11,
--  "ImageLoader/ImageLoader.svelte": 7,
--  "InlineEdit/InlineEdit.svelte": 12,
--  "InlineLoading/InlineLoading.svelte": 2,
-+  "Grid/Column.svelte": 5,
-+  "ImageLoader/ImageLoader.svelte": 6,
-+  "InlineEdit/InlineEdit.svelte": 9,
-   "InputGroup/InputGroup.svelte": 3,
-   "InterstitialScreen/InterstitialScreen.svelte": 1,
-   "InterstitialScreen/InterstitialScreenFooter.svelte": 6,
--  "InterstitialScreen/InterstitialScreenHeader.svelte": 2,
--  "Link/Link.svelte": 2,
--  "Link/LinkDownload.svelte": 3,
--  "ListBox/ListBox.svelte": 3,
-+  "InterstitialScreen/InterstitialScreenHeader.svelte": 1,
-+  "Link/Link.svelte": 1,
-+  "Link/LinkDownload.svelte": 2,
-   "ListBox/ListBoxField.svelte": 3,
--  "ListBox/ListBoxMenu.svelte": 1,
--  "ListBox/ListBoxMenuItem.svelte": 2,
--  "ListBox/ListBoxSelection.svelte": 4,
-+  "ListBox/ListBoxMenuItem.svelte": 1,
-+  "ListBox/ListBoxSelection.svelte": 3,
-   "LocalStorage/StorageBinding.svelte": 1,
--  "Menu/Menu.svelte": 3,
-+  "Menu/Menu.svelte": 2,
-   "Menu/MenuItem.svelte": 6,
--  "MenuButton/MenuButton.svelte": 3,
--  "Meter/Meter.svelte": 11,
--  "Modal/Modal.svelte": 16,
--  "MultiSelect/MultiSelect.svelte": 62,
--  "MultiSelect/MultiSelectSkeleton.svelte": 1,
-+  "MenuButton/MenuButton.svelte": 1,
-+  "Meter/Meter.svelte": 8,
-+  "Modal/Modal.svelte": 10,
-+  "MultiSelect/MultiSelect.svelte": 58,
-   "Notification/Callout.svelte": 1,
-   "Notification/InlineNotification.svelte": 1,
--  "Notification/NotificationButton.svelte": 2,
-+  "Notification/NotificationButton.svelte": 1,
-   "Notification/NotificationQueue.svelte": 
-```
-
-**File**: `src/AILabel/AILabel.svelte` (modified, +1/-1)
-```diff
-@@ -61,7 +61,7 @@
-    * Set the alignment of the explanation relative to the button.
-    * Defaults to `"end"` inside a field or tile `decorator` slot,
-    * otherwise `"start"`.
--   * @type {"start" | "center" | "end"}
-+   * @type {"start" | "center" | "end" | undefined}
-    */
-   export let align = undefined;
- 
-```
-
-**File**: `src/Accordion/Accordion.svelte` (modified, +1/-1)
-```diff
-@@ -10,7 +10,7 @@
-   /**
-    * Specify the size of the accordion.
-    * Also accepts Carbon v11's `"md"` (the 40px default) and `"lg"` (`"xl"`).
--   * @type {"sm" | "md" | "lg" | "xl"}
-+   * @type {"sm" | "md" | "lg" | "xl" | undefined}
-    */
-   export let size = undefined;
- 
-```
-
-**File**: `src/Accordion/AccordionItem.svelte` (modified, +1/-1)
-```diff
-@@ -29,7 +29,7 @@
-   /**
-    * Specify a custom label for the accordion button.
-    * This is important for accessibility when the accordion has no visible title.
--   * @type {string}
-+   * @type {string | undefined}
-    */
-   export let ariaLabel = undefined;
- 
-```
-
-**File**: `src/Accordion/AccordionSkeleton.svelte` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@
-   /**
-    * Specify the size of the accordion.
-    * Also accepts Carbon v11's `"md"` (the 40px default) and `"lg"` (`"xl"`).
--   * @type {"sm" | "md" | "lg" | "xl"}
-+   * @type {"sm" | "md" | "lg" | "xl" | undefined}
-    */
-   export let size = undefined;
- 
-```
-
-**File**: `src/BadgeIndicator/BadgeIndicator.svelte` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@
-    * Omit or set to `0` to render an empty dot.
-    * A numeric count greater than `999` displays as "999+".
-    * Pass a string to override the displayed value (e.g. `"1.2k"`).
--   * @type {number | string}
-+   * @type {number | string | undefined}
-    */
-   export let count = undefined;
- 
-```
-
-**File**: `src/BigNumber/BigNumber.svelte` (modified, +9/-9)
-```diff
-@@ -22,15 +22,15 @@
- 
-   /**
-    * The primary value to display (the "numerator" of a fraction).
--   * @type {number}
-+   * @type {number | undefined}
-    */
-   export let value = undefined;
- 
-   /**
-    * The number to render after the slash (the "denominator" of a fraction).
-    * Hidden when it formats identically to `value`, or when `percentage` is `true`;
-    * see `forceShowTotal`.
--   * @type {number}
-+   * @type {number | undefined}
-    */
-   export let total = undefined;
- 
-@@ -55,7 +55,7 @@
- 
-   /**
-    * Render a trend indicator next to the value.
--   * @type {"up" | "down" | "flat"}
-+   * @type {"up" | "down" | "flat" | undefined}
-    */
-   export let trend = undefined;
- 
-@@ -64,7 +64,7 @@
-    * `"error"` for `trend="down"`, and `"neutral"` for `trend="flat"` — set this when
-    * the direction's meaning is reversed for the metric (e.g. a falling error rate,
-    * or a rising failure count).
--   * @type {"success" | "error" | "neutral"}
-+   * @type {"success" | "error" | "neutral" | undefined}
-    */
-   export let trendColor = undefined;
- 
-@@ -79,7 +79,7 @@
- 
-   /**
-    * Determines how `value` and `total` are formatted. Defaults to the runtime locale.
--   * @type {string}
-+   * @type {string | undefined}
-    */
-   export let locale = undefined;
- 
-@@ -89,7 +89,7 @@
-   /**
-    * Additional options merged into the `Intl.NumberFormat` options used to format
-    * `value` and `total`. Consumer keys take precedence over the component's defaults.
--   * @type {Intl.NumberFormatOptions}
-+   * @type {Intl.NumberFormatOptions | undefined}
-    * @example
-    * `{ style: "currency", currency: "USD" }`
-    * @example
-@@ -100,20 +100,20 @@
-   /**
-    * Provide a custom formatter for `value` and `total`, replacing Intl formatting
-    * entirely. Non-number inputs still render the dash.
--   * @type {(value: number) => string}
-+   * @type {((value: number) => string) | undefined}
-    */
-   export let format = undefined;
- 
-   /**
-    * Override the text announced to assistive technology for the trend indicator.
-    * Defaults to "Trending up", "Trending down", or "No change" based on `trend`.
--   * @type {string}
-+   * @type {string | undefined}
-    */
-   export let trendDescription = undefined;
- 
-   /**
-    * The signed change in `value` since the last period.
--   * @type {number}
-+   * @type {number | undefined}
-    */
-   export let delta = undefined;
- 
-```
-
-**File**: `src/Box/Box.svelte` (modified, +2/-2)
-```diff
-@@ -99,7 +99,7 @@
- 
-   /**
-    * Set the background fill using a Carbon theme token.
--   * @type {"background" | "layer-01" | "layer-02" | "layer-03" | "layer-accent" | "field" | "inverse" | "brand"}
-+   * @type {"background" | "layer-01" | "layer-02" | "layer-03" | "layer-accent" | "field" | "inverse" | "brand" | undefined}
-    */
-   export let fill = undefined;
- 
-@@ -189,7 +189,7 @@
- 
-   /**
-    * Set the border using a Carbon border token.
--   * @type {"subtle" | "strong" | "interactive" | "disabled"}
-+   * @type {"subtle" | "strong" | "interactive" | "disabled" | undefined}
-    */
-   export let border = undefined;
- 
-```
-
----
-
-### Incident Patch 3: `b4589272` (2026-10-26)
-**Commit Message**: fix: derive notification and header menu ids from an `id` prop
-
-InlineNotification and ToastNotification (actionable, with a title or
-subtitle) and an open HeaderSwitcher or ProfileMenu put a `uniqueId()`
-in the server's markup, and had no prop to fix it, so prerendered HTML
-changed on every build and the ids changed on hydration. Each takes an
-`id` now and derives its title, subtitle or menu id from it.
-
-**File**: `docs/src/pages/server-rendering.svx` (modified, +1/-3)
-```diff
-@@ -182,7 +182,7 @@ Pass your own `id` or `name` to make the markup identical on every render. Ids m
- 
- | Component | Props that fix its ids |
- | :--- | :--- |
--| TextInput, PasswordInput, TextArea, NumberInput, Search, Slider, Toggle, Select, Dropdown, ComboBox, MultiSelect, Modal, ComposedModal, InterstitialScreen, Pagination, CodeSnippet, CopyInput, Tag, TooltipIcon, TooltipDefinition, Disclosure, Carousel, Toggletip, HeaderSearch, TreeView, TableContainer, FormGroup, ProgressBar, Meter, FileUploader | `id` |
-+| TextInput, PasswordInput, TextArea, NumberInput, Search, Slider, Toggle, Select, Dropdown, ComboBox, MultiSelect, Modal, ComposedModal, InterstitialScreen, Pagination, CodeSnippet, CopyInput, Tag, TooltipIcon, TooltipDefinition, Disclosure, Carousel, Toggletip, HeaderSearch, HeaderSwitcher, ProfileMenu, InlineNotification, ToastNotification, TreeView, TableContainer, FormGroup, ProgressBar, Meter, FileUploader | `id` |
- | DataTable | `id` (`inputName` sets the selection name) |
- | OverflowMenu | `id`, and `id` on each `OverflowMenuItem` |
- | Tooltip | `tooltipId` and `triggerId` |
-@@ -195,8 +195,6 @@ Pass your own `id` or `name` to make the markup identical on every render. Ids m
- | TagSet | `id` on `TagSet` and on each `Tag` |
- | DatePicker | `id` on `DatePicker` and on each `DatePickerInput` |
- 
--Two cases still render a random id on the server: `InlineNotification` and `ToastNotification` with `actionable` and a `title` or `subtitle`, and `HeaderSwitcher` and `ProfileMenu` rendered open. <!-- FIX: SSR-20 -->
--
- ## Locale and time
- 
- `Pagination` formats its item and page counts with the runtime locale, so a server in one locale and a browser in another print `12,345` and `12.345`. Svelte replaces the text on hydration. Pass `itemText`, `itemRangeText`, `pageText`, and `pageRangeText` functions that format with a fixed locale. `BigNumber`, `Meter`, and `RelativeTime` accept `locale`. `RelativeTime` also accepts `now` and `timeZone`. Pass fixed values from the request to keep prerendered HTML correct.
-```
-
-**File**: `src/Notification/InlineNotification.svelte` (modified, +12/-2)
-```diff
-@@ -83,6 +83,14 @@
-    */
-   export let open = true;
- 
-+  /**
-+   * Set an id for the top-level element. The title and subtitle ids derive
-+   * from it as `{id}-title` and `{id}-subtitle`, so the server and the
-+   * browser render the same ids.
-+   * @type {string | undefined}
-+   */
-+  export let id = undefined;
+@@ -350,3 +350,27 @@
+ @include exports("data-table-fixed-layout") {
+   @include data-table-fixed-layout;
+ }
 +
-   import { createEventDispatcher, onMount, setContext } from "svelte";
-   import { writable } from "svelte/store";
-   import { splitAriaNaming } from "../utils/aria-naming.js";
-@@ -94,8 +102,9 @@
-   import { statusIconLabel } from "./status-icon-label.js";
- 
-   const dispatch = createEventDispatcher();
--  const titleId = uniqueId();
--  const subtitleId = uniqueId();
-+  const fallbackId = uniqueId();
-+  $: titleId = `${id ?? fallbackId}-title`;
-+  $: subtitleId = `${id ?? fallbackId}-subtitle`;
- 
-   /** @type {null | HTMLDivElement} */
-   let notificationRef = null;
-@@ -178,6 +187,7 @@
-     class:bx--inline-notification--warning-alt={kind === "warning-alt"}
-     class:bx--inline-notification--low-contrast-warning-alt={lowContrast &&
-       kind === "warning-alt"}
-+    {id}
-     {...rest}
-     on:click
-     on:mouseover
++// carbon-components-svelte patch (DataTable virtualize without stickyHeader)
++@import "carbon-components/scss/globals/scss/vars";
++@import "carbon-components/scss/globals/scss/vendor/@carbon/elements/scss/import-once/import-once";
++
++/// Keep the header of a virtualized `DataTable` in view while it scrolls.
++/// Without `stickyHeader`, the wrapper around the table scrolls and the `thead`
++/// is `position: sticky`. A sticky box sticks to its nearest scroll container,
++/// and upstream's `overflow-x: auto` on `.bx--data-table-content` makes that
++/// inner `div` the scroll container (the other axis computes to `auto` too).
++/// It never scrolls vertically, so the header sticks to nothing and scrolls
++/// away with the body. The wrapper already scrolls on both axes, so the inner
++/// `div` stops being a scroll container.
++/// @access private
++/// @group components
++@mixin data-table-virtual {
++  .#{$prefix}--data-table-virtual > .#{$prefix}--data-table-content {
++    overflow: visible;
++  }
++}
++
++@include exports("data-table-virtual") {
++  @include data-table-virtual;
++}
 ```
 
-**File**: `src/Notification/ToastNotification.svelte` (modified, +12/-2)
+**File**: `e2e/data-table-virtual.test.ts` (modified, +25/-0)
 ```diff
-@@ -85,6 +85,14 @@
-    */
-   export let open = true;
+@@ -49,6 +49,31 @@ test.describe("DataTable virtualization", () => {
+     ).toHaveCount(0);
+   });
  
-+  /**
-+   * Set an id for the top-level element. The title and subtitle ids derive
-+   * from it as `{id}-title` and `{id}-subtitle`, so the server and the
-+   * browser render the same ids.
-+   * @type {string | undefined}
-+   */
-+  export let id = undefined;
++  test("header stays at the top of the scroll container while scrolling", async ({
++    page,
++  }) => {
++    const scrollContainer = page
++      .getByTestId("data-table-virtual-root")
++      .locator(".bx--data-table-container > div")
++      .filter({ has: page.locator("table.bx--data-table") });
++    await expect(scrollContainer).toBeVisible();
 +
-   import {
-     createEventDispatcher,
-     getContext,
-@@ -101,8 +109,9 @@
-   import { statusIconLabel } from "./status-icon-label.js";
- 
-   const dispatch = createEventDispatcher();
--  const titleId = uniqueId();
--  const subtitleId = uniqueId();
-+  const fallbackId = uniqueId();
-+  $: titleId = `${id ?? fallbackId}-title`;
-+  $: subtitleId = `${id ?? fallbackId}-subtitle`;
- 
-   /** @type {null | HTMLDivElement} */
-   let notificationRef = null;
-@@ -190,6 +199,7 @@
-     class:bx--toast-notification--low-contrast-warning-alt={lowContrast &&
-       kind === "warning-alt"}
-     style:width={fullWidth ? "100%" : undefined}
-+    {id}
-     {...rest}
-     on:click
-     on:mouseover
-```
-
-**File**: `src/UIShell/HeaderSwitcher.svelte` (modified, +10/-1)
-```diff
-@@ -59,6 +59,13 @@
-   /** Set to `true` to prevent the menu from closing when clicking outside */
-   export let preventCloseOnClickOutside = false;
- 
-+  /**
-+   * Set an id for the trigger button. The menu id derives from it as
-+   * `{id}-menu`, so the server and the browser render the same id.
-+   * @type {string | undefined}
-+   */
-+  export let id = undefined;
++    await scrollContainer.evaluate((el) => {
++      el.scrollTop = 50 * 48;
++    });
++    await expect(
++      page.getByRole("cell", { name: "Row 50", exact: true }),
++    ).toBeVisible();
 +
-   import { createEventDispatcher, setContext, tick } from "svelte";
-   import { get } from "svelte/store";
-   import { slide } from "svelte/transition";
-@@ -76,7 +83,8 @@
- 
-   const dispatch = createEventDispatcher();
- 
--  const menuId = `${uniqueId()}-menu`;
-+  const fallbackId = uniqueId();
-+  $: menuId = `${id ?? fallbackId}-menu`;
- 
-   /** @type {null | HTMLDivElement} */
-   let refMenu = null;
-@@ -165,6 +173,7 @@
-     aria-expanded={isOpen}
-     aria-controls={isOpen ? menuId : undefined}
-     aria-label={text ? undefined : iconDescription}
-+    {id}
-     class:bx--header__action={true}
-     class:bx--header__action--active={isOpen}
-     class:bx--header__action--text={true}
-```
-
-**File**: `src/UIShell/ProfileMenu.svelte` (modified, +10/-1)
-```diff
-@@ -42,6 +42,13 @@
-   /** Set to `true` to prevent the menu from closing when clicking outside */
-   export let preventCloseOnClickOutside = false;
- 
-+  /**
-+   * Set an id for the trigger button. The menu id derives from it as
-+   * `{id}-menu`, so the server and the browser render the same id.
-+   * @type {string | undefined}
-+   */
-+  export let id = undefined;
-+
-   import { createEventDispatcher, setContext, tick } from "svelte";
-   import { get } from "svelte/store";
-   import { slide } from "svelte/transition";
-@@ -58,7 +65,8 @@
- 
-   const dispatch = createEventDispatcher();
- 
--  const menuId = `${uniqueId()}-menu`;
-+  const fallbackId = uniqueId();
-+  $: menuId = `${id ?? fallbackId}-menu`;
- 
-   /** @type {null | HTMLDivElement} */
-   let refMenu = null;
-@@ -144,6 +152,7 @@
-   aria-expanded={isOpen}
-   aria-controls={isOpen ? menuId : undefined}
-   aria-label={iconDescription}
-+  {id}
-   class:bx--header__action={true}
-   class:bx--header__action--active={isOpen}
-   class:bx--profile-menu__trigger={true}
-```
-
-**File**: `tests/SsrLayout/StableIds.ssr.test.ts` (added, +24/-0)
-```diff
-@@ -0,0 +1,24 @@
-+// @vitest-environment node
-+import { render } from "svelte/server";
-+import StableIds from "./StableIds.test.svelte";
-+
-+describe("ids from an explicit id", () => {
-+  const html = () => render(StableIds).body;
-+
-+  it("render the same markup on every server render", () => {
-+    expect(html()).toBe(html());
++    const container = await scrollContainer.boundingBox();
++    const header = await page
++      .getByRole("columnheader", { name: "Name" })
++      .boundingBox();
++    expect(container).not.toBeNull();
++    expect(header).not.toBeNull();
++    expect(header?.y).toBeCloseTo(container?.y ?? Number.NaN, 0);
 +  });
 +
-+  it("derive from the id", () => {
-+    const body = html();
+   test("virtual scroll container is height-limited and scrollable", async ({
+     page,
+   }) => {
+```
+
+**File**: `src/DataTable/DataTable.svelte` (modified, +1/-0)
+```diff
+@@ -1428,6 +1428,7 @@
+   <div
+     bind:this={scrollContainerRef}
+     use:formReset={handleFormReset}
++    class:bx--data-table-virtual={virtualScrollContainer}
+     style:max-height={virtualScrollContainer
+       ? `${calculatedContainerHeight}px`
+       : undefined}
+```
+
+---
+
+### Incident Patch 2: `3de78af5` (2026-10-27)
+**Commit Message**: fix(overflow-menu): forward aria attributes to the menu item
+
+OverflowMenuItem moved only `aria-label`, `aria-labelledby` and
+`aria-describedby` to the menu item and left every other `aria-*` rest
+prop on the `role="none"` li, where `aria-keyshortcuts` or
+`aria-current` do nothing. Move every `aria-*` attribute to the
+button or link.
+
+**File**: `src/OverflowMenu/OverflowMenuItem.svelte` (modified, +6/-12)
+```diff
+@@ -96,7 +96,7 @@
+     getContext,
+     onMount,
+   } from "svelte";
+-  import { splitAriaNaming } from "../utils/aria-naming.js";
++  import { splitAria } from "../utils/aria-naming.js";
+   import { resolveLinkRel } from "../utils/link-rel.js";
+   import { scrollIntoViewWithin } from "../utils/scroll-into-view-within.js";
+   import { uniqueId } from "../utils/unique-id.js";
+@@ -127,28 +127,22 @@
+     }
+   });
+ 
+-  // Naming and description belong on the menuitem, not the `role="none"` li.
+-  $: ({
+-    ariaLabel,
+-    ariaLabelledBy,
+-    ariaDescribedBy,
+-    rest: wrapperProps,
+-  } = splitAriaNaming($$restProps));
++  // Every `aria-*` attribute belongs on the menuitem, not the `role="none"`
++  // li: naming, description, `aria-keyshortcuts` and the rest.
++  $: ({ aria: ariaProps, rest: wrapperProps } = splitAria($$restProps));
+ 
+   $: buttonProps = {
++    ...ariaProps,
+     role: "menuitem",
+     tabindex: "-1",
+     class: "bx--overflow-menu-options__btn",
+     type: href ? undefined : "button",
+     disabled: href ? undefined : disabled,
+-    "aria-disabled": href && disabled ? "true" : undefined,
++    "aria-disabled": href && disabled ? "true" : ariaProps["aria-disabled"],
+     href: href ? href : undefined,
+     target: href && target ? target : undefined,
+     rel: resolveLinkRel(target, rel),
+     title: requireTitle ? ($$slots.default ? undefined : text) : undefined,
+-    "aria-label": ariaLabel,
+-    "aria-labelledby": ariaLabelledBy,
+-    "aria-describedby": ariaDescribedBy,
+   };
+ 
+   /** @param {MouseEvent} event */
+```
+
+**File**: `src/utils/aria-naming.d.ts` (modified, +13/-0)
+```diff
+@@ -13,3 +13,16 @@ export function splitAriaNaming<T extends Record<string, unknown>>(
+   ariaDescribedBy: string | undefined;
+   rest: Omit<T, "aria-label" | "aria-labelledby" | "aria-describedby">;
+ };
 +
-+    for (const id of [
-+      'id="inline-title"',
-+      'id="toast-subtitle"',
-+      'id="switcher-menu"',
-+      'id="profile-menu"',
-+    ]) {
-+      expect(body).toContain(id);
++/**
++ * Split every `aria-*` attribute out of a component's rest props, for a
++ * component whose root is a wrapper with no role, such as a presentational
++ * `li`. Those attributes describe the control inside it. The rest stay on
++ * the wrapper.
++ */
++export function splitAria<T extends Record<string, unknown>>(
++  restProps: T,
++): {
++  aria: Record<`aria-${string}`, string | undefined>;
++  rest: Omit<T, `aria-${string}`>;
++};
+```
+
+**File**: `src/utils/aria-naming.js` (modified, +19/-0)
+```diff
+@@ -16,3 +16,22 @@ export function splitAriaNaming(restProps) {
+   } = restProps;
+   return { ariaLabel, ariaLabelledBy, ariaDescribedBy, rest };
+ }
++
++/**
++ * Split every `aria-*` attribute out of a component's rest props, for a
++ * component whose root is a wrapper with no role, such as a presentational
++ * `li`. Those attributes describe the control inside it. The rest stay on
++ * the wrapper.
++ *
++ * @param {Record<string, any>} restProps
++ */
++export function splitAria(restProps) {
++  /** @type {Record<string, any>} */
++  const aria = {};
++  /** @type {Record<string, any>} */
++  const rest = {};
++  for (const [name, value] of Object.entries(restProps)) {
++    (name.startsWith("aria-") ? aria : rest)[name] = value;
++  }
++  return { aria, rest };
++}
+```
+
+**File**: `tests/OverflowMenu/OverflowMenu.test.ts` (modified, +20/-0)
+```diff
+@@ -12,6 +12,7 @@ import OverflowMenuRel from "./OverflowMenu.rel.test.svelte";
+ import OverflowMenu from "./OverflowMenu.test.svelte";
+ import OverflowMenuInBreadcrumb from "./OverflowMenuInBreadcrumb.test.svelte";
+ import OverflowMenuInModal from "./OverflowMenuInModal.test.svelte";
++import OverflowMenuItemAria from "./OverflowMenuItem.aria.test.svelte";
+ import OverflowMenuItemIcons from "./OverflowMenuItem.icons.test.svelte";
+ import OverflowMenuPrimaryFocus from "./OverflowMenuPrimaryFocus.test.svelte";
+ import { closeDetails, openMenu } from "./helpers";
+@@ -728,6 +729,25 @@ describe("OverflowMenu", () => {
+     });
+   });
+ 
++  it("puts aria attributes on the menu item, and the rest on the wrapper", () => {
++    render(OverflowMenuItemAria);
++
++    const button = screen.getByRole("menuitem", { name: "Save" });
++    expect(button).toHaveAttribute("aria-keyshortcuts", "Control+S");
++    expect(button).toHaveAttribute("aria-describedby", "save-hint");
++    expect(button).toHaveAccessibleDescription("Saves the draft");
++
++    const link = screen.getByRole("menuitem", { name: "Docs" });
++    expect(link).toHaveAttribute("aria-keyshortcuts", "Control+D");
++    expect(link).toHaveAttribute("aria-current", "page");
++
++    const wrapper = screen.getByTestId("save");
++    expect(wrapper).toHaveAttribute("role", "none");
++    for (const name of wrapper.getAttributeNames()) {
++      expect(name.startsWith("aria-")).toBe(false);
 +    }
 +  });
-+});
++
+   it("focuses the primaryFocus item, not the first item, when opened", async () => {
+     render(OverflowMenuPrimaryFocus);
+ 
 ```
 
-**File**: `tests/SsrLayout/StableIds.test.svelte` (added, +21/-0)
+**File**: `tests/OverflowMenu/OverflowMenuItem.aria.test.svelte` (added, +20/-0)
 ```diff
-@@ -0,0 +1,21 @@
+@@ -0,0 +1,20 @@
 +<script lang="ts">
-+  import InlineNotification from "carbon-components-svelte/Notification/InlineNotification.svelte";
-+  import ToastNotification from "carbon-components-svelte/Notification/ToastNotification.svelte";
-+  import HeaderSwitcher from "carbon-components-svelte/UIShell/HeaderSwitcher.svelte";
-+  import ProfileMenu from "carbon-components-svelte/UIShell/ProfileMenu.svelte";
++  import OverflowMenu from "carbon-components-svelte/OverflowMenu/OverflowMenu.svelte";
++  import OverflowMenuItem from "carbon-components-svelte/OverflowMenu/OverflowMenuItem.svelte";
 +</script>
 +
-+<InlineNotification
-+  id="inline"
-+  actionable
-+  title="Saved"
-+  subtitle="Your changes are live."
-+/>
-+<ToastNotification
-+  id="toast"
-+  actionable
-+  title="Saved"
-+  subtitle="Your changes are live."
-+/>
-+<HeaderSwitcher id="switcher" isOpen text="Products" />
-+<ProfileMenu id="profile" isOpen />
++<OverflowMenu open>
++  <OverflowMenuItem
++    text="Save"
++    aria-keyshortcuts="Control+S"
++    aria-describedby="save-hint"
++    data-testid="save"
++  />
++  <OverflowMenuItem
++    href="/docs"
++    text="Docs"
++    aria-keyshortcuts="Control+D"
++    aria-current="page"
++  />
++</OverflowMenu>
++<span id="save-hint">Saves the draft</span>
+```
+
+---
+
+### Incident Patch 3: `8b4ff1b3` (2026-10-27)
+**Commit Message**: fix(menu): read a disabled MenuItem as GrayText in forced colors
+
+Forced colors repaint the text color of a disabled item with the same
+value as an enabled one, so the label, shortcut and icon showed no
+sign that the item was disabled. Set them to `GrayText` in a
+forced-colors block, with the selectors of the disabled rules they
+override.
+
+**File**: `css/vendor/carbon-components/scss/components/menu/_menu.scss` (modified, +13/-1)
+```diff
+@@ -241,14 +241,26 @@
+ // The Menu surface is separated from the page only by a box-shadow, which
+ // forced-colors mode drops. A transparent outline is repainted as a visible
+ // system colour there.
++//
++// Forced colors repaint a disabled item's text in the same color as an
++// enabled one, so nothing marked it. Its label, shortcut and icon read
++// `GrayText`. The selectors repeat the disabled rules above, which set
++// `color`, and win on order.
+ 
+-/// Menu surface edge in forced-colors mode.
++/// Menu surface edge and disabled items in forced-colors mode.
+ /// @access private
+ /// @group menu
+ @mixin menu-forced-colors {
+   .#{$prefix}--menu {
+     @include high-contrast-mode("outline");
+   }
++
++  .#{$prefix}--menu-option__content--disabled,
++  .#{$prefix}--menu-option__content--disabled .#{$prefix}--menu-option__label,
++  .#{$prefix}--menu-option__content--disabled .#{$prefix}--menu-option__info,
++  .#{$prefix}--menu-option__content--disabled .#{$prefix}--menu-option__icon {
++    @include high-contrast-mode("disabled");
++  }
+ }
+ 
+ @include exports("menu-forced-colors") {
+```
+
+**File**: `e2e/fixtures/ForcedColorsFixture.svelte` (modified, +1/-0)
+```diff
+@@ -242,6 +242,7 @@
+   <button bind:this={menuAnchor} type="button">Menu anchor</button>
+   <Menu anchor={menuAnchor} open labelText="Menu">
+     <MenuItem labelText="Item" />
++    <MenuItem labelText="Disabled item" shortcutText="⌘S" disabled />
+   </Menu>
+ 
+   <ShapeIndicator kind="medium" label="Medium" />
+```
+
+**File**: `e2e/forced-colors.test.ts` (modified, +2/-0)
+```diff
+@@ -217,6 +217,8 @@ test.describe("forced colors", () => {
+       ".bx--card--disabled",
+       ".bx--card--disabled .bx--card__label",
+       ".bx--card--disabled .bx--card__title-text-row",
++      ".bx--menu-option--disabled .bx--menu-option__label",
++      ".bx--menu-option--disabled .bx--menu-option__info",
+     ]) {
+       // biome-ignore lint/performance/noAwaitInLoops: hover moves one pointer
+       await page.hover(selector, { force: true });
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5140** (2026-10-27): fix(date-picker): match the locale's month names in the input pattern (@metonym)
-- **PR #5139** (2026-10-27): fix(date-picker): accept a time in the derived input pattern (@metonym)
-- **PR #5138** (2026-10-27): fix(date-picker): name AM and PM in the picker's locale (@metonym)
-- **PR #5137** (2026-10-27): fix(date-picker): parse the AM/PM token (@metonym)
-- **PR #5136** (2026-10-27): fix(tag-input): drop the placeholder when read-only with tags (@metonym)
-- **PR #5135** (2026-10-26): chore: format the InterstitialScreen steps fixture (@metonym)
+- **PR #5200** (2026-10-27): chore(deps-dev): bump bivium to 0.2.0 (@metonym)
+- **PR #5198** (2026-10-28): fix(data-table): keep the header in view when virtualize scrolls (@metonym)
+- **PR #5197** (2026-10-28): fix(data-table): size the selection column under fixedLayout (@metonym)
+- **PR #5196** (2026-10-28): fix(overflow-menu): forward aria attributes to the menu item (@metonym)
+- **PR #5195** (2026-10-28): fix(data-table): allow a null sortKey (@metonym)
+- **PR #5192** (2026-10-28): fix(menu): read a disabled MenuItem as GrayText in forced colors (@metonym)
 
 ---
 
@@ -1730,28 +1435,51 @@ changed on every build and the ids changed on hydration. Each takes an
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. types): type the four remaining `any` contexts
+## X. data-table): keep the header in view when virtualize scrolls
 
 **RULE**:
-When implementing operations in `scripts/svelte-types-baseline.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in carbon-design-system/carbon-components-svelte. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `css/vendor/carbon-components/scss/components/data-table/_data-table.scss`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in carbon-design-system/carbon-components-svelte. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `518ba1d7`: types): type the four remaining `any` contexts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bc2f18a0`: data-table): keep the header in view when virtualize scrolls. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/svelte-types-baseline.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `css/vendor/carbon-components/scss/components/data-table/_data-table.scss`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  "ComboButton/ComboButton.svelte": 4,
+
+// carbon-components-svelte patch (DataTable virtualize without stickyHeader)
+@import "carbon-components/scss/globals/scss/vars";
+@import "carbon-components/scss/globals/scss/vendor/@carbon/elements/scss/import-once/import-once";
+
+/// Keep the header of a virtualized `DataTable` in view while it scrolls.
+/// Without `stickyHeader`, the wrapper around the table scrolls and the `thead`
+/// is `position: sticky`. A sticky box sticks to its nearest scroll container,
+/// and upstream's `overflow-x: auto` on `.bx--data-table-content` makes that
+/// inner `div` the scroll container (the other axis computes to `auto` too).
+/// It never scrolls vertically, so the header sticks to nothing and scrolls
+/// away with the body. The wrapper already scrolls on both axes, so the inner
+/// `div` stops being a scroll container.
+/// @access private
+/// @group components
+@mixin data-table-virtual {
+  .#{$prefix}--data-table-virtual > .#{$prefix}--data-table-content {
+    overflow: visible;
+  }
+}
+
+@include exports("data-table-virtual") {
+  @include data-table-virtual;
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  "ComboButton/ComboButton.svelte": 5,
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `518ba1d7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bc2f18a0` are properly handled with clean fallback behavior.

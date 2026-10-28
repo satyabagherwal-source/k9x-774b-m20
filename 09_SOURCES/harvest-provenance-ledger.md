@@ -5634,3 +5634,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-lilylilith-qi_2-1_anyangle` | `https://huggingface.co/lilylilith/QI_2.1_AnyAngle` | `hf-lilylil` | Multi-dimensional audit evidence | 2026-10-28T01:15:46.127Z |
 | `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `fdc61caf` | Multi-dimensional audit evidence | 2026-10-28T01:22:15.164Z |
 | `learn-huggingface-baai-bge-large-en-v1-5` | `https://huggingface.co/BAAI/bge-large-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-28T01:22:24.329Z |
+| `learn-github-carbon-design-system-carbon-components-svelte` | `https://github.com/carbon-design-system/carbon-components-svelte` | `52889ec2` | Multi-dimensional audit evidence | 2026-10-28T01:29:02.336Z |
+| `learn-github-linkwarden-linkwarden` | `https://github.com/linkwarden/linkwarden` | `eff7c6b7` | Multi-dimensional audit evidence | 2026-10-28T01:29:08.650Z |
+| `learn-huggingface-zai-org-glm-5-3` | `https://huggingface.co/zai-org/GLM-5.3` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-10-28T01:29:12.496Z |
+| `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `c5a758f0` | Multi-dimensional audit evidence | 2026-10-28T01:29:18.488Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source**: github ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
-> **Source Version**: `1ec33547`  
+> **Source Version**: `c5a758f0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T12:50:29.989Z  
+> **Timestamp**: 2026-10-28T01:29:18.072Z  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T12:50:29.981Z  
+> **Harvest Timestamp**: 2026-10-28T01:29:17.974Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1198,570 +1198,194 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `762d78cf` (2026-10-27)
-**Commit Message**: Split TestSchedulerRowLevelSecurityCommands and TestUserJobMonitoring into two partitions
+### Incident Patch 1: `b4d174a0` (2026-10-27)
+**Commit Message**: Fix argmin/argmax with composite crash in YTQL
 
-Splits two heavy single-partition size_s classes in two. In the CI run of PR 16688527 both landed in chunk 30, which was killed at the 1800s chunk timeout with 30 tests not launched:
+<Message NOT for release notes>
 
-| Class | Tests | Time |
-|---|---|---|
-| `TestSchedulerRowLevelSecurityCommands` | 50 | 452s |
-| `TestUserJobMonitoring` | 13 | 303s |
+* Changelog entry
+Type: fix
+Component: dynamic-tables
 
-That run's median chunk took 1061s.
-commit_hash:c28d948f13d444ac334def2672377a1690fbcc44
+Fixed crash when using argmin/argmax aggregate functions in YTQL with v3 composite types.
+commit_hash:35c6917094462671f6345747964216aee6b28957
 
-**File**: `yt/yt/tests/integration/controller/test_rls.py` (modified, +1/-0)
+**File**: `yt/yt/library/query/engine/builtin_function_profiler.cpp` (modified, +5/-1)
 ```diff
-@@ -34,6 +34,7 @@
- @pytest.mark.parametrize("optimize_for", ["scan", "lookup"])
- class TestSchedulerRowLevelSecurityCommands(YTEnvSetup):
-     ENABLE_MULTIDAEMON = True
-+    NUM_TEST_PARTITIONS = 2
-     NUM_MASTERS = 1
-     NUM_NODES = 3
-     NUM_SCHEDULERS = 1
+@@ -1003,13 +1003,17 @@ std::vector<TCGValue> UnpackValues(TCGBaseContext& builder, TCGValue span, const
+             case EValueType::String: {
+                 Value* length = builder->CreateLoad(builder->getInt32Ty(), iterator);
+                 iterator = builder->CreateGEP(builder->getInt8Ty(), iterator, builder->getInt32(4));
++                // COMPAT(sabdenovch): Expression builder v1 does not mesh well with EValueType::Composite and all its nuances.
++                // Make sure type resolves correctly in v2.
+                 inplaceData.push_back(
+                     TCGValue::Create(
+                         builder,
+                         builder->getFalse(),
+                         length,
+                         iterator,
+-                        argTypes[index]));
++                        argTypes[index] == EValueType::Composite
++                            ? EValueType::Any
++                            : argTypes[index]));
+                 iterator = builder->CreateGEP(builder->getInt8Ty(), iterator, length);
+                 break;
+             }
 ```
 
-**File**: `yt/yt/tests/integration/node/test_user_job.py` (modified, +1/-0)
+**File**: `yt/yt/library/query/unittests/ql_query_ut.cpp` (modified, +26/-0)
 ```diff
-@@ -2979,6 +2979,7 @@ def test_token_expiration_timeout(self):
+@@ -8801,6 +8801,32 @@ TEST_F(TQueryEvaluateTest, ArgMin)
+     Evaluate("integer, argmin(any, double) as c from [//t] group by integer", split, source, ResultMatcher(result));
+ }
  
- class TestUserJobMonitoring(YTEnvSetup):
-     USE_DYNAMIC_TABLES = True
-+    NUM_TEST_PARTITIONS = 2
-     NUM_MASTERS = 1
-     NUM_NODES = 3
-     NUM_SCHEDULERS = 1
-```
-
----
-
-### Incident Patch 2: `9ee118fe` (2026-10-27)
-**Commit Message**: Fix Python style checks in Odin and UNN test helpers
-
-Fix E302 in yt/odin/lib/yt_odin/common/prctl.py by separating the module-level decorated function with two blank lines. Fix W391 by removing trailing blank lines from the pipeline_parallel_orchestrator test helper library.
-
-Validation: Python ASTs are unchanged; ya make -t --style passed for both requested projects; staged EOF/EOL checks and Arc commit lint passed.
-commit_hash:b0e2b23e2cf8f00118c6b75421e32e3d1001df7d
-
-**File**: `yt/odin/lib/yt_odin/common/prctl.py` (modified, +1/-0)
-```diff
-@@ -9,6 +9,7 @@
- PR_GET_NAME = 16
- TASK_NAME_LEN = 15
- 
++TEST_F(TQueryEvaluateTest, ArgMaxWithComposite)
++{
++    auto split = MakeSplit({
++        {"discount_id", SimpleLogicalType(ESimpleLogicalValueType::Int64)},
++        {"version_num", SimpleLogicalType(ESimpleLogicalValueType::Int64)},
++        {"parasite_key", EValueType::Int64},
++        {"utc_start_period_dttm", EValueType::String},
++        {"tag_code_list", ListLogicalType(SimpleLogicalType(ESimpleLogicalValueType::String))},
++    });
 +
- @functools.cache
- def _get_libc() -> ctypes.CDLL:
-     # Loaded lazily so that importing this module does not fail on non-Linux platforms.
++    auto source = TSource{
++        "discount_id=1;version_num=1;utc_start_period_dttm=\"abc\";tag_code_list=[\"x\";\"y\"]",
++    };
++
++    auto resultSplit = MakeSplit({
++        {"discount_id", SimpleLogicalType(ESimpleLogicalValueType::Int64)},
++        {"am", EValueType::Any},
++    });
++
++    auto result = YsonToRows({
++        "discount_id=1;am=[\"x\";\"y\"]",
++    }, resultSplit);
++
++    Evaluate("discount_id, argmax(tag_code_list, version_num) as am from [//t] group by discount_id limit 1", split, source, ResultMatcher(result));
++}
++
+ TEST_F(TQueryEvaluateTest, CardinalityAggregate)
+ {
+     auto split = MakeSplit({
 ```
 
 ---
 
-### Incident Patch 3: `412c837c` (2026-10-27)
-**Commit Message**: Refactor tests by making pytest class for each (suit, case, cfg) tuple and Result/Debug/etc its subtests
+### Incident Patch 2: `3b4b0b0b` (2026-10-27)
+**Commit Message**: Add runtime LLD threads and forward package memory limits
 
-This guarantees that different modes (like DebugResult/Plan) will always go to same chunk.
-Before this change different modes mostly went to the same chunk due to implicit sorting by full test name before chunk splitting.
-This change reduces copy-paste and speeds up test execution a little (~1.5%).
-commit_hash:f0e85163c042d4df7f2ab4e000c1076fa19ebe90
+`--lld-threads` задаёт число потоков внутри одной локальной ELF-линковки LLD. `ya` передаёт значение через runtime-переменную `_YA_LLD_THREADS`; `build/scripts/link_exe.py` обрабатывает его непосредственно перед запуском линкера, а `link_dyn_lib.py` использует ту же реализацию. Учитывается выбор линкера после plugins и внутри response files. Раннер не разбирает команду линкера.
 
-**File**: `yt/yql/tests/sql/dq_file/dq_file.make` (modified, +1/-1)
+Значение параметра не попадает в граф и ключи кэша: смена числа потоков не инвалидирует configure, компиляцию и линковку. Изменение самих linker scripts однократно изменит UID зависимых узлов. `--link-threads` по-прежнему управляет числом одновременных линковок; `--lld-threads` отклоняется для Larry и распределённой сборки.
+
+`ya package` передаёт `--lld-threads` и разобранный `--memory-limit` во внутренний `ya make`.
+commit_hash:23610ad14460033ee751dbc6a8b1b0c533df0650
+
+**File**: `build/scripts/link_dyn_lib.py` (modified, +1/-0)
 ```diff
-@@ -21,7 +21,7 @@ ELSE()
- ENDIF()
+@@ -216,6 +216,7 @@ def parse_args(args):
+     else:
+         stdout = sys.stdout
  
- FORK_TESTS()
--FORK_SUBTESTS()
-+# No FORK_SUBTESTS() to keep all modes of a SQL case in one process so they share run_file.cache.
- SPLIT_FACTOR(10)
- 
- DEPENDS(
++    cmd = link_exe.with_lld_threads(cmd, opts.arch, os.environ.get('_YA_LLD_THREADS'))
+     proc = subprocess.Popen(cmd, shell=False, stderr=sys.stderr, stdout=stdout)
+     proc.communicate()
+     thinlto_cache.postprocess(opts)
 ```
 
-**File**: `yt/yql/tests/sql/dq_file/part0/canondata/result.json` (modified, +101/-101)
+**File**: `build/scripts/link_exe.py` (modified, +42/-0)
 ```diff
-@@ -1,705 +1,705 @@
- {
--    "test.test[action-action_eval_cluster_and_table-default.txt-Plan]": [
-+    "test.TestDqFile_action-action_eval_cluster_and_table-default.txt.test[Plan]": [
-         {
-             "checksum": "3c87846ddd22ee6b15ec9654492aa750",
-             "size": 5383,
-             "uri": "https://{canondata_backend}/1781765/c4be8ffdf4ebb9b7bea187f72e557e775e4eb1fd/resource.tar.gz#test.test_action-action_eval_cluster_and_table-default.txt-Plan_/plan.txt"
-         }
-     ],
--    "test.test[action-subquery_merge2-default.txt-Plan]": [
-+    "test.TestDqFile_action-subquery_merge2-default.txt.test[Plan]": [
-         {
-             "checksum": "55515ae638f317612d048052be489bfd",
-             "size": 1740,
-             "uri": "https://{canondata_backend}/1781765/c4be8ffdf4ebb9b7bea187f72e557e775e4eb1fd/resource.tar.gz#test.test_action-subquery_merge2-default.txt-Plan_/plan.txt"
-         }
-     ],
--    "test.test[action-subquery_merge_evaluate-default.txt-Plan]": [
-+    "test.TestDqFile_action-subquery_merge_evaluate-default.txt.test[Plan]": [
-         {
-             "checksum": "b4dd508a329723c74293d80f0278c705",
-             "size": 505,
-             "uri": "https://{canondata_backend}/1781765/c4be8ffdf4ebb9b7bea187f72e557e775e4eb1fd/resource.tar.gz#test.test_action-subquery_merge_evaluate-default.txt-Plan_/plan.txt"
-         }
-     ],
--    "test.test[action-subquery_merge_nested_subquery--Plan]": [
-+    "test.TestDqFile_action-subquery_merge_nested_subquery-.test[Plan]": [
-         {
-             "checksum": "212be881133a20b5b73ef1250dbeda51",
-             "size": 960,
-             "uri": "https://{canondata_backend}/1781765/c4be8ffdf4ebb9b7bea187f72e557e775e4eb1fd/resource.tar.gz#test.test_action-subquery_merge_nested_subquery--Plan_/plan.txt"
-         }
-     ],
--    "test.test[agg_apply-avg_const_interval--Plan]": [
-+    "test.TestDqFile_agg_apply-avg_const_interval-.test[Plan]": [
-         {
-             "checksum": "3c87846ddd22ee6b15ec9654492aa750",
-             "size": 5383,
-             "uri": "https://{canondata_backend}/1781765/c4be8ffdf4ebb9b7bea187f72e557e775e4eb1fd/resource.tar.gz#test.test_agg_apply-avg_const_interval--Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggr_factory-corellation-default.txt-Plan]": [
-+    "test.TestDqFile_aggr_factory-corellation-default.txt.test[Plan]": [
-         {
-             "checksum": "31b25cd4d69dc55b87921258b4c27298",
-             "size": 9015,
-             "uri": "https://{canondata_backend}/1781765/c4be8ffdf4ebb9b7bea187f72e557e775e4eb1fd/resource.tar.gz#test.test_aggr_factory-corellation-default.txt-Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggr_factory-stddev-default.txt-Plan]": [
-+    "test.TestDqFile_aggr_factory-stddev-default.txt.test[Plan]": [
-         {
-             "checksum": "8a2ec3d3969cdc00a05ce20dc8670204",
-             "size": 11450,
-             "uri": "https://{canondata_backend}/1781765/c4be8ffdf4ebb9b7bea187f72e557e775e4eb1fd/resource.tar.gz#test.test_aggr_factory-stddev-default.txt-Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggr_factory-top-default.txt-Plan]": [
-+    "test.TestDqFile_aggr_factory-top-default.txt.test[Plan]": [
-         {
-             "checksum": "8a2ec3d3969cdc00a05ce20dc8670204",
-             "size": 11450,
-             "uri": "https://{canondata_backend}/1781765/c4be8ffdf4ebb9b7bea187f72e557e775e4eb1fd/resource.tar.gz#test.test_aggr_factory-top-default.txt-Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggr_factory-udaf-default.txt-Plan]": [
-+    "test.TestDqFile_aggr_factory-udaf-default.txt.test[Plan]": [
-         {
-             "checksum": "08da0d139683a581e8ce734b7ac8033c",
-             "size": 12012,
-             "uri": "https://{canondata_backend}/1781765/c4be8ffdf4ebb9b7bea187f72e557e775e4eb1fd/resource.tar.gz#test.test_aggr_factory-udaf-default.txt-Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggregate-group_by_gs_and_having-default.txt-Plan]": [
-+    "test.TestDqFile_aggregate-group_by_gs_and_having-default.txt.test[Plan]": [
-         {
-             "checksum": "4a18afd78b918f8ac8e38ca5b03e4a67",
-             "size": 6873,
-             "uri": "https://{canondata_backend}/1781765/c4be8ffdf4ebb9b7bea187f72e557e775e4eb1fd/resource.tar.gz#test.test_aggregate-group_by_gs_and_having-default.txt-Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggregate-group_by_gs_simp--Plan]": [
-+    "test.TestDqFile_aggregate-group_by_gs_simp-.test[Plan]": [
-         {
-             "checksum": "d6496a49fd45717fabb04156b74173da",
-             "size": 7851,
-             "uri": "https://{canondata_backend}/1781765/c4be8ffdf4ebb9b7bea187f72e557e775e4eb1fd/resource.tar.gz#test.test_aggregate-group_by_gs_simp--Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggregate-group_by_hop_expr_key--Plan]": [
-+    "test.TestDqFile_aggregate-group_by_hop_expr_key-.test[Plan]": [
-         {
-             "checksum": "57ca470c792ec0ea7f4c3974c8686f3d",
-             "size": 4363,
-             "uri": "https
+@@ -5,6 +5,7 @@
+ import json
+ import subprocess
+ import optparse
++import shlex
+ import textwrap
+ 
+ # Explicitly enable local imports
+@@ -38,6 +39,46 @@ def remove_libs(cmd, libs):
+     return flags
+ 
+ 
++def with_lld_threads(cmd, arch, threads):
++    """Apply runtime parallelism only to ELF LLD, preserving the graph command."""
++    if threads is None or arch not in ('LINUX', 'ANDROID', 'FREEBSD'):
++        return cmd
++
++    # Inspect response files too: the driver can select a different linker there.
++    args = []
++    for arg in cmd:
++        if pcf.is_cmdfile_arg(arg):
++            content = '\n'.join(pcf.read_from_command_file(pcf.cmdfile_path(arg)))
++            args.extend(shlex.split(content))
++        else:
++            args.append(arg)
++    if any(arg.startswith('@') for arg in args):
++        return cmd
++
++    linker_path = None
++    linker = None
++    for index, arg in enumerate(args):
++        if arg.startswith('--ld-path='):
++            linker_path = arg[len('--ld-path=') :]
++        elif arg == '--ld-path' and index + 1 < len(args):
++            linker_path = args[index + 1]
++        elif arg.startswith('-fuse-ld='):
++            linker = arg[len('-fuse-ld=') :]
++        elif arg == '-fuse-ld' and index + 1 < len(args):
++            linker = args[index + 1]
++
++    if linker_path is not None:
++        if os.path.basename(linker_path) != 'ld.lld':
++            return cmd
++    elif linker != 'lld':
++        return cmd
++
++    threads = int(threads)
++    if threads <= 0:
++        raise ValueError('_YA_LLD_THREADS requires a positive integer')
++    return cmd + ['-Wl,--threads={}'.format(threads)]
++
++
+ def parse_args(args):
+     parser = optparse.OptionParser()
+     parser.disable_interspersed_args()
+@@ -94,6 +135,7 @@ def parse_args(args):
+         stdout = sys.stdout
+ 
+     thinlto_cache.preprocess(opts, cmd)
++    cmd = with_lld_threads(cmd, opts.arch, os.environ.get('_YA_LLD_THREADS'))
+     rc = subprocess.call(cmd, shell=False, stderr=sys.stderr, stdout=stdout)
+     thinlto_cache.postprocess(opts)
+ 
 ```
 
-**File**: `yt/yql/tests/sql/dq_file/part0/test.py` (modified, +3/-14)
-```diff
-@@ -1,17 +1,6 @@
--import pytest
--import yatest
-+import yatest.common
- 
--from yt.yql.tests.sql.runners.dq_file import run_test
--from yt.yql.tests.sql.runners.common import DATA_PATH
--from test_utils import pytest_generate_tests_for_part
--from yql_utils import pytest_get_current_part
-+from yt.yql.tests.sql.runners.dq_file import collect_test_classes
- 
- 
--def pytest_generate_tests(metafunc):
--    current_part, part_count = pytest_get_current_part(yatest.common.source_path(__file__))
--    return pytest_generate_tests_for_part(metafunc, current_part, part_count, data_path=DATA_PATH)
--
--
--@pytest.mark.parametrize('what', ['Results', 'ForceBlocks', 'Plan'])
--def test(suite, case, cfg, tmpdir, what, yql_http_file_server):
--    return run_test(suite, case, cfg, tmpdir, what, yql_http_file_server)
-+globals().update(collect_test_classes(yatest.common.source_path(__file__)))
-```
+---
 
-**File**: `yt/yql/tests/sql/dq_file/part1/canondata/result.json` (modified, +98/-98)
-```diff
-@@ -1,684 +1,684 @@
- {
--    "test.test[action-table_content_before_from_folder--Plan]": [
-+    "test.TestDqFile_action-table_content_before_from_folder-.test[Plan]": [
-         {
-             "checksum": "0ca30dbdc9594f22b2d2e01843b47921",
-             "size": 7923,
-             "uri": "https://{canondata_backend}/1781765/4e434b8f53de2ccd229245c77552f3a4e8200f55/resource.tar.gz#test.test_action-table_content_before_from_folder--Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggr_factory-bitand-default.txt-Plan]": [
-+    "test.TestDqFile_aggr_factory-bitand-default.txt.test[Plan]": [
-         {
-             "checksum": "96bec1df38ac72c0272d9a2d869bd184",
-             "size": 11451,
-             "uri": "https://{canondata_backend}/1781765/4e434b8f53de2ccd229245c77552f3a4e8200f55/resource.tar.gz#test.test_aggr_factory-bitand-default.txt-Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggregate-group_by_expr_mul_col--Plan]": [
-+    "test.TestDqFile_aggregate-group_by_expr_mul_col-.test[Plan]": [
-         {
-             "checksum": "f06adc774a6af156f64acac58c0c83d2",
-             "size": 5135,
-             "uri": "https://{canondata_backend}/1781765/4e434b8f53de2ccd229245c77552f3a4e8200f55/resource.tar.gz#test.test_aggregate-group_by_expr_mul_col--Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggregate-group_by_expr_with_join--Plan]": [
-+    "test.TestDqFile_aggregate-group_by_expr_with_join-.test[Plan]": [
-         {
-             "checksum": "e0e3d37838b6ff8c54a508c9c105296f",
-             "size": 6589,
-             "uri": "https://{canondata_backend}/1781765/4e434b8f53de2ccd229245c77552f3a4e8200f55/resource.tar.gz#test.test_aggregate-group_by_expr_with_join--Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggregate-group_by_rollup_grouping_hum--Plan]": [
-+    "test.TestDqFile_aggregate-group_by_rollup_grouping_hum-.test[Plan]": [
-         {
-             "checksum": "aa26151f98c188fd366103cd79c6ffcd",
-             "size": 9820,
-             "uri": "https://{canondata_backend}/1781765/4e434b8f53de2ccd229245c77552f3a4e8200f55/resource.tar.gz#test.test_aggregate-group_by_rollup_grouping_hum--Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggregate-group_by_rollup_with_filter--Plan]": [
-+    "test.TestDqFile_aggregate-group_by_rollup_with_filter-.test[Plan]": [
-         {
-             "checksum": "9b24df8ecc58630c8398f956da57ddf0",
-             "size": 8848,
-             "uri": "https://{canondata_backend}/1781765/4e434b8f53de2ccd229245c77552f3a4e8200f55/resource.tar.gz#test.test_aggregate-group_by_rollup_with_filter--Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggregate-having_distinct_expr--Plan]": [
-+    "test.TestDqFile_aggregate-having_distinct_expr-.test[Plan]": [
-         {
-             "checksum": "d9bd3de50ea38aa2c3ce2bc372ada67b",
-             "size": 4535,
-             "uri": "https://{canondata_backend}/1781765/4e434b8f53de2ccd229245c77552f3a4e8200f55/resource.tar.gz#test.test_aggregate-having_distinct_expr--Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggregate-list_after_group-default.txt-Plan]": [
-+    "test.TestDqFile_aggregate-list_after_group-default.txt.test[Plan]": [
-         {
-             "checksum": "d08e98e2d000f8d7209e0302591a3460",
-             "size": 5136,
-             "uri": "https://{canondata_backend}/1781765/4e434b8f53de2ccd229245c77552f3a4e8200f55/resource.tar.gz#test.test_aggregate-list_after_group-default.txt-Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggregate-list_nullable--Plan]": [
-+    "test.TestDqFile_aggregate-list_nullable-.test[Plan]": [
-         {
-             "checksum": "42e502d920e9ac315452ad1938fd6ae9",
-             "size": 5428,
-             "uri": "https://{canondata_backend}/1781765/4e434b8f53de2ccd229245c77552f3a4e8200f55/resource.tar.gz#test.test_aggregate-list_nullable--Plan_/plan.txt"
-         }
-     ],
--    "test.test[bigdate-table_arithmetic-default.txt-Plan]": [
-+    "test.TestDqFile_bigdate-table_arithmetic-default.txt.test[Plan]": [
-         {
-             "checksum": "46e3cb70fefd16c31ac200a44b657751",
-             "size": 10052,
-             "uri": "https://{canondata_backend}/1781765/4e434b8f53de2ccd229245c77552f3a4e8200f55/resource.tar.gz#test.test_bigdate-table_arithmetic-default.txt-Plan_/plan.txt"
-         }
-     ],
--    "test.test[binding-named_node_corr_names-default.txt-Plan]": [
-+    "test.TestDqFile_binding-named_node_corr_names-default.txt.test[Plan]": [
-         {
-             "checksum": "c718b5af05c455afbbee3ef3817fbbbb",
-             "size": 4714,
-             "uri": "https://{canondata_backend}/1781765/4e434b8f53de2ccd229245c77552f3a4e8200f55/resource.tar.gz#test.test_binding-named_node_corr_names-default.txt-Plan_/plan.txt"
-         }
-     ],
--    "test.test[blocks-bitcast_scalar--Plan]": [
-+    "test.TestDqFile_blocks-bitcast_scalar-.test[Plan]": [
-         {
-             "checksum": "f195daa0332f326a49d3606aa59caf5b",
-             "size": 3671,
-             "uri": "https://{canondata_backend}/17
-```
+### Incident Patch 3: `8eac25ce` (2026-10-27)
+**Commit Message**: Increase teardown timeout in ytflow tests
+commit_hash:c9b84221403ad7b1cb580f2afb0076292ad08740
 
-**File**: `yt/yql/tests/sql/dq_file/part1/test.py` (modified, +3/-14)
+**File**: `yt/yql/tests/agent/test_ytflow.py` (modified, +1/-0)
 ```diff
-@@ -1,17 +1,6 @@
--import pytest
--import yatest
-+import yatest.common
- 
--from yt.yql.tests.sql.runners.dq_file import run_test
--from yt.yql.tests.sql.runners.common import DATA_PATH
--from test_utils import pytest_generate_tests_for_part
--from yql_utils import pytest_get_current_part
-+from yt.yql.tests.sql.runners.dq_file import collect_test_classes
+@@ -92,6 +92,7 @@ def wrapper(self, *args, **kwargs):
  
  
--def pytest_generate_tests(metafunc):
--    current_part, part_count = pytest_get_current_part(yatest.common.source_path(__file__))
--    return pytest_generate_tests_for_part(metafunc, current_part, part_count, data_path=DATA_PATH)
--
--
--@pytest.mark.parametrize('what', ['Results', 'ForceBlocks', 'Plan'])
--def test(suite, case, cfg, tmpdir, what, yql_http_file_server):
--    return run_test(suite, case, cfg, tmpdir, what, yql_http_file_server)
-+globals().update(collect_test_classes(yatest.common.source_path(__file__)))
-```
-
-**File**: `yt/yql/tests/sql/dq_file/part10/canondata/result.json` (modified, +103/-103)
-```diff
-@@ -1,719 +1,719 @@
- {
--    "test.test[action-action_eval_cluster_use--Plan]": [
-+    "test.TestDqFile_action-action_eval_cluster_use-.test[Plan]": [
-         {
-             "checksum": "4f1be07e94fcf0a8c67e043e37e0b610",
-             "size": 6194,
-             "uri": "https://{canondata_backend}/1781765/6239f41269ea25b1a6c653819738ddd35e65126b/resource.tar.gz#test.test_action-action_eval_cluster_use--Plan_/plan.txt"
-         }
-     ],
--    "test.test[action-eval_drop--Plan]": [
-+    "test.TestDqFile_action-eval_drop-.test[Plan]": [
-         {
-             "checksum": "1f003679a6ab09d18b28934c4a329c0a",
-             "size": 972,
-             "uri": "https://{canondata_backend}/1781765/6239f41269ea25b1a6c653819738ddd35e65126b/resource.tar.gz#test.test_action-eval_drop--Plan_/plan.txt"
-         }
-     ],
--    "test.test[action-eval_skip_take--Plan]": [
-+    "test.TestDqFile_action-eval_skip_take-.test[Plan]": [
-         {
-             "checksum": "45575257ecf05b7630468a0d3e5e246f",
-             "size": 5063,
-             "uri": "https://{canondata_backend}/1781765/6239f41269ea25b1a6c653819738ddd35e65126b/resource.tar.gz#test.test_action-eval_skip_take--Plan_/plan.txt"
-         }
-     ],
--    "test.test[agg_apply-table--Plan]": [
-+    "test.TestDqFile_agg_apply-table-.test[Plan]": [
-         {
-             "checksum": "31887f6455a6cb314c88fdb784951858",
-             "size": 5426,
-             "uri": "https://{canondata_backend}/1781765/6239f41269ea25b1a6c653819738ddd35e65126b/resource.tar.gz#test.test_agg_apply-table--Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggr_factory-histogram-default.txt-Plan]": [
-+    "test.TestDqFile_aggr_factory-histogram-default.txt.test[Plan]": [
-         {
-             "checksum": "235e596fecd43744603e8f869240ef85",
-             "size": 9429,
-             "uri": "https://{canondata_backend}/1781765/6239f41269ea25b1a6c653819738ddd35e65126b/resource.tar.gz#test.test_aggr_factory-histogram-default.txt-Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggr_factory-logariphmic_histogram-default.txt-Plan]": [
-+    "test.TestDqFile_aggr_factory-logariphmic_histogram-default.txt.test[Plan]": [
-         {
-             "checksum": "2b1e63fccce9bf48177f26b1bb905e68",
-             "size": 8974,
-             "uri": "https://{canondata_backend}/1781765/6239f41269ea25b1a6c653819738ddd35e65126b/resource.tar.gz#test.test_aggr_factory-logariphmic_histogram-default.txt-Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggr_factory-median-default.txt-Plan]": [
-+    "test.TestDqFile_aggr_factory-median-default.txt.test[Plan]": [
-         {
-             "checksum": "0ac92200ee3d76dcc04cc9b2da60cd26",
-             "size": 11864,
-             "uri": "https://{canondata_backend}/1781765/6239f41269ea25b1a6c653819738ddd35e65126b/resource.tar.gz#test.test_aggr_factory-median-default.txt-Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggregate-aggregate_list_in_key-default.txt-Plan]": [
-+    "test.TestDqFile_aggregate-aggregate_list_in_key-default.txt.test[Plan]": [
-         {
-             "checksum": "0f699d469b20f45f31a4cf4237dce307",
-             "size": 30496,
-             "uri": "https://{canondata_backend}/1781765/6239f41269ea25b1a6c653819738ddd35e65126b/resource.tar.gz#test.test_aggregate-aggregate_list_in_key-default.txt-Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggregate-avg_and_sum_float--Plan]": [
-+    "test.TestDqFile_aggregate-avg_and_sum_float-.test[Plan]": [
-         {
-             "checksum": "f06adc774a6af156f64acac58c0c83d2",
-             "size": 5135,
-             "uri": "https://{canondata_backend}/1781765/6239f41269ea25b1a6c653819738ddd35e65126b/resource.tar.gz#test.test_aggregate-avg_and_sum_float--Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggregate-avg_with_having-default.txt-Plan]": [
-+    "test.TestDqFile_aggregate-avg_with_having-default.txt.test[Plan]": [
-         {
-             "checksum": "06d4c92dc23c052e3eda4ec17a8821b1",
-             "size": 5234,
-             "uri": "https://{canondata_backend}/1781765/6239f41269ea25b1a6c653819738ddd35e65126b/resource.tar.gz#test.test_aggregate-avg_with_having-default.txt-Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggregate-group_by_hop_zero_delay--Plan]": [
-+    "test.TestDqFile_aggregate-group_by_hop_zero_delay-.test[Plan]": [
-         {
-             "checksum": "6b8d8b350cd52624d53da985941ef297",
-             "size": 4263,
-             "uri": "https://{canondata_backend}/1781765/6239f41269ea25b1a6c653819738ddd35e65126b/resource.tar.gz#test.test_aggregate-group_by_hop_zero_delay--Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggregate-group_by_rollup_key_check--Plan]": [
-+    "test.TestDqFile_aggregate-group_by_rollup_key_check-.test[Plan]": [
-         {
-             "checksum": "d2edda16abc3a78ff591d296f4f2f54a",
-             "size": 8840,
-             "uri": "https://{canondata_backend}/1781765/6239f41269ea25b1a6c653819738ddd35e65126b/resource.tar.gz#test.test_aggregate-group_by_rollup_key_check
-```
-
-**File**: `yt/yql/tests/sql/dq_file/part10/test.py` (modified, +3/-14)
-```diff
-@@ -1,17 +1,6 @@
--import pytest
--import yatest
-+import yatest.common
+ class TestYtflowBase(TestQueueAgentBase):
++    CLASS_TEST_LIMIT = 1000
+     ENABLE_MULTIDAEMON = True
  
--from yt.yql.tests.sql.runners.dq_file import run_test
--from yt.yql.tests.sql.runners.common import DATA_PATH
--from test_utils import pytest_generate_tests_for_part
--from yql_utils import pytest_get_current_part
-+from yt.yql.tests.sql.runners.dq_file import collect_test_classes
- 
- 
--def pytest_generate_tests(metafunc):
--    current_part, part_count = pytest_get_current_part(yatest.common.source_path(__file__))
--    return pytest_generate_tests_for_part(metafunc, current_part, part_count, data_path=DATA_PATH)
--
--
--@pytest.mark.parametrize('what', ['Results', 'ForceBlocks', 'Plan'])
--def test(suite, case, cfg, tmpdir, what, yql_http_file_server):
--    return run_test(suite, case, cfg, tmpdir, what, yql_http_file_server)
-+globals().update(collect_test_classes(yatest.common.source_path(__file__)))
-```
-
-**File**: `yt/yql/tests/sql/dq_file/part11/canondata/result.json` (modified, +96/-96)
-```diff
-@@ -1,670 +1,670 @@
- {
--    "test.test[action-dep_world_quote_code-default.txt-Plan]": [
-+    "test.TestDqFile_action-dep_world_quote_code-default.txt.test[Plan]": [
-         {
-             "checksum": "313253c54015858cb6e0535d39181f75",
-             "size": 15244,
-             "uri": "https://{canondata_backend}/212715/6644101ff469d99c5235adc34f69ea4214ac2172/resource.tar.gz#test.test_action-dep_world_quote_code-default.txt-Plan_/plan.txt"
-         }
-     ],
--    "test.test[action-eval_for-default.txt-Plan]": [
-+    "test.TestDqFile_action-eval_for-default.txt.test[Plan]": [
-         {
-             "checksum": "a48ccc9922567dfee1170d2c2df45b6e",
-             "size": 2153,
-             "uri": "https://{canondata_backend}/212715/6644101ff469d99c5235adc34f69ea4214ac2172/resource.tar.gz#test.test_action-eval_for-default.txt-Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggr_factory-avg_if-default.txt-Plan]": [
-+    "test.TestDqFile_aggr_factory-avg_if-default.txt.test[Plan]": [
-         {
-             "checksum": "1bf56833630008e219d87be2a024f2a0",
-             "size": 9014,
-             "uri": "https://{canondata_backend}/212715/6644101ff469d99c5235adc34f69ea4214ac2172/resource.tar.gz#test.test_aggr_factory-avg_if-default.txt-Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggr_factory-booland-default.txt-Plan]": [
-+    "test.TestDqFile_aggr_factory-booland-default.txt.test[Plan]": [
-         {
-             "checksum": "9268fd05c79d07fdf6882e64123d5425",
-             "size": 11449,
-             "uri": "https://{canondata_backend}/212715/6644101ff469d99c5235adc34f69ea4214ac2172/resource.tar.gz#test.test_aggr_factory-booland-default.txt-Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggr_factory-count_if-default.txt-Plan]": [
-+    "test.TestDqFile_aggr_factory-count_if-default.txt.test[Plan]": [
-         {
-             "checksum": "9268fd05c79d07fdf6882e64123d5425",
-             "size": 11449,
-             "uri": "https://{canondata_backend}/212715/6644101ff469d99c5235adc34f69ea4214ac2172/resource.tar.gz#test.test_aggr_factory-count_if-default.txt-Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggr_factory-min-default.txt-Plan]": [
-+    "test.TestDqFile_aggr_factory-min-default.txt.test[Plan]": [
-         {
-             "checksum": "8a2ec3d3969cdc00a05ce20dc8670204",
-             "size": 11450,
-             "uri": "https://{canondata_backend}/212715/6644101ff469d99c5235adc34f69ea4214ac2172/resource.tar.gz#test.test_aggr_factory-min-default.txt-Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggr_factory-min_by-default.txt-Plan]": [
-+    "test.TestDqFile_aggr_factory-min_by-default.txt.test[Plan]": [
-         {
-             "checksum": "727d0c00a1c8ceb63487f6937154bda2",
-             "size": 9428,
-             "uri": "https://{canondata_backend}/212715/6644101ff469d99c5235adc34f69ea4214ac2172/resource.tar.gz#test.test_aggr_factory-min_by-default.txt-Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggregate-group_by_expr_alias_on_subexp--Plan]": [
-+    "test.TestDqFile_aggregate-group_by_expr_alias_on_subexp-.test[Plan]": [
-         {
-             "checksum": "32aa14e811b508405413d414f981a746",
-             "size": 5164,
-             "uri": "https://{canondata_backend}/212715/6644101ff469d99c5235adc34f69ea4214ac2172/resource.tar.gz#test.test_aggregate-group_by_expr_alias_on_subexp--Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggregate-group_by_expr_order_by_expr--Plan]": [
-+    "test.TestDqFile_aggregate-group_by_expr_order_by_expr-.test[Plan]": [
-         {
-             "checksum": "68758cc21a759dfeca1624654de64bdd",
-             "size": 5242,
-             "uri": "https://{canondata_backend}/212715/6644101ff469d99c5235adc34f69ea4214ac2172/resource.tar.gz#test.test_aggregate-group_by_expr_order_by_expr--Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggregate-group_by_gs_grouping--Plan]": [
-+    "test.TestDqFile_aggregate-group_by_gs_grouping-.test[Plan]": [
-         {
-             "checksum": "f64614c30620b00e80ba06f98dcd4aa5",
-             "size": 6941,
-             "uri": "https://{canondata_backend}/212715/6644101ff469d99c5235adc34f69ea4214ac2172/resource.tar.gz#test.test_aggregate-group_by_gs_grouping--Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggregate-group_by_hop_static_list_key-default.txt-Plan]": [
-+    "test.TestDqFile_aggregate-group_by_hop_static_list_key-default.txt.test[Plan]": [
-         {
-             "checksum": "b4dd508a329723c74293d80f0278c705",
-             "size": 505,
-             "uri": "https://{canondata_backend}/212715/6644101ff469d99c5235adc34f69ea4214ac2172/resource.tar.gz#test.test_aggregate-group_by_hop_static_list_key-default.txt-Plan_/plan.txt"
-         }
-     ],
--    "test.test[aggregate-group_by_mul_gb_ru--Plan]": [
-+    "test.TestDqFile_aggregate-group_by_mul_gb_ru-.test[Plan]": [
-         {
-             "checksum": "40992a16e1ae2334b89c7379024d618d",
-             "size": 8901,
-             "uri": "https://{canondata_backend}/212715/664
+     NUM_MASTERS = 1
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1885** (closed): Run cross-cluster MR operations by ytsaurus Go SDK (@sagishev)
 - **PR #1883** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
 - **PR #1878** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
 - **PR #1877** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
 - **PR #1873** (closed): Fix "yt execute" for commands without input data commit_hash:5378810e98c0c97bc9703c2b2319f52f5ef9bde5 (@koct9i)
 - **PR #1872** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
-- **PR #1871** (closed): remove duplicate text (@masterbpro)
 
 ---
 
@@ -1781,28 +1405,32 @@ commit_hash:f0e85163c042d4df7f2ab4e000c1076fa19ebe90
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Split TestSchedulerRowLevelSecurityCommands and TestUserJobMonitoring into two p
+## X. argmin/argmax with composite crash in YTQL
 
 **RULE**:
-When implementing operations in `yt/yt/tests/integration/controller/test_rls.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yt/yt/library/query/engine/builtin_function_profiler.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `762d78cf`: Split TestSchedulerRowLevelSecurityCommands and TestUserJobMonitoring into two partitions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b4d174a0`: argmin/argmax with composite crash in YTQL. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/tests/integration/controller/test_rls.py`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/library/query/engine/builtin_function_profiler.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    NUM_TEST_PARTITIONS = 2
+                // COMPAT(sabdenovch): Expression builder v1 does not mesh well with EValueType::Composite and all its nuances.
+                // Make sure type resolves correctly in v2.
+                        argTypes[index] == EValueType::Composite
+                            ? EValueType::Any
+                            : argTypes[index]));
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+                        argTypes[index]));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `762d78cf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b4d174a0` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T01:22:24.339Z",
+  "last_updated": "2026-10-28T01:29:18.497Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1730,14 +1730,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-zai-org-glm-5-3",
-      "content_hash": "700603ba3dcd07968a86aee49678fc8085893f400779a8e7487311477ee75f6a",
-      "verified_at": "2026-10-25T04:44:16.376Z",
+      "content_hash": "915ffb33572768cc1eefdb803ff59a6f76c13b02b08f44eac3c25502bba56bb6",
+      "verified_at": "2026-10-28T01:29:12.504Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T04:44:16.376Z"
+      "last_updated": "2026-10-28T01:29:12.504Z"
     },
     "mudler/locate-anything.cpp-gguf": {
       "repository": "mudler/locate-anything.cpp-gguf",
@@ -8406,14 +8406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-carbon-design-system-carbon-components-svelte",
-      "content_hash": "218a2c8bcc1841faf17e4f72ed1dfb41c5a041c450153c4497b262937dfa6210",
-      "verified_at": "2026-10-27T12:46:32.599Z",
+      "content_hash": "bfb63e7c78765dae2f8d19b3186190ed7d6eeccaa09e9310fb201ac574d9dc67",
+      "verified_at": "2026-10-28T01:29:02.344Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T12:46:32.599Z"
+      "last_updated": "2026-10-28T01:29:02.344Z"
     },
     "shadcn-ui/lint": {
       "repository": "shadcn-ui/lint",
@@ -8556,14 +8556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ytsaurus-ytsaurus",
-      "content_hash": "7c23e515703ca38ac50da84d31321193b78488a49b83b10425c8dab85d11ba3b",
-      "verified_at": "2026-10-27T12:50:30.504Z",
+      "content_hash": "1968815bb3f19c5a219baeadb5cc2b65ca29fd859240b1eaa6c149a85c591af6",
+      "verified_at": "2026-10-28T01:29:18.496Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T12:50:30.504Z"
+      "last_updated": "2026-10-28T01:29:18.496Z"
     },
     "franken-ui/ui": {
       "repository": "franken-ui/ui",
@@ -11271,14 +11271,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-linkwarden-linkwarden",
-      "content_hash": "369f8fe225f2a6ca387b478d4f923bd63db0a177736bc7a328bdb2b4d2cf9d91",
-      "verified_at": "2026-10-19T09:12:48.217Z",
+      "content_hash": "25c41a158cd8fec799a7e5a24eec270796aa35280c355ff0aaaf0b00422475e6",
+      "verified_at": "2026-10-28T01:29:08.664Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T09:12:48.217Z"
+      "last_updated": "2026-10-28T01:29:08.664Z"
     },
     "databendlabs/databend": {
       "repository": "databendlabs/databend",

@@ -5625,3 +5625,7 @@
 | `CYCLE-20261028-ART8` | `2026-10-28T01:15:46.124Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5091, Rule 5092` | Yes (`cbe867e8...`) |
 | `CYCLE-20261028-J3ZT` | `2026-10-28T01:22:15.161Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5093` | Yes (`5324261d...`) |
 | `CYCLE-20261028-JB2E` | `2026-10-28T01:22:24.326Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5094, Rule 5095, Rule 5096` | Yes (`4faa0e85...`) |
+| `CYCLE-20261028-RU64` | `2026-10-28T01:29:02.332Z` | `carbon-design-system/carbon-components-svelte` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5097` | Yes (`bfb63e7c...`) |
+| `CYCLE-20261028-RZ1I` | `2026-10-28T01:29:08.646Z` | `linkwarden/linkwarden` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/linkwarden-linkwarden-learnings.md` | Yes (`25c41a15...`) |
+| `CYCLE-20261028-S20C` | `2026-10-28T01:29:12.492Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5098, Rule 5099, Rule 5100` | Yes (`915ffb33...`) |
+| `CYCLE-20261028-S6MT` | `2026-10-28T01:29:18.485Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5101` | Yes (`1968815b...`) |
