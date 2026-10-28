@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T12:39:58.537Z",
+  "last_updated": "2026-10-28T12:46:43.087Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1025,14 +1025,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-amazon-chronos-2",
-      "content_hash": "426983acbfdcd078d5d8af10154452daf70d1b5d7d3a7f7073f666838b50b56e",
-      "verified_at": "2026-10-25T18:28:18.799Z",
+      "content_hash": "220dc4f790a66b021f17ae4f3958d978ead60bd6a0d37e331e8d8e6be74a5394",
+      "verified_at": "2026-10-28T12:46:43.086Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T18:28:18.799Z"
+      "last_updated": "2026-10-28T12:46:43.086Z"
     },
     "CompVis/stable-diffusion-v1-4": {
       "repository": "CompVis/stable-diffusion-v1-4",

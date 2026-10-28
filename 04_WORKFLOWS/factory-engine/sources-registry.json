@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T12:40:01.058Z",
-    "lastVerified": "2026-10-28T12:40:01.058Z",
+    "lastChecked": "2026-10-28T12:46:45.612Z",
+    "lastVerified": "2026-10-28T12:46:45.612Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -310,8 +310,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T12:08:56.957Z",
-    "lastVerified": "2026-10-28T12:08:56.957Z",
+    "lastChecked": "2026-10-28T12:46:41.652Z",
+    "lastVerified": "2026-10-28T12:46:41.652Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1685,9 +1685,9 @@
   "mitmproxy-mitmproxy": {
     "name": "mitmproxy",
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
-    "lastChecked": "2026-10-28T05:55:09.240Z",
+    "lastChecked": "2026-10-28T12:46:36.754Z",
     "revisionIdentifier": "df14a286",
-    "lastVerified": "2026-10-28T05:55:09.240Z"
+    "lastVerified": "2026-10-28T12:46:36.754Z"
   },
   "oceanbase-oceanbase": {
     "name": "oceanbase",
@@ -3082,5 +3082,50 @@
     "lastChecked": "2026-10-28T12:36:56.691Z",
     "revisionIdentifier": "6305ae46",
     "lastVerified": "2026-10-28T12:36:56.691Z"
+  },
+  "mufeedvh-code2prompt": {
+    "name": "code2prompt",
+    "officialUrl": "https://github.com/mufeedvh/code2prompt",
+    "lastChecked": "2026-10-28T12:46:26.630Z",
+    "revisionIdentifier": "66585136",
+    "lastVerified": "2026-10-28T12:46:26.630Z"
+  },
+  "hf-amazon-chronos-2": {
+    "name": "amazon/chronos-2",
+    "officialUrl": "https://huggingface.co/amazon/chronos-2",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T12:46:29.743Z",
+    "lastVerified": "2026-10-28T12:46:29.743Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-amazon-chronos-2",
+    "contentHash": "220dc4f790a66b021f17ae4f3958d978ead60bd6a0d37e331e8d8e6be74a5394",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "react-native-image-picker-react-native-image-picker": {
+    "name": "react-native-image-picker",
+    "officialUrl": "https://github.com/react-native-image-picker/react-native-image-picker",
+    "lastChecked": "2026-10-28T12:46:31.829Z",
+    "revisionIdentifier": "61c0cd41",
+    "lastVerified": "2026-10-28T12:46:31.829Z"
+  },
+  "go-chassis-go-chassis": {
+    "name": "go-chassis",
+    "officialUrl": "https://github.com/go-chassis/go-chassis",
+    "lastChecked": "2026-10-28T12:46:34.229Z",
+    "revisionIdentifier": "6bcf5150",
+    "lastVerified": "2026-10-28T12:46:34.229Z"
+  },
+  "dingodb-dingo": {
+    "name": "dingo",
+    "officialUrl": "https://github.com/dingodb/dingo",
+    "lastChecked": "2026-10-28T12:46:39.152Z",
+    "revisionIdentifier": "bb96a741",
+    "lastVerified": "2026-10-28T12:46:39.153Z"
   }
 }

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-EF2J",
-    "timestamp": "2026-10-27T12:14:46.987Z",
-    "repository": "GreptimeTeam/greptimedb",
-    "learningId": "learn-github-greptimeteam-greptimedb",
-    "contentHash": "af6824af16e19b597c641b8117b96e2a53925b377e2bd02e0f3c75840098a71b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-JD3Z",
     "timestamp": "2026-10-27T12:18:37.727Z",
     "repository": "embassy-rs/embassy",
@@ -7492,6 +7477,21 @@
     "contentHash": "494705963e9f182b0136a8961aaca272cf78660c16424852447fc898a73e9734",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-ZC76",
+    "timestamp": "2026-10-28T12:46:43.074Z",
+    "repository": "amazon/chronos-2",
+    "learningId": "learn-huggingface-amazon-chronos-2",
+    "contentHash": "220dc4f790a66b021f17ae4f3958d978ead60bd6a0d37e331e8d8e6be74a5394",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

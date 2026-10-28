@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T12:39:58.476Z",
+  "last_updated": "2026-10-28T12:46:43.013Z",
   "total_verified_learnings": 1157,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -16652,10 +16652,26 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/amazon/chronos-2",
       "source_version": "hf-amazon-chronos-2",
-      "content_hash": "049f9d96a4070a605944f1df0b620ec3d1aa13c87d3c6426ffb7635d9262585f",
+      "content_hash": "220dc4f790a66b021f17ae4f3958d978ead60bd6a0d37e331e8d8e6be74a5394",
       "dossier_path": "07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 5283,
+          "title": "Patch-Based Sequence Compression for Long-Context Efficiency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5284,
+          "title": "Quantile Regression for Probabilistic Forecasting",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": "EXISTING",
+          "title": "Arcsinh Normalization for Scale Invariance",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -16674,7 +16690,7 @@
         "learn-huggingface-hf-amazon-chronos-2-mv49o8cx",
         "learn-huggingface-hf-amazon-chronos-2-mv4n1u6n"
       ],
-      "verified_at": "2026-10-20T22:45:40.251Z",
+      "verified_at": "2026-10-28T12:46:42.999Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -143882,6 +143898,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T12:39:58.465Z"
+    },
+    "rule-5283": {
+      "learning_id": "rule-5283",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5283,
+      "title": "Patch-Based Sequence Compression for Long-Context Efficiency",
+      "source_url": "https://huggingface.co/amazon/chronos-2",
+      "source_version": "hf-amazon-chronos-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T12:46:42.999Z"
+    },
+    "rule-5284": {
+      "learning_id": "rule-5284",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5284,
+      "title": "Quantile Regression for Probabilistic Forecasting",
+      "source_url": "https://huggingface.co/amazon/chronos-2",
+      "source_version": "hf-amazon-chronos-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T12:46:42.999Z"
     }
   },
   "aliases": {
