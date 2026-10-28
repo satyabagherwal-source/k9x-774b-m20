@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T06:18:38.731Z",
+  "last_updated": "2026-10-28T06:24:49.766Z",
   "total_verified_learnings": 1156,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -19449,7 +19449,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
       "source_version": "hf-comfy-org-qwen-image-2.1",
-      "content_hash": "fa53f9a04e934d4f6b73554a636cf3782e0ae0c000aff774bd7866d13bf875f0",
+      "content_hash": "8a8b617f238f9891418514eb74da8d6fe777ce1083a2649c28cc6740641d11e2",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md",
       "promoted_rules": [
@@ -19570,7 +19570,7 @@
         "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv467olr",
         "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv4ji9no"
       ],
-      "verified_at": "2026-10-25T14:18:54.171Z",
+      "verified_at": "2026-10-28T06:24:43.517Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33414,8 +33414,8 @@
       "slug": "kuddev-pebrel",
       "platform": "github",
       "source_url": "https://github.com/Kuddev/pebrel",
-      "source_version": "f3201403",
-      "content_hash": "dab7649881e8a9357aa22a7c9f3ceaa1370c4101c9c663715ce8ee43f0b56dd4",
+      "source_version": "54548685",
+      "content_hash": "5d4f8c4adf9792b55807e36bc78a190666492e60aa5444954817ebdbbd767c32",
       "dossier_path": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "promoted_rules": [
@@ -33433,6 +33433,11 @@
           "number": 4305,
           "title": "release): align translation contract lockfile with 2.3.0",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5207,
+          "title": "i18n): localize settings help and option labels (#793)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33440,7 +33445,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T00:19:29.704Z",
+      "verified_at": "2026-10-28T06:24:44.549Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41343,8 +41348,8 @@
       "slug": "openreplay-openreplay",
       "platform": "github",
       "source_url": "https://github.com/openreplay/openreplay",
-      "source_version": "0ca127a4",
-      "content_hash": "5c5270f1cd8df6d543287d2f994021caf3fb3cb0305f9d48473bf3ca35980d93",
+      "source_version": "2be0a4f8",
+      "content_hash": "71088bd7da1528c071e75fb166fde849e44317db9a0b880b6d373165eff295d4",
       "dossier_path": "07_PROJECT_LEARNING/openreplay-openreplay-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/openreplay-openreplay-learnings.md",
       "promoted_rules": [
@@ -41377,6 +41382,11 @@
           "number": 4842,
           "title": "ci): build crons as EE-only in patch workflow",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5208,
+          "title": "Updated patch build from main f8f61615f52b99aedc689358e99e8f4f16a760d1 (#5071)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41384,7 +41394,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T14:22:20.070Z",
+      "verified_at": "2026-10-28T06:24:49.755Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -142390,6 +142400,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T06:18:38.718Z"
+    },
+    "rule-5207": {
+      "learning_id": "rule-5207",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5207,
+      "title": "i18n): localize settings help and option labels (#793)",
+      "source_url": "https://github.com/Kuddev/pebrel",
+      "source_version": "54548685",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T06:24:44.549Z"
+    },
+    "rule-5208": {
+      "learning_id": "rule-5208",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5208,
+      "title": "Updated patch build from main f8f61615f52b99aedc689358e99e8f4f16a760d1 (#5071)",
+      "source_url": "https://github.com/openreplay/openreplay",
+      "source_version": "2be0a4f8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T06:24:49.755Z"
     }
   },
   "aliases": {

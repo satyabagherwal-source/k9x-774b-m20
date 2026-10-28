@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T06:18:38.805Z",
+  "last_updated": "2026-10-28T06:24:49.827Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -575,14 +575,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-qwen-image-2-1",
-      "content_hash": "fa53f9a04e934d4f6b73554a636cf3782e0ae0c000aff774bd7866d13bf875f0",
-      "verified_at": "2026-10-25T14:18:54.249Z",
+      "content_hash": "8a8b617f238f9891418514eb74da8d6fe777ce1083a2649c28cc6740641d11e2",
+      "verified_at": "2026-10-28T06:24:43.610Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T14:18:54.249Z"
+      "last_updated": "2026-10-28T06:24:43.610Z"
     },
     "akhilaaa3/Jev-Omni": {
       "repository": "akhilaaa3/Jev-Omni",
@@ -5106,14 +5106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-openreplay-openreplay",
-      "content_hash": "5c5270f1cd8df6d543287d2f994021caf3fb3cb0305f9d48473bf3ca35980d93",
-      "verified_at": "2026-10-27T14:22:20.141Z",
+      "content_hash": "71088bd7da1528c071e75fb166fde849e44317db9a0b880b6d373165eff295d4",
+      "verified_at": "2026-10-28T06:24:49.826Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T14:22:20.141Z"
+      "last_updated": "2026-10-28T06:24:49.826Z"
     },
     "kumahq/kuma": {
       "repository": "kumahq/kuma",
@@ -5181,14 +5181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kuddev-pebrel",
-      "content_hash": "dab7649881e8a9357aa22a7c9f3ceaa1370c4101c9c663715ce8ee43f0b56dd4",
-      "verified_at": "2026-10-28T00:19:29.809Z",
+      "content_hash": "5d4f8c4adf9792b55807e36bc78a190666492e60aa5444954817ebdbbd767c32",
+      "verified_at": "2026-10-28T06:24:44.648Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T00:19:29.809Z"
+      "last_updated": "2026-10-28T06:24:44.648Z"
     },
     "alibaba/formily": {
       "repository": "alibaba/formily",

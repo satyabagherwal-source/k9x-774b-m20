@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/openreplay-openreplay-learnings.md`  
 > **Source**: github ([https://github.com/openreplay/openreplay](https://github.com/openreplay/openreplay))  
-> **Source Version**: `0ca127a4`  
+> **Source Version**: `2be0a4f8`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T14:22:19.776Z  
+> **Timestamp**: 2026-10-28T06:24:49.428Z  
 > **Learning ID**: `learn-github-openreplay-openreplay`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/openreplay-openreplay-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/openreplay/openreplay](https://github.com/openreplay/openreplay))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T14:22:19.446Z  
+> **Harvest Timestamp**: 2026-10-28T06:24:49.423Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Session replay, cobrowsing and product analytics you can self-host. Best for reproducing issues and iterating on your product.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13054 stars
+- **Stars / Engagement**: 13057 stars
 
 ---
 
@@ -1057,124 +1057,218 @@ def api_key_authorizer(token):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2da25621` (2026-10-26)
-**Commit Message**: fix(ci): build crons as EE-only in patch workflow
+### Incident Patch 1: `2be0a4f8` (2026-10-27)
+**Commit Message**: Updated patch build from main f8f61615f52b99aedc689358e99e8f4f16a760d1 (#5071)
 
-Patching crons from main failed: there is no crons chart (it lives in
-utilities), so the version came out as "1.." and the FOSS build hit
-build_crons.sh, which refuses non-ee builds. Mirror the old-tag
-workflow fix: skip FOSS for crons and read/bump the utilities chart.
+* Increment api chart version to v1.28.9
 
-**File**: `.github/workflows/patch-build.yaml` (modified, +5/-2)
+* Increment assets chart version to v1.28.4
+
+* Increment canvases chart version to v1.28.2
+
+* Increment db chart version to v1.28.3
+
+* Increment ender chart version to v1.28.2
+
+* Increment http chart version to v1.28.3
+
+* Increment images chart version to v1.28.2
+
+* Increment sink chart version to v1.28.2
+
+* Increment spot chart version to v1.28.2
+
+* Increment storage chart version to v1.28.2
+
+---------
+
+Co-authored-by: GitHub Action <[REDACTED_EMAIL]>
+
+**File**: `scripts/helmcharts/openreplay/charts/api/Chart.yaml` (modified, +1/-1)
 ```diff
-@@ -222,6 +222,9 @@ jobs:
- 
-                 local foss_build_args="" ee_build_args="" build_script="$BUILD_SCRIPT_NAME"
-                 local is_ee_only=false
-+                # crons is EE-only and versioned in the utilities chart
-+                local chart=$service
-+                [[ $service == crons ]] && chart=utilities && is_ee_only=true
- 
-                 # Determine build configuration based on service type
-                 if grep -qx "$service" "$BACKEND_SERVICES_FILE"; then
-@@ -257,7 +260,7 @@ jobs:
- 
-                 # Get version and build
-                 local version
--                version=$(image_version "$service")
-+                version=$(image_version "$chart")
- 
-                 # Build FOSS and EE versions (skip FOSS for EE-only services)
-                 if [[ $is_ee_only == false ]]; then
-@@ -278,7 +281,7 @@ jobs:
-                     ;;
-                 esac
-                 # Update chart and commit
--                update_chart_version "$service" "$version"
-+                update_chart_version "$chart" "$version"
-             done
-             cd "$WORKING_DIR"
- 
+@@ -18,4 +18,4 @@ version: 0.1.1
+ # incremented each time you make changes to the application. Versions are not expected to
+ # follow Semantic Versioning. They should reflect the version the application is using.
+ # It is recommended to use it with quotes.
+-AppVersion: "v1.28.8"
++AppVersion: "v1.28.9"
+```
+
+**File**: `scripts/helmcharts/openreplay/charts/assets/Chart.yaml` (modified, +1/-1)
+```diff
+@@ -18,4 +18,4 @@ version: 0.1.1
+ # incremented each time you make changes to the application. Versions are not expected to
+ # follow Semantic Versioning. They should reflect the version the application is using.
+ # It is recommended to use it with quotes.
+-AppVersion: "v1.28.3"
++AppVersion: "v1.28.4"
+```
+
+**File**: `scripts/helmcharts/openreplay/charts/canvases/Chart.yaml` (modified, +1/-1)
+```diff
+@@ -18,4 +18,4 @@ version: 0.1.1
+ # incremented each time you make changes to the application. Versions are not expected to
+ # follow Semantic Versioning. They should reflect the version the application is using.
+ # It is recommended to use it with quotes.
+-AppVersion: "v1.28.1"
++AppVersion: "v1.28.2"
+```
+
+**File**: `scripts/helmcharts/openreplay/charts/db/Chart.yaml` (modified, +1/-1)
+```diff
+@@ -18,4 +18,4 @@ version: 0.1.1
+ # incremented each time you make changes to the application. Versions are not expected to
+ # follow Semantic Versioning. They should reflect the version the application is using.
+ # It is recommended to use it with quotes.
+-AppVersion: "v1.28.2"
++AppVersion: "v1.28.3"
+```
+
+**File**: `scripts/helmcharts/openreplay/charts/ender/Chart.yaml` (modified, +1/-1)
+```diff
+@@ -18,4 +18,4 @@ version: 0.1.1
+ # incremented each time you make changes to the application. Versions are not expected to
+ # follow Semantic Versioning. They should reflect the version the application is using.
+ # It is recommended to use it with quotes.
+-AppVersion: "v1.28.1"
++AppVersion: "v1.28.2"
+```
+
+**File**: `scripts/helmcharts/openreplay/charts/http/Chart.yaml` (modified, +1/-1)
+```diff
+@@ -18,4 +18,4 @@ version: 0.1.1
+ # incremented each time you make changes to the application. Versions are not expected to
+ # follow Semantic Versioning. They should reflect the version the application is using.
+ # It is recommended to use it with quotes.
+-AppVersion: "v1.28.2"
++AppVersion: "v1.28.3"
+```
+
+**File**: `scripts/helmcharts/openreplay/charts/images/Chart.yaml` (modified, +1/-1)
+```diff
+@@ -18,4 +18,4 @@ version: 0.1.1
+ # incremented each time you make changes to the application. Versions are not expected to
+ # follow Semantic Versioning. They should reflect the version the application is using.
+ # It is recommended to use it with quotes.
+-AppVersion: "v1.28.1"
++AppVersion: "v1.28.2"
+```
+
+**File**: `scripts/helmcharts/openreplay/charts/sink/Chart.yaml` (modified, +1/-1)
+```diff
+@@ -18,4 +18,4 @@ version: 0.1.1
+ # incremented each time you make changes to the application. Versions are not expected to
+ # follow Semantic Versioning. They should reflect the version the application is using.
+ # It is recommended to use it with quotes.
+-AppVersion: "v1.28.1"
++AppVersion: "v1.28.2"
 ```
 
 ---
 
-### Incident Patch 2: `20584224` (2026-10-26)
-**Commit Message**: fix(ci): accept a tag as patch build branch input
+### Incident Patch 2: `f8f61615` (2026-10-27)
+**Commit Message**: fix(backend): bump golang.org/x/net to v0.60.0, pin patched base images (#5070)
 
-The previous fix fetched refs/heads/$BRANCH_NAME only, but the branch
-input is often the tag itself (e.g. v1.27.0) when rebuilding a release
-without new commits. That failed with "couldn't find remote ref".
-Fetch the name as given and compare against FETCH_HEAD, matching how
-later steps resolve BRANCH_NAME.
-
-**File**: `.github/workflows/patch-build-old.yaml` (modified, +4/-4)
+**File**: `backend/Dockerfile` (modified, +3/-3)
 ```diff
-@@ -44,16 +44,16 @@ jobs:
-         TAG_NAME=${{ github.event.inputs.tag }}
-         
-         # Fetch the branch to ensure we have the latest
--        # Explicit refspec: branch and tag can share a name (e.g. v1.27.0)
--        git fetch origin "refs/heads/$BRANCH_NAME:refs/remotes/origin/$BRANCH_NAME"
-+        # BRANCH_NAME may be a branch or a tag (e.g. v1.27.0); compare FETCH_HEAD
-+        git fetch origin "$BRANCH_NAME"
-         
-         # Check if tag has commits not in the branch using git cherry
--        UNMERGED_COMMITS=$(git cherry origin/$BRANCH_NAME $TAG_NAME | { grep '^+' || true; } | wc -l)
-+        UNMERGED_COMMITS=$(git cherry FETCH_HEAD $TAG_NAME | { grep '^+' || true; } | wc -l)
-         
-         if [ $UNMERGED_COMMITS -gt 0 ]; then
-           echo "Error: Tag '$TAG_NAME' has commits not present in branch '$BRANCH_NAME'"
-           echo "Unmerged commits:"
--          git cherry origin/$BRANCH_NAME $TAG_NAME | grep '^+'
-+          git cherry FETCH_HEAD $TAG_NAME | grep '^+'
-           exit 1
-         fi
-         
+@@ -1,5 +1,5 @@
+ # syntax=docker/dockerfile:1
+-FROM golang:1.26-alpine AS build
++FROM golang:1.26.10-alpine AS build
+ RUN apk add --no-cache --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community git openssh openssl-dev pkgconf gcc g++ make libc-dev bash librdkafka-dev cyrus-sasl cyrus-sasl-gssapiv2 krb5;
+ WORKDIR /root
+ 
+@@ -20,13 +20,13 @@ RUN --mount=type=cache,target=/go/pkg/mod \
+   --mount=type=cache,target=/root/.cache/go-build \
+   CGO_ENABLED=1 GOOS=linux GOARCH=$ARCH go build -o service -tags dynamic openreplay/backend/cmd/$SERVICE_NAME
+ 
+-FROM alpine AS entrypoint
++FROM alpine:3.24.3 AS entrypoint
+ ARG GIT_SHA
+ ARG GSSAPI=false
+ LABEL GIT_SHA=$GIT_SHA
+ LABEL GSSAPI=$GSSAPI
+ 
+-RUN apk add --no-cache --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community ca-certificates librdkafka-dev cyrus-sasl cyrus-sasl-gssapiv2 krb5
++RUN apk add --no-cache --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community ca-certificates librdkafka-dev cyrus-sasl cyrus-sasl-gssapiv2 krb5 "brotli-libs>=1.2.1-r0" "libcurl>=8.23.0-r0"
+ RUN adduser -u 1001 openreplay -D
+ 
+ ARG SERVICE_NAME
 ```
 
----
-
-### Incident Patch 3: `868afcb8` (2026-10-26)
-**Commit Message**: fix(ci): make patch tag validation actually fail
-
-When branch and tag share a name (v1.27.0), "git fetch origin NAME"
-fetched the tag and never created origin/NAME. git cherry then failed,
-but the pipe into grep | wc hid the error, so the step reported
-"Validation passed" without checking anything. Fetch the branch with
-an explicit refspec and enable pipefail.
-
-**File**: `.github/workflows/patch-build-old.yaml` (modified, +4/-3)
+**File**: `backend/go.mod` (modified, +5/-5)
 ```diff
-@@ -39,15 +39,16 @@ jobs:
+@@ -35,7 +35,7 @@ require (
+ 	github.com/tomasen/realip v0.0.0-20180522021738-f0c99a92ddce
+ 	github.com/ua-parser/uap-go v0.0.0-20260529044130-17c35e68e58c
+ 	go.uber.org/zap v1.28.0
+-	golang.org/x/net v0.58.0
++	golang.org/x/net v0.60.0
+ 	gopkg.in/yaml.v3 v3.0.1
+ )
  
-     - name: Validate tag commits are in branch
-       run: |
--        set -e
-+        set -eo pipefail
-         BRANCH_NAME=${{ github.event.inputs.branch }}
-         TAG_NAME=${{ github.event.inputs.tag }}
-         
-         # Fetch the branch to ensure we have the latest
--        git fetch origin $BRANCH_NAME
-+        # Explicit refspec: branch and tag can share a name (e.g. v1.27.0)
-+        git fetch origin "refs/heads/$BRANCH_NAME:refs/remotes/origin/$BRANCH_NAME"
-         
-         # Check if tag has commits not in the branch using git cherry
--        UNMERGED_COMMITS=$(git cherry origin/$BRANCH_NAME $TAG_NAME | grep '^+' | wc -l)
-+        UNMERGED_COMMITS=$(git cherry origin/$BRANCH_NAME $TAG_NAME | { grep '^+' || true; } | wc -l)
-         
-         if [ $UNMERGED_COMMITS -gt 0 ]; then
-           echo "Error: Tag '$TAG_NAME' has commits not present in branch '$BRANCH_NAME'"
+@@ -75,10 +75,10 @@ require (
+ 	go.opentelemetry.io/otel/trace v1.46.0 // indirect
+ 	go.uber.org/atomic v1.11.0 // indirect
+ 	go.uber.org/multierr v1.11.0 // indirect
+-	golang.org/x/crypto v0.55.0 // indirect
++	golang.org/x/crypto v0.57.0 // indirect
+ 	golang.org/x/oauth2 v0.36.0 // indirect
+-	golang.org/x/sync v0.22.0 // indirect
+-	golang.org/x/sys v0.47.0 // indirect
+-	golang.org/x/text v0.41.0 // indirect
++	golang.org/x/sync v0.23.0 // indirect
++	golang.org/x/sys v0.48.0 // indirect
++	golang.org/x/text v0.42.0 // indirect
+ 	google.golang.org/protobuf v1.36.12 // indirect
+ )
+```
+
+**File**: `backend/go.sum` (modified, +10/-0)
+```diff
+@@ -219,23 +219,33 @@ golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACk
+ golang.org/x/crypto v0.0.0-20200115085410-6d4e4cb37c7d/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
+ golang.org/x/crypto v0.55.0 h1:+KWHjbgOaAQ66dh/YlkZKHlz9ZUlq61AFirAR9ntP8M=
+ golang.org/x/crypto v0.55.0/go.mod h1:uq0V9dE/fzQuJtbnL+2EhWOE63vo164FY8xqEnV9xis=
++golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
++golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
+ golang.org/x/net v0.0.0-20180906233101-161cd47e91fd/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+ golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
+ golang.org/x/net v0.58.0 h1:ynWG7rqYi4ccpTEuPZ2QGWHktVEM9DMCj9yzDE0Q7To=
+ golang.org/x/net v0.58.0/go.mod h1:YwCddHnFlT7eLQqVprV19OnhLGtc5xOKgE0RyqgfWAU=
++golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
++golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
+ golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
+ golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
+ golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.22.0 h1:SZjpbeLmrCk4xhRSZFNZW5gFUeCeFgjekvI/+gfScek=
+ golang.org/x/sync v0.22.0/go.mod h1:9xrNwdLfx4jkKbNva9FpL6vEN7evnE43NNNJQ2LF3+0=
++golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
++golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20180909124046-d0be0721c37e/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.47.0 h1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=
+ golang.org/x/sys v0.47.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
++golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
++golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+ golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+ golang.org/x/text v0.41.0 h1:vz/seA0lnX87Othu2f/0L24RcgrXD9/YFTSuGjj3rH8=
+ golang.org/x/text v0.41.0/go.mod h1:jvf1O8ajNzZqhSrQBPbutR/EB83Cc0CFrezNQIwbb5M=
++golang.org/x/text v0.42.0 h1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=
++golang.org/x/text v0.42.0/go.mod h1:ojzP1Z+2QtioaF8DTtO8K5q7JWVVYwZKenzujK0Zd0E=
+ google.golang.org/protobuf v1.36.12 h1:pJOKDDOyeXErUroCihFAd5LQuwXBSpVnKGrj5o/fwxc=
+ google.golang.org/protobuf v1.36.12/go.mod h1:HTf+CrKn2C3g5S8VImy6tdcUvCska2kB7j23XfzDpco=
+ gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5071** (2026-10-27): Updated patch build from main f8f61615f52b99aedc689358e99e8f4f16a760d1 (@estradino)
+- **PR #5070** (2026-10-27): fix(backend): bump golang.org/x/net to v0.60.0, pin patched base images (@zavorotynskiy)
 - **PR #5069** (2026-10-27): new chart tasks (@rjshrjndrn)
 - **PR #5068** (2026-10-27): Updated patch build from main 2da25621bfed6999affa1c8fdde4fb7413395c27 (@estradino)
+- **PR #5066** (2026-10-27): feat(api): prefs api (@shekarsiri)
 - **PR #5065** (closed): Updated patch build from main 2da25621bfed6999affa1c8fdde4fb7413395c27 (@estradino)
-- **PR #5064** (2026-10-26): Updated patch build from main ae396210bbae9f64b070bcb214d9d1dda7b3dca0 (@estradino)
-- **PR #5063** (2026-10-26): Move to node 26 and upgrade deps (@zavorotynskiy)
-- **PR #5061** (2026-10-23): Updated patch build from main 1d4ad3aa3b74e8c5254a9a8e9dca014bd009839e (@estradino)
 
 ---
 
@@ -1194,33 +1288,28 @@ an explicit refspec and enable pipefail.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): build crons as EE-only in patch workflow
+## X. Updated patch build from main f8f61615f52b99aedc689358e99e8f4f16a760d1 (#5071)
 
 **RULE**:
-When implementing operations in `.github/workflows/patch-build.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openreplay/openreplay. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/helmcharts/openreplay/charts/api/Chart.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openreplay/openreplay. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2da25621`: ci): build crons as EE-only in patch workflow. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2be0a4f8`: Updated patch build from main f8f61615f52b99aedc689358e99e8f4f16a760d1 (#5071). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/patch-build.yaml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/helmcharts/openreplay/charts/api/Chart.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-                # crons is EE-only and versioned in the utilities chart
-                local chart=$service
-                [[ $service == crons ]] && chart=utilities && is_ee_only=true
-                version=$(image_version "$chart")
-                update_chart_version "$chart" "$version"
+AppVersion: "v1.28.9"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-                version=$(image_version "$service")
-                update_chart_version "$service" "$version"
+AppVersion: "v1.28.8"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2da25621` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2be0a4f8` are properly handled with clean fallback behavior.

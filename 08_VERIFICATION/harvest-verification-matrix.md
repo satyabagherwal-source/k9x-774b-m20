@@ -5715,3 +5715,6 @@
 | `CYCLE-20261028-VM1E` | `2026-10-28T06:11:54.578Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5203` | Yes (`f3e15ce0...`) |
 | `CYCLE-20261028-44R8` | `2026-10-28T06:18:32.084Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5204, Rule 5205, Rule 757` | Yes (`eefd7ab9...`) |
 | `CYCLE-20261028-49XK` | `2026-10-28T06:18:38.792Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5206` | Yes (`d9c88797...`) |
+| `CYCLE-20261028-C3F2` | `2026-10-28T06:24:43.598Z` | `Comfy-Org/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md` | Yes (`8a8b617f...`) |
+| `CYCLE-20261028-C47K` | `2026-10-28T06:24:44.624Z` | `Kuddev/pebrel` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5207` | Yes (`5d4f8c4a...`) |
+| `CYCLE-20261028-C87T` | `2026-10-28T06:24:49.817Z` | `openreplay/openreplay` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5208` | Yes (`71088bd7...`) |

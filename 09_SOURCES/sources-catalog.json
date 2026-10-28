@@ -475,8 +475,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
     "sourceVersion": "hf-comfy-org-qwen-image-2.1",
     "license": "Open-Source",
-    "contentHash": "fa53f9a04e934d4f6b73554a636cf3782e0ae0c000aff774bd7866d13bf875f0",
-    "lastHarvestedAt": "2026-10-25T14:18:54.241Z",
+    "contentHash": "8a8b617f238f9891418514eb74da8d6fe777ce1083a2649c28cc6740641d11e2",
+    "lastHarvestedAt": "2026-10-28T06:24:43.600Z",
     "learningId": "learn-huggingface-comfy-org-qwen-image-2-1"
   },
   "hf-akhilaaa3-jev-omni": {
@@ -3323,10 +3323,10 @@
     "repository": "openreplay/openreplay",
     "platform": "github",
     "sourceUrl": "https://github.com/openreplay/openreplay",
-    "sourceVersion": "0ca127a4",
+    "sourceVersion": "2be0a4f8",
     "license": "NOASSERTION",
-    "contentHash": "5c5270f1cd8df6d543287d2f994021caf3fb3cb0305f9d48473bf3ca35980d93",
-    "lastHarvestedAt": "2026-10-27T14:22:20.134Z",
+    "contentHash": "71088bd7da1528c071e75fb166fde849e44317db9a0b880b6d373165eff295d4",
+    "lastHarvestedAt": "2026-10-28T06:24:49.820Z",
     "learningId": "learn-github-openreplay-openreplay"
   },
   "kumahq-kuma": {
@@ -3373,10 +3373,10 @@
     "repository": "Kuddev/pebrel",
     "platform": "github",
     "sourceUrl": "https://github.com/Kuddev/pebrel",
-    "sourceVersion": "f3201403",
+    "sourceVersion": "54548685",
     "license": "GPL-3.0",
-    "contentHash": "dab7649881e8a9357aa22a7c9f3ceaa1370c4101c9c663715ce8ee43f0b56dd4",
-    "lastHarvestedAt": "2026-10-28T00:19:29.800Z",
+    "contentHash": "5d4f8c4adf9792b55807e36bc78a190666492e60aa5444954817ebdbbd767c32",
+    "lastHarvestedAt": "2026-10-28T06:24:44.633Z",
     "learningId": "learn-github-kuddev-pebrel"
   },
   "alibaba-formily": {

@@ -5724,3 +5724,6 @@ Every entry in this ledger must capture:
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `7344c579` | Multi-dimensional audit evidence | 2026-10-28T06:11:54.582Z |
 | `learn-huggingface-taichuai-zdtaichu5-0-9b` | `https://huggingface.co/TaichuAI/ZDTaichu5.0-9B` | `hf-taichua` | Multi-dimensional audit evidence | 2026-10-28T06:18:32.088Z |
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `22ae5780` | Multi-dimensional audit evidence | 2026-10-28T06:18:38.796Z |
+| `learn-huggingface-comfy-org-qwen-image-2-1` | `https://huggingface.co/Comfy-Org/Qwen-Image-2.1` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-28T06:24:43.600Z |
+| `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `54548685` | Multi-dimensional audit evidence | 2026-10-28T06:24:44.633Z |
+| `learn-github-openreplay-openreplay` | `https://github.com/openreplay/openreplay` | `2be0a4f8` | Multi-dimensional audit evidence | 2026-10-28T06:24:49.820Z |
