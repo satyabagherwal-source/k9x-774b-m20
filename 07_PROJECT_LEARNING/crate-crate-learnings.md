@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source**: github ([https://github.com/crate/crate](https://github.com/crate/crate))  
-> **Source Version**: `85072f93`  
+> **Source Version**: `c273f2a5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T16:52:01.638Z  
+> **Timestamp**: 2026-10-28T06:52:51.512Z  
 > **Learning ID**: `learn-github-crate-crate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crate/crate](https://github.com/crate/crate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T16:52:01.410Z  
+> **Harvest Timestamp**: 2026-10-28T06:52:51.426Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: CrateDB is a distributed and scalable SQL database for storing and analyzing massive amounts of data in near real-time, even with complex queries. It is PostgreSQL-compatible, and based on Lucene.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: N/A
-- **Stars / Engagement**: 4447 stars
+- **Stars / Engagement**: 4448 stars
 
 ---
 
@@ -555,53 +555,166 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `85072f93` (2026-10-20)
-**Commit Message**: Discourage using LLMs to analyze bugs as part of issue reports
+### Incident Patch 1: `dc06f6b2` (2026-10-21)
+**Commit Message**: Fix logical replication stopping when publisher transport is not ready after restart
 
-At best they're redundant, at worst they're misleading
-
-**File**: `.github/ISSUE_TEMPLATE/bug.yml` (modified, +12/-11)
+**File**: `docs/appendices/release-notes/6.4.7.rst` (modified, +4/-0)
 ```diff
-@@ -28,18 +28,19 @@ body:
-   - type: textarea
-     id: problem_description
-     attributes:
--      label: Problem description
--      description: Concise description of the problem
-+      label: Problem description and reproduction steps
-+      description: |-
-+        Concise description of the problem in your own words.
-+        Please do NOT use any LLM tooling to analyze the problem but instead
-+        focus on what you tried to do and what behavior you observed.
-+
-+        Please provide minimal but specific reproduction steps.
-+        We'll need to be able to reproduce the problem - for that we typically
-+        require a table schema, some sample records and the queries triggering
-+        the issue. These should be as close to the original as possible with
-+        any columns and expression that are not needed to reproduce the problem
-+        removed.
+@@ -70,6 +70,10 @@ Fixes
+   :ref:`pg_tunnel mode <sql-create-subscription-conn-info>` for logical
+   replication.
  
--  - type: textarea
--    id: repro
--    attributes:
--      label: Steps to Reproduce
--      description: How can we see what you're seeing? Please be specific
--      placeholder: |-
--        1. Create a table with the schema:
--        2. Insert records:
--        3. Run the query:
-     validations:
-       required: true
++- Fixed an issue where a logical replication subscription could enter a failed
++  state and stop replicating after a publisher restart if the subscriber sent
++  requests before the publisher's transport service was ready to handle them.
++
+ - Fixed an issue which caused the ``optimizer_eliminate_cross_join`` rule to
+   drop non-equality filters (e.g., a greater-than condition) that are combined
+   with an equality filter over the same two tables. The issue also caused
+```
+
+**File**: `docs/appendices/release-notes/6.5.1.rst` (modified, +4/-0)
+```diff
+@@ -75,6 +75,10 @@ Fixes
+   :ref:`pg_tunnel mode <sql-create-subscription-conn-info>` for logical
+   replication.
+ 
++- Fixed an issue where a logical replication subscription could enter a failed
++  state and stop replicating after a publisher restart if the subscriber sent
++  requests before the publisher's transport service was ready to handle them.
++
+ - Fixed an issue which caused the ``optimizer_eliminate_cross_join`` rule to
+   drop non-equality filters (e.g., a greater-than condition) that are combined
+   with an equality filter over the same two tables. The issue also caused
+```
+
+**File**: `server/src/main/java/io/crate/exceptions/SQLExceptions.java` (modified, +5/-0)
+```diff
+@@ -167,6 +167,11 @@ public static boolean maybeTemporary(Throwable t) {
+         return maybeTemporaryNetworkError(t)
+             || isShardNotAvailable(t)
+             || t instanceof ClusterBlockException
++            || t instanceof TransportNotReady
++            // Older nodes cannot serialize TransportNotReady and send a wrapper instead.
++            // TODO: remove 'NotSerializableExceptionWrapper' handling when the minimum compatible publisher version >= 6.6.0
++            || (t instanceof NotSerializableExceptionWrapper wrapper
++                && wrapper.getExceptionName().equals(TransportNotReady.class.getSimpleName()))
+             || t instanceof ElasticsearchTimeoutException;
+     }
  
 ```
 
+**File**: `server/src/main/java/io/crate/exceptions/TransportNotReady.java` (modified, +10/-1)
+```diff
+@@ -21,12 +21,21 @@
+ 
+ package io.crate.exceptions;
+ 
+-public class TransportNotReady extends RuntimeException {
++import java.io.IOException;
++
++import org.elasticsearch.ElasticsearchException;
++import org.elasticsearch.common.io.stream.StreamInput;
++
++public class TransportNotReady extends ElasticsearchException {
+ 
+     public TransportNotReady() {
+         super("transport not ready yet to handle incoming requests");
+     }
+ 
++    public TransportNotReady(StreamInput in) throws IOException {
++        super(in);
++    }
++
+     @Override
+     public synchronized Throwable fillInStackTrace() {
+         return this;
+```
+
+**File**: `server/src/main/java/org/elasticsearch/ElasticsearchException.java` (modified, +6/-0)
+```diff
+@@ -768,6 +768,12 @@ private enum ElasticsearchExceptionHandle {
+             IncompatibleSchemaForRestoreException::new,
+             187,
+             Version.V_6_3_3
++        ),
++        TRANSPORT_NOT_READY(
++            io.crate.exceptions.TransportNotReady.class,
++            io.crate.exceptions.TransportNotReady::new,
++            188,
++            Version.V_6_6_0
+         );
+ 
+         final Class<? extends ElasticsearchException> exceptionClass;
+```
+
+**File**: `server/src/main/java/org/elasticsearch/common/io/stream/NotSerializableExceptionWrapper.java` (modified, +1/-1)
+```diff
+@@ -71,7 +71,7 @@ public void writeTo(StreamOutput out) throws IOException {
+     }
+ 
+     @Override
+-    protected String getExceptionName() {
++    public String getExceptionName() {
+         return name;
+     }
+ }
+```
+
+**File**: `server/src/test/java/io/crate/exceptions/SQLExceptionsTest.java` (modified, +27/-0)
+```diff
+@@ -27,8 +27,12 @@
+ import java.util.concurrent.ExecutionException;
+ 
+ import org.apache.lucene.index.CorruptIndexException;
++import org.elasticsearch.Version;
+ import org.elasticsearch.action.UnavailableShardsException;
+ import org.elasticsearch.common.UUIDs;
++import org.elasticsearch.common.io.stream.BytesStreamOutput;
++import org.elasticsearch.common.io.stream.NotSerializableExceptionWrapper;
++import org.elasticsearch.common.io.stream.StreamInput;
+ import org.elasticsearch.index.shard.ShardId;
+ import org.junit.Test;
+ 
+@@ -37,6 +41,29 @@
+ 
+ public class SQLExceptionsTest {
+ 
++    @Test
++    public void test_transport_not_ready_is_temporary() throws Exception {
++        TransportNotReady error = new TransportNotReady();
++        assertThat(SQLExceptions.maybeTemporary(error)).isTrue();
++
++        for (Version version : new Version[] { Version.V_6_5_0, Version.V_6_6_0 }) {
++            try (BytesStreamOutput out = new BytesStreamOutput()) {
++                out.setVersion(version);
++                out.writeException(error);
++                try (StreamInput in = out.bytes().streamInput()) {
++                    in.setVersion(version);
++                    Exception deserialized = in.readException();
++                    if (version.before(Version.V_6_6_0)) {
++                        assertThat(deserialized).isExactlyInstanceOf(NotSerializableExceptionWrapper.class);
++                    } else {
++                        assertThat(deserialized).isExactlyInstanceOf(TransportNotReady.class);
++                    }
++                    assertThat(SQLExceptions.maybeTemporary(deserialized)).isTrue();
++                }
++            }
++        }
++    }
++
+     @Test
+     public void test_unavailable_shard_exception_is_shard_failure() throws Exception {
+         ShardId shardId = new ShardId("idx1", UUIDs.randomBase64UUID(), 0);
+```
+
 #### Recent Merged Pull Requests:
+- **PR #20481** (2026-10-28): Reserve ports for LR tests to prevent interference from concurrent tests (@jeeminso)
+- **PR #20480** (2026-10-27): Test: add assertBusy to wait for replication state changes (backport #20470) (@mergify[bot])
+- **PR #20479** (2026-10-27): Test: add assertBusy to wait for replication state changes (backport #20470) (@mergify[bot])
+- **PR #20477** (2026-10-28): Revert "Remove LR integration test retries added to suppress flakiness" (@jeeminso)
 - **PR #20474** (2026-10-27): Extend `collect_set` tests to cover all registered types (@mfussenegger)
 - **PR #20473** (2026-10-27): Ensure bulk execution via http or test waits for all individual results (@mfussenegger)
-- **PR #20472** (2026-10-27): Update jacoco to 0.8.16 (@mfussenegger)
-- **PR #20469** (2026-10-23): Remove LR integration test retries added to suppress flakiness (backport #20467) (@mergify[bot])
-- **PR #20468** (2026-10-23): Remove LR integration test retries added to suppress flakiness (backport #20467) (@mergify[bot])
-- **PR #20467** (2026-10-23): Remove LR integration test retries added to suppress flakiness (@jeeminso)
 
 ---
 
@@ -621,49 +734,31 @@ At best they're redundant, at worst they're misleading
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Discourage using LLMs to analyze bugs as part of issue reports
+## X. logical replication stopping when publisher transport is not ready after restart
 
 **RULE**:
-When implementing operations in `.github/ISSUE_TEMPLATE/bug.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/appendices/release-notes/6.4.7.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `85072f93`: Discourage using LLMs to analyze bugs as part of issue reports. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dc06f6b2`: logical replication stopping when publisher transport is not ready after restart. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/ISSUE_TEMPLATE/bug.yml`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/appendices/release-notes/6.4.7.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-      label: Problem description and reproduction steps
-      description: |-
-        Concise description of the problem in your own words.
-        Please do NOT use any LLM tooling to analyze the problem but instead
-        focus on what you tried to do and what behavior you observed.
+- Fixed an issue where a logical replication subscription could enter a failed
+  state and stop replicating after a publisher restart if the subscriber sent
+  requests before the publisher's transport service was ready to handle them.
 
-        Please provide minimal but specific reproduction steps.
-        We'll need to be able to reproduce the problem - for that we typically
-        require a table schema, some sample records and the queries triggering
-        the issue. These should be as close to the original as possible with
-        any columns and expression that are not needed to reproduce the problem
-        removed.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-      label: Problem description
-      description: Concise description of the problem
-  - type: textarea
-    id: repro
-    attributes:
-      label: Steps to Reproduce
-      description: How can we see what you're seeing? Please be specific
-      placeholder: |-
-        1. Create a table with the schema:
-        2. Insert records:
-        3. Run the query:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `85072f93` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dc06f6b2` are properly handled with clean fallback behavior.

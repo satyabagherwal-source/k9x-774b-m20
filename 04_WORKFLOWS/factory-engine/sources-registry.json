@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T06:42:12.101Z",
-    "lastVerified": "2026-10-28T06:42:12.101Z",
+    "lastChecked": "2026-10-28T06:52:54.653Z",
+    "lastVerified": "2026-10-28T06:52:54.653Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -238,9 +238,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-28T06:18:36.533Z",
+    "lastChecked": "2026-10-28T06:52:49.971Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-28T06:18:36.533Z"
+    "lastVerified": "2026-10-28T06:52:49.971Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -283,9 +283,9 @@
   "openziti-zrok": {
     "name": "zrok",
     "officialUrl": "https://github.com/openziti/zrok",
-    "lastChecked": "2026-10-28T03:11:23.306Z",
+    "lastChecked": "2026-10-28T06:52:44.919Z",
     "revisionIdentifier": "09ed814e",
-    "lastVerified": "2026-10-28T03:11:23.306Z"
+    "lastVerified": "2026-10-28T06:52:44.919Z"
   },
   "run-llama-llama_index": {
     "name": "llama_index",
@@ -1924,5 +1924,70 @@
     "lastChecked": "2026-10-28T06:42:09.434Z",
     "revisionIdentifier": "8badf44d48d0d72a07e1ea3daf1ecbd76ae1a357",
     "lastVerified": "2026-10-28T06:42:09.434Z"
+  },
+  "ratatui-ratatui": {
+    "name": "ratatui/ratatui",
+    "officialUrl": "https://github.com/ratatui/ratatui",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T06:52:40.037Z",
+    "lastVerified": "2026-10-28T06:52:40.037Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-ratatui-ratatui",
+    "contentHash": "b025385b59c48242629bd45a2983410122e23571270a54abda87ec3cd9eedc85",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-inclusionai-ming-image-0.1-design": {
+    "name": "inclusionAI/Ming-Image-0.1-Design",
+    "officialUrl": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T06:52:37.585Z",
+    "lastVerified": "2026-10-28T06:52:37.585Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
+    "contentHash": "756ca41ddd4e3e825928019abc9c655b0a22de41669355d7e0b9fcc6262ad235",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "boardgameio-boardgame.io": {
+    "name": "boardgame.io",
+    "officialUrl": "https://github.com/boardgameio/boardgame.io",
+    "lastChecked": "2026-10-28T06:52:39.907Z",
+    "revisionIdentifier": "47adef2b",
+    "lastVerified": "2026-10-28T06:52:39.907Z"
+  },
+  "permify-permify": {
+    "name": "permify",
+    "officialUrl": "https://github.com/Permify/permify",
+    "lastChecked": "2026-10-28T06:52:42.480Z",
+    "revisionIdentifier": "43ce9031",
+    "lastVerified": "2026-10-28T06:52:42.480Z"
+  },
+  "crate-crate": {
+    "name": "crate/crate",
+    "officialUrl": "https://github.com/crate/crate",
+    "sourceType": "github",
+    "technology": "Java",
+    "lastChecked": "2026-10-28T06:52:51.426Z",
+    "lastVerified": "2026-10-28T06:52:51.426Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-crate-crate",
+    "contentHash": "9dc98a70b57751aac921ab5ca7e59fa152a2c9b1002d9bfc2cc6b9fc39a95ab2",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

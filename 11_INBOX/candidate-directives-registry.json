@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T03:18:06.408Z",
+  "last_updated": "2026-10-28T06:52:40.407Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3148,6 +3148,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-milvus-io-milvus"
+    },
+    {
+      "id": "CD-C193",
+      "directive_title": "docs(layout): recommend layout-cache for no_std (#2867)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "ratatui/ratatui",
+      "source_commit": "cdcb0c01",
+      "date_staged": "2026-10-28",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-ratatui-ratatui"
     }
   ]
 }

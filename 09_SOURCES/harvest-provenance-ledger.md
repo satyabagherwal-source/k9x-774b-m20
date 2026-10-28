@@ -5729,3 +5729,6 @@ Every entry in this ledger must capture:
 | `learn-github-openreplay-openreplay` | `https://github.com/openreplay/openreplay` | `2be0a4f8` | Multi-dimensional audit evidence | 2026-10-28T06:24:49.820Z |
 | `learn-huggingface-akhilaaa3-jev-omni` | `https://huggingface.co/akhilaaa3/Jev-Omni` | `hf-akhilaa` | Multi-dimensional audit evidence | 2026-10-28T06:35:55.815Z |
 | `learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-10-28T06:42:07.507Z |
+| `learn-github-ratatui-ratatui` | `https://github.com/ratatui/ratatui` | `cdcb0c01` | Multi-dimensional audit evidence | 2026-10-28T06:52:40.395Z |
+| `learn-huggingface-inclusionai-ming-image-0-1-design` | `https://huggingface.co/inclusionAI/Ming-Image-0.1-Design` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-10-28T06:52:47.784Z |
+| `learn-github-crate-crate` | `https://github.com/crate/crate` | `c273f2a5` | Multi-dimensional audit evidence | 2026-10-28T06:52:52.106Z |

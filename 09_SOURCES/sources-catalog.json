@@ -505,8 +505,8 @@
     "sourceUrl": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
     "sourceVersion": "hf-inclusionai-ming-image-0.1-design",
     "license": "Open-Source",
-    "contentHash": "535883a849695ad62adeb82fbf0bacb8d016c5a8a202aed6d62a3037d699ac58",
-    "lastHarvestedAt": "2026-10-25T14:38:08.690Z",
+    "contentHash": "756ca41ddd4e3e825928019abc9c655b0a22de41669355d7e0b9fcc6262ad235",
+    "lastHarvestedAt": "2026-10-28T06:52:47.784Z",
     "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design"
   },
   "hf-deepseek-ai-deepseek-v4.1-flash": {
@@ -2223,10 +2223,10 @@
     "repository": "crate/crate",
     "platform": "github",
     "sourceUrl": "https://github.com/crate/crate",
-    "sourceVersion": "85072f93",
+    "sourceVersion": "c273f2a5",
     "license": "Apache-2.0",
-    "contentHash": "11b00db46e087a7cde141a9bc70d02a5302167a9f21bbfd173dcabc79c52e2f8",
-    "lastHarvestedAt": "2026-10-27T16:52:02.063Z",
+    "contentHash": "9dc98a70b57751aac921ab5ca7e59fa152a2c9b1002d9bfc2cc6b9fc39a95ab2",
+    "lastHarvestedAt": "2026-10-28T06:52:52.106Z",
     "learningId": "learn-github-crate-crate"
   },
   "nucleoidai-nucleoid": {
@@ -3553,10 +3553,10 @@
     "repository": "ratatui/ratatui",
     "platform": "github",
     "sourceUrl": "https://github.com/ratatui/ratatui",
-    "sourceVersion": "b80480c1",
+    "sourceVersion": "cdcb0c01",
     "license": "MIT",
-    "contentHash": "6f539dfe39b4200e5e461f15f3db0d688c94c4f2b806d9fd4d983b973fc91259",
-    "lastHarvestedAt": "2026-10-28T00:40:09.283Z",
+    "contentHash": "b025385b59c48242629bd45a2983410122e23571270a54abda87ec3cd9eedc85",
+    "lastHarvestedAt": "2026-10-28T06:52:40.395Z",
     "learningId": "learn-github-ratatui-ratatui"
   },
   "invertase-react-native-firebase": {

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T06:42:07.511Z",
-  "total_cycles_completed": 5697,
-  "total_learnings_persisted": 5697,
-  "total_rules_promoted": 5155,
+  "last_updated": "2026-10-28T06:52:52.111Z",
+  "total_cycles_completed": 5700,
+  "total_learnings_persisted": 5700,
+  "total_rules_promoted": 5159,
   "history": [
-    {
-      "timestamp": "2026-10-27T20:11:41.004Z",
-      "repository": "pixeltable/pixeltable",
-      "learningId": "learn-github-pixeltable-pixeltable",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T20:11:41.871Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T20:20:12.307Z",
-      "repository": "actions/actions-runner-controller",
-      "learningId": "learn-github-actions-actions-runner-controller",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T20:20:18.150Z",
       "repository": "risingwavelabs/risingwave",
@@ -1403,6 +1382,27 @@
       "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
       "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T06:52:40.409Z",
+      "repository": "ratatui/ratatui",
+      "learningId": "learn-github-ratatui-ratatui",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T06:52:47.789Z",
+      "repository": "inclusionAI/Ming-Image-0.1-Design",
+      "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T06:52:52.111Z",
+      "repository": "crate/crate",
+      "learningId": "learn-github-crate-crate",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

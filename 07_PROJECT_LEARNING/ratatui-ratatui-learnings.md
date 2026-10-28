@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ratatui-ratatui-learnings.md`  
 > **Source**: github ([https://github.com/ratatui/ratatui](https://github.com/ratatui/ratatui))  
-> **Source Version**: `b80480c1`  
+> **Source Version**: `cdcb0c01`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T00:40:08.651Z  
+> **Timestamp**: 2026-10-28T06:52:40.142Z  
 > **Learning ID**: `learn-github-ratatui-ratatui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ratatui-ratatui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ratatui/ratatui](https://github.com/ratatui/ratatui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T00:40:08.056Z  
+> **Harvest Timestamp**: 2026-10-28T06:52:40.037Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Rust crate for cooking up terminal user interfaces (TUIs) 👨‍🍳🐀 https://ratatui.rs
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 23103 stars
+- **Stars / Engagement**: 23105 stars
 
 ---
 
@@ -940,15 +940,13 @@ impl StatefulWidget for CounterWidget {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2867** (2026-10-28): **docs(layout): recommend layout-cache for no_std**
+  *Symptoms*: Turning off default features to build Ratatui for `no_std` also turns off `layout-cache`. Nothing in the docs says so, or that you probably want it back on. On a microcontroller without a double-precision FPU, the kasuari solver's `f64` arithmetic is emulated in software, so every uncached `Layout::split` is expensive. With the cache back on, the default `DEFAULT_CACHE_SIZE` of 500 entries can then exhaust a small heap.  Measured on an RP2350 (Cortex-M33 at 200 MHz, single-precision FPU only) with Mousefood and a 160 KB heap:  - without `layout-cache`: a near-empty page took ~15 ms per frame of widget rendering; busier pages took 35-52 ms - with `layout-cache`: ~2.2 ms and ~5 ms respectively (3-7x faster) - with the default 500-entry cache the device ran out of heap (`memory allocation of 1668 bytes failed`); `Layout::init_cache(NonZeroUsize::new(64).unwrap())` fixed it and heap use settled around 81 KB  This PR changes docs only:  - `ratatui` crate docs: a new "Using Ratatui without std" section with the recommended `Cargo.toml` line, `Layout::init_cache` sizing, and the `critical-section` requirement (including the `std` dev-dependency for host tests) - README: a short "Embedded and `no_std`" section linking to the crate docs - `Layout`, `Layout::init_cache`, `Layout::DEFAULT_CACHE_SIZE`, and the `layout` module docs: what the cache costs in memory, how to size it, and that it is a critical-section global (not thread-local) without `std`; the `split` docs no longer say the 
+
 - **Issue #2866** (2026-10-26): **build(deps): bump taiki-e/install-action from 2.87.29 to 2.87.31**
   *Symptoms*: Bumps [taiki-e/install-action](https://github.com/taiki-e/install-action) from 2.87.29 to 2.87.31. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/taiki-e/install-action/releases">taiki-e/install-action's releases</a>.</em></p> <blockquote> <h2>2.87.31</h2> <ul> <li> <p>Downgrade <code>cargo-sort@latest</code> to 2.1.3.</p> </li> <li> <p>Update <code>vacuum@latest</code> to 0.35.0.</p> </li> <li> <p>Update <code>xh@latest</code> to 0.26.3.</p> </li> <li> <p>Update <code>uv@latest</code> to 0.13.5.</p> </li> <li> <p>Update <code>ubi@latest</code> to 0.13.0.</p> </li> <li> <p>Update <code>trivy@latest</code> to 0.76.1.</p> </li> <li> <p>Update <code>tombi@latest</code> to 1.9.0.</p> </li> <li> <p>Update <code>release-plz@latest</code> to 0.3.174.</p> </li> <li> <p>Update <code>prek@latest</code> to 0.5.7.</p> </li> <li> <p>Update <code>mise@latest</code> to 2026.10.17.</p> </li> <li> <p>Update <code>jaq@latest</code> to 3.1.2.</p> </li> <li> <p>Update <code>espup@latest</code> to 0.17.1.</p> </li> <li> <p>Update <code>cargo-zigbuild@latest</code> to 0.24.0.</p> </li> <li> <p>Update <code>cargo-nextest@latest</code> to 0.9.149.</p> </li> <li> <p>Update <code>biome@latest</code> to 2.6.2.</p> </li> </ul> <h2>2.87.30</h2> <ul> <li> <p>Update <code>zizmor@latest</code> to 1.31.1.</p> </li> <li> <p>Update <code>wasmtime@latest</code> to 50.0.0.</p> </li> <li> <p>Update <code>vacuum@latest</code> to 0.33.2.</p> </li> <li> <p>Update <code>uv@
   **Post-Mortem & Fix Analysis**:
   > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/ratatui/ratatui/pull/2866?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_start -->  No actionable comments were generated in the recent review.  <details> <summary><strong><picture><img src="https://storage.googleapis.com/coderabbit_public_assets
-
-- **Issue #2865** (2026-10-26): **build(deps): bump octocrab from 0.54.4 to 0.54.5**
-  *Symptoms*: Bumps [octocrab](https://github.com/XAMPPRocky/octocrab) from 0.54.4 to 0.54.5. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/XAMPPRocky/octocrab/releases">octocrab's releases</a>.</em></p> <blockquote> <h2>v0.54.5</h2> <h3>Other</h3> <ul> <li>Feature/missing handlers (<a href="https://redirect.github.com/XAMPPRocky/octocrab/pull/988">#988</a>)</li> </ul> </blockquote> </details> <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/XAMPPRocky/octocrab/blob/main/CHANGELOG.md">octocrab's changelog</a>.</em></p> <blockquote> <h2><a href="https://github.com/XAMPPRocky/octocrab/compare/v0.54.4...v0.54.5">0.54.5</a> - 2026-10-16</h2> <h3>Other</h3> <ul> <li>Feature/missing handlers (<a href="https://redirect.github.com/XAMPPRocky/octocrab/pull/988">#988</a>)</li> </ul> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/XAMPPRocky/octocrab/commit/b15540cf8c644f90b6d89971da5e6c54d634cd14"><code>b15540c</code></a> chore: release v0.54.5 (<a href="https://redirect.github.com/XAMPPRocky/octocrab/issues/989">#989</a>)</li> <li><a href="https://github.com/XAMPPRocky/octocrab/commit/aa7667b7a6a269ee89b372e5f2909414fa0935b5"><code>aa7667b</code></a> Feature/missing handlers (<a href="https://redirect.github.com/XAMPPRocky/octocrab/issues/988">#988</a>)</li> <li>See full diff in <a href="https://github.com/XAMPPRocky/octocrab/compare/v0.54.4...v0.54.5">compare view</
-  **Post-Mortem & Fix Analysis**:
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- This is an auto-generated comment: skip review by coderabbit.ai -->  > [!IMPORTANT] > ## Review skipped >  > Review was skipped due to path filters >  > <details> > <summary><strong>:no_entry: Files ignored due to path filters: 1</strong></summary> > <dl> > <dd> >  > * `Cargo.lock` is excluded by `!**/*.lock` >  > </dd> > </dl> > </details> >  > CodeRabbit blocks several paths by default. You can override this behavior by explicitly including those paths in the path filters. For example, including `**/dist/**` will override the default block on the `dist` directory, by removing the pattern from both the lists. >  > <details> > <summary><strong><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-comment-icons-v1/cog-dark.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-commen
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -965,252 +963,268 @@ impl StatefulWidget for CounterWidget {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `65679a6a` (2026-10-26)
-**Commit Message**: build(deps): bump release-plz/action from 0.5.142 to 0.5.145 (#2860)
+### Incident Patch 1: `cdcb0c01` (2026-10-28)
+**Commit Message**: docs(layout): recommend layout-cache for no_std (#2867)
 
-Bumps [release-plz/action](https://github.com/release-plz/action) from
-0.5.142 to 0.5.145.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/release-plz/action/releases">release-plz/action's
-releases</a>.</em></p>
-<blockquote>
-<h2>v0.5.145</h2>
-<h2>What's Changed</h2>
-<ul>
-<li>chore(deps): update dependency taiki-e/install-action to v2.87.30 by
-<a href="https://github.com/renovate"><code>@​renovate</code></a>[bot]
-in <a
-href="https://redirect.github.com/release-plz/action/pull/579">release-plz/action#579</a></li>
-<li>Update to 0.4.0 by <a
-href="https://github.com/marcoieni"><code>@​marcoieni</code></a> in <a
-href="https://redirect.github.com/release-plz/action/pull/580">release-plz/action#580</a></li>
-<li>update release-plz tag by <a
-href="https://github.com/marcoieni"><code>@​marcoieni</code></a> in <a
-href="https://redirect.github.com/release-plz/action/pull/581">release-plz/action#581</a></li>
-</ul>
-<p><strong>Full Changelog</strong>: <a
-href="https://github.com/release-plz/action/compare/v0.5.144...v0.5.145">https://github.com/release-plz/action/compare/v0.5.144...v0.5
+Turning off default features to build Ratatui for `no_std` also turns
+off `layout-cache`. Nothing in the docs says so, or that you probably
+want it back on. On a microcontroller without a double-precision FPU,
+the kasuari solver's `f64` arithmetic is emulated in software, so every
+uncached `Layout::split` is expensive. With the cache back on, the
+default `DEFAULT_CACHE_SIZE` of 500 entries can then exhaust a small
+heap.
 
-**File**: `.github/workflows/release-plz.yml` (modified, +2/-2)
+Measured on an RP2350 (Cortex-M33 at 200 MHz, single-precision FPU only)
+with Mousefood and a 160 KB heap:
+
+- without `layout-cache`: a near-empty page took ~15 ms per frame of
+widget rendering; busier pages took 35-52 ms
+- with `layout-cache`: ~2.2 ms and ~5 ms respectively (3-7x faster)
+- with the default 500-entry cache the device ran out of heap (`memory
+allocation of 1668 bytes failed`);
+`Layout::init_cache(NonZeroUsize::new(64).unwrap())` fixed it and heap
+use settled around 81 KB
+
+This PR changes docs only:
+
+- `ratatui` crate docs: a new "Using Ratatui without std" section with
+the recommended `Cargo.toml` line, `Layout::init_cache` sizing, and the
+`critical-section` requirement (including the `std` de
+
+**File**: `README.md` (modified, +14/-0)
 ```diff
-@@ -35,7 +35,7 @@ jobs:
-       - uses: rust-lang/crates-io-auth-action@c6f97d42243bad5fab37ca0427f495c86d5b1a18 # v1
-         id: auth
-       - name: Run release-plz
--        uses: release-plz/action@8921286633dfa0c4020f7f30bd1c14fe19cbb10e # v0.5
-+        uses: release-plz/action@7ef5e4d4b0420630cfcaeb182c01e13651d4c577 # v0.5
-         with:
-           command: release
-         env:
-@@ -64,7 +64,7 @@ jobs:
-         with:
-           toolchain: stable
-       - name: Run release-plz
--        uses: release-plz/action@8921286633dfa0c4020f7f30bd1c14fe19cbb10e # v0.5
-+        uses: release-plz/action@7ef5e4d4b0420630cfcaeb182c01e13651d4c577 # v0.5
-         with:
-           command: release-pr
-         env:
+@@ -89,6 +89,18 @@ If you're looking to get started quickly, you can use one of the available templ
+ cargo generate ratatui/templates
+ ```
+ 
++## Embedded and `no_std`
++
++Ratatui also runs on `no_std` targets such as microcontrollers, using a backend like [Mousefood].
++Turning off default features also turns off the layout cache, which matters most on these
++targets, so enable it again and size it for the device:
++
++```toml
++ratatui = { version = "0.30", default-features = false, features = ["layout-cache"] }
++```
++
++See [Using Ratatui without std] in the docs for details.
++
+ ## Built with Ratatui
+ 
+ [![Awesome](https://awesome.re/badge-flat2.svg)][awesome-ratatui]
+@@ -141,6 +153,8 @@ This project is licensed under the [MIT License][License].
+ [Ratatui Website]: https://ratatui.rs/
+ [Ratatui Forum]: https://forum.ratatui.rs
+ [Docs]: https://docs.rs/ratatui
++[Mousefood]: https://github.com/ratatui/mousefood
++[Using Ratatui without std]: https://docs.rs/ratatui/latest/ratatui/#using-ratatui-without-std
+ [Widget Examples]: https://github.com/ratatui/ratatui/tree/main/ratatui-widgets/examples
+ [App Examples]: https://github.com/ratatui/ratatui/tree/main/examples
+ [ARCHITECTURE.md]: https://github.com/ratatui/ratatui/blob/main/ARCHITECTURE.md
 ```
 
----
-
-### Incident Patch 2: `b80480c1` (2026-10-26)
-**Commit Message**: build(deps): bump Swatinem/rust-cache from 2.9.2 to 2.9.3 (#2859)
-
-Bumps [Swatinem/rust-cache](https://github.com/swatinem/rust-cache) from
-2.9.2 to 2.9.3.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/swatinem/rust-cache/releases">Swatinem/rust-cache's
-releases</a>.</em></p>
-<blockquote>
-<h2>v2.9.3</h2>
-<h2>What's Changed</h2>
-<ul>
-<li>Issue-375: stop cleanup timestamp pruning after the first entry by
-<a
-href="https://github.com/TethysSvensson"><code>@​TethysSvensson</code></a>
-in <a
-href="https://redirect.github.com/Swatinem/rust-cache/pull/377">Swatinem/rust-cache#377</a></li>
-<li>fix: log rustup toolchain list failure as info instead of warning by
-<a href="https://github.com/SDAChess"><code>@​SDAChess</code></a> in <a
-href="https://redirect.github.com/Swatinem/rust-cache/pull/394">Swatinem/rust-cache#394</a></li>
-</ul>
-<h2>New Contributors</h2>
-<ul>
-<li><a
-href="https://github.com/TethysSvensson"><code>@​TethysSvensson</code></a>
-made their first contribution in <a
-href="https://redirect.github.com/Swatinem/rust-cache/pull/377">Swatinem/rust-cache#377</a></li>
-<li><a href="https://github.com/SDAChess"><code>@​SDAChess</code></a>
-made
-
-**File**: `.github/workflows/ci.yml` (modified, +12/-12)
+**File**: `ratatui-core/Cargo.toml` (modified, +2/-1)
 ```diff
-@@ -36,7 +36,7 @@ jobs:
-         with:
-           toolchain: nightly
-           components: rustfmt
--      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
-+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
-       - uses: tombi-toml/setup-tombi@73552b752982de9c40393832cef2dc8a43013e6b # v1.9.1
-         with:
-           version: "0.9.19"
-@@ -104,7 +104,7 @@ jobs:
-       - uses: taiki-e/install-action@1e29709c0ec63babbe8f266397a465f29a825f91 # v2.87.31
-         with:
-           tool: cargo-udeps
--      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
-+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
-       - run: cargo xtask udeps
+@@ -41,7 +41,8 @@ std = [
+ ]
  
-   # Run cargo clippy.
-@@ -128,7 +128,7 @@ jobs:
-         with:
-           toolchain: ${{ matrix.toolchain }}
-           components: clippy
--      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
-+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
-       - run: cargo xtask clippy
-         env:
-           RUSTUP_TOOLCHAIN: ${{ matrix.toolchain }}
-@@ -163,7 +163,7 @@ jobs:
-       - uses: taiki-e/install-action@1e29709c0ec63babbe8f266397a465f29a825f91 # v2.87.31
-         with:
-           tool: cargo-llvm-cov
--      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
-+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
-       - run: cargo xtask coverage
-       - uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
-         with:
-@@ -189,7 +189,7 @@ jobs:
-       - uses: taiki-e/install-action@1e29709c0ec63babbe8f266397a465f29a825f91 # v2.87.31
-         with:
-           tool: cargo-hack
--      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
-+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
-       - run: cargo xtask check --all-features
-         env:
-           RUSTUP_TOOLCHAIN: ${{ matrix.toolchain }}
-@@ -208,7 +208,7 @@ jobs:
-       - uses: taiki-e/install-action@1e29709c0ec63babbe8f266397a465f29a825f91 # v2.87.31
-         with:
-           tool: cargo-minimal-versions,cargo-hack
--      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
-+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
-       - run: cargo minimal-versions check --direct --workspace --all-features --all-targets
+ ## enables layout cache; uses thread_local when std is available,
+-## critical-section::Mutex otherwise (for no_std/embedded targets).
++## critical-section::Mutex otherwise (for no_std/embedded targets, which must link a
++## critical-section implementation).
+ layout-cache = ["dep:critical-section"]
  
-   build-no-std:
-@@ -222,7 +222,7 @@ jobs:
-         with:
-           toolchain: stable
-           targets: x86_64-unknown-none, thumbv6m-none-eabi
--      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
-+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
-       # This makes it easier to debug the exact versions of the dependencies
-       - run: cargo tree --target x86_64-unknown-none -p ratatui-core
-       - run: cargo tree --target x86_64-unknown-none -p ratatui-widgets
-@@ -250,7 +250,7 @@ jobs:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
-           persist-credentials: false
--      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
-+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
-       - uses: taiki-e/install-action@1e29709c0ec63babbe8f266397a465f29a825f91 # v2.87.31
-         with:
-           tool: cargo-rdme
-@@ -277,7 +277,7 @@ jobs:
-       - uses: taiki-e/install-action@1e29709c0ec63babbe8f266397a465f29a825f91 # v2.87.31
-         with:
-           tool: cargo-hack
--      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
-+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
-       - run: cargo xtask docs
- 
-   # Run cargo test on the documentation of the crate. This will catch any code examples that don't
-@@ -295,7 +295,7 @@ jobs:
-       - uses: taiki-e/install-action@1e29709c0ec63babbe8f266397a465f29a825f91 # v2.87.31
-         with:
-           tool: cargo-hack
--      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
-+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
-       - run: cargo xtask test-docs
- 
-   # Run cargo test on the libraries of the crate.
-@@ -317,7 +317,7 @@ jobs:
-       - uses: taiki-e/install-action@1e29709c0ec63babbe8f266397a465f29a825f91 # v2.87.31
-         with:
-           tool: cargo-hack
--      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
-+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
-       - run: cargo xtask test-libs
- 
-   # Run cargo test on all the backends.
-@@ -340,7 +340,7 @@ jobs:
-       - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8
-         with:
-           toolchain: stable
--      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
-+      - uses: 
+ ## enables conversions to / from colors, modifiers, and styles in the ['anstyle'] crate
 ```
 
----
-
-### Incident Patch 3: `5e46f4ce` (2026-10-26)
-**Commit Message**: build(deps): bump tombi-toml/setup-tombi from 1.8.5 to 1.9.1 (#2858)
-
-Bumps
-[tombi-toml/setup-tombi](https://github.com/tombi-toml/setup-tombi) from
-1.8.5 to 1.9.1.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/tombi-toml/setup-tombi/releases">tombi-toml/setup-tombi's
-releases</a>.</em></p>
-<blockquote>
-<h2>v1.9.1</h2>
-<p>This setup-tombi release matches <a
-href="https://github.com/tombi-toml/tombi/releases/tag/v1.9.1">tombi
-v1.9.1</a>.</p>
-<p><strong>Full Changelog</strong>: <a
-href="https://github.com/tombi-toml/setup-tombi/compare/v1.9.0...v1.9.1">https://github.com/tombi-toml/setup-tombi/compare/v1.9.0...v1.9.1</a></p>
-<h2>v1.9.0</h2>
-<p>This setup-tombi release matches <a
-href="https://github.com/tombi-toml/tombi/releases/tag/v1.9.0">tombi
-v1.9.0</a>.</p>
-<p><strong>Full Changelog</strong>: <a
-href="https://github.com/tombi-toml/setup-tombi/compare/v1.8.10...v1.9.0">https://github.com/tombi-toml/setup-tombi/compare/v1.8.10...v1.9.0</a></p>
-<h2>v1.8.10</h2>
-<p>This setup-tombi release matches <a
-href="https://github.com/tombi-toml/tombi/releases/tag/v1.8.10">tombi
-v1.8.10</a>.</p>
-<p><strong>Full Changelog</strong>: <a
-href="https://
-
-**File**: `.github/workflows/ci.yml` (modified, +1/-1)
+**File**: `ratatui-core/src/layout.rs` (modified, +5/-0)
 ```diff
-@@ -37,7 +37,7 @@ jobs:
-           toolchain: nightly
-           components: rustfmt
-       - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
--      - uses: tombi-toml/setup-tombi@be97456589cb1f9c6c8a419bd7fe825b40a9df50 # v1.8.5
-+      - uses: tombi-toml/setup-tombi@73552b752982de9c40393832cef2dc8a43013e6b # v1.9.1
-         with:
-           version: "0.9.19"
-       - run: cargo xtask format --check
+@@ -286,6 +286,11 @@
+ //! explicitly enabling the `layout-cache` feature when using `ratatui-core` directly. When
+ //! enabled, layout results are cached based on the area and layout configuration.
+ //!
++//! The cache matters most on targets without a double-precision FPU, such as many
++//! microcontrollers, where the layout solver's `f64` arithmetic is emulated in software. Building
++//! `ratatui` with `default-features = false` for `no_std` also turns off `layout-cache`, so enable
++//! it again explicitly and size it for the device with [`Layout::init_cache()`].
++//!
+ //! # Related Documentation
+ //!
+ //! For more detailed information and practical examples:
+```
+
+**File**: `ratatui-core/src/layout/layout.rs` (modified, +47/-11)
+```diff
+@@ -137,9 +137,12 @@ impl From<i16> for Spacing {
+ /// solver that computes positions and sizes to satisfy as many constraints as possible in order of
+ /// their priorities.
+ ///
+-/// When the layout is computed, the result is cached in a thread-local cache, so that subsequent
+-/// calls with the same parameters are faster. The cache is a `LruCache`, and the size of the cache
+-/// can be configured using [`Layout::init_cache()`] when the `layout-cache` feature is enabled.
++/// When the `layout-cache` feature is enabled, the result is cached so that subsequent calls with
++/// the same parameters are faster. The cache is a `LruCache` that is thread-local when the `std`
++/// feature is enabled, and a global behind a [`critical-section`] mutex otherwise. The size of the
++/// cache can be configured using [`Layout::init_cache()`].
++///
++/// [`critical-section`]: https://docs.rs/critical-section
+ ///
+ /// # Construction
+ ///
+@@ -216,6 +219,9 @@ impl Layout {
+     /// row and every column, twice over, which should be enough for most apps. For those that need
+     /// more, the cache size can be set with `Layout::init_cache()` (requires the `layout-cache`
+     /// feature).
++    ///
++    /// On memory-constrained targets this default is usually too large. See
++    /// [`Layout::init_cache()`] for how to choose a smaller size.
+     #[cfg(feature = "layout-cache")]
+     pub const DEFAULT_CACHE_SIZE: usize = 500;
+ 
+@@ -309,6 +315,34 @@ impl Layout {
+     /// grows until `cache_size` is reached.
+     ///
+     /// By default, the cache size is [`Self::DEFAULT_CACHE_SIZE`].
++    ///
++    /// The cache reserves space for `cache_size` entries when it is created, and each entry stores
++    /// a copy of the layout and the areas it produced. Memory use therefore grows with both the
++    /// cache size and the number of constraints in your layouts. This doesn't matter much on a
++    /// desktop, but on a microcontroller the default size can take tens of kilobytes of heap.
++    ///
++    /// For memory-constrained targets, call this once before the first draw with a size a little
++    /// larger than the number of distinct layout and area combinations your app computes per frame
++    /// (often a few dozen). Each cache miss falls back to running the layout solver, so a cache
++    /// that is too small is slower but still correct.
++    ///
++    /// Without the `std` feature, the cache is a global shared by every thread or core and is
++    /// guarded by a [`critical-section`] mutex. Your binary must link a `critical-section`
++    /// implementation; most embedded HALs and runtimes provide one through a feature flag. Host
++    /// tests for a `no_std` crate can use the `std` feature of `critical-section` as a
++    /// dev-dependency.
++    ///
++    /// # Example
++    ///
++    /// ```
++    /// use core::num::NonZeroUsize;
++    ///
++    /// use ratatui_core::layout::Layout;
++    ///
++    /// Layout::init_cache(NonZeroUsize::new(64).unwrap());
++    /// ```
++    ///
++    /// [`critical-section`]: https://docs.rs/critical-section
+     #[cfg(feature = "layout-cache")]
+     pub fn init_cache(cache_size: NonZeroUsize) {
+         Self::resize_cache(cache_size);
+@@ -661,10 +695,11 @@ impl Layout {
+     /// splitting the area up. (e.g. splitting 100 into [min 20, 50%, 50%], may not result in [20,
+     /// 40, 40] but rather an indeterminate result between [20, 50, 30] and [20, 30, 50]).
+     ///
+-    /// This method stores the result of the computation in a thread-local cache keyed on the layout
+-    /// and area, so that subsequent calls with the same parameters are faster. The cache is a
+-    /// `LruCache`, and grows until [`Self::DEFAULT_CACHE_SIZE`] is reached by default. If the cache
+-    /// is initialized with [`Layout::init_cache()`], it grows until the initialized cache size.
++    /// When the `layout-cache` feature is enabled, this method stores the result of the computation
++    /// in a cache keyed on the layout and area, so that subsequent calls with the same parameters
++    /// are faster. The cache is a `LruCache`, and grows until [`Self::DEFAULT_CACHE_SIZE`] is
++    /// reached by default. If the cache is initialized with [`Layout::init_cache()`], it grows
++    /// until the initialized cache size.
+     ///
+     /// There is a helper method that can be used to split the whole area into smaller ones based on
+     /// the layout: [`Layout::areas()`]. That method is a shortcut for calling this method. It
+@@ -698,10 +733,11 @@ impl Layout {
+     /// This method is similar to `split`, but it returns two sets of rectangles: one for the areas
+     /// and one for the spacers.
+     ///
+-    /// This method stores the result of the computation in a thread-local cache keyed on the layout
+-    /// and area, so that subsequent calls with the same parameters are faster. The cache is a
+-    /// `LruCache`, and grows until [`Self::DEFAULT_CACHE_SIZE`] is reached by default. If the cache
+-    /// is initialized with [`Layout::init_cache()`]
+```
+
+**File**: `ratatui/Cargo.toml` (modified, +3/-1)
+```diff
+@@ -57,7 +57,9 @@ serde = [
+   "ratatui-widgets/serde",
+ ]
+ 
+-## enables layout cache
++## enables the layout cache, which avoids rerunning the layout solver for repeated layouts. Keep this
++## enabled when building with `default-features = false` for `no_std` targets; without `std` it
++## needs a [`critical-section`](https://docs.rs/critical-section) implementation.
+ layout-cache = ["ratatui-core/layout-cache"]
+ 
+ ## enables conversions from colors in the [`palette`] crate to [`Color`](crate::style::Color).
+```
+
+**File**: `ratatui/src/lib.rs` (modified, +36/-0)
+```diff
+@@ -85,6 +85,38 @@
+ //! - [`ratatui-crossterm`], [`ratatui-termion`], [`ratatui-termina`], or [`ratatui-termwiz`] when
+ //!   your application needs backend-specific APIs or a direct backend dependency
+ //!
++//! ## Using Ratatui without std
++//!
++//! Ratatui can run on `no_std` targets such as microcontrollers, with a backend like
++//! [Mousefood]. Turning off default features removes the terminal backends and `std`, but it also
++//! turns off the `layout-cache` feature. Without the cache, every layout is recomputed by the
++//! constraint solver on each frame. That solver uses `f64` arithmetic, which is slow on chips
++//! without a double-precision FPU, so turn the cache back on:
++//!
++//! ```toml
++//! [dependencies]
++//! ratatui = { version = "0.30", default-features = false, features = ["layout-cache"] }
++//! ```
++//!
++//! The default cache holds [`Layout::DEFAULT_CACHE_SIZE`] entries, which can exhaust a small heap.
++//! Call [`Layout::init_cache()`] once before the first draw with a size that fits your app,
++//! for example a few dozen entries:
++//!
++//! ```rust
++//! # #[cfg(feature = "layout-cache")] {
++//! use core::num::NonZeroUsize;
++//!
++//! use ratatui::layout::Layout;
++//!
++//! Layout::init_cache(NonZeroUsize::new(64).unwrap());
++//! # }
++//! ```
++//!
++//! Without `std`, the cache is guarded by a [`critical-section`] mutex, so your binary must link a
++//! `critical-section` implementation. Most embedded HALs and runtimes provide one through a
++//! feature flag. To run host tests for a `no_std` crate, add `critical-section` with its `std`
++//! feature as a dev-dependency.
++//!
+ //! # Other documentation
+ //!
+ //! - [Ratatui Website] - explains the library's concepts and provides step-by-step tutorials
+@@ -390,6 +422,8 @@
+ //! [Counter App]: https://ratatui.rs/tutorials/counter-app/
+ //! [Recipes]: https://ratatui.rs/recipes/
+ //! [FAQ]: https://ratatui.rs/faq/
++//! [Mousefood]: https://github.com/ratatui/mousefood
++//! [`critical-section`]: https://docs.rs/critical-section
+ //! [Templates]: https://ratatui.rs/templates/
+ //! [Cargo Generate]: https://cargo-generate.github.io/cargo-generate/
+ //! [Showcase]: https://ratatui.rs/showcase/
+@@ -421,6 +455,8 @@
+ //! [`render_widget`]: Frame::render_widget
+ //! [`Widget`]: widgets::Widget
+ //! [`Layout`]: layout::Layout
++//! [`Layout::DEFAULT_CACHE_SIZE`]: layout::Layout::DEFAULT_CACHE_SIZE
++//! [`Layout::init_cache()`]: layout::Layout::init_cache
+ //! [`Text`]: text::Text
+ //! [`Line`]: text::Line
+ //! [`Span`]: text::Span
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2867** (2026-10-28): docs(layout): recommend layout-cache for no_std (@joshka)
 - **PR #2866** (2026-10-26): build(deps): bump taiki-e/install-action from 2.87.29 to 2.87.31 (@dependabot[bot])
 - **PR #2865** (2026-10-26): build(deps): bump octocrab from 0.54.4 to 0.54.5 (@dependabot[bot])
 - **PR #2864** (2026-10-26): build(deps): bump lru from 0.18.5 to 0.19.0 (@dependabot[bot])
 - **PR #2863** (2026-10-26): build(deps): bump rust-lang/crates-io-auth-action from 1.0.5 to 1.0.6 (@dependabot[bot])
 - **PR #2862** (2026-10-26): build(deps): bump zizmorcore/zizmor-action from 0.7.1 to 0.8.0 (@dependabot[bot])
-- **PR #2861** (2026-10-26): build(deps): bump rstest from 0.27.0 to 0.28.0 (@dependabot[bot])
 
 ---
 
@@ -1230,30 +1244,41 @@ href="https://
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump release-plz/action from 0.5.142 to 0.5.145 (#2860)
+## X. docs(layout): recommend layout-cache for no_std (#2867)
 
 **RULE**:
-When implementing operations in `.github/workflows/release-plz.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ratatui/ratatui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ratatui/ratatui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `65679a6a`: build(deps): bump release-plz/action from 0.5.142 to 0.5.145 (#2860). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cdcb0c01`: docs(layout): recommend layout-cache for no_std (#2867). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release-plz.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        uses: release-plz/action@7ef5e4d4b0420630cfcaeb182c01e13651d4c577 # v0.5
-        uses: release-plz/action@7ef5e4d4b0420630cfcaeb182c01e13651d4c577 # v0.5
+## Embedded and `no_std`
+
+Ratatui also runs on `no_std` targets such as microcontrollers, using a backend like [Mousefood].
+Turning off default features also turns off the layout cache, which matters most on these
+targets, so enable it again and size it for the device:
+
+```toml
+ratatui = { version = "0.30", default-features = false, features = ["layout-cache"] }
+```
+
+See [Using Ratatui without std] in the docs for details.
+
+[Mousefood]: https://github.com/ratatui/mousefood
+[Using Ratatui without std]: https://docs.rs/ratatui/latest/ratatui/#using-ratatui-without-std
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: release-plz/action@8921286633dfa0c4020f7f30bd1c14fe19cbb10e # v0.5
-        uses: release-plz/action@8921286633dfa0c4020f7f30bd1c14fe19cbb10e # v0.5
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `65679a6a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cdcb0c01` are properly handled with clean fallback behavior.

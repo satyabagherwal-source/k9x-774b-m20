@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T06:42:07.513Z",
+  "last_updated": "2026-10-28T06:52:52.116Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -620,14 +620,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-inclusionai-ming-image-0-1-design",
-      "content_hash": "535883a849695ad62adeb82fbf0bacb8d016c5a8a202aed6d62a3037d699ac58",
-      "verified_at": "2026-10-25T14:38:08.697Z",
+      "content_hash": "756ca41ddd4e3e825928019abc9c655b0a22de41669355d7e0b9fcc6262ad235",
+      "verified_at": "2026-10-28T06:52:47.792Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T14:38:08.697Z"
+      "last_updated": "2026-10-28T06:52:47.792Z"
     },
     "deepseek-ai/DeepSeek-V4.1-Flash": {
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -3471,14 +3471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crate-crate",
-      "content_hash": "11b00db46e087a7cde141a9bc70d02a5302167a9f21bbfd173dcabc79c52e2f8",
-      "verified_at": "2026-10-27T16:52:02.071Z",
+      "content_hash": "9dc98a70b57751aac921ab5ca7e59fa152a2c9b1002d9bfc2cc6b9fc39a95ab2",
+      "verified_at": "2026-10-28T06:52:52.115Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T16:52:02.071Z"
+      "last_updated": "2026-10-28T06:52:52.115Z"
     },
     "NucleoidAI/Nucleoid": {
       "repository": "NucleoidAI/Nucleoid",
@@ -5451,14 +5451,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ratatui-ratatui",
-      "content_hash": "6f539dfe39b4200e5e461f15f3db0d688c94c4f2b806d9fd4d983b973fc91259",
-      "verified_at": "2026-10-28T00:40:09.294Z",
+      "content_hash": "b025385b59c48242629bd45a2983410122e23571270a54abda87ec3cd9eedc85",
+      "verified_at": "2026-10-28T06:52:40.412Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T00:40:09.294Z"
+      "last_updated": "2026-10-28T06:52:40.412Z"
     },
     "invertase/react-native-firebase": {
       "repository": "invertase/react-native-firebase",

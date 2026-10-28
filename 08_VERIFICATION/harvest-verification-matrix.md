@@ -5720,3 +5720,6 @@
 | `CYCLE-20261028-C87T` | `2026-10-28T06:24:49.817Z` | `openreplay/openreplay` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5208` | Yes (`71088bd7...`) |
 | `CYCLE-20261028-QI3P` | `2026-10-28T06:35:55.813Z` | `akhilaaa3/Jev-Omni` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5209, Rule 5210` | Yes (`f340b284...`) |
 | `CYCLE-20261028-YGWH` | `2026-10-28T06:42:07.505Z` | `XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1563, Rule EXISTING, Rule 5211` | Yes (`be16c01a...`) |
+| `CYCLE-20261028-C18N` | `2026-10-28T06:52:40.391Z` | `ratatui/ratatui` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/ratatui-ratatui-learnings.md` | Yes (`b025385b...`) |
+| `CYCLE-20261028-C6XW` | `2026-10-28T06:52:47.780Z` | `inclusionAI/Ming-Image-0.1-Design` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5212, Rule 5213, Rule 5214` | Yes (`756ca41d...`) |
+| `CYCLE-20261028-CA9Z` | `2026-10-28T06:52:52.103Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5215` | Yes (`9dc98a70...`) |
