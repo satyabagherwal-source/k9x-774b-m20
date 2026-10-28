@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-AKX4",
-    "timestamp": "2026-10-27T18:43:42.568Z",
-    "repository": "rollup/rollup",
-    "learningId": "learn-github-rollup-rollup",
-    "contentHash": "bb0522585e01b1b167aeb92354f783bdf7f815ef9acebc53bd81330caa74509b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-V1JV",
-    "timestamp": "2026-10-27T18:59:37.243Z",
-    "repository": "facebook/folly",
-    "learningId": "learn-github-facebook-folly",
-    "contentHash": "ab8cdc682d73881ceaed44800a1f38e401b130b89bef8b97aea5ddd65e6ce231",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-V36O",
-    "timestamp": "2026-10-27T18:59:39.360Z",
-    "repository": "ccore/Qwen3.5-4B-3D-Coder",
-    "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
-    "contentHash": "ce3a5161a76b514b0941a139522e7f2e7fc0eca6ffdf06c602f3f493fdde5bad",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-V4SF",
     "timestamp": "2026-10-27T18:59:41.439Z",
     "repository": "cypress-io/cypress",
@@ -7490,6 +7445,51 @@
     "repository": "langchain4j/langchain4j",
     "learningId": "learn-github-langchain4j-langchain4j",
     "contentHash": "24db3cda644cef48be90c37bda4832d6fd6f0133f782776dc5a37588644c2b37",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-2U3X",
+    "timestamp": "2026-10-28T23:05:17.805Z",
+    "repository": "vllm-sr/d3",
+    "learningId": "learn-huggingface-vllm-sr-d3",
+    "contentHash": "a66eaa9c2df71756c11813f608558ebb0048f6127286a20456f527a0091f0d22",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-2V4W",
+    "timestamp": "2026-10-28T23:05:19.136Z",
+    "repository": "tw93/Pake",
+    "learningId": "learn-github-tw93-pake",
+    "contentHash": "8e7b6a943ffc339682b666b3930abc9084ed5ea1874a2fd9ad2443d3b89b6b66",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-32L8",
+    "timestamp": "2026-10-28T23:05:28.796Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "5959ad535b2130fc182fb2e5f6cd6ea7b50b5effca8860d43d5bde04612ab38f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

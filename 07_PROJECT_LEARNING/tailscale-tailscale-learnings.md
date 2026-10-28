@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `8ed43f1f`  
+> **Source Version**: `f7c1b8e5`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T19:31:54.940Z  
+> **Timestamp**: 2026-10-28T23:05:28.387Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T19:31:54.803Z  
+> **Harvest Timestamp**: 2026-10-28T23:05:28.383Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38240 stars
+- **Stars / Engagement**: 38248 stars
 
 ---
 
@@ -821,580 +821,450 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8ed43f1f` (2026-10-28)
-**Commit Message**: tstest/natlab: add basic SSDP and UPnP support (#21823)
+### Incident Patch 1: `f7c1b8e5` (2026-10-28)
+**Commit Message**: hostinfo,ssh/tailssh: don't leak systemd service env to child processes
 
-This bare-bones implementation of a UPnP server covers only what
-the Tailscale client needs in order to successfully create a
-new mapping.
+tailscaled runs under a Type=notify unit, so NOTIFY_SOCKET is in its
+environment. The desktop probe ran loginctl with that environment
+inherited. loginctl sends sd_notify(3) messages on exit and error, and
+lives in the daemon's cgroup, so systemd took each message as coming
+from the tailscaled unit and rejected it:
 
-A new flag is introduced for the test control server so that UPnP
-can continue to be disabled in all tests except natlab.
+  tailscaled.service: Got notification message from PID 1234, but
+  reception only permitted for main PID 1000
 
-Updates #21713
+One failing exec sends two messages, ERRNO=... and EXIT_STATUS=... That
+is the pair of rejected lines seen at each SSH session on Debian-family
+hosts. The per-connection ssh-monitor child also received the daemon's
+full environment.
 
-Change-Id: I57779e07c6a628a12bb30dccabd94f7bb21270c4
-Signed-off-by: Francois Marier <[REDACTED_EMAIL]>
+Helpers exec'd by tailscaled now get the daemon's environment without
+the systemd service-instance variables: NOTIFY_SOCKET, WATCHDOG_PID,
+WATCHDOG_USEC, LISTEN_FDS, LISTEN_PID, LISTEN_FDNAMES, INVOCATION_ID,
+JOURNAL_STREAM. The scrub covers the loginctl and getenforce probes,
+the direct-exec fallback probe, and the ssh-monitor spawn.
 
-**File**: `tstest/integration/testcontrol/testcontrol.go` (modified, +7/-1)
+Session children still never receive the daemon's environment. The
+monitor still gives children running as the connection's u
+
+**File**: `hostinfo/hostinfo.go` (modified, +39/-1)
 ```diff
-@@ -124,6 +124,10 @@ type Server struct {
- 	// for service updates. If empty, the default is "true".
- 	CollectServices opt.Bool
- 
-+	// OverrideDisableUPnP, if true, stops the server from sending the
-+	// [nodecap.DisableUPnP] capability to every node.
-+	OverrideDisableUPnP bool
-+
- 	// ExplicitBaseURL or HTTPTestServer must be set.
- 	ExplicitBaseURL string           // e.g. "http://127.0.0.1:1234" with no trailing URL
- 	HTTPTestServer  *httptest.Server // if non-nil, used to get BaseURL
-@@ -1657,7 +1661,9 @@ func (s *Server) MapResponse(req *tailcfg.MapRequest) (res *tailcfg.MapResponse,
- 	s.mu.Unlock()
- 
- 	node.CapMap = nodeCapMap
--	node.Capabilities = append(node.Capabilities, nodecap.DisableUPnP)
-+	if !s.OverrideDisableUPnP {
-+		node.Capabilities = append(node.Capabilities, nodecap.DisableUPnP)
-+	}
- 	if sshPolicy != nil {
- 		mak.Set(&node.CapMap, nodecap.SSH, nil)
- 	}
-```
-
-**File**: `tstest/natlab/vmtest/connectivity_test.go` (modified, +19/-1)
-```diff
-@@ -123,6 +123,22 @@ func easyPxP(e *vmtest.Env) *vmtest.Node {
- 			fmt.Sprintf("192.168.%d.1/24", n), vnet.EasyNAT, vnet.PCP, vnet.NATPMP))
- }
- 
-+func easyUPnP(e *vmtest.Env) *vmtest.Node {
-+	n := e.NumNodes()
-+	return e.AddNode(fmt.Sprintf("node-%d", n),
-+		e.AddNetwork(
-+			fmt.Sprintf("2.%d.%d.%d", n, n, n), // public IP
-+			fmt.Sprintf("192.168.%d.1/24", n), vnet.EasyNAT, vnet.UPnP))
-+}
-+
-+func hardUPnP(e *vmtest.Env) *vmtest.Node {
-+	n := e.NumNodes()
-+	return e.AddNode(fmt.Sprintf("node-%d", n),
-+		e.AddNetwork(
-+			fmt.Sprintf("2.%d.%d.%d", n, n, n), // public IP
-+			fmt.Sprintf("10.7.%d.1/24", n), vnet.HardNAT, vnet.UPnP))
-+}
-+
- func hardPCP(e *vmtest.Env) *vmtest.Node {
- 	n := e.NumNodes()
- 	return e.AddNode(fmt.Sprintf("node-%d", n),
-@@ -326,15 +342,17 @@ var types = []nodeType{
- 	{"easyPCP", easyPCP},
- 	{"easyPMP", easyPMP},
- 	{"easyPxP", easyPxP},
-+	{"easyUPnP", easyUPnP},
- 	{"hardPCP", hardPCP},
- 	{"hardPMP", hardPMP},
- 	{"hardPxP", hardPxP},
-+	{"hardUPnP", hardUPnP},
- 	{"one2one", one2one},
- 	{"sameLAN", sameLAN},
- 	{"cgnat", cgnat},
- }
- 
--var pair = flag.String("pair", "", "comma-separated pair of types to test (easy, easyAF, hard, easyPCP, easyPMP, easyPxP, hardPCP, hardPMP, hardPxP, one2one, sameLAN)")
-+var pair = flag.String("pair", "", "comma-separated pair of types to test (easy, easyAF, hard, easyPCP, easyPMP, easyPxP, easyUPnP, hardPCP, hardPMP, hardPxP, hardUPnP, one2one, sameLAN)")
- 
- func TestPair(t *testing.T) {
- 	t1, t2, ok := strings.Cut(*pair, ",")
-```
-
-**File**: `tstest/natlab/vnet/portmapper.go` (added, +136/-0)
-```diff
-@@ -0,0 +1,136 @@
-+// Copyright (c) Tailscale Inc & contributors
-+// SPDX-License-Identifier: BSD-3-Clause
-+
-+package vnet
-+
-+import (
-+	"bytes"
-+	"encoding/xml"
-+	"fmt"
-+	"io"
-+	"net/http"
-+	"net/netip"
-+)
-+
-+// router's UPnP HTTP server, as advertised in its SSDP responses
-+const upnpHTTPPort = 5000
-+
-+const upnpServer = "natlab/1.0 UPnP/1.1 natlab-igd/1.0"
-+
-+// minimal UPnP root device description
-+const upnpRootDesc = `<?xml version="1.0"?>
-+<root xmlns="urn:schemas-upnp-org:device-1-0">
-+  <specVersion><major>1</major><minor>1</minor></specVersion>
-+  <device>
-+    <deviceType>urn:schemas-upnp-org:device:InternetGatewayDevice:2</deviceType>
-+    <friendlyName>natlab router</friendlyName>
-+    <UDN>uuid:00000000-0000-0000-0000-000000000000</UDN>
-+    <serviceList>
-+      <service>
-+        <serviceType>urn:schemas-upnp-org:service:WANIPConnection:2</serviceType>
-+        <serviceId>urn:upnp-org:serviceId:WANIPConn1</serviceId>
-+        <controlURL>/ctl/IPConn</controlURL>
-+      </service>
-+    </serviceList>
-+  </device>
-+</root>
-+`
-+
-+func (n *network) handleSSDPRequest(req UDPPacket) {
-+	if !n.svcs.Contains(UPnP) {
-+		return
-+	}
-+	if !bytes.HasPrefix(req.Payload, []byte("M-SEARCH ")) {
-+		n.logf("vnet: ignoring SSDP packet that isn't an M-SEARCH % 02x", req.Payload)
-+		return
-+	}
-+	res := fmt.Appendf(nil, "HTTP/1.1 200 OK\r\n"+
-+		"CACHE-CONTROL: max-age=1800\r\n"+
-+		"EXT:\r\n"+
-+		"LOCATION: http://%v/rootDesc.xml\r\n"+
-+		"SERVER: "+upnpServer+"\r\n"+
-+		"ST: urn:schemas-upnp-org:device:InternetGatewayDevice:2\r\n"+
-+		"USN: uuid:00000000-0000-0000-0000-000000000000::urn:schemas-upnp-org:device:InternetGatewayDevice:2\r\n"+
-+		"BOOTID.UPNP.ORG: 1\r\n"+
-+		"\r\n",
-+		netip.AddrPortFrom(n.lanIP4.Addr(), upnpHTTPPort))
-+	n.WriteUDPPacketNoNAT(UDPPacket{
-+		Src:     req.Dst,
-+		Dst:     req.Src,
-+		Payload: res,
-+	})
-+}
-+
-+func (n *network) upnpHandler() http.Handler {
-+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		w.Header().Set("Server", upnpServer)
-+		switch {
-+		case r.Method == "GET" && r.URL.Path == "/rootDesc.xml":
-+			w.Header().Set("Content-Type", `text/xml; charset="utf-8"`)
-+			io.WriteString(w, upnpRootDesc)
-+		case r.Method == "POST" && r.URL.Path == "/ctl/IPConn":
-+			n.handleUPnPControl(w, r)
-+		default:
-+			http.NotFound(w, r)
-+		}
-+	})
-+}
-+
-+// TODO(fmarier): return SOAP errors instead of plain HTTP errors
-+func (n *network) handleUPnPControl(w http.ResponseWriter, r *http.Request) {
-+	var env struct {
-+		Body struct {
-+			Action struct {
-+				XMLName        xml.Name
-+				InternalClient netip.Addr `xml:"NewInternalClient"`
-+				InternalPort   uint16     `xml:"NewInternalPort"`
-+				ExternalPort   uint16     `xml:"NewExternalPort"`
-+				LeaseDuration  uint32     `xml:"NewLeaseDuration"`
-+			} `xml:",any"`
-+		}
-+	}
-+	if err := xml.NewDecoder(r.Body).Decode(&env); err != nil {
-+		n.logf("UPnP control request with invalid XML: %v", err)
-+		http.Error(w, err.Error(), http.StatusBadRequest)
-+		return
-+	}
-+	action := env.Body.Action
-+	name := action.XMLName.Local
-+
-+	var out string
-+	switch name {
-+	case "GetExternalIPAddress":
-+		out = fmt.Sprintf("<NewExternalIPAddress>%v</NewExternalIPAddress>", n.wanIP4)
-+	case "AddAnyPortMapping":
-+		if !action.InternalClient.IsValid() {
-+			n.logf("UPnP map request without a valid NewInternalClient")
-+			http.Error(w, "missing NewInternalClient", http.StatusBadRequest)
-+			return
-+		}
-+		if action.InternalPort == 0 {
-+			n.logf("UPnP map request for %v without a NewInternalPort", action.InternalClient)
-+			http.Error(w, "missing NewInternalPort", http.StatusBadRequest)
-+			return
-+		}
-+		// TODO(fmarier): reject wildcard value (0) in ExternalPort
-+		// TODO(fmarier): spec says NewLeaseDuration of 0 needs to be treated as 604800 seconds
-+		gotPort, ok := n.doPortMap(action.InternalClient, action.InternalPort, action.ExternalPort, int(action.LeaseDuration), UPnP)
-+		if !ok {
-+			n.logf("UPnP map request for %v:%d failed", action.InternalClient, action.InternalPort)
-+			http.Error(w, "port mapping failed", http.StatusInternalServerError)
-+			return
-+		}
-+		out = fmt.Sprintf("<NewReservedPort>%d</NewReservedPort>", gotPort)
-+	default:
-+		// TODO(fmarier): handle portmap releases (DeletePortMapping)
-+		n.logf("TODO: handle UPnP action %q", name)
-+		http.Error(w, "unsupported action", http.StatusInternalServerError)
-+		return
-+	}
-+
-+	w.Header().Set("Content-Type", `text/xml; charset="utf-8"`)
-+	fmt.Fprintf(w, `<?xml version="1.0"?>`+
-+		`<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">`+
-+		`<s:Body><u:%sResponse xmlns:u="urn:schemas-upnp-org:service:WANIPConnection:2">%s</u:%sResponse></s:Body></s:Envelope>`,
-+		name, out, name)
-+}
-```
-
-**File**: `tstest/natlab/vnet/vnet.go` (modified, +30/-11)
-```diff
-@@ -548,6 +548,17 @@ func (n *network) acceptTCP(r *tcp.ForwarderRequest) {
- 		return
- 	}
- 
-+	if destPort == upnpHTTPPort && destIP == n.lanIP4.Addr() && n.svcs.Contains(UPnP) {
-+		r.Complete(false)
-+		tc := gonet.NewTCPConn(&wq, ep)
-+		context.AfterFunc(n.s.shutdownCtx, func() { tc.Close() })
-+		hs := &http.Server{Handler: n.upnpHandler()}
-+		n.s.wg.Go(func() {
-+			hs.Serve(netutil.NewOneConnListener(tc, nil))
-+		})
-+		return
-+	}
-+
- 	var targetDial string
- 	if n.s.derpIPs.Contains(destIP) {
- 		targetDial = destIP.String() + ":" + strconv.Itoa(int(destPort))
-@@ -1046,8 +1057,9 @@ func New(c *Config) (*Server, error) {
- 		shutdownCancel: cancel,
- 
- 		control: &testcontrol.Server{
--			DERPMap:         derpMap,
--			ExplicitBaseURL: "http://" + controlHostname,
-+			DERPMap:             derpMap,
-+			ExplicitBaseURL:     "http://" + controlHostname,
-+			OverrideDisableUPnP: true,
- 		},
- 		fakeACME: acmetest.New("http://acme.example"),
- 
-@@ -1904,8 +1916,8 @@ func (n *network) HandleEthernetPacketForRouter(ep EthernetPacket) {
- 		return
- 	}
- 
--	if toForward && n.s.shouldInterceptTCP(packet) {
--		if (flow.dst.Is4() && n.breakWAN4) ||
-+	if n.shouldInterceptTCP(packet) {
-+		if (toForward && flow.dst.Is4() && n.breakWAN4) ||
- 			(n.blackholeControl && fakeControl.Match(flow.dst)) {
- 			// Blackhole the packet.
- 			return
-@@ -2123,10 +2135,12 @@ func (n *network) handleUDPPacketForRouter(ep EthernetPacket, udp *layers.UDP, t
- 		return
- 	}
- 
--	if udp.DstPort == ssdpPort {
--		// We handle NAT-PMP and PCP, but not UPnP yet.
--		// TODO(bradfitz): handle? marginal utility so far.
--		// Don't log about it being unknown.
-+	if dstIP == n.lanIP4.Addr() && udp.DstPort == ssdpPort {
-+		n.handleSSDPRequest(UDPPacket{
-+			Src:     netip.AddrPortFrom(srcIP, uint16(udp.SrcPort)),
-+			Dst:     netip.AddrPortFrom(dstIP, uint16(udp.DstPort)),
-+			Payload: udp.Payload,
-+		})
- 		return
- 	}
- 
-@@ -2454,7 +2468,7 @@ func isMDNSQuery(pkt gopacket.Packet) bool {
- 	return ok && udp.SrcPort == 5353 && udp.DstPort == 5353
- }
- 
--func (s *Server) shouldInterceptTCP(pkt gopacket.Packet) bool {
-+func (n *network) shouldInterceptTCP(pkt gopacket.Packet) bool {
- 	tcp, ok := pkt.Layer(layers.LayerTypeTCP).(*layers.TCP)
- 	if !ok {
- 		return false
-@@ -2479,16 +2493,19 @@ func (s *Server) shouldInterceptTCP(pkt gopacket.Packet) bool {
- 			}
- 		}
- 		if fakeProxyControlplane.Match(flow.dst) {
--			return s.blendReality
-+			return n.s.blendReality
- 		}
--		if s.derpIPs.Contains(flow.dst) {
-+		if n.s.derpIPs.Contains(flow.dst) {
- 			return true
- 		}
- 	}
- 	if tcp.DstPort == TestDriverPort && fakeTestAgent.Match(flow.dst) {
- 		// Connection from cmd/tta.
- 		return true
- 	}
-+	if tcp.DstPort == upnpHTTPPort && flow.dst == n.lanIP4.Addr() {
-+		return true
-+	}
- 	return false
- }
- 
-@@ -2939,6 +2956,7 @@ func (n *network) handleNATPMPRequest(req UDPPacket) {
- 		lifetimeSec := binary.BigEndian.Uint32(req.Payload[8:12])
- 		gotPort, ok := n.doPortMap(req.Src.Addr(), internalPort, wantExtPort, int(lifetimeSec), NATPMP)
- 		if !ok {
-+			// TODO(fmarier): handle portmap releases properly
- 			n.logf("NAT-PMP map request for %v:%d failed", req.Src.Addr(), internalPort)
- 			return
- 		}
-@@ -3034,6 +3052,7 @@ func (n *network) handlePCPRequest(req UDPPacket) {
- 		// TODO(fmarier): pass the nonce into doPortmap so that it can be checked on renewals/deletions
- 		gotPort, ok := n.doPortMap(req.Src.Addr(), internalPort, wantExtPort, int(lifetimeSec), PCP)
- 		if !ok {
-+			// TODO(fmarier): handle portmap releases
- 			n.logf("PCP map request for %v:%d failed", req.Src.Addr(), internalPort)
- 			return
- 		}
-```
-
----
-
-### Incident Patch 2: `ea3b9f24` (2026-10-28)
-**Commit Message**: wgengine/magicsock: implement conn.MultiSocketBind (#21971)
-
-* wgengine/magicsock: implement conn.MultiSocketBind
-
-Bind a group of UDP sockets sharing one local port per address family. A
-flow index is plumbed through the send path to pick which socket a batch
-leaves from.
-
-Group size is fixed at Options.UDPSockets for the life of the Conn. In
-case rebind comes short, the group is padded out with conns that block
-until closed.
-
-No caller sets Options.UDPSockets yet, every group holds a single socket
-and this is inert.
-
-Additionally, add test coverage for the now exercised net/sockopts paths.
-
-Updates tailscale/corp#48168
-
-Signed-off-by: Alex Valiushko <[REDACTED_EMAIL]>
-Change-Id: I253646c753fa46e2efd0ad2158d24c416a6a6964
-
-**File**: `flake.nix` (modified, +1/-1)
-```diff
-@@ -173,4 +173,4 @@
-     });
-   };
- }
--# nix-direnv cache busting line: sha256-lC6oLZoxHpGRk+UUTRqw48hkJZNHje0EwcMaG8mfDEY=
-\ No newline at end of file
-+# nix-direnv cache busting line: sha256-/EHX7MAi3vR9BZBjmOO+3CS3jFnSikBMANtYUrTTLY4=
-\ No newline at end of file
-```
-
-**File**: `flakehashes.json` (modified, +2/-2)
-```diff
-@@ -4,7 +4,7 @@
-     "sri": "sha256-sdlgTLTkdhTvGCeQTwAsR+Do8rNwBzBUp5QPc09BPgI="
-   },
-   "vendor": {
--    "goModSum": "sha256-8/LNXdfr/G7JZWAEb4BRWjwjxwmoW5CmsV1Y2IGl5Vk=",
--    "sri": "sha256-lC6oLZoxHpGRk+UUTRqw48hkJZNHje0EwcMaG8mfDEY="
-+    "goModSum": "sha256-lPDyb4m5g0z4qVpFvHWkFrJuU+mxCzz4rkP9oYA4h/E=",
-+    "sri": "sha256-/EHX7MAi3vR9BZBjmOO+3CS3jFnSikBMANtYUrTTLY4="
-   }
- }
-```
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -126,7 +126,7 @@ require (
- 	github.com/tailscale/ts-gokrazy v0.0.0-20260630224145-b83088f2e52e
- 	github.com/tailscale/web-client-prebuilt v0.0.0-20260917222731-e0ed2d0d0fea
- 	github.com/tailscale/wf v0.0.0-20240214030419-6fbb0a674ee6
--	github.com/tailscale/wireguard-go v0.0.0-20260928213353-e61b6b78110b
-+	github.com/tailscale/wireguard-go v0.0.0-20261002162406-18e99eba5393
- 	github.com/tailscale/xnet v0.0.0-20240729143630-8497ac4dab2e
- 	github.com/tc-hib/winres v0.3.1
- 	github.com/tcnksm/go-httpstat v0.2.0
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -1154,8 +1154,8 @@ github.com/tailscale/web-client-prebuilt v0.0.0-20260917222731-e0ed2d0d0fea h1:a
- github.com/tailscale/web-client-prebuilt v0.0.0-20260917222731-e0ed2d0d0fea/go.mod h1:agQPE6y6ldqCOui2gkIh7ZMztTkIQKH049tv8siLuNQ=
- github.com/tailscale/wf v0.0.0-20240214030419-6fbb0a674ee6 h1:l10Gi6w9jxvinoiq15g8OToDdASBni4CyJOdHY1Hr8M=
- github.com/tailscale/wf v0.0.0-20240214030419-6fbb0a674ee6/go.mod h1:ZXRML051h7o4OcI0d3AaILDIad/Xw0IkXaHM17dic1Y=
--github.com/tailscale/wireguard-go v0.0.0-20260928213353-e61b6b78110b h1:roJhpZBsUsZayIDsfSSrgGKUNJjOPXXs1Ul/C/z7C0g=
--github.com/tailscale/wireguard-go v0.0.0-20260928213353-e61b6b78110b/go.mod h1:rUelGmuK4UnSJYM5gl5Mknp6YbwwcL8+VAPMhNYe+jg=
-+github.com/tailscale/wireguard-go v0.0.0-20261002162406-18e99eba5393 h1:LruJ3jY1QZZLV9Lwxkws7Jav2ILFGZpyQXVqeb6nvzM=
-+github.com/tailscale/wireguard-go v0.0.0-20261002162406-18e99eba5393/go.mod h1:rUelGmuK4UnSJYM5gl5Mknp6YbwwcL8+VAPMhNYe+jg=
- github.com/tailscale/xnet v0.0.0-20240729143630-8497ac4dab2e h1:zOGKqN5D5hHhiYUp091JqK7DPCqSARyUfduhGUY8Bek=
- github.com/tailscale/xnet v0.0.0-20240729143630-8497ac4dab2e/go.mod h1:orPd6JZXXRyuDusYilywte7k094d7dycXXU5YnWsrwg=
- github.com/tc-hib/winres v0.3.1 h1:CwRjEGrKdbi5CvZ4ID+iyVhgyfatxFoizjPhzez9Io4=
-```
-
-**File**: `net/sockopts/sockopts_test.go` (added, +89/-0)
-```diff
-@@ -0,0 +1,89 @@
-+// Copyright (c) Tailscale Inc & contributors
-+// SPDX-License-Identifier: BSD-3-Clause
-+
-+package sockopts
-+
-+import (
-+	"errors"
-+	"net"
-+	"testing"
-+
-+	"tailscale.com/types/nettype"
-+)
-+
-+// udpConns returns n bound UDP sockets, closed when the test ends.
-+func udpConns(t *testing.T, n int) []nettype.PacketConn {
-+	t.Helper()
-+	pconns := make([]nettype.PacketConn, n)
-+	for i := range pconns {
-+		uc, err := net.ListenUDP("udp4", nil)
-+		if err != nil {
-+			t.Fatalf("listen udp4: %v", err)
-+		}
-+		t.Cleanup(func() { uc.Close() })
-+		pconns[i] = uc
-+	}
-+	return pconns
-+}
-+
-+func TestControlEach(t *testing.T) {
-+	t.Run("empty", func(t *testing.T) {
-+		var calls int
-+		err := ControlEach(nil, func(uintptr) error { calls++; return nil })
-+		if !errors.Is(err, ErrNoSocket) {
-+			t.Errorf("err = %v, want it to wrap %v", err, ErrNoSocket)
-+		}
-+		if calls != 0 {
-+			t.Errorf("fn called %d times, want 0", calls)
-+		}
-+	})
-+
-+	t.Run("nosocket", func(t *testing.T) {
-+		type noSocketConn struct{ nettype.PacketConn } // mask syscall.Conn
-+		const sockets = 3
-+		for bad := range sockets {
-+			pconns := udpConns(t, sockets)
-+			pconns[bad] = noSocketConn{}
-+			var calls int
-+			err := ControlEach(pconns, func(uintptr) error { calls++; return nil })
-+			if !errors.Is(err, ErrNoSocket) {
-+				t.Errorf("bad=%d: err = %v, want it to wrap %v", bad, err, ErrNoSocket)
-+			}
-+			if calls != 0 {
-+				t.Errorf("bad=%d: fn called %d times, want 0", bad, calls)
-+			}
-+		}
-+	})
-+
-+	t.Run("eachsocket", func(t *testing.T) {
-+		const sockets = 4
-+		pconns := udpConns(t, sockets)
-+		wantErr := errors.New("boom")
-+		// failAt == sockets doesn't fail.
-+		for failAt := range sockets + 1 {
-+			var calls int
-+			err := ControlEach(pconns, func(uintptr) error {
-+				defer func() { calls++ }()
-+				if calls == failAt {
-+					return wantErr
-+				}
-+				return nil
-+			})
-+			if calls != sockets {
-+				t.Errorf("failAt=%d: fn called %d times, want %d", failAt, calls, sockets)
-+			}
-+			if failAt == sockets {
-+				if err != nil {
-+					t.Errorf("all sockets succeeded, but err = %v", err)
-+				}
-+				continue
-+			}
-+			if !errors.Is(err, wantErr) {
-+				t.Errorf("failAt=%d: err = %v, want it to wrap %v", failAt, err, wantErr)
-+			}
-+			if errors.Is(err, ErrNoSocket) {
-+				t.Errorf("failAt=%d: err = %v, want it not to match %v", failAt, err, ErrNoSocket)
-+			}
-+		}
-+	})
-+}
-```
-
-**File**: `shell.nix` (modified, +1/-1)
-```diff
-@@ -16,4 +16,4 @@
- ) {
-   src =  ./.;
- }).shellNix
--# nix-direnv cache busting line: sha256-lC6oLZoxHpGRk+UUTRqw48hkJZNHje0EwcMaG8mfDEY=
-\ No newline at end of file
-+# nix-direnv cache busting line: sha256-/EHX7MAi3vR9BZBjmOO+3CS3jFnSikBMANtYUrTTLY4=
-\ No newline at end of file
-```
-
-**File**: `wgengine/magicsock/blockforever_conn.go` (modified, +3/-5)
-```diff
-@@ -8,7 +8,6 @@ import (
- 	"net"
- 	"net/netip"
+@@ -13,6 +13,7 @@ import (
+ 	"os/exec"
+ 	"runtime"
+ 	"runtime/debug"
++	"slices"
+ 	"strings"
  	"sync"
--	"syscall"
- 	"time"
- 
- 	"tailscale.com/syncs"
-@@ -51,7 +50,6 @@ func (c *blockForeverConn) Close() error {
- 	return nil
+ 	"sync/atomic"
+@@ -500,10 +501,47 @@ func IsSELinuxEnforcing() bool {
+ 	if runtime.GOOS != "linux" {
+ 		return false
+ 	}
+-	out, _ := exec.Command("getenforce").Output()
++	cmd := exec.Command("getenforce")
++	cmd.Env = EnvironWithoutSystemdServiceVars(nil)
++	out, _ := cmd.Output()
+ 	return string(bytes.TrimSpace(out)) == "Enforcing"
  }
  
--func (c *blockForeverConn) SetDeadline(t time.Time) error         { return errors.New("unimplemented") }
--func (c *blockForeverConn) SetReadDeadline(t time.Time) error     { return errors.New("unimplemented") }
--func (c *blockForeverConn) SetWriteDeadline(t time.Time) error    { return errors.New("unimplemented") }
--func (c *blockForeverConn) SyscallConn() (syscall.RawConn, error) { return nil, errUnsupportedConnType }
-+func (c *blockForeverConn) SetDeadline(t time.Time) error      { return errors.New("unimplemented") }
-+func (c *blockForeverConn) SetReadDeadline(t time.Time) error  { return errors.New("unimplemented") }
-+func (c *blockForeverConn) SetWriteDeadline(t time.Time) error { return errors.New("unimplemented") }
++// systemdServiceEnvKeys are the environment variables systemd sets for
++// a service instance. See systemd.exec(5), sd_notify(3),
++// sd_listen_fds(3). They describe the daemon's main process, not a
++// child. With NOTIFY_SOCKET inherited, libsystemd-linked helpers such
++// as loginctl notify the tailscaled unit from a foreign PID. The other
++// variables give children the service's watchdog or listening fds.
++var systemdServiceEnvKeys = []string{
++	"NOTIFY_SOCKET",
++	"WATCHDOG_PID",
++	"WATCHDOG_USEC",
++	"LISTEN_FDS",
++	"LISTEN_PID",
++	"LISTEN_FDNAMES",
++	"INVOCATION_ID",
++	"JOURNAL_STREAM",
++}
++
++// EnvironWithoutSystemdServiceVars returns env, or the current
++// environment when nil, without the systemd service-instance
++// variables. Assign it to cmd.Env when tailscaled execs a helper
++// binary.
++func EnvironWithoutSystemdServiceVars(env []string) []string {
++	if env == nil {
++		env = os.Environ()
++	}
++	ret := make([]string, 0, len(env))
++	for _, kv := range env {
++		if k, _, ok := strings.Cut(kv, "="); ok && slices.Contains(systemdServiceEnvKeys, k) {
++			continue
++		}
++		ret = append(ret, kv)
++	}
++	return ret
++}
++
+ // IsNATLabGuestVM reports whether the current host is a NAT Lab guest VM.
+ func IsNATLabGuestVM() bool {
+ 	if runtime.GOOS == "linux" && distro.Get() == distro.Gokrazy {
 ```
 
-**File**: `wgengine/magicsock/endpoint.go` (modified, +2/-2)
+**File**: `hostinfo/hostinfo_linux.go` (modified, +7/-1)
 ```diff
-@@ -1109,7 +1109,7 @@ var (
- 	errPingTooBig  = errors.New("ping size too big")
+@@ -206,7 +206,11 @@ type logindRunner interface {
+ 	getSessionType(string) (string, error)
+ }
+ 
+-// osLogindRunner implements [logindRunner] by shelling out to the system logind.
++// osLogindRunner implements [logindRunner] by shelling out to the
++// system logind. The probes drop the systemd service variables.
++// loginctl sends sd_notify(3) messages on exit and error. systemd
++// rejects these messages because they come from the wrong PID. See
++// [EnvironWithoutSystemdServiceVars].
+ type osLogindRunner struct{ ctx context.Context }
+ 
+ // listSessions implements [logindRunner] using os calls.
+@@ -216,6 +220,7 @@ func (r *osLogindRunner) listSessions() ([]byte, error) {
+ 		return nil, err
+ 	}
+ 	cmd := exec.CommandContext(r.ctx, path, "list-sessions", "--json=short")
++	cmd.Env = EnvironWithoutSystemdServiceVars(nil)
+ 	output, err := cmd.Output()
+ 	if err != nil {
+ 		return nil, err
+@@ -232,6 +237,7 @@ func (r *osLogindRunner) getSessionType(session string) (string, error) {
+ 	}
+ 	cmd := exec.CommandContext(r.ctx,
+ 		path, "show-session", session, "--property=Type", "--value")
++	cmd.Env = EnvironWithoutSystemdServiceVars(nil)
+ 	output, err := cmd.Output()
+ 	if err != nil {
+ 		return "", err
+```
+
+**File**: `hostinfo/hostinfo_linux_test.go` (modified, +46/-0)
+```diff
+@@ -6,7 +6,12 @@
+ package hostinfo
+ 
+ import (
++	"bytes"
++	"context"
+ 	"errors"
++	"os"
++	"path/filepath"
++	"strings"
+ 	"testing"
  )
  
--func (de *endpoint) send(buffs [][]byte, offset int) error {
-+func (de *endpoint) send(flow int, buffs [][]byte, offset int) error {
- 	de.mu.Lock()
- 	if de.expired {
- 		de.mu.Unlock()
-@@ -1148,7 +1148,7 @@ func (de *endpoint) send(buffs [][]byte, offset int) error {
+@@ -183,3 +188,44 @@ func TestSystemdLogindFindDesktop(t *testing.T) {
+ 		})
  	}
- 	var err error
- 	if hasUDPTransport && udpAddr.ap.IsValid() {
--		_, err = de.c.sendUDPBatch(udpAddr, buffs, offset)
-+		_, err = de.c.sendUDPBatch(flow, udpAddr, buffs, offset)
+ }
++
++// TestLogindProbesDropSystemdServiceEnv checks that the loginctl
++// probes drop the systemd service variables. With NOTIFY_SOCKET
++// inherited, systemd rejects each probe's sd_notify(3) messages as
++// coming from the wrong PID. A fake loginctl dumps its environment, so
++// the test sees exactly what the probe child inherited.
++func TestLogindProbesDropSystemdServiceEnv(t *testing.T) {
++	dir := t.TempDir()
++	dump := filepath.Join(dir, "probe-env")
++
++	script := "#!/bin/sh\nenv >\"" + dump + "\"\necho '[]'\n"
++	if err := os.WriteFile(filepath.Join(dir, "loginctl"), []byte(script), 0o755); err != nil {
++		t.Fatal(err)
++	}
++
++	// Simulate the daemon's environment under a Type=notify systemd unit.
++	t.Setenv("NOTIFY_SOCKET", "/fake/systemd/notify")
++	t.Setenv("PROBE_SANITY_VAR", "kept")
++	t.Setenv("PATH", dir+string(os.PathListSeparator)+os.Getenv("PATH"))
++
++	out, err := (&osLogindRunner{ctx: context.Background()}).listSessions()
++	if err != nil {
++		t.Fatal(err)
++	}
++	if string(bytes.TrimSpace(out)) != "[]" {
++		t.Fatalf("probe output = %q", out)
++	}
++
++	b, err := os.ReadFile(dump)
++	if err != nil {
++		t.Fatalf("probe did not dump its environment: %v", err)
++	}
++	for _, kv := range strings.Split(string(b), "\n") {
++		if strings.HasPrefix(kv, "NOTIFY_SOCKET=") {
++			t.Errorf("loginctl probe inherited %q", kv)
++		}
++	}
++	if !strings.Contains(string(b), "PROBE_SANITY_VAR=kept") {
++		t.Errorf("probe environment missing an ordinary caller variable; got:\n%s", b)
++	}
++}
+```
+
+**File**: `hostinfo/hostinfo_test.go` (modified, +43/-0)
+```diff
+@@ -6,6 +6,7 @@ package hostinfo
+ import (
+ 	"encoding/json"
+ 	"os"
++	"slices"
+ 	"strings"
+ 	"testing"
+ )
+@@ -77,3 +78,45 @@ func TestCustomHostnameFunc(t *testing.T) {
+ 		t.Errorf("got %q, want %q", got, want)
+ 	}
+ }
++
++func TestEnvironWithoutSystemdServiceVars(t *testing.T) {
++	got := EnvironWithoutSystemdServiceVars([]string{
++		"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
++		"NOTIFY_SOCKET=/run/systemd/notify",
++		"HOME=/home/user",
++		"WATCHDOG_PID=1234",
++		"WATCHDOG_USEC=60000000",
++		"LISTEN_FDS=2",
++		"LISTEN_PID=1",
++		"LISTEN_FDNAMES=tailscaled.socket",
++		"INVOCATION_ID=57fad4dc31874d3882b8907c50d167a2",
++		"JOURNAL_STREAM=9:1234567",
++		"USER=ubuntu",
++	})
++	want := []string{
++		"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
++		"HOME=/home/user",
++		"USER=ubuntu",
++	}
++	if !slices.Equal(got, want) {
++		t.Errorf("got %q; want %q", got, want)
++	}
++
++	// A nil env means the current environment.
++	t.Setenv("NOTIFY_SOCKET", "/fake/systemd/notify")
++	got = EnvironWithoutSystemdServiceVars(nil)
++	for _, kv := range got {
++		if strings.HasPrefix(kv, "NOTIFY_SOCKET=") {
++			t.Errorf("current-environment form leaked %q", kv)
++		}
++	}
++	found := false
++	for _, kv := range os.Environ() {
++		if kv == "NOTIFY_SOCKET=/fake/systemd/notify" {
++			found = true
++		}
++	}
++	if !found {
++		t.Errorf("test setup: NOTIFY_SOCKET not in os.Environ()")
++	}
++}
+```
+
+**File**: `ssh/tailssh/incubator.go` (modified, +4/-0)
+```diff
+@@ -92,6 +92,10 @@ func tryExecInDir(ctx context.Context, dir string) error {
+ 	run := func(path string) error {
+ 		cmd := exec.CommandContext(ctx, path)
+ 		cmd.Dir = dir
++		// The probe runs in the daemon's environment. Strip the systemd
++		// service-instance variables; see
++		// hostinfo.EnvironWithoutSystemdServiceVars.
++		cmd.Env = hostinfo.EnvironWithoutSystemdServiceVars(nil)
+ 		return cmd.Run()
+ 	}
  
- 		// If the error is known to indicate that the endpoint is no longer
- 		// usable, clear the endpoint statistics so that the next send will
+```
+
+**File**: `ssh/tailssh/monitor.go` (modified, +6/-5)
+```diff
+@@ -197,11 +197,12 @@ func beMonitor(args []string) error {
+ // Both raw socketpair ends are close-on-exec at creation, as is the
+ // parent end's wrapUnixConn dup.
+ //
+-// env is used exactly as given: a nil env gives the child an empty
+-// environment, never the spawner's. Callers spawn the privileged
+-// monitor with the daemon's environment and user-identity children with
+-// none, so the daemon's environment never reaches a child running as
+-// the connection's user.
++// env is used exactly as given. A nil env gives the child an empty
++// environment, never the spawner's. Callers give the privileged
++// monitor the daemon's environment without the systemd service
++// variables, and give user-identity children an empty environment.
++// The daemon's environment never reaches a child running as the
++// connection's user.
+ func spawnRPCChild(prefix, exe string, argv, env []string, attr *syscall.SysProcAttr) (*exec.Cmd, *net.UnixConn, error) {
+ 	pair, err := unix.Socketpair(unix.AF_UNIX, unix.SOCK_STREAM, 0)
+ 	if err != nil {
+```
+
+**File**: `ssh/tailssh/monitor_client.go` (modified, +9/-2)
+```diff
+@@ -25,6 +25,8 @@ import (
+ 	"sync"
+ 	"syscall"
+ 	"time"
++
++	"tailscale.com/hostinfo"
+ )
+ 
+ // monitorSpawnPrefix is the argv prefix following the executable path,
+@@ -48,8 +50,13 @@ func spawnMonitor(exe string, uid, gid uint32, groups []uint32, localUser string
+ 		"--local-user="+localUser,
+ 		"--rpc-fd=3",
+ 	)
+-	// The monitor is its own session leader.
+-	cmd, parentConn, err := spawnRPCChild("ssh-monitor", exe, argv, os.Environ(), &syscall.SysProcAttr{Setsid: true})
++	// The monitor is its own session leader. It is a tailscaled
++	// re-exec, not a service instance. Give it the daemon's environment
++	// without the systemd service variables, so neither the monitor
++	// nor any helper it execs can notify the tailscaled unit. See
++	// [hostinfo.EnvironWithoutSystemdServiceVars].
++	cmd, parentConn, err := spawnRPCChild("ssh-monitor", exe, argv,
++		hostinfo.EnvironWithoutSystemdServiceVars(nil), &syscall.SysProcAttr{Setsid: true})
+ 	if err != nil {
+ 		return nil, err
+ 	}
+```
+
+**File**: `ssh/tailssh/monitor_env_test.go` (added, +126/-0)
+```diff
+@@ -0,0 +1,126 @@
++// Copyright (c) Tailscale Inc & contributors
++// SPDX-License-Identifier: BSD-3-Clause
++
++//go:build linux && !android
++
++package tailssh
++
++import (
++	"fmt"
++	"net"
++	"os"
++	"path/filepath"
++	"strings"
++	"testing"
++	"time"
++
++	gliderssh "github.com/tailscale/gliderssh"
++	gossh "golang.org/x/crypto/ssh"
++)
++
++// TestNotifySocketDoesNotReachChildren runs a real session through a
++// real monitor with NOTIFY_SOCKET set. The session child and the
++// monitor must not hold the variable. Nothing may send a notification
++// to the socket. The socket check is best effort, because it only
++// observes the daemon-side loginctl probes, which run on Debian-family
++// hosts. Hostinfo's TestLogindProbesDropSystemdServiceEnv pins the
++// probe's own environment.
++func TestNotifySocketDoesNotReachChildren(t *testing.T) {
++	sockPath := filepath.Join(t.TempDir(), "notify")
++	ln, err := net.ListenUnixgram("unixgram", &net.UnixAddr{Name: sockPath, Net: "unixgram"})
++	if err != nil {
++		t.Fatal(err)
++	}
++	defer ln.Close()
++	notifications := make(chan string, 16)
++	go func() {
++		for {
++			b := make([]byte, 4096)
++			n, rerr := ln.Read(b)
++			if rerr != nil {
++				return
++			}
++			select {
++			case notifications <- string(b[:n]):
++			default:
++			}
++		}
++	}()
++
++	// The daemon-side environment, as under a Type=notify systemd unit.
++	t.Setenv("NOTIFY_SOCKET", sockPath)
++
++	connCh := make(chan *conn, 1)
++	addr := newMonitorSessionServer(t, func(c *conn, s gliderssh.Session) {
++		select {
++		case connCh <- c:
++		default:
++		}
++		c.newSSHSession(s).run()
++	})
++
++	cl, err := gossh.Dial("tcp", addr, &gossh.ClientConfig{
++		HostKeyCallback: gossh.InsecureIgnoreHostKey(),
++		Timeout:         15 * time.Second,
++	})
++	if err != nil {
++		t.Fatal(err)
++	}
++	defer cl.Close()
++	s, err := cl.NewSession()
++	if err != nil {
++		t.Fatal(err)
++	}
++	var out sessTestBuffer
++	s.Stdout = &out
++	s.Stderr = &out
++	if err := s.Run("echo ENV-BEGIN; env; echo ENV-END"); err != nil {
++		t.Logf("session command: %v", err)
++	}
++
++	// The session child must not see the notify socket in its
++	// environment.
++	envOut := out.String()
++	if !strings.Contains(envOut, "ENV-BEGIN") {
++		t.Fatalf("no session output; got %q", envOut)
++	}
++	if strings.Contains(envOut, "NOTIFY_SOCKET=") {
++		t.Errorf("session child environment contains NOTIFY_SOCKET:\n%s", envOut)
++	}
++
++	// The monitor process must not hold the daemon's systemd
++	// service-instance variables either.
++	var c *conn
++	select {
++	case c = <-connCh:
++	case <-time.After(10 * time.Second):
++		t.Fatal("session never started")
++	}
++	var mc *monitorClient
++	deadline := time.Now().Add(10 * time.Second)
++	for mc == nil {
++		mc = c.connMonitorIfAny()
++		if mc == nil {
++			if time.Now().After(deadline) {
++				t.Fatal("connection monitor never spawned")
++			}
++			time.Sleep(50 * time.Millisecond)
++		}
++	}
++	monEnv, err := os.ReadFile(fmt.Sprintf("/proc/%d/environ", mc.Pid()))
++	if err != nil {
++		t.Fatalf("reading monitor (pid %d) environment: %v", mc.Pid(), err)
++	}
++	for _, kv := range strings.Split(string(monEnv), "\x00") {
++		if strings.HasPrefix(kv, "NOTIFY_SOCKET=") {
++			t.Errorf("ssh-monitor child environment contains %q", kv)
++		}
++	}
++
++	// No child may send notifications to the notify socket.
++	select {
++	case n := <-notifications:
++		t.Errorf("notification sent by a child process: %q", n)
++	case <-time.After(2 * time.Second):
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22030** (2026-10-28): hostinfo,ssh/tailssh: don't leak systemd service env to child processes (@raggi)
+- **PR #22029** (2026-10-28): ssh/tailssh: keep sessions when a prompt-free rule expires (@raggi)
+- **PR #22022** (closed): ssh/tailssh: keep sessions when a prompt-free rule expires (@raggi)
 - **PR #22006** (2026-10-27): net/netmon,net/netns: cache Windows default interface indices (@nickkhyl)
 - **PR #22002** (2026-10-27): Raggi/104release (@raggi)
 - **PR #21999** (2026-10-27): ipn/ipnlocal: check the tailscaled socket on every serve unix dial (@raggi)
-- **PR #21998** (2026-10-27): ipn/ipnlocal: reset alwayson override before reconciling prefs (@kari-ts)
-- **PR #21992** (closed): ipn/ipnlocal: recheck the tailscaled socket on every serve unix dial (@samj-ts)
-- **PR #21982** (2026-10-27): ssh/tailssh: parse UIDs consistently in isRootUser() (@fmarier)
 
 ---
 
@@ -1414,34 +1284,62 @@ Change-Id: I253646c753fa46e2efd0ad2158d24c416a6a6964
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tstest/natlab: add basic SSDP and UPnP support (#21823)
+## X. hostinfo,ssh/tailssh: don't leak systemd service env to child processes
 
 **RULE**:
-When implementing operations in `tstest/integration/testcontrol/testcontrol.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `hostinfo/hostinfo.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8ed43f1f`: tstest/natlab: add basic SSDP and UPnP support (#21823). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f7c1b8e5`: hostinfo,ssh/tailssh: don't leak systemd service env to child processes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tstest/integration/testcontrol/testcontrol.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `hostinfo/hostinfo.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// OverrideDisableUPnP, if true, stops the server from sending the
-	// [nodecap.DisableUPnP] capability to every node.
-	OverrideDisableUPnP bool
+	"slices"
+	cmd := exec.Command("getenforce")
+	cmd.Env = EnvironWithoutSystemdServiceVars(nil)
+	out, _ := cmd.Output()
+// systemdServiceEnvKeys are the environment variables systemd sets for
+// a service instance. See systemd.exec(5), sd_notify(3),
+// sd_listen_fds(3). They describe the daemon's main process, not a
+// child. With NOTIFY_SOCKET inherited, libsystemd-linked helpers such
+// as loginctl notify the tailscaled unit from a foreign PID. The other
+// variables give children the service's watchdog or listening fds.
+var systemdServiceEnvKeys = []string{
+	"NOTIFY_SOCKET",
+	"WATCHDOG_PID",
+	"WATCHDOG_USEC",
+	"LISTEN_FDS",
+	"LISTEN_PID",
+	"LISTEN_FDNAMES",
+	"INVOCATION_ID",
+	"JOURNAL_STREAM",
+}
 
-	if !s.OverrideDisableUPnP {
-		node.Capabilities = append(node.Capabilities, nodecap.DisableUPnP)
+// EnvironWithoutSystemdServiceVars returns env, or the current
+// environment when nil, without the systemd service-instance
+// variables. Assign it to cmd.Env when tailscaled execs a helper
+// binary.
+func EnvironWithoutSystemdServiceVars(env []string) []string {
+	if env == nil {
+		env = os.Environ()
 	}
+	ret := make([]string, 0, len(env))
+	for _, kv := range env {
+		if k, _, ok := strings.Cut(kv, "="); ok && slices.Contains(systemdServiceEnvKeys, k) {
+			continue
+		}
+		ret = append(ret,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	node.Capabilities = append(node.Capabilities, nodecap.DisableUPnP)
+	out, _ := exec.Command("getenforce").Output()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8ed43f1f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f7c1b8e5` are properly handled with clean fallback behavior.

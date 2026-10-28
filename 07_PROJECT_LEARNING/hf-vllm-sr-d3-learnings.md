@@ -3,7 +3,7 @@
 > **Source Version**: `hf-vllm-sr-d`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T19:06:27.161Z  
+> **Timestamp**: 2026-10-28T23:05:17.647Z  
 > **Learning ID**: `learn-huggingface-vllm-sr-d3`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/vllm-sr/d3](https://huggingface.co/vllm-sr/d3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T19:06:26.185Z  
+> **Harvest Timestamp**: 2026-10-28T23:05:17.004Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: zero-shot-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 7079 downloads | 270 likes
+- **Stars / Engagement**: 7711 downloads | 278 likes
 
 ---
 

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T22:59:13.995Z",
-    "lastVerified": "2026-10-28T22:59:13.995Z",
+    "lastChecked": "2026-10-28T23:05:31.327Z",
+    "lastVerified": "2026-10-28T23:05:31.327Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -363,8 +363,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T22:39:40.499Z",
-    "lastVerified": "2026-10-28T22:39:40.499Z",
+    "lastChecked": "2026-10-28T23:05:29.348Z",
+    "lastVerified": "2026-10-28T23:05:29.348Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1685,9 +1685,9 @@
   "zilliztech-claude-context": {
     "name": "claude-context",
     "officialUrl": "https://github.com/zilliztech/claude-context",
-    "lastChecked": "2026-10-28T05:30:57.357Z",
+    "lastChecked": "2026-10-28T23:05:26.808Z",
     "revisionIdentifier": "6fc318b4",
-    "lastVerified": "2026-10-28T05:30:57.357Z"
+    "lastVerified": "2026-10-28T23:05:26.808Z"
   },
   "unhappychoice-gitlogue": {
     "name": "gitlogue",
@@ -1815,14 +1815,14 @@
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T19:31:54.803Z",
-    "lastVerified": "2026-10-28T19:31:54.803Z",
+    "lastChecked": "2026-10-28T23:05:28.383Z",
+    "lastVerified": "2026-10-28T23:05:28.383Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "733db5923a1482eed79f03cfe624a5019f1f23a11bf449924984474a586bcec9",
+    "contentHash": "5959ad535b2130fc182fb2e5f6cd6ea7b50b5effca8860d43d5bde04612ab38f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2132,9 +2132,9 @@
   "nats-io-nats.go": {
     "name": "nats.go",
     "officialUrl": "https://github.com/nats-io/nats.go",
-    "lastChecked": "2026-10-28T06:31:09.833Z",
+    "lastChecked": "2026-10-28T23:05:21.910Z",
     "revisionIdentifier": "9868714c",
-    "lastVerified": "2026-10-28T06:31:09.833Z"
+    "lastVerified": "2026-10-28T23:05:21.910Z"
   },
   "infiniflow-infinity": {
     "name": "infinity",
@@ -7472,5 +7472,46 @@
     "lastChecked": "2026-10-28T22:58:58.538Z",
     "revisionIdentifier": "b5c3bd0a",
     "lastVerified": "2026-10-28T22:58:58.538Z"
+  },
+  "tw93-pake": {
+    "name": "tw93/Pake",
+    "officialUrl": "https://github.com/tw93/Pake",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T23:05:18.673Z",
+    "lastVerified": "2026-10-28T23:05:18.673Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-tw93-pake",
+    "contentHash": "8e7b6a943ffc339682b666b3930abc9084ed5ea1874a2fd9ad2443d3b89b6b66",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-vllm-sr-d3": {
+    "name": "vllm-sr/d3",
+    "officialUrl": "https://huggingface.co/vllm-sr/d3",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T23:05:17.004Z",
+    "lastVerified": "2026-10-28T23:05:17.004Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-vllm-sr-d3",
+    "contentHash": "a66eaa9c2df71756c11813f608558ebb0048f6127286a20456f527a0091f0d22",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ronitsingh10-finetune": {
+    "name": "FineTune",
+    "officialUrl": "https://github.com/ronitsingh10/FineTune",
+    "lastChecked": "2026-10-28T23:05:19.347Z",
+    "revisionIdentifier": "2285279d",
+    "lastVerified": "2026-10-28T23:05:19.347Z"
   }
 }

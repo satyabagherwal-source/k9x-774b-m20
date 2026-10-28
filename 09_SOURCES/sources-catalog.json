@@ -1485,8 +1485,8 @@
     "sourceUrl": "https://huggingface.co/vllm-sr/d3",
     "sourceVersion": "hf-vllm-sr-d3",
     "license": "Open-Source",
-    "contentHash": "ef43878094c05a0b2eaa2b4bbc23359da25f1007807f07b2784c2b1a3dfb6c0e",
-    "lastHarvestedAt": "2026-10-25T19:06:27.349Z",
+    "contentHash": "a66eaa9c2df71756c11813f608558ebb0048f6127286a20456f527a0091f0d22",
+    "lastHarvestedAt": "2026-10-28T23:05:17.808Z",
     "learningId": "learn-huggingface-vllm-sr-d3"
   },
   "nguyenphutrong-quotio": {
@@ -1703,10 +1703,10 @@
     "repository": "tw93/Pake",
     "platform": "github",
     "sourceUrl": "https://github.com/tw93/Pake",
-    "sourceVersion": "d51e8fdd",
+    "sourceVersion": "3816c112",
     "license": "GPL-3.0",
-    "contentHash": "2defab077b721eeee2d1238ead17dca750ed1a72d8d5ea53db8b15a20dee6dce",
-    "lastHarvestedAt": "2026-10-27T20:52:46.366Z",
+    "contentHash": "8e7b6a943ffc339682b666b3930abc9084ed5ea1874a2fd9ad2443d3b89b6b66",
+    "lastHarvestedAt": "2026-10-28T23:05:19.139Z",
     "learningId": "learn-github-tw93-pake"
   },
   "hf-datalab-to-indra-ocr": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "8ed43f1f",
+    "sourceVersion": "f7c1b8e5",
     "license": "BSD-3-Clause",
-    "contentHash": "733db5923a1482eed79f03cfe624a5019f1f23a11bf449924984474a586bcec9",
-    "lastHarvestedAt": "2026-10-28T19:31:55.582Z",
+    "contentHash": "5959ad535b2130fc182fb2e5f6cd6ea7b50b5effca8860d43d5bde04612ab38f",
+    "lastHarvestedAt": "2026-10-28T23:05:28.798Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {

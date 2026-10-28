@@ -5991,3 +5991,6 @@ Every entry in this ledger must capture:
 | `learn-github-nguyenphutrong-quotio` | `https://github.com/nguyenphutrong/quotio` | `c9555ad4` | Multi-dimensional audit evidence | 2026-10-28T22:58:58.475Z |
 | `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `3d36f6ee` | Multi-dimensional audit evidence | 2026-10-28T22:59:06.583Z |
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `3eabc2b8` | Multi-dimensional audit evidence | 2026-10-28T22:59:11.456Z |
+| `learn-huggingface-vllm-sr-d3` | `https://huggingface.co/vllm-sr/d3` | `hf-vllm-sr` | Multi-dimensional audit evidence | 2026-10-28T23:05:17.808Z |
+| `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `3816c112` | Multi-dimensional audit evidence | 2026-10-28T23:05:19.139Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `f7c1b8e5` | Multi-dimensional audit evidence | 2026-10-28T23:05:28.798Z |

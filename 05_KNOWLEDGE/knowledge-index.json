@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T22:59:11.353Z",
+  "last_updated": "2026-10-28T23:05:28.748Z",
   "total_verified_learnings": 1160,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -51247,8 +51247,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "8ed43f1f",
-      "content_hash": "733db5923a1482eed79f03cfe624a5019f1f23a11bf449924984474a586bcec9",
+      "source_version": "f7c1b8e5",
+      "content_hash": "5959ad535b2130fc182fb2e5f6cd6ea7b50b5effca8860d43d5bde04612ab38f",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -51346,6 +51346,11 @@
           "number": 5381,
           "title": "tstest/natlab: add basic SSDP and UPnP support (#21823)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5449,
+          "title": "hostinfo,ssh/tailssh: don't leak systemd service env to child processes",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51353,7 +51358,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T19:31:55.475Z",
+      "verified_at": "2026-10-28T23:05:28.736Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65440,7 +65445,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/vllm-sr/d3",
       "source_version": "hf-vllm-sr-d3",
-      "content_hash": "ef43878094c05a0b2eaa2b4bbc23359da25f1007807f07b2784c2b1a3dfb6c0e",
+      "content_hash": "a66eaa9c2df71756c11813f608558ebb0048f6127286a20456f527a0091f0d22",
       "dossier_path": "07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md",
       "promoted_rules": [
@@ -65495,7 +65500,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T19:06:27.276Z",
+      "verified_at": "2026-10-28T23:05:17.743Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -66337,8 +66342,8 @@
       "slug": "tw93-pake",
       "platform": "github",
       "source_url": "https://github.com/tw93/Pake",
-      "source_version": "d51e8fdd",
-      "content_hash": "2defab077b721eeee2d1238ead17dca750ed1a72d8d5ea53db8b15a20dee6dce",
+      "source_version": "3816c112",
+      "content_hash": "8e7b6a943ffc339682b666b3930abc9084ed5ea1874a2fd9ad2443d3b89b6b66",
       "dossier_path": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "promoted_rules": [
@@ -66366,6 +66371,11 @@
           "number": 4999,
           "title": "update Cargo.lock crates for published RustSec advisories (#1421)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5448,
+          "title": "cli): release the cache lock when a failed Windows build is already gone",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -66373,7 +66383,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T20:52:46.276Z",
+      "verified_at": "2026-10-28T23:05:19.047Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -147153,6 +147163,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T22:59:11.328Z"
+    },
+    "rule-5448": {
+      "learning_id": "rule-5448",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5448,
+      "title": "cli): release the cache lock when a failed Windows build is already gone",
+      "source_url": "https://github.com/tw93/Pake",
+      "source_version": "3816c112",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T23:05:19.047Z"
+    },
+    "rule-5449": {
+      "learning_id": "rule-5449",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5449,
+      "title": "hostinfo,ssh/tailssh: don't leak systemd service env to child processes",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "f7c1b8e5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T23:05:28.736Z"
     }
   },
   "aliases": {

@@ -5982,3 +5982,6 @@
 | `CYCLE-20261028-UPEV` | `2026-10-28T22:58:58.471Z` | `nguyenphutrong/quotio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5445` | Yes (`5e8ebec6...`) |
 | `CYCLE-20261028-UVO3` | `2026-10-28T22:59:06.579Z` | `authzed/spicedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5446` | Yes (`d285d027...`) |
 | `CYCLE-20261028-UZFG` | `2026-10-28T22:59:11.452Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5447` | Yes (`24db3cda...`) |
+| `CYCLE-20261028-2U3X` | `2026-10-28T23:05:17.805Z` | `vllm-sr/d3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md` | Yes (`a66eaa9c...`) |
+| `CYCLE-20261028-2V4W` | `2026-10-28T23:05:19.136Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5448` | Yes (`8e7b6a94...`) |
+| `CYCLE-20261028-32L8` | `2026-10-28T23:05:28.796Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5449` | Yes (`5959ad53...`) |
