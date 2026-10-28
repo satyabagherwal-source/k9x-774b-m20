@@ -1245,8 +1245,8 @@
     "sourceUrl": "https://huggingface.co/google/gemma-4-31B-it",
     "sourceVersion": "hf-google-gemma-4-31b-it",
     "license": "Open-Source",
-    "contentHash": "309aacb8699faa0054caa34f078e19428790420dabb0b6fafe3aa266c94b5910",
-    "lastHarvestedAt": "2026-10-25T04:05:52.648Z",
+    "contentHash": "9f0274d77e2e4bff3e8ed469fbc74192a6867f82318b71d13daa5d475729dd2b",
+    "lastHarvestedAt": "2026-10-28T00:46:51.903Z",
     "learningId": "learn-huggingface-google-gemma-4-31b-it"
   },
   "hf-baai-bge-base-en-v1.5": {
@@ -3613,10 +3613,10 @@
     "repository": "1jehuang/jcode",
     "platform": "github",
     "sourceUrl": "https://github.com/1jehuang/jcode",
-    "sourceVersion": "07d9354d",
+    "sourceVersion": "a3ef562f",
     "license": "MIT",
-    "contentHash": "8605e7a25e6552536edcff255dc123c2967af850e8735dbccb0a29b76d82e10f",
-    "lastHarvestedAt": "2026-10-26T13:40:31.545Z",
+    "contentHash": "db0a5fb44e5914f57bd742260d16560ee903f2ab1a2dd93832e6f22f59fab998",
+    "lastHarvestedAt": "2026-10-28T00:46:44.844Z",
     "learningId": "learn-github-1jehuang-jcode"
   },
   "wix-detox": {
@@ -5323,10 +5323,10 @@
     "repository": "yugabyte/yugabyte-db",
     "platform": "github",
     "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
-    "sourceVersion": "fb9ac9b9",
+    "sourceVersion": "9fe8c247",
     "license": "NOASSERTION",
-    "contentHash": "3fbaf08dca470a2cbf90219bb41f0bb0aea31c81c640f434e960eef88c76b0d4",
-    "lastHarvestedAt": "2026-10-27T12:10:57.836Z",
+    "contentHash": "3cd36c16d7803d1a89ca01c33d4e2833366e4b6767b4bfec1f4ef79486a09aea",
+    "lastHarvestedAt": "2026-10-28T00:47:00.003Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
   },
   "react95-react95": {

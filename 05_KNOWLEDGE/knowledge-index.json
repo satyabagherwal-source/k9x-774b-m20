@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T00:40:17.749Z",
+  "last_updated": "2026-10-28T00:46:59.959Z",
   "total_verified_learnings": 1154,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -92,8 +92,8 @@
       "slug": "1jehuang-jcode",
       "platform": "github",
       "source_url": "https://github.com/1jehuang/jcode",
-      "source_version": "07d9354d",
-      "content_hash": "8605e7a25e6552536edcff255dc123c2967af850e8735dbccb0a29b76d82e10f",
+      "source_version": "a3ef562f",
+      "content_hash": "db0a5fb44e5914f57bd742260d16560ee903f2ab1a2dd93832e6f22f59fab998",
       "dossier_path": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "promoted_rules": [
@@ -141,6 +141,11 @@
           "number": 4611,
           "title": "test(tui): validate blocked todo marker lifecycle",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5079,
+          "title": "cloud): carry private runtime for development CLI recovery",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -148,7 +153,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T13:40:31.470Z",
+      "verified_at": "2026-10-28T00:46:44.796Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -21916,7 +21921,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/gemma-4-31B-it",
       "source_version": "hf-google-gemma-4-31b-it",
-      "content_hash": "309aacb8699faa0054caa34f078e19428790420dabb0b6fafe3aa266c94b5910",
+      "content_hash": "9f0274d77e2e4bff3e8ed469fbc74192a6867f82318b71d13daa5d475729dd2b",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md",
       "promoted_rules": [
@@ -21938,7 +21943,7 @@
         {
           "number": 1803,
           "title": "Multimodal Token Alignment & Padding Invariant",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1804,
@@ -21953,6 +21958,11 @@
         {
           "number": 3156,
           "title": "Generation Config EOS Token Multiplicity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5080,
+          "title": "Logit Soft-Capping for Numerical Stability",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -21973,7 +21983,7 @@
         "learn-huggingface-hf-google-gemma-4-31b-it-mv40fw8a",
         "learn-huggingface-hf-google-gemma-4-31b-it-mv4ee2dq"
       ],
-      "verified_at": "2026-10-25T04:05:52.584Z",
+      "verified_at": "2026-10-28T00:46:51.840Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54768,8 +54778,8 @@
       "slug": "yugabyte-yugabyte-db",
       "platform": "github",
       "source_url": "https://github.com/yugabyte/yugabyte-db",
-      "source_version": "fb9ac9b9",
-      "content_hash": "3fbaf08dca470a2cbf90219bb41f0bb0aea31c81c640f434e960eef88c76b0d4",
+      "source_version": "9fe8c247",
+      "content_hash": "3cd36c16d7803d1a89ca01c33d4e2833366e4b6767b4bfec1f4ef79486a09aea",
       "dossier_path": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "promoted_rules": [
@@ -54812,6 +54822,11 @@
           "number": 4735,
           "title": "[DB-24956] CDCSDK: Retry DROP REPLICATION SLOT WAIT across RPC timeouts",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5081,
+          "title": "[PLAT-23187] YBA: Fix SSH to nodes when the YBA host has OS FIPS mode on",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54819,7 +54834,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:10:57.786Z",
+      "verified_at": "2026-10-28T00:46:59.952Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -77794,14 +77809,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 969,
       "title": "Hybrid Attention Layer Interleaving Invariant",
-      "source_url": "https://huggingface.co/LiquidAI/LFM3-1.7B",
-      "source_version": "hf-liquidai-lfm3-1.7b",
+      "source_url": "https://huggingface.co/google/gemma-4-31B-it",
+      "source_version": "hf-google-gemma-4-31b-it",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-27T23:45:58.516Z"
+      "verified_at": "2026-10-28T00:46:51.840Z"
     },
     "rule-970": {
       "learning_id": "rule-970",
@@ -89846,7 +89861,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T22:48:09.133Z"
+      "verified_at": "2026-10-28T00:46:51.840Z"
     },
     "rule-1804": {
       "learning_id": "rule-1804",
@@ -139872,6 +139887,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T00:40:17.727Z"
+    },
+    "rule-5079": {
+      "learning_id": "rule-5079",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5079,
+      "title": "cloud): carry private runtime for development CLI recovery",
+      "source_url": "https://github.com/1jehuang/jcode",
+      "source_version": "a3ef562f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T00:46:44.796Z"
+    },
+    "rule-5080": {
+      "learning_id": "rule-5080",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5080,
+      "title": "Logit Soft-Capping for Numerical Stability",
+      "source_url": "https://huggingface.co/google/gemma-4-31B-it",
+      "source_version": "hf-google-gemma-4-31b-it",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T00:46:51.840Z"
+    },
+    "rule-5081": {
+      "learning_id": "rule-5081",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5081,
+      "title": "[PLAT-23187] YBA: Fix SSH to nodes when the YBA host has OS FIPS mode on",
+      "source_url": "https://github.com/yugabyte/yugabyte-db",
+      "source_version": "9fe8c247",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T00:46:59.952Z"
     }
   },
   "aliases": {

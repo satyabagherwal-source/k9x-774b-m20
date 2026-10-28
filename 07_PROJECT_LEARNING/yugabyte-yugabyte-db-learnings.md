@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source**: github ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
-> **Source Version**: `fb9ac9b9`  
+> **Source Version**: `9fe8c247`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T12:10:57.520Z  
+> **Timestamp**: 2026-10-28T00:46:59.736Z  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T12:10:56.642Z  
+> **Harvest Timestamp**: 2026-10-28T00:46:59.189Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YugabyteDB - the cloud native distributed SQL database for mission-critical applications.
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10633 stars
+- **Stars / Engagement**: 10634 stars
 
 ---
 
@@ -2250,11 +2250,11 @@ class _SshRemoteShell(object):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #35865** (2026-10-27): **[#35734] YSQL: Take object locks before ysql_enable_object_locking_infra is promoted**
-  *Symptoms*: ### Background  Two flags control object locking: - The gflag enable_object_locking_for_table_locks. It is on in release builds.   It takes effect at the rolling restart. - The AutoFlag ysql_enable_object_locking_infra. It is promoted at upgrade   finalize.  A transaction reads the AutoFlag once, when it starts, and keeps that value until it ends (YBCSetObjectLockingInfraForCurrTxn).  - A legacy transaction read the AutoFlag as false. It does not rely on object   locks. All its requests, DMLs and DDLs, get the catalog version check.   Transactional DDL is off for it, so each of its DDLs is an autonomous DDL:   the DDL runs in its own DDL transaction. - A non-legacy transaction read the AutoFlag as true. It relies on object   locks, and its requests skip the catalog version check. Its DDLs are   concurrent DDLs.  Before this change, the AutoFlag value also controlled whether a transaction takes object locks.  ### Objectives  Rules for two transactions that use the same object at the same time: 1. Legacy and legacy: the catalog version check catches a DDL conflict. The    check is not complete, because the catalog cache can be stale in legacy    mode, but it gives some protection. 2. Non-legacy and non-legacy: object locks serialize them. 3. Legacy and non-legacy: allowed if both run only DMLs. Not allowed if one    of them runs a DDL.  Users must also be able to run concurrent DDLs immediately after finalize. An error is acceptable, but the goal is no error.  ### Problem  A tr
+- **Issue #35971** (2026-10-27): **[#35968] ClaudeCode: Make GitHub PRs the default and Phorge opt-in in agent skills**
+  *Symptoms*: ## Description Fixes #35968  Phorge is being retired in favor of GitHub Pull Requests. This PR updates the agent skills and repository guidelines to make GitHub PRs the default workflow while preserving opt-in support for Phorge:  - **`create-diff` skill**: Clarified description to mark Phorge/arc diffs as legacy and opt-in when explicitly requested. - **`create-pr` skill**: Made GitHub PR creation the explicit default publishing flow for reviews. - **`/backport-commit` command**: Removed automatic redirection of Phorge-originating commits to `/backport-diff`, keeping GitHub backport PRs as the standard. - **`review-backport` skill**: Added documentation and steps to review GitHub backport PRs (`gh pr view`/`gh pr diff`) alongside legacy Phorge revisions. - **`src/AGENTS.md`**: Updated workflow guidelines to reflect GitHub Pull Requests as the primary code review and merge flow.  ### Test Plan Inspected skill definitions and ensured compatibility with existing command syntax and instructions. 
 
-- **Issue #35852** (2026-10-26): **[BACKPORT 2025.2][#33919] DocDB: Fix flaky WriteStallCascadeTest.WriteStallCanBlockElection (#34492)**
-  *Symptoms*: ## Summary  In `WriteStallCanBlockElection`, the test shuts down one follower and then calls `GetLeaderPeerForTablet()`. That function only works if some peer is `LEADER_AND_READY`. On slow nodes the shutdown can take about 3 seconds, and two things can go wrong in that window: - The leader can lose its lease, because the stalled follower never acknowledges it. - The stalled follower can take over as leader.  When either happens, the call fails with `Expected exactly one leader ... 0 vs 1`.  **Fix:** The step-down logic is now a shared helper, `StepDownOriginalLeaderIfStillLeader()`. It finds the peer on the original leader's tserver directly. If that peer is still the leader, it steps it down. If it isn't, it skips the step-down. Both `WriteStallCanBlockElection` and `ElectionSucceedsDespiteFollowerWriteStall` use it, since both tests had the same pattern.  `GetTabletLayout()` now keeps retrying for up to 10 seconds. Right after startup, a peer may not have become a follower yet. That is what caused `Need at least 2followers: 1 vs 2` on master arm release.  Jira: DB-23519  ## Upgrade/Rollback safety  Test-only change.  Original commit: 5960e19d735f41dd45b0a57a3901459334376ce5 / #34492  ## Test plan  - [x] `yb_build.sh debug --cxx-test write_stall_cascade-test -n 50` - [x] `yb_build.sh asan --cxx-test write_stall_cascade-test -n 50` - [ ] `yb_build.sh tsan --cxx-test write_stall_cascade-test -n 50`  🤖 Generated with [Claude Code](https://claude.com/claude-code)    --------- 
+- **Issue #35936** (2026-10-27): **[#35930] YSQL: Restore the access method encapsulation of YB scans for planner-decided aggregate pushdown**
+  *Symptoms*: ## Summary  16d783a6447a49ff5c3be18f2d84f0cebcb89848 made the planner decide aggregate pushdown under the YB cost model, and its recheck handling broke the encapsulation of YB scans behind the access method (AM) interface. `ExecInitAgg` restated the AM's forced-recheck conditions and included the AM-internal header `access/yb_scan_core.h`, and the planner restated the bitmap index scan's runtime-key rule. A condition the AM gained later would have reached neither copy (#35930).  * Made `ExecInitAgg` set `EXEC_FLAG_YB_AGG_PARENT` for a planner-decided Agg too, so that the scan asks the AM at init, and made both decisions read the scan's answer through one function. Removed the restated conditions and the include. * Moved the bitmap index scan's runtime-key rule into one function that the executor and the planner share. * Reverted the "legacy only" comments on the flag and the scans' recheck fields, which both decisions now use, and marked "Legacy cost model only:" on the code that goes with the legacy modes.  Nothing changes without the YB cost model. Under it, a planner-decided pushdown is withdrawn on any recheck the AM reports at init, and EXPLAIN without ANALYZE of such a plan opens the scan's index at init.  What stays duplicated, and why:  * **Eligibility rules in the executor and the planner.** The legacy modes keep the executor's decision so that their pushdown stays as it is; the executor's copy goes when those modes are removed. * **The planner's predictions of the s
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2271,594 +2271,577 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6a8130b4` (2026-10-26)
-**Commit Message**: [DB-24956] CDCSDK: Retry DROP REPLICATION SLOT WAIT across RPC timeouts
+### Incident Patch 1: `ad809563` (2026-10-23)
+**Commit Message**: [PLAT-23187] YBA: Fix SSH to nodes when the YBA host has OS FIPS mode on
 
 Summary:
-**Problem**
-`DROP WAIT` of replication slot would fail after the RPC deadline (~62s on CDC universes, ~602s default) even when the slot was still legitimately held by another session. PostgreSQL's WAIT has no deadline and blocks indefinitely until the slot is released or the backend is cancelled.
+When the YBA host OS is in FIPS mode, universe creation hangs: YBA can't SSH into any node and keeps retrying with no error.
 
-**Solution**
-`DROP ... WAIT` matches PostgreSQL: `YbTryAcquireReplicationSlotLock` retries when wait=true and the acquire RPC returns a timeout, so the drop keeps waiting across RPC deadlines instead of failing early.
-Cancellation: `CHECK_FOR_INTERRUPTS`() runs before each attempt so disconnect, cancel, or statement_timeout can exit the loop (after the in-flight RPC returns).
-Observability: The first few timeouts log at `DEBUG1`; after 3 consecutive timeouts the message escalates to `WARNING` and notes that the slot may still be held by another session.
-Optional cap: GUC `yb_replication_slot_wait_max_retries` (default 0 = unlimited) caps the retry count, causing `DROP WAIT` to fail with `LOCK_NOT_AVAILABLE` after N RPC timeouts instead of waiting forever.
+paramiko's `SSHClient` logs the key it authenticates with via `PKey.get_fingerprint()`, which calls plain `md5()`. A host OpenSSL in FIPS mode rejects that (`ValueError: [digital envelope routines] unsupported`), so every connect fails before authentication, whatever the target machine is. The ybops retry wrapper turns the error into a recoverable one, and the wait-for-SSH loop keeps retrying.
 
-Test Plan:
-  - Added `testDropReplicationSlotWaitRet
+ybops now replaces `PKey.get_fingerprint` with one that computes the md5 with `usedforsecurity=False`, as `aws/cloud.py` already does, and falls back to sha256 if md5 is unavailable entirely. paramiko only uses this fingerprint in its log messages, and YBA never calls it.
 
-**File**: `java/yb-pgsql/src/test/java/org/yb/pgsql/TestPgReplicationSlot.java` (modified, +135/-0)
+When OpenSSL has only the FIPS provider loaded (no default provider), Python's `hashlib` has no `md5` attribute at all, and `import paramiko` fails on `from hashlib import md5`. `ybops/__init__.py` now gives `hashlib` an `md5` that raises the same `ValueError` md5 raises in FIPS mode, so paramiko and other libraries t
+
+**File**: `managed/devops/opscli/ybops/__init__.py` (modified, +10/-0)
 ```diff
-@@ -7055,6 +7055,141 @@ public void testDropReplicationSlotWaitRequiresExclusiveLock() throws Exception
-     replConn0.close();
-   }
- 
-+  @Test
-+  public void testDropReplicationSlotWaitRetriesAcrossRpcTimeout() throws Exception {
-+    // Verify that DROP_REPLICATION_SLOT ... WAIT keeps waiting even after the advisory-lock
-+    // RPC deadline expires.  We force a short RPC deadline by setting
-+    // ysql_client_read_write_timeout_ms to 5 seconds, then hold the slot alive for longer than
-+    // that before releasing it.  The drop must succeed rather than failing with a timeout error.
-+    Map<String, String> tserverFlags = getTServerFlagsWithExclusiveLock();
-+    tserverFlags.put("ysql_client_read_write_timeout_ms", "5000");
-+    restartClusterWithFlags(getMasterFlags(), tserverFlags);
+@@ -0,0 +1,10 @@
++import hashlib
 +
-+    String slotName = "drop_slot_wait_retry_test";
++# When OpenSSL has only the FIPS provider, hashlib has no md5 at all, and modules that import it by
++# name - paramiko among them - fail to import. Give them one that fails only when called, the way
++# md5 does in FIPS mode otherwise.
++if not hasattr(hashlib, "md5"):
++    def _md5_unavailable(*args, **kwargs):
++        raise ValueError("unsupported hash type md5 (in FIPS mode)")
 +
-+    try (Statement stmt = connection.createStatement()) {
-+      stmt.execute("DROP TABLE IF EXISTS t_drop_wait_retry");
-+      stmt.execute("CREATE TABLE t_drop_wait_retry(k int primary key, v text)");
-+      stmt.execute("INSERT INTO t_drop_wait_retry VALUES (1, 'a')");
-+    }
-+
-+    Connection replConn0 = getConnectionBuilder().withTServer(0).replicationConnect();
-+    PGReplicationConnection replApi0 =
-+        replConn0.unwrap(PGConnection.class).getReplicationAPI();
-+
-+    createSlot(replApi0, slotName, "test_decoding");
-+    assertReplicationSlotExists(slotName, true);
-+
-+    PGReplicationStream stream0 = replApi0.replicationStream()
-+        .logical()
-+        .withSlotName(slotName)
-+        .withStartPosition(LogSequenceNumber.valueOf(0L))
-+        .start();
-+
-+    // Start the WAIT drop on a different tserver while the slot is held.
-+    AtomicReference<Exception> dropError = new AtomicReference<>();
-+    Thread dropThread = new Thread(() -> {
-+      try (Connection replConn1 = getConnectionBuilder().withTServer(1).replicationConnect();
-+           Statement stmt = replConn1.createStatement()) {
-+        stmt.execute("DROP_REPLICATION_SLOT " + slotName + " WAIT");
-+      } catch (Exception e) {
-+        dropError.set(e);
-+      }
-+    });
-+    dropThread.start();
-+
-+    // Hold the slot alive for longer than the 5-second RPC timeout so that the first
-+    // advisory-lock acquire RPC definitely times out.  The retry loop must issue a new
-+    // acquire and eventually succeed.
-+    Thread.sleep(15000);
-+    assertTrue("DROP_REPLICATION_SLOT ... WAIT must still be blocked after the first RPC timeout",
-+        dropThread.isAlive());
-+    assertReplicationSlotExists(slotName, true);
-+
-+    // Release the slot; the retrying drop must now complete.
-+    stream0.close();
-+    replConn0.close();
-+
-+    dropThread.join(30000);
-+    assertFalse("DROP_REPLICATION_SLOT ... WAIT must complete after the slot is released",
-+        dropThread.isAlive());
-+    if (dropError.get() != null) {
-+      throw new AssertionError("DROP_REPLICATION_SLOT ... WAIT failed unexpectedly",
-+          dropError.get());
-+    }
-+    assertReplicationSlotExists(slotName, false);
-+  }
-+
-+  @Test
-+  public void testDropReplicationSlotWaitMaxRetriesGuc() throws Exception {
-+    // Verify that yb_replication_slot_wait_max_retries caps the retry loop: when set to 2,
-+    // DROP_REPLICATION_SLOT ... WAIT must fail with LOCK_NOT_AVAILABLE after 2 RPC timeouts
-+    // rather than blocking indefinitely.
-+    Map<String, String> tserverFlags = getTServerFlagsWithExclusiveLock();
-+    tserverFlags.put("ysql_client_read_write_timeout_ms", "5000");
-+    restartClusterWithFlags(getMasterFlags(), tserverFlags);
-+
-+    String slotName = "drop_slot_wait_max_retries_test";
-+
-+    try (Statement stmt = connection.createStatement()) {
-+      stmt.execute("DROP TABLE IF EXISTS t_drop_wait_maxretries");
-+      stmt.execute("CREATE TABLE t_drop_wait_maxretries(k int primary key, v text)");
-+      stmt.execute("INSERT INTO t_drop_wait_maxretries VALUES (1, 'a')");
-+    }
-+
-+    Connection replConn0 = getConnectionBuilder().withTServer(0).replicationConnect();
-+    PGReplicationConnection replApi0 =
-+        replConn0.unwrap(PGConnection.class).getReplicationAPI();
-+
-+    createSlot(replApi0, slotName, "test_decoding");
-+    assertReplicationSlotExists(slotName, true);
-+
-+    PGReplicationStream stream0 = replApi0.replicationStream()
-+        .logical()
-+        .withSlotName(slotName)
-+        .withStartPosition(LogSequenceNumber.valueOf(0L))
-+        .start();
-+
-+    // Set max retries to 2 on tserver 1 and issue DROP WAIT from there.
-+    // The slot remains held by tserver 0 throughout, so the drop must hit the cap and fail.
-+    AtomicReference<Exception> dropError = new AtomicReference<>();
-+    Thread dropThread = new Thread(() -> {
-+      try (Connection replConn1 = getConnectionBuilder().withTServer(1).replicationConnect();
-+           Statement stmt = replConn1.createStatement()) {
-+        stmt.execute("SET yb_replication_slot_wait_max_retries = 2");
-+        stmt.execute("DROP_REPLICATION_SLOT " + sl
++    hashlib.md5 = _md5_unavailable
 ```
 
-**File**: `src/postgres/src/backend/replication/slot.c` (modified, +72/-4)
+**File**: `managed/devops/opscli/ybops/utils/ssh.py` (modified, +13/-0)
 ```diff
-@@ -162,6 +162,9 @@ YbBuildReplicationSlotLockTag(const char *slot_name, LOCKTAG *tag)
- 						 /* objsubid= */ 2);
- }
+@@ -10,6 +10,7 @@
  
-+/* Number of consecutive RPC timeouts before escalating the log message to WARNING. */
-+#define YB_SLOT_WAIT_WARN_RETRIES 3
-+
- /*
-  * YB: Try to acquire an exclusive session-level advisory lock for the
-  * named replication slot.  Returns false if it is already held.
-@@ -170,19 +173,84 @@ YbBuildReplicationSlotLockTag(const char *slot_name, LOCKTAG *tag)
-  * static yb_slot_locktag on successful acquisition, so that the
-  * ReplicationSlotShmemExit() sentinel never sees a stale "lock held"
-  * value when the acquire failed.
-+ *
-+ * When wait=true, RPC timeouts are retried (unbounded by default, or up to
-+ * yb_replication_slot_wait_max_retries if set) so that the caller blocks
-+ * until the lock is granted, the backend is cancelled, or the retry cap is
-+ * reached.  This matches PostgreSQL's DROP_REPLICATION_SLOT ... WAIT behaviour.
-+ * CHECK_FOR_INTERRUPTS is called before each attempt so that a client disconnect
-+ * or SIGINT exits the loop promptly.
-+ *
-+ * After YB_SLOT_WAIT_WARN_RETRIES consecutive timeouts the retry message is
-+ * escalated from DEBUG1 to WARNING so that an infrastructure failure (e.g.
-+ * advisory-lock tablet has no leader) is visible in the server log at the
-+ * default log_min_messages level rather than silently looping forever.
-+ *
-+ * When yb_replication_slot_wait_max_retries > 0 and that many RPC timeouts
-+ * have occurred, the function raises ERROR with ERRCODE_LOCK_NOT_AVAILABLE
-+ * instead of retrying further.
-  */
- static bool
- YbTryAcquireReplicationSlotLock(const char *slot_name, bool wait)
- {
- 	LOCKTAG		tag;
- 	YbcStatus	status;
-+	int			retry_count = 0;
+ import datetime
+ import functools
++import hashlib
+ import logging
+ import os
+ import paramiko
+@@ -47,6 +48,18 @@
+ COMMAND_TIMEOUT_SEC = 600
  
- 	YbBuildReplicationSlotLockTag(slot_name, &tag);
  
--	status = YBCAcquireAdvisoryLock(GetYBAdvisoryLockId(tag),
--									YB_ADVISORY_LOCK_EXCLUSIVE,
--									wait,
--									/* session= */ true);
-+	for (;;)
-+	{
-+		CHECK_FOR_INTERRUPTS();
++# paramiko calls get_fingerprint() only for its logs, but its plain md5() fails on a host whose
++# OpenSSL is in FIPS mode, which failed every connect.
++def _fips_safe_fingerprint(key):
++    try:
++        return hashlib.md5(key.asbytes(), usedforsecurity=False).digest()
++    except ValueError:
++        return hashlib.sha256(key.asbytes()).digest()
 +
-+		status = YBCAcquireAdvisoryLock(GetYBAdvisoryLockId(tag),
-+										YB_ADVISORY_LOCK_EXCLUSIVE,
-+										wait,
-+										/* session= */ true);
 +
-+		/*
-+		 * On a plain try (wait=false) any timeout is a real failure; on a
-+		 * wait acquire a timeout just means the RPC deadline was reached
-+		 * before the lock was released -- retry to match PG's no-deadline
-+		 * WAIT behaviour.
-+		 *
-+		 * YBCStatusIsTimedOut covers both "lock still held" and infrastructure
-+		 * failures (tablet leader election, unreachable tserver).  Escalate to
-+		 * WARNING after YB_SLOT_WAIT_WARN_RETRIES attempts so that the latter
-+		 * case is diagnosable from the server log at default log_min_messages.
-+		 */
-+		if (wait && status && YBCStatusIsTimedOut(status))
-+		{
-+			int			loglevel;
++paramiko.PKey.get_fingerprint = _fips_safe_fingerprint
 +
-+			YBCFreeStatus(status);
-+			retry_count++;
-+			loglevel = (retry_count > YB_SLOT_WAIT_WARN_RETRIES) ? WARNING : DEBUG1;
-+			ereport(loglevel,
-+					(errmsg("replication slot \"%s\": advisory-lock RPC timed out"
-+							" (attempt %d); the slot may still be held by another"
-+							" session",
-+							slot_name, retry_count)));
 +
-+			/*
-+			 * YB: If the retries are capped, bail out
-+			 * rather than looping forever -- useful when the hang is caused by
-+			 * an advisory-lock tablet outage rather than normal lock contention.
-+			 */
-+			if (yb_replication_slot_wait_max_retries > 0 &&
-+				retry_count >= yb_replication_slot_wait_max_retries)
-+				ereport(ERROR,
-+						(errcode(ERRCODE_LOCK_NOT_AVAILABLE),
-+						 errmsg("timed out waiting for replication slot \"%s\""
-+								" after %d RPC attempt(s)",
-+								slot_name, retry_count)));
-+
-+			continue;
-+		}
-+
-+		break;
-+	}
-+
- 	if (!HandleStatusIgnoreSkipLocking(status))
- 		return false;
- 
-```
-
-**File**: `src/postgres/src/backend/utils/misc/guc.c` (modified, +13/-0)
-```diff
-@@ -4602,6 +4602,19 @@ static struct config_int ConfigureNamesInt[] =
- 		NULL, NULL, NULL
- 	},
- 
-+	{
-+		{"yb_replication_slot_wait_max_retries", PGC_SUSET, DEVELOPER_OPTIONS,
-+			gettext_noop("Maximum advisory-lock RPC timeout retries for "
-+						 "DROP_REPLICATION_SLOT ... WAIT before giving up with "
-+						 "an error. 0 retries indefinitely."),
-+			NULL,
-+			GUC_NOT_IN_SAMPLE
-+		},
-+		&yb_replication_slot_wait_max_retries,
-+		0, 0, INT_MAX,
-+		NULL, NULL, NULL
-+	},
-+
- 	{
- 		{"yb_notifications_poll_sleep_duration_nonempty_ms", PGC_SIGHUP, DEVELOPER_OPTIONS,
- 			gettext_noop("Time in milliseconds for which the notifications poller"
-```
-
-**File**: `src/yb/common/common_flags.cc` (modified, +5/-0)
-```diff
-@@ -122,6 +122,11 @@ DEFINE_RUNTIME_PG_PREVIEW_FLAG(bool, yb_enable_replication_slot_exclusive_lock,
-     "Acquire a cluster-wide exclusive advisory lock while a replication slot is "
-     "in use so that only one consumer can use it at a time across the universe.");
- 
-+DEFINE_RUNTIME_PG_FLAG(int32, yb_replication_slot_wait_max_retries, 0,
-+    "Maximum number of advisory-lock RPC timeout retries for "
-+    "DROP_REPLICATION_SLOT ... WAIT before giving up with an error. "
-+    "0 (default) retries indefinitely.");
-+
- DEFINE_NON_RUNTIME_bool(ysql_yb_enable_implicit_dynamic_tables_logical_replication, true,
-     "When set to true, modifications to publication will be reflected implicitly. "
-     "This replaces the previous mechanism of periodic publication refresh with PG "
-```
-
-**File**: `src/yb/yql/pggate/util/ybc_guc.cc` (modified, +2/-0)
-```diff
-@@ -65,6 +65,8 @@ bool yb_enable_consistent_replication_from_hash_range = false;
- 
- bool yb_enable_replication_slot_exclusive_lock = false;
- 
-+int yb_replication_slot_wait_max_retries = 0;
-+
- bool yb_cdcsdk_stream_tables_without_primary_key = true;
- 
- bool yb_cdcsdk_allow_dml_without_pk = false;
-```
-
-**File**: `src/yb/yql/pggate/util/ybc_guc.h` (modified, +6/-0)
-```diff
-@@ -186,6 +186,12 @@ extern bool yb_enable_consistent_replication_from_hash_range;
-  */
- extern bool yb_enable_replication_slot_exclusive_lock;
- 
-+/*
-+ * GUC variable bounding the number of advisory-lock RPC retries for
-+ * DROP_REPLICATION_SLOT ... WAIT. 0 means retry indefinitely.
-+ */
-+extern int yb_replication_slot_wait_max_retries;
-+
- /*
-  * GUC variable that enables streaming tables without primary key to CDCSDK logical replication
-  * streams.
+ def ssh_retry_decorator(fn_to_call, exc_handler=None, retry_delay=None):
+     if fn_to_call is None:
+         return functools.partial(
 ```
 
 ---
 
-### Incident Patch 2: `de4218d3` (2026-10-27)
-**Commit Message**: [#16670] DocDB: dist-trace: detach the deadline object-lock release from the DDL's trace (#34194)
+### Incident Patch 2: `f1e124bb` (2026-10-27)
+**Commit Message**: [#16670] DocDB: dist-trace: generate request trace attributes for every proto, tag CDC stream ids (#35037)
 
 ## Summary
 
-Every global object-lock release is followed by a second one sent at the
-acquire deadline, in case a retried acquire landed after the first
-release. The scheduler task that sends it captures the caller's trace
-context, so on a `CREATE INDEX` trace that second release showed up as a
-ten-minute `ReleaseObjectLocksGlobal` span (the default acquire
-deadline) hanging off the DDL and stretching the whole trace to that
-point.
+The pb proxy stub drains `(yb.rpc.trace)` request fields through a
+`TracingAttributes(const PB&)` free function that was emitted into
+`.messages.cc`, so a proto only got request attributes on its RPC spans
+if it opted into lightweight messages. #34146 worked around that by
+moving `cdc_service`, `tserver_admin`, `master_admin` and
+`master_client` to `MESSAGES_PROTO_FILES`, which generates unused
+lightweight classes for every message in those files.
 
-`ReleaseObjectLocksForLostMessages` now detaches the trace context
-before it runs, so the deadline release goes out untraced. The release
-itself is unchanged; cancelling it is not an option since it exists to
-cover out-of-order acquires.
+A new trace generator in `protoc-gen-yrpc` emits `.trace.{h,cc}` for
+every proto file (unconditionally, so the CMake output list stays
+static) with the `TracingAttributes` / `AppendTracingAttributes`
+functions for its tagged messages. The header includes the imports'
+`.trace.h`, so a service whose request types live in another file
+(`tserver_service.proto` uses `tserver.proto`'s messages) still
+compiles. The proxy includes it when any request field is tagged and no
+longer needs `.messages.h` for the pb path; the lightweight generator
+keeps only the LW form. The four protos go back to `PROTO_FILES`.
 
-Adds `DistTraceTest.TestLostMessageLockReleaseNotTraced`. The fixture
-pins `pg_client_extra_timeout_ms` so the test can compute the acquire
-deadline (`lock_timeout` of 3 s times `kTimeMultiplier`, plus the pinned
-2 s). The test asserts that the master's `ReleaseObjectLocksGlobal`
-handler count grows after the deadline, so the release did run, while
-the release span count in the DDL's trace does not. A guard checks the
-base
+Attributes are still
 
-**File**: `src/yb/tserver/ts_local_lock_manager.cc` (modified, +3/-0)
+**File**: `cmake_modules/FindYRPC.cmake` (modified, +7/-4)
 ```diff
-@@ -33,6 +33,7 @@
- #include "yb/tserver/tserver_service.pb.h"
+@@ -59,12 +59,15 @@ macro(YRPC_PROCESS_FILE FIL MESSAGES)
+   set(PROXY_CC "${ARG_BINARY_ROOT}/${REL_DIR}${FIL_WE}.proxy.cc")
+   set(PROXY_H "${ARG_BINARY_ROOT}/${REL_DIR}${FIL_WE}.proxy.h")
+   set(FORWARD_H "${ARG_BINARY_ROOT}/${REL_DIR}${FIL_WE}.fwd.h")
++  set(TRACE_CC "${ARG_BINARY_ROOT}/${REL_DIR}${FIL_WE}.trace.cc")
++  set(TRACE_H "${ARG_BINARY_ROOT}/${REL_DIR}${FIL_WE}.trace.h")
+   set(MESSAGES_CC "${ARG_BINARY_ROOT}/${REL_DIR}${FIL_WE}.messages.cc")
+   set(MESSAGES_H "${ARG_BINARY_ROOT}/${REL_DIR}${FIL_WE}.messages.h")
+-  list(APPEND ${SRCS} "${PROTO_CC_OUT}")
+-  list(APPEND ${HDRS} "${PROTO_H_OUT}" "${FORWARD_H}")
++  list(APPEND ${SRCS} "${PROTO_CC_OUT}" "${TRACE_CC}")
++  list(APPEND ${HDRS} "${PROTO_H_OUT}" "${FORWARD_H}" "${TRACE_H}")
+   set(OUTPUT_FILES "")
+-  list(APPEND OUTPUT_FILES "${PROTO_CC_OUT}" "${PROTO_H_OUT}" "${FORWARD_H}")
++  list(APPEND OUTPUT_FILES
++    "${PROTO_CC_OUT}" "${PROTO_H_OUT}" "${FORWARD_H}" "${TRACE_CC}" "${TRACE_H}")
  
- #include "yb/util/backoff_waiter.h"
-+#include "yb/util/dist_trace.h"
- #include "yb/util/monotime.h"
- #include "yb/util/scope_exit.h"
- #include "yb/util/status_format.h"
-@@ -127,6 +128,8 @@ void ReleaseObjectLocksForLostMessages(
-     std::weak_ptr<TSLocalLockManager> lock_manager_weak,
-     const std::shared_ptr<master::ReleaseObjectLocksGlobalRequestPB>& release_req,
-     const Status& status) {
-+  // Fires at the acquire deadline, long after the DDL finished; must not extend the DDL's trace.
-+  auto detach_token = dist_trace::DetachTraceContext();
-   if (!status.ok()) {
-     LOG_WITH_FUNC(ERROR) << "Aborting Release request"
-                          << (VLOG_IS_ON(1) ? release_req->ShortDebugString() : "") << " due to "
+   if(${ARG_SERVICE})
+     list(APPEND ${SRCS} "${SERVICE_CC}" "${PROXY_CC}")
+@@ -105,7 +108,7 @@ macro(YRPC_PROCESS_FILE FIL MESSAGES)
+     VERBATIM)
+ 
+   GET_PROTOBUF_GENERATION_TARGET_NAME("${PROTO_REL_TO_YB_SRC_ROOT}" TGT_NAME)
+-  set(TGT_DEPS "${PROTO_CC_OUT}" "${PROTO_H_OUT}" "${FORWARD_H}")
++  set(TGT_DEPS "${PROTO_CC_OUT}" "${PROTO_H_OUT}" "${FORWARD_H}" "${TRACE_CC}" "${TRACE_H}")
+   if(${ARG_SERVICE})
+     list(APPEND TGT_DEPS
+       "${SERVICE_CC}" "${SERVICE_H}" protoc-gen-insertions
 ```
 
-**File**: `src/yb/yql/pgwrapper/dist_trace-test.cc` (modified, +51/-0)
+**File**: `python/yugabyte/ccmd_tool.py` (modified, +1/-0)
 ```diff
-@@ -11,6 +11,7 @@
- // under the License.
+@@ -56,6 +56,7 @@ def is_protobuf_generated_path(file_path: str) -> bool:
+     return file_path.endswith((
+         '.pb.cc',
+         '.messages.cc',
++        '.trace.cc',
+         '.service.cc',
+         '.proxy.cc',
+     ))
+```
+
+**File**: `python/yugabyte/dep_graph_common.py` (modified, +1/-1)
+```diff
+@@ -62,7 +62,7 @@ def make_extensions(exts_without_dot: List[str]) -> List[str]:
  
- #include <algorithm>
-+#include <chrono>
- #include <memory>
- #include <mutex>
- #include <optional>
-@@ -62,6 +63,7 @@ DECLARE_string(otel_internal_log_level);
- DECLARE_uint32(otel_batch_max_queue_size);
- DECLARE_uint32(otel_batch_schedule_delay_ms);
- DECLARE_uint32(otel_batch_max_export_batch_size);
-+METRIC_DECLARE_counter(handler_latency_yb_master_MasterDdl_ReleaseObjectLocksGlobal);
+ EXECUTABLE_FILE_NAME_RE = re.compile(r'^[a-zA-Z0-9_.-]+$')
  
- namespace yb::pgwrapper {
+-PROTO_GEN_OUTPUT_EXTENSIONS = ['pb', 'fwd', 'proxy', 'service', 'messages']
++PROTO_GEN_OUTPUT_EXTENSIONS = ['pb', 'fwd', 'proxy', 'service', 'messages', 'trace']
+ PROTO_OUTPUT_FILE_NAME_RE = re.compile(
+     r'^([a-zA-Z_0-9-]+)[.](?:%s)[.](h|cc)$' % '|'.join(PROTO_GEN_OUTPUT_EXTENSIONS))
  
-@@ -75,6 +77,8 @@ namespace otlp_trace = opentelemetry::proto::trace::v1;
- static constexpr auto kOtelBatchMaxQueueSize = 4096;
- static constexpr auto kOtelBatchMaxExportBatchSize = 512;
- static constexpr auto kOtelBatchScheduleDelayMs = 100;
-+// Pinned at cluster start so TestLostMessageLockReleaseNotTraced can compute the acquire deadline.
-+static constexpr auto kPgClientExtraTimeoutMs = 2000;
- static const auto kSharedMemoryPerformSpanName =
-     tserver::GetSharedMemSpanName(tserver::PgSharedExchangeReqType::PERFORM);
- static const auto kSharedMemoryObjectLockSpanName =
-@@ -970,6 +974,8 @@ class DistTraceTest : public LibPqTestBase {
-     options->replication_factor = 1;
-     // Force object locks over the exchange (fastpath produces no request, hence no span).
-     options->extra_tserver_flags.push_back("--enable_object_lock_fastpath=false");
-+    options->extra_tserver_flags.push_back(
-+        Format("--pg_client_extra_timeout_ms=$0", kPgClientExtraTimeoutMs));
-     options->extra_tserver_flags.push_back(
-         Format("--pg_client_use_shared_memory=$0", UsePgClientSharedMemory()));
-     if (UsePgClientSharedMemory()) {
-@@ -2864,6 +2870,51 @@ TEST_F(DistTraceRpcTest, TestSpanUnderUnsampledParentIsDropped) {
-   ASSERT_TRUE(root->GetContext().IsSampled());
+```
+
+**File**: `src/yb/cdc/CMakeLists.txt` (modified, +2/-1)
+```diff
+@@ -56,7 +56,7 @@ YRPC_GENERATE(
+   CDC_YRPC_SRCS CDC_YRPC_HDRS CDC_YRPC_TGTS
+   SOURCE_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../..
+   BINARY_ROOT ${CMAKE_CURRENT_BINARY_DIR}/../..
+-  MESSAGES_PROTO_FILES cdc_service.proto)
++  PROTO_FILES cdc_service.proto)
+ set(CDC_YRPC_LIBS
+   yrpc
+   yb_common_proto
+@@ -121,4 +121,5 @@ ADD_YB_LIBRARY(
+ 
+ # Tests
+ set(YB_TEST_LINK_LIBS integration-tests ${YB_MIN_TEST_LIBS})
++ADD_YB_TEST(cdc_trace_attrs-test)
+ ADD_YB_TEST(xcluster_producer-test)
+```
+
+**File**: `src/yb/cdc/cdc_service.proto` (modified, +17/-17)
+```diff
+@@ -169,7 +169,7 @@ message ReplicationSlotHashRangePB {
+ 
+ message InitVirtualWALForCDCRequestPB {
+   optional uint64 session_id = 1;
+-  optional bytes stream_id = 2;
++  optional bytes stream_id = 2 [(yb.rpc.trace) = {enabled: true, bytes_as_string: true}];
+   repeated string table_id = 3;
+   // Represents the hash range constraints for replication slot i.e [start range, end range).
+   // Tablets with start hash range falling in these slot's hash range will be polled.
+@@ -188,7 +188,7 @@ message InitVirtualWALForCDCResponsePB {
  }
  
-+// Every global object-lock release is followed by a second one at the acquire deadline, in case an
-+// acquire retry landed late. That deadline release must not join and stretch the DDL's trace.
-+TEST_F(DistTraceTest, TestLostMessageLockReleaseNotTraced) {
-+  static constexpr auto kReleaseSpan = "rpc yb.master.MasterService.ReleaseObjectLocksGlobal";
-+  // The second release fires lock_timeout + pg_client_extra_timeout_ms after the acquire.
-+  static constexpr auto kLockTimeout = 3s * kTimeMultiplier;
-+  static constexpr auto kPgClientExtraTimeout = kPgClientExtraTimeoutMs * 1ms;
-+  static constexpr auto kAcquireDeadline = kLockTimeout + kPgClientExtraTimeout;
+ message GetLagMetricsRequestPB {
+-  optional bytes stream_id = 1;
++  optional bytes stream_id = 1 [(yb.rpc.trace) = {enabled: true, bytes_as_string: true}];
+   reserved 2; // ASH metadata is now passed in RequestHeader PB
+ }
+ 
+@@ -199,7 +199,7 @@ message GetLagMetricsResponsePB {
+ 
+ message GetConsistentChangesRequestPB {
+   optional uint64 session_id = 1;
+-  optional bytes stream_id = 2;
++  optional bytes stream_id = 2 [(yb.rpc.trace) = {enabled: true, bytes_as_string: true}];
+   reserved 3; // ASH metadata is now passed in RequestHeader PB
+ }
+ 
+@@ -233,7 +233,7 @@ message DestroyVirtualWALForCDCResponsePB {
+ 
+ message UpdateAndPersistLSNRequestPB {
+   optional uint64 session_id = 1;
+-  optional bytes stream_id = 2;
++  optional bytes stream_id = 2 [(yb.rpc.trace) = {enabled: true, bytes_as_string: true}];
+   optional uint64 confirmed_flush_lsn = 3;
+   // The hint given for the possible value of restart_lsn.
+   // The actual value which is persisted might differ from this value
+@@ -249,7 +249,7 @@ message UpdateAndPersistLSNResponsePB {
+ 
+ message UpdatePublicationTableListRequestPB {
+   optional uint64 session_id = 1;
+-  optional bytes stream_id = 2;
++  optional bytes stream_id = 2 [(yb.rpc.trace) = {enabled: true, bytes_as_string: true}];
+   repeated string table_id = 3;
+   reserved 4; // ASH metadata is now passed in RequestHeader PB
+   // Mapping of table's OID to relfilenode. This is used to detect table rewrites.
+@@ -283,7 +283,7 @@ message CreateCDCStreamResponsePB {
+ }
+ 
+ message DeleteCDCStreamRequestPB {
+-  repeated bytes stream_id = 1;
++  repeated bytes stream_id = 1 [(yb.rpc.trace) = {enabled: true, bytes_as_string: true}];
+   optional bool ignore_errors = 2 [default = false];
+   optional bool force_delete = 3 [default = false];
+ }
+@@ -293,7 +293,7 @@ message DeleteCDCStreamResponsePB {
+ }
+ 
+ message ListTabletsRequestPB {
+-  optional string stream_id = 1;
++  optional string stream_id = 1 [(yb.rpc.trace) = {enabled: true}];
+   // local_only = true will only list tablets local to the tserver that receives the request.
+   // local_only = false will list  all tablets for the stream.
+   optional bool local_only = 2 [default = false];
+@@ -338,7 +338,7 @@ enum CDCSDKRequestSource {
+ }
+ 
+ message GetChangesRequestPB {
+-  optional bytes stream_id = 1;
++  optional bytes stream_id = 1 [(yb.rpc.trace) = {enabled: true, bytes_as_string: true}];
+   // Tablet to get the changes for.
+   optional bytes tablet_id = 2 [(yb.rpc.trace) = {enabled: true, bytes_as_string: true}];
+ 
+@@ -352,7 +352,7 @@ message GetChangesRequestPB {
+   // Whether the caller knows the tablet address or needs to use us as a proxy.
+   optional bool serve_as_proxy = 5 [default = true];
+ 
+-  optional bytes db_stream_id = 6;
++  optional bytes db_stream_id = 6 [(yb.rpc.trace) = {enabled: true, bytes_as_string: true}];
+ 
+   optional bytes table_id = 7;
+ 
+@@ -625,7 +625,7 @@ message GetChangesResponsePB {
+ }
+ 
+ message GetCheckpointRequestPB {
+-  optional bytes stream_id = 1;
++  optional bytes stream_id = 1 [(yb.rpc.trace) = {enabled: true, bytes_as_string: true}];
+   optional bytes tablet_id = 2 [(yb.rpc.trace) = {enabled: true, bytes_as_string: true}];
+   // The table_id will be required in case of colocated tables.
+   optional bytes table_id = 3;
+@@ -655,7 +655,7 @@ message UpdateCdcReplicatedIndexRequestPB {
+   // Minimum checkpoint term and index  for CDCSDK stream, to do intent cleanup for this tablet.
+   repeated OpIdPB cdc_sdk_consumed_ops = 7;
+   repeated uint64 cdc_sdk_ops_expiration_ms = 8;
+-  repeated bytes stream_ids = 9;
++  repeated bytes stream_ids = 9 [(yb.rpc.trace) = {enabled: true, bytes_as_string: true}];
+   optional fixed64 cdc_sdk_safe_time = 10;
+   repeated fixed64 cdc_sdk_safe_times = 11;
+   // Is this an initial retention barrier setting request
+@@ -676,7 +676,7 @@ message UpdateCdcReplicatedIndexResponsePB {
+ message BootstrapProducerRequestPB {
+   repeated string table_ids = 1;
+   // If the stream_ids are not provided, a new stream for each table will be created.
+-  repeated bytes xrepl_stream_ids = 2;
++  repeated bytes xrepl_stream_ids = 2 [(yb.rpc.trace) = {enabled: true, bytes_as_string: true}];
+   // Check if data bootstrap is required. Equivalent to the IsBootstrapRequired RPC.
+   optional bool check_if_bootstrap_required = 3; // [default = false]
+ }
+@@ -707,12 +707,12 @@ message GetLatestEntryOpIdResponsePB {
+ }
+ 
+ message TableInfo {
+-  optional bytes stream_id = 1;
++  optional by
+```
+
+**File**: `src/yb/cdc/cdc_trace_attrs-test.cc` (added, +48/-0)
+```diff
+@@ -0,0 +1,48 @@
++// Copyright (c) YugabyteDB, Inc.
++//
++// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
++// in compliance with the License.  You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software distributed under the License
++// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
++// or implied.  See the License for the specific language governing permissions and limitations
++// under the License.
++//
 +
-+  // First catalog access on a fresh connection preloads the relcache; keep that out of the timing.
-+  ASSERT_OK(conn_->Fetch("SELECT 1 FROM pg_class LIMIT 1"));
++#include <gtest/gtest.h>
 +
-+  auto tp = GenerateTraceparent();
-+  ASSERT_OK(conn_->ExecuteFormat("SET lock_timeout = '$0s'", kLockTimeout.count()));
-+  ASSERT_OK(conn_->ExecuteFormat("SET yb_dist_tracecontext = 'traceparent=''$0'''", tp.full));
-+  const auto ddl_start = std::chrono::steady_clock::now();
-+  ASSERT_OK(conn_->Execute("CREATE TABLE lost_release_test (id int PRIMARY KEY)"));
++#include "yb/cdc/cdc_service.pb.h"
++#include "yb/cdc/cdc_service.trace.h"
 +
-+  // The detached release leaves no span, so count its arrivals on the master instead.
-+  auto master_releases = [this]() -> Result<int64_t> {
-+    int64_t result = 0;
-+    for (auto* master : cluster_->master_daemons()) {
-+      result += VERIFY_RESULT(master->GetMetric<int64>(
-+          &METRIC_ENTITY_server, "yb.master",
-+          &METRIC_handler_latency_yb_master_MasterDdl_ReleaseObjectLocksGlobal, "total_count"));
-+    }
-+    return result;
-+  };
++#include "yb/util/test_macros.h"
 +
-+  ASSERT_OK(collector_.VerifySpanCountInTrace(tp.trace_id, kReleaseSpan, 1));
-+  SleepFor(kOtelBatchScheduleDelayMs * kTimeMultiplier * 5ms);
-+  const auto releases_after_ddl = collector_.FindSpansByName(tp.trace_id, kReleaseSpan).size();
-+  const auto master_releases_after_ddl = ASSERT_RESULT(master_releases());
-+  // The acquire happened after ddl_start, so a baseline taken before the deadline cannot already
-+  // contain the deadline release.
-+  ASSERT_LT(std::chrono::steady_clock::now() - ddl_start, kAcquireDeadline)
-+      << "baseline taken after the acquire deadline, a leaked release would go unnoticed";
++namespace yb::cdc {
 +
-+  SleepFor(kAcquireDeadline + kOtelBatchScheduleDelayMs * kTimeMultiplier * 10ms);
-+  ASSERT_GT(ASSERT_RESULT(master_releases()), master_releases_after_ddl)
-+      << "the deadline release never reached the master";
-+  ASSERT_EQ(collector_.FindSpansByName(tp.trace_id, kReleaseSpan).size(), releases_after_ddl)
-+      << "the deadline release joined the DDL trace";
++// cdc_service.proto is a plain-protobuf proto; its stream and tablet ids reach the span through
++// the generated .trace functions alone.
++TEST(CdcTraceAttrsTest, StreamIdsAreTagged) {
++  using Attrs = std::vector<std::pair<std::string, std::string>>;
++
++  GetChangesRequestPB get_changes;
++  get_changes.set_stream_id("stream-1");
++  get_changes.set_tablet_id("tablet-1");
++  get_changes.set_db_stream_id("db-stream-1");
++  ASSERT_EQ(
++      TracingAttributes(get_changes),
++      (Attrs{{"req.db_stream_id", "db-stream-1"},
++             {"req.stream_id", "stream-1"},
++             {"req.tablet_id", "tablet-1"}}));
++
++  BootstrapProducerRequestPB bootstrap;
++  bootstrap.add_xrepl_stream_ids("stream-2");
++  bootstrap.add_xrepl_stream_ids("stream-1");
++  bootstrap.add_xrepl_stream_ids("stream-2");
++  ASSERT_EQ(
++      TracingAttributes(bootstrap), (Attrs{{"req.xrepl_stream_ids.*", "stream-1, stream-2"}}));
++
++  ASSERT_TRUE(TracingAttributes(GetChangesRequestPB()).empty());
 +}
 +
- TEST_F(DistTraceRpcTest, TestOtelInternalMessagesAreLogged) {
-   google::FlagSaver flag_saver;
-   dist_trace::ScopedTestDistTrace endpoint_setter(collector_.Url());
++}  // namespace yb::cdc
+```
+
+**File**: `src/yb/gen_yrpc/CMakeLists.txt` (modified, +2/-1)
+```diff
+@@ -24,7 +24,8 @@ add_executable(protoc-gen-yrpc
+     protoc-gen-yrpc.cc
+     proxy_generator.cc
+     service_generator.cc
+-    substitutions.cc)
++    substitutions.cc
++    trace_generator.cc)
+ target_link_libraries(protoc-gen-yrpc
+     ${YB_BASE_LIBS}
+     protoc
+```
+
+**File**: `src/yb/gen_yrpc/messages_generator.cc` (modified, +4/-131)
+```diff
+@@ -17,6 +17,7 @@
+ #include <google/protobuf/io/printer.h>
+ 
+ #include "yb/gen_yrpc/model.h"
++#include "yb/gen_yrpc/trace_generator.h"
+ 
+ #include "yb/gutil/stl_util.h"
+ 
+@@ -459,16 +460,6 @@ class Message {
+ 
+     private_scope.Reset("};\n\n");
+ 
+-    if (MessageHasTracingAttributes(message_) && !message_->options().map_entry()) {
+-      printer(
+-          "std::vector<std::pair<std::string, std::string>> TracingAttributes(\n"
+-          "    const $message_pb_name$& msg);\n"
+-          "void AppendTracingAttributes(\n"
+-          "    const $message_pb_name$& msg, const std::string& prefix,\n"
+-          "    ::yb::rpc::TracingAttributeCollector* out);\n\n"
+-      );
+-    }
+-
+     if (message_->options().map_entry()) {
+       printer(
+           "inline $message_lw_name$::KeyReturnType ExtractKey(const $message_lw_name$& pair) {\n"
+@@ -1145,8 +1136,8 @@ class Message {
+   }
+ 
+   // Collects trace-tagged fields (recursing into nested messages) as (dotted-path, text-value)
+-  // pairs; bytes hex-encoded unless bytes_as_string. Emitted as lightweight members and pb_ free
+-  // functions.
++  // pairs; bytes hex-encoded unless bytes_as_string. The pb free-function form lives in the
++  // .trace.{h,cc} the trace generator emits for every proto file.
+   void TracingAttributes(YBPrinter printer) const {
+     printer(
+         "std::vector<std::pair<std::string, std::string>> "
+@@ -1159,125 +1150,7 @@ class Message {
+         "void $message_lw_name$::AppendTracingAttributes(\n"
+         "    const std::string& prefix, ::yb::rpc::TracingAttributeCollector* out) const {\n"
+     );
+-    EmitTracingAttributesBody(printer, Lightweight::kTrue);
+-
+-    if (message_->options().map_entry()) {
+-      return;
+-    }
+-    printer(
+-        "std::vector<std::pair<std::string, std::string>> TracingAttributes(\n"
+-        "    const $message_pb_name$& msg) {\n"
+-        "  ::yb::rpc::TracingAttributeCollector collector;\n"
+-        "  AppendTracingAttributes(msg, \"req.\", &collector);\n"
+-        "  return collector.Finish();\n"
+-        "}\n"
+-        "\n"
+-        "void AppendTracingAttributes(\n"
+-        "    const $message_pb_name$& msg, const std::string& prefix,\n"
+-        "    ::yb::rpc::TracingAttributeCollector* out) {\n"
+-    );
+-    EmitTracingAttributesBody(printer, Lightweight::kFalse);
+-  }
+-
+-  // Emits the per-field code both AppendTracingAttributes forms share: `lightweight` picks
+-  // the member form (fields via `this`) or the pb_ free-function form (fields via the `msg`
+-  // parameter).
+-  void EmitTracingAttributesBody(YBPrinter printer, Lightweight lightweight) const {
+-    const bool lw = lightweight;
+-    const std::string obj = lw ? std::string() : "msg."s;
+-
+-    ScopedIndent method_indent(printer);
+-
+-    for (int j = 0; j != message_->field_count(); ++j) {
+-      const auto* field = message_->field(j);
+-      const bool nested = IsMessage(field) && MessageHasTracingAttributes(field->message_type());
+-      const bool scalar = !IsMessage(field) && FieldTraceEnabled(field);
+-      if (!nested && !scalar) {
+-        continue;
+-      }
+-      ScopedSubstituter field_substituter(printer, field);
+-
+-      // Value expression, given the token yielding a single field value (e.g. "$field_name$()" or
+-      // "msg.$field_name$()" for a singular field, "entry" for a repeated element).
+-      auto value_expr = [field, lw](const std::string& token) -> std::string {
+-        if (StoredAsSlice(field)) {
+-          const bool hex = field->type() == google::protobuf::FieldDescriptor::TYPE_BYTES &&
+-                           !FieldTraceBytesAsString(field);
+-          if (lw) {
+-            return token + (hex ? ".ToDebugHexString()" : ".ToBuffer()");
+-          }
+-          return hex ? "::yb::Slice(" + token + ").ToDebugHexString()" : token;
+-        }
+-        if (field->cpp_type() == google::protobuf::FieldDescriptor::CPPTYPE_ENUM) {
+-          return "$nonlw_field_type$_Name(" + token + ")";
+-        }
+-        if (field->cpp_type() == google::protobuf::FieldDescriptor::CPPTYPE_BOOL) {
+-          return "std::string(" + token + " ? \"true\" : \"false\")";
+-        }
+-        return "std::to_string(" + token + ")";
+-      };
+-
+-      if (!field->is_repeated()) {
+-        // The lightweight message always has has_$field$(); the pb_ message only for fields with
+-        // explicit presence -- guard the rest on non-emptiness (string/bytes) or emit them plainly.
+-        if (lw || field->has_presence()) {
+-          printer("if (" + obj + "has_$field_name$()) {\n");
+-        } else if (StoredAsSlice(field)) {
+-          printer("if (!" + obj + "$field_name$().empty()) {\n");
+-        } else {
+-          printer("{\n");
+-        }
+-        ScopedIndent if_indent(printer);
+-        if (nested) {
+-          if (lw) {
+-            printer("$field_name$().AppendTracingAttributes(prefix + \"$field_name$.\", out);\n");
+-          } else {
+-            printer(
+-                "AppendTracingAttributes(" + obj +
+-     
 ```
 
 ---
 
-### Incident Patch 3: `8be02acd` (2026-10-26)
-**Commit Message**: [#35083] YSQL: Fix a scan hint reported as failed on a pushed-down aggregate when enable_* disables the scan type (#35834)
+### Incident Patch 3: `175e5a88` (2026-10-21)
+**Commit Message**: [PLAT-23185] YBA: Fix GCP provider and GCP KMS config creation on a FIPS YBA
 
-## Summary
+Summary:
+On a FIPS YBA, creating a GCP provider fails with "Failed to initialilze GCP service", and creating a GCP KMS config fails with a misleading "User does not have enough permissions" error. Neither request reaches GCP.
 
-Under the YB cost model, the planner costs the scan under a pushed-down
-aggregate on a copy of the scan path, after pg_hint_plan has restored
-the
-`enable_*` settings that a scan-method hint overrides while the
-relation's
-paths are generated. The re-costing therefore charges `disable_cost` by
-the
-session's settings rather than by the hint's.
-16d783a6447a49ff5c3be18f2d84f0cebcb89848 restored a charge the
-re-costing
-dropped, but not the reverse. When a hint selected a scan type that the
-session
-disabled with `enable_seqscan`, `enable_indexscan` or
-`enable_bitmapscan`, the
-copy carried a charge the hinted path did not, so pg_hint_plan reported
-the
-followed hint as failed.
+Both build their Google API client on `GoogleNetHttpTransport.newTrustedTransport()`. That call loads the client's bundled `google.p12` with a password, which needs PBE, and a FIPS YBA removes every JVM provider except SUN, so SunJCE and its PBE are gone. The first call fails with `PBE AlgorithmParameters not available`. The library caches the keystore before loading it, so every later call fails with `Uninitialized keystore`.
 
-Made `yb_cost_agg_pushdown_scan` remove a charge the re-costing added as
-well,
-so the copy keeps the original path's disabled state in both directions.
-For a
-merge-scan index path, `yb_cost_index` scales the charge by the
-merge-scan
-premium, so the copy's cost keeps or lacks that fraction of the charge;
-the
-copy's disabled state still matches the original's.
+Use a plain `NetHttpTransport` instead. It uses the default HTTPS socket factory (BCJSSE with the JVM default trust store), which is what the GCS client already uses, so GCS backups work on FIPS. The GCP Cloud Monitoring telemetry provider validation had the same call and gets the same fix.
 
-Added a yb.orig.hints bl
+Non-FIPS YBAs: these Google API calls now trust the JVM default trust store instead of the roots bundled in google.p12.
 
-**File**: `src/postgres/src/backend/optimizer/util/pathnode.c` (modified, +13/-7)
+Test Plan:
+- Standalone Java program with the YBA
+
+**File**: `managed/src/main/java/com/yugabyte/yw/cloud/gcp/GCPProjectApiClient.java` (modified, +4/-2)
 ```diff
-@@ -6190,13 +6190,14 @@ yb_member_subqueryscan_is_trivial(RelOptInfo *sqrel, PathTarget *target)
-  * cost.  'root' is the scan's own PlannerInfo; what the costing takes from
-  * the Agg is on the copy.
-  *
-- * The costs pg_hint_plan sets outlive the re-costing: it makes the partial
-- * paths a Parallel hint names win by zeroing their costs, and it disables
-- * the scan types a scan-method hint excludes through the enable_* GUCs only
-- * while the relation's paths are generated (and the complete paths under a
-- * forced parallel inheritance scan by adding disable_cost itself), so a
-- * copy costed later would lose the penalty, win on its real cost, and hide
-- * the failed hint from pg_hint_plan's disabled-node check.
-+ * The copy keeps the original's disabled state, and the zero cost
-+ * pg_hint_plan gives the partial paths a Parallel hint names so that they
-+ * win.  pg_hint_plan applies a scan-method hint through the enable_* GUCs
-+ * only while the relation's paths are generated, so the re-costing charges
-+ * disable_cost by the session's settings rather than by the hint's.  A copy
-+ * that lost the charge would win on its real cost and hide a failed hint
-+ * from pg_hint_plan's disabled-node check; a copy that gained the charge
-+ * would make the check report a followed hint as failed.
-  */
- static void
- yb_cost_agg_pushdown_scan(PlannerInfo *root, Path *copy)
-@@ -6248,4 +6249,9 @@ yb_cost_agg_pushdown_scan(PlannerInfo *root, Path *copy)
- 		copy->startup_cost += disable_cost;
- 		copy->total_cost += disable_cost;
- 	}
-+	else if (!disabled && copy->startup_cost >= disable_cost)
-+	{
-+		copy->startup_cost -= disable_cost;
-+		copy->total_cost -= disable_cost;
-+	}
- }
+@@ -7,14 +7,14 @@
+ 
+ import com.fasterxml.jackson.databind.JsonNode;
+ import com.fasterxml.jackson.databind.ObjectMapper;
+-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+ import com.google.api.client.googleapis.json.GoogleJsonError;
+ import com.google.api.client.googleapis.json.GoogleJsonResponseException;
+ import com.google.api.client.http.HttpBackOffUnsuccessfulResponseHandler;
+ import com.google.api.client.http.HttpHeaders;
+ import com.google.api.client.http.HttpRequest;
+ import com.google.api.client.http.HttpRequestInitializer;
+ import com.google.api.client.http.HttpTransport;
++import com.google.api.client.http.javanet.NetHttpTransport;
+ import com.google.api.client.json.gson.GsonFactory;
+ import com.google.api.client.util.ExponentialBackOff;
+ import com.google.api.gax.core.FixedCredentialsProvider;
+@@ -437,7 +437,9 @@ public Compute buildComputeClient(GCPCloudInfo cloudInfo)
+               new ByteArrayInputStream(mapper.writeValueAsBytes(gceCreds)));
+     }
+     requestInitializer = getHttpRequestInitializerWithBackoff();
+-    httpTransport = GoogleNetHttpTransport.newTrustedTransport();
++    // Not GoogleNetHttpTransport.newTrustedTransport(): its bundled google.p12 can't be read in
++    // FIPS mode. This uses the JVM default trust store.
++    httpTransport = new NetHttpTransport();
+     // Create Compute Engine object.
+     return new Compute.Builder(httpTransport, GsonFactory.getDefaultInstance(), requestInitializer)
+         .setApplicationName("")
 ```
 
-**File**: `src/postgres/src/test/regress/expected/yb.orig.hints.out` (modified, +54/-0)
+**File**: `managed/src/main/java/com/yugabyte/yw/common/kms/util/GcpEARServiceUtil.java` (modified, +4/-2)
 ```diff
-@@ -1764,6 +1764,60 @@ WARNING:  unused hints, and/or hints causing errors, exist
-  Generated hints: /*+ SeqScan(tab) Set(yb_enable_optimizer_statistics off) Set(yb_enable_base_scans_cost_model on) Set(enable_hashagg on) Set(enable_material on) Set(enable_memoize on) Set(enable_sort on) Set(enable_incremental_sort on) Set(max_parallel_workers_per_gather 2) Set(parallel_tuple_cost 0.22) Set(parallel_setup_cost 4080.00) Set(min_parallel_table_scan_size 1024) Set(yb_prefer_bnl on) Set(yb_bnl_batch_size 1024) Set(yb_fetch_row_limit 1024) Set(from_collapse_limit 8) Set(join_collapse_limit 8) Set(geqo false) */
- (5 rows)
+@@ -14,7 +14,7 @@
+ import static play.mvc.Http.Status.BAD_REQUEST;
  
-+reset yb_enable_cbo;
-+-- The other direction: the hint selects a scan type the session disables.
-+-- The hint lifts the session's setting only while the relation's paths are
-+-- generated, but the scan copy costed for the pushed-down aggregate stays
-+-- enabled like the hinted path, so the plan check reports nothing.  One case
-+-- for each scan type the copy is costed for (#35083).
-+set yb_enable_cbo = on;
-+set enable_seqscan = off;
-+/*+ SeqScan(tab) */ explain (hints on, costs off) select count(*) from t2 tab where b2<10;
-+                                                                                                                                                                                                                                                                    QUERY PLAN                                                                                                                                                                                                                                                                    
-+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-+ Finalize Aggregate
-+   ->  Seq Scan on t2 tab
-+         Storage Filter: (b2 < 10)
-+         Partial Aggregate: true
-+ Generated hints: /*+ SeqScan(tab) Set(yb_enable_optimizer_statistics off) Set(yb_enable_base_scans_cost_model on) Set(enable_hashagg on) Set(enable_material on) Set(enable_memoize on) Set(enable_sort on) Set(enable_incremental_sort on) Set(max_parallel_workers_per_gather 2) Set(parallel_tuple_cost 0.22) Set(parallel_setup_cost 4080.00) Set(min_parallel_table_scan_size 1024) Set(yb_prefer_bnl on) Set(yb_bnl_batch_size 1024) Set(yb_fetch_row_limit 1024) Set(from_collapse_limit 8) Set(join_collapse_limit 8) Set(geqo false) */
-+(5 rows)
-+
-+reset enable_seqscan;
-+set enable_indexscan = off;
-+/*+ IndexScan(tab t2_a2_idx) */ explain (hints on, costs off) select count(*) from t2 tab where a2=1;
-+                                                                                                                                                                                                                                                                          QUERY PLAN                                                                                                                                                                                                                                                                          
-+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-+ Finalize Aggregate
-+   ->  Index Scan using t2_a2_idx on t2 tab
-+         Index Cond: (a2 = 1)
-+         Partial Aggregate: true
-+ Generated hints: /*+ IndexScan(tab t2_a2_idx) Set(yb_enable_optimizer_statistics off) Set(yb_enable_base_scans_cost_model on) Set(enable_hashagg on) Set(enable_material on) Set(enable_memoize on) Set(enable_sort on) Set(enable_incremental_sort on) Set(max_parallel_workers_per_gather 2) Set(parallel_tuple_cost 0.22) Set(parallel_setup_cost 4080.00) Set(min_parallel_table_scan_size 1024) Set(yb_prefer_bnl on) Set(yb_bnl_batch_size 1024) Set(yb_fetch_row_limit 1024) Set(from_collapse_limit 8) Set(join_collapse_limit 8) Set(geqo false) */
-+(5 rows)
-+
-+/*+ IndexOnlyScan(tab t2_a2_idx) */ explain (hints on, costs off) select count(*) from t2 tab where a2=1;
-+                                                                                   
+ import com.fasterxml.jackson.databind.node.ObjectNode;
+-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
++import com.google.api.client.http.javanet.NetHttpTransport;
+ import com.google.api.client.json.gson.GsonFactory;
+ import com.google.api.gax.core.CredentialsProvider;
+ import com.google.api.gax.core.FixedCredentialsProvider;
+@@ -751,8 +751,10 @@ public CloudResourceManager createCloudResourceManagerService(ObjectNode authCon
+     }
+     credential = credential.createScoped(Collections.singleton(IamScopes.CLOUD_PLATFORM));
+ 
++    // Not GoogleNetHttpTransport.newTrustedTransport(): its bundled google.p12 can't be read in
++    // FIPS mode.
+     return new CloudResourceManager.Builder(
+-            GoogleNetHttpTransport.newTrustedTransport(),
++            new NetHttpTransport(),
+             GsonFactory.getDefaultInstance(),
+             new HttpCredentialsAdapter(credential))
+         .setApplicationName("service-accounts")
 ```
 
-**File**: `src/postgres/src/test/regress/sql/yb.orig.hints.sql` (modified, +18/-0)
+**File**: `managed/src/main/java/com/yugabyte/yw/models/helpers/telemetry/GCPCloudMonitoringConfig.java` (modified, +4/-2)
 ```diff
-@@ -401,6 +401,24 @@ set yb_enable_cbo = on;
- /*+ noSeqScan(tab) */ explain (hints on, costs off) select count(*) from t2 tab where b2<10;
- reset yb_enable_cbo;
+@@ -4,7 +4,7 @@
+ import static play.mvc.Http.Status.BAD_REQUEST;
  
-+-- The other direction: the hint selects a scan type the session disables.
-+-- The hint lifts the session's setting only while the relation's paths are
-+-- generated, but the scan copy costed for the pushed-down aggregate stays
-+-- enabled like the hinted path, so the plan check reports nothing.  One case
-+-- for each scan type the copy is costed for (#35083).
-+set yb_enable_cbo = on;
-+set enable_seqscan = off;
-+/*+ SeqScan(tab) */ explain (hints on, costs off) select count(*) from t2 tab where b2<10;
-+reset enable_seqscan;
-+set enable_indexscan = off;
-+/*+ IndexScan(tab t2_a2_idx) */ explain (hints on, costs off) select count(*) from t2 tab where a2=1;
-+/*+ IndexOnlyScan(tab t2_a2_idx) */ explain (hints on, costs off) select count(*) from t2 tab where a2=1;
-+reset enable_indexscan;
-+set enable_bitmapscan = off;
-+/*+ BitmapScan(tab t2_a2_idx) */ explain (hints on, costs off) select count(*) from t2 tab where a2=1;
-+reset enable_bitmapscan;
-+reset yb_enable_cbo;
-+
- -- Parallel zeros partial seqscans on a non-inh rel.  That must not hide
- -- NoSeqScan: still no valid path.
- /*+ NoSeqScan(tab) Parallel(tab 2) */ explain (hints on, costs off) select count(*) from t2 tab where b2<10;
+ import com.fasterxml.jackson.databind.JsonNode;
+-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
++import com.google.api.client.http.javanet.NetHttpTransport;
+ import com.google.api.client.json.gson.GsonFactory;
+ import com.google.api.services.cloudresourcemanager.CloudResourceManager;
+ import com.google.api.services.cloudresourcemanager.model.TestIamPermissionsRequest;
+@@ -173,8 +173,10 @@ public CloudResourceManager createCloudResourceManagerService(JsonNode credentia
+         GoogleCredentials.fromStream(new ByteArrayInputStream(credentials.toString().getBytes()))
+             .createScoped(Collections.singleton(IamScopes.CLOUD_PLATFORM));
+ 
++    // Not GoogleNetHttpTransport.newTrustedTransport(): its bundled google.p12 can't be read in
++    // FIPS mode.
+     return new CloudResourceManager.Builder(
+-            GoogleNetHttpTransport.newTrustedTransport(),
++            new NetHttpTransport(),
+             GsonFactory.getDefaultInstance(),
+             new HttpCredentialsAdapter(credential))
+         .setApplicationName("service-accounts")
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #35865** (closed): [#35734] YSQL: Take object locks before ysql_enable_object_locking_infra is promoted (@pao214)
-- **PR #35852** (2026-10-26): [BACKPORT 2025.2][#33919] DocDB: Fix flaky WriteStallCascadeTest.WriteStallCanBlockElection (#34492) (@rahulb-yb)
-- **PR #35850** (2026-10-26): [BACKPORT 2026.1][#33919] DocDB: Fix flaky WriteStallCascadeTest.WriteStallCanBlockElection (#34492) (@rahulb-yb)
-- **PR #35847** (2026-10-27): [BACKPORT 2025.2.8][#10492] DocDB: Support maximum replicas per placement block (#32828) (@khosrow)
-- **PR #35844** (closed): Pg19 master catchup db5f78f (@fizaaluthra)
-- **PR #35841** (2026-10-26): [BACKPORT 2026.1][#34167] DocDB: Fix long operation tracker sanitizer test (#34205) (@hkimura)
+- **PR #35971** (closed): [#35968] ClaudeCode: Make GitHub PRs the default and Phorge opt-in in agent skills (@siddiqueirshad)
+- **PR #35936** (closed): [#35930] YSQL: Restore the access method encapsulation of YB scans for planner-decided aggregate pushdown (@mtakahar)
+- **PR #35931** (2026-10-27): [BACKPORT 2026.1][#35771] DocDB: Stop running the usearch vector index backend unit tests (#35779) (@hari90)
+- **PR #35896** (2026-10-28): [BACKPORT 2025.2][#35771] DocDB: Stop running the usearch vector index backend unit tests (#35779) (@yb-agentk-dev[bot])
+- **PR #35883** (2026-10-27): [BACKPORT 2026.1][#35445] DocDB: Don't let a tablet's compaction history cutoff move back (#35694) (@druzac)
+- **PR #35882** (2026-10-27): [BACKPORT 2025.2][#35445] DocDB: Don't let a tablet's compaction history cutoff move back (#35694) (@druzac)
 
 ---
 
@@ -2878,43 +2861,30 @@ Added a yb.orig.hints bl
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [DB-24956] CDCSDK: Retry DROP REPLICATION SLOT WAIT across RPC timeouts
+## X. [PLAT-23187] YBA: Fix SSH to nodes when the YBA host has OS FIPS mode on
 
 **RULE**:
-When implementing operations in `java/yb-pgsql/src/test/java/org/yb/pgsql/TestPgReplicationSlot.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `managed/devops/opscli/ybops/__init__.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6a8130b4`: [DB-24956] CDCSDK: Retry DROP REPLICATION SLOT WAIT across RPC timeouts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ad809563`: [PLAT-23187] YBA: Fix SSH to nodes when the YBA host has OS FIPS mode on. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `java/yb-pgsql/src/test/java/org/yb/pgsql/TestPgReplicationSlot.java`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `managed/devops/opscli/ybops/__init__.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-  @Test
-  public void testDropReplicationSlotWaitRetriesAcrossRpcTimeout() throws Exception {
-    // Verify that DROP_REPLICATION_SLOT ... WAIT keeps waiting even after the advisory-lock
-    // RPC deadline expires.  We force a short RPC deadline by setting
-    // ysql_client_read_write_timeout_ms to 5 seconds, then hold the slot alive for longer than
-    // that before releasing it.  The drop must succeed rather than failing with a timeout error.
-    Map<String, String> tserverFlags = getTServerFlagsWithExclusiveLock();
-    tserverFlags.put("ysql_client_read_write_timeout_ms", "5000");
-    restartClusterWithFlags(getMasterFlags(), tserverFlags);
+import hashlib
 
-    String slotName = "drop_slot_wait_retry_test";
+# When OpenSSL has only the FIPS provider, hashlib has no md5 at all, and modules that import it by
+# name - paramiko among them - fail to import. Give them one that fails only when called, the way
+# md5 does in FIPS mode otherwise.
+if not hasattr(hashlib, "md5"):
+    def _md5_unavailable(*args, **kwargs):
+        raise ValueError("unsupported hash type md5 (in FIPS mode)")
 
-    try (Statement stmt = connection.createStatement()) {
-      stmt.execute("DROP TABLE IF EXISTS t_drop_wait_retry");
-      stmt.execute("CREATE TABLE t_drop_wait_retry(k int primary key, v text)");
-      stmt.execute("INSERT INTO t_drop_wait_retry VALUES (1, 'a')");
-    }
-
-    Connection replConn0 = getConnectionBuilder().withTServer(0).replicationConnect();
-    PGReplicationConnection replApi0 =
-        replConn0.unwrap(PGConnection.class).getReplicationAPI();
-
-    createSlot(replApi
+    hashlib.md5 = _md5_unavailable
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2924,4 +2894,4 @@ Subsystems managing C data structures, boundary deserialization, API parsing, or
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6a8130b4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ad809563` are properly handled with clean fallback behavior.

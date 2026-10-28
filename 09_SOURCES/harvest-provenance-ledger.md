@@ -5617,3 +5617,6 @@ Every entry in this ledger must capture:
 | `learn-github-fastify-fastify` | `https://github.com/fastify/fastify` | `5df959f3` | Multi-dimensional audit evidence | 2026-10-28T00:40:10.625Z |
 | `learn-github-tencent-tds-kuiklyui` | `https://github.com/Tencent-TDS/KuiklyUI` | `f0d0389c` | Multi-dimensional audit evidence | 2026-10-28T00:40:13.031Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `9c5e56ae` | Multi-dimensional audit evidence | 2026-10-28T00:40:17.820Z |
+| `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `a3ef562f` | Multi-dimensional audit evidence | 2026-10-28T00:46:44.844Z |
+| `learn-huggingface-google-gemma-4-31b-it` | `https://huggingface.co/google/gemma-4-31B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-28T00:46:51.903Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `9fe8c247` | Multi-dimensional audit evidence | 2026-10-28T00:47:00.003Z |

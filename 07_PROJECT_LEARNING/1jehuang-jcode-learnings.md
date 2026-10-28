@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source**: github ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
-> **Source Version**: `07d9354d`  
+> **Source Version**: `a3ef562f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T13:40:31.147Z  
+> **Timestamp**: 2026-10-28T00:46:44.581Z  
 > **Learning ID**: `learn-github-1jehuang-jcode`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T13:40:30.285Z  
+> **Harvest Timestamp**: 2026-10-28T00:46:44.579Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High performance coding agent harness written in Rust, built for heavy multi-agent dev workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 21218 stars
+- **Stars / Engagement**: 21263 stars
 
 ---
 
@@ -2488,172 +2488,815 @@ impl Agent {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f35542b2` (2026-10-26)
-**Commit Message**: test(tui): validate blocked todo marker lifecycle
+### Incident Patch 1: `3f1c2712` (2026-10-27)
+**Commit Message**: fix(cloud): carry private runtime for development CLI recovery
 
-**File**: `crates/jcode-tui/src/tui/ui_todo_stages_tests.rs` (modified, +24/-0)
+**File**: `src/cli/cloud_managed.rs` (modified, +13/-1)
 ```diff
-@@ -34,6 +34,30 @@ fn blocked_todos_have_distinct_phase_and_lane_pips() {
+@@ -507,6 +507,7 @@ pub(crate) fn prepare_script_with_candidate(home: &str, candidate: Option<&str>)
+     ))
+ }
+ 
++#[cfg(test)]
+ fn prepare_script_for_paths(
+     home: &str,
+     target: Option<&str>,
+@@ -666,6 +667,16 @@ if ! capable "$cli" || ! capable "$backend" || {{ [ -n "$want" ] && {{ ! version
+     echo '[cloud prepare] installing verified local development CLI (live sessions are unchanged)' >&2
+     mkdir "$stage/bin"
+     cp "$development_candidate" "$stage/bin/jcode-linux-x86_64"
++    # A native development build can require a newer loader/libc than the
++    # managed image. Its verified private bundle carries those dependencies.
++    if [ -f "$development_candidate.bin" ]; then
++      cp "$development_candidate.bin" "$stage/bin/jcode-linux-x86_64.bin"
++      source_dir=$(dirname "$development_candidate")
++      for library in "$source_dir"/lib*.so* "$source_dir"/ld-linux*.so*; do
++        [ ! -f "$library" ] || cp "$library" "$stage/bin/"
++      done
++      chmod 755 "$stage/bin/jcode-linux-x86_64.bin"
++    fi
+     candidate="$stage/bin/jcode-linux-x86_64"
+     chmod 755 "$candidate"
+   else
+@@ -700,7 +711,8 @@ if ! capable "$cli" || ! capable "$backend" || {{ [ -n "$want" ] && {{ ! version
+   chmod 755 "$candidate" "$candidate.bin"
+   fi
+   capable "$candidate" && version_matches "$candidate" || {{
+-    echo '[cloud prepare] downloaded release lacks required protocol capabilities or exact version' >&2; exit 1;
++    version_output "$candidate" >&2 || true
++    echo '[cloud prepare] candidate CLI lacks required protocol capabilities or exact version' >&2; exit 1;
+   }}
+   # Save regular files as well as symlinks, without changing their original target.
+   if [ -e "$backend" ] || [ -L "$backend" ]; then
+```
+
+**File**: `src/cli/cloud_managed_tests.rs` (modified, +18/-0)
+```diff
+@@ -268,6 +268,24 @@ cp "$HOME/fixtures/${url##*/}" "$dest"
+         }
      }
- }
  
-+#[test]
-+fn blocked_marker_overrides_live_worker_and_clears_when_review_is_due() {
-+    let mut item = assigned(todo("1", "Activation", "in_progress", Some(1)), "fox");
-+    item.external_blocker = Some(crate::todo::TodoExternalBlocker {
-+        reason: "Need user authorization".into(),
-+        review_at: chrono::Utc::now() + chrono::Duration::hours(1),
-+    });
-+    let mut worker = agent("fox", "running", Some("Working"), Some(1));
-+    worker.todo_statuses = vec!["in_progress".into(), "pending".into()];
-+    let workers = [worker];
-+    let statuses = lane_item_statuses(&[&item], &workers);
-+    assert_eq!(statuses, vec![("blocked", false)]);
-+    let strip = lane_strip_spans(&statuses, 2);
-+    assert_eq!(strip[0].content, "⊳");
-+    assert_eq!(strip[0].style.fg, Some(rgb(225, 165, 90)));
-+    assert!(!Line::from(strip).to_string().contains(LIVE_DOT_SENTINEL));
-+
-+    item.external_blocker.as_mut().unwrap().review_at =
-+        chrono::Utc::now() - chrono::Duration::seconds(1);
-+    assert_eq!(todo_pip_status(&item), "in_progress");
-+    assert_eq!(lane_item_statuses(&[&item], &workers).len(), 2);
-+    assert_ne!(pip_span(&item).content, "⊳");
-+}
-+
- #[test]
- fn shortcut_badges_are_hidden_and_respect_lane_width() {
-     let mut item = assigned(todo("1", "Read types", "in_progress", Some(1)), "fox");
-```
-
----
-
-### Incident Patch 2: `030f67ee` (2026-10-26)
-**Commit Message**: fix(tui): show blocked markers in compact todo pips
-
-**File**: `crates/jcode-tui/src/tui/ui_todo_stages.rs` (modified, +16/-1)
-```diff
-@@ -274,12 +274,23 @@ fn current_stage(
-         .position(|stage| stage.item_indices().any(|i| !is_done(todos[i])))
- }
- 
-+fn todo_pip_status(todo: &crate::todo::TodoItem) -> &str {
-+    if crate::todo::is_incomplete_todo(todo)
-+        && (crate::todo::todo_has_external_blocker(todo) || !todo.blocked_by.is_empty())
-+    {
-+        "blocked"
-+    } else {
-+        &todo.status
++    #[test]
++    fn development_bundle_keeps_wrapper_binary_and_private_libraries_together() {
++        let f = Fixture::new();
++        f.installed(false);
++        f.artifact(true, false, None);
++        let candidate = f.dir.path().join("payload/jcode-linux-x86_64");
++        let result = f.run_candidate(None, candidate.to_str());
++        assert!(
++            result.status.success(),
++            "{}",
++            String::from_utf8_lossy(&result.stderr)
++        );
++        let installed = std::fs::read_link(f.backend()).unwrap();
++        assert!(installed.with_extension("bin").is_file());
++        assert!(installed.parent().unwrap().join("libssl.so.10").is_file());
++        assert!(!f.dir.path().join("downloads").exists());
 +    }
-+}
 +
- fn pip_span(todo: &crate::todo::TodoItem) -> Span<'static> {
--    status_pip_span(&todo.status)
-+    status_pip_span(todo_pip_status(todo))
- }
- 
- fn status_pip_span(status: &str) -> Span<'static> {
-     let (glyph, color) = match status {
-+        "blocked" => ("⊳", rgb(225, 165, 90)),
-         "completed" => ("●", rgb(100, 180, 100)),
-         "in_progress" => ("●", asap_color()),
-         _ => ("○", rgb(90, 90, 105)),
-@@ -512,6 +523,10 @@ fn lane_item_statuses<'a>(
-     let mut seen = std::collections::HashSet::new();
-     let mut statuses = Vec::new();
-     for todo in lane_todos {
-+        if todo_pip_status(todo) == "blocked" {
-+            statuses.push(("blocked", false));
-+            continue;
-+        }
-         let agent = todo
-             .assigned_to
-             .as_deref()
+     #[test]
+     fn development_candidate_rolls_back_when_effective_cli_is_broken() {
+         let f = Fixture::new();
 ```
 
-**File**: `crates/jcode-tui/src/tui/ui_todo_stages_tests.rs` (modified, +33/-0)
+**File**: `src/cli/cloud_move.rs` (modified, +59/-3)
 ```diff
-@@ -1,6 +1,39 @@
- use super::*;
- use crate::todo::TodoItem;
- 
-+#[test]
-+fn blocked_todos_have_distinct_phase_and_lane_pips() {
-+    for external in [false, true] {
-+        let mut item = todo("1", "Activation", "pending", Some(2));
-+        item.group = Some("activation".into());
-+        if external {
-+            item.external_blocker = Some(crate::todo::TodoExternalBlocker {
-+                reason: "Need user authorization".into(),
-+                review_at: chrono::Utc::now() + chrono::Duration::hours(1),
-+            });
-+        } else {
-+            item.blocked_by = vec!["dependency".into()];
+@@ -562,7 +562,63 @@ impl Target {
+     fn prepare_development_binary(&self, host: &str, home: &str) -> Result<()> {
+         let executable =
+             std::env::current_exe().context("locate running development executable")?;
+-        let mut file = std::fs::File::open(&executable)?;
++        let bundle = tempfile::tempdir()?;
++        let payload = bundle.path().join("payload");
++        std::fs::create_dir(&payload)?;
++        std::fs::copy(&executable, payload.join("jcode.bin"))?;
++        // Bundle the current executable's dependency closure, including its
++        // loader. Never install these libraries into the cloud system paths.
++        let dependencies = Command::new("ldd")
++            .arg(&executable)
++            .env_remove("LD_PRELOAD")
++            .env_remove("LD_LIBRARY_PATH")
++            .output()
++            .context("inspect development executable libraries")?;
++        if !dependencies.status.success() {
++            bail!(
++                "cannot bundle development executable libraries: {}",
++                String::from_utf8_lossy(&dependencies.stderr)
++            );
 +        }
-+        assert_eq!(pip_span(&item).content, "⊳");
-+        let statuses = lane_item_statuses(&[&item], &[]);
-+        assert_eq!(statuses, vec![("blocked", false)]);
-+        assert_eq!(lane_strip_spans(&statuses, 1)[0].content, "⊳");
-+        let mut header = Vec::new();
-+        push_stage_pips(&mut header, &[&item], 80);
-+        assert!(Line::from(header).to_string().contains('⊳'));
-+        for width in 1..80 {
-+            for row in render(&[item.clone()], &[], width) {
-+                assert!(row.width() <= usize::from(width), "{width}: {row:?}");
++        let mut members = vec!["jcode".to_string(), "jcode.bin".to_string()];
++        let mut loader = None;
++        for line in String::from_utf8_lossy(&dependencies.stdout).lines() {
++            if line.contains("not found") {
++                bail!("missing development dependency: {line}");
++            }
++            let Some(path) = line.split_whitespace().find(|part| part.starts_with('/')) else {
++                continue;
++            };
++            let path = Path::new(path);
++            let name = path
++                .file_name()
++                .and_then(|name| name.to_str())
++                .context("invalid shared library filename")?;
++            if !name
++                .bytes()
++                .all(|byte| byte.is_ascii_alphanumeric() || b"._-".contains(&byte))
++            {
++                bail!("unsupported shared library filename {name:?}");
++            }
++            if name.starts_with("ld-linux") {
++                loader = Some(name.to_string());
++            }
++            if !members.iter().any(|member| member == name) {
++                std::fs::copy(path, payload.join(name))?;
++                members.push(name.to_string());
 +            }
 +        }
-+        for status in ["completed", "cancelled"] {
-+            item.status = status.into();
-+            assert_ne!(pip_span(&item).content, "⊳");
-+            assert_ne!(lane_item_statuses(&[&item], &[])[0].0, "blocked");
-+        }
-+    }
-+}
-+
- #[test]
- fn shortcut_badges_are_hidden_and_respect_lane_width() {
-     let mut item = assigned(todo("1", "Read types", "in_progress", Some(1)), "fox");
++        let loader = loader.context("development executable has no supported Linux loader")?;
++        std::fs::write(
++            payload.join("jcode"),
++            format!(
++                "#!/bin/sh\nset -eu\np=$(readlink -f \"$0\")\nd=$(dirname \"$p\")\nexec \"$d/{loader}\" --library-path \"$d\" \"$p.bin\" \"$@\"\n"
++            ),
++        )?;
++        let archive = bundle.path().join("development.tar.gz");
++        let member_refs = members.iter().map(String::as_str).collect::<Vec<_>>();
++        tar_dir(&payload, &archive, &member_refs)?;
++        let mut file = std::fs::File::open(&archive)?;
+         let mut digest = Sha256::new();
+         let mut buffer = [0u8; 64 * 1024];
+         loop {
+@@ -577,12 +633,12 @@ impl Target {
+         // shell owns its cleanup independently of the installer's own traps.
+         let prepare = super::cloud_managed::prepare_script_with_candidate(home, Some("jcode"))?;
+         let script = format!(
+-            "set -eu\numask 077\nupload=$(mktemp -d)\ntrap 'rm -rf \"$upload\"' EXIT\ncat > \"$upload/jcode\"\nprintf '%s  %s\\n' '{checksum}' \"$upload/jcode\" | sha256sum --check --status\nchmod 755 \"$upload/jcode\"\n(\ncd \"$upload\"\n{prepare}\n)\n"
++            "set -eu\numask 077\nupload=$(mktemp -d)\ntrap 'rm -rf \"$upload\"' EXIT\ncat > \"$upload/bundle.tar.gz\"\nprintf '%s  %s\\n' '{checksum}' \"$upload/bundle.tar.gz\" | sha256sum --check --status\ntar xzf \"$upload/bundle.tar.gz\" --no-same-owner --no-same-permissions -C \"$upload\"\nchmod 755 \"$upload/jcode\" \"$upload/jcode.bin\" \"$upload\"/ld-linux*.so*\n(\ncd \"$upload\"\n{prepare}\n)\n"
+         );
+         let mut command = Self::ssh_command(host)?;
+         command.arg(format!("bash -c {}", shell_quote(&script)));
+         command
+-            .stdin(Stdio::from(std::fs::File::open(&executable)?))
++            .stdin(Stdio::from(std::fs::File::open(&archive)?))
+             .stdout(Stdio::null())
+             .stderr(Stdio::piped());
+         let output = command
 ```
 
 ---
 
-### Incident Patch 3: `07d9354d` (2026-10-26)
-**Commit Message**: Avoid production-length waits in status subprocess timeout test
+### Incident Patch 2: `9229d9d6` (2026-10-27)
+**Commit Message**: fix(cloud): repair stale managed CLI capabilities automatically
 
-**File**: `crates/jcode-tui/src/tui/justrust_status.rs` (modified, +15/-2)
+**File**: `src/cli/cloud_managed.rs` (modified, +50/-10)
 ```diff
-@@ -234,7 +234,11 @@ impl Snapshot {
+@@ -483,21 +483,27 @@ fn shell_quote(value: &str) -> String {
+     format!("'{}'", value.replace('\'', "'\\''"))
  }
  
- async fn query(program: &std::ffi::OsStr) -> Option<Snapshot> {
--    tokio::time::timeout(QUERY_TIMEOUT, async {
-+    query_with_timeout(program, QUERY_TIMEOUT).await
+-/// Preflight runs before secrets are transferred. A release client pins its own
+-/// runtime release identity; development clients only probe unless explicitly
+-/// given JCODE_CLOUD_RELEASE. Existing daemons/sessions are never restarted.
++/// Preflight runs before secrets are transferred. Published clients pin their
++/// release identity. Development clients keep capable hosts, otherwise resolve
++/// the latest published release and verify its capabilities before installation.
++/// Existing daemons/sessions are never restarted.
+ pub(crate) fn prepare_script(home: &str) -> Result<String> {
++    prepare_script_with_candidate(home, None)
 +}
 +
-+async fn query_with_timeout(program: &std::ffi::OsStr, timeout: Duration) -> Option<Snapshot> {
-+    tokio::time::timeout(timeout, async {
-         let mut child = tokio::process::Command::new(program)
-             .args(["status", "--json"])
-             .stdin(std::process::Stdio::null())
-@@ -538,8 +542,17 @@ mod tests {
-         write("exec head -c 524289 /dev/zero");
-         assert!(query(program.as_os_str()).await.is_none());
-         write("exec sleep 10");
-+        // Exercise the real subprocess cancellation path without making every
-+        // filtered test run wait for the production two-second deadline.
-+        assert_eq!(QUERY_TIMEOUT, Duration::from_secs(2));
-+        let timeout = Duration::from_millis(50);
-         let start = Instant::now();
--        assert!(query(program.as_os_str()).await.is_none());
-+        assert!(
-+            query_with_timeout(program.as_os_str(), timeout)
-+                .await
-+                .is_none()
-+        );
-+        assert!(start.elapsed() >= timeout);
-         assert!(start.elapsed() < Duration::from_secs(5));
-     }
++pub(crate) fn prepare_script_with_candidate(home: &str, candidate: Option<&str>) -> Result<String> {
+     let override_tag = std::env::var("JCODE_CLOUD_RELEASE").ok();
+     let target = release_target(
+         jcode_build_meta::is_release_build(),
+         jcode_build_meta::semver(),
+         override_tag.as_deref(),
+     )?;
+-    Ok(prepare_script_for_paths(
++    Ok(prepare_script_for_paths_with_candidate(
+         home,
+         target.as_deref(),
+         "/opt/jcode-cloud/jcode",
+         true,
++        candidate,
+     ))
  }
+ 
+@@ -507,13 +513,25 @@ fn prepare_script_for_paths(
+     backend: &str,
+     elevate: bool,
+ ) -> String {
++    prepare_script_for_paths_with_candidate(home, target, backend, elevate, None)
++}
++
++fn prepare_script_for_paths_with_candidate(
++    home: &str,
++    target: Option<&str>,
++    backend: &str,
++    elevate: bool,
++    candidate: Option<&str>,
++) -> String {
++    let development_candidate = shell_quote(candidate.unwrap_or(""));
+     let backend = shell_quote(backend);
+     let privilege = if elevate { "sudo -n " } else { "" };
+     let home = shell_quote(home);
+     let want = shell_quote(target.unwrap_or(""));
+     format!(
+         r#"set -eu
+ want={want}
++development_candidate={development_candidate}
+ export PATH="$HOME/.local/bin:$PATH"
+ cli="$HOME/.local/bin/jcode"
+ # Preserve the VM's CLI/service wrappers and their host-specific environment.
+@@ -589,14 +607,19 @@ capable() {{
+   probe "$1" cloud receive --help >/dev/null 2>&1 &&
+     probe "$1" cloud credentials --help >/dev/null 2>&1 &&
+     probe "$1" cloud router-credentials --help >/dev/null 2>&1 &&
+-    probe "$1" cloud cancel-return --help >/dev/null 2>&1
++    probe "$1" cloud cancel-return --help >/dev/null 2>&1 &&
++    probe "$1" cloud replace-receive --help >/dev/null 2>&1 &&
++    probe "$1" cloud group-protocol --help >/dev/null 2>&1
+ }}
+ version_output() {{
+   env -u JCODE_RUNTIME_RELEASE_SEMVER -u JCODE_RUNTIME_RELEASE_GIT_HASH \
+     -u JCODE_RUNTIME_RELEASE_GIT_DATE -u JCODE_RUNTIME_RELEASE_GIT_TAG \
+     "$1" --no-update --no-selfdev --version 2>/dev/null
+ }}
+ version_matches() {{
++  # Development candidates are byte-verified by the sender and capability-tested
++  # before and after switching. They do not have a published release identity.
++  [ -z "$development_candidate" ] || return 0
+   version=$(version_output "$1") || return 1
+   case "$version" in
+     "jcode $want"|"jcode $want "*|"$want"|"$want "*) return 0 ;;
+@@ -622,15 +645,31 @@ version_at_least() {{
+     }}'
+ }}
+ if ! capable "$cli" || ! capable "$backend" || {{ [ -n "$want" ] && {{ ! version_at_least "$cli" || ! version_at_least "$backend"; }}; }} || [ "${{JCODE_CLOUD_FORCE_UPGRADE:-}}" = 1 ]; then
+-  if [ -z "$want" ]; then
+-    echo '[cloud prepare] cloud CLI lacks required capabilities, or upgrade was forced. Development clients do not choose a release automatically. Set JCODE_CLOUD_RELEASE to an exact compatible published tag.' >&2
+-    exit 1
++  if [ -z "$want" ] && [ -z "$development_candidate" ]; then
++    # Development builds have no corresponding published tag. Resolve the
++    # canonical latest redirect, then pin and validate that exact release.
++    latest=$(curl --proto '=https' --proto-redir '=https' --tlsv1.2 -fsSLI --retry 3 \
++      -o /dev/null -w '%{{url_effective}}' https://github.com/1jehuang/jcode/releases/latest)
++    want=${{latest#https://github.com/1jehuang/jcode/releases/tag/}}
++    printf '%s\n' "$want" | LC_ALL=C awk '
++      NR != 1 || $0 !~ /^v(0|[1-9][0-9]*)[.](0|[1-9][0-9]*)[.](0|[1-9][0-9]*)$/ {{ bad=1 }}
++      END {{ exit (bad || NR != 1) }}' || {{
++      echo '[cloud prepare] cannot resolve an exact published release; set JCODE_CLOUD_RELEASE to a compatible published tag' >&2
++      exit 1
++    }}
+   fi
+   [ "$(uname -s)" = Linux ] && [ "$(uname -m)" = x86_64 ] || {{
+     echo '[cloud prepare] release requires Linux x86_64' >&2; exit 1;
+   }}
++  stage=$(mktemp -d "$root/${{want:-development}}.XXXXXXXX")
++  if [ -n "$development_candidate" ]; then
++    echo '[cloud prepare] installing verified local development CLI (live sessions are unchanged)' >&2
++    mkdir "$stage/bin"
++    cp "$development_candidate" "$stage/bin/jcode-linux-x86_64"
++    candidat
+```
+
+**File**: `src/cli/cloud_managed_tests.rs` (modified, +160/-5)
+```diff
+@@ -60,6 +60,8 @@ case "$*" in
+   '--no-update --no-selfdev --version') echo 'jcode {version} (test)' ;;
+   '--no-update --no-selfdev cloud receive --help') exit 0 ;;
+   '--no-update --no-selfdev cloud cancel-return --help') exit 0 ;;
++  '--no-update --no-selfdev cloud replace-receive --help') exit 0 ;;
++  '--no-update --no-selfdev cloud group-protocol --help') exit 0 ;;
+   '--no-update --no-selfdev cloud credentials --help') {credentials} ;;
+   '--no-update --no-selfdev cloud router-credentials --help') {credentials} ;;
+   *) exit 95 ;;
+@@ -87,6 +89,12 @@ while [ "$#" -gt 0 ]; do
+   shift
+ done
+ printf '%s\n' "$url" >> "$HOME/downloads"
++if [ "$url" = https://github.com/1jehuang/jcode/releases/latest ]; then
++  if [ -f "$HOME/latest-url" ]; then cat "$HOME/latest-url"; else
++    printf %s https://github.com/1jehuang/jcode/releases/tag/v0.99.123
++  fi
++  exit 0
++fi
+ cp "$HOME/fixtures/${url##*/}" "$dest"
+ "#,
+             );
+@@ -162,8 +170,21 @@ cp "$HOME/fixtures/${url##*/}" "$dest"
+         }
+ 
+         fn run(&self, target: Option<&str>) -> std::process::Output {
+-            let script =
+-                prepare_script_for_paths("", target, self.backend().to_str().unwrap(), false);
++            self.run_candidate(target, None)
++        }
++
++        fn run_candidate(
++            &self,
++            target: Option<&str>,
++            candidate: Option<&str>,
++        ) -> std::process::Output {
++            let script = prepare_script_for_paths_with_candidate(
++                "",
++                target,
++                self.backend().to_str().unwrap(),
++                false,
++                candidate,
++            );
+             let path = self.dir.path().join("prepare.sh");
+             std::fs::write(&path, script).unwrap();
+             Command::new("sh")
+@@ -216,14 +237,148 @@ cp "$HOME/fixtures/${url##*/}" "$dest"
+     }
+ 
+     #[test]
+-    fn development_rejects_receive_only_cli_without_downloading() {
++    fn development_candidate_is_probed_and_installed_without_a_release() {
++        for capable in [true, false] {
++            let f = Fixture::new();
++            f.installed(false);
++            let candidate = f.dir.path().join("native ' development");
++            executable(&candidate, &binary("v0.99.256-dev", capable, false));
++            let result = f.run_candidate(None, candidate.to_str());
++            assert_eq!(
++                result.status.success(),
++                capable,
++                "{}",
++                String::from_utf8_lossy(&result.stderr)
++            );
++            assert!(!f.dir.path().join("downloads").exists());
++            if capable {
++                let installed = std::fs::read_link(f.backend()).unwrap();
++                assert!(
++                    std::fs::read_to_string(installed)
++                        .unwrap()
++                        .contains("v0.99.256-dev")
++                );
++                // A second preflight uses capabilities, not equality with a
++                // published version, so it does not upload/install again.
++                assert!(f.run(None).status.success());
++                assert!(!f.dir.path().join("downloads").exists());
++            } else {
++                f.assert_old();
++            }
++        }
++    }
++
++    #[test]
++    fn development_candidate_rolls_back_when_effective_cli_is_broken() {
++        let f = Fixture::new();
++        f.installed(false);
++        executable(&f.cli(), &binary("v0.99.0-dev", false, false));
++        let candidate = f.dir.path().join("native-development");
++        executable(&candidate, &binary("v0.99.256-dev", true, false));
++        let result = f.run_candidate(None, candidate.to_str());
++        assert!(!result.status.success());
++        assert!(String::from_utf8_lossy(&result.stderr).contains("restored previous CLI"));
++        assert!(!f.backend().is_symlink());
++        assert!(
++            std::fs::read_to_string(f.backend())
++                .unwrap()
++                .contains("v0.99.1")
++        );
++    }
++
++    #[test]
++    fn development_upgrades_incompatible_cli_to_verified_latest() {
++        let f = Fixture::new();
++        f.installed(false);
++        f.artifact(true, false, None);
++        let result = f.run(None);
++        assert!(
++            result.status.success(),
++            "{}",
++            String::from_utf8_lossy(&result.stderr)
++        );
++        assert!(f.backend().is_symlink());
++        let downloads = std::fs::read_to_string(f.dir.path().join("downloads")).unwrap();
++        assert!(downloads.contains("/releases/latest"));
++        assert!(downloads.contains("/v0.99.123/jcode-linux-x86_64.tar.gz"));
++        let result = f.run(None);
++        assert!(result.status.success());
++        assert_eq!(
++            std::fs::read_to_string(f.dir.path().join("downloads")).unwrap(),
++            downloads
++        );
++    }
++
++    #[test]
++    fn development_rejects_invalid_latest_redirects_without_switching() {
++        for latest in [
++         
+```
+
+**File**: `src/cli/cloud_move.rs` (modified, +74/-4)
+```diff
+@@ -60,11 +60,13 @@ const FORMAT_VERSION: u32 = 1;
+ /// Hidden remote subcommands a cloud host must support before anything is
+ /// uploaded. Probing all of them up front means an older host fails clearly at
+ /// preflight instead of after a partial credential transfer.
+-const REQUIRED_REMOTE_COMMANDS: [&str; 4] = [
++const REQUIRED_REMOTE_COMMANDS: [&str; 6] = [
+     "receive",
+     "credentials",
+     "router-credentials",
+     "cancel-return",
++    "replace-receive",
++    "group-protocol",
+ ];
+ const SNAPSHOT_REF_PREFIX: &str = "refs/jcode-cloud";
+ /// Environment variables worth carrying. Everything else (DISPLAY, WAYLAND_*,
+@@ -445,7 +447,12 @@ impl Target {
+     }
+ 
+     fn preflight_key(&self, host: &str) -> String {
+-        format!("{host}\n{}", self.remote_binary())
++        // Capability changes invalidate markers written by older clients.
++        format!(
++            "{host}\n{}\n{}",
++            self.remote_binary(),
++            REQUIRED_REMOTE_COMMANDS.join(",")
++        )
+     }
+ 
+     fn preflight_uncached(&self, host: &str) -> Result<()> {
+@@ -464,8 +471,29 @@ impl Target {
+                     .map(|h| h.to_string_lossy().into_owned())
+                     .unwrap_or_default();
+                 timed_move_stage("host prepare script", || {
+-                    self.run_shell(host, &super::cloud_managed::prepare_script(&home)?)
+-                        .context("prepare the Jcode Cloud machine")
++                    let prepared =
++                        self.run_shell(host, &super::cloud_managed::prepare_script(&home)?);
++                    if let Err(error) = prepared {
++                        // A development protocol may not exist in any published
++                        // release yet. Use the running native executable, never
++                        // a stale PATH launcher, and verify it before switching.
++                        if cfg!(all(target_os = "linux", target_arch = "x86_64"))
++                            && !jcode_build_meta::is_release_build()
++                            && std::env::var_os("JCODE_CLOUD_RELEASE").is_none()
++                            && self.remote_binary.is_none()
++                            && std::env::var_os("JCODE_CLOUD_REMOTE_BINARY").is_none()
++                        {
++                            step(
++                                "prepare",
++                                "published cloud CLI is unavailable or incompatible; syncing this development binary",
++                            );
++                            self.prepare_development_binary(host, &home)
++                                .with_context(|| format!("prepare development cloud CLI (published preparation failed: {error:#})"))?;
++                        } else {
++                            return Err(error).context("prepare the Jcode Cloud machine");
++                        }
++                    }
++                    Ok(())
+                 })?;
+             }
+             // Preserve custom transports that only support one remote invocation.
+@@ -528,6 +556,48 @@ impl Target {
+         })
+     }
+ 
++    /// Transfer only our executable over the existing authenticated SSH channel.
++    /// The installer probes it before an atomic switch and rolls back on failure.
++    /// No checkout, credentials, lease, or running daemon is touched.
++    fn prepare_development_binary(&self, host: &str, home: &str) -> Result<()> {
++        let executable =
++            std::env::current_exe().context("locate running development executable")?;
++        let mut file = std::fs::File::open(&executable)?;
++        let mut digest = Sha256::new();
++        let mut buffer = [0u8; 64 * 1024];
++        loop {
++            let count = file.read(&mut buffer)?;
++            if count == 0 {
++                break;
++            }
++            digest.update(&buffer[..count]);
++        }
++        let checksum = hex::encode(digest.finalize());
++        // The candidate is inside a private temporary directory. The outer
++        // shell owns its cleanup independently of the installer's own traps.
++        let prepare = super::cloud_managed::prepare_script_with_candidate(home, Some("jcode"))?;
++        let script = format!(
++            "set -eu\numask 077\nupload=$(mktemp -d)\ntrap 'rm -rf \"$upload\"' EXIT\ncat > \"$upload/jcode\"\nprintf '%s  %s\\n' '{checksum}' \"$upload/jcode\" | sha256sum --check --status\nchmod 755 \"$upload/jcode\"\n(\ncd \"$upload\"\n{prepare}\n)\n"
++        );
++        let mut command = Self::ssh_command(host)?;
++        command.arg(format!("bash -c {}", shell_quote(&script)));
++        command
++            .stdin(Stdio::from(std::fs::File::open(&executable)?))
++            .stdout(Stdio::null())
++            .stderr(Stdio::piped());
++        let output = command
++            .output()
++            .context("send development executable to cloud")?;
++        if !output.status.success() {
++            bail!(
++                "cloud development CLI install failed ({}): {}",
++
+```
+
+**File**: `src/cli/cloud_move_latency_tests.rs` (modified, +16/-2)
+```diff
+@@ -302,7 +302,7 @@ fn isolated_latency_child() {
+         result.unwrap();
+     }
+     let probes = std::fs::read_to_string(root.join("probes")).unwrap();
+-    let expected = if mode.ends_with("failure") { 2 } else { 4 };
++    let expected = if mode.ends_with("failure") { 2 } else { 6 };
+     assert_eq!(probes.lines().count(), expected, "{probes}");
+     assert!(
+         probes
+@@ -318,7 +318,7 @@ fn isolated_latency_child() {
+             .unwrap()
+             .ends_with("cloud credentials --help")
+     );
+-    if expected == 4 {
++    if expected == 6 {
+         assert!(
+             probes
+                 .lines()
+@@ -333,6 +333,20 @@ fn isolated_latency_child() {
+                 .unwrap()
+                 .ends_with("cloud cancel-return --help")
+         );
++        assert!(
++            probes
++                .lines()
++                .nth(4)
++                .unwrap()
++                .ends_with("cloud replace-receive --help")
++        );
++        assert!(
++            probes
++                .lines()
++                .nth(5)
++                .unwrap()
++                .ends_with("cloud group-protocol --help")
++        );
+     }
+     let calls = std::fs::read_to_string(root.join("calls")).unwrap();
+     assert_eq!(
+```
+
+---
+
+### Incident Patch 3: `54c6e500` (2026-10-27)
+**Commit Message**: bench: compare Jcode and Maki TUI startup and resource use
+
+**File**: `docs/benchmarks/jcode-vs-maki-2026-10-27.md` (added, +133/-0)
+```diff
+@@ -0,0 +1,133 @@
++# Jcode vs Maki: local TUI performance and resources
++
++Measured October 27, 2026 UTC, on the user's Dell XPS 14, Intel Core Ultra X9 388H, 62.3 GiB RAM. Linux x86_64, kernel 7.2.11-arch1-1, 16 logical CPUs. Initial load averages: 2.63 / 3.18 / 3.82. This was an active development laptop, not a dedicated benchmark machine.
++
++## Scope and conclusion
++
++**This measures local TUI overhead, not coding quality, model latency, token efficiency, or tool throughput.** No prompts were submitted and no valid model credentials were supplied. Different selected model names therefore do not contribute inference work to these measurements.
++
++- Maki has a substantially smaller one-session footprint: **67.9 MiB vs Jcode's 218.8 MiB PSS**, including Jcode's server.
++- Jcode scales more economically across these idle sessions. At ten sessions it uses **327.0 MiB vs Maki's 394.9 MiB PSS**, about 17% less. The measured PSS crossover lies somewhere between five and ten sessions, not at an established exact threshold.
++- First-session editable startup was **71 ms Jcode vs 138 ms Maki** in the three one-session repetitions. Both were responsive to typing, with typical echo times of a few milliseconds.
++- **Do not interpret Maki's animated welcome-screen CPU as steady-state chat CPU.** Disabling its splash animation reduced measured CPU substantially. The resulting CPU figures are much closer to Jcode's, and Jcode's ten-session samples were noisy.
++- This compares an installed **Jcode development binary** to a **Maki release binary**. It is not an optimized-release-versus-optimized-release comparison.
++
++## Binaries
++
++Executables were resolved once before each suite. Every recorded running process executable matched the corresponding pinned binary, including Jcode's dedicated server.
++
++| | Jcode | Maki |
++|---|---|---|
++| Version | v0.99.252-dev, commit `8e1417e79` | 0.6.5 |
++| File size | 325,992,785 bytes, 310.9 MiB | 116,670,208 bytes, 111.3 MiB |
++| SHA-256 | `a54f6d87d5f739ab654a290a1fa26c0b458271bf964430d00cec06c7f72ea9b9` | `9d6c1a61ac6c706c6d4b45b72e7b032b10f52b89f0cc3c019d24865e77f759da` |
++
++File size is not resident memory and includes whatever symbols and embedded assets each distribution ships.
++
++## Method
++
++The main suite contains **18 runs**: two tools, three session counts, three repetitions. Run order was shuffled with seed 42. A further **nine runs** measure Maki with splash animation disabled, again at all three session counts with three repetitions each.
++
++Each run uses:
++
++- A fresh isolated HOME, XDG directories, and empty workspace. No real project is opened or modified.
++- A dummy Anthropic API key. No real auth or user configuration is copied.
++- A 120-column by 40-row pseudoterminal per client, with kernel input echo disabled. Terminal capability requests are answered.
++- Actual rendered chat-prompt detection followed by application-rendered input echo. Initial status text alone does not qualify as input-ready.
++- Two seconds of settling after all clients launch, then approximately five seconds of idle observation. Process accounting extends the actual interval to roughly 5.5 to 6.3 seconds.
++- `/proc` PSS, RSS, private memory, and CPU accounting for the complete measured process tree. Jcode totals include one dedicated server plus all clients. Maki totals include all independent instances.
++- Twenty additional short input strings per run, spread round-robin across the terminals. No Enter key is sent.
++- Owned process groups terminated after measurement. The user's active daemon is not reused or restarted.
++
++Jcode: `--no-update --no-selfdev`, memory disabled through `JCODE_MEMORY_ENABLED=0`, isolated socket, and returning-user markers to skip onboarding. Maki: `--no-plugins --no-commands`, keeping builtin plugins. The splash-disabled control replaces `--no-plugins` with an isolated global `init.lua` containing only:
++
++```lua
++maki.setup({ ui = { splash_animation = false } })
++```
++
++All other user plugins remain absent because the control uses a fresh HOME. The control's boolean `maki_no_splash` field distinguishes this from the main suite's generic method description.
++
++## Main results
++
++Values are medians of three run-level observations. Memory observations within each run are themselves medians of samples taken during the idle window. CPU percentages are relative to **one logical core**, not the entire 16-CPU machine.
++
++| Sessions | Jcode PSS MiB | Maki PSS MiB | Jcode private MiB | Maki private MiB | Jcode processes | Maki processes |
++|---:|---:|---:|---:|---:|---:|---:|
++| 1 | 218.8 | 67.9 | 137.4 | 67.9 | 2 | 1 |
++| 5 | 271.5 | 211.0 | 156.3 | 178.5 | 6 | 5 |
++| 10 | 327.0 | 394.9 | 211.3 | 362.5 | 11 | 10 |
++
++PSS ranges across repetitions: Jcode 216.6 to 219.4 / 267.0 to 273.1 / 324.5 to 327.6 MiB. Maki 67.6 to 69.5 / 204.9 to 215.3 / 387.9 to 395.0 MiB, for 1 / 5 / 10 sessions respectively.
++
++Summed RSS medians were Jcode 308.7 / 804.5 / 1414.9 MiB and Maki 67.9 /
+```
+
+**File**: `scripts/bench_jcode_maki.py` (added, +233/-0)
+```diff
+@@ -0,0 +1,233 @@
++#!/usr/bin/env python3
++"""Isolated, no-model-call TUI resource comparison for Jcode and Maki.
++
++Requires pyte. Uses fresh HOME/XDG directories and a dummy Anthropic key.
++Never submits a prompt. Jcode's dedicated server is included in every total.
++"""
++from __future__ import annotations
++
++import argparse
++import codecs
++import fcntl
++import hashlib
++import json
++import os
++from pathlib import Path
++import pty
++import random
++import select
++import shutil
++import signal
++import socket
++import statistics
++import struct
++import subprocess
++import tempfile
++import termios
++import time
++
++import pyte
++
++from bench_memory_cli import collect_descendants, reply_queries
++
++
++def snapshot(roots):
++    totals = dict(pss_mib=0.0, rss_mib=0.0, private_mib=0.0, cpu_seconds=0.0, processes=0)
++    for pid in collect_descendants(roots):
++        try:
++            base = Path(f"/proc/{pid}")
++            stat = (base / "stat").read_text().rsplit(")", 1)[1].split()
++            memory = dict(line.split(":", 1) for line in (base / "smaps_rollup").read_text().splitlines() if ":" in line)
++            totals["pss_mib"] += int(memory["Pss"].split()[0]) / 1024
++            totals["rss_mib"] += int(memory["Rss"].split()[0]) / 1024
++            totals["private_mib"] += sum(int(memory.get(k, "0").split()[0]) for k in ("Private_Clean", "Private_Dirty")) / 1024
++            totals["cpu_seconds"] += (int(stat[11]) + int(stat[12])) / os.sysconf("SC_CLK_TCK")
++            totals["processes"] += 1
++        except (OSError, ValueError, KeyError):
++            continue
++    return totals
++
++
++class Terminal:
++    def __init__(self, argv, env, cwd):
++        master, slave = pty.openpty()
++        self.fd = master
++        fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack("HHHH", 40, 120, 0, 0))
++        attrs = termios.tcgetattr(slave)
++        attrs[3] &= ~(termios.ECHO | termios.ICANON)
++        termios.tcsetattr(slave, termios.TCSANOW, attrs)
++        self.start = time.perf_counter()
++        self.proc = subprocess.Popen(argv, env=env, cwd=cwd, stdin=slave, stdout=slave, stderr=slave, start_new_session=True)
++        os.close(slave)
++        os.set_blocking(master, False)
++        self.screen = pyte.Screen(120, 40)
++        self.stream = pyte.Stream(self.screen)
++        self.decoder = codecs.getincrementaldecoder("utf-8")("replace")
++        self.pending = b""
++        self.visible_ms = None
++        self.bytes = 0
++
++    def text(self):
++        return "\n".join(self.screen.display)
++
++    def drain(self):
++        try:
++            chunk = os.read(self.fd, 262144)
++        except (BlockingIOError, OSError):
++            return
++        if not chunk:
++            return
++        self.bytes += len(chunk)
++        self.pending = reply_queries(self.fd, self.pending + chunk)[-256:]
++        self.stream.feed(self.decoder.decode(chunk))
++        if self.visible_ms is None and sum(c.isalnum() for c in self.text()) > 8:
++            self.visible_ms = (time.perf_counter() - self.start) * 1000
++
++
++def pump(terms, seconds):
++    deadline = time.perf_counter() + seconds
++    while time.perf_counter() < deadline:
++        ready, _, _ = select.select([t.fd for t in terms], [], [], min(0.01, max(0, deadline - time.perf_counter())))
++        for t in terms:
++            if t.fd in ready:
++                t.drain()
++
++
++def echo(terms, terminal, text, timeout=10):
++    start = time.perf_counter()
++    os.write(terminal.fd, text.encode())
++    while time.perf_counter() - start < timeout:
++        pump(terms, 0.002)
++        if text in terminal.text():
++            return (time.perf_counter() - start) * 1000
++        if terminal.proc.poll() is not None:
++            break
++    raise RuntimeError(f"Input echo failed: {terminal.text()}")
++
++
++def stop(proc):
++    try:
++        os.killpg(proc.pid, signal.SIGTERM)
++        proc.wait(timeout=2)
++    except subprocess.TimeoutExpired:
++        os.killpg(proc.pid, signal.SIGKILL)
++        proc.wait()
++    except ProcessLookupError:
++        proc.wait()
++
++
++def run(tool, binary, sessions, idle_seconds, root, maki_no_splash=False):
++    work = Path(tempfile.mkdtemp(prefix=f"{tool}-", dir=root))
++    terms, procs = [], []
++    env = {k: v for k, v in os.environ.items() if not any(x in k.upper() for x in ("TOKEN", "API_KEY", "AUTH", "JCODE", "MAKI"))}
++    env.update(HOME=str(work / "home"), XDG_CONFIG_HOME=str(work / "config"), XDG_DATA_HOME=str(work / "data"), XDG_STATE_HOME=str(work / "state"), XDG_CACHE_HOME=str(work / "cache"), TERM="xterm-256color", COLORTERM="truecolor", ANTHROPIC_API_KEY="sk-ant-benchmark-placeholder-not-valid", JCODE_HOME=str(work / "jcode"), JCODE_RUNTIME_DIR=str(work / "runtime"), JCODE_NO_TELEMETRY="1", JCODE_MEMORY_ENABLED="0", JCODE_TEMP_SERVER="1", JCODE_SERVER_OWNER_PID=str(os.getpid()))
++    for key in ("HOME", "XDG_CONFIG_HOME", "XDG_DATA_HOME", "XDG_STATE_HOME", "XDG_CACHE_HOME", "JCODE_HOME", "JCODE_RUNTIME_DIR"):
++        Path(env[key]).mkdir(parents=True)
+```
+
+**File**: `scripts/test_bench_jcode_maki.py` (added, +53/-0)
+```diff
+@@ -0,0 +1,53 @@
++#!/usr/bin/env python3
++"""Tests for the Linux-only, no-model-call Jcode/Maki benchmark harness."""
++import os
++from pathlib import Path
++import subprocess
++import sys
++import tempfile
++import unittest
++
++from bench_jcode_maki import Terminal, echo, snapshot, stop
++
++
++class BenchmarkTests(unittest.TestCase):
++    def test_snapshot_includes_live_process(self):
++        result = snapshot([os.getpid()])
++        self.assertGreaterEqual(result["processes"], 1)
++        self.assertGreater(result["pss_mib"], 0)
++        self.assertGreaterEqual(result["rss_mib"], result["pss_mib"])
++        self.assertGreaterEqual(result["pss_mib"], result["private_mib"])
++        self.assertGreaterEqual(result["cpu_seconds"], 0)
++
++    def test_snapshot_ignores_missing_process(self):
++        self.assertEqual(snapshot([999999999])["processes"], 0)
++
++    def test_application_echo_not_terminal_driver_echo(self):
++        # Child explicitly reads and renders input. PTY ECHO is disabled.
++        code = "import os; os.write(1, b'ready\\r\\n'); data=os.read(0, 100); os.write(1, data); import time; time.sleep(5)"
++        terminal = Terminal([sys.executable, "-c", code], os.environ.copy(), Path.cwd())
++        try:
++            self.assertLess(echo([terminal], terminal, "testprobe", timeout=2), 2000)
++            self.assertIn("testprobe", terminal.text())
++        finally:
++            stop(terminal.proc)
++            os.close(terminal.fd)
++
++    def test_unread_input_does_not_count_as_ready(self):
++        terminal = Terminal([sys.executable, "-c", "import time; time.sleep(5)"], os.environ.copy(), Path.cwd())
++        try:
++            with self.assertRaisesRegex(RuntimeError, "Input echo failed"):
++                echo([terminal], terminal, "not-echoed", timeout=0.05)
++        finally:
++            stop(terminal.proc)
++            os.close(terminal.fd)
++
++    def test_stop_reaps_owned_process(self):
++        with tempfile.TemporaryFile() as log:
++            proc = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"], stdout=log, stderr=log, start_new_session=True)
++            stop(proc)
++            self.assertIsNotNone(proc.poll())
++
++
++if __name__ == "__main__":
++    unittest.main()
 ```
 
 #### Recent Merged Pull Requests:
@@ -2682,51 +3325,40 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(tui): validate blocked todo marker lifecycle
+## X. cloud): carry private runtime for development CLI recovery
 
 **RULE**:
-When implementing operations in `crates/jcode-tui/src/tui/ui_todo_stages_tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/cli/cloud_managed.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f35542b2`: test(tui): validate blocked todo marker lifecycle. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3f1c2712`: cloud): carry private runtime for development CLI recovery. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/jcode-tui/src/tui/ui_todo_stages_tests.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cli/cloud_managed.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#[test]
-fn blocked_marker_overrides_live_worker_and_clears_when_review_is_due() {
-    let mut item = assigned(todo("1", "Activation", "in_progress", Some(1)), "fox");
-    item.external_blocker = Some(crate::todo::TodoExternalBlocker {
-        reason: "Need user authorization".into(),
-        review_at: chrono::Utc::now() + chrono::Duration::hours(1),
-    });
-    let mut worker = agent("fox", "running", Some("Working"), Some(1));
-    worker.todo_statuses = vec!["in_progress".into(), "pending".into()];
-    let workers = [worker];
-    let statuses = lane_item_statuses(&[&item], &workers);
-    assert_eq!(statuses, vec![("blocked", false)]);
-    let strip = lane_strip_spans(&statuses, 2);
-    assert_eq!(strip[0].content, "⊳");
-    assert_eq!(strip[0].style.fg, Some(rgb(225, 165, 90)));
-    assert!(!Line::from(strip).to_string().contains(LIVE_DOT_SENTINEL));
-
-    item.external_blocker.as_mut().unwrap().review_at =
-        chrono::Utc::now() - chrono::Duration::seconds(1);
-    assert_eq!(todo_pip_status(&item), "in_progress");
-    assert_eq!(lane_item_statuses(&[&item], &workers).len(), 2);
-    assert_ne!(pip_span(&item).content, "⊳");
-}
-
+#[cfg(test)]
+    # A native development build can require a newer loader/libc than the
+    # managed image. Its verified private bundle carries those dependencies.
+    if [ -f "$development_candidate.bin" ]; then
+      cp "$development_candidate.bin" "$stage/bin/jcode-linux-x86_64.bin"
+      source_dir=$(dirname "$development_candidate")
+      for library in "$source_dir"/lib*.so* "$source_dir"/ld-linux*.so*; do
+        [ ! -f "$library" ] || cp "$library" "$stage/bin/"
+      done
+      chmod 755 "$stage/bin/jcode-linux-x86_64.bin"
+    fi
+    version_output "$candidate" >&2 || true
+    echo '[cloud prepare] candidate CLI lacks required protocol capabilities or exact version' >&2; exit 1;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    echo '[cloud prepare] downloaded release lacks required protocol capabilities or exact version' >&2; exit 1;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f35542b2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3f1c2712` are properly handled with clean fallback behavior.

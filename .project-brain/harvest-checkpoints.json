@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T00:40:17.829Z",
+  "last_updated": "2026-10-28T00:47:00.008Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1640,14 +1640,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-gemma-4-31b-it",
-      "content_hash": "309aacb8699faa0054caa34f078e19428790420dabb0b6fafe3aa266c94b5910",
-      "verified_at": "2026-10-25T04:05:52.655Z",
+      "content_hash": "9f0274d77e2e4bff3e8ed469fbc74192a6867f82318b71d13daa5d475729dd2b",
+      "verified_at": "2026-10-28T00:46:51.908Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T04:05:52.655Z"
+      "last_updated": "2026-10-28T00:46:51.908Z"
     },
     "BAAI/bge-base-en-v1.5": {
       "repository": "BAAI/bge-base-en-v1.5",
@@ -5541,14 +5541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-1jehuang-jcode",
-      "content_hash": "8605e7a25e6552536edcff255dc123c2967af850e8735dbccb0a29b76d82e10f",
-      "verified_at": "2026-10-26T13:40:31.553Z",
+      "content_hash": "db0a5fb44e5914f57bd742260d16560ee903f2ab1a2dd93832e6f22f59fab998",
+      "verified_at": "2026-10-28T00:46:44.849Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T13:40:31.553Z"
+      "last_updated": "2026-10-28T00:46:44.849Z"
     },
     "wix/Detox": {
       "repository": "wix/Detox",
@@ -8106,14 +8106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yugabyte-yugabyte-db",
-      "content_hash": "3fbaf08dca470a2cbf90219bb41f0bb0aea31c81c640f434e960eef88c76b0d4",
-      "verified_at": "2026-10-27T12:10:57.842Z",
+      "content_hash": "3cd36c16d7803d1a89ca01c33d4e2833366e4b6767b4bfec1f4ef79486a09aea",
+      "verified_at": "2026-10-28T00:47:00.008Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T12:10:57.842Z"
+      "last_updated": "2026-10-28T00:47:00.008Z"
     },
     "React95/React95": {
       "repository": "React95/React95",

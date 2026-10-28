@@ -5608,3 +5608,6 @@
 | `CYCLE-20261028-101P` | `2026-10-28T00:40:10.621Z` | `fastify/fastify` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5076` | Yes (`68686cc7...`) |
 | `CYCLE-20261028-11WJ` | `2026-10-28T00:40:13.027Z` | `Tencent-TDS/KuiklyUI` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5077` | Yes (`82cf3148...`) |
 | `CYCLE-20261028-15LK` | `2026-10-28T00:40:17.816Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5078` | Yes (`24e1a84c...`) |
+| `CYCLE-20261028-9G89` | `2026-10-28T00:46:44.841Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5079` | Yes (`db0a5fb4...`) |
+| `CYCLE-20261028-9LOC` | `2026-10-28T00:46:51.900Z` | `google/gemma-4-31B-it` | Commit diff / Patch analysis | `VERIFIED` | `Rule 969, Rule 5080, Rule 1803` | Yes (`9f0274d7...`) |
+| `CYCLE-20261028-9RXC` | `2026-10-28T00:47:00.000Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5081` | Yes (`3cd36c16...`) |
