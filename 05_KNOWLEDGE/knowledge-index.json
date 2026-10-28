@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T01:29:18.425Z",
+  "last_updated": "2026-10-28T01:36:08.252Z",
   "total_verified_learnings": 1154,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -24382,7 +24382,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
       "source_version": "hf-mudler-locate-anything.cpp-gguf",
-      "content_hash": "c67df6d3d4e7257aae1f5de0a97f5f59e7e078201895ec586a9e65744767c8e9",
+      "content_hash": "f3f368914fc9e07d4e7f508ec6544bd3d34e770ffac235c7f43ca3404dc56d92",
       "dossier_path": "07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md",
       "promoted_rules": [
@@ -24424,7 +24424,7 @@
         {
           "number": 1522,
           "title": "Parity-Gated Inference Engine Development",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1855,
@@ -24445,6 +24445,16 @@
           "number": 4060,
           "title": "Host-Read Tensor De-quantization & Cache-Alignment Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5103,
+          "title": "Selective Quantization for Spatial Parity Preservation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5104,
+          "title": "Host-Read Tensor Precision Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -24464,7 +24474,7 @@
         "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4177m8",
         "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4f5wy1"
       ],
-      "verified_at": "2026-10-25T04:57:21.149Z",
+      "verified_at": "2026-10-28T01:36:04.447Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39825,8 +39835,8 @@
       "slug": "o2sh-onefetch",
       "platform": "github",
       "source_url": "https://github.com/o2sh/onefetch",
-      "source_version": "a459b5c4",
-      "content_hash": "b54e35e0949f0208e54e6133e60501904fc3584d1a013bd19901ffec5703fae7",
+      "source_version": "892934ca",
+      "content_hash": "aabba09dc0425037d2ae0a9db76aac80f8fc8badfdf1cc378b7756684552ce42",
       "dossier_path": "07_PROJECT_LEARNING/o2sh-onefetch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/o2sh-onefetch-learnings.md",
       "promoted_rules": [
@@ -39839,6 +39849,11 @@
           "number": 4357,
           "title": "add an Activity field with a commits-per-month sparkline (#1902)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5102,
+          "title": "deps): upgrade site to SvelteKit 3 (#1912)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39846,7 +39861,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T14:57:16.489Z",
+      "verified_at": "2026-10-28T01:35:55.742Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48537,8 +48552,8 @@
       "slug": "startrail-org-leann",
       "platform": "github",
       "source_url": "https://github.com/StarTrail-org/LEANN",
-      "source_version": "a63f484a",
-      "content_hash": "b9333ed6025adcd9ee89a7738c410ab19dd902e7c5071a7a7ef1f7ecb414733e",
+      "source_version": "c443fc41",
+      "content_hash": "7cf2e5452f54e8f930dc0827b88420c5b16584863a43cf95c2fed28f94b2a064",
       "dossier_path": "07_PROJECT_LEARNING/startrail-org-leann-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/startrail-org-leann-learnings.md",
       "promoted_rules": [
@@ -48566,6 +48581,11 @@
           "number": 4769,
           "title": "core): refuse to load a custom encoder as a vanilla BertModel (#445)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5105,
+          "title": "release): install uv before lockfile update",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48573,7 +48593,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:53:52.339Z",
+      "verified_at": "2026-10-28T01:36:08.239Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -85646,15 +85666,15 @@
       "learning_id": "rule-1522",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1522,
-      "title": "Parity-Gated Inference Engine Development (Harvested from mudler/locate-anything.cpp-gguf)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Parity-Gated Inference Engine Development",
+      "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
+      "source_version": "hf-mudler-locate-anything.cpp-gguf",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.820Z"
+      "verified_at": "2026-10-28T01:36:04.447Z"
     },
     "rule-1523": {
       "learning_id": "rule-1523",
@@ -140319,6 +140339,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T01:29:18.411Z"
+    },
+    "rule-5102": {
+      "learning_id": "rule-5102",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5102,
+      "title": "deps): upgrade site to SvelteKit 3 (#1912)",
+      "source_url": "https://github.com/o2sh/onefetch",
+      "source_version": "892934ca",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:35:55.742Z"
+    },
+    "rule-5103": {
+      "learning_id": "rule-5103",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5103,
+      "title": "Selective Quantization for Spatial Parity Preservation",
+      "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
+      "source_version": "hf-mudler-locate-anything.cpp-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:36:04.447Z"
+    },
+    "rule-5104": {
+      "learning_id": "rule-5104",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5104,
+      "title": "Host-Read Tensor Precision Invariant",
+      "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
+      "source_version": "hf-mudler-locate-anything.cpp-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:36:04.447Z"
+    },
+    "rule-5105": {
+      "learning_id": "rule-5105",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5105,
+      "title": "release): install uv before lockfile update",
+      "source_url": "https://github.com/StarTrail-org/LEANN",
+      "source_version": "c443fc41",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:36:08.240Z"
     }
   },
   "aliases": {

@@ -5638,3 +5638,6 @@ Every entry in this ledger must capture:
 | `learn-github-linkwarden-linkwarden` | `https://github.com/linkwarden/linkwarden` | `eff7c6b7` | Multi-dimensional audit evidence | 2026-10-28T01:29:08.650Z |
 | `learn-huggingface-zai-org-glm-5-3` | `https://huggingface.co/zai-org/GLM-5.3` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-10-28T01:29:12.496Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `c5a758f0` | Multi-dimensional audit evidence | 2026-10-28T01:29:18.488Z |
+| `learn-github-o2sh-onefetch` | `https://github.com/o2sh/onefetch` | `892934ca` | Multi-dimensional audit evidence | 2026-10-28T01:35:55.819Z |
+| `learn-huggingface-mudler-locate-anything-cpp-gguf` | `https://huggingface.co/mudler/locate-anything.cpp-gguf` | `hf-mudler-` | Multi-dimensional audit evidence | 2026-10-28T01:36:04.526Z |
+| `learn-github-startrail-org-leann` | `https://github.com/StarTrail-org/LEANN` | `c443fc41` | Multi-dimensional audit evidence | 2026-10-28T01:36:08.319Z |
