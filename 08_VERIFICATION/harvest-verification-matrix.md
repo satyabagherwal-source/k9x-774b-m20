@@ -5636,3 +5636,6 @@
 | `CYCLE-20261028-9CSQ` | `2026-10-28T01:42:39.626Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5107` | Yes (`e7dbe430...`) |
 | `CYCLE-20261028-9EWL` | `2026-10-28T01:42:42.357Z` | `OpenMOSS-Team/MOSS-Image-Base` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1071, Rule 3422` | Yes (`5821491f...`) |
 | `CYCLE-20261028-9FMJ` | `2026-10-28T01:42:43.291Z` | `microsoft/react-native-windows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5108` | Yes (`b1c46c9a...`) |
+| `CYCLE-20261028-HZN5` | `2026-10-28T01:49:22.481Z` | `franken-ui/ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2109` | Yes (`94ae9020...`) |
+| `CYCLE-20261028-I6IE` | `2026-10-28T01:49:31.382Z` | `kumahq/kuma` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kumahq-kuma-learnings.md` | Yes (`df5b800e...`) |
+| `CYCLE-20261028-I823` | `2026-10-28T01:49:33.387Z` | `jialinyyzz/humanizer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5109, Rule 5110, Rule 5111` | Yes (`e0de5996...`) |

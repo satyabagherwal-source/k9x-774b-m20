@@ -3,7 +3,7 @@
 > **Source Version**: `32af1a27`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T13:10:34.487Z  
+> **Timestamp**: 2026-10-28T01:49:22.187Z  
 > **Learning ID**: `learn-github-franken-ui-ui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/franken-ui-ui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/franken-ui/ui](https://github.com/franken-ui/ui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T13:10:33.676Z  
+> **Harvest Timestamp**: 2026-10-28T01:49:21.083Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---

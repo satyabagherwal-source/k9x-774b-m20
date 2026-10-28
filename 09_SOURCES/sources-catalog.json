@@ -85,8 +85,8 @@
     "sourceUrl": "https://huggingface.co/jialinyyzz/humanizer",
     "sourceVersion": "hf-jialinyyzz-humanizer",
     "license": "Open-Source",
-    "contentHash": "4e641fef331f0b5b16128dbfbccb1476b99380f9584d3a3e41c9a519d2d82467",
-    "lastHarvestedAt": "2026-10-25T05:14:47.098Z",
+    "contentHash": "e0de5996f7a94e1a3399fed9f5ae96ec2df93e3b32360ab4b4afdfe87be4c1c8",
+    "lastHarvestedAt": "2026-10-28T01:49:33.391Z",
     "learningId": "learn-huggingface-jialinyyzz-humanizer"
   },
   "hf-autotrust-jev-27b-vl": {
@@ -3333,10 +3333,10 @@
     "repository": "kumahq/kuma",
     "platform": "github",
     "sourceUrl": "https://github.com/kumahq/kuma",
-    "sourceVersion": "7339e5a9",
+    "sourceVersion": "dca7b62c",
     "license": "Apache-2.0",
-    "contentHash": "d9dee7b6525c610f59808baff03ef3a3350785a70b4bff26002a2ef11b51fcc0",
-    "lastHarvestedAt": "2026-10-27T13:22:18.502Z",
+    "contentHash": "df5b800e35267a4fd330c8a1d3a3723e3e05486d2a15d77e62a8d4ca655df614",
+    "lastHarvestedAt": "2026-10-28T01:49:31.385Z",
     "learningId": "learn-github-kumahq-kuma"
   },
   "cilium-cilium": {
@@ -5635,8 +5635,8 @@
     "sourceUrl": "https://github.com/franken-ui/ui",
     "sourceVersion": "32af1a27",
     "license": "MIT",
-    "contentHash": "8c01b70b1c7580573c1b03ff380888b6318aff04b06f963e567f625e0b3038a3",
-    "lastHarvestedAt": "2026-10-27T13:10:34.750Z",
+    "contentHash": "94ae90200af435f8e0d4e4e97920980cbb4e6c18c05b2b36cec95908f0c36150",
+    "lastHarvestedAt": "2026-10-28T01:49:22.484Z",
     "learningId": "learn-github-franken-ui-ui"
   },
   "datadog-glommio": {

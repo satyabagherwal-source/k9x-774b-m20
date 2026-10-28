@@ -5645,3 +5645,6 @@ Every entry in this ledger must capture:
 | `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `c24e68c2` | Multi-dimensional audit evidence | 2026-10-28T01:42:39.629Z |
 | `learn-huggingface-openmoss-team-moss-image-base` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base` | `hf-openmos` | Multi-dimensional audit evidence | 2026-10-28T01:42:42.360Z |
 | `learn-github-microsoft-react-native-windows` | `https://github.com/microsoft/react-native-windows` | `c7ed54c7` | Multi-dimensional audit evidence | 2026-10-28T01:42:43.294Z |
+| `learn-github-franken-ui-ui` | `https://github.com/franken-ui/ui` | `32af1a27` | Multi-dimensional audit evidence | 2026-10-28T01:49:22.484Z |
+| `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `dca7b62c` | Multi-dimensional audit evidence | 2026-10-28T01:49:31.385Z |
+| `learn-huggingface-jialinyyzz-humanizer` | `https://huggingface.co/jialinyyzz/humanizer` | `hf-jialiny` | Multi-dimensional audit evidence | 2026-10-28T01:49:33.391Z |

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261026-WUZS",
-    "timestamp": "2026-10-26T12:13:27.400Z",
-    "repository": "sayanarijit/xplr",
-    "learningId": "learn-github-sayanarijit-xplr",
-    "contentHash": "f418fe0fe721707767d1fe9a1f7bd5d08b56071654ea9ddf9b7604ab0adbfa31",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-X354",
-    "timestamp": "2026-10-26T12:13:37.960Z",
-    "repository": "lioensky/VCPToolBox",
-    "learningId": "learn-github-lioensky-vcptoolbox",
-    "contentHash": "1c6f23415e3625ef6d0a5e0e35cdb756e041db5de4545b9c4f0de8333eec0abc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-5CTL",
-    "timestamp": "2026-10-26T12:20:03.753Z",
-    "repository": "fallow-rs/fallow",
-    "learningId": "learn-github-fallow-rs-fallow",
-    "contentHash": "cb096ca078d816a34d999f106370195bdf880f497ca1e219f9b1394173ce2a21",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261026-VQLP",
     "timestamp": "2026-10-26T12:40:34.669Z",
     "repository": "kcl-lang/kcl",
@@ -7492,6 +7447,51 @@
     "contentHash": "b1c46c9ac3ac2f2fcf3c1b99aa9b8ae8b6023512620d30e9a2eb68d930a51fc3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-HZN5",
+    "timestamp": "2026-10-28T01:49:22.481Z",
+    "repository": "franken-ui/ui",
+    "learningId": "learn-github-franken-ui-ui",
+    "contentHash": "94ae90200af435f8e0d4e4e97920980cbb4e6c18c05b2b36cec95908f0c36150",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-I6IE",
+    "timestamp": "2026-10-28T01:49:31.382Z",
+    "repository": "kumahq/kuma",
+    "learningId": "learn-github-kumahq-kuma",
+    "contentHash": "df5b800e35267a4fd330c8a1d3a3723e3e05486d2a15d77e62a8d4ca655df614",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-I823",
+    "timestamp": "2026-10-28T01:49:33.387Z",
+    "repository": "jialinyyzz/humanizer",
+    "learningId": "learn-huggingface-jialinyyzz-humanizer",
+    "contentHash": "e0de5996f7a94e1a3399fed9f5ae96ec2df93e3b32360ab4b4afdfe87be4c1c8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

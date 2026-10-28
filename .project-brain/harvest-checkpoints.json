@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T01:42:43.303Z",
+  "last_updated": "2026-10-28T01:49:33.399Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1760,14 +1760,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-jialinyyzz-humanizer",
-      "content_hash": "4e641fef331f0b5b16128dbfbccb1476b99380f9584d3a3e41c9a519d2d82467",
-      "verified_at": "2026-10-25T05:14:47.110Z",
+      "content_hash": "e0de5996f7a94e1a3399fed9f5ae96ec2df93e3b32360ab4b4afdfe87be4c1c8",
+      "verified_at": "2026-10-28T01:49:33.399Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T05:14:47.110Z"
+      "last_updated": "2026-10-28T01:49:33.399Z"
     },
     "autotrust/JEV-27B-VL": {
       "repository": "autotrust/JEV-27B-VL",
@@ -5121,14 +5121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kumahq-kuma",
-      "content_hash": "d9dee7b6525c610f59808baff03ef3a3350785a70b4bff26002a2ef11b51fcc0",
-      "verified_at": "2026-10-27T13:22:18.510Z",
+      "content_hash": "df5b800e35267a4fd330c8a1d3a3723e3e05486d2a15d77e62a8d4ca655df614",
+      "verified_at": "2026-10-28T01:49:31.393Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:22:18.510Z"
+      "last_updated": "2026-10-28T01:49:31.393Z"
     },
     "cilium/cilium": {
       "repository": "cilium/cilium",
@@ -8571,14 +8571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-franken-ui-ui",
-      "content_hash": "8c01b70b1c7580573c1b03ff380888b6318aff04b06f963e567f625e0b3038a3",
-      "verified_at": "2026-10-27T13:10:34.757Z",
+      "content_hash": "94ae90200af435f8e0d4e4e97920980cbb4e6c18c05b2b36cec95908f0c36150",
+      "verified_at": "2026-10-28T01:49:22.493Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:10:34.757Z"
+      "last_updated": "2026-10-28T01:49:22.493Z"
     },
     "DataDog/glommio": {
       "repository": "DataDog/glommio",

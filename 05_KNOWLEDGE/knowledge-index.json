@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T01:42:43.216Z",
+  "last_updated": "2026-10-28T01:49:33.328Z",
   "total_verified_learnings": 1154,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12601,7 +12601,7 @@
       "platform": "github",
       "source_url": "https://github.com/franken-ui/ui",
       "source_version": "32af1a27",
-      "content_hash": "8c01b70b1c7580573c1b03ff380888b6318aff04b06f963e567f625e0b3038a3",
+      "content_hash": "94ae90200af435f8e0d4e4e97920980cbb4e6c18c05b2b36cec95908f0c36150",
       "dossier_path": "07_PROJECT_LEARNING/franken-ui-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/franken-ui-ui-learnings.md",
       "promoted_rules": [
@@ -12626,7 +12626,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:10:34.679Z",
+      "verified_at": "2026-10-28T01:49:22.410Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -22749,7 +22749,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/jialinyyzz/humanizer",
       "source_version": "hf-jialinyyzz-humanizer",
-      "content_hash": "4e641fef331f0b5b16128dbfbccb1476b99380f9584d3a3e41c9a519d2d82467",
+      "content_hash": "e0de5996f7a94e1a3399fed9f5ae96ec2df93e3b32360ab4b4afdfe87be4c1c8",
       "dossier_path": "07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md",
       "promoted_rules": [
@@ -22812,6 +22812,21 @@
           "number": 4072,
           "title": "Factual Preservation Constraint in Text Rewriting",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5109,
+          "title": "Hybrid Attention Layer Scheduling for Long-Context Efficiency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5110,
+          "title": "Factual Integrity Constraint in Text Rewriting Models",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5111,
+          "title": "Custom Quantization Calibration for Low-Bit GGUF Export",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -22831,7 +22846,7 @@
         "learn-huggingface-hf-jialinyyzz-humanizer-mv41atmq",
         "learn-huggingface-hf-jialinyyzz-humanizer-mv4fa4lf"
       ],
-      "verified_at": "2026-10-25T05:14:47.016Z",
+      "verified_at": "2026-10-28T01:49:33.315Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33142,8 +33157,8 @@
       "slug": "kumahq-kuma",
       "platform": "github",
       "source_url": "https://github.com/kumahq/kuma",
-      "source_version": "7339e5a9",
-      "content_hash": "d9dee7b6525c610f59808baff03ef3a3350785a70b4bff26002a2ef11b51fcc0",
+      "source_version": "dca7b62c",
+      "content_hash": "df5b800e35267a4fd330c8a1d3a3723e3e05486d2a15d77e62a8d4ca655df614",
       "dossier_path": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "promoted_rules": [
@@ -33178,7 +33193,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:22:18.382Z",
+      "verified_at": "2026-10-28T01:49:31.289Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -94216,7 +94231,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-27T13:10:34.679Z"
+      "verified_at": "2026-10-28T01:49:22.410Z"
     },
     "rule-2110": {
       "learning_id": "rule-2110",
@@ -140462,6 +140477,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T01:42:43.203Z"
+    },
+    "rule-5109": {
+      "learning_id": "rule-5109",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5109,
+      "title": "Hybrid Attention Layer Scheduling for Long-Context Efficiency",
+      "source_url": "https://huggingface.co/jialinyyzz/humanizer",
+      "source_version": "hf-jialinyyzz-humanizer",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:49:33.315Z"
+    },
+    "rule-5110": {
+      "learning_id": "rule-5110",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5110,
+      "title": "Factual Integrity Constraint in Text Rewriting Models",
+      "source_url": "https://huggingface.co/jialinyyzz/humanizer",
+      "source_version": "hf-jialinyyzz-humanizer",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:49:33.315Z"
+    },
+    "rule-5111": {
+      "learning_id": "rule-5111",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5111,
+      "title": "Custom Quantization Calibration for Low-Bit GGUF Export",
+      "source_url": "https://huggingface.co/jialinyyzz/humanizer",
+      "source_version": "hf-jialinyyzz-humanizer",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:49:33.315Z"
     }
   },
   "aliases": {
