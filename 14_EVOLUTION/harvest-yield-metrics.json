@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T20:01:43.244Z",
-  "total_cycles_completed": 5891,
-  "total_learnings_persisted": 5891,
-  "total_rules_promoted": 5349,
+  "last_updated": "2026-10-28T20:08:48.994Z",
+  "total_cycles_completed": 5894,
+  "total_learnings_persisted": 5894,
+  "total_rules_promoted": 5354,
   "history": [
-    {
-      "timestamp": "2026-10-28T06:18:38.801Z",
-      "repository": "paradedb/paradedb",
-      "learningId": "learn-github-paradedb-paradedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T06:24:43.606Z",
-      "repository": "Comfy-Org/Qwen-Image-2.1",
-      "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T06:24:44.643Z",
-      "repository": "Kuddev/pebrel",
-      "learningId": "learn-github-kuddev-pebrel",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T06:24:49.824Z",
       "repository": "openreplay/openreplay",
@@ -1403,6 +1382,27 @@
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T20:08:39.453Z",
+      "repository": "zenbu-labs/terminal-browser",
+      "learningId": "learn-github-zenbu-labs-terminal-browser",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T20:08:46.311Z",
+      "repository": "projectcontour/contour",
+      "learningId": "learn-github-projectcontour-contour",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T20:08:48.994Z",
+      "repository": "Cactus-Compute/whistle",
+      "learningId": "learn-huggingface-cactus-compute-whistle",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

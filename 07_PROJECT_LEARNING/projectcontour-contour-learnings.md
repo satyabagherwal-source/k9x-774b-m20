@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectcontour-contour-learnings.md`  
 > **Source**: github ([https://github.com/projectcontour/contour](https://github.com/projectcontour/contour))  
-> **Source Version**: `48670cc0`  
+> **Source Version**: `74909745`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T03:31:30.861Z  
+> **Timestamp**: 2026-10-28T20:08:45.623Z  
 > **Learning ID**: `learn-github-projectcontour-contour`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectcontour-contour-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectcontour/contour](https://github.com/projectcontour/contour))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T03:31:30.854Z  
+> **Harvest Timestamp**: 2026-10-28T20:08:45.615Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Contour is a Kubernetes ingress controller using Envoy proxy.
 - **Primary Language / Ecosystem**: HTML
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3956 stars
+- **Stars / Engagement**: 3955 stars
 
 ---
 
@@ -1592,15 +1592,11 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7786** (2026-10-27): **main: Bump to Envoy v1.40.2**
-  *Symptoms*: Updates to Envoy v1.40.2. For further info see https://github.com/envoyproxy/envoy/releases/tag/v1.40.2
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/projectcontour/contour/pull/7786?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 84.06%. Comparing base ([`223a398`](https://app.codecov.io/gh/projectcontour/contour/commit/223a398ddde894c2e53d686c4cb1c8d7f2cbc411?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)) to head ([`0c5807d`](https://app.codecov.io/gh/projectcontour/contour/commit/0c5807d1be7bb2493e6808f694b43f821be20002?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)).  <details><summary>Additional details and impacted files</summary>    [![Impacted file tree graph](https://app.codecov.io/gh/projectcontour/contour
+- **Issue #7790** (2026-10-28): **Use Go default experiments in container builds**
+  *Symptoms*: This line currently disables all Go experiments https://github.com/projectcontour/contour/blob/3b184207c78c6b14f211ed594bffd45eb4b01894/Makefile#L57  it includes those features that are enabled by default. In Go 1.27 this includes `jsonv2`, but which we have disabled by setting `none`.  This PR changes the default to empty, therefore letting Go defaults take effect. It is needed because `prometheus/common` v0.72.0 now uses `jsonv2` when compiled with Go 1.27.  Without it, container image compilation fails:  ``` imports encoding/json/v2: build constraints exclude all Go files in /usr/local/go/src/encoding/json/v2 ```  This PR fixes failing CI: #7758 #7780 
 
-- **Issue #7785** (2026-10-26): **main: Bump to Envoy v1.40.1**
-  *Symptoms*: Updates to Envoy v1.40.1. For further info see https://github.com/envoyproxy/envoy/releases/tag/v1.40.1
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/projectcontour/contour/pull/7785?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 84.08%. Comparing base ([`a550f10`](https://app.codecov.io/gh/projectcontour/contour/commit/a550f10be45cc7ac06477d7a66d6a90734296bc9?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)) to head ([`75c05ec`](https://app.codecov.io/gh/projectcontour/contour/commit/75c05ec83bd33183ca46607da1263b7155ecd0d9?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)).  <details><summary>Additional details and impacted files</summary>    [![Impacted file tree graph](https://app.codecov.io/gh/projectcontour/contour
+- **Issue #7787** (2026-10-28): **Do not use body size limit filter for websockets**
+  *Symptoms*: This PR removes `body_size_limit` filter for websocket upgrades.  Limiting the data sent over a websocket connection is not the same as limiting a request body. A websocket connection starts with an HTTP Upgrade request, and after that it uses the WebSocket protocol instead of HTTP. The `body_size_limit` filter still counts the bytes the client sends as if they were request body. When the limit is reached, Envoy cannot send an HTTP `413` because the connection is no longer HTTP, and it does not send a WebSocket Close frame either, so it just resets the connection. The client cannot tell why the connection was closed.  The limit is removed only for real websocket upgrades, not for the whole route. Plain POSTs on routes with websockets enabled still get `413`.  This is follow up to #7683   Fixes #7784
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1617,360 +1613,231 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `48670cc0` (2026-10-27)
-**Commit Message**: internal/envoy: support multiple HTTP compression algorithms (#7699)
+### Incident Patch 1: `74909745` (2026-10-28)
+**Commit Message**: build(deps): bump github.com/prometheus/client_golang (#7758)
 
-* internal/envoy: support multiple HTTP compression algorithms
+Bumps [github.com/prometheus/client_golang](https://github.com/prometheus/client_golang) from 1.24.1 to 1.25.0.
+- [Release notes](https://github.com/prometheus/client_golang/releases)
+- [Changelog](https://github.com/prometheus/client_golang/blob/v1.25.0/CHANGELOG.md)
+- [Commits](https://github.com/prometheus/client_golang/compare/v1.24.1...v1.25.0)
 
-Add compression.algorithms so Envoy can negotiate gzip, brotli, and
-zstd from Accept-Encoding. The existing algorithm field remains a
-single-algorithm shorthand and is mutually exclusive with algorithms.
+---
+updated-dependencies:
+- dependency-name: github.com/prometheus/client_golang
+  dependency-version: 1.25.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
 
-Fixes #7698
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-Signed-off-by: Yagiz Nizipli <[REDACTED_EMAIL]>
+**File**: `go.mod` (modified, +2/-2)
+```diff
+@@ -19,7 +19,7 @@ require (
+ 	github.com/onsi/ginkgo/v2 v2.33.1
+ 	github.com/onsi/gomega v1.44.0
+ 	github.com/pkg/errors v0.9.1
+-	github.com/prometheus/client_golang v1.24.1
++	github.com/prometheus/client_golang v1.25.0
+ 	github.com/prometheus/client_model v0.6.3
+ 	github.com/prometheus/common v0.72.1
+ 	github.com/sirupsen/logrus v1.10.2
+@@ -92,7 +92,7 @@ require (
+ 	github.com/opencontainers/go-digest v1.0.0 // indirect
+ 	github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10 // indirect
+ 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
+-	github.com/prometheus/procfs v0.21.1 // indirect
++	github.com/prometheus/procfs v0.22.0 // indirect
+ 	github.com/spf13/pflag v1.0.10 // indirect
+ 	github.com/stretchr/objx v0.5.3 // indirect
+ 	github.com/tsaarni/x500dn v1.1.0 // indirect
+```
 
-* apis: make compression.algorithms a tri-state pointer
+**File**: `go.sum` (modified, +6/-6)
+```diff
+@@ -142,8 +142,8 @@ github.com/joshdk/go-junit v1.0.0/go.mod h1:TiiV0PqkaNfFXjEiyjWM3XXrhVyCa1K4Zfga
+ github.com/json-iterator/go v1.1.12 h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnrnM=
+ github.com/json-iterator/go v1.1.12/go.mod h1:e30LSqwooZae/UwlEbR2852Gd8hjQvJoHmT4TnhNGBo=
+ github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
+-github.com/klauspost/compress v1.19.1 h1:VsB4HPswih7mmZ8WleSFQ75c/Ui1M4trX5oAsJnhSlk=
+-github.com/klauspost/compress v1.19.1/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
++github.com/klauspost/compress v1.20.1 h1:T7kKElXUMXrUJ2E9QhQhxFtcK5rPyLdsGZvdbLMPdiQ=
++github.com/klauspost/compress v1.20.1/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
+ github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
+ github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
+ github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
+@@ -181,14 +181,14 @@ github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 h1:Jamvg5psRI
+ github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+ github.com/prashantv/gostub v1.1.0 h1:BTyx3RfQjRHnUWaGF9oQos79AlQ5k8WNktv7VGvVH4g=
+ github.com/prashantv/gostub v1.1.0/go.mod h1:A5zLQHz7ieHGG7is6LLXLz7I8+3LZzsrV0P1IAHhP5U=
+-github.com/prometheus/client_golang v1.24.1 h1:JnJkREXzWxUdCuPFpIWZiPispT9xVV59uiuyR2bPlnU=
+-github.com/prometheus/client_golang v1.24.1/go.mod h1:F+oSRECHg4sse5ucfYpYDeIv/hu68Zo0uoHKetWnzcE=
++github.com/prometheus/client_golang v1.25.0 h1:cDtW1TcFsMi1RJc8khwCKB4VhzwV04aKqbYtNOXuiK0=
++github.com/prometheus/client_golang v1.25.0/go.mod h1:j2X/4/kaQHLPnmyEU8zjmkndo1T317VpCIQEml8LTKk=
+ github.com/prometheus/client_model v0.6.3 h1:O0jaTVAYNxTHYInEPFJt5I3+sN8zqBtVMPTB1qyxiEo=
+ github.com/prometheus/client_model v0.6.3/go.mod h1:gpN5P9S7Rr6Yr92PiQ+Ixvhf6JZEkF1dnxsYL2aPBEM=
+ github.com/prometheus/common v0.72.1 h1:ZAiQed/nk8IIcsdzb2TlJu23NEUDyDLQ9TXTN2WRK6Y=
+ github.com/prometheus/common v0.72.1/go.mod h1:1IoBY4IRaJnhs2ESjNzjilP1cJ/P8pimGoomq7zRXrA=
+-github.com/prometheus/procfs v0.21.1 h1:GljZCt+zSTS+NZq88cyQ1LjZ+RCHp3uVuabBWA5+OJI=
+-github.com/prometheus/procfs v0.21.1/go.mod h1:aB55Cww9pdSJVHk0hUf0inxWyyjPogFIjmHKYgMKmtY=
++github.com/prometheus/procfs v0.22.0 h1:6q9+/JL9IKAPbCmBrv9n5O5Ty3NKnciV5X7YGw0oics=
++github.com/prometheus/procfs v0.22.0/go.mod h1:CvmFr/GVhIjIvWJZW3tgkODBQMRIf0EyWMQLHCHab58=
+ github.com/rogpeppe/go-internal v1.14.1 h1:UQB4HGPB6osV0SQTLymcB4TgvyWu6ZyliaW0tI/otEQ=
+ github.com/rogpeppe/go-internal v1.14.1/go.mod h1:MaRKkUm5W0goXpeCfT7UZI6fk/L7L7so1lCWt35ZSgc=
+ github.com/sirupsen/logrus v1.10.2 h1:G2SED73/qrAu6YwbdxOD6peLkCBI3z7L+ykJFTXJBBo=
+```
 
-Address review feedback on #7699 by making algorithms a pointer to a
-slice so omitted, empty, and populated lists are distinct. An empty
-list disables compression. Mark algorithm deprecated, add CEL
-mutual-exclusivity validation, and expand compressor filter tests.
+---
 
-Signed-off-by: Yagiz Nizipli <[REDACTED_EMAIL]>
+### Incident Patch 2: `4fba07c9` (2026-10-28)
+**Commit Message**: build(deps): bump github.com/prometheus/common from 0.71.0 to 0.72.1 (#7780)
 
-* lint: allow remaining uses of deprecated compression.algorithm
+Bumps [github.com/prometheus/common](https://github.com/prometheus/common) from 0.71.0 to 0.72.1.
+- [Release notes](https://github.com/prometheus/common/releases)
+- [Changelog](https://github.com/prometheus/common/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/prometheus/common/compare/v0.71.0...v0.72.1)
 
-staticcheck SA1019 flags the deprecated algorithm field. Keep reading
-it for backward compatibility, matching the existing SubjectName
-exclusion.
+---
+updated-dependencies:
+- dependency-name: github.com/prometheus/common
+  dependency-version: 0.72.1
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
 
-Signed-off-by: Yagiz Nizipli <[REDACTED_EMAIL]>
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-* Review comments for pr7699
+**File**: `go.mod` (modified, +8/-8)
+```diff
+@@ -21,12 +21,12 @@ require (
+ 	github.com/pkg/errors v0.9.1
+ 	github.com/prometheus/client_golang v1.24.1
+ 	github.com/prometheus/client_model v0.6.3
+-	github.com/prometheus/common v0.71.0
++	github.com/prometheus/common v0.72.1
+ 	github.com/sirupsen/logrus v1.10.2
+ 	github.com/stretchr/testify v1.12.1
+ 	github.com/tsaarni/certyaml v0.13.0
+ 	go.uber.org/automaxprocs v1.6.0
+-	golang.org/x/net v0.60.0
++	golang.org/x/net v0.61.0
+ 	golang.org/x/oauth2 v0.37.0
+ 	gonum.org/v1/plot v0.17.0
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260720211330-0afa2a65878a
+@@ -100,15 +100,15 @@ require (
+ 	github.com/xhit/go-str2duration/v2 v2.1.0 // indirect
+ 	go.yaml.in/yaml/v2 v2.4.4 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.5 // indirect
+-	golang.org/x/crypto v0.57.0 // indirect
++	golang.org/x/crypto v0.58.0 // indirect
+ 	golang.org/x/image v0.41.0 // indirect
+ 	golang.org/x/mod v0.41.0 // indirect
+-	golang.org/x/sync v0.23.0 // indirect
+-	golang.org/x/sys v0.48.0 // indirect
+-	golang.org/x/term v0.46.0 // indirect
+-	golang.org/x/text v0.42.0 // indirect
++	golang.org/x/sync v0.24.0 // indirect
++	golang.org/x/sys v0.49.0 // indirect
++	golang.org/x/term v0.47.0 // indirect
++	golang.org/x/text v0.43.0 // indirect
+ 	golang.org/x/time v0.15.0 // indirect
+-	golang.org/x/tools v0.49.0 // indirect
++	golang.org/x/tools v0.51.0 // indirect
+ 	gomodules.xyz/jsonpatch/v2 v2.4.0 // indirect
+ 	google.golang.org/genproto/googleapis/api v0.0.0-20260720211330-0afa2a65878a // indirect
+ 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
+```
+
+**File**: `go.sum` (modified, +16/-16)
+```diff
+@@ -185,8 +185,8 @@ github.com/prometheus/client_golang v1.24.1 h1:JnJkREXzWxUdCuPFpIWZiPispT9xVV59u
+ github.com/prometheus/client_golang v1.24.1/go.mod h1:F+oSRECHg4sse5ucfYpYDeIv/hu68Zo0uoHKetWnzcE=
+ github.com/prometheus/client_model v0.6.3 h1:O0jaTVAYNxTHYInEPFJt5I3+sN8zqBtVMPTB1qyxiEo=
+ github.com/prometheus/client_model v0.6.3/go.mod h1:gpN5P9S7Rr6Yr92PiQ+Ixvhf6JZEkF1dnxsYL2aPBEM=
+-github.com/prometheus/common v0.71.0 h1:9KDAKb7Mj3HEVKyFCK6Dc/HIwlBzZIN2l7/lrHl3KK8=
+-github.com/prometheus/common v0.71.0/go.mod h1:CLJ5H8TEsGX8bl31BdMkfhIZ+QmZ9tBPPotUxUbfcmk=
++github.com/prometheus/common v0.72.1 h1:ZAiQed/nk8IIcsdzb2TlJu23NEUDyDLQ9TXTN2WRK6Y=
++github.com/prometheus/common v0.72.1/go.mod h1:1IoBY4IRaJnhs2ESjNzjilP1cJ/P8pimGoomq7zRXrA=
+ github.com/prometheus/procfs v0.21.1 h1:GljZCt+zSTS+NZq88cyQ1LjZ+RCHp3uVuabBWA5+OJI=
+ github.com/prometheus/procfs v0.21.1/go.mod h1:aB55Cww9pdSJVHk0hUf0inxWyyjPogFIjmHKYgMKmtY=
+ github.com/rogpeppe/go-internal v1.14.1 h1:UQB4HGPB6osV0SQTLymcB4TgvyWu6ZyliaW0tI/otEQ=
+@@ -240,8 +240,8 @@ go.yaml.in/yaml/v3 v3.0.5/go.mod h1:HVTZu1O7/Vkt2N+BFy8Zza+lnLsABggaTM2ZpNIGuKg=
+ golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
+ golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
+ golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
+-golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
+-golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
++golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
++golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
+ golang.org/x/image v0.41.0 h1:8wS72eGJMJaBxK6okTzd4WaXumUlTVlb753MlsSvTCo=
+ golang.org/x/image v0.41.0/go.mod h1:uIc348UZMSvS5Z65CVZ7iDPaNobNFEPeJ4kbqTOszmA=
+ golang.org/x/mod v0.3.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
+@@ -250,33 +250,33 @@ golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
+ golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
+ golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
+ golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
+-golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
+-golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
++golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
++golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
+ golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+-golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
+-golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
++golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20200930185726-fdedc70b468f/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20210119212857-b64e53b001e4/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+-golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
+-golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+-golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
+-golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
++golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
++golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
++golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
++golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
+ golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+ golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+-golang.org/x/text v0.42.0 h1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=
+-golang.org/x/text v0.42.0/go.mod h1:ojzP1Z+2QtioaF8DTtO8K5q7JWVVYwZKenzujK0Zd0E=
++golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
++golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
+ golang.org/x/time v0.15.0 h
+```
+
+---
+
+### Incident Patch 3: `e90147e7` (2026-10-28)
+**Commit Message**: Use Go default experiments in container builds (#7790)
 
 Signed-off-by: Tero Saarni <[REDACTED_EMAIL]>
 
----------
-
-Signed-off-by: Yagiz Nizipli <[REDACTED_EMAIL]>
-Signed-off-by: Tero Saarni <
-
-**File**: `.golangci.yml` (modified, +3/-0)
+**File**: `Makefile` (modified, +1/-1)
 ```diff
-@@ -110,6 +110,9 @@ linters:
-       - linters:
-           - staticcheck
-         text: "SA1019.*SubjectName.*migrate to using the plural field subjectNames"
-+      - linters:
-+          - staticcheck
-+        text: "SA1019.*Algorithm.*use Algorithms instead"
-     paths:
-       - third_party$
-       - builtin$
-```
-
-**File**: `apis/projectcontour/v1alpha1/compression.go` (modified, +81/-3)
-```diff
-@@ -16,17 +16,36 @@ package v1alpha1
- import "fmt"
+@@ -54,7 +54,7 @@ BUILD_GOPROXY ?= https://proxy.golang.org
+ # Checksum db to use.
+ BUILD_GOSUMDB ?= sum.golang.org
  
- // CompressionAlgorithm defines the type of compression algorithm applied in default HTTP listener filter chain.
--// Allowable values are defined as names of well known compression algorithms (plus "disabled").
-+// Allowable values are defined as names of well known compression algorithms.
- type CompressionAlgorithm string
+-BUILD_GOEXPERIMENT ?= none
++BUILD_GOEXPERIMENT ?=
  
- // EnvoyCompression defines configuration related to compression in the default HTTP Listener filter chain.
-+// +kubebuilder:validation:XValidation:rule="!(has(self.algorithm) && has(self.algorithms))",message="only one of algorithm and algorithms can be set"
- type EnvoyCompression struct {
--	// Algorithm selects the response compression type applied in the compression HTTP filter of the default Listener filters.
-+	// Algorithm selects a single response compression type applied in the compression HTTP filter of the default Listener filters.
- 	// Values: `gzip` (default), `brotli`, `zstd`, `disabled`.
--	// Setting this to `disabled` will make Envoy skip "Accept-Encoding: gzip,deflate" request header and always return uncompressed response.
-+	// Setting this to `disabled` will make Envoy not compress responses. Responses already compressed by the upstream are passed through unchanged.
-+	// Mutually exclusive with Algorithms.
-+	//
-+	// Deprecated: use Algorithms instead. An empty Algorithms list disables compression.
- 	// +kubebuilder:validation:Enum="gzip";"brotli";"zstd";"disabled"
- 	// +optional
- 	Algorithm CompressionAlgorithm `json:"algorithm,omitempty"`
-+
-+	// Algorithms selects the response compression types applied in the default HTTP Listener filter chain.
-+	// This field is a tri-state:
-+	// - omitted: use gzip (default)
-+	// - empty list: disable compression
-+	// - populated list: install one compressor filter per entry and negotiate from Accept-Encoding
-+	//
-+	// The first entry is preferred if the client accepts it and has no stronger preference.
-+	// Values: `gzip`, `brotli`, `zstd`. Cannot include `disabled`; use an empty list to disable.
-+	// Mutually exclusive with Algorithm.
-+	// +kubebuilder:validation:MaxItems=3
-+	// +kubebuilder:validation:items:Enum=gzip;brotli;zstd
-+	// +kubebuilder:validation:XValidation:rule="self.all(x, self.exists_one(y, y == x))",message="duplicate compression algorithm"
-+	// +optional
-+	Algorithms *[]CompressionAlgorithm `json:"algorithms,omitempty"`
- }
- 
- func (a CompressionAlgorithm) Validate() error {
-@@ -38,6 +57,65 @@ func (a CompressionAlgorithm) Validate() error {
- 	}
- }
- 
-+// Validate reports whether the compression configuration is internally consistent.
-+func (c *EnvoyCompression) Validate() error {
-+	if c == nil {
-+		return nil
-+	}
-+	if err := c.Algorithm.Validate(); err != nil {
-+		return err
-+	}
-+	if c.Algorithm != "" && c.Algorithms != nil {
-+		return fmt.Errorf("only one of compression algorithm and algorithms can be set")
-+	}
-+	if c.Algorithms == nil {
-+		return nil
-+	}
-+
-+	seen := make(map[CompressionAlgorithm]struct{}, len(*c.Algorithms))
-+	for _, algorithm := range *c.Algorithms {
-+		if algorithm == DisabledCompression {
-+			return fmt.Errorf("compression algorithms cannot include %q; set algorithms: [] to disable", DisabledCompression)
-+		}
-+		if err := algorithm.Validate(); err != nil {
-+			return err
-+		}
-+		if algorithm == "" {
-+			return fmt.Errorf("compression algorithms cannot include an empty value")
-+		}
-+		if _, ok := seen[algorithm]; ok {
-+			return fmt.Errorf("duplicate compression algorithm %q", algorithm)
-+		}
-+		seen[algorithm] = struct{}{}
-+	}
-+	return nil
-+}
-+
-+// EffectiveAlgorithms returns the ordered list of compressor libraries to program
-+// on the default HTTP listener. A nil result means compression is disabled.
-+// When neither field is set, gzip is used. An empty Algorithms list disables compression.
-+func (c *EnvoyCompression) EffectiveAlgorithms() []CompressionAlgorithm {
-+	if c == nil {
-+		return []CompressionAlgorithm{GzipCompression}
-+	}
-+	if c.Algorithms != nil {
-+		if len(*c.Algorithms) == 0 {
-+			return nil
-+		}
-+		return append([]CompressionAlgorithm(nil), *c.Algorithms...)
-+	}
-+	if c.Algorithm == DisabledCompression {
-+		return nil
-+	}
-+	switch c.Algorithm {
-+	case BrotliCompression, ZstdCompression, GzipCompression:
-+		return []CompressionAlgorithm{c.Algorithm}
-+	default:
-+		// Unset or unknown values fall back to gzip, matching historical behavior.
-+		return []CompressionAlgorithm{GzipCompression}
-+	}
-+}
-+
- const (
- 	// BrotliCompression specifies brotli as the default HTTP filter chain compression mechanism
- 	BrotliCompression CompressionAlgorithm = "brotli"
-```
-
-**File**: `apis/projectcontour/v1alpha1/compression_test.go` (modified, +61/-0)
-```diff
-@@ -30,3 +30,64 @@ func TestValidateEnvoyCompressionAlgorithmType(t *testing.T) {
- 	require.NoError(t, contour_v1alpha1.GzipCompression.Validate())
- 	require.NoError(t, contour_v1alpha1.ZstdCompression.Validate())
- }
-+
-+func TestValidateEnvoyCompression(t *testing.T) {
-+	require.NoError(t, (*contour_v1alpha1.EnvoyCompression)(nil).Validate())
-+	require.NoError(t, (&contour_v1alpha1.EnvoyCompression{}).Validate())
-+	require.NoError(t, (&contour_v1alpha1.EnvoyCompression{Algorithm: contour_v1alpha1.GzipCompression}).Validate())
-+	require.NoError(t, (&contour_v1alpha1.EnvoyCompression{
-+		Algorithms: &[]contour_v1alpha1.CompressionAlgorithm{},
-+	}).Validate())
-+	require.NoError(t, (&contour_v1alpha1.EnvoyCompression{
-+		Algorithms: &[]contour_v1alpha1.CompressionAlgorithm{
-+			contour_v1alpha1.BrotliCompression,
-+			contour_v1alpha1.GzipCompression,
-+		},
-+	}).Validate())
-+
-+	require.ErrorContains(t, (&contour_v1alpha1.EnvoyCompression{Algorithm: "bogus"}).Validate(), "invalid compression type")
-+	require.ErrorContains(t, (&contour_v1alpha1.EnvoyCompression{
-+		Algorithm:  contour_v1alpha1.GzipCompression,
-+		Algorithms: &[]contour_v1alpha1.CompressionAlgorithm{contour_v1alpha1.BrotliCompression},
-+	}).Validate(), "only one of compression algorithm and algorithms can be set")
-+	require.ErrorContains(t, (&contour_v1alpha1.EnvoyCompression{
-+		Algorithm:  contour_v1alpha1.GzipCompression,
-+		Algorithms: &[]contour_v1alpha1.CompressionAlgorithm{},
-+	}).Validate(), "only one of compression algorithm and algorithms can be set")
-+	require.ErrorContains(t, (&contour_v1alpha1.EnvoyCompression{
-+		Algorithms: &[]contour_v1alpha1.CompressionAlgorithm{contour_v1alpha1.DisabledCompression},
-+	}).Validate(), "cannot include")
-+	require.ErrorContains(t, (&contour_v1alpha1.EnvoyCompression{
-+		Algorithms: &[]contour_v1alpha1.CompressionAlgorithm{contour_v1alpha1.GzipCompression, contour_v1alpha1.GzipCompression},
-+	}).Validate(), "duplicate")
-+	require.ErrorContains(t, (&contour_v1alpha1.EnvoyCompression{
-+		Algorithms: &[]contour_v1alpha1.CompressionAlgorithm{""},
-+	}).Validate(), "empty value")
-+	require.ErrorContains(t, (&contour_v1alpha1.EnvoyCompression{
-+		Algorithms: &[]contour_v1alpha1.CompressionAlgorithm{"bogus"},
-+	}).Validate(), "invalid compression type")
-+}
-+
-+func TestEffectiveAlgorithms(t *testing.T) {
-+	require.Equal(t, []contour_v1alpha1.CompressionAlgorithm{contour_v1alpha1.GzipCompression},
-+		(*contour_v1alpha1.EnvoyCompression)(nil).EffectiveAlgorithms())
-+	require.Equal(t, []contour_v1alpha1.CompressionAlgorithm{contour_v1alpha1.GzipCompression},
-+		(&contour_v1alpha1.EnvoyCompression{}).EffectiveAlgorithms())
-+	require.Nil(t, (&contour_v1alpha1.EnvoyCompression{Algorithm: contour_v1alpha1.DisabledCompression}).EffectiveAlgorithms())
-+	require.Nil(t, (&contour_v1alpha1.EnvoyCompression{
-+		Algorithms: &[]contour_v1alpha1.CompressionAlgorithm{},
-+	}).EffectiveAlgorithms())
-+	require.Equal(t, []contour_v1alpha1.CompressionAlgorithm{contour_v1alpha1.BrotliCompression},
-+		(&contour_v1alpha1.EnvoyCompression{Algorithm: contour_v1alpha1.BrotliCompression}).EffectiveAlgorithms())
-+	require.Equal(t, []contour_v1alpha1.CompressionAlgorithm{
-+		contour_v1alpha1.BrotliCompression,
-+		contour_v1alpha1.GzipCompression,
-+	}, (&contour_v1alpha1.EnvoyCompression{
-+		Algorithms: &[]contour_v1alpha1.CompressionAlgorithm{
-+			contour_v1alpha1.BrotliCompression,
-+			contour_v1alpha1.GzipCompression,
-+		},
-+	}).EffectiveAlgorithms())
-+	require.Equal(t, []contour_v1alpha1.CompressionAlgorithm{contour_v1alpha1.GzipCompression},
-+		(&contour_v1alpha1.EnvoyCompression{Algorithm: "bogus"}).EffectiveAlgorithms())
-+}
-```
-
-**File**: `apis/projectcontour/v1alpha1/contourconfig_helpers.go` (modified, +7/-3)
-```diff
-@@ -151,9 +151,13 @@ func (e *EnvoyConfig) Validate() error {
- 		}
- 	}
- 
--	// Envoy TLS configuration
--	if e.Listener != nil && e.Listener.TLS != nil {
--		return e.Listener.TLS.Validate()
-+	if e.Listener != nil {
-+		if err := e.Listener.Compression.Validate(); err != nil {
-+			return err
-+		}
-+		if e.Listener.TLS != nil {
-+			return e.Listener.TLS.Validate()
-+		}
- 	}
- 
- 	return nil
-```
-
-**File**: `apis/projectcontour/v1alpha1/contourconfig_helpers_test.go` (modified, +20/-0)
-```diff
-@@ -90,6 +90,26 @@ func TestContourConfigurationSpecValidate(t *testing.T) {
- 		c.Envoy.Cluster.DNSLookupFamily = "foo"
- 		require.Error(t, c.Validate())
- 
-+		c = contour_v1alpha1.ContourConfigurationSpec{
-+			Envoy: &contour_v1alpha1.EnvoyConfig{
-+				Listener: &contour_v1alpha1.EnvoyListenerConfig{
-+					Compression: &contour_v1alpha1.EnvoyCompression{
-+						Algorithm:  contour_v1alpha1.GzipCompression,
-+						Algorithms: &[]contour_v1alpha1.CompressionAlgorithm{contour_v1alpha1.BrotliCompression},
-+					},
-+				},
-+			},
-+		}
-+		require.Error(t, c.Validate())
-+
-+		c.Envoy.Listener.Compression = &contour_v1alpha1.EnvoyCompression{
-+			Algorithms: &[]contour_v1alpha1.CompressionAlgorithm{
-+				contour_v1alpha1.BrotliCompression,
-+				contour_v1alpha1.GzipCompression,
-+			},
-+		}
-+		require.NoError(t, c.Validate())
-+
- 		c = contour_v1alpha1.ContourConfigurationSpec{
- 			Envoy: &contour_v1alpha1.EnvoyConfig{
- 				Listener: &contour_v1alpha1.EnvoyListenerConfig{
-```
-
-**File**: `apis/projectcontour/v1alpha1/zz_generated.deepcopy.go` (modified, +10/-1)
-```diff
-@@ -497,6 +497,15 @@ func (in *DeploymentSettings) DeepCopy() *DeploymentSettings {
- // DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
- func (in *EnvoyCompression) DeepCopyInto(out *EnvoyCompression) {
- 	*out = *in
-+	if in.Algorithms != nil {
-+		in, out := &in.Algorithms, &out.Algorithms
-+		*out = new([]CompressionAlgorithm)
-+		if **in != nil {
-+			in, out := *in, *out
-+			*out = make([]CompressionAlgorithm, len(*in))
-+			copy(*out, *in)
-+		}
-+	}
- }
- 
- // DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new EnvoyCompression.
-@@ -622,7 +631,7 @@ func (in *EnvoyListenerConfig) DeepCopyInto(out *EnvoyListenerConfig) {
- 	if in.Compression != nil {
- 		in, out := &in.Compression, &out.Compression
- 		*out = new(EnvoyCompression)
--		**out = **in
-+		(*in).DeepCopyInto(*out)
- 	}
- 	if in.DisableAllowChunkedLength != nil {
- 		in, out := &in.DisableAllowChunkedLength, &out.DisableAllowChunkedLength
-```
-
-**File**: `changelogs/unreleased/7699-anonrig-small.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+HTTP compression can now be configured with a list of algorithms via `compression.algorithms` in the configuration file or `spec.envoy.listener.compression.algorithms` in the `ContourConfiguration` CRD. Envoy negotiates the encoding from the request `Accept-Encoding` header. An empty `algorithms` list disables compression. The existing `algorithm` field is deprecated.
-```
-
-**File**: `cmd/contour/servecontext.go` (modified, +2/-15)
-```diff
-@@ -339,21 +339,8 @@ func (ctx *serveContext) convertToContourConfigurationSpec() contour_v1alpha1.Co
- 	}
- 
- 	var compression *contour_v1alpha1.EnvoyCompression
--	if ctx.Config.Compression.Algorithm != "" {
--		var algorithm contour_v1alpha1.CompressionAlgorithm
--		switch ctx.Config.Compression.Algorithm {
--		case config.CompressionBrotli:
--			algorithm = contour_v1alpha1.BrotliCompression
--		case config.CompressionDisabled:
--			algorithm = contour_v1alpha1.DisabledCompression
--		case config.CompressionGzip:
--			algorithm = contour_v1alpha1.GzipCompression
--		case config.CompressionZstd:
--			algorithm = contour_v1alpha1.ZstdCompression
--		}
--		compression = &contour_v1alpha1.EnvoyCompression{
--			Algorithm: algorithm,
--		}
-+	if ctx.Config.Compression.Algorithm != "" || ctx.Config.Compression.Algorithms != nil {
-+		compression = ctx.Config.Compression.ToEnvoyCompression()
- 	}
- 
- 	var defaultHTTPVersions []contour_v1alpha1.HTTPVersionType
+ # Sets GIT_REF to a tag if it's present, otherwise the short git sha will be used.
+ GIT_REF = $(shell git describe --tags --exact-match 2>/dev/null || git rev-parse --short=8 --verify HEAD)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7790** (2026-10-28): Use Go default experiments in container builds (@tsaarni)
+- **PR #7787** (2026-10-28): Do not use body size limit filter for websockets (@tsaarni)
 - **PR #7786** (2026-10-27): main: Bump to Envoy v1.40.2 (@tsaarni)
 - **PR #7785** (2026-10-26): main: Bump to Envoy v1.40.1 (@tsaarni)
 - **PR #7783** (2026-10-27): build(deps): bump the codeql-action group with 4 updates (@dependabot[bot])
 - **PR #7782** (2026-10-27): build(deps): bump github.com/onsi/ginkgo/v2 from 2.33.0 to 2.33.1 (@dependabot[bot])
-- **PR #7781** (2026-10-27): build(deps): bump github.com/vektra/mockery/v2 from 2.53.7 to 2.53.8 (@dependabot[bot])
-- **PR #7779** (closed): Add an Ingress Class printer column to the HTTPProxy CRD (@cvas22)
 
 ---
 
@@ -1990,30 +1857,30 @@ Signed-off-by: Tero Saarni <
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. internal/envoy: support multiple HTTP compression algorithms (#7699)
+## X. build(deps): bump github.com/prometheus/client_golang (#7758)
 
 **RULE**:
-When implementing operations in `.golangci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectcontour/contour. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectcontour/contour. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `48670cc0`: internal/envoy: support multiple HTTP compression algorithms (#7699). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `74909745`: build(deps): bump github.com/prometheus/client_golang (#7758). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing HTML data structures, boundary deserialization, API parsing, or resource lifecycles matching `.golangci.yml`.
+Subsystems managing HTML data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```html
 // Verified production-grade fix pattern:
-      - linters:
-          - staticcheck
-        text: "SA1019.*Algorithm.*use Algorithms instead"
+	github.com/prometheus/client_golang v1.25.0
+	github.com/prometheus/procfs v0.22.0 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```html
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	github.com/prometheus/client_golang v1.24.1
+	github.com/prometheus/procfs v0.21.1 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `48670cc0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `74909745` are properly handled with clean fallback behavior.

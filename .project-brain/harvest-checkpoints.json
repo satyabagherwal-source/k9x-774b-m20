@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T20:01:43.249Z",
+  "last_updated": "2026-10-28T20:08:48.998Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -185,14 +185,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cactus-compute-whistle",
-      "content_hash": "0a82625c487aaf7b53b3ed2b34e31fd6ceb6a092a3b3dd7a014f957fb28cd247",
-      "verified_at": "2026-10-25T07:05:13.740Z",
+      "content_hash": "61c1551e84f8a8f2feeed7f979dff8e65c4b041c54575edbf9d2b3814b7e1851",
+      "verified_at": "2026-10-28T20:08:48.997Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T07:05:13.740Z"
+      "last_updated": "2026-10-28T20:08:48.997Z"
     },
     "Open-Source-Legal/OpenContracts": {
       "repository": "Open-Source-Legal/OpenContracts",
@@ -10251,14 +10251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectcontour-contour",
-      "content_hash": "20ca2582db3703601a738708a6f85b068a6623fe32a804e1a8cfcf5dbb076f50",
-      "verified_at": "2026-10-28T03:31:31.441Z",
+      "content_hash": "f765451d79a1f264a68db03628b73bfbcfb2ce071ccea011ab930beb9bd0d131",
+      "verified_at": "2026-10-28T20:08:46.317Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T03:31:31.441Z"
+      "last_updated": "2026-10-28T20:08:46.317Z"
     },
     "topoteretes/cognee": {
       "repository": "topoteretes/cognee",
@@ -11001,14 +11001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zenbu-labs-terminal-browser",
-      "content_hash": "535ccf426e428c75a430816cea90d0d784ee0d4a6348a54aceded51dbee9a174",
-      "verified_at": "2026-10-27T17:05:01.022Z",
+      "content_hash": "b620877f84f6e09744bfb4274b6e38b3fb1b2c815dd02c2d3cc7285d3cae08f4",
+      "verified_at": "2026-10-28T20:08:39.457Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T17:05:01.022Z"
+      "last_updated": "2026-10-28T20:08:39.457Z"
     },
     "kosi-libs/Kodein": {
       "repository": "kosi-libs/Kodein",

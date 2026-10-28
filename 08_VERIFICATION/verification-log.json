@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-H71W",
-    "timestamp": "2026-10-27T15:32:53.876Z",
-    "repository": "lucide-icons/lucide",
-    "learningId": "learn-github-lucide-icons-lucide",
-    "contentHash": "a3105dea53f0a7e580ed074540a18e20986d306fd222d992f55375aa28af9358",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-H8VF",
-    "timestamp": "2026-10-27T15:32:56.235Z",
-    "repository": "restatedev/restate",
-    "learningId": "learn-github-restatedev-restate",
-    "contentHash": "2a29ccc89fd32ddea047cea0782ce889346daf2f44f920697393745d4860caf7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-HALE",
-    "timestamp": "2026-10-27T15:32:58.466Z",
-    "repository": "vitejs/vite",
-    "learningId": "learn-github-vitejs-vite",
-    "contentHash": "5e135c328a2727106063e8b6e009c05048f349bdb81ec3b918cac8f4bfa7390e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-PRIQ",
     "timestamp": "2026-10-27T15:39:33.650Z",
     "repository": "angular/angular",
@@ -7492,6 +7447,51 @@
     "contentHash": "7137d1df4f3b34af46f0449424489dd1226e9f398dd0afdeb79e013dffbea64e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-ROD0",
+    "timestamp": "2026-10-28T20:08:39.444Z",
+    "repository": "zenbu-labs/terminal-browser",
+    "learningId": "learn-github-zenbu-labs-terminal-browser",
+    "contentHash": "b620877f84f6e09744bfb4274b6e38b3fb1b2c815dd02c2d3cc7285d3cae08f4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-RTNF",
+    "timestamp": "2026-10-28T20:08:46.299Z",
+    "repository": "projectcontour/contour",
+    "learningId": "learn-github-projectcontour-contour",
+    "contentHash": "f765451d79a1f264a68db03628b73bfbcfb2ce071ccea011ab930beb9bd0d131",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-RVQ1",
+    "timestamp": "2026-10-28T20:08:48.985Z",
+    "repository": "Cactus-Compute/whistle",
+    "learningId": "learn-huggingface-cactus-compute-whistle",
+    "contentHash": "61c1551e84f8a8f2feeed7f979dff8e65c4b041c54575edbf9d2b3814b7e1851",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

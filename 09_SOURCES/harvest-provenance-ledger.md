@@ -5923,3 +5923,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-liquidai-d1-3b` | `https://huggingface.co/LiquidAI/d1-3B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-28T20:01:26.242Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `6afd9ba3` | Multi-dimensional audit evidence | 2026-10-28T20:01:42.183Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `5ce45773` | Multi-dimensional audit evidence | 2026-10-28T20:01:43.238Z |
+| `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `6e94e407` | Multi-dimensional audit evidence | 2026-10-28T20:08:39.448Z |
+| `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `74909745` | Multi-dimensional audit evidence | 2026-10-28T20:08:46.303Z |
+| `learn-huggingface-cactus-compute-whistle` | `https://huggingface.co/Cactus-Compute/whistle` | `hf-cactus-` | Multi-dimensional audit evidence | 2026-10-28T20:08:48.989Z |

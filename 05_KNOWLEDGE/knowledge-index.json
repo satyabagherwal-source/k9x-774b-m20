@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T20:01:43.160Z",
+  "last_updated": "2026-10-28T20:08:48.906Z",
   "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -18966,7 +18966,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cactus-Compute/whistle",
       "source_version": "hf-cactus-compute-whistle",
-      "content_hash": "0a82625c487aaf7b53b3ed2b34e31fd6ceb6a092a3b3dd7a014f957fb28cd247",
+      "content_hash": "61c1551e84f8a8f2feeed7f979dff8e65c4b041c54575edbf9d2b3814b7e1851",
       "dossier_path": "07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md",
       "promoted_rules": [
@@ -19044,6 +19044,21 @@
           "number": 4130,
           "title": "Hadamard-Quantized Block Group Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5390,
+          "title": "Edge-First ASR: Zero-Dependency Binary Containerization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5391,
+          "title": "Laddered Decoder Depth for Latency-Accuracy Trade-off",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5392,
+          "title": "Silence-First Transcription: No Hallucination Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -19064,7 +19079,7 @@
         "learn-huggingface-hf-cactus-compute-whistle-mv437sal",
         "learn-huggingface-hf-cactus-compute-whistle-mv4gguek"
       ],
-      "verified_at": "2026-10-25T07:05:13.626Z",
+      "verified_at": "2026-10-28T20:08:48.880Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44121,8 +44136,8 @@
       "slug": "projectcontour-contour",
       "platform": "github",
       "source_url": "https://github.com/projectcontour/contour",
-      "source_version": "48670cc0",
-      "content_hash": "20ca2582db3703601a738708a6f85b068a6623fe32a804e1a8cfcf5dbb076f50",
+      "source_version": "74909745",
+      "content_hash": "f765451d79a1f264a68db03628b73bfbcfb2ce071ccea011ab930beb9bd0d131",
       "dossier_path": "07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
       "promoted_rules": [
@@ -44150,6 +44165,11 @@
           "number": 5152,
           "title": "internal/envoy: support multiple HTTP compression algorithms (#7699)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5389,
+          "title": "build(deps): bump github.com/prometheus/client_golang (#7758)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44157,7 +44177,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T03:31:31.332Z",
+      "verified_at": "2026-10-28T20:08:46.192Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56724,8 +56744,8 @@
       "slug": "zenbu-labs-terminal-browser",
       "platform": "github",
       "source_url": "https://github.com/zenbu-labs/terminal-browser",
-      "source_version": "e8ca7483",
-      "content_hash": "535ccf426e428c75a430816cea90d0d784ee0d4a6348a54aceded51dbee9a174",
+      "source_version": "6e94e407",
+      "content_hash": "b620877f84f6e09744bfb4274b6e38b3fb1b2c815dd02c2d3cc7285d3cae08f4",
       "dossier_path": "07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
       "promoted_rules": [
@@ -56753,6 +56773,11 @@
           "number": 4912,
           "title": "events not passing through iframes, add permission dialogue (#211)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5388,
+          "title": "add flag to remove chrome (#217)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56760,7 +56785,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T17:05:00.959Z",
+      "verified_at": "2026-10-28T20:08:39.314Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -145953,6 +145978,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T20:01:43.140Z"
+    },
+    "rule-5388": {
+      "learning_id": "rule-5388",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5388,
+      "title": "add flag to remove chrome (#217)",
+      "source_url": "https://github.com/zenbu-labs/terminal-browser",
+      "source_version": "6e94e407",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T20:08:39.314Z"
+    },
+    "rule-5389": {
+      "learning_id": "rule-5389",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5389,
+      "title": "build(deps): bump github.com/prometheus/client_golang (#7758)",
+      "source_url": "https://github.com/projectcontour/contour",
+      "source_version": "74909745",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T20:08:46.192Z"
+    },
+    "rule-5390": {
+      "learning_id": "rule-5390",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5390,
+      "title": "Edge-First ASR: Zero-Dependency Binary Containerization",
+      "source_url": "https://huggingface.co/Cactus-Compute/whistle",
+      "source_version": "hf-cactus-compute-whistle",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T20:08:48.880Z"
+    },
+    "rule-5391": {
+      "learning_id": "rule-5391",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5391,
+      "title": "Laddered Decoder Depth for Latency-Accuracy Trade-off",
+      "source_url": "https://huggingface.co/Cactus-Compute/whistle",
+      "source_version": "hf-cactus-compute-whistle",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T20:08:48.880Z"
+    },
+    "rule-5392": {
+      "learning_id": "rule-5392",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5392,
+      "title": "Silence-First Transcription: No Hallucination Invariant",
+      "source_url": "https://huggingface.co/Cactus-Compute/whistle",
+      "source_version": "hf-cactus-compute-whistle",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T20:08:48.880Z"
     }
   },
   "aliases": {

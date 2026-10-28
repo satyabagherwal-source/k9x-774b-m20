@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T20:01:45.791Z",
-    "lastVerified": "2026-10-28T20:01:45.791Z",
+    "lastChecked": "2026-10-28T20:08:51.526Z",
+    "lastVerified": "2026-10-28T20:08:51.526Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -102,12 +102,12 @@
     "lastVerified": "2026-10-28T20:01:32.652Z"
   },
   "mintplex-labs-anything-llm": {
-    "name": "Mintplex-Labs/anything-llm",
+    "name": "anything-llm",
     "officialUrl": "https://github.com/Mintplex-Labs/anything-llm",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-10-28T02:48:14.752Z",
-    "lastVerified": "2026-10-28T02:48:14.752Z",
+    "lastChecked": "2026-10-28T20:08:45.719Z",
+    "lastVerified": "2026-10-28T20:08:45.719Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mintplex-labs-anything-llm",
@@ -116,7 +116,8 @@
     "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "0941fb03"
   },
   "bitterbot-ai-bitterbot-desktop": {
     "name": "Bitterbot-AI/bitterbot-desktop",
@@ -176,9 +177,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-10-28T16:27:21.400Z",
+    "lastChecked": "2026-10-28T20:08:43.521Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-10-28T16:27:21.400Z"
+    "lastVerified": "2026-10-28T20:08:43.521Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch",
@@ -192,8 +193,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T19:39:06.434Z",
-    "lastVerified": "2026-10-28T19:39:06.434Z",
+    "lastChecked": "2026-10-28T20:08:48.310Z",
+    "lastVerified": "2026-10-28T20:08:48.310Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -545,14 +546,14 @@
     "officialUrl": "https://github.com/projectcontour/contour",
     "sourceType": "github",
     "technology": "HTML",
-    "lastChecked": "2026-10-28T03:31:30.854Z",
-    "lastVerified": "2026-10-28T03:31:30.854Z",
+    "lastChecked": "2026-10-28T20:08:45.615Z",
+    "lastVerified": "2026-10-28T20:08:45.615Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectcontour-contour",
-    "contentHash": "20ca2582db3703601a738708a6f85b068a6623fe32a804e1a8cfcf5dbb076f50",
+    "contentHash": "f765451d79a1f264a68db03628b73bfbcfb2ce071ccea011ab930beb9bd0d131",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6463,5 +6464,46 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "zenbu-labs-terminal-browser": {
+    "name": "zenbu-labs/terminal-browser",
+    "officialUrl": "https://github.com/zenbu-labs/terminal-browser",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-28T20:08:38.580Z",
+    "lastVerified": "2026-10-28T20:08:38.580Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-zenbu-labs-terminal-browser",
+    "contentHash": "b620877f84f6e09744bfb4274b6e38b3fb1b2c815dd02c2d3cc7285d3cae08f4",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-cactus-compute-whistle": {
+    "name": "Cactus-Compute/whistle",
+    "officialUrl": "https://huggingface.co/Cactus-Compute/whistle",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T20:08:35.683Z",
+    "lastVerified": "2026-10-28T20:08:35.683Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-cactus-compute-whistle",
+    "contentHash": "61c1551e84f8a8f2feeed7f979dff8e65c4b041c54575edbf9d2b3814b7e1851",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kosi-libs-kodein": {
+    "name": "Kodein",
+    "officialUrl": "https://github.com/kosi-libs/Kodein",
+    "lastChecked": "2026-10-28T20:08:38.219Z",
+    "revisionIdentifier": "f26ea0c9",
+    "lastVerified": "2026-10-28T20:08:38.219Z"
   }
 }

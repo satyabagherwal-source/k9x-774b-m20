@@ -195,8 +195,8 @@
     "sourceUrl": "https://huggingface.co/Cactus-Compute/whistle",
     "sourceVersion": "hf-cactus-compute-whistle",
     "license": "Open-Source",
-    "contentHash": "0a82625c487aaf7b53b3ed2b34e31fd6ceb6a092a3b3dd7a014f957fb28cd247",
-    "lastHarvestedAt": "2026-10-25T07:05:13.730Z",
+    "contentHash": "61c1551e84f8a8f2feeed7f979dff8e65c4b041c54575edbf9d2b3814b7e1851",
+    "lastHarvestedAt": "2026-10-28T20:08:48.989Z",
     "learningId": "learn-huggingface-cactus-compute-whistle"
   },
   "hf-qwen-qwen3.8-27b": {
@@ -6793,10 +6793,10 @@
     "repository": "projectcontour/contour",
     "platform": "github",
     "sourceUrl": "https://github.com/projectcontour/contour",
-    "sourceVersion": "48670cc0",
+    "sourceVersion": "74909745",
     "license": "Apache-2.0",
-    "contentHash": "20ca2582db3703601a738708a6f85b068a6623fe32a804e1a8cfcf5dbb076f50",
-    "lastHarvestedAt": "2026-10-28T03:31:31.433Z",
+    "contentHash": "f765451d79a1f264a68db03628b73bfbcfb2ce071ccea011ab930beb9bd0d131",
+    "lastHarvestedAt": "2026-10-28T20:08:46.303Z",
     "learningId": "learn-github-projectcontour-contour"
   },
   "topoteretes-cognee": {
@@ -7303,10 +7303,10 @@
     "repository": "zenbu-labs/terminal-browser",
     "platform": "github",
     "sourceUrl": "https://github.com/zenbu-labs/terminal-browser",
-    "sourceVersion": "e8ca7483",
+    "sourceVersion": "6e94e407",
     "license": "MIT",
-    "contentHash": "535ccf426e428c75a430816cea90d0d784ee0d4a6348a54aceded51dbee9a174",
-    "lastHarvestedAt": "2026-10-27T17:05:01.016Z",
+    "contentHash": "b620877f84f6e09744bfb4274b6e38b3fb1b2c815dd02c2d3cc7285d3cae08f4",
+    "lastHarvestedAt": "2026-10-28T20:08:39.448Z",
     "learningId": "learn-github-zenbu-labs-terminal-browser"
   },
   "kosi-libs-kodein": {
