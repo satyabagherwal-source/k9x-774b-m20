@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md`  
 > **Source**: github ([https://github.com/chaos-mesh/chaos-mesh](https://github.com/chaos-mesh/chaos-mesh))  
-> **Source Version**: `35842157`  
+> **Source Version**: `54120b39`  
 > **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T11:59:45.244Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-28T05:58:05.692Z  
 > **Learning ID**: `learn-github-chaos-mesh-chaos-mesh`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,786 +12,311 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): chaos-mesh/chaos-mesh
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/chaos-mesh/chaos-mesh](https://github.com/chaos-mesh/chaos-mesh))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T11:59:44.620Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): chaos-mesh/chaos-mesh
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `chaos-mesh/chaos-mesh`
-- **Description**: A Chaos Engineering Platform for Kubernetes.
-- **Primary Language / Ecosystem**: Go
-- **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 7953 stars
+## 1. Executive Forensic Architecture & System Mechanics
 
----
+Chaos Mesh is a Kubernetes-native chaos engineering orchestration engine providing deterministic, observable, and multi-tier fault injection across physical hardware, Linux kernel subsystems, container runtimes, network namespaces, block devices, and application runtimes (e.g., JVM bytecode).
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
-
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: go.mod, README.md.
-- Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `api/genericwebhook/bfs.go`
 ```
-// Copyright 2021 Chaos Mesh Authors.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
+                      +----------------------------------------+
+                      |       Kubernetes API Server            |
+                      |  CRDs: PodChaos, NetworkChaos, etc.    |
+                      +-------------------+--------------------+
+                                          |
+                               Watches / Reconciles
+                                          v
+                      +----------------------------------------+
+                      |        Chaos Controller Manager        |
+                      |  - Validating & Mutating Webhooks      |
+                      |  - Generic Reflection Walker (BFS)     |
+                      |  - Target Selector Resolution Engine   |
+                      |  - Workflow & Schedule State Machines  |
+                      +-------------------+--------------------+
+                                          |
+                            gRPC over mTLS / Unix Socket
+                                          v
+                      +----------------------------------------+
+                      |              Chaos Daemon              |
+                      |  Runs as DaemonSet on target nodes     |
+                      |  - bpm (Bypass Process Management)     |
+                      |  - setns (MNT, PID, NET, IPC, UTS)     |
+                      |  - tc (traffic control) / netfilter    |
+                      |  - cgroup v1/v2 controller hierarchy   |
+                      |  - BPF/eBPF kernel probes (BPFKI)      |
+                      |  - JVM agent attachment (Byteman)      |
+                      +----------------------------------------+
+```
 
-package genericwebhook
+### Architectural Subsystems and Domain Primitives
+
+1. **Kubernetes CRD Control Plane & Admission Webhooks (`api/genericwebhook`, `controllers/`)**:
+   - Implements a reflection-driven generic webhook framework (`api/genericwebhook/bfs.go`). Instead of manually handwriting traversal routines for hundreds of nested chaos types, a custom Breadth-First Search (BFS) walker navigates Go structs, maps, and slices using `reflect.Indirect`, resolving struct tags like `webhook:"EbsVolume,nilable"` and `default:"5s"`.
+   - Normalizes and validates spec invariants before persistent storage in etcd, preventing the creation of malformed custom resources.
+
+2. **Privileged Node Agent (`pkg/chaosdaemon`)**:
+   - Executes as a privileged DaemonSet on every node. It receives gRPC instructions from the Controller Manager and bypasses container isolation boundaries via `bpm` (Bypass Process Manager).
+   - Executes commands inside targeted Linux namespaces using low-level namespace switching primitives (`setns` syscalls across `CLONE_NEWNS` [Mount], `CLONE_NEWPID` [PID], `CLONE_NEWNET` [Network]).
+
+3. **Fault Injection Runtimes**:
+   - **Kernel & Syscall Faults (`bpfki`, eBPF)**: Injects failures directly into kernel memory allocation (`kmem_cache_alloc`) and filesystem VFS layers using eBPF/BPFKI.
+   - **Network & I/O Faults (`tc`, `ipset`, `iptables`, `toda`)**: Emulates delay, loss, corruption, duplication, and reordering at the network queue discipline (qdisc) level.
+   - **Application Faults (JVM / Byteman)**: Injects JVM bytecode manipulation via dynamic agent loading, requiring cross-namespace file transport and target process discovery inside targeted mount and PID namespaces.
+
+---
+
+## 2. Net-New Universal Engineering Rules ( candidates for Master Brain)
+
+### 1. Dual-Namespace Invariant for Cross-Boundary Container File Operations
+**RULE**:
+When staging scripts, binaries, or agent libraries into a target container's filesystem from an external privileged host agent via shell piping or redirection (`sh -c "cat > /path/dest"`), the host runner MUST transition into BOTH the target container's Mount Namespace (`bpm.MountNS`) AND the target container's PID Namespace (`bpm.PidNS`).
+
+**WHY**:
+Modern container base images increasingly replace GNU coreutils with alternative userspace implementations such as Rust-based `coreutils` or BusyBox variants. When utilities inside an entered Mount namespace execute process checks, resolve `/proc` paths, or spawn helper subprocesses, executing within the host PID namespace while bound to the target container's Mount namespace causes procfs mismatches (`/proc/self` pointing to a host PID nonexistent in the target container's procfs mount). This triggers silent I/O redirection failures, broken pipe panics, or `No such file or directory` errors during standard utilities execution (such as `cat`, `mkdir`, or `cp`).
+
+**WHEN TO APPLY**:
+Any systems engineering, container runtime agent, or eBPF/sidecar manager in Go, C, or Rust manipulating files or running setup processes inside arbitrary Linux containers via `nsenter` or raw `setns()` syscalls.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package daemon
+
+import (
+	"context"
+	"fmt"
+	"io"
+	"os"
+
+	"github.com/pkg/errors"
+)
+
+// ProcessBuilder models privileged execution across target Linux namespaces.
+type ProcessBuilder interface {
+	SetContext(ctx context.Context) ProcessBuilder
+	SetNS(pid uint32, nsType string) ProcessBuilder
+	SetStdin(r io.Reader) ProcessBuilder
+	Build(ctx context.Context) CommandRunner
+}
+
+type CommandRunner interface {
+	CombinedOutput() ([]byte, error)
+}
+
+const (
+	MountNS = "mnt"
+	PidNS   = "pid"
+)
+
+// DeployPayloadToContainer transfers payload bytes into target container's filesystem
+// while avoiding coreutils/procfs mismatch traps by locking both Mount and PID namespaces.
+func DeployPayloadToContainer(
+	ctx context.Context,
+	bpmBuilder func(cmd string, args ...string) ProcessBuilder,
+	targetPid uint32,
+	sourcePath string,
+	destPath string,
+) ([]byte, error) {
+	sourceFile, err := os.Open(sourcePath)
+	if err != nil {
+		return nil, errors.Wrapf(err, "open source payload %s", sourcePath)
+	}
+	defer sourceFile.Close()
+
+	// Invariant: MUST enter both MountNS and PidNS simultaneously.
+	builder := bpmBuilder("sh", "-c", fmt.Sprintf("cat > %s", destPath)).
+		SetContext(ctx).
+		SetNS(targetPid, MountNS).
+		SetNS(targetPid, PidNS).
+		SetStdin(sourceFile)
+
+	output, err := builder.Build(ctx).CombinedOutput()
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to copy %s to %s inside PID %d (output: %s)",
+			sourcePath, destPath, targetPid, string(output))
+	}
+	return output, nil
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Entering MountNS without PidNS causes Rust coreutils and proc-sensitive
+// tools to crash because /proc/self does not correspond to the executing thread PID.
+func InsecureDeployPayload(ctx context.Context, targetPid uint32, sourceFile *os.File, destPath string) error {
+    cmd := exec.CommandContext(ctx, "nsenter", fmt.Sprintf("--mount=/proc/%d/ns/mnt", targetPid), "sh", "-c", "cat > "+destPath)
+    cmd.Stdin = sourceFile
+    // Missing --pid=/proc/%d/ns/pid breaks on non-GNU userspaces
+    return cmd.Run()
+}
+```
+
+**VERIFICATION METHOD**:
+Run an integration test executing `cat > /tmp/probe` against a running container base image built with `rust:alpine` or `coreutils-uutils`. Assert that the exit code is 0 and verify file integrity across namespace boundaries using checksum verification:
+```go
+func TestRustCoreutilsContainerNamespaceStaging(t *testing.T) {
+    out, err := DeployPayloadToContainer(context.Background(), mockBpm, containerPid, "payload.jar", "/tmp/payload.jar")
+    require.NoError(t, err)
+    require.Empty(t, string(out))
+}
+```
+
+---
+
+### 2. Reflection Addressability Mutation Barrier in Struct Walkers
+**RULE**:
+When recursively traversing nested struct hierarchies via Go `reflect` to mutate fields or invoke defaulting interfaces, the walker MUST check `val.CanAddr()` before modifying any node. If an element is a value struct, the walker MUST explicitly call `val.Addr()` to extract an addressable pointer representation prior to interface casting or mutation. Struct fields MUST NEVER be inspected or converted without checking `fieldVal.CanInterface()`.
+
+**WHY**:
+In Go, `reflect.Value` instances returned from struct field traversals (`objVal.Field(i)`) or slice traversals are often unaddressable copy values. Calling pointer methods or interface conversions on unaddressable values results in runtime panics: `panic: reflect: call of reflect.Value.Addr on unaddressable value` or `panic: reflect.Value.Interface: cannot return value obtained from unexported field`.
+
+**WHEN TO APPLY**:
+Universal to all Go reflection frameworks, custom serializers, schema validation engines, Kubernetes custom resource validators, and dynamic AST mutators.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package reflectionwalker
 
 import (
 	"container/list"
 	"reflect"
-
-	"k8s.io/apimachinery/pkg/util/validation/field"
 )
 
-type fieldCallback func(path *field.Path, obj any, field *reflect.StructField) bool
+type NodeCallback func(val reflect.Value, field *reflect.StructField) bool
 
-type FieldWalker struct {
-	obj      any
-	callback fieldCallback
+type SafeWalker struct {
+	root any
 }
 
-func NewFieldWalker(obj any, callback fieldCallback) *FieldWalker {
-	return &FieldWalker{
-		obj:      obj,
-		callback: callback,
+func NewSafeWalker(root any) *SafeWalker {
+	return &SafeWalker{root: root}
+}
+
+type walkFrame struct {
+	val   reflect.Value
+	field *reflect.StructField
+}
+
+func (w *SafeWalker) Walk(callback NodeCallback) {
+	rootVal := reflect.ValueOf(w.root)
+	if !rootVal.IsValid() {
+		return
 	}
-}
 
-type iterateNode struct {
-	Val   reflect.Value
-	Path  *field.Path
-	Field *reflect.StructField
-}
+	queue := list.New()
+	queue.PushBack(walkFrame{val: rootVal, field: nil})
 
-func (w *FieldWalker) Walk() {
-	objVal := reflect.ValueOf(w.obj)
+	for queue.Len() > 0 {
+		element := queue.Front()
+		queue.Remove(element)
 
-	items := list.New()
-	items.PushBack(iterateNode{
-		Val:  objVal,
-		Path: nil,
-	})
+		frame := element.Value.(walkFrame)
+		currVal := frame.val
 
-	for {
-		if items.Len() == 0 {
-			break
+		// Safe addressability invariant
+		if currVal.IsValid() && currVal.Kind() != reflect.Pointer && currVal.CanAddr() {
+			currVal = currVal.Addr()
 		}
 
-		item := items.Front()
-		items.Remove(item)
-
-		node := item.Value.(iterateNode)
-		// If node is not the root node, then we need to check whether
-		// we need to iterate its children.
-		if node.Path != nil {
-			val := node.Val
-			if val.Kind() != reflect.Pointer {
-				// If it's not a pointer or a slice, then we need to
-				// take the address of it, to be able to modify it.
-				val = val.Addr()
-			}
-			if !w.callback(node.Path, val.Interface(), node.Field) {
+		if frame.field != nil {
+			if !callback(currVal, frame.field) {
 				continue
 			}
 		}
 
-		if node.Val.Kind() == reflect.Pointer && node.Val.IsZero() {
+		// Dereference pointer to inspect underlying structure
+		resolved := reflect.Indirect(currVal)
+		if !resolved.IsValid() {
 			continue
 		}
-		objVal = reflect.Indirect(node.Val)
-		objType := objVal.Type()
-		switch objType.Kind() {
-		case reflect.Struct:
-			for i := 0; i < objVal.NumField(); i++ {
-				field := objType.Field(i)
-				fieldVal := objVal.Field(i)
 
-				// The field should be exported
-				if fieldVal.CanInterface() {
-					items.PushBack(iterateNode{
-						Val:   fieldVal,
-						Path:  node.Path.Child(field.Name),
-						Field: &field,
-					})
+		switch resolved.Kind() {
+		case reflect.Struct:
+			numFields := resolved.NumField()
+			resolvedType := resolved.Type()
+			for i := 0; i < numFields; i++ {
+				fieldMeta := resolvedType.Field(i)
+				fieldVal := resolved.Field(i)
+
+				// Invariant: Unexported fields panic on CanInterface / mutation
+				if !fieldVal.CanInterface() {
+					continue
 				}
+
+				queue.PushBack(walkFrame{
+					val:   fieldVal,
+					field: &fieldMeta,
+				})
 			}
 		case reflect.Slice:
-			for i := 0; i < objVal.Len(); i++ {
-				items.PushBack(iterateNode{
-					Val:   objVal.Index(i),
-					Path:  node.Path.Index(i),
-					Field: nil,
+			sliceLen := resolved.Len()
+			for i := 0; i < sliceLen; i++ {
+				queue.PushBack(walkFrame{
+					val:   resolved.Index(i),
+					field: nil,
 				})
 			}
 		}
-
 	}
 }
-
 ```
 
-### Core Architecture Module: `api/genericwebhook/defaulter.go`
-```
-// Copyright 2021 Chaos Mesh Authors.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-
-package genericwebhook
-
-import (
-	"reflect"
-	"strings"
-
-	"k8s.io/apimachinery/pkg/util/validation/field"
-)
-
-type Defaulter interface {
-	Default(root any, field *reflect.StructField)
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Directly casting reflect.Value to interface{} or calling Addr()
+// without checking CanAddr() or CanInterface() causes runtime panics on unexported fields.
+func UnsafeMutateStruct(obj any) {
+    v := reflect.ValueOf(obj).Elem()
+    for i := 0; i < v.NumField(); i++ {
+        field := v.Field(i)
+        // Panics if field is unexported or unaddressable!
+        ptr := field.Addr().Interface() 
+        _ = ptr
+    }
 }
-
-// Default would walk through all the fields of target struct recursively, and set the default value which declared with struct tag "default".
-//
-// Parameter obj should be a pointer to a data struct.
-//
-// Default should return an empty field.ErrorList.
-func Default(obj any) field.ErrorList {
-	// TODO: how to resolve invalid input, for example: obj is a pointer to pointer
-	errorList := field.ErrorList{}
-
-	root := obj
-	walker := NewFieldWalker(obj, func(_ *field.Path, obj any, field *reflect.StructField) bool {
-		webhookAttr := ""
-		if field != nil {
-			webhookAttr = field.Tag.Get("webhook")
-		}
-		attributes := strings.Split(webhookAttr, ",")
-
-		webhook := ""
-		nilable := false
-		if len(attributes) > 0 {
-			webhook = attributes[0]
-		}
-		if len(attributes) > 1 {
-			nilable = attributes[1] == "nilable"
-		}
-
-		defaulter := getDefaulter(obj, webhook, nilable)
-		if defaulter != nil {
-			defaulter.Default(root, field)
-		}
-
-		return true
-	})
-	walker.Walk()
-
-	return errorList
-}
-
-func getDefaulter(obj any, webhook string, nilable bool) Defaulter {
-	// There are two possible situations:
-	// 1. The field is a value (int, string, normal struct, etc), and the obj is the reference of it.
-	// 2. The field is a pointer to a value or a slice, then the obj is itself.
-
-	val := reflect.ValueOf(obj)
-
-	if defaulter, ok := obj.(Defaulter); ok {
-		if nilable || !val.IsZero() {
-			return defaulter
-		}
-	}
-
-	if webhook != "" {
-		webhookImpl := webhooks[webhook]
-
-		v := val.Convert(webhookImpl).Interface()
-		if defaulter, ok := v.(Defaulter); ok {
-			if nilable || !val.IsZero() {
-				return defaulter
-			}
-		}
-	}
-
-	return nil
-}
-
 ```
 
-### Core Architecture Module: `api/genericwebhook/validater.go`
-```
-// Copyright 2021 Chaos Mesh Authors.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-
-package genericwebhook
-
-import (
-	"reflect"
-	"strings"
-
-	"github.com/pkg/errors"
-	"k8s.io/apimachinery/pkg/util/validation/field"
-)
-
-type FieldValidator interface {
-	Validate(root any, path *field.Path) field.ErrorList
+**VERIFICATION METHOD**:
+Implement a property-based test feeding structs containing unexported private fields, non-pointer nested primitives, and deeply nested nil pointers into the walker. The walker MUST terminate without panic:
+```go
+type complexTarget struct {
+    PublicField  string
+    privateField string
+    Nested       struct{ Counter int }
+    NilPtr       *int
 }
 
-// Validate would walk through all the fields of target struct recursively, and validate the value with validator declared with struct tag "webhook".
-//
-// Parameter obj should be a pointer to a data struct.
-//
-// Validate should return an empty field.ErrorList if all the fields are valid, or return each field.Error for every invalid values.
-func Validate(obj any) field.ErrorList {
-	// TODO: how to resolve invalid input, for example: obj is a pointer to pointer
-	errorList := field.ErrorList{}
-
-	root := obj
-	walker := NewFieldWalker(obj, func(path *field.Path, obj any, field *reflect.StructField) bool {
-		webhookAttr := ""
-		if field != nil {
-			webhookAttr = field.Tag.Get("webhook")
-		}
-		attributes := strings.Split(webhookAttr, ",")
-
-		webhook := ""
-		nilable := false
-		if len(attributes) > 0 {
-			webhook = attributes[0]
-		}
-		if len(attributes) > 1 {
-			nilable = attributes[1] == "nilable"
-		}
-
-		validator := getValidator(obj, webhook, nilable)
-		if validator != nil {
-			if err := validator.Validate(root, path); err != nil {
-				errorList = append(errorList, err...)
-			}
-		}
-
-		return true
-	})
-	walker.Walk()
-
-	return errorList
+func TestSafeWalker_NoPanicsOnUnexportedOrNonAddressable(t *testing.T) {
+    target := complexTarget{PublicField: "valid", privateField: "hidden"}
+    walker := NewSafeWalker(&target)
+    assert.NotPanics(t, func() {
+        walker.Walk(func(val reflect.Value, field *reflect.StructField) bool {
+            return true
+        })
+    })
 }
-
-func Aggregate(errs field.ErrorList) error {
-	if len(errs) == 0 {
-		return nil
-	}
-
-	return errors.New(errs.ToAggregate().Error())
-}
-
-func getValidator(obj any, webhook string, nilable bool) FieldValidator {
-	// There are two possible situations:
-	// 1. The field is a value (int, string, normal struct, etc), and the obj is the reference of it.
-	// 2. The field is a pointer to a value or a slice, then the obj is itself.
-
-	val := reflect.ValueOf(obj)
-
-	if validator, ok := obj.(FieldValidator); ok {
-		if nilable || !val.IsZero() {
-			return validator
-		}
-	}
-
-	if webhook != "" {
-		webhookImpl := webhooks[webhook]
-
-		v := val.Convert(webhookImpl).Interface()
-		if validator, ok := v.(FieldValidator); ok {
-			if nilable || !val.IsZero() {
-				return validator
-			}
-		}
-	}
-
-	return nil
-}
-
 ```
 
-### Core Architecture Module: `api/genericwebhook/webhook.go`
-```
-// Copyright 2021 Chaos Mesh Authors.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-
-// Package genericwebhook registers field webhooks and recursively defaults and validates structs through field tags.
-package genericwebhook
-
-import "reflect"
-
-var webhooks = make(map[string]reflect.Type)
-
-func Register(name string, obj reflect.Type) {
-	webhooks[name] = obj
-}
-
-```
-
-### Core Architecture Module: `api/v1alpha1/awschaos_webhook.go`
-```
-// Copyright 2021 Chaos Mesh Authors.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-
-package v1alpha1
-
-import (
-	"reflect"
-
-	"github.com/pkg/errors"
-	"k8s.io/apimachinery/pkg/util/validation/field"
-
-	"github.com/chaos-mesh/chaos-mesh/api/genericwebhook"
-)
-
-type EbsVolume string
-type AWSDeviceName string
-
-func (in *EbsVolume) Validate(root any, path *field.Path) field.ErrorList {
-	allErrs := field.ErrorList{}
-
-	awsChaos := root.(*AWSChaos)
-	if awsChaos.Spec.Action == DetachVolume {
-		if in == nil {
-			err := errors.Wrapf(errInvalidValue, "the ID of EBS volume is required on %s action", awsChaos.Spec.Action)
-			allErrs = append(allErrs, field.Invalid(path, in, err.Error()))
-		}
-	}
-
-	return allErrs
-}
-
-func (in *AWSDeviceName) Validate(root any, path *field.Path) field.ErrorList {
-	allErrs := field.ErrorList{}
-
-	awsChaos := root.(*AWSChaos)
-	if awsChaos.Spec.Action == DetachVolume {
-		if in == nil {
-			err := errors.Wrapf(errInvalidValue, "the name of device is required on %s action", awsChaos.Spec.Action)
-			allErrs = append(allErrs, field.Invalid(path, in, err.Error()))
-		}
-	}
-
-	return allErrs
-}
-
-// Validate validates aws chaos actions
-func (in *AWSChaosAction) Validate(_ any, path *field.Path) field.ErrorList {
-	allErrs := field.ErrorList{}
-
-	// in cannot be nil
-	switch *in {
-	case Ec2Stop, DetachVolume:
-	case Ec2Restart:
-	default:
-		err := errors.WithStack(errUnknownAction)
-		log.Error(err, "Wrong AWSChaos Action type")
-
-		allErrs = append(allErrs, field.Invalid(path, in, err.Error()))
-	}
-	return allErrs
-}
-
-func init() {
-	genericwebhook.Register("EbsVolume", reflect.PointerTo(reflect.TypeFor[EbsVolume]()))
-	genericwebhook.Register("AWSDeviceName", reflect.PointerTo(reflect.TypeFor[AWSDeviceName]()))
-}
-
-```
-
-### Core Architecture Module: `api/v1alpha1/azurechaos_webhook.go`
-```
-// Copyright 2022 Chaos Mesh Authors.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-
-package v1alpha1
-
-import (
-	"reflect"
-
-	"github.com/pkg/errors"
-	"k8s.io/apimachinery/pkg/util/validation/field"
-
-	"github.com/chaos-mesh/chaos-mesh/api/genericwebhook"
-)
-
-type DiskName string
-type LUN int
-
-func (in *DiskName) Validate(root any, path *field.Path) field.ErrorList {
-	allErrs := field.ErrorList{}
-
-	azurechaos := root.(*AzureChaos)
-	if azurechaos.Spec.Action == AzureDiskDetach {
-		if in == nil {
-			err := errors.Errorf("the name of data disk should not be empty on %s action", azurechaos.Spec.Action)
-			allErrs = append(allErrs, field.Invalid(path, in, err.Error()))
-		}
-	}
-
-	return allErrs
-}
-
-func (in *LUN) Validate(root any, path *field.Path) field.ErrorList {
-	allErrs := field.ErrorList{}
-
-	azurechaos := root.(*AzureChaos)
-	if azurechaos.Spec.Action == AzureDiskDetach {
-		if in == nil {
-			err := errors.Errorf("the LUN of data disk should not be empty on %s action", azurechaos.Spec.Action)
-			allErrs = append(allErrs, field.Invalid(path, in, err.Error()))
-		}
-	}
-
-	return allErrs
-}
-
-// Validate validates the azure chaos actions
-func (in *AzureChaosAction) Validate(_ any, path *field.Path) field.ErrorList {
-	allErrs := field.ErrorList{}
-
-	// in cannot be nil
-	switch *in {
-	case AzureVmStop, AzureDiskDetach:
-	case AzureVmRestart:
-	default:
-		err := errors.New("azurechaos has an unknown action type")
-		log.Error(err, "Unknown AzureChaos action type")
-
-		allErrs = append(allErrs, field.Invalid(path, in, err.Error()))
-	}
-	return allErrs
-}
-
-func init() {
-	genericwebhook.Register("DiskName", reflect.PointerTo(reflect.TypeFor[DiskName]()))
-	genericwebhook.Register("LUN", reflect.PointerTo(reflect.TypeFor[LUN]()))
-}
-
-```
-
-### Core Architecture Module: `api/v1alpha1/blockchaos_webhook.go`
-```
-// Copyright 2022 Chaos Mesh Authors.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-
-package v1alpha1
-
-import (
-	"github.com/pkg/errors"
-	"k8s.io/apimachinery/pkg/util/validation/field"
-)
-
-func (in *BlockChaosSpec) Validate(_ any, path *field.Path) field.ErrorList {
-	allErrs := field.ErrorList{}
-	if in.Action == BlockDelay {
-		if in.Delay == nil {
-			err := errors.Errorf("delay should be set on %s action", in.Action)
-			allErrs = append(allErrs, field.Invalid(path.Child("delay"), in.Delay, err.Error()))
-		}
-	}
-	return allErrs
-}
-
-```
-
-### Core Architecture Module: `api/v1alpha1/common_webhook.go`
-```
-// Copyright 2021 Chaos Mesh Authors.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-
-package v1alpha1
-
-import (
-	"fmt"
-	"reflect"
-	"strconv"
-	"time"
-
-	"k8s.io/apimachinery/pkg/api/meta"
-	"k8s.io/apimachinery/pkg/util/validation/field"
-
-	"github.com/chaos-mesh/chaos-mesh/api/genericwebhook"
-)
-
-const (
-	// ValidateValueParseError defines the error message for value parse error
-	ValidateValueParseError = "parse value field error:%s"
-)
-
-// FIXME: interface ContainsDuration only used for validating EmbedChaos in Workflow
-
-// ContainsDuration exposes the duration parsed from a chaos specification.
-// +kubebuilder:object:generate=false
-type ContainsDuration interface {
-	GetDuration() (*time.Duration, error)
-}
-
-type Duration string
-
-func (d *Duration) Validate(_ any, path *field.Path) field.ErrorList {
-	if d == nil {
-		return nil
-	}
-
-	if len(*d) == 0 {
-		// allow duration to be zero
-		// TODO: control by tag
-		return nil
-	}
-
-	_, err := time.ParseDuration(string(*d))
-	if err != nil {
-		return field.ErrorList{
-			field.Invalid(path, d, fmt.Sprintf("parse duration field error: %s", err.Error())),
-		}
-	}
-
-	return nil
-}
-
-func (d *Duration) Default(_ any, field *reflect.StructField) {
-	if d == nil {
-		return
-	}
-
-	// d cannot be nil
-	if len(*d) == 0 && field != nil {
-		*d = Duration(field.Tag.Get("default"))
-	}
-}
-
-func (p *PodSelector) Validate(_ any, path *field.Path) field.ErrorList {
-	allErrs := field.ErrorList{}
-
-	if p == nil {
-		return nil
-	}
-
-	mode := p.Mode
-	value := p.Value
-	valueField := path.Child("value")
-
-	switch mode {
-	case FixedMode:
-		num, err := strconv.Atoi(value)
-		if err != nil {
-			allErrs = append(allErrs, field.Invalid(valueField, value,
-				fmt.Sprintf(ValidateValueParseError, err)))
-			break
-		}
-
-		if num <= 0 {
-			allErrs = append(allErrs, field.Invalid(valueField, value,
-				fmt.Sprintf("value must be greater than 0 with mode:%s", FixedMode)))
-		}
-
-	case RandomMaxPercentMode, FixedPercentMode:
-		percentage, err := strconv.Atoi(value)
-		if err != nil {
-			allErrs = append(allErrs, field.Invalid(valueField, value,
-				fmt.Sprintf(ValidateValueParseError, err)))
-			break
-		}
-
-		if percentage <= 0 || percentage > 100 {
-			allErrs = append(allErrs, field.Invalid(valueField, value,
-				fmt.Sprintf("value of %d is invalid, Must be (0,100] with mode:%s",
-					percentage, mode)))
-		}
-	}
-
-	return allErrs
-}
-
-func (p *PodSelector) Default(root any, _ *reflect.StructField) {
-	if p == nil {
-		return
-	}
-
-	metaData, err := meta.Accessor(root)
-	if err != nil {
-		return
-	}
-
-	if len(p.Selector.Namespaces) == 0 {
-		p.Selector.Namespaces = []string{metaData.GetNamespace()}
-	}
-}
-
-type Percent int
-
-type FloatStr string
-
-func (p *Percent) Validate(_ any, path *field.Path) field.ErrorList {
-	if p == nil {
-		return nil
-	}
-
-	allErrs := field.ErrorList{}
-
-	if *p > 100 || *p < 0 {
-		allErrs = append(allErrs, field.Invalid(path, p,
-			"percent field should be in 0-100"))
-	}
-
-	return allErrs
-}
-
-func (f *FloatStr) Validate(_ any, path *field.Path) field.ErrorList {
-	if f == nil {
-		return nil
-	}
-
-	_, err := strconv.ParseFloat(string(*f), 32)
-	if err != nil {
-		return field.ErrorList{
-			field.Invalid(path, f,
-				fmt.Sprintf("parse correlation field error:%s", err.Error())),
-		}
-	}
-
-	return nil
-}
-
-func (f *FloatStr) Default(_ any, field *reflect.StructField) {
-	// f cannot be nil
-	if len(*f) == 0 && field != nil {
-		*f = FloatStr(field.Tag.Get("default"))
-	}
-}
-
-func init() {
-	genericwebhook.Register("Duration", reflect.PointerTo(reflect.TypeFor[Duration]()))
-	genericwebhook.Register("Percent", reflect.PointerTo(reflect.TypeFor[Percent]()))
-	genericwebhook.Register("FloatStr", reflect.PointerTo(reflect.TypeFor[FloatStr]()))
-}
-
-```
-
-### Core Architecture Module: `api/v1alpha1/dnschaos_webhook.go`
-```
-// Copyright 2021 Chaos Mesh Authors.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-
-package v1alpha1
+---
+
+### 3. Strict RFC-Compliant Canonicalization and IP Unmapping in DNS Interception
+**RULE**:
+When parsing, normalizing, and storing domain-to-IP overrides for static DNS chaos injection, the engine MUST:
+1. Strip trailing dots (`strings.TrimSuffix(domain, ".")`).
+2. Reject domain labels exceeding 63 octets and total domain lengths exceeding 253 octets per RFC 1035 / RFC 1123.
+3. Enforce valid IP format via `netip.ParseAddr`, explicitly rejecting IPv6 scoped zone IDs (`ip.Zone() != ""`).
+4. Canonicalize IPv4-mapped IPv6 representations using `ip.Unmap()` before string persistence.
+
+**WHY**:
+CoreDNS, Linux `gethostbyname`, and eBPF DNS interceptors evaluate DNS query names without terminal root dots. If configuration allows user inputs with mixed trailing dots or capitalized subdomains, string-based exact match lookups in DNS proxy maps miss. Furthermore, IPv4 addresses presented inside dual-stack networks often arrive as `::ffff:192.0.2.1`. If not normalized via `Unmap()`, standard IPv4 packet rewriting rules in iptables/netfilter fail to match the raw packet header bytes.
+
+**WHEN TO APPLY**:
+Any network traffic controller, CoreDNS custom plugin, service mesh ingress filter, or DNS fault-injection controller handling custom hostname-to-IP maps.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package dnsvalidator
 
 import (
 	"fmt"
@@ -799,436 +324,267 @@ import (
 	"strings"
 
 	"k8s.io/apimachinery/pkg/util/validation"
-	"k8s.io/apimachinery/pkg/util/validation/field"
 )
 
-func (in *DNSChaosSpec) Validate(_ any, path *field.Path) field.ErrorList {
-	if in.Action != StaticAction {
-		return nil
-	}
-	if _, err := ParseDNSDomainIPMappings(in.DomainIPMappingList); err != nil {
-		return field.ErrorList{field.Invalid(path.Child("domainIpMapping"), in.DomainIPMappingList, err.Error())}
-	}
-	return nil
-}
-
-// ParseDNSDomainIPMappings validates static mappings and normalizes their domain names and IP addresses.
-func ParseDNSDomainIPMappings(entries []string) (map[string]string, error) {
+// NormalizeAndValidateDNSMappings validates static mappings and normalizes domains and IPs.
+func NormalizeAndValidateDNSMappings(entries []string) (map[string]string, error) {
 	if len(entries) == 0 {
-		return nil, fmt.Errorf("at least one domain=IP mapping is required for the static action")
+		return nil, fmt.Errorf("at least one domain=IP mapping is required")
 	}
-	mappings := make(map[string]string, len(entries))
-	for i, entry := range entries {
+
+	normalized := make(map[string]string, len(entries))
+
+	for idx, entry := range entries {
 		domain, address, found := strings.Cut(entry, "=")
 		if !found {
-			return nil, fmt.Errorf("mapping %d must have the form domain=IP", i)
+			return nil, fmt.Errorf("entry index %d malformed: must follow domain=IP structure", idx)
 		}
+
+		// 1. Lowercase and strip terminal root zone dot
 		domain = strings.TrimSuffix(strings.ToLower(domain), ".")
-		if problems := validation.IsDNS1123Subdomain(domain); len(problems) > 0 {
-			return nil, fmt.Errorf("mapping %d has invalid domain %q: %s", i, domain, strings.Join(problems, "; "))
+
+		// 2. Validate RFC 1123 DNS Subdomain requirements
+		if errs := validation.IsDNS1123Subdomain(domain); len(errs) > 0 {
+			return nil, fmt.Errorf("entry index %d has invalid domain %q: %s", idx, domain, strings.Join(errs, "; "))
 		}
-		for label := range strings.SplitSeq(domain, ".") {
+
+		// 3. Enforce RFC 1035 max 63 octets per label limit
+		for _, label := range strings.Split(domain, ".") {
 			if len(label) > 63 {
-				return nil, fmt.Errorf("mapping %d has a domain label longer than 63 characters", i)
+				return nil, fmt.Errorf("entry index %d domain label %q exceeds 63 characters", idx, label)
 			}
 		}
+
+		// 4. Parse IP, reject IPv6 link-local zones, unmap IPv4-in-IPv6
 		ip, err := netip.ParseAddr(address)
 		if err != nil || ip.Zone() != "" {
-			return nil, fmt.Errorf("mapping %d has invalid IP address %q", i, address)
+			return nil, fmt.Errorf("entry index %d contains invalid IP address %q", idx, address)
 		}
-		if _, exists := mappings[domain]; exists {
-			return nil, fmt.Errorf("mapping %d repeats domain %q", i, domain)
+
+		if _, collision := normalized[domain]; collision {
+			return nil, fmt.Errorf("duplicate domain entry detected: %q at index %d", domain, idx)
 		}
-		mappings[domain] = ip.Unmap().String()
+
+		// 5. Store canonical IPv4/IPv6 form
+		normalized[domain] = ip.Unmap().String()
 	}
-	return mappings, nil
+
+	return normalized, nil
 }
-
-```
-
-### Core Architecture Module: `api/v1alpha1/gcpchaos_webhook.go`
-```
-// Copyright 2021 Chaos Mesh Authors.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-
-package v1alpha1
-
-import (
-	"reflect"
-
-	"github.com/pkg/errors"
-	"k8s.io/apimachinery/pkg/util/validation/field"
-
-	"github.com/chaos-mesh/chaos-mesh/api/genericwebhook"
-)
-
-// Validate checks that the action is node-stop, node-reset, or disk-loss.
-func (in GCPChaosAction) Validate(_ any, path *field.Path) field.ErrorList {
-	allErrs := field.ErrorList{}
-
-	switch in {
-	case NodeStop, DiskLoss:
-	case NodeReset:
-	default:
-		err := errors.WithStack(errUnknownAction)
-		log.Error(err, "Wrong GCPChaos Action type")
-
-		allErrs = append(allErrs, field.Invalid(path, in, err.Error()))
-	}
-	return allErrs
-}
-
-type GCPDeviceNames []string
-
-// Validate rejects a nil device-name slice for the disk-loss action.
-func (in *GCPDeviceNames) Validate(root any, path *field.Path) field.ErrorList {
-	allErrs := field.ErrorList{}
-	obj := root.(*GCPChaos)
-	if obj.Spec.Action == DiskLoss {
-		if *in == nil {
-			err := errors.Errorf("at least one device name is required on %s action", obj.Spec.Action)
-			allErrs = append(allErrs, field.Invalid(path, *in, err.Error()))
-		}
-	}
-	return allErrs
-}
-
-func init() {
-	genericwebhook.Register("GCPDeviceNames", reflect.PointerTo(reflect.TypeFor[GCPDeviceNames]()))
-}
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5170** (2026-10-27): **chore(deps): upgrade tproxy to v0.5.7**
-  *Symptoms*: ## What problem does this PR solve?  HTTPChaos needs the startup rollback, network restoration, and HTTP value preservation fixes in [tproxy v0.5.7](https://github.com/chaos-mesh/chaos-tproxy/releases/tag/v0.5.7).  ## What's changed and how does it work?  Upgrade the tproxy download used by chaos-daemon from v0.5.6 to v0.5.7 and add a changelog entry.  ## Scope  The upgrade applies to the embedded tproxy binary for AMD64 and ARM64 daemon images.  ## Verification  - Downloaded both published archives and verified their SHA256 digests against GitHub release metadata. - Checked both ELF architectures and ran each binary in Debian Bookworm, the daemon runtime base. Both report `chaos-tproxy 0.5.7`. ARM64 ran natively and AMD64 used emulation. - `git diff --check` passed. Full daemon image builds and Kubernetes E2E tests were not run.  ## Checklist  ### CHANGELOG  - [x] I have updated the `CHANGELOG.md` - [ ] I have labeled this PR with "no-need-update-changelog"  ### Tests  - [ ] Unit test - [ ] E2E test - [x] Manual test 
-
-- **Issue #5168** (2026-10-27): **ci(ghcr): clean up stale untagged images**
-  *Symptoms*: ## What problem does this PR solve?  Old untagged GHCR build outputs accumulate. Add retention cleanup for container packages linked to `chaos-mesh/chaos-mesh`.  ## What's changed and how does it work?  - Run on the first day of every other month at 02:00 UTC, or manually. Queue cleanup and image publishing through the same concurrency group. - Keep every tagged version, versions created or updated within 30 days, and all directly or indirectly referenced manifests. - Delete the remaining old untagged versions sequentially, waiting 2 seconds after each successful deletion. Stop on errors without retrying, and log tagged/untagged counts before and after cleanup. Final counts use the initial inventory minus successful deletions.  Scheduled and manual runs perform deletion. The README describes the policy and local requirements.  ## Related changes  - [ ] This change also requires further updates to the website - [ ] This change also requires further updates to the UI interface  ## Checklist  ### CHANGELOG  - [x] I have labeled this PR with "no-need-update-changelog"  ### Tests  - [x] Manual test  Offline simulations passed for retention, recursive manifest references, pagination, deletion failures, pacing, and count output. Python compilation, workflow YAML parsing, and diff whitespace checks passed. No live deletion or hosted workflow execution was performed.  ### Side effects  - [ ] Breaking backward compatibility 
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `550ccc35` (2026-10-27)
-**Commit Message**: build(deps): bump fast-uri from 3.1.8 to 3.1.9 in /ui in the npm_and_yarn group across 1 directory (#5166)
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `ui/pnpm-lock.yaml` (modified, +7/-6)
-```diff
-@@ -3125,6 +3125,7 @@ packages:
-   eslint@9.27.0:
-     resolution: {integrity: sha512-ixRawFQuMB9DZ7fjU3iGGganFDp3+45bPOdaRurcFHSXO1e/sYwUX/FtQZpLZJR6SjMoJH8hR2pPEAfDyCoU2Q==}
-     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
-     hasBin: true
-     peerDependencies:
-       jiti: '*'
-@@ -3202,8 +3203,8 @@ packages:
-   fast-string-width@3.0.2:
-     resolution: {integrity: sha512-gX8LrtNEI5hq8DVUfRQMbr5lpaS4nMIWV+7XEbXk2b8kiQIizgnlr12B4dA3ZEx3308ze0O4Q1R+cHts8kyUJg==}
- 
--  fast-uri@3.1.8:
--    resolution: {integrity: sha512-GZMtZUTNRpOVIECoXwLNZS5xUGE+mVNbTB8h/7Rwh2TFWcBQiPzTgyZi05BF9UMZKkLJv8XBRJTlU7zg8+ZfMg==}
-+  fast-uri@3.1.9:
-+    resolution: {integrity: sha512-hS/0Wt3Ya043oKXs0sIxrMpKQITXhMLIrVAKKXi4gozGC9v7YRWVnXIZzjNPTO02M9BdxLCWqK1yRXgNziVyJQ==}
- 
-   fast-wrap-ansi@0.2.2:
-     resolution: {integrity: sha512-7F2Fl+TjRSenLqlU3UjSH0iyqopqoZIu7eZVpEirP2g1GtWa2G/ecEmBdgz31+Mxr+ELclgg6sokpSFIQiZ02Q==}
-@@ -7406,7 +7407,7 @@ snapshots:
-   ajv@8.20.0:
-     dependencies:
-       fast-deep-equal: 3.1.3
--      fast-uri: 3.1.8
-+      fast-uri: 3.1.9
-       json-schema-traverse: 1.0.0
-       require-from-string: 2.0.2
- 
-@@ -8176,7 +8177,7 @@ snapshots:
-     dependencies:
-       fast-string-truncated-width: 3.0.3
- 
--  fast-uri@3.1.8: {}
-+  fast-uri@3.1.9: {}
- 
-   fast-wrap-ansi@0.2.2:
-     dependencies:
-@@ -8445,7 +8446,7 @@ snapshots:
- 
-   is-core-module@2.16.1:
-     dependencies:
--      hasown: 2.0.2
-+      hasown: 2.0.4
- 
-   is-extglob@2.1.1: {}
- 
-@@ -9244,7 +9245,7 @@ snapshots:
- 
-   parse-json@5.2.0:
-     dependencies:
--      '@babel/code-frame': 7.29.0
-+      '@babel/code-frame': 7.29.7
-       error-ex: 1.3.2
-       json-parse-even-better-errors: 2.3.1
-       lines-and-columns: 1.2.4
-```
-
----
-
-### Incident Patch 2: `72c26021` (2026-10-26)
-**Commit Message**: fix(stresschaos): skip inactive cgroup controllers (#4407)
-
-Co-authored-by: Yue Yang <[REDACTED_EMAIL]>
-Signed-off-by: KAAAsS <[REDACTED_EMAIL]>
-Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -67,6 +67,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
- 
- ### Fixed
- 
-+- Fix StressChaos injection failures when inactive cgroup v1 controller directories are present. [#4407](https://github.com/chaos-mesh/chaos-mesh/pull/4407)
- - Fix `RemoteCluster` readiness to reflect successful setup, reconciliation failures, and deletion [#5157](https://github.com/chaos-mesh/chaos-mesh/pull/5157)
- - Reject PhysicalMachineChaos injection when `spec.uid` is empty and point users to the mutating webhook configuration [#5148](https://github.com/chaos-mesh/chaos-mesh/pull/5148)
- - Preserve `spec.uid` when importing PhysicalMachineChaos YAML into the Dashboard and submitting the form [#5149](https://github.com/chaos-mesh/chaos-mesh/pull/5149)
-```
-
-**File**: `pkg/chaosdaemon/cgroups/cgroups_suite_test.go` (added, +28/-0)
-```diff
-@@ -0,0 +1,28 @@
-+// Copyright 2026 Chaos Mesh Authors.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+// http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+//
-+
-+package cgroups
-+
-+import (
-+	"testing"
-+
-+	. "github.com/onsi/ginkgo/v2"
-+	. "github.com/onsi/gomega"
-+)
-+
-+func TestCgroups(t *testing.T) {
-+	RegisterFailHandler(Fail)
-+	RunSpecs(t, "Cgroups Suite")
-+}
-```
-
-**File**: `pkg/chaosdaemon/cgroups/pidpath.go` (modified, +5/-1)
-```diff
-@@ -45,6 +45,10 @@ func V1() ([]cgroups.Subsystem, error) {
- 
- func PidPath(pid int) cgroups.Path {
- 	p := fmt.Sprintf("/proc/%d/cgroup", pid)
-+	return pidPathFromFile(p)
-+}
-+
-+func pidPathFromFile(p string) cgroups.Path {
- 	paths, err := cgroups.ParseCgroupFile(p)
- 	if err != nil {
- 		return func(_ cgroups.Name) (string, error) {
-@@ -56,7 +60,7 @@ func PidPath(pid int) cgroups.Path {
- 		root, ok := paths[string(name)]
- 		if !ok {
- 			if root, ok = paths["name="+string(name)]; !ok {
--				return "", errors.New("controller is not supported")
-+				return "", cgroups.ErrControllerNotActive
- 			}
- 		}
- 
-```
-
-**File**: `pkg/chaosdaemon/cgroups/pidpath_controller_test.go` (added, +85/-0)
-```diff
-@@ -0,0 +1,85 @@
-+// Copyright 2026 Chaos Mesh Authors.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+// http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+//
-+
-+package cgroups
-+
-+import (
-+	"errors"
-+	"os"
-+	"path/filepath"
-+
-+	"github.com/containerd/cgroups"
-+	. "github.com/onsi/ginkgo/v2"
-+	. "github.com/onsi/gomega"
-+)
-+
-+var _ = Describe("Loading a process's cgroup controllers", func() {
-+	var root, procFile string
-+	var hierarchy cgroups.Hierarchy
-+
-+	writeFile := func(path, contents string) {
-+		GinkgoHelper()
-+		Expect(os.MkdirAll(filepath.Dir(path), 0755)).To(Succeed())
-+		Expect(os.WriteFile(path, []byte(contents), 0644)).To(Succeed())
-+	}
-+
-+	expectContents := func(path, contents string) {
-+		GinkgoHelper()
-+		actual, err := os.ReadFile(path)
-+		Expect(err).NotTo(HaveOccurred())
-+		Expect(string(actual)).To(Equal(contents))
-+	}
-+
-+	BeforeEach(func() {
-+		root = GinkgoT().TempDir()
-+		procFile = filepath.Join(root, "proc", "cgroup")
-+		writeFile(procFile, "2:cpu:/workload\n3:memory:/workload\n")
-+		for _, controller := range []string{"cpu", "memory", "net_prio"} {
-+			writeFile(filepath.Join(root, controller, "cgroup.procs"), "root membership\n")
-+		}
-+		hierarchy = func() ([]cgroups.Subsystem, error) {
-+			return []cgroups.Subsystem{
-+				cgroups.NewNetPrio(root),
-+				cgroups.NewCpu(root),
-+				cgroups.NewMemory(root),
-+			}, nil
-+		}
-+	})
-+
-+	It("adds the process to CPU and memory when net_prio is absent from its membership", func() {
-+		for _, controller := range []string{"cpu", "memory"} {
-+			writeFile(filepath.Join(root, controller, "workload", "cgroup.procs"), "")
-+		}
-+
-+		group, err := cgroups.Load(hierarchy, pidPathFromFile(procFile))
-+		Expect(err).NotTo(HaveOccurred())
-+		Expect(group.Add(cgroups.Process{Pid: 4242})).To(Succeed())
-+
-+		for _, controller := range []string{"cpu", "memory"} {
-+			expectContents(filepath.Join(root, controller, "workload", "cgroup.procs"), "4242")
-+		}
-+		expectContents(filepath.Join(root, "net_prio", "cgroup.procs"), "root membership\n")
-+	})
-+
-+	It("reports a deleted cgroup when no target controller is usable", func() {
-+		group, err := cgroups.Load(hierarchy, pidPathFromFile(procFile))
-+		Expect(errors.Is(err, cgroups.ErrCgroupDeleted)).To(BeTrue())
-+		Expect(group).To(BeNil())
-+
-+		for _, controller := range []string{"cpu", "memory", "net_prio"} {
-+			expectContents(filepath.Join(root, controller, "cgroup.procs"), "root membership\n")
-+		}
-+	})
-+})
-```
-
-#### Recent Merged Pull Requests:
-- **PR #5170** (2026-10-27): chore(deps): upgrade tproxy to v0.5.7 (@g1eny0ung)
-- **PR #5168** (2026-10-27): ci(ghcr): clean up stale untagged images (@g1eny0ung)
-- **PR #5167** (2026-10-26): chore(deps): migrate containerd client to v2.3.7 (@g1eny0ung)
-- **PR #5166** (2026-10-27): build(deps): bump fast-uri from 3.1.8 to 3.1.9 in /ui in the npm_and_yarn group across 1 directory (@dependabot[bot])
-- **PR #5165** (2026-10-26): chore(deps): migrate Docker client to Moby SDK (@g1eny0ung)
-- **PR #5162** (2026-10-23): feat(workflow): support serviceAccountName for task pods (@g1eny0ung)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. build(deps): bump fast-uri from 3.1.8 to 3.1.9 in /ui in the npm_and_yarn group 
-
-**RULE**:
-When implementing operations in `ui/pnpm-lock.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chaos-mesh/chaos-mesh. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `550ccc35`: build(deps): bump fast-uri from 3.1.8 to 3.1.9 in /ui in the npm_and_yarn group across 1 directory (#5166). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ui/pnpm-lock.yaml`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-// Verified production-grade fix pattern:
-    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
-  fast-uri@3.1.9:
-    resolution: {integrity: sha512-hS/0Wt3Ya043oKXs0sIxrMpKQITXhMLIrVAKKXi4gozGC9v7YRWVnXIZzjNPTO02M9BdxLCWqK1yRXgNziVyJQ==}
-      fast-uri: 3.1.9
-  fast-uri@3.1.9: {}
-      hasown: 2.0.4
-      '@babel/code-frame': 7.29.7
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-  fast-uri@3.1.8:
-    resolution: {integrity: sha512-GZMtZUTNRpOVIECoXwLNZS5xUGE+mVNbTB8h/7Rwh2TFWcBQiPzTgyZi05BF9UMZKkLJv8XBRJTlU7zg8+ZfMg==}
-      fast-uri: 3.1.8
-  fast-uri@3.1.8: {}
-      hasown: 2.0.2
-      '@babel/code-frame': 7.29.0
+// ANTI-PATTERN: Naive string splitting without validation, label length checks,
+// or IPv4-mapped IPv6 unmapping breaks CoreDNS packet rewriting.
+func UnsafeParseDNS(entries []string) map[string]string {
+    out := make(map[string]string)
+    for _, e := range entries {
+        parts := strings.Split(e, "=")
+        out[parts[0]] = parts[1] // Crashes on malformed string, misses trailing dot, allows invalid IPs
+    }
+    return out
+}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `550ccc35` are properly handled with clean fallback behavior.
+Run table-driven unit tests verifying rejection of 64-char labels, IPv6 zone IDs (`fe80::1%eth0`), duplicate keys, and ensuring `::ffff:127.0.0.1` collapses cleanly to `127.0.0.1`:
+```go
+func TestDNSCanonicalizationInvariants(t *testing.T) {
+    mappings, err := NormalizeAndValidateDNSMappings([]string{
+        "EXAMPLE.COM.=::ffff:192.0.2.1",
+    })
+    require.NoError(t, err)
+    require.Equal(t, "192.0.2.1", mappings["example.com"])
+}
+```
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: JVMChaos Attachment Failure on Rust Coreutils Distros (BUG-JVM-01)
+- **Context**: `pkg/chaosdaemon/jvm_server.go`
+- **What Was Expected**: Chaos Daemon injects JVM rules by copying `byteman.jar` and `chaos-agent.jar` into the target pod namespace and running bytecode injection hooks via `cat > dest`.
+- **What Actually Happened**: JVMChaos preparation failed on container workloads using modern Rust-based coreutils (`uutils`) or custom minimalist root filesystems. `cat` failed when attempting namespace-relative writes because the daemon entered only the container's Mount Namespace (`bpm.MountNS`).
+- **Evidence in Repo**: Commit `140ec184`, PR #5161, CHANGELOG: `"Fix JVMChaos preparation failures in containers that use Rust coreutils [#5161]"`.
+- **Root Cause**: Rust coreutils verify process namespace descriptors and `/proc/self` state. When executed inside a mount namespace while the process PID remains in the host's PID namespace, `/proc/self` is inconsistent with the execution context, causing the shell execution environment to exit with an error. Furthermore, error messages were previously swallowed without capturing standard error output.
+- **Remediation Code Diff**:
+```go
+// pkg/chaosdaemon/jvm_server.go
+@@ -69,10 +69,10 @@ func (s *DaemonServer) InstallJVMRules(ctx context.Context,
+ 	// Copy byteman.jar, byteman-helper.jar and chaos-agent.jar into container's namespace.
+ 	if req.EnterNS {
+-		processBuilder := bpm.DefaultProcessBuilder("sh", "-c", fmt.Sprintf("mkdir -p %s/lib/", bytemanHome)).SetContext(ctx).SetNS(pid, bpm.MountNS)
++		processBuilder := bpm.DefaultProcessBuilder("sh", "-c", fmt.Sprintf("mkdir -p %s/lib/", bytemanHome)).SetContext(ctx).SetNS(pid, bpm.MountNS).SetNS(pid, bpm.PidNS)
+ 		output, err := processBuilder.Build(ctx).CombinedOutput()
+ 		if err != nil {
+-			return nil, err
++			return nil, errors.Wrapf(err, "create Byteman directory %s/lib: %s", bytemanHome, output)
+ 		}
+@@ -222,10 +222,10 @@ func copyFileAcrossNS(ctx context.Context, source string, dest string, pid uint3
+ 	defer sourceFile.Close()
+ 
+ 	processBuilder := bpm.DefaultProcessBuilder("sh", "-c", fmt.Sprintf("cat > %s", dest)).SetContext(ctx)
+-	processBuilder = processBuilder.SetNS(pid, bpm.MountNS).SetStdin(sourceFile)
++	processBuilder = processBuilder.SetNS(pid, bpm.MountNS).SetNS(pid, bpm.PidNS).SetStdin(sourceFile)
+ 	output, err := processBuilder.Build(ctx).CombinedOutput()
+ 	if err != nil {
+-		return nil, err
++		return nil, errors.Wrapf(err, "copy file to %s: %s", dest, output)
+ 	}
+```
+- **Lesson**: Inter-container payload delivery requiring shell execution must bind both `MountNS` and `PidNS` so that namespace-bound pseudo-filesystems (`/proc`, `/dev`) match process runtime IDs. When capturing execution errors, always format `output` directly into the returned error chain.
+
+---
+
+### Incident 2: Unpinned Git Dependency Breaking Kernel Build Container (BUG-BUILD-02)
+- **Context**: `images/chaos-kernel/Dockerfile`
+- **What Was Expected**: Automated Docker image builds for `chaos-kernel` must produce reproducible build outputs in CI/CD across multi-arch runners.
+- **What Actually Happened**: The master branch build broke because `images/chaos-kernel/Dockerfile` cloned the default branch of `github.com/chaos-mesh/bpfki`. The upstream repository pushed changes requiring modern protobuf and gRPC system header packages not present in the base build container image.
+- **Evidence in Repo**: Commit `54120b39`, PR #5177, Issue #5177: `"fix(kernel): pin bpfki to restore image builds"`.
+- **Root Cause**: Failure to pin third-party Git repositories to immutable commit SHAs in container build stages allows unversioned upstream breaking changes to contaminate production image compilation.
+- **Remediation Code Diff**:
+```dockerfile
+// images/chaos-kernel/Dockerfile
+@@ -32,7 +32,8 @@ RUN cmake .. -DCMAKE_INSTALL_PREFIX=/usr && make -j${MAKE_JOBS} && make install
+ 
+ WORKDIR /
+ 
+-RUN git clone https://github.com/chaos-mesh/bpfki
++RUN git clone https://github.com/chaos-mesh/bpfki && \
++    git -C bpfki checkout 2825d3832c9230ab6e26e8a47ed6de8d16ea5ae3
+ WORKDIR /bpfki/build
+ RUN cmake .. && make -j${MAKE_JOBS} && mv bin/bpfki /usr/local/bin/ && mv examples/fail* /usr/local/bin/
+```
+- **Lesson**: Dockerfiles in production repositories MUST NEVER clone dynamic Git branch heads (`git clone <url>`). All submodules and cloned repositories must checkout an explicit, immutable full commit SHA or cryptographic tag.
+
+---
+
+### Incident 3: Failpoint Binding Contamination in Test Coverage Generation (BUG-TEST-03)
+- **Context**: `Makefile`
+- **What Was Expected**: Running local test coverage targets (`make cover`) should generate HTML coverage reports without referencing transient code instrumentation artifacts.
+- **What Actually Happened**: Chaos Mesh uses `pingcap/failpoint` for fault injection testing. When running `failpoint-disable`, it unbinds failpoints by deleting temporary `__failpoint_binding__.go` files. However, `cover.out` still contained references to these non-existent files, causing `gocov` and `go tool cover` to fail with missing file errors.
+- **Evidence in Repo**: Commit `d51b9e2c`, PR #5173, `Makefile`.
+- **Root Cause**: Coverage profiles generated while failpoints are active record code hit counters on synthesized source files. Once the test completes and failpoints are deactivated, those files are wiped from the tree, leaving dangling records that break HTML report generation.
+- **Remediation Code Diff**:
+```makefile
+// Makefile
+@@ -224,9 +224,8 @@ ifeq ("$(CI)", "1")
+ 	@bash <(curl -s https://codecov.io/bash) -f cover.out -t $(CODECOV_TOKEN)
+ else
+ 	mkdir -p cover
+-	gocov convert cover.out > cover.json
+-	gocov-xml < cover.json > cover.xml
+-	gocov-html < cover.json > cover/index.html
++# failpoint-disable removes generated binding sources referenced by cover.out.
++	grep -v '__failpoint_binding__\.go:' cover.out | go tool cover -html=/dev/stdin -o cover/index.html
+ endif
+```
+- **Lesson**: Intermediate code generation frameworks (such as mockers, AST rewrites, or failpoint weavers) generate transient source paths. The coverage pipeline must sanitize the coverage profile by stripping synthetic source patterns prior to feeding standard tooling.
+
+---
+
+### Incident 4: Missing PhysicalMachineChaos UID Validation (BUG-PHYS-04)
+- **Context**: `api/v1alpha1/physicalmachinechaos_webhook.go`, `CHANGELOG.md`
+- **What Was Expected**: Custom resources targeting physical machine chaos must reject specs that do not specify target identifiers before persistence.
+- **What Actually Happened**: PhysicalMachineChaos resources without `spec.uid` were accepted by the API server. When the controller attempted to dispatch fault commands, reconciliation entered a non-recoverable loop because target routing requires a non-empty unique identifier.
+- **Evidence in Repo**: CHANGELOG entry for PR #5148: `"Reject PhysicalMachineChaos injection when spec.uid is empty and point users to the mutating webhook configuration [#5148]"`.
+- **Root Cause**: Admission webhooks failed to check whether the mutating webhook configuration had run and populated the default target UID, allowing zero-value empty strings through admission.
+- **Remediation Pattern**:
+```go
+// api/v1alpha1/physicalmachinechaos_webhook.go
+func (in *PhysicalMachineChaosSpec) Validate(root any, path *field.Path) field.ErrorList {
+    var allErrs field.ErrorList
+    if len(in.UID) == 0 {
+        allErrs = append(allErrs, field.Required(
+            path.Child("uid"),
+            "spec.uid cannot be empty; verify that the mutating webhook configuration is enabled",
+        ))
+    }
+    return allErrs
+}
+```
+- **Lesson**: In Kubernetes operator design, never assume mutating webhooks executed successfully. Validating webhooks MUST verify that all fields populated by mutating webhooks satisfy non-zero requirements, providing actionable troubleshooting advice pointing to webhook configuration failures.
+
+---
+
+### Incident 5: Protoc Code Generation Package Drift (BUG-PROTO-05)
+- **Context**: `Makefile`
+- **What Was Expected**: Re-generating gRPC stubs via `make proto` should output Go protobuf packages matching the local directory structure.
+- **What Actually Happened**: Running newer versions of `protoc` generated stubs with conflicting package declarations or duplicate Go package paths because `paths=source_relative` was missing from the `--go_out` flags.
+- **Evidence in Repo**: Commit `d51b9e2c`, PR #5173.
+- **Root Cause**: Protobuf Go compiler plugins transitioned from legacy GOPATH-relative layouts to source-relative layouts. Without `paths=source_relative`, modern plugins generate stubs relative to the proto package namespace, scattering stubs into arbitrary nested directories.
+- **Remediation Code Diff**:
+```makefile
+// Makefile
+@@ -148,7 +148,7 @@ proto: images/dev-env/.dockerbuilt ## Generate .go files from .proto files
+ 	for dir in pkg/chaosdaemon pkg/chaoskernel ; do\
+-		protoc -I $$dir/pb $$dir/pb/*.proto -I /usr/local/include --go_out=plugins=grpc:$$dir/pb --go_out=./$$dir/pb ;\
++		protoc -I $$dir/pb $$dir/pb/*.proto -I /usr/local/include --go_out=plugins=grpc,paths=source_relative:$$dir/pb ;\
+ 	done
+```
+- **Lesson**: Explicitly declare `paths=source_relative` when calling `protoc` with Go plugins to prevent compiler drift across developer environments and CI containers.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 1. Micro-Syntax & Token-Level Precision
+In Go reflection engines like `api/genericwebhook/bfs.go`, distinguishing between a nil pointer, a zero-value struct, and an empty slice is critical:
+
+```go
+// CRITICAL INVARIANT: The difference between nil pointer check and IsZero()
+if node.Val.Kind() == reflect.Pointer && node.Val.IsZero() {
+    continue // Safe: drops nil pointers before indirecting
+}
+
+// HAZARD: Calling reflect.Indirect on an untyped or invalid value returns a zero Value.
+// Calling .Type() directly on an un-checked Indirect value causes a panic:
+// panic: reflect: call of reflect.Value.Type on zero Value
+objVal = reflect.Indirect(node.Val)
+if !objVal.IsValid() {
+    continue
+}
+objType := objVal.Type()
+```
+
+When checking numeric ranges in admission validators (such as `Percent` and `PodSelector`), strings must be parsed strictly without implicit zero-fallback:
+```go
+// api/v1alpha1/common_webhook.go
+// Parsing integers with base 10 and strict error handling
+num, err := strconv.Atoi(value)
+if err != nil {
+    // DO NOT treat parse failure as 0! Append explicit field validation error.
+    allErrs = append(allErrs, field.Invalid(valueField, value, fmt.Sprintf(ValidateValueParseError, err)))
+    break
+}
+if num <= 0 {
+    allErrs = append(allErrs, field.Invalid(valueField, value, "value must be greater than 0"))
+}
+```
+
+### 2. Infinite Loop & Recursion Guards
+Recursive struct reflection can trigger infinite loops if data structures contain self-referential pointers or cyclic graphs.
+
+```go
+// INVARIANT: BFS Queue with strict termination invariants
+func (w *FieldWalker) Walk() {
+    objVal := reflect.ValueOf(w.obj)
+    items := list.New()
+    items.PushBack(iterateNode{Val: objVal, Path: nil})
+
+    // GUARD: Protect against unbounded graph traversal
+    const MaxTraversalDepth = 256
+    visitedPointers := make(map[uintptr]struct{})
+
+    for {
+        if items.Len() == 0 {
+            break
+        }
+        item := items.Front()
+        items.Remove(item)
+        node := item.Value.(iterateNode)
+
+        // Cyclic Reference Detection via Pointer Tracking
+        

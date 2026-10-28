@@ -435,8 +435,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "f084f76d4c09dbbb467b25eb4e23afec6e40d9fe5ec5a99596540ef167cfc4d1",
-    "lastHarvestedAt": "2026-10-25T13:30:53.728Z",
+    "contentHash": "ef93c3ccb0d430abe773a38f0638338e680b181675d6adf9ef337a8e9b7516c5",
+    "lastHarvestedAt": "2026-10-28T05:59:55.304Z",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf"
   },
   "hf-orcarouter-orcasaq-2-27b": {
@@ -2343,10 +2343,10 @@
     "repository": "chaos-mesh/chaos-mesh",
     "platform": "github",
     "sourceUrl": "https://github.com/chaos-mesh/chaos-mesh",
-    "sourceVersion": "35842157",
+    "sourceVersion": "54120b39",
     "license": "Apache-2.0",
-    "contentHash": "8b6b6c3b6cff9bdd4fa53898006e9e1aa873102c1ab81c8c4df85580e5acff35",
-    "lastHarvestedAt": "2026-10-27T11:59:45.672Z",
+    "contentHash": "0cc37038a91d7f1f951d8ef29e58de33a8afd800ad2d11d88fcd016cc29a7e0e",
+    "lastHarvestedAt": "2026-10-28T05:58:06.611Z",
     "learningId": "learn-github-chaos-mesh-chaos-mesh"
   },
   "nolabs-ai-nono": {

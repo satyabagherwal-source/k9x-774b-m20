@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-AEUO",
-    "timestamp": "2026-10-27T10:47:41.232Z",
-    "repository": "sfu-db/connector-x",
-    "learningId": "learn-github-sfu-db-connector-x",
-    "contentHash": "05f665fcdcf64645af174efd8679dd98163d2328f9225dae076479d45be3329d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-EFZO",
-    "timestamp": "2026-10-27T10:50:49.332Z",
-    "repository": "zeromicro/go-zero",
-    "learningId": "learn-github-zeromicro-go-zero",
-    "contentHash": "3f7e65113dbba137f625ce50cc6b07ae14aea769373fd5aae153ca3c821a1974",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-EHYC",
     "timestamp": "2026-10-27T10:50:51.876Z",
     "repository": "sqlpage/SQLPage",
@@ -7490,6 +7460,36 @@
     "repository": "HemmingwayAI/Hemmingway-1",
     "learningId": "learn-huggingface-altworld-hemmingway-1",
     "contentHash": "caf758cf8fe02bf866fda1a7bdedd5c3ecf42211e851c05c4b5c80586aabeeeb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-DV68",
+    "timestamp": "2026-10-28T05:58:06.608Z",
+    "repository": "chaos-mesh/chaos-mesh",
+    "learningId": "learn-github-chaos-mesh-chaos-mesh",
+    "contentHash": "0cc37038a91d7f1f951d8ef29e58de33a8afd800ad2d11d88fcd016cc29a7e0e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-G71H",
+    "timestamp": "2026-10-28T05:59:55.301Z",
+    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
+    "contentHash": "ef93c3ccb0d430abe773a38f0638338e680b181675d6adf9ef337a8e9b7516c5",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

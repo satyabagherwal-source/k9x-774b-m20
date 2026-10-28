@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T05:48:32.723Z",
+  "last_updated": "2026-10-28T05:59:55.240Z",
   "total_verified_learnings": 1156,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5938,8 +5938,8 @@
       "slug": "chaos-mesh-chaos-mesh",
       "platform": "github",
       "source_url": "https://github.com/chaos-mesh/chaos-mesh",
-      "source_version": "35842157",
-      "content_hash": "8b6b6c3b6cff9bdd4fa53898006e9e1aa873102c1ab81c8c4df85580e5acff35",
+      "source_version": "54120b39",
+      "content_hash": "0cc37038a91d7f1f951d8ef29e58de33a8afd800ad2d11d88fcd016cc29a7e0e",
       "dossier_path": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "promoted_rules": [
@@ -5967,6 +5967,21 @@
           "number": 4726,
           "title": "build(deps): bump fast-uri from 3.1.8 to 3.1.9 in /ui in the npm_and_yarn group",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5195,
+          "title": "Dual-Namespace Invariant for Cross-Boundary Container File Operations",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5196,
+          "title": "Reflection Addressability Mutation Barrier in Struct Walkers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5197,
+          "title": "Strict RFC-Compliant Canonicalization and IP Unmapping in DNS Interception",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5974,7 +5989,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T11:59:45.588Z",
+      "verified_at": "2026-10-28T05:58:06.534Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -22734,7 +22749,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "f084f76d4c09dbbb467b25eb4e23afec6e40d9fe5ec5a99596540ef167cfc4d1",
+      "content_hash": "ef93c3ccb0d430abe773a38f0638338e680b181675d6adf9ef337a8e9b7516c5",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -22797,6 +22812,21 @@
           "number": 4307,
           "title": "GGUF Format Agnosticism for Quantization Methods",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5198,
+          "title": "Zero-Padding Stripping and Header Offset Alignment in Multi-Precision Binary Serialization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5199,
+          "title": "Multi-Objective Rate-Constrained Knapsack Convergence Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5200,
+          "title": "Modality-Isolated Vision Projector Weight Conservation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -22817,7 +22847,7 @@
         "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv45sbad",
         "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv4j2i3v"
       ],
-      "verified_at": "2026-10-25T13:30:53.659Z",
+      "verified_at": "2026-10-28T05:59:55.227Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -142152,6 +142182,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T05:48:32.715Z"
+    },
+    "rule-5195": {
+      "learning_id": "rule-5195",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5195,
+      "title": "Dual-Namespace Invariant for Cross-Boundary Container File Operations",
+      "source_url": "https://github.com/chaos-mesh/chaos-mesh",
+      "source_version": "54120b39",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T05:58:06.534Z"
+    },
+    "rule-5196": {
+      "learning_id": "rule-5196",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5196,
+      "title": "Reflection Addressability Mutation Barrier in Struct Walkers",
+      "source_url": "https://github.com/chaos-mesh/chaos-mesh",
+      "source_version": "54120b39",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T05:58:06.534Z"
+    },
+    "rule-5197": {
+      "learning_id": "rule-5197",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5197,
+      "title": "Strict RFC-Compliant Canonicalization and IP Unmapping in DNS Interception",
+      "source_url": "https://github.com/chaos-mesh/chaos-mesh",
+      "source_version": "54120b39",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T05:58:06.534Z"
+    },
+    "rule-5198": {
+      "learning_id": "rule-5198",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5198,
+      "title": "Zero-Padding Stripping and Header Offset Alignment in Multi-Precision Binary Serialization",
+      "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T05:59:55.227Z"
+    },
+    "rule-5199": {
+      "learning_id": "rule-5199",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5199,
+      "title": "Multi-Objective Rate-Constrained Knapsack Convergence Guard",
+      "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T05:59:55.227Z"
+    },
+    "rule-5200": {
+      "learning_id": "rule-5200",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5200,
+      "title": "Modality-Isolated Vision Projector Weight Conservation",
+      "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T05:59:55.227Z"
     }
   },
   "aliases": {

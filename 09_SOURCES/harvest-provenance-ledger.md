@@ -5718,3 +5718,5 @@ Every entry in this ledger must capture:
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `0301dc36` | Multi-dimensional audit evidence | 2026-10-28T05:42:21.255Z |
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `45f987a2` | Multi-dimensional audit evidence | 2026-10-28T05:42:24.710Z |
 | `learn-huggingface-altworld-hemmingway-1` | `https://huggingface.co/Altworld/Hemmingway-1` | `hf-altworl` | Multi-dimensional audit evidence | 2026-10-28T05:48:32.765Z |
+| `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `54120b39` | Multi-dimensional audit evidence | 2026-10-28T05:58:06.611Z |
+| `learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-28T05:59:55.304Z |

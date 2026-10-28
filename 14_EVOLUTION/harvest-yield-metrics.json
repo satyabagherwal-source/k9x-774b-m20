@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T05:48:32.769Z",
-  "total_cycles_completed": 5686,
-  "total_learnings_persisted": 5686,
-  "total_rules_promoted": 5134,
+  "last_updated": "2026-10-28T05:59:55.309Z",
+  "total_cycles_completed": 5688,
+  "total_learnings_persisted": 5688,
+  "total_rules_promoted": 5140,
   "history": [
-    {
-      "timestamp": "2026-10-27T19:56:14.894Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T19:56:17.656Z",
-      "repository": "fastapi/fastapi",
-      "learningId": "learn-github-fastapi-fastapi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T19:56:18.318Z",
       "repository": "lingodotdev/lingo.dev",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-28T05:48:32.769Z",
       "repository": "HemmingwayAI/Hemmingway-1",
       "learningId": "learn-huggingface-altworld-hemmingway-1",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T05:58:06.616Z",
+      "repository": "chaos-mesh/chaos-mesh",
+      "learningId": "learn-github-chaos-mesh-chaos-mesh",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T05:59:55.309Z",
+      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
