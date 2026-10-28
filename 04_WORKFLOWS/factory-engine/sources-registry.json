@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T07:24:17.795Z",
-    "lastVerified": "2026-10-28T07:24:17.795Z",
+    "lastChecked": "2026-10-28T07:44:50.444Z",
+    "lastVerified": "2026-10-28T07:44:50.444Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -110,9 +110,9 @@
   "bitterbot-ai-bitterbot-desktop": {
     "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "lastChecked": "2026-10-28T06:31:17.289Z",
+    "lastChecked": "2026-10-28T07:31:41.027Z",
     "revisionIdentifier": "fce458c1",
-    "lastVerified": "2026-10-28T06:31:17.289Z"
+    "lastVerified": "2026-10-28T07:31:41.027Z"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -424,9 +424,9 @@
   "nolabs-ai-nono": {
     "name": "nono",
     "officialUrl": "https://github.com/nolabs-ai/nono",
-    "lastChecked": "2026-10-28T03:24:42.849Z",
+    "lastChecked": "2026-10-28T07:31:36.072Z",
     "revisionIdentifier": "46349d39",
-    "lastVerified": "2026-10-28T03:24:42.849Z"
+    "lastVerified": "2026-10-28T07:31:36.072Z"
   },
   "vectifyai-pageindex": {
     "name": "PageIndex",
@@ -2064,5 +2064,70 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "rigellute-spotify-tui": {
+    "name": "spotify-tui",
+    "officialUrl": "https://github.com/Rigellute/spotify-tui",
+    "lastChecked": "2026-10-28T07:31:26.043Z",
+    "revisionIdentifier": "c4dcf6b9",
+    "lastVerified": "2026-10-28T07:31:26.043Z"
+  },
+  "hf-akatz-ai-minimax-h3-character-swap-lora": {
+    "name": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+    "officialUrl": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T07:31:28.808Z",
+    "lastVerified": "2026-10-28T07:31:28.808Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
+    "contentHash": "a9b43c557df740d48677326e3cae3c8c1a6e265e6d33949ed3fd755e43b4c89f",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "wix-detox": {
+    "name": "wix/Detox",
+    "officialUrl": "https://github.com/wix/Detox",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-10-28T07:31:37.012Z",
+    "lastVerified": "2026-10-28T07:31:37.012Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-wix-detox",
+    "contentHash": "1e5daa8daa0b1005e625b5f6acfcc7971dfd358a53f3317c256929888a14d2a8",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 4,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "karmada-io-karmada": {
+    "name": "karmada-io/karmada",
+    "officialUrl": "https://github.com/karmada-io/karmada",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-28T07:31:39.578Z",
+    "lastVerified": "2026-10-28T07:31:39.578Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-karmada-io-karmada",
+    "contentHash": "bff9588a8752a3b75d39f61476809d52d141d2920e809e941dbd0d289084ac1d",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "giancarloerra-socraticode": {
+    "name": "SocratiCode",
+    "officialUrl": "https://github.com/giancarloerra/SocratiCode",
+    "lastChecked": "2026-10-28T07:31:38.583Z",
+    "revisionIdentifier": "dae6d3a0",
+    "lastVerified": "2026-10-28T07:31:38.583Z"
   }
 }

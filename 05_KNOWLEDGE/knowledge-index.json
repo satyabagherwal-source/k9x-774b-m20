@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T07:24:15.172Z",
+  "last_updated": "2026-10-28T07:44:47.820Z",
   "total_verified_learnings": 1156,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -16036,7 +16036,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
       "source_version": "hf-akatz-ai-minimax-h3-character-swap-lora",
-      "content_hash": "51516e80bba96a1c027d01838bca8c33a9d71c07341ed085d048a89286f6d604",
+      "content_hash": "a9b43c557df740d48677326e3cae3c8c1a6e265e6d33949ed3fd755e43b4c89f",
       "dossier_path": "07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
       "promoted_rules": [
@@ -16084,6 +16084,16 @@
           "number": 3341,
           "title": "Temporal Chunking Continuity Guard",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5232,
+          "title": "Multi-LoRA SVD Projection Orthogonality Verification",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5233,
+          "title": "Temporal Latent Grid Allocation Invariant for DiT Architectures",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16104,7 +16114,7 @@
         "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv46r4cy",
         "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv4k1h95"
       ],
-      "verified_at": "2026-10-25T14:50:44.598Z",
+      "verified_at": "2026-10-28T07:44:47.805Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31986,8 +31996,8 @@
       "slug": "karmada-io-karmada",
       "platform": "github",
       "source_url": "https://github.com/karmada-io/karmada",
-      "source_version": "32047636",
-      "content_hash": "a9a8739d06be43c7f55c319564b30151366d0b6c0cbfb69e400d113564656651",
+      "source_version": "95490f75",
+      "content_hash": "bff9588a8752a3b75d39f61476809d52d141d2920e809e941dbd0d289084ac1d",
       "dossier_path": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "promoted_rules": [
@@ -32015,6 +32025,21 @@
           "number": 4765,
           "title": "Merge pull request #7971 from Sarthak-Shreshtha01/fix/issue-7965",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5226,
+          "title": "Deterministic Lua Key Ordering in Declarative Pipeline Interpreters",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5227,
+          "title": "Guarded Destructive Control Plane Flags (Blast-Radius Firewall)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5228,
+          "title": "Two-Way Merge Retention Pattern for Member Cluster Self-Mutations",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32022,7 +32047,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:50:25.924Z",
+      "verified_at": "2026-10-28T07:34:44.453Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54459,14 +54484,29 @@
       "slug": "wix-detox",
       "platform": "github",
       "source_url": "https://github.com/wix/Detox",
-      "source_version": "d80a5740",
-      "content_hash": "805fc37ed3e560f2a6cfd0f6fbec29df7cb6192cb9d8f32fe119777a25d15c92",
+      "source_version": "fc34e84a",
+      "content_hash": "1e5daa8daa0b1005e625b5f6acfcc7971dfd358a53f3317c256929888a14d2a8",
       "dossier_path": "07_PROJECT_LEARNING/wix-detox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/wix-detox-learnings.md",
       "promoted_rules": [
         {
           "number": 1861,
           "title": "android): Catch errors in WebView injection (#4943)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5229,
+          "title": "Dual-Compilation Member Access Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5230,
+          "title": "Isolated Execution Scope Environment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5231,
+          "title": "Fail-Fast Exception Pruning Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -54475,7 +54515,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:39:11.004Z",
+      "verified_at": "2026-10-28T07:36:27.727Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -142756,6 +142796,118 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T07:24:15.154Z"
+    },
+    "rule-5226": {
+      "learning_id": "rule-5226",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5226,
+      "title": "Deterministic Lua Key Ordering in Declarative Pipeline Interpreters",
+      "source_url": "https://github.com/karmada-io/karmada",
+      "source_version": "95490f75",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T07:34:44.453Z"
+    },
+    "rule-5227": {
+      "learning_id": "rule-5227",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5227,
+      "title": "Guarded Destructive Control Plane Flags (Blast-Radius Firewall)",
+      "source_url": "https://github.com/karmada-io/karmada",
+      "source_version": "95490f75",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T07:34:44.453Z"
+    },
+    "rule-5228": {
+      "learning_id": "rule-5228",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5228,
+      "title": "Two-Way Merge Retention Pattern for Member Cluster Self-Mutations",
+      "source_url": "https://github.com/karmada-io/karmada",
+      "source_version": "95490f75",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T07:34:44.453Z"
+    },
+    "rule-5229": {
+      "learning_id": "rule-5229",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5229,
+      "title": "Dual-Compilation Member Access Invariant",
+      "source_url": "https://github.com/wix/Detox",
+      "source_version": "fc34e84a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T07:36:27.727Z"
+    },
+    "rule-5230": {
+      "learning_id": "rule-5230",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5230,
+      "title": "Isolated Execution Scope Environment Invariant",
+      "source_url": "https://github.com/wix/Detox",
+      "source_version": "fc34e84a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T07:36:27.727Z"
+    },
+    "rule-5231": {
+      "learning_id": "rule-5231",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5231,
+      "title": "Fail-Fast Exception Pruning Invariant",
+      "source_url": "https://github.com/wix/Detox",
+      "source_version": "fc34e84a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T07:36:27.727Z"
+    },
+    "rule-5232": {
+      "learning_id": "rule-5232",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5232,
+      "title": "Multi-LoRA SVD Projection Orthogonality Verification",
+      "source_url": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+      "source_version": "hf-akatz-ai-minimax-h3-character-swap-lora",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T07:44:47.805Z"
+    },
+    "rule-5233": {
+      "learning_id": "rule-5233",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5233,
+      "title": "Temporal Latent Grid Allocation Invariant for DiT Architectures",
+      "source_url": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+      "source_version": "hf-akatz-ai-minimax-h3-character-swap-lora",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T07:44:47.805Z"
     }
   },
   "aliases": {

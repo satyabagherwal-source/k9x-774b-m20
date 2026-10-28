@@ -5736,3 +5736,6 @@ Every entry in this ledger must capture:
 | `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `2c4efdb0` | Multi-dimensional audit evidence | 2026-10-28T07:22:17.170Z |
 | `learn-huggingface-deepseek-ai-deepseek-v4-1-flash` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-28T07:23:17.077Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `9d3ad377` | Multi-dimensional audit evidence | 2026-10-28T07:24:15.246Z |
+| `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `95490f75` | Multi-dimensional audit evidence | 2026-10-28T07:34:44.547Z |
+| `learn-github-wix-detox` | `https://github.com/wix/Detox` | `fc34e84a` | Multi-dimensional audit evidence | 2026-10-28T07:36:27.832Z |
+| `learn-huggingface-akatz-ai-minimax-h3-character-swap-lora` | `https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA` | `hf-akatz-a` | Multi-dimensional audit evidence | 2026-10-28T07:44:47.910Z |

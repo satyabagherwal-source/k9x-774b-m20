@@ -525,8 +525,8 @@
     "sourceUrl": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
     "sourceVersion": "hf-akatz-ai-minimax-h3-character-swap-lora",
     "license": "Open-Source",
-    "contentHash": "51516e80bba96a1c027d01838bca8c33a9d71c07341ed085d048a89286f6d604",
-    "lastHarvestedAt": "2026-10-25T14:50:44.668Z",
+    "contentHash": "a9b43c557df740d48677326e3cae3c8c1a6e265e6d33949ed3fd755e43b4c89f",
+    "lastHarvestedAt": "2026-10-28T07:44:47.910Z",
     "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora"
   },
   "hf-unsloth-qwen-image-2.1-gguf": {
@@ -2803,10 +2803,10 @@
     "repository": "karmada-io/karmada",
     "platform": "github",
     "sourceUrl": "https://github.com/karmada-io/karmada",
-    "sourceVersion": "32047636",
+    "sourceVersion": "95490f75",
     "license": "Apache-2.0",
-    "contentHash": "a9a8739d06be43c7f55c319564b30151366d0b6c0cbfb69e400d113564656651",
-    "lastHarvestedAt": "2026-10-27T12:50:26.029Z",
+    "contentHash": "bff9588a8752a3b75d39f61476809d52d141d2920e809e941dbd0d289084ac1d",
+    "lastHarvestedAt": "2026-10-28T07:34:44.547Z",
     "learningId": "learn-github-karmada-io-karmada"
   },
   "milvus-io-bootcamp": {
@@ -3623,10 +3623,10 @@
     "repository": "wix/Detox",
     "platform": "github",
     "sourceUrl": "https://github.com/wix/Detox",
-    "sourceVersion": "d80a5740",
+    "sourceVersion": "fc34e84a",
     "license": "MIT",
-    "contentHash": "805fc37ed3e560f2a6cfd0f6fbec29df7cb6192cb9d8f32fe119777a25d15c92",
-    "lastHarvestedAt": "2026-10-18T23:39:11.047Z",
+    "contentHash": "1e5daa8daa0b1005e625b5f6acfcc7971dfd358a53f3317c256929888a14d2a8",
+    "lastHarvestedAt": "2026-10-28T07:36:27.832Z",
     "learningId": "learn-github-wix-detox"
   },
   "koderover-zadig": {

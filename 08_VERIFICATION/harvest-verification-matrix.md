@@ -5727,3 +5727,6 @@
 | `CYCLE-20261028-E47J` | `2026-10-28T07:22:17.167Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5219, Rule 5220, Rule 5221` | Yes (`7763c790...`) |
 | `CYCLE-20261028-FEFL` | `2026-10-28T07:23:17.073Z` | `deepseek-ai/DeepSeek-V4.1-Flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5222, Rule 5223, Rule 5224` | Yes (`a0497ef3...`) |
 | `CYCLE-20261028-GNBF` | `2026-10-28T07:24:15.243Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5225` | Yes (`fed33939...`) |
+| `CYCLE-20261028-U4W0` | `2026-10-28T07:34:44.544Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5226, Rule 5227, Rule 5228` | Yes (`bff9588a...`) |
+| `CYCLE-20261028-WCL2` | `2026-10-28T07:36:27.830Z` | `wix/Detox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5229, Rule 5230, Rule 5231` | Yes (`1e5daa8d...`) |
+| `CYCLE-20261028-72G3` | `2026-10-28T07:44:47.907Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5232, Rule 5233` | Yes (`a9b43c55...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
 > **Source**: github ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
-> **Source Version**: `32047636`  
+> **Source Version**: `95490f75`  
 > **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T12:50:25.480Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-28T07:34:43.396Z  
 > **Learning ID**: `learn-github-karmada-io-karmada`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,1244 +12,469 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): karmada-io/karmada
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T12:50:25.472Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): karmada-io/karmada
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `karmada-io/karmada`
-- **Description**: Open, Multi-Cloud, Multi-Cluster Kubernetes Orchestration
-- **Primary Language / Ecosystem**: Go
-- **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 5738 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+Karmada (Kubernetes Armada) provides centralized, Kubernetes-native multi-cluster orchestration across hybrid, edge, and multi-cloud topologies without requiring application refactoring. The system decouples application definition in a centralized Karmada control plane from physical execution in independent member clusters.
+
+```
++--------------------------------------------------------------------------------------------------+
+|                                     KARMADA CONTROL PLANE                                        |
+|                                                                                                  |
+|   +-----------------------+      +---------------------------+      +------------------------+   |
+|   |   karmada-apiserver   | ---> | karmada-controller-manager| ---> |    karmada-scheduler   |   |
+|   +-----------+-----------+      +-------------+-------------+      +-----------+------------+   |
+|               |                                |                                |                |
+|               | (Admission/Validation)         | (CRD Sync / Work Generation)   | (Binding Placement)
+|               v                                v                                v                |
+|   +-----------------------+      +---------------------------+      +------------------------+   |
+|   |    karmada-webhook    |      | Resource Interpreter Engine|     |  ClusterResourceBinding /  |
+|   |  - TLS 1.3 MinVersion |      | - Embedded Lua Engine     |     |      ResourceBinding   |   |
+|   |  - TokenBucketLimiter |      |   (gopher-lua)            |     +------------+-----------+   |
+|   |  - Mutation/Validation|      | - Remote Webhook Driver   |                  |                |
+|   +-----------------------+      +-------------+-------------+                  |                |
++------------------------------------------------|--------------------------------|----------------+
+                                                 |                                |
+                      +--------------------------+--------------------------------+
+                      | Execution Namespace Packaging (karmada-es-<cluster>)
+                      v
++--------------------------------------------------------------------------------------------------+
+|                                  DISPATCH & EXECUTION LAYER                                      |
+|                                                                                                  |
+|      PUSH MODE (Direct Control Plane Dispatch)           PULL MODE (Edge / Isolated Network)     |
+|      +---------------------------------------+          +------------------------------------+   |
+|      | Karmada Execution Controller          |          | karmada-agent (runs in member)     |   |
+|      | - Reads Work objects                  |          | - Watches Work objects in CP       |   |
+|      | - Directly reconciles member API      |          | - Applies manifests locally        |   |
+|      +-------------------+-------------------+          +-----------------+------------------+   |
+|                          |                                                |                      |
+|                          v                                                v                      |
+|              +-----------------------+                        +-----------------------+          |
+|              | Member Cluster Alpha  |                        | Member Cluster Beta   |          |
+|              | (k8s v1.28 - v1.37)   |                        | (k8s v1.28 - v1.37)   |          |
+|              +-----------------------+                        +-----------------------+          |
++--------------------------------------------------------------------------------------------------+
+```
+
+### Subsystem Boundaries & Abstractions
+
+1. **Declarative Resource Routing (`PropagationPolicy` & `ClusterPropagationPolicy`)**:
+   Defines placement constraints (affinity, tolerations, spread constraints, replica splitting across clusters). It decouples workload definitions from target cluster topology.
+2. **Workload Binding Abstraction (`ResourceBinding` & `ClusterResourceBinding`)**:
+   Generated by the resource detector and scheduler. Translates high-level propagation intent into concrete cluster assignments with replica split ratios (`spec.clusters[i].replicas`).
+3. **Execution Delivery Boundary (`workv1alpha1.Work`)**:
+   The execution payload placed in cluster-isolated execution namespaces (e.g., `karmada-es-member-01`). A single `Work` object wraps manifest payloads inside `runtime.RawExtension`, decoupling member cluster credentials and connectivity models.
+4. **Resource Interpreter Engine (`pkg/resourceinterpreter`)**:
+   Extensible workload parsing engine using an embedded Lua engine (`github.com/yuin/gopher-lua`) or external webhooks. It executes seven deterministic operations:
+   - `InterpretReplica`: Extracts workload replica counts.
+   - `ReviseReplica`: Divides replicas across clusters.
+   - `InterpretComponent`: Parses compound workloads (e.g., MPIJob Launcher/Worker pods) into discrete schedulable units.
+   - `Retain`: Preserves member-cluster-mutated fields (e.g., `.spec.paused`, dynamic volume attributes).
+   - `AggregateStatus`: Collects and summarizes multi-cluster status fields into the control plane root resource.
+   - `InterpretHealth`: Assesses component health based on member status.
+   - `InterpretDependency`: Traces runtime dependencies (ConfigMaps, Secrets, PVCs).
+5. **Cluster Taint & Safety Shielding (`ClusterTaintPolicy`)**:
+   Manages cluster health gating. Enforces an explicit administrative override (`--allow-no-execute-taint-policy`) before allowing `NoExecute` taints, preventing cascading evictions across entire fleets.
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: go.mod, README.md.
-- Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `cmd/service-name-resolution-detector-example/app/coredns.go`
-```
-/*
-Copyright 2024 The Karmada Authors.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
-package app
-
-import (
-	"context"
-
-	"github.com/karmada-io/karmada/pkg/servicenameresolutiondetector/coredns"
-)
-
-func startCorednsDetector(ctx context.Context, detectorContext detectorContext) (bool, error) {
-	detector, err := coredns.NewCorednsDetector(
-		detectorContext.memberClient,
-		detectorContext.controlPlaneClient,
-		detectorContext.sharedInformers,
-		detectorContext.lec,
-		detectorContext.corednsConfig,
-		detectorContext.hostName,
-		detectorContext.clusterName,
-	)
-	if err != nil {
-		return false, err
-	}
-	go detector.Run(ctx)
-	return true, nil
-}
-
-```
-
-### Core Architecture Module: `cmd/service-name-resolution-detector-example/app/options/coredns.go`
-```
-/*
-Copyright 2024 The Karmada Authors.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
-package options
-
-import (
-	"time"
-
-	"github.com/spf13/pflag"
-	"k8s.io/apimachinery/pkg/util/validation/field"
-)
-
-// CorednsOptions contains options for coredns detector.
-type CorednsOptions struct {
-	Period           time.Duration
-	SuccessThreshold time.Duration
-	FailureThreshold time.Duration
-	StaleThreshold   time.Duration
-}
-
-// NewCorednsOptions return default options for coredns detector.
-func NewCorednsOptions() *CorednsOptions {
-	return &CorednsOptions{}
-}
-
-// AddFlags adds flags of coredns detector to the specified FlagSet.
-func (o *CorednsOptions) AddFlags(fs *pflag.FlagSet) {
-	fs.DurationVar(&o.Period, "coredns-detect-period", 5*time.Second,
-		"Specifies how often detector detects coredns health status.")
-	fs.DurationVar(&o.SuccessThreshold, "coredns-success-threshold", 30*time.Second,
-		"The duration of successes for the coredns to be considered healthy after recovery.")
-	fs.DurationVar(&o.FailureThreshold, "coredns-failure-threshold", 30*time.Second,
-		"The duration of failure for the coredns to be considered unhealthy.")
-	fs.DurationVar(&o.StaleThreshold, "coredns-stale-threshold", time.Minute,
-		"If the node condition of coredns has not been updated for coredns-stale-threshold, it should be considered unknown.")
-}
-
-// Complete fills in fields required to have valid data.
-func (o *CorednsOptions) Complete() error {
-	return nil
-}
-
-// Validate checks options and return a slice of found errs.
-func (o *CorednsOptions) Validate() field.ErrorList {
-	return field.ErrorList{}
-}
-
-```
-
-### Core Architecture Module: `cmd/webhook/app/options/options.go`
-```
-/*
-Copyright 2020 The Karmada Authors.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
-package options
-
-import (
-	"github.com/spf13/pflag"
-
-	"github.com/karmada-io/karmada/pkg/features"
-	"github.com/karmada-io/karmada/pkg/sharedcli/profileflag"
-)
-
-const (
-	defaultBindAddress   = "0.0.0.0"
-	defaultPort          = 8443
-	defaultCertDir       = "/tmp/k8s-webhook-server/serving-certs"
-	defaultTLSMinVersion = "1.3"
-)
-
-// Options contains everything necessary to create and run webhook server.
-type Options struct {
-	// BindAddress is the IP address on which to listen for the --secure-port port.
-	// Default is "0.0.0.0".
-	BindAddress string
-	// SecurePort is the port that the webhook server serves at.
-	// Default is 8443.
-	SecurePort int
-	// CertDir is the directory that contains the server key and certificate.
-	// if not set, webhook server would look up the server key and certificate in {TempDir}/k8s-webhook-server/serving-certs.
-	CertDir string
-	// CertName is the server certificate name. Defaults to tls.crt.
-	CertName string
-	// KeyName is the server key name. Defaults to tls.key.
-	KeyName string
-	// TLSMinVersion is the minimum version of TLS supported. Possible values: 1.0, 1.1, 1.2, 1.3.
-	// Some environments have automated security scans that trigger on TLS versions or insecure cipher suites, and
-	// setting TLS to 1.3 would solve both problems.
-	// Defaults to 1.3.
-	TLSMinVersion string
-	// KubeAPIQPS is the QPS to use while talking with karmada-apiserver.
-	KubeAPIQPS float32
-	// KubeAPIBurst is the burst to allow while talking with karmada-apiserver.
-	KubeAPIBurst int
-	// MetricsBindAddress is the TCP address that the controller should bind to
-	// for serving prometheus metrics.
-	// It can be set to "0" to disable the metrics serving.
-	// Defaults to ":8080".
-	MetricsBindAddress string
-	// HealthProbeBindAddress is the TCP address that the controller should bind to
-	// for serving health probes
-	// Defaults to ":8000".
-	HealthProbeBindAddress string
-	// AllowNoExecuteTaintPolicy indicates that allows configuring taints with NoExecute effect in ClusterTaintPolicy.
-	// Given the impact of NoExecute, applying such a taint to a cluster may trigger the eviction of workloads
-	// that do not explicitly tolerate it, potentially causing unexpected service disruptions.
-	AllowNoExecuteTaintPolicy bool
-
-	ProfileOpts profileflag.Options
-}
-
-// NewOptions builds an empty options.
-func NewOptions() *Options {
-	return &Options{}
-}
-
-// AddFlags adds flags to the specified FlagSet.
-func (o *Options) AddFlags(flags *pflag.FlagSet) {
-	flags.Lookup("kubeconfig").Usage = "Path to karmada control plane kubeconfig file."
-
-	flags.StringVar(&o.BindAddress, "bind-address", defaultBindAddress,
-		"The IP address on which to listen for the --secure-port port.")
-	flags.IntVar(&o.SecurePort, "secure-port", defaultPort,
-		"The secure port on which to serve HTTPS.")
-	flags.StringVar(&o.CertDir, "cert-dir", defaultCertDir,
-		"The directory that contains the server key and certificate.")
-	flags.StringVar(&o.CertName, "tls-cert-file-name", "tls.crt", "The name of server certificate.")
-	flags.StringVar(&o.KeyName, "tls-private-key-file-name", "tls.key", "The name of server key.")
-	flags.StringVar(&o.TLSMinVersion, "tls-min-version", defaultTLSMinVersion, "Minimum TLS version supported. Possible values: 1.0, 1.1, 1.2, 1.3.")
-	flags.Float32Var(&o.KubeAPIQPS, "kube-api-qps", 40.0, "QPS to use while talking with karmada-apiserver.")
-	flags.IntVar(&o.KubeAPIBurst, "kube-api-burst", 60, "Burst to use while talking with karmada-apiserver.")
-	flags.StringVar(&o.MetricsBindAddress, "metrics-bind-address", ":8080", "The TCP address that the controller should bind to for serving prometheus metrics(e.g. 127.0.0.1:8080, :8080). It can be set to \"0\" to disable the metrics serving.")
-	flags.StringVar(&o.HealthProbeBindAddress, "health-probe-bind-address", ":8000", "The TCP address that the controller should bind to for serving health probes(e.g. 127.0.0.1:8000, :8000)")
-	flags.BoolVar(&o.AllowNoExecuteTaintPolicy, "allow-no-execute-taint-policy", false, "Allows configuring taints with NoExecute effect in ClusterTaintPolicy. Given the impact of NoExecute, applying such a taint to a cluster may trigger the eviction of workloads that do not explicitly tolerate it, potentially causing unexpected service disruptions. \nThis parameter is designed to remain disabled by default and requires careful evaluation by administrators before being enabled.")
-
-	features.FeatureGate.AddFlag(flags)
-	o.ProfileOpts.AddFlags(flags)
-}
-
-```
-
-### Core Architecture Module: `cmd/webhook/app/options/validation.go`
-```
-/*
-Copyright 2021 The Karmada Authors.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
-package options
-
-import (
-	"net"
-
-	"k8s.io/apimachinery/pkg/util/validation/field"
-)
-
-// Validate checks Options and return a slice of found errs.
-func (o *Options) Validate() field.ErrorList {
-	errs := field.ErrorList{}
-
-	newPath := field.NewPath("Options")
-	if net.ParseIP(o.BindAddress) == nil {
-		errs = append(errs, field.Invalid(newPath.Child("BindAddress"), o.BindAddress, "not a valid textual representation of an IP address"))
-	}
-
-	if o.SecurePort < 0 || o.SecurePort > 65535 {
-		errs = append(errs, field.Invalid(newPath.Child("SecurePort"), o.SecurePort, "must be a valid port between 0 and 65535 inclusive"))
-	}
-
-	return errs
-}
-
-```
-
-### Core Architecture Module: `cmd/webhook/app/webhook.go`
-```
-/*
-Copyright 2021 The Karmada Authors.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
-package app
-
-import (
-	"context"
-	"crypto/tls"
-	"flag"
-	"fmt"
-	"net/http"
-
-	"github.com/spf13/cobra"
-	"k8s.io/client-go/util/flowcontrol"
-	cliflag "k8s.io/component-base/cli/flag"
-	"k8s.io/component-base/logs"
-	logsv1 "k8s.io/component-base/logs/api/v1"
-	"k8s.io/component-base/term"
-	"k8s.io/klog/v2"
-	controllerruntime "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/healthz"
-	ctrlmetrics "sigs.k8s.io/controller-runtime/pkg/metrics"
-	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
-	"sigs.k8s.io/controller-runtime/pkg/webhook"
-	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
-	"sigs.k8s.io/controller-runtime/pkg/webhook/conversion"
-
-	"github.com/karmada-io/karmada/cmd/webhook/app/options"
-	"github.com/karmada-io/karmada/pkg/features"
-	versionmetrics "github.com/karmada-io/karmada/pkg/metrics"
-	"github.com/karmada-io/karmada/pkg/sharedcli"
-	"github.com/karmada-io/karmada/pkg/sharedcli/klogflag"
-	"github.com/karmada-io/karmada/pkg/sharedcli/profileflag"
-	"github.com/karmada-io/karmada/pkg/util/gclient"
-	"github.com/karmada-io/karmada/pkg/util/names"
-	"github.com/karmada-io/karmada/pkg/version"
-	"github.com/karmada-io/karmada/pkg/version/sharedcommand"
-	"github.com/karmada-io/karmada/pkg/webhook/clusteroverridepolicy"
-	"github.com/karmada-io/karmada/pkg/webhook/clusterpropagationpolicy"
-	"github.com/karmada-io/karmada/pkg/webhook/clusterresourcebinding"
-	"github.com/karmada-io/karmada/pkg/webhook/clustertaintpolicy"
-	"github.com/karmada-io/karmada/pkg/webhook/configuration"
-	"github.com/karmada-io/karmada/pkg/webhook/cronfederatedhpa"
-	"github.com/karmada-io/karmada/pkg/webhook/federatedhpa"
-	"github.com/karmada-io/karmada/pkg/webhook/federatedresourcequota"
-	"github.com/karmada-io/karmada/pkg/webhook/multiclusteringress"
-	"github.com/karmada-io/karmada/pkg/webhook/multiclusterservice"
-	"github.com/karmada-io/karmada/pkg/webhook/overridepolicy"
-	"github.com/karmada-io/karmada/pkg/webhook/propagationpolicy"
-	"github.com/karmada-io/karmada/pkg/webhook/resourcebinding"
-	"github.com/karmada-io/karmada/pkg/webhook/resourcedeletionprotection"
-	"github.com/karmada-io/karmada/pkg/webhook/resourceinterpretercustomization"
-	"github.com/karmada-io/karmada/pkg/webhook/work"
-)
-
-// NewWebhookCommand creates a *cobra.Command object with default parameters
-func NewWebhookCommand(ctx context.Context) *cobra.Command {
-	logConfig := logsv1.NewLoggingConfiguration()
-	fss := cliflag.NamedFlagSets{}
-
-	logsFlagSet := fss.FlagSet("logs")
-	logs.AddFlags(logsFlagSet, logs.SkipLoggingConfigurationFlags())
-	logsv1.AddFlags(logConfig, logsFlagSet)
-	klogflag.Add(logsFlagSet)
-
-	genericFlagSet := fss.FlagSet("generic")
-	opts := options.NewOptions()
-	genericFlagSet.AddGoFlagSet(flag.CommandLine)
-	opts.AddFlags(genericFlagSet)
-
-	cmd := &cobra.Command{
-		Use: names.KarmadaWebhookComponentName,
-		Long: `The karmada-webhook starts a webhook server and manages policies about how to mutate and validate
-Karmada resources including 'PropagationPolicy', 'OverridePolicy' and so on.`,
-		PersistentPreRunE: func(_ *cobra.Command, _ []string) error {
-			if err := logsv1.ValidateAndApply(logConfig, features.FeatureGate); err != nil {
-				return err
-			}
-			logs.InitLogs()
-
-			// Starting from version 0.15.0, controller-runtime expects its consumers to set a logger through log.SetLogger.
-			// If SetLogger is not called within the first 30 seconds of a binaries lifetime, it will get
-			// set to a NullLogSink and report an error. Here's to silence the "log.SetLogger(...) was never called; logs will not be displayed" error
-			// by setting a logger through log.SetLogger.
-			// More info refer to: https://github.com/karmada-io/karmada/pull/4885.
-			controllerruntime.SetLogger(klog.Background())
-			return nil
-		},
-		RunE: func(_ *cobra.Command, _ []string) error {
-			// validate options
-			if errs := opts.Validate(); len(errs) != 0 {
-				return errs.ToAggregate()
-			}
-			if err := Run(ctx, opts); err != nil {
-				return err
-			}
-			return nil
-		},
-		Args: func(cmd *cobra.Command, args []string) error {
-			for _, arg := range args {
-				if len(arg) > 0 {
-					return fmt.Errorf("%q does not take any arguments, got %q", cmd.CommandPath(), args)
-				}
-			}
-			return nil
-		},
-	}
-
-	cmd.AddCommand(sharedcommand.NewCmdVersion(names.KarmadaWebhookComponentName))
-	cmd.Flags().AddFlagSet(genericFlagSet)
-	cmd.Flags().AddFlagSet(logsFlagSet)
-
-	cols, _, _ := term.TerminalSize(cmd.OutOrStdout())
-	sharedcli.SetUsageAndHelpFunc(cmd, fss, cols)
-	return cmd
-}
-
-// Run runs the webhook server with options. This should never exit.
-func Run(ctx context.Context, opts *options.Options) error {
-	klog.Infof("karmada-webhook version: %s", version.Get())
-
-	profileflag.ListenAndServe(opts.ProfileOpts)
-
-	config, err := controllerruntime.GetConfig()
-	if err != nil {
-		panic(err)
-	}
-	config.RateLimiter = flowcontrol.NewTokenBucketRateLimiter(opts.KubeAPIQPS, opts.KubeAPIBurst)
-
-	hookManager, err := controllerruntime.NewManager(config, controllerruntime.Options{
-		Logger: klog.Background(),
-		Scheme: gclient.NewSchema(),
-		WebhookServer: webhook.NewServer(webhook.Options{
-			Host:     opts.BindAddress,
-			Port:     opts.SecurePort,
-			CertDir:  opts.CertDir,
-			CertName: opts.CertName,
-			KeyName:  opts.KeyName,
-			TLSOpts: []func(*tls.Config){
-				func(config *tls.Config) {
-					// Just transform the valid options as opts.TLSMinVersion
-					// can only accept "1.0", "1.1", "1.2", "1.3" and has default
-					// value,
-					switch opts.TLSMinVersion {
-					case "1.0":
-						config.MinVersion = tls.VersionTLS10
-					case "1.1":
-						config.MinVersion = tls.VersionTLS11
-					case "1.2":
-						config.MinVersion = tls.VersionTLS12
-					case "1.3":
-						config.MinVersion = tls.VersionTLS13
-					}
-				},
-			},
-		}),
-		LeaderElection:         false,
-		Metrics:                metricsserver.Options{BindAddress: opts.MetricsBindAddress},
-		HealthProbeBindAddress: opts.HealthProbeBindAddress,
-	})
-	if err != nil {
-		klog.Errorf("Failed to build webhook server: %v", err)
-		return err
-	}
-
-	decoder := admission.NewDecoder(hookManager.GetScheme())
-
-	klog.Info("Registering webhooks to the webhook server")
-	hookServer := hookManager.GetWebhookServer()
-
-	// autoscaling group
-	// CronFederatedHPA
-	hookServer.Register("/validate-cronfederatedhpa", &webhook.Admission{Handler: &cronfederatedhpa.ValidatingAdmission{Decoder: decoder}})
-	// FederatedHPA
-	hookServer.Register("/mutate-federatedhpa", &webhook.Admission{Handler: &federatedhpa.MutatingAdmission{Decoder: decoder}})
-	hookServer.Register("/validate-federatedhpa", &webhook.Admission{Handler: &federatedhpa.ValidatingAdmission{Decoder: decoder}})
-
-	// config group
-	// ResourceInterpreterCustomization
-	hookServer.Register("/validate-resourceinterpretercustomization", &webhook.Admission{Handler: &resourceinterpretercustomization.ValidatingAdmission{Client: hookManager.GetClient(), Decoder: decoder}})
-	// ResourceInterpreterWebhookConfiguration
-	hookServer.Register("/validate-resourceinterpreterwebhookconfiguration", &webhook.Admission{Handler: &configuration.ValidatingAdmission{Decoder: decoder}})
-
-	// networking group
-	// MultiClusterIngress
-	hookServer.Register("/validate-multiclusteringress", &webhook.Admission{Handler: &multiclusteringress.ValidatingAdmission{Decoder: decoder}})
-	// MultiClusterService
-	hookServer.Register("/mutate-multiclusterservice", &webhook.Admission{Handler: &multiclusterservice.MutatingAdmission{Decoder: decoder}})
-	hookServer.Register("/validate-multiclusterservice", &webhook.Admission{Handler: &multiclusterservice.ValidatingAdmission{Decoder: decoder}})
-
-	// policy group
-	// ClusterOverridePolicy
-	hookServer.Register("/validate-clusteroverridepolicy", &webhook.Admission{Handler: &clusteroverridepolicy.ValidatingAdmission{Decoder: decoder}})
-	// ClusterPropagationPolicy
-	hookServer.Register("/mutate-clusterpropagationpolicy", &webhook.Admission{Handler: clusterpropagationpolicy.NewMutatingHandler(decoder)})
-	hookServer.Register("/validate-clusterpropagationpolicy", &webhook.Admission{Handler: &clusterpropagationpolicy.ValidatingAdmission{Decoder: decoder}})
-	// ClusterTaintPolicy
-	hookServer.Register("/validate-clustertaintpolicy", &webhook.Admission{Handler: &clustertaintpolicy.ValidatingAdmission{Decoder: decoder, AllowNoExecuteTaintPolicy: opts.AllowNoExecuteTaintPolicy}})
-	// FederatedResourceQuota
-	hookServer.Register("/validate-federatedresourcequota", &webhook.Admission{Handler: &federatedresourcequota.ValidatingAdmission{Decoder: decoder}})
-	// OverridePolicy
-	hookServer.Register("/mutate-overridepolicy", &webhook.Admission{Handler: &overridepolicy.MutatingAdmission{Decoder: decoder}})
-	hookServer.Register("/validate-overridepolicy", &webhook.Admission{Handler: &overridepolicy.ValidatingAdmission{Decoder: decoder}})
-	// PropagationPolicy
-	hookServer.Register("/mutate-propagationpolicy", &webhook.Admission{Handler: propagationpolicy.NewMutatingHandler(decoder)})
-	hookServer.Register("/validate-propagationpolicy", &webhook.Admission{Handler: &propagationpolicy.ValidatingAdmission{Decoder: decoder}})
-
-	// work group
-	// ClusterResourceBinding
-	hookServer.Register("/mutate-clusterresourcebinding", &webhook.Admission{Handler: &clusterresourcebinding.MutatingAdmission{Decoder: decoder}})
-	// ResourceBinding
-	hookServer.Register("/validate-resourcebinding", &webhook.Admission{Handler: &resourcebinding.ValidatingAdmission{Client: hookManag
-```
-
-### Core Architecture Module: `cmd/webhook/main.go`
-```
-/*
-Copyright 2020 The Karmada Authors.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
-package main
-
-import (
-	"os"
-
-	"k8s.io/component-base/cli"
-	"k8s.io/component-base/logs"
-	_ "k8s.io/component-base/logs/json/register" // for JSON log format registration
-	controllerruntime "sigs.k8s.io/controller-runtime"
-
-	"github.com/karmada-io/karmada/cmd/webhook/app"
-)
-
-func main() {
-	ctx := controllerruntime.SetupSignalHandler()
-	cmd := app.NewWebhookCommand(ctx)
-	exitCode := cli.Run(cmd)
-	// Ensure any buffered log entries are flushed
-	logs.FlushLogs()
-	os.Exit(exitCode)
-}
-
-```
-
-### Core Architecture Module: `examples/customresourceinterpreter/webhook/app/options/options.go`
-```
-/*
-Copyright 2021 The Karmada Authors.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
-package options
-
-import (
-	"github.com/spf13/pflag"
-)
-
-const (
-	defaultBindAddress = "0.0.0.0"
-	defaultPort        = 8445
-	defaultCertDir     = "/tmp/k8s-webhook-server/serving-certs"
-)
-
-// Options contains everything necessary to create and run webhook server.
-type Options struct {
-	BindAddress string
-	SecurePort  int
-	CertDir     string
-}
-
-// NewOptions builds an empty options.
-func NewOptions() *Options {
-	return &Options{}
-}
-
-// AddFlags adds flags to the specified FlagSet.
-func (o *Options) AddFlags(flags *pflag.FlagSet) {
-	flags.StringVar(&o.BindAddress, "bind-address", defaultBindAddress, "The IP address on which to listen for the --secure-port port.")
-	flags.IntVar(&o.SecurePort, "secure-port", defaultPort, "The secure port on which to serve HTTPS.")
-	flags.StringVar(&o.CertDir, "cert-dir", defaultCertDir, "The directory that contains the server key(named tls.key) and certificate(named tls.crt).")
-}
-
-```
-
-### Core Architecture Module: `examples/customresourceinterpreter/webhook/app/options/validation.go`
-```
-/*
-Copyright 2021 The Karmada Authors.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
-package options
-
-import (
-	"net"
-
-	"k8s.io/apimachinery/pkg/util/validation/field"
-)
-
-// Validate checks Options and return a slice of found errs.
-func (o *Options) Validate() field.ErrorList {
-	errs := field.ErrorList{}
-	rootPath := field.NewPath("Options")
-
-	if net.ParseIP(o.BindAddress) == nil {
-		errs = append(errs, field.Invalid(rootPath.Child("BindAddress"), o.BindAddress, "not a valid textual representation of an IP address"))
-	}
-
-	if o.SecurePort < 0 || o.SecurePort > 65535 {
-		errs = append(errs, field.Invalid(rootPath.Child("SecurePort"), o.SecurePort, "must be a valid port between 0 and 65535 inclusive"))
-	}
-
-	return errs
-}
-
-```
-
-### Core Architecture Module: `examples/customresourceinterpreter/webhook/app/webhook.go`
-```
-/*
-Copyright 2021 The Karmada Authors.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
-package app
-
-import (
-	"context"
-	"flag"
-	"fmt"
-	"net/http"
-	"os"
-
-	"github.com/spf13/cobra"
-	cliflag "k8s.io/component-base/cli/flag"
-	"k8s.io/component-base/term"
-	"k8s.io/klog/v2"
-	controllerruntime "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/healthz"
-	"sigs.k8s.io/controller-runtime/pkg/webhook"
-
-	"github.com/karmada-io/karmada/examples/customresourceinterpreter/webhook/app/options"
-	"github.com/karmada-io/karmada/pkg/sharedcli"
-	"github.com/karmada-io/karmada/pkg/sharedcli/klogflag"
-	"github.com/karmada-io/karmada/pkg/util/gclient"
-	"github.com/karmada-io/karmada/pkg/version/sharedcommand"
-	"github.com/karmada-io/karmada/pkg/webhook/interpreter"
-)
-
-// NewWebhookCommand creates a *cobra.Command object with default parameters
-func NewWebhookCommand(ctx context.Context) *cobra.Command {
-	opts := options.NewOptions()
-
-	cmd := &cobra.Command{
-		Use: "karmada-interpreter-webhook-example",
-		Run: func(_ *cobra.Command, _ []string) {
-			// validate options
-			if errs := opts.Validate(); len(errs) != 0 {
-				fmt.Fprintf(os.Stderr, "configuration is not valid: %v\n", errs.ToAggregate())
-				os.Exit(1)
-			}
-
-			if err := Run(ctx, opts); err != nil {
-				fmt.Fprintf(os.Stderr, "%v\n", err)
-				os.Exit(1)
-			}
-		},
-	}
-
-	fss := cliflag.NamedFlagSets{}
-
-	genericFlagSet := fss.FlagSet("generic")
-	genericFlagSet.AddGoFlagSet(flag.CommandLine)
-	opts.AddFlags(genericFlagSet)
-
-	// Set klog flags
-	logsFlagSet := fss.FlagSet("logs")
-	klogflag.Add(logsFlagSet)
-
-	cmd.AddCommand(sharedcommand.NewCmdVersion("karmada-interpreter-webhook-example"))
-	cmd.Flags().AddFlagSet(genericFlagSet)
-	cmd.Flags().AddFlagSet(logsFlagSet)
-
-	cols, _, _ := term.TerminalSize(cmd.OutOrStdout())
-	sharedcli.SetUsageAndHelpFunc(cmd, fss, cols)
-	return cmd
-}
-
-// Run runs the webhook server with options. This should never exit.
-func Run(ctx context.Context, opts *options.Options) error {
-	config, err := controllerruntime.GetConfig()
-	if err != nil {
-		panic(err)
-	}
-
-	hookManager, err := controllerruntime.NewManager(config, controllerruntime.Options{
-		Logger: klog.Background(),
-		WebhookServer: webhook.NewServer(webhook.Options{
-			Host:    opts.BindAddress,
-			Port:    opts.SecurePort,
-			CertDir: opts.CertDir,
-		}),
-		LeaderElection: false,
-	})
-	if err != nil {
-		klog.Errorf("Failed to build webhook server: %v", err)
-		return err
-	}
-
-	klog.Info("Registering webhooks to the webhook server")
-	hookServer := hookManager.GetWebhookServer()
-	hookServer.Register("/interpreter-workload", interpreter.NewWebhook(&workloadInterpreter{}, interpreter.NewDecoder(gclient.NewSchema())))
-	hookServer.WebhookMux().Handle("/readyz/", http.StripPrefix("/readyz/", &healthz.Handler{}))
-
-	// blocks until the context is done.
-	if err := hookManager.Start(ctx); err != nil {
-		klog.Errorf("Webhook server exits unexpectedly: %v", err)
-		return err
-	}
-
-	// never reach here
-	return nil
-}
-
-```
-
-### Core Architecture Module: `examples/customresourceinterpreter/webhook/app/workloadwebhook.go`
-```
-/*
-Copyright 2021 The Karmada Authors.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
-package app
-
-import (
-	"context"
-	"encoding/json"
-	"fmt"
-	"net/http"
-
-	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/klog/v2"
-
-	workloadv1alpha1 "github.com/karmada-io/karmada/examples/customresourceinterpreter/apis/workload/v1alpha1"
-	configv1alpha1 "github.com/karmada-io/karmada/pkg/apis/config/v1alpha1"
-	workv1alpha2 "github.com/karmada-io/karmada/pkg/apis/work/v1alpha2"
-	"github.com/karmada-io/karmada/pkg/webhook/interpreter"
-)
-
-// Check if our workloadInterpreter implements necessary interface
-var _ interpreter.Handler = &workloadInterpreter{}
-var _ interpreter.DecoderInjector = &workloadInterpreter{}
-
-// workloadInterpreter explore resource with request operation.
-type workloadInterpreter struct {
-	decoder *interpreter.Decoder
-}
-
-// Handle implements interpreter.Handler interface.
-// It yields a response to an ExploreRequest.
-func (e *workloadInterpreter) Handle(_ context.Context, req interpreter.Request) interpreter.Response {
-	workload := &workloadv1alpha1.Workload{}
-	err := e.decoder.Decode(req, workload)
-	if err != nil {
-		return interpreter.Errored(http.StatusBadRequest, err)
-	}
-	klog.Infof("Explore workload(%s/%s) for request: %s", workload.GetNamespace(), workload.GetName(), req.Operation)
-
-	switch req.Operation {
-	case configv1alpha1.InterpreterOperationInterpretReplica:
-		return e.responseWithExploreReplica(workload)
-	case configv1alpha1.InterpreterOperationInterpretComponent:
-		return e.responseWithExploreComponent(workload)
-	case configv1alpha1.InterpreterOperationReviseReplica:
-		return e.responseWithExploreReviseReplica(workload, req)
-	case configv1alpha1.InterpreterOperationRetain:
-		return e.responseWithExploreRetaining(workload, req)
-	case configv1alpha1.InterpreterOperationAggregateStatus:
-		return e.responseWithExploreAggregateStatus(workload, req)
-	case configv1alpha1.InterpreterOperationInterpretHealth:
-		return e.responseWithExploreInterpretHealth(workload)
-	case configv1alpha1.InterpreterOperationInterpretStatus:
-		return e.responseWithExploreInterpretStatus(workload)
-	case configv1alpha1.InterpreterOperationInterpretDependency:
-		return e.responseWithExploreDependency(workload)
-	default:
-		return interpreter.Errored(http.StatusBadRequest, fmt.Errorf("wrong request operation type: %s", req.Operation))
-	}
-}
-
-// InjectDecoder implements interpreter.DecoderInjector interface.
-func (e *workloadInterpreter) InjectDecoder(d *interpreter.Decoder) {
-	e.decoder = d
-}
-
-func (e *workloadInterpreter) responseWithExploreReplica(workload *workloadv1alpha1.Workload) interpreter.Response {
-	res := interpreter.Succeeded("")
-	replicas := new(int32(1))
-	if workload.Spec.Replicas != nil {
-		replicas = workload.Spec.Replicas
-	}
-	res.Replicas = replicas
-	return res
-}
-
-func (e *workloadInterpreter) responseWithExploreComponent(workload *workloadv1alpha1.Workload) interpreter.Response {
-	res := interpreter.Succeeded("")
-	replicas := int32(1)
-	if workload.Spec.Replicas != nil {
-		replicas = *workload.Spec.Replicas
-	}
-	res.Components = []workv1alpha2.Component{
-		{
-			Name:     "main",
-			Replicas: replicas,
-		},
-	}
-	return res
-}
-
-func (e *workloadInterpreter) responseWithExploreDependency(workload *workloadv1alpha1.Workload) interpreter.Response {
-	res := interpreter.Succeeded("")
-	res.Dependencies = []configv1alpha1.DependentObjectReference{{APIVersion: "v1", Kind: "ConfigMap",
-		Namespace: workload.Namespace, Name: workload.Spec.Template.Spec.Containers[0].EnvFrom[0].ConfigMapRef.Name}}
-	return res
-}
-
-func (e *workloadInterpreter) responseWithExploreReviseReplica(workload *workloadv1alpha1.Workload, req interpreter.Request) interpreter.Response {
-	wantedWorkload := workload.DeepCopy()
-	wantedWorkload.Spec.Replicas = req.DesiredReplicas
-	marshaledBytes, err := json.Marshal(wantedWorkload)
-	if err != nil {
-		return interpreter.Errored(http.StatusInternalServerError, err)
-	}
-	return interpreter.PatchResponseFromRaw(req.Object.Raw, marshaledBytes)
-}
-
-func (e *workloadInterpreter) responseWithExploreRetaining(desiredWorkload *workloadv1alpha1.Workload, req interpreter.Request) interpreter.Response {
-	if req.ObservedObject == nil {
-		err := fmt.Errorf("nil observedObject in exploreReview with operation type: %s", req.Operation)
-		return interpreter.Errored(http.StatusBadRequest, err)
-	}
-	observerWorkload := &workloadv1alpha1.Workload{}
-	err := e.decoder.DecodeRaw(*req.ObservedObject, observerWorkload)
-	if err != nil {
-		return interpreter.Errored(http.StatusBadRequest, err)
-	}
-
-	// Suppose we want to retain the `.spec.paused` field of the actual observed workload object in member cluster,
-	// and prevent from being overwritten by karmada controller-plane.
-	wantedWorkload := desiredWorkload.DeepCopy()
-	wantedWorkload.Spec.Paused = observerWorkload.Spec.Paused
-	marshaledBytes, err := json.Marshal(wantedWorkload)
-	if err != nil {
-		return interpreter.Errored(http.StatusInternalServerError, err)
-	}
-	return interpreter.PatchResponseFromRaw(req.Object.Raw, marshaledBytes)
-}
-
-func (e *workloadInterpreter) responseWithExploreAggregateStatus(workload *workloadv1alpha1.Workload, req interpreter.Request) interpreter.Response {
-	wantedWorkload := workload.DeepCopy()
-	var readyReplicas int32
-	for _, item := range req.AggregatedStatus {
-		if item.Status == nil {
-			continue
-		}
-		status := &workloadv1alpha1.WorkloadStatus{}
-		if err := json.Unmarshal(item.Status.Raw, status); err != nil {
-			return interpreter.Errored(http.StatusInternalServerError, err)
-		}
-		readyReplicas += status.ReadyReplicas
-	}
-	wantedWorkload.Status.ReadyReplicas = readyReplicas
-	marshaledBytes, err := json.Marshal(wantedWorkload)
-	if err != nil {
-		return interpreter.Errored(http.StatusInternalServerError, err)
-	}
-	return interpreter.PatchResponseFromRaw(req.Object.Raw, marshaledBytes)
-}
-
-func (e *workloadInterpreter) responseWithExploreInterpretHealth(workload *workloadv1alpha1.Workload) interpreter.Response {
-	healthy := new(false)
-	if workload.Status.ReadyReplicas == *workload.Spec.Replicas {
-		healthy = new(true)
-	}
-
-	res := interpreter.Succeeded("")
-	res.Healthy = healthy
-	return res
-}
-
-func (e *workloadInterpreter) responseWithExploreInterpretStatus(workload *workloadv1alpha1.Workload) interpreter.Response {
-	status := workloadv1alpha1.WorkloadStatus{
-		ReadyReplicas: workload.Status.ReadyReplicas,
-	}
-
-	marshaledBytes, err := json.Marshal(status)
-	if err != nil {
-		return interpreter.Errored(http.StatusInternalServerError, err)
-	}
-
-	res := interpreter.Succeeded("")
-	res.RawStatus = &runtime.RawExtension{
-		Raw: marshaledBytes,
-	}
-
-	return res
-}
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7984** (2026-10-26): **build(deps): bump actions/setup-python from 7.0.0 to 7.1.0**
-  *Symptoms*: Bumps [actions/setup-python](https://github.com/actions/setup-python) from 7.0.0 to 7.1.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/actions/setup-python/releases">actions/setup-python's releases</a>.</em></p> <blockquote> <h2>v7.1.0</h2> <h2>What's Changed</h2> <h3>Enhancements</h3> <ul> <li>Add <code>mirror</code> and <code>mirror-token</code> inputs for custom Python distribution sources by <a href="https://github.com/luhenry"><code>@​luhenry</code></a> in <a href="https://redirect.github.com/actions/setup-python/pull/1302">actions/setup-python#1302</a></li> <li>Improve error message clarity by <a href="https://github.com/v-lmvysakh"><code>@​v-lmvysakh</code></a> in <a href="https://redirect.github.com/actions/setup-python/pull/1351">actions/setup-python#1351</a></li> </ul> <h3>Dependency Upgrade</h3> <ul> <li>Upgrade browserslist from 4.28.2 to 4.28.9 by <a href="https://github.com/dependabot"><code>@​dependabot</code></a> in <a href="https://redirect.github.com/actions/setup-python/pull/1353">actions/setup-python#1353</a></li> <li>Upgrade <code>@​typescript-eslint/parser</code> from 8.62.0 to 8.70.0 by <a href="https://github.com/dependabot"><code>@​dependabot</code></a> in <a href="https://redirect.github.com/actions/setup-python/pull/1343">actions/setup-python#1343</a></li> <li>Upgrade eslint-plugin-jest from 29.15.2 to 29.16.6 by <a href="https://github.com/dependabot"><code>@​dependabot</code></a> in <a href="https://r
-  **Post-Mortem & Fix Analysis**:
-  > /lgtm /approve
-  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/karmada-io/karmada/pull/7984#issuecomment-6406017090" title="Approved">zhzhuang-zju</a>*  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=karmada-io%2Fkarmada).  The pull request process is described [here](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process)  <details > Needs approval from an approver in each of these files:  - ~~[.github/workflows/OWNERS](https://github.com/karmada-io/karmada/blob/master/.github/workflows/OWNERS)~~ [zhzhuang-zju]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
-
-- **Issue #7983** (2026-10-26): **build(deps): bump docker/login-action from 4.6.0 to 4.7.0**
-  *Symptoms*: Bumps [docker/login-action](https://github.com/docker/login-action) from 4.6.0 to 4.7.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/docker/login-action/releases">docker/login-action's releases</a>.</em></p> <blockquote> <h2>v4.7.0</h2> <ul> <li>Preserve explicit ECR settings in <code>registry-auth</code> by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1089">docker/login-action#1089</a></li> <li>Use registry hosts for scoped credentials by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1088">docker/login-action#1088</a></li> <li>Raise Docker Hub OIDC max expiry to 6 hours by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1068">docker/login-action#1068</a></li> <li>Log Docker Hub OIDC token exchange progress by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1061">docker/login-action#1061</a></li> <li>Bump <code>@​aws-sdk/client-ecr</code> and <code>@​aws-sdk/client-ecr-public</code> to 3.1154.0 in <a href="https://redirect.github.com/docker/login-action/pull/1093">docker/login-action#1093</a></li> <li>Bump <code>@​docker/actions-toolkit</code> from 0.94.0 to 0.107.0 in <a href="https://redir
-  **Post-Mortem & Fix Analysis**:
-  > /lgtm /approve
-  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/karmada-io/karmada/pull/7983#issuecomment-6406030246" title="Approved">zhzhuang-zju</a>*  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=karmada-io%2Fkarmada).  The pull request process is described [here](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process)  <details > Needs approval from an approver in each of these files:  - ~~[.github/workflows/OWNERS](https://github.com/karmada-io/karmada/blob/master/.github/workflows/OWNERS)~~ [zhzhuang-zju]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `af7b2ae1` (2026-10-26)
-**Commit Message**: Merge pull request #7971 from Sarthak-Shreshtha01/fix/issue-7965
-
-fix(cronfederatedhpa): avoid a panic when failedHistoryLimit is 0
-
-**File**: `pkg/controllers/cronfederatedhpa/cronfederatedhpa_job.go` (modified, +9/-4)
-```diff
-@@ -230,11 +230,16 @@ func (c *ScalingJob) addFailedExecutionHistory(
- 			Message:       errMsg,
- 		}
- 		historyLimits := helper.GetCronFederatedHPAFailedHistoryLimits(c.rule)
--		if len(cronFHPA.Status.ExecutionHistories[index].FailedExecutions) > historyLimits-1 {
--			cronFHPA.Status.ExecutionHistories[index].FailedExecutions = cronFHPA.Status.ExecutionHistories[index].FailedExecutions[:historyLimits-1]
-+		if historyLimits <= 0 {
-+			// No failed history should be kept.
-+			cronFHPA.Status.ExecutionHistories[index].FailedExecutions = nil
-+		} else {
-+			if len(cronFHPA.Status.ExecutionHistories[index].FailedExecutions) > historyLimits-1 {
-+				cronFHPA.Status.ExecutionHistories[index].FailedExecutions = cronFHPA.Status.ExecutionHistories[index].FailedExecutions[:historyLimits-1]
-+			}
-+			cronFHPA.Status.ExecutionHistories[index].FailedExecutions =
-+				append([]autoscalingv1alpha1.FailedExecution{failedExecution}, cronFHPA.Status.ExecutionHistories[index].FailedExecutions...)
- 		}
--		cronFHPA.Status.ExecutionHistories[index].FailedExecutions =
--			append([]autoscalingv1alpha1.FailedExecution{failedExecution}, cronFHPA.Status.ExecutionHistories[index].FailedExecutions...)
- 		cronFHPA.Status.ExecutionHistories[index].NextExecutionTime = &metav1.Time{Time: nextExecutionTime}
- 	}
- 
-```
-
-**File**: `pkg/controllers/cronfederatedhpa/cronfederatedhpa_job_test.go` (modified, +75/-0)
-```diff
-@@ -189,6 +189,81 @@ func TestScaleFHPA(t *testing.T) {
- 	}
- }
- 
-+func TestAddFailedExecutionHistory(t *testing.T) {
-+	existingFailedExecutions := []autoscalingv1alpha1.FailedExecution{
-+		{Message: "old-1"},
-+		{Message: "old-2"},
-+	}
-+
-+	tests := []struct {
-+		name               string
-+		failedHistoryLimit *int32
-+		expectedMessages   []string
-+	}{
-+		{
-+			name:               "limit 0 keeps no failed history",
-+			failedHistoryLimit: new(int32(0)),
-+			expectedMessages:   nil,
-+		},
-+		{
-+			name:               "limit 1 keeps only the newest failed history",
-+			failedHistoryLimit: new(int32(1)),
-+			expectedMessages:   []string{"new"},
-+		},
-+		{
-+			name:               "default limit keeps up to 3 failed histories",
-+			failedHistoryLimit: nil,
-+			expectedMessages:   []string{"new", "old-1", "old-2"},
-+		},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			cronFHPA := &autoscalingv1alpha1.CronFederatedHPA{
-+				ObjectMeta: metav1.ObjectMeta{
-+					Name:      "test-cron-fhpa",
-+					Namespace: "default",
-+				},
-+				Status: autoscalingv1alpha1.CronFederatedHPAStatus{
-+					ExecutionHistories: []autoscalingv1alpha1.ExecutionHistory{
-+						{
-+							RuleName:         "test-rule",
-+							FailedExecutions: append([]autoscalingv1alpha1.FailedExecution{}, existingFailedExecutions...),
-+						},
-+					},
-+				},
-+			}
-+
-+			scheme := runtime.NewScheme()
-+			_ = autoscalingv1alpha1.Install(scheme)
-+			client := fake.NewClientBuilder().WithScheme(scheme).WithObjects(cronFHPA).WithStatusSubresource(cronFHPA).Build()
-+
-+			job := &ScalingJob{
-+				client:    client,
-+				scheduler: gocron.NewScheduler(time.UTC),
-+				rule: autoscalingv1alpha1.CronFederatedHPARule{
-+					Name:               "test-rule",
-+					FailedHistoryLimit: tt.failedHistoryLimit,
-+				},
-+			}
-+
-+			assert.NotPanics(t, func() {
-+				assert.NoError(t, job.addFailedExecutionHistory(cronFHPA, "new"))
-+			})
-+
-+			updated := &autoscalingv1alpha1.CronFederatedHPA{}
-+			assert.NoError(t, client.Get(context.TODO(), types.NamespacedName{Name: cronFHPA.Name, Namespace: cronFHPA.Namespace}, updated))
-+			assert.Len(t, updated.Status.ExecutionHistories, 1)
-+
-+			var messages []string
-+			for _, failedExecution := range updated.Status.ExecutionHistories[0].FailedExecutions {
-+				messages = append(messages, failedExecution.Message)
-+			}
-+			assert.Equal(t, tt.expectedMessages, messages)
-+		})
-+	}
-+}
-+
- func TestFindExecutionHistory(t *testing.T) {
- 	tests := []struct {
- 		name          string
-```
-
----
-
-### Incident Patch 2: `49792277` (2026-10-26)
-**Commit Message**: build(deps): bump github/codeql-action/upload-sarif
-
-Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.39.0 to 4.39.1.
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee...9b3254085494b55a0f7c4c2b3d2d52cc712ce370)
-
----
-updated-dependencies:
-- dependency-name: github/codeql-action/upload-sarif
-  dependency-version: 4.39.1
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/ci-image-scanning-on-schedule.yml` (modified, +1/-1)
-```diff
-@@ -69,7 +69,7 @@ jobs:
-           cache: false
-           vuln-type: 'os,library'
-       - name: Upload Trivy scan results to GitHub Security tab
--        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-         with:
-           sarif_file: '${{ matrix.target }}:${{ matrix.karmada-version }}.trivy-results.sarif'
-           ref: ${{steps.gen_git_info.outputs.ref}}
-```
-
-**File**: `.github/workflows/ci-image-scanning.yaml` (modified, +1/-1)
-```diff
-@@ -68,6 +68,6 @@ jobs:
-           vuln-type: 'os,library'
-           cache: false
-       - name: Upload Trivy scan results to GitHub Security tab
--        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-         with:
-           sarif_file: 'trivy-results.sarif'          
-```
-
----
-
-### Incident Patch 3: `32047636` (2026-10-26)
-**Commit Message**: Merge pull request #7977 from MannXo/fix/7973-goimports-path
-
-hack: add GOPATH/bin to PATH in update-import-aliases.sh
-
-**File**: `hack/update-import-aliases.sh` (modified, +1/-0)
-```diff
-@@ -23,6 +23,7 @@ cd "${SCRIPT_ROOT}"
- ROOT_PATH=$(pwd)
- 
- GO111MODULE=on go install "golang.org/x/tools/cmd/goimports"
-+export PATH=$PATH:$(go env GOPATH)/bin
- 
- IMPORT_ALIASES_PATH="${ROOT_PATH}/hack/.import-aliases"
- INCLUDE_PATH="(${ROOT_PATH}/cmd|${ROOT_PATH}/test/e2e|${ROOT_PATH}/test/helper|\
-```
-
-#### Recent Merged Pull Requests:
-- **PR #7984** (2026-10-26): build(deps): bump actions/setup-python from 7.0.0 to 7.1.0 (@dependabot[bot])
-- **PR #7983** (2026-10-26): build(deps): bump docker/login-action from 4.6.0 to 4.7.0 (@dependabot[bot])
-- **PR #7982** (2026-10-26): build(deps): bump github/codeql-action/upload-sarif from 4.39.0 to 4.39.1 (@dependabot[bot])
-- **PR #7981** (closed): Fixed "rm: Permisssion Denied" for _go directory which is created by hack/update-codegen.sh (@KAwasthi2889)
-- **PR #7978** (2026-10-26): feat(detector): populate `SchedulePriority.PreemptionPolicy` from `PriorityClass` for binding preemption (@asarj)
-- **PR #7977** (2026-10-26): hack: add GOPATH/bin to PATH in update-import-aliases.sh (@MannXo)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Merge pull request #7971 from Sarthak-Shreshtha01/fix/issue-7965
-
+### 1. Deterministic Lua Key Ordering in Declarative Pipeline Interpreters
 **RULE**:
-When implementing operations in `pkg/controllers/cronfederatedhpa/cronfederatedhpa_job.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When transforming maps or tables inside declarative interpreters (e.g., Lua scripts via `gopher-lua` or JavaScript runtimes) whose output is serialized into Kubernetes API objects, you MUST NOT iterate directly over associative keys using non-deterministic iterators (such as Lua `pairs()`) without enforcing an explicit sort sequence. Slices/arrays returned across serialization boundaries MUST have deterministic ordering.
 
 **WHY**:
-Prevents defects observed in production commit `af7b2ae1`: Merge pull request #7971 from Sarthak-Shreshtha01/fix/issue-7965. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Non-deterministic iteration order causes identical inputs to yield changing JSON/YAML serialization outputs. In Kubernetes reconciliation loops, non-deterministic slice ordering results in false positive diffs, continuous object generation bumps, spurious audit log floods, etcd write amplification, and non-deterministic controller re-queues. Furthermore, unit tests that bypass this via test-only slice sorters mask production control-plane thrashing.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/controllers/cronfederatedhpa/cronfederatedhpa_job.go`.
+Apply to any embedded scripting engine (Lua, CEL, Starlark, WASM, JavaScript) integrated into Go/Rust backends where script outputs construct declarative specs, lists of components, or JSON Patches.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```lua
+-- Lua Implementation inside Karmada Resource Interpreter
+-- File: pkg/resourceinterpreter/default/thirdparty/resourcecustomizations/kubeflow.org/v2beta1/MPIJob/customizations.yaml
+
+local taskNames = {}
+local others = {}
+
+-- 1. Segregate fixed precedence keys from arbitrary dynamic keys
+for taskName, _ in pairs(replicaSpecs) do
+  if taskName ~= "Launcher" and taskName ~= "Worker" then
+    table.insert(others, taskName)
+  end
+end
+
+-- 2. Sort arbitrary dynamic keys lexicographically
+table.sort(others)
+
+-- 3. Construct the deterministic sequence: Strict structural anchors followed by sorted extensions
+if replicaSpecs["Launcher"] ~= nil then
+  table.insert(taskNames, "Launcher")
+end
+if replicaSpecs["Worker"] ~= nil then
+  table.insert(taskNames, "Worker")
+end
+for _, taskName in ipairs(others) do
+  table.insert(taskNames, taskName)
+end
+
+-- 4. Process elements using deterministic ipairs iteration
+for _, taskName in ipairs(taskNames) do
+  local spec = replicaSpecs[taskName]
+  if spec ~= nil and spec.template ~= nil then
+    -- populate component array deterministically
+  end
+end
+```
+
+**NEGATIVE CONSTRAINT**:
+```lua
+-- ANTI-PATTERN: Direct iteration over hash map yields random iteration sequence
+for taskName, spec in pairs(replicaSpecs) do
+  -- Output array index 1 may be "Worker" on run N, and "Launcher" on run N+1.
+  -- This causes cyclic controller reconciliations in Kubernetes controllers.
+  table.insert(components, { name = taskName, replicas = spec.replicas })
+end
+```
+
+**VERIFICATION METHOD**:
+Enforce deep byte-for-byte equality in the Go test harness without sorting the test outputs:
+```go
+// thirdparty_test.go verification
+func deepEqual(expected, actualValue any) (bool, error) {
+    // Assert components match EXACTLY in the returned sequence.
+    // Do NOT call sortComponents() here; doing so hides non-deterministic generator bugs.
+    return checker.DeepEqual(unmarshaledExpected, typedActual), nil
+}
+```
+
+---
+
+### 2. Guarded Destructive Control Plane Flags (Blast-Radius Firewall)
+**RULE**:
+When exposing admission controls or webhook policies that can trigger cluster-wide workload evictions (such as `NoExecute` taints or mass uncordoning), the feature flag MUST default to `false` and MUST be explicitly validated at both command-line startup and webhook admission phases. Webhooks MUST reject matching specifications unless the operator explicitly configured the enabling runtime parameter.
+
+**WHY**:
+In multi-cluster environments, applying a `NoExecute` taint to a member cluster causes every workload running on that cluster that lacks an explicit toleration to be evicted simultaneously. In high-density environments, this causes cascading cluster failures, network saturation, and mass pod rescheduling storms that overwhelm remaining healthy clusters.
+
+**WHEN TO APPLY**:
+Any controller or webhook managing taint-based eviction, cluster decommissioning, automated cluster drain routines, or multi-tenant quota preemption.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
-// Verified production-grade fix pattern:
-		if historyLimits <= 0 {
-			// No failed history should be kept.
-			cronFHPA.Status.ExecutionHistories[index].FailedExecutions = nil
-		} else {
-			if len(cronFHPA.Status.ExecutionHistories[index].FailedExecutions) > historyLimits-1 {
-				cronFHPA.Status.ExecutionHistories[index].FailedExecutions = cronFHPA.Status.ExecutionHistories[index].FailedExecutions[:historyLimits-1]
-			}
-			cronFHPA.Status.ExecutionHistories[index].FailedExecutions =
-				append([]autoscalingv1alpha1.FailedExecution{failedExecution}, cronFHPA.Status.ExecutionHistories[index].FailedExecutions...)
+// Webhook struct options and validation guard
+// cmd/webhook/app/options/options.go & pkg/webhook/clustertaintpolicy/validating.go
+
+type ValidatingAdmission struct {
+    Decoder                   *admission.Decoder
+    AllowNoExecuteTaintPolicy bool
+}
+
+func (v *ValidatingAdmission) Handle(ctx context.Context, req admission.Request) admission.Response {
+    policy := &policyv1alpha1.ClusterTaintPolicy{}
+    err := v.Decoder.Decode(req, policy)
+    if err != nil {
+        return admission.Errored(http.StatusBadRequest, err)
+    }
+
+    for _, taint := range policy.Spec.Taints {
+        if taint.Effect == corev1.TaintEffectNoExecute && !v.AllowNoExecuteTaintPolicy {
+            return admission.Denied(
+                "configuring taints with NoExecute effect in ClusterTaintPolicy is disabled by default; " +
+                "must be enabled explicitly via flag --allow-no-execute-taint-policy on karmada-webhook",
+            )
+        }
+    }
+    return admission.Allowed("")
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-		if len(cronFHPA.Status.ExecutionHistories[index].FailedExecutions) > historyLimits-1 {
-			cronFHPA.Status.ExecutionHistories[index].FailedExecutions = cronFHPA.Status.ExecutionHistories[index].FailedExecutions[:historyLimits-1]
-		cronFHPA.Status.ExecutionHistories[index].FailedExecutions =
-			append([]autoscalingv1alpha1.FailedExecution{failedExecution}, cronFHPA.Status.ExecutionHistories[index].FailedExecutions...)
+// ANTI-PATTERN: Blindly trusting API spec without operational blast-radius guard
+func (v *ValidatingAdmission) Handle(ctx context.Context, req admission.Request) admission.Response {
+    // Dangerous: Permits a developer or compromised CI pipeline to issue an immediate
+    // fleet-wide eviction storm by passing effect: NoExecute without cluster admin consent.
+    return admission.Allowed("")
+}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `af7b2ae1` are properly handled with clean fallback behavior.
+Automated table-driven admission test verifying that passing `NoExecute` without `--allow-no-execute-taint-policy` fails admission with an explicit error code:
+```go
+func TestClusterTaintPolicyNoExecuteAdmission(t *testing.T) {
+    handler := &clustertaintpolicy.ValidatingAdmission{
+        AllowNoExecuteTaintPolicy: false,
+    }
+    resp := handler.Handle(context.Background(), mockAdmissionRequestWithNoExecute())
+    assert.False(t, resp.Allowed)
+    assert.Contains(t, resp.Result.Message, "disabled by default")
+}
+```
+
+---
+
+### 3. Two-Way Merge Retention Pattern for Member Cluster Self-Mutations
+**RULE**:
+When centralizing workload distribution while allowing edge or member-cluster local controllers to manage local operational fields (such as `.spec.paused`, HPA replicas, or volume claims), the control plane interpreter MUST execute an explicit `Retain` operation that deep-copies the desired control-plane spec and overwrites only the designated local fields with the live `observedObject` state before generating patch sets.
+
+**WHY**:
+Without retention logic, control-plane reconciliation continuously overwrites local modifications (e.g., emergency pod pausing by edge operators, dynamic storage annotations, or local runtime agents). This creates a reconciliation feedback loop where edge mutations fight central control-plane desired-state syncs.
+
+**WHEN TO APPLY**:
+Any distributed architecture where child/member runtimes have write authority over a subset of an object's fields.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Webhook Retention Handler
+// examples/customresourceinterpreter/webhook/app/workloadwebhook.go
+
+func (e *workloadInterpreter) responseWithExploreRetaining(
+    desiredWorkload *workloadv1alpha1.Workload, 
+    req interpreter.Request,
+) interpreter.Response {
+    if req.ObservedObject == nil {
+        return interpreter.Errored(
+            http.StatusBadRequest, 
+            fmt.Errorf("nil observedObject in exploreReview with operation type: %s", req.Operation),
+        )
+    }
+
+    observerWorkload := &workloadv1alpha1.Workload{}
+    err := e.decoder.DecodeRaw(*req.ObservedObject, observerWorkload)
+    if err != nil {
+        return interpreter.Errored(http.StatusBadRequest, err)
+    }
+
+    // 1. Create independent deep copy of desired state
+    wantedWorkload := desiredWorkload.DeepCopy()
+
+    // 2. Retain designated member-controlled fields from the observed cluster state
+    wantedWorkload.Spec.Paused = observerWorkload.Spec.Paused
+
+    // 3. Serialize and generate standard JSON 6902 patch from original raw object
+    marshaledBytes, err := json.Marshal(wantedWorkload)
+    if err != nil {
+        return interpreter.Errored(http.StatusInternalServerError, err)
+    }
+    return interpreter.PatchResponseFromRaw(req.Object.Raw, marshaledBytes)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Shallow overwrite or directly patching desired object onto child cluster
+func (e *workloadInterpreter) responseWithExploreRetaining(desiredWorkload *workloadv1alpha1.Workload, req interpreter.Request) interpreter.Response {
+    // Overwrites member cluster's paused state! Central plane blindly clobbers local cluster modifications.
+    return interpreter.PatchResponseFromRaw(req.Object.Raw, req.Object.Raw)
+}
+```
+
+**VERIFICATION METHOD**:
+```go
+func TestRetentionPreservesMemberState(t *testing.T) {
+    desired := &workloadv1alpha1.Workload{Spec: workloadv1alpha1.WorkloadSpec{Paused: false}}
+    observed := &workloadv1alpha1.Workload{Spec: workloadv1alpha1.WorkloadSpec{Paused: true}}
+    
+    resp := interpreter.Retain(desired, observed)
+    var result workloadv1alpha1.Workload
+    applyPatch(desired, resp.Patch, &result)
+    assert.True(t, result.Spec.Paused, "Observed .spec.paused=true must be retained across sync")
+}
+```
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Lua Hash Map Non-Determinism in Multi-Component Resource Interpreter (BUG-KARMADA-7964)
+- **Context**: `pkg/resourceinterpreter/default/thirdparty/resourcecustomizations/kubeflow.org/v2beta1/MPIJob/customizations.yaml` and `pkg/resourceinterpreter/default/thirdparty/thirdparty_test.go`
+- **What Was Expected**: Calling the `InterpretComponent` interpreter on an MPIJob resource must yield a deterministic list of workload components (Launcher, Worker, and additional worker pools) in a fixed sequence.
+- **What Actually Happened**: The Lua interpreter used `pairs(replicaSpecs)`. Because Lua's hash table iteration order is non-deterministic across different runtime environments, the output slice varied between runs (e.g., sometimes Worker first, sometimes Launcher first). To mask this in CI, tests had previously introduced `sortComponents()` in `thirdparty_test.go`. In production, this caused fluctuating component orders, resulting in unnecessary Karmada scheduler re-runs and API churn.
+- **Evidence in Repo**: Commit `95490f75`, PR #7970, fixing Issue #7964.
+- **Root Cause**: Iteration over an associative hash table via `pairs()` without key sorting, paired with an integration test suite that sorted outputs prior to comparison, masking the runtime defect.
+- **Remediation Code Diff**:
+```diff
+--- a/pkg/resourceinterpreter/default/thirdparty/resourcecustomizations/kubeflow.org/v2beta1/MPIJob/customizations.yaml
++++ b/pkg/resourceinterpreter/default/thirdparty/resourcecustomizations/kubeflow.org/v2beta1/MPIJob/customizations.yaml
+@@ -53,7 +53,28 @@ spec:
+             return components
+           end
+ 
+-          for taskName, spec in pairs(replicaSpecs) do
++          -- pairs() order is not stable, so use a fixed order:
++          -- Launcher, Worker, then any other keys sorted by name.
++          local taskNames = {}
++          local others = {}
++          for taskName, _ in pairs(replicaSpecs) do
++            if taskName ~= "Launcher" and taskName ~= "Worker" then
++              table.insert(others, taskName)
++            end
++          end
++          table.sort(others)
++          if replicaSpecs["Launcher"] ~= nil then
++            table.insert(taskNames, "Launcher")
++          end
++          if replicaSpecs["Worker"] ~= nil then
++            table.insert(taskNames, "Worker")
++          end
++          for _, taskName in ipairs(others) do
++            table.insert(taskNames, taskName)
++          end
++
++          for _, taskName in ipairs(taskNames) do
++            local spec = replicaSpecs[taskName]
+             if spec ~= nil and spec.template ~= nil then
+               local default_replicas = 1
+               if string.lower(taskName) == "worker" then
+
+--- a/pkg/resourceinterpreter/default/thirdparty/thirdparty_test.go
++++ b/pkg/resourceinterpreter/default/thirdparty/thirdparty_test.go
+@@ -270,9 +270,7 @@ func deepEqual(expected, actualValue any) (bool, error) {
+ 		if err := k8sjson.Unmarshal(expectedJSONBytes, &unmarshaledExpected); err != nil {
+ 			return false, fmt.Errorf("failed to unmarshal expected JSON into []Component: %w", err)
+ 		}
+-		// Sort both slices before comparison to handle non-deterministic order from Lua pairs()
+-		sortComponents(unmarshaledExpected)
+-		sortComponents(typedActual)
++		// Compare in order, because component order must be deterministic.
+ 		return checker.DeepEqual(unmarshaledExpected, typedActual), nil
+```
+- **Lesson**: Test verification utilities must not sanitize or sort non-deterministic production outputs. If a test harness needs to normalize output ordering to pass, the underlying production code is violating determinism.
+
+---
+
+### Incident 2: Lockstep Upstream Toolchain Synchronization for K8s v1.37 Upgrade (MAINT-KARMADA-7975)
+- **Context**: `go.mod`, dependency tree for `sigs.k8s.io/controller-runtime` and `sigs.k8s.io/controller-tools` (`controller-gen`).
+- **What Was Expected**: Upgrading dependencies to support Kubernetes v1.37 requires coordinating both the runtime engine (`controller-runtime`) and the code generators (`controller-gen`) to generate matching DeepCopy, CRD, and Webhook manifests without scheme mismatches or API deprecation panics.
+- **What Actually Happened**: Discrepancies between `controller-gen` (v0.23.0) and `controller-runtime` (v0.25.2) led to mismatched schema validations during CRD validation checks.
+- **Evidence in Repo**: PR #7988 (`Bump controller-runtime to v0.25.2`) and PR #7987 (`Bump controller-gen to v0.23.0`), part of tracking Issue #7975.
+- **Root Cause**: `controller-runtime` v0.25.x introduced changes to runtime logging contracts (enforcing mandatory logger configuration via `log.SetLogger` within 30 seconds of process startup) and updated the underlying `k8s.io/*` dependencies to `v0.37.1`.
+- **Remediation Code Diff**:
+```diff
+--- a/go.mod
++++ b/go.mod
+@@ -52,2 +52,2 @@ require (
+-	sigs.k8s.io/controller-runtime v0.24.1
++	sigs.k8s.io/controller-runtime v0.25.2
+```
+```diff
+--- a/cmd/webhook/app/webhook.go
++++ b/cmd/webhook/app/webhook.go
+@@ -74,6 +74,9 @@ func NewWebhookCommand(ctx context.Context) *cobra.Command {
+ 			logs.InitLogs()
+ 
++			// Starting from version 0.15.0+, controller-runtime expects its consumers to set a logger
++			// through log.SetLogger. If not called within 30 seconds, it sets NullLogSink and errors.
++			controllerruntime.SetLogger(klog.Background())
+ 			return nil
+ 		},
+```
+- **Lesson**: When updating core Kubernetes runtime frameworks, check framework initialization lifecycles (such as global logger bindings and client-go rate limiters) alongside schema definitions.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 1. Micro-Syntax & Token-Level Precision
+- **Safe Dereferencing of Optional Replica Counts**:
+  Workload specs often define `.spec.replicas` as an optional `*int32`. Blind dereferencing causes nil-pointer panics when manifests omit the field (defaulting to 1).
+  ```go
+  // Invariant Pattern: Nil-safe extraction with explicit fallback
+  func (e *workloadInterpreter) responseWithExploreReplica(workload *workloadv1alpha1.Workload) interpreter.Response {
+      res := interpreter.Succeeded("")
+      replicas := new(int32)
+      *replicas = 1 // Default fallback for Kubernetes workloads
+      if workload.Spec.Replicas != nil {
+          replicas = workload.Spec.Replicas
+      }
+      res.Replicas = replicas
+      return res
+  }
+  ```
+- **IP Address Validation Boundary (`net.ParseIP` vs String Checks)**:
+  Empty strings or malformed IP text can pass naive length checks but fail at socket bind time.
+  ```go
+  // cmd/webhook/app/options/validation.go
+  newPath := field.NewPath("Options")
+  if net.ParseIP(o.BindAddress) == nil {
+      errs = append(errs, field.Invalid(newPath.Child("BindAddress"), o.BindAddress, "not a valid textual representation of an IP address"))
+  }
+  ```
+- **Port Invariant Boundaries**:
+  Ports must be validated as inclusive between `0` and `65535`. (Port 0 is reserved for OS-selected ephemeral ports during testing).
+  ```go
+  if o.SecurePort < 0 || o.SecurePort > 65535 {
+      errs = append(errs, field.Invalid(newPath.Child("SecurePort"), o.SecurePort, "must be a valid port between 0 and 65535 inclusive"))
+  }
+  ```
+
+### 2. Infinite Loop & Recursion Guards
+- **Termination Invariant in Workload Splitting**:
+  When dividing an integer replica pool across $N$ member clusters, rounding errors can leave unassigned replicas or cause off-by-one reconciliation thrashing. Karmada requires that:
+  $$\sum_{i=1}^{M} \text{AssignedReplicas}_i == \text{TotalDesiredReplicas}$$
+- **Loop Avoidance in Webhook Status Retention**:
+  Status updates trigger new watch events. If `InterpretStatus` alters dynamic timestamp fields on every invocation, the controller triggers an infinite event-loop storm.
+  ```go
+  // Retain identity check before emitting JSON patch:
+  if reflect.DeepEqual(existingStatus, calculatedStatus) {
+      return interpreter.Succeeded("Status unchanged; eliding patch to break reconciliation loop")
+  }
+  ```
+
+### 3. UI & UX Micro-Mechanics (CLI & Operator Signals)
+- **Terminal Size Invariant**:
+  CLI components (like `karmadactl`) dynamically adapt help-text formatting based on the operator's active terminal width to prevent garbled escape codes in automation pipes:
+  ```go
+  // cmd/webhook/app/webhook.go
+  cols, _, _ := term.TerminalSize(cmd.OutOrStdout())
+  sharedcli.SetUsageAndHelpFunc(cmd, fss, cols)
+  ```
+- **Log Flush on Termination Invariant**:
+  Buffering log writers risk dropping critical panic or exit logs if the process terminates abruptly.
+  ```go
+  // cmd/webhook/main.go
+  func main() {
+      ctx := controllerruntime.SetupSignalHandler()
+      cmd := app.NewWebhookCommand(ctx)
+      exitCode := cli.Run(cmd)
+      logs.FlushLogs() // Non-negotiable: guarantees logs drain before SIGKILL/exit
+      os.Exit(exitCode)
+  }
+  ```
+
+### 4. Backend Concurrency & Memory Safety
+- **Token Bucket Rate Limiting against API Aggregator**:
+  When the Karmada webhook or controller boots, hundreds of informers start up simultaneously. Unthrottled API calls can trigger 429 errors from the Kubernetes API server.
+  ```go
+  // cmd/webhook/app/webhook.go
+  config, err := controllerruntime.GetConfig()
+  config.RateLimiter = flowcontrol.NewTokenBucketRateLimiter(opts.KubeAPIQPS, opts.KubeAPIBurst)
+  ```
+  *Rule*: Always set `KubeAPIQPS` and `KubeAPIBurst` explicitly (defaulting to 40.0 / 60) to protect the control-plane API server from informer synchronization storms.
+- **Strict TLS Minimum Configuration**:
+  ```go
+  // Force TLS 1.3 by default to eliminate legacy cipher vulnerabilities
+  switch opts.TLSMinVersion {
+  case "1.0": config.MinVersion = tls.VersionTLS10
+  case "1.1": config.MinVersion = tls.VersionTLS11
+  case "1.2": config.MinVersion = tls.VersionTLS12
+  case "1.3": config.MinVersion = tls.VersionTLS13
+  }
+  ```
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+- **Raw JSON Unmarshal Failure Traps**:
+  When processing aggregated statuses across member clusters, one malformed member response must not invalidate the entire cluster aggregation payload.
+  ```go
+  for _, item := range req.AggregatedStatus {
+      if item.Status == nil {
+          continue // Defensive guard: skip clusters with unpopulated status
+      }
+      status := &workloadv1alpha1.WorkloadStatus{}
+      if err := json.Unmarshal(item.Status.Raw, status); err != nil {
+          // Explicitly

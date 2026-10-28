@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T07:24:15.256Z",
+  "last_updated": "2026-10-28T07:44:47.918Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -650,14 +650,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
-      "content_hash": "51516e80bba96a1c027d01838bca8c33a9d71c07341ed085d048a89286f6d604",
-      "verified_at": "2026-10-25T14:50:44.675Z",
+      "content_hash": "a9b43c557df740d48677326e3cae3c8c1a6e265e6d33949ed3fd755e43b4c89f",
+      "verified_at": "2026-10-28T07:44:47.917Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T14:50:44.675Z"
+      "last_updated": "2026-10-28T07:44:47.917Z"
     },
     "unsloth/Qwen-Image-2.1-GGUF": {
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
@@ -4341,14 +4341,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-karmada-io-karmada",
-      "content_hash": "a9a8739d06be43c7f55c319564b30151366d0b6c0cbfb69e400d113564656651",
-      "verified_at": "2026-10-27T12:50:26.037Z",
+      "content_hash": "bff9588a8752a3b75d39f61476809d52d141d2920e809e941dbd0d289084ac1d",
+      "verified_at": "2026-10-28T07:34:44.555Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T12:50:26.037Z"
+      "last_updated": "2026-10-28T07:34:44.555Z"
     },
     "milvus-io/bootcamp": {
       "repository": "milvus-io/bootcamp",
@@ -5556,14 +5556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wix-detox",
-      "content_hash": "805fc37ed3e560f2a6cfd0f6fbec29df7cb6192cb9d8f32fe119777a25d15c92",
-      "verified_at": "2026-10-18T23:39:11.055Z",
+      "content_hash": "1e5daa8daa0b1005e625b5f6acfcc7971dfd358a53f3317c256929888a14d2a8",
+      "verified_at": "2026-10-28T07:36:27.840Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:39:11.055Z"
+      "last_updated": "2026-10-28T07:36:27.840Z"
     },
     "koderover/zadig": {
       "repository": "koderover/zadig",
