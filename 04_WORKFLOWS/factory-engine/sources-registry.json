@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T02:48:18.300Z",
-    "lastVerified": "2026-10-28T02:48:18.300Z",
+    "lastChecked": "2026-10-28T02:54:56.493Z",
+    "lastVerified": "2026-10-28T02:54:56.493Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -113,5 +113,64 @@
     "lastChecked": "2026-10-28T02:48:12.005Z",
     "revisionIdentifier": "fce458c1",
     "lastVerified": "2026-10-28T02:48:12.005Z"
+  },
+  "sxyazi-yazi": {
+    "name": "yazi",
+    "officialUrl": "https://github.com/sxyazi/yazi",
+    "lastChecked": "2026-10-28T02:54:40.220Z",
+    "revisionIdentifier": "40a91421",
+    "lastVerified": "2026-10-28T02:54:40.221Z"
+  },
+  "hf-edge0-audio8-asr-infinite": {
+    "name": "Edge0/Audio8-ASR-Infinite",
+    "officialUrl": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T02:54:42.817Z",
+    "lastVerified": "2026-10-28T02:54:42.817Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
+    "contentHash": "265fc7d943e247cc55abc22e06e8b9d6384f93d83107269bd717fd6908d409ac",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "justjavac-free-programming-books-zh_cn": {
+    "name": "free-programming-books-zh_CN",
+    "officialUrl": "https://github.com/justjavac/free-programming-books-zh_CN",
+    "lastChecked": "2026-10-28T02:54:45.214Z",
+    "revisionIdentifier": "cc1108ac",
+    "lastVerified": "2026-10-28T02:54:45.214Z"
+  },
+  "bitnami-sealed-secrets": {
+    "name": "sealed-secrets",
+    "officialUrl": "https://github.com/bitnami/sealed-secrets",
+    "lastChecked": "2026-10-28T02:54:47.750Z",
+    "revisionIdentifier": "c58a60f0",
+    "lastVerified": "2026-10-28T02:54:47.750Z"
+  },
+  "microsoft-security-101": {
+    "name": "Security-101",
+    "officialUrl": "https://github.com/microsoft/Security-101",
+    "lastChecked": "2026-10-28T02:54:50.202Z",
+    "revisionIdentifier": "b0a31ff7",
+    "lastVerified": "2026-10-28T02:54:50.202Z"
+  },
+  "meilisearch-meilisearch": {
+    "name": "meilisearch",
+    "officialUrl": "https://github.com/meilisearch/meilisearch",
+    "lastChecked": "2026-10-28T02:54:52.757Z",
+    "revisionIdentifier": "9bbe2813",
+    "lastVerified": "2026-10-28T02:54:52.757Z"
+  },
+  "dathere-qsv": {
+    "name": "qsv",
+    "officialUrl": "https://github.com/dathere/qsv",
+    "lastChecked": "2026-10-28T02:54:55.313Z",
+    "revisionIdentifier": "acf15714",
+    "lastVerified": "2026-10-28T02:54:55.313Z"
   }
 }

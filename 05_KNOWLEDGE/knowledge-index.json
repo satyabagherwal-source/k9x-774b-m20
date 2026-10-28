@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T02:48:15.711Z",
+  "last_updated": "2026-10-28T02:54:53.874Z",
   "total_verified_learnings": 1155,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -21020,7 +21020,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
       "source_version": "hf-edge0-audio8-asr-infinite",
-      "content_hash": "3ff07436711e26497f34fe7e46c906392fd3a226a3735f5b5442c50ed0e1938c",
+      "content_hash": "265fc7d943e247cc55abc22e06e8b9d6384f93d83107269bd717fd6908d409ac",
       "dossier_path": "07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
       "promoted_rules": [
@@ -21037,7 +21037,7 @@
         {
           "number": 995,
           "title": "Frame-Length Conditioning Invariant",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1313,
@@ -21077,6 +21077,16 @@
         {
           "number": 5128,
           "title": "Semantic VAD for Intelligent Turn-Taking",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5145,
+          "title": "Streaming KV Cache Roll-Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5146,
+          "title": "Semantic VAD Horizon Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -21420,7 +21430,7 @@
         "learn-huggingface-hf-edge0-audio8-asr-infinite-mv41u2xc",
         "learn-huggingface-hf-edge0-audio8-asr-infinite-mv4fpi3i"
       ],
-      "verified_at": "2026-10-28T02:20:40.097Z",
+      "verified_at": "2026-10-28T02:54:53.856Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -78492,15 +78502,15 @@
       "learning_id": "rule-995",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 995,
-      "title": "Frame-Length Conditioning Invariant (Harvested from Edge0/Audio8-ASR-Infinite)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Frame-Length Conditioning Invariant",
+      "source_url": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
+      "source_version": "hf-edge0-audio8-asr-infinite",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.816Z"
+      "verified_at": "2026-10-28T02:54:53.856Z"
     },
     "rule-996": {
       "learning_id": "rule-996",
@@ -141161,6 +141171,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T02:48:15.698Z"
+    },
+    "rule-5145": {
+      "learning_id": "rule-5145",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5145,
+      "title": "Streaming KV Cache Roll-Invariant",
+      "source_url": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
+      "source_version": "hf-edge0-audio8-asr-infinite",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:54:53.856Z"
+    },
+    "rule-5146": {
+      "learning_id": "rule-5146",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5146,
+      "title": "Semantic VAD Horizon Invariant",
+      "source_url": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
+      "source_version": "hf-edge0-audio8-asr-infinite",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:54:53.856Z"
     }
   },
   "aliases": {
