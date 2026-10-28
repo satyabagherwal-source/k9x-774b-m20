@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T20:08:51.526Z",
-    "lastVerified": "2026-10-28T20:08:51.526Z",
+    "lastChecked": "2026-10-28T20:15:56.738Z",
+    "lastVerified": "2026-10-28T20:15:56.738Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -182,11 +182,21 @@
     "lastVerified": "2026-10-28T20:08:43.521Z"
   },
   "meilisearch-meilisearch": {
-    "name": "meilisearch",
+    "name": "meilisearch/meilisearch",
     "officialUrl": "https://github.com/meilisearch/meilisearch",
-    "lastChecked": "2026-10-28T02:54:52.757Z",
-    "revisionIdentifier": "9bbe2813",
-    "lastVerified": "2026-10-28T02:54:52.757Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T20:15:53.514Z",
+    "lastVerified": "2026-10-28T20:15:53.514Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-meilisearch-meilisearch",
+    "contentHash": "bd96eac799af92e489fe49b6a105655763d74bd17c21e5986bf108baa52718d2",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
     "name": "qsv",
@@ -259,14 +269,14 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-28T16:33:47.067Z",
-    "lastVerified": "2026-10-28T16:33:47.067Z",
+    "lastChecked": "2026-10-28T20:15:50.616Z",
+    "lastVerified": "2026-10-28T20:15:50.616Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "d751ae03a042e8ffda6b8c1f3d30bcdafa1f938ac15ee33406e36bf6a05e2ee2",
+    "contentHash": "cbfc8107ff09908a04c24b077058e03320036cf8fd762f9a3c21063cb1ce7e98",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -281,9 +291,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-28T19:46:52.274Z",
+    "lastChecked": "2026-10-28T20:15:51.830Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-28T19:46:52.274Z"
+    "lastVerified": "2026-10-28T20:15:51.830Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -609,9 +619,9 @@
   "kube-rs-kube": {
     "name": "kube",
     "officialUrl": "https://github.com/kube-rs/kube",
-    "lastChecked": "2026-10-28T03:38:01.911Z",
+    "lastChecked": "2026-10-28T20:15:44.229Z",
     "revisionIdentifier": "a38f4c6c",
-    "lastVerified": "2026-10-28T03:38:01.911Z"
+    "lastVerified": "2026-10-28T20:15:44.229Z"
   },
   "defguard-defguard": {
     "name": "defguard",
@@ -6505,5 +6515,36 @@
     "lastChecked": "2026-10-28T20:08:38.219Z",
     "revisionIdentifier": "f26ea0c9",
     "lastVerified": "2026-10-28T20:08:38.219Z"
+  },
+  "killercup-cargo-edit": {
+    "name": "cargo-edit",
+    "officialUrl": "https://github.com/killercup/cargo-edit",
+    "lastChecked": "2026-10-28T20:15:36.703Z",
+    "revisionIdentifier": "5cf6c0ba",
+    "lastVerified": "2026-10-28T20:15:36.703Z"
+  },
+  "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf": {
+    "name": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+    "officialUrl": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T20:15:39.168Z",
+    "lastVerified": "2026-10-28T20:15:39.168Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
+    "contentHash": "98b22cf2ae9582e6bef134ae158406b0416bbca9f2011c62a3e623a008e1ec80",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "arkivanov-decompose": {
+    "name": "Decompose",
+    "officialUrl": "https://github.com/arkivanov/Decompose",
+    "lastChecked": "2026-10-28T20:15:41.774Z",
+    "revisionIdentifier": "42fd8933",
+    "lastVerified": "2026-10-28T20:15:41.774Z"
   }
 }

@@ -5917,3 +5917,6 @@
 | `CYCLE-20261028-ROD0` | `2026-10-28T20:08:39.444Z` | `zenbu-labs/terminal-browser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5388` | Yes (`b620877f...`) |
 | `CYCLE-20261028-RTNF` | `2026-10-28T20:08:46.299Z` | `projectcontour/contour` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5389` | Yes (`f765451d...`) |
 | `CYCLE-20261028-RVQ1` | `2026-10-28T20:08:48.985Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5390, Rule 5391, Rule 5392` | Yes (`61c1551e...`) |
+| `CYCLE-20261028-0OX7` | `2026-10-28T20:15:40.075Z` | `orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md` | Yes (`98b22cf2...`) |
+| `CYCLE-20261028-0XK7` | `2026-10-28T20:15:51.271Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5393` | Yes (`cbfc8107...`) |
+| `CYCLE-20261028-0ZT2` | `2026-10-28T20:15:54.182Z` | `meilisearch/meilisearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5394` | Yes (`bd96eac7...`) |

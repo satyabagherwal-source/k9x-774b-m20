@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T20:08:48.998Z",
+  "last_updated": "2026-10-28T20:15:54.196Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -245,14 +245,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
-      "content_hash": "dbced9fe8961924eba5041bf074cf5cf78ae57feb0edd9d2e40f25fdf53fa18b",
-      "verified_at": "2026-10-25T08:08:18.608Z",
+      "content_hash": "98b22cf2ae9582e6bef134ae158406b0416bbca9f2011c62a3e623a008e1ec80",
+      "verified_at": "2026-10-28T20:15:40.095Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T08:08:18.608Z"
+      "last_updated": "2026-10-28T20:15:40.095Z"
     },
     "autotrust/GEV-26B-Decide-NVFP4": {
       "repository": "autotrust/GEV-26B-Decide-NVFP4",
@@ -3321,14 +3321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-agent-governance-toolkit",
-      "content_hash": "d751ae03a042e8ffda6b8c1f3d30bcdafa1f938ac15ee33406e36bf6a05e2ee2",
-      "verified_at": "2026-10-28T16:33:47.489Z",
+      "content_hash": "cbfc8107ff09908a04c24b077058e03320036cf8fd762f9a3c21063cb1ce7e98",
+      "verified_at": "2026-10-28T20:15:51.286Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T16:33:47.489Z"
+      "last_updated": "2026-10-28T20:15:51.286Z"
     },
     "SynaLinks/synalinks-skills": {
       "repository": "SynaLinks/synalinks-skills",
@@ -9726,14 +9726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meilisearch-meilisearch",
-      "content_hash": "8366daacca0fa102a572950b85c19c99d2e65121fea4a62cb273e046015058fa",
-      "verified_at": "2026-10-27T13:54:35.247Z",
+      "content_hash": "bd96eac799af92e489fe49b6a105655763d74bd17c21e5986bf108baa52718d2",
+      "verified_at": "2026-10-28T20:15:54.195Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:54:35.247Z"
+      "last_updated": "2026-10-28T20:15:54.195Z"
     },
     "dip/cmdk": {
       "repository": "dip/cmdk",

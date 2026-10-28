@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
 > **Source**: github ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
-> **Source Version**: `9bbe2813`  
+> **Source Version**: `ef98c47f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T13:54:34.949Z  
+> **Timestamp**: 2026-10-28T20:15:53.521Z  
 > **Learning ID**: `learn-github-meilisearch-meilisearch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T13:54:34.442Z  
+> **Harvest Timestamp**: 2026-10-28T20:15:53.514Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A lightning-fast search engine API bringing AI-powered hybrid search to your sites and applications.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 59686 stars
+- **Stars / Engagement**: 59697 stars
 
 ---
 
@@ -2049,61 +2049,656 @@ fn check_changed(uuid: Uuid, webhook: &Webhook) -> Result<(), WebhooksError> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3429b350` (2026-10-26)
-**Commit Message**: Merge pull request #6698 from meilisearch/fix-debian-ci
+### Incident Patch 1: `64bbe61f` (2026-10-28)
+**Commit Message**: Merge pull request #6703 from meilisearch/avoid-mul-overflow
 
-Fix Debian CI
+Fix issue with ranking scores greater than 1
 
-**File**: `.github/workflows/publish-apt-brew-pkg.yml` (modified, +5/-1)
+**File**: `crates/milli/src/score_details.rs` (modified, +8/-8)
 ```diff
-@@ -31,9 +31,13 @@ jobs:
-           sudo rm -rf "/usr/share/dotnet" || true
-           sudo rm -rf "/usr/local/lib/android" || true
-           sudo rm -rf "/usr/local/share/boost" || true
-+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-+      - name: Install Rust
-+        run: |
-+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain none
-+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-       - name: Install cargo-deb
-         run: cargo install cargo-deb
--      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-       - name: Build deb package
-         run: cargo deb -p meilisearch -o target/debian/meilisearch.deb
-       - name: Upload debian pkg to release
+@@ -568,8 +568,8 @@ pub enum ScoringStrategy {
+ 
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+ pub struct Words {
+-    pub matching_words: u32,
+-    pub max_matching_words: u32,
++    pub matching_words: u64,
++    pub max_matching_words: u64,
+ }
+ 
+ impl Words {
+@@ -588,8 +588,8 @@ impl Words {
+ /// if no words from the query appear exactly in the document.
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+ pub struct ExactWords {
+-    pub matching_words: u32,
+-    pub max_matching_words: u32,
++    pub matching_words: u64,
++    pub max_matching_words: u64,
+ }
+ 
+ impl ExactWords {
+@@ -610,8 +610,8 @@ impl ExactWords {
+ 
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+ pub struct Typo {
+-    pub typo_count: u32,
+-    pub max_typo_count: u32,
++    pub typo_count: u64,
++    pub max_typo_count: u64,
+ }
+ 
+ impl Typo {
+@@ -643,11 +643,11 @@ pub struct Rank {
+     ///
+     /// The higher the better. Documents with a rank of 0 have a score of 0 and are typically never returned
+     /// (they don't match the query).
+-    pub rank: u32,
++    pub rank: u64,
+     /// The maximum possible rank. Documents with this rank have a score of 1.
+     ///
+     /// The max rank should not be 0.
+-    pub max_rank: u32,
++    pub max_rank: u64,
+ }
+ 
+ impl Rank {
+```
+
+**File**: `crates/milli/src/search/new/graph_based_ranking_rule.rs` (modified, +1/-1)
+```diff
+@@ -248,7 +248,7 @@ impl<'ctx, G: RankingRuleGraphTrait> RankingRule<'ctx, QueryGraph> for GraphBase
+         } = &mut state;
+ 
+         let rank = *next_max_cost - cost;
+-        let score = G::rank_to_score(Rank { rank: rank as u32, max_rank: *next_max_cost as u32 });
++        let score = G::rank_to_score(Rank { rank, max_rank: *next_max_cost });
+ 
+         let mut universe = universe.clone();
+ 
 ```
 
 ---
 
-### Incident Patch 2: `46b13b7e` (2026-10-26)
-**Commit Message**: Fix Debian CI
+### Incident Patch 2: `37af7e4b` (2026-10-28)
+**Commit Message**: Store Ranks as u64 to prevent multiplicative overflow in some configurations
 
-**File**: `.github/workflows/publish-apt-brew-pkg.yml` (modified, +5/-1)
+**File**: `crates/milli/src/score_details.rs` (modified, +8/-8)
 ```diff
-@@ -31,9 +31,13 @@ jobs:
-           sudo rm -rf "/usr/share/dotnet" || true
-           sudo rm -rf "/usr/local/lib/android" || true
-           sudo rm -rf "/usr/local/share/boost" || true
-+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-+      - name: Install Rust
-+        run: |
-+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain none
-+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-       - name: Install cargo-deb
-         run: cargo install cargo-deb
--      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-       - name: Build deb package
-         run: cargo deb -p meilisearch -o target/debian/meilisearch.deb
-       - name: Upload debian pkg to release
+@@ -568,8 +568,8 @@ pub enum ScoringStrategy {
+ 
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+ pub struct Words {
+-    pub matching_words: u32,
+-    pub max_matching_words: u32,
++    pub matching_words: u64,
++    pub max_matching_words: u64,
+ }
+ 
+ impl Words {
+@@ -588,8 +588,8 @@ impl Words {
+ /// if no words from the query appear exactly in the document.
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+ pub struct ExactWords {
+-    pub matching_words: u32,
+-    pub max_matching_words: u32,
++    pub matching_words: u64,
++    pub max_matching_words: u64,
+ }
+ 
+ impl ExactWords {
+@@ -610,8 +610,8 @@ impl ExactWords {
+ 
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+ pub struct Typo {
+-    pub typo_count: u32,
+-    pub max_typo_count: u32,
++    pub typo_count: u64,
++    pub max_typo_count: u64,
+ }
+ 
+ impl Typo {
+@@ -643,11 +643,11 @@ pub struct Rank {
+     ///
+     /// The higher the better. Documents with a rank of 0 have a score of 0 and are typically never returned
+     /// (they don't match the query).
+-    pub rank: u32,
++    pub rank: u64,
+     /// The maximum possible rank. Documents with this rank have a score of 1.
+     ///
+     /// The max rank should not be 0.
+-    pub max_rank: u32,
++    pub max_rank: u64,
+ }
+ 
+ impl Rank {
+```
+
+**File**: `crates/milli/src/search/new/graph_based_ranking_rule.rs` (modified, +1/-1)
+```diff
+@@ -248,7 +248,7 @@ impl<'ctx, G: RankingRuleGraphTrait> RankingRule<'ctx, QueryGraph> for GraphBase
+         } = &mut state;
+ 
+         let rank = *next_max_cost - cost;
+-        let score = G::rank_to_score(Rank { rank: rank as u32, max_rank: *next_max_cost as u32 });
++        let score = G::rank_to_score(Rank { rank, max_rank: *next_max_cost });
+ 
+         let mut universe = universe.clone();
+ 
+```
+
+---
+
+### Incident Patch 3: `5ec13cf5` (2026-10-28)
+**Commit Message**: Merge pull request #6695 from meilisearch/fix-filter-memory-and-time
+
+Fix the memory consumption and runtime of long filters
+
+**File**: `crates/filter-parser/src/condition.rs` (modified, +12/-10)
+```diff
+@@ -118,27 +118,27 @@ pub fn parse_not_exists(input: Span) -> IResult<FilterCondition> {
+ }
+ 
+ fn parse_vectors(input: Span) -> IResult<(Token, Option<Token>, VectorFilter)> {
+-    let (input, _) = multispace0(input)?;
+-    let (input, fid) = tag("_vectors")(input)?;
++    let (input, _) = multispace0(input.clone())?;
++    let (input, fid) = tag("_vectors")(input.clone())?;
+ 
+-    if let Ok((input, _)) = multispace1::<_, crate::Error>(input) {
++    if let Ok((input, _)) = multispace1::<_, crate::Error>(input.clone()) {
+         return Ok((input, (Token::from(fid), None, VectorFilter::None)));
+     }
+ 
+-    let (input, _) = char('.')(input)?;
++    let (input, _) = char('.')(input.clone())?;
+ 
+     // From this point, we are certain this is a vector filter, so our errors must be final.
+     // We could use nom's `cut` but it's better to be explicit about the errors
+ 
+-    if let Ok((_, space)) = tag::<_, _, ()>(" ")(input) {
++    if let Ok((_, space)) = tag::<_, _, ()>(" ")(input.clone()) {
+         return Err(crate::Error::failure_from_kind(
+             space.into(),
+             ErrorKind::VectorFilterMissingEmbedder,
+         ));
+     }
+ 
+     let (input, embedder_name) =
+-        parse_vector_value_cut(input, ErrorKind::VectorFilterInvalidEmbedder)?;
++        parse_vector_value_cut(input.clone(), ErrorKind::VectorFilterInvalidEmbedder)?;
+ 
+     let (input, filter) = alt((
+         map(
+@@ -154,7 +154,7 @@ fn parse_vectors(input: Span) -> IResult<(Token, Option<Token>, VectorFilter)> {
+         value(VectorFilter::None, nom::combinator::success("")),
+     ))(input)?;
+ 
+-    if let Ok((input, point)) = tag::<_, _, ()>(".")(input) {
++    if let Ok((input, point)) = tag::<_, _, ()>(".")(input.clone()) {
+         let opt_value: Option<Token> = parse_vector_value(input).ok().map(|(_, v)| v);
+         let value = opt_value
+             .as_ref()
+@@ -181,15 +181,17 @@ fn parse_vectors(input: Span) -> IResult<(Token, Option<Token>, VectorFilter)> {
+ 
+ /// vectors_exists          = vectors ("EXISTS" | ("NOT" WS+ "EXISTS"))
+ pub fn parse_vectors_exists(input: Span) -> IResult<FilterCondition> {
+-    let (input, (fid, embedder, filter)) = parse_vectors(input)?;
++    let (input, (fid, embedder, filter)) = parse_vectors(input.clone())?;
+ 
+     // Try parsing "EXISTS" first
+-    if let Ok((input, _)) = tag::<_, _, ()>("EXISTS")(input) {
++    if let Ok((input, _)) = tag::<_, _, ()>("EXISTS")(input.clone()) {
+         return Ok((input, FilterCondition::VectorExists { fid, embedder, filter }));
+     }
+ 
+     // Try parsing "NOT EXISTS"
+-    if let Ok((input, _)) = tuple::<_, _, (), _>((tag("NOT"), multispace1, tag("EXISTS")))(input) {
++    if let Ok((input, _)) =
++        tuple::<_, _, (), _>((tag("NOT"), multispace1, tag("EXISTS")))(input.clone())
++    {
+         return Ok((
+             input,
+             FilterCondition::Not(Box::new(FilterCondition::VectorExists { fid, embedder, filter })),
+```
+
+**File**: `crates/filter-parser/src/constraint.rs` (modified, +1/-1)
+```diff
+@@ -76,7 +76,7 @@ impl FilterConstraints {
+                     els.iter()
+                         .map(|el| IndexFilterCondition::Condition {
+                             fid: fid.clone(),
+-                            op: Condition::Equal(el.clone().into()),
++                            op: Condition::Equal(el.clone()),
+                         })
+                         .collect(),
+                 );
+```
+
+**File**: `crates/filter-parser/src/error.rs` (modified, +25/-4)
+```diff
+@@ -301,10 +301,31 @@ impl Display for Error {
+                 "Encountered an internal `{:?}` error while parsing your filter. Please fill an issue", kind
+             )?,
+             ErrorKind::External(ref error) => writeln!(f, "{}", error)?,
+-            ErrorKind::Foreign => writeln!(f, "Was expecting a field name and an condition inside `_foreign(..)` filter but instead found `{escaped_input}`.")?,
++            ErrorKind::Foreign => writeln!(f, "Was expecting a field name and a condition inside `_foreign(..)` filter but instead found `{escaped_input}`.")?,
+         }
+-        let base_column = self.context.get_utf8_column();
+-        let size = self.context.fragment().chars().count();
+-        write!(f, "{}:{} {}", base_column, base_column + size, self.context.extra())
++
++        let span = self.context.as_span();
++        let line = span.location_line();
++        let original = self.context.original();
++        let fragment = self.context.fragment();
++
++        let original_is_multiline = (line > 1) || original.contains('\n');
++        if original_is_multiline {
++            write!(f, "{line}:")?;
++        }
++
++        let fragment_is_multiline = fragment.contains('\n');
++        let fragment_character_count = fragment.chars().count();
++        let fragment_is_multi_character = fragment_character_count > 1;
++
++        let column = span.get_utf8_column();
++        write!(f, "{column}")?;
++
++        if fragment_is_multi_character && !fragment_is_multiline {
++            // -1: fragment_character_count > 1
++            let end_column = fragment_character_count + column - 1;
++            write!(f, "-{end_column}")?;
++        }
++        write!(f, " `{original}`")
+     }
+ }
+```
+
+**File**: `crates/filter-parser/src/lib.rs` (modified, +225/-276)
+```diff
+@@ -47,6 +47,8 @@ mod error;
+ mod value;
+ 
+ use std::fmt::Debug;
++use std::ops::Range;
++use std::sync::Arc;
+ 
+ pub use condition::{parse_condition, parse_to, Condition};
+ use condition::{
+@@ -66,23 +68,25 @@ use nom::combinator::{cut, eof, map, opt};
+ use nom::multi::{many0, separated_list1};
+ use nom::number::complete::recognize_float;
+ use nom::sequence::{delimited, preceded, separated_pair, terminated, tuple};
++use nom::Slice as _;
+ use nom_locate::LocatedSpan;
+ pub(crate) use value::parse_value;
+ use value::word_exact;
+ 
+ use crate::condition::parse_vectors_exists;
+ use crate::error::IResultExt;
+ 
+-pub type Span<'a> = LocatedSpan<&'a str, &'a str>;
++pub type Span<'a> = LocatedSpan<&'a str, Arc<String>>;
+ 
+ type IResult<'a, Ret> = nom::IResult<Span<'a>, Ret, Error>;
+ 
+ const MAX_FILTER_DEPTH: usize = 150;
+ 
+ #[derive(Debug, Clone)]
+ pub struct OwnedSpan {
+-    span: LocatedSpan<String, String>,
+-    utf8_column: usize,
++    original: Arc<String>,
++    // points in range of the `original` string
++    range: Range<usize>,
+ }
+ 
+ pub trait TokenLike {
+@@ -101,97 +105,35 @@ pub trait TokenLike {
+     }
+ }
+ 
+-/// Light version of a token.
+-/// This kind of token doesn't keep the context of the original input.
+-#[derive(Debug, Clone, PartialEq, Eq)]
+-pub struct LightToken {
+-    fragment: String,
+-    utf8_column: usize,
+-    /// If you need to modify the original input you can use the `modified_fragment` field
+-    /// to store your modified input.
+-    modified_fragment: Option<String>,
+-}
+-
+-impl From<LightToken> for Token {
+-    fn from(light_token: LightToken) -> Self {
+-        Token { span: light_token.span(), modified_fragment: light_token.modified_fragment }
+-    }
+-}
+-
+-impl From<&str> for LightToken {
+-    fn from(fragment: &str) -> Self {
+-        LightToken { fragment: fragment.to_string(), utf8_column: 0, modified_fragment: None }
+-    }
+-}
+-
+-impl From<String> for LightToken {
+-    fn from(fragment: String) -> Self {
+-        LightToken { fragment, utf8_column: 0, modified_fragment: None }
+-    }
+-}
+-
+-impl TokenLike for LightToken {
+-    fn fragment(&self) -> &str {
+-        self.modified_fragment.as_ref().unwrap_or(&self.fragment)
+-    }
+-
+-    fn with_modified_fragment(self, modified_fragment: Option<String>) -> Self {
+-        Self { fragment: self.fragment, utf8_column: self.utf8_column, modified_fragment }
+-    }
+-
+-    fn modify_fragment(&mut self, new: String) {
+-        self.modified_fragment = Some(new);
+-    }
+-
+-    fn span(&self) -> OwnedSpan {
+-        let span = LocatedSpan::new_extra(self.fragment.to_string(), String::new());
+-        OwnedSpan { span, utf8_column: self.utf8_column }
+-    }
+-}
+-
+-impl From<Span<'_>> for LightToken {
+-    fn from(span: Span) -> Self {
+-        LightToken {
+-            fragment: span.fragment().to_string(),
+-            utf8_column: span.get_utf8_column(),
+-            modified_fragment: None,
+-        }
++impl OwnedSpan {
++    pub fn from_raw_text(s: String) -> Self {
++        Self { range: 0..s.len(), original: Arc::new(s) }
+     }
+-}
+ 
+-impl OwnedSpan {
+     pub fn fragment(&self) -> &str {
+-        self.span.fragment()
++        // Panic: range is in range of the original
++        &self.original()[self.range.clone()]
+     }
+ 
+-    pub fn extra(&self) -> &str {
+-        self.span.extra.as_str()
++    pub fn original(&self) -> &str {
++        self.original.as_str()
+     }
+ 
+-    pub fn get_utf8_column(&self) -> usize {
+-        self.utf8_column
++    pub fn as_span(&self) -> LocatedSpan<&str> {
++        let original_span = LocatedSpan::new(self.original());
++        original_span.slice(self.range.clone())
+     }
+ }
+ 
+ impl From<Span<'_>> for OwnedSpan {
+     fn from(span: Span) -> Self {
+-        let utf8_column = span.get_utf8_column();
+-        let span = LocatedSpan::new_extra(span.fragment().to_string(), span.extra.to_string());
+-        OwnedSpan { span, utf8_column }
+-    }
+-}
+-
+-/// Allow [CowSpan] to be constructed from &[str]
+-impl From<&str> for OwnedSpan {
+-    fn from(s: &str) -> Self {
+-        OwnedSpan::from(Span::new_extra(s, s))
+-    }
+-}
+-
+-/// Allow [CowSpan] to be constructed from String
+-impl From<String> for OwnedSpan {
+-    fn from(s: String) -> Self {
+-        OwnedSpan::from(Span::new_extra(&s, &s))
++        let offset = span.location_offset();
++        let (fragment, extra) = span.into_fragment_and_extra();
++        // defensive cropping of end_range to the end of the referenced string and start_range to at most end_range
++        // this guarantees that begin_range..end_range is in range of extra
++        let end_range = usize::min(extra.len(), offset + fragment.len());
++        let begin_range = usize::min(offset, end_range);
++        OwnedSpan { original: extra, range: begin_range..end_range }
+     }
+ }
+ 
+@@ -245,14 +187,18 @@ impl TokenLike for Token {
+ }
+ 
+ impl Token {
++    pub fn from_raw_text(text: String) -> Self {
++        Self { span: OwnedSpan::from_raw_text(text), modified_fragment: None }
++    }
++
+     /// Retu
+```
+
+**File**: `crates/filter-parser/src/value.rs` (modified, +24/-21)
+```diff
+@@ -34,7 +34,7 @@ where
+     while let Some((idx, c)) = i.next() {
+         if c == quote {
+             let (rem, output) = input.take_split(idx);
+-            let mut token = T::from(output);
++            let mut token = T::from(output.clone());
+             if let Some(value) = escaped.then(|| unescape(output, quote)) {
+                 token.modify_fragment(value);
+             }
+@@ -52,8 +52,8 @@ where
+         // if it was preceded by a `\` or if it was anything else we can continue to advance
+     }
+ 
+-    let mut token = T::from(input);
+-    if let Some(value) = escaped.then(|| unescape(input, quote)) {
++    let mut token = T::from(input.clone());
++    if let Some(value) = escaped.then(|| unescape(input.clone(), quote)) {
+         token.modify_fragment(value);
+     }
+ 
+@@ -131,7 +131,7 @@ where
+ }
+ 
+ pub fn parse_vector_value_cut<'a>(input: Span<'a>, kind: ErrorKind) -> IResult<'a, Token> {
+-    parse_vector_value(input).map_err(|e| match e {
++    parse_vector_value(input.clone()).map_err(|e| match e {
+         nom::Err::Failure(e) => match e.kind() {
+             ErrorKind::Char(c) if *c == '"' || *c == '\'' => {
+                 crate::Error::failure_from_kind(input.into(), ErrorKind::VectorFilterInvalidQuotes)
+@@ -156,14 +156,14 @@ where
+     let geo_reserved_parse_functions = [parse_geo_point, parse_geo_distance, parse_geo];
+ 
+     for parser in geo_reserved_parse_functions {
+-        if let Err(err) = parser(input) {
++        if let Err(err) = parser(input.clone()) {
+             if err.is_failure() {
+                 return Err(err);
+             }
+         }
+     }
+ 
+-    match parse_geo_radius(input) {
++    match parse_geo_radius(input.clone()) {
+         Ok(_) => return Err(Error::failure_from_kind(input.into(), ErrorKind::MisusedGeoRadius)),
+         // if we encountered a failure it means the user badly wrote a _geoRadius filter.
+         // But instead of showing them how to fix his syntax we are going to tell them they should not use this filter as a value.
+@@ -173,7 +173,7 @@ where
+         _ => (),
+     }
+ 
+-    match parse_geo_bounding_box(input) {
++    match parse_geo_bounding_box(input.clone()) {
+         Ok(_) => {
+             return Err(Error::failure_from_kind(input.into(), ErrorKind::MisusedGeoBoundingBox))
+         }
+@@ -201,7 +201,7 @@ where
+             word_not_keyword,
+         )),
+         multispace0,
+-    )(input)
++    )(input.clone())
+     // if we found nothing in the alt it means the user specified something that was not recognized as a value
+     .map_err(|e: nom::Err<Error>| {
+         e.map_err(|error| {
+@@ -211,7 +211,7 @@ where
+                 ExpectedValueKind::Other
+             };
+             Error::new_from_kind(
+-                error_word(input).unwrap().1.into(),
++                error_word(input.clone()).unwrap().1.into(),
+                 ErrorKind::ExpectedValue(expected_value_kind),
+             )
+         })
+@@ -221,7 +221,7 @@ where
+             // if we found encountered a char failure it means the user had an unmatched quote
+             if matches!(failure.kind(), ErrorKind::Char(_)) {
+                 Error::new_from_kind(
+-                    input.into(),
++                    input.clone().into(),
+                     ErrorKind::MissingClosingDelimiter(failure.char()),
+                 )
+             } else {
+@@ -280,6 +280,8 @@ fn is_keyword(s: &str) -> bool {
+ 
+ #[cfg(test)]
+ pub mod test {
++    use std::sync::Arc;
++
+     use nom::Finish;
+ 
+     use super::*;
+@@ -311,8 +313,9 @@ pub mod test {
+         ];
+ 
+         for (input, expected) in test_case {
+-            let input = Span::new_extra(input, input);
+-            let result = parse_value::<Token>(input);
++            let all_input = Arc::new(input.into());
++            let input = Span::new_extra(input, all_input);
++            let result = parse_value::<Token>(input.clone());
+ 
+             assert!(
+                 result.is_ok(),
+@@ -339,7 +342,7 @@ pub mod test {
+         ];
+ 
+         for (input, remaining, expected_tok, expected_val) in test_case {
+-            let span = Span::new_extra(input, "");
++            let span = Span::new_extra(input, Arc::new(input.into()));
+             let result = quoted_by::<Token>('"', span);
+             assert!(result.is_ok());
+ 
+@@ -354,20 +357,20 @@ pub mod test {
+     fn test_unescape() {
+         // double quote
+         assert_eq!(
+-            unescape(Span::new_extra(r#"Hello \"World\""#, ""), '"'),
++            unescape(Span::new_extra(r#"Hello \"World\""#, Arc::new("".into())), '"'),
+             r#"Hello "World""#.to_string()
+         );
+         assert_eq!(
+-            unescape(Span::new_extra(r#"Hello \\\"World\\\""#, ""), '"'),
++            unescape(Span::new_extra(r#"Hello \\\"World\\\""#, Arc::new("".into())), '"'),
+             r#"Hello \\"World\\""#.to_string()
+         );
+         // simple quote
+         assert_eq!(
+-            unescape(Span::new_extra(r"Hello \'World\'", ""), '\''),
++            unescape(Span::new_extr
+```
+
+**File**: `crates/index-scheduler/src/scheduler/snapshots/test_failure.rs/fail_in_process_batch_for_document_deletion/after_removing_the_documents.snap` (modified, +1/-1)
+```diff
+@@ -10,7 +10,7 @@ source: crates/index-scheduler/src/scheduler/test_failure.rs
+ 1 {uid: 1, batch_uid: 1, status: succeeded, details: { received_documents: 3, indexed_documents: Some(3) }, kind: DocumentAdditionOrUpdate { index_uid: "doggos", primary_key: Some("id"), method: ReplaceDocuments, content_file: 00000000-0000-0000-0000-000000000000, documents_count: 3, allow_index_creation: true, on_missing_document: Create }}
+ 2 {uid: 2, batch_uid: 2, status: succeeded, details: { received_document_ids: 1, deleted_documents: Some(1) }, kind: DocumentDeletion { index_uid: "doggos", documents_ids: ["1"] }}
+ 3 {uid: 3, batch_uid: 2, status: failed, error: ResponseError { code: 200, message: "Invalid syntax for the filter parameter: `expected String, Array, found: true`.", error_code: "invalid_document_filter", error_type: "invalid_request", error_link: "https://docs.meilisearch.com/errors#invalid_document_filter" }, details: { original_filter: true, deleted_documents: Some(0) }, kind: DocumentDeletionByFilter { index_uid: "doggos", filter_expr: Bool(true) }}
+-4 {uid: 4, batch_uid: 2, status: failed, error: ResponseError { code: 200, message: "Index `doggos`: Attribute `id` is not filterable. Available filterable attribute patterns are: `catto`.\n1:3 id = 2", error_code: "invalid_document_filter", error_type: "invalid_request", error_link: "https://docs.meilisearch.com/errors#invalid_document_filter" }, details: { original_filter: "id = 2", deleted_documents: Some(0) }, kind: DocumentDeletionByFilter { index_uid: "doggos", filter_expr: String("id = 2") }}
++4 {uid: 4, batch_uid: 2, status: failed, error: ResponseError { code: 200, message: "Index `doggos`: Attribute `id` is not filterable. Available filterable attribute patterns are: `catto`.\n1-2 `id = 2`", error_code: "invalid_document_filter", error_type: "invalid_request", error_link: "https://docs.meilisearch.com/errors#invalid_document_filter" }, details: { original_filter: "id = 2", deleted_documents: Some(0) }, kind: DocumentDeletionByFilter { index_uid: "doggos", filter_expr: String("id = 2") }}
+ 5 {uid: 5, batch_uid: 2, status: succeeded, details: { original_filter: "catto EXISTS", deleted_documents: Some(1) }, kind: DocumentDeletionByFilter { index_uid: "doggos", filter_expr: String("catto EXISTS") }}
+ ----------------------------------------------------------------------
+ ### Status:
+```
+
+**File**: `crates/meilisearch/src/documents_retrieval/preprocessing.rs` (modified, +5/-6)
+```diff
+@@ -9,8 +9,7 @@ use meilisearch_types::index_uid::{ForeignIndexUid, IndexUid, SourceFieldName, S
+ use meilisearch_types::milli::progress::Progress;
+ use meilisearch_types::milli::search::steps::{PerformRetrievalStep, TotalProcessingTimeStep};
+ use meilisearch_types::milli::{
+-    self, filtered_universe, Filter, IndexFilter, IndexFilterCondition, LightToken, Token,
+-    TokenLike,
++    self, filtered_universe, Filter, IndexFilter, IndexFilterCondition, Token, TokenLike,
+ };
+ use meilisearch_types::{Document, ForeignKeysPerIndex};
+ use serde_json::{Map, Value};
+@@ -227,7 +226,7 @@ async fn local_process_foreign_filters(
+     foreign_filters: &[ForeignFilterWithContext],
+     progress: &Progress,
+     auth_filter: &AuthFilter,
+-) -> Result<Vec<Vec<LightToken>>, ResponseError> {
++) -> Result<Vec<Vec<Token>>, ResponseError> {
+     let _step = progress.update_progress_scoped(PerformRetrievalStep::ExecuteLocal);
+     let index_scheduler = index_scheduler.clone();
+     let foreign_filters = foreign_filters.to_vec();
+@@ -282,7 +281,7 @@ async fn local_process_foreign_filters(
+         // Build the In filter for each filter
+         for (filter_index, docids) in filter_indices.iter().zip(filters_internal_docids)
+         {
+-            let inner: Result<Vec<_>, _> = foreign_index.external_id_of(&foreign_rtxn, &fields_ids_map, docids)?.into_iter().map(|id| id.map(|id| id.into())).collect();
++            let inner: Result<Vec<_>, _> = foreign_index.external_id_of(&foreign_rtxn, &fields_ids_map, docids)?.into_iter().map(|id| id.map(Token::from_raw_text)).collect();
+ 
+             // Safety (Data oriented): `filter_index` is an index into the `foreign_filters_external_docids` vector, so it's safe to dereference it
+             foreign_filters_external_docids[*filter_index] = inner?;
+@@ -298,7 +297,7 @@ async fn federated_process_foreign_filters(
+     foreign_filters: &[ForeignFilterWithContext],
+     progress: &Progress,
+     auth_filter: &AuthFilter,
+-) -> Result<(Vec<Vec<LightToken>>, RemoteErrors), ResponseError> {
++) -> Result<(Vec<Vec<Token>>, RemoteErrors), ResponseError> {
+     let params =
+         ProxySearchParams::new_with_deadline_from_env(index_scheduler.web_client().clone());
+ 
+@@ -351,7 +350,7 @@ async fn federated_process_foreign_filters(
+             let mut federation_hit = take_federation_hit(&mut document);
+             let external_docid = take_document_id_from_federation_hit(&mut federation_hit);
+             foreign_filters_external_docids[query_id]
+-                .push(LightToken::from(external_docid.into_inner()));
++                .push(Token::from_raw_text(external_docid.into_inner()));
+         }
+     }
+ 
+```
+
+**File**: `crates/meilisearch/src/search/federated/network/enterprise_edition.rs` (modified, +2/-2)
+```diff
+@@ -25,8 +25,8 @@ pub fn partition_shards<Q: ProxyQuery>(
+         let mut query = query.proxy_with_remote(remote);
+ 
+         let shard_filter = Some(IndexFilter::from(IndexFilterCondition::Condition {
+-            fid: Token::from(SHARD_FIELD),
+-            op: Condition::Equal(Token::from(shard.as_ref())),
++            fid: Token::from_raw_text(SHARD_FIELD.into()),
++            op: Condition::Equal(Token::from_raw_text(shard.as_ref().to_owned())),
+         }));
+ 
+         let filter = Q::filter_field(&mut query);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6703** (2026-10-28): Fix issue with ranking scores greater than 1 (@dureuill)
 - **PR #6698** (2026-10-26): Fix Debian CI (@curquiza)
 - **PR #6697** (2026-10-26): Update version for the next release (v1.56.0) in Cargo.toml (@meili-bot)
+- **PR #6695** (2026-10-28): Fix the memory consumption and runtime of long filters (@dureuill)
 - **PR #6692** (2026-10-19): docs(readme): update for clarity and AI discoverability (GEO/AEO) (@mayasssh)
 - **PR #6690** (closed): Acquire search queue permit in /similar route (#6666) (@ronitgupta138)
-- **PR #6689** (2026-10-26): Reduce number of cargo flaky iterations to 60 (@dureuill)
-- **PR #6688** (closed): REMOVE: print vectors in test (@ManyTheFish)
 
 ---
 
@@ -2123,32 +2718,42 @@ Fix Debian CI
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #6698 from meilisearch/fix-debian-ci
+## X. Merge pull request #6703 from meilisearch/avoid-mul-overflow
 
 **RULE**:
-When implementing operations in `.github/workflows/publish-apt-brew-pkg.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/milli/src/score_details.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3429b350`: Merge pull request #6698 from meilisearch/fix-debian-ci. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `64bbe61f`: Merge pull request #6703 from meilisearch/avoid-mul-overflow. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/publish-apt-brew-pkg.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/milli/src/score_details.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-      - name: Install Rust
-        run: |
-          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain none
-          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+    pub matching_words: u64,
+    pub max_matching_words: u64,
+    pub matching_words: u64,
+    pub max_matching_words: u64,
+    pub typo_count: u64,
+    pub max_typo_count: u64,
+    pub rank: u64,
+    pub max_rank: u64,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+    pub matching_words: u32,
+    pub max_matching_words: u32,
+    pub matching_words: u32,
+    pub max_matching_words: u32,
+    pub typo_count: u32,
+    pub max_typo_count: u32,
+    pub rank: u32,
+    pub max_rank: u32,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3429b350` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `64bbe61f` are properly handled with clean fallback behavior.

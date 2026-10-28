@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T20:08:48.994Z",
-  "total_cycles_completed": 5894,
-  "total_learnings_persisted": 5894,
-  "total_rules_promoted": 5354,
+  "last_updated": "2026-10-28T20:15:54.191Z",
+  "total_cycles_completed": 5897,
+  "total_learnings_persisted": 5897,
+  "total_rules_promoted": 5356,
   "history": [
-    {
-      "timestamp": "2026-10-28T06:24:49.824Z",
-      "repository": "openreplay/openreplay",
-      "learningId": "learn-github-openreplay-openreplay",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T06:35:55.819Z",
-      "repository": "akhilaaa3/Jev-Omni",
-      "learningId": "learn-huggingface-akhilaaa3-jev-omni",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T06:42:07.511Z",
-      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T06:52:40.409Z",
       "repository": "ratatui/ratatui",
@@ -1403,6 +1382,27 @@
       "repository": "Cactus-Compute/whistle",
       "learningId": "learn-huggingface-cactus-compute-whistle",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T20:15:40.091Z",
+      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T20:15:51.281Z",
+      "repository": "microsoft/agent-governance-toolkit",
+      "learningId": "learn-github-microsoft-agent-governance-toolkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T20:15:54.191Z",
+      "repository": "meilisearch/meilisearch",
+      "learningId": "learn-github-meilisearch-meilisearch",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

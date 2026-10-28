@@ -235,8 +235,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
     "sourceVersion": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "dbced9fe8961924eba5041bf074cf5cf78ae57feb0edd9d2e40f25fdf53fa18b",
-    "lastHarvestedAt": "2026-10-25T08:08:18.600Z",
+    "contentHash": "98b22cf2ae9582e6bef134ae158406b0416bbca9f2011c62a3e623a008e1ec80",
+    "lastHarvestedAt": "2026-10-28T20:15:40.079Z",
     "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf"
   },
   "hf-autotrust-gev-26b-decide-nvfp4": {
@@ -2123,10 +2123,10 @@
     "repository": "microsoft/agent-governance-toolkit",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/agent-governance-toolkit",
-    "sourceVersion": "ea12b738",
+    "sourceVersion": "1b680536",
     "license": "MIT",
-    "contentHash": "d751ae03a042e8ffda6b8c1f3d30bcdafa1f938ac15ee33406e36bf6a05e2ee2",
-    "lastHarvestedAt": "2026-10-28T16:33:47.482Z",
+    "contentHash": "cbfc8107ff09908a04c24b077058e03320036cf8fd762f9a3c21063cb1ce7e98",
+    "lastHarvestedAt": "2026-10-28T20:15:51.275Z",
     "learningId": "learn-github-microsoft-agent-governance-toolkit"
   },
   "synalinks-synalinks-skills": {
@@ -6423,10 +6423,10 @@
     "repository": "meilisearch/meilisearch",
     "platform": "github",
     "sourceUrl": "https://github.com/meilisearch/meilisearch",
-    "sourceVersion": "9bbe2813",
+    "sourceVersion": "ef98c47f",
     "license": "NOASSERTION",
-    "contentHash": "8366daacca0fa102a572950b85c19c99d2e65121fea4a62cb273e046015058fa",
-    "lastHarvestedAt": "2026-10-27T13:54:35.240Z",
+    "contentHash": "bd96eac799af92e489fe49b6a105655763d74bd17c21e5986bf108baa52718d2",
+    "lastHarvestedAt": "2026-10-28T20:15:54.186Z",
     "learningId": "learn-github-meilisearch-meilisearch"
   },
   "pacocoursey-cmdk": {

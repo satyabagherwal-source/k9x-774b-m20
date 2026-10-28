@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
-> **Source Version**: `ea12b738`  
+> **Source Version**: `1b680536`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T16:33:47.072Z  
+> **Timestamp**: 2026-10-28T20:15:50.624Z  
 > **Learning ID**: `learn-github-microsoft-agent-governance-toolkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T16:33:47.067Z  
+> **Harvest Timestamp**: 2026-10-28T20:15:50.616Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -405,261 +405,85 @@ export function writeHookOutput(payload) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e9250241` (2026-10-28)
-**Commit Message**: fix(agent-sre): stop blue-green validation at its timeout (#4470)
+### Incident Patch 1: `1b680536` (2026-10-28)
+**Commit Message**: fix(agent-sre): prefer the higher-quality model at equal cost in CostOptimizer.recommend (#4469)
 
-BlueGreenManager.validate counted elapsed time by adding the check
-interval after each failed health check. The time a check took never
-counted, a zero interval retried a failing check forever, and a
-negative interval raised from time.sleep with the environment left in
-VALIDATING. Measure the timeout on the monotonic clock and sleep for
-the interval, capped at the time left and never negative.
-
-Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -47,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **`agent-sre` A/B experiments split traffic by relative variant weights.** `Experiment.assign` compared one `random.random()` draw against the running sum of the weights, so it only worked when the weights summed to 1: three variants with the default weight 0.5 never sent traffic to the third, percentage weights such as 70/30 sent everything to the first, and two variants weighted 0.1 split 10/90. Each variant now gets its weight divided by the total of all weights, and a variant with a weight of 0 or less gets no traffic.
- - **`agent-lightning` `GovernedEnvironment` includes the success bonus in the episode's `total_reward`.** `step` added the reward to `EnvironmentState.total_reward` before adding `success_bonus` for a clean step, so `total_reward` (and `info["total_reward"]`) left out every bonus that `step` returned: with the default config, a clean step returned 10.9 but raised `total_reward` by 0.9, and an episode's `total_reward` was not the sum of its step rewards. The reward is now accumulated after the bonus, and the step order in the Agent Lightning spec is updated to match (#4419).
- - **`agent-sre` GitOps rollout specs keep their step durations, manual gates and rollback operators in the reconciler.** `RolloutSpec.to_dict()` wrote steps with `duration_seconds` and `manual_gate` and rollback conditions with `comparator`, while the `AgentRollout` CRD and `k8s.Reconciler` read `durationSeconds`, `manualGate` and `operator`. A spec passed to the reconciler therefore ran every step for the default 3600 seconds without its manual gate, and every rollback condition became `gte`: `RollbackCondition("success_rate", 0.9, comparator="lt")` rolled back at a healthy 0.99. `to_dict()` now writes the CRD field names, and the reconciler also reads an analysis criterion's `comparator` instead of always using `gte`.
-+- **`agent-sre` `BlueGreenManager.validate` stops at `validation_timeout_seconds`.** It counted elapsed time by adding `health_check_interval_seconds` after each failed check, so the time a check took never counted (with a 30-second check, a 5-second interval and the default 60-second timeout it ran 12 checks over about six minutes), a `health_check_interval_seconds` of 0 retried a failing check forever, and a negative interval raised from `time.sleep` and left the environment in `VALIDATING`. The timeout is now measured on the monotonic clock, and the wait between checks is the interval, never more than the time left and never negative.
- 
- ### Added
- - **.NET `PolicyEngine.EvaluateAsync`** — added an async evaluation path so external policy backends whose work is I/O-bound (`IExternalPolicyBackend.EvaluateAsync`) are awaited instead of blocked on with `GetAwaiter().GetResult()`. Backends are evaluated sequentially to preserve registration order; the synchronous `Evaluate` keeps its exact prior behavior. The token is honored on entry and before each backend call, so an already-cancelled token throws `OperationCanceledException` (including on the no-backend in-memory path) and no `PolicyDecision` is produced; backend exceptions propagate rather than being turned into a deny, matching `Evaluate` (#3778).
-```
-
-**File**: `agent-governance-python/agent-sre/src/agent_sre/delivery/blue_green.py` (modified, +6/-5)
-```diff
-@@ -173,20 +173,21 @@ def validate(self, health_check_fn: Callable[..., bool]) -> bool:
-         self._emit("validate_start", updated.name)
- 
-         is_healthy = False
--        elapsed = 0.0
-         interval = self.config.health_check_interval_seconds
--        timeout = self.config.validation_timeout_seconds
-+        # Measure the timeout on the clock, so the time each health check takes
-+        # counts against it and a zero interval cannot keep the loop going.
-+        deadline = time.monotonic() + self.config.validation_timeout_seconds
-         while True:
-             try:
-                 if health_check_fn():
-                     is_healthy = True
-                     break
-             except Exception:
-                 logger.debug("Health check failed for %s", inactive.name.value, exc_info=True)
--            elapsed += interval
--            if elapsed >= timeout:
-+            remaining = deadline - time.monotonic()
-+            if remaining <= 0:
-                 break
--            time.sleep(interval)
-+            time.sleep(max(0.0, min(interval, remaining)))
- 
-         health = "healthy" if is_healthy else "unhealthy"
-         updated = self._env(updated.name).model_copy(update={"health_status": health})
-```
-
-**File**: `agent-governance-python/agent-sre/tests/test_blue_green.py` (modified, +97/-0)
-```diff
-@@ -80,6 +80,103 @@ def bad_check() -> bool:
-         assert result is False
- 
- 
-+class _FakeClock:
-+    """Stands in for the ``time`` module that ``blue_green`` uses."""
-+
-+    def __init__(self) -> None:
-+        self.now = 0.0
-+
-+    def monotonic(self) -> float:
-+        return self.now
-+
-+    def time(self) -> float:
-+        return self.now
-+
-+    def sleep(self, seconds: float) -> None:
-+        # Like time.sleep, reject a negative length.
-+        if seconds < 0:
-+            raise ValueError("sleep length must be non-negative")
-+        self.now += seconds
-+
-+
-+class _TooManyChecks(BaseException):
-+    """Escapes ``validate``'s ``except Exception`` to stop a loop that never ends."""
-+
-+
-+class TestValidateTimeout:
-+    """The validation timeout is measured on the clock, not by summing intervals."""
-+
-+    def test_time_spent_in_health_checks_counts_against_timeout(
-+        self, monkeypatch: pytest.MonkeyPatch
-+    ) -> None:
-+        clock = _FakeClock()
-+        monkeypatch.setattr("agent_sre.delivery.blue_green.time", clock)
-+        calls = []
-+
-+        def slow_failing_check() -> bool:
-+            calls.append(clock.now)
-+            clock.now += 30  # each check takes 30 seconds
-+            return False
-+
-+        mgr = BlueGreenManager(
-+            config=BlueGreenConfig(
-+                health_check_interval_seconds=5,
-+                validation_timeout_seconds=60,
-+            )
-+        )
-+        mgr.deploy("v2.0.0")
-+
-+        assert mgr.validate(slow_failing_check) is False
-+        # Checks start at 0s and 35s; the second one ends past the 60s timeout.
-+        assert calls == [0.0, 35.0]
-+
-+    def test_zero_interval_stops_at_timeout(self, monkeypatch: pytest.MonkeyPatch) -> None:
-+        clock = _FakeClock()
-+        monkeypatch.setattr("agent_sre.delivery.blue_green.time", clock)
-+        calls = 0
-+
-+        def failing_check() -> bool:
-+            nonlocal calls
-+            calls += 1
-+            if calls > 1000:
-+                raise _TooManyChecks
-+            clock.now += 1  # each check takes 1 second
-+            return False
-+
-+        mgr = BlueGreenManager(
-+            config=BlueGreenConfig(
-+                health_check_interval_seconds=0,
-+                validation_timeout_seconds=10,
-+            )
-+        )
-+        mgr.deploy("v2.0.0")
-+
-+        assert mgr.validate(failing_check) is False
-+        assert calls == 10
-+        inactive = mgr.get_inactive()
-+        assert inactive.health_status == "unhealthy"
-+        assert inactive.state == EnvironmentState.INACTIVE
-+
-+    def test_negative_interval_does_not_raise(self, monkeypatch: pytest.MonkeyPatch) -> None:
-+        clock = _FakeClock()
-+        monkeypatch.setattr("agent_sre.delivery.blue_green.time", clock)
-+
-+        def failing_check() -> bool:
-+            clock.now += 1
-+            return False
-+
-+        mgr = BlueGreenManager(
-+            config=BlueGreenConfig(
-+                health_check_interval_seconds=-1,
-+                validation_timeout_seconds=3,
-+            )
-+        )
-+        mgr.deploy("v2.0.0")
-+
-+        assert mgr.validate(failing_check) is False
-+        assert mgr.get_inactive().state == EnvironmentState.INACTIVE
-+
-+
- class TestSwitch:
-     """Switch traffic between environments."""
- 
-```
-
----
-
-### Incident Patch 2: `ea12b738` (2026-10-28)
-**Commit Message**: fix(agent-sre): block the end minute of a chaos blackout window to its last second (#4468)
-
-BlackoutWindow.contains compared the full time of day, seconds included,
-with HH:MM bounds, so only second 0 of the end minute was blacked out. A
-"59 23 * * *" schedule checked at 23:59:30 matched its cron expression
-(croniter matches to the minute) and ran inside a 17:00-23:59 blackout.
-Truncate the time to the minute before comparing, so both bounds cover
-their whole minute.
+recommend sorted feasible models by cost alone, so among models with the
+same cost the one registered first was marked is_optimal and chosen by
+suggest_routing, even when another had a higher quality score and was the
+only one of the two on the Pareto frontier. Break ties by quality, as
+#4211 did for pareto_frontier.
 
 Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -48,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **`agent-lightning` `GovernedEnvironment` includes the success bonus in the episode's `total_reward`.** `step` added the reward to `EnvironmentState.total_reward` before adding `success_bonus` for a clean step, so `total_reward` (and `info["total_reward"]`) left out every bonus that `step` returned: with the default config, a clean step returned 10.9 but raised `total_reward` by 0.9, and an episode's `total_reward` was not the sum of its step rewards. The reward is now accumulated after the bonus, and the step order in the Agent Lightning spec is updated to match (#4419).
+@@ -49,6 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - **`agent-sre` GitOps rollout specs keep their step durations, manual gates and rollback operators in the reconciler.** `RolloutSpec.to_dict()` wrote steps with `duration_seconds` and `manual_gate` and rollback conditions with `comparator`, while the `AgentRollout` CRD and `k8s.Reconciler` read `durationSeconds`, `manualGate` and `operator`. A spec passed to the reconciler therefore ran every step for the default 3600 seconds without its manual gate, and every rollback condition became `gte`: `RollbackCondition("success_rate", 0.9, comparator="lt")` rolled back at a healthy 0.99. `to_dict()` now writes the CRD field names, and the reconciler also reads an analysis criterion's `comparator` instead of always using `gte`.
  - **`agent-sre` `BlueGreenManager.validate` stops at `validation_timeout_seconds`.** It counted elapsed time by adding `health_check_interval_seconds` after each failed check, so the time a check took never counted (with a 30-second check, a 5-second interval and the default 60-second timeout it ran 12 checks over about six minutes), a `health_check_interval_seconds` of 0 retried a failing check forever, and a negative interval raised from `time.sleep` and left the environment in `VALIDATING`. The timeout is now measured on the monotonic clock, and the wait between checks is the interval, never more than the time left and never negative.
-+- **`agent-sre` chaos blackout windows block their end minute until its last second.** `BlackoutWindow.contains` compared the full time of day, seconds included, with `HH:MM` bounds, so only second 0 of the end minute counted as blacked out. With the example's `17:00`–`23:59` window, a `59 23 * * *` schedule checked at 23:59:30 matched its cron expression (which `croniter` matches to the minute) and ran inside the blackout. The time is now truncated to the minute before the comparison, so both bounds cover their whole minute.
+ - **`agent-sre` chaos blackout windows block their end minute until its last second.** `BlackoutWindow.contains` compared the full time of day, seconds included, with `HH:MM` bounds, so only second 0 of the end minute counted as blacked out. With the example's `17:00`–`23:59` window, a `59 23 * * *` schedule checked at 23:59:30 matched its cron expression (which `croniter` matches to the minute) and ran inside the blackout. The time is now truncated to the minute before the comparison, so both bounds cover their whole minute.
++- **`agent-sre` `CostOptimizer.recommend` prefers the higher-quality model at equal cost.** It sorted the feasible models by cost alone, so among models with the same cost the one registered first was marked `is_optimal`, and `suggest_routing` routed to it, even when another model of the same cost had a higher quality score and was the only one of the two on the Pareto frontier. Ties are now broken by quality, as #4211 did for `pareto_frontier`.
  
  ### Added
  - **.NET `PolicyEngine.EvaluateAsync`** — added an async evaluation path so external policy backends whose work is I/O-bound (`IExternalPolicyBackend.EvaluateAsync`) are awaited instead of blocked on with `GetAwaiter().GetResult()`. Backends are evaluated sequentially to preserve registration order; the synchronous `Evaluate` keeps its exact prior behavior. The token is honored on entry and before each backend call, so an already-cancelled token throws `OperationCanceledException` (including on the no-backend in-memory path) and no `PolicyDecision` is produced; backend exceptions propagate rather than being turned into a deny, matching `Evaluate` (#3778).
 ```
 
-**File**: `agent-governance-python/agent-sre/src/agent_sre/chaos/scheduler.py` (modified, +7/-2)
+**File**: `agent-governance-python/agent-sre/src/agent_sre/cost/optimizer.py` (modified, +3/-1)
 ```diff
-@@ -18,14 +18,19 @@ class BlackoutWindow(BaseModel):
-     reason: str = ""
+@@ -84,7 +84,9 @@ def recommend(
+                 continue
+             estimates.append(self.estimate_cost(model, task))
  
-     def contains(self, now: datetime) -> bool:
--        """Check if the given datetime falls within this blackout window."""
-+        """Check if the given datetime falls within this blackout window.
-+
-+        The bounds are whole minutes and both are inclusive, so the end
-+        minute is blocked until its last second, matching the minute
-+        precision at which cron expressions are matched.
-+        """
-         try:
-             start_time = _parse_time(self.start)
-             end_time = _parse_time(self.end)
-         except ValueError:
-             return False
+-        estimates.sort(key=lambda e: e.estimated_cost)
++        # At equal cost, recommend the highest quality first, as
++        # pareto_frontier does.
++        estimates.sort(key=lambda e: (e.estimated_cost, -e.estimated_quality))
  
--        current_time = now.time()
-+        current_time = now.time().replace(second=0, microsecond=0)
-         if start_time <= end_time:
-             return start_time <= current_time <= end_time
-         # Wraps midnight (e.g. 22:00 - 06:00)
+         if estimates:
+             estimates[0].is_optimal = True
 ```
 
-**File**: `agent-governance-python/agent-sre/tests/test_chaos_scheduler.py` (modified, +20/-0)
+**File**: `agent-governance-python/agent-sre/tests/test_cost_optimizer.py` (modified, +15/-0)
 ```diff
-@@ -131,6 +131,26 @@ def test_multiple_blackouts(self) -> None:
-         at_noon = datetime(2025, 1, 6, 12, 30, 0, tzinfo=timezone.utc)
-         assert scheduler.is_in_blackout(sched, at_noon) is True
+@@ -147,6 +147,16 @@ def test_optimal_flag_on_cheapest(
+         assert result.recommendations[0].is_optimal is True
+         assert all(r.is_optimal is False for r in result.recommendations[1:])
  
-+    @pytest.mark.parametrize("second", [0, 30, 59])
-+    def test_end_minute_is_blocked_to_its_last_second(self, second: int) -> None:
-+        bw = BlackoutWindow(start="17:00", end="23:59", reason="after hours")
-+        schedule = _make_schedule(cron="59 23 * * *", blackouts=[bw])
-+        scheduler = ChaosScheduler([schedule])
-+        at = datetime(2025, 1, 6, 23, 59, second, tzinfo=timezone.utc)
-+        assert scheduler.is_in_blackout(schedule, at) is True
-+        assert scheduler.should_run("s1", at) is False
++    @pytest.mark.parametrize("better_first", [False, True])
++    def test_equal_cost_recommends_higher_quality(
++        self, summarization_task: TaskProfile, better_first: bool
++    ) -> None:
++        better = CHEAP_MODEL.model_copy(update={"name": "better", "quality_score": 0.9})
++        models = [better, CHEAP_MODEL] if better_first else [CHEAP_MODEL, better]
++        result = CostOptimizer(models).recommend(summarization_task)
++        assert [r.model_name for r in result.recommendations] == ["better", "gpt-4o-mini"]
++        assert [r.is_optimal for r in result.recommendations] == [True, False]
 +
-+    def test_midnight_wrap_end_minute_is_blocked(self) -> None:
-+        bw = BlackoutWindow(start="22:00", end="06:00", reason="overnight")
-+        at = datetime(2025, 1, 6, 6, 0, 45, tzinfo=timezone.utc)
-+        assert bw.contains(at) is True
-+
-+    def test_minute_after_end_is_not_blocked(self) -> None:
-+        bw = BlackoutWindow(start="12:00", end="13:00", reason="lunch")
-+        assert bw.contains(datetime(2025, 1, 6, 13, 0, 59, tzinfo=timezone.utc)) is True
-+        assert bw.contains(datetime(2025, 1, 6, 13, 1, 0, tzinfo=timezone.utc)) is False
-+        assert bw.contains(datetime(2025, 1, 6, 11, 59, 59, tzinfo=timezone.utc)) is False
+     def test_savings_calculation(
+         self, optimizer: CostOptimizer, summarization_task: TaskProfile
+     ) -> None:
+@@ -235,6 +245,11 @@ def test_assigns_cheap_model_to_easy_tasks(
+         # Code gen (high quality + latency constraint) should get mid-tier
+         assert routing["code_gen"] == "gpt-4o"
+ 
++    def test_equal_cost_routes_to_higher_quality(self, classification_task: TaskProfile) -> None:
++        better = CHEAP_MODEL.model_copy(update={"name": "better", "quality_score": 0.9})
++        routing = CostOptimizer([CHEAP_MODEL, better]).suggest_routing([classification_task])
++        assert routing["classification"] == "better"
 +
  
  # ---------------------------------------------------------------------------
- # Progressive severity
+ # Edge cases
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #4470** (2026-10-28): fix(agent-sre): stop blue-green validation at its timeout (@ShivamSharma43)
+- **PR #4469** (2026-10-28): fix(agent-sre): prefer the higher-quality model at equal cost in CostOptimizer.recommend (@ShivamSharma43)
 - **PR #4468** (2026-10-28): fix(agent-sre): block the end minute of a chaos blackout window to its last second (@ShivamSharma43)
 - **PR #4466** (2026-10-27): chore(deps-dev): Bump setuptools from 83.0.0 to 84.1.0 in /agent-governance-python/agent-learning (@dependabot[bot])
 - **PR #4465** (2026-10-27): chore(deps): Bump certifi from 2026.5.20 to 2026.10.18 in /agent-governance-python/agent-marketplace (@dependabot[bot])
 - **PR #4464** (closed): fix(python): add AgentControl close support (@MaryamIjazMaryam)
-- **PR #4463** (2026-10-27): chore(deps): Bump zod from 4.4.3 to 4.6.7 in /agent-governance-python/agent-mesh/packages/mcp-proxy (@dependabot[bot])
 
 ---
 
@@ -679,13 +503,13 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agent-sre): stop blue-green validation at its timeout (#4470)
+## X. agent-sre): prefer the higher-quality model at equal cost in CostOptimizer.recom
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e9250241`: agent-sre): stop blue-green validation at its timeout (#4470). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1b680536`: agent-sre): prefer the higher-quality model at equal cost in CostOptimizer.recommend (#4469). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -693,7 +517,7 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **`agent-sre` `BlueGreenManager.validate` stops at `validation_timeout_seconds`.** It counted elapsed time by adding `health_check_interval_seconds` after each failed check, so the time a check took never counted (with a 30-second check, a 5-second interval and the default 60-second timeout it ran 12 checks over about six minutes), a `health_check_interval_seconds` of 0 retried a failing check forever, and a negative interval raised from `time.sleep` and left the environment in `VALIDATING`. The timeout is now measured on the monotonic clock, and the wait between checks is the interval, never more than the time left and never negative.
+- **`agent-sre` `CostOptimizer.recommend` prefers the higher-quality model at equal cost.** It sorted the feasible models by cost alone, so among models with the same cost the one registered first was marked `is_optimal`, and `suggest_routing` routed to it, even when another model of the same cost had a higher quality score and was the only one of the two on the Pareto frontier. Ties are now broken by quality, as #4211 did for `pareto_frontier`.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -703,4 +527,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e9250241` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1b680536` are properly handled with clean fallback behavior.

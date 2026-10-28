@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T20:08:48.906Z",
+  "last_updated": "2026-10-28T20:15:54.106Z",
   "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -25964,7 +25964,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
       "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
-      "content_hash": "dbced9fe8961924eba5041bf074cf5cf78ae57feb0edd9d2e40f25fdf53fa18b",
+      "content_hash": "98b22cf2ae9582e6bef134ae158406b0416bbca9f2011c62a3e623a008e1ec80",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -26095,7 +26095,7 @@
         "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv43ntz8",
         "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv4gww1z"
       ],
-      "verified_at": "2026-10-25T08:08:18.517Z",
+      "verified_at": "2026-10-28T20:15:39.973Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36721,8 +36721,8 @@
       "slug": "meilisearch-meilisearch",
       "platform": "github",
       "source_url": "https://github.com/meilisearch/meilisearch",
-      "source_version": "9bbe2813",
-      "content_hash": "8366daacca0fa102a572950b85c19c99d2e65121fea4a62cb273e046015058fa",
+      "source_version": "ef98c47f",
+      "content_hash": "bd96eac799af92e489fe49b6a105655763d74bd17c21e5986bf108baa52718d2",
       "dossier_path": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "promoted_rules": [
@@ -36750,6 +36750,11 @@
           "number": 4822,
           "title": "Merge pull request #6698 from meilisearch/fix-debian-ci",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5394,
+          "title": "Merge pull request #6703 from meilisearch/avoid-mul-overflow",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36757,7 +36762,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:54:35.182Z",
+      "verified_at": "2026-10-28T20:15:54.087Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37318,8 +37323,8 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "ea12b738",
-      "content_hash": "d751ae03a042e8ffda6b8c1f3d30bcdafa1f938ac15ee33406e36bf6a05e2ee2",
+      "source_version": "1b680536",
+      "content_hash": "cbfc8107ff09908a04c24b077058e03320036cf8fd762f9a3c21063cb1ce7e98",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
@@ -37412,6 +37417,11 @@
           "number": 5343,
           "title": "agent-sre): stop blue-green validation at its timeout (#4470)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5393,
+          "title": "agent-sre): prefer the higher-quality model at equal cost in CostOptimizer.recom",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37419,7 +37429,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T16:33:47.416Z",
+      "verified_at": "2026-10-28T20:15:51.176Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -146048,6 +146058,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T20:08:48.880Z"
+    },
+    "rule-5393": {
+      "learning_id": "rule-5393",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5393,
+      "title": "agent-sre): prefer the higher-quality model at equal cost in CostOptimizer.recom",
+      "source_url": "https://github.com/microsoft/agent-governance-toolkit",
+      "source_version": "1b680536",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T20:15:51.176Z"
+    },
+    "rule-5394": {
+      "learning_id": "rule-5394",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5394,
+      "title": "Merge pull request #6703 from meilisearch/avoid-mul-overflow",
+      "source_url": "https://github.com/meilisearch/meilisearch",
+      "source_version": "ef98c47f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T20:15:54.087Z"
     }
   },
   "aliases": {
