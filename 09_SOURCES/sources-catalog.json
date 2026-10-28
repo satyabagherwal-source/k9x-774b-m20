@@ -765,8 +765,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/MiniMax-H3",
     "sourceVersion": "hf-comfy-org-minimax-h3",
     "license": "Open-Source",
-    "contentHash": "c0f76c22b795da156cc1a342612d733998359100361f3a27924826b7f02fe040",
-    "lastHarvestedAt": "2026-10-25T17:59:11.807Z",
+    "contentHash": "e9a669964fdd6ad9a27bc684dc9de246f6b4d0e282bce65ad3e0769551335df3",
+    "lastHarvestedAt": "2026-10-28T12:56:57.974Z",
     "learningId": "learn-huggingface-comfy-org-minimax-h3"
   },
   "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf": {
@@ -4753,10 +4753,10 @@
     "repository": "wcandillon/react-native-skia",
     "platform": "github",
     "sourceUrl": "https://github.com/Shopify/react-native-skia",
-    "sourceVersion": "b205363a",
+    "sourceVersion": "8e30d2ee",
     "license": "MIT",
-    "contentHash": "4351c3b664b0bb370332e8744a0f19c71c711069e5c6f207871130aaf6ff8fb1",
-    "lastHarvestedAt": "2026-10-27T17:23:40.684Z",
+    "contentHash": "881ab398fbf0ab727661534579e38efa81e9c3de1ac178d77815b2db3fa96be7",
+    "lastHarvestedAt": "2026-10-28T12:57:06.551Z",
     "learningId": "learn-github-wcandillon-react-native-skia"
   },
   "saltstack-salt": {

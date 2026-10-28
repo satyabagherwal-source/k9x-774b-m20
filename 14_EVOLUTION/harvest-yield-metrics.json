@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T12:46:43.082Z",
-  "total_cycles_completed": 5740,
-  "total_learnings_persisted": 5740,
-  "total_rules_promoted": 5232,
+  "last_updated": "2026-10-28T12:57:06.557Z",
+  "total_cycles_completed": 5742,
+  "total_learnings_persisted": 5742,
+  "total_rules_promoted": 5233,
   "history": [
-    {
-      "timestamp": "2026-10-27T21:52:01.748Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T22:00:15.421Z",
-      "repository": "crawlseo/crawlseo",
-      "learningId": "learn-github-crawlseo-crawlseo",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T22:06:21.605Z",
       "repository": "codewhale-hq/Codewhale",
@@ -1403,6 +1389,20 @@
       "repository": "amazon/chronos-2",
       "learningId": "learn-huggingface-amazon-chronos-2",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T12:56:57.979Z",
+      "repository": "Comfy-Org/MiniMax-H3",
+      "learningId": "learn-huggingface-comfy-org-minimax-h3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T12:57:06.557Z",
+      "repository": "wcandillon/react-native-skia",
+      "learningId": "learn-github-wcandillon-react-native-skia",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

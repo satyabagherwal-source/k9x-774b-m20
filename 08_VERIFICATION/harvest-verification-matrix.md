@@ -5763,3 +5763,5 @@
 | `CYCLE-20261028-ADDU` | `2026-10-28T12:27:18.210Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`d0787f52...`) |
 | `CYCLE-20261028-QO1Q` | `2026-10-28T12:39:58.526Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5281, Rule 5282` | Yes (`49470596...`) |
 | `CYCLE-20261028-ZC76` | `2026-10-28T12:46:43.074Z` | `amazon/chronos-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5283, Rule 5284, Rule EXISTING` | Yes (`220dc4f7...`) |
+| `CYCLE-20261028-CINN` | `2026-10-28T12:56:57.971Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md` | Yes (`e9a66996...`) |
+| `CYCLE-20261028-CP9W` | `2026-10-28T12:57:06.548Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5285` | Yes (`881ab398...`) |

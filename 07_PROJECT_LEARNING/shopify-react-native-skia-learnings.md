@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md`  
 > **Source**: github ([https://github.com/Shopify/react-native-skia](https://github.com/Shopify/react-native-skia))  
-> **Source Version**: `b205363a`  
+> **Source Version**: `8e30d2ee`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T17:23:40.258Z  
+> **Timestamp**: 2026-10-28T12:57:05.944Z  
 > **Learning ID**: `learn-github-wcandillon-react-native-skia`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Shopify/react-native-skia](https://github.com/Shopify/react-native-skia))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T17:23:39.080Z  
+> **Harvest Timestamp**: 2026-10-28T12:57:05.937Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High-performance React Native Graphics using Skia
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 8754 stars
+- **Stars / Engagement**: 8757 stars
 
 ---
 
@@ -1515,501 +1515,317 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bde7f1f3` (2026-10-26)
-**Commit Message**: fix(🐛): don't crash Skottie on layers and shapes without a name (#4333)
+### Incident Patch 1: `ccc90416` (2026-10-27)
+**Commit Message**: fix(🤖): use one Vulkan pipeline cache per device (#4341)
 
-Lottie files whose nodes have no "nm" (e.g. every Jitter.video export)
-crash Skia.Skottie.Make on iOS/Android.
+Enable Dawn's vulkan_monolithic_pipeline_cache toggle on Android, as Chrome
+does for every Vulkan device. Without it Dawn creates a VkPipelineCache for
+each pipeline it compiles, serializes it for a blob cache this device does
+not have, and destroys it, on each of its worker threads at once. That
+destructor is where the Imagination PowerVR driver (MediaTek mt6855)
+segfaults while Graphite compiles its pipelines (#4340). With one cache the
+only vkDestroyPipelineCache runs at device teardown, and pipelines that
+share binaries compile faster.
 
-Skottie forwards the node name to the PropertyObserver, falling back to
-the parent's name and finally nullptr when nothing in the chain is
-named. CustomPropertyManager::acceptKey passed that pointer to
-SkStrStartsWith (which SkASSERTs on null in debug Skia builds) and then,
-with the default "" prefix, to std::string(name), which aborts on null
-(SIGABRT in libc++'s basic_string(const char*)). onEnterNode/
-onLeavingNode in the same file already guard null; this adds the same
-guard to acceptKey so unnamed nodes are skipped like a prefix mismatch.
-
-Adds an e2e case with a minimal unnamed-layer animation (null parent
-layer + shape layer, empty transforms, no "nm" anywhere). On the iOS
-simulator it crashes the example app without the guard and passes with
-it.
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `packages/skia/cpp/api/third_party/SkottieUtils.cpp` (modified, +3/-1)
+**File**: `packages/skia/cpp/rnskia/RNDawnUtils.h` (modified, +12/-0)
 ```diff
-@@ -126,7 +126,9 @@ CustomPropertyManager::~CustomPropertyManager() {
- 
- std::string CustomPropertyManager::acceptKey(const char *name,
-                                              const char *suffix) const {
--  if (!SkStrStartsWith(name, fPrefix.c_str())) {
-+  // Unnamed Lottie nodes (no "nm") arrive as nullptr; skip them like a
-+  // prefix mismatch instead of passing null to SkStrStartsWith/std::string.
-+  if (name == nullptr || !SkStrStartsWith(name, fPrefix.c_str())) {
-     return std::string();
-   }
- 
-```
-
-**File**: `packages/skia/src/renderer/__tests__/e2e/Skottie.spec.tsx` (modified, +30/-0)
-```diff
-@@ -12,6 +12,7 @@ const onboardingJSON = require("./setup/skottie/onboarding.json");
- const basicSlotsJSON = require("./setup/skottie/basic_slots.json");
- const fingerprintJSON = require("./setup/skottie/fingerprint.json");
- const textLayerJSON = require("./setup/skottie/text-layer.json");
-+const unnamedLayersJSON = require("./setup/skottie/unnamed-layers.json");
- 
- describe("Skottie", () => {
-   it("Should render Skottie component with lego animation", async () => {
-@@ -464,4 +465,33 @@ describe("Skottie", () => {
-       checkImage(image, docPath("skottie/text-prop.png"));
-     }
-   });
-+  it("loads layers and shapes without a name (nm)", async () => {
-+    // Lottie exporters such as Jitter omit "nm" everywhere; the property
-+    // observer used to receive a null node name and crash on native.
-+    const result = await surface.eval(
-+      (Skia, ctx) => {
-+        const animation = Skia.Skottie.Make(ctx.unnamedLayers);
-+        const sur = Skia.Surface.MakeOffscreen(100, 100);
-+        if (!sur) {
-+          throw new Error("Failed to create surface");
-+        }
-+        animation.seekFrame(0);
-+        animation.render(sur.getCanvas());
-+        sur.flush();
-+        return {
-+          size: animation.size(),
-+          fps: Math.round(animation.fps()),
-+          colorProps: animation.getColorProps().length,
-+          image: sur.makeImageSnapshot().encodeToBase64(),
-+        };
-+      },
-+      {
-+        unnamedLayers: JSON.stringify(unnamedLayersJSON),
-+      }
-+    );
-+    expect(result.size).toEqual({ width: 100, height: 100 });
-+    expect(result.fps).toEqual(30);
-+    expect(result.colorProps).toEqual(0);
-+    expect(result.image).toBeDefined();
-+  });
- });
-```
-
-**File**: `packages/skia/src/renderer/__tests__/e2e/setup/skottie/unnamed-layers.json` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+{"v":"5.7.4","fr":30,"ip":0,"op":30,"w":100,"h":100,"assets":[],"layers":[{"ind":1,"ty":3,"ks":{},"ip":0,"op":30,"st":0},{"ind":2,"ty":4,"parent":1,"ks":{},"ip":0,"op":30,"st":0,"shapes":[{"ty":"rc","p":{"a":0,"k":[50,50]},"s":{"a":0,"k":[60,60]},"r":{"a":0,"k":0}},{"ty":"fl","c":{"a":0,"k":[1,0,0,1]},"o":{"a":0,"k":100}}]}]}
+@@ -334,6 +334,18 @@ requestDevice(dawn::native::Adapter &nativeAdapter,
+       // Robustness only adds bounds checks to shader buffer and texture
+       // accesses; Chrome ships WebGPU with it on.
+       "disable_robustness",
++#endif
++#if defined(__ANDROID__)
++      // One VkPipelineCache per device, as Chrome configures Dawn on every
++      // Vulkan device. Without it Dawn creates a VkPipelineCache for each
++      // pipeline it compiles, serializes it (for a blob cache this device
++      // does not have) and destroys it, on each of its worker threads at
++      // once: that destructor is where the Imagination PowerVR driver
++      // (MediaTek mt6855) segfaults while Graphite compiles its pipelines
++      // (#4340). With one cache the only vkDestroyPipelineCache runs at
++      // device teardown, and pipelines that share binaries compile faster.
++      // PerformIdleTasks is not needed: nothing persists the cache.
++      "vulkan_monolithic_pipeline_cache",
+ #endif
+   };
+ #if defined(NDEBUG)
 ```
 
 ---
 
-### Incident Patch 2: `b205363a` (2026-10-27)
-**Commit Message**: fix(🐙): fail the header copy when its sources are missing (#4256)
+### Incident Patch 2: `8e30d2ee` (2026-10-28)
+**Commit Message**: fix(⚛️): keep the scene nodes a re-render leaves unchanged (#4308)
 
-copyRecursiveSync returned silently when its source did not exist, so
-`yarn copy-skia-headers` without the externals/skia submodule removed
-cpp/skia and cpp/dawn, copied nothing and reported success, and the next
-native build failed on a missing header. A missing source now throws,
-and copyHeaders checks the submodule and resolves the Dawn headers
-before it removes anything.
+* fix(⚛️): keep the scene nodes a re-render leaves unchanged
+
+cloneInstance returned a new node for every update, so every re-render
+cloned each host node on its path and replaced the container's children,
+and a re-render inside the Canvas that changed nothing recorded the scene
+again. It now returns the node when React keeps its children and its
+props are shallow-equal; React 19 keeps a returned instance as it is.
+
+shallowEq returns at the first value that differs and counts the other
+side's keys only once every value matched, so a node a re-render changes
+costs no array.
+
+* fix(⚛️): make shallowEq check key presence and ignore children
+
+shallowEq held for { r: 5, start: undefined } against { r: 5, end: 0.5 }:
+both declare two keys, and the undefined start read equal to the start
+the other side lacks, so cloneInstance kept the node without applying
+end. A key the other props lack now fails the comparison, and children
+are skipped on both sides, as suggested in review.
+
+---------
 
 Co-authored-by: William Candillon <[REDACTED_EMAIL]>
 
-**File**: `packages/skia/scripts/__tests__/utils.spec.ts` (added, +36/-0)
+**File**: `packages/skia/src/renderer/__tests__/typeddash.spec.ts` (added, +40/-0)
 ```diff
-@@ -0,0 +1,36 @@
-+import fs from "fs";
-+import os from "os";
-+import path from "path";
+@@ -0,0 +1,40 @@
++import { shallowEq } from "../typeddash";
 +
-+import { copyRecursiveSync } from "../utils";
-+
-+describe("copyRecursiveSync", () => {
-+  let directory: string;
-+
-+  beforeEach(() => {
-+    directory = fs.mkdtempSync(path.join(os.tmpdir(), "copy-recursive-"));
-+  });
-+
-+  afterEach(() => {
-+    fs.rmSync(directory, { recursive: true, force: true });
-+  });
-+
-+  it("fails on a source that does not exist, creating nothing", () => {
-+    const destination = path.join(directory, "destination");
-+    expect(() =>
-+      copyRecursiveSync(path.join(directory, "missing"), destination)
-+    ).toThrow("does not exist");
-+    expect(fs.existsSync(destination)).toBe(false);
-+  });
-+
-+  it("copies a directory tree", () => {
-+    const source = path.join(directory, "source");
-+    fs.mkdirSync(path.join(source, "nested"), { recursive: true });
-+    fs.writeFileSync(path.join(source, "nested", "header.h"), "#pragma once\n");
-+    const destination = path.join(directory, "destination");
-+    copyRecursiveSync(source, destination);
++describe("shallowEq", () => {
++  it("holds for props whose every value is the same", () => {
++    const paint = {};
 +    expect(
-+      fs.readFileSync(path.join(destination, "nested", "header.h"), "utf8")
-+    ).toBe("#pragma once\n");
++      shallowEq({ color: "red", cx: 1, paint }, { color: "red", cx: 1, paint })
++    ).toBe(true);
++  });
++
++  it("fails for a value that differs", () => {
++    expect(shallowEq({ cx: 1, r: 4 }, { cx: 1, r: 5 })).toBe(false);
++  });
++
++  it("fails for an object made again, however equal its contents", () => {
++    expect(shallowEq({ points: [1, 2] }, { points: [1, 2] })).toBe(false);
++  });
++
++  it("skips children", () => {
++    expect(shallowEq({ children: "a", r: 4 }, { children: "b", r: 4 })).toBe(
++      true
++    );
++  });
++
++  it("ignores children on either side", () => {
++    expect(shallowEq({ r: 5, children: [] }, { r: 5 })).toBe(true);
++    expect(shallowEq({ r: 5 }, { r: 5, children: [] })).toBe(true);
++  });
++
++  it("fails for a key only one side declares", () => {
++    expect(shallowEq({ r: 4 }, { cx: 1, r: 4 })).toBe(false);
++    expect(shallowEq({ cx: undefined, r: 4 }, { r: 4 })).toBe(false);
++  });
++
++  it("fails when keys differ but counts match", () => {
++    expect(shallowEq({ r: 5, start: undefined }, { r: 5, end: 0.5 })).toBe(
++      false
++    );
 +  });
 +});
 ```
 
-**File**: `packages/skia/scripts/skia-configuration.ts` (modified, +35/-26)
+**File**: `packages/skia/src/renderer/typeddash.ts` (modified, +21/-0)
 ```diff
-@@ -1,3 +1,4 @@
-+import fs from "fs";
- import path from "path";
- 
- import { $, fileOps } from "./utils";
-@@ -310,11 +311,44 @@ const copyModule = (module: string) => {
-   fileOps.cp(srcDir, destDir);
+@@ -7,3 +7,24 @@ export const exhaustiveCheck = (a: never): never => {
+   "worklet";
+   throw new Error(`Unexhaustive handling for ${a}`);
  };
- 
-+// Dawn headers: from the Dawn built locally with `yarn build-dawn` when there is
-+// one (it is what the native builds then link), otherwise from the
-+// react-native-webgpu-dawn package, the same way Gradle and the podspec pick the
-+// library.
-+const resolveDawnInclude = () => {
-+  const localDawnInclude = path.join(PackageRoot, "libs", "dawn", "include");
-+  if (fs.existsSync(path.join(localDawnInclude, "webgpu", "webgpu.h"))) {
-+    console.log(
-+      "   📦 Copying Dawn headers from the local build (libs/dawn)..."
-+    );
-+    return localDawnInclude;
++
++// Shallow eq on props (without children)
++export const shallowEq = <P extends object>(p1: P, p2: P): boolean => {
++  let count1 = 0;
++  for (const key in p1) {
++    if (key === "children") {
++      continue;
++    }
++    if (!(key in p2) || p1[key] !== p2[key]) {
++      return false;
++    }
++    count1++;
 +  }
-+  let dawnPackage: string;
-+  try {
-+    dawnPackage = path.dirname(
-+      require.resolve("react-native-webgpu-dawn/package.json")
-+    );
-+  } catch (e) {
-+    throw new Error(
-+      "No Dawn headers found: install dependencies (react-native-webgpu-dawn) or build Dawn locally with `yarn build-dawn`"
-+    );
++  let count2 = 0;
++  for (const key in p2) {
++    if (key !== "children") {
++      count2++;
++    }
 +  }
-+  console.log(`   📦 Copying Dawn headers from ${dawnPackage}...`);
-+  return path.join(dawnPackage, "include");
++  return count1 === count2;
 +};
-+
- export const copyHeaders = () => {
--  const fs = require("fs");
-   console.log("⚙️ Copying Skia headers...");
-   process.chdir(PackageRoot);
- 
-+  // Sources first: a run that cannot copy leaves the current headers in place.
-+  if (!fs.existsSync("../../externals/skia/include")) {
-+    throw new Error(
-+      "No Skia headers found in externals/skia: check out the submodules with `git submodule update --init --recursive`"
-+    );
-+  }
-+  const dawnInclude = resolveDawnInclude();
-+
-   console.log("   Cleaning up existing directories...");
-   fileOps.rm("./cpp/skia");
-   fileOps.rm("./cpp/dawn");
-@@ -338,32 +372,7 @@ export const copyHeaders = () => {
-     );
-   }
- 
--  // Dawn headers: from the Dawn built locally with `yarn build-dawn` when there
--  // is one (it is what the native builds then link), otherwise from the
--  // react-native-webgpu-dawn package, the same way Gradle and the podspec pick
--  // the library.
-   {
--    const localDawnInclude = path.join(PackageRoot, "libs", "dawn", "include");
--    let dawnInclude: string;
--    if (fs.existsSync(path.join(localDawnInclude, "webgpu", "webgpu.h"))) {
--      console.log(
--        "   📦 Copying Dawn headers from the local build (libs/dawn)..."
--      );
--      dawnInclude = localDawnInclude;
--    } else {
--      let dawnPackage: string;
--      try {
--        dawnPackage = path.dirname(
--          require.resolve("react-native-webgpu-dawn/package.json")
--        );
--      } catch (e) {
--        throw new Error(
--          "No Dawn headers found: install dependencies (react-native-webgpu-dawn) or build Dawn locally with `yarn build-dawn`"
--        );
--      }
--      console.log(`   📦 Copying Dawn headers from ${dawnPackage}...`);
--      dawnInclude = path.join(dawnPackage, "include");
--    }
-     fileOps.mkdir("./cpp/dawn/include");
-     fileOps.cp(path.join(dawnInclude, "dawn"), "./cpp/dawn/include/dawn");
-     fileOps.cp(path.join(dawnInclude, "webgpu"), "./cpp/dawn/include/webgpu");
 ```
 
-**File**: `packages/skia/scripts/utils.ts` (modified, +2/-3)
+**File**: `packages/skia/src/sksg/HostConfig.ts` (modified, +6/-1)
 ```diff
-@@ -97,9 +97,8 @@ export const build = async (
- };
+@@ -4,6 +4,7 @@ import type { Fiber, HostConfig, ReactContext } from "react-reconciler";
+ import { DefaultEventPriority } from "react-reconciler/constants";
  
- export var copyRecursiveSync = function (src: string, dest: string) {
--  var exists = existsSync(src);
--  if (!exists) {
--    return;
-+  if (!existsSync(src)) {
-+    throw new Error(`Cannot copy ${src}: it does not exist`);
-   }
-   var stats = statSync(src);
-   var isDirectory = stats.isDirectory();
+ import { NodeType } from "../dom/types";
++import { shallowEq } from "../renderer/typeddash";
+ 
+ import type { Node } from "./Node";
+ import type { Container } from "./StaticContainer";
+@@ -186,12 +187,16 @@ export const sksgHostConfig: SkiaHostConfig = {
+   cloneInstance(
+     instance,
+     _type,
+-    _oldProps,
++    oldProps,
+     newProps,
+     keepChildren,
+     _newChildSet
+   ) {
+     debug("cloneInstance");
++    // React keeps the instance unchanged when cloneInstance returns it.
++    if (keepChildren && shallowEq(oldProps, newProps)) {
++      return instance;
++    }
+     return {
+       type: instance.type,
+       props: { ...newProps },
 ```
 
----
-
-### Incident Patch 3: `20ae1f18` (2026-10-27)
-**Commit Message**: fix(🎨): honor the source alpha in plusLighter and plusDarker (#4337)
-
-**File**: `packages/skia/cpp/api/CustomBlendModes.h` (modified, +11/-39)
+**File**: `packages/skia/src/sksg/__tests__/Reconciler.spec.tsx` (modified, +86/-0)
 ```diff
-@@ -15,28 +15,13 @@ constexpr int kBlendModePlusDarker = 1001;
- constexpr int kBlendModePlusLighter = 1002;
- 
- // SkSL for PlusDarker blend mode
--// Formula: rc = max(0, 1 - ((1-dst) + (1-src))) = max(0, src + dst - 1)
--// This darkens the image by subtracting from white
-+// Formula: rc = max(0, ra - ((da - dst) + (sa - src))), ra = min(1, sa + da)
-+// On premultiplied colors, so a translucent source darkens proportionally
- inline const char *kPlusDarkerSkSL = R"(
-     vec4 main(vec4 src, vec4 dst) {
--        float outAlpha = src.a + dst.a - src.a * dst.a;
--        vec3 srcUnpremul = src.a > 0.0 ? src.rgb / src.a : vec3(0.0);
--        vec3 dstUnpremul = dst.a > 0.0 ? dst.rgb / dst.a : vec3(0.0);
--        vec3 blended = max(vec3(0.0), srcUnpremul + dstUnpremul - vec3(1.0));
--        return vec4(blended * outAlpha, outAlpha);
--    }
--)";
--
--// SkSL for PlusLighter blend mode
--// Formula: rc = min(1, dst + src)
--// This lightens the image by adding colors and clamping
--inline const char *kPlusLighterSkSL = R"(
--    vec4 main(vec4 src, vec4 dst) {
--        float outAlpha = src.a + dst.a - src.a * dst.a;
--        vec3 srcUnpremul = src.a > 0.0 ? src.rgb / src.a : vec3(0.0);
--        vec3 dstUnpremul = dst.a > 0.0 ? dst.rgb / dst.a : vec3(0.0);
--        vec3 blended = min(vec3(1.0), srcUnpremul + dstUnpremul);
--        return vec4(blended * outAlpha, outAlpha);
-+        float outAlpha = min(1.0, src.a + dst.a);
-+        vec3 c = max(vec3(0.0), outAlpha - ((dst.a - dst.rgb) + (src.a - src.rgb)));
-+        return vec4(c, outAlpha);
-     }
- )";
- 
-@@ -59,25 +44,13 @@ class CustomBlenders {
-     return _plusDarkerBlender;
-   }
- 
--  sk_sp<SkBlender> getPlusLighterBlender() {
--    if (!_plusLighterBlender) {
--      auto [effect, err] =
--          SkRuntimeEffect::MakeForBlender(SkString(kPlusLighterSkSL));
--      if (effect) {
--        _plusLighterBlender = effect->makeBlender(nullptr);
--      }
--    }
--    return _plusLighterBlender;
--  }
--
- private:
-   CustomBlenders() = default;
-   ~CustomBlenders() = default;
-   CustomBlenders(const CustomBlenders &) = delete;
-   CustomBlenders &operator=(const CustomBlenders &) = delete;
- 
-   sk_sp<SkBlender> _plusDarkerBlender;
--  sk_sp<SkBlender> _plusLighterBlender;
- };
- 
- // Helper function to apply custom blend mode to a paint
-@@ -88,20 +61,19 @@ inline void applyBlendMode(SkPaint &paint, int blendModeValue) {
-       paint.setBlender(blender);
-     }
-   } else if (blendModeValue == kBlendModePlusLighter) {
--    auto blender = CustomBlenders::getInstance().getPlusLighterBlender();
--    if (blender) {
--      paint.setBlender(blender);
--    }
-+    // CSS plus-lighter: min(1, dst + src) on every premultiplied channel,
-+    // alpha included, which is SkBlendMode::kPlus
-+    paint.setBlendMode(SkBlendMode::kPlus);
-   } else {
-     paint.setBlendMode(static_cast<SkBlendMode>(blendModeValue));
-   }
- }
- 
- // Converts a JS blend mode value to an SkBlendMode for the Skia entry points
- // that take a plain SkBlendMode rather than a paint (drawPatch, drawVertices,
--// drawAtlas, drawColor). The custom blend modes above are implemented as
--// blenders on an SkPaint and have no SkBlendMode equivalent, so they - and any
--// other out of range value - are rejected instead of being cast blindly.
-+// drawAtlas, drawColor). The custom blend modes above only go through a paint
-+// (applyBlendMode), so they - and any other out of range value - are rejected
-+// instead of being cast blindly.
- inline SkBlendMode toBlendMode(double blendModeValue) {
-   auto value = static_cast<int>(blendModeValue);
-   if (value < 0 || value > static_cast<int>(SkBlendMode::kLastMode)) {
-```
-
-**File**: `packages/skia/src/renderer/__tests__/e2e/Paint.spec.tsx` (modified, +46/-0)
-```diff
-@@ -395,4 +395,50 @@ describe("Paint", () => {
-     );
-     checkImage(result, "snapshots/paint/plus-lighter-rgb.png");
+@@ -208,4 +208,90 @@ describe("SkiaSGRoot", () => {
+     error.mockRestore();
+     await root.unmount();
    });
-+  it("should honor the source alpha in plusLighter and plusDarker", async () => {
-+    const { width, height } = surface;
-+    const blend = async (
-+      backdrop: string,
-+      color: string,
-+      blendMode: "plusLighter" | "plusDarker"
-+    ) => {
-+      const image = await surface.draw(
-+        <Group>
-+          <Fill color={backdrop} />
-+          <Fill color={color} blendMode={blendMode} />
-+        </Group>
-+      );
-+      return readPixel(
-+        image,
-+        (width / 2) * PIXEL_RATIO,
-+        (height / 2) * PIXEL_RATIO
++  it("keeps the nodes and the scene of a re-render that changes no prop", async () => {
++    const { Skia } = importSkia();
++    let rerender: () => void = () => {};
++    const Scene = () => {
++      const [, setRenders] = React.useState(0);
++      rerender = () => setRenders((renders) => renders + 1);
++      return (
++        <skGroup>
++          <skCircle r={5} color="red" />
++        </skGroup>
 +      );
 +    };
-+    // 51 + 0.4 * 255
-+    expect(
-+      await blend("#333333", "rgba(255, 255, 255, 0.4)", "plusLighter")
-+    ).toEqual([153, 153, 153, 255]);
-+    // 153 - 0.4 * 255
-+    expect(await blend("#999999", "rgba(0, 0, 0, 0.4)", "plusDarker")).toEqual([
-+      51, 51, 51, 255,
++    const root = new SkiaSGRoot(Skia);
++    const { container } = root as unknown as {
++      container: { redraw: () => void };
++    };
++    const redraw = jest.spyOn(container, "redraw");
++    await root.render(<Scene />);
++    const [group] = root.sg.children;
++    Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
++    await act(() => {
++      rerender();
++    });
++    Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: false });
++    expect(root.sg.children[0] === group).toBe(true);
++    expect(redraw).toHaveBeenCalledTimes(1);
++    await root.unmount();
++  });
++
++  it("clones the parent of a node a re-render changes, and keeps its siblings", async () => {
++    const { Skia } = importSkia();
++    let resize: (radius: number) => void = () => {};
++    const Scene = () => {
++      const [radius, setRadius] = React.useState(2);
++      resize = setRadius;
++      return (
++        <skGroup>
++          <skCircle r={1} color="red" />
++          <skCircle r={radius} color="red" />
++        </skGroup>
++      );
++    };
++    const root = new SkiaSGRoot(Skia);
++    await root.render(<Scene />);
++    const [group] = root.sg.children;
++    const [sibling] = group.children;
++    Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
++    await act(() => {
++      resize(3);
++    });
++    Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: false });
++    const [clonedGroup] = root.sg.children;
++    expect(clonedGroup === group).toBe(false);
++    expect(clonedGroup.children[0] === sibling).toBe(true);
++    expect(clonedGroup.children.map(({ props }) => props)).toMatchObject([
++      { r: 1 },
++      { r: 3 },
 +    ]);
-+    // A fully transparent source leaves the backdrop untouched
-+    expect(await blend("#999999", "rgba(0, 0, 0, 0)", "plusDarker")).toEqual([
-+      153, 153, 153, 255,
-+    ]);
-+    // With nothing behind them the alphas add up too: 0.6 + 0.6 reaches 1
-+    // (0.6 is 153/255 exactly, so every backend stores the same first fill)
-+    expect(
-+      await blend(
-+        "rgba(255, 255, 255, 0.6)",
-+        "rgba(255, 255, 255, 0.6)",
-+        "plusLighter"
-+      )
-+    ).toEqual([255, 255, 255, 255]);
-+    // plusDarker adds the alphas too: 0.4 + 0.4 = 0.8 (204), where the
-+    // source-over union would give 0.64 (163) and [0, 96, 96, 163]
-+    expect(
-+      await blend("rgba(0, 0, 255, 0.4)", "rgba(0, 255, 0, 0.4)", "plusDarker")
-+    ).toEqual([0, 128, 128, 204]);
++    await root.unmount();
++  });
++
++  it("clones the node and records a re-render that changes a prop", async () => {
++    const { Skia } = importSkia();
++    let recolor: (color: string) => void = () => {};
++    const Scene = () => {
++      const [color, setColor] = React.useState("red");
++      recolor = setColor;
++      return <skCircle r={5} color={color} />;
++    };
++    const root = new SkiaSGRoot(Skia);
++    const { container } = root as unknown as {
++      container: { redraw: () => void };
++    };
++    const redraw = jest.spyOn(container, "redraw");
++    await root.render(<Scene />);
++    const [circle] = root.sg.children;
++    Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
++    await act(() => {
++      recolor("blue");
++    });
++    Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: false });
++    expect(root.sg.children[0] === circle).toBe(false);
++    expect(root.sg.children[0].props).toMatchObject({ color: "blue" });
++    expect(redraw).toHaveBeenCalledTimes(2);
++    await root.unmount();
 +  });
  });
 ```
 
-**File**: `packages/skia/src/skia/types/Paint/BlendMode.ts` (modified, +3/-3)
-```diff
-@@ -59,7 +59,7 @@ export enum BlendMode {
-   Color, //!< hue and saturation of source with luminosity of destination
-   Luminosity, //!< luminosity of source with hue and saturation of
- 
--  // Custom blend modes (implemented via SkRuntimeEffect blenders)
--  PlusDarker = 1001, //!< rc = max(0, 1 - ((1-dst) + (1-src))), similar to iOS kCGBlendModePlusDarker
--  PlusLighter = 1002, //!< rc = min(1, dst + src), similar to iOS kCGBlendModePlusLighter
-+  // Custom blend modes: PlusDarker is a SkRuntimeEffect blender, PlusLighter is drawn with Plus
-+  PlusDarker = 1001, //!< rc = max(0, ra - ((da - dst) + (sa - src))) on premultiplied colors, ra = min(1, sa + da), similar to iOS kCGBlendModePlusDarker
-+  PlusLighter = 1002, //!< rc = min(1, dst + src) on every premultiplied channel, alpha included, as CSS plus-lighter and iOS kCGBlendModePlusLighter
- }
-```
+---
 
-**File**: `packages/skia/src/skia/web/JsiSkPaint.ts` (modified, +9/-32)
+### Incident Patch 3: `feee40af` (2026-10-28)
+**Commit Message**: chore(deps): bump postcss-selector-parser from 6.1.4 to 6.1.5 (#4343)
+
+Bumps [postcss-selector-parser](https://github.com/postcss/postcss-selector-parser) from 6.1.4 to 6.1.5.
+- [Release notes](https://github.com/postcss/postcss-selector-parser/releases)
+- [Changelog](https://github.com/postcss/postcss-selector-parser/blob/6.1.5/CHANGELOG.md)
+- [Commits](https://github.com/postcss/postcss-selector-parser/compare/6.1.4...6.1.5)
+
+---
+updated-dependencies:
+- dependency-name: postcss-selector-parser
+  dependency-version: 6.1.5
+  dependency-type: indirect
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-authored-by: William Candillon <[REDACTED_EMAIL]>
+
+**File**: `yarn.lock` (modified, +3/-3)
 ```diff
-@@ -26,41 +26,27 @@ const kBlendModePlusDarker = 1001;
- const kBlendModePlusLighter = 1002;
+@@ -24366,12 +24366,12 @@ __metadata:
+   linkType: hard
  
- // SkSL for PlusDarker blend mode
--// Formula: rc = max(0, 1 - ((1-dst) + (1-src))) = max(0, src + dst - 1)
-+// Formula: rc = max(0, ra - ((da - dst) + (sa - src))), ra = min(1, sa + da)
-+// On premultiplied colors, so a translucent source darkens proportionally
- const plusDarkerSkSL = `
-     vec4 main(vec4 src, vec4 dst) {
--        float outAlpha = src.a + dst.a - src.a * dst.a;
--        vec3 srcUnpremul = src.a > 0.0 ? src.rgb / src.a : vec3(0.0);
--        vec3 dstUnpremul = dst.a > 0.0 ? dst.rgb / dst.a : vec3(0.0);
--        vec3 blended = max(vec3(0.0), srcUnpremul + dstUnpremul - vec3(1.0));
--        return vec4(blended * outAlpha, outAlpha);
--    }
--`;
--
--// SkSL for PlusLighter blend mode
--// Formula: rc = min(1, dst + src)
--const plusLighterSkSL = `
--    vec4 main(vec4 src, vec4 dst) {
--        float outAlpha = src.a + dst.a - src.a * dst.a;
--        vec3 srcUnpremul = src.a > 0.0 ? src.rgb / src.a : vec3(0.0);
--        vec3 dstUnpremul = dst.a > 0.0 ? dst.rgb / dst.a : vec3(0.0);
--        vec3 blended = min(vec3(1.0), srcUnpremul + dstUnpremul);
--        return vec4(blended * outAlpha, outAlpha);
-+        float outAlpha = min(1.0, src.a + dst.a);
-+        vec3 c = max(vec3(0.0), outAlpha - ((dst.a - dst.rgb) + (src.a - src.rgb)));
-+        return vec4(c, outAlpha);
-     }
- `;
+ "postcss-selector-parser@npm:^6.0.11, postcss-selector-parser@npm:^6.0.16":
+-  version: 6.1.4
+-  resolution: "postcss-selector-parser@npm:6.1.4"
++  version: 6.1.5
++  resolution: "postcss-selector-parser@npm:6.1.5"
+   dependencies:
+     cssesc: ^3.0.0
+     util-deprecate: ^1.0.2
+-  checksum: 6dac8996778480a4cd274d2588cccfd989f38c40853b7b83dc31c90ce6ba32e1e1b89811ad3beafdee72887fac9ddf9f1fca3876dc17467eed62d6a825d54bfb
++  checksum: 48092b9e8d6b0b7470e460e5dd8922dad59404e73c7f3423e1bc32e14ad76140fc50812d38023259225f306e4a316c49528c75b2171955bbaa0b56894c0135f7
+   languageName: node
+   linkType: hard
  
- // Cache for custom blenders per CanvasKit instance
- // Using WeakMap ensures blenders are cleaned up when CanvasKit instance is garbage collected
- interface BlenderCache {
-   plusDarker: Blender | null;
--  plusLighter: Blender | null;
- }
- const blenderCache = new WeakMap<CanvasKit, BlenderCache>();
- 
- const getBlenderCache = (ck: CanvasKit): BlenderCache => {
-   let cache = blenderCache.get(ck);
-   if (!cache) {
--    cache = { plusDarker: null, plusLighter: null };
-+    cache = { plusDarker: null };
-     blenderCache.set(ck, cache);
-   }
-   return cache;
-@@ -139,18 +125,9 @@ export class JsiSkPaint extends HostObject<Paint, "Paint"> implements SkPaint {
-         this.ref.setBlender(cache.plusDarker);
-       }
-     } else if (blendMode === kBlendModePlusLighter) {
--      // Use custom PlusLighter blender via SkRuntimeEffect
--      const cache = getBlenderCache(this.CanvasKit);
--      if (!cache.plusLighter) {
--        const effect =
--          this.CanvasKit.RuntimeEffect.MakeForBlender(plusLighterSkSL);
--        if (effect) {
--          cache.plusLighter = effect.makeBlender([]);
--        }
--      }
--      if (cache.plusLighter) {
--        this.ref.setBlender(cache.plusLighter);
--      }
-+      // CSS plus-lighter: min(1, dst + src) on every premultiplied channel,
-+      // alpha included, which is BlendMode.Plus
-+      this.ref.setBlendMode(this.CanvasKit.BlendMode.Plus);
-     } else {
-       this.ref.setBlendMode(getEnum(this.CanvasKit, "BlendMode", blendMode));
-     }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4344** (2026-10-28): chore(deps): bump qs from 6.16.0 to 6.16.2 (@dependabot[bot])
+- **PR #4343** (2026-10-28): chore(deps): bump postcss-selector-parser from 6.1.4 to 6.1.5 (@dependabot[bot])
+- **PR #4342** (2026-10-27): chore(🍎): build the macOS example only when a pull request can affect it (@wcandillon)
+- **PR #4341** (2026-10-27): fix(🤖): use one Vulkan pipeline cache per device (@wcandillon)
 - **PR #4338** (2026-10-27): fix(🔤): apply TextStyle fontVariations on native (@LESANF)
 - **PR #4337** (2026-10-27): fix(🎨): honor the source alpha in plusLighter and plusDarker (@LESANF)
-- **PR #4336** (2026-10-26): chore(deps): bump anthropics/claude-code-action from 1.0.252 to 1.0.261 (@dependabot[bot])
-- **PR #4335** (2026-10-26): chore(deps): bump actions/setup-python from 7.0.0 to 7.1.0 (@dependabot[bot])
-- **PR #4334** (2026-10-26): chore(deps): bump ip-address from 10.7.2 to 10.7.5 (@dependabot[bot])
-- **PR #4333** (2026-10-26): fix(🐛): don't crash Skottie on layers and shapes without a name (@ImCitizen13)
 
 ---
 
@@ -2029,30 +1845,39 @@ Co-authored-by: William Candillon <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 🐛): don't crash Skottie on layers and shapes without a name (#4333)
+## X. 🤖): use one Vulkan pipeline cache per device (#4341)
 
 **RULE**:
-When implementing operations in `packages/skia/cpp/api/third_party/SkottieUtils.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wcandillon/react-native-skia. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/skia/cpp/rnskia/RNDawnUtils.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wcandillon/react-native-skia. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bde7f1f3`: 🐛): don't crash Skottie on layers and shapes without a name (#4333). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ccc90416`: 🤖): use one Vulkan pipeline cache per device (#4341). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/skia/cpp/api/third_party/SkottieUtils.cpp`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/skia/cpp/rnskia/RNDawnUtils.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  // Unnamed Lottie nodes (no "nm") arrive as nullptr; skip them like a
-  // prefix mismatch instead of passing null to SkStrStartsWith/std::string.
-  if (name == nullptr || !SkStrStartsWith(name, fPrefix.c_str())) {
+#endif
+#if defined(__ANDROID__)
+      // One VkPipelineCache per device, as Chrome configures Dawn on every
+      // Vulkan device. Without it Dawn creates a VkPipelineCache for each
+      // pipeline it compiles, serializes it (for a blob cache this device
+      // does not have) and destroys it, on each of its worker threads at
+      // once: that destructor is where the Imagination PowerVR driver
+      // (MediaTek mt6855) segfaults while Graphite compiles its pipelines
+      // (#4340). With one cache the only vkDestroyPipelineCache runs at
+      // device teardown, and pipelines that share binaries compile faster.
+      // PerformIdleTasks is not needed: nothing persists the cache.
+      "vulkan_monolithic_pipeline_cache",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  if (!SkStrStartsWith(name, fPrefix.c_str())) {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bde7f1f3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ccc90416` are properly handled with clean fallback behavior.

@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T12:46:45.612Z",
-    "lastVerified": "2026-10-28T12:46:45.612Z",
+    "lastChecked": "2026-10-28T12:57:09.101Z",
+    "lastVerified": "2026-10-28T12:57:09.101Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -110,9 +110,9 @@
   "bitterbot-ai-bitterbot-desktop": {
     "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "lastChecked": "2026-10-28T12:15:42.628Z",
+    "lastChecked": "2026-10-28T12:57:09.080Z",
     "revisionIdentifier": "fce458c1",
-    "lastVerified": "2026-10-28T12:15:42.628Z"
+    "lastVerified": "2026-10-28T12:57:09.080Z"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -1737,9 +1737,9 @@
   "aleo-labs-protocol-snarkos": {
     "name": "snarkOS",
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "lastChecked": "2026-10-28T06:11:46.003Z",
+    "lastChecked": "2026-10-28T12:57:04.073Z",
     "revisionIdentifier": "6b124303",
-    "lastVerified": "2026-10-28T06:11:46.003Z"
+    "lastVerified": "2026-10-28T12:57:04.073Z"
   },
   "databendlabs-databend": {
     "name": "databendlabs/databend",
@@ -3127,5 +3127,60 @@
     "lastChecked": "2026-10-28T12:46:39.152Z",
     "revisionIdentifier": "bb96a741",
     "lastVerified": "2026-10-28T12:46:39.153Z"
+  },
+  "timvisee-ffsend": {
+    "name": "ffsend",
+    "officialUrl": "https://github.com/timvisee/ffsend",
+    "lastChecked": "2026-10-28T12:56:54.021Z",
+    "revisionIdentifier": "85aae2f3",
+    "lastVerified": "2026-10-28T12:56:54.021Z"
+  },
+  "hf-comfy-org-minimax-h3": {
+    "name": "Comfy-Org/MiniMax-H3",
+    "officialUrl": "https://huggingface.co/Comfy-Org/MiniMax-H3",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T12:56:56.747Z",
+    "lastVerified": "2026-10-28T12:56:56.747Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-comfy-org-minimax-h3",
+    "contentHash": "e9a669964fdd6ad9a27bc684dc9de246f6b4d0e282bce65ad3e0769551335df3",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "shopify-react-native-skia": {
+    "name": "wcandillon/react-native-skia",
+    "officialUrl": "https://github.com/Shopify/react-native-skia",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-28T12:57:05.937Z",
+    "lastVerified": "2026-10-28T12:57:05.937Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-wcandillon-react-native-skia",
+    "contentHash": "881ab398fbf0ab727661534579e38efa81e9c3de1ac178d77815b2db3fa96be7",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 4,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "argoproj-argo-events": {
+    "name": "argo-events",
+    "officialUrl": "https://github.com/argoproj/argo-events",
+    "lastChecked": "2026-10-28T12:57:01.580Z",
+    "revisionIdentifier": "d00d3409",
+    "lastVerified": "2026-10-28T12:57:01.580Z"
+  },
+  "neural-maze-ava-whatsapp-agent-course": {
+    "name": "ava-whatsapp-agent-course",
+    "officialUrl": "https://github.com/neural-maze/ava-whatsapp-agent-course",
+    "lastChecked": "2026-10-28T12:57:06.515Z",
+    "revisionIdentifier": "338fd687",
+    "lastVerified": "2026-10-28T12:57:06.515Z"
   }
 }
