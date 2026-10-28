@@ -5768,3 +5768,4 @@ Every entry in this ledger must capture:
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `52568d90` | Multi-dimensional audit evidence | 2026-10-28T12:02:08.863Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `bcda14be` | Multi-dimensional audit evidence | 2026-10-28T12:08:58.557Z |
 | `learn-huggingface-google-bert-bert-base-uncased` | `https://huggingface.co/google-bert/bert-base-uncased` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-28T12:08:58.700Z |
+| `learn-huggingface-baai-bge-m3` | `https://huggingface.co/BAAI/bge-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-28T12:15:31.225Z |

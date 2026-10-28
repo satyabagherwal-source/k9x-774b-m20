@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T12:08:58.705Z",
-  "total_cycles_completed": 5736,
-  "total_learnings_persisted": 5736,
+  "last_updated": "2026-10-28T12:15:31.230Z",
+  "total_cycles_completed": 5737,
+  "total_learnings_persisted": 5737,
   "total_rules_promoted": 5227,
   "history": [
-    {
-      "timestamp": "2026-10-27T21:45:06.959Z",
-      "repository": "komi-store/komi-store",
-      "learningId": "learn-github-komi-store-komi-store",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T21:45:10.284Z",
       "repository": "pingcap/tidb",
@@ -1403,6 +1396,13 @@
       "repository": "google-bert/bert-base-uncased",
       "learningId": "learn-huggingface-google-bert-bert-base-uncased",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T12:15:31.230Z",
+      "repository": "BAAI/bge-m3",
+      "learningId": "learn-huggingface-baai-bge-m3",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

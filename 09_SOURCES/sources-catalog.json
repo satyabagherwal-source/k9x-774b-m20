@@ -735,8 +735,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-m3",
     "sourceVersion": "hf-baai-bge-m3",
     "license": "Open-Source",
-    "contentHash": "42cb46071e1ff76667070102af462e7ecf99b37efa82319756fa34bab67bbfeb",
-    "lastHarvestedAt": "2026-10-25T17:30:10.001Z",
+    "contentHash": "579902ce831bfa94ba0d9c965889a05453c2694cdb396531e2fa696c6b085e47",
+    "lastHarvestedAt": "2026-10-28T12:15:31.225Z",
     "learningId": "learn-huggingface-baai-bge-m3"
   },
   "hf-qwen-qwen3-0.6b": {

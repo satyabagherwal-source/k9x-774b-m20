@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T12:09:01.232Z",
-    "lastVerified": "2026-10-28T12:09:01.232Z",
+    "lastChecked": "2026-10-28T12:15:42.636Z",
+    "lastVerified": "2026-10-28T12:15:42.636Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -110,9 +110,9 @@
   "bitterbot-ai-bitterbot-desktop": {
     "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "lastChecked": "2026-10-28T11:46:28.551Z",
+    "lastChecked": "2026-10-28T12:15:42.628Z",
     "revisionIdentifier": "fce458c1",
-    "lastVerified": "2026-10-28T11:46:28.551Z"
+    "lastVerified": "2026-10-28T12:15:42.628Z"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -1498,9 +1498,9 @@
   "projectdiscovery-nuclei": {
     "name": "nuclei",
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
-    "lastChecked": "2026-10-28T05:30:54.835Z",
+    "lastChecked": "2026-10-28T12:15:37.729Z",
     "revisionIdentifier": "26ce6d2e",
-    "lastVerified": "2026-10-28T05:30:54.835Z"
+    "lastVerified": "2026-10-28T12:15:37.729Z"
   },
   "zilliztech-claude-context": {
     "name": "claude-context",
@@ -2946,5 +2946,50 @@
     "lastChecked": "2026-10-28T12:08:54.438Z",
     "revisionIdentifier": "ab61bc73",
     "lastVerified": "2026-10-28T12:08:54.438Z"
+  },
+  "pemistahl-grex": {
+    "name": "grex",
+    "officialUrl": "https://github.com/pemistahl/grex",
+    "lastChecked": "2026-10-28T12:15:27.643Z",
+    "revisionIdentifier": "99cc3477",
+    "lastVerified": "2026-10-28T12:15:27.643Z"
+  },
+  "hf-baai-bge-m3": {
+    "name": "BAAI/bge-m3",
+    "officialUrl": "https://huggingface.co/BAAI/bge-m3",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T12:15:30.252Z",
+    "lastVerified": "2026-10-28T12:15:30.252Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-baai-bge-m3",
+    "contentHash": "579902ce831bfa94ba0d9c965889a05453c2694cdb396531e2fa696c6b085e47",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "gorhom-react-native-bottom-sheet": {
+    "name": "react-native-bottom-sheet",
+    "officialUrl": "https://github.com/gorhom/react-native-bottom-sheet",
+    "lastChecked": "2026-10-28T12:15:32.688Z",
+    "revisionIdentifier": "9bfbeb52",
+    "lastVerified": "2026-10-28T12:15:32.688Z"
+  },
+  "alibaba-sentinel-golang": {
+    "name": "sentinel-golang",
+    "officialUrl": "https://github.com/alibaba/sentinel-golang",
+    "lastChecked": "2026-10-28T12:15:35.124Z",
+    "revisionIdentifier": "f7a7f957",
+    "lastVerified": "2026-10-28T12:15:35.124Z"
+  },
+  "supervc-stack-vectorchord": {
+    "name": "VectorChord",
+    "officialUrl": "https://github.com/supervc-stack/VectorChord",
+    "lastChecked": "2026-10-28T12:15:40.108Z",
+    "revisionIdentifier": "0768657e",
+    "lastVerified": "2026-10-28T12:15:40.108Z"
   }
 }
