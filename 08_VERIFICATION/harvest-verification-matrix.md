@@ -5711,3 +5711,5 @@
 | `CYCLE-20261028-1KE3` | `2026-10-28T05:48:32.763Z` | `HemmingwayAI/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5192, Rule 5193, Rule 5194` | Yes (`caf758cf...`) |
 | `CYCLE-20261028-DV68` | `2026-10-28T05:58:06.608Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5195, Rule 5196, Rule 5197` | Yes (`0cc37038...`) |
 | `CYCLE-20261028-G71H` | `2026-10-28T05:59:55.301Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5198, Rule 5199, Rule 5200` | Yes (`ef93c3cc...`) |
+| `CYCLE-20261028-VKRL` | `2026-10-28T06:11:52.929Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 969, Rule 5201, Rule 5202` | Yes (`f60ba0cb...`) |
+| `CYCLE-20261028-VM1E` | `2026-10-28T06:11:54.578Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5203` | Yes (`f3e15ce0...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T05:59:55.240Z",
+  "last_updated": "2026-10-28T06:11:54.516Z",
   "total_verified_learnings": 1156,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8129,8 +8129,8 @@
       "slug": "databendlabs-databend",
       "platform": "github",
       "source_url": "https://github.com/databendlabs/databend",
-      "source_version": "ad9996eb",
-      "content_hash": "14d63982ab38a716915864dc2e61341a2d3b1edb6648f917c501f4390a8f218c",
+      "source_version": "7344c579",
+      "content_hash": "f3e15ce0ad862c498cc6edb6db99eab906e67bdc6615bd45a3917cf987961a57",
       "dossier_path": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "promoted_rules": [
@@ -8163,6 +8163,11 @@
           "number": 4892,
           "title": "query): keep fuse scan columns encoded in memory (#20819)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5203,
+          "title": "query): restrict identity visibility and redact credentials (#20833)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8170,7 +8175,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T15:39:46.732Z",
+      "verified_at": "2026-10-28T06:11:54.503Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25246,10 +25251,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
       "source_version": "hf-orcarouter-orcasaq-2-27b",
-      "content_hash": "cda1395ede787b8f5211120c592fa746b2871c969ff5d844ee52f8a456f119f7",
+      "content_hash": "f60ba0cbc39c60c643e2599b7b14a3a33eeea6eba2d1095eadde74bd92913dd3",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md",
       "promoted_rules": [
+        {
+          "number": 969,
+          "title": "Hybrid Attention Layer Interleaving Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 1131,
           "title": "Hybrid Attention Layer Interleaving for Long-Context Efficiency",
@@ -25263,6 +25273,16 @@
         {
           "number": 4312,
           "title": "Multi-Token Prediction (MTP) for Speculative Decoding",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5201,
+          "title": "SSM State Dtype Precision Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5202,
+          "title": "Quantization Sensitivity Mapping Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -25284,7 +25304,7 @@
         "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv45w2u2",
         "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv4j68vm"
       ],
-      "verified_at": "2026-10-25T13:42:22.623Z",
+      "verified_at": "2026-10-28T06:11:52.852Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -78407,14 +78427,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 969,
       "title": "Hybrid Attention Layer Interleaving Invariant",
-      "source_url": "https://huggingface.co/google/gemma-4-31B-it",
-      "source_version": "hf-google-gemma-4-31b-it",
+      "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
+      "source_version": "hf-orcarouter-orcasaq-2-27b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-28T00:46:51.840Z"
+      "verified_at": "2026-10-28T06:11:52.852Z"
     },
     "rule-970": {
       "learning_id": "rule-970",
@@ -142266,6 +142286,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T05:59:55.227Z"
+    },
+    "rule-5201": {
+      "learning_id": "rule-5201",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5201,
+      "title": "SSM State Dtype Precision Guard",
+      "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
+      "source_version": "hf-orcarouter-orcasaq-2-27b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T06:11:52.852Z"
+    },
+    "rule-5202": {
+      "learning_id": "rule-5202",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5202,
+      "title": "Quantization Sensitivity Mapping Invariant",
+      "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
+      "source_version": "hf-orcarouter-orcasaq-2-27b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T06:11:52.852Z"
+    },
+    "rule-5203": {
+      "learning_id": "rule-5203",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5203,
+      "title": "query): restrict identity visibility and redact credentials (#20833)",
+      "source_url": "https://github.com/databendlabs/databend",
+      "source_version": "7344c579",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T06:11:54.503Z"
     }
   },
   "aliases": {

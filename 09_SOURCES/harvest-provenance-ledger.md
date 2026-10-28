@@ -5720,3 +5720,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-altworld-hemmingway-1` | `https://huggingface.co/Altworld/Hemmingway-1` | `hf-altworl` | Multi-dimensional audit evidence | 2026-10-28T05:48:32.765Z |
 | `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `54120b39` | Multi-dimensional audit evidence | 2026-10-28T05:58:06.611Z |
 | `learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-28T05:59:55.304Z |
+| `learn-huggingface-orcarouter-orcasaq-2-27b` | `https://huggingface.co/orcarouter/OrcaSAQ-2-27B` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-28T06:11:52.933Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `7344c579` | Multi-dimensional audit evidence | 2026-10-28T06:11:54.582Z |

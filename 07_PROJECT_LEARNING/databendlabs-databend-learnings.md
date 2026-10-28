@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source**: github ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
-> **Source Version**: `ad9996eb`  
+> **Source Version**: `7344c579`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T15:39:46.375Z  
+> **Timestamp**: 2026-10-28T06:11:54.144Z  
 > **Learning ID**: `learn-github-databendlabs-databend`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T15:39:46.068Z  
+> **Harvest Timestamp**: 2026-10-28T06:11:53.985Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Data Agent Ready Warehouse : One for  Analytics, Search, AI, Python Sandbox.  — rebuilt from scratch. Unified architecture on your S3.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9484 stars
+- **Stars / Engagement**: 9485 stars
 
 ---
 
@@ -1199,8 +1199,8 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 - **Issue #20852** (2026-10-27): **docs: meta: update compatibility tables through 1.2.956**
   *Symptoms*:   I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  ##### docs: meta: update compatibility tables through 1.2.956 # Summary  Add the 27 missing releases to query, meta-service, and Raft compatibility lookups.  # Details  Keep the existing CalVer major-release grouping because the bundled client and server patch releases share compatibility limits.  ## Tests  - [x] Unit Test - [ ] Logic Test - [ ] Benchmark Test - [ ] No Test  - _Explain why_  ## Type of change  - [x] Documentation Update  ## AI assistance  - AI usage: An AI coding agent generated code and wrote tests; I reviewed and confirmed every line before committing it. - Responsible human: @drmingdrmer - [x] The responsible human has read every line of this diff and can explain each change  ## Related Issues  <!-- Reviewable:start --> - - - This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/databendlabs/databend/20852) <!-- Reviewable:end --> 
 
-- **Issue #20846** (2026-10-27): **fix(query): count lazy pruning partitions total in blocks**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  - fixes: #20713  On a table with more than one segment, `FuseTable::do_read_partitions` takes the lazy pruning path. On this path `partitions_total` was the segment count, but `partitions_scanned` was the block count. `EXPLAIN` could show `partitions total: 3` and `partitions scanned: 48`.  Changes:  - `SegmentPruner` adds the block count of each segment that it reads to a new counter, `FusePruningStatistics::segments_blocks_total`. The counter is set before segment and block pruning, so blocks of pruned segments are in the total. - `SendPartState` takes `partitions_total` from this counter. This value goes to `EXPLAIN`, to `set_pruned_partitions_stats`, and to the prune cache. In cluster mode, each node counts only the segments that it reads, so the sum of the per-node values is correct. The fixed `partitions_total` parameter is removed. - The lazy plan estimates in `read_partitions.rs` (SELECT) and `mutation_source.rs` (lazy DELETE) now use the snapshot block count, not the segment count. - Each `SendPartInfoSink` added the shared running totals to `data_metrics` when it detached, so a pipeline with N sinks counted the partitions N times. The pipeline now reports them one time, in `on_finished`.  Known limits:  - On the lazy path, the total counts only the segments that the pipeline reads. Segments that are not read (`_segment_name` filter, early stop because of LIM
+- **Issue #20849** (2026-10-28): **fix(storage): report tolerated errors for ON_ERROR=ABORT_N**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  - fixes: #20782  With `ON_ERROR = ABORT_N`, `COPY INTO` skipped bad rows below the threshold but never recorded them in the per-file status. As a result `ERRORS_SEEN` was `0` and `FIRST_ERROR` / `FIRST_ERROR_LINE` were `NULL`, and with `RETURN_FAILED_ONLY = TRUE` a file with skipped rows was not returned at all.  `ErrorHandler::on_error` now calls `file_status.add_error(...)` for tolerated errors in the `AbortNum` branch, the same as `Continue`. Abort behavior (threshold reached / `ABORT_1`) is unchanged. This handler is shared by every row-skipping format (CSV, TSV, NDJSON, Avro, Arrow), so all of them are covered.  While adding a multi-batch test (review feedback), two more issues on the CSV path showed up and are fixed here too:  - The `Separator` processor only registered the separator's `FileStatus` for the EOF batch, so column-count mismatches found in earlier batches were dropped from `ERRORS_SEEN` / `FIRST_ERROR` (for both `CONTINUE` and `ABORT_N`). It now registers the status of every batch that has errors; `add_chunk` merges them per file. - `CsvReader::separate`: when a record skipped for a column-count mismatch started in the previous batch, its head stayed in `last_partial_row` and was prepended to the next record, corrupting it (a parse error, or silently wrong values for string columns). The head is now dropped when the first record completed in a batch
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1217,827 +1217,780 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `520a63e0` (2026-10-26)
-**Commit Message**: feat(query): keep fuse scan columns encoded in memory (#20819)
+### Incident Patch 1: `b57c0ad8` (2026-10-27)
+**Commit Message**: fix(query): restrict identity visibility and redact credentials (#20833)
 
-* feat(query): add encoded in-memory columns for fuse scans
+* fix(query): restrict identity visibility and redact credentials
 
-Add `Column::Encoded` with two encodings that keep the logical type:
-- frame of reference (`base + narrow deltas`) for integers, Date,
-  Timestamp and Decimal;
-- dictionary (`narrow keys + values`) for hashable types; String columns
-  reuse the Parquet dictionary page.
+* chore: ignore intentional masking test spellings
 
-Behind the experimental setting `enable_encoded_columns` (default off),
-fuse scans pick the smallest representation per block and keep it in the
-column array cache. Filter/take keep the encoding, `<column> <op>
-<constant>` is evaluated on the deltas, and decimal +/-/* computes in
-i64 and outputs FOR when the operand bounds prove it fits. Other
-consumers decode encoded columns before use.
+* fix(query): restore tenant settings before session roles
 
-Also take `Vec<Column>` in `Column::concat_columns` instead of a cloned
-iterator.
+* fix(query): mask parsed SQL from its AST and keep client errors intact
 
-* feat(query): read encoded columns in aggregation without decoding
+- Mask statements that parse, including nested and failed SQL, only from
+  their AST. Query and DML expressions are user data and keep their text,
+  so columns named like credentials (`ON f.date_key = d.date_key`,
+  `WHERE token = 'abc'`) are no longer rewritten or recorded as secrets.
+  Nested `CALL PROCEDURE` arguments are now hidden like top-level ones.
+- Cover credentials the token pass used to catch: `CONNECTION => (...)` of
+  stage table references, secret-named settings in SET/SETTINGS/SET_VAR,
+  task session parameters, and table/worker options.
+- Skip cloning statements without credential-bearing nodes, and drop the
+  extra token-level pass of query history.
+- Restrict the pre-planning log masker's `<key> = <value>` and URL masking
+  in queries and DML to `CONNECTION (...)` options.
+- Return errors to the client as is; scrub only logged and history cop
 
-Add `ColumnView::Encoded` so kernels that downcast a column can read a
-frame of reference / dictionary encoded column directly
-(`AccessType::try_downcast_encoded`, enabled for integers, Date,
-Timestamp, Decimal and dictionary String). Aggregate functions such 
-
-**File**: `Cargo.lock` (modified, +1/-0)
+**File**: `.config/typos.toml` (modified, +4/-0)
 ```diff
-@@ -3247,6 +3247,7 @@ dependencies = [
- name = "databend-common-expression"
- version = "0.1.0"
- dependencies = [
-+ "ahash 0.8.12",
-  "anyhow",
-  "arrow-array",
-  "arrow-buffer",
+@@ -14,6 +14,10 @@ Nd = "Nd"
+ typ = "typ"
+ aranges = "aranges"
+ pendings = "pendings"
++# Literal suffix preserved in masked credential test expectations.
++ue = "ue"
++# Intentionally misspelled credential option in masking regression tests.
++SECERT = "SECERT"
+ 
+ [default.extend-identifiers]
+ 
 ```
 
-**File**: `src/query/expression/Cargo.toml` (modified, +1/-0)
+**File**: `src/common/base/src/base/mod.rs` (modified, +0/-2)
 ```diff
-@@ -7,6 +7,7 @@ publish = { workspace = true }
- edition = { workspace = true }
- 
- [dependencies]
-+ahash = { workspace = true }
- arrow-array = { workspace = true }
- arrow-buffer = { workspace = true }
- arrow-cast = { workspace = true }
+@@ -49,8 +49,6 @@ pub use string::convert_byte_size;
+ pub use string::convert_number_size;
+ pub use string::escape_for_key;
+ pub use string::format_byte_size;
+-pub use string::mask_connection_info;
+-pub use string::mask_partial;
+ pub use string::mask_string;
+ pub use string::short_sql;
+ pub use string::unescape_for_key;
 ```
 
-**File**: `src/query/expression/benches/bench.rs` (modified, +6/-2)
+**File**: `src/common/base/src/base/string.rs` (modified, +0/-298)
 ```diff
-@@ -293,7 +293,9 @@ mod escaped_like {
- fn concat_string_offset(bencher: divan::Bencher, length: usize) {
-     let mut rng = StdRng::seed_from_u64(0);
-     let (_s, b) = generate_random_string_data(&mut rng, length);
--    let bin_col = (0..5).map(|_| BinaryType::from_data(b.clone()));
-+    let bin_col = (0..5)
-+        .map(|_| BinaryType::from_data(b.clone()))
-+        .collect::<Vec<_>>();
+@@ -13,11 +13,9 @@
+ // limitations under the License.
  
-     bencher.bench(|| {
-         Column::concat_columns(bin_col.clone()).unwrap();
-@@ -304,7 +306,9 @@ fn concat_string_offset(bencher: divan::Bencher, length: usize) {
- fn concat_string_view(bencher: divan::Bencher, length: usize) {
-     let mut rng = StdRng::seed_from_u64(0);
-     let (s, _b) = generate_random_string_data(&mut rng, length);
--    let str_col = (0..5).map(|_| StringType::from_data(s.clone()));
-+    let str_col = (0..5)
-+        .map(|_| StringType::from_data(s.clone()))
-+        .collect::<Vec<_>>();
-     bencher.bench(|| {
-         Column::concat_columns(str_col.clone()).unwrap();
-     });
-```
-
-**File**: `src/query/expression/src/aggregate/aggregate_hashtable.rs` (modified, +102/-3)
-```diff
-@@ -32,6 +32,7 @@ use super::partitioned_payload::PartitionedPayload;
- use super::payload_flush::PayloadFlushState;
- use super::probe_state::ProbeState;
- use crate::BlockEntry;
-+use crate::Column;
- use crate::ColumnBuilder;
- use crate::ProjectedBlock;
- use crate::aggregate::AggrState;
-@@ -233,16 +234,21 @@ impl AggregateHashTable {
-             }
-         }
+ use std::string::FromUtf8Error;
+-use std::sync::LazyLock;
  
--        state.row_count = row_count;
--        group_hash_entries(group_columns, &mut state.group_hashes[..row_count]);
--
-         let new_group_count = if self.direct_append {
-+            state.row_count = row_count;
-+            group_hash_entries(group_columns, &mut state.group_hashes[..row_count]);
-             for (i, entry) in state.empty_vector[..row_count].iter_mut().enumerate() {
-                 *entry = i.into();
-             }
-             self.payload.append_rows(state, row_count, group_columns);
-             row_count
-+        } else if let Some(new_group_count) =
-+            self.probe_and_create_by_codes(state, group_columns, row_count)
-+        {
-+            new_group_count
-         } else {
-+            state.row_count = row_count;
-+            group_hash_entries(group_columns, &mut state.group_hashes[..row_count]);
-             self.probe_and_create(state, group_columns, row_count)
-         };
- 
-@@ -293,6 +299,99 @@ impl AggregateHashTable {
-         Ok(new_group_count)
-     }
- 
-+    /// Probes once per distinct combination of codes when every group key is an encoded column
-+    /// with few codes (see [`EncodedColumn::codes`]): rows with the same codes have the same
-+    /// keys, so a representative row per combination goes through the regular hash and probe,
-+    /// and every row takes the address of its combination.
-+    ///
-+    /// The code of a combination is a mixed radix number (each key a digit whose radix is its
-+    /// number of codes, like a row-major array index), used to index a direct-address table of
-+    /// ranks. It is the idea of perfect hash aggregation, applied only to deduplicate the rows of
-+    /// a batch, so the hash table is still used for the representatives.
-+    ///
-+    /// For example, grouping by `(flag, status)` with codes `N=0, R=1` and `F=0, O=1`:
-+    ///
-+    /// ```text
-+    /// row:                0     1     2     3     4     5
-+    /// keys:             (N,F) (R,O) (N,F) (N,F) (R,O) (N,F)
-+    /// flag + status * 2:  0     3     0     0     3     0     1. code of each row
-+    /// representatives:   [0, 1]                               2. first row of each code
-+    /// probe rows 0 and 1:  (N,F) -> a0, (R,O) -> a1           3. regular hash and probe
-+    /// addresses:          a0    a1    a0    a0    a1    a0    4. by code
-+    /// ```
-+    ///
-+    /// `None` if the keys do not qualify (a key is not encoded, or there are not several rows
-+    /// per combination); nothing is changed then.
-+    fn probe_and_create_by_codes(
-+        &mut self,
-+        state: &mut ProbeState,
-+        group_columns: ProjectedBlock,
-+        row_count: usize,
-+    ) -> Option<usize> {
-+        // Check every key before allocating the row codes, so regular group columns cost
-+        // nothing here.
-+        let mut code_space = 1usize;
-+        for entry in group_columns.iter() {
-+            let BlockEntry::Column(Column::Encoded(encoded)) = entry else {
-+                return None;
-+            };
-+            let (_, count) = encoded.codes();
-+            code_space = code_space.checked_mul(usize::try_from(count).ok()?)?;
-+            // Only worth it with several rows per combination.
-+            if code_space.saturating_mul(4) > row_count {
-+                return None;
-+            }
-+        }
-+
-+        // Code of a row = mixed radix number of the codes of its keys.
-+        let mut row_codes = vec![0u32; row_count];
-+        let mut stride = 1usize;
-+        for entry in group_columns.iter() {
-+            let BlockEntry::Column(Column::Encoded(encoded)) = entry else {
-+                return None;
-+            };
-+            let (codes, count) = encoded.codes();
-+            // `code < count`, so the result is below `code_space <= row_count`.
-+            for (row_code, code) in row_codes.iter_mut().zip(codes.iter()) {
-+                *row_code += (code as usize * stride) as u32;
-+            }
-+            stride *= count as usize;
-+        }
-+
-+        // Rank of each combination in first-seen order, and its first row.
-+        let mut rank_of_code = vec![u32::MAX; code_space];
-+        let mut representatives = Vec::new();
-+        for (row, row_code) in row_codes.iter_mut().enumerate() {
-+            let rank = &mut rank_of_code[*row_code as usize];
-+            if *rank == u32::MAX {
-+                *rank = representatives.len() as u32;
-+                representatives.push(row as u32);
-+            }
-+            *row_code = *rank;
-+        }
-+
-+        // The representative rows stay encoded.
-+        let keys = group_columns
-+            .iter()
-+            .map(|entry| entry.
-```
-
-**File**: `src/query/expression/src/aggregate/group_hash.rs` (modified, +25/-0)
-```diff
-@@ -278,6 +278,31 @@ impl<const IS_FIRST: bool> ValueVisitor for HashVisitor<'_, IS_FIRST> {
-         Ok(())
-     }
- 
-+    fn visit_encoded(&mut self, column: Box<EncodedColumn>) -> Result<()> {
-+        // Hashing once per dictionary value only pays when there are fewer values than rows:
-+        // aggregation hashes batches of a block, and each batch carries the whole dictionary.
-+        let EncodedColumn::Dict(dict) = column.as_ref() else {
-+            return self.visit_column(column.decode());
-+        };
-+        if dict.values.len() > dict.len() {
-+            return self.visit_column(column.decode());
-+        }
-+        let mut hashes = vec![0; dict.values.len()];
-+        HashVisitor::<true> {
-+            values: &mut hashes,
-+        }
-+        .visit_column(dict.values.clone())?;
-+        for (val, key) in self.values.iter_mut().zip(dict.keys.iter()) {
-+            let hash = hashes[key as usize];
-+            *val = if IS_FIRST {
-+                hash
-+            } else {
-+                (*val).wrapping_mul(NULL_HASH_VAL) ^ hash
-+            };
-+        }
-+        Ok(())
-+    }
-+
-     fn visit_column(&mut self, column: Column) -> Result<()> {
-         match column {
-             Column::Null { .. } | Column::EmptyArray { .. } | Column::EmptyMap { .. } => {
-```
-
-**File**: `src/query/expression/src/aggregate/payload_row.rs` (modified, +118/-0)
-```diff
-@@ -36,11 +36,15 @@ use crate::types::DataType;
- use crate::types::DateType;
- use crate::types::DecimalDataKind;
- use crate::types::DecimalScalar;
-+use crate::types::DecimalType;
- use crate::types::DecimalView;
-+use crate::types::EncodedColumn;
- use crate::types::IntervalType;
- use crate::types::NumberColumn;
-+use crate::types::NumberDataType;
- use crate::types::NumberScalar;
- use crate::types::NumberType;
-+use crate::types::StringType;
- use crate::types::TimestampType;
- use crate::types::decimal::Decimal;
- use crate::types::decimal::DecimalColumn;
-@@ -83,6 +87,72 @@ pub(super) fn rowformat_size(data_type: &DataType) -> usize {
- }
- 
- /// This serialize column into row format by fixed size
-+/// Runs `$body` with `$T` the value type of a frame of reference / dictionary encodable
-+/// fixed size type, `$other` for other types.
-+macro_rules! with_encoded_fixed_size_type {
-+    ($data_type:expr, | $T:ident | $body:expr, $other:expr) => {
-+        match $data_type {
-+            DataType::Number(ty) => with_number_mapped_type!(|NUM| match ty {
-+                NumberDataType::NUM => {
-+                    type $T = NumberType<NUM>;
-+                    $body
-+                }
-+            }),
-+            DataType::Decimal(size) => with_decimal_mapped_type!(|D| match size.data_kind() {
-+                DecimalDataKind::D => {
-+                    type $T = DecimalType<D>;
-+                    $body
-+                }
-+            }),
-+            DataType::Date => {
-+                type $T = DateType;
-+                $body
-+            }
-+            DataType::Timestamp => {
-+                type $T = TimestampType;
-+                $body
-+            }
-+            _ => $other,
-+        }
-+    };
-+}
-+
-+/// Writes the selected rows of an encoded column, reading each value from the encoding.
-+/// `false` if the column cannot be read encoded, so it must be decoded.
-+unsafe fn serialize_encoded_to_rowformat(
-+    arena: &Bump,
-+    column: &EncodedColumn,
-+    select_vector: &[RowID],
-+    address: &mut [RowMut; BATCH_SIZE],
-+    offset: usize,
-+) -> bool {
-+    with_encoded_fixed_size_type!(
-+        &column.data_type(),
-+        |T| {
-+            let Some(view) = T::try_downcast_encoded(column) else {
-+                return false;
-+            };
-+            for row in select_vector {
-+                unsafe { address[*row].write(offset, &view.index_unchecked(row.to_usize())) };
-+            }
-+        },
-+        {
-+            let view = match column.data_type() {
-+                DataType::String => StringType::try_downcast_encoded(column),
-+                _ => None,
-+            };
-+            let Some(view) = view else {
-+                return false;
-+            };
-+            for row in select_vector {
-+                let data = arena.alloc_str(unsafe { view.index_unchecked(row.to_usize()) });
-+                unsafe { address[*row].write_bytes(offset, data.as_bytes()) };
-+            }
-+        }
-+    );
-+    true
-+}
-+
- pub(super) unsafe fn serialize_column_to_rowformat(
-     arena: &Bump,
-     column: &Column,
-@@ -92,6 +162,18 @@ pub(super) unsafe fn serialize_column_to_rowformat(
-     scratch: &mut Vec<u8>,
- ) {
-     match column {
-+        Column::Encoded(c) => unsafe {
-+            if !serialize_encoded_to_rowformat(arena, c, select_vector, address, offset) {
-+                serialize_column_to_rowformat(
-+                    arena,
-+                    &c.decode(),
-+                    select_vector,
-+                    address,
-+                    offset,
-+                    scratch,
-+                )
-+            }
-+        },
-         Column::Null { .. } | Column::EmptyArray { .. } | Column::EmptyMap { .. } => {}
-         Column::Number(v) => with_number_mapped_type!(|NUM_TYPE| match v {
-             NumberColumn::NUM_TYPE(buffer) => {
-@@ -416,6 +498,10 @@ impl<'s> CompareState<'s> {
-         counts: (usize, usize),
-     ) -> (usize, usize) {
-         match col {
-+            Column::Encoded(c) => match self.match_encoded(c, col_offset, validity, counts) {
-+                Some(counts) => counts,
-+                None => self.match_column(&c.decode(), col_offset, validity, counts),
-+            },
-             Column::EmptyArray { .. } | Column::EmptyMap { .. } => {
-                 self.match_validity_with(counts, validity, |_, _| true)
-             }
-@@ -473,6 +559,38 @@ impl<'s> CompareState<'s> {
-         }
-     }
- 
-+    /// Compares the rows of an encoded column, reading each value from the encoding. `None` if
-+    /// the column cannot be read encoded, so it must be decoded.
-+    fn match_encoded(
-+        &mut self,
-+        col: &EncodedColumn,
-+        col_offset: usize,
-+        validity: Option<(&Bitmap, usize)>,
-+        counts: (usize, usize),
-+    ) -> Option<(usize, usize)> {
-+        Some(with_encoded_fixed_size_type!(
-+            &col.data_type(),
-+            |T| {
-+                let view = T::try_downcast_encoded(col)?;
-+                self.match_validity_with
-```
-
-**File**: `src/query/expression/src/block.rs` (modified, +49/-0)
-```diff
-@@ -38,7 +38,9 @@ use crate::types::AnyType;
- use crate::types::ArgType;
- use crate::types::BooleanType;
- use crate::types::DataType;
-+use crate::types::EncodedView;
- use crate::types::ValueType;
-+use crate::types::encoded::EncodedViewIter;
- 
- pub type SendableDataBlockStream =
-     std::pin::Pin<Box<dyn futures::stream::Stream<Item = Result<DataBlock>> + Send>>;
-@@ -234,6 +236,14 @@ impl BlockEntry {
-                 T::to_owned_scalar(T::try_downcast_scalar(&scalar.as_ref())?),
-                 *num_rows,
-             )),
-+            BlockEntry::Column(Column::Encoded(encoded)) => {
-+                match T::try_downcast_encoded(encoded) {
-+                    Some(view) => Ok(ColumnView::Encoded(view)),
-+                    None => Ok(ColumnView::Column(T::try_downcast_column(
-+                        self.as_column().unwrap(),
-+                    )?)),
-+                }
-+            }
-             BlockEntry::Column(column) => Ok(ColumnView::Column(T::try_downcast_column(column)?)),
-         }
-     }
-@@ -274,13 +284,15 @@ impl TryFrom<Value<AnyType>> for BlockEntry {
- pub enum ColumnView<T: AccessType> {
-     Const(T::Scalar, usize),
-     Column(T::Column),
-+    Encoded(EncodedView<T>),
- }
- 
- impl<T: AccessType> ColumnView<T> {
-     pub fn len(&self) -> usize {
-         match self {
-             ColumnView::Const(_, num_rows) => *num_rows,
-             ColumnView::Column(column) => T::column_len(column),
-+            ColumnView::Encoded(view) => view.len(),
-         }
-     }
- 
-@@ -294,6 +306,7 @@ impl<T: AccessType> ColumnView<T> {
-                 ColumnViewIter::Const(T::to_scalar_ref(scalar), *num_rows)
-             }
-             ColumnView::Column(column) => ColumnViewIter::Column(T::iter_column(column)),
-+            ColumnView::Encoded(view) => ColumnViewIter::Encoded(view.iter()),
-         }
-     }
- 
-@@ -307,6 +320,7 @@ impl<T: AccessType> ColumnView<T> {
-                 }
-             }
-             ColumnView::Column(column) => T::index_column(column, i),
-+            ColumnView::Encoded(view) => view.index(i),
-         }
-     }
- 
-@@ -319,6 +333,7 @@ impl<T: AccessType> ColumnView<T> {
-             match self {
-                 ColumnView::Const(scalar, _) => T::to_scalar_ref(scalar),
-                 ColumnView::Column(column) => T::index_column_unchecked(column, i),
-+                ColumnView::Encoded(view) => view.index_unchecked(i),
-             }
-         }
-     }
-@@ -332,13 +347,45 @@ impl<T: ValueType> ColumnView<T> {
-                 BlockEntry::new_const_column(data_type, scalar, num_rows)
-             }
-             ColumnView::Column(column) => T::upcast_column_with_type(column, &data_type).into(),
-+            ColumnView::Encoded(view) => view.upcast(&data_type).into(),
-         }
-     }
- }
- 
-+/// Runs `body` with `iter` bound to an iterator over the values of `view` (a
-+/// `&ColumnView<T>`), with a concrete iterator type per layout instead of [`ColumnViewIter`],
-+/// which matches the layout on every row. Plain columns and each delta width of frame of
-+/// reference columns get their own copy of `body`.
-+#[macro_export]
-+macro_rules! with_column_view_iter {
-+    ($T:ty, $view:expr, | $iter:ident | $body:expr) => {{
-+        let view: &$crate::ColumnView<$T> = $view;
-+        match view {
-+            $crate::ColumnView::Column(column) => {
-+                let $iter = <$T as $crate::types::AccessType>::iter_column(column);
-+                $body
-+            }
-+            $crate::ColumnView::Encoded($crate::types::EncodedView::For(column)) => {
-+                let base = column.base();
-+                $crate::with_narrow_buffer!(column.deltas(), |deltas| {
-+                    let $iter = deltas.iter().map(move |delta| {
-+                        <$T as $crate::types::AccessType>::for_scalar_ref(base + *delta as i128)
-+                    });
-+                    $body
-+                })
-+            }
-+            view => {
-+                let $iter = view.iter();
-+                $body
-+            }
-+        }
-+    }};
-+}
-+
- pub enum ColumnViewIter<'a, T: AccessType> {
-     Column(T::ColumnIterator<'a>),
-     Const(T::ScalarRef<'a>, usize),
-+    Encoded(EncodedViewIter<'a, T>),
- }
- 
- impl<'a, T: AccessType> Iterator for ColumnViewIter<'a, T> {
-@@ -347,6 +394,7 @@ impl<'a, T: AccessType> Iterator for ColumnViewIter<'a, T> {
-     fn next(&mut self) -> Option<Self::Item> {
-         match self {
-             ColumnViewIter::Column(iter) => iter.next(),
-+            ColumnViewIter::Encoded(iter) => iter.next(),
-             ColumnViewIter::Const(scalar, n) => {
-                 if *n == 0 {
-                     None
-@@ -361,6 +409,7 @@ impl<'a, T: AccessType> Iterator for ColumnViewIter<'a, T> {
-     fn size_hint(&self) -> (usize, Option<usize>) {
-         match self {
-             ColumnViewIter::Column(iter) => iter.size_hint(),
-+            ColumnViewIter::Encoded(iter) => iter.size_hint(),
-             ColumnViewIter::Const(_, n) => (*n, Some(*n)),
-         }
-     }
-```
-
-**File**: `src/query/expression/src/block_vec.rs` (modified, +6/-0)
-```diff
-@@ -741,6 +741,7 @@ impl DataBlockVec {
-         let has_null = views.iter().any(|view| match view {
-             ColumnView::Const(value, num_rows) => value.is_none() && *num_rows > 0,
-             ColumnView::Column(column) => column.validity().null_count() > 0,
-+            ColumnView::Encoded(view) => view.iter().any(|value| value.is_none()),
-         });
- 
-         if !has_null {
-@@ -754,6 +755,9 @@ impl DataBlockVec {
-                     bitmap.extend_constant(*num_rows, value.is_some());
-                 }
-                 ColumnView::Column(column) => bitmap.extend_from_bitmap(column.validity()),
-+                ColumnView::Encoded(view) => {
-+                    view.iter().for_each(|value| bitmap.push(value.is_some()))
-+                }
-             }
-         }
-         Some(bitmap.into())
-@@ -771,6 +775,8 @@ impl DataBlockVec {
-             ColumnView::Column(nullable) => unsafe {
-                 T::index_column_unchecked(nullable.column(), row)
-             },
-+            ColumnView::Encoded(view) => unsafe { view.index_unchecked(row) }
-+                .expect("validity bitmap mismatch for nullable sort encoded value"),
-         }
-     }
- }
-```
-
----
-
-### Incident Patch 2: `bd51ba08` (2026-10-27)
-**Commit Message**: docs(agents): require Rust unit tests in a trailing mod tests block
-
-**File**: `AGENTS.md` (modified, +1/-0)
-```diff
-@@ -9,6 +9,7 @@ This file is the top-level guide for repository-specific working rules. Start by
- - When guidance, lower-level docs, and repository practice conflict or are ambiguous, identify the specific conflict that affects the current decision instead of assuming one source is automatically correct.
- - Validate incrementally. Run the smallest relevant checks early, and scale verification to the parts that will remain in the branch and enter review.
- - Treat tests as part of the change. Planner, executor, storage, and behavior changes should come with regression coverage.
-+- Rust unit tests live in one `#[cfg(test)] mod tests` block at the end of the file, never interleaved with the implementation. Prefer the crate's existing `tests/it/` directory when it has one. See [`agents/coding-style.md`](agents/coding-style.md).
- - Keep contributions reviewable. Commits should stay scoped, and pull requests should follow the repository's expected collaboration workflow.
- 
- ## Submission Intent
-```
-
-**File**: `agents/coding-style.md` (modified, +13/-0)
-```diff
-@@ -30,6 +30,19 @@
-   `create_index_schema`).
- 
- ## Tests and Fixtures
-+- Rust unit tests go in a single `#[cfg(test)] mod tests { ... }` block at the
-+  very end of the source file, after all production code. Never place a test
-+  module, `#[test]` function, or test-only helper between `impl` blocks or in
-+  the middle of the implementation. If a file needs more than one test module,
-+  nest them inside the trailing `mod tests`.
-+- Name the module `tests`, not `foo_tests` or `request_debug_tests`. Group by
-+  nested module or by test function name if you need to distinguish topics.
-+- Before adding a unit test, check whether the crate already has a
-+  `tests/it/` directory. Most Databend crates keep their tests there; follow
-+  the existing location and style for that crate instead of introducing an
-+  inline module where none exists.
-+- Check whether the behavior is already covered by an existing test before
-+  adding a new one, and match the assertion and fixture style of nearby tests.
- - Keep SQL suite file prefixes consistent with the existing numeric ordering in `tests/suites/`.
- 
- ## Python
-```
-
-**File**: `agents/debug-and-validation.md` (modified, +1/-1)
-```diff
-@@ -9,7 +9,7 @@
- 
- ## Changes Intended to Remain in the Branch
- 
--- Keep unit tests close to the affected crate with `#[cfg(test)]` modules.
-+- Keep unit tests close to the affected crate with `#[cfg(test)]` modules, placed at the end of the file per [`coding-style.md`](coding-style.md#tests-and-fixtures).
- - Put integration behavior in the relevant SQL suites or meta harnesses such as `tests/metactl` and `tests/meta-kvapi`.
- - Every planner, executor, or storage change should add at least one regression SQL file plus expected output when deterministic.
- - Use cluster variants such as `make stateless-cluster-test` and TLS mode when coordination, transactions, or auth are involved.
-```
-
----
-
-### Incident Patch 3: `2558f77f` (2026-10-27)
-**Commit Message**: fix(query): resolve qualified names as tables, not CTEs (#20695)
-
-* fix(query): resolve qualified names as tables, not CTEs
-
-Only unqualified table references may resolve to CTEs. Apply the same rule to CTE reference counting and materialized CTE rewriting, and remove the misleading-name check.
-
-Keep possible CTE references unqualified in new stored definitions and bind them in a captured namespace. Save the view query version and namespace as internal options, without changing SHOW CREATE syntax.
-
-Add regressions for qualified names, cross-database view binding, materialization, nested CTEs, identifier settings, and dynamic table refresh. Legacy definitions are not automatically migrated.
-
-Fixes #20686
-
-* test(query): update statistics trace view namespace fixture
-
-Include the captured view namespace in the expected statistics trace JSON. This matches the full CI actual output without changing assertions or executable code.
-
-Validated the service statistics trace collection test and the optimizer materialized CTE replay golden test locally.
-
-* refactor(query): remove view query version discriminator
-
-Read the stored definition namespace directly, without a version option or versio
-
-**File**: `src/query/service/src/interpreters/access/privilege_access.rs` (modified, +5/-1)
-```diff
-@@ -45,6 +45,7 @@ use databend_common_meta_app::principal::UserPrivilegeType;
- use databend_common_meta_app::row_access_policy::RowAccessPolicyNameIdent;
- use databend_common_meta_app::schema::is_materialized_view_engine;
- use databend_common_meta_app::tenant::Tenant;
-+use databend_common_sql::DefinitionScope;
- use databend_common_sql::Planner;
- use databend_common_sql::binder::MutationType;
- use databend_common_sql::plans::AlterSharePlanAction;
-@@ -2469,7 +2470,10 @@ impl AccessChecker for PrivilegeAccess {
-                 }
-             }
-             Plan::CreateView(plan) => {
--                let mut planner = Planner::new(self.ctx.clone());
-+                let mut planner = Planner::new(self.ctx.clone()).with_definition_scope(DefinitionScope::in_namespace(
-+                    plan.catalog.clone(),
-+                    plan.database.clone(),
-+                ));
-                 let (plan, _) = planner.plan_sql(&plan.subquery).await?;
-                 self.check(ctx, &plan).await?
-             }
-```
-
-**File**: `src/query/service/src/interpreters/common/table_option_validation.rs` (modified, +4/-0)
-```diff
-@@ -74,6 +74,8 @@ use databend_storages_common_table_meta::table::OPT_KEY_LOCATION;
- use databend_storages_common_table_meta::table::OPT_KEY_MATERIALIZED_VIEW_SOURCE_DATABASE_NAME;
- use databend_storages_common_table_meta::table::OPT_KEY_MATERIALIZED_VIEW_SOURCE_TABLE_ID;
- use databend_storages_common_table_meta::table::OPT_KEY_MATERIALIZED_VIEW_SOURCE_TABLE_NAME;
-+use databend_storages_common_table_meta::table::OPT_KEY_QUERY_CATALOG;
-+use databend_storages_common_table_meta::table::OPT_KEY_QUERY_DATABASE;
- use databend_storages_common_table_meta::table::OPT_KEY_RANDOM_MAX_ARRAY_LEN;
- use databend_storages_common_table_meta::table::OPT_KEY_RANDOM_MAX_STRING_LEN;
- use databend_storages_common_table_meta::table::OPT_KEY_RANDOM_MIN_STRING_LEN;
-@@ -279,6 +281,8 @@ pub fn is_valid_create_opt<S: AsRef<str>>(opt_key: S, engine: &Engine) -> bool {
-             CREATE_FUSE_OPTIONS.contains(opt_key)
-                 || opt_key == OPT_KEY_AS_QUERY
-                 || opt_key == OPT_KEY_SOURCE_TABLE_IDS
-+                || opt_key == OPT_KEY_QUERY_CATALOG
-+                || opt_key == OPT_KEY_QUERY_DATABASE
-         }
-     }
- }
-```
-
-**File**: `src/query/service/src/interpreters/interpreter_dynamic_table_refresh.rs` (modified, +2/-1)
-```diff
-@@ -106,7 +106,8 @@ impl Interpreter for RefreshDynamicTableInterpreter {
-             // interpolating the catalog/database/table names into SQL and re-parsing would let a
-             // crafted name break out of its quoting -- in a write path. Only the stored definition,
-             // which the system itself serialized, is parsed here.
--            let mut planner = Planner::new(self.ctx.clone());
-+            let mut planner = Planner::new(self.ctx.clone())
-+                .with_stored_definition(table.get_table_info().options());
-             let (select_plan, _) = planner.plan_sql(&query).await?;
-             // Check the exact source plan executed below, including source SELECT and UDF access.
-             Accessor::create(self.ctx.clone())
-```
-
-**File**: `src/query/service/src/interpreters/interpreter_refresh_lineage.rs` (modified, +5/-1)
-```diff
-@@ -32,6 +32,7 @@ use databend_common_expression::types::UInt64Type;
- use databend_common_meta_app::schema::CatalogType;
- use databend_common_meta_app::schema::DatabaseType;
- use databend_common_meta_app::schema::is_materialized_view_engine;
-+use databend_common_sql::DefinitionScope;
- use databend_common_sql::Planner;
- use databend_common_sql::QueryLineage;
- use databend_common_sql::QueryLineageRelation;
-@@ -112,6 +113,7 @@ struct ViewEntry {
-     /// The stored definition: the View query, or the original (logical) query of a
-     /// materialized view.
-     query: Option<String>,
-+    definition_scope: DefinitionScope,
-     /// Persisted logical output schema; only materialized views have one.
-     logical_schema: Option<TableSchema>,
-     /// The source table id a materialized view is bound to. The stored query names the source,
-@@ -253,6 +255,7 @@ impl RefreshLineageInterpreter {
-                     name: table.name().to_string(),
-                     table_id: table_info.ident.table_id,
-                     created_on: table_info.meta.created_on.timestamp_micros(),
-+                    definition_scope: DefinitionScope::from_stored_options(table_info.options()),
-                     query,
-                     logical_schema,
-                     source_table_id,
-@@ -280,7 +283,8 @@ impl RefreshLineageInterpreter {
-         })?;
-         // Bind only: lineage must describe the stored definition, not an optimized plan
-         // that may have been folded or routed through a materialized view.
--        let mut planner = Planner::new(self.ctx.clone());
-+        let mut planner =
-+            Planner::new(self.ctx.clone()).with_definition_scope(view.definition_scope.clone());
-         let query_plan = planner.bind_sql(query).await?;
-         let target = QueryLineageRelation {
-             catalog: DEFAULT_CATALOG.to_string(),
-```
-
-**File**: `src/query/service/src/interpreters/interpreter_table_describe.rs` (modified, +2/-1)
-```diff
-@@ -71,7 +71,8 @@ impl Interpreter for DescribeTableInterpreter {
- 
-             let schema = if tbl_info.engine() == VIEW_ENGINE {
-                 if let Some(query) = tbl_info.options().get(QUERY) {
--                    let mut planner = Planner::new(self.ctx.clone());
-+                    let mut planner =
-+                        Planner::new(self.ctx.clone()).with_stored_definition(tbl_info.options());
-                     let (plan, _) = planner.plan_sql(query).await?;
-                     infer_table_schema(&plan.schema())
-                 } else {
-```
-
-**File**: `src/query/service/src/interpreters/interpreter_view_create.rs` (modified, +14/-1)
-```diff
-@@ -20,11 +20,14 @@ use databend_common_exception::Result;
- use databend_common_meta_app::schema::CreateTableReq;
- use databend_common_meta_app::schema::TableMeta;
- use databend_common_meta_app::schema::TableNameIdent;
-+use databend_common_sql::DefinitionScope;
- use databend_common_sql::Planner;
- use databend_common_sql::plans::CreateViewPlan;
- use databend_common_sql::plans::Plan;
- use databend_common_storages_basic::view_table::QUERY;
- use databend_common_storages_basic::view_table::VIEW_ENGINE;
-+use databend_storages_common_table_meta::table::OPT_KEY_QUERY_CATALOG;
-+use databend_storages_common_table_meta::table::OPT_KEY_QUERY_DATABASE;
- 
- use crate::interpreters::Interpreter;
- use crate::interpreters::util::check_view_circular_dependency;
-@@ -60,7 +63,12 @@ impl Interpreter for CreateViewInterpreter {
-             let tenant = self.ctx.get_tenant();
-             let table_function = catalog.list_table_functions();
-             let mut options = BTreeMap::new();
--            let mut planner = Planner::new(self.ctx.clone());
-+            let mut planner = Planner::new(self.ctx.clone()).with_definition_scope(
-+                DefinitionScope::in_namespace(
-+                    self.plan.catalog.clone(),
-+                    self.plan.database.clone(),
-+                ),
-+            );
-             let (plan, _) = planner.plan_sql(&self.plan.subquery.clone()).await?;
-             match plan.clone() {
-                 Plan::Query { metadata, .. } => {
-@@ -117,6 +125,11 @@ impl Interpreter for CreateViewInterpreter {
-                 )
-             };
-             options.insert(QUERY.to_string(), subquery);
-+            options.insert(OPT_KEY_QUERY_CATALOG.to_string(), self.plan.catalog.clone());
-+            options.insert(
-+                OPT_KEY_QUERY_DATABASE.to_string(),
-+                self.plan.database.clone(),
-+            );
- 
-             let plan = CreateTableReq {
-                 create_option: self.plan.create_option,
-```
-
-**File**: `src/query/service/src/interpreters/interpreter_view_describe.rs` (modified, +2/-1)
-```diff
-@@ -64,7 +64,8 @@ impl Interpreter for DescribeViewInterpreter {
-             let engine = table.get_table_info().engine();
-             let schema = if engine == VIEW_ENGINE {
-                 if let Some(query) = tbl_info.options().get(QUERY) {
--                    let mut planner = Planner::new(self.ctx.clone());
-+                    let mut planner =
-+                        Planner::new(self.ctx.clone()).with_stored_definition(tbl_info.options());
-                     let (plan, _) = planner.plan_sql(query).await?;
-                     infer_table_schema(&plan.schema())
-                 } else {
-```
-
-**File**: `src/query/service/src/schedulers/scheduler.rs` (modified, +11/-1)
-```diff
-@@ -17,6 +17,7 @@ use std::sync::Arc;
- use async_trait::async_trait;
+ use databend_common_exception::ErrorCode;
  use databend_common_exception::Result;
- use databend_common_expression::DataBlock;
-+use databend_common_sql::DefinitionScope;
- use databend_common_sql::Planner;
- use databend_common_sql::planner::QueryExecutor;
- use futures_util::TryStreamExt;
-@@ -167,8 +168,17 @@ impl ServiceQueryExecutor {
- #[async_trait]
- impl QueryExecutor for ServiceQueryExecutor {
-     async fn execute_query_with_sql_string(&self, query_sql: &str) -> Result<Vec<DataBlock>> {
-+        self.execute_query_in_scope(query_sql, DefinitionScope::session())
-+            .await
+-use regex::Regex;
+ use unicode_segmentation::UnicodeSegmentation;
+ 
+ /// Function that escapes special characters in a string.
+@@ -177,54 +175,6 @@ pub fn convert_number_size(num: f64) -> String {
+     format!("{}{}{}", negative, pretty_bytes, unit)
+ }
+ 
+-/// Mask a secret value, showing first 2 and last 2 characters.
+-/// For values with 4 or fewer characters, fully mask.
+-pub fn mask_partial(s: &str) -> String {
+-    let chars: Vec<char> = s.chars().collect();
+-    if chars.len() <= 4 {
+-        "***".to_string()
+-    } else {
+-        let head: String = chars[..2].iter().collect();
+-        let tail: String = chars[chars.len() - 2..].iter().collect();
+-        format!("{}***{}", head, tail)
+-    }
+-}
+-
+-/// Mask the connection info in the sql.
+-pub fn mask_connection_info(sql: &str) -> String {
+-    // Quoted string pattern: handles both '' (SQL doubled) and \' (backslash escaped) quotes
+-    // Also handles other backslash escapes like \\
+-    // Supports both single-quoted and double-quoted literals (MySQL/Hive dialects)
+-    const SINGLE_QUOTED_STR: &str = r"'([^'\\]|''|\\.)*'";
+-    const DOUBLE_QUOTED_STR: &str = r#""([^"\\]|""|\\.)*""#;
+-
+-    // Match individual secret key-value pairs
+-    // Supports both single-quoted and double-quoted values
+-    static RE_SECRET_KV: LazyLock<Regex> = LazyLock::new(|| {
+-        let pattern = format!(
+-            r"(?i)(ACCESS_KEY_ID|ACCESS_KEY_SECRET|SECRET_ACCESS_KEY|AWS_KEY_ID|AWS_KEY_SECRET|AWS_SECRET_KEY|AWS_ACCESS_KEY_ID|AWS_SECRET_ACCESS_KEY|AWS_TOKEN|AWS_SESSION_TOKEN|MASTER_KEY|ACCOUNT_KEY|ACCOUNT_NAME|PASSWORD|SECURITY_TOKEN|SESSION_TOKEN|SECRET_ID|SECRET_KEY|CREDENTIAL|EXTERNAL_ID|AWS_EXTERNAL_ID|DELEGATION)\s*=\s*({}|{})",
+-            SINGLE_QUOTED_STR, DOUBLE_QUOTED_STR
+-        );
+-        Regex::new(&pattern).unwrap()
+-    });
+-
+-    RE_SECRET_KV
+-        .replace_all(sql, |caps: &regex::Captures| {
+-            let key = &caps[1];
+-            let quoted_val = &caps[2];
+-            let quote_char = &quoted_val[..1];
+-            let inner = &quoted_val[1..quoted_val.len() - 1];
+-            format!(
+-                "{} = {}{}{}",
+-                key,
+-                quote_char,
+-                mask_partial(inner),
+-                quote_char
+-            )
+-        })
+-        .to_string()
+-}
+-
+ /// Maximum length of the SQL query to be displayed or log.
+ /// If the query exceeds this length and starts with keywords,
+ /// it will be truncated and appended with the remaining length.
+@@ -253,251 +203,3 @@ pub fn short_sql(sql: String, max_length: u64) -> String {
+         query.to_string()
+     }
+ }
+-
+-#[cfg(test)]
+-mod tests {
+-    use super::*;
+-
+-    #[test]
+-    fn test_mask_connection_eq() {
+-        let sql = "CREATE STAGE s URL='s3://b' CONNECTION = (ACCESS_KEY_ID = 'akid123' SECRET_ACCESS_KEY = 'secret456')";
+-        let masked = mask_connection_info(sql);
+-        assert_eq!(
+-            masked,
+-            "CREATE STAGE s URL='s3://b' CONNECTION = (ACCESS_KEY_ID = 'ak***23' SECRET_ACCESS_KEY = 'se***56')"
+-        );
+-        assert!(!masked.contains("akid123"));
+-        assert!(!masked.contains("secret456"));
+-    }
+-
+-    #[test]
+-    fn test_mask_connection_arrow() {
+-        let sql = "SELECT * FROM 's3://b/data.csv' (CONNECTION => (ACCESS_KEY_ID = 'akid123', SECRET_ACCESS_KEY = 'secret456'))";
+-        let masked = mask_connection_info(sql);
+-        assert!(masked.contains("ACCESS_KEY_ID = 'ak***23'"));
+-        assert!(masked.contains("SECRET_ACCESS_KEY = 'se***56'"));
+-        assert!(!masked.contains("akid123"));
+-        assert!(!masked.contains("secret456"));
+-    }
+-
+-    #[test]
+-    fn test_mask_connection_with_parens_in_value() {
+-        // Value contains ')' inside quotes — should not break the regex
+-        let sql = "CONNECTION = (PASSWORD = 'p@ss(w)rd' ACCESS_KEY_ID = 'mykey123')";
+-        let masked = mask_connection_info(sql);
+-        assert!(masked.contains("PASSWORD = 'p@***rd'"));
+-        assert!(masked.contains("ACCESS_KEY_ID = 'my***23'"));
+-        assert!(!masked.contains("p@ss(w)rd"));
+-        assert!(!masked.contains("mykey123"));
+-    }
+-
+-    #[test]
+-    fn test_mask_connection_with_escaped_quotes() {
+-        // SQL-style escaped quotes ('') inside values
+-        let sql = "CONNECTION = (PASSWORD = 'it''s_secret' ACCESS_KEY_ID = 'ak')";
+-        let masked = mask_connection_info(sql);
+-        assert!(masked.contains("PASSWORD = 'it***et'"));
+-        assert!(masked.contains("ACCESS_KEY_ID = '***'"));
+-        assert!(!masked.contains("it''s_secret"));
+-    }
+-
+-    #[test]
+-    fn test_mask_connection_with_backslash_escaped_quotes() {
+-        // Backslash-escaped quotes (\') inside values
+-        let sql = r"CONNECTION = (PASSWORD = 'abc\'tail' ACCESS_KEY_ID = 'mykey')";
+-        let ma
+```
+
+**File**: `src/common/base/tests/it/string.rs` (modified, +0/-29)
+```diff
+@@ -75,35 +75,6 @@ fn test_unescape_string() {
+     }
+ }
+ 
+-#[test]
+-fn test_mask_connection_info() {
+-    let sql = r#"COPY INTO table1
+-        FROM 's3://xx/yy
+-        CONNECTION = (
+-            ACCESS_KEY_ID = 'aaa' ,
+-            SECRET_ACCESS_KEY = 'sss' ,
+-            REGION = 'us-east-2'
+-        )
+-        PATTERN = '.*[.]csv'
+-            FILE_FORMAT = (
+-            TYPE = CSV,
+-            FIELD_DELIMITER = '\t',
+-            RECORD_DELIMITER = '\n',
+-            SKIP_HEADER = 1
+-        );"#;
+-
+-    let actual = mask_connection_info(sql);
+-    // ACCESS_KEY_ID and SECRET_ACCESS_KEY are sensitive keys, their values get masked
+-    // 'aaa' and 'sss' are <= 4 chars so fully masked
+-    assert!(actual.contains("ACCESS_KEY_ID = '***'"));
+-    assert!(actual.contains("SECRET_ACCESS_KEY = '***'"));
+-    // REGION is not a sensitive key, should remain unchanged
+-    assert!(actual.contains("REGION = 'us-east-2'"));
+-    // Original secrets should not appear
+-    assert!(!actual.contains("= 'aaa'"));
+-    assert!(!actual.contains("= 'sss'"));
+-}
+-
+ #[test]
+ fn test_short_sql() {
+     let max_length: u64 = 128;
+```
+
+**File**: `src/query/ast/src/ast/statements/statement.rs` (modified, +357/-75)
+```diff
+@@ -12,11 +12,14 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
++use std::collections::BTreeMap;
+ use std::fmt::Display;
+ use std::fmt::Formatter;
+ 
+ use derive_visitor::Drive;
+ use derive_visitor::DriveMut;
++use derive_visitor::Visitor;
++use derive_visitor::VisitorMut;
+ use dictionary::CreateDictionaryStmt;
+ use dictionary::DropDictionaryStmt;
+ use dictionary::ShowCreateDictionaryStmt;
+@@ -43,6 +46,15 @@ use crate::ast::statements::workload::RenameWorkloadGroupStmt;
+ use crate::ast::statements::workload::SetWorkloadGroupQuotasStmt;
+ use crate::ast::statements::workload::ShowWorkloadGroupsStmt;
+ use crate::ast::write_comma_separated_list;
++use crate::parser::SqlSecrets;
++use crate::parser::mask::hide_literals;
++use crate::parser::mask::is_secret_name;
++use crate::parser::mask::mask_dynamic_sql_expr;
++use crate::parser::mask::mask_partial;
++use crate::parser::mask::mask_program_literals;
++use crate::parser::mask::url_secrets;
++use crate::parser::mask_raw_sql_with_secrets;
++use crate::parser::mask_url;
+ 
+ // SQL statement
+ #[allow(clippy::large_enum_variant)]
+@@ -432,91 +444,361 @@ pub enum Statement {
+     System(SystemStmt),
+ }
+ 
+-impl Statement {
+-    pub fn to_mask_sql(&self) -> String {
+-        match self {
+-            Statement::CopyIntoTable(copy) => {
+-                let mut copy_clone = copy.clone();
++/// Masks credentials that `Display` would otherwise print, including inside
++/// wrappers such as `EXPLAIN` and `SETTINGS (...)`, and records their values.
++#[derive(Default, VisitorMut)]
++#[visitor(
++    AuthOption(enter),
++    CreateCatalogStmt(enter),
++    NotificationWebhookOptions(enter),
++    UDFDefinition(enter),
++    CreateDictionaryStmt(enter),
++    Connection(enter),
++    CreateConnectionStmt(enter),
++    AlterTableStmt(enter),
++    ExecuteImmediateStmt(enter),
++    CreateProcedureStmt(enter),
++    CallProcedureStmt(enter),
++    TaskSql(enter),
++    CreateTaskStmt(enter),
++    AlterTaskOptions(enter),
++    Settings(enter),
++    HintItem(enter),
++    SelectStageOptions(enter),
++    CreateTableStmt(enter),
++    CreateWorkerStmt(enter),
++    AlterWorkerAction(enter)
++)]
++struct SecretMasker(SqlSecrets);
+ 
+-                if let CopyIntoTableSource::Location(FileLocation::Uri(location)) =
+-                    &mut copy_clone.src
+-                {
+-                    location.connection = location.connection.mask()
+-                }
+-                format!("{}", Statement::CopyIntoTable(copy_clone))
+-            }
+-            Statement::CopyIntoLocation(copy) => {
+-                let mut copy_clone = copy.clone();
++/// Whether [`SecretMasker`] may change a statement, so that statements
++/// without credentials, such as large `INSERT`s, are not cloned to be masked.
++#[derive(Default, Visitor)]
++#[visitor(
++    AuthOption(enter),
++    CreateCatalogStmt(enter),
++    NotificationWebhookOptions(enter),
++    UDFDefinition(enter),
++    CreateDictionaryStmt(enter),
++    Connection(enter),
++    CreateConnectionStmt(enter),
++    AlterTableStmt(enter),
++    ExecuteImmediateStmt(enter),
++    CreateProcedureStmt(enter),
++    CallProcedureStmt(enter),
++    TaskSql(enter),
++    CreateTaskStmt(enter),
++    AlterTaskOptions(enter),
++    Settings(enter),
++    HintItem(enter),
++    SelectStageOptions(enter),
++    CreateTableStmt(enter),
++    CreateWorkerStmt(enter),
++    AlterWorkerAction(enter)
++)]
++struct MayHoldSecrets(bool);
+ 
+-                if let FileLocation::Uri(location) = &mut copy_clone.dst {
+-                    location.connection = location.connection.mask()
+-                }
+-                format!("{}", Statement::CopyIntoLocation(copy_clone))
+-            }
+-            Statement::CreateStage(stage) => {
+-                let mut stage_clone = stage.clone();
+-                if let Some(location) = &mut stage_clone.location {
+-                    location.connection = location.connection.mask()
+-                }
+-                format!("{}", Statement::CreateStage(stage_clone))
++impl MayHoldSecrets {
++    fn enter_auth_option(&mut self, _: &AuthOption) {
++        self.0 = true;
 +    }
 +
-+    async fn execute_query_in_scope(
-+        &self,
-+        query_sql: &str,
-+        scope: DefinitionScope,
-+    ) -> Result<Vec<DataBlock>> {
-         let result = async {
--            let mut planner = Planner::new(self.ctx.clone());
-+            let mut planner = Planner::new(self.ctx.clone()).with_definition_scope(scope);
-             let (plan, _) = planner.plan_sql(query_sql).await?;
-             let interpreter = InterpreterFactory::get(self.ctx.clone(), &plan).await?;
-             let stream = interpreter
++    fn enter_create_catalog_stmt(&mut self, _: &CreateCatalogStmt) {
++        self.0 = true;
++    }
++
++    fn enter_notification_webhook_options(&mut self, _: &NotificationWebhookOptions) {
++        self.0 = true;
++    }
++
++    fn enter_udf_definition(&mut self, _: &UDFDefinition) {
++        self.0 = true;
++    }
++
++    fn enter_create_dictionary_stmt(&mut self, _: &CreateDictionaryStmt) {
++        self.0 = true;
++    }
++
++    fn enter_connection(&mut self, connection: &Connection) {
++        self.0 |= !connection.conns.is_empty();
++    }
++
++    fn enter_create_connection_stmt(&mut self, _: &CreateConnectionStmt) {
++        self.0 = true;
++    }
++
++    fn enter_alter_table_stmt(&mut self, stmt: &AlterTableStmt) {
++        self.0 |= match &stmt.action {
++            AlterTableAction::ModifyConnection { .. } => true,
++            AlterTabl
+```
+
+**File**: `src/query/ast/src/parser/mask.rs` (added, +1146/-0)
+```diff
+@@ -0,0 +1,1146 @@
++// Copyright 2021 Datafuse Labs
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++use std::ops::Range;
++
++use crate::ast::Expr;
++use crate::ast::Literal;
++use crate::ast::Statement;
++use crate::ast::quote::QuotedString;
++use crate::parser::Dialect;
++use crate::parser::ParseMode;
++use crate::parser::run_parser;
++use crate::parser::script::ScriptBlockOrStmt;
++use crate::parser::script::script_block_or_stmt;
++use crate::parser::statement::statement;
++use crate::parser::token::TokenKind;
++use crate::parser::token::Tokenizer;
++use crate::parser::tokenize_sql;
++
++/// Name fragments marking an option as a credential, e.g. `secret_access_key`,
++/// `"s3.session-token"`, `AUTHORIZATION_HEADER`, `"gcs.credentials"`.
++const SECRET_NAME_PARTS: &[&str] = &[
++    "secret",
++    "token",
++    "passw",
++    "pwd",
++    "credential",
++    "authorization",
++    "account_name",
++    "external_id",
++    "delegation",
++    // e.g. `SET GLOBAL enterprise_license = '...'`
++    "license",
++];
++
++/// Whether an option name holds a credential. Matching ignores case and
++/// treats `.` and `-` as `_`. A `key` component counts (`access_key_id`,
++/// `"adls.account-key"`) unless it is the whole name, like `PRIMARY KEY`.
++pub(crate) fn is_secret_name(name: &str) -> bool {
++    // Match the Unicode normalization used by connection/dictionary binders.
++    let name = name.to_lowercase().replace(['.', '-'], "_");
++    SECRET_NAME_PARTS.iter().any(|part| name.contains(part))
++        || (name.contains('_') && name.split('_').any(|part| part == "key"))
++}
++
++/// Original values hidden by masking, used to scrub diagnostics that quote
++/// the original SQL or echo its values, such as parser source excerpts.
++#[derive(Clone, Default)]
++pub struct SqlSecrets(std::collections::BTreeSet<String>);
++
++impl std::fmt::Debug for SqlSecrets {
++    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
++        write!(f, "SqlSecrets({} values)", self.0.len())
++    }
++}
++
++impl SqlSecrets {
++    /// Records a hidden value. Lines are also recorded, since source excerpts
++    /// show multi-line values (e.g. private keys) one line at a time.
++    pub fn push(&mut self, value: &str) {
++        let value = value.trim();
++        for v in std::iter::once(value).chain(value.lines().map(str::trim)) {
++            if !v.is_empty() && !self.0.contains(v) {
++                self.0.insert(v.to_string());
++            }
++        }
++    }
++
++    /// Records a quoted token both as written and unescaped.
++    fn push_literal(&mut self, text: &str) {
++        if text.len() >= 2 {
++            self.push(&text[1..text.len() - 1]);
++        }
++        self.push(&unquote(text));
++    }
++
++    fn push_token(&mut self, kind: TokenKind, text: &str) {
++        match kind {
++            TokenKind::LiteralString => self.push_literal(text),
++            TokenKind::LiteralCodeString if text.len() >= 4 => self.push(&text[2..text.len() - 2]),
++            _ => self.push(text),
++        }
++    }
++
++    pub fn extend(&mut self, other: SqlSecrets) {
++        for value in other.0 {
++            self.push(&value);
++        }
++    }
++
++    /// Replaces recorded values in `text` with `***`. Values shorter than
++    /// four characters are replaced only where quoted, so that they cannot
++    /// garble the surrounding diagnostic.
++    pub fn scrub(&self, text: &str) -> String {
++        let mut values: Vec<&str> = self.0.iter().map(String::as_str).collect();
++        values.sort_by_key(|v| std::cmp::Reverse(v.len()));
++        let mut text = text.to_string();
++        for value in values {
++            if value.chars().count() >= 4 {
++                text = text.replace(value, "***");
++            } else {
++                for q in ['\'', '"', '`'] {
++                    text = text.replace(&format!("{q}{value}{q}"), &format!("{q}***{q}"));
++                }
++            }
++        }
++        text
++    }
++}
++
++/// Progress through a `CREATE [OR REPLACE] USER` / `ALTER USER` statement.
++#[derive(Clone, Copy, PartialEq)]
++enum UserAuth {
++    Outside,
++    Statement,
++    Identified,
++    By,
++}
++
++/// Masks credentials in raw SQL text, for logs written before parsing.
++///
++/// The input is tokenized, so string literals and comments never trigger
++/// masking, and a replacement never extends past the secret it covers. This
++/// keeps an executed query's structure visible even if its literals mention
++/// keywords such as `IDENTIFIED` or `PASSWORD=`. 
+```
+
+**File**: `src/query/ast/src/parser/mod.rs` (modified, +7/-0)
+```diff
+@@ -61,6 +61,7 @@ mod error;
+ mod error_suggestion;
+ pub mod expr;
+ mod input;
++pub(crate) mod mask;
+ #[allow(clippy::module_inception)]
+ mod parser;
+ pub mod query;
+@@ -81,5 +82,11 @@ pub use error_suggestion::suggest_correction;
+ pub use input::Dialect;
+ pub use input::Input;
+ pub use input::ParseMode;
++pub use mask::SqlSecrets;
++pub use mask::mask_log_sql_secrets;
++pub use mask::mask_raw_sql_secrets;
++pub use mask::mask_raw_sql_with_secrets;
++pub use mask::mask_sql_secrets;
++pub use mask::mask_url;
+ pub use parser::*;
+ pub use token::all_reserved_keywords;
+```
+
+**File**: `src/query/catalog/src/table_context/query.rs` (modified, +5/-0)
+```diff
+@@ -15,6 +15,7 @@
+ use std::collections::HashMap;
+ use std::collections::HashSet;
+ 
++use databend_common_ast::parser::SqlSecrets;
+ use databend_common_base::base::BuildInfoRef;
+ use databend_common_exception::Result;
+ use databend_common_expression::Scalar;
+@@ -40,6 +41,10 @@ pub trait TableContextQueryIdentity: Send + Sync {
+ 
+     fn attach_query_str(&self, kind: QueryKind, query: String);
+ 
++    /// Records credential values hidden from the query text, so that error
++    /// messages of this query can be scrubbed instead of discarded.
++    fn add_query_secrets(&self, _secrets: SqlSecrets) {}
++
+     fn attach_query_hash(&self, text_hash: String, parameterized_hash: String);
+ 
+     fn get_query_str(&self) -> String;
+```
+
+---
+
+### Incident Patch 2: `420947c7` (2026-10-28)
+**Commit Message**: fix(storage): report tolerated errors for ON_ERROR=ABORT_N (#20849)
+
+* fix(storage): report tolerated errors for ON_ERROR=ABORT_N
+
+Fixes #20782
+
+* fix(storage): keep separator errors from non-final batches
+
+Register the separator FileStatus of every batch with errors, not only the
+EOF batch, so tolerated column-count mismatches are reported when the file
+spans multiple input_read_buffer_size batches.
+
+Also drop the head of a skipped CSV record that started in the previous
+batch; it was left in last_partial_row and prepended to the next record.
+
+**File**: `src/query/storages/stage/src/read/error_handler.rs` (modified, +4/-0)
+```diff
+@@ -57,6 +57,10 @@ impl ErrorHandler {
+                 {
+                     Err(e.to_error_code(&self.on_error_mode, file_path))
+                 } else {
++                    // The bad row is skipped, record it so that ERRORS_SEEN / FIRST_ERROR
++                    // (and RETURN_FAILED_ONLY) reflect the dropped rows, like `Continue`.
++                    let line = e.line;
++                    file_status.add_error(e.error, line);
+                     Ok(())
+                 }
+             }
+```
+
+**File**: `src/query/storages/stage/src/read/row_based/formats/csv/separator.rs` (modified, +15/-2)
+```diff
+@@ -233,7 +233,9 @@ impl CsvReader {
+ 
+         let mut buf_out_pos = 0usize;
+         let mut buf_out_row_end: usize = 0;
+-        let last_batch_remain_len = self.last_partial_row.len();
++        let mut last_batch_remain_len = self.last_partial_row.len();
++        // `last_partial_row` holds the head of the first record completed in this batch.
++        let mut first_record = true;
+         let pos = Position::from_bytes_batch(&batch, self.pos.rows);
+         let mut row_batch = CSVRowBatch::default();
+ 
+@@ -250,6 +252,7 @@ impl CsvReader {
+                 self.read_record(buf_in, &mut buf_out[buf_out_pos..], &mut file_status)?;
+             match res {
+                 ReadRecordOutput::Record { num_fields, bytes } => {
++                    first_record = false;
+                     buf_out_pos += bytes;
+                     row_batch.num_fields.push(num_fields);
+                     row_batch
+@@ -261,7 +264,17 @@ impl CsvReader {
+                 ReadRecordOutput::PartialRecord { bytes } => {
+                     buf_out_pos += bytes;
+                 }
+-                _ => {}
++                ReadRecordOutput::RecordSkipped => {
++                    // The skipped record's output in this batch is overwritten by the next
++                    // record since `buf_out_pos` is not advanced. If it started in a previous
++                    // batch, its head is in `last_partial_row` and must be dropped as well,
++                    // otherwise it would be prepended to the next record.
++                    if first_record {
++                        first_record = false;
++                        self.last_partial_row.clear();
++                        last_batch_remain_len = 0;
++                    }
++                }
+             }
+             if buf_in.is_empty() {
+                 // state already flushed
+```
+
+**File**: `src/query/storages/stage/src/read/row_based/processors/separator.rs` (modified, +9/-7)
+```diff
+@@ -64,14 +64,16 @@ impl AccumulatingTransform for Separator {
+             .into_iter()
+             .filter(|b| b.data.rows() > 0 || b.data.size() > 0)
+             .collect::<Vec<_>>();
++        // Errors tolerated by the separator (e.g. column count mismatch) are only reported
++        // in the status of the batch that contains them; `add_chunk` merges per file.
++        if file_status.error.is_some() {
++            self.ctx
++                .table_context
++                .copy_state()
++                .copy_status()
++                .add_chunk(&batch_meta.path, file_status);
++        }
+         if batch_meta.is_eof {
+-            if file_status.error.is_some() {
+-                self.ctx
+-                    .table_context
+-                    .copy_state()
+-                    .copy_status()
+-                    .add_chunk(&batch_meta.path, file_status);
+-            }
+             self.state = None;
+         }
+         if row_batches.is_empty() {
+```
+
+**File**: `tests/sqllogictests/suites/stage/formats/csv/csv_on_error.test` (modified, +70/-1)
+```diff
+@@ -31,7 +31,76 @@ truncate table iti
+ query ?????
+ copy into iti from @data/csv/wrong_sample.csv file_format = (type = CSV) ON_ERROR=abort_5 force=true
+ ----
+-csv/wrong_sample.csv 3 0 NULL NULL
++csv/wrong_sample.csv 3 4 Number of columns in file (4) does not match that of the corresponding table (3) 2
++
++
++query ???
++select * from iti order by a
++----
++1 'Beijing' 100
++5 'Shenzhen' 70
++7 'Beijing' 99
++
++statement ok
++truncate table iti
++
++# read the file in 20-byte batches: the column count mismatches (rows 2 and 6) are found by
++# the separator in non-final batches, and the final batch (row 7) is clean
++statement ok
++set input_read_buffer_size=20
++
++query ?????
++copy into iti from @data/csv/wrong_sample.csv file_format = (type = CSV) ON_ERROR=abort_5 force=true
++----
++csv/wrong_sample.csv 3 4 Number of columns in file (4) does not match that of the corresponding table (3) 2
++
++query ???
++select * from iti order by a
++----
++1 'Beijing' 100
++5 'Shenzhen' 70
++7 'Beijing' 99
++
++statement ok
++truncate table iti
++
++query ?????
++copy into iti from @data/csv/wrong_sample.csv file_format = (type = CSV) ON_ERROR=continue force=true
++----
++csv/wrong_sample.csv 3 4 Number of columns in file (4) does not match that of the corresponding table (3) 2
++
++# a skipped row spanning two batches must not leak into the next row
++statement ok
++create or replace table iti_str (a string, b string, c string)
++
++query ?????
++copy into iti_str from @data/csv/wrong_sample.csv file_format = (type = CSV) ON_ERROR=continue force=true
++----
++csv/wrong_sample.csv 5 2 Number of columns in file (4) does not match that of the corresponding table (3) 2
++
++query ???
++select * from iti_str order by a
++----
++1 'Beijing' 100
++3 'Guangzhou' b0
++4 'Fuzhou' b1
++5 'Shenzhen' 70
++7 'Beijing' 99
++
++statement ok
++drop table iti_str
++
++statement ok
++unset input_read_buffer_size
++
++statement ok
++truncate table iti
++
++# files with tolerated errors must still be returned with RETURN_FAILED_ONLY
++query ?????
++copy into iti from @data/csv/wrong_sample.csv file_format = (type = CSV) ON_ERROR=abort_5 force=true return_failed_only=true
++----
++csv/wrong_sample.csv 3 4 Number of columns in file (4) does not match that of the corresponding table (3) 2
+ 
+ 
+ query ???
+```
+
+**File**: `tests/sqllogictests/suites/stage/formats/ndjson/ndjson_on_error.test` (modified, +14/-0)
+```diff
+@@ -31,3 +31,17 @@ select * from wrong_ndjson order by a
+ 0 4 4.4 gh 2023-01-01 2023-01-01 00:00:00.000000 [10,11] (3,"d") [1,2]
+ 1 1 1.1 ab 2020-01-01 2020-01-01 00:00:00.000000 [1,2,3] (0,"a") {"k":"v"}
+ 1 1 1.1 ab 2020-01-01 2020-01-01 00:00:00.000000 [1,2,3] (0,"a") {"k":"v"}
++
++statement ok
++truncate table wrong_ndjson
++
++query ?????
++copy into wrong_ndjson from @data/ndjson/wrong_sample.ndjson file_format = (type = NDJSON) ON_ERROR=abort_2 force=true
++----
++ndjson/wrong_sample.ndjson 3 1 Invalid NDJSON row: key must be a string at line 1, position 88 of size 106 for File 'ndjson/wrong_sample.ndjson', next byte is 'h' 2
++
++statement ok
++drop table if exists wrong_ndjson
++
++statement ok
++drop table if exists wrong_ndjson_variant
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #20852** (2026-10-27): docs: meta: update compatibility tables through 1.2.956 (@drmingdrmer)
+- **PR #20849** (2026-10-28): fix(storage): report tolerated errors for ON_ERROR=ABORT_N (@youngsofun)
 - **PR #20846** (closed): fix(query): count lazy pruning partitions total in blocks (@SkyFan2002)
 - **PR #20845** (2026-10-27): fix(query): make prune cache key exact for floats and session settings (@SkyFan2002)
 - **PR #20844** (2026-10-27): fix(storage): decode escaped custom TEXT delimiters (@youngsofun)
 - **PR #20842** (2026-10-26): feat(query): check SELECT grants before ownership on table access (@bohutang)
-- **PR #20841** (2026-10-26): fix(config): load OSS credentials from ALIBABA_CLOUD_* env aliases (@zhang2014)
 
 ---
 
@@ -2057,21 +2010,24 @@ Read the stored definition namespace directly, without a version option or versi
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. query): keep fuse scan columns encoded in memory (#20819)
+## X. query): restrict identity visibility and redact credentials (#20833)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.config/typos.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `520a63e0`: query): keep fuse scan columns encoded in memory (#20819). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b57c0ad8`: query): restrict identity visibility and redact credentials (#20833). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.config/typos.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "ahash 0.8.12",
+# Literal suffix preserved in masked credential test expectations.
+ue = "ue"
+# Intentionally misspelled credential option in masking regression tests.
+SECERT = "SECERT"
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2081,4 +2037,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `520a63e0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b57c0ad8` are properly handled with clean fallback behavior.

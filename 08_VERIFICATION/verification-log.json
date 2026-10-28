@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-EHYC",
-    "timestamp": "2026-10-27T10:50:51.876Z",
-    "repository": "sqlpage/SQLPage",
-    "learningId": "learn-github-sqlpage-sqlpage",
-    "contentHash": "8c86aa6c0e597ca98b1827ad69a9e495ed897fc6fd692dc695facf8cca61863d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-IRXF",
-    "timestamp": "2026-10-27T10:54:11.427Z",
-    "repository": "Gaurav-Gosain/tuios",
-    "learningId": "learn-github-gaurav-gosain-tuios",
-    "contentHash": "27d064fdeeafee467712cc74b4c64ca8d6e9a18bcd88e383941b02d78b56570c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-IVN4",
     "timestamp": "2026-10-27T10:54:16.240Z",
     "repository": "liyupi/mianshiya",
@@ -7492,6 +7462,36 @@
     "contentHash": "ef93c3ccb0d430abe773a38f0638338e680b181675d6adf9ef337a8e9b7516c5",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-VKRL",
+    "timestamp": "2026-10-28T06:11:52.929Z",
+    "repository": "orcarouter/OrcaSAQ-2-27B",
+    "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
+    "contentHash": "f60ba0cbc39c60c643e2599b7b14a3a33eeea6eba2d1095eadde74bd92913dd3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-VM1E",
+    "timestamp": "2026-10-28T06:11:54.578Z",
+    "repository": "databendlabs/databend",
+    "learningId": "learn-github-databendlabs-databend",
+    "contentHash": "f3e15ce0ad862c498cc6edb6db99eab906e67bdc6615bd45a3917cf987961a57",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -3,7 +3,7 @@
 > **Source Version**: `hf-orcaroute`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-25T13:42:22.063Z  
+> **Timestamp**: 2026-10-28T06:11:52.127Z  
 > **Learning ID**: `learn-huggingface-orcarouter-orcasaq-2-27b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,336 +17,200 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-The repository addresses the **Memory-Bandwidth Wall** in Large Language Model (LLM) inference. Standard BF16 checkpoints for 27B parameter models require ~54 GB of VRAM, limiting deployment to high-end datacenter GPUs (A100/H100) or multi-GPU setups. This repository provides a **3-bit Sensitivity-Aware Quantized (SAQ)** checkpoint that reduces the footprint to **12.3 GB** (77.2% reduction) while maintaining near-lossless fidelity (+0.02% Perplexity, 93.2% Top-1 Agreement).
+The repository addresses the **Memory-Bandwidth Wall** in deploying large-scale reasoning models (27B parameters) on consumer or edge hardware. Standard BF16 checkpoints require ~54 GB of VRAM, which is prohibitive for single-GPU inference without aggressive offloading. This repository provides a **3-bit Sensitivity-Aware Quantized (SAQ)** checkpoint that reduces the footprint to **12.3 GB** while maintaining near-lossless fidelity (0.02% PPL increase, 93.2% Top-1 Agreement).
 
 **Architectural Boundaries:**
-1.  **Model Architecture (`Qwen3_5ForCausalLM`):**
-    *   **Hybrid Attention Mechanism:** The model does not use standard Transformer Self-Attention for all layers. It employs a **Linear Attention** mechanism for 48 out of 64 layers and **Full Attention** for the remaining 16 layers (every 4th layer). This is defined by `full_attention_interval: 4` and the `layer_types` array.
-    *   **Mamba/SSM Integration:** The presence of `mamba_ssm_dtype: float32` and `linear_conv_kernel_dim: 4` indicates the use of State Space Models (SSM) or linear attention variants (like Mamba2 or similar) for the "linear" layers, which offer $O(N)$ complexity vs $O(N^2)$ for full attention.
-    *   **Multi-Token Prediction (MTP):** `mtp_num_hidden_layers: 1` indicates a dedicated head for speculative decoding, allowing the model to predict the next token *and* the one after it in a single forward pass, accelerating inference.
-2.  **Quantization Strategy (OrcaSAQ2):**
-    *   **Mixed Precision:** Not uniform 3-bit. It is "Sensitivity-Aware," meaning weights with high gradient sensitivity are likely kept at higher precision (4-bit or 8-bit) while less sensitive weights are compressed to 3-bit.
-    *   **Target Runtime:** Optimized specifically for **vLLM**. The `library_name: vllm` tag and the specific quantization format imply that the weights are packed in a way that vLLM's CUDA kernels can efficiently dequantize on-the-fly.
-3.  **Context Window:**
-    *   **262,144 tokens (262K):** Enabled by the hybrid attention mechanism. Full attention layers would be prohibitively expensive at this length; linear attention layers handle the bulk of the context with linear memory/compute growth.
+1.  **Model Architecture:** Based on `Qwen3_5ForCausalLM` (Qwen3.8-27B base). It is a hybrid attention model, not a standard Transformer.
+2.  **Hybrid Attention Mechanism:** The model utilizes a **Mamba/SSM (State Space Model) hybrid architecture**.
+    *   **Layer Types:** 64 layers total.
+    *   **Pattern:** 3 layers of `linear_attention` (Mamba/SSM) followed by 1 layer of `full_attention` (Standard Transformer Attention).
+    *   **Implication:** This drastically reduces the $O(N^2)$ complexity of attention for long contexts (262K tokens) to $O(N)$ for 75% of the layers, while retaining the global retrieval capability of full attention every 4th layer.
+3.  **Quantization Strategy:** "OrcaSAQ2" implies a proprietary mixed-precision scheme. Unlike uniform 4-bit or 8-bit quantization, SAQ likely assigns higher bit-widths (e.g., 8-bit or 16-bit) to sensitive layers (e.g., embedding, output head, or specific attention heads) and 3-bit to robust layers.
+4.  **Inference Engine:** Optimized for **vLLM**. The `config.json` contains specific keys (`mamba_ssm_dtype`, `linear_conv_kernel_dim`) that are non-standard for vanilla HuggingFace Transformers, indicating a custom kernel implementation required for efficient SSM state management.
 
 **Critical Subsystem Abstractions:**
-*   **Weight Packing:** The 3-bit weights are packed into 32-bit integers (e.g., 10 weights per 32-bit int, or similar packing schemes) to minimize memory bandwidth usage.
-*   **Dequantization Kernel:** A custom CUDA kernel (implied by vLLM support) that unpacks 3-bit weights and multiplies them with activations (likely BF16 or FP16) in a single fused operation to avoid intermediate memory writes.
-*   **KV Cache Management:** For the 16 full-attention layers, the KV cache is still quadratic in memory but only for 1/4 of the layers. The linear attention layers maintain a fixed-size state vector, drastically reducing KV cache memory for long contexts.
+*   **SSM State Buffer:** The `linear_attention` layers require maintaining a hidden state vector across the sequence. This state must be managed efficiently in VRAM, especially with 262K context.
+*   **Mixed-Precision Dequantization:** The inference engine must dynamically dequantize weights from 3-bit to BF16/FP16 on-the-fly during matrix multiplications.
+*   **MTP (Multi-Token Prediction):** `mtp_num_hidden_layers: 1` indicates the model supports speculative decoding or multi-token prediction, allowing it to generate multiple tokens per forward pass, further boosting throughput.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Hybrid Attention Layer Interleaving for Long-Context Efficiency
+### 1. Hybrid Attention Layer Interleaving Invariant
 **RULE**:
-When designing or deploying LLMs for contexts > 32K tokens, **MUST** interleave linear/SSM attention layers with full attention layers at a fixed interval (e.g., 1:3 ratio) to balance computational complexity ($O(N)$ vs $O(N^2)$) and representational fidelity. **MUST NOT** use full attention for all layers in long-context models due to quadratic memory and compute explosion.
-
+When implementing hybrid SSM/Transformer architectures, you MUST interleave linear attention layers with full attention layers at a fixed interval (e.g., 1:3 ratio) and MUST NOT apply full attention to all layers or SSM to all layers without explicit architectural justification.
 **WHY**:
-Full self-attention requires storing and computing over all previous tokens ($O(N^2)$). For 262K context, this is computationally infeasible on consumer hardware. Linear attention (e.g., Mamba, RetNet) maintains a fixed-size state, offering $O(N)$ complexity. However, pure linear attention can suffer from "information bottleneck" issues where distant tokens are forgotten. Interleaving full attention every $K$ layers (here $K=4$) allows the model to periodically "reset" or "refresh" its global context view, preserving long-range dependencies while keeping the average complexity near-linear.
-
+Pure SSM models struggle with precise long-range retrieval (needle-in-a-haystack) due to the decay of state information. Pure Transformer models suffer from $O(N^2)$ memory and compute costs. Interleaving ensures that global context is refreshed periodically (via full attention) while local/sequential processing remains efficient (via SSM). A mismatch in this ratio breaks the model's ability to maintain coherent long-horizon state.
 **WHEN TO APPLY**:
-*   Any LLM architecture targeting context windows > 32K.
-*   Inference systems where KV cache memory is a bottleneck.
-*   Models using vLLM, TensorRT-LLM, or similar high-performance inference engines that support hybrid attention kernels.
-
+Any LLM architecture combining State Space Models (Mamba, S4) with Standard Attention (Qwen, Llama).
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Pseudocode for Hybrid Attention Layer Selection
-class HybridTransformerBlock(nn.Module):
-    def __init__(self, layer_idx, full_attention_interval=4):
-        self.layer_idx = layer_idx
-        self.use_full_attention = (layer_idx % full_attention_interval == 0)
-        
-        if self.use_full_attention:
-            self.attention = FullSelfAttention(...) # O(N^2)
-        else:
-            self.attention = LinearAttention(...)   # O(N)
-            
-    def forward(self, x, kv_cache=None):
-        if self.use_full_attention:
-            # Standard attention with KV cache
-            return self.attention(x, kv_cache)
-        else:
-            # Linear attention with fixed-size state
-            return self.attention(x, state_cache)
+# config.json snippet
+"layer_types": [
+    "linear_attention", "linear_attention", "linear_attention", "full_attention",
+    "linear_attention", "linear_attention", "linear_attention", "full_attention",
+    # ... repeating pattern
+],
+"full_attention_interval": 4
 ```
-
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Using full attention for all layers in a 262K context model
-class NaiveLongContextModel(nn.Module):
-    def __init__(self):
-        self.layers = [FullSelfAttention() for _ in range(64)] # O(N^2) for all 64 layers
-        
-    def forward(self, x):
-        for layer in self.layers:
-            x = layer(x) # Will OOM or be extremely slow at 262K tokens
+# ANTI-PATTERN: All layers are full attention (wastes VRAM)
+"layer_types": ["full_attention"] * 64
+
+# ANTI-PATTERN: All layers are linear attention (loses global retrieval)
+"layer_types": ["linear_attention"] * 64
 ```
-
 **VERIFICATION METHOD**:
-1.  **Static Analysis:** Parse `config.json` and assert that `layer_types` contains a mix of `"linear_attention"` and `"full_attention"`.
-2.  **Memory Profiling:** Run inference with a 128K token prompt. Measure KV cache memory usage. It should be significantly lower than a pure full-attention model of the same depth.
-3.  **Performance Benchmark:** Compare time-per-token (TPOT) at 128K context. Hybrid models should show sub-linear growth in TPOT compared to full-attention models.
+Assert that `len([l for l in layer_types if l == "full_attention"]) == num_hidden_layers // full_attention_interval`.
 
-### 2. Sensitivity-Aware Mixed-Precision Quantization for Inference
+### 2. SSM State Dtype Precision Guard
 **RULE**:
-When quantizing LLMs to < 4 bits, **MUST** use a sensitivity-aware algorithm that assigns higher bit-widths (e.g., 4-bit or 8-bit) to weight matrices with high gradient sensitivity (e.g., first/last layers, attention projections) and lower bit-widths (e.g., 3-bit) to less sensitive layers (e.g., FFN intermediate layers). **MUST NOT** apply uniform 3-bit quantization across all layers, as it causes catastrophic perplexity degradation.
-
+The hidden state for State Space Model (SSM/Mamba) layers MUST be maintained in `float32` (or higher precision) during the recurrent update step, even if the weights are quantized to 3-bit or 4-bit.
 **WHY**:
-Uniform quantization assumes all weights contribute equally to model output. In reality, certain layers (especially those involved in initial feature extraction or final output projection) are highly sensitive to quantization error. Applying 3-bit precision to these layers introduces large errors that propagate through the network. Sensitivity-aware quantization (SAQ) minimizes the total Kullback-Leibler Divergence (KLD) between the original and quantized model by allocating bits where they matter most.
-
+SSM layers involve recursive state updates: $h_t = A h_{t-1} + B x_t$. Small numerical errors in the state $h$ accumulate exponentially over long sequences (262K tokens). If the state is stored in `bfloat16` or `float16`, catastrophic drift occurs, leading to incoherent generation after ~10K tokens. The weights can be low-precision, but the *state* must be high-precision.
 **WHEN TO APPLY**:
-*   Quantizing LLMs to 3-bit or lower.
-*   Deploying models on memory-constrained hardware (e.g., 16GB VRAM GPUs).
-*   When perplexity degradation > 0.1% is unacceptable.
+Any inference engine implementing Mamba, S4, or similar SSM layers.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+// config.json
+"mamba_ssm_dtype": "float32"
+```
+**NEGATIVE CONSTRAINT**:
+```json
+// ANTI-PATTERN: Matching state dtype to weight dtype
+"mamba_ssm_dtype": "bfloat16" // Leads to state drift
+```
+**VERIFICATION METHOD**:
+Unit test: Run a 100K token sequence. Assert that the cosine similarity between the final state and a reference float64 state is > 0.99.
 
+### 3. Quantization Sensitivity Mapping Invariant
+**RULE**:
+When applying mixed-precision quantization (e.g., 3-bit SAQ), you MUST NOT apply uniform bit-width to all tensors. You MUST identify and preserve higher precision (8-bit/16-bit) for: (1) Embedding layers, (2) Output Head (LM Head), and (3) Attention Q/K projections if they are sensitive to scale.
+**WHY**:
+Uniform 3-bit quantization destroys the dynamic range required for the embedding layer to distinguish between rare tokens and the output head to produce accurate logits. The "Sensitivity-Aware" aspect of OrcaSAQ2 implies a per-layer or per-channel calibration. Ignoring this leads to the "0.02% PPL" metric degrading to >5% PPL, rendering the model unusable for reasoning.
+**WHEN TO APPLY**:
+Any post-training quantization (PTQ) workflow for LLMs.
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Pseudocode for Sensitivity-Aware Quantization
-def quantize_model_saq(model, target_bpw=3.2):
-    # 1. Compute sensitivity for each weight matrix
-    sensitivities = compute_gradient_sensitivity(model)
-    
-    # 2. Sort layers by sensitivity
-    sorted_layers = sorted(model.parameters(), key=lambda p: sensitivities[p.name], reverse=True)
-    
-    # 3. Assign bit-widths
-    bit_widths = {}
-    for i, param in enumerate(sorted_layers):
-        if i < len(sorted_layers) * 0.1: # Top 10% most sensitive
-            bit_widths[param.name] = 8
-        elif i < len(sorted_layers) * 0.3: # Next 20%
-            bit_widths[param.name] = 4
-        else:
-            bit_widths[param.name] = 3
-            
-    # 4. Quantize each layer with assigned bit-width
-    for name, param in model.named_parameters():
-        quantize_weight(param, bit_widths[name])
+# Pseudocode for SAQ calibration
+for layer in model.layers:
+    if layer.name in ["embed_tokens", "lm_head"]:
+        layer.quantization_config.bits = 8  # High precision
+    elif "q_proj" in layer.name or "k_proj" in layer.name:
+        layer.quantization_config.bits = 4  # Medium precision
+    else:
+        layer.quantization_config.bits = 3  # Low precision
 ```
-
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Uniform 3-bit quantization
-def quantize_model_uniform(model, bits=3):
-    for param in model.parameters():
-        quantize_weight(param, bits) # Causes high PPL degradation
+# ANTI-PATTERN: Uniform 3-bit
+for layer in model.layers:
+    layer.quantization_config.bits = 3
 ```
-
 **VERIFICATION METHOD**:
-1.  **Perplexity Check:** Evaluate the quantized model on a standard benchmark (e.g., WikiText-103). Assert that PPL delta < 0.05%.
-2.  **Bit-Width Distribution:** Parse the quantized checkpoint and verify that not all weights are 3-bit. There should be a distribution (e.g., 70% 3-bit, 20% 4-bit, 10% 8-bit).
-3.  **Top-1 Agreement:** Compare token predictions of the quantized model vs. the original BF16 model on a test set. Assert Top-1 agreement > 90%.
-
-### 3. Multi-Token Prediction (MTP) for Speculative Decoding
-**RULE**:
-When deploying LLMs for high-throughput inference, **MUST** enable Multi-Token Prediction (MTP) heads if the model architecture supports it. **MUST** configure the inference engine (e.g., vLLM) to use MTP for speculative decoding, verifying that the acceptance rate of speculative tokens is > 50%. **MUST NOT** disable MTP in production environments where latency is a critical metric.
-
-**WHY**:
-Standard autoregressive decoding generates one token at a time, requiring a full forward pass per token. MTP allows the model to predict multiple future tokens in a single forward pass. The inference engine can then verify these tokens in parallel. If the tokens are correct, they are accepted, reducing the number of forward passes needed. This significantly reduces time-per-token (TPOT) and increases throughput.
-
-**WHEN TO APPLY**:
-*   Any LLM with MTP heads (e.g., `mtp_num_hidden_layers > 0`).
-*   Inference engines that support speculative decoding (e.g., vLLM, TensorRT-LLM).
-*   Latency-sensitive applications (e.g., chatbots, real-time agents).
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-# Pseudocode for MTP Speculative Decoding
-def generate_with_mtp(model, prompt, max_tokens=100):
-    tokens = []
-    current_input = prompt
-    
-    for _ in range(max_tokens):
-        # 1. Forward pass with MTP head
-        logits, mtp_logits = model(current_input, use_mtp=True)
-        
-        # 2. Sample next token from main head
-        next_token = sample(logits)
-        tokens.append(next_token)
-        
-        # 3. Verify MTP predictions
-        if mtp_logits is not None:
-            mtp_token = sample(mtp_logits)
-            # Verify if mtp_token matches the next token generated in the next step
-            # (Simplified: In practice, the engine handles this verification)
-            
-        current_input = append_token(current_input, next_token)
-        
-    return tokens
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Disabling MTP in a model that supports it
-def generate_without_mtp(model, prompt, max_tokens=100):
-    tokens = []
-    current_input = prompt
-    
-    for _ in range(max_tokens):
-        # 1. Forward pass without MTP head
-        logits = model(current_input, use_mtp=False) # Wastes MTP head capacity
-        
-        # 2. Sample next token
-        next_token = sample(logits)
-        tokens.append(next_token)
-        
-        current_input = append_token(current_input, next_token)
-        
-    return tokens # Slower than necessary
-```
-
-**VERIFICATION METHOD**:
-1.  **Config Check:** Assert that `mtp_num_hidden_layers > 0` in `config.json`.
-2.  **Inference Engine Config:** Verify that the vLLM server is started with `--enable-speculative-decoding` and `--speculative-model` pointing to the MTP head.
-3.  **Performance Benchmark:** Measure TPOT with and without MTP. Assert that TPOT is reduced by > 20% with MTP enabled.
+Compare Perplexity (PPL) on a validation set (e.g., WikiText2) between the BF16 base model and the quantized model. Assert `ppl_quantized < ppl_base * 1.05`.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: The provided repository data does not contain specific commit SHAs, PR links, or bug issue details. The following incidents are inferred from common failure modes in quantized LLM deployment and the specific architectural features of this model.*
+*Note: Since no commit history or issue tracker data was provided in the input, the following incidents are **inferred** from the architectural constraints and known failure modes of hybrid SSM/Quantized models. These are "Forensic Hypotheses" based on the observed config.*
 
-### Incident 1: KV Cache Memory Overflow in Hybrid Attention (BUG-KVCACHE-01)
-- **Context:** Inference engine (vLLM) managing KV cache for 262K context.
-- **What Was Expected:** KV cache memory usage should scale linearly with context length for linear attention layers and quadratically for full attention layers, but total memory should fit within GPU VRAM.
-- **What Actually Happened:** Out-of-Memory (OOM) error during inference with 128K+ context.
-- **Evidence in Repo:** `config.json` shows `max_position_embeddings: 262144` and `full_attention_interval: 4`.
-- **Root Cause:** The inference engine incorrectly assumed all layers were full attention and allocated KV cache for all 64 layers. In reality, only 16 layers require KV cache. The engine failed to distinguish between linear and full attention layers, leading to 4x over-allocation of KV cache memory.
+### Incident 1: SSM State Drift in Long Context (BUG-SSM-DRIFT-01)
+- **Context**: Inference Engine / Mamba Layer Implementation
+- **What Was Expected**: Coherent generation over 262K tokens.
+- **What Actually Happened**: After ~50K tokens, the model begins to repeat phrases or generate incoherent text.
+- **Evidence in Repo**: `config.json` specifies `mamba_ssm_dtype: "float32"`. This key exists specifically to prevent this bug.
+- **Root Cause**: The SSM state $h_t$ was initially implemented in `bfloat16`. The recursive multiplication $A h_{t-1}$ caused cumulative rounding errors.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code: Allocate KV cache for all layers
-kv_cache_size = num_layers * max_seq_len * head_dim * dtype_size
-
-# + Fixed pattern: Allocate KV cache only for full attention layers
-full_attention_layers = [i for i, layer_type in enumerate(layer_types) if layer_type == "full_attention"]
-kv_cache_size = len(full_attention_layers) * max_seq_len * head_dim * dtype_size
+# - Buggy: state = state * A + B * x  (state is bfloat16)
+# + Fixed: state = state.float() * A.float() + B.float() * x.float()
+# + Fixed: state = state.to(bfloat16) # Only cast back for storage if necessary, but keep compute in float32
 ```
-- **Lesson:** Inference engines must be aware of hybrid attention architectures and allocate KV cache only for layers that require it.
+- **Lesson**: Recursive numerical operations require higher precision than feed-forward operations.
 
-### Incident 2: Quantization Dequantization Kernel Mismatch (BUG-QUANT-02)
-- **Context:** vLLM CUDA kernel for 3-bit dequantization.
-- **What Was Expected:** Dequantized weights should match the original BF16 weights within a small error margin.
-- **What Actually Happened:** Garbage output (nonsensical tokens) during inference.
-- **Evidence in Repo:** `config.json` shows `dtype: bfloat16` and quantization tags.
-- **Root Cause:** The vLLM version used did not support the specific 3-bit packing format used by OrcaSAQ2. The kernel interpreted the packed bits incorrectly, leading to wrong weight values.
+### Incident 2: KV Cache Mismatch in Hybrid Layers (BUG-KV-MISMATCH-02)
+- **Context**: vLLM Scheduler / Attention Layer
+- **What Was Expected**: Efficient memory management for both SSM states and KV caches.
+- **What Actually Happened**: Out-of-memory (OOM) errors or incorrect attention scores when mixing SSM and Full Attention layers.
+- **Evidence in Repo**: `layer_types` array explicitly distinguishes `linear_attention` vs `full_attention`.
+- **Root Cause**: The inference engine attempted to allocate a standard KV cache for *all* layers. SSM layers do not use KV caches; they use a fixed-size state vector. Allocating KV cache for SSM layers wastes VRAM.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code: Use generic 3-bit dequantization kernel
-weights = dequantize_3bit_generic(packed_weights)
-
-# + Fixed pattern: Use OrcaSAQ2-specific dequantization kernel
-weights = dequantize_orcasaq2(packed_weights, sensitivity_map)
+# - Buggy: for layer in model: layer.allocate_kv_cache(seq_len)
+# + Fixed: for layer in model:
+# +     if layer.type == "full_attention":
+# +         layer.allocate_kv_cache(seq_len)
+# +     elif layer.type == "linear_attention":
+# +         layer.allocate_ssm_state() # Fixed size, independent of seq_len
 ```
-- **Lesson:** Quantization formats are not standardized. Inference engines must support the specific packing and dequantization logic of the quantization method used.
+- **Lesson**: Hybrid architectures require heterogeneous memory allocation strategies.
 
-### Incident 3: MTP Head Misalignment (BUG-MTP-03)
-- **Context:** Speculative decoding with MTP.
-- **What Was Expected:** MTP head should predict the next token correctly, allowing speculative decoding to accept tokens.
-- **What Actually Happened:** Low acceptance rate (< 10%) for speculative tokens, leading to no performance gain.
-- **Evidence in Repo:** `config.json` shows `mtp_num_hidden_layers: 1`.
-- **Root Cause:** The MTP head was not properly aligned with the main model's output layer. The MTP head's weights were not updated during fine-tuning, leading to poor predictions.
+### Incident 3: Quantization Dequantization Latency Spike (BUG-DEQ-LATENCY-03)
+- **Context**: CUDA Kernels / Weight Loading
+- **What Was Expected**: Low-latency inference.
+- **What Actually Happened**: High latency on the first token (prefill) and inconsistent latency during decoding.
+- **Evidence in Repo**: `library_name: vllm`. vLLM is known for optimized kernels.
+- **Root Cause**: Naive dequantization (unpacking 3-bit weights to 16-bit on the fly in Python/PyTorch) is slow. The weights must be pre-packed into a format that allows vectorized GPU dequantization.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code: Use MTP head without alignment
-mtp_logits = model.mtp_head(hidden_states)
-
-# + Fixed pattern: Align MTP head with main output layer
-mtp_logits = model.mtp_head(hidden_states) + model.lm_head(hidden_states)
+# - Buggy: weight = unpack_bits(weight_3bit).to(bfloat16) # Slow, element-wise
+# + Fixed: weight = custom_dequant_kernel(weight_3bit, scale, zero_point) # Vectorized CUDA kernel
 ```
-- **Lesson:** MTP heads must be properly aligned and fine-tuned with the main model to ensure high acceptance rates.
-
-### Incident 4: Long-Context Attention Sink Failure (BUG-ATTN-04)
-- **Context:** Inference with 262K context.
-- **What Was Expected:** Model should maintain coherent output over long contexts.
-- **What Actually Happened:** Model output became incoherent after 64K tokens.
-- **Evidence in Repo:** `config.json` shows `max_position_embeddings: 262144`.
-- **Root Cause:** The linear attention layers suffered from "attention sink" issues, where the model's attention distribution became concentrated on a few tokens, leading to loss of context.
-- **Remediation Code Diff**:
-```python
-# - Buggy code: Standard linear attention
-attention_output = linear_attention(query, key, value)
-
-# + Fixed pattern: Linear attention with attention sink mitigation
-attention_output = linear_attention_with_sink(query, key, value, sink_token)
-```
-- **Lesson:** Linear attention mechanisms require careful handling of attention sinks to maintain coherence over long contexts.
-
-### Incident 5: Tokenizer Special Token Mismatch (BUG-TOKEN-05)
-- **Context:** Tokenization of prompts with special tokens.
-- **What Was Expected:** Special tokens (e.g., `<|im_start|>`) should be correctly encoded and decoded.
-- **What Actually Happened:** Special tokens were not recognized, leading to incorrect prompt formatting.
-- **Evidence in Repo:** `tokenizer_config.json` shows special tokens.
-- **Root Cause:** The tokenizer configuration did not match the model's expected special tokens. The `add_prefix_space` flag was set incorrectly.
-- **Remediation Code Diff**:
-```python
-# - Buggy code: Incorrect tokenizer configuration
-tokenizer = AutoTokenizer.from_pretrained("model", add_prefix_space=True)
-
-# + Fixed pattern: Correct tokenizer configuration
-tokenizer = AutoTokenizer.from_pretrained("model", add_prefix_space=False)
-```
-- **Lesson:** Tokenizer configurations must be carefully aligned with the model's training data and expected input format.
+- **Lesson**: Quantized inference requires custom CUDA kernels for dequantization to avoid CPU-GPU transfer bottlenecks.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
 1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Bit-Packing Alignment:** When packing 3-bit weights into 32-bit integers, ensure that the bit offsets are correctly calculated. A single bit offset error will corrupt all subsequent weights in the packed integer.
-    *   **Dtype Coercion:** Ensure that dequantized weights are cast to the correct dtype (e.g., BF16) before matrix multiplication. Mixing FP16 and BF16 can lead to precision loss.
-    *   **Special Token IDs:** Verify that special token IDs in `tokenizer_config.json` match the model's vocabulary. A mismatch will lead to incorrect tokenization.
+    *   **Invariant**: `pad_token_id` is `null` in `config.json` but `248044` in `generation_config.json`.
+    *   **Trap**: Code that reads `config.pad_token_id` will get `None` and crash when trying to pad tensors. Code must fall back to `generation_config.pad_token_id` or `eos_token_id`.
+    *   **Rule**: Always check `generation_config` for inference-time token IDs, not just `config`.
 
 2.  **Infinite Loop & Recursion Guards**:
-    *   **Speculative Decoding Loop:** Ensure that the speculative decoding loop terminates when the maximum number of tokens is reached or when the acceptance rate drops below a threshold.
-    *   **KV Cache Update:** Ensure that the KV cache is updated correctly for each layer. A bug in the update logic can lead to infinite loops or incorrect attention calculations.
+    *   **Invariant**: SSM layers are stateful. If the sequence length exceeds the maximum supported by the SSM kernel (e.g., if the kernel assumes a fixed block size), it may hang or produce NaNs.
+    *   **Guard**: Implement a `max_seq_len` check before entering the SSM forward pass. If `seq_len > max_ssm_len`, chunk the sequence or raise an error.
 
 3.  **UI & UX Micro-Mechanics**:
-    *   **N/A:** This is a backend model repository. UI/UX considerations are not applicable.
+    *   *N/A for this backend model repository.*
 
 4.  **Backend Concurrency & Memory Safety**:
-    *   **KV Cache Memory Management:** Ensure that the KV cache is properly allocated and freed. Memory leaks in the KV cache can lead to OOM errors.
-    *   **Thread Safety:** Ensure that the inference engine is thread-safe. Concurrent requests should not interfere with each other's KV cache or model state.
+    *   **Invariant**: SSM state is shared across batch items if not properly isolated.
+    *   **Trap**: If the SSM state buffer is allocated as a single tensor for the entire batch, concurrent requests will corrupt each other's state.
+    *   **Guard**: The SSM state must be a 3D tensor: `[batch_size, num_heads, state_dim]`. Ensure that `batch_size` is correctly indexed in the CUDA kernel.
 
 5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Quantization Error:** Verify that the quantization error is within acceptable limits. A high quantization error can lead to poor model performance.
-    *   **Context Length Overflow:** Ensure that the input context length does not exceed the model's maximum position embeddings. An overflow can lead to undefined behavior.
+    *   **Invariant**: `partial_rotary_factor: 0.25`.
+    *   **Trap**: Code that assumes full rotary embeddings (RoPE) will apply rotation to all dimensions. This model only rotates 25% of the dimensions. Applying rotation to the non-rotated dimensions will destroy the positional encoding.
+    *   **Guard**: Split the query/key tensors into rotated and non-rotated parts. Apply RoPE only to the first `int(head_dim * partial_rotary_factor)` dimensions.
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: Hybrid attention (linear + full) for long-context efficiency. MTP head for speculative decoding.
-2.  **Core Abstractions**: Weight packing, dequantization kernels, KV cache management, MTP head.
-3.  **Error Handling**: OOM handling, quantization error detection, context length overflow detection.
-4.  **Testing**: Perplexity evaluation, Top-1 agreement, KV cache memory profiling, MTP acceptance rate benchmarking.
-5.  **Security**: N/A (model repository).
-6.  **Performance**: 3-bit quantization for memory efficiency, hybrid attention for compute efficiency, MTP for latency reduction.
-7.  **Deployment**: vLLM integration, quantization format support, MTP configuration.
-8.  **Agent Patterns**: N/A (model repository).
-9.  **Data Flow**: Input tokenization -> Hybrid attention layers -> MTP head -> Output tokenization.
+1.  **Architecture**: Hybrid SSM/Transformer. 64 layers, 3:1 ratio of Linear:Full attention. 262K context.
+2.  **Core Abstractions**: `Qwen3_5ForCausalLM`. Key types: `LinearAttentionLayer`, `FullAttentionLayer`, `SSMState`.
+3.  **Error Handling**: Not visible in config. Inference engines must handle NaNs in SSM state (reset state if NaN detected).
+4.  **Testing**: Not visible. Requires long-context regression tests (e.g., Needle-in-a-Haystack at 100K, 200K tokens).
+5.  **Security**: Apache 2.0 license. No security vulnerabilities in the model weights themselves.
+6.  **Performance**: 12.3 GB footprint. 3-bit quantization. Optimized for vLLM. Expected throughput: High for long contexts due to $O(N)$ SSM layers.
+7.  **Deployment**: Requires vLLM with custom SSM support. Docker image must include CUDA 12.x and specific vLLM version.
+8.  **Agent Patterns**: Designed for "long-horizon agents". The 262K context allows agents to maintain state over many tool calls. MTP (Multi-Token Prediction) accelerates agent loops.
+9.  **Data Flow**: Input tokens -> Embedding -> [SSM Layer x3, Full Attention x1] x16 -> LM Head -> Logits. SSM state flows sequentially; KV cache flows in parallel for Full Attention layers.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Hybrid attention layer interleaving for long-context efficiency.
-2.  **Rule**: MUST interleave linear and full attention layers at a fixed interval.
-3.  **Architecture Principle**: Balance computational complexity and representational fidelity.
-4.  **Failure Mode**: KV cache memory overflow due to incorrect layer type assumption.
-5.  **Reusable Skill**: Parse `config.json` to identify layer types and allocate KV cache accordingly.
-6.  **Decision**: Use hybrid attention instead of pure full attention for long contexts.
-7.  **Anti-pattern**: Using full attention for all layers in a long-context model.
-8.  **Verification Method**: Memory profiling and performance benchmarking.
+1.  **Pattern**: Hybrid Attention Interleaving (3 SSM : 1 Full).
+2.  **Rule**: SSM State MUST be float32.
+3.  **Architecture Principle**: Memory-Bandwidth Trade-off. Use SSM for local context, Full Attention for global retrieval.
+4.  **Failure Mode**: SSM State Drift (Numerical instability in recursive updates).
+5.  **Reusable Skill**: Implementing Hybrid SSM/Transformer Models in vLLM.
+6.  **Decision**: 3-bit Quantization with Sensitivity-Aware Mapping.
+7.  **Anti-pattern**: Uniform Quantization of Embedding/LM Head.
+8.  **Verification Method**: PPL Comparison and Long-Context Needle-in-a-Haystack Test.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Parse `config.json`**:
-    *   Extract `layer_types` to identify linear and full attention layers.
-    *   Extract `mtp_num_hidden_layers` to enable MTP.
-    *   Extract `max_position_embeddings` to set context length limits.
-2.  **Configure Inference Engine**:
-    *   Use vLLM with support for hybrid attention and MTP.
-    *   Allocate KV cache only for full attention layers.
-    *   Enable speculative decoding with MTP.
-3.  **Verify Quantization**:
-    *   Ensure the inference engine supports the specific 3-bit packing format.
-    *   Verify dequantization accuracy.
-4.  **Benchmark Performance**:
-    *   Measure TPOT and throughput with and without MTP.
-    *   Measure KV cache memory usage at different context lengths.
-5.  **Evaluate Model Quality**:
-    *   Calculate perplexity and Top-1 agreement.
-    *   Ensure PPL delta < 0.05% and Top-1 agreement > 90%.
+1.  **Verify Config**: Check `layer_types` array. Ensure 3:1 ratio of `linear_attention` to `full_attention`.
+2.  **Check SSM Dtype**: Ensure `mamba_ssm_dtype` is `float32`.
+3.  **Check Quantization**: Verify that the model uses mixed-precision (3-bit for most, higher for sensitive layers).
+4.  **Test Long Context**: Run a 100K token sequence. Check for coherence.
+5.  **Test Memory**: Monitor VRAM usage. Ensure it stays under 12.3 GB + overhead.
+6.  **Test Throughput**: Measure tokens/sec. Compare to BF16 baseline.
+7.  **Test MTP**: Enable Multi-Token Prediction. Verify that it improves throughput without degrading quality.

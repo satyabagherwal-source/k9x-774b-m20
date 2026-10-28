@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T05:59:55.312Z",
+  "last_updated": "2026-10-28T06:11:54.591Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -545,14 +545,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-orcasaq-2-27b",
-      "content_hash": "cda1395ede787b8f5211120c592fa746b2871c969ff5d844ee52f8a456f119f7",
-      "verified_at": "2026-10-25T13:42:22.693Z",
+      "content_hash": "f60ba0cbc39c60c643e2599b7b14a3a33eeea6eba2d1095eadde74bd92913dd3",
+      "verified_at": "2026-10-28T06:11:52.941Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T13:42:22.693Z"
+      "last_updated": "2026-10-28T06:11:52.941Z"
     },
     "TaichuAI/ZDTaichu5.0-9B": {
       "repository": "TaichuAI/ZDTaichu5.0-9B",
@@ -11286,14 +11286,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-databendlabs-databend",
-      "content_hash": "14d63982ab38a716915864dc2e61341a2d3b1edb6648f917c501f4390a8f218c",
-      "verified_at": "2026-10-27T15:39:46.818Z",
+      "content_hash": "f3e15ce0ad862c498cc6edb6db99eab906e67bdc6615bd45a3917cf987961a57",
+      "verified_at": "2026-10-28T06:11:54.590Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T15:39:46.818Z"
+      "last_updated": "2026-10-28T06:11:54.590Z"
     },
     "atanunq/viu": {
       "repository": "atanunq/viu",

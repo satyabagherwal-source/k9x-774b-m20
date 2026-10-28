@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T05:59:57.835Z",
-    "lastVerified": "2026-10-28T05:59:57.835Z",
+    "lastChecked": "2026-10-28T06:11:57.113Z",
+    "lastVerified": "2026-10-28T06:11:57.113Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -169,9 +169,9 @@
   "dathere-qsv": {
     "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
-    "lastChecked": "2026-10-28T05:30:59.875Z",
+    "lastChecked": "2026-10-28T06:11:50.992Z",
     "revisionIdentifier": "acf15714",
-    "lastVerified": "2026-10-28T05:30:59.875Z"
+    "lastVerified": "2026-10-28T06:11:50.992Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1652,5 +1652,67 @@
     "lastChecked": "2026-10-28T05:55:11.679Z",
     "revisionIdentifier": "5e8a63d2",
     "lastVerified": "2026-10-28T05:55:11.679Z"
+  },
+  "flox-flox": {
+    "name": "flox",
+    "officialUrl": "https://github.com/flox/flox",
+    "lastChecked": "2026-10-28T06:11:36.038Z",
+    "revisionIdentifier": "339bbab0",
+    "lastVerified": "2026-10-28T06:11:36.038Z"
+  },
+  "hf-orcarouter-orcasaq-2-27b": {
+    "name": "orcarouter/OrcaSAQ-2-27B",
+    "officialUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T06:11:38.719Z",
+    "lastVerified": "2026-10-28T06:11:38.719Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
+    "contentHash": "f60ba0cbc39c60c643e2599b7b14a3a33eeea6eba2d1095eadde74bd92913dd3",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "expo-create-react-native-app": {
+    "name": "create-react-native-app",
+    "officialUrl": "https://github.com/expo/create-react-native-app",
+    "lastChecked": "2026-10-28T06:11:40.943Z",
+    "revisionIdentifier": "3a7b11ee",
+    "lastVerified": "2026-10-28T06:11:40.943Z"
+  },
+  "kubeedge-kubeedge": {
+    "name": "kubeedge",
+    "officialUrl": "https://github.com/kubeedge/kubeedge",
+    "lastChecked": "2026-10-28T06:11:43.575Z",
+    "revisionIdentifier": "1e5b0d26",
+    "lastVerified": "2026-10-28T06:11:43.575Z"
+  },
+  "aleo-labs-protocol-snarkos": {
+    "name": "snarkOS",
+    "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
+    "lastChecked": "2026-10-28T06:11:46.003Z",
+    "revisionIdentifier": "6b124303",
+    "lastVerified": "2026-10-28T06:11:46.003Z"
+  },
+  "databendlabs-databend": {
+    "name": "databendlabs/databend",
+    "officialUrl": "https://github.com/databendlabs/databend",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T06:11:53.985Z",
+    "lastVerified": "2026-10-28T06:11:53.985Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-databendlabs-databend",
+    "contentHash": "f3e15ce0ad862c498cc6edb6db99eab906e67bdc6615bd45a3917cf987961a57",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

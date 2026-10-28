@@ -445,8 +445,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
     "sourceVersion": "hf-orcarouter-orcasaq-2-27b",
     "license": "Open-Source",
-    "contentHash": "cda1395ede787b8f5211120c592fa746b2871c969ff5d844ee52f8a456f119f7",
-    "lastHarvestedAt": "2026-10-25T13:42:22.685Z",
+    "contentHash": "f60ba0cbc39c60c643e2599b7b14a3a33eeea6eba2d1095eadde74bd92913dd3",
+    "lastHarvestedAt": "2026-10-28T06:11:52.933Z",
     "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b"
   },
   "hf-taichuai-zdtaichu5.0-9b": {
@@ -7493,10 +7493,10 @@
     "repository": "databendlabs/databend",
     "platform": "github",
     "sourceUrl": "https://github.com/databendlabs/databend",
-    "sourceVersion": "ad9996eb",
+    "sourceVersion": "7344c579",
     "license": "Apache-2.0",
-    "contentHash": "14d63982ab38a716915864dc2e61341a2d3b1edb6648f917c501f4390a8f218c",
-    "lastHarvestedAt": "2026-10-27T15:39:46.810Z",
+    "contentHash": "f3e15ce0ad862c498cc6edb6db99eab906e67bdc6615bd45a3917cf987961a57",
+    "lastHarvestedAt": "2026-10-28T06:11:54.582Z",
     "learningId": "learn-github-databendlabs-databend"
   },
   "atanunq-viu": {
