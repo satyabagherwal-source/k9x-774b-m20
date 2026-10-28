@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T14:15:30.429Z",
+  "last_updated": "2026-10-28T14:22:31.580Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1175,14 +1175,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
-      "content_hash": "1b309041d2cbc9bce210b295f76b5a19aa96633b897c7c5b72eec9e5bb7d53af",
-      "verified_at": "2026-10-25T19:58:12.721Z",
+      "content_hash": "8719c035e0723d9d5b260e409efa564999d30c17f41bc90e9d4a31d80ec58de5",
+      "verified_at": "2026-10-28T14:22:22.715Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T19:58:12.721Z"
+      "last_updated": "2026-10-28T14:22:22.715Z"
     },
     "openai/gpt-oss-120b": {
       "repository": "openai/gpt-oss-120b",
@@ -8001,14 +8001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zseven-w-openpencil",
-      "content_hash": "79ffe6167e168db2cf14ade5d91e039e26437edb781d9cce2a4fc767dfa2071f",
-      "verified_at": "2026-10-27T18:43:26.820Z",
+      "content_hash": "4cc98072246a559874fedb1ea53e62b8d0ea8d8e3848cefcb30a57b71560533f",
+      "verified_at": "2026-10-28T14:22:31.579Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T18:43:26.820Z"
+      "last_updated": "2026-10-28T14:22:31.579Z"
     },
     "diggerhq/digger": {
       "repository": "diggerhq/digger",
@@ -8136,14 +8136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-embassy-rs-embassy",
-      "content_hash": "0922156e8e2e679bd61456aa6fe9666f9db3c04162281829b45207b9fc7d0496",
-      "verified_at": "2026-10-27T12:18:37.740Z",
+      "content_hash": "8610554569eb3a8ae8c0c9ac51e546c42e8da2d2f48402dd457df97c6d154a7f",
+      "verified_at": "2026-10-28T14:22:26.413Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T12:18:37.740Z"
+      "last_updated": "2026-10-28T14:22:26.413Z"
     },
     "jpush/aurora-imui": {
       "repository": "jpush/aurora-imui",

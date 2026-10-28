@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md`  
 > **Source**: github ([https://github.com/ZSeven-W/openpencil](https://github.com/ZSeven-W/openpencil))  
-> **Source Version**: `9a618ce9`  
+> **Source Version**: `070c7c77`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T18:43:26.436Z  
+> **Timestamp**: 2026-10-28T14:22:31.008Z  
 > **Learning ID**: `learn-github-zseven-w-openpencil`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ZSeven-W/openpencil](https://github.com/ZSeven-W/openpencil))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T18:43:25.891Z  
+> **Harvest Timestamp**: 2026-10-28T14:22:30.999Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The world's first open-source AI-native vector design tool and the first to feature concurrent Agent Teams. Design-as-Code. Turn prompts into UI directly on the live canvas. A modern alternative to Pencil.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6723 stars
+- **Stars / Engagement**: 6771 stars
 
 ---
 
@@ -305,6 +305,8 @@ pub enum AgentProvider {
     GrokBuild,
     /// DeepSeek Harness (`dsh`) — one-shot subprocess CLI, no ACP.
     DeepSeekHarness,
+    /// Kimi Code CLI (`kimi`) — tool-free generation subprocess.
+    Kimi,
 }
 
 impl AgentProvider {
@@ -312,7 +314,7 @@ impl AgentProvider {
     /// persisted `connected` flags are indexed positionally, so the
     /// DeepSeek Harness slot was appended at the tail and positioned in
     /// the card list via [`AgentProvider::DISPLAY`].
-    pub const ALL: [AgentProvider; 7] = [
+    pub const ALL: [AgentProvider; 8] = [
         AgentProvider::ClaudeCode,
         AgentProvider::CodexCli,
         AgentProvider::OpenCode,
@@ -320,15 +322,17 @@ impl AgentProvider {
         AgentProvider::Antigravity,
         AgentProvider::GrokBuild,
         AgentProvider::DeepSeekHarness,
+        AgentProvider::Kimi,
     ];
 
     /// Card order on the Agents tab — a permutation of `ALL`, NOT the
     /// persistence order. DeepSeek Harness renders after Codex, before
     /// OpenCode (above the generic ACP block).
-    pub const DISPLAY: [AgentProvider; 7] = [
+    pub const DISPLAY: [AgentProvider; 8] = [
         AgentProvider::ClaudeCode,
         AgentProvider::CodexCli,
         AgentProvider::DeepSeekHarness,
+        AgentProvider::Kimi,
         AgentProvider::OpenCode,
         AgentProvider::GithubCopilot,
         AgentProvider::Antigravity,
@@ -353,6 +357,7 @@ impl AgentProvider {
             AgentProvider::Antigravity => "Antigravity",
             AgentProvider::GrokBuild => "Grok Build",
             AgentProvider::DeepSeekHarness => "DeepSeek Harness",
+            AgentProvider::Kimi => "Kimi Code",
         }
     }
     /// i18n key for the provider's subtitle. Paint code resolves
@@ -369,6 +374,7 @@ impl AgentProvider {
             AgentProvider::Antigravity => "settings.provider.antigravity",
             AgentProvider::GrokBuild => "settings.provider.grokBuild",
             AgentProvider::DeepSeekHarness => "settings.provider.deepSeekHarness",
+            AgentProvider::Kimi => "settings.provider.kimi",
         }
     }
 }
@@ -617,6 +623,7 @@ pub struct AgentLoopConfig {
     pub system_prompt: String,
     pub history: Vec<(ChatHistoryRole, String)>,
     pub user_prompt: String,
+    pub attachments: Vec<op_ai::chat_provider::ChatAttachment>,
     pub max_output_tokens: u32,
     pub tools: Vec<ChatToolDef>,
     pub executor: Arc<dyn ChatToolExecutor>,
@@ -792,10 +799,7 @@ fn contract_nudge_text(committed: &[String], still_empty: &[String]) -> String {
     let (subject, pronoun) = if still_empty.len() == 1 {
         ("is", "it")
     } else {
-        ("are", "them")
-    };
-    format!(
-        "{commit_clause}{} {subje
+        ("are
 ```
 
 ### Core Architecture Module: `crates/op-chat-agent/src/chat_agent_loop/anthropic.rs`
@@ -899,7 +903,18 @@ pub(super) async fn run_anthropic_agent_loop_inner(
     for (role, text) in &cfg.history {
         messages.push(json!({ "role": role.as_str(), "content": text }));
     }
-    messages.push(json!({ "role": "user", "content": cfg.user_prompt }));
+    crate::chat_attachments::validate_model(&cfg.model, &cfg.attachments)
+        .map_err(BuiltinHttpError::Attachments)?;
+    let content = crate::chat_attachments::user_content(
+        op_editor_core::BuiltinAgentKind::Anthropic,
+        &cfg.user_prompt,
+        &cfg.attachments,
+    )
+    .map_err(BuiltinHttpError::Attachments)?;
+    messages.push(json!({ "role": "user", "content": content }));
+    // User reference images remain authoritative throughout retries/tool turns.
+    // Only generated observations after this prefix may be superseded.
+    let reference_prefix_len = messages.len();
 
     // Tier 2 — under-budget per-screen fill-round budget (see
     // `FILL_BUDGET_MAX_ROUNDS_PER_SCREEN`'s doc comment for the "budget
@@ -987,17 +1002,7 @@ pub(super) async fn run_anthropic_agent_loop_inner(
         // this wire — the empty-canvas postmortem: the OpenAI-compat loop
         // applied this control and the Anthropic loop did not, so a
         // reasoning model on its Anthropic-compatible endpoint burned the
-        // whole turn budget on thinking and never emitted `batch_design`
-        // (see `apply_reasoning_wire_control_anthropic`'s doc).
-        crate::chat_builtin_http::apply_reasoning_wire_control_anthropic(
-            &mut body,
-            &cfg.model,
-            cfg.disable_thinking,
-        );
-        let client = crate::provider_dial::client_for(cfg.dial_policy, &cfg.url).await?;
-        let (max_retries, min_gap) = crate::chat_builtin_http::default_backoff_knobs();
-        let resp = crate::chat_builtin_http::send_with_backoff(
-        
+        // whole turn bu
 ```
 
 ### Core Architecture Module: `crates/op-chat-agent/src/chat_agent_loop/openai.rs`
@@ -1064,7 +1069,18 @@ pub(super) async fn run_openai_agent_loop_inner(
     for (role, text) in &cfg.history {
         messages.push(json!({ "role": role.as_str(), "content": text }));
     }
-    messages.push(json!({ "role": "user", "content": cfg.user_prompt }));
+    crate::chat_attachments::validate_model(&cfg.model, &cfg.attachments)
+        .map_err(BuiltinHttpError::Attachments)?;
+    let content = crate::chat_attachments::user_content(
+        op_editor_core::BuiltinAgentKind::OpenAiCompat,
+        &cfg.user_prompt,
+        &cfg.attachments,
+    )
+    .map_err(BuiltinHttpError::Attachments)?;
+    messages.push(json!({ "role": "user", "content": content }));
+    // User reference images remain authoritative throughout retries/tool turns.
+    // Only generated observations after this prefix may be superseded.
+    let reference_prefix_len = messages.len();
 
     // Tier 2 — under-budget per-screen fill-round budget, and Tier 2b —
     // post-exhaustion salvage budget — see the Anthropic loop above
@@ -1148,6 +1164,7 @@ pub(super) async fn run_openai_agent_loop_inner(
             &cfg.model,
             cfg.disable_thinking,
         );
+        crate::backoff::apply_openrouter_reasoning(&mut body, &cfg.url, cfg.disable_thinking);
         // Through the shared throttle/backoff: this tool-loop path used
         // to post raw, so a provider rate limit killed the design run with
         // no retries and a raw JSON error (measured: glm-5.2, 429
@@ -1202,18 +1219,7 @@ pub(super) async fn run_openai_agent_loop_inner(
             // one dedicated fill round for any committed screen that's
             // still eligible — NOT gated by remaining turn budget (only by
             // the per-screen cap above).
-            let report = check_unfilled(&cfg.executor, cfg.finalize_on_exit).await;
-            let eligible = eligible_for_fill_round(&report.unfilled, &fill_attempts);
-            if !eligible.is_empty() {
-                spend_fill_round(&mut fill_attempts, &eligible);
-                messages.push(json!({ "role": "assistant", "content": stop_content() }));
-                messages.push(
-                    json!({ "role": "user", "content": contract_nudge_text(&report.committed, &eligible) }),
-                );
-                continue; // Does not count against `turn`.
-            }
-            // No screen left to chase — try one dedicated corrective round
-            // for any unre
+            let report = check_unfilled(&cfg.executor, cfg.finalize_on_
 ```
 
 ### Core Architecture Module: `crates/op-chat-agent/src/chat_agent_loop_blockers.rs`
@@ -1821,645 +1827,716 @@ pub struct Account {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e5d79280` (2026-09-15)
-**Commit Message**: fix(agent): route every Studio task family to the design pipeline
+### Incident Patch 1: `a84c0b5e` (2026-10-08)
+**Commit Message**: fix(web): isolate managed editor config and repair native CI (#252)
 
-The intent classifier's keyword list grew up around app and web briefs,
-so the 演示文稿 / 图文卡片 / 截图教程 / 信息图 / 活动海报 wrappers matched
-nothing and five of the seven task families answered as plain chat: a
-five-page deck brief produced one empty starter frame and a collapsed
-thinking block. Add the deliverable nouns and the 做一份/一套/一张/一篇
-verb forms, and pin every wrapper with a test so a new family cannot
-slip through the same gap.
+* fix(web): isolate managed daemon configuration from standalone settings
 
-Three unrelated reds fixed alongside, each measured:
+* fix(security): require patched rustls and cryptoki releases
 
-- The image-provider menu's expected height was a literal 176, which the
-  Atlas Cloud provider (#227) invalidated the moment it took the list
-  from four entries to five. Derive it from the list's length.
-- The pointer-clock tests fold the PROCESS-GLOBAL agent indicator
-  registry through `next_animation_deadline_ms`, so a concurrent test
-  registering a reveal made an idle engine report a deadline it did not
-  own: green single-threaded, three failures in parallel. Hold the
-  registry's own test guard, the way the desktop indicator tests do.
-- A rejected provider response now optionally goes to a local file named
-  by OPENPENCIL_DEBUG_HTTP_E
+* test(web): align chat and rail fixtures with docked panels
 
-**File**: `crates/op-chat-agent/src/backoff.rs` (modified, +59/-0)
+* test(web): remove unused import from overlay fixture
+
+**File**: `crates/op-acp/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -121,6 +121,50 @@ pub fn default_backoff_knobs() -> (u32, Duration) {
-     (BUILTIN_HTTP_MAX_RETRIES, builtin_http_min_gap())
- }
- 
-+/// Append a rejected response's status and body to the file named by
-+/// `OPENPENCIL_DEBUG_HTTP_ERROR_BODY`, when it is set.
-+///
-+/// Off by default and never wired into chat, SSE, or stdout: a provider
-+/// error body is untrusted and can echo the request's own headers, so it
-+/// stays out of every channel the user or a browser can read. With the
-+/// env var set it goes to that one file and nowhere else, which is what
-+/// turns "http 400 Bad Request" from a dead end into a diagnosis
-+/// (measured 2026-09-13: a modify turn died on a 400 whose reason was
-+/// unreachable from inside the app).
-+async fn dump_error_body(label: &str, status: reqwest::StatusCode, resp: reqwest::Response) {
-+    let Ok(path) = std::env::var("OPENPENCIL_DEBUG_HTTP_ERROR_BODY") else {
-+        return;
-+    };
-+    if path.is_empty() {
-+        return;
-+    }
-+    let body = resp.text().await.unwrap_or_default();
-+    let line = format!(
-+        "[{}] {label} http {} {}\n{}\n",
-+        chrono_like_stamp(),
-+        status.as_u16(),
-+        status.canonical_reason().unwrap_or(""),
-+        body.chars().take(4_000).collect::<String>()
-+    );
-+    use std::io::Write as _;
-+    if let Ok(mut file) = std::fs::OpenOptions::new()
-+        .create(true)
-+        .append(true)
-+        .open(&path)
-+    {
-+        let _ = file.write_all(line.as_bytes());
-+    }
-+}
-+
-+/// Seconds since the UNIX epoch — enough to line a dump up against the
-+/// app log without pulling a date crate into this leaf.
-+fn chrono_like_stamp() -> u64 {
-+    std::time::SystemTime::now()
-+        .duration_since(std::time::UNIX_EPOCH)
-+        .map(|d| d.as_secs())
-+        .unwrap_or(0)
-+}
-+
- pub async fn send_with_backoff(
-     label: &str,
-     url: &str,
-@@ -164,6 +208,10 @@ pub async fn send_with_backoff(
-                 // Provider error bodies are untrusted and can echo request
-                 // headers. Never relay them into chat/SSE where credentials
-                 // could be reflected back into logs or browser responses.
-+                // They ARE the only way to tell WHY a provider rejected a
-+                // request, so an explicit opt-in writes them to a local file
-+                // the developer named — never to the transcript.
-+                dump_error_body(label, status, resp).await;
-                 return Err(BuiltinHttpError::HttpStatus {
-                     label: label.to_string(),
-                     status,
-@@ -292,3 +340,14 @@ pub fn apply_reasoning_wire_control_anthropic(
-         obj.insert("thinking".into(), serde_json::json!({ "type": "disabled" }));
-     }
- }
-+
-+#[cfg(test)]
-+mod http_error_dump_tests {
-+    #[test]
-+    fn the_dump_is_off_unless_the_env_var_names_a_file() {
-+        unsafe {
-+            std::env::remove_var("OPENPENCIL_DEBUG_HTTP_ERROR_BODY");
-+        }
-+        assert!(std::env::var("OPENPENCIL_DEBUG_HTTP_ERROR_BODY").is_err());
-+    }
-+}
+@@ -51,7 +51,7 @@ tokio-tungstenite = { version = "0.24", optional = true, default-features = fals
+   "rustls-tls-webpki-roots",
+ ] }
+ futures-util = { version = "0.3", optional = true }
+-rustls = { version = "0.23", optional = true, default-features = false, features = [
++rustls = { version = "0.23.45", optional = true, default-features = false, features = [
+   "ring",
+   "std",
+   "tls12",
 ```
 
-**File**: `crates/op-editor-ui/src/widgets/agent_settings_images.rs` (modified, +7/-2)
+**File**: `crates/op-collab-relay-client/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -268,11 +268,16 @@ mod touch_tests {
-         let closed_row = profile_row_rect_for_ui(content, &closed, 0, true);
-         let open_row = profile_row_rect_for_ui(content, &open, 0, true);
- 
--        assert_eq!(open_row.size.y - closed_row.size.y, 176.0);
-+        // One 44 px row per entry of `ImageGenProvider::ALL`. The Atlas
-+        // Cloud provider took the list from four to five, so the
-+        // expanded profile grew 176 → 220; the constant here is the
-+        // list's length, not a free number.
-+        const EXPANDED_H: f32 = 44.0 * ImageGenProvider::ALL.len() as f32;
-+        assert_eq!(open_row.size.y - closed_row.size.y, EXPANDED_H);
-         assert_eq!(
-             content_height_for_ui(&open, content.size.x, true)
-                 - content_height_for_ui(&closed, content.size.x, true),
--            176.0
-+            EXPANDED_H
-         );
-         let api = profile_input_rect_for_ui(open_row, &open, 0, ImageGenField::ApiKey, true);
-         for (option_index, expected) in ImageGenProvider::ALL.iter().enumerate() {
+@@ -27,7 +27,7 @@ tokio-tungstenite = { version = "0.24", default-features = false, features = [
+   # connect; the bundled webpki roots make relay TLS work on every target.
+   "rustls-tls-webpki-roots",
+ ] }
+-rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12"] }
++rustls = { version = "0.23.45", default-features = false, features = ["ring", "std", "tls12"] }
+ rustls-native-certs = "0.8"
+ webpki-roots = "0.26"
+ url = "2"
 ```
 
-**File**: `crates/op-engine-ffi/src/editor_pointer_clock_tests.rs` (modified, +21/-0)
+**File**: `crates/op-collab-relay-locator-hsm/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -183,6 +183,13 @@ fn app_state_string(engine: &mut OpEngine, key: &str) -> Option<String> {
- /// times (fresh host clock is 0).
- #[test]
- fn dedicated_time_stamped_pointer_entries_swipe_without_an_intervening_frame() {
-+    // `next_animation_deadline_ms` folds the PROCESS-GLOBAL agent
-+    // indicator registry, so a concurrent test that registers a reveal
-+    // makes this idle engine report a deadline it does not own. Hold the
-+    // registry's own test guard for the whole body, the way the desktop
-+    // indicator tests do.
-+    let _indicators = op_editor_core::agent_indicators::test_guard();
-+    op_editor_core::agent_indicators::clear();
-     let mut engine = swipe_engine();
-     let pointer = &mut engine as *mut OpEngine;
-     // The preview no longer pins a blanket `now + 33` wake: an idle session
-@@ -252,6 +259,13 @@ fn dedicated_time_stamped_pointer_entries_swipe_without_an_intervening_frame() {
- /// `onSwipe` runs exactly once.
- #[test]
- fn out_of_order_dedicated_events_keep_global_clocks_and_swipe_uses_factual_delta() {
-+    // `next_animation_deadline_ms` folds the PROCESS-GLOBAL agent
-+    // indicator registry, so a concurrent test that registers a reveal
-+    // makes this idle engine report a deadline it does not own. Hold the
-+    // registry's own test guard for the whole body, the way the desktop
-+    // indicator tests do.
-+    let _indicators = op_editor_core::agent_indicators::test_guard();
-+    op_editor_core::agent_indicators::clear();
-     let mut engine = swipe_engine();
-     let pointer = &mut engine as *mut OpEngine;
- 
-@@ -315,6 +329,13 @@ fn out_of_order_dedicated_events_keep_global_clocks_and_swipe_uses_factual_delta
- /// (monotonically) and never move them backward.
- #[test]
- fn cancel_and_early_returns_advance_global_clocks_monotonically() {
-+    // `next_animation_deadline_ms` folds the PROCESS-GLOBAL agent
-+    // indicator registry, so a concurrent test that registers a reveal
-+    // makes this idle engine report a deadline it does not own. Hold the
-+    // registry's own test guard for the whole body, the way the desktop
-+    // indicator tests do.
-+    let _indicators = op_editor_core::agent_indicators::test_guard();
-+    op_editor_core::agent_indicators::clear();
-     let mut engine = swipe_engine();
-     let pointer = &mut engine as *mut OpEngine;
- 
+@@ -15,7 +15,7 @@ publish = false
+ # PKCS#11 and crypto stack for code that cannot run there.
+ [target.'cfg(unix)'.dependencies]
+ base64 = "0.22"
+-cryptoki = "0.12"
++cryptoki = "0.12.1"
+ ed25519-dalek = { version = "2.2", default-features = false, features = ["std"] }
+ libc = "0.2"
+ op-collab-relay-protocol = { path = "../op-collab-relay-protocol" }
 ```
 
-**File**: `crates/op-orchestrator/src/intent.rs` (modified, +42/-0)
+**File**: `crates/op-host-services/src/cli_modes.rs` (modified, +8/-0)
 ```diff
-@@ -73,6 +73,29 @@ const DESIGN_KEYWORDS: &[&str] = &[
-     "网页",
-     "小程序",
-     "后台",
-+    // 中文动词 —— 量词形式。Studio 首页的七类任务包装语都用"做一份/
-+    // 一套/一张/一篇"起头，而旧表只有"做一个/做个"，于是演示文稿、图文
-+    // 卡片、截图教程、信息图、活动海报五类全部落到 chat。
-+    "做一份",
-+    "做一套",
-+    "做一张",
-+    "做一篇",
-+    "做份",
-+    "做套",
-+    "做张",
-+    // 中文设计名词 —— 交付物形态。与上面的页面类名词同理：在设计工具
-+    // 语境里这些词几乎总是"造一个 X"。
-+    "演示文稿",
-+    "幻灯片",
-+    "ppt",
-+    "slides",
-+    "图文卡片",
-+    "卡片",
-+    "海报",
-+    "信息图",
-+    "长图",
-+    "截图教程",
-+    "排版",
- ];
- 
- /// 把用户消息分类为 [`Intent::Design`] 或 [`Intent::Chat`]。
-@@ -114,6 +137,25 @@ mod tests {
+@@ -120,6 +120,14 @@ fn serve_web(prog: &str, args: impl Iterator<Item = String>) -> Option<i32> {
+             return Some(2);
          }
-     }
- 
-+    /// Every Studio Home task wrapper must classify as Design. The
-+    /// deliverable is already chosen by the task card, so a wrapper that
-+    /// reads as chat silently answers the user in prose instead of
-+    /// drawing (measured 2026-09-13 on 演示文稿).
-+    #[test]
-+    fn every_studio_home_task_wrapper_classifies_as_design() {
-+        for p in [
-+            "请设计一套可编辑的高保真手机 App 界面（mobile app，375×812）。",
-+            "请设计一个完整的纵向滚动网站页面（landing page，1440 宽）。",
-+            "请做一份 5 页的 PPT 演示文稿（slides，16:9）。封面、正文与结束页风格统一。",
-+            "请做一套图文卡片（card，竖版 3:4，多页轮播）。保持统一排版与视觉系统。",
-+            "请做一篇截图教程图文（card，竖版，截图配上步骤说明）。",
-+            "请做一张数据对比信息图长图（card，竖版图文长图）。",
-+            "请做一套活动海报（card，主海报竖版 + 社交方图）。",
-+        ] {
-+            assert_eq!(classify_intent(p), Intent::Design, "{p}");
+     };
++    // Select the supervisor-owned store before settings or user
++    // templates can initialize the process-global default store.
++    if let Some(root) = options.config_root.as_ref() {
++        if let Err(e) = op_config_store::configure_user_root(root) {
++            eprintln!("{prog} --serve-web: could not initialize private config root: {e}");
++            return Some(1);
 +        }
 +    }
+     // The online daemon is multi-tenant and must not install host-user
+     // material into a process-global registry. Its MCP profile also
+     // refuses user-template tools; local and managed daemons load the
+```
+
+**File**: `crates/op-host-services/src/web_canvas_server/run_loop.rs` (modified, +1/-0)
+```diff
+@@ -40,6 +40,7 @@ pub fn run_web_canvas(options: ServeWebOptions) -> Result<()> {
+         managed,
+         allow_origins,
+         online: _,
++        config_root: _,
+     } = options;
+     let current_path = path.clone();
+     let credential_persistence = crate::web_credential_policy::from_env();
+```
+
+**File**: `crates/op-host-services/src/web_canvas_server/serve_options.rs` (modified, +22/-0)
+```diff
+@@ -27,6 +27,9 @@ pub struct ServeWebOptions {
+     /// Mutually exclusive with `--managed`: managed mode's whole contract is
+     /// one supervising operator holding the process stdin lease.
+     pub online: bool,
++    /// Private settings and user-resource directory selected by a supervisor.
++    /// Only managed mode accepts this; standalone hosts keep platform defaults.
++    pub config_root: Option<PathBuf>,
+ }
+ 
+ impl ServeWebOptions {
+@@ -98,6 +101,7 @@ pub fn parse_serve_web_args<I: Iterator<Item = String>>(mut args: I) -> Result<S
+         managed: false,
+         allow_origins: Vec::new(),
+         online,
++        config_root: None,
+     })
+ }
+ 
+@@ -117,10 +121,22 @@ pub(super) fn parse_serve_web_args_managed<I: Iterator<Item = String>>(
+     let mut allow_origins: Vec<String> = Vec::new();
+     let mut online = false;
+     let mut next_flag = Some(first_flag);
++    let mut config_root = None;
+     while let Some(arg) = next_flag.take().or_else(|| args.next()) {
+         match arg.as_str() {
+             "--managed" => managed = true,
+             "--online" => online = true,
++            "--config-root" => {
++                let root = PathBuf::from(args.next().ok_or_else(|| {
++                    WebCanvasError::Config("--config-root needs an absolute directory".into())
++                })?);
++                if config_root.is_some() || !root.is_absolute() {
++                    return Err(WebCanvasError::Config(
++                        "--config-root must be one absolute directory".into(),
++                    ));
++                }
++                config_root = Some(root);
++            }
+             "--port" => {
+                 let value = args
+                     .next()
+@@ -167,13 +183,19 @@ pub(super) fn parse_serve_web_args_managed<I: Iterator<Item = String>>(
+             "--managed requires a loopback --host (127.0.0.1, localhost, or ::1)".into(),
+         ));
+     }
++    if config_root.is_some() && !managed {
++        return Err(WebCanvasError::Config(
++            "--config-root requires --managed".into(),
++        ));
++    }
+     Ok(ServeWebOptions {
+         port,
+         path,
+         host,
+         managed,
+         allow_origins,
+         online,
++        config_root,
+     })
+ }
+ 
+```
+
+**File**: `crates/op-host-services/src/web_canvas_server_args_tests.rs` (modified, +41/-0)
+```diff
+@@ -148,6 +148,47 @@ fn parse_serve_web_args_managed_flag_form() {
+     assert_eq!(o.allow_origins.len(), 2);
+ }
+ 
++#[test]
++fn managed_config_root_is_explicit_and_never_changes_standalone_defaults() {
++    let root = std::env::temp_dir().join("op-managed-config-test");
++    let parse = |args: Vec<String>| parse_serve_web_args(args.into_iter());
++    let options = parse(vec![
++        "--managed".into(),
++        "--port".into(),
++        "0".into(),
++        "--config-root".into(),
++        root.to_string_lossy().into_owned(),
++    ])
++    .unwrap();
++    assert_eq!(options.config_root.as_deref(), Some(root.as_path()));
++    assert!(parse(vec!["3100".into()]).unwrap().config_root.is_none());
++    for args in [
++        vec!["--managed", "--port", "0", "--config-root"],
++        vec!["--managed", "--port", "0", "--config-root", "relative"],
++        vec!["--online", "--port", "0", "--config-root"],
++    ] {
++        assert!(parse(args.into_iter().map(String::from).collect()).is_err());
++    }
++    let absolute = root.to_string_lossy().into_owned();
++    assert!(parse(vec![
++        "--port".into(),
++        "0".into(),
++        "--config-root".into(),
++        absolute.clone()
++    ])
++    .is_err());
++    assert!(parse(vec![
++        "--managed".into(),
++        "--port".into(),
++        "0".into(),
++        "--config-root".into(),
++        absolute.clone(),
++        "--config-root".into(),
++        absolute
++    ])
++    .is_err());
++}
 +
-     #[test]
-     fn questions_classify_as_chat() {
-         for p in [
+ #[test]
+ fn parse_serve_web_args_managed_accepts_only_loopback_hosts() {
+     for host in ["127.0.0.1", "localhost", "::1"] {
+```
+
+**File**: `crates/op-host-web/src/widget_host/ai_chat_geometry_tests.rs` (modified, +19/-0)
+```diff
+@@ -48,6 +48,25 @@ fn the_composer_card_header_pins_the_chat_into_the_agent_rail() {
+     assert!(after.size.y > before.size.y);
+ }
+ 
++#[test]
++fn maximizing_pinned_chat_keeps_its_column_geometry() {
++    let mut host = WidgetHost::new();
++    host.editor_state.editor_ui.enter_chat_tab();
++    let before = host
++        .ai_chat_rect(1200.0, 800.0)
++        .expect("pinned chat visible");
++    host.editor_state.chat.maximized = true;
++    let after = host
++        .ai_chat_rect(1200.0, 800.0)
++        .expect("pinned chat still visible");
++    assert_eq!(
++        after, before,
++        "the retired floating maximize flag cannot move the rail"
++    );
++    assert_eq!(after.origin.x, 0.0);
++    assert_eq!(after.size.x, host.editor_state.editor_ui.layer_panel_width);
++}
++
+ #[test]
+ fn vscode_embed_has_no_chat_rect() {
+     let mut host = WidgetHost::new();
 ```
 
 ---
 
-### Incident Patch 2: `fb62583b` (2026-09-16)
-**Commit Message**: fix(i18n): carry the catalog size into the exporter, and split the settings tests
+### Incident Patch 2: `3a4b5b31` (2026-10-27)
+**Commit Message**: fix(editor): allow verified auth metadata rebinds
 
-Two reds the first CI run that actually executed on this branch caught,
-both from a constant living in more than one place.
+Permit a complete local-full ABI 4 metadata rebind when both signed matrices verify, all ten native archives and original build attestations remain identical, and every required metadata binding is renewed. Preserve the normal archive-changing promotion checks.
 
-The runtime catalog exporter keeps its own EXPECTED_KEY_COUNT beside the
-Rust-side assertion in `catalog_integrity_tests`. The Studio entry
-surface bumped the Rust one to 1852 and left the exporter at 1717, so
-the WASM bundle job failed on "English catalog has 1852 keys; expected
-1717". Bump it and point each at the other, and have the exporter's own
-test read the constant instead of repeating the number a third time.
-
-The collab security-boundary check enforces the repository's 800-line
-cap over `op-editor-host-core/src`, where `settings_io_tests.rs` arrived
-from upstream at 807 lines. Split the payload round-trips into a sibling
-at the same seam the file already uses for its other two test modules.
-
-Claude-Session: https://claude.ai/code/session_01LBqzBogViQjjA8AqRjLsoD
-
-**File**: `crates/op-editor-host-core/src/settings_io_payload_tests.rs` (added, +544/-0)
+**File**: `tools/check-op-auth-artifact-commit.sh` (modified, +111/-6)
 ```diff
-@@ -0,0 +1,544 @@
-+//! Settings payload round-trips: the MCP CLI toggle arrays across their
-+//! historical lengths, and the fields a payload may and may not carry.
+@@ -25,7 +25,7 @@ done
+     printf 'error: run the release from the exact selected auth artifact commit\n' >&2
+     exit 2
+ }
+-[[ "$(git -C "$repo_root" rev-parse HEAD)" == "$artifact_commit" ]] || {
++[[ "$(git --no-replace-objects -C "$repo_root" rev-parse HEAD)" == "$artifact_commit" ]] || {
+     printf 'error: checked-out source is not the selected auth artifact commit\n' >&2
+     exit 1
+ }
+@@ -47,7 +47,7 @@ else
+ fi
+ 
+ read -r commit parent extra < <(
+-    git -C "$repo_root" rev-list --parents -n 1 "$artifact_commit"
++    git --no-replace-objects -C "$repo_root" rev-list --parents -n 1 "$artifact_commit"
+ )
+ [[ "$commit" == "$artifact_commit" && "$parent" =~ ^[0-9a-f]{40}$ \
+     && -z "${extra:-}" ]] || {
+@@ -88,7 +88,7 @@ trap cleanup EXIT
+         done
+     done
+ } | LC_ALL=C sort > "$allowed_changes"
+-git -C "$repo_root" diff-tree --no-commit-id --name-only --no-renames -r \
++git --no-replace-objects -C "$repo_root" diff-tree --no-commit-id --name-only --no-renames -r \
+     "$parent" "$artifact_commit" | LC_ALL=C sort > "$actual_changes"
+ unexpected=$(LC_ALL=C comm -23 "$actual_changes" "$allowed_changes")
+ [[ -z "$unexpected" ]] || {
+@@ -99,14 +99,13 @@ unexpected=$(LC_ALL=C comm -23 "$actual_changes" "$allowed_changes")
+ for required_change in \
+     crates/op-auth-bridge/AUTH-RELEASE-POLICY \
+     crates/op-auth-bridge/prebuilt/RELEASE-MANIFEST \
+-    crates/op-auth-bridge/prebuilt/RELEASE-MANIFEST.sig \
+-    crates/op-auth-bridge/prebuilt/aarch64-apple-ios/libop_auth.a; do
++    crates/op-auth-bridge/prebuilt/RELEASE-MANIFEST.sig; do
+     grep -Fxq "$required_change" "$actual_changes" || {
+         printf 'error: artifact commit did not update %s\n' "$required_change" >&2
+         exit 1
+     }
+ done
+-policy_change=$(git -C "$repo_root" diff-tree --no-commit-id --name-status \
++policy_change=$(git --no-replace-objects -C "$repo_root" diff-tree --no-commit-id --name-status \
+     --no-renames -r "$parent" "$artifact_commit" -- \
+     crates/op-auth-bridge/AUTH-RELEASE-POLICY)
+ [[ "$policy_change" == $'A\tcrates/op-auth-bridge/AUTH-RELEASE-POLICY' \
+@@ -125,6 +124,112 @@ if [[ -n "$ref_version" && "$ref_version" != "$version" ]]; then
+     printf 'error: branch or tag version does not match the Cargo workspace\n' >&2
+     exit 1
+ fi
++# Ordinary promotions still require a changed iOS archive. The only exception
++# is a complete, newly signed local-full ABI 4 metadata rebind of the exact
++# archives already authenticated by the parent's signed matrix and policy.
++if ! grep -Fxq crates/op-auth-bridge/prebuilt/aarch64-apple-ios/libop_auth.a \
++    "$actual_changes"; then
++    python3 -I - "$repo_root" "$parent" "$artifact_commit" "$version" <<'PY'
++import importlib.util
++import os
++from pathlib import Path
++import subprocess
++import sys
++import tempfile
++
++repo, parent, current, version = sys.argv[1:]
++helper = Path(repo) / "tools/check-local-full-auth.py"
++prefix = "crates/op-auth-bridge/prebuilt/"
++policy_path = "crates/op-auth-bridge/AUTH-RELEASE-POLICY"
++
++
++def git(*args):
++    return subprocess.check_output(
++        ["git", "--no-replace-objects", "-C", repo, *args],
++        env={**os.environ, "GIT_NO_LAZY_FETCH": "1", "GIT_TERMINAL_PROMPT": "0"},
++    )
++
++
++helper_source = git("show", current + ":tools/check-local-full-auth.py")
++if helper.read_bytes() != helper_source:
++    raise SystemExit("error: local-full verifier differs from committed source")
++spec = importlib.util.spec_from_file_location("local_full_rebind", helper)
++contract = importlib.util.module_from_spec(spec)
++# Execute committed source bytes, never working-file or bytecode substitutions.
++exec(compile(helper_source, str(helper), "exec"), contract.__dict__)
++snapshot_paths = {policy_path} | {prefix + name for name in
++                                ("RELEASE-MANIFEST", "RELEASE-MANIFEST.sig", "PROVENANCE_PUBKEY", "README.md")}
++for target in contract.TARGETS:
++    snapshot_paths.update(prefix + target + "/" + name for name in
++                          (contract.artifact_name(target), "ABI_VERSION", "VERSION", "SHA256",
++                           "HARDENING-ATTESTATION", "PROVENANCE", "PROVENANCE.sig"))
++
++
++def snapshot(revision, destination):
++    destination.mkdir()
++    entries = {}
++    tree = git("ls-tree", "-r", "-z", revision, "--", prefix, policy_path)
++    for record in tree.split(b"\0"):
++        if not record:
++            continue
++        metadata, raw_path = record.split(b"\t", 1)
++        mode, kind, oid = metadata.split(b" ")
++        path = raw_path.decode()
++        contract.require(path in snapshot_paths, "Rebind snapshot contains an unallowlisted Git path")
++        contract.require(kind == b"blob" and mode in (b"100644", b"100755"),
++                         "Rebind inputs must be regular Git blobs")
++        entries[path] = (mode, oid)
++        relative = "policy" if path == policy_path else "matrix/" + path.removeprefix(prefix)
++        output = destination / relative
++        output.parent.mkdir(par
+```
+
+**File**: `tools/check-op-auth-artifact-commit.test.sh` (modified, +235/-0)
+```diff
+@@ -211,4 +211,239 @@ if (
+     exit 1
+ fi
+ 
++# Exercise the exception with real Ed25519 signatures and the production
++# semantic verifier, changing its fixed root only inside this temporary fixture.
++python3 -I - "$script_dir" "$temp_root" <<'PY'
++import hashlib
++import importlib.util
++import os
++from pathlib import Path
++import shutil
++import subprocess
++import sys
++
++source, temporary = map(Path, sys.argv[1:])
++repo = temporary / "rebind-repo"
++repo.mkdir()
++key = temporary / "ephemeral-rebind-key.pem"
++
++
++def run(args, **kwargs):
++    return subprocess.check_output(args, stderr=subprocess.PIPE, **kwargs)
++
++
++def git(*args):
++    return run(["git", "-C", str(repo), *args]).decode().strip()
++
++
++def write(path, value):
++    path.parent.mkdir(parents=True, exist_ok=True)
++    path.write_bytes(value if isinstance(value, bytes) else value.encode())
++
++
++def sha(value):
++    return hashlib.sha256(value).hexdigest()
++
++
++def commit(message):
++    git("add", ".")
++    git("commit", "-q", "-m", message)
++    return git("rev-parse", "HEAD")
++
++
++run(["openssl", "genpkey", "-algorithm", "ED25519", "-out", str(key)])
++pin = run(["openssl", "pkey", "-in", str(key), "-pubout", "-outform", "DER"])[-32:].hex()
++helper_source = (source / "check-local-full-auth.py").read_text()
++helper_source = helper_source.replace('PIN = "07e073b30d6de0df7343f8a11c4dccaf69aa87518d94917375eda6e63cc506e1"',
++                                      'PIN = "' + pin + '"')
++write(repo / "tools/check-local-full-auth.py", helper_source)
++spec = importlib.util.spec_from_file_location("rebind_contract", repo / "tools/check-local-full-auth.py")
++c = importlib.util.module_from_spec(spec)
++exec(compile(helper_source, spec.origin, "exec"), c.__dict__)
++shutil.copy2(source / "check-op-auth-artifact-commit.sh", repo / "tools/check-op-auth-artifact-commit.sh")
++write(repo / "scripts/workspace-version.sh", '#!/usr/bin/env bash\nprintf "0.8.5\\n"\n')
++# The exception itself invokes the real verifier twice. The existing shell
++# dispatch is also retained and must still request strict + consumer validation.
++write(repo / "tools/check-op-auth-release-matrix.sh", '''#!/usr/bin/env bash
++set -euo pipefail
++if [[ -n "${OP_AUTH_RELEASE_EXPECTED_OPENPENCIL_REVISION:-}" ]]; then
++    [[ "$OP_AUTH_RELEASE_EXPECTED_OPENPENCIL_REVISION" == "$EXPECTED_FIXTURE_PARENT" ]]
++    [[ "$OP_AUTH_RELEASE_WORKSPACE_VERSION" == 0.8.5 ]]
++    printf 'strict\n' >> "$MATRIX_CHECK_LOG"
++else
++    printf 'consumer\n' >> "$MATRIX_CHECK_LOG"
++fi
++''')
++write(repo / "tools/check-op-auth-prebuilt.sh", '#!/usr/bin/env bash\n[[ "$1" == --require-hardened ]]\n')
++for path in [*repo.joinpath("tools").glob("*.sh"), repo / "scripts/workspace-version.sh"]:
++    path.chmod(0o755)
++git("init", "-q")
++git("config", "user.name", "OpenPencil fixture")
++git("config", "user.email", "fixture@openpencil.invalid")
++root = repo / "crates/op-auth-bridge/prebuilt"
++policy = repo / "crates/op-auth-bridge/AUTH-RELEASE-POLICY"
++write(root / "PROVENANCE_PUBKEY", pin + "\n")
++p, q, version = "1" * 40, "3" * 40, "0.8.5"
++
++
++def sign(path):
++    output = temporary / "ephemeral-signature.bin"
++    run(["openssl", "pkeyutl", "-sign", "-rawin", "-inkey", str(key), "-in", str(path), "-out", str(output)])
++    write(path.with_name(path.name + ".sig"), output.read_bytes().hex() + "\n")
++
++
++def raw(target, payload, private):
++    prefix = "_" if "-apple-" in target else ""
++    abi = sha("".join(prefix + symbol + "\n" for symbol in c.SYMBOLS).encode())
++    protector = sha(("protector:" + target).encode())
++    binding = sha((f"op-auth-protector-binding-v1\ntarget={target}\nreview_id=source-{private}\nprotector_sha256={protector}\n").encode())
++    mobile = c.platform(target) in ("android", "ios", "ios-simulator")
++    cross = mobile or target in c.WINDOWS or target == "x86_64-apple-darwin"
++    minimum = "21" if c.platform(target) == "android" else "15.0" if mobile else "native"
++    values = ["3", "production", "4", target, c.artifact_name(target), sha(payload), str(len(payload)),
++              private, "clean", "1792991219", "private-ci-fat-lto", "remapped", "none", "stripped",
++              "eliminated", "op-auth-hardened-v3", abi, sha(b"coff-globals") if target in c.WINDOWS else abi,
++              sha(("sections:" + target).encode()), "1", "0", "cross-final-link" if cross else "native-link-run",
++              "not-applicable" if mobile else "passed", c.platform(target), minimum, sha(("binary:" + target).encode()),
++              "source-" + private, protector, binding, "none", "none", "none", "none", "none", "none", "none",
++              "rustc 1.95.0 (synthetic 2026-01-01);host: aarch64-apple-darwin;"]
++    return dict(zip(c.RAW_KEYS, values))
++
++
++def matrix(public, build, evidence, *, private=p, signer=q, mutation=None, payload_change=None):
++    rows = ["format=op-auth-release-matrix-v1", "version=" + version, "abi=4", "source_revision=" + private,
++            "openpencil_revision=" + public, "build_i
+```
+
+---
+
+### Incident Patch 3: `d95b14e6` (2026-10-26)
+**Commit Message**: fix(ai): narrow scaffold sidebars to the rail drawn inside them
+
+The dashboard shell pre-builds a 260px sidebar column; on the cinema console the model drew its own 112px rail with a right border in it, leaving a 148px empty strip. A full-height painted rail at the column's top-left with nothing else visible beside it is the column's edge, so the column shrinks to it. When the rail asks to fill the height but a hugging wrapper collapsed it (the second draft, 104px rail cut to 495px), the wrapper is stretched first. A/B replay over 40 earlier sidebar documents changed nothing.
+
+Claude-Session: 87a7da3f-5d16-4c4a-9f25-2e6873c43ac2
+
+**File**: `crates/op-orchestrator/src/geometry_sidebar_rail.rs` (added, +153/-0)
+```diff
+@@ -0,0 +1,153 @@
++//! A scaffold sidebar wider than the rail the model drew inside it.
 +//!
-+//! Sibling of `settings_io_tests.rs`, split out at the 800-line cap the
-+//! collab security-boundary check enforces over this crate.
++//! The two-column dashboard shell pre-builds a 260px `Sidebar` column. On the
++//! astra-new2 cinema console the model drew its own 112px navigation rail in
++//! it — a full-height frame with a right border — so a 148px empty strip sat
++//! between the rail's border and the content in both drafts. The rail's
++//! border is the authored edge of the sidebar; the column is shrunk to it and
++//! the fill-width content column takes the strip back. In the second draft
++//! the rail (a 104px card meant to run the full 900px) sat in a hugging
++//! wrapper and collapsed to its content, so the wrapper is first stretched to
++//! the column's height.
 +
 +use super::*;
++use crate::scaffold::SIDEBAR_COLUMN_NAME;
 +
-+#[test]
-+fn eleven_cli_mcp_payload_keeps_its_toggles_and_leaves_zcode_off() {
-+    let payload: SettingsPayload = serde_json::from_str(
-+        r#"{"version":1,"mcp_cli_enabled":[true,false,true,false,true,false,true,true,false,true,false]}"#,
-+    )
-+    .unwrap();
-+    let mut dst = EditorState::new();
-+    dst.editor_ui.agent_settings.mcp_cli_enabled = [true; 13];
++/// Narrower gaps are ordinary breathing room beside a rail.
++const MIN_EMPTY_STRIP: f64 = 48.0;
++/// The rail must run (almost) the column's full height to be its edge.
++const MIN_HEIGHT_SHARE: f64 = 0.8;
 +
-+    apply_payload(&mut dst, payload);
-+
-+    assert_eq!(
-+        dst.editor_ui.agent_settings.mcp_cli_enabled,
-+        [true, false, true, false, true, false, true, true, false, true, false, false, false]
-+    );
++fn paints_surface(v: &Value) -> bool {
++    let filled = v
++        .get("fill")
++        .and_then(Value::as_array)
++        .is_some_and(|fills| !fills.is_empty());
++    filled || v.get("stroke").is_some_and(|stroke| !stroke.is_null())
 +}
 +
-+#[test]
-+fn eight_cli_mcp_payload_drops_gemini_without_shifting_later_clis() {
-+    let payload: SettingsPayload = serde_json::from_str(
-+        r#"{"version":1,"mcp_cli_enabled":[true,false,true,false,true,false,true,true]}"#,
-+    )
-+    .unwrap();
-+    let mut dst = EditorState::new();
-+
-+    apply_payload(&mut dst, payload);
-+
-+    assert_eq!(
-+        dst.editor_ui.agent_settings.mcp_cli_enabled,
-+        [true, false, false, true, false, true, true, false, false, false, false, false, false]
-+    );
++fn is_hidden(v: &Value) -> bool {
++    v.get("visible").and_then(Value::as_bool) == Some(false)
 +}
 +
-+#[test]
-+fn seven_provider_connected_payload_is_the_current_layout_and_round_trips() {
-+    // The current layout has seven slots (DeepSeek Harness appended at
-+    // the tail). A 7-entry file must round-trip VERBATIM — treating it
-+    // as the legacy Gemini-era layout would silently shift every saved
-+    // connection on every load.
-+    let payload: SettingsPayload = serde_json::from_str(
-+        r#"{"version":1,"connected":[true,false,true,false,true,true,false]}"#,
-+    )
-+    .unwrap();
-+    let mut dst = EditorState::new();
-+
-+    apply_payload(&mut dst, payload);
-+
-+    assert_eq!(
-+        dst.editor_ui.agent_settings.connected,
-+        [true, false, true, false, true, true, false]
-+    );
++/// What the column holds: one or more rails drawn from its top-left corner,
++/// seen through transparent wrappers, and nothing else visible.
++struct Rails<'a> {
++    right_edge: f64,
++    /// Transparent wrappers above a full-height rail that collapsed to its
++    /// content: the rail asks to fill the column, a hugging wrapper says no.
++    collapsed_wrappers: Vec<&'a str>,
 +}
 +
-+#[test]
-+fn six_provider_connected_payload_keeps_flags_and_leaves_dsh_off() {
-+    // Files written since the Gemini retirement have six slots; the
-+    // appended DeepSeek Harness slot starts disconnected.
-+    let payload: SettingsPayload =
-+        serde_json::from_str(r#"{"version":1,"connected":[true,false,true,false,true,true]}"#)
-+            .unwrap();
-+    let mut dst = EditorState::new();
-+
-+    apply_payload(&mut dst, payload);
-+
-+    assert_eq!(
-+        dst.editor_ui.agent_settings.connected,
-+        [true, false, true, false, true, true, false]
-+    );
-+}
-+
-+#[test]
-+fn five_provider_connected_payload_drops_retired_gemini() {
-+    let payload: SettingsPayload =
-+        serde_json::from_str(r#"{"version":1,"connected":[true,false,false,false,true]}"#).unwrap();
-+    let mut dst = EditorState::new();
-+    dst.editor_ui.agent_settings.connected = [false, false, false, false, true, true, true];
-+    apply_payload(&mut dst, payload);
-+    assert_eq!(
-+        dst.editor_ui.agent_settings.connected,
-+        [true, false, false, false, false, false, false]
-+    );
-+}
-+
-+#[test]
-+fn legacy_settings_without_connected_field_default_to_disconnected() {
-+    // A settings.json written before the `connected` field
-+    // existed must still load — the missing field defaults to
-+    // all-disconnected rather than failing the parse.
-+    let legacy = r#"{"version":1,"theme":"dark","locale":"en-US"}"#;
-+    let payload: SettingsPayload = serde_json::from_str(legacy).unwrap();
-+    let mut dst = EditorState::new();
-+    apply_payload(&mut dst, payload);
-+    assert_eq!(dst.editor_ui.agent_settings.connected, [false; 7]);
-+}
-+
-+#[test]
-+fn builtin_agents_round_trip_through_payload() {
-+    let mut src = EditorState::new();
-+    src.editor_ui.agent_settings.add_builtin_agent_config(
-+        "MiniMax",
-+        "sk-test",
-+        "MiniMax-M2.7",
-+        BuiltinAgentKind::Anthropic,
-+        "https://api.minimaxi.com/anthropic",
-+    );
-+
-+    let json = serde_json::to_string(&to_payload(&src)).unwrap();
-+    let payload: SettingsPayload = serde_json::from_str(&json).unwrap();
-+    let mut dst = EditorState::new();
-+    apply_payload(&mut dst, payload);
-+
-+    assert_eq!(dst.editor_ui.agent_settings.builtin_agents.len(), 1);
-+    assert_eq!(
-+        dst.editor_ui.agent_settings.builtin_agents[0].display_name,
-+        "MiniMax"
-+    );
-+    assert_eq!(
-+        dst.editor_ui.agent_settings.builtin_agents[0].api_key,
-+        "sk-test"
-+    );
-+    assert_eq!(
-+        dst.editor_ui.agent_settings.builtin_agents[0].preset,
-+        BuiltinAgentPresetKey::MiniMax
-+    );
-+    assert_eq!(
-+        dst.editor_ui.agent_settings.builtin_agents[0].models,
-+        ["MiniMax-M2.7"]
-+    );
-+}
-+
-+#[test]
-+fn builtin_agent_multiple_models_round_trip_with_legacy_first_mirror() {
-+    let mut src = Edi
-```
-
-**File**: `crates/op-editor-host-core/src/settings_io_tests.rs` (modified, +2/-536)
-```diff
-@@ -269,539 +269,5 @@ fn seven_cli_mcp_payload_keeps_its_toggles_and_leaves_the_new_clis_off() {
-     );
- }
- 
--#[test]
--fn eleven_cli_mcp_payload_keeps_its_toggles_and_leaves_zcode_off() {
--    let payload: SettingsPayload = serde_json::from_str(
--        r#"{"version":1,"mcp_cli_enabled":[true,false,true,false,true,false,true,true,false,true,false]}"#,
--    )
--    .unwrap();
--    let mut dst = EditorState::new();
--    dst.editor_ui.agent_settings.mcp_cli_enabled = [true; 13];
--
--    apply_payload(&mut dst, payload);
--
--    assert_eq!(
--        dst.editor_ui.agent_settings.mcp_cli_enabled,
--        [true, false, true, false, true, false, true, true, false, true, false, false, false]
--    );
--}
--
--#[test]
--fn eight_cli_mcp_payload_drops_gemini_without_shifting_later_clis() {
--    let payload: SettingsPayload = serde_json::from_str(
--        r#"{"version":1,"mcp_cli_enabled":[true,false,true,false,true,false,true,true]}"#,
--    )
--    .unwrap();
--    let mut dst = EditorState::new();
--
--    apply_payload(&mut dst, payload);
--
--    assert_eq!(
--        dst.editor_ui.agent_settings.mcp_cli_enabled,
--        [true, false, false, true, false, true, true, false, false, false, false, false, false]
--    );
--}
--
--#[test]
--fn seven_provider_connected_payload_is_the_current_layout_and_round_trips() {
--    // The current layout has seven slots (DeepSeek Harness appended at
--    // the tail). A 7-entry file must round-trip VERBATIM — treating it
--    // as the legacy Gemini-era layout would silently shift every saved
--    // connection on every load.
--    let payload: SettingsPayload = serde_json::from_str(
--        r#"{"version":1,"connected":[true,false,true,false,true,true,false]}"#,
--    )
--    .unwrap();
--    let mut dst = EditorState::new();
--
--    apply_payload(&mut dst, payload);
--
--    assert_eq!(
--        dst.editor_ui.agent_settings.connected,
--        [true, false, true, false, true, true, false]
--    );
--}
--
--#[test]
--fn six_provider_connected_payload_keeps_flags_and_leaves_dsh_off() {
--    // Files written since the Gemini retirement have six slots; the
--    // appended DeepSeek Harness slot starts disconnected.
--    let payload: SettingsPayload =
--        serde_json::from_str(r#"{"version":1,"connected":[true,false,true,false,true,true]}"#)
--            .unwrap();
--    let mut dst = EditorState::new();
--
--    apply_payload(&mut dst, payload);
--
--    assert_eq!(
--        dst.editor_ui.agent_settings.connected,
--        [true, false, true, false, true, true, false]
--    );
--}
--
--#[test]
--fn five_provider_connected_payload_drops_retired_gemini() {
--    let payload: SettingsPayload =
--        serde_json::from_str(r#"{"version":1,"connected":[true,false,false,false,true]}"#).unwrap();
--    let mut dst = EditorState::new();
--    dst.editor_ui.agent_settings.connected = [false, false, false, false, true, true, true];
--    apply_payload(&mut dst, payload);
--    assert_eq!(
--        dst.editor_ui.agent_settings.connected,
--        [true, false, false, false, false, false, false]
--    );
--}
--
--#[test]
--fn legacy_settings_without_connected_field_default_to_disconnected() {
--    // A settings.json written before the `connected` field
--    // existed must still load — the missing field defaults to
--    // all-disconnected rather than failing the parse.
--    let legacy = r#"{"version":1,"theme":"dark","locale":"en-US"}"#;
--    let payload: SettingsPayload = serde_json::from_str(legacy).unwrap();
--    let mut dst = EditorState::new();
--    apply_payload(&mut dst, payload);
--    assert_eq!(dst.editor_ui.agent_settings.connected, [false; 7]);
--}
--
--#[test]
--fn builtin_agents_round_trip_through_payload() {
--    let mut src = EditorState::new();
--    src.editor_ui.agent_settings.add_builtin_agent_config(
--        "MiniMax",
--        "sk-test",
--        "MiniMax-M2.7",
--        BuiltinAgentKind::Anthropic,
--        "https://api.minimaxi.com/anthropic",
--    );
--
--    let json = serde_json::to_string(&to_payload(&src)).unwrap();
--    let payload: SettingsPayload = serde_json::from_str(&json).unwrap();
--    let mut dst = EditorState::new();
--    apply_payload(&mut dst, payload);
--
--    assert_eq!(dst.editor_ui.agent_settings.builtin_agents.len(), 1);
--    assert_eq!(
--        dst.editor_ui.agent_settings.builtin_agents[0].display_name,
--        "MiniMax"
--    );
--    assert_eq!(
--        dst.editor_ui.agent_settings.builtin_agents[0].api_key,
--        "sk-test"
--    );
--    assert_eq!(
--        dst.editor_ui.agent_settings.builtin_agents[0].preset,
--        BuiltinAgentPresetKey::MiniMax
--    );
--    assert_eq!(
--        dst.editor_ui.agent_settings.builtin_agents[0].models,
--        ["MiniMax-M2.7"]
--    );
--}
--
--#[test]
--fn builtin_agent_multiple_models_round_trip_with_legacy_first_mirror() {
--    let mut src = EditorState::new();
--    src.editor_ui.agent_settings.add_builtin_agent_configs(
--        "Private",
--        "sk-test",
--        ["model-a", "model-b", "model-c"],
--        BuiltinAgentKind::OpenAiCompat,
--        "ht
-```
-
-**File**: `tools/export-i18n-catalogs.py` (modified, +6/-1)
-```diff
-@@ -14,7 +14,12 @@
- REPO_ROOT = Path(__file__).resolve().parents[1]
- I18N_DIR = REPO_ROOT / "crates" / "op-i18n" / "src" / "i18n"
- LOCALE_FILE = I18N_DIR.parent / "locale.rs"
--EXPECTED_KEY_COUNT = 1717
-+# Mirrors the Rust-side assertion in
-+# `crates/op-i18n/src/i18n/catalog_integrity_tests.rs` ("update the
-+# intentional catalog size"). The two live apart, so adding keys means
-+# bumping BOTH — the Studio entry surface bumped the Rust one and left
-+# this at 1717, which only the WASM bundle job noticed.
-+EXPECTED_KEY_COUNT = 1852
- TABLE_SUFFIXES = ("", "_git", "_panel", "_collab")
- 
- # Module stem, Locale variant, and the exact value returned by Locale::code().
-```
-
-**File**: `tools/test_export_i18n_catalogs.py` (modified, +1/-1)
-```diff
-@@ -110,7 +110,7 @@ def test_check_mode_does_not_write(self) -> None:
-             self.assertEqual(result.returncode, 0, result.stderr)
-             self.assertEqual(list(root.iterdir()), [])
-             self.assertIn("15 locales", result.stdout)
--            self.assertIn("1717 keys", result.stdout)
-+            self.assertIn(f"{self.exporter.EXPECTED_KEY_COUNT} keys", result.stdout)
- 
-     def test_export_writes_exact_lazy_locale_set_deterministically(self) -> None:
-         with tempfile.TemporaryDirectory() as temporary:
-```
-
----
-
-### Incident Patch 3: `9cf39a0d` (2026-09-14)
-**Commit Message**: fix(ai): keep the radius context cut on a char boundary (#241)
-
-px_values capped each number's context at 48 bytes. That is a boundary only for Latin script; a CJK or Hangul radius sentence puts three bytes on most characters, so the cut landed mid-character and tail[..end] panicked. floor_char_boundary is a no-op on ASCII, where every index is already a boundary.
-
-**File**: `crates/op-ai-skills/src/style_guide/token_table.rs` (modified, +5/-4)
-```diff
-@@ -512,10 +512,11 @@ fn px_values(line: &str) -> Vec<(i64, String)> {
-         // Up to the next clause break — that is where this number's
-         // description ends and the next one's begins.
-         let tail = &line[index..];
--        let end = tail
--            .find([',', ';', '.', ')', '(', '—'])
--            .unwrap_or(tail.len())
--            .min(48);
-+        let end = tail.floor_char_boundary(
-+            tail.find([',', ';', '.', ')', '(', '—'])
-+                .unwrap_or(tail.len())
-+                .min(48),
-+        );
-         out.push((value, tail[..end].to_string()));
-     }
-     out
-```
-
-**File**: `crates/op-ai-skills/src/style_guide/token_table_tests.rs` (modified, +26/-0)
-```diff
-@@ -220,3 +220,29 @@ fn the_palette_floor_reports_colours_with_their_own_role_text() {
-     assert_eq!(prose.len(), 2);
-     assert_eq!(prose[0].color, "#101014");
- }
-+
-+/// A radius sentence whose description is not written in Latin script. The
-+/// per-number context is cut at 48 bytes, and a guide's prose is arbitrary
-+/// author text — most CJK and Hangul characters are three bytes each, so that
-+/// cut lands mid-character on ordinary input.
-+#[test]
-+fn a_radius_line_written_in_another_script_is_read_and_classified() {
-+    for line in [
-+        "Corner radius: 12px  卡片与面板容器的外框圆角，用于所有卡片与弹层",
-+        "Corner radius: 12px卡片与面板容器的外框圆角，用于所有卡片与弹层",
-+        "Corner radius: 12px 카드와 패널 컨테이너의 바깥 테두리 라운드에 사용",
-+    ] {
-+        let content = format!("# G\n\n## Shape\n\n{line}\n");
-+        let values = extract_style_guide_values(&content);
-+        // Nothing in these says which role the radius is for, so nothing is
-+        // invented — but the scan has to reach that answer, not panic on
-+        // the way.
-+        assert_eq!(values.radius, StyleRadius::default(), "line: {line}");
++fn find_rails<'a>(
++    column: &'a Value,
++    column_rect: &Rect,
++    rects: &HashMap<String, Rect>,
++) -> Option<Rails<'a>> {
++    let mut rails = Rails {
++        right_edge: f64::MIN,
++        collapsed_wrappers: Vec::new(),
++    };
++    let mut stack: Vec<(&Value, Vec<&str>)> =
++        children(column).iter().map(|c| (c, Vec::new())).collect();
++    while let Some((node, wrappers)) = stack.pop() {
++        if is_hidden(node) {
++            continue;
++        }
++        let Some(id) = node.get("id").and_then(Value::as_str) else {
++            continue;
++        };
++        let Some(rect) = rects.get(id) else {
++            continue;
++        };
++        let is_rail = node.get("type").and_then(Value::as_str) == Some("frame")
++            && fixed_width(node).is_some()
++            && paints_surface(node)
++            && (rect.x - column_rect.x).abs() <= 1.0
++            && (rect.y - column_rect.y).abs() <= 1.0;
++        if is_rail {
++            rails.right_edge = rails.right_edge.max(rect.x + rect.w);
++            let short = rect.h < column_rect.h * MIN_HEIGHT_SHARE;
++            if short {
++                if node.get("height").and_then(Value::as_str) != Some("fill_container") {
++                    // A rail sized shorter on purpose is a card, not the edge.
++                    return None;
++                }
++                rails.collapsed_wrappers.extend(wrappers);
++            }
++            continue;
++        }
++        // A transparent wrapper (the subtask's own section frame) is looked
++        // through; anything painted or fixed outside a rail ends the search.
++        if paints_surface(node) || fixed_width(node).is_some() {
++            return None;
++        }
++        let hugs = node.get("height").and_then(Value::as_str) != Some("fill_container");
++        for child in children(node) {
++            let mut path = wrappers.clone();
++            if hugs {
++                path.push(id);
++            }
++            stack.push((child, path));
++        }
 +    }
-+
-+    // The same sentence with an English role cue still classifies.
-+    let mixed = extract_style_guide_values(
-+        "# G\n\n## Shape\n\nCorner radius: 24px card 카드와 패널 컨테이너의 바깥 테두리\n",
-+    );
-+    assert_eq!(mixed.radius.card, Some(24));
++    (rails.right_edge > column_rect.x).then_some(rails)
 +}
++
++pub(super) fn collect_sidebar_rail_fixes(
++    v: &Value,
++    rects: &HashMap<String, Rect>,
++    cmds: &mut Vec<EditorCommand>,
++) {
++    if layout_str(v) == Some("horizontal") {
++        for column in children(v) {
++            if column.get("name").and_then(Value::as_str) != Some(SIDEBAR_COLUMN_NAME) {
++                continue;
++            }
++            let (Some(id), Some(width)) = (
++                column.get("id").and_then(Value::as_str),
++                fixed_width(column),
++            ) else {
++                continue;
++            };
++            let Some(column_rect) = rects.get(id) else {
++                continue;
++            };
++            let Some(rails) = find_rails(column, column_rect, rects) else {
++                continue;
++            };
++            if !rails.collapsed_wrappers.is_empty() {
++                // Let the rail reach the floor first; the next round sees
++                // its full height and narrows the column.
++                for wrapper in rails.collapsed_wrappers {
++                    cmds.push(EditorCommand::SetNodeLayoutProp {
++                        node_id: NodeId::new(wrapper.to_string()),
++               
+```
+
+**File**: `crates/op-orchestrator/src/geometry_sidebar_rail_tests.rs` (added, +91/-0)
+```diff
+@@ -0,0 +1,91 @@
++use super::*;
++use serde_json::json;
++
++fn rect(x: f64, y: f64, w: f64, h: f64) -> Rect {
++    Rect { x, y, w, h }
++}
++
++/// astra-new2 w3 rep-1: Sidebar(260) > section wrapper(fill) > rail(112,
++/// right border) > nav items.
++fn shell(rail_stroke: bool, rail_h: f64) -> (Value, HashMap<String, Rect>) {
++    let mut rail = json!({"type":"frame","id":"rail","name":"影院导航轨","width":112,
++        "height":"fill_container","layout":"vertical","children":[
++            {"type":"text","id":"item","content":"总览"}]});
++    if rail_stroke {
++        rail["stroke"] =
++            json!({"thickness":{"right":1},"fill":[{"type":"solid","color":"#3A2A30"}]});
++    }
++    let root = json!({"type":"frame","id":"root","layout":"horizontal","children":[
++        {"type":"frame","id":"sb","name":"Sidebar","width":260,"height":"fill_container",
++         "layout":"vertical","fill":[{"type":"solid","color":"#160B10"}],"children":[
++            {"type":"frame","id":"wrap","name":"影院侧边导航","width":"fill_container",
++             "height":"fill_container","layout":"vertical","children":[rail]}]},
++        {"type":"frame","id":"main","name":"Main Content","width":"fill_container"}]});
++    let rects = HashMap::from([
++        ("root".to_string(), rect(0.0, 0.0, 1440.0, 900.0)),
++        ("sb".to_string(), rect(0.0, 0.0, 260.0, 900.0)),
++        ("wrap".to_string(), rect(0.0, 0.0, 260.0, 900.0)),
++        ("rail".to_string(), rect(0.0, 0.0, 112.0, rail_h)),
++        ("item".to_string(), rect(16.0, 80.0, 80.0, 20.0)),
++        ("main".to_string(), rect(260.0, 0.0, 1180.0, 900.0)),
++    ]);
++    (root, rects)
++}
++
++fn fixes(root: &Value, rects: &HashMap<String, Rect>) -> Vec<String> {
++    let mut cmds = Vec::new();
++    collect_sidebar_rail_fixes(root, rects, &mut cmds);
++    cmds.iter()
++        .map(|cmd| match cmd {
++            EditorCommand::UpdateNode { node_id, width, .. } => {
++                format!("{} width {}", node_id.as_str(), width.unwrap())
++            }
++            EditorCommand::SetNodeLayoutProp {
++                node_id,
++                property,
++                value: LayoutPropValue::Keyword(k),
++            } => format!("{} {property} {k}", node_id.as_str()),
++            other => panic!("unexpected {other:?}"),
++        })
++        .collect()
++}
++
++#[test]
++fn the_scaffold_column_shrinks_to_the_rail_the_model_drew() {
++    let (root, rects) = shell(true, 900.0);
++    assert_eq!(fixes(&root, &rects), ["sb width 112"]);
++}
++
++#[test]
++fn unpainted_short_or_full_width_content_keeps_the_column() {
++    // Text-only navigation: whitespace beside the labels is the design.
++    let (root, rects) = shell(false, 900.0);
++    assert!(fixes(&root, &rects).is_empty());
++    // A rail authored shorter than the column is a card, not the edge.
++    let (mut root, rects) = shell(true, 300.0);
++    root["children"][0]["children"][0]["children"][0]["height"] = json!(300);
++    assert!(fixes(&root, &rects).is_empty());
++    // A rail that nearly fills the column leaves nothing to reclaim.
++    let (mut root, mut rects) = shell(true, 900.0);
++    root["children"][0]["children"][0]["children"][0]["width"] = json!(230);
++    rects.get_mut("rail").unwrap().w = 230.0;
++    assert!(fixes(&root, &rects).is_empty());
++    // A painted card beside the rail means the column holds more than the rail.
++    let (mut root, mut rects) = shell(true, 900.0);
++    root["children"][0]["children"][0]["children"]
++        .as_array_mut()
++        .unwrap()
++        .push(json!({"type":"frame","id":"promo","width":120,
++            "fill":[{"type":"solid","color":"#2A1A20"}]}));
++    rects.insert("promo".to_string(), rect(120.0, 600.0, 120.0, 100.0));
++    assert!(fixes(&root, &rects).is_empty());
++}
++
++/// astra-new2 w3 rep-2: the rail asked to fill the column but its wrapper
++/// hugged, so it collapsed to 495px; the wrapper stretches first.
++#[test]
++fn a_collapsed_full_height_rail_first_gets_its_wrapper_stretched() {
++    let (mut root, rects) = shell(true, 495.0);
++    root["children"][0]["children"][0]["height"] = json!("fit_content");
++    assert_eq!(fixes(&root, &rects), ["wrap height fill_container"]);
++}
+```
+
+**File**: `crates/op-orchestrator/src/geometry_validation.rs` (modified, +4/-0)
+```diff
+@@ -112,6 +112,8 @@ mod geometry_pinned_composer;
+ mod geometry_row_fixes;
+ #[path = "geometry_scale_ops.rs"]
+ mod geometry_scale_ops;
++#[path = "geometry_sidebar_rail.rs"]
++mod geometry_sidebar_rail;
+ #[path = "geometry_spill_diagnostics.rs"]
+ mod geometry_spill_diagnostics;
+ #[path = "geometry_starved_column.rs"]
+@@ -387,6 +389,8 @@ pub fn geometry_validate_and_fix_for_form(
+             // BEFORE the jam gap: a calendar week that cannot seat its
+             // identical cells gets the shared width and a narrower gap.
+             geometry_grid_row_fit::collect_grid_row_fit_fixes(&v, &rects, &mut cmds);
++            // A scaffold sidebar wider than the rail drawn inside it.
++            geometry_sidebar_rail::collect_sidebar_rail_fixes(&v, &rects, &mut cmds);
+             collect_row_gap_fixes(&v, &rects, &mut cmds);
+             collect_card_row_height_fixes(&v, &rects, &mut cmds, false);
+             // BEFORE the inside-out overfull repair: a rigid row starved by
 ```
 
 #### Recent Merged Pull Requests:
@@ -2488,54 +2565,28 @@ px_values capped each number's context at 48 bytes. That is a boundary only for 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agent): route every Studio task family to the design pipeline
+## X. web): isolate managed editor config and repair native CI (#252)
 
 **RULE**:
-When implementing operations in `crates/op-chat-agent/src/backoff.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ZSeven-W/openpencil. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/op-acp/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ZSeven-W/openpencil. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e5d79280`: agent): route every Studio task family to the design pipeline. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a84c0b5e`: web): isolate managed editor config and repair native CI (#252). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/op-chat-agent/src/backoff.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/op-acp/Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Append a rejected response's status and body to the file named by
-/// `OPENPENCIL_DEBUG_HTTP_ERROR_BODY`, when it is set.
-///
-/// Off by default and never wired into chat, SSE, or stdout: a provider
-/// error body is untrusted and can echo the request's own headers, so it
-/// stays out of every channel the user or a browser can read. With the
-/// env var set it goes to that one file and nowhere else, which is what
-/// turns "http 400 Bad Request" from a dead end into a diagnosis
-/// (measured 2026-09-13: a modify turn died on a 400 whose reason was
-/// unreachable from inside the app).
-async fn dump_error_body(label: &str, status: reqwest::StatusCode, resp: reqwest::Response) {
-    let Ok(path) = std::env::var("OPENPENCIL_DEBUG_HTTP_ERROR_BODY") else {
-        return;
-    };
-    if path.is_empty() {
-        return;
-    }
-    let body = resp.text().await.unwrap_or_default();
-    let line = format!(
-        "[{}] {label} http {} {}\n{}\n",
-        chrono_like_stamp(),
-        status.as_u16(),
-        status.canonical_reason().unwrap_or(""),
-        body.chars().take(4_000).collect::<String>()
-    );
-    use std::io::Write as _;
-    if let Ok(mut file) = std::fs::OpenOptions::new(
+rustls = { version = "0.23.45", optional = true, default-features = false, features = [
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+rustls = { version = "0.23", optional = true, default-features = false, features = [
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e5d79280` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a84c0b5e` are properly handled with clean fallback behavior.

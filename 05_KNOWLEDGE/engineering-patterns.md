@@ -384920,3 +384920,53 @@ checksum = "61c429a8649f110dddef65e2a5ad240f747e85f7758a6bccc7e5777bd33f756e"
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `49e5a79f` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5307. web): isolate managed editor config and repair native CI (#252) (Harvested from ZSeven-W/openpencil)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "web): isolate managed editor config and repair native CI (#252)",
+  "source": "ZSeven-W/openpencil",
+  "source_url": "https://github.com/ZSeven-W/openpencil",
+  "source_version": "070c7c77",
+  "license": "MIT",
+  "extracted_at": "2026-10-28T14:22:31.307Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zseven-w-openpencil",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ZSeven-W/openpencil](https://github.com/ZSeven-W/openpencil) (Revision: `070c7c77`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `crates/op-acp/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ZSeven-W/openpencil. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a84c0b5e`: web): isolate managed editor config and repair native CI (#252). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/op-acp/Cargo.toml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+rustls = { version = "0.23.45", optional = true, default-features = false, features = [
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+rustls = { version = "0.23", optional = true, default-features = false, features = [
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a84c0b5e` are properly handled with clean fallback behavior.

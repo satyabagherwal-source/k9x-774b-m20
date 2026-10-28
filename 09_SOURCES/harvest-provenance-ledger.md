@@ -5802,3 +5802,6 @@ Every entry in this ledger must capture:
 | `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `54137995` | Multi-dimensional audit evidence | 2026-10-28T14:15:20.945Z |
 | `learn-huggingface-openai-gpt-oss-120b` | `https://huggingface.co/openai/gpt-oss-120b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-28T14:15:29.707Z |
 | `learn-github-bee-san-ciphey` | `https://github.com/bee-san/Ciphey` | `49e5a79f` | Multi-dimensional audit evidence | 2026-10-28T14:15:30.421Z |
+| `learn-huggingface-meta-llama-meta-llama-3-8b-instruct` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-28T14:22:22.707Z |
+| `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `c2413d59` | Multi-dimensional audit evidence | 2026-10-28T14:22:26.404Z |
+| `learn-github-zseven-w-openpencil` | `https://github.com/ZSeven-W/openpencil` | `070c7c77` | Multi-dimensional audit evidence | 2026-10-28T14:22:31.571Z |

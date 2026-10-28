@@ -5793,3 +5793,6 @@
 | `CYCLE-20261028-5BHQ` | `2026-10-28T14:15:20.942Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5302` | Yes (`d2f0ec21...`) |
 | `CYCLE-20261028-5I94` | `2026-10-28T14:15:29.704Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5303, Rule 5304, Rule 5305` | Yes (`a07dcc6a...`) |
 | `CYCLE-20261028-5ISX` | `2026-10-28T14:15:30.417Z` | `bee-san/Ciphey` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5306` | Yes (`d1b6ab04...`) |
+| `CYCLE-20261028-ECXB` | `2026-10-28T14:22:22.703Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md` | Yes (`8719c035...`) |
+| `CYCLE-20261028-EFS0` | `2026-10-28T14:22:26.400Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md` | Yes (`86105545...`) |
+| `CYCLE-20261028-EJRK` | `2026-10-28T14:22:31.568Z` | `ZSeven-W/openpencil` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5307` | Yes (`4cc98072...`) |

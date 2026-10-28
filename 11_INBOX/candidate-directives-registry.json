@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T13:10:03.319Z",
+  "last_updated": "2026-10-28T14:22:26.409Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3192,6 +3192,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-huggingface-compvis-stable-diffusion-v1-4"
+    },
+    {
+      "id": "CD-EFS9",
+      "directive_title": "Empirical Invariant Guard in xspi_memory_mapped.rs",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "embassy-rs/embassy",
+      "source_commit": "c2413d59",
+      "date_staged": "2026-10-28",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-embassy-rs-embassy"
     }
   ]
 }

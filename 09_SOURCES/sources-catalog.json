@@ -905,8 +905,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
     "sourceVersion": "hf-meta-llama-meta-llama-3-8b-instruct",
     "license": "Open-Source",
-    "contentHash": "1b309041d2cbc9bce210b295f76b5a19aa96633b897c7c5b72eec9e5bb7d53af",
-    "lastHarvestedAt": "2026-10-25T19:58:12.713Z",
+    "contentHash": "8719c035e0723d9d5b260e409efa564999d30c17f41bc90e9d4a31d80ec58de5",
+    "lastHarvestedAt": "2026-10-28T14:22:22.707Z",
     "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct"
   },
   "hf-openai-gpt-oss-120b": {
@@ -5253,10 +5253,10 @@
     "repository": "ZSeven-W/openpencil",
     "platform": "github",
     "sourceUrl": "https://github.com/ZSeven-W/openpencil",
-    "sourceVersion": "9a618ce9",
+    "sourceVersion": "070c7c77",
     "license": "MIT",
-    "contentHash": "79ffe6167e168db2cf14ade5d91e039e26437edb781d9cce2a4fc767dfa2071f",
-    "lastHarvestedAt": "2026-10-27T18:43:26.810Z",
+    "contentHash": "4cc98072246a559874fedb1ea53e62b8d0ea8d8e3848cefcb30a57b71560533f",
+    "lastHarvestedAt": "2026-10-28T14:22:31.571Z",
     "learningId": "learn-github-zseven-w-openpencil"
   },
   "diggerhq-digger": {
@@ -5343,10 +5343,10 @@
     "repository": "embassy-rs/embassy",
     "platform": "github",
     "sourceUrl": "https://github.com/embassy-rs/embassy",
-    "sourceVersion": "c287925f",
+    "sourceVersion": "c2413d59",
     "license": "Apache-2.0",
-    "contentHash": "0922156e8e2e679bd61456aa6fe9666f9db3c04162281829b45207b9fc7d0496",
-    "lastHarvestedAt": "2026-10-27T12:18:37.731Z",
+    "contentHash": "8610554569eb3a8ae8c0c9ac51e546c42e8da2d2f48402dd457df97c6d154a7f",
+    "lastHarvestedAt": "2026-10-28T14:22:26.404Z",
     "learningId": "learn-github-embassy-rs-embassy"
   },
   "jpush-aurora-imui": {

@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T14:15:32.957Z",
-    "lastVerified": "2026-10-28T14:15:32.957Z",
+    "lastChecked": "2026-10-28T14:22:34.260Z",
+    "lastVerified": "2026-10-28T14:22:34.260Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -120,9 +120,9 @@
   "bitterbot-ai-bitterbot-desktop": {
     "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "lastChecked": "2026-10-28T13:50:05.384Z",
+    "lastChecked": "2026-10-28T14:22:34.253Z",
     "revisionIdentifier": "fce458c1",
-    "lastVerified": "2026-10-28T13:50:05.384Z"
+    "lastVerified": "2026-10-28T14:22:34.253Z"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -826,9 +826,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-10-28T09:58:03.902Z",
+    "lastChecked": "2026-10-28T14:22:29.304Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-10-28T09:58:03.902Z"
+    "lastVerified": "2026-10-28T14:22:29.304Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -3837,5 +3837,70 @@
     "lastChecked": "2026-10-28T14:15:27.377Z",
     "revisionIdentifier": "2f7ce315",
     "lastVerified": "2026-10-28T14:15:27.377Z"
+  },
+  "embassy-rs-embassy": {
+    "name": "embassy-rs/embassy",
+    "officialUrl": "https://github.com/embassy-rs/embassy",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T14:22:26.113Z",
+    "lastVerified": "2026-10-28T14:22:26.113Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-embassy-rs-embassy",
+    "contentHash": "8610554569eb3a8ae8c0c9ac51e546c42e8da2d2f48402dd457df97c6d154a7f",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 4,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-meta-llama-meta-llama-3-8b-instruct": {
+    "name": "meta-llama/Meta-Llama-3-8B-Instruct",
+    "officialUrl": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T14:22:21.724Z",
+    "lastVerified": "2026-10-28T14:22:21.724Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
+    "contentHash": "8719c035e0723d9d5b260e409efa564999d30c17f41bc90e9d4a31d80ec58de5",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "zseven-w-openpencil": {
+    "name": "ZSeven-W/openpencil",
+    "officialUrl": "https://github.com/ZSeven-W/openpencil",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T14:22:30.999Z",
+    "lastVerified": "2026-10-28T14:22:30.999Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-zseven-w-openpencil",
+    "contentHash": "4cc98072246a559874fedb1ea53e62b8d0ea8d8e3848cefcb30a57b71560533f",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 24,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "openyurtio-openyurt": {
+    "name": "openyurt",
+    "officialUrl": "https://github.com/openyurtio/openyurt",
+    "lastChecked": "2026-10-28T14:22:26.803Z",
+    "revisionIdentifier": "83ce3925",
+    "lastVerified": "2026-10-28T14:22:26.803Z"
+  },
+  "cozodb-cozo": {
+    "name": "cozo",
+    "officialUrl": "https://github.com/cozodb/cozo",
+    "lastChecked": "2026-10-28T14:22:31.636Z",
+    "revisionIdentifier": "481af058",
+    "lastVerified": "2026-10-28T14:22:31.636Z"
   }
 }

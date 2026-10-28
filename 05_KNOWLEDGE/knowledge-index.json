@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T14:15:30.318Z",
+  "last_updated": "2026-10-28T14:22:31.497Z",
   "total_verified_learnings": 1157,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10613,8 +10613,8 @@
       "slug": "embassy-rs-embassy",
       "platform": "github",
       "source_url": "https://github.com/embassy-rs/embassy",
-      "source_version": "c287925f",
-      "content_hash": "0922156e8e2e679bd61456aa6fe9666f9db3c04162281829b45207b9fc7d0496",
+      "source_version": "c2413d59",
+      "content_hash": "8610554569eb3a8ae8c0c9ac51e546c42e8da2d2f48402dd457df97c6d154a7f",
       "dossier_path": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "promoted_rules": [
@@ -10669,7 +10669,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:18:37.634Z",
+      "verified_at": "2026-10-28T14:22:26.281Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24453,7 +24453,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
       "source_version": "hf-meta-llama-meta-llama-3-8b-instruct",
-      "content_hash": "1b309041d2cbc9bce210b295f76b5a19aa96633b897c7c5b72eec9e5bb7d53af",
+      "content_hash": "8719c035e0723d9d5b260e409efa564999d30c17f41bc90e9d4a31d80ec58de5",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md",
       "promoted_rules": [
@@ -24592,7 +24592,7 @@
         "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4auvsz",
         "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4o8ney"
       ],
-      "verified_at": "2026-10-25T19:58:12.633Z",
+      "verified_at": "2026-10-28T14:22:22.589Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56826,8 +56826,8 @@
       "slug": "zseven-w-openpencil",
       "platform": "github",
       "source_url": "https://github.com/ZSeven-W/openpencil",
-      "source_version": "9a618ce9",
-      "content_hash": "79ffe6167e168db2cf14ade5d91e039e26437edb781d9cce2a4fc767dfa2071f",
+      "source_version": "070c7c77",
+      "content_hash": "4cc98072246a559874fedb1ea53e62b8d0ea8d8e3848cefcb30a57b71560533f",
       "dossier_path": "07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
       "promoted_rules": [
@@ -56835,6 +56835,11 @@
           "number": 2068,
           "title": "agent): route every Studio task family to the design pipeline",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 5307,
+          "title": "web): isolate managed editor config and repair native CI (#252)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56842,7 +56847,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T18:43:26.714Z",
+      "verified_at": "2026-10-28T14:22:31.475Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -144350,6 +144355,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T14:15:30.300Z"
+    },
+    "rule-5307": {
+      "learning_id": "rule-5307",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5307,
+      "title": "web): isolate managed editor config and repair native CI (#252)",
+      "source_url": "https://github.com/ZSeven-W/openpencil",
+      "source_version": "070c7c77",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T14:22:31.475Z"
     }
   },
   "aliases": {
