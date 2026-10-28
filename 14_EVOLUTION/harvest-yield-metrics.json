@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T18:14:10.047Z",
-  "total_cycles_completed": 5851,
-  "total_learnings_persisted": 5851,
-  "total_rules_promoted": 5318,
+  "last_updated": "2026-10-28T18:27:31.006Z",
+  "total_cycles_completed": 5854,
+  "total_learnings_persisted": 5854,
+  "total_rules_promoted": 5320,
   "history": [
-    {
-      "timestamp": "2026-10-28T03:49:34.979Z",
-      "repository": "deepseek-ai/DeepSeek-R1",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T03:49:35.208Z",
-      "repository": "Automattic/harper",
-      "learningId": "learn-github-automattic-harper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T03:49:40.480Z",
-      "repository": "react-hook-form/react-hook-form",
-      "learningId": "learn-github-react-hook-form-react-hook-form",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T03:49:43.809Z",
       "repository": "gardener/gardener",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-28T18:14:10.047Z",
       "repository": "vespa-engine/vespa",
       "learningId": "learn-github-vespa-engine-vespa",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T18:27:20.773Z",
+      "repository": "lilylilith/QI_2.1_AnyAngle",
+      "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T18:27:21.116Z",
+      "repository": "domcyrus/rustnet",
+      "learningId": "learn-github-domcyrus-rustnet",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T18:27:31.006Z",
+      "repository": "linkerd/linkerd2",
+      "learningId": "learn-github-linkerd-linkerd2",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

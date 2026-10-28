@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T18:14:12.581Z",
-    "lastVerified": "2026-10-28T18:14:12.581Z",
+    "lastChecked": "2026-10-28T18:27:33.546Z",
+    "lastVerified": "2026-10-28T18:27:33.546Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -193,8 +193,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T17:49:47.982Z",
-    "lastVerified": "2026-10-28T17:49:47.982Z",
+    "lastChecked": "2026-10-28T18:27:30.778Z",
+    "lastVerified": "2026-10-28T18:27:30.778Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1242,9 +1242,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-10-28T15:03:25.990Z",
+    "lastChecked": "2026-10-28T18:27:25.723Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-10-28T15:03:25.990Z"
+    "lastVerified": "2026-10-28T18:27:25.723Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -5727,5 +5727,70 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "domcyrus-rustnet": {
+    "name": "domcyrus/rustnet",
+    "officialUrl": "https://github.com/domcyrus/rustnet",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T18:27:19.359Z",
+    "lastVerified": "2026-10-28T18:27:19.359Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-domcyrus-rustnet",
+    "contentHash": "f096caddbfc7477e2d9aa897f0513ee73332afd256ad63c1fc1e0501e39d0b88",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-lilylilith-qi_2.1_anyangle": {
+    "name": "lilylilith/QI_2.1_AnyAngle",
+    "officialUrl": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T18:27:18.296Z",
+    "lastVerified": "2026-10-28T18:27:18.296Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
+    "contentHash": "dc272fbb4b8cafd749eb75c3f7457dd8794b368c5186c16a03035eb08594321f",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "iconoir-icons-iconoir": {
+    "name": "iconoir",
+    "officialUrl": "https://github.com/iconoir-icons/iconoir",
+    "lastChecked": "2026-10-28T18:27:20.843Z",
+    "revisionIdentifier": "285be69c",
+    "lastVerified": "2026-10-28T18:27:20.843Z"
+  },
+  "linkerd-linkerd2": {
+    "name": "linkerd/linkerd2",
+    "officialUrl": "https://github.com/linkerd/linkerd2",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-28T18:27:30.343Z",
+    "lastVerified": "2026-10-28T18:27:30.343Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-linkerd-linkerd2",
+    "contentHash": "adbb74356b08bc97236b23d418cd0b787e9072a7d60ac35a51a8ced3a332f942",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "postgresml-postgresml": {
+    "name": "postgresml",
+    "officialUrl": "https://github.com/postgresml/postgresml",
+    "lastChecked": "2026-10-28T18:27:28.257Z",
+    "revisionIdentifier": "caf2b6cc",
+    "lastVerified": "2026-10-28T18:27:28.257Z"
   }
 }

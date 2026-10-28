@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T18:14:10.051Z",
+  "last_updated": "2026-10-28T18:27:31.010Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1700,14 +1700,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-lilylilith-qi_2-1_anyangle",
-      "content_hash": "cbe867e80fc90b3ff2fd4d90a035417db31d3fc18072216f6b59c913b4ad1b07",
-      "verified_at": "2026-10-28T01:15:46.134Z",
+      "content_hash": "dc272fbb4b8cafd749eb75c3f7457dd8794b368c5186c16a03035eb08594321f",
+      "verified_at": "2026-10-28T18:27:20.776Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T01:15:46.134Z"
+      "last_updated": "2026-10-28T18:27:20.777Z"
     },
     "BAAI/bge-large-en-v1.5": {
       "repository": "BAAI/bge-large-en-v1.5",
@@ -9441,14 +9441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-linkerd-linkerd2",
-      "content_hash": "6808ebc735012f497031e5c8e906070606f1a545d03067ab9bb3df5b39877a88",
-      "verified_at": "2026-10-27T19:20:16.549Z",
+      "content_hash": "adbb74356b08bc97236b23d418cd0b787e9072a7d60ac35a51a8ced3a332f942",
+      "verified_at": "2026-10-28T18:27:31.010Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T19:20:16.549Z"
+      "last_updated": "2026-10-28T18:27:31.010Z"
     },
     "tursodatabase/libsql": {
       "repository": "tursodatabase/libsql",
@@ -10296,14 +10296,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-domcyrus-rustnet",
-      "content_hash": "d95f5003c713adaf38de61bb536227ff34285dbd1c628990d6d8b34f2147490b",
-      "verified_at": "2026-10-27T15:18:50.972Z",
+      "content_hash": "f096caddbfc7477e2d9aa897f0513ee73332afd256ad63c1fc1e0501e39d0b88",
+      "verified_at": "2026-10-28T18:27:21.119Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T15:18:50.972Z"
+      "last_updated": "2026-10-28T18:27:21.119Z"
     },
     "futurice/pepperoni-app-kit": {
       "repository": "futurice/pepperoni-app-kit",

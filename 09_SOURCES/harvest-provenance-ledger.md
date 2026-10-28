@@ -5883,3 +5883,6 @@ Every entry in this ledger must capture:
 | `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `825a9ba9` | Multi-dimensional audit evidence | 2026-10-28T18:04:50.189Z |
 | `learn-huggingface-bingsu-adetailer` | `https://huggingface.co/Bingsu/adetailer` | `hf-bingsu-` | Multi-dimensional audit evidence | 2026-10-28T18:13:58.845Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `f43ae343` | Multi-dimensional audit evidence | 2026-10-28T18:14:10.041Z |
+| `learn-huggingface-lilylilith-qi_2-1_anyangle` | `https://huggingface.co/lilylilith/QI_2.1_AnyAngle` | `hf-lilylil` | Multi-dimensional audit evidence | 2026-10-28T18:27:20.758Z |
+| `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `76a1d8fe` | Multi-dimensional audit evidence | 2026-10-28T18:27:21.110Z |
+| `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `36f78470` | Multi-dimensional audit evidence | 2026-10-28T18:27:31.001Z |

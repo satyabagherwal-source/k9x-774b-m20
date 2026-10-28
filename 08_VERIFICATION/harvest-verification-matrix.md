@@ -5874,3 +5874,6 @@
 | `CYCLE-20261028-CFWQ` | `2026-10-28T18:04:50.186Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5359` | Yes (`917c10c8...`) |
 | `CYCLE-20261028-O796` | `2026-10-28T18:13:58.842Z` | `Bingsu/adetailer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md` | Yes (`9e7c5c4b...`) |
 | `CYCLE-20261028-OFW6` | `2026-10-28T18:14:10.038Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5354` | Yes (`23049e5c...`) |
+| `CYCLE-20261028-5E0J` | `2026-10-28T18:27:20.755Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md` | Yes (`dc272fbb...`) |
+| `CYCLE-20261028-5EAB` | `2026-10-28T18:27:21.107Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5360` | Yes (`f096cadd...`) |
+| `CYCLE-20261028-5LX1` | `2026-10-28T18:27:30.997Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5361` | Yes (`adbb7435...`) |

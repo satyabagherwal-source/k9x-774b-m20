@@ -45,8 +45,8 @@
     "sourceUrl": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
     "sourceVersion": "hf-lilylilith-qi_2.1_anyangle",
     "license": "Open-Source",
-    "contentHash": "cbe867e80fc90b3ff2fd4d90a035417db31d3fc18072216f6b59c913b4ad1b07",
-    "lastHarvestedAt": "2026-10-28T01:15:46.127Z",
+    "contentHash": "dc272fbb4b8cafd749eb75c3f7457dd8794b368c5186c16a03035eb08594321f",
+    "lastHarvestedAt": "2026-10-28T18:27:20.758Z",
     "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle"
   },
   "hf-baai-bge-large-en-v1.5": {
@@ -6213,10 +6213,10 @@
     "repository": "linkerd/linkerd2",
     "platform": "github",
     "sourceUrl": "https://github.com/linkerd/linkerd2",
-    "sourceVersion": "e9ea8d94",
+    "sourceVersion": "36f78470",
     "license": "Apache-2.0",
-    "contentHash": "6808ebc735012f497031e5c8e906070606f1a545d03067ab9bb3df5b39877a88",
-    "lastHarvestedAt": "2026-10-27T19:20:16.542Z",
+    "contentHash": "adbb74356b08bc97236b23d418cd0b787e9072a7d60ac35a51a8ced3a332f942",
+    "lastHarvestedAt": "2026-10-28T18:27:31.001Z",
     "learningId": "learn-github-linkerd-linkerd2"
   },
   "libsql-libsql": {
@@ -6823,10 +6823,10 @@
     "repository": "domcyrus/rustnet",
     "platform": "github",
     "sourceUrl": "https://github.com/domcyrus/rustnet",
-    "sourceVersion": "213d43cd",
+    "sourceVersion": "76a1d8fe",
     "license": "Apache-2.0",
-    "contentHash": "d95f5003c713adaf38de61bb536227ff34285dbd1c628990d6d8b34f2147490b",
-    "lastHarvestedAt": "2026-10-27T15:18:50.964Z",
+    "contentHash": "f096caddbfc7477e2d9aa897f0513ee73332afd256ad63c1fc1e0501e39d0b88",
+    "lastHarvestedAt": "2026-10-28T18:27:21.110Z",
     "learningId": "learn-github-domcyrus-rustnet"
   },
   "futurice-pepperoni-app-kit": {

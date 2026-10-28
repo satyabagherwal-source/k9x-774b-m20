@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source**: github ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
-> **Source Version**: `213d43cd`  
+> **Source Version**: `76a1d8fe`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T15:18:50.491Z  
+> **Timestamp**: 2026-10-28T18:27:20.421Z  
 > **Learning ID**: `learn-github-domcyrus-rustnet`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T15:18:49.365Z  
+> **Harvest Timestamp**: 2026-10-28T18:27:19.359Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Per-process network monitoring for your terminal with deep packet inspection. Cross-platform, sandboxed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5180 stars
+- **Stars / Engagement**: 5188 stars
 
 ---
 
@@ -2495,48 +2495,54 @@ pub(super) fn dns_header_counts(payload: &[u8]) -> Option<DnsHeaderCounts> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `213d43cd` (2026-10-26)
-**Commit Message**: chore(deps): bump docker/login-action (#700)
+### Incident Patch 1: `41884d3e` (2026-10-27)
+**Commit Message**: fix(deps): update zstd dependencies to patched releases (#701)
 
-Bumps the actions group with 1 update: [docker/login-action](https://github.com/docker/login-action).
-
-
-Updates `docker/login-action` from 4.6.0 to 4.7.0
-- [Release notes](https://github.com/docker/login-action/releases)
-- [Commits](https://github.com/docker/login-action/compare/dbcb813823bdd20940b903addbd779551569679f...81c6f93d4bc991e510b342a00b419b3bb4efc5c6)
-
----
-updated-dependencies:
-- dependency-name: docker/login-action
-  dependency-version: 4.7.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-  dependency-group: actions
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/docker.yml` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +6/-6)
 ```diff
-@@ -25,7 +25,7 @@ jobs:
+@@ -4175,27 +4175,27 @@ dependencies = [
  
-       - name: Log in to Container Registry
-         if: github.event_name != 'pull_request'
--        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
-+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4
-         with:
-           registry: ${{ env.REGISTRY }}
-           username: ${{ github.actor }}
+ [[package]]
+ name = "zstd"
+-version = "0.14.2"
++version = "0.14.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "057cfd910cfac363a0ada849592624b4c9ff2e10bef504c3433810d78ed96f93"
++checksum = "db3ae9bf90af6e40197bef767eeefc46ad6397420fe873830bd85e5fbbfb3c70"
+ dependencies = [
+  "zstd-safe",
+ ]
+ 
+ [[package]]
+ name = "zstd-safe"
+-version = "8.1.0"
++version = "8.2.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "bdd44c6a7284e91f3717755b24315a302edd9153a01f753c3cba3d765e8eafac"
++checksum = "ded520f16b29e1a9b771c722221b2b0a0398c2316d9bb3c42b458a5414d7434b"
+ dependencies = [
+  "zstd-sys",
+ ]
+ 
+ [[package]]
+ name = "zstd-sys"
+-version = "2.1.1+zstd.1.5.7"
++version = "2.1.2+zstd.1.5.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "aeec9eaf2dffbbd09201e23bd0ffcbaa33bb8e9266a10734fd7ed90a85eca078"
++checksum = "481ada9c543b2323cbb7bbdbb5249177fbf0188ed959ed2c15e4b22421c84ed3"
+ dependencies = [
+  "cc",
+  "pkg-config",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #702** (2026-10-28): ci: cache Docker checks and trim test artifact retention (@domcyrus)
+- **PR #701** (2026-10-27): fix(deps): update vulnerable zstd dependencies (@domcyrus)
 - **PR #700** (2026-10-26): chore(deps): bump docker/login-action from 4.6.0 to 4.7.0 in the actions group (@dependabot[bot])
 - **PR #698** (2026-10-23): fix: update dependencies for security audit (@domcyrus)
 - **PR #697** (2026-10-21): chore(deps): bump zip from 9.0.4 to 9.0.5 in the rust-dependencies group (@dependabot[bot])
 - **PR #696** (2026-10-20): chore(deps): bump the rust-dependencies group with 2 updates (@dependabot[bot])
-- **PR #694** (2026-10-22): refactor: tighten tests and simplify DPI and command cleanup (@domcyrus)
-- **PR #693** (2026-10-19): feat: improve Host diagnostics and add history windows (@domcyrus)
 
 ---
 
@@ -2556,28 +2562,38 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump docker/login-action (#700)
+## X. deps): update zstd dependencies to patched releases (#701)
 
 **RULE**:
-When implementing operations in `.github/workflows/docker.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `213d43cd`: deps): bump docker/login-action (#700). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `41884d3e`: deps): update zstd dependencies to patched releases (#701). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/docker.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4
+version = "0.14.3"
+checksum = "db3ae9bf90af6e40197bef767eeefc46ad6397420fe873830bd85e5fbbfb3c70"
+version = "8.2.0"
+checksum = "ded520f16b29e1a9b771c722221b2b0a0398c2316d9bb3c42b458a5414d7434b"
+version = "2.1.2+zstd.1.5.7"
+checksum = "481ada9c543b2323cbb7bbdbb5249177fbf0188ed959ed2c15e4b22421c84ed3"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
+version = "0.14.2"
+checksum = "057cfd910cfac363a0ada849592624b4c9ff2e10bef504c3433810d78ed96f93"
+version = "8.1.0"
+checksum = "bdd44c6a7284e91f3717755b24315a302edd9153a01f753c3cba3d765e8eafac"
+version = "2.1.1+zstd.1.5.7"
+checksum = "aeec9eaf2dffbbd09201e23bd0ffcbaa33bb8e9266a10734fd7ed90a85eca078"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `213d43cd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `41884d3e` are properly handled with clean fallback behavior.

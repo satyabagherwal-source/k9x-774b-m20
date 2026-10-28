@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T18:14:09.968Z",
+  "last_updated": "2026-10-28T18:27:30.925Z",
   "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9657,8 +9657,8 @@
       "slug": "domcyrus-rustnet",
       "platform": "github",
       "source_url": "https://github.com/domcyrus/rustnet",
-      "source_version": "213d43cd",
-      "content_hash": "d95f5003c713adaf38de61bb536227ff34285dbd1c628990d6d8b34f2147490b",
+      "source_version": "76a1d8fe",
+      "content_hash": "f096caddbfc7477e2d9aa897f0513ee73332afd256ad63c1fc1e0501e39d0b88",
       "dossier_path": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "promoted_rules": [
@@ -9691,6 +9691,11 @@
           "number": 4879,
           "title": "deps): bump docker/login-action (#700)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5360,
+          "title": "deps): update zstd dependencies to patched releases (#701)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9698,7 +9703,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T15:18:50.888Z",
+      "verified_at": "2026-10-28T18:27:21.014Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23659,7 +23664,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
       "source_version": "hf-lilylilith-qi_2.1_anyangle",
-      "content_hash": "cbe867e80fc90b3ff2fd4d90a035417db31d3fc18072216f6b59c913b4ad1b07",
+      "content_hash": "dc272fbb4b8cafd749eb75c3f7457dd8794b368c5186c16a03035eb08594321f",
       "dossier_path": "07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md",
       "promoted_rules": [
@@ -23762,7 +23767,7 @@
         "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv40vjag",
         "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv4eu8wg"
       ],
-      "verified_at": "2026-10-28T01:15:46.041Z",
+      "verified_at": "2026-10-28T18:27:20.651Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34957,8 +34962,8 @@
       "slug": "linkerd-linkerd2",
       "platform": "github",
       "source_url": "https://github.com/linkerd/linkerd2",
-      "source_version": "e9ea8d94",
-      "content_hash": "6808ebc735012f497031e5c8e906070606f1a545d03067ab9bb3df5b39877a88",
+      "source_version": "36f78470",
+      "content_hash": "adbb74356b08bc97236b23d418cd0b787e9072a7d60ac35a51a8ced3a332f942",
       "dossier_path": "07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
       "promoted_rules": [
@@ -34976,6 +34981,11 @@
           "number": 4958,
           "title": "update go version. (#15749)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5361,
+          "title": "update dependencies. (#15748)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34983,7 +34993,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T19:20:16.479Z",
+      "verified_at": "2026-10-28T18:27:30.907Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -145421,6 +145431,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T18:04:50.099Z"
+    },
+    "rule-5360": {
+      "learning_id": "rule-5360",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5360,
+      "title": "deps): update zstd dependencies to patched releases (#701)",
+      "source_url": "https://github.com/domcyrus/rustnet",
+      "source_version": "76a1d8fe",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T18:27:21.014Z"
+    },
+    "rule-5361": {
+      "learning_id": "rule-5361",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5361,
+      "title": "update dependencies. (#15748)",
+      "source_url": "https://github.com/linkerd/linkerd2",
+      "source_version": "36f78470",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T18:27:30.907Z"
     }
   },
   "aliases": {
