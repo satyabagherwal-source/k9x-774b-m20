@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T13:43:44.415Z",
+  "last_updated": "2026-10-28T13:49:57.501Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1130,14 +1130,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
-      "content_hash": "860f81abde284d85fd16eea43904df4244c097e5fb43d342c7f9603ee767b415",
-      "verified_at": "2026-10-25T19:31:57.714Z",
+      "content_hash": "ad34a17d93b274ddf2da439614a6e0d390884e1dd957993af1a86e214784852a",
+      "verified_at": "2026-10-28T13:49:54.036Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T19:31:57.714Z"
+      "last_updated": "2026-10-28T13:49:54.036Z"
     },
     "deepseek-ai/DeepSeek-V4-Pro": {
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
@@ -7911,14 +7911,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-actix-actix-web",
-      "content_hash": "e2e690fe008ab3736b1dfc55de9edcc266bcd7053749fad8f995bab920846c7b",
-      "verified_at": "2026-10-27T12:04:32.781Z",
+      "content_hash": "256ef83e54d7b4239ab13149fe174215582f079c396cbede281d85e76142bca9",
+      "verified_at": "2026-10-28T13:49:57.501Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T12:04:32.781Z"
+      "last_updated": "2026-10-28T13:49:57.501Z"
     },
     "wix/react-native-ui-lib": {
       "repository": "wix/react-native-ui-lib",

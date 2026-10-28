@@ -5792,3 +5792,5 @@ Every entry in this ledger must capture:
 | `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `ef979746` | Multi-dimensional audit evidence | 2026-10-28T13:43:34.642Z |
 | `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `a70762de` | Multi-dimensional audit evidence | 2026-10-28T13:43:43.290Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `081a4090` | Multi-dimensional audit evidence | 2026-10-28T13:43:44.407Z |
+| `learn-huggingface-qwen-qwen3-8-flash-next` | `https://huggingface.co/Qwen/Qwen3.8-Flash-Next` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-28T13:49:54.030Z |
+| `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `f2876ace` | Multi-dimensional audit evidence | 2026-10-28T13:49:57.494Z |

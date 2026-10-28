@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T13:43:44.356Z",
+  "last_updated": "2026-10-28T13:49:57.444Z",
   "total_verified_learnings": 1157,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -457,8 +457,8 @@
       "slug": "actix-actix-web",
       "platform": "github",
       "source_url": "https://github.com/actix/actix-web",
-      "source_version": "88d7742d",
-      "content_hash": "e2e690fe008ab3736b1dfc55de9edcc266bcd7053749fad8f995bab920846c7b",
+      "source_version": "f2876ace",
+      "content_hash": "256ef83e54d7b4239ab13149fe174215582f079c396cbede281d85e76142bca9",
       "dossier_path": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "promoted_rules": [
@@ -486,6 +486,11 @@
           "number": 4729,
           "title": "Guarded Early Pre-Allocation Against Size-Hint Exploits",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5298,
+          "title": "build(deps): bump taiki-e/install-action from 2.87.30 to 2.87.31 (#4363)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -493,7 +498,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:04:32.679Z",
+      "verified_at": "2026-10-28T13:49:57.432Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26806,7 +26811,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
       "source_version": "hf-qwen-qwen3.8-flash-next",
-      "content_hash": "860f81abde284d85fd16eea43904df4244c097e5fb43d342c7f9603ee767b415",
+      "content_hash": "ad34a17d93b274ddf2da439614a6e0d390884e1dd957993af1a86e214784852a",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md",
       "promoted_rules": [
@@ -26844,7 +26849,7 @@
         "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv4ajtgj",
         "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv4nwg64"
       ],
-      "verified_at": "2026-10-25T19:31:57.637Z",
+      "verified_at": "2026-10-28T13:49:53.937Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -144178,6 +144183,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T13:43:44.344Z"
+    },
+    "rule-5298": {
+      "learning_id": "rule-5298",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5298,
+      "title": "build(deps): bump taiki-e/install-action from 2.87.30 to 2.87.31 (#4363)",
+      "source_url": "https://github.com/actix/actix-web",
+      "source_version": "f2876ace",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T13:49:57.432Z"
     }
   },
   "aliases": {

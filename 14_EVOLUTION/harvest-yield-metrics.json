@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T13:43:44.411Z",
-  "total_cycles_completed": 5760,
-  "total_learnings_persisted": 5760,
-  "total_rules_promoted": 5247,
+  "last_updated": "2026-10-28T13:49:57.498Z",
+  "total_cycles_completed": 5762,
+  "total_learnings_persisted": 5762,
+  "total_rules_promoted": 5248,
   "history": [
-    {
-      "timestamp": "2026-10-27T23:45:58.589Z",
-      "repository": "LiquidAI/LFM3-1.7B",
-      "learningId": "learn-huggingface-liquidai-lfm3-1-7b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T23:52:32.175Z",
-      "repository": "michael-denyer/pstack-claude",
-      "learningId": "learn-github-michael-denyer-pstack-claude",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T23:52:37.861Z",
       "repository": "onejs/one",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-28T13:43:44.411Z",
       "repository": "nolabs-ai/nono",
       "learningId": "learn-github-nolabs-ai-nono",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T13:49:54.034Z",
+      "repository": "Qwen/Qwen3.8-Flash-Next",
+      "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T13:49:57.498Z",
+      "repository": "actix/actix-web",
+      "learningId": "learn-github-actix-actix-web",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

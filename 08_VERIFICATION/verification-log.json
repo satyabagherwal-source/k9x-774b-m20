@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-O8P9",
-    "timestamp": "2026-10-27T12:50:24.909Z",
-    "repository": "expo/expo",
-    "learningId": "learn-github-expo-expo",
-    "contentHash": "cb24b128928a03768b98255d9602181b7e463e3227520b324374c60f0eb908ad",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-O9KA",
-    "timestamp": "2026-10-27T12:50:26.026Z",
-    "repository": "karmada-io/karmada",
-    "learningId": "learn-github-karmada-io-karmada",
-    "contentHash": "a9a8739d06be43c7f55c319564b30151366d0b6c0cbfb69e400d113564656651",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-O9NC",
     "timestamp": "2026-10-27T12:50:26.136Z",
     "repository": "trufflesecurity/trufflehog",
@@ -7490,6 +7460,36 @@
     "repository": "nolabs-ai/nono",
     "learningId": "learn-github-nolabs-ai-nono",
     "contentHash": "b32a4b83d89b0bc7e79b63ec6b18d4969d5dc0bafc7ee6feac0eeac76f996353",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-8LBF",
+    "timestamp": "2026-10-28T13:49:54.027Z",
+    "repository": "Qwen/Qwen3.8-Flash-Next",
+    "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
+    "contentHash": "ad34a17d93b274ddf2da439614a6e0d390884e1dd957993af1a86e214784852a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-8NZO",
+    "timestamp": "2026-10-28T13:49:57.492Z",
+    "repository": "actix/actix-web",
+    "learningId": "learn-github-actix-actix-web",
+    "contentHash": "256ef83e54d7b4239ab13149fe174215582f079c396cbede281d85e76142bca9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

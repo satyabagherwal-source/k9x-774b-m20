@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T13:43:46.935Z",
-    "lastVerified": "2026-10-28T13:43:46.935Z",
+    "lastChecked": "2026-10-28T13:50:05.391Z",
+    "lastVerified": "2026-10-28T13:50:05.391Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -120,9 +120,9 @@
   "bitterbot-ai-bitterbot-desktop": {
     "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "lastChecked": "2026-10-28T13:23:27.037Z",
+    "lastChecked": "2026-10-28T13:50:05.384Z",
     "revisionIdentifier": "fce458c1",
-    "lastVerified": "2026-10-28T13:23:27.037Z"
+    "lastVerified": "2026-10-28T13:50:05.384Z"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -538,9 +538,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-10-28T08:05:58.702Z",
+    "lastChecked": "2026-10-28T13:50:00.581Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-10-28T08:05:58.702Z"
+    "lastVerified": "2026-10-28T13:50:00.581Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -3597,5 +3597,60 @@
     "lastChecked": "2026-10-28T13:43:41.263Z",
     "revisionIdentifier": "aca78520",
     "lastVerified": "2026-10-28T13:43:41.263Z"
+  },
+  "actix-actix-web": {
+    "name": "actix/actix-web",
+    "officialUrl": "https://github.com/actix/actix-web",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T13:49:57.054Z",
+    "lastVerified": "2026-10-28T13:49:57.054Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-actix-actix-web",
+    "contentHash": "256ef83e54d7b4239ab13149fe174215582f079c396cbede281d85e76142bca9",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 5,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-qwen-qwen3.8-flash-next": {
+    "name": "Qwen/Qwen3.8-Flash-Next",
+    "officialUrl": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T13:49:52.979Z",
+    "lastVerified": "2026-10-28T13:49:52.979Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
+    "contentHash": "ad34a17d93b274ddf2da439614a6e0d390884e1dd957993af1a86e214784852a",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "fangwei716-30-days-of-react-native": {
+    "name": "30-days-of-react-native",
+    "officialUrl": "https://github.com/fangwei716/30-days-of-react-native",
+    "lastChecked": "2026-10-28T13:49:55.374Z",
+    "revisionIdentifier": "66af6134",
+    "lastVerified": "2026-10-28T13:49:55.374Z"
+  },
+  "gocrane-crane": {
+    "name": "crane",
+    "officialUrl": "https://github.com/gocrane/crane",
+    "lastChecked": "2026-10-28T13:49:57.917Z",
+    "revisionIdentifier": "2b0ddae8",
+    "lastVerified": "2026-10-28T13:49:57.917Z"
+  },
+  "malisper-pgrust": {
+    "name": "pgrust",
+    "officialUrl": "https://github.com/malisper/pgrust",
+    "lastChecked": "2026-10-28T13:50:02.814Z",
+    "revisionIdentifier": "38634b40",
+    "lastVerified": "2026-10-28T13:50:02.814Z"
   }
 }
