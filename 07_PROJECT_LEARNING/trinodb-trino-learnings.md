@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source**: github ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
-> **Source Version**: `34abc74b`  
+> **Source Version**: `49829ccd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T00:12:50.803Z  
+> **Timestamp**: 2026-10-28T16:12:34.369Z  
 > **Learning ID**: `learn-github-trinodb-trino`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T00:12:49.956Z  
+> **Harvest Timestamp**: 2026-10-28T16:12:34.360Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Official repository of Trino, the distributed SQL query engine for big data, formerly known as PrestoSQL (https://trino.io)
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13377 stars
+- **Stars / Engagement**: 13381 stars
 
 ---
 
@@ -1862,503 +1862,178 @@ export const SqlBlock = ({ language, code }) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7fd3d978` (2026-10-23)
-**Commit Message**: Fix running test from IntelliJ
+### Incident Patch 1: `91d50fd1` (2026-10-27)
+**Commit Message**: Accept lock timeout in SQL Server concurrent add column
 
-Before the change it failed with
+Concurrent ALTER TABLE ADD COLUMN may fail with "Lock request time out
+period exceeded" instead of a deadlock, since the test server sets
+lockTimeout.
 
-    java.lang.reflect.InaccessibleObjectException:
-        Unable to make io.trino.spi.connector.TestColumnMetadata()
-        accessible: module trino.spi does not "opens
-        io.trino.spi.connector" to module org.junit.platform.commons
-
-**File**: `core/trino-spi/src/test/java/io/trino/spi/connector/TestColumnMetadata.java` (modified, +1/-1)
+**File**: `plugin/trino-sqlserver/src/test/java/io/trino/plugin/sqlserver/BaseSqlServerConnectorTest.java` (modified, +1/-1)
 ```diff
-@@ -21,7 +21,7 @@
- import static io.trino.spi.type.IntegerType.INTEGER;
- import static org.assertj.core.api.Assertions.assertThat;
+@@ -241,7 +241,7 @@ protected void verifyAddNotNullColumnToNonEmptyTableFailurePermissible(Throwable
+     @Override
+     protected void verifyConcurrentAddColumnFailurePermissible(Exception e)
+     {
+-        assertThat(e).hasMessageContaining("was deadlocked on lock resources");
++        assertThat(e).hasMessageMatching("(?s).*(was deadlocked on lock resources|Lock request time out period exceeded).*");
+     }
  
--class TestColumnMetadata
-+public class TestColumnMetadata
- {
      @Test
-     public void testBuilderFrom()
 ```
 
 ---
 
-### Incident Patch 2: `352def8f` (2026-10-18)
-**Commit Message**: Fix overflow in partition data size estimate
+### Incident Patch 2: `42e8994f` (2026-10-27)
+**Commit Message**: Widen client timeout margin in abandoned query test
 
-**File**: `core/trino-main/src/main/java/io/trino/operator/output/SkewedPartitionRebalancer.java` (modified, +1/-1)
-```diff
-@@ -325,7 +325,7 @@ private void calculatePartitionDataSize(long dataProcessed)
-             // at least partitionDataSizeAtLastRebalance. Otherwise, it will affect the ordering of minTaskBuckets
-             // priority queue.
-             partitionDataSize[partition] = max(
--                    (partitionRowCount.get(partition) * dataProcessed) / totalPartitionRowCount,
-+                    (long) (((double) partitionRowCount.get(partition) * dataProcessed) / totalPartitionRowCount),
-                     partitionDataSize[partition]);
-         }
-     }
-```
+The test set query.client.timeout to 1s. The server holds a results
+request for up to 1s (MAX_WAIT_TIME) before recording a heartbeat, and
+CI shows major GC pauses of 0.6-0.8s, so a client actively reading rows
+could go more than 1s without a recorded heartbeat and be failed with
+ABANDONED_QUERY.
 
-**File**: `core/trino-main/src/test/java/io/trino/operator/output/TestSkewedPartitionRebalancer.java` (modified, +21/-0)
+Raise the client timeout to 3s and the per-row delay to 200ms, so
+reading the 25 rows still takes longer than the timeout and the test
+keeps verifying that row heartbeats keep the query alive.
+
+**File**: `testing/trino-tests/src/test/java/io/trino/tests/TestServerAbandonedQueries.java` (modified, +2/-2)
 ```diff
-@@ -225,6 +225,27 @@ void testRebalancePartitionToSingleTaskInARebalancingLoop()
-                 .containsExactly(ImmutableList.of(0, 1, 2), ImmutableList.of(1), ImmutableList.of(2));
-     }
- 
-+    @Test
-+    void testRebalanceWhenRowCountTimesDataProcessedExceedsLong()
-+    {
-+        int partitionCount = 3;
-+        SkewedPartitionRebalancer rebalancer = new SkewedPartitionRebalancer(
-+                partitionCount,
-+                3,
-+                3,
-+                MIN_PARTITION_DATA_PROCESSED_REBALANCE_THRESHOLD,
-+                MIN_DATA_PROCESSED_REBALANCE_THRESHOLD);
-+
-+        rebalancer.addPartitionRowCount(0, 1L << 32);
-+        rebalancer.addPartitionRowCount(1, 0);
-+        rebalancer.addPartitionRowCount(2, 0);
-+        rebalancer.addDataProcessed(1L << 31);
-+        rebalancer.rebalance();
-+
-+        assertThat(rebalancer.getPartitionAssignments())
-+                .containsExactly(ImmutableList.of(0, 1), ImmutableList.of(1), ImmutableList.of(2));
-+    }
-+
-     @Test
-     public void testConsiderSkewedPartitionOnlyWithinACycle()
+@@ -50,7 +50,7 @@ public class TestServerAbandonedQueries
+     public void setup()
      {
+         server = TestingTrinoServer.builder()
+-                .setProperties(ImmutableMap.of("query.client.timeout", "1s"))
++                .setProperties(ImmutableMap.of("query.client.timeout", "3s"))
+                 .build();
+ 
+         server.installPlugin(new TpchPlugin());
+@@ -89,7 +89,7 @@ public void testAbandonedQueries()
+             while (client.advance()) {
+                 client.currentRows().forEach(_ -> {
+                     try {
+-                        Thread.sleep(100); // 25 rows * 100 ms = 2500 ms > client timeout
++                        Thread.sleep(200); // 25 rows * 200 ms = 5000 ms > client timeout
+                     }
+                     catch (InterruptedException e) {
+                         throw new RuntimeException(e);
 ```
 
 ---
 
-### Incident Patch 3: `5a7baf5c` (2026-10-25)
-**Commit Message**: Use MemoryContext in BigQuery page sources
+### Incident Patch 3: `3a8e6eef` (2026-10-28)
+**Commit Message**: Bump the web-ui-dependencies group
 
-BigQueryPageSourceProvider implemented the deprecated createPageSource
-overload, so the page builder memory of the Arrow and Avro storage page
-sources was accounted only by polling getMemoryUsage. Report it to the
-MemoryContext instead.
+Bumps the web-ui-dependencies group in /core/trino-web-ui/src/main/resources/webapp with 8 updates:
 
-**File**: `plugin/trino-bigquery/pom.xml` (modified, +33/-0)
+| Package | From | To |
+| --- | --- | --- |
+| [react](https://github.com/react/react/tree/HEAD/packages/react) | `19.3.0` | `19.3.1` |
+| [react-dom](https://github.com/react/react/tree/HEAD/packages/react-dom) | `19.3.0` | `19.3.1` |
+| [sass](https://github.com/sass/dart-sass) | `1.105.1` | `1.105.2` |
+| [baseline-browser-mapping](https://github.com/web-platform-dx/baseline-browser-mapping) | `2.11.29` | `2.11.34` |
+| [browserslist](https://github.com/browserslist/browserslist) | `4.29.3` | `4.29.5` |
+| [caniuse-lite](https://github.com/browserslist/caniuse-lite) | `1.0.30001816` | `1.0.30001819` |
+| [electron-to-chromium](https://github.com/Kilian/electron-to-chromium) | `1.5.456` | `1.5.467` |
+| [node-releases](https://github.com/chicoxyzzy/node-releases) | `2.0.59` | `2.0.60` |
+
+
+Updates `react` from 19.3.0 to 19.3.1
+- [Release notes](https://github.com/react/react/releases)
+- [Changelog](https://github.com/react/react/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/react/react/commits/v19.3.1/packages/react)
+
+Updates `react-dom` from 19
+
+**File**: `core/trino-web-ui/src/main/resources/webapp/bun.lock` (modified, +11/-11)
 ```diff
-@@ -61,6 +61,17 @@
-             </exclusions>
-         </dependency>
+@@ -17,11 +17,11 @@
+         "axios": "^1.20.0",
+         "lodash": "^4.18.1",
+         "monaco-editor": "^0.57.0",
+-        "react": "^19.3.0",
++        "react": "^19.3.1",
+         "react-calendar-timeline": "^0.30.0-beta.4",
+-        "react-dom": "^19.3.0",
++        "react-dom": "^19.3.1",
+         "react-router-dom": "^7.18.4",
+-        "sass": "^1.105.1",
++        "sass": "^1.105.2",
+         "zustand": "^5.0.15",
+       },
+       "devDependencies": {
+@@ -387,15 +387,15 @@
  
-+        <dependency>
-+            <groupId>com.google.api.grpc</groupId>
-+            <artifactId>grpc-google-cloud-bigquerystorage-v1</artifactId>
-+            <exclusions>
-+                <exclusion>
-+                    <groupId>com.google.guava</groupId>
-+                    <artifactId>listenablefuture</artifactId>
-+                </exclusion>
-+            </exclusions>
-+        </dependency>
-+
-         <dependency>
-             <groupId>com.google.api.grpc</groupId>
-             <artifactId>proto-google-cloud-bigquerystorage-v1</artifactId>
-@@ -195,11 +206,21 @@
-             <artifactId>grpc-api</artifactId>
-         </dependency>
+     "balanced-match": ["balanced-match@1.0.2", "", {}, "sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw=="],
  
-+        <dependency>
-+            <groupId>io.grpc</groupId>
-+            <artifactId>grpc-inprocess</artifactId>
-+        </dependency>
-+
-         <dependency>
-             <groupId>io.grpc</groupId>
-             <artifactId>grpc-netty-shaded</artifactId>
-         </dependency>
+-    "baseline-browser-mapping": ["baseline-browser-mapping@2.11.29", "", { "bin": { "baseline-browser-mapping": "dist/cli.cjs" } }, "sha512-YeesxhUmR4h5y5V8KF8iBCqJb8YFrBJ++XBTeGcWIaQOYXGN19JM0FoiOjAhwuDoln8owMgXcWBmgHtYSkky2w=="],
++    "baseline-browser-mapping": ["baseline-browser-mapping@2.11.34", "", { "bin": { "baseline-browser-mapping": "dist/cli.cjs" } }, "sha512-Aqr8mA1kIvyJ3UY5YAY7ib8LSo1DmDMbMnVqGPtsKW1LxaFQFwn9Eb3yvq2fUKJsRvaXjnAV7R5osqETapzNiA=="],
  
-+        <dependency>
-+            <groupId>io.grpc</groupId>
-+            <artifactId>grpc-stub</artifactId>
-+        </dependency>
-+
-         <dependency>
-             <groupId>io.opentelemetry.instrumentation</groupId>
-             <artifactId>opentelemetry-apache-httpclient-4.3</artifactId>
-@@ -444,6 +465,18 @@
+     "batch-processor": ["batch-processor@1.0.0", "", {}, "sha512-xoLQD8gmmR32MeuBHgH0Tzd5PuSZx71ZsbhVxOCRbgktZEPe4SQy7s9Z50uPp0F/f7iw2XmkHN2xkgbMfckMDA=="],
  
-     <build>
-         <plugins>
-+            <plugin>
-+                <groupId>org.apache.maven.plugins</groupId>
-+                <artifactId>maven-dependency-plugin</artifactId>
-+                <configuration>
-+                    <ignoredNonTestScopedDependencies>
-+                        <!-- Used directly only by tests, but required at runtime -->
-+                        <ignoredDependency>com.google.api.grpc:grpc-google-cloud-bigquerystorage-v1</ignoredDependency>
-+                        <ignoredDependency>io.grpc:grpc-inprocess</ignoredDependency>
-+                        <ignoredDependency>io.grpc:grpc-stub</ignoredDependency>
-+                    </ignoredNonTestScopedDependencies>
-+                </configuration>
-+            </plugin>
-             <plugin>
-                 <groupId>org.basepom.maven</groupId>
-                 <artifactId>duplicate-finder-maven-plugin</artifactId>
+     "bezier-easing": ["bezier-easing@3.2.0", "", {}, "sha512-QOKIYCgHd06gsQg0G9k1/JnzzZ+PT99qqUmgRHQ+r5PI/gsjCn0l7LXW6gtXoPhVJviIjP01xg9E7eNime9fVw=="],
+ 
+     "brace-expansion": ["brace-expansion@1.1.21", "", { "dependencies": { "balanced-match": "^1.0.0", "concat-map": "0.0.1" } }, "sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw=="],
+ 
+-    "browserslist": ["browserslist@4.29.3", "", { "dependencies": { "baseline-browser-mapping": "^2.11.26", "caniuse-lite": "^1.0.30001813", "electron-to-chromium": "^1.5.439", "node-releases": "^2.0.57", "update-browserslist-db": "^1.3.3" }, "bin": { "browserslist": "cli.js" } }, "sha512-1R4kiYKXGViqEN0CnoDrXc1StD9niAwu+j2dukWzrD4bJgsD4lDmEp0CRbc6E/vYJIfTHwPmwyaKtVSudICdPA=="],
++    "browserslist": ["browserslist@4.29.5", "", { "dependencies": { "baseline-browser-mapping": "^2.11.33", "caniuse-lite": "^1.0.30001819", "electron-to-chromium": "^1.5.464", "node-releases": "^2.0.60", "update-browserslist-db": "^1.3.4" }, "bin": { "browserslist": "cli.js" } }, "sha512-khTmKu5NGYTotqcYo8Bew2k4RAE9PuXRSFRXG2lQBrCEQHyeQ/vX6gKMxfokwywBsLiXZMnHsmWMG1pnO8J7uQ=="],
+ 
+     "call-bind": ["call-bind@1.0.9", "", { "dependencies": { "call-bind-apply-helpers": "^1.0.2", "es-define-property": "^1.0.1", "get-intrinsic": "^1.3.0", "set-function-length": "^1.2.2" } }, "sha512-a/hy+pNsFUTR+Iz8TCJvXudKVLAnz/DyeSUo10I5yvFDQJBFU2s9uqQpoSrJlroHUKoKqzg+epxyP9lqFdzfBQ=="],
+ 
+@@ -405,7 +405,7 @@
+ 
+     "callsites": ["callsites@3.1.0", "", {}, "sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ=="],
+ 
+-    "caniuse-lite": ["caniuse-lite@1.0.30001816", "", {}, "sha512-+8Yx7BXCoqk6IF8yTicjfUR6D/ldJzdlsodlEOiOSPmhK844WIgk67/zIQaGAOxNkZyyvBlrRFnLvqKIoqbAFw=="],
++    "caniuse-lite": ["caniuse-lite@1.0.30001819", "", {}, "sha512-LFUqIIAwpzsIuevnKnsR9qnStBcgzPShTX61lBwN9uFkkf8o8zLiebEjbW8AYtZiF+1YKDWfdt/pWDtMuG8Xwg=="],
+ 
+     "chalk": ["chalk@4.1.2", "", { "dependencies": { "ansi-styles": "^4.1.0", "supports-color": "^7.1.0" } }, "sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA=="],
+ 
+@@ -497,7 +497,7 @@
+ 
+     "dunder-proto": ["dunder-proto@1.0.1", "", { "dependencies": { "call-bind-apply-helpers": "^1.0.1", "es-errors": "^1.3.0", "gopd": "^1.2.0" } }, "sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A=="],
+ 
+-    "electron-to-chromium": ["electron-to-chromium@1.5.456", "", {}, "sha512-8hboqI6xesozteFb8aa7OGknvxUtTeRJLz0FoePysUEh/oWbddykIGdgpEJRbPRg/nIMfBf2DFos+H2MtvJl2A=="],
++    "electron-to-chromium": ["electron-to-chromium@1.5.467", "", {}, "sha512-Nw9X371rtZmYcBSnEijnCDONILjs93biCZO34juC7MBOmK8E+GFnyD4T/WvyrlJkppul7oxg6TwvtKst9SODTw=="],
+ 
+     "element-resize-detector": ["element-resize-detector@1.2.4", "", { "dependencies": { "batch-processor": "1.0.0" } }, "sha512-Fl5Ftk6WwXE0wqCgNoseKWndjzZlDCwuPTcoVZfCP9R3EHQF8qUtr3YUPNETegRBOKqQKPW3n4kiIWngGi8tKg=="],
+ 
+@@ -771,7 +771,7 @@
+ 
+     "node-exports-info": ["node-exports-info@1.6.2", "", { "dependencies": { "array.prototype.flatmap": "^1.3.3", "es-errors": "^1.3.0", "object.entries": "^1.1.9", "semver": "^6.3.1" } }, "sha512-kXs9Go0cah0qHVV2v389IXQLdLCeE1xfFtjOAF+iobu0OIoG1pje8At2vMHyaPMiPMnG/LWP50twML21eMcAag=="],
+ 
+-    "node-releases": ["node-releases@2.0.59", "", {}, "sha512-5qr2okC4ItAI0hG5SaV0HoYMpnM/Y6+Oqr7AmPYy/2uEoGvS+GbSKLeRxSS1uAdu59yz0ouzcuXievSgg///WA=="],
++    "node-releases": ["node-releases@2.0.60", "", {}, "sha512-OmO8+GM1JUZqXET720VrJCwkjUCXmCMQm0Z3UDDRbfNLHS4NEAvY60j5jiFv0tkKw2PNNlqOLhahVmwJIOLDIQ=="],
+ 
+     "object-assign": ["object-assign@4.1.1", "", {}, "sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3
 ```
 
-**File**: `plugin/trino-bigquery/src/main/java/io/trino/plugin/bigquery/BigQueryPageSourceProvider.java` (modified, +12/-8)
+**File**: `core/trino-web-ui/src/main/resources/webapp/package.json` (modified, +3/-3)
 ```diff
-@@ -25,6 +25,7 @@
- import io.trino.spi.connector.ConnectorTableHandle;
- import io.trino.spi.connector.ConnectorTransactionHandle;
- import io.trino.spi.connector.DynamicFilter;
-+import io.trino.spi.connector.MemoryContext;
- 
- import java.util.List;
- import java.util.Optional;
-@@ -69,15 +70,15 @@ public BigQueryPageSourceProvider(
-     }
- 
-     @Override
--    @SuppressWarnings("deprecation") // TODO (https://github.com/trinodb/trino/issues/29959) migrate to non-deprecated createPageSource overload
-     public ConnectorPageSource createPageSource(
-             ConnectorTransactionHandle transaction,
-             ConnectorSession session,
-             ConnectorSplit split,
-             ConnectorTableHandle table,
-             Optional<ConnectorTableCredentials> tableCredentials,
-             List<ColumnHandle> columns,
--            DynamicFilter dynamicFilter)
-+            DynamicFilter dynamicFilter,
-+            MemoryContext memoryContext)
-     {
-         log.debug("createPageSource(transaction=%s, session=%s, split=%s, table=%s, columns=%s)", transaction, session, split, table, columns);
-         BigQuerySplit bigQuerySplit = (BigQuerySplit) split;
-@@ -97,22 +98,23 @@ public ConnectorPageSource createPageSource(
-                 .map(BigQueryColumnHandle.class::cast)
-                 .collect(toImmutableList());
- 
--        return createPageSource(session, (BigQueryTableHandle) table, bigQuerySplit, bigQueryColumnHandles);
-+        return createPageSource(session, (BigQueryTableHandle) table, bigQuerySplit, bigQueryColumnHandles, memoryContext);
-     }
- 
-     private ConnectorPageSource createPageSource(
-             ConnectorSession session,
-             BigQueryTableHandle table,
-             BigQuerySplit split,
--            List<BigQueryColumnHandle> columnHandles)
-+            List<BigQueryColumnHandle> columnHandles,
-+            MemoryContext memoryContext)
-     {
-         return switch (split.mode()) {
--            case STORAGE -> createStoragePageSource(session, split, columnHandles);
-+            case STORAGE -> createStoragePageSource(session, split, columnHandles, memoryContext);
-             case QUERY -> createQueryPageSource(session, table, columnHandles, split.filter());
-         };
-     }
- 
--    private ConnectorPageSource createStoragePageSource(ConnectorSession session, BigQuerySplit split, List<BigQueryColumnHandle> columnHandles)
-+    private ConnectorPageSource createStoragePageSource(ConnectorSession session, BigQuerySplit split, List<BigQueryColumnHandle> columnHandles, MemoryContext memoryContext)
-     {
-         BigQueryReadClient bigQueryReadClient = bigQueryReadClientFactory.create(session);
-         try {
-@@ -124,15 +126,17 @@ private ConnectorPageSource createStoragePageSource(ConnectorSession session, Bi
-                         arrowBufferAllocator.orElseThrow(() -> new IllegalStateException("ArrowBufferAllocator was not bound")),
-                         maxReadRowsRetries,
-                         split,
--                        columnHandles);
-+                        columnHandles,
-+                        memoryContext);
-             }
-             return new BigQueryStorageAvroPageSource(
-                     bigQueryReadClient,
-                     executor,
-                     typeManager,
-                     maxReadRowsRetries,
-                     split,
--                    columnHandles);
-+                    columnHandles,
-+                    memoryContext);
-         }
-         catch (Throwable t) {
-             closeAllSuppress(t, bigQueryReadClient);
-```
-
-**File**: `plugin/trino-bigquery/src/main/java/io/trino/plugin/bigquery/BigQueryStorageArrowPageSource.java` (modified, +16/-11)
-```diff
-@@ -20,6 +20,7 @@
- import io.trino.spi.Page;
- import io.trino.spi.PageBuilder;
- import io.trino.spi.connector.ConnectorPageSource;
-+import io.trino.spi.connector.MemoryContext;
- import io.trino.spi.connector.SourcePage;
- import org.apache.arrow.memory.BufferAllocator;
- import org.apache.arrow.vector.ipc.ReadChannel;
-@@ -55,6 +56,7 @@ public class BigQueryStorageArrowPageSource
-     private final BigQueryArrowBufferAllocator bufferAllocator;
-     private final BigQuerySplit split;
-     private final PageBuilder pageBuilder;
-+    private final MemoryContext memoryContext;
-     private final Iterator<ReadRowsResponse> responses;
- 
-     private CompletableFuture<ReadRowsResponse> nextResponse;
-@@ -67,21 +69,25 @@ public BigQueryStorageArrowPageSource(
-             BigQueryArrowBufferAllocator bufferAllocator,
-             int maxReadRowsRetries,
-             BigQuerySplit split,
--            List<BigQueryColumnHandle> columns)
-+            List<BigQueryColumnHandle> columns,
-+            MemoryContext memoryContext)
-     {
-         this.bigQueryReadClient = requireNonNull(bigQueryReadClient, "bigQueryReadClient is null");
-         this.executor = requireNonNull(executor, "executor is null");
-         this.bufferAllocator = requireNonNull(bufferAllocator, "bufferAllocator is null");
-         this.split = requireNonNull(split, "split is null");
-         requireNonNull(columns, "columns is null");
-+        this.memoryContext = requireNonNull(memoryContext, "memoryContext is null");
-         Schema schema = deserializeSchema(split.schemaString());
--        log.debug("Trace id: %s, Stream: %s, Starting to read", split.traceId(), split.streamName());
--        responses = new ReadRowsHelper(bigQueryReadClient, split.streamName(), maxReadRowsRetries).readRows();
--        nextResponse = CompletableFuture.supplyAsync(this::getResponse, executor);
-         this.bigQueryArrowToPageConverter = new BigQueryArrowToPageConverter(typeManager, schema, columns);
-         this.pageBuilder = new PageBuilder(columns.stream()
-                 .map(BigQueryColumnHandle::trinoType)
-                 .collect(toImmutableList()));
-+        // Report before the read is started, so that exceeding the memory limit sends no read request
-+        updateMemoryUsage();
-+        log.debug("Trace id: %s, Stream: %s, Starting to read", split.traceId(), split.streamName());
-+        responses = new ReadRowsHelper(bigQueryReadClient, split.streamName(), maxReadRowsRetries).readRows();
-+        nextResponse = CompletableFuture.supplyAsync(this::getResponse, executor);
-     }
- 
-     @Override
-@@ -127,18 +133,12 @@ public SourcePage getNextSourcePage()
-             }
-             page = pageBuilder.build();
-             pageBuilder.reset();
-+            updateMemoryUsage();
-         }
-         readTimeNanos.addAndGet(System.nanoTime() - start);
-         return SourcePage.create(page);
-     }
- 
--    @Override
--    @SuppressWarnings("deprecation") // TODO (https://github.com/trinodb/trino/issues/29959) migrate to MemoryContext
--    public long getMemoryUsage()
--    {
--        return pageBuilder.getRetainedSizeInBytes();
--    }
--
-     @Override
-     public void close()
-     {
-@@ -161,6 +161,11 @@ private ReadRowsResponse getResponse()
-         return response;
-     }
- 
-+    private void updateMemoryUsage()
-+    {
-+        memoryContext.setBytes(pageBuilder.getRetainedSizeInBytes());
-+    }
-+
-     private ArrowRecordBatch deserializeResponse(BufferAllocator allocator, ReadRowsResponse response)
-     {
-         int serializedSize = response.getArrowRecordBatch().getSerializedSize();
-```
-
-**File**: `plugin/trino-bigquery/src/main/java/io/trino/plugin/bigquery/BigQueryStorageAvroPageSource.java` (modified, +13/-8)
-```diff
-@@ -25,6 +25,7 @@
- import io.trino.spi.block.BlockBuilder;
- import io.trino.spi.block.RowBlockBuilder;
- import io.trino.spi.connector.ConnectorPageSource;
-+import io.trino.spi.connector.MemoryContext;
- import io.trino.spi.connector.SourcePage;
- import io.trino.spi.type.ArrayType;
- import io.trino.spi.type.DecimalType;
-@@ -99,6 +100,7 @@ public class BigQueryStorageAvroPageSource
-     private final AtomicLong readBytes = new AtomicLong();
-     private final AtomicLong readTimeNanos = new AtomicLong();
-     private final PageBuilder pageBuilder;
-+    private final MemoryContext memoryContext;
-     private final Iterator<ReadRowsResponse> responses;
- 
-     private CompletableFuture<ReadRowsResponse> nextResponse;
-@@ -110,7 +112,8 @@ public BigQueryStorageAvroPageSource(
-             BigQueryTypeManager typeManager,
-             int maxReadRowsRetries,
-             BigQuerySplit split,
--            List<BigQueryColumnHandle> columns)
-+            List<BigQueryColumnHandle> columns,
-+            MemoryContext memoryContext)
-     {
-         this.bigQueryReadClient = requireNonNull(bigQueryReadClient, "bigQueryReadClient is null");
-         this.executor = requireNonNull(executor, "executor is null");
-@@ -123,6 +126,9 @@ public BigQueryStorageAvroPageSource(
-         this.pageBuilder = new PageBuilder(columns.stream()
-                 .map(BigQueryColumnHandle::trinoType)
-                 .collect(toImmutableList()));
-+        this.memoryContext = requireNonNull(memoryContext, "memoryContext is null");
-+        // Report before the read is started, so that exceeding the memory limit sends no read request
-+        updateMemoryUsage();
- 
-         log.debug("Trace id: %s, Stream: %s, Starting to read", traceId, streamName);
-         responses = new ReadRowsHelper(bigQueryReadClient, streamName, maxReadRowsRetries).readRows();
-@@ -186,6 +192,7 @@ public SourcePage getNextSourcePage()
- 
-         Page page = pageBuilder.build();
-         pageBuilder.reset();
-+        updateMemoryUsage();
-         readTimeNanos.addAndGet(System.nanoTime() - start);
-         return SourcePage.create(page);
-     }
-@@ -329,13 +336,6 @@ private void writeRow(RowBlockBuilder output, RowType rowType, GenericRecord rec
-         });
-     }
- 
--    @Override
--    @SuppressWarnings("deprecation") // TODO (https://github.com/trinodb/trino/issues/29959) migrate to MemoryContext
--    public long getMemoryUsage()
--    {
--        return pageBuilder.getRetainedSizeInBytes();
--    }
--
-     @Override
-     public void close()
-     {
-@@ -357,6 +357,11 @@ private ReadRowsResponse getResponse()
-         return response;
-     }
- 
-+    private void updateMemoryUsage()
-+    {
-+        memoryContext.setBytes(pageBuilder.getRetainedSizeInBytes());
-+    }
-+
-     Iterable<GenericRecord> parse(ReadRowsResponse response)
-     {
-         byte[] buffer = response.getAvroRows().getSerializedBinaryRows().toByteArray();
-```
-
-**File**: `plugin/trino-bigquery/src/test/java/io/trino/plugin/bigquery/TestBigQueryStoragePageSourceMemoryTracking.java` (added, +282/-0)
-```diff
-@@ -0,0 +1,282 @@
-+/*
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+package io.trino.plugin.bigquery;
-+
-+import com.google.api.gax.core.NoCredentialsProvider;
-+import com.google.api.gax.grpc.GrpcTransportChannel;
-+import com.google.api.gax.rpc.FixedTransportChannelProvider;
-+import com.google.cloud.bigquery.Field.Mode;
-+import com.google.cloud.bigquery.StandardSQLTypeName;
-+import com.google.cloud.bigquery.storage.v1.AvroRows;
-+import com.google.cloud.bigquery.storage.v1.BigQueryReadClient;
-+import com.google.cloud.bigquery.storage.v1.BigQueryReadGrpc;
-+import com.google.cloud.bigquery.storage.v1.BigQueryReadSettings;
-+import com.google.cloud.bigquery.storage.v1.ReadRowsRequest;
-+import com.google.cloud.bigquery.storage.v1.ReadRowsResponse;
-+import com.google.common.collect.ImmutableList;
-+import com.google.protobuf.ByteString;
-+import io.grpc.ManagedChannel;
-+import io.grpc.Server;
-+import io.grpc.inprocess.InProcessChannelBuilder;
-+import io.grpc.inprocess.InProcessServerBuilder;
-+import io.grpc.stub.StreamObserver;
-+import io.trino.spi.PageBuilder;
-+import io.trino.spi.TrinoException;
-+import io.trino.spi.connector.ConnectorPageSource;
-+import io.trino.spi.connector.MemoryContext;
-+import io.trino.spi.connector.SourcePage;
-+import org.apache.arrow.memory.BufferAllocator;
-+import org.apache.arrow.memory.RootAllocator;
-+import org.apache.arrow.vector.BigIntVector;
-+import org.apache.arrow.vector.VectorSchemaRoot;
-+import org.apache.arrow.vector.VectorUnloader;
-+import org.apache.arrow.vector.ipc.WriteChannel;
-+import org.apache.arrow.vector.ipc.message.ArrowRecordBatch;
-+import org.apache.arrow.vector.ipc.message.MessageSerializer;
-+import org.apache.arrow.vector.types.pojo.ArrowType;
-+import org.apache.arrow.vector.types.pojo.Field;
-+import org.apache.arrow.vector.types.pojo.Schema;
-+import org.apache.avro.SchemaBuilder;
-+import org.apache.avro.generic.GenericData;
-+import org.apache.avro.generic.GenericDatumWriter;
-+import org.apache.avro.generic.GenericRecord;
-+import org.apache.avro.io.BinaryEncoder;
-+import org.apache.avro.io.EncoderFactory;
-+import org.junit.jupiter.api.AfterAll;
-+import org.junit.jupiter.api.Test;
-+import org.junit.jupiter.api.TestInstance;
-+import org.junit.jupiter.api.parallel.Execution;
-+
-+import java.io.ByteArrayOutputStream;
-+import java.io.IOException;
-+import java.nio.channels.Channels;
-+import java.util.ArrayList;
-+import java.util.List;
-+import java.util.OptionalInt;
-+import java.util.concurrent.ExecutorService;
-+import java.util.concurrent.atomic.AtomicInteger;
-+
-+import static com.google.common.util.concurrent.MoreExecutors.newDirectExecutorService;
-+import static io.trino.spi.StandardErrorCode.EXCEEDED_LOCAL_MEMORY_LIMIT;
-+import static io.trino.spi.type.BigintType.BIGINT;
-+import static io.trino.type.InternalTypeManager.TESTING_TYPE_MANAGER;
-+import static org.assertj.core.api.Assertions.assertThat;
-+import static org.assertj.core.api.Assertions.assertThatThrownBy;
-+import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
-+import static org.junit.jupiter.api.parallel.ExecutionMode.CONCURRENT;
-+
-+@TestInstance(PER_CLASS)
-+@Execution(CONCURRENT)
-+final class TestBigQueryStoragePageSourceMemoryTracking
-+{
-+    private static final BigQueryTypeManager TYPE_MANAGER = new BigQueryTypeManager(TESTING_TYPE_MANAGER);
-+    private static final List<BigQueryColumnHandle> COLUMNS = ImmutableList.of(
-+            new BigQueryColumnHandle("value", ImmutableList.of(), BIGINT, StandardSQLTypeName.INT64, true, Mode.NULLABLE, ImmutableList.of(), null, false));
-+    private static final Schema ARROW_SCHEMA = new Schema(ImmutableList.of(Field.nullable("value", new ArrowType.Int(64, true))));
-+    private static final org.apache.avro.Schema AVRO_SCHEMA = SchemaBuilder.record("__root__").fields()
-+            .optionalLong("value")
-+            .endRecord();
-+
-+    // Fetch the responses synchronously, so that every page is available when requested
-+    private final ExecutorService executor = newDirectExecutorService();
-+    private final BigQueryArrowBufferAllocator arrowBufferAllocator = new BigQueryArrowBufferAllocator(new BigQueryArrowConfig(), new BigQueryArrowAllocatorStats());
-+
-+    @AfterAll
-+    void tearDown()
-+    {
-+        executor.shutdownNow();
-+    }
-+
-+    @Test
-+    void testArrowMemoryUsage()
-+            throws Exception
-+    {
-+        try (TestingBigQueryReadServer server = new TestingBigQueryReadServer(ImmutableList.of(arrowResponse(0, 10
+@@ -29,11 +29,11 @@
+     "axios": "^1.20.0",
+     "lodash": "^4.18.1",
+     "monaco-editor": "^0.57.0",
+-    "react": "^19.3.0",
++    "react": "^19.3.1",
+     "react-calendar-timeline": "^0.30.0-beta.4",
+-    "react-dom": "^19.3.0",
++    "react-dom": "^19.3.1",
+     "react-router-dom": "^7.18.4",
+-    "sass": "^1.105.1",
++    "sass": "^1.105.2",
+     "zustand": "^5.0.15"
+   },
+   "devDependencies": {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #31832** (2026-10-27): Update Hadoop to 3.4.3-1 (@electrum)
-- **PR #31827** (2026-10-27): Parse JDBC LocalDate without java.sql.Date (@findepi)
-- **PR #31823** (2026-10-27): Remove Joda Time from JDBC driver tests (@findepi)
-- **PR #31821** (2026-10-27): Fix flaky TestHiveRoles and TestHive4OnDataLake (@findepi)
-- **PR #31820** (2026-10-27): Remove Joda Time from JDBC driver (@findepi)
-- **PR #31818** (closed): Add test for payload signing on S3 uploads (@findinpath)
+- **PR #31863** (2026-10-28): Assert initial roles in JDBC set role test (@ksobolew)
+- **PR #31853** (2026-10-28): Fix CLI JSON output for arrays (@chenjian2664)
+- **PR #31851** (2026-10-28): Check Hive writer task limits directly (@bvolpato)
+- **PR #31850** (2026-10-28): Share Druid ingestion for nonfinite value tests (@bvolpato)
+- **PR #31848** (2026-10-28): Bump the web-ui-dependencies group in /core/trino-web-ui/src/main/resources/webapp with 8 updates (@dependabot[bot])
+- **PR #31847** (2026-10-28): Bump io.airlift:aircompressor-v3 from 3.13 to 3.14 (@dependabot[bot])
 
 ---
 
@@ -2378,28 +2053,28 @@ MemoryContext instead.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. running test from IntelliJ
+## X. Accept lock timeout in SQL Server concurrent add column
 
 **RULE**:
-When implementing operations in `core/trino-spi/src/test/java/io/trino/spi/connector/TestColumnMetadata.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `plugin/trino-sqlserver/src/test/java/io/trino/plugin/sqlserver/BaseSqlServerConnectorTest.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7fd3d978`: running test from IntelliJ. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `91d50fd1`: Accept lock timeout in SQL Server concurrent add column. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-spi/src/test/java/io/trino/spi/connector/TestColumnMetadata.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugin/trino-sqlserver/src/test/java/io/trino/plugin/sqlserver/BaseSqlServerConnectorTest.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-public class TestColumnMetadata
+        assertThat(e).hasMessageMatching("(?s).*(was deadlocked on lock resources|Lock request time out period exceeded).*");
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-class TestColumnMetadata
+        assertThat(e).hasMessageContaining("was deadlocked on lock resources");
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7fd3d978` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `91d50fd1` are properly handled with clean fallback behavior.

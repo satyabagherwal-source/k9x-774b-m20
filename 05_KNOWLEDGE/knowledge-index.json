@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T16:05:27.550Z",
+  "last_updated": "2026-10-28T16:12:34.999Z",
   "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -25325,7 +25325,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/clip-vit-base-patch32",
       "source_version": "hf-openai-clip-vit-base-patch32",
-      "content_hash": "173b4dd233ea972c9ab2ff875eebf3c5bd3e2224801b0cbbcb6972f47c27bb5f",
+      "content_hash": "d4580dd96e79e73a8d1235507b34a2a52c2365f861bc64c56af973f09a6f7c8b",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md",
       "promoted_rules": [
@@ -25357,7 +25357,7 @@
         "learn-huggingface-hf-openai-clip-vit-base-patch32-mv3y5o08",
         "learn-huggingface-hf-openai-clip-vit-base-patch32-mv4cvq4q"
       ],
-      "verified_at": "2026-10-25T22:24:11.762Z",
+      "verified_at": "2026-10-28T16:12:18.896Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52747,8 +52747,8 @@
       "slug": "trinodb-trino",
       "platform": "github",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "34abc74b",
-      "content_hash": "5fc2397fafd0151207f62b6a0a3894fa0dc5ee0e3e5ea1b34085fbcea7edff45",
+      "source_version": "49829ccd",
+      "content_hash": "315f257de9758ddee97063aa7f1f8658976f2ffe076962336a493b86519dbb8c",
       "dossier_path": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "promoted_rules": [
@@ -52791,6 +52791,11 @@
           "number": 5070,
           "title": "running test from IntelliJ",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5338,
+          "title": "Accept lock timeout in SQL Server concurrent add column",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52798,7 +52803,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T00:12:51.147Z",
+      "verified_at": "2026-10-28T16:12:34.977Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -144973,6 +144978,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T16:05:27.539Z"
+    },
+    "rule-5338": {
+      "learning_id": "rule-5338",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5338,
+      "title": "Accept lock timeout in SQL Server concurrent add column",
+      "source_url": "https://github.com/trinodb/trino",
+      "source_version": "49829ccd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T16:12:34.977Z"
     }
   },
   "aliases": {

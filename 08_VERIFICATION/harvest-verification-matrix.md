@@ -5836,3 +5836,5 @@
 | `CYCLE-20261028-2SMZ` | `2026-10-28T16:05:21.659Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5335` | Yes (`9647257d...`) |
 | `CYCLE-20261028-2WZN` | `2026-10-28T16:05:27.299Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5336` | Yes (`ab57601d...`) |
 | `CYCLE-20261028-2X7Q` | `2026-10-28T16:05:27.590Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5337` | Yes (`85cf1a39...`) |
+| `CYCLE-20261028-BQO1` | `2026-10-28T16:12:19.009Z` | `openai/clip-vit-base-patch32` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md` | Yes (`d4580dd9...`) |
+| `CYCLE-20261028-C32H` | `2026-10-28T16:12:35.081Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5338` | Yes (`315f257d...`) |

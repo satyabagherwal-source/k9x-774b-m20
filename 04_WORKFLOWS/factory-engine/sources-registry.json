@@ -1,11 +1,11 @@
 {
   "rustls-rustls": {
-    "name": "rustls/rustls",
+    "name": "rustls",
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T13:03:45.047Z",
-    "lastVerified": "2026-10-28T13:03:45.047Z",
+    "lastChecked": "2026-10-28T16:12:25.377Z",
+    "lastVerified": "2026-10-28T16:12:25.377Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -14,7 +14,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "1783110b"
   },
   "tanstack-router": {
     "name": "TanStack/router",
@@ -38,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T16:05:30.131Z",
-    "lastVerified": "2026-10-28T16:05:30.131Z",
+    "lastChecked": "2026-10-28T16:12:37.630Z",
+    "lastVerified": "2026-10-28T16:12:37.630Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -122,8 +123,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-28T15:43:20.908Z",
-    "lastVerified": "2026-10-28T15:43:20.908Z",
+    "lastChecked": "2026-10-28T16:12:30.251Z",
+    "lastVerified": "2026-10-28T16:12:30.251Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -4765,6 +4766,61 @@
     "contentHash": "85cf1a39197ef429b8a974a7cec1366e4b526fcf357f4163e79596d4f57205ea",
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nezhahq-nezha": {
+    "name": "nezha",
+    "officialUrl": "https://github.com/nezhahq/nezha",
+    "lastChecked": "2026-10-28T16:12:15.244Z",
+    "revisionIdentifier": "a6a16eab",
+    "lastVerified": "2026-10-28T16:12:15.244Z"
+  },
+  "hf-openai-clip-vit-base-patch32": {
+    "name": "openai/clip-vit-base-patch32",
+    "officialUrl": "https://huggingface.co/openai/clip-vit-base-patch32",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T16:12:17.851Z",
+    "lastVerified": "2026-10-28T16:12:17.851Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
+    "contentHash": "d4580dd96e79e73a8d1235507b34a2a52c2365f861bc64c56af973f09a6f7c8b",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "shoutem-ui": {
+    "name": "ui",
+    "officialUrl": "https://github.com/shoutem/ui",
+    "lastChecked": "2026-10-28T16:12:20.720Z",
+    "revisionIdentifier": "92e3f530",
+    "lastVerified": "2026-10-28T16:12:20.720Z"
+  },
+  "decodingai-magazine-llm-twin-course": {
+    "name": "llm-twin-course",
+    "officialUrl": "https://github.com/decodingai-magazine/llm-twin-course",
+    "lastChecked": "2026-10-28T16:12:22.676Z",
+    "revisionIdentifier": "04e12f37",
+    "lastVerified": "2026-10-28T16:12:22.676Z"
+  },
+  "trinodb-trino": {
+    "name": "trinodb/trino",
+    "officialUrl": "https://github.com/trinodb/trino",
+    "sourceType": "github",
+    "technology": "Java",
+    "lastChecked": "2026-10-28T16:12:34.360Z",
+    "lastVerified": "2026-10-28T16:12:34.360Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-trinodb-trino",
+    "contentHash": "315f257de9758ddee97063aa7f1f8658976f2ffe076962336a493b86519dbb8c",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

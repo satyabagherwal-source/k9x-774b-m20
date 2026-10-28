@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T16:05:27.596Z",
-  "total_cycles_completed": 5813,
-  "total_learnings_persisted": 5813,
-  "total_rules_promoted": 5289,
+  "last_updated": "2026-10-28T16:12:35.092Z",
+  "total_cycles_completed": 5815,
+  "total_learnings_persisted": 5815,
+  "total_rules_promoted": 5290,
   "history": [
-    {
-      "timestamp": "2026-10-28T01:49:22.489Z",
-      "repository": "franken-ui/ui",
-      "learningId": "learn-github-franken-ui-ui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T01:49:31.390Z",
-      "repository": "kumahq/kuma",
-      "learningId": "learn-github-kumahq-kuma",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T01:49:33.395Z",
       "repository": "jialinyyzz/humanizer",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-28T16:05:27.596Z",
       "repository": "arangodb/arangodb",
       "learningId": "learn-github-arangodb-arangodb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T16:12:19.026Z",
+      "repository": "openai/clip-vit-base-patch32",
+      "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T16:12:35.092Z",
+      "repository": "trinodb/trino",
+      "learningId": "learn-github-trinodb-trino",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

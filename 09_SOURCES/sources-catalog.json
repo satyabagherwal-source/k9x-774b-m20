@@ -1095,8 +1095,8 @@
     "sourceUrl": "https://huggingface.co/openai/clip-vit-base-patch32",
     "sourceVersion": "hf-openai-clip-vit-base-patch32",
     "license": "Open-Source",
-    "contentHash": "173b4dd233ea972c9ab2ff875eebf3c5bd3e2224801b0cbbcb6972f47c27bb5f",
-    "lastHarvestedAt": "2026-10-25T22:24:11.837Z",
+    "contentHash": "d4580dd96e79e73a8d1235507b34a2a52c2365f861bc64c56af973f09a6f7c8b",
+    "lastHarvestedAt": "2026-10-28T16:12:19.013Z",
     "learningId": "learn-huggingface-openai-clip-vit-base-patch32"
   },
   "hf-sentence-transformers-all-mpnet-base-v2": {
@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "34abc74b",
+    "sourceVersion": "49829ccd",
     "license": "Apache-2.0",
-    "contentHash": "5fc2397fafd0151207f62b6a0a3894fa0dc5ee0e3e5ea1b34085fbcea7edff45",
-    "lastHarvestedAt": "2026-10-28T00:12:51.222Z",
+    "contentHash": "315f257de9758ddee97063aa7f1f8658976f2ffe076962336a493b86519dbb8c",
+    "lastHarvestedAt": "2026-10-28T16:12:35.086Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-H0QA",
-    "timestamp": "2026-10-27T13:40:47.218Z",
-    "repository": "guokaigdg/animal-island-ui",
-    "learningId": "learn-github-guokaigdg-animal-island-ui",
-    "contentHash": "08935b7da488034eeb5d8987b1e9497fb867ec0fb9f36cb2c9b996e7e6c62774",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-H5MN",
-    "timestamp": "2026-10-27T13:40:53.567Z",
-    "repository": "pubkey/rxdb",
-    "learningId": "learn-github-pubkey-rxdb",
-    "contentHash": "94943458ed99d37d50d9c50da7c1252c92df919cc927efd37dfaaf38464e8b41",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-H7PV",
     "timestamp": "2026-10-27T13:40:56.275Z",
     "repository": "koderover/zadig",
@@ -7490,6 +7460,36 @@
     "repository": "arangodb/arangodb",
     "learningId": "learn-github-arangodb-arangodb",
     "contentHash": "85cf1a39197ef429b8a974a7cec1366e4b526fcf357f4163e79596d4f57205ea",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-BQO1",
+    "timestamp": "2026-10-28T16:12:19.009Z",
+    "repository": "openai/clip-vit-base-patch32",
+    "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
+    "contentHash": "d4580dd96e79e73a8d1235507b34a2a52c2365f861bc64c56af973f09a6f7c8b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-C32H",
+    "timestamp": "2026-10-28T16:12:35.081Z",
+    "repository": "trinodb/trino",
+    "learningId": "learn-github-trinodb-trino",
+    "contentHash": "315f257de9758ddee97063aa7f1f8658976f2ffe076962336a493b86519dbb8c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -5845,3 +5845,5 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `5375fc14` | Multi-dimensional audit evidence | 2026-10-28T16:05:21.662Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `62f695c4` | Multi-dimensional audit evidence | 2026-10-28T16:05:27.302Z |
 | `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `19ed3336` | Multi-dimensional audit evidence | 2026-10-28T16:05:27.593Z |
+| `learn-huggingface-openai-clip-vit-base-patch32` | `https://huggingface.co/openai/clip-vit-base-patch32` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-28T16:12:19.013Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `49829ccd` | Multi-dimensional audit evidence | 2026-10-28T16:12:35.086Z |
