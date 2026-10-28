@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-9S6L",
-    "timestamp": "2026-10-27T13:35:09.549Z",
-    "repository": "urllib3/urllib3",
-    "learningId": "learn-github-urllib3-urllib3",
-    "contentHash": "5b9d1f1da12d73671d7aa8b159c1f4807b419fe8f1a9b21ce57358d579eb7e57",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-9TTK",
-    "timestamp": "2026-10-27T13:35:11.672Z",
-    "repository": "react-navigation/react-navigation",
-    "learningId": "learn-github-react-navigation-react-navigation",
-    "contentHash": "6b8fdae4c4e6218ccfdb4851bdae0136e5464cb9788093d67f6d8e99d080611c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-9W8F",
-    "timestamp": "2026-10-27T13:35:14.799Z",
-    "repository": "PeerDB-io/peerdb",
-    "learningId": "learn-github-peerdb-io-peerdb",
-    "contentHash": "ead50e198a79458088b5bdcb46610eb458c45be64538e6c31ac9f3f874631696",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-A0QG",
-    "timestamp": "2026-10-27T13:35:20.632Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "0721d572230a6ac84edeedfebc2346e44f47e8a83e8d4fb6d5c8d13da4646b64",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-H0QA",
     "timestamp": "2026-10-27T13:40:47.218Z",
     "repository": "guokaigdg/animal-island-ui",
@@ -7490,6 +7430,66 @@
     "repository": "Xudong-Huang/may",
     "learningId": "learn-github-xudong-huang-may",
     "contentHash": "fc63c9b9cb6c73d201348881f16122408f4f03f38f9d041d1536f3ab8aa37832",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-2JEX",
+    "timestamp": "2026-10-28T16:05:09.705Z",
+    "repository": "NaiveAI/Naive-N0.5-Flash",
+    "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
+    "contentHash": "5bd3b1e1d49c98e496fb3ceddb2249c51a1dd676b8a50d9c00ad5e9241a70165",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-2SMZ",
+    "timestamp": "2026-10-28T16:05:21.659Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "9647257de8d8a09a8847a8653b780a1eea6952ab347ce96d80770a797b32d695",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-2WZN",
+    "timestamp": "2026-10-28T16:05:27.299Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "ab57601d992c08bb9c795bb61728bb0a2d8446af3c5205be0e4bfcfd35fb5710",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-2X7Q",
+    "timestamp": "2026-10-28T16:05:27.590Z",
+    "repository": "arangodb/arangodb",
+    "learningId": "learn-github-arangodb-arangodb",
+    "contentHash": "85cf1a39197ef429b8a974a7cec1366e4b526fcf357f4163e79596d4f57205ea",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

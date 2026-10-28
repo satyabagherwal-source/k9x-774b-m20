@@ -5841,3 +5841,7 @@ Every entry in this ledger must capture:
 | `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `ce215261` | Multi-dimensional audit evidence | 2026-10-28T15:50:44.994Z |
 | `learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf` | `https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF` | `hf-venasti` | Multi-dimensional audit evidence | 2026-10-28T15:58:16.174Z |
 | `learn-github-xudong-huang-may` | `https://github.com/Xudong-Huang/may` | `1a717549` | Multi-dimensional audit evidence | 2026-10-28T15:58:18.453Z |
+| `learn-huggingface-naiveai-naive-n0-5-flash` | `https://huggingface.co/NaiveAI/Naive-N0.5-Flash` | `hf-naiveai` | Multi-dimensional audit evidence | 2026-10-28T16:05:09.708Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `5375fc14` | Multi-dimensional audit evidence | 2026-10-28T16:05:21.662Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `62f695c4` | Multi-dimensional audit evidence | 2026-10-28T16:05:27.302Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `19ed3336` | Multi-dimensional audit evidence | 2026-10-28T16:05:27.593Z |

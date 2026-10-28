@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `ba276435`  
+> **Source Version**: `62f695c4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T14:42:54.661Z  
+> **Timestamp**: 2026-10-28T16:05:26.890Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T14:42:54.559Z  
+> **Harvest Timestamp**: 2026-10-28T16:05:26.885Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -392,10 +392,11 @@ import * as nucleoid from "./lib/nucleoid";
 import * as llm from "./lib/llm";
 import * as terminal from "./lib/terminal";
 
-export async function declarations({ train_dataset }) {
+export async function declarations({ puzzle_id, train_dataset }) {
   terminal.step("Inferring declarations");
 
   const { declarations, output_canvas } = await llm.generate({
+    puzzle_id,
     messages: [
       {
         role: "user",
@@ -415,10 +416,16 @@ export async function declarations({ train_dataset }) {
   return { declarations, output_canvas };
 }
 
-export async function instances({ declarations, input_matrix, output_matrix }) {
+export async function instances({
+  puzzle_id,
+  declarations,
+  input_matrix,
+  output_matrix,
+}) {
   terminal.step("Segmenting training objects");
 
   const { instances } = await llm.generate({
+    puzzle_id,
     messages: [
       {
         role: "user",
@@ -458,6 +465,7 @@ export async function instances({ declarations, input_matrix, output_matrix }) {
 }
 
 export async function value({
+  puzzle_id,
   instance_name,
   declarations,
   input_instance_matrix,
@@ -466,6 +474,7 @@ export async function value({
   terminal.step(`Constructing ${instance_name}`);
 
   const { implementation } = await llm.generate({
+    puzzle_id,
     messages: [
       {
         role: "user",
@@ -515,7 +524,7 @@ import * as nucleoid from "./lib/nucleoid";
 import * as terminal from "./lib/terminal";
 
 // Genesis puzzle_id: 3aa6fb7a
-export async function start(puzzle_id: string = "0ca9ddb6") {
+export async function start(puzzle_id: string = "9af7a82c") {
   if (!/^[0-9a-f]{8}$/.test(puzzle_id)) {
     throw new Error("Puzzle ID must be eight lowercase hexadecimal characters");
   }
@@ -550,6 +559,7 @@ export async function start(puzzle_id: string = "0ca9ddb6") {
   let instance_index: number = 0;
 
   const { declarations, output_canvas } = await analyzer.declarations({
+    puzzle_id,
     train_dataset: training_input,
   });
   const train_dataset = {
@@ -565,6 +575,7 @@ export async function start(puzzle_id: string = "0ca9ddb6") {
     );
 
     const { instances } = await analyzer.instances({
+      puzzle_id,
       declarations,
       input_matrix,
       output_matrix,
@@ -578,6 +589,7 @@ export async function start(puzzle_id: string = "0ca9ddb6") {
 
       const { implementation, input_value, output_value } =
         await analyzer.value({
+          puzzle_id,
           instance_name,
           declarations,
           input_instance_matrix,
@@ -602,12 +614,11 @@ export async function start(puzzle_id: string = "0ca9ddb6") {
   );
 
   const { instances } = await visualizer.instances({
+    puzzle_id,
     train_dataset,
     declarations,
     test_input_matrix,
   });
-
-  let test_index: number = 0;
 
   let result_matrix = Array.from({ length: test_input_matrix.length }, () =>
     Array(test_input_matrix[0].length).fill(0)
@@ -617,14 +628,16 @@ export async function start(puzzle_id: string = "0ca9ddb6") {
 
   for (const { input_instance_matrix } of instances) {
     const { input_value, output_value } = await visualizer.value({
+      puzzle_id,
       declarations,
       train_dataset,
-      instance_name: `obj${String(test_index++).padStart(12, "0")}`,
+      instance_name: `obj${String(instance_index++).padStart(12, "0")}`,
       input_instances,
       input_instance_matrix,
     });
 
     const { output_instance_matrix } = await visualizer.output_instance_matrix({
+      puzzle_id,
       test_input_matrix,
       train_dataset,
       input_instances,
@@ -669,18 +682,24 @@ export { document } from "./instruct_dataset";
 
 ### Core Architecture Module: `arc/src/dataset/instruct_dataset.ts`
 ```
-import { readdirSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-export function document(): string {
-  const files = readdirSync(__dirname, { withFileTypes: true })
-    .filter((entry) => entry.isFile() && /\.json$/i.test(entry.name))
-    .map((entry) => entry.name)
-    .sort();
+// The genesis puzzle learns from the shared core, curve, and line datasets;
+// every other puzzle learns only from its own dataset.<puzzle_id>.json.
+const genesis_puzzle_id: string = "3aa6fb7a";
+const genesis_datasets = [
+  "dataset.core.1.json",
+  "dataset.core.2.json",
+  "dataset.curve.1.json",
+  "dataset.line.1.json",
+];
 
-  if (files.length === 0) {
-    throw new Error(`No JSON instruction datasets found in ${__dirname}`);
-  }
+export function document(puzzle_id: string): string {
+  const files =
+    puzzle_id === genesis_puzzle_id
+      ? genesis_datasets
+      : [`dataset.${puzzle_id}.json`];
 
   const datasets = files.map((file: string) => {
     const source: string = readFileSync(join(__dirname, file), "utf8");
@@ -942,454 +961,392 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ba276435` (2026-10-28)
-**Commit Message**: Rework /arc-purposal into per-puzzle NUC workflow
+### Incident Patch 1: `62f695c4` (2026-10-28)
+**Commit Message**: Clarify ARC dataset and proposal references
 
-Redefine /arc-purposal as a coordinator that takes one training puzzle ID through its instruction dataset, any required Nucleoid enhancement, and a single scored solver run.
+Allow ARC workflows to use all datasets as references and draw enhancement ideas from linked documentation, while clarifying that unaccepted NUCs still require a request.
 
-- arc-dataset can now return `nucleoid_enhancement_required` with a NUC request and evidence programs instead of writing a dataset. It also accepts a frozen candidate executable when regenerating.
-- The requested NUC goes through the usual proposal and independent evaluation stages as a single-proposal request, with token comparison skipped.
-- One `bun start <puzzle-id>` run decides the outcome. Exit status 0 (exact match) accepts the NUC regardless of the evaluator's decision. Otherwise the evaluator's decision stands.
-- The run is never repeated, and its output, which shows the expected grid, never feeds back into datasets, candidates, or prompts.
-- Add the ARC-requested proposal rule to proposals.instructions.md and update the nuc-proposal and nuc-evaluate skills, nuc-proposal agent, CLAUDE.md index, CONTRIBUTING.md, and arc/README.md to match.
-
-**File**: `.claude/CLAUDE.md` (modified, +2/-2)
+**File**: `.claude/agents/arc-dataset.agent.md` (modified, +10/-2)
 ```diff
-@@ -11,11 +11,11 @@ not a replacement for the policies it links to.
- | File | Policy |
- | --- | --- |
- | [project.instructions.md](rules/project.instructions.md) | Language goals, reference documents, and runtime architecture |
--| [arc.instructions.md](rules/arc.instructions.md) | ARC solver proposals, JSON-only LLM exchanges, and no automated ARC tests |
-+| [arc.instructions.md](rules/arc.instructions.md) | ARC puzzle proposals, JSON-only LLM exchanges, and no automated ARC tests |
- | [rust.instructions.md](rules/rust.instructions.md) | Concrete runtime types, dependencies, and Rust community conventions |
- | [documents.instructions.md](rules/documents.instructions.md) | Authoritative specification, executable documents, and dataset synchronization |
- | [versions.instructions.md](rules/versions.instructions.md) | Human-owned version numbers; no AI version changes |
--| [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation, evaluation, and token acceptance |
-+| [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation, evaluation, token acceptance, and ARC-requested acceptance |
- | [rust-improvement.instructions.md](rules/rust-improvement.instructions.md) | Focused Rust improvements and the required post-change agent |
+@@ -60,7 +60,10 @@ output. Synthesize as many pairs as the puzzle has training pairs:
  
- All instruction files use `applyTo: "**"` to preserve their repository-wide scope.
+ Before writing, read `arc/src/dataset/dataset.28bf18c6.json`, at least one
+ other dataset, and the "Instruction datasets" and "Analysis" sections of
+-`arc/README.md`. Match their structure, key order, and formatting exactly:
++`arc/README.md`. Every dataset in `arc/src/dataset/` may serve as a reference
++for world-model idioms, properties, rules, and tags, although the solver sends
++only the puzzle's own dataset. Match their structure, key order, and
++formatting exactly:
+ 
+ - Top level: `declarations`, `output_canvas` (`EXACT` or `FIT`, inferred from
+   the pairs), then `dataset` with one entry per pair.
+@@ -105,6 +108,11 @@ in the inferred transformation:
+ - First look for an accepted formulation in `nucleoid.spec.md`, which is
+   authoritative, and `docs/README.md`. Use one that works, however long; a
+   shorter spelling alone is no reason to request an enhancement.
++- You may take the request's idea from `docs/README.md` or the documentation
++  it links to, such as `docs/examples.md` and the NUCs indexed in
++  `docs/nuc-0000.md`, whatever their status. Only accepted behavior is
++  available to the dataset, so an idea from an unaccepted NUC is still a
++  request.
+ - Reduce the gap to minimal programs and run them with the accepted
+   executable. Keep the programs and their actual output or error in your
+   temporary directory.
+@@ -122,7 +130,7 @@ Return status `nucleoid_enhancement_required` with a NUC request:
+   `new_feature`, `existing_comparable`, or `existing_uncomparable` with a reason
+   and evidence.
+ - `evidence`: each program's path, the command, its actual output or error,
+-  and the result the rules need.
++  the result the rules need, and the documentation a borrowed idea comes from.
+ - `declarations`: the intended rule set, written with the requested feature.
+ 
+ Include the synthesizer's path and seed. The caller decides whether to propose
 ```
 
-**File**: `.claude/agents/arc-dataset.agent.md` (modified, +49/-8)
+**File**: `.claude/skills/arc-purposal/SKILL.md` (modified, +11/-0)
 ```diff
-@@ -1,6 +1,6 @@
- ---
- name: arc-dataset
--description: Write the ARC instruction dataset for a given training puzzle as synthesized example pairs that follow the rule of arc/data/training/<id>.json's train pairs with freshly sampled grid sizes, shapes, colors, and positions, never copies of grids in arc/data, annotated with a Nucleoid world model in arc/src/dataset/dataset.<id>.json.
-+description: Write the ARC instruction dataset for a given training puzzle as synthesized example pairs that follow the rule of arc/data/training/<id>.json's train pairs with freshly sampled grid sizes, shapes, colors, and positions, never copies of grids in arc/data, annotated with a Nucleoid world model in arc/src/dataset/dataset.<id>.json, or request the Nucleoid enhancement that model requires.
- tools: Read, Write, Edit, Glob, Grep, Bash, PowerShell
- include-custom-instructions: true
- ---
-@@ -9,14 +9,21 @@ You write one ARC instruction dataset. Given a puzzle ID, infer the
- transformation from the training pairs of `arc/data/training/<id>.json`,
- synthesize new example pairs that follow it, annotate them with an object-oriented
- Nucleoid world model, and save them as `arc/src/dataset/dataset.<id>.json`.
--Read and follow the [ARC instructions](../rules/arc.instructions.md).
-+If accepted Nucleoid cannot express that model, request the enhancement it
-+needs instead. Read and follow the [ARC instructions](../rules/arc.instructions.md).
+@@ -25,6 +25,17 @@ If you cannot launch agents, stop and report `agent_launch_unavailable`.
+   preserve pre-existing changes.
+ - Use training pairs only. Never print or read the puzzle's `test` entries.
  
- ## Inputs
- 
- - Require an eight-character lowercase hexadecimal puzzle ID with a file in
-   `arc/data/training/`. Report a missing or unknown ID instead of guessing.
- - If `arc/src/dataset/dataset.<id>.json` already exists, stop and report it;
-   overwrite it only when the caller explicitly asks.
-+- The caller may supply a candidate Nucleoid executable built from a frozen
-+  NUC candidate, with the NUC's path and your earlier enhancement request. Use
-+  it as `NUCLEOID_EXECUTABLE` for every Nucleoid run and check, and regenerate
-+  the earlier pairs from the same synthesizer and seed. Never rebuild or edit
-+  the candidate, and request no further enhancement: report what it still
-+  cannot express as a blocker.
- 
- ## Training pairs only
- 
-@@ -87,7 +94,39 @@ other dataset, and the "Instruction datasets" and "Analysis" sections of
-   predicted output crop at `output_value`'s position.
- 
- If no single rule set explains every training pair, stop and report why
--instead of writing a partial or special-cased dataset.
-+instead of writing a partial or special-cased dataset. If one does but accepted
-+Nucleoid cannot express or execute it, request an enhancement instead.
++## References
 +
-+## Request a Nucleoid enhancement
++The workflow and its workers may use every dataset in `arc/src/dataset/` as a
++reference for structure, world-model idioms, properties, rules, and tags,
++although the solver sends only the puzzle's own dataset. A requested
++enhancement may take its idea from `docs/README.md` or the documentation it
++links to, such as `docs/examples.md` and the NUCs indexed in
++`docs/nuc-0000.md`, whatever their status. `nucleoid.spec.md` stays
++authoritative: a dataset uses only accepted features or the frozen
++candidate's, so an idea from an unaccepted NUC is still a request.
 +
-+Request one enhancement only when the gap is in the language or runtime, not
-+in the inferred transformation:
-+
-+- First look for an accepted formulation in `nucleoid.spec.md`, which is
-+  authoritative, and `docs/README.md`. Use one that works, however long; a
-+  shorter spelling alone is no reason to request an enhancement.
-+- Reduce the gap to minimal programs and run them with the accepted
-+  executable. Keep the programs and their actual output or error in your
-+  temporary directory.
-+- Ask for one general, backward-compatible language or runtime feature. Never
-+  ask for puzzle IDs, grids, or helpers that only solve this puzzle.
-+- Write no dataset or README paragraph, and never change the runtime,
-+  `nucleoid.spec.md`, `docs/`, or `dataset/` yourself.
-+
-+Return status `nucleoid_enhancement_required` with a NUC request:
-+
-+- `requested_change`: the feature, stated as a proposal's requested change.
-+- `category`: one language-enhancement category from the
-+  [NUC 1 registry](../../docs/nuc-0001.md#proposal-categories), not
-+  Documentation. For Runtime features, add `runtime_applicability`:
-+  `new_feature`, `existing_comparable`, or `existing_uncomparable` with a reason
-+  and evidence.
-+- `evidence`: each program's path, the command, its actual output or error,
-+  and the result the rules need.
-+- `declarations`: the intended rule set, written with the requested feature.
-+
-+Include the synthesizer's path and seed. The caller decides whether to propose
-+the feature; you never start a NUC.
+ ## Write the dataset
  
- ## Annotate instances
+ Run `/arc-dataset <puzzle-id>`, which runs the
+```
+
+**File**: `arc/README.md` (modified, +5/-3)
+```diff
+@@ -181,9 +181,11 @@ Run `/arc-purposal <puzzle-id>` to take one training puzzle through the
+ [skill](../.claude/skills/arc-purposal/SKILL.md):
  
-@@ -140,12 +179,14 @@ Add one paragraph about the dataset to the "Instruction datasets" section of
- puzzle, that its pairs are synthesized rather than copied, pair count,
- instances, the transformation, properties the rules create, tags, the sampled
- canvas and object sizes, orientation, and that held-out data is excluded.
-+With a candidate executable, also name the NUC whose feature the rules use.
+ 1. The [arc-dataset](../.claude/agents/arc-dataset.agent.md) agent writes the
+-   puzzle's instruction dataset. If accepted Nucleoid cannot express the rules
+-   the training pairs need, it writes nothing and requests one Nucleoid
+-   enhancement instead.
++   puzzle's instruction dataset, using any dataset in `src\dataset` as a
++   reference. If accepted Nucleoid cannot express the rules the training pairs
++   need, it writes nothing and requests one Nucleoid enhancement instead,
++   whose idea may come from the [language reference](../docs/README.md) or
++   the documentation it links to.
+ 2. A requested enhancement goes through the usual NUC proposal and independent
+    evaluation stages as a single-proposal request. The dataset is then written
+    with the frozen candidate's runtime.
+```
+
+---
+
+### Incident Patch 2: `88bc3342` (2026-10-28)
+**Commit Message**: Scope instruction datasets to the puzzle ID
+
+document() now takes a puzzle_id and loads only that puzzle's dataset.<id>.json instead of every JSON file in the dataset directory. The genesis puzzle 3aa6fb7a loads the shared core, curve, and line datasets in a fixed order.
+
+The puzzle ID is passed through llm.generate from the analyzer, visualizer, and app. The default puzzle is now 9af7a82c. dataset.cross.1.json is referred to as dataset.0ca9ddb6.json. The README and arc-dataset agent docs are updated to match.
+
+**File**: `.claude/agents/arc-dataset.agent.md` (modified, +5/-5)
+```diff
+@@ -156,8 +156,8 @@ the feature; you never start a NUC.
+ 
+ Verify with a throwaway script outside the repository; do not add tests:
+ 
+-- The file parses, and `document()` from `arc/src/dataset/instruct_dataset.ts`
+-  loads it.
++- The file parses, and `document("<id>")` from
++  `arc/src/dataset/instruct_dataset.ts` loads it.
+ - No `input_matrix` or `output_matrix` equals a grid under `arc/data/`.
+   The script compares every grid there but prints only the colliding dataset
+   matrix, never puzzle contents; on a collision, change the example.
+@@ -182,9 +182,9 @@ canvas and object sizes, orientation, and that held-out data is excluded.
+ With a candidate executable, also name the NUC whose feature the rules use.
  
  Change nothing else: no other datasets, puzzle data, solver code, or
- `instruct_dataset.ts`, which discovers new files automatically. Do not run the
--solver or make LLM calls, read `.env`, change versions, spawn agents, commit,
--or push.
-+solver or make LLM calls, read `.env`, change versions, spawn agents, start a
-+NUC, commit, or push.
+-`instruct_dataset.ts`, which discovers new files automatically. Do not run the
+-solver or make LLM calls, read `.env`, change versions, spawn agents, start a
+-NUC, commit, or push.
++`instruct_dataset.ts`, which finds `dataset.<id>.json` by name. Do not run
++the solver or make LLM calls, read `.env`, change versions, spawn agents,
++start a NUC, commit, or push.
  
--Return the dataset path, the synthesizer'
+ Return the status (`written`, `nucleoid_enhancement_required`, or `blocked`)
+ with the dataset path, the synthesizer's path and seed, pair and instance
 ```
 
-**File**: `.claude/agents/arc-purposal.agent.md` (modified, +28/-32)
+**File**: `arc/README.md` (modified, +14/-10)
 ```diff
-@@ -1,43 +1,39 @@
- ---
- name: arc-purposal
--description: Propose and prototype ARC solver improvements using an object-oriented Nucleoid world model and JSON-only LLM input and output.
-+description: Coordinate one ARC training puzzle by ID. Write its instruction dataset with arc-dataset, carry any Nucleoid enhancement that dataset requires through the NUC proposal and evaluation stages, run `bun start <puzzle-id>` once, and decide that NUC's outcome from the exact-match result.
- include-custom-instructions: true
- ---
+@@ -96,14 +96,18 @@ prompts, programs, matrices, provider settings, or scoring.
  
--You propose and prototype one bounded improvement to the `arc/` project.
--Use an object-oriented world model to infer reusable transformations from
--training examples and solve unseen test inputs, rather than hard-coding answers.
-+You coordinate one ARC training puzzle, given its ID. Follow `.claude/CLAUDE.md`,
-+the [ARC instructions](../rules/arc.instructions.md), and the
-+[arc-purposal skill](../skills/arc-purposal/SKILL.md), which defines each step.
+ ## Instruction datasets
  
--Follow `.claude/CLAUDE.md`, the
--[ARC instructions](../rules/arc.instructions.md), and the
--[arc-purposal skill](../skills/arc-purposal/SKILL.md).
-+## Role
+-The synchronous `document()` function reads every JSON file in `src\dataset`,
+-alongside `instruct_dataset.ts`, on each call, independently of the working directory.
+-Files are sorted by name, validated, and minified by removing the whitespace
+-between JSON tokens; string contents, numbers, and key order stay exactly as
+-written. They are returned as one JSON array, with a separate entry per file.
+-New files, including `dataset.core.2.json`, need no additional imports.
+-Non-JSON files and subdirectories are ignored. An empty dataset directory,
+-unreadable files, or malformed JSON fail explicitly; JSON errors name the file.
++The synchronous `document(puzzle_id)` function reads only the puzzle's own
++instruction datasets from `src\dataset`, alongside `instruct_dataset.ts`, on
++each call, independently of the working directory. Every LLM call in a run
++passes the run's puzzle ID. A puzzle uses its `dataset.<puzzle_id>.json`; the
++genesis puzzle `3aa6fb7a` instead uses `dataset.core.1.json`,
++`dataset.core.2.json`, `dataset.curve.1.json`, and `dataset.line.1.json`, in
++that order. Other datasets in the directory are not sent. Each file is
++validated and minified by removing the whitespace between JSON tokens; string
++contents, numbers, and key order stay exactly as written. They are returned as
++one JSON array, with a separate entry per file. A puzzle's new dataset needs no
++additional imports, only its file name. A missing or unreadable dataset, or
++malformed JSON, fails explicitly; JSON errors name the file.
  
--## Mandatory LLM contract
-+- You are the caller. Launch the `arc-dataset` agent and, for a requested
-+  enhancement, the `nuc-proposal`, `rust-improver`, and `nuc-evaluate` agents
-+  as the skill directs. Never do their work yourself or reuse a NUC agent.
-+- If you cannot launch agents where you run, for example as a subagent, stop
-+  and return `agent_launch_unavailable` with the puzzle ID and the next step.
-+- Handle at most one NUC per invocation, as a single-proposal request, and hold
-+  its outcome until the solver run.
+ Instance `implementation` snippets use named constructor arguments whose names
+ match the parameters in their class declarations.
+@@ -113,7 +117,7 @@ Each dataset also sets `output_canvas`, how its output matrices are framed.
+ cropped to the nonzero bounding box of their content. `dataset.28bf18c6.json`
+ and `dataset.9af7a82c.json` are `FIT`; the other datasets are `EXACT`.
  
--**Never use natural language inside ARC LLM prompts. Always use JSON data in
--and JSON data out.** Every message content must be a complete JSON document,
--including injected examples, metadata, and retry feedback. Do not hide prose
--instructions or reasoning inside JSON strings. Executable Nucleoid source is
--allowed only as explicitly identified JSON code fields.
-+## Honest scoring
+-`dataset.cross.1.json` annotates only the three training pairs from
++`dataset.0ca9ddb6.json` annotates only the three training pairs from
+ `data\training\0ca9ddb6.json`, with ten point instances in total.
+ Color-1 points gain color-7 orthogonal neighbors; color-2 points gain color-4
+ diagonal neighbors. Color-6 and color-8 points remain unchanged.
+@@ -124,7 +128,7 @@ Every instance mask retains the complete 9 by 9 canvas. The x/y metadata
+ records each mask's nonzero bounding-box origin; native snapshot coordinates
+ remain anchored to the input point. Orientation is 0 in both states because
+ the patterns are symmetric. Held-out inputs and outputs are not included.
+-The dataset is discovered automatically by `document()`.
++`document()` sends it only when the run solves `0ca9ddb6`.
  
--## Scope and handoff
-+- Use training pairs only. Never read the puzzle's `test` entries, and never
-+  give the run's output, which shows the expected test grid, to another agent.
-+- Run `bun start <puzzle-id>` once, after the dataset and any NUC candidate are
-+  frozen. Exit status `0` is an exact match; any other status is not.
-+- Never rerun for a pass, or change the provider, model, sampling, prompts,
-+  solver code, dataset, or candidate around the run. Never read `.env` or
-+  credentials.
- 
--- Inspect the existing pipeline, record the baseline, and implement the
--  requested ARC change with typed objects, properties, relations, and rules.
--- Do not add or retain ARC-related automated tests, even outside `arc/`.
--  Use type checking, linting, builds, and manual/offline evaluation instead.
--- Preserve held-out evaluation integrity: infer from training pairs and test inputs only;
--  reserve test outputs, including their dimensions, for scoring.
--- Validate every LLM response before executing code or composing grids.
--- Run applicable offline checks and report exact per-task results. Mocked
--  responses do not establish live ARC-solving accuracy.
--- Preserve caller changes and project versions. Do not spawn agents, commit,
--  push, merge, or start another proposal cycle.
--- Hand language/runtime changes requiring a NUC back to the caller for the
--  existing independent proposal process; do not bypass it.
-+## Outcome
- 
--Return one JSON object without Markdown fences or surrounding prose, containing
--`status`, `changed_paths`, `world_model`, `checks`, `cases`, and `blockers` as
--defined by the skill. Use structured identifiers and error codes, not narrative
--reasoning. Stop at this handoff; the caller owns integration and required
--post-change agents.
-+- An exact match accepts the requested NUC regardless of the evaluator's
-+  decision. Otherwise the NUC is accepted only if the evaluator accepted it.
-+- Record the outcome through the NUC workflow's caller steps, with its basis,
-+  the evaluator's decision, and the run's evidence. Never push or change project
-+  versions.
-+- Save the JSON result record that the skill defines in the session workspace,
-+  report a short summary with its path, and stop.
+ `dataset.28bf18c6.json` follows the rule of `data\training\28bf18c6.json`
+ with three synthesized pairs instead of copies of its grids, one shape instance
 ```
 
-**File**: `.claude/agents/nuc-proposal.agent.md` (modified, +3/-0)
+**File**: `arc/src/analyzer.ts` (modified, +11/-2)
 ```diff
-@@ -29,6 +29,9 @@ You draft and prototype exactly one added or updated NUC revision. Follow
-   verify unchanged legacy forms alongside candidate forms.
- - Draft the proposal, implement its prototype where needed, and rewrite
-   equivalent executable cases without weakening assertions or coverage.
-+- For an ARC-requested change, the caller supplies the arc-dataset request and
-+  its evidence programs. Implement the general feature they need; never add
-+  puzzle IDs, grids, or ARC-only helpers, and never read ARC test data.
- - Follow the [mode/category token policy](../skills/nuc-proposal/SKILL.md#choose-execution-mode-caller-only).
-   The token non-regression gate requires each compared case to use the same
-   or fewer lexer tokens than its accepted baseline. Single requests always skip
+@@ -3,10 +3,11 @@ import * as nucleoid from "./lib/nucleoid";
+ import * as llm from "./lib/llm";
+ import * as terminal from "./lib/terminal";
+ 
+-export async function declarations({ train_dataset }) {
++export async function declarations({ puzzle_id, train_dataset }) {
+   terminal.step("Inferring declarations");
+ 
+   const { declarations, output_canvas } = await llm.generate({
++    puzzle_id,
+     messages: [
+       {
+         role: "user",
+@@ -26,10 +27,16 @@ export async function declarations({ train_dataset }) {
+   return { declarations, output_canvas };
+ }
+ 
+-export async function instances({ declarations, input_matrix, output_matrix }) {
++export async function instances({
++  puzzle_id,
++  declarations,
++  input_matrix,
++  output_matrix,
++}) {
+   terminal.step("Segmenting training objects");
+ 
+   const { instances } = await llm.generate({
++    puzzle_id,
+     messages: [
+       {
+         role: "user",
+@@ -69,6 +76,7 @@ export async function instances({ declarations, input_matrix, output_matrix }) {
+ }
+ 
+ export async function value({
++  puzzle_id,
+   instance_name,
+   declarations,
+   input_instance_matrix,
+@@ -77,6 +85,7 @@ export async function value({
+   terminal.step(`Constructing ${instance_name}`);
+ 
+   const { implementation } = await llm.generate({
++    puzzle_id,
+     messages: [
+       {
+         role: "user",
 ```
 
-**File**: `.claude/rules/arc.instructions.md` (modified, +18/-6)
+**File**: `arc/src/app.ts` (modified, +7/-1)
 ```diff
-@@ -5,8 +5,11 @@ applyTo: "**"
- # ARC project and solver proposals
+@@ -7,7 +7,7 @@ import * as nucleoid from "./lib/nucleoid";
+ import * as terminal from "./lib/terminal";
  
- These rules apply when working on `arc/`, its LLM exchanges, or its associated
--ARC records. Use the `arc-purposal` agent and matching skill when delegating an
--ARC proposal. Agent-configuration changes alone do not launch a solver run.
-+ARC records. Run an ARC proposal with `/arc-purposal <puzzle-id>` (the
-+`arc-purposal` skill and agent). The `arc-dataset` agent writes the puzzle's
-+instruction dataset, any Nucleoid enhancement that dataset requires goes
-+through the NUC stages, and one solver run decides that enhancement's outcome.
-+Agent-configuration changes alone do not launch a solver run.
+ // Genesis puzzle_id: 3aa6fb7a
+-export async function start(puzzle_id: string = "0ca9ddb6") {
++export async function start(puzzle_id: string = "9af7a82c") {
+   if (!/^[0-9a-f]{8}$/.test(puzzle_id)) {
+     throw new Error("Puzzle ID must be eight lowercase hexadecimal characters");
+   }
+@@ -42,6 +42,7 @@ export async function start(puzzle_id: string = "0ca9ddb6") {
+   let instance_index: number = 0;
  
- ## No automated ARC tests
+   const { declarations, output_canvas } = await analyzer.declarations({
++    puzzle_id,
+     train_dataset: training_input,
+   });
+   const train_dataset = {
+@@ -57,6 +58,7 @@ export async function start(puzzle_id: string = "0ca9ddb6") {
+     );
  
-@@ -61,7 +64,11 @@ output dimensions, overlap handling, and composition through the inferred model.
- Never use test outputs or their dimensions to infer rules, initialize result
- grids, choose candidates, or construct prompts. Access expected test grids only
- after predictions are frozen, for scoring. Do not hard-code puzzle IDs,
--expected grids, or task-specific answers into solver logic.
-+expected grids, or task-specific answers into solver logic or language features.
-+The solver's output shows the expected grid, so never feed it back into
-+datasets, NUC candidates, or prompts. Deciding an `/arc-purposal` NUC from its
-+one scored run is scoring, not candidate selection: never rerun it or compare
-+alternatives against the expected grid.
+     const { instances } = await analyzer.instances({
++      puzzle_id,
+       declarations,
+       input_matrix,
+       output_matrix,
+@@ -70,6 +72,7 @@ export async function start(puzzle_id: string = "0ca9ddb6") {
  
- Preserve puzzle datasets, expected outputs, instruction examples, and scoring.
- Replay every selected training pair, then score held-out predictions by exact
-@@ -72,6 +79,11 @@ expected grids or scoring.
+       const { implementation, input_value, output_value } =
+         await analyzer.value({
++          puzzle_id,
+           instance_name,
+           declarations,
+           input_instance_matrix,
+@@ -94,6 +97,7 @@ export async function start(puzzle_id: string = "0ca9ddb6") {
+   );
  
- Keep changes focused on the ARC project and synchronize affected documentation
- and canonical ARC records when their behavior changes. Follow the existing NUC
--workflow for language changes and the human-owned version policy. Do not read
--or expose credentials, make paid LLM calls without authorization, or alter
--provider/model settings merely to manufacture a passing result.
-+workflow for language changes and the human-owned version policy. A NUC that
-+`/arc-purposal` requests is accepted on an exact match regardless of its
-+evaluation, under the
-+[ARC-requested proposal rule](proposals.instructions.md#arc-requested-proposals-caller-only).
-+Do not read or expose credentials, make paid LLM calls without authorization,
-+or alter provider/model settings merely to manufacture a passing result. An
-+`/arc-purposal` invocation authorizes its one `bun start <puzzle-id>` run and
-+nothing more.
+   const { instances } = await visualizer.instances({
++    puzzle_id,
+     train_dataset,
+     declarations,
+     test_input_matrix,
+@@ -107,6 +111,7 @@ export async function start(puzzle_id: string = "0ca9ddb6") {
+ 
+   for (const { input_instance_matrix } of instances) {
+     const { input_value, output_value } = await visualizer.value({
++      puzzle_id,
+       declarations,
+       train_dataset,
+       instance_name: `obj${String(instance_index++).padStart(12, "0")}`,
+@@ -115,6 +120,7 @@ export async function start(puzzle_id: string = "0ca9ddb6") {
+     });
+ 
+     const { output_instance_matrix } = await visualizer.output_instance_matrix({
++      puzzle_id,
+       test_input_matrix,
+       train_dataset,
+       input_instances,
 ```
 
-**File**: `.claude/rules/proposals.instructions.md` (modified, +27/-2)
+**File**: `arc/src/dataset/instruct_dataset.ts` (modified, +15/-9)
 ```diff
-@@ -197,7 +197,9 @@ baseline, worktree, and a fresh report path. Use
- `.claude/skills/nuc-evaluate/SKILL.md`. The evaluator independently runs
- checks and `evaluate_proposal`, whose token portion follows the mode/category
- policy; it cannot repair sources, regenerate exports,
--or change the baseline. Only it returns the acceptance decision.
-+or change the baseline. Only it returns the acceptance decision; an exact ARC
-+match can also accept an
-+[ARC-requested proposal](#arc-requested-proposals-caller-only).
+@@ -1,15 +1,21 @@
+-import { readdirSync, readFileSync } from "node:fs";
++import { readFileSync } from "node:fs";
+ import { join } from "node:path";
  
- If named custom agents are unavailable, give the corresponding profile,
- skill, and inputs to separate fresh general-purpose agents. Neither role
-@@ -233,7 +235,7 @@ to that evaluation and must not recursively launch another agent.
+-export function document(): string {
+-  const files = readdirSync(__dirname, { withFileTypes: true })
+-    .filter((entry) => entry.isFile() && /\.json$/i.test(entry.name))
+-    .map((entry) => entry.name)
+-    .sort();
++// The genesis puzzle learns from the shared core, curve, and line datasets;
++// every other puzzle learns only from its own dataset.<puzzle_id>.json.
++const genesis_puzzle_id: string = "3aa6fb7a";
++const genesis_datasets = [
++  "dataset.core.1.json",
++  "dataset.core.2.json",
++  "dataset.curve.1.json",
++  "dataset.line.1.json",
++];
  
- ## Record rejected outcomes (caller only)
- 
--- After the independent evaluator's overall `Rejected` decision, the coordinating caller must record and commit the rejected proposal documentation and its index/outcome metadata.
-+- After the independent evaluator's overall `Rejected` decision, unless an exact ARC match accepts an [ARC-requested proposal](#arc-requested-proposals-caller-only), the coordinating caller must record and commit the rejected proposal documentation and its index/outcome metadata.
- - For a new proposal, record `Status: Rejected`, the rejection reason, actual token-check ran/skipped status (per-case before/after counts only when run), and update its NUC index entries.
- - For a rejected revision of an already accepted or active NUC, preserve its accepted text and status; record only the rejected revision's outcome metadata rather than replacing it with the candidate.
- - Commit only rejection documentation and directly related index/status metadata. Never apply or commit rejected runtime, executable-document, reference, synthesized-data or generated-export changes. Baseline and report artifacts stay in the session workspace.
-@@ -242,6 +244,29 @@ to that evaluation and must not recursively launch another agent.
- - Preserve unrelated staged and unstaged changes. If the rejection documentation is already committed, verify and report that commit instead of creating an empty duplicate.
- - Proposal and evaluation agents must not commit, push or merge; the rejection commit belongs solely to the coordinating caller and does not authorize an automatic push.
- 
-+## ARC-requested proposals (caller only)
-+
-+`/arc-purposal <puzzle-id>` may request one NUC when the puzzle's
-+`arc-dataset` handoff requires a Nucleoid enhancement. Prepare and evaluate it
-+as a single-proposal request: fresh proposal and evaluation agents, a pinned
-+baseline, an isolated candidate, the Rust improvement pass when required, and
-+no token comparison. Hold its outcome until the puzzle's one solver run
-+against the frozen candidate, as the
-+[arc-purposal skill](../skills/arc-purposal/SKILL.md) describes, then decide:
-+
-+- `bun start <puzzle-id>` exits with `0`, an exact match: Accepted, regardless
-+  of the evaluator's decision.
-+- Any other exit status, or no run: the evaluator's overall decision stands,
-+  and only its `Accepted` accepts the NUC.
-+
-+This exception covers only the NUC that the same invocation requested, frozen
-+before its run and integrated unchanged. For that NUC it overrides the
-+evaluator-only acceptance in NUC 1; every other NUC keeps the ordinary rule.
-+Record the basis, the evaluator's decision and report, and the run's evidence
-+with the outcome, and never hide the evaluator's failures. The run is scored
-+once: never rerun it, or revise the dataset or candidate from its output, to
-+reach a pass.
-+
- ## Continuous proposal cycles (caller only)
- 
- `/nuc-proposal` defaults to continuous mode for open-ended requests. A request
-```
-
-**File**: `.claude/skills/arc-dataset/SKILL.md` (modified, +14/-5)
-```diff
-@@ -1,11 +1,20 @@
- ---
- name: arc-dataset
--description: Write the ARC instruction dataset for one training puzzle ID by running the arc-dataset agent.
--argument-hint: <puzzle-id>
-+description: Write the ARC instruction dataset for one training puzzle ID by running the arc-dataset agent, or return the Nucleoid enhancement request the dataset requires.
-+argument-hint: <puzzle-id> [caller inputs]
- context: fork
- agent: arc-dataset
- ---
- 
--Write the ARC instruction dataset for puzzle $ARGUMENTS. Follow the
--[arc-dataset agent profile](../../agents/arc-dataset.agent.md); if it is not
--already your system prompt, delegate this request to the `arc-dataset` agent.
-+Write the ARC instruction dataset for puzzle $ARGUMENTS. The puzzle ID comes
-+first; inputs after it, such as a candidate Nucleoid executable, are defined in
-+the [arc-dataset agent profile](../../agents/arc-dataset.agent.md). Follow the
-+profile; if it is not already your system prompt, delegate this request to the
-+`arc-dataset` agent.
-+
-+A `nucleoid_enhancement_required` handoff writes no dataset and returns a NUC
-+request to the caller. Under `/arc-purposal`, the
-+[arc-purposal skill](../arc-purposal/SKILL.md) handles it. Otherwise the caller
-+may run `/nuc-proposal` with the request as a single-proposal request, which
-+the independent evaluator alone decides, and run `/arc-dataset` again once the
-+feature is accepted.
-```
-
-**File**: `.claude/skills/arc-purposal/SKILL.md` (modified, +116/-134)
-```diff
-@@ -1,142 +1,124 @@
- ---
- name: arc-purposal
--description: Propose and prototype improvements to the ARC project through an object-oriented world model, JSON-only LLM exchanges, and honest exact-grid evaluation.
-+description: Run one ARC training puzzle through its instruction dataset, any Nucleoid enhancement that dataset requires, and one exact-match solver run that decides the enhancement's outcome.
-+argument-hint: <puzzle-id>
- ---
- 
--# Preparing an ARC solver proposal
-+# Running an ARC puzzle proposal
- 
--Use this skill for ARC solver proposals, object-oriented world modeling, and
--JSON-only ARC prompt changes. Follow `.claude/CLAUDE.md`, the
-+`/arc-purposal <puzzle-id>` takes one training puzzle through its instruction
-+dataset, any Nucleoid enhancement that dataset requires, one solver run, and
-+the outcome. Follow `.claude/CLAUDE.md`, the
- [ARC instructions](../../rules/arc.instructions.md), and the
- [agent profile](../../agents/arc-purposal.agent.md).
- 
--When delegated as `arc-purposal`, perform the work below directly. Do not spawn
--another agent. Work on one bounded change and stop at its JSON handoff.
--
--## Establish scope and baseline
--
--Read the caller's requested change, allowed paths, target task IDs or fixtures,
--and any live-model call budget. Inspect the working-tree status and preserve
--pre-existing changes. If target tasks are unspecified, use the existing example
--task and affected offline fixtures; report that limited scope explicitly.
--Missing fixtures or required execution inputs block their evaluation, rather
--than justify invented scores. Default to no paid or network LLM calls.
--
--Read `arc/README.md`, `arc/package.json`, and the relevant pipeline:
--
--- `arc/src/app.ts` and `arc/src/types.ts` for orchestration and data contracts.
--- `arc/src/lib/analyzer.ts` and `arc/src/lib/visualizer.ts` for inference.
--- `arc/src/lib/llm.ts`, `arc/src/lib/openrouter.ts`, and
--  `arc/src/instruct_dataset/` for every model-facing message source.
--- `arc/src/lib/nucleoid.ts` and `arc/src/lib/Matrix.ts` for symbolic execution
--  and grid composition/scoring.
--
--Record the revision, task IDs, execution mode, and actual baseline results in
--the session workspace. Keep training and evaluation splits identifiable.
--Never inspect or feed held-out outputs into model selection; expose them to
--the scorer only after freezing predictions. Unknown results remain `null`.
--
--## Build an object-oriented solution
--
--Choose one concrete failure or missing capability supported by the inspected
--code and training examples. Model the world with:
--
--- Grid dimensions, categorical colors, background, and coordinate conventions.
--- Object classes and stable per-world instance identities.
--- Properties such as occupied cells, position, shape, color, and orientation.
--- Relations such as containment, adjacency, alignment, symmetry, and ordering.
--- Executable transformation rules and deterministic output composition.
--
--Use only properties and relations needed for the change. Infer them from
--training data rather than puzzle filenames or expected test answers. Preserve
--full-size instance masks at current interfaces, and make any internal coordinate
--conversion explicit. Derive output shape from the learned transformation and
--test input, never the expected test grid.
--
--Use Nucleoid's accepted class/instance and declarative semantics to evaluate
--symbolic rules. Replay a hypothesis against all selected training pairs before
--applying it to test inputs, without carrying training instance state into a
--test world. Keep TypeScript types concrete and validate external JSON at runtime;
--a generic type argument or cast is not validation.
--
--## Enforce JSON-only model exchanges
--
--**Never use natural language in an ARC LLM prompt: JSON data in, JSON data out.**
--This includes shared wrappers and example injection, not just the immediate
--analyzer or visualizer call. Keep every role's message content independently
--valid JSON. Serialize objects rather than assembling mixed text templates.
--
--Represent the operation, input data, and required response shape structurally.
--For example, this is a valid request payload, not a new mandatory wire schema:
--
--```json
--{
--  "operation": "infer_world_model",
--  "data": {
--    "train": [
--      { "input": [[8]], "output": [[8]] }
--    ]
--  },
--  "response_schema": {
--    "type": "object",
--    "required": ["declarations"],
--    "properties": {
--      "declarations": {
--        "type": "array",
--        "items": { "type": "string" }
--      }
--    },
--    "additionalProperties": false
+-  if (files.length === 0) {
+-    throw new Error(`No JSON instruction datasets found in ${__dirname}`);
 -  }
--}
--```
--
--Use symbolic operation names, enum constraints, real JSON schemas, and
--data/code examples. No prose-valued `instructions`, `description`, `reasoning`,
--or similar escape hatches. Carry executable Nucleoid source only inside
--explicit code fields; do not add natural-language comments or wrap code in
--Markdown. Encode control IDs and validation feedback as JSON data too.
--
--Validate responses befo
++export function document(puzzle_id: string): string {
++  const files =
++    puzzle_id === genesis_puzzle_id
++      ? genesis_datasets
++      : [`dataset.${puzzle_id}.json`];
+ 
+   const datasets = files.map((file: string) => {
+     const source: string = readFileSync(join(__dirname, file), "utf8");
+```
+
+**File**: `arc/src/lib/llm.ts` (modified, +2/-2)
+```diff
+@@ -2,13 +2,13 @@ import { v4 as uuid } from "uuid";
+ import * as dataset from "../dataset";
+ import * as openrouter from "./openrouter";
+ 
+-export async function generate({ messages = [], document = true }) {
++export async function generate({ puzzle_id, messages = [], document = true }) {
+   if (document) {
+     messages.unshift({
+       role: "assistant",
+       content: `
+         instruct_dataset:
+-        ${dataset.document()}
++        ${dataset.document(puzzle_id)}
+       `,
+     });
+   }
+```
+
+**File**: `arc/src/visualizer.ts` (modified, +6/-0)
+```diff
+@@ -4,6 +4,7 @@ import * as llm from "./lib/llm";
+ import * as terminal from "./lib/terminal";
+ 
+ export async function instances({
++  puzzle_id,
+   train_dataset,
+   declarations,
+   test_input_matrix,
+@@ -12,6 +13,7 @@ export async function instances({
+   terminal.grid("Test input", test_input_matrix);
+ 
+   const { instances } = await llm.generate({
++    puzzle_id,
+     messages: [
+       {
+         role: "assistant",
+@@ -60,6 +62,7 @@ export async function instances({
+ }
+ 
+ export async function value({
++  puzzle_id,
+   declarations,
+   train_dataset,
+   instance_name,
+@@ -70,6 +73,7 @@ export async function value({
+ 
+   terminal.step(`Synthesizing ${instance_name}`);
+   const { implementation } = await llm.generate({
++    puzzle_id,
+     messages: [
+       {
+         role: "assistant",
+@@ -133,6 +137,7 @@ export async function value({
+ }
+ 
+ export async function output_instance_matrix({
++  puzzle_id,
+   test_input_matrix,
+   train_dataset,
+   input_instances,
+@@ -144,6 +149,7 @@ export async function output_instance_matrix({
+ 
+   terminal.step("Composing the output object");
+   const { output_instance_matrix } = await llm.generate({
++    puzzle_id,
+     messages: [
+       {
+         role: "assistant",
 ```
 
 #### Recent Merged Pull Requests:
@@ -1418,30 +1375,38 @@ Redefine /arc-purposal as a coordinator that takes one training puzzle ID throug
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Rework /arc-purposal into per-puzzle NUC workflow
+## X. Clarify ARC dataset and proposal references
 
 **RULE**:
-When implementing operations in `.claude/CLAUDE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/agents/arc-dataset.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ba276435`: Rework /arc-purposal into per-puzzle NUC workflow. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `62f695c4`: Clarify ARC dataset and proposal references. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/CLAUDE.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/arc-dataset.agent.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [arc.instructions.md](rules/arc.instructions.md) | ARC puzzle proposals, JSON-only LLM exchanges, and no automated ARC tests |
-| [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation, evaluation, token acceptance, and ARC-requested acceptance |
+`arc/README.md`. Every dataset in `arc/src/dataset/` may serve as a reference
+for world-model idioms, properties, rules, and tags, although the solver sends
+only the puzzle's own dataset. Match their structure, key order, and
+formatting exactly:
+- You may take the request's idea from `docs/README.md` or the documentation
+  it links to, such as `docs/examples.md` and the NUCs indexed in
+  `docs/nuc-0000.md`, whatever their status. Only accepted behavior is
+  available to the dataset, so an idea from an unaccepted NUC is still a
+  request.
+  the result the rules need, and the documentation a borrowed idea comes from.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-| [arc.instructions.md](rules/arc.instructions.md) | ARC solver proposals, JSON-only LLM exchanges, and no automated ARC tests |
-| [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation, evaluation, and token acceptance |
+`arc/README.md`. Match their structure, key order, and formatting exactly:
+  and the result the rules need.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ba276435` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `62f695c4` are properly handled with clean fallback behavior.

@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T15:58:27.870Z",
-    "lastVerified": "2026-10-28T15:58:27.870Z",
+    "lastChecked": "2026-10-28T16:05:30.131Z",
+    "lastVerified": "2026-10-28T16:05:30.131Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -337,22 +337,21 @@
     "lastVerified": "2026-10-28T03:11:25.935Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T15:36:43.129Z",
-    "lastVerified": "2026-10-28T15:36:43.129Z",
+    "lastChecked": "2026-10-28T16:05:26.885Z",
+    "lastVerified": "2026-10-28T16:05:26.885Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "d9be5f788a923f8990400563c788efa10a2015e901602a6f8c42df743c8a5fb3",
+    "contentHash": "ab57601d992c08bb9c795bb61728bb0a2d8446af3c5205be0e4bfcfd35fb5710",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "ba276435"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -1797,11 +1796,21 @@
     "lastVerified": "2026-10-28T06:11:43.575Z"
   },
   "aleo-labs-protocol-snarkos": {
-    "name": "snarkOS",
+    "name": "aleo-labs-protocol/snarkOS",
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "lastChecked": "2026-10-28T12:57:04.073Z",
-    "revisionIdentifier": "6b124303",
-    "lastVerified": "2026-10-28T12:57:04.073Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T16:05:21.247Z",
+    "lastVerified": "2026-10-28T16:05:21.247Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "9647257de8d8a09a8847a8653b780a1eea6952ab347ce96d80770a797b32d695",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "databendlabs-databend": {
     "name": "databendlabs/databend",
@@ -4704,5 +4713,60 @@
     "lastChecked": "2026-10-28T15:58:25.051Z",
     "revisionIdentifier": "1f6fd502",
     "lastVerified": "2026-10-28T15:58:25.051Z"
+  },
+  "gotham-rs-gotham": {
+    "name": "gotham",
+    "officialUrl": "https://github.com/gotham-rs/gotham",
+    "lastChecked": "2026-10-28T16:05:06.321Z",
+    "revisionIdentifier": "53fe844b",
+    "lastVerified": "2026-10-28T16:05:06.321Z"
+  },
+  "hf-naiveai-naive-n0.5-flash": {
+    "name": "NaiveAI/Naive-N0.5-Flash",
+    "officialUrl": "https://huggingface.co/NaiveAI/Naive-N0.5-Flash",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T16:05:08.839Z",
+    "lastVerified": "2026-10-28T16:05:08.839Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
+    "contentHash": "5bd3b1e1d49c98e496fb3ceddb2249c51a1dd676b8a50d9c00ad5e9241a70165",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "tiajinsha-jkvideo": {
+    "name": "JKVideo",
+    "officialUrl": "https://github.com/tiajinsha/JKVideo",
+    "lastChecked": "2026-10-28T16:05:11.250Z",
+    "revisionIdentifier": "3592d036",
+    "lastVerified": "2026-10-28T16:05:11.250Z"
+  },
+  "diggerhq-digger": {
+    "name": "digger",
+    "officialUrl": "https://github.com/diggerhq/digger",
+    "lastChecked": "2026-10-28T16:05:13.930Z",
+    "revisionIdentifier": "7c237c09",
+    "lastVerified": "2026-10-28T16:05:13.930Z"
+  },
+  "arangodb-arangodb": {
+    "name": "arangodb/arangodb",
+    "officialUrl": "https://github.com/arangodb/arangodb",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-10-28T16:05:27.197Z",
+    "lastVerified": "2026-10-28T16:05:27.197Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-arangodb-arangodb",
+    "contentHash": "85cf1a39197ef429b8a974a7cec1366e4b526fcf357f4163e79596d4f57205ea",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

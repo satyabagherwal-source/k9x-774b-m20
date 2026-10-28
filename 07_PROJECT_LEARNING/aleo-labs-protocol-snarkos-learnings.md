@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
-> **Source Version**: `6b124303`  
+> **Source Version**: `5375fc14`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T22:36:27.201Z  
+> **Timestamp**: 2026-10-28T16:05:21.252Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T22:36:09.177Z  
+> **Harvest Timestamp**: 2026-10-28T16:05:21.247Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1955,617 +1955,43 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3f37984a` (2026-10-27)
-**Commit Message**: metrics: count transaction verification, memory-pool admission and gossip per call site
+### Incident Patch 1: `5375fc14` (2026-10-28)
+**Commit Message**: Merge pull request #4584 from aleo-labs-protocol/fix/client-solution-limit
 
-Add Prometheus metrics that count verification work, memory-pool
-admission outcomes and gossip per call site, to support load testing
-and capacity planning. Instrumentation only; no behaviour change.
-
-- snarkos_verification_transaction_checks_total{site,kind,outcome} and
-  snarkos_verification_transaction_check_secs{site,kind}: each
-  check_transaction_basic call at REST, the client relay, the worker,
-  propose_batch, and the background check on executions fetched from a
-  peer (whose outcome was previously not recorded). The histogram has
-  sub-millisecond buckets.
-- snarkos_verification_solution_checks_total{site,outcome}.
-- snarkos_consensus_mempool_transactions_total{kind,outcome} and
-  snarkos_consensus_mempool_evicted_total{kind}. TransactionsQueue::insert
-  now returns a QueueInsertion that says whether the insert was new, a
-  duplicate, or evicted another entry.
-- snarkos_router_unconfirmed_{transactions,solutions}_inbound_total{outcome}
-  and ..._propagated_total{site}.
-- snarkos_bft_peer_proposal_transmissions_total{type},
-  snarkos_bft_peer_proposals_malformed_total and
-  snarkos_bft
-
-**File**: `node/bft/src/primary.rs` (modified, +26/-2)
+**File**: `node/src/client/mod.rs` (modified, +7/-9)
 ```diff
-@@ -735,7 +735,10 @@ impl<N: Network> proposal_task::BatchPropose for Primary<N> {
-                             continue;
-                         }
-                         // Check if the solution is still valid.
--                        if let Err(e) = self.ledger.check_solution_basic(solution_id, solution).await {
-+                        let result = self.ledger.check_solution_basic(solution_id, solution).await;
-+                        #[cfg(feature = "metrics")]
-+                        metrics::record_solution_check("propose_batch", result.is_ok());
-+                        if let Err(e) = result {
-                             trace!("Proposing - Skipping solution '{}' - {e}", fmt_id(solution_id));
-                             continue;
-                         }
-@@ -767,7 +770,12 @@ impl<N: Network> proposal_task::BatchPropose for Primary<N> {
-                         };
- 
-                         // Check if the transaction is still valid.
--                        if let Err(e) = self.ledger.check_transaction_basic(transaction_id, transaction).await {
-+                        #[cfg(feature = "metrics")]
-+                        let (kind, start) = (metrics::transaction_kind(&transaction), std::time::Instant::now());
-+                        let result = self.ledger.check_transaction_basic(transaction_id, transaction).await;
-+                        #[cfg(feature = "metrics")]
-+                        metrics::record_transaction_check("propose_batch", kind, result.is_ok(), start.elapsed());
-+                        if let Err(e) = result {
-                             trace!("Proposing - Skipping transaction '{}' - {e}", fmt_id(transaction_id));
-                             continue;
-                         }
-@@ -999,11 +1007,27 @@ impl<N: Network> Primary<N> {
-         // If the peer is ahead, use the batch header to sync up to the peer.
-         let mut missing_transmissions = self.sync_with_batch_header_from_peer::<true>(peer_ip, &batch_header).await?;
- 
-+        #[cfg(feature = "metrics")]
-+        {
-+            let num_solutions =
-+                missing_transmissions.keys().filter(|id| matches!(id, TransmissionID::Solution(..))).count();
-+            let num_transactions = missing_transmissions.len().saturating_sub(num_solutions);
-+            metrics::counter_1(metrics::bft::PEER_PROPOSAL_TRANSMISSIONS, "type", "solution", num_solutions as u64);
-+            metrics::counter_1(
-+                metrics::bft::PEER_PROPOSAL_TRANSMISSIONS,
-+                "type",
-+                "transaction",
-+                num_transactions as u64,
-+            );
-+        }
-+
-         // Check that the transmission ids match and are not fee transactions.
-         if let Err(err) = cfg_iter_mut!(&mut missing_transmissions).try_for_each(|(transmission_id, transmission)| {
-             // If the transmission is not well-formed, then return early.
-             self.ledger.ensure_transmission_is_well_formed(*transmission_id, transmission)
-         }) {
-+            #[cfg(feature = "metrics")]
-+            metrics::increment_counter(metrics::bft::PEER_PROPOSALS_MALFORMED);
-             let err = err.context(format!(
-                 "Batch propose at round {batch_round} from '{peer_ip}' contains an invalid transmission"
-             ));
-```
-
-**File**: `node/bft/src/worker.rs` (modified, +25/-4)
-```diff
-@@ -409,9 +409,15 @@ impl<N: Network> Worker<N> {
-         if inserted {
-             // Eagerly verify a newly-inserted execution to warm the verification cache.
-             if let Some((tx_id, tx)) = execution_to_verify {
-+                #[cfg(feature = "metrics")]
-+                let site = if enforce_capacity_limit { "worker_ping" } else { "peer_proposal" };
-                 let self_ = self.clone();
-                 tokio::spawn(async move {
--                    let _ = self_.ledger.check_transaction_basic(tx_id, tx).await;
-+                    #[cfg(feature = "metrics")]
-+                    let start = std::time::Instant::now();
-+                    let _result = self_.ledger.check_transaction_basic(tx_id, tx).await;
-+                    #[cfg(feature = "metrics")]
-+                    metrics::record_transaction_check(site, "execute", _result.is_ok(), start.elapsed());
-                 });
-             }
-             trace!(
-@@ -447,7 +453,10 @@ impl<N: Network> Worker<N> {
-             return Ok(false);
-         }
-         // Check that the solution is well-formed and unique.
--        self.ledger.check_solution_basic(solution_id, solution).await?;
-+        let result = self.ledger.check_solution_basic(solution_id, solution).await;
-+        #[cfg(feature = "metrics")]
-+        metrics::record_solution_check("worker", result.is_ok());
-+        result?;
-         // Adds the solution to the ready queue.
-         if self.ready.write().insert(transmission_id, transmission) {
-             trace!(
-@@ -486,7 +495,12 @@ impl<N: Network> Worker<N> {
-         let transaction = spawn_blocking!(deserialize_transaction_strict(transaction))?;
- 
-         // Check that the transaction is well-formed and unique.
--        self.ledger.check_transaction_basic(transaction_id, transaction).await?;
-+        #[cfg(feature = "metrics")]
-+        let (kind, start) = (metrics::transaction_kind(&transaction), std::time::Instant::now());
-+        let result = self.ledger.check_transaction_basic(transaction_id, transaction).await;
-+        #[cfg(feature = "metrics")]
-+        metrics::record_transaction_check("worker", kind, result.is_ok(), start.elapsed());
-+        result?;
-         // Adds the transaction to the ready queue.
-         if self.ready.write().insert(transmission_id, transmission) {
-             trace!(
-@@ -617,7 +631,14 @@ impl<N: Network> Worker<N> {
-         // If the peer IP exists, finish the pending request.
-         if exists {
-             // Ensure the transmission is not a fee and matches the transmission ID.
--            match self.ledger.ensure_transmission_is_well_formed(transmission_id, &mut transmission) {
-+            let result = self.ledger.ensure_transmission_is_well_formed(transmission_id, &mut transmission);
-+            #[cfg(feature = "metrics")]
-+            metrics::increment_counter_1(
-+                metrics::bft::TRANSMISSION_RESPONSES,
-+                "outcome",
-+                if result.is_ok() { "well_formed" } else { "malformed" },
-+            );
-+            match result {
-                 Ok(()) => {
-                     trace!(
-                         "Received valid transmission response from peer '{peer_ip}' for transmission '{}'",
-```
-
-**File**: `node/consensus/src/lib.rs` (modified, +21/-1)
-```diff
-@@ -16,6 +16,8 @@
- #![forbid(unsafe_code)]
- 
- mod transactions_queue;
-+#[cfg(feature = "metrics")]
-+use transactions_queue::QueueInsertion;
- use transactions_queue::TransactionsQueue;
- 
- #[macro_use]
-@@ -393,30 +395,48 @@ impl<N: Network> Consensus<N> {
-     pub async fn add_unconfirmed_transaction(&self, transaction: Transaction<N>) -> Result<()> {
-         // Calculate the transmission checksum.
-         let checksum = Data::<Transaction<N>>::Buffer(transaction.to_bytes_le()?.into()).to_checksum::<N>()?;
-+        #[cfg(feature = "metrics")]
-+        let kind = metrics::transaction_kind(&transaction);
-         // Queue the unconfirmed transaction.
-         {
-             let transaction_id = transaction.id();
- 
-             // Check that the transaction is not a fee transaction.
-             if transaction.is_fee() {
-+                #[cfg(feature = "metrics")]
-+                metrics::record_mempool_transaction(kind, "rejected_fee_transaction");
-                 bail!("Transaction '{}' is a fee transaction (skipping)", fmt_id(transaction_id));
-             }
-             // Check if the transaction was recently seen.
-             if self.seen_transactions.lock().put(transaction_id, ()).is_some() {
-+                #[cfg(feature = "metrics")]
-+                metrics::record_mempool_transaction(kind, "recently_seen");
-                 // If the transaction was recently seen, return early.
-                 return Ok(());
-             }
-             // Check if the transaction already exists in the ledger.
-             if self.ledger.contains_transmission(&TransmissionID::Transaction(transaction_id, checksum))? {
-+                #[cfg(feature = "metrics")]
-+                metrics::record_mempool_transaction(kind, "in_ledger");
-                 bail!("Transaction '{}' exists in the ledger (skipping)", fmt_id(transaction_id));
-             }
-             // Check that the transaction is not in the mempool.
-             if self.contains_transaction(&transaction_id) {
-+                #[cfg(feature = "metrics")]
-+                metrics::record_mempool_transaction(kind, "already_queued");
-                 bail!("Transaction '{}' exists in the memory pool", fmt_id(transaction_id));
-             }
-             // Add the transaction to the memory pool.
-             let priority_fee = transaction.priority_fee_amount()?;
--            self.transactions_queue.write().insert(transaction_id, transaction, priority_fee)?;
-+            let insertion = self.transactions_queue.write().insert(transaction_id, transaction, priority_fee);
-+            #[cfg(feature = "metrics")]
-+            metrics::record_mempool_transaction(kind, match insertion {
-+                Ok(QueueInsertion::Inserted | QueueInsertion::InsertedWithEviction) => "accepted",
-+                Ok(QueueInsertion::Duplicate) => "already_queued",
-+                // The queue returns an error only when it is full.
-+                Err(_) => "rejected_pool_full",
-+            });
-+            insertion?;
-             #[cfg(feature = "metrics")]
-             {
-                 metrics::increment_gauge(metrics::consensus::UNCONFIRMED_TRANSACTIONS, 1f64);
-```
-
-**File**: `node/consensus/src/transactions_queue.rs` (modified, +58/-11)
-```diff
-@@ -25,6 +25,17 @@ use snarkvm::{ledger::Transaction, prelude::*};
- 
- use crate::{CAPACITY_FOR_DEPLOYMENTS, CAPACITY_FOR_EXECUTIONS};
- 
-+/// The result of a successful insertion into the transactions queue.
-+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-+pub enum QueueInsertion {
-+    /// The transaction was added to the queue.
-+    Inserted,
-+    /// The transaction was added to the queue, and a lower-priority transaction was evicted.
-+    InsertedWithEviction,
-+    /// The transaction was already in the queue; nothing changed.
-+    Duplicate,
-+}
-+
- pub struct TransactionsQueue<N: Network> {
-     pub deployments: TransactionsQueueInner<N>,
-     pub executions: TransactionsQueueInner<N>,
-@@ -49,15 +60,20 @@ impl<N: Network> TransactionsQueue<N> {
-         transaction_id: N::TransactionID,
-         transaction: Transaction<N>,
-         priority_fee: U64<N>,
--    ) -> Result<()> {
--        let result = if transaction.is_execute() {
-+    ) -> Result<QueueInsertion> {
-+        let is_execute = transaction.is_execute();
-+        let result = if is_execute {
-             self.executions.insert(transaction_id, transaction, priority_fee)
-         } else {
-             self.deployments.insert(transaction_id, transaction, priority_fee)
-         };
- 
-         #[cfg(feature = "metrics")]
-         {
-+            if let Ok(QueueInsertion::InsertedWithEviction) = result {
-+                let kind = if is_execute { "execute" } else { "deploy" };
-+                metrics::increment_counter_1(metrics::consensus::MEMPOOL_EVICTED, "kind", kind);
-+            }
-             metrics::gauge(metrics::consensus::DEPLOYMENTS_PRIORITY_QUEUE_SIZE, self.deployments.priority_len() as f64);
-             metrics::gauge(metrics::consensus::DEPLOYMENTS_ZERO_FEE_QUEUE_SIZE, self.deployments.zero_fee_len() as f64);
-             metrics::gauge(metrics::consensus::EXECUTIONS_PRIORITY_QUEUE_SIZE, self.executions.priority_len() as f64);
-@@ -119,13 +135,13 @@ impl<N: Network> TransactionsQueueInner<N> {
-         transaction_id: N::TransactionID,
-         transaction: Transaction<N>,
-         priority_fee: U64<N>,
--    ) -> Result<()> {
-+    ) -> Result<QueueInsertion> {
-         // Duplicates are a no-op: they must not evict anything or refresh recency.
-         // Note: the transaction ID is the root of the transaction tree, which includes a leaf for the fee
-         // transition. A transaction with the same ID therefore always has the same priority fee, and a
-         // resubmission with a higher fee has a different ID, so there is nothing to replace here.
-         if self.contains(&transaction_id) {
--            return Ok(());
-+            return Ok(QueueInsertion::Duplicate);
-         }
- 
-         // If the queue is not full, insert in the appropriate queue.
-@@ -137,10 +153,10 @@ impl<N: Network> TransactionsQueueInner<N> {
-             }
- 
-             debug_assert!(self.len() <= self.capacity, "The mempool exceeded its capacity");
--            return Ok(());
-+            return Ok(QueueInsertion::Inserted);
-         }
- 
--        match (self.priority_queue.len() < self.capacity, *priority_fee) {
-+        let insertion = match (self.priority_queue.len() < self.capacity, *priority_fee) {
-             (_, 0) => {
-                 #[cfg(feature = "metrics")]
-                 metrics::increment_counter(metrics::consensus::DROPPED_TRANSACTIONS);
-@@ -156,12 +172,14 @@ impl<N: Network> TransactionsQueueInner<N> {
-                 );
- 
-                 // Remove an entry from the low-priority queue to make room for the high-priority transaction.
--                if self.fifo_queue.pop_lru().is_some() {
-+                let evicted = self.fifo_queue.pop_lru().is_some();
-+                if evicted {
-                     #[cfg(feature = "metrics")]
-                     metrics::increment_counter(metrics::consensus::DROPPED_TRANSACTIONS);
-                 }
- 
--                self.priority_queue.insert(transaction_id, transaction, priority_fee)
-+                self.priority_queue.insert(transaction_id, transaction, priority_fee);
-+                if evicted { QueueInsertion::InsertedWithEviction } else { QueueInsertion::Inserted }
-             }
-             // Invariant: if the queue is at capacity but the priority queue is
-             // equal to the capacity, the low-priority queue must be empty.
-@@ -171,12 +189,13 @@ impl<N: Network> TransactionsQueueInner<N> {
-                     "The low-priority queue must be empty when the priority queue is full"
-                 );
- 
--                self.priority_queue.compare_insert(transaction_id, transaction, priority_fee)?
-+                self.priority_queue.compare_insert(transaction_id, transaction, priority_fee)?;
-+                QueueInsertion::InsertedWithEviction
-             }
--        }
-+        };
- 
-         debug_assert!(self.len() <= self.capacity, "The mempool exceeded its capacity");
--        Ok(())
-+        Ok(insertion)
-     }
- 
-     pub fn pop(&mut self) -> Option<(N::TransactionID, T
-```
-
-**File**: `node/metrics/src/lib.rs` (modified, +46/-1)
-```diff
-@@ -30,7 +30,7 @@ use locktick::parking_lot::Mutex;
- use parking_lot::Mutex;
- use snarkvm::{
-     ledger::narwhal::TransmissionID,
--    prelude::{Block, Network, cfg_iter},
-+    prelude::{Block, Network, Transaction, cfg_iter},
- };
- use std::{
-     collections::HashMap,
-@@ -40,6 +40,7 @@ use std::{
-         OnceLock,
-         atomic::{AtomicUsize, Ordering},
-     },
-+    time::Duration,
- };
- use time::OffsetDateTime;
- use tokio::task::JoinHandle;
-@@ -63,6 +64,10 @@ pub fn initialize_metrics(ip: Option<SocketAddr>) {
-     // Note: these are first-pass boundaries, not yet tuned against production data.
-     const SECS_BUCKETS: &[f64] = &[0.05, 0.1, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 3.0, 5.0, 10.0];
-     const COUNT_BUCKETS: &[f64] = &[1.0, 2.0, 3.0, 5.0, 8.0, 13.0, 21.0, 34.0, 55.0, 89.0];
-+    // Verification buckets, for `verification::TRANSACTION_CHECK_SECS`. They span sub-millisecond
-+    // checks, which skip proof verification, up to full checks that take seconds.
-+    const VERIFICATION_SECS_BUCKETS: &[f64] =
-+        &[0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0, 30.0];
- 
-     let builder = metrics_exporter_prometheus::PrometheusBuilder::new()
-         .set_buckets_for_metric(metrics_exporter_prometheus::Matcher::Suffix("_secs".to_string()), SECS_BUCKETS)
-@@ -72,6 +77,11 @@ pub fn initialize_metrics(ip: Option<SocketAddr>) {
-             SECS_BUCKETS,
-         )
-         .expect("can't set the transmission latency histogram buckets")
-+        .set_buckets_for_metric(
-+            metrics_exporter_prometheus::Matcher::Full(verification::TRANSACTION_CHECK_SECS.to_string()),
-+            VERIFICATION_SECS_BUCKETS,
-+        )
-+        .expect("can't set the verification histogram buckets")
-         .set_buckets_for_metric(
-             metrics_exporter_prometheus::Matcher::Prefix("snarkos_bft_subdag_".to_string()),
-             COUNT_BUCKETS,
-@@ -225,6 +235,14 @@ pub fn gauge_label<V: Into<f64>>(name: &'static str, label_key: &'static str, la
-     ::metrics::gauge!(name, label_key => label_value).set(value.into());
- }
- 
-+pub fn increment_counter_1(name: &'static str, key: &'static str, value: impl Into<::metrics::SharedString>) {
-+    ::metrics::counter!(name, key => value).increment(1);
-+}
-+
-+pub fn counter_1(name: &'static str, key: &'static str, value: impl Into<::metrics::SharedString>, amount: u64) {
-+    ::metrics::counter!(name, key => value).increment(amount);
-+}
-+
- pub fn increment_counter_2(
-     name: &'static str,
-     key_a: &'static str,
-@@ -258,6 +276,33 @@ pub fn histogram_2<V: Into<f64>>(
-     ::metrics::histogram!(name, key_a => value_a, key_b => value_b).record(value.into());
- }
- 
-+/// Returns the `kind` label value for the given transaction.
-+pub fn transaction_kind<N: Network>(transaction: &Transaction<N>) -> &'static str {
-+    match transaction {
-+        Transaction::Deploy(..) => "deploy",
-+        Transaction::Execute(..) => "execute",
-+        Transaction::Fee(..) => "fee",
-+    }
-+}
-+
-+/// Records the outcome and duration of a full transaction check at the given site.
-+pub fn record_transaction_check(site: &'static str, kind: &'static str, is_ok: bool, elapsed: Duration) {
-+    let outcome = if is_ok { "ok" } else { "err" };
-+    increment_counter_3(verification::TRANSACTION_CHECKS, "site", site, "kind", kind, "outcome", outcome);
-+    histogram_2(verification::TRANSACTION_CHECK_SECS, "site", site, "kind", kind, elapsed.as_secs_f64());
-+}
-+
-+/// Records the outcome of a solution check at the given site.
-+pub fn record_solution_check(site: &'static str, is_ok: bool) {
-+    let outcome = if is_ok { "ok" } else { "err" };
-+    increment_counter_2(verification::SOLUTION_CHECKS, "site", site, "outcome", outcome);
-+}
-+
-+/// Records the outcome of offering a transaction to the memory pool.
-+pub fn record_mempool_transaction(kind: &'static str, outcome: &'static str) {
-+    increment_counter_2(consensus::MEMPOOL_TRANSACTIONS, "kind", kind, "outcome", outcome);
-+}
-+
- // Include the generated build information
- mod built_info {
-     include!(concat!(env!("OUT_DIR"), "/built.rs"));
-```
-
-**File**: `node/metrics/src/names.rs` (modified, +49/-1)
-```diff
-@@ -13,8 +13,9 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
- 
--pub(super) const COUNTER_NAMES: [&str; 4] = [
-+pub(super) const COUNTER_NAMES: [&str; 5] = [
-     bft::LEADERS_ELECTED,
-+    bft::PEER_PROPOSALS_MALFORMED,
-     consensus::STALE_UNCONFIRMED_TRANSACTIONS,
-     consensus::STALE_UNCONFIRMED_SOLUTIONS,
-     consensus::DROPPED_TRANSACTIONS,
-@@ -96,6 +97,15 @@ pub mod bft {
-     pub const SUBDAG_CERTIFICATE_PREVIOUS_REFS: &str = "snarkos_bft_subdag_certificate_previous_refs";
-     /// The number of rounds spanned by a committed subdag (one observation per committed block).
-     pub const SUBDAG_ROUNDS_PER_BLOCK: &str = "snarkos_bft_subdag_rounds_per_block";
-+    /// The transmissions of a peer's batch proposal that were not in storage, and were taken from a
-+    /// worker or fetched from the proposer, labeled by `type` (`transaction` or `solution`).
-+    pub const PEER_PROPOSAL_TRANSMISSIONS: &str = "snarkos_bft_peer_proposal_transmissions_total";
-+    /// The peer batch proposals that were not signed because a transmission was not well-formed.
-+    /// Counted once per proposal.
-+    pub const PEER_PROPOSALS_MALFORMED: &str = "snarkos_bft_peer_proposals_malformed_total";
-+    /// The transmission responses for a pending request, labeled by `outcome`
-+    /// (`well_formed` or `malformed`).
-+    pub const TRANSMISSION_RESPONSES: &str = "snarkos_bft_transmission_responses_total";
- }
- 
- pub mod blocks {
-@@ -146,6 +156,13 @@ pub mod consensus {
-     pub const VALIDATOR_PARTICIPATION_GC_ROUND: &str = "snarkos_consensus_validator_participation_gc_round";
-     /// The number of telemetry updates dropped because the worker queue was full.
-     pub const VALIDATOR_PARTICIPATION_DROPPED: &str = "snarkos_consensus_validator_participation_dropped_total";
-+    /// The transactions offered to the memory pool, labeled by `kind` (`execute`, `deploy` or `fee`)
-+    /// and `outcome`: `accepted`, `recently_seen` (returns `Ok` without queuing), `in_ledger`,
-+    /// `already_queued`, `rejected_pool_full` or `rejected_fee_transaction`.
-+    pub const MEMPOOL_TRANSACTIONS: &str = "snarkos_consensus_mempool_transactions_total";
-+    /// The memory-pool entries evicted to make room for a transaction with a higher priority fee,
-+    /// labeled by `kind` (`execute` or `deploy`).
-+    pub const MEMPOOL_EVICTED: &str = "snarkos_consensus_mempool_evicted_total";
- }
- 
- pub mod router {
-@@ -154,6 +171,37 @@ pub mod router {
-     pub const RESTRICTED: &str = "snarkos_router_restricted_total";
-     /// Router messages, labeled by `direction` (`inbound` or `outbound`) and `type`.
-     pub const EVENTS: &str = "snarkos_router_events_total";
-+    /// Inbound `UnconfirmedTransaction` messages that passed the per-peer message limit, labeled by
-+    /// `outcome`: `syncing` (dropped while the node is behind), `seen` (dropped by the per-peer
-+    /// inbound cache) or `dispatched` (handed to the node-type handler).
-+    pub const UNCONFIRMED_TRANSACTIONS_INBOUND: &str = "snarkos_router_unconfirmed_transactions_inbound_total";
-+    /// Calls that propagate an `UnconfirmedTransaction`, labeled by `site`: `rest`, `client_unverified`
-+    /// (the client relays without verification because a state root is unknown), `client_verified`,
-+    /// or `validator` (to the connected validators, after the memory pool returns `Ok`).
-+    /// One per call, not per peer; per-peer sends are in [`EVENTS`].
-+    pub const UNCONFIRMED_TRANSACTIONS_PROPAGATED: &str = "snarkos_router_unconfirmed_transactions_propagated_total";
-+    /// Inbound `UnconfirmedSolution` messages that passed the per-peer limits, labeled by `outcome`
-+    /// (`syncing`, `seen` or `dispatched`).
-+    pub const UNCONFIRMED_SOLUTIONS_INBOUND: &str = "snarkos_router_unconfirmed_solutions_inbound_total";
-+    /// Calls that propagate an `UnconfirmedSolution`, labeled by `site` (`rest`, `client_verified` or
-+    /// `validator`). One per call, not per peer; per-peer sends are in [`EVENTS`].
-+    pub const UNCONFIRMED_SOLUTIONS_PROPAGATED: &str = "snarkos_router_unconfirmed_solutions_propagated_total";
-+}
-+
-+pub mod verification {
-+    /// Full transaction checks (`check_transaction_basic`), labeled by `site`, `kind` (`execute`,
-+    /// `deploy` or `fee`) and `outcome` (`ok` or `err`). The sites are `rest` (broadcast with
-+    /// `check_transaction=true`), `client_relay`, `worker` (unconfirmed transactions from the memory
-+    /// pool, including reinserted ones), `propose_batch`, and the background check on executions
-+    /// fetched from a peer: `peer_proposal` (for a batch proposal) or `worker_ping` (after a ping).
-+    pub const TRANSACTION_CHECKS: &str = "snarkos_verification_transaction_checks_total";
-+    /// The wall-clock duration of a full transaction check, labeled by `site` and `kind`.
-+    /// At `worker`, `propose_batch`, `peer_proposal` and `worker_ping`, this includes the wait for a
-+    /// blocking thre
-```
-
-**File**: `node/rest/src/routes.rs` (modified, +19/-2)
-```diff
-@@ -1285,7 +1285,17 @@ impl<N: Network, C: ConsensusStorage<N>, R: Routing<N>> Rest<N, C, R> {
-             match tokio::task::spawn_blocking(move || {
-                 // Hold the slot until verification finishes, even if the client disconnects.
-                 let _verification_slot = verification_slot;
--                ledger.check_transaction_basic(&tx, None, &mut rand::rng()).map(|()| tx)
-+                #[cfg(feature = "metrics")]
-+                let start = std::time::Instant::now();
-+                let result = ledger.check_transaction_basic(&tx, None, &mut rand::rng());
-+                #[cfg(feature = "metrics")]
-+                metrics::record_transaction_check(
-+                    "rest",
-+                    metrics::transaction_kind(&tx),
-+                    result.is_ok(),
-+                    start.elapsed(),
-+                );
-+                result.map(|()| tx)
-             })
-             .await
-             {
-@@ -1314,6 +1324,8 @@ impl<N: Network, C: ConsensusStorage<N>, R: Routing<N>> Rest<N, C, R> {
- 
-         // Broadcast the transaction.
-         rest.routing.propagate(message, &[]);
-+        #[cfg(feature = "metrics")]
-+        metrics::increment_counter_1(metrics::router::UNCONFIRMED_TRANSACTIONS_PROPAGATED, "site", "rest");
- 
-         // Determine if the node is synced and if the transaction was checked.
-         match !is_within_sync_leniency && check_transaction {
-@@ -1381,7 +1393,10 @@ impl<N: Network, C: ConsensusStorage<N>, R: Routing<N>> Rest<N, C, R> {
-             let res: Result<(), anyhow::Error> = match tokio::task::spawn_blocking(move || {
-                 // Hold the slot until verification finishes, even if the client disconnects.
-                 let _verification_slot = verification_slot;
--                puzzle.check_solution(&solution, epoch_hash, proof_target)
-+                let result = puzzle.check_solution(&solution, epoch_hash, proof_target);
-+                #[cfg(feature = "metrics")]
-+                metrics::record_solution_check("rest", result.is_ok());
-+                result
-             })
-             .await
-             {
-@@ -1420,6 +1435,8 @@ impl<N: Network, C: ConsensusStorage<N>, R: Routing<N>> Rest<N, C, R> {
- 
-         // Broadcast the unconfirmed solution message.
-         rest.routing.propagate(message, &[]);
-+        #[cfg(feature = "metrics")]
-+        metrics::increment_counter_1(metrics::router::UNCONFIRMED_SOLUTIONS_PROPAGATED, "site", "rest");
- 
-         // Determine if the node is synced and if the solution was checked.
-         match !is_within_sync_leniency && check_solution {
-```
-
-**File**: `node/router/src/inbound.rs` (modified, +20/-0)
-```diff
-@@ -251,6 +251,8 @@ pub trait Inbound<N: Network>: Reading + Outbound<N> {
- 
-                 // Do not process unconfirmed solutions if the node is too far behind.
-                 if !self.is_within_sync_leniency() {
-+                    #[cfg(feature = "metrics")]
-+                    metrics::increment_counter_1(metrics::router::UNCONFIRMED_SOLUTIONS_INBOUND, "outcome", "syncing");
-                     trace!("Skipped processing unconfirmed solution '{}' (node is syncing)", message.solution_id);
-                     return Ok(true);
-                 }
-@@ -259,6 +261,8 @@ pub trait Inbound<N: Network>: Reading + Outbound<N> {
-                 let seen_before = self.router().cache.insert_inbound_solution(peer_ip, message.solution_id).is_some();
-                 // Determine whether to propagate the solution.
-                 if seen_before {
-+                    #[cfg(feature = "metrics")]
-+                    metrics::increment_counter_1(metrics::router::UNCONFIRMED_SOLUTIONS_INBOUND, "outcome", "seen");
-                     trace!("Skipping 'UnconfirmedSolution' from '{peer_ip}'");
-                     return Ok(true);
-                 }
-@@ -273,6 +277,8 @@ pub trait Inbound<N: Network>: Reading + Outbound<N> {
-                 if message.solution_id != solution.id() {
-                     bail!("Peer '{peer_ip}' is not following the 'UnconfirmedSolution' protocol")
-                 }
-+                #[cfg(feature = "metrics")]
-+                metrics::increment_counter_1(metrics::router::UNCONFIRMED_SOLUTIONS_INBOUND, "outcome", "dispatched");
-                 // Handle the unconfirmed solution.
-                 match self.unconfirmed_solution(peer_ip, serialized, solution).await {
-                     true => Ok(true),
-@@ -282,6 +288,12 @@ pub trait Inbound<N: Network>: Reading + Outbound<N> {
-             Message::UnconfirmedTransaction(message) => {
-                 // Do not process unconfirmed solutions if the node is too far behind.
-                 if !self.is_within_sync_leniency() {
-+                    #[cfg(feature = "metrics")]
-+                    metrics::increment_counter_1(
-+                        metrics::router::UNCONFIRMED_TRANSACTIONS_INBOUND,
-+                        "outcome",
-+                        "syncing",
-+                    );
-                     trace!("Skipped processing unconfirmed transaction '{}' (node is syncing)", message.transaction_id);
-                     return Ok(true);
-                 }
-@@ -290,6 +302,8 @@ pub trait Inbound<N: Network>: Reading + Outbound<N> {
-                     self.router().cache.insert_inbound_transaction(peer_ip, message.transaction_id).is_some();
-                 // Determine whether to propagate the transaction.
-                 if seen_before {
-+                    #[cfg(feature = "metrics")]
-+                    metrics::increment_counter_1(metrics::router::UNCONFIRMED_TRANSACTIONS_INBOUND, "outcome", "seen");
-                     trace!("Skipping 'UnconfirmedTransaction' from '{peer_ip}'");
-                     return Ok(true);
-                 }
-@@ -304,6 +318,12 @@ pub trait Inbound<N: Network>: Reading + Outbound<N> {
-                 if message.transaction_id != transaction.id() {
-                     bail!("Peer '{peer_ip}' is not following the 'UnconfirmedTransaction' protocol")
-                 }
-+                #[cfg(feature = "metrics")]
-+                metrics::increment_counter_1(
-+                    metrics::router::UNCONFIRMED_TRANSACTIONS_INBOUND,
-+                    "outcome",
-+                    "dispatched",
-+                );
-                 // Handle the unconfirmed transaction.
-                 match self.unconfirmed_transaction(peer_ip, serialized, transaction).await {
-                     true => Ok(true),
+@@ -365,15 +365,13 @@ impl<N: Network, C: ConsensusStorage<N>> Client<N, C> {
+                     let _node = node.clone();
+                     // For each solution, spawn a task to verify it.
+                     tokio::task::spawn_blocking(move || {
+-                        // Retrieve the latest epoch hash.
+-                        if let Ok(epoch_hash) = _node.ledger.latest_epoch_hash() {
+-                            // Check if the prover has reached their solution limit.
+-                            // While snarkVM will ultimately abort any excess solutions for safety, performing this check
+-                            // here prevents the to-be aborted solutions from propagating through the network.
+-                            let prover_address = solution.address();
+-                            if _node.ledger.is_solution_limit_reached(&prover_address, 0) {
+-                                debug!("Invalid Solution '{}' - Prover '{prover_address}' has reached their solution limit for the current epoch", fmt_id(solution.id()));
+-                            }
++                        // Check if the prover has reached their solution limit.
++                        // While snarkVM will ultimately abort any excess solutions for safety, performing this check
++                        // here prevents the to-be aborted solutions from propagating through the network.
++                        let prover_address = solution.address();
++                        if _node.ledger.is_solution_limit_reached(&prover_address, 0) {
++                            debug!("Invalid Solution '{}' - Prover '{prover_address}' has reached their solution limit for the current epoch", fmt_id(solution.id()));
++                        } else if let Ok(epoch_hash) = _node.ledger.latest_epoch_hash() {
+                             // Retrieve the latest proof target.
+                             let proof_target = _node.ledger.latest_block().header().proof_target();
+                             // Ensure that the solution is valid for the given epoch.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4584** (2026-10-28): client: drop solutions from provers at their solution limit (@cbeck88)
 - **PR #4582** (2026-10-27): metrics: count transaction verification, memory-pool admission and gossip per call site (@cbeck88)
 - **PR #4581** (closed): Verify unconfirmed transactions before gossiping them (@cbeck88)
 - **PR #4579** (2026-10-26): chore(deps): bump ureq from 3.4.0 to 3.5.0 in the cargo-minor group (@dependabot[bot])
 - **PR #4578** (2026-10-26): chore(deps): bump lru from 0.18.2 to 0.19.0 (@dependabot[bot])
 - **PR #4577** (2026-10-26): fix(devnet.sh): run the build command without eval (@cbeck88)
-- **PR #4576** (2026-10-25): Drop the elliptic-curve pin and the no-op tokio-stream = (@cbeck88)
 
 ---
 
@@ -2585,45 +2011,42 @@ and capacity planning. Instrumentation only; no behaviour change.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. metrics: count transaction verification, memory-pool admission and gossip per ca
+## X. Merge pull request #4584 from aleo-labs-protocol/fix/client-solution-limit
 
 **RULE**:
-When implementing operations in `node/bft/src/primary.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `node/src/client/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3f37984a`: metrics: count transaction verification, memory-pool admission and gossip per call site. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5375fc14`: Merge pull request #4584 from aleo-labs-protocol/fix/client-solution-limit. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/bft/src/primary.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/src/client/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                        let result = self.ledger.check_solution_basic(solution_id, solution).await;
-                        #[cfg(feature = "metrics")]
-                        metrics::record_solution_check("propose_batch", result.is_ok());
-                        if let Err(e) = result {
-                        #[cfg(feature = "metrics")]
-                        let (kind, start) = (metrics::transaction_kind(&transaction), std::time::Instant::now());
-                        let result = self.ledger.check_transaction_basic(transaction_id, transaction).await;
-                        #[cfg(feature = "metrics")]
-                        metrics::record_transaction_check("propose_batch", kind, result.is_ok(), start.elapsed());
-                        if let Err(e) = result {
-        #[cfg(feature = "metrics")]
-        {
-            let num_solutions =
-                missing_transmissions.keys().filter(|id| matches!(id, TransmissionID::Solution(..))).count();
-            let num_transactions = missing_transmissions.len().saturating_sub(num_solutions);
-            metrics::counter_1(metrics::bft::PEER_PROPOSAL_TRANSMISSIONS, "type", "solution", num_solutions as u64);
-            metrics:
+                        // Check if the prover has reached their solution limit.
+                        // While snarkVM will ultimately abort any excess solutions for safety, performing this check
+                        // here prevents the to-be aborted solutions from propagating through the network.
+                        let prover_address = solution.address();
+                        if _node.ledger.is_solution_limit_reached(&prover_address, 0) {
+                            debug!("Invalid Solution '{}' - Prover '{prover_address}' has reached their solution limit for the current epoch", fmt_id(solution.id()));
+                        } else if let Ok(epoch_hash) = _node.ledger.latest_epoch_hash() {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                        if let Err(e) = self.ledger.check_solution_basic(solution_id, solution).await {
-                        if let Err(e) = self.ledger.check_transaction_basic(transaction_id, transaction).await {
+                        // Retrieve the latest epoch hash.
+                        if let Ok(epoch_hash) = _node.ledger.latest_epoch_hash() {
+                            // Check if the prover has reached their solution limit.
+                            // While snarkVM will ultimately abort any excess solutions for safety, performing this check
+                            // here prevents the to-be aborted solutions from propagating through the network.
+                            let prover_address = solution.address();
+                            if _node.ledger.is_solution_limit_reached(&prover_address, 0) {
+                                debug!("Invalid Solution '{}' - Prover '{prover_address}' has reached their solution limit for the current epoch", fmt_id(solution.id()));
+                            }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3f37984a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5375fc14` are properly handled with clean fallback behavior.

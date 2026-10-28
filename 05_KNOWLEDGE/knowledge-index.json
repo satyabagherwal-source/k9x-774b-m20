@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T15:58:18.391Z",
+  "last_updated": "2026-10-28T16:05:27.550Z",
   "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2804,8 +2804,8 @@
       "slug": "arangodb-arangodb",
       "platform": "github",
       "source_url": "https://github.com/arangodb/arangodb",
-      "source_version": "fc353927",
-      "content_hash": "4bfe01815f7385ece1612375b784826be7b016ef4f6d4facee2d4389ff63c3b5",
+      "source_version": "19ed3336",
+      "content_hash": "85cf1a39197ef429b8a974a7cec1366e4b526fcf357f4163e79596d4f57205ea",
       "dossier_path": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "promoted_rules": [
@@ -2848,6 +2848,11 @@
           "number": 5068,
           "title": "Merge pull request #23545 from arangodb/bug-fix/cor-1209/crash-on-license-activa",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5337,
+          "title": "Added a regression test",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2855,7 +2860,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T00:06:05.057Z",
+      "verified_at": "2026-10-28T16:05:27.539Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25102,7 +25107,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/NaiveAI/Naive-N0.5-Flash",
       "source_version": "hf-naiveai-naive-n0.5-flash",
-      "content_hash": "d0cb0ed7b0ade4acc1161688655171875022495dde7d8ae18f77f679155ef075",
+      "content_hash": "5bd3b1e1d49c98e496fb3ceddb2249c51a1dd676b8a50d9c00ad5e9241a70165",
       "dossier_path": "07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md",
       "promoted_rules": [
@@ -25139,7 +25144,7 @@
         "learn-huggingface-hf-naiveai-naive-n0-5-flash-mv3y20ev",
         "learn-huggingface-hf-naiveai-naive-n0-5-flash-mv4crs6s"
       ],
-      "verified_at": "2026-10-25T22:16:02.761Z",
+      "verified_at": "2026-10-28T16:05:09.648Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40470,8 +40475,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "ba276435",
-      "content_hash": "d9be5f788a923f8990400563c788efa10a2015e901602a6f8c42df743c8a5fb3",
+      "source_version": "62f695c4",
+      "content_hash": "ab57601d992c08bb9c795bb61728bb0a2d8446af3c5205be0e4bfcfd35fb5710",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -40589,6 +40594,11 @@
           "number": 5315,
           "title": "Rework /arc-purposal into per-puzzle NUC workflow",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5336,
+          "title": "Clarify ARC dataset and proposal references",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40596,7 +40606,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T14:42:55.047Z",
+      "verified_at": "2026-10-28T16:05:27.239Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65145,13 +65155,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "6b124303",
-      "content_hash": "d4a3d7dc9bac41ec851a71096c8f0c52bca83a64a4c689a8f2e4e5dafd4e1a76",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "5375fc14",
+      "content_hash": "9647257de8d8a09a8847a8653b780a1eea6952ab347ce96d80770a797b32d695",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 1114,
@@ -65207,6 +65217,11 @@
           "number": 5038,
           "title": "metrics: count transaction verification, memory-pool admission and gossip per ca",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 5335,
+          "title": "Merge pull request #4584 from aleo-labs-protocol/fix/client-solution-limit",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -65214,7 +65229,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T23:52:42.293Z",
+      "verified_at": "2026-10-28T16:05:21.608Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -144916,6 +144931,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T15:58:18.376Z"
+    },
+    "rule-5335": {
+      "learning_id": "rule-5335",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5335,
+      "title": "Merge pull request #4584 from aleo-labs-protocol/fix/client-solution-limit",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "5375fc14",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T16:05:21.608Z"
+    },
+    "rule-5336": {
+      "learning_id": "rule-5336",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5336,
+      "title": "Clarify ARC dataset and proposal references",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "62f695c4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T16:05:27.239Z"
+    },
+    "rule-5337": {
+      "learning_id": "rule-5337",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5337,
+      "title": "Added a regression test",
+      "source_url": "https://github.com/arangodb/arangodb",
+      "source_version": "19ed3336",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T16:05:27.539Z"
     }
   },
   "aliases": {

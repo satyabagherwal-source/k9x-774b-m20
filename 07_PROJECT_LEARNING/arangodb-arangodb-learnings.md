@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source**: github ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
-> **Source Version**: `fc353927`  
+> **Source Version**: `19ed3336`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T00:06:04.770Z  
+> **Timestamp**: 2026-10-28T16:05:27.203Z  
 > **Learning ID**: `learn-github-arangodb-arangodb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T00:06:04.765Z  
+> **Harvest Timestamp**: 2026-10-28T16:05:27.197Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🥑 ArangoDB is a native multi-model database with flexible data models for documents, graphs, and key-values. Build high performance applications using a convenient SQL-like query language or JavaScript extensions.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 14287 stars
+- **Stars / Engagement**: 14289 stars
 
 ---
 
@@ -988,11 +988,11 @@ my sample apple
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23546** (2026-10-27): **Bug fix/handle makedata timeoout**
-  *Symptoms*: ### Scope & Purpose  - idle agency threads added - catch makedata timeout/procmon assert - kill makedata arangosh if the SUT is going to be crash analyzed - try to bring log messages to the crash report so we have the assert message  - [x] :hankey: Bugfix 
+- **Issue #23550** (2026-10-28): **[COR-1230] (3.12.13) dont shutdown before upgrade**
+  *Symptoms*: ### Scope & Purpose  Port of https://github.com/arangodb/arangodb/pull/23549 to the 3.12.13 release branch.
 
-- **Issue #23545** (2026-10-27): **[COR-1209] Changelog**
-  *Symptoms*: ### Scope & Purpose  Changelog entry for the enterprise PR.  #### Related Information  - [ ] Docs PR:  - [x] Enterprise PR: https://github.com/arangodb/enterprise/pull/1728 - [x] Jira ticket: https://arangodb.atlassian.net/browse/COR-1209 - [ ] Design document:  
+- **Issue #23549** (2026-10-28): **[COR-1230] dont shutdown before upgrade**
+  *Symptoms*: ### Scope & Purpose  PR #23225 (commit a5ac47ca4f6) no longer registers the ServerFeature in upgrade mode. This however disabled the ShutdownFeature during its prepare().  Now the ShutdownFeature is no longer disabled in upgrade mode. This causes beginShutdown being called even before the UpgradeFeature starts. RocksDBEngine::beginShutdown being called before the compaction results in the compaction being canceled before it started.  The regression hasn't been released, so there's no CHANGELOG entry.  - [X] :hankey: Bugfix - [ ] :pizza: New feature - [ ] :fire: Performance improvement - [ ] :hammer: Refactoring/simplification  ### Checklist  - [X] Tests   - [X] **Regression tests** - [X] Backports   - [X] Backport for 3.12.13:   #### Related Information  - [X] GitHub issue / Jira ticket: https://arangodb.atlassian.net/browse/COR-1230  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1009,40 +1009,16 @@ my sample apple
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a30d37a6` (2026-10-27)
-**Commit Message**: Merge pull request #23545 from arangodb/bug-fix/cor-1209/crash-on-license-activation
+### Incident Patch 1: `22374ae6` (2026-10-28)
+**Commit Message**: Added a regression test
 
-[COR-1209] Changelog
-
-**File**: `CHANGELOG` (modified, +2/-0)
+**File**: `tests/js/client/shell/shell-auto-upgrade-full-compaction-noncluster.js` (added, +91/-0)
 ```diff
-@@ -10,6 +10,8 @@
-   authentication it requires read-write access to that database and not read-write
-   access to `_system`. Returns TRI_ERROR_FORBIDDEN on failure.
- 
-+* COR-1209: Fixed a crash that occurs when a license is being activated.
-+
- * Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
-   dependencies.
- 
-```
-
----
-
-### Incident Patch 2: `173702b2` (2026-10-27)
-**Commit Message**: Add regression test for BTS-2497
-
-**File**: `tests/js/client/aql/aql-graph-all-shortest-paths-regression.js` (added, +73/-0)
-```diff
-@@ -0,0 +1,73 @@
-+/*jshint globalstrict:false, strict:false, sub: true, maxlen: 500 */
-+/*global assertEqual, assertTrue, assertFalse, assertMatch, fail */
-+
+@@ -0,0 +1,91 @@
 +// //////////////////////////////////////////////////////////////////////////////
 +// / DISCLAIMER
 +// /
-+// / Copyright 2014-2024 ArangoDB GmbH, Cologne, Germany
-+// / Copyright 2004-2014 triAGENS GmbH, Cologne, Germany
++// / Copyright 2014-2026 ArangoDB GmbH, Cologne, Germany
 +// /
 +// / Licensed under the Business Source License 1.1 (the "License");
 +// / you may not use this file except in compliance with the License.
@@ -1061,269 +1037,249 @@ Observed empirical fixes and code patches:
 +// //////////////////////////////////////////////////////////////////////////////
 +
 +const jsunity = require("jsunity");
++const { assertTrue, assertFalse, assertEqual } = jsunity.jsUnity.assertions;
++const pu = require('@arangodb/testutils/process-utils');
++const fs = require("fs");
++const { executeExternalAndWaitWithSanitizer } = require('@arangodb/test-helper');
 +
-+function allShortestPathsRegressionTestSuite() {
-+  const vName = "UnitTestVertices";
-+  const eName = "UnitTestEdges";
++function AutoUpgradeFullCompactionSuite () {
++  'use strict';
 +
 +  return {
-+    setUpAll: function () {
-+      db._create(vName);
-+      db._createEdgeCollection(eName);
-+      db._query(`FOR k IN ["a","b","c","d","x"] INSERT {_key: k} INTO ${vName}`);
++    testAutoUpgradeWithFullCompactionSucceeds: function () {
++      /*
++       * Regression test: `--database.auto-upgrade true` combined with
++       * `--database.auto-upgrade-full-compaction true` used to fail
++       * deterministically with exit code 30 (TRI_EXIT_FULL_COMPACTION_FAILED)
++       * and "Manual compaction paused", even on an empty database directory.
++       * The ShutdownFeature was registered in upgrade mode and its start()
++       * put the server into shutdown state before the storage engine and the
++       * UpgradeFeature even started, so the full compaction saw the cancel
++       * flag immediately.
++       *
++       * As we need the exit code, we start a single server as an external
++       * process on a fresh database directory and wait for it to finish the
++       * upgrade. The log is written to a file so the result can be checked.
++       */
++      const arangod = pu.ARANGOD_BIN;
++      assertTrue(fs.isFile(arangod), "arangod not found!");
 +
-+      db._query(`FOR p IN [["a","b"],["b","d"],["a","c"],["c","d"]] INSERT {_from: CONCAT("${vName}/",p[0]), _to: CONCAT("${vName}/",p[1])} INTO ${eName}`);
-+    },
++      const dataDir = fs.getTempFile();
++      const logFile = fs.getTempFile();
++      const args = [
++        '-c', 'none',
++        '--database.directory', dataDir,
++        '--database.auto-upgrade', 'true',
++        '--database.auto-upgrade-full-compaction', 'true',
++        '--javascript.enabled', 'false',
++        '--server.rest-server', 'false',
++        '--log.output', 'file://' + logFile,
++        '--log.foreground-tty', 'false',
++        '--log.ids', 'true'
++      ];
 +
-+    tearDownAll: function () {
-+      db._drop(eName);
-+      db._drop(vName);
-+    },
++      try {
++        const rc = executeExternalAndWaitWithSanitizer(arangod, args, 'shell-auto-upgrade-full-compaction-noncluster');
++        const log = fs.isFile(logFile) ? fs.readFileSync(logFile).toString() : '';
++        const details = `arangod result: ${JSON.stringify(rc)}\narangod log:\n${log}`;
 +
-+    testAllShortestPathsResets: function () {
-+
-+      // A: an empty search in the middle
-+      const r1 = db._query(
-+        `FOR pr IN [["a","d"],["x","d"],["a","d"]]
-+           LET ps = (FOR p IN OUTBOUND ALL_SHORTEST_PATHS CONCAT("${vName}/",pr[0]) TO CONCAT("${vName}/",pr[1]) ${eName} RETURN p)
-+             RETURN LENGTH(ps)`).toArray();
-+      assertEqual(r1, [2, 0, 2]);
-+      
-+      // B: start == target in the middle
-+      const r2 = db._query(
-+        `FOR pr IN [["a","d"],["d","d"],["a","d"]]
-+           LET ps = (FOR p IN OUTBOUND ALL_SHORTEST_PATHS CONCAT("${vName}/",pr[0]) TO CONCAT("${vName}/",pr[1]) ${eName} RETURN p)
-+             RETURN LENGTH(ps)`).toArray();
-+     // assertEqual(r2, [2, 1, 2]);
-+      
-+      // control: SHORTEST_PATH in the same loop
-+      const r3 = db._query(
-+        `FOR pr IN [["a","d"],["x","d"],["a","d"]]
-+           LET ps = (FOR p IN OUTBOUND SHORTEST_PATH CONCAT("${vName}/",pr[0]) TO CONCAT("${vName}/",pr[1]) ${eName} RETURN p)
-+             RETURN LENGTH(ps)`).toArray();
-+      assertEqual(r3, [3, 0, 3]);
++        assertTrue(rc.hasOwnProperty("exit"), details);
++        assertEqual(0, rc.exit, details);
++        // e8f47: "full RocksDB compaction after upgrade completed successfully"
++        assertTrue(log.includes('[e8f47]'), details);
++        // 65594: "compaction of entire RocksDB database key range finished"
++        assertTrue(log.includes('[65594]'), details);
++        // e8f46: "full RocksDB compaction after upgrade failed"
++        assertFalse(log.includes('[e8f46]'), details);
++      } finally {
++        if (fs.isFile(logFile)) {
++          fs.remove(logFile);
++        }
++        if (fs.isDirectory(dataDir)) {
++          fs.removeDirectoryRecursive(dataDir, true);
++        }
++      }
 +    }
 +  };
 +}
 +
-+jsunity.run(allShortestPathsRegressionTestSuite);
++jsunity.run(AutoUpgradeFullCompactionSuite);
++
 +return jsunity.done();
 ```
 
 ---
 
-### Incident Patch 3: `039edacd` (2026-10-27)
-**Commit Message**: Bug fix/handle makedata timeoout (#23546)
+### Incident Patch 2: `340d7de0` (2026-10-28)
+**Commit Message**: Merge pull request #23549 from arangodb/bug-fix/cor-1230-dont-shutdown-before-upgrade
 
-* agency idle stacktframes...
+[COR-1230] dont shutdown before upgrade
 
-* properly handle aborts of makedata
-
-**File**: `js/client/modules/@arangodb/testutils/client-tools.js` (modified, +25/-5)
+**File**: `arangod/RestServer/ArangodServer.cpp` (modified, +4/-5)
 ```diff
-@@ -32,7 +32,9 @@ const fs = require('fs');
- const { sanHandler } = require('@arangodb/testutils/san-file-handler');
- const {
-   sleep,
-+  killExternal,
-   executeExternal,
-+  getExternalSpawned,
-   SetGlobalExecutionDeadlineTo } = internal;
- const { versionHas } = require("@arangodb/test-helper");
- const isCov = versionHas('coverage');
-@@ -803,13 +805,31 @@ function rtaMakedata(options, instanceManager, writeReadClean, msg, logFile, mor
-   if (options.extremeVerbosity !== 'silence') {
-     print(argv);
-   }
--  
-+  let ret;
-   let timeout = (options.isInstrumented) ? 60 * 45 : 60 * 15;
-   SetGlobalExecutionDeadlineTo(timeout);
--  let ret = pu.executeAndWait(pu.ARANGOSH_BIN, argv, options, 'arangosh', instanceManager.rootDir, options.coreCheck, timeout);
--  timeout = SetGlobalExecutionDeadlineTo(0.0);
--  if (timeout) {
--    ret.status = false;
-+  try {
-+    ret = pu.executeAndWait(pu.ARANGOSH_BIN, argv, options, 'arangosh', instanceManager.rootDir, options.coreCheck, timeout);
-+    timeout = SetGlobalExecutionDeadlineTo(0.0);
-+    if (timeout) {
-+      ret.status = false;
-+    }
-+  } catch (ex) {
-+    timeout = SetGlobalExecutionDeadlineTo(0.0);
-+    print(`${RED}${Date()}rtaMakedata(): caught exception during executing makedata: ${timeout?"timeout ":""}${ex}${RESET}`);
-+    ret = {
-+      status: false,
-+      message: `failed to execute ${argv} by: ${ex} ${ex.stack}`
-+    };
-+    let running = getExternalSpawned();
-+    running.forEach(process => {
-+      // [0] is not there in argv, only in arguments.
-+      if (process.arguments[0] === pu.ARANGOSH_BIN && (process.arguments.length -1) === argv.length) {
-+        print(`${RED}${Date()} rtaMakedata(): identified my process, killing ${JSON.stringify(process)}${RESET}`);
-+        let msg = killExternal(process.pid, 9);
-+        ret.message += '\n' + msg;
-+      }
-+    });
-   }
-   return ret;
- }
+@@ -367,11 +367,10 @@ void ArangodServer::addFeatures() {
+   addFeature<ShardingFeature>();
+   addFeature<ShellColorsFeature>();
+ #ifdef USE_V8
+-  addFeature<ShutdownFeature>(
+-      std::array{std::type_index(typeid(ScriptFeature))});
+-#else
+-  addFeature<ShutdownFeature>(
+-      std::array{std::type_index(typeid(AgencyFeaturePhase))});
++  if (operationMode == OperationMode::MODE_SCRIPT) {
++    addFeature<ShutdownFeature>(
++        std::array{std::type_index(typeid(ScriptFeature))});
++  }
+ #endif
+   addFeature<SoftShutdownFeature>();
+   addFeature<SslFeature>();
 ```
 
-**File**: `js/client/modules/@arangodb/testutils/filter_gdb_stacks.json` (modified, +78/-0)
+**File**: `arangod/RestServer/ServerFeature.cpp` (modified, +0/-6)
 ```diff
-@@ -1415,6 +1415,84 @@
-     "ThreadStarter",
-     "start_thread",
-     "clone3"
-+  ],
-+  [
-+    "epoll_wait",
-+    "run",
-+    "do_run_one",
-+    "run",
-+    "run",
-+    "operator",
-+    "__invoke_impl",
-+    "__invoke",
-+    "_M_invoke",
-+    "operator",
-+    "_M_run",
-+    "execute_native_thread_routine",
-+    "start_thread",
-+    "clone3"
-+  ],
-+  [
-+    "epoll_wait",
-+    "run",
-+    "do_run_one",
-+    "run",
-+    "run",
-+    "run",
-+    "runMe",
-+    "startThread",
-+    "ThreadStarter",
-+    "start_thread",
-+    "clone3"
-+  ],
-+  [
-+    "__futex_abstimed_wait_cancelable64",
-+    "pthread_cond_wait",
-+    "wait",
-+    "wait",
-+    "do_run_one",
-+    "run",
-+    "operator",
-+    "run",
-+    "boost_asio_detail_posix_thread_function",
-+    "start_thread",
-+    "clone3"
-+  ],
-+  [
-+    "clock_nanosleep",
-+    "nanosleep",
-+    "sleep_for",
-+    "run",
-+    "runMe",
-+    "startThread",
-+    "ThreadStarter",
-+    "start_thread",
-+    "clone3"
-+  ],
-+  [
-+    "__futex_abstimed_wait_cancelable64",
-+    "pthread_cond_clockwait",
-+    "wait_until",
-+    "__wait_until_impl",
-+    "wait_until",
-+    "wait_for",
-+    "wait",
-+    "run",
-+    "runServer",
-+    "main"
-+  ],
-+  [
-+    "__futex_abstimed_wait_cancelable64",
-+    "pthread_cond_clockwait",
-+    "wait_until",
-+    "__wait_until_impl",
-+    "wait_until",
-+    "run",
-+    "runMe",
-+    "startThread",
-+    "ThreadStarter",
-+    "start_thread",
-+    "clone3"
-   ]
+@@ -23,7 +23,6 @@
+ #include "ServerFeature.h"
  
- ]
-```
-
-**File**: `js/client/modules/@arangodb/testutils/instance-manager.js` (modified, +1/-1)
-```diff
-@@ -705,7 +705,7 @@ class instanceManager {
-   readImportantLogLines (logPath) {
-     let importantLines = {};
-     this.arangods.forEach(arangod => {
--      let lines = arangod.readImportantLogLines();
-+      let lines = arangod.readImportantLogLines([]);
-       if (lines.length > 0) {
-         importantLines[arangod.name] = lines;
-       }
-```
-
-**File**: `js/client/modules/@arangodb/testutils/instance.js` (modified, +18/-2)
-```diff
-@@ -1053,6 +1053,15 @@ class instance {
-     if (this.exitStatus === null) {
-       return 'Not yet launched!';
-     }
-+    // try to find the assert line:
-+    let assertLines = this.readImportantLogLines([
-+      'a7902', // signal handler line
-+      'a7902', // the assert line
-+      '308c3'  // crash stack frame
-+    ]);
-+    assertLines.forEach(line => {
-+      crashUtils.GDB_OUTPUT += line + "\n";
-+    });
-     return crashUtils.analyzeCrash(pu.ARANGOD_BIN, this, this.options, checkStr);
+ #include "ApplicationFeatures/ApplicationServer.h"
+-#include "ApplicationFeatures/ShutdownFeature.h"
+ #include "FeaturePhases/AqlFeaturePhase.h"
+ #include "RestServer/UpgradeFeature.h"
+ #include "Basics/application-exit.h"
+@@ -101,11 +100,6 @@ void ServerFeature::prepare() {
    }
-   // //////////////////////////////////////////////////////////////////////////////
-@@ -1337,7 +1346,7 @@ class instance {
-   // //////////////////////////////////////////////////////////////////////////////
-   // / @brief scans the log files for assert lines
-   // //////////////////////////////////////////////////////////////////////////////
--  readImportantLogLines () {
-+  readImportantLogLines (findTheseLogIDs) {
-     if (!fs.exists(fs.join(this.logFile))) {
-       print(`${RED}${Date()} unable to find ${this.logFile} of ${this.name}!${RESET}`);
-       return [];
-@@ -1351,7 +1360,14 @@ class instance {
-       if (buf[j] === 10) { // \n
-         const line = buf.utf8Slice(lineStart, j);
-         lineStart = j + 1;
+ #endif
+ 
+-  if (operationMode() == OperationMode::MODE_SERVER ||
+-      operationMode() == OperationMode::MODE_CONSOLE) {
+-    server().getFeature<ShutdownFeature>().disable();
+-  }
 -
-+        if (findTheseLogIDs.length > 0) {
-+          findTheseLogIDs.forEach(logid => {
-+            if (line.search(logid) !== -1) {
-+              fnLines.push(line);
-+            }
-+          });
-+          continue;
+   // adjust global settings for UTF-8 string validation
+   basics::VelocyPackHelper::strictRequestValidationOptions.validateUtf8Strings =
+       _options.validateUtf8Strings;
+```
+
+**File**: `tests/js/client/shell/shell-auto-upgrade-full-compaction-noncluster.js` (added, +91/-0)
+```diff
+@@ -0,0 +1,91 @@
++// //////////////////////////////////////////////////////////////////////////////
++// / DISCLAIMER
++// /
++// / Copyright 2014-2026 ArangoDB GmbH, Cologne, Germany
++// /
++// / Licensed under the Business Source License 1.1 (the "License");
++// / you may not use this file except in compliance with the License.
++// / You may obtain a copy of the License at
++// /
++// /     https://github.com/arangodb/arangodb/blob/devel/LICENSE
++// /
++// / Unless required by applicable law or agreed to in writing, software
++// / distributed under the License is distributed on an "AS IS" BASIS,
++// / WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// / See the License for the specific language governing permissions and
++// / limitations under the License.
++// /
++// / Copyright holder is ArangoDB GmbH, Cologne, Germany
++// /
++// //////////////////////////////////////////////////////////////////////////////
++
++const jsunity = require("jsunity");
++const { assertTrue, assertFalse, assertEqual } = jsunity.jsUnity.assertions;
++const pu = require('@arangodb/testutils/process-utils');
++const fs = require("fs");
++const { executeExternalAndWaitWithSanitizer } = require('@arangodb/test-helper');
++
++function AutoUpgradeFullCompactionSuite () {
++  'use strict';
++
++  return {
++    testAutoUpgradeWithFullCompactionSucceeds: function () {
++      /*
++       * Regression test: `--database.auto-upgrade true` combined with
++       * `--database.auto-upgrade-full-compaction true` used to fail
++       * deterministically with exit code 30 (TRI_EXIT_FULL_COMPACTION_FAILED)
++       * and "Manual compaction paused", even on an empty database directory.
++       * The ShutdownFeature was registered in upgrade mode and its start()
++       * put the server into shutdown state before the storage engine and the
++       * UpgradeFeature even started, so the full compaction saw the cancel
++       * flag immediately.
++       *
++       * As we need the exit code, we start a single server as an external
++       * process on a fresh database directory and wait for it to finish the
++       * upgrade. The log is written to a file so the result can be checked.
++       */
++      const arangod = pu.ARANGOD_BIN;
++      assertTrue(fs.isFile(arangod), "arangod not found!");
++
++      const dataDir = fs.getTempFile();
++      const logFile = fs.getTempFile();
++      const args = [
++        '-c', 'none',
++        '--database.directory', dataDir,
++        '--database.auto-upgrade', 'true',
++        '--database.auto-upgrade-full-compaction', 'true',
++        '--javascript.enabled', 'false',
++        '--server.rest-server', 'false',
++        '--log.output', 'file://' + logFile,
++        '--log.foreground-tty', 'false',
++        '--log.ids', 'true'
++      ];
++
++      try {
++        const rc = executeExternalAndWaitWithSanitizer(arangod, args, 'shell-auto-upgrade-full-compaction-noncluster');
++        const log = fs.isFile(logFile) ? fs.readFileSync(logFile).toString() : '';
++        const details = `arangod result: ${JSON.stringify(rc)}\narangod log:\n${log}`;
++
++        assertTrue(rc.hasOwnProperty("exit"), details);
++        assertEqual(0, rc.exit, details);
++        // e8f47: "full RocksDB compaction after upgrade completed successfully"
++        assertTrue(log.includes('[e8f47]'), details);
++        // 65594: "compaction of entire RocksDB database key range finished"
++        assertTrue(log.includes('[65594]'), details);
++        // e8f46: "full RocksDB compaction after upgrade failed"
++        assertFalse(log.includes('[e8f46]'), details);
++      } finally {
++        if (fs.isFile(logFile)) {
++          fs.remove(logFile);
 +        }
-         // filter out regular INFO lines, and test related messages
-         let warn = line.search('WARNING about to execute:') !== -1;
-         let info = line.search(' INFO ') !== -1;
++        if (fs.isDirectory(dataDir)) {
++          fs.removeDirectoryRecursive(dataDir, true);
++        }
++      }
++    }
++  };
++}
++
++jsunity.run(AutoUpgradeFullCompactionSuite);
++
++return jsunity.done();
+```
+
+**File**: `tests/sepp/Server.cpp` (modified, +0/-7)
+```diff
+@@ -226,13 +226,6 @@ void Server::Impl::setupServer(std::string const& name, int& result) {
+   _server.addFeature<ShardingFeature>();
+   _server.addFeature<SharedPRNGFeature>();
+   _server.addFeature<ShellColorsFeature>();
+-#ifdef USE_V8
+-  _server.addFeature<ShutdownFeature>(
+-      std::array{std::type_index(typeid(ScriptFeature))});
+-#else
+-  _server.addFeature<ShutdownFeature>(
+-      std::array{std::type_index(typeid(AgencyFeaturePhase))});
+-#endif
+   _server.addFeature<SoftShutdownFeature>();
+   _server.addFeature<SslFeature>();
+   _server.addFeature<StatisticsFeature>(metrics);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #23550** (2026-10-28): [COR-1230] (3.12.13) dont shutdown before upgrade (@goedderz)
+- **PR #23549** (2026-10-28): [COR-1230] dont shutdown before upgrade (@goedderz)
+- **PR #23548** (2026-10-28): [COR-1229] Refactor ApiVersion handling in RestHandlerFactory (@mpoeter)
+- **PR #23547** (2026-10-28): [BTS-2503] smart-join-smart-edge requires one vertex and direction in all OR branches (@maierlars)
 - **PR #23546** (2026-10-27): Bug fix/handle makedata timeoout (@dothebart)
 - **PR #23545** (2026-10-27): [COR-1209] Changelog (@johann-listunov)
-- **PR #23544** (2026-10-27): [BTS-2502] AQL IndexNode reads every index lookup of an OR condition (@maierlars)
-- **PR #23543** (2026-10-27): [BTS-2496] AQL LENGTH()/COUNT() of a subquery with COLLECT returns the subquery's row count (@maierlars)
-- **PR #23542** (2026-10-27): [BTS-2497] - Reset TwoSidedEnumerator a bit more. (@markuspf)
-- **PR #23541** (2026-10-27): Adjust debug DEB package layout to the adjusted build ID for client tools (@KVS85)
 
 ---
 
@@ -1343,22 +1299,48 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #23545 from arangodb/bug-fix/cor-1209/crash-on-license-activa
+## X. Added a regression test
 
 **RULE**:
-When implementing operations in `CHANGELOG`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/js/client/shell/shell-auto-upgrade-full-compaction-noncluster.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a30d37a6`: Merge pull request #23545 from arangodb/bug-fix/cor-1209/crash-on-license-activation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `22374ae6`: Added a regression test. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/js/client/shell/shell-auto-upgrade-full-compaction-noncluster.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-* COR-1209: Fixed a crash that occurs when a license is being activated.
+// //////////////////////////////////////////////////////////////////////////////
+// / DISCLAIMER
+// /
+// / Copyright 2014-2026 ArangoDB GmbH, Cologne, Germany
+// /
+// / Licensed under the Business Source License 1.1 (the "License");
+// / you may not use this file except in compliance with the License.
+// / You may obtain a copy of the License at
+// /
+// /     https://github.com/arangodb/arangodb/blob/devel/LICENSE
+// /
+// / Unless required by applicable law or agreed to in writing, software
+// / distributed under the License is distributed on an "AS IS" BASIS,
+// / WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// / See the License for the specific language governing permissions and
+// / limitations under the License.
+// /
+// / Copyright holder is ArangoDB GmbH, Cologne, Germany
+// /
+// //////////////////////////////////////////////////////////////////////////////
 
+const jsunity = require("jsunity");
+const { assertTrue, assertFalse, assertEqual } = jsunity.jsUnity.assertions;
+const pu = require('@arangodb/testutils/process-utils');
+const fs = require("fs");
+const { executeExternalAndWaitWithSanitizer } = require('@arangodb/test-helper');
+
+function AutoUpg
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1368,4 +1350,4 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a30d37a6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `22374ae6` are properly handled with clean fallback behavior.

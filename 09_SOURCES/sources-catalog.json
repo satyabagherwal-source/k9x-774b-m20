@@ -1085,8 +1085,8 @@
     "sourceUrl": "https://huggingface.co/NaiveAI/Naive-N0.5-Flash",
     "sourceVersion": "hf-naiveai-naive-n0.5-flash",
     "license": "Open-Source",
-    "contentHash": "d0cb0ed7b0ade4acc1161688655171875022495dde7d8ae18f77f679155ef075",
-    "lastHarvestedAt": "2026-10-25T22:16:02.834Z",
+    "contentHash": "5bd3b1e1d49c98e496fb3ceddb2249c51a1dd676b8a50d9c00ad5e9241a70165",
+    "lastHarvestedAt": "2026-10-28T16:05:09.708Z",
     "learningId": "learn-huggingface-naiveai-naive-n0-5-flash"
   },
   "hf-openai-clip-vit-base-patch32": {
@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "6b124303",
+    "sourceVersion": "5375fc14",
     "license": "Apache-2.0",
-    "contentHash": "6b099d696de29b98f3a8f1d9de52633959e8976ce91addbd78ed594f1c27794b",
-    "lastHarvestedAt": "2026-10-27T22:36:27.647Z",
+    "contentHash": "9647257de8d8a09a8847a8653b780a1eea6952ab347ce96d80770a797b32d695",
+    "lastHarvestedAt": "2026-10-28T16:05:21.662Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "ba276435",
+    "sourceVersion": "62f695c4",
     "license": "Apache-2.0",
-    "contentHash": "d9be5f788a923f8990400563c788efa10a2015e901602a6f8c42df743c8a5fb3",
-    "lastHarvestedAt": "2026-10-28T14:42:55.129Z",
+    "contentHash": "ab57601d992c08bb9c795bb61728bb0a2d8446af3c5205be0e4bfcfd35fb5710",
+    "lastHarvestedAt": "2026-10-28T16:05:27.302Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -5013,10 +5013,10 @@
     "repository": "arangodb/arangodb",
     "platform": "github",
     "sourceUrl": "https://github.com/arangodb/arangodb",
-    "sourceVersion": "fc353927",
+    "sourceVersion": "19ed3336",
     "license": "NOASSERTION",
-    "contentHash": "4bfe01815f7385ece1612375b784826be7b016ef4f6d4facee2d4389ff63c3b5",
-    "lastHarvestedAt": "2026-10-28T00:06:05.116Z",
+    "contentHash": "85cf1a39197ef429b8a974a7cec1366e4b526fcf357f4163e79596d4f57205ea",
+    "lastHarvestedAt": "2026-10-28T16:05:27.593Z",
     "learningId": "learn-github-arangodb-arangodb"
   },
   "chakra-ui-ark": {

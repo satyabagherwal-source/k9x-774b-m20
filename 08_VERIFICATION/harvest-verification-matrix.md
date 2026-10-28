@@ -5832,3 +5832,7 @@
 | `CYCLE-20261028-K072` | `2026-10-28T15:50:44.990Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md` | Yes (`382dce74...`) |
 | `CYCLE-20261028-TOBV` | `2026-10-28T15:58:16.171Z` | `Venastine-Research/Xing4.0-29B-A4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md` | Yes (`b5eb6b6b...`) |
 | `CYCLE-20261028-TQ36` | `2026-10-28T15:58:18.450Z` | `Xudong-Huang/may` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5334` | Yes (`fc63c9b9...`) |
+| `CYCLE-20261028-2JEX` | `2026-10-28T16:05:09.705Z` | `NaiveAI/Naive-N0.5-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md` | Yes (`5bd3b1e1...`) |
+| `CYCLE-20261028-2SMZ` | `2026-10-28T16:05:21.659Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5335` | Yes (`9647257d...`) |
+| `CYCLE-20261028-2WZN` | `2026-10-28T16:05:27.299Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5336` | Yes (`ab57601d...`) |
+| `CYCLE-20261028-2X7Q` | `2026-10-28T16:05:27.590Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5337` | Yes (`85cf1a39...`) |
