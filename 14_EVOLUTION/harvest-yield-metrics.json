@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T01:15:46.131Z",
-  "total_cycles_completed": 5600,
-  "total_learnings_persisted": 5600,
-  "total_rules_promoted": 5017,
+  "last_updated": "2026-10-28T01:22:24.334Z",
+  "total_cycles_completed": 5602,
+  "total_learnings_persisted": 5602,
+  "total_rules_promoted": 5021,
   "history": [
-    {
-      "timestamp": "2026-10-27T16:18:19.712Z",
-      "repository": "PaperDebugger/paperdebugger",
-      "learningId": "learn-github-paperdebugger-paperdebugger",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T16:24:57.004Z",
-      "repository": "paradedb/paradedb",
-      "learningId": "learn-github-paradedb-paradedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T16:31:33.791Z",
       "repository": "TanStack/query",
@@ -1403,6 +1389,20 @@
       "repository": "lilylilith/QI_2.1_AnyAngle",
       "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T01:22:15.169Z",
+      "repository": "ClementTsang/bottom",
+      "learningId": "learn-github-clementtsang-bottom",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T01:22:24.334Z",
+      "repository": "BAAI/bge-large-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

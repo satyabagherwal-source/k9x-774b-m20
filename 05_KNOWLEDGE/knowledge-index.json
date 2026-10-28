@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T01:15:46.054Z",
+  "last_updated": "2026-10-28T01:22:24.266Z",
   "total_verified_learnings": 1154,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6608,14 +6608,19 @@
       "slug": "clementtsang-bottom",
       "platform": "github",
       "source_url": "https://github.com/ClementTsang/bottom",
-      "source_version": "7d65d62c",
-      "content_hash": "ab92b1aec66d2c5c54679360559c8c43cd60a4744459c3883fbfd40231e843c4",
+      "source_version": "fdc61caf",
+      "content_hash": "5324261db0b71c9c81430e940f1c1198d90e473ed72df47c79ab1ec2039d27e3",
       "dossier_path": "07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
       "promoted_rules": [
         {
           "number": 1894,
           "title": "other: allow clippy lint for regex creation in loops (#2270)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5093,
+          "title": "make it so bracketed paste not working does not panic (#2284)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -6624,7 +6629,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T00:10:17.537Z",
+      "verified_at": "2026-10-28T01:22:15.091Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -17314,7 +17319,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-large-en-v1.5",
       "source_version": "hf-baai-bge-large-en-v1.5",
-      "content_hash": "679489d313570bed2d58fc53e3d53605be1909059d46477b26793d4b87e478c4",
+      "content_hash": "4faa0e85fa8954ca5cf6f27ea13dc16767777082b4a700cbb54edb447b80907b",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md",
       "promoted_rules": [
@@ -17357,6 +17362,21 @@
           "number": 4048,
           "title": "Normalization & Similarity Metric Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5094,
+          "title": "The Semantic Normalization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5095,
+          "title": "The Context Window Truncation & Padding Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5096,
+          "title": "The Batch Inference Determinism Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -17376,7 +17396,7 @@
         "learn-huggingface-hf-baai-bge-large-en-v1-5-mv40zfsc",
         "learn-huggingface-hf-baai-bge-large-en-v1-5-mv4exusx"
       ],
-      "verified_at": "2026-10-25T04:38:12.485Z",
+      "verified_at": "2026-10-28T01:22:24.253Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -140148,6 +140168,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T01:15:46.041Z"
+    },
+    "rule-5093": {
+      "learning_id": "rule-5093",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5093,
+      "title": "make it so bracketed paste not working does not panic (#2284)",
+      "source_url": "https://github.com/ClementTsang/bottom",
+      "source_version": "fdc61caf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:22:15.091Z"
+    },
+    "rule-5094": {
+      "learning_id": "rule-5094",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5094,
+      "title": "The Semantic Normalization Invariant",
+      "source_url": "https://huggingface.co/BAAI/bge-large-en-v1.5",
+      "source_version": "hf-baai-bge-large-en-v1.5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:22:24.253Z"
+    },
+    "rule-5095": {
+      "learning_id": "rule-5095",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5095,
+      "title": "The Context Window Truncation & Padding Invariant",
+      "source_url": "https://huggingface.co/BAAI/bge-large-en-v1.5",
+      "source_version": "hf-baai-bge-large-en-v1.5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:22:24.253Z"
+    },
+    "rule-5096": {
+      "learning_id": "rule-5096",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5096,
+      "title": "The Batch Inference Determinism Invariant",
+      "source_url": "https://huggingface.co/BAAI/bge-large-en-v1.5",
+      "source_version": "hf-baai-bge-large-en-v1.5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:22:24.253Z"
     }
   },
   "aliases": {

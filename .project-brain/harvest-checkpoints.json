@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T01:15:46.134Z",
+  "last_updated": "2026-10-28T01:22:24.339Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1715,14 +1715,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-large-en-v1-5",
-      "content_hash": "679489d313570bed2d58fc53e3d53605be1909059d46477b26793d4b87e478c4",
-      "verified_at": "2026-10-25T04:38:12.556Z",
+      "content_hash": "4faa0e85fa8954ca5cf6f27ea13dc16767777082b4a700cbb54edb447b80907b",
+      "verified_at": "2026-10-28T01:22:24.338Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T04:38:12.556Z"
+      "last_updated": "2026-10-28T01:22:24.338Z"
     },
     "zai-org/GLM-5.3": {
       "repository": "zai-org/GLM-5.3",
@@ -5961,14 +5961,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clementtsang-bottom",
-      "content_hash": "ab92b1aec66d2c5c54679360559c8c43cd60a4744459c3883fbfd40231e843c4",
-      "verified_at": "2026-10-19T00:10:17.591Z",
+      "content_hash": "5324261db0b71c9c81430e940f1c1198d90e473ed72df47c79ab1ec2039d27e3",
+      "verified_at": "2026-10-28T01:22:15.173Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T00:10:17.591Z"
+      "last_updated": "2026-10-28T01:22:15.173Z"
     },
     "jhen0409/react-native-debugger": {
       "repository": "jhen0409/react-native-debugger",

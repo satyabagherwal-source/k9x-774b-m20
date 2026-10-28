@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261026-C46K",
-    "timestamp": "2026-10-26T10:33:20.684Z",
-    "repository": "Louis-CFM/coucou",
-    "learningId": "learn-github-louis-cfm-coucou",
-    "contentHash": "2ec8392baa0c0049fd92e7ec72eb0ba467c61a360fa537b42419ea2e04a5055f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-C7IC",
-    "timestamp": "2026-10-26T10:33:24.996Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "30da01981244f55b9803eeaf919c7fc79b1e20943c6dda0293ae37baebf13b7d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261026-C974",
     "timestamp": "2026-10-26T10:33:27.184Z",
     "repository": "cachix/devenv",
@@ -7492,6 +7462,36 @@
     "contentHash": "cbe867e80fc90b3ff2fd4d90a035417db31d3fc18072216f6b59c913b4ad1b07",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-J3ZT",
+    "timestamp": "2026-10-28T01:22:15.161Z",
+    "repository": "ClementTsang/bottom",
+    "learningId": "learn-github-clementtsang-bottom",
+    "contentHash": "5324261db0b71c9c81430e940f1c1198d90e473ed72df47c79ab1ec2039d27e3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-JB2E",
+    "timestamp": "2026-10-28T01:22:24.326Z",
+    "repository": "BAAI/bge-large-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
+    "contentHash": "4faa0e85fa8954ca5cf6f27ea13dc16767777082b4a700cbb54edb447b80907b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

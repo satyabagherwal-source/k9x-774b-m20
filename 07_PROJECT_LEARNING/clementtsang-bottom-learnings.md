@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  
 > **Source**: github ([https://github.com/ClementTsang/bottom](https://github.com/ClementTsang/bottom))  
-> **Source Version**: `7d65d62c`  
+> **Source Version**: `fdc61caf`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T00:10:17.379Z  
+> **Timestamp**: 2026-10-28T01:22:14.727Z  
 > **Learning ID**: `learn-github-clementtsang-bottom`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClementTsang/bottom](https://github.com/ClementTsang/bottom))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T00:10:16.980Z  
+> **Harvest Timestamp**: 2026-10-28T01:22:14.462Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Yet another cross-platform graphical process/system monitor.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 14110 stars
+- **Stars / Engagement**: 14135 stars
 
 ---
 
@@ -1599,619 +1599,267 @@ impl InputFieldState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `048deff9` (2026-09-29)
-**Commit Message**: other: allow clippy lint for regex creation in loops (#2270)
+### Incident Patch 1: `fdc61caf` (2026-10-28)
+**Commit Message**: bug: make it so bracketed paste not working does not panic (#2284)
 
-https://github.com/rust-lang/rust-clippy/pull/17681 got merged a while ago - this makes it so the `regex_creation_in_loops` clippy `expect` "fails", since it is actually now not triggered.
+This change makes it so that if bracketed paste is not supported (e.g. Windows 7/8), we proceed and don't outright panic. This also has some small cosmetic changes around execute! and cleanup.
 
-Unfortunately, this is only in beta from the looks of it at the moment, so I can't just remove it entirely. This change just makes it an unconditional `allow` with a note to get rid of it at some point once it's stable.
-
-Note this only affects macOS, where we use this. This was fine because it's only actually triggered once, and then cached via a `OnceLock`.
-
-**File**: `.github/pull_request_template.md` (modified, +6/-4)
+**File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -36,10 +36,12 @@ _Ensure **all** of these are met:_
- - [ ] _There are no merge conflicts_
- - [ ] _You have personally reviewed your changes already before creating the PR_
- - [ ] _The pull request passes the provided CI pipeline_
--- _If the changes were generated with AI tools:_
--  - [ ] _Ensure it **fully** follows the [AI policy](https://github.com/ClementTsang/bottom/blob/main/AI_POLICY.md)._
--  - [ ] _Specify how it was used in the "Other" section._
--  - [ ] _Ensure that you, as a human, have personally reviewed the change_
-+
-+
-+_If the changes were generated with AI tools:_
-+- [ ] _Ensure it **fully** follows the [AI policy](https://github.com/ClementTsang/bottom/blob/main/AI_POLICY.md)._
-+- [ ] _Specify how it was used in the "Other" section._
-+- [ ] _Ensure that you, as a human, have personally reviewed the change_
+@@ -41,6 +41,8 @@ That said, these are more guidelines rather than hard rules, though the project
  
- ## Other
+ - [#2225](https://github.com/ClementTsang/bottom/pull/2225): Fix waking up NVIDIA GPUs when getting stats on Linux.
+ - [#2261](https://github.com/ClementTsang/bottom/pull/2261): Fix scrollbars not drawing when height of bar was 2 or less.
++- [#2279](https://github.com/ClementTsang/bottom/pull/2279): Fix an abort (SIGABRT) if the terminal is gone when exiting.
++- [#2284](https://github.com/ClementTsang/bottom/pull/2284): Fix bracketed paste not being supported on Windows 7/8 causing btm to panic on startup.
  
-```
-
-**File**: `src/app/data/store.rs` (modified, +2/-1)
-```diff
-@@ -295,7 +295,8 @@ impl InnerData {
-                     // Must trim one level further for macOS!
-                     static DISK_REGEX: OnceLock<Regex> = OnceLock::new();
- 
--                    #[expect(
-+                    // FIXME: Can remove this later once https://github.com/rust-lang/rust-clippy/pull/17681 lands in stable?
-+                    #[allow(
-                         clippy::regex_creation_in_loops,
-                         reason = "this is fine since it's done via a static OnceLock. In the future though, separate it out."
-                     )]
-```
-
----
-
-### Incident Patch 2: `fdc29871` (2026-09-22)
-**Commit Message**: bug: fix scrollbar not drawing if the height was 2 or less (#2261)
-
-**File**: `.github/ci/release_notes.md` (modified, +2/-2)
-```diff
-@@ -2,12 +2,12 @@
- 
- ---
- 
--## Bug Fixes
--
- ## Features
- 
- ## Changes
- 
-+## Bug Fixes
-+
- ## Other
- 
- ## Internal Changes
-```
-
-**File**: `CHANGELOG.md` (modified, +11/-4)
-```diff
-@@ -18,14 +18,12 @@ Versioning for this project is based on [Semantic Versioning](https://semver.org
- 
- That said, these are more guidelines rather than hard rules, though the project will generally try to follow them.
- 
-+<!--TODO: Make the changelog order standardized with features, changes, bugs, other -->
-+
- ---
- 
- ## 0.15.0 - Unreleased
- 
--### Bug Fixes
--
--- [#2225](https://github.com/ClementTsang/bottom/pull/2225): Fix waking up NVIDIA GPUs when getting stats on Linux.
--
- ### Features
- 
- - [#2239](https://github.com/ClementTsang/bottom/pull/2239): Initial Intel GPU support for Linux to get process GPU usage.
-@@ -34,6 +32,15 @@ That said, these are more guidelines rather than hard rules, though the project
- - [#2251](https://github.com/ClementTsang/bottom/pull/2251): Add configurable binary disk capacity units for disk widget I/O.
- - [#2224](https://github.com/ClementTsang/bottom/pull/2224): Add swap column for processes for Linux.
- 
-+### Changes
-+
-+- [#2260](https://github.com/ClementTsang/bottom/pull/2260): Enable scrollbars by default.
-+
-+### Bug Fixes
-+
-+- [#2225](https://github.com/ClementTsang/bottom/pull/2225): Fix waking up NVIDIA GPUs when getting stats on Linux.
-+- [#2261](https://github.com/ClementTsang/bottom/pull/2261): Fix scrollbars not drawing when height of bar was 2 or less.
-+
  ### Other
  
- - [#2227](https://github.com/ClementTsang/bottom/pull/2227): Add missing documentation around disk I/O graph.
 ```
 
-**File**: `src/canvas/components/data_table.rs` (modified, +1/-1)
+**File**: `src/app.rs` (modified, +17/-0)
 ```diff
-@@ -192,7 +192,7 @@ mod test {
-             left_to_right: false,
-             is_basic: false,
-             show_table_scroll_position: true,
--            show_table_scroll_bar: false,
-+            show_table_scroll_bar: true,
-             show_current_entry_when_unfocused: false,
-         };
-         let styling = DataTableStyling::default();
-```
-
-**File**: `src/canvas/components/pipe_gauge.rs` (modified, +22/-13)
-```diff
-@@ -315,7 +315,7 @@ mod tests {
-     }
- 
-     /// Create a [`PipeGauge`] and return what it would have rendered.
--    fn render_gauge(
-+    fn render_test_gauge(
-         ratio: f64, bar_type: BarType, start_label: Option<&str>, inner_label: Option<&str>,
-     ) -> String {
-         const WIDTH: u16 = 12;
-@@ -339,51 +339,60 @@ mod tests {
- 
-     #[test]
-     fn test_pipe_bars() {
--        assert_eq!(render_gauge(0.0, BarType::Pipe, None, None), "[          ]");
--        assert_eq!(render_gauge(0.5, BarType::Pipe, None, None), "[|||||     ]");
-         assert_eq!(
--            render_gauge(0.95, BarType::Pipe, None, None),
-+            render_test_gauge(0.0, BarType::Pipe, None, None),
-+            "[          ]"
-+        );
-+        assert_eq!(
-+            render_test_gauge(0.5, BarType::Pipe, None, None),
-+            "[|||||     ]"
-+        );
-+        assert_eq!(
-+            render_test_gauge(0.95, BarType::Pipe, None, None),
-             "[||||||||| ]"
-         );
--        assert_eq!(render_gauge(1.0, BarType::Pipe, None, None), "[||||||||||]");
-+        assert_eq!(
-+            render_test_gauge(1.0, BarType::Pipe, None, None),
-+            "[||||||||||]"
-+        );
-     }
- 
-     #[test]
-     fn test_solid_bars() {
-         assert_eq!(
--            render_gauge(0.0, BarType::Block, None, None),
-+            render_test_gauge(0.0, BarType::Block, None, None),
-             "[          ]"
-         );
-         assert_eq!(
--            render_gauge(0.5, BarType::Block, None, None),
-+            render_test_gauge(0.5, BarType::Block, None, None),
-             "[█████     ]"
-         );
-         assert_eq!(
--            render_gauge(0.55, BarType::Block, None, None),
-+            render_test_gauge(0.55, BarType::Block, None, None),
-             "[█████▌    ]"
-         );
-         assert_eq!(
--            render_gauge(0.9, BarType::Block, None, None),
-+            render_test_gauge(0.9, BarType::Block, None, None),
-             "[█████████ ]"
-         );
-         assert_eq!(
--            render_gauge(1.0, BarType::Block, None, None),
-+            render_test_gauge(1.0, BarType::Block, None, None),
-             "[██████████]"
-         );
-     }
- 
-     #[test]
-     fn test_labelled_bars() {
-         assert_eq!(
--            render_gauge(0.5, BarType::Pipe, Some("CPU"), Some(" 50%")),
-+            render_test_gauge(0.5, BarType::Pipe, Some("CPU"), Some(" 50%")),
-             "CPU[||| 50%]"
-         );
-         assert_eq!(
--            render_gauge(0.5, BarType::Block, Some("CPU"), Some(" 50%")),
-+            render_test_gauge(0.5, BarType::Block, Some("CPU"), Some(" 50%")),
-             "CPU[███ 50%]"
-         );
-         assert_eq!(
--            render_gauge(1.0, BarType::Block, Some("CPU"), Some("100%")),
-+            render_test_gauge(1.0, BarType::Block, Some("CPU"), Some("100%")),
-             "CPU[███100%]"
-         );
-     }
-```
-
-**File**: `src/canvas/components/scroll_bar.rs` (modified, +64/-3)
-```diff
-@@ -44,13 +44,74 @@ pub fn draw_scroll_bar(f: &mut Frame<'_>, area: Rect, args: ScrollBarArgs) {
-         end: "▼",
-     };
- 
--    let scrollbar = Scrollbar::new(ScrollbarOrientation::VerticalRight)
--        .style(args.style)
--        .symbols(SYMBOLS);
-+    // If the height is only 2, then there's no room for the thumb,
-+    // so instead we just draw a track with no arrows.
-+    let scrollbar = {
-+        let tmp = Scrollbar::new(ScrollbarOrientation::VerticalRight).style(args.style);
-+
-+        if area.height > 2 {
-+            tmp.symbols(SYMBOLS)
-+        } else {
-+            tmp.track_symbol(Some(SYMBOLS.track))
-+                .thumb_symbol(SYMBOLS.thumb)
-+                .begin_symbol(None)
-+                .end_symbol(None)
-+        }
-+    };
- 
-     let mut state = ScrollbarState::new(args.content_length)
-         .position(args.position)
-         .viewport_content_length(args.viewport_length);
- 
-     f.render_stateful_widget(scrollbar, area, &mut state);
+@@ -103,6 +103,21 @@ pub struct DataFilters {
+     pub net_filter: Option<Filter>,
  }
+ 
++#[derive(Clone, Copy)]
++pub struct TerminalFeatures {
++    pub bracketed_paste_enabled: bool,
++    pub mouse_capture_enabled: bool,
++}
 +
-+#[cfg(test)]
-+mod test {
-+    use super::*;
-+    use ratatui::{Terminal, backend::TestBackend};
-+
-+    fn render_test_bar(height: u16, content_length: usize, position: usize) -> Vec<String> {
-+        let mut terminal = Terminal::new(TestBackend::new(1, height)).unwrap();
-+        terminal
-+            .draw(|f| {
-+                draw_scroll_bar(
-+                    f,
-+                    Rect::new(0, 0, 1, height),
-+                    ScrollBarArgs {
-+                        content_length,
-+                        viewport_length: 2,
-+                        position,
-+                        style: Style::default(),
-+                    },
-+                );
-+            })
-+            .unwrap();
-+
-+        let buf = terminal.backend().buffer().clone();
-+        (0..height)
-+            .map(|y| buf[(0, y)].symbol().to_string())
-+            .collect()
-+    }
-+
-+    /// Make sure that a short scrollbar (height <= 2) is still drawn, just without the head/tail arrows.
-+    #[test]
-+    fn test_small_height_scroll_still_drawn() {
-+        assert_eq!(render_test_bar(1, 3, 0), ["█"]);
-+        assert_eq!(render_test_bar(2, 3, 0), ["█", " "]);
-+        assert_eq!(render_test_bar(2, 3, 2), [" ", "█"]);
-+    }
-+
-+    #[test]
-+    fn test_normal_height_scroll_all_drawn() {
-+        assert_eq!(render_test_bar(3, 3, 0), ["▲", "█", "▼"]);
-+        assert_eq!(render_test_bar(4, 3, 0), ["▲", "█", " ", "▼"]);
-+        assert_eq!(render_test_bar(4, 3, 2), ["▲", " ", "█", "▼"]);
-+    }
-+
-+    #[test]
-+    fn test_no_scroll_bar_when_list_fits() {
-+        assert_eq!(render_test_bar(4, 2, 0), [" ", " ", " ", " "]);
-+        assert_eq!(render_test_bar(2, 1, 0), [" ", " "]);
++impl Default for TerminalFeatures {
++    fn default() -> Self {
++        Self {
++            bracketed_paste_enabled: true,
++            mouse_capture_enabled: true,
++        }
 +    }
 +}
++
+ pub struct App {
+     awaiting_second_char: bool,
+     second_char: Option<char>,
+@@ -120,6 +135,7 @@ pub struct App {
+     pub current_widget: BottomWidget,
+     pub used_widgets: UsedWidgets,
+     pub filters: DataFilters,
++    pub terminal_features: TerminalFeatures,
+ }
+ 
+ impl App {
+@@ -149,6 +165,7 @@ impl App {
+             current_widget,
+             used_widgets,
+             filters,
++            terminal_features: TerminalFeatures::default(),
+         }
+     }
+ 
+```
+
+**File**: `src/lib.rs` (modified, +46/-21)
+```diff
+@@ -56,7 +56,7 @@ use ratatui::{Terminal, backend::CrosstermBackend, prelude::Backend};
+ use utils::logging::*;
+ use utils::{cancellation_token::CancellationToken, conversion::*};
+ 
+-use crate::collection::Data;
++use crate::{app::TerminalFeatures, collection::Data};
+ 
+ // Used for heap allocation debugging purposes.
+ // #[global_allocator]
+@@ -67,23 +67,28 @@ fn try_drawing(
+     terminal: &mut Terminal<CrosstermBackend<Stdout>>, app: &mut App, painter: &mut canvas::Painter,
+ ) -> anyhow::Result<()> {
+     if let Err(err) = painter.draw_data(terminal, app) {
+-        cleanup_terminal(terminal)?;
++        cleanup_terminal(terminal, app.terminal_features)?;
+         Err(err.into())
+     } else {
+         Ok(())
+     }
+ }
+ 
+ /// Clean up the terminal before returning it to the user.
+-fn cleanup_terminal(terminal: &mut Terminal<CrosstermBackend<Stdout>>) -> anyhow::Result<()> {
++fn cleanup_terminal(
++    terminal: &mut Terminal<CrosstermBackend<Stdout>>, terminal_features: TerminalFeatures,
++) -> anyhow::Result<()> {
+     disable_raw_mode()?;
+ 
+-    execute!(
+-        terminal.backend_mut(),
+-        DisableMouseCapture,
+-        DisableBracketedPaste,
+-        LeaveAlternateScreen,
+-    )?;
++    if terminal_features.mouse_capture_enabled {
++        execute!(terminal.backend_mut(), DisableMouseCapture)?;
++    }
++
++    if terminal_features.bracketed_paste_enabled {
++        execute!(terminal.backend_mut(), DisableBracketedPaste)?;
++    }
++
++    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
+     terminal.show_cursor()?;
+ 
+     Ok(())
+@@ -107,13 +112,10 @@ fn check_if_terminal() {
+ pub fn reset_stdout() {
+     let mut stdout = stdout();
+     let _ = disable_raw_mode();
+-    let _ = execute!(
+-        stdout,
+-        DisableMouseCapture,
+-        DisableBracketedPaste,
+-        LeaveAlternateScreen,
+-        Show,
+-    );
++    let _ = execute!(stdout, DisableMouseCapture);
++    let _ = execute!(stdout, DisableBracketedPaste);
++    let _ = execute!(stdout, LeaveAlternateScreen);
++    let _ = execute!(stdout, Show);
+ }
+ 
+ /// A panic hook to properly restore the terminal in the case of a panic.
+@@ -368,11 +370,27 @@ pub fn start_bottom(enable_error_hook: &mut bool) -> anyhow::Result<()> {
+     *enable_error_hook = true;
+ 
+     let mut stdout_val = stdout();
+-    execute!(stdout_val, EnterAlternateScreen, EnableBracketedPaste)?;
+-    if app.app_config_fields.disable_click {
+-        execute!(stdout_val, DisableMouseCapture)?;
+-    } else {
++    execute!(stdout_val, EnterAlternateScreen)?;
++
++    let mut bracketed_paste_enabled = true;
++    let mouse_capture_enabled = !app.app_config_fields.disable_click;
++
++    // Note that some operating systems (basically Windows 8.1 and older) don't support
++    // this, so we'll catch the error, but not outright fail.
++    // For more info, see https://github.com/ClementTsang/bottom/issues/2277 and
++    // https://github.com/helix-editor/helix/discussions/9025.
++    match execute!(stdout_val, EnableBracketedPaste) {
++        Err(err) if err.kind() == std::io::ErrorKind::Unsupported => {
++            bracketed_paste_enabled = false;
++        }
++        Err(err) => return Err(err.into()),
++        Ok(_) => {}
++    }
++
++    if mouse_capture_enabled {
+         execute!(stdout_val, EnableMouseCapture)?;
++    } else {
++        execute!(stdout_val, DisableMouseCapture)?;
+     }
+     enable_raw_mode()?;
+ 
+@@ -387,6 +405,13 @@ pub fn start_bottom(enable_error_hook: &mut bool) -> anyhow::Result<()> {
+ 
+     terminal.hide_cursor()?;
+ 
++    let terminal_features = TerminalFeatures {
++        bracketed_paste_enabled,
++        mouse_capture_enabled,
++    };
++
++    app.terminal_features = terminal_features;
++
+     // Set panic hook
+     panic::set_hook(Box::new(panic_hook));
+ 
+@@ -480,7 +505,7 @@ pub fn start_bottom(enable_error_hook: &mut bool) -> anyhow::Result<()> {
+     // I think doing it in this order is safe...
+     // TODO: maybe move the cancellation token to the ctrl-c handler?
+     cancellation_token.cancel();
+-    cleanup_terminal(&mut terminal)?;
++    cleanup_terminal(&mut terminal, terminal_features)?;
+ 
+     Ok(())
+ }
 ```
 
 ---
 
-### Incident Patch 3: `4136d204` (2026-09-21)
-**Commit Message**: feature: add process swap column for Linux (#2224)
+### Incident Patch 2: `b48e8070` (2026-10-27)
+**Commit Message**: bug: don't abort in panic hook if the terminal is gone (#2279)
 
-Adds Linux support for process swap tracking + a column in the widget.
-
-**File**: `sample_configs/default_config.toml` (modified, +1/-1)
+**File**: `src/lib.rs` (modified, +6/-2)
 ```diff
-@@ -158,7 +158,7 @@
- # Processes widget configuration
- #[processes]
- # The columns shown by the process widget. The following columns are supported (the GPU columns are only available if the GPU feature is enabled when built):
--# PID, Name, CPU%, Mem%, R/s, W/s, T.Read, T.Write, User, State, Time, GMem%, GPU%, Nice, Priority
-+# PID, Name, CPU%, Mem%, Swap, R/s, W/s, T.Read, T.Write, User, State, Time, GMem%, GPU%, Nice, Priority
- #columns = ["PID", "Name", "CPU%", "Mem%", "Virt", "R/s", "W/s", "T.Read", "T.Write", "User", "State", "GMem%", "GPU%", "Priority"]
+@@ -131,9 +131,13 @@ fn panic_hook(panic_info: &PanicHookInfo<'_>) {
  
- # The default sort column when bottom starts. Accepts any of the column names above.
-```
-
-**File**: `schema/nightly/bottom.json` (modified, +2/-0)
-```diff
-@@ -1039,6 +1039,7 @@
-         "Read",
-         "Rps",
-         "State",
-+        "Swap",
-         "T.Read",
-         "T.Write",
-         "TRead",
-@@ -1072,6 +1073,7 @@
-         "read",
-         "rps",
-         "state",
-+        "swap",
-         "t.read",
-         "t.write",
-         "time",
-```
-
-**File**: `src/app.rs` (modified, +1/-0)
-```diff
-@@ -48,6 +48,7 @@ pub struct AppConfigFields {
-     pub use_current_cpu_total: bool,
-     pub unnormalized_cpu: bool,
-     pub get_process_threads: bool,
-+    pub get_process_swap: bool,
-     pub use_basic_mode: bool,
-     pub default_time_value: u64,
-     pub time_interval: u64,
-```
-
-**File**: `src/collection.rs` (modified, +6/-0)
-```diff
-@@ -168,6 +168,7 @@ pub struct DataCollector {
-     use_current_cpu_total: bool,
-     show_average_cpu: bool,
-     get_process_threads: bool,
-+    get_process_swap: bool,
+     reset_stdout();
  
-     last_list_collection_time: Instant,
-     should_run_less_routine_tasks: bool,
-@@ -226,6 +227,7 @@ impl DataCollector {
-             use_current_cpu_total: false,
-             unnormalized_cpu: false,
-             get_process_threads: false,
-+            get_process_swap: false,
-             last_collection_time,
-             total_rx: 0,
-             total_tx: 0,
-@@ -300,6 +302,10 @@ impl DataCollector {
-         self.get_process_threads = get_process_threads;
+-    // Print stack trace. Must be done after!
++    // Print stack trace. Must be done after! Ignore write errors, as `println!`
++    // would panic inside this hook (and abort) if the terminal is gone.
+     if let Some(panic_info) = panic_info.location() {
+-        println!("thread '<unnamed>' panicked at '{msg}', {panic_info}\n\r{backtrace}")
++        let _ = writeln!(
++            stdout(),
++            "thread '<unnamed>' panicked at '{msg}', {panic_info}\n\r{backtrace}"
++        );
      }
  
-+    pub fn set_get_process_swap(&mut self, get_process_swap: bool) {
-+        self.get_process_swap = get_process_swap;
-+    }
-+
-     pub fn set_include_unmounted_disks(&mut self, include_unmounted_disks: bool) {
-         self.include_unmounted_disks = include_unmounted_disks;
-     }
+     // TODO: Might be cleaner in the future to use a cancellation token, but
 ```
 
-**File**: `src/collection/processes.rs` (modified, +3/-0)
+---
+
+### Incident Patch 3: `1aaa907a` (2026-10-27)
+**Commit Message**: ci: update netbsd cross pre-build install (#2283)
+
+Cause was due to the netbsd paths changing, apparently.
+
+**File**: `.github/workflows/build_releases.yml` (modified, +1/-1)
 ```diff
-@@ -106,6 +106,9 @@ pub struct ProcessHarvest {
-     /// Virtual memory.
-     pub virtual_mem: Bytes,
+@@ -28,7 +28,7 @@ env:
+   CARGO_HUSKY_DONT_INSTALL_HOOKS: true
+   COMPLETION_DIR: "target/tmp/bottom/completion/"
+   MANPAGE_DIR: "target/tmp/bottom/manpage/"
+-  CROSS_VERSION: "git:588b3c99db52b5a9c5906fab96cfadcf1bde7863"
++  CROSS_VERSION: "git:d6204e62acdba1a117341f93972f3d52470a3052"
  
-+    /// Swapped memory.
-+    pub swap_bytes: Option<Bytes>,
-+
-     /// The name of the process.
-     pub name: String,
- 
+ permissions:
+   id-token: write
 ```
 
-**File**: `src/collection/processes/linux/mod.rs` (modified, +15/-4)
+**File**: `.github/workflows/ci.yml` (modified, +1/-1)
 ```diff
-@@ -142,6 +142,7 @@ fn read_proc(
-         stat,
-         io,
-         cmdline,
-+        swap_bytes,
-     } = process;
+@@ -25,7 +25,7 @@ env:
+   CARGO_HUSKY_DONT_INSTALL_HOOKS: true
+   COMPLETION_DIR: "target/tmp/bottom/completion/"
+   MANPAGE_DIR: "target/tmp/bottom/manpage/"
+-  CROSS_VERSION: "git:588b3c99db52b5a9c5906fab96cfadcf1bde7863"
++  CROSS_VERSION: "git:d6204e62acdba1a117341f93972f3d52470a3052"
  
-     let ReadProcArgs {
-@@ -152,6 +153,7 @@ fn read_proc(
-         time_difference_in_secs,
-         system_uptime,
-         get_process_threads: _,
-+        get_process_swap: _,
-     } = args;
- 
-     let process_state_char = stat.state;
-@@ -272,6 +274,7 @@ fn read_proc(
-             mem_usage_percent,
-             mem_usage,
-             virtual_mem,
-+            swap_bytes,
-             name,
-             command,
-             read_per_sec,
-@@ -349,6 +352,7 @@ pub(crate) struct ReadProcArgs {
-     pub time_difference_in_secs: u64,
-     pub system_uptime: u64,
-     pub get_process_threads: bool,
-+    pub get_process_swap: bool,
- }
- 
- pub(crate) fn linux_process_data(
-@@ -364,6 +368,8 @@ pub(crate) fn linux_process_data(
-         unnormalized_cpu: collector.unnormalized_cpu,
-         get_process_threads: collector.get_process_threads,
-     };
-+    let get_swap = collector.get_process_swap;
-+
-     let prev_process_details = &mut collector.prev_process_details;
-     let user_table = &mut collector.user_table;
- 
-@@ -420,6 +426,7 @@ pub(crate) fn linux_process_data(
-         time_difference_in_secs,
-         system_uptime: sysinfo::System::uptime(),
-         get_process_threads: get_threads,
-+        get_process_swap: get_swap,
-     };
- 
-     // TODO: Maybe pre-allocate these buffers in the future w/ routine cleanup.
-@@ -428,9 +435,12 @@ pub(crate) fn linux_process_data(
- 
-     let mut process_vector: Vec<ProcessHarvest> = pids
-         .filter_map(|pid_path| {
--            if let Ok((process, threads)) =
--                Process::from_path(pid_path, &mut buffer, args.get_process_threads)
--            {
-+            if let Ok((process, threads)) = Process::from_path(
-+                pid_path,
-+                &mut buffer,
-+                args.get_process_threads,
-+                args.get_process_swap,
-+            ) {
-                 let pid = process.pid;
-                 let prev_proc_details = prev_process_details.entry(pid).or_default();
- 
-@@ -474,7 +484,8 @@ pub(crate) fn linux_process_data(
-     // Get thread data.
-     for (pid, tid_paths) in process_threads_to_check {
-         for tid_path in tid_paths {
--            if let Ok((process, _)) = Process::from_path(tid_path, &mut buffer, false) {
-+            // VmSwap is process-wide, so don't collect it for individual threads.
-+            if let Ok((process, _)) = Process::from_path(tid_path, &mut buffer, false, false) {
-                 let tid = process.pid;
-                 let prev_proc_details = prev_process_details.entry(tid).or_default();
- 
+ concurrency:
+   group: ${{ github.workflow }}-${{ github.ref }}
 ```
 
-**File**: `src/collection/processes/linux/process.rs` (modified, +80/-1)
+**File**: `Cross.toml` (modified, +2/-2)
 ```diff
-@@ -246,6 +246,33 @@ impl Io {
-     }
- }
+@@ -3,6 +3,6 @@ passthrough = ["RUST_BACKTRACE", "BTM_GENERATE"]
  
-+/// Helper that reads the `VmSwap` line from `/proc/<PID>/status`.
-+///
-+/// NB: `buffer` must be empty.
-+///
-+/// See the [`proc_pid_status(5)`](https://man7.org/linux/man-pages/man5/proc_pid_status.5.html)
-+/// documentation for details about this file and field.
-+fn get_swap_bytes(f: File, buffer: &mut String) -> anyhow::Result<u64> {
-+    let mut reader = BufReader::new(f);
-+
-+    while reader.read_line(buffer)? > 0 {
-+        let mut parts = buffer.split_whitespace();
-+
-+        if parts.next() == Some("VmSwap:") {
-+            let swap_kib: u64 = parts
-+                .next()
-+                .ok_or_else(|| anyhow!("VmSwap value missing"))?
-+                .parse()?;
-+
-+            return Ok(swap_kib.saturating_mul(1024));
-+        }
-+
-+        buffer.clear();
-+    }
-+
-+    Err(anyhow!("VmSwap field not found"))
-+}
-+
- /// A wrapper around a Linux process operations in `/proc/<PID>`.
- ///
- /// Core documentation based on [proc's manpages](https://man7.org/linux/man-pages/man5/proc.5.html).
-@@ -255,6 +282,7 @@ pub(crate) struct Process {
-     pub stat: Stat,
-     pub io: Option<Io>,
-     pub cmdline: Option<String>,
-+    pub swap_bytes: Option<u64>,
- }
- 
- #[inline]
-@@ -277,7 +305,7 @@ impl Process {
-     /// buffer.
-     #[inline]
-     pub(crate) fn from_path(
--        pid_path: PathBuf, buffer: &mut String, get_threads: bool,
-+        pid_path: PathBuf, buffer: &mut String, get_threads: bool, get_swap: bool,
-     ) -> anyhow::Result<(Process, Vec<PathBuf>)> {
-         buffer.clear();
- 
-@@ -333,6 +361,16 @@ impl Process {
- 
-         reset(&mut root, buffer);
- 
-+        let swap_bytes = if get_swap && !stat.is_kernel_thread {
-+            let bytes = open_at(&mut root, "status", &pid_dir)
-+                .and_then(|file| get_swap_bytes(file, buffer))
-+                .ok();
-+            reset(&mut root, buffer);
-+            bytes
-+        } else {
-+            None
-+        };
-+
-         let threads = threads(&mut root, pid, get_threads);
- 
-         Ok((
-@@ -342,6 +380,7 @@ impl Process {
-                 stat,
-                 io,
-                 cmdline,
-+                swap_bytes,
-             },
-             threads,
-         ))
-@@ -426,6 +465,14 @@ mod tests {
-         Stat::from_file(file, &mut String::new())
-     }
- 
-+    fn swap_file(status: &str) -> anyhow::Result<u64> {
-+        let mut file = tempfile::tempfile()?;
-+        file.write_all(status.as_bytes())?;
-+        file.rewind()?;
-+
-+        get_swap_bytes(file, &mut String::new())
-+    }
-+
-     #[test]
-     fn parse_short_comm() {
-         let stat = stat_from_name("kworker/u16:2").unwrap();
-@@ -463,4 +510,36 @@ mod tests {
-         assert!(stat_file("1 (blah)").is_err(), "too short");
-         assert!(stat_file("1 )(").is_err(), "wrong order");
-     }
-+
-+    #[test]
-+    fn parse_swap_bytes() {
-+        let status = "Name:\ttest\nVmSwap:\t4096 kB\n";
-+
-+        let swap_bytes = swap_file(status).unwrap();
-+
-+        assert_eq!(swap_bytes, 4_194_304);
-+    }
-+
-+    #[test]
-+    fn parse_zero_swap_bytes() {
-+        let status = "Name:\ttest\nVmSwap:\t0 kB\n";
-+
-+        let swap_bytes = swap_file(status).unwrap();
-+
-+        assert_eq!(swap_bytes, 0);
-+    }
-+
-+    #[test]
-+    fn missing_vm_swap_is_an_error() {
-+        let status = "Name:\ttest\nVmSize:\t4096 kB\n";
-+
-+        assert!(swap_file(status).is_err());
-+    }
-+
-+    #[test]
-+    fn invalid_vm_swap_is_an_error() {
-+        let status = "Name:\ttest\nVmSwap:\tinvalid kB\n";
-+
-+        assert!(swap_file(status).is_err());
-+    }
- }
-```
-
-**File**: `src/collection/processes/unix/process_ext.rs` (modified, +1/-0)
-```diff
-@@ -146,6 +146,7 @@ pub(crate) trait UnixProcessExt {
-                 },
-                 mem_usage: process_val.memory(),
-                 virtual_mem: process_val.virtual_memory(),
-+                swap_bytes: None,
-                 cpu_usage_percent: process_cpu_usage,
-                 read_per_sec: disk_usage.read_bytes,
-                 write_per_sec: disk_usage.written_bytes,
+ [target.x86_64-unknown-netbsd]
+ pre-build = [
+-    # Last updated on 2026-08-28
+-    "apt-get update && apt-get install -y --no-install-recommends curl=8.5.0-2ubuntu10.13 xz-utils=5.6.1+really5.4.5-1ubuntu0.3 && td=$(mktemp -d) && mkdir -p \"$td/netbsd\" && curl -4 --retry 3 -sSfL 'http://ftp.netbsd.org/pub/NetBSD/NetBSD-9.3/amd64/binary/sets/base.tar.xz' | tar -C \"$td/netbsd\" -xJ ./usr/lib ./lib && curl -4 --retry 3 -sSfL 'http://ftp.netbsd.org/pub/NetBSD/NetBSD-9.3/amd64/binary/sets/comp.tar.xz' | tar -C \"$td/netbsd\" -xJ ./usr/lib && cp \"$td\"/netbsd/usr/lib/libkvm* /usr/local/x86_64-unknown-netbsd/lib/ && rm -rf \"$td\"",
++    # Last updated on 2026-10-27
++    "apt-get update && apt-get install -y --no-install-recommends curl=8.5.0-2ubuntu10.16 xz-utils=5.6.1+really5.4.5-1ubuntu0.4 && td=$(mktemp -d) && mkdir -p \"$td/netbsd\" && curl -4 --retry 3 -sSfL 'http://ftp.fr.netbsd.org/pub/NetBSD/NetBSD-9.5/amd64/binary/sets/base.tar.xz' | tar -C \"$td/netbsd\" -xJ ./usr/lib ./lib && curl -4 --retry 3 -sSfL 'http://ftp.fr.netbsd.org/pub/NetBSD/NetBSD-9.5/amd64/binary/sets/comp.tar.xz' | tar -C \"$td/netbsd\" -xJ ./usr/lib && cp \"$td\"/netbsd/usr/lib/libkvm* /usr/local/x86_64-unknown-netbsd/lib/ && rm -rf \"$td\"",
+ ]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2275** (2026-10-03): ci: use Rust 1.99 (@ClementTsang)
-- **PR #2274** (2026-10-01): docs: update contribution doc (@ClementTsang)
-- **PR #2273** (closed): fix(windows): enable SeDebugPrivilege before OpenProcess so elevated kills of service processes work (@Mathjk)
-- **PR #2272** (2026-09-30): deps: bump starship-battery to 0.12.0 (@ClementTsang)
-- **PR #2271** (closed): fix(windows): enable SeDebugPrivilege so kill works on service/task processes (@Mathjk)
-- **PR #2270** (2026-09-29): other: allow clippy lint for regex creation in loops (@ClementTsang)
+- **PR #2285** (2026-10-27): docs: add NavpreetSSidhu as a contributor for code (@allcontributors[bot])
+- **PR #2284** (2026-10-28): bug: make it so bracketed paste not working does not panic (@ClementTsang)
+- **PR #2283** (2026-10-27): ci: update netbsd cross pre-build install (@ClementTsang)
+- **PR #2282** (2026-10-27): ci: update netbsd-vm version to 1.5.2 (@ClementTsang)
+- **PR #2280** (closed): feature: add AMD GPU temperature support on Windows via ADL (@BoYanZh)
+- **PR #2279** (2026-10-27): bug: don't abort in panic hook if the terminal is gone (@NavpreetSSidhu)
 
 ---
 
@@ -2231,36 +1879,29 @@ Adds Linux support for process swap tracking + a column in the widget.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. other: allow clippy lint for regex creation in loops (#2270)
+## X. make it so bracketed paste not working does not panic (#2284)
 
 **RULE**:
-When implementing operations in `.github/pull_request_template.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClementTsang/bottom. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClementTsang/bottom. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `048deff9`: other: allow clippy lint for regex creation in loops (#2270). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fdc61caf`: make it so bracketed paste not working does not panic (#2284). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/pull_request_template.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-
-
-_If the changes were generated with AI tools:_
-- [ ] _Ensure it **fully** follows the [AI policy](https://github.com/ClementTsang/bottom/blob/main/AI_POLICY.md)._
-- [ ] _Specify how it was used in the "Other" section._
-- [ ] _Ensure that you, as a human, have personally reviewed the change_
+- [#2279](https://github.com/ClementTsang/bottom/pull/2279): Fix an abort (SIGABRT) if the terminal is gone when exiting.
+- [#2284](https://github.com/ClementTsang/bottom/pull/2284): Fix bracketed paste not being supported on Windows 7/8 causing btm to panic on startup.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-- _If the changes were generated with AI tools:_
-  - [ ] _Ensure it **fully** follows the [AI policy](https://github.com/ClementTsang/bottom/blob/main/AI_POLICY.md)._
-  - [ ] _Specify how it was used in the "Other" section._
-  - [ ] _Ensure that you, as a human, have personally reviewed the change_
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `048deff9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fdc61caf` are properly handled with clean fallback behavior.

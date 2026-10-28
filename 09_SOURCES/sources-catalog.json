@@ -55,8 +55,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-large-en-v1.5",
     "sourceVersion": "hf-baai-bge-large-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "679489d313570bed2d58fc53e3d53605be1909059d46477b26793d4b87e478c4",
-    "lastHarvestedAt": "2026-10-25T04:38:12.546Z",
+    "contentHash": "4faa0e85fa8954ca5cf6f27ea13dc16767777082b4a700cbb54edb447b80907b",
+    "lastHarvestedAt": "2026-10-28T01:22:24.329Z",
     "learningId": "learn-huggingface-baai-bge-large-en-v1-5"
   },
   "hf-zai-org-glm-5.3": {
@@ -3893,10 +3893,10 @@
     "repository": "ClementTsang/bottom",
     "platform": "github",
     "sourceUrl": "https://github.com/ClementTsang/bottom",
-    "sourceVersion": "7d65d62c",
+    "sourceVersion": "fdc61caf",
     "license": "MIT",
-    "contentHash": "ab92b1aec66d2c5c54679360559c8c43cd60a4744459c3883fbfd40231e843c4",
-    "lastHarvestedAt": "2026-10-19T00:10:17.587Z",
+    "contentHash": "5324261db0b71c9c81430e940f1c1198d90e473ed72df47c79ab1ec2039d27e3",
+    "lastHarvestedAt": "2026-10-28T01:22:15.164Z",
     "learningId": "learn-github-clementtsang-bottom"
   },
   "jhen0409-react-native-debugger": {

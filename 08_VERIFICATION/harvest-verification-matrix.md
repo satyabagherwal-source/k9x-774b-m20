@@ -5623,3 +5623,5 @@
 | `CYCLE-20261028-ZHKW` | `2026-10-28T01:06:59.648Z` | `tw93/Mole` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5089` | Yes (`8c0af87a...`) |
 | `CYCLE-20261028-ZKTF` | `2026-10-28T01:07:03.843Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5090` | Yes (`122e6028...`) |
 | `CYCLE-20261028-ART8` | `2026-10-28T01:15:46.124Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5091, Rule 5092` | Yes (`cbe867e8...`) |
+| `CYCLE-20261028-J3ZT` | `2026-10-28T01:22:15.161Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5093` | Yes (`5324261d...`) |
+| `CYCLE-20261028-JB2E` | `2026-10-28T01:22:24.326Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5094, Rule 5095, Rule 5096` | Yes (`4faa0e85...`) |
