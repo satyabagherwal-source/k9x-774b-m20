@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T17:42:55.865Z",
+  "last_updated": "2026-10-28T17:49:49.312Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1655,14 +1655,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-base-en-v1-5",
-      "content_hash": "7b5e2e6811384fcf41bff7a30d23c385c68338d2ba7b94f26e95b599de27556b",
-      "verified_at": "2026-10-28T00:53:37.834Z",
+      "content_hash": "d1d27dfdc614f3a83ca090c8f329ad999545fb03b0802808228f959e918ac951",
+      "verified_at": "2026-10-28T17:49:36.723Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T00:53:37.834Z"
+      "last_updated": "2026-10-28T17:49:36.723Z"
     },
     "sentence-transformers/paraphrase-multilingual-mpnet-base-v2": {
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "f9461b7faf8ad6a5b394060d7d8a7e0db2aa8cd9da7ccf703ed0ed856fa126d2",
-      "verified_at": "2026-10-27T23:44:09.195Z",
+      "content_hash": "a29309b3e886ad2fda7e771419f6abcfbc290888e49d5d61f951c52cc2f0cb59",
+      "verified_at": "2026-10-28T17:49:49.311Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T23:44:09.195Z"
+      "last_updated": "2026-10-28T17:49:49.311Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",

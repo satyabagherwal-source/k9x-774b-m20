@@ -5875,3 +5875,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-google-vit-base-patch16-224` | `https://huggingface.co/google/vit-base-patch16-224` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-28T17:42:43.075Z |
 | `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `a04b8808` | Multi-dimensional audit evidence | 2026-10-28T17:42:52.277Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `1f4eee02` | Multi-dimensional audit evidence | 2026-10-28T17:42:55.855Z |
+| `learn-huggingface-baai-bge-base-en-v1-5` | `https://huggingface.co/BAAI/bge-base-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-28T17:49:36.709Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `657cff6c` | Multi-dimensional audit evidence | 2026-10-28T17:49:49.302Z |

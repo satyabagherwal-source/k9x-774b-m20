@@ -1255,8 +1255,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-base-en-v1.5",
     "sourceVersion": "hf-baai-bge-base-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "7b5e2e6811384fcf41bff7a30d23c385c68338d2ba7b94f26e95b599de27556b",
-    "lastHarvestedAt": "2026-10-28T00:53:37.825Z",
+    "contentHash": "d1d27dfdc614f3a83ca090c8f329ad999545fb03b0802808228f959e918ac951",
+    "lastHarvestedAt": "2026-10-28T17:49:36.709Z",
     "learningId": "learn-huggingface-baai-bge-base-en-v1-5"
   },
   "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "b11d06c6",
+    "sourceVersion": "657cff6c",
     "license": "NOASSERTION",
-    "contentHash": "f9461b7faf8ad6a5b394060d7d8a7e0db2aa8cd9da7ccf703ed0ed856fa126d2",
-    "lastHarvestedAt": "2026-10-27T23:44:09.187Z",
+    "contentHash": "a29309b3e886ad2fda7e771419f6abcfbc290888e49d5d61f951c52cc2f0cb59",
+    "lastHarvestedAt": "2026-10-28T17:49:49.302Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {

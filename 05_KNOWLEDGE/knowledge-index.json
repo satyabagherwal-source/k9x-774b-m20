@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T17:42:55.770Z",
+  "last_updated": "2026-10-28T17:49:49.228Z",
   "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12843,8 +12843,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "b11d06c6",
-      "content_hash": "f9461b7faf8ad6a5b394060d7d8a7e0db2aa8cd9da7ccf703ed0ed856fa126d2",
+      "source_version": "657cff6c",
+      "content_hash": "a29309b3e886ad2fda7e771419f6abcfbc290888e49d5d61f951c52cc2f0cb59",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -12962,6 +12962,11 @@
           "number": 5057,
           "title": "conformance): report-only removal tier in policy::decide (#6015)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5356,
+          "title": "deps): bump webpki-roots to 1.0.11 to drop distrusted eMudhra roots (#6023)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12969,7 +12974,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T23:44:09.123Z",
+      "verified_at": "2026-10-28T17:49:49.211Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -17581,7 +17586,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-base-en-v1.5",
       "source_version": "hf-baai-bge-base-en-v1.5",
-      "content_hash": "7b5e2e6811384fcf41bff7a30d23c385c68338d2ba7b94f26e95b599de27556b",
+      "content_hash": "d1d27dfdc614f3a83ca090c8f329ad999545fb03b0802808228f959e918ac951",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md",
       "promoted_rules": [
@@ -17652,7 +17657,7 @@
         "learn-huggingface-hf-baai-bge-base-en-v1-5-mv40jxd1",
         "learn-huggingface-hf-baai-bge-base-en-v1-5-mv4ei7wc"
       ],
-      "verified_at": "2026-10-28T00:53:37.730Z",
+      "verified_at": "2026-10-28T17:49:36.599Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -145335,6 +145340,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T17:42:52.181Z"
+    },
+    "rule-5356": {
+      "learning_id": "rule-5356",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5356,
+      "title": "deps): bump webpki-roots to 1.0.11 to drop distrusted eMudhra roots (#6023)",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "657cff6c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T17:49:49.211Z"
     }
   },
   "aliases": {

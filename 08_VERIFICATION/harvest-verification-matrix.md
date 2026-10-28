@@ -5866,3 +5866,5 @@
 | `CYCLE-20261028-JZWF` | `2026-10-28T17:42:43.071Z` | `google/vit-base-patch16-224` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md` | Yes (`6a62e9b1...`) |
 | `CYCLE-20261028-K702` | `2026-10-28T17:42:52.274Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5355` | Yes (`bfac3605...`) |
 | `CYCLE-20261028-K9RG` | `2026-10-28T17:42:55.852Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5335` | Yes (`bc6905ed...`) |
+| `CYCLE-20261028-SV2A` | `2026-10-28T17:49:36.706Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md` | Yes (`d1d27dfd...`) |
+| `CYCLE-20261028-T4S3` | `2026-10-28T17:49:49.299Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5356` | Yes (`a29309b3...`) |

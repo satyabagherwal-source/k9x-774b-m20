@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T17:42:55.861Z",
-  "total_cycles_completed": 5843,
-  "total_learnings_persisted": 5843,
-  "total_rules_promoted": 5312,
+  "last_updated": "2026-10-28T17:49:49.308Z",
+  "total_cycles_completed": 5845,
+  "total_learnings_persisted": 5845,
+  "total_rules_promoted": 5313,
   "history": [
-    {
-      "timestamp": "2026-10-28T03:18:06.410Z",
-      "repository": "milvus-io/milvus",
-      "learningId": "learn-github-milvus-io-milvus",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T03:24:45.358Z",
-      "repository": "BAAI/bge-small-en-v1.5",
-      "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T03:31:29.789Z",
       "repository": "expo/expo",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-28T17:42:55.861Z",
       "repository": "aleo-labs-protocol/snarkOS",
       "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T17:49:36.719Z",
+      "repository": "BAAI/bge-base-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T17:49:49.308Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
