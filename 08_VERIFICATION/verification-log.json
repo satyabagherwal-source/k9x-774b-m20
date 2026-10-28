@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261026-JZ54",
-    "timestamp": "2026-10-26T14:23:24.328Z",
-    "repository": "envoyproxy/envoy",
-    "learningId": "learn-github-envoyproxy-envoy",
-    "contentHash": "8642fa355bced98c974c29fbc1fb59c356dbd67f195b111ee9e5515d26278b77",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-K11E",
-    "timestamp": "2026-10-26T14:23:26.786Z",
-    "repository": "risingwavelabs/risingwave",
-    "learningId": "learn-github-risingwavelabs-risingwave",
-    "contentHash": "eaa3498455bfffa13eac89b217400cdca04d25b9017ce5854e3a8e15a3877622",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-SBZG",
-    "timestamp": "2026-10-26T14:29:54.220Z",
-    "repository": "microsoft/fluentui",
-    "learningId": "learn-github-microsoft-fluentui",
-    "contentHash": "375db55146eb260b6861bf0d6256ea731c7429d87e6f5b4eed3eab032dd47b0f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261026-0DNB",
     "timestamp": "2026-10-26T17:52:06.935Z",
     "repository": "opentofu/opentofu",
@@ -7492,6 +7447,51 @@
     "contentHash": "14ba29c79d03a04b711d69f5ab35dd18015998e50b831966483427c7a068e6d3",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-NYQV",
+    "timestamp": "2026-10-28T03:18:00.104Z",
+    "repository": "appwrite/appwrite",
+    "learningId": "learn-github-appwrite-appwrite",
+    "contentHash": "2b93e8de1461fd61f14e4daa19436ef5d35f3266e969298559880bf8315ec309",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-O1YQ",
+    "timestamp": "2026-10-28T03:18:04.274Z",
+    "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+    "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
+    "contentHash": "2057185c2b7c52a5f3ca0df96ed92d6c564558fd5d917ec6a5033714acf885e7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-O3LM",
+    "timestamp": "2026-10-28T03:18:06.394Z",
+    "repository": "milvus-io/milvus",
+    "learningId": "learn-github-milvus-io-milvus",
+    "contentHash": "41e411693cfade2630fae49ca225593865d908cec9d0607b722c0e5d3f51fb9e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

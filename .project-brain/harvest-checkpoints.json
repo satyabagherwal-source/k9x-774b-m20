@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T03:11:26.781Z",
+  "last_updated": "2026-10-28T03:18:06.414Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -96,14 +96,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
-      "content_hash": "cef9b87c00186dd8afd757faa30e5385abaa0f03ab9b9bcdc68acf1739444d0c",
-      "verified_at": "2026-10-25T06:08:11.172Z",
+      "content_hash": "2057185c2b7c52a5f3ca0df96ed92d6c564558fd5d917ec6a5033714acf885e7",
+      "verified_at": "2026-10-28T03:18:04.287Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T06:08:11.172Z"
+      "last_updated": "2026-10-28T03:18:04.287Z"
     },
     "epicweb-dev/advanced-react-patterns": {
       "repository": "epicweb-dev/advanced-react-patterns",
@@ -10071,14 +10071,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-milvus-io-milvus",
-      "content_hash": "3f1009bf8f86511b7eede86668b2bd20f9d3fb3b3866074df7e2f8e0c40539d5",
-      "verified_at": "2026-10-27T14:10:54.500Z",
+      "content_hash": "41e411693cfade2630fae49ca225593865d908cec9d0607b722c0e5d3f51fb9e",
+      "verified_at": "2026-10-28T03:18:06.413Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T14:10:54.500Z"
+      "last_updated": "2026-10-28T03:18:06.413Z"
     },
     "ynqa/jnv": {
       "repository": "ynqa/jnv",
@@ -15501,14 +15501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-appwrite-appwrite",
-      "content_hash": "c540c8c9de1d48feb6f22c1df1b89cbd4466b0544a787f36f36aacdf704b549c",
-      "verified_at": "2026-10-27T12:46:39.826Z",
+      "content_hash": "2b93e8de1461fd61f14e4daa19436ef5d35f3266e969298559880bf8315ec309",
+      "verified_at": "2026-10-28T03:18:00.116Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T12:46:39.826Z"
+      "last_updated": "2026-10-28T03:18:00.116Z"
     },
     "expo/expo": {
       "repository": "expo/expo",

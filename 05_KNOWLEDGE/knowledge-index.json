@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T03:11:26.700Z",
+  "last_updated": "2026-10-28T03:18:06.303Z",
   "total_verified_learnings": 1155,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2593,8 +2593,8 @@
       "slug": "appwrite-appwrite",
       "platform": "github",
       "source_url": "https://github.com/appwrite/appwrite",
-      "source_version": "f7aeed8f",
-      "content_hash": "c540c8c9de1d48feb6f22c1df1b89cbd4466b0544a787f36f36aacdf704b549c",
+      "source_version": "4bd8931f",
+      "content_hash": "2b93e8de1461fd61f14e4daa19436ef5d35f3266e969298559880bf8315ec309",
       "dossier_path": "07_PROJECT_LEARNING/appwrite-appwrite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/appwrite-appwrite-learnings.md",
       "promoted_rules": [
@@ -2612,6 +2612,11 @@
           "number": 4761,
           "title": "Merge pull request #14540 from appwrite/fix-redis-read-timeout",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5148,
+          "title": "vcs): follow an Entire repository to the installation that pushes it",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2619,7 +2624,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:46:39.741Z",
+      "verified_at": "2026-10-28T03:18:00.013Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -20245,14 +20250,14 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
       "source_version": "hf-cross-encoder-ms-marco-minilm-l6-v2",
-      "content_hash": "cef9b87c00186dd8afd757faa30e5385abaa0f03ab9b9bcdc68acf1739444d0c",
+      "content_hash": "2057185c2b7c52a5f3ca0df96ed92d6c564558fd5d917ec6a5033714acf885e7",
       "dossier_path": "07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md",
       "promoted_rules": [
         {
           "number": 998,
           "title": "Cross-Encoder Input Concatenation & Truncation Invariant",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 999,
@@ -20292,6 +20297,16 @@
         {
           "number": 4098,
           "title": "Cross-Encoder Pair Truncation Strategy Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5149,
+          "title": "Batched Inference Memory & Throughput Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5150,
+          "title": "Score Calibration & Thresholding Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -20635,7 +20650,7 @@
         "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv42syia",
         "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv4g0ye2"
       ],
-      "verified_at": "2026-10-25T06:08:11.111Z",
+      "verified_at": "2026-10-28T03:18:04.182Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37047,8 +37062,8 @@
       "slug": "milvus-io-milvus",
       "platform": "github",
       "source_url": "https://github.com/milvus-io/milvus",
-      "source_version": "b6cbe004",
-      "content_hash": "3f1009bf8f86511b7eede86668b2bd20f9d3fb3b3866074df7e2f8e0c40539d5",
+      "source_version": "e6aff936",
+      "content_hash": "41e411693cfade2630fae49ca225593865d908cec9d0607b722c0e5d3f51fb9e",
       "dossier_path": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "promoted_rules": [
@@ -37103,7 +37118,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T14:10:54.403Z",
+      "verified_at": "2026-10-28T03:18:06.277Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -78549,15 +78564,15 @@
       "learning_id": "rule-998",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 998,
-      "title": "Cross-Encoder Input Concatenation & Truncation Invariant (Harvested from cross-encoder/ms-marco-MiniLM-L6-v2)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Cross-Encoder Input Concatenation & Truncation Invariant",
+      "source_url": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
+      "source_version": "hf-cross-encoder-ms-marco-minilm-l6-v2",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.816Z"
+      "verified_at": "2026-10-28T03:18:04.182Z"
     },
     "rule-999": {
       "learning_id": "rule-999",
@@ -141218,6 +141233,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T03:04:33.920Z"
+    },
+    "rule-5148": {
+      "learning_id": "rule-5148",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5148,
+      "title": "vcs): follow an Entire repository to the installation that pushes it",
+      "source_url": "https://github.com/appwrite/appwrite",
+      "source_version": "4bd8931f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T03:18:00.013Z"
+    },
+    "rule-5149": {
+      "learning_id": "rule-5149",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5149,
+      "title": "Batched Inference Memory & Throughput Guard",
+      "source_url": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
+      "source_version": "hf-cross-encoder-ms-marco-minilm-l6-v2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T03:18:04.182Z"
+    },
+    "rule-5150": {
+      "learning_id": "rule-5150",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5150,
+      "title": "Score Calibration & Thresholding Invariant",
+      "source_url": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
+      "source_version": "hf-cross-encoder-ms-marco-minilm-l6-v2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T03:18:04.182Z"
     }
   },
   "aliases": {

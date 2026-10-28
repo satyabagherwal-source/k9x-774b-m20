@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T02:27:17.819Z",
+  "last_updated": "2026-10-28T03:18:06.408Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3137,6 +3137,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf"
+    },
+    {
+      "id": "CD-O3M0",
+      "directive_title": "test: expand CDC API contract and boundary coverage (#54721)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "milvus-io/milvus",
+      "source_commit": "e6aff936",
+      "date_staged": "2026-10-28",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-milvus-io-milvus"
     }
   ]
 }

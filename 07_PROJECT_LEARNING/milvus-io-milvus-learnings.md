@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source**: github ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
-> **Source Version**: `b6cbe004`  
+> **Source Version**: `e6aff936`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T14:10:53.937Z  
+> **Timestamp**: 2026-10-28T03:18:06.143Z  
 > **Learning ID**: `learn-github-milvus-io-milvus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T14:10:53.417Z  
+> **Harvest Timestamp**: 2026-10-28T03:18:05.900Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 46494 stars
+- **Stars / Engagement**: 46506 stars
 
 ---
 
@@ -1412,16 +1412,14 @@ BENCHMARK_MAIN();
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #54707** (2026-10-27): **fix: Recover etcd watches after leader changes**
-  *Symptoms*: An etcd leader change during watch authentication can escape the client as an EtcdError and make the proxy or session watcher panic. The shared watch retry predicate currently rejects this transient error.  Treat ErrLeaderChanged as recoverable so both watchers can re-read sessions and re-establish their watches. Apply the same classification when retrying the recovery snapshot request.  Add RPC fault injection for failed watch authentication and token refresh during recovery. Verify session snapshots, resumed revisions, and subsequent proxy events, plus session watcher recovery and fatal permission errors.  Related to #54706 Related: #54137
+- **Issue #54727** (2026-10-27): **test: align manifest test calls with revision paths**
+  *Symptoms*: issue: #54153  - Manifest tests: migrate five remaining `CommitManifestUpdates` calls in packed and DataCoord to the revision-path API introduced by #54154, restoring Code Check and test compilation while preserving the original base paths, versions, and assertions.
   **Post-Mortem & Fix Analysis**:
+  > /set-milestone 3.1
   > [ci-v2-notice] Notice: New ci-v2 system is enabled for this PR.  To rerun ci-v2 checks, comment with: - /ci-rerun-code-check  // for ci-v2/code-check - /ci-rerun-code-check-macos  // for Code Checker MacOS (GitHub Actions) - /ci-rerun-build  // for ci-v2/build - /ci-rerun-build-all  // for ci-v2/build-all (multi-arch builds) - /ci-rerun-buildenv  // for ci-v2/build-env (build milvus-env builder images; update .env after the new tag is ready) - /ci-rerun-ut-integration  // for ci-v2/ut-integration, will rerun ci-v2/build - /ci-rerun-ut-go  // for ci-v2/ut-go, will rerun ci-v2/build - /ci-rerun-ut-cpp  // for ci-v2/ut-cpp - /ci-rerun-ut  // for all ci-v2/ut-integration, ci-v2/ut-go, ci-v2/ut-cpp, will rerun ci-v2/build - /ci-rerun-e2e-default  // for ci-v2/e2e-default - /ci-rerun-e2e-pulsar-wp  // for ci-v2/e2e-pulsar-wp (GCP branch-equivalent Pulsar + Woodpecker Python E2E) - /ci-rerun-e2e-amd  // for ci-v2/e2e-amd (e2e pool dispatcher) - /ci-rerun-e2e-dist-wp  // for ci-v2/e2e-dist-wp 
-  > <!-- ciloop-result-36647 --> ### :white_check_mark: CI Loop Results  `28506f3`  | Stage | Result | Duration | Tests | |-------|--------|----------|-------| | :white_check_mark: Build | SUCCESS | 21.4min | - | | :white_check_mark: Code-Check | SUCCESS | 9.7min | - | | :white_check_mark: UT-GO | SUCCESS | 34.6min | - | | :white_check_mark: UT-CPP-Cov | SUCCESS | 78.3min | 22476 total, 22476 passed, 0 failed | | :white_check_mark: UT-Integration | SUCCESS | 49.2min | 658 total, 650 passed, 0 failed, 8 skipped |  **Total:** 121min | [Pipeline](https://jenkins-milvus-ci.milvus.io/job/MILVUS-CI-V2-PR-PIPELINES/job/milvus-build-ut-ciloop-pipeline/36647/pipeline-overview/) | [Artifacts](https://jenkins-milvus-ci.milvus.io/job/MILVUS-CI-V2-PR-PIPELINES/job/milvus-build-ut-ciloop-pipeline/36647/artifact)  **Overall Coverage:** 77.5% **Diff Coverage:** Go 100.0% (4 hit, 0 miss, 4 measurable lines, 5 unmeasured) **Diff Coverage HTML:** [view changed lines](https://jenkins-milvus-ci.milvus.io/job/M
 
-- **Issue #54696** (2026-10-26): **doc: Define business-version conditional upsert contracts**
-  *Symptoms*: Superseded by the [Milvus implementation PR](https://github.com/milvus-io/milvus/pull/54697), which already contains the identical design document. Design review, meeting conclusions and both approver stamps are tracked there. Closing this standalone document PR does not imply design approval.  issue: [milvus-io/milvus#54532][related-issue]  Define conditional upsert by integer business version, including per-row skip outcomes, missing-row policies, per-channel CAS retries, error projections and SDK replay boundaries.  The design covers Milvus Proxy, RESTful v2 and sync/async PyMilvus MilvusClient. It explicitly records the ordinary partial-update retry/result changes shipped in the same implementation.  - Feature DRI: @weiliu1031 - Primary Approver: @liliu-z - Independent Approver: @congqixia - Design review meeting and both approval stamps remain pending.  The public protocol is merged in [milvus-proto PR 684](https://github.com/milvus-io/milvus-proto/pull/684). This document pins that published protocol and does not introduce a feature flag or a forced-CAS protocol.  Validation: checked the published protocol and `git diff --check`. Current local implementation regression results are recorded separately from pending deployed/runtime/performance validation.  [related-issue]: https://github.com/milvus-io/milvus/issues/54532 
-  **Post-Mortem & Fix Analysis**:
-  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: To complete the [pull request process](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process), please ask for approval from **weiliu1031** after the PR has been reviewed.  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=milvus-io%2Fmilvus).  <details open> Needs approval from an approver in each of these files:  - **[docs/OWNERS](https://github.com/milvus-io/milvus/blob/master/docs/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["weiliu1031"]} -->
+- **Issue #54723** (2026-10-28): **fix: [3.0] Align milvus-common with Cardinal stream options**
+  *Symptoms*: Superseded by [PR #54734](https://github.com/milvus-io/milvus/pull/54734), whose source branch is hosted in `weiliu1031/milvus`. Please continue review there.  issue: #54295 pr: #54726  Cardinal v2 uses `OpContext::build_id` and `milvus::OutputStreamOptions`, which are absent from the milvus-common version pinned by 3.0. This prevents native VectorLake image compilation.  Pin `milvus-common/1.0.0-78f2c29@milvus/dev#af77e5f5444d6dd7cc5573182b958491`, the minimum source version containing both interfaces, and adapt the FileManager output-stream override to accept the options struct. The implementation continues to write directly to backing storage and ignores the optional hints, as the upstream contract permits. The internal `bool is_index_file` overload is unchanged.  Upstream interfaces: [milvus-common PR 138](https://github.com/zilliztech/milvus-common/pull/138) and [PR 141](https://github.com/zilliztech/milvus-common/pull/141). The corresponding master fix is [PR #54726](https://github.com/milvus-io/milvus/pull/54726). This PR applies the same dependency upgrade and output-stream interface adaptation to 3.0. It was prepared first to unblock the 3.0-based VectorLake image build and is not a clean cherry-pick: master additionally adapts VectorDiskBuildFileManager and RestrictedDiskEngineFileManager and extends existing tests, while this 3.0 change adapts FileManagerImpl.  ### Validation  - `clang-format-12 --dry-run --Werror internal/core/src/storage/FileManager.h`: passed. -
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1438,1236 +1436,733 @@ BENCHMARK_MAIN();
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `61de3a82` (2026-10-26)
-**Commit Message**: fix: write manifest index artifacts under the segment _index directory (#54412)
+### Incident Patch 1: `e6aff936` (2026-10-28)
+**Commit Message**: test: expand CDC API contract and boundary coverage (#54721)
 
-Conflict refresh (2026-10-26): merged master `f067780bd8` and
-regenerated the conflicting DataCoord protobuf bindings in the matching
-development container, preserving both compaction terminal outcomes and
-segment-rooted index fields. Proto generation, datapb compilation,
-metautil tests, and protobuf round-trip checks passed. Focused
-DataCoord/session tests could not compile against the existing local
-native outputs: `milvus-storage/ffi_talon_c.h` is missing and the
-installed segcore headers lack `SegcoreSetSparseInterimIndexAlgorithms`.
-Those tests and the full native build are not claimed as passing; hosted
-CI must validate the refreshed head.
+CDC tests miss several mutation and control APIs, and some existing
+checks can pass after a failed read or by inspecting only the primary.
+This change verifies replicated state, intentionally local operations,
+and rejected requests against their respective contracts.
 
-When manifest index publication is enabled, StorageV3 index builds still
-write outside the segment directory. Their manifest entries consequently
-contain parent traversal paths, which violate the storage manifest path
-contract. This change writes new vector/scalar index artifacts to
-`<manifest base>/_index/<buildID>/<indexVersion>/<fileKey>` and rejects
-additions or updates outside that directory.
+- Cover schema/function mutations, partial updates, truncate, RBAC,
+resource groups, import commit/abort, snapshot/refresh boundaries, and
+unsupported RPCs with state and subsequent-write checks.
+- Strengthen existing load/release, index, alias, partition, permission,
+and switchover assertions. Mark cases that require a CDC topology as L3.
+- Use MilvusClient for supported SDK operations and remove
+MilvusSys/global ORM setup from CDC paths. Retain authenticated protocol
+coverage where public SDK wrappers are unavailable. Document
+configuration requirements and the explicit instance-name option for
+stability tests.
 
-- Persist path version 2 when creating a build and pass its co
+Validation:
+- 72 selected cases passed across focused runs against Milvus commit
+`7abbd0c5f7f` with PyMilvus `3.1.0rc98`; this is an aggregate, not a
+full-suite run.
+- 11 cases passed with ORM connections and MilvusSys initialization
+forbidden. Th
 
-**File**: `configs/milvus.yaml` (modified, +2/-1)
+**File**: `tests/python_client/cdc/README.md` (modified, +90/-4)
 ```diff
-@@ -972,7 +972,8 @@ dataCoord:
-     # Layout 1 is additionally gated on no QueryNode still reporting an older release line, so setting this to 1 during a 2.6 -> 3.0 upgrade still builds layout 0 until every QueryNode is upgraded. That check reads the version each QueryNode publishes in its session, which is a per-release-line constant, so it separates 2.6.x from 3.0.x but does not differentiate binaries within the same release line.
-     storePathVersion: 0
-     # Whether completed StorageV3 index artifacts are published in segment manifests. Off (the default) keeps the legacy path: every SegmentIndex task record stays in etcd and no manifest index entry is produced. On still persists Unissued, InProgress, Failed, fake-finished, and other task states in etcd; only a successful build with artifact files is published to the manifest, and that commit atomically deletes the corresponding Finished etcd row. StorageV1/V2 always use etcd.
--    # The setting may be switched in either direction. Turning it off changes where new completions are written; records already published to manifests remain recoverable through the segment's sticky manifest_has_index marker.
-+    # New StorageV3 builds also write artifacts under the segment manifest base/_index/<build>/<version> (path version 2). Upgrade all workers and QueryNodes before enabling. Old-layout tasks keep their original etcd publication mode; external index paths are never added.
-+    # The setting applies when a build task is created. Existing builds keep their persisted mode across switches and restarts: path version 2 publishes to manifests, while versions 0/1 finish in etcd. Published records remain recoverable through the segment's manifest_has_index marker.
-     # The value must be exactly true or false. A value that does not parse as a boolean, such as yes, is silently read as false, i.e. the legacy etcd behavior.
-     writeSegmentIndexToManifest: false
-     # Concurrency of StorageV3 manifest index reads during startup and snapshot restore. Reads await asynchronous transaction callbacks in Go. Values are clamped to [1, 256], and the coordinator read limit is also capped by positive minio.maxConnections values. Restore assembly and verification share the same budget.
+@@ -15,7 +15,7 @@ This test suite validates CDC (Change Data Capture) synchronization between upst
+ - Automatic CDC topology setup at test start
+ - Query-based verification to ensure data consistency
+ - Configurable sync timeout with progress logging
+-- Comprehensive test coverage for all CDC-supported operations
++- Explicit checks for replicated state, local operations, and rejected interfaces
+ 
+ ## Prerequisites
+ 
+@@ -27,7 +27,10 @@ Before running the tests, ensure you have:
+ 
+ 2. **Python dependencies:**
+    ```bash
+-   pip install pymilvus>=2.6.0 pytest numpy
++   # From the repository root
++   uv venv -p 3.12
++   source .venv/bin/activate
++   uv pip install -r tests/python_client/requirements.txt
+    ```
+ 
+ 3. **Network connectivity:**
+@@ -77,8 +80,8 @@ The test suite is organized into the following categories:
+ **File:** `test_resource_group.py`
+ - CREATE_RESOURCE_GROUP
+ - DROP_RESOURCE_GROUP
+-- TRANSFER_NODE
+-- TRANSFER_REPLICA
++- UPDATE_RESOURCE_GROUP (local on both roles)
++- TRANSFER_REPLICA (primary assignment and default secondary-local override)
+ 
+ ### 3. RBAC Operations
+ **File:** `test_rbac.py`
+@@ -233,3 +236,86 @@ testcases/
+ ├── test_alias.py               # Alias operation tests
+ └── test_partition.py           # Partition operation tests
+ ```
++
++## Interface contract regression
++
++The supplemental cases use the repository-pinned PyMilvus version and require a
++CDC pair, so they are tagged `CDC,L3`. Run them serially: topology changes and
++Import 2PC use session-wide state. Both clusters must use
++`common.storage.useLoonFFI=true`,
++`dataCoord.compaction.bumpSchemaVersion.enabled=true`, and
++`dataCoord.compaction.storageVersion.enabled=true` for the function-field lifecycle case. Replica
++assignment cases assume the default
++`streaming.replication.useLocalReplicaConfig=true` and one secondary replica.
++The multi-replica case additionally needs two primary query nodes and, when
++StreamingNodes host replica delegators, two primary StreamingNodes. Missing
++capacity is reported as a skip, not a pass.
++
++CDC test operations and state checks use `MilvusClient`, including replica and
++file-resource inspection. CDC fixtures, stability workloads and the comparison
++script do not register ORM connections or use `MilvusSys`. Stability runs must
++pass `--upstream-milvus-name <Milvus-CR-or-release-name>` for Kubernetes Pod
++readiness checks; the CDC cluster ID is not assumed to be the release name.
++
++Protocol-only coverage uses the authenticated client channel when PyMilvus
++3.1.0rc98 has no public wrapper: unsupported namespace/prewarm RPCs, manifest
++updates, RBAC backup/restore, phrase slop, telemetry commands, snapshot
++export/external restore, and schema requests the public wrappers cannot express.
++Import jobs use the SDK bulk-import helpers and the import REST endpoints;
++collection and row checks use `MilvusClient`.
++
++| File | Contracts checked |
++| --- | --- |
++| `test_api_mutations.py` | Add/drop scalar and struct fields; function/output-index lifecycle; rejected legacy Function calls; truncate; partial update; field/index properties; secondary write rejection; FlushAll |
++| `test_api_boundaries.py` | Eight unimplemented RPCs on both roles; snapshot local lifecycle; primary-only snapshot/manifest calls; local restore data with continued DML replication |
++| `test_api_control.py` | RestoreRBAC, AlterRole, restored credentials and effective permissions; phrase slop; local heartbeat/telemetry/client commands |
++| `test_api_storage.py` | Local file-resource registration/removal; local external refresh across two rounds and secondary rejection without side effects; snapshot export/state and local external restore |
++| `test_import_2pc.py` | Manual import commit/abort, rejected auto-commit without visible rows, and subsequent successful imports |
++| `test_resource_group.py` | Actual create/update/drop/transfer calls, with local/replicated-state assertions |
++
++RestoreSnapshot, RestoreExternalSnapshot and RefreshExternalCollection currently
++emit unreplicable task messages. Their boundary cases assert successful primary
++data changes, no corresponding secondary job or restored/refreshed rows after a
++control-channel barrier, and continued ordinary DML replication. Collection and
++index DDL still replicate independently. These are executable boundary tests,
++not expected failures of full-data replication tests.
++
++Run from `tests/python_client` with the repository virtual environment active:
++
++```bash
++pytest cdc/testcases --tags L3 -n 0 \
++  -k 'TestCDCAPIChanges or TestCDCUnsupportedAPI or TestCDCSnapshotBoundary or TestCDCControlAPI or TestCDCStorageAPI or TestCDCImport2PC or TestCDCSyncResourceGroup' \
++  --upstream-uri "$CDC_SOURCE_URI" --downstream-uri "$CDC_TARGET_URI" \
++  --source-cluster-id "$CDC_SOURCE_ID" --target-cluster-id "$CDC_TARGET_ID" \
++  --import-2pc-minio-host "$CDC_SOURCE_MINIO" \
++  --import-2pc-minio-bucket "$CDC_SOURCE_BUCKET" \
++  --import-2pc-downstream-minio-host "$CDC_TA
 ```
 
-**File**: `docs/agent_guides/storage/path_contract.md` (modified, +24/-1)
+**File**: `tests/python_client/cdc/conftest.py` (modified, +24/-0)
 ```diff
-@@ -12,7 +12,7 @@ ChunkManager receives complete keys; it does not prepend its root.
- | Local | Absolute filesystem path including `localStorage.path` | `/var/lib/milvus/data/insert_log/1/2/3/...` |
- | Remote | Bucket-relative object key, normally including `minio.rootPath` | `files/insert_log/1/2/3/...` |
+@@ -93,6 +93,12 @@ def pytest_addoption(parser):
+         default="chaos-testing",
+         help="Kubernetes namespace for Milvus deployment",
+     )
++    parser.addoption(
++        "--upstream-milvus-name",
++        action="store",
++        default="",
++        help="Upstream Milvus CR/release name for CDC stability Pod readiness checks",
++    )
+     parser.addoption(
+         "--import-2pc-workload",
+         action="store",
+@@ -146,6 +152,14 @@ def _minio_endpoint(host):
+     return f"{host}:9000"
  
--**New local segment/index namespaces never use minio.rootPath.** Updates to an
-+**New local segment namespaces never use minio.rootPath.** Updates to an
- existing legacy manifest retain its base path, including the historical prefix;
- do not rebase that manifest while appending data or stats. A remote key does not include
- the bucket name or a URI scheme. Local loon/Arrow filesystems use `/` as their
-@@ -35,6 +35,23 @@ Explore is a separate layout: local temporary manifests live under
- - Cleanup uses the same layout as the producer. Preserve remote keys exactly:
-   `.`, `..`, and repeated separators are literal object-key components.
  
-+## Manifest index artifacts
++@pytest.fixture(scope="session")
++def upstream_milvus_name(request):
++    name = request.config.getoption("--upstream-milvus-name")
++    if not name:
++        raise pytest.UsageError("CDC stability tests require --upstream-milvus-name for Pod readiness checks")
++    return name
 +
-+When `dataCoord.index.writeSegmentIndexToManifest` is enabled, new StorageV3
-+vector/scalar index builds select `IndexStorePathVersion=2` and write to
-+`<manifest base>/_index/<build>/<version>/<file>`. This includes new indexes on
-+legacy local segments: they follow that existing manifest base. Disabling the
-+switch preserves the existing version-0/1 layout selection for new tasks.
-+New or updated index entries must stay inside that `_index` directory; parent
-+traversal and external namespaces are errors. Existing entries are not migrated.
-+Builds retain their creation-time publication mode across switch changes and
-+restarts: version 2 finishes in the manifest, while version 0/1 finishes in etcd.
-+Readers and cleanup use each artifact's persisted version.
-+Resolving v2 index files requires the owning segment's manifest base; load and
-+snapshot consumers report missing or invalid metadata instead of guessing the
-+canonical base. Snapshot generation uses its selected segment metadata.
-+See [design and compatibility](../../design-docs/design_docs/20261019-segment-rooted-index-artifacts.md).
 +
- ## Local upgrade compatibility
+ @pytest.fixture(scope="session")
+ def upstream_client(request):
+     """Create upstream MilvusClient."""
+@@ -567,6 +581,9 @@ def cdc_topology_setup(request, upstream_client, downstream_client):
+     target_cluster_id = request.config.getoption("--target-cluster-id")
+     pchannel_num = int(request.config.getoption("--pchannel-num"))
  
- The official Docker Compose and embedded standalone launchers run Milvus as the
-@@ -102,6 +119,12 @@ directory from the output manifest base.
- - V3 orphan scan: enumerate `insert_log` and reclaim files without segment
-   metadata after the protection period. Files belonging to registered V3
-   segments are skipped, even if an individual file is absent from the manifest.
-+- A dedicated build-aware scan handles canonical `insert_log/.../_index`
-+  orphans, including those in live V3 segments; snapshot and import protections
-+  still apply.
-+- Malformed `_index` paths are skipped by the orphan scan because their build
-+  ownership cannot be established. Dropped-segment directory cleanup still
-+  covers them; malformed objects without a segment row can remain orphaned.
- - Therefore an uncommitted stats file inside a live V3 segment is not guaranteed
-   to be reclaimed by DataCoord's orphan scan.
- - Legacy `R/M/insert_log` orphan/LOB layouts and old Explore temporary paths
++    logger.info("CDC source build: %s", upstream_client.get_server_version(detail=True))
++    logger.info("CDC target build: %s", downstream_client.get_server_version(detail=True))
++
+     logger.info(f"Setting up CDC topology: {source_cluster_id} -> {target_cluster_id} (channels: {pchannel_num})...")
+ 
+     # Create CDC replication configuration
+@@ -621,3 +638,10 @@ def cdc_topology_setup(request, upstream_client, downstream_client):
+ 
+     # Cleanup can be added here if needed
+     logger.info("CDC topology teardown completed")
++
++
++@pytest.fixture
++def cdc_contract(upstream_client, downstream_client, sync_timeout, request):
++    from cdc.testcases.contract_helpers import CDCContract
++
++    return CDCContract(upstream_client, downstream_client, sync_timeout, request)
 ```
 
-**File**: `docs/design-docs/design_docs/20260811-storagev3-manifest-index-publication.md` (modified, +20/-23)
+**File**: `tests/python_client/cdc/scripts/diff_upstream_downstream.py` (modified, +23/-37)
 ```diff
-@@ -14,8 +14,9 @@ Every such manifest revision is created by DataCoord inside
- advances `SegmentInfo.manifest_path` and persists the index task metadata.
+@@ -20,7 +20,7 @@
  
- Publication is opt-in and exclusive with the etcd `SegmentIndex` row, behind
--`dataCoord.index.writeSegmentIndexToManifest` (default off). Off is the pure
--legacy path: every task state goes to etcd and no manifest index entry is
-+`dataCoord.index.writeSegmentIndexToManifest` (default off), captured when a build
-+task is created. Off is the pure legacy path: every task state goes to etcd and
-+no manifest index entry is
- produced. On changes only the terminal artifact placement: Unissued,
- InProgress, Failed, and fake-Finished records still persist to etcd; a Finished
- StorageV3 build with files is published to the manifest, and that publication
-@@ -27,9 +28,9 @@ The same switch may be changed in either direction. A
- current manifest may contain index metadata. Additions set it atomically with
- the pointer. Retractions read the final immutable revision and clear the marker
- in that same catalog transaction only when its index section is empty. Startup
--recovery and GC follow this marker,
--not the switch's current value, so disabling publication redirects new results
--to etcd without hiding or leaking indexes written while it was enabled. An
-+recovery and GC follow this marker, not the switch's current value, so disabling
-+publication redirects newly created tasks to etcd without hiding or leaking
-+indexes written while it was enabled. An
- all-etcd cluster has no marked segments and performs no manifest index reads.
+ from deepdiff import DeepDiff
+ from loguru import logger
+-from pymilvus import Collection, connections, db, list_collections
++from pymilvus import MilvusClient
  
- Index workers keep their existing responsibility — build the index and upload
-@@ -93,13 +94,13 @@ revision.
  
- ### Artifact paths
+ def convert_deepdiff(diff):
+@@ -31,21 +31,15 @@ def convert_deepdiff(diff):
+     return diff
  
--The manifest artifact path is intentionally distinct from the legacy etcd
--`SegmentIndex` path: index bytes keep their existing
--`index_v1/<collection>/<partition>/<segment>/<build>/<version>` layout.
--DataCoord stores that prefix in `LoonIndexInfo.path` relative to the segment's
--`_index` directory, so milvus-storage's relative/absolute normalization
--round-trips it back to the legacy prefix on read. The legacy etcd handoff
--remains on its existing global `index_files`/`index_v1` hierarchy.
-+New builds with manifest publication enabled use
-+`<manifest base>/_index/<build>/<version>` (`IndexStorePathVersion=2`). New entries
-+store only `<build>/<version>`; external paths and parent traversal are rejected.
-+Older persisted entries remain readable in their original layout. Task completion
-+follows the persisted layout: version 2 publishes to the manifest, and version
-+0/1 finishes in etcd, independently of subsequent switch changes or restarts.
-+See the [artifact placement design](20261019-segment-rooted-index-artifacts.md).
  
- ### Concurrency
+-def get_collection_info(info, db_name, c_name):
++def get_collection_info(client, info, db_name, c_name):
+     info[db_name][c_name] = {}
+-    c = Collection(c_name)
+-
+-    info[db_name][c_name]["name"] = c.name
+-    # logger.info(c.num_entities)
+-    info[db_name][c_name]["num_entities"] = c.num_entities
+-    # logger.info(c.schema)
+-    info[db_name][c_name]["schema"] = len([f.name for f in c.schema.fields])
+-    # logger.info(c.indexes)
+-    info[db_name][c_name]["indexes"] = sorted([x.index_name for x in c.indexes])
+-    # logger.info(c.partitions)
+-    info[db_name][c_name]["partitions"] = sorted([p.name for p in c.partitions])
++    info[db_name][c_name]["name"] = c_name
++    info[db_name][c_name]["num_entities"] = int(client.get_collection_stats(c_name)["row_count"])
++    info[db_name][c_name]["schema"] = len(client.describe_collection(c_name)["fields"])
++    info[db_name][c_name]["indexes"] = sorted(client.list_indexes(c_name))
++    info[db_name][c_name]["partitions"] = sorted(client.list_partitions(c_name))
+     try:
+-        replicas = len(c.get_replicas().groups)
++        replicas = len(client.describe_replica(c_name, timeout=60))
+     except Exception as e:
+         logger.warning(e)
+         # logger.info(f"no replica for {db_name}.{c_name}")
+@@ -55,7 +49,7 @@ def get_collection_info(info, db_name, c_name):
+     if replicas > 0:
+         try:
+             # logger.info(f"start query {db_name}.{c_name}")
+-            res = c.query(expr="", output_fields=["count(*)"], timeout=60)
++            res = client.query(c_name, filter="", output_fields=["count(*)"], timeout=60)
+             cnt = res[0]["count(*)"]
+             # logger.info(cnt)
+             info[db_name][c_name]["cnt"] = cnt
+@@ -65,29 +59,21 @@ def get_collection_info(info, db_name, c_name):
  
-@@ -154,19 +155,15 @@ against its published manifest rather than the segment's earlier revision.
- A copy target is a fresh segment whose worker returns a complete first manifest
- pointer, index entries included; DataCoord publishes that pointer inline.
  
--The copied manifest object is a byte copy of the source's, and re-basing its
--pointer onto the target path is faithful for everything stored relative to the
--segment base — column groups and their per-file properties, stats, LOB. It is
--not faithful for index entries: an index artifact lives outside the segment
--directory, so its stored relative path walks back out of the base and thereby
--hardcodes the source collection/partition/segment/build IDs. Re-basing moves
--where that walk starts, not the IDs it encodes, so an inherited entry keeps
--pointing at the source's artifacts. The worker therefore retracts every
--inherited entry and records entries re-derived from the artifacts it actually
--copied, in one transaction on top of the copied manifest.
-+The copied manifest object is a byte copy of the source's. Index entries need
-+new target definition IDs and BuildIDs even when their paths are segment-relative.
-+Historical entries can also reference the source's external index namespace.
-+The worker therefore retracts inherited entries and records entries derived from
-+the files it actually copied. New manifest-mode copy tasks place those files
-+under the target segment's `_index`, irrespective of the source layout.
+ def get_cluster_info(uri, token):
+-    try:
+-        connections.disconnect(alias="default")
+-    except Exception as e:
+-        logger.warning(e)
+-    if token:
+-        connections.connect(uri=uri, token=token)
+-    else:
+-        connections.connect(uri=uri)
++    client = MilvusClient(uri=uri, token=token)
+     info = {}
+-    all_db = db.list_database()
+-    # logger.info(all_db)
+-    for db_name in all_db:
+-        info[db_name] = {}
+-        db.using_database(db_name)
+-        all_collection = list_collections()
+-        # logger.info(all_collection)
+-        threads = []
+-        for collection_name in all_collection:
+-            t = threading.Thread(target=get_collection_info, args=(info, db_name, collection_name))
+-            threads.append(t)
+-            t.start()
+-        for t in threads:
+-            t.join()
++    try:
++        for db_name in client.list_databases():
++            info[db_name] = {}
++            client.use_database(db_name)
++            threads = []
++            for collection_name in client.list_collections():
++                t = threading.Thread(target=get_collection_info, args=(client, info, db_name, collection_name))
++                threads.append(t)
++                t.start()
++            for t in threads:
++                t.join()
++    finally:
++        client.close()
  
- Committing on the target also constrains what the copy may bring over. The copy
--carries the segment directory wholesale, and the manifest directory is part of
-+carries the segment directory except `_index` (which uses the explicit pinned index list), and the manifest directory is part of
- it; but a snapshot pins one revision while the source segment keeps evolving
- later. The copy keeps only that pinned revision to avoid copying unrelated
- history. The pinned milvus-storage implementation (`3ae6ac4`) applies OVERWRITE
+     # logger.info(json.dumps(info, indent=2))
+     return info
 ```
 
-**File**: `docs/design-docs/design_docs/20260817-datacoord-segment-manifest-commit.md` (modified, +12/-11)
+**File**: `tests/python_client/cdc/stablity/test_concurrent_operation.py` (modified, +7/-9)
 ```diff
-@@ -364,8 +364,8 @@ costs a retry rather than an unreclaimable leak.
+@@ -26,10 +26,9 @@
+ )
+ from common import common_func as cf
+ from common.common_type import CaseLabel
+-from common.milvus_sys import MilvusSys
+ from delayed_assert import assert_expectations
+-from pymilvus import DataType, FunctionType, connections
+-from utils.util_k8s import get_milvus_instance_name, wait_pods_ready
++from pymilvus import DataType, FunctionType
++from utils.util_k8s import wait_pods_ready
+ from utils.util_log import test_log as log
  
- The manifest becomes the only durable record of a completed StorageV3 index
- artifact, but `SegmentIndex` remains the durable build-task record until that
--point. `dataCoord.index.writeSegmentIndexToManifest` (default off) controls
--only the terminal artifact placement:
-+point. `dataCoord.index.writeSegmentIndexToManifest` (default off) selects
-+terminal artifact placement when the build task is created:
- 
- - Off: every state, including Finished, persists to etcd and no manifest index
-   entry is created.
-@@ -376,10 +376,10 @@ only the terminal artifact placement:
- 
- This makes publication the sole retirement point instead of spreading an etcd
- write gate through `CreateSegmentIndex`, `AlterSegmentIndexes`, and every state
--transition. It also handles an in-flight build across false-to-true activation:
--the row created before activation is deleted atomically when its artifact is
--published, so restart cannot resurrect an old InProgress state over a Finished
--manifest entry.
-+transition. A task's persisted path version pins this choice across activation
-+and deactivation: version 0/1 finishes in etcd, while version 2 publishes to the
-+manifest and atomically deletes its etcd task row. Restart therefore cannot
-+resurrect an old InProgress state over a Finished manifest entry.
- 
- Reload follows durable placement rather than the switch's current value. It
- first loads etcd task records, then reads each retained healthy or Dropped,
-@@ -398,10 +398,11 @@ manifests that still exist fail startup. Startup logs scanned, read, and recover
- object-storage fan-out is bounded by
- `dataCoord.index.segmentIndexManifestLoadConcurrency`.
- 
--The switch may be changed in either direction. Turning it off sends new
--completions to etcd but does not move or hide records already resident in
--manifests; their marker keeps reload and GC on those manifests. Turning
--it on again resumes manifest publication. No inverse feature switch and no
-+The switch may be changed in either direction. Turning it off selects etcd
-+for newly created builds but does not redirect in-flight tasks or hide records
-+already resident in manifests; their marker keeps reload and GC on those
-+manifests. Turning it on again selects manifest publication for newly created
-+builds. No inverse feature switch and no
- eager manifest-to-etcd backfill are required, so mixed historical placement is
- supported without dual-writing an individual result.
- 
-@@ -453,7 +454,7 @@ off-by-default rather than removed:
- - A `SegmentIndex` is also the build task record. Because task-only states have
-   no manifest representation, they continue to persist in etcd. A recovered
-   manifest record is `Finished` by construction.
--- Mode changes affect new terminal results only. Historical etcd and manifest
-+- Mode changes affect newly created tasks only. Historical etcd and manifest
-   records may coexist; the per-segment marker makes both recoverable.
- 
- A version-skew guard protects the one cross-binary interaction: with the
+ _VECTOR_DTYPES = {
+@@ -92,25 +91,24 @@ class TestOperations(TestBase):
+     @pytest.fixture(scope="function", autouse=True)
+     def connection(
+         self,
++        upstream_client,
+         upstream_uri,
+         upstream_token,
+         downstream_uri,
+         downstream_token,
+         milvus_ns,
++        upstream_milvus_name,
+         import_2pc_workload,
+         import_2pc_minio_endpoint,
+         import_2pc_minio_bucket,
+         import_2pc_downstream_minio_endpoint,
+         import_2pc_downstream_minio_bucket,
+         import_2pc_rows,
+     ):
+-        connections.connect("default", uri=upstream_uri, token=upstream_token)
+-        if connections.has_connection("default") is False:
+-            raise Exception("no connections")
++        upstream_client.list_databases(timeout=10)
+         log.info("connect to milvus successfully")
+-        self.milvus_sys = MilvusSys(alias="default")
+         self.milvus_ns = milvus_ns
+-        self.release_name = get_milvus_instance_name(self.milvus_ns, milvus_sys=self.milvus_sys)
++        self.release_name = upstream_milvus_name
+         cf.param_info.param_uri = upstream_uri
+         cf.param_info.param_token = upstream_token
+         cf.param_info.param_bucket_name = import_2pc_minio_bucket
+@@ -172,7 +170,7 @@ def collection_name(self, request):
+     def test_operations(self, request_duration, is_check, collection_name):
+         # start the monitor threads to check the milvus ops
+         log.info("*********************Test Start**********************")
+-        log.info(connections.get_connection_addr("default"))
++        log.info(f"upstream URI: {self.upstream_uri}")
+         # event_records = EventRecords()
+         c_name = collection_name if collection_name else cf.gen_unique_str("Checker_")
+         # event_records.insert("init_health_checkers", "start")
 ```
 
-**File**: `docs/design-docs/design_docs/20261019-segment-rooted-index-artifacts.md` (added, +146/-0)
+**File**: `tests/python_client/cdc/stablity/test_single_request_operation.py` (modified, +7/-10)
 ```diff
-@@ -0,0 +1,146 @@
-+# Segment-rooted index artifacts for manifest publication
-+
-+- **Created:** 2026-10-19
-+- **Author(s):** @somfornot
-+- **Status:** Under Review
-+- **Component:** DataCoord, DataNode, QueryNode, Storage
-+- **Related Issues:** #53047
-+
-+## Goal and scope
-+
-+When `dataCoord.index.writeSegmentIndexToManifest=true`, newly created
-+StorageV3 vector/scalar index builds write their files into the owning segment's
-+`_index` directory. New manifest index entries must never reference another
-+namespace, including through `..`. Storage also enforces this invariant when
-+adding/updating index entries; existing entries can remain unchanged.
-+
-+This changes artifact placement, in addition to the metadata publication
-+introduced by the [manifest publication design](20260811-storagev3-manifest-index-publication.md).
-+TEXT and JSON stats use their existing `_stats` contracts. StorageV1/V2 and
-+builds created with the switch disabled keep the existing layout selection.
-+There is no migration of historical artifacts or repair of corrupted manifests.
-+
-+## Layout and interfaces
-+
-+`IndexStorePathVersion=2` (`SEGMENT_ROOTED`) identifies:
-+
-+```text
-+<segment manifest base>/_index/<buildID>/<indexVersion>/<fileKey>
-+```
-+
-+For a canonical segment the base is
-+`<storage root>/insert_log/<collection>/<partition>/<segment>`.
-+An existing legacy local manifest keeps its actual base; its new indexes must
-+also remain inside that base's `_index`, rather than using today's canonical
-+root. Object storage keys are bucket-relative and local paths are absolute.
-+
-+DataCoord persists version 2 when creating the build task. The request carries
-+both that version and the complete artifact prefix in `IndexFilePrefix`.
-+DataNode forwards them to the C++ file manager. The same prefix is used by
-+memory/disk and packed index uploads. QueryNode reconstructs its file-manager
-+prefix from the recorded complete file list. Go load, snapshot and GC consumers
-+use the persisted version and the owning segment's manifest base.
-+
-+DataCoord stores `<buildID>/<indexVersion>` in `ManifestIndexInfo.Path`.
-+`ManifestIndexRelativePath` requires literal containment under this segment's
-+`_index/` and rejects noncanonical relative components. The FFI staging boundary
-+also rejects absolute paths and parent traversal. Unrelated manifest updates do
-+not restage existing index entries.
-+
-+## Retries, mode changes and upgrades
-+
-+A task's durable path version pins both artifact placement and publication mode
-+at creation. Version-2 builds finish in the manifest even after the switch is
-+turned off; version-0/1 builds finish in etcd even after it is turned on. Completion
-+uses the coordinator's persisted task version, not the current switch or the
-+worker's claimed version. Worker results still undergo layout validation.
-+Retries and coordinator restarts preserve this choice. Pre-version-2 tasks also
-+finish in etcd because their metadata cannot establish an on-mode choice for the
-+new layout. No artifact migration or automatic rebuild is required by a switch
-+change, and external index paths are never added to a manifest.
-+
-+Upgrade DataCoord, index workers and QueryNodes before enabling this behavior.
-+An older native worker treats unknown path versions as collection-rooted and
-+can echo the requested version despite writing the old layout. The existing
-+switch remains an operator gate. DataCoord additionally checks the selected
-+worker's `QuerySlot.segment_rooted_indexes` capability before dispatching a v2
-+build or copy destination. A missing capability fails the task with an explicit
-+upgrade-required reason, without dispatching or downgrading its layout. RPC
-+failures remain retryable. Downgrading readers while version-2 artifacts exist
-+is unsupported.
-+
-+## Snapshot restore
-+
-+A new copy task captures version 2 together with manifest publication mode in
-+its durable metadata. `CopySegmentTarget.index_store_path_version` tells the
-+worker the destination layout independently of the source layout. Sources in
-+versions 0, 1 or 2 can therefore be copied to the new segment's `_index`.
-+Absent fields retain the old task's source layout; any attempt to publish an
-+external-path entry still fails. Target paths are validated before any file copy.
-+
-+The segment-directory listing excludes `_index`: only the pinned snapshot's
-+explicit index list selects builds to copy. Otherwise obsolete builds and old
-+BuildIDs would be inherited. Snapshot export also excludes `_index` from its
-+segment-directory listing and collects indexes from that explicit list, so
-+GC of unreferenced builds does not change the export file set.
-+Cleanup prefixes and result admission use the same
-+persisted destination version. A result claiming a different layout is rejected
-+before making the target segment visible.
-+
-+## Garbage collection
-+
-+Recorded-file deletion uses version 2 and the segment's actual manifest base.
-+The orphan scanner applies the existing build-state, impor
+@@ -33,10 +33,8 @@
+ )
+ from common import common_func as cf
+ from common.common_type import CaseLabel
+-from common.milvus_sys import MilvusSys
+ from delayed_assert import assert_expectations
+-from pymilvus import connections, utility
+-from utils.util_k8s import get_milvus_instance_name, wait_pods_ready
++from utils.util_k8s import wait_pods_ready
+ from utils.util_log import test_log as log
+ 
+ 
+@@ -61,29 +59,28 @@ class TestOperations(TestBase):
+     @pytest.fixture(scope="function", autouse=True)
+     def connection(
+         self,
++        upstream_client,
+         upstream_uri,
+         upstream_token,
+         downstream_uri,
+         downstream_token,
+         milvus_ns,
++        upstream_milvus_name,
+         import_2pc_workload,
+         import_2pc_minio_endpoint,
+         import_2pc_minio_bucket,
+         import_2pc_downstream_minio_endpoint,
+         import_2pc_downstream_minio_bucket,
+         import_2pc_rows,
+     ):
+-        connections.connect("default", uri=upstream_uri, token=upstream_token)
+-        if connections.has_connection("default") is False:
+-            raise Exception("no connections")
++        upstream_client.list_databases(timeout=10)
+         log.info("connect to milvus successfully")
+         pymilvus_version = pymilvus.__version__
+-        server_version = utility.get_server_version()
++        server_version = upstream_client.get_server_version(detail=True)
+         log.info(f"server version: {server_version}")
+         log.info(f"pymilvus version: {pymilvus_version}")
+-        self.milvus_sys = MilvusSys(alias="default")
+         self.milvus_ns = milvus_ns
+-        self.release_name = get_milvus_instance_name(self.milvus_ns, milvus_sys=self.milvus_sys)
++        self.release_name = upstream_milvus_name
+         cf.param_info.param_uri = upstream_uri
+         cf.param_info.param_token = upstream_token
+         cf.param_info.param_bucket_name = import_2pc_minio_bucket
+@@ -142,7 +139,7 @@ def init_health_checkers(self, collection_name=None):
+     def test_operations(self, request_duration, is_check):
+         # start the monitor threads to check the milvus ops
+         log.info("*********************Test Start**********************")
+-        log.info(connections.get_connection_addr("default"))
++        log.info(f"upstream URI: {self.upstream_uri}")
+         event_records = EventRecords()
+         c_name = None
+         event_records.insert("init_health_checkers", "start")
 ```
 
-**File**: `internal/core/src/common/RegexQuery.h` (modified, +2/-0)
+**File**: `tests/python_client/cdc/testcases/contract_helpers.py` (added, +160/-0)
 ```diff
-@@ -11,6 +11,8 @@
- 
- #pragma once
- 
-+#include <optional>
+@@ -0,0 +1,160 @@
++"""Precise state oracles shared by CDC interface contract tests."""
 +
- #include <functional>
- #include <string>
- #include <string_view>
++import time
++from contextlib import contextmanager
++
++import grpc
++from pymilvus import DataType, MilvusException
++from pymilvus.client.utils import check_status
++
++from .base import TestCDCSyncBase
++
++
++def eventually(check, timeout, description):
++    """Retry observations, preserving the last failed assertion or RPC error."""
++    deadline = time.monotonic() + timeout
++    last_error = None
++    while time.monotonic() < deadline:
++        try:
++            check()
++            return
++        except (AssertionError, MilvusException, grpc.RpcError) as exc:
++            last_error = exc
++            time.sleep(0.5)
++    raise AssertionError(f"Timed out waiting for {description}: {last_error}") from last_error
++
++
++def rows_equal(client, name, expected, fields=None, **kwargs):
++    if fields is None:
++        fields = list(expected[0]) if expected else ["id", "value", "text"]
++    actual = client.query(name, filter="id >= 0", output_fields=fields, timeout=10, **kwargs)
++    # Query also returns the primary key, including an external table's virtual PK.
++    actual = [{field: row[field] for field in fields} for row in actual]
++    assert sorted(actual, key=lambda r: r["id"]) == sorted(expected, key=lambda r: r["id"]), actual
++
++
++def logical_index(info):
++    """Exclude build progress and cluster-local identities, not user parameters."""
++    local = {"state", "index_state", "total_rows", "indexed_rows", "pending_index_rows", "index_id"}
++    return {key: value for key, value in info.items() if key not in local}
++
++
++def assert_index_sync(upstream, downstream, name, field_name, timeout):
++    indexes = upstream.list_indexes(name, field_name=field_name)
++    assert indexes, f"No source index on {field_name}"
++    expected = {index: logical_index(upstream.describe_index(name, index)) for index in indexes}
++
++    def check():
++        for index, definition in expected.items():
++            actual = downstream.describe_index(name, index)
++            assert actual is not None, f"Index {index} has not reached the target"
++            assert logical_index(actual) == definition, (definition, actual)
++            assert actual["state"] == "Finished", actual
++
++    eventually(check, timeout, f"index definitions for {name}.{field_name}")
++
++
++def rpc(client, method, request, timeout=30):
++    """Use the authenticated SDK channel for public RPCs without SDK wrappers."""
++    response = getattr(client._get_connection()._stub, method)(request, timeout=timeout)
++    status = getattr(response, "status", getattr(response, "alter_status", response))
++    check_status(status)
++    return response
++
++
++class CDCContract:
++    def __init__(self, upstream, downstream, timeout, request):
++        self.upstream = upstream
++        self.downstream = downstream
++        self.timeout = timeout
++        self.request = request
++
++    def name(self, prefix, max_length=60):
++        return TestCDCSyncBase.gen_unique_name(prefix, max_length=max_length)
++
++    def wait(self, check, description):
++        eventually(check, self.timeout, description)
++
++    def schema(self):
++        schema = self.upstream.create_schema(auto_id=False, enable_dynamic_field=False)
++        schema.add_field("id", DataType.INT64, is_primary=True)
++        schema.add_field("vector", DataType.FLOAT_VECTOR, dim=4)
++        schema.add_field("value", DataType.INT64, nullable=True)
++        schema.add_field(
++            "text",
++            DataType.VARCHAR,
++            max_length=128,
++            enable_analyzer=True,
++            enable_match=True,
++            analyzer_params={"tokenizer": "standard"},
++        )
++        return schema
++
++    def collection(self, schema=None, load=True):
++        name = self.name("cdc_api")
++        # Register before creation: a timeout may have committed the operation.
++        self.request.addfinalizer(lambda: self.upstream.drop_collection(name))
++        self.upstream.create_collection(name, schema=schema or self.schema(), consistency_level="Strong")
++        indexes = self.upstream.prepare_index_params()
++        indexes.add_index("vector", index_type="FLAT", metric_type="L2")
++        self.upstream.create_index(name, indexes)
++        if load:
++            self.upstream.load_collection(name)
++        self.sync_schema(name)
++        return name
++
++    def sync_schema(self, name):
++        source = self.upstream.describe_collection(name)
++        keys = ("fields", "struct_fields", "struct_array_fields", "functions", "enable_dynamic_field", "description")
++
++        def check():
++            target = self.downstream.describe_collection(name)
++            for key in keys:
++                assert target.get(key) == source.get(key), (key, source.get(key), target.get(key))
++
++        self.wait(check, f"schema of {name}")
++        return source
++
++    def data(self, start=0, count=4):
++        return [
++            {"id": i, "vector": [float(i
 ```
 
-**File**: `internal/core/src/indexbuilder/IndexBuildCapiAdapter.cpp` (modified, +1/-0)
+**File**: `tests/python_client/cdc/testcases/test_alias.py` (modified, +2/-2)
 ```diff
-@@ -331,6 +331,7 @@ MakeFileManagerContext(const proto::indexcgo::BuildIndexInfo& info,
-                                   params.at(DIM_KEY).get<int64_t>(),
-                                   IndexNonEncoding(params),
-                                   info.index_store_path_version()};
-+    index_meta.index_file_prefix = info.index_file_prefix();
+@@ -10,7 +10,7 @@
+ from .base import TestCDCSyncBase, logger
  
-     auto chunk_manager = storage::CreateChunkManager(storage_config);
-     auto fs = storage::InitArrowFileSystem(storage_config);
+ 
+-@pytest.mark.tags(CaseLabel.CDC)
++@pytest.mark.tags(CaseLabel.CDC, CaseLabel.L3)
+ class TestCDCSyncAlias(TestCDCSyncBase):
+     """Test CDC sync for alias operations."""
+ 
+@@ -213,7 +213,7 @@ def check_drop():
+                 return is_dropped
+             except Exception as e:
+                 logger.warning(f"Error checking downstream aliases during drop: {e}")
+-                return True  # If error, assume alias is dropped
++                return False  # A failed read does not prove deletion.
+ 
+         assert self.wait_for_sync(check_drop, sync_timeout, f"drop alias {alias_name}")
+         logger.info("=== test_drop_alias completed successfully ===")
 ```
 
-**File**: `internal/core/src/segcore/Utils.cpp` (modified, +4/-0)
+**File**: `tests/python_client/cdc/testcases/test_api_boundaries.py` (added, +143/-0)
 ```diff
-@@ -1387,6 +1387,10 @@ LoadIndexData(milvus::tracer::TraceContext& ctx,
-                                           load_index_info->index_version};
-     index_meta.index_store_path_version =
-         load_index_info->index_store_path_version;
-+    if (!load_index_info->index_files.empty()) {
-+        const auto& file = load_index_info->index_files.front();
-+        index_meta.index_file_prefix = file.substr(0, file.rfind('/'));
-+    }
-     config[milvus::index::INDEX_FILES] = load_index_info->index_files;
- 
-     // Old persisted index_params need not contain a nested flag. The legacy
+@@ -0,0 +1,143 @@
++"""Explicit unsupported-RPC and non-replicating snapshot contracts."""
++
++import grpc
++import pytest
++from common.common_type import CaseLabel
++from google.protobuf.message_factory import GetMessageClass
++from pymilvus import MilvusException
++from pymilvus.grpc_gen import milvus_pb2
++
++from .contract_helpers import assert_index_sync, rows_equal, rpc
++
++pytestmark = pytest.mark.tags(CaseLabel.CDC, CaseLabel.L3)
++
++
++class TestCDCUnsupportedAPI:
++    @pytest.mark.parametrize("role", ["upstream", "downstream"])
++    @pytest.mark.parametrize(
++        "method",
++        [
++            "Prewarm",
++            "DescribePrewarmTask",
++            "CreateNamespace",
++            "DescribeNamespace",
++            "ListNamespaces",
++            "DropNamespace",
++            "HasNamespace",
++            "GetNamespaceStats",
++        ],
++    )
++    def test_unimplemented_rpc_has_no_side_effects(self, cdc_contract, role, method):
++        c = cdc_contract
++        name = c.collection()
++        c.upstream.insert(name, c.data())
++        c.assert_rows(name, c.data())
++        descriptor = milvus_pb2.DESCRIPTOR.services_by_name["MilvusService"].methods_by_name[method]
++        request = GetMessageClass(descriptor.input_type)()
++        values = {
++            "db_name": "default",
++            "collection_name": name,
++            "namespace_name": "canary",
++            "namespace": "canary",
++            "taskID": "1",
++        }
++        for key, value in values.items():
++            if key in request.DESCRIPTOR.fields_by_name:
++                setattr(request, key, value)
++        client = getattr(c, role)
++        with c.unchanged(name):
++            with pytest.raises(grpc.RpcError) as error:
++                getattr(client._get_connection()._stub, method)(request, timeout=10)
++            assert error.value.code() == grpc.StatusCode.UNIMPLEMENTED
++        # A transport outage must not be mistaken for an unsupported interface.
++        c.upstream.insert(name, c.data(10))
++        c.assert_rows(name, c.data() + c.data(10))
++
++    def test_secondary_snapshot_creation_is_rejected(self, cdc_contract):
++        c = cdc_contract
++        name = c.collection()
++        c.upstream.insert(name, c.data())
++        c.assert_rows(name, c.data())
++        snapshot = c.name("snapshot_denied")
++        with c.unchanged(name):
++            with pytest.raises(MilvusException, match="(?i)not primary|secondary"):
++                c.downstream.create_snapshot(snapshot, name, timeout=15)
++        assert snapshot not in c.downstream.list_snapshots(name)
++        assert snapshot not in c.upstream.list_snapshots(name)
++
++
++class TestCDCSnapshotBoundary:
++    def test_snapshot_create_pin_unpin_drop_stays_local(self, cdc_contract):
++        c = cdc_contract
++        name = c.collection()
++        c.upstream.insert(name, c.data())
++        c.upstream.flush(name)
++        c.assert_rows(name, c.data())
++        snapshot = c.name("snapshot_local")
++        c.request.addfinalizer(lambda: c.upstream.drop_snapshot(snapshot, name))
++        c.upstream.create_snapshot(snapshot, name, description="CDC local snapshot", timeout=c.timeout)
++        assert snapshot in c.upstream.list_snapshots(name)
++        assert c.upstream.describe_snapshot(snapshot, name).description == "CDC local snapshot"
++        c.control_barrier()
++        assert snapshot not in c.downstream.list_snapshots(name)
++        pin = c.upstream.pin_snapshot_data(snapshot, name, ttl_seconds=600)
++        try:
++            with pytest.raises(MilvusException, match="(?i)pin"):
++                c.upstream.drop_snapshot(snapshot, name)
++            assert snapshot in c.upstream.list_snapshots(name)
++        finally:
++            c.upstream.unpin_snapshot_data(pin)
++        c.upstream.drop_snapshot(snapshot, name)
++        c.control_barrier()
++        assert snapshot not in c.upstream.list_snapshots(name)
++        assert snapshot not in c.downstream.list_snapshots(name)
++        c.upstream.insert(name, c.data(10))
++        c.assert_rows(name, c.data() + c.data(10))
++
++    def test_restore_snapshot_data_stays_local_and_cdc_continues(self, cdc_contract):
++        """Restore data stays on the primary; metadata and subsequent DML still replicate."""
++        c = cdc_contract
++        name = c.collection()
++        c.upstream.insert(name, c.data())
++        c.upstream.flush(name)
++        c.assert_rows(name, c.data())
++        snapshot = c.name("snapshot_restore")
++        c.request.addfinalizer(lambda: c.upstream.drop_snapshot(snapshot, name))
++        c.upstream.create_snapshot(snapshot, name, timeout=c.timeout)
++        target = c.name("restored")
++        c.request.addfinalizer(lambda: c.upstream.drop_collection(target))
++        job = c.upstream.restore_snapshot(snapshot, name, target, timeout=c.timeout)
++
++        def completed():
++            state = c.upstream.get_restore_snapshot_state(job)
++            assert state.state == "RestoreSnapshotCompleted", state
++
++        
 ```
 
 ---
 
-### Incident Patch 2: `76c4dca5` (2026-10-27)
-**Commit Message**: fix: Recover etcd watches after leader changes (#54707)
+### Incident Patch 2: `0a849c84` (2026-10-27)
+**Commit Message**: test: align manifest test calls with revision paths (#54727)
 
-An etcd leader change during watch authentication can escape the client
-as an EtcdError and make the proxy or session watcher panic. The shared
-watch retry predicate currently rejects this transient error.
+issue: #54153
 
-Treat ErrLeaderChanged as recoverable so both watchers can re-read
-sessions and re-establish their watches. Apply the same classification
-when retrying the recovery snapshot request.
+- Manifest tests: migrate five remaining `CommitManifestUpdates` calls
+in packed and DataCoord to the revision-path API introduced by #54154,
+restoring Code Check and test compilation while preserving the original
+base paths, versions, and assertions.
 
-Add RPC fault injection for failed watch authentication and token
-refresh during recovery. Verify session snapshots, resumed revisions,
-and subsequent proxy events, plus session watcher recovery and fatal
-permission errors.
+Signed-off-by: chyezh <[REDACTED_EMAIL]>
 
-Related to #54706
-Related: #54137
-
-Signed-off-by: Congqi Xia <[REDACTED_EMAIL]>
-
-**File**: `internal/util/proxyutil/proxy_watcher.go` (modified, +2/-2)
+**File**: `internal/datacoord/manifest_index_test.go` (modified, +1/-1)
 ```diff
-@@ -133,8 +133,8 @@ func (p *ProxyWatcher) startWatchEtcd(ctx context.Context, eventCh clientv3.Watc
- 				panic("stop watching etcd loop due to closed etcd event channel")
- 			}
- 			if err := event.Err(); err != nil {
--				// Recoverable watch errors (compaction, or auth-token
--				// invalidation when etcd auth is enabled) are handled by
-+				// Recoverable watch errors (compaction, leader changes, or
-+				// auth-token invalidation when etcd auth is enabled) are handled by
- 				// re-establishing the watch instead of crashing. Re-watching
- 				// issues a unary request that refreshes the etcd auth token, so
- 				// the new watch stream recovers. See etcd.IsRetriableWatchErr.
+@@ -62,7 +62,7 @@ func TestManifestIndexLegacyBaseRoundTrip(t *testing.T) {
+ 			segment := &datapb.SegmentInfo{ID: 3, CollectionID: 1, PartitionID: 2}
+ 			version := packed.ManifestEarliest
+ 			for _, buildID := range []int64{100, 200} {
+-				manifest, err := packed.CommitManifestUpdates(base, version, cfg, &packed.ManifestUpdates{
++				manifest, err := packed.CommitManifestUpdates(packed.MarshalManifestPath(base, version), cfg, &packed.ManifestUpdates{
+ 					Indexes: []packed.ManifestIndexInfo{{
+ 						ColumnName: "vector", IndexName: "index", IndexType: "HNSW",
+ 						Path: fmt.Sprintf("%d/1", buildID), IndexID: buildID, BuildID: buildID,
 ```
 
-**File**: `internal/util/proxyutil/proxy_watcher_recovery_test.go` (added, +172/-0)
+**File**: `internal/storagev2/packed/column_group_recovery_test.go` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,172 @@
-+// Licensed to the LF AI & Data foundation under one
-+// or more contributor license agreements. See the NOTICE file
-+// distributed with this work for additional information
-+// regarding copyright ownership. The ASF licenses this file
-+// to you under the Apache License, Version 2.0 (the
-+// "License"); you may not use this file except in compliance
-+// with the License. You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package proxyutil
-+
-+import (
-+	"context"
-+	"net"
-+	"sync/atomic"
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/require"
-+	"go.etcd.io/etcd/api/v3/etcdserverpb"
-+	"go.etcd.io/etcd/api/v3/mvccpb"
-+	"go.etcd.io/etcd/api/v3/v3rpc/rpctypes"
-+	clientv3 "go.etcd.io/etcd/client/v3"
-+	"google.golang.org/grpc"
-+	"google.golang.org/grpc/test/bufconn"
-+
-+	"github.com/milvus-io/milvus/internal/util/sessionutil"
-+	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
-+)
-+
-+// Inject failures at the RPC boundary so clientv3's authentication, error
-+// conversion and watch teardown paths run without monkey-patching Err().
-+type leaderChangedEtcdServer struct {
-+	etcdserverpb.UnimplementedAuthServer
-+	etcdserverpb.UnimplementedKVServer
-+	etcdserverpb.UnimplementedWatchServer
-+	initialAuthDone atomic.Bool
-+	authFailures    atomic.Int32
-+	rangeCalls      atomic.Int32
-+	watchRequests   chan *etcdserverpb.WatchCreateRequest
-+}
-+
-+func (s *leaderChangedEtcdServer) Authenticate(context.Context, *etcdserverpb.AuthenticateRequest) (*etcdserverpb.AuthenticateResponse, error) {
-+	if !s.initialAuthDone.Swap(true) {
-+		return &etcdserverpb.AuthenticateResponse{Token: "initial"}, nil
-+	}
-+	// Fail both the first watch's authentication and the token refresh
-+	// triggered by the first snapshot Get during recovery.
-+	if s.authFailures.Add(1) <= 2 {
-+		return nil, rpctypes.ErrGRPCLeaderChanged
-+	}
-+	return &etcdserverpb.AuthenticateResponse{Token: "recovered"}, nil
-+}
-+
-+func (s *leaderChangedEtcdServer) Range(context.Context, *etcdserverpb.RangeRequest) (*etcdserverpb.RangeResponse, error) {
-+	if s.rangeCalls.Add(1) == 1 {
-+		// The unary interceptor refreshes the token, whose Authenticate RPC
-+		// fails with leader changed. Get must propagate that error to Milvus.
-+		return nil, rpctypes.ErrGRPCInvalidAuthToken
-+	}
-+	return &etcdserverpb.RangeResponse{
-+		Header: &etcdserverpb.ResponseHeader{Revision: 20},
-+		Kvs:    []*mvccpb.KeyValue{{Key: []byte("proxy-200"), Value: []byte(`{"ServerID":200}`)}},
-+	}, nil
-+}
-+
-+func (s *leaderChangedEtcdServer) Watch(stream etcdserverpb.Watch_WatchServer) error {
-+	req, err := stream.Recv()
-+	if err != nil {
-+		return err
-+	}
-+	s.watchRequests <- req.GetCreateRequest()
-+	if err := stream.Send(&etcdserverpb.WatchResponse{
-+		Header: &etcdserverpb.ResponseHeader{Revision: 20}, WatchId: 1, Created: true,
-+	}); err != nil {
-+		return err
-+	}
-+	if err := stream.Send(&etcdserverpb.WatchResponse{
-+		Header: &etcdserverpb.ResponseHeader{Revision: 22}, WatchId: 1,
-+		Events: []*mvccpb.Event{
-+			{Type: mvccpb.PUT, Kv: &mvccpb.KeyValue{Key: []byte("proxy-201"), Value: []byte(`{"ServerID":201}`), ModRevision: 21}},
-+			{Type: mvccpb.DELETE, Kv: &mvccpb.KeyValue{Key: []byte("proxy-200"), ModRevision: 22}, PrevKv: &mvccpb.KeyValue{Value: []byte(`{"ServerID":200}`)}},
-+		},
-+	}); err != nil {
-+		return err
-+	}
-+	<-stream.Context().Done()
-+	return stream.Context().Err()
-+}
-+
-+func TestProxyWatcher_LeaderChangedRecovery(t *testing.T) {
-+	paramtable.Init()
-+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-+	t.Cleanup(cancel)
-+
-+	listener := bufconn.Listen(1024 * 1024)
-+	t.Cleanup(func() { listener.Close() })
-+	server := grpc.NewServer()
-+	service := &leaderChangedEtcdServer{watchRequests: make(chan *etcdserverpb.WatchCreateRequest, 1)}
-+	etcdserverpb.RegisterAuthServer(server, service)
-+	etcdserverpb.RegisterKVServer(server, service)
-+	etcdserverpb.RegisterWatchServer(server, service)
-+	go server.Serve(listener)
-+	t.Cleanup(server.Stop)
-+
-+	cli, err := clientv3.New(clientv3.Config{
-+		Endpoints: []string{"http://etcd-recovery"},
-+		Username:  "test", Password: "test", DialTimeout: time.Second,
-+		DialOptions: []grpc.DialOption{grpc.WithContextDialer(func(ctx context.Context, _ string) (net.Conn, error) {
-+			return listener.DialContext(ctx)
-+		})},
-+	})
-+	require.NoError(t, err)
-+	t.Cleanup(func() { cli.Close() })
-+
-+	// Observe the real client error before handing it to the watch loop. This
-+	// distinguishes a terminal authentication failure from transparent reconnect.
-+	failedWatch := cli.Watch(ctx, "proxy", clientv3.WithPrefix())
-+	var response clientv3.WatchResponse
-+	selec
+@@ -64,7 +64,7 @@ func TestRestoreColumnGroupsFromManifest(t *testing.T) {
+ 	output, err := writer.Close()
+ 	require.NoError(t, err)
+ 	defer output.Destroy()
+-	manifest, err := CommitManifestUpdates(filepath.Join(root, "segment"), ManifestEarliest, config, &ManifestUpdates{NewFiles: output})
++	manifest, err := CommitManifestUpdates(MarshalManifestPath(filepath.Join(root, "segment"), ManifestEarliest), config, &ManifestUpdates{NewFiles: output})
+ 	require.NoError(t, err)
+ 
+ 	info := &datapb.SegmentInfo{ManifestPath: manifest, Stats: &datapb.Statistics{
 ```
 
-**File**: `internal/util/sessionutil/session_util.go` (modified, +2/-1)
+**File**: `internal/storagev2/packed/manifest_index_path_test.go` (modified, +3/-3)
 ```diff
-@@ -947,7 +947,8 @@ func (w *sessionWatcher) handleWatchErr(err error) error {
- 	// Only recoverable errors are re-watched. ErrCompacted needs a fresh
- 	// revision; auth-token errors (etcd auth enabled) need the watch
- 	// re-established because clientv3 won't refresh the token on a live watch
--	// stream. Any other error closes the channel. See etcd.IsRetriableWatchErr.
-+	// stream. Leader changes during authentication also need re-watching.
-+	// Any other error closes the channel. See etcd.IsRetriableWatchErr.
- 	if !etcd.IsRetriableWatchErr(err) {
- 		// close event channel
- 		mlog.Warn(context.TODO(), "Watch service found error", mlog.Err(err))
-```
-
-**File**: `internal/util/sessionutil/session_watcher_recovery_test.go` (added, +90/-0)
-```diff
-@@ -0,0 +1,90 @@
-+// Licensed to the LF AI & Data foundation under one
-+// or more contributor license agreements. See the NOTICE file
-+// distributed with this work for additional information
-+// regarding copyright ownership. The ASF licenses this file
-+// to you under the Apache License, Version 2.0 (the
-+// "License"); you may not use this file except in compliance
-+// with the License. You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package sessionutil
-+
-+import (
-+	"context"
-+	"testing"
-+
-+	"github.com/stretchr/testify/require"
-+	"go.etcd.io/etcd/api/v3/etcdserverpb"
-+	"go.etcd.io/etcd/api/v3/mvccpb"
-+	"go.etcd.io/etcd/api/v3/v3rpc/rpctypes"
-+	clientv3 "go.etcd.io/etcd/client/v3"
-+)
-+
-+type recoveringSessionEtcd struct {
-+	clientv3.KV
-+	clientv3.Watcher
-+	getCalls int
-+	revision int64
-+	events   chan clientv3.WatchResponse
-+}
-+
-+func (c *recoveringSessionEtcd) Get(context.Context, string, ...clientv3.OpOption) (*clientv3.GetResponse, error) {
-+	c.getCalls++
-+	if c.getCalls == 1 {
-+		return nil, rpctypes.ErrLeaderChanged
-+	}
-+	return &clientv3.GetResponse{
-+		Header: &etcdserverpb.ResponseHeader{Revision: 20},
-+		Kvs:    []*mvccpb.KeyValue{{Key: []byte("test-200"), Value: []byte(`{"ServerID":200}`)}},
-+	}, nil
-+}
-+
-+func (c *recoveringSessionEtcd) Watch(_ context.Context, key string, opts ...clientv3.OpOption) clientv3.WatchChan {
-+	c.revision = clientv3.OpGet(key, opts...).Rev()
-+	return c.events
-+}
-+
-+func (c *recoveringSessionEtcd) Close() error { return nil }
-+
-+func TestSessionWatcher_LeaderChangedRecovery(t *testing.T) {
-+	ctx, cancel := context.WithCancel(context.Background())
-+	defer cancel()
-+	stub := &recoveringSessionEtcd{events: make(chan clientv3.WatchResponse)}
-+	cli := clientv3.NewCtxClient(ctx)
-+	cli.KV, cli.Watcher = stub, stub
-+	defer cli.Close()
-+
-+	rewatched := false
-+	w := &sessionWatcher{
-+		s:       &Session{ctx: ctx, etcdCli: cli},
-+		prefix:  "test",
-+		eventCh: make(chan *SessionEvent),
-+		rewatch: func(sessions map[string]*Session) error {
-+			require.Equal(t, int64(200), sessions["test-200"].ServerID)
-+			rewatched = true
-+			return nil
-+		},
-+	}
-+	require.NoError(t, w.handleWatchErr(rpctypes.ErrLeaderChanged))
-+	require.Equal(t, 2, stub.getCalls)
-+	require.True(t, rewatched)
-+	require.EqualValues(t, 20, stub.revision)
-+	require.Equal(t, clientv3.WatchChan(stub.events), w.rch)
-+	select {
-+	case <-w.eventCh:
-+		t.Fatal("successful recovery closed the session event channel")
-+	default:
-+	}
-+
-+	require.ErrorIs(t, w.handleWatchErr(rpctypes.ErrPermissionDenied), rpctypes.ErrPermissionDenied)
-+	require.Equal(t, 2, stub.getCalls, "permission denied must not retry")
-+	_, open := <-w.eventCh
-+	require.False(t, open)
-+}
-```
-
-**File**: `pkg/util/etcd/etcd_util.go` (modified, +5/-0)
-```diff
-@@ -46,6 +46,10 @@ import (
- // It returns true for:
- //   - ErrCompacted: the watched revision has been compacted; re-watch from a
- //     fresh revision (pre-existing behavior).
-+//   - ErrLeaderChanged: authentication while opening a watch stream can fail
-+//     during an election. clientv3 converts the error to an EtcdError, which
-+//     the watch reconnect loop treats as a halt error. Re-establish the watch
-+//     after the leader stabilizes; the snapshot Get can hit this error too.
- //   - auth-token errors (ErrInvalidAuthToken, ErrUserEmpty, ErrAuthOldRevision):
- //     with etcd auth enabled, the auth token held by a client can be
- //     invalidated server-side (the default "simple" token is GC'd after idle
-@@ -72,6 +76,7 @@ func IsRetriableWatchErr(err error) bool {
- 		return false
+@@ -52,13 +52,13 @@ func TestManifestSegmentRootedIndexRoundTrip(t *testing.T) {
+ 			IndexFileKeys:         []string{"index.bin"},
+ 		}
  	}
- 	return errors.Is(err, rpctypes.ErrCompacted) ||
-+		errors.Is(err, rpctypes.ErrLeaderChanged) ||
- 		errors.Is(err, rpctypes.ErrInvalidAuthToken) ||
- 		errors.Is(err, rpctypes.ErrUserEmpty) ||
- 		errors.Is(err, rpctypes.ErrAuthOldRevision)
-```
-
-**File**: `pkg/util/etcd/etcd_util_test.go` (modified, +6/-0)
-```diff
-@@ -40,6 +40,8 @@ func TestIsRetriableWatchErr(t *testing.T) {
- 	}{
- 		{"nil", nil, false},
- 		{"compacted", rpctypes.ErrCompacted, true},
-+		{"leader changed", rpctypes.ErrLeaderChanged, true},
-+		{"wrapped leader changed", errors.Wrap(rpctypes.ErrLeaderChanged, "get sessions failed"), true},
- 		{"invalid auth token", rpctypes.ErrInvalidAuthToken, true},
- 		{"user empty", rpctypes.ErrUserEmpty, true},
- 		{"auth old revision", rpctypes.ErrAuthOldRevision, true},
-@@ -48,6 +50,10 @@ func TestIsRetriableWatchErr(t *testing.T) {
- 		{"unmapped raw grpc unauthenticated", status.Error(codes.Unauthenticated, "some unmapped error"), false},
- 		{"wrapped invalid auth token", errors.Wrap(rpctypes.ErrInvalidAuthToken, "watch failed"), true},
- 		{"permission denied", rpctypes.ErrPermissionDenied, false},
-+		{"auth failed", rpctypes.ErrAuthFailed, false},
-+		{"corrupt cluster", rpctypes.ErrCorrupt, false},
-+		{"context canceled", context.Canceled, false},
-+		{"context deadline exceeded", context.DeadlineExceeded, false},
- 		{"lease not found", rpctypes.ErrLeaseNotFound, false},
- 		{"generic error", errors.New("some other error"), false},
- 	}
-```
-
----
-
-### Incident Patch 3: `4d460bbf` (2026-10-27)
-**Commit Message**: fix: make ST_DWITHIN agree between the RTREE path and the raw path (#54294)
-
-issue: #54138
-
-`ST_DWITHIN` on a segment with an `RTREE` index returned fewer rows than
-the same filter on the raw (un-indexed) path. Two independent defects,
-both pre-existing on master and neither introduced by #53585:
-
-**1. Empty geometries matched on the raw path only.**
-`Geometry::dwithin` accepted every empty row (`POINT EMPTY`, `POLYGON
-EMPTY`, ...) at any distance, because GEOS reports a distance of 0 to an
-empty geometry. The R-Tree stores a placeholder MBR at the origin for
-such rows (and older builders stored garbage), so no query envelope away
-from `(0, 0)` ever surfaced them as candidates. Raw path: returned.
-Indexed path: not returned.
-
-Fix: `dwithin` returns `false` when either operand is empty, matching
-PostGIS `ST_DWithin` (`ST_DWithinUncached` returns `false` for an empty
-operand). This makes both paths agree for every archive, whatever
-envelope an older index builder recorded for empty rows, with no index
-rebuild. The placeholder-MBR note in `RTreeEngine` now states this as
-the contract it is (every predicate must reject an empty row, because
-the placeholder is only reachable by an origi
-
-**File**: `internal/core/src/common/Geometry.h` (modified, +205/-8)
-```diff
-@@ -11,6 +11,8 @@
- #pragma once
- 
- #include <geos_c.h>
-+#include <algorithm>
-+#include <array>
- #include <atomic>
- #include <chrono>
- #include <memory>
-@@ -540,6 +542,22 @@ class Geometry {
-             return false;
-         }
- 
-+        // An empty operand is never within any distance of anything (PostGIS
-+        // ST_DWithin semantics). GEOS reports a distance of 0 to an empty
-+        // geometry, so without this check every empty row (POINT EMPTY,
-+        // POLYGON EMPTY, ...) would match at any distance -- and it would do
-+        // so only on the un-indexed path, because the R-Tree stores a
-+        // placeholder MBR for empty rows that no query envelope away from the
-+        // origin ever reaches (issue #54138). Returning false here is what
-+        // lets the index coarse pass and the exact predicate agree for empty
-+        // rows regardless of which placeholder an index builder recorded.
-+        // GEOSisEmpty_r is tri-state (1/0/2 = exception); 2 maps to "not a
-+        // match" like every other predicate here.
-+        if (GEOSisEmpty_r(ctx, geometry_) != 0 ||
-+            GEOSisEmpty_r(ctx, other.geometry_) != 0) {
-+            return false;
-+        }
-+
-         // Get geometry types
-         int thisType = GEOSGeomTypeId_r(ctx, geometry_);
-         int otherType = GEOSGeomTypeId_r(ctx, other.geometry_);
-@@ -591,6 +609,178 @@ class Geometry {
-         return false;
-     }
- 
-+    // Axis-aligned lon/lat box, the unit the R-Tree coarse pass works in.
-+    struct Envelope {
-+        double min_x;  // longitude
-+        double min_y;  // latitude
-+        double max_x;
-+        double max_y;
-+    };
-+
-+    // The coarse search region of one ST_DWITHIN query: the union of `count`
-+    // boxes (one, or two when the spherical cap wraps around the
-+    // antimeridian). The R-Tree reader takes one box per lookup, so the
-+    // caller looks up each box and ORs the candidate bitmaps.
-+    struct DWithinSearchBoxes {
-+        static constexpr size_t kMaxBoxes = 2;
-+        std::array<Envelope, kMaxBoxes> boxes{};
-+        size_t count = 0;
-+
-+        const Envelope*
-+        begin() const {
-+            return boxes.data();
-+        }
-+        const Envelope*
-+        end() const {
-+            return boxes.data() + count;
-+        }
-+    };
-+
-+    /**
-+     * The lon/lat envelope that contains EVERY geometry dwithin() can accept
-+     * for `query_point` and `distance_meters` -- the coarse pre-filter the
-+     * R-Tree index runs before exact refinement.
-+     *
-+     * dwithin() measures distance two different ways (see above): point rows
-+     * by great-circle haversine on a sphere of radius kEarthRadiusMeters,
-+     * every other row by planar GEOS distance in degrees scaled by
-+     * degrees_to_meters_at_location at the query latitude. A coarse box is
-+     * only correct if it is a superset of BOTH acceptance regions, so this is
-+     * the one place that derives it, from the same constants the predicate
-+     * uses. The historical box (111320 m/deg, longitude / cos(lat)) was
-+     * sized for neither metric and silently dropped rows near the distance
-+     * boundary on the indexed path (issue #54138).
-+     *
-+     *  - Point rows: the spherical cap of angular radius d/R. Its latitude
-+     *    extent is exactly +-d/R; its longitude extent is
-+     *    asin(sin(d/R) / cos(lat)) unless the cap contains a pole, in which
-+     *    case every longitude is reachable.
-+     *  - Other rows: a planar disc of radius d / (111320 * f(lat)) degrees in
-+     *    lon/lat space. Any geometry within that planar distance has a vertex
-+     *    inside the +-r box, so its envelope intersects the box.
-+     *
-+     * The primary box is the union of the two extents plus a tiny margin
-+     * that absorbs rounding on the boundary. Its longitude range is not
-+     * clamped to [-180, 180], so it stays a superset of the planar disc.
-+     *
-+     * Antimeridian: haversine measures longitude modulo 360, so a spherical
-+     * cap that crosses +-180 continues on the other side, while the planar
-+     * GEOS metric does not wrap. Only the cap's overflow is mapped back, as a
-+     * second box at the opposite edge -- e.g. POINT (179.999 0) with 1000 m
-+     * yields a sliver on each side of the antimeridian instead of every
-+     * longitude in the latitude band. A cap that contains a pole is widened
-+     * to the full [-180, 180] range in one box, as is a query whose own
-+     * longitude lies outside [-180, 180]. Row coordinates stored outside the
-+     * valid lon/lat range are not covered (haversine wraps them, an
-+     * axis-aligned box cannot).
-+     *
-+     * Returns false only when the query point has no coordinates (empty
-+     * geometry); dwithin() then accepts nothing, so the caller should treat
-+     * the candidate set as empty.
-+     */
-+    static bool
-+    DWithinSearchEnvelope(GEOSContextHandle_t ctx,
-+                          const GEOSGeometry* query_point,
-+                   
-```
-
-**File**: `internal/core/src/common/GeometryTest.cpp` (modified, +388/-0)
-```diff
-@@ -255,4 +255,392 @@ TEST_F(GeometryValueSemanticsTest, CloneFailureIsClassifiedAsRetriableOOM) {
-     EXPECT_EQ(copy.to_wkb_string(), src.to_wkb_string());
- }
- 
-+// --- ST_DWithin semantics and the coarse/exact contract (issue #54138) ---
-+
-+// GEOS reports a distance of 0 to an empty geometry, so an unguarded dwithin
-+// accepted every empty row at any distance on the raw path while the R-Tree
-+// (placeholder MBR at the origin) never surfaced it as a candidate. PostGIS
-+// returns false for an empty operand; so must we, on either side.
-+TEST_F(GeometryValueSemanticsTest, DWithinEmptyOperandIsFalse) {
-+    const Geometry query(ctx_, "POINT (-60 -40)");
-+    ASSERT_TRUE(query.IsValid());
-+    for (const char* wkt : {"POINT EMPTY",
-+                            "LINESTRING EMPTY",
-+                            "POLYGON EMPTY",
-+                            "MULTIPOINT EMPTY",
-+                            "GEOMETRYCOLLECTION EMPTY"}) {
-+        Geometry empty(ctx_, wkt);
-+        ASSERT_TRUE(empty.IsValid()) << wkt;
-+        EXPECT_FALSE(empty.dwithin(query, 1.0, ctx_)) << wkt;
-+        EXPECT_FALSE(empty.dwithin(query, 1e12, ctx_)) << wkt;
-+    }
-+
-+    // Empty QUERY point: nothing is within any distance of it either.
-+    Geometry row(ctx_, "POINT (-60 -40)");
-+    Geometry empty_query(ctx_, "POINT EMPTY");
-+    EXPECT_FALSE(row.dwithin(empty_query, 1e12, ctx_));
-+
-+    // Non-empty rows keep their semantics.
-+    Geometry near(ctx_, "POINT (-60 -40.0001)");
-+    EXPECT_TRUE(near.dwithin(query, 100.0, ctx_));
-+    EXPECT_FALSE(near.dwithin(query, 1.0, ctx_));
-+    Geometry line(ctx_, "LINESTRING (-61 -40, -59 -40)");
-+    EXPECT_TRUE(line.dwithin(query, 1.0, ctx_));
-+}
-+
-+namespace {
-+
-+struct LonLatBox {
-+    double min_x, min_y, max_x, max_y;
-+};
-+
-+bool
-+EnvelopeOf(GEOSContextHandle_t ctx, const Geometry& g, LonLatBox& out) {
-+    return GEOSGeom_getXMin_r(ctx, g.GetGeometry(), &out.min_x) == 1 &&
-+           GEOSGeom_getYMin_r(ctx, g.GetGeometry(), &out.min_y) == 1 &&
-+           GEOSGeom_getXMax_r(ctx, g.GetGeometry(), &out.max_x) == 1 &&
-+           GEOSGeom_getYMax_r(ctx, g.GetGeometry(), &out.max_y) == 1;
-+}
-+
-+bool
-+Intersects(const Geometry::Envelope& a, const LonLatBox& b) {
-+    return a.min_x <= b.max_x && b.min_x <= a.max_x && a.min_y <= b.max_y &&
-+           b.min_y <= a.max_y;
-+}
-+
-+// The R-Tree coarse pass keeps a row when its MBR meets ANY box of the region.
-+bool
-+Intersects(const Geometry::DWithinSearchBoxes& region, const LonLatBox& b) {
-+    for (const auto& env : region) {
-+        if (Intersects(env, b)) {
-+            return true;
-+        }
-+    }
-+    return false;
-+}
-+
-+// Total longitude width of the region, in degrees.
-+double
-+LongitudeWidth(const Geometry::DWithinSearchBoxes& region) {
-+    double width = 0;
-+    for (const auto& env : region) {
-+        width += env.max_x - env.min_x;
-+    }
-+    return width;
-+}
-+
-+// Wrap a longitude into [-180, 180], where valid rows are stored.
-+double
-+NormalizeLon(double lon) {
-+    while (lon > 180.0) {
-+        lon -= 360.0;
-+    }
-+    while (lon < -180.0) {
-+        lon += 360.0;
-+    }
-+    return lon;
-+}
-+
-+// Great-circle destination point (sphere), used to place rows exactly on the
-+// haversine boundary at an arbitrary bearing.
-+std::pair<double, double>
-+Destination(double lat_deg, double lon_deg, double bearing_deg, double meters) {
-+    const double R = 6371000.0, PI = 3.14159265358979323846;
-+    double lat = lat_deg * PI / 180, lon = lon_deg * PI / 180,
-+           brg = bearing_deg * PI / 180, ang = meters / R;
-+    double lat2 = std::asin(std::sin(lat) * std::cos(ang) +
-+                            std::cos(lat) * std::sin(ang) * std::cos(brg));
-+    double lon2 =
-+        lon + std::atan2(std::sin(brg) * std::sin(ang) * std::cos(lat),
-+                         std::cos(ang) - std::sin(lat) * std::sin(lat2));
-+    return {lon2 * 180 / PI, lat2 * 180 / PI};
-+}
-+
-+}  // namespace
-+
-+// The three points the issue reporter measured as missed by the indexed path
-+// with ST_DWITHIN(geo, 'POINT (115 35)', 500000): all accepted by the exact
-+// predicate, all outside the historical coarse box
-+// (109.516823 30.508444 120.483177 39.491556).
-+TEST_F(GeometryValueSemanticsTest, DWithinSearchEnvelopeCoversIssueRows) {
-+    const Geometry query(ctx_, "POINT (115 35)");
-+    const double d = 500000.0;
-+    Geometry::DWithinSearchBoxes region;
-+    ASSERT_TRUE(
-+        Geometry::DWithinSearchEnvelope(ctx_, query.GetGeometry(), d, region));
-+    // Far from the antimeridian and the poles: a single box.
-+    ASSERT_EQ(region.count, 1u);
-+    const auto& env = region.boxes[0];
-+
-+    // Must strictly contain the old box (no regression in what was found).
-+    EXPECT_LT(env.min_x, 109.516823);
-+    EXPECT_LT(env.min_y, 30.508444);
-+    EXPECT_GT(env.max_x, 120.483177);
-+    EXPECT_GT(env.max_y, 39.491556);
-+
-+    for (const char* wkt : {"POINT (109.513509 35.327246)",
-+                            "POINT (120.490847 35.204498)",
-+    
-```
-
-**File**: `internal/core/src/exec/expression/GISFunctionFilterExpr.cpp` (modified, +75/-46)
-```diff
-@@ -19,6 +19,7 @@
- #include <cstdlib>
- #include <iosfwd>
- #include <string_view>
-+#include <utility>
- 
- #include "bitset/bitset.h"
- #include "bitset/detail/element_vectorized.h"
-@@ -29,6 +30,7 @@
- #include "common/PreparedGeometry.h"
- #include "common/Types.h"
- #include "common/Utils.h"
-+#include "index/contracts/query/ISpatialReader.h"
- #include "geos_c.h"
- #include "log/Log.h"
- #include "pb/plan.pb.h"
-@@ -388,54 +390,66 @@ PhyGISFunctionFilterExpr::EvalForDataSegment() {
-     return res_vec;
- }
- 
--// Helper function to calculate bounding box for range_within query optimization
--// Creates a rectangular bounding box around a query point with given distance in meters
-+// Coarse pre-filter geometry for ST_DWithin on the indexed path: the R-Tree
-+// returns every row whose stored MBR intersects this polygon's envelope, and
-+// exact refinement (Geometry::dwithin) decides from there. The envelope itself
-+// is derived by Geometry::DWithinSearchEnvelope from the same metrics the
-+// exact predicate uses, so that every row dwithin() can accept is a candidate
-+// -- the previous fixed 111320 m/deg box was not a superset of either metric
-+// and silently dropped boundary rows (issue #54138).
-+//
-+// Coordinates are printed with fmt's shortest round-trip representation, not
-+// a fixed decimal count, so the WKT round trip cannot shrink the box.
- static Geometry
- create_bounding_box_for_dwithin(GEOSContextHandle_t ctx,
--                                const Geometry& query_point,
--                                double distance_meters) {
--    double query_lon, query_lat;
--
--    AssertInfo(GEOSGeomGetX_r(ctx, query_point.GetGeometry(), &query_lon) == 1,
--               "Failed to get X coordinate from query point");
--    AssertInfo(GEOSGeomGetY_r(ctx, query_point.GetGeometry(), &query_lat) == 1,
--               "Failed to get Y coordinate from query point");
--
--    const double metersPerDegreeLat = 111320.0;
--
--    // Calculate latitude offset (relatively constant)
--    double latOffset = distance_meters / metersPerDegreeLat;
--
--    // Calculate longitude offset (varies with latitude)
--    double latRad = query_lat * M_PI / 180.0;
--    double lonOffset =
--        distance_meters / (metersPerDegreeLat * std::cos(latRad));
--
--    // Calculate bounding box coordinates
--    double minLon = query_lon - lonOffset;
--    double maxLon = query_lon + lonOffset;
--    double minLat = query_lat - latOffset;
--    double maxLat = query_lat + latOffset;
--
--    // Create WKT POLYGON for bounding box
--    std::string bboxWKT = fmt::format(
--        "POLYGON(({:.6f} {:.6f}, {:.6f} {:.6f}, {:.6f} {:.6f}, {:.6f} {:.6f}, "
--        "{:.6f} {:.6f}))",
--        minLon,
--        minLat,  // Bottom-left
--        maxLon,
--        minLat,  // Bottom-right
--        maxLon,
--        maxLat,  // Top-right
--        minLon,
--        maxLat,  // Top-left
--        minLon,
--        minLat  // Close the ring
--    );
-+                                const Geometry::Envelope& env) {
-+    std::string bboxWKT =
-+        fmt::format("POLYGON(({} {}, {} {}, {} {}, {} {}, {} {}))",
-+                    env.min_x,
-+                    env.min_y,  // Bottom-left
-+                    env.max_x,
-+                    env.min_y,  // Bottom-right
-+                    env.max_x,
-+                    env.max_y,  // Top-right
-+                    env.min_x,
-+                    env.max_y,  // Top-left
-+                    env.min_x,
-+                    env.min_y  // Close the ring
-+        );
- 
-     return Geometry(ctx, bboxWKT.c_str());
- }
- 
-+// R-Tree candidates for the union of a DWITHIN search region. The reader
-+// answers one box per lookup, so a region that wraps the antimeridian costs
-+// one lookup per box and the bitmaps are ORed. Each answer is Count()-sized;
-+// should two answers differ in length, the union keeps the shorter one so a
-+// short index is still detected (and fully refined) downstream rather than
-+// padded with false negatives.
-+static TargetBitmap
-+DWithinCandidates(const index::ISpatialReader& reader,
-+                  index::SpatialOp op,
-+                  GEOSContextHandle_t ctx,
-+                  const Geometry::DWithinSearchBoxes& boxes) {
-+    AssertInfo(boxes.count > 0, "DWITHIN search region has no box");
-+    TargetBitmap candidates;
-+    bool first = true;
-+    for (const auto& env : boxes) {
-+        auto more =
-+            reader.Candidates(op, create_bounding_box_for_dwithin(ctx, env));
-+        if (first) {
-+            candidates = std::move(more);
-+            first = false;
-+            continue;
-+        }
-+        if (more.size() < candidates.size()) {
-+            candidates.resize(more.size());
-+        }
-+        candidates.inplace_or(more, candidates.size());
-+    }
-+    return candidates;
-+}
-+
- VectorPtr
- PhyGISFunctionFilterExpr::EvalForIndexSegment() {
-     AssertInfo(num_index_chunk_ == 1, "num_index_chunk_ should be 1");
-@@ -490,10 +504,25 @@ PhyGISFunctionFilterExpr::EvalForIndexSegment() {
- 
-         // For 
-```
-
-**File**: `internal/core/src/exec/expression/GISIndexRefinementTest.cpp` (modified, +297/-18)
-```diff
-@@ -13,8 +13,10 @@
- 
- #include <cstdint>
- #include <functional>
-+#include <map>
- #include <memory>
- #include <numeric>
-+#include <set>
- #include <string>
- #include <utility>
- #include <vector>
-@@ -46,16 +48,21 @@ CreateWkbFromWkt(const std::string& wkt) {
-     return Geometry(GetThreadLocalGEOSContext(), wkt.c_str()).to_wkb_string();
- }
- 
--// Fault injection at the expression boundary retains the real loaded R-Tree
--// and its NULL state. Current loaders reject incomplete archives; a malformed
--// short candidate bitmap is injected here to keep the consumer's defensive
--// full-refinement branch covered without resurrecting the removed Index API.
--class ShortSpatialCandidates final : public index::IIndexReaderBase,
--                                     public index::ISpatialReader,
--                                     public index::INullReader {
-+// Interception at the expression boundary retains the real loaded R-Tree and
-+// its NULL state while letting a test observe or rewrite each candidate
-+// bitmap the consumer receives. Current loaders reject incomplete archives;
-+// a malformed short candidate bitmap is injected through this hook to keep
-+// the consumer's defensive full-refinement branch covered without
-+// resurrecting the removed Index API, and the same hook counts candidates
-+// to check coarse-pass selectivity.
-+class InterceptedSpatialCandidates final : public index::IIndexReaderBase,
-+                                           public index::ISpatialReader,
-+                                           public index::INullReader {
-  public:
--    explicit ShortSpatialCandidates(index::IIndexReaderBasePtr reader)
--        : reader_(std::move(reader)) {
-+    using Hook = std::function<void(TargetBitmap&)>;
-+
-+    InterceptedSpatialCandidates(index::IIndexReaderBasePtr reader, Hook hook)
-+        : reader_(std::move(reader)), hook_(std::move(hook)) {
-     }
- 
-     index::ReaderCaps
-@@ -87,10 +94,7 @@ class ShortSpatialCandidates final : public index::IIndexReaderBase,
-         auto candidates =
-             dynamic_cast<const index::ISpatialReader&>(*reader_).Candidates(
-                 op, query);
--        AssertInfo(candidates.size() > 2,
--                   "short-candidate fixture needs three rows");
--        candidates.reset(1);
--        candidates.resize(candidates.size() - 1);
-+        hook_(candidates);
-         return candidates;
-     }
-     TargetBitmap
-@@ -104,8 +108,19 @@ class ShortSpatialCandidates final : public index::IIndexReaderBase,
- 
-  private:
-     index::IIndexReaderBasePtr reader_;
-+    Hook hook_;
- };
- 
-+// Drops interior row 1 and the last row from every candidate bitmap: an
-+// index that under-reports the segment row space.
-+void
-+MakeCandidatesShort(TargetBitmap& candidates) {
-+    AssertInfo(candidates.size() > 2,
-+               "short-candidate fixture needs three rows");
-+    candidates.reset(1);
-+    candidates.resize(candidates.size() - 1);
-+}
-+
- // RAII toggle for the static geometry-cache switch: restores the previous
- // value even when a gtest ASSERT returns out of the test body early, so a
- // failing test cannot leak the flag into later tests.
-@@ -184,7 +199,7 @@ class GISIndexRefinementTest : public ::testing::Test {
-     InstallGeometryIndex(GeometrySegment& segment,
-                          const std::vector<std::string>& wkbs,
-                          const std::vector<uint8_t>& validity = {},
--                         bool short_candidates = false) {
-+                         InterceptedSpatialCandidates::Hook hook = nullptr) {
-         auto data = storage::CreateFieldData(
-             DataType::GEOMETRY, DataType::NONE, !validity.empty());
-         if (validity.empty()) {
-@@ -196,9 +211,9 @@ class GISIndexRefinementTest : public ::testing::Test {
-                                                    DataType::GEOMETRY,
-                                                    index::RTREE_INDEX_TYPE,
-                                                    {data});
--        if (short_candidates) {
--            opened.reader = std::make_unique<ShortSpatialCandidates>(
--                std::move(opened.reader));
-+        if (hook) {
-+            opened.reader = std::make_unique<InterceptedSpatialCandidates>(
-+                std::move(opened.reader), std::move(hook));
-         }
-         test::expr_index::InstallIndex(*segment.sealed,
-                                        segment.geo_id,
-@@ -215,7 +230,7 @@ class GISIndexRefinementTest : public ::testing::Test {
-             validity[row / 8] |= static_cast<uint8_t>(1u << (row % 8));
-         }
-         auto segment = MakeGeometrySegment(wkbs, validity);
--        InstallGeometryIndex(segment, wkbs, validity, true);
-+        InstallGeometryIndex(segment, wkbs, validity, MakeCandidatesShort);
-         return segment;
-     }
- 
-@@ -737,4 +752,268 @@ TEST_F(GISIndexRefinementTest, GeometryCachePublishesAndRetiresWithRawColumn) {
-     EXPECT_EQ(sealed->GetGeometryCache(geo_id), nullptr);
- }
- 
-+// Regression for issue
-```
-
-**File**: `internal/core/src/index/scalar/spatial/RTreeEngine.cpp` (modified, +9/-0)
-```diff
-@@ -100,6 +100,15 @@ BoundingBox(const GEOSGeometry* geometry, GEOSContextHandle_t context) {
- // which then trips the coarse-bitmap bounds guard in EvalForIndexSegment on
- // EVERY subsequent geometry query against this segment.
- //
-+// "Exact refinement tolerates the placeholder" is a contract the predicates
-+// must uphold, not a property of the placeholder itself: the placeholder is
-+// only reachable by a query envelope covering the origin, so any predicate
-+// that accepted an empty row would match it on the raw path but not here.
-+// Geometry::dwithin therefore rejects empty operands (GEOS reports distance 0
-+// to them, issue #54138), the GEOS spatial predicates are false for empty
-+// operands, and an empty query geometry has no envelope at all, which
-+// RTreeIndexReader::Candidates answers with every non-null row.
-+//
- // Nullness is decided by the caller's validity bitmap alone, never by the
- // payload: the builder and the growing appender both classify a row as NULL
- // before reaching here, so a valid row with an empty/corrupt payload lands on
+-	manifest, err := CommitManifestUpdates(base, ManifestEarliest, cfg,
++	manifest, err := CommitManifestUpdates(MarshalManifestPath(base, ManifestEarliest), cfg,
+ 		&ManifestUpdates{Indexes: []ManifestIndexInfo{entry(100, "100/1")}})
+ 	require.NoError(t, err)
+ 	_, version, err := UnmarshalManifestPath(manifest)
+ 	require.NoError(t, err)
+ 	// A second commit must preserve the first index's complete path.
+-	manifest, err = CommitManifestUpdates(base, version, cfg,
++	manifest, err = CommitManifestUpdates(MarshalManifestPath(base, version), cfg,
+ 		&ManifestUpdates{Indexes: []ManifestIndexInfo{entry(200, "200/1")}})
+ 	require.NoError(t, err)
+ 	indexes, err := GetManifestIndexInfos(manifest, cfg)
+@@ -72,7 +72,7 @@ func TestManifestSegmentRootedIndexRoundTrip(t *testing.T) {
+ 	// A rejected incremental entry must not replace the committed revision.
+ 	_, version, err = UnmarshalManifestPath(manifest)
+ 	require.NoError(t, err)
+-	_, err = CommitManifestUpdates(base, version, cfg,
++	_, err = CommitManifestUpdates(MarshalManifestPath(base, version), cfg,
+ 		&ManifestUpdates{Indexes: []ManifestIndexInfo{entry(300, "../../index_files/300")}})
+ 	require.Error(t, err)
+ 	indexes, err = GetManifestIndexInfos(manifest, cfg)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #54727** (2026-10-27): test: align manifest test calls with revision paths (@chyezh)
+- **PR #54723** (closed): fix: [3.0] Align milvus-common with Cardinal stream options (@weiliu1031)
+- **PR #54721** (2026-10-28): test: expand CDC API contract and boundary coverage (@zhuwenxing)
 - **PR #54707** (2026-10-27): fix: Recover etcd watches after leader changes (@congqixia)
 - **PR #54696** (closed): doc: Define business-version conditional upsert contracts (@weiliu1031)
 - **PR #54694** (2026-10-27): fix: [3.0] return invalid-parameter error for malformed max_length (@XuanYang-cn)
-- **PR #54682** (2026-10-26): test: add recovery continuation checker to chaos workloads (@zhuwenxing)
-- **PR #54681** (2026-10-26): test: [3.0] preserve whitespace in query pagination error expectations (@zhuwenxing)
-- **PR #54680** (2026-10-26): test: preserve whitespace in query pagination error expectations (@zhuwenxing)
 
 ---
 
@@ -2687,29 +2182,54 @@ the placeholder is only reachable by an origi
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. write manifest index artifacts under the segment _index directory (#54412)
+## X. test: expand CDC API contract and boundary coverage (#54721)
 
 **RULE**:
-When implementing operations in `configs/milvus.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/python_client/cdc/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `61de3a82`: write manifest index artifacts under the segment _index directory (#54412). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e6aff936`: test: expand CDC API contract and boundary coverage (#54721). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `configs/milvus.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/python_client/cdc/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    # New StorageV3 builds also write artifacts under the segment manifest base/_index/<build>/<version> (path version 2). Upgrade all workers and QueryNodes before enabling. Old-layout tasks keep their original etcd publication mode; external index paths are never added.
-    # The setting applies when a build task is created. Existing builds keep their persisted mode across switches and restarts: path version 2 publishes to manifests, while versions 0/1 finish in etcd. Published records remain recoverable through the segment's manifest_has_index marker.
+- Explicit checks for replicated state, local operations, and rejected interfaces
+   # From the repository root
+   uv venv -p 3.12
+   source .venv/bin/activate
+   uv pip install -r tests/python_client/requirements.txt
+- UPDATE_RESOURCE_GROUP (local on both roles)
+- TRANSFER_REPLICA (primary assignment and default secondary-local override)
+
+## Interface contract regression
+
+The supplemental cases use the repository-pinned PyMilvus version and require a
+CDC pair, so they are tagged `CDC,L3`. Run them serially: topology changes and
+Import 2PC use session-wide state. Both clusters must use
+`common.storage.useLoonFFI=true`,
+`dataCoord.compaction.bumpSchemaVersion.enabled=true`, and
+`dataCoord.compaction.storageVersion.enabled=true` for the function-field lifecycle case. Replica
+assignment cases assume the default
+`streaming.replication.useLocalReplicaConfig=true` and one secondary replica.
+The multi-replica case additionally needs two primary query nodes and, when
+StreamingNodes host replica delegators, two primary StreamingNodes. Missing
+capacity is reported as a skip, not a pass.
+
+CDC test operations and state checks use `MilvusClient`, including replica and
+file-resource inspection. 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-    # The setting may be switched in either direction. Turning it off changes where new completions are written; records already published to manifests remain recoverable through the segment's sticky manifest_has_index marker.
+- Comprehensive test coverage for all CDC-supported operations
+   pip install pymilvus>=2.6.0 pytest numpy
+- TRANSFER_NODE
+- TRANSFER_REPLICA
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `61de3a82` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e6aff936` are properly handled with clean fallback behavior.

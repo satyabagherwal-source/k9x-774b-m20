@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T03:11:29.299Z",
-    "lastVerified": "2026-10-28T03:11:29.299Z",
+    "lastChecked": "2026-10-28T03:18:08.940Z",
+    "lastVerified": "2026-10-28T03:18:08.940Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -110,9 +110,9 @@
   "bitterbot-ai-bitterbot-desktop": {
     "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "lastChecked": "2026-10-28T02:48:12.005Z",
+    "lastChecked": "2026-10-28T03:18:04.917Z",
     "revisionIdentifier": "fce458c1",
-    "lastVerified": "2026-10-28T02:48:12.005Z"
+    "lastVerified": "2026-10-28T03:18:04.917Z"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -300,5 +300,77 @@
     "lastChecked": "2026-10-28T03:11:28.340Z",
     "revisionIdentifier": "73085699",
     "lastVerified": "2026-10-28T03:11:28.340Z"
+  },
+  "tabbyml-tabby": {
+    "name": "tabby",
+    "officialUrl": "https://github.com/TabbyML/tabby",
+    "lastChecked": "2026-10-28T03:17:49.875Z",
+    "revisionIdentifier": "21b29048",
+    "lastVerified": "2026-10-28T03:17:49.875Z"
+  },
+  "hf-cross-encoder-ms-marco-minilm-l6-v2": {
+    "name": "cross-encoder/ms-marco-MiniLM-L6-v2",
+    "officialUrl": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T03:17:52.433Z",
+    "lastVerified": "2026-10-28T03:17:52.433Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
+    "contentHash": "2057185c2b7c52a5f3ca0df96ed92d6c564558fd5d917ec6a5033714acf885e7",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "appwrite-appwrite": {
+    "name": "appwrite/appwrite",
+    "officialUrl": "https://github.com/appwrite/appwrite",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-28T03:17:58.826Z",
+    "lastVerified": "2026-10-28T03:17:58.826Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-appwrite-appwrite",
+    "contentHash": "2b93e8de1461fd61f14e4daa19436ef5d35f3266e969298559880bf8315ec309",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 27,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kubernetes-sigs-aws-load-balancer-controller": {
+    "name": "aws-load-balancer-controller",
+    "officialUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
+    "lastChecked": "2026-10-28T03:17:57.353Z",
+    "revisionIdentifier": "d19307cc",
+    "lastVerified": "2026-10-28T03:17:57.353Z"
+  },
+  "smallstep-cli": {
+    "name": "cli",
+    "officialUrl": "https://github.com/smallstep/cli",
+    "lastChecked": "2026-10-28T03:17:59.888Z",
+    "revisionIdentifier": "824bfd6b",
+    "lastVerified": "2026-10-28T03:17:59.888Z"
+  },
+  "milvus-io-milvus": {
+    "name": "milvus-io/milvus",
+    "officialUrl": "https://github.com/milvus-io/milvus",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-28T03:18:05.900Z",
+    "lastVerified": "2026-10-28T03:18:05.900Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-milvus-io-milvus",
+    "contentHash": "41e411693cfade2630fae49ca225593865d908cec9d0607b722c0e5d3f51fb9e",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

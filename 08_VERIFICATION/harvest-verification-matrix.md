@@ -5664,3 +5664,6 @@
 | `CYCLE-20261028-6JKO` | `2026-10-28T03:04:27.288Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md` | Yes (`b1540a85...`) |
 | `CYCLE-20261028-6ORN` | `2026-10-28T03:04:34.019Z` | `storybookjs/storybook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5147` | Yes (`48b2cd70...`) |
 | `CYCLE-20261028-FJ8X` | `2026-10-28T03:11:26.769Z` | `sentence-transformers/all-MiniLM-L6-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 996, Rule EXISTING` | Yes (`14ba29c7...`) |
+| `CYCLE-20261028-NYQV` | `2026-10-28T03:18:00.104Z` | `appwrite/appwrite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5148` | Yes (`2b93e8de...`) |
+| `CYCLE-20261028-O1YQ` | `2026-10-28T03:18:04.274Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 998, Rule 5149, Rule 5150` | Yes (`2057185c...`) |
+| `CYCLE-20261028-O3LM` | `2026-10-28T03:18:06.394Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md` | Yes (`41e41169...`) |

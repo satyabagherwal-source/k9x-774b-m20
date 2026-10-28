@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
 > **Source**: github ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
-> **Source Version**: `f7aeed8f`  
+> **Source Version**: `4bd8931f`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T12:46:39.415Z  
+> **Timestamp**: 2026-10-28T03:17:59.532Z  
 > **Learning ID**: `learn-github-appwrite-appwrite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T12:46:39.095Z  
+> **Harvest Timestamp**: 2026-10-28T03:17:58.826Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open-source cloud for agents & devs. Including Auth, Databases, Storage, Functions, Messaging, Hosting, Realtime, WAF and more
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 57771 stars
+- **Stars / Engagement**: 57781 stars
 
 ---
 
@@ -1926,600 +1926,363 @@ export function DomainsEmptyState({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f7aeed8f` (2026-10-27)
-**Commit Message**: Merge pull request #14540 from appwrite/fix-redis-read-timeout
+### Incident Patch 1: `9040bc52` (2026-10-27)
+**Commit Message**: fix(vcs): follow an Entire repository to the installation that pushes it
 
-fix(redis): time out unresponsive Redis connections
+An Entire repository keeps its id when it moves to another project, as
+when a GitHub mirror is detached into an Entire project. Pushes then come
+from the installation on the new project, and still reach the sites and
+functions connected to the repository, but their builds ran with the old
+installation, which no longer covers it, and failed with
+RepositoryNotFound.
 
-**File**: `app/init/registers.php` (modified, +11/-6)
-```diff
-@@ -150,6 +150,10 @@
- 
-     $poolTimeout = (float) System::getEnv('_APP_CONNECTIONS_TIMEOUT', 10);
- 
-+    // Bounds every Redis connect and reply, so an unresponsive Redis fails a request
-+    // instead of holding it. Must stay above the 2 s a queue retry blocks on a pop.
-+    $redisTimeout = (float) System::getEnv('_APP_REDIS_TIMEOUT', 3);
-+
-     foreach ($connections as $key => $connection) {
-         $type = $connection['type'];
-         $multiple = $connection['multiple'];
-@@ -204,13 +208,14 @@
-                 'postgresql' => function () use ($dsnHost, $dsnPort, $dsnUser, $dsnPass, $dsnDatabase) {
-                     return new PDO("pgsql:host={$dsnHost};port={$dsnPort};dbname={$dsnDatabase};connect_timeout=3", $dsnUser, $dsnPass, APP_DATABASE_PDO_ATTRIBUTES + [\PDO::ATTR_PERSISTENT => false]);
-                 },
--                default => function () use ($dsnHost, $dsnPort, $dsnUser, $dsnPass) {
-+                default => function () use ($dsnHost, $dsnPort, $dsnUser, $dsnPass, $redisTimeout) {
-                     $redis = new \Redis();
--                    @$redis->pconnect($dsnHost, (int)$dsnPort);
-+                    @$redis->pconnect($dsnHost, (int)$dsnPort, $redisTimeout);
-+                    // Not the pconnect argument: a socket reused from the persistent pool keeps its old read timeout
-+                    $redis->setOption(\Redis::OPT_READ_TIMEOUT, $redisTimeout);
-                     if ($dsnPass !== null && $dsnPass !== '') {
-                         $redis->auth($dsnUser !== null && $dsnUser !== '' ? [$dsnUser, $dsnPass] : $dsnPass);
-                     }
--                    $redis->setOption(\Redis::OPT_READ_TIMEOUT, -1);
- 
-                     return $redis;
-                 },
-@@ -231,7 +236,7 @@
-                 default => $poolSize,
-             };
- 
--            $pool = new Pool(new SwoolePool(), $name, $connectionPoolSize, function () use ($type, $resource, $dsn) {
-+            $pool = new Pool(new SwoolePool(), $name, $connectionPoolSize, function () use ($type, $resource, $dsn, $redisTimeout) {
-                 // Get Adapter
-                 switch ($type) {
-                     case 'database':
-@@ -253,8 +258,8 @@
-                     case 'publisher':
-                         // Publishers never block on receive, so one connection backs both broker slots.
-                         return match ($dsn->getScheme()) {
--                            'redis' => (function () use ($dsn) {
--                                $connection = Queue\Connection\Redis::fromDSN($dsn);
-+                            'redis' => (function () use ($dsn, $redisTimeout) {
-+                                $connection = Queue\Connection\Redis::fromDSN($dsn, $redisTimeout, $redisTimeout);
-                                 return new Queue\Broker\Redis($connection, $connection);
-                             })(),
-                             default => null
-```
+A push now moves the repository and its site or function to the
+installation that delivered it, when the same Appwrite project has that
+installation, before deploying. A site or function connected elsewhere
+meanwhile is left alone.
 
-**File**: `app/mqtt.php` (modified, +3/-2)
-```diff
-@@ -136,13 +136,14 @@
-     $host = System::getEnv('_APP_REDIS_HOST', 'localhost');
-     $port = System::getEnv('_APP_REDIS_PORT', 6379);
-     $pass = System::getEnv('_APP_REDIS_PASS', '');
-+    $timeout = (float) System::getEnv('_APP_REDIS_TIMEOUT', 3);
- 
-     $redis = new \Redis();
--    @$redis->pconnect($host, (int)$port);
-+    @$redis->pconnect($host, (int)$port, $timeout);
-+    $redis->setOption(\Redis::OPT_READ_TIMEOUT, $timeout);
-     if ($pass) {
-         $redis->auth($pass);
-     }
--    $redis->setOption(\Redis::OPT_READ_TIMEOUT, -1);
- 
-     return $ctx['redis'] = $redis;
- }, []);
-```
+A build whose installation cannot reach its repository now says so and
+points to reconnecting it, instead of failing with the exception name.
 
-**File**: `packages/cache/src/Adapter/Redis.php` (modified, +16/-4)
-```diff
-@@ -299,7 +299,7 @@ protected function leaseEvalSha(string $sha, string $key, array $args): mixed
-             }
- 
-             return $this->confirmScript($result, $error);
--        });
-+        }, idempotent: false);
-     }
- 
-     protected function leaseEval(string $script, string $key, array $args): mixed
-@@ -309,7 +309,7 @@ protected function leaseEval(string $script, string $key, array $args): mixed
-             $result = $this->redis->eval($script, [$key, ...$args], 1);
- 
-             return $this->confirmScript($result, (string) $this->redis->getLastError());
--        });
-+        }, idempotent: false);
-     }
- 
-     /**
-@@ -343,6 +343,10 @@ public function ping(): bool
- 
-             return true;
-         } catch (Exception) {
-+            if ($this->redis->isConnected()) {
-+                $this->redis->close();
-+            }
-+
-             return false;
-         }
-     }
-@@ -373,10 +377,11 @@ public function getRetryDelay(): int
-     /**
-      * Execute a Redis command with retry logic
-      *
-+     * A script is not idempotent: when its reply is lost Redis may already have run it, so it is never replayed.
-      *
-      * @throws \RedisException
-      */
--    private function execute(callable $callback): mixed
-+    private function execute(callable $callback, bool $idempotent = true): mixed
-     {
-         $attempts = 0;
-         $maxAttempts = 1 + $this->maxRetries;
-@@ -389,9 +394,15 @@ private function execute(callable $callback): mixed
-                     throw $th;
-                 }
- 
-+                // phpredis leaves the socket open when a script reply times out, and
-+                // the next command would read that reply as its own
-+                if ($this->redis->isConnected()) {
-+                    $this->redis->close();
-+                }
-+
-                 $attempts++;
- 
--                if ($attempts >= $maxAttempts) {
-+                if (! $idempotent || $attempts >= $maxAttempts) {
-                     throw $th;
-                 }
- 
-@@ -421,6 +432,7 @@ private function isConnectionError(Exception $e): bool
-             'went away',
-             'socket',
-             'read error on connection',
-+            'protocol error', // how phpredis reports a timed-out script reply
-             'connection lost',
-             'timed out',
-             'timeout',
-```
-
-**File**: `packages/lock/src/Distributed.php` (modified, +11/-1)
-```diff
-@@ -202,7 +202,17 @@ private function runScript(string $script, array $arguments): mixed
-     {
-         $method = 'eval';
- 
--        return $this->redis->$method($script, $arguments, 1);
-+        try {
-+            return $this->redis->$method($script, $arguments, 1);
-+        } catch (\RedisException $e) {
-+            // phpredis leaves the socket open when a script reply times out, and the
-+            // next command on this connection would read that reply as its own
-+            if ($this->redis->isConnected()) {
-+                $this->redis->close();
-+            }
-+
-+            throw $e;
-+        }
-     }
- 
-     /**
-```
-
-**File**: `packages/queue/src/Connection/Redis.php` (modified, +18/-8)
-```diff
-@@ -316,13 +316,23 @@ protected function call(callable $command, bool $idempotent = false): mixed
-     /**
-      * phpredis errors that mean the socket is gone rather than the command
-      * being wrong. Anything else (WRONGTYPE, OOM, ...) is the caller's to see.
-+     * A timed-out reply counts too: the socket still holds it, and the next
-+     * command would read it as its own.
-      */
-     private function isTransportError(\RedisException $e): bool
-     {
--        return (bool) preg_match(
--            '/went away|Connection (lost|closed|refused)|read error on connection/',
--            $e->getMessage(),
--        );
-+        $errors = [
-+            'went away',
-+            'connection lost',
-+            'connection closed',
-+            'connection refused',
-+            'read error on connection',
-+            'protocol error',
-+            'timed out',
-+        ];
-+
-+        $message = strtolower($e->getMessage());
-+        return array_any($errors, fn (string $needle): bool => str_contains($message, $needle));
-     }
- 
-     protected function getRedis(): \Redis
-@@ -339,15 +349,15 @@ protected function getRedis(): \Redis
-             try {
-                 $redis->connect($this->host, $this->port, $connectTimeout);
- 
-+                if ($this->readTimeout >= 0) {
-+                    $redis->setOption(\Redis::OPT_READ_TIMEOUT, $this->readTimeout);
-+                }
-+
-                 if ($this->password !== null && $this->password !== '') {
-                     $hasUser = $this->user !== null && $this->user !== '';
-                     $redis->auth($hasUser ? [$this->user, $this->password] : $this->password);
-                 }
- 
--                if ($this->readTimeout >= 0) {
--                    $redis->setOption(\Redis::OPT_READ_TIMEOUT, $this->readTimeout);
--                }
--
-                 $this->redis = $redis;
-                 return $this->redis;
-             } catch (\RedisException $e) {
-```
-
-**File**: `src/Appwrite/PubSub/Adapter/Redis.php` (modified, +3/-0)
-```diff
-@@ -21,6 +21,9 @@ public function ping($message = null): bool
- 
-     public function subscribe($channels, $callback)
-     {
-+        // A subscriber waits for the next message for as long as it takes
-+        $this->client->setOption(\Redis::OPT_READ_TIMEOUT, -1);
-+
-         return $this->client->subscribe($channels, $callback);
-     }
- 
-```
-
----
-
-### Incident Patch 2: `9ce72542` (2026-10-27)
-**Commit Message**: Merge remote-tracking branch 'origin/main' into sync-redis-timeout
-
-**File**: `.env` (modified, +1/-0)
-```diff
-@@ -10,6 +10,7 @@ _APP_TRUSTED_PROXIES=127.0.0.1,::1,10.0.0.0/8,100.64.0.0/10,172.16.0.0/12,192.16
- _APP_WORKER_PER_CORE=6
- _APP_WORKERS_NUM=1
- _APP_WORKER_MAX_COROUTINES=1
-+_APP_MEMORY_LIMIT=512M
- _APP_WORKER_SCREENSHOTS_ROUTER=http://appwrite
- _APP_REALTIME_TAIL_RATE=50
- _APP_COMPRESSION_ENABLED=enabled
-```
-
-**File**: `.github/workflows/console-production.yml` (modified, +9/-9)
-```diff
-@@ -90,14 +90,14 @@ jobs:
-                   cleanup: false
- 
-             - name: Login to GitHub Container Registry
--              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
-+              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-               with:
-                   registry: ${{ env.REGISTRY_GITHUB }}
-                   username: ${{ github.actor }}
-                   password: ${{ secrets.GITHUB_TOKEN }}
- 
-             - name: Login to Docker Hub
--              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
-+              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-               with:
-                   registry: ${{ env.REGISTRY_DOCKERHUB }}
-                   username: ${{ vars.DOCKERHUB_USERNAME }}
-@@ -137,14 +137,14 @@ jobs:
-         timeout-minutes: 10
-         steps:
-             - name: Login to GitHub Container Registry
--              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
-+              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-               with:
-                   registry: ${{ env.REGISTRY_GITHUB }}
-                   username: ${{ github.actor }}
-                   password: ${{ secrets.GITHUB_TOKEN }}
- 
-             - name: Login to Docker Hub
--              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
-+              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-               with:
-                   registry: ${{ env.REGISTRY_DOCKERHUB }}
-                   username: ${{ vars.DOCKERHUB_USERNAME }}
-@@ -202,14 +202,14 @@ jobs:
-                   cleanup: false
- 
-             - name: Login to GitHub Container Registry
--              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
-+              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-               with:
-                   registry: ${{ env.REGISTRY_GITHUB }}
-                   username: ${{ github.actor }}
-                   password: ${{ secrets.GITHUB_TOKEN }}
- 
-             - name: Login to Docker Hub
--              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
-+              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-               with:
-                   registry: ${{ env.REGISTRY_DOCKERHUB }}
-                   username: ${{ vars.DOCKERHUB_USERNAME }}
-@@ -245,14 +245,14 @@ jobs:
-               uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
- 
-             - name: Login to GitHub Container Registry
--              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
-+              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-               with:
-                   registry: ${{ env.REGISTRY_GITHUB }}
-                   username: ${{ github.actor }}
-                   password: ${{ secrets.GITHUB_TOKEN }}
- 
-             - name: Login to Docker Hub
--              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
-+              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-               with:
-                   registry: ${{ env.REGISTRY_DOCKERHUB }}
-                   username: ${{ vars.DOCKERHUB_USERNAME }}
-@@ -288,7 +288,7 @@ jobs:
-                   persist-credentials: false
- 
-             - name: Login to GitHub Container Registry
--              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
-+              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-               with:
-                   registry: ${{ env.REGISTRY_GITHUB }}
-                   username: ${{ github.actor }}
-```
-
-**File**: `.github/workflows/console-staging.yml` (modified, +5/-5)
-```diff
-@@ -69,14 +69,14 @@ jobs:
-                   cleanup: false
- 
-             - name: Login to GitHub Container Registry
--              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
-+              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-               with:
-                   registry: ${{ env.REGISTRY_GITHUB }}
-                   username: ${{ github.actor }}
-                   password: ${{ secrets.GITHUB_TOKEN }}
- 
-             - name: Login to Docker Hub
--              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
-+              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-               with:
-                   registry: ${{ env.REGISTRY_DOCKERHUB }}
-                   username: ${{ vars.DOCKERHUB_USERNAME }}
-@@ -114,14 +114,14 @@ jobs:
-         timeout-minutes: 10
-         steps:
-             - name: Login to GitHub Container Registry
--              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
-+              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-               with:
-                   registry: ${{ env.REGISTRY_GITHUB }}
-                   username: ${{ github.actor }}
-                   password: ${{ secrets.GITHUB_TOKEN }}
- 
-             - name: Login to Docker Hub
--              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
-+              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-               with:
-                   registry: ${{ env.REGISTRY_DOCKERHUB }}
-                   username: ${{ vars.DOCKERHUB_USERNAME }}
-@@ -157,7 +157,7 @@ jobs:
-                   persist-credentials: false
- 
-             - name: Login to GitHub Container Registry
--              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
-+              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-               with:
-                   registry: ${{ env.REGISTRY_GITHUB }}
-                   username: ${{ github.actor }}
-```
-
-**File**: `Dockerfile` (modified, +1/-0)
-```diff
-@@ -43,6 +43,7 @@ COPY ./src /usr/src/code/src
- COPY ./packages /usr/src/code/packages
- COPY ./dev /usr/src/code/dev
- COPY ./docker/opcache.ini /usr/local/etc/php/conf.d/zz-opcache.ini
-+COPY ./docker/php.ini /usr/local/etc/php/conf.d/zz-php.ini
- COPY ./mongo-init.js /usr/src/code/mongo-init.js
- COPY ./mongo-entrypoint.sh /usr/src/code/mongo-entrypoint.sh
- COPY ./clickhouse-config.xml /usr/src/code/clickhouse-config.xml
-```
-
-**File**: `README-CN.md` (modified, +4/-4)
-```diff
-@@ -83,7 +83,7 @@ docker run -it --rm \
-     --volume /var/run/docker.sock:/var/run/docker.sock \
-     --volume "$(pwd)"/appwrite:/usr/src/code/appwrite:rw \
-     --entrypoint="install" \
--    appwrite/appwrite:2.6.1
-+    appwrite/appwrite:2.6.2
- ```
- 
- ### Windows
-@@ -96,7 +96,7 @@ docker run -it --rm ^
-     --volume //var/run/docker.sock:/var/run/docker.sock ^
-     --volume "%cd%"/appwrite:/usr/src/code/appwrite:rw ^
-     --entrypoint="install" ^
--    appwrite/appwrite:2.6.1
-+    appwrite/appwrite:2.6.2
- ```
- 
- #### PowerShell
-@@ -107,7 +107,7 @@ docker run -it --rm `
-     --volume /var/run/docker.sock:/var/run/docker.sock `
-     --volume ${pwd}/appwrite:/usr/src/code/appwrite:rw `
-     --entrypoint="install" `
--    appwrite/appwrite:2.6.1
-+    appwrite/appwrite:2.6.2
- ```
- 
- 安装程序运行后，打开终端打印出的 URL（其中包含一次性密钥）完成安装向导。安装完成后，访问 http://localhost 即可从浏览器进入 Appwrite 控制台。请注意，在非 Linux 本机主机上，安装完成后服务器可能需要几分钟才能启动。
-@@ -123,7 +123,7 @@ docker run -it --rm \
-     --volume /var/run/docker.sock:/var/run/docker.sock \
-     --volume "$(pwd)"/appwrite:/usr/src/code/appwrite:rw \
-     --entrypoint="install" \
--    appwrite/appwrite:2.6.1
-+    appwrite/appwrite:2.6.2
- ```
- 
- 升级时，请为 `--entrypoint="upgrade"` 使用相同的 `--env DOCKER_API_VERSION=...` 参数。
-```
-
-**File**: `README.md` (modified, +4/-4)
-```diff
-@@ -83,7 +83,7 @@ docker run -it --rm \
-     --volume /var/run/docker.sock:/var/run/docker.sock \
-     --volume "$(pwd)"/appwrite:/usr/src/code/appwrite:rw \
-     --entrypoint="install" \
--    appwrite/appwrite:2.6.1
-+    appwrite/appwrite:2.6.2
- ```
- 
- ### Windows
-@@ -96,7 +96,7 @@ docker run -it --rm ^
-     --volume //var/run/docker.sock:/var/run/docker.sock ^
-     --volume "%cd%"/appwrite:/usr/src/code/appwrite:rw ^
-     --entrypoint="install" ^
--    appwrite/appwrite:2.6.1
-+    appwrite/appwrite:2.6.2
- ```
- 
- #### PowerShell
-@@ -107,7 +107,7 @@ docker run -it --rm `
-     --volume /var/run/docker.sock:/var/run/docker.sock `
-     --volume ${pwd}/appwrite:/usr/src/code/appwrite:rw `
-     --entrypoint="install" `
--    appwrite/appwrite:2.6.1
-+    appwrite/appwrite:2.6.2
- ```
- 
- Once the installer is running, open the URL printed in the terminal (it includes a one-time secret) to complete the setup wizard. After installation, go to http://localhost to access the Appwrite console from your browser. Please note that on non-Linux native hosts, the server might take a few minutes to start after completing the installation.
-@@ -123,7 +123,7 @@ docker run -it --rm \
-     --volume /var/run/docker.sock:/var/run/docker.sock \
-     --volume "$(pwd)"/appwrite:/usr/src/code/appwrite:rw \
-     --entrypoint="install" \
--    appwrite/appwrite:2.6.1
-+    appwrite/appwrite:2.6.2
- ```
- 
- Use the same `--env DOCKER_API_VERSION=...` flag with `--entrypoint="upgrade"` when upgrading.
-```
-
-**File**: `app/config/errors.php` (modified, +2/-2)
-```diff
-@@ -668,7 +668,7 @@
-     ],
-     Exception::PROVIDER_REPOSITORY_NOT_FOUND => [
-         'name' => Exception::PROVIDER_REPOSITORY_NOT_FOUND,
--        'description' => 'VCS (Version Control System) repository with the requested ID could not be found. Check to see if the ID is correct, and if it belongs to installationId you provided.',
-+        'description' => 'VCS (Version Control System) repository with the requested ID could not be found. Check to see if the ID is correct, and if the installation you provided still has access to it.',
-         'code' => 404,
-     ],
-     Exception::REPOSITORY_NOT_FOUND => [
-@@ -1314,7 +1314,7 @@
-     ],
-     Exception::KEY_CREATION_DENIED => [
-         'name' => Exception::KEY_CREATION_DENIED,
--        'description' => 'An API key cannot be created from a request authorized with an API key. Authenticate with a session instead. To create a short-lived key from a server, use the ephemeral key endpoint.',
-+        'description' => 'This request cannot create or change the key. A JWT cannot create or change keys, an API key cannot create another stored API key, and a key never gives out scopes it does not hold or an expiry later than its own. Authenticate with a session instead, or use the ephemeral key endpoint for a short-lived key within your key\'s grant.',
-         'code' => 403,
-     ],
-     Exception::PLATFORM_NOT_FOUND => [
-```
-
-**File**: `app/config/sdks.php` (modified, +5/-5)
-```diff
-@@ -81,7 +81,7 @@
-             [
-                 'key' => 'apple',
-                 'name' => 'Apple',
--                'version' => '20.2.0',
-+                'version' => '21.1.1',
-                 'url' => 'https://github.com/appwrite/sdk-for-apple',
-                 'package' => 'https://github.com/appwrite/sdk-for-apple',
-                 'enabled' => true,
-@@ -101,7 +101,7 @@
-                 'key' => 'android',
-                 'name' => 'Android',
-                 'namespace' => 'io.appwrite',
--                'version' => '29.2.0',
-+                'version' => '31.0.1',
-                 'url' => 'https://github.com/appwrite/sdk-for-android',
-                 'package' => 'https://search.maven.org/artifact/io.appwrite/sdk-for-android',
-                 'enabled' => true,
-@@ -143,7 +143,7 @@
-             [
-                 'key' => 'unity',
-                 'name' => 'Unity',
--                'version' => '0.9.0',
-+                'version' => '0.11.1',
-                 'url' => 'https://github.com/appwrite/sdk-for-unity',
-                 'package' => 'https://github.com/appwrite/sdk-for-unity',
-                 'enabled' => true,
-@@ -232,7 +232,7 @@
-                 'key' => 'cli',
-                 'name' => 'Command Line',
-                 'description' => 'The Appwrite CLI manages your Appwrite projects from the terminal. Create and link projects, deploy functions and sites, sync tables, buckets, teams and other resources through `appwrite.config.json`, and call any Appwrite API. For full API documentation and tutorials go to [https://appwrite.io/docs](https://appwrite.io/docs)',
--                'version' => '28.4.0',
-+                'version' => '28.9.0',
-                 'url' => 'https://github.com/appwrite/sdk-for-cli',
-                 'package' => 'https://www.npmjs.com/package/appwrite-cli',
-                 'enabled' => true,
-@@ -395,7 +395,7 @@
-             [
-                 'key' => 'python',
-                 'name' => 'Python',
--                'version' => '24.4.0',
-+                'version' => '27.0.0',
-                 'url' => 'https://github.com/appwrite/sdk-for-python',
-                 'package' => 'https://pypi.org/project/appwrite/',
-                 'enabled' => true,
-```
-
----
-
-### Incident Patch 3: `baa1fb13` (2026-10-27)
-**Commit Message**: fix(console): only filter rules by protocol on Cloud
-
-Self-hosted proxy rules have no protocol attribute, so a debug override
-of the function email flag there must not add the filter.
-
-Co-authored-by: Torsten Dittmann <[REDACTED_EMAIL]>
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01CzfEfcEhnbtMP4Jup6V2zN
 
-**File**: `apps/console/src/lib/function-smtp-domain.ts` (modified, +5/-5)
+**File**: `src/Appwrite/Platform/Modules/Functions/Workers/Builds.php` (modified, +8/-1)
 ```diff
-@@ -1,5 +1,5 @@
- import { Query, type Models } from '@appwrite.io/console'
--import { isFeatureEnabled } from '@/lib/console-profiles'
-+import { isCloudProfile, isFeatureEnabled } from '@/lib/console-profiles'
- import { getApexDomain } from '@/lib/utils/proxy-domains'
+@@ -30,6 +30,7 @@
+ use Utopia\Span\Span;
+ use Utopia\System\System;
+ use Utopia\VCS\Adapter\Git;
++use Utopia\VCS\Exception\RepositoryNotFound;
  
- /**
-@@ -40,12 +40,12 @@ export function getSmtpRecordName(domain: string): string {
+ class Builds extends Action
+ {
+@@ -301,7 +302,13 @@ protected function buildDeployment(
+             $rootDirectory = \ltrim($rootDirectory, '/');
  
- /**
-  * Extra list queries for views that only want web (HTTP) domains. Filtering
-- * on the server keeps email rows from taking up the fetched page. Only sent
-- * behind the function email flag: self-hosted rules have no `protocol`
-- * attribute to query.
-+ * on the server keeps email rows from taking up the fetched page. Only sent on
-+ * Cloud behind the function email flag: self-hosted rules have no
-+ * `protocol` attribute to query, even with the flag turned on in debug.
-  */
- export function webDomainQueries(): string[] {
--  return isFeatureEnabled('functionEmail')
-+  return isCloudProfile() && isFeatureEnabled('functionEmail')
-     ? [Query.equal('protocol', ['http'])]
-     : []
+             $owner = $providerAdapter->getOwnerName($providerInstallationId, (int) $providerRepositoryId);
+-            $repositoryName = $providerAdapter->getRepositoryName($providerRepositoryId);
++            try {
++                $repositoryName = $providerAdapter->getRepositoryName($providerRepositoryId);
++            } catch (RepositoryNotFound $e) {
++                // The repository moved, was deleted, or left the installation's selection
++                $type = $resource->getCollection() === 'sites' ? 'site' : 'function';
++                throw new BuildException("The repository is no longer available to the Git installation this {$type} deploys from. Reconnect the repository in the {$type}'s Git settings.", previous: $e);
++            }
+ 
+             $cloneOwner = $deployment->getAttribute('providerRepositoryOwner', $owner);
+             $cloneRepository = $deployment->getAttribute('providerRepositoryName', $repositoryName);
+```
+
+**File**: `src/Appwrite/Platform/Modules/VCS/Http/Entire/Events/Create.php` (modified, +46/-0)
+```diff
+@@ -388,6 +388,51 @@ private function findRepositories(string $providerRepositoryId, array $queries,
+         return \array_slice($found, 0, 100);
+     }
+ 
++    /**
++     * Moves a repository's connection to the installation that delivered its
++     * push. An Entire repository keeps its id when it moves to another
++     * project, as when a GitHub mirror is detached, and only the installation
++     * on its project now covers it; one still connected through the old
++     * installation would build with a token that no longer reaches it. The
++     * move stays within the Appwrite project that connected the repository,
++     * so it happens only once that project has the new installation too.
++     */
++    private function moveRepository(Document $repository, Document $project, string $providerInstallationId, Database $dbForPlatform, Authorization $authorization, callable $getProjectDB): Document
++    {
++        $current = $authorization->skip(fn () => $dbForPlatform->getDocument('installations', $repository->getAttribute('installationId', '')));
++        if ($providerInstallationId === '' || $current->getAttribute('providerInstallationId', '') === $providerInstallationId) {
++            return $repository;
++        }
++
++        $installation = $authorization->skip(fn () => $dbForPlatform->findOne('installations', [
++            Query::equal('provider', ['entire']),
++            Query::equal('providerInstallationId', [$providerInstallationId]),
++            Query::equal('projectInternalId', [$project->getSequence()]),
++        ]));
++        if ($installation->isEmpty()) {
++            return $repository;
++        }
++
++        $moved = new Document([
++            'installationId' => $installation->getId(),
++            'installationInternalId' => $installation->getSequence(),
++        ]);
++
++        $repository = $authorization->skip(fn () => $dbForPlatform->updateDocument('repositories', $repository->getId(), $moved));
++
++        // The site or function follows unless it was connected elsewhere meanwhile
++        $collection = $repository->getAttribute('resourceType') === 'function' ? 'functions' : 'sites';
++        $dbForProject = $getProjectDB($project);
++        $resource = $authorization->skip(fn () => $dbForProject->getDocument($collection, $repository->getAttribute('resourceId', '')));
++        if ($resource->getAttribute('installationId') === $current->getId() && $resource->getAttribute('providerRepositoryId') === $repository->getAttribute('providerRepositoryId')) {
++            $authorization->skip(fn () => $dbForProject->updateDocument($collection, $resource->getId(), $moved));
++        }
++
++        Span::add('vcs.entire.repository.moved', $repository->getId());
++
++        return $repository;
++    }
++
+     private function isProjectInCurrentRegion(Document $project): bool
+     {
+         try {
+@@ -531,6 +576,7 @@ private function handlePushEvent(
+ 
+             $attemptedAt = DateTime::now();
+             try {
++                $repository = $this->moveRepository($repository, $project, $providerInstallationId, $dbForPlatform, $authorization, $getProjectDB);
+                 $this->createGitDeployments($vcs, $providerInstallationId, [$repository], $providerBranch, $providerBranchUrl, $providerRepositoryName, $providerRepositoryUrl, $providerRepositoryOwner, $providerCommitHash, $providerCommitAuthorName, '', $providerCommitMessage, $providerCommitUrl, '', $providerAffectedFiles, false, $dbForPlatform, $authorization, $bus, $getProjectDB, $platform, $deploymentsFactory);
+             } catch (\Throwable $error) {
+                 if ($deliveryId !== '' && !$this->hasDeployed($repository, $providerCommitHash, $providerBranch, $attemptedAt, $dbForPlatform, $authorization, $getProjectDB)) {
+```
+
+---
+
+### Incident Patch 2: `98982be5` (2026-10-27)
+**Commit Message**: fix(webhooks): bound the host lookups by the connect timeout
+
+getaddrinfo() had no timeout, and the client's connect timeout only
+applies after client() returns, so an unresponsive resolver could hold
+a webhook worker instead of failing the delivery for a retry. Both
+lookups now share one deadline equal to the connect timeout.
+
+**File**: `src/Appwrite/Platform/Workers/Webhooks.php` (modified, +7/-4)
+```diff
+@@ -32,6 +32,7 @@
+ class Webhooks extends Action
+ {
+     private const MAX_FILE_SIZE = 5242880; // 5 MB
++    private const TIMEOUT = 15;
+ 
+     public static function getName(): string
+     {
+@@ -185,8 +186,8 @@ private function execute(array $events, string $payload, Document $webhook, Docu
+             );
+ 
+             $client = $this->client($request->getUri(), $publicHostname)
+-                ->withTimeout(15)
+-                ->withConnectTimeout(15)
++                ->withTimeout(self::TIMEOUT)
++                ->withConnectTimeout(self::TIMEOUT)
+                 ->withSslVerification($webhook->getAttribute('security', true));
+ 
+             if (!empty($httpUser) && !empty($httpPass)) {
+@@ -430,9 +431,11 @@ private function client(UriInterface $uri, PublicHostname $publicHostname): Clie
+         $literal = \filter_var($host, FILTER_VALIDATE_IP) !== false;
+         $destinations = $publicHostname->getDestinations();
+         // getaddrinfo() needs a socket type and a service; any port works for the lookup
++        // Both lookups share the connect timeout, so a slow resolver cannot hold the worker
++        $deadline = \microtime(true) + self::TIMEOUT;
+         $addresses = $literal ? [$host] : \array_values(\array_unique([
+-            ...(Resolver::getaddrinfo($host, AF_INET, SOCK_STREAM, STREAM_IPPROTO_TCP, '80') ?: []),
+-            ...(Resolver::getaddrinfo($host, AF_INET6, SOCK_STREAM, STREAM_IPPROTO_TCP, '80') ?: []),
++            ...(Resolver::getaddrinfo($host, AF_INET, SOCK_STREAM, STREAM_IPPROTO_TCP, '80', self::TIMEOUT) ?: []),
++            ...(Resolver::getaddrinfo($host, AF_INET6, SOCK_STREAM, STREAM_IPPROTO_TCP, '80', \max(0.001, $deadline - \microtime(true))) ?: []),
+         ]));
+ 
+         if ($addresses === []) {
+```
+
+---
+
+### Incident Patch 3: `beb63378` (2026-10-27)
+**Commit Message**: fix(console): describe build trigger patterns in the order the server applies them
+
+Globstar is order-sensitive: with an inclusion present, literal inclusions
+always match and the last matching pattern decides among the rest, so an
+exclusion before any inclusion changes nothing. The summary split
+inclusions from exclusions and showed every exclusion overriding every
+inclusion; it now walks the patterns in order ("…, except …, but
+including …", and "always" for literal inclusions). An exclusion reads as
+the server reads it, without trimming what follows the "!".
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `apps/console/src/lib/git-build-triggers.ts` (modified, +79/-24)
+```diff
+@@ -65,45 +65,100 @@ function formatPatternList(patterns: string[]): string {
+   return `${quoted.slice(0, 3).join(', ')}, and ${patterns.length - 3} more`
  }
+ 
++function isWildcardPattern(pattern: string): boolean {
++  return pattern.includes('*') || pattern.includes('?') || pattern.includes('[')
++}
++
+ /**
+- * Splits trigger patterns into the ones that include and the `!` ones that
+- * exclude, without their `!`. With exclusions alone, everything else
+- * triggers, as the server's Globstar matching does.
++ * Trigger patterns as the server's Globstar matches them. Exclusions alone
++ * leave everything else matching. Otherwise a literal inclusion always
++ * matches, and among the other patterns the last one that matches decides,
++ * so an exclusion before any inclusion changes nothing. An exclusion is the
++ * text after its `!`, untrimmed, as the server reads it.
+  */
+-function splitTriggerPatterns(patterns: string[]): {
+-  included: string[]
+-  excluded: string[]
++function triggerRules(patterns: string[]): {
++  excludedOnly: string[] | null
++  literals: string[]
++  steps: { exclude: boolean; patterns: string[] }[]
+ } {
+   const normalized = normalizeTriggerPatterns(patterns)
+-  return {
+-    included: normalized.filter((pattern) => !pattern.startsWith('!')),
+-    excluded: normalized
+-      .filter((pattern) => pattern.startsWith('!'))
+-      .map((pattern) => pattern.slice(1).trim()),
++  if (normalized.every((pattern) => pattern.startsWith('!'))) {
++    return {
++      excludedOnly: normalized.map((pattern) => pattern.slice(1)),
++      literals: [],
++      steps: [],
++    }
++  }
++
++  // Without exclusions every inclusion simply matches
++  if (!normalized.some((pattern) => pattern.startsWith('!'))) {
++    return {
++      excludedOnly: null,
++      literals: [],
++      steps: [{ exclude: false, patterns: normalized }],
++    }
++  }
++
++  const literals: string[] = []
++  const steps: { exclude: boolean; patterns: string[] }[] = []
++  for (const pattern of normalized) {
++    const exclude = pattern.startsWith('!')
++    if (!exclude && !isWildcardPattern(pattern)) {
++      literals.push(pattern)
++      continue
++    }
++    if (exclude && steps.length === 0) continue
++
++    const last = steps[steps.length - 1]
++    const value = exclude ? pattern.slice(1) : pattern
++    if (last && last.exclude === exclude) {
++      last.patterns.push(value)
++    } else {
++      steps.push({ exclude, patterns: [value] })
++    }
++  }
++
++  return { excludedOnly: null, literals, steps }
++}
++
++function describeRules(
++  rules: ReturnType<typeof triggerRules>,
++  matching: string,
++): string {
++  const parts = rules.steps.map((step, index) =>
++    index === 0
++      ? `${matching} ${formatPatternList(step.patterns)}`
++      : `${step.exclude ? 'except' : 'but including'} ${formatPatternList(step.patterns)}`,
++  )
++  if (rules.literals.length > 0) {
++    parts.push(
++      parts.length === 0
++        ? `${matching} ${formatPatternList(rules.literals)}`
++        : `and always ${formatPatternList(rules.literals)}`,
++    )
+   }
++  return parts.join(', ')
+ }
+ 
+ export function describeTriggerBehavior(
+   branches: string[],
+   paths: string[],
+ ): string {
+-  const branchPatterns = splitTriggerPatterns(branches)
+-  const pathPatterns = splitTriggerPatterns(paths)
++  const branchRules = triggerRules(branches)
++  const pathRules = triggerRules(paths)
+ 
+-  const branchExcept =
+-    branchPatterns.excluded.length > 0
+-      ? ` except ${formatPatternList(branchPatterns.excluded)}`
+-      : ''
+   const branchPart =
+-    branchPatterns.included.length === 0
+-      ? `All branches${branchExcept}`
+-      : `Only branches matching ${formatPatternList(branchPatterns.included)}${branchExcept ? `,${branchExcept}` : ''}`
++    branchRules.excludedOnly === null
++      ? describeRules(branchRules, 'Only branches matching')
++      : branchRules.excludedOnly.length > 0
++        ? `All branches except ${formatPatternList(branchRules.excludedOnly)}`
++        : 'All branches'
+ 
+   const pathPart =
+-    pathPatterns.included.length > 0
+-      ? `only paths matching ${formatPatternList(pathPatterns.included)}${pathPatterns.excluded.length > 0 ? `, except ${formatPatternList(pathPatterns.excluded)}` : ''}`
+-      : pathPatterns.excluded.length > 0
+-        ? `changes outside ${formatPatternList(pathPatterns.excluded)}`
++    pathRules.excludedOnly === null
++      ? describeRules(pathRules, 'only paths matching')
++      : pathRules.excludedOnly.length > 0
++        ? `changes outside ${formatPatternList(pathRules.excludedOnly)}`
+         : 'all file changes'
+ 
+   return `${branchPart} trigger deployments on ${pathPart}.`
+```
+
+**File**: `apps/console/tests/unit/git-build-triggers.test.ts` (modified, +32/-0)
+```diff
+@@ -12,6 +12,9 @@ describe('Build trigger summary', () => {
+     expect(describeTriggerBehavior(['main'], ['src/**'])).toBe(
+       'Only branches matching "main" trigger deployments on only paths matching "src/**".',
+     )
++    expect(describeTriggerBehavior(['main', 'feat/*'], [])).toBe(
++      'Only branches matching "main", "feat/*" trigger deployments on all file changes.',
++    )
+   })
+ 
+   test('exclusions alone leave everything else triggering', () => {
+@@ -33,4 +36,33 @@ describe('Build trigger summary', () => {
+       'Only branches matching "release/*", except "release/old" trigger deployments on only paths matching "src/**", except "src/legacy/**".',
+     )
+   })
++
++  test('later patterns take precedence, as the server matches them', () => {
++    // An exclusion before any inclusion changes nothing
++    expect(describeTriggerBehavior([], ['!src/**', 'src/generated/**'])).toBe(
++      'All branches trigger deployments on only paths matching "src/generated/**".',
++    )
++    expect(
++      describeTriggerBehavior(
++        [],
++        ['src/**', '!src/legacy/**', 'src/legacy/keep/**'],
++      ),
++    ).toBe(
++      'All branches trigger deployments on only paths matching "src/**", except "src/legacy/**", but including "src/legacy/keep/**".',
++    )
++  })
++
++  test('literal inclusions always trigger', () => {
++    expect(
++      describeTriggerBehavior(['main', 'release/*', '!release/old'], []),
++    ).toBe(
++      'Only branches matching "release/*", except "release/old", and always "main" trigger deployments on all file changes.',
++    )
++  })
++
++  test('an exclusion reads as the server reads it', () => {
++    expect(describeTriggerBehavior([], ['! src'])).toBe(
++      'All branches trigger deployments on changes outside " src".',
++    )
++  })
+ })
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15010** (2026-10-27): feat(console): ship function email on Cloud, with email domains in one table (@TorstenDittmann)
-- **PR #15009** (2026-10-27): feat(cdn): add CloudFront certificate provider (@TorstenDittmann)
-- **PR #15008** (2026-10-27): docs(console): blog post on TanStack Redact 0.2.0 (@aishwaripahwa12)
-- **PR #15007** (2026-10-27): fix(schedule): restart combined scheduler loops that stop (@HarshMN2345)
-- **PR #15006** (2026-10-27): fix(vcs): ask Entire for every permission an installation holds (@Meldiron)
-- **PR #15004** (2026-10-27): feat(console): add Gitea to Git connect (@HarshMN2345)
+- **PR #15043** (2026-10-27): fix(console): show a repository its installation no longer reaches, and correct Git copy (@Meldiron)
+- **PR #15042** (2026-10-27): fix(vcs): follow an Entire repository to the installation that pushes it (@Meldiron)
+- **PR #15040** (2026-10-27): fix(specs): give hashed password params valid hash examples (@ChiragAgg5k)
+- **PR #15037** (2026-10-27): fix(webhooks): check the destination before connecting (@ChiragAgg5k)
+- **PR #15036** (2026-10-27): fix(vcs): reject .git segments in repository root directories (@ChiragAgg5k)
+- **PR #15035** (2026-10-27): fix(vcs): strip only the leading branch namespace from push refs (@ChiragAgg5k)
 
 ---
 
@@ -2539,43 +2302,35 @@ Claude-Session: https://claude.ai/code/session_01CzfEfcEhnbtMP4Jup6V2zN
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #14540 from appwrite/fix-redis-read-timeout
+## X. vcs): follow an Entire repository to the installation that pushes it
 
 **RULE**:
-When implementing operations in `app/init/registers.php`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in appwrite/appwrite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/Appwrite/Platform/Modules/Functions/Workers/Builds.php`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in appwrite/appwrite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f7aeed8f`: Merge pull request #14540 from appwrite/fix-redis-read-timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9040bc52`: vcs): follow an Entire repository to the installation that pushes it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/init/registers.php`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Appwrite/Platform/Modules/Functions/Workers/Builds.php`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    // Bounds every Redis connect and reply, so an unresponsive Redis fails a request
-    // instead of holding it. Must stay above the 2 s a queue retry blocks on a pop.
-    $redisTimeout = (float) System::getEnv('_APP_REDIS_TIMEOUT', 3);
-
-                default => function () use ($dsnHost, $dsnPort, $dsnUser, $dsnPass, $redisTimeout) {
-                    @$redis->pconnect($dsnHost, (int)$dsnPort, $redisTimeout);
-                    // Not the pconnect argument: a socket reused from the persistent pool keeps its old read timeout
-                    $redis->setOption(\Redis::OPT_READ_TIMEOUT, $redisTimeout);
-            $pool = new Pool(new SwoolePool(), $name, $connectionPoolSize, function () use ($type, $resource, $dsn, $redisTimeout) {
-                            'redis' => (function () use ($dsn, $redisTimeout) {
-                                $connection = Queue\Connection\Redis::fromDSN($dsn, $redisTimeout, $redisTimeout);
+use Utopia\VCS\Exception\RepositoryNotFound;
+            try {
+                $repositoryName = $providerAdapter->getRepositoryName($providerRepositoryId);
+            } catch (RepositoryNotFound $e) {
+                // The repository moved, was deleted, or left the installation's selection
+                $type = $resource->getCollection() === 'sites' ? 'site' : 'function';
+                throw new BuildException("The repository is no longer available to the Git installation this {$type} deploys from. Reconnect the repository in the {$type}'s Git settings.", previous: $e);
+            }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-                default => function () use ($dsnHost, $dsnPort, $dsnUser, $dsnPass) {
-                    @$redis->pconnect($dsnHost, (int)$dsnPort);
-                    $redis->setOption(\Redis::OPT_READ_TIMEOUT, -1);
-            $pool = new Pool(new SwoolePool(), $name, $connectionPoolSize, function () use ($type, $resource, $dsn) {
-                            'redis' => (function () use ($dsn) {
-                                $connection = Queue\Connection\Redis::fromDSN($dsn);
+            $repositoryName = $providerAdapter->getRepositoryName($providerRepositoryId);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f7aeed8f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9040bc52` are properly handled with clean fallback behavior.

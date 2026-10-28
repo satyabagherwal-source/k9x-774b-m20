@@ -155,8 +155,8 @@
     "sourceUrl": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
     "sourceVersion": "hf-cross-encoder-ms-marco-minilm-l6-v2",
     "license": "Open-Source",
-    "contentHash": "cef9b87c00186dd8afd757faa30e5385abaa0f03ab9b9bcdc68acf1739444d0c",
-    "lastHarvestedAt": "2026-10-25T06:08:11.161Z",
+    "contentHash": "2057185c2b7c52a5f3ca0df96ed92d6c564558fd5d917ec6a5033714acf885e7",
+    "lastHarvestedAt": "2026-10-28T03:18:04.278Z",
     "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2"
   },
   "hf-baai-bge-small-en-v1.5": {
@@ -6673,10 +6673,10 @@
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "b6cbe004",
+    "sourceVersion": "e6aff936",
     "license": "Apache-2.0",
-    "contentHash": "3f1009bf8f86511b7eede86668b2bd20f9d3fb3b3866074df7e2f8e0c40539d5",
-    "lastHarvestedAt": "2026-10-27T14:10:54.492Z",
+    "contentHash": "41e411693cfade2630fae49ca225593865d908cec9d0607b722c0e5d3f51fb9e",
+    "lastHarvestedAt": "2026-10-28T03:18:06.397Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {
@@ -10323,10 +10323,10 @@
     "repository": "appwrite/appwrite",
     "platform": "github",
     "sourceUrl": "https://github.com/appwrite/appwrite",
-    "sourceVersion": "f7aeed8f",
+    "sourceVersion": "4bd8931f",
     "license": "BSD-3-Clause",
-    "contentHash": "c540c8c9de1d48feb6f22c1df1b89cbd4466b0544a787f36f36aacdf704b549c",
-    "lastHarvestedAt": "2026-10-27T12:46:39.818Z",
+    "contentHash": "2b93e8de1461fd61f14e4daa19436ef5d35f3266e969298559880bf8315ec309",
+    "lastHarvestedAt": "2026-10-28T03:18:00.107Z",
     "learningId": "learn-github-appwrite-appwrite"
   },
   "expo-expo": {
