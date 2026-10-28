@@ -815,8 +815,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
     "sourceVersion": "hf-meta-llama-meta-llama-3-8b",
     "license": "Open-Source",
-    "contentHash": "98acc68f055bfe4fa5f9113f9c10f59038fc3f666df20b58089f81611ded0ce0",
-    "lastHarvestedAt": "2026-10-25T18:41:00.219Z",
+    "contentHash": "0cdfa3036d59c148ecf33ad8b5678472f25c37eac41d807b8c7356f005d326fa",
+    "lastHarvestedAt": "2026-10-28T13:23:22.794Z",
     "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b"
   },
   "hf-microsoft-frognano-4b-2609": {
@@ -2123,10 +2123,10 @@
     "repository": "microsoft/agent-governance-toolkit",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/agent-governance-toolkit",
-    "sourceVersion": "9bfdd5f4",
+    "sourceVersion": "4eca1f5b",
     "license": "MIT",
-    "contentHash": "7e788bdfd4188516d7465d77d75dcd46c48aba3d5608f0df0054088fe72d65fb",
-    "lastHarvestedAt": "2026-10-27T18:10:19.839Z",
+    "contentHash": "5e7ccda7762de991baf6cadefe643f46fba9fa5dc8070c792d3baeff8275f50a",
+    "lastHarvestedAt": "2026-10-28T13:23:29.989Z",
     "learningId": "learn-github-microsoft-agent-governance-toolkit"
   },
   "synalinks-synalinks-skills": {

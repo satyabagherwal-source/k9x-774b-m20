@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
-> **Source Version**: `9bfdd5f4`  
+> **Source Version**: `4eca1f5b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T18:10:19.432Z  
+> **Timestamp**: 2026-10-28T13:23:29.582Z  
 > **Learning ID**: `learn-github-microsoft-agent-governance-toolkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T18:10:19.072Z  
+> **Harvest Timestamp**: 2026-10-28T13:23:29.577Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI Agent Governance Toolkit — Policy enforcement, zero-trust identity, execution sandboxing, and reliability engineering for autonomous AI agents. Covers 10/10 OWASP Agentic Top 10.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: README.md, Dockerfile
-- **Stars / Engagement**: 6481 stars
+- **Stars / Engagement**: 6485 stars
 
 ---
 
@@ -405,20 +405,24 @@ export function writeHookOutput(payload) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9bfdd5f4` (2026-10-27)
-**Commit Message**: fix(agent-lightning): include the success bonus in GovernedEnvironment total_reward (#4419)
+### Incident Patch 1: `4eca1f5b` (2026-10-28)
+**Commit Message**: fix(agent-sre): write CRD field names in GitOps rollout specs (#4461)
 
-* fix(agent-lightning): include the success bonus in GovernedEnvironment total_reward
+* fix(agent-sre): write CRD field names in GitOps rollout specs
 
-step() added the reward to EnvironmentState.total_reward before adding
-success_bonus for a clean step, so total_reward left out every bonus
-that step() returned and was not the sum of the episode's step rewards.
-Accumulate after the bonus and update the step order in the spec.
+RolloutSpec.to_dict() serialized steps with duration_seconds and
+manual_gate and rollback conditions with comparator, but the AgentRollout
+CRD and k8s.Reconciler read durationSeconds, manualGate and operator. A
+spec passed to the reconciler ran every step for the default 3600 s with
+no manual gate, and every rollback condition became gte, so
+RollbackCondition("success_rate", 0.9, comparator="lt") rolled back at a
+healthy 0.99. Write the CRD field names, and read an analysis criterion's
+comparator in the reconciler instead of always using gte.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
 
-* docs(changelog): add PR number to the agent-lightning entry
+* chore(cspell): add gitops to the repo terms
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
@@ -428,95 +432,172 @@ Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
 Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
+**File**: `.cspell-repo-terms.txt` (modified, +1/-0)
+```diff
+@@ -1356,3 +1356,4 @@ NDJSON
+ ndjson
+ dataschema
+ disp
++gitops
+```
+
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -45,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **`agent-runtime` `DockerDeployer.deploy` no longer lets `env` override the governance settings.** The `AGT_*` variables built from `GovernanceConfig` went on the `docker run` command line first and the `env` entries after them, and Docker keeps the last `-e` for a name, so `env={"AGT_KILL_SWITCH": "false"}` started the container with the kill switch off although `config.kill_switch_enabled` was `True` (likewise for the policy path, trust level, audit flag and limits). `deploy` now raises `ValueError` before running Docker when `env` names one of those variables or has an `=` in a name; other variables, including other `AGT_` names, are passed as before.
+@@ -46,6 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - **`agent-lightning` `policy_penalty` charges dict violations by their severity.** It read each violation's severity with `getattr`, so a violation given as a dict, the form a kernel's `get_recent_violations()` may return and that `GovernedEnvironment` already accepts, always got the default medium penalty: `{"severity": "critical"}` cost -10 instead of -100 and `{"severity": "low"}` -10 instead of -1. `PolicyReward` uses `policy_penalty`, so a rollout without `violations` whose kernel returned dicts was rewarded the same way. Dict violations are now charged by their `"severity"` key; object violations, unknown severities and the medium default when the severity is missing are unchanged (#4422).
  - **`agent-sre` A/B experiments split traffic by relative variant weights.** `Experiment.assign` compared one `random.random()` draw against the running sum of the weights, so it only worked when the weights summed to 1: three variants with the default weight 0.5 never sent traffic to the third, percentage weights such as 70/30 sent everything to the first, and two variants weighted 0.1 split 10/90. Each variant now gets its weight divided by the total of all weights, and a variant with a weight of 0 or less gets no traffic.
-+- **`agent-lightning` `GovernedEnvironment` includes the success bonus in the episode's `total_reward`.** `step` added the reward to `EnvironmentState.total_reward` before adding `success_bonus` for a clean step, so `total_reward` (and `info["total_reward"]`) left out every bonus that `step` returned: with the default config, a clean step returned 10.9 but raised `total_reward` by 0.9, and an episode's `total_reward` was not the sum of its step rewards. The reward is now accumulated after the bonus, and the step order in the Agent Lightning spec is updated to match (#4419).
+ - **`agent-lightning` `GovernedEnvironment` includes the success bonus in the episode's `total_reward`.** `step` added the reward to `EnvironmentState.total_reward` before adding `success_bonus` for a clean step, so `total_reward` (and `info["total_reward"]`) left out every bonus that `step` returned: with the default config, a clean step returned 10.9 but raised `total_reward` by 0.9, and an episode's `total_reward` was not the sum of its step rewards. The reward is now accumulated after the bonus, and the step order in the Agent Lightning spec is updated to match (#4419).
++- **`agent-sre` GitOps rollout specs keep their step durations, manual gates and rollback operators in the reconciler.** `RolloutSpec.to_dict()` wrote steps with `duration_seconds` and `manual_gate` and rollback conditions with `comparator`, while the `AgentRollout` CRD and `k8s.Reconciler` read `durationSeconds`, `manualGate` and `operator`. A spec passed to the reconciler therefore ran every step for the default 3600 seconds without its manual gate, and every rollback condition became `gte`: `RollbackCondition("success_rate", 0.9, comparator="lt")` rolled back at a healthy 0.99. `to_dict()` now writes the CRD field names, and the reconciler also reads an analysis criterion's `comparator` instead of always using `gte`.
  
  ### Added
  - **.NET `PolicyEngine.EvaluateAsync`** — added an async evaluation path so external policy backends whose work is I/O-bound (`IExternalPolicyBackend.EvaluateAsync`) are awaited instead of blocked on with `GetAwaiter().GetResult()`. Backends are evaluated sequentially to preserve registration order; the synchronous `Evaluate` keeps its exact prior behavior. The token is honored on entry and before each backend call, so an already-cancelled token throws `OperationCanceledException` (including on the no-backend in-memory path) and no `PolicyDecision` is produced; backend exceptions propagate rather than being turned into a deny, matching `Evaluate` (#3778).
 ```
 
-**File**: `agent-governance-python/agent-lightning/src/agent_lightning_gov/environment.py` (modified, +4/-2)
+**File**: `agent-governance-python/agent-sre/src/agent_sre/delivery/gitops.py` (modified, +27/-2)
 ```diff
-@@ -303,8 +303,6 @@ def step(
-                 penalty *= 5
-             reward += penalty
+@@ -57,11 +57,34 @@ def to_dict(self) -> dict[str, Any]:
+         return d
  
--        self._state.total_reward += reward
--
-         # Check termination conditions
-         terminated = False
-         truncated = False
-@@ -325,6 +323,10 @@ def step(
-             reward += self.config.success_bonus
-         self._episode_clean = step_clean and (first_step or self._episode_clean)
  
-+        # Accumulate the reward this step returns, success bonus included,
-+        # so total_reward is the episode's return.
-+        self._state.total_reward += reward
++def _step_to_spec(step: RolloutStep) -> dict[str, Any]:
++    """Serialize a step with the AgentRollout CRD field names."""
++    return {
++        "name": step.name,
++        "weight": step.weight,
++        "durationSeconds": step.duration_seconds,
++        "analysis": [a.to_dict() for a in step.analysis],
++        "manualGate": step.manual_gate,
++    }
 +
-         self._state.terminated = terminated
-         self._state.truncated = truncated
++
++def _rollback_condition_to_spec(condition: RollbackCondition) -> dict[str, Any]:
++    """Serialize a rollback condition with the AgentRollout CRD field names."""
++    return {
++        "metric": condition.metric,
++        "threshold": condition.threshold,
++        "operator": condition.comparator,
++    }
++
++
+ @dataclass
+ class RolloutSpec:
+     """Declarative rollout specification for GitOps-style deployments.
  
+     Designed to be serialized to YAML and stored in version control.
++    ``to_dict()`` returns an ``AgentRollout`` manifest that uses the CRD's
++    field names (``durationSeconds``, ``manualGate``, ``operator``), so the
++    reconciler reads it back unchanged.
+     """
+     api_version: SpecVersion = SpecVersion.V1ALPHA1
+     kind: str = "AgentRollout"
+@@ -92,8 +115,10 @@ def to_dict(self) -> dict[str, Any]:
+                 "strategy": self.strategy.value,
+                 "current": self.current.to_dict(),
+                 "candidate": self.candidate.to_dict(),
+-                "steps": [s.to_dict() for s in self.steps],
+-                "rollbackConditions": [r.to_dict() for r in self.rollback_conditions],
++                "steps": [_step_to_spec(s) for s in self.steps],
++                "rollbackConditions": [
++                    _rollback_condition_to_spec(r) for r in self.rollback_conditions
++                ],
+                 "sloRequirements": [s.to_dict() for s in self.slo_requirements],
+             },
+         }
 ```
 
-**File**: `agent-governance-python/agent-lightning/tests/test_lightning_comprehensive.py` (modified, +21/-0)
+**File**: `agent-governance-python/agent-sre/src/agent_sre/k8s/__init__.py` (modified, +3/-1)
 ```diff
-@@ -854,6 +854,27 @@ def get_recent_violations(self):
-         # No hook fire => no violations recorded.
-         assert info["violations"] == []
- 
-+    def test_total_reward_is_sum_of_step_rewards(self):
-+        """The episode's total_reward includes each step's success bonus."""
-+        kernel = _make_mock_kernel()
-+
-+        def execute(action):
-+            if action == "bad":
-+                env._handle_violation("P", "blocked", "high", True)
-+            return "result"
-+
-+        kernel.execute = MagicMock(side_effect=execute)
-+        env = GovernedEnvironment(kernel)
-+        env.reset()
-+        rewards = []
-+        for action in ("good", "bad", "good"):
-+            _, reward, _, _, info = env.step(action)
-+            rewards.append(reward)
-+            assert info["total_reward"] == pytest.approx(sum(rewards))
-+        # 1.0 - 0.1 + 10.0 (clean), 1.0 - 0.1 - 50.0 (high), clean again
-+        assert rewards == pytest.approx([10.9, -49.1, 10.9])
-+        assert env._state.total_reward == pytest.approx(sum(rewards))
-+
- 
- class TestGovernedEnvironmentGymInterface:
-     def test_terminated_property(self):
+@@ -325,7 +325,9 @@ def _parse_spec(spec_dict: dict[str, Any]) -> RolloutSpec:
+     for s in spec_dict.get("steps", []):
+         analysis = []
+         for a in s.get("analysis", []):
+-            analysis.append(AnalysisCriterion(a["metric"], a["threshold"]))
++            analysis.append(
++                AnalysisCriterion(a["metric"], a["threshold"], a.get("comparator", "gte"))
++            )
+         steps.append(RolloutStep(
+             name=s.get("name", ""),
+             weight=s.get("weight", 0.0),
 ```
 
-**File**: `docs/specs/AGENT-LIGHTNING-FAST-PATH-1.0.md` (modified, +6/-5)
+**File**: `agent-governance-python/agent-sre/tests/test_k8s.py` (modified, +39/-0)
 ```diff
-@@ -669,12 +669,13 @@ The constructor MUST be generic over state and action types:
-    - Critical: `violation_penalty * 10`
-    - High: `violation_penalty * 5`
-    - All others: `violation_penalty * 1`
--8. Accumulate the reward into `EnvironmentState.total_reward`.
--9. Check termination: if `terminate_on_critical` and any violation has
-+8. Check termination: if `terminate_on_critical` and any violation has
-    severity `"critical"`, set `terminated = True`.
--10. Check truncation: if `step_count >= max_steps`, set
--    `truncated = True`.
--11. If the step succeeded with zero violations, add `success_bonus`.
-+9. Check truncation: if `step_count >= max_steps`, set
-+   `truncated = True`.
-+10. If the step succeeded with zero violations, add `success_bonus`.
-+11. Accumulate the reward, including any `success_bonus`, into
-+    `EnvironmentState.total_reward`.
- 12. Return `(next_state, reward, terminated, truncated, info)`.
+@@ -346,3 +346,42 @@ def test_every_crd_rollback_operator_triggers_rollback(self, operator, metrics):
+         assert rollout is not None
+         assert rollout.check_rollback(metrics) is True
+         assert rollout.state.value == "rolled_back"
++
++    def test_gitops_rollout_spec_round_trips_through_reconciler(self):
++        from agent_sre.delivery.gitops import AgentRef, RolloutSpec
++        from agent_sre.delivery.rollout import (
++            AnalysisCriterion,
++            RollbackCondition,
++            RolloutStep,
++        )
++
++        spec = RolloutSpec(
++            name="gitops",
++            candidate=AgentRef(name="agent", version="v2"),
++            steps=[
++                RolloutStep(
++                    weight=0.1,
++                    duration_seconds=600,
++                    manual_gate=True,
++                    analysis=[AnalysisCriterion("latency_ms", 500.0, comparator="lte")],
++                ),
++                RolloutStep(weight=1.0, duration_seconds=0),
++            ],
++            rollback_conditions=[RollbackCondition("success_rate", 0.9, comparator="lt")],
++        )
++
++        r = Reconciler()
++        result = r.reconcile("gitops", "default", spec.to_dict()["spec"])
++        assert result.action == ReconcileAction.CREATED
++        rollout = r.get_rollout("gitops", "default")
++        assert rollout is not None
++
++        first, last = rollout.steps
++        assert (first.duration_seconds, first.manual_gate) == (600, True)
++        assert (last.duration_seconds, last.manual_gate) == (0, False)
++        assert first.analysis[0].comparator == "lte"
++        assert rollout.analyze_step({"latency_ms": 200.0}) is True
++
++        # A healthy success rate must not trip the "lt 0.9" condition.
++        assert rollout.check_rollback({"success_rate": 0.99}) is False
++        assert rollout.check_rollback({"success_rate": 0.5}) is True
+```
+
+**File**: `agent-governance-python/agent-sre/tests/unit/test_p2_features.py` (modified, +22/-0)
+```diff
+@@ -92,6 +92,28 @@ def test_to_dict_structure(self):
+         assert "metadata" in d
+         assert "spec" in d
  
- **[Pure Specification]**
++    def test_to_dict_uses_crd_field_names(self):
++        from agent_sre.delivery.rollout import RollbackCondition, RolloutStep
++        spec = RolloutSpec(
++            name="test",
++            candidate=AgentRef(name="agent", version="v1"),
++            steps=[RolloutStep(weight=0.5, duration_seconds=120, manual_gate=True)],
++            rollback_conditions=[RollbackCondition("error_rate", 0.1, comparator="gt")],
++        )
++        d = spec.to_dict()["spec"]
++        assert d["steps"] == [
++            {
++                "name": "",
++                "weight": 0.5,
++                "durationSeconds": 120,
++                "analysis": [],
++                "manualGate": True,
++            }
++        ]
++        assert d["rollbackConditions"] == [
++            {"metric": "error_rate", "threshold": 0.1, "operator": "gt"}
++        ]
++
+     def test_agent_ref(self):
+         ref = AgentRef(name="my-agent", version="v2.0", model="gpt-4")
+         d = ref.to_dict()
 ```
 
 #### Recent Merged Pull Requests:
@@ -525,7 +606,7 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 - **PR #4464** (closed): fix(python): add AgentControl close support (@MaryamIjazMaryam)
 - **PR #4463** (2026-10-27): chore(deps): Bump zod from 4.4.3 to 4.6.7 in /agent-governance-python/agent-mesh/packages/mcp-proxy (@dependabot[bot])
 - **PR #4462** (2026-10-27): chore(deps): Bump body-parser from 2.2.2 to 2.4.0 in /agent-governance-python/agent-mesh/packages/mcp-proxy (@dependabot[bot])
-- **PR #4460** (2026-10-27): fix(agent-sre): split experiment traffic by relative variant weights (@ShivamSharma43)
+- **PR #4461** (2026-10-28): fix(agent-sre): write CRD field names in GitOps rollout specs (@ShivamSharma43)
 
 ---
 
@@ -545,13 +626,13 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agent-lightning): include the success bonus in GovernedEnvironment total_reward 
+## X. agent-sre): write CRD field names in GitOps rollout specs (#4461)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9bfdd5f4`: agent-lightning): include the success bonus in GovernedEnvironment total_reward (#4419). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4eca1f5b`: agent-sre): write CRD field names in GitOps rollout specs (#4461). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -559,7 +640,7 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **`agent-lightning` `GovernedEnvironment` includes the success bonus in the episode's `total_reward`.** `step` added the reward to `EnvironmentState.total_reward` before adding `success_bonus` for a clean step, so `total_reward` (and `info["total_reward"]`) left out every bonus that `step` returned: with the default config, a clean step returned 10.9 but raised `total_reward` by 0.9, and an episode's `total_reward` was not the sum of its step rewards. The reward is now accumulated after the bonus, and the step order in the Agent Lightning spec is updated to match (#4419).
+- **`agent-sre` GitOps rollout specs keep their step durations, manual gates and rollback operators in the reconciler.** `RolloutSpec.to_dict()` wrote steps with `duration_seconds` and `manual_gate` and rollback conditions with `comparator`, while the `AgentRollout` CRD and `k8s.Reconciler` read `durationSeconds`, `manualGate` and `operator`. A spec passed to the reconciler therefore ran every step for the default 3600 seconds without its manual gate, and every rollback condition became `gte`: `RollbackCondition("success_rate", 0.9, comparator="lt")` rolled back at a healthy 0.99. `to_dict()` now writes the CRD field names, and the reconciler also reads an analysis criterion's `comparator` instead of always using `gte`.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -569,4 +650,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9bfdd5f4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4eca1f5b` are properly handled with clean fallback behavior.

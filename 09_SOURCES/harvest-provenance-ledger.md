@@ -5783,3 +5783,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hexgrad-kokoro-82m` | `https://huggingface.co/hexgrad/Kokoro-82M` | `hf-hexgrad` | Multi-dimensional audit evidence | 2026-10-28T13:16:35.818Z |
 | `learn-github-wasm-bindgen-wasm-pack` | `https://github.com/wasm-bindgen/wasm-pack` | `56d17868` | Multi-dimensional audit evidence | 2026-10-28T13:16:37.527Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `8c74dd4b` | Multi-dimensional audit evidence | 2026-10-28T13:16:53.586Z |
+| `learn-huggingface-meta-llama-meta-llama-3-8b` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-28T13:23:22.794Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `4eca1f5b` | Multi-dimensional audit evidence | 2026-10-28T13:23:29.989Z |
