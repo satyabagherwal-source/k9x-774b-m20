@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T16:45:14.831Z",
+  "last_updated": "2026-10-28T16:52:05.272Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1520,14 +1520,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-community-gpt2",
-      "content_hash": "c463c737dbf59fb4ce862e436a2f8e989f273123d08ca0003ab138132e093613",
-      "verified_at": "2026-10-25T23:45:58.168Z",
+      "content_hash": "b00c64df90d7c4392946c76847eefb3a4f2a26fe58a6f5646e3dc42285b7e580",
+      "verified_at": "2026-10-28T16:52:00.489Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T23:45:58.168Z"
+      "last_updated": "2026-10-28T16:52:00.489Z"
     },
     "Qwen/Qwen3-VL-8B-Instruct": {
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
@@ -8106,14 +8106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yugabyte-yugabyte-db",
-      "content_hash": "3cd36c16d7803d1a89ca01c33d4e2833366e4b6767b4bfec1f4ef79486a09aea",
-      "verified_at": "2026-10-28T00:47:00.008Z",
+      "content_hash": "7244fd647d0a43374b011fa131c991e74da390d9ee7ce0ed7252449afba44769",
+      "verified_at": "2026-10-28T16:52:05.271Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T00:47:00.008Z"
+      "last_updated": "2026-10-28T16:52:05.271Z"
     },
     "React95/React95": {
       "repository": "React95/React95",

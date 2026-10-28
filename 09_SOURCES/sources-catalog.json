@@ -1145,8 +1145,8 @@
     "sourceUrl": "https://huggingface.co/openai-community/gpt2",
     "sourceVersion": "hf-openai-community-gpt2",
     "license": "Open-Source",
-    "contentHash": "c463c737dbf59fb4ce862e436a2f8e989f273123d08ca0003ab138132e093613",
-    "lastHarvestedAt": "2026-10-25T23:45:58.160Z",
+    "contentHash": "b00c64df90d7c4392946c76847eefb3a4f2a26fe58a6f5646e3dc42285b7e580",
+    "lastHarvestedAt": "2026-10-28T16:52:00.481Z",
     "learningId": "learn-huggingface-openai-community-gpt2"
   },
   "hf-qwen-qwen3-vl-8b-instruct": {
@@ -5323,10 +5323,10 @@
     "repository": "yugabyte/yugabyte-db",
     "platform": "github",
     "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
-    "sourceVersion": "9fe8c247",
+    "sourceVersion": "c9f96027",
     "license": "NOASSERTION",
-    "contentHash": "3cd36c16d7803d1a89ca01c33d4e2833366e4b6767b4bfec1f4ef79486a09aea",
-    "lastHarvestedAt": "2026-10-28T00:47:00.003Z",
+    "contentHash": "7244fd647d0a43374b011fa131c991e74da390d9ee7ce0ed7252449afba44769",
+    "lastHarvestedAt": "2026-10-28T16:52:05.264Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
   },
   "react95-react95": {

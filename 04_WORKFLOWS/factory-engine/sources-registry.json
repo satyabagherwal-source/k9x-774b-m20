@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T16:45:25.635Z",
-    "lastVerified": "2026-10-28T16:45:25.635Z",
+    "lastChecked": "2026-10-28T16:52:07.818Z",
+    "lastVerified": "2026-10-28T16:52:07.818Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -193,8 +193,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T16:19:30.108Z",
-    "lastVerified": "2026-10-28T16:19:30.108Z",
+    "lastChecked": "2026-10-28T16:52:00.399Z",
+    "lastVerified": "2026-10-28T16:52:00.399Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -406,9 +406,9 @@
   "smallstep-cli": {
     "name": "cli",
     "officialUrl": "https://github.com/smallstep/cli",
-    "lastChecked": "2026-10-28T13:36:48.038Z",
+    "lastChecked": "2026-10-28T16:51:55.703Z",
     "revisionIdentifier": "824bfd6b",
-    "lastVerified": "2026-10-28T13:36:48.038Z"
+    "lastVerified": "2026-10-28T16:51:55.703Z"
   },
   "milvus-io-milvus": {
     "name": "milvus-io/milvus",
@@ -5055,5 +5055,60 @@
     "lastChecked": "2026-10-28T16:45:23.247Z",
     "revisionIdentifier": "18d81c90",
     "lastVerified": "2026-10-28T16:45:23.247Z"
+  },
+  "yvgude-lean-ctx": {
+    "name": "lean-ctx",
+    "officialUrl": "https://github.com/yvgude/lean-ctx",
+    "lastChecked": "2026-10-28T16:51:45.327Z",
+    "revisionIdentifier": "10a74ea6",
+    "lastVerified": "2026-10-28T16:51:45.327Z"
+  },
+  "hf-openai-community-gpt2": {
+    "name": "openai-community/gpt2",
+    "officialUrl": "https://huggingface.co/openai-community/gpt2",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T16:51:47.771Z",
+    "lastVerified": "2026-10-28T16:51:47.771Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-openai-community-gpt2",
+    "contentHash": "b00c64df90d7c4392946c76847eefb3a4f2a26fe58a6f5646e3dc42285b7e580",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "open-ani-animeko": {
+    "name": "animeko",
+    "officialUrl": "https://github.com/open-ani/animeko",
+    "lastChecked": "2026-10-28T16:51:50.253Z",
+    "revisionIdentifier": "2f33ea34",
+    "lastVerified": "2026-10-28T16:51:50.253Z"
+  },
+  "architect-architect": {
+    "name": "architect",
+    "officialUrl": "https://github.com/architect/architect",
+    "lastChecked": "2026-10-28T16:51:52.878Z",
+    "revisionIdentifier": "9924cd0a",
+    "lastVerified": "2026-10-28T16:51:52.878Z"
+  },
+  "yugabyte-yugabyte-db": {
+    "name": "yugabyte/yugabyte-db",
+    "officialUrl": "https://github.com/yugabyte/yugabyte-db",
+    "sourceType": "github",
+    "technology": "C",
+    "lastChecked": "2026-10-28T16:52:04.526Z",
+    "lastVerified": "2026-10-28T16:52:04.526Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-yugabyte-yugabyte-db",
+    "contentHash": "7244fd647d0a43374b011fa131c991e74da390d9ee7ce0ed7252449afba44769",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 8,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

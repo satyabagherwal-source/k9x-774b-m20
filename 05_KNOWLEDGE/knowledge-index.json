@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T16:45:14.727Z",
+  "last_updated": "2026-10-28T16:52:05.186Z",
   "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -25385,7 +25385,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai-community/gpt2",
       "source_version": "hf-openai-community-gpt2",
-      "content_hash": "c463c737dbf59fb4ce862e436a2f8e989f273123d08ca0003ab138132e093613",
+      "content_hash": "b00c64df90d7c4392946c76847eefb3a4f2a26fe58a6f5646e3dc42285b7e580",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md",
       "promoted_rules": [
@@ -25402,6 +25402,11 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-openai-community-gpt2-mv3yuiaq",
           "verified_at": "2026-10-11T15:16:31.466Z"
+        },
+        {
+          "number": 369,
+          "title": "The Tokenizer-Model ID Alignment Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1226,
@@ -25432,6 +25437,16 @@
           "number": 4493,
           "title": "Causal Attention Mask Integrity",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5345,
+          "title": "The Config-Weight Contract Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5346,
+          "title": "The Numerical Stability Epsilon Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -25451,7 +25466,7 @@
         "learn-huggingface-hf-openai-community-gpt2-mv3yuiaq",
         "learn-huggingface-hf-openai-community-gpt2-mv4dfghb"
       ],
-      "verified_at": "2026-10-25T23:45:58.090Z",
+      "verified_at": "2026-10-28T16:52:00.402Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56074,8 +56089,8 @@
       "slug": "yugabyte-yugabyte-db",
       "platform": "github",
       "source_url": "https://github.com/yugabyte/yugabyte-db",
-      "source_version": "9fe8c247",
-      "content_hash": "3cd36c16d7803d1a89ca01c33d4e2833366e4b6767b4bfec1f4ef79486a09aea",
+      "source_version": "c9f96027",
+      "content_hash": "7244fd647d0a43374b011fa131c991e74da390d9ee7ce0ed7252449afba44769",
       "dossier_path": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "promoted_rules": [
@@ -56123,6 +56138,11 @@
           "number": 5081,
           "title": "[PLAT-23187] YBA: Fix SSH to nodes when the YBA host has OS FIPS mode on",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5347,
+          "title": "[#35462] DocDB: Fix RemoveTabletServerTest.MayStillHoldLease by waiting for a po",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56130,7 +56150,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T00:46:59.952Z",
+      "verified_at": "2026-10-28T16:52:05.170Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62324,15 +62344,15 @@
       "learning_id": "rule-369",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 369,
-      "title": "The Tokenizer-Model ID Alignment Invariant (Harvested from FacebookAI/xlm-roberta-base)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "The Tokenizer-Model ID Alignment Invariant",
+      "source_url": "https://huggingface.co/openai-community/gpt2",
+      "source_version": "hf-openai-community-gpt2",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-13T17:43:04.598Z"
+      "verified_at": "2026-10-28T16:52:00.402Z"
     },
     "rule-370": {
       "learning_id": "rule-370",
@@ -145111,6 +145131,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T16:33:53.312Z"
+    },
+    "rule-5345": {
+      "learning_id": "rule-5345",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5345,
+      "title": "The Config-Weight Contract Invariant",
+      "source_url": "https://huggingface.co/openai-community/gpt2",
+      "source_version": "hf-openai-community-gpt2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T16:52:00.402Z"
+    },
+    "rule-5346": {
+      "learning_id": "rule-5346",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5346,
+      "title": "The Numerical Stability Epsilon Invariant",
+      "source_url": "https://huggingface.co/openai-community/gpt2",
+      "source_version": "hf-openai-community-gpt2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T16:52:00.402Z"
+    },
+    "rule-5347": {
+      "learning_id": "rule-5347",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5347,
+      "title": "[#35462] DocDB: Fix RemoveTabletServerTest.MayStillHoldLease by waiting for a po",
+      "source_url": "https://github.com/yugabyte/yugabyte-db",
+      "source_version": "c9f96027",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T16:52:05.170Z"
     }
   },
   "aliases": {

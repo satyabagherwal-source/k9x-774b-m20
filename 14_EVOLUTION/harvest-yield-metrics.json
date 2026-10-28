@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T16:45:14.827Z",
-  "total_cycles_completed": 5825,
-  "total_learnings_persisted": 5825,
-  "total_rules_promoted": 5297,
+  "last_updated": "2026-10-28T16:52:05.268Z",
+  "total_cycles_completed": 5827,
+  "total_learnings_persisted": 5827,
+  "total_rules_promoted": 5301,
   "history": [
-    {
-      "timestamp": "2026-10-28T02:20:40.195Z",
-      "repository": "Edge0/Audio8-ASR-Infinite",
-      "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T02:27:17.820Z",
-      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T02:27:19.574Z",
       "repository": "koderover/zadig",
@@ -1403,6 +1389,20 @@
       "repository": "FacebookAI/xlm-roberta-base",
       "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T16:52:00.486Z",
+      "repository": "openai-community/gpt2",
+      "learningId": "learn-huggingface-openai-community-gpt2",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T16:52:05.268Z",
+      "repository": "yugabyte/yugabyte-db",
+      "learningId": "learn-github-yugabyte-yugabyte-db",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -5857,3 +5857,5 @@ Every entry in this ledger must capture:
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `ea12b738` | Multi-dimensional audit evidence | 2026-10-28T16:33:47.482Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `7e354c62` | Multi-dimensional audit evidence | 2026-10-28T16:33:53.374Z |
 | `learn-huggingface-facebookai-xlm-roberta-base` | `https://huggingface.co/FacebookAI/xlm-roberta-base` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-10-28T16:45:14.816Z |
+| `learn-huggingface-openai-community-gpt2` | `https://huggingface.co/openai-community/gpt2` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-28T16:52:00.481Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `c9f96027` | Multi-dimensional audit evidence | 2026-10-28T16:52:05.264Z |

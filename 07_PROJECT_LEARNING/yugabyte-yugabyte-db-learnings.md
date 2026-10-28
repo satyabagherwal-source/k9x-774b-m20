@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source**: github ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
-> **Source Version**: `9fe8c247`  
+> **Source Version**: `c9f96027`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T00:46:59.736Z  
+> **Timestamp**: 2026-10-28T16:52:04.749Z  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T00:46:59.189Z  
+> **Harvest Timestamp**: 2026-10-28T16:52:04.526Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YugabyteDB - the cloud native distributed SQL database for mission-critical applications.
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10634 stars
+- **Stars / Engagement**: 10636 stars
 
 ---
 
@@ -2250,11 +2250,11 @@ class _SshRemoteShell(object):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #35971** (2026-10-27): **[#35968] ClaudeCode: Make GitHub PRs the default and Phorge opt-in in agent skills**
-  *Symptoms*: ## Description Fixes #35968  Phorge is being retired in favor of GitHub Pull Requests. This PR updates the agent skills and repository guidelines to make GitHub PRs the default workflow while preserving opt-in support for Phorge:  - **`create-diff` skill**: Clarified description to mark Phorge/arc diffs as legacy and opt-in when explicitly requested. - **`create-pr` skill**: Made GitHub PR creation the explicit default publishing flow for reviews. - **`/backport-commit` command**: Removed automatic redirection of Phorge-originating commits to `/backport-diff`, keeping GitHub backport PRs as the standard. - **`review-backport` skill**: Added documentation and steps to review GitHub backport PRs (`gh pr view`/`gh pr diff`) alongside legacy Phorge revisions. - **`src/AGENTS.md`**: Updated workflow guidelines to reflect GitHub Pull Requests as the primary code review and merge flow.  ### Test Plan Inspected skill definitions and ensured compatibility with existing command syntax and instructions. 
+- **Issue #36079** (2026-10-28): **[BACKPORT 2026.1][#35634] YSQL: import rejection of generated columns in COPY FROM WHERE**
+  *Symptoms*: ## Summary  Backport of yugabyte/yugabyte-db#36004 (master commit 520b08880d73242ecb62638e5ab03105935d6ce1) to `2026.1`.  Import two upstream PostgreSQL REL_15_STABLE commits ([8278737bfd0](https://github.com/postgres/postgres/commit/8278737bfd0a37b68121a42a0b0a6775488adb48) and [07e833e3cff](https://github.com/postgres/postgres/commit/07e833e3cff3da136980c7a4e30e965f825ae83c)) so that `COPY ... FROM ... WHERE` rejects conditions that reference a generated column.  Before this change, `COPY t(a) FROM stdin WHERE b > 2`, with `b` a stored generated column, loads 0 rows with no error, and `WHERE b IS NULL` loads every row: the WHERE clause is evaluated before `ExecComputeStoredGenerated()` fills in `b`, so the filter always sees NULL. Both now fail with "generated columns are not supported in COPY FROM WHERE conditions".  yugabyte/postgres side: yugabyte/postgres#42 (approved). The `src/postgres` pin in `src/lint/upstream_repositories.csv` moves to its last commit:  - 8278737bfd0a37b68121a42a0b0a6775488adb48 (upstream, in 15.15) -> 9ee82b98745852e724d297cb590c61470412de1b (yb-pg15) - 07e833e3cff3da136980c7a4e30e965f825ae83c (upstream) -> d4536bc26783a7739cb55bb2487a35ee949fcbed (yb-pg15, the new pin)  Both applied without conflicts.  `2026.1` and master both pin the yugabyte/postgres `yb-pg15` branch, and `2026.1`'s current pin 3c76b78a8ffa7cbbf38686f17ac7bc2aeecb7bab is the parent of the two imports there, so `2026.1` moves to the same pin as master and needs no separate yugab
 
-- **Issue #35936** (2026-10-27): **[#35930] YSQL: Restore the access method encapsulation of YB scans for planner-decided aggregate pushdown**
-  *Symptoms*: ## Summary  16d783a6447a49ff5c3be18f2d84f0cebcb89848 made the planner decide aggregate pushdown under the YB cost model, and its recheck handling broke the encapsulation of YB scans behind the access method (AM) interface. `ExecInitAgg` restated the AM's forced-recheck conditions and included the AM-internal header `access/yb_scan_core.h`, and the planner restated the bitmap index scan's runtime-key rule. A condition the AM gained later would have reached neither copy (#35930).  * Made `ExecInitAgg` set `EXEC_FLAG_YB_AGG_PARENT` for a planner-decided Agg too, so that the scan asks the AM at init, and made both decisions read the scan's answer through one function. Removed the restated conditions and the include. * Moved the bitmap index scan's runtime-key rule into one function that the executor and the planner share. * Reverted the "legacy only" comments on the flag and the scans' recheck fields, which both decisions now use, and marked "Legacy cost model only:" on the code that goes with the legacy modes.  Nothing changes without the YB cost model. Under it, a planner-decided pushdown is withdrawn on any recheck the AM reports at init, and EXPLAIN without ANALYZE of such a plan opens the scan's index at init.  What stays duplicated, and why:  * **Eligibility rules in the executor and the planner.** The legacy modes keep the executor's decision so that their pushdown stays as it is; the executor's copy goes when those modes are removed. * **The planner's predictions of the s
+- **Issue #36059** (2026-10-28): **[DocDB][PgVector] Rollback to 2025.2.0–2025.2.5 fails when a vector index was created after the upgrade, before finalize**
+  *Symptoms*: Jira Link: [DB-25240](https://yugabyte.atlassian.net/browse/DB-25240) ### Description  After upgrading from 2025.2.5.2 and before finalizing, a ybhnsw (vector) index is created. Rolling back to 2025.2.5.2 then leaves that table's tablets unable to open on every tserver that has rolled back:  `Tablet failed to bootstrap: Not found (yb/util/env_posix.cc:274): /mnt/d0/yb-data/tserver/data/rocksdb/table-<id>/tablet-<id>.vi-<oid>/vectorindex_1.usearch: No such file or directory`  The index was written by the new build as `vectorindex_1.yb_hnsw`; the rolled-back tserver looks for `vectorindex_1.usearch`. The other replicas cannot remote-bootstrap the failed one (`Unable to begin remote bootstrap on peer ... NOT_FOUND`).  YBA then stops the rollback before the next tserver, because taking it down would leave the table without quorum: `CheckNodesAreSafeToTakeDown ... Taking down the requested node(s) is unsafe because 3 tablet(s) would not have enough replicas for quorum.` The universe is left in RollbackFailed, with the masters and two tservers on the new build and one tserver on 2025.2.5.2, and a new upgrade request is refused ("Software version is already ...").  The table stays readable from the two replicas on the new build. Indexes created before the upgrade are not affected. The problem does not happen without a vector index.  Related: #36056 (a vector index created during the rolling upgrade itself).  ### Priority: high  Rollback before finalize is the safe way back from an 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2271,577 +2271,337 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ad809563` (2026-10-23)
-**Commit Message**: [PLAT-23187] YBA: Fix SSH to nodes when the YBA host has OS FIPS mode on
-
-Summary:
-When the YBA host OS is in FIPS mode, universe creation hangs: YBA can't SSH into any node and keeps retrying with no error.
-
-paramiko's `SSHClient` logs the key it authenticates with via `PKey.get_fingerprint()`, which calls plain `md5()`. A host OpenSSL in FIPS mode rejects that (`ValueError: [digital envelope routines] unsupported`), so every connect fails before authentication, whatever the target machine is. The ybops retry wrapper turns the error into a recoverable one, and the wait-for-SSH loop keeps retrying.
-
-ybops now replaces `PKey.get_fingerprint` with one that computes the md5 with `usedforsecurity=False`, as `aws/cloud.py` already does, and falls back to sha256 if md5 is unavailable entirely. paramiko only uses this fingerprint in its log messages, and YBA never calls it.
-
-When OpenSSL has only the FIPS provider loaded (no default provider), Python's `hashlib` has no `md5` attribute at all, and `import paramiko` fails on `from hashlib import md5`. `ybops/__init__.py` now gives `hashlib` an `md5` that raises the same `ValueError` md5 raises in FIPS mode, so paramiko and other libraries t
-
-**File**: `managed/devops/opscli/ybops/__init__.py` (modified, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+import hashlib
-+
-+# When OpenSSL has only the FIPS provider, hashlib has no md5 at all, and modules that import it by
-+# name - paramiko among them - fail to import. Give them one that fails only when called, the way
-+# md5 does in FIPS mode otherwise.
-+if not hasattr(hashlib, "md5"):
-+    def _md5_unavailable(*args, **kwargs):
-+        raise ValueError("unsupported hash type md5 (in FIPS mode)")
-+
-+    hashlib.md5 = _md5_unavailable
-```
-
-**File**: `managed/devops/opscli/ybops/utils/ssh.py` (modified, +13/-0)
-```diff
-@@ -10,6 +10,7 @@
- 
- import datetime
- import functools
-+import hashlib
- import logging
- import os
- import paramiko
-@@ -47,6 +48,18 @@
- COMMAND_TIMEOUT_SEC = 600
- 
- 
-+# paramiko calls get_fingerprint() only for its logs, but its plain md5() fails on a host whose
-+# OpenSSL is in FIPS mode, which failed every connect.
-+def _fips_safe_fingerprint(key):
-+    try:
-+        return hashlib.md5(key.asbytes(), usedforsecurity=False).digest()
-+    except ValueError:
-+        return hashlib.sha256(key.asbytes()).digest()
-+
-+
-+paramiko.PKey.get_fingerprint = _fips_safe_fingerprint
-+
-+
- def ssh_retry_decorator(fn_to_call, exc_handler=None, retry_delay=None):
-     if fn_to_call is None:
-         return functools.partial(
-```
-
----
-
-### Incident Patch 2: `f1e124bb` (2026-10-27)
-**Commit Message**: [#16670] DocDB: dist-trace: generate request trace attributes for every proto, tag CDC stream ids (#35037)
+### Incident Patch 1: `7d6468da` (2026-10-28)
+**Commit Message**: [#35462] DocDB: Fix RemoveTabletServerTest.MayStillHoldLease by waiting for a post-blacklist balancer run in drain (#35463)
 
 ## Summary
 
-The pb proxy stub drains `(yb.rpc.trace)` request fields through a
-`TracingAttributes(const PB&)` free function that was emitted into
-`.messages.cc`, so a proto only got request attributes on its RPC spans
-if it opted into lightweight messages. #34146 worked around that by
-moving `cdc_service`, `tserver_admin`, `master_admin` and
-`master_client` to `MESSAGES_PROTO_FILES`, which generates unused
-lightweight classes for every message in those files.
+`MasterClusterTest::DrainTabletServer` returned as soon as the master
+showed no replicas on the blacklisted tserver, but a cluster balancer
+run that read the old blacklist could already have queued an
+`AsyncAddServerTask` toward it (here for a `pg_advisory_locks` tablet).
+That task outlives the run and never re-checks the blacklist, so the add
+could land after the drain returned. Remove then failed with "is hosting
+tablet" before it reached the lease check the test exercises. The helper
+now waits for a balancer run that started after the blacklist change to
+end with `ClusterBalancerActivityInfo::IsIdle()`, meaning no balancer
+tasks are pending, before it accepts the drained state. It looks up the
+leader master on every poll so leadership changes during the drain don't
+stall the wait.
 
-A new trace generator in `protoc-gen-yrpc` emits `.trace.{h,cc}` for
-every proto file (unconditionally, so the CMake output list stays
-static) with the `TracingAttributes` / `AppendTracingAttributes`
-functions for its tagged messages. The header includes the imports'
-`.trace.h`, so a service whose request types live in another file
-(`tserver_service.proto` uses `tserver.proto`'s messages) still
-compiles. The proxy includes it when any request field is tagged and no
-longer needs `.messages.h` for the pb path; the lightweight generator
-keeps only the LW form. The four protos go back to `PROTO_FILES`.
+---
+_Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed
+the failure logs, wrote the change, and verified it locally._
 
-Attributes are still
+## Test plan
 
-**File**: `cmake_modules/FindYRPC.cmake` (modified, +7/-4)
+./yb_build.sh tsan --clang21 --cxx-test master_cluster_test
+--gtest-filter RemoveTabletServerTest.MayStillHoldLeas
+
+**File**: `src/yb/master/master_cluster_test.cc` (modified, +27/-1)
 ```diff
-@@ -59,12 +59,15 @@ macro(YRPC_PROCESS_FILE FIL MESSAGES)
-   set(PROXY_CC "${ARG_BINARY_ROOT}/${REL_DIR}${FIL_WE}.proxy.cc")
-   set(PROXY_H "${ARG_BINARY_ROOT}/${REL_DIR}${FIL_WE}.proxy.h")
-   set(FORWARD_H "${ARG_BINARY_ROOT}/${REL_DIR}${FIL_WE}.fwd.h")
-+  set(TRACE_CC "${ARG_BINARY_ROOT}/${REL_DIR}${FIL_WE}.trace.cc")
-+  set(TRACE_H "${ARG_BINARY_ROOT}/${REL_DIR}${FIL_WE}.trace.h")
-   set(MESSAGES_CC "${ARG_BINARY_ROOT}/${REL_DIR}${FIL_WE}.messages.cc")
-   set(MESSAGES_H "${ARG_BINARY_ROOT}/${REL_DIR}${FIL_WE}.messages.h")
--  list(APPEND ${SRCS} "${PROTO_CC_OUT}")
--  list(APPEND ${HDRS} "${PROTO_H_OUT}" "${FORWARD_H}")
-+  list(APPEND ${SRCS} "${PROTO_CC_OUT}" "${TRACE_CC}")
-+  list(APPEND ${HDRS} "${PROTO_H_OUT}" "${FORWARD_H}" "${TRACE_H}")
-   set(OUTPUT_FILES "")
--  list(APPEND OUTPUT_FILES "${PROTO_CC_OUT}" "${PROTO_H_OUT}" "${FORWARD_H}")
-+  list(APPEND OUTPUT_FILES
-+    "${PROTO_CC_OUT}" "${PROTO_H_OUT}" "${FORWARD_H}" "${TRACE_CC}" "${TRACE_H}")
+@@ -21,6 +21,7 @@
  
-   if(${ARG_SERVICE})
-     list(APPEND ${SRCS} "${SERVICE_CC}" "${PROXY_CC}")
-@@ -105,7 +108,7 @@ macro(YRPC_PROCESS_FILE FIL MESSAGES)
-     VERBATIM)
+ #include "yb/master/catalog_entity_info.h"
+ #include "yb/master/catalog_manager.h"
++#include "yb/master/cluster_balance.h"
+ #include "yb/master/master_cluster_client.h"
+ #include "yb/master/master_error.h"
+ #include "yb/master/mini_master.h"
+@@ -403,11 +404,36 @@ Status MasterClusterTest::DrainTabletServer(
+   auto& hp = tserver_it->registration().common().broadcast_addresses(0);
+   RETURN_NOT_OK(client.BlacklistHost(HostPortPB(hp)));
  
-   GET_PROTOBUF_GENERATION_TARGET_NAME("${PROTO_REL_TO_YB_SRC_ROOT}" TGT_NAME)
--  set(TGT_DEPS "${PROTO_CC_OUT}" "${PROTO_H_OUT}" "${FORWARD_H}")
-+  set(TGT_DEPS "${PROTO_CC_OUT}" "${PROTO_H_OUT}" "${FORWARD_H}" "${TRACE_CC}" "${TRACE_H}")
-   if(${ARG_SERVICE})
-     list(APPEND TGT_DEPS
-       "${SERVICE_CC}" "${SERVICE_H}" protoc-gen-insertions
-```
-
-**File**: `python/yugabyte/ccmd_tool.py` (modified, +1/-0)
-```diff
-@@ -56,6 +56,7 @@ def is_protobuf_generated_path(file_path: str) -> bool:
-     return file_path.endswith((
-         '.pb.cc',
-         '.messages.cc',
-+        '.trace.cc',
-         '.service.cc',
-         '.proxy.cc',
-     ))
-```
-
-**File**: `python/yugabyte/dep_graph_common.py` (modified, +1/-1)
-```diff
-@@ -62,7 +62,7 @@ def make_extensions(exts_without_dot: List[str]) -> List[str]:
- 
- EXECUTABLE_FILE_NAME_RE = re.compile(r'^[a-zA-Z0-9_.-]+$')
- 
--PROTO_GEN_OUTPUT_EXTENSIONS = ['pb', 'fwd', 'proxy', 'service', 'messages']
-+PROTO_GEN_OUTPUT_EXTENSIONS = ['pb', 'fwd', 'proxy', 'service', 'messages', 'trace']
- PROTO_OUTPUT_FILE_NAME_RE = re.compile(
-     r'^([a-zA-Z_0-9-]+)[.](?:%s)[.](h|cc)$' % '|'.join(PROTO_GEN_OUTPUT_EXTENSIONS))
- 
-```
-
-**File**: `src/yb/cdc/CMakeLists.txt` (modified, +2/-1)
-```diff
-@@ -56,7 +56,7 @@ YRPC_GENERATE(
-   CDC_YRPC_SRCS CDC_YRPC_HDRS CDC_YRPC_TGTS
-   SOURCE_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../..
-   BINARY_ROOT ${CMAKE_CURRENT_BINARY_DIR}/../..
--  MESSAGES_PROTO_FILES cdc_service.proto)
-+  PROTO_FILES cdc_service.proto)
- set(CDC_YRPC_LIBS
-   yrpc
-   yb_common_proto
-@@ -121,4 +121,5 @@ ADD_YB_LIBRARY(
- 
- # Tests
- set(YB_TEST_LINK_LIBS integration-tests ${YB_MIN_TEST_LIBS})
-+ADD_YB_TEST(cdc_trace_attrs-test)
- ADD_YB_TEST(xcluster_producer-test)
-```
-
-**File**: `src/yb/cdc/cdc_service.proto` (modified, +17/-17)
-```diff
-@@ -169,7 +169,7 @@ message ReplicationSlotHashRangePB {
- 
- message InitVirtualWALForCDCRequestPB {
-   optional uint64 session_id = 1;
--  optional bytes stream_id = 2;
-+  optional bytes stream_id = 2 [(yb.rpc.trace) = {enabled: true, bytes_as_string: true}];
-   repeated string table_id = 3;
-   // Represents the hash range constraints for replication slot i.e [start range, end range).
-   // Tablets with start hash range falling in these slot's hash range will be polled.
-@@ -188,7 +188,7 @@ message InitVirtualWALForCDCResponsePB {
- }
- 
- message GetLagMetricsRequestPB {
--  optional bytes stream_id = 1;
-+  optional bytes stream_id = 1 [(yb.rpc.trace) = {enabled: true, bytes_as_string: true}];
-   reserved 2; // ASH metadata is now passed in RequestHeader PB
- }
- 
-@@ -199,7 +199,7 @@ message GetLagMetricsResponsePB {
- 
- message GetConsistentChangesRequestPB {
-   optional uint64 session_id = 1;
--  optional bytes stream_id = 2;
-+  optional bytes stream_id = 2 [(yb.rpc.trace) = {enabled: true, bytes_as_string: true}];
-   reserved 3; // ASH metadata is now passed in RequestHeader PB
- }
- 
-@@ -233,7 +233,7 @@ message DestroyVirtualWALForCDCResponsePB {
- 
- message UpdateAndPersistLSNRequestPB {
-   optional uint64 session_id = 1;
--  optional bytes stream_id = 2;
-+  optional bytes stream_id = 2 [(yb.rpc.trace) = {enabled: true, bytes_as_string: true}];
-   optional uint64 confirmed_flush_lsn = 3;
-   // The hint given for the possible value of restart_lsn.
-   // The actual value which is persisted might differ from this value
-@@ -249,7 +249,7 @@ message UpdateAndPersistLSNResponsePB {
- 
- message UpdatePublicationTableListRequestPB {
-   optional uint64 session_id = 1;
--  optional bytes stream_id = 2;
-+  optional bytes stream_id = 2 [(yb.rpc.trace) = {enabled: true, bytes_as_string: true}];
-   repeated string table_id = 3;
-   reserved 4; // ASH metadata is now passed in RequestHeader PB
-   // Mapping of table's OID to relfilenode. This is used to detect table rewrites.
-@@ -283,7 +283,7 @@ message CreateCDCStreamResponsePB {
- }
- 
- message DeleteCDCStreamRequestPB {
--  repeated bytes stream_id = 1;
-+  repeated bytes stream_id = 1 [(yb.rpc.trace) = {enabled: true, bytes_as_string: true}];
-   optional bool ignore_errors = 2 [default = false];
-   optional bool force_delete = 3 [default = false];
- }
-@@ -293,7 +293,7 @@ message DeleteCDCStreamResponsePB {
- }
- 
- message ListTabletsRequestPB {
--  optional string stream_id = 1;
-+  optional string stream_id = 1 [(yb.rpc.trace) = {enabled: true}];
-   // local_only = true will only list tablets local to the tserver that receives the request.
-   // local_only = false will list  all tablets for the stream.
-   optional bool local_only = 2 [default = false];
-@@ -338,7 +338,7 @@ enum CDCSDKRequestSource {
- }
- 
- message GetChangesRequestPB {
--  optional bytes stream_id = 1;
-+  optional bytes stream_id = 1 [(yb.rpc.trace) = {enabled: true, bytes_as_string: true}];
-   // Tablet to get the changes for.
-   optional bytes tablet_id = 2 [(yb.rpc.trace) = {enabled: true, bytes_as_string: true}];
- 
-@@ -352,7 +352,7 @@ message GetChangesRequestPB {
-   // Whether the caller knows the tablet address or needs to use us as a proxy.
-   optional bool serve_as_proxy = 5 [default = true];
- 
--  optional bytes db_stream_id = 6;
-+  optional bytes db_stream_id = 6 [(yb.rpc.trace) = {enabled: true, bytes_as_string: true}];
- 
-   optional bytes table_id = 7;
- 
-@@ -625,7 +625,7 @@ message GetChangesResponsePB {
- }
- 
- message GetCheckpointRequestPB {
--  optional bytes stream_id = 1;
-+  optional bytes stream_id = 1 [(yb.rpc.trace) = {enabled: true, bytes_as_string: true}];
-   optional bytes tablet_id = 2 [(yb.rpc.trace) = {enabled: true, bytes_as_string: true}];
-   // The table_id will be required in case of colocated tables.
-   optional bytes table_id = 3;
-@@ -655,7 +655,7 @@ message UpdateCdcReplicatedIndexRequestPB {
-   // Minimum checkpoint term and index  for CDCSDK stream, to do intent cleanup for this tablet.
-   repeated OpIdPB cdc_sdk_consumed_ops = 7;
-   repeated uint64 cdc_sdk_ops_expiration_ms = 8;
--  repeated bytes stream_ids = 9;
-+  repeated bytes stream_ids = 9 [(yb.rpc.trace) = {enabled: true, bytes_as_string: true}];
-   optional fixed64 cdc_sdk_safe_time = 10;
-   repeated fixed64 cdc_sdk_safe_times = 11;
-   // Is this an initial retention barrier setting request
-@@ -676,7 +676,7 @@ message UpdateCdcReplicatedIndexResponsePB {
- message BootstrapProducerRequestPB {
-   repeated string table_ids = 1;
-   // If the stream_ids are not provided, a new stream for each table will be created.
--  repeated bytes xrepl_stream_ids = 2;
-+  repeated bytes xrepl_stream_ids = 2 [(yb.rpc.trace) = {enabled: true, bytes_as_string: true}];
-   // Check if data bootstrap is required. Equivalent to the IsBootstrapRequired RPC.
-   optional bool check_if_bootstrap_required = 3; // [default = false]
- }
-@@ -707,12 +707,12 @@ message GetLatestEntryOpIdResponsePB {
- }
- 
- message TableInfo {
--  optional bytes stream_id = 1;
-+  optional by
-```
-
-**File**: `src/yb/cdc/cdc_trace_attrs-test.cc` (added, +48/-0)
-```diff
-@@ -0,0 +1,48 @@
-+// Copyright (c) YugabyteDB, Inc.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
-+// in compliance with the License.  You may obtain a copy of the License at
-+//
-+// http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software distributed under the License
-+// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
-+// or implied.  See the License for the specific language governing permissions and limitations
-+// under the License.
-+//
++  // A balancer run that read the old blacklist may have queued an add to this ts, and that task
++  // outlives the run. Only trust the checks below once a run that started after the blacklist
++  // change has ended with no balancer tasks pending.
++  auto latest_balancer_activity = [this]() -> Result<ClusterBalancerActivityInfo> {
++    auto* leader = VERIFY_RESULT(cluster_->GetLeaderMiniMaster());
++    return leader->catalog_manager_impl().cluster_balancer()->GetLatestActivityInfo();
++  };
++  const auto blacklist_time = MonoTime::Now();
++  RETURN_NOT_OK(WaitFor(
++      [&latest_balancer_activity, blacklist_time]() -> Result<bool> {
++        return VERIFY_RESULT(latest_balancer_activity()).run_end_time_ > blacklist_time;
++      },
++      timeout, "Cluster balancer run after blacklist change"));
++  const auto fresh_run_start = MonoTime::Now();
 +
-+#include <gtest/gtest.h>
-+
-+#include "yb/cdc/cdc_service.pb.h"
-+#include "yb/cdc/cdc_service.trace.h"
-+
-+#include "yb/util/test_macros.h"
-+
-+namespace yb::cdc {
-+
-+// cdc_service.proto is a plain-protobuf proto; its stream and tablet ids reach the span through
-+// the generated .trace functions alone.
-+TEST(CdcTraceAttrsTest, StreamIdsAreTagged) {
-+  using Attrs = std::vector<std::pair<std::string, std::string>>;
-+
-+  GetChangesRequestPB get_changes;
-+  get_changes.set_stream_id("stream-1");
-+  get_changes.set_tablet_id("tablet-1");
-+  get_changes.set_db_stream_id("db-stream-1");
-+  ASSERT_EQ(
-+      TracingAttributes(get_changes),
-+      (Attrs{{"req.db_stream_id", "db-stream-1"},
-+             {"req.stream_id", "stream-1"},
-+             {"req.tablet_id", "tablet-1"}}));
-+
-+  BootstrapProducerRequestPB bootstrap;
-+  bootstrap.add_xrepl_stream_ids("stream-2");
-+  bootstrap.add_xrepl_stream_ids("stream-1");
-+  bootstrap.add_xrepl_stream_ids("stream-2");
-+  ASSERT_EQ(
-+      TracingAttributes(bootstrap), (Attrs{{"req.xrepl_stream_ids.*", "stream-1, stream-2"}}));
-+
-+  ASSERT_TRUE(TracingAttributes(GetChangesRequestPB()).empty());
-+}
-+
-+}  // namespace yb::cdc
-```
-
-**File**: `src/yb/gen_yrpc/CMakeLists.txt` (modified, +2/-1)
-```diff
-@@ -24,7 +24,8 @@ add_executable(protoc-gen-yrpc
-     protoc-gen-yrpc.cc
-     proxy_generator.cc
-     service_generator.cc
--    substitutions.cc)
-+    substitutions.cc
-+    trace_generator.cc)
- target_link_libraries(protoc-gen-yrpc
-     ${YB_BASE_LIBS}
-     protoc
-```
-
-**File**: `src/yb/gen_yrpc/messages_generator.cc` (modified, +4/-131)
-```diff
-@@ -17,6 +17,7 @@
- #include <google/protobuf/io/printer.h>
- 
- #include "yb/gen_yrpc/model.h"
-+#include "yb/gen_yrpc/trace_generator.h"
- 
- #include "yb/gutil/stl_util.h"
- 
-@@ -459,16 +460,6 @@ class Message {
- 
-     private_scope.Reset("};\n\n");
- 
--    if (MessageHasTracingAttributes(message_) && !message_->options().map_entry()) {
--      printer(
--          "std::vector<std::pair<std::string, std::string>> TracingAttributes(\n"
--          "    const $message_pb_name$& msg);\n"
--          "void AppendTracingAttributes(\n"
--          "    const $message_pb_name$& msg, const std::string& prefix,\n"
--          "    ::yb::rpc::TracingAttributeCollector* out);\n\n"
--      );
--    }
--
-     if (message_->options().map_entry()) {
-       printer(
-           "inline $message_lw_name$::KeyReturnType ExtractKey(const $message_lw_name$& pair) {\n"
-@@ -1145,8 +1136,8 @@ class Message {
-   }
- 
-   // Collects trace-tagged fields (recursing into nested messages) as (dotted-path, text-value)
--  // pairs; bytes hex-encoded unless bytes_as_string. Emitted as lightweight members and pb_ free
--  // functions.
-+  // pairs; bytes hex-encoded unless bytes_as_string. The pb free-function form lives in the
-+  // .trace.{h,cc} the trace generator emits for every proto file.
-   void TracingAttributes(YBPrinter printer) const {
-     printer(
-         "std::vector<std::pair<std::string, std::string>> "
-@@ -1159,125 +1150,7 @@ class Message {
-         "void $message_lw_name$::AppendTracingAttributes(\n"
-         "    const std::string& prefix, ::yb::rpc::TracingAttributeCollector* out) const {\n"
-     );
--    EmitTracingAttributesBody(printer, Lightweight::kTrue);
--
--    if (message_->options().map_entry()) {
--      return;
--    }
--    printer(
--        "std::vector<std::pair<std::string, std::string>> TracingAttributes(\n"
--        "    const $message_pb_name$& msg) {\n"
--        "  ::yb::rpc::TracingAttributeCollector collector;\n"
--        "  AppendTracingAttributes(msg, \"req.\", &collector);\n"
--        "  return collector.Finish();\n"
--        "}\n"
--        "\n"
--        "void AppendTracingAttributes(\n"
--        "    const $message_pb_name$& msg, const std::string& prefix,\n"
--        "    ::yb::rpc::TracingAttributeCollector* out) {\n"
--    );
--    EmitTracingAttributesBody(printer, Lightweight::kFalse);
--  }
--
--  // Emits the per-field code both AppendTracingAttributes forms share: `lightweight` picks
--  // the member form (fields via `this`) or the pb_ free-function form (fields via the `msg`
--  // parameter).
--  void EmitTracingAttributesBody(YBPrinter printer, Lightweight lightweight) const {
--    const bool lw = lightweight;
--    const std::string obj = lw ? std::string() : "msg."s;
--
--    ScopedIndent method_indent(printer);
--
--    for (int j = 0; j != message_->field_count(); ++j) {
--      const auto* field = message_->field(j);
--      const bool nested = IsMessage(field) && MessageHasTracingAttributes(field->message_type());
--      const bool scalar = !IsMessage(field) && FieldTraceEnabled(field);
--      if (!nested && !scalar) {
--        continue;
--      }
--      ScopedSubstituter field_substituter(printer, field);
--
--      // Value expression, given the token yielding a single field value (e.g. "$field_name$()" or
--      // "msg.$field_name$()" for a singular field, "entry" for a repeated element).
--      auto value_expr = [field, lw](const std::string& token) -> std::string {
--        if (StoredAsSlice(field)) {
--          const bool hex = field->type() == google::protobuf::FieldDescriptor::TYPE_BYTES &&
--                           !FieldTraceBytesAsString(field);
--          if (lw) {
--            return token + (hex ? ".ToDebugHexString()" : ".ToBuffer()");
--          }
--          return hex ? "::yb::Slice(" + token + ").ToDebugHexString()" : token;
--        }
--        if (field->cpp_type() == google::protobuf::FieldDescriptor::CPPTYPE_ENUM) {
--          return "$nonlw_field_type$_Name(" + token + ")";
--        }
--        if (field->cpp_type() == google::protobuf::FieldDescriptor::CPPTYPE_BOOL) {
--          return "std::string(" + token + " ? \"true\" : \"false\")";
--        }
--        return "std::to_string(" + token + ")";
--      };
--
--      if (!field->is_repeated()) {
--        // The lightweight message always has has_$field$(); the pb_ message only for fields with
--        // explicit presence -- guard the rest on non-emptiness (string/bytes) or emit them plainly.
--        if (lw || field->has_presence()) {
--          printer("if (" + obj + "has_$field_name$()) {\n");
--        } else if (StoredAsSlice(field)) {
--          printer("if (!" + obj + "$field_name$().empty()) {\n");
--        } else {
--          printer("{\n");
--        }
--        ScopedIndent if_indent(printer);
--        if (nested) {
--          if (lw) {
--            printer("$field_name$().AppendTracingAttributes(prefix + \"$field_name$.\", out);\n");
--          } else {
--            printer(
--                "AppendTracingAttributes(" + obj +
--     
+   // Now wait for the cluster balancer to move all tablets off the tserver.
+   auto ts_proxy = VERIFY_RESULT(CreateTabletServerServiceProxy(uuid));
+   std::string message;
+   return WaitFor(
+-      [this, &ts_proxy, &message, &uuid, &client]() -> Result<bool> {
++      [this, &ts_proxy, &message, &uuid, &client, &latest_balancer_activity,
++       fresh_run_start]() -> Result<bool> {
++        auto activity = VERIFY_RESULT(latest_balancer_activity());
++        if (activity.run_end_time_ <= fresh_run_start) {
++          message = "waiting for a cluster balancer run that saw the blacklist";
++          return false;
++        }
++        if (!activity.IsIdle()) {
++          message = "waiting for the cluster balancer to have no pending tasks";
++          return false;
++        }
+         auto resp = VERIFY_RESULT(ListTabletsForTabletServer(ts_proxy));
+         for (const auto& entry : resp.entries()) {
+           if (entry.state() != tablet::RaftGroupStatePB::SHUTDOWN) {
 ```
 
 ---
 
-### Incident Patch 3: `175e5a88` (2026-10-21)
-**Commit Message**: [PLAT-23185] YBA: Fix GCP provider and GCP KMS config creation on a FIPS YBA
+### Incident Patch 2: `ca5d0234` (2026-10-28)
+**Commit Message**: [#35479] YSQL: Fix master deadlock in PgDdlAtomicitySnapshotTest.SnapshotTest by fencing before restore submit (#35480)
+
+## Summary
+
+`CatalogManager::PrepareRestore` ran during raft apply of the
+`RESTORE_SYS_CATALOG` op and called `IncrementPitrCount()`, which waits
+for the exclusive `pitr_count_lock_`. Meanwhile, an in-flight sys
+catalog write (for example a DDL rollback task) held that lock shared
+while waiting for its own raft apply, which was queued behind the
+restore op, so the master deadlocked until the `SyncWrite` timeout.
+
+The fix moves the fence to before submit. `SubmitRestore` calls
+`FenceSysCatalogForRestore(restoration_id)`, which records the
+restoration id, sets `restoring_sys_catalog_` and drains in-flight
+writes. On apply, `PrepareRestore(restoration_id)` finds the op's own
+id, removes it and skips the wait. It keeps the old waiting path only
+for ops this node did not fence for. After the op completes or fails to
+submit, `SubmitRestore` calls
+`UnfenceSysCatalogForRestore(restoration_id)`. If the op never applied
+on this node (for example it was rejected asynchronously for a stale
+term), this drops the fence. `restoring_sys_catalog_` is cleared on
+unfence, restore f
+
+**File**: `src/yb/master/catalog_manager.cc` (modified, +1/-1)
+```diff
+@@ -14592,7 +14592,7 @@ void CatalogManager::SysCatalogLoaded(SysCatalogLoadingState&& state) {
+ 
+   SchedulePostTabletCreationTasksForPendingTables(state.epoch);
+   EnqueuePendingBackfillsAfterLoad();
+-  restoring_sys_catalog_ = false;
++  ClearRestoringSysCatalogIfNotFenced();
+ 
+   if (FLAGS_enable_ysql) {
+     // Initialize the catalog version cache.
+```
+
+**File**: `src/yb/master/catalog_manager.h` (modified, +16/-1)
+```diff
+@@ -1862,7 +1862,15 @@ class CatalogManager : public CatalogManagerIf, public SnapshotCoordinatorContex
+ 
+   void SetCDCServiceEnabled();
+ 
+-  void PrepareRestore() override;
++  void PrepareRestore(const TxnSnapshotRestorationId& restoration_id) override;
++
++  // Fails in-flight sys catalog work and rejects new RPCs ahead of the RESTORE_SYS_CATALOG op for
++  // restoration_id. Must be called before the op is submitted, not on apply.
++  void FenceSysCatalogForRestore(const TxnSnapshotRestorationId& restoration_id);
++
++  // Drops the fence for restoration_id unless its op was applied on this node.
++  // Must be called once the op has completed or failed to submit.
++  void UnfenceSysCatalogForRestore(const TxnSnapshotRestorationId& restoration_id);
+ 
+   void RunXReplBgTasks(const LeaderEpoch& epoch);
+ 
+@@ -2762,6 +2770,13 @@ class CatalogManager : public CatalogManagerIf, public SnapshotCoordinatorContex
+   // that require this lock will fail.
+   std::atomic_bool restoring_sys_catalog_ = false;
+ 
++  // Restorations fenced by FenceSysCatalogForRestore whose op has not been applied yet.
++  // restoring_sys_catalog_ is only cleared while this is empty.
++  std::mutex restore_fence_mutex_;
++  std::vector<TxnSnapshotRestorationId> fenced_restorations_ GUARDED_BY(restore_fence_mutex_);
++
++  void ClearRestoringSysCatalogIfNotFenced() EXCLUDES(restore_fence_mutex_);
++
+   // Lock used to fence operations and leader elections. All logical operations
+   // (i.e. create table, alter table, etc.) should acquire this lock for
+   // reading. Following an election where this master is elected leader, it
+```
+
+**File**: `src/yb/master/catalog_manager_ext.cc` (modified, +60/-11)
+```diff
+@@ -10,6 +10,7 @@
+ // or implied.  See the License for the specific language governing permissions and limitations
+ // under the License.
+ 
++#include <algorithm>
+ #include <memory>
+ #include <optional>
+ #include <queue>
+@@ -3314,7 +3315,7 @@ Status CatalogManager::RestoreSysCatalog(
+   if (!s.ok() && leader_mode) {
+     LOG_WITH_PREFIX_AND_FUNC(INFO)
+         << "PITR: Accepting RPCs to the master leader because of restoration failure: " << s;
+-    restoring_sys_catalog_ = false;
++    ClearRestoringSysCatalogIfNotFenced();
+   }
+   // As RestoreSysCatalog is synchronous on Master it should be ok to set the completion
+   // status in case of validation failures so that it gets propagated back to the client before
+@@ -3863,14 +3864,18 @@ Result<size_t> CatalogManager::GetNumLiveTServersForActiveCluster() {
+   return ts_descs.size();
+ }
+ 
+-// This function is used to fence other work in the catalog manager which modifies tables or tablets
+-// with PITR restores. It is called during the apply of the RESTORE_SYS_CATALOG raft op.
++// These functions fence other work in the catalog manager which modifies tables or tablets with
++// PITR restores. The leader that submits a RESTORE_SYS_CATALOG op fences in
++// FenceSysCatalogForRestore before submitting it. PrepareRestore, called during the apply of the
++// op, only fences if this node did not fence for that op (e.g. it was submitted in an earlier
++// term). Fencing during apply can deadlock: IncrementPitrCount waits for in-flight sys catalog
++// writes, whose raft ops may be queued behind the restore op.
+ //
+-// Ideally this function would use the leader lock to wait for all async tasks and rpc handlers
++// Ideally the fence would use the leader lock to wait for all async tasks and rpc handlers
+ // accessing catalog entities to return, but this is not possible:
+-//  *  exclusively acquiring the CatalogManager::leader_mutex_ here introduces a lock inversion with
+-//     ReplicaState::update_lock_.
+-//  *  waiting to acquire the leader mutex here can add unbounded delay to a raft op apply,
++//  *  exclusively acquiring the CatalogManager::leader_mutex_ during apply introduces a lock
++//     inversion with ReplicaState::update_lock_.
++//  *  waiting to acquire the leader mutex during apply can add unbounded delay to a raft op apply,
+ //     preventing raft heartbeats.
+ //
+ // Much existing code in the catalog manager acquires the locks in this order:
+@@ -3880,17 +3885,61 @@ Result<size_t> CatalogManager::GetNumLiveTServersForActiveCluster() {
+ // work (1) and preventing any new work until the sys catalog is reloaded (2).
+ //   (1) Any logical unit of work in the catalog manager should grab a LeaderEpoch when it begins.
+ //     The sys catalog mutation API for tables and tablets checks LeaderEpoch::pitr_count. If the
+-//     catalog work began before PrepareRestore was called and tried to write after PrepareRestore
+-//     was called, then the work's cached pitr_count will not match the sys catalog's pitr_count and
+-//     the write will fail.
++//     catalog work began before the fence and tried to write after it, then the work's cached
++//     pitr_count will not match the sys catalog's pitr_count and the write will fail.
+ //   (2) ScopedLeaderSharedLock checks restoring_sys_catalog_ and fails if it is set, so any new
+ //     tasks will fail.
+-void CatalogManager::PrepareRestore() {
++void CatalogManager::PrepareRestore(const TxnSnapshotRestorationId& restoration_id) {
++  restoring_sys_catalog_ = true;
++  {
++    std::lock_guard lock(restore_fence_mutex_);
++    auto it = std::find(fenced_restorations_.begin(), fenced_restorations_.end(), restoration_id);
++    if (it != fenced_restorations_.end()) {
++      fenced_restorations_.erase(it);
++      return;
++    }
++  }
+   LOG_WITH_PREFIX(INFO) << "Disabling concurrent RPCs since restoration is ongoing";
++  sys_catalog_->IncrementPitrCount();
++}
++
++void CatalogManager::FenceSysCatalogForRestore(const TxnSnapshotRestorationId& restoration_id) {
++  LOG_WITH_PREFIX(INFO) << "Disabling concurrent RPCs before submitting sys catalog restore "
++                        << restoration_id;
++  {
++    std::lock_guard lock(restore_fence_mutex_);
++    fenced_restorations_.push_back(restoration_id);
++  }
+   restoring_sys_catalog_ = true;
++  // Called without restore_fence_mutex_: this waits for writes whose ops may be queued behind
++  // another restore op, whose apply takes the mutex in PrepareRestore.
++  // The bump is not undone if the op is never applied. In-flight work then fails with Aborted as
++  // if a restore had happened, and new work picks up the new count.
+   sys_catalog_->IncrementPitrCount();
+ }
+ 
++void CatalogManager::UnfenceSysCatalogForRestore(const TxnSnapshotRestorationId& restoration_id) {
++  {
++    std::lock_guard lock(restore_fence_mutex_);
++    auto it = std::find(fenced_restorations_.begin(), fenced_restorations_.end(), restoration_id);
++    if (it == fenced_restorations_.end()) {
++      // Consumed by PrepareRestore:
+```
+
+**File**: `src/yb/master/master_snapshot_coordinator.cc` (modified, +9/-4)
+```diff
+@@ -625,7 +625,7 @@ class MasterSnapshotCoordinator::Impl {
+     }
+     // Disable concurrent RPCs to the master leader for the duration of sys catalog restore.
+     if (leader_term >= 0) {
+-      context_.PrepareRestore();
++      context_.PrepareRestore(restoration->restoration_id);
+     }
+     auto tablet = VERIFY_RESULT(operation.tablet_safe());
+     LOG_SLOW_EXECUTION(INFO, 1000, "Restore sys catalog took") {
+@@ -1882,9 +1882,14 @@ class MasterSnapshotCoordinator::Impl {
+     operation->set_completion_callback(
+         tablet::MakeWeakSynchronizerOperationCompletionCallback(synchronizer));
+ 
+-    RETURN_NOT_OK(context_.Submit(std::move(operation), leader_term));
+-
+-    return synchronizer->Wait();
++    cm_->FenceSysCatalogForRestore(restoration_id);
++    auto status = context_.Submit(std::move(operation), leader_term);
++    if (status.ok()) {
++      // Rejections such as a stale term are reported here, not by Submit.
++      status = synchronizer->Wait();
++    }
++    cm_->UnfenceSysCatalogForRestore(restoration_id);
++    return status;
+   }
+ 
+   void DeleteSnapshotAborted(
+```
+
+**File**: `src/yb/master/snapshot_coordinator_context.h` (modified, +1/-1)
+```diff
+@@ -75,7 +75,7 @@ class SnapshotCoordinatorContext {
+ 
+   virtual Status Submit(std::unique_ptr<tablet::Operation> operation, int64_t leader_term) = 0;
+ 
+-  virtual void PrepareRestore() = 0;
++  virtual void PrepareRestore(const TxnSnapshotRestorationId& restoration_id) = 0;
+ 
+   virtual rpc::Scheduler& Scheduler() = 0;
+ 
+```
+
+---
+
+### Incident Patch 3: `769f74bc` (2026-10-28)
+**Commit Message**: [#35908] YSQL: Fix memory leak in Connection Manager cancel path
 
 Summary:
-On a FIPS YBA, creating a GCP provider fails with "Failed to initialilze GCP service", and creating a GCP KMS config fails with a misleading "User does not have enough permissions" error. Neither request reaches GCP.
+Each cancel request that Connection Manager forwards to a backend leaked memory in Odyssey, about 8.7 KB per cancel: the io readahead buffer (8 KB by default) and cond vars allocated by `od_backend_connect_to()`, and the `yb_vars_session` var array from `od_server_init()`. Workloads that cancel often (statement timeouts, drivers that send CancelRequest) grow Odyssey's memory without bound.
 
-Both build their Google API client on `GoogleNetHttpTransport.newTrustedTransport()`. That call loads the client's bundled `google.p12` with a password, which needs PBE, and a FIPS YBA removes every JVM provider except SUN, so SunJCE and its PBE are gone. The first call fails with `PBE AlgorithmParameters not available`. The library caches the keystore before loading it, so every later call fails with `Uninitialized keystore`.
+`od_cancel()` built its `od_server_t` on the stack, so `is_allocated` was 0 and `od_server_free()` skipped freeing its members. `od_cancel()` now gets its server from `od_server_allocate()`, the same way every other server is created, and `od_server_free()` frees it fully. After this change every `od_server_t` is allocated on the heap; no server lives on the stack anymore.
 
-Use a plain `NetHttpTransport` instead. It uses the default HTTPS socket factory (BCJSSE with the JVM default trust store), which is what the GCS client already uses, so GCS backups work on FIPS. The GCP Cloud Monitoring telemetry provider validation had the same call and gets the same fix.
+This is the `cancel.c` part of upstream Odyssey commit daac7d53 ("Eleminate server IO leak on Cancel request", yandex/odyssey#527), cherry-picked with an added NULL check. The rest of that commit removes the `is_allocated` flag, which is always 1 now that every server is on the heap. Removing it will be part of a separate change, to keep this one small
 
-Non-FIPS YBAs: these Google API calls now trust the JVM default trust store instead of the roots bundled in google.p12.
-
-Test Plan:
-- Standalone Java program with the YBA
-
-**File**: `managed/src/main/java/com/yugabyte/yw/cloud/gcp/GCPProjectApiClient.java` (modified, +4/-2)
+**File**: `src/odyssey/sources/cancel.c` (modified, +8/-6)
 ```diff
-@@ -7,14 +7,14 @@
- 
- import com.fasterxml.jackson.databind.JsonNode;
- import com.fasterxml.jackson.databind.ObjectMapper;
--import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
- import com.google.api.client.googleapis.json.GoogleJsonError;
- import com.google.api.client.googleapis.json.GoogleJsonResponseException;
- import com.google.api.client.http.HttpBackOffUnsuccessfulResponseHandler;
- import com.google.api.client.http.HttpHeaders;
- import com.google.api.client.http.HttpRequest;
- import com.google.api.client.http.HttpRequestInitializer;
- import com.google.api.client.http.HttpTransport;
-+import com.google.api.client.http.javanet.NetHttpTransport;
- import com.google.api.client.json.gson.GsonFactory;
- import com.google.api.client.util.ExponentialBackOff;
- import com.google.api.gax.core.FixedCredentialsProvider;
-@@ -437,7 +437,9 @@ public Compute buildComputeClient(GCPCloudInfo cloudInfo)
-               new ByteArrayInputStream(mapper.writeValueAsBytes(gceCreds)));
-     }
-     requestInitializer = getHttpRequestInitializerWithBackoff();
--    httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-+    // Not GoogleNetHttpTransport.newTrustedTransport(): its bundled google.p12 can't be read in
-+    // FIPS mode. This uses the JVM default trust store.
-+    httpTransport = new NetHttpTransport();
-     // Create Compute Engine object.
-     return new Compute.Builder(httpTransport, GsonFactory.getDefaultInstance(), requestInitializer)
-         .setApplicationName("")
-```
-
-**File**: `managed/src/main/java/com/yugabyte/yw/common/kms/util/GcpEARServiceUtil.java` (modified, +4/-2)
-```diff
-@@ -14,7 +14,7 @@
- import static play.mvc.Http.Status.BAD_REQUEST;
- 
- import com.fasterxml.jackson.databind.node.ObjectNode;
--import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-+import com.google.api.client.http.javanet.NetHttpTransport;
- import com.google.api.client.json.gson.GsonFactory;
- import com.google.api.gax.core.CredentialsProvider;
- import com.google.api.gax.core.FixedCredentialsProvider;
-@@ -751,8 +751,10 @@ public CloudResourceManager createCloudResourceManagerService(ObjectNode authCon
-     }
-     credential = credential.createScoped(Collections.singleton(IamScopes.CLOUD_PLATFORM));
- 
-+    // Not GoogleNetHttpTransport.newTrustedTransport(): its bundled google.p12 can't be read in
-+    // FIPS mode.
-     return new CloudResourceManager.Builder(
--            GoogleNetHttpTransport.newTrustedTransport(),
-+            new NetHttpTransport(),
-             GsonFactory.getDefaultInstance(),
-             new HttpCredentialsAdapter(credential))
-         .setApplicationName("service-accounts")
-```
-
-**File**: `managed/src/main/java/com/yugabyte/yw/models/helpers/telemetry/GCPCloudMonitoringConfig.java` (modified, +4/-2)
-```diff
-@@ -4,7 +4,7 @@
- import static play.mvc.Http.Status.BAD_REQUEST;
- 
- import com.fasterxml.jackson.databind.JsonNode;
--import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-+import com.google.api.client.http.javanet.NetHttpTransport;
- import com.google.api.client.json.gson.GsonFactory;
- import com.google.api.services.cloudresourcemanager.CloudResourceManager;
- import com.google.api.services.cloudresourcemanager.model.TestIamPermissionsRequest;
-@@ -173,8 +173,10 @@ public CloudResourceManager createCloudResourceManagerService(JsonNode credentia
-         GoogleCredentials.fromStream(new ByteArrayInputStream(credentials.toString().getBytes()))
-             .createScoped(Collections.singleton(IamScopes.CLOUD_PLATFORM));
- 
-+    // Not GoogleNetHttpTransport.newTrustedTransport(): its bundled google.p12 can't be read in
-+    // FIPS mode.
-     return new CloudResourceManager.Builder(
--            GoogleNetHttpTransport.newTrustedTransport(),
-+            new NetHttpTransport(),
-             GsonFactory.getDefaultInstance(),
-             new HttpCredentialsAdapter(credential))
-         .setApplicationName("service-accounts")
+@@ -15,11 +15,13 @@ int od_cancel(od_global_t *global, od_rule_storage_t *storage, kiwi_key_t *key,
+ 	od_instance_t *instance = global->instance;
+ 	od_log(&instance->logger, "cancel", NULL, NULL, "cancel for %s%.*s",
+ 	       server_id->id_prefix, sizeof(server_id->id), server_id->id);
+-	od_server_t server;
+-	od_server_init(&server, 0);
+-	server.global = global;
+-	od_backend_connect_cancel(&server, storage, key);
+-	od_backend_close_connection(&server);
+-	od_backend_close(&server);
++	od_server_t *server = od_server_allocate(0);
++	if (server == NULL) {
++		return -1;
++	}
++	server->global = global;
++	od_backend_connect_cancel(server, storage, key);
++	od_backend_close_connection(server);
++	od_backend_close(server);
+ 	return 0;
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #36079** (closed): [BACKPORT 2026.1][#35634] YSQL: import rejection of generated columns in COPY FROM WHERE (@teyenc)
+- **PR #36035** (2026-10-28): [PLAT-23307] YBA: Validate user tags in v2 universe forms (@haikarthikssk)
+- **PR #36016** (2026-10-28): [2026.1][#35771] DocDB: Fix 2026.1 build: move ShutdownWaitsForChunkSave to VectorLSMHnswlibTest (@hari90)
+- **PR #36004** (2026-10-28): [#35634] YSQL: import rejection of generated columns in COPY FROM WHERE (@teyenc)
 - **PR #35971** (closed): [#35968] ClaudeCode: Make GitHub PRs the default and Phorge opt-in in agent skills (@siddiqueirshad)
-- **PR #35936** (closed): [#35930] YSQL: Restore the access method encapsulation of YB scans for planner-decided aggregate pushdown (@mtakahar)
-- **PR #35931** (2026-10-27): [BACKPORT 2026.1][#35771] DocDB: Stop running the usearch vector index backend unit tests (#35779) (@hari90)
-- **PR #35896** (2026-10-28): [BACKPORT 2025.2][#35771] DocDB: Stop running the usearch vector index backend unit tests (#35779) (@yb-agentk-dev[bot])
-- **PR #35883** (2026-10-27): [BACKPORT 2026.1][#35445] DocDB: Don't let a tablet's compaction history cutoff move back (#35694) (@druzac)
-- **PR #35882** (2026-10-27): [BACKPORT 2025.2][#35445] DocDB: Don't let a tablet's compaction history cutoff move back (#35694) (@druzac)
+- **PR #35963** (2026-10-28): [#20955,#34090,#35083] YSQL: revert making the planner aggregate-pushdown aware (@jasonyb)
 
 ---
 
@@ -2861,37 +2621,48 @@ Test Plan:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [PLAT-23187] YBA: Fix SSH to nodes when the YBA host has OS FIPS mode on
+## X. [#35462] DocDB: Fix RemoveTabletServerTest.MayStillHoldLease by waiting for a po
 
 **RULE**:
-When implementing operations in `managed/devops/opscli/ybops/__init__.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/yb/master/master_cluster_test.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ad809563`: [PLAT-23187] YBA: Fix SSH to nodes when the YBA host has OS FIPS mode on. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7d6468da`: [#35462] DocDB: Fix RemoveTabletServerTest.MayStillHoldLease by waiting for a post-blacklist balancer run in drain (#35463). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `managed/devops/opscli/ybops/__init__.py`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/yb/master/master_cluster_test.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-import hashlib
+#include "yb/master/cluster_balance.h"
+  // A balancer run that read the old blacklist may have queued an add to this ts, and that task
+  // outlives the run. Only trust the checks below once a run that started after the blacklist
+  // change has ended with no balancer tasks pending.
+  auto latest_balancer_activity = [this]() -> Result<ClusterBalancerActivityInfo> {
+    auto* leader = VERIFY_RESULT(cluster_->GetLeaderMiniMaster());
+    return leader->catalog_manager_impl().cluster_balancer()->GetLatestActivityInfo();
+  };
+  const auto blacklist_time = MonoTime::Now();
+  RETURN_NOT_OK(WaitFor(
+      [&latest_balancer_activity, blacklist_time]() -> Result<bool> {
+        return VERIFY_RESULT(latest_balancer_activity()).run_end_time_ > blacklist_time;
+      },
+      timeout, "Cluster balancer run after blacklist change"));
+  const auto fresh_run_start = MonoTime::Now();
 
-# When OpenSSL has only the FIPS provider, hashlib has no md5 at all, and modules that import it by
-# name - paramiko among them - fail to import. Give them one that fails only when called, the way
-# md5 does in FIPS mode otherwise.
-if not hasattr(hashlib, "md5"):
-    def _md5_unavailable(*args, **kwargs):
-        raise ValueError("unsupported hash type md5 (in FIPS mode)")
-
-    hashlib.md5 = _md5_unavailable
+      [this, &ts_proxy, &message, &uuid, &client, &latest_balancer_activity,
+       fresh_run_start]() -> Result<bool> {
+        auto activity = VERIFY_RESULT(latest_balancer_activity());
+        if (activity.run_end_time_ <= fresh_run_start) {
+          message = "waiting for a cluster balancer run that saw the black
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+      [this, &ts_proxy, &message, &uuid, &client]() -> Result<bool> {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ad809563` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7d6468da` are properly handled with clean fallback behavior.
