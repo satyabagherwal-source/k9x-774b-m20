@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T18:04:50.196Z",
-  "total_cycles_completed": 5849,
-  "total_learnings_persisted": 5849,
-  "total_rules_promoted": 5317,
+  "last_updated": "2026-10-28T18:14:10.047Z",
+  "total_cycles_completed": 5851,
+  "total_learnings_persisted": 5851,
+  "total_rules_promoted": 5318,
   "history": [
-    {
-      "timestamp": "2026-10-28T03:38:09.298Z",
-      "repository": "dkhamsing/open-source-ios-apps",
-      "learningId": "learn-github-dkhamsing-open-source-ios-apps",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T03:43:07.061Z",
-      "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
-      "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T03:49:34.979Z",
       "repository": "deepseek-ai/DeepSeek-R1",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-28T18:04:50.196Z",
       "repository": "MariaDB/server",
       "learningId": "learn-github-mariadb-server",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T18:13:58.855Z",
+      "repository": "Bingsu/adetailer",
+      "learningId": "learn-huggingface-bingsu-adetailer",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T18:14:10.047Z",
+      "repository": "vespa-engine/vespa",
+      "learningId": "learn-github-vespa-engine-vespa",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

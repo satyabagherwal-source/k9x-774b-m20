@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T18:04:50.117Z",
+  "last_updated": "2026-10-28T18:14:09.968Z",
   "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -18467,7 +18467,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Bingsu/adetailer",
       "source_version": "hf-bingsu-adetailer",
-      "content_hash": "ae2bdeb5f7f1db5485ef3fd87819b6e5480f616518cdc167c61efcffad382c59",
+      "content_hash": "9e7c5c4bc4081fc67e222d0c2c93a3f599fb65c7c34ddc8b25fe9c4aad0bc83f",
       "dossier_path": "07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md",
       "promoted_rules": [
@@ -18553,7 +18553,7 @@
         "learn-huggingface-hf-bingsu-adetailer-mv40r96p",
         "learn-huggingface-hf-bingsu-adetailer-mv4eqnev"
       ],
-      "verified_at": "2026-10-28T01:06:53.854Z",
+      "verified_at": "2026-10-28T18:13:58.735Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54102,8 +54102,8 @@
       "slug": "vespa-engine-vespa",
       "platform": "github",
       "source_url": "https://github.com/vespa-engine/vespa",
-      "source_version": "bc4e2fc4",
-      "content_hash": "ce46c98fc9f50371c450eb0ffd82559559f154124c94bc884fc836f16d6309cc",
+      "source_version": "f43ae343",
+      "content_hash": "23049e5c3994a89ce86dd1d958633e9c72f7eeaadd47655932a0d333e6262454",
       "dossier_path": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "promoted_rules": [
@@ -54151,6 +54151,11 @@
           "number": 5120,
           "title": "Opt out of protobuf message globals in ASan builds",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5354,
+          "title": "deps): update module golang.org/x/net to v0.62.0 [security]",
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54158,7 +54163,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T02:05:16.008Z",
+      "verified_at": "2026-10-28T18:14:09.950Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -145337,15 +145342,15 @@
       "learning_id": "rule-5354",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 5354,
-      "title": "deps): update module golang.org/x/net to v0.62.0 [security] (main) (#17321)",
-      "source_url": "https://github.com/argoproj/argo-workflows",
-      "source_version": "b304fcea",
+      "title": "deps): update module golang.org/x/net to v0.62.0 [security]",
+      "source_url": "https://github.com/vespa-engine/vespa",
+      "source_version": "f43ae343",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-28T17:35:30.588Z"
+      "verified_at": "2026-10-28T18:14:09.950Z"
     },
     "rule-5355": {
       "learning_id": "rule-5355",

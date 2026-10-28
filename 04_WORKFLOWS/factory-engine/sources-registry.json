@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T18:04:52.737Z",
-    "lastVerified": "2026-10-28T18:04:52.737Z",
+    "lastChecked": "2026-10-28T18:14:12.581Z",
+    "lastVerified": "2026-10-28T18:14:12.581Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -123,8 +123,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-28T17:42:54.678Z",
-    "lastVerified": "2026-10-28T17:42:54.678Z",
+    "lastChecked": "2026-10-28T18:14:06.939Z",
+    "lastVerified": "2026-10-28T18:14:06.939Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1180,9 +1180,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-10-28T14:56:35.060Z",
+    "lastChecked": "2026-10-28T18:14:01.163Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-10-28T14:56:35.060Z"
+    "lastVerified": "2026-10-28T18:14:01.163Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -5669,6 +5669,61 @@
     "contentHash": "917c10c8c2fe112ec9b098b6d93ee8adf0ded0c9828b7acfb5227afe25617dff",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sachaos-viddy": {
+    "name": "viddy",
+    "officialUrl": "https://github.com/sachaos/viddy",
+    "lastChecked": "2026-10-28T18:13:50.861Z",
+    "revisionIdentifier": "b56efe08",
+    "lastVerified": "2026-10-28T18:13:50.861Z"
+  },
+  "hf-bingsu-adetailer": {
+    "name": "Bingsu/adetailer",
+    "officialUrl": "https://huggingface.co/Bingsu/adetailer",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T18:13:52.984Z",
+    "lastVerified": "2026-10-28T18:13:52.984Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-bingsu-adetailer",
+    "contentHash": "9e7c5c4bc4081fc67e222d0c2c93a3f599fb65c7c34ddc8b25fe9c4aad0bc83f",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "futurice-pepperoni-app-kit": {
+    "name": "pepperoni-app-kit",
+    "officialUrl": "https://github.com/futurice/pepperoni-app-kit",
+    "lastChecked": "2026-10-28T18:13:55.910Z",
+    "revisionIdentifier": "f58c1410",
+    "lastVerified": "2026-10-28T18:13:55.910Z"
+  },
+  "kubeshark-kubeshark": {
+    "name": "kubeshark",
+    "officialUrl": "https://github.com/kubeshark/kubeshark",
+    "lastChecked": "2026-10-28T18:13:58.413Z",
+    "revisionIdentifier": "b79aa01a",
+    "lastVerified": "2026-10-28T18:13:58.413Z"
+  },
+  "vespa-engine-vespa": {
+    "name": "vespa-engine/vespa",
+    "officialUrl": "https://github.com/vespa-engine/vespa",
+    "sourceType": "github",
+    "technology": "Java",
+    "lastChecked": "2026-10-28T18:14:09.470Z",
+    "lastVerified": "2026-10-28T18:14:09.470Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-vespa-engine-vespa",
+    "contentHash": "23049e5c3994a89ce86dd1d958633e9c72f7eeaadd47655932a0d333e6262454",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

@@ -5881,3 +5881,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-28T18:04:43.628Z |
 | `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `d6b52e2e` | Multi-dimensional audit evidence | 2026-10-28T18:04:44.720Z |
 | `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `825a9ba9` | Multi-dimensional audit evidence | 2026-10-28T18:04:50.189Z |
+| `learn-huggingface-bingsu-adetailer` | `https://huggingface.co/Bingsu/adetailer` | `hf-bingsu-` | Multi-dimensional audit evidence | 2026-10-28T18:13:58.845Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `f43ae343` | Multi-dimensional audit evidence | 2026-10-28T18:14:10.041Z |

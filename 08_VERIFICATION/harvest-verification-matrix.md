@@ -5872,3 +5872,5 @@
 | `CYCLE-20261028-CAUG` | `2026-10-28T18:04:43.624Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 372, Rule 5357` | Yes (`e216f53e...`) |
 | `CYCLE-20261028-CBOS` | `2026-10-28T18:04:44.716Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5358` | Yes (`d41b9d94...`) |
 | `CYCLE-20261028-CFWQ` | `2026-10-28T18:04:50.186Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5359` | Yes (`917c10c8...`) |
+| `CYCLE-20261028-O796` | `2026-10-28T18:13:58.842Z` | `Bingsu/adetailer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md` | Yes (`9e7c5c4b...`) |
+| `CYCLE-20261028-OFW6` | `2026-10-28T18:14:10.038Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5354` | Yes (`23049e5c...`) |

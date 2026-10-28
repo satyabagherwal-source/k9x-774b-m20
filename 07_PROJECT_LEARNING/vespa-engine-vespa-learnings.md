@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source**: github ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
-> **Source Version**: `bc4e2fc4`  
+> **Source Version**: `f43ae343`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T02:05:15.716Z  
+> **Timestamp**: 2026-10-28T18:14:09.647Z  
 > **Learning ID**: `learn-github-vespa-engine-vespa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T02:05:15.619Z  
+> **Harvest Timestamp**: 2026-10-28T18:14:09.470Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AI search platform
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7148 stars
+- **Stars / Engagement**: 7152 stars
 
 ---
 
@@ -1065,42 +1065,250 @@ func (v *showHiddenFlag) IsBoolFlag() bool { return true }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `219c1326` (2026-10-27)
-**Commit Message**: Opt out of protobuf message globals in ASan builds
+### Incident Patch 1: `e3cfae00` (2026-10-28)
+**Commit Message**: fix(deps): update module golang.org/x/net to v0.62.0 [security]
 
-Define PROTOBUF_MESSAGE_GLOBALS_TEMPORARY_OPTOUT for address sanitizer
-builds to keep the ClassData layout compatible with the library.
-
-Why: When compiled with AddressSanitizer, protobuf 36.2 headers define
-PROTOBUF_MESSAGE_GLOBALS, which removes the prototype and tc_table
-fields from internal::ClassData. The libprotobuf from vespa-deps is
-built without ASan and expects the old layout, so it reads a function
-pointer as the parse table and crashes.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `cxx_settings.cmake` (modified, +4/-0)
+**File**: `client/go/go.mod` (modified, +1/-1)
 ```diff
-@@ -117,6 +117,10 @@ if (VESPA_USE_SANITIZER)
-         # Many false positives when checking vptr due to limited visibility
-         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-sanitize=vptr")
-     endif()
-+    if (VESPA_USE_SANITIZER MATCHES "address")
-+        # Keep protobuf ClassData layout compatible with non-ASan libprotobuf from vespa-deps
-+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DPROTOBUF_MESSAGE_GLOBALS_TEMPORARY_OPTOUT")
-+    endif()
- endif()
- set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_C_FLAGS} ${CXX_SPECIFIC_WARN_OPTS} -fdiagnostics-color=auto ${EXTRA_CXX_FLAGS}")
- if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
+@@ -16,7 +16,7 @@ require (
+ 	github.com/spf13/pflag v1.0.10
+ 	github.com/stretchr/testify v1.12.1
+ 	github.com/zalando/go-keyring v0.2.8
+-	golang.org/x/net v0.61.0
++	golang.org/x/net v0.62.0
+ 	golang.org/x/sys v0.49.0
+ 	gopkg.in/yaml.v3 v3.0.1
+ )
+```
+
+**File**: `client/go/go.sum` (modified, +2/-0)
+```diff
+@@ -64,6 +64,8 @@ golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
+ golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
+ golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
+ golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/sys v0.1.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
+ golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+```
+
+---
+
+### Incident Patch 2: `f43ae343` (2026-10-28)
+**Commit Message**: Merge pull request #38349 from vespa-engine/toregge/handle-modified-shared-library-prefix-in-vespamalloc
+
+Handle modified shared library prefix in vespamalloc.
+
+**File**: `vespamalloc/src/tests/doubledelete/CMakeLists.txt` (modified, +4/-1)
+```diff
+@@ -9,6 +9,9 @@ vespa_add_executable(vespamalloc_expectsignal_app
+     expectsignal.cpp
+     DEPENDS
+ )
+-vespa_add_test(NAME vespamalloc_doubledelete_test_app NO_VALGRIND COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/doubledelete_test.sh
++configure_file(doubledelete_test.sh.in doubledelete_test.sh
++    FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
++    @ONLY)
++vespa_add_test(NAME vespamalloc_doubledelete_test_app NO_VALGRIND COMMAND ${CMAKE_CURRENT_BINARY_DIR}/doubledelete_test.sh
+                DEPENDS vespamalloc_doubledelete_test_app vespamalloc_expectsignal_app
+                        vespamalloc vespamallocd)
+```
+
+**File**: `vespamalloc/src/tests/doubledelete/doubledelete_test.sh` (removed, +0/-8)
+```diff
+@@ -1,8 +0,0 @@
+-#!/bin/bash
+-# Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
+-set -e
+-
+-LD_PRELOAD=../../../src/vespamalloc/libvespamalloc.so ./vespamalloc_doubledelete_test_app
+-
+-ulimit -c 0 
+-./vespamalloc_expectsignal_app 6 "LD_PRELOAD=../../../src/vespamalloc/libvespamallocd.so ./vespamalloc_doubledelete_test_app"
+```
+
+**File**: `vespamalloc/src/tests/doubledelete/doubledelete_test.sh.in` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++#!/bin/bash
++# Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
++set -e
++
++LD_PRELOAD=../../../src/vespamalloc/@CMAKE_SHARED_LIBRARY_PREFIX@vespamalloc.so ./vespamalloc_doubledelete_test_app
++
++ulimit -c 0
++./vespamalloc_expectsignal_app 6 "LD_PRELOAD=../../../src/vespamalloc/@CMAKE_SHARED_LIBRARY_PREFIX@vespamallocd.so ./vespamalloc_doubledelete_test_app"
+```
+
+**File**: `vespamalloc/src/tests/overwrite/CMakeLists.txt` (modified, +4/-1)
+```diff
+@@ -11,7 +11,10 @@ vespa_add_executable(vespamalloc_expectsignal-overwrite_app
+     expectsignal.cpp
+     DEPENDS
+ )
+-vespa_add_test(NAME vespamalloc_overwrite_test_app NO_VALGRIND COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/overwrite_test.sh
++configure_file(overwrite_test.sh.in overwrite_test.sh
++    FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
++    @ONLY)
++vespa_add_test(NAME vespamalloc_overwrite_test_app NO_VALGRIND COMMAND ${CMAKE_CURRENT_BINARY_DIR}/overwrite_test.sh
+                DEPENDS vespamalloc_overwrite_test_app vespamalloc_expectsignal-overwrite_app
+                        vespamalloc vespamallocd)
+ 
+```
+
+**File**: `vespamalloc/src/tests/overwrite/overwrite_test.sh` (removed, +0/-10)
+```diff
+@@ -1,10 +0,0 @@
+-#!/bin/bash	
+-# Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
+-set -e
+-
+-LD_PRELOAD=../../../src/vespamalloc/libvespamalloc.so ./vespamalloc_overwrite_test_app
+-LD_PRELOAD=../../../src/vespamalloc/libvespamallocd.so ./vespamalloc_overwrite_test_app testmemoryfill
+-ulimit -c 0; 
+-./vespamalloc_expectsignal-overwrite_app 6 "LD_PRELOAD=../../../src/vespamalloc/libvespamallocd.so ./vespamalloc_overwrite_test_app prewrite"
+-./vespamalloc_expectsignal-overwrite_app 6 "LD_PRELOAD=../../../src/vespamalloc/libvespamallocd.so ./vespamalloc_overwrite_test_app postwrite"
+-./vespamalloc_expectsignal-overwrite_app 6 "LD_PRELOAD=../../../src/vespamalloc/libvespamallocd.so ./vespamalloc_overwrite_test_app writeafterfree"
+```
+
+**File**: `vespamalloc/src/tests/overwrite/overwrite_test.sh.in` (added, +10/-0)
+```diff
+@@ -0,0 +1,10 @@
++#!/bin/bash
++# Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
++set -e
++
++LD_PRELOAD=../../../src/vespamalloc/@CMAKE_SHARED_LIBRARY_PREFIX@vespamalloc.so ./vespamalloc_overwrite_test_app
++LD_PRELOAD=../../../src/vespamalloc/@CMAKE_SHARED_LIBRARY_PREFIX@vespamallocd.so ./vespamalloc_overwrite_test_app testmemoryfill
++ulimit -c 0;
++./vespamalloc_expectsignal-overwrite_app 6 "LD_PRELOAD=../../../src/vespamalloc/@CMAKE_SHARED_LIBRARY_PREFIX@vespamallocd.so ./vespamalloc_overwrite_test_app prewrite"
++./vespamalloc_expectsignal-overwrite_app 6 "LD_PRELOAD=../../../src/vespamalloc/@CMAKE_SHARED_LIBRARY_PREFIX@vespamallocd.so ./vespamalloc_overwrite_test_app postwrite"
++./vespamalloc_expectsignal-overwrite_app 6 "LD_PRELOAD=../../../src/vespamalloc/@CMAKE_SHARED_LIBRARY_PREFIX@vespamallocd.so ./vespamalloc_overwrite_test_app writeafterfree"
+```
+
+**File**: `vespamalloc/src/tests/stacktrace/CMakeLists.txt` (modified, +1/-1)
+```diff
+@@ -8,5 +8,5 @@ vespa_add_executable(vespamalloc_stacktrace_test_app TEST
+ vespa_add_test(
+     NAME vespamalloc_stacktrace_test_app
+     NO_VALGRIND COMMAND vespamalloc_stacktrace_test_app
+-    ENVIRONMENT "LD_PRELOAD=${CMAKE_CURRENT_BINARY_DIR}/../../vespamalloc/libvespamallocdst16.so"
++    ENVIRONMENT "LD_PRELOAD=${CMAKE_CURRENT_BINARY_DIR}/../../vespamalloc/${CMAKE_SHARED_LIBRARY_PREFIX}vespamallocdst16.so"
+     NO_VALGRIND)
+```
+
+---
+
+### Incident Patch 3: `70d40205` (2026-10-28)
+**Commit Message**: Handle modified shared library prefix in vespamalloc.
+
+**File**: `vespamalloc/src/tests/doubledelete/CMakeLists.txt` (modified, +4/-1)
+```diff
+@@ -9,6 +9,9 @@ vespa_add_executable(vespamalloc_expectsignal_app
+     expectsignal.cpp
+     DEPENDS
+ )
+-vespa_add_test(NAME vespamalloc_doubledelete_test_app NO_VALGRIND COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/doubledelete_test.sh
++configure_file(doubledelete_test.sh.in doubledelete_test.sh
++    FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
++    @ONLY)
++vespa_add_test(NAME vespamalloc_doubledelete_test_app NO_VALGRIND COMMAND ${CMAKE_CURRENT_BINARY_DIR}/doubledelete_test.sh
+                DEPENDS vespamalloc_doubledelete_test_app vespamalloc_expectsignal_app
+                        vespamalloc vespamallocd)
+```
+
+**File**: `vespamalloc/src/tests/doubledelete/doubledelete_test.sh` (removed, +0/-8)
+```diff
+@@ -1,8 +0,0 @@
+-#!/bin/bash
+-# Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
+-set -e
+-
+-LD_PRELOAD=../../../src/vespamalloc/libvespamalloc.so ./vespamalloc_doubledelete_test_app
+-
+-ulimit -c 0 
+-./vespamalloc_expectsignal_app 6 "LD_PRELOAD=../../../src/vespamalloc/libvespamallocd.so ./vespamalloc_doubledelete_test_app"
+```
+
+**File**: `vespamalloc/src/tests/doubledelete/doubledelete_test.sh.in` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++#!/bin/bash
++# Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
++set -e
++
++LD_PRELOAD=../../../src/vespamalloc/@CMAKE_SHARED_LIBRARY_PREFIX@vespamalloc.so ./vespamalloc_doubledelete_test_app
++
++ulimit -c 0
++./vespamalloc_expectsignal_app 6 "LD_PRELOAD=../../../src/vespamalloc/@CMAKE_SHARED_LIBRARY_PREFIX@vespamallocd.so ./vespamalloc_doubledelete_test_app"
+```
+
+**File**: `vespamalloc/src/tests/overwrite/CMakeLists.txt` (modified, +4/-1)
+```diff
+@@ -11,7 +11,10 @@ vespa_add_executable(vespamalloc_expectsignal-overwrite_app
+     expectsignal.cpp
+     DEPENDS
+ )
+-vespa_add_test(NAME vespamalloc_overwrite_test_app NO_VALGRIND COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/overwrite_test.sh
++configure_file(overwrite_test.sh.in overwrite_test.sh
++    FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
++    @ONLY)
++vespa_add_test(NAME vespamalloc_overwrite_test_app NO_VALGRIND COMMAND ${CMAKE_CURRENT_BINARY_DIR}/overwrite_test.sh
+                DEPENDS vespamalloc_overwrite_test_app vespamalloc_expectsignal-overwrite_app
+                        vespamalloc vespamallocd)
+ 
+```
+
+**File**: `vespamalloc/src/tests/overwrite/overwrite_test.sh` (removed, +0/-10)
+```diff
+@@ -1,10 +0,0 @@
+-#!/bin/bash	
+-# Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
+-set -e
+-
+-LD_PRELOAD=../../../src/vespamalloc/libvespamalloc.so ./vespamalloc_overwrite_test_app
+-LD_PRELOAD=../../../src/vespamalloc/libvespamallocd.so ./vespamalloc_overwrite_test_app testmemoryfill
+-ulimit -c 0; 
+-./vespamalloc_expectsignal-overwrite_app 6 "LD_PRELOAD=../../../src/vespamalloc/libvespamallocd.so ./vespamalloc_overwrite_test_app prewrite"
+-./vespamalloc_expectsignal-overwrite_app 6 "LD_PRELOAD=../../../src/vespamalloc/libvespamallocd.so ./vespamalloc_overwrite_test_app postwrite"
+-./vespamalloc_expectsignal-overwrite_app 6 "LD_PRELOAD=../../../src/vespamalloc/libvespamallocd.so ./vespamalloc_overwrite_test_app writeafterfree"
+```
+
+**File**: `vespamalloc/src/tests/overwrite/overwrite_test.sh.in` (added, +10/-0)
+```diff
+@@ -0,0 +1,10 @@
++#!/bin/bash
++# Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
++set -e
++
++LD_PRELOAD=../../../src/vespamalloc/@CMAKE_SHARED_LIBRARY_PREFIX@vespamalloc.so ./vespamalloc_overwrite_test_app
++LD_PRELOAD=../../../src/vespamalloc/@CMAKE_SHARED_LIBRARY_PREFIX@vespamallocd.so ./vespamalloc_overwrite_test_app testmemoryfill
++ulimit -c 0;
++./vespamalloc_expectsignal-overwrite_app 6 "LD_PRELOAD=../../../src/vespamalloc/@CMAKE_SHARED_LIBRARY_PREFIX@vespamallocd.so ./vespamalloc_overwrite_test_app prewrite"
++./vespamalloc_expectsignal-overwrite_app 6 "LD_PRELOAD=../../../src/vespamalloc/@CMAKE_SHARED_LIBRARY_PREFIX@vespamallocd.so ./vespamalloc_overwrite_test_app postwrite"
++./vespamalloc_expectsignal-overwrite_app 6 "LD_PRELOAD=../../../src/vespamalloc/@CMAKE_SHARED_LIBRARY_PREFIX@vespamallocd.so ./vespamalloc_overwrite_test_app writeafterfree"
+```
+
+**File**: `vespamalloc/src/tests/stacktrace/CMakeLists.txt` (modified, +1/-1)
+```diff
+@@ -8,5 +8,5 @@ vespa_add_executable(vespamalloc_stacktrace_test_app TEST
+ vespa_add_test(
+     NAME vespamalloc_stacktrace_test_app
+     NO_VALGRIND COMMAND vespamalloc_stacktrace_test_app
+-    ENVIRONMENT "LD_PRELOAD=${CMAKE_CURRENT_BINARY_DIR}/../../vespamalloc/libvespamallocdst16.so"
++    ENVIRONMENT "LD_PRELOAD=${CMAKE_CURRENT_BINARY_DIR}/../../vespamalloc/${CMAKE_SHARED_LIBRARY_PREFIX}vespamallocdst16.so"
+     NO_VALGRIND)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #38339** (2026-10-27): Opt out of protobuf message globals in ASan builds (@arnej27959)
-- **PR #38338** (2026-10-27): Remove the 'bitPacked' property (@bratseth)
-- **PR #38337** (2026-10-27): Arnej/independent boosts fix (@arnej27959)
-- **PR #38336** (2026-10-27): Add explanations (@bratseth)
-- **PR #38334** (2026-10-27): Add input explanations (@bratseth)
-- **PR #38331** (2026-10-26): Update how to find re2 library. (@toregge)
+- **PR #38351** (2026-10-28): Prepare for exporting vespa libraries. (@toregge)
+- **PR #38349** (2026-10-28): Handle modified shared library prefix in vespamalloc. (@toregge)
+- **PR #38348** (2026-10-28): Add dedicated Highway bit packing/unpacking kernels (@vekterli)
+- **PR #38347** (2026-10-28): Fix TritonOnnxRuntimeTest compile with Java 17 release (@glebashnik)
+- **PR #38345** (2026-10-28): Revert "Temporarily log as error" (@bratseth)
+- **PR #38344** (2026-10-28): Support matching multiple fields in one production rule (@bratseth)
 
 ---
 
@@ -1120,31 +1328,28 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Opt out of protobuf message globals in ASan builds
+## X. deps): update module golang.org/x/net to v0.62.0 [security]
 
 **RULE**:
-When implementing operations in `cxx_settings.cmake`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `client/go/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `219c1326`: Opt out of protobuf message globals in ASan builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e3cfae00`: deps): update module golang.org/x/net to v0.62.0 [security]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `cxx_settings.cmake`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `client/go/go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    if (VESPA_USE_SANITIZER MATCHES "address")
-        # Keep protobuf ClassData layout compatible with non-ASan libprotobuf from vespa-deps
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DPROTOBUF_MESSAGE_GLOBALS_TEMPORARY_OPTOUT")
-    endif()
+	golang.org/x/net v0.62.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	golang.org/x/net v0.61.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `219c1326` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e3cfae00` are properly handled with clean fallback behavior.

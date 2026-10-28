@@ -35,8 +35,8 @@
     "sourceUrl": "https://huggingface.co/Bingsu/adetailer",
     "sourceVersion": "hf-bingsu-adetailer",
     "license": "Open-Source",
-    "contentHash": "ae2bdeb5f7f1db5485ef3fd87819b6e5480f616518cdc167c61efcffad382c59",
-    "lastHarvestedAt": "2026-10-28T01:06:53.948Z",
+    "contentHash": "9e7c5c4bc4081fc67e222d0c2c93a3f599fb65c7c34ddc8b25fe9c4aad0bc83f",
+    "lastHarvestedAt": "2026-10-28T18:13:58.845Z",
     "learningId": "learn-huggingface-bingsu-adetailer"
   },
   "hf-lilylilith-qi_2.1_anyangle": {
@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "bc4e2fc4",
+    "sourceVersion": "f43ae343",
     "license": "Apache-2.0",
-    "contentHash": "ce46c98fc9f50371c450eb0ffd82559559f154124c94bc884fc836f16d6309cc",
-    "lastHarvestedAt": "2026-10-28T02:05:16.072Z",
+    "contentHash": "23049e5c3994a89ce86dd1d958633e9c72f7eeaadd47655932a0d333e6262454",
+    "lastHarvestedAt": "2026-10-28T18:14:10.041Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {
