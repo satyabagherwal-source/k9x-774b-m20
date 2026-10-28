@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T11:05:02.392Z",
+  "last_updated": "2026-10-28T11:17:02.644Z",
   "total_verified_learnings": 1157,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8377,8 +8377,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "acf15714",
-      "content_hash": "339707eaffe1c49a9bff286c56942954cf082fbad87061e690f8530c7a0d9ac8",
+      "source_version": "b923415f",
+      "content_hash": "3d54213137f2bbb772fcd16947d7c0b5b8d79bb65814e310814f5aa50c3c83b2",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -8638,7 +8638,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T22:50:02.134Z",
+      "verified_at": "2026-10-28T11:12:07.597Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28580,7 +28580,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
       "source_version": "hf-unsloth-qwen3.8-27b-gguf",
-      "content_hash": "bc90da2cbf02c1702af0386a027f433af0dda8efeacb78b39239b077e254d626",
+      "content_hash": "319a2cda41c7d790bd830be1a2195f970a387b5f70ac7f61722791f1956f7ff9",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md",
       "promoted_rules": [
@@ -28608,6 +28608,21 @@
           "number": 2263,
           "title": "Gated Attention Logit Normalization Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3759,
+          "title": "GGUF Metadata Integrity & Tokenizer Alignment",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 5257,
+          "title": "Hybrid Attention Layer Scheduling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5258,
+          "title": "Dynamic Mixed-Precision Quantization Boundary Rule",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -28628,7 +28643,7 @@
         "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv47yc4x",
         "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv4l85qv"
       ],
-      "verified_at": "2026-10-25T16:15:24.135Z",
+      "verified_at": "2026-10-28T11:17:02.630Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33685,8 +33700,8 @@
       "slug": "kumahq-kuma",
       "platform": "github",
       "source_url": "https://github.com/kumahq/kuma",
-      "source_version": "dca7b62c",
-      "content_hash": "df5b800e35267a4fd330c8a1d3a3723e3e05486d2a15d77e62a8d4ca655df614",
+      "source_version": "1bf742fe",
+      "content_hash": "22dfc13595c22eb1b08cb5013d965f8212d539948ecdf6604b76e47ca854cfeb",
       "dossier_path": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "promoted_rules": [
@@ -33714,6 +33729,11 @@
           "number": 4199,
           "title": "Environment-Aware Upstream Resolution Decoupling",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5256,
+          "title": "deps): bump golang.org/x/net from 0.61.0 to 0.62.0 (#19290)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33721,7 +33741,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T01:49:31.289Z",
+      "verified_at": "2026-10-28T11:12:02.801Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -119451,14 +119471,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 3759,
       "title": "GGUF Metadata Integrity & Tokenizer Alignment",
-      "source_url": "https://huggingface.co/unsloth/flint-GGUF",
-      "source_version": "hf-unsloth-flint-gguf",
+      "source_url": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
+      "source_version": "hf-unsloth-qwen3.8-27b-gguf",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-22T21:47:59.858Z"
+      "verified_at": "2026-10-28T11:17:02.630Z"
     },
     "rule-3760": {
       "learning_id": "rule-3760",
@@ -143354,6 +143374,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T11:05:02.374Z"
+    },
+    "rule-5256": {
+      "learning_id": "rule-5256",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5256,
+      "title": "deps): bump golang.org/x/net from 0.61.0 to 0.62.0 (#19290)",
+      "source_url": "https://github.com/kumahq/kuma",
+      "source_version": "1bf742fe",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T11:12:02.801Z"
+    },
+    "rule-5257": {
+      "learning_id": "rule-5257",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5257,
+      "title": "Hybrid Attention Layer Scheduling Invariant",
+      "source_url": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
+      "source_version": "hf-unsloth-qwen3.8-27b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T11:17:02.630Z"
+    },
+    "rule-5258": {
+      "learning_id": "rule-5258",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5258,
+      "title": "Dynamic Mixed-Precision Quantization Boundary Rule",
+      "source_url": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
+      "source_version": "hf-unsloth-qwen3.8-27b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T11:17:02.630Z"
     }
   },
   "aliases": {

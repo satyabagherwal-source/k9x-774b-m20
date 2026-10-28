@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T11:05:02.476Z",
+  "last_updated": "2026-10-28T11:17:02.721Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -785,14 +785,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
-      "content_hash": "bc90da2cbf02c1702af0386a027f433af0dda8efeacb78b39239b077e254d626",
-      "verified_at": "2026-10-25T16:15:24.217Z",
+      "content_hash": "319a2cda41c7d790bd830be1a2195f970a387b5f70ac7f61722791f1956f7ff9",
+      "verified_at": "2026-10-28T11:17:02.721Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T16:15:24.217Z"
+      "last_updated": "2026-10-28T11:17:02.721Z"
     },
     "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF": {
       "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "339707eaffe1c49a9bff286c56942954cf082fbad87061e690f8530c7a0d9ac8",
-      "verified_at": "2026-10-27T22:50:02.223Z",
+      "content_hash": "3d54213137f2bbb772fcd16947d7c0b5b8d79bb65814e310814f5aa50c3c83b2",
+      "verified_at": "2026-10-28T11:12:07.710Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T22:50:02.223Z"
+      "last_updated": "2026-10-28T11:12:07.710Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -5121,14 +5121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kumahq-kuma",
-      "content_hash": "df5b800e35267a4fd330c8a1d3a3723e3e05486d2a15d77e62a8d4ca655df614",
-      "verified_at": "2026-10-28T01:49:31.393Z",
+      "content_hash": "22dfc13595c22eb1b08cb5013d965f8212d539948ecdf6604b76e47ca854cfeb",
+      "verified_at": "2026-10-28T11:12:02.889Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T01:49:31.393Z"
+      "last_updated": "2026-10-28T11:12:02.889Z"
     },
     "cilium/cilium": {
       "repository": "cilium/cilium",

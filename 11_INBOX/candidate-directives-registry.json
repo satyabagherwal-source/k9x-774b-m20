@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T09:40:44.419Z",
+  "last_updated": "2026-10-28T11:12:07.705Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3170,6 +3170,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-huggingface-alissonerdx-bfs-best-face-swap"
+    },
+    {
+      "id": "CD-LP21",
+      "directive_title": "build(polars): use the serde feature instead of serde-lazy (#4951)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "dathere/qsv",
+      "source_commit": "b923415f",
+      "date_staged": "2026-10-28",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-dathere-qsv"
     }
   ]
 }

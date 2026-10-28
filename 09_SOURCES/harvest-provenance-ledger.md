@@ -5751,3 +5751,6 @@ Every entry in this ledger must capture:
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `e6d9739b` | Multi-dimensional audit evidence | 2026-10-28T10:43:49.323Z |
 | `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-28T10:52:34.363Z |
 | `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-28T11:05:02.467Z |
+| `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `1bf742fe` | Multi-dimensional audit evidence | 2026-10-28T11:12:02.881Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `b923415f` | Multi-dimensional audit evidence | 2026-10-28T11:12:07.699Z |
+| `learn-huggingface-unsloth-qwen3-8-27b-gguf` | `https://huggingface.co/unsloth/Qwen3.8-27B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-28T11:17:02.712Z |

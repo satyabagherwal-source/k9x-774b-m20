@@ -5742,3 +5742,6 @@
 | `CYCLE-20261028-LAKO` | `2026-10-28T10:43:49.320Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5250` | Yes (`6693cca0...`) |
 | `CYCLE-20261028-WJP4` | `2026-10-28T10:52:34.360Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5251, Rule 5252` | Yes (`0ab3c0b6...`) |
 | `CYCLE-20261028-CKXS` | `2026-10-28T11:05:02.464Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5253, Rule 5254, Rule 5255` | Yes (`cec87647...`) |
+| `CYCLE-20261028-LLBX` | `2026-10-28T11:12:02.877Z` | `kumahq/kuma` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5256` | Yes (`22dfc135...`) |
+| `CYCLE-20261028-LP1R` | `2026-10-28T11:12:07.695Z` | `dathere/qsv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dathere-qsv-learnings.md` | Yes (`3d542131...`) |
+| `CYCLE-20261028-S0OK` | `2026-10-28T11:17:02.708Z` | `unsloth/Qwen3.8-27B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5257, Rule 5258, Rule 3759` | Yes (`319a2cda...`) |

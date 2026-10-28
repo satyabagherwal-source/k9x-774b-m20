@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T11:05:05.018Z",
-    "lastVerified": "2026-10-28T11:05:05.019Z",
+    "lastChecked": "2026-10-28T11:17:05.245Z",
+    "lastVerified": "2026-10-28T11:17:05.245Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -167,11 +167,21 @@
     "lastVerified": "2026-10-28T02:54:52.757Z"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
-    "lastChecked": "2026-10-28T09:58:08.859Z",
-    "revisionIdentifier": "acf15714",
-    "lastVerified": "2026-10-28T09:58:08.859Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T11:12:07.295Z",
+    "lastVerified": "2026-10-28T11:12:07.295Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "3d54213137f2bbb772fcd16947d7c0b5b8d79bb65814e310814f5aa50c3c83b2",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1023,9 +1033,9 @@
   "rustcrypto-hashes": {
     "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-10-28T04:35:33.239Z",
+    "lastChecked": "2026-10-28T11:11:57.266Z",
     "revisionIdentifier": "23d8e40e",
-    "lastVerified": "2026-10-28T04:35:33.239Z"
+    "lastVerified": "2026-10-28T11:11:57.266Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -2530,5 +2540,60 @@
     "lastChecked": "2026-10-28T11:02:14.340Z",
     "revisionIdentifier": "bae78b18",
     "lastVerified": "2026-10-28T11:02:14.340Z"
+  },
+  "imsnif-bandwhich": {
+    "name": "bandwhich",
+    "officialUrl": "https://github.com/imsnif/bandwhich",
+    "lastChecked": "2026-10-28T11:11:47.227Z",
+    "revisionIdentifier": "1899870c",
+    "lastVerified": "2026-10-28T11:11:47.227Z"
+  },
+  "hf-unsloth-qwen3.8-27b-gguf": {
+    "name": "unsloth/Qwen3.8-27B-GGUF",
+    "officialUrl": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T11:11:49.834Z",
+    "lastVerified": "2026-10-28T11:11:49.834Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
+    "contentHash": "319a2cda41c7d790bd830be1a2195f970a387b5f70ac7f61722791f1956f7ff9",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "i18next-react-i18next": {
+    "name": "react-i18next",
+    "officialUrl": "https://github.com/i18next/react-i18next",
+    "lastChecked": "2026-10-28T11:11:52.279Z",
+    "revisionIdentifier": "16a017ee",
+    "lastVerified": "2026-10-28T11:11:52.279Z"
+  },
+  "kumahq-kuma": {
+    "name": "kumahq/kuma",
+    "officialUrl": "https://github.com/kumahq/kuma",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-28T11:12:00.430Z",
+    "lastVerified": "2026-10-28T11:12:00.430Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-kumahq-kuma",
+    "contentHash": "22dfc13595c22eb1b08cb5013d965f8212d539948ecdf6604b76e47ca854cfeb",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "vasu-devs-justhireme": {
+    "name": "JustHireMe",
+    "officialUrl": "https://github.com/vasu-devs/JustHireMe",
+    "lastChecked": "2026-10-28T11:11:59.728Z",
+    "revisionIdentifier": "accdcdb5",
+    "lastVerified": "2026-10-28T11:11:59.728Z"
   }
 }
