@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T02:27:24.824Z",
-  "total_cycles_completed": 5629,
-  "total_learnings_persisted": 5629,
-  "total_rules_promoted": 5060,
+  "last_updated": "2026-10-28T02:34:08.782Z",
+  "total_cycles_completed": 5631,
+  "total_learnings_persisted": 5631,
+  "total_rules_promoted": 5064,
   "history": [
-    {
-      "timestamp": "2026-10-27T17:23:40.689Z",
-      "repository": "wcandillon/react-native-skia",
-      "learningId": "learn-github-wcandillon-react-native-skia",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T17:23:41.168Z",
-      "repository": "Checkmarx/kics",
-      "learningId": "learn-github-checkmarx-kics",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T17:23:42.878Z",
       "repository": "projectdiscovery/nuclei",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-28T02:27:24.824Z",
       "repository": "RediSearch/RediSearch",
       "learningId": "learn-github-redisearch-redisearch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T02:34:03.668Z",
+      "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+      "learningId": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T02:34:08.782Z",
+      "repository": "ClickHouse/ClickHouse",
+      "learningId": "learn-github-clickhouse-clickhouse",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

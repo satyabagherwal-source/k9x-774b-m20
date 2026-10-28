@@ -6073,10 +6073,10 @@
     "repository": "ClickHouse/ClickHouse",
     "platform": "github",
     "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
-    "sourceVersion": "d491ad88",
+    "sourceVersion": "b4fae473",
     "license": "Apache-2.0",
-    "contentHash": "4a442519d897f584d35ad8356f6b3e2b01e37acceef65683607327e15c208509",
-    "lastHarvestedAt": "2026-10-27T13:22:24.529Z",
+    "contentHash": "17245f320a993426351f647356fb7c634ef76e4ba285f737ebace42e5b4d4ded",
+    "lastHarvestedAt": "2026-10-28T02:34:08.777Z",
     "learningId": "learn-github-clickhouse-clickhouse"
   },
   "dockview-dockview": {
@@ -10675,8 +10675,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
     "sourceVersion": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
     "license": "Open-Source",
-    "contentHash": "d43e03a6b461a048966d3005217c353fe2b415025a704db8c352e772f7b364b9",
-    "lastHarvestedAt": "2026-10-25T05:58:58.283Z",
+    "contentHash": "32bd1693c4a6a25e8ccad3abde7e8d5e804804184cfe18d279d0978062796612",
+    "lastHarvestedAt": "2026-10-28T02:34:03.663Z",
     "learningId": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf"
   },
   "makecindy-cindy": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T02:27:24.829Z",
+  "last_updated": "2026-10-28T02:34:08.785Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9231,14 +9231,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clickhouse-clickhouse",
-      "content_hash": "4a442519d897f584d35ad8356f6b3e2b01e37acceef65683607327e15c208509",
-      "verified_at": "2026-10-27T13:22:24.537Z",
+      "content_hash": "17245f320a993426351f647356fb7c634ef76e4ba285f737ebace42e5b4d4ded",
+      "verified_at": "2026-10-28T02:34:08.785Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:22:24.537Z"
+      "last_updated": "2026-10-28T02:34:08.785Z"
     },
     "dockview/dockview": {
       "repository": "dockview/dockview",
@@ -16041,14 +16041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf",
-      "content_hash": "d43e03a6b461a048966d3005217c353fe2b415025a704db8c352e772f7b364b9",
-      "verified_at": "2026-10-25T05:58:58.294Z",
+      "content_hash": "32bd1693c4a6a25e8ccad3abde7e8d5e804804184cfe18d279d0978062796612",
+      "verified_at": "2026-10-28T02:34:03.671Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T05:58:58.294Z"
+      "last_updated": "2026-10-28T02:34:03.671Z"
     },
     "makecindy/cindy": {
       "repository": "makecindy/cindy",

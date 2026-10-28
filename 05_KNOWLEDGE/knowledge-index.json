@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T02:27:24.755Z",
+  "last_updated": "2026-10-28T02:34:08.716Z",
   "total_verified_learnings": 1154,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6651,8 +6651,8 @@
       "slug": "clickhouse-clickhouse",
       "platform": "github",
       "source_url": "https://github.com/ClickHouse/ClickHouse",
-      "source_version": "d491ad88",
-      "content_hash": "4a442519d897f584d35ad8356f6b3e2b01e37acceef65683607327e15c208509",
+      "source_version": "b4fae473",
+      "content_hash": "17245f320a993426351f647356fb7c634ef76e4ba285f737ebace42e5b4d4ded",
       "dossier_path": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "promoted_rules": [
@@ -6705,6 +6705,11 @@
           "number": 4798,
           "title": "Merge pull request #116619 from groeneai/fix-executable-pool-slot-leak-on-spawn-",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5134,
+          "title": "Merge pull request #126486 from fallintoplace/fix/parse-datetime-day-digits-1264",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6712,7 +6717,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:22:24.440Z",
+      "verified_at": "2026-10-28T02:34:08.703Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -76692,15 +76697,15 @@
       "learning_id": "rule-870",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 870,
-      "title": "Model Artifact Integrity & Provenance Verification (Harvested from orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Model Artifact Integrity & Provenance Verification",
+      "source_url": "https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+      "source_version": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.815Z"
+      "verified_at": "2026-10-28T02:34:03.587Z"
     },
     "rule-871": {
       "learning_id": "rule-871",
@@ -123940,13 +123945,18 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
       "source_version": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
-      "content_hash": "d43e03a6b461a048966d3005217c353fe2b415025a704db8c352e772f7b364b9",
+      "content_hash": "32bd1693c4a6a25e8ccad3abde7e8d5e804804184cfe18d279d0978062796612",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings.md",
       "promoted_rules": [
         {
           "number": 618,
           "title": "Binary Artifact Integrity & Metadata Consistency Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 870,
+          "title": "Model Artifact Integrity & Provenance Verification",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
@@ -123958,6 +123968,16 @@
           "number": 4093,
           "title": "Abliterated Model Safety Boundary Enforcement",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5132,
+          "title": "Quantization-Aware Inference Budgeting",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5133,
+          "title": "Safe Handling of \"Abliterated\" Model Outputs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -123965,7 +123985,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T05:58:58.227Z",
+      "verified_at": "2026-10-28T02:34:03.587Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -140899,6 +140919,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T02:27:24.741Z"
+    },
+    "rule-5132": {
+      "learning_id": "rule-5132",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5132,
+      "title": "Quantization-Aware Inference Budgeting",
+      "source_url": "https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+      "source_version": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:34:03.587Z"
+    },
+    "rule-5133": {
+      "learning_id": "rule-5133",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5133,
+      "title": "Safe Handling of \"Abliterated\" Model Outputs",
+      "source_url": "https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+      "source_version": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:34:03.587Z"
+    },
+    "rule-5134": {
+      "learning_id": "rule-5134",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5134,
+      "title": "Merge pull request #126486 from fallintoplace/fix/parse-datetime-day-digits-1264",
+      "source_url": "https://github.com/ClickHouse/ClickHouse",
+      "source_version": "b4fae473",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:34:08.703Z"
     }
   },
   "aliases": {

@@ -5661,3 +5661,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-10-28T02:27:17.813Z |
 | `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `a1fe8122` | Multi-dimensional audit evidence | 2026-10-28T02:27:19.568Z |
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `0505d348` | Multi-dimensional audit evidence | 2026-10-28T02:27:24.819Z |
+| `learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf` | `https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-28T02:34:03.663Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `b4fae473` | Multi-dimensional audit evidence | 2026-10-28T02:34:08.777Z |

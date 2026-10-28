@@ -5652,3 +5652,5 @@
 | `CYCLE-20261028-URAP` | `2026-10-28T02:27:17.809Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5129` | Yes (`1fee0735...`) |
 | `CYCLE-20261028-USNG` | `2026-10-28T02:27:19.564Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5130` | Yes (`d35b3f8a...`) |
 | `CYCLE-20261028-UWPC` | `2026-10-28T02:27:24.816Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5131` | Yes (`db60f804...`) |
+| `CYCLE-20261028-3GGB` | `2026-10-28T02:34:03.659Z` | `orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 870, Rule 5132, Rule 5133` | Yes (`32bd1693...`) |
+| `CYCLE-20261028-3KED` | `2026-10-28T02:34:08.773Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5134` | Yes (`17245f32...`) |

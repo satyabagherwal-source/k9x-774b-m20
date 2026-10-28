@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source**: github ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
-> **Source Version**: `d491ad88`  
+> **Source Version**: `b4fae473`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T13:22:24.028Z  
+> **Timestamp**: 2026-10-28T02:34:08.366Z  
 > **Learning ID**: `learn-github-clickhouse-clickhouse`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T13:22:23.593Z  
+> **Harvest Timestamp**: 2026-10-28T02:34:08.134Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ClickHouse® is a real-time analytics database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 50632 stars
+- **Stars / Engagement**: 50635 stars
 
 ---
 
@@ -1338,449 +1338,75 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `66543afe` (2026-10-27)
-**Commit Message**: Merge pull request #116619 from groeneai/fix-executable-pool-slot-leak-on-spawn-error
+### Incident Patch 1: `fc4f18f8` (2026-10-27)
+**Commit Message**: Merge pull request #126486 from fallintoplace/fix/parse-datetime-day-digits-126438
 
-Fix leaked executable_pool slots and orphaned child processes on command startup failure
+Fix(DateTime): Reject non-digit input for parseDateTime %d
 
-**File**: `src/Common/ShellCommand.cpp` (modified, +25/-22)
+**File**: `src/Functions/parseDateTime.cpp` (modified, +1/-1)
 ```diff
-@@ -66,11 +66,10 @@ namespace ErrorCodes
-     extern const int BAD_ARGUMENTS;
- }
- 
--ShellCommand::ShellCommand(pid_t pid_, int & in_fd_, int & out_fd_, int & err_fd_, const ShellCommand::Config & config_)
-+ShellCommand::ShellCommand(int & in_fd_, int & out_fd_, int & err_fd_, const ShellCommand::Config & config_)
-     : in(in_fd_)
-     , out(out_fd_)
-     , err(err_fd_)
--    , pid(pid_)
-     , config(config_)
- {
- }
-@@ -99,6 +98,9 @@ UInt64 ShellCommand::remainingTerminationTimeoutMs()
- 
- ShellCommand::~ShellCommand()
- {
-+    if (pid == -1)
-+        return;
-+
-     if (do_not_terminate)
-         return;
- 
-@@ -240,6 +242,26 @@ std::unique_ptr<ShellCommand> ShellCommand::executeImpl(
-             fds->tryIncreaseSize(pipe_capacity);
-     }
- 
-+    std::unique_ptr<ShellCommand> res(new ShellCommand(
-+        pipe_stdin.fds_rw[1],
-+        pipe_stdout.fds_rw[0],
-+        pipe_stderr.fds_rw[0],
-+        config));
-+
-+    for (size_t i = 0; i < config.read_fds.size(); ++i)
-+    {
-+        auto & fds = *read_pipe_fds[i];
-+        auto fd = config.read_fds[i];
-+        res->read_fds.emplace(fd, fds.fds_rw[0]);
-+    }
-+
-+    for (size_t i = 0; i < config.write_fds.size(); ++i)
-+    {
-+        auto & fds = *write_pipe_fds[i];
-+        auto fd = config.write_fds[i];
-+        res->write_fds.emplace(fd, fds.fds_rw[1]);
-+    }
-+
-     pid_t pid = reinterpret_cast<pid_t(*)()>(real_vfork)();
- 
-     if (pid == -1)
-@@ -296,30 +318,11 @@ std::unique_ptr<ShellCommand> ShellCommand::executeImpl(
-         _exit(static_cast<int>(ReturnCodes::CANNOT_EXEC));
-     }
- 
--    std::unique_ptr<ShellCommand> res(new ShellCommand(
--        pid,
--        pipe_stdin.fds_rw[1],
--        pipe_stdout.fds_rw[0],
--        pipe_stderr.fds_rw[0],
--        config));
-+    res->pid = pid;
- 
-     if (config.register_in_udf_process_registry)
-         res->udf_registry_generation = UDFProcessRegistry::instance().add(pid);
- 
--    for (size_t i = 0; i < config.read_fds.size(); ++i)
--    {
--        auto & fds = *read_pipe_fds[i];
--        auto fd = config.read_fds[i];
--        res->read_fds.emplace(fd, fds.fds_rw[0]);
--    }
--
--    for (size_t i = 0; i < config.write_fds.size(); ++i)
--    {
--        auto & fds = *write_pipe_fds[i];
--        auto fd = config.write_fds[i];
--        res->write_fds.emplace(fd, fds.fds_rw[1]);
--    }
--
-     LOG_TRACE(
-         getLogger(),
-         "Started shell command '{}' with pid {} and file descriptors: out {}, err {}",
-```
-
-**File**: `src/Common/ShellCommand.h` (modified, +2/-2)
-```diff
-@@ -139,7 +139,7 @@ class ShellCommand final
-     std::unordered_map<int, WriteBufferFromFile> write_fds;
- private:
- 
--    pid_t pid;
-+    pid_t pid = -1;
-     Config config;
-     bool wait_called = false;
-     bool do_not_terminate = false;
-@@ -168,7 +168,7 @@ class ShellCommand final
-     /// deadline has passed, so both wait paths stop at one shared budget.
-     UInt64 remainingTerminationTimeoutMs();
- 
--    ShellCommand(pid_t pid_, int & in_fd_, int & out_fd_, int & err_fd_, const Config & config);
-+    ShellCommand(int & in_fd_, int & out_fd_, int & err_fd_, const Config & config);
- 
-     bool tryWaitProcessWithTimeout(size_t timeout_in_seconds);
-     struct tryWaitResult;
-```
-
-**File**: `src/Processors/Sources/ShellCommandSource.cpp` (modified, +41/-18)
-```diff
-@@ -11,6 +11,8 @@
- #include <Common/setThreadName.h>
- #include <Common/ThreadGroupSwitcher.h>
- #include <Common/ErrnoException.h>
-+#include <Common/LockMemoryExceptionInThread.h>
-+#include <Common/scope_guard_safe.h>
- 
- #include <IO/WriteHelpers.h>
- #include <IO/ReadHelpers.h>
-@@ -510,27 +512,29 @@ namespace
-             , command(std::move(command_))
-             , configuration(configuration_)
-             , timeout_command_out(command->out.getFD(), command->err.getFD(), command_read_timeout_milliseconds, stderr_reaction, configuration_.sampler.get())
--            , command_holder(std::move(command_holder_))
-             , process_pool(process_pool_)
-             , check_exit_code(check_exit_code_)
-         {
--            auto context_for_reading = Context::createCopy(context);
--            /// Currently parallel parsing input format cannot read exactly max_block_size rows from input,
--            /// so it will be blocked on ReadBufferFromFileDescriptor because this file descriptor represent pipe that does not have eof.
--            if (configuration.read_fixed_number_of_rows)
--                context_for_reading->setSetting("input_format_parallel_parsing", false);
--            /// Here header auto detection can only cause troubles, since if it
--            /// will find "header" the number of input and output rows will not
--            /// match.
--            context_for_reading->setSetting("input_format_csv_detect_header", false);
--            context_for_reading->setSetting("input_format_tsv_detect_header", false);
--            context_for_reading->setSetting("input_format_custom_detect_header", false);
--            context = context_for_reading;
--
--            auto thread_group = CurrentThread::getGroup();
--
-             try
+@@ -1128,7 +1128,7 @@ namespace
+             static PosOrError mysqlDayOfMonth(Pos cur, Pos end, const String & fragment, ParsedValue<error_handling, return_type> & parsed_value)
              {
-+                /// Not in the initializer list: if a member throws, the caller still owns the holder and returns it.
-+                command_holder = std::move(command_holder_);
-+
-+                auto context_for_reading = Context::createCopy(context);
-+                /// Currently parallel parsing input format cannot read exactly max_block_size rows from input,
-+                /// so it will be blocked on ReadBufferFromFileDescriptor because this file descriptor represent pipe that does not have eof.
-+                if (configuration.read_fixed_number_of_rows)
-+                    context_for_reading->setSetting("input_format_parallel_parsing", false);
-+                /// Here header auto detection can only cause troubles, since if it
-+                /// will find "header" the number of input and output rows will not
-+                /// match.
-+                context_for_reading->setSetting("input_format_csv_detect_header", false);
-+                context_for_reading->setSetting("input_format_tsv_detect_header", false);
-+                context_for_reading->setSetting("input_format_custom_detect_header", false);
-+                context = context_for_reading;
-+
-+                auto thread_group = CurrentThread::getGroup();
-+
-                 for (auto && send_data_task : send_data_tasks)
-                 {
-                     send_data_threads.emplace_back([thread_group, task = std::move(send_data_task), this]() mutable
-@@ -657,10 +661,21 @@ namespace
-             {
-                 bool valid_command = configuration.read_fixed_number_of_rows && current_read_rows >= configuration.number_of_rows_to_read;
- 
-+                LockMemoryExceptionInThread lock_memory_tracker(VariableContext::Global);
-+
-+                /// A worker that will not be reused is reaped before its slot is published.
-                 if (command && valid_command)
-                     command_holder->returnCommand(std::move(command));
--
--                process_pool->returnObject(std::move(command_holder));
-+                else
-+                    command = nullptr;
-+                try
-+                {
-+                    process_pool->returnObject(std::move(command_holder));
-+                }
-+                catch (...)
-+                {
-+                    tryLogCurrentException("ShellCommandSource");
-+                }
+                 Int32 day_of_month = 0;
+-                ASSIGN_RESULT_OR_RETURN_ERROR(cur, (readNumber2<Int32, NeedCheckSpace::Yes>(cur, end, fragment, day_of_month)))
++                ASSIGN_RESULT_OR_RETURN_ERROR(cur, readDayOfMonthNumber(cur, end, fragment, day_of_month))
+                 RETURN_ERROR_IF_FAILED(parsed_value.setDayOfMonth(day_of_month))
+                 return cur;
              }
-         }
- 
-@@ -844,6 +859,14 @@ Pipe ShellCommandSourceCoordinator::createPipe(
-     std::unique_ptr<ShellCommand> process;
-     std::unique_ptr<ShellCommandHolder> process_holder;
- 
-+    SCOPE_EXIT_SAFE({
-+        if (process_holder && process_pool)
-+        {
-+            process.reset();
-+            process_pool->returnObject(std::move(process_holder));
-+        }
-+    });
-+
-     auto destructor_strategy = ShellCommand::DestructorStrategy{true /*terminate_in_destructor*/, SIGTERM, configuration.command_termination_timeout_seconds};
-     command_config.terminate_in_destructor_strategy = destructor_strategy;
- 
 ```
 
-**File**: `tests/queries/0_stateless/05046_executable_pool_slot_leak_on_spawn_error.reference` (added, +2/-0)
+**File**: `tests/queries/0_stateless/04120_parseDateTime_format_specifiers.reference` (modified, +7/-0)
 ```diff
-@@ -0,0 +1,2 @@
-+first call failed as expected
-+Pipe capacity 2147483648 exceeds maximum supported value
+@@ -45,6 +45,13 @@
+ 2024-11-02 00:00:00
+ 2024-11-06 00:00:00.000000
+ 2024-11-02 00:00:00.000000
++--- mysqlDayOfMonth: %d requires two digits ---
++2024-11-06 10:00:00
++2024-11-06 10:00:00
++1
++1
++1
++1
+ --- 12-hour format: %h / %I + %p ---
+ 1970-01-01 23:30:00
+ 1970-01-01 11:30:00
 ```
 
-**File**: `tests/queries/0_stateless/05046_executable_pool_slot_leak_on_spawn_error.sh` (added, +58/-0)
+**File**: `tests/queries/0_stateless/04120_parseDateTime_format_specifiers.sql` (modified, +15/-0)
 ```diff
-@@ -0,0 +1,58 @@
-+#!/usr/bin/env bash
-+# An executable_pool worker whose process fails to start must not cost the pool a slot.
-+# The function below is configured with a pipe capacity that is out of range, so every
-+# attempt to start a worker fails. With a pool of one, the second call must still report
-+# that configuration error instead of waiting for a worker the pool can no longer create.
-+# Both calls have to run in one clickhouse-local process, because a fresh process gets a
-+# fresh pool.
-+
-+CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-+# shellcheck source=../shell_config.sh
-+. "$CUR_DIR"/../shell_config.sh
-+
-+WORK_DIR=$(mktemp -d "${CLICKHOUSE_TMP}/exec_pool_slot_leak_XXXXXX")
-+trap 'rm -rf "${WORK_DIR}"' EXIT
-+
-+cat > "${WORK_DIR}/echo_udf.sh" << 'SCRIPT'
-+#!/usr/bin/env bash
-+while IFS= read -r x; do printf '%s\n' "$x"; done
-+SCRIPT
-+chmod +x "${WORK_DIR}/echo_udf.sh"
-+
-+cat > "${WORK_DIR}/udf.xml" << EOF
-+<functions>
-+    <function>
-+        <type>executable_pool</type>
-+        <name>leak_udf</name>
-+        <return_type>UInt64</return_type>
-+        <argument><type>UInt64</type></argument>
-+        <format>TabSeparated</format>
-+        <command>echo_udf.sh</command>
-+        <execute_direct>1</execute_direct>
-+        <pool_size>1</pool_size>
-+        <max_command_execution_time>1</max_command_execution_time>
-+        <command_pipe_capacity>2147483648</command_pipe_capacity>
-+    </function>
-+</functions>
-+EOF
-+
-+cat > "${WORK_DIR}/config.xml" << EOF
-+<clickhouse>
-+    <user_scripts_path>${WORK_DIR}/</user_scripts_path>
-+    <user_defined_executable_functions_config>${WORK_DIR}/udf.xml</user_defined_executable_functions_config>
-+</clickhouse>
-+EOF
-+
-+# The last statement is deliberately not annotated so that its error reaches stderr.
-+cat > "${WORK_DIR}/queries.sql" << 'EOF'
-+SELECT leak_udf(1); -- { serverError UDF_EXECUTION_FAILED }
-+SELECT 'first call failed as expected';
-+SELECT leak_udf(2);
-+EOF
-+
-+$CLICKHOUSE_LOCAL --config-file="${WORK_DIR}/config.xml" --queries-file="${WORK_DIR}/queries.sql" \
-+    < /dev/null > "${WORK_DIR}/out.txt" 2> "${WORK_DIR}/err.txt"
-+
-+cat "${WORK_DIR}/out.txt"
-+grep -oE 'Pipe capacity [0-9]+ exceeds maximum supported value|Could not get process from pool' \
-+    "${WORK_DIR}/err.txt" | tail -1
-```
-
----
-
-### Incident Patch 2: `ff013fec` (2026-10-26)
-**Commit Message**: Merge pull request #127781 from groeneai/fix-flaky-05218-text-index-columns-cache
-
-Fix flaky test `05218_text_index_substreams_opened_lazily` with the columns cache
-
-**File**: `tests/queries/0_stateless/05218_text_index_substreams_opened_lazily.sh` (modified, +3/-1)
-```diff
-@@ -35,7 +35,9 @@ for i in $(seq 1 $PARTS); do
-         FROM numbers(8)"
- done
+@@ -94,6 +94,21 @@ SELECT parseDateTime64('2024-11-0:', '%F', 'UTC'); -- { serverError CANNOT_PARSE
+ SELECT parseDateTime64('11/02/24', '%D', 'UTC');
+ SELECT parseDateTime64('11/0:/24', '%D', 'UTC'); -- { serverError CANNOT_PARSE_DATETIME }
  
--SETTINGS_COMMON="use_query_condition_cache = 0, use_query_cache = 0, use_text_index_negative_tokens_cache = 1,
-+# use_columns_cache = 0: a column served from the columns cache opens no data file, which blinds the FileOpen counts.
-+SETTINGS_COMMON="use_query_condition_cache = 0, use_query_cache = 0, use_columns_cache = 0,
-+    use_text_index_negative_tokens_cache = 1,
-     use_skip_indexes = 1, use_skip_indexes_on_data_read = 1, load_marks_asynchronously = 0,
-     enable_parallel_replicas = 0, max_threads = 1"
- 
-```
-
----
-
-### Incident Patch 3: `bb4f6365` (2026-10-26)
-**Commit Message**: Merge pull request #127819 from oleg-milanov/fix-obfuscate-datetime-uint32-edge-days
-
-Keep the date of `DateTime` in `obfuscate` on the first and last days of its range
-
-**File**: `src/Common/Obfuscator/Models.h` (modified, +34/-24)
-```diff
-@@ -564,6 +564,31 @@ static Int64 makeDateTimeOnDayOf(const DateLUTImpl & date_lut, Int64 time, UInt8
-     return res;
- }
- 
-+/// The obfuscated `value` of a type with the range [`min`, `max`], in units of 1 / `scale_multiplier` seconds,
-+/// kept on the local day of the source value `src_value`, whose whole seconds are `src_whole`.
-+/// At the ends of the range of the type, the source local day can be representable only in part, e.g. `1970-01-01`
-+/// in `DateTime('Asia/Tokyo')` or `2262-04-12` in `DateTime64(9, 'Pacific/Kiritimati')`, and the obfuscated time of
-+/// day can fall outside of this part. Fold the value into the representable part of the source day. The range is
-+/// extended to contain the source value, so it is never empty, even for a value outside of the date lookup table.
-+static Int128 foldIntoRepresentablePartOfDay(
-+    const DateLUTImpl & date_lut, Int128 value, Int64 src_whole, Int128 src_value, Int64 scale_multiplier, Int128 min, Int128 max)
-+{
-+    if (value >= min && value <= max)
-+        return value;
++SELECT '--- mysqlDayOfMonth: %d requires two digits ---';
++SELECT parseDateTime('2024-11-06 10:00:00', '%Y-%m-%d %H:%i:%s', 'UTC');
++SELECT parseDateTime('2024-11-6 10:00:00', '%Y-%m-%d %H:%i:%s', 'UTC'); -- { serverError CANNOT_PARSE_DATETIME }
++SELECT parseDateTime('2024-11-0: 10:00:00', '%Y-%m-%d %H:%i:%s', 'UTC'); -- { serverError CANNOT_PARSE_DATETIME }
++SELECT parseDateTime('2024-11-/6 10:00:00', '%Y-%m-%d %H:%i:%s', 'UTC'); -- { serverError CANNOT_PARSE_DATETIME }
++SELECT parseDateTime('', '%d', 'UTC'); -- { serverError CANNOT_PARSE_DATETIME }
++SELECT parseDateTime('6', '%d', 'UTC'); -- { serverError CANNOT_PARSE_DATETIME }
++SELECT parseDateTime('a6', '%d', 'UTC'); -- { serverError CANNOT_PARSE_DATETIME }
++SELECT parseDateTime('6a', '%d', 'UTC'); -- { serverError CANNOT_PARSE_DATETIME }
++SELECT parseDateTime('2024-11-6 10:00:00', '%Y-%m-%e %H:%i:%s', 'UTC') SETTINGS parsedatetime_e_requires_space_padding = 0;
++SELECT isNull(parseDateTimeOrNull('2024-11-6 10:00:00', '%Y-%m-%d %H:%i:%s', 'UTC'));
++SELECT parseDateTimeOrZero('2024-11-6 10:00:00', '%Y-%m-%d %H:%i:%s', 'UTC') = toDateTime('1970-01-01', 'UTC');
++SELECT isNull(parseDateTime64OrNull('2024-11-0: 10:00:00', '%Y-%m-%d %H:%i:%s', 'UTC'));
++SELECT parseDateTime64OrZero('2024-11-0: 10:00:00', '%Y-%m-%d %H:%i:%s', 'UTC') = toDateTime64('1970-01-01 00:00:00', 6, 'UTC');
 +
-+    Int128 day_begin = Int128(makeDateTimeOnDayOf(date_lut, src_whole, 0, 0, 0)) * scale_multiplier;
-+    Int128 day_end = (Int128(makeDateTimeOnDayOf(date_lut, src_whole, 23, 59, 59)) + 1) * scale_multiplier - 1;
-+
-+    Int128 range_begin = std::min<Int128>(std::max<Int128>(day_begin, min), src_value);
-+    Int128 range_end = std::max<Int128>(std::min<Int128>(day_end, max), src_value);
-+    Int128 range_size = range_end - range_begin + 1;
-+
-+    Int128 offset = (value - range_begin) % range_size;
-+    if (offset < 0)
-+        offset += range_size;
-+    return range_begin + offset;
-+}
-+
- 
- /// Leave date part as is and apply pseudorandom permutation to time difference with previous value within the same log2 class.
- class DateTimeModel : public IModel
-@@ -604,12 +629,15 @@ class DateTimeModel : public IModel
-             /// time of `new_datetime` keeps it inside the source local day even across DST transitions,
-             /// where day lengths differ from 24 hours and a raw "seconds since midnight" offset added to
-             /// the source midnight could otherwise spill onto a neighbouring displayed date.
--            res_data[i] = static_cast<UInt32>(makeDateTimeOnDayOf(
-+            const Int64 res_datetime = makeDateTimeOnDayOf(
-                 date_lut,
-                 src_datetime,
-                 static_cast<UInt8>(date_lut.toHour(new_datetime)),
-                 static_cast<UInt8>(date_lut.toMinute(new_datetime)),
--                static_cast<UInt8>(date_lut.toSecond(new_datetime))));
-+                static_cast<UInt8>(date_lut.toSecond(new_datetime)));
-+
-+            res_data[i] = static_cast<UInt32>(foldIntoRepresentablePartOfDay(
-+                date_lut, res_datetime, src_datetime, src_datetime, 1, 0, std::numeric_limits<UInt32>::max()));
- 
-             src_prev_value = src_datetime;
-             res_prev_value = res_data[i];
-@@ -688,29 +716,11 @@ class DateTime64Model : public IModel
-                 res_fraction = transform(res_fraction, seed);
-             while (res_fraction >= static_cast<UInt64>(scale_multiplier));
- 
--            Int128 res_value = Int128(res_whole) * scale_multiplier + Int128(res_fraction);
--
--            /// At the ends of the range of `Int64`, the source local day can be representable only in part,
--            /// e.g. `2262-04-12` in `DateTime64(9, 'Pacific/Kiritimati')`, and the obfuscated time of day can
--            /// fall outside of this part. Fold the value into the representable part of the source day.
--            /// The range is extended to contain the source value, so it is never empty, even for a value
--            /// outside of the date lookup table.
--            if (res_value < std::numeric_limits<Int64>::min() || res_value > std::numeric_limits<Int64>::max())
--            {
--                Int128 day_begin = Int128(makeDateTimeOnDayOf(date_lut, src_whole, 0, 0, 0)) * scale_multiplier;
--                Int128 day_end = (Int128(makeDateTimeOnDayOf(date_lut, src_whole, 23, 59, 59)) + 1) * scale_multiplier - 1;
--
--                Int128 range_begin = std::min<Int128>(std::max<Int128>(day_begin, std::numeric_limits<Int64>::min()), src_value);
--                Int128 range_end = std::max<Int128>(std::min<Int128>(day_end, std::numeric_limits<Int64>::max()), src_value);
--                Int128 range_size = range_end - range_begin + 1;
--
--                Int128 offset = (res_value - range_begin) % range_size;
--                if (offset < 0)
--                    offset += range_size;
--                res_value = range_begin + offset;
--            }
-+            const Int128 res_value = Int128(res_whole) * scale_multiplier + Int128(res_fraction);
- 
--            res_data[i] = static_cast<Int64>(res_value);
-+            res_data[i] = static_cast<Int64>(foldIntoRepresentablePartOfDay(
-+                date_lut, res_value, src_whole, src_value, scale_multiplier,
-+                std::numeric_limits<Int64>::min(), std::numeric_li
-```
-
-**File**: `tests/queries/0_stateless/05452_obfuscate_datetime_uint32_edge_days.reference` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+Asia/Tokyo, first day	['1970-01-01','2000-01-01']
-+America/New_York, first day	['1969-12-31','2000-01-01']
-+UTC, last day	['2000-01-01','2106-02-07']
-+Asia/Tokyo, last day	['2000-01-01','2106-02-07']
-+America/New_York, last day	['2000-01-01','2106-02-07']
-```
-
-**File**: `tests/queries/0_stateless/05452_obfuscate_datetime_uint32_edge_days.sql` (added, +26/-0)
-```diff
-@@ -0,0 +1,26 @@
-+-- `DateTime` holds the instants from 0 to 4294967295. Outside of UTC, the local days of these instants,
-+-- `1970-01-01` in 'Asia/Tokyo' and `1969-12-31` in 'America/New_York', are representable only in part,
-+-- and so is the local day `2106-02-07` of the last instant in every time zone, including UTC.
-+-- `obfuscate` keeps the source date of `DateTime` values on these days, instead of wrapping the obfuscated
-+-- time of day around into another century. The rows on these days alternate with rows on an ordinary day,
-+-- which makes the obfuscated time of day fall anywhere in the day.
-+
-+SET obfuscate_seed = 'seed';
-+SET max_threads = 1;
-+
-+SELECT 'Asia/Tokyo, first day', arraySort(groupUniqArray(toDate32(x))) FROM (SELECT x FROM obfuscate(
-+    SELECT if(number % 2 = 0, toDateTime(0, 'Asia/Tokyo') + toIntervalSecond(number),
-+        toDateTime('2000-01-01 00:00:00', 'Asia/Tokyo') + toIntervalSecond(number * 37)) AS x FROM numbers(2000)) LIMIT 2000);
-+SELECT 'America/New_York, first day', arraySort(groupUniqArray(toDate32(x))) FROM (SELECT x FROM obfuscate(
-+    SELECT if(number % 2 = 0, toDateTime(0, 'America/New_York') + toIntervalSecond(number),
-+        toDateTime('2000-01-01 00:00:00', 'America/New_York') + toIntervalSecond(number * 37)) AS x FROM numbers(2000)) LIMIT 2000);
-+
-+SELECT 'UTC, last day', arraySort(groupUniqArray(toDate32(x))) FROM (SELECT x FROM obfuscate(
-+    SELECT if(number % 2 = 0, toDateTime(4294967295, 'UTC') - toIntervalSecond(number),
-+        toDateTime('2000-01-01 00:00:00', 'UTC') + toIntervalSecond(number * 37)) AS x FROM numbers(2000)) LIMIT 2000);
-+SELECT 'Asia/Tokyo, last day', arraySort(groupUniqArray(toDate32(x))) FROM (SELECT x FROM obfuscate(
-+    SELECT if(number % 2 = 0, toDateTime(4294967295, 'Asia/Tokyo') - toIntervalSecond(number),
-+        toDateTime('2000-01-01 00:00:00', 'Asia/Tokyo') + toIntervalSecond(number * 37)) AS x FROM numbers(2000)) LIMIT 2000);
-+SELECT 'America/New_York, last day', arraySort(groupUniqArray(toDate32(x))) FROM (SELECT x FROM obfuscate(
-+    SELECT if(number % 2 = 0, toDateTime(4294967295, 'America/New_York') - toIntervalSecond(number),
-+        toDateTime('2000-01-01 00:00:00', 'America/New_York') + toIntervalSecond(number * 37)) AS x FROM numbers(2000)) LIMIT 2000);
+ SELECT '--- 12-hour format: %h / %I + %p ---';
+ SELECT parseDateTime('11:30:00 PM', '%h:%i:%s %p', 'UTC');
+ SELECT parseDateTime('11:30:00 AM', '%h:%i:%s %p', 'UTC');
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #127931** (2026-10-27): Backport #123622 to 26.9: Send the query id with OpenAI AI function requests (@robot-ch-test-poll)
-- **PR #127928** (2026-10-27): Docs: regenerate reference documentation from source (@clickhouse-gh[bot])
-- **PR #127918** (closed): Refuse `DETACH DATABASE` of a `MaterializedPostgreSQL` database with tables before stopping its replication (@buggins)
-- **PR #127904** (2026-10-27): Backport #127411 to 26.10: Bump `c-ares` from 1.34.8 to 1.34.9 (@robot-clickhouse-ci-1)
-- **PR #127903** (2026-10-27): Backport #127411 to 26.9: Bump `c-ares` from 1.34.8 to 1.34.9 (@robot-clickhouse-ci-1)
-- **PR #127902** (2026-10-27): Backport #127411 to 26.8: Bump `c-ares` from 1.34.8 to 1.34.9 (@robot-clickhouse-ci-1)
+- **PR #128011** (2026-10-28): Backport #119353 to 26.8: Respect `remote_url_allow_hosts` in the Hive metastore catalog (@robot-ch-test-poll2)
+- **PR #127976** (2026-10-27): Backport #125698 to 26.9: Stop AI functions mid-block on `KILL QUERY` and `max_execution_time` (@robot-ch-test-poll2)
+- **PR #127975** (2026-10-27): Backport #125698 to 26.8: Stop AI functions mid-block on `KILL QUERY` and `max_execution_time` (@robot-ch-test-poll2)
+- **PR #127973** (2026-10-27): Cherry pick #125698 to 26.9: Stop AI functions mid-block on `KILL QUERY` and `max_execution_time` (@robot-clickhouse-ci-1)
+- **PR #127972** (2026-10-27): Cherry pick #125698 to 26.8: Stop AI functions mid-block on `KILL QUERY` and `max_execution_time` (@robot-clickhouse-ci-1)
+- **PR #127970** (2026-10-27): Backport #125510 to 26.10: Do not share line editor state between concurrent embedded client sessions (@robot-clickhouse-ci-2)
 
 ---
 
@@ -1800,73 +1426,28 @@ Keep the date of `DateTime` in `obfuscate` on the first and last days of its ran
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #116619 from groeneai/fix-executable-pool-slot-leak-on-spawn-
+## X. Merge pull request #126486 from fallintoplace/fix/parse-datetime-day-digits-1264
 
 **RULE**:
-When implementing operations in `src/Common/ShellCommand.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/Functions/parseDateTime.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `66543afe`: Merge pull request #116619 from groeneai/fix-executable-pool-slot-leak-on-spawn-error. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fc4f18f8`: Merge pull request #126486 from fallintoplace/fix/parse-datetime-day-digits-126438. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Common/ShellCommand.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Functions/parseDateTime.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-ShellCommand::ShellCommand(int & in_fd_, int & out_fd_, int & err_fd_, const ShellCommand::Config & config_)
-    if (pid == -1)
-        return;
-
-    std::unique_ptr<ShellCommand> res(new ShellCommand(
-        pipe_stdin.fds_rw[1],
-        pipe_stdout.fds_rw[0],
-        pipe_stderr.fds_rw[0],
-        config));
-
-    for (size_t i = 0; i < config.read_fds.size(); ++i)
-    {
-        auto & fds = *read_pipe_fds[i];
-        auto fd = config.read_fds[i];
-        res->read_fds.emplace(fd, fds.fds_rw[0]);
-    }
-
-    for (size_t i = 0; i < config.write_fds.size(); ++i)
-    {
-        auto & fds = *write_pipe_fds[i];
-        auto fd = config.write_fds[i];
-        res->write_fds.emplace(fd, fds.fds_rw[1]);
-    }
-
-    res->pid = pid;
+                ASSIGN_RESULT_OR_RETURN_ERROR(cur, readDayOfMonthNumber(cur, end, fragment, day_of_month))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-ShellCommand::ShellCommand(pid_t pid_, int & in_fd_, int & out_fd_, int & err_fd_, const ShellCommand::Config & config_)
-    , pid(pid_)
-    std::unique_ptr<ShellCommand> res(new ShellCommand(
-        pid,
-        pipe_stdin.fds_rw[1],
-        pipe_stdout.fds_rw[0],
-        pipe_stderr.fds_rw[0],
-        config));
-    for (size_t i = 0; i < config.read_fds.size(); ++i)
-    {
-        auto & fds = *read_pipe_fds[i];
-        auto fd = config.read_fds[i];
-        res->read_fds.emplace(fd, fds.fds_rw[0]);
-    }
-
-    for (size_t i = 0; i < config.write_fds.size(); ++i)
-    {
-        auto & fds = *write_pipe_fds[i];
-        auto fd = config.write_fds[i];
-        res->write_fds.emplace(fd, fds.fds_rw[1]);
-    }
-
+                ASSIGN_RESULT_OR_RETURN_ERROR(cur, (readNumber2<Int32, NeedCheckSpace::Yes>(cur, end, fragment, day_of_month)))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `66543afe` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fc4f18f8` are properly handled with clean fallback behavior.
