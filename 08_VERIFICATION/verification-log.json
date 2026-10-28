@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261026-M43A",
-    "timestamp": "2026-10-26T13:29:04.822Z",
-    "repository": "argoproj/argo-workflows",
-    "learningId": "learn-github-argoproj-argo-workflows",
-    "contentHash": "3f9a20965a59684ae62b3744e0af0cee0846614c0303cf6acfc450a48e7aedbe",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-SKJ3",
-    "timestamp": "2026-10-26T13:34:06.063Z",
-    "repository": "rustls/rustls",
-    "learningId": "learn-github-rustls-rustls",
-    "contentHash": "58ba65b748fdccb083607b9226365fa74cb7b3cf50b1e897703993397ef1f7ea",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-0TYT",
-    "timestamp": "2026-10-26T13:40:31.541Z",
-    "repository": "1jehuang/jcode",
-    "learningId": "learn-github-1jehuang-jcode",
-    "contentHash": "8605e7a25e6552536edcff255dc123c2967af850e8735dbccb0a29b76d82e10f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261026-0ZOR",
     "timestamp": "2026-10-26T13:40:38.955Z",
     "repository": "juicedata/juicefs",
@@ -7492,6 +7447,51 @@
     "contentHash": "3ff07436711e26497f34fe7e46c906392fd3a226a3735f5b5442c50ed0e1938c",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-URAP",
+    "timestamp": "2026-10-28T02:27:17.809Z",
+    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
+    "contentHash": "1fee073545039027bf3cc84763c23f454bf8539c9ca7b5904e276019787907c6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-USNG",
+    "timestamp": "2026-10-28T02:27:19.564Z",
+    "repository": "koderover/zadig",
+    "learningId": "learn-github-koderover-zadig",
+    "contentHash": "d35b3f8a900d303e950b53745ce35a3bb52128b621a8402e38a692e00c67cd78",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-UWPC",
+    "timestamp": "2026-10-28T02:27:24.816Z",
+    "repository": "RediSearch/RediSearch",
+    "learningId": "learn-github-redisearch-redisearch",
+    "contentHash": "db60f804f64cb48b3be2d2b5f334e9962a76a7ac7949ae0d31ca0bbcc53a101c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

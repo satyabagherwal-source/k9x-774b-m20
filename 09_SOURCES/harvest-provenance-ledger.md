@@ -5658,3 +5658,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-convaiinnovations-laya` | `https://huggingface.co/convaiinnovations/laya` | `hf-convaii` | Multi-dimensional audit evidence | 2026-10-28T02:13:18.409Z |
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `c62077e5` | Multi-dimensional audit evidence | 2026-10-28T02:20:23.265Z |
 | `learn-huggingface-edge0-audio8-asr-infinite` | `https://huggingface.co/Edge0/Audio8-ASR-Infinite` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-10-28T02:20:40.190Z |
+| `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-10-28T02:27:17.813Z |
+| `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `a1fe8122` | Multi-dimensional audit evidence | 2026-10-28T02:27:19.568Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `0505d348` | Multi-dimensional audit evidence | 2026-10-28T02:27:24.819Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source**: github ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
-> **Source Version**: `f787c19f`  
+> **Source Version**: `0505d348`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T13:18:07.503Z  
+> **Timestamp**: 2026-10-28T02:27:24.389Z  
 > **Learning ID**: `learn-github-redisearch-redisearch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T13:18:06.327Z  
+> **Harvest Timestamp**: 2026-10-28T02:27:24.067Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1626,374 +1626,287 @@ void Priority_Queue_Free(PriorityQueue *pq) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d7ce5386` (2026-10-26)
-**Commit Message**: [MOD-16899] Use FAIL timeout policy in COLLECT benchmarks (#12001)
+### Incident Patch 1: `0505d348` (2026-10-27)
+**Commit Message**: Speed up copying aggregate index results (#12004)
 
-* [MOD-16899] Use RETURN-STRICT in COLLECT benchmarks
+* top_k_bencher: Bench capturing child term records
 
-* [MOD-16899] Remove redundant benchmark comments
+The existing top-k iterator benches use IdList children, whose virtual
+records carry no terms, so none measures the cost of capturing a child
+record holding term records. Add iterator/captured_terms, which runs the
+batches path over an intersection of term-yielding leaves, both when only
+the first k matches are captured and when every match is.
 
-* [MOD-16899] Fail COLLECT benchmark queries on timeout
+* index_result: Box aggregate children as they are copied
 
-**File**: `tests/benchmarks/search-groupby-collect-10K-entity-events-hash-cached-sortby-fields-explicit-k50.yml` (modified, +2/-0)
+RSAggregateResult::to_owned built each child copy and boxed it in a
+separate map step. Box each copy in the closure that builds it instead:
+it makes capturing every match in the top-k iterator/captured_terms bench
+3% to 10% faster, about 3 to 5 ns per copied child.
+
+**File**: `src/redisearch_rs/Cargo.lock` (modified, +4/-0)
 ```diff
-@@ -18,6 +18,8 @@ setups:
- dbconfig:
-   - dataset_name: "groupby-collect-entity-events-10K-heavy-hash"
-   - dataset_load_timeout_secs: 1800
-+  - configuration-parameters:
-+    - search-on-timeout: "FAIL"
-   - init_commands:
-     - '"CONFIG" "SET" "search-enable-unstable-features" "yes"'
-     - '"FT.CREATE" "idx:entity_events" "ON" "HASH" "PREFIX" "1" "entity:" "SCHEMA" "recordId" "NUMERIC" "SORTABLE" "entityName" "TEXT" "SORTABLE" "event_id" "AS" "eventId" "NUMERIC" "SORTABLE" "event_type" "AS" "type" "TAG" "event_target" "AS" "target" "TAG" "SORTABLE" "event_hasNotes" "AS" "hasNotes" "TAG" "event_processed" "AS" "processed" "TAG" "event_dueDate" "AS" "dueDate" "TEXT" "SORTABLE" "event_payload" "AS" "payload" "TEXT" "NOINDEX"'
+@@ -3339,9 +3339,13 @@ dependencies = [
+  "bindgen",
+  "build_utils",
+  "criterion",
++ "index_result",
++ "index_spec",
+  "rand 0.10.1",
+  "redis_mock",
+  "redisearch_rs",
++ "rqe_core",
++ "rqe_iterator_type",
+  "rqe_iterators",
+  "top_k",
+  "workspace_hack",
 ```
 
-**File**: `tests/benchmarks/search-groupby-collect-10K-entity-events-hash-cached-sortby-fields-star-offset500-k50.yml` (modified, +2/-0)
+**File**: `src/redisearch_rs/index_result/src/aggregate.rs` (modified, +2/-4)
 ```diff
-@@ -18,6 +18,8 @@ setups:
- dbconfig:
-   - dataset_name: "groupby-collect-entity-events-10K-heavy-hash"
-   - dataset_load_timeout_secs: 1800
-+  - configuration-parameters:
-+    - search-on-timeout: "FAIL"
-   - init_commands:
-     - '"CONFIG" "SET" "search-enable-unstable-features" "yes"'
-     - '"FT.CREATE" "idx:entity_events" "ON" "HASH" "PREFIX" "1" "entity:" "SCHEMA" "recordId" "NUMERIC" "SORTABLE" "entityName" "TEXT" "SORTABLE" "event_id" "AS" "eventId" "NUMERIC" "SORTABLE" "event_type" "AS" "type" "TAG" "event_target" "AS" "target" "TAG" "SORTABLE" "event_hasNotes" "AS" "hasNotes" "TAG" "event_processed" "AS" "processed" "TAG" "event_dueDate" "AS" "dueDate" "TEXT" "SORTABLE" "event_payload" "AS" "payload" "TEXT" "NOINDEX"'
+@@ -235,8 +235,7 @@ impl<'a> RSBorrowedAggregateResult<'a> {
+         records.extend(
+             self.records
+                 .iter()
+-                .map(|c| RSIndexResult::to_owned(c.get()))
+-                .map(Box::new),
++                .map(|c| Box::new(RSIndexResult::to_owned(c.get()))),
+         );
+ 
+         RSOwnedAggregateResult {
+@@ -352,8 +351,7 @@ impl<'a> RSOwnedAggregateResult<'a> {
+         records.extend(
+             self.records
+                 .iter()
+-                .map(|c| RSIndexResult::to_owned(c))
+-                .map(Box::new),
++                .map(|c| Box::new(RSIndexResult::to_owned(c))),
+         );
+ 
+         RSOwnedAggregateResult {
 ```
 
-**File**: `tests/benchmarks/search-groupby-collect-10K-entity-events-json-cached-sortby-fields-explicit-k50.yml` (modified, +2/-0)
+**File**: `src/redisearch_rs/top_k_bencher/Cargo.toml` (modified, +4/-0)
 ```diff
-@@ -18,6 +18,8 @@ setups:
- dbconfig:
-   - dataset_name: "groupby-collect-entity-events-10K-heavy-json"
-   - dataset_load_timeout_secs: 1800
-+  - configuration-parameters:
-+    - search-on-timeout: "FAIL"
-   - init_commands:
-     - '"CONFIG" "SET" "search-enable-unstable-features" "yes"'
-     - '"FT.CREATE" "idx:entity_events" "ON" "JSON" "PREFIX" "1" "entity:" "SCHEMA" "$.recordId" "AS" "recordId" "NUMERIC" "SORTABLE" "$.entityName" "AS" "entityName" "TEXT" "SORTABLE" "$.event.id" "AS" "eventId" "NUMERIC" "SORTABLE" "$.event.type" "AS" "type" "TAG" "$.event.target" "AS" "target" "TAG" "SORTABLE" "$.event.hasNotes" "AS" "hasNotes" "TAG" "$.event.processed" "AS" "processed" "TAG" "$.event.dueDate" "AS" "dueDate" "TEXT" "SORTABLE" "$.event.payload" "AS" "payload" "TEXT" "NOINDEX"'
+@@ -22,8 +22,12 @@ build_utils = { path = "../build_utils" }
+ 
+ [dependencies]
+ criterion.workspace = true
++index_result.workspace = true
++index_spec.workspace = true
+ rand.workspace = true
+ redis_mock.workspace = true
++rqe_core.workspace = true
++rqe_iterator_type.workspace = true
+ rqe_iterators = { workspace = true }
+ top_k = { workspace = true, features = ["test-utils"] }
+ workspace_hack.workspace = true
 ```
 
-**File**: `tests/benchmarks/search-groupby-collect-10K-entity-events-json-cached-sortby-fields-star-offset500-k50.yml` (modified, +2/-0)
+**File**: `src/redisearch_rs/top_k_bencher/benches/top_k.rs` (modified, +147/-1)
 ```diff
-@@ -18,6 +18,8 @@ setups:
- dbconfig:
-   - dataset_name: "groupby-collect-entity-events-10K-heavy-json"
-   - dataset_load_timeout_secs: 1800
-+  - configuration-parameters:
-+    - search-on-timeout: "FAIL"
-   - init_commands:
-     - '"CONFIG" "SET" "search-enable-unstable-features" "yes"'
-     - '"FT.CREATE" "idx:entity_events" "ON" "JSON" "PREFIX" "1" "entity:" "SCHEMA" "$.recordId" "AS" "recordId" "NUMERIC" "SORTABLE" "$.entityName" "AS" "entityName" "TEXT" "SORTABLE" "$.event.id" "AS" "eventId" "NUMERIC" "SORTABLE" "$.event.type" "AS" "type" "TAG" "$.event.target" "AS" "target" "TAG" "SORTABLE" "$.event.hasNotes" "AS" "hasNotes" "TAG" "$.event.processed" "AS" "processed" "TAG" "$.event.dueDate" "AS" "dueDate" "TEXT" "SORTABLE" "$.event.payload" "AS" "payload" "TEXT" "NOINDEX"'
-```
-
----
-
-### Incident Patch 2: `b9cf3364` (2026-10-26)
-**Commit Message**: [MOD-20194] Fix out-of-bounds read when a JSON document's language field is empty (#11973)
-
-* Add tests for RSLanguage_Find length handling and empty JSON language
-
-RSLanguage_Find treats a zero length as "read up to the NUL", so an empty
-JSON LANGUAGE_FIELD value, whose RedisJSON buffer is not NUL-terminated,
-is looked up past its end.
-
-The JSON path-cache mock can now report a length other than strlen, which
-lets JSONPathIndexingTest.emptyLanguageFallsBackToDefault model that
-buffer. It and LanguageTest.testFindZeroLengthIsUnsupported fail until
-the fix lands. The other new cases pass today and pin what the fix must
-keep: length-bounded and NULL lookups, the fallback for an empty JSON
-language on the real RedisJSON path, and LANGUAGE arguments with an
-embedded NUL being read up to that NUL.
-
-* Make RSLanguage_Find length-bounded
-
-RSLanguage_Find treated len == 0 as "the string is NUL-terminated" and
-then scanned the table with strcasecmp. An empty JSON LANGUAGE_FIELD
-value reaches it as (ptr, 0), where ptr comes from RedisJSON's getString
-and points into a buffer that is not NUL-terminated, so strcasecmp read
-past the value.
-
-RSLanguage_Find now always reads exactly len bytes: le
-
-**File**: `src/aggregate/aggregate_request.c` (modified, +1/-1)
-```diff
-@@ -784,7 +784,7 @@ static int parseQueryArgs(ArgsCursor *ac, AREQ *req, RSSearchOptions *searchOpts
-   if(languageStr == NULL) {
-     searchOpts->language = RS_LANG_UNSET;
-   } else {
--    searchOpts->language = RSLanguage_Find(languageStr, 0);
-+    searchOpts->language = RSLanguage_Find(languageStr, strlen(languageStr));
-   }
+@@ -20,8 +20,14 @@ use std::hint::black_box;
+ use std::num::NonZeroUsize;
  
-   if (AC_IsInitialized(&returnFields)) {
-```
-
-**File**: `src/language.c` (modified, +7/-11)
-```diff
-@@ -106,17 +106,13 @@ RSLanguage RSLanguage_Find(const char *language, size_t len) {
-   if (language == NULL)
-     return DEFAULT_LANGUAGE;
+ use criterion::{BatchSize, BenchmarkId, Criterion, criterion_group, criterion_main};
++use index_result::{RSIndexResult, RSOffsetSlice, RSQueryTerm};
++use index_spec::IndexSpecReadGuard;
+ use rand::{SeedableRng as _, seq::SliceRandom as _};
+-use rqe_iterators::RQEIterator;
++use rqe_core::DocId;
++use rqe_iterator_type::IteratorType;
++use rqe_iterators::{
++    IdList, Intersection, RQEIterator, RQEIteratorError, RQEValidateStatus, SkipToOutcome,
++};
+ use top_k::{Ascending, BatchStrategy, TopKHeap, TopKIterator, TopKMode, mock::MockScoreSource};
  
--  if (!len) {
--    for (size_t i = 0; __langPairs[i].str != NULL; i++) {
--      if (!strcasecmp(language, __langPairs[i].str)) {
--        return __langPairs[i].lang;
--      }
--    }
--  } else {
--    for (size_t i = 0; __langPairs[i].str != NULL; i++) {
--      if (STR_EQCASE(language, len, __langPairs[i].str)) {
--        return __langPairs[i].lang;
--      }
-+  if (len == 0) {
-+    return RS_LANG_UNSUPPORTED;
-+  }
-+
-+  for (size_t i = 0; __langPairs[i].str != NULL; i++) {
-+    if (STR_EQCASE(language, len, __langPairs[i].str)) {
-+      return __langPairs[i].lang;
-     }
-   }
-   return RS_LANG_UNSUPPORTED;
-```
-
-**File**: `src/language.h` (modified, +6/-1)
-```diff
-@@ -51,7 +51,12 @@ typedef enum {
- 
- #define DEFAULT_LANGUAGE RS_LANG_ENGLISH
- 
--/* check if a language is supported by our stemmers */
-+/* Look up a supported language by name.
-+ * - Reads exactly `len` bytes of `language`; it need not be NUL-terminated.
-+ * - `len == 0` is the empty string and returns RS_LANG_UNSUPPORTED; pass strlen(s) for a C string.
-+ * - `language == NULL` returns DEFAULT_LANGUAGE.
-+ * - Matches case-insensitively (strncasecmp; ASCII in the C locale) on all `len` bytes;
-+ *   anything else returns RS_LANG_UNSUPPORTED. */
- RSLanguage RSLanguage_Find(const char *language, size_t len);
- const char *RSLanguage_ToString(RSLanguage language);
- 
-```
-
-**File**: `src/rules.c` (modified, +1/-1)
-```diff
-@@ -138,7 +138,7 @@ static SchemaRule *SchemaRule_CreateInternal(SchemaRuleArgs *args, ArgsCursor *p
-   }
- 
-   if (args->lang_default) {
--    RSLanguage lang = RSLanguage_Find(args->lang_default, 0);
-+    RSLanguage lang = RSLanguage_Find(args->lang_default, strlen(args->lang_default));
-     if (lang == RS_LANG_UNSUPPORTED) {
-       QueryError_SetError(status, QUERY_ERROR_CODE_ADD_ARGS, "Invalid language");
-       goto error;
-```
-
-**File**: `tests/cpptests/test_cpp_json_path_cache_indexing.cpp` (modified, +19/-1)
-```diff
-@@ -8,6 +8,7 @@
-  */
- 
- #include "gtest/gtest.h"
-+#include "gtest/internal/gtest-port.h"  // For CaptureStderr/GetCapturedStderr
- #include "document.h"
- #include "indexes.h"
- #include "json.h"
-@@ -16,6 +17,7 @@
- 
- #include <cstring>
- #include <map>
-+#include <optional>
- #include <set>
- #include <string>
- #include <vector>
-@@ -28,6 +30,9 @@ class JSONPathIndexingTest : public ::testing::Test {
-   struct Value {
-     double number = 0;
-     const char *string = nullptr;
-+    // Reported by getString instead of strlen, to model RedisJSON strings, which are not
-+    // NUL-terminated.
-+    std::optional<size_t> length;
-   };
-   using Root = std::map<std::string, Value>;
-   struct Iterator {
-@@ -107,7 +112,7 @@ class JSONPathIndexingTest : public ::testing::Test {
-     auto *value = static_cast<const Value *>(json);
-     if (!value->string) return REDISMODULE_ERR;
-     *out = value->string;
--    *len = strlen(*out);
-+    *len = value->length.value_or(strlen(*out));
-     return REDISMODULE_OK;
-   }
- 
-@@ -235,4 +240,17 @@ TEST_F(JSONPathIndexingTest, languageAndScorePathsAreCompiledAndReused) {
-   EXPECT_EQ(stringGets, 0);
+ // ── Heap benchmarks ───────────────────────────────────────────────────────────
+@@ -237,12 +243,152 @@ fn bench_adhoc_vs_batches(c: &mut Criterion) {
+     group.finish();
  }
  
-+TEST_F(JSONPathIndexingTest, emptyLanguageFallsBackToDefault) {
-+  auto *spec = createSpec({"ON", "JSON", "LANGUAGE", "italian", "LANGUAGE_FIELD", "$.lang",
-+                           "SCHEMA", "$.price", "NUMERIC"});
-+  ASSERT_NE(spec, nullptr);
-+  // An empty value whose pointer is followed by a valid language name: a lookup that reads past
-+  // the reported length finds English instead of falling back to the index default.
-+  Root doc = {{"$.lang", {0, "english", 0}}};
-+  testing::internal::CaptureStderr();
-+  EXPECT_EQ(SchemaRule_JsonLang(ctx, spec->rule, &doc, "doc"), RS_LANG_ITALIAN);
-+  std::string log = testing::internal::GetCapturedStderr();
-+  EXPECT_NE(log.find("invalid language for key doc"), std::string::npos) << log;
++/// Child yielding, for each id of an [`IdList`], a term record owning its query
++/// term, as an inverted index reader does.
++struct TermLeaf<'index> {
++    ids: IdList<'index, true>,
++    result: RSIndexResult<'index>,
 +}
 +
- }  // namespace
-```
-
-**File**: `tests/cpptests/test_cpp_language.cpp` (added, +26/-0)
-```diff
-@@ -0,0 +1,26 @@
-+/*
-+ * Copyright (c) 2006-Present, Redis Ltd.
-+ * All rights reserved.
-+ *
-+ * Licensed under your choice of the Redis Source Available License 2.0
-+ * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
-+ * GNU Affero General Public License v3 (AGPLv3).
-+ */
++impl TermLeaf<'_> {
++    const OFFSETS: &'static [u8] = &[1, 2, 3];
 +
-+#include "gtest/gtest.h"
-+#include "language.h"
-+
-+class LanguageTest : public ::testing::Test {};
-+
-+TEST_F(LanguageTest, testFindZeroLengthIsUnsupported) {
-+  // Zero length is the empty string, even when a valid name follows the pointer.
-+  EXPECT_EQ(RSLanguage_Find("english", 0), RS_LANG_UNSUPPORTED);
++    fn new(ids: Vec<DocId>, term: &str) -> Self {
++        Self {
++            ids: IdList::new(ids),
++            result: RSIndexResult::build_term()
++                .borrowed_record(
++                    Some(RSQueryTerm::new(term, 1, 0)),
++                    RSOffsetSlice::from_slice(Self::OFFSETS),
++                )
++                .build(),
++        }
++    }
 +}
 +
-+TEST_F(LanguageTest, testFindReadsOnlyLenBytes) {
-+  EXPECT_EQ(RSLanguage_Find("englishXXX", 7), RS_LANG_ENGLISH);
++impl<'index> RQEIterator<'index> for TermLeaf<'index> {
++    fn current(&mut self) -> Option<&mut RSIndexResult<'index>> {
++        self.ids.current()?;
++        Some(&mut self.result)
++    }
++
++    fn read(&mut self) -> Result<Option<&mut RSIndexResult<'index>>, RQEIteratorError> {
++        let Some(r) = self.ids.read()? else {
++            return Ok(None);
++        };
++        self.result.doc_id = r.doc_id;
++        Ok(Some(&mut self.result))
++    }
++
++    fn skip_to(
++        &mut self,
++        doc_id: DocId,
++    ) -> Result<Option<SkipToOutcome<'_, 'index>>, RQEIteratorError> {
++        let Some(outcome) = self.ids.skip_to(doc_id)? else {
++            return Ok(None);
++        };
++        let (found, doc_id) = match outcome {
++            SkipToOutcome::Found(r) => (true, r.doc_id),
++            SkipToOutcome::NotFound(r) => (false, r.doc_id),
++        };
++        self.result.doc_id = doc_id;
++        Ok(Some(if found {
++            SkipToOutcome::Found(&mut self.result)
++        } else {
++            SkipToOutcome::NotFound(&mut self.result)
++        }))
++    }
++
++    fn revalidate(
++        &mut self,
++        _: &IndexSpecReadGuard,
++    ) -> Result<RQEValidateStatus<'_, 'index>, RQEIteratorError> {
++        Ok(RQEValidateStatus::Ok)
++    }
++
++    fn rewind(&mut self) {
++        self.ids.rewind();
++    }
++
++    fn num_estimated(&self) -> usize {
++        self.ids.num_estimated()
++    }
++
++    fn last_doc_id(&self) -> DocId {
++        self.ids.last_doc_id()
++    }
++
++    fn at_eof(&self) -> bool {
++        self.ids.at_eof()
++    }
++
++    fn type_(&self) -> IteratorType {
++        IteratorType::Mock
++    }
++
++    fn intersection_sort_weight(&self, _: bool) -> f64 {
++        1.0
++    }
 +}
 +
-+TEST_F(LanguageTest, testFindNullReturnsDefault) {
-+  EXPECT_EQ(RSLanguage_Find(NULL, 0), DEFAULT_LANGUAGE);
-+}
-```
-
-**File**: `tests/pytests/test_language.py` (modified, +51/-0)
-```diff
-@@ -549,6 +549,57 @@ def testJsonIndexLanguageField(env):
-                       'SORTBY', 'word', 'DESC')
-         env.assertEqual(res2, res1)
- 
-+@skip(no_json=True)
-+def testJsonIndexEmptyLanguageField(env):
-+    """An empty JSON language value falls back to the index default language.
++fn bench_captured_term_records(c: &mut Criterion) {
++    // Batches with an untrimmed child yielding term records, as a filtered KNN
++    // whose scorer or highlighter reads the child's terms: each match the heap
++    // retains deep-copies the child's record, terms included.
++    let mut group = c.benchmark_group("iterator/captured_terms");
++    let n = 10_000usize;
++    let k = NonZeroUsize::new(100).unwrap();
++    // 50% overlap: batch docs are even numbers, child docs are every other even.
++    let child_ids: Vec<u64> = (0..n as u64).step_by(2).map(|i| i * 2).collect();
++    // Scores rising with the doc id fill the heap with the first `k` matches and
++    // reject every later one before capturing it; falling scores make every
++    // match outrank the heap's worst entry, so every match is captured.
++    let ascending: Vec<(u64, f64)> = (0..n as u64).map(|i| (i * 2, i as f64)).collect();
++    let descending: Vec<(u64, f64)> = (0..n as u64)
++        .map(|i| (i * 2, (n as u64 - i) as f64))
++        .collect();
++    const TERMS: [&str; 3] = ["hello", "world", "again"];
 +
-+    A regression guard over the real RedisJSON path, whose strings are not
-+    NUL-terminated: reading the empty value up to a terminator over-reads. A
-+    normal build cannot see that over-read, so this passes with or without it;
-+    only a sanitizer run can report it.
-+    """
-+    conn = getConnectionByEnv(env)
-+    env.expect('FT.CREATE', 'idx', 'ON', 'JSON',
-+               'LANGUAGE', 'italian', 'LANGUAGE_FIELD', '$.lang',
-+               'SCHEMA', '$.word', 'AS', 'word', 'TEXT').ok()
-+
-+    conn.execute_command('JSON.SET', '{word}:1', '$',
-+                         r'{"word":"ciliegia", "lang": ""}') # cherry
-+    conn.execute_command('JSON.SET', '{word}:2', '$',
-+                         r'{"word":"ciliegie", "lang": ""}') # cherries
-+
-+    info = index_info(env, 'idx')
-+    env.assertEqual(int(info['num_docs']), 2, message=info)
-+    env.assertEqual(int(info['hash_indexing_failures']), 0, message=info)
-+
-+    # Each word finding both documents shows they were stemmed in Italian.
-+    expected = [2, '{word}:1', '{word}:2']
-+    for word in ['ciliegia', 'ciliegie']:
-+        res = env.cmd('FT.SEARCH', 'idx', word, 'SORTBY', 'word', 'ASC',
-+                      'NOCONTENT')
-+        env.assertEqual(res, expected)
-+
-+    for shardId in range(1, env.shardsCount + 1):
-+        env.assertEqual(env.getConnection(shardId).execute_command('PING'), True)
-+
-+def testLanguageArgEmbeddedNul(env):
-+    """FT.CREATE and FT.SEARCH read a LANGUAGE argument only up to its first
-+    NUL byte, so Italian followed by a NUL and junk is accepted as Italian.
-+
-+    Pinned so that bounding the language lookup by length keeps accepting what
-+    these two commands accept today. FT.ADD is not covered: it already uses the
-+    argument's full length and rejects the same bytes.
-+    """
-+    env.expect('FT.CREATE', 'idx', 'LANGUAGE', 'italian\x00x',
-+               'SCHEMA', 't', 'TEXT').ok()
-+
-+    info = index_info(env, 'idx')
-+    index_definition = info['index_definition']
-+    idx = {index_definition[i]: index_definition[i + 1] for i in range(0, len(index_definition), 2)}
-+    env.assertEqual(idx['default_language'], 'italian')
-+
-+    env.expect('FT.SEARCH', 'idx', '*', 'LANGUAGE', 'italian\x00x').equal([0])
-+
- def testTagalogLanguage(env):
-     conn = getConnectionByEnv(env)
- 
++    for (captures, batch) in [("first_k", &ascending), ("every_match", &descending)] {
++        for n_terms in [1usize, 2, 3] {
++            group.bench_with_input(
++                BenchmarkId::new(captures, format!("{n_terms}_terms")),
++                &n_terms,
++                |b, &n_terms| {
++                    b.iter_batched(
++                        || {
++                            let source =
++                                MockScoreSource::new(vec![batch.clone()], vec![], |_, _| {
++                                    BatchStrategy::Continue
++                                });
++                            let leaves = TERMS[..n_terms]
++                                .iter()
++ 
 ```
 
 ---
 
-### Incident Patch 3: `6c941c74` (2026-10-26)
-**Commit Message**: query_eval: fix valgrind uninitialised-read in the vector test fixture (#11684)
+### Incident Patch 2: `be488761` (2026-10-27)
+**Commit Message**: check-rust-coverage: report partially covered branches like CI (#12013)
 
-`VectorFixture::new` built its query vector from
-`opts.indexed_vectors.unwrap_or(0)`. In optimised builds the code reads
-the uninitialised payload of `None`, which valgrind reports as a
-conditional jump on uninitialised memory for every fixture without an
-index.
-
-Build the index and the query vector in one `match` so the count is
-only read when it is present.
-
-**File**: `src/redisearch_rs/query_eval/tests/integration/vector.rs` (modified, +8/-8)
+**File**: `.skills/check-rust-coverage/SKILL.md` (modified, +28/-3)
 ```diff
-@@ -374,9 +374,14 @@ impl VectorFixture {
-         // Opening the index asserts the field is a vector field before reading
-         // the index off it, so the type has to be set even when there is none.
-         field_spec_mut.set_types(ffi::FieldType_INDEXFLD_T_VECTOR);
--        let index = opts
--            .indexed_vectors
--            .map_or(std::ptr::null_mut(), flat_index);
-+        // Querying at the last indexed vector makes distance fall as the document
-+        // id rises, so the nearest neighbours are the highest ids; see `flat_index`.
-+        // Without an index the query is never wired into `vq`, so the zeroed
-+        // placeholder is never read.
-+        let (index, mut query_vector): (_, Box<[f32]>) = match opts.indexed_vectors {
-+            Some(count) => (flat_index(count), vec![count as f32; DIM].into()),
-+            None => (std::ptr::null_mut(), vec![0.0; DIM].into()),
-+        };
-         field_spec_mut.__bindgen_anon_1.vectorOpts.vecSimIndex = index;
+@@ -19,14 +19,39 @@ If a path points to a directory, consider all Rust crates in that directory.
+ Run
  
-         let (mut child, filter) = match opts.child {
-@@ -407,11 +412,6 @@ impl VectorFixture {
-         vq.fieldIndex = unsafe { (*field_spec.as_ptr()).index };
-         vq.scoreField = opts.score_field.map_or(std::ptr::null_mut(), module_string);
+ ```bash
+-cargo llvm-cov test --manifest-path <crate_directory>/Cargo.toml --quiet --json 2>/dev/null | jq -r '"Uncovered Lines:",
++NEXTEST_PROFILE=coverage cargo +$(cat .rust-nightly) llvm-cov nextest --manifest-path <crate_directory>/Cargo.toml --branch --json 2>/dev/null | jq -r '"Uncovered Lines:",
+ (.data[0].files[] |
+-  select(.summary.lines.percent < 100) |
+   .filename as $f |
+   [.segments[] | select(.[2] == 0 and .[4] == true) | .[0]] |
+   unique |
+   if length > 0 then "\($f): \(join(", "))" else empty end
++),
++"Partially Covered Branches (line: true/false):",
++(.data[0].files[] |
++  .filename as $f |
++  [.branches | group_by(.[0:4])[] |
++    {line: .[0][0], t: (map(.[4]) | add), f: (map(.[5]) | add)} |
++    select(.t == 0 or .f == 0) | "\(.line): \(.t)/\(.f)"] |
++  unique |
++  if length > 0 then "\($f): \(join(", "))" else empty end
+ )'
+ ```
  
--        // The corner the index's contents are arranged around; see `flat_index`.
--        // Without an index the search stops before it ever reads the query, so
--        // the zeroed value the fallback produces is never looked at.
--        let mut query_vector: Box<[f32]> =
--            vec![opts.indexed_vectors.unwrap_or(0) as f32; DIM].into_boxed_slice();
-         if !index.is_null() {
-             let vector = query_vector.as_mut_ptr().cast();
-             let vec_len = std::mem::size_of_val(&*query_vector);
+-to get the list of uncovered lines for each file in the target crate.
++from the repository root to get, for each file in the target crate, the lines no test
++executes and the conditions no test drives both ways.
++
++This mirrors the CI coverage job, which Codecov reports from:
++- `--branch` is what catches a condition that runs but never takes one of its outcomes,
++  such as one operand of an `&&` chain that is never false. Without it such a line counts
++  as covered.
++- `--branch` needs nightly, and only the pinned `.rust-nightly` is known to work: an
++  unpinned `+nightly` can silently produce a report with every line at zero.
++- `NEXTEST_PROFILE=coverage` gives tests the longer timeouts that branch instrumentation
++  needs; under the default profile slow tests are killed and no report is written.
++- Generic code yields one branch entry per instantiation, so the query sums them per
++  condition before deciding it is partially covered.
++
++Ignore lines that exist only to reject states the code rules out, as no test can reach
++them: `unreachable!`, `unreachable_unchecked`, `debug_assert!` and its variants, and a
++`panic!` or `expect` guarding an invariant. A condition inside a `debug_assert!` that never
++fails shows as partially covered for the same reason.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12014** (closed): [MOD-19327] Use a cheaper vector generator in the vector-update benchmark (@nonirosenfeldredis)
+- **PR #12013** (2026-10-27): check-rust-coverage: report partially covered branches like CI (@gdesmott)
 - **PR #12012** (2026-10-27): sorting_vector: avoid a valgrind false positive in legacy_rdb test (@gdesmott)
 - **PR #12011** (2026-10-27): Bump cargo-nextest to 0.9.150 for GHSA-vc25-qg58-w57c (@gdesmott)
 - **PR #12007** (2026-10-26): [8.12] Upgrade boto3 in the release set-artifacts job (@oshadmi)
 - **PR #12006** (closed): Bump version from 8.11.90 to 8.11.91 (@github-actions[bot])
-- **PR #12003** (2026-10-26): [8.12] Bump version from 8.11.80 to 8.11.90 (@oshadmi)
+- **PR #12004** (2026-10-27): Speed up copying aggregate index results (@gdesmott)
 
 ---
 
@@ -2013,22 +1926,24 @@ only read when it is present.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [MOD-16899] Use FAIL timeout policy in COLLECT benchmarks (#12001)
+## X. Speed up copying aggregate index results (#12004)
 
 **RULE**:
-When implementing operations in `tests/benchmarks/search-groupby-collect-10K-entity-events-hash-cached-sortby-fields-explicit-k50.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/redisearch_rs/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d7ce5386`: [MOD-16899] Use FAIL timeout policy in COLLECT benchmarks (#12001). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0505d348`: Speed up copying aggregate index results (#12004). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/benchmarks/search-groupby-collect-10K-entity-events-hash-cached-sortby-fields-explicit-k50.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/redisearch_rs/Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  - configuration-parameters:
-    - search-on-timeout: "FAIL"
+ "index_result",
+ "index_spec",
+ "rqe_core",
+ "rqe_iterator_type",
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2038,4 +1953,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d7ce5386` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0505d348` are properly handled with clean fallback behavior.

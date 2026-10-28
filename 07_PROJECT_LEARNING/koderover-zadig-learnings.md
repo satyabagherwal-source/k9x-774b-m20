@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/koderover-zadig-learnings.md`  
 > **Source**: github ([https://github.com/koderover/zadig](https://github.com/koderover/zadig))  
-> **Source Version**: `a1ca224c`  
+> **Source Version**: `a1fe8122`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T13:40:55.923Z  
+> **Timestamp**: 2026-10-28T02:27:19.092Z  
 > **Learning ID**: `learn-github-koderover-zadig`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/koderover-zadig-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/koderover/zadig](https://github.com/koderover/zadig))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T13:40:55.915Z  
+> **Harvest Timestamp**: 2026-10-28T02:27:18.863Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1158,324 +1158,178 @@ func FileExists(filePath string) (bool, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8e99b968` (2026-10-26)
-**Commit Message**: Merge pull request #5035 from Cynthia-0203/fix/daemonset-support-gaps
+### Incident Patch 1: `a1fe8122` (2026-10-28)
+**Commit Message**: Merge pull request #5042 from leozhang2018/basic-image-deletion
 
-**File**: `pkg/microservice/aslan/core/common/service/environment.go` (modified, +3/-1)
+feat: enhance basic image deletion logic and error handling.
+
+**File**: `pkg/microservice/aslan/core/system/service/basic_images.go` (modified, +167/-36)
 ```diff
-@@ -998,7 +998,7 @@ func FindServiceFromIstioGateway(gwObjs *v1alpha3.GatewayList, serviceName strin
- }
+@@ -18,17 +18,25 @@ package service
  
- // GetHelmServiceName get service name from annotations of resources deployed by helm
--// resType currently only support Deployment, StatefulSet, Job and CronJob.
-+// resType currently only supports Deployment, DaemonSet, StatefulSet, Job and CronJob.
- // this function needs to be optimized
- func GetHelmServiceName(prod *models.Product, resType, resName string, kubeClient client.Client, version *version.Info) (string, error) {
- 	res := &unstructured.Unstructured{}
-@@ -1012,6 +1012,8 @@ func GetHelmServiceName(prod *models.Product, resType, resName string, kubeClien
- 	switch resType {
- 	case setting.Deployment:
- 		res.SetGroupVersionKind(getter.DeploymentGVK)
-+	case setting.DaemonSet:
-+		res.SetGroupVersionKind(getter.DaemonSetGVK)
- 	case setting.StatefulSet:
- 		res.SetGroupVersionKind(getter.StatefulSetGVK)
- 	case setting.Job:
-```
-
-**File**: `pkg/microservice/aslan/core/common/service/kube/apply.go` (modified, +2/-0)
-```diff
-@@ -230,6 +230,8 @@ func removeResources(currentItems, newItems []*unstructured.Unstructured, namesp
- 		switch item.GetKind() {
- 		case setting.Deployment:
- 			watcher, err = clientSet.AppsV1().Deployments(namespace).Watch(ctx, watchOpts)
-+		case setting.DaemonSet:
-+			watcher, err = clientSet.AppsV1().DaemonSets(namespace).Watch(ctx, watchOpts)
- 		case setting.Service:
- 			watcher, err = clientSet.CoreV1().Services(namespace).Watch(ctx, watchOpts)
- 		case setting.StatefulSet:
-```
-
-**File**: `pkg/microservice/aslan/core/common/service/kube/render.go` (modified, +12/-0)
-```diff
-@@ -552,6 +552,9 @@ func FetchImportedAllManifests(envInfo *models.Product, serviceTmp *models.Servi
- 		case setting.Deployment:
- 			bs, exist, err = getter.GetDeploymentYamlFormat(envInfo.Namespace, name, kubeClient)
- 			isWorkload = true
-+		case setting.DaemonSet:
-+			bs, exist, err = getter.GetDaemonSetYamlFormat(envInfo.Namespace, name, kubeClient)
-+			isWorkload = true
- 		case setting.StatefulSet:
- 			bs, exist, err = getter.GetStatefulSetYamlFormat(envInfo.Namespace, name, kubeClient)
- 			isWorkload = true
-@@ -811,6 +814,15 @@ func FetchImportedManifests(option *GeneSvcYamlOption, productInfo *models.Produ
- 				return "", nil, errors.Errorf("deployment %s not found", u.GetName())
- 			}
- 			manifestArr = append(manifestArr, string(workloadBs))
-+		case setting.DaemonSet:
-+			workloadBs, exist, err := getter.GetDaemonSetYamlFormat(productInfo.Namespace, u.GetName(), kubeClient)
-+			if err != nil {
-+				return "", nil, errors.Wrapf(err, "failed to get daemonset %s", u.GetName())
-+			}
-+			if !exist {
-+				return "", nil, errors.Errorf("daemonset %s not found", u.GetName())
-+			}
-+			manifestArr = append(manifestArr, string(workloadBs))
- 		case setting.StatefulSet:
- 			workloadBs, exist, err := getter.GetStatefulSetYamlFormat(productInfo.Namespace, u.GetName(), kubeClient)
- 			if err != nil {
-```
-
-**File**: `pkg/microservice/aslan/core/common/service/service.go` (modified, +14/-0)
-```diff
-@@ -1419,6 +1419,20 @@ func GetServiceImpl(serviceName string, serviceTmpl *commonmodels.Service, workL
- 	case setting.SourceFromHelm:
- 		k8sServices, _ := getter.ListServicesWithCache(nil, inf)
- 		switch workLoadType {
-+		case setting.DaemonSet:
-+			daemonSet, err := getter.GetDaemonSetByNameWithCache(serviceName, namespace, inf)
-+			if err != nil {
-+				return nil, e.ErrGetService.AddDesc(fmt.Sprintf("service %s not found for daemonset, err: %v", serviceName, err))
-+			}
-+			ret.Scales = append(ret.Scales, GetDaemonSetWorkloadResource(daemonSet, inf, log))
-+			ret.Workloads = append(ret.Workloads, ToDaemonSetWorkload(daemonSet))
-+			podLabels := labels.Set(daemonSet.Spec.Template.GetLabels())
-+			for _, svc := range k8sServices {
-+				if labels.SelectorFromValidatedSet(svc.Spec.Selector).Matches(podLabels) {
-+					ret.Services = append(ret.Services, wrapper.Service(svc).Resource())
-+					break
-+				}
-+			}
- 		case setting.StatefulSet:
- 			statefulSet, err := getter.GetStatefulSetByNameWWithCache(serviceName, namespace, inf)
- 			if err != nil {
-```
-
-**File**: `pkg/microservice/aslan/core/common/service/version.go` (modified, +1/-1)
-```diff
-@@ -667,7 +667,7 @@ func RollbackEnvServiceVersion(ctx *internalhandler.Context, projectName, envNam
+ import (
+ 	"fmt"
++	"strings"
+ 	"time"
  
- 					for _, us := range unstructuredList {
- 						switch us.GetKind() {
--						case setting.Deployment, setting.StatefulSet:
-+						case setting.Deployment, setting.DaemonSet, setting.StatefulSet:
- 							podLabels, _, err := unstructured.NestedStringMap(us.Object, "spec", "template", "metadata", "labels")
- 							if err == nil {
- 								rollbackStatus.RelatedPodLabels = append(rollbackStatus.RelatedPodLabels, podLabels)
-```
-
-**File**: `pkg/microservice/aslan/core/common/service/workflowcontroller/jobcontroller/job_restart.go` (modified, +10/-8)
-```diff
-@@ -242,7 +242,7 @@ func (c *RestartJobCtl) restartHelmService(ctx context.Context, env *commonmodel
- }
+ 	"go.uber.org/zap"
  
- func restartWorkloadResources(ctx context.Context, clusterID string, resources []*kube.WorkloadResource, env *commonmodels.Product, kubeClient crClient.Client, clientSet *kubernetes.Clientset) (replaceResources []commonmodels.Resource, relatedPodLabels []map[string]string, err error) {
--	deployments, _, statefulSets, _, _, _, err := kube.FetchSelectedWorkloads(env.Namespace, resources, kubeClient, clientSet)
-+	deployments, daemonSets, statefulSets, _, _, _, err := kube.FetchSelectedWorkloads(env.Namespace, resources, kubeClient, clientSet)
- 	if err != nil {
- 		return nil, nil, err
- 	}
-@@ -300,14 +300,16 @@ func restartWorkloadResources(ctx context.Context, clusterID string, resources [
- 		relatedPodLabels = append(relatedPodLabels, sts.Spec.Template.Labels)
- 	}
+ 	"github.com/koderover/zadig/v2/pkg/microservice/aslan/config"
+ 	commonmodels "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/repository/models"
+ 	commonrepo "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/repository/mongodb"
++	templaterepo "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/repository/mongodb/template"
+ 	"github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/service/base"
+ 	e "github.com/koderover/zadig/v2/pkg/tool/errors"
+ )
  
--	for _, resource := range resources {
--		switch resource.Type {
--		case setting.DaemonSet:
--			if err := updater.RestartDaemonSet(ctx, clusterID, env.Namespace, resource.Name); err != nil {
--				return nil, nil, fmt.Errorf("failed to restart daemonset %s/%s: %v", env.Namespace, resource.Name, err)
--			}
--			replaceResources = append(replaceResources, commonmodels.Resource{Kind: setting.DaemonSet, Name: resource.Name})
-+	for _, daemonSet := range daemonSets {
-+		if err := updater.RestartDaemonSet(ctx, clusterID, daemonSet.Namespace, daemonSet.Name); err != nil {
-+			return nil, nil, fmt.Errorf("failed to restart daemonset %s/%s: %v", daemonSet.Namespace, daemonSet.Name, err)
- 		}
-+		replaceResources = append(replaceResources, commonmodels.Resource{
-+			Kind:        setting.DaemonSet,
-+			Name:        daemonSet.Name,
-+			PodOwnerUID: string(daemonSet.UID),
++type basicImageRef struct {
++	productName string
++	resource    string
++	name        string
++}
++
+ func InitbasicImageInfos() []*commonmodels.BasicImage {
+ 	basicImageInfos := []*commonmodels.BasicImage{
+ 		{
+@@ -135,58 +143,181 @@ func UpdateBasicImage(id string, args *commonmodels.BasicImage, log *zap.Sugared
+ 
+ func DeleteBasicImage(id string, log *zap.SugaredLogger) error {
+ 	// 检查该镜像是否被引用
+-	buildOpt := &commonrepo.BuildListOption{BasicImageID: id}
+-	builds, err := commonrepo.NewBuildColl().List(buildOpt)
+-	if err == nil && len(builds) != 0 {
+-		log.Errorf("BasicImage has been used by build, image id:%s, product name:%s, build name:%s", id, builds[0].ProductName, builds[0].Name)
+-		return e.ErrDeleteUsedBasicImage
++	refs := make([]basicImageRef, 0)
++	seen := make(map[string]struct{})
++	var listErr error
++
++	builds, err := commonrepo.NewBuildColl().List(&commonrepo.BuildListOption{BasicImageID: id})
++	if err != nil {
++		log.Errorf("list builds by basic image %s error: %v", id, err)
++		listErr = err
++	}
++	for _, build := range builds {
++		if build == nil {
++			continue
++		}
++		refs = appendBasicImageRef(refs, seen, basicImageRef{
++			productName: build.ProductName,
++			resource:    "构建",
++			name:        build.Name,
 +		})
-+		relatedPodLabels = append(relatedPodLabels, daemonSet.Spec.Template.Labels)
  	}
- 	return replaceResources, relatedPodLabels, nil
- }
-```
-
-**File**: `pkg/microservice/aslan/core/environment/service/common_env_cfg_informer.go` (modified, +100/-0)
-```diff
-@@ -81,6 +81,22 @@ func NewClusterInformerFactory(clusterID string, cls *kubernetes.Clientset) (inf
- 		DeleteFunc: onStatefulSetDelete,
- 	})
  
-+	informerFactory.Apps().V1().DaemonSets().Lister()
-+	informerFactory.Apps().V1().DaemonSets().Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-+		AddFunc: func(obj interface{}) {
-+			go onDaemonSetAddAndUpdate(obj)
-+		},
-+		UpdateFunc: func(oldObj interface{}, newObj interface{}) {
-+			newDaemonSet := newObj.(*appsv1.DaemonSet)
-+			oldDaemonSet := oldObj.(*appsv1.DaemonSet)
-+			if newDaemonSet.ResourceVersion == oldDaemonSet.ResourceVersion {
-+				return
-+			}
-+			go onDaemonSetAddAndUpdate(newObj)
-+		},
-+		DeleteFunc: onDaemonSetDelete,
-+	})
-+
- 	stopchan := make(chan struct{})
- 	informerFactory.Start(stopchan)
- 	informerFactory.WaitForCacheSync(make(chan struct{}))
-@@ -258,6 +274,90 @@ func VisitStatefulSet(sts *appsv1.StatefulSet) (sets.String, sets.String, sets.S
- 	return cfgSets, secretSets, pvcSets
- }
- 
-+func onDaemonSetAddAndUpdate(obj interface{}) {
-+	daemonSet := obj.(*appsv1.DaemonSet)
-+	serviceName := daemonSet.GetLabels()[setting.ServiceLabel]
-+	product, continueFlag := GetProductAndFilterNs(daemonSet.Namespace, daemonSet.Name, serviceName)
-+	if !continueFlag {
-+		return
-+	}
-+
-+	configMaps, secrets, pvcs := VisitDaemonSet(daemonSet)
-+	envSvcDepend := &models.EnvSvcDepend{
-+		ProductName:   product.ProductName,
-+		EnvName:       product.EnvName,
-+		Namespace:     daemonSet.Namespace,
-+		ServiceName:   serviceName,
-+		ServiceModule: daemonSet.Name,
-+		WorkloadType:  setting.DaemonSet,
-+		ConfigMaps:    configMaps.List(),
-+		Pvcs:          pvcs.List(),
-+		Secrets:       secrets.List(),
-+	}
-+	if err := commonrepo.NewEnvSvcDependColl().CreateOrUpdate(envSvcDepend); err != nil {
-+		log.Error("onDaemonSetAddAndUpdate EnvSvcDepend CreateOrUpdate error:", err)
-+	}
-+}
-+
-+func onDaemonSetDelete(obj interface{}) {
-+	daemonSet, ok := obj.(*appsv1.DaemonSet)
-+	if !ok {
-+		tombstone, ok := obj.(cache.DeletedFinalStateUnknown)
-+		if !ok {
-+			return
-+		}
-+		daemonSet, ok = tombstone.Obj.(*appsv1.DaemonSet)
-+		if !ok {
-+			return
+-	testOpt := &commonrepo.ListTestOption{BasicImageID: id}
+-	tests, err := commonrepo.NewTestingColl().List(testOpt)
+-	if err == nil && len(tests) != 0 {
+-		log.Errorf("BasicImage has been used by testing, image id:%s, product name:%s, testing name:%s", id, tests[0].ProductName, tests[0].Name)
+-		return e.ErrDeleteUsedBasicImage
++	tests, err := commonrepo.NewTestingColl().List(&commonrepo.ListTestOption{BasicImageID: id})
++	if err != nil {
++		log.Errorf("list testings by basic image %s error: %v", id, err)
++		if listErr == nil {
++			listErr = err
 +		}
 +	}
-+	serviceName := daemonSet.GetLabels()[setting.ServiceLabel]
-+	product, continueFlag := GetProductAndFilterNs(daemonSet.Namespace, daemonSet.Name, serviceName)
-+	if !continueFlag {
-+		return
-+	}
-+	opts := &commonrepo.DeleteEnvSvcDependOption{
-+		ProductName:   product.ProductName,
-+		EnvName:       product.EnvName,
-+		ServiceName:   serviceName,
-+		ServiceModule: daemonSet.Name,
-+	}
-+	if err := commonrepo.NewEnvSvcDependColl().Delete(opts); err != nil {
-+		log.Error("onDaemonSetDelete EnvSvcDepend Delete error:", err)
-+	}
-+}
-+
-+func VisitDaemonSet(daemonSet *appsv1.DaemonSet) (sets.String, sets.String, sets.String) {
-+	cfgSets := sets.NewString()
-+	secretSets := sets.NewString()
-+	pvcSets := sets.NewString()
-+	for _, initCon := range daemonSet.Spec.Template.Spec.InitContainers {
-+		cfg, sec := visitContainerConfigmapAndSecretNames(initCon)
-+		cfgSets = cfgSets.Union(cfg)
-+		secretSets = secretSets.Union(sec)
-+	}
-+	for _, con := range daemonSet.Spec.Template.Spec.Containers {
-+		cfg, sec := visitContainerConfigmapAndSecretNames(con)
-+		cfgSets = cfgSets.Union(cfg)
-+		secretSets = secretSets.Union(sec)
-+	}
-+	for _, ephemeralCon := range daemonSet.Spec.Template.Spec.EphemeralContainers {
-+		cfg, sec := visitContainerConfigmapAndSecretNames(corev1.Container(ephemeralCon.DeepCopy().EphemeralContainerCommon))
-+		cfgSets = cfgSets.Union(cfg)
-+		secretSets = secretSets.Union(sec)
-+	}
-+	for _, volume := range daemonSet.Spec.Template.Spec.Volumes {
-+		cfg, sec, pvc := visitVolumeConfigmapAndSecretAndPvcNames(volume)
-+		cfgSets = cfgSets.Union(cfg)
-+		secretSets = secretSets.Union(sec)
-+		pvcSets = pvcSets.Union(pvc)
-+	}
-+	for _, sec := range daemonSet.Spec.Template.Spec.ImagePullSecrets {
-+		secretSets.Insert(sec.Name)
-+	}
-+	return cfgSets, secretSets, pvcSets
-+}
-+
- func GetProductAndFilterNs(namespace, workloadName, svcName string) (*models.Product, bool) {
- 	products, err := commonrepo.NewProductColl().List(&commonrepo.ProductListOptions{Namespace: namespace})
- 	if err != nil {
-```
-
-**File**: `pkg/microservice/aslan/core/environment/service/environment.go` (modified, +14/-1)
-```diff
-@@ -4633,9 +4633,12 @@ func EnvSleep(productName, envName string, isEnable, isProduction bool, userName
++	for _, test := range tests {
++		if test == nil {
++			continue
++		}
++		refs = appendBasicImageRef(refs, seen, basicImageRef{
++			productName: test.ProductName,
++			resource:    "测试",
++			name:        test.Name,
++		})
+ 	}
  
- 	scaleMap := make(map[string]*commonservice.Workload)
- 	cronjobMap := make(map[string]*commonservice.Workload)
-+	daemonSetMap := make(map[string]*commonservice.Workload)
- 	for _, workLoad := range workLoads {
- 		if workLoad.Type == setting.CronJob {
- 			cronjobMap[workLoad.Name] = workLoad
-+		} else if workLoad.Type == setting.DaemonSet {
-+			daemonSetMap[workLoad.Name] = workLoad
- 		} else {
- 			scaleMap[workLoad.Name] = workLoad
- 		}
-@@ -4672,6 +4675,11 @@ func EnvSleep(productName, envName string, isEnable, isProduction bool, userName
- 				}
- 
- 				switch u.GetKind() {
-+				case setting.DaemonSet:
-+					if workLoad, ok := daemonSetMap[u.GetName()]; ok {
-+						workLoad.ServiceName = svc.ServiceName
-+						workLoad.DeployedFromZadig = true
-+					}
- 				case setting.Deployment, setting.StatefulSet:
- 					if workLoad, ok := scaleMap[u.GetName()]; ok {
- 						workLoad.ServiceName = svc.ServiceName
-@@ -4702,7 +4710,7 @@ func EnvSleep(productName, envName string, isEnable, isProduction bool, userName
- 				}
- 				for _, workload := range workLoads {
- 					if workload.ReleaseName == releaseName {
--						if workload.Type != setting.CronJob {
-+						if workload.Type != setting.CronJob && workload.Type != setting.DaemonSet {
- 							newScaleNumMap[workload.Name] = int(workload.Replicas)
- 						}
- 					}
-@@ -4755,6 +4763,11 @@ func EnvSleep(productName, envName string, isEnable, isProduction bool, userName
- 		}
- 
- 		switch workload.Type {
-+		case setting.DaemonSet:
-+			log.Infof("set daemonset %s/%s sleep=%t", prod.Namespace, workload.Name, isEnable)
-+			if err := updater.SetDaemonSetSleep(context.TODO(), clientset, prod.Namespace, workload.Name, isEnable); err != nil {
-+				log.Errorf("failed to set daemonset %s/%s sleep=%t: %v", prod.Namespace, workload.Name, isEnable, err)
+ 	pipelines, err := commonrepo.NewPipelineColl().List(&commonrepo.PipelineListOption{})
+-	if err == nil {
+-		for _, pipeline := range pipelines {
+-			for _, subTask := range pipeline.SubTasks {
+-				pre, err := base.ToPreview(subTask)
+-				if err != nil {
++	if err != nil {
++		log.Errorf("list pipelines for basic image %s error: %v", id, err)
++		if listErr == nil {
++			listErr = err
++		}
++	}
++	for _, pipeline := range pipelines {
++		if pipeline == nil {
++			continue
++		}
++		for _, subTask := range pipeline.SubTasks {
++			pre, err := base.ToPreview(subTask)
++			if err != nil {
++				continue
 +			}
- 		case setting.Deployment:
- 			log.Infof("scale workload %s(%s) to %d", workload.Name, workload.Type, scaleNum)
- 			err := updater.ScaleDeploymentV2(context.TODO(), prod.ClusterID, prod.Namespace, workload.Name, scaleNum)
++			switch pre.TaskType {
++			case config.TaskBuild:
++				// 校验是否被服务工作流的构建使用
++				task, err := base.ToBuildTask(subTask)
++				if err != nil || task == nil || task.ImageID != id {
++					continue
++				}
++				name := pipeline.Name
++				if task.ServiceName != "" {
++					name = fmt.Sprintf("%s（构建 %s）", pipeline.Name, task.ServiceName)
++				}
++				refs = appendBasicImageRef(refs, seen, basicImageRef{
++					productName: pipeline.ProductName,
++					resource:    "工作流",
++					name:        name,
++				})
++			case config.TaskTestingV2:
++				// 校验是否被服务工作流的测试使用
++				testing, err := base.ToTestingTask(subTask)
++				if err != nil || testing == nil || testing.ImageID != id {
+ 					continue
+ 				}
+-				switch pre.TaskType {
+-				case config.TaskBuild:
+-					// 校验是否被服务工作流的构建使用
+-					task, err := base.ToBuildTask(subTask)
+-					if err != nil || task == nil {
+-						continue
+-					}
+-					if task.ImageID == id {
+-						log.Errorf("BasicImage has been used by pipeline build, image id:%s, pipeline name:%s", id, pipeline.Name)
+-						return e.ErrDeleteUsedBasicImage
+-					}
+-				case config.TaskTestingV2:
+-					// 校验是否被服务工作流的测试使用
+-					testing, err := base.ToTestingTask(subTask)
+-					if err != nil || testing == nil {
+-						continue
+-					}
+-					if testing.ImageID == id {
+-						log.Errorf("BasicImage has been used by pipeline testing, image id:%s, pipeline name:%s", id, pipeline.Name)
+-						return e.ErrDeleteUsedBasicImage
+-					}
++				name := pipeline.Name
++				if testing.TestName != "" {
++					name = fmt.Sprintf("%s（测试 %s）", pipeline.Name, testing.TestName)
+ 				}
++				refs = appendBasicImageRef(refs, seen, basicImageRef{
++					productName: pipeline.ProductName,
++					resource:    "工作流",
++					name:        name,
++				})
+ 			}
+ 		}
+ 	}
+ 
++	i
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #5047** (2026-10-26): cherry pick #5045 to release 5.0.0 (@PetrusZ)
 - **PR #5045** (2026-10-26): perf: batch test report queries in workflow task history (@PetrusZ)
 - **PR #5044** (2026-10-26): cherry pick #5041 to release 5.0.0 (@PetrusZ)
+- **PR #5042** (2026-10-28): feat: enhance basic image deletion logic and error handling. (@leozhang2018)
 - **PR #5041** (2026-10-23): fix: use target Kubernetes version when rendering Helm charts (@PetrusZ)
 - **PR #5036** (2026-10-23): feat(codehost): support bot identities for AI review comments (@huanghongbo-hhb)
-- **PR #5035** (2026-10-26): fix: daemonset support gaps (@Cynthia-0203)
 
 ---
 
@@ -1495,30 +1349,97 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #5035 from Cynthia-0203/fix/daemonset-support-gaps
+## X. Merge pull request #5042 from leozhang2018/basic-image-deletion
 
 **RULE**:
-When implementing operations in `pkg/microservice/aslan/core/common/service/environment.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/microservice/aslan/core/system/service/basic_images.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8e99b968`: Merge pull request #5035 from Cynthia-0203/fix/daemonset-support-gaps. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a1fe8122`: Merge pull request #5042 from leozhang2018/basic-image-deletion. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/microservice/aslan/core/common/service/environment.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/microservice/aslan/core/system/service/basic_images.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// resType currently only supports Deployment, DaemonSet, StatefulSet, Job and CronJob.
-	case setting.DaemonSet:
-		res.SetGroupVersionKind(getter.DaemonSetGVK)
+	"strings"
+	templaterepo "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/repository/mongodb/template"
+type basicImageRef struct {
+	productName string
+	resource    string
+	name        string
+}
+
+	refs := make([]basicImageRef, 0)
+	seen := make(map[string]struct{})
+	var listErr error
+
+	builds, err := commonrepo.NewBuildColl().List(&commonrepo.BuildListOption{BasicImageID: id})
+	if err != nil {
+		log.Errorf("list builds by basic image %s error: %v", id, err)
+		listErr = err
+	}
+	for _, build := range builds {
+		if build == nil {
+			continue
+		}
+		refs = appendBasicImageRef(refs, seen, basicImageRef{
+			productName: build.ProductName,
+			resource:    "构建",
+			name:        build.Name,
+		})
+	tests, err := commonrepo.NewTestingColl().List(&commonrepo.ListTestOption{BasicImageID: id})
+	if err != nil {
+		log.Errorf("list testings by basic image %s error: %v", id, err)
+		if listErr == nil {
+			listErr = err
+		}
+	}
+	for _, test := range tests {
+		if test == nil {
+			continue
+		}
+		refs = appendBasicImageRef(refs, seen, basicImageRef{
+			productName: test.ProductName,
+			resource:    "测试",
+			name:        test.Name,
+		})
+	if err != nil {
+		log.Errorf("list pipelines for basic im
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// resType currently only support Deployment, StatefulSet, Job and CronJob.
+	buildOpt := &commonrepo.BuildListOption{BasicImageID: id}
+	builds, err := commonrepo.NewBuildColl().List(buildOpt)
+	if err == nil && len(builds) != 0 {
+		log.Errorf("BasicImage has been used by build, image id:%s, product name:%s, build name:%s", id, builds[0].ProductName, builds[0].Name)
+		return e.ErrDeleteUsedBasicImage
+	testOpt := &commonrepo.ListTestOption{BasicImageID: id}
+	tests, err := commonrepo.NewTestingColl().List(testOpt)
+	if err == nil && len(tests) != 0 {
+		log.Errorf("BasicImage has been used by testing, image id:%s, product name:%s, testing name:%s", id, tests[0].ProductName, tests[0].Name)
+		return e.ErrDeleteUsedBasicImage
+	if err == nil {
+		for _, pipeline := range pipelines {
+			for _, subTask := range pipeline.SubTasks {
+				pre, err := base.ToPreview(subTask)
+				if err != nil {
+				switch pre.TaskType {
+				case config.TaskBuild:
+					// 校验是否被服务工作流的构建使用
+					task, err := base.ToBuildTask(subTask)
+					if err != nil || task == nil {
+						continue
+					}
+					if task.ImageID == id {
+						log.Errorf("BasicImage has been used by pipeline build, image id:%s, pipeline name:%s", id, pipeline.Name)
+						return e.ErrDeleteUsedBasicImage
+					}
+				case config.Tas
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8e99b968` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a1fe8122` are properly handled with clean fallback behavior.

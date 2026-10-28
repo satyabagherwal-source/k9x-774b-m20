@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T02:20:40.199Z",
+  "last_updated": "2026-10-28T02:27:24.829Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2023,15 +2023,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
-      "content_hash": "6171825c3eb738169c3550ce61972a2507f98ef15aab57e9da9e247b9d1e10ea",
-      "verified_at": "2026-10-25T12:50:26.319Z",
+      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
+      "content_hash": "1fee073545039027bf3cc84763c23f454bf8539c9ca7b5904e276019787907c6",
+      "verified_at": "2026-10-28T02:27:17.824Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T12:50:26.319Z"
+      "last_updated": "2026-10-28T02:27:17.824Z"
     },
     "iliyami/MacSai": {
       "repository": "iliyami/MacSai",
@@ -5571,14 +5571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-koderover-zadig",
-      "content_hash": "0288616a70f8707c0d35c49309c682ef3a1a37b24dae8744e1735d1bbed1791b",
-      "verified_at": "2026-10-27T13:40:56.285Z",
+      "content_hash": "d35b3f8a900d303e950b53745ce35a3bb52128b621a8402e38a692e00c67cd78",
+      "verified_at": "2026-10-28T02:27:19.578Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:40:56.285Z"
+      "last_updated": "2026-10-28T02:27:19.578Z"
     },
     "trufflesecurity/trufflehog": {
       "repository": "trufflesecurity/trufflehog",
@@ -9156,14 +9156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-redisearch-redisearch",
-      "content_hash": "64452c16848f3429616aff24659c95b2e928492a4d3efc813d40906377952d4a",
-      "verified_at": "2026-10-27T13:18:08.091Z",
+      "content_hash": "db60f804f64cb48b3be2d2b5f334e9962a76a7ac7949ae0d31ca0bbcc53a101c",
+      "verified_at": "2026-10-28T02:27:24.828Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:18:08.091Z"
+      "last_updated": "2026-10-28T02:27:24.828Z"
     },
     "taiga-family/taiga-ui": {
       "repository": "taiga-family/taiga-ui",

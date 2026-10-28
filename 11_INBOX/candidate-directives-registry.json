@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T01:29:08.659Z",
+  "last_updated": "2026-10-28T02:27:17.819Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3126,6 +3126,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-linkwarden-linkwarden"
+    },
+    {
+      "id": "CD-URAY",
+      "directive_title": "Quantization Precision-Size Trade-off Documentation",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "source_commit": "hf-abenzerps",
+      "date_staged": "2026-10-28",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf"
     }
   ]
 }

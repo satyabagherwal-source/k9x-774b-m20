@@ -135,8 +135,8 @@
     "sourceUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
     "sourceVersion": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "bde7af3085bc2dbef40994bba81b601141507b3405f6fb3dc1ffb202b160e73f",
-    "lastHarvestedAt": "2026-10-25T05:52:29.691Z",
+    "contentHash": "1fee073545039027bf3cc84763c23f454bf8539c9ca7b5904e276019787907c6",
+    "lastHarvestedAt": "2026-10-28T02:27:17.813Z",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf"
   },
   "hf-sentence-transformers-all-minilm-l6-v2": {
@@ -3633,10 +3633,10 @@
     "repository": "koderover/zadig",
     "platform": "github",
     "sourceUrl": "https://github.com/koderover/zadig",
-    "sourceVersion": "a1ca224c",
+    "sourceVersion": "a1fe8122",
     "license": "NOASSERTION",
-    "contentHash": "0288616a70f8707c0d35c49309c682ef3a1a37b24dae8744e1735d1bbed1791b",
-    "lastHarvestedAt": "2026-10-27T13:40:56.277Z",
+    "contentHash": "d35b3f8a900d303e950b53745ce35a3bb52128b621a8402e38a692e00c67cd78",
+    "lastHarvestedAt": "2026-10-28T02:27:19.568Z",
     "learningId": "learn-github-koderover-zadig"
   },
   "trufflesecurity-trufflehog": {
@@ -6023,10 +6023,10 @@
     "repository": "RediSearch/RediSearch",
     "platform": "github",
     "sourceUrl": "https://github.com/RediSearch/RediSearch",
-    "sourceVersion": "f787c19f",
+    "sourceVersion": "0505d348",
     "license": "NOASSERTION",
-    "contentHash": "64452c16848f3429616aff24659c95b2e928492a4d3efc813d40906377952d4a",
-    "lastHarvestedAt": "2026-10-27T13:18:08.082Z",
+    "contentHash": "db60f804f64cb48b3be2d2b5f334e9962a76a7ac7949ae0d31ca0bbcc53a101c",
+    "lastHarvestedAt": "2026-10-28T02:27:24.819Z",
     "learningId": "learn-github-redisearch-redisearch"
   },
   "taiga-family-taiga-ui": {

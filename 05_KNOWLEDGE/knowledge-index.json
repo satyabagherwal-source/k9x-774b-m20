@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T02:20:40.114Z",
+  "last_updated": "2026-10-28T02:27:24.755Z",
   "total_verified_learnings": 1154,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15543,7 +15543,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
       "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
-      "content_hash": "bde7af3085bc2dbef40994bba81b601141507b3405f6fb3dc1ffb202b160e73f",
+      "content_hash": "1fee073545039027bf3cc84763c23f454bf8539c9ca7b5904e276019787907c6",
       "dossier_path": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -15570,6 +15570,11 @@
         {
           "number": 3205,
           "title": "Multi-Format Quantization Artifact Governance",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5129,
+          "title": "Multi-Format Quantization Artifact Isolation",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -15913,7 +15918,7 @@
         "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv42kq8l",
         "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv4ftgho"
       ],
-      "verified_at": "2026-10-25T05:52:29.623Z",
+      "verified_at": "2026-10-28T02:27:17.735Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32284,8 +32289,8 @@
       "slug": "koderover-zadig",
       "platform": "github",
       "source_url": "https://github.com/koderover/zadig",
-      "source_version": "a1ca224c",
-      "content_hash": "0288616a70f8707c0d35c49309c682ef3a1a37b24dae8744e1735d1bbed1791b",
+      "source_version": "a1fe8122",
+      "content_hash": "d35b3f8a900d303e950b53745ce35a3bb52128b621a8402e38a692e00c67cd78",
       "dossier_path": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "promoted_rules": [
@@ -32313,6 +32318,11 @@
           "number": 4814,
           "title": "Merge pull request #5035 from Cynthia-0203/fix/daemonset-support-gaps",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5130,
+          "title": "Merge pull request #5042 from leozhang2018/basic-image-deletion",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32320,7 +32330,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:40:56.208Z",
+      "verified_at": "2026-10-28T02:27:19.466Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44594,8 +44604,8 @@
       "slug": "redisearch-redisearch",
       "platform": "github",
       "source_url": "https://github.com/RediSearch/RediSearch",
-      "source_version": "f787c19f",
-      "content_hash": "64452c16848f3429616aff24659c95b2e928492a4d3efc813d40906377952d4a",
+      "source_version": "0505d348",
+      "content_hash": "db60f804f64cb48b3be2d2b5f334e9962a76a7ac7949ae0d31ca0bbcc53a101c",
       "dossier_path": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "promoted_rules": [
@@ -44628,6 +44638,11 @@
           "number": 4795,
           "title": "[MOD-16899] Use FAIL timeout policy in COLLECT benchmarks (#12001)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5131,
+          "title": "Speed up copying aggregate index results (#12004)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44635,7 +44650,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:18:07.990Z",
+      "verified_at": "2026-10-28T02:27:24.741Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -140842,6 +140857,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T02:20:40.097Z"
+    },
+    "rule-5129": {
+      "learning_id": "rule-5129",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5129,
+      "title": "Multi-Format Quantization Artifact Isolation",
+      "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
+      "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:27:17.735Z"
+    },
+    "rule-5130": {
+      "learning_id": "rule-5130",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5130,
+      "title": "Merge pull request #5042 from leozhang2018/basic-image-deletion",
+      "source_url": "https://github.com/koderover/zadig",
+      "source_version": "a1fe8122",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:27:19.466Z"
+    },
+    "rule-5131": {
+      "learning_id": "rule-5131",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5131,
+      "title": "Speed up copying aggregate index results (#12004)",
+      "source_url": "https://github.com/RediSearch/RediSearch",
+      "source_version": "0505d348",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:27:24.741Z"
     }
   },
   "aliases": {

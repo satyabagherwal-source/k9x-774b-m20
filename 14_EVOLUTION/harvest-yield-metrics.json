@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T02:20:40.195Z",
-  "total_cycles_completed": 5626,
-  "total_learnings_persisted": 5626,
-  "total_rules_promoted": 5057,
+  "last_updated": "2026-10-28T02:27:24.824Z",
+  "total_cycles_completed": 5629,
+  "total_learnings_persisted": 5629,
+  "total_rules_promoted": 5060,
   "history": [
-    {
-      "timestamp": "2026-10-27T17:16:53.311Z",
-      "repository": "DylanVann/react-native-fast-image",
-      "learningId": "learn-github-dylanvann-react-native-fast-image",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T17:16:54.331Z",
-      "repository": "octodns/octodns",
-      "learningId": "learn-github-octodns-octodns",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T17:16:56.692Z",
-      "repository": "mitmproxy/mitmproxy",
-      "learningId": "learn-github-mitmproxy-mitmproxy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T17:23:40.689Z",
       "repository": "wcandillon/react-native-skia",
@@ -1403,6 +1382,27 @@
       "repository": "Edge0/Audio8-ASR-Infinite",
       "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T02:27:17.820Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T02:27:19.574Z",
+      "repository": "koderover/zadig",
+      "learningId": "learn-github-koderover-zadig",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T02:27:24.824Z",
+      "repository": "RediSearch/RediSearch",
+      "learningId": "learn-github-redisearch-redisearch",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

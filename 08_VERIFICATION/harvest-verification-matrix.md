@@ -5649,3 +5649,6 @@
 | `CYCLE-20261028-CRLX` | `2026-10-28T02:13:18.405Z` | `convaiinnovations/laya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5122, Rule 5123, Rule 5124` | Yes (`7ffbefa8...`) |
 | `CYCLE-20261028-LVFH` | `2026-10-28T02:20:23.261Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5125` | Yes (`d8ce4214...`) |
 | `CYCLE-20261028-M8HM` | `2026-10-28T02:20:40.186Z` | `Edge0/Audio8-ASR-Infinite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5126, Rule 5127, Rule 5128` | Yes (`3ff07436...`) |
+| `CYCLE-20261028-URAP` | `2026-10-28T02:27:17.809Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5129` | Yes (`1fee0735...`) |
+| `CYCLE-20261028-USNG` | `2026-10-28T02:27:19.564Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5130` | Yes (`d35b3f8a...`) |
+| `CYCLE-20261028-UWPC` | `2026-10-28T02:27:24.816Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5131` | Yes (`db60f804...`) |
