@@ -5926,3 +5926,7 @@
 | `CYCLE-20261028-T6DT` | `2026-10-28T20:37:49.073Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5397` | Yes (`a5d49981...`) |
 | `CYCLE-20261028-T85B` | `2026-10-28T20:37:51.359Z` | `SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5398, Rule 5399` | Yes (`e121d93d...`) |
 | `CYCLE-20261028-TDAV` | `2026-10-28T20:37:58.039Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5400` | Yes (`981acf09...`) |
+| `CYCLE-20261028-1KGJ` | `2026-10-28T20:44:20.563Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`3549507b...`) |
+| `CYCLE-20261028-1QYA` | `2026-10-28T20:44:28.978Z` | `NativeScript/NativeScript` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5401` | Yes (`237791fe...`) |
+| `CYCLE-20261028-1R6V` | `2026-10-28T20:44:29.287Z` | `Kong/kubernetes-ingress-controller` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md` | Yes (`4ac6ca7a...`) |
+| `CYCLE-20261028-1VLS` | `2026-10-28T20:44:35.008Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5402` | Yes (`25cc4e81...`) |

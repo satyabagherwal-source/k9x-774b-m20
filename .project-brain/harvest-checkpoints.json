@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T20:37:58.052Z",
+  "last_updated": "2026-10-28T20:44:35.020Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1355,14 +1355,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-4b",
-      "content_hash": "d3737401be70c47b9b1185f57354f3b83d612d4031ba7a19f5ddc503f0e27bea",
-      "verified_at": "2026-10-25T21:40:07.557Z",
+      "content_hash": "3549507ba0c96fb4706760486f5a4eb0a92bb86cca0d39e7af9e92b1871c4ca1",
+      "verified_at": "2026-10-28T20:44:20.580Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T21:40:07.557Z"
+      "last_updated": "2026-10-28T20:44:20.580Z"
     },
     "FermionResearch/Phonon-2": {
       "repository": "FermionResearch/Phonon-2",
@@ -10071,14 +10071,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-milvus-io-milvus",
-      "content_hash": "41e411693cfade2630fae49ca225593865d908cec9d0607b722c0e5d3f51fb9e",
-      "verified_at": "2026-10-28T03:18:06.413Z",
+      "content_hash": "25cc4e816a9e8b488a1faf383f536695ff00f52713b2960546aef2e3635a5e8b",
+      "verified_at": "2026-10-28T20:44:35.019Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T03:18:06.413Z"
+      "last_updated": "2026-10-28T20:44:35.019Z"
     },
     "ynqa/jnv": {
       "repository": "ynqa/jnv",
@@ -10551,14 +10551,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kong-kubernetes-ingress-controller",
-      "content_hash": "8c7926a09de531fdb3f3a6f7fb374f49bf243d9cb6f6de844e7e2672ed61e906",
-      "verified_at": "2026-10-27T10:09:02.835Z",
+      "content_hash": "4ac6ca7a5e27e7602ba8fcf95d66b530b7b86dfefd24e9855a578f1df75b5c35",
+      "verified_at": "2026-10-28T20:44:29.300Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T10:09:02.835Z"
+      "last_updated": "2026-10-28T20:44:29.300Z"
     },
     "Comfy-Org/z_image_turbo": {
       "repository": "Comfy-Org/z_image_turbo",
@@ -11226,14 +11226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nativescript-nativescript",
-      "content_hash": "914fdd3ea2b4252b81710868b053e629fd148419229b7815921e1b65e3ec60ea",
-      "verified_at": "2026-10-25T13:30:54.183Z",
+      "content_hash": "237791fe1dc9525cf9ebb5df14ef1433d39c92338a0f08a488e592033deeb7b7",
+      "verified_at": "2026-10-28T20:44:28.990Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T13:30:54.183Z"
+      "last_updated": "2026-10-28T20:44:28.990Z"
     },
     "oramasearch/orama": {
       "repository": "oramasearch/orama",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T20:37:57.964Z",
+  "last_updated": "2026-10-28T20:44:34.927Z",
   "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -26822,7 +26822,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-4B",
       "source_version": "hf-qwen-qwen3-4b",
-      "content_hash": "d3737401be70c47b9b1185f57354f3b83d612d4031ba7a19f5ddc503f0e27bea",
+      "content_hash": "3549507ba0c96fb4706760486f5a4eb0a92bb86cca0d39e7af9e92b1871c4ca1",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md",
       "promoted_rules": [
@@ -26859,7 +26859,7 @@
         "learn-huggingface-hf-qwen-qwen3-4b-mv3xiori",
         "learn-huggingface-hf-qwen-qwen3-4b-mv4c8j52"
       ],
-      "verified_at": "2026-10-25T21:40:07.479Z",
+      "verified_at": "2026-10-28T20:44:20.480Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33311,8 +33311,8 @@
       "slug": "kong-kubernetes-ingress-controller",
       "platform": "github",
       "source_url": "https://github.com/Kong/kubernetes-ingress-controller",
-      "source_version": "76d2886d",
-      "content_hash": "8c7926a09de531fdb3f3a6f7fb374f49bf243d9cb6f6de844e7e2672ed61e906",
+      "source_version": "5fa96bf0",
+      "content_hash": "4ac6ca7a5e27e7602ba8fcf95d66b530b7b86dfefd24e9855a578f1df75b5c35",
       "dossier_path": "07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
       "promoted_rules": [
@@ -33367,7 +33367,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T10:09:02.767Z",
+      "verified_at": "2026-10-28T20:44:29.167Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38018,8 +38018,8 @@
       "slug": "milvus-io-milvus",
       "platform": "github",
       "source_url": "https://github.com/milvus-io/milvus",
-      "source_version": "e6aff936",
-      "content_hash": "41e411693cfade2630fae49ca225593865d908cec9d0607b722c0e5d3f51fb9e",
+      "source_version": "3f0e3b9a",
+      "content_hash": "25cc4e816a9e8b488a1faf383f536695ff00f52713b2960546aef2e3635a5e8b",
       "dossier_path": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "promoted_rules": [
@@ -38067,6 +38067,11 @@
           "number": 4834,
           "title": "write manifest index artifacts under the segment _index directory (#54412)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5402,
+          "title": "Recover from all transient etcd errors, not only leader changes (#54733)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38074,7 +38079,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T03:18:06.277Z",
+      "verified_at": "2026-10-28T20:44:34.911Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39475,8 +39480,8 @@
       "slug": "nativescript-nativescript",
       "platform": "github",
       "source_url": "https://github.com/NativeScript/NativeScript",
-      "source_version": "6bb01eab",
-      "content_hash": "914fdd3ea2b4252b81710868b053e629fd148419229b7815921e1b65e3ec60ea",
+      "source_version": "c72e04d7",
+      "content_hash": "237791fe1dc9525cf9ebb5df14ef1433d39c92338a0f08a488e592033deeb7b7",
       "dossier_path": "07_PROJECT_LEARNING/nativescript-nativescript-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nativescript-nativescript-learnings.md",
       "promoted_rules": [
@@ -39489,6 +39494,11 @@
           "number": 4308,
           "title": "core): make background: none clear the background color (#11536)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5401,
+          "title": "android): create prompt and login inputs from the dialog context (#11582)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39496,7 +39506,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T13:30:54.106Z",
+      "verified_at": "2026-10-28T20:44:28.900Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -146200,6 +146210,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T20:37:57.945Z"
+    },
+    "rule-5401": {
+      "learning_id": "rule-5401",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5401,
+      "title": "android): create prompt and login inputs from the dialog context (#11582)",
+      "source_url": "https://github.com/NativeScript/NativeScript",
+      "source_version": "c72e04d7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T20:44:28.900Z"
+    },
+    "rule-5402": {
+      "learning_id": "rule-5402",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5402,
+      "title": "Recover from all transient etcd errors, not only leader changes (#54733)",
+      "source_url": "https://github.com/milvus-io/milvus",
+      "source_version": "3f0e3b9a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T20:44:34.911Z"
     }
   },
   "aliases": {

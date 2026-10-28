@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T20:37:58.048Z",
-  "total_cycles_completed": 5903,
-  "total_learnings_persisted": 5903,
-  "total_rules_promoted": 5362,
+  "last_updated": "2026-10-28T20:44:35.016Z",
+  "total_cycles_completed": 5907,
+  "total_learnings_persisted": 5907,
+  "total_rules_promoted": 5364,
   "history": [
-    {
-      "timestamp": "2026-10-28T07:24:15.251Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T07:34:44.552Z",
-      "repository": "karmada-io/karmada",
-      "learningId": "learn-github-karmada-io-karmada",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T07:36:27.837Z",
-      "repository": "wix/Detox",
-      "learningId": "learn-github-wix-detox",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T07:44:47.914Z",
-      "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
-      "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T08:07:41.921Z",
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-28T20:37:58.048Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T20:44:20.577Z",
+      "repository": "Qwen/Qwen3-4B",
+      "learningId": "learn-huggingface-qwen-qwen3-4b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T20:44:28.987Z",
+      "repository": "NativeScript/NativeScript",
+      "learningId": "learn-github-nativescript-nativescript",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T20:44:29.297Z",
+      "repository": "Kong/kubernetes-ingress-controller",
+      "learningId": "learn-github-kong-kubernetes-ingress-controller",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T20:44:35.016Z",
+      "repository": "milvus-io/milvus",
+      "learningId": "learn-github-milvus-io-milvus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

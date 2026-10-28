@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T18:57:38.014Z",
+  "last_updated": "2026-10-28T20:44:29.295Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3236,6 +3236,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-jhspetersson-fselect"
+    },
+    {
+      "id": "CD-1R73",
+      "directive_title": "add entries for releases 3.5.14 and 3.4.21 (#8136)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Kong/kubernetes-ingress-controller",
+      "source_commit": "5fa96bf0",
+      "date_staged": "2026-10-28",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-kong-kubernetes-ingress-controller"
     }
   ]
 }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nativescript-nativescript-learnings.md`  
 > **Source**: github ([https://github.com/NativeScript/NativeScript](https://github.com/NativeScript/NativeScript))  
-> **Source Version**: `6bb01eab`  
+> **Source Version**: `c72e04d7`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T13:30:53.805Z  
+> **Timestamp**: 2026-10-28T20:44:28.457Z  
 > **Learning ID**: `learn-github-nativescript-nativescript`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nativescript-nativescript-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NativeScript/NativeScript](https://github.com/NativeScript/NativeScript))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T13:30:53.122Z  
+> **Harvest Timestamp**: 2026-10-28T20:44:28.451Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚡ Write Native with TypeScript ✨ Best of all worlds (TypeScript, Swift, Objective C, Kotlin, Java, Dart). Use what you love ❤️ Angular, React, Solid, Svelte, Vue with: iOS (UIKit, SwiftUI), Android (View, Jetpack Compose), Flutter and you name it compatible.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 25682 stars
+- **Stars / Engagement**: 25688 stars
 
 ---
 
@@ -947,825 +947,282 @@ export function getTimeInFrameBase(): number;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `67bf7ee0` (2026-10-24)
-**Commit Message**: fix(core): make background: none clear the background color (#11536)
+### Incident Patch 1: `f154847c` (2026-10-28)
+**Commit Message**: fix(android): create prompt and login inputs from the dialog context (#11582)
 
-* fix(core): make background: none clear the background color
+Closes #11068
 
-`background: none` left background-color unset, so a native control such
-as a button kept its own background. The shorthand parser did not accept
-the `none` keyword at all, so the declaration failed to expand and none of
-the background longhands changed.
-
-The background parser now reads `none` as the image component, and the
-`background` shorthand maps it to no image and, unless the declaration
-also gives a color, to a transparent background-color, the initial value
-CSS resets it to. Shorthands that only give an image, repeat or position
-still leave background-color unset, so views keep their native default
-background behind an image.
-
-* chore(core): drop comments
-
-**File**: `apps/automated/src/ui/styling/style-properties-tests.ts` (modified, +4/-0)
+**File**: `packages/core/ui/dialogs/index.android.spec.ts` (added, +96/-0)
 ```diff
-@@ -39,6 +39,10 @@ export function test_setting_backgroundImage_property_from_CSS_is_applied_to_Sty
- 	test_property_from_CSS_is_applied_to_style('backgroundImage', 'background-image', "url('~/pages/test2.png')");
- }
- 
-+export function test_setting_background_none_from_CSS_makes_backgroundColor_transparent() {
-+	test_property_from_CSS_is_applied_to_style('backgroundColor', 'background', new Color('transparent'), 'none');
-+}
+@@ -0,0 +1,96 @@
++import { describe, it, expect, vi, beforeEach } from 'vitest';
 +
- export function test_setting_borderWidth_property_from_CSS_is_applied_to_Style() {
- 	test_property_from_CSS_is_applied_to_style('borderWidth', 'border-width', 5, '5', true);
- }
-```
-
-**File**: `packages/core/css/parser.spec.ts` (modified, +3/-0)
-```diff
-@@ -122,6 +122,9 @@ describe('css', () => {
- 						size: { x: { value: 100, unit: 'px' }, y: { value: 100, unit: 'px' } },
- 					},
- 				});
-+				test(parseBackground, 'none', { start: 0, end: 4, value: { image: 'none' } });
-+				test(parseBackground, ' #00ff00 none no-repeat ', { start: 0, end: 24, value: { color: new Color('#00ff00'), image: 'none', repeat: 'no-repeat' } });
-+				test(parseBackground, 'nonesuch', null);
- 				test(parseBackground, '  linear-gradient(to right top) ', {
- 					start: 0,
- 					end: 32,
-```
-
-**File**: `packages/core/css/parser.ts` (modified, +5/-0)
-```diff
-@@ -601,6 +601,11 @@ export function parseBackground(text: string, start = 0): Parsed<Background> {
- 			end = url.end;
- 			continue;
- 		}
-+		if (keyword && keyword.value.toLowerCase() === 'none') {
-+			value.image = 'none';
-+			end = keyword.end;
-+			continue;
++const { activity, themedContext, created } = vi.hoisted(() => {
++	const activity = { name: 'activity' };
++	const themedContext = { name: 'themed dialog context' };
++	const created: Array<{ type: string; context: unknown }> = [];
++
++	class Builder {
++		getContext() {
++			return themedContext;
 +		}
- 		const gradient = parseLinearGradient(text, end);
- 		if (gradient) {
- 			value.image = gradient.value;
-```
-
-**File**: `packages/core/ui/styling/style-properties.spec.ts` (modified, +45/-0)
-```diff
-@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest';
- 
- import { Label } from '../label';
- import { Color } from '../../color';
-+import { StackLayout } from '../layouts/stack-layout';
-+import { StyleScope } from './style-scope';
- 
- describe('border-color shorthand', () => {
- 	it('applies a function color with nested arguments to all sides', () => {
-@@ -61,3 +63,46 @@ describe('corner-shape', () => {
- 		expect(() => (label.style.cornerShape = 'bevel' as any)).toThrow();
- 	});
- });
-+
-+describe('background shorthand', () => {
-+	it('none makes the background transparent and removes the image', () => {
-+		const label = new Label();
-+		label.style.backgroundColor = new Color('red');
-+		label.style.backgroundImage = 'res://logo';
-+
-+		label.style.background = 'none' as any;
-+
-+		expect(label.style.backgroundColor).toEqual(new Color('transparent'));
-+		expect(label.style.backgroundImage).toBeUndefined();
-+	});
-+
-+	it('none applies from CSS', () => {
-+		const scope = new StyleScope();
-+		scope.css = 'Label { background-color: red; } .reset { background: none; }';
-+		const root: any = new StackLayout();
-+		root._styleScope = scope;
-+		const label: any = new Label();
-+		label.className = 'reset';
-+		root.addChild(label);
-+		label._styleScope = scope;
-+		label._cssState.onLoaded();
-+
-+		expect(label.style.backgroundColor).toEqual(new Color('transparent'));
-+	});
-+
-+	it('none keeps a color given with it', () => {
-+		const label = new Label();
-+		label.style.background = 'none #00ff00' as any;
-+
-+		expect(label.style.backgroundColor).toEqual(new Color('#00ff00'));
-+		expect(label.style.backgroundImage).toBeUndefined();
-+	});
-+
-+	it('an image without a color still leaves the color unset', () => {
-+		const label = new Label();
-+		label.style.background = 'url(res://logo) no-repeat' as any;
-+
-+		expect(label.style.backgroundColor).toBeUndefined();
-+		expect(label.style.backgroundImage).toBe('res://logo');
-+	});
-+});
-```
-
-**File**: `packages/core/ui/styling/style-properties.ts` (modified, +6/-0)
-```diff
-@@ -132,17 +132,23 @@ function parseBorderColorPositioning(value: string): ShorthandPositioning {
- 	return positioningFromParts(splitOnTopLevelSpacesAndCommas(value.trim()), value);
- }
- 
-+const TRANSPARENT = new Color('transparent');
-+
- function convertToBackgrounds(value: string): [CssProperty<any, any> | CssAnimationProperty<any, any>, any][] {
- 	if (typeof value === 'string') {
- 		const backgrounds = parseBackground(value).value;
- 		let backgroundColor = unsetValue;
- 		if (backgrounds.color) {
- 			backgroundColor = backgrounds.color instanceof Color ? backgrounds.color : new Color(backgrounds.color);
-+		} else if (backgrounds.image === 'none') {
-+			backgroundColor = TRANSPARENT;
- 		}
- 
- 		let backgroundImage: string | LinearGradient;
- 		if (typeof backgrounds.image === 'object' && backgrounds.image) {
- 			backgroundImage = LinearGradient.parse(backgrounds.image);
-+		} else if (backgrounds.image === 'none') {
-+			backgroundImage = unsetValue;
- 		} else {
- 			backgroundImage = backgrounds.image || unsetValue;
- 		}
-```
-
----
-
-### Incident Patch 2: `26f5032e` (2026-10-24)
-**Commit Message**: fix(core): appearance APIs before app start, replaceable Android handlers, explicit systemAppearanceChanged() (#11537)
-
-* fix(android): read app traits before the app has started
-
-Application.systemAppearance(), orientation() and layoutDirection() threw
-on Android until Application.run() had initialized the module, because
-they read the configuration from Application.android.context, which is
-only set then. Code that reads the appearance while it loads, such as a
-theme module imported by the app's entry, could not use them.
-
-They now read the configuration from the native application when the
-context is not set yet. The app's code runs from the native application's
-onCreate, so it exists by then.
-
-* fix(android): let setDarkModeHandler and bar color setters replace values
-
-Utils.android.setDarkModeHandler() kept the first handler it was given
-and ignored later ones, and setStatusBarColor() and
-setNavigationBarColor() never changed a color at all: they assigned with
-`??=` onto settings that always start with default colors. All three also
-stored the settings under the current activity rather than the one passed
-in, so refreshEdgeToEdge() on that activity lost them.
-
-The setters now 
-
-**File**: `packages/core/application/application-common.ts` (modified, +4/-2)
-```diff
-@@ -1030,7 +1030,9 @@ export class ApplicationCommon {
- 			return;
- 		}
- 		this._systemAppearance = value;
--		this.systemAppearanceChanged(this.getRootView(), value);
-+		if (this.autoSystemAppearanceChanged) {
-+			this.systemAppearanceChanged(this.getRootView(), value);
++		setTitle() {}
++		setMessage() {}
++		setCancelable() {}
++		setView() {}
++		setPositiveButton() {}
++		setNegativeButton() {}
++		setNeutralButton() {}
++		setOnDismissListener() {}
++		show(): never {
++			throw new Error('dialog shown');
 +		}
- 		this.notify(<SystemAppearanceChangedEventData>{
- 			eventName: this.systemAppearanceChangedEvent,
- 			android: this.android,
-@@ -1060,7 +1062,7 @@ export class ApplicationCommon {
- 	 * @param newSystemAppearance the new appearance change
- 	 */
- 	systemAppearanceChanged(rootView: View, newSystemAppearance: 'dark' | 'light'): void {
--		if (!rootView || !this.autoSystemAppearanceChanged) {
-+		if (!rootView) {
- 			return;
- 		}
- 
-```
-
-**File**: `packages/core/application/application.android.ts` (modified, +7/-9)
-```diff
-@@ -850,9 +850,11 @@ export class AndroidApplication extends ApplicationCommon implements IAndroidApp
- 	}
- 
- 	getSystemAppearance(): 'light' | 'dark' {
--		const resources = this.context.getResources();
--		const configuration = resources.getConfiguration();
--		return this.getSystemAppearanceValue(configuration);
-+		return this.getSystemAppearanceValue(this.getConfiguration());
 +	}
 +
-+	private getConfiguration(): android.content.res.Configuration {
-+		return (this.context ?? this.getNativeApplication()).getResources().getConfiguration();
- 	}
- 
- 	// https://developer.android.com/guide/topics/ui/look-and-feel/darktheme#configuration_changes
-@@ -869,9 +871,7 @@ export class AndroidApplication extends ApplicationCommon implements IAndroidApp
- 	}
- 
- 	getLayoutDirection(): CoreTypes.LayoutDirectionType {
--		const resources = this.context.getResources();
--		const configuration = resources.getConfiguration();
--		return this.getLayoutDirectionValue(configuration);
-+		return this.getLayoutDirectionValue(this.getConfiguration());
- 	}
- 
- 	private getLayoutDirectionValue(configuration: android.content.res.Configuration): CoreTypes.LayoutDirectionType {
-@@ -886,9 +886,7 @@ export class AndroidApplication extends ApplicationCommon implements IAndroidApp
- 	}
- 
- 	getOrientation() {
--		const resources = this.context.getResources();
--		const configuration = <android.content.res.Configuration>resources.getConfiguration();
--		return this.getOrientationValue(configuration);
-+		return this.getOrientationValue(this.getConfiguration());
- 	}
- 
- 	private getOrientationValue(configuration: android.content.res.Configuration): 'portrait' | 'landscape' | 'unknown' {
-```
-
-**File**: `packages/core/application/system-appearance.spec.ts` (added, +139/-0)
-```diff
-@@ -0,0 +1,139 @@
-+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
++	class TextInput {
++		private inputType = 0;
++		constructor(public context: unknown) {
++			created.push({ type: 'EditText', context });
++		}
++		setInputType(value: number) {
++			this.inputType = value;
++		}
++		getInputType() {
++			return this.inputType;
++		}
++		setText() {}
++		setHint() {}
++		setTypeface() {}
++		getText() {
++			return '';
++		}
++	}
 +
-+vi.hoisted(() => {
-+	(globalThis as any).NativeScriptGlobals.addEventWiring = () => {};
-+});
++	class Layout {
++		constructor(public context: unknown) {
++			created.push({ type: 'LinearLayout', context });
++		}
++		setOrientation() {}
++		addView() {}
++	}
 +
-+import { CoreTypes } from '../core-types';
-+import { Observable } from '../data/observable';
-+import type { View } from '../ui/core/view';
-+import { ApplicationCommon } from './application-common';
-+import { AndroidApplication } from './application.android';
-+import { setNativeApp } from './helpers-common';
++	class Listener {
++		constructor(public impl: unknown) {}
++	}
 +
-+function installApplicationEventBus(): Observable {
-+	const events = new Observable();
-+	const bus = (global.NativeScriptGlobals as any).events;
-+
-+	bus.on = events.on.bind(events);
-+	bus.once = events.once.bind(events);
-+	bus.off = events.off.bind(events);
-+	bus.notify = events.notify.bind(events);
-+	bus.hasListeners = events.hasListeners.bind(events);
-+
-+	return events;
-+}
-+
-+function createRootView() {
-+	return {
-+		cssClasses: new Set<string>(),
-+		_onCssStateChange: vi.fn(),
-+		_getRootModalViews: () => [],
++	const g = globalThis as any;
++	g.android = {
++		...g.android,
++		app: { ...g.android?.app, AlertDialog: { Builder } },
++		widget: { ...g.android?.widget, EditText: TextInput, LinearLayout: Layout },
++		content: { ...g.android?.content, DialogInterface: { OnClickListener: Listener, OnDismissListener: Listener } },
++		text: { ...g.android?.text, InputType: { TYPE_CLASS_TEXT: 1, TYPE_TEXT_VARIATION_PASSWORD: 128 } },
++		graphics: { ...g.android?.graphics, Typeface: { DEFAULT: {} } },
 +	};
-+}
 +
-+class TestApplication extends ApplicationCommon {
-+	rootView = createRootView();
-+
-+	getRootView(): View {
-+		return this.rootView as unknown as View;
-+	}
-+
-+	getOrientation(): 'portrait' | 'landscape' | 'unknown' {
-+		return 'portrait';
-+	}
-+
-+	getSystemAppearance(): 'dark' | 'light' | null {
-+		return 'light';
-+	}
-+
-+	getLayoutDirection(): CoreTypes.LayoutDirectionType | null {
-+		return CoreTypes.LayoutDirection.ltr;
-+	}
-+
-+	changeSystemAppearance(value: 'dark' | 'light') {
-+		this.setSystemAppearance(value);
-+	}
-+}
-+
-+describe('system appearance', () => {
-+	let app: TestApplication;
-+
-+	beforeEach(() => {
-+		installApplicationEventBus();
-+		app = new TestApplication();
-+	});
-+
-+	afterEach(() => {
-+		app.setAutoSystemAppearanceChanged(true);
-+		installApplicationEventBus();
-+	});
-+
-+	it('applies the appearance an app sets while automatic changes are off', () => {
-+		app.setAutoSystemAppearanceChanged(false);
-+
-+		app.systemAppearanceChanged(app.getRootView(), 'dark');
-+
-+		expect(app.rootView.cssClasses.has('ns-dark')).toBe(true);
-+		expect(app.rootView._onCssStateChange).toHaveBeenCalled();
-+	});
-+
-+	it('leaves the classes alone when the system changes while automatic changes are off', () => {
-+		const changes: string[] = [];
-+		app.on(app.systemAppearanceChangedEvent, (args: any) => changes.push(args.newValue));
-+		app.setAutoSystemAppearanceChanged(false);
-+
-+		app.changeSystemAppearance('dark');
-+
-+		expect(app.rootView.cssClasses.has('ns-dark')).toBe(false);
-+		expect(changes).toEqual(['dark']);
-+	});
-+
-+	it('applies system changes while automatic changes are on', () => {
-+		app.changeSystemAppearance('dark');
-+
-+		expect(app.rootView.cssClasses.has('ns-dark')).toBe(true);
-+	});
++	return { activity, themedContext, created };
 +});
 +
-+describe('Android application traits before the app has started', () => {
-+	const UI_MODE_NIGHT_YES = 0x20;
-+	let globals: Record<string, any>;
++vi.mock('../../utils/native-helper', async (importOriginal) => {
++	const actual = await importOriginal<any>();
++	return { ...actual, android: { ...actual.android, getCurrentActivity: () => activity } };
++});
 +
++import { login, prompt } from './index.android';
++
++describe('dialogs (Android) input views', () => {
 +	beforeEach(() => {
-+		installApplicationEventBus();
-+		globals = { android: (global as any).android };
-+		(global as any).android = {
-+			...globals.android,
-+			content: {
-+				...globals.android?.content,
-+				res: {
-+					Configuration: {
-+						UI_MODE_NIGHT_MASK: 0x30,
-+						UI_MODE_NIGHT_UNDEFINED: 0x00,
-+						UI_MODE_NIGHT_NO: 0x10,
-+						UI_MODE_NIGHT_YES,
-+						ORIENTATION_PORTRAIT: 1,
-+						ORIENTATION_LANDSCAPE: 2,
-+					},
-+				},
-+			},
-+		};
-+		const configuration = { uiMode: 0x01 | UI_MODE_NIGHT_YES, orientation: 2 };
-+		setNativeApp({ getResources: () => ({ getConfiguration: () => configuration }) } as any);
++		created.length = 0;
 +	});
 +
-+	afterEach(() => {
-+		(global as any).android = globals.android;
-+		setNativeApp(undefined);
-+		installApplicationEventBus();
++	it('creates the prompt input from the dialog context', async () => {
++		await expect(prompt({ title: 't', message: 'm', okButtonText: 'OK' })).rejects.toThrow('dialog shown');
++
++		expect(created).toEqual([{ type: 'EditText', context: themedContext }]);
 +	});
 +
-+	it('reads them from the native application', () => {
-+		const app = new AndroidApplication();
++	it('creates the login inputs and layout from the dialog context', async () => {
++		await expect(login({ title: 't', message: 'm', okButtonText: 'OK' })).rejects.toThrow('dialog shown');
 +
-+		expect(app.context).toBeUndefined();
-+		expect(app.systemAppearance()).toBe('dark');
-+		expect(app.orientation()).toBe('landscape');
++		expect(created).toEqual([
++			{ type: 'EditText', context: themedContext },
++			{ type: 'EditText', context: themedContext },
++			{ type: 'LinearLayout', context: themedContext },
++		]);
 +	});
 +});
 ```
 
-**File**: `packages/core/utils/edge-to-edge.android.spec.ts` (added, +69/-0)
+**File**: `packages/core/ui/dialogs/index.android.ts` (modified, +5/-5)
 ```diff
-@@ -0,0 +1,69 @@
-+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-+
-+import { Color } from '../color';
-+import { setDarkModeHandler, setNavigationBarColor, setStatusBarColor, refreshEdgeToEdge } from './native-helper-for-android';
-+
-+describe('Android edge-to-edge setters', () => {
-+	let globals: Record<string, any>;
-+	let enableEdgeToEdge: ReturnType<typeof vi.fn>;
-+
-+	class HandleDarkMode {
-+		constructor(readonly implementation: { onHandle(bar: number, resources: any): boolean }) {}
-+	}
-+
-+	beforeEach(() => {
-+		globals = { android: (global as any).android, org: (global as any).org, java: (global as any).java };
-+		enableEdgeToEdge = vi.fn();
-+		(global as any).android = { ...globals.android, view: { ...globals.android?.view, Window: class Window {} } };
-+		(global as any).org = { nativescript: { widgets: { Utils: { enableEdgeToEdge, HandleDarkMode } } } };
-+		(global as any).java = { lang: { Integer: { valueOf: (value: number) => value } } };
-+	});
-+
-+	afterEach(() => {
-+		Object.assign(global, globals);
-+	});
-+
-+	function lastHandler(): (bar: number) => boolean {
-+		const args = enableEdgeToEdge.mock.calls.at(-1);
-+		const handler = args.at(-1);
-+		return handler instanceof HandleDarkMode ? (bar) => handler.implementation.onHandle(bar, null) : null;
-+	}
-+
-+	function lastColors(): number[] {
-+		return enableEdgeToEdge.mock.calls.at(-1).slice(1, 5);
-+	}
-+
-+	it('uses the latest dark mode handler', () => {
-+		const activity = {} as any;
-+
-+		setDarkModeHandler({ activity, handler: () => false });
-+		setDarkModeHandler({ activity, handler: () => true });
-+		expect(lastHandler()(0)).toBe(true);
-+
-+		refreshEdgeToEdge(activity);
-+		expect(lastHandler()(0)).toBe(true);
-+	});
-+
-+	it('keeps the settings of the activity it was given', () => {
-+		const activity = {} as any;
-+
-+		setStatusBarColor({ activity, lightColor: new Color('#ff0000') });
-+		setNavigationBarColor({ activity, darkColor: new Color('#0000ff') });
-+		refreshEdgeToEdge(activity);
-+
-+		const [statusBarLight, , , navigationBarDark] = lastColors();
-+		expect(statusBarLight).toBe(new Color('#ff0000').android);
-+		expect(navigationBarDark).toBe(new Color('#0000ff').android);
-+	});
-+
-+	it('replaces colors set before and keeps the ones not given', () => {
-+		const activity = {} as any;
-+
-+		setStatusBarColor({ activity, lightColor: new Color('#ff0000'), darkColor: new Color('#00ff00') });
-+		setStatusBarColor({ activity, lightColor: new Color('#0000ff') });
-+
-+		const [statusBarLight, statusBarDark] = lastColors();
-+		expect(statusBarLight).toBe(new Color('#0000ff').android);
-+		expect(statusBarDark).toBe(new Color('#00ff00').android);
-+	});
-+});
-```
-
-**File**: `packages/core/utils/native-helper-for-android.ts` (modified, +8/-8)
-```diff
-@@ -344,9 +344,9 @@ export function setStatusBarColor(options?: { activity?: androidx.appcompat.app.
- 			statusBarLight: DefaultStatusBarLight,
- 			statusBarDark: DefaultStatusBarDark,
- 		};
--		existingColors.statusBarLight ??= statusBarLightColor;
--		existingColors.statusBarDark ??= statusBarDarkColor;
--		systemColors.set(getCurrentActivity(), existingColors);
-+		existingColors.statusBarLight = statusBarLightColor ?? existingColors.statusBarLight;
-+		existingColors.statusBarDark = statusBarDarkColor ?? existingColors.statusBarDark;
-+		systemColors.set(activity, existingColors);
+@@ -4,7 +4,6 @@
+ import { DialogOptions, ConfirmOptions, PromptOptions, PromptResult, LoginOptions, LoginResult, ActionOptions } from './dialogs-common';
+ import { getLabelColor, getButtonColors, isDialogOptions, inputType, capitalizationType, DialogStrings, parseLoginOptions } from './dialogs-common';
+ import { android as androidUtils } from '../../utils/native-helper';
+-import { getNativeApp } from '../../application/helpers-common';
  
- 		setEnableEdgeToEdge(activity, existingColors);
- 	}
-@@ -363,9 +363,9 @@ export function setNavigationBarColor(options?: { activity?: androidx.appcompat.
- 			statusBarLight: DefaultStatusBarLight,
- 			statusBarDark: DefaultStatusBarDark,
- 		};
--		existingColors.navigationBarLight ??= navigationBarLightColor;
--		existingColors.navigationBarDark ??= navigationBarDarkColor;
--		systemColors.set(getCurrentActivity(), existingColors);
-+		existingColors.navigationBarLight = navigationBarLightColor ?? existingColors.navigationBarLight;
-+		existingColors.navigationBarDark = navigationBarDarkColor ?? existingColors.navigationBarDark;
-+		systemColors.set(activity, existingColors);
+ export * from './dialogs-common';
  
- 		setEnableEdgeToEdge(activity, existingColors);
- 	}
-@@ -382,9 +382,9 @@ export function setDarkModeHandler(options?: { activity?: androidx.appcompat.app
- 			statusBarDark: DefaultStatusBarDark,
- 		};
+@@ -203,7 +202,7 @@ export function prompt(...args): Promise<PromptResult> {
+ 		try {
+ 			const alert = createAlertDialog(options);
  
--		existingColors.handler ??= darkModeHandler;
-+		existingColors.handler = darkModeHandler;
+-			const input = new android.widget.EditText(androidUtils.getCurrentActivity());
++			const input = new android.widget.EditText(alert.getContext());
  
--		systemColors.set(getCurrentActivity(), existingColors);
-+		systemColors.set(activity, existingColors);
+ 			if (options) {
+ 				if (options.inputType === inputType.password) {
+@@ -260,19 +259,20 @@ export function login(...args: any[]): Promise<LoginResult> {
+ 		try {
+ 			const alert = createAlertDialog(options);
  
- 		setEnableEdgeToEdge(activity, existingColors);
- 	}
+-			const userNameInput = new android.widget.EditText(getNativeApp<android.app.Application>().getApplicationContext());
++			const context = alert.getContext();
++			const userNameInput = new android.widget.EditText(context);
+ 
+ 			userNameInput.setHint(options.userNameHint ? options.userNameHint : '');
+ 			userNameInput.setText(options.userName ? options.userName : '');
+ 
+-			const passwordInput = new android.widget.EditText(getNativeApp<android.app.Application>().getApplicationContext());
++			const passwordInput = new android.widget.EditText(context);
+ 			passwordInput.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
+ 			passwordInput.setTypeface(android.graphics.Typeface.DEFAULT);
+ 
+ 			passwordInput.setHint(options.passwordHint ? options.passwordHint : '');
+ 			passwordInput.setText(options.password ? options.password : '');
+ 
+-			const layout = new android.widget.LinearLayout(getNativeApp<android.app.Application>().getApplicationContext());
++			const layout = new android.widget.LinearLayout(context);
+ 			layout.setOrientation(1);
+ 			layout.addView(userNameInput);
+ 			layout.addView(passwordInput);
 ```
 
 ---
 
-### Incident Patch 3: `2f1ce03b` (2026-10-23)
-**Commit Message**: fix(core): restore the css value when a local style value is reset (#11520)
+### Incident Patch 2: `24c8311d` (2026-10-28)
+**Commit Message**: fix(core): TextDecoder decodes only the bytes of a typed array view (#11578)
+
+Closes #9941
+
+**File**: `packages/core/text/text-common.spec.ts` (added, +29/-0)
+```diff
+@@ -0,0 +1,29 @@
++import { describe, it, expect } from 'vitest';
++import { TextDecoder, TextEncoder } from './text-common';
++
++describe('TextDecoder', () => {
++	const decoder = new TextDecoder();
++
++	it('decodes an ArrayBuffer', () => {
++		expect(decoder.decode(new Uint8Array([0x68, 0x69]).buffer)).toBe('hi');
++	});
++
++	it('decodes only the bytes inside a typed array view', () => {
++		const bytes = new Uint8Array([0x78, 0x78, 0x68, 0x69, 0x78]);
++		expect(decoder.decode(bytes.subarray(2, 4))).toBe('hi');
++	});
++
++	it('decodes only the bytes inside a DataView', () => {
++		const bytes = new Uint8Array([0x78, 0x68, 0x69, 0x78]);
++		expect(decoder.decode(new DataView(bytes.buffer, 1, 2))).toBe('hi');
++	});
++
++	it('round-trips multi-byte characters through TextEncoder', () => {
++		const encoded = new TextEncoder().encode('héllo ✓');
++		expect(decoder.decode(encoded)).toBe('héllo ✓');
++	});
++
++	it('rejects values that are not buffers', () => {
++		expect(() => decoder.decode('abc' as any)).toThrow();
++	});
++});
+```
+
+**File**: `packages/core/text/text-common.ts` (modified, +1/-1)
+```diff
+@@ -71,7 +71,7 @@ export class TextDecoder {
+ 		if (Object_prototype_toString.call(buffer) !== ArrayBufferString) {
+ 			throw Error("Failed to execute 'decode' on 'TextDecoder': The provided value is not of type '(ArrayBuffer or ArrayBufferView)'");
+ 		}
+-		const inputAs8 = new Uint8Array(buffer);
++		const inputAs8 = ArrayBuffer.isView(input) ? new Uint8Array(input.buffer, input.byteOffset, input.byteLength) : new Uint8Array(buffer);
+ 		let resultingString = '';
+ 		for (let index = 0, len = inputAs8.length | 0; index < len; index = (index + 32768) | 0) {
+ 			resultingString += String.fromCharCode.apply(0, inputAs8.slice(index, (index + 32768) | 0));
+```
+
+---
+
+### Incident Patch 3: `16d8ef12` (2026-10-28)
+**Commit Message**: fix(core): split className on any whitespace (#11577)
+
+Closes #9402
 
 [skip ci]
 
-**File**: `apps/automated/src/ui/styling/value-source-tests.ts` (modified, +1/-2)
+**File**: `packages/core/ui/core/view-base/class-name.spec.ts` (added, +32/-0)
 ```diff
-@@ -1,5 +1,4 @@
- import * as helper from '../../ui-helper';
--import * as TKUnit from '../../tk-unit';
- import { Color, Button, StackLayout, unsetValue } from '@nativescript/core';
- 
- export var test_value_Inherited_after_unset = function () {
-@@ -51,5 +50,5 @@ export function test_value_Local_stronger_than_Css() {
- 	btn.style.color = new Color('#0000FF');
- 	helper.assertViewColor(btn, '#0000FF');
- 	btn.style.color = unsetValue;
--	TKUnit.assertEqual(btn.style.color, undefined, 'style.color should be undefined when set locally.');
-+	helper.assertViewColor(btn, '#FF0000');
- }
-```
-
-**File**: `packages/core/ui/core/properties/css-property-local-reset.spec.ts` (added, +211/-0)
-```diff
-@@ -0,0 +1,211 @@
+@@ -0,0 +1,32 @@
 +import { describe, it, expect } from 'vitest';
 +
-+import { CssProperty, unsetValue } from '.';
-+import { View } from '../view';
 +import { Label } from '../../label';
-+import { StackLayout } from '../../layouts/stack-layout';
-+import { Style } from '../../styling/style';
-+import { StyleScope } from '../../styling/style-scope';
-+import { marginTopProperty } from '../../styling/style-properties';
-+import { PropertyChangeData } from '../../../data/observable';
 +
-+const NATIVE_DEFAULT = 'native-default';
++function classesOf(className: string): string[] {
++	const view = new Label();
++	view.className = className;
 +
-+class NativeView extends View {
-+	public nativeWrites: unknown[] = [];
-+
-+	public createNativeView() {
-+		return {};
-+	}
++	return [...view.cssClasses];
 +}
 +
-+const nativeTestProperty = new CssProperty<Style, string>({
-+	name: 'nativeTest',
-+	cssName: 'native-test',
-+	defaultValue: 'default',
-+});
-+nativeTestProperty.register(Style);
-+
-+NativeView.prototype[nativeTestProperty.getDefault] = () => NATIVE_DEFAULT;
-+NativeView.prototype[nativeTestProperty.setNative] = function (this: NativeView, value: unknown) {
-+	this.nativeWrites.push(value);
-+};
-+
-+function loaded<T extends View>(css: string, view: T, parent: View = new StackLayout()): T {
-+	const scope = new StyleScope();
-+	scope.css = css;
-+
-+	(<any>parent)._styleScope = scope;
-+	(<any>parent)._cssState.onLoaded();
-+
-+	parent._addView(view);
-+	(<any>view)._styleScope = scope;
-+	(<any>view)._cssState.onLoaded();
-+
-+	return view;
-+}
-+
-+/** Lets the setters reach the native view without creating one. */
-+function withNativeUpdates<T extends View>(view: T): T {
-+	(<any>view)._suspendNativeUpdatesCount = 0;
-+
-+	return view;
-+}
-+
-+describe('CssProperty local reset', () => {
-+	it.each([
-+		['unsetValue', unsetValue],
-+		["'unset'", 'unset'],
-+		["'initial'", 'initial'],
-+		["''", ''],
-+	])('restores the css value when reset with %s', (_name, reset) => {
-+		const view = loaded('label { margin-top: 4; }', new Label());
-+
-+		view.style.marginTop = 20;
-+		view.style.marginTop = <any>reset;
-+
-+		expect(view.style.marginTop).toBe(4);
++describe('className', () => {
++	it('splits on spaces', () => {
++		expect(classesOf('a b c')).toEqual(['a', 'b', 'c']);
 +	});
 +
-+	it('restores the css value when reset through the view', () => {
-+		const view = loaded('label { margin-top: 4; }', new Label());
-+
-+		view.marginTop = 20;
-+		view.marginTop = <any>unsetValue;
-+
-+		expect(view.marginTop).toBe(4);
++	it('splits on newlines and tabs', () => {
++		expect(classesOf('\n\ta\n\tb\tc\n')).toEqual(['a', 'b', 'c']);
 +	});
 +
-+	it('restores a css value written through a shorthand', () => {
-+		const view = loaded('label { margin: 4; }', new Label());
-+
-+		view.style.marginTop = 20;
-+		view.style.marginTop = unsetValue;
-+
-+		expect(view.style.marginTop).toBe(4);
++	it('ignores repeated whitespace', () => {
++		expect(classesOf('  a   b  ')).toEqual(['a', 'b']);
 +	});
 +
-+	it('restores an evaluated css variable', () => {
-+		const view = loaded('label { --gap: 4; margin-top: var(--gap); }', new Label());
-+
-+		view.style.marginTop = 20;
-+		view.style.marginTop = unsetValue;
-+
-+		expect(view.style.marginTop).toBe(4);
-+	});
-+
-+	it('restores a css value the local value shadowed before css ran', () => {
++	it('clears classes for an empty string', () => {
 +		const view = new Label();
-+		view.style.marginTop = 20;
-+		loaded('label { margin-top: 4; }', view);
-+		expect(view.style.marginTop).toBe(20);
++		view.className = 'a b';
++		view.className = '';
 +
-+		view.style.marginTop = unsetValue;
-+
-+		expect(view.style.marginTop).toBe(4);
-+	});
-+
-+	it('falls back to the default when no css rule sets the property', () => {
-+		const view = loaded('label { color: red; }', new Label());
-+
-+		view.style.marginTop = 20;
-+		view.style.marginTop = unsetValue;
-+
-+		expect(view.style.marginTop).toBe(marginTopProperty.defaultValue);
-+	});
-+
-+	it('lets the css own the property again', () => {
-+		const view = loaded('label { margin-top: 4; } .wide { margin-top: 8; }', new Label());
-+
-+		view.style.marginTop = 20;
-+		view.style.marginTop = unsetValue;
-+		view.className = 'wide';
-+		(<any>view)._cssState.onChange();
-+		(<any>view)._cssState.onLoaded();
-+
-+		expect(view.style.marginTop).toBe(8);
-+	});
-+
-+	it('notifies the css value as a script change', () => {
-+		const view = loaded('label { margin-top: 4; }', new Label());
-+		view.style.marginTop = 20;
-+
-+		const events: PropertyChangeData[] = [];
-+		view.style.on('marginTopChange', (data: PropertyChangeData) => events.push(data));
-+
-+		view.style.marginTop = unsetValue;
-+
-+		expect(events.map((e) => [e.value, e.oldValue, e.origin])).toEqual([[4, 20, 'script']]);
-+	});
-+
-+	it('writes the css value to the native view', () => {
-+		const view = withNativeUpdates(loaded('* { native-test: from-css; }', new NativeView()));
-+
-+		view.style['nativeTest'] = 'local';
-+		view.style['nativeTest'] = unsetValue;
-+
-+		expect(view.nativeWrites).toEqual(['local', 'from-css']);
-+		expect(view.style['nativeTest']).toBe('from-css');
-+	});
-+
-+	it('restores the native default when no css rule sets the property', () => {
-+		const view = withNativeUpdates(loaded('* { color: red; }', new NativeView()));
-+
-+		view.style['nativeTest'] = 'local';
-+		view.style['nativeTest'] = unsetValue;
-+
-+		expect(view.nativeWrites).toEqual(['local', NATIVE_DEFAULT]);
-+		expect(view.style['nativeTest']).toBe('default');
++		expect([...view.cssClasses]).toEqual([]);
 +	});
 +});
-+
-+describe('InheritedCssProperty local reset', () => {
-+	it('restores the css value', () => {
-+		const view = loaded('label { co
 ```
 
-**File**: `packages/core/ui/core/properties/index.ts` (modified, +37/-6)
+**File**: `packages/core/ui/core/view-base/index.ts` (modified, +4/-2)
 ```diff
-@@ -41,8 +41,8 @@ const cssValueSourceKeys: Record<string, symbol> = Object.create(null);
- /**
-  * Whether the style still carries what the cascade last wrote for the property.
-  * A `CssProperty` keeps one value: a local value both suppresses the css write and
-- * takes the slot, so clearing it leaves the property at its default with the css
-- * value gone. The cascade has to write it again rather than skip it as unchanged.
-+ * takes the slot, so the style can stop carrying what the cascade recorded. The
-+ * cascade has to write it again rather than skip it as unchanged.
-  */
- export function _isCssValueStillApplied(style: unknown, cssLocalName: string, value: unknown): boolean {
- 	const sourceKey = cssValueSourceKeys[cssLocalName];
-@@ -55,6 +55,16 @@ export function _isCssValueStillApplied(style: unknown, cssLocalName: string, va
- 	return style[sourceKey] === (isResetValue(value) ? undefined : ValueSource.Css);
- }
+@@ -1645,9 +1645,11 @@ export const classNameProperty = new Property<ViewBase, string>({
+ 		}
  
-+/**
-+ * What a released local value falls back to: the value the cascade last resolved for
-+ * the property, or `undefined` when it resolved none.
-+ */
-+function cascadedCssValue(view: ViewBase, cssLocalName: string): unknown {
-+	const value = view._cssState?._getAppliedPropertyValue(cssLocalName);
-+
-+	return value === '' || isResetValue(value) ? undefined : value;
-+}
-+
- function print(map) {
- 	const symbols = Object.getOwnPropertySymbols(map);
- 	for (const symbol of symbols) {
-@@ -780,14 +790,24 @@ export class CssProperty<T extends Style, U> {
- 
- 			this._localValueVersion++;
- 
--			const reset = isResetValue(newValue) || newValue === '';
-+			let reset = isResetValue(newValue) || newValue === '';
-+			let valueSource = ValueSource.Local;
- 			let value: U;
- 
-+			if (reset) {
-+				const cssValue = cascadedCssValue(view, property.cssLocalName);
-+				if (cssValue !== undefined) {
-+					newValue = <U | string>cssValue;
-+					valueSource = ValueSource.Css;
-+					reset = false;
+ 		if (typeof newValue === 'string' && newValue !== '') {
+-			const classes = newValue.split(' ');
++			const classes = newValue.split(/\s+/);
+ 			for (let i = 0, length = classes.length; i < length; i++) {
+-				cssClasses.add(classes[i]);
++				if (classes[i]) {
++					cssClasses.add(classes[i]);
 +				}
-+			}
-+
- 			if (reset) {
- 				value = defaultValue;
- 				delete this[sourceKey];
- 			} else {
--				this[sourceKey] = ValueSource.Local;
-+				this[sourceKey] = valueSource;
- 				value = valueConverter && typeof newValue === 'string' ? (overrideConverter ? valueConverter.call(this, newValue) : valueConverter(newValue)) : <U>newValue;
  			}
+ 		}
  
-@@ -1210,6 +1230,7 @@ export class InheritedCssProperty<T extends Style, U> extends CssProperty<T, U>
- 		const getDefault = this.getDefault;
- 		const setNative = this.setNative;
- 		const defaultValueKey = this.defaultValueKey;
-+		const cssLocalName = this.cssLocalName;
- 		const eventName = propertyName + 'Change';
- 		const defaultValue: U = options.defaultValue;
- 
-@@ -1253,7 +1274,17 @@ export class InheritedCssProperty<T extends Style, U> extends CssProperty<T, U>
- 					this._localValueVersion++;
- 				}
- 
--				const reset = isResetValue(boxedValue) || boxedValue === '';
-+				let reset = isResetValue(boxedValue) || boxedValue === '';
-+				let newValueSource = valueSource;
-+				if (reset && isLocalWrite) {
-+					const cssValue = cascadedCssValue(view, cssLocalName);
-+					if (cssValue !== undefined) {
-+						boxedValue = cssValue;
-+						newValueSource = ValueSource.Css;
-+						reset = false;
-+					}
-+				}
-+
- 				const currentValueSource: number = this[sourceKey] || ValueSource.Default;
- 
- 				if (reset) {
-@@ -1286,7 +1317,7 @@ export class InheritedCssProperty<T extends Style, U> extends CssProperty<T, U>
- 						unsetNativeValue = true;
- 					}
- 				} else {
--					this[sourceKey] = valueSource;
-+					this[sourceKey] = newValueSource;
- 					if (valueConverter && typeof boxedValue === 'string') {
- 						value = overrideConverter ? valueConverter.call(this, boxedValue) : valueConverter(boxedValue);
- 					} else {
-```
-
-**File**: `packages/core/ui/styling/style-scope.ts` (modified, +8/-0)
-```diff
-@@ -736,6 +736,14 @@ export class CssState {
- 		return this.viewRef.get()._styleScope.getSelectorsVersion() === this._appliedSelectorsVersion;
- 	}
- 
-+	/**
-+	 * The value the cascade last resolved for a longhand, `undefined` if it resolved none.
-+	 * Recorded even while a local value suppresses the write.
-+	 */
-+	public _getAppliedPropertyValue(property: string): unknown {
-+		return this._appliedPropertyValues[property];
-+	}
-+
- 	public onLoaded(): void {
- 		if (this._matchInvalid) {
- 			this.updateMatch();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11567** (2026-10-22): fix(vite): recognize aliased default exports in link checks (@aleclarson)
-- **PR #11565** (2026-10-22): fix(vite): preserve package imports during vendor bundling (@aleclarson)
-- **PR #11562** (2026-10-21): fix(ios): measure padded LiquidGlass content inside its padding (@aleclarson)
-- **PR #11560** (2026-10-21): fix(vite): keep source-only dependencies out of the HMR vendor bundle regardless of spec (@aleclarson)
-- **PR #11559** (2026-10-21): fix(vite): resolve nested node_modules requests for install-linked dependencies (@aleclarson)
-- **PR #11555** (2026-10-21): fix(vite): preserve Vue plugin imports and canonical runtime bridge (@rafaelaugustos)
+- **PR #11585** (2026-10-28): docs: fix stale unit-test anchors and API reference build command (@ZainnQureshii)
+- **PR #11583** (2026-10-28): chore(skills): add issue-sweep skill (@NathanWalker)
+- **PR #11582** (2026-10-28): fix(android): create prompt and login inputs from the dialog context (@NathanWalker)
+- **PR #11581** (2026-10-28): fix(windows): break import cycle between view and animation modules (@aleclarson)
+- **PR #11579** (2026-10-28): fix(ios): skip Switch color updates without a native view (@NathanWalker)
+- **PR #11578** (2026-10-28): fix(core): TextDecoder decodes only the bytes of a typed array view (@NathanWalker)
 
 ---
 
@@ -1785,24 +1242,79 @@ The setters now
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core): make background: none clear the background color (#11536)
+## X. android): create prompt and login inputs from the dialog context (#11582)
 
 **RULE**:
-When implementing operations in `apps/automated/src/ui/styling/style-properties-tests.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NativeScript/NativeScript. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/core/ui/dialogs/index.android.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NativeScript/NativeScript. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `67bf7ee0`: core): make background: none clear the background color (#11536). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f154847c`: android): create prompt and login inputs from the dialog context (#11582). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/automated/src/ui/styling/style-properties-tests.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/core/ui/dialogs/index.android.spec.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-export function test_setting_background_none_from_CSS_makes_backgroundColor_transparent() {
-	test_property_from_CSS_is_applied_to_style('backgroundColor', 'background', new Color('transparent'), 'none');
-}
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+const { activity, themedContext, created } = vi.hoisted(() => {
+	const activity = { name: 'activity' };
+	const themedContext = { name: 'themed dialog context' };
+	const created: Array<{ type: string; context: unknown }> = [];
+
+	class Builder {
+		getContext() {
+			return themedContext;
+		}
+		setTitle() {}
+		setMessage() {}
+		setCancelable() {}
+		setView() {}
+		setPositiveButton() {}
+		setNegativeButton() {}
+		setNeutralButton() {}
+		setOnDismissListener() {}
+		show(): never {
+			throw new Error('dialog shown');
+		}
+	}
+
+	class TextInput {
+		private inputType = 0;
+		constructor(public context: unknown) {
+			created.push({ type: 'EditText', context });
+		}
+		setInputType(value: number) {
+			this.inputType = value;
+		}
+		getInputType() {
+			return this.inputType;
+		}
+		setText() {}
+		setHint() {}
+		setTypeface() {}
+		getText() {
+			return '';
+		}
+	}
+
+	class Layout {
+		constructor(public context: unknown) {
+			created.push({ type: 'LinearLayout', context });
+		}
+		setOrientation() {}
+		addView() {}
+	}
+
+	class Listener {
+		constructor(public impl: unknown) {}
+	}
+
+	const g = globalThis as any;
+	g.android = {
+		...g.android,
+		
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1812,4 +1324,4 @@ export function test_setting_background_none_from_CSS_makes_backgroundColor_tran
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `67bf7ee0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f154847c` are properly handled with clean fallback behavior.

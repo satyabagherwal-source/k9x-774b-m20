@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source**: github ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
-> **Source Version**: `e6aff936`  
+> **Source Version**: `3f0e3b9a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T03:18:06.143Z  
+> **Timestamp**: 2026-10-28T20:44:34.465Z  
 > **Learning ID**: `learn-github-milvus-io-milvus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T03:18:05.900Z  
+> **Harvest Timestamp**: 2026-10-28T20:44:34.458Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 46506 stars
+- **Stars / Engagement**: 46513 stars
 
 ---
 
@@ -1412,14 +1412,11 @@ BENCHMARK_MAIN();
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #54727** (2026-10-27): **test: align manifest test calls with revision paths**
-  *Symptoms*: issue: #54153  - Manifest tests: migrate five remaining `CommitManifestUpdates` calls in packed and DataCoord to the revision-path API introduced by #54154, restoring Code Check and test compilation while preserving the original base paths, versions, and assertions.
-  **Post-Mortem & Fix Analysis**:
-  > /set-milestone 3.1
-  > [ci-v2-notice] Notice: New ci-v2 system is enabled for this PR.  To rerun ci-v2 checks, comment with: - /ci-rerun-code-check  // for ci-v2/code-check - /ci-rerun-code-check-macos  // for Code Checker MacOS (GitHub Actions) - /ci-rerun-build  // for ci-v2/build - /ci-rerun-build-all  // for ci-v2/build-all (multi-arch builds) - /ci-rerun-buildenv  // for ci-v2/build-env (build milvus-env builder images; update .env after the new tag is ready) - /ci-rerun-ut-integration  // for ci-v2/ut-integration, will rerun ci-v2/build - /ci-rerun-ut-go  // for ci-v2/ut-go, will rerun ci-v2/build - /ci-rerun-ut-cpp  // for ci-v2/ut-cpp - /ci-rerun-ut  // for all ci-v2/ut-integration, ci-v2/ut-go, ci-v2/ut-cpp, will rerun ci-v2/build - /ci-rerun-e2e-default  // for ci-v2/e2e-default - /ci-rerun-e2e-pulsar-wp  // for ci-v2/e2e-pulsar-wp (GCP branch-equivalent Pulsar + Woodpecker Python E2E) - /ci-rerun-e2e-amd  // for ci-v2/e2e-amd (e2e pool dispatcher) - /ci-rerun-e2e-dist-wp  // for ci-v2/e2e-dist-wp 
+- **Issue #54770** (2026-10-28): **fix: [cp3.0] support contextual keywords as field names**
+  *Symptoms*: issue: #53925 pr: #53968  Cherry-pick of #53968 onto 3.0.  ## What  Fields named after contextual keywords (`iso`, `interval`, ...) can be created but could not be used in filters, because the lexer emits a keyword token where the parser expects an identifier. A shared `fieldName` rule now accepts 20 contextual keyword families in expression field positions while keeping their function, option and timestamp syntax. `LIKE`, `AND`, `OR`, `NOT` and `IN` are rejected as field names in every casing on Create and Add.  Compatibility (same as master): mixed-case names such as `And`, `In` and `Like` could be created before; new Create/Add requests now reject them. Existing collections are not revalidated.  ## 3.0 adaptations  - The master change to `internal/proxy/task.go` / `internal/proxy/util.go` maps to `internal/proxy/ddl/task.go` / `internal/proxy/ddl/util_ddl.go` on 3.0. - 3.0 already validates the struct-array parent name before the remaining struct checks and already classifies `ErrFieldInvalidName` (1701) as `InputError`, so those parts of #53968 are kept as they are on 3.0 (`pkg/util/merr/errors.go` is unchanged). - `ARRAY_LENGTH` keeps 3.0's operand list (no struct sub-field operand); that operand comes from a different master change, not from #53968. - The parser under `internal/parser/planparserv2/generated` was regenerated from the 3.0 grammar with ANTLR 4.13.2 (`generate.sh`), not copied from master. - `internal/proxy/contextual_keywords_test.go` already existed on 3.
 
-- **Issue #54723** (2026-10-28): **fix: [3.0] Align milvus-common with Cardinal stream options**
-  *Symptoms*: Superseded by [PR #54734](https://github.com/milvus-io/milvus/pull/54734), whose source branch is hosted in `weiliu1031/milvus`. Please continue review there.  issue: #54295 pr: #54726  Cardinal v2 uses `OpContext::build_id` and `milvus::OutputStreamOptions`, which are absent from the milvus-common version pinned by 3.0. This prevents native VectorLake image compilation.  Pin `milvus-common/1.0.0-78f2c29@milvus/dev#af77e5f5444d6dd7cc5573182b958491`, the minimum source version containing both interfaces, and adapt the FileManager output-stream override to accept the options struct. The implementation continues to write directly to backing storage and ignores the optional hints, as the upstream contract permits. The internal `bool is_index_file` overload is unchanged.  Upstream interfaces: [milvus-common PR 138](https://github.com/zilliztech/milvus-common/pull/138) and [PR 141](https://github.com/zilliztech/milvus-common/pull/141). The corresponding master fix is [PR #54726](https://github.com/milvus-io/milvus/pull/54726). This PR applies the same dependency upgrade and output-stream interface adaptation to 3.0. It was prepared first to unblock the 3.0-based VectorLake image build and is not a clean cherry-pick: master additionally adapts VectorDiskBuildFileManager and RestrictedDiskEngineFileManager and extends existing tests, while this 3.0 change adapts FileManagerImpl.  ### Validation  - `clang-format-12 --dry-run --Werror internal/core/src/storage/FileManager.h`: passed. -
+- **Issue #54764** (2026-10-28): **fix: return WALNameMismatch synchronously during remote consumer creation**
+  *Symptoms*: Fixes #54762  When a remote consumer reconnects with a position from the previous WAL backend, the VChannel handshake reports `WALNameMismatch` after the constructor has already returned. The handler client's existing `DeliverPolicyAll` fallback therefore cannot catch the error.  Complete the VChannel handshake before returning the consumer and starting its receive loop. Each creation attempt owns a child context, so failures release its stream while preserving the parent context and upper message handler for retry. Validate both successful and embedded-error handshake responses.  Add gRPC regressions using the production server/client error interceptors, with fault-injection coverage for handshake failures and cancellation. Historical WAL catch-up and handler-level catch-up/All-handoff coverage are in #54778 (issue #54763), which must merge after this PR. The two PRs have no overlapping changed files.  ### Validation  - Confirmed the gRPC mismatch regression fails on unmodified master and passes with this change. - Passed consumer, streaming status and streaming service interceptor tests with `-tags dynamic,test -gcflags="all=-N -l" -count=1`; reran the full consumer package after moving handler handoff coverage to #54778. - Passed scoped consumer lint. - Audited the mismatch source through server construction, gRPC error conversion and the existing handler fallback. - Full online concurrent read/write + MQ switch e2e has not been run. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1436,733 +1433,1203 @@ BENCHMARK_MAIN();
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e6aff936` (2026-10-28)
-**Commit Message**: test: expand CDC API contract and boundary coverage (#54721)
+### Incident Patch 1: `029df857` (2026-10-28)
+**Commit Message**: fix: Recover from all transient etcd errors, not only leader changes (#54733)
 
-CDC tests miss several mutation and control APIs, and some existing
-checks can pass after a failed read or by inspecting only the primary.
-This change verifies replicated state, intentionally local operations,
-and rejected requests against their respective contracts.
+issue: #54706
+Related: #54707
 
-- Cover schema/function mutations, partial updates, truncate, RBAC,
-resource groups, import commit/abort, snapshot/refresh boundaries, and
-unsupported RPCs with state and subsequent-write checks.
-- Strengthen existing load/release, index, alias, partition, permission,
-and switchover assertions. Mark cases that require a CDC topology as L3.
-- Use MilvusClient for supported SDK operations and remove
-MilvusSys/global ORM setup from CDC paths. Retain authenticated protocol
-coverage where public SDK wrappers are unavailable. Document
-configuration requirements and the explicit instance-name option for
-stability tests.
+### What
 
-Validation:
-- 72 selected cases passed across focused runs against Milvus commit
-`7abbd0c5f7f` with PyMilvus `3.1.0rc98`; this is an aggregate, not a
-full-suite run.
-- 11 cases passed with ORM connections and MilvusSys initialization
-forbidden. Th
+#54707 made `etcdserver: leader changed` recoverable for the proxy and
+session watchers. That error is only one member of a family. With etcd
+auth enabled, clientv3 authenticates before opening every watch stream.
+`Authenticate` is a raft request that clientv3 does not retry, and its
+failure is converted to an `rpctypes.EtcdError`, which
+`openWatchClient`'s `isHaltErr` treats as fatal. The watch is then
+canceled with whatever transient error the member returned. During an
+etcd rolling restart that is just as likely to be `server stopped`, `no
+leader` or `request timed out`.
 
-**File**: `tests/python_client/cdc/README.md` (modified, +90/-4)
+The new `TestIsRetriableWatchErr_WatchCanceledByAuthFailure` injects
+each error into `Authenticate` through a bufconn server and uses the
+real clientv3. Every case cancels the watch. On master after #54707,
+every error except leader changed is classified as non-retriable, so the
+watcher panics:
+
+| injected | watch canceled | `IsRetriableWatchErr` on master |
+|---|---|---|
+| leader changed | yes | true |
+| no leader | yes | **false** |
+| server stopped | yes | **false** |
+| request timed out | 
+
+**File**: `internal/cdc/controller/controller.go` (modified, +37/-4)
 ```diff
-@@ -15,7 +15,7 @@ This test suite validates CDC (Change Data Capture) synchronization between upst
- - Automatic CDC topology setup at test start
- - Query-based verification to ensure data consistency
- - Configurable sync timeout with progress logging
--- Comprehensive test coverage for all CDC-supported operations
-+- Explicit checks for replicated state, local operations, and rejected interfaces
+@@ -18,9 +18,11 @@ package controller
  
- ## Prerequisites
+ import (
+ 	"context"
++	"fmt"
+ 	"path"
+ 	"strings"
+ 	"sync"
++	"time"
  
-@@ -27,7 +27,10 @@ Before running the tests, ensure you have:
- 
- 2. **Python dependencies:**
-    ```bash
--   pip install pymilvus>=2.6.0 pytest numpy
-+   # From the repository root
-+   uv venv -p 3.12
-+   source .venv/bin/activate
-+   uv pip install -r tests/python_client/requirements.txt
-    ```
- 
- 3. **Network connectivity:**
-@@ -77,8 +80,8 @@ The test suite is organized into the following categories:
- **File:** `test_resource_group.py`
- - CREATE_RESOURCE_GROUP
- - DROP_RESOURCE_GROUP
--- TRANSFER_NODE
--- TRANSFER_REPLICA
-+- UPDATE_RESOURCE_GROUP (local on both roles)
-+- TRANSFER_REPLICA (primary assignment and default secondary-local override)
- 
- ### 3. RBAC Operations
- **File:** `test_rbac.py`
-@@ -233,3 +236,86 @@ testcases/
- ├── test_alias.py               # Alias operation tests
- └── test_partition.py           # Partition operation tests
- ```
-+
-+## Interface contract regression
-+
-+The supplemental cases use the repository-pinned PyMilvus version and require a
-+CDC pair, so they are tagged `CDC,L3`. Run them serially: topology changes and
-+Import 2PC use session-wide state. Both clusters must use
-+`common.storage.useLoonFFI=true`,
-+`dataCoord.compaction.bumpSchemaVersion.enabled=true`, and
-+`dataCoord.compaction.storageVersion.enabled=true` for the function-field lifecycle case. Replica
-+assignment cases assume the default
-+`streaming.replication.useLocalReplicaConfig=true` and one secondary replica.
-+The multi-replica case additionally needs two primary query nodes and, when
-+StreamingNodes host replica delegators, two primary StreamingNodes. Missing
-+capacity is reported as a skip, not a pass.
-+
-+CDC test operations and state checks use `MilvusClient`, including replica and
-+file-resource inspection. CDC fixtures, stability workloads and the comparison
-+script do not register ORM connections or use `MilvusSys`. Stability runs must
-+pass `--upstream-milvus-name <Milvus-CR-or-release-name>` for Kubernetes Pod
-+readiness checks; the CDC cluster ID is not assumed to be the release name.
-+
-+Protocol-only coverage uses the authenticated client channel when PyMilvus
-+3.1.0rc98 has no public wrapper: unsupported namespace/prewarm RPCs, manifest
-+updates, RBAC backup/restore, phrase slop, telemetry commands, snapshot
-+export/external restore, and schema requests the public wrappers cannot express.
-+Import jobs use the SDK bulk-import helpers and the import REST endpoints;
-+collection and row checks use `MilvusClient`.
-+
-+| File | Contracts checked |
-+| --- | --- |
-+| `test_api_mutations.py` | Add/drop scalar and struct fields; function/output-index lifecycle; rejected legacy Function calls; truncate; partial update; field/index properties; secondary write rejection; FlushAll |
-+| `test_api_boundaries.py` | Eight unimplemented RPCs on both roles; snapshot local lifecycle; primary-only snapshot/manifest calls; local restore data with continued DML replication |
-+| `test_api_control.py` | RestoreRBAC, AlterRole, restored credentials and effective permissions; phrase slop; local heartbeat/telemetry/client commands |
-+| `test_api_storage.py` | Local file-resource registration/removal; local external refresh across two rounds and secondary rejection without side effects; snapshot export/state and local external restore |
-+| `test_import_2pc.py` | Manual import commit/abort, rejected auto-commit without visible rows, and subsequent successful imports |
-+| `test_resource_group.py` | Actual create/update/drop/transfer calls, with local/replicated-state assertions |
-+
-+RestoreSnapshot, RestoreExternalSnapshot and RefreshExternalCollection currently
-+emit unreplicable task messages. Their boundary cases assert successful primary
-+data changes, no corresponding secondary job or restored/refreshed rows after a
-+control-channel barrier, and continued ordinary DML replication. Collection and
-+index DDL still replicate independently. These are executable boundary tests,
-+not expected failures of full-data replication tests.
-+
-+Run from `tests/python_client` with the repository virtual environment active:
-+
-+```bash
-+pytest cdc/testcases --tags L3 -n 0 \
-+  -k 'TestCDCAPIChanges or TestCDCUnsupportedAPI or TestCDCSnapshotBoundary or TestCDCControlAPI or TestCDCStorageAPI or TestCDCImport2PC or TestCDCSyncResourceGroup' \
-+  --upstream-uri "$CDC_SOURCE_URI" --downstream-uri "$CDC_TARGET_URI" \
-+  --source-cluster-id "$CDC_SOURCE_ID" --target-cluster-id "$CDC_TARGET_ID" \
-+  --import-2pc-minio-host "$CDC_SOURCE_MINIO" \
-+  --import-2pc-minio-bucket "$CDC_SOURCE_BUCKET" \
-+  --import-2pc-downstream-minio-host "$CDC_TA
-```
-
-**File**: `tests/python_client/cdc/conftest.py` (modified, +24/-0)
-```diff
-@@ -93,6 +93,12 @@ def pytest_addoption(parser):
-         default="chaos-testing",
-         help="Kubernetes namespace for Milvus deployment",
-     )
-+    parser.addoption(
-+        "--upstream-milvus-name",
-+        action="store",
-+        default="",
-+        help="Upstream Milvus CR/release name for CDC stability Pod readiness checks",
-+    )
-     parser.addoption(
-         "--import-2pc-workload",
-         action="store",
-@@ -146,6 +152,14 @@ def _minio_endpoint(host):
-     return f"{host}:9000"
- 
- 
-+@pytest.fixture(scope="session")
-+def upstream_milvus_name(request):
-+    name = request.config.getoption("--upstream-milvus-name")
-+    if not name:
-+        raise pytest.UsageError("CDC stability tests require --upstream-milvus-name for Pod readiness checks")
-+    return name
-+
-+
- @pytest.fixture(scope="session")
- def upstream_client(request):
-     """Create upstream MilvusClient."""
-@@ -567,6 +581,9 @@ def cdc_topology_setup(request, upstream_client, downstream_client):
-     target_cluster_id = request.config.getoption("--target-cluster-id")
-     pchannel_num = int(request.config.getoption("--pchannel-num"))
- 
-+    logger.info("CDC source build: %s", upstream_client.get_server_version(detail=True))
-+    logger.info("CDC target build: %s", downstream_client.get_server_version(detail=True))
-+
-     logger.info(f"Setting up CDC topology: {source_cluster_id} -> {target_cluster_id} (channels: {pchannel_num})...")
- 
-     # Create CDC replication configuration
-@@ -621,3 +638,10 @@ def cdc_topology_setup(request, upstream_client, downstream_client):
- 
-     # Cleanup can be added here if needed
-     logger.info("CDC topology teardown completed")
-+
-+
-+@pytest.fixture
-+def cdc_contract(upstream_client, downstream_client, sync_timeout, request):
-+    from cdc.testcases.contract_helpers import CDCContract
-+
-+    return CDCContract(upstream_client, downstream_client, sync_timeout, request)
-```
-
-**File**: `tests/python_client/cdc/scripts/diff_upstream_downstream.py` (modified, +23/-37)
-```diff
-@@ -20,7 +20,7 @@
- 
- from deepdiff import DeepDiff
- from loguru import logger
--from pymilvus import Collection, connections, db, list_collections
-+from pymilvus import MilvusClient
- 
- 
- def convert_deepdiff(diff):
-@@ -31,21 +31,15 @@ def convert_deepdiff(diff):
-     return diff
- 
- 
--def get_collection_info(info, db_name, c_name):
-+def get_collection_info(client, info, db_name, c_name):
-     info[db_name][c_name] = {}
--    c = Collection(c_name)
--
--    info[db_name][c_name]["name"] = c.name
--    # logger.info(c.num_entities)
--    info[db_name][c_name]["num_entities"] = c.num_entities
--    # logger.info(c.schema)
--    info[db_name][c_name]["schema"] = len([f.name for f in c.schema.fields])
--    # logger.info(c.indexes)
--    info[db_name][c_name]["indexes"] = sorted([x.index_name for x in c.indexes])
--    # logger.info(c.partitions)
--    info[db_name][c_name]["partitions"] = sorted([p.name for p in c.partitions])
-+    info[db_name][c_name]["name"] = c_name
-+    info[db_name][c_name]["num_entities"] = int(client.get_collection_stats(c_name)["row_count"])
-+    info[db_name][c_name]["schema"] = len(client.describe_collection(c_name)["fields"])
-+    info[db_name][c_name]["indexes"] = sorted(client.list_indexes(c_name))
-+    info[db_name][c_name]["partitions"] = sorted(client.list_partitions(c_name))
-     try:
--        replicas = len(c.get_replicas().groups)
-+        replicas = len(client.describe_replica(c_name, timeout=60))
-     except Exception as e:
-         logger.warning(e)
-         # logger.info(f"no replica for {db_name}.{c_name}")
-@@ -55,7 +49,7 @@ def get_collection_info(info, db_name, c_name):
-     if replicas > 0:
-         try:
-             # logger.info(f"start query {db_name}.{c_name}")
--            res = c.query(expr="", output_fields=["count(*)"], timeout=60)
-+            res = client.query(c_name, filter="", output_fields=["count(*)"], timeout=60)
-             cnt = res[0]["count(*)"]
-             # logger.info(cnt)
-             info[db_name][c_name]["cnt"] = cnt
-@@ -65,29 +59,21 @@ def get_collection_info(info, db_name, c_name):
- 
- 
- def get_cluster_info(uri, token):
--    try:
--        connections.disconnect(alias="default")
--    except Exception as e:
--        logger.warning(e)
--    if token:
--        connections.connect(uri=uri, token=token)
--    else:
--        connections.connect(uri=uri)
-+    client = MilvusClient(uri=uri, token=token)
-     info = {}
--    all_db = db.list_database()
--    # logger.info(all_db)
--    for db_name in all_db:
--        info[db_name] = {}
--        db.using_database(db_name)
--        all_collection = list_collections()
--        # logger.info(all_collection)
--        threads = []
--        for collection_name in all_collection:
--            t = threading.Thread(target=get_collection_info, args=(info, db_name, collection_name))
--            threads.append(t)
--            t.start()
--        for t in threads:
--            t.join()
-+    try:
-+        for db_name in client.list_databases():
-+            info[db_name] = {}
-+            client.use_database(db_name)
-+            threads = []
-+            for collection_name in client.list_collections():
-+                t = threading.Thread(target=get_collection_info, args=(client, info, db_name, collection_name))
-+                threads.append(t)
-+                t.start()
-+            for t in threads:
-+                t.join()
-+    finally:
-+        client.close()
- 
-     # logger.info(json.dumps(info, indent=2))
-     return info
-```
-
-**File**: `tests/python_client/cdc/stablity/test_concurrent_operation.py` (modified, +7/-9)
-```diff
-@@ -26,10 +26,9 @@
+ 	"go.etcd.io/etcd/api/v3/mvccpb"
+ 	clientv3 "go.etcd.io/etcd/client/v3"
+@@ -29,9 +31,14 @@ import (
+ 	"github.com/milvus-io/milvus/internal/cdc/resource"
+ 	"github.com/milvus-io/milvus/internal/metastore/kv/streamingcoord"
+ 	"github.com/milvus-io/milvus/pkg/v3/mlog"
++	"github.com/milvus-io/milvus/pkg/v3/util/etcd"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
  )
- from common import common_func as cf
- from common.common_type import CaseLabel
--from common.milvus_sys import MilvusSys
- from delayed_assert import assert_expectations
--from pymilvus import DataType, FunctionType, connections
--from utils.util_k8s import get_milvus_instance_name, wait_pods_ready
-+from pymilvus import DataType, FunctionType
-+from utils.util_k8s import wait_pods_ready
- from utils.util_log import test_log as log
  
- _VECTOR_DTYPES = {
-@@ -92,25 +91,24 @@ class TestOperations(TestBase):
-     @pytest.fixture(scope="function", autouse=True)
-     def connection(
-         self,
-+        upstream_client,
-         upstream_uri,
-         upstream_token,
-         downstream_uri,
-         downstream_token,
-         milvus_ns,
-+        upstream_milvus_name,
-         import_2pc_workload,
-         import_2pc_minio_endpoint,
-         import_2pc_minio_bucket,
-         import_2pc_downstream_minio_endpoint,
-         import_2pc_downstream_minio_bucket,
-         import_2pc_rows,
-     ):
--        connections.connect("default", uri=upstream_uri, token=upstream_token)
--        if connections.has_connection("default") is False:
--            raise Exception("no connections")
-+        upstream_client.list_databases(timeout=10)
-         log.info("connect to milvus successfully")
--        self.milvus_sys = MilvusSys(alias="default")
-         self.milvus_ns = milvus_ns
--        self.release_name = get_milvus_instance_name(self.milvus_ns, milvus_sys=self.milvus_sys)
-+        self.release_name = upstream_milvus_name
-         cf.param_info.param_uri = upstream_uri
-         cf.param_info.param_token = upstream_token
-         cf.param_info.param_bucket_name = import_2pc_minio_bucket
-@@ -172,7 +170,7 @@ def collection_name(self, request):
-     def test_operations(self, request_duration, is_check, collection_name):
-         # start the monitor threads to check the milvus ops
-         log.info("*********************Test Start**********************")
--        log.info(connections.get_connection_addr("default"))
-+        log.info(f"upstream URI: {self.upstream_uri}")
-         # event_records = EventRecords()
-         c_name = collection_name if collection_name else cf.gen_unique_str("Checker_")
-         # event_records.insert("init_health_checkers", "start")
++// listRetryInterval is how long the controller waits before listing the
++// replicate pchannels again after a transient etcd error.
++const listRetryInterval = time.Second
++
+ // Controller controls and schedules the CDC process.
+ // It will periodically update the replications by the replicate configuration.
+ type Controller interface {
+@@ -103,10 +110,12 @@ func (c *controller) startWatchLoop() {
+ 	go func() {
+ 		defer c.wg.Done()
+ 		for {
+-			m, err := meta.ListReplicatePChannels(c.ctx, resource.Resource().ETCD(), c.prefix)
+-			if err != nil && c.ctx.Err() == nil {
+-				mlog.Warn(c.ctx, "failed to list replicate pchannels", mlog.Err(err))
+-				continue
++			m, err := c.listReplicatePChannels()
++			if err != nil {
++				if c.ctx.Err() != nil {
++					return
++				}
++				panic(fmt.Sprintf("failed to list replicate pchannels: %v", err))
+ 			}
+ 			c.recoverReplicatePChannelMeta(m.Channels)
+ 			eventCh := c.watchEvents(m.Revision + 1)
+@@ -118,13 +127,37 @@ func (c *controller) startWatchLoop() {
+ 	}()
+ }
+ 
++// listReplicatePChannels lists the replicate pchannels, retrying transient etcd
++// errors (e.g. leader changed while etcd restarts). Any other error, including
++// a request timeout, is returned.
++func (c *controller) listReplicatePChannels() (*meta.ReplicateChannels, error) {
++	for {
++		m, err := meta.ListReplicatePChannels(c.ctx, resource.Resource().ETCD(), c.prefix)
++		if err == nil {
++			return m, nil
++		}
++		if c.ctx.Err() != nil || !etcd.IsRetriableEtcdErr(err) {
++			return nil, err
++		}
++		mlog.Warn(c.ctx, "failed to list replicate pchannels, retry", mlog.Err(err))
++		select {
++		case <-time.After(listRetryInterval):
++		case <-c.ctx.Done():
++			return nil, c.ctx.Err()
++		}
++	}
++}
++
+ func (c *controller) watchLoop(eventCh clientv3.WatchChan) error {
+ 	for {
+ 		select {
+ 		case <-c.ctx.Done():
+ 			return nil
+ 		case event, ok := <-eventCh:
+ 			if !ok {
++				if c.ctx.Err() != nil {
++					return nil
++				}
+ 				panic("etcd event channel closed")
+ 			}
+ 			if err := event.Err(); err != nil {
 ```
 
-**File**: `tests/python_client/cdc/stablity/test_single_request_operation.py` (modified, +7/-10)
+**File**: `internal/cdc/controller/controller_test.go` (modified, +109/-0)
 ```diff
-@@ -33,10 +33,8 @@
+@@ -17,12 +17,20 @@
+ package controller
+ 
+ import (
++	"context"
++	"net"
++	"sync/atomic"
+ 	"testing"
+ 	"time"
+ 
+ 	"github.com/stretchr/testify/mock"
++	"github.com/stretchr/testify/require"
++	"go.etcd.io/etcd/api/v3/etcdserverpb"
+ 	"go.etcd.io/etcd/api/v3/mvccpb"
++	"go.etcd.io/etcd/api/v3/v3rpc/rpctypes"
+ 	clientv3 "go.etcd.io/etcd/client/v3"
++	"google.golang.org/grpc"
++	"google.golang.org/grpc/test/bufconn"
+ 	"google.golang.org/protobuf/proto"
+ 
+ 	"github.com/milvus-io/milvus/internal/cdc/meta"
+@@ -102,3 +110,104 @@ func TestController_StartAndStop_WithEvents(t *testing.T) {
+ 	}
+ 	ctrl.Stop()
+ }
++
++// failingRangeServer fails the first failures Range calls with err.
++type failingRangeServer struct {
++	etcdserverpb.UnimplementedKVServer
++	failures int32
++	err      error
++	calls    atomic.Int32
++}
++
++func (s *failingRangeServer) Range(context.Context, *etcdserverpb.RangeRequest) (*etcdserverpb.RangeResponse, error) {
++	if s.calls.Add(1) <= s.failures {
++		return nil, s.err
++	}
++	return &etcdserverpb.RangeResponse{Header: &etcdserverpb.ResponseHeader{Revision: 10}}, nil
++}
++
++func newBufconnEtcdClient(t *testing.T, kv etcdserverpb.KVServer) *clientv3.Client {
++	listener := bufconn.Listen(1024 * 1024)
++	server := grpc.NewServer()
++	etcdserverpb.RegisterKVServer(server, kv)
++	go server.Serve(listener)
++	t.Cleanup(server.Stop)
++
++	cli, err := clientv3.New(clientv3.Config{
++		Endpoints:   []string{"http://etcd-controller"},
++		DialTimeout: time.Second,
++		// Surface server errors to the controller instead of retrying them
++		// inside clientv3.
++		MaxUnaryRetries: 1,
++		DialOptions: []grpc.DialOption{grpc.WithContextDialer(func(ctx context.Context, _ string) (net.Conn, error) {
++			return listener.DialContext(ctx)
++		})},
++	})
++	require.NoError(t, err)
++	t.Cleanup(func() { cli.Close() })
++	return cli
++}
++
++func TestController_ListRetriesTransientEtcdError(t *testing.T) {
++	// The leader change outlasts clientv3's own retry and reaches the controller.
++	kv := &failingRangeServer{failures: 3, err: rpctypes.ErrGRPCLeaderChanged}
++	resource.InitForTest(t, resource.OptETCD(newBufconnEtcdClient(t, kv)))
++
++	ctrl := NewController()
++	defer ctrl.cancel()
++	m, err := ctrl.listReplicatePChannels()
++	require.NoError(t, err)
++	require.EqualValues(t, 10, m.Revision)
++	require.EqualValues(t, 4, kv.calls.Load())
++}
++
++func TestController_ListAbortsOnNonTransientError(t *testing.T) {
++	kv := &failingRangeServer{failures: 1, err: rpctypes.ErrGRPCPermissionDenied}
++	resource.InitForTest(t, resource.OptETCD(newBufconnEtcdClient(t, kv)))
++
++	ctrl := NewController()
++	defer ctrl.cancel()
++	_, err := ctrl.listReplicatePChannels()
++	require.ErrorIs(t, err, rpctypes.ErrPermissionDenied)
++	require.EqualValues(t, 1, kv.calls.Load())
++}
++
++func TestController_ListWithCanceledContext(t *testing.T) {
++	kv := &failingRangeServer{}
++	manager := replication.NewMockReplicateManagerClient(t)
++	manager.EXPECT().Close().Return().Once()
++	resource.InitForTest(t,
++		resource.OptETCD(newBufconnEtcdClient(t, kv)),
++		resource.OptReplicateManagerClient(manager),
++	)
++
++	ctrl := NewController()
++	ctrl.cancel()
++	require.NoError(t, ctrl.Start())
++	ctrl.Stop()
++	require.Zero(t, kv.calls.Load())
++}
++
++func TestController_WatchLoopCanceled(t *testing.T) {
++	ctx, cancel := context.WithCancel(context.Background())
++	events := make(chan clientv3.WatchResponse)
++	ctrl := &controller{ctx: ctx}
++	// clientv3 closes the watch channel after cancellation. Both select cases
++	// can be ready before the controller resumes.
++	cancel()
++	close(events)
++	for range 128 {
++		require.NotPanics(t, func() {
++			require.NoError(t, ctrl.watchLoop(events))
++		})
++	}
++}
++
++func TestController_WatchLoopUnexpectedClose(t *testing.T) {
++	ctrl := &controller{ctx: context.Background()}
++	events := make(chan clientv3.WatchResponse)
++	close(events)
++	require.PanicsWithValue(t, "etcd event channel closed", func() {
++		ctrl.watchLoop(events)
++	})
++}
+```
+
+**File**: `internal/cdc/replication/replicatestream/replicate_stream_client_impl.go` (modified, +13/-2)
+```diff
+@@ -36,7 +36,9 @@ import (
+ 	"github.com/milvus-io/milvus/internal/util/streamingutil/service/contextutil"
+ 	"github.com/milvus-io/milvus/pkg/v3/mlog"
+ 	"github.com/milvus-io/milvus/pkg/v3/streaming/util/message"
++	"github.com/milvus-io/milvus/pkg/v3/util/etcd"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
++	"github.com/milvus-io/milvus/pkg/v3/util/retry"
  )
- from common import common_func as cf
- from common.common_type import CaseLabel
--from common.milvus_sys import MilvusSys
- from delayed_assert import assert_expectations
--from pymilvus import connections, utility
--from utils.util_k8s import get_milvus_instance_name, wait_pods_ready
-+from utils.util_k8s import wait_pods_ready
- from utils.util_log import test_log as log
  
- 
-@@ -61,29 +59,28 @@ class TestOperations(TestBase):
-     @pytest.fixture(scope="function", autouse=True)
-     def connection(
-         self,
-+        upstream_client,
-         upstream_uri,
-         upstream_token,
-         downstream_uri,
-         downstream_token,
-         milvus_ns,
-+        upstream_milvus_name,
-         import_2pc_workload,
-         import_2pc_minio_endpoint,
-         import_2pc_minio_bucket,
-         import_2pc_downstream_minio_endpoint,
-         import_2pc_downstream_minio_bucket,
-         import_2pc_rows,
-     ):
--        connections.connect("default", uri=upstream_uri, token=upstream_token)
--        if connections.has_connection("default") is False:
--            raise Exception("no connections")
-+        upstream_client.list_databases(timeout=10)
-         log.info("connect to milvus successfully")
-         pymilvus_version = pymilvus.__version__
--        server_version = utility.get_server_version()
-+        server_version = upstream_client.get_server_version(detail=True)
-         log.info(f"server version: {server_version}")
-         log.info(f"pymilvus version: {pymilvus_version}")
--        self.milvus_sys = MilvusSys(alias="default")
-         self.milvus_ns = milvus_ns
--        self.release_name = get_milvus_instance_name(self.milvus_ns, milvus_sys=self.milvus_sys)
-+        self.release_name = upstream_milvus_name
-         cf.param_info.param_uri = upstream_uri
-         cf.param_info.param_token = upstream_token
-         cf.param_info.param_bucket_name = import_2pc_minio_bucket
-@@ -142,7 +139,7 @@ def init_health_checkers(self, collection_name=None):
-     def test_operations(self, request_duration, is_check):
-         # start the monitor threads to check the milvus ops
-         log.info("*********************Test Start**********************")
--        log.info(connections.get_connection_addr("default"))
-+        log.info(f"upstream URI: {self.upstream_uri}")
-         event_records = EventRecords()
-         c_name = None
-         event_records.insert("init_health_checkers", "start")
+ var ErrReplicationRemoved = errors.New("replication removed")
+@@ -359,15 +361,24 @@ func (r *replicateStreamClient) handleAlterReplicateConfigMessage(msg message.Im
+ 		// Cannot find the target channel, it means that the `current->target` topology edge is removed,
+ 		// so we need to remove the replicate pchannel and stop replicate.
+ 		etcdCli := resource.Resource().ETCD()
+-		ok, err := meta.RemoveReplicatePChannelWithRevision(r.ctx, etcdCli, r.channel.Key, r.channel.ModRevision)
++		// Retry transient etcd errors (e.g. leader changed during an etcd restart).
++		// The delete is guarded by the channel's revision, so retrying after an
++		// attempt that was applied despite the error just finds the revision
++		// changed; the replication is removed either way.
++		var ok bool
++		err := retry.Do(r.ctx, func() error {
++			var err error
++			ok, err = meta.RemoveReplicatePChannelWithRevision(r.ctx, etcdCli, r.channel.Key, r.channel.ModRevision)
++			return err
++		}, retry.Attempts(0), retry.RetryErr(etcd.IsRetriableEtcdErr))
+ 		if err != nil {
+ 			logger.Warn(r.ctx, "failed to remove replicate pchannel", mlog.Err(err))
+ 			// When performing delete operation on etcd, the context may be canceled by the delete event
+ 			// in cdc controller and then return `context.Canceled` error.
+ 			// Since the delete event is generated after the delete operation is committed in etcd,
+ 			// the delete is guaranteed to have succeeded on the server side.
+ 			// So we can ignore the context canceled error here.
+-			if !errors.Is(err, context.Canceled) {
++			if !errors.Is(err, context.Canceled) && r.ctx.Err() == nil {
+ 				panic(fmt.Sprintf("failed to remove replicate pchannel: %v", err))
+ 			}
+ 		}
 ```
 
-**File**: `tests/python_client/cdc/testcases/contract_helpers.py` (added, +160/-0)
+**File**: `internal/kv/etcd/embed_etcd_error_test.go` (added, +75/-0)
 ```diff
-@@ -0,0 +1,160 @@
-+"""Precise state oracles shared by CDC interface contract tests."""
+@@ -0,0 +1,75 @@
++// Licensed to the LF AI & Data foundation under one
++// or more contributor license agreements. See the NOTICE file
++// distributed with this work for additional information
++// regarding copyright ownership. The ASF licenses this file
++// to you under the Apache License, Version 2.0 (the
++// "License"); you may not use this file except in compliance
++// with the License. You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
 +
-+import time
-+from contextlib import contextmanager
++package etcdkv
 +
-+import grpc
-+from pymilvus import DataType, MilvusException
-+from pymilvus.client.utils import check_status
++import (
++	"context"
++	"testing"
++	"time"
 +
-+from .base import TestCDCSyncBase
++	"github.com/stretchr/testify/require"
++	"go.etcd.io/etcd/api/v3/v3rpc/rpctypes"
++	clientv3 "go.etcd.io/etcd/client/v3"
 +
++	"github.com/milvus-io/milvus/pkg/v3/util/etcd"
++	"github.com/milvus-io/milvus/pkg/v3/util/merr"
++)
 +
-+def eventually(check, timeout, description):
-+    """Retry observations, preserving the last failed assertion or RPC error."""
-+    deadline = time.monotonic() + timeout
-+    last_error = None
-+    while time.monotonic() < deadline:
-+        try:
-+            check()
-+            return
-+        except (AssertionError, MilvusException, grpc.RpcError) as exc:
-+            last_error = exc
-+            time.sleep(0.5)
-+    raise AssertionError(f"Timed out waiting for {description}: {last_error}") from last_error
++type failedEmbeddedTxnKV struct {
++	clientv3.KV
++	err error
++}
 +
++func (kv failedEmbeddedTxnKV) Txn(context.Context) clientv3.Txn {
++	return failedEmbeddedTxn{err: kv.err}
++}
 +
-+def rows_equal(client, name, expected, fields=None, **kwargs):
-+    if fields is None:
-+        fields = list(expected[0]) if expected else ["id", "value", "text"]
-+    actual = client.query(name, filter="id >= 0", output_fields=fields, timeout=10, **kwargs)
-+    # Query also returns the primary key, including an external table's virtual PK.
-+    actual = [{field: row[field] for field in fields} for row in actual]
-+    assert sorted(actual, key=lambda r: r["id"]) == sorted(expected, key=lambda r: r["id"]), actual
++type failedEmbeddedTxn struct {
++	err error
++}
 +
++func (t failedEmbeddedTxn) If(...clientv3.Cmp) clientv3.Txn  { return t }
++func (t failedEmbeddedTxn) Then(...clientv3.Op) clientv3.Txn { return t }
++func (t failedEmbeddedTxn) Else(...clientv3.Op) clientv3.Txn { return t }
++func (t failedEmbeddedTxn) Commit() (*clientv3.TxnResponse, error) {
++	return nil, t.err
++}
 +
-+def logical_index(info):
-+    """Exclude build progress and cluster-local identities, not user parameters."""
-+    local = {"state", "index_state", "total_rows", "indexed_rows", "pending_index_rows", "index_id"}
-+    return {key: value for key, value in info.items() if key not in local}
-+
-+
-+def assert_index_sync(upstream, downstream, name, field_name, timeout):
-+    indexes = upstream.list_indexes(name, field_name=field_name)
-+    assert indexes, f"No source index on {field_name}"
-+    expected = {index: logical_index(upstream.describe_index(name, index)) for index in indexes}
-+
-+    def check():
-+        for index, definition in expected.items():
-+            actual = downstream.describe_index(name, index)
-+            assert actual is not None, f"Index {index} has not reached the target"
-+            assert logical_index(actual) == definition, (definition, actual)
-+            assert actual["state"] == "Finished", actual
-+
-+    eventually(check, timeout, f"index definitions for {name}.{field_name}")
-+
-+
-+def rpc(client, method, request, timeout=30):
-+    """Use the authenticated SDK channel for public RPCs without SDK wrappers."""
-+    response = getattr(client._get_connection()._stub, method)(request, timeout=timeout)
-+    status = getattr(response, "status", getattr(response, "alter_status", response))
-+    check_status(status)
-+    return response
-+
-+
-+class CDCContract:
-+    def __init__(self, upstream, downstream, timeout, request):
-+        self.upstream = upstream
-+        self.downstream = downstream
-+        self.timeout = timeout
-+        self.request = request
-+
-+    def name(self, prefix, max_length=60):
-+        return TestCDCSyncBase.gen_unique_name(prefix, max_length=max_length)
-+
-+    def wait(self, check, description):
-+        eventually(check, self.timeout, description)
-+
-+    def schema(self):
-+        schema = self.upstream.create_schema(auto_id=False, enable_dynamic_field=False)
-+        schema.add_field("id", DataType.INT64, is_primary=True)
-+        schema.add_field("vector", DataType.FLOAT_VECTOR, dim=4)
-+        schema.add_field("value", DataType.INT64, nullable=True)
-+        schema.add_field(
-+            "text",
-+            DataType.VARCHAR,
-+            max_length=128,
-+            enable_analyzer=True,
-+            enable_match=True,
-+            analyzer_params={"tokenizer": "standard"},
-+        )
-+        return schema
-+
-+    def collection(self, schema=None, load=True):
-+        name = self.name("cdc_api")
-+        # Register before creation: a timeout may have committed the operation.
-+        self.request.addfinalizer(lambda: self.upstream.drop_collection(name))
-+        self.upstream.create_collection(name, schema=schema or self.schema(), consistency_level="Strong")
-+        indexes = self.upstream.prepare_index_params()
-+        indexes.add_index("vector", index_type="FLAT", metric_type="L2")
-+        self.upstream.create_index(name, indexes)
-+        if load:
-+            self.upstream.load_collection(name)
-+        self.sync_schema(name)
-+        return name
-+
-+    def sync_schema(self, name):
-+        source = self.upstream.describe_collection(name)
-+        keys = ("fields", "struct_fields", "struct_array_fields", "functions", "enable_dynamic_field", "description")
-+
-+        def check():
-+            target = self.downstream.describe_collection(name)
-+            for key in keys:
-+                assert target.get(key) == source.get(key), (key, source.get(key), target.get(key))
-+
-+        self.wait(check, f"schema of {name}")
-+        return source
-+
-+    def data(self, start=0, count=4):
-+        return [
-+            {"id": i, "vector": [float(i
++func TestEmbedEtcdKVMultiSavePreservesEtcdCause(t *testing.T) {
++	for _, tc := range []struct {
++		cause     error
++		retriable bool
++	}{
++		{rpctypes.ErrLeaderChanged, true},
++		{rpctypes.ErrPermissionDenied, false},
++		{context.Canceled, false},
++		{context.DeadlineExceeded, false},
++	} {
++		t.Run(tc.cause.Error(), func(t *testing.T) {
++			kv := &EmbedEtcdKV{
++				client:         &clientv3.Client{KV: failedEmbeddedTxnKV{err: tc.cause}},
++				rootPath:       "test",
++				requestTimeout: time.Second,
++			}
++			err := kv.MultiSave(context.Background(), map[string]string{"rg": "value"})
++			require.ErrorIs(t, err, tc.cause)
++			require.ErrorIs(t, err, merr.ErrIoFailed)
++			require.EqualValues(t, 1001, merr.Code(err))
++			require.Equal(t, tc.retriable, etcd.IsRetriableEtcdErr(err))
++		})
++	}
++}
 ```
 
-**File**: `tests/python_client/cdc/testcases/test_alias.py` (modified, +2/-2)
+**File**: `internal/kv/etcd/embed_etcd_kv.go` (modified, +2/-1)
 ```diff
-@@ -10,7 +10,7 @@
- from .base import TestCDCSyncBase, logger
+@@ -415,7 +415,8 @@ func (kv *EmbedEtcdKV) MultiSave(ctx context.Context, kvs map[string]string) err
  
- 
--@pytest.mark.tags(CaseLabel.CDC)
-+@pytest.mark.tags(CaseLabel.CDC, CaseLabel.L3)
- class TestCDCSyncAlias(TestCDCSyncBase):
-     """Test CDC sync for alias operations."""
- 
-@@ -213,7 +213,7 @@ def check_drop():
-                 return is_dropped
-             except Exception as e:
-                 logger.warning(f"Error checking downstream aliases during drop: {e}")
--                return True  # If error, assume alias is dropped
-+                return False  # A failed read does not prove deletion.
- 
-         assert self.wait_for_sync(check_drop, sync_timeout, f"drop alias {alias_name}")
-         logger.info("=== test_drop_alias completed successfully ===")
+ 	_, err := kv.client.Txn(ctx1).If().Then(ops...).Commit()
+ 	if err != nil {
+-		return merr.WrapErrIoFailedReason("failed to execute transaction", err.Error())
++		// Preserve the same IO contract and driver cause as external etcd.
++		return merr.WrapErrIoFailedErr(err, "failed to execute transaction")
+ 	}
+ 	return nil
+ }
 ```
 
-**File**: `tests/python_client/cdc/testcases/test_api_boundaries.py` (added, +143/-0)
+**File**: `internal/kv/etcd/etcd_kv.go` (modified, +3/-1)
 ```diff
-@@ -0,0 +1,143 @@
-+"""Explicit unsupported-RPC and non-replicating snapshot contracts."""
+@@ -810,7 +810,9 @@ func (kv *etcdKV) executeTxn(txn clientv3.Txn, ops ...clientv3.Op) (*clientv3.Tx
+ 	}
+ 
+ 	if err != nil {
+-		err = merr.WrapErrIoFailedReason("execute etcd txn failed", err.Error())
++		// Keep the existing IO classification at this boundary, but retain the
++		// driver cause so callers can distinguish transient etcd errors.
++		err = merr.WrapErrIoFailedErr(err, "execute etcd txn failed")
+ 	}
+ 	return resp, err
+ }
+```
+
+**File**: `internal/metastore/kv/querycoord/etcd_retry_test.go` (added, +148/-0)
+```diff
+@@ -0,0 +1,148 @@
++// Licensed to the LF AI & Data foundation under one
++// or more contributor license agreements. See the NOTICE file
++// distributed with this work for additional information
++// regarding copyright ownership. The ASF licenses this file
++// to you under the Apache License, Version 2.0 (the
++// "License"); you may not use this file except in compliance
++// with the License. You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
 +
-+import grpc
-+import pytest
-+from common.common_type import CaseLabel
-+from google.protobuf.message_factory import GetMessageClass
-+from pymilvus import MilvusException
-+from pymilvus.grpc_gen import milvus_pb2
++package querycoord
 +
-+from .contract_helpers import assert_index_sync, rows_equal, rpc
++import (
++	"context"
++	"net"
++	"sync/atomic"
++	"testing"
++	"time"
 +
-+pytestmark = pytest.mark.tags(CaseLabel.CDC, CaseLabel.L3)
++	"github.com/stretchr/testify/require"
++	"go.etcd.io/etcd/api/v3/etcdserverpb"
++	"go.etcd.io/etcd/api/v3/v3rpc/rpctypes"
++	clientv3 "go.etcd.io/etcd/client/v3"
++	"google.golang.org/grpc"
++	"google.golang.org/grpc/test/bufconn"
 +
++	etcdkv "github.com/milvus-io/milvus/internal/kv/etcd"
++	"github.com/milvus-io/milvus/pkg/v3/proto/querypb"
++	"github.com/milvus-io/milvus/pkg/v3/util/etcd"
++	"github.com/milvus-io/milvus/pkg/v3/util/merr"
++	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
++	"github.com/milvus-io/milvus/pkg/v3/util/retry"
++)
 +
-+class TestCDCUnsupportedAPI:
-+    @pytest.mark.parametrize("role", ["upstream", "downstream"])
-+    @pytest.mark.parametrize(
-+        "method",
-+        [
-+            "Prewarm",
-+            "DescribePrewarmTask",
-+            "CreateNamespace",
-+            "DescribeNamespace",
-+            "ListNamespaces",
-+            "DropNamespace",
-+            "HasNamespace",
-+            "GetNamespaceStats",
-+        ],
-+    )
-+    def test_unimplemented_rpc_has_no_side_effects(self, cdc_contract, role, method):
-+        c = cdc_contract
-+        name = c.collection()
-+        c.upstream.insert(name, c.data())
-+        c.assert_rows(name, c.data())
-+        descriptor = milvus_pb2.DESCRIPTOR.services_by_name["MilvusService"].methods_by_name[method]
-+        request = GetMessageClass(descriptor.input_type)()
-+        values = {
-+            "db_name": "default",
-+            "collection_name": name,
-+            "namespace_name": "canary",
-+            "namespace": "canary",
-+            "taskID": "1",
-+        }
-+        for key, value in values.items():
-+            if key in request.DESCRIPTOR.fields_by_name:
-+                setattr(request, key, value)
-+        client = getattr(c, role)
-+        with c.unchanged(name):
-+            with pytest.raises(grpc.RpcError) as error:
-+                getattr(client._get_connection()._stub, method)(request, timeout=10)
-+            assert error.value.code() == grpc.StatusCode.UNIMPLEMENTED
-+        # A transport outage must not be mistaken for an unsupported interface.
-+        c.upstream.insert(name, c.data(10))
-+        c.assert_rows(name, c.data() + c.data(10))
++type resourceGroupTxnServer struct {
++	etcdserverpb.UnimplementedKVServer
++	txn func(context.Context, *etcdserverpb.TxnRequest) (*etcdserverpb.TxnResponse, error)
++}
 +
-+    def test_secondary_snapshot_creation_is_rejected(self, cdc_contract):
-+        c = cdc_contract
-+        name = c.collection()
-+        c.upstream.insert(name, c.data())
-+        c.assert_rows(name, c.data())
-+        snapshot = c.name("snapshot_denied")
-+        with c.unchanged(name):
-+            with pytest.raises(MilvusException, match="(?i)not primary|secondary"):
-+                c.downstream.create_snapshot(snapshot, name, timeout=15)
-+        assert snapshot not in c.downstream.list_snapshots(name)
-+        assert snapshot not in c.upstream.list_snapshots(name)
++func (s *resourceGroupTxnServer) Txn(ctx context.Context, req *etcdserverpb.TxnRequest) (*etcdserverpb.TxnResponse, error) {
++	return s.txn(ctx, req)
++}
 +
++func newResourceGroupTxnClient(t *testing.T, service *resourceGroupTxnServer) *clientv3.Client {
++	t.Helper()
++	listener := bufconn.Listen(1024 * 1024)
++	t.Cleanup(func() { listener.Close() })
++	server := grpc.NewServer()
++	etcdserverpb.RegisterKVServer(server, service)
++	go server.Serve(listener)
++	t.Cleanup(server.Stop)
++	cli, err := clientv3.New(clientv3.Config{
++		Endpoints:   []string{"http://resource-group-etcd"},
++		DialTimeout: time.Second,
++		DialOptions: []grpc.DialOption{grpc.WithContextDialer(func(ctx context.Context, _ string) (net.Conn, error) {
++			return listener.DialContext(ctx)
++		})},
++	})
++	require.NoError(t, err)
++	t.Cleanup(func() { cli.Close() })
++	return cli
++}
 +
-+class TestCDCSnapshotBoundary:
-+    def test_snapshot_create_pin_unpin_drop_stays_local(self, cdc_contract):
-+        c = cdc_contract
-+        name = c.collection()
-+        c.upstream.insert(name, c.data())
-+        c.upstream.flush(name)
-+        c.assert_rows(name, c.data())
-+        snapshot = c.name("snapshot_local")
-+        c.request.addfinalizer(lambda: c.upstream.drop_snapshot(snapshot, name))
-+        c.upstream.create_snapshot(snapshot, name, description="CDC local snapshot", timeout=c.timeout)
-+        assert snapshot in c.upstream.list_snapshots(name)
-+        assert c.upstream.describe_snapshot(snapshot, name).description == "CDC local snapshot"
-+        c.control_barrier()
-+        assert snapshot not in c.downstream.list_snapshots(name)
-+        pin = c.upstream.pin_snapshot_data(snapshot, name, ttl_seconds=600)
-+        try:
-+            with pytest.raises(MilvusException, match="(?i)pin"):
-+                c.upstream.drop_snapshot(snapshot, name)
-+            assert snapshot in c.upstream.list_snapshots(name)
-+        finally:
-+            c.upstream.unpin_snapshot_data(pin)
-+        c.upstream.drop_snapshot(snapshot, name)
-+        c.control_barrier()
-+        assert snapshot not in c.upstream.list_snapshots(name)
-+        assert snapshot not in c.downstream.list_snapshots(name)
-+        c.upstream.insert(name, c.data(10))
-+        c.assert_rows(name, c.data() + c.data(10))
++// Exercise the actual catalog and etcdKV layers: mocking SaveResourceGroup to
++// return an etcd sentinel misses errors that get stringified below the catalog.
++func TestCatalogSaveResourceGroupRetriesEtcdErrors(t *testing.T) {
++	paramtable.Init()
++	for _, tc := range []struct {
++		name      string
++		rpcErr    error
++		cause     error
++		retriable bool
++	}{
++		{"leader changed", rpctypes.ErrGRPCLeaderChanged, rpctypes.ErrLeaderChanged, true},
++		{"server stopped", rpctypes.ErrGRPCStopped, rpctypes.ErrStopped, true},
++		{"permission denied", rpctypes.ErrGRPCPermissionDenied, rpctypes.ErrPermissionDenied, false},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
++			defer cancel()
++			var rpcCalls atomic.Int32
++			requests := make(chan *etcdserverpb.TxnRequest, 3)
++			cli := newResourceGroupTxnClient(t, &resourceGroupTxnServer{
++				txn: func(_ context.Context, req *etcdserverpb.TxnRequest) (*etcdserverpb.TxnResponse, error) {
++					requests <- req
++					if rpcCalls.Add(1) == 1 {
++						return nil, tc.rpcErr
++					}
++					return &etcdserverpb.TxnResponse{
++						Header: &etcdserverpb.ResponseHeader{Revision: 2}, Succeeded: true,
++					}, nil
++				},
++			})
++			catalog := NewCatalog(etcdkv.NewEtcdKV(cli, "test"))
++			rg := &querypb.ResourceGroup{Name: "rg", Nodes: []int64{101}}
++			var firstErr error
++			var attempts int
++			err := retry.Do(ctx, func() error {
++				attempts++
++				err := catalog.SaveResourceGroup(ctx, rg)
++				if attempts == 1 {
++					firstErr = err
++				}
++				return err
++			}, retry.Attempts(3), retry.Sleep(time.Millisecond), retry.RetryErr(etcd.IsRetriableEtcdErr))
++			require.ErrorIs(t, firstErr, tc.cause)
++			var etcdErr rpctypes.EtcdError
++			require.ErrorAs(t, firstErr, &etcdErr)
++			require.Equal(t, merr.Code(merr.ErrIoFailed), merr.Code(firstErr))
++			require.Equal(t, tc.retriable, etcd.IsRetriableEtcdErr(firstErr))
++			if tc.retriable {
++				require.NoError(t, err)
++				require.Equal(t, 2, attempts)
++				require.EqualValues(t, 2, rpcCalls.Load())
++				first, second := <-requests, <-requests
++				require.Equal(t, first, second, "retry must persist the same resource group")
++			} else {
++				require.ErrorIs(t, err, tc.cause)
++				require.Equal(t, 1, attempts)
++				require.EqualValues(t, 1, rpcCalls.Load())
++			}
++		})
++	}
++}
 +
-+    def test_restore_snapshot_data_stays_local_and_cdc_continues(self, cdc_contract):
-+        """Restore data stays on the primary; metadata and subsequent DML still replicate."""
-+        c = cdc_contract
-+        name = c.collection()
-+        c.upstream.insert(name, c.data())
-+        c.upstream.flush(name)
-+        c.assert_rows(name, c.data())
-+        snapshot = c.name("snapshot_restore")
-+        c.request.addfinalizer(lambda: c.upstream.drop_snapshot(snapshot, name))
-+        c.upstream.create_snapshot(snapshot, name, timeout=c.timeout)
-+        target = c.name("restored")
-+        c.request.addfinalizer(lambda: c.upstream.drop_collection(target))
-+        job = c.upstream.restore_snapshot(snapshot, name, target, timeout=c.timeout)
-+
-+        def completed():
-+            state = c.upstream.get_restore_snapshot_state(job)
-+            assert state.state == "RestoreSnapshotCompleted", state
-+
-+        
++func TestCatalogSaveResourceGroupPreservesRequestDeadline(t *testing.T) {
++	paramtable.Init()
++	ctx, cancel := context.WithTimeout(context.Background(), 5
+```
+
+**File**: `internal/querycoordv2/meta/resource_manager.go` (modified, +11/-1)
+```diff
+@@ -35,9 +35,11 @@ import (
+ 	"github.com/milvus-io/milvus/pkg/v3/metrics"
+ 	"github.com/milvus-io/milvus/pkg/v3/mlog"
+ 	"github.com/milvus-io/milvus/pkg/v3/proto/querypb"
++	"github.com/milvus-io/milvus/pkg/v3/util/etcd"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/merr"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/metricsinfo"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
++	"github.com/milvus-io/milvus/pkg/v3/util/retry"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/syncutil"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/typeutil"
+ )
+@@ -1095,7 +1097,15 @@ func (rm *ResourceManager) unassignNode(ctx context.Context, node int64) (string
+ 		mrg.UnassignNode(node)
+ 		rg := mrg.ToResourceGroup()
+ 
+-		if err := rm.catalog.SaveResourceGroup(ctx, rg.GetMeta()); err != nil {
++		// Saving the whole resource group is an unconditional overwrite, so it is
++		// safe to retry a transient etcd error (e.g. leader changed during an etcd
++		// restart) even if the failed attempt was applied. The retry is bounded
++		// because rm.rwmutex is held; a persistent failure still exits to reload
++		// a consistent state.
++		err := retry.Do(ctx, func() error {
++			return rm.catalog.SaveResourceGroup(ctx, rg.GetMeta())
++		}, retry.RetryErr(etcd.IsRetriableEtcdErr))
++		if err != nil {
+ 			mlog.Fatal(context.TODO(), "unassign node from resource group",
+ 				mlog.String("rgName", rg.GetName()),
+ 				mlog.Int64("node", node),
 ```
 
 ---
 
-### Incident Patch 2: `0a849c84` (2026-10-27)
-**Commit Message**: test: align manifest test calls with revision paths (#54727)
+### Incident Patch 2: `3f4f04d3` (2026-10-28)
+**Commit Message**: fix: authenticate GCS requests with the registered GCP credential provider (#54760)
 
-issue: #54153
+issue: #54759
 
-- Manifest tests: migrate five remaining `CommitManifestUpdates` calls
-in packed and DataCoord to the revision-path API introduced by #54154,
-restoring Code Check and test compilation while preserving the original
-base paths, versions, and assertions.
+### What
 
-Signed-off-by: chyezh <[REDACTED_EMAIL]>
+With `minio.useIAM=true` on GCP, Milvus installs
+`GoogleHttpClientFactory` as the process-wide AWS SDK HTTP factory (only
+the first `Aws::InitAPI` in a process takes effect), so it also serves
+milvus-storage (StorageV2 / StorageV3). It fetched a token from its own
+`ComputeEngineCredentials` for every request and threw when the fetch
+failed. Since the google-cloud-cpp 2.28 upgrade
+`ComputeEngineCredentials` no longer caches tokens, so every S3 request
+became a GKE metadata server request. Under load the metadata server
+throttles, and the exception — raised inside the AWS SDK, which is built
+with `-fno-exceptions` — ended the process in `std::terminate`.
 
-**File**: `internal/datacoord/manifest_index_test.go` (modified, +1/-1)
+### Changes
+(`internal/core/src/storage/minio/MinioChunkManager.{h,cpp}`)
+
+1. **Authenticate with milvus-storage's GCP credential providers**,
+which cache the token (google-cloud-cpp `CachedCredentials`, the same
+stack milvus-storage uses). Milvus no longer builds its own
+`ComputeEngineCredentials`.
+- Milvus' own bucket uses the IAM provider built in
+`BuildGoogleCloudClient`, kept per (endpoint, bucket) and reused by
+later c
+
+**File**: `internal/core/src/storage/minio/MinioChunkManager.cpp` (modified, +190/-26)
 ```diff
-@@ -62,7 +62,7 @@ func TestManifestIndexLegacyBaseRoundTrip(t *testing.T) {
- 			segment := &datapb.SegmentInfo{ID: 3, CollectionID: 1, PartitionID: 2}
- 			version := packed.ManifestEarliest
- 			for _, buildID := range []int64{100, 200} {
--				manifest, err := packed.CommitManifestUpdates(base, version, cfg, &packed.ManifestUpdates{
-+				manifest, err := packed.CommitManifestUpdates(packed.MarshalManifestPath(base, version), cfg, &packed.ManifestUpdates{
- 					Indexes: []packed.ManifestIndexInfo{{
- 						ColumnName: "vector", IndexName: "index", IndexType: "HNSW",
- 						Path: fmt.Sprintf("%d/1", buildID), IndexID: buildID, BuildID: buildID,
-```
-
-**File**: `internal/storagev2/packed/column_group_recovery_test.go` (modified, +1/-1)
-```diff
-@@ -64,7 +64,7 @@ func TestRestoreColumnGroupsFromManifest(t *testing.T) {
- 	output, err := writer.Close()
- 	require.NoError(t, err)
- 	defer output.Destroy()
--	manifest, err := CommitManifestUpdates(filepath.Join(root, "segment"), ManifestEarliest, config, &ManifestUpdates{NewFiles: output})
-+	manifest, err := CommitManifestUpdates(MarshalManifestPath(filepath.Join(root, "segment"), ManifestEarliest), config, &ManifestUpdates{NewFiles: output})
- 	require.NoError(t, err)
+@@ -18,6 +18,7 @@
+ #include "storage/minio/GuardedS3EndpointProvider.h"
  
- 	info := &datapb.SegmentInfo{ManifestPath: manifest, Stats: &datapb.Statistics{
+ #include <aws/core/auth/AWSCredentials.h>
++#include <aws/core/auth/AWSCredentialsProvider.h>
+ #include <aws/s3/model/CreateBucketRequest.h>
+ #include <aws/s3/model/DeleteBucketRequest.h>
+ #include <aws/s3/model/DeleteObjectRequest.h>
+@@ -29,10 +30,16 @@
+ #include <string.h>
+ #include <unistd.h>
+ #include <algorithm>
++#include <cctype>
+ #include <chrono>
+ #include <exception>
+ #include <functional>
++#include <mutex>
++#include <optional>
++#include <set>
+ #include <sstream>
++#include <unordered_map>
++#include <utility>
+ 
+ #include "aws/core/Aws.h"
+ #include "aws/core/auth/signer/AWSAuthV4Signer.h"
+@@ -49,9 +56,6 @@
+ #include "common/Consts.h"
+ #include "common/EasyAssert.h"
+ #include "fmt/core.h"
+-#include "google/cloud/internal/rest_client.h"
+-#include "google/cloud/storage/oauth2/compute_engine_credentials.h"
+-#include "google/cloud/version.h"
+ #include "log/Log.h"
+ #include "milvus-storage/common/extend_status.h"
+ #include "milvus-storage/filesystem/gcp/gcp_credential_registry.h"
+@@ -69,22 +73,156 @@ namespace milvus::storage {
+ std::atomic<size_t> MinioChunkManager::init_count_(0);
+ std::mutex MinioChunkManager::client_mutex_;
+ 
++namespace {
++
++std::mutex&
++GcsEndpointsMutex() {
++    static std::mutex mutex;
++    return mutex;
++}
++
++std::set<std::string>&
++GcsEndpointHosts() {
++    static std::set<std::string> hosts;
++    return hosts;
++}
++
++// The IAM providers of the GCS buckets Milvus itself is configured with,
++// guarded by GcsEndpointsMutex(). milvus-storage replaces its registry entry
++// for a bucket whenever it opens a filesystem there, possibly with another
++// identity (an external table on the same bucket), so Milvus' own requests do
++// not use the registry entry. Reusing the provider also keeps its cached token.
++using GcpProviderMap =
++    std::unordered_map<milvus_storage::GcpBucketKey,
++                       std::shared_ptr<milvus_storage::GcpCredentialProvider>,
++                       milvus_storage::GcpBucketKeyHash>;
++
++GcpProviderMap&
++MilvusGcpProviders() {
++    static GcpProviderMap providers;
++    return providers;
++}
++
++std::string
++ToLower(std::string s) {
++    std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) {
++        return std::tolower(c);
++    });
++    return s;
++}
++
++// Matches a request like GcpCredentialRegistry::Lookup: path-style
++// (<endpoint>/<bucket>/<key>), then virtual-host style (<bucket>.<endpoint>).
++std::shared_ptr<milvus_storage::GcpCredentialProvider>
++LookupMilvusGcpProvider(const Aws::Http::URI& uri) {
++    milvus_storage::GcpEndpointKey endpoint{
++        uri.GetScheme(), uri.GetPort(), ToLower(uri.GetAuthority().c_str())};
++    std::string path = uri.GetPath().c_str();
++    size_t start = (!path.empty() && path.front() == '/') ? 1 : 0;
++    std::string bucket = path.substr(start, path.find('/', start) - start);
++
++    std::lock_guard<std::mutex> lock(GcsEndpointsMutex());
++    const auto& providers = MilvusGcpProviders();
++    if (!bucket.empty()) {
++        auto it = providers.find({endpoint, bucket});
++        if (it != providers.end()) {
++            return it->second;
++        }
++    }
++    auto dot = endpoint.host.find('.');
++    if (dot != std::string::npos && dot > 0) {
++        bucket = endpoint.host.substr(0, dot);
++        endpoint.host.erase(0, dot + 1);
++        auto it = providers.find({endpoint, bucket});
++        if (it != providers.end()) {
++            return it->second;
++        }
++    }
++    return nullptr;
++}
++
++// Whether a request to `host` may carry GCP credentials: Google's own
++// endpoints, and the GCS endpoints Milvus is configured with, also in
++// virtual-host form (<bucket>.<endpoint>).
++bool
++IsGcsHostForCredentials(std::string host) {
++    host = ToLower(std::move(host));
++    const std::string google_suffix = ".googleapis.com";
++    if (host.size() > google_suffix.size() &&
++        host.compare(host.size() - google_suffix.size(),
++                     google_suffix.size(),
++                     google_suffix) == 0) {
++        return true;
++    }
++    std::lock_guard<std::mutex> lock(GcsEndpointsMutex());
++    const auto& hosts = GcsEndpointHosts();
++    if (hosts.count(host) > 0) {
++        return true;
++    }
++    auto dot = host.find('.');
++    return dot != std::string::npos && hosts.count(host.substr(dot + 1)) > 0;
++}
++
++}  // namespace
++
++void
++AddGcsEndpointForCredentials(const std::string& address, bool use_ssl) {
++    auto endpoint = milvus_storage::NormalizeGcpEndpoint(address, use_ssl);
++    std::lock_guard<std::mutex> lock(GcsEndpointsMutex());
++    GcsEndpointHosts().insert(endpoint.host);
++}
++
+ void
+ ConfigureGoogleCloudIAMHttpClientFactory(Aws::SDKOptions& sdk_options) {
+     sdk_options.httpOptions.httpClientFactory_create_fn = []() {
+-        auto credentials =
+-            std::make_shared<google::cloud::oauth2_internal::
+-                                 GOOGLE_CLOUD_CPP_NS::ComputeEngineCredentials>(
+-         
 ```
 
-**File**: `internal/storagev2/packed/manifest_index_path_test.go` (modified, +3/-3)
+**File**: `internal/core/src/storage/minio/MinioChunkManager.h` (modified, +16/-35)
 ```diff
-@@ -52,13 +52,13 @@ func TestManifestSegmentRootedIndexRoundTrip(t *testing.T) {
- 			IndexFileKeys:         []string{"index.bin"},
- 		}
+@@ -455,20 +455,22 @@ class TlsHttpClientFactory : public Aws::Http::HttpClientFactory {
+ static const char* GOOGLE_CLIENT_FACTORY_ALLOCATION_TAG =
+     "GoogleHttpClientFactory";
+ 
++// Records a GCS endpoint that Milvus itself is configured to use.
++// GoogleHttpClientFactory sends GCP credentials only to these endpoints and to
++// Google's *.googleapis.com.
++void
++AddGcsEndpointForCredentials(const std::string& address, bool use_ssl);
++
++// Process-wide AWS SDK HTTP factory for GCP IAM. Only the first Aws::InitAPI
++// in a process takes effect, so it also serves milvus-storage. It
++// authenticates a request for Milvus' own GCS bucket with Milvus' IAM
++// provider, and any other GCS request with the provider milvus-storage's
++// GcpCredentialRegistry holds for its endpoint and bucket, as milvus-storage's
++// own GCP factory does. Every other request is left alone.
+ class GoogleHttpClientFactory : public Aws::Http::HttpClientFactory {
+  public:
+-    explicit GoogleHttpClientFactory(
+-        std::shared_ptr<google::cloud::oauth2_internal::Credentials>
+-            credentials,
+-        const std::string& tls_min_version = "")
++    explicit GoogleHttpClientFactory(const std::string& tls_min_version = "")
+         : tls_min_version_(tls_min_version) {
+-        credentials_ = credentials;
+-    }
+-
+-    void
+-    SetCredentials(std::shared_ptr<google::cloud::oauth2_internal::Credentials>
+-                       credentials) {
+-        credentials_ = credentials;
+     }
+ 
+     std::shared_ptr<Aws::Http::HttpClient>
+@@ -493,32 +495,11 @@ class GoogleHttpClientFactory : public Aws::Http::HttpClientFactory {
+     }
+ 
+     std::shared_ptr<Aws::Http::HttpRequest>
+-    CreateHttpRequest(
+-        const Aws::Http::URI& uri,
+-        Aws::Http::HttpMethod method,
+-        const Aws::IOStreamFactory& streamFactory) const override {
+-        auto request =
+-            Aws::MakeShared<Aws::Http::Standard::StandardHttpRequest>(
+-                GOOGLE_CLIENT_FACTORY_ALLOCATION_TAG, uri, method);
+-        request->SetResponseStreamFactory(streamFactory);
+-        auto auth_header =
+-            google::cloud::oauth2_internal::AuthorizationHeader(*credentials_);
+-        if (!auth_header.ok()) {
+-            ThrowInfo(IsRetryableGcpStatus(auth_header.status().code())
+-                          ? ErrorCode::S3Error
+-                          : ErrorCode::UnexpectedError,
+-                      fmt::format("get authorization failed, errcode: {}",
+-                                  google::cloud::StatusCodeToString(
+-                                      auth_header.status().code())));
+-        }
+-        request->SetHeaderValue(auth_header->first.c_str(),
+-                                auth_header->second.c_str());
+-
+-        return request;
+-    }
++    CreateHttpRequest(const Aws::Http::URI& uri,
++                      Aws::Http::HttpMethod method,
++                      const Aws::IOStreamFactory& streamFactory) const override;
+ 
+  private:
+-    std::shared_ptr<google::cloud::oauth2_internal::Credentials> credentials_;
+     std::string tls_min_version_;
+ };
+ 
+```
+
+**File**: `internal/core/unittest/test_gcp_chunk_manager.cpp` (modified, +259/-0)
+```diff
+@@ -20,7 +20,14 @@
+ #include <aws/core/http/standard/StandardHttpRequest.h>
+ #include <cstdio>
+ #include <cstdlib>
++#include <memory>
++#include <optional>
+ #include <sstream>
++#include <stdexcept>
++#include <string>
++#include <utility>
++
++#include <arrow/status.h>
+ 
+ #include "milvus-storage/filesystem/gcp/gcp_credential_registry.h"
+ #include "milvus-storage/filesystem/gcp/gcp_filesystem_producer.h"
+@@ -150,8 +157,249 @@ CheckGcpRegistration(const bool legacy_first, const bool use_iam) {
+     }
+ }
+ 
++class FakeGcpCredentialProvider : public milvus_storage::GcpCredentialProvider {
++ public:
++    enum class Mode { kToken, kNoToken, kEmptyHeader, kThrow };
++
++    explicit FakeGcpCredentialProvider(Mode mode) : mode_(mode) {
++    }
++
++    std::optional<std::pair<std::string, std::string>>
++    AuthorizationHeader() override {
++        ++calls_;
++        switch (mode_) {
++            case Mode::kToken:
++                return std::make_pair(std::string("Authorization"),
++                                      std::string("Bearer fake-token"));
++            case Mode::kNoToken:
++                return std::nullopt;
++            case Mode::kEmptyHeader:
++                return std::make_pair(std::string(), std::string());
++            case Mode::kThrow:
++                throw std::runtime_error("malformed token response");
++        }
++        return std::nullopt;
++    }
++
++    arrow::Status
++    MaybeSignConditionalWrite(
++        const std::shared_ptr<Aws::Http::HttpRequest>&) override {
++        return arrow::Status::OK();
++    }
++
++    int
++    calls() const {
++        return calls_;
++    }
++
++ private:
++    Mode mode_;
++    int calls_ = 0;
++};
++
++// Registers a provider for a bucket on `endpoint`, as milvus-storage does for
++// every filesystem it opens.
++static std::shared_ptr<FakeGcpCredentialProvider>
++RegisterFakeProvider(const std::string& endpoint,
++                     const std::string& bucket,
++                     FakeGcpCredentialProvider::Mode mode) {
++    auto provider = std::make_shared<FakeGcpCredentialProvider>(mode);
++    milvus_storage::GcpCredentialRegistry::Instance().Register(
++        {milvus_storage::NormalizeGcpEndpoint(endpoint, true), bucket},
++        provider);
++    return provider;
++}
++
++// Registers a provider the way MinioChunkManager::BuildGoogleCloudClient does
++// for the GCS endpoint Milvus is configured with.
++static std::shared_ptr<FakeGcpCredentialProvider>
++RegisterMilvusProvider(const std::string& bucket,
++                       FakeGcpCredentialProvider::Mode mode) {
++    AddGcsEndpointForCredentials("gcs-factory-test.invalid", true);
++    return RegisterFakeProvider("gcs-factory-test.invalid", bucket, mode);
++}
++
++static std::shared_ptr<Aws::Http::HttpRequest>
++CreateGoogleRequest(const std::string& uri) {
++    GoogleHttpClientFactory factory;
++    return factory.CreateHttpRequest(
++        Aws::Http::URI(uri.c_str()),
++        Aws::Http::HttpMethod::HTTP_GET,
++        Aws::Utils::Stream::DefaultResponseStreamFactoryMethod);
++}
++
++static void
++CheckMilvusBucketKeepsItsProvider() {
++    setenv("AWS_EC2_METADATA_DISABLED", "true", 1);
++    setenv("AWS_CONFIG_FILE", "/dev/null", 1);
++    setenv("AWS_SHARED_CREDENTIALS_FILE", "/dev/null", 1);
++    // Milvus' own IAM provider asks the metadata server for a token; point it
++    // at a closed port so the fetch fails at once instead of reaching GCP.
++    setenv("GCE_METADATA_ROOT", "127.0.0.1:1", 1);
++    unsetenv("GOOGLE_APPLICATION_CREDENTIALS");
++    setenv("GOOGLE_GCLOUD_ADC_PATH_OVERRIDE", "/nonexistent/adc.json", 1);
++
++    MinioChunkManager manager;
++    manager.InitSDKAPI(RemoteStorageType::GOOGLE_CLOUD, true, "off");
++
++    StorageConfig storage_config;
++    storage_config.address = "storage.googleapis.com:443";
++    storage_config.bucket_name = "milvus-own-bucket";
++    storage_config.cloud_provider = "gcp";
++    storage_config.useSSL = true;
++    storage_config.useIAM = true;
++    Aws::Client::ClientConfiguration client_config;
++    client_config.region = "europe-west3";
++    client_config.endpointOverride = "storage.googleapis.com:443";
++    manager.BuildGoogleCloudClient(storage_config, client_config);
++
++    auto& registry = milvus_storage::GcpCredentialRegistry::Instance();
++    const Aws::Http::URI own_uri(
++        "https://storage.googleapis.com/milvus-own-bucket/key");
++    const auto milvus_provider = registry.Lookup(own_uri);
++    ASSERT_NE(milvus_provider, nullptr);
++
++    // milvus-storage registers another identity for the same bucket, as for
++    // an external table on it. Milvus' own requests keep Milvus' provider.
++    const milvus_storage::GcpBucketKey own_key{
++        milvus_storage::NormalizeGcpEndpoint(storage_config.address, true),
++        storage_config.bucket_name};
++    auto replacement = std::make_shared<FakeGcpCredentialProvider>(
++        FakeGcpCredentialProvider::Mode::kToken);
++    registry.Register(own_key, replacement);
++    for (const auto* uri :
++         {"https://storage.google
+```
+
+---
+
+### Incident Patch 3: `6a779486` (2026-10-28)
+**Commit Message**: fix: return WALNameMismatch synchronously during remote consumer creation (#54764)
+
+Fixes #54762
+
+When a remote consumer reconnects with a position from the previous WAL
+backend, the VChannel handshake reports `WALNameMismatch` after the
+constructor has already returned. The handler client's existing
+`DeliverPolicyAll` fallback therefore cannot catch the error.
+
+Complete the VChannel handshake before returning the consumer and
+starting its receive loop. Each creation attempt owns a child context,
+so failures release its stream while preserving the parent context and
+upper message handler for retry. Validate both successful and
+embedded-error handshake responses.
+
+Add gRPC regressions using the production server/client error
+interceptors, with fault-injection coverage for handshake failures and
+cancellation. Historical WAL catch-up and handler-level
+catch-up/All-handoff coverage are in #54778 (issue #54763), which must
+merge after this PR. The two PRs have no overlapping changed files.
+
+### Validation
+
+- Confirmed the gRPC mismatch regression fails on unmodified master and
+passes with this change.
+- Passed consumer, streaming status and streaming service interceptor
+tests with `-tag
+
+**File**: `internal/streamingnode/client/handler/consumer/consumer_impl.go` (modified, +30/-6)
+```diff
+@@ -45,6 +45,13 @@ func CreateConsumer(
+ 	opts *ConsumerOptions,
+ 	handlerClient streamingpb.StreamingNodeHandlerServiceClient,
+ ) (Consumer, error) {
++	ctx, cancel := context.WithCancel(ctx)
++	created := false
++	defer func() {
++		if !created {
++			cancel()
++		}
++	}()
+ 	ctx = contextutil.WithCreateConsumer(ctx, &streamingpb.CreateConsumerRequest{
+ 		Pchannel: types.NewProtoFromPChannelInfo(opts.Assignment.Channel),
+ 	})
+@@ -69,6 +76,7 @@ func CreateConsumer(
  	}
--	manifest, err := CommitManifestUpdates(base, ManifestEarliest, cfg,
-+	manifest, err := CommitManifestUpdates(MarshalManifestPath(base, ManifestEarliest), cfg,
- 		&ManifestUpdates{Indexes: []ManifestIndexInfo{entry(100, "100/1")}})
- 	require.NoError(t, err)
- 	_, version, err := UnmarshalManifestPath(manifest)
- 	require.NoError(t, err)
- 	// A second commit must preserve the first index's complete path.
--	manifest, err = CommitManifestUpdates(base, version, cfg,
-+	manifest, err = CommitManifestUpdates(MarshalManifestPath(base, version), cfg,
- 		&ManifestUpdates{Indexes: []ManifestIndexInfo{entry(200, "200/1")}})
- 	require.NoError(t, err)
- 	indexes, err := GetManifestIndexInfos(manifest, cfg)
-@@ -72,7 +72,7 @@ func TestManifestSegmentRootedIndexRoundTrip(t *testing.T) {
- 	// A rejected incremental entry must not replace the committed revision.
- 	_, version, err = UnmarshalManifestPath(manifest)
- 	require.NoError(t, err)
--	_, err = CommitManifestUpdates(base, version, cfg,
-+	_, err = CommitManifestUpdates(MarshalManifestPath(base, version), cfg,
- 		&ManifestUpdates{Indexes: []ManifestIndexInfo{entry(300, "../../index_files/300")}})
- 	require.Error(t, err)
- 	indexes, err = GetManifestIndexInfos(manifest, cfg)
+ 	cli := &consumerImpl{
+ 		ctx:              ctx,
++		cancel:           cancel,
+ 		walName:          createResp.GetWalName(),
+ 		opts:             opts,
+ 		grpcStreamClient: streamClient,
+@@ -77,16 +85,26 @@ func CreateConsumer(
+ 			mlog.String("walName", createResp.GetWalName()),
+ 			mlog.String("pchannel", opts.Assignment.Channel.Name),
+ 			mlog.Int64("term", opts.Assignment.Channel.Term),
+-			mlog.Int64("streamingNodeID", opts.Assignment.Node.ServerID)),
++			mlog.Int64("streamingNodeID", opts.Assignment.Node.ServerID),
++		),
+ 		msgHandler: opts.MessageHandler,
+ 		finishErr:  syncutil.NewFuture[error](),
+ 	}
++	if err := cli.createVChannelConsumer(); err != nil {
++		// No receiver owns finishErr yet. Cancel only this attempt and leave
++		// the upper message handler available for a retry.
++		cancel()
++		_ = streamClient.CloseSend()
++		return nil, err
++	}
++	created = true
+ 	go cli.execute()
+ 	return cli, nil
+ }
+ 
+ type consumerImpl struct {
+-	ctx              context.Context // TODO: the cancel method of consumer should be managed by consumerImpl, fix it in future.
++	ctx              context.Context
++	cancel           context.CancelFunc
+ 	walName          string
+ 	opts             *ConsumerOptions
+ 	grpcStreamClient streamingpb.StreamingNodeHandlerService_ConsumeClient
+@@ -147,12 +165,10 @@ func (c *consumerImpl) recvLoop() (err error) {
+ 		} else {
+ 			c.logger.Info(c.ctx, "recv arm of stream closed")
+ 		}
++		c.cancel()
+ 		c.finishErr.Set(err)
+ 		c.msgHandler.Close()
+ 	}()
+-	if err := c.createVChannelConsumer(); err != nil {
+-		return err
+-	}
+ 	for {
+ 		resp, err := c.grpcStreamClient.Recv()
+ 		if errors.Is(err, io.EOF) {
+@@ -221,7 +237,15 @@ func (c *consumerImpl) createVChannelConsumer() error {
+ 	if createVChannelResp == nil {
+ 		return status.NewInvalidRequestSeq("expect create vchannel response")
+ 	}
+-	return nil
++	switch response := createVChannelResp.GetResponse().(type) {
++	case *streamingpb.CreateVChannelConsumerResponse_ConsumerId:
++		return nil
++	case *streamingpb.CreateVChannelConsumerResponse_Error:
++		if response.Error != nil {
++			return (*status.StreamingError)(response.Error)
++		}
++	}
++	return status.NewInvalidRequestSeq("expect successful create vchannel response")
+ }
+ 
+ func (c *consumerImpl) handleTxnMessage(ctx context.Context, msg message.ImmutableMessage) error {
+```
+
+**File**: `internal/streamingnode/client/handler/consumer/handshake_test.go` (added, +211/-0)
+```diff
+@@ -0,0 +1,211 @@
++package consumer
++
++import (
++	"context"
++	"io"
++	"net"
++	"sync/atomic"
++	"testing"
++	"time"
++
++	"github.com/cockroachdb/errors"
++	"github.com/stretchr/testify/mock"
++	"github.com/stretchr/testify/require"
++	"google.golang.org/grpc"
++	"google.golang.org/grpc/credentials/insecure"
++	"google.golang.org/grpc/test/bufconn"
++
++	serviceinterceptor "github.com/milvus-io/milvus/internal/util/streamingutil/service/interceptor"
++	"github.com/milvus-io/milvus/internal/util/streamingutil/status"
++	"github.com/milvus-io/milvus/pkg/v3/mocks/proto/mock_streamingpb"
++	"github.com/milvus-io/milvus/pkg/v3/proto/streamingpb"
++	"github.com/milvus-io/milvus/pkg/v3/streaming/util/message"
++	"github.com/milvus-io/milvus/pkg/v3/streaming/util/options"
++	"github.com/milvus-io/milvus/pkg/v3/streaming/util/types"
++	"github.com/milvus-io/milvus/pkg/v3/streaming/walimpls/impls/walimplstest"
++)
++
++type handshakeHandler struct{ closed atomic.Int32 }
++
++func (h *handshakeHandler) Handle(message.HandleParam) message.HandleResult {
++	return message.HandleResult{MessageHandled: true}
++}
++func (h *handshakeHandler) Close() { h.closed.Add(1) }
++func handshakeOptions(h message.Handler) *ConsumerOptions {
++	return &ConsumerOptions{
++		Assignment: &types.PChannelInfoAssigned{Channel: types.PChannelInfo{Name: "p", Term: 1}},
++		VChannel:   "v1", DeliverPolicy: options.DeliverPolicyStartFrom(walimplstest.NewTestMessageID(1)), MessageHandler: h,
++	}
++}
++
++func firstHandshakeResponse() *streamingpb.ConsumeResponse {
++	return &streamingpb.ConsumeResponse{Response: &streamingpb.ConsumeResponse_Create{Create: &streamingpb.CreateConsumerResponse{WalName: "woodpecker"}}}
++}
++
++func successfulHandshakeResponse() *streamingpb.ConsumeResponse {
++	return &streamingpb.ConsumeResponse{Response: &streamingpb.ConsumeResponse_CreateVchannel{CreateVchannel: &streamingpb.CreateVChannelConsumerResponse{Response: &streamingpb.CreateVChannelConsumerResponse_ConsumerId{ConsumerId: 1}}}}
++}
++
++func TestConsumerFailedHandshakeCancelsOnlyItsStream(t *testing.T) {
++	expected := status.NewWALNameMismatchError("woodpecker", "test")
++	for _, stage := range []string{"open", "first-recv", "first-response", "second-send", "second-recv", "embedded-error", "second-response", "empty-second-response", "nil-embedded-error"} {
++		t.Run(stage, func(t *testing.T) {
++			parent, cancel := context.WithCancel(t.Context())
++			defer cancel()
++			h := &handshakeHandler{}
++			client := mock_streamingpb.NewMockStreamingNodeHandlerServiceClient(t)
++			stream := mock_streamingpb.NewMockStreamingNodeHandlerService_ConsumeClient(t)
++			var attempt context.Context
++			client.EXPECT().Consume(mock.Anything, mock.Anything).RunAndReturn(func(ctx context.Context, _ ...grpc.CallOption) (streamingpb.StreamingNodeHandlerService_ConsumeClient, error) {
++				attempt = ctx
++				if stage == "open" {
++					return nil, expected
++				}
++				return stream, nil
++			}).Once()
++			if stage != "open" {
++				calls := 0
++				stream.EXPECT().Recv().RunAndReturn(func() (*streamingpb.ConsumeResponse, error) {
++					calls++
++					if calls == 1 {
++						if stage == "first-recv" {
++							return nil, expected
++						}
++						if stage == "first-response" {
++							return &streamingpb.ConsumeResponse{}, nil
++						}
++						return firstHandshakeResponse(), nil
++					}
++					if stage == "second-recv" {
++						return nil, expected
++					}
++					if stage == "embedded-error" {
++						return &streamingpb.ConsumeResponse{Response: &streamingpb.ConsumeResponse_CreateVchannel{CreateVchannel: &streamingpb.CreateVChannelConsumerResponse{Response: &streamingpb.CreateVChannelConsumerResponse_Error{Error: expected.AsPBError()}}}}, nil
++					}
++					if stage == "empty-second-response" {
++						return &streamingpb.ConsumeResponse{Response: &streamingpb.ConsumeResponse_CreateVchannel{CreateVchannel: &streamingpb.CreateVChannelConsumerResponse{}}}, nil
++					}
++					if stage == "nil-embedded-error" {
++						return &streamingpb.ConsumeResponse{Response: &streamingpb.ConsumeResponse_CreateVchannel{CreateVchannel: &streamingpb.CreateVChannelConsumerResponse{Response: &streamingpb.CreateVChannelConsumerResponse_Error{}}}}, nil
++					}
++					return &streamingpb.ConsumeResponse{}, nil
++				}).Maybe()
++				stream.EXPECT().Send(mock.Anything).RunAndReturn(func(*streamingpb.ConsumeRequest) error {
++					if stage == "second-send" {
++						return expected
++					}
++					return nil
++				}).Maybe()
++				stream.EXPECT().CloseSend().Return(nil).Maybe()
++			}
++			c, err := CreateConsumer(parent, handshakeOptions(h), client)
++			require.Error(t, err)
++			require.Nil(t, c)
++			if stage == "embedded-error" || stage == "open" || stage == "first-recv" || stage == "second-send" || stage == "second-recv" {
++				require.True(t, status.AsStreamingError(err).IsWALNameMismatch())
++			} else {
++				require.Equal(t, streamingpb.StreamingCode_STREAMING_CODE_INVALID_REQUEST_SEQ, status.AsStreamingError(err).Code)
++			}
++			require.NoError(t, parent.Err())
++		
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #54727** (2026-10-27): test: align manifest test calls with revision paths (@chyezh)
-- **PR #54723** (closed): fix: [3.0] Align milvus-common with Cardinal stream options (@weiliu1031)
-- **PR #54721** (2026-10-28): test: expand CDC API contract and boundary coverage (@zhuwenxing)
-- **PR #54707** (2026-10-27): fix: Recover etcd watches after leader changes (@congqixia)
-- **PR #54696** (closed): doc: Define business-version conditional upsert contracts (@weiliu1031)
-- **PR #54694** (2026-10-27): fix: [3.0] return invalid-parameter error for malformed max_length (@XuanYang-cn)
+- **PR #54770** (2026-10-28): fix: [cp3.0] support contextual keywords as field names (@zhengbuqian)
+- **PR #54764** (2026-10-28): fix: return WALNameMismatch synchronously during remote consumer creation (@tinswzy)
+- **PR #54761** (2026-10-28): fix: [cp3.0] authenticate GCS requests with the registered GCP credential provider (@xiaofan-luan)
+- **PR #54760** (2026-10-28): fix: authenticate GCS requests with the registered GCP credential provider (@xiaofan-luan)
+- **PR #54758** (2026-10-28): test: [3.0] expand CDC API contract and boundary coverage (@zhuwenxing)
+- **PR #54754** (2026-10-28): fix: [3.0] Recover from transient etcd errors instead of crashing (@xiaofan-luan)
 
 ---
 
@@ -2182,54 +2649,67 @@ Signed-off-by: chyezh <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: expand CDC API contract and boundary coverage (#54721)
+## X. Recover from all transient etcd errors, not only leader changes (#54733)
 
 **RULE**:
-When implementing operations in `tests/python_client/cdc/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/cdc/controller/controller.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e6aff936`: test: expand CDC API contract and boundary coverage (#54721). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `029df857`: Recover from all transient etcd errors, not only leader changes (#54733). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/python_client/cdc/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/cdc/controller/controller.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- Explicit checks for replicated state, local operations, and rejected interfaces
-   # From the repository root
-   uv venv -p 3.12
-   source .venv/bin/activate
-   uv pip install -r tests/python_client/requirements.txt
-- UPDATE_RESOURCE_GROUP (local on both roles)
-- TRANSFER_REPLICA (primary assignment and default secondary-local override)
+	"fmt"
+	"time"
+	"github.com/milvus-io/milvus/pkg/v3/util/etcd"
+// listRetryInterval is how long the controller waits before listing the
+// replicate pchannels again after a transient etcd error.
+const listRetryInterval = time.Second
 
-## Interface contract regression
+			m, err := c.listReplicatePChannels()
+			if err != nil {
+				if c.ctx.Err() != nil {
+					return
+				}
+				panic(fmt.Sprintf("failed to list replicate pchannels: %v", err))
+// listReplicatePChannels lists the replicate pchannels, retrying transient etcd
+// errors (e.g. leader changed while etcd restarts). Any other error, including
+// a request timeout, is returned.
+func (c *controller) listReplicatePChannels() (*meta.ReplicateChannels, error) {
+	for {
+		m, err := meta.ListReplicatePChannels(c.ctx, resource.Resource().ETCD(), c.prefix)
+		if err == nil {
+			return m, nil
+		}
+		if c.ctx.Err() != nil || !etcd.IsRetriableEtcdErr(err) {
+			return nil, err
+		}
+		mlog.Warn(c.ctx, "failed to list replicate pchannels, retry", mlog.Err(err))
+		select {
+		case <-time.After(listRetryInterval):
+		case <-c.ctx.Done():
+			return nil, c.ctx.Err()
+		}
+	}
+}
 
-The supplemental cases use the repository-pinned PyMilvus version and require a
-CDC pair, so they are tagged `CDC,L3`. Run them serially: topology changes and
-Import 2PC use session-wide state. Both clusters must use
-`common.storage.useLoonFFI=true`,
-`dataCoord.compaction.bumpSchemaVersion.enabled=true`, and
-`dataCoord.compaction.storageVersion.enabled=true` for the function-field lifecycle case. Replica
-assignment cases assume the default
-`streaming.replication.useLocalReplicaConfig=true` and one secondary replica.
-The multi-replica case additionally needs two primary query nodes and, when
-StreamingNodes host replica delegators, two primary StreamingNodes. Missing
-capacity is reported as a skip, not a pass.
-
-CDC test operations and state checks use `MilvusClient`, including replica and
-file-resource inspection. 
+				if c.ctx.Err() != nil {
+					return nil
+				}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-- Comprehensive test coverage for all CDC-supported operations
-   pip install pymilvus>=2.6.0 pytest numpy
-- TRANSFER_NODE
-- TRANSFER_REPLICA
+			m, err := meta.ListReplicatePChannels(c.ctx, resource.Resource().ETCD(), c.prefix)
+			if err != nil && c.ctx.Err() == nil {
+				mlog.Warn(c.ctx, "failed to list replicate pchannels", mlog.Err(err))
+				continue
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e6aff936` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `029df857` are properly handled with clean fallback behavior.

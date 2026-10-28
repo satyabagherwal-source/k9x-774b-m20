@@ -5935,3 +5935,7 @@ Every entry in this ledger must capture:
 | `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `e83da884` | Multi-dimensional audit evidence | 2026-10-28T20:37:49.077Z |
 | `learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf` | `https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | `hf-sc117-q` | Multi-dimensional audit evidence | 2026-10-28T20:37:51.363Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `098582e4` | Multi-dimensional audit evidence | 2026-10-28T20:37:58.042Z |
+| `learn-huggingface-qwen-qwen3-4b` | `https://huggingface.co/Qwen/Qwen3-4B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-28T20:44:20.566Z |
+| `learn-github-nativescript-nativescript` | `https://github.com/NativeScript/NativeScript` | `c72e04d7` | Multi-dimensional audit evidence | 2026-10-28T20:44:28.982Z |
+| `learn-github-kong-kubernetes-ingress-controller` | `https://github.com/Kong/kubernetes-ingress-controller` | `5fa96bf0` | Multi-dimensional audit evidence | 2026-10-28T20:44:29.290Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `3f0e3b9a` | Multi-dimensional audit evidence | 2026-10-28T20:44:35.011Z |

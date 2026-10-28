@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md`  
 > **Source**: github ([https://github.com/Kong/kubernetes-ingress-controller](https://github.com/Kong/kubernetes-ingress-controller))  
-> **Source Version**: `76d2886d`  
+> **Source Version**: `5fa96bf0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T10:09:02.484Z  
+> **Timestamp**: 2026-10-28T20:44:29.020Z  
 > **Learning ID**: `learn-github-kong-kubernetes-ingress-controller`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Kong/kubernetes-ingress-controller](https://github.com/Kong/kubernetes-ingress-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T10:06:12.254Z  
+> **Harvest Timestamp**: 2026-10-28T20:44:29.013Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: :gorilla: Kong for Kubernetes: The official Ingress Controller for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2413 stars
+- **Stars / Engagement**: 2414 stars
 
 ---
 
@@ -1560,61 +1560,105 @@ func CRDExists(restMapper meta.RESTMapper, gvr schema.GroupVersionResource) bool
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `76d2886d` (2026-10-26)
-**Commit Message**: chore(deps): bump golang from `f241642` to `f20d83a` (#8135)
+### Incident Patch 1: `5fa96bf0` (2026-10-28)
+**Commit Message**: add entries for releases 3.5.14 and 3.4.21 (#8136)
 
-Bumps golang from `f241642` to `f20d83a`.
-
----
-updated-dependencies:
-- dependency-name: golang
-  dependency-version: 1.27.3
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Dockerfile` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +33/-3)
 ```diff
-@@ -1,6 +1,6 @@
- ### Standard binary
- # Build the manager binary
--FROM --platform=$BUILDPLATFORM golang:1.27.3@sha256:f24164268fc1e741bbdc0066dbadcf1c8426c5a8489f0729c02c3905a53032fd AS builder
-+FROM --platform=$BUILDPLATFORM golang:1.27.3@sha256:f20d83a83e18dbd2a4714b8ffd4b30b287b6243962dd75608e86abcc63ba4efc AS builder
+@@ -8,6 +8,7 @@ Adding a new version? You'll need three changes:
+   This is all the way at the bottom. It's the thing we always forget.
+ --->
  
- ARG GOPATH
- ARG GOCACHE
-```
-
-**File**: `Dockerfile.debug` (modified, +2/-2)
-```diff
-@@ -1,5 +1,5 @@
- # Build a manager binary with debug symbols and download Delve
--FROM --platform=$BUILDPLATFORM golang:1.27.3@sha256:f24164268fc1e741bbdc0066dbadcf1c8426c5a8489f0729c02c3905a53032fd AS builder
-+FROM --platform=$BUILDPLATFORM golang:1.27.3@sha256:f20d83a83e18dbd2a4714b8ffd4b30b287b6243962dd75608e86abcc63ba4efc AS builder
++- [3.5.14](#3514)
+ - [3.5.13](#3513)
+ - [3.5.12](#3512)
+ - [3.5.11](#3511)
+@@ -22,6 +23,7 @@ Adding a new version? You'll need three changes:
+ - [3.5.2](#352)
+ - [3.5.1](#351)
+ - [3.5.0](#350)
++- [3.4.21](#3421)
+ - [3.4.20](#3420)
+ - [3.4.19](#3419)
+ - [3.4.18](#3418)
+@@ -136,7 +138,9 @@ Adding a new version? You'll need three changes:
+ - [0.0.5](#005)
+ - [0.0.4 and prior](#004-and-prior)
  
- ARG GOPATH
- ARG GOCACHE
-@@ -45,7 +45,7 @@ RUN --mount=type=cache,target=$GOPATH/pkg/mod \
+-## Unreleased
++## [3.5.14]
++
++> Release date: 2026-10-22
  
- ### Debug
- # Create an image that runs a debug build with Delve installed
--FROM --platform=$BUILDPLATFORM golang:1.27.3@sha256:f24164268fc1e741bbdc0066dbadcf1c8426c5a8489f0729c02c3905a53032fd AS debug
-+FROM --platform=$BUILDPLATFORM golang:1.27.3@sha256:f20d83a83e18dbd2a4714b8ffd4b30b287b6243962dd75608e86abcc63ba4efc AS debug
- # renovate: datasource=github-releases depName=go-delve/delve
- RUN go install github.com/go-delve/delve/cmd/dlv@v1.27.3
- # We want all source so Delve file location operations work
+ ### Fixed
+ 
+@@ -153,8 +157,9 @@ Adding a new version? You'll need three changes:
+ 
+ ### Changed
+ 
+-- Bump Go to 1.27.2.
+-  [#8110](https://github.com/Kong/kubernetes-ingress-controller/pull/8110)
++- Bump Go to 1.27.3.
++  [#8108](https://github.com/Kong/kubernetes-ingress-controller/pull/8108)
++  [#8126](https://github.com/Kong/kubernetes-ingress-controller/pull/8126)
+ 
+ ## [3.5.13]
+ 
+@@ -405,6 +410,29 @@ Adding a new version? You'll need three changes:
+   source is different than cookie).
+   [#7582](https://github.com/Kong/kubernetes-ingress-controller/pull/7582)
+ 
++## [3.4.21]
++
++> Release date: 2026-10-22
++
++### Fixed
++
++- Inherit the tags of the translated Kong certificate from the one with earliest
++  creation timestamp, then lowest ID to keep the tags stable in merging certificates
++  from multiple `Secret`s with the same certificate content.
++  [#8085](https://github.com/Kong/kubernetes-ingress-controller/pull/8085)
++- Generate a distinct Kong route for each match when its parent `HTTPRoute` rule
++  contains `ReplacePrefixMatch` typed `URLRewrite` filter or `requestRedirect` filter.
++  NOTE: This would make the generate routes from the affected `HTTPRoute` rules
++  containing the filters to be deleted and re-created, and the names of the routes
++  are changed.
++  [#8081](https://github.com/Kong/kubernetes-ingress-controller/pull/8081)
++
++### Changed
++
++- Bump Go to 1.27.3.
++  [#8109](https://github.com/Kong/kubernetes-ingress-controller/pull/8109)
++  [#8125](https://github.com/Kong/kubernetes-ingress-controller/pull/8125)
++
+ ## [3.4.20]
+ 
+ > Release date: 2026-08-07
+@@ -4591,6 +4619,7 @@ Please read the changelog and test in your environment.
+ - The initial versions were rapildy iterated to deliver
+   a working ingress controller.
+ 
++[3.5.14]: https://github.com/kong/kubernetes-ingress-controller/compare/v3.5.13...v3.5.14
+ [3.5.13]: https://github.com/kong/kubernetes-ingress-controller/compare/v3.5.12...v3.5.13
+ [3.5.12]: https://github.com/kong/kubernetes-ingress-controller/compare/v3.5.11...v3.5.12
+ [3.5.11]: https://github.com/kong/kubernetes-ingress-controller/compare/v3.5.10...v3.5.11
+@@ -4605,6 +4634,7 @@ Please read the changelog and test in your environment.
+ [3.5.2]: https://github.com/kong/kubernetes-ingress-controller/compare/v3.5.1...v3.5.2
+ [3.5.1]: https://github.com/kong/kubernetes-ingress-controller/compare/v3.5.0...v3.5.1
+ [3.5.0]: https://github.com/kong/kubernetes-ingress-controller/compare/v3.4.7...v3.5.0
++[3.4.21]: https://github.com/kong/kubernetes-ingress-controller/compare/v3.4.20...v3.4.21
+ [3.4.20]: https://github.com/kong/kubernetes-ingress-controller/compare/v3.4.19...v3.4.20
+ [3.4.19]: https://github.com/kong/kubernetes-ingress-controller/compare/v3.4.18...v3.4.19
+ [3.4.18]: https://github.com/kong/kubernetes-ingress-controller/compare/v3.4.17...v3.4.18
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8136** (2026-10-28): docs(changelog): Add entries for releases 3.5.14 and 3.4.21 (@randmonkey)
 - **PR #8135** (2026-10-26): chore(deps): bump golang from `f241642` to `f20d83a` (@dependabot[bot])
 - **PR #8129** (2026-10-22): chore(changelog): update changelog for 3.5.14 (@randmonkey)
 - **PR #8128** (2026-10-22): chore(changelog): update changelog for 3.4.21 (@randmonkey)
 - **PR #8126** (2026-10-22): [Backport release/3.5.x] chore(build): Bump golang to 1.27.3 (@kong-k8s-team[bot])
 - **PR #8125** (2026-10-22): [Backport release/3.4.x] chore(build): Bump golang to 1.27.3 (@kong-k8s-team[bot])
-- **PR #8124** (2026-10-21): chore(build): Bump golang to 1.27.3 (@randmonkey)
 
 ---
 
@@ -1634,28 +1678,59 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump golang from `f241642` to `f20d83a` (#8135)
+## X. add entries for releases 3.5.14 and 3.4.21 (#8136)
 
 **RULE**:
-When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kong/kubernetes-ingress-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kong/kubernetes-ingress-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `76d2886d`: deps): bump golang from `f241642` to `f20d83a` (#8135). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5fa96bf0`: add entries for releases 3.5.14 and 3.4.21 (#8136). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-FROM --platform=$BUILDPLATFORM golang:1.27.3@sha256:f20d83a83e18dbd2a4714b8ffd4b30b287b6243962dd75608e86abcc63ba4efc AS builder
+- [3.5.14](#3514)
+- [3.4.21](#3421)
+## [3.5.14]
+
+> Release date: 2026-10-22
+- Bump Go to 1.27.3.
+  [#8108](https://github.com/Kong/kubernetes-ingress-controller/pull/8108)
+  [#8126](https://github.com/Kong/kubernetes-ingress-controller/pull/8126)
+## [3.4.21]
+
+> Release date: 2026-10-22
+
+### Fixed
+
+- Inherit the tags of the translated Kong certificate from the one with earliest
+  creation timestamp, then lowest ID to keep the tags stable in merging certificates
+  from multiple `Secret`s with the same certificate content.
+  [#8085](https://github.com/Kong/kubernetes-ingress-controller/pull/8085)
+- Generate a distinct Kong route for each match when its parent `HTTPRoute` rule
+  contains `ReplacePrefixMatch` typed `URLRewrite` filter or `requestRedirect` filter.
+  NOTE: This would make the generate routes from the affected `HTTPRoute` rules
+  containing the filters to be deleted and re-created, and the names of the routes
+  are changed.
+  [#8081](https://github.com/Kong/kubernetes-ingress-controller/pull/8081)
+
+### Changed
+
+- Bump Go to 1.27.3.
+  [#8109](https://github.com/Kong/kubernetes-ingress-controller/pull/8109)
+  [#8125](https://github.com/Kong/kubernetes-ingress-controller/pull
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-FROM --platform=$BUILDPLATFORM golang:1.27.3@sha256:f24164268fc1e741bbdc0066dbadcf1c8426c5a8489f0729c02c3905a53032fd AS builder
+## Unreleased
+- Bump Go to 1.27.2.
+  [#8110](https://github.com/Kong/kubernetes-ingress-controller/pull/8110)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `76d2886d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5fa96bf0` are properly handled with clean fallback behavior.

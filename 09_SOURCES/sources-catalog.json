@@ -1035,8 +1035,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-4B",
     "sourceVersion": "hf-qwen-qwen3-4b",
     "license": "Open-Source",
-    "contentHash": "d3737401be70c47b9b1185f57354f3b83d612d4031ba7a19f5ddc503f0e27bea",
-    "lastHarvestedAt": "2026-10-25T21:40:07.549Z",
+    "contentHash": "3549507ba0c96fb4706760486f5a4eb0a92bb86cca0d39e7af9e92b1871c4ca1",
+    "lastHarvestedAt": "2026-10-28T20:44:20.566Z",
     "learningId": "learn-huggingface-qwen-qwen3-4b"
   },
   "hf-fermionresearch-phonon-2": {
@@ -6673,10 +6673,10 @@
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "e6aff936",
+    "sourceVersion": "3f0e3b9a",
     "license": "Apache-2.0",
-    "contentHash": "41e411693cfade2630fae49ca225593865d908cec9d0607b722c0e5d3f51fb9e",
-    "lastHarvestedAt": "2026-10-28T03:18:06.397Z",
+    "contentHash": "25cc4e816a9e8b488a1faf383f536695ff00f52713b2960546aef2e3635a5e8b",
+    "lastHarvestedAt": "2026-10-28T20:44:35.011Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {
@@ -6993,10 +6993,10 @@
     "repository": "Kong/kubernetes-ingress-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/Kong/kubernetes-ingress-controller",
-    "sourceVersion": "76d2886d",
+    "sourceVersion": "5fa96bf0",
     "license": "Apache-2.0",
-    "contentHash": "8c7926a09de531fdb3f3a6f7fb374f49bf243d9cb6f6de844e7e2672ed61e906",
-    "lastHarvestedAt": "2026-10-27T10:09:02.828Z",
+    "contentHash": "4ac6ca7a5e27e7602ba8fcf95d66b530b7b86dfefd24e9855a578f1df75b5c35",
+    "lastHarvestedAt": "2026-10-28T20:44:29.290Z",
     "learningId": "learn-github-kong-kubernetes-ingress-controller"
   },
   "hf-comfy-org-z_image_turbo": {
@@ -7453,10 +7453,10 @@
     "repository": "NativeScript/NativeScript",
     "platform": "github",
     "sourceUrl": "https://github.com/NativeScript/NativeScript",
-    "sourceVersion": "6bb01eab",
+    "sourceVersion": "c72e04d7",
     "license": "MIT",
-    "contentHash": "914fdd3ea2b4252b81710868b053e629fd148419229b7815921e1b65e3ec60ea",
-    "lastHarvestedAt": "2026-10-25T13:30:54.175Z",
+    "contentHash": "237791fe1dc9525cf9ebb5df14ef1433d39c92338a0f08a488e592033deeb7b7",
+    "lastHarvestedAt": "2026-10-28T20:44:28.982Z",
     "learningId": "learn-github-nativescript-nativescript"
   },
   "oramasearch-orama": {
