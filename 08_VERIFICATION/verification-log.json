@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261026-1PKM",
-    "timestamp": "2026-10-26T02:57:21.334Z",
-    "repository": "orcarouter/OrcaCyber-Nano-1.0",
-    "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
-    "contentHash": "4c4a2bfff7ac0b40b484db3ef36b30d7cc33b46db8ca11e4f6668b66dc9110d4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-9USN",
-    "timestamp": "2026-10-26T03:03:41.351Z",
-    "repository": "iii-hq/iii",
-    "learningId": "learn-github-iii-hq-iii",
-    "contentHash": "e20b63c5e16ab5c924e420a0dd22ca28260d4e16c283fbe58bd1b953bb247845",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-A21C",
-    "timestamp": "2026-10-26T03:03:50.736Z",
-    "repository": "aws/aws-cdk",
-    "learningId": "learn-github-aws-aws-cdk",
-    "contentHash": "898ede3c62bc3cbf332e7c564481d04d4cdb340301dc776a1f8006d7d197508c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261026-I9TB",
     "timestamp": "2026-10-26T03:10:14.063Z",
     "repository": "Automattic/harper",
@@ -7490,6 +7445,51 @@
     "repository": "necolas/react-native-web",
     "learningId": "learn-github-necolas-react-native-web",
     "contentHash": "b10e4babd4d4511a52a23d5aef1d0649e0c6837c63d100313159215111e2adca",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-J5TY",
+    "timestamp": "2026-10-28T00:26:18.310Z",
+    "repository": "zeronsh/zeron",
+    "learningId": "learn-github-zeronsh-zeron",
+    "contentHash": "47551654e9e83ae7e0bbfce5ce2cfac51270be4b47585778c5f8e9bdae807661",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-J6BB",
+    "timestamp": "2026-10-28T00:26:18.935Z",
+    "repository": "CrawlCove/robots-txt-tester",
+    "learningId": "learn-github-crawlcove-robots-txt-tester",
+    "contentHash": "95a3c30dfc796a83ba56bef17cd13aff5e354f974c0835547afd078a7df65290",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-JDXU",
+    "timestamp": "2026-10-28T00:26:28.818Z",
+    "repository": "citusdata/citus",
+    "learningId": "learn-github-citusdata-citus",
+    "contentHash": "44febd64ea276959021e77783164933f18ead2a8a23da88d7c5c400495189a37",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T00:19:33.649Z",
-  "total_cycles_completed": 5575,
-  "total_learnings_persisted": 5575,
-  "total_rules_promoted": 4988,
+  "last_updated": "2026-10-28T00:26:28.826Z",
+  "total_cycles_completed": 5578,
+  "total_learnings_persisted": 5578,
+  "total_rules_promoted": 4991,
   "history": [
-    {
-      "timestamp": "2026-10-27T15:04:43.547Z",
-      "repository": "aquasecurity/trivy",
-      "learningId": "learn-github-aquasecurity-trivy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T15:08:14.621Z",
-      "repository": "pulumi/pulumi",
-      "learningId": "learn-github-pulumi-pulumi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T15:12:02.780Z",
-      "repository": "cosscom/ui",
-      "learningId": "learn-github-cosscom-ui",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T15:12:07.038Z",
       "repository": "scrapinghub/dateparser",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-28T00:19:33.649Z",
       "repository": "necolas/react-native-web",
       "learningId": "learn-github-necolas-react-native-web",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T00:26:18.318Z",
+      "repository": "zeronsh/zeron",
+      "learningId": "learn-github-zeronsh-zeron",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T00:26:18.944Z",
+      "repository": "CrawlCove/robots-txt-tester",
+      "learningId": "learn-github-crawlcove-robots-txt-tester",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T00:26:28.826Z",
+      "repository": "citusdata/citus",
+      "learningId": "learn-github-citusdata-citus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

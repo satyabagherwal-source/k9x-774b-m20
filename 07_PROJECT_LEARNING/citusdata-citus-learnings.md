@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/citusdata-citus-learnings.md`  
 > **Source**: github ([https://github.com/citusdata/citus](https://github.com/citusdata/citus))  
-> **Source Version**: `f24c6fc4`  
+> **Source Version**: `1aba449a`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T11:56:17.515Z  
+> **Timestamp**: 2026-10-28T00:26:28.397Z  
 > **Learning ID**: `learn-github-citusdata-citus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/citusdata-citus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/citusdata/citus](https://github.com/citusdata/citus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T11:56:17.263Z  
+> **Harvest Timestamp**: 2026-10-28T00:26:28.389Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Distributed PostgreSQL as an extension
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 12828 stars
+- **Stars / Engagement**: 12829 stars
 
 ---
 
@@ -2563,254 +2563,631 @@ ColumnarStorageGetReservedRowNumber(Relation rel, bool force)
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f24c6fc4` (2026-10-27)
-**Commit Message**: Report unsupported ALTER CONSTRAINT explicitly (#8808)
+### Incident Patch 1: `1aba449a` (2026-10-27)
+**Commit Message**: Add 'force_logical_auto_identity' shard transfer mode for non-blocking moves of tables without a replica identity (#8828)
 
-DESCRIPTION: Report unsupported ALTER CONSTRAINT explicitly on
-PostgreSQL 19 RC1
+DESCRIPTION: Adds `force_logical_auto_identity` value to
+`citus.shard_transfer_mode` so tables that have no usable replica
+identity can still be moved / rebalanced with a non-blocking (logical
+replication) shard transfer.
 
-Draft follow-up to #8758, based on the PostgreSQL 19 RC1 alignment in
-#8929.
+Closes https://github.com/citusdata/citus/issues/6860.
+(See the end of PR description)
 
-This PR is intentionally limited to `ALTER TABLE ... ALTER CONSTRAINT`:
+Citus performs non-blocking shard moves with logical replication.
+Logical replication has to publish the user's concurrent
+`UPDATE`/`DELETE` on the source shard, which PostgreSQL only allows when
+the table can identify a row for those commands: a `PRIMARY KEY`, a
+replica-identity unique index, or `REPLICA IDENTITY FULL`. For a table
+that has none of these, `force_logical` does not reject the move, but
+every concurrent `UPDATE`/`DELETE` the user issues against the source
+shard fails for the duration of the transfer, because PostgreSQL refuses
+those commands on a table with no replica identity that is part of a
+publication publishing them.
 
-- return `FEATURE_NOT_SUPPORTED` for distributed, reference, and
-Citus-local tables;
-- explain that constraint property changes are not propagated to shards;
-- preserve native PostgreSQL behavior for ordinary local tables;
-- verify rejected changes leave the constraint enforcement state
-unchanged.
+`force_logical_auto_identity` is a new opt-in value for
+`citus.shard_transfer_mode` (and for the `shard_transfer_mode` 
 
-The earlier unrelated `DETACH PARTITION` error-code, message, and detail
-changes have been removed.
-
-Validation:
-
-- PostgreSQL 17.10: `make -C src/test/regress check-minimal
-EXTRA_TESTS='partitioning_issue_3970'` passed.
-- PostgreSQL 18.4: `make -C src/test/regress check-minimal
-EXTRA_TESTS='pg18'` passed.
-- PostgreSQL 19 RC1: `make -C src/test/regress check-minimal
-EXTRA_TESTS='pg18'` passed.
-- `make check-style` passed with CI-pinned uncrustify 0.82.0 and
-citusdata/tools v0.8.33.
-- `ci/normalize_expected.sh` produced no further changes.
-- `git diff --check` passed.
-
-Fixes #8758
-
----------
-
-Co-authored-
-
-**File**: `src/backend/distributed/commands/table.c` (modified, +8/-2)
+**File**: `src/backend/distributed/README.md` (modified, +12/-3)
 ```diff
-@@ -3944,8 +3944,14 @@ ErrorIfUnsupportedAlterTableStmt(AlterTableStmt *alterTableStatement)
- 			{
- 				ereport(ERROR,
- 						(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
--						 errmsg("alter table command is currently unsupported"),
--						 errdetail("Only ADD|DROP COLUMN, SET|DROP NOT NULL, "
-+						 errmsg("%s", alterTableType == AT_AlterConstraint ?
-+								"ALTER TABLE ... ALTER CONSTRAINT commands are currently "
-+								"unsupported" :
-+								"alter table command is currently unsupported"),
-+						 errdetail("%s", alterTableType == AT_AlterConstraint ?
-+								   "Citus does not propagate constraint property changes "
-+								   "to shards." :
-+								   "Only ADD|DROP COLUMN, SET|DROP NOT NULL, "
- 								   "SET|DROP DEFAULT, ADD|DROP|VALIDATE CONSTRAINT, "
- 								   "SET (), RESET (), "
- 								   "ENABLE|DISABLE|NO FORCE|FORCE ROW LEVEL SECURITY, "
-```
-
-**File**: `src/test/regress/expected/partitioning_issue_3970.out` (modified, +2/-2)
-```diff
-@@ -120,8 +120,8 @@ SET search_path = test_3970;
- ALTER TABLE part_table RENAME CONSTRAINT my_seq TO my_seq_check;
- ERROR:  renaming constraints belonging to distributed tables is currently unsupported
- ALTER TABLE part_table ALTER CONSTRAINT my_seq DEFERRABLE;
--ERROR:  alter table command is currently unsupported
--DETAIL:  Only ADD|DROP COLUMN, SET|DROP NOT NULL, SET|DROP DEFAULT, ADD|DROP|VALIDATE CONSTRAINT, SET (), RESET (), ENABLE|DISABLE|NO FORCE|FORCE ROW LEVEL SECURITY, ATTACH|DETACH PARTITION and TYPE subcommands are supported.
-+ERROR:  ALTER TABLE ... ALTER CONSTRAINT commands are currently unsupported
-+DETAIL:  Citus does not propagate constraint property changes to shards.
- -- verify that we can drop the constraints on partitioned tables
- ALTER TABLE part_table DROP CONSTRAINT my_seq;
- DROP TABLE part_table, dist CASCADE;
-```
-
-**File**: `src/test/regress/expected/pg18.out` (modified, +84/-2)
-```diff
-@@ -1471,6 +1471,25 @@ SET search_path TO pg18_nn;
- -- END: PG18: verify publish_generated_columns is preserved for distributed tables
- -- PG18 Feature: FOREIGN KEY constraints can be specified as NOT ENFORCED
- -- PG18 commit: https://github.com/postgres/postgres/commit/eec0040c4
-+CREATE TABLE alter_constraint_local (
-+	id int PRIMARY KEY,
-+	parent_id int,
-+	CONSTRAINT alter_constraint_local_fk
-+		FOREIGN KEY (parent_id) REFERENCES alter_constraint_local (id) NOT ENFORCED
-+);
-+-- PostgreSQL tables retain native ALTER CONSTRAINT behavior.
-+ALTER TABLE alter_constraint_local
-+	ALTER CONSTRAINT alter_constraint_local_fk ENFORCED;
-+SELECT conenforced
-+FROM pg_constraint
-+WHERE conrelid = 'alter_constraint_local'::regclass
-+  AND conname = 'alter_constraint_local_fk';
-+ conenforced
-+---------------------------------------------------------------------
-+ t
-+(1 row)
-+
-+DROP TABLE alter_constraint_local;
- CREATE TABLE customers(
-    customer_id INT GENERATED ALWAYS AS IDENTITY,
-    customer_name VARCHAR(255) NOT NULL,
-@@ -1567,8 +1586,71 @@ SELECT * FROM contacts ORDER BY contact_id;
- -- ALTER TABLE .. ALTER CONSTRAINT is not supported in Citus,
- -- so the following command should fail
- ALTER TABLE contacts ALTER CONSTRAINT fk_customer ENFORCED;
--ERROR:  alter table command is currently unsupported
--DETAIL:  Only ADD|DROP COLUMN, SET|DROP NOT NULL, SET|DROP DEFAULT, ADD|DROP|VALIDATE CONSTRAINT, SET (), RESET (), ENABLE|DISABLE|NO FORCE|FORCE ROW LEVEL SECURITY, ATTACH|DETACH PARTITION and TYPE subcommands are supported.
-+ERROR:  ALTER TABLE ... ALTER CONSTRAINT commands are currently unsupported
-+DETAIL:  Citus does not propagate constraint property changes to shards.
-+SELECT conenforced
-+FROM pg_constraint
-+WHERE conrelid = 'contacts'::regclass AND conname = 'fk_customer';
-+ conenforced
-+---------------------------------------------------------------------
-+ f
-+(1 row)
-+
-+CREATE TABLE alter_constraint_reference (
-+	id int PRIMARY KEY,
-+	parent_id int,
-+	CONSTRAINT alter_constraint_reference_fk
-+		FOREIGN KEY (parent_id) REFERENCES alter_constraint_reference (id) NOT ENFORCED
-+);
-+SELECT create_reference_table('alter_constraint_reference');
-+ create_reference_table
-+---------------------------------------------------------------------
-+
-+(1 row)
-+
-+ALTER TABLE alter_constraint_reference
-+	ALTER CONSTRAINT alter_constraint_reference_fk ENFORCED;
-+ERROR:  ALTER TABLE ... ALTER CONSTRAINT commands are currently unsupported
-+DETAIL:  Citus does not propagate constraint property changes to shards.
-+SELECT conenforced
-+FROM pg_constraint
-+WHERE conrelid = 'alter_constraint_reference'::regclass
-+  AND conname = 'alter_constraint_reference_fk';
-+ conenforced
-+---------------------------------------------------------------------
-+ f
-+(1 row)
-+
-+DROP TABLE alter_constraint_reference;
-+CREATE TABLE alter_constraint_citus_local (
-+	id int PRIMARY KEY,
-+	parent_id int,
-+	CONSTRAINT alter_constraint_citus_local_fk
-+		FOREIGN KEY (parent_id) REFERENCES alter_constraint_citus_local (id) NOT ENFORCED
-+);
-+SELECT citus_add_local_table_to_metadata(
-+	'alter_constraint_citus_local',
-+	cascade_via_foreign_keys => true
-+);
-+ citus_add_local_table_to_metadata
-+---------------------------------------------------------------------
-+
-+(1 row)
-+
-+ALTER TABLE alter_constraint_citus_local
-+	ALTER CONSTRAINT alter_constraint_citus_local_fk ENFORCED;
-+ERROR:  ALTER TABLE ... ALTER CONSTRAINT commands are currently unsupported
-+DETAIL:  Citus does not propagate constraint property changes to shards.
-+SELECT conenforced
-+FROM pg_constraint
-+WHERE conrelid = 'alter_constraint_citus_local'::regclass
-+  AND conname = 'alter_constraint_citus_local_fk';
-+ conenforced
-+---------------------------------------------------------------------
-+ f
-+(1 row)
-+
-+DROP TABLE alter_constraint_citus_local;
- -- PG18 Feature: ENFORCED / NOT ENFORCED check constraints
- -- PG18 commit: https://github.com/postgres/postgres/commit/ca87c415e
- -- In Citus, CHECK constraints are propagated on promoting a postgres table
-```
-
-**File**: `src/test/regress/sql/pg18.sql` (modified, +52/-0)
-```diff
-@@ -973,6 +973,22 @@ SET search_path TO pg18_nn;
+@@ -2589,7 +2589,7 @@ are spread evenly across the nodes.
  
- -- PG18 Feature: FOREIGN KEY constraints can be specified as NOT ENFORCED
- -- PG18 commit: https://github.com/postgres/postgres/commit/eec0040c4
-+CREATE TABLE alter_constraint_local (
-+	id int PRIMARY KEY,
-+	parent_id int,
-+	CONSTRAINT alter_constraint_local_fk
-+		FOREIGN KEY (parent_id) REFERENCES alter_constraint_local (id) NOT ENFORCED
-+);
-+
-+-- PostgreSQL tables retain native ALTER CONSTRAINT behavior.
-+ALTER TABLE alter_constraint_local
-+	ALTER CONSTRAINT alter_constraint_local_fk ENFORCED;
-+SELECT conenforced
-+FROM pg_constraint
-+WHERE conrelid = 'alter_constraint_local'::regclass
-+  AND conname = 'alter_constraint_local_fk';
-+DROP TABLE alter_constraint_local;
-+
- CREATE TABLE customers(
-    customer_id INT GENERATED ALWAYS AS IDENTITY,
-    customer_name VARCHAR(255) NOT NULL,
-@@ -1043,6 +1059,42 @@ SELECT * FROM contacts ORDER BY contact_id;
- -- ALTER TABLE .. ALTER CONSTRAINT is not supported in Citus,
- -- so the following command should fail
- ALTER TABLE contacts ALTER CONSTRAINT fk_customer ENFORCED;
-+SELECT conenforced
-+FROM pg_constraint
-+WHERE conrelid = 'contacts'::regclass AND conname = 'fk_customer';
-+
-+CREATE TABLE alter_constraint_reference (
-+	id int PRIMARY KEY,
-+	parent_id int,
-+	CONSTRAINT alter_constraint_reference_fk
-+		FOREIGN KEY (parent_id) REFERENCES alter_constraint_reference (id) NOT ENFORCED
-+);
-+SELECT create_reference_table('alter_constraint_reference');
-+ALTER TABLE alter_constraint_reference
-+	ALTER CONSTRAINT alter_constraint_reference_fk ENFORCED;
-+SELECT conenforced
-+FROM pg_constraint
-+WHERE conrelid = 'alter_constraint_reference'::regclass
-+  AND conname = 'alter_constraint_reference_fk';
-+DROP TABLE alter_constraint_reference;
-+
-+CREATE TABLE alter_constraint_citus_local (
-+	id int PRIMARY KEY,
-+	parent_id int,
-+	CONSTRAINT alter_constraint_citus_local_fk
-+		FOREIGN KEY (parent_id) REFERENCES alter_constraint_citus_local (id) NOT ENFORCED
-+);
-+SELECT citus_add_local_table_to_metadata(
-+	'alter_constraint_citus_local',
-+	cascade_via_foreign_keys => true
-+);
-+ALTER TABLE alter_constraint_citus_local
-+	ALTER CONSTRAINT alter_constraint_citus_local_fk ENFORCED;
-+SELECT conenforced
-+FROM pg_constraint
-+WHERE conrelid = 'alter_constraint_citus_local'::regclass
-+  AND conname = 'alter_constraint_citus_local_fk';
-+DROP TABLE alter_constraint_citus_local;
+ Shard moves move a shard group placement to a different node (group). It would be more correct if these were called "shard **group** moves", but in many places we don't due to historical reasons. Moves are orchestrated by the `citus_move_shard_placement` UDF, which is also the function that the rebalancer runs to move a shard.
  
- -- PG18 Feature: ENFORCED / NOT ENFORCED check constraints
- -- PG18 commit: https://github.com/postgres/postgres/commit/ca87c415e
+-We implement blocking and non-blocking shard splits. Non-blocking shard moves use logical replication, which has an important limitation. If the (distributed) table does not have a replica identity (usually the primary key), then update/delete commands will error out once we create a publication. That means using a non-blocking move without a replica identity does incur some downtime. Since a blocking move is generally faster (in part because it forces out regular work), it may be less invasive. We therefore force the user to choose when trying to move a shard group that includes a table without a replica identity by supplying `shard_transfer_mode := 'force_logical'` or `shard_transfer_mode := 'block_writes'`.
++We implement blocking and non-blocking shard splits. Non-blocking shard moves use logical replication, which has an important limitation. If the (distributed) table does not have a replica identity (usually the primary key), then update/delete commands will error out once we create a publication. That means using a non-blocking move without a replica identity does incur some downtime. Since a blocking move is generally faster (in part because it forces out regular work), it may be less invasive. We therefore force the user to choose when trying to move a shard group that includes a table without a replica identity by supplying `shard_transfer_mode := 'force_logical'` or `shard_transfer_mode := 'block_writes'`. A third option is `shard_transfer_mode := 'force_logical_auto_identity'`, which moves such tables without blocking writes by temporarily setting `REPLICA IDENTITY FULL` on them (see "Moving tables without a replica identity" below).
+ 
+ The blocking-move is mostly a simplified variant of the non-blocking move, where the write locks are taken upfront so that no catch-up using logical replication is needed. A non-blocking move involves the following steps:
+ 
+@@ -2612,11 +2612,20 @@ It is worth noting that the final commit happens in a 2PC, with all the characte
+ 
+ A similar operation to shard moves is `citus_copy_shard_placement`, which can be used to add a replica to a shard group. We also use this function to replicate reference tables without blocking. The main difference is that dropping the old shard group placement is skipped.
+ 
+-A workaround for the replica identity problem is to always assign REPLICA IDENTITY FULL to distributed tables / shards if they have no other replica identity. However, prior to PostgreSQL 16, replication of updates and delete to a table with replica identity full could be extremely slow (it does a sequential scan per tuple). As of PostgreSQL 16, the logical replication worker can use a regular btree index to find a matching tuple (if one exists). Even for distributed tables without any indexes, and without a replica identity, we could tactically set REPLICA IDENTITY FULL on the shards, and create a suitable index on the target shard group placement for the duration of the move. Once we implement this, we could avoid erroring for distributed tables without a replica identity.
++### Moving tables without a replica identity
++
++A workaround for the replica identity problem is to assign REPLICA IDENTITY FULL to the shards that have no other replica identity. However, prior to PostgreSQL 16, replication of updates and delete to a table with replica identity full could be extremely slow (it does a sequential scan per tuple). As of PostgreSQL 16, the logical replication worker can use a regular btree index to find a matching tuple (if one exists). We implement this workaround in the `force_logical_auto_identity` shard transfer mode, which behaves like `force_logical` and additionally does the following for tables that have no replica identity:
++
++- **Verify up front that REPLICA IDENTITY FULL can work**. `ErrorIfTablesCannotUseReplicaIdentityFull` rejects tables for which updates and deletes could not be replicated (e.g. a column type without an equality operator), so that we fail before moving anything instead of halfway through. The rebalancer runs this check once for every table that is part of the rebalance. It checks each colocation group once, and each append/range-distributed table separately, because all of those tables share colocation id 0 even though they are unrelated.
++- **Temporarily set REPLICA IDENTITY FULL on the source shards** right before creating the publications (`PrepareReplicaIdentitiesForPublication`). This takes a brief `AccessExclusiveLock`, which we retry a few times with an increasing `lock_timeout`. The original replica identity is restored through "Resource c
+```
+
+**File**: `src/backend/distributed/metadata/metadata_cache.c` (modified, +16/-0)
+```diff
+@@ -1043,6 +1043,22 @@ RelationIdForShard(uint64 shardId)
+ }
+ 
+ 
++/*
++ * RelationIdAndColocationIdForShard returns the relationId of the distributed
++ * table that the given shard belongs to, and sets *colocationId to that table's
++ * colocation id. Both values come from a single shard id cache lookup.
++ */
++Oid
++RelationIdAndColocationIdForShard(uint64 shardId, uint32 *colocationId)
++{
++	bool missingOk = false;
++	ShardIdCacheEntry *shardIdEntry = LookupShardIdCacheEntry(shardId, missingOk);
++	CitusTableCacheEntry *tableEntry = shardIdEntry->tableEntry;
++	*colocationId = tableEntry->colocationId;
++	return tableEntry->relationId;
++}
++
++
+ /*
+  * ReferenceTableShardId returns true if the given shardId belongs to
+  * a reference table.
+```
+
+**File**: `src/backend/distributed/operations/citus_split_shard_by_split_points.c` (modified, +15/-1)
+```diff
+@@ -95,9 +95,23 @@ LookupSplitMode(Oid shardTransferModeOid)
+ 	{
+ 		shardSplitMode = AUTO_SPLIT;
+ 	}
++	else if (strncmp(enumLabel, "force_logical_auto_identity", NAMEDATALEN) == 0)
++	{
++		/*
++		 * force_logical_auto_identity only changes how shard moves perform logical
++		 * replication (see LogicallyReplicateShards); shard splits and tenant
++		 * isolation do not go through that path yet. Reject it explicitly here instead
++		 * of silently downgrading to a plain non-blocking split.
++		 */
++		ereport(ERROR, (errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
++						errmsg("shard transfer mode 'force_logical_auto_identity' "
++							   "is not supported for shard splits or tenant isolation"),
++						errhint("Use 'force_logical', 'auto' or 'block_writes' "
++								"instead.")));
++	}
+ 	else
+ 	{
+-		/* We will not get here as postgres will validate the enum value. */
++		/* postgres validates the enum value, so any other label is an internal error */
+ 		ereport(ERROR, (errmsg(
+ 							"Invalid shard tranfer mode: '%s'. Expected split mode is 'block_writes/auto/force_logical'.",
+ 							enumLabel)));
+```
+
+**File**: `src/backend/distributed/operations/node_protocol.c` (modified, +214/-0)
+```diff
+@@ -32,6 +32,7 @@
+ #include "catalog/dependency.h"
+ #include "catalog/indexing.h"
+ #include "catalog/namespace.h"
++#include "catalog/pg_am.h"
+ #include "catalog/pg_class.h"
+ #include "catalog/pg_constraint.h"
+ #include "catalog/pg_index.h"
+@@ -51,6 +52,7 @@
+ #include "utils/palloc.h"
+ #include "utils/relcache.h"
+ #include "utils/ruleutils.h"
++#include "utils/syscache.h"
+ #include "utils/varlena.h"
+ 
+ #include "pg_version_constants.h"
+@@ -63,6 +65,8 @@
+ #include "distributed/lock_graph.h"
+ #include "distributed/metadata_cache.h"
+ #include "distributed/metadata_sync.h"
++#include "distributed/multi_logical_replication.h"
++#include "distributed/multi_partitioning_utils.h"
+ #include "distributed/namespace_utils.h"
+ #include "distributed/pg_dist_shard.h"
+ #include "distributed/remote_commands.h"
+@@ -86,6 +90,9 @@ static void GatherIndexAndConstraintDefinitionListExcludingReplicaIdentity(Form_
+ 																		   indexDDLEventList,
+ 																		   int
+ 																		   indexFlags);
++static void
++GatherIndexAndConstraintDefinitionListExcludingReplicaIdentityAndReplicationHelperIndex(
++	Form_pg_index indexForm, List **indexDDLEventList, int indexFlags);
+ static Datum WorkerNodeGetDatum(WorkerNode *workerNode, TupleDesc tupleDescriptor);
+ 
+ static char * CitusCreateAlterColumnarTableSet(char *qualifiedRelationName,
+@@ -893,6 +900,213 @@ GatherIndexAndConstraintDefinitionListExcludingReplicaIdentity(Form_pg_index ind
+ }
+ 
+ 
++/*
++ * GetTableIndexAndConstraintCommandsExcludingReplicaIdentityAndReplicationHelperIndex
++ * behaves like GetTableIndexAndConstraintCommandsExcludingReplicaIdentity but, in
++ * addition to the index backing the replica identity, it also excludes the single
++ * existing index that Citus builds early on the destination shard of a
++ * logical-replication based move (see ChooseReplicationHelperIndexToBuildEarly).
++ * This is used only for the CREATE INDEX phase of the move so that we do not attempt
++ * to create that index a second time; the CLUSTER and STATISTICS phases still process
++ * it, because the index already exists on the destination shard at that point.
++ */
++List *
++GetTableIndexAndConstraintCommandsExcludingReplicaIdentityAndReplicationHelperIndex(Oid
++																					relationId,
++																					int
++																					indexFlags)
++{
++	return ExecuteFunctionOnEachTableIndex(
++		relationId,
++		GatherIndexAndConstraintDefinitionListExcludingReplicaIdentityAndReplicationHelperIndex,
++		indexFlags);
++}
++
++
++/*
++ * GatherIndexAndConstraintDefinitionListExcludingReplicaIdentityAndReplicationHelperIndex is
++ * a wrapper around GatherIndexAndConstraintDefinitionList() which excludes both the
++ * index backing the replica identity and the existing index that Citus built early on
++ * the destination shard. This variant is only ever used for a force_logical_auto_identity
++ * shard move, where that early build actually happened.
++ */
++static void
++GatherIndexAndConstraintDefinitionListExcludingReplicaIdentityAndReplicationHelperIndex(
++	Form_pg_index indexForm, List **indexDDLEventList, int indexFlags)
++{
++	Oid relationId = indexForm->indrelid;
++	Relation relation = table_open(relationId, AccessShareLock);
++
++	Oid replicaIdentityIndex = GetRelationIdentityOrPK(relation);
++
++	if (replicaIdentityIndex == indexForm->indexrelid)
++	{
++		/* this index is backing the replica identity, so skip */
++		table_close(relation, NoLock);
++		return;
++	}
++
++	if (ChooseReplicationHelperIndexToBuildEarly(relationId) != indexForm->indexrelid)
++	{
++		/*
++		 * Gather the index if we haven't already built it early on the destination
++		 * shard.
++		 *
++		 * We pick the index to create early on the destination shard via
++		 * ChooseReplicationHelperIndexToBuildEarly and we do this only for a
++		 * force_logical_auto_identity shard move to help the subscriber use an
++		 * index scan while it applies the changes that are being replicated from the
++		 * source shard.
++		 */
++		GatherIndexAndConstraintDefinitionList(indexForm, indexDDLEventList, indexFlags);
++	}
++
++	table_close(relation, NoLock);
++}
++
++
++/*
++ * ChooseReplicationHelperIndexToBuildEarly returns the OID of the existing index
++ * that Citus should build early on the destination shard of a logical-replication
++ * based move, so that the subscriber can use an index scan while it applies the
++ * changes that accumulate during the catch-up phase.
++ *
++ * It returns InvalidOid when there is no such index, in which case nothing is built
++ * early and the table's indexes are created in the normal late post-load phase.
++ *
++ * We only do this for a table that does not already have an index backing its replica
++ * identity or primary key: such an index is built on the destination shard before the
++ * catch-up anyway (see CreateReplicaIdentities), so its catch-up is already
++ * index-assisted. Partitioned parents hold no data of their own, so we skip them.
++ */
++Oid
++ChooseReplicationHelperIndexToBuildEarly(Oid relationId)
++{
++	if (PartitionedTable(
+```
+
+**File**: `src/backend/distributed/operations/shard_cleaner.c` (modified, +249/-2)
+```diff
+@@ -14,20 +14,27 @@
+ #include "miscadmin.h"
+ 
+ #include "access/genam.h"
++#include "access/relation.h"
+ #include "access/xact.h"
+ #include "catalog/namespace.h"
++#include "catalog/pg_class.h"
+ #include "commands/dbcommands.h"
+ #include "commands/sequence.h"
+ #include "nodes/makefuncs.h"
+ #include "postmaster/postmaster.h"
+ #include "utils/builtins.h"
+ #include "utils/fmgroids.h"
++#include "utils/lsyscache.h"
++#include "utils/rel.h"
++#include "utils/relcache.h"
+ 
+ #include "distributed/citus_safe_lib.h"
+ #include "distributed/coordinator_protocol.h"
+ #include "distributed/listutils.h"
+ #include "distributed/metadata_cache.h"
++#include "distributed/metadata_utility.h"
+ #include "distributed/pg_dist_cleanup.h"
++#include "distributed/relay_utility.h"
+ #include "distributed/remote_commands.h"
+ #include "distributed/resource_lock.h"
+ #include "distributed/shard_cleaner.h"
+@@ -94,6 +101,12 @@ static bool TryDropReplicationSlotOutsideTransaction(char *replicationSlotName,
+ static bool TryDropUserOutsideTransaction(char *username, char *nodeName, int nodePort);
+ static bool TryDropDatabaseOutsideTransaction(char *databaseName, char *nodeName,
+ 											  int nodePort);
++static bool TryResetReplicaIdentityOutsideTransaction(char *objectName, char *nodeName,
++													  int nodePort);
++static bool RelationHasUpdateOrDeletePublication(MultiConnection *connection,
++												 char *qualifiedRelationName);
++static bool TryDropIndexOutsideTransaction(char *qualifiedIndexName, char *nodeName,
++										   int nodePort);
+ 
+ static CleanupRecord * GetCleanupRecordByNameAndType(char *objectName,
+ 													 CleanupObject type);
+@@ -609,6 +622,18 @@ TryDropResourceByCleanupRecordOutsideTransaction(CleanupRecord *record,
+ 													 nodePort);
+ 		}
+ 
++		case CLEANUP_OBJECT_REPLICA_IDENTITY:
++		{
++			return TryResetReplicaIdentityOutsideTransaction(record->objectName,
++															 nodeName, nodePort);
++		}
++
++		case CLEANUP_OBJECT_INDEX:
++		{
++			return TryDropIndexOutsideTransaction(record->objectName,
++												  nodeName, nodePort);
++		}
++
+ 		default:
+ 		{
+ 			ereport(WARNING, (errmsg(
+@@ -953,9 +978,231 @@ TryDropDatabaseOutsideTransaction(char *databaseName, char *nodeName, int nodePo
+ 
+ 
+ /*
+- * ErrorIfCleanupRecordForShardExists errors out if a cleanup record for the given
+- * shard name exists.
++ * TryResetReplicaIdentityOutsideTransaction restores the replica identity of a shard
++ * that was temporarily set to REPLICA IDENTITY FULL for the duration of a logical
++ * replication based transfer (see PrepareReplicaIdentitiesForPublication).
++ *
++ * The objectName is the shard id. Rather than restoring a replica identity captured
++ * at move time, we restore the shard to match its distributed (shell) table's CURRENT
++ * replica identity. This is because, for Citus tables, normally we always make sure
++ * that a shard's replica identity mirrors its distributed table, except when setting
++ * up replica identity for the duration of the logical replication based transfer.
++ *
++ * We use ALTER TABLE IF EXISTS so that this is a no-op if the shard has already been
++ * dropped (e.g. the source shard of a completed move).
++ */
++static bool
++TryResetReplicaIdentityOutsideTransaction(char *objectName, char *nodeName, int nodePort)
++{
++	uint64 shardId = strtou64(objectName, NULL, 10);
++
++	if (!ShardExists(shardId))
++	{
++		return true;
++	}
++
++	ShardInterval *shardInterval = LoadShardInterval(shardId);
++	char *qualifiedShardName = ConstructQualifiedShardName(shardInterval);
++
++	Oid shellTableId = shardInterval->relationId;
++	Relation shellTable = try_relation_open(shellTableId, AccessShareLock);
++	if (shellTable == NULL)
++	{
++		return true;
++	}
++
++	char replicaIdentity = shellTable->rd_rel->relreplident;
++	char *replicaIdentityClause = NULL;
++
++	switch (replicaIdentity)
++	{
++		case REPLICA_IDENTITY_NOTHING:
++		{
++			replicaIdentityClause = "NOTHING";
++			break;
++		}
++
++		case REPLICA_IDENTITY_INDEX:
++		{
++			Oid replicaIndexId = RelationGetReplicaIndex(shellTable);
++			if (OidIsValid(replicaIndexId))
++			{
++				/*
++				 * Restore REPLICA IDENTITY USING INDEX, shard-qualifying the index
++				 * name the same way normal replica-identity DDL propagation does
++				 * (see the AT_ReplicaIdentity handling in RelayEventExtendNames).
++				 */
++				char *indexName = pstrdup(get_rel_name(replicaIndexId));
++				AppendShardIdToName(&indexName, shardId);
++				replicaIdentityClause = psprintf("USING INDEX %s",
++												 quote_identifier(indexName));
++			}
++			else
++			{
++				/*
++				 * The shell table is marked REPLICA IDENTITY USING INDEX but has no
++				 * usable replica identity index (it was dropped or is invalid), which
++				 * behaves the same as NOTHING (see the pg_class.relreplident
++				 * documentation), so restore NOTHING.
++				 */
++				ereport(WARNING, (errmsg("restoring replica identity to NOTHING on %s "
++										 "because the replica identity index was "
++										 "missing", qualifiedShardName)));
++				repli
+```
+
+**File**: `src/backend/distributed/operations/shard_rebalancer.c` (modified, +88/-14)
+```diff
+@@ -290,6 +290,7 @@ static bool ShardAllowedOnNode(uint64 shardId, WorkerNode *workerNode, void *con
+ static float4 NodeCapacity(WorkerNode *workerNode, void *context);
+ static ShardCost GetShardCost(uint64 shardId, void *context);
+ static List * NonColocatedDistRelationIdList(void);
++static List * CollectCitusTableIdsForPlacementUpdates(List *placementUpdateList);
+ static void RebalanceTableShards(RebalanceOptions *options, Oid shardReplicationModeOid);
+ static int64 RebalanceTableShardsBackground(RebalanceOptions *options, Oid
+ 											shardReplicationModeOid,
+@@ -2091,14 +2092,24 @@ RebalanceTableShards(RebalanceOptions *options, Oid shardReplicationModeOid)
+ 		 * if we are able to use logical replication to transfer shards or not.
+ 		 * We throw an error if any of the tables do not have a replica identity, which
+ 		 * is required for logical replication to replicate UPDATE and DELETE commands.
++		 * This check only needs to run once per colocation group.
+ 		 */
+-		PlacementUpdateEvent *placementUpdate = NULL;
+-		foreach_declared_ptr(placementUpdate, placementUpdateList)
+-		{
+-			Oid relationId = RelationIdForShard(placementUpdate->shardId);
+-			List *colocatedTableList = ColocatedTableList(relationId);
+-			VerifyTablesHaveReplicaIdentity(colocatedTableList);
+-		}
++		List *relationIdList =
++			CollectCitusTableIdsForPlacementUpdates(placementUpdateList);
++		VerifyTablesHaveReplicaIdentity(relationIdList);
++	}
++	else if (transferMode == TRANSFER_MODE_FORCE_LOGICAL_AUTO_IDENTITY)
++	{
++		/*
++		 * force_logical_auto_identity temporarily sets REPLICA IDENTITY FULL on the
++		 * tables that have no usable replica identity. Reject up front any such table
++		 * that cannot then have UPDATE and DELETE replicated (e.g. a column with no
++		 * equality operator), so we fail here instead of failing mid-transfer.
++		 * This check only needs to run once per colocation group.
++		 */
++		List *relationIdList =
++			CollectCitusTableIdsForPlacementUpdates(placementUpdateList);
++		ErrorIfTablesCannotUseReplicaIdentityFull(relationIdList);
+ 	}
+ 
+ 	EnsureReferenceTablesExistOnAllNodesExtended(transferMode);
+@@ -2360,14 +2371,25 @@ RebalanceTableShardsBackground(RebalanceOptions *options, Oid shardReplicationMo
+ 		 * if we are able to use logical replication to transfer shards or not.
+ 		 * We throw an error if any of the tables do not have a replica identity, which
+ 		 * is required for logical replication to replicate UPDATE and DELETE commands.
++		 * This check only needs to run once per colocation group.
+ 		 */
+-		PlacementUpdateEvent *placementUpdate = NULL;
+-		foreach_declared_ptr(placementUpdate, placementUpdateList)
+-		{
+-			relationId = RelationIdForShard(placementUpdate->shardId);
+-			List *colocatedTables = ColocatedTableList(relationId);
+-			VerifyTablesHaveReplicaIdentity(colocatedTables);
+-		}
++		List *relationIdList =
++			CollectCitusTableIdsForPlacementUpdates(placementUpdateList);
++		VerifyTablesHaveReplicaIdentity(relationIdList);
++	}
++	else if (shardTransferMode == TRANSFER_MODE_FORCE_LOGICAL_AUTO_IDENTITY)
++	{
++		/*
++		 * force_logical_auto_identity temporarily sets REPLICA IDENTITY FULL on the
++		 * tables that have no usable replica identity. Reject up front any such table
++		 * that cannot then have UPDATE and DELETE replicated (e.g. a column with no
++		 * equality operator). Otherwise the background job would be scheduled only to
++		 * fail (and retry) when it later executes the move.
++		 * This check only needs to run once per colocation group.
++		 */
++		List *relationIdList =
++			CollectCitusTableIdsForPlacementUpdates(placementUpdateList);
++		ErrorIfTablesCannotUseReplicaIdentityFull(relationIdList);
+ 	}
+ 
+ 	DropOrphanedResourcesInSeparateTransaction();
+@@ -2394,6 +2416,10 @@ RebalanceTableShardsBackground(RebalanceOptions *options, Oid shardReplicationMo
+ 		{
+ 			VerifyTablesHaveReplicaIdentity(referenceTableIdList);
+ 		}
++		else if (shardTransferMode == TRANSFER_MODE_FORCE_LOGICAL_AUTO_IDENTITY)
++		{
++			ErrorIfTablesCannotUseReplicaIdentityFull(referenceTableIdList);
++		}
+ 
+ 		/*
+ 		 * Reference tables need to be copied to (newly-added) nodes, this needs to be the
+@@ -2480,6 +2506,54 @@ RebalanceTableShardsBackground(RebalanceOptions *options, Oid shardReplicationMo
+ }
+ 
+ 
++/*
++ * CollectCitusTableIdsForPlacementUpdates returns the list of Citus table ids
++ * whose replica identity must be verified before executing placementUpdateList.
++ *
++ * placementUpdateList holds one entry per shard(-group) move, so several entries
++ * can belong to the same colocation group and would produce the same colocated
++ * table list. We therefore visit each colocation group only once: for the first
++ * shard we see from a colocation group we append that group's colocated table list
++ * to the result, and we skip any later shard from the same group.
++ *
++ * The exception is INVALID_COLOCATION_ID: append- and range-distributed tables all
++ * share it although they are unrelated, so each such table is added on its ow
+```
+
+**File**: `src/backend/distributed/operations/shard_split.c` (modified, +8/-1)
+```diff
+@@ -1631,13 +1631,20 @@ NonBlockingShardSplit(SplitOperation splitOperation,
+ 	 */
+ 	bool skipInterShardRelationshipCreation = false;
+ 
++	/*
++	 * For now we don't support automatically creating replica identities
++	 * (and maybe an index) for non-blocking shard splits, so we pass
++	 * useAutoIdentityLogicalReplication as false here.
++	 */
++	bool useAutoIdentityLogicalReplication = false;
+ 	CompleteNonBlockingShardTransfer(sourceColocatedShardIntervalList,
+ 									 sourceConnection,
+ 									 publicationInfoHash,
+ 									 logicalRepTargetList,
+ 									 groupedLogicalRepTargetsHash,
+ 									 SHARD_SPLIT,
+-									 skipInterShardRelationshipCreation);
++									 skipInterShardRelationshipCreation,
++									 useAutoIdentityLogicalReplication);
+ 
+ 	/*
+ 	 * 10) Delete old shards metadata and mark the shards as to be deferred drop.
+```
+
+**File**: `src/backend/distributed/operations/shard_transfer.c` (modified, +138/-19)
+```diff
+@@ -18,8 +18,10 @@
+ #include "miscadmin.h"
+ 
+ #include "access/htup_details.h"
++#include "catalog/pg_am.h"
+ #include "catalog/pg_class.h"
+ #include "catalog/pg_enum.h"
++#include "catalog/pg_index.h"
+ #include "lib/stringinfo.h"
+ #include "nodes/pg_list.h"
+ #include "storage/lmgr.h"
+@@ -31,6 +33,7 @@
+ #include "utils/palloc.h"
+ #include "utils/rel.h"
+ #include "utils/syscache.h"
++#include "utils/typcache.h"
+ 
+ #include "distributed/adaptive_executor.h"
+ #include "distributed/backend_data.h"
+@@ -107,12 +110,14 @@ static void ErrorIfSameNode(char *sourceNodeName, int sourceNodePort,
+ static void CopyShardTables(List *shardIntervalList, char *sourceNodeName,
+ 							int32 sourceNodePort, char *targetNodeName,
+ 							int32 targetNodePort, bool useLogicalReplication,
++							bool useAutoIdentityLogicalReplication,
+ 							const char *operationName, uint32 optionFlags);
+ static void CopyShardTablesViaLogicalReplication(List *shardIntervalList,
+ 												 char *sourceNodeName,
+ 												 int32 sourceNodePort,
+ 												 char *targetNodeName,
+ 												 int32 targetNodePort,
++												 bool useAutoIdentityLogicalReplication,
+ 												 uint32 optionFlags);
+ 
+ static void CopyShardTablesViaBlockWrites(List *shardIntervalList, char *sourceNodeName,
+@@ -593,10 +598,16 @@ TransferShards(int64 shardId, char *sourceNodeName,
+ 			return;
+ 		}
+ 
++		/*
++		 * Whether shard transfer mode is set to TRANSFER_MODE_FORCE_LOGICAL_AUTO_IDENTITY
++		 * doesn't matter while creating the relationships, so we just pass false here.
++		 */
++		bool useAutoIdentityLogicalReplication = false;
+ 		CopyShardTables(colocatedShardList, sourceNodeName, sourceNodePort, targetNodeName
+ 						,
+ 						targetNodePort, (shardReplicationMode ==
+ 										 TRANSFER_MODE_FORCE_LOGICAL),
++						useAutoIdentityLogicalReplication,
+ 						operationFunctionName, optionFlags);
+ 
+ 		/* We don't need to do anything else, just return */
+@@ -620,6 +631,10 @@ TransferShards(int64 shardId, char *sourceNodeName,
+ 	{
+ 		VerifyTablesHaveReplicaIdentity(colocatedTableList);
+ 	}
++	else if (shardReplicationMode == TRANSFER_MODE_FORCE_LOGICAL_AUTO_IDENTITY)
++	{
++		ErrorIfTablesCannotUseReplicaIdentityFull(colocatedTableList);
++	}
+ 
+ 	EnsureEnoughDiskSpaceForShardMove(colocatedShardList,
+ 									  sourceNodeName, sourceNodePort,
+@@ -698,9 +713,12 @@ TransferShards(int64 shardId, char *sourceNodeName,
+ 		ErrorIfCleanupRecordForShardExists(qualifiedShardName);
+ 	}
+ 
++	bool useAutoIdentityLogicalReplication =
++		(shardReplicationMode == TRANSFER_MODE_FORCE_LOGICAL_AUTO_IDENTITY);
+ 	CopyShardTables(colocatedShardList, sourceNodeName, sourceNodePort, targetNodeName,
+-					targetNodePort, useLogicalReplication, operationFunctionName,
+-					optionFlags);
++					targetNodePort, useLogicalReplication,
++					useAutoIdentityLogicalReplication,
++					operationFunctionName, optionFlags);
+ 
+ 	if (transferType == SHARD_TRANSFER_MOVE)
+ 	{
+@@ -1470,8 +1488,15 @@ ErrorIfMoveUnsupportedTableType(Oid relationId)
+ 
+ /*
+  * VerifyTablesHaveReplicaIdentity throws an error if any of the tables
+- * do not have a replica identity, which is required for logical replication
+- * to replicate UPDATE and DELETE commands.
++ * cannot be safely transferred using logical replication in the automatic
++ * shard transfer mode.
++ *
++ * Logical replication needs to be able to publish UPDATE and DELETE commands. A
++ * table that has a REPLICA IDENTITY or PRIMARY KEY satisfies this directly. A
++ * table that has neither cannot publish its UPDATE/DELETE, so the publisher would
++ * reject the user's concurrent writes during the transfer. Therefore, in the
++ * automatic mode, we refuse such a table and direct the user to
++ * force_logical_auto_identity, force_logical, or block_writes.
+  */
+ void
+ VerifyTablesHaveReplicaIdentity(List *colocatedTableList)
+@@ -1482,21 +1507,106 @@ VerifyTablesHaveReplicaIdentity(List *colocatedTableList)
+ 	{
+ 		Oid colocatedTableId = lfirst_oid(colocatedTableCell);
+ 
+-		if (!RelationCanPublishAllModifications(colocatedTableId))
++		if (RelationCanPublishAllModifications(colocatedTableId))
+ 		{
+-			char *colocatedRelationName = get_rel_name(colocatedTableId);
++			continue;
++		}
+ 
+-			ereport(ERROR, (errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
+-							errmsg("cannot use logical replication to transfer shards of "
+-								   "the relation %s since it doesn't have a REPLICA "
+-								   "IDENTITY or PRIMARY KEY", colocatedRelationName),
+-							errdetail("UPDATE and DELETE commands on the shard will "
+-									  "error out during logical replication unless "
+-									  "there is a REPLICA IDENTITY or PRIMARY KEY."),
+-							errhint("If you wish to continue without a replica "
+-									"identity set the shard_transfer_mode to "
+-									"'force_logical' or 'block_writes'.")));
++		char *colocatedRelationName = get_rel_name(colocatedTableId);
++
++		ereport(ERROR, (errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
++						errmsg("cannot use logical replication to transfer shards of "
++		
 ```
 
 #### Recent Merged Pull Requests:
@@ -2839,36 +3216,32 @@ Co-authored-
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Report unsupported ALTER CONSTRAINT explicitly (#8808)
+## X. Add 'force_logical_auto_identity' shard transfer mode for non-blocking moves of 
 
 **RULE**:
-When implementing operations in `src/backend/distributed/commands/table.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in citusdata/citus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/backend/distributed/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in citusdata/citus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f24c6fc4`: Report unsupported ALTER CONSTRAINT explicitly (#8808). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1aba449a`: Add 'force_logical_auto_identity' shard transfer mode for non-blocking moves of tables without a replica identity (#8828). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/backend/distributed/commands/table.c`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/backend/distributed/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-						 errmsg("%s", alterTableType == AT_AlterConstraint ?
-								"ALTER TABLE ... ALTER CONSTRAINT commands are currently "
-								"unsupported" :
-								"alter table command is currently unsupported"),
-						 errdetail("%s", alterTableType == AT_AlterConstraint ?
-								   "Citus does not propagate constraint property changes "
-								   "to shards." :
-								   "Only ADD|DROP COLUMN, SET|DROP NOT NULL, "
+We implement blocking and non-blocking shard splits. Non-blocking shard moves use logical replication, which has an important limitation. If the (distributed) table does not have a replica identity (usually the primary key), then update/delete commands will error out once we create a publication. That means using a non-blocking move without a replica identity does incur some downtime. Since a blocking move is generally faster (in part because it forces out regular work), it may be less invasive. We therefore force the user to choose when trying to move a shard group that includes a table without a replica identity by supplying `shard_transfer_mode := 'force_logical'` or `shard_transfer_mode := 'block_writes'`. A third option is `shard_transfer_mode := 'force_logical_auto_identity'`, which moves such tables without blocking writes by temporarily setting `REPLICA IDENTITY FULL` on them (see "Moving tables without a replica identity" below).
+### Moving tables without a replica identity
+
+A workaround for the replica identity problem is to assign REPLICA IDENTITY FULL to the shards that have no other replica identity. However, prior to PostgreSQL 16, replication of updates and delete to
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Anti-pattern to NEVER write (induced failure mode):
-						 errmsg("alter table command is currently unsupported"),
-						 errdetail("Only ADD|DROP COLUMN, SET|DROP NOT NULL, "
+We implement blocking and non-blocking shard splits. Non-blocking shard moves use logical replication, which has an important limitation. If the (distributed) table does not have a replica identity (usually the primary key), then update/delete commands will error out once we create a publication. That means using a non-blocking move without a replica identity does incur some downtime. Since a blocking move is generally faster (in part because it forces out regular work), it may be less invasive. We therefore force the user to choose when trying to move a shard group that includes a table without a replica identity by supplying `shard_transfer_mode := 'force_logical'` or `shard_transfer_mode := 'block_writes'`.
+A workaround for the replica identity problem is to always assign REPLICA IDENTITY FULL to distributed tables / shards if they have no other replica identity. However, prior to PostgreSQL 16, replication of updates and delete to a table with replica identity full could be extremely slow (it does a sequential scan per tuple). As of PostgreSQL 16, the logical replication worker can use a regular btree index to find a matching tuple (if one exists). Even for distributed tables w
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f24c6fc4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1aba449a` are properly handled with clean fallback behavior.

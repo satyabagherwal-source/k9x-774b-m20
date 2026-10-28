@@ -1863,10 +1863,10 @@
     "repository": "CrawlCove/robots-txt-tester",
     "platform": "github",
     "sourceUrl": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
-    "sourceVersion": "63245304",
+    "sourceVersion": "0d91d23a",
     "license": "MIT",
-    "contentHash": "c50b8e49b5587df14a87f0fdd486ad0d7676b0b690104e778b84bd031930c6f8",
-    "lastHarvestedAt": "2026-10-25T03:45:01.577Z",
+    "contentHash": "95a3c30dfc796a83ba56bef17cd13aff5e354f974c0835547afd078a7df65290",
+    "lastHarvestedAt": "2026-10-28T00:26:18.939Z",
     "learningId": "learn-github-crawlcove-robots-txt-tester"
   },
   "crawlcove-crawlcove-hreflang-checker": {
@@ -3433,10 +3433,10 @@
     "repository": "zeronsh/zeron",
     "platform": "github",
     "sourceUrl": "https://github.com/zeronsh/zeron",
-    "sourceVersion": "325384d8",
+    "sourceVersion": "ab189159",
     "license": "MIT",
-    "contentHash": "be9739128407f955095f67174afc4169a9b7e8154b51a82f689ac9c4125f1cf4",
-    "lastHarvestedAt": "2026-10-26T13:15:08.385Z",
+    "contentHash": "47551654e9e83ae7e0bbfce5ce2cfac51270be4b47585778c5f8e9bdae807661",
+    "lastHarvestedAt": "2026-10-28T00:26:18.313Z",
     "learningId": "learn-github-zeronsh-zeron"
   },
   "welldone-software-why-did-you-render": {
@@ -5173,10 +5173,10 @@
     "repository": "citusdata/citus",
     "platform": "github",
     "sourceUrl": "https://github.com/citusdata/citus",
-    "sourceVersion": "f24c6fc4",
+    "sourceVersion": "1aba449a",
     "license": "AGPL-3.0",
-    "contentHash": "8d342f16db3544a3ab6c5c861af1de8821b68ad306908b9a4be95bae276cd37b",
-    "lastHarvestedAt": "2026-10-27T11:56:17.916Z",
+    "contentHash": "44febd64ea276959021e77783164933f18ead2a8a23da88d7c5c400495189a37",
+    "lastHarvestedAt": "2026-10-28T00:26:28.821Z",
     "learningId": "learn-github-citusdata-citus"
   },
   "reshaped-ui-reshaped": {

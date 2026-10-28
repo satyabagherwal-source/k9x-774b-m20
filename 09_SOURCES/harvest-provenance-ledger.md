@@ -5607,3 +5607,6 @@ Every entry in this ledger must capture:
 | `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `f3201403` | Multi-dimensional audit evidence | 2026-10-28T00:19:29.800Z |
 | `learn-github-crawlcove-hreflang-checker` | `https://github.com/CrawlCove/crawlcove-hreflang-checker` | `3e8c680f` | Multi-dimensional audit evidence | 2026-10-28T00:19:32.071Z |
 | `learn-github-necolas-react-native-web` | `https://github.com/necolas/react-native-web` | `6a995615` | Multi-dimensional audit evidence | 2026-10-28T00:19:33.644Z |
+| `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `ab189159` | Multi-dimensional audit evidence | 2026-10-28T00:26:18.313Z |
+| `learn-github-crawlcove-robots-txt-tester` | `https://github.com/CrawlCove/crawlcove-robots-txt-tester` | `0d91d23a` | Multi-dimensional audit evidence | 2026-10-28T00:26:18.939Z |
+| `learn-github-citusdata-citus` | `https://github.com/citusdata/citus` | `1aba449a` | Multi-dimensional audit evidence | 2026-10-28T00:26:28.821Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T00:19:33.582Z",
+  "last_updated": "2026-10-28T00:26:28.758Z",
   "total_verified_learnings": 1154,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6472,8 +6472,8 @@
       "slug": "citusdata-citus",
       "platform": "github",
       "source_url": "https://github.com/citusdata/citus",
-      "source_version": "f24c6fc4",
-      "content_hash": "8d342f16db3544a3ab6c5c861af1de8821b68ad306908b9a4be95bae276cd37b",
+      "source_version": "1aba449a",
+      "content_hash": "44febd64ea276959021e77783164933f18ead2a8a23da88d7c5c400495189a37",
       "dossier_path": "07_PROJECT_LEARNING/citusdata-citus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/citusdata-citus-learnings.md",
       "promoted_rules": [
@@ -6496,6 +6496,11 @@
           "number": 4724,
           "title": "Report unsupported ALTER CONSTRAINT explicitly (#8808)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5074,
+          "title": "Add 'force_logical_auto_identity' shard transfer mode for non-blocking moves of",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6503,7 +6508,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T11:56:17.844Z",
+      "verified_at": "2026-10-28T00:26:28.744Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55269,8 +55274,8 @@
       "slug": "zeronsh-zeron",
       "platform": "github",
       "source_url": "https://github.com/zeronsh/zeron",
-      "source_version": "325384d8",
-      "content_hash": "be9739128407f955095f67174afc4169a9b7e8154b51a82f689ac9c4125f1cf4",
+      "source_version": "ab189159",
+      "content_hash": "47551654e9e83ae7e0bbfce5ce2cfac51270be4b47585778c5f8e9bdae807661",
       "dossier_path": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "promoted_rules": [
@@ -55298,6 +55303,11 @@
           "number": 4605,
           "title": "Transcript: agent senders and provider switches as captions over the message (#1",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5073,
+          "title": "Linux browser: WPE WebKit at the display's rate, frames shared with GPUI as dma-",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -55305,7 +55315,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T13:15:08.304Z",
+      "verified_at": "2026-10-28T00:26:18.237Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65953,8 +65963,8 @@
       "slug": "crawlcove-crawlcove-robots-txt-tester",
       "platform": "github",
       "source_url": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
-      "source_version": "63245304",
-      "content_hash": "c50b8e49b5587df14a87f0fdd486ad0d7676b0b690104e778b84bd031930c6f8",
+      "source_version": "0d91d23a",
+      "content_hash": "95a3c30dfc796a83ba56bef17cd13aff5e354f974c0835547afd078a7df65290",
       "dossier_path": "07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md",
       "promoted_rules": [
@@ -65963,6 +65973,11 @@
           "number": 1781,
           "title": "repository renamed to CrawlCove/robots-txt-tester; point links, install commands",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 5071,
+          "title": "docs: link seo-chrome-extension from Related tools",
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -65970,7 +65985,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T03:45:01.508Z",
+      "verified_at": "2026-10-28T00:26:18.862Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -139726,14 +139741,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 5071,
       "title": "docs: link seo-chrome-extension from Related tools",
-      "source_url": "https://github.com/CrawlCove/crawlcove-hreflang-checker",
-      "source_version": "3e8c680f",
+      "source_url": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
+      "source_version": "0d91d23a",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-28T00:19:31.996Z"
+      "verified_at": "2026-10-28T00:26:18.862Z"
     },
     "rule-5072": {
       "learning_id": "rule-5072",
@@ -139748,6 +139763,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T00:19:33.569Z"
+    },
+    "rule-5073": {
+      "learning_id": "rule-5073",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5073,
+      "title": "Linux browser: WPE WebKit at the display's rate, frames shared with GPUI as dma-",
+      "source_url": "https://github.com/zeronsh/zeron",
+      "source_version": "ab189159",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T00:26:18.237Z"
+    },
+    "rule-5074": {
+      "learning_id": "rule-5074",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5074,
+      "title": "Add 'force_logical_auto_identity' shard transfer mode for non-blocking moves of",
+      "source_url": "https://github.com/citusdata/citus",
+      "source_version": "1aba449a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T00:26:28.744Z"
     }
   },
   "aliases": {
