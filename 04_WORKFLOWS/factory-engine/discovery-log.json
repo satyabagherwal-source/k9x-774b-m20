@@ -19627,5 +19627,17 @@
     "qualityScore": 2123,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-27T23:48:51.922Z"
+  },
+  {
+    "name": "tencent/Hy-SimulMT-30B-A3B-FP8",
+    "fullName": "tencent/Hy-SimulMT-30B-A3B-FP8",
+    "url": "https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: tencent/Hy-SimulMT-30B-A3B-FP8 (162 likes, 93 downloads)",
+    "likes": 162,
+    "downloads": 93,
+    "qualityScore": 1713,
+    "discoveredAt": "2026-10-28T03:35:41.175Z"
   }
 ]

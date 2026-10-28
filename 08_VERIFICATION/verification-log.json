@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261026-8INE",
-    "timestamp": "2026-10-26T17:58:26.666Z",
-    "repository": "zama-ai/tfhe-rs",
-    "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "2b30b67f7f363751b1a7807e68f8d582d8dc0ba73c57a545d95f88496fd2ad9a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-8LGG",
-    "timestamp": "2026-10-26T17:58:30.304Z",
-    "repository": "MaterializeInc/materialize",
-    "learningId": "learn-github-materializeinc-materialize",
-    "contentHash": "d79645254cd6a18d234ea38338a1c8c8548f6a53ea3ecab5834ad95ef3418ac2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-8MCM",
-    "timestamp": "2026-10-26T17:58:31.462Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "1d018500b01a19e3b9d8af4dba62c04d3a44cc90ef4e848df1f730960317f1c2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261026-HENT",
     "timestamp": "2026-10-26T18:05:21.401Z",
     "repository": "mui/base-ui",
@@ -7490,6 +7445,51 @@
     "repository": "Qwen/Qwen3.8-27B",
     "learningId": "learn-huggingface-qwen-qwen3-8-27b",
     "contentHash": "aab339483193ee7783bcbffb9f0038d89fa2793cdbb04d2d56ba0969bab538d6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-DTCP",
+    "timestamp": "2026-10-28T03:38:06.169Z",
+    "repository": "black-forest-labs/FLUX.1-dev",
+    "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
+    "contentHash": "2526bce89eca70f058ec16bdc08429e0f72dcd7e90c1e696bae7fc40f7fce4d2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-DVRE",
+    "timestamp": "2026-10-28T03:38:09.290Z",
+    "repository": "dkhamsing/open-source-ios-apps",
+    "learningId": "learn-github-dkhamsing-open-source-ios-apps",
+    "contentHash": "e38c342f78b579ec9f24ec093c9afe03a6fb74ec7a66752f7d2d752554059be5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-K9IK",
+    "timestamp": "2026-10-28T03:43:07.052Z",
+    "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
+    "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
+    "contentHash": "99608b7009081586baa1bb11f06f5f43568801ae61e393ba1eb87564b6ce4d3a",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T03:31:32.212Z",
+  "last_updated": "2026-10-28T03:43:07.065Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -230,14 +230,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-1-dev",
-      "content_hash": "3e22f0a103d7116afa3caa10d2a00c9738e0ffa7fc3c9026556472804bbc278d",
-      "verified_at": "2026-10-25T07:39:33.179Z",
+      "content_hash": "2526bce89eca70f058ec16bdc08429e0f72dcd7e90c1e696bae7fc40f7fce4d2",
+      "verified_at": "2026-10-28T03:38:06.181Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T07:39:33.180Z"
+      "last_updated": "2026-10-28T03:38:06.181Z"
     },
     "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF": {
       "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -3291,14 +3291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dkhamsing-open-source-ios-apps",
-      "content_hash": "51c5a9325089a6aadd839e666211d2072233b5e76f8a5cb60ea5f82b6b9b408e",
-      "verified_at": "2026-10-27T13:00:32.061Z",
+      "content_hash": "e38c342f78b579ec9f24ec093c9afe03a6fb74ec7a66752f7d2d752554059be5",
+      "verified_at": "2026-10-28T03:38:09.302Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:00:32.061Z"
+      "last_updated": "2026-10-28T03:38:09.302Z"
     },
     "moby/buildkit": {
       "repository": "moby/buildkit",
@@ -17114,6 +17114,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-28T02:41:25.117Z"
+    },
+    "tencent/Hy-SimulMT-30B-A3B-FP8": {
+      "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
+      "content_hash": "99608b7009081586baa1bb11f06f5f43568801ae61e393ba1eb87564b6ce4d3a",
+      "verified_at": "2026-10-28T03:43:07.064Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-28T03:43:07.064Z"
     }
   },
   "repos": {

@@ -215,8 +215,8 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
     "sourceVersion": "hf-black-forest-labs-flux.1-dev",
     "license": "Open-Source",
-    "contentHash": "3e22f0a103d7116afa3caa10d2a00c9738e0ffa7fc3c9026556472804bbc278d",
-    "lastHarvestedAt": "2026-10-25T07:39:33.166Z",
+    "contentHash": "2526bce89eca70f058ec16bdc08429e0f72dcd7e90c1e696bae7fc40f7fce4d2",
+    "lastHarvestedAt": "2026-10-28T03:38:06.172Z",
     "learningId": "learn-huggingface-black-forest-labs-flux-1-dev"
   },
   "hf-francisring-prism": {
@@ -2103,10 +2103,10 @@
     "repository": "dkhamsing/open-source-ios-apps",
     "platform": "github",
     "sourceUrl": "https://github.com/dkhamsing/open-source-ios-apps",
-    "sourceVersion": "99bbbbff",
+    "sourceVersion": "28722ee0",
     "license": "CC0-1.0",
-    "contentHash": "51c5a9325089a6aadd839e666211d2072233b5e76f8a5cb60ea5f82b6b9b408e",
-    "lastHarvestedAt": "2026-10-27T13:00:32.053Z",
+    "contentHash": "e38c342f78b579ec9f24ec093c9afe03a6fb74ec7a66752f7d2d752554059be5",
+    "lastHarvestedAt": "2026-10-28T03:38:09.293Z",
     "learningId": "learn-github-dkhamsing-open-source-ios-apps"
   },
   "moby-buildkit": {
@@ -11388,5 +11388,15 @@
     "contentHash": "fb8e7af78e7d349cb2184f9eda9653c5bd77ffaad8b7c6887d4eaa8d79ba67d1",
     "lastHarvestedAt": "2026-10-28T02:41:25.109Z",
     "learningId": "learn-github-tanstack-router"
+  },
+  "hf-tencent-hy-simulmt-30b-a3b-fp8": {
+    "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8",
+    "sourceVersion": "hf-tencent-hy-simulmt-30b-a3b-fp8",
+    "license": "Open-Source",
+    "contentHash": "99608b7009081586baa1bb11f06f5f43568801ae61e393ba1eb87564b6ce4d3a",
+    "lastHarvestedAt": "2026-10-28T03:43:07.055Z",
+    "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8"
   }
 }

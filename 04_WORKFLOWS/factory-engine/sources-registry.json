@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T03:31:34.738Z",
-    "lastVerified": "2026-10-28T03:31:34.738Z",
+    "lastChecked": "2026-10-28T03:43:09.588Z",
+    "lastVerified": "2026-10-28T03:43:09.588Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -297,9 +297,9 @@
   "nucleoidai-nucleoid": {
     "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "lastChecked": "2026-10-28T03:11:28.340Z",
+    "lastChecked": "2026-10-28T03:38:09.419Z",
     "revisionIdentifier": "73085699",
-    "lastVerified": "2026-10-28T03:11:28.340Z"
+    "lastVerified": "2026-10-28T03:38:09.419Z"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -496,5 +496,77 @@
     "lastChecked": "2026-10-28T03:31:30.963Z",
     "revisionIdentifier": "222b2e44",
     "lastVerified": "2026-10-28T03:31:30.963Z"
+  },
+  "hf-black-forest-labs-flux.1-dev": {
+    "name": "black-forest-labs/FLUX.1-dev",
+    "officialUrl": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T03:37:56.906Z",
+    "lastVerified": "2026-10-28T03:37:56.906Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
+    "contentHash": "2526bce89eca70f058ec16bdc08429e0f72dcd7e90c1e696bae7fc40f7fce4d2",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "dkhamsing-open-source-ios-apps": {
+    "name": "dkhamsing/open-source-ios-apps",
+    "officialUrl": "https://github.com/dkhamsing/open-source-ios-apps",
+    "sourceType": "github",
+    "technology": "Multi-language",
+    "lastChecked": "2026-10-28T03:38:01.813Z",
+    "lastVerified": "2026-10-28T03:38:01.813Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-dkhamsing-open-source-ios-apps",
+    "contentHash": "e38c342f78b579ec9f24ec093c9afe03a6fb74ec7a66752f7d2d752554059be5",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kube-rs-kube": {
+    "name": "kube",
+    "officialUrl": "https://github.com/kube-rs/kube",
+    "lastChecked": "2026-10-28T03:38:01.911Z",
+    "revisionIdentifier": "a38f4c6c",
+    "lastVerified": "2026-10-28T03:38:01.911Z"
+  },
+  "defguard-defguard": {
+    "name": "defguard",
+    "officialUrl": "https://github.com/DefGuard/defguard",
+    "lastChecked": "2026-10-28T03:38:04.407Z",
+    "revisionIdentifier": "8efdae0f",
+    "lastVerified": "2026-10-28T03:38:04.407Z"
+  },
+  "topoteretes-cognee": {
+    "name": "cognee",
+    "officialUrl": "https://github.com/topoteretes/cognee",
+    "lastChecked": "2026-10-28T03:38:06.957Z",
+    "revisionIdentifier": "37f788bd",
+    "lastVerified": "2026-10-28T03:38:06.957Z"
+  },
+  "hf-tencent-hy-simulmt-30b-a3b-fp8": {
+    "name": "tencent/Hy-SimulMT-30B-A3B-FP8",
+    "officialUrl": "https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T03:37:54.484Z",
+    "lastVerified": "2026-10-28T03:37:54.484Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
+    "contentHash": "99608b7009081586baa1bb11f06f5f43568801ae61e393ba1eb87564b6ce4d3a",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

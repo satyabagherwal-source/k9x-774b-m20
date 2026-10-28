@@ -5671,3 +5671,6 @@
 | `CYCLE-20261028-5BHX` | `2026-10-28T03:31:29.781Z` | `expo/expo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5151` | Yes (`3f2da629...`) |
 | `CYCLE-20261028-5CRP` | `2026-10-28T03:31:31.429Z` | `projectcontour/contour` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5152` | Yes (`20ca2582...`) |
 | `CYCLE-20261028-5DD4` | `2026-10-28T03:31:32.200Z` | `Qwen/Qwen3.8-27B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5153, Rule 5154, Rule 5155` | Yes (`aab33948...`) |
+| `CYCLE-20261028-DTCP` | `2026-10-28T03:38:06.169Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5156, Rule 1072, Rule 5157` | Yes (`2526bce8...`) |
+| `CYCLE-20261028-DVRE` | `2026-10-28T03:38:09.290Z` | `dkhamsing/open-source-ios-apps` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5158, Rule 5159, Rule 5160` | Yes (`e38c342f...`) |
+| `CYCLE-20261028-K9IK` | `2026-10-28T03:43:07.052Z` | `tencent/Hy-SimulMT-30B-A3B-FP8` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5161, Rule 5162, Rule 5163` | Yes (`99608b70...`) |

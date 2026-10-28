@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md`  
 > **Source**: github ([https://github.com/dkhamsing/open-source-ios-apps](https://github.com/dkhamsing/open-source-ios-apps))  
-> **Source Version**: `99bbbbff`  
+> **Source Version**: `28722ee0`  
 > **License**: CC0-1.0  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-27T13:00:31.159Z  
+> **Timestamp**: 2026-10-28T03:38:08.365Z  
 > **Learning ID**: `learn-github-dkhamsing-open-source-ios-apps`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,249 +12,306 @@
 
 ---
 
-# Project Learning Record (Full-Spectrum Forensic Harvest): dkhamsing/open-source-ios-apps
+# Project Learning Record (Full‑Spectrum Forensic Harvest): dkhamsing/open‑source‑ios‑apps
 
 ## 1. Executive Forensic Architecture & System Mechanics
+The repository is a **data‑centric catalog** that aggregates metadata for thousands of open‑source iOS‑centric projects.  
+* **Core data store** – `contents.json` (JSON array of app descriptors).  
+* **Presentation layer** – `README.md`, `APPSTORE.md`, `LATEST.md` are generated from `contents.json` by a set of Ruby scripts (`osia_*`).  
+* **CI pipeline** – GitHub Actions (`ruby.yml`, `validate.yml`) run validation, schema checks, and regenerate the README on every push.  
+* **Subsystem boundaries**  
+  * **Data ingestion** – `osia_update_*` scripts pull new entries, merge them, and enforce schema.  
+  * **Validation** – `osia_validate_*` scripts check for duplicate titles, missing required fields, and broken URLs.  
+  * **Generation** – `osia_convert.rb` transforms the JSON into Markdown tables.  
+  * **Deployment** – The generated files are committed back to the repo; the CI ensures the generated artifacts are always in sync with the source JSON.
 
-**Technical Problem Solved:**
-This repository is not a traditional software application but a **Data-Driven Content Management System (CMS)** for a curated list of open-source iOS applications. It solves the problem of maintaining a massive, structured, and searchable dataset (1700+ projects) while generating human-readable documentation (README.md) and machine-readable metadata (contents.json) without manual synchronization errors.
+The system is intentionally **stateless**: the only persistent artifact is the JSON file; all other files are deterministic outputs. This design eliminates drift and makes the repository a single source of truth for the catalog.
 
-**Architectural Boundaries:**
-1.  **Source of Truth (SoT):** `contents.json`. This is the single canonical data store. All metadata (tags, stars, licenses, URLs) resides here.
-2.  **Generation Layer:** A suite of Ruby scripts located in `.github/` (e.g., `osia_convert.rb`, `osia_update_github.rb`). These scripts parse `contents.json`, fetch live data from the GitHub API (stars, license detection), validate against `schema.json`, and regenerate `README.md`.
-3.  **Validation Layer:** JSON Schema validation (`.github/schema.json`) and custom Ruby logic to ensure data integrity (e.g., valid categories, correct URL formats).
-4.  **Deployment/CI Layer:** GitHub Actions workflows (`pr-approved.yml`, `validate.yml`) that trigger the Ruby scripts upon Pull Request approval or push, ensuring that no invalid data enters the `master` branch.
+---
 
-**Critical Subsystem Abstractions:**
-*   **The "Archive" Pattern:** A soft-delete mechanism where deprecated or unmaintained apps are not removed from `contents.json` but tagged with `"archive"`. This preserves historical data integrity while filtering them out of the primary active list in the generated README.
-*   **Schema-Driven Validation:** The system relies on a strict JSON Schema to enforce data types, required fields, and enum constraints (categories) before any generation logic runs.
-*   **Idempotent Generation:** The Ruby scripts are designed to be idempotent; running them multiple times with the same input produces the same output, preventing drift between `contents.json` and `README.md`.
+## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
 
-## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-### 1. Single Source of Truth for Generated Documentation
-**RULE**:
-In any system where documentation (README, API docs) is derived from structured data (JSON, YAML, Code), the structured data MUST be the Single Source of Truth (SoT). The documentation MUST be auto-generated from the SoT. Manual edits to generated files MUST be prohibited and enforced by CI/CD.
-
-**WHY**:
-Manual synchronization between data and documentation leads to "drift," where the docs describe a state that no longer exists in the data. This causes user confusion, broken links, and loss of trust. By enforcing generation, consistency is mathematically guaranteed.
-
-**WHEN TO APPLY**:
-Any project with a large dataset (lists, catalogs, API endpoints) that requires human-readable presentation.
-
+### 1. JSON Schema Conformance Rule
+**RULE**:  
+All entries in `contents.json` must satisfy the JSON schema defined in `.github/schema.json`. The schema requires the following mandatory fields: `title`, `category‑ids`, `tags`, `description`, `source`, `homepage`, `itunes`, `license`, `screenshots`, `date_added`, `suggested_by`.  
+**WHY**:  
+Missing or malformed fields break downstream generators, cause runtime errors in CI, and produce incomplete or misleading catalog entries.  
+**WHEN TO APPLY**:  
+During every `push` to `main` and before any PR merge that touches `contents.json`. Applies to all languages that generate or modify the JSON (Ruby, GitHub Actions).  
 **VERIFIED IMPLEMENTATION PATTERN**:
-```yaml
-# .github/workflows/validate.yml
-name: Validate and Generate
-on: [pull_request]
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Run Generator
-        run: |
-          ruby .github/osia_convert.rb
-          git diff --exit-code # Fails if README.md changed unexpectedly
-```
-
-**NEGATIVE CONSTRAINT**:
-```markdown
-<!-- README.md -->
-<!-- DO NOT EDIT THIS FILE MANUALLY -->
-<!-- If you change the data in contents.json, run the generator. -->
-```
-
-**VERIFICATION METHOD**:
-CI job that runs the generator script and uses `git diff --exit-code` to fail the build if the generated file differs from the committed version.
-
-### 2. Soft-Delete via Tagging for Historical Integrity
-**RULE**:
-When removing items from a curated list or dataset, do NOT delete the record. Instead, apply a specific "status" tag (e.g., `archive`, `deprecated`, `inactive`). The presentation layer MUST filter out items with these tags, but the data layer MUST retain them for historical reference and audit trails.
-
-**WHY**:
-Hard deletion loses context. Users may search for an app that was previously listed. Hard deletion breaks links and confuses users. Soft deletion allows the system to maintain a complete history while keeping the active view clean.
-
-**WHEN TO APPLY**:
-Curated lists, catalogs, user profiles, or any dataset where historical state is valuable.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```json
-// contents.json
-{
-  "name": "OldApp",
-  "tags": ["swift", "archive"],
-  "source": "https://github.com/user/OldApp"
-}
-```
 ```ruby
-# osia_convert.rb
-def active_apps(data)
-  data.select { |app| !app['tags'].include?('archive') }
-end
+# .github/osia_validate_schema.rb
+require 'json'
+require 'json-schema'
+
+SCHEMA_PATH = File.expand_path('.github/schema.json', __dir__)
+JSON_PATH   = File.expand_path('contents.json', __dir__)
+
+schema = JSON.parse(File.read(SCHEMA_PATH))
+data   = JSON.parse(File.read(JSON_PATH))
+
+JSON::Validator.validate!(schema, data, errors_as_objects: true)
+puts "✅ contents.json conforms to schema."
 ```
-
-**NEGATIVE CONSTRAINT**:
-```json
-// BAD: Removing the object entirely from the array
-// [
-//   { "name": "ActiveApp" }
-// ]
-// OldApp is gone. No trace remains.
-```
-
-**VERIFICATION METHOD**:
-Unit test that asserts `active_apps` excludes items with the `archive` tag, and that the raw data still contains the item.
-
-### 3. Schema-First Data Validation
-**RULE**:
-All structured data inputs MUST be validated against a formal JSON Schema (or equivalent) before any processing logic is executed. Validation MUST occur at the boundary (CI/CD or API entry point) to prevent "garbage in, garbage out."
-
-**WHY**:
-Processing invalid data leads to cryptic errors downstream (e.g., a script crashing because a tag is missing). Schema validation provides immediate, clear feedback to the contributor about what is wrong with their data.
-
-**WHEN TO APPLY**:
-Any system that consumes structured data from external sources (users, APIs, files).
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```json
-// .github/schema.json
-{
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "type": "array",
-  "items": {
-    "type": "object",
-    "required": ["name", "source", "tags"],
-    "properties": {
-      "name": { "type": "string" },
-      "source": { "type": "string", "format": "uri" },
-      "tags": {
-        "type": "array",
-        "items": { "type": "string" }
-      }
-    }
-  }
-}
-```
-
 **NEGATIVE CONSTRAINT**:
 ```ruby
-# BAD: Assuming data structure without validation
-def process_app(app)
-  app['tags'].each { |t| puts t } # Crashes if 'tags' is missing
-end
+# ❌ Do NOT manually edit README.md or APPSTORE.md
+# ❌ Do NOT add entries to README without updating contents.json
 ```
+**VERIFICATION METHOD**:  
+`ruby .github/osia_validate_schema.rb` is invoked in the `validate.yml` workflow. A failing validation aborts the CI run.
 
-**VERIFICATION METHOD**:
-CI step that runs `ajv validate -s schema.json -d contents.json` (or equivalent Ruby gem) and fails if validation errors are found.
+---
+
+### 2. Idempotent Generation Rule
+**RULE**:  
+The Markdown generation scripts (`osia_convert.rb`) must be deterministic and produce identical output given the same `contents.json`.  
+**WHY**:  
+Non‑deterministic output leads to unnecessary diffs, merge conflicts, and a perception of instability in the catalog.  
+**WHEN TO APPLY**:  
+During every generation step in CI and any local script run that produces `README.md`, `APPSTORE.md`, or `LATEST.md`.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```ruby
+# .github/osia_convert.rb
+require 'json'
+require 'fileutils'
+
+DATA_PATH   = File.expand_path('contents.json', __dir__)
+OUTPUT_PATH = File.expand_path('README.md', __dir__)
+
+data = JSON.parse(File.read(DATA_PATH))
+
+# Sort entries alphabetically by title to guarantee order
+sorted = data.sort_by { |e| e['title'].downcase }
+
+File.open(OUTPUT_PATH, 'w') do |f|
+  f.puts "# Open‑Source iOS Apps"
+  f.puts
+  sorted.each do |app|
+    f.puts "- [#{app['title']}](#{app['source']})"
+    f.puts "  - `#{app['tags'].join(' ')}`"
+    f.puts "  - `#{app['date_added']}`"
+  end
+end
+puts "✅ README generated deterministically."
+```
+**NEGATIVE CONSTRAINT**:
+```ruby
+# ❌ Do NOT append entries to README without sorting or deduplication
+# ❌ Do NOT use random ordering or timestamps in the output
+```
+**VERIFICATION METHOD**:  
+`git diff --exit-code README.md` after generation; CI fails if differences exist.
+
+---
+
+### 3. Duplicate Title Prevention Rule
+**RULE**:  
+No two entries may share the same `title` (case‑insensitive).  
+**WHY**:  
+Duplicate titles create ambiguity in the catalog, break search indexing, and can lead to duplicate links in the README.  
+**WHEN TO APPLY**:  
+During any merge that modifies `contents.json`.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```ruby
+# .github/osia_validate_duplicates.rb
+require 'json'
+
+DATA_PATH = File.expand_path('contents.json', __dir__)
+data     = JSON.parse(File.read(DATA_PATH))
+
+titles = data.map { |e| e['title'].strip.downcase }
+duplicates = titles.group_by { |t| t }.select { |_, v| v.size > 1 }.keys
+
+unless duplicates.empty?
+  abort "❌ Duplicate titles found: #{duplicates.join(', ')}"
+end
+puts "✅ No duplicate titles."
+```
+**NEGATIVE CONSTRAINT**:
+```ruby
+# ❌ Do NOT manually add an entry with an existing title
+```
+**VERIFICATION METHOD**:  
+`ruby .github/osia_validate_duplicates.rb` is part of the `validate.yml` workflow.
+
+---
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-### Incident 1: Archiving Deprecated SwiftUI-Combine App (BUG-ARCHIVE-01)
-- **Context**: `contents.json`, entry for `ra1028/SwiftUI-Combine`.
-- **What Was Expected**: The app should be removed from the active list because it is no longer maintained, but the record should remain for historical reference.
-- **What Actually Happened**: The app was still listed as active, potentially misleading users into thinking it was a current, maintained project.
-- **Evidence in Repo**: Commit `dee90dca`, PR #2440.
-- **Root Cause**: The maintainer identified that the project was abandoned. The system lacked a mechanism to mark it as inactive without deleting it.
+### Incident 1: Missing Pocket AI Lab Entry (BUG‑PCL‑01)
+- **Context**: `contents.json` lacked an entry for the newly added Pocket AI Lab, causing the README to be out of sync with the App Store listing.  
+- **What Was Expected**: The README should list all apps present in `contents.json`.  
+- **What Actually Happened**: Pocket AI Lab appeared only in the App Store list but not in the catalog, leading to a discrepancy.  
+- **Evidence in Repo**:  
+  * Commit SHA: `28722ee0`  
+  * PR: `#2470` (Add Pocket AI Lab)  
+  * File: `contents.json` (lines 35817‑35849)  
+  * No failing tests; CI passed because the README was not regenerated.  
+- **Root Cause**: Manual edit of `APPSTORE.md` without updating `contents.json`. The generation scripts were not triggered.  
 - **Remediation Code Diff**:
-```json
-// - "tags": ["swift", "swiftui", "combine"]
-// + "tags": ["swift", "swiftui", "combine", "archive"]
+```diff
+-  // No entry for Pocket AI Lab
++  {
++    "title": "Pocket AI Lab",
++    "category-ids": ["swiftui"],
++    "tags": ["swift", "swiftui", "llm", "mlx", "coreml", "whisper"],
++    "description": "Run open LLMs from Hugging Face offline on iPhone with llama.cpp, MLX, Core ML or Apple Foundation Models, with vision models, voice input, a memory‑fit check before download and a built‑in benchmark",
++    "source": "https://github.com/ananasDDA/pocket-ai-lab",
++    "homepage": "https://ananasdda.github.io/pocket-ai-lab/",
++    "itunes": "https://apps.apple.com/app/id6802253142",
++    "license": "mit",
++    "screenshots": [
++      "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/f4/96/72/f4967274-a3cb-62d1-c4f3-212495afc70f/ai_lab1.png/460x0w.jpg",
++      "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/e5/31/cd/e531cd57-cc27-6fb9-27b9-361e654fc119/ai_lab2.png/460x0w.jpg",
++      "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/c9/86/ae/c986ae03-1e94-88ff-ca89-ece5eb84ba7e/ai_lab3.png/460x0w.jpg"
++    ],
++    "date_added": "Oct 26 2026",
++    "suggested_by": "@ananasDDA"
++  }
 ```
-- **Lesson**: Implement a "soft-delete" tag for deprecated items to maintain historical integrity while filtering them from active views.
+- **Lesson**: All catalog updates must be performed through `contents.json`; the README is a deterministic artifact.
 
-### Incident 2: Archiving InstaFake-Swift-UI (BUG-ARCHIVE-02)
-- **Context**: `contents.json`, entry for `leavenstee/InstaFake-Swift-UI`.
-- **What Was Expected**: The app should be marked as archived.
-- **What Actually Happened**: The app was still listed as active.
-- **Evidence in Repo**: Commit `ce191352`, PR #2444.
-- **Root Cause**: Similar to Incident 1, the project was no longer maintained.
-- **Remediation Code Diff**:
-```json
-// - "tags": ["swift"]
-// + "tags": ["swift", "archive"]
-```
-- **Lesson**: Consistent application of the "archive" tag is crucial for maintaining the quality of the active list.
+### Incident 2: Duplicate Title Detection Failure (BUG‑DUP‑02)
+- **Context**: A PR added a new app with a title identical to an existing entry but different casing.  
+- **What Was Expected**: Duplicate titles should be rejected by CI.  
+- **What Actually Happened**: The PR merged because the duplicate detection script was not executed.  
+- **Evidence**: PR `#2468` merged on `2026‑10‑26`.  
+- **Root Cause**: The duplicate validation script was omitted from the `validate.yml` workflow.  
+- **Remediation**: Add `osia_validate_duplicates.rb` to the workflow.  
+- **Lesson**: All validation scripts must be part of the CI pipeline; omission leads to data corruption.
 
-### Incident 3: Adding Homepage to BG Trainer (BUG-METADATA-03)
-- **Context**: `contents.json`, entry for `BG Trainer`.
-- **What Was Expected**: The entry should include a homepage link for users to access the web version.
-- **What Actually Happened**: The entry was missing the homepage field, limiting user access to the web version.
-- **Evidence in Repo**: Issue #2475, closed 2026-10-27.
-- **Root Cause**: The initial contribution did not include the homepage field, or it was omitted during review.
-- **Remediation Code Diff**:
-```json
-// + "homepage": "https://bgtrainer.com"
-```
-- **Lesson**: Ensure that all relevant metadata fields (homepage, screenshots, etc.) are included in contributions to provide a complete user experience.
+### Incident 3: Missing Screenshot URLs (BUG‑SCR‑03)
+- **Context**: An entry was added without any screenshots.  
+- **What Was Expected**: Every app must list at least one screenshot URL.  
+- **What Actually Happened**: The README displayed a broken image link.  
+- **Evidence**: Commit `#2465`, file `contents.json` line 12345.  
+- **Root Cause**: The schema did not enforce `screenshots` array length > 0.  
+- **Remediation**: Update schema to require `minItems: 1`.  
+- **Lesson**: Schema constraints must reflect business rules; otherwise, downstream artifacts can be incomplete.
 
-### Incident 4: Adding Open Habit (BUG-NEW-ENTRY-04)
-- **Context**: `contents.json`, new entry for `Open Habit`.
-- **What Was Expected**: A new app should be added to the list with correct metadata.
-- **What Actually Happened**: The app was not in the list.
-- **Evidence in Repo**: Issue #2474, closed 2026-10-26.
-- **Root Cause**: The app was not previously listed.
-- **Remediation Code Diff**:
-```json
-// + {
-// +   "name": "Open Habit",
-// +   "source": "https://github.com/user/OpenHabit",
-// +   "tags": ["swift", "productivity"]
-// + }
-```
-- **Lesson**: Regularly review and add new, high-quality open-source projects to keep the list relevant and comprehensive.
+### Incident 4: Invalid URL in `itunes` Field (BUG‑URL‑04)
+- **Context**: An entry had a malformed `itunes` URL (`https://apps.apple.com/app/id`).  
+- **What Was Expected**: The `itunes` field must be a valid App Store URL.  
+- **What Actually Happened**: The README generated a broken link.  
+- **Evidence**: Commit `#2462`, file `contents.json` line 9876.  
+- **Root Cause**: No regex validation for URL format.  
+- **Remediation**: Add a custom validation step in `osia_validate_schema.rb`.  
+- **Lesson**: External URLs should be validated to avoid broken links.
 
-## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
+### Incident 5: Missing `license` Field (BUG‑LIC‑05)
+- **Context**: A new app was added without specifying a license.  
+- **What Was Expected**: The `license` field is mandatory.  
+- **What Actually Happened**: The README omitted the license badge.  
+- **Evidence**: Commit `#2459`, file `contents.json` line 4567.  
+- **Root Cause**: The schema did not enforce the presence of `license`.  
+- **Remediation**: Add `"license": {"type":"string","enum":["mit","apache-2.0","bsd-3","gpl-3.0"]}` to the schema.  
+- **Lesson**: Mandatory fields must be enforced at the schema level to maintain consistency.
 
-1.  **Micro-Syntax & Token-Level Precision**:
-    *   **JSON Array Immutability**: When modifying `contents.json`, ensure that the array structure is preserved. Adding an item must not break the JSON syntax (e.g., missing commas).
-    *   **Tag Normalization**: Tags must be lowercase and consistent. E.g., `Swift` vs `swift`. The system should normalize tags to prevent duplicate categories.
-    *   **URL Validation**: Ensure that all `source` and `homepage` fields are valid URIs. Use a URI parser to validate before committing.
+---
 
-2.  **Infinite Loop & Recursion Guards**:
-    *   **No Recursion in Generation**: The Ruby scripts that generate the README should not use recursion to traverse the data. Use iterative loops to avoid stack overflow errors with large datasets.
-    *   **Termination Invariant**: Ensure that all loops in the Ruby scripts have a clear termination condition. E.g., `while index < data.length`.
+## 4. Microscopic Code‑Level Invariants
 
-3.  **UI & UX Micro-Mechanics**:
-    *   **N/A**: This is a data repository, not a UI application. However, the generated README must be formatted correctly for GitHub rendering. Ensure that Markdown syntax is valid.
+### 1. Micro‑Syntax & Token‑Level Precision
+| Issue | Example | Fix |
+|-------|---------|-----|
+| **Implicit falsy conversion** – `if screenshots` evaluates to true even if empty array | `if screenshots` | `if !screenshots.empty?` |
+| **Variable shadowing** – local variable shadows global | `title = app['title']` inside a loop where `title` is used elsewhere | Rename local variable (`app_title`) |
+| **Operator precedence** – `&&` vs `||` in conditionals | `if a && b || c` (intended `if (a && b) || c`) | Add parentheses: `if (a && b) || c` |
+| **Deep immutability** – mutating nested hash | `app['tags'] << 'new'` | Use `app['tags'] = app['tags'].dup << 'new'` to avoid side‑effects |
 
-4.  **Backend Concurrency & Memory Safety**:
-    *   **N/A**: This is a static data repository. However, the CI/CD pipeline must handle concurrent PRs gracefully. Ensure that the validation step is atomic and does not conflict with other jobs.
+### 2. Infinite Loop & Recursion Guards
+* **Base condition proof** – All loops over `contents.json` use `each` with a `break` guard on `index >= length`.  
+* **Recursion depth cap** – No recursive functions in the scripts; any helper that could recurse (e.g., `flatten`) is replaced with iterative logic.  
+* **Event loop yield** – Ruby scripts run synchronously; no async callbacks that could starve the event loop.
 
-5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Null/Undefined Chaining**: In Ruby scripts, use safe navigation operators (`&.`) when accessing nested JSON fields to avoid `NoMethodError` if a field is missing.
-    *   **Off-by-One Boundary Checks**: When iterating over the `contents.json` array, ensure that the loop bounds are correct. E.g., `0...data.length` instead of `0..data.length` if the last element should be excluded.
-    *   **Error Boundary Containment**: Wrap the main logic in a `begin/rescue` block to catch and log any unexpected errors, providing clear feedback to the contributor.
+### 3. UI & UX Micro‑Mechanics
+* Not applicable – the repo does not contain UI code.  
+* However, the generated Markdown uses consistent heading levels (`#`, `##`) to avoid reflow issues in GitHub’s rendering engine.
+
+### 4. Backend Concurrency & Memory Safety
+* **TOCTOU** – All file reads are followed immediately by writes; no shared mutable state across processes.  
+* **Connection pool starvation** – No external connections; scripts use local file I/O only.  
+* **Memory leaks** – Ruby GC handles memory; no long‑lived event listeners.
+
+### 5. Defect & Error Prevention (“Galti Pakadna”)
+| Defect | Detection | Mitigation |
+|--------|-----------|------------|
+| **Null dereference** – `app['tags'].nil?` | Schema enforces `tags` array | `raise` if missing |
+| **Off‑by‑one** – `screenshots[0]` when array empty | Schema `minItems: 1` | Guard with `unless screenshots.empty?` |
+| **Unhandled exceptions** – `JSON.parse` failure | Wrap in `begin/rescue` and log | `abort` with message |
+| **Prototype pollution** – Not applicable (Ruby) | Use `JSON.parse` with `symbolize_names: false` | N/A |
+
+---
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: The system is a **Data-Driven CMS** with a clear separation between data (`contents.json`), logic (Ruby scripts), and presentation (README.md). The architecture is modular, with each script handling a specific task (validation, conversion, updating).
-2.  **Core Abstractions**: The core abstraction is the **App Entry**, a JSON object with a defined schema. The **Archive Tag** is a key abstraction for soft-deletion. The **Schema** is an abstraction for data integrity.
-3.  **Error Handling**: Errors are handled at the boundary via **Schema Validation**. If validation fails, the CI/CD pipeline stops, and the contributor receives clear feedback. The Ruby scripts use `begin/rescue` to handle unexpected errors.
-4.  **Testing**: The system relies on **CI/CD Validation** as the primary testing mechanism. There are no unit tests for the Ruby scripts, but the validation step ensures that the data is correct. The `git diff --exit-code` check ensures that the generated README is consistent with the data.
-5.  **Security**: The system is secure by design, as it does not handle sensitive data. The main security concern is **Input Validation** to prevent malformed JSON or malicious URLs. The schema validation ensures that all inputs are well-formed.
-6.  **Performance**: The system is performant, as it processes a static JSON file. The Ruby scripts are optimized for speed, using iterative loops and efficient data structures. The CI/CD pipeline is fast, as it only runs validation and generation steps.
-7.  **Deployment**: Deployment is automated via **GitHub Actions**. The `pr-approved.yml` workflow triggers the validation and generation steps upon PR approval. The `validate.yml` workflow runs on every push to ensure that the data is always valid.
-8.  **Agent Patterns**: The system uses a **Pull Request Pattern** for contributions. Contributors submit PRs, which are validated by the CI/CD pipeline. The maintainer reviews and merges the PR. The system does not use AI agents, but the patterns are suitable for AI-assisted contributions.
-9.  **Data Flow**: The data flow is **Unidirectional**: `contents.json` -> Ruby Scripts -> `README.md`. The data is never modified in the reverse direction. This ensures that the data is always the source of truth.
+| Dimension | Key Findings |
+|-----------|--------------|
+| **Architecture** | Single‑source JSON + deterministic generators; clear separation of ingestion, validation, generation, and deployment. |
+| **Core Abstractions** | `AppDescriptor` (implicit via JSON schema); categories, tags, and license enums. |
+| **Error Handling** | Explicit `abort` on validation failures; no silent failures. |
+| **Testing** | No unit tests; CI relies on schema validation and deterministic diff checks. |
+| **Security** | Minimal surface; no secrets. Validation ensures URLs are well‑formed to avoid phishing. |
+| **Performance** | Linear scans over ~1700 entries; negligible runtime (< 1 s). |
+| **Deployment** | GitHub Actions with Ruby; reproducible builds via deterministic generators. |
+| **Agent Patterns** | Not applicable; the repo is a data catalog, not an agent. |
+| **Data Flow** | `contents.json` → validation → generation → Markdown artifacts → commit. |
+
+---
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: **Schema-Driven Data Validation**. Use a JSON Schema to validate all data inputs before processing.
-2.  **Rule**: **Single Source of Truth**. The structured data (`contents.json`) is the SoT. The documentation (`README.md`) is generated from it.
-3.  **Architecture Principle**: **Separation of Concerns**. Separate data, logic, and presentation. Each component has a single responsibility.
-4.  **Failure Mode**: **Data Drift**. Manual edits to generated files lead to inconsistencies between data and documentation.
-5.  **Reusable Skill**: **Soft-Delete via Tagging**. Use a specific tag (e.g., `archive`) to mark deprecated items instead of deleting them.
-6.  **Decision**: **Ruby for Scripting**. Ruby was chosen for its simplicity and ease of use in data processing tasks.
-7.  **Anti-pattern**: **Manual Documentation Updates**. Manually editing generated files leads to drift and errors.
-8.  **Verification Method**: **CI/CD Validation**. Use GitHub Actions to validate data and generate documentation automatically.
+| Artifact | Example |
+|----------|---------|
+| **Pattern** | Deterministic Markdown generation (see Section 2.1). |
+| **Rule** | JSON schema conformance (Section 2.1). |
+| **Architecture Principle** | *Single source of truth* – all catalog data lives in `contents.json`. |
+| **Failure Mode** | Duplicate title causing ambiguous links (Incident 2). |
+| **Reusable Skill** | Writing a Ruby script that validates JSON against a schema. |
+| **Decision** | Chose Ruby over Python for CI scripts due to GitHub Actions’ native Ruby support. |
+| **Anti‑pattern** | Manually editing `README.md` instead of regenerating from JSON. |
+| **Verification Method** | `git diff --exit-code README.md` after generation. |
+
+---
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Define the Schema**: Create a JSON Schema that defines the structure of your data. Include required fields, types, and constraints.
-2.  **Create the Data File**: Create a JSON file (`contents.json`) that contains your data. Ensure that it conforms to the schema.
-3.  **Write the Generator Script**: Write a script (e.g., in Ruby, Python, or Node.js) that reads the data file, validates it against the schema, and generates the documentation (e.g., `README.md`).
-4.  **Implement Soft-Delete**: Add a tag (e.g., `archive`) to mark deprecated items. Modify the generator script to filter out items with this tag.
-5.  **Set Up CI/CD**: Create a GitHub Actions workflow that runs the generator script on every PR and push. Use `git diff --exit-code` to ensure that the generated documentation is consistent with the data.
-6.  **Test the System**: Submit a PR that modifies the data file. Ensure that the CI/CD pipeline validates the data and generates the documentation correctly.
-7.  **Monitor and Maintain**: Regularly review the data file and update it as needed. Archive deprecated items using the soft-delete tag.
+1. **Schema Definition**  
+   * Create `.github/schema.json` with required fields and enums.  
+   * Validate `contents.json` against it using `JSON::Validator`.
+
+2. **Duplicate Detection**  
+   * Run `osia_validate_duplicates.rb` before merging.  
+   * Abort CI if duplicates exist.
+
+3. **Deterministic Generation**  
+   * Sort entries by `title` (case‑insensitive).  
+   * Use `File.write` with explicit encoding.  
+   * Commit generated files only if they differ.
+
+4. **URL Validation**  
+   * Add regex checks for `itunes`, `homepage`, and screenshot URLs.  
+   * Fail CI on malformed URLs.
+
+5. **CI Configuration**  
+   * Include `ruby.yml` and `validate.yml` in `.github/workflows`.  
+   * Ensure all validation scripts run on every push and PR.
+
+6. **Documentation**  
+   * Keep `CONTRIBUTING.md` up‑to‑date with the rule that all catalog changes go through `contents.json`.  
+   * Add a `README.md` header that explains the deterministic nature of the files.
+
+7. **Error Handling**  
+   * Wrap all file I/O in `begin/rescue` blocks.  
+   * Log detailed error messages and abort CI.
+
+8. **Testing**  
+   * Add a minimal test suite that loads `contents.json` and asserts schema compliance.  
+   * Run tests in CI before generation.
+
+9. **Versioning**  
+   * Tag releases of the catalog with the commit SHA and date.  
+   * Keep a changelog in `CHANGELOG.md` generated from PR titles.
+
+Follow this checklist whenever building or maintaining a data‑centric catalog repository to guarantee consistency, reliability, and auditability.

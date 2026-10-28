@@ -4648,3 +4648,7 @@ https://huggingface.co/LiquidAI/LFM3-1.7B
 # --- Automatically Discovered by AI Scout Engine [2026-10-27T23:52:19.968Z] ---
 # [AI-AGENTS] michael-denyer/pstack-claude (2123 score) - Claude Code, Codex, Copilot, Pi, OpenCode, Muse, Gemini, and Prime Agent version
 https://github.com/michael-denyer/pstack-claude
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-28T03:37:49.082Z] ---
+# [HUGGINGFACE-AI-MODELS] tencent/Hy-SimulMT-30B-A3B-FP8 (1713 score) - Verified Hugging Face Model: tencent/Hy-SimulMT-30B-A3B-FP8 (162 likes, 93 downl
+https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8

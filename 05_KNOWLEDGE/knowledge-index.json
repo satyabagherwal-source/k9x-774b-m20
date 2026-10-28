@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T03:31:32.126Z",
-  "total_verified_learnings": 1155,
+  "last_updated": "2026-10-28T03:43:06.992Z",
+  "total_verified_learnings": 1156,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -9235,8 +9235,8 @@
       "slug": "dkhamsing-open-source-ios-apps",
       "platform": "github",
       "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
-      "source_version": "99bbbbff",
-      "content_hash": "51c5a9325089a6aadd839e666211d2072233b5e76f8a5cb60ea5f82b6b9b408e",
+      "source_version": "28722ee0",
+      "content_hash": "e38c342f78b579ec9f24ec093c9afe03a6fb74ec7a66752f7d2d752554059be5",
       "dossier_path": "07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
       "promoted_rules": [
@@ -9274,6 +9274,21 @@
           "number": 4780,
           "title": "Schema-First Data Validation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5158,
+          "title": "JSON Schema Conformance Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5159,
+          "title": "Idempotent Generation Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5160,
+          "title": "Duplicate Title Prevention Rule",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9281,7 +9296,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:00:31.977Z",
+      "verified_at": "2026-10-28T03:38:09.212Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -18270,7 +18285,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
       "source_version": "hf-black-forest-labs-flux.1-dev",
-      "content_hash": "3e22f0a103d7116afa3caa10d2a00c9738e0ffa7fc3c9026556472804bbc278d",
+      "content_hash": "2526bce89eca70f058ec16bdc08429e0f72dcd7e90c1e696bae7fc40f7fce4d2",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
       "promoted_rules": [
@@ -18308,7 +18323,7 @@
         {
           "number": 1072,
           "title": "Memory-Bounded Inference Pipeline Invariant",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1073,
@@ -18394,6 +18409,16 @@
           "number": 4165,
           "title": "Latent Patchification Tensor Boundary Alignment",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5156,
+          "title": "Weight Integrity & Schema Validation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5157,
+          "title": "Deterministic Reproducibility Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -18414,7 +18439,7 @@
         "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv43g3lp",
         "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv4goq8m"
       ],
-      "verified_at": "2026-10-25T07:39:33.095Z",
+      "verified_at": "2026-10-28T03:38:06.094Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -79628,15 +79653,15 @@
       "learning_id": "rule-1072",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1072,
-      "title": "Memory-Bounded Inference Pipeline Invariant (Harvested from black-forest-labs/FLUX.1-dev)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Memory-Bounded Inference Pipeline Invariant",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
+      "source_version": "hf-black-forest-labs-flux.1-dev",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.817Z"
+      "verified_at": "2026-10-28T03:38:06.094Z"
     },
     "rule-1073": {
       "learning_id": "rule-1073",
@@ -141373,6 +141398,161 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T03:31:32.103Z"
+    },
+    "rule-5156": {
+      "learning_id": "rule-5156",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5156,
+      "title": "Weight Integrity & Schema Validation Invariant",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
+      "source_version": "hf-black-forest-labs-flux.1-dev",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T03:38:06.094Z"
+    },
+    "rule-5157": {
+      "learning_id": "rule-5157",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5157,
+      "title": "Deterministic Reproducibility Invariant",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
+      "source_version": "hf-black-forest-labs-flux.1-dev",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T03:38:06.094Z"
+    },
+    "rule-5158": {
+      "learning_id": "rule-5158",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5158,
+      "title": "JSON Schema Conformance Rule",
+      "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
+      "source_version": "28722ee0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T03:38:09.212Z"
+    },
+    "rule-5159": {
+      "learning_id": "rule-5159",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5159,
+      "title": "Idempotent Generation Rule",
+      "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
+      "source_version": "28722ee0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T03:38:09.212Z"
+    },
+    "rule-5160": {
+      "learning_id": "rule-5160",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5160,
+      "title": "Duplicate Title Prevention Rule",
+      "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
+      "source_version": "28722ee0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T03:38:09.212Z"
+    },
+    "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8": {
+      "learning_id": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "tencent/Hy-SimulMT-30B-A3B-FP8",
+      "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
+      "slug": "hf-tencent-hy-simulmt-30b-a3b-fp8",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8",
+      "source_version": "hf-tencent-hy-simulmt-30b-a3b-fp8",
+      "content_hash": "99608b7009081586baa1bb11f06f5f43568801ae61e393ba1eb87564b6ce4d3a",
+      "dossier_path": "07_PROJECT_LEARNING/hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 5161,
+          "title": "FP8 Quantization Sensitivity Isolation Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5162,
+          "title": "Simultaneous Translation Latency-Accuracy Trade-off Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5163,
+          "title": "MoE Routing Stability with Sigmoid and Bias Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-28T03:43:06.978Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-5161": {
+      "learning_id": "rule-5161",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5161,
+      "title": "FP8 Quantization Sensitivity Isolation Rule",
+      "source_url": "https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8",
+      "source_version": "hf-tencent-hy-simulmt-30b-a3b-fp8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T03:43:06.978Z"
+    },
+    "rule-5162": {
+      "learning_id": "rule-5162",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5162,
+      "title": "Simultaneous Translation Latency-Accuracy Trade-off Rule",
+      "source_url": "https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8",
+      "source_version": "hf-tencent-hy-simulmt-30b-a3b-fp8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T03:43:06.978Z"
+    },
+    "rule-5163": {
+      "learning_id": "rule-5163",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5163,
+      "title": "MoE Routing Stability with Sigmoid and Bias Rule",
+      "source_url": "https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8",
+      "source_version": "hf-tencent-hy-simulmt-30b-a3b-fp8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T03:43:06.978Z"
     }
   },
   "aliases": {

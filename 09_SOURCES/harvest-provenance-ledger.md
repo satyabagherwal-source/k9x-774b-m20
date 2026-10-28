@@ -5680,3 +5680,6 @@ Every entry in this ledger must capture:
 | `learn-github-expo-expo` | `https://github.com/expo/expo` | `142ce925` | Multi-dimensional audit evidence | 2026-10-28T03:31:29.784Z |
 | `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `48670cc0` | Multi-dimensional audit evidence | 2026-10-28T03:31:31.433Z |
 | `learn-huggingface-qwen-qwen3-8-27b` | `https://huggingface.co/Qwen/Qwen3.8-27B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-28T03:31:32.203Z |
+| `learn-huggingface-black-forest-labs-flux-1-dev` | `https://huggingface.co/black-forest-labs/FLUX.1-dev` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-28T03:38:06.172Z |
+| `learn-github-dkhamsing-open-source-ios-apps` | `https://github.com/dkhamsing/open-source-ios-apps` | `28722ee0` | Multi-dimensional audit evidence | 2026-10-28T03:38:09.293Z |
+| `learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8` | `https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8` | `hf-tencent` | Multi-dimensional audit evidence | 2026-10-28T03:43:07.055Z |
