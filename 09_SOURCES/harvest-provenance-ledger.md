@@ -5610,3 +5610,5 @@ Every entry in this ledger must capture:
 | `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `ab189159` | Multi-dimensional audit evidence | 2026-10-28T00:26:18.313Z |
 | `learn-github-crawlcove-robots-txt-tester` | `https://github.com/CrawlCove/crawlcove-robots-txt-tester` | `0d91d23a` | Multi-dimensional audit evidence | 2026-10-28T00:26:18.939Z |
 | `learn-github-citusdata-citus` | `https://github.com/citusdata/citus` | `1aba449a` | Multi-dimensional audit evidence | 2026-10-28T00:26:28.821Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `41983afe` | Multi-dimensional audit evidence | 2026-10-28T00:32:49.294Z |
+| `learn-github-crawlcove-xml-sitemap-validator` | `https://github.com/CrawlCove/crawlcove-sitemap-validator` | `8aeca12b` | Multi-dimensional audit evidence | 2026-10-28T00:33:34.434Z |

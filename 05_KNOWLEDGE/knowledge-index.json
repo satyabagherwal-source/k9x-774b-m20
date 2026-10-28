@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T00:26:28.758Z",
+  "last_updated": "2026-10-28T00:33:34.386Z",
   "total_verified_learnings": 1154,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -48354,8 +48354,8 @@
       "slug": "starrocks-starrocks",
       "platform": "github",
       "source_url": "https://github.com/StarRocks/starrocks",
-      "source_version": "2d15aef3",
-      "content_hash": "929c70ca02037c0eda45937f27d0ec05a35e167995a1a84146facc42b3c5c7af",
+      "source_version": "41983afe",
+      "content_hash": "6ddac598a9a2d3645af1f636c999bda1e04b30de8d85467a4c6eb6a451c32d2d",
       "dossier_path": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "promoted_rules": [
@@ -48405,7 +48405,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T11:59:51.044Z",
+      "verified_at": "2026-10-28T00:32:49.219Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -89516,8 +89516,8 @@
       "slug": "crawlcove-crawlcove-sitemap-validator",
       "platform": "github",
       "source_url": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
-      "source_version": "caa1d0b5",
-      "content_hash": "34d60cf43f1d66a8565063491323bce646be2810c4d94bf44ebdca891d81a96a",
+      "source_version": "8aeca12b",
+      "content_hash": "b62e6a50ba48954690fda691764b76d585b0684fa746aead186cc31ab78f7187",
       "dossier_path": "07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
       "promoted_rules": [
@@ -89540,6 +89540,11 @@
           "number": 4027,
           "title": "Canonical Domain Host Matching under www-Apex Symmetry",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5071,
+          "title": "docs: link seo-chrome-extension from Related tools",
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -89547,7 +89552,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T03:52:50.888Z",
+      "verified_at": "2026-10-28T00:33:34.375Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -139741,14 +139746,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 5071,
       "title": "docs: link seo-chrome-extension from Related tools",
-      "source_url": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
-      "source_version": "0d91d23a",
+      "source_url": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
+      "source_version": "8aeca12b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-28T00:26:18.862Z"
+      "verified_at": "2026-10-28T00:33:34.375Z"
     },
     "rule-5072": {
       "learning_id": "rule-5072",

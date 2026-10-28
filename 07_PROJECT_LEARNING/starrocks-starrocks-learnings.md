@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source**: github ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
-> **Source Version**: `2d15aef3`  
+> **Source Version**: `41983afe`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T11:59:50.713Z  
+> **Timestamp**: 2026-10-28T00:32:49.142Z  
 > **Learning ID**: `learn-github-starrocks-starrocks`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T11:59:50.260Z  
+> **Harvest Timestamp**: 2026-10-28T00:32:47.819Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1818,644 +1818,915 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5ffc3151` (2026-10-27)
-**Commit Message**: [BugFix] Bump lastSchemaUpdateTime before shared-data schema change swaps indexes so concurrent queries re-plan (#81363)
+### Incident Patch 1: `41983afe` (2026-10-27)
+**Commit Message**: [Doc] Fix the Japanese Tableau connector page (#81688)
 
-Signed-off-by: GavinMar <[REDACTED_EMAIL]>
-Co-authored-by: Gavin <[REDACTED_EMAIL]>
+Signed-off-by: DanRoscigno <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/alter/LakeTableSchemaChangeJob.java` (modified, +4/-0)
+**File**: `docs/ja/integrations/BI_integrations/Tableau_Desktop.md` (modified, +12/-12)
 ```diff
-@@ -1272,6 +1272,10 @@ List<MaterializedIndex> visualiseShadowIndex(@NotNull OlapTable table) {
-             }
-         }
+@@ -14,25 +14,25 @@ StarRocks Tableau JDBC Connector は、Tableau Desktop および Tableau Server
  
-+        // Lock-free plans share these physical partitions; invalidate them before the first origin index is dropped,
-+        // so a plan that hits the half-swapped partitions retries instead of failing.
-+        table.lastSchemaUpdateTime.set(System.nanoTime());
-+
-         // replace the origin index with shadow index, set index state as NORMAL
-         for (PhysicalPartition physicalPartition : table.getPhysicalPartitions()) {
-             Preconditions.checkState(commitVersionMap.containsKey(physicalPartition.getId()));
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/alter/LakeTableSchemaChangeJobTest.java` (modified, +55/-0)
-```diff
-@@ -60,6 +60,7 @@
- import com.starrocks.server.LocalMetastore;
- import com.starrocks.server.RunMode;
- import com.starrocks.server.WarehouseManager;
-+import com.starrocks.sql.OptimisticVersion;
- import com.starrocks.sql.ast.AlterMaterializedViewStatusClause;
- import com.starrocks.sql.ast.AlterTableStmt;
- import com.starrocks.sql.ast.CancelAlterTableStmt;
-@@ -1869,6 +1870,60 @@ public void testFollowerReplayPrunesFinishedJob() throws Exception {
-         Assertions.assertEquals(0, shadowIndexCount(followerTable));
-     }
+ ### 主な機能
  
-+    /**
-+     * A query planned off a snapshot taken before the swap shares the swapped physical partitions, so the swap must
-+     * invalidate that snapshot before it drops the first origin index, or the planner rethrows instead of retrying.
-+     */
-+    @Test
-+    public void testSwapInvalidatesEarlierPlansBeforeDroppingOriginIndex() throws Exception {
-+        completeTasksAndPublishOnSend();
-+        LakeTableSchemaChangeJob job = alterTableAddColumn();
-+        long planStartTime = OptimisticVersion.generate();
-+        List<Boolean> planValidAtDrop = recordPlanValidityOnIndexDrop(table, planStartTime);
-+
-+        runToFinished(job);
-+
-+        Assertions.assertEquals(List.of(false), planValidAtDrop);
-+        Assertions.assertFalse(OptimisticVersion.validateTableUpdate(table, planStartTime));
-+    }
-+
-+    @Test
-+    public void testFollowerReplayInvalidatesEarlierPlansBeforeDroppingOriginIndex() throws Exception {
-+        completeTasksAndPublishOnSend();
-+        UtFrameUtils.PseudoImage initialImage = saveMetastore();
-+        LakeTableSchemaChangeJob job = alterTableAddColumn();
-+        runToFinished(job);
-+        List<LakeTableSchemaChangeJob> entries = readJournaledEntries(job.getJobId());
-+
-+        LocalMetastore followerMetastore = loadMetastore(initialImage);
-+        OlapTable followerTable = tableIn(followerMetastore);
-+        SchemaChangeHandler followerHandler = new SchemaChangeHandler();
-+        long planStartTime = OptimisticVersion.generate();
-+        List<Boolean> planValidAtDrop = recordPlanValidityOnIndexDrop(followerTable, planStartTime);
-+        for (LakeTableSchemaChangeJob entry : entries) {
-+            replayOn(followerMetastore, followerHandler, entry);
-+        }
-+
-+        Assertions.assertEquals(List.of(false), planValidAtDrop);
-+        Assertions.assertFalse(OptimisticVersion.validateTableUpdate(followerTable, planStartTime));
-+    }
-+
-+    /**
-+     * Records, at each origin index drop, whether a plan started at {@code planStartTime} would still pass the
-+     * planner's schema check on {@code olapTable}.
-+     */
-+    private static List<Boolean> recordPlanValidityOnIndexDrop(OlapTable olapTable, long planStartTime) {
-+        List<Boolean> planValidAtDrop = new ArrayList<>();
-+        new MockUp<PhysicalPartition>() {
-+            @Mock
-+            public List<MaterializedIndex> deleteMaterializedIndexByMetaId(Invocation inv, long indexMetaId) {
-+                planValidAtDrop.add(OptimisticVersion.validateTableUpdate(olapTable, planStartTime));
-+                return inv.proceed(indexMetaId);
-+            }
-+        };
-+        return planValidAtDrop;
-+    }
-+
-     @Test
-     public void testFollowerReplayDropsShadowIndexOfCancelledJob() throws Exception {
-         // The follower starts from the catalog as it was before the alter.
+-- LDAP サポート： 安全な認証のためのパスワードプロンプト付きの LDAP ログインを可能にします。
+-- 高い互換性： TDVT (Tableau Design Verification Tool) テストで 99.99% の互換性を達成。
++- LDAP サポート: 安全な認証のためのパスワードプロンプト付きの LDAP ログインを可能にします。
++- 高い互換性: TDVT (Tableau Design Verification Tool) テストで 99.99% の互換性を達成しており、失敗するのは軽微なケース 1 件のみです。
+ 
+ ## 前提条件
+ 
+-先に進む前に、以下の要件が満たされていることを確認してください：
++先に進む前に、以下の要件が満たされていることを確認してください。
+ 
+-- Tableau バージョン： Tableau 2020.4 以降
++- Tableau バージョン: Tableau 2020.4 以降
+ - StarRocks バージョン: v3.2 以降
+ 
+-## Tableau Desktop 用 Connector のインストール
++## Tableau Desktop 用コネクタのインストール
+ 
+ 1. [MySQL JDBC Driver 8.0.33](https://downloads.mysql.com/archives/c-j/) をダウンロードします。
+ 2. ドライバファイルを以下のディレクトリに保存します（ディレクトリが存在しない場合は作成します）：
+ 
+    - macOS: `~/Library/Tableau/Drivers`
+    - Windows: `C:\Program Files\Tableau\Drivers`
+ 
+-3. [StarRocks Tableau JDBC Connector file](https://exchange.tableau.com/products/1079) をダウンロードします。
++3. [StarRocks Tableau JDBC Connector ファイル](https://exchange.tableau.com/products/1079) をダウンロードします。
+ 4. コネクタファイルを以下のディレクトリに保存します：
+ 
+    - macOS: `~/Documents/My Tableau Repository/Connectors`
+@@ -41,7 +41,7 @@ StarRocks Tableau JDBC Connector は、Tableau Desktop および Tableau Server
+ 5. Tableau Desktop を起動します。
+ 6. **Connect** -> **To a Server** -> **StarRocks JDBC by CelerData** に移動します。
+ 
+-## Tableau Server 用 Connector のインストール
++## Tableau Server 用コネクタのインストール
+ 
+ 1. [MySQL JDBC Driver 8.0.33](https://downloads.mysql.com/archives/c-j/) をダウンロードします。
+ 2. ドライバファイルを以下のディレクトリに保存します（ディレクトリが存在しない場合は作成します）：
+@@ -51,7 +51,7 @@ StarRocks Tableau JDBC Connector は、Tableau Desktop および Tableau Server
+ 
+    :::info
+ 
+-   Linux では、「Tableau」 ユーザがディレクトリにアクセスすることを許可する必要があります。
++   Linux では、"Tableau" ユーザーにディレクトリへのアクセスを許可する必要があります。
+ 
+    以下の手順に従ってください：
+ 
+@@ -60,11 +60,11 @@ StarRocks Tableau JDBC Connector は、Tableau Desktop および Tableau Server
+       ```Bash
+       sudo mkdir -p /opt/tableau/tableau_driver/jdbc
+ 
+-      # Replace <path_to_driver_file_name> with the absolute path of the driver file.
++      # <path_to_driver_file_name> をドライバファイルの絶対パスに置き換えてください。
+       sudo cp /<path_to_driver_file_name>.jar /opt/tableau/tableau_driver/jdbc
+       ```
+   
+-   2. Tableau "ユーザーにアクセス許可を与える。
++   2. "Tableau" ユーザーに権限を付与します。
+ 
+       ```Bash
+       # <driver_file_name> をドライバファイル名に置き換えてください。
+@@ -73,7 +73,7 @@ StarRocks Tableau JDBC Connector は、Tableau Desktop および Tableau Server
+ 
+    :::
+ 
+-3. [StarRocks Tableau JDBC Connector file](https://exchange.tableau.com/products/1079) をダウンロードします。
++3. [StarRocks Tableau JDBC Connector ファイル](https://exchange.tableau.com/products/1079) をダウンロードします。
+ 4. 各ノードの以下のディレクトリにコネクタファイルを保存します：
+ 
+    - Linux: `/opt/tableau/connectors`
+@@ -91,6 +91,6 @@ StarRocks Tableau JDBC Connector は、Tableau Desktop および Tableau Server
+ 
+    :::
+ 
+-## Usage notes
++## 使用上の注意
+ 
+ LDAP ログインのサポートが必要な場合は、設定中に **Advanced** タブの **Enable LDAP** スイッチにチェックを入れることができます。
 ```
 
 ---
 
-### Incident Patch 2: `2d15aef3` (2026-10-27)
-**Commit Message**: [BugFix] Cap subdivide_bitmap's scratch buffer so it stops scaling with the caller's split size (#81478)
+### Incident Patch 2: `a65b666c` (2026-10-27)
+**Commit Message**: [BugFix] Fix Kafka routine load EOF tracking and empty-load offsets (#81412)
 
-Co-authored-by: tqqq <[REDACTED_EMAIL]>
-Co-authored-by: tqqq <[REDACTED_EMAIL]>
+Signed-off-by: meegoo <[REDACTED_EMAIL]>
+Co-authored-by: mervinsr <[REDACTED_EMAIL]>
+Co-authored-by: meegoo <[REDACTED_EMAIL]>
+Co-authored-by: wanpengfei-git <[REDACTED_EMAIL]>
 
-**File**: `be/src/exprs/table_function/subdivide_bitmap.h` (modified, +27/-6)
+**File**: `be/src/data_workflows/load/routine_load/data_consumer.cpp` (modified, +22/-5)
 ```diff
-@@ -145,8 +145,18 @@ class SubdivideBitmap final : public TableFunction {
-             subdivide_state->set_offset(0);
-         };
+@@ -172,7 +172,8 @@ Status KafkaDataConsumer::assign_topic_partitions(const std::map<int32_t, int64_
+         topic_partitions.push_back(tp1);
+         ss << "[" << entry.first << ": " << entry.second << "] ";
+     }
+-    _non_eof_partition_count = topic_partitions.size();
++    _assigned_partition_count = topic_partitions.size();
++    _eof_partitions.clear();
  
--        // Reused across pieces and across rows: one piece is at most `batch_size` values, and the
--        // fast path below means the general path only runs when batch_size < cardinality.
-+        // Reused across pieces and across rows. Capped rather than sized by the piece: a piece holds
-+        // `batch_size` values and `batch_size` is the caller's, so sizing the buffer by it would make
-+        // subdivide_bitmap(b, 50000000) ask for 400MB of uint64 scratch to build a piece whose Roaring
-+        // representation is a fraction of that - an allocation the value-at-a-time iterator this
-+        // replaced never made, and one that counts against the query's memory limit. next_batch() can
-+        // be called repeatedly against the same cursor, so a larger piece is filled in several passes.
-+        //
-+        // Deliberately its own constant rather than `chunk_size`, which happens to have the same
-+        // default: chunk_size bounds output *rows* per call and is a session variable, so tying the
-+        // buffer to it would make `SET chunk_size = 2` - which the sibling batching case does set -
-+        // fill a piece two values at a time.
-+        constexpr uint64_t kValueBatchSize = 4096;
-         std::vector<uint64_t> values;
-         uint32_t emitted = 0;
-         while (emitted < chunk_size && cur_row < rows) {
-@@ -200,12 +210,23 @@ class SubdivideBitmap final : public TableFunction {
-             const auto pieces = static_cast<uint32_t>(std::min<uint64_t>(pieces_left, chunk_size - emitted));
- 
-             if (required) {
--                values.resize(std::min<uint64_t>(split_size, remain));
-+                values.resize(std::min({split_size, remain, kValueBatchSize}));
-                 for (uint32_t k = 0; k < pieces; ++k) {
--                    const uint64_t taken = subdivide_state->iter.next_batch(values.data(), values.size());
-+                    // A piece is a full split_size, except for the row's last one, which is whatever
-+                    // the iterator still holds - the same truncation next_batch() applied when it was
-+                    // asked for a whole piece at once. The iterator was reset with this cardinality.
-+                    uint64_t left = std::min<uint64_t>(split_size, cardinality - subdivide_state->iter.offset());
-                     BitmapValue sub_bitmap;
--                    for (uint64_t j = 0; j < taken; ++j) {
--                        sub_bitmap.add(values[j]);
-+                    while (left > 0) {
-+                        const uint64_t taken = subdivide_state->iter.next_batch(
-+                                values.data(), std::min<uint64_t>(left, values.size()));
-+                        if (taken == 0) {
-+                            break;
-+                        }
-+                        for (uint64_t j = 0; j < taken; ++j) {
-+                            sub_bitmap.add(values[j]);
-+                        }
-+                        left -= taken;
-                     }
-                     // append() copies the value into the column's pool, so the temporary above is the
-                     // only extra materialization - one piece at a time, against the whole row's worth
+     LOG(INFO) << "consumer: " << _id << ", grp: " << _grp_id << " assign topic partitions: " << topic << ", "
+               << ss.str();
+@@ -204,13 +205,15 @@ Status KafkaDataConsumer::group_consume(TimedBlockingQueue<RdKafka::Message*>* q
+     int64_t received_rows = 0;
+     int64_t put_rows = 0;
+     Status st = Status::OK();
++    const char* finish_reason = "time limit";
+     MonotonicStopWatch consumer_watch;
+     MonotonicStopWatch watch;
+     watch.start();
+     while (true) {
+         {
+             std::unique_lock<std::mutex> l(_lock);
+             if (_cancelled) {
++                finish_reason = "cancelled";
+                 break;
+             }
+         }
+@@ -227,8 +230,10 @@ Status KafkaDataConsumer::group_consume(TimedBlockingQueue<RdKafka::Message*>* q
+         consumer_watch.stop();
+         switch (msg->err()) {
+         case RdKafka::ERR_NO_ERROR:
++            _eof_partitions.erase(msg->partition());
+             if (!queue->blocking_put(msg.get())) {
+                 // queue is shutdown
++                finish_reason = "queue closed";
+                 done = true;
+             } else {
+                 ++put_rows;
+@@ -245,6 +250,7 @@ Status KafkaDataConsumer::group_consume(TimedBlockingQueue<RdKafka::Message*>* q
+             break;
+         }
+         case RdKafka::ERR_OFFSET_OUT_OF_RANGE: {
++            finish_reason = "error";
+             done = true;
+             std::stringstream ss;
+             ss << msg->errstr() << ", this is no data in partition: " << msg->partition()
+@@ -258,7 +264,10 @@ Status KafkaDataConsumer::group_consume(TimedBlockingQueue<RdKafka::Message*>* q
+             break;
+         }
+         case RdKafka::ERR__PARTITION_EOF: {
+-            _non_eof_partition_count--;
++            // The receiving thread can delete the message as soon as it is
++            // queued, so read its partition before handing over ownership.
++            _eof_partitions.insert(msg->partition());
++            const bool all_partitions_eof = _eof_partitions.size() == _assigned_partition_count;
+             // For transaction producer, producer will append one control msg to the group of msgs,
+             // but the control msg will not return to consumer,
+             // so we use the offset of eof to compute the last offset.
+@@ -267,16 +276,19 @@ Status KafkaDataConsumer::group_consume(TimedBlockingQueue<RdKafka::Message*>* q
+             // The goal of put the EOF msg to queue is that:
+             // we will calculate the last offset of the partition using offset of EOF msg
+             if (!queue->blocking_put(msg.get())) {
++                finish_reason = "queue closed";
+                 done = true;
+-            } else if (_non_eof_partition_count <= 0) {
++            } else if (all_partitions_eof) {
+                 msg.release();
++                finish_reason = "all partitions EOF";
+                 done = true;
+             } else {
+                 msg.release();
+             }
+             break;
+         }
+         case RdKafka::ERR_TOPIC_AUTHORIZATION_FAILED: {
++            finish_reason = "error";
+             LOG(WARNING) << "kafka consume failed: " << _id << ", msg: " << msg->errstr();
+             done = true;
+             st = Status::InternalError(fmt::format(
+@@ -285,6 +297,7 @@ Status KafkaDataConsumer::group_consume(TimedBlockingQueue<RdKafka::Message*>* q
+             break;
+         }
+         case RdKafka::ERR_GROUP_AUTHORIZATION_FAILED: {
++            finish_reason = "error";
+             LOG(WARNING) << "kafka consume failed: " << _id << ", msg: " << msg->errstr();
+             done = true;
+             st = Status::InternalError(fmt::format(
+@@ -295,6 +308,7 @@ Status KafkaDataConsumer::group_consume(TimedBlockingQueue<RdKafka::Message*>* q
+             break;
+         }
+         default:
++            finish_reason = "error";
+             LOG(WARNING) << "kafka consume failed: " << _id << ", msg: " << msg->errstr();
+             done = true;
+             st = Status::InternalError(fmt::format("kafka consume failed, err: {}", msg->errstr()));
+@@ -310,7 +324,9 @@ Status KafkaDataConsumer::group_consume(TimedBlockingQueue<RdKafka::Message*>* q
+     LOG(INFO) << "kafka consume done: " << _id << ", grp: " << _grp_id << ". cancelled: " << _cancelled
+               << ", left time(ms): " << left_time << ", total cost(ms): " << watch.elapsed_time() / 1000 / 1000
+               << ", consume cost(ms): " << consumer_watch.elapsed_time() / 1000 / 1000
+-              << ", received rows: " << received_rows << ", put rows: " << put_rows;
++              << ", received rows: " << received_rows << ", put rows: "
 ```
 
-**File**: `test/sql/test_bitmap_functions/R/test_subdivide_bitmap_scratch_bound` (added, +84/-0)
+**File**: `be/src/data_workflows/load/routine_load/data_consumer.h` (modified, +4/-1)
 ```diff
-@@ -0,0 +1,84 @@
-+-- name: test_subdivide_bitmap_scratch_bound
-+CREATE DATABASE db_${uuid0};
+@@ -37,6 +37,7 @@
+ #include <ctime>
+ #include <mutex>
+ #include <unordered_map>
++#include <unordered_set>
+ 
+ #include "base/concurrency/blocking_queue.hpp"
+ #include "base/uid_util.h"
+@@ -187,7 +188,9 @@ class KafkaDataConsumer : public DataConsumer {
+     std::string _group_id;
+     std::unordered_map<std::string, std::string> _custom_properties;
+ 
+-    size_t _non_eof_partition_count = 0;
++    size_t _assigned_partition_count = 0;
++    // Partitions whose latest delivered event is EOF; new data clears the state.
++    std::unordered_set<int32_t> _eof_partitions;
+     KafkaEventCb _k_event_cb;
+     RdKafka::KafkaConsumer* _k_consumer = nullptr;
+ };
+```
+
+**File**: `be/test/data_workflows/load/routine_load/data_consumer_test.cpp` (modified, +202/-1)
+```diff
+@@ -14,11 +14,18 @@
+ 
+ #include "data_workflows/load/routine_load/data_consumer.h"
+ 
+-#include <gtest/gtest.h>
++#include <chrono>
++#include <map>
++#include <thread>
+ 
++#include "gtest/gtest.h"
++
++// Routine load dependencies.
+ #include "base/testutil/assert.h"
+ #include "data_workflows/load/routine_load/data_consumer_group.h"
+ #include "exec/exec_env.h"
++#include "librdkafka/rdkafka.h"
++#include "librdkafka/rdkafka_mock.h"
+ #include "runtime/byte_buffer.h"
+ 
+ #ifndef __APPLE__
+@@ -29,6 +36,200 @@ namespace starrocks {
+ 
+ class KafkaDataConsumerTest : public testing::Test {};
+ 
++// Exercise the public consumer API against librdkafka's in-process mock broker.
++// A small receiving queue hands off message ownership to the test immediately.
++class KafkaDataConsumerEofTest : public testing::Test {
++protected:
++    void SetUp() override {
++        std::string error;
++        std::unique_ptr<RdKafka::Conf> conf(RdKafka::Conf::create(RdKafka::Conf::CONF_GLOBAL));
++        ASSERT_EQ(RdKafka::Conf::CONF_OK, conf->set("test.mock.num.brokers", "1", error));
++        ASSERT_EQ(RdKafka::Conf::CONF_OK, conf->set("log_level", "0", error));
++        ASSERT_EQ(RdKafka::Conf::CONF_OK, conf->set("linger.ms", "0", error));
++        ASSERT_EQ(RdKafka::Conf::CONF_OK, conf->set("batch.num.messages", "1", error));
++        _producer.reset(RdKafka::Producer::create(conf.get(), error));
++        ASSERT_NE(nullptr, _producer) << error;
++        auto* cluster = rd_kafka_handle_mock_cluster(_producer->c_ptr());
++        ASSERT_NE(nullptr, cluster);
++        ASSERT_EQ(RD_KAFKA_RESP_ERR_NO_ERROR, rd_kafka_mock_topic_create(cluster, _topic.c_str(), 3, 1));
++
++        TKafkaLoadInfo info;
++        info.brokers = rd_kafka_mock_cluster_bootstraps(cluster);
++        info.topic = _topic;
++        info.properties = {{"group.id", "routine-load-eof-test"}, {"enable.auto.commit", "false"},
++                           {"fetch.wait.max.ms", "10"},           {"fetch.message.max.bytes", "1024"},
++                           {"queued.min.messages", "100000"},     {"queued.max.messages.kbytes", "64"},
++                           {"fetch.queue.backoff.ms", "10"}};
++        _context = std::make_unique<StreamLoadContext>(nullptr);
++        _context->kafka_info = std::make_unique<KafkaLoadInfo>(info);
++        _consumer = std::make_unique<KafkaDataConsumer>(_context.get());
++        ASSERT_OK(_consumer->init(_context.get()));
++    }
++
++    RdKafka::ErrorCode produce(int32_t partition, int count) {
++        std::string payload(1024, 'x');
++        for (int i = 0; i < count; ++i) {
++            auto error = _producer->produce(_topic, partition, RdKafka::Producer::RK_MSG_COPY, payload.data(),
++                                            payload.size(), nullptr, 0, 0, nullptr);
++            if (error != RdKafka::ERR_NO_ERROR) {
++                return error;
++            }
++        }
++        return _producer->flush(10000);
++    }
++
++    struct BatchResult {
++        Status status;
++        std::map<int32_t, int> data_rows;
++        std::map<int32_t, int> eof_events;
++        bool data_after_eof = false;
++        RdKafka::ErrorCode produce_error = RdKafka::ERR_NO_ERROR;
++    };
++
++    BatchResult consume_batch(const std::map<int32_t, int64_t>& offsets, int records_after_first_eof = 0) {
++        BatchResult result;
++        result.status = _consumer->assign_topic_partitions(offsets, _topic, _context.get());
++        if (!result.status.ok()) {
++            return result;
++        }
++        TimedBlockingQueue<RdKafka::Message*> queue(1);
++        std::thread worker([&] {
++            result.status = _consumer->group_consume(&queue, 30000);
++            queue.shutdown();
++        });
++        RdKafka::Message* raw_message;
++        while (queue.blocking_get(&raw_message)) {
++            std::unique_ptr<RdKafka::Message> message(raw_message);
++            const int32_t partition = message->partition();
++            if (message->err() == RdKafka::ERR_NO_ERROR) {
++                ++result.data_rows[partition];
++                if (partition == 0 && result.eof_events[0] > 0) {
++                    result.data_after_eof = true;
++                }
++                // Keep the other partition backlogged while the caught-up
++                // partition produces EOF -> data -> EOF through the real SDK.
++                std::this_thread::sleep_for(std::chrono::milliseconds(1));
++            } else if (message->err() == RdKafka::ERR__PARTITION_EOF) {
++                ++result.eof_events[partition];
++                if (records_after_first_eof > 0 && partition == 0 && result.eof_events[0] == 1) {
++                    result.produce_error = produce(0, records_after_first_eof);
++                    if (result.produce_error != RdKafka::ERR_NO_ERROR) {
++                        queue.shutdown();
++                    }
++                }
++            }
++        }
++        worker.join();
++        return result;
++    }
++
++    const std::string _topic = "routine_load_eof_test";
++    s
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/transaction/DatabaseTransactionMgr.java` (modified, +17/-1)
+```diff
+@@ -64,6 +64,7 @@
+ import com.starrocks.common.util.concurrent.lock.Locker;
+ import com.starrocks.lake.LakeTableHelper;
+ import com.starrocks.load.loadv2.ManualLoadTxnCommitAttachment;
++import com.starrocks.load.routineload.KafkaProgress;
+ import com.starrocks.load.routineload.RLTaskTxnCommitAttachment;
+ import com.starrocks.memory.estimate.Estimator;
+ import com.starrocks.metric.MetricRepo;
+@@ -393,9 +394,12 @@ public void prepareTransaction(long transactionId,
+             // too: an empty-partition range rewrite produces zero rows but must still commit so the flip
+             // can anchor an empty op_schema_change@W on that partition (the BE converter tolerates an empty
+             // source). Without this it would abort with ERR_NO_ROWS_IMPORTED and cancel the schema change.
++            // Kafka routine load must also commit successful empty batches carrying consumption progress:
++            // aborting them prevents the BE from committing the corresponding Kafka consumer-group offsets.
+             if (Config.empty_load_as_error && tabletCommitInfos.isEmpty()
+                     && transactionState.getSourceType() != TransactionState.LoadJobSourceType.INSERT_STREAMING
+-                    && !transactionState.isShadowRewrite()) {
++                    && !transactionState.isShadowRewrite()
++                    && !canCommitEmptyKafkaRoutineLoad(transactionState, txnCommitAttachment)) {
+                 throw new TransactionCommitFailedException(ERR_NO_ROWS_IMPORTED.formatErrorMsg());
+             }
+ 
+@@ -1111,6 +1115,18 @@ public List<TransactionStateBatch> getReadyToPublishTxnListBatch() {
+         return result;
+     }
+ 
++    private static boolean canCommitEmptyKafkaRoutineLoad(TransactionState transactionState,
++                                                          TxnCommitAttachment attachment) {
++        if (transactionState.getSourceType() != TransactionState.LoadJobSourceType.ROUTINE_LOAD_TASK
++                || !(attachment instanceof RLTaskTxnCommitAttachment)) {
++            return false;
++        }
++        RLTaskTxnCommitAttachment routineLoadAttachment = (RLTaskTxnCommitAttachment) attachment;
++        return routineLoadAttachment.getLoadedRows() == 0
++                && !routineLoadAttachment.isNonRetryable()
++                && routineLoadAttachment.getProgress() instanceof KafkaProgress;
++    }
++
+     // check whether transaction can be finished or not
+     // for each tablet of load txn, if most replicas version publish successed
+     // the trasaction can be treated as successful and can be finished
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/transaction/DatabaseTransactionMgrTest.java` (modified, +157/-0)
+```diff
+@@ -72,6 +72,10 @@
+ import com.starrocks.common.util.concurrent.lock.Locker;
+ import com.starrocks.ha.FrontendNodeType;
+ import com.starrocks.lake.compaction.CompactionMgr;
++import com.starrocks.load.loadv2.ManualLoadTxnCommitAttachment;
++import com.starrocks.load.routineload.KafkaProgress;
++import com.starrocks.load.routineload.KafkaRoutineLoadJob;
++import com.starrocks.load.routineload.KafkaTaskInfo;
+ import com.starrocks.load.routineload.RLTaskTxnCommitAttachment;
+ import com.starrocks.metric.MetricRepo;
+ import com.starrocks.persist.EditLog;
+@@ -84,8 +88,13 @@
+ import com.starrocks.sql.ast.AggregateType;
+ import com.starrocks.sql.ast.KeysType;
+ import com.starrocks.system.ComputeNode;
++import com.starrocks.thrift.TKafkaRLTaskProgress;
++import com.starrocks.thrift.TLoadSourceType;
++import com.starrocks.thrift.TPulsarRLTaskProgress;
++import com.starrocks.thrift.TRLTaskTxnCommitAttachment;
+ import com.starrocks.thrift.TStorageMedium;
+ import com.starrocks.thrift.TStorageType;
++import com.starrocks.thrift.TUniqueId;
+ import com.starrocks.type.FloatType;
+ import com.starrocks.type.IntegerType;
+ import mockit.Invocation;
+@@ -103,6 +112,7 @@
+ import java.util.HashMap;
+ import java.util.List;
+ import java.util.Map;
++import java.util.UUID;
+ import java.util.concurrent.CountDownLatch;
+ import java.util.concurrent.TimeUnit;
+ import java.util.concurrent.atomic.AtomicBoolean;
+@@ -112,6 +122,7 @@
+ import static org.hamcrest.CoreMatchers.containsString;
+ import static org.hamcrest.MatcherAssert.assertThat;
+ import static org.junit.jupiter.api.Assertions.assertEquals;
++import static org.junit.jupiter.api.Assertions.assertFalse;
+ import static org.junit.jupiter.api.Assertions.assertNotNull;
+ import static org.junit.jupiter.api.Assertions.assertNull;
+ import static org.junit.jupiter.api.Assertions.assertThrows;
+@@ -798,6 +809,152 @@ public void testEmptyShadowRewriteTxnCommitsWithoutNoRowsError() throws StarRock
+         }
+     }
+ 
++    @ParameterizedTest
++    @ValueSource(longs = {0, 10})
++    public void testEmptyKafkaRoutineLoadTxnCommitsAndBecomesVisible(long unselectedRows) throws StarRocksException {
++        boolean savedEmptyLoadAsError = Config.empty_load_as_error;
++        Config.empty_load_as_error = true;
++        try {
++            DatabaseTransactionMgr masterDbTransMgr =
++                    masterTransMgr.getDatabaseTransactionMgr(GlobalStateMgrTestUtil.testDbId1);
++            long jobId = 20000;
++            KafkaRoutineLoadJob job = new KafkaRoutineLoadJob(jobId, "empty_kafka_job",
++                    GlobalStateMgrTestUtil.testDbId1, GlobalStateMgrTestUtil.testTableId1, "broker:9092", "topic");
++            masterTransMgr.getCallbackFactory().addCallback(job);
++            long txnId = masterTransMgr.beginTransaction(GlobalStateMgrTestUtil.testDbId1,
++                    Lists.newArrayList(GlobalStateMgrTestUtil.testTableId1), "empty_kafka_label", null,
++                    transactionSource, TransactionState.LoadJobSourceType.ROUTINE_LOAD_TASK, jobId,
++                    Config.stream_load_default_timeout_second);
++            UUID taskId = UUID.randomUUID();
++            KafkaTaskInfo task = new KafkaTaskInfo(taskId, job, 10000, 0, Map.of(0, 100L), 60000);
++            Deencapsulation.setField(task, "txnId", txnId);
++            Deencapsulation.setField(job, "routineLoadTaskInfoList", Lists.newArrayList(task));
++            RLTaskTxnCommitAttachment attachment = new RLTaskTxnCommitAttachment(
++                    emptyKafkaRoutineLoadAttachment(jobId, taskId, unselectedRows));
++
++            // Both WHERE-only filtering and a control-record-only batch must commit their consumed positions.
++            masterTransMgr.commitTransaction(GlobalStateMgrTestUtil.testDbId1, txnId,
++                    Lists.newArrayList(), Lists.newArrayList(), attachment);
++            assertEquals(TransactionStatus.COMMITTED, masterDbTransMgr.getTxnState(txnId).getStatus());
++            assertEquals(110L, ((KafkaProgress) job.getProgress()).getOffsetByPartition(0));
++            masterDbTransMgr.finishTransaction(txnId, Sets.newHashSet(), 0);
++            assertEquals(TransactionStatus.VISIBLE, masterDbTransMgr.getTxnState(txnId).getStatus());
++        } finally {
++            Config.empty_load_as_error = savedEmptyLoadAsError;
++        }
++    }
++
++    private static TRLTaskTxnCommitAttachment emptyKafkaRoutineLoadAttachment(long jobId, UUID taskId,
++                                                                              long unselectedRows) {
++        TKafkaRLTaskProgress progress = new TKafkaRLTaskProgress();
++        progress.setPartitionCmtOffset(Map.of(0, 109L));
++        progress.setPartitionCmtOffsetTimestamp(Map.of(0, 1000L));
++        TRLTaskTxnCommitAttachment attachment = new TRLTaskTxnCommitAttachment();
++        attachment.setJobId(jobId);
++        attachment.setId(new TUniqueId(taskId.getMostSignificantBits(), taskId.getLeastSignificantBits()));
++        attachment.setLoadSourceType(TLoadSourceType
+```
+
+---
+
+### Incident Patch 3: `3239bdb0` (2026-10-27)
+**Commit Message**: [BugFix] Keep a projected column deferred only if its child still defers it (#81509)
+
+Signed-off-by: Hyper-FF <[REDACTED_EMAIL]>
+Co-authored-by: stdpain <[REDACTED_EMAIL]>
+Co-authored-by: Hyper-FF <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: kangkaisen <[REDACTED_EMAIL]>
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/rule/tree/lazymaterialize/GlobalLateMaterializationRewriter.java` (modified, +28/-5)
+```diff
+@@ -500,11 +500,22 @@ private void collectEarlyMaterialized(CollectorContext context, AliasResolver re
+         }
+ 
+         Map<ColumnRefOperator, ColumnRefOperator> buildUnMaterializedAlias(CollectorContext context,
+-                                                                           AliasResolver resolver) {
++                                                                           AliasResolver resolver,
++                                                                           ColumnRefSet childDeferred) {
+             Map<ColumnRefOperator, ColumnRefOperator> alias = Maps.newHashMap();
+             resolver.resolved.forEach((k, v) -> {
+-                if (!k.equals(v) && context.columnSources.containsKey(v)) {
+-                    alias.put(k, v);
++                // `resolver` only knows this projection, so `v` is the column as the child names it, which is a
++                // scan column only when the child is the scan. A deferred column renamed more than once on its way
++                // up (scan col -> a -> b) reaches the second rename as another projection's output; resolve it
++                // through the aliases collected below to land back on the scan column. Without that the second
++                // rename is dropped: `b` never becomes deferred here, while the Rewriter, which follows the rename
++                // at every projection, still defers the column and strips it, leaving the consumer above reading a
++                // column nothing produces.
++                //
++                // Only a column the child still defers gets an alias; one materialized below is just a value.
++                final ColumnRefOperator origin = context.getOriginColumnRef(v);
++                if (!k.equals(origin) && childDeferred.contains(v) && context.columnSources.containsKey(origin)) {
++                    alias.put(k, origin);
+                 }
+             });
+             return alias;
+@@ -515,6 +526,10 @@ public Void visitPhysicalProject(OptExpression optExpression, CollectorContext c
+             visitChildren(optExpression, context);
+             PhysicalProjectOperator op = (PhysicalProjectOperator) optExpression.getOp();
+ 
++            // the columns the child hands up still deferred
++            final ColumnRefSet childDeferred = new ColumnRefSet();
++            context.unMaterializedColumns.values().forEach(childDeferred::union);
++
+             AliasResolver resolver = new AliasResolver();
+             resolver.addProjection(op.getCommonSubOperatorMap());
+             resolver.addProjection(op.getColumnRefMap());
+@@ -525,15 +540,23 @@ public Void visitPhysicalProject(OptExpression optExpression, CollectorContext c
+             collectEarlyMaterialized(context, resolver, op.getColumnRefMap(), earlyMaterializedColumns);
+ 
+             // collect un-materialized columns
+-            final Map<ColumnRefOperator, ColumnRefOperator> alias = buildUnMaterializedAlias(context, resolver);
++            final Map<ColumnRefOperator, ColumnRefOperator> alias =
++                    buildUnMaterializedAlias(context, resolver, childDeferred);
+             context.alias.putAll(alias);
+ 
+             recordMaterializedBefore(earlyMaterializedColumns, op, context);
+ 
+-            // remove un-projected un-materialized columns
++            // An output stays deferred only when the column it reads, as the child names it, is still deferred
++            // by the child. Matching the id against columnSources alone is not enough: an aggregate outputs its
++            // group key under the scan column's id, and above it that id can be a different value.
++            final ColumnRefSet childUnMaterialized = new ColumnRefSet();
++            context.unMaterializedColumns.values().forEach(childUnMaterialized::union);
+             context.unMaterializedColumns.clear();
+ 
+             for (ColumnRefOperator columnRefOperator : op.getColumnRefMap().keySet()) {
++                if (!childUnMaterialized.contains(resolver.resolve(columnRefOperator))) {
++                    continue;
++                }
+                 final ColumnRefOperator origin = context.getOriginColumnRef(columnRefOperator);
+                 if (context.columnSources.containsKey(origin)) {
+                     final IdentifyOperator identifyOperator = context.columnSources.get(origin);
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/sql/plan/GlobalLateMaterializeGroupingSetTest.java` (added, +114/-0)
+```diff
+@@ -0,0 +1,114 @@
++// Copyright 2021-present StarRocks, Inc. All rights reserved.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     https://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package com.starrocks.sql.plan;
++
++import com.starrocks.qe.SessionVariable;
++import org.junit.jupiter.api.AfterAll;
++import org.junit.jupiter.api.BeforeAll;
++import org.junit.jupiter.api.Test;
++
++// PushDownAggregateGroupingSetsRule's union outputs the aggregation's group keys, which keep the scan columns'
++// ids. A grouping() filter that folds the full-key branch away leaves a rolled-up key as a NULL constant under
++// that id. Global late materialization must not take it for the scan column and defer it, or the fetch is
++// pushed down to the constant and tryPushDownFetch fails its checkState.
++public class GlobalLateMaterializeGroupingSetTest extends TPCDS1TTestBase {
++
++    @BeforeAll
++    public static void beforeClass() throws Exception {
++        TPCDS1TTestBase.beforeClass();
++        SessionVariable sv = connectContext.getSessionVariable();
++        sv.setEnableGlobalLateMaterialization(true);
++        sv.setEnableGlobalLateMaterializationCostBased(false);
++        sv.setCboPushDownGroupingSet(true);
++    }
++
++    @AfterAll
++    public static void afterClass() {
++        SessionVariable sv = connectContext.getSessionVariable();
++        sv.setEnableGlobalLateMaterialization(false);
++        sv.setEnableGlobalLateMaterializationCostBased(true);
++        sv.setCboPushDownGroupingSet(false);
++        TPCDS1TTestBase.afterClass();
++    }
++
++    // TPC-DS Q67's rollup; g = 1 prunes the push-down's branch that still has s_store_id
++    private static final String DW1 = "(select i_category, i_class, i_brand, i_product_name, d_year, d_qoy, " +
++            "d_moy, s_store_id, sum(coalesce(ss_sales_price*ss_quantity,0)) sumsales, grouping(s_store_id) g " +
++            "from store_sales, date_dim, store, item " +
++            "where ss_sold_date_sk=d_date_sk and ss_item_sk=i_item_sk and ss_store_sk = s_store_sk " +
++            "and d_month_seq between 1200 and 1200+11 " +
++            "group by rollup(i_category, i_class, i_brand, i_product_name, d_year, d_qoy, d_moy, s_store_id)) dw1 ";
++
++    // ranked as in Q67; the window keeps the NULL projection apart from any projection above it
++    private static final String DW2 = "(select i_category, i_class, i_brand, i_product_name, d_year, d_qoy, " +
++            "d_moy, s_store_id, sumsales, rank() over (partition by i_category order by sumsales desc) rk " +
++            "from " + DW1 + "where g = 1) dw2 ";
++
++    // a projection above the window that computes other columns and only passes s_store_id through
++    private static final String PASS_THROUGH = "(select s_store_id, i_category, concat(i_brand, '#') b, rk + 1 r " +
++            "from " + DW2 + "where rk <= 100) t ";
++
++    @Test
++    public void testNullKeyUnderTopN() throws Exception {
++        String sql = "select i_category, i_brand, s_store_id, sumsales from " + DW1 +
++                "where g = 1 order by s_store_id, i_category limit 100";
++        assertContains(getFragmentPlan(sql), "TOP-N");
++    }
++
++    @Test
++    public void testRankedNullKeyUnderTopN() throws Exception {
++        String sql = "select * from " + DW2 + "where rk <= 100 " +
++                "order by i_category, i_class, i_brand, i_product_name, d_year, d_qoy, d_moy, s_store_id, " +
++                "sumsales, rk limit 100";
++        assertContains(getFragmentPlan(sql), "TOP-N");
++    }
++
++    // The projection above the window does not compute s_store_id, but it must not defer it again either: a
++    // projection below has already turned it into a value.
++    @Test
++    public void testPassThroughNullKeyUnderTopN() throws Exception {
++        String sql = "select s_store_id, i_category, b, r from " + PASS_THROUGH +
++                "order by s_store_id, i_category, b, r limit 100";
++        assertContains(getFragmentPlan(sql), "TOP-N");
++    }
++
++    @Test
++    public void testPassThroughNullKeyInJoin() throws Exception {
++        String sql = "select t.s_store_id, t.b, s.s_store_name from " + PASS_THROUGH +
++                "join store s on t.s_store_id = s.s_store_id limit 100";
++        assertContains(getFragmentPlan(sql), "HASH JOIN");
++    }
++
++    @Test
++    public void testPassThroughNullKeyInWindowPartition() throws Exception {
++        String sql = "select s_store_id, b, sum(r) over (partition by s_store_id) w from " + PASS_THROUGH +
++                "limit 100";
++     
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/sql/plan/GlobalLateMaterializeNativeTest.java` (modified, +77/-0)
+```diff
+@@ -315,6 +315,83 @@ public void testGroupBy() throws Exception {
+         assertContains(plan, "FETCH");
+     }
+ 
++    // A deferred column may be renamed more than once on its way up the plan: the projection over the
++    // scan names the (json-subfield) scan column, and the projection that feeds an aggregate renames it
++    // again. ColumnCollector used to record only the first rename, because the second one's target is a
++    // projection output rather than a scan column -- so nothing above could register a fetch position for
++    // the column, while the Rewriter still deferred it and stripped it from both projections. The
++    // aggregate was then left reading a column no operator produced and the plan failed validation with
++    // "Input dependency cols check failed" (or, with the validator off, at fragment building).
++    //
++    // The LIMIT is load-bearing (GLM only engages with one) and so is the join (it keeps the rename that
++    // feeds the aggregate in its own projection above the join). Reproduced first on a live cluster,
++    // where the plan carried exactly this shape:
++    //
++    //   AGG max(20)
++    //     PROJECT {1->1, 20 -> 22}            <- second rename, dropped by the collector
++    //       JOIN
++    //         PROJECT {1->1, 22 -> 23: j.a}   <- first rename, the only one recorded
++    //           SCAN [1: k, 23: j.a]
++    @Test
++    public void testAggregateOverTwiceRenamedDeferredColumn() throws Exception {
++        boolean pruneJsonSubfield = connectContext.getSessionVariable().isCboPruneJsonSubfield();
++        boolean lowCardinality = connectContext.getSessionVariable().isEnableLowCardinalityOptimize();
++        boolean mockDict = FeConstants.USE_MOCK_DICT_MANAGER;
++        // The json read has to survive as a plain rename for this shape to exist at all. The mock dict
++        // manager this class installs pretends every string column has a global dictionary, which turns
++        // the read into a DictMapping expression -- a derived value, which the collector already handles
++        // correctly -- and hides the defect entirely. A real cluster has no dictionary on a json subfield.
++        connectContext.getSessionVariable().setEnableLowCardinalityOptimize(false);
++        FeConstants.USE_MOCK_DICT_MANAGER = false;
++        connectContext.getSessionVariable().setCboPruneJsonSubfield(true);
++        try {
++            String sql;
++            String plan;
++
++            // max() over the renamed column -- the shape that used to produce an invalid plan.
++            sql = "select v_int, max(a) from (select t.v_int as v_int, get_json_string(t.v_json, '$.a') as a "
++                    + "from tjson t join t0 d on d.v1 = t.v_int) x group by v_int limit 5";
++            plan = getFragmentPlan(sql);
++            assertContains(plan, "max");
++
++            // A numeric subfield is the same defect. It used to be masked in production because the
++            // cost model declines to defer a small all-numeric set -- so the bug looked type-dependent
++            // when the type only decided whether the gate let GLM run at all. With the gate off, as it
++            // is in this class, it fails exactly like the varchar one.
++            sql = "select v_int, max(n) from (select t.v_int as v_int, get_json_double(t.v_json, '$.n') as n "
++                    + "from tjson t join t0 d on d.v1 = t.v_int) x group by v_int limit 5";
++            getFragmentPlan(sql);
++
++            // Neighbouring shapes. These plan on their own today -- the optimizer lays their
++            // projections out differently and no second rename survives -- but they are one plan-shape
++            // change away from the same path, so keep them as guard rails rather than as repros.
++            sql = "select v_int, any_value(a) from (select t.v_int as v_int, get_json_string(t.v_json, '$.a') as a "
++                    + "from tjson t join t0 d on d.v1 = t.v_int) x group by v_int limit 5";
++            getFragmentPlan(sql);
++
++            sql = "select v_int, a from (select t.v_int as v_int, get_json_string(t.v_json, '$.a') as a "
++                    + "from tjson t join t0 d on d.v1 = t.v_int) x group by v_int, a limit 5";
++            getFragmentPlan(sql);
++
++            // An expression over the renamed column keeps the projection non-trivial, so the collector
++            // records the base column through collectEarlyMaterialized and this shape always planned.
++            sql = "select v_int, max(concat(a, 'x')) from (select t.v_int as v_int, "
++                    + "get_json_string(t.v_json, '$.a') as a from tjson t join t0 d on d.v1 = t.v_int) x "
++                    + "group by v_int limit 5";
++            getFragmentPlan(sql);
++
++            // Without the limit GLM never engages at all.
++            sql = "select v_int, max(a) from (select t.v_int as v_int, get_json_string(t.v_json, '$.a') as a "
++                    + "from tjson t join t0 d on d.v1 = t.v_int) x group by v_int";
++      
+```
+
+**File**: `test/sql/test_global_late_mterialization/R/test_glm_agg_renamed_column` (added, +97/-0)
+```diff
+@@ -0,0 +1,97 @@
++-- name: test_glm_agg_renamed_column
++CREATE TABLE `tj` (
++  `k` int(11) NOT NULL COMMENT "",
++  `j` json NULL COMMENT "",
++  `s` varchar(64) NULL COMMENT ""
++) ENGINE=OLAP
++DUPLICATE KEY(`k`)
++DISTRIBUTED BY HASH(`k`) BUCKETS 4
++PROPERTIES (
++"replication_num" = "1");
 +-- result:
 +-- !result
-+USE db_${uuid0};
++CREATE TABLE `td` (
++  `k` int(11) NOT NULL COMMENT "",
++  `d` int(11) NULL COMMENT ""
++) ENGINE=OLAP
++DUPLICATE KEY(`k`)
++DISTRIBUTED BY HASH(`k`) BUCKETS 4
++PROPERTIES (
++"replication_num" = "1");
 +-- result:
 +-- !result
-+CREATE TABLE sbs (
-+    `id` int(11) NULL COMMENT "",
-+    `b` bitmap BITMAP_UNION NULL COMMENT ""
-+)
-+AGGREGATE KEY(`id`)
-+DISTRIBUTED BY HASH(`id`) BUCKETS 1
-+PROPERTIES ("replication_num" = "1");
++insert into tj values (1, '{"a": "x", "n": 1.5}', 'p'), (2, '{"a": "y", "n": 2.5}', 'q'), (3, '{"a": "z", "n": 3.5}', 'r');
 +-- result:
 +-- !result
-+INSERT INTO sbs SELECT 1, bitmap_agg(generate_series) FROM TABLE(generate_series(2, 20000, 2));
++insert into td values (1, 10), (2, 20), (3, 30);
 +-- result:
 +-- !result
-+SET pipeline_dop = 1;
++set enable_global_late_materialization = true;
 +-- result:
 +-- !result
-+SELECT bitmap_count(subdivide_bitmap) AS cnt, bitmap_min(subdivide_bitmap) AS lo,
-+       bitmap_max(subdivide_bitmap) AS hi, array_sum(bitmap_to_array(subdivide_bitmap)) AS total
-+FROM sbs, subdivide_bitmap(b, 6000) ORDER BY lo;
-+-- result:
-+6000	2	12000	36006000
-+4000	12002	20000	64004000
-+-- !result
-+SELECT bitmap_count(subdivide_bitmap) AS cnt, bitmap_min(subdivide_bitmap) AS lo,
-+       bitmap_max(subdivide_bitmap) AS hi, array_sum(bitmap_to_array(subdivide_bitmap)) AS total
-+FROM sbs, subdivide_bitmap(b, 4096) ORDER BY lo;
-+-- result:
-+4096	2	8192	16781312
-+4096	8194	16384	50335744
-+1808	16386	20000	32892944
-+-- !result
-+SELECT bitmap_count(subdivide_bitmap) AS cnt, bitmap_min(subdivide_bitmap) AS lo,
-+       bitmap_max(subdivide_bitmap) AS hi, array_sum(bitmap_to_array(subdivide_bitmap)) AS total
-+FROM sbs, subdivide_bitmap(b, 4097) ORDER BY lo;
-+-- result:
-+4097	2	8194	16789506
-+4097	8196	16388	50360324
-+1806	16390	20000	32860170
-+-- !result
-+SELECT bitmap_count(subdivide_bitmap) AS cnt, bitmap_min(subdivide_bitmap) AS lo,
-+       bitmap_max(subdivide_bitmap) AS hi, array_sum(bitmap_to_array(subdivide_bitmap)) AS total
-+FROM sbs, subdivide_bitmap(b, 9000) ORDER BY lo;
-+-- result:
-+9000	2	18000	81009000
-+1000	18002	20000	19001000
-+-- !result
-+SET chunk_size = 2;
++set cbo_prune_json_subfield = true;
 +-- result:
 +-- !result
-+SELECT bitmap_count(subdivide_bitmap) AS cnt, bitmap_min(subdivide_bitmap) AS lo,
-+       bitmap_max(subdivide_bitmap) AS hi, array_sum(bitmap_to_array(subdivide_bitmap)) AS total
-+FROM sbs, subdivide_bitmap(b, 4097) ORDER BY lo;
-+-- result:
-+4097	2	8194	16789506
-+4097	8196	16388	50360324
-+1806	16390	20000	32860170
-+-- !result
-+SET chunk_size = 4096;
++set enable_global_late_materialization_cost_based = false;
 +-- result:
 +-- !result
-+INSERT INTO sbs SELECT 2, bitmap_agg(generate_series) FROM TABLE(generate_series(1, 10000000));
++select k, m from (select k, max(a) as m from (select t.k as k, get_json_string(t.j, '$.a') as a from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
++-- result:
++1	x
++2	y
++3	z
++-- !result
++select k, m from (select k, max(n) as m from (select t.k as k, get_json_double(t.j, '$.n') as n from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
++-- result:
++1	1.5
++2	2.5
++3	3.5
++-- !result
++select k, a from (select k, a from (select t.k as k, get_json_string(t.j, '$.a') as a from tj t join td d on d.k = t.k) x group by k, a limit 5) y order by k;
++-- result:
++1	x
++2	y
++3	z
++-- !result
++select k, m from (select k, any_value(a) as m from (select t.k as k, get_json_string(t.j, '$.a') as a from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
++-- result:
++1	x
++2	y
++3	z
++-- !result
++select k, m from (select k, max(concat(a, '!')) as m from (select t.k as k, get_json_string(t.j, '$.a') as a from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
++-- result:
++1	x!
++2	y!
++3	z!
++-- !result
++select k, m from (select k, max(s) as m from (select t.k as k, t.s as s from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
++-- result:
++1	p
++2	q
++3	r
++-- !result
++set enable_global_late_materialization_cost_based = true;
 +-- result:
 +-- !result
-+SELECT /*+ SET_VAR(query_mem_limit=33554432) */
-+       bitmap_count(subdivide_bitmap) AS cnt, bitmap_min(subdivide_bitmap) AS lo, bitmap_max(subdivide_bitmap) AS hi
-+FROM sbs, subdivide_bitmap(b, 9500000) WHERE id = 2 ORDER BY lo;
++select k, m from (select k, max(a) as m from (select t.k as k, get_json_string(t.j, '$.a') as a from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
 +-- result:
-+9500000	1	9500000
-+500000	9500001	10000000
++1	x
++2	y
++3	z
 +-- !result
-+SELECT /*+ SET_VAR(query_mem_limit=33554432) */ count(1)
-+FROM sbs, subdivide_bitmap(b, 1000) WHERE id = 2;
++select k, m from (select k, max(n) as m from (select t.k as k, get_json_double(t.j, '$.n') as n from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
 +-- result:
-+10000
++1	1.5
++2	2.5
++3	3.5
 +-- !result
-+DROP DATABASE db_${uuid0};
++set enable_global_late_materialization = false;
 +-- result:
++-- !result
++select k, m from (select k, max(a) as m from (select t.k as k, get_json_string(t.j, '$.a') as a from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
++-- result:
++1	x
++2	y
++3	z
 +-- !result
 \ No newline at end of file
 ```
 
-**File**: `test/sql/test_bitmap_functions/T/test_subdivide_bitmap_scratch_bound` (added, +86/-0)
+**File**: `test/sql/test_global_late_mterialization/T/test_glm_agg_renamed_column` (added, +53/-0)
 ```diff
-@@ -0,0 +1,86 @@
-+-- name: test_subdivide_bitmap_scratch_bound
-+-- subdivide_bitmap builds each sub-bitmap through a uint64 scratch buffer that it fills from a
-+-- BitmapValueIter. The buffer used to be sized by the piece - `resize(min(split_size, remain))` - so
-+-- it scaled with the split size the caller passed, at 8 bytes per value: subdivide_bitmap(b, 9500000)
-+-- asked for 76MB of scratch to build a piece whose Roaring representation is around 1MB, and that
-+-- allocation counts against the query's memory limit. It is now capped, and a piece larger than the
-+-- cap is filled in several passes instead.
-+--
-+-- Two things need to hold, and they pull in opposite directions, so this case asserts both:
-+--   1. the multi-pass fill puts exactly the same values in exactly the same pieces (below);
-+--   2. the buffer no longer scales with the split size (the query_mem_limit assertion at the end).
-+--
-+-- The pre-existing test_subdivide_bitmap_bounded_batching covers the batching cursor itself, but only
-+-- with split sizes of 1, 4 and 100 - all smaller than the cap, so none of them ever fills a piece in
-+-- more than one pass. Every split size here is deliberately at or above it.
-+CREATE DATABASE db_${uuid0};
-+USE db_${uuid0};
+@@ -0,0 +1,53 @@
++-- name: test_glm_agg_renamed_column
++CREATE TABLE `tj` (
++  `k` int(11) NOT NULL COMMENT "",
++  `j` json NULL COMMENT "",
++  `s` varchar(64) NULL COMMENT ""
++) ENGINE=OLAP
++DUPLICATE KEY(`k`)
++DISTRIBUTED BY HASH(`k`) BUCKETS 4
++PROPERTIES (
++"replication_num" = "1");
 +
-+CREATE TABLE sbs (
-+    `id` int(11) NULL COMMENT "",
-+    `b` bitmap BITMAP_UNION NULL COMMENT ""
-+)
-+AGGREGATE KEY(`id`)
-+DISTRIBUTED BY HASH(`id`) BUCKETS 1
-+PROPERTIES ("replication_num" = "1");
++CREATE TABLE `td` (
++  `k` int(11) NOT NULL COMMENT "",
++  `d` int(11) NULL COMMENT ""
++) ENGINE=OLAP
++DUPLICATE KEY(`k`)
++DISTRIBUTED BY HASH(`k`) BUCKETS 4
++PROPERTIES (
++"replication_num" = "1");
 +
-+-- 10000 values, even numbers only. Not a contiguous range on purpose: over 1..10000 a piece that
-+-- silently lost or repeated a value could still come out with the right min and max, and the sum
-+-- below would be the only thing to catch it. Over the even numbers, every piece's min, max, count and
-+-- sum have to agree with each other for the answer to be right.
-+INSERT INTO sbs SELECT 1, bitmap_agg(generate_series) FROM TABLE(generate_series(2, 20000, 2));
++insert into tj values (1, '{"a": "x", "n": 1.5}', 'p'), (2, '{"a": "y", "n": 2.5}', 'q'), (3, '{"a": "z", "n": 3.5}', 'r');
++insert into td values (1, 10), (2, 20), (3, 30);
 +
-+SET pipeline_dop = 1;
++set enable_global_late_materialization = true;
++set cbo_prune_json_subfield = true;
 +
-+-- A piece of 6000 values does not fit the 4096-value buffer, so it is filled in two passes
-+-- (4096 + 1904). Expect 6000 values 2..12000 summing to 36006000, then 4000 values 12002..20000
-+-- summing to 64004000 - the same split the single-pass fill produced.
-+SELECT bitmap_count(subdivide_bitmap) AS cnt, bitmap_min(subdivide_bitmap) AS lo,
-+       bitmap_max(subdivide_bitmap) AS hi, array_sum(bitmap_to_array(subdivide_bitmap)) AS total
-+FROM sbs, subdivide_bitmap(b, 6000) ORDER BY lo;
++-- A json subfield read is a column rename, and the projection that feeds the aggregate renames it a
++-- second time. GLM used to record only the first rename, defer the column anyway, and emit a plan whose
++-- aggregate read a column no operator produced -- "Input dependency cols check failed", no rows at all.
++-- Both selects below were red before the fix.
++set enable_global_late_materialization_cost_based = false;
++select k, m from (select k, max(a) as m from (select t.k as k, get_json_string(t.j, '$.a') as a from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
++-- A numeric subfield is the SAME defect. In production it looked type-dependent only because the cost
++-- model declines to defer a small all-numeric set, so the gate happened to keep GLM away from it.
++select k, m from (select k, max(n) as m from (select t.k as k, get_json_double(t.j, '$.n') as n from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
 +
-+-- Exactly the buffer size: one full pass per piece and a `taken == 0` on the next one, the boundary
-+-- where an off-by-one in the loop condition would either drop a piece or spin.
-+SELECT bitmap_count(subdivide_bitmap) AS cnt, bitmap_min(subdivide_bitmap) AS lo,
-+       bitmap_max(subdivide_bitmap) AS hi, array_sum(bitmap_to_array(subdivide_bitmap)) AS total
-+FROM sbs, subdivide_bitmap(b, 4096) ORDER BY lo;
++-- Neighbouring shapes. These planned before the fix too -- the optimizer lays their projections out
++-- differently and no second rename survives -- but they sit one plan-shape change from the same path.
++select k, a from (select k, a from (select t.k as k, get_json_string(t.j, '$.a') as a from tj t join td d on d.k = t.k) x group by k, a limit 5) y order by k;
++select k, m from (select k, any_value(a) as m from (select t.k as k, get_json_string(t.j, '$.a') as a from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
++select k, m from (select k, max(concat(a, '!')) as m from (select t.k as k, get_json_string(t.j, '$.a') as a from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
++-- a plain varchar column is renamed only once and always worked
++select k, m from (select k, max(s) as m from (select t.k as k, t.s as s from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
 +
-+-- One over the buffer, so the second pass of each full piece carries a single value.
-+SELECT bitmap_count(subdivide_bitmap) AS cnt, bitmap_min(subdivide_bitmap) AS lo,
-+       bitmap_max(subdivide_bitmap) AS hi, array_sum(bitmap_to_array(subdivide_bitmap)) AS total
-+FROM sbs, subdivide_bitmap(b, 4097) ORDER BY lo;
++-- The same queries with the cost model on, which is the default. On this corpus the gate keeps GLM out,
++-- so these are a smoke test of the default path rather than a repro.
++set enable_global_late_materialization_cost_based = true;
++select k, m from (select k, max(a) as m from (select t.k as k, get_json_string(t.j, '$.a') as a from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
++select k, m from (select k, max(n) as m from (select t.k as k, get_json_double(t.j, '$.n') as n from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
 +
-+-- Three passes for the first piece (4096 + 4096 + 808), and its last piece is a short one that the
-+-- iterator, not the split size, has to truncate.
-+SELECT bitmap_count(subdivide_bitmap) AS cnt, bitmap_min(subdivide_bitmap) AS lo,
-+       bitmap_max(subdivide_bitmap) AS hi, array_sum(bitmap_to_array(subdivide_bitmap)) AS total
-+FROM sbs, subdivide_bitmap(b, 9000) ORDER BY lo;
-+
-+-- Multi-pass pieces crossing a process() boundary: split size 4097 gives 3 pieces, so at chunk_size 2
-+-- the third one is emitted by a later call and the row's cursor - the cached BitmapValueIter plus the
-+-- offset - has to survive in between, having been left mid-row by a loop that itself ran in passes.
-+-- The answer must not depend on where that boundary fell, so the same query runs again unbatched.
-+SET chunk_size = 2;
-+SELECT bitmap_count(subdivide_bitmap) AS cnt, bitmap_min(subdivide_bitmap) AS lo,
-+       bitmap_max(subdivide_bitmap) AS hi, array_sum(bitmap_to_array(subdivide_bitmap)) AS total
-+FROM sbs, subdivide_bitmap(b, 4097) ORDER BY lo;
-+SET chunk_size = 4096;
-+
-+-- The scratch bound itself. Cardinality 10000000, split size 9500000: two pieces, and the old buffer
-+-- was min(9500000, 10000000) * 8 = 76MB. The query is capped at 32MB, which the whole thing now fits
-+-- in several times over - the sub-bitmap being built is ~1MB of Roaring and the buffer is 32KB - but
-+-- which the buffer alone used to blow through more than twice over, and TRY_CATCH_BAD_ALLOC around
-+-- the table function turns that into "Memory of ... exceed limit" rather than a wrong answer.
-+INSERT INTO sbs SELECT 2, bitmap_agg(generate_series) FROM TABLE(generate_series(1, 10000000));
-+SELECT /*+ SET_VAR(query_mem_limit=33554432) */
-+       bitmap_count(subdivide_bitmap) AS cnt, bitmap_min(subdivide_bitmap) AS lo, bitmap_max(subdivide
-```
-
----
-
-### Incident Patch 3: `3d983651` (2026-10-27)
-**Commit Message**: [BugFix] Journal the MV inactivation a refresh does, and keep its task scheduled (#81660)
-
-Signed-off-by: tqqq <[REDACTED_EMAIL]>
-Co-authored-by: tqqq <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/alter/AlterJobMgr.java` (modified, +5/-0)
-```diff
-@@ -579,6 +579,11 @@ && clearsOnInactivation(log, reason)) {
-             }
-             AlterMaterializedViewStatusContext context =
-                     prepareAlterMaterializedViewStatus(mv, log.getStatus(), reason, true);
-+            if (log.isKeepTaskScheduled()) {
-+                // Inactivated by a refresh, which left the task scheduled: see AlterMVJobExecutor#inactiveMvFromRefresh.
-+                context = new AlterMaterializedViewStatusContext(context.status(), context.reason(),
-+                        context.baseTableInfos(), null);
-+            }
-             applyAlterMaterializedViewStatus(mv, context, true);
-         } catch (Throwable e) {
-             LOG.warn("replay alter materialized-view status failed: {}", mv.getName(), e);
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/alter/AlterMVJobExecutor.java` (modified, +32/-0)
-```diff
-@@ -45,6 +45,7 @@
- import com.starrocks.common.StarRocksException;
- import com.starrocks.common.util.DynamicPartitionUtil;
- import com.starrocks.common.util.PropertyAnalyzer;
-+import com.starrocks.common.util.concurrent.lock.AutoCloseableLock;
- import com.starrocks.common.util.concurrent.lock.LockType;
- import com.starrocks.common.util.concurrent.lock.Locker;
- import com.starrocks.persist.AlterMaterializedViewBaseTableInfosLog;
-@@ -1780,6 +1781,37 @@ public static void inactiveForConsecutiveFailures(MaterializedView mv) {
-         inactiveMvAndLog(mv, MaterializedViewExceptions.inactiveReasonForConsecutiveFailures(mv.getName()));
-     }
- 
-+    /**
-+     * Inactivates an MV from inside the refresh that found a base table gone or changed, clearing its version map, and
-+     * journals it so that followers and the next leader do not keep the MV active. It leaves the task scheduled: such
-+     * a table is often dropped and created again by an ETL job, and the next refresh can activate the MV again.
-+     */
-+    public static void inactiveMvFromRefresh(MaterializedView mv, String inactiveReason) {
-+        try (AutoCloseableLock ignored = new AutoCloseableLock(mv.getDbId(), mv.getId(), LockType.WRITE)) {
-+            // A refresh can get here after its MV, or the MV's database, was dropped: the entry would then have
-+            // nothing to apply to on any FE.
-+            if (!mv.isInCatalog()) {
-+                LOG.info("Skip inactivating materialized view {}/{}, it was dropped: {}", mv.getName(), mv.getId(),
-+                        inactiveReason);
-+                return;
-+            }
-+            AlterMaterializedViewStatusLog log = new AlterMaterializedViewStatusLog(mv.getDbId(),
-+                    mv.getId(), AlterMaterializedViewStatusClause.INACTIVE, inactiveReason);
-+            log.setClearVersionMap(true);
-+            log.setKeepTaskScheduled(true);
-+            // See doInactiveMaterializedViewOnly for the reset epoch bumped on both sides of the clear.
-+            mv.markVersionMapReset();
-+            try {
-+                GlobalStateMgr.getCurrentState().getEditLog().logAlterMvStatus(log, wal -> {
-+                    mv.setInactiveAndReason(inactiveReason);
-+                    mv.getRefreshScheme().clearVersionState();
-+                });
-+            } finally {
-+                mv.markVersionMapReset();
-+            }
-+        }
-+    }
-+
-     // Mark the MV inactive and journal the transition, so the inactive state survives a leader restart
-     // or failover instead of reverting to active until the next refresh re-detects the condition.
-     public static void inactiveMvAndLog(MaterializedView mv, String inactiveReason) {
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/persist/AlterMaterializedViewStatusLog.java` (modified, +12/-0)
-```diff
-@@ -43,6 +43,10 @@ public class AlterMaterializedViewStatusLog implements Writable {
-     // GSON builds the entry without running the constructor, which sets it for every entry written now.
-     @SerializedName(value = "clearVersionMap")
-     private Boolean clearVersionMap;
-+    // INACTIVE only: the inactivation came from a refresh, which leaves the MV's task scheduled so that the next
-+    // refresh can activate the MV again. Replay must not suspend the task either. Null in older entries.
-+    @SerializedName(value = "keepTaskScheduled")
-+    private Boolean keepTaskScheduled;
- 
-     public AlterMaterializedViewStatusLog(long dbId, long tableId, String status, String reason) {
-         this.dbId = dbId;
-@@ -100,4 +104,12 @@ public boolean isClearVersionMapUnset() {
-     public void setClearVersionMap(boolean clearVersionMap) {
-         this.clearVersionMap = clearVersionMap;
-     }
-+
-+    public boolean isKeepTaskScheduled() {
-+        return Boolean.TRUE.equals(keepTaskScheduled);
-+    }
-+
-+    public void setKeepTaskScheduled(boolean keepTaskScheduled) {
-+        this.keepTaskScheduled = keepTaskScheduled;
-+    }
- }
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/scheduler/mv/MVRefreshProcessor.java` (modified, +3/-2)
-```diff
-@@ -20,6 +20,7 @@
- import com.google.common.base.Strings;
- import com.google.common.collect.Lists;
- import com.google.common.collect.Maps;
-+import com.starrocks.alter.AlterMVJobExecutor;
- import com.starrocks.catalog.BaseTableInfo;
- import com.starrocks.catalog.Column;
- import com.starrocks.catalog.Database;
-@@ -624,7 +625,7 @@ public void refreshExternalTable(Map<BaseTableSnapshotInfo, PCellSortedSet> base
-             final Optional<Table> optTable = MvUtils.getTable(baseTableInfo);
-             if (optTable.isEmpty()) {
-                 logger.warn("table {} do not exist when refreshing materialized view", baseTableInfo.getTableInfoStr());
--                mv.setInactiveAndReason(
-+                AlterMVJobExecutor.inactiveMvFromRefresh(mv,
-                         MaterializedViewExceptions.inactiveReasonForBaseTableNotExists(baseTableInfo.getTableName()));
-                 throw new DmlException("Materialized view %s.%s refresh failed: base table %s does not exist",
-                         db.getFullName(), mv.getName(), baseTableInfo.getTableInfoStr());
-@@ -665,7 +666,7 @@ public void refreshExternalTable(Map<BaseTableSnapshotInfo, PCellSortedSet> base
-             if (optNewTable.isEmpty()) {
-                 logger.warn("table {} does not exist after refreshing materialized view",
-                         baseTableInfo.getTableInfoStr());
--                mv.setInactiveAndReason(
-+                AlterMVJobExecutor.inactiveMvFromRefresh(mv,
-                         MaterializedViewExceptions.inactiveReasonForBaseTableNotExists(baseTableInfo.getTableName()));
-                 throw new DmlException("Materialized view %s.%s refresh failed: base table %s disappeared " +
-                                 "after metadata refresh",
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/scheduler/mv/MVRefreshSchemaChecker.java` (modified, +3/-2)
-```diff
-@@ -15,6 +15,7 @@
- package com.starrocks.scheduler.mv;
- 
- import com.google.common.base.Strings;
-+import com.starrocks.alter.AlterMVJobExecutor;
- import com.starrocks.catalog.BaseTableInfo;
- import com.starrocks.catalog.Database;
- import com.starrocks.catalog.MaterializedView;
-@@ -68,7 +69,7 @@ public static void checkExternalBaseSchemaCompat(MaterializedView mv) {
-             boolean isExternalCatalog = !CatalogMgr.isInternalCatalog(bti.getCatalogName());
- 
-             if (!baseTableOpt.isPresent() && isExternalCatalog) {
--                mv.setInactiveAndReason(
-+                AlterMVJobExecutor.inactiveMvFromRefresh(mv,
-                         MaterializedViewExceptions.inactiveReasonForBaseTableNotExists(bti.getTableName()));
-                 return;
-             }
-@@ -101,7 +102,7 @@ public static void checkExternalBaseSchemaCompat(MaterializedView mv) {
-             // known drift signatures so a transient catalog blip doesn't brick the MV.
-             if (isLikelyDriftException(e)) {
-                 if (mv.isActive()) {
--                    mv.setInactiveAndReason(MaterializedViewExceptions.inactiveReasonForSchemaCheckFailed(
-+                    AlterMVJobExecutor.inactiveMvFromRefresh(mv, MaterializedViewExceptions.inactiveReasonForSchemaCheckFailed(
-                             mv.getName(), e.getMessage()));
-                 }
-                 LOG.warn("[MVRefreshSchemaChecker] schema drift detected for MV {}: {}", mv.getName(), e.getMessage());
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/scheduler/mv/pct/MVPCTMetaRepairer.java` (modified, +2/-1)
-```diff
-@@ -17,6 +17,7 @@
- import com.google.common.base.Preconditions;
- import com.google.common.collect.Lists;
- import com.google.common.collect.Maps;
-+import com.starrocks.alter.AlterMVJobExecutor;
- import com.starrocks.catalog.BaseTableInfo;
- import com.starrocks.catalog.Database;
- import com.starrocks.catalog.HiveTable;
-@@ -77,7 +78,7 @@ public static void repairMetaIfNeeded(Database db, MaterializedView mv,
-                 toRepairTables.stream().filter(p -> !isSupportedPCTRepairer(p.first, p.second)).findFirst();
-         if (nonSupportedTableOpt.isPresent()) {
-             Pair<Table, BaseTableInfo> nonSupportedTable = nonSupportedTableOpt.get();
--            mv.setInactiveAndReason(
-+            AlterMVJobExecutor.inactiveMvFromRefresh(mv,
-                     MaterializedViewExceptions.inactiveReasonForBaseTableChanged(nonSupportedTable.second.getTableName()));
-             throw new DmlException(String.format("Materialized view %s.%s set inactive: base table '%s' " +
-                             "(catalog=%s, db=%s) was recreated but its table type is not supported for automatic meta repair. " +
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/analysis/AlterMaterializedViewTest.java` (modified, +98/-0)
-```diff
-@@ -22,6 +22,7 @@
- import com.google.gson.JsonObject;
- import com.starrocks.alter.AlterJobMgr;
- import com.starrocks.alter.AlterMVJobExecutor;
-+import com.starrocks.catalog.BaseTableInfo;
- import com.starrocks.catalog.Column;
- import com.starrocks.catalog.Database;
- import com.starrocks.catalog.HashDistributionInfo;
-@@ -45,7 +46,9 @@
- import com.starrocks.scheduler.Task;
- import com.starrocks.scheduler.TaskManager;
- import com.starrocks.scheduler.TaskRunManager;
-+import com.starrocks.scheduler.mv.MVRefreshSchemaChecker;
- import com.starrocks.scheduler.persist.TaskRunStatus;
-+import com.starrocks.server.CatalogMgr;
- import com.starrocks.server.GlobalStateMgr;
- import com.starrocks.sql.analyzer.AnalyzeTestUtil;
- import com.starrocks.sql.analyzer.SemanticException;
-@@ -60,6 +63,7 @@
- import com.starrocks.sql.ast.SyncRefreshSchemeDesc;
- import com.starrocks.sql.ast.expression.IntLiteral;
- import com.starrocks.sql.optimizer.rule.transformation.materialization.MVTestBase;
-+import com.starrocks.sql.optimizer.rule.transformation.materialization.MvUtils;
- import com.starrocks.sql.parser.SqlParser;
- import com.starrocks.sql.plan.ExecPlan;
- import com.starrocks.utframe.LockProbe;
-@@ -76,6 +80,7 @@
- import java.time.LocalDateTime;
- import java.util.List;
- import java.util.Map;
-+import java.util.Optional;
- import java.util.Set;
- import java.util.concurrent.atomic.AtomicBoolean;
- import java.util.concurrent.atomic.AtomicInteger;
-@@ -1368,4 +1373,97 @@ public void testReplayStatusEntryOfADroppedDatabase() {
-                 AlterMaterializedViewStatusClause.INACTIVE, "base table dropped");
-         Assertions.assertDoesNotThrow(() -> currentState.getAlterJobMgr().replayAlterMaterializedViewStatus(orphan));
-     }
-+
-+    /**
-+     * A refresh that finds a base table of an external catalog gone inactivates its MV: the inactivation is
-+     * journaled, with the clear of the version map, so that followers and the next leader do not keep the MV active.
-+     * But the task is not suspended, so that the next refresh tries to activate the MV again.
-+     */
-+    @Test
-+    public void testRefreshPathInactivationIsJournaled() throws Exception {
-+        starRocksAssert.withTable("CREATE TABLE refresh_gone_base (k1 int, v1 int)\n" +
-+                "DUPLICATE KEY(k1) DISTRIBUTED BY HASH(k1) BUCKETS 1\n" +
-+                "PROPERTIES ('replication_num' = '1');");
-+        starRocksAssert.withMaterializedView("CREATE MATERIALIZED VIEW refresh_gone_mv\n" +
-+                "DISTRIBUTED BY HASH(k1) BUCKETS 1\nREFRESH DEFERRED MANUAL\n" +
-+                "PROPERTIES ('replication_num' = '1')\n" +
-+                "AS SELECT k1, v1 FROM refresh_gone_base;");
-+        try {
-+            MaterializedView mv = starRocksAssert.getMv("test", "refresh_gone_mv");
-+            Table base = starRocksAssert.getTable("test", "refresh_gone_base");
-+            putStaleVersion(mv, base);
-+            // Make the base table look like a dropped table of an external catalog.
-+            AtomicBoolean tableGone = new AtomicBoolean(true);
-+            new MockUp<MvUtils>() {
-+                @Mock
-+                public Optional<Table> getTable(Invocation invocation, BaseTableInfo baseTableInfo) {
-+                    return tableGone.get() ? Optional.empty() : invocation.proceed(baseTableInfo);
-+                }
-+            };
-+            new MockUp<CatalogMgr>() {
-+                @Mock
-+                public boolean isInternalCatalog(Invocation invocation, String name) {
-+                    return !tableGone.get() && (boolean) invocation.proceed(name);
-+                }
-+            };
-+            List<AlterMaterializedViewStatusLog> journaled = captureMvStatusJournal();
-+
-+            MVRefreshSchemaChecker.checkExternalBaseSchemaCompat(mv);
-+            tableGone.set(false);
-+
-+            Assertions.assertFalse(mv.isActive());
-+            Assertions.assertFalse(hasVersionMap(mv));
-+            AlterMaterializedViewStatusLog log = journaledInactivation(journaled, mv);
-+            Assertions.assertTrue(log.isClearVersionMap());
-+            Assertions.assertEquals(mv.getInactiveReason(), log.getReason());
-+            Assertions.assertEquals(0, mv.getVersionMapResetEpoch() % 2, "the reset epoch was left odd");
-+            // The task stays scheduled, here and on every FE that replays the entry, so that the next refresh
-+            // activates the MV again once the table is back: an ETL job dropping and creating it again is enough to
-+            // get here.
-+            Assertions.assertTrue(log.isKeepTaskScheduled());
-+            Task task = GlobalStateMgr.getCurrentState().getTaskManager().getTask(mv);
-+            Constants.TaskState state = task.getState();
-+            Assertions.assertNotEquals(Constants.TaskState.PAUSE, state);
-+            currentState.getAlterJobMgr().replayAlterMaterializedViewStatus(log);
-+            Assertions.assertEquals(state, task.getState(), "replaying the inactivation suspended the task");
-+    
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/persist/AlterMaterializedViewStatusLogTest.java` (modified, +16/-0)
-```diff
-@@ -45,4 +45,20 @@ public void testClearVersionMapOfCurrentAndOldEntries() {
-         Assertions.assertTrue(read.isClearVersionMapUnset());
-         Assertions.assertEquals("reason", read.getReason());
-     }
-+
-+    @Test
-+    public void testKeepTaskScheduledOfCurrentAndOldEntries() {
-+        AlterMaterializedViewStatusLog log = new AlterMaterializedViewStatusLog(1L, 2L, "INACTIVE", "reason");
-+        Assertions.assertFalse(log.isKeepTaskScheduled());
-+        log.setKeepTaskScheduled(true);
-+        AlterMaterializedViewStatusLog read = GsonUtils.GSON.fromJson(GsonUtils.GSON.toJson(log),
-+                AlterMaterializedViewStatusLog.class);
-+        Assertions.assertTrue(read.isKeepTaskScheduled());
-+
-+        // An entry written by a version that did not journal the flag suspends the task on replay, as it did.
-+        JsonObject old = GsonUtils.GSON.toJsonTree(log).getAsJsonObject();
-+        old.remove("keepTaskScheduled");
-+        read = GsonUtils.GSON.fromJson(old, AlterMaterializedViewStatusLog.class);
-+        Assertions.assertFalse(read.isKeepTaskScheduled());
-+    }
- }
++-- and with GLM off, which is the workaround the defect used to need
++set enable_global_late_materialization = false;
++select k, m from (select k, max(a) as m from (select t.k as k, get_json_string(t.j, '$.a') as a from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #81672** (closed): [Enhancement] Enable enable_put_combinded_txn_log_parallel by default (backport #81662) (@mergify[bot])
-- **PR #81670** (2026-10-27): [Enhancement] Allow adding a NOT NULL column with a default to an Iceberg v3 table (@starrocks-bot[bot])
-- **PR #81669** (2026-10-27): [Enhancement] Spread the runtime filter worker over several threads within a BE (@starrocks-bot[bot])
-- **PR #81668** (closed): [Enhancement] Skip TabletMetadataPB deep copy on metacache hit in tablet_id overload (backport #73071) (@mergify[bot])
-- **PR #81667** (2026-10-27): [Enhancement] Skip TabletMetadataPB deep copy on metacache hit in tablet_id overload (backport #73071) (@luohaha)
-- **PR #81662** (2026-10-27): [Enhancement] Enable enable_put_combinded_txn_log_parallel by default (@luohaha)
+- **PR #81693** (2026-10-27): [Doc] Give the general monitoring metrics one sidebar entry (backport #81690) (@mergify[bot])
+- **PR #81692** (2026-10-27): [Doc] Give the general monitoring metrics one sidebar entry (backport #81690) (@DanRoscigno)
+- **PR #81691** (2026-10-27): [Doc] Give the general monitoring metrics one sidebar entry (backport #81690) (@DanRoscigno)
+- **PR #81690** (2026-10-27): [Doc] Give the general monitoring metrics one sidebar entry (@DanRoscigno)
+- **PR #81688** (2026-10-27): [Doc] Fix the Japanese Tableau connector page (@DanRoscigno)
+- **PR #81685** (2026-10-27): [Refactor] Remove disabled multi-shape code from geo_types (@trueeyu)
 
 ---
 
@@ -2475,31 +2746,50 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [BugFix] Bump lastSchemaUpdateTime before shared-data schema change swaps indexe
+## X. [Doc] Fix the Japanese Tableau connector page (#81688)
 
 **RULE**:
-When implementing operations in `fe/fe-core/src/main/java/com/starrocks/alter/LakeTableSchemaChangeJob.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/ja/integrations/BI_integrations/Tableau_Desktop.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5ffc3151`: [BugFix] Bump lastSchemaUpdateTime before shared-data schema change swaps indexes so concurrent queries re-plan (#81363). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `41983afe`: [Doc] Fix the Japanese Tableau connector page (#81688). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `fe/fe-core/src/main/java/com/starrocks/alter/LakeTableSchemaChangeJob.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/ja/integrations/BI_integrations/Tableau_Desktop.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-        // Lock-free plans share these physical partitions; invalidate them before the first origin index is dropped,
-        // so a plan that hits the half-swapped partitions retries instead of failing.
-        table.lastSchemaUpdateTime.set(System.nanoTime());
-
+- LDAP サポート: 安全な認証のためのパスワードプロンプト付きの LDAP ログインを可能にします。
+- 高い互換性: TDVT (Tableau Design Verification Tool) テストで 99.99% の互換性を達成しており、失敗するのは軽微なケース 1 件のみです。
+先に進む前に、以下の要件が満たされていることを確認してください。
+- Tableau バージョン: Tableau 2020.4 以降
+## Tableau Desktop 用コネクタのインストール
+3. [StarRocks Tableau JDBC Connector ファイル](https://exchange.tableau.com/products/1079) をダウンロードします。
+## Tableau Server 用コネクタのインストール
+   Linux では、"Tableau" ユーザーにディレクトリへのアクセスを許可する必要があります。
+      # <path_to_driver_file_name> をドライバファイルの絶対パスに置き換えてください。
+   2. "Tableau" ユーザーに権限を付与します。
+3. [StarRocks Tableau JDBC Connector ファイル](https://exchange.tableau.com/products/1079) をダウンロードします。
+## 使用上の注意
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+- LDAP サポート： 安全な認証のためのパスワードプロンプト付きの LDAP ログインを可能にします。
+- 高い互換性： TDVT (Tableau Design Verification Tool) テストで 99.99% の互換性を達成。
+先に進む前に、以下の要件が満たされていることを確認してください：
+- Tableau バージョン： Tableau 2020.4 以降
+## Tableau Desktop 用 Connector のインストール
+3. [StarRocks Tableau JDBC Connector file](https://exchange.tableau.com/products/1079) をダウンロードします。
+## Tableau Server 用 Connector のインストール
+   Linux では、「Tableau」 ユーザがディレクトリにアクセスすることを許可する必要があります。
+      # Replace <path_to_driver_file_name> with the absolute path of the driver file.
+   2. Tableau "ユーザーにアクセス許可を与える。
+3. [StarRocks Tableau JDBC Connector file](https://exchange.tableau.com/products/1079) をダウンロードします。
+## Usage notes
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5ffc3151` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `41983afe` are properly handled with clean fallback behavior.

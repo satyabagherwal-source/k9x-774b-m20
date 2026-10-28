@@ -5601,3 +5601,5 @@
 | `CYCLE-20261028-J5TY` | `2026-10-28T00:26:18.310Z` | `zeronsh/zeron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5073` | Yes (`47551654...`) |
 | `CYCLE-20261028-J6BB` | `2026-10-28T00:26:18.935Z` | `CrawlCove/robots-txt-tester` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5071` | Yes (`95a3c30d...`) |
 | `CYCLE-20261028-JDXU` | `2026-10-28T00:26:28.818Z` | `citusdata/citus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5074` | Yes (`44febd64...`) |
+| `CYCLE-20261028-RJIK` | `2026-10-28T00:32:49.292Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md` | Yes (`6ddac598...`) |
+| `CYCLE-20261028-SICG` | `2026-10-28T00:33:34.432Z` | `CrawlCove/xml-sitemap-validator` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5071` | Yes (`b62e6a50...`) |

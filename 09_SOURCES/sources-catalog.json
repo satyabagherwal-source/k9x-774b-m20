@@ -1853,10 +1853,10 @@
     "repository": "CrawlCove/xml-sitemap-validator",
     "platform": "github",
     "sourceUrl": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
-    "sourceVersion": "caa1d0b5",
+    "sourceVersion": "8aeca12b",
     "license": "MIT",
-    "contentHash": "34d60cf43f1d66a8565063491323bce646be2810c4d94bf44ebdca891d81a96a",
-    "lastHarvestedAt": "2026-10-25T03:52:50.956Z",
+    "contentHash": "b62e6a50ba48954690fda691764b76d585b0684fa746aead186cc31ab78f7187",
+    "lastHarvestedAt": "2026-10-28T00:33:34.434Z",
     "learningId": "learn-github-crawlcove-xml-sitemap-validator"
   },
   "crawlcove-crawlcove-robots-txt-tester": {
@@ -5223,10 +5223,10 @@
     "repository": "StarRocks/starrocks",
     "platform": "github",
     "sourceUrl": "https://github.com/StarRocks/starrocks",
-    "sourceVersion": "2d15aef3",
+    "sourceVersion": "41983afe",
     "license": "Apache-2.0",
-    "contentHash": "929c70ca02037c0eda45937f27d0ec05a35e167995a1a84146facc42b3c5c7af",
-    "lastHarvestedAt": "2026-10-27T11:59:51.118Z",
+    "contentHash": "6ddac598a9a2d3645af1f636c999bda1e04b30de8d85467a4c6eb6a451c32d2d",
+    "lastHarvestedAt": "2026-10-28T00:32:49.294Z",
     "learningId": "learn-github-starrocks-starrocks"
   },
   "lobehub-lobe-ui": {

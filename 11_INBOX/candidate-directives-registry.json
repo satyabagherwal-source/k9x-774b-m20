@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T00:19:29.805Z",
+  "last_updated": "2026-10-28T00:32:49.298Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3104,6 +3104,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-kuddev-pebrel"
+    },
+    {
+      "id": "CD-RJIQ",
+      "directive_title": "[Doc] Fix the Japanese Tableau connector page (#81688)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "StarRocks/starrocks",
+      "source_commit": "41983afe",
+      "date_staged": "2026-10-28",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-starrocks-starrocks"
     }
   ]
 }
