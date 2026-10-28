@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T20:57:34.898Z",
+  "last_updated": "2026-10-28T21:04:30.526Z",
   "total_verified_learnings": 1159,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -26263,7 +26263,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
       "source_version": "hf-phocinae-phocinae-largha-150m-v1",
-      "content_hash": "8cf5794a21609745e1dfc393b71f6c926693fab2dec59f902950efc8677c488a",
+      "content_hash": "c12cc8d8e318e2436efe32ede70041ff3d5bba7ea9bf3a6b7df64c173044f0eb",
       "dossier_path": "07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
       "promoted_rules": [
@@ -26343,7 +26343,7 @@
         "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv463krd",
         "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv4jeadc"
       ],
-      "verified_at": "2026-10-25T14:03:25.719Z",
+      "verified_at": "2026-10-28T21:04:20.213Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37679,8 +37679,8 @@
       "slug": "microsoft-react-native-windows",
       "platform": "github",
       "source_url": "https://github.com/microsoft/react-native-windows",
-      "source_version": "c7ed54c7",
-      "content_hash": "b1c46c9ac3ac2f2fcf3c1b99aa9b8ae8b6023512620d30e9a2eb68d930a51fc3",
+      "source_version": "8079828c",
+      "content_hash": "86ade1673287617f4afd29eabab659108df98d945573714ac10abfeaada99a4a",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
       "promoted_rules": [
@@ -37698,6 +37698,11 @@
           "number": 5108,
           "title": "Dependabot grouping and route it through PackageFeedProxy (#16511)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5404,
+          "title": "📦 Bump the all-dependencies group across 1 directory with 2 updates (#16507)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37705,7 +37710,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T01:42:43.203Z",
+      "verified_at": "2026-10-28T21:04:27.579Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43550,8 +43555,8 @@
       "slug": "pingcap-tidb",
       "platform": "github",
       "source_url": "https://github.com/pingcap/tidb",
-      "source_version": "bb23c552",
-      "content_hash": "45e3ff5efd35c156caa4c18f0ce4565cb0627ecd20ef047d81c7a3b1869d928e",
+      "source_version": "4150cef7",
+      "content_hash": "9db4c05e7cb8e25eb032086aee91b8053bb61586728d5f8b9105e3ebed812cf2",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "promoted_rules": [
@@ -43609,6 +43614,11 @@
           "number": 5172,
           "title": "infoschema, executor, planner: expose materialized view metadata tables (#72442)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5405,
+          "title": "ddl: preserve expression defaults for binary columns (#71285)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43616,7 +43626,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T04:28:27.432Z",
+      "verified_at": "2026-10-28T21:04:30.511Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -146284,6 +146294,34 @@
         "rules_verified": true,
         "index_read_back_verified": true
       }
+    },
+    "rule-5404": {
+      "learning_id": "rule-5404",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5404,
+      "title": "📦 Bump the all-dependencies group across 1 directory with 2 updates (#16507)",
+      "source_url": "https://github.com/microsoft/react-native-windows",
+      "source_version": "8079828c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T21:04:27.579Z"
+    },
+    "rule-5405": {
+      "learning_id": "rule-5405",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5405,
+      "title": "ddl: preserve expression defaults for binary columns (#71285)",
+      "source_url": "https://github.com/pingcap/tidb",
+      "source_version": "4150cef7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T21:04:30.511Z"
     }
   },
   "aliases": {

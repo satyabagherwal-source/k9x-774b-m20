@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T20:57:46.954Z",
-    "lastVerified": "2026-10-28T20:57:46.954Z",
+    "lastChecked": "2026-10-28T21:04:33.114Z",
+    "lastVerified": "2026-10-28T21:04:33.114Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -120,12 +120,12 @@
     "revisionIdentifier": "0941fb03"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "Bitterbot-AI/bitterbot-desktop",
+    "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-28T20:37:56.866Z",
-    "lastVerified": "2026-10-28T20:37:56.866Z",
+    "lastChecked": "2026-10-28T21:04:31.852Z",
+    "lastVerified": "2026-10-28T21:04:31.852Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -134,7 +134,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "098582e4"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -578,9 +579,9 @@
   "qdrant-qdrant": {
     "name": "qdrant",
     "officialUrl": "https://github.com/qdrant/qdrant",
-    "lastChecked": "2026-10-28T03:31:30.963Z",
+    "lastChecked": "2026-10-28T21:04:29.479Z",
     "revisionIdentifier": "222b2e44",
-    "lastVerified": "2026-10-28T03:31:30.963Z"
+    "lastVerified": "2026-10-28T21:04:29.479Z"
   },
   "hf-black-forest-labs-flux.1-dev": {
     "name": "black-forest-labs/FLUX.1-dev",
@@ -736,9 +737,9 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-10-28T17:20:43.439Z",
+    "lastChecked": "2026-10-28T21:04:26.980Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-10-28T17:20:43.439Z"
+    "lastVerified": "2026-10-28T21:04:26.980Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
@@ -1071,12 +1072,12 @@
     "officialUrl": "https://github.com/pingcap/tidb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T04:28:26.991Z",
-    "lastVerified": "2026-10-28T04:28:26.991Z",
+    "lastChecked": "2026-10-28T21:04:30.060Z",
+    "lastVerified": "2026-10-28T21:04:30.060Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pingcap-tidb",
-    "contentHash": "45e3ff5efd35c156caa4c18f0ce4565cb0627ecd20ef047d81c7a3b1869d928e",
+    "contentHash": "9db4c05e7cb8e25eb032086aee91b8053bb61586728d5f8b9105e3ebed812cf2",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -6761,5 +6762,46 @@
     "lastChecked": "2026-10-28T20:57:37.113Z",
     "revisionIdentifier": "666a7437",
     "lastVerified": "2026-10-28T20:57:37.113Z"
+  },
+  "imsnif-diskonaut": {
+    "name": "diskonaut",
+    "officialUrl": "https://github.com/imsnif/diskonaut",
+    "lastChecked": "2026-10-28T21:04:16.882Z",
+    "revisionIdentifier": "65cd8290",
+    "lastVerified": "2026-10-28T21:04:16.882Z"
+  },
+  "hf-phocinae-phocinae-largha-150m-v1": {
+    "name": "Phocinae/Phocinae-Largha-150M-v1",
+    "officialUrl": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T21:04:19.460Z",
+    "lastVerified": "2026-10-28T21:04:19.460Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
+    "contentHash": "c12cc8d8e318e2436efe32ede70041ff3d5bba7ea9bf3a6b7df64c173044f0eb",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "microsoft-react-native-windows": {
+    "name": "microsoft/react-native-windows",
+    "officialUrl": "https://github.com/microsoft/react-native-windows",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-10-28T21:04:27.175Z",
+    "lastVerified": "2026-10-28T21:04:27.175Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-microsoft-react-native-windows",
+    "contentHash": "86ade1673287617f4afd29eabab659108df98d945573714ac10abfeaada99a4a",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

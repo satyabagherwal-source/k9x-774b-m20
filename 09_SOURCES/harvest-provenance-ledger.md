@@ -5943,3 +5943,6 @@ Every entry in this ledger must capture:
 | `learn-github-flux-iac-tofu-controller` | `https://github.com/flux-iac/tofu-controller` | `e2db61bd` | Multi-dimensional audit evidence | 2026-10-28T20:50:54.406Z |
 | `learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-28T20:57:33.311Z |
 | `learn-huggingface-qwen-qwen-image-2-1-turbo` | `https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-28T20:57:34.981Z |
+| `learn-huggingface-phocinae-phocinae-largha-150m-v1` | `https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1` | `hf-phocina` | Multi-dimensional audit evidence | 2026-10-28T21:04:20.299Z |
+| `learn-github-microsoft-react-native-windows` | `https://github.com/microsoft/react-native-windows` | `8079828c` | Multi-dimensional audit evidence | 2026-10-28T21:04:27.666Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `4150cef7` | Multi-dimensional audit evidence | 2026-10-28T21:04:30.583Z |

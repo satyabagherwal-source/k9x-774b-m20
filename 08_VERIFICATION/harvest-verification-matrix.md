@@ -5934,3 +5934,6 @@
 | `CYCLE-20261028-A0CJ` | `2026-10-28T20:50:54.403Z` | `flux-iac/tofu-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5403` | Yes (`10de6090...`) |
 | `CYCLE-20261028-IK57` | `2026-10-28T20:57:33.307Z` | `nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings.md` | Yes (`f3c5f7de...`) |
 | `CYCLE-20261028-ILFL` | `2026-10-28T20:57:34.977Z` | `Qwen/Qwen-Image-2.1-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md` | Yes (`4d626639...`) |
+| `CYCLE-20261028-RA6F` | `2026-10-28T21:04:20.295Z` | `Phocinae/Phocinae-Largha-150M-v1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md` | Yes (`c12cc8d8...`) |
+| `CYCLE-20261028-RFV3` | `2026-10-28T21:04:27.663Z` | `microsoft/react-native-windows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5404` | Yes (`86ade167...`) |
+| `CYCLE-20261028-RI44` | `2026-10-28T21:04:30.580Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5405` | Yes (`9db4c05e...`) |

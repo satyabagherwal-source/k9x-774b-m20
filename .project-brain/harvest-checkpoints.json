@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T20:57:34.997Z",
+  "last_updated": "2026-10-28T21:04:30.591Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1835,14 +1835,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
-      "content_hash": "8cf5794a21609745e1dfc393b71f6c926693fab2dec59f902950efc8677c488a",
-      "verified_at": "2026-10-25T14:03:25.769Z",
+      "content_hash": "c12cc8d8e318e2436efe32ede70041ff3d5bba7ea9bf3a6b7df64c173044f0eb",
+      "verified_at": "2026-10-28T21:04:20.311Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T14:03:25.769Z"
+      "last_updated": "2026-10-28T21:04:20.311Z"
     },
     "microsoft/FrogNano-4B-2609": {
       "repository": "microsoft/FrogNano-4B-2609",
@@ -10701,14 +10701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pingcap-tidb",
-      "content_hash": "45e3ff5efd35c156caa4c18f0ce4565cb0627ecd20ef047d81c7a3b1869d928e",
-      "verified_at": "2026-10-28T04:28:27.526Z",
+      "content_hash": "9db4c05e7cb8e25eb032086aee91b8053bb61586728d5f8b9105e3ebed812cf2",
+      "verified_at": "2026-10-28T21:04:30.590Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T04:28:27.526Z"
+      "last_updated": "2026-10-28T21:04:30.590Z"
     },
     "neondatabase/neon": {
       "repository": "neondatabase/neon",
@@ -11346,14 +11346,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-react-native-windows",
-      "content_hash": "b1c46c9ac3ac2f2fcf3c1b99aa9b8ae8b6023512620d30e9a2eb68d930a51fc3",
-      "verified_at": "2026-10-28T01:42:43.302Z",
+      "content_hash": "86ade1673287617f4afd29eabab659108df98d945573714ac10abfeaada99a4a",
+      "verified_at": "2026-10-28T21:04:27.672Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T01:42:43.302Z"
+      "last_updated": "2026-10-28T21:04:27.672Z"
     },
     "paradedb/paradedb": {
       "repository": "paradedb/paradedb",

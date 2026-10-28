@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T20:57:34.993Z",
-  "total_cycles_completed": 5911,
-  "total_learnings_persisted": 5911,
-  "total_rules_promoted": 5365,
+  "last_updated": "2026-10-28T21:04:30.588Z",
+  "total_cycles_completed": 5914,
+  "total_learnings_persisted": 5914,
+  "total_rules_promoted": 5367,
   "history": [
-    {
-      "timestamp": "2026-10-28T09:30:41.313Z",
-      "repository": "beclab/Olares",
-      "learningId": "learn-github-beclab-olares",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T09:40:44.421Z",
-      "repository": "Alissonerdx/BFS-Best-Face-Swap",
-      "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T10:03:16.807Z",
-      "repository": "xerj-org/xerj",
-      "learningId": "learn-github-xerj-org-xerj",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T10:06:37.581Z",
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -1403,6 +1382,27 @@
       "repository": "Qwen/Qwen-Image-2.1-Turbo",
       "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T21:04:20.308Z",
+      "repository": "Phocinae/Phocinae-Largha-150M-v1",
+      "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T21:04:27.670Z",
+      "repository": "microsoft/react-native-windows",
+      "learningId": "learn-github-microsoft-react-native-windows",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T21:04:30.588Z",
+      "repository": "pingcap/tidb",
+      "learningId": "learn-github-pingcap-tidb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

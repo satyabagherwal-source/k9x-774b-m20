@@ -465,8 +465,8 @@
     "sourceUrl": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
     "sourceVersion": "hf-phocinae-phocinae-largha-150m-v1",
     "license": "Open-Source",
-    "contentHash": "8cf5794a21609745e1dfc393b71f6c926693fab2dec59f902950efc8677c488a",
-    "lastHarvestedAt": "2026-10-25T14:03:25.763Z",
+    "contentHash": "c12cc8d8e318e2436efe32ede70041ff3d5bba7ea9bf3a6b7df64c173044f0eb",
+    "lastHarvestedAt": "2026-10-28T21:04:20.299Z",
     "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1"
   },
   "hf-comfy-org-qwen-image-2.1": {
@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "bb23c552",
+    "sourceVersion": "4150cef7",
     "license": "Apache-2.0",
-    "contentHash": "45e3ff5efd35c156caa4c18f0ce4565cb0627ecd20ef047d81c7a3b1869d928e",
-    "lastHarvestedAt": "2026-10-28T04:28:27.518Z",
+    "contentHash": "9db4c05e7cb8e25eb032086aee91b8053bb61586728d5f8b9105e3ebed812cf2",
+    "lastHarvestedAt": "2026-10-28T21:04:30.583Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {
@@ -7533,10 +7533,10 @@
     "repository": "microsoft/react-native-windows",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/react-native-windows",
-    "sourceVersion": "c7ed54c7",
+    "sourceVersion": "8079828c",
     "license": "NOASSERTION",
-    "contentHash": "b1c46c9ac3ac2f2fcf3c1b99aa9b8ae8b6023512620d30e9a2eb68d930a51fc3",
-    "lastHarvestedAt": "2026-10-28T01:42:43.294Z",
+    "contentHash": "86ade1673287617f4afd29eabab659108df98d945573714ac10abfeaada99a4a",
+    "lastHarvestedAt": "2026-10-28T21:04:27.666Z",
     "learningId": "learn-github-microsoft-react-native-windows"
   },
   "paradedb-paradedb": {

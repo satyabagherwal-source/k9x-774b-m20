@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source**: github ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
-> **Source Version**: `bb23c552`  
+> **Source Version**: `4150cef7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T04:28:26.998Z  
+> **Timestamp**: 2026-10-28T21:04:30.066Z  
 > **Learning ID**: `learn-github-pingcap-tidb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T04:28:26.991Z  
+> **Harvest Timestamp**: 2026-10-28T21:04:30.060Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TiDB is built for agentic workloads that grow unpredictably, with ACID guarantees and native support for transactions, analytics, and vector search. No data silos. No noisy neighbors. No infrastructure ceiling.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 40683 stars
+- **Stars / Engagement**: 40685 stars
 
 ---
 
@@ -1919,11 +1919,11 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #72453** (2026-10-27): **sessionctx: lower the new-cluster sampled NDV threshold to 100 million**
-  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #67449  Problem Summary: Tests at 100 million rows showed few plan regressions, so new clusters can sample NDV from a lower threshold.  ### What changed and how does it work?  - New clusters start `tidb_analyze_sampled_ndv_threshold` at 100,000,000 (was 500,000,000). Upgraded clusters still start at 0. - The design doc uses the new value.  ### Check List  Tests <!-- At least one of them must be included. -->  - [x] Unit test - [ ] Integration test - [ ] Manual test (add detailed scripts or steps below) - [ ] No need to test   > - [ ] I checked and no code files have been changed.   > <!-- Or your custom  "No need to test" reasons -->  Side effects  - [ ] Performance regression: Consumes more CPU - [ ] Performance regression: Consumes more Memory - [ ] Breaking backward compatibility  Documentation  - [x] Affects user behaviors - [ ] Contains syntax changes - [x] Contains variable changes - [ ] Contains experimental features - [ ] Changes MySQL compatibility  ### Release note  <!-- compatibility chan
+- **Issue #72479** (2026-10-28): **memory: backport arbitration improvements with default disabled (#71346, #71640)**
+  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #58194, ref #71141, ref #68327  Problem Summary:  `release-nextgen-202609` is missing the subsequent global memory arbitration improvements and the cancellation-test stability fix. Backport #71346 and #71640 while keeping memory arbitration disabled by default.  ### What changed and how does it work?  - Cherry-pick #71346 (`8a37ef2b44f5adef5a5cf57c263d9da8db76faa0`) to reduce arbitration overhead, improve memory-pressure handling and runtime-state persistence, and add automatic heap profiles. - Cherry-pick #71640 (`b67dc7cbaa71e4bd6af164cbc9b4df55c96dc538`) to use fresh sessions for out-of-quota cancellation probes in `TestGlobalMemArbitrator`. - Preserve the branch's `tidb_mem_arbitrator_mode = disable` default from #71508, including the existing disabled-runtime and `SET GLOBAL ... = DEFAULT` assertions. Explicit `standard` and `priority` modes remain available.  Both cherry-picks retain their upstream commit references. The memory package matches upstream #71346; `pkg/metrics/memory.go` and the d
 
-- **Issue #72445** (2026-10-28): **br: enable log redact by default (#72429)**
-  *Symptoms*: This is an automated cherry-pick of #72429  <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: close #72428  Problem Summary:  ### What changed and how does it work?  Now, `--redact-info-log` was enabled by default.  ### Check List  Tests <!-- At least one of them must be included. -->  - [ ] Unit test - [ ] Integration test - [x] Manual test (add detailed scripts or steps below)  Source: current uncommitted change in br/cmd/br/cmd.go, based on 7fa5afdeb8412ec26fd848054a9bc1f703a2eb90. All builds and runtime verification were executed outside the sandbox.  #### Commands  ```sh make build_br BR_BIN=/private/tmp/br-redact-tiup.F1JjR8/br tiup playground:v1.16.1 v9.0.0-beta.2.pre-nightly --mode tikv-slim --pd 1 --kv 1 --without-monitor --port-offset 20000 --tag br-redact-F1JjR8 tiup --binpath /private/tmp/br-redact-tiup.F1JjR8/br br backup raw --pd 127.0.0.1:22379 --storage local:///private/tmp/br-redact-tiup.F1JjR8/default-backup --format raw --start br_redact_probe_a --end br_redact_probe_z --log-file /private/tmp/br-redact-tiup.F1JjR8/default.log --log-f
+- **Issue #72477** (2026-10-28): **memory: backport global arbitration fixes with default disabled (#69638, #70058, #70205, #68700, #71346, #71640)**
+  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #58194, ref #70177, ref #71141, ref #68327  Problem Summary:  `release-nextgen-202603` is missing the subsequent global memory arbitration fixes and performance improvements. Backport them while preserving the branch's opt-in behavior: `tidb_mem_arbitrator_mode` remains `disable` by default.  ### What changed and how does it work?  Cherry-pick the following PRs, retaining their upstream commit references:  | PR | Change | |---|---| | #69638 | Improve compilation quota handling, GC memory-limit tuning, digest profiles, and runtime-state paths. | | #70058 | Prevent panics and budget leaks when memory consumption races with tracker detachment or a detached tracker is reused. | | #70205 | Use an explicitly approximate, non-race-instrumented accessor for opportunistic pool-allocation reads. | | #68700 | Stabilize resource-group setup in the global memory arbitration SQL test. | | #71346 | Reduce arbitration overhead, improve memory-pressure handling and state persistence, and add automatic heap profiles.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1940,399 +1940,292 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bb23c552` (2026-10-28)
-**Commit Message**: infoschema, executor, planner: expose materialized view metadata tables (#72442)
+### Incident Patch 1: `4150cef7` (2026-10-28)
+**Commit Message**: ddl: preserve expression defaults for binary columns (#71285)
+
+close pingcap/tidb#49508
+
+**File**: `pkg/ddl/add_column.go` (modified, +2/-1)
+```diff
+@@ -1028,7 +1028,8 @@ func setDefaultValueWithBinaryPadding(col *table.Column, value any) error {
+ 	}
+ 	// https://dev.mysql.com/doc/refman/8.0/en/binary-varbinary.html
+ 	// Set the default value for binary type should append the paddings.
+-	if value != nil {
++	// Expression defaults store SQL text; only their evaluated values need padding.
++	if value != nil && !col.DefaultIsExpr {
+ 		if col.GetType() == mysql.TypeString && types.IsBinaryStr(&col.FieldType) && len(value.(string)) < col.GetFlen() {
+ 			padding := make([]byte, col.GetFlen()-len(value.(string)))
+ 			col.DefaultValue = string(append([]byte(col.DefaultValue.(string)), padding...))
+```
+
+**File**: `pkg/ddl/db_integration_test.go` (modified, +15/-0)
+```diff
+@@ -1649,6 +1649,21 @@ func TestDefaultValueAsExpressions(t *testing.T) {
+ 	store := testkit.CreateMockStoreWithSchemaLease(t, testLease)
+ 	tk := testkit.NewTestKit(t, store)
+ 	tk.MustExec("use test")
++	t.Run("binary expression defaults", func(t *testing.T) {
++		tk := testkit.NewTestKit(t, store)
++		tk.MustExec("use test")
++		tk.MustExec("create table binary_defaults (id int primary key, u binary(50) default (uuid()), b binary(50) default (uuid_to_bin(uuid())), v varbinary(50) default (uuid()), literal binary(4) default 'a', nullable binary(4) default null)")
++		defer tk.MustExec("drop table binary_defaults")
++		tk.MustExec("insert into binary_defaults(id) values (1), (2)")
++		tk.MustQuery("select length(u), length(b), length(v), hex(literal), nullable is null, hex(substr(u,37)) = repeat('00',14), hex(substr(b,17)) = repeat('00',34) from binary_defaults order by id").Check(testkit.Rows("50 50 36 61000000 1 1 1", "50 50 36 61000000 1 1 1"))
++		tk.MustQuery("select count(distinct u), count(distinct b) from binary_defaults").Check(testkit.Rows("2 2"))
++		tk.MustExec("alter table binary_defaults alter column u set default (uuid())")
++		tk.MustExec("insert into binary_defaults(id) values (3)")
++		tk.MustQuery("select length(u), hex(substr(u,37)) = repeat('00',14) from binary_defaults where id = 3").Check(testkit.Rows("50 1"))
++		tk.MustExec("alter table binary_defaults modify column u binary(60) default (uuid())")
++		tk.MustExec("insert into binary_defaults(id) values (4)")
++		tk.MustQuery("select length(u), hex(substr(u,37)) = repeat('00',24) from binary_defaults where id = 4").Check(testkit.Rows("60 1"))
++	})
+ 	tk.MustExec("drop table if exists t, t1, t2")
+ 
+ 	// date_format
+```
+
+---
+
+### Incident Patch 2: `59bfe3da` (2026-10-28)
+**Commit Message**: executor, planner: support materialized view comparison (#72472)
 
 ref pingcap/tidb#18023
 
-**File**: `pkg/executor/builder.go` (modified, +3/-0)
+**File**: `docs/agents/README.md` (modified, +0/-1)
 ```diff
-@@ -2843,6 +2843,9 @@ func (b *executorBuilder) buildMemTable(v *physicalop.PhysicalMemTable) exec.Exe
- 			strings.ToLower(infoschema.TableTiDBCheckConstraints),
- 			strings.ToLower(infoschema.TableKeywords),
- 			strings.ToLower(infoschema.TableTiDBIndexUsage),
-+			strings.ToLower(infoschema.TableTiDBMViews),
-+			strings.ToLower(infoschema.TableTiDBMLogs),
-+			strings.ToLower(infoschema.TableTiDBTableMViewDependencies),
- 			strings.ToLower(infoschema.TableTiDBPlanCache),
- 			strings.ToLower(infoschema.ClusterTableTiDBPlanCache),
- 			strings.ToLower(infoschema.ClusterTableTiDBIndexUsage),
+@@ -11,7 +11,6 @@ This directory is the single top-level home for agent-facing documentation.
+   Current component folders include:
+   - `docs/agents/ddl/`
+   - `docs/agents/dxf/`
+-  - `docs/agents/executor/`
+   - `docs/agents/import-into/`
+ 
+ ## Maintenance
 ```
 
-**File**: `pkg/executor/infoschema_reader.go` (modified, +452/-0)
+**File**: `docs/agents/executor/fullouter_join_dev_note.md` (removed, +0/-240)
 ```diff
-@@ -167,6 +167,12 @@ func (e *memtableRetriever) retrieve(ctx context.Context, sctx sessionctx.Contex
- 			err = e.setDataForAnalyzeStatus(ctx, sctx)
- 		case infoschema.TableTiDBIndexes:
- 			err = e.setDataFromIndexes(ctx, sctx)
-+		case infoschema.TableTiDBMViews:
-+			err = e.setDataFromTiDBMViews(ctx, sctx)
-+		case infoschema.TableTiDBMLogs:
-+			err = e.setDataFromTiDBMLogs(ctx, sctx)
-+		case infoschema.TableTiDBTableMViewDependencies:
-+			err = e.setDataFromTiDBTableMViewDependencies(ctx, sctx)
- 		case infoschema.TableViews:
- 			err = e.setDataFromViews(ctx, sctx)
- 		case infoschema.TableEngines:
-@@ -4315,3 +4321,449 @@ func tableOrPartitionNotExist(ctx context.Context, dbName string, tableName stri
- 	}
- 	return false
+@@ -1,240 +0,0 @@
+-# TiDB FULL OUTER JOIN Development Notes
+-
+-## Goal
+-
+-Track the design decisions and staged implementation plan for adding SQL standard
+-`FULL OUTER JOIN` support in TiDB.
+-
+-Tracking issue: https://github.com/pingcap/tidb/issues/69998
+-
+-The feature is developed in four steps:
+-
+-1. Add syntax, AST restore, and a feature gate. Keep execution unsupported.
+-2. Add root planner support while keeping execution unsupported.
+-3. Add root HashJoin v1 executor support.
+-4. Add TiFlash MPP shuffle join support after root semantics are stable.
+-
+-## Scope
+-
+-Initial target:
+-
+-- `FULL OUTER JOIN ... ON ...`
+-- Volcano planner path
+-- root HashJoin v1 execution
+-- feature-gated by `tidb_enable_full_outer_join`, default `OFF`
+-
+-Initial non-goals:
+-
+-- `FULL OUTER JOIN ... USING (...)`
+-- `NATURAL FULL OUTER JOIN`
+-- Cascades planner support
+-- root IndexJoin, MergeJoin, or HashJoin v2 support
+-- TiFlash MPP broadcast join support
+-- non-MPP coprocessor join pushdown
+-
+-## Decision Log
+-
+-### Syntax
+-
+-Only `FULL OUTER JOIN` is introduced as full join syntax.
+-
+-`FULL JOIN` is not introduced as shorthand. `FULL` is an unreserved keyword in
+-the current grammar and can be used as an alias or identifier. Keeping
+-`FULL JOIN` out of scope avoids changing MySQL-compatible parsing behavior such
+-as:
+-
+-```sql
+-SELECT * FROM t1 full JOIN t2 ON t1.a = t2.a;
+-```
+-
+-This should continue to parse as `t1 AS full JOIN t2`, not as a full outer join.
+-
+-### Feature Gate
+-
+-The feature is guarded by `tidb_enable_full_outer_join`.
+-
+-The default is `OFF` because the feature changes planner and executor behavior
+-across several join paths. The gate allows the implementation to land in staged
+-PRs without making the syntax accidentally executable before root semantics are
+-complete.
+-
+-In Step 1, `FULL OUTER JOIN` still returns `ErrNotSupportedYet` even if the
+-variable is set to `ON`. This is intentional: Step 1 only makes the syntax
+-recognizable and prevents silent fallback to another join type.
+-
+-In Step 2, planner-only support allows optimizer tests and planner APIs to
+-exercise the full outer join path when the variable is `ON`, but user SQL
+-execution must still fail with `ErrNotSupportedYet("FULL OUTER JOIN")`. This
+-includes `EXPLAIN`, because TiDB's explain executor still builds the target
+-executor for partition-pruning metadata. The HashJoin v1 executor guard is
+-removed only in Step 3.
+-
+-### No Silent Fallback
+-
+-After parser support is added, `ast.FullJoin` must not fall through to the
+-default inner join path in `PlanBuilder`.
+-
+-Until planner and executor support are fully wired, the safe behavior is to fail
+-fast with `ErrNotSupportedYet("FULL OUTER JOIN")`.
+-
+-### Nullability
+-
+-Full outer join preserves both input sides. Therefore both sides can produce
+-NULL-extended rows, and output columns from both children must be treated as
+-nullable.
+-
+-This differs from left and right outer joins, where only one side is null
+-extended.
+-
+-### ON Condition Handling
+-
+-Full outer join cannot reuse all one-sided outer join assumptions.
+-
+-For full join:
+-
+-- `EqualConditions` are join-key conditions.
+-- one-side `ON` predicates must stay in join semantics unless a later rule can
+-  prove a transformation is safe.
+-- optimizer rules that rely on a single preserved side need explicit full join
+-  guards.
+-
+-The main correctness risk is accidentally pushing a preserved-side predicate
+-below the join and filtering rows before NULL extension.
+-
+-### Join Key Semantics
+-
+-Root HashJoin v1 should reuse existing join-key null-safe equality handling:
+-
+-- `=` does not match NULL join keys.
+-- `<=>` allows `NULL <=> NULL` to match.
+-- The existing `IsNullEQ` mechanism should represent per-key `<=>` behavior.
+-
+-No additional full-join-only join-key comparison rule should be introduced
+-unless existing `IsNullEQ` handling is insufficient.
+-
+-### Root Execution Strategy
+-
+-The first executable implementation should be root HashJoin v1 only.
+-
+-This keeps the first semantic implementation focused on correctness:
+-
+-- matched rows
+-- left-only unmatched rows
+-- right-only unmatched rows
+-- one-side `ON` filters
+-- `=` and `<=>` join keys
+-- spill behavior
+-
+-Root IndexJoin, MergeJoin, and HashJoin v2 should remain unsupported until they
+-are designed and tested separately.
+-
+-### TiFlash MPP Strategy
+-
+-TiFlash MPP support should be a follow-up after root semantics are stable.
+-
+-The intended first TiFlash scope is shuffle HashJoin only:
+-
+-- allow full outer join MPP shuffle join
+-- do not allow full outer join MPP broadcast join
+-- do not advertise one-side hash partitioning above a full outer join
+-- keep `<=>` / `NullEQ` join-key pushdown unsupported until that is handled as a
+-  separate compatibility item
+-
+-## Four-Step Development Plan
+-
+-### Step 1: Syntax and Gate
+-
+-Status: done in the first PR.
+-
+-Implementation scope:
+-
+-- Add parser token/grammar support for `FULL OUTER JOIN`.
+-- Add AST join type and rest
+```
+
+**File**: `pkg/executor/BUILD.bazel` (modified, +1/-0)
+```diff
+@@ -53,6 +53,7 @@ go_library(
+         "mlog_purge.go",
+         "mpp_gather.go",
+         "mv_refresh_observability.go",
++        "mview_compare.go",
+         "mview_complete_delta_apply.go",
+         "mview_complete_delta_apply_bulder.go",
+         "mview_delta_merge_agg_builder.go",
+```
+
+**File**: `pkg/executor/builder.go` (modified, +9/-0)
+```diff
+@@ -220,6 +220,8 @@ func (b *executorBuilder) build(p base.Plan) exec.Executor {
+ 		return b.buildDDL(v)
+ 	case *plannercore.PurgeMaterializedViewLog:
+ 		return b.buildPurgeMaterializedViewLog(v)
++	case *plannercore.CompareMaterializedView:
++		return b.buildCompareMaterializedView(v)
+ 	case *plannercore.RefreshMaterializedView:
+ 		return b.buildRefreshMaterializedView(v)
+ 	case *plannercore.DryRunRefreshMaterializedView:
+@@ -6712,3 +6714,10 @@ func (b *executorBuilder) buildWorkloadRepoCreate(_ *plannercore.WorkloadRepoCre
+ 	base := exec.NewBaseExecutor(b.sctx, nil, 0)
+ 	return &WorkloadRepoCreateExec{base}
  }
 +
-+func (e *memtableRetriever) setDataFromTiDBMViews(ctx context.Context, sctx sessionctx.Context) error {
-+	checker := privilege.GetPrivilegeManager(sctx)
-+	ex, ok := e.extractor.(*plannercore.InfoSchemaTiDBMViewsExtractor)
-+	if !ok {
-+		return errors.Errorf("wrong extractor type: %T, expected InfoSchemaTiDBMViewsExtractor", e.extractor)
++func (b *executorBuilder) buildCompareMaterializedView(v *plannercore.CompareMaterializedView) exec.Executor {
++	return &CompareMaterializedViewExec{
++		BaseExecutor: exec.NewBaseExecutor(b.sctx, v.Schema(), v.ID()),
++		stmt:         v.Statement,
 +	}
-+
-+	if ex.SkipRequest {
-+		return nil
-+	}
-+
-+	schemas, tables, err := ex.ListSchemasAndTables(ctx, e.is)
-+	if err != nil {
-+		return errors.Trace(err)
-+	}
-+
-+	loc := sctx.GetSessionVars().TimeZone
-+	if loc == nil {
-+		loc = time.Local
-+	}
-+
-+	rows := make([][]types.Datum, 0)
-+	for i, tbl := range tables {
-+		schema := schemas[i]
-+		if tbl.MaterializedView == nil {
-+			continue
-+		}
-+		if checker != nil && !checker.RequestVerification(sctx.GetSessionVars().ActiveRoles, schema.L, tbl.Name.L, "", mysql.AllPrivMask) {
-+			continue
-+		}
-+		modifyTime := types.NewTime(types.FromGoTime(tbl.GetUpdateTime().In(loc)), mysql.TypeDatetime, types.DefaultFsp)
-+		record := types.MakeDatums(
-+			infoschema.CatalogVal,                 // TABLE_CATALOG
-+			schema.O,                              // TABLE_SCHEMA
-+			tbl.ID,                                // MVIEW_ID
-+			tbl.Name.O,                            // MVIEW_NAME
-+			tbl.MaterializedView.SQLContent,       // MVIEW_SQL_CONTENT
-+			tbl.Comment,                           // MVIEW_COMMENT
-+			modifyTime,                            // MVIEW_MODIFY_TIME
-+			tbl.MaterializedView.RefreshMethod,    // REFRESH_METHOD
-+			tbl.MaterializedView.RefreshStartWith, // REFRESH_START
-+			tbl.MaterializedView.RefreshNext,      // REFRESH_NEXT
-+		)
-+		rows = append(rows, record)
-+	}
-+	e.rows = rows
-+	return nil
 +}
-+
-+type mlogBaseTableInfo struct {
-+	catalog string
-+	schema  string
-+	id      int64
-+	idStr   string
-+	name    string
-+}
-+
-+func newMLogBaseTableInfoFromBaseTable(
-+	baseSchema ast.CIStr,
-+	baseTbl *model.TableInfo,
-+) mlogBaseTableInfo {
-+	baseInfo := mlogBaseTableInfo{
-+		catalog: infoschema.CatalogVal,
-+	}
-+
-+	baseInfo.id = baseTbl.ID
-+	baseInfo.idStr = strconv.FormatInt(baseInfo.id, 10)
-+	baseInfo.name = baseTbl.Name.O
-+	if baseSchema.O != "" {
-+		baseInfo.schema = baseSchema.O
-+	}
-+	return baseInfo
-+}
-+
-+func newMLogBaseTableInfos(
-+	baseSchemas []ast.CIStr,
-+	baseTables []*model.TableInfo,
-+) []mlogBaseTableInfo {
-+	baseInfos := make([]mlogBaseTableInfo, 0, len(baseTables))
-+	for i, baseTbl := range baseTables {
-+		baseInfos = append(baseInfos, newMLogBaseTableInfoFromBaseTable(baseSchemas[i], baseTbl))
-+	}
-+	return baseInfos
-+}
-+
-+func (e *memtableRetriever) getMLogBaseTableInfos(
-+	ctx context.Context,
-+	schemas []ast.CIStr,
-+	tables []*model.TableInfo,
-+) []mlogBaseTableInfo {
-+	baseInfos := make([]mlogBaseTableInfo, 0, len(tables))
-+	for i, tbl := range tables {
-+		baseInfos = append(baseInfos, e.getMLogBaseTableInfo(ctx, schemas[i], tbl))
-+	}
-+	return baseInfos
-+}
-+
-+func (e *memtableRetriever) getMLogBaseTableInfo(
-+	ctx context.Context,
-+	mlogSchema ast.CIStr,
-+	tbl *model.TableInfo,
-+) mlogBaseTableInfo {
-+	baseInfo := mlogBaseTableInfo{
-+		catalog: infoschema.CatalogVal,
-+		schema:  mlogSchema.O,
-+	}
-+	if tbl.MaterializedViewLog == nil {
-+		return baseInfo
-+	}
-+
-+	baseInfo.id = tbl.MaterializedViewLog.BaseTableID
-+	baseInfo.idStr = strconv.FormatInt(baseInfo.id, 10)
-+	if baseInfo.id == 0 {
-+		return baseInfo
-+	}
-+
-+	baseTbl, ok := e.is.TableByID(ctx, baseInfo.id)
-+	if !ok {
-+		return baseInfo
-+	}
-+	baseInfo.name = baseTbl.Meta().Name.O
-+	if baseSchema, ok := infoschema.SchemaByTable(e.is, baseTbl.Meta()); ok {
-+		baseInfo.schema = baseSchema.Name.O
-+	}
-+	return baseInfo
-+}
-+
-+func (e *memtableRetriever) filterMLogCandidatesByBasePredicates(
-+	ctx context.Context,
-+	ex *plannercore.InfoSchemaTiDBMLogsExtractor,
-+	schemas []ast.CIStr,
-+	tables []*model.TableInfo,
-+) ([]ast.CIStr, []*model.TableInfo, []mlogBaseTableInfo) {
-+	filteredSchemas := schemas[:0]
-+	filteredTables := tables[:0]
-+	baseInfos := make([]mlogBaseTableInfo, 0, len(tables))
-+	for i, tbl := range tables {
-+		if tbl.MaterializedViewLog == nil {
-+			continue
-+		}
-+		baseInfo := e.getMLogBaseTableInfo(ctx, schemas[i], tbl)
-+		if ex.Filter(plannercore.BaseTableSchema, baseInfo.schema) ||
-+			ex.Filter(plannercore.BaseTableName, baseInfo.name) ||
-
 ```
 
-**File**: `pkg/executor/infoschema_reader_internal_test.go` (modified, +878/-0)
+**File**: `pkg/executor/internal/util/touched_rows.go` (modified, +6/-2)
 ```diff
-@@ -16,14 +16,23 @@ package executor
- 
- import (
- 	"context"
-+	"errors"
-+	"reflect"
-+	"regexp"
- 	"testing"
-+	"time"
-+	"unsafe"
- 
- 	"github.com/pingcap/tidb/pkg/infoschema"
- 	"github.com/pingcap/tidb/pkg/meta/model"
- 	"github.com/pingcap/tidb/pkg/parser/ast"
-+	"github.com/pingcap/tidb/pkg/parser/auth"
- 	"github.com/pingcap/tidb/pkg/parser/mysql"
- 	plannercore "github.com/pingcap/tidb/pkg/planner/core"
-+	"github.com/pingcap/tidb/pkg/privilege"
-+	"github.com/pingcap/tidb/pkg/table"
- 	"github.com/pingcap/tidb/pkg/types"
-+	"github.com/pingcap/tidb/pkg/util/set"
- 	"github.com/stretchr/testify/require"
+@@ -24,8 +24,8 @@ import (
  )
  
-@@ -162,3 +171,872 @@ func TestSetDataFromKeywords(t *testing.T) {
- 	require.Equal(t, types.NewStringDatum("ADD"), mt.rows[0][0]) // Keyword: ADD
- 	require.Equal(t, types.NewIntDatum(1), mt.rows[0][1])        // Reserved: true(1)
- }
-+
-+type mockInfoSchemaWithItems struct {
-+	infoschema.InfoSchema
-+	items []infoschema.TableItem
-+}
-+
-+func (m *mockInfoSchemaWithItems) IterateAllTableItems(visit func(infoschema.TableItem) bool) {
-+	for _, item := range m.items {
-+		if !visit(item) {
-+			return
-+		}
-+	}
-+}
-+
-+type tableByNameErrorInfoSchema struct {
-+	infoschema.InfoSchema
-+	err error
-+}
-+
-+func (m *tableByNameErrorInfoSchema) TableByName(
-+	_ context.Context,
-+	_, _ ast.CIStr,
-+) (table.Table, error) {
-+	return nil, m.err
-+}
-+
-+type tableByIDCountInfoSchema struct {
-+	infoschema.InfoSchema
-+	calls map[int64]int
-+}
-+
-+func (m *tableByIDCountInfoSchema) TableByID(ctx context.Context, id int64) (table.Table, bool) {
-+	if m.calls == nil {
-+		m.calls = make(map[int64]int)
-+	}
-+	m.calls[id]++
-+	return m.InfoSchema.TableByID(ctx, id)
-+}
-+
-+type stubPrivilegeManager struct {
-+	privilege.Manager
-+	allow func(db, table string) bool
-+	calls []string
-+}
-+
-+func (m *stubPrivilegeManager) RequestVerification(
-+	_ []*auth.RoleIdentity,
-+	db, table, _ string,
-+	_ mysql.PrivilegeType,
-+) bool {
-+	m.calls = append(m.calls, db+"."+table)
-+	if m.allow == nil {
-+		return true
-+	}
-+	return m.allow(db, table)
-+}
-+
-+func setExtractorRegexp(
-+	t *testing.T,
-+	ex *plannercore.InfoSchemaTiDBMViewsExtractor,
-+	col string,
-+	patterns ...string,
-+) {
-+	t.Helper()
-+
-+	regs := make([]*regexp.Regexp, 0, len(patterns))
-+	for _, pattern := range patterns {
-+		regs = append(regs, regexp.MustCompile(pattern))
-+	}
-+
-+	field := reflect.ValueOf(&ex.InfoSchemaBaseExtractor).Elem().FieldByName("colsRegexp")
-+	require.True(t, field.IsValid())
-+	field = reflect.NewAt(field.Type(), unsafe.Pointer(field.UnsafeAddr())).Elem()
-+	field.Set(reflect.ValueOf(map[string][]*regexp.Regexp{col: regs}))
-+}
-+
-+func newColumnInfo(name string) *model.ColumnInfo {
-+	return &model.ColumnInfo{Name: ast.NewCIStr(name)}
-+}
-+
-+func requireNoNullDatums(t *testing.T, row []types.Datum, indexes ...int) {
-+	t.Helper()
-+	for _, index := range indexes {
-+		require.False(t, row[index].IsNull(), "column index %d", index)
-+	}
-+}
-+
-+func newMViewTableInfo(id int64, name string, updateTS uint64) *model.TableInfo {
-+	return &model.TableInfo{
-+		ID:       id,
-+		Name:     ast.NewCIStr(name),
-+		Comment:  name + "-comment",
-+		UpdateTS: updateTS,
-+		State:    model.StatePublic,
-+		MaterializedView: &model.MaterializedViewInfo{
-+			SQLContent:       "select 1",
-+			RefreshMethod:    "FAST",
-+			RefreshStartWith: "CURRENT_TIMESTAMP",
-+			RefreshNext:      "CURRENT_TIMESTAMP + INTERVAL 1 HOUR",
-+		},
-+	}
-+}
-+
-+func newBaseTableInfo(id int64, name string, mlogID int64) *model.TableInfo {
-+	tbl := &model.TableInfo{
-+		ID:    id,
-+		Name:  ast.NewCIStr(name),
-+		State: model.StatePublic,
-+	}
-+	if mlogID != 0 {
-+		tbl.MaterializedViewBase = &model.MaterializedViewBaseInfo{MLogID: mlogID}
-+	}
-+	return tbl
-+}
-+
-+func newBaseTableInfoWithMViews(id int64, name string, mlogID int64, mviewIDs ...int64) *model.TableInfo {
-+	tbl := newBaseTableInfo(id, name, mlogID)
-+	if tbl.MaterializedViewBase == nil {
-+		tbl.MaterializedViewBase = &model.MaterializedViewBaseInfo{}
-+	}
-+	tbl.MaterializedViewBase.MViewIDs = append([]int64(nil), mviewIDs...)
-+	return tbl
-+}
-+
-+func newMViewTableInfoWithBase(id int64, name string, baseIDs ...int64) *model.TableInfo {
-+	tbl := newMViewTableInfo(id, name, 0)
-+	tbl.MaterializedView.BaseTableIDs = append([]int64(nil), baseIDs...)
-+	return tbl
-+}
-+
-+func newMLogTableInfo(id int64, name string, baseTableID int64) *model.TableInfo {
-+	return &model.TableInfo{
-+		ID:    id,
-+		Name:  ast.NewCIStr(name),
-+		State: model.StatePublic,
-+		MaterializedViewLog: &model.MaterializedViewLogInfo{
-+			BaseTableID:    baseTableID,
-+			Columns:        []ast.CIStr{ast.NewCIStr("a"), ast.NewCIStr("b")},
-+			PurgeMethod:    "DEFERRED",
-+			PurgeStartWith: "CURRENT_TIMESTAMP",
-+			PurgeNext:      "CURRENT_TIMESTAMP + INTERVAL 1 HOUR",
-+		},
-+	}
-+}
-+
-+func TestSetDataFromTiDBMViews(t *testing.T) {
-+	t.Run("wrong extractor type", func(t *testing.T) {
-+		mt := memtableRetriever{
-+			extractor: &plannercore.InfoSchemaTablesExtractor{},
-+		}
-+
-+		err := mt.setDataFromTiDBMViews(context.Background(), defa
+ // MarkTouchedRowsByColumn compares old/new values and sets the bit for rows whose value changed.
+-// Values are compared using their binary representation; this matches the mlog touched-column
+-// contract, which must not apply the session's SQL collation rules.
++// String values use binary equality to preserve the mlog touched-column contract,
++// independent of the session's SQL collation rules.
+ func MarkTouchedRowsByColumn(
+ 	updateRows []int,
+ 	updateTouchedBitmap []uint8,
+@@ -56,6 +56,10 @@ func MarkTouchedRowsByColumn(
+ 		changed := oldNull != newNull
+ 		if !changed && !oldNull && !newNull {
+ 			switch fieldType.GetType() {
++			case mysql.TypeNewDecimal:
++				// Equal DECIMAL values can have different internal representations.
++				changed = !bytes.Equal(oldCol.GetRaw(rowIdx), newCol.GetRaw(rowIdx)) &&
++					oldCol.GetDecimal(rowIdx).Compare(newCol.GetDecimal(rowIdx)) != 0
+ 			case mysql.TypeEnum:
+ 				changed = oldCol.GetEnum(rowIdx).Name != newCol.GetEnum(rowIdx).Name
+ 			case mysql.TypeSet:
 ```
 
-**File**: `pkg/executor/test/materializedview/BUILD.bazel` (modified, +2/-1)
+**File**: `pkg/executor/mview_compare.go` (added, +996/-0)
 ```diff
-@@ -5,14 +5,15 @@ go_test(
-     timeout = "short",
-     srcs = [
-         "main_test.go",
-+        "materialized_view_infoschema_test.go",
-         "materialized_view_refresh_entry_test.go",
-         "materialized_view_refresh_operator_test.go",
-         "materialized_view_refresh_test.go",
-         "materialized_view_show_test.go",
-         "testutil_test.go",
-     ],
-     flaky = True,
--    shard_count = 46,
-+    shard_count = 47,
-     deps = [
-         "//pkg/config",
-         "//pkg/ddl",
-```
-
-**File**: `pkg/executor/test/materializedview/materialized_view_infoschema_test.go` (added, +68/-0)
-```diff
-@@ -0,0 +1,68 @@
+@@ -0,0 +1,996 @@
 +// Copyright 2026 PingCAP, Inc.
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -2347,298 +2240,234 @@ ref pingcap/tidb#18023
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package materializedview
++package executor
 +
 +import (
++	"bytes"
 +	"context"
 +	"fmt"
-+	"testing"
++	"strconv"
++	"strings"
++	"sync"
++	"time"
 +
++	"github.com/pingcap/errors"
++	"github.com/pingcap/failpoint"
++	"github.com/pingcap/tidb/pkg/domain"
++	"github.com/pingcap/tidb/pkg/executor/internal/exec"
++	executil "github.com/pingcap/tidb/pkg/executor/internal/util"
++	"github.com/pingcap/tidb/pkg/executor/join"
++	"github.com/pingcap/tidb/pkg/expression"
++	"github.com/pingcap/tidb/pkg/infoschema"
++	"github.com/pingcap/tidb/pkg/kv"
++	"github.com/pingcap/tidb/pkg/meta/autoid"
++	"github.com/pingcap/tidb/pkg/meta/model"
 +	"github.com/pingcap/tidb/pkg/parser/ast"
-+	"github.com/pingcap/tidb/pkg/testkit"
-+	"github.com/stretchr/testify/require"
++	"github.com/pingcap/tidb/pkg/parser/mysql"
++	"github.com/pingcap/tidb/pkg/planner/core/base"
++	mvmerge "github.com/pingcap/tidb/pkg/planner/mview"
++	"github.com/pingcap/tidb/pkg/sessionctx"
++	"github.com/pingcap/tidb/pkg/sessiontxn"
++	"github.com/pingcap/tidb/pkg/sessiontxn/staleread"
++	"github.com/pingcap/tidb/pkg/table"
++	"github.com/pingcap/tidb/pkg/types"
++	"github.com/pingcap/tidb/pkg/util/chunk"
++	"github.com/pingcap/tidb/pkg/util/dbterror"
++	"github.com/pingcap/tidb/pkg/util/dbterror/plannererrors"
++	"github.com/pingcap/tidb/pkg/util/logutil"
++	"github.com/pingcap/tidb/pkg/util/sqlescape"
++	"github.com/pingcap/tidb/pkg/util/sqlexec"
++	"github.com/pingcap/tidb/pkg/util/stringutil"
++	"github.com/tikv/client-go/v2/oracle"
++	"go.uber.org/zap"
 +)
 +
-+func TestInformationSchemaMaterializedView(t *testing.T) {
-+	t.Run("TiDBMViews", testInformationSchemaTiDBMViews)
-+	t.Run("TiDBMLogs", testInformationSchemaTiDBMLogs)
++// CompareMaterializedViewExec executes "COMPARE MATERIALIZED VIEW" as a utility-style statement.
++type CompareMaterializedViewExec struct {
++	exec.BaseExecutor
++	stmt *ast.CompareMaterializedViewStmt
++	done bool
 +}
 +
-+func testInformationSchemaTiDBMViews(t *testing.T) {
-+	store, dom := testkit.CreateMockStoreAndDomain(t)
-+	tk := newMViewTestKit(t, store)
-+	tk.MustExec("use test")
-+	tk.MustExec("create table t (a int not null, b int not null)")
-+	tk.MustExec("create materialized view log on t (a, b) purge next date_add(now(), interval 1 hour)")
-+	tk.MustExec("create materialized view mv_meta (a, s, cnt) comment='mv-meta' refresh fast next date_add(now(), interval 1 hour) as select a, sum(b), count(1) from t group by a")
++const (
++	compareMaterializedViewDifferTypeBaseName = "_Differ_type_"
++	compareMaterializedViewDifferType         = "mview_differ"
++	compareMaterializedViewVacuumType         = "mview_vacuum"
++	compareMaterializedViewExcessiveType      = "mview_excessive"
 +
-+	is := dom.InfoSchema()
-+	mvTable, err := is.TableByName(context.Background(), ast.NewCIStr("test"), ast.NewCIStr("mv_meta"))
-+	require.NoError(t, err)
-+	mvID := mvTable.Meta().ID
++	compareMaterializedViewOutputWriterBatchSize     = 1024
++	compareMaterializedViewOutputWriterBatchBytesCap = 16 * 1024 * 1024
++)
 +
-+	tk.MustQuery("select table_catalog, table_schema, mview_id, mview_name, mview_comment, refresh_method, refresh_start, refresh_next from information_schema.tidb_mviews where table_schema = 'test' and mview_name = 'mv_meta'").
-+		Check(testkit.Rows(fmt.Sprintf("def test %d mv_meta mv-meta FAST  DATE_ADD(NOW(), INTERVAL 1 HOUR)", mvID)))
-+	tk.MustQuery("select mview_modify_time is not null from information_schema.tidb_mviews where table_schema = 'test' and mview_name = 'mv_meta'").
-+		Check(testkit.Rows("1"))
-+	tk.MustQuery("select mview_sql_content like 'SELECT%' from information_schema.tidb_mviews where table_schema = 'test' and mview_name = 'mv_meta'").
-+		Check(testkit.Rows("1"))
++type compareMaterializedViewDiffLayout struct {
++	groupKeyOffsets        []int
++	currentMarkerColIdx    int
++	recomputedMarkerColIdx int
++	payloadCompareColumns  []mviewCompleteDeltaCompareColumn
 +}
 +
-+func testInformationSchemaTiDBMLogs(t *testing.T) {
-+	store, dom := testkit.CreateMockStoreAndDomain(t)
-+	tk := newMViewTestKit(t, store)
-+	tk.MustExec("use test")
-+	tk.MustExec("create table t (a int not null, b int not null)")
-+	tk.MustExec("create materialized view log on t (a, b) purge start with now() next date_add(now(), interval 1 hour)")
++type compareMaterializedViewRecordSetExec struct {
++	exec.BaseExecutor
 +
-+	is := dom.InfoSchema()
-+	baseTable, err := is.TableByName(context.Background(), ast.NewCIStr("test"), ast.NewCIStr("t"))
-+	require.NoError(t, err)
-+	mlogID := baseTable.Meta().MaterializedViewBase.MLogID
-+	baseID := baseTable.Meta().ID
-+
-+	tk.MustQuery("select table_catalog, table_schema, mlog_id, mlog_name, mlog_columns, base_table_catalog, base_table_schema, base_table_id, base_table_name, purge_method, purge_start, purge_next from information_schema.tidb_mlogs where table_schema = 'test' and mlog_name = '$mlog$t'").
-+		Check(testkit.Rows(fmt.Sprintf("def test %d $mlog$t a,b def test %d t DEFERRED NOW() DATE_ADD(NOW(), INTERVAL 1 HOUR)", mlogID, baseID)))
++	recordSet sqlexec.RecordSet
++	release   func() error
++	closeOnce sync.Once
++	closeErr  error
 +}
++
++type compareMaterializedViewOutputWriter struct {
++	sctx          sessionctx.Context
++	targetTable   table.Table
++	txn           kv.Transaction
++	fieldTypes    []*types.FieldType
++	row           []types.Datum
++	mvColumnCount int
++	batchSize     int
++	batchBytes    int
++	pendingRows   int
++	release       func(context.Context)
++	dropTable     func(context.Context)
++}
++
++// Next implements the Executor Next interface.
++func (e *CompareMaterializedViewExec) Next(ctx context.Context, req *chunk.Chunk) error {
++	req.Reset()
++	if e.done {
++		return nil
++	}
++	e.done = true
++
++	ctx = kv.WithInternalSourceType(ctx, kv.InternalTxnMViewMaintenance)
++
++	compareSnapshotTS, err := e.resolveCompareMaterializedViewSnapshotTS(ctx)
++	if err != nil {
++		return err
++	}
++	if err := e.precheckCompareMaterializedViewCurrentState(); err != nil {
++		return err
++	}
++	snapshotIS, err := domain.GetDomain(e.Ctx()).GetSnapshotInfoSchema(compareSnapshotTS)
++	if err != nil {
++		return err
++	}
++
++	schemaName, targetTable, tblInfo, err := e.resolveCompareMaterializedViewTarget(snapshotIS)
++	if err != nil {
++		return err
++	}
++	if err := checkRefreshMaterializedViewBaseTableSelect(e.Ctx(), snapshotIS, tblInfo.MaterializedView); err != nil {
++		return err
++	}
++	if err := e.checkCompareMaterializedViewOutputTableNotExists(); err != nil {
++		return err
++	}
++
++	lastSuccessReadTSO, err := e.readCompareMaterializedViewLastSuccessReadTSO(ctx, tblInfo.ID, compareSnapshotTS)
++	if err != nil {
++		return err
++	}
++
++	diffMeta, err := mvmerge.BuildCompleteDiffSource(e.Ctx().GetPlanCtx(), snapshotIS, tblInfo)
++	if err != nil {
++		return err
++	}
++	visibleCols := targetTable.VisibleCols()
++	layout, err := buildCompareMaterializedViewDiffLayout(diffMeta, visibleCols)
++	if err != nil {
++		return err
++	}
++
++	var outputWriter *compareMaterializedViewOutputWriter
++	if e.stmt.OutputTable != nil {
++		outputWriter, err = e.openCompareMaterializedViewOutputWriter(ctx, tblInfo, visibleCols)
++		if err != nil {
++			return err
++		}
++	
 ```
 
-**File**: `pkg/infoschema/infoschema_test.go` (modified, +33/-0)
+**File**: `pkg/executor/mviewdeltamergeagg/BUILD.bazel` (modified, +1/-1)
 ```diff
-@@ -237,6 +237,39 @@ func TestBasic(t *testing.T) {
- 	require.NoError(t, err)
- 	require.NotNil(t, tb)
- 
-+	tb, err = is.TableByName(context.Background(), ast.NewCIStr("information_schema"), ast.NewCIStr(infoschema.TableTiDBMLogs))
-+	require.NoError(t, err)
-+	col := tb.Meta().FindPublicColumnByName("base_table_id")
-+	require.NotNil(t, col)
-+	require.Equal(t, mysql.TypeLonglong, col.GetType())
-+	for _, colName := range []string{
-+		"table_catalog", "table_schema", "mlog_id", "mlog_name", "mlog_columns",
-+		"base_table_catalog", "base_table_schema", "base_table_id", "base_table_name",
-+	} {
-+		col = tb.Meta().FindPublicColumnByName(colName)
-+		require.NotNil(t, col)
-+		require.True(t, mysql.HasNotNullFlag(col.GetFlag()), colName)
-+	}
-+	for _, colName := range []string{"purge_method", "purge_start", "purge_next"} {
-+		col = tb.Meta().FindPublicColumnByName(colName)
-+		require.NotNil(t, col)
-+		require.False(t, mysql.HasNotNullFlag(col.GetFlag()), colName)
-+	}
-+	tb, err = is.TableByName(context.Background(), ast.NewCIStr("information_schema"), ast.NewCIStr(infoschema.TableTiDBTableMViewDependencies))
-+	require.NoError(t, err)
-+	col = tb.Meta().FindPublicColumnByName("mview_id")
-+	require.NotNil(t, col)
-+	require.Equal(t, mysql.TypeLonglong, col.GetType())
-+	for _, colName := range []string{
-+		"table_catalog", "table_schema", "table_id", "table_name",
-+		"mlog_id", "mlog_name",
-+		"mview_catalog", "mview_schema", "mview_id", "mview_name",
-+	} {
-+		col = tb.Meta().FindPublicColumnByName(colName)
-+		require.NotNil(t, col)
-+		require.True(t, mysql.HasNotNullFlag(col.GetFlag()), colName)
-+	}
-+
- 	require.NoError(t, err)
- 	txn, err = re.Store().Begin()
- 	require.NoError(t, err)
+@@ -43,7 +43,7 @@ go_test(
+     srcs = ["exec_test.go"],
+     embed = [":mviewdeltamergeagg"],
+     flaky = True,
+-    shard_count = 33,
++    shard_count = 34,
+     deps = [
+         "//pkg/executor/internal/exec",
+         "//pkg/executor/internal/util",
 ```
 
-**File**: `pkg/infoschema/tables.go` (modified, +53/-0)
+**File**: `pkg/executor/mviewdeltamergeagg/exec_test.go` (modified, +51/-0)
 ```diff
-@@ -219,6 +219,12 @@ const (
- 	TableTiDBCheckConstraints = "TIDB_CHECK_CONSTRAINTS"
- 	// TableKeywords is the list of keywords.
- 	TableKeywords = "KEYWORDS"
-+	// TableTiDBMViews is a table to show the metadata of materialized views in the current instance.
-+	TableTiDBMViews = "TIDB_MVIEWS"
-+	// TableTiDBMLogs is a table to show the metadata of materialized view logs in the current instance.
-+	TableTiDBMLogs = "TIDB_MLOGS"
-+	// TableTiDBTableMViewDependencies is a table to show dependencies between base tables, mlog and materialized views.
-+	TableTiDBTableMViewDependencies = "TIDB_TABLE_MVIEW_DEPENDENCIES"
- 	// TableTiDBIndexUsage is a table to show the usage stats of indexes in the current instance.
- 	TableTiDBIndexUsage = "TIDB_INDEX_USAGE"
- 	// TableTiDBPlanCache is the plan cache table.
-@@ -358,6 +364,9 @@ var tableIDMap = map[string]int64{
- 	TableKeyspaceMeta:                    autoid.InformationSchemaDBID + 100,
- 	TableSchemataExtensions:              autoid.InformationSchemaDBID + 101,
- 	TableStorageClassTransitions:         autoid.InformationSchemaDBID + 102,
-+	TableTiDBMViews:                      autoid.InformationSchemaDBID + 103,
-+	TableTiDBMLogs:                       autoid.InformationSchemaDBID + 104,
-+	TableTiDBTableMViewDependencies:      autoid.InformationSchemaDBID + 105,
+@@ -1950,6 +1950,57 @@ func TestMarkUpdateTouchedRowsByColumnStringCollation(t *testing.T) {
+ 	require.Equal(t, []uint8{1, 1, 0, 1}, updateTouchedBitmap)
  }
  
- // columnInfo represents the basic column information of all kinds of INFORMATION_SCHEMA tables
-@@ -753,6 +762,47 @@ var tableViewsCols = []columnInfo{
- 	{name: "COLLATION_CONNECTION", tp: mysql.TypeVarchar, size: 32, flag: mysql.NotNullFlag},
- }
- 
-+var tableTiDBMViewsCols = []columnInfo{
-+	{name: "TABLE_CATALOG", tp: mysql.TypeVarchar, size: 512, flag: mysql.NotNullFlag},
-+	{name: "TABLE_SCHEMA", tp: mysql.TypeVarchar, size: 64, flag: mysql.NotNullFlag},
-+	{name: "MVIEW_ID", tp: mysql.TypeLonglong, size: 21, flag: mysql.NotNullFlag},
-+	{name: "MVIEW_NAME", tp: mysql.TypeVarchar, size: 64, flag: mysql.NotNullFlag},
-+	{name: "MVIEW_SQL_CONTENT", tp: mysql.TypeLongBlob, size: types.UnspecifiedLength, flag: mysql.NotNullFlag},
-+	{name: "MVIEW_COMMENT", tp: mysql.TypeVarchar, size: 128},
-+	{name: "MVIEW_MODIFY_TIME", tp: mysql.TypeDatetime, flag: mysql.NotNullFlag},
-+	{name: "REFRESH_METHOD", tp: mysql.TypeVarchar, size: 32},
-+	{name: "REFRESH_START", tp: mysql.TypeVarchar, size: 128},
-+	{name: "REFRESH_NEXT", tp: mysql.TypeVarchar, size: 128},
-+}
++func TestMarkUpdateTouchedRowsByColumnDecimalValueComparison(t *testing.T) {
++	ft := types.NewFieldType(mysql.TypeNewDecimal)
++	ft.SetFlen(32)
++	ft.SetDecimal(0)
 +
-+var tableTiDBMLogsCols = []columnInfo{
-+	{name: "TABLE_CATALOG", tp: mysql.TypeVarchar, size: 512, flag: mysql.NotNullFlag},
-+	{name: "TABLE_SCHEMA", tp: mysql.TypeVarchar, size: 64, flag: mysql.NotNullFlag},
-+	{name: "MLOG_ID", tp: mysql.TypeLonglong, size: 21, flag: mysql.NotNullFlag},
-+	{name: "MLOG_NAME", tp: mysql.TypeVarchar, size: 64, flag: mysql.NotNullFlag},
-+	{name: "MLOG_COLUMNS", tp: mysql.TypeLongBlob, size: types.UnspecifiedLength, flag: mysql.NotNullFlag},
-+	{name: "BASE_TABLE_CATALOG", tp: mysql.TypeVarchar, size: 512, flag: mysql.NotNullFlag},
-+	{name: "BASE_TABLE_SCHEMA", tp: mysql.TypeVarchar, size: 64, flag: mysql.NotNullFlag},
-+	{name: "BASE_TABLE_ID", tp: mysql.TypeLonglong, size: 21, flag: mysql.NotNullFlag},
-+	{name: "BASE_TABLE_NAME", tp: mysql.TypeVarchar, size: 64, flag: mysql.NotNullFlag},
-+	{name: "PURGE_METHOD", tp: mysql.TypeVarchar, size: 32},
-+	{name: "PURGE_START", tp: mysql.TypeVarchar, size: 128},
-+	{name: "PURGE_NEXT", tp: mysql.TypeVarchar, size: 128},
-+}
++	// Stored values and aggregate results can use different internal precisions.
++	compact := types.NewDecFromStringForTest("50")
++	encoded, err := compact.ToBin(ft.GetFlen(), ft.GetDecimal())
++	require.NoError(t, err)
++	padded := new(types.MyDecimal)
++	_, err = padded.FromBin(encoded, ft.GetFlen(), ft.GetDecimal())
++	require.NoError(t, err)
++	require.Zero(t, padded.Compare(compact))
++	require.NotEqual(t, padded.GetDigitsInt(), compact.GetDigitsInt())
 +
-+var tableTiDBTableMViewDependenciesCols = []columnInfo{
-+	{name: "TABLE_CATALOG", tp: mysql.TypeVarchar, size: 512, flag: mysql.NotNullFlag},
-+	{name: "TABLE_SCHEMA", tp: mysql.TypeVarchar, size: 64, flag: mysql.NotNullFlag},
-+	{name: "TABLE_ID", tp: mysql.TypeLonglong, size: 21, flag: mysql.NotNullFlag},
-+	{name: "TABLE_NAME", tp: mysql.TypeVarchar, size: 64, flag: mysql.NotNullFlag},
-+	{name: "MLOG_ID", tp: mysql.TypeLonglong, size: 21, flag: mysql.NotNullFlag},
-+	{name: "MLOG_NAME", tp: mysql.TypeVarchar, size: 64, flag: mysql.NotNullFlag},
-+	{name: "MVIEW_CATALOG", tp: mysql.TypeVarchar, size: 512, flag: mysql.NotNullFlag},
-+	{name: "MVIEW_SCHEMA", tp: mysql.TypeVarchar, size: 64, flag: mysql.NotNullFlag},
-+	{name: "MVIEW_ID", tp: mysql.TypeLonglong, size: 21, flag: mysql.NotNullFlag},
-+	{name: "MVIEW_NAME", tp: mysql.TypeVarchar, size: 64, flag: mysql.NotNullFlag},
-+}
-+
- var tableRoutinesCols = []columnInfo{
- 	{name: "SPECIFIC_NAME", tp: mysql.TypeVarchar, size: 64, flag: mysql.NotNullFlag},
- 	{name: "ROUTINE_CATALOG", tp: mysql.TypeVarchar, size: 512, flag: mysql.NotNullFlag},
-@@ -2578,6 +2628,9 @@ var tableNameToColumns = map[string][]columnInfo{
- 	TableRunawayWatches:                     tableRunawayWatchListCols,
- 	TableCheckConstraints:                   tableCheckConstraintsCols,
- 	TableTiDBCheckConstraints:               tableTiDBCheckConstraintsCols,
-+	TableTiDBMViews:                         tableTiDBMViewsCols,
-+	TableTiDBMLogs:                          tableTiDBMLogsCols,
-+	TableTiDBTableMViewDependencies:         tableTiDBTableMViewDependenciesCols,
- 	TableKeywords
-```
-
-**File**: `pkg/planner/core/logical_plan_builder.go` (modified, +6/-0)
-```diff
-@@ -5580,6 +5580,12 @@ func (b *PlanBuilder) buildMemTable(_ context.Context, dbName ast.CIStr, tableIn
- 			p.Extractor = NewInfoSchemaReferConstExtractor()
- 		case infoschema.TableTiDBIndexes:
- 			p.Extractor = NewInfoSchemaIndexesExtractor()
-+		case infoschema.TableTiDBMViews:
-+			p.Extractor = NewInfoSchemaTiDBMViewsExtractor()
-+		case infoschema.TableTiDBMLogs:
-+			p.Extractor = NewInfoSchemaTiDBMLogsExtractor()
-+		case infoschema.TableTiDBTableMViewDependencies:
-+			p.Extractor = NewInfoSchemaTiDBTableMViewDependenciesExtractor()
- 		case infoschema.TableViews:
- 			p.Extractor = NewInfoSchemaViewsExtractor()
- 		case infoschema.TableKeyColumn:
-```
-
----
-
-### Incident Patch 2: `96f2b0da` (2026-10-28)
-**Commit Message**: executor: preserve transaction scan ranges for unsigned clustered primary keys (#72433)
-
-close pingcap/tidb#72432
-
-**File**: `pkg/executor/table_reader.go` (modified, +10/-0)
-```diff
-@@ -342,11 +342,21 @@ func (e *TableReaderExecutor) Open(ctx context.Context) error {
- 		e.resultHandler.open(nil, firstResult)
- 		return nil
- 	}
-+	// Each call to buildRespForGroupedRanges replaces e.kvRanges. Preserve the first part so
-+	// UnionScan can read transaction-local rows from both sides of the unsigned handle boundary.
-+	firstKVRanges := e.kvRanges
- 	var secondResult distsql.SelectResult
- 	secondResult, err = e.buildRespForGroupedRanges(ctx, secondPartGroupedRanges)
- 	if err != nil {
- 		return err
- 	}
-+	// The split follows scan order, but UnionScan reverses the ranges for descending scans.
-+	// Keep the two parts in ascending handle order before passing them to UnionScan.
-+	if e.desc {
-+		e.kvRanges = append(e.kvRanges, firstKVRanges...)
-+	} else {
-+		e.kvRanges = append(firstKVRanges, e.kvRanges...)
++	rows := [][2]*types.MyDecimal{
++		{padded, compact},
++		{compact, padded},
++		{compact, compact},
++		{padded, padded},
++		{padded, types.NewDecFromStringForTest("51")},
++		{nil, nil},
++		{nil, compact},
++		{compact, nil},
 +	}
- 	e.resultHandler.open(firstResult, secondResult)
- 	return nil
- }
-```
-
-**File**: `tests/integrationtest/r/executor/union_scan.result` (modified, +24/-0)
-```diff
-@@ -562,3 +562,27 @@ insert into t values (1, 1), (2, 2), (1, 3) on duplicate key update a = a + 1;
- Error 1062 (23000): Duplicate entry '2' for key 't.a'
- commit;
- admin check table t;
-+CREATE TABLE repro_union_scan_hint (id BIGINT UNSIGNED NOT NULL, tenant VARCHAR(128) NOT NULL, payload VARCHAR(128) DEFAULT NULL, PRIMARY KEY (id) /*T![clustered_index] CLUSTERED */, KEY idx_tenant (tenant));
-+BEGIN;
-+INSERT INTO repro_union_scan_hint (id, tenant, payload) VALUES (9, 'csong', 'uncommitted');
-+SELECT * FROM repro_union_scan_hint WHERE tenant = 'csong' ORDER BY id;
-+id	tenant	payload
-+9	csong	uncommitted
-+SELECT /*+ USE_INDEX(repro_union_scan_hint) */ * FROM repro_union_scan_hint WHERE tenant = 'csong' ORDER BY id;
-+id	tenant	payload
-+9	csong	uncommitted
-+INSERT INTO repro_union_scan_hint (id, tenant, payload) VALUES (9223372036854775807, 'csong', 'uncommitted'), (9223372036854775808, 'csong', 'uncommitted'), (18446744073709551615, 'csong', 'uncommitted');
-+SELECT /*+ USE_INDEX(repro_union_scan_hint) */ * FROM repro_union_scan_hint WHERE tenant = 'csong' ORDER BY id ASC;
-+id	tenant	payload
-+9	csong	uncommitted
-+9223372036854775807	csong	uncommitted
-+9223372036854775808	csong	uncommitted
-+18446744073709551615	csong	uncommitted
-+SELECT /*+ USE_INDEX(repro_union_scan_hint) */ * FROM repro_union_scan_hint WHERE tenant = 'csong' ORDER BY id DESC;
-+id	tenant	payload
-+18446744073709551615	csong	uncommitted
-+9223372036854775808	csong	uncommitted
-+9223372036854775807	csong	uncommitted
-+9	csong	uncommitted
-+ROLLBACK;
-+DROP TABLE repro_union_scan_hint;
-```
-
-**File**: `tests/integrationtest/t/executor/union_scan.test` (modified, +12/-0)
-```diff
-@@ -286,3 +286,15 @@ insert into t values (1, 1), (2, 2), (1, 3) on duplicate key update a = a + 1;
- commit;
- admin check table t;
- 
-+# https://github.com/pingcap/tidb/issues/72432
-+CREATE TABLE repro_union_scan_hint (id BIGINT UNSIGNED NOT NULL, tenant VARCHAR(128) NOT NULL, payload VARCHAR(128) DEFAULT NULL, PRIMARY KEY (id) /*T![clustered_index] CLUSTERED */, KEY idx_tenant (tenant));
-+BEGIN;
-+INSERT INTO repro_union_scan_hint (id, tenant, payload) VALUES (9, 'csong', 'uncommitted');
-+SELECT * FROM repro_union_scan_hint WHERE tenant = 'csong' ORDER BY id;
-+SELECT /*+ USE_INDEX(repro_union_scan_hint) */ * FROM repro_union_scan_hint WHERE tenant = 'csong' ORDER BY id;
-+INSERT INTO repro_union_scan_hint (id, tenant, payload) VALUES (9223372036854775807, 'csong', 'uncommitted'), (9223372036854775808, 'csong', 'uncommitted'), (18446744073709551615, 'csong', 'uncommitted');
-+SELECT /*+ USE_INDEX(repro_union_scan_hint) */ * FROM repro_union_scan_hint WHERE tenant = 'csong' ORDER BY id ASC;
-+SELECT /*+ USE_INDEX(repro_union_scan_hint) */ * FROM repro_union_scan_hint WHERE tenant = 'csong' ORDER BY id DESC;
-+ROLLBACK;
-+DROP TABLE repro_union_scan_hint;
++	chk := chunk.NewChunkWithCapacity([]*types.FieldType{ft, ft}, len(rows))
++	for _, row := range rows {
++		for colIdx, value := range row {
++			if value == nil {
++				chk.AppendNull(colIdx)
++			} else {
++				chk.AppendMyDecimal(colIdx, value)
++			}
++		}
++	}
++	updateTouchedBitmap := make([]uint8, len(rows))
++	err = executil.MarkTouchedRowsByColumn(
++		[]int{0, 1, 2, 3, 4, 5, 6, 7},
++		updateTouchedBitmap,
++		1,
++		0,
++		chk.Column(0),
++		chk.Column(1),
++		ft,
++		false,
++		"aggregate change",
++	)
++	require.NoError(t, err)
++	require.Equal(t, []uint8{0, 0, 0, 0, 1, 0, 1, 1}, updateTouchedBitmap)
++}
 +
+ func TestMarkUpdateTouchedRowsByColumnEnumSetUseBinaryNameCompare(t *testing.T) {
+ 	enumFT := types.NewFieldType(mysql.TypeEnum)
+ 	enumFT.SetCharset("utf8mb4")
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #72479** (2026-10-28): memory: backport arbitration improvements with default disabled (#71346, #71640) (@solotzg)
+- **PR #72477** (2026-10-28): memory: backport global arbitration fixes with default disabled (#69638, #70058, #70205, #68700, #71346, #71640) (@solotzg)
+- **PR #72472** (2026-10-28): executor, planner: support materialized view comparison (@windtalker)
+- **PR #72471** (2026-10-28): dxf: update step executor resource after live slot changes (@D3Hunter)
 - **PR #72453** (2026-10-27): sessionctx: lower the new-cluster sampled NDV threshold to 100 million (@0xPoe)
 - **PR #72445** (2026-10-28): br: enable log redact by default (#72429) (@ti-chi-bot)
-- **PR #72442** (2026-10-28): infoschema, executor, planner: expose materialized view metadata tables (@windtalker)
-- **PR #72441** (2026-10-27): dumpling: retain TLS compatibility with legacy MySQL servers (@GMHDBJD)
-- **PR #72433** (2026-10-28): executor: preserve transaction scan ranges for unsigned clustered primary keys (@qw4990)
-- **PR #72430** (2026-10-27): executor, planner: support materialized view SHOW statements (@windtalker)
 
 ---
 
@@ -2658,30 +2487,29 @@ close pingcap/tidb#72432
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. infoschema, executor, planner: expose materialized view metadata tables (#72442)
+## X. ddl: preserve expression defaults for binary columns (#71285)
 
 **RULE**:
-When implementing operations in `pkg/executor/builder.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/ddl/add_column.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bb23c552`: infoschema, executor, planner: expose materialized view metadata tables (#72442). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4150cef7`: ddl: preserve expression defaults for binary columns (#71285). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/executor/builder.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/ddl/add_column.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			strings.ToLower(infoschema.TableTiDBMViews),
-			strings.ToLower(infoschema.TableTiDBMLogs),
-			strings.ToLower(infoschema.TableTiDBTableMViewDependencies),
+	// Expression defaults store SQL text; only their evaluated values need padding.
+	if value != nil && !col.DefaultIsExpr {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	if value != nil {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bb23c552` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4150cef7` are properly handled with clean fallback behavior.

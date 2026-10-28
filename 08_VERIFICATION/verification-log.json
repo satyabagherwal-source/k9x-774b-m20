@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-AON1",
-    "timestamp": "2026-10-27T16:51:48.925Z",
-    "repository": "assistant-ui/assistant-ui",
-    "learningId": "learn-github-assistant-ui-assistant-ui",
-    "contentHash": "f62b0ababd067d6a2c0f2f942003826fe261d736b224b559bcb168d9810cb03f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-AT9L",
-    "timestamp": "2026-10-27T16:51:54.921Z",
-    "repository": "vitest-dev/vitest",
-    "learningId": "learn-github-vitest-dev-vitest",
-    "contentHash": "b44bf11cfbed153e28939a4755ae96ff90926df89f018b34af34ba0fb1a40e45",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-AYRV",
-    "timestamp": "2026-10-27T16:52:02.059Z",
-    "repository": "crate/crate",
-    "learningId": "learn-github-crate-crate",
-    "contentHash": "11b00db46e087a7cde141a9bc70d02a5302167a9f21bbfd173dcabc79c52e2f8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-JEJG",
     "timestamp": "2026-10-27T16:58:35.740Z",
     "repository": "tamagui/tamagui",
@@ -7492,6 +7447,51 @@
     "contentHash": "4d6266396f9ac2e6226e84ef046a32224fe38a46e3e244b219c625988d293c3d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-RA6F",
+    "timestamp": "2026-10-28T21:04:20.295Z",
+    "repository": "Phocinae/Phocinae-Largha-150M-v1",
+    "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
+    "contentHash": "c12cc8d8e318e2436efe32ede70041ff3d5bba7ea9bf3a6b7df64c173044f0eb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-RFV3",
+    "timestamp": "2026-10-28T21:04:27.663Z",
+    "repository": "microsoft/react-native-windows",
+    "learningId": "learn-github-microsoft-react-native-windows",
+    "contentHash": "86ade1673287617f4afd29eabab659108df98d945573714ac10abfeaada99a4a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-RI44",
+    "timestamp": "2026-10-28T21:04:30.580Z",
+    "repository": "pingcap/tidb",
+    "learningId": "learn-github-pingcap-tidb",
+    "contentHash": "9db4c05e7cb8e25eb032086aee91b8053bb61586728d5f8b9105e3ebed812cf2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

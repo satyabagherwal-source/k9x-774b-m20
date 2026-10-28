@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/react-native-windows](https://github.com/microsoft/react-native-windows))  
-> **Source Version**: `c7ed54c7`  
+> **Source Version**: `8079828c`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T01:42:42.858Z  
+> **Timestamp**: 2026-10-28T21:04:27.182Z  
 > **Learning ID**: `learn-github-microsoft-react-native-windows`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/react-native-windows](https://github.com/microsoft/react-native-windows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T01:42:42.131Z  
+> **Harvest Timestamp**: 2026-10-28T21:04:27.175Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A framework for building native Windows apps with React.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 17359 stars
+- **Stars / Engagement**: 17360 stars
 
 ---
 
@@ -1568,281 +1568,124 @@ export default FocusManager;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e7f4af20` (2026-10-26)
-**Commit Message**: Fix Dependabot grouping and route it through PackageFeedProxy (#16511)
+### Incident Patch 1: `8079828c` (2026-10-28)
+**Commit Message**: 📦 Bump the all-dependencies group across 1 directory with 2 updates (#16507)
 
-- Group all npm updates without group update-types. Group filtering checks the
-  newest release, so compatible patch/minor updates were split into separate PRs
-  when a newer major existed. Ignore major updates explicitly instead.
-- Keep React, React Native, react-test-renderer, and React types on each
-  branch's release line by ignoring minor updates; add the same guard on main.
-- Declare anonymous PackageFeedProxy as Dependabot's npm registry and allow the
-  exact ms-feed tarball hosts it advertises, which Dependabot's egress allowlist
-  was blocking.
-- Point existing yarn.lock archive URLs at the proxy without changing versions
-  or checksums, and document Dependabot's feed setup.
+Bumps the all-dependencies group with 2 updates in the / directory: [ts-jest](https://github.com/kulshekhar/ts-jest) and [eslint-plugin-jest](https://github.com/jest-community/eslint-plugin-jest).
 
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-**File**: `.ado/README.md` (modified, +8/-0)
+Updates `ts-jest` from 29.4.14 to 29.4.15
+- [Release notes](https://github.com/kulshekhar/ts-jest/releases)
+- [Changelog](https://github.com/kulshekhar/ts-jest/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/kulshekhar/ts-jest/compare/v29.4.14...v29.4.15)
+
+Updates `eslint-plugin-jest` from 29.16.11 to 29.17.0
+- [Release notes](https://github.com/jest-community/eslint-plugin-jest/releases)
+- [Changelog](https://github.com/jest-community/eslint-plugin-jest/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/jest-community/eslint-plugin-jest/compare/v29.16.11...v29.17.0)
+
+---
+updated-dependencies:
+- dependency-name: eslint-plugin-jest
+  dependency-version: 29.17.0
+  dependency-type: direct:development
+  update-type: version-update:semver-minor
+  dependency-group: all-dependencies
+- dependency-name: ts-jest
+  dependency-version: 29.4.15
+  dependency-type: direct:development
+  update-type: version-update
+
+**File**: `yarn.lock` (modified, +13/-13)
 ```diff
-@@ -98,6 +98,14 @@ attempts that green builds would otherwise hide:
-   `templates/auth-npm-feed.yml` keeps the managed-identity token scoped to direct
-   Azure Artifacts requests in `~/.npmrc` and passes it to the Verdaccio uplink;
-   Yarn does not send the token to the proxy.
-+- **Dependabot:** `.github/dependabot.yml` configures the same anonymous proxy
-+  separately; Dependabot does not inherit the pipeline variables. Its registry
-+  declarations also allow the exact `ms-feed-*` hosts advertised by proxy
-+  metadata for tarball downloads. Existing archive URLs in the main lockfile
-+  also use proxy paths without changing dependency versions or checksums.
-+  Major version updates are ignored before grouping. React, React Native, the
-+  test renderer, and React types also ignore minor updates to stay on each
-+  branch's selected release lines; exact versions remain manifest-controlled.
- - **Verdaccio (CLI init tests):** `verdaccio/generate-config.js` emits the config at
-   runtime, so the uplink uses the proxy for PRs and the ADO feed with the CI token while
-   local packages still publish offline. The former static `config.yaml` was removed.
-```
-
-**File**: `.github/dependabot.yml` (modified, +59/-41)
-```diff
-@@ -1,21 +1,55 @@
- version: 2
--# cooldown.default-days: 8 holds lockfile bumps until a version has cleared the
--# ms/react-native-public feed's 7-day upstream quarantine (8 = 7 + 1d margin); newer
--# versions 404 in CI under network isolation. Overrides Dependabot's 3-day default.
-+registries:
-+  packagefeedproxy:
-+    type: npm-registry
-+    url: https://packagefeedproxy.microsoft.io/npm/
-+    replaces-base: true
-+  # PackageFeedProxy metadata advertises these anonymous tarball download hosts.
-+  # They do not replace the registry used to check for updates.
-+  npm-public-2:
-+    type: npm-registry
-+    url: https://ms-feed-2.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/
-+  npm-public-12:
-+    type: npm-registry
-+    url: https://ms-feed-12.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/
-+  npm-public-25:
-+    type: npm-registry
-+    url: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/
-+# Keep the existing 8-day cooldown aligned with npmMinimalAgeGate in .yarnrc.yml.
- updates:
- # main branch - all dependency updates (minor + patch), daily
- - package-ecosystem: npm
-   directory: "/"
-   target-branch: "main"
-+  registries: ["*"]
-   cooldown:
-     default-days: 8
-   groups:
-     all-dependencies:
-       patterns:
-         - '*'
-+  ignore:
-+    # Filter majors before grouping; group update-types checks the latest version,
-+    # not the compatible version selected by lockfile-only.
-+    - dependency-name: "*"
-+      update-types:
-+        - "version-update:semver-major"
-+    # Keep the RN and React release lines selected by integration; manifests pin exact versions.
-+    - dependency-name: "react"
-+      update-types:
-+        - "version-update:semver-minor"
-+    - dependency-name: "react-native"
-+      update-types:
-+        - "version-update:semver-minor"
-+    - dependency-name: "react-test-renderer"
-+      update-types:
-+        - "version-update:semver-minor"
-+    - dependency-name: "@types/react"
-       update-types:
--        - 'minor'
--        - 'patch'
-+        - "version-update:semver-minor"
-+    - dependency-name: "@types/react-dom"
-+      update-types:
-+        - "version-update:semver-minor"
-   schedule:
-     interval: daily
-     time: "05:00"
-@@ -33,37 +67,33 @@ updates:
- - package-ecosystem: npm
-   directory: "/"
-   target-branch: "0.81-stable"
-+  registries: ["*"]
-   cooldown:
-     default-days: 8
-   groups:
-     all-dependencies:
-       patterns:
-         - '*'
--      update-types:
--        - 'minor'
--        - 'patch'
-   ignore:
--    # Pin react + react-native + react-test-renderer + @types/react* to the React 19.1 minor used by this branch.
-+    - dependency-name: "*"
-+      update-types:
-+        - "version-update:semver-major"
-+    # Keep RN on 0.81.x and React/renderers/types on 19.1.x; manifests pin exact versions.
-     - dependency-name: "react"
-       update-types:
-         - "version-update:semver-minor"
--        - "version-update:semver-major"
-     - dependency-name: "react-native"
-       update-types:
-         - "version-update:semver-minor"
--        - "version-update:semver-major"
-     - dependency-name: "react-test-renderer"
-       update-types:
-         - "version-update:semver-minor"
--        - "version-update:semver-major"
-     - dependency-name: "@types/react"
-       update-types:
-         - "version-update:semver-minor"
--        - "version-update:semver-major"
-     - dependency-name: "@types/react-dom"
-       update-types:
-         - "version-update:semver-minor"
--        - "version-update:semver-major"
-   schedule:
-     interval: weekly
-     time: "05:00"
-@@ -79,37 +109,33 @@ updates:
- - package-ecosystem: npm
-   directory: "/"
-   target-branch: "0.83-stable"
-+  registries: ["*"]
-   cooldown:
-     default-days: 8
-   groups:
-     all-dependencies:
-       patterns:
-         - '*'
--      update-types:
--        - 'minor'
--        - 'patch'
-   ignore:
--    # Pin react + react-native + react-test-renderer + @types/react* to the React 19.2 minor used by this branch.
-+    - dependency-name: "*"
-+      update-types:
-+        - "version-update:semver-major"
-+    # Keep RN on 0.83.x and React/renderers/types on 19.2.x; manifests pin exact versions.
-     - dependency-name: "react"
-       update-types:
-         - "version-update:semver-minor"
--        - "version-update:semver-major"
-     - dependency-name: "react-native"
-       update-types:
-         - "version-update:semver-minor"
--        - "version-update:semver-major"
-     - dependency-name: "react-test-renderer"
-       update-types:
-         - "version-update:semver-minor"
--        - "version-update:semver-major"
-     - dependency-name: "@types/react"
-       update-types:
-         - "version-update:semver-minor"
--        - "version-update:semver-major"
-     - dependency-name: "@types/react-dom"
-       update-types:
-         - "version-update:semver-minor"
--        - "version-update:semver-major"
-   schedule:
-     interval: weekly
-     time: "05:00"
-@@ -
-```
-
-**File**: `yarn.lock` (modified, +135/-135)
-```diff
-@@ -2048,14 +2048,14 @@ __metadata:
+@@ -10388,8 +10388,8 @@ __metadata:
+   linkType: hard
  
- "@electron-internal/extract-zip@npm:^1.0.1":
-   version: 1.0.5
--  resolution: "@electron-internal/extract-zip@npm:1.0.5::__archiveUrl=https%3A%2F%2Fms-feed-25.pkgs.visualstudio.com%2F1es-public%2F_packaging%2Fnpm-public%2Fnpm%2Fregistry%2F%40electron-internal%2Fextract-zip%2F-%2Fextract-zip-1.0.5.tgz"
-+  resolution: "@electron-internal/extract-zip@npm:1.0.5::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron-internal%2Fextract-zip%2F-%2Fextract-zip-1.0.5.tgz"
-   checksum: 10c0/d3341937dcb37097fd4927b7e5dfb7cb6b1ba56a42b00d62a55a7a9bbd093545dd8c6711ab39b321b2696d968b2cc32c29ed9d60a1fa6aa1665588e03e60d4e1
+ "eslint-plugin-jest@npm:^29.0.1":
+-  version: 29.16.11
+-  resolution: "eslint-plugin-jest@npm:29.16.11"
++  version: 29.17.0
++  resolution: "eslint-plugin-jest@npm:29.17.0"
+   dependencies:
+     "@typescript-eslint/utils": "npm:^8.0.0"
+   peerDependencies:
+@@ -10404,7 +10404,7 @@ __metadata:
+       optional: true
+     typescript:
+       optional: true
+-  checksum: 10c0/455c041a4e696bea936b66ddc7276ea982b20b67664e61023334d8b5391ef0daab2dd3b41a611f95b0dabe5219cd0b4c32e9c29238c31f284294c620e983369e
++  checksum: 10c0/2ac9e40361f0e2593c71cac05c676b6a03957946806fb3286e704cadaf534ad68eddfb7f792080fad5fd806c6dd41f249ecf14af9ae6227542e61c5552a23844
    languageName: node
    linkType: hard
  
- "@electron/asar@npm:^4.0.0, @electron/asar@npm:^4.0.1":
-   version: 4.3.0
--  resolution: "@electron/asar@npm:4.3.0::__archiveUrl=https%3A%2F%2Fms-feed-25.pkgs.visualstudio.com%2F1es-public%2F_packaging%2Fnpm-public%2Fnpm%2Fregistry%2F%40electron%2Fasar%2F-%2Fasar-4.3.0.tgz"
-+  resolution: "@electron/asar@npm:4.3.0::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron%2Fasar%2F-%2Fasar-4.3.0.tgz"
-   dependencies:
-     glob: "npm:^13.0.2"
-     minimatch: "npm:^10.0.1"
-@@ -2070,7 +2070,7 @@ __metadata:
+@@ -11949,11 +11949,11 @@ __metadata:
+   languageName: node
+   linkType: hard
  
- "@electron/get@npm:^5.0.0":
-   version: 5.1.0
--  resolution: "@electron/get@npm:5.1.0::__archiveUrl=https%3A%2F%2Fms-feed-25.pkgs.visualstudio.com%2F1es-public%2F_packaging%2Fnpm-public%2Fnpm%2Fregistry%2F%40electron%2Fget%2F-%2Fget-5.1.0.tgz"
-+  resolution: "@electron/get@npm:5.1.0::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron%2Fget%2F-%2Fget-5.1.0.tgz"
+-"handlebars@npm:^4.7.9":
+-  version: 4.7.9
+-  resolution: "handlebars@npm:4.7.9"
++"handlebars@npm:^4.7.10":
++  version: 4.7.10
++  resolution: "handlebars@npm:4.7.10"
    dependencies:
-     debug: "npm:^4.1.1"
-     env-paths: "npm:^3.0.0"
-@@ -2088,7 +2088,7 @@ __metadata:
+-    minimist: "npm:^1.2.5"
++    minimist: "npm:^1.2.8"
+     neo-async: "npm:^2.6.2"
+     source-map: "npm:^0.6.1"
+     uglify-js: "npm:^3.1.4"
+@@ -11963,7 +11963,7 @@ __metadata:
+       optional: true
+   bin:
+     handlebars: bin/handlebars
+-  checksum: 10c0/22f8105a7e68e81aff2662bb434edf05f757d21d850731d71cec886d69c10cd33d3c43e34b2892968ec62de8241611851d3d0674c8ef324ea3e01dc66262faa9
++  checksum: 10c0/9b5573584ae5836172ae3f1502d9819568ba1b92ee83b81b18223beeb4c07486595e7b0fa633102beabc66ed06fe6e7da1dd9a9ea8c7072b9550b9a88809165c
+   languageName: node
+   linkType: hard
  
- "@electron/notarize@npm:^3.1.0":
-   version: 3.1.1
--  resolution: "@electron/notarize@npm:3.1.1::__archiveUrl=https%3A%2F%2Fms-feed-25.pkgs.visualstudio.com%2F1es-public%2F_packaging%2Fnpm-public%2Fnpm%2Fregistry%2F%40electron%2Fnotarize%2F-%2Fnotarize-3.1.1.tgz"
-+  resolution: "@electron/notarize@npm:3.1.1::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron%2Fnotarize%2F-%2Fnotarize-3.1.1.tgz"
+@@ -15347,7 +15347,7 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"minimist@npm:^1.2.5, minimist@npm:^1.2.6, minimist@npm:^1.2.8":
++"minimist@npm:^1.2.6, minimist@npm:^1.2.8":
+   version: 1.2.8
+   resolution: "minimist@npm:1.2.8"
+   checksum: 10c0/19d3fcdca050087b84c2029841a093691a91259a47def2f18222f41e7645a0b7c44ef4b40e88a1e58a40c84d2ef0ee6047c55594d298146d0eb3f6b737c20ce6
+@@ -18799,12 +18799,12 @@ __metadata:
+   linkType: hard
+ 
+ "ts-jest@npm:^29.0.3":
+-  version: 29.4.14
+-  resolution: "ts-jest@npm:29.4.14"
++  version: 29.4.15
++  resolution: "ts-jest@npm:29.4.15"
    dependencies:
-     debug: "npm:^4.4.0"
-     promise-retry: "npm:^2.0.1"
-@@ -2098,7 +2098,7 @@ __metadata:
+     bs-logger: "npm:^0.2.6"
+     fast-json-stable-stringify: "npm:^2.1.0"
+-    handlebars: "npm:^4.7.9"
++    handlebars: "npm:^4.7.10"
+     json5: "npm:^2.2.3"
+     lodash.memoize: "npm:^4.1.2"
+     make-error: "npm:^1.3.6"
+@@ -18834,7 +18834,7 @@ __metadata:
+       optional: true
+   bin:
+     ts-jest: cli.js
+-  checksum: 10c0/58780804871e5752d7f42e69a38ea0716d0a6330272f3a253cf10dbf8c59390f64f2da6fff3d93dcb1bc514d8fa5d02963d8ef6d062fdfa96113b3aad0fd9331
++  checksum: 10c0/99f8f71c0ee07adc036cf8917eadb29a2a5e002ed695e568c464a51661352a042bf69539d29a3e2c43773fc4e7525d47eae6dfabef45277b3a85a6d2a28a1071
+   languageName: node
+   linkType: hard
  
- "@electron/osx-sign@npm:^2.2.0":
-   version: 2.7.0
--  resolution: "@electron/osx-sign@npm:2.7.0::__archiveUrl=https%3A%2F%2Fms-feed-25.pkgs.visualstudio.com%2F1es-public%2F_packaging%2Fnpm-public%2Fnpm%2Fregistry%2F%40electron%2Fosx-sign%2F-%2Fosx-sign-2.7.0.tgz"
-+  resolution: "@electron/osx-sign@npm:2.7.0::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron%2Fosx-sign%2F-%2Fosx-sign-2.7.0.tgz"
-   dependencies:
-     debug: "npm:^4.3.4"
-     isbinaryfile: "npm:^4.0.8"
-@@ -2113,7 +2113,7 @@ __metadata:
- 
- "@electron/packager@npm:^20.0.0":
-   version: 20.3.0
--  resolution: "@electron/packager@npm:20.3.0::__archiveUrl=https%3A%2F%2Fms-feed-25.pkgs.visualstudio.com%2F1es-public%2F_packaging%2Fnpm-public%2Fnpm%2Fregistry%2F%40electron%2Fpackager%2F-%2Fpackager-20.3.0.tgz"
-+  resolution: "@electron/packager@npm:20.3.0::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron%2Fpackager%2F-%2Fpackager-20.3.0.tgz"
-   dependencies:
-     "@electron-internal/extract-zip": "npm:^1.0.1"
-     "@electron/asar": "npm:^4.0.1"
-@@ -2140,7 +2140,7 @@ __metadata:
- 
- "@electron/universal@npm:^3.0.1":
-   version: 3.0.6
--  resolution: "@electron/universal@npm:3.0.6::__archiveUrl=https%3A%2F%2Fms-feed-25.pkgs.visualstudio.com%2F1es-public%2F_packaging%2Fnpm-public%2Fnpm%2Fregistry%2F%40electron%2Funiversal%2F-%2Funiversal-3.0.6.tgz"
-+  resolution: "@electron/universal@npm:3.0.6::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron%2Funiversal%2F-%2Funiversal-3.0.6.tgz"
-   dependencies:
-     "@electron/asar": "npm:^4.0.0"
-     debug: "npm:^4.3.1"
-@@ -2151,7 +2151,7 @@ __metadata:
- 
- "@electron/windows-sign@npm:^2.0.2":
-   version: 2.1.0
--  resolution: "@electron/windows-sign@npm:2.1.0::__archiveUrl=https%3A%2F%2Fms-feed-25.pkgs.visualstudio.com%2F1es-public%2F_packaging%2Fnpm-public%2Fnpm%2Fregistry%2F%40electron%2Fwindows-sign%2F-%2Fwindows-sign-2.1.0.tgz"
-+  resolution: "@electron/windows-sign@npm:2.1.0::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron%2Fwindows-sign%2F-%2Fwindows-sign-2.1.0.tgz"
-   dependencies:
-     debug: "npm:^4.3.4"
-     graceful-fs: "npm:^4.2.11"
-@@ -3827,7 +3827,7 @@ __metadata:
- 
- "@react-native-community/cli-clean@npm:20.2.0":
-   version: 20.2.0
--  resolution: "@react-native-community/cli-clean@npm:20.2.0::__archiveUrl=https%3A%2F%2Fms-feed-25.pkgs.visualstudio.com%2F1es-public%2F_packaging%2Fnpm-public%2Fnpm%2Fregistry%2F%40react-native-community%2Fcli-clean%2F-%2Fcli-clean-20.2.0.tgz"
-+  resolution: "@react-native-community/cli-clean@npm:20.2.0::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40react-native-community%2Fcli-clean%2F-%2Fcli-clean-20.2.0
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #16529** (closed): Withdrawn (@rileysay)
+- **PR #16524** (2026-10-28): [0.85] Update Browserslist and ip-address to patched versions  (@anuagragith)
 - **PR #16523** (2026-10-27):  [0.81] Update Browserslist to patched versions  (@anuagragith)
+- **PR #16521** (2026-10-28): [0.85] Update js-yaml to patched versions (@anuagragith)
 - **PR #16520** (2026-10-27): [0.81] Update vulnerable tooling dependencies (@anuagragith)
 - **PR #16519** (2026-10-27): [0.85] Publish NuGet packages through ESRP Release (@vmoroz)
-- **PR #16518** (2026-10-27): [0.84] Publish NuGet packages through ESRP Release (@vmoroz)
-- **PR #16517** (2026-10-27): [0.83] Publish NuGet packages through ESRP Release (@vmoroz)
-- **PR #16516** (2026-10-27): Update vulnerable tooling dependencies on main (@anuagragith)
 
 ---
 
@@ -1862,35 +1705,52 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Dependabot grouping and route it through PackageFeedProxy (#16511)
+## X. 📦 Bump the all-dependencies group across 1 directory with 2 updates (#16507)
 
 **RULE**:
-When implementing operations in `.ado/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/react-native-windows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yarn.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/react-native-windows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e7f4af20`: Dependabot grouping and route it through PackageFeedProxy (#16511). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8079828c`: 📦 Bump the all-dependencies group across 1 directory with 2 updates (#16507). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.ado/README.md`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yarn.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-- **Dependabot:** `.github/dependabot.yml` configures the same anonymous proxy
-  separately; Dependabot does not inherit the pipeline variables. Its registry
-  declarations also allow the exact `ms-feed-*` hosts advertised by proxy
-  metadata for tarball downloads. Existing archive URLs in the main lockfile
-  also use proxy paths without changing dependency versions or checksums.
-  Major version updates are ignored before grouping. React, React Native, the
-  test renderer, and React types also ignore minor updates to stay on each
-  branch's selected release lines; exact versions remain manifest-controlled.
+  version: 29.17.0
+  resolution: "eslint-plugin-jest@npm:29.17.0"
+  checksum: 10c0/2ac9e40361f0e2593c71cac05c676b6a03957946806fb3286e704cadaf534ad68eddfb7f792080fad5fd806c6dd41f249ecf14af9ae6227542e61c5552a23844
+"handlebars@npm:^4.7.10":
+  version: 4.7.10
+  resolution: "handlebars@npm:4.7.10"
+    minimist: "npm:^1.2.8"
+  checksum: 10c0/9b5573584ae5836172ae3f1502d9819568ba1b92ee83b81b18223beeb4c07486595e7b0fa633102beabc66ed06fe6e7da1dd9a9ea8c7072b9550b9a88809165c
+"minimist@npm:^1.2.6, minimist@npm:^1.2.8":
+  version: 29.4.15
+  resolution: "ts-jest@npm:29.4.15"
+    handlebars: "npm:^4.7.10"
+  checksum: 10c0/99f8f71c0ee07adc036cf8917eadb29a2a5e002ed695e568c464a51661352a042bf69539d29a3e2c43773fc4e7525d47eae6dfabef45277b3a85a6d2a28a1071
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  version: 29.16.11
+  resolution: "eslint-plugin-jest@npm:29.16.11"
+  checksum: 10c0/455c041a4e696bea936b66ddc7276ea982b20b67664e61023334d8b5391ef0daab2dd3b41a611f95b0dabe5219cd0b4c32e9c29238c31f284294c620e983369e
+"handlebars@npm:^4.7.9":
+  version: 4.7.9
+  resolution: "handlebars@npm:4.7.9"
+    minimist: "npm:^1.2.5"
+  checksum: 10c0/22f8105a7e68e81aff2662bb434edf05f757d21d850731d71cec886d69c10cd33d3c43e34b2892968ec62de8241611851d3d0674c8ef324ea3e01dc66262faa9
+"minimist@npm:^1.2.5, minimist@npm:^1.2.6, minimist@npm:^1.2.8":
+  version: 29.4.14
+  resolution: "ts-jest@npm:29.4.14"
+    handlebars: "npm:^4.7.9"
+  checksum: 10c0/58780804871e5752d7f42e69a38ea0716d0a6330272f3a253cf10dbf8c59390f64f2da6fff3d93dcb1bc514d8fa5d02963d8ef6d062fdfa96113b3aad0fd9331
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e7f4af20` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8079828c` are properly handled with clean fallback behavior.
