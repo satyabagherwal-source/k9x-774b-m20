@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source**: github ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
-> **Source Version**: `2662cc4b`  
+> **Source Version**: `562e9e32`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T13:00:27.114Z  
+> **Timestamp**: 2026-10-28T01:07:03.289Z  
 > **Learning ID**: `learn-github-beclab-olares`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T13:00:26.546Z  
+> **Harvest Timestamp**: 2026-10-28T01:07:03.283Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-Source Personal Cloud OS for Always-On Agents
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5326 stars
+- **Stars / Engagement**: 5328 stars
 
 ---
 
@@ -1137,362 +1137,51 @@ export const formatPathtoUrl = (path: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9b68ac83` (2026-10-26)
-**Commit Message**: fix(cli): raise Multus memory limit to 256Mi to avoid install OOM (#4303)
+### Incident Patch 1: `562e9e32` (2026-10-27)
+**Commit Message**: feat(download-server): improve download URL routing and task lifecycle reliability (#4315)
 
-**File**: `cli/pkg/plugins/network/templates/multus.go` (modified, +1/-1)
+download v1.0.24
+
+**File**: `framework/download-server/.olares/config/cluster/deploy/download_deploy.yaml` (modified, +1/-1)
 ```diff
-@@ -208,7 +208,7 @@ spec:
-             memory: "50Mi"
-           limits:
-             cpu: "100m"
--            memory: "50Mi"
-+            memory: "256Mi"
+@@ -162,7 +162,7 @@ spec:
+             memory: 300Mi
+             
+       - name: download-server
+-        image: "beclab/download-server:v1.0.22"
++        image: "beclab/download-server:v1.0.24"
+         imagePullPolicy: IfNotPresent
          securityContext:
-           privileged: true
-         terminationMessagePolicy: FallbackToLogsOnError
-```
-
-**File**: `cli/pkg/plugins/network/templates/multus_test.go` (modified, +82/-0)
-```diff
-@@ -82,3 +82,85 @@ func TestUnderlayMacvlanDefineStructureInvariants(t *testing.T) {
- 		t.Fatalf("top-level fields changed: %v", conf)
- 	}
- }
-+
-+// TestMultusMainContainerMemoryBudget pins the kube-multus container budget:
-+// a 50Mi request with a 256Mi limit. The install init container stays at its
-+// 15Mi request and has no limit.
-+func TestMultusMainContainerMemoryBudget(t *testing.T) {
-+	var buf bytes.Buffer
-+	if err := Multus.Execute(&buf, map[string]string{
-+		"MultusImage": "example.invalid/multus:test",
-+	}); err != nil {
-+		t.Fatalf("render Multus: %v", err)
-+	}
-+
-+	var main, init map[string]interface{}
-+	for _, doc := range bytes.Split(buf.Bytes(), []byte("\n---")) {
-+		doc = bytes.TrimSpace(doc)
-+		if len(doc) == 0 {
-+			continue
-+		}
-+		var obj map[string]interface{}
-+		if err := yaml.Unmarshal(doc, &obj); err != nil || obj == nil {
-+			continue
-+		}
-+		if obj["kind"] != "DaemonSet" {
-+			continue
-+		}
-+		meta, _ := obj["metadata"].(map[string]interface{})
-+		if meta["name"] != "kube-multus-ds" {
-+			t.Fatalf("daemonset name = %v", meta["name"])
-+		}
-+		podSpec := obj["spec"].(map[string]interface{})["template"].(map[string]interface{})["spec"].(map[string]interface{})
-+		for _, c := range podSpec["containers"].([]interface{}) {
-+			ctr := c.(map[string]interface{})
-+			if ctr["name"] == "kube-multus" {
-+				main = ctr
-+			}
-+		}
-+		for _, c := range podSpec["initContainers"].([]interface{}) {
-+			ctr := c.(map[string]interface{})
-+			if ctr["name"] == "install-multus-binary" {
-+				init = ctr
-+			}
-+		}
-+	}
-+	if main == nil || init == nil {
-+		t.Fatal("kube-multus or install-multus-binary was not rendered")
-+	}
-+
-+	req, lim := containerMemory(main)
-+	if req != "50Mi" || lim != "256Mi" {
-+		t.Fatalf("kube-multus memory request/limit = %s/%s, want 50Mi/256Mi", req, lim)
-+	}
-+	cpuReq, cpuLim := containerCPU(main)
-+	if cpuReq != "100m" || cpuLim != "100m" {
-+		t.Fatalf("kube-multus cpu request/limit = %s/%s, want 100m/100m", cpuReq, cpuLim)
-+	}
-+	ireq, ilim := containerMemory(init)
-+	if ireq != "15Mi" || ilim != "" {
-+		t.Fatalf("install-multus-binary memory request/limit = %s/%q, want 15Mi and no limit", ireq, ilim)
-+	}
-+}
-+
-+func containerMemory(c map[string]interface{}) (request, limit string) {
-+	res, _ := c["resources"].(map[string]interface{})
-+	if req, ok := res["requests"].(map[string]interface{}); ok {
-+		request, _ = req["memory"].(string)
-+	}
-+	if lim, ok := res["limits"].(map[string]interface{}); ok {
-+		limit, _ = lim["memory"].(string)
-+	}
-+	return request, limit
-+}
-+
-+func containerCPU(c map[string]interface{}) (request, limit string) {
-+	res, _ := c["resources"].(map[string]interface{})
-+	if req, ok := res["requests"].(map[string]interface{}); ok {
-+		request, _ = req["cpu"].(string)
-+	}
-+	if lim, ok := res["limits"].(map[string]interface{}); ok {
-+		limit, _ = lim["cpu"].(string)
-+	}
-+	return request, limit
-+}
+           runAsUser: 1000
 ```
 
 ---
 
-### Incident Patch 2: `b188c23d` (2026-10-26)
-**Commit Message**: fix(cli): refresh PCI IDs for unknown NVIDIA architectures (#4304)
+### Incident Patch 2: `41c11f4f` (2026-10-27)
+**Commit Message**: system-frontend: update image to v1.12.14 (#4314)
 
-Refresh the PCI ID database once during GPU prechecks when the architecture is unknown, with a bounded download and actionable errors. Remove the unconditional refresh from OS dependency installation.
+chore(helm): bump system-frontend image to v1.12.14
 
-Match NVIDIA chip codenames to avoid treating VGA as Ampere. Add regression coverage for stale databases, supported and unsupported GPUs, and refresh or detection failures.
-
-**File**: `cli/pkg/bootstrap/patch/tasks.go` (modified, +0/-4)
+**File**: `apps/.olares/config/user/helm-charts/system-apps/templates/olares-app.yaml` (modified, +1/-1)
 ```diff
-@@ -123,10 +123,6 @@ func (t *PatchTask) Execute(runtime connector.Runtime) error {
- 			return err
- 		}
- 
--		if _, err := runtime.GetRunner().SudoCmd("update-pciids", false, true); err != nil {
--			return fmt.Errorf("failed to update-pciids: %v", err)
--		}
--
- 		if _, err := runtime.GetRunner().SudoCmd(fmt.Sprintf("%s %s install -y openssh-server", debianFrontend, pkgManager), false, true); err != nil {
- 			logger.Errorf("install deps %s error %v", cmd, err)
- 			return err
-```
-
-**File**: `cli/pkg/bootstrap/precheck/nvidia_arch_test.go` (added, +117/-0)
-```diff
-@@ -0,0 +1,117 @@
-+package precheck
-+
-+import (
-+	"errors"
-+	"strings"
-+	"testing"
-+
-+	"github.com/beclab/Olares/cli/pkg/core/connector"
-+)
-+
-+type nvidiaArchRuntime struct {
-+	connector.Runtime
-+	runner *connector.Runner
-+}
-+
-+func (r *nvidiaArchRuntime) GetRunner() *connector.Runner { return r.runner }
-+func (r *nvidiaArchRuntime) GetSystemInfo() connector.Systems {
-+	return &nvidiaArchSystem{}
-+}
-+
-+type nvidiaArchSystem struct{ connector.Systems }
-+
-+func (*nvidiaArchSystem) IsDarwin() bool { return false }
-+
-+type nvidiaArchHost struct {
-+	connector.Host
-+	exec func(string) (string, error)
-+}
-+
-+func (*nvidiaArchHost) SudoPrefixIfNecessary(cmd string) string { return cmd }
-+func (h *nvidiaArchHost) ExecExt(cmd string, _, _ bool) (string, int, error) {
-+	out, err := h.exec(cmd)
-+	if err != nil {
-+		return out, 1, err
-+	}
-+	return out, 0, nil
-+}
-+
-+func TestNvidiaCardArchChecker(t *testing.T) {
-+	const (
-+		unknown   = "2f:00.0 3D controller: NVIDIA Corporation Device 2bb5 (rev a1)"
-+		blackwell = "2f:00.0 3D controller: NVIDIA Corporation GB202GL [RTX PRO 6000 Blackwell Server Edition] (rev a1)"
-+		pascal    = "01:00.0 VGA compatible controller: NVIDIA Corporation GP104 [GeForce GTX 1080] (rev a1)"
-+	)
-+	downloadErr := errors.New("download failed")
-+	tests := []struct {
-+		name           string
-+		scans          []string
-+		scanErr        error
-+		refreshErr     error
-+		wantScans      int
-+		wantRefreshes  int
-+		wantErr        string
-+		wantWrappedErr error
-+	}{
-+		{name: "no NVIDIA GPU", scans: []string{""}, wantScans: 1},
-+		{name: "known supported card needs no download", scans: []string{blackwell}, wantScans: 1},
-+		{name: "Ada VGA card", scans: []string{"01:00.0 VGA compatible controller: NVIDIA Corporation AD106 [GeForce RTX 4060 Ti]"}, wantScans: 1},
-+		{name: "Hopper 3D card", scans: []string{"01:00.0 3D controller: NVIDIA Corporation GH100 [H100 PCIe]"}, wantScans: 1},
-+		{name: "Ampere VGA card", scans: []string{"01:00.0 VGA compatible controller: NVIDIA Corporation GA102 [GeForce RTX 3090]"}, wantScans: 1},
-+		{name: "Turing VGA card", scans: []string{"01:00.0 VGA compatible controller: NVIDIA Corporation TU104GL [Quadro RTX 5000]"}, wantScans: 1},
-+		{name: "known unsupported card needs no download", scans: []string{pascal}, wantScans: 1, wantErr: "unsupported NVIDIA card GeForce GTX 1080 of architecture: Pascal"},
-+		{name: "stale database refresh identifies Blackwell", scans: []string{unknown, blackwell}, wantScans: 2, wantRefreshes: 1},
-+		{name: "unknown VGA card also refreshes", scans: []string{"ad:00.0 VGA compatible controller: NVIDIA Corporation Device 1ad0 (rev a1)", blackwell}, wantScans: 2, wantRefreshes: 1},
-+		{name: "unknown after one refresh stays blocked", scans: []string{unknown, unknown}, wantScans: 2, wantRefreshes: 1, wantErr: "cannot determine architecture of NVIDIA card " + unknown + " even after refreshing"},
-+		{name: "refresh identifies unsupported architecture", scans: []string{unknown, pascal}, wantScans: 2, wantRefreshes: 1, wantErr: "unsupported NVIDIA card GeForce GTX 1080 of architecture: Pascal"},
-+		{name: "download failure gives recovery instructions", scans: []string{unknown}, refreshErr: downloadErr, wantScans: 1, wantRefreshes: 1, wantErr: "ensure pciutils is installed, run `sudo update-pciids`, and retry", wantWrappedErr: downloadErr},
-+		{name: "missing updater stays blocked", scans: []string{unknown}, refreshErr: errors.New("update-pciids: No such file or directory"), wantScans: 1, wantRefreshes: 1, wantErr: "PCI ID database refresh failed"},
-+		{name: "refresh timeout stays blocked", scans: []string{unknown}, refreshErr: errors.New("exit status 124"), wantScans: 1, wantRefreshes: 1, wantErr: "PCI ID database refresh failed"},
-+		{name: "GPU disappearing on retry stays blocked", scans: []string{unknown, ""}, wantScans: 2, wantRefreshes: 1, wantErr: "NVIDIA card was no longer detected"},
-+		{name: "initial scan failure is preserved", scans: []string{""}, scanErr: errors.New("scan failed"), wantScans: 1, wantErr: "scan failed"},
-+		{name: "retry scan failure is preserved", scans: []string{unknown, ""}, scanErr: errors.New("scan failed"), wantScans: 2, wantRefreshes: 1, wantErr: "failed to detect NVIDIA card after refreshing"},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			var scans, refreshes int
-+			host := &nvidiaArchHost{exec: func(cmd string) (string, error) {
-+				if strings.HasPrefix(cmd, "lspci ") {
-+					if scans >= len(tt.scans) {
-+						t.Fatalf("unexpected extra GPU scan: %s", cmd)
-+					}
-+					out := tt.scans[scans]
-+					scans++
-+					if scans == len(tt.scans) {
-+						return out, tt.scanErr
-+					}
-+					return out, nil
-+				}
-+				// The timeout must cover the downloader's process group and
-+				// force termination if it ignores the initial signal.
-+				if cmd != "timeout --kill-after=5s 30s update-pciids" {
-+					t.Fatalf("unexpected command: %s", cmd)
-+				}
-+				if scans != 1 {
-+					t.Fatalf("refresh r
-```
-
-**File**: `cli/pkg/bootstrap/precheck/tasks.go` (modified, +20/-0)
-```diff
-@@ -308,6 +308,26 @@ func (t *NvidiaCardArchChecker) Check(runtime connector.Runtime) error {
- 	if strings.TrimSpace(model) == "" {
- 		return nil
- 	}
-+	if arch == "Unknown" {
-+		// Prechecks run before OS dependency installation. A stale pci.ids can
-+		// hide the chip codename of a supported card, so refresh only when needed.
-+		logger.Info("NVIDIA card architecture is unknown; refreshing the PCI ID database ...")
-+		// Bound the entire process group, including update-pciids' downloader.
-+		// A context timeout on the shell alone can leave curl/wget running.
-+		if _, err := runtime.GetRunner().SudoCmd("timeout --kill-after=5s 30s update-pciids", false, false); err != nil {
-+			return fmt.Errorf("cannot determine architecture of NVIDIA card %s: PCI ID database refresh failed: %w; ensure pciutils is installed, run `sudo update-pciids`, and retry", model, err)
-+		}
-+		model, arch, err = utils.DetectNvidiaModelAndArch(runtime)
-+		if err != nil {
-+			return fmt.Errorf("failed to detect NVIDIA card after refreshing the PCI ID database: %w", err)
-+		}
-+		if strings.TrimSpace(model) == "" {
-+			return fmt.Errorf("NVIDIA card was no longer detected after refreshing the PCI ID database; check `lspci -nn -d 10de:` and retry")
-+		}
-+		if arch == "Unknown" {
-+			return fmt.Errorf("cannot determine architecture of NVIDIA card %s even after refreshing the PCI ID database; check `lspci -nn -d 10de:` and verify that this GPU is supported by the current Olares CLI", model)
-+		}
-+	}
- 	if !slices.Contains(supportedArchs, arch) {
- 		return fmt.Errorf("unsupported NVIDIA card %s of architecture: %s, Olares only supports the following architectures: %s", model, arch, strings.Join(supportedArchs, ", "))
- 	}
-```
-
-**File**: `cli/pkg/utils/gpu.go` (modified, +11/-6)
-```diff
-@@ -6,6 +6,7 @@ import (
- 	"fmt"
- 	"os"
- 	"os/exec"
-+	"regexp"
- 	"runtime"
- 	"strings"
- 
-@@ -342,6 +343,10 @@ func DetectNovaBoundGPUs(execRuntime connector.Runtime) (driver string, devices
- 	return "", nil, nil
- }
- 
-+// Match a chip codename after the vendor, rather than prefixes anywhere in the
-+// line: for example, the "GA" in "VGA" does not identify an Ampere GPU.
-+var nvidiaChipPattern = regexp.MustCompile(`(?i)\bNVIDIA Corporation\s+(AD|GB|GH|GA|TU|GV|GP|GM|GK|GF)[0-9]{2,3}[A-Z0-9]*\b`)
-+
- func DetectNvidiaModelAndArch(execRuntime connector.Runtime) (model string, architecture string, err error) {
- 	if execRuntime.GetSystemInfo().IsDarwin() {
- 		return "", "", nil
-@@ -355,13 +360,13 @@ func DetectNvidiaModelAndArch(execRuntime connector.Runtime) (model string, arch
- 	if out == "" {
- 		return "", "", nil
- 	}
--	// try to extract codename in square brackets e.g. "AD106 [GeForce RTX 4060 Ti]"
--	// examples: "NVIDIA Corporation AD106 [GeForce RTX 4060 Ti]"
- 	model = out
- 	architecture = "Unknown"
--	upper := strings.ToUpper(out)
--	// codename appears as two letters followed by digits, within the line, often right before '['
--	// detect common prefixes: AD(Ada), GB(Blackwell), GH(Hopper), GA(Ampere), TU(Turing), GV(Volta), GP(Pascal), GM(Maxwell), GK(Kepler), GF(Fermi)
-+	chip := nvidiaChipPattern.FindStringSubmatch(out)
-+	var prefix string
-+	if len(chip) > 1 {
-+		prefix = strings.ToUpper(chip[1])
-+	}
- 	codePrefixes := []struct {
- 		Prefix string
- 		Arch   string
-@@ -378,7 +383,7 @@ func DetectNvidiaModelAndArch(execRuntime connector.Runtime) (model string, arch
- 		{"GF", "Fermi"},
- 	}
- 	for _, p := range codePrefixes {
--		if strings.Contains(upper, p.Prefix) {
-+		if prefix == p.Prefix {
- 			architecture = p.Arch
- 			break
- 		}
-```
-
----
-
-### Incident Patch 3: `8886e481` (2026-10-26)
-**Commit Message**: fix(tailscale): handle retained Corefile permissions and update DERP URL (#4297)
-
-Co-authored-by: 0x7fffff92 <[REDACTED_EMAIL]>
-
-**File**: `framework/headscale/.olares/config/cluster/deploy/headscale.yaml` (modified, +8/-2)
-```diff
-@@ -214,7 +214,7 @@ data:
-         private_key_path: /var/lib/headscale/derp_server_private.key
-         automatically_add_embedded_derp_region: false
-       urls:
--        - https://controlplane.tailscale.com/derpmap/default
-+        - https://api.olares.com/controlplane/derpmap/default
-       paths: []
-       auto_update_enabled: true
-       update_frequency: 3h
-@@ -1148,9 +1148,15 @@ spec:
-             - |
-               # Seed the expected first allocation. The Tailscale postStart hook
-               # replaces it with the address reported by tailscaled.
-+              # Replace the root-owned Corefile left by a previous start.
-+              corefile_tmp=$(mktemp /etc/coredns-runtime/Corefile.XXXXXX)
-+              trap 'rm -f "${corefile_tmp}"' EXIT
-               sed 's/__TAILSCALE_DNS_IP__/100.64.0.1/g' \
-                 /etc/coredns-template/Corefile \
--                > /etc/coredns-runtime/Corefile
-+                > "${corefile_tmp}"
-+              chmod 0644 "${corefile_tmp}"
-+              mv -f "${corefile_tmp}" /etc/coredns-runtime/Corefile
-+              trap - EXIT
-           securityContext:
-             allowPrivilegeEscalation: false
-             capabilities:
+@@ -269,7 +269,7 @@ spec:
+           imagePullPolicy: IfNotPresent
+           name: check-auth
+         - name: olares-app-init
+-          image: beclab/system-frontend:v1.12.13
++          image: beclab/system-frontend:v1.12.14
+           imagePullPolicy: IfNotPresent
+           command:
+             - /bin/sh
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4306** (2026-10-26): system-frontend: update image to v1.12.13 (@icebergtsn)
-- **PR #4304** (2026-10-26): fix(cli): refresh PCI IDs for unknown NVIDIA architectures (@dkeven)
-- **PR #4303** (2026-10-26): fix(cli): raise Multus memory limit to 256Mi to avoid install OOM (@oscdjj)
-- **PR #4302** (2026-10-26): apps, tapr: upgrade vault Node.js to 26.12.1 (@qq815776412)
-- **PR #4301** (2026-10-26): search3: upgrade search3monitor to v0.4.6 (@bleachzou3)
-- **PR #4298** (2026-10-23): system-frontend: update image to v1.12.12 (@icebergtsn)
+- **PR #4315** (2026-10-27): feat(download-server): improve download URL routing and task lifecycle reliability (@kaki-admin)
+- **PR #4314** (2026-10-27): system-frontend: update image to v1.12.14 (@qq815776412)
+- **PR #4313** (2026-10-27): files(refactor): one enforced authorization layer for the files backend (@aby913)
+- **PR #4311** (2026-10-27): market(refactor): reduce background polling with event-driven scheduling (@aby913)
+- **PR #4310** (2026-10-27): feat(timeslice): hand the GPU over in tens of milliseconds (@dkeven)
+- **PR #4307** (2026-10-27): chore(files): tidy up deployment manifest (@pengpeng)
 
 ---
 
@@ -1512,28 +1201,28 @@ Co-authored-by: 0x7fffff92 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cli): raise Multus memory limit to 256Mi to avoid install OOM (#4303)
+## X. download-server): improve download URL routing and task lifecycle reliability (#
 
 **RULE**:
-When implementing operations in `cli/pkg/plugins/network/templates/multus.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `framework/download-server/.olares/config/cluster/deploy/download_deploy.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9b68ac83`: cli): raise Multus memory limit to 256Mi to avoid install OOM (#4303). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `562e9e32`: download-server): improve download URL routing and task lifecycle reliability (#4315). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/pkg/plugins/network/templates/multus.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `framework/download-server/.olares/config/cluster/deploy/download_deploy.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-            memory: "256Mi"
+        image: "beclab/download-server:v1.0.24"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-            memory: "50Mi"
+        image: "beclab/download-server:v1.0.22"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9b68ac83` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `562e9e32` are properly handled with clean fallback behavior.

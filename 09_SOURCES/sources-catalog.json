@@ -35,8 +35,8 @@
     "sourceUrl": "https://huggingface.co/Bingsu/adetailer",
     "sourceVersion": "hf-bingsu-adetailer",
     "license": "Open-Source",
-    "contentHash": "2ac4dee7eeb71af512c3ac328c6c5dc823640a2cf560e30203a98be3187a84cd",
-    "lastHarvestedAt": "2026-10-25T04:25:22.340Z",
+    "contentHash": "ae2bdeb5f7f1db5485ef3fd87819b6e5480f616518cdc167c61efcffad382c59",
+    "lastHarvestedAt": "2026-10-28T01:06:53.948Z",
     "learningId": "learn-huggingface-bingsu-adetailer"
   },
   "hf-lilylilith-qi_2.1_anyangle": {
@@ -2973,10 +2973,10 @@
     "repository": "beclab/Olares",
     "platform": "github",
     "sourceUrl": "https://github.com/beclab/Olares",
-    "sourceVersion": "2662cc4b",
+    "sourceVersion": "562e9e32",
     "license": "AGPL-3.0",
-    "contentHash": "c8e3dc421b65e0dffcecf4646f3fadcc185d8946fe4bf61f240d95e20ed0f7c1",
-    "lastHarvestedAt": "2026-10-27T13:00:27.530Z",
+    "contentHash": "122e6028301320e66f686620b62342439d0cfbb7164c06b71f21fd8402c5b997",
+    "lastHarvestedAt": "2026-10-28T01:07:03.846Z",
     "learningId": "learn-github-beclab-olares"
   },
   "cryfs-cryfs": {
@@ -3793,10 +3793,10 @@
     "repository": "asciinema/asciinema",
     "platform": "github",
     "sourceUrl": "https://github.com/asciinema/asciinema",
-    "sourceVersion": "77498061",
+    "sourceVersion": "cf66ef4c",
     "license": "GPL-3.0",
-    "contentHash": "85ad744a1e4361e13affb6b050e167dbb93bb3b13657476959ad6337e06f30d6",
-    "lastHarvestedAt": "2026-10-18T23:57:53.349Z",
+    "contentHash": "7888f90039a07cea1c36ea8f298caba049f3c65783842655695848aa4ef768b6",
+    "lastHarvestedAt": "2026-10-28T01:06:54.737Z",
     "learningId": "learn-github-asciinema-asciinema"
   },
   "software-mansion-react-native-reanimated": {
@@ -7373,10 +7373,10 @@
     "repository": "tw93/Mole",
     "platform": "github",
     "sourceUrl": "https://github.com/tw93/Mole",
-    "sourceVersion": "6020bc9c",
+    "sourceVersion": "1d6bd4c1",
     "license": "GPL-3.0",
-    "contentHash": "79e6be67e0a6ab94434cba3da78c87864462df44413162bf91eb6c976c781f76",
-    "lastHarvestedAt": "2026-10-25T13:08:14.827Z",
+    "contentHash": "8c0af87aaafb45050ffb7f2b3d4551e2541fcf163b014630060cceaface492ad",
+    "lastHarvestedAt": "2026-10-28T01:06:59.651Z",
     "learningId": "learn-github-tw93-mole"
   },
   "siderolabs-talos": {

@@ -5627,3 +5627,7 @@ Every entry in this ledger must capture:
 | `learn-github-arkivanov-decompose` | `https://github.com/arkivanov/Decompose` | `42fd8933` | Multi-dimensional audit evidence | 2026-10-28T01:00:10.561Z |
 | `learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-28T01:00:14.023Z |
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `e389d007` | Multi-dimensional audit evidence | 2026-10-28T01:00:20.993Z |
+| `learn-huggingface-bingsu-adetailer` | `https://huggingface.co/Bingsu/adetailer` | `hf-bingsu-` | Multi-dimensional audit evidence | 2026-10-28T01:06:53.948Z |
+| `learn-github-asciinema-asciinema` | `https://github.com/asciinema/asciinema` | `cf66ef4c` | Multi-dimensional audit evidence | 2026-10-28T01:06:54.737Z |
+| `learn-github-tw93-mole` | `https://github.com/tw93/Mole` | `1d6bd4c1` | Multi-dimensional audit evidence | 2026-10-28T01:06:59.651Z |
+| `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `562e9e32` | Multi-dimensional audit evidence | 2026-10-28T01:07:03.846Z |

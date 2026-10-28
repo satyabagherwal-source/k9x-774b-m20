@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T01:00:21.001Z",
+  "last_updated": "2026-10-28T01:07:03.856Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1685,14 +1685,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-bingsu-adetailer",
-      "content_hash": "2ac4dee7eeb71af512c3ac328c6c5dc823640a2cf560e30203a98be3187a84cd",
-      "verified_at": "2026-10-25T04:25:22.355Z",
+      "content_hash": "ae2bdeb5f7f1db5485ef3fd87819b6e5480f616518cdc167c61efcffad382c59",
+      "verified_at": "2026-10-28T01:06:53.961Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T04:25:22.365Z"
+      "last_updated": "2026-10-28T01:06:53.961Z"
     },
     "lilylilith/QI_2.1_AnyAngle": {
       "repository": "lilylilith/QI_2.1_AnyAngle",
@@ -4581,14 +4581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-beclab-olares",
-      "content_hash": "c8e3dc421b65e0dffcecf4646f3fadcc185d8946fe4bf61f240d95e20ed0f7c1",
-      "verified_at": "2026-10-27T13:00:27.539Z",
+      "content_hash": "122e6028301320e66f686620b62342439d0cfbb7164c06b71f21fd8402c5b997",
+      "verified_at": "2026-10-28T01:07:03.855Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:00:27.539Z"
+      "last_updated": "2026-10-28T01:07:03.855Z"
     },
     "cryfs/cryfs": {
       "repository": "cryfs/cryfs",
@@ -5811,14 +5811,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-asciinema-asciinema",
-      "content_hash": "85ad744a1e4361e13affb6b050e167dbb93bb3b13657476959ad6337e06f30d6",
-      "verified_at": "2026-10-18T23:57:53.357Z",
+      "content_hash": "7888f90039a07cea1c36ea8f298caba049f3c65783842655695848aa4ef768b6",
+      "verified_at": "2026-10-28T01:06:54.745Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:57:53.357Z"
+      "last_updated": "2026-10-28T01:06:54.746Z"
     },
     "software-mansion/react-native-reanimated": {
       "repository": "software-mansion/react-native-reanimated",
@@ -11106,14 +11106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tw93-mole",
-      "content_hash": "79e6be67e0a6ab94434cba3da78c87864462df44413162bf91eb6c976c781f76",
-      "verified_at": "2026-10-25T13:08:14.835Z",
+      "content_hash": "8c0af87aaafb45050ffb7f2b3d4551e2541fcf163b014630060cceaface492ad",
+      "verified_at": "2026-10-28T01:06:59.660Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T13:08:14.835Z"
+      "last_updated": "2026-10-28T01:06:59.660Z"
     },
     "siderolabs/talos": {
       "repository": "siderolabs/talos",

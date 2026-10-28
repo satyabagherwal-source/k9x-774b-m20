@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T01:00:20.919Z",
+  "last_updated": "2026-10-28T01:07:03.774Z",
   "total_verified_learnings": 1154,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3248,14 +3248,19 @@
       "slug": "asciinema-asciinema",
       "platform": "github",
       "source_url": "https://github.com/asciinema/asciinema",
-      "source_version": "77498061",
-      "content_hash": "85ad744a1e4361e13affb6b050e167dbb93bb3b13657476959ad6337e06f30d6",
+      "source_version": "cf66ef4c",
+      "content_hash": "7888f90039a07cea1c36ea8f298caba049f3c65783842655695848aa4ef768b6",
       "dossier_path": "07_PROJECT_LEARNING/asciinema-asciinema-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/asciinema-asciinema-learnings.md",
       "promoted_rules": [
         {
           "number": 1884,
           "title": "Update contribution guidelines",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5088,
+          "title": "Update async-trait to fix Clippy warnings",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -3264,7 +3269,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:57:53.298Z",
+      "verified_at": "2026-10-28T01:06:54.642Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -4114,8 +4119,8 @@
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "2662cc4b",
-      "content_hash": "c8e3dc421b65e0dffcecf4646f3fadcc185d8946fe4bf61f240d95e20ed0f7c1",
+      "source_version": "562e9e32",
+      "content_hash": "122e6028301320e66f686620b62342439d0cfbb7164c06b71f21fd8402c5b997",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "promoted_rules": [
@@ -4178,6 +4183,11 @@
           "number": 4776,
           "title": "cli): raise Multus memory limit to 256Mi to avoid install OOM (#4303)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5090,
+          "title": "download-server): improve download URL routing and task lifecycle reliability (#",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4185,7 +4195,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:00:27.456Z",
+      "verified_at": "2026-10-28T01:07:03.750Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -18063,7 +18073,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Bingsu/adetailer",
       "source_version": "hf-bingsu-adetailer",
-      "content_hash": "2ac4dee7eeb71af512c3ac328c6c5dc823640a2cf560e30203a98be3187a84cd",
+      "content_hash": "ae2bdeb5f7f1db5485ef3fd87819b6e5480f616518cdc167c61efcffad382c59",
       "dossier_path": "07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md",
       "promoted_rules": [
@@ -18149,7 +18159,7 @@
         "learn-huggingface-hf-bingsu-adetailer-mv40r96p",
         "learn-huggingface-hf-bingsu-adetailer-mv4eqnev"
       ],
-      "verified_at": "2026-10-25T04:25:22.272Z",
+      "verified_at": "2026-10-28T01:06:53.854Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51962,8 +51972,8 @@
       "slug": "tw93-mole",
       "platform": "github",
       "source_url": "https://github.com/tw93/Mole",
-      "source_version": "6020bc9c",
-      "content_hash": "79e6be67e0a6ab94434cba3da78c87864462df44413162bf91eb6c976c781f76",
+      "source_version": "1d6bd4c1",
+      "content_hash": "8c0af87aaafb45050ffb7f2b3d4551e2541fcf163b014630060cceaface492ad",
       "dossier_path": "07_PROJECT_LEARNING/tw93-mole-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tw93-mole-learnings.md",
       "promoted_rules": [
@@ -51981,6 +51991,11 @@
           "number": 4299,
           "title": "clean): protect active caches and measure reclaimable blocks",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5089,
+          "title": "core): avoid removal fallthrough during dry run find scans (#1866)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51988,7 +52003,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T13:08:14.753Z",
+      "verified_at": "2026-10-28T01:06:59.556Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -140053,6 +140068,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T01:00:20.900Z"
+    },
+    "rule-5088": {
+      "learning_id": "rule-5088",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5088,
+      "title": "Update async-trait to fix Clippy warnings",
+      "source_url": "https://github.com/asciinema/asciinema",
+      "source_version": "cf66ef4c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:06:54.642Z"
+    },
+    "rule-5089": {
+      "learning_id": "rule-5089",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5089,
+      "title": "core): avoid removal fallthrough during dry run find scans (#1866)",
+      "source_url": "https://github.com/tw93/Mole",
+      "source_version": "1d6bd4c1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:06:59.556Z"
+    },
+    "rule-5090": {
+      "learning_id": "rule-5090",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5090,
+      "title": "download-server): improve download URL routing and task lifecycle reliability (#",
+      "source_url": "https://github.com/beclab/Olares",
+      "source_version": "562e9e32",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:07:03.750Z"
     }
   },
   "aliases": {

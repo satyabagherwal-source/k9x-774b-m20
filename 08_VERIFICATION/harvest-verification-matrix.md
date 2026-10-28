@@ -5618,3 +5618,7 @@
 | `CYCLE-20261028-QPXA` | `2026-10-28T01:00:10.558Z` | `arkivanov/Decompose` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5085` | Yes (`4d6f82f8...`) |
 | `CYCLE-20261028-QSLG` | `2026-10-28T01:00:14.020Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 996, Rule 5086` | Yes (`56c38c0b...`) |
 | `CYCLE-20261028-QXYX` | `2026-10-28T01:00:20.985Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5087` | Yes (`4865a7ee...`) |
+| `CYCLE-20261028-ZD6G` | `2026-10-28T01:06:53.944Z` | `Bingsu/adetailer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md` | Yes (`ae2bdeb5...`) |
+| `CYCLE-20261028-ZDSD` | `2026-10-28T01:06:54.733Z` | `asciinema/asciinema` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5088` | Yes (`7888f900...`) |
+| `CYCLE-20261028-ZHKW` | `2026-10-28T01:06:59.648Z` | `tw93/Mole` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5089` | Yes (`8c0af87a...`) |
+| `CYCLE-20261028-ZKTF` | `2026-10-28T01:07:03.843Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5090` | Yes (`122e6028...`) |
