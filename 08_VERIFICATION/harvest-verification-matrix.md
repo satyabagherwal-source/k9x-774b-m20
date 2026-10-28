@@ -5886,3 +5886,7 @@
 | `CYCLE-20261028-O8UM` | `2026-10-28T18:42:00.526Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5367` | Yes (`ae7f3750...`) |
 | `CYCLE-20261028-O90D` | `2026-10-28T18:42:00.733Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5368` | Yes (`2a59b0e1...`) |
 | `CYCLE-20261028-ODWR` | `2026-10-28T18:42:07.083Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md` | Yes (`1ab9643a...`) |
+| `CYCLE-20261028-WLNJ` | `2026-10-28T18:48:30.367Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5369` | Yes (`5538f39f...`) |
+| `CYCLE-20261028-WQY8` | `2026-10-28T18:48:37.232Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5370` | Yes (`7ac9efae...`) |
+| `CYCLE-20261028-WTB0` | `2026-10-28T18:48:40.284Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5371, Rule 5372` | Yes (`273c5e57...`) |
+| `CYCLE-20261028-WV10` | `2026-10-28T18:48:42.516Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5373` | Yes (`8c57b26b...`) |

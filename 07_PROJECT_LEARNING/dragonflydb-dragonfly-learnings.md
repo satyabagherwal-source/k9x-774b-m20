@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source**: github ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
-> **Source Version**: `1042051b`  
+> **Source Version**: `2391d544`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T13:25:27.852Z  
+> **Timestamp**: 2026-10-28T18:48:41.998Z  
 > **Learning ID**: `learn-github-dragonflydb-dragonfly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T13:25:27.492Z  
+> **Harvest Timestamp**: 2026-10-28T18:48:41.807Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern replacement for Redis and Memcached
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 31824 stars
+- **Stars / Engagement**: 31828 stars
 
 ---
 
@@ -2321,359 +2321,544 @@ class Segment {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1042051b` (2026-10-27)
-**Commit Message**: fix(server): don't exit on cloud snapshot storage init failure at runtime (#8689)
+### Incident Patch 1: `3aad471b` (2026-10-28)
+**Commit Message**: fix(server): make XINFO and JSON.DEBUG keyed so scripts read them through the transaction (#8648)
 
-CreateCloudSnapshotStorage called exit(1) when S3/GCS/Azure storage initialization
-failed. It is also used by runtime SAVE/BGSAVE/DFLY LOAD with a cloud URI, so a
-transient issue such as a missing AWS credential provider killed a serving instance.
+* fix(server): stop XINFO and JSON.DEBUG in scripts from deadlocking their shard
 
-Return an error instead and propagate it to the command caller. Startup with a cloud
---dir still exits on failure.
+A single-shard EVAL runs its body inside one hop; when the hop is not inlined it runs on the
+shard's task-queue fiber. XINFO and JSON.DEBUG MEMORY/FIELDS read the key's shard through
+shard_set->Await, which queued behind that fiber: on the script's own shard the queue waited on
+itself forever and only SIGKILL recovered the process.
 
-**File**: `src/server/server_family.cc` (modified, +52/-25)
+TaskQueue::Await now runs the callback in place when it is called from one of the queue's own
+consumer fibers. Every other caller still goes through the queue.
+
+* fix(server): make XINFO and JSON.DEBUG keyed instead of running TaskQueue::Await in place
+
+Per review, fix the commands instead of TaskQueue::Await. XINFO and JSON.DEBUG were registered
+without a key and read the key's shard through shard_set->Await, which queued behind a script hop
+running on that shard's queue.
+
+- Register XINFO and JSON.DEBUG with the key at position 2 and read via ScheduleSingleHopT: a
+  script's stub transaction runs the read in place, and a key on another shard is an
+  undeclared-key error ins
+
+**File**: `src/server/acl/validator.cc` (modified, +2/-3)
 ```diff
-@@ -308,44 +308,53 @@ string UnknownCmd(string cmd, facade::ParsedArgs args, size_t num_args) {
-                       absl::StrJoin(args.begin(), end, ", ", CmdArgListFormatter()));
+@@ -107,10 +107,9 @@ bool IsKeyAllowed(const AclKeys& keys, string_view key, KeyPermissions perms) {
+   });
  }
  
--std::shared_ptr<detail::SnapshotStorage> CreateCloudSnapshotStorage(std::string_view uri) {
-+// Returns an error instead of terminating the process: this is called at runtime by
-+// SAVE/LOAD commands, where a transient failure (e.g. missing credentials) must not kill
-+// an already serving instance.
-+io::Result<std::shared_ptr<detail::SnapshotStorage>, GenericError> CreateCloudSnapshotStorage(
-+    std::string_view uri) {
-+  auto make_err = [](std::error_code ec, std::string_view what) {
-+    return nonstd::make_unexpected(GenericError{ec, absl::StrCat("Failed to initialize ", what)});
-+  };
-+
-   if (detail::IsS3Path(uri)) {
-     auto aws = std::make_shared<detail::AwsS3SnapshotStorage>(absl::GetFlag(FLAGS_s3_endpoint),
-                                                               absl::GetFlag(FLAGS_s3_use_https),
-                                                               absl::GetFlag(FLAGS_s3_ec2_metadata));
-     auto ec = shard_set->pool()->GetNextProactor()->Await(
-         [&] { return aws->Init(detail::kBucketConnectMs); });
--    if (ec) {
--      LOG(ERROR) << "Failed to initialize AWS S3 snapshot storage: " << ec.message();
--      exit(1);
--    }
-+    if (ec)
-+      return make_err(ec, "AWS S3 snapshot storage");
-     return aws;
-   } else if (detail::IsGCSPath(uri)) {
- #ifdef WITH_GCP
-     auto gcs = std::make_shared<detail::GcsSnapshotStorage>();
-     auto ec = shard_set->pool()->GetNextProactor()->Await([&] { return gcs->Init(3000); });
--    if (ec) {
--      LOG(ERROR) << "Failed to initialize GCS snapshot storage: " << ec.message();
--      exit(1);
--    }
-+    if (ec)
-+      return make_err(ec, "GCS snapshot storage");
-     return gcs;
- #else
--    LOG(ERROR) << "Compiled without GCP support";
--    exit(1);
-+    return nonstd::make_unexpected(
-+        GenericError{make_error_code(errc::not_supported), "Compiled without GCP support"});
- #endif
-   } else if (detail::IsAzurePath(uri)) {
-     auto azure = std::make_shared<detail::AzureSnapshotStorage>();
-     auto ec = shard_set->pool()->GetNextProactor()->Await(
-         [&] { return azure->Init(uri, detail::kBucketConnectMs); });
--    if (ec) {
--      LOG(ERROR) << "Failed to initialize Azure snapshot storage: " << ec.message();
--      exit(1);
--    }
-+    if (ec)
-+      return make_err(ec, "Azure snapshot storage");
-     return azure;
--  } else {
--    LOG(ERROR) << "Unknown cloud storage " << uri;
--    exit(1);
-   }
-+  return nonstd::make_unexpected(GenericError{make_error_code(errc::invalid_argument),
-+                                              absl::StrCat("Unknown cloud storage ", uri)});
-+}
-+
-+// Cloud paths need their own storage, other paths use the server's default storage.
-+io::Result<std::shared_ptr<detail::SnapshotStorage>, GenericError> SelectSnapshotStorage(
-+    std::string_view path, std::shared_ptr<detail::SnapshotStorage> default_storage) {
-+  if (detail::IsCloudPath(path))
-+    return CreateCloudSnapshotStorage(path);
-+  return default_storage;
+-// These commands have no key position because a subcommand comes first; the key follows it.
++// This command has no key position because a subcommand comes first; the key follows it.
+ bool ReadsKeyAfterSubcommand(string_view cmd, string_view sub) {
+-  return cmd == "XINFO" || cmd == "JSON.DEBUG" ||
+-         (cmd == "MEMORY" && absl::EqualsIgnoreCase(sub, "USAGE"));
++  return cmd == "MEMORY" && absl::EqualsIgnoreCase(sub, "USAGE");
  }
  
- template <typename T> void UpdateMax(T* maxv, T current) {
-@@ -1428,7 +1437,12 @@ void ServerFamily::Init(util::AcceptServer* acceptor, std::vector<facade::Listen
-   string flag_dir = GetFlag(FLAGS_dir);
- 
-   if (detail::IsCloudPath(flag_dir)) {
--    snapshot_storage_ = CreateCloudSnapshotStorage(flag_dir);
-+    auto res = CreateCloudSnapshotStorage(flag_dir);
-+    if (!res) {
-+      LOG(ERROR) << res.error().Format();
-+      exit(1);
-+    }
-+    snapshot_storage_ = std::move(*res);
-   } else if (fq_threadpool_) {
-     snapshot_storage_ = std::make_shared<detail::FileSnapshotStorage>(fq_threadpool_.get());
-   } else {
-@@ -1599,8 +1613,10 @@ GenericError ServerFamily::CheckSnapshotLoadable(const std::string& path) {
-     return {std::make_error_code(std::errc::operation_not_permitted), "replica cannot load data"};
-   if (path.empty())
-     return {std::make_error_code(std::errc::invalid_argument), "no snapshot found to load"};
--  auto storage = detail::IsCloudPath(path) ? CreateCloudSnapshotStorage(path) : snapshot_storage_;
--  if (auto res = storage->ExpandSnapshot(path); !res)
-+  auto storage = SelectSnapshotStorage(path, snapshot_storage_);
-+  if (!storage)
-+    return storage.error();
-+  if (auto res = (*storage)->ExpandSnapshot(path); !res)
-     return res.error();
-   return {};
- }
-@@ -1626,7 +1642,12 @@ std::optional<fb2::Future<GenericError>> ServerFamily::Load(const std::string& p
- 
-   // Select the right storage based on the path: cloud paths need their own storage,
-   // mirroring what DoSaveCheckAndStart does for saves.
--  auto storage = detail::IsCloudPath(path) ? CreateCloudSnapshotStorage(path) : snapshot_storage_;
-+  auto storage_res = SelectSnapshotStorage(path, snapshot_storage_);
-+  if (!storage_res) {
-+    LOG(ERROR) << "Failed to load snapshot: " << storage_res.error().F
+ // RM deletes whatever its MATCH selects, so it needs write access to every key.
 ```
 
-**File**: `tests/dragonfly/snapshot_test.py` (modified, +27/-0)
+**File**: `src/server/command_registry.cc` (modified, +4/-4)
 ```diff
-@@ -452,6 +452,33 @@ async def test_s3_snapshot(async_client, tmp_dir):
-         )
+@@ -215,10 +215,10 @@ CommandId::CommandId(const char* name, uint32_t mask, int8_t arity, int8_t first
+   else if (name_ == "JSON.MSET")
+     interleave_step_ = 3;
  
+-  // A command has a single key at a fixed position when first_key == last_key > 0 and it
+-  // carries no variadic/store-key or global/no-key semantics. DetermineKeys uses this to
+-  // skip its generic branching.
+-  if (first_key_ > 0 && first_key_ == last_key_ &&
++  // A command has a single key at a fixed position when first_key == last_key > 0, its arity
++  // guarantees the key and it carries no variadic/store-key or global/no-key semantics.
++  // DetermineKeys uses this to skip its generic branching.
++  if (first_key_ > 0 && first_key_ == last_key_ && std::abs(arity_) > first_key_ &&
+       (opt_mask_ & (CO::VARIADIC_KEYS | CO::STORE_LAST_KEY | CO::GLOBAL_TRANS |
+                     CO::NO_KEY_TRANSACTIONAL)) == 0) {
+     kind_mask_ |= FIXED_SINGLE_KEY;
+```
+
+**File**: `src/server/command_registry.h` (modified, +6/-5)
+```diff
+@@ -184,9 +184,9 @@ class CommandId : public facade::CommandId {
+     return (last_key_ != first_key_) || (opt_mask_ & CO::VARIADIC_KEYS);
+   }
  
-+async def test_s3_init_failure_at_runtime_does_not_exit(df_factory, tmp_path, monkeypatch):
-+    """A cloud storage init failure during SAVE/LOAD must return an error, not kill the server."""
-+    for var in list(os.environ):
-+        if var.startswith("AWS_"):
-+            monkeypatch.delenv(var)
-+    monkeypatch.setenv("HOME", str(tmp_path))
-+    monkeypatch.delenv("MINIO_S3_ENDPOINT", raising=False)
+-  // True for commands with exactly one key at a fixed position (first_key == last_key > 0),
+-  // no variadic/store-key handling and no global/no-key semantics. Lets DetermineKeys skip
+-  // its generic branching. Precomputed at construction.
++  // True for commands with exactly one key at a fixed position (first_key == last_key > 0) that
++  // the arity guarantees, no variadic/store-key handling and no global/no-key semantics. Lets
++  // DetermineKeys skip its generic branching. Precomputed at construction.
+   bool IsFixedSingleKey() const {
+     return kind_mask_ & FIXED_SINGLE_KEY;
+   }
+@@ -323,8 +323,9 @@ class CommandId : public facade::CommandId {
+     IS_ALIAS = 1U << 13,
+     // Command has an async handler (set via SetAsyncHandler / SetHandler with async_support).
+     SUPPORT_ASYNC = 1U << 14,
+-    // Command has exactly one key at a fixed position (first_key == last_key > 0) with no
+-    // variadic/store-key or global/no-key semantics. Lets DetermineKeys skip its generic branching.
++    // Command has exactly one key at a fixed position (first_key == last_key > 0), guaranteed by
++    // its arity, with no variadic/store-key or global/no-key semantics. Lets DetermineKeys skip
++    // its generic branching.
+     FIXED_SINGLE_KEY = 1U << 15,  // last bit of the low uint16_t half of kind_mask_.
+ 
+     RESET = 1U << 16,  // RESET only
+```
+
+**File**: `src/server/json_family.cc` (modified, +7/-17)
+```diff
+@@ -1814,16 +1814,11 @@ void CmdDebug(CmdArgParser parser, CommandContext* cmd_cntx) {
+ 
+     WrappedJsonPath json_path = GET_OR_SEND_UNEXPECTED(ParseJsonPath(path));
+ 
+-    ShardId sid = Shard(key, shard_set->size());
+-    ConnectionContext* cntx = cmd_cntx->server_conn_cntx();
+-    auto cb = [&]() {
+-      EngineShard* shard = EngineShard::tlocal();
+-      DbContext db_cntx{cntx->ns, cntx->conn_state.db_index};
+-      OpArgs op_args{shard, nullptr, db_cntx};
+-      return OpMemory(op_args, key, json_path);
++    auto cb = [&](Transaction* t, EngineShard* shard) {
++      return OpMemory(t->GetOpArgs(shard), key, json_path);
+     };
+ 
+-    auto result = shard_set->Await(sid, std::move(cb));
++    auto result = cmd_cntx->tx()->ScheduleSingleHopT(std::move(cb));
+     reply_generic::Send(result, cmd_cntx);
+     return;
+   }
+@@ -1838,16 +1833,11 @@ void CmdDebug(CmdArgParser parser, CommandContext* cmd_cntx) {
+ 
+     WrappedJsonPath json_path = GET_OR_SEND_UNEXPECTED(ParseJsonPath(path));
+ 
+-    ShardId sid = Shard(key, shard_set->size());
+-    ConnectionContext* cntx = cmd_cntx->server_conn_cntx();
+-    auto cb = [&]() {
+-      EngineShard* shard = EngineShard::tlocal();
+-      DbContext db_cntx{cntx->ns, cntx->conn_state.db_index};
+-      OpArgs op_args{shard, nullptr, db_cntx};
+-      return OpFields(op_args, key, json_path);
++    auto cb = [&](Transaction* t, EngineShard* shard) {
++      return OpFields(t->GetOpArgs(shard), key, json_path);
+     };
+ 
+-    auto result = shard_set->Await(sid, std::move(cb));
++    auto result = cmd_cntx->tx()->ScheduleSingleHopT(std::move(cb));
+     reply_generic::Send(result, cmd_cntx);
+     return;
+   }
+@@ -2233,7 +2223,7 @@ void RegisterJsonFamily(CommandRegistry* registry) {
+                    .HFUNC(ArrAppend);
+   *registry << CI{"JSON.ARRINDEX", CO::READONLY | CO::FAST, -4, 1, 1, acl::JSON}.HFUNC(ArrIndex);
+   *registry
+-      << CI{"JSON.DEBUG", CO::READONLY | CO::FAST, -2, 0, 0, acl::JSON}.HFUNC(Debug)
++      << CI{"JSON.DEBUG", CO::READONLY | CO::FAST, -2, 2, 2, acl::JSON}.HFUNC(Debug)
+       << CI{"JSON.RESP", CO::READONLY | CO::FAST, -2, 1, 1, acl::JSON}.HFUNC(Resp)
+       << CI{"JSON.SET", CO::JOURNALED | CO::DENYOOM | CO::FAST, -4, 1, 1, acl::JSON}.HFUNC(Set)
+       << CI{"JSON.MSET", kMsetFlags, -4, 1, -1, acl::JSON}.HFUNC(MSet)
+```
+
+**File**: `src/server/multi_test.cc` (modified, +84/-0)
+```diff
+@@ -1923,4 +1923,88 @@ TEST_F(MultiTest, SquashedCallbackBadAlloc) {
+   EXPECT_EQ(Run({"get", kKey2}), "b");
+ }
+ 
++// A shard queue waiting on itself never recovers, so abort instead of hanging in TearDown.
++template <typename F> RespExpr RunOrAbort(ProactorBase* pb, F&& cmd) {
++  fb2::Done done;
++  RespExpr resp;
++  auto fb = pb->LaunchFiber([&] {
++    resp = cmd();
++    done.Notify();
++  });
++  CHECK(done.WaitFor(10s)) << "Command deadlocked";
++  fb.Join();
++  return resp;
++}
 +
-+    df_server = df_factory.create(dir=str(tmp_path))
-+    df_server.start()
-+    client = df_server.client()
-+    await client.set("k", "v")
++// Keyed XINFO and JSON.DEBUG must not wait on the shard queue that runs the script hop.
++TEST_F(MultiTest, EvalKeyedInfoCommands) {
++  if (!absl::GetFlag(FLAGS_default_lua_flags).empty())
++    GTEST_SKIP() << "Expects undeclared keys to be rejected";
 +
-+    s3_path = "s3://nonexistent-dfly-test-bucket/dir"
-+    for cmd in [
-+        ("SAVE", "DF", s3_path, "snap"),
-+        ("BGSAVE", "DF", s3_path, "snap"),
-+        ("DFLY", "LOAD", s3_path + "/snap-summary.dfs", "APPEND"),
-+    ]:
-+        with pytest.raises(redis.exceptions.ResponseError, match="Failed to initialize AWS S3"):
-+            await client.execute_command(*cmd)
-+        assert await client.get("k") == "v"
++  const ShardId sid1 = Shard(kKeySid1, shard_set->size());
++  ASSERT_NE(sid1, 0u);  // Run() uses thread 0, so the hop on sid1 is not inlined.
++  ASSERT_NE(Shard(kKeySid2, shard_set->size()), sid1);
 +
-+    await client.aclose()
-+    df_server.stop()
++  // Runs the script on thread `tid`.
++  auto eval = [&](unsigned tid, string_view script, string_view arg) {
++    return RunOrAbort(pp_->at(tid), [&] { return Run({"eval", script, "1", kKeySid1, arg}); });
++  };
 +
++  Run({"xgroup", "create", kKeySid1, "g", "$", "mkstream"});
++  EXPECT_THAT(eval(0,
++                   "redis.call('xinfo', 'stream', ARGV[1]) "
++                   "redis.call('xinfo', 'consumers', ARGV[1], 'g') "
++                   "return #redis.call('xinfo', 'groups', ARGV[1])",
++                   kKeySid1),
++              IntArg(1));
 +
- # If DRAGONFLY_S3_BUCKET is configured, AWS credentials must also be
- # configured.
- @pytest.mark.skipif(
++  // A client blocked on the shard keeps the hop off the connection thread as well.
++  RespExpr read;
++  auto reader = pp_->at(0)->LaunchFiber(Launch::dispatch, [&] {
++    read = Run({"xreadgroup", "group", "g", "c", "block", "10000", "streams", kKeySid1, ">"});
++  });
++  ASSERT_TRUE(WaitUntilCondition([&] { return IsConnBlocked("IO0"); }, 1s));
++  EXPECT_THAT(eval(sid1,
++                   "redis.call('xadd', KEYS[1], '*', 'f', 'v') "
++                   "return #redis.call('xinfo', 'groups', KEYS[1])",
++                   kKeySid1),
++              IntArg(1));
++  reader.Join();
++  EXPECT_THAT(read, ArrLen(1));
++
++  Run({"del", kKeySid1});
++  Run({"json.set", kKeySid1, "$", R"({"a":1})"});
++  EXPECT_THAT(eval(0,
++                   "redis.call('json.debug', 'memory', ARGV[1]) "
++                   "return redis.call('json.debug', 'fields', ARGV[1])",
++                   kKeySid1),
++              IntArg(1));
++
++  // The key-less HELP forms need no declared key.
++  EXPECT_THAT(
++      eval(0, "return #redis.call('xinfo', 'help') + #redis.call('json.debug', 'help')", ""),
++      IntArg(11));
++
++  // A key on another shard is undeclared instead of being read through that shard's queue.
++  EXPECT_THAT(eval(0, "return redis.call('xinfo', 'groups', ARGV[1])", kKeySid2),
++              ErrArg("undeclared key"));
++
++  // Every EVAL above ran as a single-shard hop.
++  EXPECT_EQ(GetMetrics().coordinator_stats.eval_shardlocal_coordination_cnt, 5u);
++}
++
++// With undeclared keys on a single shard the whole script runs in one hop on the shard queue.
++TEST_F(SingleShardMultiTest, EvalKeyedInfoCommandsGlobal) {
++  Run({"xgroup", "create", "s", "g", "$", "mkstream"});
++  Run({"json.set", "j", "$", R"({"a":1})"});
++
++  string_view script = R"(
++--!df flags=allow-undeclared-keys
++return #redis.call('xinfo', 'groups', ARGV[1]) + redis.call('json.debug', 'fields', ARGV[2])
++)";
++  auto resp = RunOrAbort(pp_->at(0), [&] { return Run({"eval", script, "0", "s", "j"}); });
++  EXPECT_THAT(resp, IntArg(2));
++  EXPECT_EQ(GetMetrics().coordinator_stats.eval_shardlocal_coordination_cnt, 1u);
++}
++
+ }  // namespace dfly
+```
+
+**File**: `src/server/stream_family.cc` (modified, +11/-19)
+```diff
+@@ -3733,20 +3733,15 @@ void CmdXInfo(CmdArgParser parser, CommandContext* cmd_cntx) {
+     return rb->SendSimpleStrArr(help_arr);
+   }
+ 
+-  ConnectionContext* cntx = cmd_cntx->server_conn_cntx();
+   if (args.size() >= 2) {
+     string_view key = args[1];
+-    ShardId sid = Shard(key, shard_set->size());
+ 
+     if (sub_cmd == "GROUPS") {
+-      // We do not use transactional xemantics for xinfo since it's informational command.
+-      auto cb = [&]() {
+-        EngineShard* shard = EngineShard::tlocal();
+-        DbContext db_context{cntx->ns, cntx->db_index(), GetCurrentTimeMs()};
+-        return OpListGroups(db_context, key, shard);
++      auto cb = [&](Transaction* t, EngineShard* shard) {
++        return OpListGroups(t->GetDbContext(), key, shard);
+       };
+ 
+-      OpResult<vector<GroupInfo>> result = shard_set->Await(sid, std::move(cb));
++      OpResult<vector<GroupInfo>> result = cmd_cntx->tx()->ScheduleSingleHopT(cb);
+       if (result) {
+         rb->StartArray(result->size());
+         for (const auto& ginfo : *result) {
+@@ -3805,13 +3800,11 @@ void CmdXInfo(CmdArgParser parser, CommandContext* cmd_cntx) {
+         }
+       }
+ 
+-      auto cb = [&]() {
+-        EngineShard* shard = EngineShard::tlocal();
+-        return OpStreams(DbContext{cntx->ns, cntx->db_index(), GetCurrentTimeMs()}, key, shard,
+-                         full, count);
++      auto cb = [&](Transaction* t, EngineShard* shard) {
++        return OpStreams(t->GetDbContext(), key, shard, full, count);
+       };
+ 
+-      OpResult<StreamInfo> sinfo = shard_set->Await(sid, std::move(cb));
++      OpResult<StreamInfo> sinfo = cmd_cntx->tx()->ScheduleSingleHopT(cb);
+       if (sinfo) {
+         if (full) {
+           rb->StartCollection(9, CollectionType::MAP);
+@@ -3940,15 +3933,14 @@ void CmdXInfo(CmdArgParser parser, CommandContext* cmd_cntx) {
+       }
+       string_view stream_name = args[1];
+       string_view group_name = args[2];
+-      auto cb = [&]() {
+-        return OpConsumers(DbContext{cntx->ns, cntx->db_index(), GetCurrentTimeMs()},
+-                           EngineShard::tlocal(), stream_name, group_name);
++      auto cb = [&](Transaction* t, EngineShard* shard) {
++        return OpConsumers(t->GetDbContext(), shard, stream_name, group_name);
+       };
+ 
+-      OpResult<vector<ConsumerInfo>> result = shard_set->Await(sid, std::move(cb));
++      OpResult<vector<ConsumerInfo>> result = cmd_cntx->tx()->ScheduleSingleHopT(cb);
+       if (result) {
+         rb->StartArray(result->size());
+-        int64_t now_ms = GetCurrentTimeMs();
++        int64_t now_ms = cmd_cntx->tx()->GetDbContext().time_now_ms;
+         for (const auto& consumer_info : *result) {
+           int64_t active = consumer_info.active_time;
+           int64_t inactive = active != -1 ? now_ms - active : -1;
+@@ -4325,7 +4317,7 @@ void StreamFamily::Register(CommandRegistry* registry) {
+             << CI{"XCLAIM", CO::JOURNALED | CO::FAST, -6, 1, 1, acl::kXClaim}.HFUNC(XClaim)
+             << CI{"XDEL", CO::JOURNALED | CO::FAST, -3, 1, 1, acl::kXDel}.HFUNC(XDel)
+             << CI{"XGROUP", CO::JOURNALED | CO::DENYOOM, -3, 2, 2, acl::kXGroup}.HFUNC(XGroup)
+-            << CI{"XINFO", CO::READONLY, -2, 0, 0, acl::kXInfo}.HFUNC(XInfo)
++            << CI{"XINFO", CO::READONLY, -2, 2, 2, acl::kXInfo}.HFUNC(XInfo)
+             << CI{"XLEN", CO::READONLY | CO::FAST, 2, 1, 1, acl::kXLen}.HFUNC(XLen)
+             << CI{"XPENDING", CO::READONLY, -3, 1, 1, acl::kXPending}.HFUNC(XPending)
+             << CI{"XRANGE", CO::READONLY, -4, 1, 1, acl::kXRange}.HFUNC(XRange)
+```
+
+**File**: `src/server/transaction.cc` (modified, +3/-0)
+```diff
+@@ -1847,6 +1847,9 @@ OpResult<KeyIndex> DetermineKeys(const CommandId* cid, const facade::ParsedArgs&
+     if (num_custom_keys >= 0) {
+       end = start + num_custom_keys;
+     } else {
++      // A command with a key-less form (e.g. XINFO HELP) has no keys in that form.
++      if (start >= args.size())
++        return KeyIndex{};
+       end = last > 0 ? last : (int(args.size()) + last + 1);
+     }
+     if (cid->interleaved_step()) {
 ```
 
 ---
 
-### Incident Patch 2: `a495967c` (2026-10-27)
-**Commit Message**: Cover JSON, streams and sketches in DEBUG OBJHIST (#8656)
+### Incident Patch 2: `2391d544` (2026-10-28)
+**Commit Message**: fix(server): reply to TIME with bulk strings (#8712)
 
-feat(server): cover json, streams and sketches in DEBUG OBJHIST
+TIME replied with two integer elements in both RESP2 and RESP3, while the documented reply is an
+array of two bulk strings (unix seconds, microseconds). Strict typed clients decode TIME with a
+bulk-string-only output and fail (Lettuce: "ValueListOutput does not support set(long)"), and Lua
+scripts saw numbers instead of strings.
 
-Report JSON's cached malloc size without traversing its contents.
-Collect stream data and field/value length histograms using inline iterator buffers.
-Use tracked memory sizes instead of slow memory scans.
+Send both elements as bulk strings and update TimeNoKeys / TimeWithKeys to the string reply, with
+an assertion that Lua sees strings.
 
-**File**: `src/server/debugcmd.cc` (modified, +43/-10)
+Fixes #8709
+
+**File**: `src/server/generic_family.cc` (modified, +2/-2)
 ```diff
-@@ -7,6 +7,7 @@
+@@ -2712,8 +2712,8 @@ void GenericFamily::Time(CmdArgParser parser, CommandContext* cmd_cntx) {
  
- extern "C" {
- #include "redis/redis_aux.h"
-+#include "redis/stream.h"
+   auto* rb = static_cast<RedisReplyBuilder*>(cmd_cntx->rb());
+   rb->StartArray(2);
+-  rb->SendLong(now_usec / 1000000);
+-  rb->SendLong(now_usec % 1000000);
++  rb->SendBulkString(absl::StrCat(now_usec / 1000000));
++  rb->SendBulkString(absl::StrCat(now_usec % 1000000));
  }
  
- #include <absl/cleanup/cleanup.h>
-@@ -161,6 +162,29 @@ struct ObjHist {
-   base::Histogram listpack;     // for listpack encodings - the malloc used of the listpack.
- };
- 
-+size_t StreamDataLen(stream* s, ObjHist* hist) {
-+  // Stream IDs fit the rax iterator's inline key/path buffers; fields are read in place.
-+  static_assert(sizeof(streamID) <= RAX_ITER_STATIC_LEN);
-+  static_assert(sizeof(streamID) + 1 <= RAX_STACK_STATIC_ITEMS);
-+  streamIterator si;
-+  streamID id;
-+  int64_t numfields;
-+  size_t len = 0;
-+  streamIteratorStart(&si, s, nullptr, nullptr, 0);
-+  while (streamIteratorGetID(&si, &id, &numfields)) {
-+    while (numfields--) {
-+      unsigned char *field, *value;
-+      int64_t field_len, value_len;
-+      streamIteratorGetField(&si, &field, &value, &field_len, &value_len);
-+      size_t entry_len = field_len + value_len;
-+      hist->entry_len.Add(entry_len);
-+      len += entry_len;
-+    }
-+  }
-+  streamIteratorStop(&si);
-+  return len;
-+}
-+
- // No yield: runs inside Traverse, which holds a raw segment pointer a yield could free.
- void AddObjHist(PrimeIterator it, ObjHist* hist) {
-   using namespace container_utils;
-@@ -194,7 +218,7 @@ void AddObjHist(PrimeIterator it, ObjHist* hist) {
-     IterateList(pv, per_entry_cb, 0, SIZE_MAX, /*allow_yield=*/false);
-     if (pv.Encoding() == kEncodingQL2) {
-       const QList* ql = static_cast<QList*>(pv.RObjPtr());
--      malloc_used = ql->MallocUsed(true);
-+      malloc_used = ql->MallocUsed(false);
-     } else if (pv.Encoding() == kEncodingListPack) {
-       malloc_used = pv.MallocUsed();
-       hist->listpack.Add(malloc_used);
-@@ -223,21 +247,28 @@ void AddObjHist(PrimeIterator it, ObjHist* hist) {
-     if (pv.Encoding() == kEncodingListPack) {
-       hist->listpack.Add(pv.MallocUsed());
-     }
-+  } else if (pv.ObjType() == OBJ_STREAM) {
-+    stream* s = static_cast<stream*>(pv.RObjPtr());
-+    data_len = StreamDataLen(s, hist);
-+    hist->card.Add(s->length);
-+  } else if (pv.ObjType() != OBJ_JSON) {
-+    // Probabilistic types (bloom, cuckoo, count-min sketch, topk) are fixed-size sketches.
-+    data_len = pv.MallocUsed();
-   }
--  // TODO: streams
- 
-   if (malloc_used == 0) {
-     // Fallback
--    malloc_used = pv.MallocUsed(true);
-+    malloc_used = pv.MallocUsed();
-   }
- 
-   hist->malloc_used.Add(malloc_used);
- 
--  // TODO: data size for json and streams.
--  if (pv.ObjType() != OBJ_JSON && pv.ObjType() != OBJ_STREAM)
-+  // JSON reports only its cached malloc size.
-+  if (pv.ObjType() != OBJ_JSON)
-     hist->data_len.Add(data_len);
- 
--  if (pv.ObjType() != OBJ_STRING && pv.ObjType() != OBJ_JSON)
-+  // Stream cardinality is added above since its Size() returns the memory usage.
-+  if (pv.ObjType() != OBJ_STRING && pv.ObjType() != OBJ_JSON && pv.ObjType() != OBJ_STREAM)
-     hist->card.Add(pv.Size());
- }
- 
-@@ -1215,13 +1246,13 @@ void DebugCmd::ObjHist(CommandContext* cmd_cntx) {
- 
-     // IterateMap/IterateSet may trigger lazy expiry.  Clean up empty containers
-     // in the currently traversed DB (not the connection-selected one).
--    if (it->second.Size() == 0 && it->second.Encoding() == kEncodingStrMap2) {
-+    if ((obj_type == OBJ_SET || obj_type == OBJ_HASH) &&
-+        it->second.Encoding() == kEncodingStrMap2 && it->second.Size() == 0) {
-       auto& db_slice = cntx->ns->GetDbSlice(EngineShard::tlocal()->shard_id());
-       DbContext db_cntx{cntx->ns, dbid, GetCurrentTimeMs()};
-       string key;
-       it->first.GetString(&key);
--      if (obj_type == OBJ_SET || obj_type == OBJ_HASH)
--        DeleteCollectionIfEmpty(db_slice, db_cntx, key, it->second);
-+      DeleteCollectionIfEmpty(db_slice, db_cntx, key, it->second);
-     }
-   };
-   TraverseAllEntries(absl::GetFlag(FLAGS_background_debug_jobs), cntx_, cb);
-@@ -1250,7 +1281,9 @@ void DebugCmd::ObjHist(CommandContext* cmd_cntx) {
-       StrAppend(&result, "Cardinality histogram (number of elements in sets):\n",
-                 hist_ptr->card.ToString(), "\n");
-     }
--    StrAppend(&result, "Items length histogram:\n", hist_ptr->entry_len.ToString(), "\n");
-+    if (hist_ptr->entry_len.count() > 0) {
-+      StrAppend(&result, "Items length histogram:\n", hist_ptr->entry_len.ToString(), "\n");
-+    }
-     if (hist_ptr->listpack.count() > 0) {
-       StrAppend(&result, "Listpack histogram:\n", hist_ptr->listpack.ToString(), "\n");
-     }
+ void GenericFamily::Echo(CmdArgParser parser, CommandContext* cmd_cntx) {
 ```
 
-**File**: `src/server/generic_family_test.cc` (modified, +52/-0)
+**File**: `src/server/generic_family_test.cc` (modified, +26/-21)
 ```diff
-@@ -1987,6 +1987,58 @@ TEST_F(GenericFamilyTest, DebugObjHistMultiDbCorrectDb) {
-   EXPECT_EQ("value", Run({"HGET", "shared", "alive"}));
+@@ -5,6 +5,7 @@
+ #include "server/generic_family.h"
+ 
+ #include <absl/cleanup/cleanup.h>
++#include <absl/strings/numbers.h>
+ 
+ #include <array>
+ #include <cstring>
+@@ -1358,11 +1359,22 @@ TEST_F(GenericFamilyTest, SortROBug3636) {
+   ASSERT_THAT(resp, ArrLen(17));
  }
  
-+TEST_F(GenericFamilyTest, DebugObjHistDataSize) {
-+  Run({"JSON.SET", "json", "$", R"({"ab":"cde","f":[1,"gh"]})"});
-+  Run({"XADD", "stream", "*", "f1", "v1", "f2", "value2"});
-+  Run({"XADD", "stream", "*", "f1", "v1"});
-+  Run({"BF.ADD", "bloom", "item"});
++void ExpectTimeReply(const RespExpr& resp) {
++  ASSERT_THAT(resp, RespArray(ElementsAre(ArgType(RespExpr::STRING), ArgType(RespExpr::STRING))));
++  int64_t sec = 0, usec = -1;
++  EXPECT_TRUE(absl::SimpleAtoi(resp.GetVec()[0].GetView(), &sec));
++  EXPECT_TRUE(absl::SimpleAtoi(resp.GetVec()[1].GetView(), &usec));
++  EXPECT_GT(sec, 0);
++  EXPECT_GE(usec, 0);
++  EXPECT_LT(usec, 1000000);
++}
 +
-+  string hist = Run({"DEBUG", "OBJHIST"}).GetString();
-+  auto section = [&](string_view type) {
-+    size_t start = hist.find(absl::StrCat("OBJECT:", type, "\n"));
-+    EXPECT_NE(start, string::npos) << type;
-+    if (start == string::npos)
-+      return string{};
-+    size_t end = hist.find("OBJECT:", start + 1);
-+    return hist.substr(start, end == string::npos ? string::npos : end - start);
+ TEST_F(GenericFamilyTest, TimeNoKeys) {
+-  auto resp = Run({"time"});
+-  EXPECT_THAT(resp, ArrLen(2));
+-  EXPECT_THAT(resp.GetVec()[0], ArgType(RespExpr::INT64));
+-  EXPECT_THAT(resp.GetVec()[1], ArgType(RespExpr::INT64));
++  ExpectTimeReply(Run({"time"}));
++
++  // Lua must see the elements as strings, not numbers.
++  auto resp = Run({"eval", "local t = redis.call('TIME'); return {type(t[1]), type(t[2])}", "0"});
++  EXPECT_THAT(resp, RespArray(ElementsAre("string", "string")));
+ 
+   // Check that time is the same inside a transaction.
+   Run({"multi"});
+@@ -1371,37 +1383,30 @@ TEST_F(GenericFamilyTest, TimeNoKeys) {
+   Run({"time"});
+   resp = Run({"exec"});
+ 
+-  EXPECT_THAT(resp, RespArray(ElementsAre(RespArray(ElementsAre(Not(IntArg(0)), _)),
+-                                          RespArray(ElementsAre(Not(IntArg(0)), _)))));
+-
++  ASSERT_THAT(resp, RespArray(ElementsAre(ArrLen(2), ArrLen(2))));
++  ExpectTimeReply(resp.GetVec()[0]);
++  ExpectTimeReply(resp.GetVec()[1]);
+   for (int i = 0; i < 2; ++i) {
+-    int64_t val0 = get<int64_t>(resp.GetVec()[0].GetVec()[i].u);
+-    int64_t val1 = get<int64_t>(resp.GetVec()[1].GetVec()[i].u);
+-    EXPECT_EQ(val0, val1);
++    EXPECT_EQ(resp.GetVec()[0].GetVec()[i].GetString(), resp.GetVec()[1].GetVec()[i].GetString());
+   }
+ }
+ 
+ TEST_F(GenericFamilyTest, TimeWithKeys) {
+-  auto resp = Run({"time"});
+-  EXPECT_THAT(resp, ArrLen(2));
+-  EXPECT_THAT(resp.GetVec()[0], ArgType(RespExpr::INT64));
+-  EXPECT_THAT(resp.GetVec()[1], ArgType(RespExpr::INT64));
++  ExpectTimeReply(Run({"time"}));
+ 
+   // Check that time is the same inside a transaction.
+   Run({"multi"});
+   Run({"time"});
+   usleep(2000);
+   Run({"time"});
+   Run({"get", "x"});
+-  resp = Run({"exec"});
+-
+-  EXPECT_THAT(resp, RespArray(ElementsAre(RespArray(ElementsAre(Not(IntArg(0)), _)),
+-                                          RespArray(ElementsAre(Not(IntArg(0)), _)), _)));
++  auto resp = Run({"exec"});
+ 
++  ASSERT_THAT(resp, RespArray(ElementsAre(ArrLen(2), ArrLen(2), _)));
++  ExpectTimeReply(resp.GetVec()[0]);
++  ExpectTimeReply(resp.GetVec()[1]);
+   for (int i = 0; i < 2; ++i) {
+-    int64_t val0 = get<int64_t>(resp.GetVec()[0].GetVec()[i].u);
+-    int64_t val1 = get<int64_t>(resp.GetVec()[1].GetVec()[i].u);
+-    EXPECT_EQ(val0, val1);
++    EXPECT_EQ(resp.GetVec()[0].GetVec()[i].GetString(), resp.GetVec()[1].GetVec()[i].GetString());
+   }
+ }
+ 
+```
+
+---
+
+### Incident Patch 3: `b833947c` (2026-10-28)
+**Commit Message**: fix(search): shrink the map of kept field values after removals (#8672)
+
+#8657 keeps the values of indexed hash fields that have a TTL in a map per index. Erasing from
+the map never shrinks it, so once such documents were gone it kept search memory at its peak
+size. Shrink it once at most 1/16 of its slots are used, which frees it when it becomes empty.
+
+Also count the field list that #8657 added in GetNonPmrMemoryUsage when it leaves its inline
+storage, and fix two comments.
+
+**File**: `src/server/search/doc_accessors.cc` (modified, +2/-2)
+```diff
+@@ -201,8 +201,8 @@ SearchDocData ListPackAccessor::SerializeAll(const DocFieldTypes& types) const {
+ StringMapAccessor::~StringMapAccessor() {
+   // Reads (e.g. Serialize/GetStrings) trigger lazy field expiry on the
+   // underlying StringMap.  If all fields expired during our lifetime,
+-  // delete the now-empty hash so a later SAVE does not hit the DFATAL for
+-  // empty OBJ_HASH in rdb_save.cc.
++  // delete the now-empty hash so a later SAVE does not skip it with an ERROR
++  // for empty OBJ_HASH in rdb_save.cc.
+   if (cleanup_key_.empty() || !hset_ || !hset_->Empty())
+     return;
+ 
+```
+
+**File**: `src/server/search/doc_index.cc` (modified, +7/-0)
+```diff
+@@ -463,6 +463,7 @@ ShardDocIndex::ShardDocIndex(shared_ptr<const DocIndex> index, unsigned* hash_in
+     if (field.type == SchemaField::TEXT)
+       stems |= !std::get<SchemaField::TextParams>(field.special_params).no_stem;
+   }
++
+   // Only stemming TEXT indices read the language field.
+   if (stems && !base_->schema.language_field.empty())
+     add_field(base_->schema.language_field);
+@@ -629,6 +630,10 @@ void ShardDocIndex::RemoveFromIndices(DocId id, const DbContext& db_cntx, const
+   }
+   indices_->Remove(id, ExpiringValuesAccessor{*accessor, it->second});
+   expiring_values_.erase(it);
++
++  // erase never shrinks the table. Growth happens at 7/8 load, so shrinking at 1/16 cannot thrash.
++  if (expiring_values_.size() * 16 <= expiring_values_.capacity())
++    expiring_values_.rehash(0);
+ }
+ 
+ // --- HnswShardIndex implementation ---
+@@ -1405,6 +1410,8 @@ size_t ShardDocIndex::GetNonPmrMemoryUsage() const {
+   size_t mem = field_types_.GetNonPmrMemoryUsage();
+   if (indices_)
+     mem += indices_->GetNonPmrMemoryUsage();
++  if (content_fields_.size() > 4)
++    mem += content_fields_.capacity() * sizeof(string_view);
+   return mem;
+ }
+ 
+```
+
+**File**: `src/server/search/search_family_test.cc` (modified, +22/-0)
+```diff
+@@ -4526,6 +4526,28 @@ TEST_F(SearchFamilyTest, FieldExpirySynUpdateDropsExpiredTerm) {
+   EXPECT_THAT(Run({"FT.SEARCH", "idx", "hi", "NOCONTENT"}), kNoResults);
+ }
+ 
++// The kept values release their memory once the documents are gone.
++TEST_F(SearchFamilyTest, FieldExpiryValuesReleaseMemory) {
++  EXPECT_EQ(Run({"FT.CREATE", "idx", "ON", "HASH", "PREFIX", "1", "d:", "SCHEMA", "title", "TEXT",
++                 "NOSTEM"}),
++            "OK");
++  auto add_and_delete = [&](bool with_ttl) {
++    constexpr int kNumDocs = 500;
++    for (int i = 0; i < kNumDocs; i++) {
++      if (with_ttl)
++        Run({"HSETEX", absl::StrCat("d:", i), "100", "title", "hello"});
++      else
++        Run({"HSET", absl::StrCat("d:", i), "title", "hello"});
++    }
++    for (int i = 0; i < kNumDocs; i++)
++      Run({"DEL", absl::StrCat("d:", i)});
++    return GetMetrics().search_stats.used_memory;
 +  };
-+  constexpr string_view kDataSize = "Values - Data size (in-memory and tiered):\n";
-+  constexpr string_view kMemoryUsed = "Values - Total Memory used:\n";
 +
-+  string json_hist = section("ReJSON-RL");
-+  EXPECT_THAT(json_hist, HasSubstr(absl::StrCat(kMemoryUsed, "Count: 1 ")));
-+  EXPECT_THAT(json_hist, Not(HasSubstr(absl::StrCat(kMemoryUsed, "Count: 1 Average: 0.0000"))));
-+  EXPECT_THAT(json_hist, Not(HasSubstr(kDataSize)));
-+  EXPECT_THAT(json_hist, Not(HasSubstr("Cardinality histogram")));
-+  EXPECT_THAT(json_hist, Not(HasSubstr("Items length histogram")));
-+
-+  string stream_hist = section("stream");
-+  EXPECT_THAT(stream_hist, HasSubstr(absl::StrCat(kMemoryUsed, "Count: 1 ")));
-+  EXPECT_THAT(stream_hist, HasSubstr(absl::StrCat(kDataSize, "Count: 1 Average: 16.0")));
-+  EXPECT_THAT(stream_hist, HasSubstr("Cardinality histogram (number of elements in sets):\n"
-+                                     "Count: 1 Average: 2.0"));
-+  EXPECT_THAT(stream_hist, HasSubstr("Items length histogram:\nCount: 3 "));
-+
-+  string bloom_hist = section("MBbloom--");
-+  EXPECT_THAT(bloom_hist, HasSubstr(absl::StrCat(kDataSize, "Count: 1 ")));
-+  EXPECT_THAT(bloom_hist, Not(HasSubstr(absl::StrCat(kDataSize, "Count: 1 Average: 0.0000"))));
++  size_t without_ttl = add_and_delete(false);
++  EXPECT_EQ(add_and_delete(true), without_ttl);
 +}
 +
-+TEST_F(GenericFamilyTest, DebugObjHistStreamTombstonesAndNodes) {
-+  for (unsigned i = 1; i <= 256; ++i) {
-+    EXPECT_EQ(Run({"XADD", "stream", StrCat(i, "-0"), "123", "456"}), StrCat(i, "-0"));
-+  }
-+  EXPECT_EQ(Run({"XADD", "stream", "257-0", "field", "value"}), "257-0");
-+  EXPECT_THAT(Run({"XDEL", "stream", "2-0"}), IntArg(1));
-+
-+  string hist = Run({"DEBUG", "OBJHIST"}).GetString();
-+  EXPECT_THAT(hist, HasSubstr("Values - Data size (in-memory and tiered):\n"
-+                              "Count: 1 Average: 1540.0"));
-+  EXPECT_THAT(hist, HasSubstr("Cardinality histogram (number of elements in sets):\n"
-+                              "Count: 1 Average: 256.0"));
-+  EXPECT_THAT(hist, HasSubstr("Items length histogram:\nCount: 256 "));
-+}
-+
- TEST_F(GenericFamilyTest, ZInterStoreDeletesEmptySet) {
-   for (int i = 0; i < 20; ++i) {
-     Run({"SADDEX", "skey", "1", absl::StrCat("m", i)});
+ TEST_F(SearchFamilyTest, FtAlterKeepsSynonyms) {
+   EXPECT_EQ(Run({"FT.CREATE", "idx", "ON", "HASH", "PREFIX", "1", "d:", "SCHEMA", "title", "TEXT"}),
+             "OK");
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8712** (2026-10-28): fix(server): reply to TIME with bulk strings (@vyavdoshenko)
+- **PR #8702** (2026-10-28): chore(search): Propagate error if index dropped during search (@abhijat)
+- **PR #8691** (2026-10-27): chore(search): Simplify tx concluding (@abhijat)
 - **PR #8689** (2026-10-27): fix(server): don't exit on cloud snapshot storage init failure at runtime (@dranikpg)
-- **PR #8684** (2026-10-27): refactor(acl): expose a pure CheckCommand over an AclRulesView (@romange)
-- **PR #8676** (2026-10-25): chore(deps): bump setuptools from 84.0.0 to 84.1.0 (@dependabot[bot])
-- **PR #8675** (2026-10-24): fix(search): build sort_indices.cc against libc++. (macOS fix) (@vyavdoshenko)
-- **PR #8668** (2026-10-26): refactor(server): simplify WAIT acknowledgement tracking (@romange)
-- **PR #8667** (closed): [WIP] feat(search): alias to remaining cmds (@abhijat)
+- **PR #8688** (2026-10-27): chore(server): Use lookup mode enum instead of one named after stats (@abhijat)
+- **PR #8685** (2026-10-27): refactor(acl): decouple User and UserRegistry from AclFamily's category tables (@romange)
 
 ---
 
@@ -2693,72 +2878,31 @@ Use tracked memory sizes instead of slow memory scans.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. server): don't exit on cloud snapshot storage init failure at runtime (#8689)
+## X. server): make XINFO and JSON.DEBUG keyed so scripts read them through the transa
 
 **RULE**:
-When implementing operations in `src/server/server_family.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/server/acl/validator.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1042051b`: server): don't exit on cloud snapshot storage init failure at runtime (#8689). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3aad471b`: server): make XINFO and JSON.DEBUG keyed so scripts read them through the transaction (#8648). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/server_family.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/acl/validator.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-// Returns an error instead of terminating the process: this is called at runtime by
-// SAVE/LOAD commands, where a transient failure (e.g. missing credentials) must not kill
-// an already serving instance.
-io::Result<std::shared_ptr<detail::SnapshotStorage>, GenericError> CreateCloudSnapshotStorage(
-    std::string_view uri) {
-  auto make_err = [](std::error_code ec, std::string_view what) {
-    return nonstd::make_unexpected(GenericError{ec, absl::StrCat("Failed to initialize ", what)});
-  };
-
-    if (ec)
-      return make_err(ec, "AWS S3 snapshot storage");
-    if (ec)
-      return make_err(ec, "GCS snapshot storage");
-    return nonstd::make_unexpected(
-        GenericError{make_error_code(errc::not_supported), "Compiled without GCP support"});
-    if (ec)
-      return make_err(ec, "Azure snapshot storage");
-  return nonstd::make_unexpected(GenericError{make_error_code(errc::invalid_argument),
-                                              absl::StrCat("Unknown cloud storage ", uri)});
-}
-
-// Cloud paths need their own storage, other paths use the server's default storage.
-io::Result<std::shared_ptr<detail::SnapshotStorage>, GenericError> SelectSnapshotStorage(
-    std::string_vi
+// This command has no key position because a subcommand comes first; the key follows it.
+  return cmd == "MEMORY" && absl::EqualsIgnoreCase(sub, "USAGE");
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-std::shared_ptr<detail::SnapshotStorage> CreateCloudSnapshotStorage(std::string_view uri) {
-    if (ec) {
-      LOG(ERROR) << "Failed to initialize AWS S3 snapshot storage: " << ec.message();
-      exit(1);
-    }
-    if (ec) {
-      LOG(ERROR) << "Failed to initialize GCS snapshot storage: " << ec.message();
-      exit(1);
-    }
-    LOG(ERROR) << "Compiled without GCP support";
-    exit(1);
-    if (ec) {
-      LOG(ERROR) << "Failed to initialize Azure snapshot storage: " << ec.message();
-      exit(1);
-    }
-  } else {
-    LOG(ERROR) << "Unknown cloud storage " << uri;
-    exit(1);
-    snapshot_storage_ = CreateCloudSnapshotStorage(flag_dir);
-  auto storage = detail::IsCloudPath(path) ? CreateCloudSnapshotStorage(path) : snapshot_storage_;
-  if (auto res = storage->ExpandSnapshot(path); !res)
-  auto storage = detail::IsCloudPath(path) ? CreateCloudSnapshotStorage(path) : snapshot_storage_;
+// These commands have no key position because a subcommand comes first; the key follows it.
+  return cmd == "XINFO" || cmd == "JSON.DEBUG" ||
+         (cmd == "MEMORY" && absl::EqualsIgnoreCase(sub, "USAGE"));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1042051b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3aad471b` are properly handled with clean fallback behavior.

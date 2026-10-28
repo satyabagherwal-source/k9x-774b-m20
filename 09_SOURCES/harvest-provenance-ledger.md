@@ -5895,3 +5895,7 @@ Every entry in this ledger must capture:
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `58fba8cb` | Multi-dimensional audit evidence | 2026-10-28T18:42:00.529Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `5c280571` | Multi-dimensional audit evidence | 2026-10-28T18:42:00.736Z |
 | `learn-huggingface-zai-org-glm-5-3` | `https://huggingface.co/zai-org/GLM-5.3` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-10-28T18:42:07.087Z |
+| `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `91eff8da` | Multi-dimensional audit evidence | 2026-10-28T18:48:30.371Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `38be8ce3` | Multi-dimensional audit evidence | 2026-10-28T18:48:37.235Z |
+| `learn-huggingface-mudler-locate-anything-cpp-gguf` | `https://huggingface.co/mudler/locate-anything.cpp-gguf` | `hf-mudler-` | Multi-dimensional audit evidence | 2026-10-28T18:48:40.287Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `2391d544` | Multi-dimensional audit evidence | 2026-10-28T18:48:42.519Z |

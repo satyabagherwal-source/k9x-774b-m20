@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T18:42:06.994Z",
+  "last_updated": "2026-10-28T18:48:42.457Z",
   "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9894,8 +9894,8 @@
       "slug": "dragonflydb-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflydb/dragonfly",
-      "source_version": "1042051b",
-      "content_hash": "8cacac3431d19d42451ff060fd2f13ee473633b371fbed95b2505efbbdae813b",
+      "source_version": "2391d544",
+      "content_hash": "8c57b26be7817067a104045418b1cdfa049d7a717659b9132a30488ea83472d9",
       "dossier_path": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "promoted_rules": [
@@ -9948,6 +9948,11 @@
           "number": 4802,
           "title": "server): don't exit on cloud snapshot storage init failure at runtime (#8689)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5373,
+          "title": "server): make XINFO and JSON.DEBUG keyed so scripts read them through the transa",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9955,7 +9960,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:25:28.148Z",
+      "verified_at": "2026-10-28T18:48:42.441Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11016,8 +11021,8 @@
       "slug": "envoyproxy-envoy",
       "platform": "github",
       "source_url": "https://github.com/envoyproxy/envoy",
-      "source_version": "b9f63105",
-      "content_hash": "0ed692e8157f5f3e75d8f4ff2d0d8738067fe8c808c9dd83cd3d066b77a9d4fc",
+      "source_version": "38be8ce3",
+      "content_hash": "7ac9efae53ec38af2a3ccb59520b6b463b1d067cfa7edbb69eda8f9c484d4b2a",
       "dossier_path": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "promoted_rules": [
@@ -11055,6 +11060,11 @@
           "number": 4966,
           "title": "mcp_json_rest_bridge: fix empty JSON-RPC responses for streaming tools/call with",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5370,
+          "title": "deps: Update QUICHE to f53fd81 (#48778)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11062,7 +11072,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T19:32:04.741Z",
+      "verified_at": "2026-10-28T18:48:37.159Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25052,7 +25062,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
       "source_version": "hf-mudler-locate-anything.cpp-gguf",
-      "content_hash": "f3f368914fc9e07d4e7f508ec6544bd3d34e770ffac235c7f43ca3404dc56d92",
+      "content_hash": "273c5e57fbbf8c9aa13b8251145d8decb017644177a0395c07e7ac47b123b532",
       "dossier_path": "07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md",
       "promoted_rules": [
@@ -25125,6 +25135,16 @@
           "number": 5104,
           "title": "Host-Read Tensor Precision Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5371,
+          "title": "Hybrid Precision Isolation for Spatial Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5372,
+          "title": "Parity-Gated Deployment for C++/Python Migration",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -25144,7 +25164,7 @@
         "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4177m8",
         "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4f5wy1"
       ],
-      "verified_at": "2026-10-28T01:36:04.447Z",
+      "verified_at": "2026-10-28T18:48:40.209Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45847,8 +45867,8 @@
       "slug": "restatedev-restate",
       "platform": "github",
       "source_url": "https://github.com/restatedev/restate",
-      "source_version": "d188f08a",
-      "content_hash": "2a29ccc89fd32ddea047cea0782ce889346daf2f44f920697393745d4860caf7",
+      "source_version": "91eff8da",
+      "content_hash": "5538f39f701176080ae418b0f3be2bf1fcb23a29d390fb42c27d20aab93a45b5",
       "dossier_path": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "promoted_rules": [
@@ -45896,6 +45916,11 @@
           "number": 4887,
           "title": "[PartitionStore] Fix storage cleanup and durable-LSN reporting",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5369,
+          "title": "[types] Make schema zstd compression level configurable (#5675)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45903,7 +45928,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T15:32:56.184Z",
+      "verified_at": "2026-10-28T18:48:30.285Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -145592,6 +145617,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T18:42:00.642Z"
+    },
+    "rule-5369": {
+      "learning_id": "rule-5369",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5369,
+      "title": "[types] Make schema zstd compression level configurable (#5675)",
+      "source_url": "https://github.com/restatedev/restate",
+      "source_version": "91eff8da",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T18:48:30.285Z"
+    },
+    "rule-5370": {
+      "learning_id": "rule-5370",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5370,
+      "title": "deps: Update QUICHE to f53fd81 (#48778)",
+      "source_url": "https://github.com/envoyproxy/envoy",
+      "source_version": "38be8ce3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T18:48:37.159Z"
+    },
+    "rule-5371": {
+      "learning_id": "rule-5371",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5371,
+      "title": "Hybrid Precision Isolation for Spatial Integrity",
+      "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
+      "source_version": "hf-mudler-locate-anything.cpp-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T18:48:40.209Z"
+    },
+    "rule-5372": {
+      "learning_id": "rule-5372",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5372,
+      "title": "Parity-Gated Deployment for C++/Python Migration",
+      "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
+      "source_version": "hf-mudler-locate-anything.cpp-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T18:48:40.209Z"
+    },
+    "rule-5373": {
+      "learning_id": "rule-5373",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5373,
+      "title": "server): make XINFO and JSON.DEBUG keyed so scripts read them through the transa",
+      "source_url": "https://github.com/dragonflydb/dragonfly",
+      "source_version": "2391d544",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T18:48:42.441Z"
     }
   },
   "aliases": {

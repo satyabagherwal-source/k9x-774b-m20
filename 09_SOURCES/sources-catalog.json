@@ -75,8 +75,8 @@
     "sourceUrl": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
     "sourceVersion": "hf-mudler-locate-anything.cpp-gguf",
     "license": "Open-Source",
-    "contentHash": "f3f368914fc9e07d4e7f508ec6544bd3d34e770ffac235c7f43ca3404dc56d92",
-    "lastHarvestedAt": "2026-10-28T01:36:04.526Z",
+    "contentHash": "273c5e57fbbf8c9aa13b8251145d8decb017644177a0395c07e7ac47b123b532",
+    "lastHarvestedAt": "2026-10-28T18:48:40.287Z",
     "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf"
   },
   "hf-jialinyyzz-humanizer": {
@@ -6123,10 +6123,10 @@
     "repository": "dragonflydb/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflydb/dragonfly",
-    "sourceVersion": "1042051b",
+    "sourceVersion": "2391d544",
     "license": "NOASSERTION",
-    "contentHash": "8cacac3431d19d42451ff060fd2f13ee473633b371fbed95b2505efbbdae813b",
-    "lastHarvestedAt": "2026-10-27T13:25:28.209Z",
+    "contentHash": "8c57b26be7817067a104045418b1cdfa049d7a717659b9132a30488ea83472d9",
+    "lastHarvestedAt": "2026-10-28T18:48:42.519Z",
     "learningId": "learn-github-dragonflydb-dragonfly"
   },
   "danielpetho-fancy": {
@@ -6253,10 +6253,10 @@
     "repository": "envoyproxy/envoy",
     "platform": "github",
     "sourceUrl": "https://github.com/envoyproxy/envoy",
-    "sourceVersion": "b9f63105",
+    "sourceVersion": "38be8ce3",
     "license": "Apache-2.0",
-    "contentHash": "0ed692e8157f5f3e75d8f4ff2d0d8738067fe8c808c9dd83cd3d066b77a9d4fc",
-    "lastHarvestedAt": "2026-10-27T19:32:04.815Z",
+    "contentHash": "7ac9efae53ec38af2a3ccb59520b6b463b1d067cfa7edbb69eda8f9c484d4b2a",
+    "lastHarvestedAt": "2026-10-28T18:48:37.235Z",
     "learningId": "learn-github-envoyproxy-envoy"
   },
   "tursodatabase-limbo": {
@@ -6983,10 +6983,10 @@
     "repository": "restatedev/restate",
     "platform": "github",
     "sourceUrl": "https://github.com/restatedev/restate",
-    "sourceVersion": "d188f08a",
+    "sourceVersion": "91eff8da",
     "license": "NOASSERTION",
-    "contentHash": "2a29ccc89fd32ddea047cea0782ce889346daf2f44f920697393745d4860caf7",
-    "lastHarvestedAt": "2026-10-27T15:32:56.237Z",
+    "contentHash": "5538f39f701176080ae418b0f3be2bf1fcb23a29d390fb42c27d20aab93a45b5",
+    "lastHarvestedAt": "2026-10-28T18:48:30.371Z",
     "learningId": "learn-github-restatedev-restate"
   },
   "kong-kubernetes-ingress-controller": {

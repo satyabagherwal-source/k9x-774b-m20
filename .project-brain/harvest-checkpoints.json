@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T18:42:07.102Z",
+  "last_updated": "2026-10-28T18:48:42.527Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1745,14 +1745,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-mudler-locate-anything-cpp-gguf",
-      "content_hash": "f3f368914fc9e07d4e7f508ec6544bd3d34e770ffac235c7f43ca3404dc56d92",
-      "verified_at": "2026-10-28T01:36:04.539Z",
+      "content_hash": "273c5e57fbbf8c9aa13b8251145d8decb017644177a0395c07e7ac47b123b532",
+      "verified_at": "2026-10-28T18:48:40.295Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T01:36:04.539Z"
+      "last_updated": "2026-10-28T18:48:40.295Z"
     },
     "jialinyyzz/humanizer": {
       "repository": "jialinyyzz/humanizer",
@@ -9306,14 +9306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dragonflydb-dragonfly",
-      "content_hash": "8cacac3431d19d42451ff060fd2f13ee473633b371fbed95b2505efbbdae813b",
-      "verified_at": "2026-10-27T13:25:28.217Z",
+      "content_hash": "8c57b26be7817067a104045418b1cdfa049d7a717659b9132a30488ea83472d9",
+      "verified_at": "2026-10-28T18:48:42.527Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:25:28.217Z"
+      "last_updated": "2026-10-28T18:48:42.527Z"
     },
     "danielpetho/fancy": {
       "repository": "danielpetho/fancy",
@@ -9501,14 +9501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-envoyproxy-envoy",
-      "content_hash": "0ed692e8157f5f3e75d8f4ff2d0d8738067fe8c808c9dd83cd3d066b77a9d4fc",
-      "verified_at": "2026-10-27T19:32:04.824Z",
+      "content_hash": "7ac9efae53ec38af2a3ccb59520b6b463b1d067cfa7edbb69eda8f9c484d4b2a",
+      "verified_at": "2026-10-28T18:48:37.243Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T19:32:04.824Z"
+      "last_updated": "2026-10-28T18:48:37.243Z"
     },
     "tursodatabase/turso": {
       "repository": "tursodatabase/turso",
@@ -10536,14 +10536,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-restatedev-restate",
-      "content_hash": "2a29ccc89fd32ddea047cea0782ce889346daf2f44f920697393745d4860caf7",
-      "verified_at": "2026-10-27T15:32:56.242Z",
+      "content_hash": "5538f39f701176080ae418b0f3be2bf1fcb23a29d390fb42c27d20aab93a45b5",
+      "verified_at": "2026-10-28T18:48:30.379Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T15:32:56.242Z"
+      "last_updated": "2026-10-28T18:48:30.379Z"
     },
     "Kong/kubernetes-ingress-controller": {
       "repository": "Kong/kubernetes-ingress-controller",

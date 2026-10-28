@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source**: github ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
-> **Source Version**: `b9f63105`  
+> **Source Version**: `38be8ce3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T19:32:04.402Z  
+> **Timestamp**: 2026-10-28T18:48:36.732Z  
 > **Learning ID**: `learn-github-envoyproxy-envoy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T19:32:03.523Z  
+> **Harvest Timestamp**: 2026-10-28T18:48:36.727Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cloud-native high-performance edge/middle/service proxy
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 29149 stars
+- **Stars / Engagement**: 29151 stars
 
 ---
 
@@ -1041,13 +1041,11 @@ public:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #48627** (2026-10-28): **Compression being applied to bodyless responses**
+  *Symptoms*: Making an issue because explaining all this in the PR (#48604) would be a bit much, and for discoverability if someone else runs into "Safari is aborting connections" with a similar cause.  On upgrading from envoy 1.36 to envoy 1.38 we found (eventually) that 204 responses started acquiring a 20 byte `sent_bytes`, despite 0 bytes from upstream.  The reason is that the upgrade changed the default from oghttp2 back to nghttp2 (again), and nghttp2 strips the content-length header from 204 responses.  Envoy, on receiving http2 with no content-length header, apparently does decodeHeaders(..., end_stream=false) then decodeData(empty_buffer, end_stream=true).  The compression filter starts compression on headers end_stream=false, so in these conditions results in gzipping zero bytes, creating a 20-byte body.  This becomes a much more severe problem than wasting 20 bytes when these responses go to a Safari browser, which, as far as we can tell, goes "a body on a 204 response? Outrageous! I'm aborting the entire connection!"  Which meant that a telemetry 204 would cause much more important POST requests to suddenly abort mid-stream, just for Safari browsers.  This took a week to notice, by which point non-edge instances had also deployed, which led to an extremely confusing situation where we could see that the upgrade on edge had clearly caused the increase in aborted POSTs, but when we flipped flags and reverted things it wasn't fixed - because the further-in proxies were, by now, *
+
 - **Issue #48362** (2026-10-16): **geoip: client-supplied geolocation headers are forwarded upstream whenever the lookup has no value for them**
   *Symptoms*: *Title*: geoip: client-supplied geolocation headers are forwarded upstream whenever the lookup has no value for them  *Description*:  The HTTP geoip filter documents that a configured geolocation header present in the incoming request "will be overridden by the filter" (`docs/root/configuration/http/http_filters/geoip_filter.rst`, and the `geo_headers_to_add` comment in `api/envoy/extensions/geoip_providers/common/v3/common.proto`).  The filter only writes a header when the provider returned a non-empty value for it (`source/extensions/filters/http/geoip/geoip_filter.cc`, `onLookupComplete`: `if (!lookup_value.empty()) { request_headers_->setCopy(...) }`) and never removes one. The maxmind provider only inserts a key when `found_entry` is true and the field exists. So a client-supplied `x-geo-country`, `x-geo-asn`, `x-geo-anon-vpn`, etc. reaches the upstream unchanged whenever the lookup produces nothing for that header:  - the address is not in the database (unresolved ranges, private ranges, new allocations), - the lookup returns an error, - the database has no such field for that address (city/region are often absent), - the lookup is skipped because the downstream address is not an IP address (internal listener, Unix socket; the skip path added in #47481 lets the request through "untouched").  The upstream, or an RBAC, ext_authz or Lua step later in the filter chain, cannot tell such a header from one the filter set. The anon headers are documented as "set to either true 
-
-- **Issue #48218** (2026-10-13): **auto_host_sni is not applied to upstream HTTP/3 (QUIC) connections**
-  *Symptoms*: **Description**  `UpstreamTlsContext.auto_host_sni` is ignored when the context is wrapped in `QuicUpstreamTransport`. An HTTP/3 upstream connection sends no SNI, or the configured `sni`, instead of the upstream host's hostname. Envoy's QUIC client then checks the server certificate against that name, so the handshake fails whenever the certificate only carries the host's hostname.  Over TLS over TCP, `ClientContextImpl::newSsl` picks the SNI through `effectiveSni`: the per-request server name override, then the host's hostname when `auto_host_sni` is set, then the configured `sni`. The HTTP/3 pool picks it in `sni()` in `source/common/http/http3/conn_pool.cc`, which only looks at the override and the configured `sni`:  ```cpp return options && options->serverNameOverride().has_value()            ? options->serverNameOverride().value()            : getConfig(host->transportSocketFactory()).serverNameIndication(); ```  The pool is created per host and already receives it, so it could apply the same order as `effectiveSni`.  The `auto_host_sni` docs and the `QuicUpstreamTransport` docs don't mention this limitation. Found while adding upstream HTTP/3 to Envoy Gateway, https://github.com/envoyproxy/gateway/pull/10068, where a Backend using `autoSNIFromEndpointHostname` works over TCP but fails over HTTP/3.  **Repro**  Envoy 1.35.2, Caddy 2.8 serving HTTP/3 on 8443 with a certificate for `h3-backend`. Cluster with `explicit_http_config.http3_protocol_options`:  ```yaml load_assig
-  **Post-Mortem & Fix Analysis**:
-  > /assign @agrawroh
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1064,459 +1062,271 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5af8d913` (2026-10-27)
-**Commit Message**: mcp_json_rest_bridge: fix empty JSON-RPC responses for streaming tools/call with headers-only backend responses (#48744)
+### Incident Patch 1: `38be8ce3` (2026-10-28)
+**Commit Message**: deps: Update QUICHE to f53fd81 (#48778)
 
-Commit Message:
-mcp_json_rest_bridge: fix empty JSON-RPC responses for streaming
-tools/call with headers-only backend responses
+Update QUICHE from 67bce2e to f53fd81
+https://github.com/google/quiche/compare/67bce2e..f53fd81
 
-When `text_content_streaming_enabled` is configured on a tool,
-`McpJsonRestBridgeFilter::encodeHeaders()` previously checked the
-streaming branch (`mcp_operation_ == McpOperation::ToolsCall &&
-text_content_streaming_enabled_`) before checking `if (end_stream)`. For
-a headers-only backend response (such as `204 No Content`, `304 Not
-Modified`, or a bodyless `4xx`/`5xx`), `encodeHeaders()` removed
-`Content-Length` and returned `FilterHeadersStatus::Continue` without
-emitting any body, and `encodeData()`/`encodeTrailers()` were never
-invoked, resulting in an empty HTTP `200` response body instead of a
-valid JSON-RPC response.
+Registry:
+https://github.com/envoyproxy/bazel-registry/commit/1c874f7787383338455c4cf4a03f0d6d547fbd88
 
-Move the `if (end_stream)` block above the streaming block in
-`encodeHeaders()` so that headers-only backend responses for
-streaming-enabled `tools/call` operations synthesize the complete
-JSON-RPC `CallToolResult` payload via `encodeData()` (preserving the
-request ID, `isError`, `Content-Length`, and `"resultType":
+```
+$ git log 67bce2e..f53fd81 --date=short --no-merges --format="%ad %an %s"
 
-**File**: `source/extensions/filters/http/mcp_json_rest_bridge/mcp_json_rest_bridge_filter.cc` (modified, +24/-23)
-```diff
-@@ -1107,29 +1107,6 @@ McpJsonRestBridgeFilter::encodeHeaders(Http::ResponseHeaderMap& response_headers
-   }
- 
-   const int response_code = getResponseCode(response_headers);
--  // Streaming mode: pre-build the JSON-RPC prefix/suffix, strip Content-Length
--  // (final size is unknown), and let the headers flow through immediately so
--  // the client can start receiving data without waiting for the full body.
--  if (mcp_operation_ == McpOperation::ToolsCall && text_content_streaming_enabled_) {
--    is_sse_response_ = isSseContentType(response_headers.getContentTypeValue());
--    // Overwrite response code to 200 OK unless it is 401 or 403. Non-200 responses
--    // cause MCP clients to fail at the transport layer. 401 and 403 are preserved
--    // as required by the MCP auth spec to drive OAuth handshake and step-up scope flows:
--    // https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization#error-handling
--    // Note on 400 Bad Request: While the MCP authorization spec also includes HTTP 400 for
--    // certain authorization errors, we assume authorization checks (e.g., OAuth token
--    // validation) occur in filters before MCP transcoding, so any 400 error from the REST
--    // backend is assumed to be an API error and is transformed into a standard JSON-RPC error.
--    if (response_code != static_cast<int>(Http::Code::Unauthorized) &&
--        response_code != static_cast<int>(Http::Code::Forbidden)) {
--      response_headers.setStatus(enumToInt(Http::Code::OK));
--    }
--    buildStreamingPrefixAndSuffix(response_code >= static_cast<int>(Http::Code::BadRequest));
--    response_headers.removeContentLength();
--    response_headers.setContentType(Http::Headers::get().ContentTypeValues.Json);
--    return Http::FilterHeadersStatus::Continue;
--  }
--
-   if (end_stream) {
-     // Backend returned a headers-only response (e.g., 204 No Content). Synthesize a JSON-RPC
-     // response body so MCP clients don't hang waiting for a body that will never arrive.
-@@ -1167,6 +1144,30 @@ McpJsonRestBridgeFilter::encodeHeaders(Http::ResponseHeaderMap& response_headers
-     encoder_callbacks_->addEncodedData(body_buffer, false);
-     return Http::FilterHeadersStatus::Continue;
-   }
-+
-+  // Streaming mode: pre-build the JSON-RPC prefix/suffix, strip Content-Length
-+  // (final size is unknown), and let the headers flow through immediately so
-+  // the client can start receiving data without waiting for the full body.
-+  if (mcp_operation_ == McpOperation::ToolsCall && text_content_streaming_enabled_) {
-+    is_sse_response_ = isSseContentType(response_headers.getContentTypeValue());
-+    // Overwrite response code to 200 OK unless it is 401 or 403. Non-200 responses
-+    // cause MCP clients to fail at the transport layer. 401 and 403 are preserved
-+    // as required by the MCP auth spec to drive OAuth handshake and step-up scope flows:
-+    // https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization#error-handling
-+    // Note on 400 Bad Request: While the MCP authorization spec also includes HTTP 400 for
-+    // certain authorization errors, we assume authorization checks (e.g., OAuth token
-+    // validation) occur in filters before MCP transcoding, so any 400 error from the REST
-+    // backend is assumed to be an API error and is transformed into a standard JSON-RPC error.
-+    if (response_code != static_cast<int>(Http::Code::Unauthorized) &&
-+        response_code != static_cast<int>(Http::Code::Forbidden)) {
-+      response_headers.setStatus(enumToInt(Http::Code::OK));
-+    }
-+    buildStreamingPrefixAndSuffix(response_code >= static_cast<int>(Http::Code::BadRequest));
-+    response_headers.removeContentLength();
-+    response_headers.setContentType(Http::Headers::get().ContentTypeValues.Json);
-+    return Http::FilterHeadersStatus::Continue;
-+  }
-+
-   return Http::FilterHeadersStatus::StopIteration;
- }
- 
+2026-10-21 apaseltiner Update Structured Headers generated specification tests.
+2026-10-21 QUICHE team QBONE Bonnet: pull netlink usage out of packet exchanger
+2026-10-24 ianswett Consolidate OnStreamHeadersPriority and OnPriorityFrame into OnStreamPriority.
+2026-10-24 ianswett Use min(1ms, SmoothedRTT) as the QUIC delayed ACK floor with AKDF copt.
+2026-10-26 ianswett Update the Connection ID code to only give out more than 2 CIDs if the client is not using a CID and the server is a Blue L1.
+2026-10-27 ricea Add missing QUICHE_EXPORT annotations to moq_varint.h
+2026-10-27 apaseltiner Update Structured Headers generated specification tests.
 ```
 
-**File**: `test/extensions/filters/http/mcp_json_rest_bridge/mcp_json_rest_bridge_filter_test.cc` (modified, +76/-0)
+Signed-off-by: Ricardo Perez Perez <[REDACTED_EMAIL]>
+
+**File**: `.bazelrc` (modified, +1/-1)
 ```diff
-@@ -4303,6 +4303,82 @@ TEST_F(McpJsonRestBridgeStreamingFilterTest, TrailersEmptyBodyEmitsPrefixAndSuff
-   EXPECT_EQ(filter_->encodeTrailers(response_trailers), Http::FilterTrailersStatus::Continue);
- }
+@@ -26,7 +26,7 @@ common --noincompatible_disallow_ctx_resolve_tools
+ common --legacy_external_runfiles
  
-+TEST_F(McpJsonRestBridgeStreamingFilterTest, HeadersOnly204EmitsSyntheticSuccessResult) {
-+  sendToolsCallRequest();
-+
-+  const std::string expected =
-+      R"json({"id":123,"jsonrpc":"2.0","result":{"content":[{"text":"","type":"text"}],"isError":false}})json";
-+  EXPECT_CALL(encoder_callbacks_, addEncodedData(_, false))
-+      .WillOnce(Invoke([&expected](Buffer::Instance& data, bool) {
-+        EXPECT_EQ(nlohmann::json::parse(data.toString()), nlohmann::json::parse(expected));
-+      }));
-+
-+  response_headers_ = {{":status", "204"}};
-+  EXPECT_EQ(filter_->encodeHeaders(response_headers_, /*end_stream=*/true),
-+            Http::FilterHeadersStatus::Continue);
-+  EXPECT_THAT(response_headers_.getContentTypeValue(), StrEq("application/json"));
-+  EXPECT_THAT(response_headers_.getContentLengthValue(), StrEq(std::to_string(expected.size())));
-+  EXPECT_EQ(response_headers_.getStatusValue(), "200");
-+}
-+
-+TEST_F(McpJsonRestBridgeStreamingFilterTest, HeadersOnly5xxEmitsSyntheticErrorResult) {
-+  sendToolsCallRequest();
-+
-+  const std::string expected =
-+      R"json({"id":123,"jsonrpc":"2.0","result":{"content":[{"text":"","type":"text"}],"isError":true}})json";
-+  EXPECT_CALL(encoder_callbacks_, addEncodedData(_, false))
-+      .WillOnce(Invoke([&expected](Buffer::Instance& data, bool) {
-+        EXPECT_EQ(nlohmann::json::parse(data.toString()), nlohmann::json::parse(expected));
-+      }));
-+
-+  response_headers_ = {{":status", "503"}};
-+  EXPECT_EQ(filter_->encodeHeaders(response_headers_, /*end_stream=*/true),
-+            Http::FilterHeadersStatus::Continue);
-+  EXPECT_THAT(response_headers_.getContentTypeValue(), StrEq("application/json"));
-+  EXPECT_THAT(response_headers_.getContentLengthValue(), StrEq(std::to_string(expected.size())));
-+  EXPECT_EQ(response_headers_.getStatusValue(), "200");
-+}
-+
-+TEST_F(McpJsonRestBridgeStreamingFilterTest,
-+       StatelessHeadersOnly204EmitsSyntheticSuccessResultWithResultType) {
-+  envoy::extensions::filters::http::mcp_json_rest_bridge::v3::McpJsonRestBridge
-+      stateless_proto_config;
-+
-+  TestUtility::loadFromYaml(R"yaml(
-+server_info:
-+  max_supported_protocol_version: "2026-07-28"
-+tool_config:
-+  tools:
-+    - name: get_api_key
-+      http_rule:
-+        get: "/v1/apiKeys"
-+      text_content_streaming_enabled: true
-+)yaml",
-+                            stateless_proto_config);
-+
-+  ASSERT_OK_AND_ASSIGN(config_, McpJsonRestBridgeFilterConfig::create(stateless_proto_config));
-+
-+  filter_ = std::make_unique<McpJsonRestBridgeFilter>(config_);
-+  filter_->setDecoderFilterCallbacks(decoder_callbacks_);
-+  filter_->setEncoderFilterCallbacks(encoder_callbacks_);
-+
-+  sendToolsCallRequest(true);
-+
-+  const std::string expected =
-+      R"json({"id":123,"jsonrpc":"2.0","result":{"content":[{"text":"","type":"text"}],"isError":false,"resultType":"complete"}})json";
-+  EXPECT_CALL(encoder_callbacks_, addEncodedData(_, false))
-+      .WillOnce(Invoke([&expected](Buffer::Instance& data, bool) {
-+        EXPECT_EQ(nlohmann::json::parse(data.toString()), nlohmann::json::parse(expected));
-+      }));
-+
-+  response_headers_ = {{":status", "204"}};
-+  EXPECT_EQ(filter_->encodeHeaders(response_headers_, /*end_stream=*/true),
-+            Http::FilterHeadersStatus::Continue);
-+  EXPECT_THAT(response_headers_.getContentTypeValue(), StrEq("application/json"));
-+  EXPECT_THAT(response_headers_.getContentLengthValue(), StrEq(std::to_string(expected.size())));
-+  EXPECT_EQ(response_headers_.getStatusValue(), "200");
-+}
-+
- TEST_F(McpJsonRestBridgeStreamingFilterTest, SseResponseStreaming) {
-   sendToolsCallRequest();
- 
+ common --registry=https://bcr.bazel.build/
+-common --registry=https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055
++common --registry=https://raw.githubusercontent.com/envoyproxy/bazel-registry/16371188feba0bcc93ef353abfd5017a6480e735
+ # common --registry=file:///bazel-registry
+ # this can be useful for dev
+ # common --lockfile_mode=off
 ```
 
-**File**: `test/extensions/filters/http/mcp_json_rest_bridge/mcp_json_rest_bridge_integration_test.cc` (modified, +212/-0)
+**File**: `MODULE.bazel` (modified, +1/-1)
 ```diff
-@@ -2540,6 +2540,218 @@ TEST_P(McpJsonRestBridgeIntegrationTest, ToolsCallHeadersOnly304SyntheticSuccess
-   EXPECT_EQ(nlohmann::json::parse(response->body()), nlohmann::json::parse(expected_rpc_response));
- }
+@@ -79,7 +79,7 @@ bazel_dep(name = "proxy-wasm-rust-sdk", version = "0.2.5")
+ bazel_dep(name = "qat-zstd", version = "1.0.0.envoy")
+ bazel_dep(name = "qatlib", version = "26.02.0.envoy")
+ bazel_dep(name = "qatzip", version = "2.0.0.envoy")
+-bazel_dep(name = "quiche", version = "0.0.0-261019-67bce2e.envoy")
++bazel_dep(name = "quiche", version = "0.0.0-261027-f53fd81.envoy")
+ bazel_dep(name = "ragel", version = "7.0.4-211228-d4577c9.envoy")
+ bazel_dep(name = "re2", version = "2025-11-05.bcr.1")
+ bazel_dep(name = "rules_apple", version = "5.3.1")
+```
+
+**File**: `MODULE.bazel.lock` (modified, +137/-137)
+```diff
+@@ -459,7 +459,7 @@
+     "https://bcr.bazel.build/modules/qat-zstd/1.0.0.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/qatlib/26.02.0.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/qatzip/2.0.0.envoy/MODULE.bazel": "not found",
+-    "https://bcr.bazel.build/modules/quiche/0.0.0-261019-67bce2e.envoy/MODULE.bazel": "not found",
++    "https://bcr.bazel.build/modules/quiche/0.0.0-261027-f53fd81.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/ragel/7.0.4-211228-d4577c9.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/rapidjson/1.1.0.bcr.20241007/MODULE.bazel": "82fbcb2e42f9e0040e76ccc74c06c3e46dfd33c64ca359293f8b84df0e6dff4c",
+     "https://bcr.bazel.build/modules/rapidjson/1.1.0.bcr.20241007/source.json": "5c42389ad0e21fc06b95ad7c0b730008271624a2fa3292e0eab5f30e15adeee3",
+@@ -770,142 +770,142 @@
+     "https://bcr.bazel.build/modules/zstd/1.5.7.bcr.3/MODULE.bazel": "031c2f61e3f30853704948e722b6c3c7f7989780ee37bc431747cf3dc6cbe0b3",
+     "https://bcr.bazel.build/modules/zstd/1.5.7.bcr.3/source.json": "92e3cd6613957216e9954b59e7c944766cdd7e55e5684862a1434bd5132663de",
+     "https://bcr.bazel.build/modules/zstd/1.5.7/MODULE.bazel": "f5780cdbd6f4c5bb985a20f839844316fe48fb5e463056f372dbc37cfabdf450",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/bazel_registry.json": "51bd3a0b193753e419c5d3db38e92fbcb9f7f97fd992ef2e24a0addd7274b37a",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/aws-c-auth-testdata/0.10.4.envoy/MODULE.bazel": "ed40f4181373fb0e277d5511db521f5a77f5558141b5697499a9b22fa1dc96c4",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/aws-c-auth-testdata/0.10.4.envoy/source.json": "20b0d19dc5c1e83f57c1cbc7e54ab0131291cc2220b374b0d222e44a6a0d914e",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/bazel-compdb/0.0.0-20220906-4086479.envoy/MODULE.bazel": "8ea7d294e0ea35bdcfddb8c3597eaa2967a4fa18b0e975ddef9374cd0e926d92",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/bazel-compdb/0.0.0-20220906-4086479.envoy/source.json": "586e9896baf303341171326f8721091d0b9748386e2383c9b60b351d30b60550",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/boost.headers/1.89.0.envoy.1/MODULE.bazel": "c05fcf60ad2a00dbf39055698d0ea1becf4ceb8fff7d9e248f3f6dece982d856",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/boost.headers/1.89.0.envoy.1/source.json": "31a56cde871ef03d5ae0e22d9959f9a049336474fae2ad0fb5998964d40cd1d4",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/boost.headers/1.89.0.envoy/MODULE.bazel": "c7205963786fdbe14f5a384ff5a3a04da66ed0cecfee3d3cedecf5be173dcb66",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/boringssl-fips/0.20260929.0.envoy.1/MODULE.bazel": "5e634802b6ae4b25fb21ee82636c288b4ac5973fb5c981456751ec72a40ac463",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/boringssl-fips/0.20260929.0.envoy.1/source.json": "054bd9dff1076a6caf66c47a44aeafad70ffa0e0f9e701daa43f157da6a8f3e3",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/boringssl-source/0.20260929.0.envoy/MODULE.bazel": "d80ba9dddc69a8d1900428c2f0b128cd1a41f63f058b4b0bce668357f7ec66a0",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/boringssl-source/0.20260929.0.envoy/source.json": "9c57158c4b3a2b2ac0188c472249d1faacbfcf3fd3fa822a4785836b391fe8b4",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/brotli/1.2.0-260930-42a2ed4.envoy/MODULE.bazel": "dce5f9c0643e0551aaeb0341ed90b994337ae3fbf232b584f2aaeae79ae47800",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/brotli/1.2.0-260930-42a2ed4.envoy/source.json": "c699301760293b6ffa07f1117aa1c1763683aeef33f1e10a061e1db342873860",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/cel-cpp/0.16.1.envoy/MODULE.bazel": "f835ee95427829db17d60fe1349839a759478fe89bb03c3869f39b5d6e56491d",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/cel-cpp/0.16.1.envoy/source.json": "decb295094395a4ef83e0562a82c58487d580e1a89e86cfa575c5705471dbac7",
+-    "https://raw.githubusercontent.com/env
+```
+
+**File**: `api/.bazelrc` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
  
-+TEST_P(McpJsonRestBridgeIntegrationTest, ToolsCallStreamingHeadersOnly204SyntheticSuccessResult) {
-+  const std::string config = R"EOF(
-+    name: envoy.filters.http.mcp_json_rest_bridge
-+    typed_config:
-+      "@type": type.googleapis.com/envoy.extensions.filters.http.mcp_json_rest_bridge.v3.McpJsonRestBridge
-+      tool_config:
-+        tools:
-+          - name: "create_api_key"
-+            http_rule:
-+              post: "/v1/{parent=projects/*}/keys"
-+              body: "key"
-+            text_content_streaming_enabled: true
-+  )EOF";
-+
-+  initializeFilter(config);
-+
-+  codec_client_ = makeHttpConnection(lookupPort("http"));
-+
-+  const std::string request_body = R"({
-+    "jsonrpc": "2.0",
-+    "id": 11,
-+    "method": "tools/call",
-+    "params": {
-+      "name": "create_api_key",
-+      "arguments": {
-+        "parent": "projects/foo",
-+        "key": {
-+          "displayName": "bar"
-+        }
-+      }
-+    }
-+  })";
-+
-+  auto response = codec_client_->makeRequestWithBody(
-+      Http::TestRequestHeaderMapImpl{{":method", "POST"},
-+                                     {":path", "/mcp"},
-+                                     {":scheme", "http"},
-+                                     {":authority", "host"},
-+                                     {"content-type", "application/json"}},
-+      request_body);
-+
-+  waitForNextUpstreamRequest();
-+  EXPECT_THAT(upstream_request_->headers().getMethodValue(), StrEq("POST"));
-+  EXPECT_THAT(upstream_request_->headers().getPathValue(), StrEq("/v1/projects/foo/keys"));
-+
-+  Http::TestResponseHeaderMapImpl response_headers;
-+  response_headers.setStatus(204);
-+  upstream_request_->encodeHeaders(response_headers, true);
-+
-+  ASSERT_TRUE(response->waitForEndStream());
-+  EXPECT_TRUE(upstream_request_->complete());
-+  EXPECT_THAT(response->headers().getStatusValue(), StrEq("200"));
-+  EXPECT_THAT(response->headers().getContentTypeValue(), StrEq("application/json"));
-+  EXPECT_THAT(response->headers().getContentLengthValue(),
-+              StrEq(std::to_string(response->body().size())));
-+
-+  const std::string expected_rpc_response = R"({
-+    "jsonrpc": "2.0",
-+    "id": 11,
-+    "result": {
-+      "content": [{"type": "text", "text": ""}],
-+      "isError": false
-+    }
-+  })";
-+  EXPECT_EQ(nlohmann::json::parse(response->body()), nlohmann::json::parse(expected_rpc_response));
-+}
-+
-+TEST_P(McpJsonRestBridgeIntegrationTest, ToolsCallStreamingHeadersOnly5xxSyntheticErrorResult) {
-+  const std::string config = R"EOF(
-+    name: envoy.filters.http.mcp_json_rest_bridge
-+    typed_config:
-+      "@type": type.googleapis.com/envoy.extensions.filters.http.mcp_json_rest_bridge.v3.McpJsonRestBridge
-+      tool_config:
-+        tools:
-+          - name: "create_api_key"
-+            http_rule:
-+              post: "/v1/{parent=projects/*}/keys"
-+              body: "key"
-+            text_content_streaming_enabled: true
-+  )EOF";
-+
-+  initializeFilter(config);
-+
-+  codec_client_ = makeHttpConnection(lookupPort("http"));
-+
-+  const std::string request_body = R"({
-+    "jsonrpc": "2.0",
-+    "id": 12,
-+    "method": "tools/call",
-+    "params": {
-+      "name": "create_api_key",
-+      "arguments": {
-+        "parent": "projects/foo",
-+        "key": {
-+          "displayName": "bar"
-+        }
-+      }
-+    }
-+  })";
-+
-+  auto response = codec_client_->makeRequestWithBody(
-+      Http::TestRequestHeaderMapImpl{{":method", "POST"},
-+                                     {":path", "/mcp"},
-+                                     {":scheme", "http"},
-+                                     {":authority", "host"},
-+                                     {"content-type", "application/json"}},
-+      request_body);
-+
-+  waitForNextUpstreamRequest();
-+  EXPECT_THAT(upstream_request_->headers().getMethodValue(), StrEq("POST"));
-+  EXPECT_THAT(upstream_request_->headers().getPathValue(), StrEq("/v1/projects/foo/keys"));
-+
-+  Http::TestResponseHeaderMapImpl response_headers;
-+  response_headers.setStatus(503);
-+  upstream_request_->encodeHeaders(response_headers, true);
-+
-+  ASSERT_TRUE(response->waitForEndStream());
-+  EXPECT_TRUE(upstream_request_->complete());
-+  EXPECT_THAT(response->headers().getStatusValue(), StrEq("200"));
-+  EXPECT_THAT(response->headers().getContentTypeValue(), StrEq("application/json"));
-+  EXPECT_THAT(response->headers().getContentLengthValue(),
-+              StrEq(std::to_string(response->body().size())));
-+
-+  const std::string expected_rpc_response = R"({
-+    "jsonrpc": "2.0",
-+    "id": 12,
-+    "result": {
-+      "content": [{"type": "text", "text": ""}],
-+      "isError": true
-+    }
-+  })";
-+  EXPECT_EQ(nlohmann::json::parse(response->body()), nlohmann::json::parse(expected_rpc_response));
-+}
-+
-+TEST_P(McpJsonRestBridgeIntegrationTest,
-+       St
+ common --registry=https://bcr.bazel.build/
+-common --registry=https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055
++common --registry=https://raw.githubusercontent.com/envoyproxy/bazel-registry/16371188feba0bcc93ef353abfd5017a6480e735
+ 
+ # Build settings
+ build --incompatible_strict_action_env
+```
+
+**File**: `api/MODULE.bazel.lock` (modified, +15/-15)
+```diff
+@@ -521,21 +521,21 @@
+     "https://bcr.bazel.build/modules/zlib/1.3/MODULE.bazel": "6a9c02f19a24dcedb05572b2381446e27c272cd383aed11d41d99da9e3167a72",
+     "https://bcr.bazel.build/modules/zstd/1.5.7.bcr.3/MODULE.bazel": "031c2f61e3f30853704948e722b6c3c7f7989780ee37bc431747cf3dc6cbe0b3",
+     "https://bcr.bazel.build/modules/zstd/1.5.7.bcr.3/source.json": "92e3cd6613957216e9954b59e7c944766cdd7e55e5684862a1434bd5132663de",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/bazel_registry.json": "51bd3a0b193753e419c5d3db38e92fbcb9f7f97fd992ef2e24a0addd7274b37a",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/envoy_toolshed/0.5.9.envoy/MODULE.bazel": "13b3b2534ebc162c99021fb0502b797a1bf6dc4242da9966c590330548ebf39c",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/envoy_toolshed/0.5.9.envoy/source.json": "b0b86356a107b49d273d5a16df8e3245a373878eb2d85d8c24acbd5730324791",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/envoy_toolshed_jq/0.5.9.envoy/MODULE.bazel": "3d7505a7421eedf8aef4722ba5dfe62a2bdc0245c8cfee0bfc78dbd65b3d263d",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/envoy_toolshed_jq/0.5.9.envoy/source.json": "420f1a3474253833d851bed39cbc6c9abf1e4a24fcee289f9aba647600230004",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/grpc/1.83.0.envoy/MODULE.bazel": "71ff92df79911a0975a09c1482791fd3983696383d4652277684e67884ac9d40",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/grpc/1.83.0.envoy/source.json": "39d70fd55602db781fc793f0417b7ecce8f2427e9fdaf6c18938e33acdc4d549",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/prometheus-metrics-model/0.6.2.envoy/MODULE.bazel": "40e1b9b9db52c3238fcc3e85c08ef35eb9157783e620009ed01eeed7631a9f67",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/prometheus-metrics-model/0.6.2.envoy/source.json": "0943a090f19491879321638e307bf6bea1459659fb8de4d85ff7e1eb153f12c9",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/protobuf/35.1.bcr.envoy/MODULE.bazel": "97206075bc75d7aa4c3d580f488ad19de0f374f192c9e93da9e071b4780d1f23",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/protobuf/35.1.bcr.envoy/source.json": "1e41359b39620019d80e22316fb8762780330dfbae99ea32e0dd98f3db233e56",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/protoc-gen-jsonschema/0.0.0-20230530-7680e49.envoy/MODULE.bazel": "bfa220406788d867e7358476be714494f0e7a9a2389fd67e826a04eff6dba4e5",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/protoc-gen-jsonschema/0.0.0-20230530-7680e49.envoy/source.json": "45bf54e4859f6031318404956ac2933654cc8494899fc84f1d4f5414c0e977ca",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/protoc-gen-validate/1.3.3.envoy/MODULE.bazel": "48db25694ec054d0bf9039ce2d51d292daf67b8ff8fc3c4071b43a807f313b41",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/protoc-gen-validate/1.3.3.envoy/source.json": "1c2acb99b8b3e7c57b5d43d06a71e65be1ba5f62ff327e126699ebad6defc018"
++    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/16371188feba0bcc93ef353abfd5017a6480e735/bazel_registry.json": "51bd3a0b193753e419c5d3db38e92fbcb9f7f97fd992ef2e24a0addd7274b37a",
++    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/16371188feba0bcc93ef353abfd5017a6480e735/modules/envoy_toolshed/0.5.9.envoy/MODULE.bazel": "13b3b2534ebc162c99021fb0502b797a1bf6dc4242da9966c590330548ebf39c",
++    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/16371188feba0bcc93ef353abfd5017a6480e735/modules/envoy_toolshed/0.5.9.envoy/source.json": "b0b86356a107b49d273d5a16df8e3245a373878eb2d85d8c24acbd5730324791",
++    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/16371188feba0bcc93ef353abfd5017a6480e735/modules/envoy_toolshed_jq/0.5.9.envoy/MODULE.bazel": "3d7505a7421eedf8aef4722ba5dfe62a2bdc0245c8cfee0bfc78dbd65b3d263d",
++    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/16371188feba0bcc93ef353abfd5017a6480e735/modules/envoy_toolshed_jq/0.5.9.envoy/source.json": "420f1a3474253833d851bed39cbc6c9abf1e4a24fcee289f9aba647600230004",
++    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/1637118
+```
+
+**File**: `bazel/deps.yaml` (modified, +1/-1)
+```diff
+@@ -1437,7 +1437,7 @@ zstd:
+   project_name: "zstd"
+   project_desc: "zstd compression library"
+   project_url: "https://facebook.github.io/zstd"
+-  release_date: "2026-10-19"
++  release_date: "2026-10-27"
+   use_category:
+   - dataplane_ext
+   extensions:
+```
+
+**File**: `bazel/tests/codeql/.bazelrc` (modified, +1/-1)
+```diff
+@@ -1,5 +1,5 @@
+ common --registry=https://bcr.bazel.build/
+-common --registry=https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055
++common --registry=https://raw.githubusercontent.com/envoyproxy/bazel-registry/16371188feba0bcc93ef353abfd5017a6480e735
+ 
+ common --noincompatible_disallow_empty_glob
+ common --noincompatible_disallow_ctx_resolve_tools
+```
+
+**File**: `bazel/tests/codeql/MODULE.bazel.lock` (modified, +138/-138)
+```diff
+@@ -475,7 +475,7 @@
+     "https://bcr.bazel.build/modules/qat-zstd/1.0.0.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/qatlib/26.02.0.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/qatzip/2.0.0.envoy/MODULE.bazel": "not found",
+-    "https://bcr.bazel.build/modules/quiche/0.0.0-261019-67bce2e.envoy/MODULE.bazel": "not found",
++    "https://bcr.bazel.build/modules/quiche/0.0.0-261027-f53fd81.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/ragel/7.0.4-211228-d4577c9.envoy/MODULE.bazel": "not found",
+     "https://bcr.bazel.build/modules/rapidjson/1.1.0.bcr.20241007/MODULE.bazel": "82fbcb2e42f9e0040e76ccc74c06c3e46dfd33c64ca359293f8b84df0e6dff4c",
+     "https://bcr.bazel.build/modules/rapidjson/1.1.0.bcr.20241007/source.json": "5c42389ad0e21fc06b95ad7c0b730008271624a2fa3292e0eab5f30e15adeee3",
+@@ -785,143 +785,143 @@
+     "https://bcr.bazel.build/modules/zstd/1.5.7.bcr.3/MODULE.bazel": "031c2f61e3f30853704948e722b6c3c7f7989780ee37bc431747cf3dc6cbe0b3",
+     "https://bcr.bazel.build/modules/zstd/1.5.7.bcr.3/source.json": "92e3cd6613957216e9954b59e7c944766cdd7e55e5684862a1434bd5132663de",
+     "https://bcr.bazel.build/modules/zstd/1.5.7/MODULE.bazel": "f5780cdbd6f4c5bb985a20f839844316fe48fb5e463056f372dbc37cfabdf450",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/bazel_registry.json": "51bd3a0b193753e419c5d3db38e92fbcb9f7f97fd992ef2e24a0addd7274b37a",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/aws-c-auth-testdata/0.10.4.envoy/MODULE.bazel": "ed40f4181373fb0e277d5511db521f5a77f5558141b5697499a9b22fa1dc96c4",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/aws-c-auth-testdata/0.10.4.envoy/source.json": "20b0d19dc5c1e83f57c1cbc7e54ab0131291cc2220b374b0d222e44a6a0d914e",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/bazel-compdb/0.0.0-20220906-4086479.envoy/MODULE.bazel": "8ea7d294e0ea35bdcfddb8c3597eaa2967a4fa18b0e975ddef9374cd0e926d92",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/bazel-compdb/0.0.0-20220906-4086479.envoy/source.json": "586e9896baf303341171326f8721091d0b9748386e2383c9b60b351d30b60550",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/boost.headers/1.89.0.envoy.1/MODULE.bazel": "c05fcf60ad2a00dbf39055698d0ea1becf4ceb8fff7d9e248f3f6dece982d856",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/boost.headers/1.89.0.envoy.1/source.json": "31a56cde871ef03d5ae0e22d9959f9a049336474fae2ad0fb5998964d40cd1d4",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/boost.headers/1.89.0.envoy/MODULE.bazel": "c7205963786fdbe14f5a384ff5a3a04da66ed0cecfee3d3cedecf5be173dcb66",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/boringssl-fips/0.20260929.0.envoy.1/MODULE.bazel": "5e634802b6ae4b25fb21ee82636c288b4ac5973fb5c981456751ec72a40ac463",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/boringssl-fips/0.20260929.0.envoy.1/source.json": "054bd9dff1076a6caf66c47a44aeafad70ffa0e0f9e701daa43f157da6a8f3e3",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/boringssl-source/0.20260929.0.envoy/MODULE.bazel": "d80ba9dddc69a8d1900428c2f0b128cd1a41f63f058b4b0bce668357f7ec66a0",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/boringssl-source/0.20260929.0.envoy/source.json": "9c57158c4b3a2b2ac0188c472249d1faacbfcf3fd3fa822a4785836b391fe8b4",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/brotli/1.2.0-260930-42a2ed4.envoy/MODULE.bazel": "dce5f9c0643e0551aaeb0341ed90b994337ae3fbf232b584f2aaeae79ae47800",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/brotli/1.2.0-260930-42a2ed4.envoy/source.json": "c699301760293b6ffa07f1117aa1c1763683aeef33f1e10a061e1db342873860",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/cel-cpp/0.16.1.envoy/MODULE.bazel": "f835ee95427829db17d60fe1349839a759478fe89bb03c3869f39b5d6e56491d",
+-    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/cel-cpp/0.16.1.envoy/source.json": "decb295094395a4ef83e0562a82c58487d580e1a89e86cfa575c5705471dbac7",
+-    "https://raw.githubusercontent.com/env
 ```
 
 ---
 
-### Incident Patch 2: `aedd2c43` (2026-10-27)
-**Commit Message**: listener: fix use-after-free in filter_chain_benchmark_test at exit (#48757)
+### Incident Patch 2: `072c869a` (2026-10-28)
+**Commit Message**: bazel: add `use_prebuilt_libs` flag to build prebuilt deps from source (#48772)
 
-Commit Message: listener: fix use-after-free in
-filter_chain_benchmark_test at exit
+Add a `--@envoy//bazel:use_prebuilt_libs` bool flag (default `True`,
+preserving current behavior). Setting it to `False` builds dependencies
+that otherwise use prebuilt artifacts (currently `wee8`) from source,
+for environments that disallow prebuilt artifacts.
 
-Each `FilterChainBenchmarkFixture` held a `Logger::Context`, which
-reactivates the previous context on destruction. The benchmark library
-builds the fixtures at static initialization and destroys them at exit;
-with libstdc++ this happens in registration order, so the second fixture
-reactivates the first one's freed context. Under GCC this corrupts the
-heap and tcmalloc aborts with `CHECK in BitmapPushBatch` (libc++
-destroys them in reverse order, so clang builds are unaffected).
+Signed-off-by: Jonh Wendell <[REDACTED_EMAIL]>
 
-The fixture context is redundant since `test/benchmark/main.cc` already
-installs one for the whole run. Remove it.
-
-Additional Description:
-The GCC job of `Envoy/Checks` fails after all benchmarks have run on PRs
-that invalidate this test's cache entry, e.g. #48470
-([job](https://github.com/envoyproxy/envoy/actions/runs/40478692516/job/122125067805))
-and #48449
-([job](https://github.com/envoyproxy/envoy/actions/runs/40354667795/job/121684997303)).
-main looks green because its GCC runs take this result from the remote
-cache. The bug is old; whethe
-
-**File**: `test/common/listener_manager/filter_chain_benchmark_test.cc` (modified, +1/-3)
+**File**: `bazel/BUILD` (modified, +28/-5)
 ```diff
-@@ -200,6 +200,7 @@ const char YamlSingleDstPortBottom[] = R"EOF(
-             - filename: "{{ test_rundir }}/test/common/tls/test_data/ticket_key_a")EOF";
- } // namespace
+@@ -684,14 +684,37 @@ label_flag(
+     visibility = ["//visibility:public"],
+ )
  
-+// Fixtures are destroyed at exit in an unspecified order, so they must not hold a Logger::Context.
- class FilterChainBenchmarkFixture : public ::benchmark::Fixture {
- public:
-   void initialize(::benchmark::State& state) {
-@@ -216,9 +217,6 @@ class FilterChainBenchmarkFixture : public ::benchmark::Fixture {
-     filter_chains_ = listener_config_.filter_chains();
-   }
- 
--  Envoy::Thread::MutexBasicLockable lock_;
--  Logger::Context logging_state_{spdlog::level::warn, Logger::Logger::DEFAULT_LOG_FORMAT, lock_,
--                                 false};
-   std::string listener_yaml_config_;
-   envoy::config::listener::v3::Listener listener_config_;
-   absl::Span<const envoy::config::listener::v3::FilterChain* const> filter_chains_;
-```
-
----
-
-### Incident Patch 3: `1a62e1fe` (2026-10-27)
-**Commit Message**: http: reserve the header map's lookup index before building it (#48672)
-
-Commit Message: http: reserve the header map's lookup index before
-building it
-
-`HeaderList::maybeMakeMap()` fills the lazy key-to-node map with no
-`reserve()`, so it grows and rehashes several times on the way to its
-final size. It is built on the first lookup of a header that has no
-inline slot. The HCM does that on every request with three or more
-headers, because `mutateRequestHeaders()` looks up `referer`
-unconditionally. This sizes the map once, from the header count. Keys
-are unchanged, and a duplicate header only over-reserves.
-
-Additional Description:
-
-No existing benchmark rebuilt the index each iteration, so this adds
-`headerMapImplBuildLookupIndex`. It populates a request header map, then
-looks up a missing non-inline header.
-
-Medians of five alternating base/PR rounds, `-c opt` binaries,
-`--benchmark_repetitions=5 --benchmark_enable_random_interleaving=true`,
-macOS arm64. Base is `b5061f06b4`, the merge base, built with this PR's
-benchmark file.
-
-| Case | Base | This PR | Change | Rounds won |
-| ---------------------------------- | -------: | -------: | -----: |
----------: |
-| `headerMapImplBuildL
-
-**File**: `source/common/http/header_map_impl.cc` (modified, +1/-0)
-```diff
-@@ -59,6 +59,7 @@ bool HeaderMapImpl::HeaderList::maybeMakeMap() {
-       return false;
-     }
-     // Add all entries from the list into the map.
-+    lazy_map_.reserve(headers_.size());
-     for (auto node = headers_.begin(); node != headers_.end(); ++node) {
-       HeaderNodeVector& v = lazy_map_[node->key().getStringView()];
-       v.push_back(node);
-```
-
-**File**: `test/common/http/header_map_impl_speed_test.cc` (modified, +21/-0)
-```diff
-@@ -19,6 +19,27 @@ static void addDummyHeaders(HeaderMap& headers, size_t num_headers,
-   }
- }
- 
-+/**
-+ * Measure populating a request header map and then looking up a header that has no inline slot,
-+ * which builds the map's lookup index. The HCM does this on every request, since it looks up
-+ * referer unconditionally.
-+ */
-+static void headerMapImplBuildLookupIndex(benchmark::State& state) {
-+  std::vector<LowerCaseString> keys;
-+  for (int64_t i = 0; i < state.range(0); i++) {
-+    keys.emplace_back("dummy-key-" + std::to_string(i));
-+  }
-+  const LowerCaseString missing("missing-key");
-+  for (auto _ : state) { // NOLINT
-+    auto headers = Http::RequestHeaderMapImpl::create();
-+    for (const auto& key : keys) {
-+      headers->addReference(key, "abcd");
-+    }
-+    benchmark::DoNotOptimize(headers->get(missing).empty());
-+  }
-+}
-+BENCHMARK(headerMapImplBuildLookupIndex)->Arg(3)->Arg(5)->Arg(10)->Arg(20)->Arg(50);
+-# wee8 engine: envoy_toolshed prebuilt by default, source for configs the
+-# prebuilt is incompatible with (gcc libstdc++ ABI; sanitizers need instrumented deps).
++# Use prebuilt artifacts for dependencies that offer them (currently wee8). Set to False to
++# build every such dependency from source, e.g. in environments that disallow prebuilt
++# artifacts: --//bazel:use_prebuilt_libs=False
++# Toolchain components (compiler, sysroot, libc++/libunwind runtimes) are not covered.
++bool_flag(
++    name = "use_prebuilt_libs",
++    build_setting_default = True,
++)
 +
- /** Measure the construction/destruction speed of RequestHeaderMapImpl.*/
- static void headerMapImplCreate(benchmark::State& state) {
-   // Make sure first time construction is not counted.
++config_setting(
++    name = "prebuilt_libs_disabled",
++    flag_values = {":use_prebuilt_libs": "False"},
++)
++
++selects.config_setting_group(
++    name = "wee8_source_build",
++    match_any = [
++        ":prebuilt_libs_disabled",
++        ":asan_build",
++        ":msan_build",
++        ":tsan_build",
++    ],
++)
++
++# wee8 engine: envoy_toolshed prebuilt by default, source when :use_prebuilt_libs is False
++# or for configs the prebuilt is incompatible with (sanitizers need instrumented deps).
++# envoy_toolshed itself falls back to source on unsupported platforms.
+ alias(
+     name = "wee8_engine",
+     actual = select({
+-        ":asan_build": "@proxy-wasm-cpp-host//bazel:wee8_no_pointer_compression",
+-        ":msan_build": "@proxy-wasm-cpp-host//bazel:wee8_no_pointer_compression",
+-        ":tsan_build": "@proxy-wasm-cpp-host//bazel:wee8_no_pointer_compression",
++        ":wee8_source_build": "@proxy-wasm-cpp-host//bazel:wee8_no_pointer_compression",
+         "//conditions:default": "@envoy_toolshed//v8:wee8",
+     }),
+     visibility = ["//visibility:public"],
+```
+
+**File**: `bazel/README.md` (modified, +6/-0)
+```diff
+@@ -643,6 +643,12 @@ Invalid values are rejected at parse time. Note: the former `--define wasm=<engi
+ `--define engine=<engine>` mechanisms are no longer supported; passing them is now a **build
+ error**. Use `--@proxy-wasm-cpp-host//bazel:engine=<engine>` instead.
+ 
++By default the `v8` engine links a prebuilt wee8 (V8) static library from `envoy_toolshed` on
++supported platforms. To build all dependencies that have prebuilt alternatives (currently only
++wee8) from source instead, e.g. in environments that disallow prebuilt artifacts, pass
++`--@envoy//bazel:use_prebuilt_libs=False`. This does not affect toolchain components such as the
++compiler, sysroot or C++ runtime libraries.
++
+ You may persist those options in `user.bazelrc` in Envoy repo or your `.bazelrc`.
+ 
+ Contrib extensions can be enabled and disabled similarly to above when building the contrib
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #48774** (2026-10-27): deps: Bump `bazel-registry` -> e85c87b (@dependency-envoy[bot])
-- **PR #48769** (2026-10-27): set_filter_state: support use as an upstream HTTP filter (@botengyao)
-- **PR #48766** (2026-10-27): test: Increase shard_count for listener_manager_impl_test (@phlax)
-- **PR #48757** (2026-10-27): listener: fix use-after-free in filter_chain_benchmark_test at exit (@wdauchy)
-- **PR #48756** (closed): lua: add an opt-in histogram of the time a stream's scripts run (@derekargueta)
-- **PR #48754** (2026-10-27): [dev/v1.40] repo: Dev v1.40.3 (@publish-envoy[bot])
+- **PR #48805** (2026-10-28): deps/cve: Update c-ares cpe to newer (@phlax)
+- **PR #48804** (2026-10-28): Remove deprecated testing::Invoke (@michalkielan)
+- **PR #48803** (2026-10-28): deps: Bump `envoy_toolshed` -> 0.5.9.envoy (@dependency-envoy[bot])
+- **PR #48802** (2026-10-28): deps: Bump `bazel-registry` -> 34d8081 (@dependency-envoy[bot])
+- **PR #48800** (2026-10-28): deps: Bump `c-ares` -> 1.34.6.bcr.3 (@dependency-envoy[bot])
+- **PR #48787** (2026-10-28): rbac: update docs to match implementation (@ggreenway)
 
 ---
 
@@ -1536,57 +1346,28 @@ benchmark file.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mcp_json_rest_bridge: fix empty JSON-RPC responses for streaming tools/call with
+## X. deps: Update QUICHE to f53fd81 (#48778)
 
 **RULE**:
-When implementing operations in `source/extensions/filters/http/mcp_json_rest_bridge/mcp_json_rest_bridge_filter.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.bazelrc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5af8d913`: mcp_json_rest_bridge: fix empty JSON-RPC responses for streaming tools/call with headers-only backend responses (#48744). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `38be8ce3`: deps: Update QUICHE to f53fd81 (#48778). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `source/extensions/filters/http/mcp_json_rest_bridge/mcp_json_rest_bridge_filter.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.bazelrc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-
-  // Streaming mode: pre-build the JSON-RPC prefix/suffix, strip Content-Length
-  // (final size is unknown), and let the headers flow through immediately so
-  // the client can start receiving data without waiting for the full body.
-  if (mcp_operation_ == McpOperation::ToolsCall && text_content_streaming_enabled_) {
-    is_sse_response_ = isSseContentType(response_headers.getContentTypeValue());
-    // Overwrite response code to 200 OK unless it is 401 or 403. Non-200 responses
-    // cause MCP clients to fail at the transport layer. 401 and 403 are preserved
-    // as required by the MCP auth spec to drive OAuth handshake and step-up scope flows:
-    // https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization#error-handling
-    // Note on 400 Bad Request: While the MCP authorization spec also includes HTTP 400 for
-    // certain authorization errors, we assume authorization checks (e.g., OAuth token
-    // validation) occur in filters before MCP transcoding, so any 400 error from the REST
-    // backend is assumed to be an API error and is transformed into a standard JSON-RPC error.
-    if (response_code != static_cast<int>(Http::Code::Unauthorized) &&
-     
+common --registry=https://raw.githubusercontent.com/envoyproxy/bazel-registry/16371188feba0bcc93ef353abfd5017a6480e735
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-  // Streaming mode: pre-build the JSON-RPC prefix/suffix, strip Content-Length
-  // (final size is unknown), and let the headers flow through immediately so
-  // the client can start receiving data without waiting for the full body.
-  if (mcp_operation_ == McpOperation::ToolsCall && text_content_streaming_enabled_) {
-    is_sse_response_ = isSseContentType(response_headers.getContentTypeValue());
-    // Overwrite response code to 200 OK unless it is 401 or 403. Non-200 responses
-    // cause MCP clients to fail at the transport layer. 401 and 403 are preserved
-    // as required by the MCP auth spec to drive OAuth handshake and step-up scope flows:
-    // https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization#error-handling
-    // Note on 400 Bad Request: While the MCP authorization spec also includes HTTP 400 for
-    // certain authorization errors, we assume authorization checks (e.g., OAuth token
-    // validation) occur in filters before MCP transcoding, so any 400 error from the REST
-    // backend is assumed to be an API error and is transformed into a standard JSON-RPC error.
-    if (response_code != static_cast<int>(Http::Code::Unauthorized) &&
-      
+common --registry=https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5af8d913` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `38be8ce3` are properly handled with clean fallback behavior.

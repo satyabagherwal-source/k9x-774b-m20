@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source**: github ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
-> **Source Version**: `d188f08a`  
+> **Source Version**: `91eff8da`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T15:32:55.878Z  
+> **Timestamp**: 2026-10-28T18:48:29.828Z  
 > **Learning ID**: `learn-github-restatedev-restate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T15:32:54.606Z  
+> **Harvest Timestamp**: 2026-10-28T18:48:29.568Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Restate is the platform for building resilient applications that tolerate all infrastructure faults w/o the need for a PhD.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4611 stars
+- **Stars / Engagement**: 4616 stars
 
 ---
 
@@ -1631,881 +1631,920 @@ async fn list(env: &CliEnv, opts: &List) -> Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `374dc27d` (2026-10-26)
-**Commit Message**: [PartitionStore] Fix storage cleanup and durable-LSN reporting
+### Incident Patch 1: `91eff8da` (2026-10-28)
+**Commit Message**: [types] Make schema zstd compression level configurable (#5675)
 
-Allow unused partition storage to be released after its manager is dropped,
-while keeping durability updates working for stores that are still in use.
-
-Keep reported durable progress correct when flush notifications arrive late or
-a partition is reopened or replaced from a snapshot. Also fix a deadlock when
-configuration reload overlaps database cleanup.
-
-## Caveats and follow-ups
-
-- Partition close still allows commits through retained handles and does not
-  wait for pending writes. The next commit in this stack fixes this for
-  transaction commits.
-- Waiting for all retained partition resources to be released is planned for
-  the following step. Removing the resource leak alone does not provide that
-  guarantee.
-- A database can still miss a configuration update that arrives while it is
-  opening (exists prior to this commit already).
-
-**File**: `Cargo.lock` (modified, +1/-0)
+**File**: `crates/types/src/config/common.rs` (modified, +26/-0)
 ```diff
-@@ -8523,6 +8523,7 @@ dependencies = [
-  "restate-limiter",
-  "restate-memory",
-  "restate-object-store-util",
-+ "restate-platform",
-  "restate-rocksdb",
-  "restate-service-protocol-v4",
-  "restate-storage-api",
-```
-
-**File**: `crates/partition-store/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -20,6 +20,7 @@ restate-errors = { workspace = true }
- restate-limiter = { workspace = true, features = ["rule-book"] }
- restate-memory = { workspace = true }
- restate-object-store-util = { workspace = true }
-+restate-platform = { workspace = true }
- restate-rocksdb = { workspace = true }
- restate-storage-api = { workspace = true }
- restate-types = { workspace = true }
-```
-
-**File**: `crates/partition-store/src/durable_lsn_tracking.rs` (modified, +104/-17)
-```diff
-@@ -10,21 +10,23 @@
+@@ -901,10 +901,31 @@ pub struct CommonOptions {
+     #[serde(default)]
+     hlc_max_drift: FriendlyDuration,
  
- use std::borrow::Cow;
- use std::ffi::{CStr, CString};
--use std::sync::{Arc, Weak};
-+use std::sync::Arc;
- 
- use ahash::HashMap;
- use rocksdb::event_listener::{EventListener, FlushJobInfo};
- use rocksdb::table_properties::{
-     CollectorError, EntryType, TablePropertiesCollector, TablePropertiesCollectorFactory,
- };
-+use tokio::sync::watch;
- use tracing::warn;
- 
-+use restate_platform::sync::RwLock;
- use restate_storage_api::StorageError;
- use restate_storage_api::fsm_table::SequenceNumber;
- use restate_storage_api::protobuf_types::PartitionStoreProtobufValue;
-+use restate_types::logs::SequenceNumber as _;
- use restate_types::{identifiers::PartitionId, logs::Lsn};
- 
--use crate::SharedState;
- use crate::fsm_table::{PartitionStateMachineKey, fsm_variable};
- #[cfg(test)]
- use crate::keys::EncodeTableKey;
-@@ -109,32 +111,116 @@ impl TablePropertiesCollectorFactory for AppliedLsnCollectorFactory {
-     }
++    /// # Schema compression level
++    ///
++    /// Zstandard (zstd) compression level for schema data. It always applies
++    /// to schema updates sent between nodes. It applies to stored schemas only
++    /// when `experimental-enable-schema-bilrost-encoding` is enabled.
++    ///
++    /// `0` (the default) uses zstd's default level (currently `3`). Higher
++    /// values (up to `19`) produce smaller output but use more CPU on every
++    /// schema change. Negative values select zstd's faster, lower-ratio modes.
++    /// Values outside `-22..=19` are clamped to that range. Changing this
++    /// setting does not affect data that has already been written, and data
++    /// written at any level can be read by all nodes.
++    ///
++    /// Since v1.8.2
++    #[serde(default, skip_serializing_if = "is_default_compression")]
++    schema_compression_level: i32,
++
+     #[serde(flatten)]
+     pub experimental: Experimental,
  }
  
--/// Event listener tracking durable LSNs across
-+/// Per-database registry of durable-LSN watch senders.
-+///
-+/// [`DurableLsnEventListener`] uses it to notify partition stores when their
-+/// applied state reaches disk, without keeping the stores or their manager alive.
-+#[derive(Default)]
-+pub(crate) struct DurableLsnSenders {
-+    senders: RwLock<HashMap<PartitionId, Registration>>,
-+    #[cfg(test)]
-+    before_note: restate_platform::sync::Mutex<Option<NotificationPause>>,
++fn is_default_compression(lvl: &i32) -> bool {
++    *lvl == 0
 +}
 +
-+struct Registration {
-+    cf_id: u32,
-+    sender: watch::Sender<Lsn>,
-+}
-+
-+impl DurableLsnSenders {
-+    pub fn register(&self, partition_id: PartitionId, cf_id: u32, sender: watch::Sender<Lsn>) {
-+        let mut senders = self.senders.write();
-+        if let Some(previous) = senders.insert(partition_id, Registration { cf_id, sender }) {
-+            previous.sender.send_replace(Lsn::INVALID);
-+        }
-+    }
-+
-+    pub fn unregister(&self, partition_id: PartitionId, cf_id: u32) {
-+        let mut senders = self.senders.write();
-+        if let std::collections::hash_map::Entry::Occupied(entry) = senders.entry(partition_id)
-+            && entry.get().cf_id == cf_id
-+        {
-+            entry.remove().sender.send_replace(Lsn::INVALID);
-+        }
-+    }
-+
-+    pub fn note_durable_lsn(&self, partition_id: PartitionId, cf_id: u32, lsn: Lsn) {
-+        #[cfg(test)]
-+        let completed = {
-+            let pause = self.before_note.lock().take();
-+            pause.map(|pause| {
-+                let _ = pause.reached.send(());
-+                let _ = pause.resume.recv();
-+                pause.completed
-+            })
-+        };
-+        // Keep the read lock through notification so unregister cannot reset an
-+        // old watch to INVALID and then have an in-flight callback or recovery revive it.
-+        let senders = self.senders.read();
-+        if let Some(registration) = senders.get(&partition_id)
-+            && registration.cf_id == cf_id
-+        {
-+            registration.sender.send_if_modified(|current| {
-+                if lsn > *current {
-+                    *current = lsn;
-+                    true
-+                } else {
-+                    false
-+                }
-+            });
-+        }
-+        #[cfg(test)]
-+        if let Some(completed) = completed {
-+            let _ = completed.send(());
-+        }
-+    }
-+
-+    /// Pause a native callback before it selects a registration. Dropping the
-+    /// resume sender releases it, including if the test fails.
-+    #[cfg(test)]
-+    pub fn pause_next_notification(
-+        &self,
-+    ) -> (
-+        tokio::sync::oneshot::Receiver<()>,
-+        std::sync::mpsc::Sender<()>,
-+        tokio::sync::oneshot::Receiver<()>,
-+    ) {
-+        let (reached_tx, reached_rx) = tokio::sync::oneshot::channel();
-+        let (resume_tx, resume_rx) = std::sync::mpsc::channel();
-+        let (completed_tx, completed_rx) = tokio::sync::oneshot::channel();
-+        *self.before_note.lock() = Some(NotificationPause {
-+            reached: reached_tx,
-+            resume: resume_rx,
-+            completed: completed_tx,
-+        });
-+        (reached_rx, resume_tx, completed_rx)
-+    }
-+}
-+
-+#[cfg(test)]
-+struct NotificationPause {
-+    reached: tokio::sync::oneshot::Sender<()>,
-+    resume: std::sync::mpsc::Receiver<()>,
-+    completed: tokio::sync::oneshot::Sender<()>,
-+}
-+
-+/// Event listener tracking durable LSNs across partitions.
+ /// Declares the [`Experimental`] feature-flag struct from a list of feature names.
  ///
- /// This listener works in conjunction with the [`AppliedLsnCollector`] to track the high watermark
- /// applied LSNs per partition, once tables are flushed to disk. The event listener will only track
--/// partitions for which there are already entries in the [`shared_state`].
--#[derive(Default)]
-+/// partitions with a registered sender in [`DurableLsnSenders`].
- pub(crate) struct DurableLsnEventListener {
--    shared_state: Weak<SharedState>,
-+    notifications: Arc<DurableLsnSenders>,
- }
- 
- impl DurableLsnEventListener {
--    pub fn new(shared_state: &Arc<SharedState>) -> Self {
--        Self {
--     
-```
-
-**File**: `crates/partition-store/src/partition_db.rs` (modified, +77/-53)
-```diff
-@@ -14,10 +14,10 @@ use std::ops::DerefMut;
- use std::sync::Arc;
- use std::time::Duration;
- 
--use parking_lot::RwLock;
- use rocksdb::table_properties::TablePropertiesExt;
- use rocksdb::{
--    BoundColumnFamily, DBRawIteratorWithThreadMode, ExportImportFilesMetaData, ReadOptions,
-+    AsColumnFamilyRef, BoundColumnFamily, DBRawIteratorWithThreadMode, ExportImportFilesMetaData,
-+    ReadOptions,
- };
- use tokio::sync::{RwLock as AsyncRwLock, watch};
- use tokio::time::Instant;
-@@ -28,45 +28,54 @@ use restate_rocksdb::configuration::{CfConfigurator, DbConfigurator};
- use restate_rocksdb::{DbName, RocksDb, RocksError};
- use restate_storage_api::StorageError;
- use restate_types::config::Configuration;
--use restate_types::logs::Lsn;
-+use restate_types::logs::{Lsn, SequenceNumber};
- use restate_types::partitions::{CfName, Partition};
- use restate_util_bytecount::ByteCount;
-+use restate_util_string::{ReString, ToReString};
- 
--use crate::durable_lsn_tracking::{AppliedLsnCollectorFactory, DurableLsnEventListener};
-+use crate::durable_lsn_tracking::{
-+    AppliedLsnCollectorFactory, DurableLsnEventListener, DurableLsnSenders,
-+};
- use crate::keys::KeyKind;
- use crate::memory::{MemoryBudget, PartitionDbMemoryConfig};
- use crate::scan::PhysicalScan;
- use crate::snapshots::LocalPartitionSnapshot;
- use crate::{TableKind, configure_prefix_iterator_opts, configure_range_iterator_opts};
- 
--use restate_util_string::{ReString, ToReString};
-+/// A physical database and the notification registry installed in its listener.
-+/// Keep these together when reusing a database from the manager's weak cache.
-+#[derive(Clone)]
-+pub(crate) struct PartitionStoreDb {
-+    pub rocksdb: Arc<RocksDb>,
-+    pub notifications: Arc<DurableLsnSenders>,
-+}
- 
- #[derive(Clone)]
- pub struct PartitionDb {
-     meta: Arc<Partition>,
--    durable_lsn: watch::Sender<Option<Lsn>>,
-+    durable_lsn: watch::Sender<Lsn>,
-     archived_lsn: watch::Sender<Option<Lsn>>,
-     // Note: Rust will drop the fields in the order they are declared in the struct.
-     // It's crucial to keep the column family and the database in this exact order.
-     cf: PartitionBoundCfHandle,
--    rocksdb: Arc<RocksDb>,
-+    database: PartitionStoreDb,
- }
- 
- impl PartitionDb {
-     pub(crate) fn new(
-         meta: Arc<Partition>,
-         archived_lsn: watch::Sender<Option<Lsn>>,
--        rocksdb: Arc<RocksDb>,
-+        database: PartitionStoreDb,
-         cf: Arc<BoundColumnFamily<'_>>,
-     ) -> Self {
-         Self {
-             meta,
--            durable_lsn: watch::Sender::new(None),
-+            durable_lsn: watch::Sender::new(Lsn::INVALID),
-             archived_lsn,
-             // SAFETY: the new BoundColumnFamily here just expanding lifetime to static,
--            // it's safe to use here as long as rocksdb is dropped last.
-+            // it's safe to use here as long as database is dropped last.
-             cf: unsafe { PartitionBoundCfHandle::new(cf) },
--            rocksdb,
-+            database,
+ /// Each entry is a bare identifier (optionally preceded by doc comments / attributes) inside
+@@ -1338,6 +1359,10 @@ impl CommonOptions {
+             )
          }
      }
- 
-@@ -75,12 +84,12 @@ impl PartitionDb {
-     }
- 
-     pub fn rocksdb(&self) -> &Arc<RocksDb> {
--        &self.rocksdb
-+        &self.database.rocksdb
-     }
- 
-     #[cfg(test)]
-     pub fn into_rocksdb(self) -> Arc<RocksDb> {
--        self.rocksdb
-+        self.database.rocksdb
-     }
- 
-     pub fn cf_handle(&self) -> &Arc<BoundColumnFamily<'_>> {
-@@ -100,7 +109,7 @@ impl PartitionDb {
-     }
- 
-     pub async fn flush_memtables(&self, wait: bool) -> Result<(), RocksError> {
--        self.rocksdb
-+        self.rocksdb()
-             .clone()
-             .flush_memtables(
-                 std::slice::from_ref(&restate_rocksdb::CfName::from(self.partition().cf_name())),
-@@ -129,14 +138,29 @@ impl PartitionDb {
-         self.archived_lsn.subscribe()
-     }
- 
--    pub(crate) fn durable_lsn_sender(&self) -> &watch::Sender<Option<Lsn>> {
-+    pub(crate) fn durable_lsn_sender(&self) -> &watch::Sender<Lsn> {
-         &self.durable_lsn
-     }
- 
-+    pub(crate) fn note_durable_lsn(&self, lsn: Lsn) {
-+        self.database.notifications.note_durable_lsn(
-+            self.meta.partition_id,
-+            self.cf_handle_for_key_kind(KeyKind::Fsm).id(),
-+            lsn,
-+        );
-+    }
 +
-+    fn unregister_durable_lsn(&self) {
-+        self.database.notifications.unregister(
-+            self.meta.partition_id,
-+            self.cf_handle_for_key_kind(KeyKind::Fsm).id(),
-+        );
++    pub fn schema_compression_level(&self) -> i32 {
++        self.schema_compression_level.clamp(-22, 19)
 +    }
-+
-     pub(crate) async fn update_memory_budget(&self, memory_budget: usize) {
-         // impacts only this partition's column-families
-         let cf_names = self.cf_names();
--        let rocksdb = self.rocksdb.clone();
-+        let rocksdb = self.rocksdb().clone();
+ }
  
-         // NOTE: Updating rocksdb's options is a blocking operations and may take a few
-         // tens of milliseconds on each column family. We need to perform this operation
-@@ -201,7 +225,7 @@ impl PartitionDb {
-                 configure_prefix_iterator_opts(&mut opts, prefix.as_ref());
-                 let t
+ impl Default for CommonOptions {
+@@ -1397,6 +1422,7 @@ impl Default for CommonOptions {
+             disable_config_sql_table: false,
+             gossip: GossipOptions::default(),
+             hlc_max_drift: FriendlyDuration::from_millis(5000),
++            schema_compression_level: 0,
+             experimental: Experimental::default(),
+         }
+     }
 ```
 
-**File**: `crates/partition-store/src/partition_store.rs` (modified, +8/-24)
+**File**: `crates/types/src/net/metadata.rs` (modified, +6/-1)
 ```diff
-@@ -37,7 +37,7 @@ use restate_storage_api::{IsolationLevel, Storage, StorageError, Transaction};
- use restate_types::SemanticRestateVersion;
- use restate_types::config::{Configuration, StorageOptions};
- use restate_types::identifiers::{PartitionId, PartitionKey, SnapshotId, WithPartitionKey};
--use restate_types::logs::Lsn;
-+use restate_types::logs::{Lsn, SequenceNumber};
- use restate_types::partitions::Partition;
- use restate_types::partitions::StorageVersion;
- use restate_types::sharding::KeyRange;
-@@ -535,31 +535,15 @@ impl PartitionStore {
-         self.transaction_with_isolation(IsolationLevel::Committed)
-     }
+@@ -259,6 +259,7 @@ mod wire {
  
--    /// Returns the durably persisted applied LSN, if any.
--    pub async fn get_durable_lsn(&mut self) -> Result<watch::Receiver<Option<Lsn>>> {
--        {
--            let sender = self.db.durable_lsn_sender();
--            if sender.borrow().is_some() {
--                let mut rx = self.db.durable_lsn_sender().subscribe();
--                rx.mark_changed();
--                return Ok(rx);
--            }
--        }
--
--        let local = get_locally_durable_lsn(self).await?;
--        let sender = self.db.durable_lsn_sender();
--        if let Some(lsn) = local {
--            sender.send_if_modified(|current_mut| {
--                if current_mut.is_none_or(|c| c < lsn) {
--                    *current_mut = Some(lsn);
--                    true
--                } else {
--                    false
+     use super::MetadataUpdate;
+     use crate::{
++        config::Configuration,
+         net::{ProtocolVersion, metadata::MetadataContainer},
+         schema::SchemaUnindexed,
+         storage::{self},
+@@ -330,7 +331,11 @@ mod wire {
+                 )?;
+             }
+             MetadataContainer::Schema(value) => {
+-                storage::encode::encode_bilrost_zstd(value.as_ref().deref(), &mut bytes)?;
++                storage::encode::encode_bilrost_zstd(
++                    value.as_ref().deref(),
++                    &mut bytes,
++                    Configuration::pinned().common.schema_compression_level(),
++                )?;
+             }
+         };
+ 
+```
+
+**File**: `crates/types/src/schema/metadata/lite.rs` (modified, +6/-3)
+```diff
+@@ -699,6 +699,7 @@ mod storage {
+     };
+ 
+     use super::SchemaUnindexedLite;
++    use crate::config::Configuration;
+     use crate::storage;
+ 
+     // Mirrors the `SchemaUnindexed` storage codec so both types stay wire-compatible.
+@@ -717,9 +718,11 @@ mod storage {
+                 StorageCodecKind::FlexbuffersSerde => {
+                     storage::encode::encode_serde(self, buf, self.default_codec())
+                 }
+-                StorageCodecKind::ZstdBilrostDefault => {
+-                    storage::encode::encode_bilrost_zstd(self, buf)
 -                }
--            });
-+    /// Returns a watch of the durably persisted applied LSN, or [`Lsn::INVALID`]
-+    /// when no durable position is known or the old column family has been removed.
-+    pub async fn get_durable_lsn(&mut self) -> Result<watch::Receiver<Lsn>> {
-+        let needs_recovery = *self.db.durable_lsn_sender().borrow() == Lsn::INVALID;
-+        if needs_recovery && let Some(lsn) = get_locally_durable_lsn(self).await? {
-+            self.db.note_durable_lsn(lsn);
++                StorageCodecKind::ZstdBilrostDefault => storage::encode::encode_bilrost_zstd(
++                    self,
++                    buf,
++                    Configuration::pinned().common.schema_compression_level(),
++                ),
+                 _ => unreachable!("unsupported StorageCodecKind"),
+             }
          }
- 
--        let mut rx = sender.subscribe();
-+        let mut rx = self.db.durable_lsn_sender().subscribe();
-         rx.mark_changed();
-         Ok(rx)
-     }
 ```
 
-**File**: `crates/partition-store/src/partition_store_manager.rs` (modified, +522/-38)
+**File**: `crates/types/src/schema/metadata/mod.rs` (modified, +6/-3)
 ```diff
-@@ -25,8 +25,11 @@ use restate_types::partitions::Partition;
- use restate_types::protobuf::common::DatabaseKind;
+@@ -208,6 +208,7 @@ mod storage {
+     };
  
- use crate::SnapshotError;
-+use crate::durable_lsn_tracking::DurableLsnSenders;
- use crate::memory::MemoryController;
--use crate::partition_db::{AllDataCf, PartitionCell, PartitionDb, RocksConfigurator};
-+use crate::partition_db::{
-+    AllDataCf, PartitionCell, PartitionDb, PartitionStoreDb, RocksConfigurator,
-+};
- use crate::snapshots::{LocalPartitionSnapshot, PartitionSnapshotStatus, Snapshots};
- use crate::{BuildError, OpenError, PartitionStore, SnapshotErrorKind};
+     use super::{Schema, SchemaUnindexed};
++    use crate::config::Configuration;
+     use crate::storage;
  
-@@ -84,7 +87,7 @@ impl SharedState {
-     pub async fn get_or_open(
-         &self,
-         partition: &Partition,
--        rocksdb: &Arc<RocksDb>,
-+        database: &PartitionStoreDb,
-     ) -> Arc<PartitionCell> {
-         let cell = self.get_or_default(partition);
-         let mut state_guard = cell.inner.write().await;
-@@ -93,22 +96,12 @@ impl SharedState {
-             return cell;
+     impl StorageEncode for SchemaUnindexed {
+@@ -225,9 +226,11 @@ mod storage {
+                 StorageCodecKind::FlexbuffersSerde => {
+                     storage::encode::encode_serde(self, buf, self.default_codec())
+                 }
+-                StorageCodecKind::ZstdBilrostDefault => {
+-                    storage::encode::encode_bilrost_zstd(self, buf)
+-                }
++                StorageCodecKind::ZstdBilrostDefault => storage::encode::encode_bilrost_zstd(
++                    self,
++                    buf,
++                    Configuration::pinned().common.schema_compression_level(),
++                ),
+                 _ => unreachable!("unsupported StorageCodecKind"),
+             }
          }
- 
--        cell.open_cf(&mut state_guard, rocksdb);
-+        cell.open_cf(&mut state_guard, database);
- 
-         drop(state_guard);
-         cell
-     }
- 
--    /// Note: we only modify entries, never insert, from the event listener. If we don't find
--    /// an existing entry for the partition, that means that the PartitionStoreManager doesn't
--    /// know about it.
--    pub fn note_durable_lsn(&self, partition_id: PartitionId, durable_lsn: Lsn) {
--        let guard = self.partitions.read();
--        if let Some(cell) = guard.get(&partition_id) {
--            cell.note_durable_lsn(durable_lsn);
--        };
--    }
--
-     #[cfg(test)]
-     pub async fn drop_partition(
-         &self,
-@@ -122,10 +115,15 @@ impl SharedState {
-     }
- }
- 
-+struct CachedDb {
-+    rocksdb: Weak<RocksDb>,
-+    notifications: Arc<DurableLsnSenders>,
-+}
-+
- pub struct PartitionStoreManager {
-     state: Arc<SharedState>,
-     snapshots: Snapshots,
--    db_cache: AsyncMutex<HashMap<restate_rocksdb::DbName, Weak<RocksDb>>>,
-+    db_cache: AsyncMutex<HashMap<restate_rocksdb::DbName, CachedDb>>,
-     memory_controller: MemoryController,
-     use_multi_db_layout: bool,
- }
-@@ -151,18 +149,24 @@ impl PartitionStoreManager {
-         Ok(psm)
-     }
- 
--    async fn open_rocksdb(&self, partition: &Partition) -> Result<Arc<RocksDb>, RocksError> {
-+    async fn open_rocksdb(&self, partition: &Partition) -> Result<PartitionStoreDb, RocksError> {
-         let mut db_cache_guard = self.db_cache.lock().await;
-         let db_name = restate_rocksdb::DbName::from(partition.db_name(self.use_multi_db_layout));
- 
--        if let Some(db) = db_cache_guard.get(&db_name).and_then(|db| db.upgrade()) {
--            return Ok(db);
-+        if let Some(cached) = db_cache_guard.get(&db_name)
-+            && let Some(rocksdb) = cached.rocksdb.upgrade()
-+        {
-+            return Ok(PartitionStoreDb {
-+                rocksdb,
-+                notifications: cached.notifications.clone(),
-+            });
-         }
- 
-         // We need to create/open this database.
-+        let notifications = Arc::new(DurableLsnSenders::default());
-         let configurator = RocksConfigurator::<AllDataCf>::new(
-             self.memory_controller.memory_budget.clone(),
--            Arc::clone(&self.state),
-+            &notifications,
-             self.use_multi_db_layout,
-         );
- 
-@@ -179,11 +183,20 @@ impl PartitionStoreManager {
-         .build()
-         .expect("valid spec");
- 
--        let db = RocksDbManager::get().open_db(db_spec).await?;
-+        let rocksdb = RocksDbManager::get().open_db(db_spec).await?;
- 
--        db_cache_guard.insert(db_name, Arc::downgrade(&db));
-+        db_cache_guard.insert(
-+            db_name,
-+            CachedDb {
-+                rocksdb: Arc::downgrade(&rocksdb),
-+                notifications: notifications.clone(),
-+            },
-+        );
- 
--        Ok(db)
-+        Ok(PartitionStoreDb {
-+            rocksdb,
-+            notifications,
-+        })
-     }
- 
-     pub fn is_repository_configured(&self) -> bool {
-@@ -239,11 +252,11 @@ impl PartitionStoreManager {
-         partition: &Partition,
-         target_lsn: Option<Lsn>,
-     ) -> Result<PartitionStore, OpenError> {
--        let rocksdb = self.open_rocksdb(partition).await?;
-+        let database = self.open_rocksdb(partition).await?;
- 
-         // If we already have the partition locally and we don't have a fast-forward target, or the
-         // store already meets the target LSN requirement, then we simply return it.
--        let cell = self.state.get_or_open(partition, &rocksdb).await;
-+        let cell = self.state.get_or_open(partition, &database).await;
- 
-         let mut state_guard = cell.inner.write().await;
- 
-@@ -277,15 +290,13 @@ impl PartitionStoreManager {
-         match (snapshot, target_lsn) {
-             (None, None) => {
-                 debug!("No snapshot found for partition, creating new partition store");
--                let db = cell.provision(&mut state_guard, rocksd
 ```
 
-**File**: `crates/partition-store/src/tests/durable_lsn_tracking_test.rs` (modified, +17/-14)
+**File**: `crates/types/src/storage/encode.rs` (modified, +2/-1)
 ```diff
-@@ -18,7 +18,7 @@ use restate_storage_api::{
- };
- use restate_types::{
-     identifiers::{PartitionId, PartitionKey},
--    logs::Lsn,
-+    logs::{Lsn, SequenceNumber},
-     partitions::Partition,
-     sharding::KeyRange,
-     time::MillisSinceEpoch,
-@@ -55,34 +55,37 @@ async fn track_latest_applied_lsn() -> googletest::Result<()> {
-     txn.commit().await.expect("commit succeeds");
-     drop(txn);
+@@ -93,8 +93,9 @@ pub fn encode_bilrost_writer<T: bilrost::Message, W: Write>(
+ pub fn encode_bilrost_zstd<T: bilrost::Message>(
+     value: &T,
+     buf: &mut BytesMut,
++    level: i32,
+ ) -> Result<(), StorageEncodeError> {
+-    let mut compressor = zstd::Encoder::new(buf.writer(), 0)
++    let mut compressor = zstd::Encoder::new(buf.writer(), level)
+         .map_err(|err| StorageEncodeError::EncodeValue(err.into()))?;
+     encode_bilrost_writer(value, &mut compressor)?;
  
--    assert_eq!(None, *partition_store.get_durable_lsn().await?.borrow());
--    assert_eq!(None, *watch_durable_lsn.borrow());
-+    assert_eq!(
-+        Lsn::INVALID,
-+        *partition_store.get_durable_lsn().await?.borrow()
-+    );
-+    assert_eq!(Lsn::INVALID, *watch_durable_lsn.borrow());
- 
-     partition_store.partition_db().flush_memtables(true).await?;
- 
--    assert_eq!(Some(Lsn::new(100)), *watch_durable_lsn.borrow());
-+    assert_eq!(Lsn::new(100), *watch_durable_lsn.borrow());
-     assert_eq!(
--        Some(Lsn::new(100)),
-+        Lsn::new(100),
-         *partition_store.get_durable_lsn().await?.borrow()
-     );
- 
-     drop(partition_store);
-     partition_store_manager
-         .close_partition_store(PARTITION.partition_id)
-         .await;
--    assert_eq!(None, *watch_durable_lsn.borrow());
-+    assert_eq!(Lsn::INVALID, *watch_durable_lsn.borrow());
- 
-     let mut partition_store = partition_store_manager.open(&PARTITION, None).await?;
-     assert_eq!(
--        Some(Lsn::new(100)),
-+        Lsn::new(100),
-         *partition_store.get_durable_lsn().await?.borrow(),
-         "partition store should announce the durable LSN on open"
-     );
--    // old watch should be _still_ None
--    assert_eq!(None, *watch_durable_lsn.borrow());
--    // new watch should have Some(100)
-+    // The old watch stays reset after the database reopens.
-+    assert_eq!(Lsn::INVALID, *watch_durable_lsn.borrow());
-+    // The new watch recovers the durable position from storage.
-     let watch_durable_lsn = partition_store.get_durable_lsn().await?;
--    assert_eq!(Some(Lsn::new(100)), *watch_durable_lsn.borrow());
-+    assert_eq!(Lsn::new(100), *watch_durable_lsn.borrow());
- 
-     partition_store.partition_db().flush_memtables(true).await?;
- 
-@@ -95,15 +98,15 @@ async fn track_latest_applied_lsn() -> googletest::Result<()> {
-         drop(txn);
- 
-         assert_eq!(
--            Some(Lsn::new(100)),
-+            Lsn::new(100),
-             *partition_store.get_durable_lsn().await?.borrow(),
-             "durable LSN remains unchanged"
-         );
--        assert_eq!(Some(Lsn::new(100)), *watch_durable_lsn.borrow());
-+        assert_eq!(Lsn::new(100), *watch_durable_lsn.borrow());
-     }
- 
-     partition_store.partition_db().flush_memtables(true).await?;
--    assert_eq!(Some(Lsn::new(200)), *watch_durable_lsn.borrow());
-+    assert_eq!(Lsn::new(200), *watch_durable_lsn.borrow());
- 
-     rocksdb.shutdown().await;
-     Ok(())
 ```
 
-**File**: `crates/rocksdb/src/db_manager.rs` (modified, +95/-1)
+**File**: `crates/wal-protocol/src/control.rs` (modified, +7/-2)
 ```diff
-@@ -503,7 +503,10 @@ impl DbWatchdog {
+@@ -246,6 +246,7 @@ pub struct UpsertSchemaCommand {
+ mod upsert_schema_storage {
+     use bytes::{Buf, BytesMut};
  
-         // Databases choose to react to config updates as they see fit.
-         // e.g. set write_buffer_size
--        for db in self.manager.dbs.read().values() {
-+        // A final Arc drop re-enters background_close_db, which takes the write
-+        // lock. Snapshot weak references and upgrade them outside the registry lock.
-+        let dbs: Vec<_> = self.manager.dbs.read().values().cloned().collect();
-+        for db in dbs {
-             let Some(db) = db.upgrade() else {
-                 continue;
-             };
-@@ -535,3 +538,94 @@ fn check_memory_limit(opts: &CommonOptions) {
- }
++    use restate_types::config::Configuration;
+     use restate_types::storage::{
+         StorageCodecKind, StorageDecode, StorageDecodeError, StorageEncode, StorageEncodeError,
+         decode, encode,
+@@ -264,7 +265,11 @@ mod upsert_schema_storage {
+                 StorageCodecKind::FlexbuffersSerde => {
+                     encode::encode_serde(self, buf, StorageCodecKind::FlexbuffersSerde)
+                 }
+-                StorageCodecKind::ZstdBilrostDefault => encode::encode_bilrost_zstd(self, buf),
++                StorageCodecKind::ZstdBilrostDefault => encode::encode_bilrost_zstd(
++                    self,
++                    buf,
++                    Configuration::pinned().common.schema_compression_level(),
++                ),
+                 _ => unreachable!("unsupported StorageCodecKind"),
+             }
+         }
+@@ -367,7 +372,7 @@ mod tests {
+                 StorageCodecKind::FlexbuffersSerde => {
+                     encode::encode_serde(&command, &mut buf, codec).unwrap()
+                 }
+-                _ => encode::encode_bilrost_zstd(&command, &mut buf).unwrap(),
++                _ => encode::encode_bilrost_zstd(&command, &mut buf, 0).unwrap(),
+             }
  
- static_assertions::assert_impl_all!(RocksDbManager: Send, Sync);
+             // the codec recorded in the envelope header drives the decoding
+```
+
+**File**: `release-notes/unreleased/5675-schema-compression-level.md` (added, +41/-0)
+```diff
+@@ -0,0 +1,41 @@
++# Release Notes for PR #5675: Configurable schema compression level
 +
-+#[cfg(test)]
-+mod tests {
-+    use std::sync::Arc;
++## New Feature
 +
-+    use parking_lot::Mutex;
++### What Changed
 +
-+    use restate_core::TaskCenterBuilder;
-+    use restate_types::config::{Configuration, node_dir};
-+    use restate_types::protobuf::common::DatabaseKind;
++A new option, `schema-compression-level`, sets the Zstandard (zstd) compression level Restate uses
++for schema data. It always applies to schema updates that nodes send to each other. It applies to
++stored schemas only when `experimental-enable-schema-bilrost-encoding` is enabled.
 +
-+    use super::{DbWatchdog, RocksDbManager};
-+    use crate::configuration::{DbConfigurator, create_default_db_options};
-+    use crate::{DbName, DbSpecBuilder, RocksAccess, RocksDb};
++### Why This Matters
 +
-+    #[derive(Clone, Default)]
-+    struct ReleaseOnConfigUpdate {
-+        owner: Arc<Mutex<Option<Arc<RocksDb>>>>,
-+    }
++Clusters with many deployments and services can have large schemas. A higher level makes schema
++data smaller, at the cost of more CPU every time the schema changes (for example, when you register
++a deployment). A lower or negative level makes schema changes cheaper but the data larger.
 +
-+    impl DbConfigurator for ReleaseOnConfigUpdate {
-+        fn get_db_options(
-+            &self,
-+            db_name: &DbName,
-+            env: &rocksdb::Env,
-+            write_buffer_manager: &rocksdb::WriteBufferManager,
-+            limiter: &rocksdb::RateLimiter,
-+        ) -> rocksdb::Options {
-+            create_default_db_options(env, db_name, write_buffer_manager, limiter)
-+        }
++### Impact on Users
 +
-+        fn note_config_update(&self, _db: &RocksAccess) {
-+            // On regression, retain the external owner so the test can report the
-+            // failure instead of deadlocking when the watchdog drops its Arc.
-+            if RocksDbManager::get().dbs.try_write().is_some() {
-+                // Leave the watchdog holding the last strong reference.
-+                self.owner.lock().take();
-+            }
-+        }
-+    }
++- The default is `0`, which uses zstd's default level (currently `3`), the same level Restate
++  used before. Nothing changes unless you set the option.
++- Accepted values are `-22` to `19`. Values outside that range are clamped to it.
++- Nodes read schema data written at any level, so nodes can use different values, and you can
++  change the value during a rolling upgrade. Changing it does not rewrite data already stored.
 +
-+    #[tokio::test]
-+    async fn config_update_can_release_last_database_reference() -> anyhow::Result<()> {
-+        let task_center = TaskCenterBuilder::default()
-+            .default_runtime_handle(tokio::runtime::Handle::current())
-+            .build()?
-+            .into_handle();
-+        let manager = task_center.run_sync(RocksDbManager::init);
-+        let mut owners = Vec::new();
-+        for name in ["config-update-first", "config-update-second"] {
-+            let configurator = ReleaseOnConfigUpdate::default();
-+            let spec = DbSpecBuilder::new(
-+                DbName::new(name),
-+                DatabaseKind::PartitionStore,
-+                node_dir().join(name),
-+                configurator.clone(),
-+            )
-+            .cf_patterns(Vec::new())
-+            .build()?;
-+            let db = manager.open_db(spec).await?;
-+            *configurator.owner.lock() = Some(db);
-+            owners.push(configurator.owner);
-+        }
++### Migration Guidance
 +
-+        let mut watchdog = DbWatchdog {
-+            manager,
-+            cache: manager.cache.clone(),
-+            current_common_opts: Configuration::pinned().common.clone(),
-+        };
-+        watchdog.on_config_update();
++No action is needed. To change the level:
 +
-+        let released_in_callback = owners.iter().all(|owner| owner.lock().is_none());
-+        let databases_unregistered = manager.dbs.read().is_empty();
-+        // Also release retained owners on regression, after the registry lock is gone.
-+        for owner in owners {
-+            owner.lock().take();
-+        }
-+        task_center.shutdown_node("test completed", 0).await;
-+        manager.shutdown().await;
++```toml
++schema-compression-level = 9
++```
 +
-+        assert!(
-+            released_in_callback,
-+            "config callbacks must run without the database registry lock"
-+        );
-+        assert!(
-+            databases_unregistered,
-+            "the watchdog must release its final database references before returning"
-+        );
-+        Ok(())
-+    }
-+}
++or through the environment:
++
++```sh
++RESTATE_SCHEMA_COMPRESSION_LEVEL=9
++```
++
++### Related Issues
++
++- PR #5675: Make schema zstd compression level configurable
 ```
 
 ---
 
-### Incident Patch 2: `71b52eea` (2026-10-26)
-**Commit Message**: [types] Add address lists to NodeConfig and a v1.8.1 compatibility fixture
+### Incident Patch 2: `efa74a95` (2026-10-28)
+**Commit Message**: [ci] Add lockfiles for github actions (#5670)
 
-Add QualifiedAddress, an advertised address with an optional location, and two ordered lists on NodeConfig: `addresses` for fabric and `ctrl_addresses` for control. Both default to empty and are left out of the encoding when empty, so a node without lists serializes the way older versions wrote it. Nothing populates them yet.
+Generated by:
 
-Entries this version cannot read are skipped instead of failing the decode of the whole configuration. A newer version may publish an entry that this one rejects, such as a location with a third scope, and a single such entry would otherwise stop every older node from reading cluster metadata. Skipped entries are logged at debug level. If this version rewrites the configuration they are dropped, like entries dropped by older versions, and they return when their node publishes its lists again. The existing `ctrl_address` field gets the same protection: a value this version cannot read, such as an address in neither defined shape, decodes as absent, so readers fall back to the fabric address instead of failing.
-
-Start keeping compatibility fixtures in crates/types/tests/fixtures: bytes 
-
-**File**: `crates/types/src/nodes_config.rs` (modified, +238/-2)
-```diff
-@@ -21,7 +21,7 @@ use serde_with::serde_as;
- use crate::base62_util::base62_max_length_for_type;
- use crate::locality::NodeLocation;
- use crate::metadata::GlobalMetadata;
--use crate::net::address::{AdvertisedAddress, ControlPort, FabricPort};
-+use crate::net::address::{AdvertisedAddress, ControlPort, FabricPort, ListenerPort};
- use crate::net::metadata::{MetadataContainer, MetadataKind};
- use crate::{
-     GenerationalNodeId, NodeId, PlainNodeId, RestateVersion, base62_util,
-@@ -258,19 +258,59 @@ enum MaybeNode {
-     Node(Box<NodeConfig>),
- }
- 
-+/// An advertised address for callers whose own location starts with `location`. An entry without
-+/// a location is for every caller.
-+#[derive(Debug, Clone, Eq, PartialEq, serde::Serialize, serde::Deserialize)]
-+pub struct QualifiedAddress<P: ListenerPort> {
-+    pub address: AdvertisedAddress<P>,
-+    #[serde(default, skip_serializing_if = "Option::is_none")]
-+    pub location: Option<NodeLocation>,
-+}
-+
-+/// Logs an address list entry that this version cannot read. Such entries are skipped instead of
-+/// failing the decode of the whole configuration, because a newer version may publish entries
-+/// that this one rejects, for example a location with more scopes.
-+struct SkippedAddressEntry;
-+
-+impl serde_with::InspectError for SkippedAddressEntry {
-+    fn inspect_error(error: impl serde::de::Error) {
-+        tracing::debug!(%error, "Skipping an advertised address entry this version cannot read");
-+    }
-+}
-+
-+#[serde_as]
- #[derive(
-     Debug, Clone, Eq, PartialEq, serde::Serialize, serde::Deserialize, typed_builder::TypedBuilder,
- )]
- pub struct NodeConfig {
-     pub name: String,
-     pub current_generation: GenerationalNodeId,
-     pub address: AdvertisedAddress<FabricPort>,
-+    /// Fabric addresses for callers in specific locations, in this node's order of preference.
-+    /// Empty means `address` is the only route. Versions that predate this field drop it when
-+    /// they rewrite the configuration, and entries this version cannot read are skipped.
-+    /// Introduced in v1.8.2 (not populated yet)
-+    #[serde_as(as = "serde_with::VecSkipError<_, SkippedAddressEntry>")]
-+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
-+    #[builder(default)]
-+    pub addresses: Vec<QualifiedAddress<FabricPort>>,
-     /// The address to use for control plane requests (NodeCtlSvc / ClusterCtrlSvc)
-     /// Introduced in v1.6.0 (for forward compatibility, not populated by v1.6.0)
--    /// Since v1.8.2, nodes populate this on startup, defaulting to the fabric address.
-+    /// Since v1.8.2, nodes populate this on startup, defaulting to the fabric address. A value
-+    /// this version cannot read decodes as absent, so `ctrl_address()` falls back to `address`,
-+    /// instead of failing the decode of the whole configuration.
-+    #[serde_as(as = "serde_with::DefaultOnError")]
-     #[serde(default, skip_serializing_if = "Option::is_none")]
-     #[builder(default)]
-     pub ctrl_address: Option<AdvertisedAddress<ControlPort>>,
-+    /// Control addresses for callers in specific locations, in this node's order of preference.
-+    /// Empty means `ctrl_address()` is the only route. Entries this version cannot read are
-+    /// skipped.
-+    /// Introduced in v1.8.2 (not populated yet)
-+    #[serde_as(as = "serde_with::VecSkipError<_, SkippedAddressEntry>")]
-+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
-+    #[builder(default)]
-+    pub ctrl_addresses: Vec<QualifiedAddress<ControlPort>>,
-     pub roles: EnumSet<Role>,
-     #[serde(default)]
-     #[builder(default)]
-@@ -758,16 +798,208 @@ flexbuffers_storage_encode_decode!(NodesConfiguration);
- 
- #[cfg(test)]
- mod tests {
-+    use std::io::Write;
-     use std::num::NonZeroU64;
-+    use std::path::{Path, PathBuf};
- 
-     use bytes::BytesMut;
- 
-     use super::*;
- 
-     use restate_test_util::assert_eq;
- 
-+    use crate::net::ProtocolVersion;
-+    use crate::net::codec::{WireDecode, WireEncode};
-+    use crate::net::metadata::MetadataUpdate;
-     use crate::storage::StorageCodec;
- 
-+    /// Compatibility fixtures written by released versions. See `tests/fixtures/README.md`.
-+    fn fixtures_dir() -> PathBuf {
-+        Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/nodes_config")
-+    }
-+
-+    const FIXTURE_FINGERPRINT: u64 = 0x5245_5354_4154_4531;
-+
-+    /// The live nodes of every node configuration fixture. A third node is removed.
-+    fn fixture_nodes(binary_version: &str) -> [NodeConfig; 2] {
-+        let binary_version = RestateVersion::new(binary_version.to_owned());
-+        [
-+            NodeConfig::builder()
-+                .name("node-1".to_owned())
-+                .current_generation(GenerationalNodeId::new(1, 3))
-+                .address("http://10.1.7.3:5122/".parse().unwrap())
-+                .location("us-east1.az1".parse().unwrap())
-+                .roles(Role::Admin | Role::Worker | Role::LogServer | Role::MetadataServer)
-+                .log_server_config(LogServe
+```
+gh extension install github/gh-actions-lock
+gh actions-lock
 ```
 
-**File**: `crates/types/tests/fixtures/README.md` (added, +30/-0)
+**File**: `.github/workflows/actions.lock` (added, +273/-0)
 ```diff
-@@ -0,0 +1,30 @@
-+# Compatibility fixtures
-+
-+Bytes written by released Restate versions. Every later version must keep decoding them, so a
-+test that fails on one of these files means a compatibility break, not a stale fixture.
-+
-+## Rules
-+
-+1. Never edit or regenerate an existing fixture. Add a new file instead.
-+2. Name a fixture after the release that wrote it, for example `nodes_config/v1.8.1.flexbuffers`.
-+3. Generate fixtures from the release tag, not from a development branch.
-+4. Tests assert the decoded content, not the bytes, so harmless encoder changes do not fail them.
-+
-+## Adding a fixture for a release
-+
-+Check out the release tag and run the generator, which refuses to overwrite an existing file:
-+
-+```sh
-+RESTATE_FIXTURE_PATH=$PWD/crates/types/tests/fixtures/nodes_config/v1.9.0.flexbuffers \
-+  cargo nextest run -p restate-types --run-ignored only -E 'test(write_nodes_config_fixture)'
-+```
-+
-+Copy the file into this directory on the main branch, and add assertions for its content to
-+`decodes_nodes_config_fixtures` in `crates/types/src/nodes_config.rs`. Every file in
-+`nodes_config/` is decoded by that test automatically.
-+
-+## Provenance
-+
-+| Fixture | Written by | How |
-+| --- | --- | --- |
-+| `nodes_config/v1.8.1.flexbuffers` | v1.8.1 tag, commit `20efb1b83a39` | That release has no generator, so the generator from `crates/types/src/nodes_config.rs` was added to an export of the tag, without the address lists that v1.8.1 does not have. |
+@@ -0,0 +1,273 @@
++# This file is machine-generated by `gh actions-lock`.
++# Do not edit by hand; run `gh actions-lock` to update.
++# Docs: https://gh.io/actions-lockfile
++version: 'v0.0.3'
++workflows:
++    '.github/workflows/ci.yml':
++        - 'actions-rust-lang/setup-rust-toolchain@v1.17.0'
++        - 'actions/checkout@v4.4.0'
++        - 'actions/download-artifact@v8.0.2'
++        - 'actions/upload-artifact@v4.6.2'
++        - 'docker/setup-docker-action@v4.7.0'
++        - 'dtolnay/rust-toolchain@stable'
++        - 'extractions/setup-just@v3.1.0'
++        - 'restatedev/e2e@main'
++        - 'taiki-e/install-action@v2.88.0'
++        - 'warpbuilds/rust-cache@v2.9.1'
++    '.github/workflows/cla.yml':
++        - 'contributor-assistant/github-action@v2.6.1'
++    '.github/workflows/deps.yml':
++        - 'actions/checkout@v4.4.0'
++        - 'embarkstudios/cargo-deny-action@v2.1.1'
++    '.github/workflows/docker-build-release.yml': []
++    '.github/workflows/docker-push-release.yml':
++        - 'actions/download-artifact@v8.0.2'
++        - 'docker/build-push-action@v6.19.2'
++        - 'docker/login-action@v3.7.0'
++        - 'docker/metadata-action@v5.10.0'
++        - 'docker/setup-buildx-action@v3.12.0'
++        - 'docker/setup-docker-action@v4.7.0'
++    '.github/workflows/docker-refresh.yml':
++        - 'actions/checkout@v4.4.0'
++        - 'docker/build-push-action@v6.19.2'
++        - 'docker/login-action@v3.7.0'
++        - 'docker/metadata-action@v5.10.0'
++        - 'docker/setup-buildx-action@v3.12.0'
++        - 'docker/setup-docker-action@v4.7.0'
++    '.github/workflows/docker-tools.yml':
++        - 'actions/checkout@v4.4.0'
++        - 'depot/use-containerd-snapshotter-action@v1.1.1'
++        - 'docker/build-push-action@v6.19.2'
++        - 'docker/login-action@v3.7.0'
++        - 'docker/metadata-action@v5.10.0'
++        - 'docker/setup-buildx-action@v3.12.0'
++        - 'reproducible-containers/buildkit-cache-dance@v3.1.2'
++        - 'taiki-e/install-action@v2.88.0'
++        - 'warpbuilds/cache@v1.4.13'
++    '.github/workflows/docker.yml':
++        - 'actions/checkout@v4.4.0'
++        - 'actions/upload-artifact@v4.6.2'
++        - 'depot/use-containerd-snapshotter-action@v1.1.1'
++        - 'docker/build-push-action@v6.19.2'
++        - 'docker/login-action@v3.7.0'
++        - 'docker/metadata-action@v5.10.0'
++        - 'docker/setup-buildx-action@v3.12.0'
++        - 'reproducible-containers/buildkit-cache-dance@v3.1.2'
++        - 'taiki-e/install-action@v2.88.0'
++        - 'warpbuilds/cache@v1.4.13'
++    '.github/workflows/hack-clippy.yml':
++        - 'actions-rust-lang/setup-rust-toolchain@v1.17.0'
++        - 'actions/checkout@v4.4.0'
++        - 'extractions/setup-just@v2.0.0'
++        - 'taiki-e/install-action@v2.88.0'
++        - 'warpbuilds/rust-cache@v2.9.1'
++    '.github/workflows/helm.yml':
++        - 'actions/checkout@v4.4.0'
++        - 'appany/helm-oci-chart-releaser@v0.4.2'
++    '.github/workflows/homebrew.yml':
++        - 'actions/checkout@v4.4.0'
++        - 'actions/download-artifact@v8.0.2'
++    '.github/workflows/notarize.yml':
++        - 'actions/checkout@v4.4.0'
++        - 'actions/download-artifact@v8.0.2'
++    '.github/workflows/npm.yml':
++        - 'actions/checkout@v4.4.0'
++        - 'actions/download-artifact@v8.0.2'
++        - 'actions/setup-node@v4.4.0'
++    '.github/workflows/pullfrog.yml':
++        - 'actions-rust-lang/setup-rust-toolchain@v1.17.0'
++        - 'actions/checkout@v6.1.0'
++        - 'pullfrog/pullfrog@v0.1.102'
++        - 'taiki-e/install-action@v2.88.0'
++        - 'warpbuilds/rust-cache@v2.9.1'
++    '.github/workflows/release-notes.yml':
++        - 'actions/checkout@v4.4.0'
++    '.github/workflows/release.yml':
++        - 'actions/checkout@v4'
++        - 'actions/download-artifact@v8'
++        - 'actions/upload-artifact@v4'
++        - 'extractions/setup-just@v2'
++        - 'taiki-e/install-action@v2'
++    '.github/workflows/verify-lockfile.yml':
++        - 'actions/checkout@v4.4.0'
++dependencies:
++    'actions-rust-lang/setup-rust-toolchain@v1.17.0':
++        ref: 'v1.17.0'
++        commit: 'sha1-166cdcfd11aee3cb47222f9ddb555ce30ddb9659'
++        owner_id: 103899579
++        repo_id: 482610590
++        uses:
++            - 'swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4'
++    'actions/checkout@v4':
++        ref: 'v4'
++        commit: 'sha1-11d5960a326750d5838078e36cf38b85af677262'
++        owner_id: 44036562
++        repo_id: 197814629
++    'actions/checkout@v4.4.0':
++        ref: 'v4.4.0'
++        commit: 'sha1-11d5960a326750d5838078e36cf38b85af677262'
++        owner_id: 44036562
++        repo_id: 197814629
++    'actions/checkout@v6.1.0':
++        ref: 'v6.1.0'
++        commit: 'sha1-d23441a48e516b6c34aea4fa41551a30e30af803'
++        owner_id: 44036562
++        repo_id: 197814629
++    'actions/download-artifact@v8':
++        ref: 'v8'
++        commit: 'sha1-9000827ccba6bdab643e8b6fd33ac0654aef8333'
++        owner_id: 44036562
++        repo_id: 192626254
++    'ac
+```
+
+**File**: `.github/workflows/ci.yml` (modified, +26/-20)
+```diff
+@@ -23,10 +23,10 @@ jobs:
+     env:
+       RUSTFLAGS: -D warnings
+     steps:
+-      - uses: actions/checkout@v4
++      - uses: actions/checkout@v4.4.0
+       - uses: dtolnay/rust-toolchain@stable
+       - name: Install cargo-hakari
+-        uses: taiki-e/install-action@v2
++        uses: taiki-e/install-action@v2.88.0
+         with:
+           tool: cargo-hakari
+       - name: Check workspace-hack Cargo.toml is up-to-date
+@@ -37,19 +37,19 @@ jobs:
+     name: Check CLI SQL tables reference
+     runs-on: warp-ubuntu-latest-x64-4x
+     steps:
+-      - uses: actions/checkout@v4
++      - uses: actions/checkout@v4.4.0
+       - name: Install Rust toolchain
+-        uses: actions-rust-lang/setup-rust-toolchain@v1
++        uses: actions-rust-lang/setup-rust-toolchain@v1.17.0
+         with:
+           rustflags: ""
+           cache: false
+       - name: Setup Rust Caching
+-        uses: WarpBuilds/rust-cache@v2 # a fork of Swatinem/rust-cache@v2 that uses warpbuild cache
++        uses: WarpBuilds/rust-cache@v2.9.1 # a fork of Swatinem/rust-cache@v2 that uses warpbuild cache
+         with:
+           prefix-key: "v1-rust-xtask"
+           cache-on-failure: "true"
+       - name: Install protoc
+-        uses: ./.github/actions/install-protoc
++        uses: $/.github/actions/install-protoc
+       - name: Check cli/src/commands/sql_tables.rs is up-to-date
+         run: |
+           cargo xtask generate-cli-sql-tables > cli/src/commands/sql_tables.rs
+@@ -73,17 +73,17 @@ jobs:
+       # - name: Install liburing
+       #   run: sudo apt-get update && sudo apt-get install -y liburing-dev
+ 
+-      - uses: actions/checkout@v4
++      - uses: actions/checkout@v4.4.0
+ 
+       - name: Install Rust toolchain
+-        uses: actions-rust-lang/setup-rust-toolchain@v1
++        uses: actions-rust-lang/setup-rust-toolchain@v1.17.0
+         with:
+           components: clippy
+           rustflags: ""
+           cache: false
+ 
+       - name: Setup Rust Caching
+-        uses: WarpBuilds/rust-cache@v2 # a fork of Swatinem/rust-cache@v2 that uses warpbuild cache
++        uses: WarpBuilds/rust-cache@v2.9.1 # a fork of Swatinem/rust-cache@v2 that uses warpbuild cache
+         with:
+           prefix-key: "v1-rust"
+           cache-on-failure: "true"
+@@ -92,23 +92,23 @@ jobs:
+         run: df -h / && du -sh target/ 2>/dev/null || true
+ 
+       - name: Install cargo-hakari
+-        uses: taiki-e/install-action@v2
++        uses: taiki-e/install-action@v2.88.0
+         with:
+           tool: cargo-hakari
+ 
+       - name: Disable hakari
+         run: cargo hakari disable
+ 
+       - name: Install protoc
+-        uses: ./.github/actions/install-protoc
++        uses: $/.github/actions/install-protoc
+ 
+       - name: Install nextest
+-        uses: taiki-e/install-action@v2
++        uses: taiki-e/install-action@v2.88.0
+         with:
+           tool: nextest@0.9.98
+ 
+       - name: Setup just
+-        uses: extractions/setup-just@v3
++        uses: extractions/setup-just@v3.1.0
+         env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+ 
+@@ -135,7 +135,7 @@ jobs:
+       - name: Run doctest
+         run: just doctest
+ 
+-      - uses: actions/upload-artifact@v4
++      - uses: actions/upload-artifact@v4.6.2
+         if: always()
+         with:
+           name: local-cluster-runner
+@@ -315,7 +315,7 @@ jobs:
+     needs: docker
+     steps:
+       - name: Set up Docker containerd snapshotter
+-        uses: docker/setup-docker-action@v4
++        uses: docker/setup-docker-action@v4.7.0
+         with:
+           version: "v28.5.2"
+           set-host: true
+@@ -328,7 +328,7 @@ jobs:
+ 
+       ### Download the Restate container image, if needed
+       - name: Download restate snapshot from in-progress workflow
+-        uses: actions/download-artifact@v8
++        uses: actions/download-artifact@v8.0.2
+         with:
+           name: restate.tar
+       - name: Install restate snapshot
+@@ -339,6 +339,8 @@ jobs:
+ 
+       ### Run e2e tests
+       - name: Run E2E tests
++        # Pinned to a commit in actions.lock. To pick up the latest e2e main, run:
++        #   gh actions-lock --relock .github/workflows/ci.yml
+         uses: restatedev/e2e/e2e-tests@main
+         with:
+           testArtifactOutput: e2e-test-report
+@@ -358,7 +360,7 @@ jobs:
+     needs: docker
+     steps:
+       - name: Set up Docker containerd snapshotter
+-        uses: docker/setup-docker-action@v4
++        uses: docker/setup-docker-action@v4.7.0
+         with:
+           version: "v28.5.2"
+           set-host: true
+@@ -371,7 +373,7 @@ jobs:
+ 
+       ### Download the Restate container image, if needed
+       - name: Download restate snapshot from in-progress workflow
+-        uses: actions/download-artifact@v8
++        uses: actions/download-artifact@v8.0.2
+         with:
+           name: restate.tar
+       - name: Install restate snapshot
+@@ -382,6 +384,8 @@ jobs:
+ 
+       ### Run e2e tests with bilrost schema enabled.
+       - name: Run E2E tests
++        # Pinned to a commit in actions.lock. To
+```
+
+**File**: `.github/workflows/deps.yml` (modified, +4/-4)
+```diff
+@@ -19,16 +19,16 @@ jobs:
+     runs-on: warp-ubuntu-latest-x64-2x
+     continue-on-error: true
+     steps:
+-    - uses: actions/checkout@v4
+-    - uses: EmbarkStudios/cargo-deny-action@v2
++    - uses: actions/checkout@v4.4.0
++    - uses: EmbarkStudios/cargo-deny-action@v2.1.1
+       with:
+         command: check advisories
+ 
+   bans:
+     timeout-minutes: 10
+     runs-on: warp-ubuntu-latest-x64-2x
+     steps:
+-    - uses: actions/checkout@v4
+-    - uses: EmbarkStudios/cargo-deny-action@v2
++    - uses: actions/checkout@v4.4.0
++    - uses: EmbarkStudios/cargo-deny-action@v2.1.1
+       with:
+         command: check bans licenses sources
+```
+
+**File**: `.github/workflows/docker-push-release.yml` (modified, +10/-10)
+```diff
+@@ -24,7 +24,7 @@ jobs:
+     steps:
+       # support importing oci-format restate.tar
+       - name: Set up Docker containerd snapshotter
+-        uses: docker/setup-docker-action@v4
++        uses: docker/setup-docker-action@v4.7.0
+         with:
+           set-host: true
+           daemon-config: |
+@@ -35,20 +35,20 @@ jobs:
+             }
+ 
+       - name: Log into GitHub container registry
+-        uses: docker/login-action@v3
++        uses: docker/login-action@v3.7.0
+         with:
+           registry: ${{ env.GHCR_REGISTRY }}
+           username: ${{ env.GHCR_REGISTRY_USERNAME }}
+           password: ${{ env.GHCR_REGISTRY_TOKEN }}
+ 
+       - name: Log into DockerHub
+-        uses: docker/login-action@v3
++        uses: docker/login-action@v3.7.0
+         with:
+           username: ${{ secrets.DOCKER_USERNAME }}
+           password: ${{ secrets.DOCKER_PASSWORD }}
+ 
+       - name: Download restate snapshot from in-progress workflow
+-        uses: actions/download-artifact@v8
++        uses: actions/download-artifact@v8.0.2
+         with:
+           # the name is docker-build-release, but the extracted file will be 'restate.tar'
+           name: docker-build-release
+@@ -70,23 +70,23 @@ jobs:
+       IMAGE_NAME: "restate-cli"
+     steps:
+       - name: Set up Docker Buildx
+-        uses: docker/setup-buildx-action@v3
++        uses: docker/setup-buildx-action@v3.12.0
+ 
+       - name: Log into GitHub container registry
+-        uses: docker/login-action@v3
++        uses: docker/login-action@v3.7.0
+         with:
+           registry: ${{ env.GHCR_REGISTRY }}
+           username: ${{ env.GHCR_REGISTRY_USERNAME }}
+           password: ${{ env.GHCR_REGISTRY_TOKEN }}
+ 
+       - name: Log into DockerHub
+-        uses: docker/login-action@v3
++        uses: docker/login-action@v3.7.0
+         with:
+           username: ${{ secrets.DOCKER_USERNAME }}
+           password: ${{ secrets.DOCKER_PASSWORD }}
+ 
+       - name: Download linux binaries
+-        uses: actions/download-artifact@v8
++        uses: actions/download-artifact@v8.0.2
+         with:
+           pattern: artifacts-*-unknown-linux-musl
+           merge-multiple: true
+@@ -123,7 +123,7 @@ jobs:
+ 
+       - name: Extract metadata (tags, labels) for Docker
+         id: meta
+-        uses: docker/metadata-action@v5
++        uses: docker/metadata-action@v5.10.0
+         with:
+           images: |
+             ${{ env.GHCR_REGISTRY }}/${{ env.REPOSITORY_OWNER }}/${{ env.IMAGE_NAME }}
+@@ -153,7 +153,7 @@ jobs:
+           EOF
+ 
+       - name: Build and push multiplatform image
+-        uses: docker/build-push-action@v6
++        uses: docker/build-push-action@v6.19.2
+         with:
+           context: .
+           push: true
+```
+
+**File**: `.github/workflows/docker-refresh.yml` (modified, +7/-7)
+```diff
+@@ -51,7 +51,7 @@ jobs:
+             base: alpine
+     steps:
+       - name: Checkout repository
+-        uses: actions/checkout@v4
++        uses: actions/checkout@v4.4.0
+ 
+       - name: Determine release
+         id: release
+@@ -73,7 +73,7 @@ jobs:
+           echo "version=${VERSION}" >> $GITHUB_OUTPUT
+ 
+       - name: Set up Docker containerd snapshotter
+-        uses: docker/setup-docker-action@v4
++        uses: docker/setup-docker-action@v4.7.0
+         with:
+           daemon-config: |
+             {
+@@ -83,24 +83,24 @@ jobs:
+             }
+ 
+       - name: Set up Docker Buildx
+-        uses: docker/setup-buildx-action@v3
++        uses: docker/setup-buildx-action@v3.12.0
+ 
+       - name: Log into GitHub container registry
+-        uses: docker/login-action@v3
++        uses: docker/login-action@v3.7.0
+         with:
+           registry: ${{ env.GHCR_REGISTRY }}
+           username: ${{ github.actor }}
+           password: ${{ secrets.GITHUB_TOKEN }}
+ 
+       - name: Log into DockerHub
+-        uses: docker/login-action@v3
++        uses: docker/login-action@v3.7.0
+         with:
+           username: ${{ secrets.DOCKER_USERNAME }}
+           password: ${{ secrets.DOCKER_PASSWORD }}
+ 
+       - name: Extract metadata (tags, labels) for Docker
+         id: meta
+-        uses: docker/metadata-action@v5
++        uses: docker/metadata-action@v5.10.0
+         with:
+           images: |
+             ${{ env.GHCR_REGISTRY }}/${{ env.REPOSITORY_OWNER }}/${{ matrix.image.name }}
+@@ -113,7 +113,7 @@ jobs:
+             type=semver,pattern={{major}}.{{minor}},value=${{ steps.release.outputs.version }}
+ 
+       - name: Build and push refreshed Docker image
+-        uses: docker/build-push-action@v6
++        uses: docker/build-push-action@v6.19.2
+         with:
+           context: .
+           file: docker/Dockerfile.refresh
+```
+
+**File**: `.github/workflows/docker-tools.yml` (modified, +8/-8)
+```diff
+@@ -25,11 +25,11 @@ jobs:
+ 
+     steps:
+       - name: Checkout repository
+-        uses: actions/checkout@v4
++        uses: actions/checkout@v4.4.0
+ 
+       - name: Install cargo-hakari
+         if: ${{ hashFiles('.config/hakari.toml') != '' }}
+-        uses: taiki-e/install-action@v2
++        uses: taiki-e/install-action@v2.88.0
+         with:
+           tool: cargo-hakari
+ 
+@@ -39,18 +39,18 @@ jobs:
+ 
+       # this is needed to be able to load and push a multiplatform image in one step
+       - name: Set up Docker containerd snapshotter
+-        uses: depot/use-containerd-snapshotter-action@v1
++        uses: depot/use-containerd-snapshotter-action@v1.1.1
+ 
+       - name: Set up Docker Buildx
+-        uses: docker/setup-buildx-action@v3
++        uses: docker/setup-buildx-action@v3.12.0
+         with:
+           # https://docs.warpbuild.com/cache/docker-layer-caching#step-1-set-up-docker-buildx-action
+           driver-opts: |
+             network=host
+ 
+       - name: Cache sccache
+         id: cache
+-        uses: WarpBuilds/cache@v1
++        uses: WarpBuilds/cache@v1.4.13
+         with:
+           path: sccache-cache
+           key: ${{ runner.os }}-sccache-tools-${{ hashFiles('**/Cargo.lock') }}
+@@ -65,7 +65,7 @@ jobs:
+           skip-extraction: ${{ steps.cache.outputs.cache-hit }}
+ 
+       - name: Log into GitHub container registry
+-        uses: docker/login-action@v3
++        uses: docker/login-action@v3.7.0
+         with:
+           registry: ${{ env.GHCR_REGISTRY }}
+           username: ${{ env.GHCR_REGISTRY_USERNAME }}
+@@ -86,7 +86,7 @@ jobs:
+ 
+       - name: Extract metadata (tags, labels) for Docker
+         id: meta
+-        uses: docker/metadata-action@v5
++        uses: docker/metadata-action@v5.10.0
+         with:
+           images: |
+             ${{ env.GHCR_REGISTRY }}/${{ env.REPOSITORY_OWNER }}/${{ env.IMAGE_NAME }}
+@@ -100,7 +100,7 @@ jobs:
+ 
+       - name: Build and push Docker image
+         id: build
+-        uses: docker/build-push-action@v6
++        uses: docker/build-push-action@v6.19.2
+         with:
+           context: .
+           file: "docker/tools.Dockerfile"
+```
+
+**File**: `.github/workflows/docker.yml` (modified, +12/-12)
+```diff
+@@ -118,11 +118,11 @@ jobs:
+ 
+     steps:
+       - name: Checkout repository
+-        uses: actions/checkout@v4
++        uses: actions/checkout@v4.4.0
+ 
+       - name: Install cargo-hakari
+         if: ${{ hashFiles('.config/hakari.toml') != '' }}
+-        uses: taiki-e/install-action@v2
++        uses: taiki-e/install-action@v2.88.0
+         with:
+           tool: cargo-hakari
+ 
+@@ -132,18 +132,18 @@ jobs:
+ 
+       # this is needed to be able to load and push a multiplatform image in one step
+       - name: Set up Docker containerd snapshotter
+-        uses: depot/use-containerd-snapshotter-action@v1
++        uses: depot/use-containerd-snapshotter-action@v1.1.1
+ 
+       - name: Set up Docker Buildx
+-        uses: docker/setup-buildx-action@v3
++        uses: docker/setup-buildx-action@v3.12.0
+         with:
+           # https://docs.warpbuild.com/cache/docker-layer-caching#step-1-set-up-docker-buildx-action
+           driver-opts: |
+             network=host
+ 
+       - name: Cache sccache
+         id: cache
+-        uses: WarpBuilds/cache@v1
++        uses: WarpBuilds/cache@v1.4.13
+         with:
+           path: sccache-cache
+           key: ${{ runner.os }}-sccache-${{ hashFiles('**/Cargo.lock') }}
+@@ -158,15 +158,15 @@ jobs:
+           skip-extraction: ${{ steps.cache.outputs.cache-hit }}
+ 
+       - name: Log into GitHub container registry
+-        uses: docker/login-action@v3
++        uses: docker/login-action@v3.7.0
+         with:
+           registry: ${{ env.GHCR_REGISTRY }}
+           username: ${{ env.GHCR_REGISTRY_USERNAME }}
+           password: ${{ env.GHCR_REGISTRY_TOKEN }}
+ 
+       - name: Log into DockerHub
+         if: ${{ inputs.pushToDockerHub }}
+-        uses: docker/login-action@v3
++        uses: docker/login-action@v3.7.0
+         with:
+           username: ${{ secrets.DOCKER_USERNAME }}
+           password: ${{ secrets.DOCKER_PASSWORD }}
+@@ -233,7 +233,7 @@ jobs:
+ 
+       - name: Extract metadata (tags, labels) for Docker
+         id: meta
+-        uses: docker/metadata-action@v5
++        uses: docker/metadata-action@v5.10.0
+         with:
+           images: |
+             ${{ env.GHCR_REGISTRY }}/${{ env.REPOSITORY_OWNER }}/${{ env.IMAGE_NAME }}
+@@ -272,7 +272,7 @@ jobs:
+ 
+       - name: Build${{(inputs.uploadImageAsTarball == '' || github.ref == 'refs/heads/main') && ' and push ' || ' '}}Docker image
+         id: build
+-        uses: docker/build-push-action@v6
++        uses: docker/build-push-action@v6.19.2
+         with:
+           context: .
+           file: "docker/Dockerfile"
+@@ -306,7 +306,7 @@ jobs:
+ 
+       - name: Upload docker image tar as artifact
+         if: ${{ inputs.uploadImageAsTarball != '' }}
+-        uses: actions/upload-artifact@v4
++        uses: actions/upload-artifact@v4.6.2
+         with:
+           name: ${{ inputs.uploadImageAsTarball }}
+           path: restate.tar
+@@ -315,7 +315,7 @@ jobs:
+ 
+       - name: Extract debug symbols
+         if: ${{ inputs.parca }}
+-        uses: docker/build-push-action@v6
++        uses: docker/build-push-action@v6.19.2
+         with:
+           context: .
+           file: "docker/Dockerfile"
+@@ -333,7 +333,7 @@ jobs:
+ 
+       - name: Upload debug symbols
+         if: ${{ inputs.parca }}
+-        uses: actions/upload-artifact@v4
++        uses: actions/upload-artifact@v4.6.2
+         with:
+           name: debug-symbols
+           path: ./debug-symbols/**/restate-server.debug
+```
+
+**File**: `.github/workflows/hack-clippy.yml` (modified, +7/-7)
+```diff
+@@ -23,38 +23,38 @@ jobs:
+     env:
+       RUST_BACKTRACE: full
+     steps:
+-      - uses: actions/checkout@v4
++      - uses: actions/checkout@v4.4.0
+ 
+       - name: Install Rust toolchain
+-        uses: actions-rust-lang/setup-rust-toolchain@v1
++        uses: actions-rust-lang/setup-rust-toolchain@v1.17.0
+         with:
+           components: clippy
+           rustflags: ""
+           cache: false
+ 
+       - name: Setup Rust Caching
+-        uses: WarpBuilds/rust-cache@v2 # a fork of Swatinem/rust-cache@v2 that uses warpbuild cache
++        uses: WarpBuilds/rust-cache@v2.9.1 # a fork of Swatinem/rust-cache@v2 that uses warpbuild cache
+         with:
+           cache-on-failure: "true"
+ 
+       - name: Install cargo-hakari and cargo-hack
+-        uses: taiki-e/install-action@v2
++        uses: taiki-e/install-action@v2.88.0
+         with:
+           tool: cargo-hakari,cargo-hack
+ 
+       - name: Disable hakari
+         run: cargo hakari disable
+ 
+       - name: Install protoc
+-        uses: ./.github/actions/install-protoc
++        uses: $/.github/actions/install-protoc
+ 
+       - name: Install nextest
+-        uses: taiki-e/install-action@v2
++        uses: taiki-e/install-action@v2.88.0
+         with:
+           tool: nextest@0.9.98
+ 
+       - name: Setup just
+-        uses: extractions/setup-just@v2
++        uses: extractions/setup-just@v2.0.0
+         env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5652** (2026-10-26): [rocksdb] Introduce configurable database environments (@AhmedSoliman)
-- **PR #5647** (2026-10-27): Remove obsolete Jepsen CI workflows (@pcholakov)
-- **PR #5646** (closed): Refresh restate-cli and the previous minor release in the Docker refresh workflow (@tillrohrmann)
-- **PR #5643** (2026-10-26): [PartitionStore] Wait for in-flight commits before closing partitions (@AhmedSoliman)
-- **PR #5642** (2026-10-25): [chore] upgrade deps for advisories (@AhmedSoliman)
-- **PR #5641** (2026-10-25): [tests] Kill local cluster nodes when a test exits without cleanup (@AhmedSoliman)
+- **PR #5675** (2026-10-28): [types] Make schema zstd compression level configurable (@muhamadazmy)
+- **PR #5671** (closed): [test] Await native storage teardown before exiting fixtures (@AhmedSoliman)
+- **PR #5670** (2026-10-28): [ci] Add lockfiles for github actions (@MohamedBassem)
+- **PR #5669** (2026-10-28): [types] Stop compressing internal gRPC traffic by default (@AhmedSoliman)
+- **PR #5668** (2026-10-28): [chore] Bump pulldown-cmark to 0.13.5 for RUSTSEC-2026-0414 (@AhmedSoliman)
+- **PR #5665** (2026-10-28): [snapshots] Track inflight snapshot upload/downloads and their byte rate (@MohamedBassem)
 
 ---
 
@@ -2525,21 +2564,46 @@ Start keeping compatibility fixtures in crates/types/tests/fixtures: bytes
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [PartitionStore] Fix storage cleanup and durable-LSN reporting
+## X. [types] Make schema zstd compression level configurable (#5675)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/types/src/config/common.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `374dc27d`: [PartitionStore] Fix storage cleanup and durable-LSN reporting. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `91eff8da`: [types] Make schema zstd compression level configurable (#5675). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/types/src/config/common.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "restate-platform",
+    /// # Schema compression level
+    ///
+    /// Zstandard (zstd) compression level for schema data. It always applies
+    /// to schema updates sent between nodes. It applies to stored schemas only
+    /// when `experimental-enable-schema-bilrost-encoding` is enabled.
+    ///
+    /// `0` (the default) uses zstd's default level (currently `3`). Higher
+    /// values (up to `19`) produce smaller output but use more CPU on every
+    /// schema change. Negative values select zstd's faster, lower-ratio modes.
+    /// Values outside `-22..=19` are clamped to that range. Changing this
+    /// setting does not affect data that has already been written, and data
+    /// written at any level can be read by all nodes.
+    ///
+    /// Since v1.8.2
+    #[serde(default, skip_serializing_if = "is_default_compression")]
+    schema_compression_level: i32,
+
+fn is_default_compression(lvl: &i32) -> bool {
+    *lvl == 0
+}
+
+
+    pub fn schema_compression_level(&self) -> i32 {
+        self.schema_compression_level.clamp(-22, 19)
+    }
+            schema_compression_level: 0,
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2549,4 +2613,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `374dc27d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `91eff8da` are properly handled with clean fallback behavior.
