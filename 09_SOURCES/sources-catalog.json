@@ -1295,8 +1295,8 @@
     "sourceUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
     "sourceVersion": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
     "license": "Open-Source",
-    "contentHash": "6171825c3eb738169c3550ce61972a2507f98ef15aab57e9da9e247b9d1e10ea",
-    "lastHarvestedAt": "2026-10-25T12:50:26.312Z",
+    "contentHash": "59902ba69cf49be7f5faf3108f17c11fbba19df99b5174e3737f1cd922093416",
+    "lastHarvestedAt": "2026-10-28T22:07:47.922Z",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized"
   },
   "iliyami-macsai": {
@@ -7033,10 +7033,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/turso",
-    "sourceVersion": "5a269c3c",
+    "sourceVersion": "b0563444",
     "license": "MIT",
-    "contentHash": "df728f2fcfabe5db630d388a04114c4b88aaaec73267129b83f6bb4e75911ad6",
-    "lastHarvestedAt": "2026-10-28T04:28:32.784Z",
+    "contentHash": "d1ffe8b80c033e36d3a38be54e6d2774fef6d2ddf318c89cf154128281c4e7a5",
+    "lastHarvestedAt": "2026-10-28T22:07:53.898Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "flux-iac-tofu-controller": {
@@ -7383,10 +7383,10 @@
     "repository": "siderolabs/talos",
     "platform": "github",
     "sourceUrl": "https://github.com/siderolabs/talos",
-    "sourceVersion": "e15f8938",
+    "sourceVersion": "f2aca49f",
     "license": "MPL-2.0",
-    "contentHash": "1be2e4c0791d0b24686cc80789d1d32c2313eb0d589b8cb7aab00c923e7b50de",
-    "lastHarvestedAt": "2026-10-27T23:01:40.673Z",
+    "contentHash": "a7e65e389430839661cb8f5bb404ba33cb3c011e4efc97ced02517fbd8de8b6e",
+    "lastHarvestedAt": "2026-10-28T22:07:48.681Z",
     "learningId": "learn-github-siderolabs-talos"
   },
   "zilliztech-claude-context": {
@@ -7763,10 +7763,10 @@
     "repository": "tokio-rs/tokio",
     "platform": "github",
     "sourceUrl": "https://github.com/tokio-rs/tokio",
-    "sourceVersion": "0d38f834",
+    "sourceVersion": "e0f829f0",
     "license": "MIT",
-    "contentHash": "59c37bcc859b5d72e956ae15e3c4371ac8a31531832abab7a5a8bbf328e8efae",
-    "lastHarvestedAt": "2026-10-27T19:38:45.409Z",
+    "contentHash": "000e6c7499b78b01c1544f09b753b9f501e02909f208f2fb03548d6fb1759f84",
+    "lastHarvestedAt": "2026-10-28T22:07:41.157Z",
     "learningId": "learn-github-tokio-rs-tokio"
   },
   "simonschubert-linuxcommandlibrary": {

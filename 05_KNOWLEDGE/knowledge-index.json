@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T22:01:34.756Z",
+  "last_updated": "2026-10-28T22:07:53.846Z",
   "total_verified_learnings": 1159,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -48269,8 +48269,8 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "e15f8938",
-      "content_hash": "1be2e4c0791d0b24686cc80789d1d32c2313eb0d589b8cb7aab00c923e7b50de",
+      "source_version": "f2aca49f",
+      "content_hash": "a7e65e389430839661cb8f5bb404ba33cb3c011e4efc97ced02517fbd8de8b6e",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
@@ -48313,6 +48313,11 @@
           "number": 5045,
           "title": "use the established BGP source for numbered-peer BFD",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5424,
+          "title": "reconnect log senders when the receiver closes the connection",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48320,7 +48325,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T23:01:40.599Z",
+      "verified_at": "2026-10-28T22:07:48.613Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52461,8 +52466,8 @@
       "slug": "tokio-rs-tokio",
       "platform": "github",
       "source_url": "https://github.com/tokio-rs/tokio",
-      "source_version": "0d38f834",
-      "content_hash": "59c37bcc859b5d72e956ae15e3c4371ac8a31531832abab7a5a8bbf328e8efae",
+      "source_version": "e0f829f0",
+      "content_hash": "000e6c7499b78b01c1544f09b753b9f501e02909f208f2fb03548d6fb1759f84",
       "dossier_path": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "promoted_rules": [
@@ -52500,6 +52505,11 @@
           "number": 4968,
           "title": "taskdump: release the core borrow before tracing a dump (#8728)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5420,
+          "title": "time: add `Interval::deadline` (#8732)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52507,7 +52517,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T19:38:45.328Z",
+      "verified_at": "2026-10-28T22:07:41.094Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53355,13 +53365,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-limbo",
+      "slug": "tursodatabase-turso",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_url": "https://github.com/tursodatabase/turso",
       "source_version": "b0563444",
-      "content_hash": "dc280eae6f46aac6750cab824fe4bdbb0b878794e02ab80d73eb1bcaa8c74a36",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "content_hash": "d1ffe8b80c033e36d3a38be54e6d2774fef6d2ddf318c89cf154128281c4e7a5",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
         {
           "number": 2188,
@@ -53431,7 +53441,7 @@
         {
           "number": 5382,
           "title": "Merge 'build(deps): bump undici from 8.11.2 to 8.12.3 in /bindings/javascript' f",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53439,7 +53449,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T19:32:01.071Z",
+      "verified_at": "2026-10-28T22:07:53.834Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65257,7 +65267,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
       "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
-      "content_hash": "6171825c3eb738169c3550ce61972a2507f98ef15aab57e9da9e247b9d1e10ea",
+      "content_hash": "59902ba69cf49be7f5faf3108f17c11fbba19df99b5174e3737f1cd922093416",
       "dossier_path": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md",
       "promoted_rules": [
@@ -65275,6 +65285,21 @@
           "number": 3298,
           "title": "Licensing Isolation for Modified Weights",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5421,
+          "title": "Quantization Format Interoperability Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5422,
+          "title": "Quantization Precision vs. Memory Trade-off Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5423,
+          "title": "Hardware-Specific Optimization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -65282,7 +65307,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T12:50:26.229Z",
+      "verified_at": "2026-10-28T22:07:47.862Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -146035,14 +146060,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 5382,
       "title": "Merge 'build(deps): bump undici from 8.11.2 to 8.12.3 in /bindings/javascript' f",
-      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_url": "https://github.com/tursodatabase/turso",
       "source_version": "b0563444",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-28T19:32:01.071Z"
+      "verified_at": "2026-10-28T22:07:53.834Z"
     },
     "rule-5383": {
       "learning_id": "rule-5383",
@@ -146588,6 +146613,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T21:57:57.712Z"
+    },
+    "rule-5420": {
+      "learning_id": "rule-5420",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5420,
+      "title": "time: add `Interval::deadline` (#8732)",
+      "source_url": "https://github.com/tokio-rs/tokio",
+      "source_version": "e0f829f0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T22:07:41.094Z"
+    },
+    "rule-5421": {
+      "learning_id": "rule-5421",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5421,
+      "title": "Quantization Format Interoperability Invariant",
+      "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T22:07:47.862Z"
+    },
+    "rule-5422": {
+      "learning_id": "rule-5422",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5422,
+      "title": "Quantization Precision vs. Memory Trade-off Invariant",
+      "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T22:07:47.862Z"
+    },
+    "rule-5423": {
+      "learning_id": "rule-5423",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5423,
+      "title": "Hardware-Specific Optimization Invariant",
+      "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T22:07:47.862Z"
+    },
+    "rule-5424": {
+      "learning_id": "rule-5424",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5424,
+      "title": "reconnect log senders when the receiver closes the connection",
+      "source_url": "https://github.com/siderolabs/talos",
+      "source_version": "f2aca49f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T22:07:48.613Z"
     }
   },
   "aliases": {

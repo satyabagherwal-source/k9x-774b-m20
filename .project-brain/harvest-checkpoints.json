@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T22:01:34.831Z",
+  "last_updated": "2026-10-28T22:07:53.904Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2023,15 +2023,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-      "content_hash": "b1540a850266e3c2df61c115737a3dd64f98de2c3412d8d3655d211c7ba5fb8d",
-      "verified_at": "2026-10-28T03:04:27.301Z",
+      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
+      "content_hash": "59902ba69cf49be7f5faf3108f17c11fbba19df99b5174e3737f1cd922093416",
+      "verified_at": "2026-10-28T22:07:47.929Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T03:04:27.301Z"
+      "last_updated": "2026-10-28T22:07:47.929Z"
     },
     "iliyami/MacSai": {
       "repository": "iliyami/MacSai",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "dc280eae6f46aac6750cab824fe4bdbb0b878794e02ab80d73eb1bcaa8c74a36",
-      "verified_at": "2026-10-28T19:32:01.173Z",
+      "content_hash": "d1ffe8b80c033e36d3a38be54e6d2774fef6d2ddf318c89cf154128281c4e7a5",
+      "verified_at": "2026-10-28T22:07:53.904Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T19:32:01.173Z"
+      "last_updated": "2026-10-28T22:07:53.904Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -11121,14 +11121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-siderolabs-talos",
-      "content_hash": "1be2e4c0791d0b24686cc80789d1d32c2313eb0d589b8cb7aab00c923e7b50de",
-      "verified_at": "2026-10-27T23:01:40.681Z",
+      "content_hash": "a7e65e389430839661cb8f5bb404ba33cb3c011e4efc97ced02517fbd8de8b6e",
+      "verified_at": "2026-10-28T22:07:48.687Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T23:01:40.681Z"
+      "last_updated": "2026-10-28T22:07:48.687Z"
     },
     "zilliztech/claude-context": {
       "repository": "zilliztech/claude-context",
@@ -11691,14 +11691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tokio-rs-tokio",
-      "content_hash": "59c37bcc859b5d72e956ae15e3c4371ac8a31531832abab7a5a8bbf328e8efae",
-      "verified_at": "2026-10-27T19:38:45.418Z",
+      "content_hash": "000e6c7499b78b01c1544f09b753b9f501e02909f208f2fb03548d6fb1759f84",
+      "verified_at": "2026-10-28T22:07:41.163Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T19:38:45.418Z"
+      "last_updated": "2026-10-28T22:07:41.163Z"
     },
     "SimonSchubert/LinuxCommandLibrary": {
       "repository": "SimonSchubert/LinuxCommandLibrary",

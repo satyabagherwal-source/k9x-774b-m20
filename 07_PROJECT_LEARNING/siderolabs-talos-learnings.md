@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source**: github ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
-> **Source Version**: `e15f8938`  
+> **Source Version**: `f2aca49f`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T23:01:40.264Z  
+> **Timestamp**: 2026-10-28T22:07:48.262Z  
 > **Learning ID**: `learn-github-siderolabs-talos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T23:01:39.927Z  
+> **Harvest Timestamp**: 2026-10-28T22:07:48.057Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Talos Linux is a modern Linux distribution built for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11415 stars
+- **Stars / Engagement**: 11426 stars
 
 ---
 
@@ -1920,16 +1920,14 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14754** (2026-10-27): **test: new NVIDIA chart and drivers**
-  *Symptoms*: Bump NVIDIA chart, and also test with new drivers from https://github.com/siderolabs/extensions/pull/1326. 
+- **Issue #14767** (2026-10-28): **feat: container `privileged` profile makes sysfs writable**
+  *Symptoms*: Resolves: https://github.com/siderolabs/talos/issues/14764  Setting `ContainerConfig.security.profile` to `privileged` now also makes sysfs writable. 
   **Post-Mortem & Fix Analysis**:
+  > `qemu/integration` passed on [`ec4fc77` (this PR)](https://github.com/siderolabs/talos/pull/14767/changes/ec4fc77c0536b523ed246c5e3c35cbfae77cc17f)
   > /m
 
-- **Issue #14752** (2026-10-27): **Multiple ServiceCIDRs**
-  *Symptoms*: ## Feature Request There is no way to set several [ServiceCIDR](https://kubernetes.io/docs/reference/kubernetes-api/networking/service-cidr-v1/) in Talos (1.14) right now  No way to create a few [KubeNetworkConfig](https://docs.siderolabs.com/talos/v1.14/reference/configuration/kubernetes/kubenetworkconfig) as well  ### Description Requesting a way to get multiple CIDR blocks for k8s svc
-  **Post-Mortem & Fix Analysis**:
-  > It is perfectly supported, even documented https://docs.siderolabs.com/talos/v1.14/reference/configuration/kubernetes/kubenetworkconfig
-  > @smira sorry, I don't get it. The doc says I can put only one IPv4 block to serviceSubnets. The second one can only be IPv6 only. How how I get multiple IPv4 blocks like with multiple ServiceCIDR objects?
+- **Issue #14764** (2026-10-28): **`privileged` security profile should make sysfs writable**
+  *Symptoms*: Add `oci.WithWriteableSysfs` to containerd options, when `ContainerConfig.security.profile == privileged`.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1946,413 +1944,241 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `78fccf08` (2026-10-27)
-**Commit Message**: fix: use the established BGP source for numbered-peer BFD
+### Incident Patch 1: `0343d803` (2026-10-21)
+**Commit Message**: fix: reconnect log senders when the receiver closes the connection
 
-Update GoBGP from v4.9.0 to the upstream source-selection fix at
-57fa92f17f18. BFD previously chose its UDP source independently of BGP,
-leaving numbered peers stuck in Init when the addresses differed.
-BFD now uses the established TCP connection address without forcing
-an explicit local address or restricting incoming BGP connections.
+The JSON lines sender never reads from its TCP connection, so it misses
+the receiver's FIN and keeps writing into the half-closed connection:
+writes succeed while they fit into the send buffer, and the messages
+are lost. The kernel log sender hits this every time the receiver
+restarts behind a Kubernetes Service.
 
-Fixes: #13940
+TCP keepalives are enabled in Talos by default, so just enable TCP user
+timeouts.
 
-Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
+Fixes #14701
 
-**File**: `go.mod` (modified, +1/-1)
+Signed-off-by: Matthew Kelch <[REDACTED_EMAIL]>
+Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
+
+**File**: `internal/app/machined/pkg/runtime/logging/sender_jsonlines.go` (modified, +96/-8)
 ```diff
-@@ -122,7 +122,7 @@ require (
- 	github.com/opencontainers/go-digest v1.0.0
- 	github.com/opencontainers/image-spec v1.1.1
- 	github.com/opencontainers/runtime-spec v1.3.0
--	github.com/osrg/gobgp/v4 v4.10.0
-+	github.com/osrg/gobgp/v4 v4.10.1-0.20261020121312-57fa92f17f18
- 	github.com/packethost/packngo v0.31.0
- 	github.com/pelletier/go-toml/v2 v2.4.3
- 	github.com/pin/tftp/v3 v3.2.0
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -1370,8 +1370,8 @@ github.com/opentracing/opentracing-go v1.2.0 h1:uEJPy/1a5RIPAJ0Ov+OIO8OxWu77jEv+
- github.com/opentracing/opentracing-go v1.2.0/go.mod h1:GxEUsuufX4nBwe+T+Wl9TAgYrxe9dPLANfrWvHYVTgc=
- github.com/orcaman/concurrent-map/v2 v2.0.1 h1:jOJ5Pg2w1oeB6PeDurIYf6k9PQ+aTITr/6lP/L/zp6c=
- github.com/orcaman/concurrent-map/v2 v2.0.1/go.mod h1:9Eq3TG2oBe5FirmYWQfYO5iH1q0Jv47PLaNK++uCdOM=
--github.com/osrg/gobgp/v4 v4.10.0 h1:9yoWSFo7mR9byOBRDg/daWh0yBlv2PfWkb1YkCZZww8=
--github.com/osrg/gobgp/v4 v4.10.0/go.mod h1:cVD5Q5BXFPLQ1EKROFeXexGJi3XYca4pbs/drBwzUig=
-+github.com/osrg/gobgp/v4 v4.10.1-0.20261020121312-57fa92f17f18 h1:iw41jCfDpaE7JoBviwki/QSWaAfe47FMWUbl44Yff3U=
-+github.com/osrg/gobgp/v4 v4.10.1-0.20261020121312-57fa92f17f18/go.mod h1:cVD5Q5BXFPLQ1EKROFeXexGJi3XYca4pbs/drBwzUig=
- github.com/packethost/packngo v0.31.0 h1:LLH90ardhULWbagBIc3I3nl2uU75io0a7AwY6hyi0S4=
- github.com/packethost/packngo v0.31.0/go.mod h1:Io6VJqzkiqmIEQbpOjeIw9v8q9PfcTEq8TEY/tMQsfw=
- github.com/pborman/getopt v0.0.0-20170112200414-7148bc3a4c30/go.mod h1:85jBQOZwpVEaDAr341tbn15RS4fCAsIst0qp7i8ex1o=
-```
-
-**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/main_test.go` (added, +44/-0)
-```diff
-@@ -0,0 +1,44 @@
-+// This Source Code Form is subject to the terms of the Mozilla Public
-+// License, v. 2.0. If a copy of the MPL was not distributed with this
-+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
-+
-+package bgp_test
-+
-+import (
-+	"net"
-+	"os"
-+	"testing"
-+
-+	"github.com/jsimonetti/rtnetlink/v2"
+@@ -7,16 +7,24 @@ package logging
+ import (
+ 	"context"
+ 	"encoding/json"
++	"errors"
+ 	"fmt"
+ 	"maps"
+ 	"net"
+ 	"net/url"
++	"syscall"
+ 	"time"
+ 
 +	"golang.org/x/sys/unix"
 +
-+	"github.com/siderolabs/talos/internal/pkg/testnetns"
-+)
+ 	"github.com/siderolabs/talos/internal/app/machined/pkg/runtime"
+ 	"github.com/siderolabs/talos/pkg/machinery/config/config"
+ )
+ 
++// tcpUserTimeout bounds how long data sent to the receiver may stay unacknowledged: without it, a receiver
++// which goes away without closing the connection is noticed only when TCP gives up retransmitting (~15 minutes).
++const tcpUserTimeout = 60 * time.Second
 +
-+func TestMain(m *testing.M) {
-+	os.Exit(testnetns.Run(func() int {
-+		// GoBGP opens sockets in background goroutines, so isolate the whole
-+		// process, not just an OS-thread-locked test goroutine.
-+		conn, err := rtnetlink.Dial(nil)
-+		if err != nil {
-+			panic(err)
-+		}
+ type jsonLinesSender struct {
+ 	endpoint  *url.URL
+ 	extraTags map[string]string
+@@ -83,14 +91,8 @@ func (j *jsonLinesSender) Send(ctx context.Context, e *runtime.LogEvent) error {
+ 
+ 	defer unlock()
+ 
+-	// Connect (or "connect" for UDP) if no connection is established already.
+-	if j.conn == nil {
+-		conn, err := new(net.Dialer).DialContext(ctx, j.endpoint.Scheme, j.endpoint.Host)
+-		if err != nil {
+-			return err
+-		}
+-
+-		j.conn = conn
++	if err = j.connect(ctx); err != nil {
++		return err
+ 	}
+ 
+ 	d, _ := ctx.Deadline()
+@@ -112,6 +114,92 @@ func (j *jsonLinesSender) Send(ctx context.Context, e *runtime.LogEvent) error {
+ 	return nil
+ }
+ 
++// connect establishes the connection (or "connects" for UDP) unless it is already established.
++func (j *jsonLinesSender) connect(ctx context.Context) error {
++	// Reconnect if the receiver has closed the connection.
++	if j.conn != nil && receiverClosed(j.conn) {
++		j.conn.Close() //nolint:errcheck
++		j.conn = nil
++	}
 +
-+		lo, err := net.InterfaceByName("lo")
-+		if err != nil {
-+			panic(err)
-+		}
++	if j.conn != nil {
++		return nil
++	}
 +
-+		if err = conn.Link.Set(&rtnetlink.LinkMessage{
-+			Index: uint32(lo.Index), Flags: unix.IFF_UP, Change: unix.IFF_UP,
-+		}); err != nil {
-+			panic(err)
-+		}
++	var dialer net.Dialer
 +
-+		if err = conn.Close(); err != nil {
-+			panic(err)
-+		}
++	if j.endpoint.Scheme == "tcp" {
++		dialer.Control = setTCPUserTimeout
++	}
 +
-+		return m.Run()
-+	}))
++	conn, err := dialer.DialContext(ctx, j.endpoint.Scheme, j.endpoint.Host)
++	if err != nil {
++		return err
++	}
++
++	j.conn = conn
++
++	return nil
 +}
++
++func setTCPUserTimeout(_, _ string, c syscall.RawConn) error {
++	var sockErr error
++
++	if err := c.Control(func(fd uintptr) {
++		sockErr = unix.SetsockoptInt(int(fd), unix.IPPROTO_TCP, unix.TCP_USER_TIMEOUT, int(tcpUserTimeout.Milliseconds()))
++	}); err != nil {
++		return err
++	}
++
++	if sockErr != nil {
++		return fmt.Errorf("failed to set TCP_USER_TIMEOUT: %w", sockErr)
++	}
++
++	return nil
++}
++
++// receiverClosed reports whether the receiver has closed the TCP connection (or it has failed).
++//
++// The sender never reads from the connection, so it doesn't see the FIN from the receiver, and writes
++// into the closed connection keep succeeding until the receiver responds with a RST, or, if the receiver
++// is gone, until TCP gives up retransmitting; anything written until then is lost.
++//
++// The check is a non-blocking read: EOF means the receiver has closed the connection.
++func receiverClosed(conn net.Conn) bool {
++	tcpConn, ok := conn.(*net.TCPConn)
++	if !ok {
++		return false
++	}
++
++	rawConn, err := tcpConn.SyscallConn()
++	if err != nil {
++		return true
++	}
++
++	var closed bool
++
++	if err = rawConn.Read(func(fd uintptr) bool {
++		var buf [64]byte
++
++		for {
++			n, err := unix.Read(int(fd), buf[:])
++			if n > 0 {
++				// the receiver is not expected to send anything, discard
++				continue
++			}
++
++			// n == 0 is EOF, any other error except for EAGAIN means the connection has failed
++			closed = !errors.Is(err, unix.EAGAIN)
++
++			return true
++		}
++	}); err != nil {
++		return true
++	}
++
++	return closed
++}
++
+ // Close implements LogSender interface.
+ func (j *jsonLinesSender) Close(ctx context.Context) error {
+ 	unlock := j.tryLock(ctx)
 ```
 
-**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/numbered_test.go` (added, +230/-0)
+**File**: `internal/app/machined/pkg/runtime/logging/sender_jsonlines_test.go` (modified, +64/-0)
 ```diff
-@@ -0,0 +1,230 @@
-+// This Source Code Form is subject to the terms of the Mozilla Public
-+// License, v. 2.0. If a copy of the MPL was not distributed with this
-+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+@@ -326,3 +326,67 @@ func TestSenderJSONLines(t *testing.T) { //nolint:tparallel
+ 
+ 	cancel()
+ }
 +
-+package bgp_test
++func TestSenderJSONLinesReconnect(t *testing.T) {
++	t.Parallel()
 +
-+import (
-+	"context"
-+	"io"
-+	"net"
-+	"net/netip"
-+	"testing"
-+	"time"
++	ctx, cancel := context.WithTimeout(t.Context(), 10*time.Second)
++	t.Cleanup(cancel)
 +
-+	"github.com/jsimonetti/rtnetlink/v2"
-+	gobgpapi "github.com/osrg/gobgp/v4/api"
-+	bgppacket "github.com/osrg/gobgp/v4/pkg/packet/bgp"
-+	"github.com/stretchr/testify/require"
-+	"golang.org/x/sys/unix"
-+
-+	internalbgp "github.com/siderolabs/talos/internal/app/machined/pkg/controllers/network/internal/bgp"
-+	"github.com/siderolabs/talos/pkg/machinery/resources/network"
-+)
-+
-+// TestNumberedBFDSource checks packets, not just configuration: an unspecified
-+// BFD source must follow the established TCP socket, including accepted sockets
-+// whose local address differs from the kernel's preferred outgoing source.
-+func TestNumberedBFDSource(t *testing.T) {
-+	for _, family := range []string{"IPv4", "IPv6"} {
-+		for _, direction := range []string{"accepted", "outgoing"} {
-+			t.Run(family+"/"+direction, func(t *testing.T) {
-+				testNumberedBFDSource(t, family == "IPv6", direction == "outgoing")
-+			})
-+		}
-+	}
-+}
-+
-+func assertNumberedFixtureRemoved(t *testing.T, conn *rtnetlink.Conn, ips ...string) {
-+	t.Helper()
-+
-+	addresses, err := conn.Address.List()
-+	require.NoError(t, err)
-+	routes, err := conn.Route.List()
++	lis, err := (&net.ListenConfig{}).Listen(ctx, "tcp", "127.0.0.1:0")
 +	require.NoError(t, err)
 +
-+	for _, ip := range ips {
-+		for _, address := range addresses {
-+			require.False(t, address.Attributes.Address.Equal(net.ParseIP(ip)), "fixture address leaked: %s", ip)
-+		}
++	endpoint := lis.Addr().String()
 +
-+		for _, route := range routes {
-+			require.False(t, route.Attributes.Dst.Equal(net.ParseIP(ip)), "fixture route leaked: %s: %+v", ip, route)
-+		}
-+	}
-+}
-+
-+func assertIPv6FixtureReady(t *testing.T, conn *rtnetlink.Conn, index uint32, address net.IP) {
-+	t.Helper()
-+
-+	addresses, err := conn.Address.List()
-+	require.NoError(t, err)
-+
-+	for _, actual := range addresses {
-+		if actual.Index == index && actual.Attributes.Address.Equal(address) {
-+			require.NotZero(t, actual.Attributes.Flags&unix.IFA_F_NODAD, "IPv6 fixture must disable DAD")
-+			require.Zero(t, actual.Attributes.Flags&unix.IFA_F_TENTATIVE, "IPv6 fixture must be ready immediately")
-+
-+			return
-+		}
-+	}
-+
-+	t.Fatal("IPv6 fixture address must exist")
-+}
-+
-+func testNumberedBFDSource(t *testing.T, ipv6, outgoing bool) {
-+	t.Helper()
-+
-+	primary, secondary, remoteIP, tcp, udp := "192.0.2.20", "192.0.2.10", "192.0.2.99", "tcp4", "udp4"
-+	family, prefixLength := uint8(unix.AF_INET), uint8(32)
-+	priority := uint32(0)
-+
-+	if ipv6 {
-+		primary, secondary, remoteIP, tcp, udp = "2001:db8::20", "2001:db8::10", "2001:db8::99", "tcp6", "udp6"
-+		family, prefixLength = unix.AF_INET6, 128
-+		// IPv6 assigns this default metric when none is supplied. Include it
-+		// explicitly so deletion selects our route, not the address's route.
-+		priority = 1024
-+	}
-+
-+	// All addresses and routes exist only in the disposable child namespace.
-+	conn, err := rtnetlink.Dial(nil)
-+	require.NoError(t, err)
-+	t.Cleanup(func() { require.NoError(t, conn.Close()) })
-+
-+	lo, err := net.InterfaceByName("lo")
-+	require.NoError(t, err)
-+
-+	index := uint32(lo.Index)
-+	require.NoError(t, conn.Link.Set(&rtnetlink.LinkMessage{
-+		Index: index, Flags: unix.IFF_UP, Change: unix.IFF_UP,
-+	}))
-+
-+	// Registered before fixture cleanup, this runs after it and catches leaks
-+	// even in the last case, when no subsequent test would encounter them.
-+	t.Cleanup(func() {
-+		assertNumberedFixtureRemoved(t, conn, primary, secondary, remoteIP)
++	sender := logging.NewJSONLines(&loggingDestination{
++		endpoint: ensure.Value(url.Parse("tcp://" + endpoint)),
 +	})
 +
-+	for _, ip := range []string{primary, secondary, remoteIP} {
-+		address := netip.MustParseAddr(ip).AsSlice()
-+		message := &rtnetlink.AddressMessage{
-+			Family: family, PrefixLength: prefixLength, Index: index,
-+			Attributes: &rtnetlink.AddressAttributes{Address: address, Local: address, Flags: unix.IFA_F_NODAD},
-+		}
-+		require.NoError(t, conn.Address.New(message))
-+		// Cleanup runs after the sockets, server, and explicit route cleanup,
-+		// and before the netlink connection closes.
-+		t.Cleanup(func() { require.NoError(t, conn.Address.Delete(message)) })
++	t.Cleanup(func() {
++		require.NoError(t, sender.Close(context.Background()))
++	})
 +
-+		if ipv6 {
-+			assertIPv6FixtureReady(t, conn, index, address)
-+		}
-+	}
++	// send sends a message and returns the connection it was received on.
++	send := func(lis net.Listener, msg string) net.Conn {
++		t.Helper()
 +
-+	route := &rtnetlink.RouteMessage{
-+		Family: family, DstLength: prefixLength,
-+		Table: unix.RT_TABLE_LOCAL, Type: unix.RTN_LOCAL, Scope: unix.RT_SCOPE_HOST,
-+		Attributes: rtnetlink.RouteAttributes{
-+			OutIface: index, Dst: netip.MustParseAddr(remoteIP).AsSlice(), Src: netip.MustParseAddr(primary).AsSlice(), Priority: priority,
-+		},
-+	}
-+	require.NoError(t, conn.Route.Replace(route))
-+	t.Cleanup(func() { require.NoError(t, conn.Route.Delete(route)) })
++		require.NoError(t, sender.Send(ctx, &runtime.LogEvent{Msg: msg}))
 +
-+	packets, err := net.ListenUDP(udp, &net.UDPAddr{IP: net.ParseIP(remoteIP)})
-+	require.NoError(t, err)
-+	t.Cleanup(func() { require.NoError(t, packets.Close()) })
++		require.NoError(t, lis.(*net.TCPListener).SetDeadline(time.Now().Add(5*time.Second)))
 +
-+	ctx, cancel := context.WithTimeout(t.Context(), 15*time.Second)
-+	defer cance
-```
-
-**File**: `internal/pkg/testnetns/testnetns_linux.go` (added, +51/-0)
-```diff
-@@ -0,0 +1,51 @@
-+// This Source Code Form is subject to the terms of the Mozilla Public
-+// License, v. 2.0. If a copy of the MPL was not distributed with this
-+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
++		conn, err := lis.Accept()
++		require.NoError(t, err, "message %q was not sent on a new connection", msg)
 +
-+// Package testnetns runs tests in an isolated network namespace.
-+package testnetns
++		require.NoError(t, conn.SetReadDeadline(time.Now().Add(5*time.Second)))
 +
-+import (
-+	"context"
-+	"errors"
-+	"fmt"
-+	"os"
-+	"os/exec"
-+	"syscall"
-+)
++		r := bufio.NewReader(conn)
 +
-+const childEnvironment = "TALOS_TEST_NETNS_CHILD"
-+
-+// Run is called from TestMain as os.Exit(testnetns.Run(m.Run)). It reexecutes
-+// the test binary with its original arguments and streams, so test selection,
-+// repetition, JSON output, skips, and failures remain owned by testing.
-+//
-+// All goroutines in the child share the new network namespace. Its loopback
-+// interface is initially down; callers must configure it if needed. Tests still
-+// share one namespace and must clean up their fixtures between cases.
-+// Creating the namespace requires CAP_SYS_ADMIN, as provided by privileged CI.
-+// Namespace creation failures fail the suite rather than silently losing tests.
-+func Run(run func() int) int {
-+	if os.Getenv(childEnvironment) == "1" {
-+		return run()
-+	}
-+
-+	cmd := exec.CommandContext(context.Background(), os.Args[0], os.Args[1:]...)
-+	cmd.Stdin, cmd.Stdout, cmd.Stderr = os.Stdin, os.Stdout, os.Stderr
-+
-+	cmd.Env = append(os.Environ(), childEnvironment+"=1")
-+	cmd.SysProcAttr = &syscall.SysProcAttr{Cloneflags: syscall.CLONE_NEWNET}
-+
-+	if err := cmd.Run(); err != nil {
-+		var exitErr *exec.ExitError
-+		if errors.As(err, &exitErr) && exitErr.ExitCode() >= 0 {
-+			return exitErr.ExitCode()
-+		}
-+
-+		fmt.Fprintf(os.Stderr, "testnetns: running tests in a network namespace: %v\n", err)
-+
-+		return 1
-+	}
-+
-+	return 0
-+}
-```
-
-**File**: `internal/pkg/testnetns/testnetns_linux_test.go` (added, +104/-0)
-```diff
-@@ -0,0 +1,104 @@
-+// This Source Code Form is subject to the terms of the Mozilla Public
-+// License, v. 2.0. If a copy of the MPL was not distributed with this
-+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
-+
-+package testnetns_test
-+
-+import (
-+	"fmt"
-+	"io"
-+	"os"
-+	"os/exec"
-+	"strings"
-+	"testing"
-+
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/siderolabs/talos/internal/pkg/testnetns"
-+)
-+
-+const (
-+	modeEnvironment  = "TALOS_TEST_NETNS_MODE"
-+	childEnvironment = "TALOS_TEST_NETNS_CHILD"
-+)
-+
-+func TestMain(m *testing.M) {
-+	if os.Getenv(modeEnvironment) != "" {
-+		os.Exit(testnetns.Run(m.Run))
-+	}
-+
-+	os.Exit(m.Run())
-+}
-+
-+func TestChild(t *testing.T) {
-+	mode := os.Getenv(modeEnvironment)
-+	if mode == "" {
-+		t.Skip("subprocess fixture")
-+	}
-+
-+	switch mode {
-+	case "pass":
-+		input, err := io.ReadAll(os.Stdin)
++		line, err := r.ReadBytes('\n')
 +		require.NoError(t, err)
-+		require.Equal(t, "forwarded stdin", string(input))
-+		fmt.Fprintln(os.Stdout, "forwarded stdout")
-+		fmt.Fprintln(os.Stderr, "forwarded stderr")
-+	case "fail":
-+		t.Fatal("intentional failure")
-+	case "skip":
-+		t.Skip("intentional skip")
-+	case "panic":
-+		panic("intentional panic")
++
++		var m map[string]any
++
++		require.NoError(t, json.Unmarshal(line, &m))
++		require.Equal(t, msg, m["msg"])
++
++		return conn
 +	}
-+}
 +
-+func TestRun(t *testing.T) {
-+	for _, tt := range []struct {
-+		mode   string
-+		code   int
-+		output string
-+	}{
-+		{"pass", 0, "--- PASS: TestChild"},
-+		{"fail", 1, "intentional failure"},
-+		{"skip", 0, "--- SKIP: TestChild"},
-+		{"panic", 2, "panic: intentional panic"},
-+	} {
-+		t.Run(tt.mode, func(t *testing.T) {
-+			cmd := exec.CommandContext(t.Context(), os.Args[0], "-test.run=^TestChild$", "-test.v")
++	conn := send(lis, "before restart")
 +
-+			cmd.Env = append(os.Environ(), modeEnvironment+"="+tt.mode, childEnvironment+"=")
-+			cmd.Stdin = strings.NewReader("forwarded stdin")
-+			output, err := cmd.CombinedOutput()
++	// The receiver closes the connection.
++	require.NoError(t, conn.Close())
++	require.NoError(t, lis.Close())
 +
-+			if tt.code == 0 {
-+				require.NoError(t, err, "%s", output)
-+			} else {
-+				var exitErr *exec.ExitError
-+				require.ErrorAs(t, err, &exitErr, "%s", output)
-+				require.Equal(t, tt.code, exitErr.ExitCode(), "%s", output)
-+			}
++	// A new receiver listens on the same address.
++	lis, err = (&net.ListenConfig{}).Listen(ctx, "tcp", endpoint)
++	require.NoError(t, err)
 +
-+			require.Contains(t, string(output), tt.output)
++	t.Cleanup(func() {
++		require.NoError(t, lis.Close())
++	})
 +
-+			if tt.mode == "pass" {
-+				require.Contains(t, string(output), "forwarded stdout")
-+				require.Contains(t, string(output), "forwarded stderr")
-+			}
-+		})
-+	}
-+}
-+
-+func TestStartFailure(t *testing.T) {
-+	t.Setenv(childEnvironment, "")
-+
-+	original := os.Args
-+	os.Args = []string{"/nonexistent/testnetns-binary"}
-+
-+	t.Cleanup(func() { os.Args = original })
-+
-+	require.Equal(t, 1, testnetns.Run(func() int {
-+		t.Fatal("must not run without namespace isolation")
-+
-+		return 0
-+	}))
++	// The message is sent on a new connection rather than lost in the closed one.
++	conn = send(lis, "after restart")
++	require.NoError(t, conn.Close())
 +}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14767** (2026-10-28): feat: container `privileged` profile makes sysfs writable (@majabojarska)
+- **PR #14761** (2026-10-28): test: disable delegations in the development NFS server (@smira)
+- **PR #14757** (closed): fix: bound the Argon2id memory cost when formatting LUKS2 volumes (@ehbello)
+- **PR #14756** (2026-10-28): feat: bump major versions of Go modules (@smira)
+- **PR #14755** (2026-10-28): refactor: ContainerConfig.dependsOn.network field name (@majabojarska)
 - **PR #14754** (2026-10-27): test: new NVIDIA chart and drivers (@smira)
-- **PR #14751** (2026-10-27): chore: update Go dependencies (@smira)
-- **PR #14749** (2026-10-27): test: update CSI helm chart versions (@smira)
-- **PR #14748** (2026-10-27): feat: update Flannel to 0.28.10 (@smira)
-- **PR #14747** (2026-10-27): release(v1.15.0-alpha.2): prepare release (@smira)
-- **PR #14746** (2026-10-27): feat: include applesmc module (@smira)
 
 ---
 
@@ -2372,28 +2198,78 @@ Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. use the established BGP source for numbered-peer BFD
+## X. reconnect log senders when the receiver closes the connection
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/app/machined/pkg/runtime/logging/sender_jsonlines.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `78fccf08`: use the established BGP source for numbered-peer BFD. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0343d803`: reconnect log senders when the receiver closes the connection. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/pkg/runtime/logging/sender_jsonlines.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/osrg/gobgp/v4 v4.10.1-0.20261020121312-57fa92f17f18
+	"errors"
+	"syscall"
+	"golang.org/x/sys/unix"
+
+// tcpUserTimeout bounds how long data sent to the receiver may stay unacknowledged: without it, a receiver
+// which goes away without closing the connection is noticed only when TCP gives up retransmitting (~15 minutes).
+const tcpUserTimeout = 60 * time.Second
+
+	if err = j.connect(ctx); err != nil {
+		return err
+// connect establishes the connection (or "connects" for UDP) unless it is already established.
+func (j *jsonLinesSender) connect(ctx context.Context) error {
+	// Reconnect if the receiver has closed the connection.
+	if j.conn != nil && receiverClosed(j.conn) {
+		j.conn.Close() //nolint:errcheck
+		j.conn = nil
+	}
+
+	if j.conn != nil {
+		return nil
+	}
+
+	var dialer net.Dialer
+
+	if j.endpoint.Scheme == "tcp" {
+		dialer.Control = setTCPUserTimeout
+	}
+
+	conn, err := dialer.DialContext(ctx, j.endpoint.Scheme, j.endpoint.Host)
+	if err != nil {
+		return err
+	}
+
+	j.conn = conn
+
+	return nil
+}
+
+func setTCPUserTimeout(_, _ string, c syscall.RawConn) error {
+	var sockErr error
+
+	if err := c.Control(func(fd uintptr) {
+		sockErr = unix.SetsockoptInt(int(fd), unix.IPPROTO_TCP, unix.TCP_USER_TIMEOUT, int(tcpUserTimeout.Milliseconds()))
+	}); err
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/osrg/gobgp/v4 v4.10.0
+	// Connect (or "connect" for UDP) if no connection is established already.
+	if j.conn == nil {
+		conn, err := new(net.Dialer).DialContext(ctx, j.endpoint.Scheme, j.endpoint.Host)
+		if err != nil {
+			return err
+		}
+
+		j.conn = conn
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `78fccf08` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0343d803` are properly handled with clean fallback behavior.

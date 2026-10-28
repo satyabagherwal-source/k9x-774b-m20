@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md`  
 > **Source**: github ([https://github.com/tokio-rs/tokio](https://github.com/tokio-rs/tokio))  
-> **Source Version**: `0d38f834`  
+> **Source Version**: `e0f829f0`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T19:38:44.964Z  
+> **Timestamp**: 2026-10-28T22:07:40.740Z  
 > **Learning ID**: `learn-github-tokio-rs-tokio`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tokio-rs/tokio](https://github.com/tokio-rs/tokio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T19:38:44.954Z  
+> **Harvest Timestamp**: 2026-10-28T22:07:40.556Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A runtime for writing reliable asynchronous applications with Rust. Provides I/O, networking, scheduling, timers, ...
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 33531 stars
+- **Stars / Engagement**: 33536 stars
 
 ---
 
@@ -1934,11 +1934,13 @@ where
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8729** (2026-10-27): **time: wake the driver when the paused clock advances**
-  *Symptoms*: Fixes #8696.  `time::advance` moves the paused clock and wakes nothing. While `spawn_blocking` work runs, auto-advance is inhibited, so the time driver parks on a real timeout instead of advancing the clock itself. A sleep whose deadline the advance covers therefore waits out that timeout in real time; the report measures 8.19 s for a 10 s sleep advanced at 100 ms.  Unpark the driver after the clock moves, so it re-checks its deadlines against the new time. The change sits in the shared `time::advance` path, so it applies whichever time driver is in use.  `advance_wakes_a_parked_driver` in `tests/time_pause.rs` reproduces the report: without the change it fails after 8.20 s, with it the full `time_pause` suite passes in 0.40 s. `rustfmt --check --edition 2021` is clean on both files. 
+- **Issue #8734** (2026-10-28): **stream: prevent duplicate keys in StreamMap::extend**
+  *Symptoms*: ## Motivation  `tokio_stream::StreamMap::extend` was previously delegating directly to `self.entries.extend(iter)` on the underlying vector. This bypassed the key uniqueness invariant of `StreamMap`, allowing duplicate keys to accumulate if a key was inserted first and then re-added via `extend`, or if the incoming iterator contained duplicate keys within itself.  When duplicate keys existed: - `remove(&k)` would only remove the first matching entry, leaving duplicates behind. - `StreamMap::len()` reported inflated counts. - `poll_next` polled multiple streams under the same logical key.  ## Solution  This PR updates `Extend<(K, V)>` for `StreamMap<K, V>` to: 1. Add `where K: Hash + Eq` bounds on the `impl` block, matching `FromIterator<(K, V)>` and `insert`. 2. Route items through `self.insert(key, value)` so that duplicate keys overwrite existing entries as expected of a map. 3. Adds comprehensive unit tests verifying that both existing keys and duplicate keys within the iterator are properly deduplicated and the replaced stream yields the latest values.  Closes #4774
 
-- **Issue #8728** (2026-10-27): **taskdump: release the core borrow before tracing a dump**
-  *Symptoms*: Fixes #8391.  `Handle::dump()` on a current-thread runtime holds the scheduler's core borrow while it polls every task, so a task that wakes itself during the dump re-enters `Schedule::schedule` and panics with `RefCell already borrowed`.  Drain the task queue into an owned queue, release the borrow, then trace. Wakes raised during tracing land back in the queue through the normal path and are picked up after the dump. The `inject.is_closed()` early return moves above the drain so a closed runtime cannot drop tasks that were queued when the dump began.  `self_wake_during_tracing_current_thread` in `tests/dump.rs` covers it: without the change it panics at `current_thread/mod.rs:722`, with it the full dump suite passes. `rustfmt --check --edition 2021` is clean on both touched files.  An alternative was to use `try_borrow_mut` and skip a task that is mid-schedule, but that can drop a wake, which is the same bug in a quieter form. 
+- **Issue #8732** (2026-10-28): **time: add Interval::deadline**
+  *Symptoms*: Interval already tracks the deadline for its next tick internally (poll_tick reads it via self.delay.deadline() to compute the following one), but never exposes it. Sleep::deadline and the already-open Timeout::deadline (#8685) both expose this same kind of information for their own types, so Interval having no way to inspect when its next tick is due was the odd one out.
+  **Post-Mortem & Fix Analysis**:
+  > duplicate of #8685
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1955,147 +1957,69 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0d38f834` (2026-10-27)
-**Commit Message**: taskdump: release the core borrow before tracing a dump (#8728)
+### Incident Patch 1: `e0f829f0` (2026-10-28)
+**Commit Message**: time: add `Interval::deadline` (#8732)
 
-Handle::dump() holds the current-thread scheduler's core borrow while it
-polls every task, so a task that wakes itself during the dump re-enters the
-scheduler and panics with "RefCell already borrowed". Thus, drain the task
-queue, release the borrow, and trace the drained tasks.
-
-Fixes: #8391
-
-**File**: `tokio/src/runtime/scheduler/current_thread/mod.rs` (modified, +17/-12)
+**File**: `tokio/src/time/interval.rs` (modified, +21/-0)
 ```diff
-@@ -593,26 +593,31 @@ impl Handle {
-                 Some(CurrentThread(context)) if Arc::ptr_eq(self, &context.handle) => context,
-                 _ => return,
-             };
--            let mut maybe_core = context.core.borrow_mut();
--            let core = if let Some(core) = maybe_core.as_mut() {
--                core
--            } else {
--                return;
--            };
--            let local = &mut core.tasks;
--
-             if self.shared.inject.is_closed() {
-                 return;
-             }
- 
--            traces = trace_current_thread(&self.shared.owned, local, &self.shared.inject)
-+            // Move the local queue out of the scheduler core and drop the borrow
-+            // before polling anything. Tracing polls tasks, and a task that wakes
-+            // itself while being polled calls `schedule`, which borrows the core
-+            // again. Holding this borrow across the poll panics with
-+            // "RefCell already borrowed".
-+            let mut local = VecDeque::new();
-+            {
-+                let mut maybe_core = context.core.borrow_mut();
-+                let core = if let Some(core) = maybe_core.as_mut() {
-+                    core
-+                } else {
-+                    return;
-+                };
-+                local.append(&mut core.tasks);
-+            }
+@@ -634,4 +634,25 @@ impl Interval {
+     pub fn period(&self) -> Duration {
+         self.period
+     }
 +
-+            traces = trace_current_thread(&self.shared.owned, &mut local, &self.shared.inject)
-                 .into_iter()
-                 .map(|(id, trace)| dump::Task::new(id, trace))
-                 .collect();
- 
--            // Avoid double borrow panic
--            drop(maybe_core);
--
-             // Taking a taskdump could wakes every task, but we probably don't want
-             // the `yield_now` vector to be that large under normal circumstances.
-             // Therefore, we free its allocation.
-```
-
-**File**: `tokio/tests/dump.rs` (modified, +28/-0)
-```diff
-@@ -203,6 +203,34 @@ fn notified_during_tracing() {
-     });
- }
- 
-+/// A task that wakes itself while the dumper is polling it must not panic.
-+///
-+/// Taking a dump polls each task. Waking from inside that poll is legal, and
-+/// the wake goes through `Schedule::schedule`, which borrows the scheduler
-+/// core. If the dump holds that borrow across the poll it panics with
-+/// "RefCell already borrowed" and takes the runtime down with it.
-+#[test]
-+fn self_wake_during_tracing_current_thread() {
-+    let rt = runtime::Builder::new_current_thread()
-+        .enable_all()
-+        .build()
-+        .unwrap();
-+
-+    rt.block_on(async {
-+        let task = tokio::spawn(std::future::poll_fn(|cx| {
-+            if Handle::is_tracing() {
-+                cx.waker().wake_by_ref();
-+            }
-+            std::task::Poll::<()>::Pending
-+        }));
-+
-+        tokio::task::yield_now().await;
-+        let _dump = Handle::current().dump().await;
-+
-+        task.abort();
-+    });
-+}
-+
- /// Regression tests for the scheduler's idle bookkeeping across a dump.
- ///
- /// Requesting a dump wakes every worker thread directly, without going through
-```
-
----
-
-### Incident Patch 2: `b980c95d` (2026-10-26)
-**Commit Message**: macros: suppress `clippy::redundant_pub_crate` in `select!` (#8712)
-
-**File**: `tokio/src/macros/select.rs` (modified, +1/-0)
-```diff
-@@ -644,6 +644,7 @@ doc! {macro_rules! select {
-         // This module is defined within a scope and should not leak out of this
-         // macro.
-         #[doc(hidden)]
-+        #[allow(clippy::redundant_pub_crate)]
-         mod __tokio_select_util {
-             // Generate an enum with one variant per select branch
-             $crate::select_priv_declare_output_enum!( ( $($count)* ) );
-```
-
-**File**: `tokio/tests/macros_select.rs` (modified, +12/-0)
-```diff
-@@ -1159,3 +1159,15 @@ async fn select_is_budget_aware() {
-     let poll = futures::poll!(&mut task());
-     assert!(poll.is_pending());
- }
-+
-+#[maybe_tokio_test]
-+#[deny(clippy::redundant_pub_crate)]
-+async fn clippy_redundant_pub_crate() {
-+    let (tx, mut rx) = tokio::sync::mpsc::channel::<()>(1);
-+    drop(tx);
-+
-+    tokio::select! {
-+        Some(()) = rx.recv() => {}
-+        else => {}
++    /// Returns the instant at which the next tick will complete.
++    ///
++    /// # Examples
++    ///
++    /// ```
++    /// use tokio::time::{self, Instant};
++    ///
++    /// use std::time::Duration;
++    ///
++    /// # #[tokio::main(flavor = "current_thread")]
++    /// # async fn main() {
++    /// let start = Instant::now();
++    /// let interval = time::interval_at(start, Duration::from_millis(10));
++    ///
++    /// assert_eq!(interval.deadline(), start);
++    /// # }
++    /// ```
++    pub fn deadline(&self) -> Instant {
++        self.delay.deadline()
 +    }
+ }
+```
+
+**File**: `tokio/tests/time_interval.rs` (modified, +15/-0)
+```diff
+@@ -495,3 +495,18 @@ async fn interval_doesnt_panic_max_duration_when_polling() {
+     let mut timer = task::spawn(time::interval(Duration::MAX));
+     assert_ready!(timer.enter(|cx, mut timer| timer.poll_tick(cx)));
+ }
++
++#[tokio::test(start_paused = true)]
++async fn deadline() {
++    let start = Instant::now();
++    let mut interval = time::interval_at(start, ms(300));
++
++    assert_eq!(interval.deadline(), start);
++
++    interval.tick().await;
++    assert_eq!(interval.deadline(), start + ms(300));
++
++    time::advance(ms(300)).await;
++    interval.tick().await;
++    assert_eq!(interval.deadline(), start + ms(600));
 +}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8734** (closed): stream: prevent duplicate keys in StreamMap::extend (@Ranjeet2063)
+- **PR #8732** (2026-10-28): time: add Interval::deadline (@stackedbyaradhya)
 - **PR #8729** (closed): time: wake the driver when the paused clock advances (@scrieve)
 - **PR #8728** (2026-10-27): taskdump: release the core borrow before tracing a dump (@scrieve)
 - **PR #8727** (2026-10-26): docs: state UnboundedReceiver::recv_many returns before limit is full (@stepancheg)
 - **PR #8725** (2026-10-25): Merge 'tokio-1.54.x' into 'master' (@Darksonn)
-- **PR #8724** (2026-10-25): Merge 'tokio-1.51.x' into 'tokio-1.53.x' (@Darksonn)
-- **PR #8722** (2026-10-25): sync: remove obsolete TODO in mpsc block reclaim (@darkraider01)
 
 ---
 
@@ -2115,55 +2039,48 @@ Fixes: #8391
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. taskdump: release the core borrow before tracing a dump (#8728)
+## X. time: add `Interval::deadline` (#8732)
 
 **RULE**:
-When implementing operations in `tokio/src/runtime/scheduler/current_thread/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tokio-rs/tokio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tokio/src/time/interval.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tokio-rs/tokio. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0d38f834`: taskdump: release the core borrow before tracing a dump (#8728). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e0f829f0`: time: add `Interval::deadline` (#8732). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tokio/src/runtime/scheduler/current_thread/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tokio/src/time/interval.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            // Move the local queue out of the scheduler core and drop the borrow
-            // before polling anything. Tracing polls tasks, and a task that wakes
-            // itself while being polled calls `schedule`, which borrows the core
-            // again. Holding this borrow across the poll panics with
-            // "RefCell already borrowed".
-            let mut local = VecDeque::new();
-            {
-                let mut maybe_core = context.core.borrow_mut();
-                let core = if let Some(core) = maybe_core.as_mut() {
-                    core
-                } else {
-                    return;
-                };
-                local.append(&mut core.tasks);
-            }
 
-            traces = trace_current_thread(&self.shared.owned, &mut local, &self.shared.inject)
+    /// Returns the instant at which the next tick will complete.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tokio::time::{self, Instant};
+    ///
+    /// use std::time::Duration;
+    ///
+    /// # #[tokio::main(flavor = "current_thread")]
+    /// # async fn main() {
+    /// let start = Instant::now();
+    /// let interval = time::interval_at(start, Duration::from_millis(10));
+    ///
+    /// assert_eq!(interval.deadline(), start);
+    /// # }
+    /// ```
+    pub fn deadline(&self) -> Instant {
+        self.delay.deadline()
+    }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            let mut maybe_core = context.core.borrow_mut();
-            let core = if let Some(core) = maybe_core.as_mut() {
-                core
-            } else {
-                return;
-            };
-            let local = &mut core.tasks;
-
-            traces = trace_current_thread(&self.shared.owned, local, &self.shared.inject)
-            // Avoid double borrow panic
-            drop(maybe_core);
-
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0d38f834` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e0f829f0` are properly handled with clean fallback behavior.

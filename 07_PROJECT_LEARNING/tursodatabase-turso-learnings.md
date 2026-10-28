@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
-> **Source Version**: `5a269c3c`  
+> **Source Version**: `b0563444`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T04:28:32.275Z  
+> **Timestamp**: 2026-10-28T22:07:53.626Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T04:28:32.269Z  
+> **Harvest Timestamp**: 2026-10-28T22:07:53.622Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25071 stars
+- **Stars / Engagement**: 25076 stars
 
 ---
 
@@ -1376,11 +1376,11 @@ async fn main() -> Result<(), Error> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10943** (2026-10-28): **core/translate: qualify the child table of a foreign-key action in main**
-  *Symptoms*: ## Description  Foreign-key actions on a child table in `main` now name the child table with its database (`main.child`), the same way they already did for attached databases. Before, the generated `UPDATE`/`DELETE` for `ON DELETE`/`ON UPDATE` `CASCADE`, `SET NULL` and `SET DEFAULT` used the bare table name. Unqualified names find TEMP objects first, so a TEMP table with the child's name received the action and `main.child` kept a row pointing at a deleted parent. A TEMP view with that name made the parent write fail with `no such table`.  The change is in the four `fire_fk_*` functions in `core/translate/fkeys.rs`, plus a regression `.sqltest`.  ## Motivation and context  Fixes #10938. The issue has the reproducer and an `EXPLAIN` comparison: SQLite's action subprogram opens `main.child` (`root=4 iDb=0`), while turso's opens `temp.child` (`root=2; iDb=1`).  SQLite compiles each action as a trigger in the child table's own database (`fkActionTrigger` in `fkey.c`), so a TEMP object never takes part. This change gets the same result with a smaller change. Compiling the action under the child's `database_scope` would follow SQLite's design more closely; happy to switch to that if you prefer.  #10585 and #10008 change the same four lines (`child_namespace_name`, which returns `None` for `main`). Whichever lands first, `main` needs a name in the action SQL for as long as unqualified lookup checks TEMP first.  ## Description of AI Usage  I used claude code extensively. The root cau
+- **Issue #10970** (2026-10-28): **build(deps): bump undici from 8.11.2 to 8.12.3 in /bindings/javascript**
+  *Symptoms*: Bumps [undici](https://github.com/nodejs/undici) from 8.11.2 to 8.12.3. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/nodejs/undici/releases">undici's releases</a>.</em></p> <blockquote> <h2>v8.12.3</h2> <h2>What's Changed</h2> <ul> <li>ci: use Python 3.14 for the WPT server on macOS by <a href="https://github.com/mrityunjay-pandey"><code>@​mrityunjay-pandey</code></a> in <a href="https://redirect.github.com/nodejs/undici/pull/6029">nodejs/undici#6029</a></li> <li>build(deps-dev): bump neostandard from 0.13.0 to 0.14.0 by <a href="https://github.com/dependabot"><code>@​dependabot</code></a>[bot] in <a href="https://redirect.github.com/nodejs/undici/pull/6006">nodejs/undici#6006</a></li> <li>build(deps-dev): bump eslint from 9.39.4 to 10.12.0 by <a href="https://github.com/dependabot"><code>@​dependabot</code></a>[bot] in <a href="https://redirect.github.com/nodejs/undici/pull/5967">nodejs/undici#5967</a></li> <li>docs: document the options of interceptors.cache() by <a href="https://github.com/qodelicious"><code>@​qodelicious</code></a> in <a href="https://redirect.github.com/nodejs/undici/pull/6050">nodejs/undici#6050</a></li> <li>fix(h2): replace a connection that stops responding after a stream timeout by <a href="https://github.com/mcollina"><code>@​mcollina</code></a> in <a href="https://redirect.github.com/nodejs/undici/pull/6052">nodejs/undici#6052</a></li> <li>fix(pool): keep caller async context for queued requests by <a h
 
-- **Issue #10941** (2026-10-27): **postgres: report default public schema ownership and permissions**
-  *Symptoms*: ## Description  Report `pg_database_owner` as the owner of the public schema, with CREATE and USAGE for the owner and USAGE for PUBLIC. Expose the built-in role in `pg_roles` with its PostgreSQL attributes, and recognize its OID in `pg_get_userbyid` and `acldefault`.  ## Motivation and context  The catalog previously reported `turso` as the public schema owner and a NULL ACL. This caused pg_dump to emit `ALTER SCHEMA public OWNER TO turso` and `REVOKE USAGE ON SCHEMA public FROM PUBLIC`. Matching PostgreSQL's defaults removes both unnecessary statements.  This changes catalog metadata only; it does not implement role management or permission enforcement. Table-owner names and the server-version header still differ in the dump comparison.  ## Description of AI Usage  Codex investigated the catalog defaults, implemented the fix, added regression coverage and documentation, and validated the changes under the author's direction. 
+- **Issue #10969** (2026-10-28): **build(deps): bump launch-editor from 2.14.1 to 2.14.2 in /examples/react-native**
+  *Symptoms*: Bumps [launch-editor](https://github.com/vitejs/launch-editor) from 2.14.1 to 2.14.2. <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/vitejs/launch-editor/commit/b5334895a00f8000ef3b6a46f2aa9e1a62eb27b4"><code>b533489</code></a> v2.14.2</li> <li><a href="https://github.com/vitejs/launch-editor/commit/f13cd835d4b8e860b1d4d080ad8a490cc2463679"><code>f13cd83</code></a> fix: check file existence after path resolution (<a href="https://redirect.github.com/vitejs/launch-editor/issues/157">#157</a>)</li> <li><a href="https://github.com/vitejs/launch-editor/commit/f6e6701bb1f16f2dd242b321374f1b6cca6eb6d4"><code>f6e6701</code></a> fix: ensure filenames passed to editors are not considered as flags (<a href="https://redirect.github.com/vitejs/launch-editor/issues/156">#156</a>)</li> <li><a href="https://github.com/vitejs/launch-editor/commit/3c2f9bf2ff8fe63d056a8f9cc52d825b66ca79fc"><code>3c2f9bf</code></a> fix: reject paths containing <code>%</code> on windows (<a href="https://redirect.github.com/vitejs/launch-editor/issues/155">#155</a>)</li> <li><a href="https://github.com/vitejs/launch-editor/commit/ecdfce1f9ec56a9c08f225f27d8047f3cf9690b1"><code>ecdfce1</code></a> refactor: extract <code>constructWindowsLaunchCommand</code> (<a href="https://redirect.github.com/vitejs/launch-editor/issues/154">#154</a>)</li> <li><a href="https://github.com/vitejs/launch-editor/commit/24d5d8442a022a83c9c9c486b18a3bc4236cf45a"><code>24d5d84</code></a> fix: correctly show e
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1397,684 +1397,157 @@ async fn main() -> Result<(), Error> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `73cf506b` (2026-10-27)
-**Commit Message**: Merge 'postgres: preserve not-null constraints in pg_dump' from Pedro Muniz
+### Incident Patch 1: `ccebb425` (2026-10-28)
+**Commit Message**: Merge 'build(deps): bump undici from 8.11.2 to 8.12.3 in /bindings/javascript' from app/dependabot
 
-Pedro: I personally don't like too much this approach because its very
-fragile, but we don't have a good binding and resolved expr/type
-support, so its kinda impossible to properly know the output logical
-type.
+Bumps [undici](https://github.com/nodejs/undici) from 8.11.2 to 8.12.3.
+<details> <summary>Release notes</summary> <p><em>Sourced from <a
+href="https://github.com/nodejs/undici/releases">undici's
+releases</a>.</em></p> <blockquote> <h2>v8.12.3</h2> <h2>What's
+Changed</h2> <ul> <li>ci: use Python 3.14 for the WPT server on macOS by
+<a href="https://github.com/mrityunjay-pandey"><code>@​mrityunjay-
+pandey</code></a> in <a href="https://redirect.github.com/nodejs/undici/
+pull/6029">nodejs/undici#6029</a></li> <li>build(deps-dev): bump
+neostandard from 0.13.0 to 0.14.0 by <a
+href="https://github.com/dependabot"><code>@​dependabot</code></a>[bot]
+in <a href="https://redirect.github.com/nodejs/undici/pull/6006">nodejs/
+undici#6006</a></li> <li>build(deps-dev): bump eslint from 9.39.4 to
+10.12.0 by <a
+href="https://github.com/dependabot"><code>@​dependabot</code></a>[bot]
+in <a href="https://redirect.github.com/nodejs/undici/pull/5967">nodejs/
+undici#5967</a></li> <li>docs: document the options of
+interceptors.cache() by <a
+href="https://github.com/qodelicious"><code>@​qodelicious</code></a
 
-Preserve NOT NULL constraints in PostgreSQL dumps. Report rowid-alias
-primary keys as non-nullable in `pg_attribute`, and preserve boolean
-literal and CASE result types so PostgreSQL clients receive `t`/`f`
-instead of integer `1`/`0`.
-
-Boolean literals translate to typed boolean expressions. The PostgreSQL
-statement wrapper reports boolean result metadata from the compiled
-expressions; no new dialect hook is needed. Make `Column::notnull()`
-include rowid aliases, while preserving SQLite declaration metadata and
-schema rewriting. Update the SQL documentation to describe this
-behavior.
-
-`pg_dump` omitted NOT NULL from integer primary keys because their
-catalog flag was false. It also missed explicitly declared NOT NULL
-columns because its `notnull_islocal` CASE expression was reported as an
-integer; pg_dump checks for PostgreSQL's textual boolean `t`.
-
-The dump fixtures now preserve these declaration
-
-**File**: `core/schema.rs` (modified, +24/-3)
+**File**: `bindings/javascript/yarn.lock` (modified, +3/-3)
 ```diff
-@@ -4886,7 +4886,9 @@ impl BTreeTable {
+@@ -3368,9 +3368,9 @@ __metadata:
+   linkType: hard
  
-     fn primary_key_implies_not_null(&self, column: &Column) -> bool {
-         column.primary_key()
--            && (self.is_strict || (!self.has_rowid && self.primary_key_columns.len() == 1))
-+            && (column.is_rowid_alias()
-+                || self.is_strict
-+                || (!self.has_rowid && self.primary_key_columns.len() == 1))
-     }
- 
-     pub fn column_collations(&self) -> Result<Vec<CollationSeq>> {
-@@ -6872,7 +6874,7 @@ impl Column {
-     }
-     #[inline]
-     pub fn notnull(&self) -> bool {
--        self.info.notnull()
-+        self.info.notnull() || self.is_rowid_alias()
-     }
-     #[inline]
-     pub fn set_notnull(&mut self, v: bool) {
-@@ -7834,13 +7836,17 @@ mod tests {
-             for (actual, flag) in [
-                 (column.primary_key(), ColDefFlags::PrimaryKey),
-                 (column.is_rowid_alias(), ColDefFlags::RowIdAlias),
--                (column.notnull(), ColDefFlags::NotNull),
-                 (column.explicit_notnull(), ColDefFlags::ExplicitNotNull),
-                 (column.unique(), ColDefFlags::Unique),
-                 (column.hidden(), ColDefFlags::Hidden),
-             ] {
-                 assert_eq!(actual, flags.contains(flag), "{flags:?}: {flag:?}");
-             }
-+            assert_eq!(
-+                column.notnull(),
-+                flags.intersects(ColDefFlags::NotNull | ColDefFlags::RowIdAlias),
-+                "{flags:?}"
-+            );
-             assert_eq!(column.ty(), Type::Numeric, "{flags:?}");
-             assert_eq!(
-                 column.collation_opt(),
-@@ -8233,6 +8239,21 @@ mod tests {
-         Ok(())
-     }
- 
-+    #[test]
-+    fn rowid_alias_is_not_nullable() {
-+        for sql in [
-+            "CREATE TABLE t(id INTEGER PRIMARY KEY)",
-+            "CREATE TABLE t(id INTEGER, PRIMARY KEY(id))",
-+        ] {
-+            let table = BTreeTable::from_sql(sql, 2).unwrap();
-+            let column = table.get_column("id").unwrap().1;
-+            assert!(column.notnull(), "{sql}");
-+            assert!(!column.explicit_notnull(), "{sql}");
-+        }
-+        let table = BTreeTable::from_sql("CREATE TABLE t(id INTEGER PRIMARY KEY DESC)", 2).unwrap();
-+        assert!(!table.get_column("id").unwrap().1.notnull());
-+    }
-+
-     #[test]
-     pub fn test_col_notnull_negative() -> Result<()> {
-         let sql = r#"CREATE TABLE t1 (a INTEGER);"#;
-```
-
-**File**: `core/translate/emitter/update.rs` (modified, +1/-1)
-```diff
-@@ -1064,7 +1064,7 @@ fn emit_deferred_notnull_checks<'a>(
- ) -> crate::Result<()> {
-     let or_conflict = program.resolve_type;
-     for (idx, table_column) in target_table.table.columns().iter().enumerate() {
--        if !table_column.notnull() {
-+        if !table_column.notnull() || table_column.is_rowid_alias() {
-             continue;
-         }
-         // Only check columns that are in SET clauses
-```
-
-**File**: `core/translate/pragma.rs` (modified, +4/-1)
-```diff
-@@ -2026,7 +2026,10 @@ fn emit_columns_for_table_info(
-         program.emit_string8(column.ty_str.clone(), base_reg + 2);
- 
-         // notnull
--        program.emit_bool(column.notnull(), base_reg + 3);
-+        program.emit_bool(
-+            column.notnull() && (!column.is_rowid_alias() || column.explicit_notnull()),
-+            base_reg + 3,
-+        );
- 
-         // dflt_value
-         match &column.default {
-```
-
-**File**: `docs/sql-reference/expressions.mdx` (modified, +2/-0)
-```diff
-@@ -54,6 +54,8 @@ SELECT 1;    -- true
- SELECT 0;    -- false
- ```
- 
-+The PostgreSQL frontend supports `TRUE` and `FALSE` literals. Boolean literals and boolean-valued `CASE` expressions are sent to PostgreSQL clients as booleans (`t` or `f` in text format).
-+
- ## Operators
- 
- ### Arithmetic Operators
-```
-
-**File**: `docs/sql-reference/statements/create-table.mdx` (modified, +2/-0)
-```diff
-@@ -120,6 +120,8 @@ Note also that MVCC autoincrement does **not** un-burn rolled-back rowids — a
- 
- ### NOT NULL
- 
-+The PostgreSQL catalogs report `INTEGER PRIMARY KEY` columns as non-nullable, along with explicitly declared `NOT NULL` columns, so `pg_dump` preserves those constraints.
-+
- Prevents the column from containing NULL values. Any INSERT or UPDATE that would set the column to NULL raises a constraint error.
- 
- ```sql
-```
-
-**File**: `postgres/conformance/pg-sqltests/catalog.sqltest` (modified, +34/-0)
-```diff
-@@ -1280,3 +1280,37 @@ expect @tursopg {
-     1
-     t_pkey|__turso_internal_pk_index_t
- }
-+
-+test pg-attribute-not-null-dump {
-+    CREATE TABLE dump_nulls (id INTEGER PRIMARY KEY, required TEXT NOT NULL, optional TEXT);
-+    SELECT a.attname, a.attnotnull,
-+           CASE WHEN a.attislocal THEN true
-+                WHEN a.attnotnull AND NOT a.attislocal THEN true
-+                ELSE false END AS notnull_islocal
-+    FROM pg_attribute a JOIN pg_class c ON c.oid = a.attrelid
-+    WHERE c.relname = 'dump_nulls' AND a.attnum > 0 ORDER BY a.attnum;
-+}
-+expect {
-+    id|t|t
-+    required|t|t
-+    optional|f|t
-+}
-+
-+test pg-boolean-case-results {
-+    SELECT true, false, CASE WHEN true THEN true ELSE false END,
-+           CASE WHEN false THEN true ELSE false END,
-+           CASE WHEN false THEN true END,
-+           CASE WHEN true THEN 1 ELSE 0 END;
-+    CREATE TABLE bools (value BOOLEAN);
-+    INSERT INTO bools VALUES (true), (false);
-+    SELECT CASE WHEN true THEN value ELSE false END FROM bools ORDER BY value;
-+    SELECT CASE WHEN true THEN (CASE WHEN false THEN false ELSE true END) ELSE NULL END,
-+           CASE WHEN true THEN NULL ELSE NULL END,
-+           CASE WHEN true THEN 1 ELSE NULL END;
-+}
-+expect {
-+    t|f|t|f||1
-+    f
-+    t
-+    t||1
-+}
-```
-
-**File**: `postgres/frontend/catalog.rs` (modified, +1/-1)
-```diff
-@@ -653,7 +653,7 @@ impl SnapshotRows for PgAttributeTable {
-                     _ => sqlite_type_to_pg_oid(&col.ty_str),
-                 };
-                 let attnum = (i + 1) as i64; // 1-based
--                let notnull = if col.notnull() { 1i64 } else { 0i64 };
-+                let notnull = i64::from(col.notnull());
-                 let has_def = if col.default.is_some() { 1i64 } else { 0i64 };
- 
-                 rows.push(vec![
-```
-
-**File**: `postgres/frontend/statement.rs` (modified, +78/-1)
-```diff
-@@ -78,7 +78,20 @@ impl Statement {
-     }
- 
-     pub fn get_column_type_info(&self, index: usize) -> Result<Option<ColumnTypeInfo>> {
--        self.inner.get_column_type_info(index).map_err(Into::into)
-+        let mut info = self.inner.get_column_type_info(index)?;
-+        if self.inner.get_query_mode() == turso_core::QueryMode::Normal {
-+            let program = self.inner.get_program();
-+            if let (Some(info), Some(column)) = (&mut info, program.result_columns.get(index)) {
-+                if matches!(
-+                    boolean_result_type(&column.expr, program),
-+                    BooleanResultType::Boolean
-+                ) {
-+                    info.declared_name = "BOOLEAN".to_string();
-+                    info.base_type = None;
-+                }
-+            }
-+        }
-+        Ok(info)
-     }
- 
-     pub fn run_ignore_rows(&mut self) -> Result<()> {
-@@ -195,6 +208,70 @@ impl Statement {
-     }
- }
- 
-+enum BooleanResultType {
-+    Boolean,
-+    Null,
-+    Other,
-+}
-+
-+// TODO: With better binding and resolved expression support, read the result type
-+// from the resolved expression instead. Inferring it from expression shapes here
-+// is fragile: new expressions and rewrites can lose the boolean type.
-+fn boolean_result_type(
-+    expr: &turso_parser::ast::Expr,
-+    program: &turso_core::Program,
-+) -> BooleanResultType {
-+    use turso_parser::ast::{Expr, Literal};
-+
-+    match expr {
-+        Expr::Literal(Literal::Null) => BooleanResultType::Null,
-+        Expr::Cast {
-+            type_name: Some(ty),
-+            ..
-+        } if ty.array_dimensions == 0 && is_boolean_type(&ty.name) => BooleanResultType::Boolean,
-+        Expr::Column { table, column, .. } => {
-+            let column = program
-+                .table_references
-+                .find_table_by_internal_id(*table)
-+                .and_then(|(_, table)| table.get_column_at(*column));
-+            match column {
-+                Some(column)
-+                    if column.array_dimensions() == 0 && is_boolean_type(&column.ty_str) =>
-+                {
-+                    BooleanResultType::Boolean
-+                }
-+                _ => BooleanResultType::Other,
-+            }
-+        }
-+        Expr::Parenthesized(exprs) if exprs.len() == 1 => boolean_result_type(&exprs[0], program),
-+        Expr::Collate(expr, _) => boolean_result_type(expr, program),
-+        Expr::Case {
-+            when_then_pairs,
-+            else_expr,
-+            ..
-+        } => {
-+            let mut result = BooleanResultType::Null;
-+            for expr in when_then_pairs
-+                .iter()
-+                .map(|(_, then)| then.as_ref())
-+                .chain(else_expr.as_deref())
-+            {
-+                match boolean_result_type(expr, program) {
-+                    BooleanResultType::Boolean => result = BooleanResultType::Boolean,
-+                    BooleanResultType::Null => {}
-+                    BooleanResultType::Other => return BooleanResultType::Other,
-+                }
-+            }
-+            result
-+        }
-+        _ => BooleanResultType::Other,
-+    }
-+}
-+
-+fn is_boolean_type(name: &str) -> bool {
-+    name.eq_ignore_ascii_case("boolean") || name.eq_ignore_ascii_case("bool")
-+}
-+
- impl std::ops::Deref for Statement {
-     type Target = turso_core::Statement;
+ "undici@npm:^8.4.1":
+-  version: 8.11.2
+-  resolution: "undici@npm:8.11.2"
+-  checksum: 10c0/106f6991178fb7562fd90cdec7993c5f807a9428682306091f0c4b27fc474ec291f868e29972c6252988bf061ad193df943b3b99e775be157a28d92bbb95699d
++  version: 8.12.3
++  resolution: "undici@npm:8.12.3"
++  checksum: 10c0/714919e62b4160eea195fb35c7f5c4907235741e47bfde8a014ac58f6d24df13434e23400d7f48e2c455fd2b259d27f07fce514f04a5b4e99936ba62cbc4bb71
+   languageName: node
+   linkType: hard
  
 ```
 
 ---
 
-### Incident Patch 2: `2b018b85` (2026-10-27)
-**Commit Message**: Merge 'vdbe/explain: fix O(N²) quadratic in EXPLAIN by caching ephemeral cursors' from Glauber Costa
+### Incident Patch 2: `d3bff3e6` (2026-10-28)
+**Commit Message**: Merge 'build(deps): bump rustls from 0.23.45 to 0.23.46' from app/dependabot
 
-## Summary
+Bumps [rustls](https://github.com/rustls/rustls) from 0.23.45 to
+0.23.46. <details> <summary>Commits</summary> <ul> <li><a href="https://
+github.com/rustls/rustls/commit/f04804fa13341a9b1dc02b5d1dd8a746f2c4b7fb
+"><code>f04804f</code></a> Delay saving KX hint until handshake
+confirmation</li> <li><a href="https://github.com/rustls/rustls/commit/0
+49d39b975ef5c39f546a10fa03d420dcf053510"><code>049d39b</code></a> Bump
+version to 0.23.46</li> <li><a href="https://github.com/rustls/rustls/co
+mmit/6d0ba089d6d446959d113bdad43042780949ba48"><code>6d0ba08</code></a>
+Eliminate secret from impl Debug for
+<code>ServerSessionValue</code></li> <li><a href="https://github.com/rus
+tls/rustls/commit/2b82b8141ae090fa193a9961705598b81d3aae9c"><code>2b82b8
+1</code></a> unbuffered: update TLS 1.3 traffic keys before exhausting
+them</li> <li><a href="https://github.com/rustls/rustls/commit/74343e704
+7d7179b9bd7e67cef543b6c490518a1"><code>74343e7</code></a> conn: update
+TLS 1.3 traffic keys within fragmented writes</li> <li><a href="https://
+github.com/rustls/rustls/commit/795eea719e9491ee45aae38acc62a60a98969fbe
+"><code>795eea
 
-- `insn_to_row()` in `core/vdbe/explain.rs` was scanning **all
-instructions** on every call to determine which cursor IDs are
-ephemeral. EXPLAIN calls it once per instruction, so N instructions × N
-scan = **O(N²) total work**.
-- For a query with a 100k-row VALUES subquery this made EXPLAIN take
-~80s instead of ~2s.
-- Fix: add `ExplainInfo::ephemeral_cursors` (a `HashSet<usize>` built
-once in `build_prepared_program`) and look it up in O(1) from
-`insn_to_row`.
-
-## Performance
-
-| VALUES rows | Before | After |
-|---|---|---|
-| 10k | 1.8s | 0.6s |
-| 50k | 42.7s | 1.1s |
-| 100k | ~80s | 1.9s |
-
-## CI impact
-
-This should improve CI significantly — EXPLAIN is exercised in many
-conformance tests (including `selectG.test` which runs EXPLAIN on a
-100k-entry VALUES list). The quadratic was keeping CI margins thin and
-causing flakes on slower runners.
-
-## Test plan
-
-- New integration test
-`explain_scaling::explain_values_instruction_count_scales_linearly`
-counts EXPLAIN instruction rows for N=100 and N=1000 VALUES entries and
-asserts the ratio stays under 30× (ruling out super-line
-
-**File**: `core/vdbe/builder.rs` (modified, +2/-0)
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -2480,6 +2480,8 @@ impl ProgramBuilder {
+@@ -5438,9 +5438,9 @@ dependencies = [
  
-         self.parameters.list.dedup();
- 
-+        self.explain.build_ephemeral_cursors(&self.insns);
-+
-         // Mirrors SQLite's: usesStmtJournal = isMultiWrite && mayAbort
-         // Statement journals are only needed when a statement writes multiple rows AND could
-         // abort midway (e.g. constraint violation). Single-row writes are atomic and don't
-```
-
-**File**: `core/vdbe/explain.rs` (modified, +21/-16)
-```diff
-@@ -27,6 +27,8 @@ pub struct ExplainInfo {
-     /// Shared CTEs materialized before the main query, for `EXPLAIN QUERY PLAN`
-     /// consumers. Empty outside `EXPLAIN QUERY PLAN` mode.
-     pub cte_materializations: Vec<EqpCteMaterialization>,
-+    /// Cursor IDs opened as ephemeral (OpenEphemeral / OpenAutoindex / OpenDup).
-+    pub ephemeral_cursors: HashSet<usize>,
- }
- 
- impl ExplainInfo {
-@@ -37,6 +39,24 @@ impl ExplainInfo {
-             .map(|(_, comment)| *comment)
-     }
- 
-+    pub(crate) fn build_ephemeral_cursors(&mut self, insns: &[(Insn, usize)]) {
-+        self.ephemeral_cursors.clear();
-+        for (insn, _) in insns {
-+            match insn {
-+                Insn::OpenEphemeral { cursor_id, .. } => {
-+                    self.ephemeral_cursors.insert(*cursor_id);
-+                }
-+                Insn::OpenAutoindex { cursor_id } => {
-+                    self.ephemeral_cursors.insert(*cursor_id);
-+                }
-+                Insn::OpenDup { new_cursor_id, .. } => {
-+                    self.ephemeral_cursors.insert(*new_cursor_id);
-+                }
-+                _ => {}
-+            }
-+        }
-+    }
-+
-     pub(crate) fn remap_insn_indices(&mut self, old_to_new: &[usize]) {
-         for (offset, _) in self.comments.iter_mut() {
-             *offset = old_to_new[*offset as usize] as InsnReference;
-@@ -53,22 +73,7 @@ pub fn insn_to_row(
-     program: &PreparedProgram,
-     insn: &Insn,
- ) -> (&'static str, i64, i64, i64, Value, i64, String) {
--    let mut ephemeral_cursors = HashSet::default();
--    for (insn, _) in &program.insns {
--        match insn {
--            Insn::OpenEphemeral { cursor_id, .. } => {
--                ephemeral_cursors.insert(*cursor_id);
--            }
--            Insn::OpenAutoindex { cursor_id } => {
--                ephemeral_cursors.insert(*cursor_id);
--            }
--            Insn::OpenDup { new_cursor_id, .. } => {
--                // Note: relies on invariant that OpenDup is only for ephemeral cursors
--                ephemeral_cursors.insert(*new_cursor_id);
--            }
--            _ => {}
--        }
--    }
-+    let ephemeral_cursors = &program.explain.ephemeral_cursors;
- 
-     let get_table_or_index_name = |cursor_id: usize| -> String {
-         let cursor_type = &program.cursor_ref[cursor_id].1;
+ [[package]]
+ name = "rustls"
+-version = "0.23.45"
++version = "0.23.46"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "0d41d731c7d2f962d1ccc364cec258de3c0e93b38c2fb3ba97ac74513048d634"
++checksum = "48e13bd8c0e9365c43cfa5c9e8f9ad49d3c8444926c9aac819e0e4dc503c8fdf"
+ dependencies = [
+  "aws-lc-rs",
+  "log",
 ```
 
 ---
 
-### Incident Patch 3: `40a72824` (2026-10-28)
-**Commit Message**: Merge 'perf/memory: add a tool that measures MVCC heap per row' from Mikaël Francoeur
+### Incident Patch 3: `b84291bb` (2026-10-28)
+**Commit Message**: Merge 'build(deps): bump launch-editor from 2.14.1 to 2.14.2 in /examples/react-native' from app/dependabot
 
-This PR adds `mvcc-row-memory` to `perf/memory`. The tool measures the
-heap that MVCC keeps for each row that a transaction writes. It changes
-no engine code.
+Bumps [launch-editor](https://github.com/vitejs/launch-editor) from
+2.14.1 to 2.14.2. <details> <summary>Commits</summary> <ul> <li><a
+href="https://github.com/vitejs/launch-editor/commit/b5334895a00f8000ef3
+b6a46f2aa9e1a62eb27b4"><code>b533489</code></a> v2.14.2</li> <li><a
+href="https://github.com/vitejs/launch-editor/commit/f13cd835d4b8e860b1d
+4d080ad8a490cc2463679"><code>f13cd83</code></a> fix: check file
+existence after path resolution (<a
+href="https://redirect.github.com/vitejs/launch-
+editor/issues/157">#157</a>)</li> <li><a
+href="https://github.com/vitejs/launch-editor/commit/f6e6701bb1f16f2dd24
+2b321374f1b6cca6eb6d4"><code>f6e6701</code></a> fix: ensure filenames
+passed to editors are not considered as flags (<a
+href="https://redirect.github.com/vitejs/launch-
+editor/issues/156">#156</a>)</li> <li><a
+href="https://github.com/vitejs/launch-editor/commit/3c2f9bf2ff8fe63d056
+a8f9cc52d825b66ca79fc"><code>3c2f9bf</code></a> fix: reject paths
+containing <code>%</code> on windows (<a
+href="https://redirect.github.com/vitejs/launch-
+editor/issues/155">#155</a>)</li> <li><a
 
-The tool runs one `INSERT`, `UPDATE` or `DELETE` over all rows of `t(id
-INTEGER PRIMARY KEY, v BLOB)` in one transaction. `update` and `delete`
-change rows that a checkpoint already wrote to the B-tree. The JSON
-report gives the bytes per row at four points:
-
-- The live heap before `COMMIT`.
-- The peak heap during the statement.
-- The peak heap during `COMMIT`.
-- The live heap after `COMMIT`, with automatic checkpoints and GC turned
-off.
-
-dhat counts the bytes that the code requests, so the values do not
-change with the load of the machine.
-
-On `main`, with 100k rows and a 100-byte blob per row (bytes per row):
-
-| Statement | Before `COMMIT` | Statement peak | `COMMIT` peak | After
-`COMMIT` | Allocations per row |
-|---|---|---|---|---|---|
-| insert | 661.8 | 745.8 | 843.7 | 664.3 | 6.00 |
-| update | 781.8 | 949.7 | 1047.6 | 784.3 | 7.05 |
-| delete | 661.8 | 661.9 | 731.0 | 664.3 | 5.05 |
-
-The other PRs of this stack use this tool to measur
-
-**File**: `.claude/skills/memory-benchmark/SKILL.md` (modified, +23/-0)
+**File**: `examples/react-native/package-lock.json` (modified, +6/-6)
 ```diff
-@@ -26,6 +26,29 @@ The crate is split into a library and binaries. The workload engine lives in
- dhat/RSS measurement. Randomized profiles (`read-heavy`, `mixed`) use a fixed
- RNG seed (`profile::WORKLOAD_RNG_SEED`) so workloads are identical across runs.
- 
-+## MVCC Memory Per Row
-+
-+The `mvcc-row-memory` binary measures the heap that one MVCC transaction keeps
-+for each row it writes: one `INSERT`, `UPDATE` or `DELETE` over every row of
-+`t(id INTEGER PRIMARY KEY, v BLOB)`. `update` and `delete` change rows that a
-+checkpoint already wrote to the B-tree. Use it to measure changes to MvStore
-+data structures (version chains, write sets, tombstones).
-+
-+```bash
-+cargo run -p memory-benchmark --bin mvcc-row-memory -- \
-+  --statement insert|update|delete --rows 100000 --payload-bytes 100 \
-+  --mode mvcc|wal --dhat-file /tmp/rows.json
-+python3 perf/memory/analyze-dhat.py /tmp/rows.json --sort-by eb --top 10
-+```
-+
-+The JSON report has `uncommitted_bytes_per_row` (before `COMMIT`),
-+`statement_peak_bytes_per_row`, `commit_peak_bytes_per_row`,
-+`committed_bytes_per_row` (after `COMMIT`, with automatic checkpoints and GC
-+off) and `statement_allocations_per_row`. The byte values are requested bytes,
-+so a debug build gives the same numbers as an optimized build. The dhat file's
-+"At exit" values are the live allocations at the committed measurement. See
-+`perf/memory/README.md` for details.
-+
- ## FTS Query Allocations
- 
- The `fts-memory` binary and `perf/memory/codspeed/benches/fts_queries.rs` share
-```
-
-**File**: `perf/memory/Cargo.toml` (modified, +4/-0)
-```diff
-@@ -13,6 +13,10 @@ path = "src/main.rs"
- name = "stack-report"
- path = "src/stack_report.rs"
- 
-+[[bin]]
-+name = "mvcc-row-memory"
-+path = "src/mvcc_row_memory.rs"
-+
- [[bin]]
- name = "fts-memory"
- path = "src/fts_memory.rs"
-```
-
-**File**: `perf/memory/README.md` (modified, +32/-0)
-```diff
-@@ -242,3 +242,35 @@ warm-up outside the measured closure. Each input is used for one measured query
- or transaction sequence and dropped after measurement. The same boundaries apply
- under CodSpeed instrumentation.
- Existing Criterion profiles retain their separate harness and measurement rules.
-+
-+# MVCC memory per row
-+
-+`mvcc-row-memory` measures how much heap one MVCC transaction keeps for each
-+row that it writes. The transaction runs one statement over every row of table
-+`t(id INTEGER PRIMARY KEY, v BLOB)`. `update` and `delete` change rows that a
-+checkpoint already wrote to the B-tree.
-+
-+```bash
-+cargo run -p memory-benchmark --bin mvcc-row-memory -- --statement insert --rows 100000
-+cargo run -p memory-benchmark --bin mvcc-row-memory -- --statement update --rows 100000
-+cargo run -p memory-benchmark --bin mvcc-row-memory -- --statement delete --rows 100000
-+python3 perf/memory/analyze-dhat.py dhat-heap.json --sort-by eb --top 10
-+```
-+
-+The JSON report gives bytes per row at four points:
-+
-+| Field | Live heap |
-+|-------|-----------|
-+| `uncommitted_bytes_per_row` | After the statement, before `COMMIT` |
-+| `statement_peak_bytes_per_row` | Highest value during the statement |
-+| `commit_peak_bytes_per_row` | Highest value from the statement to the end of `COMMIT` |
-+| `committed_bytes_per_row` | After `COMMIT`, with automatic checkpoints and GC turned off |
-+
-+Setup, which writes and checkpoints the rows for `update` and `delete`, is not
-+measured. Before the committed measurement, the tool runs 1000 small read transactions.
-+The MVCC skip maps free removed entries only after later transactions, so without
-+these reads the measurement also counts the write set of the finished transaction.
-+The dhat file shows the live allocations at the committed measurement as "At exit".
-+The values count the bytes that the code requests, so they are the same for debug
-+and optimized builds. The process RSS is higher because the allocator rounds sizes.
-+`--mode wal` runs the same statements in WAL mode for comparison.
-```
-
-**File**: `perf/memory/src/mvcc_row_memory.rs` (added, +146/-0)
-```diff
-@@ -0,0 +1,146 @@
-+use anyhow::Result;
-+use clap::{Parser, ValueEnum};
-+use memory_benchmark::workload::JournalMode;
-+use serde::Serialize;
-+use std::path::PathBuf;
-+use turso::{Builder, Connection, Database};
-+
-+#[cfg(not(clippy))]
-+#[global_allocator]
-+static ALLOC: dhat::Alloc = dhat::Alloc;
-+
-+#[derive(Parser)]
-+#[command(about = "Measure the heap that one transaction keeps for each row it writes")]
-+struct Args {
-+    #[arg(long, default_value = "insert")]
-+    statement: Statement,
-+    #[arg(long, default_value = "100000")]
-+    rows: usize,
-+    #[arg(long, default_value = "100")]
-+    payload_bytes: usize,
-+    #[arg(long, default_value = "mvcc")]
-+    mode: JournalMode,
-+    #[arg(long, default_value = "dhat-heap.json")]
-+    dhat_file: PathBuf,
-+}
-+
-+/// The statement that the measured transaction runs. `update` and `delete`
-+/// change rows that a checkpoint already wrote to the B-tree.
-+#[derive(Debug, Clone, Copy, ValueEnum, Serialize)]
-+#[serde(rename_all = "kebab-case")]
-+enum Statement {
-+    Insert,
-+    Update,
-+    Delete,
-+}
-+
-+#[derive(Serialize)]
-+struct Report {
-+    statement: Statement,
-+    mode: JournalMode,
-+    rows: usize,
-+    payload_bytes: usize,
-+    /// Live heap after the statement, before COMMIT.
-+    uncommitted_bytes_per_row: f64,
-+    /// Highest live heap during the statement.
-+    statement_peak_bytes_per_row: f64,
-+    /// Highest live heap from the start of the statement to the end of COMMIT.
-+    commit_peak_bytes_per_row: f64,
-+    /// Live heap after COMMIT, with automatic checkpoints and GC turned off.
-+    committed_bytes_per_row: f64,
-+    /// Heap allocations that the statement made.
-+    statement_allocations_per_row: f64,
-+}
-+
-+#[tokio::main(flavor = "current_thread")]
-+async fn main() -> Result<()> {
-+    let args = Args::parse();
-+    let dir = std::env::temp_dir().join(format!("turso-mvcc-row-memory-{}", std::process::id()));
-+    std::fs::create_dir_all(&dir)?;
-+    let db_path = dir.join("rows.db").to_string_lossy().into_owned();
-+    prepare_table(&db_path, &args).await?;
-+    let report = measure(&db_path, &args).await?;
-+    std::fs::remove_dir_all(&dir)?;
-+    println!("{}", serde_json::to_string_pretty(&report)?);
-+    Ok(())
-+}
-+
-+async fn prepare_table(db_path: &str, args: &Args) -> Result<()> {
-+    let (_db, conn) = open(db_path, args.mode).await?;
-+    conn.execute("CREATE TABLE t(id INTEGER PRIMARY KEY, v BLOB)", ())
-+        .await?;
-+    if !matches!(args.statement, Statement::Insert) {
-+        conn.execute(&insert_sql(args), ()).await?;
-+    }
-+    drain(&conn, "PRAGMA wal_checkpoint(TRUNCATE)").await?;
-+    Ok(())
-+}
-+
-+async fn measure(db_path: &str, args: &Args) -> Result<Report> {
-+    let (_db, conn) = open(db_path, args.mode).await?;
-+    drain(&conn, "SELECT count(*) FROM t").await?;
-+    if matches!(args.mode, JournalMode::Mvcc) {
-+        drain(&conn, "PRAGMA mvcc_checkpoint_threshold = -1").await?;
-+        drain(&conn, "PRAGMA mvcc_gc_threshold = -1").await?;
-+    }
-+    let sql = match args.statement {
-+        Statement::Insert => insert_sql(args),
-+        Statement::Update => format!("UPDATE t SET v = randomblob({})", args.payload_bytes),
-+        Statement::Delete => "DELETE FROM t".to_string(),
-+    };
-+
-+    #[cfg(not(clippy))]
-+    let _profiler = dhat::Profiler::builder().file_name(&args.dhat_file).build();
-+    conn.execute("BEGIN", ()).await?;
-+    let start = dhat::HeapStats::get();
-+    conn.execute(&sql, ()).await?;
-+    let after_statement = dhat::HeapStats::get();
-+    conn.execute("COMMIT", ()).await?;
-+    let after_commit = dhat::HeapStats::get();
-+    release_deferred_frees(&conn).await?;
-+    let committed = dhat::HeapStats::get();
-+
-+    let per_row = |bytes: usize| bytes as f64 / args.rows as f64;
-+    Ok(Report {
-+        statement: args.statement,
-+        mode: args.mode,
-+        rows: args.rows,
-+        payload_bytes: args.payload_bytes,
-+        uncommitted_bytes_per_row: per_row(after_statement.curr_bytes - start.curr_bytes),
-+        statement_peak_bytes_per_row: per_row(after_statement.max_bytes - start.curr_bytes),
-+        commit_peak_bytes_per_row: per_row(after_commit.max_bytes - start.curr_bytes),
-+        committed_bytes_per_row: per_row(committed.curr_bytes.saturating_sub(start.curr_bytes)),
-+        statement_allocations_per_row: (after_statement.total_blocks - start.total_blocks) as f64
-+            / args.rows as f64,
-+    })
-+}
-+
-+/// The MVCC skip maps free removed entries only after later transactions move
-+/// their epoch forward, so the committed measurement runs small transactions
-+/// first. Without them, it also counts the write set of the finished transaction.
-+async fn release_deferred_frees(conn: &Connection) -> Result<()> {
-+    for _ in 0..1000 {
-+        drain(conn, "SELECT count(*) FROM sqlite_schema").await?;
-+    }
-+    Ok(())
-+}
-+
-+fn insert_sql(args: &Args) -> String {
-+    format!(
-+        "INSERT INTO t SELECT value, randomblob({}) FROM generate_series(1, {})"
+@@ -42,7 +42,7 @@
+     },
+     "../../bindings/react-native": {
+       "name": "@tursodatabase/sync-react-native",
+-      "version": "0.8.0",
++      "version": "0.9.0-pre.1",
+       "license": "MIT",
+       "dependencies": {
+         "@babel/runtime": "^7.25.0"
+@@ -8428,14 +8428,14 @@
+       }
+     },
+     "node_modules/launch-editor": {
+-      "version": "2.14.1",
+-      "resolved": "https://registry.npmjs.org/launch-editor/-/launch-editor-2.14.1.tgz",
+-      "integrity": "sha512-QWBrQsMpH7gPr965dsKD/3cKWiNoTjpATQf++Xq63N6sKRGMwlVXz41O1IZTMfZQgBctD/K5Zt06+/I6pP6+HA==",
++      "version": "2.14.2",
++      "resolved": "https://registry.npmjs.org/launch-editor/-/launch-editor-2.14.2.tgz",
++      "integrity": "sha512-NHJEb30MGBCkmZXLZwz25t37QR4aY03ZzPYUJXOJaOa92uWwExI9SBQUuIznBYc1xkD7cJNGX7oc3Nl3sq2kQQ==",
+       "devOptional": true,
+       "license": "MIT",
+       "dependencies": {
+         "picocolors": "^1.1.1",
+-        "shell-quote": "^1.8.4"
++        "shell-quote": "^1.10.0"
+       }
+     },
+     "node_modules/leven": {
+@@ -11635,7 +11635,7 @@
+       "version": "5.9.3",
+       "resolved": "https://registry.npmjs.org/typescript/-/typescript-5.9.3.tgz",
+       "integrity": "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==",
+-      "dev": true,
++      "devOptional": true,
+       "license": "Apache-2.0",
+       "bin": {
+         "tsc": "bin/tsc",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10943** (2026-10-28): core/translate: qualify the child table of a foreign-key action in main (@Rehket)
-- **PR #10941** (2026-10-27): postgres: report default public schema ownership and permissions (@pedrocarlo)
-- **PR #10940** (2026-10-27): postgres: report the default public schema comment (@pedrocarlo)
-- **PR #10937** (2026-10-28): translate: extract shared catalog lookup context (@pedrocarlo)
-- **PR #10936** (2026-10-27): postgres: report default column storage in dump catalogs (@pedrocarlo)
-- **PR #10929** (2026-10-27): postgres: preserve not-null constraints in pg_dump (@pedrocarlo)
+- **PR #10970** (2026-10-28): build(deps): bump undici from 8.11.2 to 8.12.3 in /bindings/javascript (@dependabot[bot])
+- **PR #10969** (2026-10-28): build(deps): bump launch-editor from 2.14.1 to 2.14.2 in /examples/react-native (@dependabot[bot])
+- **PR #10964** (2026-10-28): Match SQLite formatting for empty json_pretty containers (@deepak-swami007)
+- **PR #10963** (2026-10-28): Skip erroring constant projections when WHERE is false (@deepak-swami007)
+- **PR #10960** (2026-10-28): core/translate: keep an index method's LIMIT off aggregate and DISTINCT queries (@cmolocznik)
+- **PR #10950** (2026-10-28): core/json: classify BLOB arguments as JSONB the way SQLite does (@turso-github-handyman[bot])
 
 ---
 
@@ -2094,53 +1567,32 @@ The other PRs of this stack use this tool to measur
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'postgres: preserve not-null constraints in pg_dump' from Pedro Muniz
+## X. Merge 'build(deps): bump undici from 8.11.2 to 8.12.3 in /bindings/javascript' f
 
 **RULE**:
-When implementing operations in `core/schema.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `bindings/javascript/yarn.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `73cf506b`: Merge 'postgres: preserve not-null constraints in pg_dump' from Pedro Muniz. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ccebb425`: Merge 'build(deps): bump undici from 8.11.2 to 8.12.3 in /bindings/javascript' from app/dependabot. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/schema.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `bindings/javascript/yarn.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            && (column.is_rowid_alias()
-                || self.is_strict
-                || (!self.has_rowid && self.primary_key_columns.len() == 1))
-        self.info.notnull() || self.is_rowid_alias()
-            assert_eq!(
-                column.notnull(),
-                flags.intersects(ColDefFlags::NotNull | ColDefFlags::RowIdAlias),
-                "{flags:?}"
-            );
-    #[test]
-    fn rowid_alias_is_not_nullable() {
-        for sql in [
-            "CREATE TABLE t(id INTEGER PRIMARY KEY)",
-            "CREATE TABLE t(id INTEGER, PRIMARY KEY(id))",
-        ] {
-            let table = BTreeTable::from_sql(sql, 2).unwrap();
-            let column = table.get_column("id").unwrap().1;
-            assert!(column.notnull(), "{sql}");
-            assert!(!column.explicit_notnull(), "{sql}");
-        }
-        let table = BTreeTable::from_sql("CREATE TABLE t(id INTEGER PRIMARY KEY DESC)", 2).unwrap();
-        assert!(!table.get_column("id").unwrap().1.notnull());
-    }
-
+  version: 8.12.3
+  resolution: "undici@npm:8.12.3"
+  checksum: 10c0/714919e62b4160eea195fb35c7f5c4907235741e47bfde8a014ac58f6d24df13434e23400d7f48e2c455fd2b259d27f07fce514f04a5b4e99936ba62cbc4bb71
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            && (self.is_strict || (!self.has_rowid && self.primary_key_columns.len() == 1))
-        self.info.notnull()
-                (column.notnull(), ColDefFlags::NotNull),
+  version: 8.11.2
+  resolution: "undici@npm:8.11.2"
+  checksum: 10c0/106f6991178fb7562fd90cdec7993c5f807a9428682306091f0c4b27fc474ec291f868e29972c6252988bf061ad193df943b3b99e775be157a28d92bbb95699d
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `73cf506b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ccebb425` are properly handled with clean fallback behavior.

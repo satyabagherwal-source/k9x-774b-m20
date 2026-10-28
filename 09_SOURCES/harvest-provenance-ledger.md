@@ -5963,3 +5963,7 @@ Every entry in this ledger must capture:
 | `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `c48f5120` | Multi-dimensional audit evidence | 2026-10-28T21:56:44.969Z |
 | `learn-huggingface-speridlabs-iris-3b` | `https://huggingface.co/speridlabs/iris-3b` | `hf-speridl` | Multi-dimensional audit evidence | 2026-10-28T21:57:57.796Z |
 | `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `c9d4e2e1` | Multi-dimensional audit evidence | 2026-10-28T22:01:34.815Z |
+| `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `e0f829f0` | Multi-dimensional audit evidence | 2026-10-28T22:07:41.157Z |
+| `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-10-28T22:07:47.922Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `f2aca49f` | Multi-dimensional audit evidence | 2026-10-28T22:07:48.681Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `b0563444` | Multi-dimensional audit evidence | 2026-10-28T22:07:53.898Z |

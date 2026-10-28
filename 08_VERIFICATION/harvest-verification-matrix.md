@@ -5954,3 +5954,7 @@
 | `CYCLE-20261028-MOME` | `2026-10-28T21:56:44.966Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5417` | Yes (`6e3aff28...`) |
 | `CYCLE-20261028-O8TD` | `2026-10-28T21:57:57.793Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5418, Rule 5419` | Yes (`b743ae20...`) |
 | `CYCLE-20261028-SW9O` | `2026-10-28T22:01:34.812Z` | `astral-sh/ruff` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md` | Yes (`3f671b04...`) |
+| `CYCLE-20261028-0QXU` | `2026-10-28T22:07:41.154Z` | `tokio-rs/tokio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5420` | Yes (`000e6c74...`) |
+| `CYCLE-20261028-0W5S` | `2026-10-28T22:07:47.920Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5421, Rule 5422, Rule 5423` | Yes (`59902ba6...`) |
+| `CYCLE-20261028-0WQU` | `2026-10-28T22:07:48.678Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5424` | Yes (`a7e65e38...`) |
+| `CYCLE-20261028-10RS` | `2026-10-28T22:07:53.896Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5382` | Yes (`d1ffe8b8...`) |
