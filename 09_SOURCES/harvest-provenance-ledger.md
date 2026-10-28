@@ -5704,3 +5704,5 @@ Every entry in this ledger must capture:
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `1766aca2` | Multi-dimensional audit evidence | 2026-10-28T04:42:05.914Z |
 | `learn-huggingface-lightricks-ltx-2-5` | `https://huggingface.co/Lightricks/LTX-2.5` | `hf-lightri` | Multi-dimensional audit evidence | 2026-10-28T04:48:37.668Z |
 | `learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf` | `https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf` | `hf-prism-m` | Multi-dimensional audit evidence | 2026-10-28T04:56:04.523Z |
+| `learn-huggingface-viggle-qwen-image-2-1-viggle-turbo` | `https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-10-28T05:03:37.472Z |
+| `learn-github-pubkey-rxdb` | `https://github.com/pubkey/rxdb` | `159a4a8c` | Multi-dimensional audit evidence | 2026-10-28T05:03:43.354Z |

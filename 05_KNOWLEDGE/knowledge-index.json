@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T04:56:04.444Z",
+  "last_updated": "2026-10-28T05:03:43.289Z",
   "total_verified_learnings": 1156,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -28446,7 +28446,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
       "source_version": "hf-viggle-qwen-image-2.1-viggle-turbo",
-      "content_hash": "7c09b5474c05292c8382694cea686baa3d13c9afbc2b66177f9132c7f7a4b304",
+      "content_hash": "1b92b5f6499998e4e526164583c6462e2bb8f46cf5e836b2aa241aaa4eeba0f1",
       "dossier_path": "07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
       "promoted_rules": [
@@ -28486,7 +28486,7 @@
         "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv451vsw",
         "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv4ibcf4"
       ],
-      "verified_at": "2026-10-25T12:06:04.322Z",
+      "verified_at": "2026-10-28T05:03:37.371Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43500,8 +43500,8 @@
       "slug": "pubkey-rxdb",
       "platform": "github",
       "source_url": "https://github.com/pubkey/rxdb",
-      "source_version": "a8a2bb3d",
-      "content_hash": "94943458ed99d37d50d9c50da7c1252c92df919cc927efd37dfaaf38464e8b41",
+      "source_version": "159a4a8c",
+      "content_hash": "b1e188ead9309c39eed696d6b55a820f5b28e4c123dc7f340b5cc231158853b6",
       "dossier_path": "07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
       "promoted_rules": [
@@ -43524,6 +43524,11 @@
           "number": 3878,
           "title": "Mango Operator-To-Engine Compatibility Guarding",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5181,
+          "title": "Update dependency react-native-gesture-handler to v3.4.0 (#9347)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43531,7 +43536,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:40:53.492Z",
+      "verified_at": "2026-10-28T05:03:43.276Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -141876,6 +141881,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T04:56:04.432Z"
+    },
+    "rule-5181": {
+      "learning_id": "rule-5181",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5181,
+      "title": "Update dependency react-native-gesture-handler to v3.4.0 (#9347)",
+      "source_url": "https://github.com/pubkey/rxdb",
+      "source_version": "159a4a8c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T05:03:43.276Z"
     }
   },
   "aliases": {

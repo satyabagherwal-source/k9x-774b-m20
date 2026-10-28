@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-EVVE",
-    "timestamp": "2026-10-27T08:31:11.834Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "7bce661a9e2247f98637cd7adfe154f0be3dfca368d38ab9aa3d036080735566",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-M1K0",
-    "timestamp": "2026-10-27T09:04:45.408Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "dc38c3b9533bc17bb3aeecbc83674ee19f157b178330fd0e1f24ed89bf6fae3d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-XBLH",
     "timestamp": "2026-10-27T09:13:31.637Z",
     "repository": "gardener/gardener",
@@ -7492,6 +7462,36 @@
     "contentHash": "13b66d234335a5f84b65baf7e62d7f424fbe9b86fc70cd1bf59e901c81463433",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-FSOS",
+    "timestamp": "2026-10-28T05:03:37.468Z",
+    "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
+    "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
+    "contentHash": "1b92b5f6499998e4e526164583c6462e2bb8f46cf5e836b2aa241aaa4eeba0f1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-FX86",
+    "timestamp": "2026-10-28T05:03:43.350Z",
+    "repository": "pubkey/rxdb",
+    "learningId": "learn-github-pubkey-rxdb",
+    "contentHash": "b1e188ead9309c39eed696d6b55a820f5b28e4c123dc7f340b5cc231158853b6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

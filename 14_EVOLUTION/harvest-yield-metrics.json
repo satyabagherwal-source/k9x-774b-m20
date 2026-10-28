@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T04:56:04.527Z",
-  "total_cycles_completed": 5672,
-  "total_learnings_persisted": 5672,
-  "total_rules_promoted": 5117,
+  "last_updated": "2026-10-28T05:03:43.359Z",
+  "total_cycles_completed": 5674,
+  "total_learnings_persisted": 5674,
+  "total_rules_promoted": 5118,
   "history": [
-    {
-      "timestamp": "2026-10-27T19:20:20.314Z",
-      "repository": "rmax/scrapy-redis",
-      "learningId": "learn-github-rmax-scrapy-redis",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T19:20:22.162Z",
-      "repository": "doobidoo/mcp-memory-service",
-      "learningId": "learn-github-doobidoo-mcp-memory-service",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T19:31:58.269Z",
       "repository": "pola-rs/polars",
@@ -1403,6 +1389,20 @@
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
       "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T05:03:37.477Z",
+      "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
+      "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T05:03:43.359Z",
+      "repository": "pubkey/rxdb",
+      "learningId": "learn-github-pubkey-rxdb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

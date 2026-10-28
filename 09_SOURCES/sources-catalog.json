@@ -365,8 +365,8 @@
     "sourceUrl": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
     "sourceVersion": "hf-viggle-qwen-image-2.1-viggle-turbo",
     "license": "Open-Source",
-    "contentHash": "7c09b5474c05292c8382694cea686baa3d13c9afbc2b66177f9132c7f7a4b304",
-    "lastHarvestedAt": "2026-10-25T12:06:04.371Z",
+    "contentHash": "1b92b5f6499998e4e526164583c6462e2bb8f46cf5e836b2aa241aaa4eeba0f1",
+    "lastHarvestedAt": "2026-10-28T05:03:37.472Z",
     "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo"
   },
   "hf-qwen-qwen-image-2.1-turbo": {
@@ -2793,10 +2793,10 @@
     "repository": "pubkey/rxdb",
     "platform": "github",
     "sourceUrl": "https://github.com/pubkey/rxdb",
-    "sourceVersion": "a8a2bb3d",
+    "sourceVersion": "159a4a8c",
     "license": "Apache-2.0",
-    "contentHash": "94943458ed99d37d50d9c50da7c1252c92df919cc927efd37dfaaf38464e8b41",
-    "lastHarvestedAt": "2026-10-27T13:40:53.570Z",
+    "contentHash": "b1e188ead9309c39eed696d6b55a820f5b28e4c123dc7f340b5cc231158853b6",
+    "lastHarvestedAt": "2026-10-28T05:03:43.354Z",
     "learningId": "learn-github-pubkey-rxdb"
   },
   "karmada-io-karmada": {

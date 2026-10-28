@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T04:56:04.530Z",
+  "last_updated": "2026-10-28T05:03:43.364Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -440,14 +440,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
-      "content_hash": "7c09b5474c05292c8382694cea686baa3d13c9afbc2b66177f9132c7f7a4b304",
-      "verified_at": "2026-10-25T12:06:04.377Z",
+      "content_hash": "1b92b5f6499998e4e526164583c6462e2bb8f46cf5e836b2aa241aaa4eeba0f1",
+      "verified_at": "2026-10-28T05:03:37.481Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T12:06:04.377Z"
+      "last_updated": "2026-10-28T05:03:37.481Z"
     },
     "XingChen-AGI/Xing4.0-29B-A4B": {
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -4326,14 +4326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pubkey-rxdb",
-      "content_hash": "94943458ed99d37d50d9c50da7c1252c92df919cc927efd37dfaaf38464e8b41",
-      "verified_at": "2026-10-27T13:40:53.582Z",
+      "content_hash": "b1e188ead9309c39eed696d6b55a820f5b28e4c123dc7f340b5cc231158853b6",
+      "verified_at": "2026-10-28T05:03:43.363Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:40:53.582Z"
+      "last_updated": "2026-10-28T05:03:43.363Z"
     },
     "karmada-io/karmada": {
       "repository": "karmada-io/karmada",
