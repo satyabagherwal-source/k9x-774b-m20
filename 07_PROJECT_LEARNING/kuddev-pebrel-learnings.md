@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source**: github ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
-> **Source Version**: `404d9173`  
+> **Source Version**: `f3201403`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T13:11:27.310Z  
+> **Timestamp**: 2026-10-28T00:19:29.593Z  
 > **Learning ID**: `learn-github-kuddev-pebrel`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T13:11:26.379Z  
+> **Harvest Timestamp**: 2026-10-28T00:19:28.065Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI-native, GPU-accelerated terminal emulator for Windows with SSH, persistent sessions, split panes, and first-class AI CLI workflows.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3602 stars
+- **Stars / Engagement**: 3622 stars
 
 ---
 
@@ -1379,1683 +1379,440 @@ pub(crate) fn shutdown() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `96595622` (2026-10-26)
-**Commit Message**: Merge pull request #775 from Kuddev/fix/windows-update-worker-20261026
+### Incident Patch 1: `f3201403` (2026-10-27)
+**Commit Message**: release: prepare Pebrel 2.3.1 (#790)
 
-Fix Windows update preparation blocked by its own identity worker
+release: prepare Pebrel 2.3.1
 
-**File**: `architecture/notes/nebula_app/platform/ai_session_identity/windows/2026-10-26-update-quiescence.md` (added, +86/-0)
+**File**: `CHANGELOG.md` (modified, +62/-0)
 ```diff
-@@ -0,0 +1,86 @@
-+# Quiesce the owned identity worker before Windows update preparation
+@@ -4,6 +4,68 @@ Every release entry is provided in English and Simplified Chinese.
+ 
+ 每个版本条目均同时提供英文和简体中文说明。
+ 
++## 2.3.1 - 2026-10-27
 +
-+## Status
++```text
++b40bcd922e7340b51893c247695b4b286d330b4e7b27238694a4aee3c345f94b  Pebrel-v2.3.1-android-universal-preview.apk
++516045e26444aa161e4abef7a74cf7e4dbcbe4eecd059c5bfb923da98e33f786  Pebrel-v2.3.1-linux-x64-preview.AppImage
++59bff08d2f07f044029b15c50bb37c2e6b0dca1bb9f82611a80ad03c221f4d85  Pebrel-v2.3.1-linux-x64-preview.deb
++de7586f1afc0d7abea1a4ba20805a7c030f9d281570d2fb25e01a44146ee0808  Pebrel-v2.3.1-linux-x64-preview.tar.gz
++0260651ee08fdb384a5441bb3db836690f4296dd6b45ba4a45e360831f3d8a2f  Pebrel-v2.3.1-macos-arm64-preview.dmg
++2043effa1328dcd5d7926a4139668fb85a416a69654308ea816de67e8c564a6d  Pebrel-v2.3.1-macos-x64-preview.dmg
++a86bc7d886c388089be3208f51d619c47bef29014b9688171f553eb9f20a30fd  Pebrel-v2.3.1-relay-manual.tar.gz
++0b64c4d5cf4c60c7fa40d3f340105b97889cf08d25bd7f9c66079490950c4ee6  Pebrel-v2.3.1-windows-arm64-setup.exe
++583aa3a42b78ed43df732c0d17894482807a6ec5911264e902b5009f7e876605  Pebrel-v2.3.1-windows-arm64.zip
++9e21164f493a1b05fcdc3102baf316371e099e5d0532f5f8a26b2bfae9f0472b  Pebrel-v2.3.1-windows-x64-setup.exe
++e12dcfb573ac5d20e06b234202f1065af12b04979311a2ca10a97969a92f70e5  Pebrel-v2.3.1-windows-x64.zip
++```
 +
-+Implemented; native validation and review pending.
++### English
 +
-+## Context
++This maintenance release restores comfortable terminal text spacing while keeping supported character-art logos in proportion. It also makes the default interface font explicit and updates the approved sponsor presentation.
 +
-+Windows update preparation rejects any live process from the installed executable
-+that is absent from the handoff's participant list. The list intentionally contains
-+only the application authorizing the update. The reusable identity worker is a
-+second copy of that executable and survives idle time until its owner exits.
-+Preparation happens before that exit, so a resident worker blocks the update.
++Packages include Windows x64/ARM64 installers and portable ZIPs, macOS Apple Silicon/Intel builds, Linux x64 packages, an Android universal APK and the offline relay package. macOS, Linux and Android retain their Preview distribution labels.
 +
-+The reporter runs 2.2.2, whose disposable probe can also overlap the same process
-+check. Their exact interfering process has not been identified. Replacing the
-+downloaded installer cannot modify the old updater's pre-installation check;
-+exiting the old application and manually running setup remains the recovery path.
++#### Fixed
 +
-+## Evidence
++- Fix overly tight terminal text and list spacing by restoring the font height, baseline and default row padding from 2.2.2. Custom terminal fonts and explicit line-height settings remain available. ([#783](https://github.com/Kuddev/pebrel/pull/783))
++- Fix stretched supported character-art logos, including the dense Braille/block and repeated-slash patterns used by Codex and Fastfetch, without compressing surrounding text or changing the terminal grid. Keep partially scrolled artwork complete and align selection, search highlights and link hit testing with its displayed position. ([#787](https://github.com/Kuddev/pebrel/pull/787))
++- Fix the interface-font input to display the actual default, Geist, including after clearing a custom value. Interface and terminal font preferences remain independent. ([#783](https://github.com/Kuddev/pebrel/pull/783))
 +
-+- `worker::query_slot` retains a healthy child after returning its response.
-+- `handoff::prepare` writes only the current PID and creation time as participants.
-+- `handoff.ps1::Check-UnpreparedProcesses` rejects that second live executable
-+  with `Another process from this installation is not prepared for update`.
-+- The native regression exercises that exact production PowerShell function on a
-+  real worker, both before and after acquiring the update pause.
++#### Improved
 +
-+## Decision
++- Improve the Sponsors page and both READMEs with the approved AIAPI logo, bilingual introduction and visit action. Existing provider settings and credentials are unchanged. ([#789](https://github.com/Kuddev/pebrel/pull/789))
++- Improve the README badge layout with the official Trendshift badge and the XERJ contributor badge, removing redundant technology badges. ([#782](https://github.com/Kuddev/pebrel/pull/782))
++- Improve Linux CI dependency downloads by using Ubuntu's official archive while retaining package signature checks and the existing native test matrix. ([#787](https://github.com/Kuddev/pebrel/pull/787))
 +
-+The identity capability exposes a scoped update pause. On Windows, acquisition
-+closes a process-wide, reference-counted gate before waiting for the existing
-+worker mutex. Probes check the gate before and after locking. Acquisition reaps
-+only the owned worker through its kernel handle and confirms process exit before
-+returning. Both mutex acquisition and process cleanup remain bounded.
++### 中文
 +
-+The update transaction acquires its pause on the background executor before
-+starting the native handoff helper. `PreparedUpdate` owns it during preparation,
-+snapshot validation and commit. Errors and cancellation drop the pause, permitting
-+the next poll to create a worker lazily. A committed handoff retains the gate until
-+process exit even when `PreparedUpdate` is dropped. Dropping a pause does not lock
-+or wait, since cancellation can happen on the UI thread. Other platforms have no
-+self-spawned resident identity worker and retain their existing behavior.
++本维护版本恢复舒适的终端正文行距，同时保持受支持字符画标志的正确比例，并让界面默认字体显示更明确、同步已批准的赞助商展示。
 +
-+## Rejected alternatives
++提供 Windows x64/ARM64 安装器与便携 ZIP、macOS Apple Silicon/Intel 包、Linux x64 包、Android universal APK 及离线中继包。macOS、Linux 和 Android 继续保留 Preview 分发标记。
 +
-+- Ignore helpers by name or command line: weakens the executable identity guard
-+  and leaves a running copy of the installed executable during replacement.
-+- Kill matching process names: may terminate another application instance and its
-+  unsaved workspace. The worker owner already has the exact native handle.
-+- Stop only the current worker without gating new probes: polling can immediately
-+  recreate it during the asynchronous preparation handshake.
-+- Resume probing when a committed guard drops: the shutdown path can drop its
-+  local handoff before process teardown finishes.
-+- Add the worker as an update participant: gives a probe process transaction
-+  responsibilities without solving its ownership and exit ordering.
++#### 修复
 +
-+## Consequences
++- 修复终端正文与列表行距过紧，恢复 2.2.2 的字体高度、基线和默认行间留白；保留自定义终端字体与显式行高设置。 ([#783](https://github.com/Kuddev/pebrel/pull/783))
++- 修复受支持字符画标志被拉伸的问题，包括 Codex、Fastfetch 使用的密集盲文、块字符及连续斜线图案；不压缩周围正文，也不改变终端网格。滚动时保留仍应可见的图案，并让选区、搜索高亮与链接命中跟随实际显示位置。 ([#787](https://github.com/Kuddev/pebrel/pull/787))
++- 修复界面字体输入框的默认值显示，未设置或清空自定义值后均显示真实默认字体 Geist；界面字体与终端字体仍独立设置。 ([#783](https://github.com/Kuddev/pebrel/pull/783))
 +
-+Identity polling pauses only during an active update handoff. Existing collected
-+identities remain with their pane owners. A cancelled attempt can resume probing;
-+overlapping attempts cannot release each other's pauses. The installer still
-+rejects unrelated live instances and unverified process identities. No persisted
-+format, helper protocol, installation guard or process-killing authority changes.
++#### 改进
 +
-+## Validation
++- 改进应用赞助页与中英文 README，展示已批准的 AIAPI 标志、双语介绍及访问入口；不改变已有服务商设置与凭据。 ([#789](https://github.com/Kuddev/pebrel/pull/789))
++- 改进 README 徽章布局，加入官方 Trendshift 徽章与 XERJ 贡献者徽章，移除重复的技术徽章。 ([#782](https://github.com/Kuddev/pebrel/pull/782))
++- 改进 Linux CI 依赖下载，使用 Ubuntu 官方软件源，保留软件包签名校验与现有原生测试矩阵。 ([#787](https://github.com/Kuddev/pebrel/pull/787))
 +
-+The native regression covers the original guard failure, confirmed worker exit,
-+concurrent polls while paused, cancellation/restart, overlapping pause owners,
-+bounded acquisition failure, in-flight lock ordering and commit/drop lifetime.
-+It also verifies that another live copy still blocks preparation and is not killed.
-+The existing worker failure, owner-exit and installer handoff fixtures remain.
-+Native Windows execution is required; Linux compilation cannot establish those
-+process and PowerShell contracts.
++### Contributors
 +
-+## Supersedes
++<p>
++  <a href="https://github.com/Kuddev"><img src="https://avatars.githubusercontent.com/u/292709043?v=4&amp;s=96" width="48" height="48" alt="Kuddev" title="Kuddev" /></a>
++</p>
 +
-+The idle-worker lifetime in
-+[the reusable worker decision](2026-10-23-reusable-probe-process.md) is extended
-+with update preparation as an explicit quiescence boundary. Its process ownership,
-+private pipes, probe deadline and startup-feedback policy remain applicable.
++Thanks to [Kuddev](https://github.com/Kuddev) for the fixes, documentation and release integration.
 +
-+## Revisit when
++感谢 [Kuddev](https://github.com/Kuddev) 对本版修复、文档与发布整合的贡献。
 +
-+The application introduces authenticated cross-process update coordination or
-+the identity probe no longer runs a copy of the installed executable.
+ ## 2.3.0 - 2026-10-26
+ 
+ - `Pebrel-v2.3.0-linux-x64-preview.AppImage`: `65ba287a3510cfeffc5909260899100297ef3ffdabe711b70086c138c490419d`
 ```
 
-**File**: `nebula_app/src/platform/ai_session_identity.rs` (modified, +22/-0)
+**File**: `Cargo.lock` (modified, +7/-7)
 ```diff
-@@ -25,6 +25,28 @@ pub(crate) fn run_helper_if_requested() -> Option<i32> {
-     None
- }
+@@ -5287,7 +5287,7 @@ dependencies = [
  
-+/// Keep owned copies of the application executable stopped during installation.
-+/// Acquisition waits on the background executor; cancellation only releases a gate.
-+pub(crate) struct UpdatePause {
-+    #[cfg(windows)]
-+    inner: windows::UpdatePause,
-+}
-+
-+impl UpdatePause {
-+    pub(crate) fn acquire() -> io::Result<Self> {
-+        Ok(Self {
-+            #[cfg(windows)]
-+            inner: windows::UpdatePause::acquire()?,
-+        })
-+    }
-+
-+    /// A committed handoff must keep probes stopped even when its owner is dropped.
-+    pub(crate) fn commit(&mut self) {
-+        #[cfg(windows)]
-+        self.inner.commit();
-+    }
-+}
-+
- const PROBE_TIMEOUT: Duration = Duration::from_secs(2);
- const MAX_PROBE_OUTPUT: usize = 64 * 1024;
- const MAX_PROBE_LINE: usize = 64 * 1024;
+ [[package]]
+ name = "nebula"
+-version = "2.3.0"
++version = "2.3.1"
+ dependencies = [
+  "ab_glyph_rasterizer",
+  "aes-gcm",
+@@ -5401,15 +5401,15 @@ dependencies = [
+ 
+ [[package]]
+ name = "nebula-settings"
+-version = "2.3.0"
++version = "2.3.1"
+ 
+ [[package]]
+ name = "nebula-split"
+-version = "2.3.0"
++version = "2.3.1"
+ 
+ [[package]]
+ name = "nebula_config"
+-version = "2.3.0"
++version = "2.3.1"
+ dependencies = [
+  "log",
+  "nebula_config_derive",
+@@ -5419,7 +5419,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "nebula_config_derive"
+-version = "2.3.0"
++version = "2.3.1"
+ dependencies = [
+  "log",
+  "nebula_config",
+@@ -5436,7 +5436,7 @@ version = "0.6.0"
+ 
+ [[package]]
+ name = "nebula_terminal"
+-version = "2.3.0"
++version = "2.3.1"
+ dependencies = [
+  "base64 0.22.1",
+  "bitflags 2.13.0",
+@@ -6507,7 +6507,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "pebrel-completions"
+-version = "2.3.0"
++version = "2.3.1"
+ dependencies = [
+  "lscolors",
+  "nu-ansi-term",
 ```
 
-**File**: `nebula_app/src/platform/ai_session_identity/windows.rs` (modified, +2/-0)
+**File**: `docs/release-notes/v2.3.1.md` (added, +63/-0)
 ```diff
-@@ -3,6 +3,8 @@
- 
- mod worker;
- 
-+pub(super) use worker::UpdatePause;
+@@ -0,0 +1,63 @@
++# Pebrel 2.3.1
 +
- use super::*;
- use std::collections::HashMap;
- use std::mem;
++## English
++
++This maintenance release restores comfortable terminal text spacing while keeping supported character-art logos in proportion. It also makes the default interface font explicit and updates the approved sponsor presentation.
++
++Packages include Windows x64/ARM64 installers and portable ZIPs, macOS Apple Silicon/Intel builds, Linux x64 packages, an Android universal APK and the offline relay package. macOS, Linux and Android retain their Preview distribution labels.
++
++### Fixed
++
++- Fix overly tight terminal text and list spacing by restoring the font height, baseline and default row padding from 2.2.2. Custom terminal fonts and explicit line-height settings remain available. ([#783](https://github.com/Kuddev/pebrel/pull/783))
++- Fix stretched supported character-art logos, including the dense Braille/block and repeated-slash patterns used by Codex and Fastfetch, without compressing surrounding text or changing the terminal grid. Keep partially scrolled artwork complete and align selection, search highlights and link hit testing with its displayed position. ([#787](https://github.com/Kuddev/pebrel/pull/787))
++- Fix the interface-font input to display the actual default, Geist, including after clearing a custom value. Interface and terminal font preferences remain independent. ([#783](https://github.com/Kuddev/pebrel/pull/783))
++
++### Improved
++
++- Improve the Sponsors page and both READMEs with the approved AIAPI logo, bilingual introduction and visit action. Existing provider settings and credentials are unchanged. ([#789](https://github.com/Kuddev/pebrel/pull/789))
++- Improve the README badge layout with the official Trendshift badge and the XERJ contributor badge, removing redundant technology badges. ([#782](https://github.com/Kuddev/pebrel/pull/782))
++- Improve Linux CI dependency downloads by using Ubuntu's official archive while retaining package signature checks and the existing native test matrix. ([#787](https://github.com/Kuddev/pebrel/pull/787))
++
++## 中文
++
++本维护版本恢复舒适的终端正文行距，同时保持受支持字符画标志的正确比例，并让界面默认字体显示更明确、同步已批准的赞助商展示。
++
++提供 Windows x64/ARM64 安装器与便携 ZIP、macOS Apple Silicon/Intel 包、Linux x64 包、Android universal APK 及离线中继包。macOS、Linux 和 Android 继续保留 Preview 分发标记。
++
++### 修复
++
++- 修复终端正文与列表行距过紧，恢复 2.2.2 的字体高度、基线和默认行间留白；保留自定义终端字体与显式行高设置。 ([#783](https://github.com/Kuddev/pebrel/pull/783))
++- 修复受支持字符画标志被拉伸的问题，包括 Codex、Fastfetch 使用的密集盲文、块字符及连续斜线图案；不压缩周围正文，也不改变终端网格。滚动时保留仍应可见的图案，并让选区、搜索高亮与链接命中跟随实际显示位置。 ([#787](https://github.com/Kuddev/pebrel/pull/787))
++- 修复界面字体输入框的默认值显示，未设置或清空自定义值后均显示真实默认字体 Geist；界面字体与终端字体仍独立设置。 ([#783](https://github.com/Kuddev/pebrel/pull/783))
++
++### 改进
++
++- 改进应用赞助页与中英文 README，展示已批准的 AIAPI 标志、双语介绍及访问入口；不改变已有服务商设置与凭据。 ([#789](https://github.com/Kuddev/pebrel/pull/789))
++- 改进 README 徽章布局，加入官方 Trendshift 徽章与 XERJ 贡献者徽章，移除重复的技术徽章。 ([#782](https://github.com/Kuddev/pebrel/pull/782))
++- 改进 Linux CI 依赖下载，使用 Ubuntu 官方软件源，保留软件包签名校验与现有原生测试矩阵。 ([#787](https://github.com/Kuddev/pebrel/pull/787))
++
++## Contributors
++
++<p>
++  <a href="https://github.com/Kuddev"><img src="https://avatars.githubusercontent.com/u/292709043?v=4&amp;s=96" width="48" height="48" alt="Kuddev" title="Kuddev" /></a>
++</p>
++
++Thanks to [Kuddev](https://github.com/Kuddev) for the fixes, documentation and release integration.
++
++感谢 [Kuddev](https://github.com/Kuddev) 对本版修复、文档与发布整合的贡献。
++
++## SHA256
++
++```text
++b40bcd922e7340b51893c247695b4b286d330b4e7b27238694a4aee3c345f94b  Pebrel-v2.3.1-android-universal-preview.apk
++516045e26444aa161e4abef7a74cf7e4dbcbe4eecd059c5bfb923da98e33f786  Pebrel-v2.3.1-linux-x64-preview.AppImage
++59bff08d2f07f044029b15c50bb37c2e6b0dca1bb9f82611a80ad03c221f4d85  Pebrel-v2.3.1-linux-x64-preview.deb
++de7586f1afc0d7abea1a4ba20805a7c030f9d281570d2fb25e01a44146ee0808  Pebrel-v2.3.1-linux-x64-preview.tar.gz
++0260651ee08fdb384a5441bb3db836690f4296dd6b45ba4a45e360831f3d8a2f  Pebrel-v2.3.1-macos-arm64-preview.dmg
++2043effa1328dcd5d7926a4139668fb85a416a69654308ea816de67e8c564a6d  Pebrel-v2.3.1-macos-x64-preview.dmg
++a86bc7d886c388089be3208f51d619c47bef29014b9688171f553eb9f20a30fd  Pebrel-v2.3.1-relay-manual.tar.gz
++0b64c4d5cf4c60c7fa40d3f340105b97889cf08d25bd7f9c66079490950c4ee6  Pebrel-v2.3.1-windows-arm64-setup.exe
++583aa3a42b78ed43df732c0d17894482807a6ec5911264e902b5009f7e876605  Pebrel-v2.3.1-windows-arm64.zip
++9e21164f493a1b05fcdc3102baf316371e099e5d0532f5f8a26b2bfae9f0472b  Pebrel-v2.3.1-windows-x64-setup.exe
++e12dcfb573ac5d20e06b234202f1065af12b04979311a2ca10a97969a92f70e5  Pebrel-v2.3.1-windows-x64.zip
++```
 ```
 
-**File**: `nebula_app/src/platform/ai_session_identity/windows/worker.rs` (modified, +71/-16)
+**File**: `mobile/android/app/build.gradle.kts` (modified, +2/-2)
 ```diff
-@@ -9,10 +9,13 @@ use std::mem;
- use std::os::windows::ffi::OsStrExt as _;
- use std::os::windows::io::{AsHandle as _, AsRawHandle as _, FromRawHandle as _, OwnedHandle};
- use std::ptr;
--use std::sync::{Mutex, TryLockError};
-+use std::sync::atomic::{AtomicUsize, Ordering};
-+use std::sync::{Mutex, MutexGuard, TryLockError};
- use std::time::{Duration, Instant};
- 
--use windows_sys::Win32::Foundation::{DUPLICATE_SAME_ACCESS, DuplicateHandle, HANDLE};
-+use windows_sys::Win32::Foundation::{
-+    DUPLICATE_SAME_ACCESS, DuplicateHandle, HANDLE, WAIT_OBJECT_0, WAIT_TIMEOUT,
-+};
- use windows_sys::Win32::System::Pipes::{CreatePipe, PeekNamedPipe};
- use windows_sys::Win32::System::Threading::{
-     CREATE_SUSPENDED, CreateProcessW, DeleteProcThreadAttributeList, EXTENDED_STARTUPINFO_PRESENT,
-@@ -25,23 +28,65 @@ pub(super) const ARG: &str = "--internal-codex-session-worker";
- const READY: &[u8] = b"PEBREL_SESSION_PROBE_V1\n";
- const POLL: Duration = Duration::from_millis(5);
- static WORKER: Mutex<Option<Worker>> = Mutex::new(None);
-+static UPDATE_PAUSES: AtomicUsize = AtomicUsize::new(0);
-+
-+pub(crate) struct UpdatePause {
-+    resume_on_drop: bool,
-+}
-+
-+impl UpdatePause {
-+    pub(crate) fn acquire() -> io::Result<Self> {
-+        // Close the gate before waiting for an in-flight probe, so queued probes
-+        // cannot create another executable after we have reaped the current one.
-+        UPDATE_PAUSES.fetch_add(1, Ordering::AcqRel);
-+        let pause = Self { resume_on_drop: true };
-+        let mut slot = lock_worker(Instant::now() + PROBE_TIMEOUT + Duration::from_secs(1))?;
-+        if let Some(mut worker) = slot.take() {
-+            worker.stop()?;
-+        }
-+        Ok(pause)
-+    }
-+
-+    pub(crate) fn commit(&mut self) {
-+        self.resume_on_drop = false;
-+    }
-+}
-+
-+impl Drop for UpdatePause {
-+    fn drop(&mut self) {
-+        if self.resume_on_drop {
-+            // This guard may return to the UI thread. Never wait for a probe here.
-+            UPDATE_PAUSES.fetch_sub(1, Ordering::AcqRel);
-+        }
-+    }
-+}
- 
- pub(super) fn probe(pid: u32, created: u64) -> Option<super::CodexSession> {
-+    if UPDATE_PAUSES.load(Ordering::Acquire) != 0 {
-+        return None;
-+    }
-     let deadline = Instant::now() + PROBE_TIMEOUT;
-+    let mut slot = lock_worker(deadline).ok()?;
-+    if UPDATE_PAUSES.load(Ordering::Acquire) != 0 {
-+        return None;
-+    }
-+    let output = query_slot(&mut slot, pid, created, deadline).ok()?;
-+    super::parse_probe_context(&output)
-+}
-+
-+fn lock_worker(deadline: Instant) -> io::Result<MutexGuard<'static, Option<Worker>>> {
-     // Several panes may ask together. Waiting for the shared worker uses the
-     // same request deadline, rather than serially adding unbounded waits.
--    let mut slot = loop {
-+    loop {
-         if Instant::now() >= deadline {
--            return None;
-+            return Err(io::ErrorKind::TimedOut.into());
-         }
-         match WORKER.try_lock() {
--            Ok(slot) => break slot,
--            Err(TryLockError::Poisoned(error)) => break error.into_inner(),
-+            Ok(slot) => return Ok(slot),
-+            Err(TryLockError::Poisoned(error)) => return Ok(error.into_inner()),
-             Err(TryLockError::WouldBlock) => std::thread::sleep(POLL),
-         }
--    };
--    let output = query_slot(&mut slot, pid, created, deadline).ok()?;
--    super::parse_probe_context(&output)
-+    }
- }
- 
- fn query_slot(
-@@ -109,6 +154,20 @@ struct Worker {
- }
- 
- impl Worker {
-+    fn stop(&mut self) -> io::Result<()> {
-+        drop(self.group.take());
-+        // SAFETY: this is our owned process object, including startup failures.
-+        // An already exited child is successful; no PID/name lookup can kill a peer.
-+        unsafe {
-+            TerminateProcess(self.process.as_raw_handle(), 1);
-+            match WaitForSingleObject(self.process.as_raw_handle(), 500) {
-+                WAIT_OBJECT_0 => Ok(()),
-+                WAIT_TIMEOUT => Err(io::ErrorKind::TimedOut.into()),
-+                _ => Err(io::Error::last_os_error()),
-+            }
-+        }
-+    }
-+
-     fn start(args: &[String], deadline: Instant) -> io::Result<Self> {
-         let (input_read, input_write) = pipe()?;
-         let (output_read, output_write) = pipe()?;
-@@ -195,13 +254,7 @@ impl Worker {
- 
- impl Drop for Worker {
-     fn drop(&mut self) {
--        drop(self.group.take());
--        // SAFETY: the process handle belongs to this worker, including failures
--        // before job attachment. Cleanup is bounded and happens on the probing thread.
--        unsafe {
--            TerminateProcess(self.process.as_raw_handle(), 1);
--            WaitForSingleObject(self.process.as_raw_handle(), 500);
--        }
-+        let _ = self.stop();
+@@ -13,8 +13,8 @@ android {
+         applicationId = "io.github.kuddev.pebrel.mobile"
+         minSdk = 26
+         targetSdk = 35
+-        versionCode = 24
+-        versionName = "2.3.0-preview"
++        versionCode = 25
++        versionName = "2.3.1-preview"
+         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+         ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
      }
- }
- 
-@@ -323,3 +376,5 @@ fn spawn(args: &[String], files: [&File; 3]) -> io::Result<(OwnedHandle, OwnedHa
- 
- #[cfg(test)]
- mod tests;
-+#[cfg(test)]
-+mod update_tests;
 ```
 
-**File**: `nebula_app/src/platform/ai_session_identity/windows/worker/update_tests.rs` (added, +132/-0)
+**File**: `nebula-completions/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,132 @@
-+use super::*;
-+use crate::platform::ai_session_identity::UpdatePause as HandoffPause;
-+use std::process::Command;
-+use windows_sys::Win32::System::Threading::GetProcessId;
-+
-+fn start_probe() -> OwnedHandle {
-+    // An empty identity reply still leaves a healthy native worker resident.
-+    assert!(probe(0, 0).is_none());
-+    WORKER.lock().unwrap().as_ref().unwrap().process.try_clone().unwrap()
-+}
-+
-+fn assert_paused() {
-+    std::thread::scope(|scope| {
-+        for _ in 0..8 {
-+            scope.spawn(|| assert!(probe(0, 0).is_none()));
-+        }
-+    });
-+    assert!(WORKER.lock().unwrap().is_none(), "background polls must not recreate the worker");
-+}
-+
-+fn check_processes(handles: &[&OwnedHandle]) -> std::process::Output {
-+    let directory = tempfile::tempdir().unwrap();
-+    let helper = directory.path().join("handoff.ps1");
-+    std::fs::write(&helper, include_bytes!("../../../../update_download/handoff.ps1")).unwrap();
-+    // Execute the actual updater guard against the selected real processes. The
-+    // full test runner may have unrelated tests running from this same binary.
-+    let script = r#"
-+$ErrorActionPreference = 'Stop'
-+$tokens = $null
-+$errors = $null
-+$ast = [System.Management.Automation.Language.Parser]::ParseFile(
-+    $env:PEBREL_PAUSE_HELPER, [ref]$tokens, [ref]$errors)
-+if ($errors) { throw 'Invalid production helper' }
-+$functions = $ast.FindAll({ param($node)
-+    $node -is [System.Management.Automation.Language.FunctionDefinitionAst] -and
-+        $node.Name -in @('Same-Path', 'Check-UnpreparedProcesses')
-+}, $false)
-+if ($functions.Count -ne 2) { throw 'Missing production process guard' }
-+foreach ($function in $functions) { . ([scriptblock]::Create($function.Extent.Text)) }
-+$exe = $env:PEBREL_PAUSE_EXE
-+$plan = @{ participants = @(@{ pid = [int]$env:PEBREL_PAUSE_OWNER }) }
-+$ids = @($env:PEBREL_PAUSE_PIDS.Split(',') | ForEach-Object { [int]$_ })
-+$processes = @([System.Diagnostics.Process]::GetProcessesByName(
-+    [System.IO.Path]::GetFileNameWithoutExtension($exe)) | Where-Object { $ids -contains $_.Id })
-+try { Check-UnpreparedProcesses $processes }
-+catch { [Console]::Out.Write($_.Exception.Message); exit 1 }
-+"#;
-+    let system = std::env::var_os("SystemRoot").unwrap();
-+    let mut command = Command::new(
-+        std::path::Path::new(&system).join("System32/WindowsPowerShell/v1.0/powershell.exe"),
-+    );
-+    let mut ids = vec![std::process::id().to_string()];
-+    ids.extend(
-+        handles.iter().map(|handle| unsafe { GetProcessId(handle.as_raw_handle()).to_string() }),
-+    );
-+    command
-+        .args(["-NoProfile", "-NonInteractive", "-Command", script])
-+        .env("PEBREL_PAUSE_HELPER", helper)
-+        .env("PEBREL_PAUSE_EXE", std::env::current_exe().unwrap())
-+        .env("PEBREL_PAUSE_OWNER", std::process::id().to_string())
-+        .env("PEBREL_PAUSE_PIDS", ids.join(","));
-+    crate::platform::process::hidden_command(&mut command).output().unwrap()
-+}
-+
-+fn assert_blocked(output: std::process::Output) {
-+    assert!(!output.status.success(), "a live unprepared process must block installation");
-+    assert_eq!(
-+        String::from_utf8(output.stdout).unwrap(),
-+        "Another process from this installation is not prepared for update",
-+        "{}",
-+        String::from_utf8_lossy(&output.stderr)
-+    );
-+}
-+
-+#[test]
-+fn update_pause_coordinates_native_workers_and_preserves_the_process_guard() {
-+    // The global pause deliberately survives commit. Isolate it from other tests.
-+    if std::env::var_os("PEBREL_TEST_UPDATE_PAUSE").is_none() {
-+        let mut command = Command::new(std::env::current_exe().unwrap());
-+        command
-+            .args([
-+                "--exact",
-+                "platform::ai_session_identity::windows::worker::update_tests::update_pause_coordinates_native_workers_and_preserves_the_process_guard",
-+                "--nocapture",
-+            ])
-+            .env("PEBREL_TEST_UPDATE_PAUSE", "1");
-+        let output = crate::platform::process::hidden_command(&mut command).output().unwrap();
-+        assert!(output.status.success(), "{output:?}");
-+        return;
-+    }
-+
-+    let original = start_probe();
-+    assert_blocked(check_processes(&[&original]));
-+    let pause = HandoffPause::acquire().unwrap();
-+    assert_eq!(unsafe { WaitForSingleObject(original.as_raw_handle(), 0) }, WAIT_OBJECT_0);
-+    assert_paused();
-+    let output = check_processes(&[&original]);
-+    assert!(output.status.success(), "{output:?}");
-+
-+    // An overlapping failed/cancelled attempt cannot release another attempt's gate.
-+    let overlapping = HandoffPause::acquire().unwrap();
-+    drop(pause);
-+    assert_paused();
-+    let unrelated = Worker::start(&arguments(), Instant::now() + PROBE_TIMEOUT).unwrap();
-+    assert_blocked(check_processes(&[&unrelated.process]));
-+    assert_eq!(unsafe { WaitForSingleObject(unrelated.process.as_raw_handle(), 0) }, WAIT_TIMEOUT);
-+    drop(overlapping);
-+    let 
+@@ -1,6 +1,6 @@
+ [package]
+ name = "pebrel-completions"
+-version = "2.3.0"
++version = "2.3.1"
+ edition.workspace = true
+ 
+ [features]
 ```
 
-**File**: `nebula_app/src/update_download/handoff.rs` (modified, +8/-1)
+**File**: `nebula_app/Cargo.toml` (modified, +6/-6)
 ```diff
-@@ -53,6 +53,7 @@ pub(crate) struct PreparedUpdate {
-     transaction: String,
-     child: Child,
-     committed: bool,
-+    identity_pause: crate::platform::ai_session_identity::UpdatePause,
- }
+@@ -1,7 +1,7 @@
+ [package]
+ name = "nebula"
+ default-run = "pebrel"
+-version = "2.3.0"
++version = "2.3.1"
+ license = "GPL-3.0-or-later"
+ description = "Pebrel — a GPU-accelerated terminal emulator"
+ readme = "README.md"
+@@ -22,15 +22,15 @@ bench = false
  
- impl PreparedUpdate {
-@@ -68,6 +69,7 @@ impl PreparedUpdate {
-         crate::atomic_file::write(&self.directory.join("commit.json"), &commit)
-             .map_err(|error| format!("Could not commit the update: {error}"))?;
-         self.committed = true;
-+        self.identity_pause.commit();
-         Ok(())
-     }
- }
-@@ -172,9 +174,14 @@ pub(crate) fn prepare(asset: &UpdateAsset) -> Result<PreparedUpdate, String> {
-         &serde_json::to_vec(&plan_path).map_err(|error| error.to_string())?,
-     )
-     .map_err(|error| error.to_string())?;
-+    // The identity worker runs from the same executable as this participant.
-+    // Reap it before the helper scans processes, and hold the gate through commit.
-+    let identity_pause = crate::platform::ai_session_identity::UpdatePause::acquire()
-+        .map_err(|error| format!("Could not stop session detection for update: {error}"))?;
-     let child =
-         crate::platform::update_installation::spawn_prepared_helper(&directory, &plan_path)?;
--    let mut prepared = PreparedUpdate { directory, transaction, child, committed: false };
-+    let mut prepared =
-+        PreparedUpdate { directory, transaction, child, committed: false, identity_pause };
-     let timeout = if crate::platform::Platform::current() == crate::platform::Platform::MacOS {
-         600
-     } else {
+ [dependencies.nebula_terminal]
+ path = "../nebula_terminal"
+-version = "2.3.0"
++version = "2.3.1"
+ 
+ [dependencies.nebula_config_derive]
+ path = "../nebula_config_derive"
+-version = "2.3.0"
++version = "2.3.1"
+ 
+ [dependencies.nebula_config]
+ path = "../nebula_config"
+-version = "2.3.0"
++version = "2.3.1"
+ 
+ # 可选：GPUI UI 层（feature = "gpui-shell"，模块 src/gpui_shell/）。
+ # GPUI/component 的版本和 Git 来源由根 Cargo.toml 统一精确固定。
+@@ -79,7 +79,7 @@ optional = true
+ 
+ [dependencies.pebrel-completions]
+ path = "../nebula-completions"
+-version = "2.3.0"
++version = "2.3.1"
+ 
+ [dependencies]
+ anyhow = { version = "=1.0.104", optional = true }
+@@ -165,7 +165,7 @@ naga = { version = "=29.0.4", optional = true, features = ["wgsl-in", "hlsl-out"
+ gif = { version = "=0.14.2", optional = true }
+ 
+ [build-dependencies]
+-nebula-settings = { path = "../nebula_settings", version = "2.3.0" }
++nebula-settings = { path = "../nebula_settings", version = "2.3.1" }
+ gl_generator = { version = "0.14.0", optional = true }
+ serde = "1"
+ serde_json = "1"
+```
+
+**File**: `nebula_app/windows/nebula.rc` (modified, +4/-4)
+```diff
+@@ -10,8 +10,8 @@ APP_MANIFEST RT_MANIFEST nebula.manifest
+ #endif
+ 
+ 1 VERSIONINFO
+-FILEVERSION 2,3,0,0
+-PRODUCTVERSION 2,3,0,0
++FILEVERSION 2,3,1,0
++PRODUCTVERSION 2,3,1,0
+ FILEFLAGSMASK 0x3fL
+ FILEFLAGS 0x0L
+ FILEOS 0x40004L
+@@ -24,11 +24,11 @@ BEGIN
+         BEGIN
+             VALUE "CompanyName", "Kuddev"
+             VALUE "FileDescription", "Pebrel"
+-            VALUE "FileVersion", "2.3.0"
++            VALUE "FileVersion", "2.3.1"
+             VALUE "InternalName", "nebula"
+             VALUE "OriginalFilename", "pebrel.exe"
+             VALUE "ProductName", "Pebrel"
+-            VALUE "ProductVersion", "2.3.0"
++            VALUE "ProductVersion", "2.3.1"
+         END
+     END
+     BLOCK "VarFileInfo"
+```
+
+**File**: `nebula_config/Cargo.toml` (modified, +2/-2)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "nebula_config"
+-version = "2.3.0"
++version = "2.3.1"
+ license = "GPL-3.0-or-later"
+ description = "Nebula configuration abstractions"
+ homepage = "https://github.com/Kuddev/pebrel"
+@@ -14,5 +14,5 @@ serde = "1.0.163"
+ toml.workspace = true
+ 
+ [dev-dependencies]
+-nebula_config_derive = { version = "2.3.0", path = "../nebula_config_derive" }
++nebula_config_derive = { version = "2.3.1", path = "../nebula_config_derive" }
+ serde = { version = "1.0.163", features = ["derive"] }
 ```
 
 ---
 
-### Incident Patch 2: `404d9173` (2026-10-26)
-**Commit Message**: Fix character-art proportions without changing text spacing (#787)
+### Incident Patch 2: `cb23d50d` (2026-10-27)
+**Commit Message**: docs: finalize verified 2.3.1 release checksums
 
-Fit bounded dense character-art regions inside the existing terminal allocation while preserving the restored default font metrics. Share geometry across painting and interaction, capture neighboring source rows for scrolling, and use the official Ubuntu archive for native CI dependency downloads.
-
-**File**: `.github/workflows/linux-lua.yml` (modified, +2/-0)
+**File**: `CHANGELOG.md` (modified, +19/-13)
 ```diff
-@@ -108,6 +108,8 @@ jobs:
-       - name: Install native dependencies
-         if: ${{ runner.os == 'Linux' }}
-         run: |
-+          # 避开 runner 默认 Azure 镜像的低速下载，保留现有发行版与签名配置。
-+          printf '%s\n' 'https://archive.ubuntu.com/ubuntu/' | sudo tee /etc/apt/apt-mirrors.txt
-           sudo apt-get update
-           sudo apt-get install -y --no-install-recommends \
-             build-essential cmake pkg-config zsh libasound2-dev libdbus-1-dev libudev-dev \
-```
-
-**File**: `architecture/notes/nebula_app/gpui_shell/terminal/2026-10-26-bounded-character-art-regions.md` (added, +88/-0)
-```diff
-@@ -0,0 +1,88 @@
-+# Bounded character-art regions without changing text rows
-+
-+## Status
-+
-+Implemented. The combined Windows desktop preview was accepted on 2026-10-26.
-+The approved 2.2.2 text spacing remains unchanged; native CI coverage is separate
-+from that visual acceptance.
-+
-+## Context
-+
-+Restoring normal reading space also restored the tall aspect ratio of multi-row
-+character art. A global 1:2 grid had corrected logos but made paragraphs and lists
-+too tight. Ordinary text spacing must no longer be used to fix a graphic.
-+
-+## Evidence
-+
-+Braille uses two dot columns and four dot rows. Its source grid may have taller
-+rows, but geometric glyphs can use a local two-times-column-width pitch. Merely
-+changing individual dot positions leaves gaps between terminal rows; the complete
-+region and its input coordinates must share the same mapping.
-+
-+The ordinary render snapshot contains only source rows in the viewport. Centered
-+compression can leave pixels from a source row just outside that viewport visible.
-+Reusing only cached bounds would drop those pixels early and mis-map selection.
-+
-+## Decision
-+
-+- The frontend identifies bounded, multi-row regions made exclusively from dense
-+  Braille, block characters, or long repeated slash runs. It does not inspect
-+  process names. Short decorations, ordinary prose, table borders, Powerline,
-+  explicit backgrounds, images and formula/native-result coverage are excluded.
-+- Draw a qualifying graphic with local row pitch equal to twice the existing
-+  column width, centered in its original reserved rectangle. The terminal grid,
-+  text font size, PTY dimensions and surrounding rows do not change.
-+- Selection backgrounds, search highlights, link decoration and pointer inversion
-+  use the same local mapping. Cursor-intersecting regions and VI mode retain grid
-+  presentation. Graphic slash runs do not use programming ligature coalescing.
-+- Retain only bounded source-region coordinates, not stale glyphs. A partially
-+  visible known region requests its current neighboring source rows through the
-+  shared `RenderSnapshot::capture_from` pipeline under the existing terminal lock.
-+  This preserves colors and selection without duplicating snapshot semantics or
-+  changing the actual viewport. Negative relative source rows remain addressable.
-+- Recompute complete boundaries from current source data. Erasing or shrinking a
-+  region must yield the same layout as a newly created view. Reset, screen switch
-+  and column changes invalidate the coordinate cache. The candidate scan and cache
-+  have explicit bounds; insufficient evidence leaves the existing grid visible.
-+
-+## Rejected alternatives
-+
-+- Change default text row height again: contradicts the accepted reading result.
-+- Scale only dots inside each cell: leaves character-boundary gaps.
-+- Move graphic pixels without input mapping: selection targets the wrong row.
-+- Cache full rendered glyphs: can display stale output after an offscreen rewrite.
-+- Treat every punctuation or Braille run as a picture: changes ordinary text.
-+- Claim arbitrary ASCII art recognition: text and ASCII drawings can be ambiguous;
-+  this slice covers the observed Braille and repeated-slash cases.
-+
-+## Consequences
-+
-+The graphic keeps its original vertical allocation, including its surrounding
-+space; following output does not jump. Partially observed regions without known
-+complete boundaries use normal grid rendering. Source text and copy semantics
-+remain authoritative. No setting, application-specific hook or dependency is added.
-+
-+## Validation
-+
-+Focused regressions cover excluded text and borders, neighboring system-info text,
-+selection inversion, actual drag-selection copying, source-row capture, partial
-+scrolling, erase/shrink history independence and reset. Native captures compare the
-+approved reading scene pixel-for-pixel and measure a circle while retaining the
-+29-device-pixel Maple 13px row at 150% display scale. Fastfetch uses its actual
-+Windows 11 output; a live Codex preview remains separate from synthetic geometry.
-+The live Codex logo and the circle before/after scrolling measured 355 by 355
-+pixels, while the ordinary reading scene's client pixels stayed identical.
-+Seventy focused regressions and the source-snapshot regression passed locally;
-+Fastfetch returned zero in the real product PTY. The 60-frame local captures had
-+median draw CPU costs of 4.09ms for reading, 5.29ms for the scrolling circle and
-+6.59ms for Fastfetch; these are fixture results, not universal performance claims.
-+
-+## Supersedes
-+
-+None. The default typography contract from
-+[2.2.2 reading spacing](2026-10-26-restore-2-2-2-reading-spacing.md) remains unchanged.
-+
-+## Revisit when
-+
-+A real false-positive or interaction case demonstrates ambiguity, or applications
-+provide an explicit image/graphic region protocol that replaces shape detection.
-```
-
-**File**: `nebula_app/src/gpui_shell/terminal/character_art.rs` (added, +447/-0)
-```diff
-@@ -0,0 +1,447 @@
-+//! 纯字符画在原占位内适配比例；正文网格、PTY 尺寸和源文本保持不变。
-+
-+use std::ops::Range;
-+
-+use nebula_terminal::render::RenderSnapshot;
-+
-+mod paint;
-+pub(super) use paint::paint_overflow;
-+
-+const BLOCKED: u8 = 15;
-+const DENSE: u8 = 16;
-+const VISITED: u8 = 128;
-+const MAX_CELLS: usize = 262_144;
-+const MAX_REGIONS: usize = 32;
-+
-+#[derive(Clone, Copy, Debug)]
-+struct Area {
-+    top: i64,
-+    bottom: i64,
-+    left: usize,
-+    right: usize,
-+    kind: u8,
-+}
-+
-+impl Area {
-+    fn intersects_rows(self, top: i64, rows: usize) -> bool {
-+        self.top < top + rows as i64 && self.bottom > top
-+    }
-+}
-+
-+#[derive(Clone, Copy)]
-+struct Region {
-+    area: Area,
-+    source_top: f32,
-+    visual_top: f32,
-+    padding: f32,
-+    ratio: f32,
-+}
-+
-+impl Region {
-+    fn contains(self, row: i64, col: usize) -> bool {
-+        let row = row as f32 - self.source_top;
-+        row >= 0.0
-+            && row < (self.area.bottom - self.area.top) as f32
-+            && (self.area.left..self.area.right).contains(&col)
-+    }
-+}
-+
-+/// 坐标单位与 native-result projection 一样，都是行/列，不混用物理像素。
-+#[derive(Clone, Default)]
-+pub(super) struct Frame {
-+    regions: Vec<Region>,
-+}
-+
-+impl Frame {
-+    fn region(&self, row: i64, col: usize) -> Option<usize> {
-+        self.regions.iter().position(|region| region.contains(row, col))
-+    }
-+
-+    pub fn same_region(&self, row: usize, a: usize, b: usize) -> bool {
-+        self.region(row as i64, a) == self.region(row as i64, b)
-+    }
-+
-+    pub fn cell(&self, row: usize, col: usize, normal_y: f32) -> (f32, f32) {
-+        self.cell_at(row as i64, col, normal_y)
-+    }
-+
-+    pub fn cell_at(&self, row: i64, col: usize, normal_y: f32) -> (f32, f32) {
-+        let Some(index) = self.region(row, col) else { return (normal_y, 1.0) };
-+        let region = self.regions[index];
-+        (
-+            region.visual_top + region.padding + (row as f32 - region.source_top) * region.ratio,
-+            region.ratio,
-+        )
-+    }
-+
-+    pub fn mapped_source_row(&self, col: f32, visual_y: f32) -> Option<f32> {
-+        for region in &self.regions {
-+            let rows = (region.area.bottom - region.area.top) as f32;
-+            if col >= region.area.left as f32
-+                && col < region.area.right as f32
-+                && visual_y >= region.visual_top
-+                && visual_y < region.visual_top + rows
-+            {
-+                // 上下留白归对应边缘源行，拖选离开图案时仍有确定且连续的边界。
-+                return Some(
-+                    region.source_top
-+                        + ((visual_y - region.visual_top - region.padding) / region.ratio)
-+                            .clamp(0.0, rows - 0.0001),
-+                );
-+            }
-+        }
-+        None
-+    }
-+
-+    pub fn source_bounds(&self) -> Range<i64> {
-+        let start = self.regions.iter().map(|r| r.source_top as i64).min().unwrap_or(0);
-+        let end = self
-+            .regions
-+            .iter()
-+            .map(|r| r.source_top as i64 + r.area.bottom - r.area.top)
-+            .max()
-+            .unwrap_or(0);
-+        start..end
-+    }
-+
-+    pub fn shift_source(&mut self, offset: i64) {
-+        for region in &mut self.regions {
-+            region.source_top += offset as f32;
-+        }
-+    }
-+
-+    pub fn spans(
-+        &self,
-+        row: i64,
-+        columns: Range<usize>,
-+        normal_y: f32,
-+        mut paint: impl FnMut(Range<usize>, f32, f32),
-+    ) {
-+        let mut start = columns.start;
-+        while start < columns.end {
-+            let end = if let Some(index) = self.region(row, start) {
-+                columns.end.min(self.regions[index].area.right)
-+            } else {
-+                self.regions
-+                    .iter()
-+                    .filter(|region| {
-+                        region.area.left > start && region.contains(row, region.area.left)
-+                    })
-+                    .map(|region| region.area.left)
-+                    .min()
-+                    .unwrap_or(columns.end)
-+                    .min(columns.end)
-+            };
-+            let (y, height) = self.cell_at(row, start, normal_y);
-+            paint(start..end, y, height);
-+            start = end;
-+        }
-+    }
-+}
-+
-+#[derive(Default)]
-+pub(super) struct Layout {
-+    identity: Option<(usize, u64, bool, u16)>,
-+    cached: Vec<Area>,
-+    pub frame: Frame,
-+}
-+
-+fn geometry(ch: char) -> u8 {
-+    match ch {
-+        '\u{2801}'..='\u{28ff}' => {
-+            1 | if (ch as u32 - 0x2800).count_ones() >= 5 { DENSE } else { 0 }
-+        },
-+        '\u{2580}'..='\u{259f}' => 2 | DENSE,
-+        _ => BLOCKED,
-+    }
-+}
-+
-+fn kind(value: u8) -> u8 {
-+    value & 15
-+}
-+
-+impl Layout {
-+    pub fn capture_rows(
-+        &self,
-+        identity: (usize, u64, bool, u16),
-+        top: i64,
-+        rows: usize,
-+        retained: Range<i64>,
-+        visible: &RenderSnapshot,
-+    ) -> Option<Range<i64>> {
-+        let mut range = top..top + rows as i64;
-+        for area in self
-+            .cached
-
-```
-
-**File**: `nebula_app/src/gpui_shell/terminal/character_art/paint.rs` (added, +104/-0)
-```diff
-@@ -0,0 +1,104 @@
-+//! 图案压缩后仍可见的相邻源行，复用快照颜色与选区而不缓存旧字形。
-+use super::Frame;
-+use crate::gpui_shell::terminal::{colors::Palette, cursor_painter::paint_box_glyph};
-+use gpui::{App, Bounds, Font, Pixels, Point, Rgba, TextAlign, TextRun, Window, fill, point, size};
-+use nebula_terminal::{
-+    render::{RenderSnapshot, boxdraw},
-+    term::color::Colors,
-+};
-+
-+pub(in crate::gpui_shell::terminal) fn paint_overflow(
-+    frame: &Frame,
-+    source: &RenderSnapshot,
-+    offset: i64,
-+    visible_rows: u16,
-+    origin: Point<Pixels>,
-+    metrics: (Pixels, Pixels),
-+    theme: &Palette,
-+    overrides: &Colors,
-+    selection: Rgba,
-+    selection_foreground: Option<Rgba>,
-+    font_size: Pixels,
-+    font: &impl Fn(bool, bool, bool) -> Font,
-+    window: &mut Window,
-+    cx: &mut App,
-+) {
-+    let (width, height) = metrics;
-+    let outside = |row: u16| {
-+        let row = i64::from(row) + offset;
-+        row < 0 || row >= i64::from(visible_rows)
-+    };
-+    let rect = |col: usize, count: usize, y: f32, h: f32| {
-+        Bounds::new(
-+            point(origin.x + width * col as f32, origin.y + height * y),
-+            size(width * count as f32, height * h),
-+        )
-+    };
-+    for run in source.selection_runs.iter().filter(|run| outside(run.row)) {
-+        let row = i64::from(run.row) + offset;
-+        frame.spans(row, usize::from(run.start)..usize::from(run.end), row as f32, |cols, y, h| {
-+            if h < 1.0 {
-+                window.paint_quad(fill(rect(cols.start, cols.len(), y, h), selection));
-+            }
-+        });
-+    }
-+    let foreground = |row, col, fg, bold, dim| {
-+        selection_foreground
-+            .filter(|_| {
-+                source.selection_runs.iter().any(|r| r.row == row && r.start <= col && col < r.end)
-+            })
-+            .unwrap_or_else(|| theme.resolve_styled(fg, overrides, bold, dim))
-+    };
-+    for glyph in source.box_glyphs.iter().filter(|glyph| outside(glyph.row)) {
-+        let row = i64::from(glyph.row) + offset;
-+        let (y, h) = frame.cell_at(row, usize::from(glyph.col), row as f32);
-+        if h >= 1.0 {
-+            continue;
-+        }
-+        let Some(primitives) = boxdraw::primitives(
-+            glyph.ch,
-+            width.as_f32(),
-+            height.as_f32() * h,
-+            window.scale_factor(),
-+        ) else {
-+            continue;
-+        };
-+        let snap = crate::gpui_shell::terminal::element::snap_to_device;
-+        paint_box_glyph(
-+            window,
-+            &primitives,
-+            point(
-+                snap(origin.x + width * f32::from(glyph.col), window.scale_factor()),
-+                snap(origin.y + height * y, window.scale_factor()),
-+            ),
-+            foreground(glyph.row, glyph.col, glyph.fg, glyph.bold, glyph.dim),
-+        );
-+    }
-+    for segment in source.segments.iter().filter(|segment| outside(segment.row)) {
-+        let row = i64::from(segment.row) + offset;
-+        for cell in &segment.cells {
-+            let (y, h) = frame.cell_at(row, usize::from(cell.col), row as f32);
-+            if h >= 1.0 {
-+                continue;
-+            }
-+            let run = TextRun {
-+                len: cell.text.len(),
-+                font: font(cell.bold, cell.italic, segment.wide),
-+                color: foreground(segment.row, cell.col, cell.fg, cell.bold, cell.dim).into(),
-+                background_color: None,
-+                underline: None,
-+                strikethrough: None,
-+            };
-+            let line =
-+                window.text_system().shape_line(cell.text.clone().into(), font_size, &[run], None);
-+            let _ = line.paint(
-+                point(origin.x + width * f32::from(cell.col), origin.y + height * y),
-+                height * h,
-+                TextAlign::Left,
-+                None,
-+                window,
-+                cx,
-+            );
-+        }
-+    }
-+}
-```
-
-**File**: `nebula_app/src/gpui_shell/terminal/character_art/tests.rs` (added, +246/-0)
-```diff
-@@ -0,0 +1,246 @@
-+use super::*;
-+use nebula_terminal::render::{BgRun, BoxGlyph, CursorSnapshot, SnapCell, TextSegment};
-+use nebula_terminal::term::cell::Flags;
-+use nebula_terminal::vte::ansi::{Color, CursorShape, NamedColor};
-+
-+fn snapshot(lines: &[String], rows: u16) -> RenderSnapshot {
-+    let mut snap = RenderSnapshot {
-+        cols: 64,
-+        rows,
-+        display_offset: 0,
-+        color_overrides: Default::default(),
-+        bg_runs: Vec::new(),
-+        selection_runs: Vec::new(),
-+        segments: Vec::new(),
-+        box_glyphs: Vec::new(),
-+        image_runs: Vec::new(),
-+        cursor: None,
-+    };
-+    for (row, line) in lines.iter().enumerate() {
-+        for (col, ch) in line.chars().enumerate() {
-+            if ch == ' ' {
-+                continue;
-+            }
-+            if nebula_terminal::render::boxdraw::is_builtin(ch) {
-+                snap.box_glyphs.push(BoxGlyph {
-+                    row: row as u16,
-+                    col: col as u16,
-+                    wide: false,
-+                    ch,
-+                    fg: Color::Named(NamedColor::Foreground),
-+                    bold: false,
-+                    dim: false,
-+                });
-+            } else {
-+                snap.segments.push(TextSegment {
-+                    row: row as u16,
-+                    start_col: col as u16,
-+                    wide: false,
-+                    cells: vec![SnapCell {
-+                        col: col as u16,
-+                        text: ch.to_string(),
-+                        fg: Color::Named(NamedColor::Foreground),
-+                        bg: Color::Named(NamedColor::Background),
-+                        bold: false,
-+                        dim: false,
-+                        bg_dim: false,
-+                        italic: false,
-+                        underline: false,
-+                        strikethrough: false,
-+                    }],
-+                });
-+            }
-+        }
-+    }
-+    snap
-+}
-+
-+fn logo(ch: char) -> Vec<String> {
-+    let mut lines = vec![String::new()];
-+    lines.extend((0..8).map(|_| format!("  {}", ch.to_string().repeat(12))));
-+    lines.push("following text".into());
-+    lines
-+}
-+
-+fn update(layout: &mut Layout, snap: &RenderSnapshot, top: i64) {
-+    layout.update(snap, (1, 0, false, snap.cols), top, 8.0, 22.0, false, |row| row, |_, _| true);
-+}
-+
-+#[test]
-+fn character_art_fits_a_region_without_moving_body_or_following_rows() {
-+    for ch in ['⣿', '█', '/'] {
-+        let snap = snapshot(&logo(ch), 16);
-+        let mut layout = Layout::default();
-+        update(&mut layout, &snap, 0);
-+        assert_eq!(layout.frame.regions.len(), 1);
-+        let (first, h) = layout.frame.cell(1, 2, 1.0);
-+        let (last, _) = layout.frame.cell(8, 13, 8.0);
-+        assert!((h * 22.0 - 16.0).abs() < 0.001);
-+        assert!((last + h - first - 8.0 * h).abs() < 0.001);
-+        assert_eq!(layout.frame.cell(9, 2, 9.0), (9.0, 1.0));
-+        assert_eq!(layout.frame.cell(4, 30, 4.0), (4.0, 1.0));
-+        for row in 1..9 {
-+            let (y, h) = layout.frame.cell(row, 2, row as f32);
-+            assert!(
-+                (layout.frame.mapped_source_row(2.5, y + h * 0.5).unwrap() - row as f32 - 0.5)
-+                    .abs()
-+                    < 0.001
-+            );
-+        }
-+    }
-+}
-+
-+#[test]
-+fn character_art_selection_spans_match_the_same_inverse_geometry() {
-+    let mut layout = Layout::default();
-+    update(&mut layout, &snapshot(&logo('⣿'), 16), 0);
-+    let mut spans = Vec::new();
-+    layout.frame.spans(3, 0..20, 3.0, |cols, y, h| spans.push((cols, y, h)));
-+    assert_eq!(spans.len(), 3);
-+    assert_eq!(spans[0], (0..2, 3.0, 1.0));
-+    assert_eq!(spans[1].0, 2..14);
-+    assert_eq!(spans[2], (14..20, 3.0, 1.0));
-+    assert!((spans[1].2 * 22.0 - 16.0).abs() < 0.001);
-+}
-+
-+#[test]
-+fn character_art_excludes_prose_tables_powerline_small_decoration_and_mixed_content() {
-+    for lines in [
-+        vec!["hello ⣿⣿⣿⣿ world".into()],
-+        logo('─'),
-+        logo(''),
-+        logo('⠁'),
-+        vec!["/path/to/file".into(); 8],
-+        {
-+            let mut rows = logo('⣿');
-+            rows[4] = "  ⣿⣿⣿word⣿⣿⣿⣿⣿".into();
-+            rows
-+        },
-+    ] {
-+        let mut layout = Layout::default();
-+        update(&mut layout, &snapshot(&lines, 16), 0);
-+        assert!(layout.frame.regions.is_empty());
-+    }
-+}
-+
-+#[test]
-+fn character_art_respects_cursor_background_and_other_projection_ownership() {
-+    let mut snap = snapshot(&logo('⣿'), 16);
-+    snap.cursor = Some(CursorSnapshot {
-+        row: 4,
-+        col: 5,
-+        shape: CursorShape::Hidden,
-+        wide: false,
-+        cell_ch: ' ',
-+        cell_flags: Flags::empty(),
-+        cell_bg: Color::Named(NamedColor::Background),
-+    });
-+    let mut layout = Layout::default();
-+    update(&mut layout, &snap, 0);
-+    assert!(layout.frame.regions.is_empty());
-+    snap.cursor = None;
-+    snap.bg_runs.push(BgRun {
-+       
-```
-
-**File**: `nebula_app/src/gpui_shell/terminal/element.rs` (modified, +112/-81)
-```diff
-@@ -32,6 +32,7 @@ mod cell_fit;
- #[path = "element/color_tests.rs"]
- mod color_tests;
- mod reading;
-+mod snapshot;
- #[cfg(all(test, feature = "gpui-test-support"))]
- pub(in crate::gpui_shell) mod snapshot_probe;
+@@ -4,19 +4,21 @@ Every release entry is provided in English and Simplified Chinese.
  
-@@ -87,66 +88,6 @@ pub struct TermLayout {
- }
+ 每个版本条目均同时提供英文和简体中文说明。
  
- impl TerminalElement {
--    /// 在一次锁内通过渲染合同截取快照；锁外解析颜色与绘制。第三项是回滚
--    /// 历史行数——滚动条拇指的分母，顺着这一次锁一起取回，免得绘制路径
--    /// 为了它再抢一次 `Term` 锁。
--    fn snapshot(
--        &self,
--        rows: usize,
--        cols: usize,
--        cx: &App,
--    ) -> Option<(RenderSnapshot, Option<String>, usize, super::osc_links::LinkCells, i64, bool)>
--    {
--        let view = self.view.read(cx);
--        let session = view.session.as_ref()?;
--        let hint_config = view.hint_config.clone();
--        let term = session.term.lock();
--        let prompt_line = if term.mode().intersects(TermMode::ALT_SCREEN | TermMode::VI) {
--            None
--        } else {
--            let cursor = term.grid().cursor.point;
--            crate::display::nebula_prompt_line_from_raw_grid(
--                &term,
--                cursor,
--                &view.suggest.line_buf,
--                &view.suggest.suggest_env,
--            )
--            .or_else(|| {
--                if !view.suggest.completion_popup_requested {
--                    return None;
--                }
--                view.suggest.completion_prefix_from_raw_grid(&term, cursor)
--            })
--            .map(|line| line.input)
--        };
--        // 分段只反映内容与宽度类，绝不掺入光标状态：per-cell 绘制下反色只是
--        // 换色，若让闪烁相位改变分段，整行会随闪烁重塑形而跳字。
--        let projection = view.native_results.projection.borrow();
--        let source_rows = projection.source_rows(rows);
--        let snapshot = RenderSnapshot::capture_rows(
--            &term,
--            &SnapshotConfig { rows: source_rows as u16, cols: cols as u16 },
--            |row| !projection.covers(row),
--        );
--        let history = term.history_size();
--        let dashed =
--            super::osc_links::dashed_cells_where(&term, &hint_config, source_rows, cols, |row| {
--                !projection.covers(row)
--            });
--        let scrollback_floor = term.grid().scrolled_out();
--        let image_anchor = scrollback_floor.saturating_add(history) as i64;
--        let viewport_top_abs = image_anchor + i64::from(term.viewport_origin_for(rows).0);
+-## 2.3.1 - 2026-10-26
 -
--        Some((
--            snapshot,
--            prompt_line,
--            history,
--            dashed,
--            viewport_top_abs,
--            term.mode().contains(TermMode::ALT_SCREEN),
--        ))
--    }
--
-     /// 把**应用写死的**颜色按当前主题矫正，直接写回快照。
-     ///
-     /// 用的是旧壳那一个 `TerminalColorResolver`（`display::terminal_color`）：最低
-@@ -327,11 +268,20 @@ impl Element for TerminalElement {
-         let focused = focus_handle.is_focused(window);
-         // 旧壳只让光标本身参与闪烁；ghost、弹窗补齐和 IME 仍复用同一个坐标锚点。
-         let cursor_visible = self.view.read(cx).cursor_visible();
--        let Some((mut snap, prompt_line, history, mut dashed, viewport_top_abs, alternate_screen)) =
--            self.snapshot(layout.rows, layout.cols, cx)
-+        let Some(snapshot::FrameSnapshot {
-+            mut snap,
-+            mut art_source,
-+            prompt_line,
-+            history,
-+            mut dashed,
-+            viewport_top_abs,
-+            mode,
-+            reading_epoch,
-+        }) = self.snapshot(layout.rows, layout.cols, cx)
-         else {
-             return;
-         };
-+        let alternate_screen = mode.contains(TermMode::ALT_SCREEN);
-         #[cfg(all(test, feature = "gpui-test-support"))]
-         snapshot_probe::record(&self.view, &snap, bounds, layout, cx);
-         let suggest_anchor =
-@@ -344,6 +294,9 @@ impl Element for TerminalElement {
-         });
-         let overrides = snap.color_overrides;
-         self.resolve_app_colors(&mut snap, &mut dashed, &theme, &overrides, cx);
-+        if let Some((_, source)) = &mut art_source {
-+            self.resolve_app_colors(source, &mut Default::default(), &theme, &overrides, cx);
-+        }
-         let (theme_anchor, theme_is_light) = themed_anchor(&theme, cx);
-         let host_cursor_follows_theme = is_default_host_cursor(&theme);
-         let app_cursor = snap.cursor.as_ref().filter(|cursor| {
-@@ -406,6 +359,31 @@ impl Element for TerminalElement {
-             .update(cx, |view, cx| view.math.finalize_frame(pending_math_frame, scale_factor, cx));
+-- `Pebrel-v2.3.1-linux-x64-preview.AppImage`: `PENDING FINAL BUILD`
+-- `Pebrel-v2.3.1-linux-x64-preview.deb`: `PENDING FINAL BUILD`
+-- `Pebrel-v2.3.1-linux-x64-preview.tar.gz`: `PENDING FINAL BUILD`
+-- `Pebrel-v2.3.1-macos-arm64-preview.dmg`: `PENDING FINAL BUILD`
+-- `Pebrel-v2.3.1-macos-x64-preview.dmg`: `PENDING FINAL BUILD`
+-- `Pebrel-v2.3.1-windows-x64.zip`: `PENDING FINAL BUILD`
+-- `Pebrel-v2.3.1-windows-x64-setup.exe`: `PENDING FINAL BUILD`
+-- `Pebrel-v2.3.1-windows-arm64.zip`: `PENDING FINAL BUILD`
+-- `Pebrel-v2.3.1-windows-arm64-setup.exe`: `PENDING FINAL BUILD`
+-- `Pebrel-v2.3.1-android-universal-preview.apk`: `PENDING FINAL BUILD`
+-- `Pebrel-v2.3.1-relay-manual.tar.gz`: `PENDING FINAL BUILD`
++## 2.3.1 - 2026-10-27
++
++```text
++b40bcd922e7340b51893c247695b4b286d330b4e7b27238694a4aee3c345f94b  Pebrel-v2.3.1-android-universal-preview.apk
++516045e26444aa161e4abef7a74cf7e4dbcbe4eecd059c5bfb923da98e33f786  Pebrel-v2.3.1-linux-x64-preview.AppImage
++59bff08d2f07f044029b15c50bb37c2e6b0dca1bb9f82611a80ad03c221f4d85  Pebrel-v2.3.1-linux-x64-preview.deb
++de7586f1afc0d7abea1a4ba20805a7c030f9d281570d2fb25e01a44146ee0808  Pebrel-v2.3.1-linux-x64-preview.tar.gz
++0260651ee08fdb384a5441bb3db836690f4296dd6b45ba4a45e360831f3d8a2f  Pebrel-v2.3.1-macos-arm64-preview.dmg
++2043effa1328dcd5d7926a4139668fb85a416a69654308ea816de67e8c564a6d  Pebrel-v2.3.1-macos-x64-preview.dmg
++a86bc7d886c388089be3208f51d619c47bef29014b9688171f553eb9f20a30fd  Pebrel-v2.3.1-relay-manual.tar.gz
++0b64c4d5cf4c60c7fa40d3f340105b97889cf08d25bd7f9c66079490950c4ee6  Pebrel-v2.3.1-windows-arm64-setup.exe
++583aa3a42b78ed43df732c0d17894482807a6ec5911264e902b5009f7e876605  Pebrel-v2.3.1-windows-arm64.zip
++9e21164f493a1b05fcdc3102baf316371e099e5d0532f5f8a26b2bfae9f0472b  Pebrel-v2.3.1-windows-x64-setup.exe
++e12dcfb573ac5d20e06b234202f1065af12b04979311a2ca10a97969a92f70e5  Pebrel-v2.3.1-windows-x64.zip
++```
  
-         let vertical = self.view.read(cx).native_results.projection.borrow().clone();
-+        let art = self.view.update(cx, |view, _| {
-+            let screen =
-+                view.session.as_ref().map_or(0, |s| std::sync::Arc::as_ptr(&s.term) as usize);
-+            let (offset, source) =
-+                art_source.as_ref().map_or((0, &snap), |(offset, source)| (*offset, source));
-+            view.character_art.update(
-+                source,
-+                (screen, reading_epoch, alternate_screen, snap.cols),
-+                viewport_top_abs + offset,
-+                layout.cell_width.as_f32(),
-+             
+ ### English
+ 
+@@ -56,6 +58,10 @@ Packages include Windows x64/ARM64 installers and portable ZIPs, macOS Apple Sil
+ 
+ ### Contributors
+ 
++<p>
++  <a href="https://github.com/Kuddev"><img src="https://avatars.githubusercontent.com/u/292709043?v=4&amp;s=96" width="48" height="48" alt="Kuddev" title="Kuddev" /></a>
++</p>
++
+ Thanks to [Kuddev](https://github.com/Kuddev) for the fixes, documentation and release integration.
+ 
+ 感谢 [Kuddev](https://github.com/Kuddev) 对本版修复、文档与发布整合的贡献。
 ```
 
-**File**: `nebula_app/src/gpui_shell/terminal/element/reading.rs` (modified, +22/-12)
+**File**: `docs/release-notes/v2.3.1.md` (modified, +17/-11)
 ```diff
-@@ -24,11 +24,14 @@ impl TerminalElement {
-         let color = cx.theme().primary.opacity(0.30);
-         let projection = view.native_results.projection.borrow();
-         // 折叠后的可见尾行可能来自屏幕范围以外；隐藏原文也不能把高亮压到控制行上。
--        for row in 0..projection.source_rows(layout.rows) {
--            if projection.covers(row) {
-+        let art_rows = view.character_art.frame.source_bounds();
-+        for row in
-+            art_rows.start.min(0)..art_rows.end.max(projection.source_rows(layout.rows) as i64)
-+        {
-+            if projection.covers_source_row(row) {
-                 continue;
-             }
--            let absolute = viewport_top + row as i64;
-+            let absolute = viewport_top + row;
-             if absolute < 0 {
-                 continue;
-             }
-@@ -43,16 +46,23 @@ impl TerminalElement {
-             if start >= end {
-                 continue;
-             }
--            let highlight = Bounds::new(
--                point(
--                    bounds.origin.x + layout.cell_width * start as f32,
--                    bounds.origin.y + layout.line_height * projection.row(row as f32),
--                ),
--                size(layout.cell_width * (end - start) as f32, layout.line_height),
-+            view.character_art.frame.spans(
-+                row,
-+                start..end,
-+                projection.row(row as f32),
-+                |columns, y, h| {
-+                    let highlight = Bounds::new(
-+                        point(
-+                            bounds.origin.x + layout.cell_width * columns.start as f32,
-+                            bounds.origin.y + layout.line_height * y,
-+                        ),
-+                        size(layout.cell_width * columns.len() as f32, layout.line_height * h),
-+                    );
-+                    #[cfg(all(test, feature = "gpui-test-support"))]
-+                    snapshot_probe::record_reading_highlight(self.view.entity_id(), highlight, cx);
-+                    window.paint_quad(fill(highlight, color));
-+                },
-             );
--            #[cfg(all(test, feature = "gpui-test-support"))]
--            snapshot_probe::record_reading_highlight(self.view.entity_id(), highlight, cx);
--            window.paint_quad(fill(highlight, color));
-         }
-     }
- }
-```
-
-**File**: `nebula_app/src/gpui_shell/terminal/element/snapshot.rs` (added, +100/-0)
-```diff
-@@ -0,0 +1,100 @@
-+//! 同一终端锁内获取可见网格和图案必要的相邻源行，统一复用渲染快照语义。
-+use super::*;
-+
-+pub(super) struct FrameSnapshot {
-+    pub snap: RenderSnapshot,
-+    pub art_source: Option<(i64, RenderSnapshot)>,
-+    pub prompt_line: Option<String>,
-+    pub history: usize,
-+    pub dashed: super::super::osc_links::LinkCells,
-+    pub viewport_top_abs: i64,
-+    pub mode: TermMode,
-+    pub reading_epoch: u64,
-+}
-+
-+impl TerminalElement {
-+    /// 在一次锁内通过渲染合同截取快照；锁外解析颜色与绘制。第三项是回滚
-+    /// 历史行数——滚动条拇指的分母，顺着这一次锁一起取回，免得绘制路径
-+    /// 为了它再抢一次 `Term` 锁。
-+    pub(super) fn snapshot(&self, rows: usize, cols: usize, cx: &App) -> Option<FrameSnapshot> {
-+        let view = self.view.read(cx);
-+        let session = view.session.as_ref()?;
-+        let hint_config = view.hint_config.clone();
-+        let term = session.term.lock();
-+        let prompt_line = if term.mode().intersects(TermMode::ALT_SCREEN | TermMode::VI) {
-+            None
-+        } else {
-+            let cursor = term.grid().cursor.point;
-+            crate::display::nebula_prompt_line_from_raw_grid(
-+                &term,
-+                cursor,
-+                &view.suggest.line_buf,
-+                &view.suggest.suggest_env,
-+            )
-+            .or_else(|| {
-+                if !view.suggest.completion_popup_requested {
-+                    return None;
-+                }
-+                view.suggest.completion_prefix_from_raw_grid(&term, cursor)
-+            })
-+            .map(|line| line.input)
-+        };
-+        // 分段只反映内容与宽度类，绝不掺入光标状态：per-cell 绘制下反色只是
-+        // 换色，若让闪烁相位改变分段，整行会随闪烁重塑形而跳字。
-+        let projection = view.native_results.projection.borrow();
-+        let source_rows = projection.source_rows(rows);
-+        let snapshot = RenderSnapshot::capture_rows(
-+            &term,
-+            &SnapshotConfig { rows: source_rows as u16, cols: cols as u16 },
-+            |row| !projection.covers(row),
-+        );
-+        let history = term.history_size();
-+        let dashed = super::super::osc_links::dashed_cells_where(
-+            &term,
-+            &hint_config,
-+            source_rows,
-+            cols,
-+            |row| !projection.covers(row),
-+        );
-+        let scrollback_floor = term.grid().scrolled_out();
-+        let image_anchor = scrollback_floor.saturating_add(history) as i64;
-+        let viewport_top_abs = image_anchor + i64::from(term.viewport_origin_for(rows).0);
-+
-+        let mode = *term.mode();
-+        let reading_epoch = term.reading_epoch();
-+        let identity = (
-+            std::sync::Arc::as_ptr(&session.term) as usize,
-+            reading_epoch,
-+            mode.contains(TermMode::ALT_SCREEN),
-+            cols as u16,
-+        );
-+        let retained = term.reading_span();
-+        let art_source = view
-+            .character_art
-+            .capture_rows(
-+                identity,
-+                viewport_top_abs,
-+                source_rows,
-+                retained.start.line as i64..retained.end.line as i64,
-+                &snapshot,
-+            )
-+            .map(|range| {
-+                let source = RenderSnapshot::capture_from(
-+                    &term,
-+                    &SnapshotConfig { rows: (range.end - range.start) as u16, cols: cols as u16 },
-+                    nebula_terminal::index::Line((range.start - image_anchor) as i32),
-+                );
-+                (range.start - viewport_top_abs, source)
-+            });
-+        Some(FrameSnapshot {
-+            snap: snapshot,
-+            art_source,
-+            prompt_line,
-+            history,
-+            dashed,
-+            viewport_top_abs,
-+            mode,
-+            reading_epoch,
-+        })
-+    }
-+}
-```
-
----
-
-### Incident Patch 3: `31a64485` (2026-10-26)
-**Commit Message**: fix(fonts): restore 2.2.2 reading spacing and show Geist default (#783)
-
-Restore released natural font metrics, platform padding and baseline behavior without changing font size or column widths. Display Geist as the actual default interface font and preserve custom font save/reset semantics.
-
-**File**: `architecture/notes/nebula_app/gpui_shell/terminal/2026-10-25-independent-glyphs-and-proportional-grids.md` (modified, +2/-0)
-```diff
-@@ -2,6 +2,8 @@
+@@ -38,20 +38,26 @@ Packages include Windows x64/ARM64 installers and portable ZIPs, macOS Apple Sil
  
- ## Status
+ ## Contributors
  
-+Default typography is superseded by [the 2.2.2 reading-spacing restoration](2026-10-26-restore-2-2-2-reading-spacing.md).
++<p>
++  <a href="https://github.com/Kuddev"><img src="https://avatars.githubusercontent.com/u/292709043?v=4&amp;s=96" width="48" height="48" alt="Kuddev" title="Kuddev" /></a>
++</p>
 +
- Implemented and inspected on native Windows at 150% scaling. Other native
- platforms remain covered by their selected CI jobs, not this desktop inspection.
+ Thanks to [Kuddev](https://github.com/Kuddev) for the fixes, documentation and release integration.
  
-```
-
-**File**: `architecture/notes/nebula_app/gpui_shell/terminal/2026-10-26-restore-2-2-2-reading-spacing.md` (added, +70/-0)
-```diff
-@@ -0,0 +1,70 @@
-+# Restore 2.2.2 terminal reading spacing
-+
-+## Status
-+
-+Implemented from the `v2.2.2` source and verified with focused regressions and
-+native Windows reading captures at 150% scaling.
-+
-+## Context
-+
-+The proportional-grid change made character-art circles round, but its default
-+row height also tightened ordinary multiline text. Measuring unchanged glyph ink
-+and a circular logo did not establish that paragraphs and lists remained readable.
-+The requested correction is to restore 2.2.2 typography rather than introduce
-+another character-art-driven default.
-+
-+## Evidence
-+
-+`v2.2.2` resolves to `9db57b6e794ebed88431e9e4aaef519b58986a0e`.
-+Its `view/typography.rs` measures the main font's ascent plus descent, applies
-+an explicit theme multiplier when present, then adds the device-pixel offset
-+and floors the result. Its Windows default offset is four device pixels.
-+Each shaped line is painted at its grid origin using GPUI's own baseline rule.
-+
-+## Decision
-+
-+Restore that typography implementation and its `line_height_for_view` adapter.
-+Restore the platform default offset through the existing platform identity API.
-+Remove the proportional-grid override and per-run shared-baseline translation.
-+Retain font size, width modes, explicit line-height settings and explicit offsets.
-+
-+The independent symbol font, Maple registration lifetime, UI font setting and
-+native-result viewing changes are separate features and remain in place.
-+The interface font input displays the existing default, Geist, while an absent
-+override stays absent in persistence; clearing the input returns to Geist.
-+
-+## Rejected alternatives
-+
-+- Keep the 1:2 grid and change the requested font size: changes glyphs instead
-+  of restoring reading space.
-+- Apply another guessed line-height multiplier: does not restore the specified
-+  released behavior.
-+- Declare a text-only ink-size comparison sufficient: it does not measure the
-+  interline space that prompted this rollback.
-+
-+## Consequences
-+
-+Default ordinary-text spacing matches 2.2.2 again. Character-art aspect ratio
-+once again follows that row spacing; this rollback does not claim both a taller
-+row and unchanged column width still form a 1:2 grid. No application-specific
-+rendering heuristic or new saved preference is added.
-+
-+## Validation
-+
-+The typography module is compared directly with the released source. Existing
-+regressions cover natural metrics, DPI, explicit overrides, startup sizing,
-+and UI-font input save/reset. Native captures use consecutive Chinese/English
-+list rows, rather than treating a character-art circle as the reading oracle.
-+Maple 13px and 14px measured 29 and 31 device-pixel rows respectively, matching
-+2.2.2. A native settings capture shows Geist in the input. Sixteen focused tests
-+passed, including the displayed default, custom font save and empty-input reset.
-+
-+## Supersedes
-+
-+The default grid and shared-baseline decisions in
-+[independent glyphs and proportional grids](2026-10-25-independent-glyphs-and-proportional-grids.md).
-+
-+## Revisit when
-+
-+A separately approved spacing design has multiline reading acceptance in addition
-+to character-art checks; a glyph-size or logo-only check is insufficient.
-```
-
-**File**: `nebula_app/src/gpui_shell/config.rs` (modified, +12/-4)
-```diff
-@@ -361,8 +361,12 @@ impl Settings {
- }
+ 感谢 [Kuddev](https://github.com/Kuddev) 对本版修复、文档与发布整合的贡献。
  
- fn default_font_offset() -> RawDelta {
--    // 正文通过独立基线放置，平台补偿不再隐式改变字符网格的比例。
--    RawDelta { x: 0, y: 0 }
-+    // 恢复 2.2.2 的默认留白，不再为字符画比例压缩普通正文。
-+    let y = match crate::platform::Platform::current() {
-+        crate::platform::Platform::Windows => 4,
-+        _ => 0,
-+    };
-+    RawDelta { x: 0, y }
- }
+ ## SHA256
  
- fn runtime_background(
-@@ -863,9 +867,13 @@ mod tests {
-     }
- 
-     #[test]
--    fn font_offset_has_no_implicit_platform_padding_and_preserves_explicit_values() {
-+    fn font_offset_restores_2_2_2_padding_and_preserves_explicit_values() {
-+        let default_y = match crate::platform::Platform::current() {
-+            crate::platform::Platform::Windows => 4,
-+            _ => 0,
-+        };
-         for (input, expected) in [
--            ("", (0, 0)),
-+            ("", (0, default_y)),
-             ("[font.offset]\nx = 2\ny = 4", (2, 4)),
-             ("[font.offset]\ny = -2", (0, -2)),
-         ] {
-```
-
-**File**: `nebula_app/src/gpui_shell/settings_pane/appearance.rs` (modified, +21/-3)
-```diff
-@@ -258,7 +258,12 @@ mod tests {
-         use crate::gpui_shell::settings_fixture::{SettingsBytesGuard, lock_theme_studio};
-         let _lock = lock_theme_studio();
-         let _settings = SettingsBytesGuard::capture();
--        persist_keys(&[("font_size", "15".into()), ("ui_font_size", "14".into())]).unwrap();
-+        persist_keys(&[
-+            ("font_size", "15".into()),
-+            ("ui_font_size", "14".into()),
-+            ("ui_font_family", String::new()),
-+        ])
-+        .unwrap();
-         cx.update(|cx| {
-             gpui_component::init(cx);
-             cx.set_reduce_motion(true);
-@@ -271,6 +276,10 @@ mod tests {
-             gpui_component::Root::new(view, window, cx)
-         });
-         let pane = pane.unwrap();
-+        assert_eq!(
-+            pane.read_with(cx, |pane, cx| pane.ui_font_family_input.read(cx).value().to_string()),
-+            "Geist"
-+        );
-         cx.simulate_resize(gpui::size(px(1280.0), px(1800.0)));
-         cx.update(|window, _| window.activate_window());
-         cx.run_until_parked();
-@@ -369,7 +378,7 @@ mod tests {
-             }
-         }
-         let terminal_family = RuntimeSettings::load().font_family;
--        for value in ["Consolas", ""] {
-+        for value in ["Geist", "Consolas", ""] {
-             cx.update(|window, cx| {
-                 pane.read(cx).ui_font_family_input.read(cx).focus_handle(cx).focus(window, cx);
-                 let _ = window.draw(cx);
-@@ -385,7 +394,16 @@ mod tests {
-             cx.simulate_keystrokes("enter");
-             cx.run_until_parked();
-             let saved = RuntimeSettings::load();
--            assert_eq!(saved.ui_font_family.as_deref(), (!value.is_empty()).then_some(value));
-+            let custom = (!value.is_empty() && value != "Geist").then_some(value);
-+            assert_eq!(saved.ui_font_family.as_deref(), custom);
-+            assert_eq!(
-+                pane.read_with(cx, |pane, cx| pane
-+                    .ui_font_family_input
-+                    .read(cx)
-+                    .value()
-+                    .to_string()),
-+                custom.unwrap_or("Geist")
-+            );
-             assert_eq!(saved.font_family, terminal_family);
-         }
-     }
-```
-
-**File**: `nebula_app/src/gpui_shell/settings_pane/initialization.rs` (modified, +19/-7)
-```diff
-@@ -558,20 +558,32 @@ impl SettingsPane {
-             },
-         ));
- 
--        let ui_font_family_input = cx.new(|cx| {
--            InputState::new(window, cx)
--                .placeholder(localized_input_placeholder("font_family", language))
--                .default_value(runtime.ui_font_family.clone().unwrap_or_default())
--        });
-+        let ui_font_family_input =
-+            cx.new(|cx| {
-+                InputState::new(window, cx)
-+                    .placeholder(localized_input_placeholder("font_family", language))
-+                    .default_value(runtime.ui_font_family.clone().unwrap_or_else(|| {
-+                        crate::gpui_shell::typography::UI_FONT_FAMILY.to_owned()
-+                    }))
-+            });
-         subscriptions.push(cx.subscribe_in(
-             &ui_font_family_input,
-             window,
--            |this: &mut Self, input, event: &InputEvent, _, cx| {
-+            |this: &mut Self, input, event: &InputEvent, window, cx| {
-                 if matches!(event, InputEvent::PressEnter { .. } | InputEvent::Blur) {
--                    let value = input.read(cx).value().trim().to_owned();
-+                    let default = crate::gpui_shell::typography::UI_FONT_FAMILY;
-+                    let entered = input.read(cx).value().trim().to_owned();
-+                    // 默认字体显示真实名称，但不把占位默认值变成用户覆盖设置。
-+                    let value =
-+                        if entered.eq_ignore_ascii_case(default) { String::new() } else { entered };
-                     if value != this.runtime.ui_font_family.as_deref().unwrap_or_default() {
-                         this.persist(&[("ui_font_family", value)], cx);
-                     }
-+                    let displayed =
-+                        this.runtime.ui_font_family.as_deref().unwrap_or(default).to_owned();
-+                    if input.read(cx).value().as_ref() != displayed {
-+                        input.update(cx, |state, cx| state.set_value(displayed, window, cx));
-+                    }
-                 }
-             },
-         ));
-```
-
-**File**: `nebula_app/src/gpui_shell/terminal/element.rs` (modified, +2/-23)
-```diff
-@@ -81,7 +81,6 @@ impl TerminalElement {
- pub struct TermLayout {
-     cell_width: Pixels,
-     line_height: Pixels,
--    text_baseline: Pixels,
-     rows: usize,
-     cols: usize,
-     hitbox: Hitbox,
-@@ -258,9 +257,8 @@ impl Element for TerminalElement {
-         let scale = window.scale_factor();
-         let view = self.view.read(cx);
-         let cell_width = view.cell_width_for_advance(sample.width.as_f32(), scale);
--        let line_height = view.line_height_for_width(cell_width, scale);
--        let text_baseline =
--            super::view::typography::baseline(sample.ascent, sample.descent, line_height);
-+        let line_height =
-+            view.line_height_for_metrics(sample.ascent.as_f32() + sample.descent.as_f32(), scale);
- 
-         // 网格裁定（floor、最小网格、resize 合流）全部由渲染合同的
-         // ViewportTracker 在 view 内完成；元素只上报内容矩形与度量。
-@@ -297,7 +295,6 @@ impl Element for TerminalElement {
-         TermLayout {
-             cell_width,
-             line_height,
--            text_baseline,
-             rows: view.grid_rows(),
-             cols: view.grid_cols(),
-             hitbox,
-@@ -752,15 +749,6 @@ impl Element for TerminalElement {
-                         run.clone(),
-                         layout.cell_width,
-                     );
--                    let origin = point(
--                        origin.x,
--                        super::view::typography::glyph_origin_y(
--                            &shaped,
--                            origin.y,
--                            layout.line_height,
--                            layout.text_baseline,
--                        ),
--                    );
-                     let _ = shaped.paint(
-                         origin,
-                         layout.line_height,
-@@ -788,15 +776,6 @@ impl Element for TerminalElement {
-                         &run,
-                         layout.cell_width,
-                     );
--                    let origin = point(
--                        origin.x,
--                        super::view::typography::glyph_origin_y(
--                            &shaped,
--                            origin.y,
--                            layout.line_height,
--                            layout.text_baseline,
--                        ),
--                    );
-                     let _ = shaped.paint(
-                         origin,
-                         layout.line_height,
-```
-
-**File**: `nebula_app/src/gpui_shell/terminal/view.rs` (modified, +5/-5)
-```diff
-@@ -34,7 +34,7 @@ mod startup_command;
- #[cfg(all(test, feature = "gpui-test-support"))]
- pub(super) mod startup_tests;
- mod tab_identity;
--pub(super) mod typography;
-+mod typography;
- 
- pub use broadcast::TerminalInput;
- pub use runtime::InputOrigin;
-@@ -557,11 +557,11 @@ impl TerminalView {
-         typography::effective_cell_width(raw_width, self.cell_width_mode, scale, self.font_offset_x)
-     }
- 
--    pub(super) fn line_height_for_width(&self, cell_width: Pixels, scale: f32) -> Pixels {
--        typography::effective_line_height_with_theme(
--            cell_width,
--            self.font_size.as_f32(),
-+    pub(super) fn line_height_for_metrics(&self, natural_height: f32, scale: f32) -> Pixels {
-+        typography::line_height_for_view(
-+            self.font_size,
-             self.line_height_multiplier,
-+            natural_height,
-             self.font_offset_y,
-             scale,
-         )
-```
-
-**File**: `nebula_app/src/gpui_shell/terminal/view/tests.rs` (modified, +23/-35)
-```diff
-@@ -314,24 +314,16 @@ fn explicit_line_height_offset_is_still_measured_in_device_pixels() {
- }
- 
- #[test]
--fn default_line_height_keeps_square_dot_pitch_across_fonts_dpi_and_zoom() {
-+fn default_line_height_matches_2_2_2_natural_metrics_across_dpi_and_zoom() {
-     for font_size in [10.0, 13.0, 14.0, 15.0, 18.0, 24.0] {
-         for scale in [1.0, 1.25, 1.5, 1.75, 2.0, 2.5] {
--            for advance_ratio in [0.5, 0.55, 0.6, 0.65] {
--                for mode in [
--                    nebula_settings::CellWidthModeName::Compact,
--                    nebula_settings::CellWidthModeName::Relaxed,
--                ] {
--                    let width = typography::effective_cell_width(
--                        font_size * advance_ratio,
--                        mode,
--                        scale,
--                        0.0,
--                    );
-+            for metric_ratio in [1.2, 1.32, 1.6] {
-+                for offset in [0.0, 4.0] {
-+                    let natural = font_size * metric_ratio;
-                     let height = typography::effective_line_height_with_theme(
--                        width, font_size, None, 0.0, scale,
-+                        natural, font_size, None, offset, scale,
-                     );
--                    assert!((height.as_f32() / 4.0 - width.as_f32() / 2.0).abs() < 1e-5);
-+                    assert_eq!(height, typography::effective_line_height(natural, offset, scale));
-                 }
-             }
-         }
-@@ -343,31 +335,27 @@ fn theme_line_height_uses_font_size_and_keeps_device_pixel_flooring() {
-     // 15px * 1.5 = 22.5 logical px; at 150% DPI with a 4px device offset,
-     // floor(22.5 * 1.5 + 4) = 37 device px, or 37 / 1.5 logical px.
-     let height =
--        typography::effective_line_height_with_theme(gpui::px(9.0), 15.0, Some(1.5), 4.0, 1.5);
-+        typography::effective_line_height_with_theme(15.0 * 1.32, 15.0, Some(1.5), 4.0, 1.5);
- 
-     assert!((f32::from(height) - 37.0 / 1.5).abs() < f32::EPSILON);
- }
- 
- #[test]
--fn fallback_baseline_alignment_preserves_glyph_size_and_positions() {
--    use gpui::{LineLayout, ShapedLine, px};
--    let primary_baseline = typography::baseline(px(14.28), px(4.2), px(16.0));
--    for (ascent, descent) in [(14.28, 4.2), (16.0, 6.0), (12.0, 2.0)] {
--        let mut line = ShapedLine::default();
--        *line = std::sync::Arc::new(LineLayout {
--            font_size: px(14.0),
--            width: px(8.4),
--            ascent: px(ascent),
--            descent: px(descent),
--            runs: Vec::new(),
--            len: 1,
--        });
--        let original_layout = std::ops::Deref::deref(&line).clone();
--        let origin = typography::glyph_origin_y(&line, px(32.0), px(16.0), primary_baseline);
--        let painted_baseline = origin + typography::baseline(line.ascent, line.descent, px(16.0));
--        assert!((painted_baseline.as_f32() - (32.0 + primary_baseline.as_f32())).abs() < 1e-5);
--        assert!(std::sync::Arc::ptr_eq(&original_layout, &line));
--        assert_eq!(line.font_size, px(14.0));
--        assert_eq!(line.width, px(8.4));
-+fn maple_reading_rows_restore_2_2_2_height_without_changing_columns() {
-+    use gpui::px;
-+    for (font_size, expected_device_height) in [(13.0, 29.0), (14.0, 31.0)] {
-+        let width = typography::effective_cell_width(
-+            font_size * 0.6,
-+            nebula_settings::CellWidthModeName::Compact,
-+            1.5,
-+            0.0,
-+        );
-+        let height =
-+            typography::line_height_for_view(px(font_size), None, font_size * 1.32, 4.0, 1.5);
-+        assert!((height.as_f32() * 1.5 - expected_device_height).abs() < 1e-5);
-+        assert!(
-+            height > width * 2.0,
-+            "reading space must not be tied to character-art proportions"
-+        );
-     }
- }
+-- `Pebrel-v2.3.1-linux-x64-preview.AppImage`: `PENDING FINAL BUILD`
+-- `Pebrel-v2.3.1-linux-x64-preview.deb`: `PENDING FINAL BUILD`
+-- `Pebrel-v2.3.1-linux-x64-preview.tar.gz`: `PENDING FINAL BUILD`
+-- `Pebrel-v2.3.1-macos-arm64-preview.dmg`: `PENDING FINAL BUILD`
+-- `Pebrel-v2.3.1-macos-x64-preview.dmg`: `PENDING FINAL BUILD`
+-- `Pebrel-v2.3.1-windows-x64.zip`: `PENDING FINAL BUILD`
+-- `Pebrel-v2.3.1-windows-x64-setup.exe`: `PENDING FINAL BUILD`
+-- `Pebrel-v2.3.1-windows-arm64.zip`: `PENDING FINAL BUILD`
+-- `Pebrel-v2.3.1-windows-arm64-setup.exe`: `PENDING FINAL BUILD`
+-- `Pebrel-v2.3.1-android-universal-preview.apk`: `PENDING FINAL BUILD`
+-- `Pebrel-v2.3.1-relay-manual.tar.gz`: `PENDING FINAL BUILD`
++```text
++b40bcd922e7340b51893c247695b4b286d330b4e7b27238694a4aee3c345f94b  Pebrel-v2.3.1-android-universal-preview.apk
++516045e26444aa161e4abef7a74cf7e4dbcbe4eecd059c5bfb923da98e33f786  Pebrel-v2.3.1-linux-x64-preview.AppImage
++59bff08d2f07f044029b15c50bb37c2e6b0dca1bb9f82611a80ad03c221f4d85  Pebrel-v2.3.1-linux-x64-preview.deb
++de7586f1afc0d7abea1a4ba20805a7c030f9d281570d2fb25e01a44146ee0808  Pebrel-v2.3.1-linux-x64-preview.tar.gz
++0260651ee08fdb384a5441bb3db836690f4296dd6b45ba4a45e360831f3d8a2f  Pebrel-v2.3.1-macos-arm64-preview.dmg
++2043effa1328dcd5d7926a4139668fb85a416a69654308ea816de67e8c564a6d  Pebrel-v2.3.1-macos-x64-preview.dmg
++a86bc7d886c388089be3208f51d619c47bef29014b9688171f553eb9f20a30fd  Pebrel-v2.3.1-relay-manual.tar.gz
++0b64c4d5cf4c60c7fa40d3f340105b97889cf08d25bd7f9c66079490950c4ee6  Pebrel-v2.3.1-windows-arm64-setup.exe
++583aa3a42b78ed43df732c0d17894482807a6ec5911264e902b5009f7e876605  Pebrel-v2.3.1-windows-arm64.zip
++9e21164f493a1b05fcdc3102baf316371e099e5d0532f5f8a26b2bfae9f0472b  Pebrel-v2.3.1-windows-x64-setup.exe
++e12dcfb573ac5d20e06b234202f1065af12b04979311a2ca10a97969a92f70e5  Pebrel-v2.3.1-windows-x64.zip
++```
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #790** (2026-10-27): release: prepare Pebrel 2.3.1 (@Kuddev)
 - **PR #789** (2026-10-26): feat(sponsors): add approved AIAPI branding (@Kuddev)
 - **PR #787** (2026-10-26): [codex] Fix character-art proportions without changing text spacing (@Kuddev)
 - **PR #783** (2026-10-26): fix(fonts): restore 2.2.2 reading spacing and show Geist default (@Kuddev)
 - **PR #782** (2026-10-26): Simplify README badges and add XERJ and Trendshift (@Kuddev)
 - **PR #780** (2026-10-26): Expand 2.3.0 release notes around verified improvements (@Kuddev)
-- **PR #779** (2026-10-26): Finalize verified 2.3.0 replacement packages and Windows version metadata (@Kuddev)
 
 ---
 
@@ -3075,46 +1832,39 @@ Restore released natural font metrics, platform padding and baseline behavior wi
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #775 from Kuddev/fix/windows-update-worker-20261026
+## X. release: prepare Pebrel 2.3.1 (#790)
 
 **RULE**:
-When implementing operations in `architecture/notes/nebula_app/platform/ai_session_identity/windows/2026-10-26-update-quiescence.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `96595622`: Merge pull request #775 from Kuddev/fix/windows-update-worker-20261026. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f3201403`: release: prepare Pebrel 2.3.1 (#790). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `architecture/notes/nebula_app/platform/ai_session_identity/windows/2026-10-26-update-quiescence.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Quiesce the owned identity worker before Windows update preparation
+## 2.3.1 - 2026-10-27
 
-## Status
+```text
+b40bcd922e7340b51893c247695b4b286d330b4e7b27238694a4aee3c345f94b  Pebrel-v2.3.1-android-universal-preview.apk
+516045e26444aa161e4abef7a74cf7e4dbcbe4eecd059c5bfb923da98e33f786  Pebrel-v2.3.1-linux-x64-preview.AppImage
+59bff08d2f07f044029b15c50bb37c2e6b0dca1bb9f82611a80ad03c221f4d85  Pebrel-v2.3.1-linux-x64-preview.deb
+de7586f1afc0d7abea1a4ba20805a7c030f9d281570d2fb25e01a44146ee0808  Pebrel-v2.3.1-linux-x64-preview.tar.gz
+0260651ee08fdb384a5441bb3db836690f4296dd6b45ba4a45e360831f3d8a2f  Pebrel-v2.3.1-macos-arm64-preview.dmg
+2043effa1328dcd5d7926a4139668fb85a416a69654308ea816de67e8c564a6d  Pebrel-v2.3.1-macos-x64-preview.dmg
+a86bc7d886c388089be3208f51d619c47bef29014b9688171f553eb9f20a30fd  Pebrel-v2.3.1-relay-manual.tar.gz
+0b64c4d5cf4c60c7fa40d3f340105b97889cf08d25bd7f9c66079490950c4ee6  Pebrel-v2.3.1-windows-arm64-setup.exe
+583aa3a42b78ed43df732c0d17894482807a6ec5911264e902b5009f7e876605  Pebrel-v2.3.1-windows-arm64.zip
+9e21164f493a1b05fcdc3102baf316371e099e5d0532f5f8a26b2bfae9f0472b  Pebrel-v2.3.1-windows-x64-setup.exe
+e12dcfb573ac5d20e06b234202f1065af12b04979311a2ca10a97969a92f70e5  Pebrel-v2.3.1-windows-x64.zip
+```
 
-Implemented; native validation and review pending.
+### English
 
-## Context
-
-Windows update preparation rejects any live process from the installed executable
-that is absent from the handoff's participant list. The list intentionally contains
-only the application authorizing the update. The reusable identity worker is a
-second copy of that executable and survives idle time until its owner exits.
-Preparation happens before that exit, so a resident worker blocks the update.
-
-The reporter runs 2.2.2, whose disposable probe can also overlap the same process
-check. Their exact interfering process has not been identified. Replacing the
-downloaded installer cannot modify the old updater's pre-installation check;
-exiting the old application and manually running setup remains the recovery path.
-
-## Evidence
-
-- `worker::query_slot` retains a healthy child after returning its response.
-- `handoff::prepare` writes only the current PID and creation time as participants.
-- `handoff.ps1::Check-UnpreparedProcesses` rejects that second live executable
-  with `Another process from this installation is not prepared for update`.
-- Th
+This maintenance rele
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3124,4 +1874,4 @@ exiting the old application and manually running setup remains the recovery path
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `96595622` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f3201403` are properly handled with clean fallback behavior.

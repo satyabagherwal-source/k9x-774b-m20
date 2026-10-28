@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T00:12:51.160Z",
+  "last_updated": "2026-10-28T00:19:33.582Z",
   "total_verified_learnings": 1154,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -32936,8 +32936,8 @@
       "slug": "kuddev-pebrel",
       "platform": "github",
       "source_url": "https://github.com/Kuddev/pebrel",
-      "source_version": "404d9173",
-      "content_hash": "e6205e97a1b50d5b26b1045e1aaebc1fcb8e155be49fdc4d711acd82e6615c2b",
+      "source_version": "f3201403",
+      "content_hash": "dab7649881e8a9357aa22a7c9f3ceaa1370c4101c9c663715ce8ee43f0b56dd4",
       "dossier_path": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "promoted_rules": [
@@ -32962,7 +32962,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T13:11:27.413Z",
+      "verified_at": "2026-10-28T00:19:29.704Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38421,8 +38421,8 @@
       "slug": "necolas-react-native-web",
       "platform": "github",
       "source_url": "https://github.com/necolas/react-native-web",
-      "source_version": "2b1ee50a",
-      "content_hash": "4edb0339ff7e244f8b661c392e7aece2fe0cefdc379679c69294d47753038aa7",
+      "source_version": "6a995615",
+      "content_hash": "b10e4babd4d4511a52a23d5aef1d0649e0c6837c63d100313159215111e2adca",
       "dossier_path": "07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
       "promoted_rules": [
@@ -38440,6 +38440,11 @@
           "number": 2346,
           "title": "Asynchronous Resource Effect Lifecycle Isolation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5072,
+          "title": "Add \"type\" prop for elements rendered as <button> (#2930)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38447,7 +38452,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T12:05:59.328Z",
+      "verified_at": "2026-10-28T00:19:33.569Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65787,8 +65792,8 @@
       "slug": "crawlcove-crawlcove-hreflang-checker",
       "platform": "github",
       "source_url": "https://github.com/CrawlCove/crawlcove-hreflang-checker",
-      "source_version": "68a78d31",
-      "content_hash": "0dc6ea340024db54c4badaf650a757b26452437772aaa86efee814ce35fc60a1",
+      "source_version": "3e8c680f",
+      "content_hash": "ea19ae4aa5282aead3722213c0f9eb0888e6b2f01d76f78b4628aac4f8793525",
       "dossier_path": "07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md",
       "promoted_rules": [
@@ -65797,6 +65802,11 @@
           "number": 1775,
           "title": "repository renamed to CrawlCove/hreflang-checker; point links, install commands",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 5071,
+          "title": "docs: link seo-chrome-extension from Related tools",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -65804,7 +65814,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T03:38:32.239Z",
+      "verified_at": "2026-10-28T00:19:31.996Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -139710,6 +139720,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T00:12:51.147Z"
+    },
+    "rule-5071": {
+      "learning_id": "rule-5071",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5071,
+      "title": "docs: link seo-chrome-extension from Related tools",
+      "source_url": "https://github.com/CrawlCove/crawlcove-hreflang-checker",
+      "source_version": "3e8c680f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T00:19:31.996Z"
+    },
+    "rule-5072": {
+      "learning_id": "rule-5072",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5072,
+      "title": "Add \"type\" prop for elements rendered as <button> (#2930)",
+      "source_url": "https://github.com/necolas/react-native-web",
+      "source_version": "6a995615",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T00:19:33.569Z"
     }
   },
   "aliases": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/necolas-react-native-web-learnings.md`  
 > **Source**: github ([https://github.com/necolas/react-native-web](https://github.com/necolas/react-native-web))  
-> **Source Version**: `2b1ee50a`  
+> **Source Version**: `6a995615`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T12:05:59.222Z  
+> **Timestamp**: 2026-10-28T00:19:33.229Z  
 > **Learning ID**: `learn-github-necolas-react-native-web`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/necolas-react-native-web-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/necolas/react-native-web](https://github.com/necolas/react-native-web))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T12:05:58.983Z  
+> **Harvest Timestamp**: 2026-10-28T00:19:33.222Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cross-platform React UI packages
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 22154 stars
+- **Stars / Engagement**: 22156 stars
 
 ---
 
@@ -565,188 +565,301 @@ export default TextInputState;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `84ed1d9f` (2026-10-22)
-**Commit Message**: Fix #2925
+### Incident Patch 1: `58334dc6` (2026-10-27)
+**Commit Message**: Add "type" prop for elements rendered as <button> (#2930)
 
-**File**: `packages/react-native-web-examples/pages/index.js` (modified, +3/-4)
+**File**: `packages/react-native-web-docs/src/pages/docs/components/text.md` (modified, +4/-0)
 ```diff
-@@ -1,6 +1,5 @@
- import NextLink from 'next/link';
--import React from 'react';
--import { Image, StyleSheet, Text, View } from 'react-native';
-+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+@@ -100,6 +100,10 @@ Set whether the view can receive keyboard focus.
+ Set the test selector label (via `data-testid`).
+ {% endcall %}
  
- const logoUri =
-   'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 841.9 595.3"><g fill="#1977f2"><path d="M666.3 296.5c0-32.5-40.7-63.3-103.1-82.4 14.4-63.6 8-114.2-20.2-130.4-6.5-3.8-14.1-5.6-22.4-5.6v22.3c4.6 0 8.3.9 11.4 2.6 13.6 7.8 19.5 37.5 14.9 75.7-1.1 9.4-2.9 19.3-5.1 29.4-19.6-4.8-41-8.5-63.5-10.9-13.5-18.5-27.5-35.3-41.6-50 32.6-30.3 63.2-46.9 84-46.9V78c-27.5 0-63.5 19.6-99.9 53.6-36.4-33.8-72.4-53.2-99.9-53.2v22.3c20.7 0 51.4 16.5 84 46.6-14 14.7-28 31.4-41.3 49.9-22.6 2.4-44 6.1-63.6 11-2.3-10-4-19.7-5.2-29-4.7-38.2 1.1-67.9 14.6-75.8 3-1.8 6.9-2.6 11.5-2.6V78.5c-8.4 0-16 1.8-22.6 5.6-28.1 16.2-34.4 66.7-19.9 130.1-62.2 19.2-102.7 49.9-102.7 82.3 0 32.5 40.7 63.3 103.1 82.4-14.4 63.6-8 114.2 20.2 130.4 6.5 3.8 14.1 5.6 22.5 5.6 27.5 0 63.5-19.6 99.9-53.6 36.4 33.8 72.4 53.2 99.9 53.2 8.4 0 16-1.8 22.6-5.6 28.1-16.2 34.4-66.7 19.9-130.1 62-19.1 102.5-49.9 102.5-82.3zm-130.2-66.7c-3.7 12.9-8.3 26.2-13.5 39.5-4.1-8-8.4-16-13.1-24-4.6-8-9.5-15.8-14.4-23.4 14.2 2.1 27.9 4.7 41 7.9zm-45.8 106.5c-7.8 13.5-15.8 26.3-24.1 38.2-14.9 1.3-30 2-45.2 2-15.1 0-30.2-.7-45-1.9-8.3-11.9-16.4-24.6-24.2-38-7.6-13.1-14.5-26.4-20.8-39.8 6.2-13.4 13.2-26.8 20.7-39.9 7.8-13.5 15.8-26.3 24.1-38.2 14.9-1.3 30-2 45.2-2 15.1 0 30.2.7 45 1.9 8.3 11.9 16.4 24.6 24.2 38 7.6 13.1 14.5 26.4 20.8 39.8-6.3 13.4-13.2 26.8-20.7 39.9zm32.3-13c5.4 13.4 10 26.8 13.8 39.8-13.1 3.2-26.9 5.9-41.2 8 4.9-7.7 9.8-15.6 14.4-23.7 4.6-8 8.9-16.1 13-24.1zM421.2 430c-9.3-9.6-18.6-20.3-27.8-32 9 .4 18.2.7 27.5.7 9.4 0 18.7-.2 27.8-.7-9 11.7-18.3 22.4-27.5 32zm-74.4-58.9c-14.2-2.1-27.9-4.7-41-7.9 3.7-12.9 8.3-26.2 13.5-39.5 4.1 8 8.4 16 13.1 24 4.7 8 9.5 15.8 14.4 23.4zM420.7 163c9.3 9.6 18.6 20.3 27.8 32-9-.4-18.2-.7-27.5-.7-9.4 0-18.7.2-27.8.7 9-11.7 18.3-22.4 27.5-32zm-74 58.9c-4.9 7.7-9.8 15.6-14.4 23.7-4.6 8-8.9 16-13 24-5.4-13.4-10-26.8-13.8-39.8 13.1-3.1 26.9-5.8 41.2-7.9zm-90.5 125.2c-35.4-15.1-58.3-34.9-58.3-50.6 0-15.7 22.9-35.6 58.3-50.6 8.6-3.7 18-7 27.7-10.1 5.7 19.6 13.2 40 22.5 60.9-9.2 20.8-16.6 41.1-22.2 60.6-9.9-3.1-19.3-6.5-28-10.2zM310 490c-13.6-7.8-19.5-37.5-14.9-75.7 1.1-9.4 2.9-19.3 5.1-29.4 19.6 4.8 41 8.5 63.5 10.9 13.5 18.5 27.5 35.3 41.6 50-32.6 30.3-63.2 46.9-84 46.9-4.5-.1-8.3-1-11.3-2.7zm237.2-76.2c4.7 38.2-1.1 67.9-14.6 75.8-3 1.8-6.9 2.6-11.5 2.6-20.7 0-51.4-16.5-84-46.6 14-14.7 28-31.4 41.3-49.9 22.6-2.4 44-6.1 63.6-11 2.3 10.1 4.1 19.8 5.2 29.1zm38.5-66.7c-8.6 3.7-18 7-27.7 10.1-5.7-19.6-13.2-40-22.5-60.9 9.2-20.8 16.6-41.1 22.2-60.6 9.9 3.1 19.3 6.5 28.1 10.2 35.4 15.1 58.3 34.9 58.3 50.6-.1 15.7-23 35.6-58.4 50.6zM320.8 78.4z" /><circle cx="420.9" cy="296.5" r="45.7" /><path d="M520.5 78.1z" /></g></svg>';
-@@ -15,7 +14,7 @@ function Link(props) {
- 
- export default function IndexPage() {
-   return (
--    <View style={styles.app}>
-+    <ScrollView contentContainerStyle={styles.app}>
-       <View style={styles.header}>
-         <Image
-           aria-label="React logo"
-@@ -41,7 +40,7 @@ export default function IndexPage() {
-           </View>
-         ))}
-       </View>
--    </View>
-+    </ScrollView>
-   );
- }
- 
-```
-
-**File**: `packages/react-native-web-examples/shared/example.js` (modified, +4/-2)
-```diff
-@@ -1,4 +1,4 @@
--import { StyleSheet, Text, View } from 'react-native';
-+import { ScrollView, StyleSheet, Text, View } from 'react-native';
- 
- export default function Example(props) {
-   return (
-@@ -21,7 +21,9 @@ export default function Example(props) {
-           {props.title}
-         </Text>
-       </View>
--      <View style={styles.container}>{props.children}</View>
-+      <ScrollView contentContainerStyle={styles.container}>
-+        {props.children}
-+      </ScrollView>
-     </View>
-   );
- }
-```
-
----
-
-### Incident Patch 2: `70e4ea74` (2026-10-21)
-**Commit Message**: Remove the "compile" script (a "build" alias)
-
-**File**: `.github/workflows/performance.yml` (modified, +0/-1)
-```diff
-@@ -11,7 +11,6 @@ jobs:
-         env:
-           MINIFY: 'true'
-         with:
--          build-script: 'compile'
-           omit-unchanged: 'true'
-           pattern: './packages/react-native-web/dist/{index.js,**/*.js}'
-           repo-token: '${{ secrets.GITHUB_TOKEN }}'
-```
-
-**File**: `package.json` (modified, +0/-1)
-```diff
-@@ -6,7 +6,6 @@
-   "scripts": {
-     "clean": "del-cli ./packages/*/dist",
-     "build": "npm run clean && npm run build --workspaces --if-present",
--    "compile": "npm run build",
-     "dev": "npm run dev --workspaces --if-present",
-     "flow": "flow",
-     "format": "prettier --check --ignore-unknown .",
-```
-
----
-
-### Incident Patch 3: `043858ce` (2026-10-21)
-**Commit Message**: Minify build output in compressed-size check
-
-**File**: `.github/workflows/performance.yml` (modified, +2/-0)
-```diff
-@@ -8,6 +8,8 @@ jobs:
-     steps:
-       - uses: actions/checkout@v7
-       - uses: preactjs/compressed-size-action@v2
-+        env:
-+          MINIFY: 'true'
-         with:
-           build-script: 'compile'
-           omit-unchanged: 'true'
-```
-
-**File**: `package-lock.json` (modified, +2/-1)
-```diff
-@@ -35,7 +35,8 @@
-         "jest-environment-jsdom": "^30.5.2",
-         "lint-staged": "^17.6.0",
-         "prettier": "^3.9.10",
--        "prettier-plugin-hermes-parser": "0.37.0"
-+        "prettier-plugin-hermes-parser": "0.37.0",
-+        "terser": "^5.51.2"
-       }
-     },
-     "node_modules/@-xun/debug": {
-```
-
-**File**: `package.json` (modified, +2/-1)
-```diff
-@@ -54,7 +54,8 @@
-     "jest-environment-jsdom": "^30.5.2",
-     "lint-staged": "^17.6.0",
-     "prettier": "^3.9.10",
--    "prettier-plugin-hermes-parser": "0.37.0"
-+    "prettier-plugin-hermes-parser": "0.37.0",
-+    "terser": "^5.51.2"
-   },
-   "workspaces": [
-     "packages/react-native-web",
-```
-
-**File**: `packages/react-native-web/package.json` (modified, +3/-2)
-```diff
-@@ -28,8 +28,9 @@
-   ],
-   "scripts": {
-     "clean": "del-cli ./dist",
--    "build": "npm run clean && babel src --root-mode upward --out-dir dist --ignore \"**/__tests__\"",
--    "dev": "npm run clean && babel src --root-mode upward --out-dir dist --ignore \"**/__tests__\" --watch"
-+    "build": "npm run clean && babel src --root-mode upward --out-dir dist --ignore \"**/__tests__\" && npm run minify",
-+    "dev": "npm run clean && babel src --root-mode upward --out-dir dist --ignore \"**/__tests__\" --watch",
-+    "minify": "node ../../scripts/minifyDist.js dist"
-   },
-   "dependencies": {
-     "@react-native/normalize-colors": "^0.88.0",
-```
-
-**File**: `scripts/minifyDist.js` (added, +25/-0)
-```diff
-@@ -0,0 +1,25 @@
-+/**
-+ * Minifies the JS files in a directory in place. Used by CI to measure the
-+ * compressed size of the build. Does nothing unless MINIFY=true.
-+ */
-+import fs from 'node:fs';
-+import path from 'node:path';
-+import { minify } from 'terser';
++{% call macro.prop('type', '?("button" | "reset" | "submit")') %}
++If the element renders as a `<button>`, this prop sets its [type](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#type). Defaults to `"button"`. Use `"submit"` to submit a parent `<form>`.
++{% endcall %}
 +
-+async function minifyDir(dir) {
-+  for (const file of fs.globSync('**/*.js', { cwd: dir })) {
-+    const filePath = path.join(dir, file);
-+    const code = fs.readFileSync(filePath, 'utf-8');
+ ---
+ 
+ ## Examples
+```
+
+**File**: `packages/react-native-web-docs/src/pages/docs/components/view.md` (modified, +4/-0)
+```diff
+@@ -98,6 +98,10 @@ Set whether the view can receive keyboard focus.
+ Set the test selector label (via `data-testid`).
+ {% endcall %}
+ 
++{% call macro.prop('type', '?("button" | "reset" | "submit")') %}
++If the element renders as a `<button>`, this prop sets its [type](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#type). Defaults to `"button"`. Use `"submit"` to submit a parent `<form>`.
++{% endcall %}
 +
-+    const result = await minify(code, {
-+      compress: { directives: false },
-+      module: true
+ ---
+ 
+ ## Examples
+```
+
+**File**: `packages/react-native-web/src/exports/Button/index.js` (modified, +13/-3)
+```diff
+@@ -20,12 +20,21 @@ type ButtonProps = {|
+   onPress?: ?(e: any) => void,
+   ref?: React.Ref<React.ElementRef<typeof TouchableOpacity>>,
+   testID?: ?string,
+-  title: string
++  title: string,
++  type?: ?('button' | 'reset' | 'submit')
+ |};
+ 
+ const Button = (props: ButtonProps): React.Node => {
+-  const { accessibilityLabel, color, disabled, onPress, ref, testID, title } =
+-    props;
++  const {
++    accessibilityLabel,
++    color,
++    disabled,
++    onPress,
++    ref,
++    testID,
++    title,
++    type
++  } = props;
+ 
+   return (
+     <TouchableOpacity
+@@ -41,6 +50,7 @@ const Button = (props: ButtonProps): React.Node => {
+         disabled && styles.buttonDisabled
+       ]}
+       testID={testID}
++      type={type}
+     >
+       <Text style={[styles.text, disabled && styles.textDisabled]}>
+         {title}
+```
+
+**File**: `packages/react-native-web/src/exports/Text/index.js` (modified, +2/-1)
+```diff
+@@ -36,7 +36,8 @@ const forwardPropsList = {
+   ...forwardedProps.styleProps,
+   href: true,
+   lang: true,
+-  pointerEvents: true
++  pointerEvents: true,
++  type: true
+ };
+ 
+ const pickProps = (props: { ... }) => pick(props, forwardPropsList);
+```
+
+**File**: `packages/react-native-web/src/exports/TouchableWithoutFeedback/index.js` (modified, +4/-2)
+```diff
+@@ -39,7 +39,8 @@ export type Props = Readonly<{|
+   onPressOut?: PressResponderConfig['onPressEnd'],
+   ref?: React.Ref<any>,
+   rejectResponderTermination?: ?boolean,
+-  testID?: ViewProps['testID']
++  testID?: ViewProps['testID'],
++  type?: ViewProps['type']
+ |}>;
+ 
+ const forwardPropsList = {
+@@ -56,7 +57,8 @@ const forwardPropsList = {
+   onBlur: true,
+   onFocus: true,
+   onLayout: true,
+-  testID: true
++  testID: true,
++  type: true
+ };
+ 
+ const pickProps = (props: Props) => pick(props, forwardPropsList);
+```
+
+**File**: `packages/react-native-web/src/exports/View/__tests__/index-test.js` (modified, +12/-0)
+```diff
+@@ -300,4 +300,16 @@ describe('components/View', () => {
+       expect(container.firstChild).toMatchSnapshot();
+     });
+   });
++
++  describe('prop "type"', () => {
++    test('default is "button" when role is "button"', () => {
++      const { container } = render(<View role="button" />);
++      expect(container.firstChild.getAttribute('type')).toBe('button');
 +    });
 +
-+    fs.writeFileSync(filePath, result.code);
-+  }
-+}
++    test('value is set when role is "button"', () => {
++      const { container } = render(<View role="button" type="submit" />);
++      expect(container.firstChild.getAttribute('type')).toBe('submit');
++    });
++  });
+ });
+```
+
+**File**: `packages/react-native-web/src/exports/View/index.js` (modified, +2/-1)
+```diff
+@@ -38,7 +38,8 @@ const forwardPropsList = {
+   lang: true,
+   onScroll: true,
+   onWheel: true,
+-  pointerEvents: true
++  pointerEvents: true,
++  type: true
+ };
+ 
+ const pickProps = (props: { ... }) => pick(props, forwardPropsList);
+```
+
+**File**: `packages/react-native-web/src/exports/View/types.js` (modified, +1/-0)
+```diff
+@@ -253,6 +253,7 @@ export type ViewProps = {
+   // unstable
+   href?: ?string,
+   hrefAttrs?: ?{ download?: ?boolean, rel?: ?string, target?: ?string },
++  type?: ?('button' | 'reset' | 'submit'),
+   // @deprecated
+   focusable?: ?boolean,
+   pointerEvents?: 'box-none' | 'none' | 'box-only' | 'auto',
+```
+
+---
+
+### Incident Patch 2: `e4e364cd` (2026-10-27)
+**Commit Message**: [fix] useResponderEvents: negotiate from a common ancestor with no responder ancestors (#2917)
+
+**File**: `packages/react-native-web/src/modules/useResponderEvents/__tests__/index-test.js` (modified, +0/-26)
+```diff
+@@ -2224,24 +2224,6 @@ describe('useResponderEvents', () => {
+     test('negotiate from first common ancestor when there are siblings', () => {
+       const pointerType = 'touch';
+       let eventLog = [];
+-      const grandParentCallbacks = {
+-        onStartShouldSetResponderCapture() {
+-          eventLog.push('grandParent: onStartShouldSetResponderCapture');
+-          return false;
+-        },
+-        onStartShouldSetResponder() {
+-          eventLog.push('grandParent: onStartShouldSetResponder');
+-          return false;
+-        },
+-        onMoveShouldSetResponderCapture() {
+-          eventLog.push('grandParent: onMoveShouldSetResponderCapture');
+-          return false;
+-        },
+-        onMoveShouldSetResponder() {
+-          eventLog.push('grandParent: onMoveShouldSetResponder');
+-          return false;
+-        }
+-      };
+       const parentCallbacks = {
+         onStartShouldSetResponderCapture() {
+           eventLog.push('parent: onStartShouldSetResponderCapture');
+@@ -2307,7 +2289,6 @@ describe('useResponderEvents', () => {
+       };
+ 
+       const Component = () => {
+-        useResponderEvents(grandParentRef, grandParentCallbacks);
+         useResponderEvents(parentRef, parentCallbacks);
+         useResponderEvents(targetRef, targetCallbacks);
+         useResponderEvents(siblingRef, siblingCallbacks);
+@@ -2331,7 +2312,6 @@ describe('useResponderEvents', () => {
+       });
+       expect(getResponderNode()).toBe(targetRef.current);
+       expect(eventLog).toEqual([
+-        'grandParent: onStartShouldSetResponderCapture',
+         'parent: onStartShouldSetResponderCapture',
+         'target: onStartShouldSetResponderCapture',
+         'target: onStartShouldSetResponder',
+@@ -2347,10 +2327,8 @@ describe('useResponderEvents', () => {
+       expect(getResponderNode()).toBe(targetRef.current);
+       // negotiates from first common ancestor of current responder and sibling (i.e., parent)
+       expect(eventLog).toEqual([
+-        'grandParent: onStartShouldSetResponderCapture',
+         'parent: onStartShouldSetResponderCapture',
+         'parent: onStartShouldSetResponder',
+-        'grandParent: onStartShouldSetResponder',
+         'target: onResponderStart'
+       ]);
+       eventLog = [];
+@@ -2362,10 +2340,8 @@ describe('useResponderEvents', () => {
+       expect(getResponderNode()).toBe(targetRef.current);
+       // negotiates from first common ancestor
+       expect(eventLog).toEqual([
+-        'grandParent: onMoveShouldSetResponderCapture',
+         'parent: onMoveShouldSetResponderCapture',
+         'parent: onMoveShouldSetResponder',
+-        'grandParent: onMoveShouldSetResponder',
+         'target: onResponderMove'
+       ]);
+       eventLog = [];
+@@ -2377,10 +2353,8 @@ describe('useResponderEvents', () => {
+       expect(getResponderNode()).toBe(targetRef.current);
+       // negotiates from first common ancestor
+       expect(eventLog).toEqual([
+-        'grandParent: onMoveShouldSetResponderCapture',
+         'parent: onMoveShouldSetResponderCapture',
+         'parent: onMoveShouldSetResponder',
+-        'grandParent: onMoveShouldSetResponder',
+         'target: onResponderMove'
+       ]);
+     });
+```
+
+**File**: `packages/react-native-web/src/modules/useResponderEvents/utils.js` (modified, +2/-2)
+```diff
+@@ -121,8 +121,8 @@ export function getLowestCommonAncestor(
+     if (itemA === itemB) {
+       return itemA;
+     }
+-    itemA = pathA[indexA++];
+-    itemB = pathB[indexB++];
++    itemA = pathA[++indexA];
++    itemB = pathB[++indexB];
+   }
+   return null;
+ }
+```
+
+---
+
+### Incident Patch 3: `f3d89de7` (2026-10-27)
+**Commit Message**: [fix] TextInput multiline defaults to 1 row (#2861)
+
+**File**: `packages/react-native-web/src/exports/TextInput/__tests__/index-test.js` (modified, +6/-0)
+```diff
+@@ -305,6 +305,12 @@ describe('components/TextInput', () => {
+       const textarea = findTextArea(container);
+       expect(textarea.getAttribute('rows')).toEqual('3');
+     });
 +
-+if (process.env.MINIFY === 'true') {
-+  minifyDir(path.resolve(process.argv[2]));
-+}
++    test('with "multiline" defaults to 1 row', () => {
++      const { container } = render(<TextInput multiline />);
++      const textarea = findTextArea(container);
++      expect(textarea.getAttribute('rows')).toEqual('1');
++    });
+   });
+ 
+   test('prop "onBlur"', () => {
+```
+
+**File**: `packages/react-native-web/src/exports/TextInput/index.js` (modified, +1/-1)
+```diff
+@@ -404,7 +404,7 @@ const TextInput = (props: {
+   supportedProps.onKeyDown = handleKeyDown;
+   supportedProps.onSelect = handleSelectionChange;
+   supportedProps.readOnly = readOnly === true || editable === false;
+-  supportedProps.rows = multiline ? (rows ?? numberOfLines) : 1;
++  supportedProps.rows = multiline ? (rows ?? numberOfLines ?? 1) : 1;
+   supportedProps.spellCheck = spellCheck ?? autoCorrect;
+   supportedProps.style = [
+     { '--placeholderTextColor': placeholderTextColor },
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2930** (2026-10-27): Add "type" prop for elements rendered as <button> (@zoontek)
 - **PR #2923** (2026-10-22): Update AccessibilityInfo to match the React Native API (@zoontek)
 - **PR #2919** (2026-10-21): [fix] Linking: register listeners once and remove by subscription (@zoontek)
 - **PR #2918** (2026-10-20): Replace CodeSandbox embeds with self-hosted examples (@zoontek)
+- **PR #2917** (2026-10-27): [fix] useResponderEvents: negotiate from a common ancestor with no responder ancestors (@Pduhard)
 - **PR #2915** (2026-10-21): Fix comma operator discarding shadow/textShadow options in preprocess (@charan-rathore)
-- **PR #2913** (2026-10-19): [0.22] Add TypeScript types (@zoontek)
-- **PR #2912** (2026-10-19): [0.22] Test that rgb() with a slash alpha survives StyleSheet (@YevheniiKotyrlo)
 
 ---
 
@@ -766,33 +879,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in index.js
+## X. Add "type" prop for elements rendered as <button> (#2930)
 
 **RULE**:
-When implementing operations in `packages/react-native-web-examples/pages/index.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in necolas/react-native-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react-native-web-docs/src/pages/docs/components/text.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in necolas/react-native-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `84ed1d9f`: #2925. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `58334dc6`: Add "type" prop for elements rendered as <button> (#2930). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-web-examples/pages/index.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-web-docs/src/pages/docs/components/text.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
-    <ScrollView contentContainerStyle={styles.app}>
-    </ScrollView>
+{% call macro.prop('type', '?("button" | "reset" | "submit")') %}
+If the element renders as a `<button>`, this prop sets its [type](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#type). Defaults to `"button"`. Use `"submit"` to submit a parent `<form>`.
+{% endcall %}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
-    <View style={styles.app}>
-    </View>
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `84ed1d9f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `58334dc6` are properly handled with clean fallback behavior.

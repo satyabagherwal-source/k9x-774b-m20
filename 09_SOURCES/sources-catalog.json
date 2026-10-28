@@ -1873,10 +1873,10 @@
     "repository": "CrawlCove/hreflang-checker",
     "platform": "github",
     "sourceUrl": "https://github.com/CrawlCove/crawlcove-hreflang-checker",
-    "sourceVersion": "68a78d31",
+    "sourceVersion": "3e8c680f",
     "license": "MIT",
-    "contentHash": "0dc6ea340024db54c4badaf650a757b26452437772aaa86efee814ce35fc60a1",
-    "lastHarvestedAt": "2026-10-25T03:38:32.306Z",
+    "contentHash": "ea19ae4aa5282aead3722213c0f9eb0888e6b2f01d76f78b4628aac4f8793525",
+    "lastHarvestedAt": "2026-10-28T00:19:32.071Z",
     "learningId": "learn-github-crawlcove-hreflang-checker"
   },
   "alecxe-scrapy-fake-useragent": {
@@ -3373,10 +3373,10 @@
     "repository": "Kuddev/pebrel",
     "platform": "github",
     "sourceUrl": "https://github.com/Kuddev/pebrel",
-    "sourceVersion": "404d9173",
+    "sourceVersion": "f3201403",
     "license": "GPL-3.0",
-    "contentHash": "e6205e97a1b50d5b26b1045e1aaebc1fcb8e155be49fdc4d711acd82e6615c2b",
-    "lastHarvestedAt": "2026-10-26T13:11:27.501Z",
+    "contentHash": "dab7649881e8a9357aa22a7c9f3ceaa1370c4101c9c663715ce8ee43f0b56dd4",
+    "lastHarvestedAt": "2026-10-28T00:19:29.800Z",
     "learningId": "learn-github-kuddev-pebrel"
   },
   "alibaba-formily": {
@@ -7123,10 +7123,10 @@
     "repository": "necolas/react-native-web",
     "platform": "github",
     "sourceUrl": "https://github.com/necolas/react-native-web",
-    "sourceVersion": "2b1ee50a",
+    "sourceVersion": "6a995615",
     "license": "MIT",
-    "contentHash": "4edb0339ff7e244f8b661c392e7aece2fe0cefdc379679c69294d47753038aa7",
-    "lastHarvestedAt": "2026-10-25T12:05:59.395Z",
+    "contentHash": "b10e4babd4d4511a52a23d5aef1d0649e0c6837c63d100313159215111e2adca",
+    "lastHarvestedAt": "2026-10-28T00:19:33.644Z",
     "learningId": "learn-github-necolas-react-native-web"
   },
   "zvec-ai-zvec-grep": {

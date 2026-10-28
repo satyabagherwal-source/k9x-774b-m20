@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T00:12:51.231Z",
+  "last_updated": "2026-10-28T00:19:33.653Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2946,14 +2946,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crawlcove-hreflang-checker",
-      "content_hash": "0dc6ea340024db54c4badaf650a757b26452437772aaa86efee814ce35fc60a1",
-      "verified_at": "2026-10-25T03:38:32.318Z",
+      "content_hash": "ea19ae4aa5282aead3722213c0f9eb0888e6b2f01d76f78b4628aac4f8793525",
+      "verified_at": "2026-10-28T00:19:32.080Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T03:38:32.318Z"
+      "last_updated": "2026-10-28T00:19:32.080Z"
     },
     "alecxe/scrapy-fake-useragent": {
       "repository": "alecxe/scrapy-fake-useragent",
@@ -5181,14 +5181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kuddev-pebrel",
-      "content_hash": "e6205e97a1b50d5b26b1045e1aaebc1fcb8e155be49fdc4d711acd82e6615c2b",
-      "verified_at": "2026-10-26T13:11:27.514Z",
+      "content_hash": "dab7649881e8a9357aa22a7c9f3ceaa1370c4101c9c663715ce8ee43f0b56dd4",
+      "verified_at": "2026-10-28T00:19:29.809Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T13:11:27.514Z"
+      "last_updated": "2026-10-28T00:19:29.809Z"
     },
     "alibaba/formily": {
       "repository": "alibaba/formily",
@@ -10731,14 +10731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-necolas-react-native-web",
-      "content_hash": "4edb0339ff7e244f8b661c392e7aece2fe0cefdc379679c69294d47753038aa7",
-      "verified_at": "2026-10-25T12:05:59.403Z",
+      "content_hash": "b10e4babd4d4511a52a23d5aef1d0649e0c6837c63d100313159215111e2adca",
+      "verified_at": "2026-10-28T00:19:33.652Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T12:05:59.403Z"
+      "last_updated": "2026-10-28T00:19:33.652Z"
     },
     "zvec-ai/zvec-grep": {
       "repository": "zvec-ai/zvec-grep",

@@ -5604,3 +5604,6 @@ Every entry in this ledger must capture:
 | `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `fc353927` | Multi-dimensional audit evidence | 2026-10-28T00:06:05.116Z |
 | `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `9868714c` | Multi-dimensional audit evidence | 2026-10-28T00:12:45.168Z |
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `34abc74b` | Multi-dimensional audit evidence | 2026-10-28T00:12:51.222Z |
+| `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `f3201403` | Multi-dimensional audit evidence | 2026-10-28T00:19:29.800Z |
+| `learn-github-crawlcove-hreflang-checker` | `https://github.com/CrawlCove/crawlcove-hreflang-checker` | `3e8c680f` | Multi-dimensional audit evidence | 2026-10-28T00:19:32.071Z |
+| `learn-github-necolas-react-native-web` | `https://github.com/necolas/react-native-web` | `6a995615` | Multi-dimensional audit evidence | 2026-10-28T00:19:33.644Z |
