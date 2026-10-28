@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-S068",
-    "timestamp": "2026-10-27T08:13:24.320Z",
-    "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
-    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb",
-    "contentHash": "48da1837bef0e5b1b38df6e7150814b86dcfe7b59cf5c2886f8d80dcad727eb9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-EVVE",
     "timestamp": "2026-10-27T08:31:11.834Z",
     "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -7490,6 +7475,21 @@
     "repository": "Lightricks/LTX-2.5",
     "learningId": "learn-huggingface-lightricks-ltx-2-5",
     "contentHash": "be6ee49c90373d2ce2a7a7896d368dd5362bb4f30580098079791d5d487257aa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-636W",
+    "timestamp": "2026-10-28T04:56:04.520Z",
+    "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+    "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
+    "contentHash": "13b66d234335a5f84b65baf7e62d7f424fbe9b86fc70cd1bf59e901c81463433",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
     "barriers": {

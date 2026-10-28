@@ -5694,3 +5694,4 @@
 | `CYCLE-20261028-NYM8` | `2026-10-28T04:41:58.784Z` | `zulip/zulip` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5175` | Yes (`50c638e5...`) |
 | `CYCLE-20261028-O447` | `2026-10-28T04:42:05.911Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5176` | Yes (`4ce550ba...`) |
 | `CYCLE-20261028-WIE8` | `2026-10-28T04:48:37.664Z` | `Lightricks/LTX-2.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5177, Rule 5178` | Yes (`be6ee49c...`) |
+| `CYCLE-20261028-636W` | `2026-10-28T04:56:04.520Z` | `prism-ml/Ternary-Bonsai-2-27B-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5179, Rule 5180` | Yes (`13b66d23...`) |
