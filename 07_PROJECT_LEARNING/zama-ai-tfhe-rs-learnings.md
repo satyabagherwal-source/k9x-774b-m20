@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `5c02d67f`  
+> **Source Version**: `b07103df`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T20:38:35.967Z  
+> **Timestamp**: 2026-10-28T11:52:44.014Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T20:38:35.322Z  
+> **Harvest Timestamp**: 2026-10-28T11:52:43.451Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1927,1239 +1927,492 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5c02d67f` (2026-10-27)
-**Commit Message**: chore(gpu): use thread-local streams as much as possible (#4068)
+### Incident Patch 1: `b07103df` (2026-10-28)
+**Commit Message**: chore(deps-dev): bump fast-uri in /tfhe/web_wasm_parallel_tests (#4115)
 
-* chore(gpu): fix ci check for gpu
+Bumps [fast-uri](https://github.com/fastify/fast-uri) from 3.1.7 to 3.1.9.
+- [Release notes](https://github.com/fastify/fast-uri/releases)
+- [Commits](https://github.com/fastify/fast-uri/compare/v3.1.7...v3.1.9)
 
-* chore(gpu): use with_thread_local_cuda_streams consistently
+---
+updated-dependencies:
+- dependency-name: fast-uri
+  dependency-version: 3.1.9
+  dependency-type: indirect
+...
 
-- it should be used only to move data to the CPU, when we might not have
-  a cuda server key set
-- since we do not ensure a user doesn't set a server key on a GPU, then
-  unsets it and sets another one on GPU1, this PR also makes sure data
-  is copied on the fly whenever an operation is called, to ensure
-  ciphertext data reides on the current key's first GPU
-- tests are added to cover this case
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `scripts/check_scratch_cleanup.py` (modified, +8/-8)
+**File**: `tfhe/web_wasm_parallel_tests/package-lock.json` (modified, +3/-8)
 ```diff
-@@ -54,29 +54,29 @@
- # Bindings parsed from bindings.rs
- # Scratch functions: Two more than cleanup functions because of
- #  'scratch_cuda_programmable_bootstrap_32_async' and
--EXPECTED_SCRATCH_COUNT = 83
-+EXPECTED_SCRATCH_COUNT = 84
- 
- # Cuda operation functions
--EXPECTED_CUDA_COUNT = 121
-+EXPECTED_CUDA_COUNT = 122
- 
- # Cleanup functions
--EXPECTED_CLEANUP_COUNT = 83
-+EXPECTED_CLEANUP_COUNT = 84
- 
- # Check 3: Rust call-site scanning
- # Number of functions in ffi.rs files
--EXPECTED_CHECK3_RUST_FNS = 143
-+EXPECTED_CHECK3_RUST_FNS = 144
- # Number of functions in ffi.rs files that
--EXPECTED_CHECK3_ASYNC_CUDA_CALLS = 107
-+EXPECTED_CHECK3_ASYNC_CUDA_CALLS = 108
- 
- # Number of instances of Rust calls to the scratch/cuda/cleanup in a
- # triplet sequence.
--EXPECTED_CHECK3_SCRATCH_CUDA_CLEANUP_TRIPLET_CALLS = 125
-+EXPECTED_CHECK3_SCRATCH_CUDA_CLEANUP_TRIPLET_CALLS = 126
- 
- # Check 5: Rust async-caller scanning
--EXPECTED_CHECK5_ASYNC_CALLERS = 136
-+EXPECTED_CHECK5_ASYNC_CALLERS = 137
- 
- # Check 6: Rust cleanup-caller scanning
--EXPECTED_CHECK6_CLEANUP_CALLERS = 123
-+EXPECTED_CHECK6_CLEANUP_CALLERS = 124
- 
- 
- def check_paths_exist():
-```
-
-**File**: `tfhe/src/core_crypto/gpu/mod.rs` (modified, +17/-0)
-```diff
-@@ -127,6 +127,23 @@ impl CudaStreams {
-         &self.gpu_indexes
-     }
- 
-+    /// Returns `true` if `data_gpu_indexes` contains only the first GPU index of these streams.
-+    ///
-+    /// Ciphertexts live on a single GPU, so comparing their indexes with all the indexes of
-+    /// multi-GPU streams would never match
-+    ///
-+    /// # Panics
-+    ///
-+    /// Panics if `data_gpu_indexes` does not contain exactly one index
-+    pub(crate) fn is_on_first_gpu(&self, data_gpu_indexes: &[GpuIndex]) -> bool {
-+        assert_eq!(
-+            data_gpu_indexes.len(),
-+            1,
-+            "Data is expected to live on a single GPU"
-+        );
-+        self.gpu_indexes.get(..1) == Some(data_gpu_indexes)
-+    }
-+
-     /// Returns a pointer the array of GpuIndex as u32
-     pub(crate) fn gpu_indexes_ptr(&self) -> *const u32 {
-         // The cast here is safe as GpuIndex is repr(transparent)
-```
-
-**File**: `tfhe/src/high_level_api/array/gpu/booleans.rs` (modified, +47/-25)
-```diff
-@@ -3,10 +3,12 @@
- 
- use super::super::helpers::{create_sub_mut_slice_with_bound, create_sub_slice_with_bound};
- use super::super::traits::{BitwiseArrayBackend, ClearBitwiseArrayBackend};
-+use super::on_gpu;
- use crate::array::stride::{ParStridedIter, ParStridedIterMut, StridedIter};
- use crate::array::traits::TensorSlice;
- use crate::high_level_api::array::{ArrayBackend, BackendDataContainer, BackendDataContainerMut};
- use crate::high_level_api::global_state;
-+use crate::high_level_api::global_state::cuda_clone;
- use crate::integer::gpu::ciphertext::boolean_value::CudaBooleanBlock;
- use crate::prelude::{FheDecrypt, FheTryEncrypt};
- use crate::{ClientKey, FheBoolId};
-@@ -28,13 +30,9 @@ use crate::high_level_api::global_state::with_cuda_internal_keys;
- 
- impl Clone for GpuBooleanOwned {
-     fn clone(&self) -> Self {
--        // When cloning, we assume that the intention is to return a ciphertext that lies in the GPU
--        // 0 defined in the set server key. Hence, we use the server key to get the streams instead
--        // of those inside the ciphertext itself
--        with_cuda_internal_keys(|key| {
--            let streams = &key.streams;
--            Self(self.0.iter().map(|elem| elem.duplicate(streams)).collect())
--        })
-+        // When a Cuda server key is set, the clone lies on its GPU 0, otherwise
-+        // it stays on the GPU of the ciphertext
-+        Self(self.0.iter().map(cuda_clone).collect())
-     }
- }
- 
-@@ -166,7 +164,11 @@ impl BitwiseArrayBackend for GpuFheBoolArrayBackend {
-             lhs.par_iter()
-                 .zip(rhs.par_iter())
-                 .map(|(lhs, rhs)| {
--                    CudaBooleanBlock(cuda_key.pbs_key().bitand(&lhs.0, &rhs.0, streams))
-+                    CudaBooleanBlock(cuda_key.pbs_key().bitand(
-+                        &*on_gpu(&lhs.0, streams),
-+                        &*on_gpu(&rhs.0, streams),
-+                        streams,
-+                    ))
-                 })
-                 .collect::<Vec<_>>()
-         }))
-@@ -181,7 +183,11 @@ impl BitwiseArrayBackend for GpuFheBoolArrayBackend {
-             lhs.par_iter()
-                 .zip(rhs.par_iter())
-                 .map(|(lhs, rhs)| {
--                    CudaBooleanBlock(cuda_key.pbs_key().bitor(&lhs.0, &rhs.0, streams))
-+                    CudaBooleanBlock(cuda_key.pbs_key().bitor(
-+                        &*on_gpu(&lhs.0, streams),
-+                        &*on_gpu(&rhs.0, streams),
-+                        streams,
-+                    ))
-                 })
-                 .collect::<Vec<_>>()
-         }))
-@@ -196,7 +202,11 @@ impl BitwiseArrayBackend for GpuFheBoolArrayBackend {
-             lhs.par_iter()
-                 .zip(rhs.par_iter())
-                 .map(|(lhs, rhs)| {
--                    CudaBooleanBlock(cuda_key.pbs_key().bitxor(&lhs.0, &rhs.0, streams))
-+                    CudaBooleanBlock(cuda_key.pbs_key().bitxor(
-+                        &*on_gpu(&lhs.0, streams),
-+                        &*on_gpu(&rhs.0, streams),
-+                        streams,
-+                    ))
-                 })
-                 .collect::<Vec<_>>()
-         }))
-@@ -206,6 +216,7 @@ impl BitwiseArrayBackend for GpuFheBoolArrayBackend {
-         GpuBooleanOwned(global_state::with_cuda_internal_keys(|cuda_key| {
-             let streams = &cuda_key.streams;
-             lhs.par_iter()
-+                // boolean_bitnot copies lhs on the GPU of the streams
-                 .map(|lhs| cuda_key.pbs_key().boolean_bitnot(lhs, streams))
-                 .collect::<Vec<_>>()
-         }))
-@@ -222,7 +233,11 @@ impl ClearBitwiseArrayBackend<bool> for GpuFheBoolArrayBackend {
-             lhs.par_iter()
-                 .zip(rhs.par_iter().copied())
-                 .map(|(lhs, rhs)| {
--                    CudaBooleanBlock(cuda_key.pbs_key().scalar_bitand(&lhs.0, rhs as u8, streams))
-+                    CudaBooleanBlock(cuda_key.pbs_key().scalar_bitand(
-+                        &*on_gpu(&lhs.0, streams),
-+                        rhs as u8,
-+                        streams,
-+                    ))
-                 })
-                 .collect::<Vec<_>>()
-         }))
-@@ -237,7 +252,11 @@ impl ClearBitwiseArrayBackend<bool> for GpuFheBoolArrayBackend {
-             lhs.par_iter()
-                 .zip(rhs.par_iter().copied())
-                 .map(|(lhs, rhs)| {
--                    CudaBooleanBlock(cuda_key.pbs_key().scalar_bitor(&lhs.0, rhs as u8, streams))
-+                    CudaBooleanBlock(cuda_key.pbs_key().scalar_bitor(
-+                        &*on_gpu(&lhs.0, streams),
-+                        rhs as u8,
-+                        streams,
-+                    ))
-                 })
-                 .collect::<Vec<_>>()
-         }))
-@@ -252,7 +271,11 @@ impl ClearBitwiseArrayBackend<bool> for GpuFheBoolArrayBackend {
-             lhs.par_iter()
-                 .zip(rhs.par_iter().copied())
-                 .map(|(lhs, rhs)| {
--                    CudaBooleanBlock(cuda_key.pbs_key().
-```
-
-**File**: `tfhe/src/high_level_api/array/gpu/integers.rs` (modified, +34/-28)
-```diff
-@@ -2,10 +2,12 @@
- //! where the values and computations are always done on GPU
- use super::super::helpers::{create_sub_mut_slice_with_bound, create_sub_slice_with_bound};
- use super::super::traits::{ArithmeticArrayBackend, BitwiseArrayBackend, ClearBitwiseArrayBackend};
-+use super::on_gpu;
- use crate::core_crypto::prelude::{SignedNumeric, UnsignedNumeric};
- use crate::high_level_api::array::{
-     ArrayBackend, FheArrayBase, FheBackendArray, FheBackendArraySlice, FheBackendArraySliceMut,
- };
-+use crate::high_level_api::global_state::cuda_clone;
- 
- use crate::array::stride::{ParStridedIter, ParStridedIterMut, StridedIter};
- use crate::array::traits::{
-@@ -53,10 +55,7 @@ where
-     T: CudaIntegerRadixCiphertext,
- {
-     fn clone(&self) -> Self {
--        with_cuda_internal_keys(|key| {
--            let streams = &key.streams;
--            Self(self.0.iter().map(|elem| elem.duplicate(streams)).collect())
--        })
-+        Self(self.0.iter().map(cuda_clone).collect())
-     }
- }
- 
-@@ -112,7 +111,14 @@ where
-         let streams = &cuda_key.streams;
-         lhs.par_iter()
-             .zip(rhs.par_iter())
--            .map(|(lhs, rhs)| op(cuda_key.pbs_key(), lhs, rhs, streams))
-+            .map(|(lhs, rhs)| {
-+                op(
-+                    cuda_key.pbs_key(),
-+                    &*on_gpu(lhs, streams),
-+                    &*on_gpu(rhs, streams),
-+                    streams,
-+                )
-+            })
-             .collect::<Vec<_>>()
-     }))
- }
-@@ -173,7 +179,7 @@ where
-         let streams = &cuda_key.streams;
-         lhs.par_iter()
-             .zip(rhs.par_iter())
--            .map(|(lhs, rhs)| op(cuda_key.pbs_key(), lhs, *rhs, streams))
-+            .map(|(lhs, rhs)| op(cuda_key.pbs_key(), &*on_gpu(lhs, streams), *rhs, streams))
-             .collect::<Vec<_>>()
-     }))
- }
-@@ -337,7 +343,7 @@ where
-         GpuOwned(global_state::with_cuda_internal_keys(|cuda_key| {
-             let streams = &cuda_key.streams;
-             lhs.par_iter()
--                .map(|lhs| cuda_key.pbs_key().bitnot(lhs, streams))
-+                .map(|lhs| cuda_key.pbs_key().bitnot(&*on_gpu(lhs, streams), streams))
-                 .collect::<Vec<_>>()
-         }))
-     }
-@@ -572,15 +578,16 @@ where
-     Clear: RecomposableFrom<u64> + UnsignedNumeric,
- {
-     fn decrypt(&self, key: &ClientKey) -> Vec<Clear> {
--        with_cuda_internal_keys(|cuda_key| {
--            let streams = &cuda_key.streams;
--            self.as_tensor_slice()
--                .iter()
--                .map(|ct: &CudaUnsignedRadixCiphertext| {
--                    key.key.key.decrypt_radix(&ct.to_radix_ciphertext(streams))
--                })
--                .collect()
--        })
-+        self.as_tensor_slice()
-+            .iter()
-+            .map(|ct: &CudaUnsignedRadixCiphertext| {
-+                let cpu_ct = global_state::with_thread_local_cuda_streams_for_gpu_indexes(
-+                    ct.gpu_indexes(),
-+                    |streams| ct.to_radix_ciphertext(streams),
-+                );
-+                key.key.key.decrypt_radix(&cpu_ct)
-+            })
-+            .collect()
-     }
- }
- 
-@@ -638,17 +645,16 @@ where
-     Clear: RecomposableSignedInteger,
- {
-     fn decrypt(&self, key: &ClientKey) -> Vec<Clear> {
--        with_cuda_internal_keys(|cuda_key| {
--            let streams = &cuda_key.streams;
--            self.elems
--                .0
--                .iter()
--                .map(|ct| {
--                    key.key
--                        .key
--                        .decrypt_signed_radix(&ct.to_signed_radix_ciphertext(streams))
--                })
--                .collect()
--        })
-+        self.elems
-+            .0
-+            .iter()
-+            .map(|ct| {
-+                let cpu_ct = global_state::with_thread_local_cuda_streams_for_gpu_indexes(
-+                    ct.gpu_indexes(),
-+                    |streams| ct.to_signed_radix_ciphertext(streams),
-+                );
-+                key.key.key.decrypt_signed_radix(&cpu_ct)
-+            })
-+            .collect()
-     }
- }
-```
-
-**File**: `tfhe/src/high_level_api/array/gpu/mod.rs` (modified, +18/-0)
-```diff
-@@ -1,9 +1,27 @@
- pub(crate) mod booleans;
- pub(crate) mod integers;
-+
-+use crate::core_crypto::gpu::CudaStreams;
-+use crate::high_level_api::details::MaybeCloned;
-+use crate::integer::gpu::ciphertext::CudaIntegerRadixCiphertext;
- #[cfg(test)]
- pub use booleans::GpuFheBoolArrayBackend;
- pub use booleans::{GpuFheBoolArray, GpuFheBoolSlice, GpuFheBoolSliceMut};
- pub use integers::{
-     GpuFheIntArray, GpuFheIntSlice, GpuFheIntSliceMut, GpuFheUintArray, GpuFheUintSlice,
-     GpuFheUintSliceMut,
- };
-+
-+/// Returns the element if it is on the GPU where `streams` allocate ciphertexts,
-+/// otherwise (e.g. the server key was changed for one on another GPU) returns a copy of it
-+/// on that GPU
-+fn on_gpu<'a, T>(elem: &'a T, streams: &CudaStreams) -> MaybeCloned<'a, T>
-+where
-+    T: CudaIntegerRadixCiphertext,
-+{
-+    if streams.is_on_first_gpu(elem.gpu_indexes()) {
-+        MaybeCloned::Borrowed(elem)
-+    } else {
-+        MaybeCloned::Cloned(elem.duplicate(streams))
-+    }
-+}
-```
-
-**File**: `tfhe/src/high_level_api/booleans/inner.rs` (modified, +6/-8)
-```diff
-@@ -4,6 +4,8 @@ use crate::high_level_api::backward_compatibility::booleans::SerializableInnerBo
- use crate::high_level_api::details::MaybeCloned;
- use crate::high_level_api::global_state;
- #[cfg(feature = "gpu")]
-+use crate::high_level_api::global_state::cuda_clone;
-+#[cfg(feature = "gpu")]
- use crate::high_level_api::global_state::with_cuda_internal_keys;
- #[cfg(feature = "gpu")]
- use crate::high_level_api::global_state::with_thread_local_cuda_streams_for_gpu_indexes;
-@@ -38,11 +40,7 @@ impl Clone for InnerBoolean {
-         match self {
-             Self::Cpu(inner) => Self::Cpu(inner.clone()),
-             #[cfg(feature = "gpu")]
--            Self::Cuda(inner) => {
--                with_thread_local_cuda_streams_for_gpu_indexes(inner.gpu_indexes(), |streams| {
--                    Self::Cuda(inner.duplicate(streams))
--                })
--            }
-+            Self::Cuda(inner) => Self::Cuda(cuda_clone(inner)),
-             #[cfg(feature = "hpu")]
-             Self::Hpu(inner) => Self::Hpu(inner.clone()),
+@@ -360,7 +360,6 @@
+       "integrity": "sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "bin": {
+         "acorn": "bin/acorn"
+       },
+@@ -387,7 +386,6 @@
+       "integrity": "sha512-PlXPeEWMXMZ7sPYOHqmDyCJzcfNrUr3fGNKtezX14ykXOEIvyK81d+qydx89KY5O71FKMPaQ2vBfBFI5NHR63A==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "fast-deep-equal": "^3.1.3",
+         "fast-uri": "^3.0.1",
+@@ -613,7 +611,6 @@
          }
-@@ -130,7 +128,7 @@ impl InnerBoolean {
-         streams: &CudaStreams,
-     ) -> MaybeCloned<'_, CudaUnsignedRadixCiphertext> {
-         let cpu_radix = if let Self::Cuda(gpu_radix) = self {
--            if gpu_radix.gpu_indexes() == streams.gpu_indexes() {
-+            if streams.is_on_first_gpu(gpu_radix.gpu_indexes()) {
-                 return MaybeCloned::Borrowed(&gpu_radix.0);
-             }
-             return MaybeCloned::Cloned(gpu_radix.duplicate(streams).0);
-@@ -171,7 +169,7 @@ impl InnerBoolean {
-         use crate::integer::gpu::ciphertext::boolean_value::CudaBooleanBlock;
- 
-         let cpu_radix = if let Self::Cuda(cuda_ct) = self {
--            if cuda_ct.gpu_indexes() != streams.gpu_indexes() {
-+            if !streams.is_on_first_gpu(cuda_ct.gpu_indexes()) {
-                 *cuda_ct = cuda_ct.duplicate(streams);
-             }
-             return &mut cuda_ct.0;
-@@ -221,7 +219,7 @@ impl InnerBoolean {
-             if let Self::Cuda(cuda_ct) = self {
-                 with_cuda_internal_keys(|key| {
-                     let streams = &key.streams;
--                    if cuda_ct.gpu_indexes() != streams.gpu_indexes() {
-+                    if !streams.is_on_first_gpu(cuda_ct.gpu_indexes()) {
-                         *cuda_ct = cuda_ct.duplicate(streams);
-                     }
-                 })
-```
-
-**File**: `tfhe/src/high_level_api/booleans/squashed_noise.rs` (modified, +4/-6)
-```diff
-@@ -3,6 +3,8 @@ use crate::backward_compatibility::booleans::SquashedNoiseFheBoolVersions;
- use crate::high_level_api::backward_compatibility::booleans::SerializableInnerSquashedNoiseBooleanVersions;
- use crate::high_level_api::details::MaybeCloned;
- use crate::high_level_api::errors::UninitializedNoiseSquashing;
-+#[cfg(feature = "gpu")]
-+use crate::high_level_api::global_state::cuda_clone;
- use crate::high_level_api::global_state::{self, with_internal_keys};
- #[cfg(feature = "gpu")]
- use crate::high_level_api::global_state::{
-@@ -64,11 +66,7 @@ impl Clone for InnerSquashedNoiseBoolean {
-         match self {
-             Self::Cpu(inner) => Self::Cpu(inner.clone()),
-             #[cfg(feature = "gpu")]
--            Self::Cuda(inner) => {
--                with_thread_local_cuda_streams_for_gpu_indexes(inner.gpu_indexes(), |streams| {
--                    Self::Cuda(inner.duplicate(streams))
--                })
--            }
-+            Self::Cuda(inner) => Self::Cuda(cuda_clone(inner)),
-         }
-     }
- }
-@@ -118,7 +116,7 @@ impl InnerSquashedNoiseBoolean {
-             if let Self::Cuda(cuda_ct) = self {
-                 with_cuda_internal_keys(|keys| {
-                     let streams = &keys.streams;
--                    if cuda_ct.gpu_indexes() != streams.gpu_indexes() {
-+                    if !streams.is_on_first_gpu(cuda_ct.gpu_indexes()) {
-                         *cuda_ct = cuda_ct.duplicate(streams);
-                     }
-                 })
-```
-
-**File**: `tfhe/src/high_level_api/compact_list.rs` (modified, +26/-16)
-```diff
-@@ -2,6 +2,8 @@ use crate::backward_compatibility::compact_list::CompactCiphertextListVersions;
- use crate::conformance::ParameterSetConformant;
- use crate::core_crypto::prelude::Numeric;
- use crate::high_level_api::global_state;
-+#[cfg(feature = "gpu")]
-+use crate::high_level_api::global_state::cuda_clone;
- use crate::high_level_api::keys::InternalServerKeyRef;
- use crate::high_level_api::traits::Tagged;
- use crate::integer::block_decomposition::DecomposableInto;
-@@ -29,6 +31,8 @@ use crate::{CompactPublicKey, Tag};
- #[cfg(feature = "strings")]
- use super::ClearString;
- 
-+#[cfg(feature = "gpu")]
-+use crate::high_level_api::details::MaybeCloned;
- #[cfg(feature = "gpu")]
- use crate::integer::gpu::ciphertext::compact_list::CudaFlattenedVecCompactCiphertextList;
- 
-@@ -173,11 +177,7 @@ impl Clone for InnerCompactCiphertextList {
-         match self {
-             Self::Cpu(inner) => Self::Cpu(inner.clone()),
-             #[cfg(feature = "gpu")]
--            Self::Cuda(inner) => {
--                with_thread_local_cuda_streams_for_gpu_indexes(inner.gpu_indexes(), |streams| {
--                    Self::Cuda(inner.duplicate(streams))
--                })
--            }
-+            Self::Cuda(inner) => Self::Cuda(cuda_clone(inner)),
-         }
-     }
- }
-@@ -235,7 +235,7 @@ impl InnerCompactCiphertextList {
-             #[cfg(feature = "gpu")]
-             (Self::Cuda(cuda_ct), crate::Device::CudaGpu) => with_cuda_internal_keys(|keys| {
-                 let streams = &keys.streams;
--                if cuda_ct.gpu_indexes() == streams.gpu_indexes() {
-+                if streams.is_on_first_gpu(cuda_ct.gpu_indexes()) {
-                     None
-                 } else {
-                     Some(Self::Cuda(cuda_ct.duplicate(streams)))
-@@ -415,6 +415,12 @@ impl CompactCiphertextList {
- 
-                 let ksk = cuda_key.cpk_key_switching_key();
-                 let streams = &cuda_key.streams;
-+                // The list may be on another GPU than the key, e.g. if the key changed
-+                let gpu_inner = if streams.is_on_first_gpu(gpu_inner.gpu_indexes()) {
-+                    MaybeCloned::Borrowed(gpu_inner)
-+                } else {
-+                    MaybeCloned::Cloned(gpu_inner.duplicate(streams))
-+                };
-                 let expander =
-                     gpu_inner.expand(&ksk, crate::integer::gpu::ZKType::Casting, streams)?;
- 
-@@ -519,11 +525,7 @@ pub(crate) mod zk {
-             match self {
-                 Self::Cpu(inner) => Self::Cpu(inner.clone()),
-                 #[cfg(feature = "gpu")]
--                Self::Cuda(inner) => {
--                    with_thread_local_cuda_streams_for_gpu_indexes(inner.gpu_indexes(), |streams| {
--                        Self::Cuda(inner.duplicate(streams))
--                    })
--                }
-+                Self::Cuda(inner) => Self::Cuda(cuda_clone(inner)),
-             }
-         }
-     }
-@@ -571,7 +573,7 @@ pub(crate) mod zk {
-                 #[cfg(feature = "gpu")]
-                 (Self::Cuda(cuda_ct), crate::Device::CudaGpu) => with_cuda_internal_keys(|keys| {
-                     let streams = &keys.streams;
--                    if cuda_ct.gpu_indexes() == streams.gpu_indexes() {
-+                    if streams.is_on_first_gpu(cuda_ct.gpu_indexes()) {
-                         None
-                     } else {
-                         Some(Self::Cuda(cuda_ct.duplicate(streams)))
-@@ -825,12 +827,20 @@ pub(crate) mod zk {
- 
-                     let streams = &gpu_key.streams;
-                     let proven_ct = match &self.inner {
--                        InnerProvenCompactCiphertextList::Cpu(inner) => {
--                            &CudaProvenCompactCiphertextList::from_proven_compact_ciphertext_list(
-+                        InnerProvenCompactCiphertextList::Cpu(inner) => MaybeCloned::Cloned(
-+                            CudaProvenCompactCiphertextList::from_proven_compact_ciphertext_list(
-                                 inner, streams,
--                            )?
-+                            )?,
-+                        ),
-+                        InnerProvenCompactCiphertextList::Cuda(inner)
-+                            if streams.is_on_first_gpu(inner.gpu_indexes()) =>
-+                        {
-+                            MaybeCloned::Borrowed(inner)
-+                        }
-+                        // The list may be on another GPU than the key, e.g. if the key changed
-+                        InnerProvenCompactCiphertextList::Cuda(inner) => {
-+                            MaybeCloned::Cloned(inner.duplicate(streams))
-                         }
--                        InnerProvenCompactCiphertextList::Cuda(inner) => inner,
-                     };
- 
-                     let ksk = gpu_key.cpk_key_switching_key();
+       ],
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "baseline-browser-mapping": "^2.11.12",
+         "caniuse-lite": "^1.0.30001809",
+@@ -1089,9 +1086,9 @@
+       "license": "MIT"
+     },
+     "node_modules/fast-uri": {
+-      "version": "3.1.7",
+-      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.7.tgz",
+-      "integrity": "sha512-dOvZVzjdZdz7phd9v6jCbwxrBW3fK6n8Rc0CtdmM4bumzMnxywBYhuph6J819RRw/ku+rLbelwfMunktuzVVHg==",
++      "version": "3.1.9",
++      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.9.tgz",
++      "integrity": "sha512-hS/0Wt3Ya043oKXs0sIxrMpKQITXhMLIrVAKKXi4gozGC9v7YRWVnXIZzjNPTO02M9BdxLCWqK1yRXgNziVyJQ==",
+       "dev": true,
+       "funding": [
+         {
+@@ -2250,7 +2247,6 @@
+       "integrity": "sha512-gX/dMkRQc7QOMzgTe6KsYFM7DxeIONQSui1s0n/0xht36HvrgbxtM1xBlgx596NbpHuQU8P7QpKwrZYwUX48nw==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "@types/eslint-scope": "^3.7.7",
+         "@types/estree": "^1.0.8",
+@@ -2300,7 +2296,6 @@
+       "integrity": "sha512-pIDJHIEI9LR0yxHXQ+Qh95k2EvXpWzZ5l+d+jIo+RdSm9MiHfzazIxwwni/p7+x4eJZuvG1AJwgC4TNQ7NRgsg==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "@discoveryjs/json-ext": "^0.5.0",
+         "@webpack-cli/configtest": "^2.1.1",
 ```
 
 ---
 
-### Incident Patch 2: `8e6c574f` (2026-10-27)
-**Commit Message**: refactor(integer): move ge,le,gt,lt,eq,ne tests to new harness (#4092)
+### Incident Patch 2: `f25a9cd4` (2026-10-28)
+**Commit Message**: feat(gpu): extend throughput oriented pbs to other gpu archs. (#4088)
 
-**File**: `tfhe/src/integer/gpu/server_key/radix/tests_signed/legacy_default_tests.rs` (modified, +189/-8)
+**File**: `Makefile` (modified, +1/-1)
 ```diff
-@@ -2,13 +2,15 @@
- //!
- //! FIXME(gpu): the CPU tests for these operations moved to `radix_parallel::test_harness`
- //! (see `radix_parallel::tests_signed::test_scalar_shift`, `test_scalar_rotate`,
--//! `test_scalar_add`, `test_scalar_sub` and `test_neg`), which also exercises inputs at the maximum
--//! degree and noise level. The GPU full propagation cannot take blocks at the maximum degree
--//! yet. The overflowing scalar tests also cover scalars that fit the radix blocks but not
--//! the signed range, for which the GPU implementations return the opposite overflow flag:
--//! the CPU fix is `ScalarOverflowFlagSource` in `radix_parallel::scalar_add`, which the GPU
--//! can reuse. Once both are addressed point the GPU wrappers at the harness tests and delete
--//! this file.
-+//! `test_scalar_add`, `test_scalar_sub`, `test_neg` and `test_comparison`), which also
-+//! exercises inputs at the maximum degree and noise level. The GPU full propagation cannot
-+//! take blocks at the maximum degree yet. The overflowing scalar tests also cover scalars
-+//! that fit the radix blocks but not the signed range, for which the GPU implementations
-+//! return the opposite overflow flag: the CPU fix is `ScalarOverflowFlagSource` in
-+//! `radix_parallel::scalar_add`, which the GPU can reuse. Once both are addressed point the
-+//! GPU wrappers at the harness tests and delete this file.
-+use crate::core_crypto::prelude::SignedNumeric;
-+use crate::integer::block_decomposition::{DecomposableInto, RecomposableSignedInteger};
- use crate::integer::keycache::KEY_CACHE;
- use crate::integer::server_key::radix_parallel::tests_cases_unsigned::FunctionExecutor;
- use crate::integer::server_key::radix_parallel::tests_signed::{
-@@ -22,7 +24,9 @@ use crate::integer::server_key::radix_parallel::tests_unsigned::{
- };
- use crate::integer::{BooleanBlock, IntegerKeyKind, RadixClientKey, SignedRadixCiphertext};
- use crate::shortint::parameters::*;
--use rand::Rng;
-+use rand::distributions::Standard;
-+use rand::prelude::*;
-+use rand_distr::num_traits::WrappingAdd;
- use std::sync::Arc;
+@@ -449,7 +449,7 @@ check_fmt_toml: install_taplo
  
- pub(crate) fn legacy_signed_default_scalar_left_shift_test<P, T>(param: P, mut executor: T)
-@@ -803,3 +807,180 @@ where
-         );
-     }
- }
-+
-+/// Function to test a "default" comparison server_key function for signed inputs.
-+///
-+/// This calls the `server_key_method` with non-fresh ciphertexts,
-+/// that is ciphertexts that have non-zero carries, and compares that the result is
-+/// the same as the one of`clear_fn`.
-+pub(crate) fn legacy_signed_default_comparison_test<P, T, ClearF, Scalar>(
-+    param: P,
-+    num_test: usize,
-+    mut executor: T,
-+    clear_fn: ClearF,
-+) where
-+    P: Into<TestParameters>,
-+    Scalar: SignedNumeric
-+        + RecomposableSignedInteger
-+        + DecomposableInto<u64>
-+        + WrappingAdd
-+        + From<bool>,
-+    T: for<'a> FunctionExecutor<
-+        (&'a SignedRadixCiphertext, &'a SignedRadixCiphertext),
-+        BooleanBlock,
-+    >,
-+    ClearF: Fn(Scalar, Scalar) -> Scalar,
-+    Standard: Distribution<Scalar>,
-+{
-+    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
-+    let num_block = Scalar::BITS.div_ceil(cks.parameters().message_modulus().0.ilog2() as usize);
-+    assert_eq!(
-+        Scalar::BITS as u32 % cks.parameters().message_modulus().0.ilog2(),
-+        0,
-+        "bit width must be a multiple of number of bit in a block"
-+    );
-+    let sks = Arc::new(sks);
-+    let cks = RadixClientKey::from((cks, num_block));
-+
-+    let mut rng = rand::thread_rng();
-+
-+    executor.setup(&cks, sks.clone());
-+
-+    for _ in 0..num_test {
-+        let mut clear_0 = rng.gen::<Scalar>();
-+        let mut clear_1 = rng.gen::<Scalar>();
-+        let mut ct_0 = cks.encrypt_signed(clear_0);
-+        let mut ct_1 = cks.encrypt_signed(clear_1);
-+
-+        // Raise the degree, so as to ensure worst case path in operations
-+        while ct_0.block_carries_are_empty() {
-+            let clear_2 = rng.gen::<Scalar>();
-+            let ct_2 = cks.encrypt_signed(clear_2);
-+            sks.unchecked_add_assign(&mut ct_0, &ct_2);
-+            clear_0 = clear_0.wrapping_add(&clear_2);
-+        }
-+
-+        while ct_1.block_carries_are_empty() {
-+            let clear_2 = rng.gen::<Scalar>();
-+            let ct_2 = cks.encrypt_signed(clear_2);
-+            sks.unchecked_add_assign(&mut ct_1, &ct_2);
-+            clear_1 = clear_1.wrapping_add(&clear_2);
-+        }
-+
-+        // Sanity decryption checks
-+        {
-+            let a: Scalar = cks.decrypt_signed(&ct_0);
-+            assert_eq!(a, clear_0);
-+
-+            let b: Scalar = cks.decrypt_signed(&ct_1);
-+            assert_eq!(b, clear_1);
-+        }
-+
-+        assert!(!ct_0.block_carries_are_empty());
-+        assert!(!ct_1.block_carries_are_empty());
-+        let encrypted_result = executor.execute((&ct_0, &ct_1));
-+
-+        // Sanity decryption checks
-+        {
-+            let a: Scalar = cks.decrypt_signed(&ct_0);
-+            assert_eq!(a, clear
+ .PHONY: check_typos # Check for typos in codebase
+ check_typos: install_typos_checker
+-	@git ls-files ":!*.png" ":!*.cbor" ":!*.bcode" ":!*.ico" ":!*/twiddles.cu" ":!*/fft16x4x16_twiddles.cuh" ":!*/test_cpu_gpu_fft16x4x16.cpp" ":!*/test_cpu_gpu_ifft16x4x16.cpp" ":!*.hpu" ":!*/pbs128_golden_data/*.rs" ":!ci/csv_to_ods.py" | typos --file-list - && echo "No typos found"
++	@git ls-files ":!*.png" ":!*.cbor" ":!*.bcode" ":!*.ico" ":!*/twiddles.cu" ":!*/fft16x16x4_twiddles.cuh" ":!*.hpu" ":!*/pbs128_golden_data/*.rs" ":!ci/csv_to_ods.py" | typos --file-list - && echo "No typos found"
+ 
+ .PHONY: clippy_gpu # Run clippy lints on tfhe with "gpu" enabled
+ clippy_gpu: install_rs_check_toolchain
 ```
 
-**File**: `tfhe/src/integer/gpu/server_key/radix/tests_signed/test_comparison.rs` (modified, +7/-5)
+**File**: `backends/tfhe-cuda-backend/cuda/include/pbs/pbs_utilities.h` (modified, +3/-5)
 ```diff
-@@ -1,10 +1,12 @@
-+use super::legacy_default_tests::{
-+    legacy_signed_default_comparison_test, legacy_signed_default_minmax_test,
+@@ -377,11 +377,9 @@ uint64_t get_buffer_size_programmable_bootstrap_cg(
+ }
+ 
+ template <typename Torus>
+-bool has_support_to_cuda_programmable_bootstrap_cg(uint32_t glwe_dimension,
+-                                                   uint32_t polynomial_size,
+-                                                   uint32_t level_count,
+-                                                   uint32_t num_samples,
+-                                                   uint32_t max_shared_memory);
++bool has_support_to_cuda_programmable_bootstrap_cg(
++    uint32_t glwe_dimension, uint32_t polynomial_size, uint32_t level_count,
++    uint32_t lwe_dimension, uint32_t num_samples, uint32_t max_shared_memory);
+ 
+ template <typename Torus>
+ void cuda_programmable_bootstrap_cg_lwe_ciphertext_vector_async(
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/include/pbs/programmable_bootstrap.h` (modified, +24/-15)
+```diff
+@@ -10,7 +10,7 @@ void cuda_fourier_polynomial_mul_async(void *stream, uint32_t gpu_index,
+                                        void *output, uint32_t polynomial_size,
+                                        uint32_t total_polynomials);
+ 
+-void cuda_fourier_polynomial_mul_fft16x4x16_async(
++void cuda_fourier_polynomial_mul_fft16x16x4_async(
+     void *stream, uint32_t gpu_index, void const *input1, void const *input2,
+     void *output, uint32_t polynomial_size, uint32_t total_polynomials);
+ 
+@@ -21,28 +21,37 @@ void cuda_forward_fft_classic_async(void *stream, uint32_t gpu_index,
+                                     uint32_t polynomial_size,
+                                     uint32_t total_polynomials);
+ 
+-// Test-only: forward-only negacyclic FFT using the throughput-oriented
+-// FFT16x4x16 core. Output is in NATURAL frequency order. Hardcoded to
+-// polynomial_size == 2048 and requires sm_90 (H100).
+-void cuda_forward_fft16x4x16_async(void *stream, uint32_t gpu_index,
++// Test-only: forward-only negacyclic FFT using the paired FFT16x16x4 transform
++// of the specialized 2_2_params PBS. Output is in NATURAL frequency order.
++// Hardcoded to polynomial_size == 2048; two polynomials per block, so
++// total_polynomials must be even. Runs on compute capability 8.x and newer.
++void cuda_forward_fft16x16x4_async(void *stream, uint32_t gpu_index,
+                                    void const *input, void *output,
+                                    uint32_t polynomial_size,
+                                    uint32_t total_polynomials);
+ 
+-// Test-only: inverse-only negacyclic FFT using the throughput-oriented
+-// FFT16x4x16 core. The clean inverse of cuda_forward_fft16x4x16_async: input
+-// and time-domain output are both in NATURAL order. Hardcoded to
+-// polynomial_size == 2048 and requires sm_90 (H100).
+-void cuda_backward_fft16x4x16_async(void *stream, uint32_t gpu_index,
++// Test-only: inverse-only negacyclic FFT using the paired FFT16x16x4 transform.
++// The clean inverse of cuda_forward_fft16x16x4_async: natural-order input and
++// natural-order time-domain output, no 1/N. Same restrictions as the forward.
++void cuda_backward_fft16x16x4_async(void *stream, uint32_t gpu_index,
+                                     void const *input, void *output,
+                                     uint32_t polynomial_size,
+                                     uint32_t total_polynomials);
+ 
+-// Returns true iff the given GPU can run the FFT16x4x16 core, i.e. it has
+-// compute capability 9.x (Hopper) or newer, the only architectures the core
+-// is validated on. Lets callers (e.g. tests) gate the specialized path at
+-// runtime instead of failing on older architectures.
+-bool cuda_fft16x4x16_is_supported_async(uint32_t gpu_index);
++// Returns true iff the given GPU has compute capability 9.x (Hopper) or newer,
++// the only architecture the 128-bit PBS golden data is validated on. Lets the
++// pbs128 golden tests gate themselves at runtime.
++bool cuda_pbs128_golden_is_supported_async(uint32_t gpu_index);
++
++// True iff the GPU reproduces the committed PBS golden data bit for bit:
++// compute capability 8.x (Ampere) or newer, checked on A100, L40 and H100.
++bool cuda_pbs_golden_is_supported_async(uint32_t gpu_index);
++
++// True iff the GPU runs the FFT16x16x4 transforms and reproduces the committed
++// FFT golden data bit for bit: compute capability 8.x (Ampere) or newer,
++// checked on A100, L40 and H100. A deliberate twin of the PBS golden probe
++// above: the two policies are independent and may diverge.
++bool cuda_fft16x16x4_is_supported_async(uint32_t gpu_index);
+ 
+ void cuda_convert_lwe_programmable_bootstrap_key_32_async(
+     void *stream, uint32_t gpu_index, void *dest, void const *src,
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/src/crypto/torus.cuh` (modified, +2/-2)
+```diff
+@@ -46,8 +46,8 @@ __device__ inline void typecast_double_round_to_torus(double x, T &r) {
+   constexpr double mx = get_two_pow_torus_bits<T>();
+   // floor must be used here because round has an issue with rounding .5,
+   // as it rounds away from zero.
+-  double frac = x - floor(x);
+-  frac *= mx;
++  double frac = __dsub_rn(x, floor(x));
++  frac = __dmul_rn(frac, mx);
+   typecast_double_to_torus(round(frac), r);
+ }
+ 
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/src/fft/bnsmfft.cuh` (modified, +187/-363)
+```diff
+@@ -1,7 +1,7 @@
+ #ifndef GPU_BOOTSTRAP_FFT_CUH
+ #define GPU_BOOTSTRAP_FFT_CUH
+ 
+-#include "fft/fft16x4x16.cuh"
++#include "fft/fft16x16x4.cuh"
+ #include "polynomial/functions.cuh"
+ #include "polynomial/parameters.cuh"
+ #include "twiddles.cuh"
+@@ -581,108 +581,85 @@ __global__ void batch_NSMFFT_classical_specialized(double2 *d_input,
+   }
+ }
+ 
+-// FFT16x4x16-based batch BSK forward transform for the specialized 2_2 path.
+-//
+-// Replacement for batch_NSMFFT_classical_specialized that converts each
+-// bootstrapping-key polynomial into the same bit-reversed-frequency layout the
+-// FFT16x4x16-based accumulate kernel produces and reads. Both sides therefore
+-// pair identical frequencies during the GGSW pointwise multiply without any
+-// per-iteration register permutation.
+-//
+-// Layout convention
+-// ─────────────────
+-//   For an N=2048 real polynomial encoded as N/2=1024 complex doubles via the
+-//   compressed real layout (input[k].x = poly[k], input[k].y = poly[k+1024]):
++// Block startup shared by the key conversion and the test kernels, as in the
++// PBS kernel: folded twiddles in shared memory, roots and rows in registers.
++struct fft16x16x4_block_context {
++  const double2 *tw;
++  double *xpose, *xpose_other, *xpose_pong, *xpose0_pong, *xpose1_pong;
++  double2 small_w[6];
++  double2 r0, r7, r3, r11, r1;
 +};
- use crate::integer::gpu::server_key::radix::tests_unsigned::{
-     create_gpu_parameterized_test, GpuFunctionExecutor,
- };
- use crate::integer::gpu::CudaServerKey;
- use crate::integer::server_key::radix_parallel::tests_signed::test_comparison::{
--    test_signed_default_function, test_signed_default_minmax, test_signed_unchecked_function,
--    test_signed_unchecked_minmax,
-+    test_signed_unchecked_function, test_signed_unchecked_minmax,
- };
- use crate::shortint::parameters::test_params::*;
- use crate::shortint::parameters::*;
-@@ -34,7 +36,7 @@ macro_rules! define_gpu_signed_comparison_test_functions {
-             fn [<integer_signed_default_ $comparison_name _ $clear_type>]<P>(param: P) where P: Into<TestParameters> {
-                 let num_tests = 1;
-                 let executor = GpuFunctionExecutor::new(&CudaServerKey::[<$comparison_name>]);
--                test_signed_default_function(
-+                legacy_signed_default_comparison_test(
-                     param,
-                     num_tests,
-                     executor,
-@@ -77,15 +79,15 @@ where
-     P: Into<TestParameters>,
- {
-     let executor = GpuFunctionExecutor::new(&CudaServerKey::min);
--    test_signed_default_minmax(params, 2, executor, std::cmp::min::<i128>);
-+    legacy_signed_default_minmax_test(params, 2, executor, std::cmp::min::<i128>);
- }
- 
- fn integer_signed_max_128_bits<P>(params: P)
- where
-     P: Into<TestParameters>,
- {
-     let executor = GpuFunctionExecutor::new(&CudaServerKey::max);
--    test_signed_default_minmax(params, 2, executor, std::cmp::max::<i128>);
-+    legacy_signed_default_minmax_test(params, 2, executor, std::cmp::max::<i128>);
- }
- 
- create_gpu_parameterized_test!(integer_signed_unchecked_max_128_bits {
-```
-
-**File**: `tfhe/src/integer/gpu/server_key/radix/tests_unsigned/legacy_default_tests.rs` (modified, +180/-4)
-```diff
-@@ -2,12 +2,13 @@
- //!
- //! FIXME(gpu): the CPU tests for these operations moved to
- //! `radix_parallel::test_harness` (see `radix_parallel::tests_unsigned::test_add`,
--//! `test_scalar_add`, `test_scalar_shift`, `test_scalar_rotate`, `test_sum` and `test_neg`),
--//! which also
--//! exercises inputs at the maximum degree and noise level.
-+//! `test_scalar_add`, `test_scalar_shift`, `test_scalar_rotate`, `test_sum`, `test_neg` and
-+//! `test_comparison`), which also exercises inputs at the maximum degree and noise level.
- //! The GPU full propagation cannot take blocks at the maximum degree yet.
- //! Once it is aligned with the CPU one point the GPU wrappers at the harness
- //! tests and delete this file.
-+use crate::core_crypto::prelude::UnsignedNumeric;
-+use crate::integer::block_decomposition::{DecomposableInto, RecomposableFrom};
- use crate::integer::ciphertext::{IntegerCiphertext, IntegerRadixCiphertext};
- use crate::integer::keycache::KEY_CACHE;
- use crate::integer::server_key::radix_parallel::tests_cases_unsigned::FunctionExecutor;
-@@ -18,7 +19,9 @@ use crate::integer::server_key::radix_parallel::tests_unsigned::{
- };
- use crate::integer::{BooleanBlock, IntegerKeyKind, RadixCiphertext, RadixClientKey};
- use crate::shortint::parameters::*;
--use rand::Rng;
-+use rand::distributions::Standard;
-+use rand::prelude::*;
-+use std::ops::AddAssign;
- use std::sync::Arc;
- 
- pub(crate) fn legacy_default_add_test<P, T>(param: P, mut executor: T)
-@@ -744,3 +747,176 @@ where
-         );
-     }
- }
 +
-+/// Function to test a "default" comparison server_key function.
-+///
-+/// This calls the `server_key_method` with non-fresh ciphertexts,
-+/// that is ciphertexts that have non-zero carries, and compares that the result is
-+/// the same as the one of`clear_fn`.
-+pub(crate) fn legacy_default_comparison_test<P, T, ClearF, Scalar>(
-+    param: P,
-+    num_test: usize,
-+    mut executor: T,
-+    clear_fn: ClearF,
-+) where
-+    P: Into<TestParameters>,
-+    Scalar: UnsignedNumeric
-+        + AddAssign<Scalar>
-+        + DecomposableInto<u64>
-+        + RecomposableFrom<u64>
-+        + From<bool>,
-+    T: for<'a> FunctionExecutor<(&'a RadixCiphertext, &'a RadixCiphertext), BooleanBlock>,
-+    ClearF: Fn(Scalar, Scalar) -> Scalar,
-+    Standard: Distribution<Scalar>,
-+{
-+    let mut rng = rand::thread_rng();
++static __device__ __forceinline__ void
++fft16x16x4_block_setup(double *smem, fft16x16x4_block_context &c) {
++  double *xpose0 = smem + FFT16x16x4_DUAL_XPOSE0_OFFSET;
++  double *xpose1 = smem + FFT16x16x4_DUAL_XPOSE1_OFFSET;
++  c.tw = reinterpret_cast<const double2 *>(smem);
++  c.xpose0_pong = smem + FFT16x16x4_DUAL_XPOSE0_PONG_OFFSET;
++  c.xpose1_pong = smem + FFT16x16x4_DUAL_XPOSE1_PONG_OFFSET;
++  c.xpose = threadIdx.y == 0 ? xpose0 : xpose1;
++  c.xpose_other = threadIdx.y == 0 ? xpose1 : xpose0;
++  c.xpose_pong = threadIdx.y == 0 ? c.xpose0_pong : c.xpose1_pong;
 +
-+    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
-+    let sks = Arc::new(sks);
-+    let num_block = Scalar::BITS.div_ceil(cks.parameters().message_modulus().0.ilog2() as usize);
-+    let cks = RadixClientKey::from((cks, num_block));
-+
-+    executor.setup(&cks, sks.clone());
-+
-+    assert_eq!(
-+        Scalar::BITS as u32 % cks.parameters().message_modulus().0.ilog2(),
-+        0,
-+        "bit width must be a multiple of number of bit in a block"
-+    );
-+
-+    for _ in 0..num_test {
-+        let mut clear_0 = rng.gen::<Scalar>();
-+        let mut clear_1 = rng.gen::<Scalar>();
-+        let mut ct_0 = cks.encrypt(clear_0);
-+        let mut ct_1 = cks.encrypt(clear_1);
-+
-+        // Raise the degree, so as to ensure worst case path in operations
-+        while ct_0.block_carries_are_empty() {
-+            let clear_2 = rng.gen::<Scalar>();
-+            let ct_2 = cks.encrypt(clear_2);
-+            sks.unchecked_add_assign(&mut ct_0, &ct_2);
-+            clear_0 += clear_2;
-+        }
-+
-+        while ct_1.block_carries_are_empty() {
-+            let clear_2 = rng.gen::<Scalar>();
-+            let ct_2 = cks.encrypt(clear_2);
-+            sks.unchecked_add_assign(&mut ct_1, &ct_2);
-+            clear_1 += clear_2;
-+        }
-+
-+        // Sanity decryption checks
-+        {
-+            let a: Scalar = cks.decrypt(&ct_0);
-+            assert_eq!(a, clear_0);
-+
-+            let b: Scalar = cks.decrypt(&ct_1);
-+            assert_eq!(b, clear_1);
-+        }
-+
-+        assert!(!ct_0.block_carries_are_empty());
-+        assert!(!ct_1.block_carries_are_empty());
-+        let encrypted_result = executor.execute((&ct_0, &ct_1));
-+
-+        // Sanity decryption checks
-+        {
-+            let a: Scalar = cks.decrypt(&ct_0);
-+            assert_eq!(a, clear_0);
-+
-+            let b: Scalar = cks.decrypt(&ct_1);
-+            assert_eq!(b, clear_1);
-+        }
-+
-+        let decrypted_result: Scalar = cks.decrypt_bool(&encrypted_result).into();
-+
-+        let expected_result = clear_fn(clear_0, clear_1);
-+        assert_eq!(decrypted_result, expected_result);
-+    }
++  fft16x16x4_load_shared_twiddles_folded_128t(smem);
++  __syncthreads();
++  fft16x16x4_load_small_twiddles(c.small_w);
++  c.r0 = conjugate(twisting_twiddles[threadIdx.x]);
++  c.r7 = c.tw[7 * 64 + threadIdx.x];
++  c.r3 = c.tw[3 * 64 + threadIdx.x];
++  c.r11 = c.tw[11 * 64 + threadIdx.x];
++  c.r1 = c.tw[1 * 64 + threadIdx.x];
 +}
 +
-+/// Function to test a "default" `min`/`max` server_key function.
-+///
-+/// This calls the `server_key_method` with non-fresh ciphertexts,
-+/// that is ciphertexts that have non-zero carries, and compares that the result is
-+/// the same as the one of`clear_fn`.
-+pub(crate) fn legacy_default_minmax_test<P, T, ClearF, Scalar>(
-+    param: P,
-+    num_test: usize,
-+    mut executor: T,
-+    clear_fn: ClearF,
-+) where
-+    P: Into<TestParameters>,
-+    Scalar: UnsignedNumeric
-+        + AddAssign<Scalar>
-+        + DecomposableInto<u64>
++// Bootstrapping-key forward transform of the specialized 2_2 path: the paired
++// FFT16x16x4 forward of the PBS kernel, run on pairs of key polynomials, with
++// the spectra stored in the slot order the PBS kernel reads them back.
+ //
+-//     d_output[blockIdx.x*(N/2) + tid + j*64]  =  Â_bsk[bitreversal16(j)*64 +
+-//     tid]
++// Layout
++//   After the paired forward, register j of thread (tid, y) holds, for both
++//   polynomials of the pair, the frequency the PBS kernel consumes from slot
++//   tid + 64*(j + 8*y) of its key slice (see fft16x16x4.cuh). Storing register
++//   j (polynomial 0) and register 8 + j (polynomial 1) at that slot pairs
++//   identical frequencies in the GGSW product without any permutation.
+ //
+-//   tid ∈ [0,64), j ∈ [0,16).  The accumulate kernel's FFT16x4x16 forward
+-//   leaves register a[j] holding Â_acc[bitreversal16(j)*64+tid]; reading bsk at
+-//   physical index tid+j*64 picks the matching frequency.
++//   The spectra carry the 1/N of the inverse transform (N = 1024), which the
++//   PBS inverse path does not apply itself.
+ //
+-// SMEM layout (≈41 KB, single 64-thread FFT — Strategy A from the keybundle
+-// migration plan, no monomial precalc needed for the classic bsk):
+-//   [0 .. TW_SMEM_DOUBLES-1]                   tw_1024 twiddle table (1920)
+-//   [FFT16x4x16_DUAL_COMPACT_TW_OFFSET .. +101] compact_twiddles (102)
+-//   [FFT16x4x16_DUAL_XPOSE0_OFFSET .. +2207]   xpose scratch (2208)
+-//   [KB_TWIST_OFFSET .. +1025]                  negacyclic twist half-table
++// One (64, 2, 1) block per pair of polynomials (so the count must be even),
++// FFT16x16x4_DUAL_SMEM_BYTES of shared memory.
+ template <class params>
+-__global__ void batch_FFT16x4x16_classical_specialized(double2 *d_input,
+-                                                       double2 *d_output) {
+-  extern __shared__ int8_t batch_fft16_sharedmem[];
+-  double *smem = reinterpret_cast<double *>(batch_fft16_sharedmem);
+-
+-  const double2 *tw_shared = reinterpret_cast<const double2 *>(smem);
+-  const double *compact_twiddles = smem + FFT16x4x16_DUAL_COMPACT_TW_OFFSET;
+-  double *smem_xpose = smem + FFT16x4x16_DUAL_XPOSE0_OFFSET;
+-  double2 *smem_twist = reinterpret_cast<double2 *>(smem + KB_TWIST_OFFSET);
+-
+-  // Load FFT twiddle table cooperatively (64 threads × 15 iters = 960 d2's).
+-  double2 *tw_shared_w = reinterpret_cast<double2 *>(smem);
+-#pragma unroll
+-  for (int idx = threadIdx.x; idx < 15 * 64; idx += 64)
+-    tw_shared_w[idx] = tw_1024[idx >> 6][idx & 63];
+-
+-  // Compact twiddles: 3 rows × 16 columns of (re, im).  First 48 threads each
+-  // load one (row, col) entry; matches the convention used by the dual-FFT
+-  // 128-thread loader in fft16x4x16_load_shared_twiddles_128t.
+-  double *compact_twidd
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/src/fft/fft16x16x4.cuh` (added, +608/-0)
+```diff
+@@ -0,0 +1,608 @@
++#pragma once
 +
-```
-
-**File**: `tfhe/src/integer/gpu/server_key/radix/tests_unsigned/test_comparison.rs` (modified, +6/-5)
-```diff
-@@ -1,11 +1,12 @@
-+use super::legacy_default_tests::{legacy_default_comparison_test, legacy_default_minmax_test};
- use crate::core_crypto::gpu::get_number_of_gpus;
- use crate::integer::gpu::server_key::radix::tests_signed::GpuMultiDeviceFunctionExecutor;
- use crate::integer::gpu::server_key::radix::tests_unsigned::{
-     create_gpu_parameterized_test, GpuFunctionExecutor,
- };
- use crate::integer::gpu::CudaServerKey;
- use crate::integer::server_key::radix_parallel::tests_unsigned::test_comparison::{
--    test_default_function, test_default_minmax, test_unchecked_function, test_unchecked_minmax,
-+    test_unchecked_function, test_unchecked_minmax,
- };
- use crate::integer::U256;
- use crate::shortint::parameters::test_params::*;
-@@ -35,7 +36,7 @@ macro_rules! define_gpu_comparison_test_functions {
-             fn [<integer_default_ $comparison_name _ $clear_type:lower>]<P>(param: P) where P: Into<TestParameters> {
-                 let num_tests = 1;
-                 let executor = GpuFunctionExecutor::new(&CudaServerKey::[<$comparison_name>]);
--                test_default_function(
-+                legacy_default_comparison_test(
-                     param,
-                     num_tests,
-                     executor,
-@@ -48,7 +49,7 @@ macro_rules! define_gpu_comparison_test_functions {
-                 let executor = GpuMultiDeviceFunctionExecutor::new(&CudaServerKey::[<$comparison_name>]);
-                 let num_gpus = get_number_of_gpus();
-                 if num_gpus > 1 {
--                    test_default_function(
-+                    legacy_default_comparison_test(
-                         param,
-                         num_tests,
-                         executor,
-@@ -94,15 +95,15 @@ where
-     P: Into<TestParameters>,
- {
-     let executor = GpuFunctionExecutor::new(CudaServerKey::min);
--    test_default_minmax(params, 2, executor, std::cmp::min::<U256>);
-+    legacy_default_minmax_test(params, 2, executor, std::cmp::min::<U256>);
- }
- 
- fn integer_max_u256<P>(params: P)
- where
-     P: Into<TestParameters>,
- {
-     let executor = GpuFunctionExecutor::new(CudaServerKey::max);
--    test_default_minmax(params, 2, executor, std::cmp::max::<U256>);
-+    legacy_default_minmax_test(params, 2, executor, std::cmp::max::<U256>);
- }
- 
- create_gpu_parameterized_test!(integer_unchecked_min_u256 {
-```
-
-**File**: `tfhe/src/integer/server_key/radix_parallel/comparison.rs` (modified, +16/-210)
-```diff
-@@ -692,257 +692,63 @@ impl ServerKey {
-     where
-         T: IntegerRadixCiphertext,
-     {
--        let mut tmp_lhs;
--        let mut tmp_rhs;
--        let (lhs, rhs) = match (lhs.block_carries_are_empty(), rhs.block_carries_are_empty()) {
--            (true, true) => (lhs, rhs),
--            (true, false) => {
--                tmp_rhs = rhs.clone();
--                self.full_propagate_parallelized(&mut tmp_rhs);
--                (lhs, &tmp_rhs)
--            }
--            (false, true) => {
--                tmp_lhs = lhs.clone();
--                self.full_propagate_parallelized(&mut tmp_lhs);
--                (&tmp_lhs, rhs)
--            }
--            (false, false) => {
--                tmp_lhs = lhs.clone();
--                tmp_rhs = rhs.clone();
--                rayon::join(
--                    || self.full_propagate_parallelized(&mut tmp_lhs),
--                    || self.full_propagate_parallelized(&mut tmp_rhs),
--                );
--                (&tmp_lhs, &tmp_rhs)
--            }
--        };
--
--        self.unchecked_eq_parallelized(lhs, rhs)
-+        let (lhs, rhs) = self.clean_for_default_binary_op(lhs, rhs);
-+        self.unchecked_eq_parallelized(&*lhs, &*rhs)
-     }
- 
-     pub fn ne_parallelized<T>(&self, lhs: &T, rhs: &T) -> BooleanBlock
-     where
-         T: IntegerRadixCiphertext,
-     {
--        let mut tmp_lhs;
--        let mut tmp_rhs;
--        let (lhs, rhs) = match (lhs.block_carries_are_empty(), rhs.block_carries_are_empty()) {
--            (true, true) => (lhs, rhs),
--            (true, false) => {
--                tmp_rhs = rhs.clone();
--                self.full_propagate_parallelized(&mut tmp_rhs);
--                (lhs, &tmp_rhs)
--            }
--            (false, true) => {
--                tmp_lhs = lhs.clone();
--                self.full_propagate_parallelized(&mut tmp_lhs);
--                (&tmp_lhs, rhs)
--            }
--            (false, false) => {
--                tmp_lhs = lhs.clone();
--                tmp_rhs = rhs.clone();
--                rayon::join(
--                    || self.full_propagate_parallelized(&mut tmp_lhs),
--                    || self.full_propagate_parallelized(&mut tmp_rhs),
--                );
--                (&tmp_lhs, &tmp_rhs)
--            }
--        };
--
--        self.unchecked_ne_parallelized(lhs, rhs)
-+        let (lhs, rhs) = self.clean_for_default_binary_op(lhs, rhs);
-+        self.unchecked_ne_parallelized(&*lhs, &*rhs)
-     }
- 
-     pub fn gt_parallelized<T>(&self, lhs: &T, rhs: &T) -> BooleanBlock
-     where
-         T: IntegerRadixCiphertext,
-     {
--        let mut tmp_lhs;
--        let mut tmp_rhs;
--        let (lhs, rhs) = match (lhs.block_carries_are_empty(), rhs.block_carries_are_empty()) {
--            (true, true) => (lhs, rhs),
--            (true, false) => {
--                tmp_rhs = rhs.clone();
--                self.full_propagate_parallelized(&mut tmp_rhs);
--                (lhs, &tmp_rhs)
--            }
--            (false, true) => {
--                tmp_lhs = lhs.clone();
--                self.full_propagate_parallelized(&mut tmp_lhs);
--                (&tmp_lhs, rhs)
--            }
--            (false, false) => {
--                tmp_lhs = lhs.clone();
--                tmp_rhs = rhs.clone();
--                rayon::join(
--                    || self.full_propagate_parallelized(&mut tmp_lhs),
--                    || self.full_propagate_parallelized(&mut tmp_rhs),
--                );
--                (&tmp_lhs, &tmp_rhs)
--            }
--        };
--
--        self.unchecked_gt_parallelized(lhs, rhs)
-+        let (lhs, rhs) = self.clean_for_default_binary_op(lhs, rhs);
-+        self.unchecked_gt_parallelized(&*lhs, &*rhs)
-     }
- 
-     pub fn ge_parallelized<T>(&self, lhs: &T, rhs: &T) -> BooleanBlock
-     where
-         T: IntegerRadixCiphertext,
-     {
--        let mut tmp_lhs;
--        let mut tmp_rhs;
--        let (lhs, rhs) = match (lhs.block_carries_are_empty(), rhs.block_carries_are_empty()) {
--            (true, true) => (lhs, rhs),
--            (true, false) => {
--                tmp_rhs = rhs.clone();
--                self.full_propagate_parallelized(&mut tmp_rhs);
--                (lhs, &tmp_rhs)
--            }
--            (false, true) => {
--                tmp_lhs = lhs.clone();
--                self.full_propagate_parallelized(&mut tmp_lhs);
--                (&tmp_lhs, rhs)
--            }
--            (false, false) => {
--                tmp_lhs = lhs.clone();
--                tmp_rhs = rhs.clone();
--                rayon::join(
--                    || self.full_propagate_parallelized(&mut tmp_lhs),
--                    || self.full_propagate_parallelized(&mut tmp_rhs),
--                );
--                (&tmp_lhs, &tmp_rhs)
--            }
--        };
--
--        self.unchecked_ge_parallelized(lhs, rhs)
-+        let (lhs, rhs) = self.clean_for_default_binary_op(lhs, rhs);
-+        self.unchecked_ge_parallelized(&*lhs, &*rhs)
-     }
- 
-     pub fn lt_parallelized<T>(&self, lhs: &T, rhs: &T) -> B
-```
-
-**File**: `tfhe/src/integer/server_key/radix_parallel/mod.rs` (modified, +18/-0)
-```diff
-@@ -345,6 +345,24 @@ impl ServerKey {
-         }
-     }
- 
-+    /// Cleans both inputs of a default binary op so that they are ready to be used, each into
-+    /// a `Cow` (owned only if it had to be cleaned).
-+    ///
-+    /// Both cleanings run in parallel.
-+    pub(crate) fn clean_for_default_binary_op<'a, T>(
-+        &self,
-+        lhs: &'a T,
-+        rhs: &'a T,
-+    ) -> (Cow<'a, T>, Cow<'a, T>)
-+    where
-+        T: IntegerRadixCiphertext,
-+    {
-+        rayon::join(
-+            || self.clean_for_default_op(lhs),
-+            || self.clean_for_default_op(rhs),
-+        )
-+    }
++#include <cuda_runtime.h>
++#include <math.h>
 +
-     /// Cleans both inputs of a default binary assign op so that they are ready to be used:
-     /// `lhs` inplace, `rhs` into a `Cow` (owned only if it had to be cleaned).
-     ///
-```
-
-**File**: `tfhe/src/integer/server_key/radix_parallel/test_harness.rs` (modified, +13/-0)
-```diff
-@@ -1213,6 +1213,19 @@ pub(crate) fn radix_edges_fixed_cases<C: ClearInteger>(
-         .collect()
- }
- 
-+/// Fixed cases for an operation between two radixes of `radix_bits` bits: every edge value
-+/// against every other (see [`ClearInteger`]).
-+///
-+/// The product includes the pairs of equal values, which comparison-like operations treat
-+/// specially and random cases practically never draw.
-+pub(crate) fn radix_pair_fixed_cases<C: ClearInteger>(
-+    size_requirements: SizeRequirements,
-+    ctx: &TestContext,
-+) -> Vec<(C, C)> {
-+    let radix_bits = ctx.radix_bits(size_requirements.n_blocks);
-+    iproduct!(C::radix_edges(radix_bits), C::radix_edges(radix_bits)).collect()
++#include "fft/fft16x16x4_twiddles.cuh"
++#include "types/complex/operations.cuh"
++
++// ============================================================================
++//  FFT16x16x4: paired 1024-point negacyclic FFT of the specialized 2_2 PBS on a
++//  (64, 2, 1) block; n = a + 4b + 64c, FFT16 along c and b, FFT4 along a.
++// ============================================================================
++
++// ============================================================================
++//  Building blocks: twiddle constants, radix-2/4/16 butterflies, twiddle rows
++// ============================================================================
++#define D_COS_PI_8 0.9238795325112867561281831893967882868
++#define D_SIN_PI_8 0.3826834323650897717284599840303988667
++
++// Forward (sign = -1): exp(-i * angle)
++#define d_exp_1_16 make_double2(D_COS_PI_8, -D_SIN_PI_8)
++#define d_exp_3_16 make_double2(D_SIN_PI_8, -D_COS_PI_8)
++#define d_exp_9_16 make_double2(-D_COS_PI_8, D_SIN_PI_8)
++#define d_exp_1_8 make_double2(1.0, -1.0)  // post-multiply by 1/sqrt(2)
++#define d_exp_3_8 make_double2(-1.0, -1.0) // post-multiply by 1/sqrt(2)
++
++// Inverse (sign = +1): exp(+i * angle)
++#define d_iexp_1_16 make_double2(D_COS_PI_8, D_SIN_PI_8)
++#define d_iexp_3_16 make_double2(D_SIN_PI_8, D_COS_PI_8)
++#define d_iexp_9_16 make_double2(-D_COS_PI_8, -D_SIN_PI_8)
++#define d_iexp_1_8 make_double2(1.0, 1.0)  // post-multiply by 1/sqrt(2)
++#define d_iexp_3_8 make_double2(-1.0, 1.0) // post-multiply by 1/sqrt(2)
++
++// bitreversal16(j): natural-order index of register j after the in-register
++// FFT16 below; for the whole transform, register j holds time position
++// bitreversal16(j)*64 + tid. Used inside unrolled loops, so it folds at
++// compile time.
++static __device__ __forceinline__ int bitreversal16(int bits) {
++  const int t[] = {0, 8, 4, 12, 2, 10, 6, 14, 1, 9, 5, 13, 3, 11, 7, 15};
++  return t[bits];
 +}
 +
- /// Fixed cases for an operation between a radix of `radix_bits` bits and a scalar of type
- /// `T`: the radix edges against the scalar edge values (see [`ClearInteger`]).
- pub(crate) fn default_scalar_fixed_cases<T: ScalarType>(
++// ============================================================================
++//  Special-case complex multipliers (multiply by unit-magnitude pure angles)
++// ============================================================================
++
++// Multiply by exp(-i*pi/2) = -i: (a.x, a.y) → (a.y, -a.x)
++static inline __device__ double2 cmul_exp_1_4(double2 a) {
++  return make_double2(a.y, -a.x);
++}
++
++// Multiply by exp(+i*pi/2) = +i: (a.x, a.y) → (-a.y, a.x)
++static inline __device__ double2 cmul_iexp_1_4(double2 a) {
++  return make_double2(-a.y, a.x);
++}
++
++// ============================================================================
++//  Butterfly primitives — forward FFT (sign = -1)
++// ============================================================================
++static inline __device__ void FFT2(double2 &a0, double2 &a1) {
++  double2 c0 = a0;
++  a0 = c0 + a1;
++  a1 = c0 - a1;
++}
++
++// Component ops pinned: nothing here may be contracted with a multiply.
++static inline __device__ void FFT2_mul_exp_1_4(double2 &a0, double2 &a1) {
++  double2 c0 = a0;
++  a0.x = __dadd_rn(c0.x, a1.y);
++  a0.y = __dsub_rn(c0.y, a1.x);
++  double a1_x = a1.x;
++  a1.x = __dsub_rn(c0.x, a1.y);
++  a1.y = __dadd_rn(c0.y, a1_x);
++}
++
++static inline __device__ void FFT4(double2 &a0, double2 &a1, double2 &a2,
++                                   double2 &a3) {
++  FFT2(a0, a2);
++  FFT2(a1, a3);
++  FFT2(a0, a1);
++  FFT2_mul_exp_1_4(a2, a3);
++}
++
++// ---------------------------------------------------------------------------
++//  16-point DFT held entirely in 16 registers a[0..15] (the in-register
++//  passes of the transform). Computed as a 4x4 Cooley-Tukey grid, IN PLACE:
++//  no transpose happens here, so every register keeps its index across both
++//  passes and the two FFT4 layers just couple different subsets of the lines.
++//
++//  PASS 1 runs an FFT4 down each STRIDE-4 group; PASS 2 runs an FFT4 across
++//  each CONTIGUOUS block; a twiddle layer scales 9 registers in between.
++//  W = exp(-2*pi*i / 16).
++//
++//   reg   PASS 1 group (stride-4 FFT4)   x W^e     PASS 2 group (block FFT4)
++//   ----  ---------------------------   -------    -------------------------
++//   a0    {0, 4, 8,12}                  x 1        {0, 1, 2, 3}
++//   a1    {1, 5, 9,13}                  x 1        {0, 1, 2, 3}
++//   a2    {2, 6,10,14}                  x 1        {0, 1, 2, 3}
++//   a3    {3, 7,11,15}                  x 1        {0, 1, 2, 3}
++//   a4    {0, 4, 8,12}                  x 1        {4, 5, 6, 7}
++//   a5    {1, 5, 9,13}                  x W^2      {4, 5, 6, 7}
++//   a6    {2, 6,10,14}                  x W^4      {4, 5, 6, 7}
++//   a7    {3, 7,11,15}                  x W^6      {4, 5, 6, 7}
++//   a8    {0, 4, 8,12}                  x 1        {8, 9,10,11}
++//   a9    {1, 5, 9,13}                  x W^1      {8, 9,10,11}
++//   a10   {2, 6,10,14}                  x W^2      {8, 9,10,11}
++//   a11   {3, 7,11,15}                  x W^3      {8, 9,10,11}
++//   a12   {0, 4, 8,12}               
 ```
 
-**File**: `tfhe/src/integer/server_key/radix_parallel/tests_signed/test_comparison.rs` (modified, +114/-266)
+**File**: `backends/tfhe-cuda-backend/cuda/src/fft/fft16x16x4_twiddles.cu` (added, +4/-0)
 ```diff
-@@ -2,9 +2,13 @@ use crate::core_crypto::prelude::SignedNumeric;
- use crate::integer::block_decomposition::{DecomposableInto, RecomposableSignedInteger};
- use crate::integer::ciphertext::SignedRadixCiphertext;
- use crate::integer::keycache::KEY_CACHE;
-+use crate::integer::server_key::radix_parallel::test_harness::{
-+    radix_pair_fixed_cases, ExecuteOn, TestBuilder, TestContext,
-+};
- use crate::integer::server_key::radix_parallel::tests_cases_unsigned::FunctionExecutor;
- use crate::integer::server_key::radix_parallel::tests_unsigned::{CpuFunctionExecutor, NB_CTXT};
- use crate::integer::tests::create_parameterized_test;
-+use crate::integer::tests::int::Int;
- use crate::integer::{BooleanBlock, IntegerKeyKind, RadixClientKey, ServerKey};
- #[cfg(tarpaulin)]
- use crate::shortint::parameters::coverage_parameters::*;
-@@ -94,104 +98,13 @@ pub(crate) fn test_signed_unchecked_function<P, T, ClearF, Scalar>(
-     }
- }
+@@ -0,0 +1,4 @@
++// Single instantiation of the FFT16x16x4 constant-memory twiddle tables: the
++// macro turns the header's extern declarations into definitions in this TU.
++#define FFT16X16X4_TWIDDLES_INSTANTIATE
++#include "fft/fft16x16x4_twiddles.cuh"
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/src/fft/fft16x16x4_twiddles.cuh` (renamed, +14/-14)
+```diff
+@@ -1,5 +1,5 @@
+ #pragma once
+-// Precalculated twiddle factors for FFT16x4x16 (1024-point complex FFT).
++// Precalculated twiddle factors for FFT16x16x4 (1024-point complex FFT).
+ // Ported from test_correctness/twiddle_tables.h; operators and helpers are
+ // provided by types/complex/operations.cuh — not duplicated here.
+ //
+@@ -11,14 +11,14 @@
+ //   - The header is included by many translation units. To avoid nvlink
+ //     "multiple definition" errors and to keep total constant-memory usage
+ //     within the 64 KB per-program limit, the data is defined in exactly one
+-//     translation unit (fft16x4x16_twiddles.cu) which #defines
+-//     FFT16X4X16_TWIDDLES_INSTANTIATE before including this header. Every
++//     translation unit (fft16x16x4_twiddles.cu) which #defines
++//     FFT16X16X4_TWIDDLES_INSTANTIATE before including this header. Every
+ //     other TU sees only the `extern __device__ __constant__` declarations.
  
--/// Function to test a "default" server_key function for signed inputs.
-+/// This macro generates the `unchecked` tests for a given comparison fn
- ///
--/// This calls the `server_key_method` with non-fresh ciphertexts,
--/// that is ciphertexts that have non-zero carries, and compares that the result is
--/// the same as the one of`clear_fn`.
--pub(crate) fn test_signed_default_function<P, T, ClearF, Scalar>(
--    param: P,
--    num_test: usize,
--    mut executor: T,
--    clear_fn: ClearF,
--) where
--    P: Into<TestParameters>,
--    Scalar: SignedNumeric
--        + RecomposableSignedInteger
--        + DecomposableInto<u64>
--        + WrappingAdd
--        + From<bool>,
--    T: for<'a> FunctionExecutor<
--        (&'a SignedRadixCiphertext, &'a SignedRadixCiphertext),
--        BooleanBlock,
--    >,
--    ClearF: Fn(Scalar, Scalar) -> Scalar,
--    Standard: Distribution<Scalar>,
--{
--    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
--    let num_block = Scalar::BITS.div_ceil(cks.parameters().message_modulus().0.ilog2() as usize);
--    assert_eq!(
--        Scalar::BITS as u32 % cks.parameters().message_modulus().0.ilog2(),
--        0,
--        "bit width must be a multiple of number of bit in a block"
--    );
--    let sks = Arc::new(sks);
--    let cks = RadixClientKey::from((cks, num_block));
--
--    let mut rng = rand::thread_rng();
--
--    executor.setup(&cks, sks.clone());
--
--    for _ in 0..num_test {
--        let mut clear_0 = rng.gen::<Scalar>();
--        let mut clear_1 = rng.gen::<Scalar>();
--        let mut ct_0 = cks.encrypt_signed(clear_0);
--        let mut ct_1 = cks.encrypt_signed(clear_1);
--
--        // Raise the degree, so as to ensure worst case path in operations
--        while ct_0.block_carries_are_empty() {
--            let clear_2 = rng.gen::<Scalar>();
--            let ct_2 = cks.encrypt_signed(clear_2);
--            sks.unchecked_add_assign(&mut ct_0, &ct_2);
--            clear_0 = clear_0.wrapping_add(&clear_2);
--        }
--
--        while ct_1.block_carries_are_empty() {
--            let clear_2 = rng.gen::<Scalar>();
--            let ct_2 = cks.encrypt_signed(clear_2);
--            sks.unchecked_add_assign(&mut ct_1, &ct_2);
--            clear_1 = clear_1.wrapping_add(&clear_2);
--        }
--
--        // Sanity decryption checks
--        {
--            let a: Scalar = cks.decrypt_signed(&ct_0);
--            assert_eq!(a, clear_0);
--
--            let b: Scalar = cks.decrypt_signed(&ct_1);
--            assert_eq!(b, clear_1);
--        }
--
--        assert!(!ct_0.block_carries_are_empty());
--        assert!(!ct_1.block_carries_are_empty());
--        let encrypted_result = executor.execute((&ct_0, &ct_1));
--
--        // Sanity decryption checks
--        {
--            let a: Scalar = cks.decrypt_signed(&ct_0);
--            assert_eq!(a, clear_0);
--
--            let b: Scalar = cks.decrypt_signed(&ct_1);
--            assert_eq!(b, clear_1);
--        }
--
--        let decrypted_result: Scalar = cks.decrypt_bool(&encrypted_result).into();
--
--        let expected_result = clear_fn(clear_0, clear_1);
--        assert_eq!(decrypted_result, expected_result);
--    }
--}
--
--/// This macro generates the tests for a given comparison fn
--///
--/// All our comparison function have 3 variants:
--/// - unchecked_$comparison_name
--/// - unchecked_$comparison_name_parallelized
--/// - $comparison_name_parallelized
--///
--/// So, for example, for the `gt` comparison fn, this macro will generate the tests for
--/// the 3 variants described above
--macro_rules! define_signed_comparison_test_functions {
-+/// Comparisons only keep one unchecked variant, `unchecked_$comparison_name_parallelized`,
-+/// so this macro generates a single test per comparison.
-+/// The `default` variant is tested through the harness, see
-+/// [`define_signed_default_comparison_tests`].
-+macro_rules! define_signed_unchecked_comparison_test_functions {
-     ($comparison_name:ident, $clear_type:ty) => {
-         ::paste::paste!{
-             // Fist we "specialialize" the test_signed fns
-@@ -207,17 +120,6 @@ macro_rules! 
+ #include <cuda_runtime.h>
+ #include <device.h>
+ 
+-#ifdef FFT16X4X16_TWIDDLES_INSTANTIATE
++#ifdef FFT16X16X4_TWIDDLES_INSTANTIATE
+ __device__ __constant__ double2 tw_1024[15][64] = {
+     // k = 1  (row 0)
+     {
+@@ -1047,19 +1047,19 @@ static inline void init_twiddle_tables() {
+ // ============================================================================
+ //  Twisting twiddles for negacyclic FFT
+ //
+-//  psi_k = exp(-i*pi*k / 2048),  k = 0..1023
++//  psi_k = exp(-i*pi*k / 2048),  k = 0..512, stored in hex for bit-exact
++//  values. Same negative-exponent sign convention as tw_1024.
+ //
+-//  First-quadrant half-table: k=0..511, stored in hex for bit-exact values.
+-//  Entries k=513..1023 are derived at runtime via:
+-//    psi_{1024-k} = (-psi_k.y, -psi_k.x)  (swap + negate both parts)
+-//  Entry k=512 = (1/sqrt(2), -1/sqrt(2)) is a compile-time constant in
+-//  twist_lookup.
++//  The FFT16x16x4 transforms read entries k = 0..63 only, one per thread:
++//  conj(psi^tid) is folded into the shared first-stage twiddle rows and kept
++//  in a register for row 0 (fft16x16x4_load_shared_twiddles_folded_128t,
++//  fft16x16x4_block_setup and the PBS kernel); the rest of the twist comes
++//  from the W64 literals of fft16x16x4_w64. The CPU reference copies the whole
++//  table but reads the same 64 entries. Entries 64..512 are unused.
+ //
+-//  Same negative-exponent sign convention as tw_1024.
+-//
+-//  512 entries x 16 bytes = 8192 bytes
++//  513 entries x 16 bytes = 8208 bytes
+ // ============================================================================
+-#ifdef FFT16X4X16_TWIDDLES_INSTANTIATE
++#ifdef FFT16X16X4_TWIDDLES_INSTANTIATE
+ __device__ __constant__ double2 twisting_twiddles[513] = {
+     {0x1.0000000000000p+0, -0x0.0p+0},
+     {0x1.ffffd88586ee6p-1, -0x1.921faaee6472dp-10},
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4115** (2026-10-28): chore(deps-dev): bump fast-uri from 3.1.7 to 3.1.9 in /tfhe/web_wasm_parallel_tests (@dependabot[bot])
 - **PR #4111** (2026-10-27): chore(deps-dev): bump fast-uri from 3.1.8 to 3.1.9 in /utils/wasm-par-mq/web_tests (@dependabot[bot])
 - **PR #4108** (2026-10-26): chore: move CODEOWNERS back because reviewable does not check all locations (@IceTDrinker)
 - **PR #4107** (2026-10-26): chore(data-extractor): update tokio to 1.54.1 (@nsarlin-zama)
 - **PR #4106** (2026-10-26): chore(deps): bump zizmorcore/zizmor-action from 0.6.4 to 0.7.1 (@dependabot[bot])
 - **PR #4104** (2026-10-27): Mz/remove wopbs from parameter set (@mayeul-zama)
-- **PR #4101** (2026-10-23): chore(gpu): run multi-bit h100 and zk memcheck workflows weekly on cron (@agnesLeroy)
 
 ---
 
@@ -3179,42 +2432,37 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gpu): use thread-local streams as much as possible (#4068)
+## X. deps-dev): bump fast-uri in /tfhe/web_wasm_parallel_tests (#4115)
 
 **RULE**:
-When implementing operations in `scripts/check_scratch_cleanup.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tfhe/web_wasm_parallel_tests/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5c02d67f`: gpu): use thread-local streams as much as possible (#4068). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b07103df`: deps-dev): bump fast-uri in /tfhe/web_wasm_parallel_tests (#4115). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/check_scratch_cleanup.py`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/web_wasm_parallel_tests/package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-EXPECTED_SCRATCH_COUNT = 84
-EXPECTED_CUDA_COUNT = 122
-EXPECTED_CLEANUP_COUNT = 84
-EXPECTED_CHECK3_RUST_FNS = 144
-EXPECTED_CHECK3_ASYNC_CUDA_CALLS = 108
-EXPECTED_CHECK3_SCRATCH_CUDA_CLEANUP_TRIPLET_CALLS = 126
-EXPECTED_CHECK5_ASYNC_CALLERS = 137
-EXPECTED_CHECK6_CLEANUP_CALLERS = 124
+      "version": "3.1.9",
+      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.9.tgz",
+      "integrity": "sha512-hS/0Wt3Ya043oKXs0sIxrMpKQITXhMLIrVAKKXi4gozGC9v7YRWVnXIZzjNPTO02M9BdxLCWqK1yRXgNziVyJQ==",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-EXPECTED_SCRATCH_COUNT = 83
-EXPECTED_CUDA_COUNT = 121
-EXPECTED_CLEANUP_COUNT = 83
-EXPECTED_CHECK3_RUST_FNS = 143
-EXPECTED_CHECK3_ASYNC_CUDA_CALLS = 107
-EXPECTED_CHECK3_SCRATCH_CUDA_CLEANUP_TRIPLET_CALLS = 125
-EXPECTED_CHECK5_ASYNC_CALLERS = 136
-EXPECTED_CHECK6_CLEANUP_CALLERS = 123
+      "peer": true,
+      "peer": true,
+      "peer": true,
+      "version": "3.1.7",
+      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.7.tgz",
+      "integrity": "sha512-dOvZVzjdZdz7phd9v6jCbwxrBW3fK6n8Rc0CtdmM4bumzMnxywBYhuph6J819RRw/ku+rLbelwfMunktuzVVHg==",
+      "peer": true,
+      "peer": true,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5c02d67f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b07103df` are properly handled with clean fallback behavior.

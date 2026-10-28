@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T11:46:31.259Z",
-  "total_cycles_completed": 5728,
-  "total_learnings_persisted": 5728,
-  "total_rules_promoted": 5215,
+  "last_updated": "2026-10-28T11:52:44.289Z",
+  "total_cycles_completed": 5730,
+  "total_learnings_persisted": 5730,
+  "total_rules_promoted": 5218,
   "history": [
-    {
-      "timestamp": "2026-10-27T21:28:59.286Z",
-      "repository": "kirillzyusko/react-native-keyboard-controller",
-      "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T21:29:01.295Z",
-      "repository": "open-ani/animeko",
-      "learningId": "learn-github-open-ani-animeko",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T21:29:02.707Z",
       "repository": "flux-iac/tofu-controller",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-28T11:46:31.259Z",
       "repository": "matrixorigin/matrixone",
       "learningId": "learn-github-matrixorigin-matrixone",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T11:52:40.577Z",
+      "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T11:52:44.289Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

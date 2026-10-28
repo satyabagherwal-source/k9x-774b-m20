@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T11:46:31.185Z",
+  "last_updated": "2026-10-28T11:52:44.246Z",
   "total_verified_learnings": 1157,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -27305,7 +27305,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
       "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-      "content_hash": "8da24840749ed2130fe0413f87a199d532ab2e8b9440866c11458fa5c99416a6",
+      "content_hash": "9509d73f326514f3dcb6ade3bf9f2138d81a3f2e51027887812aac29ea4fd24f",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md",
       "promoted_rules": [
@@ -27336,6 +27336,11 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv48pqnn",
           "verified_at": "2026-10-11T19:52:45.175Z"
+        },
+        {
+          "number": 858,
+          "title": "The Attention-Masked Mean Pooling Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 996,
@@ -27376,6 +27381,11 @@
           "number": 4390,
           "title": "Tokenizer-Model Dimensional Alignment",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5271,
+          "title": "The Multilingual Tokenizer Normalization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -27396,7 +27406,7 @@
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv48pqnn",
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv4m2r5u"
       ],
-      "verified_at": "2026-10-25T17:08:04.953Z",
+      "verified_at": "2026-10-28T11:52:40.526Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55875,8 +55885,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "5c02d67f",
-      "content_hash": "8dc22b0143bfa5915c068407796fe984971597e31c1fd02cc7a9359d0ae282cf",
+      "source_version": "b07103df",
+      "content_hash": "ff1e2614c0e17cc61847a1a8535877a20a6cfd1df4a272d928f281abf13afa34",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -55934,6 +55944,11 @@
           "number": 4995,
           "title": "gpu): use thread-local streams as much as possible (#4068)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5272,
+          "title": "deps-dev): bump fast-uri in /tfhe/web_wasm_parallel_tests (#4115)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -55941,7 +55956,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T20:38:36.252Z",
+      "verified_at": "2026-10-28T11:52:44.238Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -77212,15 +77227,15 @@
       "learning_id": "rule-858",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 858,
-      "title": "The Attention-Masked Mean Pooling Invariant (Harvested from sentence-transformers/all-mpnet-base-v2)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "The Attention-Masked Mean Pooling Invariant",
+      "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.815Z"
+      "verified_at": "2026-10-28T11:52:40.526Z"
     },
     "rule-859": {
       "learning_id": "rule-859",
@@ -143644,6 +143659,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T11:46:31.171Z"
+    },
+    "rule-5271": {
+      "learning_id": "rule-5271",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5271,
+      "title": "The Multilingual Tokenizer Normalization Invariant",
+      "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T11:52:40.526Z"
+    },
+    "rule-5272": {
+      "learning_id": "rule-5272",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5272,
+      "title": "deps-dev): bump fast-uri in /tfhe/web_wasm_parallel_tests (#4115)",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "b07103df",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T11:52:44.238Z"
     }
   },
   "aliases": {

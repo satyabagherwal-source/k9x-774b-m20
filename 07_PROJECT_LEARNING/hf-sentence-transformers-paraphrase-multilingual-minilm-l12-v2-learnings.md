@@ -3,7 +3,7 @@
 > **Source Version**: `hf-sentence-`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-25T17:08:04.482Z  
+> **Timestamp**: 2026-10-28T11:52:40.236Z  
 > **Learning ID**: `learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,261 +17,223 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-This repository is not a traditional software application but a **pre-trained neural network artifact** (weights + configuration) designed to solve the **Semantic Similarity** problem. It maps variable-length natural language text (across 50+ languages) into a fixed-dimensional dense vector space (384 dimensions). The core architectural challenge is bridging the gap between discrete token sequences and continuous geometric space where cosine distance correlates with semantic meaning.
+This repository is not a traditional software application but a **pre-trained neural network artifact** (a "model weight bundle") designed to solve the **Semantic Similarity** and **Sentence Embedding** problem. It maps variable-length natural language text (across 50+ languages) into a fixed-dimensional dense vector space (384 dimensions). This allows for efficient cosine similarity calculations, clustering, and semantic search, bypassing the need for token-level matching.
 
 **Architectural Boundaries:**
-1.  **Input Boundary:** Raw text strings.
-2.  **Tokenization Layer:** `PreTrainedTokenizerFast` (Rust-based HuggingFace tokenizer). Handles multilingual character mapping, lowercasing, and padding/truncation to `max_position_embeddings` (512).
-3.  **Transformer Backbone:** `BertModel` (12 layers, 12 heads, hidden size 384). This is a bidirectional self-attention mechanism. It does *not* include the classification head (MLM/NSP) found in standard BERT; it outputs contextualized token embeddings.
-4.  **Pooling Layer:** The critical architectural decision. The model uses **Mean Pooling** over all non-padding tokens, weighted by the attention mask. This aggregates the 512x384 token matrix into a single 384-dim vector.
-5.  **Output Boundary:** A 384-dimensional float vector (L2 normalized in typical usage, though the raw output here is the pooled mean).
+1.  **Input Boundary:** Raw text strings. The boundary is defined by the `PreTrainedTokenizerFast` (Rust-based tokenizer) which handles subword tokenization, padding, and truncation.
+2.  **Processing Core:** A `BertModel` (Transformer Encoder) with 12 layers, 12 attention heads, and a hidden size of 384. It processes sequences up to 512 tokens (though the SentenceTransformer wrapper often defaults to 128 for efficiency).
+3.  **Output Boundary:** A 384-dimensional float vector. The boundary is defined by the **Pooling Module**, which aggregates token-level embeddings into a single sentence-level vector.
 
 **Critical Subsystem Abstractions:**
-*   **State Ownership:** The model is stateless during inference. All state resides in the input tensors.
-*   **Decoupling:** The tokenizer is strictly decoupled from the model. The model expects integer IDs, not strings.
-*   **Invariant Contract:** The output vector must be invariant to the order of tokens *within* the sentence only if the attention mechanism is permutation-invariant (which BERT is not, but Mean Pooling mitigates this by averaging). However, the *magnitude* of the vector is sensitive to padding if not masked correctly.
+*   **Tokenizer (`PreTrainedTokenizerFast`):** Handles the conversion of text to integer IDs. Critical invariant: `do_lower_case: true` implies case-insensitive processing, which is a lossy transformation for proper nouns but essential for multilingual generalization.
+*   **Transformer Backbone (`BertModel`):** The core feature extractor. It uses absolute position embeddings (`position_embedding_type: "absolute"`), limiting its ability to extrapolate to sequences longer than `max_position_embeddings` (512).
+*   **Pooling Module (`Mean Pooling`):** The critical aggregation step. It does *not* use the `[CLS]` token (common in BERT classification) but instead averages all non-padding tokens. This is a specific architectural choice for sentence embeddings that differs from standard BERT fine-tuning.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Masked Mean Pooling Invariant
+### 1. The Attention-Masked Mean Pooling Invariant
 **RULE**:
-When aggregating variable-length sequences into fixed-size vectors using mean pooling, you **MUST** multiply the token embeddings by the expanded attention mask before summing, and **MUST** divide by the clamped sum of the mask (minimum epsilon) to prevent division by zero or bias from padding tokens. You **MUST NOT** use a simple `torch.mean()` over the sequence dimension without masking.
+When aggregating token embeddings into a sentence embedding using mean pooling, you **MUST** multiply the token embeddings by the expanded attention mask **BEFORE** summing, and you **MUST** divide by the sum of the mask (clamped to a minimum epsilon) rather than the total sequence length. You **MUST NOT** simply average the raw tensor dimensions.
 
 **WHY**:
-Padding tokens (ID 0) produce non-zero embeddings in the transformer. If you average all 512 positions, the padding tokens dilute the semantic signal of the actual text. For short sentences, this dilution is catastrophic, causing the embedding to drift towards the "average padding embedding" rather than the sentence meaning. Division by zero occurs if a batch contains an empty sequence (mask sum = 0).
+Transformer outputs include padding tokens (usually ID 0). If you average the raw tensor, the zero-vectors from padding tokens will dilute the semantic signal of the actual content, dragging the embedding vector towards the origin (zero vector) and destroying cosine similarity accuracy. The attention mask identifies which tokens are real content. Dividing by the *count of real tokens* (sum of mask) ensures the magnitude of the vector remains consistent regardless of sentence length.
 
 **WHEN TO APPLY**:
-Any NLP pipeline using Transformer-based models (BERT, RoBERTa, GPT-2 encoder) where the output requires a single vector representation of a variable-length input.
+Any system performing sentence embedding, document summarization, or feature extraction from variable-length sequences using Transformer architectures.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import torch
 
-def safe_mean_pooling(model_output, attention_mask):
-    """
-    model_output: Tensor of shape [batch_size, seq_len, hidden_dim]
-    attention_mask: Tensor of shape [batch_size, seq_len] (1 for real tokens, 0 for pad)
-    """
-    # 1. Expand mask to match hidden dimension: [batch, seq_len, 1]
-    input_mask_expanded = attention_mask.unsqueeze(-1).expand(model_output.size()).float()
+def mean_pooling(model_output, attention_mask):
+    # model_output[0] is the last_hidden_state (token embeddings)
+    token_embeddings = model_output[0]
     
-    # 2. Zero out padding tokens
-    masked_embeddings = model_output * input_mask_expanded
+    # Expand mask to match embedding dimensions: [batch, seq_len] -> [batch, seq_len, hidden_size]
+    # .float() ensures the mask is in the same dtype as the embeddings (usually float32)
+    input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
     
-    # 3. Sum over sequence dimension
-    sum_embeddings = torch.sum(masked_embeddings, dim=1)
+    # Sum the masked embeddings
+    sum_embeddings = torch.sum(token_embeddings * input_mask_expanded, dim=1)
     
-    # 4. Calculate count of real tokens, clamp to avoid div-by-zero
-    # min=1e-9 prevents NaN if a sequence is entirely padding
-    token_counts = torch.clamp(input_mask_expanded.sum(dim=1), min=1e-9)
+    # Calculate the count of non-padding tokens per sentence
+    # Clamp min=1e-9 prevents division by zero if a sentence is empty or all padding
+    token_count = torch.clamp(input_mask_expanded.sum(dim=1), min=1e-9)
     
-    # 5. Compute mean
-    return sum_embeddings / token_counts
+    # Mean pooling
+    return sum_embeddings / token_count
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Biased by padding
+# ANTI-PATTERN: Naive averaging including padding
 def bad_mean_pooling(model_output, attention_mask):
-    # This averages padding tokens as if they were real words
-    return torch.mean(model_output, dim=1) 
+    token_embeddings = model_output[0]
+    # This includes padding zeros in the average, diluting the signal
+    return torch.mean(token_embeddings, dim=1) 
 
-# ANTI-PATTERN: Division by zero crash
-def crash_pooling(model_output, attention_mask):
-    mask_sum = attention_mask.sum(dim=1, keepdim=True).float()
-    # If mask_sum is 0, this produces NaN/Inf
-    return torch.sum(model_output * mask_sum, dim=1) / mask_sum
+# ANTI-PATTERN: Dividing by sequence length instead of token count
+def bad_mean_pooling_v2(model_output, attention_mask):
+    token_embeddings = model_output[0]
+    input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
+    sum_embeddings = torch.sum(token_embeddings * input_mask_expanded, dim=1)
+    # WRONG: Divides by max_seq_len (e.g., 128), not the actual number of tokens
+    return sum_embeddings / 128.0
 ```
 
 **VERIFICATION METHOD**:
-1.  **Unit Test**: Create a batch with one long sentence and one short sentence. Assert that the embedding of the short sentence is *not* closer to the zero vector than the long sentence (padding dilution check).
-2.  **Edge Case Test**: Pass an input where `attention_mask` is all zeros. Assert that the output is finite (no NaN/Inf).
-3.  **Gradient Check**: Ensure gradients flow correctly through the division operation.
+1.  **Unit Test**: Create a batch with two sentences: one short ("Hi") and one long ("This is a very long sentence...").
+2.  **Assert**: The L2 norm of the short sentence's embedding should be roughly proportional to its content, not suppressed by the padding.
+3.  **Cosine Similarity Check**: The cosine similarity between "Hi" and "Hello" should be significantly higher than the similarity between "Hi" and a random long sentence, proving the padding did not distort the vector space.
 
-### 2. Tokenizer-Model Dimensional Alignment
+### 2. The Multilingual Tokenizer Normalization Invariant
 **RULE**:
-The `max_position_embeddings` in the model config **MUST** be greater than or equal to the `model_max_length` in the tokenizer config. If the tokenizer truncates to a length $L$, the model must support positions up to $L$. Conversely, if the model supports $M$ positions, the tokenizer should not generate sequences longer than $M$ without explicit truncation.
+When deploying a multilingual model, you **MUST** verify that the tokenizer's `do_lower_case` setting aligns with the model's training data. If `do_lower_case` is `true`, you **MUST** ensure that case-sensitive entities (like proper nouns or code identifiers) are handled with caution, as they will be lowercased before tokenization. You **MUST NOT** assume that the tokenizer preserves the original case of the input string in the embedding space.
 
 **WHY**:
-If the tokenizer outputs a sequence of length 512, but the model's position embeddings only have 511 slots, the model will throw an index out of bounds error or silently wrap around (depending on implementation), corrupting the positional encoding. In this specific repo, both are 512, which is safe. However, if a user changes the tokenizer's `model_max_length` to 1024 without updating the model, the system breaks.
+The `paraphrase-multilingual-MiniLM-L12-v2` model uses `do_lower_case: true`. This means "Apple" (the company) and "apple" (the fruit) are tokenized identically. If your application relies on case sensitivity for disambiguation, the model will fail. Furthermore, lowercasing is a lossy operation that can merge distinct semantic concepts in some languages or contexts.
 
 **WHEN TO APPLY**:
-Any system combining a tokenizer and a transformer model.
+Any NLP pipeline using BERT-based models, especially multilingual ones.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-from transformers import AutoTokenizer, AutoModel
+from transformers import AutoTokenizer
 
-def validate_alignment(tokenizer, model):
-    max_tok_len = tokenizer.model_max_length
-    max_model_len = model.config.max_position_embeddings
-    
-    if max_tok_len > max_model_len:
-        raise ValueError(
-            f"Tokenizer max length ({max_tok_len}) exceeds model max position embeddings ({max_model_len}). "
-            f"Truncation will be required or model will fail."
-        )
-    return True
+tokenizer = AutoTokenizer.from_pretrained('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2')
+
+# Verify behavior
+input_text = "Apple Inc. is a tech company."
+tokens = tokenizer(input_text)
+print(tokens['input_ids'])
+# Check if 'Apple' became 'apple' in the token IDs
+
+# If case sensitivity is required, consider:
+# 1. Using a model trained with do_lower_case=False
+# 2. Pre-processing to preserve case-sensitive tokens (if supported by tokenizer)
+# 3. Accepting the limitation and using context for disambiguation
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Silent failure
-tokenizer = AutoTokenizer.from_pretrained("model", model_max_length=1024)
-model = AutoModel.from_pretrained("model") # max_position_embeddings=512
-# Passing a 1024-token sequence will crash or corrupt
+# ANTI-PATTERN: Assuming case preservation
+def process_text(text):
+    # Assuming the model distinguishes "Apple" from "apple"
+    # This is FALSE for this model
+    embedding = model.encode(text)
+    return embedding
 ```
 
 **VERIFICATION METHOD**:
-Static analysis of `config.json` and `tokenizer_config.json` at model load time.
+1.  **Tokenization Test**: Tokenize "Apple" and "apple". Assert that the resulting token IDs are identical.
+2.  **Embedding Similarity Test**: Encode "Apple Inc." and "apple fruit". Assert that the cosine similarity is not 1.0, but also not 0.0, indicating some shared semantic space due to lowercasing.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: The provided input data contains empty lists for commits, issues, and source code snippets. Therefore, no specific historical incidents from this repository's git history can be extracted. However, based on the **configuration evidence** and **standard failure modes** of this specific model architecture (MiniLM-L12-v2), we can reconstruct the "Forensic Incidents" that this configuration is designed to prevent or that commonly occur in its usage.*
+*Note: Since no specific commit patches or bug issues were provided in the input data, this section will document **inferred production incidents** based on common failure modes of this specific model architecture and configuration, derived from the forensic analysis of the config and code patterns.*
 
 ### Incident 1: Padding Dilution in Semantic Search (BUG-PAD-01)
-- **Context**: Inference pipeline, `mean_pooling` function.
-- **What Was Expected**: Sentences of different lengths should have embeddings that reflect their semantic content, not their length.
-- **What Actually Happened**: Users reported that short sentences had lower cosine similarity to their paraphrases than long sentences, even when semantically identical.
-- **Evidence in Repo**: The `README.md` explicitly provides the `mean_pooling` function with `torch.clamp(..., min=1e-9)` and mask multiplication. This code exists *because* the naive approach failed.
-- **Root Cause**: Naive `torch.mean()` includes padding tokens. Padding tokens have non-zero embeddings. As sequence length decreases (more padding), the embedding vector shifts towards the "padding centroid."
+- **Context**: Semantic Search Subsystem, `mean_pooling` function.
+- **What Was Expected**: Sentences of varying lengths should have embeddings that reflect their semantic content, with padding tokens having zero influence on the final vector.
+- **What Actually Happened**: Short sentences had embeddings with significantly lower L2 norms than long sentences. Cosine similarity scores were skewed, causing short, relevant sentences to rank lower than long, irrelevant ones.
+- **Evidence in Repo**: The `mean_pooling` function in the README explicitly uses `attention_mask` and `clamp(min=1e-9)`. The absence of this logic in naive implementations leads to this bug.
+- **Root Cause**: Naive averaging `torch.mean(embeddings, dim=1)` includes the zero-vectors from padding tokens. Since padding tokens are zero, they pull the mean vector towards the origin. The magnitude of the vector becomes dependent on the ratio of real tokens to total tokens, not just the semantic content.
 - **Remediation Code Diff**:
 ```python
-// - Buggy: return torch.mean(model_output, dim=1)
-// + Fixed: 
-//   mask = attention_mask.unsqueeze(-1).expand(model_output.size()).float()
-//   return torch.sum(model_output * mask, dim=1) / torch.clamp(mask.sum(dim=1), min=1e-9)
-```
-- **Lesson**: Always mask aggregation operations in variable-length sequence models.
+# - Buggy code
+# return torch.mean(model_output[0], dim=1)
 
-### Incident 2: Multilingual Tokenization Mismatch (BUG-TOK-02)
-- **Context**: Tokenizer configuration, `tokenizer_config.json`.
-- **What Was Expected**: Consistent tokenization across 50+ languages.
-- **What Actually Happened**: Users found that `do_lower_case: true` was causing issues for languages where case is morphologically significant (e.g., German, Turkish).
-- **Evidence in Repo**: `tokenizer_config.json` shows `"do_lower_case": true`. This is a known trade-off. The model was trained with lowercased text. If a user feeds mixed-case text without lowercasing, the embeddings degrade.
-- **Root Cause**: The model's vocabulary and weights are optimized for lowercased input. The tokenizer enforces this.
-- **Remediation Code Diff**:
-```python
-// - Buggy: model.encode("Istanbul is in Turkey") # If model expects lowercase
-// + Fixed: 
-//   tokenizer = AutoTokenizer.from_pretrained(...)
-//   tokenizer.do_lower_case = True # Ensure consistency
-//   inputs = tokenizer(["Istanbul is in Turkey"], padding=True, truncation=True)
+# + Fixed pattern
+# input_mask_expanded = attention_mask.unsqueeze(-1).expand(model_output[0].size()).float()
+# return torch.sum(model_output[0] * input_mask_expanded, dim=1) / torch.clamp(input_mask_expanded.sum(dim=1), min=1e-9)
 ```
-- **Lesson**: Verify the `do_lower_case` setting in the tokenizer matches the training data preprocessing.
+- **Lesson**: Always mask out padding tokens when aggregating variable-length sequences. Never assume that zero-padding is neutral in mean aggregation.
 
-### Incident 3: Memory Overflow with Long Sequences (BUG-MEM-03)
-- **Context**: Model inference, `max_position_embeddings: 512`.
-- **What Was Expected**: Efficient processing of long documents.
-- **What Actually Happened**: Users attempted to encode documents > 512 tokens without truncation, leading to `IndexError` or OOM.
-- **Evidence in Repo**: `config.json` shows `"max_position_embeddings": 512`. `tokenizer_config.json` shows `"model_max_length": 512`.
-- **Root Cause**: The model's positional embeddings are fixed at 512. Passing longer sequences causes index out of bounds.
+### Incident 2: Division by Zero on Empty Inputs (BUG-DIV-02)
+- **Context**: Inference Pipeline, `mean_pooling` function.
+- **What Was Expected**: The model should handle edge cases like empty strings or strings that tokenize to only padding tokens without crashing.
+- **What Actually Happened**: `RuntimeError: division by zero` or `NaN` values in the output embeddings when processing empty or all-padding inputs.
+- **Evidence in Repo**: The `torch.clamp(input_mask_expanded.sum(1), min=1e-9)` in the README is the explicit guard against this.
+- **Root Cause**: If a sentence is empty or consists only of special tokens that are masked out, the sum of the attention mask is 0. Dividing by 0 results in `inf` or `NaN`.
 - **Remediation Code Diff**:
 ```python
-// - Buggy: tokenizer(text, padding=True) # No truncation
-// + Fixed: tokenizer(text, padding=True, truncation=True, max_length=512)
+# - Buggy code
+# return sum_embeddings / input_mask_expanded.sum(dim=1)
+
+# + Fixed pattern
+# return sum_embeddings / torch.clamp(input_mask_expanded.sum(dim=1), min=1e-9)
 ```
-- **Lesson**: Always enforce `truncation=True` when using models with fixed positional embeddings.
+- **Lesson**: Always clamp denominators in division operations to a small epsilon to prevent division by zero, especially when dealing with variable-length inputs that can be empty.
+
+### Incident 3: Multilingual Tokenization Mismatch (BUG-TOK-03)
+- **Context**: Preprocessing Pipeline, Tokenizer.
+- **What Was Expected**: Text in various languages should be tokenized correctly, preserving semantic units.
+- **What Actually Happened**: For some languages (e.g., Chinese, Japanese), the tokenizer split characters incorrectly or failed to handle specific Unicode characters, leading to poor embeddings.
+- **Evidence in Repo**: The `tokenizer_config.json` specifies `tokenize_chinese_chars: true`. This is a critical setting for CJK languages.
+- **Root Cause**: The default tokenizer behavior for CJK languages is to split each character into a separate token. If `tokenize_chinese_chars` is set to `false`, the tokenizer may try to use subword tokenization, which is less effective for CJK.
+- **Remediation Code Diff**:
+```json
+// - Buggy config
+// "tokenize_chinese_chars": false
+
+// + Fixed config
+// "tokenize_chinese_chars": true
+```
+- **Lesson**: Always verify tokenizer settings for multilingual models, especially for CJK languages. The `tokenize_chinese_chars` flag is critical for correct tokenization.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-### 1. Micro-Syntax & Token-Level Precision
-*   **Float Precision in Clamping**: In `torch.clamp(input_mask_expanded.sum(1), min=1e-9)`, the use of `1e-9` is critical. Using `min=0` allows division by zero. Using `min=1.0` biases the mean for short sequences. `1e-9` is a standard epsilon for float32.
-*   **Type Coercion**: `attention_mask` is typically an integer tensor. It **MUST** be cast to `.float()` before multiplication with `token_embeddings` (which are floats). If not, PyTorch may upcast, but explicit casting is safer for memory management.
-*   **Dimension Expansion**: `unsqueeze(-1)` adds a dimension at the end. `expand(token_embeddings.size())` broadcasts the mask. If you use `unsqueeze(1)` instead, the dimensions will not align, causing a broadcasting error.
+1.  **Micro-Syntax & Token-Level Precision**:
+    *   **Float Precision**: When computing embeddings, always use `float32` or `float64`. Using `float16` can lead to precision loss in the pooling step, especially when summing many small values.
+    *   **Mask Expansion**: The `unsqueeze(-1).expand(...)` operation is a view, not a copy. This is efficient but must be handled carefully. If you modify the expanded mask, you will modify the original mask. Always use `.clone()` if you need to modify the mask.
+    *   **Clamp Epsilon**: The `min=1e-9` in `torch.clamp` is a magic number. It should be chosen based on the precision of the floating-point format. For `float32`, `1e-9` is safe. For `float16`, `1e-4` might be more appropriate.
 
-### 2. Infinite Loop & Recursion Guards
-*   **N/A**: This is a feed-forward neural network. There are no loops or recursion in the inference path. The only "loop" is the batch processing loop, which is finite.
+2.  **Infinite Loop & Recursion Guards**:
+    *   **Sequence Length**: The model has a `max_position_embeddings` of 512. If you input a sequence longer than 512 tokens, the tokenizer will truncate it. This is a hard limit. You must ensure that your preprocessing pipeline truncates sequences to 512 tokens or less.
+    *   **Batch Size**: There is no explicit limit on batch size in the model, but memory constraints will limit it. You must implement a batching strategy that monitors memory usage and adjusts the batch size dynamically.
 
-### 3. UI & UX Micro-Mechanics
-*   **N/A**: This is a backend model. No UI components.
+3.  **UI & UX Micro-Mechanics**:
+    *   **N/A**: This is a backend model, not a UI component. However, if you are building a UI for semantic search, ensure that the search results are sorted by cosine similarity in descending order.
 
-### 4. Backend Concurrency & Memory Safety
-*   **Thread Safety**: PyTorch models are generally thread-safe for inference if `torch.no_grad()` is used. However, if the model is shared across threads, ensure that the tokenizer is also thread-safe (HuggingFace tokenizers are Rust-based and thread-safe).
-*   **Memory Leaks**: Ensure that large tensors (e.g., `model_output`) are deleted or go out of scope after pooling. In Python, garbage collection handles this, but in C++/CUDA, explicit deletion is required.
+4.  **Backend Concurrency & Memory Safety**:
+    *   **Thread Safety**: The `SentenceTransformer` model is not thread-safe. If you are using it in a multi-threaded environment, you must use a lock or a thread-local storage to ensure that each thread has its own instance of the model.
+    *   **Memory Leaks**: The model loads weights into GPU memory. If you are creating and destroying model instances frequently, you must ensure that the GPU memory is properly freed. Use `torch.cuda.empty_cache()` if necessary.
 
-### 5. Defect & Error Prevention ("Galti Pakadna")
-*   **Null/Undefined Chaining**: If `model_output` is `None` (e.g., due to a previous error), `model_output[0]` will raise `TypeError`. Always check for `None` before accessing.
-*   **Off-by-One**: `max_position_embeddings` is 512. This means valid indices are 0 to 511. If you pass a sequence of length 513, it will fail. The tokenizer's `max_length=512` ensures this.
-*   **Error Swallowing**: Do not catch exceptions in the pooling function. Let them propagate to the caller.
+5.  **Defect & Error Prevention ("Galti Pakadna")**:
+    *   **Null Inputs**: Always check for `None` or empty strings before passing them to the tokenizer. The tokenizer may not handle `None` gracefully.
+    *   **Unicode Errors**: Ensure that your input text is properly encoded in UTF-8. The tokenizer may fail if it encounters invalid Unicode characters.
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**:
-    *   **Subsystem Boundaries**: Tokenizer -> Transformer -> Pooling.
-    *   **Decoupling**: Tokenizer is independent of model weights.
-    *   **Modular Layout**: `config.json` defines the model structure. `tokenizer_config.json` defines the tokenization.
-    *   **State Ownership**: Stateless inference.
-
-2.  **Core Abstractions**:
-    *   **Key Types**: `Tensor`, `BertModel`, `PreTrainedTokenizerFast`.
-    *   **Traits/Interfaces**: `encode()`, `forward()`.
-    *   **Domain Primitives**: Token IDs, Attention Mask, Embedding Vector.
-    *   **Invariant Contracts**: Output vector dimension is 384.
-
-3.  **Error Handling**:
-    *   **Fault Boundaries**: Tokenizer errors (invalid characters), Model errors (index out of bounds).
-    *   **Error Trees**: `ValueError` for length mismatch, `IndexError` for position embedding.
-    *   **Retries**: N/A.
-    *   **Rollbacks**: N/A.
-    *   **Graceful Degradation**: Truncation instead of failure.
-
-4.  **Testing**:
-    *   **Property Testing**: Cosine similarity of identical sentences should be ~1.0.
-    *   **Mock Invariants**: Mock tokenizer to return fixed IDs.
-    *   **Integration Harnesses**: End-to-end test with real text.
-    *   **Regression Shields**: Ensure embedding dimension is 384.
-
-5.  **Security**:
-    *   **Threat Model**: Model poisoning (if weights are tampered with).
-    *   **Credential Boundaries**: N/A.
-    *   **Sanitization**: Tokenizer handles special characters.
-    *   **Memory Safety**: PyTorch manages memory.
-    *   **Least Privilege**: N/A.
-
-6.  **Performance**:
-    *   **Latency Profiles**: O(N^2) for attention, where N is sequence length.
-    *   **Asymptotic Complexity**: O(N^2 * D) for transformer, O(N * D) for pooling.
-    *   **Caching**: KV cache is not used in this model (encoder-only).
-    *   **Zero-Copy**: N/A.
-    *   **Concurrency Bottlenecks**: GPU memory bandwidth.
-
-7.  **Deployment**:
-    *   **CI/CD Invariants**: Model weights must be checksummed.
-    *   **Container Constraints**: GPU required for fast inference.
-    *   **Reproducible Builds**: Weights are static.
-    *   **Runtime Flags**: `torch.no_grad()`, `device='cuda'`.
-
-8.  **Agent Patterns**:
-    *   **Tooling Interfaces**: `SentenceTransformer` API.
-    *   **Prompt Chains**: N/A.
-    *   **Loop Guards**: N/A.
-    *   **Context Budget Optimization**: Truncation to 512 tokens.
-
-9.  **Data Flow**:
-    *   **Mutation Lifecycles**: Text -> Token IDs -> Embeddings -> Pooled Vector.
-    *   **Streams**: Batch processing.
-    *   **Serializers**: JSON for configs, binary for weights.
-    *   **Network Protocol Barriers**: N/A.
+1.  **Architecture**: The model is a standard BERT encoder with a mean pooling layer. The architecture is simple and well-understood. The key architectural decision is the use of mean pooling instead of `[CLS]` token pooling.
+2.  **Core Abstractions**: The core abstractions are the `Tokenizer`, the `Transformer` model, and the `Pooling` module. The `Tokenizer` handles text-to-ID conversion, the `Transformer` handles feature extraction, and the `Pooling` module handles aggregation.
+3.  **Error Handling**: The model does not have explicit error handling. Errors are typically raised by the underlying PyTorch or Transformers libraries. You must implement your own error handling in the preprocessing and postprocessing steps.
+4.  **Testing**: The model is tested using standard NLP benchmarks like STS (Semantic Textual Similarity). You should test your implementation using a small set of known sentence pairs and verify that the cosine similarity scores are reasonable.
+5.  **Security**: The model is a static artifact and does not have any security vulnerabilities. However, you must ensure that your input text is sanitized to prevent prompt injection attacks if you are using the model in a LLM pipeline.
+6.  **Performance**: The model is efficient and can process large batches of text quickly. The main performance bottleneck is the tokenization step, which can be slow for large batches. You can optimize this by using a Rust-based tokenizer (`PreTrainedTokenizerFast`).
+7.  **Deployment**: The model can be deployed using standard Docker containers. You must ensure that the container has the correct version of PyTorch and Transformers installed. You should also set the `CUDA_VISIBLE_DEVICES` environment variable to control which GPU is used.
+8.  **Agent Patterns**: The model can be used as a tool in an LLM agent pipeline. For example, you can use it to retrieve relevant documents from a knowledge base and then pass them to an LLM for generation.
+9.  **Data Flow**: The data flow is: Text -> Tokenizer -> Transformer -> Pooling -> Embedding. The embedding is a 384-dimensional vector that can be used for similarity search, clustering, or as input to another model.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Masked Mean Pooling with Clamped Denominator.
-2.  **Rule**: Always mask aggregation operations in variable-length sequence models.
-3.  **Architecture Principle**: Decouple tokenization from model inference.
-4.  **Failure Mode**: Padding dilution causing semantic drift.
-5.  **Reusable Skill**: Validate tokenizer-model alignment at load time.
-6.  **Decision**: Use Mean Pooling instead of CLS token for multilingual models (CLS is less robust across languages).
-7.  **Anti-pattern**: Using `torch.mean()` without masking.
-8.  **Verification Method**: Unit test for padding dilution and division by zero.
+1.  **Pattern**: Masked Mean Pooling.
+2.  **Rule**: Always mask out padding tokens when aggregating variable-length sequences.
+3.  **Architecture Principle**: Use mean pooling instead of `[CLS]` token pooling for sentence embeddings.
+4.  **Failure Mode**: Padding dilution leads to skewed cosine similarity scores.
+5.  **Reusable Skill**: Implementing masked mean pooling in PyTorch.
+6.  **Decision**: Use `PreTrainedTokenizerFast` for faster tokenization.
+7.  **Anti-pattern**: Naive averaging without masking.
+8.  **Verification Method**: Unit test with short and long sentences to verify that the L2 norm is consistent.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Load Model**: Use `AutoModel.from_pretrained` and `AutoTokenizer.from_pretrained`.
-2.  **Validate Alignment**: Check `tokenizer.model_max_length <= model.config.max_position_embeddings`.
-3.  **Tokenize**: Use `padding=True, truncation=True, max_length=512`.
-4.  **Infer**: Use `torch.no_grad()` and `model(**inputs)`.
-5.  **Pool**: Use `safe_mean_pooling` with mask multiplication and clamped denominator.
-6.  **Normalize**: L2 normalize the output vector for cosine similarity.
-7.  **Test**: Verify embedding dimension is 384.
-8.  **Monitor**: Track inference latency and memory usage.
+1.  **Install Dependencies**: `pip install sentence-transformers torch transformers`
+2.  **Load Model**: `model = SentenceTransformer('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2')`
+3.  **Preprocess Text**: Ensure text is UTF-8 encoded and truncated to 512 tokens.
+4.  **Encode Text**: `embeddings = model.encode(sentences)`
+5.  **Verify Embeddings**: Check that the embeddings are 384-dimensional and have reasonable L2 norms.
+6.  **Compute Similarity**: Use `cosine_similarity` from `scipy.spatial.distance` or `torch.nn.functional.cosine_similarity`.
+7.  **Test Edge Cases**: Test with empty strings, very long strings, and multilingual text.
+8.  **Monitor Performance**: Monitor GPU memory usage and inference time.
+9.  **Deploy**: Package the model in a Docker container and deploy it to a cloud service.

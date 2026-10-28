@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T11:46:33.786Z",
-    "lastVerified": "2026-10-28T11:46:33.786Z",
+    "lastChecked": "2026-10-28T11:52:46.811Z",
+    "lastVerified": "2026-10-28T11:52:46.811Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -167,12 +167,12 @@
     "lastVerified": "2026-10-28T02:54:52.757Z"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T11:12:07.295Z",
-    "lastVerified": "2026-10-28T11:12:07.295Z",
+    "lastChecked": "2026-10-28T11:52:43.326Z",
+    "lastVerified": "2026-10-28T11:52:43.326Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -181,7 +181,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b923415f"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1269,11 +1270,21 @@
     "lastVerified": "2026-10-28T05:03:41.416Z"
   },
   "zama-ai-tfhe-rs": {
-    "name": "tfhe-rs",
+    "name": "zama-ai/tfhe-rs",
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
-    "lastChecked": "2026-10-28T05:03:44.021Z",
-    "revisionIdentifier": "5c02d67f",
-    "lastVerified": "2026-10-28T05:03:44.021Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T11:52:43.451Z",
+    "lastVerified": "2026-10-28T11:52:43.451Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-zama-ai-tfhe-rs",
+    "contentHash": "ff1e2614c0e17cc61847a1a8535877a20a6cfd1df4a272d928f281abf13afa34",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "memvid-memvid": {
     "name": "memvid",
@@ -2760,5 +2771,50 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nasiko-labs-nasiko": {
+    "name": "nasiko",
+    "officialUrl": "https://github.com/Nasiko-Labs/nasiko",
+    "lastChecked": "2026-10-28T11:52:28.243Z",
+    "revisionIdentifier": "10a08581",
+    "lastVerified": "2026-10-28T11:52:28.244Z"
+  },
+  "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
+    "name": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "officialUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T11:52:30.881Z",
+    "lastVerified": "2026-10-28T11:52:30.881Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+    "contentHash": "9509d73f326514f3dcb6ade3bf9f2138d81a3f2e51027887812aac29ea4fd24f",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "berty-berty": {
+    "name": "berty",
+    "officialUrl": "https://github.com/berty/berty",
+    "lastChecked": "2026-10-28T11:52:33.344Z",
+    "revisionIdentifier": "e4ea1d8b",
+    "lastVerified": "2026-10-28T11:52:33.344Z"
+  },
+  "peerdb-io-peerdb": {
+    "name": "peerdb",
+    "officialUrl": "https://github.com/PeerDB-io/peerdb",
+    "lastChecked": "2026-10-28T11:52:35.823Z",
+    "revisionIdentifier": "65ce26b8",
+    "lastVerified": "2026-10-28T11:52:35.823Z"
+  },
+  "featureform-featureform": {
+    "name": "featureform",
+    "officialUrl": "https://github.com/featureform/featureform",
+    "lastChecked": "2026-10-28T11:52:40.770Z",
+    "revisionIdentifier": "dc8b9fca",
+    "lastVerified": "2026-10-28T11:52:40.770Z"
   }
 }

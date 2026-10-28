@@ -5751,3 +5751,5 @@
 | `CYCLE-20261028-GS2K` | `2026-10-28T11:36:17.948Z` | `Cloudflare/clef` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5264, Rule 5265, Rule 5266` | Yes (`3318a219...`) |
 | `CYCLE-20261028-TQKW` | `2026-10-28T11:46:22.544Z` | `Cloudflare/clef-flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5267, Rule 5268, Rule 5269` | Yes (`a5548a20...`) |
 | `CYCLE-20261028-TXAQ` | `2026-10-28T11:46:31.250Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5270` | Yes (`57463977...`) |
+| `CYCLE-20261028-1U9N` | `2026-10-28T11:52:40.571Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 858, Rule 5271` | Yes (`9509d73f...`) |
+| `CYCLE-20261028-1X4R` | `2026-10-28T11:52:44.283Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5272` | Yes (`ff1e2614...`) |

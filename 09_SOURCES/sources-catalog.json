@@ -705,8 +705,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
     "sourceVersion": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
     "license": "Open-Source",
-    "contentHash": "8da24840749ed2130fe0413f87a199d532ab2e8b9440866c11458fa5c99416a6",
-    "lastHarvestedAt": "2026-10-25T17:08:05.029Z",
+    "contentHash": "9509d73f326514f3dcb6ade3bf9f2138d81a3f2e51027887812aac29ea4fd24f",
+    "lastHarvestedAt": "2026-10-28T11:52:40.573Z",
     "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2"
   },
   "hf-google-bert-bert-base-uncased": {
@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "5c02d67f",
+    "sourceVersion": "b07103df",
     "license": "NOASSERTION",
-    "contentHash": "8dc22b0143bfa5915c068407796fe984971597e31c1fd02cc7a9359d0ae282cf",
-    "lastHarvestedAt": "2026-10-27T20:38:36.315Z",
+    "contentHash": "ff1e2614c0e17cc61847a1a8535877a20a6cfd1df4a272d928f281abf13afa34",
+    "lastHarvestedAt": "2026-10-28T11:52:44.286Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
