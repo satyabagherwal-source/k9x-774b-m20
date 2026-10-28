@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `c22b2932`  
+> **Source Version**: `5ce45773`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T14:49:48.809Z  
+> **Timestamp**: 2026-10-28T20:01:42.592Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T14:49:48.800Z  
+> **Harvest Timestamp**: 2026-10-28T20:01:42.584Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,813 +1799,401 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c22b2932` (2026-10-28)
-**Commit Message**: feat(benchmarks): LongMemEval runner on the official protocol (#318)
+### Incident Patch 1: `5ce45773` (2026-10-28)
+**Commit Message**: fix(p2p): fail-closed skill ingest and publish gates (#320)
 
-* feat(benchmarks): LongMemEval runner on the official protocol
+Port the always-on hardening from Astra's review onto main's current layout.
 
-The existing LongMemEval runner could not produce a citable number: it judged
-with its own prompt on a floating gpt-4o alias, fed question_type hints to
-the reader and the retrieval query, and wrote the dataset's gold-marked
-session ids (every evidence id contains "answer") into the ingested text and
-file names. This adds a runner that follows the reference pipeline
-(xiaowu0162/LongMemEval @ 9e0b455f) exactly and leaves the old runners as
-diagnostic tooling, labelled non-comparable.
+Inbound: SkillNetworkBridge.ingestNetworkSkill now verifies the envelope's
+Ed25519 signature and SHA-256 content hash before dedup, version resolution
+or any chunk write. The check lives in the new shared
+src/agents/skills/envelope-validation.ts (extracted from ingest.ts, debug
+log kept) so the filesystem ingest and the crystal ingest run the same code.
+The bridge previously trusted its caller; it is also a public entry point
+(promotion re-import, embedders), so it no longer does.
 
-- official-protocol.ts: reader template (Chain-of-Note and direct), context
-  formatting (date-sorted "### Session i" blocks, python json.dumps-faithful
-  turn lists), the five per-type judge prompts and the abstention prompt,
-  verdict rule, aggregates (overall, task-averaged, abstention), session
-  recall; all copied verbatim from the reference and pinned by tests.
-- runner-official.ts: per question, rebuilds turns as {role, content} with
-  positional session ids (removes the has_answer and id leaks), one nl
-  document per session, back-dates chunks to the session, se
+Outbound, single gate: publishCrystalSkill only publishes chunks that are
+semantic_type='skill', lifecycle_state active and not archived/expired;
+checkBountyClaimQuality fails closed when the verifier or execution tracker
+is not wired or when metrics are non-finite or above 1; Forage query
+responses route through publishCrystalSkill (keeping the response-<id>-
+wire name) instead of calling the orchestrator directly; the skills.publish
+RPC no longer broadcasts arbitrary operator bytes but requires content that
+byte-matches an active skill crystal (publishSkillContent) 
 
-**File**: `.gitignore` (modified, +3/-0)
+**File**: `docs/memory/skills-pipeline.md` (modified, +33/-5)
 ```diff
-@@ -264,3 +264,6 @@ docs/plans/
- docs/reviews/v1-release-audit-2026-08-21.md
- docs/reviews/v1-release-audit-2026-08-21-verification.md
- docs/reviews/circles-p2p-security-remediation-2026-08-14.md
+@@ -1011,13 +1011,32 @@ the 2026-09-03 code-first audit in `docs/reviews/`).
+ 
+ The `SkillNetworkBridge` (`skill-network-bridge.ts`) mediates between the local crystal store and the P2P network.
+ 
+-**Publishing** (`publishCrystalSkill()`):
+-
+-1. Loads the crystal from the database
++**Publishing** (`publishCrystalSkill()`), the single outbound gate. Every
++selector that can put a skill on the wire goes through it: auto-publish on
++crystallize, the maturity re-attempt after an execution, Forage query
++responses (same gate, wire name `response-<query>-<skill>`), and the manual
++`skills.publish` RPC. The gate fails closed:
 +
-+benchmarks/longmemeval/.work-official/
-+benchmarks/longmemeval/.work-official-scorer/
++1. Loads the crystal from the database; only a chunk with
++   `semantic_type = 'skill'` and `lifecycle_state = 'active'` whose `lifecycle`
++   is not `archived`/`expired` qualifies. A non-skill chunk or an archived
++   crystal never leaves the node, whatever its governance says.
+ 2. Enforces governance: only `shared` or `public` scope, never `confidential` sensitivity
+ 3. Checks provenance chain for confidential ancestors (blocks publish if found)
+-4. Generates a SKILL.md format with frontmatter
+-5. Sends to the Rust orchestrator via `orchestratorBridge.publishSkill()`
++4. Maturity bar (the same one the marketplace lists with): `SkillVerifier`
++   passes AND the `SkillExecutionTracker` reports at least 3 executions with
++   a success rate in `(0.7, 1]`. If either dependency is not wired on the
++   bridge, or a metric is non-finite or above 1, the answer is "no": missing
++   evidence is never permission to publish.
++5. Generates a SKILL.md format with frontmatter
++6. Sends to the Rust orchestrator via `orchestratorBridge.publishSkill()`
++
++The `skills.publish` RPC does not publish arbitrary operator-supplied bytes.
++Its `content` must byte-match the text of an active skill crystal; the bridge
++resolves that crystal and runs it through the gate above. Hand-written
++SKILL.md that was never crystallized (or has not matured) is refused with
++`INVALID_REQUEST`. This closes the one path that let a node broadcast content
++with no execution evidence behind it.
+ 
+ **Receiving — the file half first** (`src/agents/skills/ingest.ts`,
+ PLAN-13/PLAN-44): the gateway hands every `skill_received` envelope to
+@@ -1041,6 +1060,15 @@ the mesh-content trust notice, subject to the load-time capability gate.
+ 
+ **Ingesting — the memory-chunk half** (`ingestNetworkSkill()`):
+ 
++0. **Authenticity, before anything else.** The envelope's Ed25519 signature
++   over the decoded `skill_md` bytes is verified against the raw 32-byte
++   `author_pubkey`, then the SHA-256 of those bytes must equal
++   `content_hash` (`src/agents/skills/envelope-validation.ts`, shared with
++   the filesystem ingest). A failing envelope is rejected before
++   deduplication, version resolution or any write; the bridge does not
++   assume its caller already checked. Only an envelope the filesystem
++   ingest `accepted` is handed here at all; a quarantined (`review`) skill
++   is not crystallized until the operator accepts it.
+ 1. Checks if the sender peer is banned via `PeerReputationManager`
+ 2. **Cortisol gate** — if a network cortisol spike is active (`haltUntrustedIngestion`), rejects skills from peers with trust level below `"trusted"` (i.e., `untrusted` and `provisional` peers are blocked)
+ 3. Deduplicates by content hash
 ```
 
-**File**: `benchmarks/longmemeval/README.md` (modified, +162/-6)
+**File**: `src/agents/skills/crystallize.test.ts` (modified, +14/-0)
 ```diff
-@@ -2,6 +2,157 @@
- 
- Runs the [LongMemEval](https://github.com/xiaowu0162/LongMemEval) benchmark (ICLR 2025) against Bitterbot's biological memory system.
- 
-+Two kinds of runner live here. `runner-official.ts` follows the reference
-+protocol exactly and produces numbers that can be placed next to published
-+ones. Everything else (`runner.ts`, `runner-biological.ts`,
-+`runner-retrieval.ts`, `runner-contrastive.ts`) is diagnostic tooling whose
-+output is **not comparable** to any published LongMemEval figure: those
-+runners use their own judge prompt, feed `question_type` hints to the
-+reader, and until 2026-10-27 wrote the dataset's gold-marked session ids into
-+the retrieval corpus. Use them to compare Bitterbot against Bitterbot, never
-+against the leaderboard.
+@@ -104,4 +104,18 @@ describe("crystallizeSkill (PLAN-42 Phase 0: staged + gated, no direct live writ
+     expect(result.error).toContain("below threshold");
+     expect(await readProvenance({ configDir: tmpDir })).toHaveLength(0);
+   });
 +
-+## Official protocol run
-+
-+The reference pipeline defines a third-party result as: feed each question's
-+timestamped history to the memory system without the question, ask the
-+question at `question_date`, write `{question_id, hypothesis}` JSONL, score it
-+with the unmodified `evaluate_qa.py` using the pinned `gpt-4o-2024-08-06`
-+judge and its five question-type prompts, and report overall (question
-+weighted), task-averaged (mean of the six type means) and abstention accuracy.
-+`official-protocol.ts` holds the reader template, context formatting, judge
-+prompts and aggregates copied verbatim from the reference at commit
-+`9e0b455f`; `official-protocol.test.ts` pins them.
-+
-+```bash
-+pnpm benchmark:longmemeval:download                   # cleaned S + oracle from HF, hashes checked below
-+
-+# 1. Answer all 500 questions (hours; resumable with --resume)
-+pnpm benchmark:longmemeval:official -- \
-+  --out benchmarks/longmemeval/results/official-s-haiku-4-5.jsonl \
-+  --reader anthropic/claude-haiku-4-5-20251001 --unit session --k 10
-+
-+# 2a. Score with the reference scripts themselves (venv + OPENAI_API_KEY)
-+pnpm benchmark:longmemeval:official:scorer -- benchmarks/longmemeval/results/official-s-haiku-4-5.jsonl
-+
-+# 2b. Or with the TypeScript port (same judge, prompts, decoding, output format).
-+#     Refuses a file with fewer than 500 distinct ids unless --allow-partial (pilots).
-+pnpm benchmark:longmemeval:official:evaluate -- --hyp benchmarks/longmemeval/results/official-s-haiku-4-5.jsonl
-+
-+# Baselines with the same reader: long context (no retrieval) and oracle (gold sessions only)
-+pnpm benchmark:longmemeval:official -- --full-context --out benchmarks/longmemeval/results/official-s-fullctx-haiku-4-5.jsonl
-+pnpm benchmark:longmemeval:official -- --oracle --out benchmarks/longmemeval/results/official-oracle-haiku-4-5.jsonl
-+```
-+
-+What the runner does per question, and why each step is there:
-+
-+| Step                                                                                                                 | Protocol reason                                                                                                                                                                       |
-+| -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-+| Rebuild every turn as `{role, content}` and give sessions positional ids `session-001`…                              | The dataset leaks gold two ways: `has_answer` keys exist only on evidence-session turns, and every evidence session id contains the substring `answer`. Neither may reach the system. |
-+| One document per session, `Session Date:` header, `role: content` lines (the reference `nl` format)                  | Every retrieved chunk maps to one session and so to one date.                                                                                                                         |
-+| Back-date each session's chunks to the session timestamp and search with `now = question_date`                       | Recency and temporal-intent boosts measure age; the history is from 2023 and must be scored as of the question, not as of the ingest.                                                 |
-+| Query = the raw question. No `question_type` anywhere on the inference path                                          | `question_type` is a scoring key in `evaluate_qa.py`; the reference retrieval query is the question text.                                                                             |
-+| Top-k distinct sessions by best chunk (or top-k chunks with `--unit chunk`), rendered date-sorted as `### Session i` | `run_generation.py` sorts retrieved items by timestamp and labels each with its date; sessions are rendered as `json.dumps` of the turn list, the paper's recommended format.         |
-+| Chain-of-Note template (`--reading con`), pinned reader id, temperature 0, 800 max tokens                            | The paper's default reading str
-```
-
-**File**: `benchmarks/longmemeval/analyze-official.ts` (added, +197/-0)
-```diff
-@@ -0,0 +1,197 @@
-+/**
-+ * Dissect an official-protocol run: where the misses come from.
-+ *
-+ * Joins the hypothesis file, the judge output (`.eval-results-gpt-4o`), the
-+ * retrieval log (`.retrieval.jsonl`) and the reference data, and reports per
-+ * question type: accuracy, session recall at several k, how many misses had
-+ * every gold session inside the reader's context (a reading failure) versus
-+ * missing one (a retrieval failure), where the first missing gold session
-+ * ranked, and abstention behaviour (false abstentions on answerable
-+ * questions, missed abstentions on `_abs` ones). Output is JSON on stdout plus
-+ * a markdown table; nothing here touches the inference path.
-+ *
-+ *   node --import tsx benchmarks/longmemeval/analyze-official.ts --hyp <jsonl> [--k 10] [--ref data/longmemeval_s.json] [--samples 0]
-+ */
-+import { readFileSync } from "node:fs";
-+import { dirname, join } from "node:path";
-+import { fileURLToPath } from "node:url";
-+import { parseArgs } from "node:util";
-+import { isAbstentionId, QUESTION_TYPES, type RawItem } from "./official-protocol.js";
-+
-+const __dirname = dirname(fileURLToPath(import.meta.url));
-+const { values: args } = parseArgs({
-+  options: {
-+    hyp: { type: "string" },
-+    ref: { type: "string", default: join(__dirname, "data", "longmemeval_s.json") },
-+    k: { type: "string", default: "10" },
-+    /** Print this many wrong answers per type (question, expected, answer head) for reading. */
-+    samples: { type: "string", default: "0" },
-+  },
-+  strict: true,
-+});
-+if (!args.hyp) {
-+  throw new Error("--hyp <hypothesis.jsonl> is required");
-+}
-+const K = Number(args.k);
-+const samples = Number(args.samples);
-+const lines = (p: string) =>
-+  readFileSync(p, "utf-8")
-+    .split("\n")
-+    .filter((l) => l.trim())
-+    .map((l) => JSON.parse(l) as Record<string, unknown>);
-+
-+const ref = new Map(
-+  (JSON.parse(readFileSync(args.ref!, "utf-8")) as RawItem[]).map((r) => [r.question_id, r]),
-+);
-+const hyps = new Map(lines(args.hyp).map((h) => [h.question_id as string, h.hypothesis as string]));
-+const labels = new Map(
-+  lines(`${args.hyp}.eval-results-gpt-4o`).map((r) => [
-+    r.question_id as string,
-+    (r.autoeval_label as { label: boolean }).label,
-+  ]),
-+);
-+type Ret = { question_id: string; ranked: string[]; gold: string[]; abstention: boolean };
-+const retrieval = new Map(
-+  lines(`${args.hyp}.retrieval.jsonl`).map((r) => [r.question_id as string, r as unknown as Ret]),
-+);
-+
-+const ABSTAIN_RE =
-+  /not enough information|no information|does not (contain|mention|provide)|doesn't (contain|mention|provide)|cannot (determine|find|answer)|can't (determine|find|answer)|unable to (determine|find|answer)|insufficient|not (available|mentioned|provided) in/i;
-+
-+type Bucket = {
-+  n: number;
-+  correct: number;
-+  recallAll: Record<number, number>;
-+  recallAny: Record<number, number>;
-+  retrievalScored: number;
-+  wrongAllGoldInContext: number;
-+  wrongGoldMissing: number;
-+  missingGoldRanks: number[];
-+  falseAbstain: number;
-+  absN: number;
-+  absCorrect: number;
-+  hypChars: number[];
-+};
-+const KS = [1, 3, 5, 10, K].filter((v, i, a) => a.indexOf(v) === i).toSorted((a, b) => a - b);
-+const empty = (): Bucket => ({
-+  n: 0,
-+  correct: 0,
-+  recallAll: Object.fromEntries(KS.map((k) => [k, 0])),
-+  recallAny: Object.fromEntries(KS.map((k) => [k, 0])),
-+  retrievalScored: 0,
-+  wrongAllGoldInContext: 0,
-+  wrongGoldMissing: 0,
-+  missingGoldRanks: [],
-+  falseAbstain: 0,
-+  absN: 0,
-+  absCorrect: 0,
-+  hypChars: [],
-+});
-+const byType: Record<string, Bucket> = {};
-+const all = empty();
-+const wrongSamples: Record<
-+  string,
-+  Array<{ id: string; q: string; expected: string; got: string }>
-+> = {};
-+
-+for (const [id, label] of labels) {
-+  const item = ref.get(id);
-+  const ret = retrieval.get(id);
-+  const hyp = hyps.get(id) ?? "";
-+  if (!item || !ret) continue;
-+  const b = (byType[item.question_type] ??= empty());
-+  for (const t of [b, all]) {
-+    t.n++;
-+    if (label) t.correct++;
-+    t.hypChars.push(hyp.length);
-+    const abstained = ABSTAIN_RE.test(hyp);
-+    if (isAbstentionId(id)) {
-+      t.absN++;
-+      if (label) t.absCorrect++;
-+    } else {
-+      if (abstained && !label) t.falseAbstain++;
-+      const gold = new Set(ret.gold);
-+      if (gold.size > 0) {
-+        t.retrievalScored++;
-+        for (const k of KS) {
-+          const top = new Set(ret.ranked.slice(0, k));
-+          const hit = [...gold].filter((g) => top.has(g)).length;
-+          if (hit > 0) t.recallAny[k]!++;
-+          if (hit === gold.size) t.recallAll[k]!++;
-+        }
-+        if (!label) {
-+          const topK = new Set(ret.ranked.slice(0, K));
-+          const missing = [...gold].filter((g) => !topK.has(g));
-+          if (missing.length === 0) {
-+            t.wrongAllGoldInContext++;
-+          } else {
-+            t.wrongGoldMissing++;
-+            for (const g of missing) {
-+              const r = ret.ranked.indexOf(g);
-+              t.missingG
-```
-
-**File**: `benchmarks/longmemeval/bitterbot-bridge.ts` (modified, +89/-14)
-```diff
-@@ -17,6 +17,9 @@ const __filename = fileURLToPath(import.meta.url);
- const __dirname = dirname(__filename);
- 
- // Bitterbot internal imports
-+import type { DatabaseSync } from "node:sqlite";
-+import { resolveApiKeyForProvider } from "../../src/agents/model-auth.js";
-+import { loadConfig } from "../../src/config/io.js";
- import type { BitterbotConfig } from "../../src/config/types.js";
- import { MemoryIndexManager } from "../../src/memory/manager.js";
- import type { MemorySearchResult } from "../../src/memory/types.js";
-@@ -30,7 +33,17 @@ export interface BenchmarkBridge {
- }
- 
- export interface BenchmarkMemoryManager {
--  search(query: string, opts?: { maxResults?: number }): Promise<MemorySearchResult[]>;
-+  /** `now` = the instant the question is asked (epoch ms); boosts measure age from it. */
-+  search(
-+    query: string,
-+    opts?: { maxResults?: number; now?: number },
-+  ): Promise<MemorySearchResult[]>;
-+  /**
-+   * Back-date the chunks of each ingested file to the time the conversation
-+   * happened, so age-dependent scoring sees the history's own timeline rather
-+   * than the ingest wall clock. Keys are file basenames as passed to ingest.
-+   */
-+  setChunkTimestamps(timestamps: Record<string, number>): number;
-   sync(opts?: { reason?: string }): Promise<void>;
-   ingestMarkdownFiles(files: string[]): Promise<void>;
-   /** Retry embeddings for chunks a transient failure left pending; returns what is still pending. */
-@@ -39,12 +52,48 @@ export interface BenchmarkMemoryManager {
- }
- 
- export interface BenchmarkLlmProvider {
--  complete(params: { model: string; prompt: string; maxTokens?: number }): Promise<string>;
-+  complete(params: {
-+    model: string;
-+    prompt: string;
-+    maxTokens?: number;
-+    temperature?: number;
-+  }): Promise<string>;
-+}
-+
-+export interface BenchmarkBridgeOptions {
-+  /**
-+   * `query.postFusionBoostScale` for the run. Omitted = the legacy pin of 1
-+   * every saved retrieval run used; `"production"` = leave the key unset so
-+   * the shipped default applies (what an official-protocol run must measure).
-+   */
-+  postFusionBoostScale?: number | "production";
-+  /** `query.maxResults` default for searches that do not pass one. */
-+  maxResults?: number;
-+}
-+
-+/**
-+ * API keys: environment first, then the operator's normal auth path (the same
-+ * resolution the gateway uses), so a benchmark never needs keys pasted into a
-+ * shell.
-+ */
-+async function resolveKey(provider: "openai" | "anthropic"): Promise<string | undefined> {
-+  const env = provider === "openai" ? process.env.OPENAI_API_KEY : process.env.ANTHROPIC_API_KEY;
-+  if (env?.trim()) {
-+    return env.trim();
-+  }
-+  try {
-+    const resolved = await resolveApiKeyForProvider({ provider, cfg: loadConfig() });
-+    return resolved?.apiKey ?? undefined;
-+  } catch {
-+    return undefined;
-+  }
- }
- 
- // ── Factory ──
- 
--export async function createBenchmarkMemoryManager(): Promise<BenchmarkBridge> {
-+export async function createBenchmarkMemoryManager(
-+  options: BenchmarkBridgeOptions = {},
-+): Promise<BenchmarkBridge> {
-   const runId = randomUUID().slice(0, 8);
-   const benchDir = join(__dirname, ".bench-runs", runId);
-   const workspaceDir = join(benchDir, "workspace");
-@@ -58,12 +107,14 @@ export async function createBenchmarkMemoryManager(): Promise<BenchmarkBridge> {
-   // Write an empty MEMORY.md so the workspace is recognized
-   writeFileSync(join(memoryDir, "MEMORY.md"), "# Benchmark Memory\n", "utf-8");
- 
--  // Resolve API keys from env
--  const openaiApiKey = process.env.OPENAI_API_KEY?.trim();
-+  // Resolve API keys: env, else the operator's configured auth profiles.
-+  const openaiApiKey = await resolveKey("openai");
-   if (!openaiApiKey) {
--    throw new Error("OPENAI_API_KEY env var is required for LongMemEval embeddings");
-+    throw new Error(
-+      "no OpenAI key: set OPENAI_API_KEY or configure the openai provider (embeddings need it)",
-+    );
-   }
--  const anthropicApiKey = process.env.ANTHROPIC_API_KEY?.trim();
-+  const anthropicApiKey = await resolveKey("anthropic");
- 
-   // Use the static factory — this creates the embedding provider and DB properly
-   const agentId = `benchmark-${runId}`;
-@@ -91,7 +142,7 @@ export async function createBenchmarkMemoryManager(): Promise<BenchmarkBridge> {
-             onStartup: false,
-           },
-           query: {
--            maxResults: 15,
-+            maxResults: options.maxResults ?? 15,
-             minScore: 0.0,
-             importanceWeight: 0.15,
-             hybrid: {
-@@ -101,11 +152,13 @@ export async function createBenchmarkMemoryManager(): Promise<BenchmarkBridge> {
-               keywordWeight: 0.3,
-               candidateMultiplier: 5,
-             },
--            // LongMemEval sessions carry synthetic 2023 dates, so the recency and
--            // temporal boosts are uniform noise here. Pin the legacy full-boost
--            // behaviour so every saved run stays comparable; the live-recall
--            // benchmark is where
-```
-
-**File**: `benchmarks/longmemeval/evaluate-official.ts` (added, +177/-0)
-```diff
-@@ -0,0 +1,177 @@
-+/**
-+ * LongMemEval official scoring, as `evaluate_qa.py` does it.
-+ *
-+ * Same judge snapshot (gpt-4o-2024-08-06), same five question-type prompts,
-+ * same decoding (temperature 0, max_tokens 10), same verdict rule
-+ * (`'yes' in response.lower()`), same output: one JSON line per hypothesis
-+ * with `autoeval_label: {model, label}` appended, written to
-+ * `<hyp>.eval-results-gpt-4o`. Aggregates follow `print_qa_metrics.py`:
-+ * per type, task-averaged (mean of the six type means), overall
-+ * (question-weighted) and abstention.
-+ *
-+ * To cross-check against the reference Python script itself, run
-+ * `bash benchmarks/longmemeval/official-scorer.sh <hyp> <ref>`.
-+ *
-+ *   node --import tsx benchmarks/longmemeval/evaluate-official.ts --hyp <jsonl> [--ref data/longmemeval_s.json]
-+ */
-+import { appendFileSync, existsSync, readFileSync } from "node:fs";
-+import { dirname, join } from "node:path";
-+import { fileURLToPath } from "node:url";
-+import { parseArgs } from "node:util";
-+import { resolveApiKeyForProvider } from "../../src/agents/model-auth.js";
-+import { loadConfig } from "../../src/config/io.js";
-+import {
-+  aggregate,
-+  isAbstentionId,
-+  type Judged,
-+  JUDGE_MAX_TOKENS,
-+  JUDGE_TEMPERATURE,
-+  judgePrompt,
-+  OFFICIAL_JUDGE_MODEL,
-+  parseJudgeLabel,
-+  type RawItem,
-+} from "./official-protocol.js";
-+
-+const __dirname = dirname(fileURLToPath(import.meta.url));
-+const { values: args } = parseArgs({
-+  options: {
-+    hyp: { type: "string" },
-+    ref: { type: "string", default: join(__dirname, "data", "longmemeval_s.json") },
-+    concurrency: { type: "string", default: "4" },
-+    /** Score a partial file (pilots). An official number needs all 500. */
-+    "allow-partial": { type: "boolean", default: false },
-+  },
-+  strict: true,
-+});
-+if (!args.hyp) {
-+  throw new Error("--hyp <hypothesis.jsonl> is required");
-+}
-+const hypPath = args.hyp;
-+const resultPath = `${hypPath}.eval-results-gpt-4o`;
-+
-+type Hyp = { question_id: string; hypothesis: string; [k: string]: unknown };
-+const hyps = readFileSync(hypPath, "utf-8")
-+  .split("\n")
-+  .filter((l) => l.trim())
-+  .map((l) => JSON.parse(l) as Hyp);
-+const ref = new Map(
-+  (JSON.parse(readFileSync(args.ref!, "utf-8")) as RawItem[]).map(
-+    (r) => [r.question_id, r] as const,
-+  ),
-+);
-+const distinct = new Set(hyps.map((h) => h.question_id));
-+if (distinct.size !== hyps.length) {
-+  throw new Error(`${hyps.length - distinct.size} duplicate question_id(s) in ${hypPath}`);
-+}
-+if (distinct.size !== ref.size && !args["allow-partial"]) {
-+  throw new Error(
-+    `${distinct.size} hypotheses for ${ref.size} reference questions; an official number needs every one (pass --allow-partial for a pilot)`,
++  it.each([NaN, Number.POSITIVE_INFINITY, 1.5, -Infinity])(
++    "refuses a malformed self-reported reward score (%s) before staging",
++    async (rewardScore) => {
++      const result = await crystallizeSkill({
++        candidate: candidate({ rewardScore }),
++        config,
++        configDir: tmpDir,
++      });
++      expect(result.ok).toBe(false);
++      expect(result.error).toMatch(/not a finite value|below threshold/);
++      expect(await readProvenance({ configDir: tmpDir })).toHaveLength(0);
++    },
 +  );
-+}
-+
-+// Resume: verdicts already written are kept (same inputs, deterministic judge).
-+const judged = new Map<string, Judged>();
-+if (existsSync(resultPath)) {
-+  for (const line of readFileSync(resultPath, "utf-8").split("\n")) {
-+    if (!line.trim()) continue;
-+    const row = JSON.parse(line) as Hyp & { autoeval_label: { label: boolean } };
-+    const item = ref.get(row.question_id);
-+    if (item) {
-+      judged.set(row.question_id, {
-+        question_id: row.question_id,
-+        question_type: item.question_type,
-+        label: row.autoeval_label.label,
-+      });
-+    }
-+  }
-+}
-+
-+const envKey = process.env.OPENAI_API_KEY?.trim();
-+const apiKey =
-+  envKey || (await resolveApiKeyForProvider({ provider: "openai", cfg: loadConfig() }))?.apiKey;
-+if (!apiKey) {
-+  throw new Error("no OpenAI key for the judge");
-+}
-+
-+async function judgeOnce(prompt: string): Promise<string> {
-+  let lastErr: unknown;
-+  for (let attempt = 0; attempt < 5; attempt++) {
-+    try {
-+      const res = await fetch("https://api.openai.com/v1/chat/completions", {
-+        method: "POST",
-+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
-+        body: JSON.stringify({
-+          model: OFFICIAL_JUDGE_MODEL,
-+          messages: [{ role: "user", content: prompt }],
-+          n: 1,
-+          temperature: JUDGE_TEMPERATURE,
-+          max_tokens: JUDGE_MAX_TOKENS,
-+        }),
-+      });
-+      if (!res.ok) {
-+        throw new Error(`judge ${res.status}: ${(await res.text()).slice(0, 200)}`);
-+      }
-+      const data = (await res.json()) as { choices: Array<{ message: { content: string } }> };
-+      return data.choices[0]?.message.content ?? "";
-+    } catch (err) {
-+      lastErr = err;
-+      await new Promise((r) => setTimeout(r, 1500 * 2 ** attempt));
-+    }
-+  }
-+  throw lastErr;
-+}
-+
-+const todo = hyps.filter((h) => {
-+  if (!ref.has(h.question_id)) {
-+    console.warn(`Warning: skipping ${h.question_id} as it is not in reference data.`);
-+    return false;
-+  }
-+  return !judged.has(h.question_id);
-+});
-+console.log(`judging ${todo.length} of ${hyps.length} hypotheses with ${OFFICIAL_JUDGE_MODEL}`);
-+
-+const concurrency = Math.max(1, Number(args.concurrency));
-+let cursor = 0;
-+let doneCo
+ });
 ```
 
-**File**: `benchmarks/longmemeval/official-protocol.test.ts` (added, +202/-0)
+**File**: `src/agents/skills/crystallize.ts` (modified, +8/-1)
 ```diff
-@@ -0,0 +1,202 @@
+@@ -41,7 +41,14 @@ export async function crystallizeSkill(params: {
+ }): Promise<CrystallizationResult> {
+   const { candidate, config, bridge, workspaceDir, configDir } = params;
+ 
+-  // 1. Evaluate reward threshold
++  // 1. Evaluate reward threshold. The score is self-reported by the caller, so
++  //    a NaN/Infinity or a value above 1 is a malformed candidate, not a pass.
++  if (!Number.isFinite(candidate.rewardScore) || candidate.rewardScore > 1) {
++    return {
++      ok: false,
++      error: `reward score ${candidate.rewardScore} is not a finite value in [0, 1]`,
++    };
++  }
+   if (candidate.rewardScore < SUCCESS_THRESHOLD) {
+     return {
+       ok: false,
+```
+
+**File**: `src/agents/skills/envelope-validation.test.ts` (added, +61/-0)
+```diff
+@@ -0,0 +1,61 @@
++import { createHash, generateKeyPairSync, sign } from "node:crypto";
 +import { describe, expect, it } from "vitest";
 +import {
-+  aggregate,
-+  buildReaderPrompt,
-+  firstPerType,
-+  formatHistory,
-+  isAbstentionId,
-+  judgePrompt,
-+  OFFICIAL_JUDGE_MODEL,
-+  parseJudgeLabel,
-+  parseLongMemEvalDate,
-+  pythonJsonDumpsTurns,
-+  type RawItem,
-+  sessionRecall,
-+  sessionToNlDocument,
-+  toInferenceItem,
-+} from "./official-protocol.js";
++  computeSkillContentHash,
++  validateSkillEnvelope,
++  verifySkillSignature,
++} from "./envelope-validation.js";
++import type { SkillEnvelope } from "./ingest.js";
 +
-+const item: RawItem = {
-+  question_id: "gpt4_70e84552_abs",
-+  question_type: "multi-session",
-+  question: "What did I name my dog?",
-+  answer: 42,
-+  question_date: "2023/05/20 (Sat) 02:21",
-+  haystack_dates: ["2023/04/10 (Mon) 23:07", "2023/04/10 (Mon) 17:50", "2023/05/01 (Mon) 09:00"],
-+  haystack_session_ids: ["sharegpt_1", "answer_abc_1", "answer_abc_2"],
-+  haystack_sessions: [
-+    [
-+      { role: "user", content: "hi" },
-+      { role: "assistant", content: "hello" },
-+    ],
-+    [
-+      { role: "user", content: "I named my dog Biscuit", has_answer: true },
-+      { role: "assistant", content: "Nice name", has_answer: false },
-+    ],
-+    [{ role: "user", content: 'café ☕ "quoted"\nline', has_answer: false }],
-+  ],
-+  answer_session_ids: ["answer_abc_1", "answer_abc_2"],
-+};
-+
-+describe("toInferenceItem", () => {
-+  it("strips has_answer and every dataset session id from the inference view", () => {
-+    const { inference, gold } = toInferenceItem(item);
-+    const dump = JSON.stringify(inference);
-+    expect(dump).not.toContain("has_answer");
-+    expect(dump).not.toContain("answer_");
-+    expect(dump).not.toContain("sharegpt");
-+    expect(inference.sessions.map((s) => s.id)).toEqual([
-+      "session-001",
-+      "session-002",
-+      "session-003",
-+    ]);
-+    // Dataset order is kept (the online order); the reader sorts by date later.
-+    expect(inference.sessions[0]!.date).toBe("2023/04/10 (Mon) 23:07");
-+    expect(gold.goldOpaqueIds).toEqual(new Set(["session-002", "session-003"]));
-+    expect(gold.isAbstention).toBe(true);
-+  });
-+
-+  it("writes every turn into the nl document with its date header", () => {
-+    const { inference } = toInferenceItem(item);
-+    const doc = sessionToNlDocument(inference.sessions[1]!);
-+    expect(doc).toBe(
-+      "Session Date: 2023/04/10 (Mon) 17:50\n\nuser: I named my dog Biscuit\n\nassistant: Nice name\n",
-+    );
-+  });
-+});
-+
-+describe("parseLongMemEvalDate", () => {
-+  it("parses the dataset format as UTC", () => {
-+    expect(parseLongMemEvalDate("2023/05/20 (Sat) 02:21")).toBe(Date.UTC(2023, 4, 20, 2, 21));
-+  });
-+  it("rejects anything else", () => {
-+    expect(() => parseLongMemEvalDate("2023-05-20")).toThrow();
-+  });
-+});
-+
-+describe("reader prompt", () => {
-+  it("reproduces python json.dumps for the turn list", () => {
-+    expect(
-+      pythonJsonDumpsTurns(
-+        item.haystack_sessions[2]!.map((t) => ({ role: t.role, content: t.content })),
-+      ),
-+    ).toBe('[{"role": "user", "content": "caf\\u00e9 \\u2615 \\"quoted\\"\\nline"}]');
-+  });
-+
-+  it("matches run_generation.py formatting: date-sorted sessions, CoN template, raw question_date", () => {
-+    const prompt = buildReaderPrompt({
-+      items: [
-+        { date: "2023/04/10 (Mon) 23:07", turns: [{ role: "user", content: "b" }] },
-+        { date: "2023/04/10 (Mon) 17:50", turns: [{ role: "user", content: "a" }] },
-+      ],
-+      questionDate: "2023/05/20 (Sat) 02:21",
-+      question: "Q?",
-+      reading: "con",
-+      format: "json",
-+    });
-+    expect(prompt).toBe(
-+      "I will give you several history chats between you and a user. Please answer the question based on the relevant chat history. Answer the question step by step: first extract all the relevant information, and then reason over the information to get the answer.\n\n\nHistory Chats:\n\n" +
-+        '\n### Session 1:\nSession Date: 2023/04/10 (Mon) 17:50\nSession Content:\n\n[{"role": "user", "content": "a"}]\n' +
-+        '\n### Session 2:\nSession Date: 2023/04/10 (Mon) 23:07\nSession Content:\n\n[{"role": "user", "content": "b"}]\n' +
-+        "\n\nCurrent Date: 2023/05/20 (Sat) 02:21\nQuestion: Q?\nAnswer (step by step):",
-+    );
-+  });
-+
-+  it("renders chunk text as-is for the nl unit and the direct template ends with Answer:", () => {
-+    const history = formatHistory([{ date: "2023/04/10 (Mon) 17:50", text: "user: a" }], "nl");
-+    expect(history).toBe(
-+      "\n### Session 1:\nSession Date: 2023/04/10 (Mon) 17:50\nSession Content:\nuser: a\n",
-+    );
-+    const prompt = buildReaderPrompt({
-+      items: [],
-+      questionDate: "d",
-+      question: "q",
-+      reading: "direct",
-+      format: "nl",
-+    });
-+    expect(prompt.endsWith("\nCurrent Date: d\nQuestion: q\nAnswer:")).toBe(true);
-+    expect(prompt).not.toContain("step by step");
-+  });
-+});
-+
-+describe("judge", () => {
-+  it("pins the official judge snapshot", () => {
-+    expect(OFFICIAL_JUDGE_MODEL).toBe("gpt-4o-2024-08-06");
-+  });
-+
-+  it("selects the abstention template from the id alone and stringifies integer answers", ()
-```
-
-**File**: `benchmarks/longmemeval/official-protocol.ts` (added, +395/-0)
-```diff
-@@ -0,0 +1,395 @@
-+/**
-+ * LongMemEval official protocol, as code.
-+ *
-+ * Everything here mirrors the reference implementation in
-+ * https://github.com/xiaowu0162/LongMemEval at commit 9e0b455f (2026-05-11):
-+ * `src/generation/run_generation.py` for the reader prompt and context
-+ * formatting, `src/evaluation/evaluate_qa.py` for the judge prompts and verdict
-+ * parsing, `src/evaluation/print_qa_metrics.py` for the aggregates, and the
-+ * README for which fields a memory system may see. Template strings are copied
-+ * verbatim; where Python formatting matters (json.dumps) it is reproduced.
-+ *
-+ * Pure functions only, so the protocol is unit-testable without a store.
-+ */
-+
-+export const OFFICIAL_PROTOCOL_REF =
-+  "xiaowu0162/LongMemEval@9e0b455f4ef0e2ab8f2e582289761153549043fc";
-+
-+// ── Dataset view ────────────────────────────────────────────────────────────
-+
-+export type RawTurn = { role: string; content: string; has_answer?: boolean };
-+
-+export type RawItem = {
-+  question_id: string;
-+  question_type: string;
-+  question: string;
-+  /** A string in 468 questions and an integer in 32; the judge sees str(answer). */
-+  answer: string | number;
-+  question_date: string;
-+  haystack_dates: string[];
-+  haystack_session_ids: string[];
-+  haystack_sessions: RawTurn[][];
-+  answer_session_ids: string[];
-+};
-+
-+export type Turn = { role: string; content: string };
-+
-+export type InferenceSession = {
-+  /** Opaque id assigned by position; never derived from the dataset's ids. */
-+  id: string;
-+  date: string;
-+  turns: Turn[];
-+};
-+
-+/** What a memory system may see before it answers. Nothing else. */
-+export type InferenceItem = {
-+  question_id: string;
-+  question: string;
-+  question_date: string;
-+  sessions: InferenceSession[];
-+};
-+
-+/** Evaluation-only companion: which opaque ids are gold. Built after search. */
-+export type GoldMap = {
-+  goldOpaqueIds: Set<string>;
-+  isAbstention: boolean;
-+};
-+
-+export const OPAQUE_ID_PREFIX = "session-";
-+
-+export function opaqueSessionId(index: number): string {
-+  return `${OPAQUE_ID_PREFIX}${String(index + 1).padStart(3, "0")}`;
-+}
-+
-+/**
-+ * Strip every evaluation-only signal from a dataset item.
-+ *
-+ * Two leaks the official data carries (both documented in the repo's issues):
-+ * every turn of an evidence session has a `has_answer` key (true or false) and
-+ * no filler turn has one, so key presence marks gold; and every evidence
-+ * session id contains the substring "answer" by construction. Turns are
-+ * rebuilt with only role and content, and sessions get positional ids.
-+ * Sessions keep dataset order (the "online" order the history arrived in).
-+ */
-+export function toInferenceItem(item: RawItem): { inference: InferenceItem; gold: GoldMap } {
-+  const sessions: InferenceSession[] = item.haystack_sessions.map((turns, i) => ({
-+    id: opaqueSessionId(i),
-+    date: item.haystack_dates[i] ?? "",
-+    turns: turns.map((t) => ({ role: t.role, content: t.content })),
-+  }));
-+  const goldOpaqueIds = new Set<string>();
-+  const gold = new Set(item.answer_session_ids ?? []);
-+  for (let i = 0; i < item.haystack_session_ids.length; i++) {
-+    if (gold.has(item.haystack_session_ids[i]!)) {
-+      goldOpaqueIds.add(opaqueSessionId(i));
-+    }
-+  }
++function signed(body = "---\nname: x\ndescription: y\n---\nbody\n"): SkillEnvelope {
++  const keys = generateKeyPairSync("ed25519");
++  const bytes = Buffer.from(body, "utf-8");
 +  return {
-+    inference: {
-+      question_id: item.question_id,
-+      question: item.question,
-+      question_date: item.question_date,
-+      sessions,
-+    },
-+    gold: { goldOpaqueIds, isAbstention: isAbstentionId(item.question_id) },
++    version: 1,
++    name: "x",
++    author_peer_id: "peer",
++    timestamp: 1,
++    skill_md: bytes.toString("base64"),
++    content_hash: createHash("sha256").update(bytes).digest("hex"),
++    author_pubkey: keys.publicKey
++      .export({ format: "der", type: "spki" })
++      .subarray(-32)
++      .toString("base64"),
++    signature: sign(null, bytes, keys.privateKey).toString("base64"),
 +  };
 +}
 +
-+/** evaluate_qa.py line 101: `abstention='_abs' in entry['question_id']`. */
-+export function isAbstentionId(questionId: string): boolean {
-+  return questionId.includes("_abs");
-+}
++describe("envelope-validation", () => {
++  it("accepts an authentic envelope", () => {
++    const e = signed();
++    expect(verifySkillSignature(e)).toBe(true);
++    expect(validateSkillEnvelope(e)).toBeNull();
++    expect(computeSkillContentHash(e.skill_md)).toBe(e.content_hash);
++  });
 +
-+// ── Time ────────────────────────────────────────────────────────────────────
++  it("rejects a signature over different bytes", () => {
++    const e = signed();
++    const other = Buffer.from("other", "utf-8");
++    e.skill_md = other.toString("base64");
++    e.content_hash = createHash("sha256").update(other).digest("hex");
++    expect(validateSkillEnvelope(e)).toBe("invalid Ed25519 signature");
++  });
 +
-+const DATE_RE = /^(\d{4})\/(\d{2})\/(\d{2}) \((?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)\) (\d{2}):(\d{2})$/;
++  it("reports a hash mismatch only once the signature holds", () => {
++    const e = signed();
++    e.content_hash = "0".repeat(64);
++    expect(validateSkillEnvelope(e)).toBe("content hash mismatch");
++  });
 +
-+/**
-+ * Parse the dataset's `%Y/%m/%d (%a) %H:%M` timestamps (no zone; treated as
-+ * UTC). Used as the memory system's "now" for the question and as each
-+ * session's creation time, so age-dependent scoring sees 2023 as 2023.
-+ */
-+export function parseLongMemEvalDate(s: string): number {
-+  const m = DATE_RE.exec(s.trim());
-+  if (!m) {
-+    throw new Error(`not a LongMemEval timestamp: ${JSON.stringify(s)}`);
-+  }
-+  const [, y, mo, d, h, mi] = m;
-+  return Date.UTC(Number(y), Number(mo) - 1, Number(d), Number(h), Number(mi));
-+}
-+
-+// ── Ingest format ───────────────────────────────────────────────────────────
-+
-+/**
-+ * One document per session in the official `nl` history format
-+ * (run_generation.py L239: `"\n\n{}: {}".format(role, content.strip())`),
-+ * headed by the session date. A retrieved chunk of this file is therefore a
-+ * legitimate `nl`-format fragment of the session.
-+ */
-+export function sessionToNlDocument(session: InferenceSession): string {
-+  const parts = [`Session Date: ${session.date}`];
-+  for (const t of session.turns) {
-+    parts.push(`${t.role}: ${t.content.trim()
++  it.each([
++    ["short key", (e: SkillEnvelope) => (e.author_pubkey = Buffer.alloc(16).toString("base64"))],
++    ["short signature", (e: SkillEnvelope) => (e.signature = Buffer.alloc(63).toString("base64"))],
++    ["garbage key", (e: SkillEnvelope) => (e.author_pubkey = "not base64 at all!!")],
++    ["empty signature", (e: SkillEnvelope) => (e.signature = "")],
++  ])("fails closed on %s without throwing", (_label, mutate) => {
++    const e = signed();
++    mutate(e);
++    expect(verifySkillSignature(e)).toBe(false);
++    expect(validateSkillEnvelope(e)).toBe("invalid Ed25519 signature");
++  });
++});
 ```
 
-**File**: `benchmarks/longmemeval/official-scorer.sh` (added, +37/-0)
+**File**: `src/agents/skills/envelope-validation.ts` (added, +60/-0)
 ```diff
-@@ -0,0 +1,37 @@
-+#!/usr/bin/env bash
-+# Score a hypothesis file with the reference LongMemEval scripts, unmodified.
-+#
-+# Fetches evaluate_qa.py and print_qa_metrics.py at the pinned commit into a
-+# scratch dir, installs their four dependencies into a local venv, and runs
-+# them. Needs OPENAI_API_KEY in the environment (the reference script reads it
-+# itself). Output: <hyp>.eval-results-gpt-4o next to the hypothesis file.
-+#
-+#   bash benchmarks/longmemeval/official-scorer.sh <hypothesis.jsonl> [reference.json]
-+set -euo pipefail
+@@ -0,0 +1,60 @@
++/**
++ * Skill envelope authenticity checks shared by every storage boundary.
++ *
++ * The filesystem ingest (`ingest.ts`) and the crystal-level ingest
++ * (`SkillNetworkBridge.ingestNetworkSkill`) both have to run these before
++ * anything is written: a peer envelope whose bytes do not match its signature
++ * or its content hash must never reach the skills directory or the chunk store.
++ */
 +
-+HYP="${1:?usage: official-scorer.sh <hypothesis.jsonl> [reference.json]}"
-+HERE="$(cd "$(dirname "$0")" && pwd)"
-+REF="${2:-$HERE/data/longmemeval_s.json}"
-+COMMIT="9e0b455f4ef0e2ab8f2e582289761153549043fc"
-+TOOLS="$HERE/.work-official-scorer"
-+VENV="$TOOLS/venv"
-+RAW="https://raw.githubusercontent.com/xiaowu0162/LongMemEval/$COMMIT/src/evaluation"
++import { createHash, createPublicKey, verify } from "node:crypto";
++import { createSubsystemLogger } from "../../logging/subsystem.js";
++import type { SkillEnvelope } from "./ingest.js";
 +
-+mkdir -p "$TOOLS"
-+for f in evaluate_qa.py print_qa_metrics.py; do
-+  if [ ! -f "$TOOLS/$f" ]; then
-+    echo "fetching $f @ ${COMMIT:0:8}"
-+    curl -fsSL "$RAW/$f" -o "$TOOLS/$f"
-+  fi
-+done
-+if [ ! -x "$VENV/bin/python" ]; then
-+  python3 -m venv "$VENV"
-+  "$VENV/bin/pip" install --quiet openai numpy backoff tqdm
-+fi
-+: "${OPENAI_API_KEY:?OPENAI_API_KEY must be set for the reference judge}"
++const log = createSubsystemLogger("skills/envelope-validation");
 +
-+HYP_ABS="$(cd "$(dirname "$HYP")" && pwd)/$(basename "$HYP")"
-+REF_ABS="$(cd "$(dirname "$REF")" && pwd)/$(basename "$REF")"
-+cd "$TOOLS"
-+"$VENV/bin/python" -I evaluate_qa.py gpt-4o "$HYP_ABS" "$REF_ABS" | tail -n 12
-+"$VENV/bin/python" -I print_qa_metrics.py "$HYP_ABS.eval-results-gpt-4o" "$REF_ABS" || true
++/** SPKI DER prefix for a raw 32-byte Ed25519 public key. */
++const ED25519_SPKI_PREFIX = Buffer.from("302a300506032b6570032100", "hex");
++
++/**
++ * Ed25519 verification of `skill_md` (decoded bytes) against the envelope's
++ * raw 32-byte `author_pubkey` and 64-byte `signature`, both base64.
++ */
++export function verifySkillSignature(envelope: SkillEnvelope): boolean {
++  try {
++    const pubkeyBytes = Buffer.from(envelope.author_pubkey, "base64");
++    const signatureBytes = Buffer.from(envelope.signature, "base64");
++    if (pubkeyBytes.length !== 32 || signatureBytes.length !== 64) {
++      return false;
++    }
++    const skillBytes = Buffer.from(envelope.skill_md, "base64");
++    const publicKey = createPublicKey({
++      key: Buffer.concat([ED25519_SPKI_PREFIX, pubkeyBytes]),
++      format: "der",
++      type: "spki",
++    });
++    return verify(null, skillBytes, publicKey, signatureBytes);
++  } catch (err) {
++    log.debug(`Signature verification error: ${String(err)}`);
++    return false;
++  }
++}
++
++/** SHA-256 hex of the decoded `skill_md` bytes, the value `content_hash` must carry. */
++export function computeSkillContentHash(skillMdBase64: string): string {
++  return createHash("sha256").update(Buffer.from(skillMdBase64, "base64")).digest("hex");
++}
++
++/**
++ * Full authenticity check: signature, then content hash. Returns `null` when
++ * the envelope is authentic, otherwise the rejection reason.
++ */
++export function validateSkillEnvelope(envelope: SkillEnvelope): string | null {
++  if (!verifySkillSignature(envelope)) {
++    return "invalid Ed25519 signature";
++  }
++  if (computeSkillContentHash(envelope.skill_md) !== envelope.content_hash) {
++    return "content hash mismatch";
++  }
++  return null;
++}
+```
+
+**File**: `src/agents/skills/ingest.ts` (modified, +2/-21)
+```diff
+@@ -5,7 +5,7 @@
+  * Policies: "auto" (accept if valid), "review" (quarantine), "deny" (reject all).
+  */
+ 
+-import { createHash, createPublicKey, verify } from "node:crypto";
++import { createHash } from "node:crypto";
+ import fs from "node:fs/promises";
+ import path from "node:path";
+ import type { BitterbotConfig } from "../../config/config.js";
+@@ -42,6 +42,7 @@ import {
+   type LiveSkillIndexEntry,
+   listLiveSkillIndex,
+ } from "./description-overlap.js";
++import { verifySkillSignature as verifySignature } from "./envelope-validation.js";
+ import { appendImpactEntry, resolveWikiDir } from "./impact-trail.js";
+ import { SELF_LOOPBACK_REASON } from "./ingest-stats.js";
+ import { peerStageCollision, stagePeerSkill } from "./peer-staging.js";
+@@ -1129,26 +1130,6 @@ export async function listIncomingSkills(config: BitterbotConfig): Promise<Incom
+   }
+ }
+ 
+-function verifySignature(envelope: SkillEnvelope): boolean {
+-  try {
+-    const pubkeyBytes = Buffer.from(envelope.author_pubkey, "base64");
+-    const signatureBytes = Buffer.from(envelope.signature, "base64");
+-    const skillBytes = Buffer.from(envelope.skill_md, "base64");
+-
+-    // Ed25519 verification: construct SPKI DER from raw 32-byte pubkey
+-    const spkiDer = Buffer.concat([Buffer.from("302a300506032b6570032100", "hex"), pubkeyBytes]);
+-    const publicKey = createPublicKey({
+-      key: spkiDer,
+-      format: "der",
+-      type: "spki",
+-    });
+-    return verify(null, skillBytes, publicKey, signatureBytes);
+-  } catch (err) {
+-    log.debug(`Signature verification error: ${String(err)}`);
+-    return false;
+-  }
+-}
+-
+ function validateSkillContent(content: string): boolean {
+   if (!content.startsWith("---")) return false;
+   const endIdx = content.indexOf("---", 3);
+```
+
+**File**: `src/gateway/p2p-skill-receive.test.ts` (modified, +6/-1)
+```diff
+@@ -57,6 +57,8 @@ describe("P2P skill receive path", () => {
+     await fs.rm(tmp, { recursive: true, force: true });
+   });
+ 
++  const bridgeIngest = vi.fn();
++
+   function handler(getIdentity: () => Promise<{ pubkey: string }>) {
+     const config = {
+       skills: { p2p: { ingestPolicy: "review", quarantineDir: quarantine } },
+@@ -66,7 +68,7 @@ describe("P2P skill receive path", () => {
+       loadConfig: () => config,
+       getSkillNetworkBridge: () => ({
+         getPeerReputation: () => reputation as never,
+-        ingestNetworkSkill: vi.fn(),
++        ingestNetworkSkill: bridgeIngest,
+       }),
+       log: { warn: vi.fn() },
+     });
+@@ -114,6 +116,9 @@ describe("P2P skill receive path", () => {
+       heldForReview: 1,
+       ownEchoesIgnored: 0,
+     });
++    // A quarantined (review) skill must NOT be crystallised: only an accepted
++    // envelope reaches the crystal store (PLAN-44 Phase 3).
++    expect(bridgeIngest).not.toHaveBeenCalled();
+   });
+ 
+   it("an unavailable orchestrator identity does not break receiving", async () => {
+```
+
+**File**: `src/gateway/server-methods/skills.ts` (modified, +21/-14)
+```diff
+@@ -902,28 +902,35 @@ export const skillsHandlers: GatewayRequestHandlers = {
+       );
+       return;
+     }
+-    const skillMdBase64 = Buffer.from(p.content, "utf8").toString("base64");
++    // The RPC selects existing content; it does not manufacture evidence. The
++    // bytes must match an active skill crystal, and the publish runs through the
++    // bridge's single outbound gate (governance, confidential ancestors,
++    // archived lifecycle, verifier + execution maturity). Hand-written
++    // SKILL.md that was never crystallized is not publishable from here.
++    if (!context.skillNetworkBridge) {
++      respond(
++        false,
++        undefined,
++        errorShape(ErrorCodes.UNAVAILABLE, "skill network bridge is not available"),
++      );
++      return;
++    }
+     try {
+-      const raw = (await context.orchestratorBridge.publishSkill(skillMdBase64, p.name)) as
+-        | {
+-            ok?: boolean;
+-            content_hash?: string;
+-            delivered_to?: number;
+-            error?: string;
+-          }
+-        | undefined;
++      const raw = await context.skillNetworkBridge.publishSkillContent(p.content);
+       const result = {
+-        ok: raw?.ok === true,
+-        contentHash: raw?.content_hash,
+-        deliveredTo: raw?.delivered_to,
+-        error: raw?.error,
++        ok: raw != null,
++        contentHash: raw?.contentHash,
++        deliveredTo: raw?.deliveredTo,
++        error: raw
++          ? undefined
++          : "content must byte-match an active, shareable skill crystal that has matured (verifier + executions)",
+       };
+       respond(
+         result.ok,
+         result,
+         result.ok
+           ? undefined
+-          : errorShape(ErrorCodes.UNAVAILABLE, result.error ?? "publish failed"),
++          : errorShape(ErrorCodes.INVALID_REQUEST, result.error ?? "publish failed"),
+       );
+     } catch (err) {
+       respond(
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #320** (2026-10-28): fix(p2p): fail-closed skill ingest and publish gates (@VGIL77)
 - **PR #318** (2026-10-28): feat(benchmarks): LongMemEval runner on the official protocol (@VGIL77)
 - **PR #317** (2026-10-27): bench(live-recall): replay the agent's real memory_search queries under each boost scale (@VGIL77)
 - **PR #316** (2026-10-27): fix(gateway): restarted gateway outlives its parent's lock instead of dying at the 5 s timeout (@VGIL77)
 - **PR #315** (2026-10-27): fix(memory): bound post-fusion boosts to the RRF scale; held-out live-memory benchmark; evidence-level LongMemEval metrics (@VGIL77)
 - **PR #313** (closed): bench(longmemeval): stratified per-type sampling and the stratified before/after of the keyword-channel change (@VGIL77)
-- **PR #312** (2026-10-27): fix(memory): keyword channel matches natural-language queries; failed embedding batch no longer aborts sync (@VGIL77)
 
 ---
 
@@ -2625,30 +2213,51 @@ diagnostic tooling, labelled non-comparable.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. benchmarks): LongMemEval runner on the official protocol (#318)
+## X. p2p): fail-closed skill ingest and publish gates (#320)
 
 **RULE**:
-When implementing operations in `.gitignore`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/memory/skills-pipeline.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c22b2932`: benchmarks): LongMemEval runner on the official protocol (#318). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5ce45773`: p2p): fail-closed skill ingest and publish gates (#320). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.gitignore`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/memory/skills-pipeline.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
+**Publishing** (`publishCrystalSkill()`), the single outbound gate. Every
+selector that can put a skill on the wire goes through it: auto-publish on
+crystallize, the maturity re-attempt after an execution, Forage query
+responses (same gate, wire name `response-<query>-<skill>`), and the manual
+`skills.publish` RPC. The gate fails closed:
 
-benchmarks/longmemeval/.work-official/
-benchmarks/longmemeval/.work-official-scorer/
+1. Loads the crystal from the database; only a chunk with
+   `semantic_type = 'skill'` and `lifecycle_state = 'active'` whose `lifecycle`
+   is not `archived`/`expired` qualifies. A non-skill chunk or an archived
+   crystal never leaves the node, whatever its governance says.
+4. Maturity bar (the same one the marketplace lists with): `SkillVerifier`
+   passes AND the `SkillExecutionTracker` reports at least 3 executions with
+   a success rate in `(0.7, 1]`. If either dependency is not wired on the
+   bridge, or a metric is non-finite or above 1, the answer is "no": missing
+   evidence is never permission to publish.
+5. Generates a SKILL.md format with frontmatter
+6. Sends to the Rust orchestrator via `orchestratorBridge.publishSkill()`
+
+The `skills.publish` RPC does not publish arbitrary operator-supplied bytes.
+Its `content` must byte-match the t
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+**Publishing** (`publishCrystalSkill()`):
+
+1. Loads the crystal from the database
+4. Generates a SKILL.md format with frontmatter
+5. Sends to the Rust orchestrator via `orchestratorBridge.publishSkill()`
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c22b2932` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5ce45773` are properly handled with clean fallback behavior.

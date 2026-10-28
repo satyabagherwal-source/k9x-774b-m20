@@ -5911,3 +5911,6 @@
 | `CYCLE-20261028-ZMC1` | `2026-10-28T19:46:50.449Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5384` | Yes (`721b8794...`) |
 | `CYCLE-20261028-ZOII` | `2026-10-28T19:46:53.274Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5385` | Yes (`1d9b2ae0...`) |
 | `CYCLE-20261028-9GXT` | `2026-10-28T19:54:30.017Z` | `autotrust/GLM5.3-Flash-E224-DGX-Spark` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md` | Yes (`775ee31f...`) |
+| `CYCLE-20261028-IE3I` | `2026-10-28T20:01:26.238Z` | `LiquidAI/d1-3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md` | Yes (`fd76c2d8...`) |
+| `CYCLE-20261028-IQEB` | `2026-10-28T20:01:42.179Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5386` | Yes (`275c1a5d...`) |
+| `CYCLE-20261028-IR7N` | `2026-10-28T20:01:43.235Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5387` | Yes (`7137d1df...`) |

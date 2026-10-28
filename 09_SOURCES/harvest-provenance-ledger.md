@@ -5920,3 +5920,6 @@ Every entry in this ledger must capture:
 | `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `a052bc26` | Multi-dimensional audit evidence | 2026-10-28T19:46:50.452Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `1f4eee02` | Multi-dimensional audit evidence | 2026-10-28T19:46:53.277Z |
 | `learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark` | `https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-28T19:54:30.020Z |
+| `learn-huggingface-liquidai-d1-3b` | `https://huggingface.co/LiquidAI/d1-3B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-28T20:01:26.242Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `6afd9ba3` | Multi-dimensional audit evidence | 2026-10-28T20:01:42.183Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `5ce45773` | Multi-dimensional audit evidence | 2026-10-28T20:01:43.238Z |

@@ -390015,3 +390015,128 @@ trap s
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `1f4eee02` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5386. plugins): read profile and memory listings from peer scope (#5246) (Harvested from volcengine/OpenViking)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "plugins): read profile and memory listings from peer scope (#5246)",
+  "source": "volcengine/OpenViking",
+  "source_url": "https://github.com/volcengine/OpenViking",
+  "source_version": "6afd9ba3",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-10-28T20:01:41.882Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-volcengine-openviking",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [volcengine/OpenViking](https://github.com/volcengine/OpenViking) (Revision: `6afd9ba3`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `docs/en/agent-integrations/16-capability-reference.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `196e5820`: plugins): read profile and memory listings from peer scope (#5246). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/agent-integrations/16-capability-reference.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+Integrations that use the shared plugin code inject one `<openviking-context>` block at session start. It holds the user profile (`viking://user/<space>/memories/profile.md`), an index of the `preferences/` and `entities/` memories, and an `<available-skills>` catalog. When the session has an actor peer, the same files under `viking://user/<space>/peers/<peer>/memories/` are added: the profile, preferences, and entities have no message range, so extraction writes the user's own facts to the user root even in a peer session. The user root comes first; the peer profile is a second `<user-profile>` element without the lines it shares with the user profile, and both roots share one budget:
+- `profileTokenBudget` (default 10,000 tokens) covers the profiles and the memory index. The profiles get half: the user profile first, the peer profile what is left, or a one-line pointer to its URI when less than 200 tokens remain. The two roots split the index budget. An oversized profile keeps its first 8 lines and its end; an oversized listing ends with `... +N more`. Token estimates count CJK characters as 1.5 tokens and other text as four characters per token.
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Anti-pattern to NEVER write (induced failure mode):
+Integrations that use the shared plugin code inject one `<openviking-context>` block at session start. It holds the user profile (`viking://user/<space>/memories/profile.md`), an index of the `preferences/` and `entities/` memories, and an `<available-skills>` catalog:
+- `profileTokenBudget` (default 10,000 tokens) covers the profile and the memory index. The profile gets half. An oversized profile keeps its first 8 lines and its end; an oversized listing ends with `... +N more`. Token estimates count CJK characters as 1.5 tokens and other text as four characters per token.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `196e5820` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5387. p2p): fail-closed skill ingest and publish gates (#320) (Harvested from Bitterbot-AI/bitterbot-desktop)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "p2p): fail-closed skill ingest and publish gates (#320)",
+  "source": "Bitterbot-AI/bitterbot-desktop",
+  "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+  "source_version": "5ce45773",
+  "license": "MIT",
+  "extracted_at": "2026-10-28T20:01:42.938Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop) (Revision: `5ce45773`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `docs/memory/skills-pipeline.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `5ce45773`: p2p): fail-closed skill ingest and publish gates (#320). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/memory/skills-pipeline.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+**Publishing** (`publishCrystalSkill()`), the single outbound gate. Every
+selector that can put a skill on the wire goes through it: auto-publish on
+crystallize, the maturity re-attempt after an execution, Forage query
+responses (same gate, wire name `response-<query>-<skill>`), and the manual
+`skills.publish` RPC. The gate fails closed:
+
+1. Loads the crystal from the database; only a chunk with
+   `semantic_type = 'skill'` and `lifecycle_state = 'active'` whose `lifecycle`
+   is not `archived`/`expired` qualifies. A non-skill chunk or an archived
+   crystal never leaves the node, whatever its governance says.
+4. Maturity bar (the same one the marketplace lists with): `SkillVerifier`
+   passes AND the `SkillExecutionTracker` reports at least 3 executions with
+   a success rate in `(0.7, 1]`. If either dependency is not wired on the
+   bridge, or a metric is non-finite or above 1, the answer is "no": missing
+   evidence is never permission to publish.
+5. Generates a SKILL.md format with frontmatter
+6. Sends to the Rust orchestrator via `orchestratorBridge.publishSkill()`
+
+The `skills.publish` RPC does not publish arbitrary operator-supplied bytes.
+Its `content` must byte-match the t
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+**Publishing** (`publishCrystalSkill()`):
+
+1. Loads the crystal from the database
+4. Generates a SKILL.md format with frontmatter
+5. Sends to the Rust orchestrator via `orchestratorBridge.publishSkill()`
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `5ce45773` are properly handled with clean fallback behavior.

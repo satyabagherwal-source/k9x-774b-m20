@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T19:54:30.028Z",
-  "total_cycles_completed": 5888,
-  "total_learnings_persisted": 5888,
-  "total_rules_promoted": 5347,
+  "last_updated": "2026-10-28T20:01:43.244Z",
+  "total_cycles_completed": 5891,
+  "total_learnings_persisted": 5891,
+  "total_rules_promoted": 5349,
   "history": [
-    {
-      "timestamp": "2026-10-28T06:11:52.938Z",
-      "repository": "orcarouter/OrcaSAQ-2-27B",
-      "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T06:11:54.587Z",
-      "repository": "databendlabs/databend",
-      "learningId": "learn-github-databendlabs-databend",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T06:18:32.093Z",
-      "repository": "TaichuAI/ZDTaichu5.0-9B",
-      "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T06:18:38.801Z",
       "repository": "paradedb/paradedb",
@@ -1403,6 +1382,27 @@
       "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
       "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T20:01:26.253Z",
+      "repository": "LiquidAI/d1-3B",
+      "learningId": "learn-huggingface-liquidai-d1-3b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T20:01:42.189Z",
+      "repository": "volcengine/OpenViking",
+      "learningId": "learn-github-volcengine-openviking",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T20:01:43.244Z",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

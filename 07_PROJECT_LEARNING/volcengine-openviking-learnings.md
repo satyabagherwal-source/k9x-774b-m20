@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source**: github ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
-> **Source Version**: `54d4c0fa`  
+> **Source Version**: `6afd9ba3`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T17:23:43.353Z  
+> **Timestamp**: 2026-10-28T20:01:41.531Z  
 > **Learning ID**: `learn-github-volcengine-openviking`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T17:23:43.191Z  
+> **Harvest Timestamp**: 2026-10-28T20:01:41.523Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 40959 stars
+- **Stars / Engagement**: 41056 stars
 
 ---
 
@@ -1495,1186 +1495,583 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5c066d97` (2026-10-26)
-**Commit Message**: fix(storage): 修复递归删除导致 PathLock 提前失效 (#6631)
+### Incident Patch 1: `196e5820` (2026-10-28)
+**Commit Message**: fix(plugins): read profile and memory listings from peer scope (#5246)
 
-* fix(storage): 修复递归删除导致 PathLock 提前失效
+* fix(plugins): read profile and memory listings from peer scope
 
-将目录锁迁移到父目录 sidecar，并兼容旧锁与 handoff；删除获锁后重新确认目标状态，避免并发请求沿用过期判断。
+SessionStart profile injection read `viking://user/<space>/memories/...`
+unconditionally, while capture has written to
+`viking://user/<space>/peers/<id>/memories/...` since the user/peer memory
+isolation model landed. The reader and the writer therefore never agreed on a
+path: `<user-profile>` was empty for every repository workspace, whatever was
+in the peer profile.
 
-* test(storage): 补充 PathLock 路径关系矩阵
+`actorPeerId` was already accepted by `buildProfileBlock` and already passed by
+its caller, but it only becomes the `X-OpenViking-Actor-Peer` request header.
+That header is a view filter, not a path rewrite, so it could not redirect the
+hardcoded URIs.
 
-使用共享文件系统上的独立 Manager 验证祖先、后代与兄弟路径的冲突和非冲突语义，防止 sidecar 迁移引入锁范围回归。
+Resolve each category independently, peer scope first, user scope as fallback:
 
-* fix(storage): 收敛 PathLock sidecar 迁移协议
+    const roots = [];
+    if (actorPeerId) roots.push(`.../peers/${actorPeerId}/memories`);
+    roots.push(`.../memories`);
 
-拆分 Tree 路径解析并修正根路径寻址，撤回无关的 Snapshot 行为变化，同时明确新旧锁协议的切换约束，降低迁移影响范围。
+Per category rather than per scope, because a peer that has `preferences/` or
+`entities/` but no `profile.md` would otherwise win the scope and drop the user
+profile from the block entirely - a state that occurs in practice, not ju
 
----------
-
-Co-authored-by: zhanghe.1216 <@bytedance.com>
-
-**File**: `crates/ragfs/src/lock/manager.rs` (modified, +272/-84)
+**File**: `docs/en/agent-integrations/16-capability-reference.md` (modified, +2/-2)
 ```diff
-@@ -1049,15 +1049,13 @@ impl PathLockManager {
-                         });
-                     }
-                     PathLockKind::Tree => {
--                        let lock_path = self.resolver.resolve_tree_lock_path(&request.path).await?;
-+                        let resolved = self.resolver.resolve_tree_paths(&request.path).await?;
-                         self.check_ancestor_tree_locks(&request.path, owner_id)
-                             .await?;
--                        let exact_candidates = self
--                            .resolver
--                            .resolve_exact_conflict_paths(&request.path)
-+                        self.check_lock_paths(&resolved.conflict_paths, owner_id)
-                             .await?;
--                        self.check_lock_paths(&exact_candidates, owner_id).await?;
-                         self.check_descendant_locks(&request.path, owner_id).await?;
-+                        let lock_path = resolved.acquire_lock_path;
-                         self.ensure_lock_dir(&lock_path).await.map_err(|error| {
-                             PathLockError::Io(format!("failed to create lock dir: {error}"))
-                         })?;
-@@ -1099,11 +1097,11 @@ impl PathLockManager {
-                     PathLockKind::Tree => {
-                         self.check_ancestor_tree_locks(&request.path, owner_id)
-                             .await?;
--                        let exact_candidates = self
-+                        let tree_candidates = self
-                             .resolver
--                            .resolve_exact_conflict_paths(&request.path)
-+                            .resolve_tree_conflict_paths(&request.path)
-                             .await?;
--                        self.check_lock_paths(&exact_candidates, owner_id).await?;
-+                        self.check_lock_paths(&tree_candidates, owner_id).await?;
-                         self.check_descendant_locks(&request.path, owner_id).await?;
-                     }
-                 }
-@@ -1252,37 +1250,25 @@ impl PathLockManager {
+@@ -200,7 +200,7 @@ The table shows the default path. Turning on [recall digests](#recall-digest) ch
  
-     /// Check ancestor directories for tree locks that would conflict.
-     async fn check_ancestor_tree_locks(&self, path: &str, owner_id: &str) -> PathLockResult<()> {
--        let mut current = path.to_string();
-         let now_ns = Self::now_ns();
+ ### Session-start context
  
--        loop {
--            let parent = match current.rsplit_once('/') {
--                Some((p, _)) if !p.is_empty() => p.to_string(),
--                Some(_) if current != "/" => "/".to_string(),
--                _ => break,
--            };
--
--            let ancestor_lock = if parent == "/" {
--                format!("/{}", PATH_LOCK_FILE)
--            } else {
--                format!("{}/{}", parent, PATH_LOCK_FILE)
--            };
--            if let Some(token) = self.provider.read_token(&ancestor_lock).await? {
--                // Only Tree locks propagate to descendants; an Exact lock on
--                // /a must not block /a/b.
--                if token.lock_type == PathLockKind::Tree
--                    && token.owner_id != owner_id
--                    && !self.is_stale(&token, now_ns)
--                {
--                    return Err(PathLockError::Conflict {
--                        lock_path: ancestor_lock,
--                        owner: token.owner_id,
--                        kind: token.lock_type,
--                    });
-+        for parent in LockPathResolver::ancestor_paths(path) {
-+            for ancestor_lock in self.resolver.resolve_tree_conflict_paths(&parent).await? {
-+                if let Some(token) = self.provider.read_token(&ancestor_lock).await? {
-+                    // Only Tree locks propagate to descendants; an Exact lock on
-+                    // /a must not block /a/b.
-+                    if token.lock_type == PathLockKind::Tree
-+                        && token.owner_id != owner_id
-+                        && !self.is_stale(&token, now_ns)
-+                    {
-+                        return Err(PathLockError::Conflict {
-+                            lock_path: ancestor_lock,
-+                            owner: token.owner_id,
-+                            kind: token.lock_type,
-+                        });
-+                    }
-                 }
-             }
--
--            current = parent;
-         }
-         Ok(())
-     }
-@@ -1851,17 +1837,23 @@ impl PathLockManager {
-                 }
-                 PathLockHandleMode::LockPath if legacy_handoff => {
-                     let file_name = lp.rsplit('/').next().unwrap_or("");
--                    if lp == &format!("/{}", PATH_LOCK_FILE)
-+                    if !(lp == &format!("/{}", PATH_LOCK_FILE)
-                         || lp.ends_with(&format!("/{}", PATH_LOCK_FILE))
-+                        || file_name.starts_with(EXACT_LOCK_FILE_PREFIX))
-                     {
--                        PathLockKind::Tree
--                    } else if file_name.starts_with(EXACT_LOCK_FILE_PREFIX) {
--                     
+-Integrations that use the shared plugin code inject one `<openviking-context>` block at session start. It holds the user profile (`viking://user/<space>/memories/profile.md`), an index of the `preferences/` and `entities/` memories, and an `<available-skills>` catalog:
++Integrations that use the shared plugin code inject one `<openviking-context>` block at session start. It holds the user profile (`viking://user/<space>/memories/profile.md`), an index of the `preferences/` and `entities/` memories, and an `<available-skills>` catalog. When the session has an actor peer, the same files under `viking://user/<space>/peers/<peer>/memories/` are added: the profile, preferences, and entities have no message range, so extraction writes the user's own facts to the user root even in a peer session. The user root comes first; the peer profile is a second `<user-profile>` element without the lines it shares with the user profile, and both roots share one budget:
+ 
+ ```text
+ <openviking-context source="startup">
+@@ -233,7 +233,7 @@ When each integration injects it:
+ 
+ Budgets and limits:
+ 
+-- `profileTokenBudget` (default 10,000 tokens) covers the profile and the memory index. The profile gets half. An oversized profile keeps its first 8 lines and its end; an oversized listing ends with `... +N more`. Token estimates count CJK characters as 1.5 tokens and other text as four characters per token.
++- `profileTokenBudget` (default 10,000 tokens) covers the profiles and the memory index. The profiles get half: the user profile first, the peer profile what is left, or a one-line pointer to its URI when less than 200 tokens remain. The two roots split the index budget. An oversized profile keeps its first 8 lines and its end; an oversized listing ends with `... +N more`. Token estimates count CJK characters as 1.5 tokens and other text as four characters per token.
+ - `skillCatalogTokenBudget` (default 1,200 tokens, `OPENVIKING_SKILL_CATALOG_TOKEN_BUDGET`) is a separate budget for the skill catalog. `skillCatalog` (`OPENVIKING_SKILL_CATALOG`) or a budget of 0 turns the catalog off.
+ - The catalog comes from one `GET /api/v1/skills` request. The user's own skills come first, and an account skill with the same name as a user skill is left out. Each description is cut to about 40 tokens. If descriptions do not fit, the catalog lists names only; if names do not fit, it ends with `... +N more`, or shrinks to a one-line count. Servers without that endpoint get no catalog.
+ - `sessionStartMaxBytes` caps the whole block in UTF-8 bytes: 9,500 for Claude Code and Codex, whose hosts move hook output above about 10,000 characters into a file and show only a preview; 20,000 for ZCode, which drops output above 32 KB; no cap elsewhere. Above the cap, the memory index is dropped first, then the skill catalog.
 ```
 
-**File**: `crates/ragfs/src/lock/resolver.rs` (modified, +109/-40)
+**File**: `docs/zh/agent-integrations/16-capability-reference.md` (modified, +2/-2)
 ```diff
-@@ -18,9 +18,18 @@ pub(crate) struct ResolvedExactPaths {
-     pub conflict_paths: Vec<String>,
- }
+@@ -199,7 +199,7 @@ skill 走单独的路径。创建、安装或替换 skill 用 MCP `add_skill` 
  
-+/// Tree-lock paths resolved for new writes plus legacy reads.
-+#[derive(Debug, Clone, PartialEq, Eq)]
-+pub(crate) struct ResolvedTreePaths {
-+    /// Lock path used for the actual tree token creation.
-+    pub acquire_lock_path: String,
-+    /// Paths that may contain a tree token for the same logical path.
-+    pub conflict_paths: Vec<String>,
+ ### 会话开场上下文
+ 
+-使用共享插件代码的集成会在会话开始时注入一个 `<openviking-context>` 块，包含用户 profile（`viking://user/<space>/memories/profile.md`）、`preferences/` 和 `entities/` 记忆的索引，以及 `<available-skills>` skill 清单：
++使用共享插件代码的集成会在会话开始时注入一个 `<openviking-context>` 块，包含用户 profile（`viking://user/<space>/memories/profile.md`）、`preferences/` 和 `entities/` 记忆的索引，以及 `<available-skills>` skill 清单。会话带有 actor peer 时，还会加入 `viking://user/<space>/peers/<peer>/memories/` 下的同名文件：profile、preferences 和 entities 没有消息范围，所以即使在 peer 会话中，抽取也会把用户本人的事实写到用户根目录。用户根目录在前；peer profile 是第二个 `<user-profile>` 元素，并去掉与用户 profile 相同的行；两个根目录共用同一份预算：
+ 
+ ```text
+ <openviking-context source="startup">
+@@ -232,7 +232,7 @@ skill 走单独的路径。创建、安装或替换 skill 用 MCP `add_skill` 
+ 
+ 预算与限制：
+ 
+-- `profileTokenBudget`（默认 10,000 token）覆盖 profile 和记忆索引，profile 占一半。profile 超长时保留前 8 行和结尾；清单超长时以 `... +N more` 结尾。token 估算中，CJK 字符按 1.5 token 计，其他文本按每 4 个字符 1 token 计。
++- `profileTokenBudget`（默认 10,000 token）覆盖 profile 和记忆索引，profile 占一半：先放用户 profile，peer profile 使用剩余部分，剩余不足 200 token 时只放一行指向其 URI 的提示。两个根目录分摊索引预算。profile 超长时保留前 8 行和结尾；清单超长时以 `... +N more` 结尾。token 估算中，CJK 字符按 1.5 token 计，其他文本按每 4 个字符 1 token 计。
+ - `skillCatalogTokenBudget`（默认 1,200 token，`OPENVIKING_SKILL_CATALOG_TOKEN_BUDGET`）是 skill 清单的独立预算。`skillCatalog`（`OPENVIKING_SKILL_CATALOG`）或把预算设为 0 都会关闭清单。
+ - 清单来自一次 `GET /api/v1/skills` 请求。用户自己的 skill 排在前面，与用户 skill 同名的账户 skill 不再列出。每条描述截到约 40 token。描述放不下时只列名称；名称也放不下时以 `... +N more` 结尾，或缩成一行数量。服务端没有该接口时不注入清单。
+ - `sessionStartMaxBytes` 按 UTF-8 字节限制整个块：Claude Code 和 Codex 为 9,500，因为这两个宿主会把超过约 10,000 字符的 hook 输出存成文件，只显示预览；ZCode 为 20,000，因为它会丢弃超过 32 KB 的输出；其他集成不设上限。超出上限时，先去掉记忆索引，再去掉 skill 清单。
+```
+
+**File**: `examples/agent-hook-plugin/hosts/codebuddy/plugin.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "openviking-memory",
+-  "version": "0.5.26",
++  "version": "0.5.27",
+   "description": "Long-term semantic memory for the CodeBuddy Code CLI, powered by OpenViking. Injects relevant context at session start and on each prompt, and captures the conversation back into OpenViking.",
+   "author": {
+     "name": "OpenViking",
+```
+
+**File**: `examples/agent-hook-plugin/hosts/cursor/openviking.integration.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "schemaVersion": 1,
+   "id": "openviking-memory",
+-  "version": "0.5.26",
++  "version": "0.5.27",
+   "clients": [
+     "cursor"
+   ],
+```
+
+**File**: `examples/agent-hook-plugin/hosts/kimicode/kimi.plugin.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "openviking-memory",
+-  "version": "0.5.26",
++  "version": "0.5.27",
+   "description": "Long-term semantic memory for Kimi Code CLI, powered by OpenViking.",
+   "author": {
+     "name": "OpenViking",
+```
+
+**File**: `examples/agent-hook-plugin/hosts/kimicode/openviking.integration.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "schemaVersion": 1,
+   "id": "openviking-memory",
+-  "version": "0.5.26",
++  "version": "0.5.27",
+   "clients": [
+     "kimicode"
+   ],
+```
+
+**File**: `examples/agent-hook-plugin/hosts/trae/openviking.integration.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "schemaVersion": 1,
+   "id": "openviking-memory",
+-  "version": "0.5.26",
++  "version": "0.5.27",
+   "clients": [
+     "trae",
+     "trae-cn"
+```
+
+**File**: `examples/agent-hook-plugin/hosts/zcode/openviking.integration.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "schemaVersion": 1,
+   "id": "openviking-memory",
+-  "version": "0.5.26",
++  "version": "0.5.27",
+   "clients": [
+     "zcode"
+   ],
+```
+
+---
+
+### Incident Patch 2: `4adcab74` (2026-10-28)
+**Commit Message**: fix(pathlock): revoke lease authorization after token loss (#6704)
+
+* fix(pathlock): revoke lease authorization after token loss
+
+Track per-token confirmation deadlines for explicit and background renewal, preserve release capabilities after invalidation, and bound cleanup retries to prevent stale authorization and registry growth.
+
+* test(pathlock): cover Redis renewal timeout and network recovery
+
+Delay real Redis replies through a local TCP proxy to exercise the 20ms command timeout, retain lease authorization during a short interruption, and verify renewal and file writes recover afterwards.
+
+* feat(pathlock): distinguish lease invalidation causes for diagnostics
+
+Retain the first invalidation reason and timestamp through cleanup, and expose cause-specific log context with regression coverage and bilingual documentation.
+
+**File**: `crates/ragfs-python/src/lib.rs` (modified, +2/-2)
+```diff
+@@ -2834,7 +2834,7 @@ impl RAGFSBindingClient {
+             let ownership = ownership_ref.clone();
+             async move {
+                 let lease = mgr
+-                    .get_owned_lease_by_capability(&lr, &ownership)
++                    .get_releasable_lease_by_capability(&lr, &ownership)
+                     .await
+                     .ok_or_else(|| {
+                         PathLockError::InvalidRequest(format!(
+@@ -2867,7 +2867,7 @@ impl RAGFSBindingClient {
+             let paths = lock_paths.clone();
+             async move {
+                 let lease = mgr
+-                    .get_owned_lease_by_capability(&lr, &ownership)
++                    .get_releasable_lease_by_capability(&lr, &ownership)
+                     .await
+                     .ok_or_else(|| {
+                         PathLockError::InvalidRequest(format!(
+```
+
+**File**: `crates/ragfs/src/lock/lost_lease_tests.rs` (added, +1031/-0)
+```diff
+@@ -0,0 +1,1031 @@
++//! Lost lease authorization, renewal deadlines, and bounded cleanup regressions.
++use super::*;
++use crate::core::{FsContextInner, PathLockContext, WriteFlag, FS_CTX};
++use crate::lock::provider::{FilesystemPathLockProvider, MemoryPathLockProvider};
++use crate::lock::wrapper::PathLockWrappedFS;
++use crate::plugins::memfs::MemFileSystem;
++use async_trait::async_trait;
++use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
++
++struct FaultProvider {
++    inner: Arc<dyn PathLockProvider>,
++    /// false: definite loss; true: uncertain transport failure.
++    failures: StdMutex<HashMap<String, bool>>,
++    fail_remove: AtomicBool,
++    refresh_calls: AtomicUsize,
++    remove_calls: AtomicUsize,
++    delay: Duration,
 +}
 +
- /// Computes lock-file paths for exact and tree locks.
- pub struct LockPathResolver {
--    /// Filesystem used for `stat` calls to determine is_dir.
-+    /// Filesystem retained for lock-directory creation and compatibility checks.
-     pub(crate) fs: Arc<dyn FileSystem>,
- }
- 
-@@ -32,17 +41,13 @@ impl LockPathResolver {
- 
-     /// Compute exact lock paths for `path`.
-     ///
--    /// - Existing directory → `{path}/.path.ovlock`
--    /// - File or non-existent path → `{parent}/.exact.ovlock.<safe_name>.<sha1-prefix>`
-+    /// All paths use a parent sidecar so deleting a directory cannot delete its own token.
-     pub async fn resolve_exact_lock_paths(&self, path: &str) -> PathLockResult<Vec<String>> {
-         Ok(vec![self.resolve_exact_lock_path(path).await?])
-     }
- 
-     /// Compute every lock-file path that can represent an exact lock for conflict checks.
--    pub async fn resolve_exact_conflict_paths(
--        &self,
--        path: &str,
--    ) -> PathLockResult<Vec<String>> {
-+    pub async fn resolve_exact_conflict_paths(&self, path: &str) -> PathLockResult<Vec<String>> {
-         Ok(self.resolve_exact_paths(path).await?.conflict_paths)
-     }
- 
-@@ -51,37 +56,54 @@ impl LockPathResolver {
-         Ok(self.resolve_exact_paths(path).await?.acquire_lock_path)
-     }
- 
--    /// Resolve the exact acquire path and its conservative conflict set using one `stat`.
--    pub(crate) async fn resolve_exact_paths(&self, path: &str) -> PathLockResult<ResolvedExactPaths> {
--        let stat_result = self.fs.stat(path).await;
--        let acquire_lock_path = match stat_result {
--            Ok(info) if info.is_dir => path_lock_path(path),
--            _ => prefixed_exact_lock_path(path),
--        };
--        let conflict_paths = if acquire_lock_path == path_lock_path(path) {
--            vec![acquire_lock_path.clone(), prefixed_exact_lock_path(path)]
--        } else {
--            vec![acquire_lock_path.clone(), path_lock_path(path)]
--        };
-+    /// Resolve the sidecar acquire path and include the legacy in-directory token for conflicts.
-+    pub(crate) async fn resolve_exact_paths(
++impl FaultProvider {
++    fn new(inner: Arc<dyn PathLockProvider>) -> Self {
++        Self {
++            inner,
++            failures: StdMutex::new(HashMap::new()),
++            fail_remove: AtomicBool::new(false),
++            refresh_calls: AtomicUsize::new(0),
++            remove_calls: AtomicUsize::new(0),
++            delay: Duration::ZERO,
++        }
++    }
++}
++
++#[async_trait]
++impl PathLockProvider for FaultProvider {
++    fn name(&self) -> &'static str {
++        "fault-injection"
++    }
++    fn handle_mode(&self) -> PathLockHandleMode {
++        self.inner.handle_mode()
++    }
++    async fn try_acquire_batch_atomic(
++        &self,
++        requests: &[PathLockRequest],
++        owner: &str,
++        now: u128,
++        stale: u128,
++    ) -> PathLockResult<Option<Vec<AtomicAcquisition>>> {
++        self.inner
++            .try_acquire_batch_atomic(requests, owner, now, stale)
++            .await
++    }
++    async fn read_token(&self, path: &str) -> PathLockResult<Option<LockToken>> {
++        self.inner.read_token(path).await
++    }
++    async fn try_create_token(&self, path: &str, token: &LockToken) -> PathLockResult<()> {
++        self.inner.try_create_token(path, token).await
++    }
++    async fn compare_and_write_token(
 +        &self,
 +        path: &str,
-+    ) -> PathLockResult<ResolvedExactPaths> {
-+        let acquire_lock_path = prefixed_exact_lock_path(path);
-+        let conflict_paths = vec![acquire_lock_path.clone(), path_lock_path(path)];
-         Ok(ResolvedExactPaths {
-             acquire_lock_path,
-             conflict_paths,
-         })
-     }
++        expected: &LockToken,
++        replacement: &LockToken,
++    ) -> PathLockResult<bool> {
++        self.inner
++            .compare_and_write_token(path, expected, replacement)
++            .await
++    }
++    async fn refresh_token(&self, path: &str, owner: &str, now: u128) -> PathLockResult<bool> {
++        self.refresh_calls.fetch_add(1, Ordering::SeqCst);
++        if !self.delay.is_zero() {
++            tokio::time::sleep(self.delay).await;
++        }
++        let fault = self.failures.lock().unwrap().get(path).copied();
++        match fault {
++            Some(true) => Err(PathLockError::Io("injected refresh timeout".into())),
++            Some(false) => Ok(false),
++            None => self.inner.refresh_token(path, owner, now).await,
++        }
++    }
++    async fn remove_token(&self, path: &str, owner: &str, force: bool) -> PathLockResult<bool> {
++        assert!(!force, "cleanup must use ownership CAS");
++        self.remove_calls.fetch_add(1, Ordering::SeqCst);
++        if self.fail_remove.load(Ordering::SeqCst) {
++            Err(PathLockError::Io("injected cleanup timeout".into()))
++        } else {
++            self.inner.remove_token(path, owner, force).await
++        }
++    }
++    async fn scan_descendant_locks(&self, root: &str) -> PathLockResult<Vec<String>> {
++        self.inner.scan_descendant_locks(root).await
++    }
++}
++
++async fn fixture() -> (PathLockManager, Arc<FaultProvider>) {
++    let fs = Arc::new(MemFileSystem::new());
++    fs.mkdir("/data", 0o755).await.unwrap();
++    let provider = Arc::new(FaultProvider::new(Arc::new(MemoryPathLockProvider::new())));
++    let manager = PathLockManager::new(fs, provider.clone(), PathLockConfig::default());
++    (manager, provider)
++}
++
++fn capability(lease: &OwnedPathLockLease) -> Option<(&str, &str)> {
++    Some((&lease.lease.lease_ref, &lease.ownership_ref))
++}
++
++async fn age_token(
++    manager: &PathLockManager,
++    lease: &OwnedPathLockLease,
++    path: &str,
++    age: Duration,
++) {
++    let owner = manager
++        .lease_registry
++        .resolve(&lease.lease.lease_ref)
++        .unwrap();
++    owner
++        .registry
++        .lock()
++        .await
++        .token_health
++        .get_mut(path)
++        .unwrap()
++        .last_confirmed_at = Instant::now() - age;
++}
++
++async fn lease_invalidation(
++    manager: &PathLockManager,
++    lease: &OwnedPathLockLease,
++) -> LeaseInvalidation {
++    let owner = manager
++        .lease_registry
++        .resolve(&lease.lease.lease_ref)
++        .unwrap();
++    let registry = owner.registry.lock().await;
++    registry.entries[&lease.lease.lease_ref]
++        .invalidation
++        .unwrap()
++}
++
++#[tokio::test]
++async fn loss_invalidates_whole_leases_sharing_tokens_but_not_exact_descendants() {
++    let (manager, provider) = fixture().await;
++    let tree = manager
++        .acquire_tree("/data", Duration::ZERO, None)
++        .await
++        .unwrap();
++    let shared = ma
+```
+
+**File**: `crates/ragfs/src/lock/manager.rs` (modified, +438/-184)
+```diff
+@@ -62,6 +62,10 @@ const MAX_POLL_INTERVAL_MS: u64 = 500;
+ const POLL_BACKOFF_NUMERATOR: u64 = 3;
+ const POLL_BACKOFF_DENOMINATOR: u64 = 2;
+ const POLL_JITTER_PERCENT: u64 = 20;
++/// Revoke authorization before the provider's expiry, leaving a safety margin.
++const LEASE_VALIDITY_RATIO: f64 = 0.8;
++/// Retry invalidated cleanup for six heartbeat intervals, then forget locally.
++const CLEANUP_RETRY_INTERVALS: f64 = 6.0;
  
--    /// Compute the tree lock path for `path`.
--    ///
--    /// - Regular directory or missing path → `{path}/.path.ovlock`
--    /// - Existing file path → parent directory sidecar
-+    /// Compute every lock-file path that can represent a tree lock.
-+    pub async fn resolve_tree_conflict_paths(&self, path: &str) -> PathLockResult<Vec<String>> {
-+        Ok(self.resolve_tree_paths(path).await?.conflict_paths)
+ impl PathLockManager {
+     fn poll_interval_bounds(attempt: u32) -> (u64, u64) {
+@@ -117,6 +121,45 @@ struct LeaseEntry {
+     pending_handoff: bool,
+     lock_kinds: HashMap<String, PathLockKind>,
+     last_active_at: Instant,
++    /// Irreversible; retain the capability and references until cleanup finishes.
++    invalidation: Option<LeaseInvalidation>,
++}
++
++/// The first irreversible authorization revocation, retained through cleanup.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++struct LeaseInvalidation {
++    at: Instant,
++    reason: InvalidationReason,
++}
++
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++enum InvalidationReason {
++    TokenLost,
++    ConfirmationDeadlineExceeded,
++    ReleaseFailed,
++}
++
++impl LeaseEntry {
++    /// Keep the first cause and timestamp, including during cleanup retries.
++    fn invalidate(&mut self, at: Instant, reason: InvalidationReason, paths: &[&str]) {
++        if self.invalidation.is_some() {
++            return;
++        }
++        self.invalidation = Some(LeaseInvalidation { at, reason });
++        warn!(
++            lease_ref = %self.lease.lease_ref,
++            owner_id = %self.lease.owner_id,
++            ?reason,
++            affected_paths = ?paths,
++            "pathlock lease invalidated"
++        );
 +    }
++}
 +
-+    /// Compute the primary lock-file path used when acquiring one tree lock.
-     pub async fn resolve_tree_lock_path(&self, path: &str) -> PathLockResult<String> {
--        let stat_result = self.fs.stat(path).await;
--        match stat_result {
--            Ok(info) if !info.is_dir => {
--                // Existing file: use parent sidecar to avoid `{file}/.path.ovlock`.
--                Ok(prefixed_exact_lock_path(path))
--            }
--            _ => Ok(path_lock_path(path)),
-+        Ok(self.resolve_tree_paths(path).await?.acquire_lock_path)
-+    }
-+
-+    /// Resolve the shared sidecar acquire path and include the legacy tree token for reads.
-+    pub(crate) async fn resolve_tree_paths(&self, path: &str) -> PathLockResult<ResolvedTreePaths> {
-+        let acquire_lock_path = prefixed_exact_lock_path(path);
-+        let conflict_paths = vec![acquire_lock_path.clone(), path_lock_path(path)];
-+        Ok(ResolvedTreePaths {
-+            acquire_lock_path,
-+            conflict_paths,
-+        })
-+    }
-+
-+    /// Return every ancestor path from nearest parent to root.
-+    pub(crate) fn ancestor_paths(path: &str) -> Vec<String> {
-+        let mut current = path.to_string();
-+        let mut ancestors = Vec::new();
-+
-+        loop {
-+            let parent = match current.rsplit_once('/') {
-+                Some((p, _)) if !p.is_empty() => p.to_string(),
-+                Some(_) if current != "/" => "/".to_string(),
-+                _ => break,
-+            };
-+            ancestors.push(parent.clone());
-+            current = parent;
-         }
-+        ancestors
-     }
++#[derive(Debug)]
++struct TokenHealth {
++    last_confirmed_at: Instant,
++    consecutive_failures: u64,
  }
  
-@@ -93,13 +115,17 @@ fn path_lock_path(path: &
-```
-
-**File**: `docs/en/concepts/09-transaction.md` (modified, +23/-12)
-```diff
-@@ -242,17 +242,17 @@ Locks coordinate participating operations. The low-level `PathLockWrappedFS` use
- 
- ### Filesystem Provider Lock Protocol
- 
--The caller chooses the lock type; the resolver chooses the token location from the target's state:
-+The caller chooses the lock type. The filesystem provider uses a parent sidecar for every target:
- 
- | Target state | Exact token | Tree token |
- | --- | --- | --- |
- | Existing file `/docs/a` | `/docs/.exact.ovlock.a.<hash>`, containing E | Same sidecar, containing T |
--| Existing directory `/docs/a` | `/docs/a/.path.ovlock`, containing E | Same file inside the directory, containing T |
--| Missing `/docs/a` | Parent sidecar, containing E | Create the target directory, then write `.path.ovlock` inside it, containing T |
-+| Existing directory `/docs/a` | `/docs/.exact.ovlock.a.<hash>`, containing E | Same sidecar, containing T |
-+| Missing `/docs/a` | `/docs/.exact.ovlock.a.<hash>`, containing E | Same sidecar, containing T |
- 
--A sidecar sits beside its target but represents only that target, not its parent directory. `<hash>` is a SHA-1 prefix of the full backend path, not the business file's contents.
-+A sidecar sits beside its target but represents only that target, not its parent directory. Recursively deleting the target does not delete the token in its parent, so mutual exclusion remains active until the lease is formally released. `<hash>` is a SHA-1 prefix of the full backend path, not the business file's contents.
- 
--`.exact.ovlock.*` can contain a Tree token, and `.path.ovlock` can contain an Exact token. Filenames are part of the storage protocol, but do not alone identify the logical lock type. Token contents are:
-+`.exact.ovlock.*` stores E or T according to the logical lock type. For compatibility with tokens left by older versions, conflict checks still read `.path.ovlock` inside the target, but new locks are no longer written there. Filenames are part of the storage protocol, but do not alone identify the logical lock type. Token contents are:
- 
- ```text
- {owner_id}:{time_ns}:{lock_type}
-@@ -262,6 +262,17 @@ A sidecar sits beside its target but represents only that target, not its parent
- 
- A lease records logical scope in `covered_paths` separately from token locations in `lock_paths`. An owned lease controls refresh, release, and handoff. A borrowed lease proves coverage by an existing lock without permission to release the outer lock.
- 
-+#### Protocol Migration and Deployment
-+
-+The new version reads both the new sidecar and the legacy `.path.ovlock`, but writes new tokens only to the sidecar. Existing leases are not migrated in place: refresh, release, and handoff continue to use the legacy `lock_paths` recorded by the lease until those tokens are released or expire.
-+
-+Old versions do not inspect new ancestor sidecars, so filesystem-provider instances of different protocol versions must not process writes against the same backend concurrently. The current version requires a coordinated cutover:
-+
-+1. Stop new writes, wait for active leases and pending handoffs to drain, then stop every old instance.
-+2. Start all new instances, confirm legacy tokens were released or can be reclaimed by expiry, then resume writes.
-+
-+A zero-downtime rolling deployment requires two independently deployable protocol stages: first deploy a compatibility version that reads both formats but still writes legacy tokens; after every instance is upgraded, switch all instances to reading both formats and writing only new sidecars. There must be no interval where an old instance can encounter a new sidecar.
-+
- ### Cache Provider Lock Protocol
- 
- The cache provider stores the same token format in Redis HASH fields. It uses
-@@ -321,8 +332,8 @@ loop until timeout (poll interval: 200ms):
-        - Missing target directory? -> treat as no descendant locks
-        - Stale lock? -> remove and retry
-        - Active lock? -> wait
--    4. Ensure the resolved token parent exists; this creates a missing target as a directory
--    5. Write the TREE (T) token (sidecar for an existing file, internal .path.ovlock otherwise)
-+    4. Ensure the resolved sidecar parent exists; do not create the missing target itself
-+    5. Write the TREE (T) token to the parent sidecar
-     6. TOCTOU double-check: re-scan descendants and ancestors
-        - Conflict found: compare (timestamp, handle_id)
-        - Later one (larger timestamp/handle_id) backs off (removes own lock) to prevent livelock
-@@ -335,17 +346,17 @@ Timeout (default 0 = no-wait) raises LockAcquisitionError
- 
- ### Missing Directory Creation
- 
--The lock system may create directories so it can place lock files, but it checks
--for conflicts first:
-+The lock system may create a missing parent chain so it can place a sidecar,
-+but it does not create the locked target itself. It checks for conflicts first:
- 
- ```
--1. Ancestor TreeLock / same-path lock / descendant lock conflict -> do not create the directory
--2. No current conflict -> create
-```
-
-**File**: `docs/zh/concepts/09-transaction.md` (modified, +22/-12)
-```diff
-@@ -239,17 +239,17 @@ Exact 和 Tree 表达操作范围，文件、目录或缺失路径表达目标
- 
- ### Filesystem Provider 锁协议
- 
--锁类型由调用者选择，Resolver 根据目标状态决定 token 位置：
-+锁类型由调用者选择。Filesystem Provider 对所有目标统一使用父目录 sidecar：
- 
- | 目标状态 | Exact token | Tree token |
- | --- | --- | --- |
- | 现存文件 `/docs/a` | `/docs/.exact.ovlock.a.<hash>`，内容为 E | 同一 sidecar，内容为 T |
--| 现存目录 `/docs/a` | `/docs/a/.path.ovlock`，内容为 E | 同一目录内文件，内容为 T |
--| 缺失路径 `/docs/a` | 父目录 sidecar，内容为 E | 创建目标目录后写内部 `.path.ovlock`，内容为 T |
-+| 现存目录 `/docs/a` | `/docs/.exact.ovlock.a.<hash>`，内容为 E | 同一 sidecar，内容为 T |
-+| 缺失路径 `/docs/a` | `/docs/.exact.ovlock.a.<hash>`，内容为 E | 同一 sidecar，内容为 T |
- 
--sidecar 位于目标旁边，但只代表该目标，不会锁住整个父目录。`<hash>` 来自完整后端路径的 SHA-1 前缀，与业务文件内容无关。
-+sidecar 位于目标旁边，但只代表该目标，不会锁住整个父目录。递归删除目标时不会删除位于父目录中的 token，因此锁的互斥保护会持续到 lease 正式释放。`<hash>` 来自完整后端路径的 SHA-1 前缀，与业务文件内容无关。
- 
--`.exact.ovlock.*` 可以存 Tree token，`.path.ovlock` 也可以存 Exact token。文件名是存储协议的一部分，不能单凭名字判断逻辑锁类型。token 内容为：
-+`.exact.ovlock.*` 根据实际锁类型存储 E 或 T。为兼容升级前遗留 token，冲突检测仍读取目标内部的 `.path.ovlock`，但新锁不再写入该位置。文件名是存储协议的一部分，不能单凭名字判断逻辑锁类型。token 内容为：
- 
- ```text
- {owner_id}:{time_ns}:{lock_type}
-@@ -259,6 +259,17 @@ sidecar 位于目标旁边，但只代表该目标，不会锁住整个父目录
- 
- lease 将逻辑范围 `covered_paths` 与 token 位置 `lock_paths` 分开记录。Owned lease 控制续期、释放和交接；Borrowed lease 仅提供已有锁的覆盖证明，不能释放外层锁。
- 
-+#### 协议迁移与发布
-+
-+新版本对新 sidecar 和旧 `.path.ovlock` 执行双读，但只向新 sidecar 写入 token。升级前已存在的 lease 不做原地迁移：续期、释放和交接继续使用 lease 中记录的旧 `lock_paths`，直到旧 token 正常释放或过期。
-+
-+旧版本不会检查祖先路径的新 sidecar，因此 Filesystem Provider 不能让新旧版本在同一后端上同时处理写请求。当前版本采用协调切换：
-+
-+1. 停止新的写请求，等待活跃 lease 和待交接任务排空，然后停止所有旧实例。
-+2. 全量启动新版本实例，确认旧 token 已释放或可按过期规则回收，再恢复写流量。
-+
-+如果部署必须保持零停机滚动升级，需要拆成两个可独立发布的协议阶段：先发布“新旧双读、仍写旧 token”的兼容版本；全部实例升级后，再统一切换为“新旧双读、只写新 sidecar”。两个阶段之间不得存在旧实例读取新 sidecar 的窗口。
-+
- ### Cache Provider 锁协议
- 
- Cache Provider 将相同 token 格式存入 Redis HASH field，并通过 Lua
-@@ -318,8 +329,8 @@ HASH。跨 scope batch 会被拒绝。
-        - 目标目录不存在？ -> 视为无后代锁
-        - 陈旧锁？ -> 移除后重试
-        - 活跃锁？ -> 等待
--    4. 确保 Resolver 选定的 token 父目录存在；缺失目标会因此被创建成目录
--    5. 写入 TREE (T) token（现存文件用 sidecar，其余用内部 .path.ovlock）
-+    4. 确保 Resolver 选定的 sidecar 父目录存在；不会创建缺失目标本身
-+    5. 在父目录 sidecar 写入 TREE (T) token
-     6. TOCTOU 双重检查：重新扫描后代目录和祖先目录
-        - 发现冲突：比较 (timestamp, handle_id)
-        - 后到者（更大的 timestamp/handle_id）主动让步（删除自己的锁），防止活锁
-@@ -332,11 +343,11 @@ HASH。跨 scope batch 会被拒绝。
- 
- ### 缺失目录创建规则
- 
--锁系统允许为了放置锁文件而创建目录，但创建前必须先检查冲突：
-+锁系统允许为了放置 sidecar 而创建缺失的父目录链，但不会创建被锁目标本身。创建前必须先检查冲突：
- 
- ```
- 1. 发现祖先 TreeLock / 同路径锁 / 后代锁冲突 -> 不创建目录，直接失败或等待
--2. 当前无冲突 -> 可以创建目录并写锁
-+2. 当前无冲突 -> 可以创建 sidecar 的父目录并写锁
- 3. 写锁后再次检查时发现新冲突 -> 删除自己的锁并失败或重试
- 4. 第 3 步不会回滚刚创建的空目录
- ```
-@@ -353,10 +364,9 @@ HASH。跨 scope batch 会被拒绝。
- ```
- 
- 如果两个请求同时创建 `java-guide`，两边都可能先看到“当前无冲突”，但最终只有
--fencing token 校验通过的一方成功持有 `TreeLock(java-guide)`；失败方会删除自己的锁，
--已创建出来的空目录可以保留。
-+fencing token 校验通过的一方成功持有 `TreeLock(java-guide)`；失败方会删除自己的锁。
- 
--获取失败的回滚和正常释放只清理 token，不保证删除为存放 token 创建的目录。Exact sidecar 也可能创建缺失的父目录链。Snapshot 对缺失目标采用单独的策略，见 [快照的范围与并发](../guides/15-snapshot.md#提交范围与并发)。
-+获取失败的回滚和正常释放只清理 token，不保证删除为存放 sidecar 创建的父目录链。Snapshot 对缺失目标采用单独的策略，见 [快照的范围与并发](../guides/15-snapshot.md#提交范围与并发)。
- 
- ### 锁过期清理
- 
-```
-
-**File**: `openviking/storage/viking_fs/_ops.py` (modified, +24/-10)
-```diff
-@@ -268,6 +268,18 @@ async def _estimate_deleted_count(target_path: str, real_ctx: RequestContext) ->
-                 logger.warning(f"[VikingFS] Failed to count nodes before delete: {e}")
-                 return 0
- 
-+        async def _finish_missing_delete() -> Dict[str, Any]:
-+            """Clean orphan index records for an idempotent delete."""
-+            if no_vector:
-+                return {"estimated_deleted_count": 0}
-+            uris_to_delete = await self._collect_uris(path, recursive, ctx=ctx)
-+            uris_to_delete.append(target_uri)
-+            real_ctx = self._ctx_or_default(ctx)
-+            estimated_count = await _estimate_deleted_count(path, real_ctx)
-+            await self._delete_from_vector_store(uris_to_delete, ctx=ctx)
-+            logger.info(f"[VikingFS] rm target not found, cleaned orphan index: {uri}")
-+            return {"estimated_deleted_count": estimated_count}
-+
-         # Check existence and determine lock strategy
-         try:
-             stat = await self._async_agfs.stat(path)
-@@ -280,16 +292,7 @@ async def _estimate_deleted_count(target_path: str, real_ctx: RequestContext) ->
-                 raise
-             if recursive:
-                 await self._ensure_access(target_uri, ctx, action=AclAction.MANAGE)
--            if no_vector:
--                return {"estimated_deleted_count": 0}
--            # Path does not exist: clean up any orphan index records and return
--            uris_to_delete = await self._collect_uris(path, recursive, ctx=ctx)
--            uris_to_delete.append(target_uri)
--            real_ctx = self._ctx_or_default(ctx)
--            estimated_count = await _estimate_deleted_count(path, real_ctx)
--            await self._delete_from_vector_store(uris_to_delete, ctx=ctx)
--            logger.info(f"[VikingFS] rm target not found, cleaned orphan index: {uri}")
--            return {"estimated_deleted_count": estimated_count}
-+            return await _finish_missing_delete()
- 
-         if is_dir:
-             await self._ensure_access(target_uri, ctx, action=AclAction.MANAGE)
-@@ -315,6 +318,17 @@ async def _estimate_deleted_count(target_path: str, real_ctx: RequestContext) ->
-                 raise ResourceBusyError(f"Resource is being processed: {uri}", uri=uri)
- 
-         try:
-+            if lease_ref is None and lease is not None:
-+                try:
-+                    await self._async_agfs.stat(path)
-+                except Exception as exc:
-+                    if is_not_found_error(exc):
-+                        return await _finish_missing_delete()
-+                    mapped = map_exception(exc, resource=uri)
-+                    if mapped is not None:
-+                        raise mapped from exc
-+                    raise
-+
-             check_descendant_acl = (
-                 is_dir
-                 and (not no_vector or is_acl_uri(target_uri))
-```
-
-**File**: `tests/storage/test_session_delete_storage.py` (modified, +14/-0)
-```diff
-@@ -139,6 +139,20 @@ async def test_session_rm_releases_its_tree_lease_when_backend_delete_fails(stor
-     assert storage.agfs.rm.await_args.kwargs["fs_ctx"]["lease_ref"] == "delete-lease"
- 
- 
-+async def test_session_rm_rechecks_existence_after_waiting_for_tree_lock(storage):
-+    storage.agfs.stat.side_effect = [
-+        {"isDir": True},
-+        FileNotFoundError(SESSION_PATH),
-+    ]
-+
-+    result = await storage.fs.rm(SESSION_URI, recursive=True, ctx=storage.ctx, no_vector=True)
-+
-+    assert result == {"estimated_deleted_count": 0}
-+    storage.agfs.pathlock_acquire_tree.assert_awaited_once_with(SESSION_PATH)
-+    storage.agfs.rm.assert_not_awaited()
-+    storage.agfs.pathlock_release.assert_awaited_once_with(storage.lease)
-+
-+
- async def test_session_rm_reuses_outer_lease_without_releasing_it(storage):
-     outer_lease = {"lease_ref": "outer-lease"}
- 
-```
-
----
-
-### Incident Patch 2: `54d4c0fa` (2026-10-27)
-**Commit Message**: fix(pathlock): prevent path aliases from bypassing locks (#6687)
-
-Share logical path validation across acquisition, lease coverage, Redis, and SQLite, and reject ambiguous Lua batch paths before mutation.
-
-**File**: `crates/ragfs/src/lock/cache_provder.rs` (modified, +204/-3)
-```diff
-@@ -12,6 +12,7 @@ use crate::cache_runtime::{
- };
- 
- use super::codec::LockTokenCodec;
-+use super::path::validate_normalized_logical_path;
- use super::provider::{
-     AcquisitionChange, AtomicAcquisition, AtomicAcquisitionResult, PathLockHandleMode,
-     PathLockProvider,
-@@ -79,6 +80,21 @@ local function decode_token(raw)
-     end
-     return { owner = token_owner, time_ns = time_ns, kind = kind }
- end
-+local function is_normalized_path(path)
-+    if not path or string.sub(path, 1, 1) ~= "/"
-+        or (path ~= "/" and string.sub(path, -1) == "/")
-+        or string.find(path, "//", 1, true)
-+        or string.find(path, string.char(0), 1, true) then
-+        return false
-+    end
-+    for part in string.gmatch(path, "[^/]+") do
-+        if part == "." or part == ".." then
-+            return false
-+        end
-+    end
-+    return true
-+end
-+
- local function ancestors(path)
-     local result = {}
-     if path == "/" then
-@@ -127,9 +143,7 @@ local includes_tree = false
- for index = 5, #ARGV, 2 do
-     local path = ARGV[index]
-     local kind = ARGV[index + 1]
--    if not path or string.sub(path, 1, 1) ~= "/"
--        or (path ~= "/" and string.sub(path, -1) == "/")
--        or (kind ~= "E" and kind ~= "T") then
-+    if not is_normalized_path(path) or (kind ~= "E" and kind ~= "T") then
-         return { "invalid_request", "invalid path or lock kind" }
-     end
-     table.insert(requests, { path = path, kind = kind })
-@@ -535,6 +549,7 @@ impl RedisPathLockProvider {
- 
-     /// Return the Redis HASH key responsible for one logical path.
-     fn tokens_key_for_path(&self, path: &str) -> PathLockResult<String> {
-+        validate_normalized_logical_path(path)?;
-         let suffix = if path == "/" || path == "/local" {
-             "global".to_string()
-         } else {
-@@ -1188,6 +1203,7 @@ mod tests {
-     use crate::cache_runtime::{
-         CacheRuntime, RedisProviderConfig, ScriptDefinition, ScriptRequest, ScriptValue,
-     };
-+    use crate::core::FileSystem;
-     use crate::plugins::memfs::MemFileSystem;
- 
-     use super::super::manager::{PathLockConfig, PathLockManager};
-@@ -1532,6 +1548,191 @@ return redis.call("HGET", KEYS[1], ARGV[2])
-         runtime.close().await.unwrap();
-     }
- 
-+    /// Real filesystem aliases must not bypass another manager's Redis Exact lock.
-+    #[tokio::test]
-+    async fn redis_path_aliases_cannot_write_a_locked_file() {
-+        let Some((runtime, provider)) = test_provider("path-alias-write").await else {
-+            return;
-+        };
-+        let dir = tempfile::TempDir::new().unwrap();
-+        let fs = Arc::new(
-+            crate::plugins::localfs::LocalFileSystem::new(dir.path().to_str().unwrap()).unwrap(),
-+        );
-+        let path = "/local/account-a/file";
-+        std::fs::create_dir_all(dir.path().join("local/account-a")).unwrap();
-+        fs.write(path, b"original", 0, crate::core::WriteFlag::Create)
-+            .await
-+            .unwrap();
-+        let second_provider =
-+            RedisPathLockProvider::new(runtime.clone(), &provider.service_name, 1.0).unwrap();
-+        let config = PathLockConfig {
-+            lock_expire_secs: 1.0,
-+            ..PathLockConfig::default()
-+        };
-+        let first = PathLockManager::new(fs.clone(), Arc::new(provider), config.clone());
-+        let second = Arc::new(PathLockManager::new(
-+            fs.clone(),
-+            Arc::new(second_provider),
-+            config,
-+        ));
-+        let wrapped = crate::lock::PathLockWrappedFS::new(second, fs.clone());
-+        let lease = first
-+            .acquire_exact(path, Duration::ZERO, None)
-+            .await
-+            .unwrap();
-+
-+        assert!(matches!(
-+            wrapped
-+                .write(path, b"modified", 0, crate::core::WriteFlag::Truncate)
-+                .await,
-+            Err(crate::core::Error::PathLock(PathLockError::Timeout { .. }))
-+        ));
-+        for alias in [
-+            "/local/account-a/./file",
-+            "/local/account-a//file",
-+            "/local/./account-a/file",
-+        ] {
-+            assert_eq!(fs.read(alias, 0, 100).await.unwrap(), b"original");
-+            assert!(
-+                wrapped
-+                    .write(alias, b"modified", 0, crate::core::WriteFlag::Truncate)
-+                    .await
-+                    .is_err(),
-+                "write through alias {alias} bypassed the lock"
-+            );
-+            assert_eq!(fs.read(path, 0, 100).await.unwrap(), b"original");
-+        }
-+        first.release(&lease).await.unwrap();
-+        wrapped
-+            .write(path, b"modified", 0, crate::core::WriteFlag::Truncate)
-+            .await
-+            .unwrap();
-+        assert_eq!(fs.read(path, 0, 100).await.unwrap(), b"modified");
-+        runtime.close().await.unwrap();
-+    }
-+
-+    /// Lua validates the entire batch before writing any target or cleaning stale tokens.
-+    #[tokio::test]
-+    async fn redis_lua_rejects_path_aliases_before_mutation() {
-+        let Some(
-```
-
-**File**: `crates/ragfs/src/lock/manager.rs` (modified, +20/-20)
-```diff
-@@ -17,6 +17,7 @@ use crate::core::internal_names::{EXACT_LOCK_FILE_PREFIX, PATH_LOCK_FILE};
- use crate::core::{FileSystem, FsContextView};
- 
- use super::metrics::LockMetrics;
-+use super::path::normalize_logical_path;
- use super::provider::{AcquisitionChange, AtomicAcquisition, PathLockHandleMode, PathLockProvider};
- use super::resolver::{LockPathResolver, ResolvedExactPaths};
- use super::types::{
-@@ -669,10 +670,10 @@ impl PathLockManager {
-     }
- 
-     /// Normalize, deduplicate, and sort requests with Tree taking precedence over Exact.
--    fn normalize_requests(requests: &[PathLockRequest]) -> Vec<PathLockRequest> {
-+    fn normalize_requests(requests: &[PathLockRequest]) -> PathLockResult<Vec<PathLockRequest>> {
-         let mut by_path: HashMap<String, PathLockKind> = HashMap::new();
-         for request in requests {
--            let path = Self::normalize_path(&request.path);
-+            let path = normalize_logical_path(&request.path)?.to_string();
-             by_path
-                 .entry(path)
-                 .and_modify(|kind| {
-@@ -693,17 +694,7 @@ impl PathLockManager {
-                 .cmp(&b.path.len())
-                 .then_with(|| a.path.cmp(&b.path))
-         });
--        normalized
--    }
--
--    /// Normalize one logical path using the existing PathLock trailing-slash rule.
--    fn normalize_path(path: &str) -> String {
--        let trimmed = path.trim_end_matches('/');
--        if trimmed.is_empty() {
--            "/".to_string()
--        } else {
--            trimmed.to_string()
--        }
-+        Ok(normalized)
-     }
- 
-     /// Return the configured lock expiry in nanoseconds.
-@@ -851,7 +842,7 @@ impl PathLockManager {
-                 "lock request batch must not be empty".to_string(),
-             ));
-         }
--        let sorted = Self::normalize_requests(requests);
-+        let sorted = Self::normalize_requests(requests)?;
- 
-         let owner = self.resolve_owner_state(owner_capability)?;
-         let owner_id = owner.owner_id.clone();
-@@ -1751,6 +1742,9 @@ impl PathLockManager {
-                 "handoff owner_id and lock_paths must not be empty".to_string(),
-             ));
-         }
-+        for request in &handoff.covered_paths {
-+            normalize_logical_path(&request.path)?;
-+        }
- 
-         // Local fast path: a handoff carrying lease_ref MUST be adopted from this
-         // process's registry — it is never legacy. Adopt in-place (migrate to a fresh
-@@ -1834,8 +1828,8 @@ impl PathLockManager {
-             let expected_kind = match handle_mode {
-                 PathLockHandleMode::LogicalPath => {
-                     let request = &handoff.covered_paths[index];
--                    let expected_path = Self::normalize_path(&request.path);
--                    if lp != &expected_path {
-+                    let expected_path = normalize_logical_path(&request.path)?;
-+                    if lp != expected_path {
-                         return Err(PathLockError::InvalidRequest(format!(
-                             "handoff coverage '{}' does not match logical lock path '{lp}'",
-                             request.path
-@@ -1976,11 +1970,11 @@ impl PathLockManager {
-     /// Check if a path is locked (for observability).
-     pub async fn is_locked(&self, path: &str, ignore_stale: bool) -> PathLockResult<bool> {
-         let now_ns = Self::now_ns();
--        let normalized_path = Self::normalize_path(path);
-+        let normalized_path = normalize_logical_path(path)?;
-         if let Some(locked) = self
-             .provider
-             .is_path_locked_atomic(
--                &normalized_path,
-+                normalized_path,
-                 now_ns,
-                 now_ns.saturating_sub(self.lock_expire_ns()),
-                 ignore_stale,
-@@ -1993,7 +1987,7 @@ impl PathLockManager {
-         // Check the current sidecar and the legacy in-directory token.
-         let exact_paths = self
-             .resolver
--            .resolve_exact_conflict_paths(&normalized_path)
-+            .resolve_exact_conflict_paths(normalized_path)
-             .await?;
-         for lp in &exact_paths {
-             if let Ok(Some(token)) = self.provider.read_token(lp).await {
-@@ -2004,7 +1998,7 @@ impl PathLockManager {
-         }
- 
-         // Check ancestor tree locks.
--        for parent in LockPathResolver::ancestor_paths(&normalized_path) {
-+        for parent in LockPathResolver::ancestor_paths(normalized_path) {
-             for ancestor_lock in self.resolver.resolve_tree_conflict_paths(&parent).await? {
-                 if let Ok(Some(token)) = self.provider.read_token(&ancestor_lock).await {
-                     // Only Tree locks propagate to descendants.
-@@ -2081,6 +2075,9 @@ impl PathLockManager {
-         lease_ref: &str,
-         requests: &[PathLockRequest],
+ #[derive(Debug)]
+@@ -132,6 +175,7 @@ enum DowngradeTokenResult {
+ struct OwnerRegistry {
+     entries: HashMap<String, LeaseEntry>,
+     lock_refs: HashMap<String, usize>,
++    token_health: HashMap<String, TokenHealth>,
+     // ponytail: grows with handoffs while this owner lives; encode generations if measured.
+     consumed_handoff_refs: HashSet<String>,
+ }
+@@ -144,6 +188,7 @@ impl OwnerRegistry {
+         lease: PathLockLease,
+         ownership_ref: String,
+         lock_kinds: &[PathLockKind],
++        confirmed_at: Instant,
      ) -> PathLockResult<()> {
-+        for request in requests {
-+            normalize_logical_path(&request.path)?;
-+        }
-         let owner = self.lease_registry.resolve(lease_ref).ok_o
-```
-
-**File**: `crates/ragfs/src/lock/mod.rs` (modified, +1/-0)
-```diff
-@@ -17,6 +17,7 @@ pub mod codec;
- mod cache_provder;
- pub mod manager;
- pub mod metrics;
-+mod path;
- pub mod provider;
- pub mod resolver;
- pub mod sqlite_provider;
-```
-
-**File**: `crates/ragfs/src/lock/path.rs` (added, +198/-0)
-```diff
-@@ -0,0 +1,198 @@
-+//! Shared lexical path rules for lock identity and lease coverage.
-+
-+use super::types::{PathLockError, PathLockResult};
-+
-+/// Validate a logical path and preserve compatibility with a single trailing slash.
-+///
-+/// Reject aliases instead of rewriting them: the filesystem still receives the
-+/// original path, and resolving `..` could change the operation's scope.
-+pub(super) fn normalize_logical_path(path: &str) -> PathLockResult<&str> {
-+    if !path.starts_with('/')
-+        || path.contains("//")
-+        || path.contains('\0')
-+        || path.split('/').any(|part| matches!(part, "." | ".."))
-+    {
-+        return Err(PathLockError::InvalidRequest(format!(
-+            "PathLock requires an absolute logical path without repeated '/', \
-+             '.' or '..' components, or NUL: {path:?}"
-+        )));
-+    }
-+    Ok(if path == "/" {
-+        path
-+    } else {
-+        path.strip_suffix('/').unwrap_or(path)
-+    })
-+}
-+
-+/// Provider token paths must already be normalized by the Manager.
-+pub(super) fn validate_normalized_logical_path(path: &str) -> PathLockResult<()> {
-+    if normalize_logical_path(path)? != path {
-+        return Err(PathLockError::InvalidRequest(format!(
-+            "PathLock requires a normalized absolute logical path: {path:?}"
-+        )));
-+    }
-+    Ok(())
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+    use crate::core::{FileSystem, FsContextInner, PathLockContext, FS_CTX};
-+    use crate::lock::types::PathLockKind;
-+    use crate::lock::{MemoryPathLockProvider, PathLockConfig, PathLockManager, PathLockRequest};
-+    use crate::plugins::memfs::MemFileSystem;
-+    use std::sync::Arc;
-+    use std::time::Duration;
-+
-+    #[test]
-+    fn logical_paths_reject_aliases_and_preserve_valid_names() {
-+        for path in [
-+            "", "relative", "//", "/a//b", "/a//", "/a/./b", "/./a", "/a/../b", "/a/.", "/a/..",
-+            "/a\0b",
-+        ] {
-+            assert!(normalize_logical_path(path).is_err(), "{path:?}");
-+            assert!(validate_normalized_logical_path(path).is_err(), "{path:?}");
-+        }
-+        for path in [
-+            "/",
-+            "/a",
-+            "/a/.hidden",
-+            "/a/file..txt",
-+            "/中文/文件",
-+            "/a/file name",
-+        ] {
-+            assert_eq!(normalize_logical_path(path).unwrap(), path);
-+            validate_normalized_logical_path(path).unwrap();
-+        }
-+        assert_eq!(normalize_logical_path("/a/").unwrap(), "/a");
-+        assert!(validate_normalized_logical_path("/a/").is_err());
-+    }
-+
-+    /// Invalid aliases cannot acquire locks, query locks, or borrow Tree coverage.
-+    #[tokio::test]
-+    async fn path_aliases_are_rejected_before_acquisition_and_coverage() {
-+        let fs = Arc::new(MemFileSystem::new());
-+        fs.mkdir("/data", 0o755).await.unwrap();
-+        let mgr = PathLockManager::new(
-+            fs.clone(),
-+            Arc::new(MemoryPathLockProvider::new()),
-+            PathLockConfig::default(),
-+        );
-+        let tree = mgr
-+            .acquire_tree("/data", Duration::ZERO, None)
-+            .await
-+            .unwrap();
-+        let context = Arc::new(FsContextInner::with_pathlock(
-+            "account",
-+            PathLockContext {
-+                lease_ref: Some(tree.lease.lease_ref.clone()),
-+                disable_auto_pathlock: false,
-+            },
-+        ));
-+        for path in [
-+            "",
-+            "relative",
-+            "//",
-+            "/data//file",
-+            "/data/./file",
-+            "/data/../other/file",
-+            "/data/file//",
-+            "/data/file\0",
-+        ] {
-+            let request = PathLockRequest {
-+                path: path.to_string(),
-+                kind: PathLockKind::Exact,
-+            };
-+            for kind in [PathLockKind::Exact, PathLockKind::Tree] {
-+                assert!(
-+                    matches!(
-+                        mgr.acquire_batch(
-+                            &[
-+                                PathLockRequest {
-+                                    path: "/unrelated/file".into(),
-+                                    kind: PathLockKind::Exact
-+                                },
-+                                PathLockRequest {
-+                                    path: path.into(),
-+                                    kind
-+                                },
-+                            ],
-+                            Duration::ZERO,
-+                            None
-+                        )
-+                        .await,
-+                        Err(PathLockError::InvalidRequest(_))
-+                    ),
-+                    "Manager accepted {path:?}"
-+                );
-+            }
-+            assert!(
-+                matches!(
-+                    mgr.is_locked(path, true).await,
-+                    Err(PathLockError::InvalidRequest(_))
-+                ),
-+                "is_locked accepted {path:?}"
-+           
-```
-
-**File**: `crates/ragfs/src/lock/sqlite_provider.rs` (modified, +1/-14)
-```diff
-@@ -7,6 +7,7 @@ use std::time::Duration;
- use async_trait::async_trait;
- use rusqlite::{params, Connection, OptionalExtension, TransactionBehavior};
- 
-+use super::path::validate_normalized_logical_path as validate_path;
- use super::provider::{
-     AcquisitionChange, AtomicAcquisition, AtomicAcquisitionResult, PathLockHandleMode,
-     PathLockProvider,
-@@ -50,20 +51,6 @@ fn timestamp(time_ns: u128) -> String {
-     format!("{time_ns:039}")
- }
- 
--fn validate_path(path: &str) -> PathLockResult<()> {
--    if !path.starts_with('/')
--        || (path != "/" && path.ends_with('/'))
--        || path.contains("//")
--        || path.contains('\0')
--        || path.split('/').any(|part| matches!(part, "." | ".."))
--    {
--        return Err(PathLockError::InvalidRequest(format!(
--            "SQLite PathLock requires a normalized absolute logical path: {path}"
--        )));
--    }
--    Ok(())
--}
--
- fn validate_owner(owner: &str) -> PathLockResult<()> {
-     if owner.is_empty() || owner.contains(':') {
-         return Err(PathLockError::InvalidRequest(
-```
-
-**File**: `crates/ragfs/src/lock/types.rs` (modified, +12/-16)
-```diff
-@@ -2,6 +2,8 @@
- 
- use serde::{Deserialize, Serialize};
- 
-+use super::path::normalize_logical_path;
-+
- /// Lock kind: exact (single path) or tree (path + descendants).
- #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
- pub enum PathLockKind {
-@@ -106,31 +108,25 @@ impl PathLockLease {
- 
- /// Return true when a held request covers another requested operation.
- fn request_is_covered_by(held: &PathLockRequest, request: &PathLockRequest) -> bool {
-+    let (Ok(held_path), Ok(request_path)) = (
-+        normalize_logical_path(&held.path),
-+        normalize_logical_path(&request.path),
-+    ) else {
-+        return false;
-+    };
-     match (held.kind, request.kind) {
--        (PathLockKind::Exact, PathLockKind::Exact) => normalize_path(&held.path) == normalize_path(&request.path),
--        (PathLockKind::Tree, _) => path_is_self_or_descendant(&request.path, &held.path),
-+        (PathLockKind::Exact, PathLockKind::Exact) => held_path == request_path,
-+        (PathLockKind::Tree, _) => path_is_self_or_descendant(request_path, held_path),
-         (PathLockKind::Exact, PathLockKind::Tree) => false,
+         let lease_ref = lease.lease_ref.clone();
+         if lease.owner_id != expected_owner_id {
+@@ -172,6 +217,12 @@ impl OwnerRegistry {
+         for lock_path in &lease.lock_paths {
+             if unique_paths.insert(lock_path.clone()) {
+                 *self.lock_refs.entry(lock_path.clone()).or_default() += 1;
++                self.token_health
++                    .entry(lock_path.clone())
++                    .or_insert(TokenHealth {
++                        last_confirmed_at: confirmed_at,
++                        consecutive_failures: 0,
++                    });
+             }
+         }
+         self.entries.insert(
+@@ -182,6 +233,7 @@ impl OwnerRegistry {
+                 pending_handoff: false,
+                 lock_kinds,
+                 last_active_at: Instant::now(),
++                invalidation: None,
+             },
+         );
+         Ok(())
+@@ -200,19 +252,22 @@ impl OwnerRegistry {
      }
- }
  
--/// Normalize a path for simple lock coverage checks.
--fn normalize_path(path: &str) -> String {
--    let trimmed = path.trim_end_matches('/');
--    if trimmed.is_empty() {
--        "/".to_string()
--    } else {
--        trimmed.to_string()
--    }
--}
--
--/// Return true when `path` is equal to or under `ancestor`.
-+/// Return true when a normalized `path` is equal to or under `ancestor`.
- fn path_is_self_or_descendant(path: &str, ancestor: &str) -> bool {
--    let path = normalize_path(path);
--    let ancestor = normalize_path(ancestor);
-     path == ancestor
-         || ancestor == "/"
-         || path
--            .strip_prefix(&ancestor)
-+            .strip_prefix(ancestor)
-             .is_some_and(|suffix| suffix.starts_with('/'))
- }
+     /// True when the entry exists, is owned (not parked for handoff) and its
+-    /// ownership_ref matches. Used to gate release/refresh against a stale
++    /// ownership_ref matches. Used to gate acquisition/refresh against a stale
+     /// capability under the same write guard that performs the mutation.
+     fn capability_matches(&self, lease_ref: &str, ownership_ref: &str) -> bool {
+-        self.entries
+-            .get(lease_ref)
+-            .is_some_and(|entry| !entry.pending_handoff && entry.ownership_ref == ownership_ref)
++        self.entries.get(lease_ref).is_some_and(|entry| {
++            !entry.pending_handoff
++                && entry.invalidation.is_none()
++                && entry.ownership_ref == ownership_ref
++        })
+     }
+ 
+     /// Return the strongest remaining kind after one lease drops a lock path.
+     fn strongest_kind_excluding(&self, lease_ref: &str, lock_path: &str) -> Option<PathLockKind> {
+         self.entries
+             .iter()
+             .filter(|(candidate_ref, _)| candidate_ref.as_str() != lease_ref)
++            .filter(|(_, entry)| entry.invalidation.is_none())
+             .filter_map(|(_, entry)| entry.lock_kinds.get(lock_path).copied())
+             .max_by_key(|kind| match kind {
+                 PathLockKind::Exact => 0,
+@@ -253,7 +308,11 @@ impl OwnerRegistry {
+     /// but reject the original ownership_ref. Requires a matching, not-yet-parked entry.
+     fn mark_pending_handoff(&mut self, lease_ref: &str, ownership_ref: &str) -> PathLockResult<()> {
+         match self.entries.get_mut(lease_ref) {
+-            Some(entry) if entry.ownership_ref == ownership_ref && !entry.pending_handoff 
+```
+
+**File**: `docs/en/concepts/09-transaction.md` (modified, +9/-1)
+```diff
+@@ -375,7 +375,15 @@ Acquisition rollback and normal release clean up tokens without guaranteeing rem
+ 
+ **Stale lock detection**: PathLockEngine checks the ownership token timestamp. Locks older than `lock_expire` (default 30s) are considered stale and are removed automatically during acquisition.
+ 
+-**In-process cleanup**: During refresh, Rust PathLockManager checks leases that have not refreshed successfully for `2 × lock_expire` and attempts cleanup with ownership validation.
++**Lost lease authorization**: Explicit and background refresh use the same rules. A missing token or owner mismatch immediately invalidates every local lease under that owner sharing the actual token path (`lock_paths`). Losing any required token invalidates the entire lease, including a pending handoff. A Tree ancestor and an Exact descendant have different tokens and do not invalidate each other.
++
++A transport error preserves authorization only until `0.8 × lock_expire` since that token's last successful confirmation (24 seconds by default). Each token has its own monotonic deadline; partial refresh, reentry, and local handoff/adoption do not extend failed tokens. Authorization checks enforce the deadline even before the next heartbeat. Invalidated leases cannot authorize subsequent protected writes, refresh, owner reuse, or handoff/adoption, and cannot become valid again.
++
++**In-process cleanup**: Invalidated leases retain their release capability and local references while ownership-checked cleanup is retried. A missing or foreign-owned token completes cleanup without deleting a new owner's token. Tokens shared with another valid local lease remain protected. After six heartbeat intervals from the first invalidation (`2 × lock_expire`, 60 seconds by default), the manager logs remaining paths and forgets the local entry even if the provider is unavailable; remaining provider tokens rely on expiry. Cleanup retries never extend this window.
++
++**Invalidation diagnostics**: The manager retains the first invalidation time and reason through cleanup. The `pathlock lease invalidated` log includes `reason`, `lease_ref`, `owner_id`, and `affected_paths`. `TokenLost` means a required token is missing or ownership no longer matches; inspect token expiry, removal, and takeover. `ConfirmationDeadlineExceeded` means ownership could not be confirmed before the safety deadline; inspect provider health, network latency, and renewal scheduling. Its token log includes `since_last_confirmation_ms` and `failures`. `ReleaseFailed` means a release or downgrade error revoked authorization while cleanup is retried; the release log includes the error. Later results and cleanup failures do not replace the first reason or reset its time; the cleanup-window exhaustion log retains that reason.
++
++These checks revoke authorization for future operations after loss is detected or the deadline passes. They do not cancel writes that already passed authorization or provide storage-side fencing.
+ 
+ **Orphan locks**: Provider tokens left behind after a process crash are automatically removed via stale lock detection when a later acquisition checks the same path or scope.
  
 ```
 
-**File**: `docs/en/concepts/09-transaction.md` (modified, +8/-0)
+**File**: `docs/zh/concepts/09-transaction.md` (modified, +9/-1)
 ```diff
-@@ -224,6 +224,14 @@ The lock mechanism uses two lock types to handle different conflict patterns:
+@@ -383,7 +383,15 @@ fencing token 校验通过的一方成功持有 `TreeLock(java-guide)`；失败
  
- Exact and Tree describe an operation's scope; file, directory, and missing describe the target's current state. These are independent. Locks protect path names, including names that do not currently exist.
+ **陈旧锁检测**：PathLockEngine 检查归属 token 中的时间戳。超过 `lock_expire`（默认 30s）的锁被视为陈旧锁，在加锁过程中自动移除。
  
-+Lock paths must be absolute. The Manager rejects empty or relative paths, repeated
-+`/`, `.` or `..` components, and NUL with `InvalidRequest` before acquiring locks
-+or checking lease coverage. A single trailing `/` is stripped, except at `/`.
-+Redis and SQLite token operations require this normalized form; Redis Lua batch
-+acquisition also validates every request before mutating tokens. Use
-+`/local/account-a/file`, rather than aliases such as `/local/account-a/./file`
-+or `/local/account-a//file`.
+-**进程内清理**：Rust PathLockManager 在续期循环中检查长期未成功续期的 lease，以 `2 × lock_expire` 为阈值尝试清理，并校验归属后释放 token。
++**失锁后的授权失效**：手动和后台续租使用相同规则。token 不存在或 owner 不匹配时，同 owner 下共享实际 token 路径（`lock_paths`）的所有本地 lease 立即整份失效，包括待交接的 lease。Tree 祖先和 Exact 后代使用不同 token，不会因逻辑覆盖关系连带失效。
 +
- The following conflicts apply to different owners within the same provider scope:
- 
- | Held lock | New request | Conflict |
-```
-
-**File**: `docs/zh/concepts/09-transaction.md` (modified, +7/-0)
-```diff
-@@ -221,6 +221,13 @@ async with LockContext(lock_manager, [src], lock_mode="mv", mv_dst_path=dst):
- 
- Exact 和 Tree 表达操作范围，文件、目录或缺失路径表达目标的当前状态，两者独立。锁保护路径名字，目标不存在也可以申请锁。
- 
-+锁路径必须是绝对路径。Manager 在获取锁或检查租约覆盖范围前，对空路径、
-+相对路径、重复 `/`、`.` 或 `..` 路径段及 NUL 返回 `InvalidRequest`。
-+非根路径末尾的单个 `/` 会被移除。Redis 和 SQLite 的 token 操作要求路径
-+已完成这一规范化；Redis Lua 批量获取也会在修改 token 前校验全部请求。
-+应使用 `/local/account-a/file`，避免 `/local/account-a/./file`、
-+`/local/account-a//file` 等别名。
++网络等不确定错误允许短暂重试，但每个 token 距离最近一次成功确认达到 `0.8 × lock_expire`（默认 24 秒）时撤销授权。使用单调时钟分别记录各 token 的确认时间；部分续租成功、重入和本地交接/接管不会延长失败 token 的期限。写入授权检查也会检查期限，无需等待下次心跳。失效 lease 不能再授权后续受保护写入、续租、复用 owner 或交接/接管，且不会恢复有效。
 +
- 以下冲突关系限定为不同 owner、同一 Provider scope 内的请求：
++**进程内清理**：失效 lease 保留释放能力和本地引用，后台重试带 owner 校验的清理。token 已不存在或已被其他 owner 接管均视为清理完成，不会删除新 owner 的 token；仍被其他有效本地 lease 引用的 token 也不会被删除。从首次失效起超过六个心跳间隔（`2 × lock_expire`，默认 60 秒），即使 Provider 持续不可用也记录剩余路径并移除本地 entry，遗留的远端 token 依赖过期清理。重试不会延长该窗口。
++
++**失效诊断**：manager 在清理期间保留首次失效的时间与原因。`pathlock lease invalidated` 日志包含 `reason`、`lease_ref`、`owner_id` 和 `affected_paths`。`TokenLost` 表示必要 token 缺失或归属不符，应检查 token 过期、删除和接管情况；`ConfirmationDeadlineExceeded` 表示安全期限内未能确认归属，应检查 Provider 健康、网络延迟和续租调度，对应 token 日志还包含 `since_last_confirmation_ms` 和 `failures`；`ReleaseFailed` 表示释放或降级错误导致撤销授权并进入清理重试，释放日志会记录具体错误。后续响应和清理失败不会覆盖首次原因或重置时间，清理窗口耗尽的日志也会保留该原因。
++
++上述检查在发现失锁或达到期限后拒绝后续操作；不会中断已经通过授权检查的写入，也不提供存储侧 fencing。
  
- | 已持有 | 新请求 | 冲突 |
+ **孤儿锁**：进程崩溃后遗留的 Provider token，在后续 acquire 检查同一路径或 scope 时通过 stale lock 检测自动移除。
+ 
 ```
 
 ---
 
-### Incident Patch 3: `f3d408a4` (2026-10-27)
-**Commit Message**: fix(pathlock): reject Redis Tree locks spanning scopes (#6685)
+### Incident Patch 3: `eb8ae949` (2026-10-28)
+**Commit Message**: fix(gateway): relay a null "tools" in Responses replies instead of failing (#6309)
 
-* fix(pathlock): reject Redis Tree locks spanning scopes
+An OpenAI-compatible upstream may echo "tools": null in a Responses object.
+public_response() filtered the hidden openviking_ tools out of any present
+"tools" key, so a null value raised TypeError and the request failed with
+"Invalid model tool response". Only filter when the value is a list and
+relay anything else unchanged.
 
-Prevent global Tree locks from reporting success without excluding account and system descendants; validate acquisition and token upgrades and document supported roots.
+Fixes #6284
 
-* fix format
+Co-authored-by: wang2-lat <[REDACTED_EMAIL]>
 
-**File**: `crates/ragfs/src/lock/cache_provder.rs` (modified, +205/-6)
+**File**: `openviking_gateway/tool_protocols/responses.py` (modified, +1/-1)
 ```diff
-@@ -1,4 +1,5 @@
--//! Redis-backed PathLock storage.
-+//! Redis-backed PathLock storage. Tree locks must fit within one account or
-+//! system scope; global roots cannot atomically cover the separate scope HASHes.
+@@ -150,7 +150,7 @@ def encode(self, value):
  
- use std::collections::BTreeMap;
- use std::sync::Arc;
-@@ -12,7 +13,8 @@ use crate::cache_runtime::{
- 
- use super::codec::LockTokenCodec;
- use super::provider::{
--    AcquisitionChange, AtomicAcquisition, AtomicAcquisitionResult, PathLockHandleMode, PathLockProvider,
-+    AcquisitionChange, AtomicAcquisition, AtomicAcquisitionResult, PathLockHandleMode,
-+    PathLockProvider,
- };
- use super::types::{LockToken, PathLockError, PathLockKind, PathLockRequest, PathLockResult};
- 
-@@ -556,6 +558,17 @@ impl RedisPathLockProvider {
-         ))
-     }
- 
-+    /// Reject Tree roots whose descendants span multiple Redis HASHes.
-+    fn validate_lock_scope(path: &str, kind: PathLockKind) -> PathLockResult<()> {
-+        if kind == PathLockKind::Tree && (path == "/" || path == "/local") {
-+            return Err(PathLockError::InvalidRequest(format!(
-+                "cache PathLock Tree lock at '{path}' spans multiple scopes; \
-+                 use '/local/<account>' or '/local/_system' as the Tree root"
-+            )));
-+        }
-+        Ok(())
-+    }
-+
-     /// Return the shared Redis HASH key for one same-scope path batch.
-     fn tokens_key_for_batch<'a>(
-         &self,
-@@ -809,6 +822,9 @@ impl PathLockProvider for RedisPathLockProvider {
-                 "lock request batch must not be empty".to_string(),
-             ));
-         }
-+        for request in requests {
-+            Self::validate_lock_scope(&request.path, request.kind)?;
-+        }
-         let key =
-             self.tokens_key_for_batch(requests.iter().map(|request| request.path.as_str()))?;
-         let mut args = vec![
-@@ -958,6 +974,7 @@ impl PathLockProvider for RedisPathLockProvider {
- 
-     /// Atomically create one token when the path is absent.
-     async fn try_create_token(&self, lock_path: &str, token: &LockToken) -> PathLockResult<()> {
-+        Self::validate_lock_scope(lock_path, token.lock_type)?;
-         let key = self.tokens_key_for_path(lock_path)?;
-         let values = self
-             .execute_array(
-@@ -995,6 +1012,7 @@ impl PathLockProvider for RedisPathLockProvider {
-         expected: &LockToken,
-         replacement: &LockToken,
-     ) -> PathLockResult<bool> {
-+        Self::validate_lock_scope(lock_path, replacement.lock_type)?;
-         let key = self.tokens_key_for_path(lock_path)?;
-         self.execute_integer(
-             COMPARE_WRITE_ID,
-@@ -1514,6 +1532,185 @@ return redis.call("HGET", KEYS[1], ARGV[2])
-         runtime.close().await.unwrap();
-     }
- 
-+    /// Reject global Tree requests before accessing Redis, including token upgrades.
-+    #[tokio::test]
-+    async fn provider_rejects_cross_scope_tree_before_redis_access() {
-+        let mock = crate::cache_runtime::MemoryMockProvider::new()
-+            .with_script_handler(|_| panic!("invalid Tree request must not access Redis"));
-+        let runtime = CacheRuntime::memory_with_provider(Arc::new(mock));
-+        let provider = RedisPathLockProvider::new(runtime.clone(), "global-tree", 1.0).unwrap();
-+        for root in ["/", "/local"] {
-+            let exact = token("owner-a", 100, PathLockKind::Exact);
-+            let tree = token("owner-a", 200, PathLockKind::Tree);
-+            for requests in [
-+                vec![request(root, PathLockKind::Tree)],
-+                vec![
-+                    request(root, PathLockKind::Exact),
-+                    request(root, PathLockKind::Tree),
-+                ],
-+            ] {
-+                assert!(matches!(
-+                    provider
-+                        .try_acquire_batch_atomic(&requests, "owner-a", 200, 100)
-+                        .await,
-+                    Err(PathLockError::InvalidRequest(message))
-+                        if message.contains("Tree") && message.contains("scope")
-+                ));
-+            }
-+            assert!(matches!(
-+                provider.try_create_token(root, &tree).await,
-+                Err(PathLockError::InvalidRequest(_))
-+            ));
-+            assert!(matches!(
-+                provider.compare_and_write_token(root, &exact, &tree).await,
-+                Err(PathLockError::InvalidRequest(_))
-+            ));
-+        }
-+        runtime.close().await.unwrap();
-+    }
-+
-+    /// Neither acquisition order can publish a Tree token spanning Redis scope HASHes.
-+    #[tokio::test]
-+    async fn provider_rejects_cross_scope_tree_in_both_acquisition_orders() {
-+        let Some((runtime, provider)) = test_provider("global-tree-orders").await else {
-+            return;
-+        };
-+        for root in ["/", "/local"] {
-+            for scope in ["/local/account-a", "/local/_system"] {
-+                let child = format!("{scope}/file");
-+                for kind in [PathLockKind::Exact, PathLockKind::Tree] {
-+                    f
-```
-
-**File**: `docs/en/concepts/09-transaction.md` (modified, +5/-2)
-```diff
-@@ -293,8 +293,11 @@ HASH keys are isolated by path scope:
- 
- All keys use `{service_name}` as the Redis Cluster hash tag. Exact acquisition
- reads the target and ancestors with `HMGET`; Tree acquisition scans only its
--scope HASH with `HGETALL`. Global `/` and `/local` locks do not scan account
--or `_system` HASHes. Cross-scope batches are rejected.
-+scope HASH with `HGETALL`. Tree locks at `/` and `/local` are rejected with
-+`InvalidRequest`, because their subtrees span account and `_system` HASHes.
-+Use `/local/<account>` or `/local/_system` (or a descendant) as the Tree root.
-+Exact locks at `/` and `/local` remain supported and protect only those paths.
-+Cross-scope batches are rejected.
- 
- ### Filesystem Lock Acquisition (EXACT mode)
+     def public_response(self, value):
+         value = {**value, "id": self.identifier}
+-        if "tools" in value:
++        if isinstance(value.get("tools"), list):
+             value["tools"] = [t for t in value["tools"] if not t.get("name", "").startswith(PREFIX)]
+         return value
  
 ```
 
-**File**: `docs/zh/concepts/09-transaction.md` (modified, +4/-2)
+**File**: `tests/gateway/test_native_tools.py` (modified, +21/-0)
 ```diff
-@@ -290,8 +290,10 @@ HASH key 按路径 scope 隔离：
+@@ -679,6 +679,27 @@ async def backend(request):
+     assert "openviking_search" not in response.text
  
- 所有 key 都使用 `{service_name}` 作为 Redis Cluster hash tag。Exact 获取使用
- `HMGET` 读取目标和祖先；Tree 获取只对所属 scope 的 HASH 执行
--`HGETALL`。`/` 和 `/local` 的 global 锁不会扫描 account 或 `_system`
--HASH。跨 scope batch 会被拒绝。
-+`HGETALL`。`/` 和 `/local` 的 Tree 锁会返回 `InvalidRequest`，因为它们的
-+子树跨越 account 和 `_system` HASH。Tree 根路径应使用 `/local/<account>`、
-+`/local/_system` 或其后代。`/` 和 `/local` 的 Exact 锁仍然支持，只保护
-+对应路径本身。跨 scope batch 会被拒绝。
  
- ### Filesystem 获取锁流程（EXACT 模式）
- 
++@pytest.mark.parametrize("streaming", [False, True])
++async def test_responses_relays_null_tools(running_gateway, streaming):
++    app, client, admin, key, _, _ = running_gateway
++    await enable_tools(client, admin)
++
++    async def backend(request):
++        if request.path != "/v1/responses":
++            return None
++        value = {**native_response("responses", 1), "tools": None}
++        return await wire_response(request, "responses", value, streaming)
++
++    app.state.test_backend["handler"] = backend
++    response = await client.post(
++        "/v1/responses",
++        headers={"Authorization": "Bearer " + key["key"]},
++        json=request_body("responses", streaming),
++    )
++    assert response.status_code == 200, response.text
++    assert visible_response("responses", response, streaming)["tools"] is None
++
++
+ @pytest.mark.parametrize("protocol", ["responses", "anthropic"])
+ async def test_native_incompatible_mode_keeps_only_visible_history(
+     setup_kernel, credential, policy, protocol
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6688** (2026-10-27): feat(multiwrite): 降低多写元数据 IO (@baojun-zhang)
-- **PR #6687** (2026-10-27): fix(pathlock): prevent path aliases from bypassing locks (@zhanglistar)
-- **PR #6685** (2026-10-27): fix(pathlock): reject Redis Tree locks spanning scopes (@zhanglistar)
-- **PR #6680** (2026-10-27): fix(privacy): pause automatic session secret discovery (@MaojiaSheng)
-- **PR #6679** (2026-10-27): feat(ragfs): add transactional SQLite path locks (@zhanglistar)
-- **PR #6678** (2026-10-27): feat(encryption): support inline local root key (@zhoujh01)
+- **PR #6735** (2026-10-28): fix(ci): 将 API 集成测试模型切换到 Seed 2.1 Lite (@qin-ptr)
+- **PR #6734** (closed): fix(ci): 将 API 集成测试模型切换到 Seed 2.1 Lite (@qin-ctx)
+- **PR #6730** (2026-10-28): fix(embedding): 在线检索绕过入库并发限制 (@qin-ctx)
+- **PR #6725** (2026-10-28): fix(sdk/go): omit unset write and session options (@qin-ptr)
+- **PR #6724** (2026-10-28): rerank: add optional candidate isolation for Jev (@chenjw)
+- **PR #6722** (2026-10-28): feat(pathlock): observe Redis acquisition latency and slow calls (@zhanglistar)
 
 ---
 
@@ -2694,69 +2091,30 @@ Prevent global Tree locks from reporting success without excluding account and s
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. storage): 修复递归删除导致 PathLock 提前失效 (#6631)
+## X. plugins): read profile and memory listings from peer scope (#5246)
 
 **RULE**:
-When implementing operations in `crates/ragfs/src/lock/manager.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/en/agent-integrations/16-capability-reference.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5c066d97`: storage): 修复递归删除导致 PathLock 提前失效 (#6631). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `196e5820`: plugins): read profile and memory listings from peer scope (#5246). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ragfs/src/lock/manager.rs`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/agent-integrations/16-capability-reference.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-                        let resolved = self.resolver.resolve_tree_paths(&request.path).await?;
-                        self.check_lock_paths(&resolved.conflict_paths, owner_id)
-                        let lock_path = resolved.acquire_lock_path;
-                        let tree_candidates = self
-                            .resolve_tree_conflict_paths(&request.path)
-                        self.check_lock_paths(&tree_candidates, owner_id).await?;
-        for parent in LockPathResolver::ancestor_paths(path) {
-            for ancestor_lock in self.resolver.resolve_tree_conflict_paths(&parent).await? {
-                if let Some(token) = self.provider.read_token(&ancestor_lock).await? {
-                    // Only Tree locks propagate to descendants; an Exact lock on
-                    // /a must not block /a/b.
-                    if token.lock_type == PathLockKind::Tree
-                        && token.owner_id != owner_id
-                        && !self.is_stale(&token, now_ns)
-                    {
-                        return Err(PathLockError::Conflict {
-                            lock_path: ancestor_lock,
-                            owner: token.owner_id,
-                 
+Integrations that use the shared plugin code inject one `<openviking-context>` block at session start. It holds the user profile (`viking://user/<space>/memories/profile.md`), an index of the `preferences/` and `entities/` memories, and an `<available-skills>` catalog. When the session has an actor peer, the same files under `viking://user/<space>/peers/<peer>/memories/` are added: the profile, preferences, and entities have no message range, so extraction writes the user's own facts to the user root even in a peer session. The user root comes first; the peer profile is a second `<user-profile>` element without the lines it shares with the user profile, and both roots share one budget:
+- `profileTokenBudget` (default 10,000 tokens) covers the profiles and the memory index. The profiles get half: the user profile first, the peer profile what is left, or a one-line pointer to its URI when less than 200 tokens remain. The two roots split the index budget. An oversized profile keeps its first 8 lines and its end; an oversized listing ends with `... +N more`. Token estimates count CJK characters as 1.5 tokens and other text as four characters per token.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-                        let lock_path = self.resolver.resolve_tree_lock_path(&request.path).await?;
-                        let exact_candidates = self
-                            .resolver
-                            .resolve_exact_conflict_paths(&request.path)
-                        self.check_lock_paths(&exact_candidates, owner_id).await?;
-                        let exact_candidates = self
-                            .resolve_exact_conflict_paths(&request.path)
-                        self.check_lock_paths(&exact_candidates, owner_id).await?;
-        let mut current = path.to_string();
-        loop {
-            let parent = match current.rsplit_once('/') {
-                Some((p, _)) if !p.is_empty() => p.to_string(),
-                Some(_) if current != "/" => "/".to_string(),
-                _ => break,
-            };
-
-            let ancestor_lock = if parent == "/" {
-                format!("/{}", PATH_LOCK_FILE)
-            } else {
-                format!("{}/{}", parent, PATH_LOCK_FILE)
-            };
-            if let Some(token) = self.provider.read_token(&ancestor_lock).await? {
-                // Only Tree locks propagate to descendants; an Exact lock on
-       
+Integrations that use the shared plugin code inject one `<openviking-context>` block at session start. It holds the user profile (`viking://user/<space>/memories/profile.md`), an index of the `preferences/` and `entities/` memories, and an `<available-skills>` catalog:
+- `profileTokenBudget` (default 10,000 tokens) covers the profile and the memory index. The profile gets half. An oversized profile keeps its first 8 lines and its end; an oversized listing ends with `... +N more`. Token estimates count CJK characters as 1.5 tokens and other text as four characters per token.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5c066d97` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `196e5820` are properly handled with clean fallback behavior.

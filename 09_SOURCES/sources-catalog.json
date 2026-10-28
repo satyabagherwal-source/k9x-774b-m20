@@ -185,8 +185,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/d1-3B",
     "sourceVersion": "hf-liquidai-d1-3b",
     "license": "Open-Source",
-    "contentHash": "c64aad709fb664098eec5ea5ed50e9699f3d4643ac3050931ca8d0bce3dbf4f6",
-    "lastHarvestedAt": "2026-10-25T06:55:57.586Z",
+    "contentHash": "fd76c2d8b01c0cc6150caec90174edc0d0302167b3e0c414b4d209e942296b41",
+    "lastHarvestedAt": "2026-10-28T20:01:26.242Z",
     "learningId": "learn-huggingface-liquidai-d1-3b"
   },
   "hf-cactus-compute-whistle": {
@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "54d4c0fa",
+    "sourceVersion": "6afd9ba3",
     "license": "AGPL-3.0",
-    "contentHash": "1b91069fef41d0acd6d20af8e13105066b4717d6e1d305beac4ff3c5b2203007",
-    "lastHarvestedAt": "2026-10-27T17:23:43.767Z",
+    "contentHash": "275c1a5dffb01c1032cbdf8806751e93bc81b8427908e37402e9b93b1076169d",
+    "lastHarvestedAt": "2026-10-28T20:01:42.183Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {
@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "c22b2932",
+    "sourceVersion": "5ce45773",
     "license": "MIT",
-    "contentHash": "1c3219cdd5916fa38603ba520464c5ad55c4fdc4d5e3ab261395289f0db88118",
-    "lastHarvestedAt": "2026-10-28T14:49:49.254Z",
+    "contentHash": "7137d1df4f3b34af46f0449424489dd1226e9f398dd0afdeb79e013dffbea64e",
+    "lastHarvestedAt": "2026-10-28T20:01:43.238Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {

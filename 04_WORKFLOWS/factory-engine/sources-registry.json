@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T19:54:41.286Z",
-    "lastVerified": "2026-10-28T19:54:41.286Z",
+    "lastChecked": "2026-10-28T20:01:45.791Z",
+    "lastVerified": "2026-10-28T20:01:45.791Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -97,9 +97,9 @@
   "gravitl-netmaker": {
     "name": "netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
-    "lastChecked": "2026-10-28T16:19:29.617Z",
+    "lastChecked": "2026-10-28T20:01:32.652Z",
     "revisionIdentifier": "f20acf34",
-    "lastVerified": "2026-10-28T16:19:29.617Z"
+    "lastVerified": "2026-10-28T20:01:32.652Z"
   },
   "mintplex-labs-anything-llm": {
     "name": "Mintplex-Labs/anything-llm",
@@ -119,22 +119,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "bitterbot-desktop",
+    "name": "Bitterbot-AI/bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-28T19:31:54.931Z",
-    "lastVerified": "2026-10-28T19:31:54.931Z",
+    "lastChecked": "2026-10-28T20:01:42.584Z",
+    "lastVerified": "2026-10-28T20:01:42.584Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "1c3219cdd5916fa38603ba520464c5ad55c4fdc4d5e3ab261395289f0db88118",
+    "contentHash": "7137d1df4f3b34af46f0449424489dd1226e9f398dd0afdeb79e013dffbea64e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "c22b2932"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -471,9 +470,9 @@
   "open-policy-agent-gatekeeper": {
     "name": "gatekeeper",
     "officialUrl": "https://github.com/open-policy-agent/gatekeeper",
-    "lastChecked": "2026-10-28T03:24:40.399Z",
+    "lastChecked": "2026-10-28T20:01:30.040Z",
     "revisionIdentifier": "e492e24c",
-    "lastVerified": "2026-10-28T03:24:40.399Z"
+    "lastVerified": "2026-10-28T20:01:30.040Z"
   },
   "nolabs-ai-nono": {
     "name": "nono",
@@ -6416,5 +6415,53 @@
     "lastChecked": "2026-10-28T19:54:38.884Z",
     "revisionIdentifier": "e2a7a09b",
     "lastVerified": "2026-10-28T19:54:38.884Z"
+  },
+  "railwayapp-nixpacks": {
+    "name": "nixpacks",
+    "officialUrl": "https://github.com/railwayapp/nixpacks",
+    "lastChecked": "2026-10-28T20:01:22.668Z",
+    "revisionIdentifier": "144b4f9a",
+    "lastVerified": "2026-10-28T20:01:22.668Z"
+  },
+  "hf-liquidai-d1-3b": {
+    "name": "LiquidAI/d1-3B",
+    "officialUrl": "https://huggingface.co/LiquidAI/d1-3B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T20:01:25.083Z",
+    "lastVerified": "2026-10-28T20:01:25.083Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-liquidai-d1-3b",
+    "contentHash": "fd76c2d8b01c0cc6150caec90174edc0d0302167b3e0c414b4d209e942296b41",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mobilenativefoundation-store": {
+    "name": "Store",
+    "officialUrl": "https://github.com/MobileNativeFoundation/Store",
+    "lastChecked": "2026-10-28T20:01:27.513Z",
+    "revisionIdentifier": "74a5988f",
+    "lastVerified": "2026-10-28T20:01:27.513Z"
+  },
+  "volcengine-openviking": {
+    "name": "volcengine/OpenViking",
+    "officialUrl": "https://github.com/volcengine/OpenViking",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-28T20:01:41.523Z",
+    "lastVerified": "2026-10-28T20:01:41.523Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-volcengine-openviking",
+    "contentHash": "275c1a5dffb01c1032cbdf8806751e93bc81b8427908e37402e9b93b1076169d",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 20,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
