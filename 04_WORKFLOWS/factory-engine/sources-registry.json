@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T04:42:08.457Z",
-    "lastVerified": "2026-10-28T04:42:08.457Z",
+    "lastChecked": "2026-10-28T04:48:43.268Z",
+    "lastVerified": "2026-10-28T04:48:43.268Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -110,9 +110,9 @@
   "bitterbot-ai-bitterbot-desktop": {
     "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "lastChecked": "2026-10-28T04:21:51.094Z",
+    "lastChecked": "2026-10-28T04:48:43.261Z",
     "revisionIdentifier": "fce458c1",
-    "lastVerified": "2026-10-28T04:21:51.094Z"
+    "lastVerified": "2026-10-28T04:48:43.261Z"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -1094,5 +1094,57 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "googleworkspace-cli": {
+    "name": "cli",
+    "officialUrl": "https://github.com/googleworkspace/cli",
+    "lastChecked": "2026-10-28T04:48:28.285Z",
+    "revisionIdentifier": "a3768d0e",
+    "lastVerified": "2026-10-28T04:48:28.285Z"
+  },
+  "hf-lightricks-ltx-2.5": {
+    "name": "Lightricks/LTX-2.5",
+    "officialUrl": "https://huggingface.co/Lightricks/LTX-2.5",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T04:48:30.773Z",
+    "lastVerified": "2026-10-28T04:48:30.773Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-lightricks-ltx-2-5",
+    "contentHash": "be6ee49c90373d2ce2a7a7896d368dd5362bb4f30580098079791d5d487257aa",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "react-native-elements-react-native-elements": {
+    "name": "react-native-elements",
+    "officialUrl": "https://github.com/react-native-elements/react-native-elements",
+    "lastChecked": "2026-10-28T04:48:33.256Z",
+    "revisionIdentifier": "32ae0eda",
+    "lastVerified": "2026-10-28T04:48:33.256Z"
+  },
+  "go-kratos-kratos": {
+    "name": "kratos",
+    "officialUrl": "https://github.com/go-kratos/kratos",
+    "lastChecked": "2026-10-28T04:48:35.796Z",
+    "revisionIdentifier": "dd0fb7df",
+    "lastVerified": "2026-10-28T04:48:35.796Z"
+  },
+  "lunasec-io-lunasec": {
+    "name": "lunasec",
+    "officialUrl": "https://github.com/lunasec-io/lunasec",
+    "lastChecked": "2026-10-28T04:48:38.305Z",
+    "revisionIdentifier": "c6bb0762",
+    "lastVerified": "2026-10-28T04:48:38.305Z"
+  },
+  "valeriansaliou-sonic": {
+    "name": "sonic",
+    "officialUrl": "https://github.com/valeriansaliou/sonic",
+    "lastChecked": "2026-10-28T04:48:40.727Z",
+    "revisionIdentifier": "b635a181",
+    "lastVerified": "2026-10-28T04:48:40.727Z"
   }
 }

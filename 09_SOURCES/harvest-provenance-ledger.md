@@ -5702,3 +5702,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nvidia-nemotron-3-diarization` | `https://huggingface.co/nvidia/Nemotron-3-Diarization` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-28T04:41:52.669Z |
 | `learn-github-zulip-zulip` | `https://github.com/zulip/zulip` | `00635bc3` | Multi-dimensional audit evidence | 2026-10-28T04:41:58.787Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `1766aca2` | Multi-dimensional audit evidence | 2026-10-28T04:42:05.914Z |
+| `learn-huggingface-lightricks-ltx-2-5` | `https://huggingface.co/Lightricks/LTX-2.5` | `hf-lightri` | Multi-dimensional audit evidence | 2026-10-28T04:48:37.668Z |

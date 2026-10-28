@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T04:42:05.851Z",
+  "last_updated": "2026-10-28T04:48:37.604Z",
   "total_verified_learnings": 1156,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -23097,7 +23097,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Lightricks/LTX-2.5",
       "source_version": "hf-lightricks-ltx-2.5",
-      "content_hash": "81c7d7ade0a91f8e2fd8e3141331aefe0651bcd5a80422cb4f083843c0120b75",
+      "content_hash": "be6ee49c90373d2ce2a7a7896d368dd5362bb4f30580098079791d5d487257aa",
       "dossier_path": "07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md",
       "promoted_rules": [
@@ -23164,6 +23164,16 @@
           "number": 1552,
           "title": "Diffusion Scheduler Determinism & Reproducibility",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5177,
+          "title": "Latent Space Temporal Consistency Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5178,
+          "title": "VRAM Optimization via Blockwise Quantization",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -23184,7 +23194,7 @@
         "learn-huggingface-hf-lightricks-ltx-2-5-mv44u4a4",
         "learn-huggingface-hf-lightricks-ltx-2-5-mv4i3gub"
       ],
-      "verified_at": "2026-10-25T11:53:47.544Z",
+      "verified_at": "2026-10-28T04:48:37.591Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -141800,6 +141810,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T04:42:05.836Z"
+    },
+    "rule-5177": {
+      "learning_id": "rule-5177",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5177,
+      "title": "Latent Space Temporal Consistency Invariant",
+      "source_url": "https://huggingface.co/Lightricks/LTX-2.5",
+      "source_version": "hf-lightricks-ltx-2.5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T04:48:37.591Z"
+    },
+    "rule-5178": {
+      "learning_id": "rule-5178",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5178,
+      "title": "VRAM Optimization via Blockwise Quantization",
+      "source_url": "https://huggingface.co/Lightricks/LTX-2.5",
+      "source_version": "hf-lightricks-ltx-2.5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T04:48:37.591Z"
     }
   },
   "aliases": {
