@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T17:49:51.841Z",
-    "lastVerified": "2026-10-28T17:49:51.841Z",
+    "lastChecked": "2026-10-28T17:56:44.923Z",
+    "lastVerified": "2026-10-28T17:56:44.923Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -281,9 +281,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-28T17:28:16.812Z",
+    "lastChecked": "2026-10-28T17:56:44.914Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-28T17:28:16.812Z"
+    "lastVerified": "2026-10-28T17:56:44.914Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1046,9 +1046,9 @@
   "cryfs-cryfs": {
     "name": "cryfs",
     "officialUrl": "https://github.com/cryfs/cryfs",
-    "lastChecked": "2026-10-28T14:42:44.956Z",
+    "lastChecked": "2026-10-28T17:56:39.898Z",
     "revisionIdentifier": "ad1f72d5",
-    "lastVerified": "2026-10-28T14:42:44.956Z"
+    "lastVerified": "2026-10-28T17:56:39.898Z"
   },
   "tursodatabase-turso": {
     "name": "tursodatabase/turso",
@@ -5562,5 +5562,50 @@
     "lastChecked": "2026-10-28T17:49:45.179Z",
     "revisionIdentifier": "c443fc41",
     "lastVerified": "2026-10-28T17:49:45.179Z"
+  },
+  "ynqa-jnv": {
+    "name": "jnv",
+    "officialUrl": "https://github.com/ynqa/jnv",
+    "lastChecked": "2026-10-28T17:56:29.882Z",
+    "revisionIdentifier": "9871ba34",
+    "lastVerified": "2026-10-28T17:56:29.882Z"
+  },
+  "hf-google-gemma-4-31b-it": {
+    "name": "google/gemma-4-31B-it",
+    "officialUrl": "https://huggingface.co/google/gemma-4-31B-it",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T17:56:32.418Z",
+    "lastVerified": "2026-10-28T17:56:32.418Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-google-gemma-4-31b-it",
+    "contentHash": "204302ceb403baf987288409b1e31924f68341d859c2103650999e122d7938e5",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kizitonwose-calendar": {
+    "name": "Calendar",
+    "officialUrl": "https://github.com/kizitonwose/Calendar",
+    "lastChecked": "2026-10-28T17:56:34.985Z",
+    "revisionIdentifier": "c2711b3c",
+    "lastVerified": "2026-10-28T17:56:34.985Z"
+  },
+  "databricks-click": {
+    "name": "click",
+    "officialUrl": "https://github.com/databricks/click",
+    "lastChecked": "2026-10-28T17:56:37.383Z",
+    "revisionIdentifier": "47ff7d1b",
+    "lastVerified": "2026-10-28T17:56:37.383Z"
+  },
+  "activeloopai-deeplake": {
+    "name": "deeplake",
+    "officialUrl": "https://github.com/activeloopai/deeplake",
+    "lastChecked": "2026-10-28T17:56:42.462Z",
+    "revisionIdentifier": "f432041f",
+    "lastVerified": "2026-10-28T17:56:42.462Z"
   }
 }

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T17:49:49.308Z",
-  "total_cycles_completed": 5845,
-  "total_learnings_persisted": 5845,
+  "last_updated": "2026-10-28T17:56:33.458Z",
+  "total_cycles_completed": 5846,
+  "total_learnings_persisted": 5846,
   "total_rules_promoted": 5313,
   "history": [
-    {
-      "timestamp": "2026-10-28T03:31:29.789Z",
-      "repository": "expo/expo",
-      "learningId": "learn-github-expo-expo",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T03:31:31.438Z",
       "repository": "projectcontour/contour",
@@ -1403,6 +1396,13 @@
       "repository": "freenet/freenet-core",
       "learningId": "learn-github-freenet-freenet-core",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T17:56:33.458Z",
+      "repository": "google/gemma-4-31B-it",
+      "learningId": "learn-huggingface-google-gemma-4-31b-it",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

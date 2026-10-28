@@ -5877,3 +5877,4 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `1f4eee02` | Multi-dimensional audit evidence | 2026-10-28T17:42:55.855Z |
 | `learn-huggingface-baai-bge-base-en-v1-5` | `https://huggingface.co/BAAI/bge-base-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-28T17:49:36.709Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `657cff6c` | Multi-dimensional audit evidence | 2026-10-28T17:49:49.302Z |
+| `learn-huggingface-google-gemma-4-31b-it` | `https://huggingface.co/google/gemma-4-31B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-28T17:56:33.446Z |
