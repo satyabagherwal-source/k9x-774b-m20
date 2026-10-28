@@ -1565,8 +1565,8 @@
     "sourceUrl": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
     "sourceVersion": "hf-meta-models-muse-spark-open-816b-a42b",
     "license": "Open-Source",
-    "contentHash": "23f8156f03c3b909af8e214a147a3a48c7d4e5350fa1fa30481a31e136aadd43",
-    "lastHarvestedAt": "2026-10-25T23:32:54.930Z",
+    "contentHash": "03502bd94cfee37a4fb9fa9cdbc86af7fd2671b9e92fdf7b29137e982079fab9",
+    "lastHarvestedAt": "2026-10-28T23:56:15.362Z",
     "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b"
   },
   "hf-black-forest-labs-flux-3-image-klein-comfy": {
@@ -7493,10 +7493,10 @@
     "repository": "databendlabs/databend",
     "platform": "github",
     "sourceUrl": "https://github.com/databendlabs/databend",
-    "sourceVersion": "7344c579",
+    "sourceVersion": "48758c8c",
     "license": "Apache-2.0",
-    "contentHash": "f3e15ce0ad862c498cc6edb6db99eab906e67bdc6615bd45a3917cf987961a57",
-    "lastHarvestedAt": "2026-10-28T06:11:54.582Z",
+    "contentHash": "c62adbdc40bb0c456af30f5c75b3c4f9f75c457acec00cf11e4974581d55dde1",
+    "lastHarvestedAt": "2026-10-28T23:52:22.242Z",
     "learningId": "learn-github-databendlabs-databend"
   },
   "atanunq-viu": {
@@ -7883,10 +7883,10 @@
     "repository": "herdrdev/herdr",
     "platform": "github",
     "sourceUrl": "https://github.com/herdrdev/herdr",
-    "sourceVersion": "2713feb5",
+    "sourceVersion": "bc8c2898",
     "license": "Apache-2.0",
-    "contentHash": "81b3a3224ff8ef5d4f16d9b71ed5ba65f1fd994c85736c69081888c458dd4aca",
-    "lastHarvestedAt": "2026-10-27T20:31:51.886Z",
+    "contentHash": "7266e83b80eef2e150bf6bb4b3c17b4a17796ec586c9660b95e679d6cda0c4f4",
+    "lastHarvestedAt": "2026-10-28T23:52:10.875Z",
     "learningId": "learn-github-herdrdev-herdr"
   },
   "darrylmorley-whatcable": {

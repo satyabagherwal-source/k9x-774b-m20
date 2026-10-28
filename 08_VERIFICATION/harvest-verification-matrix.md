@@ -5991,3 +5991,6 @@
 | `CYCLE-20261028-0NUS` | `2026-10-28T23:31:36.004Z` | `black-forest-labs/flux-3-image-klein` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5454, Rule 5455, Rule 5456` | Yes (`be78296d...`) |
 | `CYCLE-20261028-FAH6` | `2026-10-28T23:42:58.506Z` | `sxyazi/yazi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5457` | Yes (`f6ec81dc...`) |
 | `CYCLE-20261028-FKST` | `2026-10-28T23:43:11.885Z` | `pyannote/speaker-diarization-community-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5458, Rule 5459, Rule 5460` | Yes (`8aa69fba...`) |
+| `CYCLE-20261028-R4OO` | `2026-10-28T23:52:10.872Z` | `herdrdev/herdr` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5461` | Yes (`7266e83b...`) |
+| `CYCLE-20261028-RDGF` | `2026-10-28T23:52:22.239Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5462` | Yes (`c62adbdc...`) |
+| `CYCLE-20261028-WDBZ` | `2026-10-28T23:56:15.359Z` | `meta-models/Muse-Spark-Open-816B-A42B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5463, Rule 5464` | Yes (`03502bd9...`) |

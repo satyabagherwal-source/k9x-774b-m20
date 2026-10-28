@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T23:43:14.416Z",
-    "lastVerified": "2026-10-28T23:43:14.416Z",
+    "lastChecked": "2026-10-28T23:56:17.900Z",
+    "lastVerified": "2026-10-28T23:56:17.900Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -107,9 +107,9 @@
   "gravitl-netmaker": {
     "name": "netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
-    "lastChecked": "2026-10-28T20:01:32.652Z",
+    "lastChecked": "2026-10-28T23:52:13.294Z",
     "revisionIdentifier": "f20acf34",
-    "lastVerified": "2026-10-28T20:01:32.652Z"
+    "lastVerified": "2026-10-28T23:52:13.294Z"
   },
   "mintplex-labs-anything-llm": {
     "name": "anything-llm",
@@ -238,11 +238,21 @@
     "revisionIdentifier": "74088ac3"
   },
   "herdrdev-herdr": {
-    "name": "herdr",
+    "name": "herdrdev/herdr",
     "officialUrl": "https://github.com/herdrdev/herdr",
-    "lastChecked": "2026-10-28T03:04:23.430Z",
-    "revisionIdentifier": "2713feb5",
-    "lastVerified": "2026-10-28T03:04:23.430Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T23:52:09.166Z",
+    "lastVerified": "2026-10-28T23:52:09.166Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-herdrdev-herdr",
+    "contentHash": "7266e83b80eef2e150bf6bb4b3c17b4a17796ec586c9660b95e679d6cda0c4f4",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-abenzerps-qwen-image-2.1-uncensored-gguf": {
     "name": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
@@ -383,8 +393,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T23:05:29.348Z",
-    "lastVerified": "2026-10-28T23:05:29.348Z",
+    "lastChecked": "2026-10-28T23:52:18.136Z",
+    "lastVerified": "2026-10-28T23:52:18.136Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1977,14 +1987,14 @@
     "officialUrl": "https://github.com/databendlabs/databend",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T06:11:53.985Z",
-    "lastVerified": "2026-10-28T06:11:53.985Z",
+    "lastChecked": "2026-10-28T23:52:21.712Z",
+    "lastVerified": "2026-10-28T23:52:21.712Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-databendlabs-databend",
-    "contentHash": "f3e15ce0ad862c498cc6edb6db99eab906e67bdc6615bd45a3917cf987961a57",
+    "contentHash": "c62adbdc40bb0c456af30f5c75b3c4f9f75c457acec00cf11e4974581d55dde1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2381,12 +2391,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "karmada-io-karmada": {
-    "name": "karmada-io/karmada",
+    "name": "karmada",
     "officialUrl": "https://github.com/karmada-io/karmada",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T07:31:39.578Z",
-    "lastVerified": "2026-10-28T07:31:39.578Z",
+    "lastChecked": "2026-10-28T23:52:10.761Z",
+    "lastVerified": "2026-10-28T23:52:10.761Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-karmada-io-karmada",
@@ -2395,7 +2405,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "95490f75"
   },
   "giancarloerra-socraticode": {
     "name": "SocratiCode",
@@ -7613,5 +7624,29 @@
     "lastChecked": "2026-10-28T23:42:59.235Z",
     "revisionIdentifier": "e184b284",
     "lastVerified": "2026-10-28T23:42:59.235Z"
+  },
+  "hf-meta-models-muse-spark-open-816b-a42b": {
+    "name": "meta-models/Muse-Spark-Open-816B-A42B",
+    "officialUrl": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T23:52:05.829Z",
+    "lastVerified": "2026-10-28T23:52:05.829Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
+    "contentHash": "03502bd94cfee37a4fb9fa9cdbc86af7fd2671b9e92fdf7b29137e982079fab9",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "swiftuix-swiftuix": {
+    "name": "SwiftUIX",
+    "officialUrl": "https://github.com/SwiftUIX/SwiftUIX",
+    "lastChecked": "2026-10-28T23:52:08.108Z",
+    "revisionIdentifier": "3a99044b",
+    "lastVerified": "2026-10-28T23:52:08.108Z"
   }
 }

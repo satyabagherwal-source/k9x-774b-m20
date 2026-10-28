@@ -6000,3 +6000,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-black-forest-labs-flux-3-image-klein` | `https://huggingface.co/black-forest-labs/flux-3-image-klein` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-28T23:31:36.010Z |
 | `learn-github-sxyazi-yazi` | `https://github.com/sxyazi/yazi` | `ec4ce8f2` | Multi-dimensional audit evidence | 2026-10-28T23:42:58.509Z |
 | `learn-huggingface-pyannote-speaker-diarization-community-1` | `https://huggingface.co/pyannote/speaker-diarization-community-1` | `hf-pyannot` | Multi-dimensional audit evidence | 2026-10-28T23:43:11.888Z |
+| `learn-github-herdrdev-herdr` | `https://github.com/herdrdev/herdr` | `bc8c2898` | Multi-dimensional audit evidence | 2026-10-28T23:52:10.875Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `48758c8c` | Multi-dimensional audit evidence | 2026-10-28T23:52:22.242Z |
+| `learn-huggingface-meta-models-muse-spark-open-816b-a42b` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-10-28T23:56:15.362Z |

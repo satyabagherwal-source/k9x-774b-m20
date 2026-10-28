@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T23:43:11.842Z",
+  "last_updated": "2026-10-28T23:56:15.285Z",
   "total_verified_learnings": 1160,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8274,8 +8274,8 @@
       "slug": "databendlabs-databend",
       "platform": "github",
       "source_url": "https://github.com/databendlabs/databend",
-      "source_version": "7344c579",
-      "content_hash": "f3e15ce0ad862c498cc6edb6db99eab906e67bdc6615bd45a3917cf987961a57",
+      "source_version": "48758c8c",
+      "content_hash": "c62adbdc40bb0c456af30f5c75b3c4f9f75c457acec00cf11e4974581d55dde1",
       "dossier_path": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "promoted_rules": [
@@ -8313,6 +8313,11 @@
           "number": 5203,
           "title": "query): restrict identity visibility and redact credentials (#20833)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5462,
+          "title": "query): preserve year-one timestamp boundaries and text round trips (#20853)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8320,7 +8325,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T06:11:54.503Z",
+      "verified_at": "2026-10-28T23:52:22.162Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15776,8 +15781,8 @@
       "slug": "herdrdev-herdr",
       "platform": "github",
       "source_url": "https://github.com/herdrdev/herdr",
-      "source_version": "2713feb5",
-      "content_hash": "81b3a3224ff8ef5d4f16d9b71ed5ba65f1fd994c85736c69081888c458dd4aca",
+      "source_version": "bc8c2898",
+      "content_hash": "7266e83b80eef2e150bf6bb4b3c17b4a17796ec586c9660b95e679d6cda0c4f4",
       "dossier_path": "07_PROJECT_LEARNING/herdrdev-herdr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/herdrdev-herdr-learnings.md",
       "promoted_rules": [
@@ -15810,6 +15815,11 @@
           "number": 4988,
           "title": "install opencode and kilo integrations under XDG_CONFIG_HOME (#5585)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5461,
+          "title": "ci: close stale issues without outside engagement monthly",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15817,7 +15827,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T20:31:51.789Z",
+      "verified_at": "2026-10-28T23:52:10.782Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64762,7 +64772,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
       "source_version": "hf-meta-models-muse-spark-open-816b-a42b",
-      "content_hash": "23f8156f03c3b909af8e214a147a3a48c7d4e5350fa1fa30481a31e136aadd43",
+      "content_hash": "03502bd94cfee37a4fb9fa9cdbc86af7fd2671b9e92fdf7b29137e982079fab9",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md",
       "promoted_rules": [
@@ -64815,6 +64825,16 @@
           "number": 4489,
           "title": "Guarded Sparse MoE Dispatch-Combine Routing with Numerical Normalization",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5463,
+          "title": "MoE All-to-All Memory Alignment and Token Dropping Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5464,
+          "title": "Distributed Manifest Integrity and Zero-Allocation Stub Guard",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -64822,7 +64842,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T23:32:54.860Z",
+      "verified_at": "2026-10-28T23:56:15.269Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -147400,6 +147420,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T23:43:11.832Z"
+    },
+    "rule-5461": {
+      "learning_id": "rule-5461",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5461,
+      "title": "ci: close stale issues without outside engagement monthly",
+      "source_url": "https://github.com/herdrdev/herdr",
+      "source_version": "bc8c2898",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T23:52:10.782Z"
+    },
+    "rule-5462": {
+      "learning_id": "rule-5462",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5462,
+      "title": "query): preserve year-one timestamp boundaries and text round trips (#20853)",
+      "source_url": "https://github.com/databendlabs/databend",
+      "source_version": "48758c8c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T23:52:22.162Z"
+    },
+    "rule-5463": {
+      "learning_id": "rule-5463",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5463,
+      "title": "MoE All-to-All Memory Alignment and Token Dropping Invariant",
+      "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
+      "source_version": "hf-meta-models-muse-spark-open-816b-a42b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T23:56:15.269Z"
+    },
+    "rule-5464": {
+      "learning_id": "rule-5464",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5464,
+      "title": "Distributed Manifest Integrity and Zero-Allocation Stub Guard",
+      "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
+      "source_version": "hf-meta-models-muse-spark-open-816b-a42b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T23:56:15.269Z"
     }
   },
   "aliases": {

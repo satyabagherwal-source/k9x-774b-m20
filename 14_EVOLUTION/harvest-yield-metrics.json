@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T23:43:11.891Z",
-  "total_cycles_completed": 5968,
-  "total_learnings_persisted": 5968,
-  "total_rules_promoted": 5424,
+  "last_updated": "2026-10-28T23:56:15.367Z",
+  "total_cycles_completed": 5971,
+  "total_learnings_persisted": 5971,
+  "total_rules_promoted": 5428,
   "history": [
-    {
-      "timestamp": "2026-10-28T14:15:29.716Z",
-      "repository": "openai/gpt-oss-120b",
-      "learningId": "learn-huggingface-openai-gpt-oss-120b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T14:15:30.426Z",
-      "repository": "bee-san/Ciphey",
-      "learningId": "learn-github-bee-san-ciphey",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T14:22:22.712Z",
-      "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T14:22:26.411Z",
       "repository": "embassy-rs/embassy",
@@ -1403,6 +1382,27 @@
       "repository": "pyannote/speaker-diarization-community-1",
       "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T23:52:10.880Z",
+      "repository": "herdrdev/herdr",
+      "learningId": "learn-github-herdrdev-herdr",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T23:52:22.247Z",
+      "repository": "databendlabs/databend",
+      "learningId": "learn-github-databendlabs-databend",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T23:56:15.367Z",
+      "repository": "meta-models/Muse-Spark-Open-816B-A42B",
+      "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

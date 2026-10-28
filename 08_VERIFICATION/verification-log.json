@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-D2DA",
-    "timestamp": "2026-10-27T19:13:38.110Z",
-    "repository": "oven-sh/bun",
-    "learningId": "learn-github-oven-sh-bun",
-    "contentHash": "3b819d968eb012cf3e0d7c6bd12fb99e926c3e40ed239c05648096e982446d77",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-D3NV",
-    "timestamp": "2026-10-27T19:13:39.787Z",
-    "repository": "webdriverio/webdriverio",
-    "learningId": "learn-github-webdriverio-webdriverio",
-    "contentHash": "60ef70381a2a41fbec4b4ae3eb09efc6d6baddf18fc9d42acc3d0ebfe74cb2c0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-LHMB",
-    "timestamp": "2026-10-27T19:20:11.123Z",
-    "repository": "oxc-project/oxc",
-    "learningId": "learn-github-oxc-project-oxc",
-    "contentHash": "4a7628c48a1d757bf48a2e1238fb0d0c70c8f5567d768b85f1bb0773282b9c34",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-LLSR",
     "timestamp": "2026-10-27T19:20:16.539Z",
     "repository": "linkerd/linkerd2",
@@ -7492,6 +7447,51 @@
     "contentHash": "8aa69fbaeb95bf32ab00355df9e4a458bb9be8684560b9d749799e6c81998026",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-R4OO",
+    "timestamp": "2026-10-28T23:52:10.872Z",
+    "repository": "herdrdev/herdr",
+    "learningId": "learn-github-herdrdev-herdr",
+    "contentHash": "7266e83b80eef2e150bf6bb4b3c17b4a17796ec586c9660b95e679d6cda0c4f4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-RDGF",
+    "timestamp": "2026-10-28T23:52:22.239Z",
+    "repository": "databendlabs/databend",
+    "learningId": "learn-github-databendlabs-databend",
+    "contentHash": "c62adbdc40bb0c456af30f5c75b3c4f9f75c457acec00cf11e4974581d55dde1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-WDBZ",
+    "timestamp": "2026-10-28T23:56:15.359Z",
+    "repository": "meta-models/Muse-Spark-Open-816B-A42B",
+    "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
+    "contentHash": "03502bd94cfee37a4fb9fa9cdbc86af7fd2671b9e92fdf7b29137e982079fab9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
