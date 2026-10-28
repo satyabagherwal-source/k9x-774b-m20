@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T07:44:47.914Z",
-  "total_cycles_completed": 5707,
-  "total_learnings_persisted": 5707,
-  "total_rules_promoted": 5177,
+  "last_updated": "2026-10-28T08:07:41.921Z",
+  "total_cycles_completed": 5708,
+  "total_learnings_persisted": 5708,
+  "total_rules_promoted": 5179,
   "history": [
-    {
-      "timestamp": "2026-10-27T20:38:36.319Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T20:45:18.887Z",
       "repository": "nitrojs/nitro",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-28T07:44:47.914Z",
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
       "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T08:07:41.921Z",
+      "repository": "unsloth/Qwen-Image-2.1-GGUF",
+      "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
       "promotedRulesCount": 2,
       "status": "PROMOTED"
     }

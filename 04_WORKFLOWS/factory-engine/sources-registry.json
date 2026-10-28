@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T07:44:50.444Z",
-    "lastVerified": "2026-10-28T07:44:50.444Z",
+    "lastChecked": "2026-10-28T08:07:44.448Z",
+    "lastVerified": "2026-10-28T08:07:44.448Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -169,9 +169,9 @@
   "dathere-qsv": {
     "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
-    "lastChecked": "2026-10-28T06:42:12.096Z",
+    "lastChecked": "2026-10-28T08:06:03.716Z",
     "revisionIdentifier": "acf15714",
-    "lastVerified": "2026-10-28T06:42:12.096Z"
+    "lastVerified": "2026-10-28T08:06:03.716Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -496,9 +496,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-10-28T03:31:28.331Z",
+    "lastChecked": "2026-10-28T08:05:58.702Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-10-28T03:31:28.331Z"
+    "lastVerified": "2026-10-28T08:05:58.702Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -2129,5 +2129,50 @@
     "lastChecked": "2026-10-28T07:31:38.583Z",
     "revisionIdentifier": "dae6d3a0",
     "lastVerified": "2026-10-28T07:31:38.583Z"
+  },
+  "orange-opensource-hurl": {
+    "name": "hurl",
+    "officialUrl": "https://github.com/Orange-OpenSource/hurl",
+    "lastChecked": "2026-10-28T08:05:48.746Z",
+    "revisionIdentifier": "4b465615",
+    "lastVerified": "2026-10-28T08:05:48.746Z"
+  },
+  "hf-unsloth-qwen-image-2.1-gguf": {
+    "name": "unsloth/Qwen-Image-2.1-GGUF",
+    "officialUrl": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T08:05:51.238Z",
+    "lastVerified": "2026-10-28T08:05:51.238Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
+    "contentHash": "7f45ec5af53056af7f54db6a0950bcc696f1be6d486abc8af1799bac27eed4ab",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nozbe-watermelondb": {
+    "name": "WatermelonDB",
+    "officialUrl": "https://github.com/Nozbe/WatermelonDB",
+    "lastChecked": "2026-10-28T08:05:53.700Z",
+    "revisionIdentifier": "5c463222",
+    "lastVerified": "2026-10-28T08:05:53.700Z"
+  },
+  "kgateway-dev-kgateway": {
+    "name": "kgateway",
+    "officialUrl": "https://github.com/kgateway-dev/kgateway",
+    "lastChecked": "2026-10-28T08:05:56.236Z",
+    "revisionIdentifier": "e8e3d347",
+    "lastVerified": "2026-10-28T08:05:56.236Z"
+  },
+  "zilliztech-attu": {
+    "name": "attu",
+    "officialUrl": "https://github.com/zilliztech/attu",
+    "lastChecked": "2026-10-28T08:06:01.196Z",
+    "revisionIdentifier": "d51e1c78",
+    "lastVerified": "2026-10-28T08:06:01.196Z"
   }
 }

@@ -5739,3 +5739,4 @@ Every entry in this ledger must capture:
 | `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `95490f75` | Multi-dimensional audit evidence | 2026-10-28T07:34:44.547Z |
 | `learn-github-wix-detox` | `https://github.com/wix/Detox` | `fc34e84a` | Multi-dimensional audit evidence | 2026-10-28T07:36:27.832Z |
 | `learn-huggingface-akatz-ai-minimax-h3-character-swap-lora` | `https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA` | `hf-akatz-a` | Multi-dimensional audit evidence | 2026-10-28T07:44:47.910Z |
+| `learn-huggingface-unsloth-qwen-image-2-1-gguf` | `https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-28T08:07:41.916Z |

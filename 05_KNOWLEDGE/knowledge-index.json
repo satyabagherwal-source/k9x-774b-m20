@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T07:44:47.820Z",
+  "last_updated": "2026-10-28T08:07:41.855Z",
   "total_verified_learnings": 1156,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -28434,7 +28434,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
       "source_version": "hf-unsloth-qwen-image-2.1-gguf",
-      "content_hash": "5bf242d835e6e8ea42d7bd037464d7016e886a6ccb13a64c29906720ab1e8c31",
+      "content_hash": "7f45ec5af53056af7f54db6a0950bcc696f1be6d486abc8af1799bac27eed4ab",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md",
       "promoted_rules": [
@@ -28462,6 +28462,16 @@
           "number": 1359,
           "title": "Heterogeneous Memory Alignment and Decoupled Modular Loading Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5234,
+          "title": "Tri-Component Precision Decoupling Invariant for Multimodal Diffusion",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5235,
+          "title": "Sensitivity-Calibrated Dynamic Bit-Allocation Invariant for Multi-Modal LLM Heads",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -28482,7 +28492,7 @@
         "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv46v2n7",
         "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv4k568v"
       ],
-      "verified_at": "2026-10-25T14:57:15.555Z",
+      "verified_at": "2026-10-28T08:07:41.842Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -142908,6 +142918,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T07:44:47.805Z"
+    },
+    "rule-5234": {
+      "learning_id": "rule-5234",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5234,
+      "title": "Tri-Component Precision Decoupling Invariant for Multimodal Diffusion",
+      "source_url": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
+      "source_version": "hf-unsloth-qwen-image-2.1-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T08:07:41.842Z"
+    },
+    "rule-5235": {
+      "learning_id": "rule-5235",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5235,
+      "title": "Sensitivity-Calibrated Dynamic Bit-Allocation Invariant for Multi-Modal LLM Heads",
+      "source_url": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
+      "source_version": "hf-unsloth-qwen-image-2.1-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T08:07:41.843Z"
     }
   },
   "aliases": {
