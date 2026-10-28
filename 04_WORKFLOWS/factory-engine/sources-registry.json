@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T10:52:36.892Z",
-    "lastVerified": "2026-10-28T10:52:36.892Z",
+    "lastChecked": "2026-10-28T11:05:05.018Z",
+    "lastVerified": "2026-10-28T11:05:05.019Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -110,9 +110,9 @@
   "bitterbot-ai-bitterbot-desktop": {
     "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "lastChecked": "2026-10-28T09:25:22.915Z",
+    "lastChecked": "2026-10-28T11:02:16.833Z",
     "revisionIdentifier": "fce458c1",
-    "lastVerified": "2026-10-28T09:25:22.915Z"
+    "lastVerified": "2026-10-28T11:02:16.833Z"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -951,9 +951,9 @@
   "cryfs-cryfs": {
     "name": "cryfs",
     "officialUrl": "https://github.com/cryfs/cryfs",
-    "lastChecked": "2026-10-28T04:28:24.446Z",
+    "lastChecked": "2026-10-28T11:02:11.844Z",
     "revisionIdentifier": "ad1f72d5",
-    "lastVerified": "2026-10-28T04:28:24.446Z"
+    "lastVerified": "2026-10-28T11:02:11.844Z"
   },
   "tursodatabase-turso": {
     "name": "tursodatabase/turso",
@@ -2485,5 +2485,50 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "gitoxidelabs-gitoxide": {
+    "name": "gitoxide",
+    "officialUrl": "https://github.com/GitoxideLabs/gitoxide",
+    "lastChecked": "2026-10-28T11:02:01.895Z",
+    "revisionIdentifier": "c24e68c2",
+    "lastVerified": "2026-10-28T11:02:01.895Z"
+  },
+  "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf": {
+    "name": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+    "officialUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T11:02:04.396Z",
+    "lastVerified": "2026-10-28T11:02:04.396Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
+    "contentHash": "cec87647009b8ac7142e5dda180121c98ed6949a79337d37bfd735a3a171b4cb",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "devhubapp-devhub": {
+    "name": "devhub",
+    "officialUrl": "https://github.com/devhubapp/devhub",
+    "lastChecked": "2026-10-28T11:02:06.841Z",
+    "revisionIdentifier": "1d0d66a3",
+    "lastVerified": "2026-10-28T11:02:06.841Z"
+  },
+  "aliyuncontainerservice-pouch": {
+    "name": "pouch",
+    "officialUrl": "https://github.com/AliyunContainerService/pouch",
+    "lastChecked": "2026-10-28T11:02:09.371Z",
+    "revisionIdentifier": "ba854f2d",
+    "lastVerified": "2026-10-28T11:02:09.371Z"
+  },
+  "vearch-vearch": {
+    "name": "vearch",
+    "officialUrl": "https://github.com/vearch/vearch",
+    "lastChecked": "2026-10-28T11:02:14.340Z",
+    "revisionIdentifier": "bae78b18",
+    "lastVerified": "2026-10-28T11:02:14.340Z"
   }
 }

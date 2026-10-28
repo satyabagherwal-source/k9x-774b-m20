@@ -5741,3 +5741,4 @@
 | `CYCLE-20261028-QOEO` | `2026-10-28T10:20:00.912Z` | `PSRben/VisionHOPE` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5248, Rule 5249` | Yes (`c2cd76b7...`) |
 | `CYCLE-20261028-LAKO` | `2026-10-28T10:43:49.320Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5250` | Yes (`6693cca0...`) |
 | `CYCLE-20261028-WJP4` | `2026-10-28T10:52:34.360Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5251, Rule 5252` | Yes (`0ab3c0b6...`) |
+| `CYCLE-20261028-CKXS` | `2026-10-28T11:05:02.464Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5253, Rule 5254, Rule 5255` | Yes (`cec87647...`) |

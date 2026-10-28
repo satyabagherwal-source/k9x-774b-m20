@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-HZA3",
-    "timestamp": "2026-10-27T11:49:33.531Z",
-    "repository": "wcandillon/react-native-skia",
-    "learningId": "learn-github-wcandillon-react-native-skia",
-    "contentHash": "df447fe43e6dc29f03f13354a28bef3ee5c52371b6c4798f8e336bc94f118fa4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-I3YR",
     "timestamp": "2026-10-27T11:49:39.603Z",
     "repository": "FastVideo/FastH3-Omni-Comfy",
@@ -7492,6 +7477,21 @@
     "contentHash": "0ab3c0b63551c4c902b2d01ae13aac6c7bb8e0f9ec21b1e3bacc0843cd045007",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-CKXS",
+    "timestamp": "2026-10-28T11:05:02.464Z",
+    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
+    "contentHash": "cec87647009b8ac7142e5dda180121c98ed6949a79337d37bfd735a3a171b4cb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

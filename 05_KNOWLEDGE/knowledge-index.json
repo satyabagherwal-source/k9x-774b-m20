@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T10:52:34.293Z",
+  "last_updated": "2026-10-28T11:05:02.392Z",
   "total_verified_learnings": 1157,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -23011,7 +23011,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
-      "content_hash": "074b0ebf966582ba35fd7776c2cd807d7d5708c9cb9c81a97d68cdb4e4ebe61f",
+      "content_hash": "cec87647009b8ac7142e5dda180121c98ed6949a79337d37bfd735a3a171b4cb",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -23044,6 +23044,21 @@
           "number": 4376,
           "title": "Sensitivity-Aware Precision Allocation for MoE Models",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5253,
+          "title": "Uniform-Per-Tensor MoE Quantization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5254,
+          "title": "Vision Projector Decoupled Multi-Modal GGUF Boundary",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5255,
+          "title": "MoE Expert Router (Gate) Precision Invariance Rule",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -23064,7 +23079,7 @@
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv47q2a0",
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv4l09tk"
       ],
-      "verified_at": "2026-10-25T16:02:41.216Z",
+      "verified_at": "2026-10-28T11:05:02.374Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -143297,6 +143312,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T10:52:34.282Z"
+    },
+    "rule-5253": {
+      "learning_id": "rule-5253",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5253,
+      "title": "Uniform-Per-Tensor MoE Quantization Invariant",
+      "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T11:05:02.374Z"
+    },
+    "rule-5254": {
+      "learning_id": "rule-5254",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5254,
+      "title": "Vision Projector Decoupled Multi-Modal GGUF Boundary",
+      "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T11:05:02.374Z"
+    },
+    "rule-5255": {
+      "learning_id": "rule-5255",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5255,
+      "title": "MoE Expert Router (Gate) Precision Invariance Rule",
+      "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T11:05:02.374Z"
     }
   },
   "aliases": {
