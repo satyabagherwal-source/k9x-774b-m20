@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T14:42:55.138Z",
+  "last_updated": "2026-10-28T14:49:49.263Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1220,14 +1220,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
-      "content_hash": "14608bbae8242e4cc5248118194077ac9fe40cfdc98ff83114e8cdf753a09d51",
-      "verified_at": "2026-10-25T20:17:44.900Z",
+      "content_hash": "5383d64a792e4e702d5073c72aca4bb27329a9da9d05401d8e40e610fecffcae",
+      "verified_at": "2026-10-28T14:49:33.590Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T20:17:44.900Z"
+      "last_updated": "2026-10-28T14:49:33.590Z"
     },
     "bigscience/bloom": {
       "repository": "bigscience/bloom",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "a8dc125c0d8a65d7d2bd087f3d87e0b2c528807e51f611671646e33f461f6d76",
-      "verified_at": "2026-10-27T21:52:01.751Z",
+      "content_hash": "1c3219cdd5916fa38603ba520464c5ad55c4fdc4d5e3ab261395289f0db88118",
+      "verified_at": "2026-10-28T14:49:49.262Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T21:52:01.751Z"
+      "last_updated": "2026-10-28T14:49:49.262Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -7266,14 +7266,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-saltstack-salt",
-      "content_hash": "c2ba244630db252ff066ee908b2c7f40ee60c53ab28ee89fe8fd3820d49d0443",
-      "verified_at": "2026-10-27T15:12:12.626Z",
+      "content_hash": "91980244a1fefa48a5337747907e9d02382effd51a21b50b859414c8dda5d544",
+      "verified_at": "2026-10-28T14:49:42.137Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T15:12:12.626Z"
+      "last_updated": "2026-10-28T14:49:42.137Z"
     },
     "etcd-io/etcd": {
       "repository": "etcd-io/etcd",

@@ -935,8 +935,8 @@
     "sourceUrl": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
     "sourceVersion": "hf-stabilityai-stable-diffusion-3-medium",
     "license": "Open-Source",
-    "contentHash": "14608bbae8242e4cc5248118194077ac9fe40cfdc98ff83114e8cdf753a09d51",
-    "lastHarvestedAt": "2026-10-25T20:17:44.894Z",
+    "contentHash": "5383d64a792e4e702d5073c72aca4bb27329a9da9d05401d8e40e610fecffcae",
+    "lastHarvestedAt": "2026-10-28T14:49:33.583Z",
     "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium"
   },
   "hf-bigscience-bloom": {
@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "fce458c1",
+    "sourceVersion": "c22b2932",
     "license": "MIT",
-    "contentHash": "a8dc125c0d8a65d7d2bd087f3d87e0b2c528807e51f611671646e33f461f6d76",
-    "lastHarvestedAt": "2026-10-27T21:52:01.737Z",
+    "contentHash": "1c3219cdd5916fa38603ba520464c5ad55c4fdc4d5e3ab261395289f0db88118",
+    "lastHarvestedAt": "2026-10-28T14:49:49.254Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -4763,10 +4763,10 @@
     "repository": "saltstack/salt",
     "platform": "github",
     "sourceUrl": "https://github.com/saltstack/salt",
-    "sourceVersion": "021a041a",
+    "sourceVersion": "401a8531",
     "license": "Apache-2.0",
-    "contentHash": "c2ba244630db252ff066ee908b2c7f40ee60c53ab28ee89fe8fd3820d49d0443",
-    "lastHarvestedAt": "2026-10-27T15:12:12.617Z",
+    "contentHash": "91980244a1fefa48a5337747907e9d02382effd51a21b50b859414c8dda5d544",
+    "lastHarvestedAt": "2026-10-28T14:49:42.129Z",
     "learningId": "learn-github-saltstack-salt"
   },
   "etcd-io-etcd": {

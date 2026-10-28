@@ -5804,3 +5804,6 @@
 | `CYCLE-20261028-4ODW` | `2026-10-28T14:42:50.612Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5311` | Yes (`a27e64fa...`) |
 | `CYCLE-20261028-4OYP` | `2026-10-28T14:42:51.361Z` | `bigscience/bloom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5312, Rule 5313, Rule 5314` | Yes (`251058e0...`) |
 | `CYCLE-20261028-4RV8` | `2026-10-28T14:42:55.124Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5315` | Yes (`d9be5f78...`) |
+| `CYCLE-20261028-DBBF` | `2026-10-28T14:49:33.579Z` | `stabilityai/stable-diffusion-3-medium` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md` | Yes (`5383d64a...`) |
+| `CYCLE-20261028-DHWT` | `2026-10-28T14:49:42.125Z` | `saltstack/salt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5316` | Yes (`91980244...`) |
+| `CYCLE-20261028-DNEQ` | `2026-10-28T14:49:49.250Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5317` | Yes (`1c3219cd...`) |

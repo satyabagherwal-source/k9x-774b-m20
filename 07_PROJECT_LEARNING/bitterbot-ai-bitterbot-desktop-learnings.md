@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `fce458c1`  
+> **Source Version**: `c22b2932`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T21:52:01.541Z  
+> **Timestamp**: 2026-10-28T14:49:48.809Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T21:52:01.533Z  
+> **Harvest Timestamp**: 2026-10-28T14:49:48.800Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,842 +1799,813 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fce458c1` (2026-10-27)
-**Commit Message**: fix(gateway): restarted gateway outlives its parent's lock instead of dying at the 5 s timeout (#316)
+### Incident Patch 1: `c22b2932` (2026-10-28)
+**Commit Message**: feat(benchmarks): LongMemEval runner on the official protocol (#318)
 
-* fix(gateway): let a restarted gateway outlive its parent's lock instead of dying at the 5 s timeout
+* feat(benchmarks): LongMemEval runner on the official protocol
 
-A full-process restart spawns the new gateway while the old one is still
-draining tasks and closing the server (the orchestrator sidecar alone takes
-~10 s to exit), so the child regularly finds the lock file held by its
-parent. It gave up at the plain 5 s lock timeout, the parent then exited, and
-nothing was left listening: on 2026-10-27 a soapbox-compute config change
-triggered exactly this and the reference node was dark for 51 minutes until
-an operator procedure started a gateway by hand.
+The existing LongMemEval runner could not produce a citable number: it judged
+with its own prompt on a floating gpt-4o alias, fed question_type hints to
+the reader and the retrieval query, and wrote the dataset's gold-marked
+session ids (every evidence id contains "answer") into the ingested text and
+file names. This adds a runner that follows the reference pipeline
+(xiaowu0162/LongMemEval @ 9e0b455f) exactly and leaves the old runners as
+diagnostic tooling, labelled non-comparable.
 
-- process-respawn passes BITTERBOT_RESTART_PARENT_PID to the child.
-- acquireGatewayLock: when the lock owner is that pid, the wait extends to
-  restartHandoffTimeoutMs (default 120 s) and fires onRestartHandoffWait once;
-  the run loop logs it. A lock held by any other live gateway fails fast as
-  before.
-- run-loop releases the lock right after a successful spawn, before
-  runtime.exit(): the finally that used to release it never ran on that path.
-- Tests: the child acquires the lock after
+- official-protocol.ts: reader template (Chain-of-Note and direct), context
+  formatting (date-sorted "### Session i" blocks, python json.dumps-faithful
+  turn lists), the five per-type judge prompts and the abstention prompt,
+  verdict rule, aggregates (overall, task-averaged, abstention), session
+  recall; all copied verbatim from the reference and pinned by tests.
+- runner-official.ts: per question, rebuilds turns as {role, content} with
+  positional session ids (removes the has_answer and id leaks), one nl
+  document per session, back-dates chunks to the session, se
 
-**File**: `docs/gateway/gateway-lock.md` (modified, +8/-1)
+**File**: `.gitignore` (modified, +3/-0)
 ```diff
-@@ -8,7 +8,7 @@ title: "Gateway Lock"
- 
- # Gateway lock
- 
--Last updated: 2025-12-11
-+Last updated: 2026-10-27
- 
- ## Why
- 
-@@ -28,6 +28,13 @@ Last updated: 2025-12-11
- - If another process holds the port, startup throws `GatewayLockError("another gateway instance is already listening on ws://127.0.0.1:<port>")`.
- - Other bind failures surface as `GatewayLockError("failed to bind gateway socket on ws://127.0.0.1:<port>: …")`.
- 
-+## Restart handoff
+@@ -264,3 +264,6 @@ docs/plans/
+ docs/reviews/v1-release-audit-2026-08-21.md
+ docs/reviews/v1-release-audit-2026-08-21-verification.md
+ docs/reviews/circles-p2p-security-remediation-2026-08-14.md
 +
-+- A full-process restart (SIGUSR1, the gateway tool, a config change that needs a restart) spawns the new gateway while the old one is still draining tasks and closing the server; the orchestrator sidecar alone can take ten seconds to exit. The child therefore usually finds the lock file still held by its parent.
-+- The child is told who its parent is (`BITTERBOT_RESTART_PARENT_PID`). When the lock owner is that pid, the child waits up to 120 s for the parent to release the lock or exit instead of giving up at the plain 5 s timeout, and logs `lock still held by the restarting gateway (pid …); waiting for it to exit` once.
-+- The parent releases the lock right after the spawn succeeds, before it exits, so the handoff normally completes in well under a second.
-+- Before 2026-10-27 the child gave up at 5 s, the parent then exited, and no gateway was left listening (a 51-minute outage on the reference node). A lock held by any other live gateway still fails fast as before.
-+
- ## Operational notes
- 
- - If the port is occupied by _another_ process, the error is the same; free the port or choose another with `bitterbot gateway --port <port>`.
++benchmarks/longmemeval/.work-official/
++benchmarks/longmemeval/.work-official-scorer/
 ```
 
-**File**: `src/cli/gateway-cli/run-loop.ts` (modified, +9/-1)
+**File**: `benchmarks/longmemeval/README.md` (modified, +162/-6)
 ```diff
-@@ -24,7 +24,12 @@ export async function runGatewayLoop(params: {
-   start: () => Promise<Awaited<ReturnType<typeof startGatewayServer>>>;
-   runtime: typeof defaultRuntime;
- }) {
--  const lock = await acquireGatewayLock();
-+  const lock = await acquireGatewayLock({
-+    onRestartHandoffWait: (parentPid) =>
-+      gatewayLog.info(
-+        `lock still held by the restarting gateway (pid ${parentPid}); waiting for it to exit`,
-+      ),
-+  });
-   let server: Awaited<ReturnType<typeof startGatewayServer>> | null = null;
-   let shuttingDown = false;
-   let restartResolver: (() => void) | null = null;
-@@ -95,6 +100,9 @@ export async function runGatewayLoop(params: {
-                 ? `spawned pid ${respawn.pid ?? "unknown"}`
-                 : "supervisor restart";
-             gatewayLog.info(`restart mode: full process restart (${modeLabel})`);
-+            // Hand the lock over now: runtime.exit() below never reaches the
-+            // finally that would release it, and the child is already waiting.
-+            await lock?.release().catch(() => undefined);
-             cleanupSignals();
-             params.runtime.exit(0);
-           } else {
-```
-
-**File**: `src/infra/gateway-lock.test.ts` (modified, +58/-1)
-```diff
-@@ -5,7 +5,7 @@ import os from "node:os";
- import path from "node:path";
- import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
- import { resolveConfigPath, resolveGatewayLockDir, resolveStateDir } from "../config/paths.js";
--import { acquireGatewayLock, GatewayLockError } from "./gateway-lock.js";
-+import { acquireGatewayLock, GatewayLockError, RESTART_PARENT_PID_ENV } from "./gateway-lock.js";
+@@ -2,6 +2,157 @@
  
- let fixtureRoot = "";
- let fixtureCount = 0;
-@@ -215,3 +215,60 @@ describe("gateway lock", () => {
-     await cleanup();
-   });
- });
+ Runs the [LongMemEval](https://github.com/xiaowu0162/LongMemEval) benchmark (ICLR 2025) against Bitterbot's biological memory system.
+ 
++Two kinds of runner live here. `runner-official.ts` follows the reference
++protocol exactly and produces numbers that can be placed next to published
++ones. Everything else (`runner.ts`, `runner-biological.ts`,
++`runner-retrieval.ts`, `runner-contrastive.ts`) is diagnostic tooling whose
++output is **not comparable** to any published LongMemEval figure: those
++runners use their own judge prompt, feed `question_type` hints to the
++reader, and until 2026-10-27 wrote the dataset's gold-marked session ids into
++the retrieval corpus. Use them to compare Bitterbot against Bitterbot, never
++against the leaderboard.
 +
-+describe("restart handoff", () => {
-+  // Real timers: the loop polls the filesystem.
-+  it("outlives a parent that is still shutting down when spawned as its restart", async () => {
-+    vi.useRealTimers();
-+    const { env, cleanup } = await makeEnv();
-+    const parent = await acquireGatewayLock({
-+      env,
-+      allowInTests: true,
-+      timeoutMs: 50,
-+      pollIntervalMs: 2,
-+    });
-+    expect(parent).not.toBeNull();
-+    // The lock owner is this process; the child is told this process is its parent.
-+    const childEnv = { ...env, [RESTART_PARENT_PID_ENV]: String(process.pid) };
-+    const waited: number[] = [];
-+    const pending = acquireGatewayLock({
-+      env: childEnv,
-+      allowInTests: true,
-+      timeoutMs: 30,
-+      restartHandoffTimeoutMs: 3000,
-+      pollIntervalMs: 2,
-+      onRestartHandoffWait: (pid) => waited.push(pid),
-+    });
-+    // Well past the plain timeout, the parent finally lets go.
-+    await new Promise((r) => setTimeout(r, 150));
-+    await parent?.release();
-+    const child = await pending;
-+    expect(child).not.toBeNull();
-+    expect(waited).toEqual([process.pid]);
-+    await child?.release();
-+    await cleanup();
-+  });
++## Official protocol run
 +
-+  it("still gives up at the plain timeout when the owner is not its parent", async () => {
-+    vi.useRealTimers();
-+    const { env, cleanup } = await makeEnv();
-+    const owner = await acquireGatewayLock({
-+      env,
-+      allowInTests: true,
-+      timeoutMs: 50,
-+      pollIntervalMs: 2,
-+    });
-+    const childEnv = { ...env, [RESTART_PARENT_PID_ENV]: String(process.pid + 100_000) };
-+    await expect(
-+      acquireGatewayLock({
-+        env: childEnv,
-+        allowInTests: true,
-+        timeoutMs: 30,
-+        restartHandoffTimeoutMs: 3000,
-+        pollIntervalMs: 2,
-+      }),
-+    ).rejects.toBeInstanceOf(GatewayLockError);
-+    await owner?.release();
-+    await cleanup();
-+  });
-+});
++The reference pipeline defines a third-party result as: feed each question's
++timestamped history to the memory system without the question, ask the
++question at `question_date`, write `{question_id, hypothesis}` JSONL, score it
++with the unmodified `evaluate_qa.py` using the pinned `gpt-4o-2024-08-06`
++judge and its five question-type prompts, and report overall (question
++weighted), task-averaged (mean of the six type means) and abstention accuracy.
++`official-protocol.ts` holds the reader template, context formatting, judge
++prompts and aggregates copied verbatim from the reference at commit
++`9e0b455f`; `official-protocol.test.ts` pins them.
++
++```bash
++pnpm benchmark:longmemeval:download                   # cleaned S + oracle from HF, hashes checked below
++
++# 1. Answer all 500 questions (hours; resumable with --resume)
++pnpm benchmark:longmemeval:official -- \
++  --out benchmarks/longmemeval/results/official-s-haiku-4-5.jsonl \
++  --reader anthropic/claude-haiku-4-5-20251001 --unit session --k 10
++
++# 2a. Score with the reference scripts themselves (venv + OPENAI_API_KEY)
++pnpm benchmark:longmemeval:official:scorer -- benchmarks/longmemeval/results/official-s-haiku-4-5.jsonl
++
++# 2b. Or with the TypeScript port (same judge, prompts, decoding, output format).
++#     Refuses a file with fewer than 500 distinct ids unless --allow-partial (pilots).
++pnpm benchmark:longmemeval:official:evaluate -- --hyp benchmarks/longmemeval/results/official-s-haiku-4-5.jsonl
++
++# Baselines with the same reader: long context (no retrieval) and oracle (gold sessions only)
++pnpm benchmark:longmemeval:official -- --full-context --out benchmarks/longmemeval/results/official-s-fullctx-haiku-4-5.jsonl
++pnpm benchmark:longmemeval:official -- --oracle --out benchmarks/longmemeval/results/official-oracle-haiku-4-5.jsonl
++```
++
++What the runner does per question, and why each step is there:
++
++| Step                                                                                                                 | Protocol reason                                                                                                                                                                       |
++| -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
++| Rebuild every turn as `{role, content}` and give sessions positional ids `session-001`…                              | The dataset leaks gold two ways: `has_answer` keys exist only on evidence-session turns, and every evidence session id contains the substring `answer`. Neither may reach the system. |
++| One document per session, `Session Date:` header, `role: content` lines (the reference `nl` format)                  | Every retrieved chunk maps to one session and so to one date.                                                                                                                         |
++| Back-date each session's chunks to the session timestamp and search with `now = question_date`                       | Recency and temporal-intent boosts measure age; the history is from 2023 and must be scored as of the question, not as of the ingest.                                                 |
++| Query = the raw question. No `question_type` anywhere on the inference path                                          | `question_type` is a scoring key in `evaluate_qa.py`; the reference retrieval query is the question text.                                                                             |
++| Top-k distinct sessions by best chunk (or top-k chunks with `--unit chunk`), rendered date-sorted as `### Session i` | `run_generation.py` sorts retrieved items by timestamp and labels each with its date; sessions are rendered as `json.dumps` of the turn list, the paper's recommended format.         |
++| Chain-of-Note template (`--reading con`), pinned reader id, temperature 0, 800 max tokens                            | The paper's default reading str
 ```
 
-**File**: `src/infra/gateway-lock.ts` (modified, +32/-1)
+**File**: `benchmarks/longmemeval/analyze-official.ts` (added, +197/-0)
 ```diff
-@@ -8,6 +8,16 @@ import { isPidAlive } from "../shared/pid-alive.js";
- const DEFAULT_TIMEOUT_MS = 5000;
- const DEFAULT_POLL_INTERVAL_MS = 100;
- const DEFAULT_STALE_MS = 30_000;
+@@ -0,0 +1,197 @@
 +/**
-+ * A full-process restart spawns the new gateway while the old one is still
-+ * draining and closing (the orchestrator alone can take ~10 s to exit), so the
-+ * child regularly finds the lock held by its parent. With the plain 5 s
-+ * timeout the child gave up, the parent then exited, and nothing was left
-+ * listening: a 51-minute outage on 2026-10-27. When the lock owner IS the
-+ * parent named in RESTART_PARENT_PID_ENV, the child waits this long instead.
++ * Dissect an official-protocol run: where the misses come from.
++ *
++ * Joins the hypothesis file, the judge output (`.eval-results-gpt-4o`), the
++ * retrieval log (`.retrieval.jsonl`) and the reference data, and reports per
++ * question type: accuracy, session recall at several k, how many misses had
++ * every gold session inside the reader's context (a reading failure) versus
++ * missing one (a retrieval failure), where the first missing gold session
++ * ranked, and abstention behaviour (false abstentions on answerable
++ * questions, missed abstentions on `_abs` ones). Output is JSON on stdout plus
++ * a markdown table; nothing here touches the inference path.
++ *
++ *   node --import tsx benchmarks/longmemeval/analyze-official.ts --hyp <jsonl> [--k 10] [--ref data/longmemeval_s.json] [--samples 0]
 + */
-+const DEFAULT_RESTART_HANDOFF_TIMEOUT_MS = 120_000;
-+export const RESTART_PARENT_PID_ENV = "BITTERBOT_RESTART_PARENT_PID";
- 
- type LockPayload = {
-   pid: number;
-@@ -29,6 +39,10 @@ export type GatewayLockOptions = {
-   staleMs?: number;
-   allowInTests?: boolean;
-   platform?: NodeJS.Platform;
-+  /** How long to wait for the restart parent (env RESTART_PARENT_PID_ENV) to let go of the lock. */
-+  restartHandoffTimeoutMs?: number;
-+  /** Called once when the wait is extended for the restart parent. */
-+  onRestartHandoffWait?: (parentPid: number) => void;
- };
- 
- export class GatewayLockError extends Error {
-@@ -200,10 +214,13 @@ export async function acquireGatewayLock(
-     return null;
-   }
- 
--  const timeoutMs = opts.timeoutMs ?? DEFAULT_TIMEOUT_MS;
-+  let timeoutMs = opts.timeoutMs ?? DEFAULT_TIMEOUT_MS;
-   const pollIntervalMs = opts.pollIntervalMs ?? DEFAULT_POLL_INTERVAL_MS;
-   const staleMs = opts.staleMs ?? DEFAULT_STALE_MS;
-   const platform = opts.platform ?? process.platform;
-+  const restartParentPid = Number.parseInt(env[RESTART_PARENT_PID_ENV] ?? "", 10);
-+  const handoffTimeoutMs = opts.restartHandoffTimeoutMs ?? DEFAULT_RESTART_HANDOFF_TIMEOUT_MS;
-+  let handoffExtended = false;
-   const { lockPath, configPath } = resolveGatewayLockPath(env);
-   await fs.mkdir(path.dirname(lockPath), { recursive: true });
- 
-@@ -246,6 +263,20 @@ export async function acquireGatewayLock(
-         await fs.rm(lockPath, { force: true });
-         continue;
-       }
-+      // Restart handoff: the lock is held by the gateway that spawned us and is
-+      // still shutting down. Outlive it instead of giving up at the plain
-+      // timeout; it releases the lock or dies, and either frees the loop above.
-+      if (
-+        !handoffExtended &&
-+        Number.isFinite(restartParentPid) &&
-+        restartParentPid > 0 &&
-+        ownerPid === restartParentPid &&
-+        handoffTimeoutMs > timeoutMs
-+      ) {
-+        handoffExtended = true;
-+        timeoutMs = handoffTimeoutMs;
-+        opts.onRestartHandoffWait?.(restartParentPid);
-+      }
-       if (ownerStatus !== "alive") {
-         let stale = false;
-         if (lastPayload?.createdAt) {
-```
-
-**File**: `src/infra/process-respawn.ts` (modified, +8/-2)
-```diff
-@@ -2,6 +2,7 @@ import { spawn } from "node:child_process";
- import fs from "node:fs";
- import path from "node:path";
- import { readBootVerify } from "./boot-verify.js";
-+import { RESTART_PARENT_PID_ENV } from "./gateway-lock.js";
- import { setupHandoverPending } from "./setup-handover.js";
- import { CURRENT_LINK, resolveTarballLayout } from "./tarball-install.js";
- import { spawnTarballBootWatchdog } from "./tarball-watchdog-spawn.js";
-@@ -111,7 +112,10 @@ export function restartGatewayProcessWithFreshPid(): GatewayRespawnResult {
-   }
-   if (tarball) {
-     try {
--      const env = { ...process.env };
-+      const env: NodeJS.ProcessEnv = {
-+        ...process.env,
-+        [RESTART_PARENT_PID_ENV]: String(process.pid),
-+      };
-       // The new launcher sets its own root, and its entry.js re-execs itself
-       // (warning flags) unless this marker is inherited.
-       delete env.BITTERBOT_INSTALL_ROOT;
-@@ -128,7 +132,9 @@ export function restartGatewayProcessWithFreshPid(): GatewayRespawnResult {
-   try {
-     const args = [...process.execArgv, ...process.argv.slice(1)];
-     const child = spawn(process.execPath, args, {
--      env: process.env,
-+      // The child finds our lock still held while we drain and close; the pid
-+      // lets it wait for us instead of giving up at the plain lock timeout.
-+      env: { ...process.env, [RESTART_PARENT_PID_ENV]: String(process.pid) },
-       detached: true,
-       stdio: "inherit",
-     });
-```
-
----
-
-### Incident Patch 2: `ac3cc673` (2026-10-27)
-**Commit Message**: bench(live-recall): replay the agent's real memory_search queries under each boost scale (#317)
-
-The event journal records every memory_search call with its query text: 71
-calls, 68 distinct queries, May to October 2026. extract-journal-queries.mts
-pulls them (private output, manifest committed); replay-judge.mts searches a
-snapshot copy once per postFusionBoostScale, pools the top-5 passages across
-settings and has claude-haiku-4-5 judge each (query, passage) pair once, so
-the same verdicts score every setting.
-
-Results: scale 1 hit@5 38.2% / P@5 23.8% / MRR 0.342; 0.1: 42.6% / 30.9% /
-0.354; 0: 44.1% / 31.2% / 0.362. Same direction as the held-out set, much
-smaller effect on real (short, keyword-shaped) queries; 0 is not
-distinguishable from 0.1 here (3 up, 3 down), so the default stays 0.1. Only
-33 of 68 real queries had any relevant passage in the store under any setting.
-
-Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-**File**: `benchmarks/live-recall/README.md` (modified, +36/-0)
-```diff
-@@ -73,6 +73,42 @@ out of the returned 50 by the boosts has no channel rank either.
- 
- Result files are in `results/` and hold ranks, chunk ids and sources only.
- 
-+## Real agent queries (journal replay)
-+
-+Generated questions always contain findable terms. The event journal records
-+every `memory_search` the agent has made, with its query text, so the same
-+code paths can be judged on what the agent actually asks:
-+
-+1. `extract-journal-queries.mts` pulls the distinct queries from
-+   `~/.bitterbot/event-journal.sqlite` (stream `tool`, phase `start`). Private
-+   output under `~/.bitterbot`, never committed; a manifest with counts and the
-+   file hash is.
-+2. `replay-judge.mts` searches a copy of the snapshot once per setting
-+   (here `postFusionBoostScale` 1, 0.1, 0), pools the top-k passages across
-+   settings, and asks a small model ONCE per (query, passage) pair whether the
-+   passage answers the query. The same verdicts score every setting, so the
-+   comparison is fair even where the judge is not. Output: hit@k (any relevant
-+   passage in the top k), precision@k, relevant@1, MRR; hashes and ranks only.
-+
-+Results, 2026-10-27: 68 distinct real queries (May to October 2026, median 36
-+characters), k = 5, judge `claude-haiku-4-5`, 398 pairs judged. Only 33 of the
-+68 queries had any relevant passage under any setting; the store simply does
-+not hold an answer for the rest, which is itself a finding about what the agent
-+asks for versus what it has kept.
-+
-+| `postFusionBoostScale` | hit@5 | precision@5 | relevant@1 | MRR   |
-+| ---------------------- | ----- | ----------- | ---------- | ----- |
-+| 1 (legacy)             | 38.2% | 23.8%       | 32.4%      | 0.342 |
-+| 0.1 (default)          | 42.6% | 30.9%       | 32.4%      | 0.354 |
-+| 0                      | 44.1% | 31.2%       | 32.4%      | 0.362 |
-+
-+Per query, 0.1 against 1 moved the first relevant passage up on 8 queries and
-+down on 5 (55 unchanged); 0 against 0.1 moved 3 up and 3 down. The direction
-+agrees with the held-out set; the size of the effect is far smaller on real
-+queries, which are short and keyword-shaped and sit closer to the keyword
-+channel's strengths, and 0 is not distinguishable from 0.1 on this sample. The
-+default stays at 0.1.
-+
- ## Caveats
- 
- - The question writer sees the passage, so questions can be easier than real
-```
-
-**File**: `benchmarks/live-recall/extract-journal-queries.mts` (added, +97/-0)
-```diff
-@@ -0,0 +1,97 @@
-+/**
-+ * Real agent queries from the event journal.
-+ *
-+ * Every `memory_search` tool call the agent made is journaled with its
-+ * arguments (stream "tool", phase "start"). This pulls the distinct queries
-+ * out so retrieval can be judged on what the agent actually asks, not on
-+ * questions a model wrote while looking at the answer. The output paraphrases
-+ * the operator's conversations, so it is PRIVATE: written 0600 outside the
-+ * repository, never committed. A manifest with counts and the file hash is.
-+ *
-+ *   node --import tsx benchmarks/live-recall/extract-journal-queries.mts \
-+ *     --journal ~/.bitterbot/event-journal.sqlite --out ~/.bitterbot/benchmarks/live-recall/journal-queries.jsonl [--max 120]
-+ */
-+import { createHash } from "node:crypto";
-+import { mkdirSync, writeFileSync } from "node:fs";
-+import { dirname } from "node:path";
-+import { DatabaseSync } from "node:sqlite";
-+import { parseArgs } from "node:util";
-+import { gunzipSync } from "node:zlib";
-+
-+const { values: args } = parseArgs({
-+  options: {
-+    journal: { type: "string" },
-+    out: { type: "string" },
-+    max: { type: "string", default: "120" },
-+  },
-+  strict: true,
-+});
-+if (!args.journal || !args.out) {
-+  throw new Error("usage: --journal <event-journal.sqlite> --out <queries.jsonl> [--max N]");
-+}
-+const max = Number(args.max);
-+
-+type ToolEvent = { phase?: string; name?: string; args?: { query?: unknown } };
-+
-+const db = new DatabaseSync(args.journal, { readOnly: true });
-+const rows = db
-+  .prepare(
-+    `SELECT seq, ts, session_key AS sk, data_blob AS d FROM event_log WHERE stream = 'tool' ORDER BY seq DESC`,
-+  )
-+  .all() as unknown as Array<{ seq: number; ts: number; sk: string | null; d: Uint8Array }>;
-+db.close();
-+
-+const seen = new Set<string>();
-+const picked: Array<{ seq: number; ts: number; sessionKeySha256: string; query: string }> = [];
-+let calls = 0;
-+for (const r of rows) {
-+  let evt: ToolEvent;
-+  try {
-+    evt = JSON.parse(gunzipSync(Buffer.from(r.d)).toString("utf-8")) as ToolEvent;
-+  } catch {
-+    continue;
-+  }
-+  if (evt.name !== "memory_search" || evt.phase !== "start") {
-+    continue;
-+  }
-+  const query = typeof evt.args?.query === "string" ? evt.args.query.trim() : "";
-+  if (!query) {
-+    continue;
-+  }
-+  calls++;
-+  const key = query.toLowerCase();
-+  if (seen.has(key)) {
-+    continue;
-+  }
-+  seen.add(key);
-+  picked.push({
-+    seq: r.seq,
-+    ts: r.ts,
-+    sessionKeySha256: createHash("sha256")
-+      .update(r.sk ?? "")
-+      .digest("hex")
-+      .slice(0, 16),
-+    query,
-+  });
-+  if (picked.length >= max) {
-+    break;
-+  }
-+}
-+// Oldest first, so a saved file reads chronologically.
-+picked.sort((a, b) => a.seq - b.seq);
-+
-+mkdirSync(dirname(args.out), { recursive: true });
-+const body = `${picked.map((p) => JSON.stringify(p)).join("\n")}\n`;
-+writeFileSync(args.out, body, { mode: 0o600 });
-+const manifest = {
-+  createdAt: new Date().toISOString(),
-+  journal: args.journal,
-+  toolEvents: rows.length,
-+  memorySearchCalls: calls,
-+  distinctQueries: picked.length,
-+  oldest: picked[0] ? new Date(picked[0].ts).toISOString() : null,
-+  newest: picked.at(-1) ? new Date(picked.at(-1)!.ts).toISOString() : null,
-+  queriesSha256: createHash("sha256").update(body).digest("hex"),
-+};
-+writeFileSync(`${args.out}.manifest.json`, `${JSON.stringify(manifest, null, 2)}\n`);
-+console.log(JSON.stringify(manifest));
-```
-
-**File**: `benchmarks/live-recall/replay-judge.mts` (added, +274/-0)
-```diff
-@@ -0,0 +1,274 @@
-+/**
-+ * Replay real agent queries against a store snapshot under several
-+ * post-fusion boost scales and judge relevance with a small model.
-+ *
-+ * The held-out set (run.mts) has exact ground truth but synthetic questions.
-+ * Real queries from the journal (extract-journal-queries.mts) have no ground
-+ * truth, so a judge model marks each (query, passage) pair relevant or not,
-+ * ONCE, and the same verdicts score every setting. Settings differ only in the
-+ * code path under test, so the comparison is fair even if the judge is not
-+ * perfect. Output holds metrics and ids only.
-+ *
-+ *   node --import tsx benchmarks/live-recall/replay-judge.mts \
-+ *     --snapshot ~/snap.sqlite --queries ~/.bitterbot/benchmarks/live-recall/journal-queries.jsonl \
-+ *     --scales 1,0.1,0 --out benchmarks/live-recall/results/replay-<date>.json [--k 5] [--judge claude-haiku-4-5]
-+ */
-+import { execSync } from "node:child_process";
-+import { createHash } from "node:crypto";
-+import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-+import { tmpdir } from "node:os";
++import { readFileSync } from "node:fs";
 +import { dirname, join } from "node:path";
++import { fileURLToPath } from "node:url";
 +import { parseArgs } from "node:util";
-+import { resolveApiKeyForProvider } from "../../src/agents/model-auth.js";
-+import type { BitterbotConfig } from "../../src/config/config.js";
-+import { loadConfig } from "../../src/config/io.js";
-+import { MemoryIndexManager } from "../../src/memory/manager.js";
-+import type { MemorySearchResult } from "../../src/memory/types.js";
++import { isAbstentionId, QUESTION_TYPES, type RawItem } from "./official-protocol.js";
 +
++const __dirname = dirname(fileURLToPath(import.meta.url));
 +const { values: args } = parseArgs({
 +  options: {
-+    snapshot: { type: "string" },
-+    queries: { type: "string" },
-+    out: { type: "string" },
-+    scales: { type: "string", default: "1,0.1,0" },
-+    k: { type: "string", default: "5" },
-+    judge: { type: "string", default: "claude-haiku-4-5" },
++    hyp: { type: "string" },
++    ref: { type: "string", default: join(__dirname, "data", "longmemeval_s.json") },
++    k: { type: "string", default: "10" },
++    /** Print this many wrong answers per type (question, expected, answer head) for reading. */
++    samples: { type: "string", default: "0" },
 +  },
 +  strict: true,
 +});
-+if (!args.snapshot || !args.queries || !args.out) {
-+  throw new Error(
-+    "usage: --snapshot <sqlite> --queries <jsonl> --out <json> [--scales 1,0.1,0] [--k 5]",
-+  );
++if (!args.hyp) {
++  throw new Error("--hyp <hypothesis.jsonl> is required");
 +}
 +const K = Number(args.k);
-+const scales = args.scales.split(",").map((s) => Number(s.trim()));
-+const sha = (s: string | Buffer) => createHash("sha256").update(s).digest("hex");
++const samples = Number(args.samples);
++const lines = (p: string) =>
++  readFileSync(p, "utf-8")
++    .split("\n")
++    .filter((l) => l.trim())
++    .map((l) => JSON.parse(l) as Record<string, unknown>);
 +
-+const queriesRaw = readFileSync(args.queries, "utf-8");
-+const queries = queriesRaw
++const ref = new Map(
++  (JSON.parse(readFileSync(args.ref!, "utf-8")) as RawItem[]).map((r) => [r.question_id, r]),
++);
++const hyps = new Map(lines(args.hyp).map((h) => [h.question_id as string, h.hypothesis as string]));
++const labels = new Map(
++  lines(`${args.hyp}.eval-results-gpt-4o`).map((r) => [
++    r.question_id as string,
++    (r.autoeval_label as { label: boolean }).label,
++  ]),
++);
++type Ret = { question_id: string; ranked: string[]; gold: string[]; abstention: boolean };
++const retrieval = new Map(
++  lines(`${args.hyp}.retrieval.jsonl`).map((r) => [r.question_id as string, r as unknown as Ret]),
++);
++
++const ABSTAIN_RE =
++  /not enough information|no information|does not (contain|mention|provide)|doesn't (contain|mention|provide)|cannot (determine|find|answer)|can't (determine|find|answer)|unable to (determine|find|answer)|insufficient|not (available|mentioned|provided) in/i;
++
++type Bucket = {
++  n: number;
++  correct: number;
++  recallAll: Record<number, number>;
++  recallAny: Record<number, number>;
++  retrievalScored: number;
++  wrongAllGoldInContext: number;
++  wrongGoldMissing: number;
++  missingGoldRanks: number[];
++  falseAbstain: number;
++  absN: number;
++  absCorrect: number;
++  hypChars: number[];
++};
++const KS = [1, 3, 5, 10, K].filter((v, i, a) => a.indexOf(v) === i).toSorted((a, b) => a - b);
++const empty = (): Bucket => ({
++  n: 0,
++  correct: 0,
++  recallAll: Object.fromEntries(KS.map((k) => [k, 0])),
++  recallAny: Object.fromEntries(KS.map((k) => [k, 0])),
++  retrievalScored: 0,
++  wrongAllGoldInContext: 0,
++  wrongGoldMissing: 0,
++  missingGoldRanks: [],
++  falseAbstain: 0,
++  absN: 0,
++  absCorrect: 0,
++  hypChars: [],
++});
++const byType: Record<string, Bucket> = {};
++const all = empty();
++const wrongSamples: Record<
++  string,
++  Array<{ id: string; q: string; expected: string; got: string }>
++> = {};
++
++for (const [id, label] of labels) {
++  const item = ref.get(id);
++  const ret = retrieval.get(id);
++  const hyp = hyps.get(id) ?? "";
++  if (!item || !ret) continue;
++  const b = (byType[item.question_type] ??= empty());
++  for (const t of [b, all]) {
++    t.n++;
++    if (label) t.correct++;
++    t.hypChars.push(hyp.length);
++    const abstained = ABSTAIN_RE.test(hyp);
++    if (isAbstentionId(id)) {
++      t.absN++;
++      if (label) t.absCorrect++;
++    } else {
++      if (abstained && !label) t.falseAbstain++;
++      const gold = new Set(ret.gold);
++      if (gold.size > 0) {
++        t.retrievalScored++;
++        for (const k of KS) {
++          const top = new Set(ret.ranked.slice(0, k));
++          const hit = [...gold].filter((g) => top.has(g)).length;
++          if (hit > 0) t.recallAny[k]!++;
++          if (hit === gold.size) t.recallAll[k]!++;
++        }
++        if (!label) {
++          const topK = new Set(ret.ranked.slice(0, K));
++          const missing = [...gold].filter((g) => !topK.has(g));
++          if (missing.length === 0) {
++            t.wrongAllGoldInContext++;
++          } else {
++            t.wrongGoldMissing++;
++            for (const g of missing) {
++              const r = ret.ranked.indexOf(g);
++              t.missingG
+```
+
+**File**: `benchmarks/longmemeval/bitterbot-bridge.ts` (modified, +89/-14)
+```diff
+@@ -17,6 +17,9 @@ const __filename = fileURLToPath(import.meta.url);
+ const __dirname = dirname(__filename);
+ 
+ // Bitterbot internal imports
++import type { DatabaseSync } from "node:sqlite";
++import { resolveApiKeyForProvider } from "../../src/agents/model-auth.js";
++import { loadConfig } from "../../src/config/io.js";
+ import type { BitterbotConfig } from "../../src/config/types.js";
+ import { MemoryIndexManager } from "../../src/memory/manager.js";
+ import type { MemorySearchResult } from "../../src/memory/types.js";
+@@ -30,7 +33,17 @@ export interface BenchmarkBridge {
+ }
+ 
+ export interface BenchmarkMemoryManager {
+-  search(query: string, opts?: { maxResults?: number }): Promise<MemorySearchResult[]>;
++  /** `now` = the instant the question is asked (epoch ms); boosts measure age from it. */
++  search(
++    query: string,
++    opts?: { maxResults?: number; now?: number },
++  ): Promise<MemorySearchResult[]>;
++  /**
++   * Back-date the chunks of each ingested file to the time the conversation
++   * happened, so age-dependent scoring sees the history's own timeline rather
++   * than the ingest wall clock. Keys are file basenames as passed to ingest.
++   */
++  setChunkTimestamps(timestamps: Record<string, number>): number;
+   sync(opts?: { reason?: string }): Promise<void>;
+   ingestMarkdownFiles(files: string[]): Promise<void>;
+   /** Retry embeddings for chunks a transient failure left pending; returns what is still pending. */
+@@ -39,12 +52,48 @@ export interface BenchmarkMemoryManager {
+ }
+ 
+ export interface BenchmarkLlmProvider {
+-  complete(params: { model: string; prompt: string; maxTokens?: number }): Promise<string>;
++  complete(params: {
++    model: string;
++    prompt: string;
++    maxTokens?: number;
++    temperature?: number;
++  }): Promise<string>;
++}
++
++export interface BenchmarkBridgeOptions {
++  /**
++   * `query.postFusionBoostScale` for the run. Omitted = the legacy pin of 1
++   * every saved retrieval run used; `"production"` = leave the key unset so
++   * the shipped default applies (what an official-protocol run must measure).
++   */
++  postFusionBoostScale?: number | "production";
++  /** `query.maxResults` default for searches that do not pass one. */
++  maxResults?: number;
++}
++
++/**
++ * API keys: environment first, then the operator's normal auth path (the same
++ * resolution the gateway uses), so a benchmark never needs keys pasted into a
++ * shell.
++ */
++async function resolveKey(provider: "openai" | "anthropic"): Promise<string | undefined> {
++  const env = provider === "openai" ? process.env.OPENAI_API_KEY : process.env.ANTHROPIC_API_KEY;
++  if (env?.trim()) {
++    return env.trim();
++  }
++  try {
++    const resolved = await resolveApiKeyForProvider({ provider, cfg: loadConfig() });
++    return resolved?.apiKey ?? undefined;
++  } catch {
++    return undefined;
++  }
+ }
+ 
+ // ── Factory ──
+ 
+-export async function createBenchmarkMemoryManager(): Promise<BenchmarkBridge> {
++export async function createBenchmarkMemoryManager(
++  options: BenchmarkBridgeOptions = {},
++): Promise<BenchmarkBridge> {
+   const runId = randomUUID().slice(0, 8);
+   const benchDir = join(__dirname, ".bench-runs", runId);
+   const workspaceDir = join(benchDir, "workspace");
+@@ -58,12 +107,14 @@ export async function createBenchmarkMemoryManager(): Promise<BenchmarkBridge> {
+   // Write an empty MEMORY.md so the workspace is recognized
+   writeFileSync(join(memoryDir, "MEMORY.md"), "# Benchmark Memory\n", "utf-8");
+ 
+-  // Resolve API keys from env
+-  const openaiApiKey = process.env.OPENAI_API_KEY?.trim();
++  // Resolve API keys: env, else the operator's configured auth profiles.
++  const openaiApiKey = await resolveKey("openai");
+   if (!openaiApiKey) {
+-    throw new Error("OPENAI_API_KEY env var is required for LongMemEval embeddings");
++    throw new Error(
++      "no OpenAI key: set OPENAI_API_KEY or configure the openai provider (embeddings need it)",
++    );
+   }
+-  const anthropicApiKey = process.env.ANTHROPIC_API_KEY?.trim();
++  const anthropicApiKey = await resolveKey("anthropic");
+ 
+   // Use the static factory — this creates the embedding provider and DB properly
+   const agentId = `benchmark-${runId}`;
+@@ -91,7 +142,7 @@ export async function createBenchmarkMemoryManager(): Promise<BenchmarkBridge> {
+             onStartup: false,
+           },
+           query: {
+-            maxResults: 15,
++            maxResults: options.maxResults ?? 15,
+             minScore: 0.0,
+             importanceWeight: 0.15,
+             hybrid: {
+@@ -101,11 +152,13 @@ export async function createBenchmarkMemoryManager(): Promise<BenchmarkBridge> {
+               keywordWeight: 0.3,
+               candidateMultiplier: 5,
+             },
+-            // LongMemEval sessions carry synthetic 2023 dates, so the recency and
+-            // temporal boosts are uniform noise here. Pin the legacy full-boost
+-            // behaviour so every saved run stays comparable; the live-recall
+-            // benchmark is where
+```
+
+**File**: `benchmarks/longmemeval/evaluate-official.ts` (added, +177/-0)
+```diff
+@@ -0,0 +1,177 @@
++/**
++ * LongMemEval official scoring, as `evaluate_qa.py` does it.
++ *
++ * Same judge snapshot (gpt-4o-2024-08-06), same five question-type prompts,
++ * same decoding (temperature 0, max_tokens 10), same verdict rule
++ * (`'yes' in response.lower()`), same output: one JSON line per hypothesis
++ * with `autoeval_label: {model, label}` appended, written to
++ * `<hyp>.eval-results-gpt-4o`. Aggregates follow `print_qa_metrics.py`:
++ * per type, task-averaged (mean of the six type means), overall
++ * (question-weighted) and abstention.
++ *
++ * To cross-check against the reference Python script itself, run
++ * `bash benchmarks/longmemeval/official-scorer.sh <hyp> <ref>`.
++ *
++ *   node --import tsx benchmarks/longmemeval/evaluate-official.ts --hyp <jsonl> [--ref data/longmemeval_s.json]
++ */
++import { appendFileSync, existsSync, readFileSync } from "node:fs";
++import { dirname, join } from "node:path";
++import { fileURLToPath } from "node:url";
++import { parseArgs } from "node:util";
++import { resolveApiKeyForProvider } from "../../src/agents/model-auth.js";
++import { loadConfig } from "../../src/config/io.js";
++import {
++  aggregate,
++  isAbstentionId,
++  type Judged,
++  JUDGE_MAX_TOKENS,
++  JUDGE_TEMPERATURE,
++  judgePrompt,
++  OFFICIAL_JUDGE_MODEL,
++  parseJudgeLabel,
++  type RawItem,
++} from "./official-protocol.js";
++
++const __dirname = dirname(fileURLToPath(import.meta.url));
++const { values: args } = parseArgs({
++  options: {
++    hyp: { type: "string" },
++    ref: { type: "string", default: join(__dirname, "data", "longmemeval_s.json") },
++    concurrency: { type: "string", default: "4" },
++    /** Score a partial file (pilots). An official number needs all 500. */
++    "allow-partial": { type: "boolean", default: false },
++  },
++  strict: true,
++});
++if (!args.hyp) {
++  throw new Error("--hyp <hypothesis.jsonl> is required");
++}
++const hypPath = args.hyp;
++const resultPath = `${hypPath}.eval-results-gpt-4o`;
++
++type Hyp = { question_id: string; hypothesis: string; [k: string]: unknown };
++const hyps = readFileSync(hypPath, "utf-8")
 +  .split("\n")
 +  .filter((l) => l.trim())
-+  .map((l) => (JSON.parse(l) as { query: string }).query);
++  .map((l) => JSON.parse(l) as Hyp);
++const ref = new Map(
++  (JSON.parse(readFileSync(args.ref!, "utf-8")) as RawItem[]).map(
++    (r) => [r.question_id, r] as const,
++  ),
++);
++const distinct = new Set(hyps.map((h) => h.question_id));
++if (distinct.size !== hyps.length) {
++  throw new Error(`${hyps.length - distinct.size} duplicate question_id(s) in ${hypPath}`);
++}
++if (distinct.size !== ref.size && !args["allow-partial"]) {
++  throw new Error(
++    `${distinct.size} hypotheses for ${ref.size} reference questions; an official number needs every one (pass --allow-partial for a pilot)`,
++  );
++}
 +
-+function gitCommit(): string | null {
-+  try {
-+    const head = execSync("git rev-parse --short HEAD", { encoding: "utf-8" }).trim();
-+    const dirty = execSync("git status --porcelain --untracked-files=no", {
-+      encoding: "utf-8",
-+    }).trim();
-+    return dirty ? `${head}+dirty` : head;
-+  } catch {
-+    return null;
++// Resume: verdicts already written are kept (same inputs, deterministic judge).
++const judged = new Map<string, Judged>();
++if (existsSync(resultPath)) {
++  for (const line of readFileSync(resultPath, "utf-8").split("\n")) {
++    if (!line.trim()) continue;
++    const row = JSON.parse(line) as Hyp & { autoeval_label: { label: boolean } };
++    const item = ref.get(row.question_id);
++    if (item) {
++      judged.set(row.question_id, {
++        question_id: row.question_id,
++        question_type: item.question_type,
++        label: row.autoeval_label.label,
++      });
++    }
 +  }
 +}
-+const measuredCommit = gitCommit();
 +
-+const live = loadConfig();
-+const openai = await resolveApiKeyForProvider({ provider: "openai", cfg: live });
-+const anthropic = await resolveApiKeyForProvider({ provider: "anthropic", cfg: live });
-+if (!openai?.apiKey || !anthropic?.apiKey) {
-+  throw new Error("need both an OpenAI key (embeddings) and an Anthropic key (judge)");
++const envKey = process.env.OPENAI_API_KEY?.trim();
++const apiKey =
++  envKey || (await resolveApiKeyForProvider({ provider: "openai", cfg: loadConfig() }))?.apiKey;
++if (!apiKey) {
++  throw new Error("no OpenAI key for the judge");
 +}
-+const judgeKey = anthropic.apiKey;
 +
-+type Hit = { id: string; snippet: string; rank: number };
-+const resultId = (r: MemorySearchResult) => `${r.path}:${r.startLine}-${r.endLine}`;
-+
-+async function searchAll(scale: number): Promise<Map<string, Hit[]>> {
-+  const work = mkdtempSync(join(tmpdir(), `replay-${scale}-`));
-+  const storePath = join(work, "store.sqlite");
-+  copyFileSync(args.snapshot!, storePath);
-+  const workspaceDir = join(work, "workspace");
-+  mkdirSync(join(workspaceDir, "memory"), { recursive: true });
-+  writeFileSync(join(workspaceDir, "memory", "MEMORY.md"), "# replay\n");
-+  const agentId = `replay-${String(scale).replace(".", "_")}`;
-+  const cfg = {
-+    agents: {
-+      defaults: {
-+        workspace: workspaceDir,
-+        memorySearch: {
-+          enabled: true,
-+          provider: "openai",
-+          model: "text-embedding-3-small",
-+          remote: { apiKey: openai!.apiKey },
-+          sources: ["memory", "sessions"],
-+          store: { path: storePath, vector: { enabled: true } },
-+          sync: {
-+            intervalMinutes: 0,
-+            onSearch: false,
-+            onStartup: false,
-+            watch: false,
-+            onSessionStart: false,
-+          },
-+          query: {
-+            maxResults: K,
-+            minScore: 0,
-+            hybrid: { enabled: true, mergeStrategy: "rrf", candidateMultiplier: 5 },
-+            postFusionBoostScale: scale,
-+          },
-+        },
-+      },
-+      list: [{ id: agentId, default: true, workspace: workspaceDir }],
-+    },
-+    memory: {
-+      dream: { enabled: false },
-+      consolidation: { enabled: false },
-+      curiosity: { enabled: false },
-+      emotional: { enabled: false },
-+      healthSweep: { enabled: false },
-+      coverageDiagnostics: { enabled: false },
-+    },
-+  } as unknown as BitterbotConfig;
-+  const m
-```
-
-**File**: `benchmarks/live-recall/results/journal-queries-2026-10-27.manifest.json` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+{
-+  "createdAt": "2026-10-27T21:00:29.171Z",
-+  "journal": "/home/vicmg/.bitterbot/event-journal.sqlite",
-+  "toolEvents": 22869,
-+  "memorySearchCalls": 71,
-+  "distinctQueries": 68,
-+  "oldest": "2026-05-22T18:57:08.945Z",
-+  "newest": "2026-10-23T00:12:31.985Z",
-+  "queriesSha256": "f3075b7c9129fe562d04d79893176583d4256dc70acbd65f65eddc60fa0406a2"
-+}
-```
-
-**File**: `benchmarks/live-recall/results/replay-journal-2026-10-27.json` (added, +1193/-0)
-```diff
-@@ -0,0 +1,1193 @@
-+{
-+  "git_commit": "db896f78",
-+  "snapshotSha256": "1d3432bb80e181f2b86da3e46c7a69a72f85d14b04240125a7153f45d4a7dc17",
-+  "queriesSha256": "f3075b7c9129fe562d04d79893176583d4256dc70acbd65f65eddc60fa0406a2",
-+  "judge": "claude-haiku-4-5",
-+  "judgePromptSha256": "56d6dc5281a15b16bb9790e296c942a2e9c2629ea264bbf939a8b9956f726f79",
-+  "k": 5,
-+  "n": 68,
-+  "pairsJudged": 398,
-+  "anyRelevantQueries": 33,
-+  "elapsed_seconds": 348.7,
-+  "summary": {
-+    "0": {
-+      "n": 68,
-+      "hitAtK": 0.441,
-+      "precisionAtK": 0.312,
-+      "mrr": 0.362,
-+      "relevantAt1": 0.324
-+    },
-+    "1": {
-+      "n": 68,
-+      "hitAtK": 0.382,
-+      "precisionAtK": 0.238,
-+      "mrr": 0.342,
-+      "relevantAt1": 0.324
-+    },
-+    "0.1": {
-+      "n": 68,
-+      "hitAtK": 0.426,
-+      "precisionAtK": 0.309,
-+      "mrr": 0.354,
-+      "relevantAt1": 0.324
++async function judgeOnce(prompt: string): Promise<string> {
++  let lastErr: unknown;
++  for (let attempt = 0; attempt < 5; attempt++) {
++    try {
++      const res = await fetch("https://api.openai.com/v1/chat/completions", {
++        method: "POST",
++        headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
++        body: JSON.stringify({
++          model: OFFICIAL_JUDGE_MODEL,
++          messages: [{ role: "user", content: prompt }],
++          n: 1,
++          temperature: JUDGE_TEMPERATURE,
++          max_tokens: JUDGE_MAX_TOKENS,
++        }),
++      });
++      if (!res.ok) {
++        throw new Error(`judge ${res.status}: ${(await res.text()).slice(0, 200)}`);
++      }
++      const data = (await res.json()) as { choices: Array<{ message: { content: string } }> };
++      return data.choices[0]?.message.content ?? "";
++    } catch (err) {
++      lastErr = err;
++      await new Promise((r) => setTimeout(r, 1500 * 2 ** attempt));
 +    }
-+  },
-+  "per_query": [
-+    {
-+      "q": "c4b4aafcd5d3",
-+      "results": {
-+        "0": {
-+          "ranks": [],
-+          "relevant": 0
-+        },
-+        "1": {
-+          "ranks": [],
-+          "relevant": 0
-+        },
-+        "0.1": {
-+          "ranks": [],
-+          "relevant": 0
-+        }
-+      }
++  }
++  throw lastErr;
++}
++
++const todo = hyps.filter((h) => {
++  if (!ref.has(h.question_id)) {
++    console.warn(`Warning: skipping ${h.question_id} as it is not in reference data.`);
++    return false;
++  }
++  return !judged.has(h.question_id);
++});
++console.log(`judging ${todo.length} of ${hyps.length} hypotheses with ${OFFICIAL_JUDGE_MODEL}`);
++
++const concurrency = Math.max(1, Number(args.concurrency));
++let cursor = 0;
++let doneCo
+```
+
+**File**: `benchmarks/longmemeval/official-protocol.test.ts` (added, +202/-0)
+```diff
+@@ -0,0 +1,202 @@
++import { describe, expect, it } from "vitest";
++import {
++  aggregate,
++  buildReaderPrompt,
++  firstPerType,
++  formatHistory,
++  isAbstentionId,
++  judgePrompt,
++  OFFICIAL_JUDGE_MODEL,
++  parseJudgeLabel,
++  parseLongMemEvalDate,
++  pythonJsonDumpsTurns,
++  type RawItem,
++  sessionRecall,
++  sessionToNlDocument,
++  toInferenceItem,
++} from "./official-protocol.js";
++
++const item: RawItem = {
++  question_id: "gpt4_70e84552_abs",
++  question_type: "multi-session",
++  question: "What did I name my dog?",
++  answer: 42,
++  question_date: "2023/05/20 (Sat) 02:21",
++  haystack_dates: ["2023/04/10 (Mon) 23:07", "2023/04/10 (Mon) 17:50", "2023/05/01 (Mon) 09:00"],
++  haystack_session_ids: ["sharegpt_1", "answer_abc_1", "answer_abc_2"],
++  haystack_sessions: [
++    [
++      { role: "user", content: "hi" },
++      { role: "assistant", content: "hello" },
++    ],
++    [
++      { role: "user", content: "I named my dog Biscuit", has_answer: true },
++      { role: "assistant", content: "Nice name", has_answer: false },
++    ],
++    [{ role: "user", content: 'café ☕ "quoted"\nline', has_answer: false }],
++  ],
++  answer_session_ids: ["answer_abc_1", "answer_abc_2"],
++};
++
++describe("toInferenceItem", () => {
++  it("strips has_answer and every dataset session id from the inference view", () => {
++    const { inference, gold } = toInferenceItem(item);
++    const dump = JSON.stringify(inference);
++    expect(dump).not.toContain("has_answer");
++    expect(dump).not.toContain("answer_");
++    expect(dump).not.toContain("sharegpt");
++    expect(inference.sessions.map((s) => s.id)).toEqual([
++      "session-001",
++      "session-002",
++      "session-003",
++    ]);
++    // Dataset order is kept (the online order); the reader sorts by date later.
++    expect(inference.sessions[0]!.date).toBe("2023/04/10 (Mon) 23:07");
++    expect(gold.goldOpaqueIds).toEqual(new Set(["session-002", "session-003"]));
++    expect(gold.isAbstention).toBe(true);
++  });
++
++  it("writes every turn into the nl document with its date header", () => {
++    const { inference } = toInferenceItem(item);
++    const doc = sessionToNlDocument(inference.sessions[1]!);
++    expect(doc).toBe(
++      "Session Date: 2023/04/10 (Mon) 17:50\n\nuser: I named my dog Biscuit\n\nassistant: Nice name\n",
++    );
++  });
++});
++
++describe("parseLongMemEvalDate", () => {
++  it("parses the dataset format as UTC", () => {
++    expect(parseLongMemEvalDate("2023/05/20 (Sat) 02:21")).toBe(Date.UTC(2023, 4, 20, 2, 21));
++  });
++  it("rejects anything else", () => {
++    expect(() => parseLongMemEvalDate("2023-05-20")).toThrow();
++  });
++});
++
++describe("reader prompt", () => {
++  it("reproduces python json.dumps for the turn list", () => {
++    expect(
++      pythonJsonDumpsTurns(
++        item.haystack_sessions[2]!.map((t) => ({ role: t.role, content: t.content })),
++      ),
++    ).toBe('[{"role": "user", "content": "caf\\u00e9 \\u2615 \\"quoted\\"\\nline"}]');
++  });
++
++  it("matches run_generation.py formatting: date-sorted sessions, CoN template, raw question_date", () => {
++    const prompt = buildReaderPrompt({
++      items: [
++        { date: "2023/04/10 (Mon) 23:07", turns: [{ role: "user", content: "b" }] },
++        { date: "2023/04/10 (Mon) 17:50", turns: [{ role: "user", content: "a" }] },
++      ],
++      questionDate: "2023/05/20 (Sat) 02:21",
++      question: "Q?",
++      reading: "con",
++      format: "json",
++    });
++    expect(prompt).toBe(
++      "I will give you several history chats between you and a user. Please answer the question based on the relevant chat history. Answer the question step by step: first extract all the relevant information, and then reason over the information to get the answer.\n\n\nHistory Chats:\n\n" +
++        '\n### Session 1:\nSession Date: 2023/04/10 (Mon) 17:50\nSession Content:\n\n[{"role": "user", "content": "a"}]\n' +
++        '\n### Session 2:\nSession Date: 2023/04/10 (Mon) 23:07\nSession Content:\n\n[{"role": "user", "content": "b"}]\n' +
++        "\n\nCurrent Date: 2023/05/20 (Sat) 02:21\nQuestion: Q?\nAnswer (step by step):",
++    );
++  });
++
++  it("renders chunk text as-is for the nl unit and the direct template ends with Answer:", () => {
++    const history = formatHistory([{ date: "2023/04/10 (Mon) 17:50", text: "user: a" }], "nl");
++    expect(history).toBe(
++      "\n### Session 1:\nSession Date: 2023/04/10 (Mon) 17:50\nSession Content:\nuser: a\n",
++    );
++    const prompt = buildReaderPrompt({
++      items: [],
++      questionDate: "d",
++      question: "q",
++      reading: "direct",
++      format: "nl",
++    });
++    expect(prompt.endsWith("\nCurrent Date: d\nQuestion: q\nAnswer:")).toBe(true);
++    expect(prompt).not.toContain("step by step");
++  });
++});
++
++describe("judge", () => {
++  it("pins the official judge snapshot", () => {
++    expect(OFFICIAL_JUDGE_MODEL).toBe("gpt-4o-2024-08-06");
++  });
++
++  it("selects the abstention template from the id alone and stringifies integer answers", ()
+```
+
+**File**: `benchmarks/longmemeval/official-protocol.ts` (added, +395/-0)
+```diff
+@@ -0,0 +1,395 @@
++/**
++ * LongMemEval official protocol, as code.
++ *
++ * Everything here mirrors the reference implementation in
++ * https://github.com/xiaowu0162/LongMemEval at commit 9e0b455f (2026-05-11):
++ * `src/generation/run_generation.py` for the reader prompt and context
++ * formatting, `src/evaluation/evaluate_qa.py` for the judge prompts and verdict
++ * parsing, `src/evaluation/print_qa_metrics.py` for the aggregates, and the
++ * README for which fields a memory system may see. Template strings are copied
++ * verbatim; where Python formatting matters (json.dumps) it is reproduced.
++ *
++ * Pure functions only, so the protocol is unit-testable without a store.
++ */
++
++export const OFFICIAL_PROTOCOL_REF =
++  "xiaowu0162/LongMemEval@9e0b455f4ef0e2ab8f2e582289761153549043fc";
++
++// ── Dataset view ────────────────────────────────────────────────────────────
++
++export type RawTurn = { role: string; content: string; has_answer?: boolean };
++
++export type RawItem = {
++  question_id: string;
++  question_type: string;
++  question: string;
++  /** A string in 468 questions and an integer in 32; the judge sees str(answer). */
++  answer: string | number;
++  question_date: string;
++  haystack_dates: string[];
++  haystack_session_ids: string[];
++  haystack_sessions: RawTurn[][];
++  answer_session_ids: string[];
++};
++
++export type Turn = { role: string; content: string };
++
++export type InferenceSession = {
++  /** Opaque id assigned by position; never derived from the dataset's ids. */
++  id: string;
++  date: string;
++  turns: Turn[];
++};
++
++/** What a memory system may see before it answers. Nothing else. */
++export type InferenceItem = {
++  question_id: string;
++  question: string;
++  question_date: string;
++  sessions: InferenceSession[];
++};
++
++/** Evaluation-only companion: which opaque ids are gold. Built after search. */
++export type GoldMap = {
++  goldOpaqueIds: Set<string>;
++  isAbstention: boolean;
++};
++
++export const OPAQUE_ID_PREFIX = "session-";
++
++export function opaqueSessionId(index: number): string {
++  return `${OPAQUE_ID_PREFIX}${String(index + 1).padStart(3, "0")}`;
++}
++
++/**
++ * Strip every evaluation-only signal from a dataset item.
++ *
++ * Two leaks the official data carries (both documented in the repo's issues):
++ * every turn of an evidence session has a `has_answer` key (true or false) and
++ * no filler turn has one, so key presence marks gold; and every evidence
++ * session id contains the substring "answer" by construction. Turns are
++ * rebuilt with only role and content, and sessions get positional ids.
++ * Sessions keep dataset order (the "online" order the history arrived in).
++ */
++export function toInferenceItem(item: RawItem): { inference: InferenceItem; gold: GoldMap } {
++  const sessions: InferenceSession[] = item.haystack_sessions.map((turns, i) => ({
++    id: opaqueSessionId(i),
++    date: item.haystack_dates[i] ?? "",
++    turns: turns.map((t) => ({ role: t.role, content: t.content })),
++  }));
++  const goldOpaqueIds = new Set<string>();
++  const gold = new Set(item.answer_session_ids ?? []);
++  for (let i = 0; i < item.haystack_session_ids.length; i++) {
++    if (gold.has(item.haystack_session_ids[i]!)) {
++      goldOpaqueIds.add(opaqueSessionId(i));
++    }
++  }
++  return {
++    inference: {
++      question_id: item.question_id,
++      question: item.question,
++      question_date: item.question_date,
++      sessions,
 +    },
-+    {
-+      "q": "c3e3a474a0e8",
-+      "results": {
-+        "0": {
-+          "ranks": [],
-+          "relevant": 0
-+        },
-+        "1": {
-+          "ranks": [],
-+          "relevant": 0
-+        },
-+        "0.1": {
-+          "ranks": [],
-+          "relevant": 0
-+        }
-+      }
-+    },
-+    {
-+      "q": "ec7da990967b",
-+      "results": {
-+        "0": {
-+          "ranks": [],
-+          "relevant": 0
-+        },
-+        "1": {
-+          "ranks": [],
-+          "relevant": 0
-+        },
-+        "0.1": {
-+          "ranks": [],
-+          "relevant": 0
-+        }
-+      }
-+    },
-+    {
-+      "q": "e9a264deb36c",
-+      "results": {
-+        "0": {
-+          "ranks": [4],
-+          "relevant": 1
-+        },
-+        "1": {
-+          "ranks": [],
-+          "relevant": 0
-+        },
-+        "0.1": {
-+          "ranks": [4],
-+          "relevant": 1
-+        }
-+      }
-+    },
-+    {
-+      "q": "b7dfabb2f915",
-+      "results": {
-+        "0": {
-+          "ranks": [],
-+          "relevant": 0
-+        },
-+        "1": {
-+          "ranks": [],
-+          "relevant": 0
-+        },
-+        "0.1": {
-+          "ranks": [],
-+          "relevant": 0
-+        }
-+      }
-+    },
-+    {
-+      "q": "b99ea1dac442",
-+      "results": {
-+        "0": {
-+          "ranks": [2, 3, 4, 5],
-+          "relevant": 4
-+        },
-+        "1": {
-+          "ranks": [1, 2, 3, 4, 5],
-+          "relevant": 5
-+        },
-+        "0.1": {
-+          "ranks": [1, 2, 4, 5],
-+          "relevant": 4
-+        }
-+      }
-+    },
-+    {
-+      "q": "f1ae139c5d90",
-+      "results": {
-+        "0": {
-+          "ranks": [1, 2, 5],
-+          "relevant": 3
-+        },
-+        "1": {
-+          "ranks": [4],
-+          "relevant": 1
-+        },
-+        "0.1": {
-+          "ranks": [1, 3],
-+          "relevant": 2
-+        }
-+      }
-+    },
-+    {
-+      "q": "0e6f2c9a2e04",
-+      "results": {
-+        "0": {
-+          "ranks": [1, 2, 3, 4, 5],
-+          "relevant": 5
-+        },
-+        "1": {
-+          "ranks": [1, 3, 4],
-+          "relevant": 3
-+        },
-+        "0.1": {
-+          "ranks": [1, 2, 3, 4, 5],
-+          "relevant": 5
-+        }
-+      }
-+    },
-+    {
-+      "q": "47ee47857fe7",
-+      "results": {
-+        "0": {
-+          "ranks": [],
-+          "relevant": 0
-+        },
-+        "1": {
-+          "ranks": [],
-+          "relevant": 0
-+        },
-+        "0.1": {
-+          "ranks": [],
-+          "relevant": 0
-+        }
-+      }
-+    },
-+    {
-+      "q": "562cae9685a9",
-+      "results": {
-+        "0": {
-+          "ranks": [],
-+          "relevant": 0
-+        },
-+        "1": {
-+          "ranks": [],
-+          "relevant": 0
-+        },
-+        "0.1": {
-+          "ranks": [],
-+          "relevant": 0
-+        }
-+      }
-+    },
-+    {
-+      "q": "5b9ed35adf6e",
-+      "results": {
-+        "0": {
-+          "ranks": [1, 2, 3, 4, 5],
-+          "relevant": 5
-+        },
-+        "1": {
-+          "ranks": [1, 2, 3, 4],
-+          "relevant": 4
-+        },
-+        "0.1": {
-+          "ranks": [1, 2, 3, 4, 5],
-+          "relevant": 5
-+        }
-+      }
-+    },
-+    {
-+      "q": "7e7063207d6c",
-+      "results": {
-+        "0": {
-+          "ranks": [4],
-+          "relevant": 1
-+        },
-+        "1": {
-+          "ranks": [],
-+          "relevant": 0
-+        },
-+        "0.1": {
-+          "ranks": [],
-+          "relevant": 0
-+        }
-+      }
-+    },
-+    {
-+      "q": "a9b038920ac6",
-+      "results": {
-+        "0": {
-+          "ranks": [],
-+          "relevant": 0
-+        },
-+        "1": {
-+          "ranks": [],
-+          "relevant": 0
-+        },
-+        "0.1": {
-+          "ranks": [],
-+          "relevant": 0
-+        }
-+      }
-+    },
-+    {
-+      "q"
++    gold: { goldOpaqueIds, isAbstention: isAbstentionId(item.question_id) },
++  };
++}
++
++/** evaluate_qa.py line 101: `abstention='_abs' in entry['question_id']`. */
++export function isAbstentionId(questionId: string): boolean {
++  return questionId.includes("_abs");
++}
++
++// ── Time ────────────────────────────────────────────────────────────────────
++
++const DATE_RE = /^(\d{4})\/(\d{2})\/(\d{2}) \((?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)\) (\d{2}):(\d{2})$/;
++
++/**
++ * Parse the dataset's `%Y/%m/%d (%a) %H:%M` timestamps (no zone; treated as
++ * UTC). Used as the memory system's "now" for the question and as each
++ * session's creation time, so age-dependent scoring sees 2023 as 2023.
++ */
++export function parseLongMemEvalDate(s: string): number {
++  const m = DATE_RE.exec(s.trim());
++  if (!m) {
++    throw new Error(`not a LongMemEval timestamp: ${JSON.stringify(s)}`);
++  }
++  const [, y, mo, d, h, mi] = m;
++  return Date.UTC(Number(y), Number(mo) - 1, Number(d), Number(h), Number(mi));
++}
++
++// ── Ingest format ───────────────────────────────────────────────────────────
++
++/**
++ * One document per session in the official `nl` history format
++ * (run_generation.py L239: `"\n\n{}: {}".format(role, content.strip())`),
++ * headed by the session date. A retrieved chunk of this file is therefore a
++ * legitimate `nl`-format fragment of the session.
++ */
++export function sessionToNlDocument(session: InferenceSession): string {
++  const parts = [`Session Date: ${session.date}`];
++  for (const t of session.turns) {
++    parts.push(`${t.role}: ${t.content.trim()
+```
+
+**File**: `benchmarks/longmemeval/official-scorer.sh` (added, +37/-0)
+```diff
+@@ -0,0 +1,37 @@
++#!/usr/bin/env bash
++# Score a hypothesis file with the reference LongMemEval scripts, unmodified.
++#
++# Fetches evaluate_qa.py and print_qa_metrics.py at the pinned commit into a
++# scratch dir, installs their four dependencies into a local venv, and runs
++# them. Needs OPENAI_API_KEY in the environment (the reference script reads it
++# itself). Output: <hyp>.eval-results-gpt-4o next to the hypothesis file.
++#
++#   bash benchmarks/longmemeval/official-scorer.sh <hypothesis.jsonl> [reference.json]
++set -euo pipefail
++
++HYP="${1:?usage: official-scorer.sh <hypothesis.jsonl> [reference.json]}"
++HERE="$(cd "$(dirname "$0")" && pwd)"
++REF="${2:-$HERE/data/longmemeval_s.json}"
++COMMIT="9e0b455f4ef0e2ab8f2e582289761153549043fc"
++TOOLS="$HERE/.work-official-scorer"
++VENV="$TOOLS/venv"
++RAW="https://raw.githubusercontent.com/xiaowu0162/LongMemEval/$COMMIT/src/evaluation"
++
++mkdir -p "$TOOLS"
++for f in evaluate_qa.py print_qa_metrics.py; do
++  if [ ! -f "$TOOLS/$f" ]; then
++    echo "fetching $f @ ${COMMIT:0:8}"
++    curl -fsSL "$RAW/$f" -o "$TOOLS/$f"
++  fi
++done
++if [ ! -x "$VENV/bin/python" ]; then
++  python3 -m venv "$VENV"
++  "$VENV/bin/pip" install --quiet openai numpy backoff tqdm
++fi
++: "${OPENAI_API_KEY:?OPENAI_API_KEY must be set for the reference judge}"
++
++HYP_ABS="$(cd "$(dirname "$HYP")" && pwd)/$(basename "$HYP")"
++REF_ABS="$(cd "$(dirname "$REF")" && pwd)/$(basename "$REF")"
++cd "$TOOLS"
++"$VENV/bin/python" -I evaluate_qa.py gpt-4o "$HYP_ABS" "$REF_ABS" | tail -n 12
++"$VENV/bin/python" -I print_qa_metrics.py "$HYP_ABS.eval-results-gpt-4o" "$REF_ABS" || true
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #318** (2026-10-28): feat(benchmarks): LongMemEval runner on the official protocol (@VGIL77)
 - **PR #317** (2026-10-27): bench(live-recall): replay the agent's real memory_search queries under each boost scale (@VGIL77)
 - **PR #316** (2026-10-27): fix(gateway): restarted gateway outlives its parent's lock instead of dying at the 5 s timeout (@VGIL77)
 - **PR #315** (2026-10-27): fix(memory): bound post-fusion boosts to the RRF scale; held-out live-memory benchmark; evidence-level LongMemEval metrics (@VGIL77)
 - **PR #313** (closed): bench(longmemeval): stratified per-type sampling and the stratified before/after of the keyword-channel change (@VGIL77)
 - **PR #312** (2026-10-27): fix(memory): keyword channel matches natural-language queries; failed embedding batch no longer aborts sync (@VGIL77)
-- **PR #311** (2026-10-27): fix(skills): lint src/agents/skills again, dedupe fit text, two-node mesh harness, startup log (@VGIL77)
 
 ---
 
@@ -2654,35 +2625,30 @@ Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gateway): restarted gateway outlives its parent's lock instead of dying at the 5
+## X. benchmarks): LongMemEval runner on the official protocol (#318)
 
 **RULE**:
-When implementing operations in `docs/gateway/gateway-lock.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.gitignore`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fce458c1`: gateway): restarted gateway outlives its parent's lock instead of dying at the 5 s timeout (#316). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c22b2932`: benchmarks): LongMemEval runner on the official protocol (#318). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/gateway/gateway-lock.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.gitignore`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-Last updated: 2026-10-27
-## Restart handoff
 
-- A full-process restart (SIGUSR1, the gateway tool, a config change that needs a restart) spawns the new gateway while the old one is still draining tasks and closing the server; the orchestrator sidecar alone can take ten seconds to exit. The child therefore usually finds the lock file still held by its parent.
-- The child is told who its parent is (`BITTERBOT_RESTART_PARENT_PID`). When the lock owner is that pid, the child waits up to 120 s for the parent to release the lock or exit instead of giving up at the plain 5 s timeout, and logs `lock still held by the restarting gateway (pid …); waiting for it to exit` once.
-- The parent releases the lock right after the spawn succeeds, before it exits, so the handoff normally completes in well under a second.
-- Before 2026-10-27 the child gave up at 5 s, the parent then exited, and no gateway was left listening (a 51-minute outage on the reference node). A lock held by any other live gateway still fails fast as before.
-
+benchmarks/longmemeval/.work-official/
+benchmarks/longmemeval/.work-official-scorer/
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-Last updated: 2025-12-11
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fce458c1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c22b2932` are properly handled with clean fallback behavior.

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-E67V",
-    "timestamp": "2026-10-27T13:10:34.747Z",
-    "repository": "franken-ui/ui",
-    "learningId": "learn-github-franken-ui-ui",
-    "contentHash": "8c01b70b1c7580573c1b03ff380888b6318aff04b06f963e567f625e0b3038a3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-EC37",
-    "timestamp": "2026-10-27T13:10:42.355Z",
-    "repository": "mattermost/mattermost",
-    "learningId": "learn-github-mattermost-mattermost",
-    "contentHash": "fcf228ce9a33c7f7253a5d08ae01cb710d8d421d3fe9b1b74b4d13307740d539",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-EF2M",
-    "timestamp": "2026-10-27T13:10:46.222Z",
-    "repository": "nolabs-ai/nono",
-    "learningId": "learn-github-nolabs-ai-nono",
-    "contentHash": "913b890a5964ae86eece90f80e79e927ff9e0345634b44896ee1b3fb3e24a61b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-IVBY",
     "timestamp": "2026-10-27T13:14:13.918Z",
     "repository": "NVIDIA/cuda-rust",
@@ -7490,6 +7445,51 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "d9be5f788a923f8990400563c788efa10a2015e901602a6f8c42df743c8a5fb3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-DBBF",
+    "timestamp": "2026-10-28T14:49:33.579Z",
+    "repository": "stabilityai/stable-diffusion-3-medium",
+    "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
+    "contentHash": "5383d64a792e4e702d5073c72aca4bb27329a9da9d05401d8e40e610fecffcae",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-DHWT",
+    "timestamp": "2026-10-28T14:49:42.125Z",
+    "repository": "saltstack/salt",
+    "learningId": "learn-github-saltstack-salt",
+    "contentHash": "91980244a1fefa48a5337747907e9d02382effd51a21b50b859414c8dda5d544",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-DNEQ",
+    "timestamp": "2026-10-28T14:49:49.250Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "1c3219cdd5916fa38603ba520464c5ad55c4fdc4d5e3ab261395289f0db88118",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

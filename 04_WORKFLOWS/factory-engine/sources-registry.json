@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T14:42:57.663Z",
-    "lastVerified": "2026-10-28T14:42:57.663Z",
+    "lastChecked": "2026-10-28T14:49:51.787Z",
+    "lastVerified": "2026-10-28T14:49:51.787Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -118,11 +118,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "bitterbot-desktop",
+    "name": "Bitterbot-AI/bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "lastChecked": "2026-10-28T14:22:34.253Z",
-    "revisionIdentifier": "fce458c1",
-    "lastVerified": "2026-10-28T14:22:34.253Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-28T14:49:48.800Z",
+    "lastVerified": "2026-10-28T14:49:48.800Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "1c3219cdd5916fa38603ba520464c5ad55c4fdc4d5e3ab261395289f0db88118",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -1082,9 +1092,9 @@
   "rustcrypto-hashes": {
     "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-10-28T11:11:57.266Z",
+    "lastChecked": "2026-10-28T14:49:39.982Z",
     "revisionIdentifier": "23d8e40e",
-    "lastVerified": "2026-10-28T11:11:57.266Z"
+    "lastVerified": "2026-10-28T14:49:39.982Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -4065,5 +4075,60 @@
     "lastChecked": "2026-10-28T14:42:47.511Z",
     "revisionIdentifier": "d1dc56f1",
     "lastVerified": "2026-10-28T14:42:47.511Z"
+  },
+  "tokio-rs-console": {
+    "name": "console",
+    "officialUrl": "https://github.com/tokio-rs/console",
+    "lastChecked": "2026-10-28T14:49:29.970Z",
+    "revisionIdentifier": "b59758e5",
+    "lastVerified": "2026-10-28T14:49:29.970Z"
+  },
+  "hf-stabilityai-stable-diffusion-3-medium": {
+    "name": "stabilityai/stable-diffusion-3-medium",
+    "officialUrl": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T14:49:32.489Z",
+    "lastVerified": "2026-10-28T14:49:32.489Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
+    "contentHash": "5383d64a792e4e702d5073c72aca4bb27329a9da9d05401d8e40e610fecffcae",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "react-native-modal-react-native-modal": {
+    "name": "react-native-modal",
+    "officialUrl": "https://github.com/react-native-modal/react-native-modal",
+    "lastChecked": "2026-10-28T14:49:36.047Z",
+    "revisionIdentifier": "3e413c4c",
+    "lastVerified": "2026-10-28T14:49:36.047Z"
+  },
+  "saltstack-salt": {
+    "name": "saltstack/salt",
+    "officialUrl": "https://github.com/saltstack/salt",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-28T14:49:41.683Z",
+    "lastVerified": "2026-10-28T14:49:41.683Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-saltstack-salt",
+    "contentHash": "91980244a1fefa48a5337747907e9d02382effd51a21b50b859414c8dda5d544",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "tako8ki-gobang": {
+    "name": "gobang",
+    "officialUrl": "https://github.com/TaKO8Ki/gobang",
+    "lastChecked": "2026-10-28T14:49:42.514Z",
+    "revisionIdentifier": "7b1b5f7e",
+    "lastVerified": "2026-10-28T14:49:42.514Z"
   }
 }

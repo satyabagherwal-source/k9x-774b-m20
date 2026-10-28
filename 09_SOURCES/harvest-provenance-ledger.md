@@ -5813,3 +5813,6 @@ Every entry in this ledger must capture:
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `a790c218` | Multi-dimensional audit evidence | 2026-10-28T14:42:50.616Z |
 | `learn-huggingface-bigscience-bloom` | `https://huggingface.co/bigscience/bloom` | `hf-bigscie` | Multi-dimensional audit evidence | 2026-10-28T14:42:51.364Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `ba276435` | Multi-dimensional audit evidence | 2026-10-28T14:42:55.129Z |
+| `learn-huggingface-stabilityai-stable-diffusion-3-medium` | `https://huggingface.co/stabilityai/stable-diffusion-3-medium` | `hf-stabili` | Multi-dimensional audit evidence | 2026-10-28T14:49:33.583Z |
+| `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `401a8531` | Multi-dimensional audit evidence | 2026-10-28T14:49:42.129Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `c22b2932` | Multi-dimensional audit evidence | 2026-10-28T14:49:49.254Z |

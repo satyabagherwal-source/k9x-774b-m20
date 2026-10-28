@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/saltstack-salt-learnings.md`  
 > **Source**: github ([https://github.com/saltstack/salt](https://github.com/saltstack/salt))  
-> **Source Version**: `021a041a`  
+> **Source Version**: `401a8531`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T15:12:12.087Z  
+> **Timestamp**: 2026-10-28T14:49:41.691Z  
 > **Learning ID**: `learn-github-saltstack-salt`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/saltstack-salt-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/saltstack/salt](https://github.com/saltstack/salt))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T15:12:11.551Z  
+> **Harvest Timestamp**: 2026-10-28T14:49:41.683Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Software to automate the management and configuration of infrastructure and applications at scale.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 15727 stars
+- **Stars / Engagement**: 15726 stars
 
 ---
 
@@ -1980,90 +1980,206 @@ def start(grains=False, grain_keys=None, pillar=False, pillar_keys=None):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `021a041a` (2026-10-27)
-**Commit Message**: Remove deprecated tcp.TCPPubClient and tcp.TCPPublishServer (#70377)
+### Incident Patch 1: `401a8531` (2026-10-28)
+**Commit Message**: [master] Fix MySQL cache entry enumeration output (#66103)
 
-* Add changelog for TCPPubClient and TCPPublishServer removal
+* Fix entry enumeration output
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+* Add changelog
 
-* Rename tcp PublishClient and PublishServer tests to match
+* pre-commit suggested fixes
 
-The tests now build PublishClient and PublishServer directly, so name
-them after those classes.
+* Address result correctly
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+* Fix mysql_cache.ls() to return both direct keys and sub-bank names
+
+The original PR #66103 fix (SELECT bank LIKE 'bank/%') correctly enumerated
+sub-banks (fixing manage.present) but dropped direct keys (SELECT etcd_key
+WHERE bank=exact), breaking the cross-backend cache contract exercised by
+tests/pytests/functional/cache/helpers.py::run_common_cache_tests.
+
+Replace with two queries whose results are union'd:
+1. SELECT etcd_key WHERE bank=<bank>  — direct keys at this bank level
+2. SELECT DISTINCT SUBSTRING_INDEX(SUBSTR(bank, N), '/', 1) WHERE bank LIKE
+   '<bank>/%'  — first-level sub-bank names (MySQL SUBSTR is 1-indexed)
+
+Add three unit tests covering direct keys, sub-bank enumeration, and
+combined results.
+
+Fixes #66102
 
 ---------
 
-Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: Daniel A. Wozniak <[REDACTED_EMAIL]>
 
-**File**: `changelog/70377.removed.md` (added, +1/-0)
+**File**: `changelog/66102.fixed.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+Removed the deprecated `salt.transport.tcp.TCPPubClient` and `salt.transport.tcp.TCPPublishServer`. They were only aliases for `salt.transport.tcp.PublishClient` and `salt.transport.tcp.PublishServer`, which should be used instead.
++Fix MySQL cache driver ls results which fixes salt-run manage.present
 ```
 
-**File**: `tests/pytests/unit/transport/test_tcp.py` (modified, +4/-4)
+**File**: `salt/cache/mysql_cache.py` (modified, +29/-2)
 ```diff
-@@ -785,7 +785,7 @@ async def test_presence_removed_on_stream_closed():
-             server.remove_presence_callback.assert_called_with(client)
+@@ -319,13 +319,40 @@ def ls(bank):
+     bank.
+     """
+     _init_client()
++    # Return both direct keys in this bank AND first-level sub-bank names.
++    # MySQL stores entries flat; a "sub-bank" is a row whose bank column
++    # starts with <bank>/.  Direct keys have bank == <bank> exactly.
++    out = set()
++
++    # Query 1: direct keys (etcd_key) for rows whose bank exactly matches.
+     query = "SELECT etcd_key FROM {} WHERE bank=%s".format(
+         __context__["mysql_table_name"]
+     )
+     cur, _ = run_query(__context__.get("mysql_client"), query, args=(bank,))
+-    out = [row[0] for row in cur.fetchall()]
++    for row in cur.fetchall():
++        out.add(row[0])
++    cur.close()
++
++    # Query 2: first-level sub-bank names for rows nested below this bank.
++    bank_path = bank + "/"
++    # SUBSTR(bank, N) strips the "<bank>/" prefix (MySQL SUBSTR is 1-indexed);
++    # SUBSTRING_INDEX(..., '/', 1) keeps only the first path component so
++    # deeper nesting doesn't leak through.
++    prefix_len = len(bank_path) + 1
++    query = (
++        "SELECT DISTINCT SUBSTRING_INDEX(SUBSTR(bank, %s), '/', 1)"
++        " FROM {} WHERE bank LIKE %s".format(__context__["mysql_table_name"])
++    )
++    cur, _ = run_query(
++        __context__.get("mysql_client"),
++        query,
++        args=(prefix_len, bank_path + "%"),
++    )
++    for row in cur.fetchall():
++        out.add(row[0])
+     cur.close()
+-    return out
++
++    return list(out)
  
  
--async def test_tcp_pub_client_decode_dict(minion_opts, io_loop, tmp_path):
-+async def test_tcp_publish_client_decode_dict(minion_opts, io_loop, tmp_path):
-     dmsg = {"meh": "bah"}
-     with salt.transport.tcp.PublishClient(
-         minion_opts, io_loop, path=tmp_path
-@@ -794,7 +794,7 @@ async def test_tcp_pub_client_decode_dict(minion_opts, io_loop, tmp_path):
-         assert ret == dmsg
- 
- 
--async def test_tcp_pub_client_decode_msgpack(minion_opts, io_loop, tmp_path):
-+async def test_tcp_publish_client_decode_msgpack(minion_opts, io_loop, tmp_path):
-     dmsg = {"meh": "bah"}
-     msg = salt.payload.dumps(dmsg)
-     with salt.transport.tcp.PublishClient(
-@@ -804,7 +804,7 @@ async def test_tcp_pub_client_decode_msgpack(minion_opts, io_loop, tmp_path):
-         assert ret == dmsg
- 
- 
--def test_tcp_pub_client_close(minion_opts, io_loop, tmp_path):
-+def test_tcp_publish_client_close(minion_opts, io_loop, tmp_path):
-     client = salt.transport.tcp.PublishClient(minion_opts, io_loop, path=tmp_path)
- 
-     stream = MagicMock()
-@@ -1092,7 +1092,7 @@ async def test_message_client_stream_return_exception(minion_opts, io_loop):
-         client.close()
- 
- 
--def test_tcp_pub_server_pre_fork(master_opts):
-+def test_tcp_publish_server_pre_fork(master_opts):
-     process_manager = MagicMock()
-     server = salt.transport.tcp.PublishServer(master_opts)
-     server.pre_fork(process_manager)
+ def contains(bank, key):
 ```
 
----
-
-### Incident Patch 2: `f67c6e9f` (2026-10-27)
-**Commit Message**: Add changelog for TCPReqServer removal (#70376)
-
-Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-**File**: `changelog/70376.removed.md` (added, +1/-0)
+**File**: `tests/pytests/unit/cache/test_mysql_cache.py` (modified, +97/-0)
 ```diff
-@@ -0,0 +1 @@
-+Removed the deprecated `salt.transport.tcp.TCPReqServer`. It was only an alias for `salt.transport.tcp.RequestServer`, which should be used instead.
+@@ -197,6 +197,103 @@ def test_init_client():
+             assert mysql_cache.__context__["mysql_fresh_connection"]
+ 
+ 
++def test_ls_direct_keys():
++    """
++    Tests that ls() returns direct keys stored under exactly the given bank.
++
++    After store(bank='fnord/kevin/stuart', key='roscivs', data=...) the
++    contract requires cache.list('fnord/kevin/stuart') == ['roscivs'].
++    Query 1 (SELECT etcd_key WHERE bank=<bank>) must return the key.
++    """
++    mock_connect_client = MagicMock()
++    # Q1 (exact match) returns the key; Q2 (sub-banks LIKE) returns nothing.
++    q1_cursor = MagicMock()
++    q1_cursor.fetchall.return_value = [("roscivs",)]
++    q2_cursor = MagicMock()
++    q2_cursor.fetchall.return_value = []
++
++    with patch.object(mysql_cache, "_init_client"):
++        with patch.dict(
++            mysql_cache.__context__,
++            {
++                "mysql_table_name": "salt",
++                "mysql_client": mock_connect_client,
++            },
++        ):
++            with patch.object(mysql_cache, "run_query") as mock_run_query:
++                mock_run_query.side_effect = [
++                    (q1_cursor, 1),
++                    (q2_cursor, 0),
++                ]
++                result = mysql_cache.ls(bank="fnord/kevin/stuart")
++
++    assert sorted(result) == ["roscivs"]
++
++
++def test_ls_subbanks_for_manage_present():
++    """
++    Tests that ls() returns sub-bank names when data is stored under nested
++    banks — the manage.present use case.
++
++    Minion data is stored as store(bank='minions/<id>', key='data', ...).
++    cache.list('minions') must return the minion IDs.  Query 2
++    (SUBSTRING_INDEX(SUBSTR(bank, N), '/', 1) WHERE bank LIKE 'minions/%')
++    must return the IDs.
++    """
++    mock_connect_client = MagicMock()
++    # Q1 (exact match on 'minions') returns nothing; Q2 (sub-banks) returns ids.
++    q1_cursor = MagicMock()
++    q1_cursor.fetchall.return_value = []
++    q2_cursor = MagicMock()
++    q2_cursor.fetchall.return_value = [("minion1",), ("minion2",)]
++
++    with patch.object(mysql_cache, "_init_client"):
++        with patch.dict(
++            mysql_cache.__context__,
++            {
++                "mysql_table_name": "salt",
++                "mysql_client": mock_connect_client,
++            },
++        ):
++            with patch.object(mysql_cache, "run_query") as mock_run_query:
++                mock_run_query.side_effect = [
++                    (q1_cursor, 0),
++                    (q2_cursor, 2),
++                ]
++                result = mysql_cache.ls(bank="minions")
++
++    assert sorted(result) == ["minion1", "minion2"]
++
++
++def test_ls_combined_direct_and_subbanks():
++    """
++    Tests that ls() returns both direct keys AND sub-bank names when both are
++    present, deduplicating via a set so no entry appears twice.
++    """
++    mock_connect_client = MagicMock()
++    q1_cursor = MagicMock()
++    q1_cursor.fetchall.return_value = [("key1",), ("key2",)]
++    q2_cursor = MagicMock()
++    q2_cursor.fetchall.return_value = [("child",)]
++
++    with patch.object(mysql_cache, "_init_client"):
++        with patch.dict(
++            mysql_cache.__context__,
++            {
++                "mysql_table_name": "salt",
++                "mysql_client": mock_connect_client,
++            },
++        ):
++            with patch.object(mysql_cache, "run_query") as mock_run_query:
++                mock_run_query.side_effect = [
++                    (q1_cursor, 2),
++                    (q2_cursor, 1),
++                ]
++                result = mysql_cache.ls(bank="somebank")
++
++    assert sorted(result) == ["child", "key1", "key2"]
++
++
+ def test_create_table():
+     """
+     Tests that the _create_table
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #70572** (2026-10-27): Address dropped merge forward commits (@dwoz)
+- **PR #70562** (2026-10-27): Close the publishers to prevent leaks (@nsychev)
+- **PR #70560** (2026-10-28): Address cluster peers correctly on IPv6 (@nsychev)
+- **PR #70558** (2026-10-28): Pass extra and sinfo to their own makeRecord slots (@nsychev)
+- **PR #70556** (2026-10-28): Restore (accidentally?) deleted Saltclass pillar module. (@dhs-rec)
 - **PR #70546** (2026-10-23): Loosen packaging pin from == to >= on 3007.15-patch (@dwoz)
-- **PR #70545** (2026-10-23): Loosen packaging pin from == to >= on 3006.28-patch (@dwoz)
-- **PR #70544** (2026-10-23): Revert 3008.3-1 release prep; cut next 3008 release from this branch instead (@dwoz)
-- **PR #70541** (closed): Restore (accidentally?) deleted Saltclass pillar module. (@dhs-rec)
-- **PR #70511** (closed): charlie_codex (@charzl)
-- **PR #70510** (closed): Make pillar_mask_output a default-off feature flag with a single repr switch (@charzl)
 
 ---
 
@@ -2083,21 +2199,21 @@ Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Remove deprecated tcp.TCPPubClient and tcp.TCPPublishServer (#70377)
+## X. [master] Fix MySQL cache entry enumeration output (#66103)
 
 **RULE**:
-When implementing operations in `changelog/70377.removed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in saltstack/salt. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog/66102.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in saltstack/salt. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `021a041a`: Remove deprecated tcp.TCPPubClient and tcp.TCPPublishServer (#70377). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `401a8531`: [master] Fix MySQL cache entry enumeration output (#66103). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/70377.removed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/66102.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-Removed the deprecated `salt.transport.tcp.TCPPubClient` and `salt.transport.tcp.TCPPublishServer`. They were only aliases for `salt.transport.tcp.PublishClient` and `salt.transport.tcp.PublishServer`, which should be used instead.
+Fix MySQL cache driver ls results which fixes salt-run manage.present
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2107,4 +2223,4 @@ Removed the deprecated `salt.transport.tcp.TCPPubClient` and `salt.transport.tcp
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `021a041a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `401a8531` are properly handled with clean fallback behavior.
