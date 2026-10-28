@@ -5787,3 +5787,4 @@ Every entry in this ledger must capture:
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `4eca1f5b` | Multi-dimensional audit evidence | 2026-10-28T13:23:29.989Z |
 | `learn-huggingface-openai-whisper-large-v3` | `https://huggingface.co/openai/whisper-large-v3` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-28T13:30:06.879Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `ed0467e4` | Multi-dimensional audit evidence | 2026-10-28T13:30:22.226Z |
+| `learn-huggingface-black-forest-labs-flux-1-schnell` | `https://huggingface.co/black-forest-labs/FLUX.1-schnell` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-28T13:36:48.637Z |

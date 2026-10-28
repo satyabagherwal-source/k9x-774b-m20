@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T13:30:24.775Z",
-    "lastVerified": "2026-10-28T13:30:24.775Z",
+    "lastChecked": "2026-10-28T13:36:53.045Z",
+    "lastVerified": "2026-10-28T13:36:53.045Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -269,9 +269,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-28T13:10:05.680Z",
+    "lastChecked": "2026-10-28T13:36:53.038Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-28T13:10:05.680Z"
+    "lastVerified": "2026-10-28T13:36:53.038Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -393,9 +393,9 @@
   "smallstep-cli": {
     "name": "cli",
     "officialUrl": "https://github.com/smallstep/cli",
-    "lastChecked": "2026-10-28T07:18:00.508Z",
+    "lastChecked": "2026-10-28T13:36:48.038Z",
     "revisionIdentifier": "824bfd6b",
-    "lastVerified": "2026-10-28T07:18:00.508Z"
+    "lastVerified": "2026-10-28T13:36:48.038Z"
   },
   "milvus-io-milvus": {
     "name": "milvus-io/milvus",
@@ -3476,5 +3476,50 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mtkennerly-ludusavi": {
+    "name": "ludusavi",
+    "officialUrl": "https://github.com/mtkennerly/ludusavi",
+    "lastChecked": "2026-10-28T13:36:37.956Z",
+    "revisionIdentifier": "95b651aa",
+    "lastVerified": "2026-10-28T13:36:37.956Z"
+  },
+  "hf-black-forest-labs-flux.1-schnell": {
+    "name": "black-forest-labs/FLUX.1-schnell",
+    "officialUrl": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T13:36:40.513Z",
+    "lastVerified": "2026-10-28T13:36:40.513Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
+    "contentHash": "e123aec246da4161a9ed9fcd98de0a4afcc735edbcacca6b0719ebb86b776995",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "wix-react-native-ui-lib": {
+    "name": "react-native-ui-lib",
+    "officialUrl": "https://github.com/wix/react-native-ui-lib",
+    "lastChecked": "2026-10-28T13:36:43.109Z",
+    "revisionIdentifier": "1d6f609a",
+    "lastVerified": "2026-10-28T13:36:43.109Z"
+  },
+  "sealerio-sealer": {
+    "name": "sealer",
+    "officialUrl": "https://github.com/sealerio/sealer",
+    "lastChecked": "2026-10-28T13:36:45.479Z",
+    "revisionIdentifier": "e426153a",
+    "lastVerified": "2026-10-28T13:36:45.479Z"
+  },
+  "helixdb-helix-db": {
+    "name": "helix-db",
+    "officialUrl": "https://github.com/HelixDB/helix-db",
+    "lastChecked": "2026-10-28T13:36:50.569Z",
+    "revisionIdentifier": "2052f24e",
+    "lastVerified": "2026-10-28T13:36:50.569Z"
   }
 }

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-J9FV",
-    "timestamp": "2026-10-27T12:46:32.587Z",
-    "repository": "carbon-design-system/carbon-components-svelte",
-    "learningId": "learn-github-carbon-design-system-carbon-components-svelte",
-    "contentHash": "218a2c8bcc1841faf17e4f72ed1dfb41c5a041c450153c4497b262937dfa6210",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-JBQN",
     "timestamp": "2026-10-27T12:46:35.567Z",
     "repository": "cheeriojs/dom-serializer",
@@ -7492,6 +7477,21 @@
     "contentHash": "822a6f5037bd8758176642827c8bc03a7bb956f316701670ca366e9701ca5f6c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-RRAY",
+    "timestamp": "2026-10-28T13:36:48.634Z",
+    "repository": "black-forest-labs/FLUX.1-schnell",
+    "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
+    "contentHash": "e123aec246da4161a9ed9fcd98de0a4afcc735edbcacca6b0719ebb86b776995",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

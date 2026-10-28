@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T13:30:22.147Z",
+  "last_updated": "2026-10-28T13:36:48.566Z",
   "total_verified_learnings": 1157,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -18613,7 +18613,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
       "source_version": "hf-black-forest-labs-flux.1-schnell",
-      "content_hash": "6ac389969203fb511de08e2beead758f9b0c76a5d91c277abae97cda01517ac6",
+      "content_hash": "e123aec246da4161a9ed9fcd98de0a4afcc735edbcacca6b0719ebb86b776995",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
       "promoted_rules": [
@@ -18660,6 +18660,11 @@
           "verified_at": "2026-10-11T20:38:17.071Z"
         },
         {
+          "number": 919,
+          "title": "Latent Space Dimensionality Consistency",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
           "number": 1213,
           "title": "Distilled Model Inference Step Invariance",
           "status": "PROMOTED_AND_VERIFIED"
@@ -18702,7 +18707,7 @@
         {
           "number": 1507,
           "title": "Distilled Model Step-Count Invariant",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1583,
@@ -18773,7 +18778,7 @@
         "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4acall",
         "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4np6ca"
       ],
-      "verified_at": "2026-10-25T19:19:13.271Z",
+      "verified_at": "2026-10-28T13:36:48.553Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -78202,15 +78207,15 @@
       "learning_id": "rule-919",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 919,
-      "title": "Latent Space Dimensionality Consistency Invariant",
-      "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
-      "source_version": "hf-black-forest-labs-flux-3-image-klein",
+      "title": "Latent Space Dimensionality Consistency",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+      "source_version": "hf-black-forest-labs-flux.1-schnell",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-21T02:49:55.516Z"
+      "verified_at": "2026-10-28T13:36:48.553Z"
     },
     "rule-920": {
       "learning_id": "rule-920",
@@ -86420,15 +86425,15 @@
       "learning_id": "rule-1507",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1507,
-      "title": "Distilled Model Step-Count Invariant (Harvested from black-forest-labs/FLUX.1-schnell)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Distilled Model Step-Count Invariant",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+      "source_version": "hf-black-forest-labs-flux.1-schnell",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.820Z"
+      "verified_at": "2026-10-28T13:36:48.553Z"
     },
     "rule-1508": {
       "learning_id": "rule-1508",
