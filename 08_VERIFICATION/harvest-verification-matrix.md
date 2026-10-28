@@ -5830,3 +5830,5 @@
 | `CYCLE-20261028-JRMO` | `2026-10-28T15:50:33.888Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5331` | Yes (`021d85b8...`) |
 | `CYCLE-20261028-JWJZ` | `2026-10-28T15:50:40.271Z` | `pablodawson/MiniMax-H3-360-Orbit-LoRA` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5332, Rule 5333` | Yes (`adbd11d3...`) |
 | `CYCLE-20261028-K072` | `2026-10-28T15:50:44.990Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md` | Yes (`382dce74...`) |
+| `CYCLE-20261028-TOBV` | `2026-10-28T15:58:16.171Z` | `Venastine-Research/Xing4.0-29B-A4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md` | Yes (`b5eb6b6b...`) |
+| `CYCLE-20261028-TQ36` | `2026-10-28T15:58:18.450Z` | `Xudong-Huang/may` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5334` | Yes (`fc63c9b9...`) |

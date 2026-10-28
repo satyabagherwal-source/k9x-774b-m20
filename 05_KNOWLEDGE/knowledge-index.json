@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T15:50:44.910Z",
+  "last_updated": "2026-10-28T15:58:18.391Z",
   "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -28914,7 +28914,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
       "source_version": "hf-venastine-research-xing4.0-29b-a4b-gguf",
-      "content_hash": "0cbcd5878f74184740a02ae6f93466b4ccc07bb3fbd879d71f0923d111046985",
+      "content_hash": "b5eb6b6b17792b0544d55e540c312aaaffd5b118ed92ba49f3a6d7a63f67ddbd",
       "dossier_path": "07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md",
       "promoted_rules": [
@@ -28951,7 +28951,7 @@
         "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv3xybf6",
         "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv4co4ot"
       ],
-      "verified_at": "2026-10-25T22:07:10.267Z",
+      "verified_at": "2026-10-28T15:58:16.069Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55583,14 +55583,19 @@
       "slug": "xudong-huang-may",
       "platform": "github",
       "source_url": "https://github.com/Xudong-Huang/may",
-      "source_version": "8dceb4ab",
-      "content_hash": "f1678e05a32e6b1b9fc5a127aa3666e0769d95ca2862570951920ceeed58a061",
+      "source_version": "1a717549",
+      "content_hash": "fc63c9b9cb6c73d201348881f16122408f4f03f38f9d041d1536f3ab8aa37832",
       "dossier_path": "07_PROJECT_LEARNING/xudong-huang-may-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xudong-huang-may-learnings.md",
       "promoted_rules": [
         {
           "number": 4799,
           "title": "may_queue: keep block allocation and queue teardown off the calling stack",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5334,
+          "title": "spsc: add Receiver::recv_timeout",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -55599,7 +55604,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:25:16.195Z",
+      "verified_at": "2026-10-28T15:58:18.376Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -144897,6 +144902,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T15:50:40.170Z"
+    },
+    "rule-5334": {
+      "learning_id": "rule-5334",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5334,
+      "title": "spsc: add Receiver::recv_timeout",
+      "source_url": "https://github.com/Xudong-Huang/may",
+      "source_version": "1a717549",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T15:58:18.376Z"
     }
   },
   "aliases": {

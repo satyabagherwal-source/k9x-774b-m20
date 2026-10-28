@@ -1075,8 +1075,8 @@
     "sourceUrl": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
     "sourceVersion": "hf-venastine-research-xing4.0-29b-a4b-gguf",
     "license": "Open-Source",
-    "contentHash": "0cbcd5878f74184740a02ae6f93466b4ccc07bb3fbd879d71f0923d111046985",
-    "lastHarvestedAt": "2026-10-25T22:07:10.338Z",
+    "contentHash": "b5eb6b6b17792b0544d55e540c312aaaffd5b118ed92ba49f3a6d7a63f67ddbd",
+    "lastHarvestedAt": "2026-10-28T15:58:16.174Z",
     "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf"
   },
   "hf-naiveai-naive-n0.5-flash": {
@@ -5893,10 +5893,10 @@
     "repository": "Xudong-Huang/may",
     "platform": "github",
     "sourceUrl": "https://github.com/Xudong-Huang/may",
-    "sourceVersion": "8dceb4ab",
+    "sourceVersion": "1a717549",
     "license": "Apache-2.0",
-    "contentHash": "f1678e05a32e6b1b9fc5a127aa3666e0769d95ca2862570951920ceeed58a061",
-    "lastHarvestedAt": "2026-10-27T13:25:16.258Z",
+    "contentHash": "fc63c9b9cb6c73d201348881f16122408f4f03f38f9d041d1536f3ab8aa37832",
+    "lastHarvestedAt": "2026-10-28T15:58:18.453Z",
     "learningId": "learn-github-xudong-huang-may"
   },
   "rcbyr-keen-slider": {

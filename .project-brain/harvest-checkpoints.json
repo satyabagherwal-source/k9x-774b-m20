@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T15:50:45.014Z",
+  "last_updated": "2026-10-28T15:58:18.461Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1415,14 +1415,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-      "content_hash": "0cbcd5878f74184740a02ae6f93466b4ccc07bb3fbd879d71f0923d111046985",
-      "verified_at": "2026-10-25T22:07:10.346Z",
+      "content_hash": "b5eb6b6b17792b0544d55e540c312aaaffd5b118ed92ba49f3a6d7a63f67ddbd",
+      "verified_at": "2026-10-28T15:58:16.181Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T22:07:10.346Z"
+      "last_updated": "2026-10-28T15:58:16.181Z"
     },
     "NaiveAI/Naive-N0.5-Flash": {
       "repository": "NaiveAI/Naive-N0.5-Flash",
@@ -8961,14 +8961,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-xudong-huang-may",
-      "content_hash": "f1678e05a32e6b1b9fc5a127aa3666e0769d95ca2862570951920ceeed58a061",
-      "verified_at": "2026-10-27T13:25:16.265Z",
+      "content_hash": "fc63c9b9cb6c73d201348881f16122408f4f03f38f9d041d1536f3ab8aa37832",
+      "verified_at": "2026-10-28T15:58:18.460Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:25:16.265Z"
+      "last_updated": "2026-10-28T15:58:18.460Z"
     },
     "rcbyr/keen-slider": {
       "repository": "rcbyr/keen-slider",

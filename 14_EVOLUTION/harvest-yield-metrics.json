@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T15:50:45.010Z",
-  "total_cycles_completed": 5807,
-  "total_learnings_persisted": 5807,
-  "total_rules_promoted": 5285,
+  "last_updated": "2026-10-28T15:58:18.457Z",
+  "total_cycles_completed": 5809,
+  "total_learnings_persisted": 5809,
+  "total_rules_promoted": 5286,
   "history": [
-    {
-      "timestamp": "2026-10-28T01:36:04.534Z",
-      "repository": "mudler/locate-anything.cpp-gguf",
-      "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T01:36:08.324Z",
-      "repository": "StarTrail-org/LEANN",
-      "learningId": "learn-github-startrail-org-leann",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T01:42:36.432Z",
       "repository": "cloudscape-design/components",
@@ -1403,6 +1389,20 @@
       "repository": "rqlite/rqlite",
       "learningId": "learn-github-rqlite-rqlite",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T15:58:16.178Z",
+      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T15:58:18.457Z",
+      "repository": "Xudong-Huang/may",
+      "learningId": "learn-github-xudong-huang-may",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

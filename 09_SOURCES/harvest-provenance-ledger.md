@@ -5839,3 +5839,5 @@ Every entry in this ledger must capture:
 | `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `feb17a0d` | Multi-dimensional audit evidence | 2026-10-28T15:50:33.892Z |
 | `learn-huggingface-pablodawson-minimax-h3-360-orbit-lora` | `https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA` | `hf-pabloda` | Multi-dimensional audit evidence | 2026-10-28T15:50:40.275Z |
 | `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `ce215261` | Multi-dimensional audit evidence | 2026-10-28T15:50:44.994Z |
+| `learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf` | `https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF` | `hf-venasti` | Multi-dimensional audit evidence | 2026-10-28T15:58:16.174Z |
+| `learn-github-xudong-huang-may` | `https://github.com/Xudong-Huang/may` | `1a717549` | Multi-dimensional audit evidence | 2026-10-28T15:58:18.453Z |

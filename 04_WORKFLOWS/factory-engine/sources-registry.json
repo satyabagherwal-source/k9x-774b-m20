@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T15:50:47.536Z",
-    "lastVerified": "2026-10-28T15:50:47.536Z",
+    "lastChecked": "2026-10-28T15:58:27.870Z",
+    "lastVerified": "2026-10-28T15:58:27.870Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -280,9 +280,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-28T15:29:48.618Z",
+    "lastChecked": "2026-10-28T15:58:27.862Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-28T15:29:48.618Z"
+    "lastVerified": "2026-10-28T15:58:27.862Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1747,9 +1747,9 @@
   "mitmproxy-mitmproxy": {
     "name": "mitmproxy",
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
-    "lastChecked": "2026-10-28T12:46:36.754Z",
+    "lastChecked": "2026-10-28T15:58:22.493Z",
     "revisionIdentifier": "df14a286",
-    "lastVerified": "2026-10-28T12:46:36.754Z"
+    "lastVerified": "2026-10-28T15:58:22.493Z"
   },
   "oceanbase-oceanbase": {
     "name": "oceanbase",
@@ -4649,5 +4649,60 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "xudong-huang-may": {
+    "name": "Xudong-Huang/may",
+    "officialUrl": "https://github.com/Xudong-Huang/may",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T15:58:17.903Z",
+    "lastVerified": "2026-10-28T15:58:17.903Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-xudong-huang-may",
+    "contentHash": "fc63c9b9cb6c73d201348881f16122408f4f03f38f9d041d1536f3ab8aa37832",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-venastine-research-xing4.0-29b-a4b-gguf": {
+    "name": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+    "officialUrl": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T15:58:15.188Z",
+    "lastVerified": "2026-10-28T15:58:15.188Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
+    "contentHash": "b5eb6b6b17792b0544d55e540c312aaaffd5b118ed92ba49f3a6d7a63f67ddbd",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "react-native-webrtc-react-native-webrtc": {
+    "name": "react-native-webrtc",
+    "officialUrl": "https://github.com/react-native-webrtc/react-native-webrtc",
+    "lastChecked": "2026-10-28T15:58:17.542Z",
+    "revisionIdentifier": "fb662c9d",
+    "lastVerified": "2026-10-28T15:58:17.542Z"
+  },
+  "goss-org-goss": {
+    "name": "goss",
+    "officialUrl": "https://github.com/goss-org/goss",
+    "lastChecked": "2026-10-28T15:58:20.027Z",
+    "revisionIdentifier": "e1210076",
+    "lastVerified": "2026-10-28T15:58:20.027Z"
+  },
+  "apple-foundationdb": {
+    "name": "foundationdb",
+    "officialUrl": "https://github.com/apple/foundationdb",
+    "lastChecked": "2026-10-28T15:58:25.051Z",
+    "revisionIdentifier": "1f6fd502",
+    "lastVerified": "2026-10-28T15:58:25.051Z"
   }
 }
