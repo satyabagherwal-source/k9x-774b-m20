@@ -5937,3 +5937,5 @@
 | `CYCLE-20261028-RA6F` | `2026-10-28T21:04:20.295Z` | `Phocinae/Phocinae-Largha-150M-v1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md` | Yes (`c12cc8d8...`) |
 | `CYCLE-20261028-RFV3` | `2026-10-28T21:04:27.663Z` | `microsoft/react-native-windows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5404` | Yes (`86ade167...`) |
 | `CYCLE-20261028-RI44` | `2026-10-28T21:04:30.580Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5405` | Yes (`9db4c05e...`) |
+| `CYCLE-20261028-0611` | `2026-10-28T21:11:14.821Z` | `microsoft/FrogNano-4B-2609` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md` | Yes (`d037d9df...`) |
+| `CYCLE-20261028-0C2K` | `2026-10-28T21:11:22.652Z` | `CrossPaste/crosspaste-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5406` | Yes (`334bb814...`) |

@@ -5946,3 +5946,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-phocinae-phocinae-largha-150m-v1` | `https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1` | `hf-phocina` | Multi-dimensional audit evidence | 2026-10-28T21:04:20.299Z |
 | `learn-github-microsoft-react-native-windows` | `https://github.com/microsoft/react-native-windows` | `8079828c` | Multi-dimensional audit evidence | 2026-10-28T21:04:27.666Z |
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `4150cef7` | Multi-dimensional audit evidence | 2026-10-28T21:04:30.583Z |
+| `learn-huggingface-microsoft-frognano-4b-2609` | `https://huggingface.co/microsoft/FrogNano-4B-2609` | `hf-microso` | Multi-dimensional audit evidence | 2026-10-28T21:11:14.824Z |
+| `learn-github-crosspaste-crosspaste-desktop` | `https://github.com/CrossPaste/crosspaste-desktop` | `bc806010` | Multi-dimensional audit evidence | 2026-10-28T21:11:22.656Z |

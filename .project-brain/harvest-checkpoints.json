@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T21:04:30.591Z",
+  "last_updated": "2026-10-28T21:11:22.665Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1850,14 +1850,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-microsoft-frognano-4b-2609",
-      "content_hash": "bde2cb99fa85398f19eb8d7f5266a0dab55f87652d577c8ef61e33310c177b55",
-      "verified_at": "2026-10-25T18:54:05.188Z",
+      "content_hash": "d037d9df82d28ba9f605eb28267580f8b8f34b211eadb5baccd1f53f97985c32",
+      "verified_at": "2026-10-28T21:11:14.840Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T18:54:05.188Z"
+      "last_updated": "2026-10-28T21:11:14.840Z"
     },
     "FrancisRing/Prism": {
       "repository": "FrancisRing/Prism",
@@ -11451,14 +11451,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crosspaste-crosspaste-desktop",
-      "content_hash": "4951791502e6fe7a8ee4ec6a95fe5d582f36d00f85015e8e25c3710e1e877ed4",
-      "verified_at": "2026-10-28T01:58:36.540Z",
+      "content_hash": "334bb814e46ca37bd3738f623d7ad34a9fe0aecee3539f89a9909bac28eb5822",
+      "verified_at": "2026-10-28T21:11:22.664Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T01:58:36.540Z"
+      "last_updated": "2026-10-28T21:11:22.664Z"
     },
     "infiniflow/infinity": {
       "repository": "infiniflow/infinity",

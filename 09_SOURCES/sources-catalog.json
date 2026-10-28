@@ -825,8 +825,8 @@
     "sourceUrl": "https://huggingface.co/microsoft/FrogNano-4B-2609",
     "sourceVersion": "hf-microsoft-frognano-4b-2609",
     "license": "Open-Source",
-    "contentHash": "bde2cb99fa85398f19eb8d7f5266a0dab55f87652d577c8ef61e33310c177b55",
-    "lastHarvestedAt": "2026-10-25T18:54:05.180Z",
+    "contentHash": "d037d9df82d28ba9f605eb28267580f8b8f34b211eadb5baccd1f53f97985c32",
+    "lastHarvestedAt": "2026-10-28T21:11:14.824Z",
     "learningId": "learn-huggingface-microsoft-frognano-4b-2609"
   },
   "hf-hexgrad-kokoro-82m": {
@@ -7603,10 +7603,10 @@
     "repository": "CrossPaste/crosspaste-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/CrossPaste/crosspaste-desktop",
-    "sourceVersion": "5d07b610",
+    "sourceVersion": "bc806010",
     "license": "AGPL-3.0",
-    "contentHash": "4951791502e6fe7a8ee4ec6a95fe5d582f36d00f85015e8e25c3710e1e877ed4",
-    "lastHarvestedAt": "2026-10-28T01:58:36.532Z",
+    "contentHash": "334bb814e46ca37bd3738f623d7ad34a9fe0aecee3539f89a9909bac28eb5822",
+    "lastHarvestedAt": "2026-10-28T21:11:22.656Z",
     "learningId": "learn-github-crosspaste-crosspaste-desktop"
   },
   "infiniflow-infinity": {

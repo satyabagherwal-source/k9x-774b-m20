@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md`  
 > **Source**: github ([https://github.com/CrossPaste/crosspaste-desktop](https://github.com/CrossPaste/crosspaste-desktop))  
-> **Source Version**: `5d07b610`  
+> **Source Version**: `bc806010`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T01:58:36.062Z  
+> **Timestamp**: 2026-10-28T21:11:22.023Z  
 > **Learning ID**: `learn-github-crosspaste-crosspaste-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/CrossPaste/crosspaste-desktop](https://github.com/CrossPaste/crosspaste-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T01:58:35.947Z  
+> **Harvest Timestamp**: 2026-10-28T21:11:22.016Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cross-device clipboard sync for macOS, Windows & Linux — end-to-end encrypted, LAN-only, no cloud. OCR, CLI and MCP server built in.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2667 stars
+- **Stars / Engagement**: 2668 stars
 
 ---
 
@@ -768,446 +768,635 @@ private val MIN_CONNECTING_VISIBLE = 1.seconds
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5d07b610` (2026-10-26)
-**Commit Message**: :bug: highlight the clicked row in the paste panel (#5286)
+### Incident Patch 1: `bc806010` (2026-10-28)
+**Commit Message**: :arrow_up: bump web vite to 6.4.5 and vitest to 4.1.12 for security fixes (#5295)
 
-**File**: `app/src/desktopMain/kotlin/com/crosspaste/ui/model/PastePanelViewModel.kt` (modified, +14/-22)
+**File**: `web/package-lock.json` (modified, +55/-55)
 ```diff
-@@ -26,12 +26,10 @@ import kotlin.time.Duration.Companion.milliseconds
-  * State for the floating paste panel (#4995).
+@@ -27,8 +27,8 @@
+         "postcss": "^8.5.15",
+         "tailwindcss": "^4.0.7",
+         "typescript": "^5.7.3",
+-        "vite": "^6.0.7",
+-        "vitest": "^4.1.11"
++        "vite": "^6.4.5",
++        "vitest": "^4.1.12"
+       }
+     },
+     "../core/build/dist/js/productionLibrary": {
+@@ -1745,16 +1745,16 @@
+       }
+     },
+     "node_modules/@vitest/expect": {
+-      "version": "4.1.11",
+-      "resolved": "https://registry.npmjs.org/@vitest/expect/-/expect-4.1.11.tgz",
+-      "integrity": "sha512-VX2x5vNJXET47KAFzwERI+KRMtTTCSWTfSMKsW7JsUsXV4psq++e3DvZpuTDOpHcxytiDs6p2nhVb2tVDiiUYw==",
++      "version": "4.1.12",
++      "resolved": "https://registry.npmjs.org/@vitest/expect/-/expect-4.1.12.tgz",
++      "integrity": "sha512-vFlTt+YEu9WBpNjdGayNmlMVzrWPi1+sv853/7t2FU7hpO5gAFBKHzQmkCq5Xjpr+evegF2994LQT3hF3mRlqQ==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "@standard-schema/spec": "^1.1.0",
+         "@types/chai": "^5.2.2",
+-        "@vitest/spy": "4.1.11",
+-        "@vitest/utils": "4.1.11",
++        "@vitest/spy": "4.1.12",
++        "@vitest/utils": "4.1.12",
+         "chai": "^6.2.2",
+         "tinyrainbow": "^3.1.0"
+       },
+@@ -1763,13 +1763,13 @@
+       }
+     },
+     "node_modules/@vitest/mocker": {
+-      "version": "4.1.11",
+-      "resolved": "https://registry.npmjs.org/@vitest/mocker/-/mocker-4.1.11.tgz",
+-      "integrity": "sha512-2XJVD55d1o5AZous5CCGKS74g/riOj9odEt2bQpCVZeblHyHdnMeFl4jl0XjU21stf4mbjUkew2eXQZt65g5CQ==",
++      "version": "4.1.12",
++      "resolved": "https://registry.npmjs.org/@vitest/mocker/-/mocker-4.1.12.tgz",
++      "integrity": "sha512-fKShNpKZzupWZuY0z7egydvL0sqW4INEZBEExMBMAa6izlENEVHwoXgdaTCaBZ5fwlr4xf2o1wXC83n9RpO+NA==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+-        "@vitest/spy": "4.1.11",
++        "@vitest/spy": "4.1.12",
+         "estree-walker": "^3.0.3",
+         "magic-string": "^0.30.21"
+       },
+@@ -1800,9 +1800,9 @@
+       }
+     },
+     "node_modules/@vitest/pretty-format": {
+-      "version": "4.1.11",
+-      "resolved": "https://registry.npmjs.org/@vitest/pretty-format/-/pretty-format-4.1.11.tgz",
+-      "integrity": "sha512-yiZzPbGTS9Sr/JpFl8zHrcIkAofNbFV6k21vIgQN/cY/oxZeXhJv5sc/MBJ5jFKWmWs+oJHw0UXLZjmf931+Vw==",
++      "version": "4.1.12",
++      "resolved": "https://registry.npmjs.org/@vitest/pretty-format/-/pretty-format-4.1.12.tgz",
++      "integrity": "sha512-XW9O8+Mxx4VpCtkYdMJLZQQwsVryP9wk7cPKDxtXFfwSak6yRh5+2fep/Y0XF/ElBvJHq8bcYdi6aeuai0opZA==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+@@ -1813,28 +1813,28 @@
+       }
+     },
+     "node_modules/@vitest/runner": {
+-      "version": "4.1.11",
+-      "resolved": "https://registry.npmjs.org/@vitest/runner/-/runner-4.1.11.tgz",
+-      "integrity": "sha512-LztvUgdwMNJMIkj3hQnnxiC2Xy1zNxq928W/xhjCLaNCzqTZOudjwbQf6v9IntZGPw132i2Lq2rgTRZHD3JHNw==",
++      "version": "4.1.12",
++      "resolved": "https://registry.npmjs.org/@vitest/runner/-/runner-4.1.12.tgz",
++      "integrity": "sha512-NKlVKCr5QnCe8jijdMnmkpHHU+WTqiLFR6G0pHji9uRjXK9xJl1k1nTw6F3pOOj2PDcsDt2GKQMI7wIsaT491w==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+-        "@vitest/utils": "4.1.11",
++        "@vitest/utils": "4.1.12",
+         "pathe": "^2.0.3"
+       },
+       "funding": {
+         "url": "https://opencollective.com/vitest"
+       }
+     },
+     "node_modules/@vitest/snapshot": {
+-      "version": "4.1.11",
+-      "resolved": "https://registry.npmjs.org/@vitest/snapshot/-/snapshot-4.1.11.tgz",
+-      "integrity": "sha512-pN7ikn1ON7h8ee4gIAp4AzyK+zBtJPzVbqOgu5LCEh4VaJVbPQcgYQYJIMGQPXVeJJq1fnfazis7a5pFNPahog==",
++      "version": "4.1.12",
++      "resolved": "https://registry.npmjs.org/@vitest/snapshot/-/snapshot-4.1.12.tgz",
++      "integrity": "sha512-ko1y1Qgb/slzQ9mr+b89Cuqud8WG1TKtsPD8r7ZUBdvVOGt85Af2HwCqHujrhwJq95hs/9RM7fcAPg57o1vlzw==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+-        "@vitest/pretty-format": "4.1.11",
+-        "@vitest/utils": "4.1.11",
++        "@vitest/pretty-format": "4.1.12",
++        "@vitest/utils": "4.1.12",
+         "magic-string": "^0.30.21",
+         "pathe": "^2.0.3"
+       },
+@@ -1843,23 +1843,23 @@
+       }
+     },
+     "node_modules/@vitest/spy": {
+-      "version": "4.1.11",
+-      "resolved": "https://registry.npmjs.org/@vitest/spy/-/spy-4.1.11.tgz",
+-      "integrity": "sha512-apNa/prQy2qCeywhnixOHPRCgGNhvg7T4Dapfl1GahLp/R+uhBm5cPyFoNVyqsNd2h1nJxL6BqqdIjiABL60YA==",
++      "version": "4.1.12",
++      "resolved": "https://registry.npmjs.org/@vitest/spy/-/spy-4.1.12.tgz",
++      "integrity": "sha512-RGq9x4JNGNTZHEJxvN0oSiJjeSCExm0n2gZKKJZHY9cX5AVA6M7VJILBT3ZJ/tJ/0J9uWT7fETV9/btoi//vSg==",
+       "dev": true,
+       "license": "MIT",
+       "funding": {
+         "url": "https://opencollective.com/vitest"
+       }
+     },
+     "node_modules/@vitest/utils": {
+-      "version": "4.1.11",
+-      "resolved": "https://registry.npmjs.org/@vites
+```
+
+**File**: `web/package.json` (modified, +2/-2)
+```diff
+@@ -31,8 +31,8 @@
+     "postcss": "^8.5.15",
+     "tailwindcss": "^4.0.7",
+     "typescript": "^5.7.3",
+-    "vite": "^6.0.7",
+-    "vitest": "^4.1.11"
++    "vite": "^6.4.5",
++    "vitest": "^4.1.12"
+   },
+   "overrides": {
+     "@crxjs/vite-plugin": {
+```
+
+---
+
+### Incident Patch 2: `0565512d` (2026-10-28)
+**Commit Message**: :memo: add the Wayland clipboard fix to the 2.3.1 changelog (#5294)
+
+**File**: `CHANGELOG.md` (modified, +6/-2)
+```diff
+@@ -6,8 +6,11 @@ All notable changes to this project will be documented in this file.
+ # Highlights 🌟
+ 
+ - 📋 **Floating paste button fixes**
+-  Fixed interaction issues with the floating paste button and its panel
+-  (#5283 #5284 #5285 #5286).
++  Fixed interaction issues with the floating paste button and its panel;
++  on Wayland its pastes now reach native Wayland apps, because clipboard
++  writes go straight into the Wayland clipboard instead of an XWayland
++  selection that KWin mirrors only while CrossPaste has the focus
++  (#5283 #5284 #5285 #5286 #5292 #5293).
+ 
+ - 🪟 **MSIX packages declare their firewall rules**
+   Inbound TCP/UDP for `bin\CrossPaste.exe` on domain and private networks
+@@ -26,6 +29,7 @@ All notable changes to this project will be documented in this file.
+ 
+ # Bug Fixes 🐛
+ 
++- :bug: Write the Wayland clipboard natively so background writes reach Wayland apps (#5293)
+ - :bug: Fold the MSIX CLI aliases into the main Application so the Store accepts it (#5290)
+ - :bug: Declare MSIX firewall rules so Store updates stop re-prompting (#5288)
+ - :bug: Highlight the clicked row in the paste panel (#5286)
+```
+
+---
+
+### Incident Patch 3: `a5e9ecd4` (2026-10-28)
+**Commit Message**: :bug: write the Wayland clipboard natively so background writes reach Wayland apps (#5293)
+
+* :bug: write the Wayland clipboard natively so background writes reach Wayland apps
+
+* :bug: harden the native Wayland writer against listener races, stalled readers and Latin-1 targets
+
+**File**: `app/src/desktopMain/kotlin/com/crosspaste/paste/LinuxOriginMarkedTransferable.kt` (modified, +1/-5)
+```diff
+@@ -24,12 +24,8 @@ class LinuxOriginMarkedTransferable(
+     override fun getTransferData(flavor: DataFlavor?): Any =
+         if (flavor == PasteDataFlavors.CROSSPASTE_ORIGIN_FLAVOR) {
+             // A fresh stream per read: AWT may convert the target more than once.
+-            ByteArrayInputStream(MARKER_BYTES)
++            ByteArrayInputStream(PasteDataFlavors.CROSSPASTE_ORIGIN_MARKER.encodeToByteArray())
+         } else {
+             delegate.getTransferData(flavor)
+         }
+-
+-    companion object {
+-        private val MARKER_BYTES = "crosspaste".encodeToByteArray()
+-    }
+ }
+```
+
+**File**: `app/src/desktopMain/kotlin/com/crosspaste/paste/LinuxPasteboardService.kt` (modified, +27/-5)
+```diff
+@@ -40,13 +40,19 @@ import java.nio.charset.Charset
+  *    keeps for X clients, and it is incomplete — KWin never mirrors images
+  *    copied in native Wayland apps, so the X11 path below never even notices
+  *    the copy (#5167). Copies made by XWayland apps are bridged *into* the
+- *    Wayland clipboard by every compositor, so this one channel sees them all.
++ *    Wayland clipboard while they hold the focus, so this one channel sees
++ *    them all.
+  *  - **X11 sessions**, and Wayland compositors without data-control (GNOME),
+  *    watch the X11 selection with XFixes and read it through AWT.
   *
-  * The panel lists the clipboard history newest-first. Clicking a row pastes it into
-- * whatever app currently has focus (the panel never takes focus itself) and moves the
-- * "next" marker to the row copied right after it, so a batch copied as A, B, C is
-- * pasted back in the same order with one click per field. The marker is tracked by
-- * paste id rather than index so that new copies arriving while the panel is open do
-- * not shift it. A double click pastes once: presses that land while a paste is still
-- * running, or shortly after it, are dropped.
-+ * whatever app currently has focus (the panel never takes focus itself) and highlights
-+ * that row. The highlight is tracked by paste id rather than index so that new copies
-+ * arriving while the panel is open do not shift it. A double click pastes once: presses
-+ * that land while a paste is still running, or shortly after it, are dropped.
+- * Writes go through AWT in both modes; in Wayland mode they carry
+- * [PasteDataFlavors.CROSSPASTE_ORIGIN_FLAVOR] so the bridged echo of our own
+- * write is recognised and skipped.
++ * Writes follow the same split. With the Wayland monitor running they go
++ * straight into the Wayland clipboard ([WaylandClipboardMonitor.setSelection]):
++ * KWin mirrors an XWayland client's selection only while that client has the
++ * keyboard focus, so an AWT write made from the background — the
++ * non-activating paste panel, a synced paste — never reached native Wayland
++ * apps (#5292). Otherwise they go through AWT. Either way a Wayland-mode write
++ * carries [PasteDataFlavors.CROSSPASTE_ORIGIN_MIME], so the monitor recognises
++ * the echo of our own write and skips it.
   */
- class PastePanelViewModel(
-     private val appWindowManager: DesktopAppWindowManager,
-@@ -53,8 +51,8 @@ class PastePanelViewModel(
-     private val _loadAll = MutableStateFlow(false)
-     val loadAll: StateFlow<Boolean> = _loadAll.asStateFlow()
- 
--    /** Id of the row to paste next; null means the newest row. */
--    private val _nextId = MutableStateFlow<Long?>(null)
-+    /** Id of the row pasted last; null until a row is clicked. */
-+    private val _highlightedId = MutableStateFlow<Long?>(null)
- 
-     private val pasteInFlight = Mutex()
- 
-@@ -74,21 +72,19 @@ class PastePanelViewModel(
-                 initialValue = emptyList(),
-             )
- 
--    val nextIndex: StateFlow<Int> =
--        combine(items, _nextId) { list, nextId ->
--            nextId
--                ?.let { id -> list.indexOfFirst { it.id == id } }
--                ?.takeIf { it >= 0 }
--                ?: 0
-+    /** Index of the highlighted row, -1 when none is. */
-+    val highlightedIndex: StateFlow<Int> =
-+        combine(items, _highlightedId) { list, highlightedId ->
-+            highlightedId?.let { id -> list.indexOfFirst { it.id == id } } ?: -1
-         }.stateIn(
-             scope = viewModelScope,
-             started = SharingStarted.WhileSubscribed(5000),
--            initialValue = 0,
-+            initialValue = -1,
-         )
- 
--    /** Every open starts fresh: newest row is next, first page only. */
-+    /** Every open starts fresh: nothing highlighted, first page only. */
-     fun onShown() {
--        _nextId.value = null
-+        _highlightedId.value = null
-         _limit.value = PAGE_SIZE
+ class LinuxPasteboardService(
+     override val appWindowManager: DesktopAppWindowManager,
+@@ -368,13 +374,29 @@ class LinuxPasteboardService(
+         pasteItem: PasteItem,
+         transferable: DesktopWriteTransferable,
+     ) {
+-        systemClipboard.setContents(markOrigin(transferable), this)
++        write(transferable)
      }
  
-@@ -111,10 +107,6 @@ class PastePanelViewModel(
-     }
- 
-     private suspend fun pasteOnce(pasteData: PasteData) {
--        val list = items.value
--        val index = list.indexOfFirst { it.id == pasteData.id }
--        // The row copied right after this one; stays put when there is nothing newer.
--        val next = if (index > 0) list[index - 1] else pasteData
-         val written =
-             withContext(ioDispatcher) {
-                 pasteboardService
-@@ -130,6 +122,6 @@ class PastePanelViewModel(
-             return
-         }
-         appWindowManager.toPaste()
--        _nextId.value = next.id
-+        _highlightedId.value = pasteData.id
-     }
- }
-```
-
-**File**: `app/src/desktopMain/kotlin/com/crosspaste/ui/paste/panel/PastePanelContent.kt` (modified, +2/-2)
-```diff
-@@ -85,7 +85,7 @@ fun FrameWindowScope.PastePanelContent(surface: PastePanelSurface) {
-     val viewModel = koinInject<PastePanelViewModel>()
- 
-     val items by viewModel.items.collectAsState()
--    val nextIndex by viewModel.nextIndex.collectAsState()
-+    val highlightedIndex by viewModel.highlightedIndex.collectAsState()
-     val loadAll by viewModel.loadAll.collectAsState()
- 
-     val listState = rememberLazyListState()
-@@ -153,7 +153,7 @@ fun FrameWindowScope.PastePanelContent(surface: PastePanelSurface) {
-                 ) { index, pasteData ->
-                     PastePanelRow(
-                         pasteData = pasteData,
--                        highlighted = index == nextIndex,
-+                        highlighted = index == highlightedIndex,
-                         onClick = {
-                             mainCoroutineDispatcher.launch {
-                                 viewModel.paste(pasteData)
-```
-
-**File**: `app/src/desktopTest/kotlin/com/crosspaste/ui/model/PastePanelViewModelTest.kt` (modified, +21/-21)
-```diff
-@@ -100,16 +100,16 @@ class PastePanelViewModelTest {
-     }
- 
-     @Test
--    fun `pasting a row writes it, simulates paste and advances to the row copied after it`() =
-+    fun `pasting a row writes it, simulates paste and highlights that row`() =
-         runTest {
-             val vm = createViewModel()
-             val jobs =
-                 listOf(
-                     launch { vm.items.collect {} },
--                    launch { vm.nextIndex.collect {} },
-+                    launch { vm.highlightedIndex.collect {} },
-                 )
-             advanceUntilIdle()
--            assertEquals(0, vm.nextIndex.value)
-+            assertEquals(-1, vm.highlightedIndex.value)
- 
-             vm.paste(pasteData(1))
-             advanceUntilIdle()
-@@ -123,30 +123,30 @@ class PastePanelViewModelTest {
-                 )
-             }
-             coVerify(exactly = 1) { windowManager.toPaste() }
--            assertEquals(1, vm.nextIndex.value)
-+            assertEquals(2, vm.highlightedIndex.value)
- 
-             vm.paste(pasteData(2))
-             advanceUntilIdle()
--            assertEquals(0, vm.nextIndex.value)
-+            assertEquals(1, vm.highlightedIndex.value)
- 
-             jobs.forEach { it.cancel() }
-         }
- 
-     @Test
--    fun `pasting the newest row keeps the marker on it`() =
-+    fun `pasting the newest row highlights it`() =
-         runTest {
-             val vm = createViewModel()
-             val jobs =
-                 listOf(
-                     launch { vm.items.collect {} },
--                    launch { vm.nextIndex.collect {} },
-+                    launch { vm.highlightedIndex.collect {} },
-                 )
-             advanceUntilIdle()
- 
-             vm.paste(pasteData(3))
-             advanceUntilIdle()
- 
--            assertEquals(0, vm.nextIndex.value)
-+            assertEquals(0, vm.highlightedIndex.value)
- 
-             jobs.forEach { it.cancel() }
-         }
-@@ -158,7 +158,7 @@ class PastePanelViewModelTest {
-             val jobs =
-                 listOf(
-                     launch { vm.items.collect {} },
--                    launch { vm.nextIndex.collect {} },
-+                    launch { vm.highlightedIndex.collect {} },
-                 )
-             advanceUntilIdle()
- 
-@@ -169,35 +169,35 @@ class PastePanelViewModelTest {
-                 pasteboardService.tryWritePasteboard(any<PasteData>(), any(), any(), any())
-             }
-             coVerify(exactly = 1) { windowManager.toPaste() }
--            assertEquals(1, vm.nextIndex.value)
-+            assertEquals(2, vm.highlightedIndex.value)
- 
-             jobs.forEach { it.cancel() }
-         }
- 
-     @Test
--    fun `marker follows the row by id when a new copy arrives on top`() =
-+    fun `highlight follows the row by id when a new copy arrives on top`() =
-         runTest {
-             val vm = createViewModel()
-             val jobs =
-                 listOf(
-                     launch { vm.items.collect {} },
--                    launch { vm.nextIndex.collect {} },
-+                    launch { vm.highlightedIndex.collect {} },
-                 )
-             advanceUntilIdle()
- 
-             vm.paste(pasteData(1))
-             advanceUntilIdle()
--            assertEquals(1, vm.nextIndex.value)
-+            assertEquals(2, vm.highlightedIndex.value)
- 
-             history.value = listOf(pasteData(4)) + history.value
-             advanceUntilIdle()
--            assertEquals(2, vm.nextIndex.value)
-+            assertEquals(3, vm.highlightedIndex.value)
- 
-             jobs.forEach { it.cancel() }
-         }
- 
-     @Test
--    fun `a failed clipboard write neither pastes nor advances`() =
-+    fun `a failed clipboard write neither pastes nor highlights`() =
-         runTest {
-             coEvery {
-                 pasteboardService.tryWritePasteboard(any<PasteData>(), any(), any(), any())
-@@ -206,37 +206,37 @@ class PastePanelViewModelTest {
-             val jobs =
-                 listOf(
-                     launch { vm.items.collect {} },
--                    launch { vm.nextIndex.collect {} },
-+                    launch { vm.highlightedIndex.collect {} },
-                 )
-             advanceUntilIdle()
- 
-             vm.paste(pasteData(1))
-             advanceUntilIdle()
- 
-             coVerify(exactly = 0) { windowManager.toPaste() }
--            assertEquals(0, vm.nextIndex.value)
-+            assertEquals(-1, vm.highlightedIndex.value)
- 
-             jobs.forEach { it.cancel() }
-         }
- 
-     @Test
--    fun `reopening resets the marker and the page size`() =
-+    fun `reopening clears the highlight and resets the page size`() =
-         runTest {
-             val vm = createViewModel()
-             val jobs =
-                 listOf(
-                     launch { vm.items.collect {} },
--                    launch { vm.nextIndex.collect {} },
-+                    launch { vm.highlightedIndex.collect {} },
-                 )
-             advanceUntilIdle()
- 
-             vm.paste(paste
-```
-
----
-
-### Incident Patch 2: `e486ec05` (2026-10-26)
-**Commit Message**: :bug: make the macOS paste panel stay on screen and paste into the focused app (#5284)
-
-**File**: `app/src/desktopMain/kotlin/com/crosspaste/ui/NonActivatingWindow.kt` (modified, +3/-1)
-```diff
-@@ -33,7 +33,9 @@ import kotlin.math.roundToInt
-  * without activating the app is an NSPanel carrying NSWindowStyleMaskNonactivatingPanel.
-  * JBR does not expose that flag (Window.Type.POPUP is an ordinary NSWindow there), but it
-  * does allocate an NSPanel for a root pane marked `Window.hidesOnDeactivate`; the flag is
-- * then switched on natively once the peer exists, see [MacNonActivatingEffect].
-+ * then switched on natively once the peer exists, see [MacNonActivatingEffect]. Set that
-+ * late, the style bit alone no longer stops a click from activating the app, so the
-+ * native side also sets AppKit's private preventsActivation flag.
-  * Non-focusable state plus WS_EX_NOACTIVATE cover Windows. On Linux the window is an
-  * override-redirect X window (that is what XAWT makes of Window.Type.POPUP): the window
-  * manager never sees it, so a click cannot go through its click-to-focus path. A managed
-```
-
-**File**: `app/src/desktopMain/swift/MacosApi.swift` (modified, +14/-0)
-```diff
-@@ -378,7 +378,21 @@ public func makeWindowNonActivating(_ rawPtr: UnsafeRawPointer?) {
-         // panel is clicked while the app is inactive and must stay on screen then.
-         guard window is NSPanel else { return }
-         window.styleMask.insert(.nonactivatingPanel)
-+        // AppKit derives its private preventsActivation flag from the style mask only at
-+        // init. Setting the bit afterwards (all AWT allows) leaves the flag off on macOS 27,
-+        // so a click still activates CrossPaste and the simulated Cmd+V lands in CrossPaste
-+        // instead of the target app. The private setter is used deliberately (#5283).
-+        let preventsActivation = NSSelectorFromString("_setPreventsActivation:")
-+        if window.responds(to: preventsActivation), let imp = window.method(for: preventsActivation) {
-+            typealias SetPreventsActivation = @convention(c) (AnyObject, Selector, Bool) -> Void
-+            unsafeBitCast(imp, to: SetPreventsActivation.self)(window, preventsActivation, true)
-+        } else {
-+            NSLog("CrossPaste: _setPreventsActivation: unavailable, clicks on the panel will activate the app")
+     override fun writePasteboard(
+         pasteData: PasteData,
+         transferable: DesktopWriteTransferable,
+     ) {
++        write(transferable)
++    }
++
++    private fun write(transferable: DesktopWriteTransferable) {
++        val monitor = waylandMonitor
++        if (monitor != null) {
++            val contents = WaylandClipboardContents.create(transferable)
++            if (contents.isEmpty()) {
++                logger.warn {
++                    "No Wayland MIME type for flavors ${transferable.transferDataFlavors.map { it.mimeType }}, " +
++                        "writing through AWT"
++                }
++            } else if (monitor.setSelection(contents)) {
++                return
++            }
 +        }
-         window.hidesOnDeactivate = false
-+        // Must follow the line above, which flips canHide back to true on NSPanel. Without
-+        // it NSApp.hide in searchToBack/mainToBack hides the panel until the next activation.
-+        window.canHide = false
+         systemClipboard.setContents(markOrigin(transferable), this)
      }
+ 
+```
+
+**File**: `app/src/desktopMain/kotlin/com/crosspaste/paste/PasteDataFlavors.kt` (modified, +3/-0)
+```diff
+@@ -19,6 +19,9 @@ object PasteDataFlavors {
+      */
+     const val CROSSPASTE_ORIGIN_MIME = "application/x-crosspaste-origin"
+ 
++    /** The payload served under [CROSSPASTE_ORIGIN_MIME]; only its presence matters. */
++    const val CROSSPASTE_ORIGIN_MARKER = "crosspaste"
++
+     val CROSSPASTE_ORIGIN_FLAVOR = DataFlavor("$CROSSPASTE_ORIGIN_MIME;class=java.io.InputStream")
  }
  
 ```
 
----
-
-### Incident Patch 3: `c89f14fd` (2026-10-26)
-**Commit Message**: :bug: read Shift from the click itself in the search window list (#5280)
-
-* :bug: read Shift from the click itself in the search window list
-
-* :memo: describe what the search list's open reset actually covers
-
-**File**: `app/src/desktopMain/kotlin/com/crosspaste/ui/paste/side/SidePasteItemView.kt` (modified, +22/-4)
+**File**: `app/src/desktopMain/kotlin/com/crosspaste/paste/WaylandClipboardContents.kt` (added, +109/-0)
 ```diff
-@@ -14,8 +14,10 @@ import androidx.compose.material3.Card
- import androidx.compose.material3.CardDefaults
- import androidx.compose.runtime.Composable
- import androidx.compose.runtime.getValue
-+import androidx.compose.runtime.mutableStateOf
- import androidx.compose.runtime.remember
- import androidx.compose.runtime.rememberUpdatedState
-+import androidx.compose.runtime.setValue
- import androidx.compose.ui.ExperimentalComposeUiApi
- import androidx.compose.ui.Modifier
- import androidx.compose.ui.draganddrop.DragAndDropTransferAction
-@@ -26,6 +28,9 @@ import androidx.compose.ui.draw.drawWithContent
- import androidx.compose.ui.graphics.Color
- import androidx.compose.ui.graphics.layer.drawLayer
- import androidx.compose.ui.graphics.rememberGraphicsLayer
-+import androidx.compose.ui.input.pointer.PointerEventPass
-+import androidx.compose.ui.input.pointer.PointerEventType
-+import androidx.compose.ui.input.pointer.isShiftPressed
- import androidx.compose.ui.input.pointer.pointerInput
- import androidx.compose.ui.unit.IntSize
- import androidx.compose.ui.unit.dp
-@@ -51,8 +56,8 @@ import org.koin.compose.koinInject
- fun PasteDataScope.SidePasteItemView(
-     selected: Boolean,
-     isScrolling: Boolean,
--    onPress: () -> Unit,
--    onDoubleTap: () -> Unit,
-+    onPress: (isShiftPressed: Boolean) -> Unit,
-+    onDoubleTap: (isShiftPressed: Boolean) -> Unit,
-     pasteContent: @Composable PasteData.() -> Unit,
- ) {
-     val configManager = koinInject<CommonConfigManager>()
-@@ -63,6 +68,7 @@ fun PasteDataScope.SidePasteItemView(
- 
-     val currentOnPress by rememberUpdatedState(onPress)
-     val currentOnDoubleTap by rememberUpdatedState(onDoubleTap)
-+    var isShiftPressed by remember { mutableStateOf(false) }
- 
-     val graphicsLayer = rememberGraphicsLayer()
-     val hoverInteraction = remember { MutableInteractionSource() }
-@@ -110,13 +116,25 @@ fun PasteDataScope.SidePasteItemView(
-                 }.size(appSizeValue.sidePasteSize)
-                 .clip(small3XRoundedCornerShape)
-                 .pointerInput(Unit) {
-+                    // Read Shift off the press itself: tap callbacks carry no modifiers, and
-+                    // modifier state tracked from key events goes stale whenever a key-up is
-+                    // delivered elsewhere (e.g. while the window is hidden or not yet focused).
-+                    awaitPointerEventScope {
-+                        while (true) {
-+                            val event = awaitPointerEvent(PointerEventPass.Initial)
-+                            if (event.type == PointerEventType.Press) {
-+                                isShiftPressed = event.keyboardModifiers.isShiftPressed
-+                            }
-+                        }
+@@ -0,0 +1,109 @@
++package com.crosspaste.paste
++
++import com.crosspaste.paste.plugin.type.DesktopRtfTypePlugin.Companion.RTF_DATA_FLAVOR
++import java.awt.Image
++import java.awt.datatransfer.DataFlavor
++import java.awt.datatransfer.Transferable
++import java.awt.image.BufferedImage
++import java.io.ByteArrayOutputStream
++import java.io.File
++import java.io.InputStream
++import javax.imageio.ImageIO
++
++/**
++ * Turns one of our clipboard writes into the MIME types a native Wayland
++ * clipboard offer carries, the reverse of [WaylandClipboardSnapshot]: AWT is
++ * not involved in a data-control write, so this does by hand what
++ * `XDataTransferer` does when it exports flavors as X11 targets.
++ *
++ * Each payload is serialized on first request and then reused, so a paste that
++ * only wants text never encodes the image (whose decoding is deferred too), and
++ * single-use stream values (RTF) survive repeated requests.
++ */
++object WaylandClipboardContents {
++
++    /**
++     * UTF-8 text MIME types. Not the ICCCM `STRING`/`TEXT` targets: they mean Latin-1,
++     * no Wayland client asks for them, and the compositor would hand X clients our
++     * UTF-8 bytes under those names unconverted.
++     */
++    private val TEXT_MIME_TYPES = listOf("text/plain;charset=utf-8", "UTF8_STRING", "text/plain")
++
++    private val RTF_MIME_TYPES = listOf("text/rtf", "application/rtf")
++
++    private const val URI_LIST = "text/uri-list"
++
++    private const val GNOME_COPIED_FILES = "x-special/gnome-copied-files"
++
++    fun create(transferable: Transferable): Map<String, () -> ByteArray?> {
++        val contents = LinkedHashMap<String, () -> ByteArray?>()
++
++        fun offer(
++            mimeTypes: List<String>,
++            produce: () -> ByteArray?,
++        ) {
++            val once = lazy { produce() }
++            mimeTypes.forEach { contents.putIfAbsent(it, once::value) }
++        }
++
++        fun valueOf(flavor: DataFlavor): Any? =
++            if (transferable.isDataFlavorSupported(flavor)) {
++                transferable.getTransferData(flavor).takeUnless { it === NoneTransferData }
++            } else {
++                null
++            }
++
++        // Files first, as on read: every other representation describes them.
++        (valueOf(DataFlavor.javaFileListFlavor) as? List<*>)
++            ?.filterIsInstance<File>()
++            ?.takeIf { it.isNotEmpty() }
++            ?.let { files ->
++                val uris = files.map { it.toURI().toASCIIString().replaceFirst("file:/", "file:///") }
++                offer(listOf(URI_LIST)) { uris.joinToString("\r\n", postfix = "\r\n").encodeToByteArray() }
++                offer(listOf(GNOME_COPIED_FILES)) { (listOf("copy") + uris).joinToString("\n").encodeToByteArray() }
++            }
++
++        if (transferable.isDataFlavorSupported(DataFlavor.imageFlavor)) {
++            offer(listOf("image/png")) { (valueOf(DataFlavor.imageFlavor) as? Image)?.let(::encodePng) }
++        }
++
++        (valueOf(DataFlavor.allHtmlFlavor) as? String)?.let { html ->
++            offer(listOf("text/html")) { html.encodeToByteArray() }
++        }
++
++        if (transferable.isDataFlavorSupported(RTF_DATA_FLAVOR)) {
++            offer(RTF_MIME_TYPES) { (valueOf(RTF_DATA_FLAVOR) as? InputStream)?.use { it.readBytes() } }
++        }
++
++        (valueOf(DataFlavor.stringFlavor) as? String)?.let { text ->
++            offer(TEXT_MIME_TYPES) { text.encodeToByteArray() }
++        }
++
++        // Only when there is something to paste: a bare marker must not empty the clipboard.
++        if (contents.isNotEmpty()) {
++            offer(listOf(PasteDataFlavors.CROSSPASTE_ORIGIN_MIME)) {
++                PasteDataFlavors.CROSSPASTE_ORIGIN_MARKER.encodeToByteArray()
++            }
++        }
++        return contents
++    }
++
++    private fun encodePng(image: Image): ByteArray? {
++        val buffered =
++            image as? BufferedImage
++                ?: BufferedImage(
++                    image.getWidth(null).takeIf { it > 0 } ?: return null,
++                    image.getHeight(null).takeIf { it > 0 } ?: return null,
++                    BufferedImage.TYPE_INT_ARGB,
++                ).also { target ->
++                    val graphics = target.createGraphics()
++                    try {
++                        graphics.drawImage(image, 0, 0, null)
++                    } finally {
++                        graphics.dispose()
 +                    }
-+                }.pointerInput(Unit) {
-                     detectTapGestures(
-                         onPress = {
--                            currentOnPress()
-+                            currentOnPress(isShiftPressed)
-                             tryAwaitRelease()
-                         },
-                         onDoubleTap = {
--                            currentOnDoubleTap()
-+                            currentOnDoubleTap(isShiftPressed)
-                         },
-                     )
-                 }.border(
++                }
++        val output = ByteArrayOutputStream()
++        return if (ImageIO.write(buffered, "png", output)) output.toByteArray() else null
++    }
++}
 ```
 
-**File**: `app/src/desktopMain/kotlin/com/crosspaste/ui/paste/side/SidePasteboardContentView.kt` (modified, +5/-8)
+**File**: `app/src/desktopMain/kotlin/com/crosspaste/platform/linux/api/WaylandClient.kt` (modified, +1/-0)
 ```diff
-@@ -49,7 +49,6 @@ import androidx.compose.ui.focus.focusRequester
- import androidx.compose.ui.graphics.Color
- import androidx.compose.ui.input.key.KeyEventType
- import androidx.compose.ui.input.key.isCtrlPressed
--import androidx.compose.ui.input.key.isShiftPressed
- import androidx.compose.ui.input.key.key
- import androidx.compose.ui.input.key.nativeKeyCode
- import androidx.compose.ui.input.key.onKeyEvent
-@@ -112,7 +111,6 @@ fun SidePasteboardContentView() {
-     val latestSearchResult = rememberUpdatedState(searchResult)
-     val pasteListFocusRequester = remember { FocusRequester() }
-     var previousFirstItemId by remember { mutableStateOf<Long?>(null) }
--    var isShiftPressed by remember { mutableStateOf(false) }
-     var isCtrlPressed by remember { mutableStateOf(false) }
+@@ -178,6 +178,7 @@ interface WaylandLibC : Library {
+         val INSTANCE: WaylandLibC by lazy { Native.load("c", WaylandLibC::class.java) }
  
-     val showToStart by remember(searchListState) {
-@@ -123,12 +121,12 @@ fun SidePasteboardContentView() {
+         const val POLLIN: Short = 0x0001
++        const val POLLOUT: Short = 0x0004
+         const val POLLERR: Short = 0x0008
+         const val POLLHUP: Short = 0x0010
+         const val POLLNVAL: Short = 0x0020
+```
+
+**File**: `app/src/desktopMain/kotlin/com/crosspaste/platform/linux/api/WaylandClipboardMonitor.kt` (modified, +180/-9)
+```diff
+@@ -3,10 +3,14 @@ package com.crosspaste.platform.linux.api
+ import com.crosspaste.platform.linux.api.WaylandClientLib.Companion.arguments
+ import com.crosspaste.platform.linux.api.WaylandDataControlProtocol.Companion.BIND_VERSION
+ import com.crosspaste.platform.linux.api.WaylandDataControlProtocol.Companion.DEVICE_DESTROY
++import com.crosspaste.platform.linux.api.WaylandDataControlProtocol.Companion.DEVICE_SET_SELECTION
++import com.crosspaste.platform.linux.api.WaylandDataControlProtocol.Companion.MANAGER_CREATE_DATA_SOURCE
+ import com.crosspaste.platform.linux.api.WaylandDataControlProtocol.Companion.MANAGER_DESTROY
+ import com.crosspaste.platform.linux.api.WaylandDataControlProtocol.Companion.MANAGER_GET_DATA_DEVICE
+ import com.crosspaste.platform.linux.api.WaylandDataControlProtocol.Companion.OFFER_DESTROY
+ import com.crosspaste.platform.linux.api.WaylandDataControlProtocol.Companion.OFFER_RECEIVE
++import com.crosspaste.platform.linux.api.WaylandDataControlProtocol.Companion.SOURCE_DESTROY
++import com.crosspaste.platform.linux.api.WaylandDataControlProtocol.Companion.SOURCE_OFFER
+ import com.sun.jna.Callback
+ import com.sun.jna.CallbackReference
+ import com.sun.jna.Memory
+@@ -55,10 +59,20 @@ class WaylandSelection internal constructor(
+  * each new selection; the callback must return quickly and read the data
+  * elsewhere via [read]. [stop] wakes the thread and tears everything down.
+  *
+- * Threading: [read] marshals its request from the caller's thread while the
+- * event thread sleeps in `poll`, which libwayland supports (it serialises on
+- * the display mutex). [lock] guards our own proxy bookkeeping so a selection
+- * that arrives mid-read cannot destroy the offer being read.
++ * Writing: [setSelection] makes the clipboard ours through the same
++ * connection. KWin mirrors an XWayland client's selection into the Wayland
++ * clipboard only while one of that client's windows has the keyboard focus,
++ * so an AWT write from the background (the non-activating paste panel, a
++ * synced paste) never reaches native Wayland apps (#5292); data-control has
++ * no such condition. The compositor bridges the selection to XWayland clients
++ * in turn, so X11 apps paste it too.
++ *
++ * Threading: [read] and [setSelection] marshal their requests from the
++ * caller's thread while the event thread sleeps in `poll`, which libwayland
++ * supports (it serialises on the display mutex). [lock] guards our own proxy
++ * bookkeeping so a selection that arrives mid-read cannot destroy the offer
++ * being read. Data for a `send` request is produced and written on a thread
++ * of its own, so a slow reader or a large payload never stalls the event loop.
+  */
+ class WaylandClipboardMonitor(
+     /**
+@@ -86,6 +100,9 @@ class WaylandClipboardMonitor(
+     /** Offers announced by `data_offer`, with the MIME types collected so far, keyed by proxy address. */
+     private val pendingOffers = LinkedHashMap<Long, MutableList<String>>()
+ 
++    /** Sources we set as the selection and have not been cancelled yet, keyed by proxy address. */
++    private val sources = HashMap<Long, Map<String, () -> ByteArray?>>()
++
+     /** The offer backing the current selection, or null when the clipboard is empty. */
+     private var currentOffer: Pointer? = null
+     private var currentSerial = 0L
+@@ -210,9 +227,51 @@ class WaylandClipboardMonitor(
          }
      }
  
--    // Reset key modifier state and selection when the window opens, so it matches
--    // the freshly recreated scroll state above.
-+    // Best-effort reset of the Ctrl+1..9 badge state and the selection when the window opens.
-+    // Like the scroll reset above, this may miss a reopen because the composition is paused
-+    // while the window is hidden; nothing here may depend on it for correctness.
-     LaunchedEffect(searchWindowInfo.show) {
-         if (searchWindowInfo.show) {
-             isCtrlPressed = false
--            isShiftPressed = false
-             pasteSelectionViewModel.initSelectIndex()
-         }
-     }
-@@ -278,7 +276,6 @@ fun SidePasteboardContentView() {
-                     .focusRequester(pasteListFocusRequester)
-                     .focusable()
-                     .onKeyEvent { keyEvent ->
--                        isShiftPressed = keyEvent.isShiftPressed
-                         isCtrlPressed = keyEvent.isCtrlPressed
++    /**
++     * Makes the clipboard hold [contents]: MIME type to a producer of its bytes,
++     * called only when a client asks for that type (possibly more than once).
++     * Returns false when [contents] is empty, when the monitor is not running or
++     * when the request could not be sent, so the caller can write another way.
++     */
++    fun setSelection(contents: Map<String, () -> ByteArray?>): Boolean {
++        if (contents.isEmpty()) return false
++        return lock.withLock {
++            val manager = manager
++            val device = device
++            val protocol = protocol
++            if (closed || !running || manager == null || device == null || protocol == null) {
++                return@withLock false
++            }
++            val source =
++                lib.wl_proxy_marshal_array_constructor_versioned(
++                    manager,
++                    MANAGER_CREATE_DATA_SOURCE,
++                    arguments(null).pointer,
++                    protocol.source.pointer,
++                    BIND_VERSION,
++                ) ?: return@withLock false
++            sources[Pointer.nativeValue(source)] = contents
++            addListener(source, sourceListenerTable)
++            contents.keys.forEach { mimeType ->
++                lib.wl_proxy_marshal_array(source, SOURCE_OFFER, arguments(mimeType).pointer)
++            }
++            lib.wl_proxy_marshal_array(device, DEVICE_SET_SELECTION, arguments(source).pointer)
++            if (!flush()) {
++                logger.warn { "Could not send the Wayland selection to the compositor" }
++                return@with
+```
+
+**File**: `app/src/desktopMain/kotlin/com/crosspaste/platform/linux/api/WaylandDataControl.kt` (modified, +6/-0)
+```diff
+@@ -139,6 +139,12 @@ class WaylandDataControlProtocol private constructor(
+         const val DEVICE_EVENT_FINISHED = 2
+         const val DEVICE_EVENT_PRIMARY_SELECTION = 3
  
-                         if (keyEvent.type == KeyEventType.KeyDown) {
-@@ -336,10 +333,10 @@ fun SidePasteboardContentView() {
-                             scope.SidePasteItemView(
-                                 selected = currentIndex in selectedIndexes,
-                                 isScrolling = searchListState.isScrollInProgress,
--                                onPress = {
-+                                onPress = { isShiftPressed ->
-                                     pasteSelectionViewModel.clickSelectedIndex(currentIndex, isShiftPressed)
-                                 },
--                                onDoubleTap = {
-+                                onDoubleTap = { isShiftPressed ->
-                                     if (!isShiftPressed) {
-                                         pasteMenuService.quickPasteFromSearchWindow(currentPasteData)
-                                     }
++        const val SOURCE_OFFER = 0
++        const val SOURCE_DESTROY = 1
++
++        const val SOURCE_EVENT_SEND = 0
++        const val SOURCE_EVENT_CANCELLED = 1
++
+         const val OFFER_RECEIVE = 0
+         const val OFFER_DESTROY = 1
+ 
+```
+
+**File**: `app/src/desktopTest/kotlin/com/crosspaste/paste/WaylandClipboardContentsTest.kt` (added, +110/-0)
+```diff
+@@ -0,0 +1,110 @@
++package com.crosspaste.paste
++
++import com.crosspaste.paste.plugin.type.DesktopRtfTypePlugin.Companion.RTF_DATA_FLAVOR
++import java.awt.datatransfer.DataFlavor
++import java.awt.image.BufferedImage
++import java.io.ByteArrayInputStream
++import java.io.File
++import javax.imageio.ImageIO
++import kotlin.test.Test
++import kotlin.test.assertContentEquals
++import kotlin.test.assertEquals
++import kotlin.test.assertFalse
++import kotlin.test.assertNotNull
++import kotlin.test.assertTrue
++
++class WaylandClipboardContentsTest {
++
++    private fun transferable(vararg values: Pair<DataFlavor, Any>): DesktopWriteTransferable =
++        DesktopWriteTransferable(linkedMapOf(*values))
++
++    private fun Map<String, () -> ByteArray?>.text(mimeType: String): String? =
++        this[mimeType]?.invoke()?.decodeToString()
++
++    @Test
++    fun `text is offered under every text type plus the origin marker`() {
++        val contents = WaylandClipboardContents.create(transferable(DataFlavor.stringFlavor to "héllo"))
++
++        assertEquals(
++            listOf(
++                "text/plain;charset=utf-8",
++                "UTF8_STRING",
++                "text/plain",
++                PasteDataFlavors.CROSSPASTE_ORIGIN_MIME,
++            ),
++            contents.keys.toList(),
++        )
++        assertEquals("héllo", contents.text("text/plain;charset=utf-8"))
++        assertEquals("crosspaste", contents.text(PasteDataFlavors.CROSSPASTE_ORIGIN_MIME))
++    }
++
++    @Test
++    fun `files are offered as a uri list and as gnome copied files ahead of their text`() {
++        val files = listOf(File("/tmp/a b.txt"), File("/tmp/c.png"))
++        val contents =
++            WaylandClipboardContents.create(
++                transferable(
++                    DataFlavor.javaFileListFlavor to files,
++                    DataFlavor.stringFlavor to "a b.txt\nc.png",
++                ),
++            )
++
++        assertEquals("text/uri-list", contents.keys.first())
++        assertEquals("file:///tmp/a%20b.txt\r\nfile:///tmp/c.png\r\n", contents.text("text/uri-list"))
++        assertEquals("copy\nfile:///tmp/a%20b.txt\nfile:///tmp/c.png", contents.text("x-special/gnome-copied-files"))
++        // What we write reads back as the same files.
++        assertEquals(files, WaylandClipboardSnapshot.parseFileUris(contents.text("text/uri-list")!!))
++    }
++
++    @Test
++    fun `html and a single-use rtf stream can each be served more than once`() {
++        val rtf = "{\\rtf1 hi}".encodeToByteArray()
++        val contents =
++            WaylandClipboardContents.create(
++                transferable(
++                    DataFlavor.allHtmlFlavor to "<b>hi</b>",
++                    RTF_DATA_FLAVOR to ByteArrayInputStream(rtf),
++                    DataFlavor.stringFlavor to "hi",
++                ),
++            )
++
++        assertEquals("<b>hi</b>", contents.text("text/html"))
++        assertContentEquals(rtf, contents.getValue("text/rtf").invoke())
++        assertContentEquals(rtf, contents.getValue("text/rtf").invoke())
++        assertContentEquals(rtf, contents.getValue("application/rtf").invoke())
++    }
++
++    @Test
++    fun `an image is encoded to png only when a client asks for it`() {
++        var loads = 0
++        val image = BufferedImage(3, 2, BufferedImage.TYPE_INT_ARGB)
++        val contents =
++            WaylandClipboardContents.create(
++                transferable(
++                    DataFlavor.imageFlavor to
++                        LazyTransferData {
++                            loads++
++                            image
++                        },
++                ),
++            )
++
++        assertTrue("image/png" in contents)
++        assertEquals(0, loads)
++
++        val png = assertNotNull(contents.getValue("image/png").invoke())
++        val decoded = ImageIO.read(png.inputStream())
++        assertEquals(3, decoded.width)
++        assertEquals(2, decoded.height)
++        contents.getValue("image/png").invoke()
++        assertEquals(1, loads)
++    }
++
++    @Test
++    fun `nothing to paste yields no offer, not a bare marker`() {
++        val contents = WaylandClipboardContents.create(transferable(PasteDataFlavors.URL_FLAVOR to "unused"))
++
++        assertTrue(contents.isEmpty())
++        assertFalse(PasteDataFlavors.CROSSPASTE_ORIGIN_MIME in contents)
++    }
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5286** (2026-10-26): :bug: highlight the clicked row in the paste panel (@guiyanakuang)
-- **PR #5284** (2026-10-26): :bug: make the macOS paste panel stay on screen and paste into the focused app (@guiyanakuang)
-- **PR #5282** (2026-10-26): :sparkles: drive the search window top bar from the keyboard (@guiyanakuang)
-- **PR #5281** (2026-10-26): :hammer: route search window shortcuts through one key resolver keyed by focused zone (@guiyanakuang)
-- **PR #5280** (2026-10-26): :bug: read Shift from the click itself in the search window list (@guiyanakuang)
-- **PR #5278** (2026-10-26): :bug: honor the system double-click interval in the search window (@guiyanakuang)
+- **PR #5295** (2026-10-28): :arrow_up: bump web vite to 6.4.5 and vitest to 4.1.12 for security fixes (@guiyanakuang)
+- **PR #5294** (2026-10-28): :memo: add the Wayland clipboard fix to the 2.3.1 changelog (@guiyanakuang)
+- **PR #5293** (2026-10-28): :bug: write the Wayland clipboard natively so background writes reach Wayland apps (@guiyanakuang)
+- **PR #5291** (2026-10-28): :bookmark: release 2.3.1 (@guiyanakuang)
+- **PR #5290** (2026-10-28): :bug: fold the MSIX CLI aliases into the main Application so the Store accepts it (@guiyanakuang)
+- **PR #5289** (2026-10-28): :construction_worker: assert the Store MSIX keeps its firewall rules (@guiyanakuang)
 
 ---
 
@@ -1227,61 +1416,66 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. :bug: highlight the clicked row in the paste panel (#5286)
+## X. :arrow_up: bump web vite to 6.4.5 and vitest to 4.1.12 for security fixes (#5295
 
 **RULE**:
-When implementing operations in `app/src/desktopMain/kotlin/com/crosspaste/ui/model/PastePanelViewModel.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in CrossPaste/crosspaste-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `web/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in CrossPaste/crosspaste-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5d07b610`: :bug: highlight the clicked row in the paste panel (#5286). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bc806010`: :arrow_up: bump web vite to 6.4.5 and vitest to 4.1.12 for security fixes (#5295). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/src/desktopMain/kotlin/com/crosspaste/ui/model/PastePanelViewModel.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `web/package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
- * whatever app currently has focus (the panel never takes focus itself) and highlights
- * that row. The highlight is tracked by paste id rather than index so that new copies
- * arriving while the panel is open do not shift it. A double click pastes once: presses
- * that land while a paste is still running, or shortly after it, are dropped.
-    /** Id of the row pasted last; null until a row is clicked. */
-    private val _highlightedId = MutableStateFlow<Long?>(null)
-    /** Index of the highlighted row, -1 when none is. */
-    val highlightedIndex: StateFlow<Int> =
-        combine(items, _highlightedId) { list, highlightedId ->
-            highlightedId?.let { id -> list.indexOfFirst { it.id == id } } ?: -1
-            initialValue = -1,
-    /** Every open starts fresh: nothing highlighted, first page only. */
-        _highlightedId.value = null
-        _highlightedId.value = pasteData.id
+        "vite": "^6.4.5",
+        "vitest": "^4.1.12"
+      "version": "4.1.12",
+      "resolved": "https://registry.npmjs.org/@vitest/expect/-/expect-4.1.12.tgz",
+      "integrity": "sha512-vFlTt+YEu9WBpNjdGayNmlMVzrWPi1+sv853/7t2FU7hpO5gAFBKHzQmkCq5Xjpr+evegF2994LQT3hF3mRlqQ==",
+        "@vitest/spy": "4.1.12",
+        "@vitest/utils": "4.1.12",
+      "version": "4.1.12",
+      "resolved": "https://registry.npmjs.org/@vitest/mocker/-/mocker-4.1.12.tgz",
+      "integrity": "sha512-fKShNpKZzupWZuY0z7egydvL0sqW4INEZBEExMBMAa6izlENEVHwoXgdaTCaBZ5fwlr4xf2o1wXC83n9RpO+NA==",
+        "@vitest/spy": "4.1.12",
+      "version": "4.1.12",
+      "resolved": "https://registry.npmjs.org/@vitest/pretty-format/-/pretty-format-4.1.12.tgz",
+      "integrity": "sha512-XW9O8+Mxx4VpCtkYdMJLZQQwsVryP9wk7cPKDxtXFfwSak6yRh5+2fep/Y0XF/ElBvJHq8bcYdi6aeuai0opZA==",
+      "version": "4.1.12",
+      "resolved": "https://registry.npmjs.org/@vitest/runner/-/runner-4.1.12.tgz",
+      "integrity": "sha512-NKlVKCr5QnCe8jijdMnmkpHHU+WTqiLFR6G0pHji9uRjXK9xJl1k1nTw6F3pOOj2PDcsDt2GKQMI7wIsaT491w==",
+        "@vitest/utils": "4.1.12",
+      "version": "4.1.12",
+      "resolved": "https://registry.npmjs.org/@vitest/sna
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
- * whatever app currently has focus (the panel never takes focus itself) and moves the
- * "next" marker to the row copied right after it, so a batch copied as A, B, C is
- * pasted back in the same order with one click per field. The marker is tracked by
- * paste id rather than index so that new copies arriving while the panel is open do
- * not shift it. A double click pastes once: presses that land while a paste is still
- * running, or shortly after it, are dropped.
-    /** Id of the row to paste next; null means the newest row. */
-    private val _nextId = MutableStateFlow<Long?>(null)
-    val nextIndex: StateFlow<Int> =
-        combine(items, _nextId) { list, nextId ->
-            nextId
-                ?.let { id -> list.indexOfFirst { it.id == id } }
-                ?.takeIf { it >= 0 }
-                ?: 0
-            initialValue = 0,
-    /** Every open starts fresh: newest row is next, first page only. */
-        _nextId.value = null
-        val list = items.value
-        val index = list.indexOfFirst { it.id == pasteData.id }
-        // The row copied right after this one; stays put when there is nothing newer.
-        val next = if (index > 0) list[index - 1] else pasteDat
+        "vite": "^6.0.7",
+        "vitest": "^4.1.11"
+      "version": "4.1.11",
+      "resolved": "https://registry.npmjs.org/@vitest/expect/-/expect-4.1.11.tgz",
+      "integrity": "sha512-VX2x5vNJXET47KAFzwERI+KRMtTTCSWTfSMKsW7JsUsXV4psq++e3DvZpuTDOpHcxytiDs6p2nhVb2tVDiiUYw==",
+        "@vitest/spy": "4.1.11",
+        "@vitest/utils": "4.1.11",
+      "version": "4.1.11",
+      "resolved": "https://registry.npmjs.org/@vitest/mocker/-/mocker-4.1.11.tgz",
+      "integrity": "sha512-2XJVD55d1o5AZous5CCGKS74g/riOj9odEt2bQpCVZeblHyHdnMeFl4jl0XjU21stf4mbjUkew2eXQZt65g5CQ==",
+        "@vitest/spy": "4.1.11",
+      "version": "4.1.11",
+      "resolved": "https://registry.npmjs.org/@vitest/pretty-format/-/pretty-format-4.1.11.tgz",
+      "integrity": "sha512-yiZzPbGTS9Sr/JpFl8zHrcIkAofNbFV6k21vIgQN/cY/oxZeXhJv5sc/MBJ5jFKWmWs+oJHw0UXLZjmf931+Vw==",
+      "version": "4.1.11",
+      "resolved": "https://registry.npmjs.org/@vitest/runner/-/runner-4.1.11.tgz",
+      "integrity": "sha512-LztvUgdwMNJMIkj3hQnnxiC2Xy1zNxq928W/xhjCLaNCzqTZOudjwbQf6v9IntZGPw132i2Lq2rgTRZHD3JHNw==",
+        "@vitest/utils": "4.1.11",
+      "version": "4.1.11",
+      "resolved": "https://registry.npmjs.org/@vitest/sna
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5d07b610` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bc806010` are properly handled with clean fallback behavior.

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T21:04:30.588Z",
-  "total_cycles_completed": 5914,
-  "total_learnings_persisted": 5914,
-  "total_rules_promoted": 5367,
+  "last_updated": "2026-10-28T21:11:22.661Z",
+  "total_cycles_completed": 5916,
+  "total_learnings_persisted": 5916,
+  "total_rules_promoted": 5368,
   "history": [
-    {
-      "timestamp": "2026-10-28T10:06:37.581Z",
-      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T10:20:00.921Z",
-      "repository": "PSRben/VisionHOPE",
-      "learningId": "learn-huggingface-psrben-visionhope",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T10:43:49.327Z",
       "repository": "lioensky/VCPToolBox",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-28T21:04:30.588Z",
       "repository": "pingcap/tidb",
       "learningId": "learn-github-pingcap-tidb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T21:11:14.836Z",
+      "repository": "microsoft/FrogNano-4B-2609",
+      "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T21:11:22.661Z",
+      "repository": "CrossPaste/crosspaste-desktop",
+      "learningId": "learn-github-crosspaste-crosspaste-desktop",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

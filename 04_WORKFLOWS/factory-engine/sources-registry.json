@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T21:04:33.114Z",
-    "lastVerified": "2026-10-28T21:04:33.114Z",
+    "lastChecked": "2026-10-28T21:11:26.047Z",
+    "lastVerified": "2026-10-28T21:11:26.047Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -204,8 +204,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T20:44:31.527Z",
-    "lastVerified": "2026-10-28T20:44:31.527Z",
+    "lastChecked": "2026-10-28T21:11:26.037Z",
+    "lastVerified": "2026-10-28T21:11:26.037Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -645,9 +645,9 @@
   "topoteretes-cognee": {
     "name": "cognee",
     "officialUrl": "https://github.com/topoteretes/cognee",
-    "lastChecked": "2026-10-28T03:38:06.957Z",
+    "lastChecked": "2026-10-28T21:11:23.669Z",
     "revisionIdentifier": "37f788bd",
-    "lastVerified": "2026-10-28T03:38:06.957Z"
+    "lastVerified": "2026-10-28T21:11:23.669Z"
   },
   "hf-tencent-hy-simulmt-30b-a3b-fp8": {
     "name": "tencent/Hy-SimulMT-30B-A3B-FP8",
@@ -787,12 +787,12 @@
     "lastVerified": "2026-10-28T20:37:45.811Z"
   },
   "bee-san-ciphey": {
-    "name": "bee-san/Ciphey",
+    "name": "Ciphey",
     "officialUrl": "https://github.com/bee-san/Ciphey",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T17:28:15.690Z",
-    "lastVerified": "2026-10-28T17:28:15.690Z",
+    "lastChecked": "2026-10-28T21:11:21.002Z",
+    "lastVerified": "2026-10-28T21:11:21.002Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bee-san-ciphey",
@@ -801,7 +801,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "867d27e8"
   },
   "weaviate-weaviate": {
     "name": "weaviate",
@@ -1152,9 +1153,9 @@
   "zeromicro-go-zero": {
     "name": "go-zero",
     "officialUrl": "https://github.com/zeromicro/go-zero",
-    "lastChecked": "2026-10-28T04:35:30.809Z",
+    "lastChecked": "2026-10-28T21:11:18.548Z",
     "revisionIdentifier": "4fce4e76",
-    "lastVerified": "2026-10-28T04:35:30.809Z"
+    "lastVerified": "2026-10-28T21:11:18.548Z"
   },
   "rustcrypto-hashes": {
     "name": "hashes",
@@ -6800,6 +6801,47 @@
     "contentHash": "86ade1673287617f4afd29eabab659108df98d945573714ac10abfeaada99a4a",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "veirt-weathr": {
+    "name": "weathr",
+    "officialUrl": "https://github.com/Veirt/weathr",
+    "lastChecked": "2026-10-28T21:11:11.023Z",
+    "revisionIdentifier": "7d403a0c",
+    "lastVerified": "2026-10-28T21:11:11.023Z"
+  },
+  "hf-microsoft-frognano-4b-2609": {
+    "name": "microsoft/FrogNano-4B-2609",
+    "officialUrl": "https://huggingface.co/microsoft/FrogNano-4B-2609",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T21:11:13.747Z",
+    "lastVerified": "2026-10-28T21:11:13.747Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
+    "contentHash": "d037d9df82d28ba9f605eb28267580f8b8f34b211eadb5baccd1f53f97985c32",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "crosspaste-crosspaste-desktop": {
+    "name": "CrossPaste/crosspaste-desktop",
+    "officialUrl": "https://github.com/CrossPaste/crosspaste-desktop",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-10-28T21:11:22.016Z",
+    "lastVerified": "2026-10-28T21:11:22.016Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-crosspaste-crosspaste-desktop",
+    "contentHash": "334bb814e46ca37bd3738f623d7ad34a9fe0aecee3539f89a9909bac28eb5822",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

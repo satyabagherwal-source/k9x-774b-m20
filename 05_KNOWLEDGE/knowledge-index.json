@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T21:04:30.526Z",
+  "last_updated": "2026-10-28T21:11:22.582Z",
   "total_verified_learnings": 1159,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7769,8 +7769,8 @@
       "slug": "crosspaste-crosspaste-desktop",
       "platform": "github",
       "source_url": "https://github.com/CrossPaste/crosspaste-desktop",
-      "source_version": "5d07b610",
-      "content_hash": "4951791502e6fe7a8ee4ec6a95fe5d582f36d00f85015e8e25c3710e1e877ed4",
+      "source_version": "bc806010",
+      "content_hash": "334bb814e46ca37bd3738f623d7ad34a9fe0aecee3539f89a9909bac28eb5822",
       "dossier_path": "07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md",
       "promoted_rules": [
@@ -7788,6 +7788,11 @@
           "number": 5114,
           "title": ":bug: highlight the clicked row in the paste panel (#5286)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5406,
+          "title": ":arrow_up: bump web vite to 6.4.5 and vitest to 4.1.12 for security fixes (#5295",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7795,7 +7800,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T01:58:36.453Z",
+      "verified_at": "2026-10-28T21:11:22.564Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24918,7 +24923,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/microsoft/FrogNano-4B-2609",
       "source_version": "hf-microsoft-frognano-4b-2609",
-      "content_hash": "bde2cb99fa85398f19eb8d7f5266a0dab55f87652d577c8ef61e33310c177b55",
+      "content_hash": "d037d9df82d28ba9f605eb28267580f8b8f34b211eadb5baccd1f53f97985c32",
       "dossier_path": "07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md",
       "promoted_rules": [],
@@ -24938,7 +24943,7 @@
         "learn-huggingface-hf-microsoft-frognano-4b-2609-mv49zxkw",
         "learn-huggingface-hf-microsoft-frognano-4b-2609-mv4nczd5"
       ],
-      "verified_at": "2026-10-25T18:54:05.113Z",
+      "verified_at": "2026-10-28T21:11:14.725Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -146322,6 +146327,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T21:04:30.511Z"
+    },
+    "rule-5406": {
+      "learning_id": "rule-5406",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5406,
+      "title": ":arrow_up: bump web vite to 6.4.5 and vitest to 4.1.12 for security fixes (#5295",
+      "source_url": "https://github.com/CrossPaste/crosspaste-desktop",
+      "source_version": "bc806010",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T21:11:22.564Z"
     }
   },
   "aliases": {
