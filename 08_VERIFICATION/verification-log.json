@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261026-FBBN",
-    "timestamp": "2026-10-26T13:51:47.219Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "802f16620230337f1eae2c8a58cca69bbf1c86fb72dd47bcbc588728f80da48a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-FCN2",
-    "timestamp": "2026-10-26T13:51:48.926Z",
-    "repository": "XHToken/Spark-X2.6-4B",
-    "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b",
-    "contentHash": "41f20dbdcb0e0d8d6eab19342ee838a3d6bbc916ee6dd6c1de268684c1a847e9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-FDCS",
-    "timestamp": "2026-10-26T13:51:49.852Z",
-    "repository": "LLPhant/LLPhant",
-    "learningId": "learn-github-llphant-llphant",
-    "contentHash": "3767525e06428ba80ac04e13fd2f00315861377e0d6eb6773d52a7ec4cf8fcc9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261026-NP1I",
     "timestamp": "2026-10-26T13:58:18.246Z",
     "repository": "Orange-OpenSource/hurl",
@@ -7490,6 +7445,51 @@
     "repository": "ClickHouse/ClickHouse",
     "learningId": "learn-github-clickhouse-clickhouse",
     "contentHash": "17245f320a993426351f647356fb7c634ef76e4ba285f737ebace42e5b4d4ded",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-CORC",
+    "timestamp": "2026-10-28T02:41:14.328Z",
+    "repository": "HuggingFaceBio/Carbon-X",
+    "learningId": "learn-huggingface-huggingfacebio-carbon-x",
+    "contentHash": "2adf8afa66af96ffdff7da6be4182395d2f5403dd9591590fec963063430c4ab",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-CPHA",
+    "timestamp": "2026-10-28T02:41:15.262Z",
+    "repository": "pointfreeco/swift-composable-architecture",
+    "learningId": "learn-github-pointfreeco-swift-composable-architecture",
+    "contentHash": "2dcd342484c2783dba0f2e820ffca421b56c4197b7d16fcd5e9e05626c6b42e1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-CX2Q",
+    "timestamp": "2026-10-28T02:41:25.106Z",
+    "repository": "TanStack/router",
+    "learningId": "learn-github-tanstack-router",
+    "contentHash": "fb8e7af78e7d349cb2184f9eda9653c5bd77ffaad8b7c6887d4eaa8d79ba67d1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

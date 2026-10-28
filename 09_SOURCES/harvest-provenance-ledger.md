@@ -5663,3 +5663,6 @@ Every entry in this ledger must capture:
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `0505d348` | Multi-dimensional audit evidence | 2026-10-28T02:27:24.819Z |
 | `learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf` | `https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-28T02:34:03.663Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `b4fae473` | Multi-dimensional audit evidence | 2026-10-28T02:34:08.777Z |
+| `learn-huggingface-huggingfacebio-carbon-x` | `https://huggingface.co/HuggingFaceBio/Carbon-X` | `hf-hugging` | Multi-dimensional audit evidence | 2026-10-28T02:41:14.331Z |
+| `learn-github-pointfreeco-swift-composable-architecture` | `https://github.com/pointfreeco/swift-composable-architecture` | `bb175b54` | Multi-dimensional audit evidence | 2026-10-28T02:41:15.265Z |
+| `learn-github-tanstack-router` | `https://github.com/TanStack/router` | `da2adec7` | Multi-dimensional audit evidence | 2026-10-28T02:41:25.109Z |

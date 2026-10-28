@@ -5654,3 +5654,6 @@
 | `CYCLE-20261028-UWPC` | `2026-10-28T02:27:24.816Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5131` | Yes (`db60f804...`) |
 | `CYCLE-20261028-3GGB` | `2026-10-28T02:34:03.659Z` | `orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 870, Rule 5132, Rule 5133` | Yes (`32bd1693...`) |
 | `CYCLE-20261028-3KED` | `2026-10-28T02:34:08.773Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5134` | Yes (`17245f32...`) |
+| `CYCLE-20261028-CORC` | `2026-10-28T02:41:14.328Z` | `HuggingFaceBio/Carbon-X` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5135, Rule 5136, Rule 5137` | Yes (`2adf8afa...`) |
+| `CYCLE-20261028-CPHA` | `2026-10-28T02:41:15.262Z` | `pointfreeco/swift-composable-architecture` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5138` | Yes (`2dcd3424...`) |
+| `CYCLE-20261028-CX2Q` | `2026-10-28T02:41:25.106Z` | `TanStack/router` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5139` | Yes (`fb8e7af7...`) |

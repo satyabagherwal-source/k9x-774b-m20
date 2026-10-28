@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T02:34:08.716Z",
-  "total_verified_learnings": 1154,
+  "last_updated": "2026-10-28T02:41:25.045Z",
+  "total_verified_learnings": 1155,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -42747,14 +42747,19 @@
       "slug": "pointfreeco-swift-composable-architecture",
       "platform": "github",
       "source_url": "https://github.com/pointfreeco/swift-composable-architecture",
-      "source_version": "bc2db5ba",
-      "content_hash": "d9d2026231a4ef00e69f5192b1cb1c89e6904c5bf8c9260f0f9c8ad566b5fc00",
+      "source_version": "bb175b54",
+      "content_hash": "2dcd342484c2783dba0f2e820ffca421b56c4197b7d16fcd5e9e05626c6b42e1",
       "dossier_path": "07_PROJECT_LEARNING/pointfreeco-swift-composable-architecture-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pointfreeco-swift-composable-architecture-learnings.md",
       "promoted_rules": [
         {
           "number": 2495,
           "title": "Fixed: Reading @Shared state from a Store conforming to BindableAction raises de",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5138,
+          "title": "Deprecate `ReducerBuilder.buildArray` (#3971)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -42763,7 +42768,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T10:34:52.724Z",
+      "verified_at": "2026-10-28T02:41:15.187Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -69027,20 +69032,35 @@
     "learn-github-tanstack-router": {
       "learning_id": "learn-github-tanstack-router",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "tanstack-router",
+      "source": "TanStack/router",
+      "repository": "TanStack/router",
       "slug": "tanstack-router",
       "platform": "github",
       "source_url": "https://github.com/TanStack/router",
-      "source_version": "main",
-      "content_hash": "",
+      "source_version": "da2adec7",
+      "content_hash": "fb8e7af78e7d349cb2184f9eda9653c5bd77ffaad8b7c6887d4eaa8d79ba67d1",
       "dossier_path": "07_PROJECT_LEARNING/tanstack-router-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tanstack-router-learnings.md",
-      "promoted_rules": [],
-      "status": "FAILED_OR_UNAVAILABLE",
-      "verification_status": "404_OR_UNAVAILABLE",
-      "verified": false,
+      "promoted_rules": [
+        {
+          "number": 5139,
+          "title": "start-plugin-core): skip unchanged server function resolver rebuilds in Rsbuild",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-28T02:41:25.033Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-tanstack-query": {
       "learning_id": "learn-github-tanstack-query",
@@ -123846,7 +123866,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/HuggingFaceBio/Carbon-X",
       "source_version": "hf-huggingfacebio-carbon-x",
-      "content_hash": "bdf9980e019d2532492bcaac4fd8dc9199fc35081f43577c367ee50d25019759",
+      "content_hash": "2adf8afa66af96ffdff7da6be4182395d2f5403dd9591590fec963063430c4ab",
       "dossier_path": "07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md",
       "promoted_rules": [
@@ -123864,6 +123884,21 @@
           "number": 4090,
           "title": "Generation‑Sampling Hyper‑Parameter Coherence",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5135,
+          "title": "Token ID Uniqueness Across Domains",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5136,
+          "title": "Consistent Data‑Type Enforcement for Model Weights",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5137,
+          "title": "Generation Config Validation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -123871,7 +123906,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T05:58:44.703Z",
+      "verified_at": "2026-10-28T02:41:14.255Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -140961,6 +140996,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T02:34:08.703Z"
+    },
+    "rule-5135": {
+      "learning_id": "rule-5135",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5135,
+      "title": "Token ID Uniqueness Across Domains",
+      "source_url": "https://huggingface.co/HuggingFaceBio/Carbon-X",
+      "source_version": "hf-huggingfacebio-carbon-x",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:41:14.255Z"
+    },
+    "rule-5136": {
+      "learning_id": "rule-5136",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5136,
+      "title": "Consistent Data‑Type Enforcement for Model Weights",
+      "source_url": "https://huggingface.co/HuggingFaceBio/Carbon-X",
+      "source_version": "hf-huggingfacebio-carbon-x",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:41:14.255Z"
+    },
+    "rule-5137": {
+      "learning_id": "rule-5137",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5137,
+      "title": "Generation Config Validation",
+      "source_url": "https://huggingface.co/HuggingFaceBio/Carbon-X",
+      "source_version": "hf-huggingfacebio-carbon-x",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:41:14.255Z"
+    },
+    "rule-5138": {
+      "learning_id": "rule-5138",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5138,
+      "title": "Deprecate `ReducerBuilder.buildArray` (#3971)",
+      "source_url": "https://github.com/pointfreeco/swift-composable-architecture",
+      "source_version": "bb175b54",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:41:15.187Z"
+    },
+    "rule-5139": {
+      "learning_id": "rule-5139",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5139,
+      "title": "start-plugin-core): skip unchanged server function resolver rebuilds in Rsbuild",
+      "source_url": "https://github.com/TanStack/router",
+      "source_version": "da2adec7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:41:25.033Z"
     }
   },
   "aliases": {

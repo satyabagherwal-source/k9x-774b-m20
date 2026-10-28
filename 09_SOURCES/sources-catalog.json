@@ -7733,10 +7733,10 @@
     "repository": "pointfreeco/swift-composable-architecture",
     "platform": "github",
     "sourceUrl": "https://github.com/pointfreeco/swift-composable-architecture",
-    "sourceVersion": "bc2db5ba",
+    "sourceVersion": "bb175b54",
     "license": "MIT",
-    "contentHash": "d9d2026231a4ef00e69f5192b1cb1c89e6904c5bf8c9260f0f9c8ad566b5fc00",
-    "lastHarvestedAt": "2026-10-19T10:34:52.757Z",
+    "contentHash": "2dcd342484c2783dba0f2e820ffca421b56c4197b7d16fcd5e9e05626c6b42e1",
+    "lastHarvestedAt": "2026-10-28T02:41:15.265Z",
     "learningId": "learn-github-pointfreeco-swift-composable-architecture"
   },
   "pola-rs-polars": {
@@ -10665,8 +10665,8 @@
     "sourceUrl": "https://huggingface.co/HuggingFaceBio/Carbon-X",
     "sourceVersion": "hf-huggingfacebio-carbon-x",
     "license": "Open-Source",
-    "contentHash": "bdf9980e019d2532492bcaac4fd8dc9199fc35081f43577c367ee50d25019759",
-    "lastHarvestedAt": "2026-10-25T05:58:44.758Z",
+    "contentHash": "2adf8afa66af96ffdff7da6be4182395d2f5403dd9591590fec963063430c4ab",
+    "lastHarvestedAt": "2026-10-28T02:41:14.331Z",
     "learningId": "learn-huggingface-huggingfacebio-carbon-x"
   },
   "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf": {
@@ -11378,5 +11378,15 @@
     "contentHash": "ec6f32dfe9dd196b57575bf1be39670969b130d3da1fd1b3c05c319d7c2f2743",
     "lastHarvestedAt": "2026-10-27T23:52:32.170Z",
     "learningId": "learn-github-michael-denyer-pstack-claude"
+  },
+  "tanstack-router": {
+    "repository": "TanStack/router",
+    "platform": "github",
+    "sourceUrl": "https://github.com/TanStack/router",
+    "sourceVersion": "da2adec7",
+    "license": "MIT",
+    "contentHash": "fb8e7af78e7d349cb2184f9eda9653c5bd77ffaad8b7c6887d4eaa8d79ba67d1",
+    "lastHarvestedAt": "2026-10-28T02:41:25.109Z",
+    "learningId": "learn-github-tanstack-router"
   }
 }

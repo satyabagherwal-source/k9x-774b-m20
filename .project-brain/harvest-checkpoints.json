@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T02:34:08.785Z",
+  "last_updated": "2026-10-28T02:41:25.118Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11646,14 +11646,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pointfreeco-swift-composable-architecture",
-      "content_hash": "d9d2026231a4ef00e69f5192b1cb1c89e6904c5bf8c9260f0f9c8ad566b5fc00",
-      "verified_at": "2026-10-19T10:34:52.762Z",
+      "content_hash": "2dcd342484c2783dba0f2e820ffca421b56c4197b7d16fcd5e9e05626c6b42e1",
+      "verified_at": "2026-10-28T02:41:15.274Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T10:34:52.762Z"
+      "last_updated": "2026-10-28T02:41:15.274Z"
     },
     "pola-rs/polars": {
       "repository": "pola-rs/polars",
@@ -16026,14 +16026,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-huggingfacebio-carbon-x",
-      "content_hash": "bdf9980e019d2532492bcaac4fd8dc9199fc35081f43577c367ee50d25019759",
-      "verified_at": "2026-10-25T05:58:44.768Z",
+      "content_hash": "2adf8afa66af96ffdff7da6be4182395d2f5403dd9591590fec963063430c4ab",
+      "verified_at": "2026-10-28T02:41:14.340Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T05:58:44.768Z"
+      "last_updated": "2026-10-28T02:41:14.340Z"
     },
     "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF": {
       "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
@@ -17099,6 +17099,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-27T23:52:32.178Z"
+    },
+    "TanStack/router": {
+      "repository": "TanStack/router",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-tanstack-router",
+      "content_hash": "fb8e7af78e7d349cb2184f9eda9653c5bd77ffaad8b7c6887d4eaa8d79ba67d1",
+      "verified_at": "2026-10-28T02:41:25.117Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-28T02:41:25.117Z"
     }
   },
   "repos": {

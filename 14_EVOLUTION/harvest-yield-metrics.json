@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T02:34:08.782Z",
-  "total_cycles_completed": 5631,
-  "total_learnings_persisted": 5631,
-  "total_rules_promoted": 5064,
+  "last_updated": "2026-10-28T02:41:25.114Z",
+  "total_cycles_completed": 5634,
+  "total_learnings_persisted": 5634,
+  "total_rules_promoted": 5069,
   "history": [
-    {
-      "timestamp": "2026-10-27T17:23:42.878Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T17:23:43.773Z",
-      "repository": "volcengine/OpenViking",
-      "learningId": "learn-github-volcengine-openviking",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T17:30:56.157Z",
-      "repository": "software-mansion/react-native-gesture-handler",
-      "learningId": "learn-github-software-mansion-react-native-gesture-handler",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T17:31:04.573Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-28T02:34:08.782Z",
       "repository": "ClickHouse/ClickHouse",
       "learningId": "learn-github-clickhouse-clickhouse",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T02:41:14.336Z",
+      "repository": "HuggingFaceBio/Carbon-X",
+      "learningId": "learn-huggingface-huggingfacebio-carbon-x",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T02:41:15.271Z",
+      "repository": "pointfreeco/swift-composable-architecture",
+      "learningId": "learn-github-pointfreeco-swift-composable-architecture",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T02:41:25.114Z",
+      "repository": "TanStack/router",
+      "learningId": "learn-github-tanstack-router",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

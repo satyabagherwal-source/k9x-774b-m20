@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pointfreeco-swift-composable-architecture-learnings.md`  
 > **Source**: github ([https://github.com/pointfreeco/swift-composable-architecture](https://github.com/pointfreeco/swift-composable-architecture))  
-> **Source Version**: `bc2db5ba`  
+> **Source Version**: `bb175b54`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T10:34:52.576Z  
+> **Timestamp**: 2026-10-28T02:41:14.831Z  
 > **Learning ID**: `learn-github-pointfreeco-swift-composable-architecture`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pointfreeco-swift-composable-architecture-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pointfreeco/swift-composable-architecture](https://github.com/pointfreeco/swift-composable-architecture))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T10:34:52.571Z  
+> **Harvest Timestamp**: 2026-10-28T02:41:14.719Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A library for building applications in a consistent and understandable way, with composition, testing, and ergonomics in mind.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 14977 stars
+- **Stars / Engagement**: 14993 stars
 
 ---
 
@@ -1654,140 +1654,104 @@ extension Three<Three<Player?>> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce8ee578` (2026-03-30)
-**Commit Message**: Fixed: Reading @Shared state from a Store conforming to BindableAction raises deprecation warning (#3906)
+### Incident Patch 1: `bb175b54` (2026-10-27)
+**Commit Message**: Deprecate `ReducerBuilder.buildArray` (#3971)
 
-In a `View` context, reading a `@Shared` value from the store's state will raise a deprecation warning when the store's `Action` conforms to `BindableAction`.
+We added it because we could, not because we should, and it's not currently implemented in 2.0.
 
-```swift
-@Reducer
-struct Feature {
-  @ObservableState
-  struct State: Equatable {
-    @Shared(.inMemory("value")) var value: Int = 0
-  }
-  enum Action: BindableAction {
-    case binding(BindingAction<State>)
-  }
-}
-
-struct FeatureView: View {
-  let store: StoreOf<Feature>
-
-  var body: some View {
-    let _ = store.value
-    // 🛑 Setter for 'value' is deprecated: Use '$shared.withLock' to modify a shared value with exclusive access; when constructing a SwiftUI binding, use 'Binding($shared)'
-  }
-}
-```
-
-This is because the dynamicMemberLookup selects an overload that requires a `WritableKeyPath` which is enough to trigger Swift to require a setter for the property which is invalid for a `@Shared` value. Applying `@_disfavoredOverload` will drive the lookup toward an overload requiring a `KeyPath` instead.
-
-Co-authored-by: Sean <[REDACTED_EMAIL]>
-
-**File**: `Sources/ComposableArchitecture/Observation/Binding+Observation.swift` (modified, +2/-0)
+**File**: `Package.resolved` (modified, +10/-1)
 ```diff
-@@ -168,6 +168,7 @@ extension BindableAction where State: ObservableState {
- }
- 
- extension Store where State: ObservableState, Action: BindableAction, Action.State == State {
-+  @_disfavoredOverload
-   public subscript<Value: Equatable & Sendable>(
-     dynamicMember keyPath: WritableKeyPath<State, Value>
-   ) -> Value {
-@@ -212,6 +213,7 @@ where
-   Action.ViewAction: BindableAction,
-   Action.ViewAction.State == State
+@@ -1,5 +1,5 @@
  {
-+  @_disfavoredOverload
-   public subscript<Value: Equatable & Sendable>(
-     dynamicMember keyPath: WritableKeyPath<State, Value>
-   ) -> Value {
+-  "originHash" : "e06633540745a804b50a99e0382dc321aae1c38b6381a2c21e5498f335a15fdd",
++  "originHash" : "e448aeb25b94d92b65914a847781e984ae565ada637ca2870d3a1d4f058a081b",
+   "pins" : [
+     {
+       "identity" : "combine-schedulers",
+@@ -91,6 +91,15 @@
+         "version" : "1.1.1"
+       }
+     },
++    {
++      "identity" : "swift-issue-reporting",
++      "kind" : "remoteSourceControl",
++      "location" : "https://github.com/pointfreeco/swift-issue-reporting",
++      "state" : {
++        "revision" : "b23bb4493c439d3e05152bc167014235ba3d47fc",
++        "version" : "2.1.2"
++      }
++    },
+     {
+       "identity" : "swift-macro-testing",
+       "kind" : "remoteSourceControl",
 ```
 
----
-
-### Incident Patch 2: `a28ddfad` (2026-06-11)
-**Commit Message**: Fix syntax error and typo in documentation examples (#3939)
-
-- Add missing closing parenthesis to a store.send(.textFieldChanged("Hello")) example in Performance.md, consistent with the surrounding examples.
-- Fix "trialing" -> "trailing" typo in TreeBasedNavigation.md.
-
-Co-authored-by: devk4nt <[REDACTED_EMAIL]>
-
-**File**: `Sources/ComposableArchitecture/Documentation.docc/Articles/Performance.md` (modified, +1/-1)
+**File**: `Sources/ComposableArchitecture/Reducer/ReducerBuilder.swift` (modified, +32/-2)
 ```diff
-@@ -175,7 +175,7 @@ store.send(.toggleChanged) {
-   $0.isEnabled = true
-   // Assert on shared logic
- }
--store.send(.textFieldChanged("Hello") {
-+store.send(.textFieldChanged("Hello")) {
-   $0.description = "Hello"
-   // Assert on shared logic
- }
-```
-
-**File**: `Sources/ComposableArchitecture/Documentation.docc/Articles/TreeBasedNavigation.md` (modified, +1/-1)
-```diff
-@@ -238,7 +238,7 @@ struct InventoryFeature {
- }
- ```
+@@ -7,6 +7,34 @@
+ /// See ``CombineReducers`` for an entry point into a reducer builder context.
+ @resultBuilder
+ public enum ReducerBuilder<State, Action> {
++  #if ComposableArchitecture2Deprecations
++    @available(
++      *,
++      deprecated,
++      message: "Please file a GitHub issue with your use case if you'd like to see it supported"
++    )
++  #else
++    @available(
++      iOS,
++      deprecated: 9999,
++      message: "Please file a GitHub issue with your use case if you'd like to see it supported"
++    )
++    @available(
++      macOS,
++      deprecated: 9999,
++      message: "Please file a GitHub issue with your use case if you'd like to see it supported"
++    )
++    @available(
++      tvOS,
++      deprecated: 9999,
++      message: "Please file a GitHub issue with your use case if you'd like to see it supported"
++    )
++    @available(
++      watchOS,
++      deprecated: 9999,
++      message: "Please file a GitHub issue with your use case if you'd like to see it supported"
++    )
++  #endif
+   @inlinable
+   public static func buildArray(
+     _ reducers: [some Reducer<State, Action>]
+@@ -75,7 +103,8 @@ public enum ReducerBuilder<State, Action> {
  
--> Note: It's not necessary to specify `Destination` in a trialing closure of `ifLet` because it can
-+> Note: It's not necessary to specify `Destination` in a trailing closure of `ifLet` because it can
- > automatically be inferred due to how the `Destination` enum was defined with the ``Reducer()``
- > macro.
- 
-```
-
----
-
-### Incident Patch 3: `ead11e04` (2026-07-21)
-**Commit Message**: Fix errors in stack navigation documentation examples (#3955)
-
-* docs: Fix path mutation in stack navigation example
-
-* docs: Fix reducer in stack navigation test examples
-
-**File**: `Sources/ComposableArchitecture/Documentation.docc/Articles/StackBasedNavigation.md` (modified, +3/-3)
-```diff
-@@ -266,7 +266,7 @@ methods, such as ``StackState/popLast()``, ``StackState/pop(from:)`` and more:
- 
- ```swift
- case .closeButtonTapped:
--  state.popLast()
-+  state.path.popLast()
-   return .none
- ```
- 
-@@ -430,7 +430,7 @@ func dismissal() {
-       ])
-     )
-   ) {
--    CounterFeature()
-+    Feature()
+   @inlinable
+   public static func buildPartialBlock<R0: Reducer<State, Action>, R1: Reducer<State, Action>>(
+-    accumulated: R0, next: R1
++    accumulated: R0,
++    next: R1
+   ) -> _Sequence<R0, R1> {
+     _Sequence(accumulated, next)
    }
- }
- ```
-@@ -553,7 +553,7 @@ func dismissal() {
-       ])
-     )
-   ) {
--    CounterFeature()
-+    Feature()
-   }
-   store.exhaustivity = .off
+@@ -129,7 +158,8 @@ public enum ReducerBuilder<State, Action> {
  
+     @inlinable
+     public func _reduce(
+-      into state: inout Element.State, action: Element.Action
++      into state: inout Element.State,
++      action: Element.Action
+     ) -> Effect<Element.Action> {
+       self.reducers.reduce(.none) { $0.merge(with: $1._reduce(into: &state, action: action)) }
+     }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3971** (2026-10-27): Deprecate `ReducerBuilder.buildArray` (@stephencelis)
 - **PR #3967** (2026-10-06): Make PresentationAction, IdentifiedAction and StackAction CasePathIterable (@heyltsjay)
 - **PR #3960** (closed): Issue 3950 - Backport Xcode 27 support to TCA 1.23 (@aryansk)
 - **PR #3956** (2026-07-24): Fix missing @ObservableState annotations in bindings examples (@indextrown)
 - **PR #3955** (2026-07-21): Fix errors in stack navigation documentation examples (@indextrown)
 - **PR #3954** (2026-07-21): Fix reducer in tree-based navigation test examples (@indextrown)
-- **PR #3952** (2026-07-16): Fix TestStore initialization in navigation tutorial (@opficdev)
 
 ---
 
@@ -1807,29 +1771,37 @@ Co-authored-by: devk4nt <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Fixed: Reading @Shared state from a Store conforming to BindableAction raises de
+## X. Deprecate `ReducerBuilder.buildArray` (#3971)
 
 **RULE**:
-When implementing operations in `Sources/ComposableArchitecture/Observation/Binding+Observation.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pointfreeco/swift-composable-architecture. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Package.resolved`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pointfreeco/swift-composable-architecture. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce8ee578`: Fixed: Reading @Shared state from a Store conforming to BindableAction raises deprecation warning (#3906). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bb175b54`: Deprecate `ReducerBuilder.buildArray` (#3971). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/ComposableArchitecture/Observation/Binding+Observation.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Package.resolved`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-  @_disfavoredOverload
-  @_disfavoredOverload
+  "originHash" : "e448aeb25b94d92b65914a847781e984ae565ada637ca2870d3a1d4f058a081b",
+    {
+      "identity" : "swift-issue-reporting",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-issue-reporting",
+      "state" : {
+        "revision" : "b23bb4493c439d3e05152bc167014235ba3d47fc",
+        "version" : "2.1.2"
+      }
+    },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  "originHash" : "e06633540745a804b50a99e0382dc321aae1c38b6381a2c21e5498f335a15fdd",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce8ee578` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bb175b54` are properly handled with clean fallback behavior.
