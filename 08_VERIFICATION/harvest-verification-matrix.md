@@ -5944,3 +5944,7 @@
 | `CYCLE-20261028-XGII` | `2026-10-28T21:37:08.058Z` | `nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2-learnings.md` | Yes (`2cf7e82d...`) |
 | `CYCLE-20261028-XIUY` | `2026-10-28T21:37:11.098Z` | `biomejs/biome` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5410` | Yes (`8a8adf31...`) |
 | `CYCLE-20261028-XRWX` | `2026-10-28T21:37:22.833Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5411` | Yes (`72f00540...`) |
+| `CYCLE-20261028-5LHJ` | `2026-10-28T21:43:27.751Z` | `facebook/sam3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md` | Yes (`2ddc61fc...`) |
+| `CYCLE-20261028-5NQS` | `2026-10-28T21:43:30.676Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5412` | Yes (`8a9c8d74...`) |
+| `CYCLE-20261028-5TCP` | `2026-10-28T21:43:37.945Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5413` | Yes (`d0292b2a...`) |
+| `CYCLE-20261028-5UK3` | `2026-10-28T21:43:39.507Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5414` | Yes (`222bdfd8...`) |

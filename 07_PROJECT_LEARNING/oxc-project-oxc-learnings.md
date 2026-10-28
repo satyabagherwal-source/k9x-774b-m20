@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source**: github ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
-> **Source Version**: `4e132918`  
+> **Source Version**: `36bf2b88`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T19:20:10.701Z  
+> **Timestamp**: 2026-10-28T21:43:30.303Z  
 > **Learning ID**: `learn-github-oxc-project-oxc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T19:20:09.232Z  
+> **Harvest Timestamp**: 2026-10-28T21:43:30.299Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚓ A collection of high-performance JavaScript tools.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 23252 stars
+- **Stars / Engagement**: 23254 stars
 
 ---
 
@@ -1229,15 +1229,17 @@ impl ResolvedDispatchConfig {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #28235** (2026-10-27): **refactor(linter): migrate expect-expect to AST dispatch**
-  *Symptoms*: Use run and should_run with the existing per-call Jest/Vitest resolver. Preserve rule configuration, diagnostics, and fixes.  Refs https://github.com/oxc-project/backlog/issues/206  Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>  ---  <sub>Stack created with <a href="https://github.com/github/gh-stack">GitHub Stacks CLI</a> • <a href="https://gh.io/stacks-feedback">Give Feedback 💬</a></sub>
+- **Issue #28326** (2026-10-28): **fix(ast/estree): include comments in TS Program span**
+  *Symptoms*: - Align TS ESTree `Program` spans with `@typescript-eslint/parser` v8.72.0, which includes leading and trailing comments/whitespace. - Remove the TS-only `Program.start` adjustment from the Rust serializer and raw-transfer deserializers. - Update affected coverage and oxlint fixture snapshots. 
   **Post-Mortem & Fix Analysis**:
-  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**   `✅ 5` untouched benchmarks   `⏩ 91` skipped benchmarks[^skipped]        ---  <sub>Comparing <code>cam/jest-run/expect-expect</code> (5ad2580) with <code>main</code> (f00862b)[^unexpected-base]</sub>  <a href="https://app.codspeed.io/oxc-project/oxc/branches/cam%2Fjest-run%2Fexpect-expect?utm_source=github&utm_medium=comment-v2&utm_content=button">   <picture>     <source media="(prefers-color-scheme: dark)" srcset="https://codspeed.io/pr-report/open-in-codspeed-dark.svg">     <source media="(prefers-color-scheme: light)" srcset="https://codspeed.io/pr-report/open-in-codspeed-light.svg">     <img alt="Open in CodSpeed" src="https://codspeed.io/pr-report/open-in-codspeed-light.svg" width="169" height="32">   </picture> </a>   [^skipped]: 91 benchmarks were skipped, so the baseline results were used instead. If they were deleted from the codebase, [click here and archive them to remove the
+  > ## How to use the Graphite Merge Queue  Add either label to this PR to merge it via the merge queue: - <kbd>0-merge</kbd> - adds this PR to the back of the merge queue - <kbd>hotfix</kbd> - for urgent changes, fast-track this PR to the front of the merge queue  You must have a Graphite account in order to use the merge queue. Sign up using [this link](https://app.graphite.com/invite/github/oxc-project?ref=merge-queue-instructions-comment&prId=8753272653).  <h2></h2> <sub>  An organization admin has enabled the [Graphite Merge Queue](https://graphite.dev/docs/graphite-merge-queue) in this repository.  </sub>  <sub>  Please do not merge from GitHub as this will restart CI on PRs being processed by the merge queue.  </sub>
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"0ac3b4626a52ea601680e9b9260c62209a52a3c4","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-10-28T19:04:29.387835Z">2026-10-28T19:04:29.387835Z</relative-time> | `0ac3b46` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review".  Codex 
 
-- **Issue #28234** (2026-10-27): **refactor(linter): migrate valid-expect-in-promise to AST dispatch**
-  *Symptoms*: Use run and should_run with the existing per-call Jest/Vitest resolver. Preserve rule configuration, diagnostics, and fixes.  Refs https://github.com/oxc-project/backlog/issues/206  Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>  ---  <sub>Stack created with <a href="https://github.com/github/gh-stack">GitHub Stacks CLI</a> • <a href="https://gh.io/stacks-feedback">Give Feedback 💬</a></sub>
+- **Issue #28325** (2026-10-28): **fix(coverage): clone missing submodules once**
+  *Symptoms*: - Check all required coverage fixture roots before `TestData::load` starts its parallel suite loaders. - Run `just submodules` once when any required suite is empty. - Keep `runtime` test262-only by checking only its test262 root. - Stop with a clear error if `just submodules` fails, instead of retrying.  This prevents a fresh checkout from launching one `just submodules` process per missing suite. 
   **Post-Mortem & Fix Analysis**:
-  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**   `✅ 5` untouched benchmarks   `⏩ 91` skipped benchmarks[^skipped]        ---  <sub>Comparing <code>cam/jest-run/valid-expect-in-promise</code> (4ded044) with <code>main</code> (f00862b)[^unexpected-base]</sub>  <a href="https://app.codspeed.io/oxc-project/oxc/branches/cam%2Fjest-run%2Fvalid-expect-in-promise?utm_source=github&utm_medium=comment-v2&utm_content=button">   <picture>     <source media="(prefers-color-scheme: dark)" srcset="https://codspeed.io/pr-report/open-in-codspeed-dark.svg">     <source media="(prefers-color-scheme: light)" srcset="https://codspeed.io/pr-report/open-in-codspeed-light.svg">     <img alt="Open in CodSpeed" src="https://codspeed.io/pr-report/open-in-codspeed-light.svg" width="169" height="32">   </picture> </a>   [^skipped]: 91 benchmarks were skipped, so the baseline results were used instead. If they were deleted from the codebase, [click here and archiv
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"00ee8eeff24c2b6e024048076959b49c5a29d9f4","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-10-28T18:58:00.188926Z">2026-10-28T18:58:00.188926Z</relative-time> | `00ee8ee` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review".  Codex 
+  > ### Merge activity  * **Oct 28, 7:23 PM UTC**: The merge label '0-merge' was detected. This PR will be added to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc) once it meets the requirements. * **Oct 28, 7:23 PM UTC**: `camc314` added this pull request to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). * **Oct 28, 7:28 PM UTC**: Merged by the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1254,377 +1256,686 @@ impl ResolvedDispatchConfig {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8a7c2f82` (2026-10-27)
-**Commit Message**: refactor(linter): migrate no-test-prefixes to AST dispatch (#28225)
+### Incident Patch 1: `36bf2b88` (2026-10-28)
+**Commit Message**: fix(coverage): clone missing submodules once (#28325)
 
-Use run and should_run with the existing per-call Jest/Vitest resolver.
-Preserve rule configuration, diagnostics, and fixes.
+- Check all required coverage fixture roots before `TestData::load` starts its parallel suite loaders.
+- Run `just submodules` once when any required suite is empty.
+- Keep `runtime` test262-only by checking only its test262 root.
+- Stop with a clear error if `just submodules` fails, instead of retrying.
 
-Refs https://github.com/oxc-project/backlog/issues/206
+This prevents a fresh checkout from launching one `just submodules` process per missing suite.
 
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
-
----
-
-<sub>Stack created with <a
-href="https://github.com/github/gh-stack">GitHub Stacks CLI</a> • <a
-href="https://gh.io/stacks-feedback">Give Feedback 💬</a></sub>
-
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
-
-**File**: `crates/oxc_linter/src/generated/rule_runner_impls.rs` (modified, +6/-4)
+**File**: `tasks/coverage/src/lib.rs` (modified, +5/-1)
 ```diff
-@@ -2387,8 +2387,9 @@ impl RuleRunner for crate::rules::jest::no_standalone_expect::NoStandaloneExpect
- }
+@@ -516,7 +516,11 @@ impl AppArgs {
+     /// Loads only test262 (not the other fixture suites), so it works in a checkout
+     /// that has only the test262 submodule — load-bearing for monitor-oxc CI.
+     pub fn run_runtime(&self) {
+-        let files = load::load_test262(self.filter.as_deref());
++        let filter = self.filter.as_deref();
++        if filter.is_none() {
++            load::ensure_submodules(&[TEST262_PATH]);
++        }
++        let files = load::load_test262(filter);
+         self.run_tool("runtime", TEST262_PATH, &files, runtime::run);
+     }
  
- impl RuleRunner for crate::rules::jest::no_test_prefixes::NoTestPrefixes {
--    const NODE_TYPES: Option<&AstTypesBitset> = None;
--    const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::RunOnJestNode;
-+    const NODE_TYPES: Option<&AstTypesBitset> =
-+        Some(&AstTypesBitset::from_types(&[AstType::CallExpression]));
-+    const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::Run;
- }
- 
- impl RuleRunner for crate::rules::jest::no_test_return_statement::NoTestReturnStatement {
-@@ -4949,8 +4950,9 @@ impl RuleRunner for crate::rules::vitest::no_standalone_expect::NoStandaloneExpe
- }
- 
- impl RuleRunner for crate::rules::vitest::no_test_prefixes::NoTestPrefixes {
--    const NODE_TYPES: Option<&AstTypesBitset> = None;
--    const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::RunOnJestNode;
-+    const NODE_TYPES: Option<&AstTypesBitset> =
-+        Some(&AstTypesBitset::from_types(&[AstType::CallExpression]));
-+    const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::Run;
- }
- 
- impl RuleRunner for crate::rules::vitest::no_test_return_statement::NoTestReturnStatement {
 ```
 
-**File**: `crates/oxc_linter/src/rules/jest/no_test_prefixes.rs` (modified, +11/-11)
+**File**: `tasks/coverage/src/load.rs` (modified, +39/-21)
 ```diff
-@@ -1,12 +1,11 @@
-+use oxc_ast::AstKind;
- use oxc_macros::declare_oxc_lint;
-+use oxc_semantic::AstNode;
- 
- use crate::{
--    context::LintContext,
-+    context::{ContextHost, LintContext},
-     rule::Rule,
--    rules::{
--        PossibleJestNode,
--        shared::no_test_prefixes::{DOCUMENTATION, run_on_jest_node},
--    },
-+    rules::shared::no_test_prefixes::{DOCUMENTATION, run},
+@@ -2,7 +2,7 @@ use std::{
+     fs,
+     io::Read,
+     path::{Path, PathBuf},
+-    process::{Command, Stdio},
++    process::Command,
  };
  
- #[derive(Debug, Default, Clone)]
-@@ -23,12 +22,13 @@ declare_oxc_lint!(
- );
+ use cow_utils::CowUtils;
+@@ -14,12 +14,17 @@ use rayon::prelude::*;
+ use walkdir::WalkDir;
  
- impl Rule for NoTestPrefixes {
--    fn run_on_jest_node<'a, 'c>(
--        &self,
--        jest_node: &PossibleJestNode<'a, 'c>,
--        ctx: &'c LintContext<'a>,
--    ) {
--        run_on_jest_node(jest_node, ctx);
-+    fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
-+        let AstKind::CallExpression(_) = node.kind() else { return };
-+        run(node, ctx);
-+    }
+ use crate::{
+-    AcornJsxFile, BabelFile, MiscFile, Test262File, TestData, TypeScriptFile, babel, test262,
+-    typescript, workspace_root,
++    AcornJsxFile, BABEL_PATH, BabelFile, ESTREE_ACORN_JSX_PATH, MiscFile, TEST262_PATH,
++    TYPESCRIPT_PATH, Test262File, TestData, TypeScriptFile, babel, test262, typescript,
++    workspace_root,
+ };
+ 
+ impl TestData {
+     pub fn load(filter: Option<&str>) -> Self {
++        if filter.is_none() {
++            ensure_submodules(&[TEST262_PATH, BABEL_PATH, TYPESCRIPT_PATH, ESTREE_ACORN_JSX_PATH]);
++        }
 +
-+    fn should_run(&self, ctx: &ContextHost) -> bool {
-+        ctx.frameworks().is_test()
+         let ((test262, babel), (typescript, (misc, acorn_jsx))) = rayon::join(
+             || rayon::join(|| load_test262(filter), || load_babel(filter)),
+             || {
+@@ -33,6 +38,33 @@ impl TestData {
      }
  }
  
++pub fn ensure_submodules(roots: &[&str]) {
++    let empty_roots: Vec<_> =
++        roots.iter().copied().filter(|root| !has_files(Path::new(root))).collect();
++    if empty_roots.is_empty() {
++        return;
++    }
++
++    println!("-------------------------------------------------------");
++    for root in &empty_roots {
++        println!("git submodule is empty for {root}");
++    }
++    println!("Running `just submodules` to clone the submodules");
++    println!("-------------------------------------------------------");
++    let status = Command::new("just")
++        .arg("submodules")
++        .status()
++        .expect("failed to execute `just submodules`");
++    assert!(status.success(), "`just submodules` failed with {status}");
++}
++
++fn has_files(root: &Path) -> bool {
++    WalkDir::new(workspace_root().join(root))
++        .into_iter()
++        .filter_map(Result::ok)
++        .any(|entry| !entry.file_type().is_dir() && entry.file_name() != ".DS_Store")
++}
++
+ fn walk_and_read(
+     root: &Path,
+     filter: Option<&str>,
+@@ -51,20 +83,6 @@ fn walk_and_read(
+         .filter(|path| filter.is_none_or(|q| path.to_string_lossy().contains(q)))
+         .collect();
+ 
+-    if paths.is_empty() && filter.is_none() {
+-        println!("-------------------------------------------------------");
+-        println!("git submodule is empty for {}", root.display());
+-        println!("Running `just submodules` to clone the submodules");
+-        println!("-------------------------------------------------------");
+-        Command::new("just")
+-            .args(["submodules"])
+-            .stdout(Stdio::inherit())
+-            .stderr(Stdio::inherit())
+-            .output()
+-            .expect("failed to execute `just submodules`");
+-        return walk_and_read(root, filter, skip_path);
+-    }
+-
+     paths
+         .into_par_iter()
+         .filter_map(|path| {
+@@ -99,7 +117,7 @@ pub fn load_test262(filter: Option<&str>) -> Vec<Test262File> {
+             || s.contains("annexB/language/expressions/assignmenttargettype")
+     };
+ 
+-    walk_and_read(Path::new("test262/test"), filter, skip_path)
++    walk_and_read(Path::new(TEST262_PATH), filter, skip_path)
+         .into_par_iter()
+         .map(|(path, code)| {
+             let meta = test262::parse_meta(&code);
+@@ -148,7 +166,7 @@ fn load_babel(filter: Option<&str>) -> Vec<BabelFile> {
+         not_supported || not_interesting || bad_ext
+     };
+ 
+-    walk_and_read(Path::new("babel/packages/babel-parser/test/fixtures"), filter, skip_path)
++    walk_and_read(Path::new(BABEL_PATH), filter, skip_path)
+         .into_par_iter()
+         .filter_map(|(path, code)| {
+             let dir = workspace_root().join(&path);
+@@ -208,7 +226,7 @@ fn load_typescript(filter: Option<&str>) -> Vec<TypeScriptFile> {
+         !supported || unsupported
+     };
+ 
+-    let files = walk_and_read(Path::new(typescript::CASES_PATH), filter, skip_path);
++    let files = walk_and_read(Path::new(TYPESCRIPT_PATH), filter, skip_path);
+     let reference_baselines = typescript::ReferenceBaselines::new();
+     files
+         .into_par_iter()
+@@ -268,7 +286,7 @@ fn load_misc(filter: Option<&str>) -> Vec<MiscFile> {
+ fn load_acorn_jsx(filter: Option<&str>) -> Vec<AcornJsxFile> {
+     let skip_path = |path: &Path| path.extension().is_none_or(|ext| ext != "jsx");
+ 
+-    walk_and_read(Path::new("estree-conformance/tests/acorn-jsx"), filter, skip_path)
++    walk_and_read(Path::new(ESTREE_ACORN_JSX_PATH), filter, skip_path)
+         .into_par_iter()
+         .map(|(path, code)| {
+             let should_fail =
 ```
 
-**File**: `crates/oxc_linter/src/rules/shared/jest_vitest/no_test_prefixes.rs` (modified, +8/-7)
+---
+
+### Incident Patch 2: `ed7df7de` (2026-10-28)
+**Commit Message**: fix(ast/estree): include comments in TS Program span (#28326)
+
+- Align TS ESTree `Program` spans with `@typescript-eslint/parser` v8.72.0, which includes leading and trailing comments/whitespace.
+- Remove the TS-only `Program.start` adjustment from the Rust serializer and raw-transfer deserializers.
+- Update affected coverage and oxlint fixture snapshots.
+
+**File**: `apps/oxlint/src-js/generated/deserialize.js` (modified, +6/-25)
 ```diff
-@@ -3,6 +3,7 @@ use oxc_ast::{
-     ast::{CallExpression, Expression},
- };
- use oxc_diagnostics::OxcDiagnostic;
-+use oxc_semantic::AstNode;
- use oxc_span::{GetSpan, Span};
- 
- use crate::{
-@@ -47,16 +48,16 @@ struct ParsedNoTestPrefixesCall {
-     member_names: Vec<String>,
+@@ -64,7 +64,8 @@ export function resetBuffer() {
  }
  
--pub fn run_on_jest_node<'a, 'c>(jest_node: &PossibleJestNode<'a, 'c>, ctx: &'c LintContext<'a>) {
--    run(jest_node, ctx);
+ function deserializeProgram(pos) {
+-  let end = deserializeI32(pos + 4),
++  let start = deserializeI32(pos),
++    end = deserializeI32(pos + 4),
+     program = (parent = {
+       __proto__: NodeProto,
+       type: "Program",
+@@ -78,32 +79,12 @@ function deserializeProgram(pos) {
+         tokens === null && initTokens();
+         return tokens;
+       },
+-      start: 0,
++      start,
+       end,
+-      range: [0, end],
++      range: [start, end],
+       parent: null,
+-    }),
+-    body = (program.body = deserializeVecDirective(pos + 88));
+-  body.push(...deserializeVecStatement(pos + 112));
+-  {
+-    let start;
+-    if (body.length > 0) {
+-      let first = body[0];
+-      start = first.start;
+-      if (first.type === "ExportNamedDeclaration" || first.type === "ExportDefaultDeclaration") {
+-        let { declaration } = first;
+-        if (
+-          declaration !== null
+-          && declaration.type === "ClassDeclaration"
+-          && declaration.decorators.length > 0
+-        ) {
+-          let decoratorStart = declaration.decorators[0].start;
+-          decoratorStart < start && (start = decoratorStart);
+-        }
+-      }
+-    } else start = end;
+-    program.start = program.range[0] = start;
+-  }
++    });
++  (program.body = deserializeVecDirective(pos + 88)).push(...deserializeVecStatement(pos + 112));
+   parent = null;
+   return program;
+ }
+```
+
+**File**: `apps/oxlint/src-js/plugins/location.ts` (modified, +1/-4)
+```diff
+@@ -323,8 +323,7 @@ const LOC_DESCRIPTOR: PropertyDescriptor = {
+  */
+ export function computeLoc(start: number, end: number): Location {
+   // All AST nodes, tokens and comments have `start < end`, with only one exception:
+-  // `Program` node can have `start === end` if it has no directives or statements - either 0-length file,
+-  // or purely comments and/or whitespace and/or hashbang. But `start > end` is impossible.
++  // `Program` node has `start === end` for a 0-length file. But `start > end` is impossible.
+   debugAssert(start <= end, "`start` must be <= `end`");
+ 
+   if (lines.length === 0) initLines();
+@@ -418,8 +417,6 @@ export function getNodeByRangeIndex(offset: number): ESTreeNode | null {
+   debugAssertIsNonNull(ast);
+ 
+   // If index is outside of `Program`, return `null`
+-  // TODO: Once `Program`'s span covers the entire file (as per ESLint v10), `index < ast.start` check can be removed
+-  // (or changed to `index < 0` if we want to check for negative indices)
+   if (offset < ast.start || offset >= ast.end) return null;
+ 
+   // Search for the node containing the index
+```
+
+**File**: `apps/oxlint/test/fixtures/bom/output.snap.md` (modified, +4/-4)
+```diff
+@@ -53,9 +53,9 @@
+   x bom-plugin(bom):
+   | hasBOM: true
+   | sourceText: "/*x*/'é';/*y*/ऊ=1;debugger;\n// 😀🤪😆😎🤮\ndebugger;\ndebugger;"
+-  | Program span: 5-61
++  | Program span: 0-61
+   | comments: [{"start":0,"end":5,"text":"/*x*/"},{"start":9,"end":14,"text":"/*y*/"},{"start":28,"end":41,"text":"// 😀🤪😆😎🤮"}]
+-   ,-[files/bom_unicode.js:1:9]
++   ,-[files/bom_unicode.js:1:4]
+  1 | ,-> ﻿/*x*/'é';/*y*/ऊ=1;debugger;
+  2 | |   // 😀🤪😆😎🤮
+  3 | |   debugger;
+@@ -134,9 +134,9 @@
+   x bom-plugin(bom):
+   | hasBOM: false
+   | sourceText: "/*x*/'é';/*y*/ऊ=1;debugger;\n// 😀🤪😆😎🤮\ndebugger;\ndebugger;"
+-  | Program span: 5-61
++  | Program span: 0-61
+   | comments: [{"start":0,"end":5,"text":"/*x*/"},{"start":9,"end":14,"text":"/*y*/"},{"start":28,"end":41,"text":"// 😀🤪😆😎🤮"}]
+-   ,-[files/no_bom_unicode.js:1:6]
++   ,-[files/no_bom_unicode.js:1:1]
+  1 | ,-> /*x*/'é';/*y*/ऊ=1;debugger;
+  2 | |   // 😀🤪😆😎🤮
+  3 | |   debugger;
+```
+
+**File**: `apps/oxlint/test/fixtures/comments/output.snap.md` (modified, +14/-12)
+```diff
+@@ -283,6 +283,20 @@
+  2 | // Line comment after hashbang
+    `----
+ 
++  x test-comments(test-comments): getAllComments: 3 comments
++  |   [0] Shebang: "/usr/bin/env node" at [0, 19]
++  |   [1] Line: " Line comment after hashbang" at [20, 50]
++  |   [2] Block: " Block comment after hashbang " at [51, 85]
++   ,-[files/hashbang.js:1:1]
++ 1 | ,-> #!/usr/bin/env node
++ 2 | |   // Line comment after hashbang
++ 3 | |   /* Block comment after hashbang */
++ 4 | |   const topLevelVariable1 = 1;
++ 5 | |   const topLevelVariable2 = 2;
++ 6 | |   
++ 7 | `-> export function topLevelFunction() {}
++   `----
++
+   x test-comments(test-comments): VariableDeclaration(topLevelVariable1):
+   | getCommentsBefore: 3 comments
+   |   [0] Shebang: "/usr/bin/env node" at [0, 19]
+@@ -298,18 +312,6 @@
+  5 | const topLevelVariable2 = 2;
+    `----
+ 
+-  x test-comments(test-comments): getAllComments: 3 comments
+-  |   [0] Shebang: "/usr/bin/env node" at [0, 19]
+-  |   [1] Line: " Line comment after hashbang" at [20, 50]
+-  |   [2] Block: " Block comment after hashbang " at [51, 85]
+-   ,-[files/hashbang.js:4:1]
+- 3 |     /* Block comment after hashbang */
+- 4 | ,-> const topLevelVariable1 = 1;
+- 5 | |   const topLevelVariable2 = 2;
+- 6 | |   
+- 7 | `-> export function topLevelFunction() {}
+-   `----
+-
+   x test-comments(test-comments): VariableDeclaration(topLevelVariable2):
+   | getCommentsBefore: 0 comments
+   | getCommentsInside: 0 comments
+```
+
+**File**: `apps/oxlint/test/fixtures/estree/output.snap.md` (modified, +13/-9)
+```diff
+@@ -33,9 +33,11 @@
+   | * TSUnionType:exit: (types: TSStringKeyword, TSNumberKeyword)
+   | * TSTypeAliasDeclaration:exit: (typeAnnotation: TSUnionType)
+   | * Program:exit
+-    ,-[files/index.ts:4:1]
+-  3 |     // All `Identifier`s
+-  4 | ,-> let a = { x: y };
++    ,-[files/index.ts:1:1]
++  1 | ,-> // @ts-nocheck
++  2 | |   
++  3 | |   // All `Identifier`s
++  4 | |   let a = { x: y };
+   5 | |   
+   6 | |   // No `ParenthesizedExpression`s in AST
+   7 | |   // prettier-ignore
+@@ -50,12 +52,14 @@
+     `----
+ 
+   x estree-check(check): program:
+-  | start/end: [37,281]
+-  | range: [37,281]
+-  | loc: [{"start":{"line":4,"column":0},"end":{"line":16,"column":0}}]
+-    ,-[files/index.ts:4:1]
+-  3 |     // All `Identifier`s
+-  4 | ,-> let a = { x: y };
++  | start/end: [0,281]
++  | range: [0,281]
++  | loc: [{"start":{"line":1,"column":0},"end":{"line":16,"column":0}}]
++    ,-[files/index.ts:1:1]
++  1 | ,-> // @ts-nocheck
++  2 | |   
++  3 | |   // All `Identifier`s
++  4 | |   let a = { x: y };
+   5 | |   
+   6 | |   // No `ParenthesizedExpression`s in AST
+   7 | |   // prettier-ignore
+```
+
+**File**: `apps/oxlint/test/fixtures/getNodeByRangeIndex/output.snap.md` (modified, +2/-2)
+```diff
+@@ -3,14 +3,14 @@
+ 
+ # stdout
+ ```
+-  x getNode-plugin(getNode): type: null
++  x getNode-plugin(getNode): type: Program
+    ,-[files/index.ts:1:1]
+  1 | // Comment
+    : ^
+  2 | 
+    `----
+ 
+-  x getNode-plugin(getNode): type: null
++  x getNode-plugin(getNode): type: Program
+    ,-[files/index.ts:2:1]
+  1 | // Comment
+  2 | 
+```
+
+**File**: `crates/oxc_ast/src/serialize/mod.rs` (modified, +4/-78)
+```diff
+@@ -1,11 +1,8 @@
+-use std::cmp;
+-
+ use oxc_ast_macros::ast_meta;
+ use oxc_estree::{
+     CompactFixesSerializer, CompactSerializer, Concat2, ESTree, JsonSafeString,
+     PrettyFixesSerializer, PrettySerializer, Serializer, StructSerializer,
+ };
+-use oxc_span::GetSpan;
+ 
+ use crate::ast::*;
+ 
+@@ -81,19 +78,11 @@ impl Program<'_> {
+ 
+ /// Serializer for `Program`.
+ ///
+-/// In TS AST, set start span to start of first directive or statement.
+-/// This is required because unlike Acorn, TS-ESLint excludes whitespace and comments
+-/// from the `Program` start span.
+-/// See <https://github.com/oxc-project/oxc/pull/10134> for more info.
+-///
+-/// Special case where first statement is an `ExportDeclaration` or `ExportDefaultDeclaration`
+-/// exporting a class with decorators, where one of the decorators is before `export`.
+-/// In these cases, the span of the statement starts after the span of the decorators.
+-/// e.g. `@dec export class C {}` - `ExportDeclaration` span start is 5, `Decorator` span start is 0.
+-/// `Program` span start is 0 (not 5).
++/// Serializes directives and statements together as `body`.
++/// The span covers the entire source text, including leading and trailing comments and whitespace.
+ #[ast_meta]
+ #[estree(raw_deser = "
+-    const start = IS_TS ? 0 : DESER[i32](POS_OFFSET.span.start),
++    const start = DESER[i32](POS_OFFSET.span.start),
+         end = DESER[i32](POS_OFFSET.span.end);
+ 
+     const program = parent = {
+@@ -124,32 +113,6 @@ impl Program<'_> {
+     const body = program.body = DESER[Vec<Directive>](POS_OFFSET.directives);
+     body.push(...DESER[Vec<Statement>](POS_OFFSET.body));
+ 
+-    if (IS_TS) {
+-        let start;
+-        if (body.length > 0) {
+-            const first = body[0];
+-            start = first.start;
+-            if (first.type === 'ExportNamedDeclaration' || first.type === 'ExportDefaultDeclaration') {
+-                const { declaration } = first;
+-                if (
+-                    declaration !== null && declaration.type === 'ClassDeclaration'
+-                    && declaration.decorators.length > 0
+-                ) {
+-                    const decoratorStart = declaration.decorators[0].start;
+-                    if (decoratorStart < start) start = decoratorStart;
+-                }
+-            }
+-        } else {
+-            start = end;
+-        }
+-
+-        if (RANGE) {
+-            program.start = program.range[0] = start;
+-        } else {
+-            program.start = start;
+-        }
+-    }
+-
+     if (PARENT) parent = null;
+ 
+     program
+@@ -165,49 +128,12 @@ impl ESTree for ProgramConverter<'_, '_> {
+         state.serialize_field("body", &Concat2(&program.directives, &program.body));
+         state.serialize_field("sourceType", &program.source_type.module_kind());
+         state.serialize_field("hashbang", &program.hashbang);
+-
+-        let span = if state.include_ts_fields() {
+-            Span::new(get_ts_start_span(program), program.span.end)
+-        } else {
+-            program.span
+-        };
+-        state.serialize_span(span);
++        state.serialize_span(program.span);
+ 
+         state.end();
+     }
+ }
+ 
+-fn get_ts_start_span(program: &Program<'_>) -> u32 {
+-    if let Some(first_directive) = program.directives.first() {
+-        return first_directive.span.start;
+-    }
+-
+-    let Some(first_stmt) = program.body.first() else {
+-        // Program contains no statements or directives. Span start = span end.
+-        return program.span.end;
+-    };
+-
+-    let start = first_stmt.span().start;
+-    match first_stmt {
+-        Statement::ExportDeclaration(decl) => {
+-            if let Declaration::ClassDeclaration(class) = &decl.declaration
+-                && let Some(decorator) = class.decorators.first()
+-            {
+-                return cmp::min(start, decorator.span.start);
+-            }
+-        }
+-        Statement::ExportDefaultDeclaration(decl) => {
+-            if let ExportDefaultDeclarationKind::ClassDeclaration(class) = &decl.declaration
+-                && let Some(decorator) = class.decorators.first()
+-            {
+-                return cmp::min(start, decorator.span.start);
+-            }
+-        }
+-        _ => {}
+-    }
+-    start
 -}
 -
--fn run<'a>(possible_jest_node: &PossibleJestNode<'a, '_>, ctx: &LintContext<'a>) {
--    let node = possible_jest_node.node;
-+pub fn run<'a>(node: &AstNode<'a>, ctx: &LintContext<'a>) {
-     let AstKind::CallExpression(call_expr) = node.kind() else {
-         return;
-     };
--    let Some(jest_fn_call) = parse_no_test_prefixes_call(call_expr, possible_jest_node, ctx) else {
-+    let Some(possible_jest_node) = PossibleJestNode::from_call_expression(node, call_expr, ctx)
-+    else {
-+        return;
-+    };
-+    let Some(jest_fn_call) = parse_no_test_prefixes_call(call_expr, &possible_jest_node, ctx)
-+    else {
-         return;
-     };
- 
+ /// Serialize `value` field of `Comment`.
+ ///
+ /// This serializer does not work for JSON serializer, because there's no access to source text
 ```
 
-**File**: `crates/oxc_linter/src/rules/vitest/no_test_prefixes.rs` (modified, +11/-11)
+**File**: `napi/parser/src-js/generated/deserialize/ts.js` (modified, +4/-23)
 ```diff
-@@ -1,12 +1,11 @@
-+use oxc_ast::AstKind;
- use oxc_macros::declare_oxc_lint;
-+use oxc_semantic::AstNode;
- 
- use crate::{
--    context::LintContext,
-+    context::{ContextHost, LintContext},
-     rule::Rule,
--    rules::{
--        PossibleJestNode,
--        shared::no_test_prefixes::{DOCUMENTATION, run_on_jest_node},
--    },
-+    rules::shared::no_test_prefixes::{DOCUMENTATION, run},
- };
- 
- #[derive(Debug, Default, Clone)]
-@@ -15,12 +14,13 @@ pub struct NoTestPrefixes;
- declare_oxc_lint!(NoTestPrefixes, vitest, style, fix, docs = DOCUMENTATION, version = "0.0.7",);
- 
- impl Rule for NoTestPrefixes {
--    fn run_on_jest_node<'a, 'c>(
--        &self,
--        jest_node: &PossibleJestNode<'a, 'c>,
--        ctx: &'c LintContext<'a>,
--    ) {
--        run_on_jest_node(jest_node, ctx);
-+    fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
-+        let AstKind::CallExpression(_) = node.kind() else { return };
-+        run(node, ctx);
-+    }
-+
-+    fn should_run(&self, ctx: &ContextHost) -> bool {
-+        ctx.frameworks().is_test()
-     }
+@@ -55,37 +55,18 @@ export function resetBuffer() {
  }
  
-```
-
-**File**: `tasks/track_linter_timings/linter_timings.snap` (modified, +0/-2)
-```diff
-@@ -233,7 +233,6 @@ jest/no-large-snapshots                                    |      7
- jest/no-mocks-import                                       |      7
- jest/no-restricted-jest-methods                            |      0
- jest/no-standalone-expect                                  |      7
--jest/no-test-prefixes                                      |      0
- jest/no-test-return-statement                              |  14199
- jest/no-untyped-mock-factory                               |      0
- jest/padding-around-after-all-blocks                       |      0
-@@ -685,7 +684,6 @@ vitest/no-large-snapshots                                  |      7
- vitest/no-mocks-import                                     |      7
- vitest/no-restricted-vi-methods                            |      0
- vitest/no-standalone-expect                                |      7
--vitest/no-test-prefixes                                    |      0
- vitest/no-test-return-statement                            |  14199
- vitest/padding-around-after-all-blocks                     |      0
- vitest/padding-around-test-blocks                          |      0
+ function deserializeProgram(pos) {
+-  let end = deserializeI32(pos + 4),
++  let start = deserializeI32(pos),
++    end = deserializeI32(pos + 4),
+     program = {
+       type: "Program",
+       body: null,
+       sourceType: deserializeModuleKind(pos + 137),
+       hashbang: null,
+-      start: 0,
++      start,
+       end,
+     };
+   program.hashbang = deserializeOptionHashbang(pos + 56);
+-  let body = (program.body = deserializeVecDirective(pos + 88));
+-  body.push(...deserializeVecStatement(pos + 112));
+-  {
+-    let start;
+-    if (body.length > 0) {
+-      let first = body[0];
+-      start = first.start;
+-      if (first.type === "ExportNamedDeclaration" || first.type === "ExportDefaultDeclaration") {
+-        let { declaration } = first;
+-        if (
+-          declaration !== null
+-          && declaration.type === "ClassDeclaration"
+-          && declaration.decorators.length > 0
+-        ) {
+-          let decoratorStart = declaration.decorators[0].start;
+-          decoratorStart < start && (start = decoratorStart);
+-        }
+-      }
+-    } else start = end;
+-    program.start = start;
+-  }
++  (program.body = deserializeVecDirective(pos + 88)).push(...deserializeVecStatement(pos + 112));
+   return program;
+ }
+ 
 ```
 
 ---
 
-### Incident Patch 2: `ff19bb81` (2026-10-27)
-**Commit Message**: refactor(linter): migrate require-to-throw-message to AST dispatch (#28222)
+### Incident Patch 3: `31cbe378` (2026-10-28)
+**Commit Message**: fix(linter): make gitlab fingerprints unique per diagnostic (#28307)
 
-Use run and should_run with the existing per-call Jest/Vitest resolver.
-Preserve rule configuration, diagnostics, and fixes.
+Include columns and rule IDs in GitLab Code Quality fingerprints so distinct diagnostics on the same line no longer collide.
 
-Refs https://github.com/oxc-project/backlog/issues/206
+Fixes #28283
 
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
-
----
-
-<sub>Stack created with <a
-href="https://github.com/github/gh-stack">GitHub Stacks CLI</a> • <a
-href="https://gh.io/stacks-feedback">Give Feedback 💬</a></sub>
-
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
-
-**File**: `crates/oxc_linter/src/generated/rule_runner_impls.rs` (modified, +6/-4)
+**File**: `apps/oxlint/src/output_formatter/gitlab.rs` (modified, +33/-0)
 ```diff
-@@ -2558,8 +2558,9 @@ impl RuleRunner for crate::rules::jest::require_hook::RequireHook {
- }
+@@ -123,8 +123,11 @@ fn format_gitlab(diagnostics: &mut Vec<Error>, repo_path_prefix: Option<&Path>)
+         let fingerprint = {
+             let mut hasher = DefaultHasher::new();
+             start.line.hash(&mut hasher);
++            start.column.hash(&mut hasher);
+             end.line.hash(&mut hasher);
++            end.column.hash(&mut hasher);
+             filename.hash(&mut hasher);
++            rule_id.hash(&mut hasher);
+             message.hash(&mut hasher);
+             severity.hash(&mut hasher);
  
- impl RuleRunner for crate::rules::jest::require_to_throw_message::RequireToThrowMessage {
--    const NODE_TYPES: Option<&AstTypesBitset> = None;
--    const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::RunOnJestNode;
-+    const NODE_TYPES: Option<&AstTypesBitset> =
-+        Some(&AstTypesBitset::from_types(&[AstType::CallExpression]));
-+    const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::Run;
- }
+@@ -255,6 +258,36 @@ mod test {
+         assert_eq!(path, "example.js");
+     }
  
- impl RuleRunner for crate::rules::jest::require_top_level_describe::RequireTopLevelDescribe {
-@@ -5177,8 +5178,9 @@ impl RuleRunner for crate::rules::vitest::require_test_timeout::RequireTestTimeo
- }
- 
- impl RuleRunner for crate::rules::vitest::require_to_throw_message::RequireToThrowMessage {
--    const NODE_TYPES: Option<&AstTypesBitset> = None;
--    const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::RunOnJestNode;
-+    const NODE_TYPES: Option<&AstTypesBitset> =
-+        Some(&AstTypesBitset::from_types(&[AstType::CallExpression]));
-+    const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::Run;
- }
- 
- impl RuleRunner for crate::rules::vitest::require_top_level_describe::RequireTopLevelDescribe {
-```
-
-**File**: `crates/oxc_linter/src/rules/jest/require_to_throw_message.rs` (modified, +11/-9)
-```diff
-@@ -1,10 +1,11 @@
-+use oxc_ast::AstKind;
- use oxc_macros::declare_oxc_lint;
-+use oxc_semantic::AstNode;
- 
- use crate::{
--    context::LintContext,
-+    context::{ContextHost, LintContext},
-     rule::Rule,
--    rules::shared::require_to_throw_message::{DOCUMENTATION, run_on_jest_node},
--    utils::PossibleJestNode,
-+    rules::shared::require_to_throw_message::{DOCUMENTATION, run},
- };
- 
- #[derive(Debug, Default, Clone)]
-@@ -19,12 +20,13 @@ declare_oxc_lint!(
- );
- 
- impl Rule for RequireToThrowMessage {
--    fn run_on_jest_node<'a, 'c>(
--        &self,
--        jest_node: &PossibleJestNode<'a, 'c>,
--        ctx: &'c LintContext<'a>,
--    ) {
--        run_on_jest_node(jest_node, ctx);
-+    fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
-+        let AstKind::CallExpression(_) = node.kind() else { return };
-+        run(node, ctx);
++    #[test]
++    fn format_gitlab_unique_fingerprints() {
++        let source = "foo(null, null);";
++        let diagnostic = |rule_name: &'static str, span: Span| -> Error {
++            OxcDiagnostic::warn("Do not use `null` literals")
++                .with_error_code("unicorn", rule_name)
++                .with_label(span)
++                .with_source_code(NamedSource::new("example.ts", source))
++        };
++
++        let mut diagnostics: Vec<Error> = vec![
++            diagnostic("no-null", Span::new(4, 8)),
++            diagnostic("no-null", Span::new(10, 14)),
++            diagnostic("other-rule", Span::new(10, 14)),
++        ];
++
++        let result = format_gitlab(&mut diagnostics, None);
++        let json: serde_json::Value = serde_json::from_str(&result).unwrap();
++        let fingerprints = json
++            .as_array()
++            .unwrap()
++            .iter()
++            .map(|value| value["fingerprint"].as_str().unwrap())
++            .collect::<Vec<_>>();
++
++        assert_eq!(fingerprints.len(), 3);
++        assert_ne!(fingerprints[0], fingerprints[1]);
++        assert_ne!(fingerprints[1], fingerprints[2]);
 +    }
 +
-+    fn should_run(&self, ctx: &ContextHost) -> bool {
-+        ctx.frameworks().is_test()
-     }
- }
- 
+     #[cfg(windows)]
+     #[test]
+     fn format_gitlab_windows_normalization() {
 ```
 
-**File**: `crates/oxc_linter/src/rules/shared/jest_vitest/require_to_throw_message.rs` (modified, +7/-6)
+**File**: `apps/oxlint/src/snapshots/fixtures__cli__output_formatter_diagnostic_--format=gitlab --report-unused-disable-directives disable-directive.js@oxlint.snap` (modified, +3/-3)
 ```diff
-@@ -1,5 +1,6 @@
- use oxc_ast::AstKind;
- use oxc_diagnostics::OxcDiagnostic;
-+use oxc_semantic::AstNode;
- use oxc_span::Span;
- 
- use crate::{
-@@ -48,16 +49,16 @@ test('all the things', async () => {
- ```
- ";
- 
--pub fn run_on_jest_node<'a, 'c>(
--    possible_jest_node: &PossibleJestNode<'a, 'c>,
--    ctx: &'c LintContext<'a>,
--) {
--    let node = possible_jest_node.node;
-+pub fn run<'a>(node: &AstNode<'a>, ctx: &LintContext<'a>) {
-     let AstKind::CallExpression(call_expr) = node.kind() else {
-         return;
-     };
- 
--    let Some(jest_fn_call) = parse_expect_jest_fn_call(call_expr, possible_jest_node, ctx) else {
-+    let Some(possible_jest_node) = PossibleJestNode::from_call_expression(node, call_expr, ctx)
-+    else {
-+        return;
-+    };
-+    let Some(jest_fn_call) = parse_expect_jest_fn_call(call_expr, &possible_jest_node, ctx) else {
-         return;
-     };
- 
+@@ -9,7 +9,7 @@ working directory: fixtures/cli/output_formatter_diagnostic
+   {
+     "description": "Unused eslint-disable directive (no problems were reported).",
+     "check_name": "",
+-    "fingerprint": "6460b46f54ac436d",
++    "fingerprint": "a96e9030c214757",
+     "severity": "major",
+     "location": {
+       "path": "apps/oxlint/disable-directive.js",
+@@ -22,7 +22,7 @@ working directory: fixtures/cli/output_formatter_diagnostic
+   {
+     "description": "Unused oxlint-disable directive (no problems were reported).",
+     "check_name": "",
+-    "fingerprint": "2c72baee0104413c",
++    "fingerprint": "e8201dedf4e15d5",
+     "severity": "major",
+     "location": {
+       "path": "apps/oxlint/disable-directive.js",
+@@ -35,7 +35,7 @@ working directory: fixtures/cli/output_formatter_diagnostic
+   {
+     "description": "Unused oxlint-disable directive (no problems were reported).",
+     "check_name": "",
+-    "fingerprint": "2cc074b70ccb86fd",
++    "fingerprint": "6a6bf4bfe989dd08",
+     "severity": "major",
+     "location": {
+       "path": "apps/oxlint/disable-directive.js",
 ```
 
-**File**: `crates/oxc_linter/src/rules/vitest/require_to_throw_message.rs` (modified, +11/-9)
+**File**: `apps/oxlint/src/snapshots/fixtures__cli__output_formatter_diagnostic_--format=gitlab parser-error.js@oxlint.snap` (modified, +1/-1)
 ```diff
-@@ -1,10 +1,11 @@
-+use oxc_ast::AstKind;
- use oxc_macros::declare_oxc_lint;
-+use oxc_semantic::AstNode;
- 
- use crate::{
--    context::LintContext,
-+    context::{ContextHost, LintContext},
-     rule::Rule,
--    rules::shared::require_to_throw_message::{DOCUMENTATION, run_on_jest_node},
--    utils::PossibleJestNode,
-+    rules::shared::require_to_throw_message::{DOCUMENTATION, run},
- };
- 
- #[derive(Debug, Default, Clone)]
-@@ -19,12 +20,13 @@ declare_oxc_lint!(
- );
- 
- impl Rule for RequireToThrowMessage {
--    fn run_on_jest_node<'a, 'c>(
--        &self,
--        jest_node: &PossibleJestNode<'a, 'c>,
--        ctx: &'c LintContext<'a>,
--    ) {
--        run_on_jest_node(jest_node, ctx);
-+    fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
-+        let AstKind::CallExpression(_) = node.kind() else { return };
-+        run(node, ctx);
-+    }
-+
-+    fn should_run(&self, ctx: &ContextHost) -> bool {
-+        ctx.frameworks().is_test()
-     }
- }
- 
+@@ -9,7 +9,7 @@ working directory: fixtures/cli/output_formatter_diagnostic
+   {
+     "description": "Expected `;` but found `:`",
+     "check_name": "",
+-    "fingerprint": "5f141d44128bf58e",
++    "fingerprint": "dd897cb1109c9fa9",
+     "severity": "critical",
+     "location": {
+       "path": "apps/oxlint/parser-error.js",
 ```
 
-**File**: `tasks/track_linter_timings/linter_timings.snap` (modified, +0/-2)
+**File**: `apps/oxlint/src/snapshots/fixtures__cli__output_formatter_diagnostic_--format=gitlab test.js@oxlint.snap` (modified, +3/-3)
 ```diff
-@@ -254,7 +254,6 @@ jest/prefer-snapshot-hint                                  |      7
- jest/prefer-spy-on                                         |  13005
- jest/prefer-to-have-been-called                            |      0
- jest/require-hook                                          |  62613
--jest/require-to-throw-message                              |      0
- jest/require-top-level-describe                            |      7
- jest/valid-describe-callback                               |      0
- jest/valid-expect                                          |      7
-@@ -719,7 +718,6 @@ vitest/require-hook                                        |  62613
- vitest/require-local-test-context-for-concurrent-snapshots |      0
- vitest/require-mock-type-parameters                        |      0
- vitest/require-test-timeout                                |      7
--vitest/require-to-throw-message                            |      0
- vitest/require-top-level-describe                          |      7
- vitest/valid-describe-callback                             |      0
- vitest/valid-expect                                        |      7
+@@ -9,7 +9,7 @@ working directory: fixtures/cli/output_formatter_diagnostic
+   {
+     "description": "Function 'foo' is declared but never used.",
+     "check_name": "eslint(no-unused-vars)",
+-    "fingerprint": "b1e9b343a9c1e457",
++    "fingerprint": "62e780597e453391",
+     "severity": "major",
+     "location": {
+       "path": "apps/oxlint/test.js",
+@@ -22,7 +22,7 @@ working directory: fixtures/cli/output_formatter_diagnostic
+   {
+     "description": "Parameter 'b' is declared but never used. Unused parameters should start with a '_'.",
+     "check_name": "eslint(no-unused-vars)",
+-    "fingerprint": "53ecf7c08335f91",
++    "fingerprint": "2907a4c638474e6c",
+     "severity": "major",
+     "location": {
+       "path": "apps/oxlint/test.js",
+@@ -35,7 +35,7 @@ working directory: fixtures/cli/output_formatter_diagnostic
+   {
+     "description": "`debugger` statement is not allowed",
+     "check_name": "eslint(no-debugger)",
+-    "fingerprint": "9333a3278325994",
++    "fingerprint": "1506c15e875d60c7",
+     "severity": "critical",
+     "location": {
+       "path": "apps/oxlint/test.js",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #28235** (2026-10-27): refactor(linter): migrate expect-expect to AST dispatch (@camchenry)
-- **PR #28234** (2026-10-27): refactor(linter): migrate valid-expect-in-promise to AST dispatch (@camchenry)
-- **PR #28233** (2026-10-27): refactor(linter): migrate no-conditional-expect to AST dispatch (@camchenry)
-- **PR #28232** (2026-10-27): refactor(linter): migrate padding-around-test-blocks to AST dispatch (@camchenry)
-- **PR #28231** (2026-10-27): refactor(linter): migrate padding-around-after-all-blocks to AST dispatch (@camchenry)
-- **PR #28230** (2026-10-27): refactor(linter): migrate no-restricted-test-methods to AST dispatch (@camchenry)
+- **PR #28326** (2026-10-28): fix(ast/estree): include comments in TS Program span (@camc314)
+- **PR #28325** (2026-10-28): fix(coverage): clone missing submodules once (@camc314)
+- **PR #28314** (2026-10-28): refactor(lexer): comments classification produce `CommentContent` directly (@overlookmotel)
+- **PR #28313** (2026-10-28): refactor(lexer): remove multiline flag from comment flags (@overlookmotel)
+- **PR #28312** (2026-10-28): refactor(lexer): simplify creating comments (@overlookmotel)
+- **PR #28311** (2026-10-28): refactor(lexer): remove `comment_meta` field from `Lanes` (@overlookmotel)
 
 ---
 
@@ -1644,36 +1955,32 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. linter): migrate no-test-prefixes to AST dispatch (#28225)
+## X. coverage): clone missing submodules once (#28325)
 
 **RULE**:
-When implementing operations in `crates/oxc_linter/src/generated/rule_runner_impls.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tasks/coverage/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8a7c2f82`: linter): migrate no-test-prefixes to AST dispatch (#28225). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `36bf2b88`: coverage): clone missing submodules once (#28325). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_linter/src/generated/rule_runner_impls.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tasks/coverage/src/lib.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    const NODE_TYPES: Option<&AstTypesBitset> =
-        Some(&AstTypesBitset::from_types(&[AstType::CallExpression]));
-    const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::Run;
-    const NODE_TYPES: Option<&AstTypesBitset> =
-        Some(&AstTypesBitset::from_types(&[AstType::CallExpression]));
-    const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::Run;
+        let filter = self.filter.as_deref();
+        if filter.is_none() {
+            load::ensure_submodules(&[TEST262_PATH]);
+        }
+        let files = load::load_test262(filter);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    const NODE_TYPES: Option<&AstTypesBitset> = None;
-    const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::RunOnJestNode;
-    const NODE_TYPES: Option<&AstTypesBitset> = None;
-    const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::RunOnJestNode;
+        let files = load::load_test262(self.filter.as_deref());
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8a7c2f82` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `36bf2b88` are properly handled with clean fallback behavior.

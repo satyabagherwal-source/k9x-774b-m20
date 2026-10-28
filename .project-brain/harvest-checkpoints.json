@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T21:37:22.845Z",
+  "last_updated": "2026-10-28T21:43:39.516Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1909,14 +1909,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-facebook-sam3",
-      "content_hash": "f69731dbfb7c6dd17cb6e1ab9553359157577f9ffeb9a52e10e21fd80e3e6790",
-      "verified_at": "2026-10-25T16:08:58.013Z",
+      "content_hash": "2ddc61fc2125208cc1309cd9554c1e40c3ea1a4f2c1f40ce7444b077e3cbcd10",
+      "verified_at": "2026-10-28T21:43:27.764Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T16:08:58.013Z"
+      "last_updated": "2026-10-28T21:43:27.764Z"
     },
     "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF": {
       "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "a29309b3e886ad2fda7e771419f6abcfbc290888e49d5d61f951c52cc2f0cb59",
-      "verified_at": "2026-10-28T17:49:49.311Z",
+      "content_hash": "222bdfd8e1be1fc906adee54d255bf56a1333993da22b880fef60a46ce29f50b",
+      "verified_at": "2026-10-28T21:43:39.515Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T17:49:49.311Z"
+      "last_updated": "2026-10-28T21:43:39.515Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -10941,14 +10941,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-server",
-      "content_hash": "6ba4eebf0c92d13f12da7605264563e58fe309380661be1d3a51716667c62a47",
-      "verified_at": "2026-10-27T11:02:57.063Z",
+      "content_hash": "d0292b2a781409438d3aa22bdc4334d76c25b9575918d684ee8c3529b4dc88a1",
+      "verified_at": "2026-10-28T21:43:37.953Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T11:02:57.063Z"
+      "last_updated": "2026-10-28T21:43:37.953Z"
     },
     "str4d/rage": {
       "repository": "str4d/rage",
@@ -11631,14 +11631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oxc-project-oxc",
-      "content_hash": "4a7628c48a1d757bf48a2e1238fb0d0c70c8f5567d768b85f1bb0773282b9c34",
-      "verified_at": "2026-10-27T19:20:11.134Z",
+      "content_hash": "8a9c8d74e95de0c8af9e46fb4e60dc5fd09d63a17df54764b8e8ed3fdb3c55ad",
+      "verified_at": "2026-10-28T21:43:30.684Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T19:20:11.134Z"
+      "last_updated": "2026-10-28T21:43:30.684Z"
     },
     "pointfreeco/swift-composable-architecture": {
       "repository": "pointfreeco/swift-composable-architecture",

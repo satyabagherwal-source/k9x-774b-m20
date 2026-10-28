@@ -5953,3 +5953,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2` | `https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | `hf-nerkyor` | Multi-dimensional audit evidence | 2026-10-28T21:37:08.062Z |
 | `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `824df15e` | Multi-dimensional audit evidence | 2026-10-28T21:37:11.102Z |
 | `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `d923b9b0` | Multi-dimensional audit evidence | 2026-10-28T21:37:22.836Z |
+| `learn-huggingface-facebook-sam3` | `https://huggingface.co/facebook/sam3` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-10-28T21:43:27.754Z |
+| `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `36bf2b88` | Multi-dimensional audit evidence | 2026-10-28T21:43:30.679Z |
+| `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `60ce2463` | Multi-dimensional audit evidence | 2026-10-28T21:43:37.948Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `c1a950a9` | Multi-dimensional audit evidence | 2026-10-28T21:43:39.510Z |

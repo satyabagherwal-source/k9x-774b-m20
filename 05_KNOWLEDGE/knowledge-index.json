@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T21:37:22.759Z",
+  "last_updated": "2026-10-28T21:43:39.465Z",
   "total_verified_learnings": 1159,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12908,8 +12908,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "657cff6c",
-      "content_hash": "a29309b3e886ad2fda7e771419f6abcfbc290888e49d5d61f951c52cc2f0cb59",
+      "source_version": "c1a950a9",
+      "content_hash": "222bdfd8e1be1fc906adee54d255bf56a1333993da22b880fef60a46ce29f50b",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -13032,6 +13032,11 @@
           "number": 5356,
           "title": "deps): bump webpki-roots to 1.0.11 to drop distrusted eMudhra roots (#6023)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5414,
+          "title": "test: cover delegate contract notification end to end (#6022)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13039,7 +13044,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T17:49:49.211Z",
+      "verified_at": "2026-10-28T21:43:39.454Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -21958,7 +21963,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/facebook/sam3",
       "source_version": "hf-facebook-sam3",
-      "content_hash": "f69731dbfb7c6dd17cb6e1ab9553359157577f9ffeb9a52e10e21fd80e3e6790",
+      "content_hash": "2ddc61fc2125208cc1309cd9554c1e40c3ea1a4f2c1f40ce7444b077e3cbcd10",
       "dossier_path": "07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
       "promoted_rules": [
@@ -22015,7 +22020,7 @@
         "learn-huggingface-hf-facebook-sam3-mv47u4yi",
         "learn-huggingface-hf-facebook-sam3-mv4l4ga1"
       ],
-      "verified_at": "2026-10-25T16:08:57.937Z",
+      "verified_at": "2026-10-28T21:43:27.694Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39591,8 +39596,8 @@
       "slug": "nats-io-nats-server",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats-server",
-      "source_version": "ac848fa8",
-      "content_hash": "6ba4eebf0c92d13f12da7605264563e58fe309380661be1d3a51716667c62a47",
+      "source_version": "60ce2463",
+      "content_hash": "d0292b2a781409438d3aa22bdc4334d76c25b9575918d684ee8c3529b4dc88a1",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "promoted_rules": [
@@ -39620,6 +39625,11 @@
           "number": 4698,
           "title": "[FIXED] server: lock when reading lnocu state (#8779)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5413,
+          "title": "[FIXED] Durable mirror/source skipping messages after a consumer reset (#8802)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39627,7 +39637,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T11:02:56.964Z",
+      "verified_at": "2026-10-28T21:43:37.892Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42808,8 +42818,8 @@
       "slug": "oxc-project-oxc",
       "platform": "github",
       "source_url": "https://github.com/oxc-project/oxc",
-      "source_version": "4e132918",
-      "content_hash": "4a7628c48a1d757bf48a2e1238fb0d0c70c8f5567d768b85f1bb0773282b9c34",
+      "source_version": "36bf2b88",
+      "content_hash": "8a9c8d74e95de0c8af9e46fb4e60dc5fd09d63a17df54764b8e8ed3fdb3c55ad",
       "dossier_path": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "promoted_rules": [
@@ -42847,6 +42857,11 @@
           "number": 4957,
           "title": "linter): migrate no-test-prefixes to AST dispatch (#28225)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5412,
+          "title": "coverage): clone missing submodules once (#28325)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42854,7 +42869,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T19:20:11.060Z",
+      "verified_at": "2026-10-28T21:43:30.616Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -146436,6 +146451,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T21:37:22.734Z"
+    },
+    "rule-5412": {
+      "learning_id": "rule-5412",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5412,
+      "title": "coverage): clone missing submodules once (#28325)",
+      "source_url": "https://github.com/oxc-project/oxc",
+      "source_version": "36bf2b88",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T21:43:30.616Z"
+    },
+    "rule-5413": {
+      "learning_id": "rule-5413",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5413,
+      "title": "[FIXED] Durable mirror/source skipping messages after a consumer reset (#8802)",
+      "source_url": "https://github.com/nats-io/nats-server",
+      "source_version": "60ce2463",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T21:43:37.892Z"
+    },
+    "rule-5414": {
+      "learning_id": "rule-5414",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5414,
+      "title": "test: cover delegate contract notification end to end (#6022)",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "c1a950a9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T21:43:39.454Z"
     }
   },
   "aliases": {

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T21:37:25.372Z",
-    "lastVerified": "2026-10-28T21:37:25.372Z",
+    "lastChecked": "2026-10-28T21:43:42.044Z",
+    "lastVerified": "2026-10-28T21:43:42.044Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -124,8 +124,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-28T21:04:31.852Z",
-    "lastVerified": "2026-10-28T21:04:31.852Z",
+    "lastChecked": "2026-10-28T21:43:40.392Z",
+    "lastVerified": "2026-10-28T21:43:40.392Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -889,9 +889,9 @@
   "influxdata-influxdb": {
     "name": "influxdb",
     "officialUrl": "https://github.com/influxdata/influxdb",
-    "lastChecked": "2026-10-28T04:03:46.998Z",
+    "lastChecked": "2026-10-28T21:43:37.042Z",
     "revisionIdentifier": "185688a5",
-    "lastVerified": "2026-10-28T04:03:46.998Z"
+    "lastVerified": "2026-10-28T21:43:37.042Z"
   },
   "burntsushi-ripgrep": {
     "name": "ripgrep",
@@ -1009,14 +1009,14 @@
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T17:49:48.657Z",
-    "lastVerified": "2026-10-28T17:49:48.657Z",
+    "lastChecked": "2026-10-28T21:43:39.107Z",
+    "lastVerified": "2026-10-28T21:43:39.107Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "a29309b3e886ad2fda7e771419f6abcfbc290888e49d5d61f951c52cc2f0cb59",
+    "contentHash": "222bdfd8e1be1fc906adee54d255bf56a1333993da22b880fef60a46ce29f50b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1338,11 +1338,21 @@
     "lastVerified": "2026-10-28T04:55:00.082Z"
   },
   "nats-io-nats-server": {
-    "name": "nats-server",
+    "name": "nats-io/nats-server",
     "officialUrl": "https://github.com/nats-io/nats-server",
-    "lastChecked": "2026-10-28T04:55:02.551Z",
-    "revisionIdentifier": "ac848fa8",
-    "lastVerified": "2026-10-28T04:55:02.551Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-28T21:43:37.477Z",
+    "lastVerified": "2026-10-28T21:43:37.477Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-nats-io-nats-server",
+    "contentHash": "d0292b2a781409438d3aa22bdc4334d76c25b9575918d684ee8c3529b4dc88a1",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 6,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
@@ -6938,5 +6948,46 @@
     "lastChecked": "2026-10-28T21:37:09.360Z",
     "revisionIdentifier": "4af02006",
     "lastVerified": "2026-10-28T21:37:09.360Z"
+  },
+  "oxc-project-oxc": {
+    "name": "oxc-project/oxc",
+    "officialUrl": "https://github.com/oxc-project/oxc",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T21:43:30.299Z",
+    "lastVerified": "2026-10-28T21:43:30.299Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-oxc-project-oxc",
+    "contentHash": "8a9c8d74e95de0c8af9e46fb4e60dc5fd09d63a17df54764b8e8ed3fdb3c55ad",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 6,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-facebook-sam3": {
+    "name": "facebook/sam3",
+    "officialUrl": "https://huggingface.co/facebook/sam3",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T21:43:26.983Z",
+    "lastVerified": "2026-10-28T21:43:26.983Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-facebook-sam3",
+    "contentHash": "2ddc61fc2125208cc1309cd9554c1e40c3ea1a4f2c1f40ce7444b077e3cbcd10",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "msasikanth-twine": {
+    "name": "twine",
+    "officialUrl": "https://github.com/msasikanth/twine",
+    "lastChecked": "2026-10-28T21:43:29.523Z",
+    "revisionIdentifier": "4b3aa942",
+    "lastVerified": "2026-10-28T21:43:29.523Z"
   }
 }

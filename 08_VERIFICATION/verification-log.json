@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-RXOM",
-    "timestamp": "2026-10-27T17:05:13.798Z",
-    "repository": "tickernelz/opencode-mem",
-    "learningId": "learn-github-tickernelz-opencode-mem",
-    "contentHash": "86a4a89e24999dba3e70342f64b6cbd4f18283be76bc387578d9655e671abbe0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-Y38N",
-    "timestamp": "2026-10-27T17:10:00.935Z",
-    "repository": "cosscom/coss",
-    "learningId": "learn-github-cosscom-coss",
-    "contentHash": "67122c0d74315fed3f8d7aaa95b94dfc1b8a4d02af7dc4ff1e1dbf3fe054d4f9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-6P9K",
-    "timestamp": "2026-10-27T17:16:42.728Z",
-    "repository": "MCPJam/inspector",
-    "learningId": "learn-github-mcpjam-inspector",
-    "contentHash": "cc653b1ad46bf238f979ee65720cdcedb7dd7edb70ac360c647ff328e2c19a59",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-6SOS",
-    "timestamp": "2026-10-27T17:16:47.164Z",
-    "repository": "cjo4m06/mcp-shrimp-task-manager",
-    "learningId": "learn-github-cjo4m06-mcp-shrimp-task-manager",
-    "contentHash": "beef38a5b453e78cc7e5c2fb739c38143ec3e78af97a0506f9874e29dd312b80",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-6UBB",
     "timestamp": "2026-10-27T17:16:49.271Z",
     "repository": "chongdashu/unreal-mcp",
@@ -7490,6 +7430,66 @@
     "repository": "weaviate/weaviate",
     "learningId": "learn-github-weaviate-weaviate",
     "contentHash": "72f00540277944fc4190da5608cd61e3808330fc8a4d5710f75b51f670b86cc3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-5LHJ",
+    "timestamp": "2026-10-28T21:43:27.751Z",
+    "repository": "facebook/sam3",
+    "learningId": "learn-huggingface-facebook-sam3",
+    "contentHash": "2ddc61fc2125208cc1309cd9554c1e40c3ea1a4f2c1f40ce7444b077e3cbcd10",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-5NQS",
+    "timestamp": "2026-10-28T21:43:30.676Z",
+    "repository": "oxc-project/oxc",
+    "learningId": "learn-github-oxc-project-oxc",
+    "contentHash": "8a9c8d74e95de0c8af9e46fb4e60dc5fd09d63a17df54764b8e8ed3fdb3c55ad",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-5TCP",
+    "timestamp": "2026-10-28T21:43:37.945Z",
+    "repository": "nats-io/nats-server",
+    "learningId": "learn-github-nats-io-nats-server",
+    "contentHash": "d0292b2a781409438d3aa22bdc4334d76c25b9575918d684ee8c3529b4dc88a1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-5UK3",
+    "timestamp": "2026-10-28T21:43:39.507Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "222bdfd8e1be1fc906adee54d255bf56a1333993da22b880fef60a46ce29f50b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

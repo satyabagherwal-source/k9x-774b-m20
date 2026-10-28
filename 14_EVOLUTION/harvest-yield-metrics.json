@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T21:37:22.841Z",
-  "total_cycles_completed": 5921,
-  "total_learnings_persisted": 5921,
-  "total_rules_promoted": 5373,
+  "last_updated": "2026-10-28T21:43:39.513Z",
+  "total_cycles_completed": 5925,
+  "total_learnings_persisted": 5925,
+  "total_rules_promoted": 5376,
   "history": [
-    {
-      "timestamp": "2026-10-28T11:17:02.717Z",
-      "repository": "unsloth/Qwen3.8-27B-GGUF",
-      "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T11:23:51.188Z",
-      "repository": "skyhook-io/radar",
-      "learningId": "learn-github-skyhook-io-radar",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T11:23:52.713Z",
-      "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
-      "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T11:32:27.459Z",
-      "repository": "okteto/okteto",
-      "learningId": "learn-github-okteto-okteto",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T11:36:17.955Z",
       "repository": "Cloudflare/clef",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-28T21:37:22.841Z",
       "repository": "weaviate/weaviate",
       "learningId": "learn-github-weaviate-weaviate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T21:43:27.761Z",
+      "repository": "facebook/sam3",
+      "learningId": "learn-huggingface-facebook-sam3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T21:43:30.682Z",
+      "repository": "oxc-project/oxc",
+      "learningId": "learn-github-oxc-project-oxc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T21:43:37.951Z",
+      "repository": "nats-io/nats-server",
+      "learningId": "learn-github-nats-io-nats-server",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T21:43:39.513Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

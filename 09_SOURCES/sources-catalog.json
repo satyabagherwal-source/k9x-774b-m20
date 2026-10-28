@@ -625,8 +625,8 @@
     "sourceUrl": "https://huggingface.co/facebook/sam3",
     "sourceVersion": "hf-facebook-sam3",
     "license": "Open-Source",
-    "contentHash": "f69731dbfb7c6dd17cb6e1ab9553359157577f9ffeb9a52e10e21fd80e3e6790",
-    "lastHarvestedAt": "2026-10-25T16:08:58.005Z",
+    "contentHash": "2ddc61fc2125208cc1309cd9554c1e40c3ea1a4f2c1f40ce7444b077e3cbcd10",
+    "lastHarvestedAt": "2026-10-28T21:43:27.754Z",
     "learningId": "learn-huggingface-facebook-sam3"
   },
   "hf-unsloth-qwen3.8-27b-gguf": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "657cff6c",
+    "sourceVersion": "c1a950a9",
     "license": "NOASSERTION",
-    "contentHash": "a29309b3e886ad2fda7e771419f6abcfbc290888e49d5d61f951c52cc2f0cb59",
-    "lastHarvestedAt": "2026-10-28T17:49:49.302Z",
+    "contentHash": "222bdfd8e1be1fc906adee54d255bf56a1333993da22b880fef60a46ce29f50b",
+    "lastHarvestedAt": "2026-10-28T21:43:39.510Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -7263,10 +7263,10 @@
     "repository": "nats-io/nats-server",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats-server",
-    "sourceVersion": "ac848fa8",
+    "sourceVersion": "60ce2463",
     "license": "Apache-2.0",
-    "contentHash": "6ba4eebf0c92d13f12da7605264563e58fe309380661be1d3a51716667c62a47",
-    "lastHarvestedAt": "2026-10-27T11:02:57.055Z",
+    "contentHash": "d0292b2a781409438d3aa22bdc4334d76c25b9575918d684ee8c3529b4dc88a1",
+    "lastHarvestedAt": "2026-10-28T21:43:37.948Z",
     "learningId": "learn-github-nats-io-nats-server"
   },
   "str4d-rage": {
@@ -7723,10 +7723,10 @@
     "repository": "oxc-project/oxc",
     "platform": "github",
     "sourceUrl": "https://github.com/oxc-project/oxc",
-    "sourceVersion": "4e132918",
+    "sourceVersion": "36bf2b88",
     "license": "MIT",
-    "contentHash": "4a7628c48a1d757bf48a2e1238fb0d0c70c8f5567d768b85f1bb0773282b9c34",
-    "lastHarvestedAt": "2026-10-27T19:20:11.126Z",
+    "contentHash": "8a9c8d74e95de0c8af9e46fb4e60dc5fd09d63a17df54764b8e8ed3fdb3c55ad",
+    "lastHarvestedAt": "2026-10-28T21:43:30.679Z",
     "learningId": "learn-github-oxc-project-oxc"
   },
   "pointfreeco-swift-composable-architecture": {
