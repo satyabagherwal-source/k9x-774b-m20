@@ -675,8 +675,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
     "sourceVersion": "hf-unsloth-embeddinggemma-2-gguf",
     "license": "Open-Source",
-    "contentHash": "1a65e25c534faaf0ae2145e1ced297c26955d7d99ba8f14dea538bc08a491a01",
-    "lastHarvestedAt": "2026-10-25T16:48:05.896Z",
+    "contentHash": "0b4ecab20085c0a2b9057c6d6a1f3aad7417c40963f118a6ce95222539ea08dc",
+    "lastHarvestedAt": "2026-10-28T19:46:40.750Z",
     "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf"
   },
   "hf-cloudflare-clef": {
@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "5375fc14",
+    "sourceVersion": "1f4eee02",
     "license": "Apache-2.0",
-    "contentHash": "9647257de8d8a09a8847a8653b780a1eea6952ab347ce96d80770a797b32d695",
-    "lastHarvestedAt": "2026-10-28T16:05:21.662Z",
+    "contentHash": "1d9b2ae0dc011a9dd30b1e2fc797e4be684b21983545208cc37aee4d9d1a169a",
+    "lastHarvestedAt": "2026-10-28T19:46:53.277Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -6663,10 +6663,10 @@
     "repository": "nginx/kubernetes-ingress",
     "platform": "github",
     "sourceUrl": "https://github.com/nginx/kubernetes-ingress",
-    "sourceVersion": "f45222fb",
+    "sourceVersion": "a052bc26",
     "license": "Apache-2.0",
-    "contentHash": "4ebf8b8016c6edbc036309679f598278417f479d8ae6ecc94e9b437bfdaba147",
-    "lastHarvestedAt": "2026-10-27T20:31:59.852Z",
+    "contentHash": "721b879436de950bdb68731b2a989017ca53d97b73f2e22dd6540491af5e2ecb",
+    "lastHarvestedAt": "2026-10-28T19:46:50.452Z",
     "learningId": "learn-github-nginx-kubernetes-ingress"
   },
   "milvus-io-milvus": {
@@ -7233,10 +7233,10 @@
     "repository": "Tencent-TDS/KuiklyUI",
     "platform": "github",
     "sourceUrl": "https://github.com/Tencent-TDS/KuiklyUI",
-    "sourceVersion": "f0d0389c",
+    "sourceVersion": "2fcb6f77",
     "license": "NOASSERTION",
-    "contentHash": "82cf314822b6db6f049f46443a927b5ae2fc218bea12a4bc0e2837cde3608041",
-    "lastHarvestedAt": "2026-10-28T00:40:13.031Z",
+    "contentHash": "94c7021ac105ad56ad310d8fbb63456c8fe0f6a1812080936b4ebd651e7dffc1",
+    "lastHarvestedAt": "2026-10-28T19:46:48.194Z",
     "learningId": "learn-github-tencent-tds-kuiklyui"
   },
   "seaql-sea-orm": {

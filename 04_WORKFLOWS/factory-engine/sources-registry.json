@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T19:39:06.443Z",
-    "lastVerified": "2026-10-28T19:39:06.443Z",
+    "lastChecked": "2026-10-28T19:46:55.817Z",
+    "lastVerified": "2026-10-28T19:46:55.817Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -281,9 +281,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-28T19:17:20.839Z",
+    "lastChecked": "2026-10-28T19:46:52.274Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-28T19:17:20.839Z"
+    "lastVerified": "2026-10-28T19:46:52.274Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -317,11 +317,21 @@
     "lastVerified": "2026-10-28T03:11:18.351Z"
   },
   "nginx-kubernetes-ingress": {
-    "name": "kubernetes-ingress",
+    "name": "nginx/kubernetes-ingress",
     "officialUrl": "https://github.com/nginx/kubernetes-ingress",
-    "lastChecked": "2026-10-28T03:11:20.917Z",
-    "revisionIdentifier": "f45222fb",
-    "lastVerified": "2026-10-28T03:11:20.917Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-28T19:46:49.860Z",
+    "lastVerified": "2026-10-28T19:46:49.860Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-nginx-kubernetes-ingress",
+    "contentHash": "721b879436de950bdb68731b2a989017ca53d97b73f2e22dd6540491af5e2ecb",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "openziti-zrok": {
     "name": "zrok",
@@ -1843,14 +1853,14 @@
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T16:05:21.247Z",
-    "lastVerified": "2026-10-28T16:05:21.247Z",
+    "lastChecked": "2026-10-28T19:46:52.639Z",
+    "lastVerified": "2026-10-28T19:46:52.639Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "9647257de8d8a09a8847a8653b780a1eea6952ab347ce96d80770a797b32d695",
+    "contentHash": "1d9b2ae0dc011a9dd30b1e2fc797e4be684b21983545208cc37aee4d9d1a169a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6320,5 +6330,53 @@
     "lastChecked": "2026-10-28T19:39:03.907Z",
     "revisionIdentifier": "6652e8dd",
     "lastVerified": "2026-10-28T19:39:03.907Z"
+  },
+  "bgreenwell-doxx": {
+    "name": "doxx",
+    "officialUrl": "https://github.com/bgreenwell/doxx",
+    "lastChecked": "2026-10-28T19:46:37.194Z",
+    "revisionIdentifier": "062819a1",
+    "lastVerified": "2026-10-28T19:46:37.194Z"
+  },
+  "hf-unsloth-embeddinggemma-2-gguf": {
+    "name": "unsloth/embeddinggemma-2-GGUF",
+    "officialUrl": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T19:46:39.732Z",
+    "lastVerified": "2026-10-28T19:46:39.732Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
+    "contentHash": "0b4ecab20085c0a2b9057c6d6a1f3aad7417c40963f118a6ce95222539ea08dc",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "tencent-tds-kuiklyui": {
+    "name": "Tencent-TDS/KuiklyUI",
+    "officialUrl": "https://github.com/Tencent-TDS/KuiklyUI",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-10-28T19:46:47.575Z",
+    "lastVerified": "2026-10-28T19:46:47.575Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-tencent-tds-kuiklyui",
+    "contentHash": "94c7021ac105ad56ad310d8fbb63456c8fe0f6a1812080936b4ebd651e7dffc1",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "tickernelz-opencode-mem": {
+    "name": "opencode-mem",
+    "officialUrl": "https://github.com/tickernelz/opencode-mem",
+    "lastChecked": "2026-10-28T19:46:49.756Z",
+    "revisionIdentifier": "83c386bc",
+    "lastVerified": "2026-10-28T19:46:49.756Z"
   }
 }

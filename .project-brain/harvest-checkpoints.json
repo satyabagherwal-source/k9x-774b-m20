@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T19:38:54.946Z",
+  "last_updated": "2026-10-28T19:46:53.288Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -845,14 +845,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
-      "content_hash": "1a65e25c534faaf0ae2145e1ced297c26955d7d99ba8f14dea538bc08a491a01",
-      "verified_at": "2026-10-25T16:48:05.904Z",
+      "content_hash": "0b4ecab20085c0a2b9057c6d6a1f3aad7417c40963f118a6ce95222539ea08dc",
+      "verified_at": "2026-10-28T19:46:40.767Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T16:48:05.904Z"
+      "last_updated": "2026-10-28T19:46:40.767Z"
     },
     "Cloudflare/clef": {
       "repository": "Cloudflare/clef",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "bc6905ed852da8d96a08791329b631066ab219bca4d3f14d909344059718202e",
-      "verified_at": "2026-10-28T17:42:55.865Z",
+      "content_hash": "1d9b2ae0dc011a9dd30b1e2fc797e4be684b21983545208cc37aee4d9d1a169a",
+      "verified_at": "2026-10-28T19:46:53.288Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T17:42:55.865Z"
+      "last_updated": "2026-10-28T19:46:53.288Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -10056,14 +10056,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nginx-kubernetes-ingress",
-      "content_hash": "4ebf8b8016c6edbc036309679f598278417f479d8ae6ecc94e9b437bfdaba147",
-      "verified_at": "2026-10-27T20:31:59.861Z",
+      "content_hash": "721b879436de950bdb68731b2a989017ca53d97b73f2e22dd6540491af5e2ecb",
+      "verified_at": "2026-10-28T19:46:50.460Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T20:31:59.861Z"
+      "last_updated": "2026-10-28T19:46:50.460Z"
     },
     "milvus-io/milvus": {
       "repository": "milvus-io/milvus",
@@ -10896,14 +10896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tencent-tds-kuiklyui",
-      "content_hash": "82cf314822b6db6f049f46443a927b5ae2fc218bea12a4bc0e2837cde3608041",
-      "verified_at": "2026-10-28T00:40:13.042Z",
+      "content_hash": "94c7021ac105ad56ad310d8fbb63456c8fe0f6a1812080936b4ebd651e7dffc1",
+      "verified_at": "2026-10-28T19:46:48.203Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T00:40:13.042Z"
+      "last_updated": "2026-10-28T19:46:48.203Z"
     },
     "SeaQL/sea-orm": {
       "repository": "SeaQL/sea-orm",

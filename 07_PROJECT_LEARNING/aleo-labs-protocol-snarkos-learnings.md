@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
-> **Source Version**: `5375fc14`  
+> **Source Version**: `1f4eee02`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T16:05:21.252Z  
+> **Timestamp**: 2026-10-28T19:46:52.647Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T16:05:21.247Z  
+> **Harvest Timestamp**: 2026-10-28T19:46:52.639Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Decentralized Operating System for ZK Applications
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4531 stars
+- **Stars / Engagement**: 4530 stars
 
 ---
 
@@ -1141,6 +1141,9 @@ pub const LEGACY_ROUTER_PEER_CACHE_FILE: &str = "cached_router_peers";
 /// The filename of the proposal cache.
 pub const CURRENT_PROPOSAL_CACHE_FILE: &str = "current-proposal-cache";
 
+/// The filename of the consensus upgrade that validators require of this node.
+pub const REQUIRED_CONSENSUS_UPGRADE_FILE: &str = "required-consensus-upgrade";
+
 /// The filename used to persist the hotswapped dev committee's starting round.
 #[cfg(feature = "test_network")]
 pub const DEV_COMMITTEE_STATE_FILE: &str = "dev-committee-state";
@@ -1207,6 +1210,11 @@ impl NodeDataDir {
     /// The location to store the current proposal cache.
     pub fn current_proposal_cache_path(&self) -> PathBuf {
         self.path.join(CURRENT_PROPOSAL_CACHE_FILE)
+    }
+
+    /// The location to record the consensus upgrade that validators require of this node.
+    pub fn required_consensus_upgrade_path(&self) -> PathBuf {
+        self.path.join(REQUIRED_CONSENSUS_UPGRADE_FILE)
     }
 
     /// The location used to persist the hotswapped dev committee's starting round.
@@ -1396,6 +1404,9 @@ pub struct SignalHandler {
     /// This receiver is used to wait for the node to be stopped.
     stopped_receiver: Mutex<Option<oneshot::Receiver<()>>>,
 
+    /// The reason the node was stopped with, if the process should exit with an error.
+    error: Mutex<Option<String>>,
+
     /// An optional tokio runtime handle.
     pub handle: Option<Handle>,
 }
@@ -1407,6 +1418,7 @@ impl SignalHandler {
         let obj = Arc::new(Self {
             stopped_sender: RwLock::new(Some(stopped_sender)),
             stopped_receiver: Mutex::new(Some(stopped_receiver)),
+            error: Default::default(),
             handle,
         });
 
@@ -1455,6 +1467,19 @@ impl SignalHandler {
         }
 
         self.stop();
+    }
+
+    /// Stops the node, and records `error` as the reason for the process to exit with an error.
+    ///
+    /// Only the first error is kept.
+    pub fn stop_with_error(&self, error: String) {
+        self.error.lock().get_or_insert(error);
+        self.stop();
+    }
+
+    /// Returns the error the node was stopped with, if any.
+    pub fn error(&self) -> Option<String> {
+        self.error.lock().clone()
     }
 
     /// Waits until the signal handler was invoked or the stopped flag was set some other way.
@@ -1508,6 +1533,18 @@ mod tests {
         // The manual path, used when the node hits a fatal error rather than a Ctrl+C.
         handler.stop();
         assert!(handler.is_stopped());
+    }
+
+    #[tokio::test]
+    async fn a_signal_handler_keeps_the_first_error_it_was_stopped_with() {
+        let handler = SignalHandler::new(None);
+        assert_eq!(handler.error(), None);
+
+        handler.stop_with_error("first".to_string());
+        handler.stop_with_error("second".to_string());
+
+        assert!(handler.is_stopped());
+        assert_eq!(handler.error().as_deref(), Some("first"));
     }
 
     #[tokio::test]
@@ -1955,34 +1992,586 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5375fc14` (2026-10-28)
-**Commit Message**: Merge pull request #4584 from aleo-labs-protocol/fix/client-solution-limit
+### Incident Patch 1: `1f4eee02` (2026-10-28)
+**Commit Message**: Merge pull request #4534 from aleo-labs-protocol/feat/upgrade-schedule-handshake
 
-**File**: `node/src/client/mod.rs` (modified, +7/-9)
+Exchange consensus schedules in the gateway handshake, and stop before an unsupported version activates
+
+**File**: `.ci/test_upgrade_required.sh` (added, +230/-0)
 ```diff
-@@ -365,15 +365,13 @@ impl<N: Network, C: ConsensusStorage<N>> Client<N, C> {
-                     let _node = node.clone();
-                     // For each solution, spawn a task to verify it.
-                     tokio::task::spawn_blocking(move || {
--                        // Retrieve the latest epoch hash.
--                        if let Ok(epoch_hash) = _node.ledger.latest_epoch_hash() {
--                            // Check if the prover has reached their solution limit.
--                            // While snarkVM will ultimately abort any excess solutions for safety, performing this check
--                            // here prevents the to-be aborted solutions from propagating through the network.
--                            let prover_address = solution.address();
--                            if _node.ledger.is_solution_limit_reached(&prover_address, 0) {
--                                debug!("Invalid Solution '{}' - Prover '{prover_address}' has reached their solution limit for the current epoch", fmt_id(solution.id()));
--                            }
-+                        // Check if the prover has reached their solution limit.
-+                        // While snarkVM will ultimately abort any excess solutions for safety, performing this check
-+                        // here prevents the to-be aborted solutions from propagating through the network.
-+                        let prover_address = solution.address();
-+                        if _node.ledger.is_solution_limit_reached(&prover_address, 0) {
-+                            debug!("Invalid Solution '{}' - Prover '{prover_address}' has reached their solution limit for the current epoch", fmt_id(solution.id()));
-+                        } else if let Ok(epoch_hash) = _node.ledger.latest_epoch_hash() {
-                             // Retrieve the latest proof target.
-                             let proof_target = _node.ledger.latest_block().header().proof_target();
-                             // Ensure that the solution is valid for the given epoch.
+@@ -0,0 +1,230 @@
++#!/bin/bash
++
++####################################################
++# Runs a devnet in which one validator lacks the next consensus version.
++# Checks that the outdated validator warns as soon as it connects, keeps building blocks up to 100
++# blocks before the activation height, and then exits with an error and without forking. Checks the
++# same exit on every restart, with or without its record of the required upgrade. Then checks that
++# it rejoins the network once upgraded, and that it discards a record no validator confirms.
++####################################################
++
++set -eo pipefail
++
++network_id=0
++total_validators=4
++activation_height=150
++# The outdated validator builds no block from REQUIRED_UPGRADE_SAFETY_MARGIN blocks before the activation.
++safety_margin=100
++stop_height=$((activation_height - safety_margin))
++target_height=180
++# The outdated validator is the last one, so that the upgraded ones form a contiguous range.
++outdated_validator=$((total_validators-1))
++NODE_VERBOSITY=2
++
++# shellcheck source=SCRIPTDIR/utils.sh
++. ./.ci/utils.sh
++
++network_name=$(get_network_name "$network_id")
++
++# Logs a failure and exits.
++function fail() {
++  log "⛔️ $*"
++  exit 1
++}
++init_log_dir
++
++trap stop_nodes EXIT
++
++# The heights of V1..V21 match the test defaults; only V22 differs.
++base_heights="0,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24"
++upgraded_heights="$base_heights,$activation_height"
++outdated_heights="$base_heights,4294967295"
++
++common_flags=(
++  --nodisplay --nobanner --noupdater "--network=$network_id" "--verbosity=$NODE_VERBOSITY"
++  "--dev-num-validators=$total_validators" "--dev-num-clients=0"
++)
++
++upgraded_port=3030
++outdated_port=$((3030+outdated_validator))
++outdated_metrics_port=9000
++record_file=".node-data-$network_id-$outdated_validator/required-consensus-upgrade"
++# The activation height and ConsensusVersion::V22, in the little-endian encoding of the record.
++expected_record="$(printf '%08x' "$activation_height" | sed -E 's/(..)(..)(..)(..)/\4\3\2\1/')1600"
++
++# Starts validator $1 with the consensus version heights $2, logging to $3.
++function start_validator() {
++  local index=$1
++  local heights=$2
++  local log_file=$3
++  local metrics_flags=()
++  if (( index == outdated_validator )); then
++    metrics_flags=(--metrics "--metrics-ip=$localhost:$outdated_metrics_port")
++  fi
++  CONSENSUS_VERSION_HEIGHTS=$heights run_with_prefix "validator-$index" snarkos start "${common_flags[@]}" \
++    "--dev=$index" --validator "--logfile=$log_file" "--rest=$localhost:$((3030+index))" --no-dev-txs \
++    "${metrics_flags[@]}"
++  PIDS[index]=$!
++}
++
++# Prints the hash of the block at height $2 on the node with the REST port $1, or nothing.
++function block_hash() {
++  curl -s --max-time 5 "http://$localhost:$1/v2/$network_name/block/$2" | jq -r '.block_hash // empty' 2>/dev/null || true
++}
++
++# Fails unless the upgraded validators hold the block with hash $2 at height $1.
++function check_no_fork() {
++  local height=$1
++  local outdated_hash=$2
++  local upgraded_hash
++  upgraded_hash=$(block_hash "$upgraded_port" "$height")
++  if [[ -z "$outdated_hash" || "$outdated_hash" != "$upgraded_hash" ]]; then
++    fail "At height $height, the outdated validator holds '$outdated_hash' and the upgraded ones '$upgraded_hash'"
++  fi
++}
++
++# Waits for the outdated validator to exit, and checks that it exited with an error, recorded the
++# required upgrade, and holds no block the upgraded validators lack. $1 names the run, $2 is its log
++# file, and $3, if set, is the lowest height it must have reached; it must not exceed the activation
++# height. Sets `warned_height` to its height when it first warned of the upgrade, if it did, and
++# `reported_upgrade` if its metrics reported that it needs an upgrade.
++function expect_outdated_exit() {
++  local run=$1
++  local log_file=$2
++  local min_height=$3
++  local pid=${PIDS[outdated_validator]}
++  local height last_height="" last_hash="" hash start
++  warned_height=""
++  reported_upgrade=""
++  start=$(now)
++
++  while kill -0 "$pid" 2>/dev/null; do
++    if (( $(elapsed_since "$start") > 600 )); then
++      fail "The outdated validator did not exit ($run)"
++    fi
++    height=$(get_block_height_by_port "$outdated_port" "$network_name" 5)
++    if [[ -n "$height" ]]; then
++      hash=$(block_hash "$outdated_port" "$height")
++      if [[ -n "$hash" ]]; then
++        last_height=$height
++        last_hash=$hash
++      fi
++      if [[ -z "$warned_height" ]] && grep -q "This node stops before building block" "$log_file"; then
++        warned_height=$height
++      fi
++      if [[ -n "$warned_height" && -z "$reported_upgrade" ]]; then
++        # Read the metrics first: with `pipefail`, `grep -q` exiting early would fail `curl`.
++        metrics=$(curl -s --max-time 5 "http://$localhost:$outdated_metrics_port/metrics" || true)
++        if grep -q "^snarkos_consensus_needs_upgrade 1$" <<< "$metrics"; then
++          reported_upgrade
+```
+
+**File**: `README.md` (modified, +21/-0)
+```diff
+@@ -216,6 +216,27 @@ cargo install --locked --path .
+ 
+ Telemetry is included by default when running `./scripts/run-validator.sh`.
+ 
++### 3.2.2 Required Consensus Upgrades
++
++During the handshake, each validator shares the consensus version schedule of its build. Your validator needs an upgrade when validators that hold at least a third of the stake schedule a consensus version that your build does not run at that height. Your validator learns this as soon as those validators connect, which is usually long before the activation height.
++
++When an upgrade is required, your validator:
++
++1. Exports the metric `snarkos_consensus_needs_upgrade` with the value `1`. The metrics `snarkos_consensus_required_upgrade_height` and `snarkos_consensus_required_upgrade_version` give the activation height and the version.
++2. Logs an error every 10 minutes, with the version and the activation height.
++3. Keeps building blocks until 100 blocks before the activation height. There it stops and exits with an error, instead of forking.
++
++If you run a validator, start it with `--metrics`, and alert when `snarkos_consensus_needs_upgrade` is greater than `0`. Then upgrade snarkOS at least 100 blocks before the height in `snarkos_consensus_required_upgrade_height`. For example, as a Prometheus alerting rule:
++
++```yaml
++- alert: SnarkOSNeedsUpgrade
++  expr: snarkos_consensus_needs_upgrade > 0
++  annotations:
++    summary: "{{ $labels.instance }} must be upgraded 100 blocks before the height in snarkos_consensus_required_upgrade_height"
++```
++
++A validator that exits with this error needs an upgrade, not a restart. It writes the requirement to `required-consensus-upgrade` in its node data directory, and a restart with the same build exits again. An upgraded build removes the file.
++
+ ## 3.3 Run an Aleo Prover
+ 
+ Start by following the instructions in the [Build Guide](#2-build-guide).
+```
+
+**File**: `cli/src/commands/start.rs` (modified, +5/-0)
+```diff
+@@ -1013,6 +1013,11 @@ impl Start {
+         }
+ 
+         node.wait_for_signals(&signal_handler).await;
++
++        // Exit with an error, so that the node is not mistaken for one that was stopped on purpose.
++        if let Some(error) = signal_handler.error() {
++            bail!(error);
++        }
+         Ok(())
+     }
+ 
+```
+
+**File**: `node/bft/events/src/helpers/handshake.rs` (modified, +264/-4)
+```diff
+@@ -21,7 +21,7 @@
+ //! The four messages are:
+ //!
+ //! 1. `->` [`HandshakeHint`] - cleartext, so the responder can bail out before doing any work.
+-//! 2. `<-` [`PeerInfo`] - the responder's metadata, deliberately without a signature.
++//! 2. `<-` [`ResponderInfo`] - the responder's metadata, deliberately without a signature.
+ //! 3. `->` [`InitiatorInfo`] - the initiator's metadata *and* the proof of its identity.
+ //! 4. `<-` [`ResponderProof`] - the responder's verdict, and its own proof if the initiator checked
+ //!    out. This is the first transport message, the pattern having ended with the third.
+@@ -43,6 +43,14 @@
+ //! it earlier. What must not change is that anything the responder acts on ends up covered by one of
+ //! the two: metadata reaching it unencrypted *after* message 2 would be bound by neither.
+ //!
++//! # Fields after the original layout
++//!
++//! Peers that predate a field ignore whatever follows the fields they know, as handshake payloads
++//! are decoded without a check for leftover bytes. Fields added since are therefore appended to the
++//! end of messages 2 and 3, behind a length prefix, as the [`HandshakeTrailer`]. A field must not go
++//! into [`PeerInfo`] itself: in message 3 it is followed by the signature, which an older peer would
++//! then misread.
++//!
+ //! The separate reason the responder re-checks the hint against [`InitiatorInfo`] is a
+ //! self-inconsistent initiator, not tampering. Nothing stops a peer from claiming one value in the
+ //! hint, having the responder run its early checks against it, and then authenticating a different
+@@ -58,6 +66,8 @@ use snarkvm::{
+     prelude::{Address, Field, Signature},
+ };
+ 
++use tracing::warn;
++
+ use std::{io::Result as IoResult, net::SocketAddr};
+ 
+ /// The domain separator for the signatures binding an Aleo address to a gateway Noise session.
+@@ -181,6 +191,141 @@ impl<N: Network> FromBytes for PeerInfo<N> {
+     }
+ }
+ 
++/// The activation height of each consensus version that a build schedules, in version order,
++/// starting with `ConsensusVersion::V1`. A version that is not scheduled has the height `u32::MAX`.
++///
++/// Versions are positions rather than `ConsensusVersion`s, so that a schedule that names a version
++/// this build does not define still decodes.
++#[derive(Clone, Debug, PartialEq, Eq)]
++pub struct ConsensusSchedule {
++    heights: Vec<u32>,
++}
++
++impl ConsensusSchedule {
++    /// Initializes a schedule from the activation heights of versions 1, 2, and so on.
++    ///
++    /// The number of versions is encoded as a `u8`. In practice, the 1024-byte limit on handshake
++    /// messages caps a schedule at about 150 versions.
++    pub fn new(heights: Vec<u32>) -> IoResult<Self> {
++        u8::try_from(heights.len()).map_err(io_error)?;
++        Ok(Self { heights })
++    }
++
++    /// Returns the schedule of this build.
++    pub fn of<N: Network>() -> Self {
++        // `N::CONSENSUS_HEIGHT` indexes the table by version, so it is in version order.
++        Self { heights: N::CONSENSUS_VERSION_HEIGHTS().iter().map(|(_, height)| *height).collect() }
++    }
++
++    /// Returns the activation heights of versions 1, 2, and so on.
++    pub fn heights(&self) -> &[u32] {
++        &self.heights
++    }
++}
++
++impl ToBytes for ConsensusSchedule {
++    fn write_le<W: Write>(&self, mut writer: W) -> IoResult<()> {
++        let num_versions = u8::try_from(self.heights.len()).map_err(io_error)?;
++        num_versions.write_le(&mut writer)?;
++        self.heights.iter().try_for_each(|height| height.write_le(&mut writer))
++    }
++}
++
++impl FromBytes for ConsensusSchedule {
++    fn read_le<R: Read>(mut reader: R) -> IoResult<Self> {
++        let num_versions = u8::read_le(&mut reader)?;
++        let heights = (0..num_versions).map(|_| u32::read_le(&mut reader)).collect::<IoResult<_>>()?;
++        Ok(Self { heights })
++    }
++}
++
++/// The fields appended to messages 2 and 3 after their original layout.
++///
++/// It is written as a `u16` length followed by the fields, so that fields added later are skipped by
++/// peers that only know the earlier ones. A missing or malformed trailer decodes as one without
++/// fields. That is only acceptable from a peer below [`Self::FIRST_VERSION`]; the gateway rejects a
++/// peer at or above it that sends no schedule.
++///
++/// The responder's trailer, in message 2, is covered by the responder's signature. The initiator's
++/// trailer, in message 3, is not covered by the initiator's signature, which is made before that
++/// message; the AEAD of the Noise session binds it, like the rest of message 3.
++#[derive(Clone, Debug, Default, PartialEq, Eq)]
++pub struct HandshakeTrailer {
++    /// The consensus schedule of the sender's build.
++    pub schedule: Option<ConsensusSchedule>,
++}
++
++impl HandshakeTrailer {
++    /// The first event version whose handshake messages 2 and 3 must carry a trailer with a schedule.
++    pub const FIRST_VERSION: u32 = 11;
++
++    /// Returns the trailer that this build sends.
++
+```
+
+**File**: `node/bft/events/src/lib.rs` (modified, +5/-2)
+```diff
+@@ -171,8 +171,11 @@ macro_rules! with_data_payload {
+ }
+ 
+ impl<N: Network> Event<N> {
+-    /// The version of the event protocol; it can be incremented in order to force users to update.
+-    pub const VERSION: u32 = 10;
++    /// The oldest event protocol version this node accepts from a peer; it can be incremented in
++    /// order to force users to update.
++    pub const MINIMUM_VERSION: u32 = 10;
++    /// The version of the event protocol this node speaks.
++    pub const VERSION: u32 = 11;
+ 
+     /// Serializes the event's [`Data`] payload, if it holds one that is not already serialized.
+     ///
+```
+
+**File**: `node/bft/src/bft.rs` (modified, +8/-2)
+```diff
+@@ -15,7 +15,7 @@
+ 
+ use crate::{
+     MAX_LEADER_CERTIFICATE_DELAY,
+-    helpers::{ConsensusSender, DAG, PrimaryReceiver, PrimarySender, Storage, fmt_id, now},
++    helpers::{BlockHeldBack, ConsensusSender, DAG, PrimaryReceiver, PrimarySender, Storage, fmt_id, now},
+     primary::{Primary, PrimaryCallback},
+     sync::SyncCallback,
+ };
+@@ -774,8 +774,14 @@ impl<N: Network> BFT<N> {
+                     Ok(Ok(true)) => (),
+                     Ok(Ok(false)) => ledger_already_advanced = true,
+                     Ok(Err(err)) => {
++                        // A held-back block is retried with the next commit, as the subdag stays uncommitted.
++                        let is_held_back = err.downcast_ref::<BlockHeldBack>().is_some();
+                         let err = err.context(format!("BFT failed to advance the subdag for round {anchor_round}"));
+-                        error!("{}", &flatten_error(err));
++                        if is_held_back {
++                            warn!("{}", &flatten_error(err));
++                        } else {
++                            error!("{}", &flatten_error(err));
++                        }
+                         return Ok(());
+                     }
+                     Err(err) => {
+```
+
+**File**: `node/bft/src/gateway.rs` (modified, +120/-27)
+```diff
+@@ -22,7 +22,7 @@ use crate::{
+     MEMORY_POOL_PORT,
+     Worker,
+     events::{DisconnectReason, EventCodec, PrimaryPing},
+-    helpers::{Cache, PrimarySender, Storage, SyncSender, WorkerSender, assign_to_worker},
++    helpers::{Cache, PrimarySender, Storage, SyncSender, UpgradeMonitor, WorkerSender, assign_to_worker},
+     spawn_blocking,
+ };
+ use smol_str::SmolStr;
+@@ -32,12 +32,15 @@ use snarkos_node_bft_events::{
+     BlockResponse,
+     CertificateRequest,
+     CertificateResponse,
++    ConsensusSchedule,
+     DataBlocks,
+     Event,
+     HANDSHAKE_DOMAIN,
+     HandshakeHint,
++    HandshakeTrailer,
+     InitiatorInfo,
+     PeerInfo,
++    ResponderInfo,
+     ResponderProof,
+     TransmissionRequest,
+     TransmissionResponse,
+@@ -210,6 +213,8 @@ pub struct InnerGateway<N: Network> {
+     worker_senders: OnceCell<IndexMap<u8, WorkerSender<N>>>,
+     /// The sync sender.
+     sync_sender: OnceCell<SyncSender<N>>,
++    /// Tracks the consensus schedules of validators, and whether this build may build a block.
++    upgrade_monitor: UpgradeMonitor<N>,
+     /// The spawned handles.
+     handles: Mutex<Vec<JoinHandle<()>>>,
+     /// The storage mode.
+@@ -293,6 +298,8 @@ impl<N: Network> Gateway<N> {
+         #[cfg(feature = "metrics")]
+         let (validator_telemetry, telemetry_worker) = Telemetry::new();
+ 
++        let upgrade_monitor = UpgradeMonitor::new(account.address(), node_data_dir.required_consensus_upgrade_path());
++
+         // Return the gateway.
+         Ok(Self(Arc::new(InnerGateway {
+             account,
+@@ -309,6 +316,7 @@ impl<N: Network> Gateway<N> {
+             primary_sender: Default::default(),
+             worker_senders: Default::default(),
+             sync_sender: Default::default(),
++            upgrade_monitor,
+             handles: Default::default(),
+             node_data_dir,
+             trusted_peers_only,
+@@ -445,6 +453,40 @@ impl<N: Network> Gateway<N> {
+         &self.resolver
+     }
+ 
++    /// Returns the upgrade monitor.
++    pub fn upgrade_monitor(&self) -> &UpgradeMonitor<N> {
++        &self.upgrade_monitor
++    }
++
++    /// Returns the committee and the addresses of the connected validators, as the upgrade monitor
++    /// weighs them.
++    ///
++    /// The committee is the lookback committee for the current round, which certifies the blocks
++    /// this validator builds next.
++    fn upgrade_evidence(&self) -> Result<(Committee<N>, HashSet<Address<N>>)> {
++        let committee = self.ledger.get_committee_lookback_for_round(self.storage.current_round())?;
++        Ok((committee, self.connected_addresses()))
++    }
++
++    /// Re-evaluates the upgrade status for the next block.
++    fn update_upgrade_status(&self) {
++        let (committee, connected) = match self.upgrade_evidence() {
++            Ok(evidence) => evidence,
++            Err(error) => {
++                warn!("{CONTEXT} Unable to retrieve the committee to evaluate consensus schedules - {error}");
++                return;
++            }
++        };
++        let next_height = self.ledger.latest_block_height().saturating_add(1);
++        self.upgrade_monitor.update(&committee, &connected, next_height);
++    }
++
++    /// Returns an error unless this build may build the block at `height`.
++    pub fn ensure_block_may_be_built(&self, height: u32) -> Result<()> {
++        let (committee, connected) = self.upgrade_evidence()?;
++        self.upgrade_monitor.ensure_block_may_be_built(&committee, &connected, height)
++    }
++
+     /// Returns the listener IP address from the (ambiguous) peer address.
+     pub fn resolve_to_listener(&self, connected_addr: &SocketAddr) -> Option<SocketAddr> {
+         self.resolver.read().get_listener(*connected_addr)
+@@ -810,7 +852,7 @@ impl<N: Network> Gateway<N> {
+                 let PrimaryPing { version, block_locators, primary_certificate } = ping;
+ 
+                 // Ensure the event version is not outdated.
+-                if version < Event::<N>::VERSION {
++                if version < Event::<N>::MINIMUM_VERSION {
+                     bail!("Dropping '{peer_ip}' on event version {version} (outdated)");
+                 }
+ 
+@@ -979,6 +1021,8 @@ impl<N: Network> Gateway<N> {
+     async fn heartbeat(&self) {
+         // Log the connected validators.
+         self.log_connected_validators();
++        // Re-evaluate whether validators run a consensus version this build lacks.
++        self.update_upgrade_status();
+         // Log the validator participation scores.
+         #[cfg(feature = "metrics")]
+         self.log_participation_scores();
+@@ -1619,13 +1663,17 @@ impl<N: Network> Handshake for Gateway<N> {
+         // Register the peer, or roll it back, if the handshake got far enough to learn its listening
+         // address.
+         match (&handshake_result, listener_addr) {
+-            (Ok(peer_info), Some(addr)) => {
++            (Ok((peer_info, peer_schedule)), Some(addr)) => {
+                 let node_type = if bootstrap_peers::<N>(self.is_dev()).contains(&a
+```
+
+**File**: `node/bft/src/helpers/mod.rs` (modified, +3/-0)
+```diff
+@@ -51,6 +51,9 @@ pub use telemetry::*;
+ pub mod timestamp;
+ pub use timestamp::*;
+ 
++pub mod upgrade_monitor;
++pub use upgrade_monitor::*;
++
+ /// Formats an ID into a truncated identifier (for logging purposes).
+ pub fn fmt_id(id: impl ToString) -> String {
+     let id = id.to_string();
+```
+
+---
+
+### Incident Patch 2: `e19d9479` (2026-10-28)
+**Commit Message**: Refute an unreadable record only with a quorum not ahead at any height
+
+An unreadable record stood for an upgrade at height 0, where every build
+runs V1, so any connected quorum refuted it within seconds, whatever it
+schedules later. The record now holds back every block until this
+validator and the connected validators that are ahead of this build at
+no height hold a quorum.
+
+The comment on the per-member check now says that a faulty member holds
+back one height, not one block per handshake, and only while this
+validator is connected to less than a quorum that is not ahead there.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01UYfmmMf4knQyc7bmfeSuZ7
+
+**File**: `node/bft/src/helpers/upgrade_monitor.rs` (modified, +57/-23)
+```diff
+@@ -193,6 +193,10 @@ fn metric_values(status: UpgradeStatus, recorded: Option<RequiredUpgrade>) -> (u
+     }
+ }
+ 
++/// The record that stands in for one that cannot be read. It holds back every block until a quorum
++/// that is not ahead of this build at any height refutes it.
++const UNREADABLE_RECORD: RequiredUpgrade = RequiredUpgrade { height: 0, consensus_version: u16::MAX };
++
+ /// The evidence the monitor keeps.
+ struct State<N: Network> {
+     /// The steps of the schedule each validator disclosed in its latest handshake.
+@@ -228,13 +232,11 @@ pub struct UpgradeMonitor<N: Network> {
+ impl<N: Network> UpgradeMonitor<N> {
+     /// Initializes the monitor of the validator at `address` from the record at `record_path`.
+     ///
+-    /// A record of an upgrade that this build schedules is removed. Any other record, including one
+-    /// that cannot be read, holds back the blocks from its stop height until connected validators
+-    /// refute it.
++    /// A record of an upgrade that this build schedules is removed. Any other record holds back the
++    /// blocks from its stop height until connected validators refute it, and one that cannot be
++    /// read holds back every block.
+     pub fn new(address: Address<N>, record_path: PathBuf) -> Self {
+         let own = Steps::new(&ConsensusSchedule::of::<N>());
+-        // A record that cannot be read holds back every block.
+-        let unreadable = RequiredUpgrade { height: 0, consensus_version: u16::MAX };
+         let recorded = match read_record(&record_path) {
+             Ok(None) => None,
+             Ok(Some(recorded)) if own.version_at(recorded.height) >= recorded.consensus_version => {
+@@ -258,7 +260,7 @@ impl<N: Network> UpgradeMonitor<N> {
+             }
+             Err(error) => {
+                 warn!("Unable to read the required upgrade at {} - {error}", record_path.display());
+-                Some(unreadable)
++                Some(UNREADABLE_RECORD)
+             }
+         };
+         let state = State { schedules: Default::default(), recorded, warned_at: None, metrics: (0, 0, 0) };
+@@ -296,15 +298,22 @@ impl<N: Network> UpgradeMonitor<N> {
+             return UpgradeStatus::Required(required);
+         }
+ 
+-        if let Some(recorded) = state.recorded
+-            && self.is_refuted(state, committee, connected, recorded.height)
+-        {
+-            info!(
+-                "Connected validators holding a quorum of stake do not run ConsensusVersion::V{} at height {}",
+-                recorded.consensus_version, recorded.height
+-            );
+-            remove_record(&self.record_path);
+-            state.recorded = None;
++        if let Some(recorded) = state.recorded {
++            let refuted_height = (recorded != UNREADABLE_RECORD).then_some(recorded.height);
++            if self.is_refuted(state, committee, connected, refuted_height) {
++                match refuted_height {
++                    Some(height) => info!(
++                        "Connected validators holding a quorum of stake do not run ConsensusVersion::V{} at height {height}",
++                        recorded.consensus_version
++                    ),
++                    None => info!(
++                        "Connected validators holding a quorum of stake are not ahead of this build at any height, so \
++                         the unreadable record of a required upgrade is removed"
++                    ),
++                }
++                remove_record(&self.record_path);
++                state.recorded = None;
++            }
+         }
+ 
+         let status = match self.required_upgrade(state, committee) {
+@@ -342,8 +351,10 @@ impl<N: Network> UpgradeMonitor<N> {
+     ///   that height hold the quorum threshold of stake.
+     ///
+     /// Connected validators that disclosed no schedule count as not ahead. A member's schedule
+-    /// counts at one height only, so that a faulty member holds back at most one block per
+-    /// handshake; any other height would let it list many activations and hold back as many blocks.
++    /// counts only at the first height where it is ahead of this build; any other height would let
++    /// it list many activations and hold back as many blocks. So a faulty member can hold back only
++    /// that height, and only while this validator is connected to less than a quorum of stake that
++    /// is not ahead there. Block sync still advances the ledger past it.
+     ///
+     /// The error is a [`BlockHeldBack`].
+     pub fn ensure_block_may_be_built(
+@@ -372,7 +383,7 @@ impl<N: Network> UpgradeMonitor<N> {
+         let is_claimed = state.schedules.iter().any(|(address, steps)| {
+             committee.get_stake(*address) > 0 && steps.first_ahead_of(&self.own) == Some(height)
+         });
+-        if is_claimed && !self.is_refuted(&state, committee, connected, height) {
++        if is_claimed && !self.is_refuted(&state, committee, connected, Some(height)) {
+             return Err(BlockHeldBack(format!(
+                 "Validato
 ```
 
 #### Recent Merged Pull Requests:
@@ -2011,42 +2600,63 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4584 from aleo-labs-protocol/fix/client-solution-limit
+## X. Merge pull request #4534 from aleo-labs-protocol/feat/upgrade-schedule-handshake
 
 **RULE**:
-When implementing operations in `node/src/client/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.ci/test_upgrade_required.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5375fc14`: Merge pull request #4584 from aleo-labs-protocol/fix/client-solution-limit. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1f4eee02`: Merge pull request #4534 from aleo-labs-protocol/feat/upgrade-schedule-handshake. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/src/client/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.ci/test_upgrade_required.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                        // Check if the prover has reached their solution limit.
-                        // While snarkVM will ultimately abort any excess solutions for safety, performing this check
-                        // here prevents the to-be aborted solutions from propagating through the network.
-                        let prover_address = solution.address();
-                        if _node.ledger.is_solution_limit_reached(&prover_address, 0) {
-                            debug!("Invalid Solution '{}' - Prover '{prover_address}' has reached their solution limit for the current epoch", fmt_id(solution.id()));
-                        } else if let Ok(epoch_hash) = _node.ledger.latest_epoch_hash() {
+#!/bin/bash
+
+####################################################
+# Runs a devnet in which one validator lacks the next consensus version.
+# Checks that the outdated validator warns as soon as it connects, keeps building blocks up to 100
+# blocks before the activation height, and then exits with an error and without forking. Checks the
+# same exit on every restart, with or without its record of the required upgrade. Then checks that
+# it rejoins the network once upgraded, and that it discards a record no validator confirms.
+####################################################
+
+set -eo pipefail
+
+network_id=0
+total_validators=4
+activation_height=150
+# The outdated validator builds no block from REQUIRED_UPGRADE_SAFETY_MARGIN blocks before the activation.
+safety_margin=100
+stop_height=$((activation_height - safety_margin))
+target_height=180
+# The outdated validator is the last one, so that the upgraded ones form a contiguous range.
+outdated_validator=$((total_validators-1))
+NODE_VERBOSITY=2
+
+# shellcheck source=SCRIPTDIR/utils.sh
+. ./.ci/utils.sh
+
+network_name=$(get_network_name "$network_id")
+
+# Logs a failure and exits.
+function fail() {
+  log "⛔️ $*"
+  exit 1
+}
+init_log_dir
+
+trap s
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                        // Retrieve the latest epoch hash.
-                        if let Ok(epoch_hash) = _node.ledger.latest_epoch_hash() {
-                            // Check if the prover has reached their solution limit.
-                            // While snarkVM will ultimately abort any excess solutions for safety, performing this check
-                            // here prevents the to-be aborted solutions from propagating through the network.
-                            let prover_address = solution.address();
-                            if _node.ledger.is_solution_limit_reached(&prover_address, 0) {
-                                debug!("Invalid Solution '{}' - Prover '{prover_address}' has reached their solution limit for the current epoch", fmt_id(solution.id()));
-                            }
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5375fc14` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1f4eee02` are properly handled with clean fallback behavior.

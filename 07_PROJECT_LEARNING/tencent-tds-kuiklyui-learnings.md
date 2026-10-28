@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md`  
 > **Source**: github ([https://github.com/Tencent-TDS/KuiklyUI](https://github.com/Tencent-TDS/KuiklyUI))  
-> **Source Version**: `f0d0389c`  
+> **Source Version**: `2fcb6f77`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T00:40:12.424Z  
+> **Timestamp**: 2026-10-28T19:46:47.582Z  
 > **Learning ID**: `learn-github-tencent-tds-kuiklyui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Tencent-TDS/KuiklyUI](https://github.com/Tencent-TDS/KuiklyUI))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T00:40:12.305Z  
+> **Harvest Timestamp**: 2026-10-28T19:46:47.575Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Kotlin Multiplatform UI framework from Tencent TDS — high-performance, one codebase for six platforms, with dynamic delivery.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3608 stars
+- **Stars / Engagement**: 3609 stars
 
 ---
 
@@ -756,11 +756,11 @@ class Animatable<T, V : AnimationVector>(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1840** (2026-10-28): **fix(h5): HoverView sticky-header move to wrong position**
+  *Symptoms*: Kuikly H5 快速滚轮后吸顶标题漂移问题修复。  问题确认：KRHoverView.kt 里，因为 initialTop == 0f 被同时当作"合法原始位置"与"未测量"哨兵，叠加 fixed 态下 getBoundingClientRect().top + scrollTop 的坐标污染。 修复：采用独立 initialTopMeasured 标记 + fixed 态守卫 + onFrameChange 失效钩子的方案。
+
 - **Issue #1839** (2026-10-27): **feat(ohos): Expose instance id in set property callback**
   *Symptoms*: 
-
-- **Issue #1835** (2026-10-27): **fix(ohos): lay out text at its final width during measure**
-  *Symptoms*: ## Summary - Finish OHOS text Typography at the resolved content width before measure returns, and hand that height back to the parent in the same pass. - Keep the initial measurement cache separate from the final-width layout cache. Drawing no longer relayouts when the new core and renderer agree on that width; older bundles still fit only when the real layout width differs from the frame. - Add DSL and Compose manual pages for flex, wrap, minWidth, intrinsic measure, rich text, and line limits.  ## Test plan - [x] Open `OhosTextLayoutRepro`, toggle width, and check right/center alignment, minWidth height, the following label, rich text, and two-line truncation. - [x] Open `OhosComposeTextLayoutRepro` and check text stays inside its background, fixed-width Chinese wrapping, intrinsic-then-measure, and ellipsis. - [x] Spot-check explicit height/minHeight, image/placeholder spans, gradient text, and an older core bundle against the new renderer. - [x] Confirm Android, iOS, and Web text measure is unchanged.   Made with [Cursor](https://cursor.com)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -777,241 +777,140 @@ class Animatable<T, V : AnimationVector>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cfd986f8` (2026-10-27)
-**Commit Message**: fix(android): destroy render layer after pageWillDestroy (#1834)
+### Incident Patch 1: `2fcb6f77` (2026-10-28)
+**Commit Message**: fix(h5): stabilize Hover positioning in transformed containers (#1838)
 
-Move the render layer (including all native Modules) teardown from
-before to after the Kotlin page destroy, matching the structure of
-HarmonyOS KRRenderCore::WillDealloc: run DestroyInstance inside the
-context queue task, then release the render layer on the main thread.
+* fix(h5): support Hover in transformed containers
 
-destroyInstance synchronously runs PagerManager.destroyPager(), so
-when it returns pageWillDestroy() has completed and the ordering is
-deterministic.
+* fix(h5): bind Hover before list content overflows
 
-Scope note: this covers synchronous Module calls (syncCall=true) made
-during pageWillDestroy(). Asynchronous calls (syncCall=false) are
-enqueued via uiScheduler.scheduleTask into mainThreadTasksOnContextQueue
-and only flushed to the main thread by a later context task, so they
-still run after the render layer is destroyed. Confirmed by measurement
-to behave identically before this change - it is pre-existing.
+* fix(h5): keep the first Hover above list content
 
-Adds ModuleLifecycleTestPager to observe the ordering. It compares log
-timestamps and includes an async call probe; it does not assert on a
-Module return value, since several Modules are stateless or have
-idempotent onDestroy() and would yield false positives.
-
-Verified on device (OCE-AN10), sta
-
-**File**: `core-render-android/src/main/java/com/tencent/kuikly/core/render/android/core/KuiklyRenderCore.kt` (modified, +5/-1)
+**File**: `core-render-web/base/src/jsMain/kotlin/com/tencent/kuikly/core/render/web/expand/components/KRHoverView.kt` (modified, +126/-36)
 ```diff
-@@ -16,6 +16,8 @@
- package com.tencent.kuikly.core.render.android.core
+@@ -1,6 +1,10 @@
+ package com.tencent.kuikly.core.render.web.expand.components
  
- import android.graphics.RectF
-+import android.os.Handler
-+import android.os.Looper
- import android.util.SizeF
- import android.util.SparseArray
- import android.view.View
-@@ -171,7 +173,6 @@ class KuiklyRenderCore(
-     override fun destroy() {
-         val destroyTracer = KuiklyRenderTracer("KuiklyRenderCore.destroy")
-         renderLayerHandler?.willDealloc()
--        renderLayerHandler?.onDestroy()
-         performOnContextQueue {
-             val destroyCallKotlinTracer = KuiklyRenderTracer("KuiklyRenderCore.destroy.performOnContextQueue")
-             contextHandler?.call(
-@@ -182,6 +183,9 @@ class KuiklyRenderCore(
-             )
-             contextHandler?.destroy()
-             destroyCallKotlinTracer.end()
-+            Handler(Looper.getMainLooper()).post {
-+                renderLayerHandler?.onDestroy()
++import com.tencent.kuikly.core.render.web.const.KRCssConst
++import com.tencent.kuikly.core.render.web.const.KRListConst
+ import com.tencent.kuikly.core.render.web.export.IKuiklyRenderViewExport
++import com.tencent.kuikly.core.render.web.ktx.Frame
++import com.tencent.kuikly.core.render.web.ktx.hrAnimation
+ import com.tencent.kuikly.core.render.web.ktx.kuiklyDocument
+ import com.tencent.kuikly.core.render.web.ktx.kuiklyWindow
+ import com.tencent.kuikly.core.render.web.ktx.pxToFloat
+@@ -9,7 +13,9 @@ import com.tencent.kuikly.core.render.web.runtime.dom.element.ElementType
+ import org.w3c.dom.Element
+ import org.w3c.dom.HTMLDivElement
+ import org.w3c.dom.HTMLElement
++import org.w3c.dom.events.Event
+ import kotlin.js.json
++import kotlin.math.max
+ 
+ /**
+  * Hover top view
+@@ -18,9 +24,14 @@ class KRHoverView : IKuiklyRenderViewExport {
+     // div instance
+     private val hover = kuiklyDocument.createElement(ElementType.DIV)
+ 
+-    // Component's original top value in normal flow
++    // Keep the layout top separate from the visual position while hovering.
+     private var initialTop = 0f
++    private var initialLeft = ""
++    private var parentOffsetTop = 0f
++    private var fixedLeftOffset = 0f
+     private var hoverViewMarginTop = 0f
++    private var scrollContainer: HTMLElement? = null
++    private val scrollListener: (Event) -> Unit = { updateHoverPosition() }
+ 
+     override val ele: HTMLDivElement
+         get() = hover.unsafeCast<HTMLDivElement>()
+@@ -29,8 +40,8 @@ class KRHoverView : IKuiklyRenderViewExport {
+      * Set hover view's display layer
+      */
+     private fun setBringIndex(index: Any): Boolean {
+-        // Set display layer
+-        ele.style.zIndex = index.unsafeCast<Int>().toString()
++        // Start at layer 1 so bringIndex=0 paints above later list rows.
++        ele.style.zIndex = (index.unsafeCast<Int>() + 1).toString()
+         return true
+     }
+ 
+@@ -39,6 +50,7 @@ class KRHoverView : IKuiklyRenderViewExport {
+      */
+     private fun setHoverMarginTop(propValue: Any): Boolean {
+         hoverViewMarginTop = propValue.unsafeCast<Float>()
++        updateHoverPosition()
+         return true
+     }
+ 
+@@ -50,7 +62,9 @@ class KRHoverView : IKuiklyRenderViewExport {
+         while (node != null) {
+             val style = kuiklyWindow.getComputedStyle(node)
+             val overflowY = style?.overflowY ?: ""
+-            val isScrollableY = (overflowY == "auto" || overflowY == "scroll") && node.scrollHeight > node.clientHeight
++            // A Hover may attach before its Kuikly list overflows.
++            val isScrollableY = (overflowY == "auto" || overflowY == "scroll") &&
++                (node.classList.contains(KRListConst.IS_LIST) || node.scrollHeight > node.clientHeight)
+             if (isScrollableY) {
+                 return node
+             }
+@@ -60,49 +74,125 @@ class KRHoverView : IKuiklyRenderViewExport {
+     }
+ 
+     /**
+-     * Measure element top relative to a specific container.
++     * Layout coordinates ignore ancestor transforms, unlike getBoundingClientRect().
++     * Include offset-parent borders because CSS top is relative to the padding edge.
+      */
+-    private fun getTopRelativeToContainer(target: HTMLElement, container: HTMLElement): Float {
+-        val targetRect = target.getBoundingClientRect()
+-        val containerRect = container.getBoundingClientRect()
+-        return (targetRect.top - containerRect.top + container.scrollTop).toFloat()
++    private fun getLayoutTop(element: HTMLElement): Float {
++        var top = 0f
++        var node: HTMLElement? = element
++        while (node != null) {
++            val style = kuiklyWindow.getComputedStyle(node)
++            // offsetTop rounds to integers; Kuikly's absolute frames can contain subpixels.
++            top += if (style?.position == "absolute" && style.top.endsWith("px")) {
++                style.top.pxToFloat() + style.marginTop.pxToFloat()
++            } else {
++                node.offsetTop.toFloat()
 +            }
-         }
-         uiScheduler?.destroy()
-         destroyTracer.end()
-```
-
-**File**: `demo/src/commonMain/kotlin/com/tencent/kuikly/demo/pages/ModuleLifecycleTestPager.kt` (added, +86/-0)
-```diff
-@@ -0,0 +1,86 @@
-+package com.tencent.kuikly.demo.pages
-+
-+import com.tencent.kuikly.core.annotations.Page
-+import com.tencent.kuikly.core.base.Color
-+import com.tencent.kuikly.core.base.ViewBuilder
-+import com.tencent.kuikly.core.log.KLog
-+import com.tencent.kuikly.core.module.NotifyModule
-+import com.tencent.kuikly.core.module.RouterModule
-+import com.tencent.kuikly.core.nvi.serialization.json.JSONObject
-+import com.tencent.kuikly.core.reactive.handler.observable
-+import com.tencent.kuikly.core.views.Text
-+import com.tencent.kuikly.core.views.View
-+import com.tencent.kuikly.core.views.compose.Button
-+import com.tencent.kuikly.demo.pages.base.BasePager
-+
-+/**
-+ * 观测渲染层销毁与页面 pageWillDestroy() 的先后顺序。
-+ *
-+ * 点击「关闭页面」按钮后对比 logcat 两个打点：
-+ * [ModuleLifecycle] pageWillDestroy / [KuiklyRenderCore] renderLayer onDestroy。
-+ *
-+ * 只观测顺序、不断言 Module 返回值：部分 Module 无状态或 onDestroy() 幂等，
-+ * 返回值无法区分「可用」与「已销毁」，用作断言会产生假阳性。
-+ */
-+@Page("ModuleLifecycleTestPager")
-+internal class ModuleLifecycleTestPager : BasePager() {
-+
-+    private var resultText by observable("点击下方按钮关闭页面，然后从 logcat 观察销毁顺序")
-+
-+    override fun body(): ViewBuilder {
-+        val ctx = this
-+        return {
-+            attr { backgroundColor(Color.WHITE) }
-+            View {
-+                attr { margin(16f) }
-+                Text {
-+                    attr {
-+                        text(ctx.resultText)
-+                        fontSize(15f)
-+                        color(Color(0xFF333333))
-+                    }
-+                }
++            val parent = node.offsetParent.unsafeCast<HTMLElement?>()
++            if (parent != null) {
++                top += parent.clientTop.toFloat()
 +            }
-+            // 关闭页面 -> Activity.finish() -> Kuikly onDetach
-+            Button {
-+                attr {
-+                    margin(16f)
-+                    titleAttr {
-+                        text("关闭页面并观察 logcat")
-+                        color(Color.WHITE)
-+                    }
-+                    backgroundColor(Color(0xFF007AFF))
-+                    size(width = 280f, height = 48f)
-+                    borderRadius(8f)
-+                }
-+                event {
-+                    click {
-+                        ctx.finishSelf()
-+                    }
-+                }
-+            }
++            node = parent
 +        }
-+    }
-+
-+    private fun finishSelf() {
-+        acquireModule<RouterModule>(RouterModule.MODULE_NAME).closePage()
-+    }
-+
-+    override fun pageWillDestroy() {
-+        // 与渲染层销毁打点对比时间戳
-+        KLog.i(TAG, "pageWillDestroy")
-+        // 异步调用（syncCall=false）会晚于渲染层销毁执行，用于观测该既有行为
-+        asyncProbeAfterDestroy()
-+        super.pageWillDestroy()
-+    }
-+
-+    private fun asyncProbeAfterDestroy() {
-+        acquireModule<NotifyModule>(NotifyModule.MODULE_NAME)
-+            .postNotify(PROBE_EVENT, JSONObject(), false)
-+    }
-+
-+    companion object {
-+        private const val TAG = "ModuleLifecycle"
-+        private const val PROBE_EVENT = "module_lifecycle_async_probe"
-+    }
-+}
-```
-
----
-
-### Incident Patch 2: `99babbb6` (2026-10-27)
-**Commit Message**: fix(android): guard RenderScriptBlur after destroy to avoid RSInvalidStateException (#1792)
-
-* fix(android): guard RenderScriptBlur after destroy to avoid RSInvalidStateException
-
-* fix(android): blur 组件销毁后禁止继续刷新，修复 RSInvalidStateException
-
-* chore: modify some detail
-
----------
-
-Co-authored-by: elixxli <[REDACTED_EMAIL]>
-
-**File**: `core-render-android/src/main/java/com/tencent/kuikly/core/render/android/expand/component/blur/KRBlurView.kt` (modified, +9/-1)
-```diff
-@@ -70,6 +70,12 @@ class KRBlurView(context: Context) : FrameLayout(context), IKuiklyRenderViewExpo
-         true
++        return top
      }
  
-+    /**
-+     * 页面销毁后置位。销毁时 View 可能仍挂在窗口上（不会先走 onDetachedFromWindow），
-+     * preDraw 监听摘不掉，需要靠这个标志阻止后续继续刷新模糊内容。
-+     */
-+    private var destroyed = false
-+
-     init {
-         setWillNotDraw(false)
-     }
-@@ -120,6 +126,7 @@ class KRBlurView(context: Context) : FrameLayout(context), IKuiklyRenderViewExpo
- 
-     override fun onDestroy() {
-         super.onDestroy()
-+        destroyed = true
-         blur.destroy()
-     }
- 
-@@ -163,7 +170,8 @@ class KRBlurView(context: Context) : FrameLayout(context), IKuiklyRenderViewExpo
-     }
- 
-     private fun updateBlurBitmap() {
--        if (!initialized) {
-+        // 销毁后不再刷新：避免把未模糊的底图写进 internalBitmap 后上屏
-+        if (!initialized || destroyed) {
-             return
-         }
- 
-```
-
----
-
-### Incident Patch 3: `cbe47b35` (2026-10-27)
-**Commit Message**: fix(ohos): keep KRSetSyncMainTaskWarnTimeout exported under hidden visibility (#1831)
-
-Release builds compile libkuikly.so with -fvisibility=hidden and then strip it. Mark the public scheduler API so it remains in the dynamic symbol table.
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `core-render-ohos/src/main/cpp/libohos_render/scheduler/KRContextScheduler.cpp` (modified, +2/-1)
-```diff
-@@ -21,6 +21,7 @@
- #include <exception>
- #include <future>
- #include <memory>
-+#include "libohos_render/api/include/Kuikly/KuiklyExport.h"
- #include "libohos_render/foundation/thread/KRMainThread.h"
- #include "libohos_render/utils/KRRenderLoger.h"
- 
-@@ -289,7 +290,7 @@ EXTERN_C_START
-  * 仅应在初始化 kuikly 前调用一次（且只调用一次），不要多次调用或在运行期并发设置，
-  * 否则存在数据竞争风险。
-  */
--void KRSetSyncMainTaskWarnTimeout(int ms) {
-+KUIKLY_EXPORT void KRSetSyncMainTaskWarnTimeout(int ms) {
-     // 负数 / 0 视为非法输入，保持默认 10s，避免把等待阈值直接打到 0 导致
-     // 任何一次主线程轻微抖动都被判为死锁而触发 assert。
-     if (ms > 0) {
+-    /**
+-     * Compute the fixed top position in viewport coordinates.
+-     */
+-    private fun getFixedTopInViewport(container: HTMLElement): Float {
+-        return container.getBoundingClientRect().top.toFloat() + hoverViewMarginTop
++    private fun hasTransformedAncestor(): Boolean {
++        var node = ele.parentElement.unsafeCast<HTMLElement?>()
++        while (node != null) {
++            val transform = kuiklyWindow.getComputedStyle(node)?.transform ?: "none"
++            if (transform != "none" && transform.isNotEmpty()) {
++                return true
++            }
++            node = node.parentElement.unsafeCast<HTMLElement?>()
++        }
++        re
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1840** (closed): fix(h5): HoverView sticky-header move to wrong position (@etkmao)
 - **PR #1839** (2026-10-27): feat(ohos): Expose instance id in set property callback (@ruifanyuan)
+- **PR #1838** (2026-10-28): fix(h5): stabilize Hover positioning in transformed containers (@renjar)
 - **PR #1835** (closed): fix(ohos): lay out text at its final width during measure (@yukiykchen)
 - **PR #1834** (2026-10-27): fix(android): destroy render layer after pageWillDestroy (@zenipchen)
 - **PR #1833** (2026-10-26): chore(demo): add fold adaptation demos under pages/fold (@elixxli)
-- **PR #1832** (2026-10-26): feat(demo): add fold adaptive settings split demo (@elixxli)
-- **PR #1831** (2026-10-27): fix(ohos): keep KRSetSyncMainTaskWarnTimeout exported under hidden vi… (@ruifanyuan)
 
 ---
 
@@ -1031,32 +930,61 @@ Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. android): destroy render layer after pageWillDestroy (#1834)
+## X. h5): stabilize Hover positioning in transformed containers (#1838)
 
 **RULE**:
-When implementing operations in `core-render-android/src/main/java/com/tencent/kuikly/core/render/android/core/KuiklyRenderCore.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Tencent-TDS/KuiklyUI. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core-render-web/base/src/jsMain/kotlin/com/tencent/kuikly/core/render/web/expand/components/KRHoverView.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Tencent-TDS/KuiklyUI. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cfd986f8`: android): destroy render layer after pageWillDestroy (#1834). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2fcb6f77`: h5): stabilize Hover positioning in transformed containers (#1838). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `core-render-android/src/main/java/com/tencent/kuikly/core/render/android/core/KuiklyRenderCore.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `core-render-web/base/src/jsMain/kotlin/com/tencent/kuikly/core/render/web/expand/components/KRHoverView.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-import android.os.Handler
-import android.os.Looper
-            Handler(Looper.getMainLooper()).post {
-                renderLayerHandler?.onDestroy()
-            }
+import com.tencent.kuikly.core.render.web.const.KRCssConst
+import com.tencent.kuikly.core.render.web.const.KRListConst
+import com.tencent.kuikly.core.render.web.ktx.Frame
+import com.tencent.kuikly.core.render.web.ktx.hrAnimation
+import org.w3c.dom.events.Event
+import kotlin.math.max
+    // Keep the layout top separate from the visual position while hovering.
+    private var initialLeft = ""
+    private var parentOffsetTop = 0f
+    private var fixedLeftOffset = 0f
+    private var scrollContainer: HTMLElement? = null
+    private val scrollListener: (Event) -> Unit = { updateHoverPosition() }
+        // Start at layer 1 so bringIndex=0 paints above later list rows.
+        ele.style.zIndex = (index.unsafeCast<Int>() + 1).toString()
+        updateHoverPosition()
+            // A Hover may attach before its Kuikly list overflows.
+            val isScrollableY = (overflowY == "auto" || overflowY == "scroll") &&
+                (node.classList.contains(KRListConst.IS_LIST) || node.scrollHeight > node.clientHeight)
+     * Layout coordinates ignore ancestor transforms, unlike getBoundingClientRect().
+     * Include offset-parent borders because CSS top is relative to the padding edge.
+    p
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-        renderLayerHandler?.onDestroy()
+    // Component's original top value in normal flow
+        // Set display layer
+        ele.style.zIndex = index.unsafeCast<Int>().toString()
+            val isScrollableY = (overflowY == "auto" || overflowY == "scroll") && node.scrollHeight > node.clientHeight
+     * Measure element top relative to a specific container.
+    private fun getTopRelativeToContainer(target: HTMLElement, container: HTMLElement): Float {
+        val targetRect = target.getBoundingClientRect()
+        val containerRect = container.getBoundingClientRect()
+        return (targetRect.top - containerRect.top + container.scrollTop).toFloat()
+    /**
+     * Compute the fixed top position in viewport coordinates.
+     */
+    private fun getFixedTopInViewport(container: HTMLElement): Float {
+        return container.getBoundingClientRect().top.toFloat() + hoverViewMarginTop
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cfd986f8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2fcb6f77` are properly handled with clean fallback behavior.

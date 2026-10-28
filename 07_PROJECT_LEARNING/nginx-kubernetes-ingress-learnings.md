@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source**: github ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
-> **Source Version**: `f45222fb`  
+> **Source Version**: `a052bc26`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T20:31:59.391Z  
+> **Timestamp**: 2026-10-28T19:46:49.867Z  
 > **Learning ID**: `learn-github-nginx-kubernetes-ingress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T20:31:58.802Z  
+> **Harvest Timestamp**: 2026-10-28T19:46:49.860Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: NGINX and  NGINX Plus Ingress Controllers for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md
-- **Stars / Engagement**: 5092 stars
+- **Stars / Engagement**: 5093 stars
 
 ---
 
@@ -1287,257 +1287,112 @@ NIC prints a startup warning when set. Requires -plm-storage-url.`)
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f45222fb` (2026-10-27)
-**Commit Message**: Update github actions (main) (#11232)
+### Incident Patch 1: `a052bc26` (2026-10-28)
+**Commit Message**: Add stack support to pr-review skill (#11283)
 
-Update github actions
+* Add stack support to pr-review skill
 
-| datasource      | package                              | from    | to      |
-| --------------- | ------------------------------------ | ------- | ------- |
-| github-tags     | actions/setup-python                 | v7.0.0  | v7.1.0  |
-| github-tags     | docker/login-action                  | v4.6.0  | v4.7.0  |
-| github-tags     | docker/scout-action                  | v1.26.0 | v1.27.0 |
-| github-tags     | github/codeql-action                 | v4.39.0 | v4.39.1 |
-| github-releases | goreleaser/goreleaser                | v2.18.3 | v2.19.0 |
-| github-tags     | reviewdog/action-actionlint          | v1.80.4 | v1.80.6 |
-| github-releases | sigstore/cosign                      | v3.1.3  | v3.1.4  |
-| github-tags     | stefanzweifel/git-auto-commit-action | v7.2.0  | v7.2.1  |
+* add the option for full stack or single PR in the stack
 
-Signed-off-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/build-artifacts.yml` (modified, +1/-1)
+**File**: `.github/prompts/pr-review.prompt.md` (modified, +5/-3)
 ```diff
-@@ -124,7 +124,7 @@ jobs:
-       - name: Build binaries
-         uses: goreleaser/goreleaser-action@a4f02ab5355a589de60d917a659ce617ed19b3de # v7.3.0
-         with:
--          version: v2.18.3 # renovate: datasource=github-releases depName=goreleaser/goreleaser,
-+          version: v2.19.0 # renovate: datasource=github-releases depName=goreleaser/goreleaser,
-           args: build --snapshot --clean
-         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+@@ -9,9 +9,11 @@ Load and follow the **`nic-code-review`** skill at [`.github/skills/nic-code-rev
+ ## Task
+ 
+ 1. Determine the base and head:
+-   - Default base: `origin/main` (or `origin/release-*` if the current branch name starts with `release-`).
+-   - Head: the current working branch.
+-2. Get the diff. Prefer the `get_changed_files` tool; fall back to `git diff <base>...HEAD`.
++   - Check if the PR is part of a stack using `gh` CLI, `gh api`, or `gh stack` (`gh extension install github/gh-stack`).
++   - If part of a stack and not specified, show the stack chain and ask whether to review **this PR only** (`origin/<baseRefName>...<headRefName>`) or the **full stack** (`origin/main...<stack-tip>`).
++   - Base: `origin/<baseRefName>` from the PR/stack, falling back to `origin/main` (or `origin/release-*` if the current branch name starts with `release-`).
++   - Head: the target PR's head (or stack tip for a full-stack review), falling back to the current working branch.
++2. Get the diff. Prefer the `get_changed_files` tool (or `gh pr diff` / `git diff <base>...HEAD` when stacked).
+ 3. Classify the change using the **Change type classification** table in the skill and load any referenced sub-skills.
+ 4. Walk the applicable **dimension checklists** in the skill (Security -> Correctness -> Architecture -> Tests -> layer-specific).
+ 5. Verify each finding by reading the actual file, not just the hunk. Never fabricate line numbers or symbol names.
 ```
 
-**File**: `.github/workflows/build-base-images.yml` (modified, +3/-3)
+**File**: `.github/skills/nic-code-review/SKILL.md` (modified, +13/-10)
 ```diff
-@@ -85,7 +85,7 @@ jobs:
-           service_account: ${{ env.GCR_SERVICE_ACCOUNT }}
+@@ -76,15 +76,18 @@ Downgrade or drop a finding when any of these apply:
+ ## Review workflow
  
-       - name: Login to GCR
--        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
-         with:
-           registry: gcr.io
-           username: oauth2accesstoken
-@@ -175,7 +175,7 @@ jobs:
-           service_account: ${{ env.GCR_SERVICE_ACCOUNT }}
+ 1. **Read the PR title, description, and linked issue.** Understand intent before reading the diff.
+-2. **Get the diff.** Locally: `git diff origin/main...HEAD` or `gh pr diff <n>`. In agent context, use the `get_changed_files` tool.
+-3. **Classify the change** using the table below to pick the right sub-skills.
+-4. **Read the surrounding code**, not just the diff hunks, context often lives in the same file just outside the hunk.
+-5. **Verify NGINX / NIC semantics upstream** for any change that reaches a `.tmpl` file, an annotation, or a CRD field -- see the source table above.
+-6. **Walk the review dimensions** in order (Security -> Correctness -> Architecture -> Tests -> Build/chart/CI -> Docs and Examples), loading the referenced skills for depth.
+-7. **Verify claims before commenting.** Grep for the symbol, read the referenced file, run `make lint`/`make test` if in doubt.
+-8. **Run the completeness gate** below before writing anything.
+-9. **Produce the review** in the Output Format below.
+-10. **Clean up.** Leave no trace of the review -- see below.
++2. **Check if the PR is part of a stack** using `gh` CLI, `gh api`, or `gh stack` (`gh extension install github/gh-stack`).
++   - **Interactive / local**: If stacked and unspecified, show the stack chain and ask whether to review **this PR only** (`origin/<baseRefName>...<headRefName>`) or the **full stack** (`origin/main...<stack-tip>`).
++   - **Unattended / bot**: Review **this PR only** (`origin/<baseRefName>...<headRefName>`), using sibling PRs in the stack for context and cross-layer completeness checks.
++3. **Get the diff.** Locally: `gh pr diff <n>` or `git diff origin/<base>...HEAD`. In agent context, use the `get_changed_files` tool (or `gh pr diff` / `git diff origin/<base>...HEAD` when stacked).
++4. **Classify the change** using the table below to pick the right sub-skills.
++5. **Read the surrounding code**, not just the diff hunks, context often lives in the same file just outside the hunk.
++6. **Verify NGINX / NIC semantics upstream** for any change that reaches a `.tmpl` file, an annotation, or a CRD field -- see the source table above.
++7. **Walk the review dimensions** in order (Security -> Correctness -> Architecture -> Tests -> Build/chart/CI -> Docs and Examples), loading the referenced skills for depth.
++8. **Verify claims before commenting.** Grep for the symbol, read the referenced file, run `make lint`/`make test` if in doubt.
++9. **Run the completeness gate** below before writing anything.
++10. **Produce the review** in the Output Format below.
++11. **Clean up.** Leave no trace of the review -- see below.
  
-       - name: Login to GCR
--        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
-         with:
-           registry: gcr.io
-           username: oauth2accesstoken
-@@ -268,7 +268,7 @@ jobs:
-           service_account: ${{ env.GCR_SERVICE_ACCOUNT }}
+ ### Local checkout and cleanup
  
-       - name: Login to GCR
--        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
-         with:
-           registry: gcr.io
-           username: oauth2accesstoken
-```
-
-**File**: `.github/workflows/build-oss.yml` (modified, +3/-3)
-```diff
-@@ -118,15 +118,15 @@ jobs:
-         if: ${{ inputs.authenticated }}
+@@ -179,7 +182,7 @@ Before producing output, confirm you have checked each row that the diff touches
+ | `.github/workflows/**` | Correct `github.repository` gate for the stage (internal repo builds, public repo publishes), pinned action SHAs, matrix JSON in sync |
+ | A new user-controlled string reaching NGINX config | A `containsDangerousChars()` / `ValidateEscapedString()` guard **and** a negative test |
  
-       - name: Login to GCR
--        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
-         with:
-           registry: gcr.io
-           username: oauth2accesstoken
-           password: ${{ steps.auth.outputs.access_token }}
-         if: ${{ inputs.authenticated }}
+-An unmet row is Blocking unless the Fixed verdicts table above assigns it a lower severity. Cite the missing artifact by path.
++An unmet row is Blocking unless the Fixed verdicts table above assigns it a lower severity, or (when reviewing a single PR in a stack) the missing layer is intentionally split into a sibling PR in the stack. Cite the missing artifact by path.
  
-       - name: DockerHub Login
--        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
-         with:
-           username: ${{ env.DOCKER_USERNAME }}
-           password: ${{ env.DOCKER_PASSWORD }}
-@@ -251,7 +251,7 @@ jobs:
+ ## Change type classification
  
-       - name: Run Docker Scout vulnerability scanner
-         id: docker-scout
--        uses: docker/scout-action@221e7f4860634eeb1579e3bd7ca232e577bd1864 # v1.26.0
-+        uses: docker/scout-action@a4119c5a8c5076236a54e4ce99531f7e4dd2ef84 # v1.27.0
-         with:
-           command: cves
-           image: ${{ steps.meta.outputs.tags }}
-```
-
-**File**: `.github/workflows/build-plus.yml` (modified, +3/-3)
-```diff
-@@ -130,15 +130,15 @@ jobs:
-         if: ${{ inputs.authenticated }}
- 
-       - name: Login to GCR
--        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
-         with:
-           registry: gcr.io
-           username: oauth2accesstoken
-           password: ${{ steps.auth.outputs.access_token }}
-         if: ${{ inputs.authenticated }}
- 
-       - name: DockerHub Login
--        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
-         with:
-           username: ${{ env.DOCKER_USERNAME }}
-           password: ${{ env.DOCKER_PASSWORD }}
-@@ -273,7 +273,7 @@ jobs:
- 
-       - name: Run Docker Scout vulnerability scanner
-         id: docker-scout
--        uses: docker/scout-action@221e7f4860634eeb1579e3bd7ca232e577bd1864 # v1.26.0
-+        uses: docker/scout-action@a4119c5a8c5076236a54e4ce99531f7e4dd2ef84 # v1.27.0
-         with:
-           command: cves
-           image: ${{ steps.meta.outputs.tags }}
-```
-
-**File**: `.github/workflows/build-single-image.yml` (modified, +1/-1)
-```diff
-@@ -117,7 +117,7 @@ jobs:
-           service_account: ${{ env.GCR_SERVICE_ACCOUNT }}
- 
-       - name: Login to GCR
--        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
-         with:
-           registry: gcr.io
-           username: oauth2accesstoken
-```
-
-**File**: `.github/workflows/build-test-image.yml` (modified, +2/-2)
-```diff
-@@ -55,14 +55,14 @@ jobs:
-           service_account: ${{ env.GCR_SERVICE_ACCOUNT }}
- 
-       - name: Login to GCR
--        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
-         with:
-           registry: gcr.io
-           username: oauth2accesstoken
-           password: ${{ steps.auth.outputs.access_token }}
- 
-       - name: Login to GHCR
--        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
-         with:
-           registry: ghcr.io
-           username: ${{ github.actor }}
-```
-
-**File**: `.github/workflows/build-ubi-dependency.yml` (modified, +1/-1)
-```diff
-@@ -69,7 +69,7 @@ jobs:
-         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
- 
-       - name: Login to GitHub Container Registry
--        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
-         with:
-           registry: ghcr.io
-           username: ${{ github.repository_owner }}
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +5/-5)
-```diff
-@@ -125,7 +125,7 @@ jobs:
-         if: ${{ steps.vars.outputs.forked_workflow == 'false' }}
- 
-       - name: Login to GCR
--        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
-         with:
-           registry: gcr.io
-           username: oauth2accesstoken
-@@ -464,7 +464,7 @@ jobs:
-         if: ${{ needs.checks.outputs.forked_workflow == 'false' || needs.checks.outputs.docs_only == 'false' }}
- 
-       - name: Login to GCR
--        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
-         with:
-           registry: gcr.io
-           username: oauth2accesstoken
-@@ -564,7 +564,7 @@ jobs:
-         if: ${{ needs.checks.outputs.forked_workflow == 'false' }}
- 
-       - name: Login to GCR
--        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
-         with:
-           registry: gcr.io
-           username: oauth2accesstoken
-@@ -726,15 +726,15 @@ jobs:
-         if: ${{ needs.checks.outputs.forked_workflow == 'false' }}
- 
-       - name: Login to GCR
--        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
-         with:
-           registry: gcr.io
-           username: oauth2accesstoken
-           password: ${{ steps.auth.outputs.access_token }}
-         if: ${{ needs.checks.outputs.forked_workflow == 'false' }}
- 
-       - name: Login to GHCR
--        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
-         with:
-           registry: ghcr.io
-           username: ${{ github.actor }}
 ```
 
 ---
 
-### Incident Patch 2: `acb412fb` (2026-10-27)
-**Commit Message**: Update golang:1.27.3-alpine Docker digest to d200d2d (main) (#11248)
+### Incident Patch 2: `93b66bdd` (2026-10-28)
+**Commit Message**: Update version to 5.8.0 & chart to 2.9.0 (#11278)
 
-Update golang:1.27.3-alpine Docker digest to d200d2d
+* Update version to 5.8.0 & chart to 2.9.0
 
-Signed-off-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+* Update snaps
 
-**File**: `build/Dockerfile` (modified, +1/-1)
+**File**: `.github/data/version.txt` (modified, +2/-2)
 ```diff
-@@ -25,7 +25,7 @@ ARG UBI10_PACKAGES_IMAGE=ghcr.io/nginx/dependencies/nginx-ubi:ubi10@sha256:07e03
- 
- 
- ############################################# External dependency images #############################################
--FROM golang:1.27.3-alpine@sha256:f2c872bcee949b7be9c490efd02b48a8a2fbf947cdf533f1c58525ec9d8170fd AS golang-builder
-+FROM golang:1.27.3-alpine@sha256:d200d2dd76b03a99b52651fd1325aff7dcd35422c35c01bac56571b0507f3deb AS golang-builder
- FROM ghcr.io/nginx/alpine-fips:0.6.0-alpine3.24@sha256:2122f993efed0ba145bfc118699f042a7c7dce82274d01e7f72ed3884cdfed4b AS alpine-fips-3.24
- FROM ${UBI10_PACKAGES_IMAGE} AS ubi10-packages
- FROM redhat/ubi10-minimal:10.2-1791891203@sha256:552f8cc1ddb0bc9e411065c78499aa4dbc2c4ea9bd057aa0e6e44940db13acb5 AS ubi-minimal
+@@ -1,2 +1,2 @@
+-IC_VERSION=5.7.0
+-HELM_CHART_VERSION=2.8.0
++IC_VERSION=5.8.0
++HELM_CHART_VERSION=2.9.0
+```
+
+**File**: `charts/nginx-ingress/Chart.yaml` (modified, +2/-2)
+```diff
+@@ -1,7 +1,7 @@
+ apiVersion: v2
+ name: nginx-ingress
+-version: 2.8.0
+-appVersion: 5.7.0
++version: 2.9.0
++appVersion: 5.8.0
+ kubeVersion: ">= 1.25.0-0"
+ type: application
+ description: NGINX Ingress Controller
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11259** (2026-10-27): Update AWS SDK v2 (release-5.7) (@renovate[bot])
-- **PR #11258** (2026-10-27): Update pre-commit hook python-jsonschema/check-jsonschema to v0.39.0 (main) (@renovate[bot])
-- **PR #11257** (2026-10-27): Update AWS SDK v2 (main) (@renovate[bot])
-- **PR #11256** (2026-10-27): Update module github.com/dlclark/regexp2/v2 to v2.11.0 (release-2026-lts) (@renovate[bot])
-- **PR #11255** (2026-10-27): Update golang:1.27.3-alpine Docker digest to d200d2d (release-2026-lts) (@renovate[bot])
-- **PR #11254** (2026-10-27): Update debian:13-slim Docker digest to 62bd423 (release-2026-lts) (@renovate[bot])
+- **PR #11283** (2026-10-28): Add stack support to pr-review skill (@AlexFenlon)
+- **PR #11282** (closed): Update community call date from 2026-11-02 to 2026-11-03 (@haywoodsh)
+- **PR #11280** (2026-10-28): Update version to 2026-lts-r10 & chart to 2026.0.9 (@pdabelf5)
+- **PR #11279** (2026-10-28): Update version to 5.7.1 & chart to 2.8.1 (@pdabelf5)
+- **PR #11278** (2026-10-28): Update version to 5.8.0 & chart to 2.9.0 (@pdabelf5)
+- **PR #11275** (2026-10-28): Update dependency preflight to v1.22.0 (release-2026-lts) (@renovate[bot])
 
 ---
 
@@ -1557,28 +1412,34 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update github actions (main) (#11232)
+## X. Add stack support to pr-review skill (#11283)
 
 **RULE**:
-When implementing operations in `.github/workflows/build-artifacts.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/prompts/pr-review.prompt.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f45222fb`: Update github actions (main) (#11232). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a052bc26`: Add stack support to pr-review skill (#11283). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-artifacts.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/prompts/pr-review.prompt.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-          version: v2.19.0 # renovate: datasource=github-releases depName=goreleaser/goreleaser,
+   - Check if the PR is part of a stack using `gh` CLI, `gh api`, or `gh stack` (`gh extension install github/gh-stack`).
+   - If part of a stack and not specified, show the stack chain and ask whether to review **this PR only** (`origin/<baseRefName>...<headRefName>`) or the **full stack** (`origin/main...<stack-tip>`).
+   - Base: `origin/<baseRefName>` from the PR/stack, falling back to `origin/main` (or `origin/release-*` if the current branch name starts with `release-`).
+   - Head: the target PR's head (or stack tip for a full-stack review), falling back to the current working branch.
+2. Get the diff. Prefer the `get_changed_files` tool (or `gh pr diff` / `git diff <base>...HEAD` when stacked).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-          version: v2.18.3 # renovate: datasource=github-releases depName=goreleaser/goreleaser,
+   - Default base: `origin/main` (or `origin/release-*` if the current branch name starts with `release-`).
+   - Head: the current working branch.
+2. Get the diff. Prefer the `get_changed_files` tool; fall back to `git diff <base>...HEAD`.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f45222fb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a052bc26` are properly handled with clean fallback behavior.

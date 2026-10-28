@@ -5915,3 +5915,7 @@ Every entry in this ledger must capture:
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `8ed43f1f` | Multi-dimensional audit evidence | 2026-10-28T19:31:55.582Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `b0563444` | Multi-dimensional audit evidence | 2026-10-28T19:32:01.164Z |
 | `learn-huggingface-canberkkkkkk-ema-lightning` | `https://huggingface.co/canberkkkkkk/ema-lightning` | `hf-canberk` | Multi-dimensional audit evidence | 2026-10-28T19:38:54.930Z |
+| `learn-huggingface-unsloth-embeddinggemma-2-gguf` | `https://huggingface.co/unsloth/embeddinggemma-2-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-28T19:46:40.750Z |
+| `learn-github-tencent-tds-kuiklyui` | `https://github.com/Tencent-TDS/KuiklyUI` | `2fcb6f77` | Multi-dimensional audit evidence | 2026-10-28T19:46:48.194Z |
+| `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `a052bc26` | Multi-dimensional audit evidence | 2026-10-28T19:46:50.452Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `1f4eee02` | Multi-dimensional audit evidence | 2026-10-28T19:46:53.277Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T19:38:54.847Z",
+  "last_updated": "2026-10-28T19:46:53.207Z",
   "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -28786,7 +28786,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
       "source_version": "hf-unsloth-embeddinggemma-2-gguf",
-      "content_hash": "1a65e25c534faaf0ae2145e1ced297c26955d7d99ba8f14dea538bc08a491a01",
+      "content_hash": "0b4ecab20085c0a2b9057c6d6a1f3aad7417c40963f118a6ce95222539ea08dc",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
       "promoted_rules": [
@@ -28869,7 +28869,7 @@
         "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv48dth3",
         "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv4lnhts"
       ],
-      "verified_at": "2026-10-25T16:48:05.830Z",
+      "verified_at": "2026-10-28T19:46:40.653Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40089,8 +40089,8 @@
       "slug": "nginx-kubernetes-ingress",
       "platform": "github",
       "source_url": "https://github.com/nginx/kubernetes-ingress",
-      "source_version": "f45222fb",
-      "content_hash": "4ebf8b8016c6edbc036309679f598278417f479d8ae6ecc94e9b437bfdaba147",
+      "source_version": "a052bc26",
+      "content_hash": "721b879436de950bdb68731b2a989017ca53d97b73f2e22dd6540491af5e2ecb",
       "dossier_path": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "promoted_rules": [
@@ -40128,6 +40128,11 @@
           "number": 4991,
           "title": "Update github actions (main) (#11232)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5384,
+          "title": "Add stack support to pr-review skill (#11283)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40135,7 +40140,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T20:31:59.773Z",
+      "verified_at": "2026-10-28T19:46:50.363Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51677,8 +51682,8 @@
       "slug": "tencent-tds-kuiklyui",
       "platform": "github",
       "source_url": "https://github.com/Tencent-TDS/KuiklyUI",
-      "source_version": "f0d0389c",
-      "content_hash": "82cf314822b6db6f049f46443a927b5ae2fc218bea12a4bc0e2837cde3608041",
+      "source_version": "2fcb6f77",
+      "content_hash": "94c7021ac105ad56ad310d8fbb63456c8fe0f6a1812080936b4ebd651e7dffc1",
       "dossier_path": "07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md",
       "promoted_rules": [
@@ -51711,6 +51716,11 @@
           "number": 5077,
           "title": "android): destroy render layer after pageWillDestroy (#1834)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5383,
+          "title": "h5): stabilize Hover positioning in transformed containers (#1838)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51718,7 +51728,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T00:40:12.931Z",
+      "verified_at": "2026-10-28T19:46:48.105Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65410,13 +65420,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
       "source_version": "1f4eee02",
-      "content_hash": "bc6905ed852da8d96a08791329b631066ab219bca4d3f14d909344059718202e",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "content_hash": "1d9b2ae0dc011a9dd30b1e2fc797e4be684b21983545208cc37aee4d9d1a169a",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 1114,
@@ -65477,6 +65487,11 @@
           "number": 5335,
           "title": "Merge pull request #4584 from aleo-labs-protocol/fix/client-solution-limit",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 5385,
+          "title": "Merge pull request #4534 from aleo-labs-protocol/feat/upgrade-schedule-handshake",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -65484,7 +65499,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T17:42:55.751Z",
+      "verified_at": "2026-10-28T19:46:53.190Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -145858,6 +145873,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T19:32:01.071Z"
+    },
+    "rule-5383": {
+      "learning_id": "rule-5383",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5383,
+      "title": "h5): stabilize Hover positioning in transformed containers (#1838)",
+      "source_url": "https://github.com/Tencent-TDS/KuiklyUI",
+      "source_version": "2fcb6f77",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T19:46:48.105Z"
+    },
+    "rule-5384": {
+      "learning_id": "rule-5384",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5384,
+      "title": "Add stack support to pr-review skill (#11283)",
+      "source_url": "https://github.com/nginx/kubernetes-ingress",
+      "source_version": "a052bc26",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T19:46:50.363Z"
+    },
+    "rule-5385": {
+      "learning_id": "rule-5385",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5385,
+      "title": "Merge pull request #4534 from aleo-labs-protocol/feat/upgrade-schedule-handshake",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "1f4eee02",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T19:46:53.190Z"
     }
   },
   "aliases": {

@@ -5906,3 +5906,7 @@
 | `CYCLE-20261028-GFUI` | `2026-10-28T19:31:55.578Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5381` | Yes (`733db592...`) |
 | `CYCLE-20261028-GK5L` | `2026-10-28T19:32:01.161Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5382` | Yes (`dc280eae...`) |
 | `CYCLE-20261028-PFF2` | `2026-10-28T19:38:54.926Z` | `canberkkkkkk/ema-lightning` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md` | Yes (`2ff5e104...`) |
+| `CYCLE-20261028-ZEUI` | `2026-10-28T19:46:40.746Z` | `unsloth/embeddinggemma-2-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md` | Yes (`0b4ecab2...`) |
+| `CYCLE-20261028-ZKLB` | `2026-10-28T19:46:48.191Z` | `Tencent-TDS/KuiklyUI` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5383` | Yes (`94c7021a...`) |
+| `CYCLE-20261028-ZMC1` | `2026-10-28T19:46:50.449Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5384` | Yes (`721b8794...`) |
+| `CYCLE-20261028-ZOII` | `2026-10-28T19:46:53.274Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5385` | Yes (`1d9b2ae0...`) |
