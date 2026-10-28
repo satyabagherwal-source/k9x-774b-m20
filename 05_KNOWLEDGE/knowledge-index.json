@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T21:11:22.582Z",
+  "last_updated": "2026-10-28T21:30:04.871Z",
   "total_verified_learnings": 1159,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7246,13 +7246,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "hmbown-codewhale",
+      "slug": "codewhale-hq-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/Hmbown/Codewhale",
-      "source_version": "07ea16b4",
-      "content_hash": "85734e854871c5a85ffc83db5006f35738dbd196621e06cc36432fb923f7f913",
-      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "687a38c6",
+      "content_hash": "56f8e0f9f7d5f134fd538eb7fc3729eefe3ce401f0014998cf5d1d64e7e70f34",
+      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 1747,
@@ -7333,6 +7333,11 @@
           "number": 5174,
           "title": "security): bound MCP catalog revalidation and harden hunk patch parsing",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5407,
+          "title": "tui): vendored terminal kit on design tokens 2.3.0 (Accent role)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7340,7 +7345,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T04:35:28.637Z",
+      "verified_at": "2026-10-28T21:29:53.421Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -22218,7 +22223,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FrancisRing/Prism",
       "source_version": "hf-francisring-prism",
-      "content_hash": "920e39ecd89b619f21a38f26e3b4ef0c91554f8c8598406a6dff38f70473a81c",
+      "content_hash": "8040ee89005e129a8f971cf754b9867b46be32f888f2584580795cdbaa23dfd2",
       "dossier_path": "07_PROJECT_LEARNING/hf-francisring-prism-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-francisring-prism-learnings.md",
       "promoted_rules": [
@@ -22255,6 +22260,16 @@
           "number": 4170,
           "title": "Multi-Modal Cross-Attention KV-Norm Numerical Clamp",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5408,
+          "title": "Dynamic Sparse Attention Memory Safety",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5409,
+          "title": "Joint Video-Audio Temporal Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -22271,7 +22286,7 @@
         "learn-huggingface-hf-francisring-prism-mv43jvl8",
         "learn-huggingface-hf-francisring-prism-mv4gsoqj"
       ],
-      "verified_at": "2026-10-25T07:53:37.120Z",
+      "verified_at": "2026-10-28T21:30:04.852Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -146341,6 +146356,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T21:11:22.564Z"
+    },
+    "rule-5407": {
+      "learning_id": "rule-5407",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5407,
+      "title": "tui): vendored terminal kit on design tokens 2.3.0 (Accent role)",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "687a38c6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T21:29:53.421Z"
+    },
+    "rule-5408": {
+      "learning_id": "rule-5408",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5408,
+      "title": "Dynamic Sparse Attention Memory Safety",
+      "source_url": "https://huggingface.co/FrancisRing/Prism",
+      "source_version": "hf-francisring-prism",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T21:30:04.852Z"
+    },
+    "rule-5409": {
+      "learning_id": "rule-5409",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5409,
+      "title": "Joint Video-Audio Temporal Alignment Invariant",
+      "source_url": "https://huggingface.co/FrancisRing/Prism",
+      "source_version": "hf-francisring-prism",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T21:30:04.852Z"
     }
   },
   "aliases": {

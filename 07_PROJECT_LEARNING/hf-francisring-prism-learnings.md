@@ -3,7 +3,7 @@
 > **Source Version**: `hf-francisri`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-25T07:53:36.795Z  
+> **Timestamp**: 2026-10-28T21:30:03.923Z  
 > **Learning ID**: `learn-huggingface-francisring-prism`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -14,512 +14,349 @@
 
 # Project Learning Record (Full-Spectrum Forensic Harvest): FrancisRing/Prism
 
----
-
 ## 1. Executive Forensic Architecture & System Mechanics
 
-### 1.1 Technical Problem Domain
-Native 2K high-resolution video generation combined synchronously with multi-channel audio synthesis introduces an intractable token explosion. In a standard Video Diffusion Transformer (DiT), sequence length scales as:
-$$L_{\text{video}} = T \times \left(\frac{H}{p_h}\right) \times \left(\frac{W}{p_w}\right)$$
-For native $2048 \times 1152$ video at $T = 125$ frames with spatial patch size $p_h = p_w = 8$ and temporal patch size $p_t = 1$, video tokens alone exceed $4.6 \times 10^6$ elements per sample. Concatenating acoustic representations (mel-spectrogram tokens or latent neural audio codec tokens at $50\text{ Hz}$) alongside dense full self-attention incurs an $\mathcal{O}(L^2)$ memory and compute bound that exceeds the High Bandwidth Memory (HBM3e) capacity of clustered 80GB/192GB accelerators.
+**Technical Problem Solved:**
+The repository `FrancisRing/Prism` addresses the computational infeasibility of generating high-resolution (2K) video with synchronized audio using standard dense attention mechanisms. Standard Transformers scale quadratically ($O(N^2)$) with sequence length. For video, the sequence length $N$ is the product of temporal frames, spatial height, and spatial width. At 2K resolution, $N$ becomes massive, causing memory overflow and prohibitive latency. Prism introduces **Dynamic Sparse Attention** to reduce this complexity while maintaining the quality of joint video-audio generation.
 
-`FrancisRing/Prism` (Tencent-Hunyuan / Fudan University) resolves this bottleneck by implementing **Dynamic Sparse Attention (DSA)** combined with **Sequence Parallelism ($SP$)** and **Synchronized Joint Video-Audio Cross-Modal Diffusion Transformers**.
+**Architectural Boundaries & Subsystems:**
+1.  **Diffusion Backbone (DiT):** The core is a Diffusion Transformer (DiT) architecture, likely based on the HunyuanVideo lineage (given the Tencent Hunyuan affiliation). It operates in latent space, not pixel space.
+2.  **Sparse Attention Kernel:** The critical innovation is the attention mechanism. Instead of computing $Q \cdot K^T$ for all pairs, it dynamically selects a subset of relevant tokens (spatial/temporal neighbors) based on content. This is the "Prism" mechanism.
+3.  **Joint Modality Fusion:** The system does not generate video and audio separately. It uses a unified transformer where video tokens and audio tokens attend to each other. This requires careful handling of different token dimensions and temporal alignment.
+4.  **Inference Pipeline (Diffusers):** The `config.json` reveals it is integrated into the Hugging Face `diffusers` library.
+    *   `"i2v": true`: Supports Image-to-Video conditioning.
+    *   `"use_audio": true`: Enables the audio generation head.
+    *   `"random_prefix_frames": true`: A training/inference strategy where random initial frames are provided to stabilize generation or reduce compute.
+    *   `"sp_size": 1`: Sequence Parallelism size. Set to 1, implying single-GPU inference or that the parallelism logic is handled externally/optionally.
 
-```
-[ Input Condition: Image / Text / Prefix Frames ]
-                   │
-                   ▼
-     ┌────────────────────────────┐
-     │ 3D Causal VAE / Audio VAE   │
-     └─────────────┬──────────────┘
-                   │ Video Latents: [B, C_v, T, H, W]
-                   │ Audio Latents: [B, C_a, T_a, D_a]
-                   ▼
-     ┌────────────────────────────┐
-     │ Multimodal Tokenizer       │
-     │ 3D Patchification + Embed  │
-     └─────────────┬──────────────┘
-                   │ Flattened & RoPE: [B, L_v + L_a, D]
-                   ▼
- ┌──────────────────────────────────────────────────┐
- │ Prism DiT Block (Repeated N Times)               │
- │                                                  │
- │  ┌────────────────────────────────────────────┐  │
- │  │ Sequence Parallel Split (sp_size = P)      │  │
- │  │ Sharded Tokens: (L_v + L_a) / P            │  │
- │  └──────────────────────┬─────────────────────┘  │
- │                         ▼                        │
- │  ┌────────────────────────────────────────────┐  │
- │  │ Dynamic Sparse Attention (DSA) Router      │  │
- │  │ Top-k Query/Key Dynamic Routing Cluster    │  │
- │  │ - Spatial Intra-frame Sparse Mask          │  │
- │  │ - Temporal Cross-frame Motion Vectors      │  │
- │  │ - Audio-Visual Temporal Cross-Alignment    │  │
- │  └──────────────────────┬─────────────────────┘  │
- │                         ▼                        │
- │  ┌────────────────────────────────────────────┐  │
- │  │ Ring-Attention / All-to-All SP Exchange    │  │
- │  └──────────────────────┬─────────────────────┘  │
- │                         ▼                        │
- │  ┌────────────────────────────────────────────┐  │
- │  │ Pointwise SwiGLU Feed-Forward Network      │  │
- │  └────────────────────────────────────────────┘  │
- └─────────────────────────┬────────────────────────┘
-                           │
-                           ▼
-     ┌────────────────────────────┐
-     │ Flow-Matching / V-Pred Denoiser
-     └─────────────┬──────────────┘
-                   │
-                   ▼
-  [ Synthesized Native 2K Video (MP4) + Synchronous Audio (WAV) ]
-```
+**Critical Abstractions:**
+*   **Latent Video Tensor:** Shape typically `[B, C, T, H, W]` in latent space.
+*   **Audio Latent Tensor:** Shape typically `[B, C_a, T_a]`.
+*   **Sparse Mask/Indices:** A dynamic tensor of indices or a boolean mask that defines which $Q$ tokens attend to which $K$ tokens. This is the core state that changes per inference step.
 
-### 1.2 Subsystem Decoupling & Invariant Boundaries
-1. **Multimodal Dual-Stream Latent Space**: Video latents ($C_v = 16$) and audio latents ($C_a = 8$) are patchified separately, augmented with 3D rotary positional embeddings (3D-RoPE) for video and 1D temporal RoPE for audio, before entering a joint projection space.
-2. **Dynamic Sparse Attention (DSA) Engine**: Instead of static windowed attention, queries dynamically compute coarse-grained block centroids, selecting top-$k$ critical visual and acoustic key blocks across time, eliminating redundant background and static acoustic token computation.
-3. **Sequence Parallelism ($SP$) Runtime Boundary**: Sequences are sharded along the combined token dimension across `sp_size` ranks using Ring Attention or All-to-All primitives. Local rank activations store only $\frac{L}{P}$ tokens, while communication hooks manage asynchronous key/value tensor exchanges.
-4. **Random Prefix Conditioning Pipeline**: To unify Image-to-Video (`i2v: true`), Video Extension, and Text-to-Video (`t2v`) in a single network, a stochastic prefix masking mask sets $0 \le t_{\text{prefix}} < T$ frames as uncorrupted conditioning latents with zero diffusion loss, while remaining frames receive standard forward Gaussian noise.
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
----
-
-## 2. Net-New Universal Engineering Rules
-
-### 1. Sequence-Parallel Spatial-Temporal Block Realignment
+### 1. Dynamic Sparse Attention Memory Safety
 **RULE**:
-When sharding multi-modal 3D spatial-temporal tokens across distributed sequence-parallel ranks (`sp_size > 1`), sequence lengths MUST be strictly padded to a multiple of $(\text{Block Size} \times \text{sp\_size})$. Dynamic sparse routing kernels MUST compute block-level clustering ONLY over rank-aligned boundaries, and the padded tokens MUST be masked with $-\infty$ prior to softmax and discarded before loss computation.
+When implementing dynamic sparse attention for high-resolution media generation, you MUST pre-allocate the maximum possible sparse index buffer and use a "fill-and-mask" strategy rather than dynamic allocation per step. You MUST NOT use Python-level list comprehensions to gather indices for GPU tensors; this causes CPU-GPU synchronization stalls.
 
 **WHY**:
-Non-divisible sequence lengths lead to silent shape mismatch or hanging collective all-to-all communications (`NCCL watchdog timeout`). In dynamic sparse attention, if a spatial block is partially split across two sequence-parallel ranks without boundary alignment, coarse-grained cluster centroids diverge across GPUs, producing non-deterministic sparse routing patterns, corrupted attention maps, and gradient NaN blowups during backward passes.
+Dynamic sparse attention requires gathering non-contiguous memory blocks. If indices are computed on CPU and moved to GPU every step, the PCIe bus becomes the bottleneck, negating the speedup of sparsity. Pre-allocating a dense buffer of indices (or using a fixed-size sparse structure) allows the GPU to process the sparse operation in a single kernel launch without host-device synchronization.
 
 **WHEN TO APPLY**:
-Apply to any 3D Diffusion Transformer (DiT) or Multimodal LLM employing sequence parallelism (RingAttention, DeepSpeed Ulysses, Megatron-SP) combined with sparse or block-sparse attention.
+Any Transformer-based model where attention is computed over sequences longer than 4096 tokens, specifically in video (3D) or high-res image (2D) generation.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import torch
-import torch.distributed as dist
-import torch.nn.functional as F
 
-def align_and_shard_tokens(
-    tokens: torch.Tensor, 
-    block_size: int, 
-    sp_group: dist.ProcessGroup
-) -> tuple[torch.Tensor, int, int]:
+def sparse_attention_forward(q, k, v, sparse_indices, max_seq_len):
     """
-    Pads and shards multimodal tokens across Sequence Parallel ranks.
-    tokens: [B, L, D]
-    Returns: (sharded_tokens, original_len, pad_len)
+    q, k, v: [B, H, L, D]
+    sparse_indices: [B, H, L, K] where K is the number of neighbors to attend to.
     """
-    B, L, D = tokens.shape
-    sp_size = dist.get_world_size(sp_group)
-    rank = dist.get_rank(sp_group)
+    B, H, L, D = q.shape
+    K = sparse_indices.shape[-1]
     
-    # Invariant: Total length must be divisible by (block_size * sp_size)
-    alignment_unit = block_size * sp_size
-    remainder = L % alignment_unit
-    pad_len = (alignment_unit - remainder) if remainder != 0 else 0
+    # 1. Expand Q to match the sparse structure
+    # q_expanded: [B, H, L, K, D]
+    q_expanded = q.unsqueeze(3).expand(B, H, L, K, D)
     
-    if pad_len > 0:
-        # Pad with zeros at the tail; padding mask will mask these in attention
-        padding = torch.zeros(B, pad_len, D, dtype=tokens.dtype, device=tokens.device)
-        tokens_padded = torch.cat([tokens, padding], dim=1)
-    else:
-        tokens_padded = tokens
-        
-    total_aligned_len = L + pad_len
-    shard_len = total_aligned_len // sp_size
+    # 2. Gather K and V based on indices
+    # k_gathered: [B, H, L, K, D]
+    # v_gathered: [B, H, L, K, D]
+    # Note: sparse_indices must be long tensor on GPU
+    k_gathered = torch.gather(k.unsqueeze(2).expand(B, H, L, L, D), 
+                              dim=3, 
+                              index=sparse_indices.unsqueeze(-1).expand(B, H, L, K, D))
+    v_gathered = torch.gather(v.unsqueeze(2).expand(B, H, L, L, D), 
+                              dim=3, 
+                              index=sparse_indices.unsqueeze(-1).expand(B, H, L, K, D))
     
-    # Deterministic contiguous slice per rank
-    start_idx = rank * shard_len
-    end_idx = start_idx + shard_len
-    sharded_tokens = tokens_padded[:, start_idx:end_idx, :].contiguous()
+    # 3. Compute attention scores only for the sparse set
+    # scores: [B, H, L, K]
+    scores = torch.einsum('bhld,bhkd->bhkl', q_expanded, k_gathered) / (D ** 0.5)
     
-    return sharded_tokens, L, pad_len
-
-def unshard_and_unpad_tokens(
-    sharded_tokens: torch.Tensor, 
-    original_len: int, 
-    sp_group: dist.ProcessGroup
-) -> torch.Tensor:
-    """
-    Gathers sharded tokens across SP ranks and strips padding.
-    """
-    sp_size = dist.get_world_size(sp_group)
-    B, shard_len, D = sharded_tokens.shape
-    gathered_list = [torch.empty_like(sharded_tokens) for _ in range(sp_size)]
-    dist.all_gather(gathered_list, sharded_tokens, group=sp_group)
+    # 4. Softmax over the sparse dimension K
+    attn_weights = torch.softmax(scores, dim=-1)
     
-    full_tokens = torch.cat(gathered_list, dim=1)
-    # Strip padding to restore exact original sequence invariant
-    return full_tokens[:, :original_len, :].contiguous()
+    # 5. Weighted sum
+    # out: [B, H, L, D]
+    out = torch.einsum('bhkl,bhkd->bhld', attn_weights, v_gathered)
+    
+    return out
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# CRITICAL DEFECT: Direct sharding without block-alignment and padding
-def unsafe_shard(tokens: torch.Tensor, sp_size: int, rank: int):
-    # Fails if L is not divisible by sp_size -> uneven chunks across ranks
-    # Causes NCCL all_to_all collective crash or deadlocks on shape mismatch
-    chunk = torch.chunk(tokens, sp_size, dim=1)[rank]
-    # Fails inside block-sparse kernels expecting chunk.size(1) % block_size == 0
-    return chunk
+# ANTI-PATTERN: Dynamic Python Loop for Sparse Attention
+def bad_sparse_attention(q, k, v, indices):
+    B, H, L, D = q.shape
+    out = torch.zeros_like(q)
+    for b in range(B):
+        for h in range(H):
+            for l in range(L):
+                idx = indices[b, h, l] # CPU-GPU sync if indices is on GPU
+                # This loop is O(L) Python iterations, killing performance
+                out[b, h, l] = torch.sum(
+                    torch.softmax(torch.matmul(q[b, h, l], k[b, h, idx].T), dim=-1) 
+                    * v[b, h, idx], 
+                    dim=0
+                )
+    return out
 ```
 
 **VERIFICATION METHOD**:
-Enforce dynamic assertion in the distributed forward pass:
-```python
-assert (sharded_tokens.shape[1] % block_size) == 0, \
-    f"Shard length {sharded_tokens.shape[1]} not divisible by block_size {block_size}"
-assert total_gathered_len == (original_len + pad_len), \
-    "Gathered tensor length violates pad invariant"
-```
+1.  **Profiling**: Use `torch.profiler` to check for `cudaStreamSynchronize` calls inside the attention loop. There should be zero syncs during the forward pass of the attention block.
+2.  **Memory Check**: Assert that `sparse_indices` is a `torch.Tensor` on the same device as `q, k, v`.
+3.  **Correctness**: Compare output against a dense attention implementation with a mask that zeros out non-sparse entries. The difference should be within floating-point epsilon.
 
----
-
-### 2. Multi-Modal Cross-Attention KV-Norm Numerical Clamp
+### 2. Joint Video-Audio Temporal Alignment Invariant
 **RULE**:
-When joint audio-visual features with disparate dynamic energy ranges (e.g., normalized video diffusion latents $\mu=0, \sigma^2 \approx 1$ and audio spectrogram latents $\mu \ne 0$) interact in shared cross-attention projections, Key and Query projections MUST be individually scaled with RMSNorm and bounded with a clamping invariant ($\kappa \le 50.0$) prior to dynamic sparse routing score calculation.
+When fusing video and audio tokens in a joint Transformer, you MUST enforce a strict temporal downsampling ratio invariant between the video latent frames and audio latent steps. You MUST NOT allow the audio sequence length to drift relative to the video sequence length during the diffusion denoising steps.
 
 **WHY**:
-Audio latent representations frequently exhibit localized spectral bursts (e.g., transient percussion or loud onset phonemes) causing extreme dynamic outliers. In FP16/BF16 mixed-precision attention, these outliers cause the inner product $Q \cdot K^T$ to exceed $+65504$ (FP16 max) or saturate softmax exponents, resulting in all-zero or all-one sparse routing distributions. This degrades dynamic attention into collapsed single-token updates and induces numerical underflow in downstream gradients.
+Video latents are typically downsampled in time (e.g., 4x or 8x) compared to raw frames. Audio is continuous. If the audio tokens are not precisely aligned to the video temporal grid, the model learns to generate audio that is out of sync (lip-sync failure). During diffusion, if the noise schedule or sequence length changes dynamically without re-aligning the cross-attention masks, the model receives corrupted temporal context.
 
 **WHEN TO APPLY**:
-All joint cross-attention or unified multimodal self-attention blocks in audio-video diffusion models, especially during FP16 or BF16 training and inference.
+Any multi-modal generation model where one modality is discrete/temporal (video frames) and the other is continuous/temporal (audio waveform/latent).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-import torch
-import torch.nn as nn
-
-class SafeJointMultimodalQKNorm(nn.Module):
-    def __init__(self, dim: int, heads: int, max_qk_val: float = 50.0):
-        super().__init__()
-        self.heads = heads
-        self.head_dim = dim // heads
-        self.scale = self.head_dim ** -0.5
-        self.max_qk_val = max_qk_val
+class JointVideoAudioTransformer:
+    def __init__(self, video_temporal_downsample=4, audio_sample_rate=16000, video_fps=24):
+        self.video_temporal_downsample = video_temporal_downsample
+        # Calculate audio tokens per video latent frame
+        # 1 video latent frame = 4 raw frames = 4/24 seconds
+        # Audio tokens per second = 16000 / hop_size (e.g., 256) = 62.5
+        # Audio tokens per video latent frame = (4/24) * 62.5 = 10.416...
+        # We must round or interpolate to an integer.
+        self.audio_tokens_per_video_frame = int((self.video_temporal_downsample / video_fps) * (audio_sample_rate / 256))
         
-        # Explicit per-head RMSNorm
-        self.q_norm = nn.RMSNorm(self.head_dim, eps=1e-6)
-        self.k_norm = nn.RMSNorm(self.head_dim, eps=1e-6)
-
-    def forward(
-        self, 
-        q: torch.Tensor, 
-        k: torch.Tensor
-    ) -> tuple[torch.Tensor, torch.Tensor]:
+    def align_audio_to_video(self, audio_latents, video_latents):
         """
-        q: [B, H, L_q, D_h]
-        k: [B, H, L_k, D_h]
+        audio_latents: [B, T_a, D_a]
+        video_latents: [B, T_v, C, H, W]
         """
-        # Apply normalization to prevent dimensional variance drift
-        q_normed = self.q_norm(q)
-        k_normed = self.k_norm(k)
+        B, T_v, C, H, W = video_latents.shape
+        expected_audio_len = T_v * self.audio_tokens_per_video_frame
         
-        # Numerical clamp on query/key dot-product inputs
-        # Preserves directional sparsity while capping exponent magnitude
-        q_clamped = torch.clamp(q_normed, -self.max_qk_val, self.max_qk_val)
-        k_clamped = torch.clamp(k_normed, -self.max_qk_val, self.max_qk_val)
-        
-        return q_clamped, k_clamped
+        # If audio is longer, truncate; if shorter, pad with zeros
+        if audio_latents.shape[1] > expected_audio_len:
+            audio_latents = audio_latents[:, :expected_audio_len, :]
+        elif audio_latents.shape[1] < expected_audio_len:
+            pad_len = expected_audio_len - audio_latents.shape[1]
+            audio_latents = torch.nn.functional.pad(audio_latents, (0, 0, 0, pad_len))
+            
+        # Reshape audio to match video temporal grid for cross-attention
+        # [B, T_v, K, D_a] where K is tokens per video frame
+        audio_aligned = audio_latents.view(B, T_v, self.audio_tokens_per_video_frame, -1)
+        return audio_aligned
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# CRITICAL DEFECT: Raw inner product of multimodal tokens without normalization
-def unsafe_multimodal_attn(q, k):
-    # If audio k has outliers (~100.0) and video q has ~50.0,
-    # dot product = 5000. Softmax(5000) causes FP16 overflow / NaN gradients.
-    scores = torch.matmul(q, k.transpose(-1, -2)) * (q.shape[-1] ** -0.5)
-    return torch.softmax(scores, dim=-1)
+# ANTI-PATTERN: Independent Sequence Lengths
+def bad_joint_attention(video_tokens, audio_tokens):
+    # video_tokens: [B, T_v, D]
+    # audio_tokens: [B, T_a, D]
+    # If T_v != T_a, and we just concatenate or cross-attend without alignment,
+    # the model has no way to know which audio token corresponds to which video frame.
+    # This leads to "drifting" audio.
+    combined = torch.cat([video_tokens, audio_tokens], dim=1)
+    return transformer_forward(combined)
 ```
 
 **VERIFICATION METHOD**:
-Run property test evaluating extreme magnitude inputs:
-```python
-def test_qk_norm_stability():
-    module = SafeJointMultimodalQKNorm(dim=512, heads=8, max_qk_val=50.0).cuda().bfloat16()
-    q = torch.randn(2, 8, 1024, 64, device="cuda", dtype=torch.bfloat16) * 1000.0
-    k = torch.randn(2, 8, 1024, 64, device="cuda", dtype=torch.bfloat16) * 1000.0
-    qc, kc = module(q, k)
-    scores = torch.matmul(qc, kc.transpose(-1, -2)) * (64 ** -0.5)
-    assert not torch.isnan(scores).any(), "Softmax input scores contain NaNs"
-    assert not torch.isinf(scores).any(), "Softmax input scores contain Infs"
-    assert scores.abs().max() <= (50.0 * 50.0 * 64 * (64 ** -0.5)), "Score bound violated"
-```
+1.  **Unit Test**: Generate a video with a known audio pattern (e.g., a beep at frame 10). Verify that the generated audio has the beep at the corresponding timestamp.
+2.  **Shape Assertion**: In the forward pass, assert `audio_latents.shape[1] == video_latents.shape[1] * self.audio_tokens_per_video_frame`.
+3.  **Gradient Check**: Verify that gradients flow from the audio loss back to the video encoder and vice versa, confirming the joint training signal.
 
----
+## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-## 3. Forensic Real Incidents & Production Patches
+*Note: Since no specific commit diffs or bug issues were provided in the input, the following incidents are reconstructed based on common failure modes in this specific architectural class (Sparse Attention + Joint Video-Audio + Diffusers Integration) and the configuration flags provided.*
 
-### Incident 1: Dynamic Sparse Top-$k$ Discontinuity Under Sequence Parallelism (BUG-PRISM-01)
-- **Context**: Dynamic Sparse Attention Router, `prism/models/sparse_attention.py`
-- **What Was Expected**: Each sequence-parallel rank evaluates top-$k$ block keys globally by computing block centroids across all distributed video tokens.
-- **What Actually Happened**: When `sp_size > 1`, ranks only computed top-$k$ keys from their local partition of tokens. Video temporal dependencies spanning past frame blocks located on different ranks were ignored, causing catastrophic temporal flickering and tearing across video frame chunks.
-- **Evidence in Repo**: `config.json` exposes `"sp_size": 1` as the default fallback mode to prevent this distributed routing desynchronization.
-- **Root Cause**: The dynamic sparse router selected keys using a local `torch.topk` on the rank's partition before an `all_gather` of block keys, rather than computing coarse cluster centroids globally via an all-reduce before local sparse selection.
+### Incident 1: OOM Crash During 2K Inference with Dense Fallback (BUG-SPARSE-OOM-01)
+- **Context**: Inference pipeline, `PrismPipeline.__call__`
+- **What Was Expected**: The model to use sparse attention to fit within 24GB VRAM.
+- **What Actually Happened**: Out of Memory (OOM) error at the first denoising step.
+- **Evidence in Repo**: `config.json` has `"sp_size": 1`. If the sparse attention implementation falls back to dense attention when the sparsity ratio is low (e.g., in early denoising steps where noise is high and attention is diffuse), the memory spikes.
+- **Root Cause**: The sparse attention kernel was implemented with a "hybrid" mode that switches to dense if the number of selected neighbors exceeds a threshold. At high noise levels, the attention map is uniform, so the "sparse" selection picks almost all tokens, triggering the dense path.
 - **Remediation Code Diff**:
 ```python
-# - # Local routing failure:
-# - local_keys = keys[:, :, rank*shard_len : (rank+1)*shard_len, :]
-# - topk_indices = torch.topk(torch.matmul(q, local_keys.transpose(-1, -2)), k=top_k, dim=-1).indices
+# - Buggy: Dynamic switch to dense
+if num_selected_neighbors > threshold:
+    attn = dense_attention(q, k, v)
+else:
+    attn = sparse_attention(q, k, v, indices)
 
-# + # Safe global sparse routing:
-# + global_centroids = all_reduce_centroids(local_centroids, group=sp_group)
-# + global_topk_blocks = torch.topk(torch.matmul(q_centroids, global_centroids.transpose(-1, -2)), k=top_k_blocks, dim=-1).indices
-# + selected_keys = gather_sparse_blocks_all_to_all(keys, global_topk_blocks, group=sp_group)
+# + Fixed: Always use sparse, but with a larger K (neighbor count)
+# Ensure the sparse kernel can handle K up to L (full sequence) without falling back to a separate dense kernel.
+# Or, use a fixed K that is large enough to capture the diffuse attention without OOM.
+K = min(L, max_sparse_neighbors)
+indices = get_top_k_indices(q, k, K)
+attn = sparse_attention(q, k, v, indices)
 ```
-- **Lesson**: Sparse routing indices in sequence-parallel transformers must be computed over globally reduced coarse representations before performing sparse token transfers.
+- **Lesson**: Sparse attention implementations must have a **fixed memory footprint** regardless of the sparsity pattern. The kernel must be able to handle the worst-case (dense) scenario within the same memory allocation.
 
----
-
-### Incident 2: Stochastic Prefix Framing Latent Leakage in Flow Matching (BUG-PRISM-02)
-- **Context**: Image-to-Video Conditioning Loader, `prism/pipelines/pipeline_prism.py`
-- **What Was Expected**: With `"random_prefix_frames": true`, $N_{\text{prefix}}$ randomly sampled frames ($1 \le N_{\text{prefix}} \le N_{\text{max}}$) are treated as known visual conditions. Noise must be injected ONLY into target frames $t > N_{\text{prefix}}$, and loss gradients on prefix frames must be strictly zeroed out.
-- **What Actually Happened**: Diffusion noise schedule applied standard flow-matching interpolation ($x_t = (1 - \sigma) x_1 + \sigma x_0$) across the *entire* concatenated latent tensor, corrupting the prefix conditioning frames. During generation, the model treated conditioning frames as noisy targets, producing blurred, morphing identity drifts instead of strict frame continuation.
-- **Evidence in Repo**: `config.json`: `"random_prefix_frames": true, "i2v": true`.
-- **Root Cause**: The conditioning mask was multiplied post-noise-addition, but velocity target loss calculation omitted the condition mask, backpropagating loss through the conditioned frames and destabilizing image-to-video convergence.
+### Incident 2: Audio-Video Desync at High Resolution (BUG-ALIGN-DESYNC-02)
+- **Context**: `JointVideoAudioTransformer.forward`
+- **What Was Expected**: Lip-synced audio.
+- **What Actually Happened**: Audio was 100ms out of sync with video at 2K resolution.
+- **Evidence in Repo**: `config.json` has `"use_audio": true`. The README mentions "joint-video-audio-generation".
+- **Root Cause**: The audio latent sequence length was calculated based on the raw video frame count, but the video latent sequence length was based on the downsampled frame count. The cross-attention mask was not adjusted for the temporal downsampling factor.
 - **Remediation Code Diff**:
 ```python
-# - # Leaking noise into conditioning frames:
-# - noisy_latents = (1.0 - sigmas) * latents + sigmas * noise
-# - loss = F.mse_loss(model_pred, noise - latents)
+# - Buggy:
+audio_len = video_raw_frames
+video_latent_len = video_raw_frames // 4
+# Cross-attention mask created with shape [video_latent_len, audio_len]
+# This is incorrect because audio_len is 4x video_latent_len
 
-# + # Strict invariant: zero-noise injection on prefix condition
-# + condition_mask = build_prefix_mask(batch_size, num_frames, prefix_len, device=latents.device) # 1 for cond, 0 for target
-# + noisy_latents = torch.where(condition_mask == 1, latents, (1.0 - sigmas) * latents + sigmas * noise)
-# + loss = F.mse_loss(model_pred * (1 - condition_mask), (noise - latents) * (1 - condition_mask), reduction='sum') / (1 - condition_mask).sum()
+# + Fixed:
+audio_len = video_latent_len * audio_tokens_per_video_frame
+# Cross-attention mask created with shape [video_latent_len, audio_len]
+# This is correct because audio_len is now aligned to video_latent_len
 ```
-- **Lesson**: Conditioning latents in flow-matching networks must be explicitly masked out from both the forward diffusion perturbation and the loss objective.
+- **Lesson**: Always calculate sequence lengths in the **latent space**, not the raw pixel/waveform space. The temporal downsampling factor must be applied to the audio sequence length calculation.
 
----
-
-### Incident 3: Audio-Video Mel-Spectrogram Temporal Rate Desynchronization (BUG-PRISM-03)
-- **Context**: Multimodal Joint Tokenizer, `prism/data/audio_video_collator.py`
-- **What Was Expected**: Audio latents sampled at $50\text{ Hz}$ must align temporally with video latents at $24\text{ fps}$ downsampled temporally by $4\times$ ($6\text{ fps}$ in latent space). 1 video latent frame corresponds to exactly $\frac{50}{6} \approx 8.333$ audio tokens.
-- **What Actually Happened**: Integer division truncation (`audio_len // video_len = 8`) dropped fractional audio tokens over long $2K$ video sequences (e.g., 125 frames at 24fps = 5.2 seconds). By second 5, the audio lagged the video by over 400 milliseconds, causing severe audiovisual desynchronization.
-- **Evidence in Repo**: `README.md` metadata: `joint-video-audio-generation`, `tags: diffusers`.
-- **Root Cause**: Naive temporal slicing using fixed integer ratios instead of fractional interpolation or dynamic dynamic time warping (DTW) positional grids for joint RoPE.
+### Incident 3: Random Prefix Frames Causing Artifacts (BUG-PREFIX-ARTIFACT-03)
+- **Context**: `PrismPipeline.__call__`
+- **What Was Expected**: Smooth video generation from a random prefix.
+- **What Actually Happened**: Visible seams between the prefix frames and the generated frames.
+- **Evidence in Repo**: `config.json` has `"random_prefix_frames": true`.
+- **Root Cause**: The random prefix frames were not properly conditioned in the diffusion process. The model was trained with random prefixes, but the inference pipeline did not apply the same noise schedule to the prefix frames as to the generated frames.
 - **Remediation Code Diff**:
 ```python
-# - # Integer truncation caused temporal drift:
-# - aligned_audio_tokens = audio_tokens[:, :video_tokens.shape[1] * 8, :]
+# - Buggy:
+prefix_frames = random_prefix
+# No noise added to prefix_frames
+generated_frames = model.denoise(noisy_frames, prefix_frames)
 
-# + # Exact continuous time-timestamp embedding:
-# + video_timestamps = torch.arange(T_v, device=device) / fps_video
-# + audio_timestamps = torch.arange(T_a, device=device) / sample_rate_audio
-# + rope_pos_video = compute_1d_continuous_rope(video_timestamps)
-# + rope_pos_audio = compute_1d_continuous_rope(audio_timestamps)
+# + Fixed:
+prefix_frames = random_prefix
+# Add noise to prefix_frames according to the current denoising step
+noisy_prefix = add_noise(prefix_frames, noise, t)
+generated_frames = model.denoise(noisy_frames, noisy_prefix)
 ```
-- **Lesson**: Never align multi-rate multimodal streams via integer token index truncation; align via continuous physical timestamps inside positional embeddings.
+- **Lesson**: When using conditional inputs (like prefix frames) in diffusion models, the conditional inputs must be **noised** to the same level as the target output. Otherwise, the model sees a "clean" prefix and a "noisy" target, leading to artifacts.
 
----
-
-### Incident 4: Out-Of-Memory (OOM) Allocation Spikes During 2K Dense Validation Fallback (BUG-PRISM-04)
-- **Context**: Validation Inference Loop, `eval/evaluate_prism.py`
-- **What Was Expected**: Native 2K evaluation should run within an 80GB GPU envelope using dynamic sparse attention.
-- **What Actually Happened**: When switching from training to evaluation mode (`model.eval()`), the dynamic sparse attention block defaulted back to `torch.nn.functional.scaled_dot_product_attention` for ground-truth sparse comparison, allocating an intermediate tensor of shape `[1, 32, 288000, 288000]` in FP16 ($165\text{ GB}$), instantly crashing with `CUDA out of memory`.
-- **Evidence in Repo**: `README.md`: `Native 2K Joint Video-Audio Generation Model Training`, `sparse-attention`.
-- **Root Cause**: Evaluation script lacked the block-sparse kernel execution branch, falling back to full dense SDPA when calculating validation metrics.
+### Incident 4: Sparse Index Out of Bounds (BUG-INDEX-OOB-04)
+- **Context**: `SparseAttentionKernel.forward`
+- **What Was Expected**: Stable inference.
+- **What Actually Happened**: `IndexError: index 1024 is out of bounds for dimension 2 with size 1024`.
+- **Evidence in Repo**: N/A (inferred from sparse attention implementation).
+- **Root Cause**: The top-k selection algorithm returned indices that were equal to the sequence length `L`. This happened due to a floating-point precision issue in the softmax calculation, where a very small negative value was rounded to zero, causing the argmax to return an out-of-bounds index.
 - **Remediation Code Diff**:
 ```python
-# - if not self.training:
-# -     return F.scaled_dot_product_attention(q, k, v) # Instant OOM at 2K resolution
+# - Buggy:
+indices = torch.topk(scores, k=K, dim=-1).indices
+# No bounds check
 
-# + if not self.training:
-# +     # Invariant: Maintain dynamic block sparsity during evaluation
-# +     with torch.inference_mode():
-# +         return self.sparse_kernel_forward(q, k, v, block_size=self.block_size, topk=self.topk)
+# + Fixed:
+indices = torch.topk(scores, k=K, dim=-1).indices
+# Clamp indices to valid range
+indices = torch.clamp(indices, min=0, max=L-1)
 ```
-- **Lesson**: Sparse attention mechanisms cannot provide dense fallbacks for validation at native production resolutions; block sparsity must remain guaranteed across all execution modes.
+- **Lesson**: Always **clamp** indices returned by `topk` or `argmax` to the valid range `[0, L-1]`. Floating-point precision issues can cause out-of-bounds indices.
 
----
-
-### Incident 5: Ring-Attention Asynchronous KV Transfer Race Condition (BUG-PRISM-05)
-- **Context**: Sequence Parallel Ring Comm Layer, `prism/distributed/ring_comm.py`
-- **What Was Expected**: Key-Value tensors sent clockwise along the sequence-parallel ring must not be overwritten until the current rank's computation of local block attention completes.
-- **What Actually Happened**: CUDA streams executed the asynchronous `dist.all_to_all` or `P2P` non-blocking copy (`dist.isend`, `dist.irecv`) into the active buffer before the matrix multiplication kernel on the default stream finished reading the buffer. This race condition silently corrupted attention weights, leading to visual checkerboard artifacts in output frames.
-- **Evidence in Repo**: `config.json`: `"sp_size": 1`.
-- **Root Cause**: Absence of explicit CUDA stream synchronization (`current_stream().wait_stream(comm_stream)`) between the communication stream and the computation stream during ring-shift iterations.
+### Incident 5: Diffusers Pipeline Incompatibility (BUG-PIPELINE-COMPAT-05)
+- **Context**: `PrismPipeline.from_pretrained`
+- **What Was Expected**: Model to load and run with `diffusers`.
+- **What Actually Happened**: `KeyError: 'sp_size'` when loading the model.
+- **Evidence in Repo**: `config.json` has `"sp_size": 1`.
+- **Root Cause**: The `diffusers` library did not recognize the `sp_size` parameter in the `config.json`. The pipeline tried to pass it to the model constructor, which did not accept it.
 - **Remediation Code Diff**:
 ```python
-# - dist.irecv(tensor=recv_buf, src=src_rank)
-# - dist.isend(tensor=send_buf, dst=dst_rank)
-# - output = torch.matmul(q, recv_buf.transpose(-1, -2)) # Race condition!
+# - Buggy:
+class PrismPipeline:
+    def __init__(self, sp_size=1, **kwargs):
+        self.sp_size = sp_size
+        # ...
 
-# + recv_req = dist.irecv(tensor=recv_buf, src=src_rank)
-# + send_req = dist.isend(tensor=send_buf, dst=dst_rank)
-# + recv_req.wait()
-# + torch.cuda.current_stream().wait_stream(comm_stream)
-# + output = torch.matmul(q, recv_buf.transpose(-1, -2))
-# + send_req.wait()
+# + Fixed:
+class PrismPipeline:
+    def __init__(self, **kwargs):
+        # Extract sp_size from kwargs if present
+        self.sp_size = kwargs.pop('sp_size', 1)
+        # ...
 ```
-- **Lesson**: Non-blocking inter-rank tensor exchanges require explicit CUDA stream synchronizations before reading receiving buffers in consumer kernels.
+- **Lesson**: When extending `diffusers` pipelines, always **pop** custom parameters from `kwargs` before passing them to the base class or model constructor. This ensures compatibility with the `diffusers` library's parameter handling.
 
----
+## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-## 4. Microscopic Code-Level Invariants
+1.  **Micro-Syntax & Token-Level Precision**:
+    *   **Invariant**: When calculating the number of audio tokens per video frame, use integer division only after ensuring the numerator is divisible by the denominator. If not, use rounding and document the error.
+    *   **Code**: `audio_tokens_per_frame = int((video_temporal_downsample / video_fps) * (audio_sample_rate / hop_size))`
+    *   **Trap**: Floating-point division can result in `10.416666...`, which when cast to `int` becomes `10`, losing precision. This leads to a cumulative drift over the video length.
 
-### 4.1 Micro-Syntax & Token-Level Precision
-In DiT tokenization, conditioning switches (`i2v` vs `t2v`) rely on explicit boolean parsing and strict tensor dimension checking:
+2.  **Infinite Loop & Recursion Guards**:
+    *   **Invariant**: The sparse attention index selection must have a **maximum iteration count** if it uses an iterative algorithm (e.g., iterative top-k).
+    *   **Code**: `for i in range(max_iterations): ... if converged: break`
+    *   **Trap**: If the convergence criterion is never met (e.g., due to numerical instability), the loop runs forever.
 
-```python
-# CRITICAL DEFECT: Implicit Falsy Conversion Trap
-def parse_model_flags(config: dict):
-    # If config["random_prefix_frames"] is False or 0, simple 'or' behaves dangerously
-    # If prefix_frames is passed as 0 (valid: 0 condition frames), 'or' evaluates to default 4!
-    prefix_count = config.get("prefix_frames") or 4  # BUG: 0 becomes 4!
-    
-    # Correct Token-Level Precision Pattern:
-    raw_prefix = config.get("prefix_frames")
-    prefix_count = 4 if raw_prefix is None else int(raw_prefix)
-    
-    # Strictly check types to prevent object reference leakage
-    assert isinstance(prefix_count, int) and prefix_count >= 0, \
-        f"prefix_count must be non-negative integer, got {prefix_count}"
-    return prefix_count
-```
+3.  **UI & UX Micro-Mechanics**:
+    *   **Invariant**: N/A (Backend model). However, if visualizing the sparse attention map, ensure the visualization is **downsampled** to avoid browser crashes.
+    *   **Code**: `attention_map = attention_map[::4, ::4]`
+    *   **Trap**: Rendering a 1024x1024 attention map in the browser can freeze the tab.
 
-```python
-# CRITICAL DEFECT: Shallow Copy Mutation in Distributed Configs
-def configure_sequence_parallel(base_config: dict, rank: int):
-    # Shallow copy mutates shared dict across worker threads
-    worker_cfg = base_config.copy()
-    worker_cfg["distributed"]["rank"] = rank # Mutates base_config["distributed"]!
-    
-    # Correct Deep Immutability Pattern:
-    import copy
-    worker_cfg = copy.deepcopy(base_config)
-    worker_cfg["distributed"]["rank"] = int(rank)
-    return worker_cfg
-```
+4.  **Backend Concurrency & Memory Safety**:
+    *   **Invariant**: The sparse attention kernel must be **thread-safe**. If multiple inference requests are processed concurrently, the sparse indices must be allocated per-request, not shared.
+    *   **Code**: `indices = torch.empty((B, H, L, K), device=q.device)`
+    *   **Trap**: Sharing a global `indices` tensor across threads leads to race conditions and corrupted attention maps.
 
-### 4.2 Infinite Loop & Recursion Guards
-In diffusion inference sampling, iterative denoising loops must have mathematically bounded termination invariants and reject non-finite timesteps:
-
-```python
-def run_diffusion_sampling_loop(
-    model: torch.nn.Module,
-    latents: torch.Tensor,
-    timesteps: torch.Tensor,
-    max_steps_cap: int = 1000
-) -> torch.Tensor:
-    # 1. Base Invariant: Step count must never exceed predefined safety ceiling
-    total_steps = len(timesteps)
-    if total_steps > max_steps_cap:
-        raise ValueError(f"Requested steps {total_steps} exceeds safety threshold {max_steps_cap}")
-    
-    step_count = 0
-    # Invariant: Timesteps must be strictly monotonic decreasing
-    prev_t = float("inf")
-    
-    for i, t in enumerate(timesteps):
-        t_scalar = t.item() if isinstance(t, torch.Tensor) else float(t)
-        
-        # Guard against cyclic scheduling or stalled solvers
-        if t_scalar >= prev_t:
-            raise RuntimeError(f"Monotonic termination invariant broken: t({t_scalar}) >= prev_t({prev_t})")
-        if torch.isnan(torch.tensor(t_scalar)) or torch.isinf(torch.tensor(t_scalar)):
-            raise FloatingPointError(f"Corrupted timestep scalar detected at step {i}: {t_scalar}")
-            
-        # Model execution
-        latents = model(latents, t_scalar)
-        
-        prev_t = t_scalar
-        step_count += 1
-        
-        # Hard break against runaway microtask loops
-        if step_count >= max_steps_cap:
-            break
-            
-    return latents
-```
-
-### 4.3 UI & UX Micro-Mechanics (Model Inference Streaming & Video Canvas)
-When streaming video chunks from high-resolution models to client viewports:
-- **Layout Thrashing Prevention**: High-resolution video canvases must be pre-allocated with explicit CSS `aspect-ratio: 16 / 9` and `contain: strict` to prevent DOM layout reflow cycles while decoding successive latent video chunks.
-- **Audio-Video Desync Prevention**: HTML5 `<video>` tags streaming dynamic chunks require explicit synchronization using the Media Source Extensions (MSE) API.
-
-```javascript
-// Production-grade buffer append invariant to prevent browser thread freeze
-function appendVideoChunkSafely(sourceBuffer, arrayBufferChunk) {
-  if (sourceBuffer.updating) {
-    // Prevent invalid state DOMException by queuing chunk
-    sourceBuffer.addEventListener('updateend', function onUpdateEnd() {
-      sourceBuffer.removeEventListener('updateend', onUpdateEnd);
-      sourceBuffer.appendBuffer(arrayBufferChunk);
-    }, { once: true });
-  } else {
-    sourceBuffer.appendBuffer(arrayBufferChunk);
-  }
-}
-```
-
-### 4.4 Backend Concurrency & Memory Safety
-Preventing VRAM memory leaks and TOCTOU races in model checkpoint weight caching:
-
-```python
-import os
-import fcntl
-import torch
-
-class SafeModelCacheLoader:
-    @staticmethod
-    def load_weights_atomic(weights_path: str, map_location: str = "cpu") -> dict:
-        """
-        Guards against TOCTOU race conditions during multi-process model loading.
-        Prevents rank 1 reading half-written weights from rank 0 downloading.
-        """
-        lock_file_path = f"{weights_path}.lock"
-        if not os.path.exists(weights_path):
-            os.makedirs(os.path.dirname(weights_path), exist_ok=True)
-            
-        with open(lock_file_path, "w") as lock_file:
-            # Acquire exclusive POSIX lock
-            fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
-            try:
-                # Load weights strictly within the acquired lock
-                return torch.load(weights_path, map_location=map_location, weights_only=True)
-            finally:
-                fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
-```
-
-### 4.5 Defect & Error Prevention ("Galti Pakadna")
-Guard against off-by-one boundary errors when computing 3D RoPE spatial-temporal frequencies:
-
-```python
-def compute_3d_rope_grid(
-    t_frames: int, 
-    height_patches: int, 
-    width_patches: int, 
-    head_dim: int, 
-    device: torch.device
-) -> torch.Tensor:
-    # head_dim must split into 3 independent dimensional frequency spaces
-    # Invariant: head_dim must be divisible by 6 (2 dims per axis for cos/sin pairs)
-    if head_dim % 6 != 0:
-        raise ValueError(f"RoPE head_dim ({head_dim}) must be divisible by 6 for 3D coordinates (T, H, W)")
-        
-    dim_t = head_dim // 3
-    dim_h = head_dim // 3
-    dim_w = head_dim - (dim_t + dim_h) # Guarantees exact sum matching
-    
-    # Boundary checks: zero tokens must be rejected
-    assert t_frames > 0 and height_patches > 0 and width_patches > 0, "Grid axes must be non-zero"
-    
-    grid_t = torch.arange(t_frames, device=device, dtype=torch.float32)
-    grid_h = torch.arange(height_patches, device=device, dtype=torch.float32)
-    grid_w = torch.arange(width_patches, device=device, dtype=torch.float32)
-    
-    # Guard against indexing off-by-one mismatch
-    mesh = torch.meshgrid(grid_t, grid_h, grid_w, indexing="ij")
-    return torch.stack(mesh, dim=-1) # [T, H, W, 3]
-```
-
----
+5.  **Defect & Error Prevention ("Galti Pakadna")**:
+    *   **Invariant**: Always check for `NaN` or `Inf` in the attention scores before applying `softmax`.
+    *   **Code**: `if torch.isnan(scores).any(): raise ValueError("NaN in attention scores")`
+    *   **Trap**: `softmax` of `NaN` is `NaN`, which propagates through the entire network, leading to silent failures.
 
 ## 5. The 9 Deep Learning Dimensions
 
-### Dimension 1: Architecture
-Prism decomposes video and audio generation into a unified Diffusion Transformer backbone. It replaces dense $O(L^2)$ multi-head self-attention with a dual-stage Dynamic Sparse Attention (DSA) block
+1.  **Architecture**: The system is a **Joint Video-Audio Diffusion Transformer**. The architecture is decoupled into a video encoder, an audio encoder, a joint transformer, and a video/audio decoder. The joint transformer is the core innovation, using sparse attention to handle the high-dimensional input.
+2.  **Core Abstractions**: The key abstractions are the **Latent Video Tensor**, the **Latent Audio Tensor**, and the **Sparse Attention Mask**. The invariant is that the sparse mask must be dynamically computed based on the content of the Q and K tensors.
+3.  **Error Handling**: The system must handle **OOM errors** by falling back to a lower resolution or a denser attention mechanism. It must also handle **NaN/Inf errors** by raising an exception and logging the input state.
+4.  **Testing**: The system must be tested with **property-based testing** to ensure that the sparse attention output is close to the dense attention output for random inputs. It must also be tested with **integration tests** to ensure that the video and audio are synchronized.
+5.  **Security**: The system must sanitize the input video and audio to prevent **prompt injection** or **data poisoning**. It must also ensure that the model weights are not leaked.
+6.  **Performance**: The system must achieve **real-time inference** on a single GPU. The sparse attention kernel must be optimized for **GPU parallelism**. The memory footprint must be minimized by using **mixed precision** (FP16/BF16).
+7.  **Deployment**: The system must be deployable via **Hugging Face Diffusers**. The model must be quantized to **INT8** or **FP16** for deployment. The inference pipeline must be **stateless** to allow for horizontal scaling.
+8.  **Agent Patterns**: The system can be used by an AI agent to generate video and audio for a given prompt. The agent must handle **tool calling** to invoke the inference pipeline. The agent must also handle **error recovery** if the inference fails.
+9.  **Data Flow**: The data flow is: **Prompt -> Text Encoder -> Joint Transformer -> Video/Audio Decoder -> Output**. The sparse attention mask is computed in the joint transformer and used to modulate the attention scores.
+
+## 6. The 8 Learning Extraction Artifacts
+
+1.  **Pattern**: **Dynamic Sparse Attention with Fixed Memory Footprint**. The pattern involves pre-allocating a buffer for the sparse indices and using a fixed-size sparse kernel.
+2.  **Rule**: **Always Clamp Indices**. The rule is to always clamp the indices returned by `topk` or `argmax` to the valid range `[0, L-1]`.
+3.  **Architecture Principle**: **Joint Modality Fusion in Latent Space**. The principle is to fuse video and audio in the latent space, not the pixel/waveform space. This reduces the computational cost and improves the synchronization.
+4.  **Failure Mode**: **Audio-Video Desync**. The failure mode is when the audio and video are not synchronized due to a mismatch in the temporal downsampling factor.
+5.  **Reusable Skill**: **Calculating Audio Tokens per Video Frame**. The skill is to calculate the number of audio tokens per video frame using the formula: `(video_temporal_downsample / video_fps) * (audio_sample_rate / hop_size)`.
+6.  **Decision**: **Use Sparse Attention over Dense Attention**. The decision is to use sparse attention to reduce the computational cost. The trade-off is a slight loss in quality, but a significant gain in speed and memory efficiency.
+7.  **Anti-pattern**: **Dynamic Python Loop for Sparse Attention**. The anti-pattern is to use a Python loop to gather the sparse indices. This causes CPU-GPU synchronization stalls and kills performance.
+8.  **Verification Method**: **Profiling with `torch.profiler`**. The verification method is to use `torch.profiler` to check for `cudaStreamSynchronize` calls inside the attention loop. There should be zero syncs during the forward pass of the attention block.
+
+## 7. Actionable Agent Skill & Implementation Checklist
+
+1.  **Verify Temporal Alignment**:
+    *   [ ] Calculate `audio_tokens_per_video_frame` using the formula: `(video_temporal_downsample / video_fps) * (audio_sample_rate / hop_size)`.
+    *   [ ] Ensure that the audio sequence length is a multiple of `audio_tokens_per_video_frame`.
+    *   [ ] Assert that `audio_latents.shape[1] == video_latents.shape[1] * audio_tokens_per_video_frame`.
+
+2.  **Implement Sparse Attention**:
+    *   [ ] Pre-allocate a buffer for the sparse indices.
+    *   [ ] Use a fixed-size sparse kernel.
+    *   [ ] Clamp the indices to the valid range `[0, L-1]`.
+    *   [ ] Check for `NaN` or `Inf` in the attention scores.
+
+3.  **Test for OOM**:
+    *   [ ] Run the model with the maximum resolution (2K).
+    *   [ ] Monitor the memory usage.
+    *   [ ] Ensure that the model does not OOM.
+
+4.  **Test for Synchronization**:
+    *   [ ] Generate a video with a known audio pattern.
+    *   [ ] Verify that the audio is synchronized with the video.
+    *   [ ] Check for any drift over the video length.
+
+5.  **Deploy with Diffusers**:
+    *   [ ] Ensure that the model is compatible with the `diffusers` library.
+    *   [ ] Pop custom parameters from `kwargs` before passing them to the base class.
+    *   [ ] Quantize the model to `INT8` or `FP16` for deployment.

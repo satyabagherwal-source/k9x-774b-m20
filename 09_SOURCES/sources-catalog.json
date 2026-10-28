@@ -225,8 +225,8 @@
     "sourceUrl": "https://huggingface.co/FrancisRing/Prism",
     "sourceVersion": "hf-francisring-prism",
     "license": "Open-Source",
-    "contentHash": "920e39ecd89b619f21a38f26e3b4ef0c91554f8c8598406a6dff38f70473a81c",
-    "lastHarvestedAt": "2026-10-25T07:53:37.171Z",
+    "contentHash": "8040ee89005e129a8f971cf754b9867b46be32f888f2584580795cdbaa23dfd2",
+    "lastHarvestedAt": "2026-10-28T21:30:04.947Z",
     "learningId": "learn-huggingface-francisring-prism"
   },
   "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf": {
@@ -7803,10 +7803,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/codewhale-hq/Codewhale",
-    "sourceVersion": "fff5a476",
+    "sourceVersion": "687a38c6",
     "license": "MIT",
-    "contentHash": "a9eaaed06383d898f5ac06f78021d4fa5cbc55e00f618bbe6455720a2ec8b022",
-    "lastHarvestedAt": "2026-10-27T19:56:14.889Z",
+    "contentHash": "56f8e0f9f7d5f134fd538eb7fc3729eefe3ce401f0014998cf5d1d64e7e70f34",
+    "lastHarvestedAt": "2026-10-28T21:29:53.519Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "meshtastic-meshtastic-android": {

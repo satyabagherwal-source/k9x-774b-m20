@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T21:11:26.047Z",
-    "lastVerified": "2026-10-28T21:11:26.047Z",
+    "lastChecked": "2026-10-28T21:30:07.489Z",
+    "lastVerified": "2026-10-28T21:30:07.489Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -292,9 +292,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-28T20:50:56.303Z",
+    "lastChecked": "2026-10-28T21:30:02.998Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-28T20:50:56.303Z"
+    "lastVerified": "2026-10-28T21:30:02.998Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -744,9 +744,9 @@
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
     "officialUrl": "https://github.com/NirDiamant/RAG_Techniques",
-    "lastChecked": "2026-10-28T03:49:43.335Z",
+    "lastChecked": "2026-10-28T21:30:00.472Z",
     "revisionIdentifier": "9e2e9930",
-    "lastVerified": "2026-10-28T03:49:43.335Z"
+    "lastVerified": "2026-10-28T21:30:00.473Z"
   },
   "max-sixty-worktrunk": {
     "name": "worktrunk",
@@ -872,9 +872,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-10-28T17:35:15.173Z",
+    "lastChecked": "2026-10-28T21:29:58.038Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-10-28T17:35:15.174Z"
+    "lastVerified": "2026-10-28T21:29:58.038Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -1215,9 +1215,9 @@
   "goharbor-harbor": {
     "name": "harbor",
     "officialUrl": "https://github.com/goharbor/harbor",
-    "lastChecked": "2026-10-28T04:41:56.647Z",
+    "lastChecked": "2026-10-28T21:29:55.705Z",
     "revisionIdentifier": "d822d80c",
-    "lastVerified": "2026-10-28T04:41:56.647Z"
+    "lastVerified": "2026-10-28T21:29:55.705Z"
   },
   "build-trust-ockam": {
     "name": "ockam",
@@ -6845,5 +6845,46 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "codewhale-hq-codewhale": {
+    "name": "codewhale-hq/Codewhale",
+    "officialUrl": "https://github.com/codewhale-hq/Codewhale",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T21:29:52.673Z",
+    "lastVerified": "2026-10-28T21:29:52.673Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-codewhale-hq-codewhale",
+    "contentHash": "56f8e0f9f7d5f134fd538eb7fc3729eefe3ce401f0014998cf5d1d64e7e70f34",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 12,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-francisring-prism": {
+    "name": "FrancisRing/Prism",
+    "officialUrl": "https://huggingface.co/FrancisRing/Prism",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T21:29:50.583Z",
+    "lastVerified": "2026-10-28T21:29:50.583Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-francisring-prism",
+    "contentHash": "8040ee89005e129a8f971cf754b9867b46be32f888f2584580795cdbaa23dfd2",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "louiscad-splitties": {
+    "name": "Splitties",
+    "officialUrl": "https://github.com/LouisCAD/Splitties",
+    "lastChecked": "2026-10-28T21:29:52.980Z",
+    "revisionIdentifier": "1ed56ba2",
+    "lastVerified": "2026-10-28T21:29:52.980Z"
   }
 }

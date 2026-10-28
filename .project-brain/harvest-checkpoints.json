@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T21:11:22.665Z",
+  "last_updated": "2026-10-28T21:30:04.956Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1865,14 +1865,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-francisring-prism",
-      "content_hash": "920e39ecd89b619f21a38f26e3b4ef0c91554f8c8598406a6dff38f70473a81c",
-      "verified_at": "2026-10-25T07:53:37.180Z",
+      "content_hash": "8040ee89005e129a8f971cf754b9867b46be32f888f2584580795cdbaa23dfd2",
+      "verified_at": "2026-10-28T21:30:04.956Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T07:53:37.180Z"
+      "last_updated": "2026-10-28T21:30:04.956Z"
     },
     "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2": {
       "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "85734e854871c5a85ffc83db5006f35738dbd196621e06cc36432fb923f7f913",
-      "verified_at": "2026-10-28T04:35:28.741Z",
+      "content_hash": "56f8e0f9f7d5f134fd538eb7fc3729eefe3ce401f0014998cf5d1d64e7e70f34",
+      "verified_at": "2026-10-28T21:29:53.528Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T04:35:28.741Z"
+      "last_updated": "2026-10-28T21:29:53.528Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",

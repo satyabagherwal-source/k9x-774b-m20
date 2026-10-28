@@ -5948,3 +5948,5 @@ Every entry in this ledger must capture:
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `4150cef7` | Multi-dimensional audit evidence | 2026-10-28T21:04:30.583Z |
 | `learn-huggingface-microsoft-frognano-4b-2609` | `https://huggingface.co/microsoft/FrogNano-4B-2609` | `hf-microso` | Multi-dimensional audit evidence | 2026-10-28T21:11:14.824Z |
 | `learn-github-crosspaste-crosspaste-desktop` | `https://github.com/CrossPaste/crosspaste-desktop` | `bc806010` | Multi-dimensional audit evidence | 2026-10-28T21:11:22.656Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `687a38c6` | Multi-dimensional audit evidence | 2026-10-28T21:29:53.519Z |
+| `learn-huggingface-francisring-prism` | `https://huggingface.co/FrancisRing/Prism` | `hf-francis` | Multi-dimensional audit evidence | 2026-10-28T21:30:04.947Z |

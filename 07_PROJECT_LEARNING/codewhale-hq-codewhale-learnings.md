@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
-> **Source Version**: `fff5a476`  
+> **Source Version**: `687a38c6`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T19:56:14.297Z  
+> **Timestamp**: 2026-10-28T21:29:52.895Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T19:56:12.951Z  
+> **Harvest Timestamp**: 2026-10-28T21:29:52.673Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source agent for the terminal written in Rust. Use any provider or model. Issues & PRs always welcome
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41134 stars
+- **Stars / Engagement**: 41137 stars
 
 ---
 
@@ -803,6 +803,255 @@ pub enum ConstitutionValidity {
 pub enum RuntimePostureSource {
     /// Not yet reviewed.
     #[default]
+```
+
+### Core Architecture Module: `crates/config/src/state_dirs.rs`
+```
+use crate::config_migration::default_config_path;
+use crate::external_credentials::quote_os_path;
+use crate::path_io::{
+    checked_path_exists, normalize_config_file_path, normalize_project_workspace,
+};
+use crate::provider_toml::CONFIG_FILE_NAME;
+use anyhow::Context as _;
+use anyhow::{Result, bail};
+use codewhale_paths::{CODEWHALE_APP_DIR, LEGACY_APP_DIR};
+use std::ffi::{OsStr, OsString};
+use std::path::{Path, PathBuf};
+
+/// Resolve the primary CodeWhale home directory.
+///
+/// `$CODEWHALE_HOME` takes precedence when set. Otherwise defaults to
+/// `$HOME/.codewhale`. This is the write target for new product state.
+pub fn codewhale_home() -> Result<PathBuf> {
+    codewhale_paths::codewhale_home()
+        .map_err(anyhow::Error::new)?
+        .context("failed to resolve home directory")
+}
+
+/// Whether `$CODEWHALE_HOME` is set to a non-empty value.
+///
+/// An explicit CodeWhale home is an isolation boundary: state/config resolvers
+/// must not fall back to ambient legacy `~/.deepseek` data outside that root.
+pub fn codewhale_home_is_explicit() -> bool {
+    codewhale_paths::codewhale_home_is_explicit()
+}
+
+/// Resolve the legacy DeepSeek home directory (`$HOME/.deepseek`).
+///
+/// Always returns the legacy path regardless of whether it exists.
+pub fn legacy_deepseek_home() -> Result<PathBuf> {
+    codewhale_paths::legacy_deepseek_home().context("failed to resolve home directory")
+}
+
+/// Reject state subdirs that could escape the state root via path injection.
+///
+/// `ensure_state_dir` / `resolve_state_dir` are public APIs taking an arbitrary
+/// subdir string; every in-tree caller passes a hardcoded single component
+/// (e.g. `"sessions"`, `"."`). This validates defensively so a future caller
+/// can never traverse out of the state root via `..` components or an absolute
+/// path. Nested relative paths such as `"a/b"` are permitted.
+pub(crate) fn ensure_safe_state_subdir(subdir: &str) -> Result<()> {
+    if subdir.is_empty() {
+        bail!("state subdir must not be empty");
+    }
+    let path = std::path::Path::new(subdir);
+    if path.is_absolute() {
+        bail!("state subdir must not be an absolute path: {subdir}");
+    }
+    if path.components().any(|c| {
+        matches!(
+            c,
+            std::path::Component::RootDir | std::path::Component::Prefix(_)
+        )
+    }) {
+        bail!("state subdir must not contain a root or prefix: {subdir}");
+    }
+    if path
+        .components()
+        .any(|c| matches!(c, std::path::Component::ParentDir))
+    {
+        bail!("state subdir must not contain parent-dir (..) components: {subdir}");
+    }
+    Ok(())
+}
+
+/// Resolve a state subdirectory, preferring the CodeWhale root if
+/// it already exists, otherwise falling back to the legacy root.
+///
+/// This is the read-path resolver: it returns the primary path when
+/// migration has occurred or on a fresh install, but keeps reading
+/// from the legacy path for users who haven't migrated yet.
+pub fn resolve_state_dir(subdir: &str) -> Result<PathBuf> {
+    ensure_safe_state_subdir(subdir)?;
+    let explicit_codewhale_home = codewhale_home_is_explicit();
+    let primary = codewhale_home()?.join(subdir);
+    if explicit_codewhale_home || primary.exists() {
+        return Ok(primary);
+    }
+    let legacy = legacy_deepseek_home()?.join(subdir);
+    if legacy.exists() {
+        return Ok(legacy);
+    }
+    // Neither exists — return primary for first-write creation.
+    Ok(primary)
+}
+
+/// Ensure a state subdirectory exists under the primary CodeWhale root,
+/// creating it if necessary. This is the write-path resolver.
+///
+/// On the first creation of a real subdirectory (not the root sentinel `"."`),
+/// if a legacy `~/.deepseek/<subdir>` exists but the primary
+/// `~/.codewhale/<subdir>` does not, the legacy directory is relocated into
+/// the primary location so the user keeps their data and the legacy tree
+/// stops growing (#3240). After migration, [`resolve_state_dir`] finds the
+/// data in the primary location; the read resolver itself is unchanged.
+pub fn ensure_state_dir(subdir: &str) -> Result<PathBuf> {
+    let (dir, migration) = ensure_state_dir_with_migration(subdir)?;
+    if let Some(migration) = migration {
+        eprintln!("{}", migration.user_notice());
+    }
+    Ok(dir)
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum StateMigrationKind {
+    Relocated,
+    Copied,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct StateMigration {
+    pub subdir: String,
+    pub legacy_path: PathBuf,
+    pub primary_path: PathBuf,
+    pub kind: StateMigrationKind,
+}
+
+impl StateMigration {
+    pub fn user_notice(&self) -> String {
+        let action = match self.kind {
+            StateMigrationKind::Relocated => "relocated",
+            StateMigrationKind::Copied => "copied",
+        };
+        let legacy_detail = match self.kind {
+            StateMigrationKind::Relocated => {
+                "The legacy .deepseek copy for this state path was removed by the move."
+            }
+            StateMigrationKind::Copied => {
+                "The legacy .deepseek copy was left in place because a direct move failed."
+            }
+        };
+
+        format!(
+            "Codewhale migrated legacy state ({action}):\n  {} -> {}\nYour data was preserved. Use .codewhale as the canonical state location from now on.\n{legacy_detail}\nIf no other apps use it, you can remove the legacy .deepseek tree after confirming everything looks right.",
+            self.legacy_path.display(),
+            self.primary_path.display(),
+        )
+    }
+}
+
+/// Variant of [`ensure_state_dir`] that exposes whether a legacy state path was
+/// migrated. Most callers should use [`ensure_state_dir`]; this is kept for
+/// tests and future UI surfaces that want to render the notice themselves.
+pub fn ensure_state_dir_with_migration(subdir: &str) -> Result<(PathBuf, Option<StateMigration>)> {
+    ensure_safe_state_subdir(subdir)?;
+    let explicit_codewhale_home = codewhale_home_is_explicit();
+    let dir = codewhale_home()?.join(subdir);
+    let migration = if explicit_codewhale_home {
+        None
+    } else {
+        match migrate_legacy_state_dir(&dir, subdir)? {
+            LegacyStateMigration::NotNeeded => None,
+            LegacyStateMigration::Migrated(migration) => Some(migration),
+            // Creating an empty primary here would make it authoritative and
+            // hide the legacy data for good. Keep using the legacy directory
+            // (the read resolver does the same) and retry on the next call.
+            LegacyStateMigration::Failed { legacy } => return Ok((legacy, None)),
+        }
+    };
+    std::fs::create_dir_all(&dir)
+        .with_context(|| format!("failed to create {}/", dir.display()))?;
+    Ok((dir, migration))
+}
+
+pub(crate) enum LegacyStateMigration {
+    NotNeeded,
+    Migrated(StateMigration),
+    /// Neither the move nor the copy completed. The primary was left absent,
+    /// so the legacy directory stays authoritative and migration retries.
+    Failed {
+        legacy: PathBuf,
+    },
+}
+
+/// One-time relocation of a legacy `~/.deepseek/<subdir>` state directory into
+/// the primary `~/.codewhale/<subdir>` location (#3240). No-op once the primary
+/// exists, for the root sentinel `"."` (a whole-tree move is owned by the
+/// config-file migration), or when no legacy directory is present.
+pub(crate) fn migrate_legacy_state_dir(
+    primary: &Path,
+    subdir: &str,
+) -> Result<LegacyStateMigration> {
+    if primary.exists() || subdir == "." || subdir.is_empty() {
+        return Ok(LegacyStateMigration::NotNeeded);
+    }
+    let legacy = match legacy_deepseek_home() {
+        Ok(home) => home.join(subdir),
+        Err(_) => return Ok(LegacyStateMigration::NotNeeded),
+    };
+    if !legacy.exists() {
+        return Ok(LegacyStateMigration::NotNeeded);
+    }
+    // The primary's parent (the ~/.codewhale root) must exist for the rename.
+    if let Some(parent) = primary.parent()
+        && let Err(err) = std::fs::create_dir_all(parent)
+    {
+        tracing::warn!(
+            target: "config::migration",
+            "Could not create {} for state migration ({}); writing to primary anyway",
+            parent.display(),
+            err
+        );
+    }
+    match std::fs::rename(&legacy, primary) {
+        Ok(()) => {
+            tracing::info!(
+                target: "config::migration",
+                "Migrated legacy state directory {} -> {} (relocated). The .deepseek copy was removed.",
+                legacy.display(),
+                primary.display()
+            );
+            return Ok(LegacyStateMigration::Migrated(StateMigration {
+                subdir: subdir.to_string(),
+                legacy_path: legacy,
+                primary_path: primary.to_path_buf(),
+                kind: StateMigrationKind::Relocated,
+            }));
+        }
+        Err(err) => {
+            // Cross-device rename or permission issue: fall back to a
+            // recursive copy so the user keeps their data. The legacy tree is
+            // left in place; it stops growing because writes now target the
+            // primary path.
+            match copy_dir_into_place(&legacy, primary) {
+                Ok(()) => {
+                    tracing::info!(
+                        target: "config::migration",
+                        "Migrated legacy state directory {} -> {} (copied; rename failed: {err}). \
+                         The legacy .deepseek copy was left in place.",
+                        legacy.display(),
+                        primary.display()
+                    );
+                    return Ok(LegacyStateMigration::Migrated(StateMigration {
+                        subdir: subdir.to_string(),
+                        legacy_path: legacy,
+                        primary_path: primary.to_path_buf(),
+                        kind: StateMigrationKind::Copied,
+                    }));
+                }
+                Err(copy_err) => {
+                    // A concurrent process may have completed t
 ```
 
 ### Core Architecture Module: `crates/core/src/context_reference.rs`
@@ -1764,24 +2013,19 @@ pub enum PrefixCheck {
 const TOOL_CATALOG_CACHE_CA
 ```
 
-### Core Architecture Module: `crates/core/src/request.rs`
-```
-//! Compatibility path for the shared protocol request types.
-pub use codewhale_protocol::request::*;
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7072** (2026-10-25): **codewhale review accepts DeepSeek's leaked DSML tool-call markup as the review and exits 0 with no tally**
-  *Symptoms*: **Version:** 0.10.2 (`ff466b2ed0bf`, npm build), Linux. Provider `deepseek`, model `deepseek-flash`, `reasoning_effort = "high"`, UI locale zh-Hans. **Target:** 0.10.3 · Related: #7067  ## Repro Same setup as #7067: a one-file +10/−1 working-tree diff with no sensitive paths, so triage classes it as Low risk, which offers **0 tools**. Run `codewhale review`. In 1 of 4 runs it printed this as the entire review and exited normally:  ``` <｜｜DSML｜｜ calls> <｜｜DSML｜｜ invoke name="read_file"> <｜｜DSML｜｜ parameter name="path" string="true">tides.py</｜｜DSML｜｜ parameter> </｜｜DSML｜｜ invoke> <｜｜DSML｜｜ invoke name="search_repository"> <｜｜DSML｜｜ parameter name="query" string="true">parse_reading\|high_tides\|low_tides\|tides</｜｜DSML｜｜ parameter> </｜｜DSML｜｜ invoke> </｜｜DSML｜｜ calls> ```  There were no findings, no "Checked, nothing wrong" section and no `<!-- codewhale-review: … -->` tally. The other three runs hit the #7067 output cap.  ## Cause - The engine already knows this shape. `crates/tui/src/core/engine/streaming.rs:~586` says: "DeepSeek also emits a doubled-delimiter form (`<｜｜DSML｜｜ calls>`) when a request offers no tools; one-shot `codewhale exec` printed it verbatim as the answer." It's handled there through `TOOL_CALL_MARKER_PAIRS` and `contains_fake_tool_wrapper` (`streaming.rs:717`). - The review path builds its own requests in `crates/tui/src/tools/review_core.rs` and never applies that check. Neither `review_core.rs`, `review.rs` nor the CLI path in `lib.rs` references `con
+- **Issue #7114** (2026-10-28): **/provider on main: 'browse all' does not toggle, and a fresh home shows a broken 'Antigravity (legacy)' row**
+  *Symptoms*: ## What a new user hits  On a fresh `CODEWHALE_HOME` with no keys (Ollama running), `/provider` on main opens the *configured* view containing only:  ```    ▸ Antigravity (legacy, disabled)    legacy      Ollama *                      local · not checked ```  - The first row is a retired provider with `! provider admission failed: saved session requires custom provider 'antigravity', but…` and `Endpoint: https://legacy-antigravity.invalid`, in a home that never had Antigravity configured. - The footer advertises `A browse all`, but neither `A` nor `a` switches to the catalog view (title stays `Provider`, action stays `browse all`). Up/Down work. Only `/` search finds DeepSeek, OpenRouter, StepFun etc.  So a new user without a key cannot discover how to add DeepSeek/OpenRouter/Anthropic/OpenAI from the picker.  ## Compare 0.10.2  Installed `codewhale 0.10.2 (3400ebb5c93b)`, fresh home: `/provider` opens the full list (`DeepSeek … needs key`, `Fireworks AI … needs key`, … `OpenAI Codex (ChatGPT) needs sign-in`), footer `A configured`. No Antigravity row.  ## Repro  1. `HOME=$(mktemp -d) CODEWHALE_HOME=$(mktemp -d) codewhale` (main `715bb2ed02` release build), 160x48 tmux pane. 2. `/provider` Enter → configured view as above. 3. Press `a` (and `A`) → no change.  Notes from source: `toggle_view` is reached for `KeyCode::Char(c)` only when `key.modifiers.is_empty()` (`crates/tui/src/tui/provider_picker.rs` ~4899), so Shift+A never toggles on terminals that report SHIFT; lowercase 
+  **Post-Mortem & Fix Analysis**:
+  > Fixed on main in c21e0b1e14 (the /provider list now opens on every provider, with no Antigravity row); ships in 0.10.3.
 
-- **Issue #7069** (2026-10-25): **Composer history ignores CODEWHALE_HOME: typed prompts go to $HOME/.codewhale and are shared across isolated homes**
-  *Symptoms*: **Version:** 0.10.2 (`ff466b2ed0bf`, npm build), Linux. **Target:** 0.10.3  ## Repro ```sh export CODEWHALE_HOME=/tmp/cw-isolated   # an explicit, isolated home codewhale                                # type and send any prompt, then quit ls ~/.codewhale/composer_history.jsonl   # exists, and holds the prompt ls /tmp/cw-isolated/composer_history.jsonl  # absent ``` I saw this across several sessions, each with its own `CODEWHALE_HOME`. All their prompts went to one `$HOME/.codewhale/composer_history.jsonl`, so Up-arrow history in each "isolated" home shows the others' prompts.  ## Cause `composer_history::default_history_path()` builds the path from `effective_home_dir()` (the user's `$HOME`) plus `.codewhale` (`crates/tui/src/composer_history.rs:43-72`). It never consults `CODEWHALE_HOME`. It can also fall back to `~/.deepseek/composer_history.jsonl` when that file exists.  ## Why it matters - `docs/REBRAND.md` says: "An explicit `CODEWHALE_HOME` intentionally isolates that home and disables the ambient `~/.deepseek` fallback." Composer history breaks both halves of that. - History holds everything the user typed, which can include pasted secrets. People use a separate home for CI, demos, classrooms or per-client separation, and they don't expect prompts to land in, or be read back from, the shared ambient home.  ## Expected When `CODEWHALE_HOME` is set, read and write `$CODEWHALE_HOME/composer_history.jsonl`, with no `~/.deepseek` fallback. Keep today's resolution only whe
+- **Issue #7113** (2026-10-28): **Ollama 32K local models fail on the second turn: input budget ~5K (regression of #5820)**
+  *Symptoms*: ## What a new user hits  Main now adopts a running local Ollama on first launch when no cloud key exists (good). On that route the **second turn fails**:  ``` Note Context recovery failed: The summary for making room was incomplete: provider stop reason length; the partial summary was not accepted. Original conversation was preserved. Error The request still exceeds this model's context budget and automatic recovery did not complete. The conversation is saved; retry or choose a larger context route. ```  while the footer reads `context 33%` and `/context report` says `Window: 32768 tokens (16.2% used)`, `Overflow guard: 5468 tokens`.  ## Repro (isolated, no keys)  1. Ollama running with `qwen3:4b` (reports `context_length: 32768` in `/api/ps`, 262144 in `/api/show`). 2. `HOME=$(mktemp -d) CODEWHALE_HOME=$(mktemp -d) codewhale` (release build of main `715bb2ed02` + working tree, `codewhale 0.10.2 (dev)`), in a tiny git repo. 3. TUI shows `Provider switched: deepseek → ollama`, footer `Ollama · qwen3:4b · thinking: max`. 4. Turn 1: "Read calc.py and add a subtract function" → completes (+2 −2 patch). 5. Turn 2: "Write a file notes.md with a 10-item list of python tips." → "Making room in the conversation… 55s", then the error above. No file written.  Log (`$CODEWHALE_HOME/logs/tui-*.log`):  ``` WARN compaction: auto-compaction refused under pressure reason=RetainedFloor { floor: 8082, threshold: 5120 } billed=Some(6319) INFO engine.turn: engine turn completion settled status=Fa
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1798,829 +2042,1228 @@ pub use codewhale_protocol::request::*;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0cf390f0` (2026-10-27)
-**Commit Message**: feat(tui): change mode and permissions mid-turn; record steering in Unreleased (CW-7552)
+### Incident Patch 1: `7b47cf99` (2026-10-28)
+**Commit Message**: feat(tui): vendored terminal kit on design tokens 2.3.0 (Accent role)
 
-Mode and permission posture can now change while a turn is running. Tab,
-Shift+Tab, Alt shortcuts, /mode, the hotbar, /auto and /config mode|approval*
-no longer hit the #2982 turn lock; model, thinking and provider stay locked
-because they change the route the in-flight request is on.
+Copies the token migration from upstream codewhale-hq/codewhale-ratatui
+528a9c4 into vendor/codewhale-ratatui, before the 0.10.3 tag:
 
-Decision: a change applies at the engine's next step in the same turn, not at
-the next turn and not by restarting the streaming response. The engine already
-drains the live authority snapshot before each tool batch, at every approval
-gate and at the per-step preparation boundary; a call nobody approved, or one
-whose approval is narrowed, is returned to the model to retry. New: the
-preparation boundary now records the mode notice (and Operate contract) via
-Engine::record_mode_context, so the next model request is told the new mode
-and the notice is a session message (model-visible means logged). While a turn
-runs, the TUI shows "<Mode> · <permissions> — applies at the agent's next step
-in this turn"; the engine's existing "Permissions: … · <mode>" status confirms
-the apply.
+- roles.rs regenerated from tokens 2.3.0 (19 roles: `Accent` for links,
+  focus and selection; `Primary` is filled-action ink; diff tints from
+  diff_add/diff_remove); vendor/codewhale-design/tokens.rs 1.1.2 -> 2.3.0;
+  theme.rs, tui_palettes.rs and assets/tui-palettes.json match upstream.
+- The kit's Primary-to-Accent call sites are applied to the Engine's own
+  copy (base snapshot 2ad795b plus its patches); the other upstream
+  commits since that snapshot are not taken.
+- The 16 named TUI palettes map Accent to the same accent_primary slot
+  the old Primary read, so the built-in themes keep their colours.
+- crates/tui: the infoline Info/policy ink and two test fixtures move
+  from Role::Primary to Role::Accent.
+- UPSTREAM.json records a `tokens_update` section (commit, scope, local
+  changes, sha256 of the 47 changed files); the original snapshot hashes
+  are left as provenance, as pet_update does.
 
-Reference comparison (CW/refs): Codex 
+Verified on a Linux Boat VM from a fresh clone of origin/main 786a0e4b33
+plus t
 
-**File**: `CHANGELOG.md` (modified, +2/-0)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
  ## [Unreleased]
  
-+- **Change mode and permissions while the agent works:** Tab, Shift+Tab, `/mode`, the hotbar and `/config mode` no longer refuse while a turn is running. A response that is already streaming is not restarted; the change applies at the agent's next step in the same turn (before its next tool batch, at every approval gate, and before its next model request, which carries the new mode notice). The status line says so until it applies. A call still waiting for approval goes back to the model under the new posture, and a call you already approved runs only if the new posture is equal or broader. Model, thinking level and provider stay locked until the turn ends. (CW-7552)
-+- **Steering interrupts thinking:** a steer (Ctrl+Enter, or Enter twice after queueing) now closes the in-flight model request at once, whether the model is waiting on headers, reasoning, writing text or emitting a tool call, and continues the same turn with your message. Text already shown is kept as interrupted output; unfinished reasoning and partial tool calls are discarded, never run. (CW-7552)
- - **Switching provider lands on its current model:** `/provider stepfun` now selects Step 5 Preview instead of the older Step 3.7 Flash; a model you saved for a provider is still kept. `/model` now lists the current provider's own models (bundled and live, newest first, up to 20) instead of only the selected one. Search also matches ids typed without separators (`step5`). While you search, Shift+P and Shift+F type their letters rather than pinning or adding to Fleet, so `Step-5-Preview` can be typed in full; Ctrl+P and Ctrl+F pin or add the highlighted row at any time.
- - **Remote control works again:** `codewhale rc` (`/rc`) can attach to the hosted control plane for web Chat again. The control plane had only accepted the retired 0.9.13 runtime identity, so every 0.10.x Engine was refused with `runner_runtime_identity_unavailable`; it now accepts the exact released runtime identity (commit, image and digest) and fails closed when they are not configured.
- - **Modern MCP client:** MCP servers now connect through the official MCP SDK (2.4) behind Codewhale's Rust broker by default (`mcp_backend = "host"`; `"rust"` stays available for one release). Servers that speak the 2026-07-28 revision are discovered with `server/discover`; other stdio and HTTP servers fall back to the legacy `initialize` handshake, and configured SSE servers keep theirs. Rust keeps process, network, credential, catalog, approval and cancellation authority. (CW-6713)
++- **Terminal kit on design tokens 2.3.0:** the vendored `codewhale-ratatui` now follows design tokens 2.3.0: an `Accent` role carries the one blue for links, focus and selection, and `Primary` is the ink of filled actions (upstream codewhale-hq/codewhale-ratatui 528a9c4). The built-in TUI themes keep their colours; only surfaces drawn in the kit's own roles take the 2.3.0 values.
+ - **Fleet workers run the same Codewhale:** `codewhale fleet run` and Runtime API Fleet runs (`POST /v1/fleet/runs`) now start workers from the running `codewhale` binary instead of whichever `codewhale` is first on `PATH`, so they work with a minimal `PATH` and never pick up a stale copy. `CODEWHALE_FLEET_CODEWHALE_BINARY` still overrides it. (#7119)
+ - **Pinned marketplace archives:** a Codewhale or Claude marketplace entry whose tarball source carries a `sha256` now installs only when the downloaded bytes match it; a mismatch, a malformed pin or a pin on a non-archive source refuses the install with nothing written. The pin also applies to direct installs as `https://…/x.tar.gz#sha256=<hex>`. (E2, CW-6732)
+ - **Sandboxed commands cannot plant git hooks or edit git config:** in workspace-write mode, `.git/hooks` and `.git/config` (and a linked worktree's shared `hooks` and `config`) are read-only to sandboxed commands, so a command cannot leave a hook or `core.hooksPath` that later runs outside the sandbox. The workspace's `.codewhale/` is protected even before it exists (on Linux it is created first, because bubblewrap can only protect existing paths). `git commit` and ordinary file writes are unaffected; `git config` writes and hook edits need an approved unsandboxed command.
 ```
 
-**File**: `crates/tui/CHANGELOG.md` (modified, +2/-0)
+**File**: `crates/tui/src/tui/infoline.rs` (modified, +1/-1)
 ```diff
-@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ## [Unreleased]
- 
-+- **Change mode and permissions while the agent works:** Tab, Shift+Tab, `/mode`, the hotbar and `/config mode` no longer refuse while a turn is running. A response that is already streaming is not restarted; the change applies at the agent's next step in the same turn (before its next tool batch, at every approval gate, and before its next model request, which carries the new mode notice). The status line says so until it applies. A call still waiting for approval goes back to the model under the new posture, and a call you already approved runs only if the new posture is equal or broader. Model, thinking level and provider stay locked until the turn ends. (CW-7552)
-+- **Steering interrupts thinking:** a steer (Ctrl+Enter, or Enter twice after queueing) now closes the in-flight model request at once, whether the model is waiting on headers, reasoning, writing text or emitting a tool call, and continues the same turn with your message. Text already shown is kept as interrupted output; unfinished reasoning and partial tool calls are discarded, never run. (CW-7552)
- - **Switching provider lands on its current model:** `/provider stepfun` now selects Step 5 Preview instead of the older Step 3.7 Flash; a model you saved for a provider is still kept. `/model` now lists the current provider's own models (bundled and live, newest first, up to 20) instead of only the selected one. Search also matches ids typed without separators (`step5`). While you search, Shift+P and Shift+F type their letters rather than pinning or adding to Fleet, so `Step-5-Preview` can be typed in full; Ctrl+P and Ctrl+F pin or add the highlighted row at any time.
- - **Remote control works again:** `codewhale rc` (`/rc`) can attach to the hosted control plane for web Chat again. The control plane had only accepted the retired 0.9.13 runtime identity, so every 0.10.x Engine was refused with `runner_runtime_identity_unavailable`; it now accepts the exact released runtime identity (commit, image and digest) and fails closed when they are not configured.
- - **Modern MCP client:** MCP servers now connect through the official MCP SDK (2.4) behind Codewhale's Rust broker by default (`mcp_backend = "host"`; `"rust"` stays available for one release). Servers that speak the 2026-07-28 revision are discovered with `server/discover`; other stdio and HTTP servers fall back to the legacy `initialize` handshake, and configured SSE servers keep theirs. Rust keeps process, network, credential, catalog, approval and cancellation authority. (CW-6713)
+@@ -161,7 +161,7 @@ pub(super) fn ink_role(ink: ChromeInk) -> Role {
+         | ChromeInk::PolicyPlan
+         | ChromeInk::PolicyOperate
+         | ChromeInk::Identity
+-        | ChromeInk::Info => Role::Primary,
++        | ChromeInk::Info => Role::Accent,
+         ChromeInk::MetadataValue => Role::Foreground,
+         ChromeInk::Metadata => Role::Muted,
+         ChromeInk::MetadataHint => Role::Hint,
 ```
 
-**File**: `crates/tui/src/commands/config_main_host.rs` (modified, +15/-33)
+**File**: `crates/tui/src/tui/infoline/tests.rs` (modified, +1/-1)
 ```diff
-@@ -1656,18 +1656,16 @@ fn subagents_runtime_action(
- ///
- /// `default_mode` is deliberately absent: it is a restart default that
- /// `set_config_value` explicitly does *not* apply to the live session, so
--/// refusing it would lock a key that cannot affect the turn.
-+/// refusing it would lock a key that cannot affect the turn. `mode` and the
-+/// approval keys are absent too: the engine applies a posture change at its
-+/// next step boundary in the running turn.
- fn live_route_setting_subject(key: &str) -> Option<MessageId> {
-     match key {
--        "mode" => Some(MessageId::SettingSubjectMode),
-         // `default_model` is not merely a startup default: for the DeepSeek
-         // routes `set_config_value` installs it as the live model.
-         "model" | "default_model" => Some(MessageId::SettingSubjectModel),
-         "reasoning_effort" | "effort" => Some(MessageId::SettingSubjectThinking),
-         "provider" => Some(MessageId::SettingSubjectProvider),
--        "approval_mode" | "approval_policy" | "approval" => {
--            Some(MessageId::SettingSubjectPermissions)
--        }
-         _ => None,
+@@ -554,7 +554,7 @@ fn infoline_preserves_every_live_chrome_ink_and_untouched_host_style() {
+         let mut buf = ratatui::buffer::Buffer::empty(Rect::new(0, 0, 40, 5));
+         let existing = Style::default()
+             .fg(super::source_theme(false)
+-                .color(codewhale_ratatui::Role::Primary)
++                .color(codewhale_ratatui::Role::Accent)
+                 .unwrap())
+             .bg(Color::Rgb(30, 40, 50))
+             .add_modifier(Modifier::ITALIC);
+```
+
+**File**: `crates/tui/src/tui/phase_strip/posture_tests.rs` (modified, +1/-1)
+```diff
+@@ -65,7 +65,7 @@ fn posture_retains_every_host_ink_including_the_pinned_right_fact() {
+             buf.area,
+             Style::default()
+                 .fg(crate::tui::infoline::source_theme(false)
+-                    .color(codewhale_ratatui::Role::Primary)
++                    .color(codewhale_ratatui::Role::Accent)
+                     .unwrap())
+                 .bg(Color::Rgb(30, 40, 50))
+                 .add_modifier(Modifier::ITALIC),
+```
+
+**File**: `vendor/codewhale-ratatui/COMPONENTS.md` (modified, +2/-2)
+```diff
+@@ -16,8 +16,8 @@ Source snapshots inspected for this crosswalk:
+   pins `bc1044887b4ef973e444b6f8f83f9389daffee2a`; see
+   [its provenance](assets/whale-motion/PROVENANCE.md).
+ - **Design authority:** `codewhale-design` at
+-  `642795c1f9ef465b8d4f4df8584d23be28af6e9f`, `DIRECTION.md` and
+-  `tokens.json` version **1.1.2**. This kit vendors its token release in
++  `4c046da67b0d3d441eb9dfcbdec85620b480e0f2`, `DIRECTION.md` and
++  `tokens.json` version **2.3.0**. This kit vendors its token release in
+   [vendor/codewhale-design](vendor/codewhale-design).
+ - **Kit baseline:** `d02d14799b046fb6c9fdd3969c36ec9202251f34`, with the
+   native component extraction represented below.
+```
+
+**File**: `vendor/codewhale-ratatui/UPSTREAM.json` (modified, +54/-0)
+```diff
+@@ -204,5 +204,59 @@
+     "merged_exports": {
+       "src/components/mod.rs": "0ea81b474b2137b177c5535e7523ed6b312ea972630ac94f5131883246496e8e"
      }
- }
-@@ -3433,55 +3431,39 @@ mod tests {
-     }
- 
-     /// The refusal list is the contract for #2982 on the slash surfaces. Keep
--    /// restart-only `default_mode` out of it: `set_config_value` deliberately
--    /// does not apply that key to the live session.
-+    /// restart-only `default_mode` out of it, and mode and permissions, which
-+    /// the engine applies at its next step boundary mid-turn.
-     #[test]
-     fn live_route_key_list_covers_every_route_mutating_alias() {
-         for key in [
--            "mode",
-             "model",
-             "default_model",
-             "reasoning_effort",
-             "effort",
-             "provider",
--            "approval_mode",
--            "approval_policy",
--            "approval",
-         ] {
-             assert!(
-                 live_route_setting_subject(key).is_some(),
-                 "{key} mutates the active route and must be locked mid-turn"
-             );
-         }
--        for key in ["default_mode", "theme", "calm_mode", "rail_panel"] {
-+        for key in [
-+            "default_mode",
-+            "mode",
-+            "approval_mode",
-+            "approval_policy",
-+            "approval",
-+            "theme",
-+            "calm_mode",
-+            "rail_panel",
-+        ] {
-             assert!(
-                 live_route_setting_subject(key).is_none(),
-                 "{key} does not mutate the active route and must stay settable"
-             );
-         }
-     }
- 
--    #[test]
--    fn approval_aliases_are_inert_while_a_turn_is_running() {
--        let mut app = create_test_app();
--        app.approval_mode = ApprovalMode::Suggest;
--        app.is_loading = true;
--
--        for key in ["approval_mode", "approval_policy", "approval"] {
--            let result = set_config_value(&mut app, key, "never", false);
--            assert!(result.is_error, "{key} must be refused mid-turn");
--            assert!(
--                result
--                    .message
--                    .as_deref()
--                    .is_some_and(|message| message.contains("locked while a turn is running")),
--                "unexpected refusal for {key}: {:?}",
--                result.message
--            );
--            assert_eq!(app.approval_mode, ApprovalMode::Suggest);
--        }
--    }
--
-     #[test]
-     fn config_preset_calm_applies_bundle_to_session_and_keeps_evidence() {
-         let mut app = create_test_app();
++  },
++  "tokens_update": {
++    "commit": "528a9c4494f688b40bd642da7ca9aac80dc0c980",
++    "scope": "Design tokens 2.3.0 role migration only: the Accent role, regenerated roles, the vendored tokens.rs, the named-palette export with Accent, and the Primary-to-Accent call sites.",
++    "local_changes": "Applied to the base snapshot and existing Engine patches without taking the other upstream commits since 2ad795b. roles.rs, theme.rs, tui_palettes.rs, assets/tui-palettes.json and vendor/codewhale-design/tokens.rs match upstream at this commit; other listed files carry the same Primary-to-Accent rename on the Engine's copy. Where a pet_update file is listed here, this hash supersedes it.",
++    "files": {
++      "COMPONENTS.md": "d614d691d35eba578daf7516b99c393bb2a72ff4f711f5ee8bc0312de7733040",
++      "assets/tui-palettes.json": "c36f0323e5d0328d61c5d6e80e997ce6e2a2414fab9c70c9e1493d20eb653465",
++      "src/avatar_sprite.rs": "2d8f1a4a495431ff83977b3043171ba9f974bfb6d3790f4fe73cb2988b148837",
++      "src/color.rs": "7350c380faa2a14c33b8a7e0a3b81b41b9e79f594cbf7eda1c56c20eb7f8a94b",
++      "src/components/approval.rs": "c3ce15788c8b5c709d573b2657335eb759f08e1a39f142abcc2d0bbb73ae0c60",
++      "src/components/artifacts.rs": "d8977c46e66098cce10884573224fa296cd621a54d7b1cdd5f107f9cd27586ea",
++      "src/components/attention.rs": "bdaca3a4f2805deeaccd2dbc2eab43a1c20ae9bb273e1f2d090882609f3a720f",
++      "src/components/dot_whale.rs": "883be447918aaf1795bb846a30047ad3c489ab276385964bcff6c11c3dd959f6",
++      "src/components/empty.rs": "bc89617805648d5c4a82414a617f42731111f503390a8410acb53d19ba38def3",
++      "src/components/habitat.rs": "5a75bce9037d2faf327f96da9464112170ae3147466d86e4403ca37f55fcfc70",
++      "src/components/instrument.rs": "3418a7c6858fa739f4e84530931d1ba4c28910e33bd83531e409aca5d030be16",
++      "src/components/list.rs": "f345638461b4c3931b3ac86b9300b80859a4c2324f0edce962d198f7593861d2",
++      "src/components/motion.rs": "ec19554be3b844dde56ddfe3d38436f821d790773157accb6b75fa753b3b4f6d",
++      "src/components/native_chrome.rs": "4e830a145a2d9a2651d4cffa0cb704b4b3322efaebdd8fe8d49667578dca39ae",
++      "src/components/pending_input.rs": "d2bd8c7f7c715e426b2c2600a83a8f1df74344514d21d0c005f9abb2d4116d40",
++      "src/components/pet_mode.rs": "d1366ca9fb645e85c9f04f8cfc5970401b73f9523057a0eee6b40992f3a964de",
++      "src/components/picker.rs": "b6349f3bdc076b3cc169fc6998b8312b6058f3fa2d9751da97cd54d603e11968",
++      "src/components/segmented.rs": "846c85499f55f0e67bcf9fa8731beff48a3f227e33f9ec6ae52a146e47191f01",
++      "src/components/settings.rs": "b131c4e6ebb84e9dcee439bb71a0443ccb492d1c2d7115fadfb0cdc889d89ceb",
++      "src/components/subagents.rs": "cac111451d9e90d14f6f84627762157092a58abbad952a3d96fbac29a190a8c3",
++      "src/components/surface.rs": "a95e18d4f9c05334f86366ebafe63bc1f081a5cd1c97960b0a679d7b2b872568",
++      "src/components/tabs.rs": "8562450f6aa280469d66bf898718b9c06b8b4f5dedb3fd205c6478354901b0e8",
++      "src/components/text_input.rs": "439dad781a794affb1a2f203e1d70854fb18a3fedb657ccd5bf668d81e71a0f4",
++      "src/components/toggle.rs": "8a7218869bebe36ec08708b75da7f70e4ecee70368cd2bb77d7bf44f8d46826a",
++      "src/components/transcript.rs": "ea999949b1becf187c58845fd289ffdcee7c48ac223146d4afb49d3e89bd1547",
++      "src/components/tree.rs": "0a063a638b14c47652b56b2dac1096398b6579a15b4d1794645a2d6824a0601a",
++      "src/components/workbar.rs": "2fd780b1cb80a04de8b999c5c182a9a7ff86a8c431f9606eb41f5adb3d31970d",
++      "src/components/workbench.rs": "9d6679b6011bce0a8f8c4f4b5e756ada266dbd0ad7b8d1a875db632b28908096",
++      "src/components/workspace.rs": "f4e4de88a84a0a93b4852dde55a414fecba2f17136c836be726bade4420875e0",
++      "src/gallery/approval.rs": "2017b278ac6c9b25cc93c54958ae378d79bc65bb8cd13966082749b4eaad3c7a",
++      "src/gallery/atmosphere.rs": "0ce88be0b53565552e2d3bfacce12685303c0acf6f85fd7f77764b872558d3a3",
++      "src/gallery/display.rs": "9d34e9712399cd9b396f7a27bdead0bd14b3263c1aa31da3dbaf5f5185df6db8",
++      "src/gallery/native_views.rs": "bbcecc9102afefa915c001e04f3a9445b255e8855dd4abd36ef0ac00f38b6512",
++      "src/gallery/ocean.rs": "faa6c9b3fc87baa9d2228f839b7e21a35ad8306b53dbdc38b58e7162152348ee",
++      "src/gallery/posture.rs": "988957612b58af20cd43e004c8f56e9804c82a0e107af384b9ef76557150966f",
++      "src/gallery/scenes.rs": "41127cf56af9ea8a6df2cacc219327fae3d783e68e77044c19d2686aeba9f833",
++      "src/gallery/showcase.rs": "f213d7565978a1b23bc3ccf0203e1323bef38a2701a32a88c82e05c63fab1d9f",
++      "src/gallery/surface.rs": "ce6bd31293c909f2d09182d8255d0f7109556953540abfa0ef5c3c3e54cd1060",
++      "src/gallery/transcript.rs": "cf111d85def21fb26a702a85953645cc238fc24f0b90acef0fdfd189f7bb8652",
++      "src/gallery/workbench.rs": "c475a64e8b06c1dc72f26478afdb8792c6427cc06fa2d10fd46d6a27244a3bd7",
++  
 ```
 
-**File**: `crates/tui/src/core/engine.rs` (modified, +28/-17)
+**File**: `vendor/codewhale-ratatui/assets/tui-palettes.json` (modified, +76/-0)
 ```diff
-@@ -7101,23 +7101,7 @@ impl Engine {
-                 });
-             }
- 
--            self.record_mode_notice(mode);
--
--            // The Operate contract (docs/MODES.md) precedes the first Operate
--            // prompt. KV-cache effect: append-only history, one user-role runtime
--            // message; it is derived from the session log rather than a flag so a
--            // cleared, restored, or compacted session gets it again exactly once
--            // and every later Operate turn does not repeat it.
--            if mode == AppMode::Operate
--                && !self
--                    .session
--                    .messages
--                    .iter()
--                    .any(crate::runtime_handoff::is_current_operate_contract_message)
--            {
--                self.session
--                    .add_message(crate::runtime_handoff::operate_contract_runtime_message());
--            }
-+            self.record_mode_context(mode);
- 
-             self.session
-                 .working_set
-@@ -9139,6 +9123,33 @@ impl Engine {
-     /// new one is appended whenever the mode differs from the latest. Restored
-     /// Operate contracts also require a current notice after leaving Operate.
-     /// Child and RLM hosts get none: their mode is fixed by their parent.
-+    /// Record the mode notice and, on entering Operate, the Operate contract
-+    /// (docs/MODES.md), which precedes the first Operate prompt. KV-cache
-+    /// effect: append-only history, user-role runtime messages; derived from
-+    /// the session log rather than a flag so a cleared, restored, or compacted
-+    /// session gets the contract again exactly once and every later Operate
-+    /// step does not repeat it. Runs at turn start and before every model
-+    /// request, so a mode switched mid-turn reaches the next request. Known
-+    /// limitation: a response already streaming is not restarted for a mode
-+    /// change; it finishes under the notice it was sent with, and its tool
-+    /// calls are planned under the new posture. Returns whether anything was
-+    /// appended.
-+    fn record_mode_context(&mut self, mode: AppMode) -> bool {
-+        let before = self.session.messages.len();
-+        self.record_mode_notice(mode);
-+        if mode == AppMode::Operate
-+            && !self
-+                .session
-+                .messages
-+                .iter()
-+                .any(crate::runtime_handoff::is_current_operate_contract_message)
-+        {
-+            self.session
-+                .add_message(crate::runtime_handoff::operate_contract_runtime_message());
-+        }
-+        self.session.messages.len() != before
-+    }
-+
-     fn record_mode_notice(&mut self, mode: AppMode) {
-         if self.child_host.is_some() || self.rlm_host.is_some() {
-             return;
+@@ -59,6 +59,11 @@
+         30,
+         51
+       ],
++      [
++        106,
++        166,
++        220
++      ],
+       [
+         79,
+         209,
+@@ -365,6 +370,11 @@
+         16,
+         25
+       ],
++      [
++        106,
++        166,
++        220
++      ],
+       [
+         79,
+         209,
+@@ -671,6 +681,11 @@
+         31,
+         35
+       ],
++      [
++        103,
++        184,
++        214
++      ],
+       [
+         127,
+         214,
+@@ -977,6 +992,11 @@
+         240,
+         233
+       ],
++      [
++        0,
++        102,
++        132
++      ],
+       [
+         31,
+         122,
+@@ -1267,6 +1287,11 @@
+         220
+       ],
+       "Color::Reset",
++      [
++        106,
++        166,
++        220
++      ],
+       [
+         79,
+         209,
+@@ -1537,6 +1562,11 @@
+         178
+       ],
+       "Color::Reset",
++      [
++        21,
++        53,
++        178
++      ],
+       [
+         8,
+         118,
+@@ -1779,6 +1809,7 @@
+       "Color::Reset",
+       "Color::Blue",
+       "Color::Reset",
++      "Color::Blue",
+       "Color::Cyan",
+       "Color::Yellow",
+       "Color::Red",
+@@ -1893,6 +1924,11 @@
+         10,
+         10
+       ],
++      [
++        220,
++        220,
++        220
++      ],
+       [
+         180,
+         180,
+@@ -2199,6 +2235,11 @@
+         30,
+         46
+       ],
++      [
++        137,
++        180,
++        250
++      ],
+       [
+         116,
+         199,
+@@ -2505,6 +2546,11 @@
+         27,
+         38
+       ],
++      [
++        122,
++        162,
++        247
++      ],
+       [
+         125,
+         207,
+@@ -2811,6 +2857,11 @@
+         42,
+         54
+       ],
++      [
++        189,
++        147,
++        249
++      ],
+       [
+         139,
+         233,
+@@ -3117,6 +3168,11 @@
+         40,
+         40
+       ],
++      [
++        131,
++        165,
++        152
++      ],
+       [
+         142,
+         192,
+@@ -3423,6 +3479,11 @@
+         23,
+         21
+       ],
++      [
++        204,
++        120,
++        92
++      ],
+       [
+         93,
+         184,
+@@ -3729,6 +3790,11 @@
+         10,
+         0
+       ],
++      [
++        0,
++        204,
++        0
++      ],
+       [
+         0,
+         153,
+@@ -4035,6 +4101,11 @@
+         246,
+         227
+       ],
++      [
++        38,
++        139,
++        210
++      ],
+       [
+         41,
+         158,
+@@ -4341,6 +4412,11 @@
+         18,
+         28
+       ],
++      [
++        255,
++        158,
++        205
++      ],
+       [
+         154,
+         236,
 ```
 
-**File**: `crates/tui/src/core/engine/turn_loop/preparation.rs` (modified, +3/-0)
+**File**: `vendor/codewhale-ratatui/src/avatar_sprite.rs` (modified, +1/-1)
 ```diff
-@@ -59,6 +59,9 @@ impl Engine {
-             }
-             progress.mode = self.current_mode;
-         }
-+        if self.record_mode_context(self.current_mode) {
-+            self.emit_session_updated().await;
-+        }
- 
-         let mut accepted_steer = false;
-         while let Some(pending) = self.next_turn_steer() {
-```
-
-**File**: `crates/tui/src/tui/app.rs` (modified, +9/-24)
-```diff
-@@ -3485,9 +3485,6 @@ impl App {
-     /// permission surface and refuses here; otherwise this behaves like
-     /// [`Self::select_mode`] and persists the mode actually installed (Act).
-     pub fn select_yolo_compat(&mut self) -> SettingSelection {
--        if self.reject_setting_change_while_busy(MessageId::SettingSubjectMode) {
--            return SettingSelection::Refused;
--        }
-         if self.approval_policy_locked() {
-             self.push_status_toast(
-                 "Permissions are controlled by config or managed requirements".to_string(),
-@@ -3562,28 +3559,21 @@ impl App {
-     /// What is persisted is `self.mode` — the mode `set_mode` actually
-     /// installed — not the requested enum.
-     ///
--    /// The outcome is typed, not a bool, because three things can happen and
--    /// only one of them means "nothing was saved":
-+    /// The outcome is typed, not a bool, so callers can tell a live change
-+    /// from a selection that only saved the startup default:
-     ///
-     /// - [`SettingSelection::Changed`] — live mode moved *and* the startup
-     ///   default was queued.
-     /// - [`SettingSelection::PersistedSame`] — live mode was already the
-     ///   requested one, but the startup default was still queued. This is a
-     ///   real, reportable action: after a session restore the live mode and the
-     ///   startup default routinely disagree.
--    /// - [`SettingSelection::Refused`] — the #2982 turn lock rejected it and
--    ///   nothing was written anywhere.
-     ///
--    /// A bool collapsed the last two, so every caller (slash `/mode`, the
--    /// Alt+A/P/Y shortcuts, the hotbar mode rows) reported a refusal and a
--    /// successful same-mode save identically — as "already in that mode", with
--    /// no receipt for the write that did happen.
-+    /// Mode is not turn-locked: a change during a running turn is sent to the
-+    /// engine, which applies it at its next step boundary in that turn.
-     ///
-     /// [`StartupDefaultsWriter`]: crate::tui::startup_defaults::StartupDefaultsWriter
-     pub fn select_mode(&mut self, mode: AppMode) -> SettingSelection {
--        if self.reject_setting_change_while_busy(MessageId::SettingSubjectMode) {
--            return SettingSelection::Refused;
--        }
-         let changed = self.set_mode(mode);
-         // Persist an explicit selection even when it matches the live mode.
-         // A restored session can be Operate while the startup default remains
-@@ -3695,11 +3685,12 @@ impl App {
-         );
-     }
- 
--    /// Whether mode/thinking selection is locked because a turn is in flight.
-+    /// Whether a route setting is locked because a turn is in flight.
-     ///
--    /// While `is_loading`, the model/permission surface the engine is acting on
--    /// must not shift underneath it, so user-initiated mode and thinking changes
--    /// are refused (#2982). Returns true (and posts a concise status message) if
-+    /// While `is_loading`, the model, provider and thinking the engine is
-+    /// acting on must not shift underneath it, so those changes are refused
-+    /// (#2982). Mode and permissions are not locked: the engine applies them
-+    /// at its next step boundary in the same turn. Returns true (and posts a concise status message) if
-     /// the change should be rejected — the caller leaves the selection unchanged
-     /// so the chip "twitches" back instead of moving.
-     ///
-@@ -3991,9 +3982,6 @@ impl App {
-     }
- 
-     fn next_approval_posture(&mut self, allow_root_policy: bool) -> Option<ApprovalMode> {
--        if self.reject_setting_change_while_busy(MessageId::SettingSubjectPermissions) {
--            return None;
--        }
-         // Plan used to refuse the change outright, which welded the two axes
-         // together on the keyboard: Tab cycles the mode, Shift+Tab cycles the
-         // posture, and in Plan the second key silently did nothing. They are
-@@ -4104,9 +4092,6 @@ impl App {
-     /// landing on it; Plan stays read-only and only the Act baseline moves.
-     /// Shared by `/auto` and the Plan hand-off.
-     pub fn apply_agent_posture(&mut self, next: ApprovalMode) -> Result<(), String> {
--        if self.reject_setting_change_while_busy(MessageId::SettingSubjectPermissions) {
--            return Err(self.setting_locked_message(MessageId::SettingSubjectPermissions));
--        }
-         if self.approval_policy_locked() {
-             return Err("Permissions are controlled by config or managed requirements".to_string());
-         }
-```
-
-**File**: `crates/tui/src/tui/app/tests.rs` (modified, +27/-38)
-```diff
-@@ -645,17 +645,18 @@ fn auto_reasoning_change_invalidates_the_previous_route_and_receipt() {
- }
- 
- #[test]
--fn mode_and_thinking_are_locked_while_a_turn_is_running() {
--    // #2982: while a turn is in flight, user-initiated mode/thinking changes
--    // are refused with a concise message instead of shifting the surface the
--    // engine is acting on.
-+fn thinking_is_locked_but_mode_moves_while_a_turn_is_running() {
-     let mut app = App::new(test_options(false), &Config::default());
-     app.mode = AppMode::Agent;
-     app.reasoning_effort = ReasoningEffort::Max;
-     app.is_loading = true;
- 
--    app.cycle_mode();
--    assert_eq!(app.mode, AppMode::Agent, "mode must not change while busy");
-+    let before_effort = app.reasoning_effort;
-+    app.cycle_effort();
-+    assert_eq!(
-+        app.reasoning_effort, before_effort,
-+        "thinking must not change while busy"
-+    );
-     assert!(
-         app.status_message
-             .as_deref()
-@@ -665,17 +666,8 @@ fn mode_and_thinking_are_locked_while_a_turn_is_running() {
-         app.status_message
-     );
- 
--    let before_effort = app.reasoning_effort;
--    app.cycle_effort();
--    assert_eq!(
--        app.reasoning_effort, before_effort,
--        "thinking must not change while busy"
--    );
--
--    // Once the turn finishes, the same gesture works again.
--    app.is_loading = false;
-     app.cycle_mode();
--    assert_ne!(app.mode, AppMode::Agent, "mode should change when idle");
-+    assert_ne!(app.mode, AppMode::Agent, "mode changes mid-turn");
- }
- 
- #[test]
-@@ -4157,7 +4149,7 @@ fn plan_permission_cycle_moves_the_baseline_and_leaves_plan_read_only() {
- }
- 
- #[test]
--fn busy_permission_cycle_changes_neither_runtime_nor_persistence() {
-+fn busy_permission_cycle_moves_the_live_posture() {
-     let _env_lock = lock_test_env();
-     let tmp = tempfile::tempdir().expect("tempdir");
-     let config_path = tmp.path().join("config.toml");
-@@ -4168,12 +4160,10 @@ fn busy_permission_cycle_changes_neither_runtime_nor_persistence() {
-     let before = app.approval_mode;
-     app.is_loading = true;
- 
--    assert!(!app.cycle_approval_posture());
--    assert_eq!(app.approval_mode, before);
--    assert_eq!(app.mode_prefs.agent_approval_mode, before);
--    assert!(!tmp.path().join("settings.toml").exists());
-+    assert!(app.cycle_approval_posture());
-+    assert_ne!(app.mode_prefs.agent_approval_mode, before);
-     assert!(
--        app.status_message
-+        !app.status_message
-             .as_deref()
-             .is_some_and(|message| message.contains("locked"))
-     );
-@@ -6928,7 +6918,7 @@ fn reselecting_restored_live_mode_updates_the_startup_default() {
- }
- 
- #[test]
--fn mode_change_refused_while_a_turn_runs_persists_nothing() {
-+fn mode_change_while_a_turn_runs_is_live_and_persisted() {
-     let _lock = lock_test_env();
-     let tmp = tempfile::TempDir::new().expect("tempdir");
-     let _env = sealed_settings_home(tmp.path());
-@@ -6938,12 +6928,13 @@ fn mode_change_refused_while_a_turn_runs_persists_nothing() {
-     app.select_mode(AppMode::Plan);
-     app.is_loading = true;
-     app.cycle_mode();
-+    app.startup_defaults.flush();
- 
--    assert_eq!(app.mode, AppMode::Plan, "#2982 lock still holds");
-+    assert_eq!(app.mode, AppMode::Plan.next());
-     assert_eq!(
-         Settings::load().expect("reload").default_mode,
--        "plan",
--        "a refused change must not be persisted"
-+        app.mode.as_setting(),
-+        "a mid-turn change is a real selection"
-     );
- }
- 
-@@ -7394,7 +7385,7 @@ fn mode_cycling_in_an_unsealed_test_writes_nothing() {
- // hotbar. `/set` and `/config <key> <value>` reached the same live route through
- // a different door, and both are reachable mid-turn: the composer accepts
- // Shift+Enter and the slash menu while `is_loading`. So during a running turn a
--// slash command could swap the model, thinking level, mode, or provider out from
-+// slash command could swap the model, thinking level, or provider out from
- // under the engine *and* persist it. The refusal now sits in one place, above
- // every disk write and every `App` mutation.
- 
-@@ -7438,7 +7429,6 @@ fn slash_config_and_set_refuse_every_live_route_key_while_a_turn_runs() {
-             ("default_model", "deepseek-v4-pro"),
-             ("reasoning_effort", "high"),
-             ("effort", "high"),
--            ("mode", "operate"),
-             ("provider", "openai"),
-         ] {
-             let result = crate::commands::set_config_value(&mut app, key, value, persist);
-@@ -7637,15 +7627,15 @@ fn mode_selection_reports_refusal_change_and_persisted_same_distinctly() {
-     );
- 
-     app.is_loading = true;
--    assert_eq!(app.select_mode(AppMode::Plan), SettingSelection::Refused);
-+    assert_eq!(app.select_mode(AppMode::Plan), SettingSelection::Changed);
-     assert!(!SettingSelection::Refused.accepted());
--    assert_eq!(app.mode, AppMode::Operate, "a refusal changes nothing");
-+    assert_eq!(app.mode, AppMode::Plan, "mode is not turn-locked");
- }
- 
--/// Eve
-```
-
-**File**: `crates/tui/src/tui/ui/provider_routes.rs` (modified, +12/-1)
-```diff
-@@ -627,7 +627,7 @@ pub(crate) fn reasoning_effort_receipt_for_route(
-     .unwrap_or(EffectiveReasoningEffort::Tier(tier))
- }
- 
--pub(crate) async fn sync_mode_update(app: &App, engine_handle: &EngineHandle) {
-+pub(crate) async fn sync_mode_update(app: &mut App, engine_handle: &EngineHandle) {
-     // #6150: non-blocking send on the input path. ChangeMode is safe to drop
-     // on a full channel — `try_send` still publishes the live authority
-     // snapshot, which the drain applies before the next queued op.
-@@ -639,6 +639,17 @@ pub(crate) async fn sync_mode_update(app: &App, engine_handle: &EngineHandle) {
-         approval_mode: app.approval_mode,
-         configured_sandbox_mode: app.configured_sandbox_mode.clone(),
-     });
-+    if app.is_loading {
-+        app.push_status_toast(
-+            format!(
-+                "{} · {} — applies at the agent's next step in this turn",
-+                crate::tui::app::AppModeUi::display_name_localized(app.mode, app.ui_locale),
-+                app.effective_permission_label(),
-+            ),
-+            StatusToastLevel::Info,
-+            Some(6_000),
-+        );
-+    }
- }
- 
- /// Apply a `/provider` switch by resolving a complete route candidate before
+@@ -161,7 +161,7 @@ impl Paint for Sprite<'_> {
+                     } else {
+                         "#"
+                     };
+-                    cell.set_symbol(symbol).set_style(theme.fg(Role::Primary));
++                    cell.set_symbol(symbol).set_style(theme.fg(Role::Accent));
+                     continue;
+                 }
+                 let bg = color::resolvable_rgb(cell.bg);
 ```
 
 ---
 
-### Incident Patch 2: `f75bb12d` (2026-10-27)
-**Commit Message**: fix(dependencies): a version probe that outlives its deadline means installed, not missing (CW-7525)
+### Incident Patch 2: `fed2140d` (2026-10-28)
+**Commit Message**: fix(tui): preserve and surface interrupted sessions
 
-tools::subagent::tests::root_operate_dispatch_delegates_builtin_verification_but_not_shell
-failed under load: Cargo::resolve() (and resolve_executable_path for
-git/pandoc) run `<tool> --version` with the 3 s VERSION_PROBE_TIMEOUT,
-and on a busy machine the rustup `cargo` shim can take longer. The
-timeout was treated as "not installed" and cached in the resolver's
-OnceLock for the whole process, so run_tests reported cargo missing for
-the rest of the session. That is a product bug, not a test bug.
+Retain crash checkpoints, discover recoverable sessions in the picker, and promote only under the session lease with workspace and saved-state checks. Preserve the shared legacy slot and fail closed when damaged recovery could otherwise be overwritten.
 
-probe_executable_with_flag and resolve_executable_path now share
-probe_found(): a successful exit means present, a failed launch or a
-failing exit means absent, and a probe that launched and was still
-running at its deadline means present (it is killed with its process
-tree as before). The deadline still bounds how long resolution waits;
-it no longer decides presence. Banner capture
-(probe_executable_capturing) is unchanged and still returns None on
-timeout.
+Verified on macOS with the locked hermetic TUI checks: checkpoint 78 passed, continue 12 passed, picker rename 1 passed, picker archive 1 passed. The linker reported a compact-unwind size warning. Legacy-slot cleanup and old-writer coordination remain limited.
 
-Verification: same nextest batch as 8084ead09c (frozen source) ->
-142 passed, including 55 dependencies:: tests and the subagent te
+**File**: `crates/tui/src/lib.rs` (modified, +59/-110)
+```diff
+@@ -10064,14 +10064,14 @@ async fn prepare_mounted_session(
+                 .ok_or_else(|| anyhow!("No saved sessions found for this workspace"))?
+                 .id
+         } else {
+-            manager.resolve_session_id_prefix(&selector)?
++            manager.resolve_recoverable_session_id_prefix(&selector)?
+         };
+         // Under the existing inactive-session guard, promote any crash
+         // checkpoint first: the mount below stamps a newer document, and the
+         // later attach would then discard the checkpoint as stale. Then
+         // capture the complete document and separate local goal.
+         let _source_lease = manager.reserve_session_for_external_write(&id)?;
+-        let stale_checkpoint = manager.promote_interrupted_checkpoint(&id);
++        let stale_checkpoint = manager.promote_interrupted_checkpoint(&id, Some(&selection_workspace))?;
+         let saved = manager.load_session_snapshot_bounded(&id, MAX_CANONICAL_HISTORY_BYTES)?;
+         if stale_checkpoint {
+             let _ = manager.clear_session_checkpoint(&id);
+@@ -12960,23 +12960,17 @@ fn default_mouse_capture_enabled(
+     true
+ }
+ 
+-/// A loadable crash-recovery checkpoint candidate: session content, file
+-/// age, and which slot it came from (per-session file or the legacy single
+-/// slot).
++/// A crash-recovery checkpoint candidate: session metadata and file age.
+ struct RecentCheckpoint {
+-    session: session_manager::SavedSession,
++    metadata: session_manager::SessionMetadata,
+     age: std::time::Duration,
+-    source: session_manager::CheckpointSource,
+ }
+ 
+-const CHECKPOINT_MAX_AGE: std::time::Duration = std::time::Duration::from_secs(24 * 3600);
+-
+-/// Load all recent crash-recovery checkpoints, pruning stale ones first.
++/// Load crash-recovery checkpoints.
+ ///
+ /// Candidates are the per-session checkpoint files plus the legacy
+-/// single-slot `checkpoints/latest.json` (compatibility read). Files older
+-/// than 24 hours are removed; unreadable files are skipped. The result is
+-/// sorted most recent first.
++/// single-slot `checkpoints/latest.json` (compatibility read). Unreadable
++/// files are skipped. The result is sorted most recent first.
+ fn load_recent_checkpoints(manager: &session_manager::SessionManager) -> Vec<RecentCheckpoint> {
+     let refs = manager.list_checkpoints().unwrap_or_default();
+     let mut recent = Vec::new();
+@@ -12986,39 +12980,16 @@ fn load_recent_checkpoints(manager: &session_manager::SessionManager) -> Vec<Rec
+         // take that session's only crash-recovery record while it runs. The
+         // legacy slot is checked by the session it names, before anything
+         // prunes, promotes or migrates it over that session's live state.
+-        let owner = match &checkpoint_ref.source {
+-            session_manager::CheckpointSource::Session(id) => Some(id.clone()),
+-            session_manager::CheckpointSource::Legacy => {
+-                manager.legacy_checkpoint_origin().ok().flatten()
+-            }
+-        };
+-        if owner.is_some_and(|id| manager.is_session_live_anywhere(&id)) {
+-            continue;
+-        }
+-        let Ok(age) = std::time::SystemTime::now().duration_since(checkpoint_ref.modified) else {
++        let Ok(Some(metadata)) = manager.checkpoint_metadata(&checkpoint_ref) else {
+             continue;
+         };
+-        if age > CHECKPOINT_MAX_AGE {
+-            let _ = match &checkpoint_ref.source {
+-                session_manager::CheckpointSource::Session(id) => {
+-                    manager.clear_session_checkpoint(id)
+-                }
+-                session_manager::CheckpointSource::Legacy => manager.clear_legacy_checkpoint(),
+-            };
++        if manager.is_session_live_anywhere(&metadata.id) {
+             continue;
+         }
+-        let loaded = match &checkpoint_ref.source {
+-            session_manager::CheckpointSource::Session(id) => manager.load_session_checkpoint(id),
+-            session_manager::CheckpointSource::Legacy => manager.load_legacy_checkpoint(),
+-        };
+-        let Ok(Some(session)) = loaded else {
++        let Ok(age) = std::time::SystemTime::now().duration_since(checkpoint_ref.modified) else {
+             continue;
+         };
+-        recent.push(RecentCheckpoint {
+-            session,
+-            age,
+-            source: checkpoint_ref.source,
+-        });
++        recent.push(RecentCheckpoint { metadata, age });
+     }
+     // `list_checkpoints` sorts newest-first already; keep it explicit here so
+     // selection does not silently depend on the manager's ordering.
+@@ -13041,9 +13012,9 @@ fn checkpoint_age_label(age: std::time::Duration) -> String {
+ /// workspace.
+ ///
+ /// Candidates are all per-session checkpoint files plus the legacy
+-/// single-slot `checkpoints/latest.json`; each must be younger than 24 hours
+-/// **and its workspace must match the resolved launch workspace after
+-/// canonicalisation** — the newest matching candidate wins. If no candidate
++/// single-slot
+```
+
+**File**: `crates/tui/src/session_manager.rs` (modified, +324/-92)
+```diff
+@@ -1617,7 +1617,6 @@ pub enum CheckpointSource {
+ #[derive(Debug, Clone)]
+ pub struct CheckpointRef {
+     pub source: CheckpointSource,
+-    #[cfg_attr(not(test), expect(dead_code))]
+     pub path: PathBuf,
+     pub modified: std::time::SystemTime,
+ }
+@@ -1944,12 +1943,6 @@ impl SessionManager {
+     /// must tell a malformed id apart (a 400, not a 409) validate first or
+     /// reserve the lease, which reports `InvalidInput`.
+     ///
+-    /// Known limitation: startup's stale-checkpoint pruning
+-    /// (`load_recent_checkpoints` in `lib.rs`) still clears a checkpoint
+-    /// older than a day after this released probe. A session that attached
+-    /// in that gap and is mid-turn refreshes its checkpoint, so only a
+-    /// day-old checkpoint of a session attached in the same instant is
+-    /// exposed.
+     #[must_use]
+     pub fn is_session_live_anywhere(&self, session_id: &str) -> bool {
+         if is_live_session(session_id) {
+@@ -3158,10 +3151,14 @@ impl SessionManager {
+     }
+ 
+     fn read_checkpoint_file(&self, path: &Path) -> std::io::Result<Option<SavedSession>> {
+-        if !path.exists() {
+-            return Ok(None);
+-        }
+-        let content = fs::read_to_string(path)?;
++        use std::io::Read as _;
++        let mut file = match open_private_read_file(path) {
++            Ok(file) => file,
++            Err(error) if error.kind() == io::ErrorKind::NotFound => return Ok(None),
++            Err(error) => return Err(error),
++        };
++        let mut content = String::new();
++        file.read_to_string(&mut content)?;
+         let mut session: SavedSession = serde_json::from_str(&content)
+             .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))?;
+         if session.schema_version > CURRENT_SESSION_SCHEMA_VERSION {
+@@ -3173,6 +3170,9 @@ impl SessionManager {
+                 ),
+             ));
+         }
++        if let Some(journal) = &session.journal {
++            validate_saved_journal(journal)?;
++        }
+         // A crash after retirement but before checkpoint removal must not
+         // offer the deleted origin for recovery. Optional accounting damage
+         // still permits recovery and is projected as incomplete below.
+@@ -3194,7 +3194,71 @@ impl SessionManager {
+         session_id: &str,
+     ) -> std::io::Result<Option<SavedSession>> {
+         let path = self.validated_checkpoint_path(session_id)?;
+-        self.read_checkpoint_file(&path)
++        let session = self.read_checkpoint_file(&path)?;
++        if session
++            .as_ref()
++            .is_some_and(|session| session.metadata.id != session_id)
++        {
++            return Err(io::Error::new(
++                io::ErrorKind::InvalidData,
++                "checkpoint identity mismatch",
++            ));
++        }
++        Ok(session)
++    }
++
++    pub(crate) fn load_recovery_checkpoint(
++        &self,
++        session_id: &str,
++    ) -> std::io::Result<Option<SavedSession>> {
++        Ok(self
++            .recovery_checkpoint_with_source(session_id, true)?
++            .map(|(session, _)| session))
++    }
++
++    fn recovery_checkpoint_with_source(
++        &self,
++        session_id: &str,
++        allow_damaged_current: bool,
++    ) -> std::io::Result<Option<(SavedSession, bool)>> {
++        self.validated_checkpoint_path(session_id)?;
++        let current = self.load_session_checkpoint(session_id);
++        let legacy = match self.legacy_checkpoint_origin() {
++            Ok(Some(origin)) if origin == session_id => self
++                .load_legacy_checkpoint()
++                .unwrap_or_else(|error| {
++                    tracing::warn!(%error, "legacy checkpoint could not be read; preserving it");
++                    None
++                })
++                .filter(|session| session.metadata.id == session_id),
++            Ok(_) => None,
++            Err(error) => {
++                tracing::warn!(%error, "legacy checkpoint could not be read; preserving it");
++                None
++            }
++        };
++        let current = match current {
++            Ok(current) => current,
++            Err(_) if allow_damaged_current && legacy.is_some() => None,
++            Err(error) => {
++                return Err(io::Error::new(
++                    error.kind(),
++                    format!(
++                        "checkpoint {} is unreadable and has been preserved. Review the available conversation preview and preserve this recovery file before resuming: {error}",
++                        self.validated_checkpoint_path(session_id)?.display()
++                    ),
++                ));
++            }
++        };
++        Ok(match (current, legacy) {
++            (Some(current), Some(legacy))
++                if legacy.metadata.updated_at > current.metadata.updated_at =>
++            {
++                Some((legacy, true))
++            }
++            (Some(current), _) => Some((current, false)),
++            (None, legacy) => legacy.map(|session| (session,
+```
+
+**File**: `crates/tui/src/session_manager/test_cases_01.rs` (modified, +7/-1)
+```diff
+@@ -514,6 +514,9 @@
+         )
+         .expect("owned legacy checkpoint");
+ 
++        assert!(manager.delete_session("retired-recovery").is_err());
++        assert!(legacy_path.exists());
++        fs::remove_file(&legacy_path).expect("remove legacy checkpoint");
+         manager.delete_session("retired-recovery").expect("delete");
+         assert!(manager.load_legacy_checkpoint().expect("legacy").is_none());
+         assert!(
+@@ -833,7 +836,10 @@
+         let (ledger, _) = manager.late_usage_paths(id).expect("ledger paths");
+         assert!(!SessionManager::late_usage_is_deleted(&ledger).expect("not retired"));
+ 
+-        // Explicit deletion remains the user's decision.
++        assert!(manager.delete_session(id).is_err());
++        assert_eq!(fs::read(&snapshot).unwrap(), original);
++        assert_eq!(fs::read(&legacy).unwrap(), corrupt);
++        fs::remove_file(&legacy).expect("remove damaged legacy fixture");
+         manager.delete_session(id).expect("explicit delete");
+         assert!(!snapshot.exists());
+     }
+```
+
+**File**: `crates/tui/src/session_manager/test_cases_03.rs` (modified, +59/-29)
+```diff
+@@ -567,6 +567,57 @@
+                 .any(|r| r.source == CheckpointSource::Session(session.metadata.id.clone()))
+         );
+         assert!(refs.iter().any(|r| r.source == CheckpointSource::Legacy));
++        let (sessions, recovery, warning) =
++            manager.list_sessions_with_recovery().expect("recovery list");
++        assert!(warning.is_some());
++        assert_eq!(sessions.len(), 1);
++        assert_eq!(sessions[0].id, session.metadata.id);
++        assert!(recovery.contains(&session.metadata.id));
++        assert!(
++            manager
++                .load_recovery_checkpoint(&session.metadata.id)
++                .unwrap()
++                .is_some()
++        );
++        let mut collision = session.clone();
++        collision.metadata.id = format!("{}-other", session.metadata.id);
++        manager.save_checkpoint(&collision).expect("save colliding checkpoint");
++        assert_eq!(
++            manager
++                .resolve_recoverable_session_id_prefix(&session.metadata.id)
++                .unwrap_err()
++                .kind(),
++            io::ErrorKind::InvalidInput
++        );
++        manager.clear_session_checkpoint(&collision.metadata.id).unwrap();
++        let (restored, lease) = manager
++            .attach_session_by_prefix(&session.metadata.id[..8])
++            .expect("attach checkpoint-only session");
++        assert_eq!(restored.session.metadata.id, session.metadata.id);
++        drop(lease);
++        let mut legacy = session.clone();
++        legacy.metadata.id = "legacy-only".to_string();
++        let damaged = manager.save_checkpoint(&legacy).expect("save checkpoint");
++        fs::write(&damaged, b"{").expect("damage checkpoint");
++        fs::write(
++            checkpoints.join("latest.json"),
++            serde_json::to_vec(&legacy).unwrap(),
++        )
++        .expect("write legacy checkpoint");
++        let (sessions, recovery, warning) =
++            manager.list_sessions_with_recovery().expect("recovery list");
++        assert!(warning.is_some());
++        assert!(sessions.iter().any(|entry| entry.id == "legacy-only"));
++        assert!(recovery.contains("legacy-only"));
++        assert_eq!(
++            manager.load_recovery_checkpoint("legacy-only").unwrap().unwrap().metadata.id,
++            "legacy-only"
++        );
++        assert!(manager.attach_session("legacy-only").is_err());
++        assert_eq!(fs::read(&damaged).unwrap(), b"{");
++        assert!(manager.load_session("legacy-only").is_err());
++        assert!(manager.attach_session("legacy-only").is_err());
++        assert_eq!(fs::read(&damaged).unwrap(), b"{");
+     }
+ 
+     /// A session owned by a *prior* process instance with a crash-recovery
+@@ -703,6 +754,14 @@
+         manager
+             .save_checkpoint(&interrupted)
+             .expect("save checkpoint");
++        let (listed, recovery, warning) =
++            manager.list_sessions_with_recovery().expect("list recovery");
++        assert!(warning.is_none());
++        assert_eq!(listed.iter().filter(|session| session.id == id).count(), 1);
++        assert!(recovery.contains(&id));
++        let foreign = tmp.path().join("another-workspace");
++        assert!(manager.attach_session_in_workspace(&id, Some(&foreign)).is_err());
++        assert!(manager.load_session_checkpoint(&id).unwrap().is_some());
+ 
+         let (recovery, lease) = manager.attach_session(&id).expect("attach");
+         assert_eq!(
+@@ -957,35 +1016,6 @@
+         assert!(session_recovery_hint(&workspace, Some("sess-prior")).is_none());
+     }
+ 
+-    #[test]
+-    fn legacy_migration_never_overwrites_existing_per_session_checkpoint() {
+-        let tmp = tempdir().expect("tempdir");
+-        let manager = SessionManager::new(tmp.path().join("sessions")).expect("new");
+-        let mut session = create_saved_session(
+-            &[make_test_message("user", "original")],
+-            "test-model",
+-            tmp.path(),
+-            0,
+-            None,
+-        );
+-        manager.save_checkpoint(&session).expect("save checkpoint");
+-
+-        session.messages = vec![make_test_message("user", "stale legacy copy")];
+-        let written = manager
+-            .write_session_checkpoint_if_absent(&session)
+-            .expect("migration attempt");
+-        assert!(!written, "migration must not overwrite an existing file");
+-        let loaded = manager
+-            .load_session_checkpoint(&session.metadata.id)
+-            .expect("load")
+-            .expect("checkpoint exists");
+-        assert_eq!(
+-            loaded.messages,
+-            vec![make_test_message("user", "original")],
+-            "existing per-session checkpoint content must be preserved"
+-        );
+-    }
+-
+     #[test]
+     fn workspace_scope_matches_subdirectories_in_same_git_checkout() {
+         let tmp = tempdir().expect("tempdir");
+```
+
+**File**: `crates/tui/src/tui/session_picker.rs` (modified, +181/-16)
+```diff
+@@ -1,7 +1,7 @@
+ //! Session resume picker view for the TUI.
+ 
+ use std::cell::{Cell, RefCell};
+-use std::collections::VecDeque;
++use std::collections::{HashSet, VecDeque};
+ use std::path::{Path, PathBuf};
+ use std::sync::{Arc, Mutex};
+ 
+@@ -98,7 +98,7 @@ struct PendingPreview {
+ }
+ 
+ /// One session-store listing, or why the store could not be listed.
+-type SessionListing = Result<Vec<SessionMetadata>, String>;
++type SessionListing = Result<(Vec<SessionMetadata>, HashSet<String>, Option<String>), String>;
+ 
+ /// The session-store listing running off the event loop (U08-09). The
+ /// store's metadata scan grows with every saved session, so the picker opens
+@@ -119,6 +119,7 @@ enum ListNotice<'a> {
+ pub struct SessionPickerView {
+     /// Every session loaded from disk. The picker filters from this set.
+     sessions: Vec<SessionMetadata>,
++    recovery_sessions: HashSet<String>,
+     /// The store listing still in flight, if any.
+     pending_list: Option<PendingSessionList>,
+     /// The store could not be listed. Shown instead of "no saved sessions",
+@@ -205,17 +206,25 @@ impl SessionPickerView {
+     /// Install a finished store listing. A failure is shown as a failure —
+     /// never as an empty store — and the list stays empty.
+     fn apply_session_list(&mut self, listed: SessionListing, select: Option<String>) {
++        self.preview_generation = self.preview_generation.wrapping_add(1);
++        self.pending_preview = None;
++        self.preview_cache = PreviewCache::default();
+         match listed {
+-            Ok(sessions) => {
++            Ok((sessions, recovery_sessions, warning)) => {
+                 self.sessions = sessions;
++                self.recovery_sessions = recovery_sessions;
+                 self.load_error = None;
++                self.status = warning.map(|error| {
++                    tr(self.locale, MessageId::SessionsLoadFailed).replace("{error}", &error)
++                });
+                 self.apply_sort_and_filter();
+                 if let Some(session_id) = select {
+                     self.select_with_fallback(&session_id);
+                 }
+             }
+             Err(error) => {
+                 self.sessions.clear();
++                self.recovery_sessions.clear();
+                 self.load_error =
+                     Some(tr(self.locale, MessageId::SessionsOpenFailed).replace("{error}", &error));
+                 self.apply_sort_and_filter();
+@@ -259,6 +268,7 @@ impl SessionPickerView {
+     fn from_session_list(workspace: &Path, locale: Locale, sessions: Vec<SessionMetadata>) -> Self {
+         let mut view = Self {
+             sessions,
++            recovery_sessions: HashSet::new(),
+             pending_list: None,
+             load_error: None,
+             filtered: Vec::new(),
+@@ -439,8 +449,16 @@ impl SessionPickerView {
+     }
+ 
+     fn apply_sort_and_filter(&mut self) {
+-        let query = self.view_query();
+-        self.filtered = crate::session_projection::select_sessions(&self.sessions, &query)
++        let mut query = self.view_query();
++        let mut sessions = self.sessions.clone();
++        if query.hide_empty_auto_created {
++            sessions.retain(|session| {
++                self.recovery_sessions.contains(&session.id)
++                    || !crate::session_manager::is_empty_auto_created_session(session)
++            });
++            query.hide_empty_auto_created = false;
++        }
++        self.filtered = crate::session_projection::select_sessions(&sessions, &query)
+             .into_iter()
+             .cloned()
+             .collect();
+@@ -624,6 +642,7 @@ impl SessionPickerView {
+             return None;
+         }
+         self.sessions.retain(|s| s.id != session.id);
++        self.recovery_sessions.remove(&session.id);
+         self.apply_sort_and_filter();
+         self.refresh_preview();
+         self.status = Some(
+@@ -636,6 +655,32 @@ impl SessionPickerView {
+         })
+     }
+ 
++    fn reserve_recovery_for_edit(
++        &mut self,
++        manager: &SessionManager,
++        session: &SessionMetadata,
++    ) -> std::io::Result<Option<crate::session_manager::SessionLease>> {
++        let lease = if self.current_session_id.as_deref() == Some(session.id.as_str()) {
++            None
++        } else {
++            let lease = manager.reserve_session_for_external_write(&session.id)?;
++            manager.promote_interrupted_checkpoint(&session.id, Some(&session.workspace))?;
++            Some(lease)
++        };
++        let saved = manager.load_session(&session.id)?;
++        if !crate::session_manager::workspace_scope_matches(
++            &saved.metadata.workspace,
++            &session.workspace,
++        ) {
++            return Err(std::io::Error::new(
++                std::io::ErrorKind::PermissionDenied,
++                "session belongs to another workspace",
++            ));
++        }
++        self.recovery_sessions.remove(&session.id);
++        Ok(lease)
++    }
++
+     /// Archive or restore the selected sessi
+```
+
+**File**: `crates/tui/src/tui/ui/handlers.rs` (modified, +5/-2)
+```diff
+@@ -2028,7 +2028,10 @@ pub(crate) async fn handle_view_events(
+                     });
+                 }
+             }
+-            ViewEvent::SessionSelected { session_id } => {
++            ViewEvent::SessionSelected {
++                session_id,
++                workspace,
++            } => {
+                 let manager = match SessionManager::default_location() {
+                     Ok(manager) => manager,
+                     Err(err) => {
+@@ -2040,7 +2043,7 @@ pub(crate) async fn handle_view_events(
+ 
+                 // Another window's open session is refused, not attached
+                 // as a second autosaving writer.
+-                match manager.attach_session(&session_id) {
++                match manager.attach_session_in_workspace(&session_id, Some(&workspace)) {
+                     Ok((recovery, lease)) => {
+                         let session = recovery.session;
+                         let next_config = config.clone();
+```
+
+**File**: `crates/tui/src/tui/views/mod.rs` (modified, +1/-0)
+```diff
+@@ -774,6 +774,7 @@ pub enum ViewEvent {
+     },
+     SessionSelected {
+         session_id: String,
++        workspace: std::path::PathBuf,
+     },
+     SessionRenamed {
+         metadata: Box<crate::session_manager::SessionMetadata>,
+```
+
+---
+
+### Incident Patch 3: `a5dd8a18` (2026-10-28)
+**Commit Message**: fix(plugins): enforce marketplace sha256 pins (E2, B15)
+
+Security finding E2 / 0.10.3 checklist B15: the Codewhale catalog parser
+dropped any digest for tarball sources (`sha256: None`), and the Claude
+parser recorded `archive.sha256` with an UNVERIFIED_PIN warning but never
+checked it, so a catalog could not pin the bytes it installs.
+
+A Codewhale catalog entry may now carry `sha256`; the Claude `archive`
+source's `sha256` takes the same path. The pin is folded into the install
+spec as a URL fragment (`#sha256=<hex>`, or `&sha256=` after `#path=`),
+so it reaches every remote install route (install, InstallExact with
+expected_content_hash, update) and the .installed-from marker.
+install_remote_bytes compares sha256(bytes) with the pin before staging
+and returns PluginArchiveMismatch (Runtime API 409) with nothing written.
+A non-string, malformed, or non-archive pin is an INVALID_SHA256 /
+INVALID_SOURCE error, so the candidate is not installable (fail closed).
+Direct installs accept the same `#sha256=` fragment.
+
+The bundled first-party catalog still names the unpinned
+releases/latest Computer Use URL; it is re-pinned once the cu-plugin
+release asset exists.
+
+Re-applied onto S19's l
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **Uninstall on every install route:** `codewhale uninstall` previews receipt-owned release files and `--yes` removes only checked files, with the running command last. Both Unix installers and the Windows archive installer record command ownership; self-update renews existing receipts on both. On Windows the running `codewhale.exe` is renamed and deleted once the command exits. Package-managed copies are left alone, and the command prints their exact removal command: npm with its prefix, Cargo with its root, the Homebrew formula, `scoop uninstall codewhale`, `winget uninstall --id HunterBown.CodeWhale`, or the Windows setup's `Uninstall.exe`. Every other `codewhale`/`codew` still on PATH is listed. User data is kept unless you add `--purge-data`, which previews and then deletes only `~/.codewhale` (or a `CODEWHALE_HOME` named `.codewhale`) and `~/.deepseek/snapshots`, refusing symlinks, home ancestors and directories owned by another user. Windows removal is compile-checked but not yet exercised on a Windows host. (Refs #7091)
+@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
- - **GitHub Action needs an explicit provider:** the Action's `provider` input no longer defaults to the `codewhale` account relay. Name your BYOK provider (or `codewhale` for a separately verified account machine key); a missing provider stops with `configuration_missing` before any download or model call. The repository's own (disabled) review workflow now pins CLI `v0.10.2` by default instead of `v0.10.0`.
-+- **Slow tools are not reported missing:** a tool whose `--version` probe is still running at its 3-second deadline (for example the `cargo` rustup shim on a busy machine) now counts as installed instead of being cached as missing for the rest of the session.
- - **GitHub Action reviews:** analysis can export a structured Engine review for a separate trusted publisher job. The publisher checks the current PR revision and line anchors, deduplicates its findings, and keeps uncertain or preexisting claims out of inline comments.
- - **Telegram recovery:** prompts and their initiating identity are durable before the polling cursor advances. Restart recovery reuses the original Engine operation, questions preserve human ownership, and uncertain final replies remain available through `/status` without an automatic resend.
- - **DingTalk bridge:** an optional internal-app Stream adapter reuses the same Engine, shared admission and approval helpers. Tenant/staff allowlists, durable acceptance before acknowledgement and retained uncertain deliveries protect recovery. Managed account linking is separate from this advanced self-hosted bridge.
+ ## [Unreleased]
+ 
++- **Pinned marketplace archives:** a Codewhale or Claude marketplace entry whose tarball source carries a `sha256` now installs only when the downloaded bytes match it; a mismatch, a malformed pin or a pin on a non-archive source refuses the install with nothing written. The pin also applies to direct installs as `https://…/x.tar.gz#sha256=<hex>`. (E2, CW-6732)
+ - **Sandboxed commands cannot plant git hooks or edit git config:** in workspace-write mode, `.git/hooks` and `.git/config` (and a linked worktree's shared `hooks` and `config`) are read-only to sandboxed commands, so a command cannot leave a hook or `core.hooksPath` that later runs outside the sandbox. The workspace's `.codewhale/` is protected even before it exists (on Linux it is created first, because bubblewrap can only protect existing paths). `git commit` and ordinary file writes are unaffected; `git config` writes and hook edits need an approved unsandboxed command.
+ - **Interrupted session hint stays visible (#7095):** when a plain `codewhale` launch finds an in-flight session snapshot, the "Run `codewhale --continue` to resume it" hint now appears in the TUI's status line instead of being printed to the terminal just before the TUI covered it.
+ - **`codewhale-plugins` crate:** plugin discovery, review, install and marketplace parsing move out of `codewhale-tui` into a new crate; MCP server config types move to `codewhale-mcp`, and the skill parse core and recommendations to `codewhale-skill-install`. Review and trust behavior is unchanged. (S19, CW-6129)
+```
+
+**File**: `crates/plugins/src/install/mod.rs` (modified, +74/-20)
+```diff
+@@ -66,6 +66,16 @@ pub struct PluginContentMismatch {
+     pub actual: String,
+ }
+ 
++#[derive(Debug, Error)]
++#[error(
++    "plugin archive {url} does not match its pinned sha256: expected {expected}, downloaded bytes hash {actual}; nothing was installed"
++)]
++pub struct PluginArchiveMismatch {
++    pub url: String,
++    pub expected: String,
++    pub actual: String,
++}
++
+ use crate::manifest::PluginManifest;
+ use codewhale_net::network_policy::NetworkPolicy;
+ use codewhale_skill_install::install::{
+@@ -200,7 +210,7 @@ impl PluginInstallSource {
+             let source = InstallSource::parse(trimmed)?;
+             return match source {
+                 InstallSource::GitHubRepo(_) | InstallSource::DirectUrl(_) => {
+-                    remote_bundle_path(&source)?;
++                    remote_fragment(&source)?;
+                     Ok(Self::Remote(source))
+                 }
+                 InstallSource::Registry(_) => {
+@@ -223,34 +233,68 @@ impl PluginInstallSource {
+         }
+         Ok(Self::LocalPath(path))
+     }
++
++    pub(crate) fn pin_archive_spec(spec: &str, sha256: &str) -> Result<(String, String), String> {
++        let digest = sha256.trim().to_ascii_lowercase();
++        if digest.len() != 64 || !digest.bytes().all(|ch| ch.is_ascii_hexdigit()) {
++            return Err(format!(
++                "archive sha256 pin `{sha256}` must be 64 hexadecimal characters"
++            ));
++        }
++        let spec = spec.trim();
++        let separator = if spec.contains('#') { '&' } else { '#' };
++        let pinned = format!("{spec}{separator}sha256={digest}");
++        match Self::parse(&pinned) {
++            Ok(Self::Remote(InstallSource::DirectUrl(_))) => Ok((pinned, digest)),
++            Ok(_) => Err("a sha256 pin applies only to an http(s) archive URL source".to_string()),
++            Err(err) => Err(format!("cannot pin `{spec}` to a sha256: {err}")),
++        }
++    }
+ }
+ 
+-/// Select one manifest-rooted bundle from a repository archive. The fragment
+-/// is local extraction metadata, never a path sent to or executed by a server.
+-fn remote_bundle_path(source: &InstallSource) -> Result<Option<String>> {
++/// Read a repository archive's fragment: `path=` selects one manifest-rooted
++/// bundle and `sha256=` pins the archive bytes. The fragment is local install
++/// metadata, never sent to or executed by a server.
++fn remote_fragment(source: &InstallSource) -> Result<(Option<String>, Option<String>)> {
+     let InstallSource::DirectUrl(raw) = source else {
+-        return Ok(None);
++        return Ok((None, None));
+     };
+     let url = reqwest::Url::parse(raw).context("invalid plugin archive URL")?;
+     let Some(fragment) = url.fragment() else {
+-        return Ok(None);
++        return Ok((None, None));
+     };
+-    let path = fragment
+-        .strip_prefix("path=")
+-        .context("plugin archive fragment must be #path=<bundle-directory>")?;
+-    if path.is_empty()
+-        || !path.split('/').all(|part| {
+-            !part.is_empty()
+-                && part != "."
+-                && part != ".."
+-                && part
+-                    .bytes()
+-                    .all(|ch| ch.is_ascii_alphanumeric() || matches!(ch, b'-' | b'_' | b'.'))
+-        })
++    let (mut path, mut sha256) = (None, None);
++    for part in fragment.split('&') {
++        match part.split_once('=') {
++            Some(("path", value)) if path.is_none() => path = Some(value),
++            Some(("sha256", value)) if sha256.is_none() => sha256 = Some(value),
++            _ => bail!(
++                "plugin archive fragment must be #path=<bundle-directory>, #sha256=<hex>, or both joined by &"
++            ),
++        }
++    }
++    if let Some(path) = path
++        && (path.is_empty()
++            || !path.split('/').all(|part| {
++                !part.is_empty()
++                    && part != "."
++                    && part != ".."
++                    && part
++                        .bytes()
++                        .all(|ch| ch.is_ascii_alphanumeric() || matches!(ch, b'-' | b'_' | b'.'))
++            }))
+     {
+         bail!("plugin archive bundle path must contain only safe relative directory names");
+     }
+-    Ok(Some(path.to_string()))
++    if let Some(digest) = sha256
++        && (digest.len() != 64
++            || !digest
++                .bytes()
++                .all(|ch| ch.is_ascii_digit() || (b'a'..=b'f').contains(&ch)))
++    {
++        bail!("plugin archive sha256 pin must be 64 lowercase hexadecimal characters");
++    }
++    Ok((path.map(str::to_string), sha256.map(str::to_string)))
+ }
+ 
+ /// Serialize a source for the `.installed-from` marker. Must round-trip
+@@ -572,7 +616,17 @@ fn install_remote_bytes(
+     expected_content_hash: Option<&str>,
+ ) -> Result<PluginInstallOutcome> {
+     let checksum = sha256_hex(bytes);
+-    let bundle_path = remote_bundle_path(remote)?;
++    let (bundle_path, pinned_sha256) = remote_fragment(remote)?;
++    if let Some(pinned) = pinned_sha256
++      
+```
+
+**File**: `crates/plugins/src/marketplace/parsers/claude.rs` (modified, +15/-10)
+```diff
+@@ -556,18 +556,23 @@ fn normalize_claude_source(
+             let Some(url) = field("url") else {
+                 return invalid("archive source requires `url`", value, &mut diags);
+             };
+-            if let Some(pin) = field("sha256") {
+-                diags.push(MarketplaceDiagnostic::warning(
+-                    "UNVERIFIED_PIN",
+-                    format!("archive sha256 pin `{pin}` is recorded but not verified during fetch"),
+-                    None,
+-                    None,
+-                ));
+-            }
++            let (spec, sha256) = match obj.get("sha256").filter(|pin| !pin.is_null()) {
++                None => (url.to_string(), None),
++                Some(pin) => match pin
++                    .as_str()
++                    .ok_or_else(|| "archive `sha256` must be a string".to_string())
++                    .and_then(|pin| {
++                        crate::install::PluginInstallSource::pin_archive_spec(url, pin)
++                    })
++                {
++                    Ok((spec, digest)) => (spec, Some(digest)),
++                    Err(reason) => return invalid(&reason, value, &mut diags),
++                },
++            };
+             (
+-                MarketplaceSourceSpec::ArchiveUrl { url: url.to_string(), sha256: field("sha256").map(ToString::to_string) },
++                MarketplaceSourceSpec::ArchiveUrl { url: url.to_string(), sha256 },
+                 MarketplaceInstallPlan::Supported {
+-                    spec: url.to_string(),
++                    spec,
+                     source_kind: "Tarball archive URL".to_string(),
+                 },
+                 diags,
+```
+
+**File**: `crates/plugins/src/marketplace/parsers/codewhale.rs` (modified, +27/-3)
+```diff
+@@ -3,7 +3,8 @@
+ //! This is Codewhale's own documented catalog format. It is deliberately
+ //! the smallest of the supported formats: entries carry a `name` and a
+ //! `source` that is exactly the install spec `/plugin install` accepts
+-//! (`github:owner/repo`, `path:dir`, an http(s) tarball URL).
++//! (`github:owner/repo`, `path:dir`, an http(s) tarball URL). A tarball
++//! entry may add `sha256`; the install refuses archive bytes that differ.
+ //!
+ //! ```json
+ //! {
+@@ -39,6 +40,7 @@ const ENTRY_FIELDS: &[&str] = &[
+     "author",
+     "icon",
+     "platforms",
++    "sha256",
+ ];
+ 
+ pub fn parse_codewhale_catalog(document: MarketplaceDocument) -> MarketplaceCatalog {
+@@ -204,7 +206,7 @@ fn parse_codewhale_entry(
+         return None;
+     };
+ 
+-    let install_plan = match PluginInstallSource::parse(source) {
++    let mut install_plan = match PluginInstallSource::parse(source) {
+         Ok(parsed) => {
+             let source_kind = match &parsed {
+                 PluginInstallSource::Remote(
+@@ -229,7 +231,29 @@ fn parse_codewhale_entry(
+             raw: source.to_string(),
+         },
+     };
+-    let normalized = normalize_native_source(source);
++    let mut normalized = normalize_native_source(source);
++    if let Some(pin) = obj.get("sha256").filter(|value| !value.is_null()) {
++        let pinned = pin
++            .as_str()
++            .ok_or_else(|| "sha256 must be a string".to_string())
++            .and_then(|pin| PluginInstallSource::pin_archive_spec(source, pin));
++        match pinned {
++            Ok((pinned_spec, digest)) => {
++                if let MarketplaceInstallPlan::Supported { spec, .. } = &mut install_plan {
++                    *spec = pinned_spec;
++                }
++                if let MarketplaceSourceSpec::ArchiveUrl { sha256, .. } = &mut normalized {
++                    *sha256 = Some(digest);
++                }
++            }
++            Err(reason) => entry_diags.push(MarketplaceDiagnostic::error(
++                "INVALID_SHA256",
++                reason,
++                Some(name.clone()),
++                Some(index),
++            )),
++        }
++    }
+ 
+     let (description, bad_desc) = str_field(obj, "description");
+     if let Some(diag) = bad_desc {
+```
+
+**File**: `crates/plugins/src/marketplace/tests.rs` (modified, +6/-3)
+```diff
+@@ -300,7 +300,7 @@ fn claude_source_object_matrix_matches_documented_forms() {
+           {"name": "u", "source": {"source": "url", "url": "https://git.example.com/x.git"}},
+           {"name": "gs", "source": {"source": "git-subdir", "url": "https://github.com/a/sub", "path": "p"}},
+           {"name": "np", "source": {"source": "npm", "package": "pkg"}},
+-          {"name": "ar", "source": {"source": "archive", "url": "https://x.example.com/p.tgz", "sha256": "abc"}},
++          {"name": "ar", "source": {"source": "archive", "url": "https://x.example.com/p.tgz", "sha256": "ABCDEF0123456789abcdef0123456789abcdef0123456789abcdef0123456789"}},
+           {"name": "cm", "source": {"source": "command", "command": "curl x"}}
+         ]
+       }"#;
+@@ -329,10 +329,13 @@ fn claude_source_object_matrix_matches_documented_forms() {
+ 
+     let ar = catalog.candidate_by_name("ar").unwrap();
+     assert!(ar.install_plan.is_supported());
++    let pin = "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789";
+     assert!(matches!(&ar.source,
+         MarketplaceSourceSpec::ArchiveUrl { url, sha256: Some(s) }
+-            if url == "https://x.example.com/p.tgz" && s == "abc"));
+-    assert!(ar.diagnostics.iter().any(|d| d.code == "UNVERIFIED_PIN"));
++            if url == "https://x.example.com/p.tgz" && s == pin));
++    assert!(matches!(&ar.install_plan,
++        MarketplaceInstallPlan::Supported { spec, .. }
++            if *spec == format!("https://x.example.com/p.tgz#sha256={pin}")));
+ 
+     let cm = catalog.candidate_by_name("cm").unwrap();
+     assert!(!cm.install_plan.is_supported());
+```
+
+**File**: `crates/plugins/src/marketplace/types.rs` (modified, +1/-1)
+```diff
+@@ -205,7 +205,7 @@ pub enum MarketplaceSourceSpec {
+         #[serde(default, skip_serializing_if = "Option::is_none")]
+         sha: Option<String>,
+     },
+-    /// Tarball archive URL with an optional unverified sha256 pin.
++    /// Tarball archive URL with an optional sha256 pin, verified at install.
+     ArchiveUrl {
+         url: String,
+         #[serde(default, skip_serializing_if = "Option::is_none")]
 ```
 
 **File**: `crates/tui/CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **Uninstall on every install route:** `codewhale uninstall` previews receipt-owned release files and `--yes` removes only checked files, with the running command last. Both Unix installers and the Windows archive installer record command ownership; self-update renews existing receipts on both. On Windows the running `codewhale.exe` is renamed and deleted once the command exits. Package-managed copies are left alone, and the command prints their exact removal command: npm with its prefix, Cargo with its root, the Homebrew formula, `scoop uninstall codewhale`, `winget uninstall --id HunterBown.CodeWhale`, or the Windows setup's `Uninstall.exe`. Every other `codewhale`/`codew` still on PATH is listed. User data is kept unless you add `--purge-data`, which previews and then deletes only `~/.codewhale` (or a `CODEWHALE_HOME` named `.codewhale`) and `~/.deepseek/snapshots`, refusing symlinks, home ancestors and directories owned by another user. Windows removal is compile-checked but not yet exercised on a Windows host. (Refs #7091)
- 
- - **GitHub Action needs an explicit provider:** the Action's `provider` input no longer defaults to the `codewhale` account relay. Name your BYOK provider (or `codewhale` for a separately verified account machine key); a missing provider stops with `configuration_missing` before any download or model call. The repository's own (disabled) review workflow now pins CLI `v0.10.2` by default instead of `v0.10.0`.
-+- **Slow tools are not reported missing:** a tool whose `--version` probe is still running at its 3-second deadline (for example the `cargo` rustup shim on a busy machine) now counts as installed instead of being cached as missing for the rest of the session.
- - **GitHub Action reviews:** analysis can export a structured Engine review for a separate trusted publisher job. The publisher checks the current PR revision and line anchors, deduplicates its findings, and keeps uncertain or preexisting claims out of inline comments.
- - **Telegram recovery:** prompts and their initiating identity are durable before the polling cursor advances. Restart recovery reuses the original Engine operation, questions preserve human ownership, and uncertain final replies remain available through `/status` without an automatic resend.
- - **DingTalk bridge:** an optional internal-app Stream adapter reuses the same Engine, shared admission and approval helpers. Tenant/staff allowlists, durable acceptance before acknowledgement and retained uncertain deliveries protect recovery. Managed account linking is separate from this advanced self-hosted bridge.
-```
-
-**File**: `crates/tui/src/dependencies.rs` (modified, +12/-3)
-```diff
-@@ -70,7 +70,17 @@ pub fn probe_executable_with_flag(spec: &str, version_flag: &str) -> bool {
-     };
-     let mut cmd = version_probe_command(program);
-     cmd.args(parts).arg(version_flag);
--    matches!(probe_output(&mut cmd, false, VERSION_PROBE_TIMEOUT), Ok(output) if output.status.success())
-+    probe_found(&mut cmd)
-+}
-+
-+/// A probe that launched and was still running at its deadline found an
-+/// installed tool that is slow under load; only a failed launch or a failing
-+/// exit means the tool is absent.
-+fn probe_found(command: &mut Command) -> bool {
-+    match probe_output(command, false, VERSION_PROBE_TIMEOUT) {
-+        Ok(output) => output.status.success(),
-+        Err(error) => error.kind() == std::io::ErrorKind::TimedOut,
-+    }
- }
- 
- /// Probe a single executable and capture its version banner in one spawn.
-@@ -244,8 +254,7 @@ fn resolve_executable_path(spec: &str, version_flag: &str) -> Option<String> {
-         let mut cmd = version_probe_command(&candidate);
-         cmd.args(&args).arg(version_flag);
- 
--        if matches!(probe_output(&mut cmd, false, VERSION_PROBE_TIMEOUT), Ok(output) if output.status.success())
--        {
-+        if probe_found(&mut cmd) {
-             return Some(candidate.to_string_lossy().into_owned());
-         }
-     }
-```
-
----
-
-### Incident Patch 3: `363f03a2` (2026-10-27)
-**Commit Message**: Merge main into fix/instruction-budget-6526
-
-Maintainer merge to make the PR mergeable again. Conflicts were limited to
-CHANGELOG.md and crates/tui/CHANGELOG.md (kept both sides: main's entries
-and this PR's instruction-budget entry; the two Unreleased sections stay in
-sync) and the generated web/data/{agent-docs,features}.generated.json
-(main's copy; regenerated from source on main afterwards).
-
-Verified (Linux, Boat VM) on the same merge against main 7fe0cc2b4f:
-cargo check --workspace --all-targets --locked exit 0; codewhale-config
-808 passed, 0 failed. This merge adds only main's two newer commits
-(#7097 and the changelog sync, 7 files).
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `AGENTS.md` (modified, +1/-1)
-```diff
-@@ -183,7 +183,7 @@ casually it reads as taking the work even when credit is preserved.
-   KV-cache effect: frozen prefix vs. append-only history. Never splice a
-   volatile fact into the prefix; append it as a user-role message.
- - These active modules are repeatedly misidentified as dead; verify consumers
--  before removal: `runtime/src/context_budget.rs`, `tui/src/model_registry.rs`,
-+  before removal: `runtime/src/context_budget.rs`,
-   `runtime/src/prompt_zones.rs`, `tui/src/tools/remember.rs`, and
-   `config/src/route/`. Native memory lives in `runtime/src/native_memory.rs`;
-   `tools/remember.rs` is its capture path.
-```
-
-**File**: `CHANGELOG.md` (modified, +49/-6)
-```diff
-@@ -7,6 +7,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
  ## [Unreleased]
  
-+- **GitHub Action reviews:** analysis can export a structured Engine review for a separate trusted publisher job. The publisher checks the current PR revision and line anchors, deduplicates its findings, and keeps uncertain or preexisting claims out of inline comments.
-+- **Telegram recovery:** prompts and their initiating identity are durable before the polling cursor advances. Restart recovery reuses the original Engine operation, questions preserve human ownership, and uncertain final replies remain available through `/status` without an automatic resend.
-+- **DingTalk bridge:** an optional internal-app Stream adapter reuses the same Engine, shared admission and approval helpers. Tenant/staff allowlists, durable acceptance before acknowledgement and retained uncertain deliveries protect recovery. Managed account linking is separate from this advanced self-hosted bridge.
-+
-+- **Answerless output-limit recovery:** opt into `[reasoning_only] on_output_limit = true` to request an answer again after a length stop with no answer or tool call, including hidden reasoning and ordinary Fleet workers. Retries share `max_reprompts`, retain existing output and control limits, and record request-scoped nudge receipts without adding them to resumed conversation context. RLM keeps its existing stop protocol. Thanks [@M-Maciej](https://github.com/M-Maciej) for the long-proof Fleet report. (#6990)
-+
-+- **Linux hardening tests:** the NoNewPrivs child matrices now respect a parent that already holds the irreversible flag, keeping the full assertions on unpinned hosts and checking the kernel ratchet on pinned hosts. Thanks [@asto18089](https://github.com/asto18089) for diagnosing the hardened-container failure. (#7021)
-+
-+- **OrcaRouter recommendation:** `/provider` and `/model` offer a shared partner recommendation with the DeepSeek V4.1 Flash 30% top-up-match link, public referral disclosure and localized offer details. F7 or a click opens the existing pager while retaining the current route.
-+
-+- Long drafts now show a localized external-editor hint when the actual composer
-+  viewport clips their text. The hint uses the shared F4 binding and preserves
-+  queue, running-turn, history, and menu hints (#7049). Thanks @Lstarsky0.
-+- Archived context markdown now uses the active theme's palette when rendered
-+  in the transcript, preventing unreadable dark text on dark backgrounds (#7043).
-+  Thanks @Statter.
-+- Plan-to-Work handoff now names the seeded To-do item in a localized reminder
-+  to keep it on the list and complete it after the plan (#7068).
-+- Localized question footers, approval and plan-handoff chrome, tool waiting
-+  status, and /color receipts use the shared locale packs (#7071).
-+
-+- Clearing a conversation with no goal no longer shows a misleading "Goal cleared."
-+  receipt. Clearing an existing or configured goal still reports it (#7089).
-+  Thanks @Lstarsky0.
-+
-+- Removed the internal config re-export facade and its model-constant wrapper;
-+  provider types, shared constants, credential helpers, and notification types
-+  now come directly from their shared owners. Configuration and saved settings
-+  keep their existing behavior.
-+
-+- Removed superseded home-directory and Fleet-role re-export shims, unused
-+  tool-context sandbox/MCP fields, and the redundant core tool-parser facade.
-+  Consumers now call their existing owners directly; tool denial rules, approval
-+  posture, strict tool schemas, home resolution, and legacy saved-role migration
-+  retain their behavior. The cleanup removes three dead-code suppressions and
-+  keeps the engine as the sole owner of human approval attestations.
-+- Removed unused plan/journal accessors, an unused plan-status glyph helper,
-+  and a cancellation case that no execution path issued. Active mailbox and
-+  cancellation wiring stays in place; its stale unused-code suppressions are
-+  removed. No supported command or feature is retired by this cleanup.
-+
- - Standing instructions are budgeted per scope (`global` and `project`) in
-   estimated tokens instead of one 48 KiB byte ceiling shared by everything, and
-   every trim, skip, and refusal is reported — as a system cell at session start,
-@@ -58,11 +99,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   unchanged (#6436, #7082).
- - `codewhale review` no longer accepts leaked tool-call markup as a review: a
-   pass whose reply is a DeepSeek DSML (or other) tool-call wrapper outside code
--  now fails as incomplete, with no tally and nothing posted (#7072). A Low-risk
--  review on a reasoning model caps its reasoning at low so the 4,000-token
--  allowance leaves room for the review, and an exhausted pass now reports the
--  allowance and reserve actually sent and says "cut off" when visible text came
--  back (#7067).
-+  now fails as incomplete, with no tally and nothin
++- **Pinned marketplace archives:** a Codewhale or Claude marketplace entry whose tarball source carries a `sha256` now installs only when the downloaded bytes match it; a mismatch, a malformed pin or a pin on a non-archive source refuses the install with nothing written. The pin also applies to direct installs as `https://…/x.tar.gz#sha256=<hex>`. (E2, CW-6732)
+ - **Sandboxed commands cannot plant git hooks or edit git config:** in workspace-write mode, `.git/hooks` and `.git/config` (and a linked worktree's shared `hooks` and `config`) are read-only to sandboxed commands, so a command cannot leave a hook or `core.hooksPath` that later runs outside the sandbox. The workspace's `.codewhale/` is protected even before it exists (on Linux it is created first, because bubblewrap can only protect existing paths). `git commit` and ordinary file writes are unaffected; `git config` writes and hook edits need an approved unsandboxed command.
+ - **Interrupted session hint stays visible (#7095):** when a plain `codewhale` launch finds an in-flight session snapshot, the "Run `codewhale --continue` to resume it" hint now appears in the TUI's status line instead of being printed to the terminal just before the TUI covered it.
+ - **`codewhale-plugins` crate:** plugin discovery, review, install and marketplace parsing move out of `codewhale-tui` into a new crate; MCP server config types move to `codewhale-mcp`, and the skill parse core and recommendations to `codewhale-skill-install`. Review and trust behavior is unchanged. (S19, CW-6129)
 ```
 
-**File**: `action.yml` (modified, +5/-2)
+**File**: `crates/tui/src/runtime_api/plugins.rs` (modified, +3/-0)
 ```diff
-@@ -11,7 +11,7 @@ inputs:
-     description: Exact model ID. Account mode requires provider/model from the account catalog.
-     required: true
-   github-token:
--    description: GitHub token with contents read and pull-requests write.
-+    description: GitHub token with contents read and pull-requests read; legacy post:true also requires pull-requests write.
-     default: ${{ github.token }}
-   pr-number:
-     description: PR number for workflow_dispatch; pull_request events use the event snapshot.
-@@ -27,7 +27,7 @@ inputs:
-     description: Model and publication deadline, in seconds (30–1200).
-     default: '600'
-   post:
--    description: Publish a COMMENT review; never approve or request changes.
-+    description: Legacy direct COMMENT publication. Set false to export findings for a separate publisher job.
-     default: 'true'
- outputs:
-   outcome:
-@@ -36,6 +36,9 @@ outputs:
-   receipt:
-     description: Absolute path to the sanitized JSON execution receipt (also written on failures).
-     value: ${{ steps.review.outputs.receipt }}
-+  findings:
-+    description: Absolute path to validated findings JSON for a complete post:false review; contains repository-sensitive review text.
-+    value: ${{ steps.review.outputs.findings }}
-   pr-url:
-     description: URL of the pull request, when resolved.
-     value: ${{ steps.review.outputs.pr-url }}
-```
-
-**File**: `crates/agent-contract/src/role.rs` (modified, +1/-21)
-```diff
-@@ -20,7 +20,7 @@
- //! ledger / executor / worker_runtime / roster / profile / identity /
- //! members, and nothing from tools.
- 
--use codewhale_protocol::fleet::FleetEffectivePermissions;
-+use codewhale_protocol::fleet::{FleetEffectivePermissions, migrate_legacy_role_token};
- use codewhale_workflow::{PermissionCeiling, ShellCeiling};
- 
- use crate::worker_profile::{ShellPolicy, ToolScope, WorkerRuntimeProfile};
-@@ -119,26 +119,6 @@ impl<'de> serde::Deserialize<'de> for FleetRole {
-     }
- }
- 
--/// Explicit boundary migration for pre-Fleet serialized role tokens.
--///
--/// Call this only at load / parse edges. Runtime code must use Fleet role
--/// names via [`FleetRole::as_str`]. Returns `None` for tokens that are
--/// already canonical or unknown — callers should prefer [`FleetRole::parse`]
--/// for full acceptance (canonical + legacy).
--#[must_use]
--pub fn migrate_legacy_role_token(token: &str) -> Option<&'static str> {
--    match token.trim().to_ascii_lowercase().as_str() {
--        "worker" | "general-purpose" | "general_purpose" | "default" => Some("general"),
--        "scout" | "exploration" | "explorer" => Some("explore"),
--        "plan" | "planning" | "awaiter" => Some("planner"),
--        "review" | "code-review" | "code_review" => Some("reviewer"),
--        "builder" | "implementer" | "implementation" => Some("implement"),
--        "verifier" | "verify" | "verification" | "validator" | "tester" => Some("test"),
--        "consultant" | "oracle" => Some("advisor"),
--        _ => None,
--    }
--}
--
- impl FleetRole {
-     /// Parse a Fleet role from user input or a serialized boundary.
-     ///
-```
-
-**File**: `crates/command-contract/src/config_policy.rs` (modified, +1/-0)
-```diff
-@@ -187,6 +187,7 @@ pub struct ConfigStatusView {
-     pub cache_miss_tokens: u32,
-     pub cost: f64,
-     pub currency: CommandCurrency,
-+    pub cost_label: Option<String>,
-     pub metrics: StatusMetrics,
-     pub ascii_safe: bool,
-     pub tool_outputs: StatusToolOutputs,
-```
-
-**File**: `crates/command-contract/src/handler.rs` (modified, +3/-2)
-```diff
-@@ -48,9 +48,10 @@ impl CommandCapabilities {
-     /// basic session capability.
-     pub const SESSION_LIFECYCLE: Self = Self(1 << 13);
-     /// Session-control host data (FEAT-024 D3), the next non-conflicting bit
--    /// after `SESSION_LIFECYCLE`. Required only by the six host-dependent
-+    /// after `SESSION_LIFECYCLE`. Required only by the seven host-dependent
-     /// control commands (`/relay`, `/rename`, `/resume`, `/rc`, `/remote-env`,
--    /// `/title`); `/remote-env` also declares `PRESENTATION`. Bit 14 fit the
-+    /// `/title`, `/color`); `/remote-env` and `/color` also declare
-+    /// `PRESENTATION`. Bit 14 fit the
-     /// original `u16` backing without speculative widening in FEAT-023.
-     pub const SESSION_CONTROL: Self = Self(1 << 14);
-     /// Session-export host data (FEAT-025 D1), the next non-conflicting bit
-```
-
-**File**: `crates/core/src/prefix_cache.rs` (modified, +0/-5)
-```diff
-@@ -129,7 +129,6 @@ pub struct PrefixChange {
-     pub tools_changed: bool,
- }
- 
--#[allow(dead_code)]
- impl PrefixChange {
-     /// Returns a human-readable description of what changed.
-     pub fn description(&self) -> String {
-@@ -316,7 +315,6 @@ impl ToolCatalogCache {
-     /// Drop every cached entry. Used by tool-registry mutation paths
-     /// (e.g. plugin hot-reload, MCP attach) when the caller cannot
-     /// easily prove the tool set is unchanged.
--    #[allow(dead_code)] // observability; called by /cache flush and tests
-     pub fn invalidate(&mut self) {
-         self.by_identity.clear();
-         self.insertion_order.clear();
-@@ -329,15 +327,13 @@ impl ToolCatalogCache {
-     }
- 
-     /// Returns `true` if the cache has no entries.
--    #[allow(dead_code)] // observability; surfaced via /status
-     #[must_use]
-     pub fn is_empty(&self) -> bool {
-         self.by_identity.is_empty()
-     }
- 
-     /// Returns `(current_entries, capacity)` for observability. Surfaced via
-     /// the `/status` chip in a follow-up; tests exercise the path.
--    #[allow(dead_code)] // surfaced via /status in a follow-up; tests exercise it
-     #[must_use]
-     pub fn stats(&self) -> (usize, usize) {
-         (self.len(), self.capacity)
-@@ -423,7 +419,6 @@ fn hash_json_value<H: Hasher>(value: &serde_json::Value, state: &mut H) {
- /// [`PrefixFingerprint::compute_with_tool_cache`] and pass the cache in
- /// directly, both to share state and to avoid the thread-local lookup
- /// on the hot path.
--#[allow(dead_code)]
- impl PrefixStabilityManager {
-     /// Create a new manager and immediately pin the first fingerprint.
-     pub fn new(system_text: &str, tools: Option<&[Tool]>) -> Self {
-```
-
-**File**: `crates/execpolicy/src/approval_mode.rs` (modified, +16/-0)
-```diff
-@@ -17,6 +17,14 @@ pub enum ApprovalMode {
- }
- 
- impl ApprovalMode {
-+    pub fn from_auto_approve(auto_approve: bool) -> Self {
-+        if auto_approve {
-+            Self::Bypass
-+        } else {
-+            Self::Suggest
-+        }
-+    }
-+
-     /// Shift+Tab permission cycle order (#0.8.68 M2).
-     pub const PERMISSION_CYCLE: [Self; 3] = [Self::Suggest, Self::Auto, Self::Bypass];
- 
-@@ -44,6 +52,14 @@ impl ApprovalMode {
-         }
-     }
- 
-+    #[must_use]
-+    pub fn agent_baseline_sandbox_mode(self) -> &'static str {
-+        match self {
-+            Self::Bypass => "danger-full-access",
-+            Self::Auto | Self::Suggest | Self::Never => "workspace-write",
-+        }
-+    }
-+
-     #[must_use]
-     pub fn cycle_permission_next(self) -> Self {
-         let Some(index) = Self::PERMISSION_CYCLE.iter().position(|mode| *mode == self) else {
+@@ -422,6 +422,9 @@ async fn run_plugin_mutation(
+                 || error
+                     .downcast_ref::<codewhale_plugins::install::PluginContentMismatch>()
+                     .is_some()
++                || error
++                    .downcast_ref::<codewhale_plugins::install::PluginArchiveMismatch>()
++                    .is_some()
+             {
+                 ApiError::conflict(format!("plugin mutation failed: {error:#}"))
+             } else {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7097** (2026-10-27): fix(tui): resolve the state root before opening session-side state (@SparkofSpike)
-- **PR #7090** (2026-10-25): fix(tui): don't print an unpriced session cost as $0.0000 in /status (@Lstarsky0)
-- **PR #7089** (2026-10-26): fix(tui): only say "Goal cleared." when there was a goal to clear (@Lstarsky0)
-- **PR #7087** (2026-10-25): fix(tui): keep the /diff pager's place when the terminal is resized (@Lstarsky0)
-- **PR #7086** (2026-10-27): feat(context): per-scope instruction budgets with visible truncation (#6526) (@7jrxt42BxFZo4iAnN4CX)
-- **PR #7084** (closed): feat(tui): consider Ctrl+C clearing a non-empty composer before it arms exit (Esc/Ctrl+C split revisited) (@Hmbown)
+- **PR #7112** (2026-10-27): fix(tui): shed to the folder name before clipping the launch card's path (@Lstarsky0)
+- **PR #7111** (2026-10-28): chore(deps): bump the npm_and_yarn group across 2 directories with 1 update (@dependabot[bot])
+- **PR #7110** (2026-10-27): fix(commands): don't total unreported cache tokens as 0 in /cache (@Lstarsky0)
+- **PR #7109** (closed): fix(ci): preserve DSH receipt bytes on Windows (@ddlw)
+- **PR #7108** (2026-10-27): style(tui): apply rustfmt to mcp (@ddlw)
+- **PR #7107** (2026-10-27): fix(installer): avoid downloading identical codew asset twice (@ddlw)
 
 ---
 
@@ -2640,13 +3283,13 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tui): change mode and permissions mid-turn; record steering in Unreleased (CW-75
+## X. tui): vendored terminal kit on design tokens 2.3.0 (Accent role)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0cf390f0`: tui): change mode and permissions mid-turn; record steering in Unreleased (CW-7552). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7b47cf99`: tui): vendored terminal kit on design tokens 2.3.0 (Accent role). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2654,8 +3297,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **Change mode and permissions while the agent works:** Tab, Shift+Tab, `/mode`, the hotbar and `/config mode` no longer refuse while a turn is running. A response that is already streaming is not restarted; the change applies at the agent's next step in the same turn (before its next tool batch, at every approval gate, and before its next model request, which carries the new mode notice). The status line says so until it applies. A call still waiting for approval goes back to the model under the new posture, and a call you already approved runs only if the new posture is equal or broader. Model, thinking level and provider stay locked until the turn ends. (CW-7552)
-- **Steering interrupts thinking:** a steer (Ctrl+Enter, or Enter twice after queueing) now closes the in-flight model request at once, whether the model is waiting on headers, reasoning, writing text or emitting a tool call, and continues the same turn with your message. Text already shown is kept as interrupted output; unfinished reasoning and partial tool calls are discarded, never run. (CW-7552)
+- **Terminal kit on design tokens 2.3.0:** the vendored `codewhale-ratatui` now follows design tokens 2.3.0: an `Accent` role carries the one blue for links, focus and selection, and `Primary` is the ink of filled actions (upstream codewhale-hq/codewhale-ratatui 528a9c4). The built-in TUI themes keep their colours; only surfaces drawn in the kit's own roles take the 2.3.0 values.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2665,4 +3307,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0cf390f0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7b47cf99` are properly handled with clean fallback behavior.

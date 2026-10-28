@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T21:11:22.661Z",
-  "total_cycles_completed": 5916,
-  "total_learnings_persisted": 5916,
-  "total_rules_promoted": 5368,
+  "last_updated": "2026-10-28T21:30:04.952Z",
+  "total_cycles_completed": 5918,
+  "total_learnings_persisted": 5918,
+  "total_rules_promoted": 5371,
   "history": [
-    {
-      "timestamp": "2026-10-28T10:43:49.327Z",
-      "repository": "lioensky/VCPToolBox",
-      "learningId": "learn-github-lioensky-vcptoolbox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T10:52:34.368Z",
-      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T11:05:02.472Z",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
@@ -1403,6 +1389,20 @@
       "repository": "CrossPaste/crosspaste-desktop",
       "learningId": "learn-github-crosspaste-crosspaste-desktop",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T21:29:53.524Z",
+      "repository": "codewhale-hq/Codewhale",
+      "learningId": "learn-github-codewhale-hq-codewhale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T21:30:04.952Z",
+      "repository": "FrancisRing/Prism",
+      "learningId": "learn-huggingface-francisring-prism",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
