@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T23:31:36.020Z",
+  "last_updated": "2026-10-28T23:43:11.894Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2406,14 +2406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-pyannote-speaker-diarization-community-1",
-      "content_hash": "9dd4b5295ae2a22f3901fbd519b68943bce8ef30e912afd437983732fb60f642",
-      "verified_at": "2026-10-25T22:56:44.012Z",
+      "content_hash": "8aa69fbaeb95bf32ab00355df9e4a458bb9be8684560b9d749799e6c81998026",
+      "verified_at": "2026-10-28T23:43:11.893Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T22:56:44.012Z"
+      "last_updated": "2026-10-28T23:43:11.893Z"
     },
     "meta-models/Muse-Spark-Open-816B-A42B": {
       "repository": "meta-models/Muse-Spark-Open-816B-A42B",
@@ -11826,14 +11826,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sxyazi-yazi",
-      "content_hash": "4c4e74da4edc7d130b23cc24a34659b2791692333e3002b40fd713279a01b71c",
-      "verified_at": "2026-10-25T08:08:11.069Z",
+      "content_hash": "f6ec81dc95d504b4a82a092a36c003f33752537da28f614aac0ce8a77f2cc392",
+      "verified_at": "2026-10-28T23:42:58.517Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T08:08:11.069Z"
+      "last_updated": "2026-10-28T23:42:58.517Z"
     },
     "ronitsingh10/FineTune": {
       "repository": "ronitsingh10/FineTune",

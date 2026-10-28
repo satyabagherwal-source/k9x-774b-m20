@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-4BP7",
-    "timestamp": "2026-10-27T19:06:50.299Z",
-    "repository": "open-policy-agent/opa",
-    "learningId": "learn-github-open-policy-agent-opa",
-    "contentHash": "a100afcf87bbf0a01eb8e86c6e279bc27821f8119fdf62cdcc32f3e15815d9f4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-4FZY",
-    "timestamp": "2026-10-27T19:06:55.870Z",
-    "repository": "matrixorigin/matrixone",
-    "learningId": "learn-github-matrixorigin-matrixone",
-    "contentHash": "b30e14a4a5f3874ba667a814dc34f667dc4d6dc4c9a720f3828108ff18dc8d9e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-D2DA",
     "timestamp": "2026-10-27T19:13:38.110Z",
     "repository": "oven-sh/bun",
@@ -7490,6 +7460,36 @@
     "repository": "black-forest-labs/flux-3-image-klein",
     "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
     "contentHash": "be78296d0f68470fb6209cdad6cf025e0d5902515666f36571d6f65f67d03565",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-FAH6",
+    "timestamp": "2026-10-28T23:42:58.506Z",
+    "repository": "sxyazi/yazi",
+    "learningId": "learn-github-sxyazi-yazi",
+    "contentHash": "f6ec81dc95d504b4a82a092a36c003f33752537da28f614aac0ce8a77f2cc392",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-FKST",
+    "timestamp": "2026-10-28T23:43:11.885Z",
+    "repository": "pyannote/speaker-diarization-community-1",
+    "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
+    "contentHash": "8aa69fbaeb95bf32ab00355df9e4a458bb9be8684560b9d749799e6c81998026",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

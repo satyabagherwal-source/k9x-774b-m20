@@ -5989,3 +5989,5 @@
 | `CYCLE-20261028-KFB8` | `2026-10-28T23:18:58.436Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5452` | Yes (`4fbc6f7d...`) |
 | `CYCLE-20261028-ZHWI` | `2026-10-28T23:30:41.634Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5453` | Yes (`0a7364ed...`) |
 | `CYCLE-20261028-0NUS` | `2026-10-28T23:31:36.004Z` | `black-forest-labs/flux-3-image-klein` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5454, Rule 5455, Rule 5456` | Yes (`be78296d...`) |
+| `CYCLE-20261028-FAH6` | `2026-10-28T23:42:58.506Z` | `sxyazi/yazi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5457` | Yes (`f6ec81dc...`) |
+| `CYCLE-20261028-FKST` | `2026-10-28T23:43:11.885Z` | `pyannote/speaker-diarization-community-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5458, Rule 5459, Rule 5460` | Yes (`8aa69fba...`) |

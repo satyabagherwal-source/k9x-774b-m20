@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T23:31:36.016Z",
-  "total_cycles_completed": 5966,
-  "total_learnings_persisted": 5966,
-  "total_rules_promoted": 5420,
+  "last_updated": "2026-10-28T23:43:11.891Z",
+  "total_cycles_completed": 5968,
+  "total_learnings_persisted": 5968,
+  "total_rules_promoted": 5424,
   "history": [
-    {
-      "timestamp": "2026-10-28T14:08:37.658Z",
-      "repository": "Tongyi-MAI/Z-Image-Turbo",
-      "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T14:15:20.950Z",
-      "repository": "grpc/grpc-rust",
-      "learningId": "learn-github-grpc-grpc-rust",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T14:15:29.716Z",
       "repository": "openai/gpt-oss-120b",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-28T23:31:36.016Z",
       "repository": "black-forest-labs/flux-3-image-klein",
       "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T23:42:58.515Z",
+      "repository": "sxyazi/yazi",
+      "learningId": "learn-github-sxyazi-yazi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T23:43:11.891Z",
+      "repository": "pyannote/speaker-diarization-community-1",
+      "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

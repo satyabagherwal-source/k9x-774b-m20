@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T23:31:35.930Z",
+  "last_updated": "2026-10-28T23:43:11.842Z",
   "total_verified_learnings": 1160,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -50788,8 +50788,8 @@
       "slug": "sxyazi-yazi",
       "platform": "github",
       "source_url": "https://github.com/sxyazi/yazi",
-      "source_version": "40a91421",
-      "content_hash": "4c4e74da4edc7d130b23cc24a34659b2791692333e3002b40fd713279a01b71c",
+      "source_version": "ec4ce8f2",
+      "content_hash": "f6ec81dc95d504b4a82a092a36c003f33752537da28f614aac0ce8a77f2cc392",
       "dossier_path": "07_PROJECT_LEARNING/sxyazi-yazi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sxyazi-yazi-learnings.md",
       "promoted_rules": [
@@ -50817,6 +50817,11 @@
           "number": 4173,
           "title": "Preflight Cancellation Pattern via Monadic Result Mapping in Event Pipelines",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5457,
+          "title": "random read/write for virtual file systems (#4451)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50824,7 +50829,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T08:08:10.988Z",
+      "verified_at": "2026-10-28T23:42:58.452Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64621,7 +64626,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/pyannote/speaker-diarization-community-1",
       "source_version": "hf-pyannote-speaker-diarization-community-1",
-      "content_hash": "9dd4b5295ae2a22f3901fbd519b68943bce8ef30e912afd437983732fb60f642",
+      "content_hash": "8aa69fbaeb95bf32ab00355df9e4a458bb9be8684560b9d749799e6c81998026",
       "dossier_path": "07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md",
       "promoted_rules": [
@@ -64644,6 +64649,21 @@
           "number": 4482,
           "title": "Audio Pipeline Device & Token Context Guard",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5458,
+          "title": "ML Model Artifact Isolation & Version Locking",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5459,
+          "title": "Audio Preprocessing Invariant: Resampling & Normalization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5460,
+          "title": "Memory Management for Long Audio Streams",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -64651,7 +64671,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T22:56:43.916Z",
+      "verified_at": "2026-10-28T23:43:11.832Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -147324,6 +147344,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T23:31:35.912Z"
+    },
+    "rule-5457": {
+      "learning_id": "rule-5457",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5457,
+      "title": "random read/write for virtual file systems (#4451)",
+      "source_url": "https://github.com/sxyazi/yazi",
+      "source_version": "ec4ce8f2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T23:42:58.452Z"
+    },
+    "rule-5458": {
+      "learning_id": "rule-5458",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5458,
+      "title": "ML Model Artifact Isolation & Version Locking",
+      "source_url": "https://huggingface.co/pyannote/speaker-diarization-community-1",
+      "source_version": "hf-pyannote-speaker-diarization-community-1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T23:43:11.832Z"
+    },
+    "rule-5459": {
+      "learning_id": "rule-5459",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5459,
+      "title": "Audio Preprocessing Invariant: Resampling & Normalization",
+      "source_url": "https://huggingface.co/pyannote/speaker-diarization-community-1",
+      "source_version": "hf-pyannote-speaker-diarization-community-1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T23:43:11.832Z"
+    },
+    "rule-5460": {
+      "learning_id": "rule-5460",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5460,
+      "title": "Memory Management for Long Audio Streams",
+      "source_url": "https://huggingface.co/pyannote/speaker-diarization-community-1",
+      "source_version": "hf-pyannote-speaker-diarization-community-1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T23:43:11.832Z"
     }
   },
   "aliases": {

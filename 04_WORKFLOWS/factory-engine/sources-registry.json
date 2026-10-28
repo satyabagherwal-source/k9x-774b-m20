@@ -4,8 +4,8 @@
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T19:54:36.276Z",
-    "lastVerified": "2026-10-28T19:54:36.276Z",
+    "lastChecked": "2026-10-28T23:43:04.238Z",
+    "lastVerified": "2026-10-28T23:43:04.238Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T23:31:38.566Z",
-    "lastVerified": "2026-10-28T23:31:38.566Z",
+    "lastChecked": "2026-10-28T23:43:14.416Z",
+    "lastVerified": "2026-10-28T23:43:14.416Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -148,11 +148,21 @@
     "revisionIdentifier": "098582e4"
   },
   "sxyazi-yazi": {
-    "name": "yazi",
+    "name": "sxyazi/yazi",
     "officialUrl": "https://github.com/sxyazi/yazi",
-    "lastChecked": "2026-10-28T02:54:40.220Z",
-    "revisionIdentifier": "40a91421",
-    "lastVerified": "2026-10-28T02:54:40.221Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T23:42:57.973Z",
+    "lastVerified": "2026-10-28T23:42:57.973Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-sxyazi-yazi",
+    "contentHash": "f6ec81dc95d504b4a82a092a36c003f33752537da28f614aac0ce8a77f2cc392",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-edge0-audio8-asr-infinite": {
     "name": "Edge0/Audio8-ASR-Infinite",
@@ -302,9 +312,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-28T22:59:08.505Z",
+    "lastChecked": "2026-10-28T23:43:09.174Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-28T22:59:08.505Z"
+    "lastVerified": "2026-10-28T23:43:09.174Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1902,9 +1912,9 @@
   "oceanbase-oceanbase": {
     "name": "oceanbase",
     "officialUrl": "https://github.com/oceanbase/oceanbase",
-    "lastChecked": "2026-10-28T05:55:11.679Z",
+    "lastChecked": "2026-10-28T23:43:06.747Z",
     "revisionIdentifier": "5e8a63d2",
-    "lastVerified": "2026-10-28T05:55:11.679Z"
+    "lastVerified": "2026-10-28T23:43:06.747Z"
   },
   "flox-flox": {
     "name": "flox",
@@ -2308,9 +2318,9 @@
   "easegress-io-easegress": {
     "name": "easegress",
     "officialUrl": "https://github.com/easegress-io/easegress",
-    "lastChecked": "2026-10-28T07:17:58.051Z",
+    "lastChecked": "2026-10-28T23:43:01.731Z",
     "revisionIdentifier": "48bacc2e",
-    "lastVerified": "2026-10-28T07:17:58.051Z"
+    "lastVerified": "2026-10-28T23:43:01.731Z"
   },
   "ontos-ai-knowhere": {
     "name": "Ontos-AI/knowhere",
@@ -7579,5 +7589,29 @@
     "lastChecked": "2026-10-28T23:30:41.198Z",
     "revisionIdentifier": "45722c72",
     "lastVerified": "2026-10-28T23:30:41.198Z"
+  },
+  "hf-pyannote-speaker-diarization-community-1": {
+    "name": "pyannote/speaker-diarization-community-1",
+    "officialUrl": "https://huggingface.co/pyannote/speaker-diarization-community-1",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T23:42:56.842Z",
+    "lastVerified": "2026-10-28T23:42:56.842Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
+    "contentHash": "8aa69fbaeb95bf32ab00355df9e4a458bb9be8684560b9d749799e6c81998026",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sindresorhus-gifski": {
+    "name": "Gifski",
+    "officialUrl": "https://github.com/sindresorhus/Gifski",
+    "lastChecked": "2026-10-28T23:42:59.235Z",
+    "revisionIdentifier": "e184b284",
+    "lastVerified": "2026-10-28T23:42:59.235Z"
   }
 }

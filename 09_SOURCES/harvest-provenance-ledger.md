@@ -5998,3 +5998,5 @@ Every entry in this ledger must capture:
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `741cb9ad` | Multi-dimensional audit evidence | 2026-10-28T23:18:58.439Z |
 | `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `5f4a4dcb` | Multi-dimensional audit evidence | 2026-10-28T23:30:41.638Z |
 | `learn-huggingface-black-forest-labs-flux-3-image-klein` | `https://huggingface.co/black-forest-labs/flux-3-image-klein` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-28T23:31:36.010Z |
+| `learn-github-sxyazi-yazi` | `https://github.com/sxyazi/yazi` | `ec4ce8f2` | Multi-dimensional audit evidence | 2026-10-28T23:42:58.509Z |
+| `learn-huggingface-pyannote-speaker-diarization-community-1` | `https://huggingface.co/pyannote/speaker-diarization-community-1` | `hf-pyannot` | Multi-dimensional audit evidence | 2026-10-28T23:43:11.888Z |
