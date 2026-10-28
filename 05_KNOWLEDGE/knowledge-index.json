@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T12:57:06.476Z",
+  "last_updated": "2026-10-28T13:03:45.522Z",
   "total_verified_learnings": 1157,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -28221,7 +28221,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
       "source_version": "hf-timm-mobilenetv3_small_100.lamb_in1k",
-      "content_hash": "002169a9cd395180798f6f56da30c4b5840a0db69b10e4e43b7c4337ff9d3c02",
+      "content_hash": "d41314434a7dc935e63879a9d3dfbb1165805fc30f0563969a01403ac6ed8983",
       "dossier_path": "07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md",
       "promoted_rules": [
@@ -28279,7 +28279,7 @@
         "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv49kikk",
         "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv4mxoq2"
       ],
-      "verified_at": "2026-10-25T18:21:50.992Z",
+      "verified_at": "2026-10-28T13:03:31.414Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46339,8 +46339,8 @@
       "slug": "rustls-rustls",
       "platform": "github",
       "source_url": "https://github.com/rustls/rustls",
-      "source_version": "51370d96",
-      "content_hash": "c2fa65f21e067832461244ab6db0ad39eadc41c121f7ab012e522638d67dfd64",
+      "source_version": "1783110b",
+      "content_hash": "a615eb3512908e4815143021d1b70b179422d0e153c8d07ec77055d1b98a0dc7",
       "dossier_path": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "promoted_rules": [
@@ -46373,6 +46373,11 @@
           "number": 4697,
           "title": "Test for EndOfEarlyData handshake alignment check",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5286,
+          "title": "reject hello retry request selecting a non-TLS1.3 cipher suite",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46380,7 +46385,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T10:58:02.560Z",
+      "verified_at": "2026-10-28T13:03:45.507Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -143945,6 +143950,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T12:57:06.459Z"
+    },
+    "rule-5286": {
+      "learning_id": "rule-5286",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5286,
+      "title": "reject hello retry request selecting a non-TLS1.3 cipher suite",
+      "source_url": "https://github.com/rustls/rustls",
+      "source_version": "1783110b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T13:03:45.507Z"
     }
   },
   "aliases": {

@@ -785,8 +785,8 @@
     "sourceUrl": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
     "sourceVersion": "hf-timm-mobilenetv3_small_100.lamb_in1k",
     "license": "Open-Source",
-    "contentHash": "002169a9cd395180798f6f56da30c4b5840a0db69b10e4e43b7c4337ff9d3c02",
-    "lastHarvestedAt": "2026-10-25T18:21:51.061Z",
+    "contentHash": "d41314434a7dc935e63879a9d3dfbb1165805fc30f0563969a01403ac6ed8983",
+    "lastHarvestedAt": "2026-10-28T13:03:31.518Z",
     "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k"
   },
   "hf-amazon-chronos-2": {
@@ -2693,10 +2693,10 @@
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "51370d96",
+    "sourceVersion": "1783110b",
     "license": "NOASSERTION",
-    "contentHash": "c2fa65f21e067832461244ab6db0ad39eadc41c121f7ab012e522638d67dfd64",
-    "lastHarvestedAt": "2026-10-27T10:58:02.643Z",
+    "contentHash": "a615eb3512908e4815143021d1b70b179422d0e153c8d07ec77055d1b98a0dc7",
+    "lastHarvestedAt": "2026-10-28T13:03:45.581Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {

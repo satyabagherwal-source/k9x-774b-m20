@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T12:57:06.557Z",
-  "total_cycles_completed": 5742,
-  "total_learnings_persisted": 5742,
-  "total_rules_promoted": 5233,
+  "last_updated": "2026-10-28T13:03:45.585Z",
+  "total_cycles_completed": 5744,
+  "total_learnings_persisted": 5744,
+  "total_rules_promoted": 5234,
   "history": [
-    {
-      "timestamp": "2026-10-27T22:06:21.605Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T22:06:30.645Z",
-      "repository": "nolabs-ai/nono",
-      "learningId": "learn-github-nolabs-ai-nono",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T22:36:27.652Z",
       "repository": "aleo-labs-protocol/snarkOS",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-28T12:57:06.557Z",
       "repository": "wcandillon/react-native-skia",
       "learningId": "learn-github-wcandillon-react-native-skia",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T13:03:31.522Z",
+      "repository": "timm/mobilenetv3_small_100.lamb_in1k",
+      "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T13:03:45.585Z",
+      "repository": "rustls/rustls",
+      "learningId": "learn-github-rustls-rustls",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -5774,3 +5774,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-amazon-chronos-2` | `https://huggingface.co/amazon/chronos-2` | `hf-amazon-` | Multi-dimensional audit evidence | 2026-10-28T12:46:43.078Z |
 | `learn-huggingface-comfy-org-minimax-h3` | `https://huggingface.co/Comfy-Org/MiniMax-H3` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-28T12:56:57.974Z |
 | `learn-github-wcandillon-react-native-skia` | `https://github.com/Shopify/react-native-skia` | `8e30d2ee` | Multi-dimensional audit evidence | 2026-10-28T12:57:06.551Z |
+| `learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k` | `https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k` | `hf-timm-mo` | Multi-dimensional audit evidence | 2026-10-28T13:03:31.518Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `1783110b` | Multi-dimensional audit evidence | 2026-10-28T13:03:45.581Z |

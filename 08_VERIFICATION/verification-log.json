@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-NG65",
-    "timestamp": "2026-10-27T12:21:48.317Z",
-    "repository": "storybookjs/storybook",
-    "learningId": "learn-github-storybookjs-storybook",
-    "contentHash": "4f00426c10c439646d5b6f106a99b087095d100c3da8591cf474f20c811e95fd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-NI61",
-    "timestamp": "2026-10-27T12:21:50.905Z",
-    "repository": "nats-io/nats.go",
-    "learningId": "learn-github-nats-io-nats-go",
-    "contentHash": "c7b343de97de19db6e7efac6156430ff3df660d00c6ab86cba10df41c1bc8523",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-NJPC",
     "timestamp": "2026-10-27T12:21:52.896Z",
     "repository": "mitmproxy/mitmproxy",
@@ -7490,6 +7460,36 @@
     "repository": "wcandillon/react-native-skia",
     "learningId": "learn-github-wcandillon-react-native-skia",
     "contentHash": "881ab398fbf0ab727661534579e38efa81e9c3de1ac178d77815b2db3fa96be7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-KYBF",
+    "timestamp": "2026-10-28T13:03:31.515Z",
+    "repository": "timm/mobilenetv3_small_100.lamb_in1k",
+    "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
+    "contentHash": "d41314434a7dc935e63879a9d3dfbb1165805fc30f0563969a01403ac6ed8983",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-L962",
+    "timestamp": "2026-10-28T13:03:45.578Z",
+    "repository": "rustls/rustls",
+    "learningId": "learn-github-rustls-rustls",
+    "contentHash": "a615eb3512908e4815143021d1b70b179422d0e153c8d07ec77055d1b98a0dc7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

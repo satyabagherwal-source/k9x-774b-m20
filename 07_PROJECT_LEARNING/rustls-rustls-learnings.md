@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source**: github ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
-> **Source Version**: `51370d96`  
+> **Source Version**: `1783110b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T10:58:02.226Z  
+> **Timestamp**: 2026-10-28T13:03:45.054Z  
 > **Learning ID**: `learn-github-rustls-rustls`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T10:58:02.070Z  
+> **Harvest Timestamp**: 2026-10-28T13:03:45.047Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1108,16 +1108,14 @@ pub struct CommonState {
     pub(crate) outputs: ConnectionOutputs,
     pub(crate) send: SendPath,
     pub(crate) recv: ReceivePath,
-    pub(crate) fips: FipsStatus,
 }
 
 impl CommonState {
     pub(crate) fn new(side: Side, fips: FipsStatus) -> Self {
         Self {
-            outputs: ConnectionOutputs::default(),
+            outputs: ConnectionOutputs::new(fips),
             send: SendPath::default(),
             recv: ReceivePath::new(side),
-            fips,
         }
     }
 
@@ -1163,8 +1161,8 @@ impl fmt::Debug for CommonState {
 }
 
 /// Facts about the connection learned through the handshake.
-#[derive(Default)]
 pub struct ConnectionOutputs {
+    pub(crate) fips: FipsStatus,
     negotiated_version: Option<ProtocolVersion>,
     handshake_kind: Option<HandshakeKind>,
     suite: Option<SupportedCipherSuite>,
@@ -1177,6 +1175,21 @@ pub struct ConnectionOutputs {
 }
 
 impl ConnectionOutputs {
+    fn new(fips: FipsStatus) -> Self {
+        Self {
+            fips,
+            negotiated_version: None,
+            handshake_kind: None,
+            suite: None,
+            negotiated_kx_group: None,
+            alpn_protocol: None,
+            peer_identity: None,
+            extended_main_secret: None,
+            exporter: None,
+            early_exporter: None,
+        }
+    }
+
     /// Retrieves the certificate chain or the raw public key used by the peer to authenticate.
     ///
     /// This is made available for both full and resumed handshakes.
@@ -1223,6 +1236,17 @@ impl ConnectionOutputs {
     /// This returns `None` until the version is agreed.
     pub fn protocol_version(&self) -> Option<ProtocolVersion> {
         self.negotiated_version
+    }
+
+    /// Return the FIPS validation status of the connection.
+    ///
+    /// This is different from [`CryptoProvider::fips()`][]:
+    /// it is concerned only with cryptography, whereas this _also_ covers TLS-level
+    /// configuration that NIST recommends, as well as ECH HPKE suites if applicable.
+    ///
+    /// [`CryptoProvider::fips()`]: crate::crypto::CryptoProvider::fips()
+    pub fn fips(&self) -> FipsStatus {
+        self.fips
     }
 
     /// Whether the Extended Main Secret extension was negotiated.
@@ -1305,6 +1329,7 @@ impl ConnectionOutput for ConnectionOutputs {
 impl fmt::Debug for ConnectionOutputs {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let Self {
+            fips,
             negotiated_version,
             handshake_kind,
             suite,
@@ -1316,6 +1341,7 @@ impl fmt::Debug for ConnectionOutputs {
             early_exporter: _,
         } = self;
         f.debug_struct("ConnectionOutputs")
+            .field("fips", fips)
             .field("negotiated_version", negotiated_version)
             .field("handshake_kind", handshake_kind)
             .field("suite", suite)
@@ -1330,31 +1356,7 @@ impl fmt::Debug for ConnectionOutputs {
 /// Send an alert via `output` if `error` specifies one.
 pub(crate) fn maybe_send_fatal_alert(
     send: &mut dyn SendOutput,
-    error: &Error,
-    tls: &mut Vec<u8>,
-) -> Result<(), Error> {
-    let Ok(alert) = AlertDescription::try_from(error) else {
-        return Ok(());
-    };
-    send.send_alert(AlertLevel::Fatal, alert, tls)
-}
-
-/// Describes which sort of handshake happened.
-#[derive(Debug, PartialEq, Clone, Copy)]
-#[non_exhaustive]
-pub enum HandshakeKind {
-    /// A full handshake.
-    ///
-    /// This is the typical TLS connection initiation process when resumption is
-    /// not available, and the initial `ClientHello` was accepted by the server.
-    Full,
-
-    /// A full TLS1.3 handshake, with an extra round-trip for a `HelloRetryRequest`.
-    ///
-    /// The server can respond with a `HelloRetryRequest` if the initial `ClientHello`
-    /// is unacceptable for several reasons, the most likely being if no supported key
-    /// shares were offered by the client.
-    
+    error: 
 ```
 
 ### Core Architecture Module: `admin/threads-seq.rs`
@@ -2242,17 +2244,17 @@ fn exec(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3392** (2026-10-26): **Check handshake alignment at end of early data**
-  *Symptoms*: test is backport from #3391 
+- **Issue #3395** (2026-10-28): **Move connection FIPS status onto `ConnectionOutputs`**
+  *Symptoms*: This allows `fips()` to be accessed on the handshake API.
   **Post-Mortem & Fix Analysis**:
-  >   # Benchmark results  ## Instruction counts    #### Significant differences    _There are no significant instruction count differences_    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.2_rsa_aes_server | 10490229 | 10441832 | [-48397](https://bench.rustls.dev/comparisons/f04804fa13341a9b1dc02b5d1dd8a746f2c4b7fb:ac9b24bd179379eb8ac089bc5ee1e1281305a5b8/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.2_rsa_aes_server) (-0.46%) | 1.08% | | handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server | 10978216 | 10941048 | [-37168](https://bench.rustls.dev/comparisons/f04804fa13341a9b1dc02b5d1dd8a746f2c4b7fb:ac9b24bd179379eb8ac089bc5ee1e1281305a5b8/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server) (-0.34%) | 1.20% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_server | 2295364 | 2297808 | [2444](ht
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3392?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.40%. Comparing base ([`f04804f`](https://app.codecov.io/gh/rustls/rustls/commit/f04804fa13341a9b1dc02b5d1dd8a746f2c4b7fb?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`ac9b24b`](https://app.codecov.io/gh/rustls/rustls/commit/ac9b24bd179379eb8ac089bc5ee1e1281305a5b8?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff            @@ ##           rel-0.23    #3392   +/-   ## ====================================
+  >   # Benchmark results  ## Instruction counts    #### Significant differences    _There are no significant instruction count differences_    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_rsa_aes_server | 10870998 | 10957239 | [86241](https://bench.rustls.dev/comparisons/51370d96f0e746d01a53c3acb4c7d5cc2db7cba1:11eccaa2e3997a1344f3b78c72e1f47556091e34/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_rsa_aes_server) (0.79%) | 1.07% | | handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server | 10926475 | 10953509 | [27034](https://bench.rustls.dev/comparisons/51370d96f0e746d01a53c3acb4c7d5cc2db7cba1:11eccaa2e3997a1344f3b78c72e1f47556091e34/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server) (0.25%) | 1.09% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_client | 8796695 | 8776163 | [-20532](h
+  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3395?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.63%. Comparing base ([`51370d9`](https://app.codecov.io/gh/rustls/rustls/commit/51370d96f0e746d01a53c3acb4c7d5cc2db7cba1?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`11eccaa`](https://app.codecov.io/gh/rustls/rustls/commit/11eccaa2e3997a1344f3b78c72e1f47556091e34?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3395   +/-   ## ======================================= 
 
-- **Issue #3391** (2026-10-26): **Test for EndOfEarlyData handshake alignment check**
-  *Symptoms*: (regression test for an issue that exists only on rel-0.23)
+- **Issue #3393** (2026-10-28): **Extract signature scheme filtering**
+  *Symptoms*: Inspired by  - https://github.com/rustls/rustls/pull/3372  It feels like there's probably a way to avoid allocating for `sig_schemes` in `ExpectClientHello::with_version()`, but not sure if that's worth it? It gets a bit gnarly.
   **Post-Mortem & Fix Analysis**:
-  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_client | 2394896 | 2381560 | ✅ [-13336](https://bench.rustls.dev/comparisons/8f54626e1bd98bc61e3af9dca6c0569333eb850d:37d41c080d85c1e158bfaff97c3d1c91cea598ed/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_client) (-0.56%) | 0.20% |   </details>    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_client | 8798556 | 8746795 | [-51761](https://bench.rustls.dev/comparisons/8f54626e1bd98bc61e3af9dca6c0569333eb850d:37d41c080d85c1e158bfaff97c3d1c91cea598ed/cachegrin
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3391?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.63%. Comparing base ([`8f54626`](https://app.codecov.io/gh/rustls/rustls/commit/8f54626e1bd98bc61e3af9dca6c0569333eb850d?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`37d41c0`](https://app.codecov.io/gh/rustls/rustls/commit/37d41c080d85c1e158bfaff97c3d1c91cea598ed?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3391   +/-   ## ======================================= 
+  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_session_id_aws_lc_rs_1.2_rsa_aes_server | 3491316 | 3475806 | ✅ [-15510](https://bench.rustls.dev/comparisons/51370d96f0e746d01a53c3acb4c7d5cc2db7cba1:553120218dd444d21365194b9bd5a187c139d693/cachegrind-diff/handshake_session_id_aws_lc_rs_1.2_rsa_aes_server) (-0.44%) | 0.20% | | handshake_session_id_ring_1.2_rsa_aes_server | 3050022 | 3037842 | ✅ [-12180](https://bench.rustls.dev/comparisons/51370d96f0e746d01a53c3acb4c7d5cc2db7cba1:553120218dd444d21365194b9bd5a187c139d693/cachegrind-diff/handshake_session_id_ring_1.2_rsa_aes_server) (-0.40%) | 0.20% | | handshake_tickets_aws_lc_rs_1.2_rsa_aes_server | 4566049 | 4550539 | ✅ [-15510](https://bench.rustls.dev/comparisons/51370d96f0e746d01
+  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3393?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :x: Patch coverage is `94.59459%` with `2 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 95.64%. Comparing base ([`71dbec0`](https://app.codecov.io/gh/rustls/rustls/commit/71dbec0f69af72d860a74e0f3759b31734a359e7?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`5531202`](https://app.codecov.io/gh/rustls/rustls/commit/553120218dd444d21365194b9bd5a187c139d693?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)). :warning: Report is 1 commits behind head on main.  | [Files with missing lines](https://app.codecov.io/gh/rustls/rustls/pull/3393?dropdown=coverage&src=pr&el=tree&utm_medium
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2269,210 +2271,212 @@ fn exec(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `51370d96` (2026-10-26)
-**Commit Message**: Test for EndOfEarlyData handshake alignment check
+### Incident Patch 1: `013beb9d` (2026-10-17)
+**Commit Message**: reject hello retry request selecting a non-TLS1.3 cipher suite
 
-**File**: `rustls-test/tests/api/crypto.rs` (modified, +181/-8)
+**File**: `rustls/src/client/hs.rs` (modified, +13/-2)
 ```diff
-@@ -6,6 +6,7 @@ use std::borrow::Cow;
- use std::io::Cursor;
- use std::sync::{Arc, Mutex};
+@@ -341,8 +341,19 @@ impl ExpectServerHelloOrHelloRetryRequest {
+         };
+         output.output(OutputEvent::ProtocolVersion(ProtocolVersion::TLSv1_3));
  
-+use rustls::client::Resumption;
- use rustls::crypto::cipher::{AeadKey, EncodableVersion, InboundOpaque, Iv, Payload, Record};
- use rustls::crypto::tls13::{HkdfExpander, OkmBlock, expand};
- use rustls::crypto::{Credentials, CryptoProvider};
-@@ -16,7 +17,7 @@ use rustls::{
-     ServerSide, SideData, SupportedCipherSuite, Tcp, Tls13CipherSuite, VecInput,
- };
- use rustls_test::{
--    ClientConfigExt, ErrorFromPeer, KeyType, MultiTest, RawTls, ServerConfigExt,
-+    ClientConfigExt, ClientStorage, ErrorFromPeer, KeyType, MultiTest, RawTls, ServerConfigExt,
-     aes_128_gcm_with_1024_confidentiality_limit, do_handshake, do_handshake_until_error, encoding,
-     make_client_config, make_pair, make_pair_for_arc_configs, make_pair_for_configs,
-     make_server_config, provider_with_one_suite, transfer,
-@@ -1169,13 +1170,7 @@ fn move_encrypted_extensions_into_server_hello(
-         )
-     };
+-        // Or asks us to use a ciphersuite we didn't offer.
+-        let Some(cs) = config.find_cipher_suite(hrr.cipher_suite) else {
++        // Or asks us to use a ciphersuite we didn't offer, or one that isn't for TLS 1.3.
++        let Some(cs) = config
++            .find_cipher_suite(hrr.cipher_suite)
++            .filter(|cs| {
++                matches!(cs, SupportedCipherSuite::Tls13(_))
++                    && self
++                        .next
++                        .input
++                        .hello
++                        .offered_cipher_suites
++                        .contains(&hrr.cipher_suite)
++            })
++        else {
+             return Err(PeerMisbehaved::IllegalHelloRetryRequestWithUnofferedCipherSuite.into());
+         };
  
--    let mut records = Vec::new();
--    let mut rest = flight;
--    while !rest.is_empty() {
--        let len = u16::from_be_bytes([rest[3], rest[4]]) as usize;
--        records.push(rest[..5 + len].to_vec());
--        rest = &rest[5 + len..];
--    }
-+    let mut records = split_records(flight);
- 
-     let (key, iv) = traffic_key();
-     let mut decrypter = suite.aead_alg.decrypter(key, iv);
-@@ -1233,6 +1228,184 @@ fn move_encrypted_extensions_into_server_hello(
-     output
+```
+
+**File**: `rustls/src/client/test.rs` (modified, +39/-0)
+```diff
+@@ -221,6 +221,45 @@ fn test_client_rejects_hrr_with_varied_session_id() {
+     );
  }
  
 +#[test]
-+fn server_rejects_finished_in_end_of_early_data_record() {
-+    let suite = cipher_suite::TLS13_AES_128_GCM_SHA256;
-+    let provider: Arc<CryptoProvider> = provider_with_one_suite(
-+        &provider::DEFAULT_PROVIDER,
-+        SupportedCipherSuite::Tls13(suite),
-+    )
-+    .into();
-+    let kt = KeyType::default();
++fn test_client_rejects_hrr_selecting_tls12_cipher_suite() {
++    let config = ClientConfig::builder(Arc::new(TEST_PROVIDER.clone()))
++        .with_root_certificates(roots())
++        .with_no_client_auth()
++        .unwrap();
++    let mut tls = Vec::new();
++    let mut conn = Arc::new(config)
++        .connect(ServerName::try_from("localhost").unwrap())
++        .build(&mut tls)
++        .unwrap();
 +
-+    let key_log = Arc::new(KeyLogToVec::new("client"));
-+    let mut client_config = ClientConfig::builder(provider.clone()).finish(kt);
-+    client_config.enable_early_data = true;
-+    client_config.resumption = Resumption::store(Arc::new(ClientStorage::new()));
-+    client_config.key_log = key_log.clone();
-+    let mut server_config = ServerConfig::builder(provider).finish(kt);
-+    server_config.max_early_data_size = 1234;
-+    let (client_config, server_config) = (Arc::new(client_config), Arc::new(server_config));
++    // server replies with HRR, but selects a TLS 1.2 cipher suite.
++    let hrr = Message {
++        version: EncodableVersion::Legacy(ProtocolVersion::TLSv1_3),
++        payload: MessagePayload::handshake(HandshakeMessagePayload(
++            HandshakePayload::HelloRetryRequest(HelloRetryRequest {
++                cipher_suite: TLS_TEST_SUITE.suite(),
++                legacy_version: ProtocolVersion::TLSv1_2,
++                session_id: client_hello_in(&tls).session_id,
++                extensions: HelloRetryRequestExtensions {
++                    cookie: Some(SizedPayload::from(vec![1, 2, 3, 4])),
++                    supported_versions: Some(ProtocolVersion::TLSv1_3),
++                    ..HelloRetryRequestExtensions::default()
++                },
++            }),
++        )),
++    };
 +
-+    let mut client_input = VecInput::default();
-+    let mut server_input = VecInput::default();
-+    let mut client_output = Vec::new();
-+    let mut server_output = Vec::new();
-+    let (mut client, mut server) =
-+        make_pair_for_arc_configs(&client_config, &server_config, &mut client_output);
-+    do_handshake(
-+        &mut client_input,
-+        &mut client_output,
-+        &mut client,
-+        &mut server_input,
-+        &mut server_output,
-+        &mut server,
-+    );
-+    key_log.take();
-+
-+    let mut client_input = VecInput::default();
-+    let mut server_input = VecInput::default();
-+    let mut client_output = Vec::new();
-+    let mut server_output = Vec::new();
-+    let (mut client, mut server) =
-+        make_pair_for_arc_configs(&client_config, &server_config, &mut client_output);
++    let mut input = VecInput::default();
++    input
++        .read(&mut hrr.into_wire_bytes().as_slice())
++        .unwrap();
 +    assert_eq!(
-+        client
-+            .early_data()
-+            .unwrap()
-+            .write(b"hello".into(), &mut client_output)
-+            .unwrap(),
-+        5
++        process(&mut input, &mut conn).unwrap_err(),
++        PeerMisbehaved::IllegalHelloRetryRequestWithUnofferedCipherSuite.into()
 +    );
++}
 +
-+    let early_records = split_records(&client_output)
-+        .iter()
-+        .filter(|record| record[0] == u8::from(ContentType::ApplicationData))
-+        .count();
-+    transfer(&mut client_output, &mut server_input);
-+    let mut handler = server.read_tls(&mut server_input, &mut server_output);
-+    while let Some(result) = handler.next_early_data() {
-+        assert_eq!(result.unwrap().bytes(), b"hello");
-+    }
-+    handler
-+        .handle_all(&mut Vec::new())
-+        .unwrap();
-+
-+    transfer(&mut server_output, &mut client_input);
-+    client
-+        .read_tls(&mut client_input, &mut client_output)
-+        .handle_all(&mut Vec::new())
-+        .unwrap();
-+    assert!(client.side().is_early_data_accepted());
-+
-+    let secrets = key_log.take();
-+    let secret = |label: &str| {
-+        secrets
-+            .iter()
-+            .find(|item| item.label == label)
-+            .unwrap()
-+            .secret
-+            .clone()
-+    };
-+    let traffic_key = |secret: &[u8]| -> (AeadKey, Iv) {
-+        let expander = suite
-+            .hkdf_provider
-+            .expander_for_okm(&OkmBlock::new(secret));
-+        (
-+            hkdf_expand_label::<AeadKey, 16>(&*expander, b"key"),
-+            hkdf_expand_label::<Iv, 12>(&*expander, b"iv"),
-+        )
-+    };
-+    let early_secret = secret("CLIENT_EARLY_TRAFFIC_SECRET");
-+    let handshake_secret = secret("CLIENT_HANDSHAKE_TRAFFIC_SECRET");
-+
-+    let mut records = split_records(&client_output);
-+    client_output.clear();
-+    let mut encrypted = records
-+        .iter_mut()
-+        .filter(|record| record[0] == u8::from(ContentType::ApplicationData));
-+
-+    let (key, iv) =
+ #[test]
+ fn test_client_rejects_server_hello_with_varied_session_id() {
+     let config = ClientConfig::builder(Arc::new(tls13_only(TEST_PROVIDER.clone())))
 ```
 
 ---
 
-### Incident Patch 2: `71dbec0f` (2026-10-26)
-**Commit Message**: crypto: replace AeadKey::new_with() with expand()
+### Incident Patch 2: `8a05479d` (2026-10-26)
+**Commit Message**: suites: extract filter_signature_schemes() method
 
-**File**: `rustls/src/crypto/cipher/mod.rs` (modified, +7/-4)
+**File**: `rustls/src/server/hs.rs` (modified, +1/-15)
 ```diff
-@@ -6,6 +6,7 @@ use core::{array, fmt};
- use pki_types::FipsStatus;
- use zeroize::Zeroize;
+@@ -608,21 +608,7 @@ impl ExpectClientHello {
+         let suites = <CryptoProvider as Borrow<[&'static T]>>::borrow(&self.config.provider);
  
-+use crate::crypto::tls13::{HkdfExpander, HkdfLabel, OutputLengthError};
- use crate::enums::{ContentType, ProtocolVersion};
- use crate::error::{ApiMisuse, Error};
- use crate::msgs::{put_u16, put_u64};
-@@ -375,16 +376,18 @@ impl AeadKey {
-     }
+         let mut sig_schemes = input.sig_schemes.to_owned();
+-        if T::VERSION == ProtocolVersion::TLSv1_2 {
+-            let client_suites = suites.iter().filter(|&&scs| {
+-                input
+-                    .client_hello
+-                    .cipher_suites
+-                    .contains(&scs.suite())
+-            });
+-            sig_schemes.retain(|scheme| {
+-                client_suites
+-                    .clone()
+-                    .any(|&suite| suite.usable_for_signature_scheme(*scheme))
+-            });
+-        } else if T::VERSION == ProtocolVersion::TLSv1_3 {
+-            sig_schemes.retain(SignatureScheme::supported_in_tls13);
+-        }
++        T::filter_signature_schemes(&mut sig_schemes, &input.client_hello.cipher_suites, suites);
  
-     /// Builds a key of `len` bytes by letting `fill` write directly into it.
--    pub(crate) fn new_with<E>(
-+    pub(crate) fn expand(
-+        expander: &dyn HkdfExpander,
-+        label: &HkdfLabel<'_>,
-         len: usize,
--        fill: impl FnOnce(&mut [u8]) -> Result<(), E>,
--    ) -> Result<Self, E> {
-+    ) -> Result<Self, OutputLengthError> {
-         debug_assert!(len <= Self::MAX_LEN);
-         let mut key = Self {
-             buf: [0u8; Self::MAX_LEN],
-             used: len,
-         };
--        fill(&mut key.buf[..len])?;
-+
-+        expander.expand_slice(&label.info(), &mut key.buf[..len])?;
-         Ok(key)
-     }
- 
+         // Choose a certificate.
+         let credentials = self
 ```
 
-**File**: `rustls/src/tls13/key_schedule.rs` (modified, +1/-4)
+**File**: `rustls/src/suites.rs` (modified, +7/-0)
 ```diff
-@@ -1088,10 +1088,7 @@ pub(crate) fn hkdf_expand_label_aead_key(
-     label: &[u8],
-     context: &[u8],
- ) -> AeadKey {
--    let label = HkdfLabel::new(label, context, key_len);
--    // Request exactly `key_len` bytes so `L` matches the length
--    // encoded in the HkdfLabel.
--    AeadKey::new_with(key_len, |out| expander.expand_slice(&label.info(), out))
-+    AeadKey::expand(expander, &HkdfLabel::new(label, context, key_len), key_len)
-         .expect("AEAD key length from cipher suite must be within MAX_LEN")
- }
+@@ -1,3 +1,4 @@
++use alloc::vec::Vec;
+ use core::fmt;
  
+ use pki_types::FipsStatus;
+@@ -111,6 +112,12 @@ pub(crate) trait Suite: fmt::Debug {
+ 
+     fn usable_for_protocol(&self, proto: Protocol) -> bool;
+ 
++    fn filter_signature_schemes(
++        schemes: &mut Vec<SignatureScheme>,
++        client: &[CipherSuite],
++        server: &[&'static Self],
++    );
++
+     fn usable_for_signature_scheme(&self, _scheme: SignatureScheme) -> bool;
+ 
+     fn usable_for_kx_algorithm(&self, _kxa: KeyExchangeAlgorithm) -> bool {
+```
+
+**File**: `rustls/src/tls12.rs` (modified, +16/-1)
+```diff
+@@ -11,7 +11,7 @@ use crate::conn::{ConnectionRandoms, Exporter};
+ use crate::crypto::cipher::{AeadKey, RecordDecrypter, RecordEncrypter, Tls12AeadAlgorithm};
+ use crate::crypto::kx::{ActiveKeyExchange, KeyExchangeAlgorithm};
+ use crate::crypto::tls12::PrfSecret;
+-use crate::crypto::{self, SignatureScheme, hash};
++use crate::crypto::{self, CipherSuite, SignatureScheme, hash};
+ use crate::enums::ProtocolVersion;
+ use crate::error::{ApiMisuse, Error, InvalidMessage};
+ use crate::msgs::{Codec, HandshakeAlignedProof, KxDecode, Reader};
+@@ -107,6 +107,21 @@ impl Suite for Tls12CipherSuite {
+         self.kx == kxa
+     }
+ 
++    fn filter_signature_schemes(
++        schemes: &mut Vec<SignatureScheme>,
++        client: &[CipherSuite],
++        server: &[&'static Self],
++    ) {
++        let client_suites = server
++            .iter()
++            .filter(|&&scs| client.contains(&scs.suite()));
++        schemes.retain(|scheme| {
++            client_suites
++                .clone()
++                .any(|&suite| suite.usable_for_signature_scheme(*scheme))
++        });
++    }
++
+     /// Return true if this suite is usable for a key only offering `scheme` signatures.
+     fn usable_for_signature_scheme(&self, scheme: SignatureScheme) -> bool {
+         let Some(alg) = scheme.algorithm() else {
+```
+
+**File**: `rustls/src/tls13/mod.rs` (modified, +10/-1)
+```diff
+@@ -1,9 +1,10 @@
++use alloc::vec::Vec;
+ use core::fmt;
+ 
+ use pki_types::FipsStatus;
+ 
+ use crate::common_state::Protocol;
+-use crate::crypto::{self, SignatureScheme, hash};
++use crate::crypto::{self, CipherSuite, SignatureScheme, hash};
+ use crate::enums::ProtocolVersion;
+ use crate::quic;
+ use crate::suites::{CipherSuiteCommon, Suite, SupportedCipherSuite};
+@@ -119,6 +120,14 @@ impl Suite for Tls13CipherSuite {
+         }
+     }
+ 
++    fn filter_signature_schemes(
++        schemes: &mut Vec<SignatureScheme>,
++        _client: &[CipherSuite],
++        _server: &[&'static Self],
++    ) {
++        schemes.retain(|scheme| scheme.supported_in_tls13());
++    }
++
+     fn usable_for_signature_scheme(&self, scheme: SignatureScheme) -> bool {
+         scheme.supported_in_tls13()
+     }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3395** (2026-10-28): Move connection FIPS status onto `ConnectionOutputs` (@ctz)
+- **PR #3393** (2026-10-28): Extract signature scheme filtering (@djc)
 - **PR #3392** (2026-10-26): Check handshake alignment at end of early data (@ctz)
 - **PR #3391** (2026-10-26): Test for EndOfEarlyData handshake alignment check (@ctz)
 - **PR #3390** (2026-10-26): crypto: replace AeadKey::new_with() with expand() (@djc)
 - **PR #3389** (closed): ⚡ [Buzz] Fix CVE-2024-24576: Rusts's `std::process::Command` did not properly escape arguments of batch files on Windows (@AgenticJamesBond)
-- **PR #3385** (2026-10-26): Expand exactly key_len bytes for TLS 1.3 AEAD keys (@6d7770)
-- **PR #3384** (2026-10-23): Avoid panic for error handling in `set_resumption_data()` (@ctz)
 
 ---
 
@@ -2492,61 +2496,41 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Test for EndOfEarlyData handshake alignment check
+## X. reject hello retry request selecting a non-TLS1.3 cipher suite
 
 **RULE**:
-When implementing operations in `rustls-test/tests/api/crypto.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rustls/src/client/hs.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `51370d96`: Test for EndOfEarlyData handshake alignment check. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `013beb9d`: reject hello retry request selecting a non-TLS1.3 cipher suite. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls-test/tests/api/crypto.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls/src/client/hs.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use rustls::client::Resumption;
-    ClientConfigExt, ClientStorage, ErrorFromPeer, KeyType, MultiTest, RawTls, ServerConfigExt,
-    let mut records = split_records(flight);
-#[test]
-fn server_rejects_finished_in_end_of_early_data_record() {
-    let suite = cipher_suite::TLS13_AES_128_GCM_SHA256;
-    let provider: Arc<CryptoProvider> = provider_with_one_suite(
-        &provider::DEFAULT_PROVIDER,
-        SupportedCipherSuite::Tls13(suite),
-    )
-    .into();
-    let kt = KeyType::default();
-
-    let key_log = Arc::new(KeyLogToVec::new("client"));
-    let mut client_config = ClientConfig::builder(provider.clone()).finish(kt);
-    client_config.enable_early_data = true;
-    client_config.resumption = Resumption::store(Arc::new(ClientStorage::new()));
-    client_config.key_log = key_log.clone();
-    let mut server_config = ServerConfig::builder(provider).finish(kt);
-    server_config.max_early_data_size = 1234;
-    let (client_config, server_config) = (Arc::new(client_config), Arc::new(server_config));
-
-    let mut client_input = VecInput::default();
-    let mut server_input = VecInput::default();
-    let mut client_output = Vec::new();
-    let mut server_output = Vec::new();
-    let (m
+        // Or asks us to use a ciphersuite we didn't offer, or one that isn't for TLS 1.3.
+        let Some(cs) = config
+            .find_cipher_suite(hrr.cipher_suite)
+            .filter(|cs| {
+                matches!(cs, SupportedCipherSuite::Tls13(_))
+                    && self
+                        .next
+                        .input
+                        .hello
+                        .offered_cipher_suites
+                        .contains(&hrr.cipher_suite)
+            })
+        else {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    ClientConfigExt, ErrorFromPeer, KeyType, MultiTest, RawTls, ServerConfigExt,
-    let mut records = Vec::new();
-    let mut rest = flight;
-    while !rest.is_empty() {
-        let len = u16::from_be_bytes([rest[3], rest[4]]) as usize;
-        records.push(rest[..5 + len].to_vec());
-        rest = &rest[5 + len..];
-    }
+        // Or asks us to use a ciphersuite we didn't offer.
+        let Some(cs) = config.find_cipher_suite(hrr.cipher_suite) else {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `51370d96` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `013beb9d` are properly handled with clean fallback behavior.

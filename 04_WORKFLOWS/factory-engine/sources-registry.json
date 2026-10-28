@@ -1,10 +1,20 @@
 {
   "rustls-rustls": {
-    "name": "rustls",
+    "name": "rustls/rustls",
     "officialUrl": "https://github.com/rustls/rustls",
-    "lastChecked": "2026-10-28T06:18:31.583Z",
-    "revisionIdentifier": "51370d96",
-    "lastVerified": "2026-10-28T06:18:31.583Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T13:03:45.047Z",
+    "lastVerified": "2026-10-28T13:03:45.047Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-rustls-rustls",
+    "contentHash": "a615eb3512908e4815143021d1b70b179422d0e153c8d07ec77055d1b98a0dc7",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tanstack-router": {
     "name": "TanStack/router",
@@ -28,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T12:57:09.101Z",
-    "lastVerified": "2026-10-28T12:57:09.101Z",
+    "lastChecked": "2026-10-28T13:03:48.109Z",
+    "lastVerified": "2026-10-28T13:03:48.109Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -171,8 +181,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T12:22:22.573Z",
-    "lastVerified": "2026-10-28T12:22:22.573Z",
+    "lastChecked": "2026-10-28T13:03:42.798Z",
+    "lastVerified": "2026-10-28T13:03:42.798Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -3182,5 +3192,50 @@
     "lastChecked": "2026-10-28T12:57:06.515Z",
     "revisionIdentifier": "338fd687",
     "lastVerified": "2026-10-28T12:57:06.515Z"
+  },
+  "chmln-sd": {
+    "name": "sd",
+    "officialUrl": "https://github.com/chmln/sd",
+    "lastChecked": "2026-10-28T13:03:27.714Z",
+    "revisionIdentifier": "44febdf8",
+    "lastVerified": "2026-10-28T13:03:27.714Z"
+  },
+  "hf-timm-mobilenetv3_small_100.lamb_in1k": {
+    "name": "timm/mobilenetv3_small_100.lamb_in1k",
+    "officialUrl": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T13:03:30.379Z",
+    "lastVerified": "2026-10-28T13:03:30.379Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
+    "contentHash": "d41314434a7dc935e63879a9d3dfbb1165805fc30f0563969a01403ac6ed8983",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "margelo-react-native-mmkv": {
+    "name": "react-native-mmkv",
+    "officialUrl": "https://github.com/margelo/react-native-mmkv",
+    "lastChecked": "2026-10-28T13:03:32.825Z",
+    "revisionIdentifier": "ca5acf0c",
+    "lastVerified": "2026-10-28T13:03:32.825Z"
+  },
+  "krakend-krakend-ce": {
+    "name": "krakend-ce",
+    "officialUrl": "https://github.com/krakend/krakend-ce",
+    "lastChecked": "2026-10-28T13:03:35.230Z",
+    "revisionIdentifier": "0ecf3bf0",
+    "lastVerified": "2026-10-28T13:03:35.230Z"
+  },
+  "pixeltable-pixeltable": {
+    "name": "pixeltable",
+    "officialUrl": "https://github.com/pixeltable/pixeltable",
+    "lastChecked": "2026-10-28T13:03:40.339Z",
+    "revisionIdentifier": "cb995107",
+    "lastVerified": "2026-10-28T13:03:40.339Z"
   }
 }
