@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T12:27:20.755Z",
-    "lastVerified": "2026-10-28T12:27:20.755Z",
+    "lastChecked": "2026-10-28T12:40:01.058Z",
+    "lastVerified": "2026-10-28T12:40:01.058Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -249,9 +249,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-28T12:02:05.133Z",
+    "lastChecked": "2026-10-28T12:36:59.178Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-28T12:02:05.133Z"
+    "lastVerified": "2026-10-28T12:36:59.178Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1623,9 +1623,9 @@
   "tailscale-tailscale": {
     "name": "tailscale",
     "officialUrl": "https://github.com/tailscale/tailscale",
-    "lastChecked": "2026-10-28T05:48:32.946Z",
+    "lastChecked": "2026-10-28T12:36:54.549Z",
     "revisionIdentifier": "3a38840c",
-    "lastVerified": "2026-10-28T05:48:32.946Z"
+    "lastVerified": "2026-10-28T12:36:54.549Z"
   },
   "oramasearch-orama": {
     "name": "orama",
@@ -3037,5 +3037,50 @@
     "lastChecked": "2026-10-28T12:22:20.054Z",
     "revisionIdentifier": "7da1d48a",
     "lastVerified": "2026-10-28T12:22:20.054Z"
+  },
+  "svenstaro-miniserve": {
+    "name": "miniserve",
+    "officialUrl": "https://github.com/svenstaro/miniserve",
+    "lastChecked": "2026-10-28T12:36:44.315Z",
+    "revisionIdentifier": "e698dbd0",
+    "lastVerified": "2026-10-28T12:36:44.315Z"
+  },
+  "hf-google-t5-t5-small": {
+    "name": "google-t5/t5-small",
+    "officialUrl": "https://huggingface.co/google-t5/t5-small",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T12:36:46.818Z",
+    "lastVerified": "2026-10-28T12:36:46.818Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-google-t5-t5-small",
+    "contentHash": "494705963e9f182b0136a8961aaca272cf78660c16424852447fc898a73e9734",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "founded-labs-react-native-reusables": {
+    "name": "react-native-reusables",
+    "officialUrl": "https://github.com/founded-labs/react-native-reusables",
+    "lastChecked": "2026-10-28T12:36:49.182Z",
+    "revisionIdentifier": "385834c2",
+    "lastVerified": "2026-10-28T12:36:49.182Z"
+  },
+  "liftbridge-io-liftbridge": {
+    "name": "liftbridge",
+    "officialUrl": "https://github.com/liftbridge-io/liftbridge",
+    "lastChecked": "2026-10-28T12:36:51.747Z",
+    "revisionIdentifier": "af2a6626",
+    "lastVerified": "2026-10-28T12:36:51.747Z"
+  },
+  "llphant-llphant": {
+    "name": "LLPhant",
+    "officialUrl": "https://github.com/LLPhant/LLPhant",
+    "lastChecked": "2026-10-28T12:36:56.691Z",
+    "revisionIdentifier": "6305ae46",
+    "lastVerified": "2026-10-28T12:36:56.691Z"
   }
 }

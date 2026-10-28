@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T12:27:18.131Z",
+  "last_updated": "2026-10-28T12:39:58.476Z",
   "total_verified_learnings": 1157,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -22439,7 +22439,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google-t5/t5-small",
       "source_version": "hf-google-t5-t5-small",
-      "content_hash": "f4d1a0fc533dc55dd0c71b28c3e42014f40039a4d4040fe1b13e4f90cd967e1e",
+      "content_hash": "494705963e9f182b0136a8961aaca272cf78660c16424852447fc898a73e9734",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md",
       "promoted_rules": [
@@ -22472,6 +22472,16 @@
           "number": 3409,
           "title": "Strict Logarithmic Bucketing Boundary Proof for Relative Attention",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5281,
+          "title": "Dual-Purpose Index Disambiguation for Target Masking and Start Tokens",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5282,
+          "title": "Relative Attention Bucketing Logarithmic Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -22492,7 +22502,7 @@
         "learn-huggingface-hf-google-t5-t5-small-mv498vvv",
         "learn-huggingface-hf-google-t5-t5-small-mv4mm4dm"
       ],
-      "verified_at": "2026-10-25T17:49:07.762Z",
+      "verified_at": "2026-10-28T12:39:58.465Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -143844,6 +143854,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T12:08:58.624Z"
+    },
+    "rule-5281": {
+      "learning_id": "rule-5281",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5281,
+      "title": "Dual-Purpose Index Disambiguation for Target Masking and Start Tokens",
+      "source_url": "https://huggingface.co/google-t5/t5-small",
+      "source_version": "hf-google-t5-t5-small",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T12:39:58.465Z"
+    },
+    "rule-5282": {
+      "learning_id": "rule-5282",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5282,
+      "title": "Relative Attention Bucketing Logarithmic Invariant",
+      "source_url": "https://huggingface.co/google-t5/t5-small",
+      "source_version": "hf-google-t5-t5-small",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T12:39:58.465Z"
     }
   },
   "aliases": {

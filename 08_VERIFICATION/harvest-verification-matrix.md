@@ -5761,3 +5761,4 @@
 | `CYCLE-20261028-MSZT` | `2026-10-28T12:08:58.697Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING, Rule 5279, Rule 5280` | Yes (`379e96a9...`) |
 | `CYCLE-20261028-V7V9` | `2026-10-28T12:15:31.221Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`579902ce...`) |
 | `CYCLE-20261028-ADDU` | `2026-10-28T12:27:18.210Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`d0787f52...`) |
+| `CYCLE-20261028-QO1Q` | `2026-10-28T12:39:58.526Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5281, Rule 5282` | Yes (`49470596...`) |
