@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T12:15:31.230Z",
-  "total_cycles_completed": 5737,
-  "total_learnings_persisted": 5737,
+  "last_updated": "2026-10-28T12:27:18.227Z",
+  "total_cycles_completed": 5738,
+  "total_learnings_persisted": 5738,
   "total_rules_promoted": 5227,
   "history": [
-    {
-      "timestamp": "2026-10-27T21:45:10.284Z",
-      "repository": "pingcap/tidb",
-      "learningId": "learn-github-pingcap-tidb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T21:45:15.383Z",
       "repository": "typedb/typedb",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-28T12:15:31.230Z",
       "repository": "BAAI/bge-m3",
       "learningId": "learn-huggingface-baai-bge-m3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T12:27:18.227Z",
+      "repository": "Qwen/Qwen3-0.6B",
+      "learningId": "learn-huggingface-qwen-qwen3-0-6b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

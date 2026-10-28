@@ -1,46 +1,46 @@
 {
   "domains": {
     "ai-agents": {
-      "queryIndex": 5,
-      "page": 1
+      "queryIndex": 0,
+      "page": 6
     },
     "fullstack-ui": {
-      "queryIndex": 2,
-      "page": 1
+      "queryIndex": 0,
+      "page": 3
     },
     "high-perf-systems": {
-      "queryIndex": 3,
-      "page": 2
+      "queryIndex": 1,
+      "page": 5
     },
     "huggingface-ai-models": {
       "queryIndex": 0,
       "page": 1
     },
     "mobile-cross-platform": {
-      "queryIndex": 0,
+      "queryIndex": 2,
       "page": 3
     },
     "devops-cloud-infrastructure": {
-      "queryIndex": 2,
-      "page": 4
+      "queryIndex": 1,
+      "page": 2
     },
     "cybersecurity-defenses": {
-      "queryIndex": 3,
-      "page": 1
+      "queryIndex": 0,
+      "page": 2
     },
     "database-storage-engines": {
-      "queryIndex": 3,
-      "page": 1
+      "queryIndex": 1,
+      "page": 3
     },
     "cognitive-neuroscience-systems": {
-      "queryIndex": 2,
-      "page": 2
+      "queryIndex": 0,
+      "page": 1
     }
   },
   "huggingFace": {
-    "sortIndex": 0,
+    "sortIndex": 1,
     "page": 1
   },
   "totalAutoDiscovered": 200,
-  "lastReplenishedAt": "2026-10-28T12:15:22.140Z"
+  "lastReplenishedAt": "2026-10-28T12:22:02.228Z"
 }

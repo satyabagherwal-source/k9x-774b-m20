@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-E9YY",
-    "timestamp": "2026-10-27T12:14:40.378Z",
-    "repository": "authzed/spicedb",
-    "learningId": "learn-github-authzed-spicedb",
-    "contentHash": "a111294c47f299622dccacd64b906d6085f23d0eb983956b2b76113af30c8594",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-ED9U",
     "timestamp": "2026-10-27T12:14:44.658Z",
     "repository": "cilium/cilium",
@@ -7490,6 +7475,21 @@
     "repository": "BAAI/bge-m3",
     "learningId": "learn-huggingface-baai-bge-m3",
     "contentHash": "579902ce831bfa94ba0d9c965889a05453c2694cdb396531e2fa696c6b085e47",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-ADDU",
+    "timestamp": "2026-10-28T12:27:18.210Z",
+    "repository": "Qwen/Qwen3-0.6B",
+    "learningId": "learn-huggingface-qwen-qwen3-0-6b",
+    "contentHash": "d0787f52196867e12daa0884732a997e6990e1db0720cab41468f91349427786",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
