@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T16:52:07.818Z",
-    "lastVerified": "2026-10-28T16:52:07.818Z",
+    "lastChecked": "2026-10-28T16:59:01.867Z",
+    "lastVerified": "2026-10-28T16:59:01.867Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -281,9 +281,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-28T16:27:26.448Z",
+    "lastChecked": "2026-10-28T16:58:55.657Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-28T16:27:26.448Z"
+    "lastVerified": "2026-10-28T16:58:55.657Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -466,12 +466,12 @@
     "lastVerified": "2026-10-28T03:24:40.399Z"
   },
   "nolabs-ai-nono": {
-    "name": "nolabs-ai/nono",
+    "name": "nono",
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T13:43:44.013Z",
-    "lastVerified": "2026-10-28T13:43:44.013Z",
+    "lastChecked": "2026-10-28T16:58:50.678Z",
+    "lastVerified": "2026-10-28T16:58:50.678Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
@@ -480,7 +480,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "081a4090"
   },
   "vectifyai-pageindex": {
     "name": "PageIndex",
@@ -5107,6 +5108,61 @@
     "contentHash": "7244fd647d0a43374b011fa131c991e74da390d9ee7ce0ed7252449afba44769",
     "promotedRulesCount": 1,
     "recentFixesCount": 8,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "graykode-abtop": {
+    "name": "abtop",
+    "officialUrl": "https://github.com/graykode/abtop",
+    "lastChecked": "2026-10-28T16:58:40.631Z",
+    "revisionIdentifier": "4b965686",
+    "lastVerified": "2026-10-28T16:58:40.631Z"
+  },
+  "hf-qwen-qwen3-vl-8b-instruct": {
+    "name": "Qwen/Qwen3-VL-8B-Instruct",
+    "officialUrl": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T16:58:43.214Z",
+    "lastVerified": "2026-10-28T16:58:43.214Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
+    "contentHash": "4cfb0c09d6f932745bd1215a18cc0022042f4b7a2e8df2c77aaf50b4c8912236",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "komi-store-komi-store": {
+    "name": "komi-store",
+    "officialUrl": "https://github.com/komi-store/komi-store",
+    "lastChecked": "2026-10-28T16:58:45.803Z",
+    "revisionIdentifier": "19eb7447",
+    "lastVerified": "2026-10-28T16:58:45.803Z"
+  },
+  "pytest-dev-pytest-testinfra": {
+    "name": "pytest-testinfra",
+    "officialUrl": "https://github.com/pytest-dev/pytest-testinfra",
+    "lastChecked": "2026-10-28T16:58:48.200Z",
+    "revisionIdentifier": "04cccc39",
+    "lastVerified": "2026-10-28T16:58:48.200Z"
+  },
+  "greptimeteam-greptimedb": {
+    "name": "GreptimeTeam/greptimedb",
+    "officialUrl": "https://github.com/GreptimeTeam/greptimedb",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T16:58:58.859Z",
+    "lastVerified": "2026-10-28T16:58:58.859Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-greptimeteam-greptimedb",
+    "contentHash": "6817ae15182494880c02477f005f68b790175619547c3381202536afc6fb7396",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

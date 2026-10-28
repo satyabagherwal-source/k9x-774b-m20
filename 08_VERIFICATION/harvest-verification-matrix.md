@@ -5850,3 +5850,5 @@
 | `CYCLE-20261028-I37H` | `2026-10-28T16:45:14.813Z` | `FacebookAI/xlm-roberta-base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md` | Yes (`75d099df...`) |
 | `CYCLE-20261028-QS7Y` | `2026-10-28T16:52:00.478Z` | `openai-community/gpt2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5345, Rule 369, Rule 5346` | Yes (`b00c64df...`) |
 | `CYCLE-20261028-QVWT` | `2026-10-28T16:52:05.261Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5347` | Yes (`7244fd64...`) |
+| `CYCLE-20261028-ZFMN` | `2026-10-28T16:58:44.063Z` | `Qwen/Qwen3-VL-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md` | Yes (`4cfb0c09...`) |
+| `CYCLE-20261028-ZREJ` | `2026-10-28T16:58:59.323Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5348` | Yes (`6817ae15...`) |

@@ -1155,8 +1155,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
     "sourceVersion": "hf-qwen-qwen3-vl-8b-instruct",
     "license": "Open-Source",
-    "contentHash": "fe24084134d320bc63ff45261775c72a5a768ca4490dd1c4b08f3ed225856d17",
-    "lastHarvestedAt": "2026-10-25T23:53:23.071Z",
+    "contentHash": "4cfb0c09d6f932745bd1215a18cc0022042f4b7a2e8df2c77aaf50b4c8912236",
+    "lastHarvestedAt": "2026-10-28T16:58:44.066Z",
     "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct"
   },
   "hf-nomic-ai-nomic-embed-text-v1.5": {
@@ -5373,10 +5373,10 @@
     "repository": "GreptimeTeam/greptimedb",
     "platform": "github",
     "sourceUrl": "https://github.com/GreptimeTeam/greptimedb",
-    "sourceVersion": "62ebf71f",
+    "sourceVersion": "8e167104",
     "license": "Apache-2.0",
-    "contentHash": "5aa699a5dd5d402df457dabfecf54abafb4e0dba067b343f1488cdcf12c17d89",
-    "lastHarvestedAt": "2026-10-28T00:53:43.140Z",
+    "contentHash": "6817ae15182494880c02477f005f68b790175619547c3381202536afc6fb7396",
+    "lastHarvestedAt": "2026-10-28T16:58:59.326Z",
     "learningId": "learn-github-greptimeteam-greptimedb"
   },
   "heroui-inc-heroui-native": {

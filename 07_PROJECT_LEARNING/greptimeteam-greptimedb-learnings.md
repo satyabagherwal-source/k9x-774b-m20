@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source**: github ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
-> **Source Version**: `62ebf71f`  
+> **Source Version**: `8e167104`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T00:53:42.582Z  
+> **Timestamp**: 2026-10-28T16:58:58.864Z  
 > **Learning ID**: `learn-github-greptimeteam-greptimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T00:53:42.397Z  
+> **Harvest Timestamp**: 2026-10-28T16:58:58.859Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open-source observability database. One columnar engine for metrics, logs, and traces, on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6768 stars
+- **Stars / Engagement**: 6769 stars
 
 ---
 
@@ -1651,11 +1651,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10013** (2026-10-27): **fix(query): stop windowed sort on precision-lowering time casts [Backport release/v1.3]**
-  *Symptoms*: Backport of #9524 to release/v1.3.  --- Original PR: #9524 Merged by: @WenyXu
+- **Issue #10040** (2026-10-28): **ci: enqueue eligible pull requests during the nightly window**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  None.  ## What's changed and what's your intention?  Shift automatic merge-queue admission to the nightly window to reduce competition with daytime PR CI. The PR template defaults to a checked nightly-merge option; creating or editing a PR synchronizes the `merge nightly` label, and unchecking removes it.  Run hourly from 02:10 through 08:10 Beijing time (UTC+8), enqueueing at most five eligible PRs per run, oldest first. Only open, non-draft PRs targeting `main` with approval, a clean merge status, and all review threads resolved are eligible. Recheck the current checkbox and labels and supply the expected head SHA when enqueueing. Leave existing queue entries and manually enabled auto-merge untouched so maintainers can use **Merge when ready** earlier.  Add a manual dry-run option, setup documentation, and mocked workflow-script tests wired into the existing GitHub Script Tests job. Before rollout, create the label and verify the existing automation token can enqueue PRs. Conversation-resolution protection is already enabled according to the maintainer. Actual GitHub permissions and runner savings have not been validated.  Validation passed: actionlint for the changed workflows, the existing and new Node test files, and `git diff --check`. The new tests cover checkbox synchronization, eligibility gates, paginated 
 
-- **Issue #10012** (2026-10-27): **perf(mito2): index encoded bulk parts from memory during flush [Backport release/v1.3]**
-  *Symptoms*: Backport of #9913 to release/v1.3.  --- Original PR: #9913 Merged by: @killme2008 
+- **Issue #10034** (2026-10-28): **fix(log-store): accept a retried first create of the conditional create probe**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Follow-up to #9909.  ## What's changed and what's your intention?  **Problem.** The conditional create probe that #9909 added to the object store WAL wrote its first create by hand and failed the open on any error. The object store sits behind a retry layer. When that first create is stored but its response is lost, for example to a timeout, the retry layer repeats it and the repeat finds the object, so the probe reports a failed write and the WAL refuses to open. A restart uses a new key and usually passes, but the startup failure is spurious.  **Fix.** `put_if_absent` already handles this case: when a create fails, it reads the object back and accepts identical content. Its body moves unchanged into a private path-based core, `put_path_if_absent`, which both `put_if_absent` and the probe's first create now call. The probe treats `Created` and `AlreadyPresent` alike for the first create. The second create, which the store must refuse, and the delete are unchanged, so a store that ignores the condition is still refused. `put_if_absent` keeps its behaviour and errors.  **Tests.** A new test wraps the store so that the probe's first create is stored and then reported as `ConditionNotMatch`, as its retry would see it, and asserts that the store opens and only the start object remains. It fails without the fix. The exis
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1672,175 +1672,885 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `44df6e5d` (2026-10-27)
-**Commit Message**: fix(mito2): coordinate range cache invalidation and singleflight reads (#9935)
+### Incident Patch 1: `180e2716` (2026-10-28)
+**Commit Message**: fix(log-store): make raft-engine periodic WAL sync actually fsync (#9715)
 
-* fix(mito2): invalidate retired SST range results and coalesce loads
+* fix(log-store): make raft-engine periodic WAL sync actually fsync
 
-Coordinate decoded range loads by their full scan key, bound shared work, and prevent late fills after SST retirement. Invalidate range results for local purge and object-store GC while preserving old snapshot reads.
+On raft-engine 0.4.2, Engine::sync() writes an empty LogBatch and
+write() returns before fsync (tikv/raft-engine#395). The periodic
+sync task therefore never durable-flushed acknowledged WAL data.
 
-Fixes #9934
+Work around by writing a minimal non-empty marker with sync=true so
+the fsync path is reached until a crates.io release includes
+tikv/raft-engine#400.
 
-Signed-off-by: Lei, HUANG <[REDACTED_EMAIL]>
+Fixes #9712
 
-* fix(mito): preserve SST lifetime across index replacement
+Signed-off-by: Yvan Wang <[REDACTED_EMAIL]>
 
-Share retirement and final purge across immutable index metadata views. Keep version-specific GC references until readers release them and match Parquet liveness by file identity.
+* perf(log-store): reuse LogBatch across periodic WAL syncs
 
-Fixes #9944
+Keep the periodic sync task's LogBatch across ticks instead of
+allocating a fresh one (4 KiB encode buffer plus item vec) every
+period. A successful Engine::write drains the batch but retains its
+buffers; after a failed write or a panicked blocking task the batch is
+discarded and recreated on the next tick, since it may be left
+partially encoded.
 
-Signed-off-by: Lei, HUANG <[REDACTED_EMAIL]>
+Keep the marker put rather than deleting an empty key: the put
+overwrites a single key, whereas every delete would become a recovery
+tombstone that raft-engine keeps in memory while replaying append
+files.
 
-* refactor(mito): list-based SST purge and single FilePurger::remove_file
+Also document that the marker 
 
-The final purge of a retired SST no longer depends on FileMeta: index
-files of every version are discovered by listing
-({region_dir}/index/{file_id}. prefix), so even when the last live view
-is a stale one, the purge still removes all newer index files.
-
-- SstLifetime is slimmed down to { deleted, file_purger }; the purge now
-  runs in the last FileHandleInner::drop (Arc::strong_count == 1, wh
-
-**File**: `src/mito2/src/cache.rs` (modified, +88/-19)
+**File**: `src/log-store/src/raft_engine/log_store.rs` (modified, +118/-4)
 ```diff
-@@ -19,6 +19,7 @@ pub(crate) mod cache_size;
- pub(crate) mod file_cache;
- pub(crate) mod index;
- pub(crate) mod manifest_cache;
-+pub(crate) mod range_cache;
- #[cfg(test)]
- pub(crate) mod test_util;
- pub(crate) mod write_cache;
-@@ -145,6 +146,40 @@ impl RangeResultMemoryLimiter {
-         self.semaphore.available_permits()
+@@ -82,17 +82,60 @@ impl TaskFunction<Error> for PurgeExpiredFilesFunction {
+     }
+ }
+ 
++/// Key used by the periodic WAL sync task. Overwritten each period so the
++/// write stays non-empty on raft-engine 0.4.2 (see [`durable_sync`]).
++const PERIODIC_SYNC_MARKER_KEY: &[u8] = b"$wal_periodic_sync";
++
++/// Force an fsync of previously appended WAL data on raft-engine 0.4.2.
++///
++/// `Engine::sync()` writes an empty [`LogBatch`] with `sync = true`, but
++/// 0.4.2's `Engine::write` returns early for empty batches *before* the
++/// fsync (tikv/raft-engine#395). Upstream fixed this in tikv/raft-engine#400,
++/// which is not on crates.io yet. Issuing a minimal non-empty put with
++/// `sync = true` reaches the fsync path on 0.4.2.
++///
++/// `batch` must be empty and can be reused across calls: a successful
++/// `Engine::write` drains its items but keeps its encoding buffer. On error the
++/// batch may be left partially encoded, so callers must discard it.
++fn durable_sync(engine: &Engine, batch: &mut LogBatch) -> raft_engine::Result<usize> {
++    debug_assert!(batch.is_empty());
++    // The value is unused, but it must not decode as a `NamespaceImpl`: the
++    // marker key sorts after `NAMESPACE_PREFIX`, inside the range scanned by
++    // `list_namespaces`. Overwriting the same key keeps the marker bounded.
++    batch.put(SYSTEM_NAMESPACE, PERIODIC_SYNC_MARKER_KEY.to_vec(), vec![0])?;
++    engine.write(batch, true)
++}
++
+ pub struct SyncWalTaskFunction {
+     engine: Arc<Engine>,
++    /// Batch reused across ticks to avoid allocating a new one each period.
++    /// `None` after a failed sync; a fresh batch is created on the next tick.
++    batch: Option<LogBatch>,
+ }
+ 
+ #[async_trait::async_trait]
+ impl TaskFunction<Error> for SyncWalTaskFunction {
+     async fn call(&mut self) -> std::result::Result<(), Error> {
+         let engine = self.engine.clone();
+-        if let Err(e) = tokio::task::spawn_blocking(move || engine.sync()).await {
+-            error!(e; "Failed to sync raft engine log files");
+-        };
++        let mut batch = self
++            .batch
++            .take()
++            .unwrap_or_else(|| LogBatch::with_capacity(1));
++        match tokio::task::spawn_blocking(move || {
++            let res = durable_sync(&engine, &mut batch);
++            (res, batch)
++        })
++        .await
++        {
++            Ok((Ok(_), batch)) => self.batch = Some(batch),
++            // The batch may be partially encoded after a failed write; drop it.
++            Ok((Err(e), _)) => {
++                error!(e; "Failed to sync raft engine log files");
++            }
++            Err(e) => {
++                error!(e; "Failed to sync raft engine log files");
++            }
++        }
+         Ok(())
      }
  
-+    /// Never wait while holding a partial load: several partial loads could
-+    /// otherwise exhaust the budget and wait on each other indefinitely.
-+    pub(crate) fn try_acquire(&self, bytes: usize) -> Option<tokio::sync::OwnedSemaphorePermit> {
-+        let permits = bytes.div_ceil(self.permit_bytes).max(1);
-+        if permits > self.total_permits {
-+            return None;
+@@ -103,7 +146,10 @@ impl TaskFunction<Error> for SyncWalTaskFunction {
+ 
+ impl SyncWalTaskFunction {
+     pub fn new(engine: Arc<Engine>) -> Self {
+-        Self { engine }
++        Self {
++            engine,
++            batch: None,
 +        }
-+        self.semaphore
-+            .clone()
-+            .try_acquire_many_owned(permits.try_into().ok()?)
-+            .ok()
-+    }
-+
-+    /// Transfers a load's reservation to its completed result without a gap in
-+    /// accounting. Compaction may shrink buffers or add metadata; growing the
-+    /// reservation must remain nonblocking just like loading more input.
-+    pub(crate) fn try_resize(
-+        &self,
-+        permit: Option<tokio::sync::OwnedSemaphorePermit>,
-+        bytes: usize,
-+    ) -> Option<tokio::sync::OwnedSemaphorePermit> {
-+        let Some(mut permit) = permit else {
-+            return self.try_acquire(bytes);
+     }
+ }
+ 
+@@ -555,6 +601,74 @@ mod tests {
+         assert_eq!(0, namespaces.len());
+     }
+ 
++    /// Regression for #9712: periodic sync must write a non-empty batch so
++    /// raft-engine 0.4.2 actually fsyncs (empty `Engine::sync()` is a no-op).
++    #[tokio::test]
++    async fn test_durable_sync_writes_non_empty_batch() {
++        let dir = create_temp_dir("raft-engine-durable-sync-test");
++        let cfg = Config {
++            dir: dir.path().to_str().unwrap().to_string(),
++            recovery_mode: RecoveryMode::TolerateTailCorruption,
++            ..Default::default()
 +        };
-+        let required = bytes.div_ceil(self.permit_bytes).max(1);
-+        let reserved = permit.num_permits();
-+        if required > reserved {
-+            permit.merge(self.try_acquire((required - reserved).checked_mul(self.permit_bytes)?)?);
-+        } else {
-+            drop(permit.split(reserved - required));
-+        }
-+        Some(permit)
++        let engine = Engine::open(cfg).unwrap();
++
++        // Control: empty sync leaves no marker and returns Ok without fsync
++        // on 0.4.2 (we cannot count fsyncs here, but we can show the empty
++        // path writes nothing).
++        engine.sync().unwrap();
++        assert!(
++            engine
++                .get(SYSTEM_NAMESPACE, PERIODIC_SYNC_MARKER_KEY)
++                .is_none(),
++            "Engine::sync must not create the periodic sync marker"
++        );
++
++        let mut batch = LogBatch::with_capacity(1);
++        let written = durable_sync(&engine, &mut batch).unwrap();
++        assert!(written > 0, "durable_sync must write a non-empty batch");
++        assert!(batch.is_empty(), "a successful write drains the batch");
++        assert_eq!(
++            engine
++                .get(SYSTEM_NAMESPACE, PERIODIC_SYNC_MARKER_KEY)
++                .as_deref(),
++            Some(&[0][..]),
++            "durable_sync must persist the periodic sync marker"
++        );
++
++        // Reusing the drained batch overwrites the same key and still writes.
++        let written_again = durable_sync(&engine, &mut batch).unwrap();
++        assert!(written_again > 0);
++        assert!(batch.is_empty());
 +    }
 +
-     pub(crate) async fn acquire(&self, bytes: usize) -> Result<tokio::sync::SemaphorePermit<'_>> {
-         let permits = bytes.div_ceil(self.permit_bytes).max(1);
-         if permits > self.total_permits {
-@@ -898,6 +933,7 @@ impl CacheStrategy {
- 
-     /// Calls [CacheManager::get_range_result()].
-     /// It returns None if the strategy is [CacheStrategy::Compaction] or [CacheStrategy::Disabled].
-+    #[cfg(test)]
-     pub(crate) fn get_range_result(
-         &self,
-         key: &RangeScanCacheKey,
-@@ -910,6 +946,7 @@ impl CacheStrategy {
- 
-     /// Calls [CacheManager::put_range_result()].
-     /// It does nothing if the strategy isn't [CacheStrategy::EnableAll].
-+    #[cfg(any(test, feature = "test"))]
-     pub(crate) fn put_range_result(
-         &self,
-         key: RangeScanCacheKey,
-@@ -920,6 +957,13 @@ impl CacheStrategy {
-         }
-     }
- 
-+    pub(crate) fn range_cache_worker(&self) -> Option<&Arc<range_cache::RangeCacheWorker>> {
-+        match self {
-+            Self::EnableAll(manager) => manager.range_result_cache.as_ref(),
-+            Self::Compaction(_) | Self::Disabled => None,
-+        }
-+    }
-+
-     /// Returns true if the range result cache is enabled.
-     pub(crate) fn has_range_result_cache(&self) -> bool {
-         match self {
-@@ -1389,7 +1433,15 @@ impl CacheManager {
-         }
-     }
- 
-+    /// Retires decoded range results when an SST leaves the current version.
-+    pub(crate) fn invalidate_range_results(&self, file_id: FileId) {
-+        if let Some(worker) = &self.range_result_cache {
-+            worker.invalidate_file(file_id);
-+        }
-+    }
-+
-     /// Gets cached result for range scan.
-+    #[cfg(test)]
-     pub(crate) fn get_range_result(
-         &self,
-         key: &RangeScanCacheKey,
-@@ -1400,15 +1452,13 @@ impl CacheManager {
-     }
- 
-     /// Puts range scan result into cache.
-+    #[cfg(any(test, feature = "test"))]
-     pub(crate) fn put_range_result(
-         &self,
-         key: RangeScanCacheKey,
-         result: Arc<RangeScanCacheValue>,
-     ) {
-         if let Some(cache) = &self.range_result_cache {
--            CACHE_BYTES
--                .with_label_values(&[RANGE_RESULT_TYPE])
--                .add(range_result_cache_weight(&key, &result).into());
-             cache.insert(key, result);
-         }
-     }
-@@ -1649,21 +1699,8 @@ impl CacheManagerBuilder {
-                 })
-                 .build()
-         });
--        let range_result_cache = (self.range_result_cache_size != 0).then(|| {
--            Cache::builder()
--                .max_capacity(self.range_result_cache_size)
--                .weigher(range_result_cache_weight)
--                .eviction_listener(move |k, v, cause| {
--                    let size = range_result_cache_weight(&k, &v);
--                    CACHE_BYTES
--                        .with_label_values(&[RANGE_RESULT_TYPE])
--                        .sub(size.into());
--                    CACHE_EVICTION
--                        .with_label_values(&[RANGE_RESULT_TYPE, removal_cause_str(cause)])
--                        .inc();
--                })
--                .build()
--        });
-+        let range_result_cache = (self.range_result_cache_size != 0)
-+            .then(|| range_cache::RangeCacheWo
++    #[tokio::test]
++    async fn test_sync_wal_task_reuses_batch_and_keeps_namespaces() {
++        let dir = create_temp_dir("raft-engine-sync-wal-task-
 ```
 
-**File**: `src/mito2/src/cache/range_cache.rs` (added, +733/-0)
+---
+
+### Incident Patch 2: `4135e65a` (2026-10-28)
+**Commit Message**: fix(query): keep requested sort when filtering on a lossy cast (#10026)
+
+fix(query): pin DataFusion cast constraint propagation fix
+
+Update the pinned GreptimeTeam/datafusion revision from e3221b8 to
+cc55344 (the 55.1 fork carrying apache/datafusion#25531 plus a stronger
+regression test).
+
+CastExpr::propagate_constraints used to cast a filter's output interval
+straight back to the input type. For CAST(k AS BIGINT) = 1 the singleton
+output [1, 1] was inverted to [1.0, 1.0] although k = 1.5 matches too, so
+FilterExec advertised k as constant, the equivalence classes dropped the
+ordering required by ORDER BY k, and rows returned in scan order.
+
+The sqlness case keeps every #9600 assertion and the explicit ORDER BY,
+and adds ascending and descending checks for the partitioned table, the
+control table and a table whose matching rows are stored in neither
+ascending nor descending k order.
+
+Cargo.lock only rewrites the 35 datafusion source lines.
+
+Signed-off-by: discord9 <[REDACTED_EMAIL]>
+
+**File**: `Cargo.lock` (modified, +35/-35)
 ```diff
-@@ -0,0 +1,733 @@
+@@ -3756,7 +3756,7 @@ checksum = "a4ae5f15dda3c708c0ade84bfee31ccab44a3da4f88015ed22f63732abe300c8"
+ [[package]]
+ name = "datafusion"
+ version = "55.1.0"
+-source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=e3221b8f74b15c7192621576e5d1e354a6cf097a#e3221b8f74b15c7192621576e5d1e354a6cf097a"
++source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=cc5534492d5408831395609cdafb6520c7d514b7#cc5534492d5408831395609cdafb6520c7d514b7"
+ dependencies = [
+  "arrow 59.2.0",
+  "arrow-schema 59.2.0",
+@@ -3808,7 +3808,7 @@ dependencies = [
+ [[package]]
+ name = "datafusion-catalog"
+ version = "55.1.0"
+-source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=e3221b8f74b15c7192621576e5d1e354a6cf097a#e3221b8f74b15c7192621576e5d1e354a6cf097a"
++source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=cc5534492d5408831395609cdafb6520c7d514b7#cc5534492d5408831395609cdafb6520c7d514b7"
+ dependencies = [
+  "arrow 59.2.0",
+  "async-trait",
+@@ -3832,7 +3832,7 @@ dependencies = [
+ [[package]]
+ name = "datafusion-catalog-listing"
+ version = "55.1.0"
+-source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=e3221b8f74b15c7192621576e5d1e354a6cf097a#e3221b8f74b15c7192621576e5d1e354a6cf097a"
++source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=cc5534492d5408831395609cdafb6520c7d514b7#cc5534492d5408831395609cdafb6520c7d514b7"
+ dependencies = [
+  "arrow 59.2.0",
+  "async-trait",
+@@ -3855,7 +3855,7 @@ dependencies = [
+ [[package]]
+ name = "datafusion-common"
+ version = "55.1.0"
+-source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=e3221b8f74b15c7192621576e5d1e354a6cf097a#e3221b8f74b15c7192621576e5d1e354a6cf097a"
++source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=cc5534492d5408831395609cdafb6520c7d514b7#cc5534492d5408831395609cdafb6520c7d514b7"
+ dependencies = [
+  "arrow 59.2.0",
+  "arrow-ipc 59.2.0",
+@@ -3881,7 +3881,7 @@ dependencies = [
+ [[package]]
+ name = "datafusion-common-runtime"
+ version = "55.1.0"
+-source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=e3221b8f74b15c7192621576e5d1e354a6cf097a#e3221b8f74b15c7192621576e5d1e354a6cf097a"
++source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=cc5534492d5408831395609cdafb6520c7d514b7#cc5534492d5408831395609cdafb6520c7d514b7"
+ dependencies = [
+  "futures",
+  "log",
+@@ -3891,7 +3891,7 @@ dependencies = [
+ [[package]]
+ name = "datafusion-datasource"
+ version = "55.1.0"
+-source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=e3221b8f74b15c7192621576e5d1e354a6cf097a#e3221b8f74b15c7192621576e5d1e354a6cf097a"
++source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=cc5534492d5408831395609cdafb6520c7d514b7#cc5534492d5408831395609cdafb6520c7d514b7"
+ dependencies = [
+  "arrow 59.2.0",
+  "async-compression",
+@@ -3927,7 +3927,7 @@ dependencies = [
+ [[package]]
+ name = "datafusion-datasource-arrow"
+ version = "55.1.0"
+-source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=e3221b8f74b15c7192621576e5d1e354a6cf097a#e3221b8f74b15c7192621576e5d1e354a6cf097a"
++source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=cc5534492d5408831395609cdafb6520c7d514b7#cc5534492d5408831395609cdafb6520c7d514b7"
+ dependencies = [
+  "arrow 59.2.0",
+  "arrow-ipc 59.2.0",
+@@ -3951,7 +3951,7 @@ dependencies = [
+ [[package]]
+ name = "datafusion-datasource-csv"
+ version = "55.1.0"
+-source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=e3221b8f74b15c7192621576e5d1e354a6cf097a#e3221b8f74b15c7192621576e5d1e354a6cf097a"
++source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=cc5534492d5408831395609cdafb6520c7d514b7#cc5534492d5408831395609cdafb6520c7d514b7"
+ dependencies = [
+  "arrow 59.2.0",
+  "async-trait",
+@@ -3974,7 +3974,7 @@ dependencies = [
+ [[package]]
+ name = "datafusion-datasource-json"
+ version = "55.1.0"
+-source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=e3221b8f74b15c7192621576e5d1e354a6cf097a#e3221b8f74b15c7192621576e5d1e354a6cf097a"
++source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=cc5534492d5408831395609cdafb6520c7d514b7#cc5534492d5408831395609cdafb6520c7d514b7"
+ dependencies = [
+  "arrow 59.2.0",
+  "async-trait",
+@@ -3997,7 +3997,7 @@ dependencies = [
+ [[package]]
+ name = "datafusion-datasource-parquet"
+ version = "55.1.0"
+-source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=e3221b8f74b15c7192621576e5d1e354a6cf097a#e3221b8f74b15c7192621576e5d1e354a6cf097a"
++source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=cc5534492d5408831395609cdafb6520c7d514b7#cc5534492d5408831395609cdafb6520c7d514b7"
+ dependencies = [
+  "arrow 59.2.0",
+  "arrow-schema 59.2.0",
+@@ -4029,12 +4029,12 @@ dependencies = [
+ [[package]]
+ name = "datafusion-doc"
+ version = "55.1.0"
+-source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=e3221b8f74b15c7192621576e5d1e354a6cf097a#e3221b8f74b15c7192621576e5d1e354a6cf097a"
++source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=cc5534492d5408831395609cdafb6520c7d514b7#c
+```
+
+**File**: `Cargo.toml` (modified, +16/-16)
+```diff
+@@ -367,22 +367,22 @@ rev = "f743c3a5fe8c1f57363eac5866c356b7d91f9b39"
+ 
+ [patch.crates-io]
+ substrait = { git = "https://github.com/GreptimeTeam/substrait-rs.git", rev = "91ec978b0649417ad3da8390e7a515baec723b1b" }
+-datafusion = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
+-datafusion-common = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
+-datafusion-datasource = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
+-datafusion-execution = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
+-datafusion-expr = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
+-datafusion-expr-common = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
+-datafusion-functions = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
+-datafusion-functions-aggregate-common = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
+-datafusion-functions-window-common = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
+-datafusion-optimizer = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
+-datafusion-physical-expr = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
+-datafusion-physical-expr-common = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
+-datafusion-physical-plan = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
+-datafusion-proto = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
+-datafusion-sql = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
+-datafusion-substrait = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
++datafusion = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
++datafusion-common = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
++datafusion-datasource = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
++datafusion-execution = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
++datafusion-expr = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
++datafusion-expr-common = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
++datafusion-functions = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
++datafusion-functions-aggregate-common = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
++datafusion-functions-window-common = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
++datafusion-optimizer = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
++datafusion-physical-expr = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
++datafusion-physical-expr-common = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
++datafusion-physical-plan = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
++datafusion-proto = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
++datafusion-sql = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
++datafusion-substrait = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
+ datafusion-pg-catalog = { git = "https://github.com/datafusion-contrib/datafusion-postgres.git", rev = "3ae0a6cb30b1c5131687f4637247ff4f84ac11e4" }
+ arrow-pg = { git = "https://github.com/datafusion-contrib/datafusion-postgres.git", rev = "3ae0a6cb30b1c5131687f4637247ff4f84ac11e4" }
+ sqlparser = { git = "https://github.com/GreptimeTeam/sqlparser-rs.git", rev = "9e9019bb1c7040ed956f654e39378dd42ab17884" }
+```
+
+**File**: `tests/cases/distributed/optimizer/partition_pruning_cast.result` (modified, +74/-0)
+```diff
+@@ -97,6 +97,80 @@ ORDER BY k;
+ | 1970-01-01T00:00:01 | 1.5 | 15 | 1      |
+ +---------------------+-----+----+--------+
+ 
++-- The same rows must also come back in descending order: a filter on a lossy
++-- cast must not turn `k` into a constant and drop the requested sort.
++SELECT ts, k, v, CAST(k AS BIGINT) AS cast_k
++FROM partition_pruning_cast_partitioned
++WHERE CAST(k AS BIGINT) = 1
++ORDER BY k DESC;
++
+++---------------------+-----+----+--------+
++| ts                  | k   | v  | cast_k |
+++---------------------+-----+----+--------+
++| 1970-01-01T00:00:01 | 1.5 | 15 | 1      |
++| 1970-01-01T00:00:01 | 1.0 | 10 | 1      |
+++---------------------+-----+----+--------+
++
++SELECT ts, k, v, CAST(k AS BIGINT) AS cast_k
++FROM partition_pruning_cast_control
++WHERE CAST(k AS BIGINT) = 1
++ORDER BY k DESC;
++
+++---------------------+-----+----+--------+
++| ts                  | k   | v  | cast_k |
+++---------------------+-----+----+--------+
++| 1970-01-01T00:00:01 | 1.5 | 15 | 1      |
++| 1970-01-01T00:00:01 | 1.0 | 10 | 1      |
+++---------------------+-----+----+--------+
++
++-- A table whose matching rows are stored in neither ascending nor descending
++-- order, so a dropped sort cannot accidentally satisfy the ASC assertion.
++CREATE TABLE partition_pruning_cast_unsorted (
++    ts TIMESTAMP TIME INDEX,
++    k FLOAT PRIMARY KEY,
++    v BIGINT,
++);
++
++Affected Rows: 0
++
++INSERT INTO partition_pruning_cast_unsorted VALUES
++    (1000, 1.5, 15),
++    (1000, 2.5, 25),
++    (1000, 1.0, 10),
++    (1000, 1.25, 12);
++
++Affected Rows: 4
++
++SELECT ts, k, v, CAST(k AS BIGINT) AS cast_k
++FROM partition_pruning_cast_unsorted
++WHERE CAST(k AS BIGINT) = 1
++ORDER BY k;
++
+++---------------------+------+----+--------+
++| ts                  | k    | v  | cast_k |
+++---------------------+------+----+--------+
++| 1970-01-01T00:00:01 | 1.0  | 10 | 1      |
++| 1970-01-01T00:00:01 | 1.25 | 12 | 1      |
++| 1970-01-01T00:00:01 | 1.5  | 15 | 1      |
+++---------------------+------+----+--------+
++
++SELECT ts, k, v, CAST(k AS BIGINT) AS cast_k
++FROM partition_pruning_cast_unsorted
++WHERE CAST(k AS BIGINT) = 1
++ORDER BY k DESC;
++
+++---------------------+------+----+--------+
++| ts                  | k    | v  | cast_k |
+++---------------------+------+----+--------+
++| 1970-01-01T00:00:01 | 1.5  | 15 | 1      |
++| 1970-01-01T00:00:01 | 1.25 | 12 | 1      |
++| 1970-01-01T00:00:01 | 1.0  | 10 | 1      |
+++---------------------+------+----+--------+
++
++DROP TABLE partition_pruning_cast_unsorted;
++
++Affected Rows: 0
++
+ -- SQLNESS REPLACE (-+) -
+ -- SQLNESS REPLACE (\s\s+) _
+ -- SQLNESS REPLACE (elapsed_compute.*) REDACTED
+```
+
+**File**: `tests/cases/distributed/optimizer/partition_pruning_cast.sql` (modified, +36/-0)
+```diff
+@@ -43,6 +43,42 @@ FROM partition_pruning_cast_control
+ WHERE CAST(k AS BIGINT) = 1
+ ORDER BY k;
+ 
++-- The same rows must also come back in descending order: a filter on a lossy
++-- cast must not turn `k` into a constant and drop the requested sort.
++SELECT ts, k, v, CAST(k AS BIGINT) AS cast_k
++FROM partition_pruning_cast_partitioned
++WHERE CAST(k AS BIGINT) = 1
++ORDER BY k DESC;
++SELECT ts, k, v, CAST(k AS BIGINT) AS cast_k
++FROM partition_pruning_cast_control
++WHERE CAST(k AS BIGINT) = 1
++ORDER BY k DESC;
++
++-- A table whose matching rows are stored in neither ascending nor descending
++-- order, so a dropped sort cannot accidentally satisfy the ASC assertion.
++CREATE TABLE partition_pruning_cast_unsorted (
++    ts TIMESTAMP TIME INDEX,
++    k FLOAT PRIMARY KEY,
++    v BIGINT,
++);
++
++INSERT INTO partition_pruning_cast_unsorted VALUES
++    (1000, 1.5, 15),
++    (1000, 2.5, 25),
++    (1000, 1.0, 10),
++    (1000, 1.25, 12);
++
++SELECT ts, k, v, CAST(k AS BIGINT) AS cast_k
++FROM partition_pruning_cast_unsorted
++WHERE CAST(k AS BIGINT) = 1
++ORDER BY k;
++SELECT ts, k, v, CAST(k AS BIGINT) AS cast_k
++FROM partition_pruning_cast_unsorted
++WHERE CAST(k AS BIGINT) = 1
++ORDER BY k DESC;
++
++DROP TABLE partition_pruning_cast_unsorted;
++
+ -- SQLNESS REPLACE (-+) -
+ -- SQLNESS REPLACE (\s\s+) _
+ -- SQLNESS REPLACE (elapsed_compute.*) REDACTED
+```
+
+---
+
+### Incident Patch 3: `c818b6ac` (2026-10-28)
+**Commit Message**: feat(postgres): influxdb line protocol ingest via COPY FROM STDIN (#9982)
+
+* feat(postgres): influxdb line protocol ingest via COPY FROM STDIN
+
+COPY FROM STDIN WITH (FORMAT influxdb [, precision 'ns']) ingests
+InfluxDB line protocol over the postgres wire protocol, reusing the
+HTTP ingestion pipeline wholesale for correctness and performance
+parity: the whole payload is buffered and completed once at CopyDone
+through the frontend's InfluxdbLineProtocolHandler::exec — conversion,
+permissions, line-protocol interceptors, timestamp alignment to table
+time-index units, merge mode and inserts are the same path an HTTP
+write of the same bytes takes, under the connection's regular postgres
+query context.
+
+Formats are an explicit, closed enum (CopyFormat::Csv |
+CopyFormat::Influxdb(options)); each variant states its own rules in
+the copy lifecycle's match arms — csv requires a target table and
+parses incrementally, influxdb forbids one (each line names its own
+measurement) and buffers one bounded request body. The COPY layer owns
+only the buffering: record boundaries, including newlines inside quoted
+field values and after escapes, belong to the line-protocol parser
+alone — one COPY statem
+
+**File**: `src/frontend/src/server.rs` (modified, +1/-0)
+```diff
+@@ -429,6 +429,7 @@ where
+                     user_provider.clone(),
+                     Some(self.instance.process_manager().clone()),
+                 )
++                .with_influxdb_handler(instance.clone())
+                 .with_batching_enabled(postgres_batching),
+             ) as Box<dyn Server>;
+ 
+```
+
+**File**: `src/servers/src/http/influxdb.rs` (modified, +3/-20)
+```diff
+@@ -24,7 +24,7 @@ use common_grpc::precision::Precision;
+ use common_telemetry::tracing;
+ use session::context::{Channel, QueryContext, QueryContextRef};
+ 
+-use crate::error::{Result, TimePrecisionSnafu};
++use crate::error::Result;
+ use crate::http::header::write_cost_header_map;
+ use crate::influxdb::InfluxdbRequest;
+ use crate::query_handler::InfluxdbLineProtocolHandlerRef;
+@@ -107,30 +107,13 @@ pub async fn influxdb_write(
+     ))
+ }
+ 
+-fn parse_time_precision(value: &str) -> Result<Precision> {
+-    // Precision conversion needs to be compatible with influxdb v1 v2 api.
+-    // For details, see the Influxdb documents.
+-    // https://docs.influxdata.com/influxdb/v1.8/tools/api/#apiv2write-http-endpoint
+-    // https://docs.influxdata.com/influxdb/v1.8/tools/api/#write-http-endpoint
+-    match value {
+-        "n" | "ns" => Ok(Precision::Nanosecond),
+-        "u" | "us" => Ok(Precision::Microsecond),
+-        "ms" => Ok(Precision::Millisecond),
+-        "s" => Ok(Precision::Second),
+-        "m" => Ok(Precision::Minute),
+-        "h" => Ok(Precision::Hour),
+-        unknown => TimePrecisionSnafu {
+-            name: unknown.to_string(),
+-        }
+-        .fail(),
+-    }
+-}
++pub(crate) use crate::influxdb::parse_time_precision;
+ 
+ #[cfg(test)]
+ mod tests {
+     use common_grpc::precision::Precision;
+ 
+-    use crate::http::influxdb::parse_time_precision;
++    use super::parse_time_precision;
+ 
+     #[test]
+     fn test_parse_time_precision() {
+```
+
+**File**: `src/servers/src/influxdb.rs` (modified, +22/-1)
+```diff
+@@ -20,7 +20,7 @@ use hyper::Request;
+ use influxdb_line_protocol::{FieldValue, parse_lines};
+ use snafu::ResultExt;
+ 
+-use crate::error::{Error, InfluxdbLineProtocolSnafu};
++use crate::error::{Error, InfluxdbLineProtocolSnafu, TimePrecisionSnafu};
+ use crate::row_writer::{self, MultiTableData};
+ 
+ const INFLUXDB_API_PATH_NAME: &str = "influxdb";
+@@ -113,6 +113,27 @@ fn unwrap_or_default_precision(precision: Option<Precision>) -> Precision {
+     }
+ }
+ 
++/// Parses an InfluxDB time-precision name shared by the HTTP write
++/// endpoints (v1/v2) and the `precision` option of COPY FROM STDIN.
++pub(crate) fn parse_time_precision(value: &str) -> crate::error::Result<Precision> {
++    // Precision conversion needs to be compatible with influxdb v1 v2 api.
++    // For details, see the Influxdb documents.
++    // https://docs.influxdata.com/influxdb/v1.8/tools/api/#apiv2write-http-endpoint
++    // https://docs.influxdata.com/influxdb/v1.8/tools/api/#write-http-endpoint
++    match value {
++        "n" | "ns" => Ok(Precision::Nanosecond),
++        "u" | "us" => Ok(Precision::Microsecond),
++        "ms" => Ok(Precision::Millisecond),
++        "s" => Ok(Precision::Second),
++        "m" => Ok(Precision::Minute),
++        "h" => Ok(Precision::Hour),
++        unknown => TimePrecisionSnafu {
++            name: unknown.to_string(),
++        }
++        .fail(),
++    }
++}
++
+ #[cfg(test)]
+ mod tests {
+     use api::v1::value::ValueData;
+```
+
+**File**: `src/servers/src/postgres.rs` (modified, +9/-1)
+```diff
+@@ -43,8 +43,8 @@ use session::context::Channel;
+ 
+ use self::auth_handler::{PgUserProviderSource, ZeroPidSecretKeyGenerator};
+ use self::handler::DefaultQueryParser;
+-use crate::query_handler::CopyInHandlerRef;
+ use crate::query_handler::sql::ServerSqlQueryHandlerRef;
++use crate::query_handler::{CopyInHandlerRef, InfluxdbLineProtocolHandlerRef};
+ 
+ pub(crate) struct GreptimeDBStartupParameters {
+     version: String,
+@@ -81,6 +81,11 @@ pub struct PostgresServerHandlerInner {
+     query_handler: ServerSqlQueryHandlerRef,
+     auth_source: Option<Arc<PgUserProviderSource>>,
+     copy_in_handler: CopyInHandlerRef,
++    /// Executes influxdb line-protocol batches flushed by a table-less
++    /// COPY FROM STDIN — the same handler the HTTP write endpoints use.
++    /// Absent on servers not wired for it; such connections reject the
++    /// influxdb format when a copy starts.
++    influxdb_handler: Option<InfluxdbLineProtocolHandlerRef>,
+     force_tls: bool,
+     auth_driver: AuthDriver<Arc<GreptimeDBStartupParameters>, UserInfoRef>,
+     /// SCRAM selected; failures get the uniform metric label.
+@@ -99,6 +104,8 @@ pub struct PostgresServerHandlerInner {
+ pub(crate) struct MakePostgresServerHandler {
+     query_handler: ServerSqlQueryHandlerRef,
+     copy_in_handler: CopyInHandlerRef,
++    #[builder(default)]
++    influxdb_handler: Option<InfluxdbLineProtocolHandlerRef>,
+     user_provider: Option<UserProviderRef>,
+     #[builder(default = "Arc::new(GreptimeDBStartupParameters::new())")]
+     param_provider: Arc<GreptimeDBStartupParameters>,
+@@ -149,6 +156,7 @@ impl MakePostgresServerHandler {
+                 .clone()
+                 .map(|p| Arc::new(PgUserProviderSource::new(p))),
+             copy_in_handler: self.copy_in_handler.clone(),
++            influxdb_handler: self.influxdb_handler.clone(),
+             force_tls: self.force_tls,
+             auth_driver: AuthDriver::new(self.param_provider.clone())
+                 .with_pid_secret_key_generator(Arc::new(ZeroPidSecretKeyGenerator)),
+```
+
+**File**: `src/servers/src/postgres/copy_in/codec.rs` (modified, +46/-72)
+```diff
+@@ -12,58 +12,63 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-//! The COPY FROM STDIN codec framework.
++//! The COPY FROM STDIN formats.
+ //!
+-//! A *codec* binds one COPY data format to its implementation. Codecs are
+-//! stateless strategies: they validate the options they accept at
+-//! statement-parse time, describe which column types they can ingest, and
+-//! create the stateful [`RecordParser`] per stream.
+-//!
+-//! Formats are not limited to PostgreSQL's own — GreptimeDB-specific
+-//! formats (a line protocol, a JSON-lines dialect, ...) register exactly
+-//! like `csv` does, and may define their own options through the open
+-//! `WITH (...)` clause.
++//! [`CopyFormat`] is the closed, explicit set of supported formats — a
++//! small enum over the real implementations rather than a generic
++//! format framework. Each variant carries its validated options and
++//! its rules are stated where they apply: a variant's match arms in
++//! the copy lifecycle (see the parent module) decide whether a target
++//! table is required, how the `CopyData` bytes are consumed, and which
++//! existing ingestion pipeline completes the copy. Adding a format is
++//! a normal extension: a new variant plus its arms.
+ //!
+ //! # Parsing and conversion
+ //!
+-//! A [`RecordParser`] consumes raw `CopyData` bytes and emits complete,
+-//! insertable rows: one [`ParsedRow`] per record, in the order of the
+-//! targeted columns. Parsers validate record shape (field counts) and
+-//! convert field values themselves — `csv` delegates both splitting and
+-//! typed conversion to arrow-csv's incremental decoder (the engine
+-//! behind `COPY ... FROM 'file.csv'`) and turns decoded batches into
+-//! rows with the shared `api::helper::vectors_to_rows`. A future format
+-//! that carries values as text (e.g. a line protocol) would reintroduce
+-//! shared field-conversion helpers here; see the removed `text` codec in
+-//! git history for the shape they had.
++//! Table-bound formats parse incrementally through a [`RecordParser`]:
++//! it consumes raw `CopyData` bytes and emits complete, insertable
++//! rows — one [`ParsedRow`] per record, in the order of the targeted
++//! columns. `csv` delegates splitting and typed conversion to
++//! arrow-csv's incremental decoder (the engine behind
++//! `COPY ... FROM 'file.csv'`) and turns decoded batches into rows
++//! with the shared `api::helper::vectors_to_rows`.
++//!
++//! Formats that delegate to an existing ingestion pipeline (the
++//! influxdb line protocol) do not parse here at all: the whole payload
++//! is buffered as one bounded request body and completed through that
++//! pipeline, so record boundaries and values stay with the pipeline's
++//! own parser.
+ //!
+ //! # Options
+ //!
+ //! The `WITH (...)` clause is open: every `KEY value` entry the client
+-//! writes is collected into a [`CopyOptionSet`] (see `options`) regardless
+-//! of whether any format understands it — the statement is parsed
+-//! textually (see `parse`) precisely so options beyond sqlparser's COPY
+-//! grammar can reach the codecs. A codec builder takes the options it
+-//! understands (`take_string`, `take_single_byte`, `take_flag`, or raw
+-//! `take_value` for codec-specific shapes) and rejects the rest with
+-//! `reject_leftovers`, so a future format like
+-//! `COPY t FROM STDIN WITH (FORMAT influxdb_line, precision 'ns')` only
+-//! needs its own codec and registry entry.
+-//!
+-//! To add a format:
+-//!
+-//! 1. implement [`CopyInCodec`] for a config struct holding the format's
+-//!    validated options (see `csv::CsvCodec` for the example),
+-//! 2. write a builder `fn(CopyOptionSet) -> PgWireResult<Arc<dyn
+-//!    CopyInCodec>>` that applies defaults and rejects options the format
+-//!    does not accept,
+-//! 3. register the builder under every accepted `FORMAT` name (including
+-//!    aliases) in `REGISTERED_FORMATS` in the parent module.
++//! writes is collected into a [`CopyOptionSet`] (see `options`)
++//! regardless of whether any format understands it — the statement is
++//! parsed textually (see `parse`) precisely so options beyond
++//! sqlparser's COPY grammar can reach the formats. A format builder
++//! takes the options it understands (`take_string`,
++//! `take_single_byte`, `take_flag`, or raw `take_value` for
++//! format-specific shapes) and rejects the rest with
++//! `reject_leftovers`.
+ 
+-use datatypes::prelude::ConcreteDataType;
+-use datatypes::schema::ColumnSchema;
+ use pgwire::error::PgWireResult;
+ 
++use crate::postgres::copy_in::csv::CsvCodec;
++use crate::postgres::copy_in::influxdb::InfluxdbOptions;
++
++/// A resolved COPY FROM STDIN format with its validated options.
++#[derive(Debug, Clone)]
++pub(super) enum CopyFormat {
++    /// Table-bound CSV: records are parsed incrementally against the
++    /// targeted table's columns and inserted in batches.
++    Csv(CsvCodec),
++    /// Table-less influxdb line protocol: the whole payload is one
++    /
+```
+
+**File**: `src/servers/src/postgres/copy_in/csv.rs` (modified, +24/-28)
+```diff
+@@ -40,12 +40,12 @@ use datatypes::schema::{ColumnSchema, Schema as GreptimeSchema};
+ use datatypes::vectors::{BooleanVector, Helper, StringVector, Vector};
+ use pgwire::error::{PgWireError, PgWireResult};
+ 
+-use crate::postgres::copy_in::codec::{CopyInCodec, ParsedRow, RecordParser};
++use crate::postgres::copy_in::codec::{CopyFormat, ParsedRow, RecordParser};
+ use crate::postgres::copy_in::options::CopyOptionSet;
+ use crate::postgres::copy_in::{COPY_IN_FLUSH_ROWS, bad_copy_data, invalid_text_repr, unsupported};
+ 
+ /// The validated `csv` format configuration.
+-#[derive(Debug)]
++#[derive(Debug, Clone)]
+ pub(super) struct CsvCodec {
+     delimiter: u8,
+     quote: u8,
+@@ -54,7 +54,7 @@ pub(super) struct CsvCodec {
+ }
+ 
+ /// Builds the CSV codec from the parsed options.
+-pub(super) fn build_csv_codec(mut options: CopyOptionSet) -> PgWireResult<Arc<dyn CopyInCodec>> {
++pub(super) fn build_csv_codec(mut options: CopyOptionSet) -> PgWireResult<CopyFormat> {
+     let delimiter = options.take_single_byte("DELIMITER")?.unwrap_or(b',');
+     let quote = options.take_single_byte("QUOTE")?.unwrap_or(b'"');
+     // In PostgreSQL the default escape character for CSV is the quote
+@@ -75,21 +75,17 @@ pub(super) fn build_csv_codec(mut options: CopyOptionSet) -> PgWireResult<Arc<dy
+     if delimiter == quote {
+         return Err(bad_copy_data("DELIMITER must not be equal to QUOTE"));
+     }
+-    Ok(Arc::new(CsvCodec {
++    Ok(CopyFormat::Csv(CsvCodec {
+         delimiter,
+         quote,
+         escape,
+         header,
+     }))
+ }
+ 
+-impl CopyInCodec for CsvCodec {
+-    fn name(&self) -> &'static str {
+-        "csv"
+-    }
+-
++impl CsvCodec {
+     /// The column types arrow-csv can decode against.
+-    fn check_column_type(&self, data_type: &ConcreteDataType) -> PgWireResult<()> {
++    pub(super) fn check_column_type(&self, data_type: &ConcreteDataType) -> PgWireResult<()> {
+         let supported = matches!(
+             data_type,
+             ConcreteDataType::Boolean(_)
+@@ -117,7 +113,7 @@ impl CopyInCodec for CsvCodec {
+         Ok(())
+     }
+ 
+-    fn create_parser(
++    pub(super) fn create_parser(
+         &self,
+         columns: &[ColumnSchema],
+         timezone: &str,
+@@ -292,9 +288,15 @@ mod tests {
+         ]
+     }
+ 
++    fn build_codec(set: CopyOptionSet) -> CsvCodec {
++        match build_csv_codec(set).unwrap() {
++            CopyFormat::Csv(codec) => codec,
++            other => panic!("expected csv format, got {other:?}"),
++        }
++    }
++
+     fn parser() -> Box<dyn RecordParser + Send> {
+-        build_csv_codec(CopyOptionSet::default())
+-            .unwrap()
++        build_codec(CopyOptionSet::default())
+             .create_parser(&test_columns(), "UTC")
+             .unwrap()
+     }
+@@ -308,8 +310,7 @@ mod tests {
+ 
+     fn rows_with(mut set: CopyOptionSet) -> Box<dyn RecordParser + Send> {
+         set.take_format().unwrap();
+-        build_csv_codec(set)
+-            .unwrap()
++        build_codec(set)
+             .create_parser(&test_columns(), "UTC")
+             .unwrap()
+     }
+@@ -329,8 +330,8 @@ mod tests {
+ 
+     #[test]
+     fn test_build_defaults() {
+-        let codec = build_csv_codec(CopyOptionSet::default()).unwrap();
+-        assert_eq!(codec.name(), "csv");
++        let codec = build_codec(CopyOptionSet::default());
++        assert!(matches!(codec, CsvCodec { .. }));
+     }
+ 
+     #[test]
+@@ -368,7 +369,7 @@ mod tests {
+ 
+     #[test]
+     fn test_check_column_type() {
+-        let codec = build_csv_codec(CopyOptionSet::default()).unwrap();
++        let codec = build_codec(CopyOptionSet::default());
+         assert!(
+             codec
+                 .check_column_type(&ConcreteDataType::json_datatype())
+@@ -524,8 +525,7 @@ mod tests {
+             .into_bytes();
+ 
+         let check = |chunk: usize| {
+-            let mut parser = build_csv_codec(CopyOptionSet::default())
+-                .unwrap()
++            let mut parser = build_codec(CopyOptionSet::default())
+                 .create_parser(&sweep_columns, "UTC")
+                 .unwrap();
+             let mut ids: Vec<i32> = Vec::new();
+@@ -560,8 +560,7 @@ mod tests {
+             check(chunk);
+             let mut shifted = payload.clone();
+             shifted.drain(..37);
+-            let mut parser = build_csv_codec(CopyOptionSet::default())
+-                .unwrap()
++            let mut parser = build_codec(CopyOptionSet::default())
+                 .create_parser(&sweep_columns, "UTC")
+                 .unwrap();
+             let mut count = 0usize;
+@@ -585,8 +584,7 @@ mod tests {
+                 false,
+             ),
+         ];
+-        let mut parser = build_csv_codec(CopyOptionSet::default())
+-            .unwrap()
++        let mut parser = build_codec(CopyOptionSet::default())
+             .create_parser(&columns, "UTC")
+             .unwrap();
+         let rows = feed_all(
+@@ -628,8 +626,7 @@ mod tests {
+                 false,
+             ),
+         ];
+-        let mut parser = build_csv_codec(Co
+```
+
+**File**: `src/servers/src/postgres/copy_in/influxdb.rs` (added, +95/-0)
+```diff
+@@ -0,0 +1,95 @@
 +// Copyright 2023 Greptime Team
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -1855,1027 +2565,213 @@ is a stale one, the purge still removes all newer index files.
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+//! Coordinates range-result cache loads and SST retirement. No I/O or decoding
-+//! runs under the coordinator lock; loaders use the shared query runtime.
++//! The `influxdb` line protocol format for COPY FROM STDIN.
++//!
++//! `COPY FROM STDIN WITH (FORMAT influxdb, precision 'ns')` ingests
++//! [InfluxDB line protocol](https://docs.influxdata.com/influxdb/v1.8/write_protocols/line_protocol_reference/)
++//! text. The format is table-less — each line names its own measurement
++//! — and does not parse here at all: the COPY layer buffers the whole
++//! payload (bounded by [`crate::postgres::copy_in::COPY_IN_MAX_PAYLOAD_BYTES`])
++//! and completes the copy by handing it to the frontend's line-protocol
++//! write pipeline as one body, exactly like the HTTP
++//! `/v1/influxdb/v1/write` endpoint receives one request body:
++//! conversion, permissions, interceptors, timestamp alignment, merge
++//! mode and inserts are the same path, and record boundaries (including
++//! newlines inside quoted field values and after escapes) are decided
++//! by the line-protocol parser alone — the COPY layer never splits
++//! records.
++//!
++//! One COPY statement is therefore one bounded ingestion request; a
++//! larger import is multiple COPY statements.
++//!
++//! The `precision` option carries the same values as the HTTP
++//! `precision` query parameter (`ns`, `us`, `ms`, `s`, ...), defaults to
++//! nanoseconds, and is resolved by the shared `parse_time_precision`.
 +
-+use std::collections::HashMap;
-+use std::future::Future;
-+use std::sync::{Arc, Mutex, Weak, mpsc};
++use common_grpc::precision::Precision;
++use pgwire::error::PgWireResult;
 +
-+use moka::sync::Cache;
-+use store_api::storage::FileId;
-+use tokio::sync::{OwnedSemaphorePermit, watch};
++use crate::postgres::copy_in::bad_copy_data;
++use crate::postgres::copy_in::codec::CopyFormat;
++use crate::postgres::copy_in::options::CopyOptionSet;
 +
-+use crate::cache::{
-+    RANGE_RESULT_TYPE, RangeResultMemoryLimiter, range_result_cache_weight, removal_cause_str,
-+};
-+use crate::metrics::{CACHE_BYTES, CACHE_EVICTION, RANGE_CACHE_WORKER_EVENTS};
-+use crate::read::range_cache::{RangeScanCacheKey, RangeScanCacheValue};
-+use crate::sst::file::FileHandle;
-+
-+/// Admission, not a queue: excess distinct misses keep using ordinary scans.
-+const MAX_IN_FLIGHT_RANGES: usize = 32;
-+
-+type SharedResult = Option<Arc<RangeCacheDelivery>>;
-+
-+/// Keeps completed results charged while subscribers or replay streams own them.
-+/// Cache entries retain only a weak reference: after the last reader leaves,
-+/// the resident value is covered solely by the cache's capacity accounting.
-+pub(crate) struct RangeCacheDelivery {
-+    value: Arc<RangeScanCacheValue>,
-+    _permit: OwnedSemaphorePermit,
++/// The format's validated options. A `None` precision carries the
++/// pipeline's default (nanoseconds), exactly like an HTTP write without
++/// a `precision` parameter.
++#[derive(Debug, Clone)]
++pub(super) struct InfluxdbOptions {
++    pub(super) precision: Option<Precision>,
 +}
 +
-+impl RangeCacheDelivery {
-+    /// Shares a decoded result together with its memory reservation.
-+    pub(crate) fn new(value: Arc<RangeScanCacheValue>, permit: OwnedSemaphorePermit) -> Arc<Self> {
-+        Arc::new(Self {
-+            value,
-+            _permit: permit,
-+        })
-+    }
-+
-+    /// Borrows the result without detaching it from the delivery reservation.
-+    pub(crate) fn value(&self) -> &RangeScanCacheValue {
-+        &self.value
-+    }
++pub(super) fn build_influxdb_codec(mut options: CopyOptionSet) -> PgWireResult<CopyFormat> {
++    let precision = match options.take_string("precision")? {
++        Some(value) => Some(
++            crate::influxdb::parse_time_precision(&value)
++                .map_err(|e| bad_copy_data(format!("invalid precision option: {e}")))?,
++        ),
++        None => None,
++    };
++    options.reject_leftovers("influxdb")?;
++    Ok(CopyFormat::Influxdb(InfluxdbOptions { precision }))
 +}
 +
-+pub(crate) enum RangeCacheLookup {
-+    Hit(Arc<RangeCacheDelivery>),
-+    Loading(watch::Receiver<SharedResult>),
-+    Bypass,
-+}
++#[cfg(test)]
++mod tests {
++    use super::*;
++    use crate::postgres::copy_in::options::CopyOptionValue;
 +
-+struct Entry {
-+    generation: u64,
-+    value: Arc<RangeScanCacheValue>,
-+    delivery: Mutex<Weak<RangeCacheDelivery>>,
-+}
++    #[test]
++    fn test_builder_options() {
++        let format = build_influxdb_codec(CopyOptionSet::default()).unwrap();
++        assert!(matches!(format, CopyFormat::Influxdb(_)));
++        assert!(matches!(format, CopyFormat::Influxdb(_)));
 +
-+impl Entry {
-+    fn deliver(&self, memory: &RangeResultMemoryLimiter) -> SharedResult {
-+        // Serialize cache-hit reservations so readers of the same result share
-+        // one charge, including when the last previous reader just left.
-+        let mut shared_delivery = self
-+            .delivery
-+            .lock()
-+            .unwrap_or_else(std::sync::PoisonError::into_inner);
-+        if let Some(delivery) = shared_delivery.upgrade() {
-+            return Some(delivery);
-+        }
-+        let permit = memory.try_acquire(self.value.estimated_size())?;
-+        let delivery = RangeCacheDelivery::new(self.value.clone(), permit);
-+        *shared_delivery = Arc::downgrade(&delivery);
-+        Some(delivery)
-+    }
-+}
++        let mut set = CopyOptionSet::default();
++        set.insert("precision".into(), CopyOptionValue::String("ms".into()))
++            .unwrap();
++        assert!(matches!(
++            build_influxdb_codec(set).unwrap(),
++            CopyFormat::Influxdb(InfluxdbOptions {
++                precision: Some(Precision::Millisecond)
++            })
++        ));
 +
-+struct Flight {
-+    generation: u64,
-+    sender: watch::Sender<SharedResult>,
-+    invalidated: bool,
-+}
++        let mut set = CopyOptionSet::default();
++        set.insert("precision".into(), CopyOptionValue::String("bogus".into()))
++            .unwrap();
++        assert!(build_influxdb_codec(set).is_err());
 +
-+#[derive(Default)]
-+struct State {
-+    generation: u64,
-+    flights: HashMap<RangeScanCacheKey, Flight>,
-+    /// File IDs are globally unique. Index by physical file, not query region:
-+    /// a copied region can read an SST whose original region differs from its own.
-+    files: HashMap<FileId, HashMap<Arc<RangeScanCacheKey>, u64>>,
-+}
-+
-+impl State {
-+    fn next_generation(&mut self) -> u64 {
-+        self.generation += 1;
-+        self.generation
-+    }
-+
-+    fn forget(&mut self, key: &RangeScanCacheKey, generation: u64) {
-+        for (file, _) in &key.row_groups {
-+            if let Some(keys) = self.files.get_mut(file) {
-+                // Eviction callbacks may arrive after the same key is refilled.
-+                if keys.get(key) == Some(&generation) {
-+                    keys.remove(key);
-+                }
-+                if keys.is_empty() {
-+                    self.files.remove(file);
-+                }
-+            }
-+        }
-+    }
-+}
-+
-+pub(crate) struct RangeCacheWorker {
-+    cache: Cache<RangeScanCacheKey, Arc<Entry>>,
-+    state: Mutex<State>,
-+    /// Moka can call listeners during a cache operation. Queue only cleanup
-+    /// metadata instead of reentering `state` from its eviction listener.
-+    evictions: Mutex<mpsc::Receiver<(Arc<RangeScanCacheKey>, u64)>>,
-+    /// Covers loads and completed deliveries, separately from cache residency
-+    /// and the temporary concat-memory limiter. Never wait for this budget.
-+    pub(crate) load_memory: RangeResultMemoryLimiter,
-+}
-+
-+impl RangeCacheWorker {
-+    pub(crate) 
-```
-
-**File**: `src/mito2/src/cache/test_util.rs` (modified, +26/-0)
-```diff
-@@ -145,3 +145,29 @@ pub(crate) fn assert_parquet_metadata_equal(x: Arc<ParquetMetaData>, y: Arc<Parq
-     let y = normalize_statistics(Arc::unwrap_or_clone(y));
-     assert_eq!(x, y);
- }
-+
-+/// A file-only range key shared by cache and SST-lifecycle regression tests.
-+pub(crate) fn range_cache_key(
-+    files: &[store_api::storage::FileId],
-+) -> crate::read::range_cache::RangeScanCacheKey {
-+    use crate::read::range_cache::{RangeScanCacheKey, ScanRequestFingerprintBuilder};
-+    use crate::read::read_columns::ReadColumns;
-+
-+    RangeScanCacheKey {
-+        region_id: store_api::storage::RegionId::new(1, 1),
-+        row_groups: files.iter().map(|file| (*file, 0)).collect(),
-+        scan: ScanRequestFingerprintBuilder {
-+            read_columns: ReadColumns::new(std::iter::empty()),
-+            read_column_types: vec![],
-+            filters: vec![],
-+            time_filters: vec![],
-+            series_row_selector: None,
-+            append_mode: false,
-+            filter_deleted: true,
-+            merge_mode: crate::region::options::MergeMode::LastRow,
-+            sequence_range: None,
-+            partition_expr_version: 0,
-+        }
-+        .build(),
++        let mut set = CopyOptionSet::default();
++        set.insert("unknown".into(), CopyOptionValue::Flag).unwrap();
++        assert!(build_influxdb_codec(set).is_err());
 +    }
 +}
 ```
 
-**File**: `src/mito2/src/metrics.rs` (modified, +8/-0)
+**File**: `src/servers/src/postgres/copy_in/mod.rs` (modified, +229/-76)
 ```diff
-@@ -319,6 +319,14 @@ lazy_static! {
-         "mito upload bytes total",
-     )
-     .unwrap();
-+    /// Bounded event labels distinguish lookup misses from actual shared loads.
-+    pub static ref RANGE_CACHE_WORKER_EVENTS: IntCounterVec = register_int_counter_vec!(
-+        "greptime_mito_range_cache_worker_events_total",
-+        "Range cache load coordination and SST retirement events",
-+        &["event"]
-+    )
-+    .unwrap();
-+
-     /// Cache eviction counter, labeled with cache type and eviction reason.
-     pub static ref CACHE_EVICTION: IntCounterVec = register_int_counter_vec!(
-         "greptime_mito_cache_eviction",
-```
-
-**File**: `src/mito2/src/read/range_cache.rs` (modified, +467/-84)
-```diff
-@@ -14,6 +14,7 @@
+@@ -21,38 +21,42 @@
+ //! the data stream incrementally and flushes it into the query handler as
+ //! [`RowInsertRequests`] batches.
+ //!
+-//! # Format framework
++//! # Formats
+ //!
+-//! Each COPY data format is implemented as a [`codec::CopyInCodec`]: a
+-//! stateless strategy that validates its options at statement-parse time,
+-//! describes the column types it can ingest, and creates the stateful
+-//! record parser for one stream. Formats register a builder under every
+-//! accepted `FORMAT` name in [`REGISTERED_FORMATS`] — `csv` is the only
+-//! implemented format today; PostgreSQL's `text`/`binary` and
+-//! GreptimeDB-specific formats alike can be added the same way. See the
+-//! `codec` module docs.
++//! The supported formats are the explicit [`codec::CopyFormat`] enum —
++//! `csv` (table-bound, incremental row parsing) and `influxdb`
++//! (table-less, one bounded whole-payload request). Each format states
++//! its own target rule and ingestion shape in the match arms of the
++//! copy lifecycle below; adding a format is a new variant plus its
++//! arms. Builders resolve a `FORMAT` name (and its aliases) through
++//! [`REGISTERED_FORMATS`]. See the `codec` module docs.
  
- //! Utilities for the partition range scan result cache.
+ mod codec;
+ mod csv;
++mod influxdb;
+ mod options;
+ mod parse;
  
-+use std::future::Future;
- use std::mem;
+ use std::fmt::Debug;
  use std::sync::Arc;
  
-@@ -36,6 +37,7 @@ use table::predicate::is_string_timestamp_literal;
- use tokio::sync::{mpsc, oneshot};
++use crate::influxdb::InfluxdbRequest;
+ use api::helper::ColumnDataTypeWrapper;
+ use api::v1::column_def::options_from_column_schema;
+ use api::v1::{
+     Row as GrpcRow, RowInsertRequest, RowInsertRequests, Rows as GrpcRows, SemanticType,
+ };
+ use async_trait::async_trait;
+-use codec::{CopyInCodec, RecordParser};
++use codec::{CopyFormat, RecordParser};
++use common_grpc::precision::Precision;
+ use common_query::OutputData;
+ use common_telemetry::{info, warn};
++use csv::CsvCodec;
+ use datafusion::sql::sqlparser::ast::{CopyTarget, Statement as SqlParserStatement};
+ use datatypes::data_type::DataType;
+ use datatypes::schema::{ColumnSchema, SchemaRef};
+ use futures::{Sink, SinkExt, stream};
++use influxdb::InfluxdbOptions;
+ use pgwire::api::copy::CopyHandler;
+ use pgwire::api::results::{CopyResponse, Response, Tag};
+ use pgwire::api::{ClientInfo, PgWireConnectionState};
+@@ -80,38 +84,43 @@ use crate::postgres::utils::convert_err;
+ /// the per-batch fixed costs negligible.
+ pub(crate) const COPY_IN_FLUSH_ROWS: usize = 32768;
  
- use crate::cache::CacheStrategy;
-+use crate::cache::range_cache::{RangeCacheDelivery, RangeCacheLookup, RangeCacheWorker};
- use crate::error::{ComputeArrowSnafu, Result};
- use crate::read::BoxedRecordBatchStream;
- use crate::read::read_columns::ReadColumns;
-@@ -608,9 +610,14 @@ fn build_range_cache_key_inner(
+-/// Builds a codec from the format-neutral option set.
+-type CodecBuilder = fn(options::CopyOptionSet) -> PgWireResult<Arc<dyn CopyInCodec>>;
++/// Upper bound of an influxdb COPY FROM STDIN payload. One COPY
++/// statement is one bounded ingestion request (the whole payload is
++/// buffered like one HTTP write body); a larger import is multiple COPY
++/// statements. Streaming ingest may arrive later, with framing owned by
++/// the shared line-protocol parser rather than the COPY layer.
++pub(crate) const COPY_IN_MAX_PAYLOAD_BYTES: usize = 64 * 1024 * 1024;
++
++/// Builds a format from the format-neutral option set.
++type FormatBuilder = fn(options::CopyOptionSet) -> PgWireResult<CopyFormat>;
+ 
+ /// The registered COPY FROM STDIN formats: accepted `FORMAT` name to
+ /// builder. `csv` is the only implemented format; the others are
+ /// registered so they report a clear "not supported yet" instead of an
+ /// unknown-format error.
+-const REGISTERED_FORMATS: &[(&str, CodecBuilder)] = &[
++const REGISTERED_FORMATS: &[(&str, FormatBuilder)] = &[
+     ("csv", csv::build_csv_codec),
++    ("influxdb", influxdb::build_influxdb_codec),
++    ("influxdb_line", influxdb::build_influxdb_codec),
+     ("text", build_unimplemented_text_codec),
+     ("txt", build_unimplemented_text_codec),
+     ("binary", build_unimplemented_binary_codec),
+ ];
+ 
+-fn build_unimplemented_text_codec(
+-    _options: options::CopyOptionSet,
+-) -> PgWireResult<Arc<dyn CopyInCodec>> {
++fn build_unimplemented_text_codec(_options: options::CopyOptionSet) -> PgWireResult<CopyFormat> {
+     Err(unsupported(
+         "the text format is not supported yet; use WITH (FORMAT csv)",
+     ))
  }
  
- /// Returns a stream that replays cached record batches.
--pub(crate) fn cached_flat_range_stream(value: Arc<RangeScanCacheValue>) -> BoxedRecordBatchStream {
-+pub(crate) fn cached_flat_range_stream(
-+    delivery: Arc<RangeCacheDelivery>,
-+) -> BoxedRecordBatchStream {
-     Box::pin(try_stream! {
--        for cached_batch in &value.cached_batches {
-+        // Borrow through the delivery guard so it survives every yield. Batches
-+        // handed to downstream operators are then owned by the query, not by
-+        // this completed-result backlog.
-+        for cached_batch in &delivery.value().cached_batches {
-             let mut offset = 0;
-             for &len in &cached_batch.slice_lengths {
-                 yield cached_batch.batch.slice(offset, len);
-@@ -620,14 +627,147 @@ pub(crate) fn cached_flat_range_stream(value: Arc<RangeScanCacheValue>) -> Boxed
-     })
+-fn build_unimplemented_binary_codec(
+-    _options: options::CopyOptionSet,
+-) -> PgWireResult<Arc<dyn CopyInCodec>> {
++fn build_unimplemented_binary_codec(_options: options::CopyOptionSet) -> PgWireResult<CopyFormat> {
+     Err(unsupported(
+         "COPY FROM STDIN WITH (FORMAT binary) is not supported yet",
+     ))
  }
  
-+/// Builds only one decoded result per full cache key. A load must be driven
-+/// independently of any caller: merge readers can wait for another stream with
-+/// the same key before polling their first stream to completion.
-+pub(crate) struct CachedRangeReader<'a> {
-+    pub(crate) stream_ctx: &'a StreamContext,
-+    pub(crate) part_range: &'a PartitionRange,
-+    pub(crate) key: Option<RangeScanCacheKey>,
-+    pub(crate) metrics: &'a PartitionMetrics,
-+}
-+
-+impl CachedRangeReader<'_> {
-+    pub(crate) async fn build<F, Fut>(self, build: F) -> Result<(BoxedRecordBatchStream, usize)>
-+    where
-+        F: FnOnce() -> Fut + Clone + Send + 'static,
-+        Fut: Future<Output = Result<(BoxedRecordBatchStream, usize)>> + Send + 'static,
-+    {
-+        let Self {
-+            stream_ctx,
-+            part_range,
-+            key,
-+            metrics,
-+        } = self;
-+        let strategy = &stream_ctx.input.cache_strategy;
-+        let (Some(key), Some(worker)) = (key, strategy.range_cache_worker()) else {
-+            return build().await;
-+        };
-+        let files = stream_ctx.ranges[part_range.identifier]
-+            .row_group_indices
-+            .iter()
-+            .map(|index| stream_ctx.input.file_from_index(*index).clone())
-+            .collect();
-+        let loader = build.clone();
-+        let load_worker = worker.clone();
-+        let load_strategy = strategy.clone();
-+        let load_metrics = metrics.clone();
-+        let key_size = key.estimated_size();
-+        match worker.get_or_load(key, files, async move {
-+            let result = async {
-+                let (stream, _) = loader().await?;
-+                collect_range_result(stream, &load_worker, &load_strategy).await
-+            }
-+            .await;
-+            match result {
-+                Ok(Some(value)) => {
-+                    load_metrics.inc_range_cache_size(key_size + value.value().estimated_size());
-+                    Some(value)
-+                }
-+                Ok(None) => None,
-+                Err(error) => {
-+                    warn!(error; "Failed to load range cache; falling back to an uncached scan");
-+                    None
-+                }
-+            }
-+        }) {
-+            RangeCacheLookup::Hit(value) => {
-+                metrics.inc_range_cache_hit();
-+                Ok((cached_flat_range_stream(value), DEFAULT_READ_BATCH_SIZE))
-+            }
-+            RangeCacheLookup::Loading(receiver) => {
-+                metrics.inc_range_cache_miss();
-+                Ok((
-+                    shared_range_stream(receiver, build),
-+                    DEFAULT_READ_BATCH_SIZE,
-+                ))
-+            }
-+            RangeCacheLookup::Bypass => {
-+                metrics.inc_range_cache_miss();
-+                build().await
-+            }
-+        }
-+    }
-+}
-+
-+/// Waiting is lazy, but the producer is independent of every consumer.
-+fn shared_range_stream<F, Fut>(
-+    mut receiver: tokio::sync::watch::Receiver<Option<Arc<RangeCacheDelivery>>>,
-+    build: F,
-+) -> BoxedRecordBatchStream
-+where
-+    F: FnOnce() -> Fut + Send + 'static,
-+    Fut: Future<Output = Result<(BoxedRecordBatchStream, usize)>> + Send + 'static,
-+{
-+    Box::pin(try_stream! {
-+        let cached = receiver.wait_for(|cached| cached.is_some()).await
-+            .ok().and_then(|cached| cached.clone());
-+        drop(receiver);
-+        let mut stream = if let Some(cached) = cached {
-+            cached_flat_range_stream(cached)
-+        } else {
-+            // A failed/oversize
-```
-
-**File**: `src/mito2/src/read/seq_scan.rs` (modified, +32/-20)
-```diff
-@@ -42,9 +42,7 @@ use crate::read::flat_merge::FlatMergeReader;
- use crate::read::last_row::FlatLastRowReader;
- use crate::read::pruner::{PartitionPruner, Pruner};
- use crate::read::range::RangeMeta;
--use crate::read::range_cache::{
--    build_range_cache_key, cache_flat_range_stream, cached_flat_range_stream,
--};
-+use crate::read::range_cache::{CachedRangeReader, build_range_cache_key};
- use crate::read::scan_region::{ScanInput, StreamContext};
- use crate::read::scan_util::{
-     BATCH_SIZE_THRESHOLD, MIN_COMPACTION_SPLIT_ROWS, PartitionMetrics, PartitionMetricsList,
-@@ -307,15 +305,39 @@ impl SeqScan {
-                 key
-             }
-         });
--
--        if let Some(key) = cache_key.as_ref() {
--            if let Some(value) = stream_ctx.input.cache_strategy.get_range_result(key) {
--                part_metrics.inc_range_cache_hit();
--                return Ok((cached_flat_range_stream(value), DEFAULT_READ_BATCH_SIZE));
--            }
--            part_metrics.inc_range_cache_miss();
-+        let ctx = stream_ctx.clone();
-+        let range = *part_range;
-+        let metrics = part_metrics.clone();
-+        CachedRangeReader {
-+            stream_ctx,
-+            part_range,
-+            key: cache_key,
-+            metrics: part_metrics,
-         }
-+        .build(move || async move {
-+            Self::build_uncached_partition_range(
-+                &ctx,
-+                &range,
-+                read_mode,
-+                &metrics,
-+                partition_pruner,
-+                file_scan_semaphore,
-+                merge_semaphore,
-+            )
-+            .await
-+        })
-+        .await
-+    }
- 
-+    async fn build_uncached_partition_range(
-+        stream_ctx: &Arc<StreamContext>,
-+        part_range: &PartitionRange,
-+        read_mode: FlatReadMode,
-+        part_metrics: &PartitionMetrics,
-+        partition_pruner: Arc<PartitionPruner>,
-+        file_scan_semaphore: Option<Arc<Semaphore>>,
-+        merge_semaphore: Option<Arc<Semaphore>>,
-+    ) -> Result<(BoxedRecordBatchStream, usize)> {
-         let mut sources = Vec::new();
-         let split_batch_size = build_flat_sources(
-             stream_ctx,
-@@ -339,16 +361,6 @@ impl SeqScan {
-         )
-         .await?;
- 
--        let stream = match cache_key {
--            Some(key) => cache_flat_range_stream(
--                stream,
--                stream_ctx.input.cache_strategy.clone(),
--                key,
--                part_metrics.clone(),
--            ),
--            None => stream,
--        };
--
-         Ok((stream, estimated_rows_per_batch))
-     }
- 
-```
-
-**File**: `src/mito2/src/read/series_candidate.rs` (modified, +23/-18)
-```diff
-@@ -47,9 +47,7 @@ use crate::error::{
- use crate::read::BoxedRecordBatchStream;
- use crate::read::pruner::{PartitionPruner, Pruner};
- use crate::read::range::RowGroupIndex;
--use crate::read::range_cache::{
--    build_candidate_range_cache_key, cache_flat_range_stream, cached_flat_range_stream,
--};
-+use crate::read::range_cache::{CachedRangeReader, build_candidate_range_cache_key};
- use crate::read::scan_region::StreamContext;
- use crate::read::scan_util::{PartitionMetrics, new_filter_metrics, scan_flat_mem_ranges};
- use crate::series_index::{
-@@ -371,14 +369,29 @@ impl SeriesCandidateRangeBuilder {
-         } else {
-             build_candidate_range_cache_key(&self.stream_ctx, &part_range)
-         };
--        if let Some(key) = cache_key.as_ref() {
--            if let Some(value) = self.stream_ctx.input.cache_strategy.get_range_result(key) {
--                self.part_metrics.inc_range_cache_hit();
--                return Ok(cached_flat_range_stream(value));
--            }
--            self.part_metrics.inc_range_cache_miss();
-+        let builder = self.clone();
-+        let (stream, _) = CachedRangeReader {
-+            stream_ctx: &self.stream_ctx,
-+            part_range: &part_range,
-+            key: cache_key,
-+            metrics: &self.part_metrics,
-         }
-+        .build(move || async move {
-+            let stream = builder
-+                .build_uncached_range_stream(part_range, merge_partition)
-+                .await?;
-+            Ok((stream, DEFAULT_READ_BATCH_SIZE))
-+        })
-+        .await?;
-+        Ok(stream)
-+    }
- 
-+    async fn build_uncached_range_stream(
-+        &self,
-+        part_range: PartitionRange,
-+        merge_partition: usize,
-+    ) -> Result<BoxedRecordBatchStream> {
-+        let range_meta = &self.stream_ctx.ranges[part_range.identifier];
-         let mut sources = Vec::with_capacity(range_meta.row_group_indices.len());
-         for index in &range_meta.row_group_indices {
-             let source = self.build_source(*index, range_meta.time_range).await?;
-@@ -400,15 +413,7 @@ impl SeriesCandidateRangeBuilder {
-             "SeriesCandidateScanner::range_merge",
-         )?;
- 
--        Ok(match cache_key {
--            Some(key) => cache_flat_range_stream(
--                stream,
--                self.stream_ctx.input.cache_strategy.clone(),
--                key,
--                self.part_metrics.clone(),
--            ),
--            None => stream,
--        })
-+        Ok(stream)
-     }
- 
-     async fn build_source(
-```
-
-**File**: `src/mito2/src/read/series_reader.rs` (modified, +29/-18)
-```diff
-@@ -31,9 +31,7 @@ use crate::error::InvalidRequestSnafu;
- use crate::error::{JoinSnafu, Result, UnexpectedSnafu};
- use crate::read::BoxedRecordBatchStream;
- use crate::read::pruner::PartitionPruner;
--use crate::read::range_cache::{
--    build_series_range_cache_key, cache_flat_range_stream, cached_flat_range_stream,
--};
-+use crate::read::range_cache::{CachedRangeReader, build_series_range_cache_key};
- use crate::read::scan_region::StreamContext;
- use crate::read::scan_util::{
-     PartitionMetrics, SplitRecordBatchStream, compute_average_batch_size,
-@@ -377,14 +375,36 @@ async fn build_series_partition_range(
-         .enable_range_cache
-         .then(|| build_series_range_cache_key(&stream_ctx, &part_range, range))
-         .flatten();
--    if let Some(key) = cache_key.as_ref() {
--        if let Some(value) = stream_ctx.input.cache_strategy.get_range_result(key) {
--            part_metrics.inc_range_cache_hit();
--            return Ok((cached_flat_range_stream(value), DEFAULT_READ_BATCH_SIZE));
--        }
--        part_metrics.inc_range_cache_miss();
-+    let ctx = stream_ctx.clone();
-+    let metrics = part_metrics.clone();
-+    CachedRangeReader {
-+        stream_ctx: &stream_ctx,
-+        part_range: &part_range,
-+        key: cache_key,
-+        metrics: &part_metrics,
-     }
-+    .build(move || async move {
-+        build_uncached_series_partition_range(
-+            ctx,
-+            part_range,
-+            filter,
-+            codec,
-+            partition_pruner,
-+            metrics,
-+        )
-+        .await
-+    })
-+    .await
-+}
- 
-+async fn build_uncached_series_partition_range(
-+    stream_ctx: Arc<StreamContext>,
-+    part_range: PartitionRange,
-+    filter: MetricSeriesFilter,
-+    codec: SparsePrimaryKeyCodec,
-+    partition_pruner: Arc<PartitionPruner>,
-+    part_metrics: PartitionMetrics,
-+) -> Result<(BoxedRecordBatchStream, usize)> {
-     let range_meta = &stream_ctx.ranges[part_range.identifier];
-     let split_batch_size = should_split_flat_batches_for_merge(&stream_ctx, range_meta);
-     let mut sources = Vec::with_capacity(range_meta.row_group_indices.len());
-@@ -480,15 +500,6 @@ async fn build_series_partition_range(
-         compute_parallel_channel_size(estimated_batch_size),
-     )
-     .await?;
--    let stream = match cache_key {
--        Some(key) => cache_flat_range_stream(
--            stream,
--            stream_ctx.input.cache_strategy.clone(),
--            key,
--            part_metrics,
--        ),
--        None => stream,
--    };
-     Ok((stream, estimated_batch_size))
- }
- 
-```
-
----
-
-### Incident Patch 2: `984f80e2` (2026-10-27)
-**Commit Message**: fix(query): stop windowed sort on precision-lowering time casts (#9524)
-
-* test: cover windowed sort cast unit mismatch
-
-Signed-off-by: discord9 <[REDACTED_EMAIL]>
-
-* fix(query): stop windowed sort on unit- or timezone-changing time casts
-
-A cast on the time index column keeps the windowed-sort optimization
-eligible only when it preserves the underlying timestamp values. Casts
-that change the time unit (e.g. ms -> s) or that add a timezone to a
-naive timestamp re-interpret the values, so the working ranges derived
-from the time index no longer describe the sort column and the scan
-fails with a working-range error or silently wrong order. Reject both
-cast shapes so such queries fall back to the normal SortExec path.
-
-The integration fixture uses two rows 1000 seconds apart so the cast
-output stays distinct and the ordering assertions are not vacuous; the
-descending arm gets its own expectation.
-
-Signed-off-by: discord9 <[REDACTED_EMAIL]>
-
-* fix(query): stop windowed sort on unit-changing timestamp wrappers
-
-to_timestamp_seconds/millis/... cast their argument to their own unit
-inside the function, so the hidden cast bypassed the explicit-cast guard
-and kept the windowed-sort optimiza
-
-**File**: `src/query/src/optimizer/windowed_sort.rs` (modified, +228/-35)
-```diff
-@@ -222,18 +222,31 @@ fn is_time_index_expr(
-     }
- 
-     if let Some(cast_expr) = expr.downcast_ref::<CastExpr>() {
--        return if matches!(cast_expr.cast_type(), DataType::Timestamp(_, _)) {
-+        let source_type = cast_expr.expr().data_type(plan.schema().as_ref())?;
-+        return if preserves_timestamp_values(cast_expr.cast_type(), &source_type) {
-             is_time_index_expr(plan, cast_expr.expr())
-         } else {
-             Ok(false)
-         };
-     }
- 
-     if let Some(scalar_function_expr) = expr.downcast_ref::<ScalarFunctionExpr>() {
--        return if is_supported_time_index_wrapper(scalar_function_expr)
--            && scalar_function_expr.args().len() == 1
-+        if !is_supported_time_index_wrapper(scalar_function_expr)
-+            || scalar_function_expr.args().len() != 1
-         {
--            is_time_index_expr(plan, &scalar_function_expr.args()[0])
-+            return Ok(false);
-+        }
-+
-+        // Wrappers such as `to_timestamp_seconds` cast their argument to another time unit
-+        // inside the function. That cast does not show up as a `CastExpr` in the plan, but it
-+        // changes the values of the sort column exactly like a cast in the plan does, so the
-+        // wrapper is only still the time index if its result keeps both the unit and the values
-+        // of its argument.
-+        let arg = &scalar_function_expr.args()[0];
-+        let return_type = scalar_function_expr.data_type(plan.schema().as_ref())?;
-+        let arg_type = arg.data_type(plan.schema().as_ref())?;
-+        return if preserves_timestamp_values(&return_type, &arg_type) {
-+            is_time_index_expr(plan, arg)
-         } else {
-             Ok(false)
-         };
-@@ -242,6 +255,24 @@ fn is_time_index_expr(
-     Ok(false)
- }
- 
-+/// Returns true if a cast, or a function wrapper, that turns `source` into `target` keeps both the
-+/// time unit and the underlying values of a timestamp.
-+///
-+/// A cast (or a hidden cast inside a function wrapper) that changes the time unit changes the
-+/// values of the sort column, so the working ranges derived from the time index, which keep the
-+/// unit of the time index, no longer apply. The optimizer conservatively rejects every cast that
-+/// adds a timezone to a naive timestamp, including UTC, even though UTC has a zero offset. Only a
-+/// target that keeps both the unit and the values of its source can still be the time index.
-+fn preserves_timestamp_values(target: &DataType, source: &DataType) -> bool {
-+    matches!(
-+        (target, source),
-+        (
-+            DataType::Timestamp(target_unit, target_tz),
-+            DataType::Timestamp(source_unit, source_tz)
-+        ) if target_unit == source_unit && (source_tz.is_some() || target_tz.is_none())
-+    )
-+}
-+
- fn is_time_index_column(
-     plan: &Arc<dyn ExecutionPlan>,
-     column_expr: &PhysicalColumn,
-@@ -344,7 +375,7 @@ mod test {
-     use datafusion::config::ConfigOptions;
-     use datafusion::physical_plan::filter::FilterExecBuilder;
-     use datafusion_common::ScalarValue;
--    use datafusion_functions::datetime::to_timestamp_millis;
-+    use datafusion_functions::datetime::{to_timestamp, to_timestamp_millis, to_timestamp_seconds};
-     use datafusion_physical_expr::expressions::{CastExpr, Literal};
-     use datatypes::data_type::ConcreteDataType;
-     use datatypes::schema::{ColumnSchema, Schema};
-@@ -416,37 +447,92 @@ mod test {
-     }
- 
-     #[test]
--    fn test_is_time_index_expr_tracks_wrapped_aliases_through_projection() {
--        let scan = new_region_scan();
-+    fn test_is_time_index_expr_tracks_value_preserving_wrapper_through_projection() {
-+        let scan = new_region_scan_with_unit(TimeUnit::Millisecond);
-         let config = Arc::new(ConfigOptions::default());
--        let return_field = Arc::new(Field::new(
--            "ts",
--            DataType::Timestamp(TimeUnit::Millisecond, None),
--            false,
--        ));
-+        let wrapper = ScalarFunctionExpr::try_new(
-+            to_timestamp_millis(config.as_ref()),
-+            vec![Arc::new(PhysicalColumn::new("ts", 1))],
-+            scan.schema().as_ref(),
-+            config,
-+        )
-+        .unwrap();
-+        // `to_timestamp_millis` keeps both the unit and the values of a millisecond timestamp.
-+        assert_eq!(
-+            wrapper.data_type(scan.schema().as_ref()).unwrap(),
-+            DataType::Timestamp(TimeUnit::Millisecond, None)
-+        );
-         let projection = Arc::new(
-             ProjectionExec::try_new(
--                vec![(
--                    Arc::new(ScalarFunctionExpr::new(
--                        "to_timestamp_millis",
--                        to_timestamp_millis(config.as_ref()),
--                        vec![Arc::new(PhysicalColumn::new("ts", 1))],
--                        return_field,
--                        config,
--                    )) as Arc<dyn PhysicalExpr>,
--                    "ts".to_string(),
--                )],
-+                vec![(Arc::new
-```
-
-**File**: `tests-integration/src/tests/instance_test.rs` (modified, +168/-0)
-```diff
-@@ -949,6 +949,174 @@ ORDER BY t.key_id"#;
-     );
- }
- 
-+/// Sorting by `CAST(ts AS TIMESTAMP(0))` must not be optimized as if it were sorting by the
-+/// (millisecond) time index column.
-+///
-+/// The windowed sort rule still recognizes the cast as the time index column, but the working
-+/// ranges it derives from the region scan's `PartitionRange`s stay in the unit of the table's time
-+/// index (millisecond here). `PartSortExec` projects those ranges onto the unit of the sort column
-+/// while `WindowedSortExec` does not, so sorted runs (second) are checked against working ranges
-+/// (millisecond) and the range invariant trips with
-+/// "Current batch have data on the left side of working range, something is very wrong".
-+///
-+/// The two rows are 1000 seconds apart, so casting the millisecond time index to second precision
-+/// truncates sub-second parts and collapses the first row onto second 0, which is before the start
-+/// of the region's time range.
-+///
-+/// `to_timestamp_seconds(ts)` casts the time index to second precision *inside* the function, so it
-+/// has to be rejected exactly like the cast in the plan; the cast is just not visible as a
-+/// `CastExpr`. `to_timestamp_millis(ts)` keeps the values of the millisecond time index and is used
-+/// as the value-preserving control.
-+#[apply(standalone_instance_case)]
-+async fn test_windowed_sort_sort_column_cast_time_unit_mismatch(instance: Arc<dyn MockInstance>) {
-+    let frontend = instance.frontend();
-+
-+    execute_sql(
-+        &frontend,
-+        r#"CREATE TABLE f05_mito_wc (
-+            ts TIMESTAMP(3) TIME INDEX,
-+            host STRING PRIMARY KEY,
-+            val DOUBLE
-+        ) ENGINE = mito"#,
-+    )
-+    .await;
-+
-+    // The metric engine flavor only creates its physical table explicitly; rows are written to and
-+    // read from the logical table built on it.
-+    execute_sql(
-+        &frontend,
-+        r#"CREATE TABLE f05_metric_phy (
-+            ts TIMESTAMP(3) TIME INDEX,
-+            host STRING PRIMARY KEY,
-+            val DOUBLE
-+        ) ENGINE = metric WITH ('physical_metric_table' = '')"#,
-+    )
-+    .await;
-+    execute_sql(
-+        &frontend,
-+        r#"CREATE TABLE f05_metric_wc (
-+            ts TIMESTAMP(3) TIME INDEX,
-+            host STRING PRIMARY KEY,
-+            val DOUBLE
-+        ) ENGINE = metric WITH ('on_physical_table' = 'f05_metric_phy')"#,
-+    )
-+    .await;
-+
-+    let rows_by_time_index = r#"+-------------------------+------+
-+| ts                      | host |
-++-------------------------+------+
-+| 1970-01-01T00:00:00.001 | a    |
-+| 1970-01-01T00:16:40.001 | b    |
-++-------------------------+------+"#;
-+    let rows_by_cast = r#"+---------------------+------+
-+| t                   | host |
-++---------------------+------+
-+| 1970-01-01T00:00:00 | a    |
-+| 1970-01-01T00:16:40 | b    |
-++---------------------+------+"#;
-+    // `ORDER BY t DESC` returns the same rows in the opposite order; without distinct cast values
-+    // the two rows tie and this expectation would be vacuous. `rows_by_cast` is an ascending
-+    // fixture, so the descending query needs its own.
-+    let rows_by_cast_desc = r#"+---------------------+------+
-+| t                   | host |
-++---------------------+------+
-+| 1970-01-01T00:16:40 | b    |
-+| 1970-01-01T00:00:00 | a    |
-++---------------------+------+"#;
-+
-+    // `to_timestamp_seconds` casts the millisecond time index to second precision inside the
-+    // function, so it returns the same rows as the direct cast above (the function is registered
-+    // without a session time zone, so its result stays a naive timestamp).
-+    let rows_by_seconds_wrapper = rows_by_cast;
-+    let rows_by_seconds_wrapper_desc = rows_by_cast_desc;
-+    // `to_timestamp_millis` keeps the values of the millisecond time index, so the control below
-+    // returns the same rows as sorting by the time index itself, only under the `t` alias.
-+    let rows_by_millis_wrapper = r#"+-------------------------+------+
-+| t                       | host |
-++-------------------------+------+
-+| 1970-01-01T00:00:00.001 | a    |
-+| 1970-01-01T00:16:40.001 | b    |
-++-------------------------+------+"#;
-+
-+    for table in ["f05_mito_wc", "f05_metric_wc"] {
-+        let output = execute_sql(
-+            &frontend,
-+            &format!("INSERT INTO {table} (ts, host, val) VALUES (1, 'a', 1), (1000001, 'b', 2)"),
-+        )
-+        .await
-+        .data;
-+        assert!(matches!(output, OutputData::AffectedRows(2)), "{table}");
-+
-+        // Controls: sorting by the time index itself, applying a fetch, or sorting by the cast
-+        // together with another column all keep working.
-+        let output = execute_sql(
-+            &frontend,
-+            &format!("SELECT ts, host FROM {table} ORDER BY ts"),
-+        )
-+        .await
-+        .data;
-+        check_output_stream(output, rows_by_time_index).await;
-+
-+        let output = execute_sql(
-+            &frontend,
-+            &fo
-```
-
-**File**: `tests/cases/distributed/optimizer/windowed_sort_advance.result` (modified, +1/-1)
-```diff
-@@ -107,7 +107,7 @@ EXPLAIN ANALYZE select to_timestamp_millis(ts) as ts, status, value from `a` whe
- |_|_|_|
- | 1_| 0_|_ProjectionExec: expr=[to_timestamp_millis(a.ts)@0 as ts, status@1 as status, value@2 as value] REDACTED
- |_|_|_SortPreservingMergeExec: [to_timestamp_millis(a.ts)@0 ASC NULLS LAST] REDACTED
--|_|_|_WindowedSortExec: expr=to_timestamp_millis(a.ts)@0 ASC NULLS LAST num_ranges=REDACTED REDACTED
-+|_|_|_SortExec: expr=[to_timestamp_millis(a.ts)@0 ASC NULLS LAST], preserve_partitioning=[true] REDACTED
- |_|_|_ProjectionExec: expr=[to_timestamp_millis(ts@2) as to_timestamp_millis(a.ts), status@1 as status, value@0 as value] REDACTED
- |_|_|_SeqScan: region=REDACTED, "partition_count":{"count":1, "mem_ranges":1, "files":0, "file_ranges":0}, "projection": ["value", "status", "ts"], "filters": ["ts >= TimestampNanosecond(1773273600000000000, None)", "ts < TimestampNanosecond(1773273721000000000, None)"], "time_range":REDACTED
- |_|_|_|
-```
-
-**File**: `tests/cases/distributed/optimizer/windowed_sort_nanos.result` (modified, +1/-1)
-```diff
-@@ -67,7 +67,7 @@ EXPLAIN ANALYZE select to_timestamp_nanos(ts) as ts, status, value from `a_ms` w
- |_|_|_|
- | 1_| 0_|_ProjectionExec: expr=[to_timestamp_nanos(a_ms.ts)@0 as ts, status@1 as status, value@2 as value] REDACTED
- |_|_|_SortPreservingMergeExec: [to_timestamp_nanos(a_ms.ts)@0 ASC NULLS LAST] REDACTED
--|_|_|_WindowedSortExec: expr=to_timestamp_nanos(a_ms.ts)@0 ASC NULLS LAST num_ranges=REDACTED REDACTED
-+|_|_|_SortExec: expr=[to_timestamp_nanos(a_ms.ts)@0 ASC NULLS LAST], preserve_partitioning=[true] REDACTED
- |_|_|_ProjectionExec: expr=[to_timestamp_nanos(ts@2) as to_timestamp_nanos(a_ms.ts), status@1 as status, value@0 as value] REDACTED
- |_|_|_SeqScan: region=REDACTED, "partition_count":{"count":1, "mem_ranges":1, "files":0, "file_ranges":0}, "projection": ["value", "status", "ts"], "filters": ["ts >= TimestampMillisecond(1773273600000, None)", "ts < TimestampMillisecond(1773273721000, None)"], "time_range":REDACTED
- |_|_|_|
-```
-
-**File**: `tests/cases/standalone/optimizer/windowed_sort_advance.result` (modified, +1/-1)
-```diff
-@@ -106,7 +106,7 @@ EXPLAIN ANALYZE select to_timestamp_millis(ts) as ts, status, value from `a` whe
- |_|_|_MergeScanExec: REDACTED
- |_|_|_|
- | 1_| 0_|_SortPreservingMergeExec: [ts@0 ASC NULLS LAST] REDACTED
--|_|_|_WindowedSortExec: expr=ts@0 ASC NULLS LAST num_ranges=REDACTED REDACTED
-+|_|_|_SortExec: expr=[ts@0 ASC NULLS LAST], preserve_partitioning=[true] REDACTED
- |_|_|_ProjectionExec: expr=[to_timestamp_millis(ts@2) as ts, status@1 as status, value@0 as value] REDACTED
- |_|_|_SeqScan: region=REDACTED, "partition_count":{"count":1, "mem_ranges":1, "files":0, "file_ranges":0}, "projection": ["value", "status", "ts"], "filters": ["ts >= TimestampNanosecond(1773273600000000000, None)", "ts < TimestampNanosecond(1773273721000000000, None)"], "time_range":REDACTED
- |_|_|_|
-```
-
-**File**: `tests/cases/standalone/optimizer/windowed_sort_nanos.result` (modified, +1/-1)
-```diff
-@@ -66,7 +66,7 @@ EXPLAIN ANALYZE select to_timestamp_nanos(ts) as ts, status, value from `a_ms` w
- |_|_|_MergeScanExec: REDACTED
- |_|_|_|
- | 1_| 0_|_SortPreservingMergeExec: [ts@0 ASC NULLS LAST] REDACTED
--|_|_|_WindowedSortExec: expr=ts@0 ASC NULLS LAST num_ranges=REDACTED REDACTED
-+|_|_|_SortExec: expr=[ts@0 ASC NULLS LAST], preserve_partitioning=[true] REDACTED
- |_|_|_ProjectionExec: expr=[to_timestamp_nanos(ts@2) as ts, status@1 as status, value@0 as value] REDACTED
- |_|_|_SeqScan: region=REDACTED, "partition_count":{"count":1, "mem_ranges":1, "files":0, "file_ranges":0}, "projection": ["value", "status", "ts"], "filters": ["ts >= TimestampMillisecond(1773273600000, None)", "ts < TimestampMillisecond(1773273721000, None)"], "time_range":REDACTED
- |_|_|_|
-```
-
----
-
-### Incident Patch 3: `62ebf71f` (2026-10-27)
-**Commit Message**: fix(meta): exclude route followers from failover targets (#10001)
-
-* fix(meta): exclude route followers from failover targets
-
-Failover target selection did not exclude the region's route followers.
-The selector could keep picking a follower, the submit rejected it as a
-peer conflict, and the region never failed over.
-
-Group the failed regions by their followers and exclude them per group.
-A group without a candidate is skipped instead of failing every region of
-the datanode.
-
-Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
-
-* test: check failover continues after a group without candidates
-
-Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
-
-* fix(meta): keep failover going when follower routes can't be read
-
-Fall back to selecting without follower exclusion when the routes can't
-be read, log skipped groups with their followers at warn level, and test
-a region without a route.
-
-Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
-
-* refactor(meta): select failover targets per exclusion set in select_peers
-
-generate_failover_tasks now only reads the route followers of the regions.
-select_peers resolves the affinity and the unschedulable datanodes once,
-then selects per group of regions that exclude the sa
-
-**File**: `src/meta-srv/src/region/supervisor.rs` (modified, +283/-48)
-```diff
-@@ -12,7 +12,7 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
- 
--use std::collections::{HashMap, HashSet};
-+use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
- use std::fmt::Debug;
- use std::sync::{Arc, Mutex};
- use std::time::{Duration, Instant};
-@@ -23,7 +23,7 @@ use common_meta::affinity::{AffinityFallback, AffinityReference, AffinityResolve
- use common_meta::datanode::Stat;
- use common_meta::ddl::{DetectingRegion, RegionFailureDetectorController};
- use common_meta::key::runtime_switch::RuntimeSwitchManagerRef;
--use common_meta::key::table_route::{TableRouteKey, TableRouteValue};
-+use common_meta::key::table_route::{TableRouteKey, TableRouteStorage, TableRouteValue};
- use common_meta::key::{MetadataKey, MetadataValue};
- use common_meta::kv_backend::KvBackendRef;
- use common_meta::leadership_notifier::LeadershipChangeListener;
-@@ -34,6 +34,7 @@ use common_runtime::JoinHandle;
- use common_telemetry::{debug, error, info, warn};
- use common_time::util::current_time_millis;
- use futures::{StreamExt, TryStreamExt};
-+use itertools::Itertools;
- use snafu::{ResultExt, ensure};
- use store_api::storage::RegionId;
- use tokio::sync::mpsc::error::TrySendError;
-@@ -44,7 +45,7 @@ use tokio::time::{MissedTickBehavior, interval, interval_at};
- use crate::discovery::utils::accept_ingest_workload;
- use crate::error::{self, Result};
- use crate::failure_detector::PhiAccrualFailureDetectorOptions;
--use crate::metasrv::{RegionStatAwareSelectorRef, SelectTarget, SelectorContext, SelectorRef};
-+use crate::metasrv::{RegionStatAwareSelectorRef, SelectorContext, SelectorRef};
- use crate::metrics::METRIC_META_HEARTBEAT_DROPPED;
- use crate::procedure::region_migration::manager::{
-     RegionMigrationManagerRef, RegionMigrationTriggerReason, SubmitRegionMigrationTaskResult,
-@@ -667,11 +668,15 @@ impl RegionSupervisor {
-             .context(error::RuntimeSwitchManagerSnafu)
-     }
- 
-+    /// Selects a target for each of `regions`, excluding `failure_datanodes`, the unschedulable
-+    /// datanodes and the region's datanodes in `exclude_peer_ids_by_region`. Regions without a
-+    /// candidate are left out.
-     async fn select_peers(
-         &self,
-         from_peer_id: DatanodeId,
-         regions: &[RegionId],
-         failure_datanodes: &[DatanodeId],
-+        exclude_peer_ids_by_region: &HashMap<RegionId, BTreeSet<DatanodeId>>,
-     ) -> Result<Vec<(RegionId, Peer)>> {
-         let affinity = if let Some(resolver) = &self.affinity_resolver {
-             match resolver
-@@ -715,54 +720,66 @@ impl RegionSupervisor {
-             .filter(|datanode| !datanode.is_schedulable())
-             .map(|datanode| datanode.peer.id);
-         exclude_peer_ids.extend(unschedulable_datanodes);
--        match &self.selector {
-+
-+        let region_peers = match &self.selector {
-             RegionSupervisorSelector::NaiveSelector(selector) => {
--                let opts = SelectorOptions {
--                    affinity: affinity.as_ref(),
--                    min_required_items: regions.len(),
--                    allow_duplication: true,
--                    exclude_peer_ids,
--                    workload_filter: Some(accept_ingest_workload),
--                };
--                let peers = selector.select(&self.selector_context, opts).await?;
--                ensure!(
--                    peers.len() == regions.len(),
--                    error::NoEnoughAvailableNodeSnafu {
--                        required: regions.len(),
--                        available: peers.len(),
--                        select_target: SelectTarget::Datanode,
-+                // `Selector` takes one exclusion set, so select once per distinct set of excluded
-+                // datanodes.
-+                let empty = BTreeSet::new();
-+                let mut groups = BTreeMap::<_, Vec<_>>::new();
-+                for region_id in regions {
-+                    let excluded = exclude_peer_ids_by_region.get(region_id).unwrap_or(&empty);
-+                    groups.entry(excluded).or_default().push(*region_id);
-+                }
-+                let mut region_peers = Vec::with_capacity(regions.len());
-+                for (excluded, regions) in groups {
-+                    let mut exclude_peer_ids = exclude_peer_ids.clone();
-+                    exclude_peer_ids.extend(excluded);
-+                    let opts = SelectorOptions {
-+                        affinity: affinity.as_ref(),
-+                        min_required_items: regions.len(),
-+                        allow_duplication: true,
-+                        exclude_peer_ids,
-+                        workload_filter: Some(accept_ingest_workload),
-+                    };
-+                    match selector.select(&self.selector_context, opts).await {
-+                        Ok(peers) => region_peers.extend(regions.into_iter().zip(peers)),
-+                        // Other groups may still have candidates.
-+                        Err(error::E
-```
-
-**File**: `src/meta-srv/src/selector.rs` (modified, +6/-1)
-```diff
-@@ -20,7 +20,7 @@ pub mod round_robin;
- pub(crate) mod test_utils;
- pub mod weight_compute;
- pub mod weighted_choose;
--use std::collections::HashSet;
-+use std::collections::{BTreeSet, HashMap, HashSet};
- 
- use api::v1::meta::heartbeat_request::NodeWorkloads;
- use common_meta::affinity::AffinityRequirements;
-@@ -43,6 +43,10 @@ pub trait Selector: Send + Sync {
- ///
- /// It selects the best destination peer for a list of regions.
- /// The selection is based on the region statistics, such as the region leader's write throughput.
-+///
-+/// A region is never placed on `exclude_peer_ids`, nor on its own peers in
-+/// `exclude_peer_ids_by_region`. It returns the regions it placed, possibly none: a region
-+/// without a remaining candidate is left out. Errors are for other failures.
- #[async_trait::async_trait]
- pub trait RegionStatAwareSelector: Send + Sync {
-     type Context;
-@@ -54,6 +58,7 @@ pub trait RegionStatAwareSelector: Send + Sync {
-         from_peer_id: u64,
-         region_ids: &[RegionId],
-         exclude_peer_ids: HashSet<u64>,
-+        exclude_peer_ids_by_region: &HashMap<RegionId, BTreeSet<u64>>,
-         affinity: Option<&AffinityRequirements>,
-     ) -> Result<Self::Output>;
- }
+-/// Resolves the format codec from the parsed options.
+-fn resolve_codec(options: &mut options::CopyOptionSet) -> PgWireResult<Arc<dyn CopyInCodec>> {
++/// Resolves the format from the parsed options.
++fn resolve_format(options: &mut options::CopyOptionSet) -> PgWireResult<CopyFormat> {
+     let name = options.take_format()?.ok_or_else(|| {
+         unsupported(
+             "COPY FROM STDIN requires an explicit format in this version; use WITH (FORMAT csv)",
+@@ -133,15 +142,15 @@ pub(crate) struct CopyFromStdin {
+     table: Vec<String>,
+     /// Requested column list; empty means all columns in table order.
+     columns: Vec<String>,
+-    /// The resol
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10013** (2026-10-27): fix(query): stop windowed sort on precision-lowering time casts [Backport release/v1.3] (@MichaelScofield)
-- **PR #10012** (2026-10-27): perf(mito2): index encoded bulk parts from memory during flush [Backport release/v1.3] (@killme2008)
-- **PR #10004** (2026-10-27): feat(promql): run native statements over any number of selectors (@killme2008)
-- **PR #10003** (2026-10-27): fix(mito2): stop the series distributor from stalling on unread partitions (@killme2008)
-- **PR #10001** (2026-10-27): fix(meta): exclude route followers from failover targets (@fengjiachun)
-- **PR #9998** (closed): feat(promql): split distributed aggregates over the raw fan-in (@discord9)
+- **PR #10040** (2026-10-28): ci: enqueue eligible pull requests during the nightly window (@WenyXu)
+- **PR #10034** (2026-10-28): fix(log-store): accept a retried first create of the conditional create probe (@fengjiachun)
+- **PR #10032** (closed): test(promql): cover the canonical merge and the routing node end to end (@discord9)
+- **PR #10031** (closed): feat(promql): route evaluated fragments to their canonical owner (@discord9)
+- **PR #10030** (closed): feat(promql): answer one series per canonical label set in the native path (@discord9)
+- **PR #10026** (2026-10-28): fix(query): keep requested sort when filtering on a lossy cast (@discord9)
 
 ---
 
@@ -2895,72 +2791,50 @@ then selects per group of regions that exclude the sa
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mito2): coordinate range cache invalidation and singleflight reads (#9935)
+## X. log-store): make raft-engine periodic WAL sync actually fsync (#9715)
 
 **RULE**:
-When implementing operations in `src/mito2/src/cache.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/log-store/src/raft_engine/log_store.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `44df6e5d`: mito2): coordinate range cache invalidation and singleflight reads (#9935). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `180e2716`: log-store): make raft-engine periodic WAL sync actually fsync (#9715). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/mito2/src/cache.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/log-store/src/raft_engine/log_store.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-pub(crate) mod range_cache;
-    /// Never wait while holding a partial load: several partial loads could
-    /// otherwise exhaust the budget and wait on each other indefinitely.
-    pub(crate) fn try_acquire(&self, bytes: usize) -> Option<tokio::sync::OwnedSemaphorePermit> {
-        let permits = bytes.div_ceil(self.permit_bytes).max(1);
-        if permits > self.total_permits {
-            return None;
-        }
-        self.semaphore
-            .clone()
-            .try_acquire_many_owned(permits.try_into().ok()?)
-            .ok()
-    }
+/// Key used by the periodic WAL sync task. Overwritten each period so the
+/// write stays non-empty on raft-engine 0.4.2 (see [`durable_sync`]).
+const PERIODIC_SYNC_MARKER_KEY: &[u8] = b"$wal_periodic_sync";
 
-    /// Transfers a load's reservation to its completed result without a gap in
-    /// accounting. Compaction may shrink buffers or add metadata; growing the
-    /// reservation must remain nonblocking just like loading more input.
-    pub(crate) fn try_resize(
-        &self,
-        permit: Option<tokio::sync::OwnedSemaphorePermit>,
-        bytes: usize,
-    ) -> Option<tokio::sync::OwnedSemaphorePermit> {
-        let Some(mut permit) = permit else {
-            return self.try_acquire(bytes);
-        };
-        let required = bytes.div_ceil(self.permit_bytes).max(1);
-        let reserved = permit.num_permits();
-        if required > reserve
+/// Force an fsync of previously appended WAL data on raft-engine 0.4.2.
+///
+/// `Engine::sync()` writes an empty [`LogBatch`] with `sync = true`, but
+/// 0.4.2's `Engine::write` returns early for empty batches *before* the
+/// fsync (tikv/raft-engine#395). Upstream fixed this in tikv/raft-engine#400,
+/// which is not on crates.io yet. Issuing a minimal non-empty put with
+/// `sync = true` reaches the fsync path on 0.4.2.
+///
+/// `batch` must be empty and can be reused across calls: a successful
+/// `Engine::write` drains its items but keeps its encoding buffer. On error the
+/// batch may be left partially encoded, so callers must discard it.
+fn durable_sync(engine: &Engine, batch: &mut LogBatch) -> raft_engine::Result<usize> {
+    debug_assert!(batch.is_empty());
+    // The value is unused, but it must not decode as a `NamespaceImpl`: the
+    // marker key sorts after `NAMESPACE_PREFIX`, inside the range scanned by
+    // `list_namespaces`. Overwriting the same key keeps the
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            CACHE_BYTES
-                .with_label_values(&[RANGE_RESULT_TYPE])
-                .add(range_result_cache_weight(&key, &result).into());
-        let range_result_cache = (self.range_result_cache_size != 0).then(|| {
-            Cache::builder()
-                .max_capacity(self.range_result_cache_size)
-                .weigher(range_result_cache_weight)
-                .eviction_listener(move |k, v, cause| {
-                    let size = range_result_cache_weight(&k, &v);
-                    CACHE_BYTES
-                        .with_label_values(&[RANGE_RESULT_TYPE])
-                        .sub(size.into());
-                    CACHE_EVICTION
-                        .with_label_values(&[RANGE_RESULT_TYPE, removal_cause_str(cause)])
-                        .inc();
-                })
-                .build()
-        });
+        if let Err(e) = tokio::task::spawn_blocking(move || engine.sync()).await {
+            error!(e; "Failed to sync raft engine log files");
+        };
+        Self { engine }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `44df6e5d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `180e2716` are properly handled with clean fallback behavior.

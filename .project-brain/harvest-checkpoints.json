@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T16:52:05.272Z",
+  "last_updated": "2026-10-28T16:58:59.333Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1535,14 +1535,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-      "content_hash": "fe24084134d320bc63ff45261775c72a5a768ca4490dd1c4b08f3ed225856d17",
-      "verified_at": "2026-10-25T23:53:23.077Z",
+      "content_hash": "4cfb0c09d6f932745bd1215a18cc0022042f4b7a2e8df2c77aaf50b4c8912236",
+      "verified_at": "2026-10-28T16:58:44.077Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T23:53:23.077Z"
+      "last_updated": "2026-10-28T16:58:44.077Z"
     },
     "nomic-ai/nomic-embed-text-v1.5": {
       "repository": "nomic-ai/nomic-embed-text-v1.5",
@@ -8181,14 +8181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-greptimeteam-greptimedb",
-      "content_hash": "5aa699a5dd5d402df457dabfecf54abafb4e0dba067b343f1488cdcf12c17d89",
-      "verified_at": "2026-10-28T00:53:43.149Z",
+      "content_hash": "6817ae15182494880c02477f005f68b790175619547c3381202536afc6fb7396",
+      "verified_at": "2026-10-28T16:58:59.333Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T00:53:43.149Z"
+      "last_updated": "2026-10-28T16:58:59.333Z"
     },
     "heroui-inc/heroui-native": {
       "repository": "heroui-inc/heroui-native",

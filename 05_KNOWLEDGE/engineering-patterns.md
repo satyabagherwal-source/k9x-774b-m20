@@ -387544,3 +387544,75 @@ Subsystems managing C data structures, boundary deserialization, API parsing, or
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `7d6468da` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5348. log-store): make raft-engine periodic WAL sync actually fsync (#9715) (Harvested from GreptimeTeam/greptimedb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "log-store): make raft-engine periodic WAL sync actually fsync (#9715)",
+  "source": "GreptimeTeam/greptimedb",
+  "source_url": "https://github.com/GreptimeTeam/greptimedb",
+  "source_version": "8e167104",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-28T16:58:59.087Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-greptimeteam-greptimedb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb) (Revision: `8e167104`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `src/log-store/src/raft_engine/log_store.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `180e2716`: log-store): make raft-engine periodic WAL sync actually fsync (#9715). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/log-store/src/raft_engine/log_store.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+/// Key used by the periodic WAL sync task. Overwritten each period so the
+/// write stays non-empty on raft-engine 0.4.2 (see [`durable_sync`]).
+const PERIODIC_SYNC_MARKER_KEY: &[u8] = b"$wal_periodic_sync";
+
+/// Force an fsync of previously appended WAL data on raft-engine 0.4.2.
+///
+/// `Engine::sync()` writes an empty [`LogBatch`] with `sync = true`, but
+/// 0.4.2's `Engine::write` returns early for empty batches *before* the
+/// fsync (tikv/raft-engine#395). Upstream fixed this in tikv/raft-engine#400,
+/// which is not on crates.io yet. Issuing a minimal non-empty put with
+/// `sync = true` reaches the fsync path on 0.4.2.
+///
+/// `batch` must be empty and can be reused across calls: a successful
+/// `Engine::write` drains its items but keeps its encoding buffer. On error the
+/// batch may be left partially encoded, so callers must discard it.
+fn durable_sync(engine: &Engine, batch: &mut LogBatch) -> raft_engine::Result<usize> {
+    debug_assert!(batch.is_empty());
+    // The value is unused, but it must not decode as a `NamespaceImpl`: the
+    // marker key sorts after `NAMESPACE_PREFIX`, inside the range scanned by
+    // `list_namespaces`. Overwriting the same key keeps the
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+        if let Err(e) = tokio::task::spawn_blocking(move || engine.sync()).await {
+            error!(e; "Failed to sync raft engine log files");
+        };
+        Self { engine }
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `180e2716` are properly handled with clean fallback behavior.

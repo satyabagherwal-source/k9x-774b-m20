@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T16:52:05.186Z",
+  "last_updated": "2026-10-28T16:58:59.255Z",
   "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -14750,8 +14750,8 @@
       "slug": "greptimeteam-greptimedb",
       "platform": "github",
       "source_url": "https://github.com/GreptimeTeam/greptimedb",
-      "source_version": "62ebf71f",
-      "content_hash": "5aa699a5dd5d402df457dabfecf54abafb4e0dba067b343f1488cdcf12c17d89",
+      "source_version": "8e167104",
+      "content_hash": "6817ae15182494880c02477f005f68b790175619547c3381202536afc6fb7396",
       "dossier_path": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "promoted_rules": [
@@ -14794,6 +14794,11 @@
           "number": 5083,
           "title": "mito2): coordinate range cache invalidation and singleflight reads (#9935)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5348,
+          "title": "log-store): make raft-engine periodic WAL sync actually fsync (#9715)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14801,7 +14806,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T00:53:43.047Z",
+      "verified_at": "2026-10-28T16:58:59.243Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26817,7 +26822,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
       "source_version": "hf-qwen-qwen3-vl-8b-instruct",
-      "content_hash": "fe24084134d320bc63ff45261775c72a5a768ca4490dd1c4b08f3ed225856d17",
+      "content_hash": "4cfb0c09d6f932745bd1215a18cc0022042f4b7a2e8df2c77aaf50b4c8912236",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md",
       "promoted_rules": [
@@ -26854,7 +26859,7 @@
         "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv3yxxno",
         "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv4dj7y1"
       ],
-      "verified_at": "2026-10-25T23:53:22.996Z",
+      "verified_at": "2026-10-28T16:58:44.001Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -145173,6 +145178,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T16:52:05.170Z"
+    },
+    "rule-5348": {
+      "learning_id": "rule-5348",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5348,
+      "title": "log-store): make raft-engine periodic WAL sync actually fsync (#9715)",
+      "source_url": "https://github.com/GreptimeTeam/greptimedb",
+      "source_version": "8e167104",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T16:58:59.243Z"
     }
   },
   "aliases": {
