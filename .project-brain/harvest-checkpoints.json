@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T21:43:39.516Z",
+  "last_updated": "2026-10-28T21:50:15.367Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1924,14 +1924,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
-      "content_hash": "91718c64b8ce20c25b4f6b7f4e428fa63d78c6898c6726256336367122a30223",
-      "verified_at": "2026-10-25T18:15:28.748Z",
+      "content_hash": "52b538d4678be50c0e6aefb20ed84b0b0103b23f913dc4603851510394befd29",
+      "verified_at": "2026-10-28T21:50:12.458Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T18:15:28.748Z"
+      "last_updated": "2026-10-28T21:50:12.458Z"
     },
     "slopus/happy": {
       "repository": "slopus/happy",
@@ -11721,14 +11721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zed-industries-zed",
-      "content_hash": "fd171d0a74303e7532a09ee2691b1181d433d99ebbee0f24750378ddfac9941b",
-      "verified_at": "2026-10-27T19:49:21.574Z",
+      "content_hash": "7568108dc1b0ff55f538f5280ef423c2fcfb5a26b251ade2387ea9ed35fb3bd0",
+      "verified_at": "2026-10-28T21:50:15.366Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T19:49:21.574Z"
+      "last_updated": "2026-10-28T21:50:15.366Z"
     },
     "MohamedRejeb/compose-rich-editor": {
       "repository": "MohamedRejeb/compose-rich-editor",

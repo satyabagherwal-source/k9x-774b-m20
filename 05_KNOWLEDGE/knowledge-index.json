@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T21:43:39.465Z",
+  "last_updated": "2026-10-28T21:50:15.283Z",
   "total_verified_learnings": 1159,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -17225,7 +17225,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
       "source_version": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
-      "content_hash": "91718c64b8ce20c25b4f6b7f4e428fa63d78c6898c6726256336367122a30223",
+      "content_hash": "52b538d4678be50c0e6aefb20ed84b0b0103b23f913dc4603851510394befd29",
       "dossier_path": "07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -17272,7 +17272,7 @@
         "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv49gron",
         "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv4mtxpo"
       ],
-      "verified_at": "2026-10-25T18:15:28.663Z",
+      "verified_at": "2026-10-28T21:50:12.345Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56754,8 +56754,8 @@
       "slug": "zed-industries-zed",
       "platform": "github",
       "source_url": "https://github.com/zed-industries/zed",
-      "source_version": "37faef81",
-      "content_hash": "fd171d0a74303e7532a09ee2691b1181d433d99ebbee0f24750378ddfac9941b",
+      "source_version": "e5bdd01c",
+      "content_hash": "7568108dc1b0ff55f538f5280ef423c2fcfb5a26b251ade2387ea9ed35fb3bd0",
       "dossier_path": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "promoted_rules": [
@@ -56803,6 +56803,11 @@
           "number": 4971,
           "title": "workspace: Fix panel buttons not working while a dock panel is zoomed (#66119)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5415,
+          "title": "agent_ui: Fix crash when expanding an ACP subagent card (#66251)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56810,7 +56815,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T19:49:21.490Z",
+      "verified_at": "2026-10-28T21:50:15.266Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -146493,6 +146498,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T21:43:39.454Z"
+    },
+    "rule-5415": {
+      "learning_id": "rule-5415",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5415,
+      "title": "agent_ui: Fix crash when expanding an ACP subagent card (#66251)",
+      "source_url": "https://github.com/zed-industries/zed",
+      "source_version": "e5bdd01c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T21:50:15.266Z"
     }
   },
   "aliases": {

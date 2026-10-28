@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T21:43:42.044Z",
-    "lastVerified": "2026-10-28T21:43:42.044Z",
+    "lastChecked": "2026-10-28T21:50:23.846Z",
+    "lastVerified": "2026-10-28T21:50:23.846Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -204,8 +204,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T21:11:26.037Z",
-    "lastVerified": "2026-10-28T21:11:26.037Z",
+    "lastChecked": "2026-10-28T21:50:23.836Z",
+    "lastVerified": "2026-10-28T21:50:23.836Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -962,9 +962,9 @@
   "chroma-core-chroma": {
     "name": "chroma",
     "officialUrl": "https://github.com/chroma-core/chroma",
-    "lastChecked": "2026-10-28T04:10:10.766Z",
+    "lastChecked": "2026-10-28T21:50:21.338Z",
     "revisionIdentifier": "52ce8448",
-    "lastVerified": "2026-10-28T04:10:10.766Z"
+    "lastVerified": "2026-10-28T21:50:21.338Z"
   },
   "sharkdp-bat": {
     "name": "bat",
@@ -1099,9 +1099,9 @@
   "cryfs-cryfs": {
     "name": "cryfs",
     "officialUrl": "https://github.com/cryfs/cryfs",
-    "lastChecked": "2026-10-28T17:56:39.898Z",
+    "lastChecked": "2026-10-28T21:50:18.737Z",
     "revisionIdentifier": "ad1f72d5",
-    "lastVerified": "2026-10-28T17:56:39.898Z"
+    "lastVerified": "2026-10-28T21:50:18.737Z"
   },
   "tursodatabase-turso": {
     "name": "tursodatabase/turso",
@@ -1412,9 +1412,9 @@
   "kubesphere-kubesphere": {
     "name": "kubesphere",
     "officialUrl": "https://github.com/kubesphere/kubesphere",
-    "lastChecked": "2026-10-28T05:03:41.416Z",
+    "lastChecked": "2026-10-28T21:50:16.352Z",
     "revisionIdentifier": "04a29b5c",
-    "lastVerified": "2026-10-28T05:03:41.416Z"
+    "lastVerified": "2026-10-28T21:50:16.352Z"
   },
   "zama-ai-tfhe-rs": {
     "name": "zama-ai/tfhe-rs",
@@ -6989,5 +6989,46 @@
     "lastChecked": "2026-10-28T21:43:29.523Z",
     "revisionIdentifier": "4b3aa942",
     "lastVerified": "2026-10-28T21:43:29.523Z"
+  },
+  "zed-industries-zed": {
+    "name": "zed-industries/zed",
+    "officialUrl": "https://github.com/zed-industries/zed",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T21:50:14.746Z",
+    "lastVerified": "2026-10-28T21:50:14.746Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-zed-industries-zed",
+    "contentHash": "7568108dc1b0ff55f538f5280ef423c2fcfb5a26b251ade2387ea9ed35fb3bd0",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 9,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf": {
+    "name": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+    "officialUrl": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T21:50:11.431Z",
+    "lastVerified": "2026-10-28T21:50:11.431Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
+    "contentHash": "52b538d4678be50c0e6aefb20ed84b0b0103b23f913dc4603851510394befd29",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kotlin-kmp-production-sample": {
+    "name": "kmp-production-sample",
+    "officialUrl": "https://github.com/Kotlin/kmp-production-sample",
+    "lastChecked": "2026-10-28T21:50:13.829Z",
+    "revisionIdentifier": "b0bed628",
+    "lastVerified": "2026-10-28T21:50:13.829Z"
   }
 }

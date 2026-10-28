@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T21:43:39.513Z",
-  "total_cycles_completed": 5925,
-  "total_learnings_persisted": 5925,
-  "total_rules_promoted": 5376,
+  "last_updated": "2026-10-28T21:50:15.363Z",
+  "total_cycles_completed": 5927,
+  "total_learnings_persisted": 5927,
+  "total_rules_promoted": 5377,
   "history": [
-    {
-      "timestamp": "2026-10-28T11:36:17.955Z",
-      "repository": "Cloudflare/clef",
-      "learningId": "learn-huggingface-cloudflare-clef",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T11:46:22.553Z",
-      "repository": "Cloudflare/clef-flash",
-      "learningId": "learn-huggingface-cloudflare-clef-flash",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T11:46:31.259Z",
       "repository": "matrixorigin/matrixone",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-28T21:43:39.513Z",
       "repository": "freenet/freenet-core",
       "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T21:50:12.455Z",
+      "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+      "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T21:50:15.363Z",
+      "repository": "zed-industries/zed",
+      "learningId": "learn-github-zed-industries-zed",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

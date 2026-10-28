@@ -775,8 +775,8 @@
     "sourceUrl": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
     "sourceVersion": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "91718c64b8ce20c25b4f6b7f4e428fa63d78c6898c6726256336367122a30223",
-    "lastHarvestedAt": "2026-10-25T18:15:28.740Z",
+    "contentHash": "52b538d4678be50c0e6aefb20ed84b0b0103b23f913dc4603851510394befd29",
+    "lastHarvestedAt": "2026-10-28T21:50:12.444Z",
     "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf"
   },
   "hf-timm-mobilenetv3_small_100.lamb_in1k": {
@@ -7783,10 +7783,10 @@
     "repository": "zed-industries/zed",
     "platform": "github",
     "sourceUrl": "https://github.com/zed-industries/zed",
-    "sourceVersion": "37faef81",
+    "sourceVersion": "e5bdd01c",
     "license": "NOASSERTION",
-    "contentHash": "fd171d0a74303e7532a09ee2691b1181d433d99ebbee0f24750378ddfac9941b",
-    "lastHarvestedAt": "2026-10-27T19:49:21.566Z",
+    "contentHash": "7568108dc1b0ff55f538f5280ef423c2fcfb5a26b251ade2387ea9ed35fb3bd0",
+    "lastHarvestedAt": "2026-10-28T21:50:15.358Z",
     "learningId": "learn-github-zed-industries-zed"
   },
   "mohamedrejeb-compose-rich-editor": {

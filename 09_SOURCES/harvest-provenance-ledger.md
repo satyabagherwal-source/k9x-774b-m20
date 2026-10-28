@@ -5957,3 +5957,5 @@ Every entry in this ledger must capture:
 | `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `36bf2b88` | Multi-dimensional audit evidence | 2026-10-28T21:43:30.679Z |
 | `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `60ce2463` | Multi-dimensional audit evidence | 2026-10-28T21:43:37.948Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `c1a950a9` | Multi-dimensional audit evidence | 2026-10-28T21:43:39.510Z |
+| `learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf` | `https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-10-28T21:50:12.444Z |
+| `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `e5bdd01c` | Multi-dimensional audit evidence | 2026-10-28T21:50:15.358Z |

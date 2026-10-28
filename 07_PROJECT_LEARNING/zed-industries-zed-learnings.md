@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source**: github ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
-> **Source Version**: `37faef81`  
+> **Source Version**: `e5bdd01c`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T19:49:21.156Z  
+> **Timestamp**: 2026-10-28T21:50:14.754Z  
 > **Learning ID**: `learn-github-zed-industries-zed`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T19:49:20.329Z  
+> **Harvest Timestamp**: 2026-10-28T21:50:14.746Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Code at the speed of thought – Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 92288 stars
+- **Stars / Engagement**: 92341 stars
 
 ---
 
@@ -2334,975 +2334,648 @@ fn score_against_expected_patch(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5e548b8a` (2026-10-26)
-**Commit Message**: workspace: Fix panel buttons not working while a dock panel is zoomed (#66119)
+### Incident Patch 1: `c693e6a8` (2026-10-28)
+**Commit Message**: agent_ui: Fix crash when expanding an ACP subagent card (#66251)
 
-## Summary
+Expanding an ACP subagent's card panicked with "cannot read ThreadView
+while it is already being updated".
 
-I use Claude Code in a terminal thread with the agent panel zoomed, and
-I couldn't get back to the project panel by clicking its button in the
-status bar: the button flickers and I stay in the agent panel. The
-keybinding for the same action (`cmd-1` in the JetBrains keymap) works
-fine. It happens with any two panels in the same dock, not only the
-agent panel.
+An expanded card renders the subagent's entries using the parent view's
+render context. When those entries include the subagent's incoming
+session message, its "From Main Agent" row called
+`session_participant_label`, which read the parent's `ThreadView` while
+the parent was rendering. Subagents announced by claude-agent-acp always
+start with that message, so this happened whenever their card was
+expanded.
 
-The cause: before dispatching its action, a panel button focuses the
-dock's focus handle (added in #34590 so the action works when nothing is
-focused yet). But when a panel is zoomed, the dock isn't rendered,
-because the panel is drawn in the zoom layer instead. So the dock's
-focus handle isn't in the rendered frame, the action is dispatched from
-the window root, and it never reaches the workspace's handlers.
+`session_participant_label` now reads the participant's `AcpThread` from
+the `Conversation`, through a new `Conversation::thread`, instead of
+through its view. Threads are registered there just before their views
+are created, so the labels are unchanged.
 
-The fix: when the dock has a zoomed panel, the button focuses that panel
-instead, since it's on screen. Otherwise nothing changes.
+`test_first_message_to_an_acp_subagent_shows_its_card` now adds the
+subagent's incoming message and expands the card. It panics without the
+fix.
 
-AI helped me find the cause and write the tests; I've reviewed and
-tested the change myself.
-
-## Testing
-
-Tested manually on macOS:
-
-1. Open the agent panel in the left dock (the project panel is in 
-
-**File**: `crates/workspace/src/dock.rs` (modified, +9/-1)
-```diff
-@@ -989,6 +989,14 @@ impl Dock {
-         }
-     }
- 
-+    /// Panel buttons focus this before dispatching their action. A zoomed panel isn't rendered
-+    /// inside its dock, so the dock's own handle would be outside the frame and the action dropped.
-+    pub(crate) fn panel_button_focus_handle(&self, window: &Window, cx: &App) -> FocusHandle {
-+        self.zoomed_panel(window, cx)
-+            .map(|panel| panel.panel_focus_handle(cx))
-+            .unwrap_or_else(|| self.focus_handle.clone())
-+    }
-+
-     pub fn active_panel_size(&self) -> Option<PanelSizeState> {
-         if self.is_open {
-             self.active_panel_entry().map(|entry| entry.size_state)
-@@ -1435,7 +1443,7 @@ impl Render for PanelButtons {
-                     (action, icon_tooltip.into())
-                 };
- 
--                let focus_handle = dock.focus_handle(cx);
-+                let focus_handle = dock.panel_button_focus_handle(window, cx);
-                 let icon_label = entry.panel.icon_label(window, cx);
- 
-                 Some(
-```
-
-**File**: `crates/workspace/src/workspace.rs` (modified, +76/-5)
-```diff
-@@ -12723,8 +12723,8 @@ mod tests {
-     };
-     use fs::{FakeFs, RemoveOptions};
-     use gpui::{
--        DismissEvent, Empty, EventEmitter, FocusHandle, Focusable, Render, TestAppContext,
--        UpdateGlobal, VisualTestContext, px,
-+        DismissEvent, Empty, EventEmitter, FocusHandle, Focusable, Modifiers, Render,
-+        TestAppContext, UpdateGlobal, VisualTestContext, px,
-     };
-     use project::{Project, ProjectEntryId, WorktreeId};
-     use serde_json::json;
-@@ -20753,6 +20753,77 @@ mod tests {
-         });
-     }
- 
-+    #[gpui::test]
-+    async fn test_panel_buttons_work_while_dock_is_zoomed(cx: &mut gpui::TestAppContext) {
-+        init_test(cx);
-+        let fs = FakeFs::new(cx.executor());
-+        let project = Project::test(fs, [], cx).await;
-+        // Workspace actions are registered on the `MultiWorkspace` root, so a bare `Workspace`
-+        // window wouldn't route dispatched actions to the workspace.
-+        let (multi_workspace, cx) =
-+            cx.add_window_view(|window, cx| MultiWorkspace::test_new(project, window, cx));
-+        let workspace =
-+            multi_workspace.read_with(cx, |multi_workspace, _| multi_workspace.workspace().clone());
-+
-+        let (zoomed_panel, sibling_panel) = workspace.update_in(cx, |workspace, window, cx| {
-+            workspace.register_action(|workspace, _: &ToggleSecondTestPanel, window, cx| {
-+                workspace.toggle_panel_focus::<SecondTestPanel>(window, cx);
-+            });
-+            let sibling_panel = cx.new(|cx| SecondTestPanel {
-+                focus_handle: cx.focus_handle(),
-+                zoomed: false,
-+            });
-+            workspace.add_panel(sibling_panel.clone(), window, cx);
-+            let zoomed_panel = cx.new(|cx| TestPanel::new(DockPosition::Bottom, 100, cx));
-+            workspace.add_panel(zoomed_panel.clone(), window, cx);
-+            workspace.toggle_panel_focus::<TestPanel>(window, cx);
-+            (zoomed_panel, sibling_panel)
-+        });
-+        zoomed_panel.update(cx, |_, cx| cx.emit(PanelEvent::ZoomIn));
-+        cx.run_until_parked();
-+        workspace.read_with(cx, |workspace, _| {
-+            assert_eq!(workspace.zoomed_position, Some(DockPosition::Bottom));
-+        });
-+
-+        let sibling_button = cx
-+            .debug_bounds("ICON-Terminal")
-+            .expect("sibling panel button should be rendered in the status bar");
-+        cx.simulate_click(sibling_button.center(), Modifiers::none());
-+        cx.run_until_parked();
-+        workspace.update_in(cx, |workspace, window, cx| {
-+            let dock = workspace.bottom_dock().read(cx);
-+            assert!(dock.is_open());
-+            assert_eq!(
-+                dock.active_panel().map(|panel| panel.panel_id()),
-+                Some(sibling_panel.entity_id()),
-+            );
-+            assert!(
-+                sibling_panel
-+                    .read(cx)
-+                    .focus_handle(cx)
-+                    .contains_focused(window, cx)
-+            );
-+        });
-+
-+        sibling_panel.update(cx, |_, cx| cx.emit(PanelEvent::ZoomIn));
-+        cx.run_until_parked();
-+        workspace.read_with(cx, |workspace, _| {
-+            assert_eq!(workspace.zoomed_position, Some(DockPosition::Bottom));
-+        });
-+
-+        let close_button = cx
-+            .debug_bounds("ICON-Terminal")
-+            .expect("active panel button should be rendered in the status bar");
-+        cx.simulate_click(close_button.center(), Modifiers::none());
-+        cx.run_until_parked();
-+        workspace.read_with(cx, |workspace, cx| {
-+            assert!(!workspace.bottom_dock().read(cx).is_open());
-+            assert_eq!(workspace.zoomed_position, None);
-+        });
-+    }
-+
-+    actions!(test_only, [ToggleSecondTestPanel]);
-+
-     struct SecondTestPanel {
-         focus_handle: FocusHandle,
-         zoomed: bool,
-@@ -20798,15 +20869,15 @@ mod tests {
-         }
- 
-         fn icon(&self, _: &Window, _: &App) -> Option<ui::IconName> {
--            None
-+            Some(ui::IconName::Terminal)
-         }
- 
-         fn icon_tooltip(&self, _: &Window, _: &App) -> Option<&'static str> {
--            None
-+            Some("Second Test Panel")
-         }
- 
-         fn toggle_action(&self) -> Box<dyn Action> {
--            crate::dock::test::ToggleTestPanel.boxed_clone()
-+            ToggleSecondTestPanel.boxed_clone()
-         }
- 
-         fn activation_priority(&self) -> u32 {
-```
-
----
-
-### Incident Patch 2: `6b985a8b` (2026-10-26)
-**Commit Message**: vim: Fix Helix surround add crashing on adjacent selections (#66107)
-
-## Summary
-
-Closes #65718
-
-Reproduction, Helix mode:
-
-1. Type `abcd` in a buffer.
-2. Press `x` to select the line.
-3. Press `s`, enable regex, enter `\w`.
-   Each character is now its own selection.
-4. Press `m s "`.
-
-Result: Zed panics with `cannot seek backward` in `text.rs`.
-
-Cause: #59201 changed `m s` to select the surrounded text together with
-the new delimiters.
-It uses anchors taken before the edit:
-`anchor_before(start)..anchor_after(end)`.
-When two selections touch, the edit inserts the closing `"` of the first
-selection and the opening `"` of the second selection at the same
-offset.
-`anchor_after(end)` of the first selection resolves after both.
-The two selections now overlap.
-Resolving overlapping anchors fails the ordering check.
-
-Fix: each edge of a new `m s` selection records anchors on both sides of
-its pre-edit offset, plus the length of the text requested at that
-insertion point before the edge.
-After the edit, the edge moves forward by that length, but never past
-the text actually inserted between its anchors.
-This keeps adjacent selections apart, and keeps ranges valid when an
-insertion does n
-
-**File**: `crates/vim/src/helix/surround.rs` (modified, +218/-21)
-```diff
-@@ -1,7 +1,8 @@
-+use collections::HashMap;
- use editor::display_map::DisplaySnapshot;
- use editor::{Bias, DisplayPoint, MultiBufferOffset, movement};
- use gpui::{Context, Window};
--use multi_buffer::Anchor;
-+use multi_buffer::{Anchor, MultiBufferSnapshot, ToOffset};
- use text::Selection;
- 
- use crate::Vim;
-@@ -80,29 +81,71 @@ fn preserved_selection_anchors(
- }
- 
- type SurroundEdits = Vec<(std::ops::Range<MultiBufferOffset>, String)>;
--type SurroundAnchors = Vec<std::ops::Range<Anchor>>;
-+
-+/// One end of a selection that `ms` surrounds, resolved after the edit.
-+struct SurroundedEdge {
-+    /// Anchors around the pre-edit offset: everything inserted there ends up
-+    /// between them.
-+    before: Anchor,
-+    after: Anchor,
-+    /// The length of the text requested at this offset that belongs before
-+    /// the edge.
-+    skip: usize,
-+}
-+
-+impl SurroundedEdge {
-+    fn new(snapshot: &MultiBufferSnapshot, offset: MultiBufferOffset, skip: usize) -> Self {
-+        Self {
-+            before: snapshot.anchor_before(offset),
-+            after: snapshot.anchor_after(offset),
-+            skip,
-+        }
-+    }
-+
-+    fn resolve(&self, snapshot: &MultiBufferSnapshot) -> MultiBufferOffset {
-+        let before = self.before.to_offset(snapshot);
-+        let after = self.after.to_offset(snapshot);
-+        // The multi buffer does not always grow by the requested amount: the
-+        // editor can be read-only, or an excerpt can end at the insertion
-+        // point. Only move over text that was actually inserted.
-+        before + self.skip.min(after - before)
-+    }
-+}
-+
-+enum SurroundSelections {
-+    Anchors(Vec<std::ops::Range<Anchor>>),
-+    Surrounded(Vec<std::ops::Range<SurroundedEdge>>),
-+}
- 
- fn apply_helix_surround_edits<F>(
-     vim: &mut Vim,
-     window: &mut Window,
-     cx: &mut Context<Vim>,
-     mut build: F,
- ) where
--    F: FnMut(&DisplaySnapshot, Vec<Selection<DisplayPoint>>) -> (SurroundEdits, SurroundAnchors),
-+    F: FnMut(&DisplaySnapshot, Vec<Selection<DisplayPoint>>) -> (SurroundEdits, SurroundSelections),
- {
-     vim.update_editor(cx, |_, editor, cx| {
-         editor.transact(window, cx, |editor, window, cx| {
-             editor.set_clip_at_line_ends(false, cx);
- 
-             let display_map = editor.display_snapshot(cx);
-             let selections = editor.selections.all_display(&display_map);
--            let (mut edits, anchors) = build(&display_map, selections);
-+            let (mut edits, new_selections) = build(&display_map, selections);
- 
-+            // The sort is stable, so insertions at the same offset keep the
-+            // order they were pushed in.
-             edits.sort_by_key(|edit| edit.0.start);
-             editor.edit(edits, cx);
- 
--            editor.change_selections(Default::default(), window, cx, |s| {
--                s.select_anchor_ranges(anchors);
-+            let snapshot = editor.buffer().read(cx).snapshot(cx);
-+            editor.change_selections(Default::default(), window, cx, |s| match new_selections {
-+                SurroundSelections::Anchors(anchors) => s.select_anchor_ranges(anchors),
-+                SurroundSelections::Surrounded(edges) => s.select_ranges(
-+                    edges
-+                        .iter()
-+                        .map(|edge| edge.start.resolve(&snapshot)..edge.end.resolve(&snapshot)),
-+                ),
-             });
-             editor.set_clip_at_line_ends(true, cx);
-         });
-@@ -117,31 +160,50 @@ impl Vim {
-         let pair = bracket_pair_for_str_helix(text);
- 
-         apply_helix_surround_edits(self, window, cx, |display_map, selections| {
-+            let snapshot = display_map.buffer_snapshot();
-             let mut edits = Vec::new();
--            let mut anchors = Vec::new();
--
-+            let mut ranges = Vec::new();
-+            // The length of the text requested so far at each insertion
-+            // point. Keyed by the position in the source buffer: offsets on
-+            // both sides of an excerpt boundary can map to the same source
-+            // position, and the multi buffer coalesces their insertions.
-+            let mut requested_at = HashMap::default();
-+            let insertion_point = |offset| {
-+                snapshot
-+                    .point_to_buffer_offset(offset)
-+                    .map(|(buffer, offset)| (buffer.remote_id(), offset))
-+            };
-+
-+            // Like Helix, the new selection covers the surrounded text
-+            // including the added delimiters, so that surrounds compose and
-+            // `i`/`a` land outside the pair. When two selections touch, the
-+            // closing delimiter of the first and the opening delimiter of the
-+            // second are inserted at the same offset, so no anchor can end up
-+            // between them. Instead, each edge records how much of the text
-+            // requested at its offset was pushed before it.
-             for selection in selections {
-                 let range = selection.ra
-```
-
----
-
-### Incident Patch 3: `fdcb1981` (2026-10-27)
-**Commit Message**: gpui: Smooth frame pacing in macOS Low Power Mode (#63477)
-
-# Objective
-
-On macOS, Low Power Mode reduces the CPU and GPU performance available
-to applications. GPUI continued requesting animation frames at the
-normal cadence, so work that no longer fit inside every refresh produced
-irregular frame drops instead of a deliberate lower frame rate.
-
-Frame throttling could also reject a display-link callback that arrived
-a fraction of a millisecond before the mathematically exact target
-interval. On a 120 Hz display, for example, a measured 16.666 ms
-interval missed a 16.667 ms threshold and delayed the frame until
-roughly 25 ms, intermittently turning a 60 fps cap into 40 fps.
-
-## Self-Review Checklist:
-
-- [x] I've reviewed my own diff for quality, security, and reliability
-- [x] Unsafe blocks (if any) have justifying comments
-- [x] The content adheres to Zed's UI standards
-- [x] Tests cover the new/changed behavior
-- [x] Performance impact has been considered and is acceptable
-
----
+ACP subagents are only offered behind `acp-beta`.
 
 Release Notes:
 
-- [GPUI] Improved animation smoothness on macOS when Low Power Mode is
-enabled.
+- N/A
 
----------
-
-Co-authored-by: Anthony Eid <[REDACTED_EMAIL]>
-
-**File**: `crates/gpui/src/app.rs` (modified, +22/-3)
+**File**: `crates/agent_ui/src/conversation_view.rs` (modified, +26/-0)
 ```diff
-@@ -51,9 +51,9 @@ use crate::{
-     DisplayChanges, DisplayEvent, DisplayId, EventEmitter, ExternalDragPayload, FocusHandle,
-     FocusMap, ForegroundExecutor, Global, KeyBinding, KeyContext, Keymap, Keystroke, LayoutId,
-     Menu, MenuItem, MissingGlyph, OwnedMenu, PathPromptOptions, Pixels, Platform, PlatformDisplay,
--    PlatformKeyboardLayout, PlatformKeyboardMapper, Point, Priority, PromptBuilder, PromptButton,
--    PromptHandle, PromptLevel, Render, RenderImage, RenderablePromptHandle, Reservation,
--    ScreenCaptureSource, SharedString, SubscriberSet, Subscription, SvgRenderer,
-+    PlatformKeyboardLayout, PlatformKeyboardMapper, Point, PowerMode, Priority, PromptBuilder,
-+    PromptButton, PromptHandle, PromptLevel, Render, RenderImage, RenderablePromptHandle,
-+    Reservation, ScreenCaptureSource, SharedString, SubscriberSet, Subscription, SvgRenderer,
-     SystemNotification, SystemNotificationResponse, Task, TextRenderingMode, TextSystem,
-     ThermalState, Window, WindowAppearance, WindowButtonLayout, WindowHandle, WindowId,
-     WindowInvalidator, WindowingRequest,
-@@ -939,6 +939,7 @@ pub struct App {
-     pub(crate) reduce_motion: bool,
-     /// Origin of the shared clock that phase-locks synced repeating animations.
-     pub(crate) synced_animation_epoch: Instant,
-+    power_mode: PowerMode,
-     /// Whether the app was created by [`Application::new_inaccessible`]. No
-     /// accesskit APIs will be called when this flag is set.
-     pub(crate) accessibility_force_disabled: bool,
-@@ -973,6 +974,7 @@ impl App {
-         let entities = EntityMap::new();
-         let keyboard_layout = platform.keyboard_layout();
-         let keyboard_mapper = platform.keyboard_mapper();
-+        let power_mode = platform.power_mode();
+@@ -501,6 +501,10 @@ impl Conversation {
+         ))
+     }
  
-         #[cfg(any(test, gpui_leak_detection))]
-         let _ref_counts = entities.ref_counts_drop_handle();
-@@ -1048,6 +1050,7 @@ impl App {
-                 cursor_hide_mode: CursorHideMode::default(),
-                 reduce_motion: false,
-                 synced_animation_epoch,
-+                power_mode,
-                 accessibility_force_disabled: false,
++    pub(crate) fn thread(&self, session_id: &acp_v2::SessionId) -> Option<&Entity<AcpThread>> {
++        self.threads.get(session_id)
++    }
++
+     pub fn subagents_awaiting_permission(&self, cx: &App) -> Vec<(acp_v2::SessionId, usize)> {
+         self.permission_requests
+             .iter()
+@@ -20595,6 +20599,28 @@ pub(crate) mod tests {
+                 "Investigator"
+             );
+         });
++
++        // The expanded card renders the subagent's own view of the message, a row that
++        // names the parent.
++        child
++            .update(cx, |child, cx| {
++                child.upsert_session_message(
++                    acp_v2::SessionMessage::new("task")
++                        .sender_session_id(root_session_id.clone())
++                        .recipient_session_id(acp_v2::SessionId::new("child"))
++                        .content(vec!["Check the failure".into()]),
++                    cx,
++                )
++            })
++            .expect("incoming message");
++        thread_view.update(cx, |view, cx| {
++            view.entry_view_state.update(cx, |state, _| {
++                state.toggle_session_message_card_expansion(&acp_v2::MessageId::new("launch"))
++            });
++            cx.notify();
++        });
++        cx.run_until_parked();
++        assert!(cx.debug_bounds("subagent-card-0").is_some());
+     }
  
-                 #[cfg(any(test, feature = "test-support", debug_assertions))]
-@@ -1150,6 +1153,16 @@ impl App {
-             }
-         }));
+     #[gpui::test]
+```
+
+**File**: `crates/agent_ui/src/conversation_view/thread_view.rs` (modified, +4/-3)
+```diff
+@@ -9009,9 +9009,10 @@ impl ThreadView {
+         session_id: &acp_v2::SessionId,
+         cx: &App,
+     ) -> Option<SharedString> {
+-        let server_view = self.server_view.upgrade()?;
+-        let thread_view = server_view.read(cx).thread_view(session_id)?;
+-        let thread = thread_view.read(cx).thread.read(cx);
++        // Read the thread through the conversation rather than its view: an expanded subagent
++        // card renders the subagent's entries while the parent's view is being updated.
++        let conversation = self.conversation.read(cx);
++        let thread = conversation.thread(session_id)?.read(cx);
+         Some(if thread.parent_session_id().is_none() {
+             "Main Agent".into()
+         } else {
+```
+
+---
+
+### Incident Patch 2: `44ec5691` (2026-10-28)
+**Commit Message**: gpui_apple: Start font-size alternation at the exact size (#65728)
+
+## Summary
+
+On macOS, `layout_line` alternates between the requested font size and
+its `next_up()` value to prevent ligatures from forming across font-run
+boundaries.
+Previously, the alternation started with the nudged size, so even a line
+with a single run was laid out at a slightly larger size than requested.
+SF tracking depends on the exact point size: the test string measures
+152.71 px instead of 152.85 px at 11 px, which was reported as GPUI text
+not lining up with AppKit labels in the same font.
+
+Start the alternation at the exact size and advance it only when a run
+inserts text.
+Empty runs and leading BOM-only runs discarded by `replace_str` do not
+advance the alternation.
+Multi-run lines still alternate sizes, but now start at the exact size.
+The boundary-splitting workaround remains independent of font identity,
+covering both distinct font IDs that resolve to the same CTFont and
+different fonts that share a fallback, such as Helvetica and Times
+falling back to Geeza Pro for Arabic.
+
+## Testing
+
+- `test_layout_line_sets_a_lone_run_at_its_exact_size` compares a
+single-run line, with and without a preceding B
+
+**File**: `crates/gpui_apple/src/text_system.rs` (modified, +132/-3)
+```diff
+@@ -545,7 +545,12 @@ impl AppleTextSystemState {
  
-+        platform.on_power_mode_change(Box::new({
-+            let app = Rc::downgrade(&app);
-+            move || {
-+                if let Some(app) = app.upgrade() {
-+                    let power_mode = app.borrow().platform.power_mode();
-+                    app.borrow_mut().power_mode = power_mode;
+         {
+             let mut text = text;
+-            let mut break_ligature = true;
++            // CoreText merges adjacent runs that end up in equal fonts, including runs of
++            // different fonts that fall back to the same one, so every other run that inserts
++            // text is set a hair larger to keep ligatures from forming across them. The first
++            // run keeps its exact size: SF tracks by its exact point size, and a nudged size
++            // draws wider or narrower than AppKit sets the same text.
++            let mut break_ligature = false;
+             for run in font_runs {
+                 let text_run;
+                 (text_run, text) = text.split_at(run.len);
+@@ -576,7 +581,9 @@ impl AppleTextSystemState {
+                         &font.native_font().clone_with_font_size(font_size.into()),
+                     );
+                 }
+-                break_ligature = !break_ligature;
++                if length > 0 {
++                    break_ligature = !break_ligature;
 +                }
-+            }
-+        }));
-+
-         platform.on_quit(Box::new({
-             let cx = Rc::downgrade(&app);
-             move || {
-@@ -1814,6 +1827,12 @@ impl App {
-         self.text_rendering_mode.get()
+             }
+         }
+         // Retrieve the glyphs from the shaped line, converting UTF16 offsets to UTF8 offsets.
+@@ -775,7 +782,9 @@ mod lenient_font_attributes {
+ #[cfg(test)]
+ mod tests {
+     use crate::AppleTextSystem;
+-    use gpui::{FontFallbacks, FontFeatures, FontRun, GlyphId, PlatformTextSystem, font, px};
++    use gpui::{
++        FontFallbacks, FontFeatures, FontId, FontRun, GlyphId, PlatformTextSystem, font, px,
++    };
+     use std::sync::Arc;
+ 
+     #[test]
+@@ -801,6 +810,126 @@ mod tests {
+         assert!(!layout.runs.is_empty());
      }
  
-+    /// Returns the operating system's power mode, or [`PowerMode::Unknown`]
-+    /// when the platform cannot determine it.
-+    pub fn power_mode(&self) -> PowerMode {
-+        self.power_mode
-+    }
++    #[test]
++    fn test_layout_line_sets_a_lone_run_at_its_exact_size() {
++        use core_foundation::attributed_string::CFMutableAttributedString;
++        use core_foundation::base::{CFRange, TCFType};
++        use core_foundation::string::CFString;
++        use core_text::line::CTLine;
++        use core_text::string_attributes::kCTFontAttributeName;
 +
-     /// Writes data to the platform clipboard.
-     pub fn write_to_clipboard(&self, item: ClipboardItem) {
-         self.platform.write_to_clipboard(item)
-```
-
-**File**: `crates/gpui/src/platform.rs` (modified, +22/-0)
-```diff
-@@ -514,6 +514,14 @@ pub trait Platform: 'static {
-     fn on_thermal_state_change(&self, callback: Box<dyn FnMut()>);
-     fn prevent_idle_sleep(&self, reason: &str) -> Task<Result<ActivityGuard>>;
- 
-+    /// Returns the operating system's power mode, or [`PowerMode::Unknown`]
-+    /// when the platform cannot determine it.
-+    fn power_mode(&self) -> PowerMode {
-+        PowerMode::Unknown
-+    }
-+    /// Registers a callback invoked when the reported power mode changes.
-+    fn on_power_mode_change(&self, _callback: Box<dyn FnMut()>) {}
++        let fonts = AppleTextSystem::new();
++        let font_id = fonts.font_id(&font(".SystemUIFont")).unwrap();
++        let text = "Hamburgefonstiv 0123 Wafer";
++        let bom = "\u{feff}";
++        let with_bom = format!("{bom}{text}");
++        for size in [11., 17., 22.] {
++            let exact = fonts.0.read().fonts[font_id.0]
++                .native_font()
++                .clone_with_font_size(size as f64);
++            let mut string = CFMutableAttributedString::new();
++            string.replace_str(&CFString::new(text), CFRange::init(0, 0));
++            let range = CFRange::init(0, string.char_len());
++            unsafe { string.set_attribute(range, kCTFontAttributeName, &exact) };
++            let line = CTLine::new_with_attributed_string(string.as_concrete_TypeRef());
++            let width = line.get_typographic_bounds().width as f32;
 +
-     /// Sets the application's process-wide identity and user-visible name.
-     ///
-     /// The identifier is used for platform identity mechanisms such as the
-@@ -701,6 +709,20 @@ pub struct SystemNotificationResponse {
-     pub action_id: Option<SharedString>,
- }
- 
-+/// The operating system's preference for energy use versus performance.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub enum PowerMode {
-+    /// The platform cannot determine the mode, or cannot distinguish the
-+    /// active mode from other non-low-power modes.
-+    Unknown,
-+    /// The system prioritizes reducing energy use.
-+    LowPower,
-+    /// The system balances energy use and performance.
-+    Balanced,
-+    /// The system prioritizes performance over energy use.
-+    HighPower,
-+}
++            let layout = fonts.layout_line(
++                text,
++                px(size),
++                &[FontRun {
++                    font_id,
++                    len: text.len(),
++                }],
++            );
++            assert_eq!(f32::from(layout.width), width, "{size} px");
 +
- /// Thermal state of the system
- #[derive(Debug, Clone, Copy, PartialEq, Eq)]
- pub enum ThermalState {
-```
-
-**File**: `crates/gpui/src/profiler/journal.rs` (modified, +2/-0)
-```diff
-@@ -165,6 +165,8 @@ pub enum FrameSkipReason {
-     InactiveFrameRateLimit,
-     /// Thermal throttling deferred drawing.
-     ThermalFrameRateLimit,
-+    /// Low power mode deferred drawing.
-+    LowPowerFrameRateLimit,
- }
- 
- /// A completed frame request that returned without drawing a new frame.
-```
-
-**File**: `crates/gpui/src/window.rs` (modified, +132/-37)
-```diff
-@@ -146,15 +146,6 @@ struct FrameDirtyAccumulator {
-     invalidations: u64,
- }
- 
--/// Why GPUI capped a window's frame rate.
--#[derive(Clone, Copy)]
--enum FrameRateLimit {
--    /// The window isn't focused.
--    Inactive,
--    /// The system is under thermal pressure.
--    Thermal,
--}
--
- #[derive(Clone)]
- pub(crate) struct WindowInvalidator {
-     inner: Rc<RefCell<WindowInvalidatorInner>>,
-@@ -1332,6 +1323,47 @@ pub(crate) struct InputRateTracker {
-     sustain_duration: Duration,
- }
- 
-+const THIRTY_FPS_INTERVAL: Duration = Duration::from_micros(33333);
-+const SIXTY_FPS_INTERVAL: Duration = Duration::from_micros(16667);
-+const FRAME_INTERVAL_TOLERANCE: Duration = Duration::from_millis(1);
-+
-+/// Display-link timestamps can straddle a target interval by fractions of a
-+/// millisecond. Accepting that callback preserves an even display-frame divisor
-+/// instead of occasionally waiting for an additional refresh.
-+fn frame_request_arrived_too_early(elapsed: Duration, minimum_interval: Duration) -> bool {
-+    elapsed < minimum_interval.saturating_sub(FRAME_INTERVAL_TOLERANCE)
-+}
-+
-+fn minimum_frame_interval(
-+    should_throttle: bool,
-+    inactive_without_high_rate_input: bool,
-+    inactive_frame_interval: Option<Duration>,
-+    thermal_state: ThermalState,
-+    power_mode: crate::PowerMode,
-+) -> Option<Duration> {
-+    let low_power_mode_enabled = power_mode == crate::PowerMode::LowPower;
-+    if !should_throttle {
-+        None
-+    } else if inactive_without_high_rate_input {
-+        match (inactive_frame_interval, low_power_mode_enabled) {
-+            (Some(inactive_frame_interval), true) => {
-+                Some(inactive_frame_interval.max(THIRTY_FPS_INTERVAL))
-+            }
-+            (inactive_frame_interval, false) => inactive_frame_interval,
-+            (None, true) => Some(THIRTY_FPS_INTERVAL),
++            // replace_str drops a leading BOM, so its run must not count as the previous run.
++            let layout = fonts.layout_line(
++                &with_bom,
++                px(size),
++                &[
++                    FontRun {
++                        font_id,
++                        len: bom.len(),
++                    },
++                    FontRun {
++                        font_id,
++                        len: text.len(),
++                    },
++                ],
++            );
++            assert_eq!(f32::from(layout.width), width, "{size} px after a BOM run");
 +        }
-+    } else if low_power_mode_enabled {
-+        Some(THIRTY_FPS_INTERVAL)
-+    } else if matches!(
-+        thermal_state,
-+        ThermalState::Critical | ThermalState::Serious
-+    ) {
-+        Some(SIXTY_FPS_INTERVAL)
-+    } else {
-+        None
-+    }
-+}
-+
- impl Default for InputRateTracker {
-     fn default() -> Self {
-         Self {
-@@ -1830,31 +1862,37 @@ impl Window {
-                 let force_render =
-                     mem::take(&mut deferred_force_render) || request_frame_options.force_render;
- 
--                let thermal_state = handle
--                    .update(&mut cx, |_, _, cx| cx.thermal_state())
-+                let power_state = handle
-+                    .update(&mut cx, |_, _, cx| (cx.thermal_state(), cx.power_mode()))
-                     .log_err();
- 
-                 // Throttle frame rate based on conditions:
-                 // - Thermal pressure (Serious/Critical): cap to ~60fps
--                // - Inactive window (not focused): cap to ~30fps to save energy
--                let min_frame_interval = if request_frame_options.require_presentation
--                    || (!request_frame_options.force_render
--                        && next_frame_callbacks.borrow().is_empty())
--                {
--                    None
--                } else if !active.get() && !input_rate_tracker.borrow_mut().is_high_rate() {
--                    inactive_frame_interval.map(|interval| (interval, FrameRateLimit::Inactive))
--                } else if let Some(ThermalState::Critical | ThermalState::Serious) = thermal_state {
--                    Some((Duration::from_micros(16667), FrameRateLimit::Thermal))
--                } else {
--                    None
--                };
-+                // - Low power mode: cap to ~30fps
-+                // - Inactive window (not focused): use its configured frame interval
-+                let should_throttle = !request_frame_options.require_presentation
-+                    && (request_frame_options.force_render
-+                        || !next_frame_callbacks.borrow().is_empty());
-+                let inactive_without_high_rate_input = should_throttle
-+                    && !active.get()
-+                    && !input_rate_tracker.borrow_mut().is_high_rate();
-+                let (thermal_state, power_mode) =
-+                    power_state.unwrap_or((ThermalState::Nominal, crate::PowerMode::Unknown));
-+                let min_frame_interval = minimum_frame_interval(
-+                    should_throttle,
-+                    inactive_without_high_rate_input,
-+                    inactive_frame_interval,
-+                    thermal_state,
-+                    power_mode,
-+                );
- 
-                 let now = Instant::now();
--                #[cfg_attr(not(feature = "profiler"), expect(unused_variables))]
--                if let Some((min_interval, limit)) = min_frame_interval {
-+                if let Some(min_interval) = min_frame_interval {
-                     if let Some(last_frame) = last_frame_time.get()
--                        && now.duration_since(last_frame) < min_interval
-+                        && 
-```
-
-**File**: `crates/gpui_apple/src/gpui_apple.rs` (modified, +1/-1)
-```diff
-@@ -9,7 +9,7 @@ mod dispatcher;
- pub mod keychain;
- mod metal_atlas;
- pub mod metal_renderer;
--pub mod thermal;
-+pub mod process_info;
- 
- #[cfg(feature = "font-kit")]
- mod open_type;
-```
-
-**File**: `crates/gpui_apple/src/process_info.rs` (added, +182/-0)
-```diff
-@@ -0,0 +1,182 @@
-+use block2::RcBlock;
-+use futures::{StreamExt, channel::mpsc};
-+use gpui::{ForegroundExecutor, PowerMode, Task, ThermalState};
-+use objc2::{rc::Retained, runtime::ProtocolObject};
-+use objc2_foundation::{
-+    NSNotification, NSNotificationCenter, NSNotificationName, NSObjectProtocol, NSProcessInfo,
-+    NSProcessInfoPowerStateDidChangeNotification, NSProcessInfoThermalState,
-+    NSProcessInfoThermalStateDidChangeNotification,
-+};
-+
-+pub fn thermal_state() -> ThermalState {
-+    match NSProcessInfo::processInfo().thermalState() {
-+        NSProcessInfoThermalState::Fair => ThermalState::Fair,
-+        NSProcessInfoThermalState::Serious => ThermalState::Serious,
-+        NSProcessInfoThermalState::Critical => ThermalState::Critical,
-+        _ => ThermalState::Nominal,
-+    }
-+}
-+
-+pub fn power_mode() -> PowerMode {
-+    if NSProcessInfo::processInfo().isLowPowerModeEnabled() {
-+        PowerMode::LowPower
-+    } else {
-+        // This API does not distinguish Automatic from High Power Mode on macOS.
-+        PowerMode::Unknown
-+    }
-+}
-+
-+pub fn observe_thermal_state(
-+    executor: &ForegroundExecutor,
-+    callback: Box<dyn FnMut()>,
-+) -> ProcessInfoObserver {
-+    // Foundation requires reading thermalState before registering for changes.
-+    // https://developer.apple.com/documentation/foundation/processinfo/thermalstatedidchangenotification
-+    thermal_state();
-+    ProcessInfoObserver::new(
-+        unsafe { NSProcessInfoThermalStateDidChangeNotification },
-+        executor,
-+        callback,
-+    )
-+}
-+
-+pub fn observe_power_mode(
-+    executor: &ForegroundExecutor,
-+    callback: Box<dyn FnMut()>,
-+) -> ProcessInfoObserver {
-+    ProcessInfoObserver::new(
-+        unsafe { NSProcessInfoPowerStateDidChangeNotification },
-+        executor,
-+        callback,
-+    )
-+}
-+
-+pub struct ProcessInfoObserver {
-+    center: Retained<NSNotificationCenter>,
-+    observer: Retained<ProtocolObject<dyn NSObjectProtocol>>,
-+    _task: Task<()>,
-+}
-+
-+impl ProcessInfoObserver {
-+    fn new(
-+        name: &NSNotificationName,
-+        executor: &ForegroundExecutor,
-+        callback: Box<dyn FnMut()>,
-+    ) -> Self {
-+        Self::with_center(
-+            NSNotificationCenter::defaultCenter(),
-+            name,
-+            executor,
-+            callback,
-+        )
 +    }
 +
-+    fn with_center(
-+        center: Retained<NSNotificationCenter>,
-+        name: &NSNotificationName,
-+        executor: &ForegroundExecutor,
-+        mut callback: Box<dyn FnMut()>,
-+    ) -> Self {
-+        let (sender, mut receiver) = mpsc::unbounded();
-+        let block = RcBlock::new(move |_: std::ptr::NonNull<NSNotification>| {
-+            // Notifications can arrive synchronously or off-thread. Defer application
-+            // callbacks so they cannot reenter GPUI while it is already borrowed.
-+            if sender.unbounded_send(()).is_err() {
-+                log::debug!("process info observer stopped before notification delivery");
-+            }
-+        });
-+        let observer = unsafe {
-+            center.addObserverForName_object_queue_usingBlock(
-+                Some(name),
-+                Some(&NSProcessInfo::processInfo()),
-+                None,
-+                &block,
-+            )
++    #[test]
++    fn test_layout_line_breaks_ligatures_between_runs() {
++        let fonts = AppleTextSystem::new();
++        fonts
++            .add_fonts(vec![
++                include_bytes!("../../../assets/fonts/lilex/Lilex-Regular.ttf")
++                    .as_slice()
++                    .into(),
++            ])
++            .unwrap();
++        let glyphs = |text: &str, runs: &[(FontId, usize)]| -> Vec<GlyphId> {
++            let runs = runs
++                .iter()
++                .map(|&(font_id, len)| FontRun { font_id, len })
++                .collect::<Vec<_>>();
++            fonts
++                .layout_line(text, px(16.), &runs)
++                .runs
++                .iter()
++                .flat_map(|run| run.glyphs.iter().map(|glyph| glyph.id))
++                .collect()
 +        };
-+        let task = executor.spawn(async move {
-+            while receiver.next().await.is_some() {
-+                callback();
-+            }
-+        });
-+        Self {
-+            center,
-+            observer,
-+            _task: task,
-+        }
-+    }
-+}
 +
-+impl Drop for ProcessInfoObserver {
-+    fn drop(&mut self) {
-+        unsafe {
-+            self.center.removeObserver(self.observer.as_ref());
-+        }
-+    }
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+    use std::{cell::Cell, rc::Rc};
-+
-+    fn post_notification(center: &NSNotificationCenter, name: &NSNotificationName) {
-+        unsafe {
-+            center.postNotificationName_object(name, Some(&NSProcessInfo::processInfo()));
-+        }
-+    }
-+
-+    #[gpui::test]
-+    fn notifications_are_deferred_and_cancelled_on_drop(cx: &mut gpui::TestAppContext) {
-+        for name in unsafe {
-+            [
-+                NSProcessInfoPowerStateDidChangeNotification,
-+                NSProcessInfoThermalStateDidChangeNotification,
-+            ]
-+        } {
-+            check_notification_lifecycle(cx, name);
-+        }
-+    }
-+
-+    fn check_notification_lifecycle(
-+        cx: &mut gpui::TestAppContext,
-+        name: &'static NSNotificationName,
-+    ) {
-+        // Tests cannot share the default center because they run concurrently.
-+        let center = NSNotificationCenter::new();
-+        let calls = Rc::new(Cell::new(0));
-+        let observer = ProcessInfoObserver::with_center(
-+            center.clone(),
-+            name,
-+            &cx.foreground_executor,
-+            Box::new({
-+                let calls = calls.clone();
-+                move || calls.set(calls.get() + 1)
-+            }),
++        let lilex = fonts.font_id(&font("Lilex")).unwrap();
++        let gt = glyphs(">", &[(lilex, 1)])[0];
++        assert_ne!(glyphs(">>>", &[(lilex, 3)]), vec![gt; 3], ">>> as one run");
++        assert_eq!(
++            glyphs(">>>", &[(lilex, 1), (lilex, 1), (lilex, 1)]),
++            vec![gt; 3]
 +        );
-
++        let mut split = glyphs(">>", &[(li
 ```
 
-**File**: `crates/gpui_apple/src/thermal.rs` (removed, +0/-113)
+---
+
+### Incident Patch 3: `33d111ea` (2026-10-28)
+**Commit Message**: agent_ui: Show each linked message to an ACP subagent as its own card (#66102)
+
+Stacked on #66101 (linked session message views). Item 6 part 2 of the
+ACP subagents RFD work.
+
+Until now an ACP parent's first message to a subagent was drawn as one
+card for the whole subagent, and later messages stayed "To …" rows.
+Native subagents get one card per `spawn_agent` call. This PR gives ACP
+subagents the same: one card per delegation.
+
+**Which messages are cards**
+- A message linked to the subagent's view of it gets its own card.
+claude-agent-acp links launches and, since v0.96.0
+(agentclientprotocol/claude-agent-acp#1424), `SendMessage` delegations.
+- The card covers its part of the subagent's transcript: from the linked
+view up to the next message from the parent.
+- Without a link, the first message still gets a card for the whole
+subagent, and later ones stay rows. This is unchanged for agents that
+don't send references.
+
+**Status of earlier cards**
+The subagent reports one state for all its work, and the protocol has no
+per-message outcome. So:
+- A card for an earlier message shows the first idle state the subagent
+reported after receiving it. That idle ended the message's work.
+- Unt
+
+**File**: `crates/acp_thread/src/acp_thread.rs` (modified, +17/-0)
 ```diff
-@@ -1,113 +0,0 @@
--use block2::RcBlock;
--use futures::{StreamExt, channel::mpsc};
--use gpui::{ForegroundExecutor, Task, ThermalState};
--use objc2::{rc::Retained, runtime::ProtocolObject};
--use objc2_foundation::{
--    NSNotification, NSNotificationCenter, NSObjectProtocol, NSProcessInfo,
--    NSProcessInfoThermalState, NSProcessInfoThermalStateDidChangeNotification,
--};
--
--pub fn thermal_state() -> ThermalState {
--    match NSProcessInfo::processInfo().thermalState() {
--        NSProcessInfoThermalState::Fair => ThermalState::Fair,
--        NSProcessInfoThermalState::Serious => ThermalState::Serious,
--        NSProcessInfoThermalState::Critical => ThermalState::Critical,
--        _ => ThermalState::Nominal,
--    }
--}
--
--pub struct ThermalObserver {
--    center: Retained<NSNotificationCenter>,
--    observer: Retained<ProtocolObject<dyn NSObjectProtocol>>,
--    _task: Task<()>,
--}
--
--impl ThermalObserver {
--    pub fn new(executor: &ForegroundExecutor, callback: Box<dyn FnMut()>) -> Self {
--        Self::with_center(NSNotificationCenter::defaultCenter(), executor, callback)
--    }
--
--    fn with_center(
--        center: Retained<NSNotificationCenter>,
--        executor: &ForegroundExecutor,
--        mut callback: Box<dyn FnMut()>,
--    ) -> Self {
--        let (sender, mut receiver) = mpsc::unbounded();
--        let block = RcBlock::new(move |_: std::ptr::NonNull<NSNotification>| {
--            // NotificationCenter can call synchronously or off-thread. Never enter
--            // application code here: GPUI may already be borrowed on the main thread.
--            if sender.unbounded_send(()).is_err() {
--                log::debug!("thermal observer stopped before notification delivery");
--            }
--        });
--        let observer = unsafe {
--            center.addObserverForName_object_queue_usingBlock(
--                Some(NSProcessInfoThermalStateDidChangeNotification),
--                Some(&NSProcessInfo::processInfo()),
--                None,
--                &block,
--            )
--        };
--        let task = executor.spawn(async move {
--            while receiver.next().await.is_some() {
--                callback();
--            }
--        });
--        Self {
--            center,
--            observer,
--            _task: task,
--        }
--    }
--}
--
--impl Drop for ThermalObserver {
--    fn drop(&mut self) {
--        unsafe {
--            self.center.removeObserver(self.observer.as_ref());
--        }
--    }
--}
--
--#[cfg(test)]
--mod tests {
--    use super::*;
--    use std::{cell::Cell, rc::Rc};
--
--    // Tests run concurrently in one process, so they cannot share the default center.
--    fn post_thermal_notification(center: &NSNotificationCenter) {
--        unsafe {
--            center.postNotificationName_object(
--                NSProcessInfoThermalStateDidChangeNotification,
--                Some(&NSProcessInfo::processInfo()),
--            );
--        }
--    }
--
--    #[gpui::test]
--    fn notifications_are_deferred_and_cancelled_on_drop(cx: &mut gpui::TestAppContext) {
--        let center = NSNotificationCenter::new();
--        let calls = Rc::new(Cell::new(0));
--        let observer = ThermalObserver::with_center(
--            center.clone(),
--            &cx.foreground_executor,
--            Box::new({
--                let calls = calls.clone();
--                move || calls.set(calls.get() + 1)
--            }),
--        );
--        let post_notification = || post_thermal_notification(&center);
--        post_notification();
--        assert_eq!(calls.get(), 0);
--        cx.run_until_parked();
--        assert_eq!(calls.get(), 1);
--
--        post_notification();
--        drop(observer);
--        cx.run_until_parked();
--        assert_eq!(calls.get(), 1);
--        post_notification();
--        cx.run_until_parked();
--        assert_eq!(calls.get(), 1);
--    }
--}
+@@ -3652,6 +3652,10 @@ pub struct AcpThread {
+     submissions: SessionSubmissions,
+     activity: SessionActivity,
+     received_session_state: bool,
++    /// Each idle state a subagent reported, with how many entries it had then. The subagent
++    /// reports one state for all its work, so this is what shows the outcome of an earlier
++    /// message to it after it has received later ones.
++    subagent_outcomes: Vec<(usize, acp_v2::StateUpdate)>,
+     reported_usage: Option<ReportedTokenUsage>,
+     token_usage: Option<TokenUsage>,
+     cost: Option<SessionCost>,
+@@ -4013,6 +4017,7 @@ impl AcpThread {
+             ),
+             activity: SessionActivity::default(),
+             received_session_state: false,
++            subagent_outcomes: Vec::new(),
+             reported_usage: None,
+             connection,
+             token_usage: None,
+@@ -4303,6 +4308,14 @@ impl AcpThread {
+         self.received_session_state
+     }
+ 
++    /// The first idle state this subagent reported after the entry at `entry_ix` arrived.
++    pub fn subagent_outcome_after(&self, entry_ix: usize) -> Option<&acp_v2::StateUpdate> {
++        self.subagent_outcomes
++            .iter()
++            .find(|(entry_count, _)| *entry_count > entry_ix)
++            .map(|(_, state)| state)
++    }
++
+     pub fn foreground_activity(&self) -> ForegroundActivity {
+         self.activity.phase()
+     }
+@@ -4667,6 +4680,10 @@ impl AcpThread {
+         let previous = self.foreground_activity();
+         let was_in_progress = self.activity.in_progress();
+         self.received_session_state = true;
++        if self.subagent_association.is_some() && matches!(state, acp_v2::StateUpdate::Idle(_)) {
++            self.subagent_outcomes
++                .push((self.entries.len(), state.clone()));
++        }
+         self.set_foreground_state(state, cx);
+         if let Some(acp_v2::StateUpdate::Idle(idle)) = self.activity.state() {
+             let stop_reason = idle.stop_reason.clone();
 ```
 
-**File**: `crates/gpui_ios/src/ios/platform.rs` (modified, +16/-5)
+**File**: `crates/agent_ui/src/conversation_view.rs` (modified, +137/-1)
 ```diff
-@@ -20,11 +20,11 @@ use gpui::{
-     Action, AnyWindowHandle, AppLifecyclePhase, BackgroundExecutor, ClipboardItem, CursorStyle,
-     DummyKeyboardMapper, ForegroundExecutor, Keymap, Menu, MenuItem, PathPromptOptions, Platform,
-     PlatformDisplay, PlatformKeyboardLayout, PlatformKeyboardMapper, PlatformTextSystem,
--    PlatformWindow, Result, Task, ThermalState, WindowAppearance, WindowParams,
-+    PlatformWindow, PowerMode, Result, Task, ThermalState, WindowAppearance, WindowParams,
- };
- use gpui_apple::{
-     AppleDispatcher, keychain, main_thread_marker,
--    thermal::{self, ThermalObserver},
-+    process_info::{self, ProcessInfoObserver},
- };
- use objc2::{MainThreadOnly, rc::Retained, runtime::ProtocolObject};
- use objc2_foundation::{
-@@ -51,7 +51,8 @@ pub(crate) struct IosPlatformState {
-     background_executor: BackgroundExecutor,
-     foreground_executor: ForegroundExecutor,
-     text_system: Arc<dyn PlatformTextSystem>,
--    thermal_observer: RefCell<Option<ThermalObserver>>,
-+    thermal_observer: RefCell<Option<ProcessInfoObserver>>,
-+    power_mode_observer: RefCell<Option<ProcessInfoObserver>>,
-     display_observers: RefCell<Vec<Retained<ProtocolObject<dyn NSObjectProtocol>>>>,
-     display_task: RefCell<Option<Task<()>>>,
-     displays_changed_callback: CallbackSlot<Box<dyn FnMut()>>,
-@@ -75,6 +76,7 @@ impl IosPlatform {
-             foreground_executor: ForegroundExecutor::new(dispatcher),
-             text_system,
-             thermal_observer: RefCell::new(None),
-+            power_mode_observer: RefCell::new(None),
-             display_observers: RefCell::new(Vec::new()),
-             display_task: RefCell::new(None),
-             displays_changed_callback: CallbackSlot::default(),
-@@ -459,14 +461,23 @@ impl Platform for IosPlatform {
+@@ -20563,7 +20563,7 @@ pub(crate) mod tests {
+             "an idle subagent cannot be stopped"
+         );
+         child.read_with(cx, |child, _| {
+-            let card = subagent_card::SubagentCardState::from_acp_subagent(child);
++            let card = subagent_card::SubagentCardState::from_acp_subagent(child, None);
+             assert_eq!(card.status, subagent_card::SubagentStatus::Canceled);
+             assert_eq!(
+                 card.title(Some("Own title".into())).as_ref(),
+@@ -20594,6 +20594,142 @@ pub(crate) mod tests {
+         assert!(cx.debug_bounds("subagent-card-0").is_some());
      }
  
-     fn thermal_state(&self) -> ThermalState {
--        thermal::thermal_state()
-+        process_info::thermal_state()
++    #[gpui::test]
++    async fn test_each_linked_message_to_an_acp_subagent_is_its_own_card(cx: &mut TestAppContext) {
++        use subagent_card::{SubagentCardState, SubagentEntries, SubagentStatus};
++
++        init_test(cx);
++        let connection = StubAgentConnection::new();
++        let (conversation_view, cx) =
++            setup_conversation_view(StubAgentServer::new(connection.clone()), cx).await;
++        add_to_workspace_with_size(conversation_view.clone(), true, cx);
++        let root =
++            active_thread(&conversation_view, cx).read_with(cx, |view, _| view.thread.clone());
++        let root_session_id = root.read_with(cx, |thread, _| thread.session_id().clone());
++        let child_session_id = acp_v2::SessionId::new("child");
++        let child = conversation_view.update(cx, |view, cx| {
++            create_test_acp_subagent(
++                root_session_id.clone(),
++                "child",
++                Rc::new(connection.clone()),
++                view.project.clone(),
++                cx,
++            )
++        });
++        // Each ACP notification is applied in its own update, as here.
++        root.update(cx, |root, cx| root.register_subagent(child.clone(), cx));
++        let to_child = |message_id: &str| {
++            acp_v2::SessionMessage::new(message_id)
++                .sender_session_id(root_session_id.clone())
++                .recipient_session_id(child_session_id.clone())
++                .content(vec![message_id.into()])
++        };
++        let delegate = |sent: &str, received: &str, cx: &mut VisualTestContext| {
++            root.update(cx, |root, cx| {
++                root.upsert_session_message(
++                    to_child(sent).recipient_message_id(acp_v2::MessageId::new(received)),
++                    cx,
++                )
++            })
++            .expect("outgoing view");
++            child
++                .update(cx, |child, cx| {
++                    child.upsert_session_message(
++                        to_child(received).sender_message_id(acp_v2::MessageId::new(sent)),
++                        cx,
++                    )
++                })
++                .expect("incoming view");
++        };
++        let report = |state: acp_v2::StateUpdate, cx: &mut VisualTestContext| {
++            child
++                .update(cx, |child, cx| child.update_session_state(state, cx))
++                .expect("reported state");
++        };
++        let running = || acp_v2::StateUpdate::Running(acp_v2::RunningStateUpdate::new());
++        let work = |message_id: &str, cx: &mut VisualTestContext| {
++            child
++                .update(cx, |child, cx| {
++                    child.upsert_assistant_message(
++                        acp_v2::AgentMessage::new(message_id).content(vec!["Working".into()]),
++                        cx,
++                    )
++                })
++                .expect("subagent work");
++        };
++        let cards = |cx: &mut VisualTestContext| {
++            root.read_with(cx, |root, cx| {
++                root.entries()
++                    .iter()
++                    .enumerate()
++                    .map(|(entry_ix, entry)| {
++                        let AgentThreadEntry::SessionMessage(message) = entry else {
++                            panic!("expected session messages, got {entry:?}");
++                        };
++                        subagent_card::acp_subagent_card(root, entry_ix, message, cx).map(|card| {
++                            let state = SubagentCardState::from_acp_subagent(
++                                card.subagent.read(cx),
++                                card.entries,
++                            );
++                            (card.entries, state.status)
++                        })
++                    })
++                    .collect::<Vec<_>>()
++            })
++        };
++        let entries = |start, end| Some(SubagentEntries { start, end });
++
++        delegate("launch", "task-1", cx);
++        report(running(), cx);
++        work("work-1", cx);
++        // The second message arrives while the subagent still works on the first.
++        delegate("follow-up", "task-2", cx);
++        work("work-2", cx);
++        assert_eq!(
++            cards(cx),
++            vec![
++                Some((entries(0, Some(1)), SubagentStatus::Running)),
++                Some((entries(2, None), Subagent
+```
+
+**File**: `crates/agent_ui/src/conversation_view/subagent_card.rs` (modified, +61/-12)
+```diff
+@@ -30,16 +30,27 @@ impl fmt::Display for SubagentCardId {
      }
+ }
  
-     fn on_thermal_state_change(&self, callback: Box<dyn FnMut()>) {
--        let observer = ThermalObserver::new(&self.0.foreground_executor, callback);
-+        let observer = process_info::observe_thermal_state(&self.0.foreground_executor, callback);
-         self.0.thermal_observer.replace(Some(observer));
-     }
- 
-+    fn power_mode(&self) -> PowerMode {
-+        process_info::power_mode()
+-/// The subagent whose card a session message in `thread` is drawn as, in place of its
+-/// message row. The message must be the first that `thread` sent to one of its own
+-/// subagents. Later messages to the same subagent stay message rows, because nothing yet
+-/// links each message to its part of the subagent's transcript or to its outcome, so one
+-/// card covers the whole subagent.
++/// A session message that an ACP parent sent to one of its own subagents, drawn as a
++/// subagent card in place of its message row.
++pub(crate) struct AcpSubagentCard {
++    pub id: SubagentCardId,
++    pub subagent: Entity<AcpThread>,
++    /// The subagent entries for this message; `None` covers the whole subagent.
++    pub entries: Option<SubagentEntries>,
++}
++
++/// The subagent card that a session message in `thread` is drawn as, if any.
++///
++/// A message linked to the subagent's view of it gets a card for its part of the
++/// subagent's transcript: from that view up to the next message from `thread`. Without a
++/// link, only the first message to a subagent gets a card, which covers the whole subagent,
++/// and later ones stay message rows.
+ pub(crate) fn acp_subagent_card(
+     thread: &AcpThread,
+     entry_ix: usize,
+     message: &SessionMessage,
+-) -> Option<(SubagentCardId, Entity<AcpThread>)> {
++    cx: &App,
++) -> Option<AcpSubagentCard> {
+     let own_session_id = thread.session_id();
+     let SessionMessageSide::Outgoing {
+         recipient: Some(recipient),
+@@ -51,6 +62,34 @@ pub(crate) fn acp_subagent_card(
+     let MessageIdentity::Keyed(message_id) = &message.identity else {
+         return None;
+     };
++    let id = SubagentCardId::SessionMessage(message_id.clone());
++
++    let subagent_thread = subagent.read(cx);
++    if let Some(start) = subagent_thread.linked_session_message(message, own_session_id) {
++        let next_message_ix = subagent_thread
++            .entries()
++            .iter()
++            .enumerate()
++            .skip(start + 1)
++            .find_map(|(ix, entry)| {
++                matches!(
++                    entry,
++                    AgentThreadEntry::SessionMessage(later)
++                        if later.side(recipient)
++                            == SessionMessageSide::Incoming { sender: Some(own_session_id) }
++                )
++                .then_some(ix)
++            });
++        return Some(AcpSubagentCard {
++            id,
++            subagent,
++            entries: Some(SubagentEntries {
++                start,
++                end: next_message_ix.map(|next_message_ix| next_message_ix - 1),
++            }),
++        });
 +    }
 +
-+    fn on_power_mode_change(&self, callback: Box<dyn FnMut()>) {
-+        let observer = process_info::observe_power_mode(&self.0.foreground_executor, callback);
-+        self.0.power_mode_observer.replace(Some(observer));
-+    }
-+
-     fn keyboard_layout(&self) -> Box<dyn PlatformKeyboardLayout> {
-         Box::new(IosKeyboardLayout)
+     let sent_earlier = thread.entries().get(..entry_ix)?.iter().any(|entry| {
+         matches!(
+             entry,
+@@ -59,7 +98,11 @@ pub(crate) fn acp_subagent_card(
+                     == SessionMessageSide::Outgoing { recipient: Some(recipient) }
+         )
+     });
+-    (!sent_earlier).then(|| (SubagentCardId::SessionMessage(message_id.clone()), subagent))
++    (!sent_earlier).then_some(AcpSubagentCard {
++        id,
++        subagent,
++        entries: None,
++    })
+ }
+ 
+ #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+@@ -177,10 +220,16 @@ impl SubagentCardState {
+         }
      }
+ 
+-    /// Builds the card for an ACP subagent. Without a link from the parent's message to the
+-    /// subagent's entries, the card covers the subagent's whole transcript.
+-    pub(crate) fn from_acp_subagent(thread: &AcpThread) -> Self {
+-        let (status, error) = SubagentStatus::from_reported_state(thread.foreground_state());
++    /// Builds the card for an ACP subagent, covering `entries` of its transcript or all of
++    /// it. The subagent reports one state for all its work, so a card for an earlier message
++    /// shows the first outcome the subagent reported after receiving it. Until then, that
++    /// work continues alongside the later message's, and the card shows the current state.
++    pub(crate) fn from_acp_subagent(thread: &AcpThread, entries: Option<SubagentEntries>) -> Self {
++        let earlier_outcome = entries
++            .filter(|entries| entries.end.is_some())
++            .and_then(|entries| thread.subagent_outcome_after(entries.start));
++        let (status, error) =
++            SubagentStatus::from_reported_state(earlier_outcome.or(thread.foreground_state()));
+         let can_cancel = thread
+             .subagent_association()
+             .is_some_and(|association| association.can_cancel);
+@@ -190,7 +239,7 @@ impl SubagentCardState {
+             status,
+             error,
+             can_stop: status == SubagentStatus::Running && can_cancel,
+-            entries: None,
++            entries,
+         }
+     }
+ 
+```
+
+**File**: `crates/agent_ui/src/conversation_view/thread_search_bar.rs` (modified, +1/-1)
+```diff
+@@ -364,7 +364,7 @@ impl ThreadSearchBar {
+                 }
+                 // Drawn as the subagent's card, which does not show the message.
+                 AgentThreadEntry::SessionMessage(message)
+-                    if acp_subagent_card(thread, entry_ix, message).is_some() => {}
++                    if acp_subagent_card(thread, entry_ix, message, cx).is_some() => {}
+                 _ => {
+                     for markdown in collect_markdowns(entry_ix, entry, &entry_view_state, cx) {
+                         let source = markdown.read(cx).source().clone();
+```
+
+**File**: `crates/agent_ui/src/conversation_view/thread_view.rs` (modified, +11/-11)
+```diff
+@@ -56,7 +56,9 @@ use workspace::{OpenOptions, SERIALIZATION_THROTTLE_TIME};
+ use super::elicitation::{
+     ElicitationCard, ElicitationCardHandlers, ElicitationFormState, should_render_elicitation,
+ };
+-use super::subagent_card::{SubagentCardId, SubagentCardState, SubagentStatus, acp_subagent_card};
++use super::subagent_card::{
++    AcpSubagentCard, SubagentCardId, SubagentCardState, SubagentStatus, acp_subagent_card,
++};
+ use super::*;
+ 
+ /// How a parent's view names a subagent. An ACP parent's own title for the subagent
+@@ -5208,7 +5210,7 @@ impl ThreadView {
+         // An ACP subagent reports its own outcome; a native one's is its parent's tool call.
+         let thread = self.thread.read(cx);
+         if thread.subagent_association().is_some() {
+-            return SubagentCardState::from_acp_subagent(thread)
++            return SubagentCardState::from_acp_subagent(thread, None)
+                 .status
+                 .is_failed_or_canceled();
+         }
+@@ -7530,10 +7532,8 @@ impl ThreadView {
+             }
+             AgentThreadEntry::SessionMessage(message) => {
+                 let session_message =
+-                    match acp_subagent_card(self.thread.read(cx), entry_ix, message) {
+-                        Some((card_id, subagent)) => {
+-                            self.render_acp_subagent_card(entry_ix, &card_id, &subagent, window, cx)
+-                        }
++                    match acp_subagent_card(self.thread.read(cx), entry_ix, message, cx) {
++                        Some(card) => self.render_acp_subagent_card(entry_ix, &card, window, cx),
+                         None => self.render_session_message(entry_ix, message, window, cx),
+                     };
+                 if let Some(handle) = self
+@@ -8950,12 +8950,12 @@ impl ThreadView {
+     fn render_acp_subagent_card(
+         &self,
+         entry_ix: usize,
+-        card_id: &SubagentCardId,
+-        subagent: &Entity<AcpThread>,
++        card: &AcpSubagentCard,
+         window: &Window,
+         cx: &Context<Self>,
+     ) -> Div {
+-        let subagent_session_id = subagent.read(cx).session_id().clone();
++        let subagent = card.subagent.read(cx);
++        let subagent_session_id = subagent.session_id().clone();
+         let subagent_thread_view = self
+             .server_view
+             .upgrade()
+@@ -8964,8 +8964,8 @@ impl ThreadView {
+         let content = self.render_subagent_card(
+             self.thread.read(cx).session_id(),
+             entry_ix,
+-            card_id,
+-            &SubagentCardState::from_acp_subagent(subagent.read(cx)),
++            &card.id,
++            &SubagentCardState::from_acp_subagent(subagent, card.entries),
+             subagent_thread_view,
+             &self.focus_handle(cx),
+             window,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #66219** (closed): repl: Update Jupyter libraries and repair notebook cell IDs (@rgbkrk)
-- **PR #66212** (closed): Restore activity when reopening retained ACP v1 sessions (@pepusz)
-- **PR #66206** (2026-10-27): gpui: Fix text system reference cycle through pooled line wrappers (@Anthony-Eid)
-- **PR #66199** (2026-10-27): title_bar: Fix project name shown for `repo.git` bare clones on Windows remotes (@lingyaochu)
-- **PR #66190** (2026-10-27): gpui_wgpu: Fix WebGL surface reconfiguration panics (@probably-neb)
-- **PR #66185** (2026-10-27): Update Tree-sitter and extension grammar memory imports (@maxbrunsfeld)
+- **PR #66255** (2026-10-28): agent: Report native subagent state like ACP subagents (@benbrandt)
+- **PR #66253** (2026-10-28): Bump Zed to v1.28.0 (@zed-zippy[bot])
+- **PR #66252** (2026-10-28): agent_ui: Open a stopped subagent card's part in full screen (@benbrandt)
+- **PR #66251** (2026-10-28): agent_ui: Fix crash when expanding an ACP subagent card (@benbrandt)
+- **PR #66245** (2026-10-28): Update agent-client-protocol to 3.6.0 (schema 1.13) (@benbrandt)
+- **PR #66237** (2026-10-28): gpui: Apply frame limits consistently and stabilize pacing (@Veykril)
 
 ---
 
@@ -3322,36 +2995,53 @@ Co-authored-by: Anthony Eid <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. workspace: Fix panel buttons not working while a dock panel is zoomed (#66119)
+## X. agent_ui: Fix crash when expanding an ACP subagent card (#66251)
 
 **RULE**:
-When implementing operations in `crates/workspace/src/dock.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/agent_ui/src/conversation_view.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5e548b8a`: workspace: Fix panel buttons not working while a dock panel is zoomed (#66119). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c693e6a8`: agent_ui: Fix crash when expanding an ACP subagent card (#66251). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/workspace/src/dock.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/agent_ui/src/conversation_view.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// Panel buttons focus this before dispatching their action. A zoomed panel isn't rendered
-    /// inside its dock, so the dock's own handle would be outside the frame and the action dropped.
-    pub(crate) fn panel_button_focus_handle(&self, window: &Window, cx: &App) -> FocusHandle {
-        self.zoomed_panel(window, cx)
-            .map(|panel| panel.panel_focus_handle(cx))
-            .unwrap_or_else(|| self.focus_handle.clone())
+    pub(crate) fn thread(&self, session_id: &acp_v2::SessionId) -> Option<&Entity<AcpThread>> {
+        self.threads.get(session_id)
     }
 
-                let focus_handle = dock.panel_button_focus_handle(window, cx);
+
+        // The expanded card renders the subagent's own view of the message, a row that
+        // names the parent.
+        child
+            .update(cx, |child, cx| {
+                child.upsert_session_message(
+                    acp_v2::SessionMessage::new("task")
+                        .sender_session_id(root_session_id.clone())
+                        .recipient_session_id(acp_v2::SessionId::new("child"))
+                        .content(vec!["Check the failure".into()]),
+                    cx,
+                )
+            })
+            .expect("incoming message");
+        thread_view.update(cx, |view, cx| {
+            view.entry_view_state.update(cx, |state, _| {
+                state.toggle_session_message_card_expansion(&acp_v2::MessageId::new("launch"))
+            });
+            cx.notify();
+        });
+        cx.run_until_parked();
+        assert!(cx.debug_bounds("subagent-card-0").is_some());
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                let focus_handle = dock.focus_handle(cx);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5e548b8a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c693e6a8` are properly handled with clean fallback behavior.
