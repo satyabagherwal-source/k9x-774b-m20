@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md`  
 > **Source**: github ([https://github.com/kubearmor/KubeArmor](https://github.com/kubearmor/KubeArmor))  
-> **Source Version**: `99518b0d`  
+> **Source Version**: `3b5c8f74`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-24T20:04:55.712Z  
+> **Timestamp**: 2026-10-28T16:27:16.641Z  
 > **Learning ID**: `learn-github-kubearmor-kubearmor`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kubearmor/KubeArmor](https://github.com/kubearmor/KubeArmor))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-24T20:04:54.371Z  
+> **Harvest Timestamp**: 2026-10-28T16:27:16.634Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Runtime Security Enforcement System. Workload hardening/sandboxing and implementing least-permissive policies made easy leveraging LSMs (LSM-BPF, AppArmor).
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md, Dockerfile
-- **Stars / Engagement**: 2631 stars
+- **Stars / Engagement**: 2637 stars
 
 ---
 
@@ -686,10 +686,12 @@ func (dm *KubeArmorDaemon) UpdateCrioContainer(ctx context.Context, containerID,
 
 		if dm.SystemMonitor != nil && cfg.GlobalCfg.Policy {
 			// for throttling
+			dm.SystemMonitor.Logger.ContainerNsKeyLock.Lock()
 			dm.SystemMonitor.Logger.ContainerNsKey[containerID] = common.OuterKey{
 				MntNs: container.MntNS,
 				PidNs: container.PidNS,
 			}
+			dm.SystemMonitor.Logger.ContainerNsKeyLock.Unlock()
 
 			// update NsMap
 			dm.SystemMonitor.AddContainerIDToNsMap(containerID, container.NamespaceName, container.PidNS, container.MntNS)
@@ -715,9 +717,7 @@ func (dm *KubeArmorDaemon) UpdateCrioContainer(ctx context.Context, containerID,
 
 		if !dm.K8sEnabled {
 			dm.ContainersLock.Lock()
-			dm.EndPointsLock.Lock()
-			dm.MatchandUpdateContainerSecurityPolicies(containerID)
-			dm.EndPointsLock.Unlock()
+			dm.
 ```
 
 ### Core Architecture Module: `KubeArmor/core/dockerHandler.go`
@@ -1476,10 +1476,12 @@ func (dm *KubeArmorDaemon) UpdateContainer(containerID string, container tp.Cont
 
 		if dm.SystemMonitor != nil && cfg.GlobalCfg.Policy {
 			// for throttling
+			dm.SystemMonitor.Logger.ContainerNsKeyLock.Lock()
 			dm.SystemMonitor.Logger.ContainerNsKey[containerID] = common.OuterKey{
 				MntNs: container.MntNS,
 				PidNs: container.PidNS,
 			}
+			dm.SystemMonitor.Logger.ContainerNsKeyLock.Unlock()
 
 			// update NsMap
 			dm.SystemMonitor.AddContainerIDToNsMap(containerID, container.NamespaceName, container.PidNS, container.MntNS)
@@ -1547,9 +1549,11 @@ func (dm *KubeArmorDaemon) UpdateContainer(containerID string, container tp.Cont
 		}
 
 		if dm.SystemMonitor != nil && cfg.GlobalCfg.Policy {
+			dm.SystemMonitor.Logger.ContainerNsKeyLock.Lock()
 			outkey := dm.SystemMonitor.Logger.ContainerNsKey[containerID]
-			dm.Logger.DeleteAlertMapKey(outkey)
 			delete(dm.SystemMonitor.Logger.ContainerNsKey, containerID)
+			dm.SystemMonitor.Logger.ContainerNsKeyLock.Unlock()
+			dm.Logger.DeleteAlertMapKey(outkey)
 			// update NsMap
 			dm.SystemMonitor.DeleteContainerIDFromNsMap(containerID, container.NamespaceName, container.PidNS, container.MntNS)
 			dm.RuntimeEnforcer.UnregisterContainer(containerID)
@@ -3175,481 +3179,774 @@ func (nh *NRIHandler) nriToKubeArmorContainer(nriContainer *api.Container) tp.Co
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e56e040a` (2026-10-23)
-**Commit Message**: enforcer: Replace execve kprobe with tracepoint in process monitor
+### Incident Patch 1: `3b5c8f74` (2026-10-28)
+**Commit Message**: Merge pull request #2945 from charankamal20/bugfix/alertthrottle
 
-Signed-off-by: Aryan Bakliwal <[REDACTED_EMAIL]>
+bugfix(apparmor): fix alertthrottling for apparmor default posture logs
 
-**File**: `KubeArmor/BPF/process_monitor.bpf.c` (modified, +14/-15)
+**File**: `KubeArmor/BPF/system_monitor.c` (modified, +0/-137)
 ```diff
-@@ -11,6 +11,16 @@ struct {
-     __uint(max_entries, 10240);
- } ns_transition SEC(".maps");
- 
-+struct tracepoint_raw_sys_enter
-+{
-+    unsigned short common_type;
-+    unsigned char common_flags;
-+    unsigned char common_preempt_count;
-+    int common_pid;
-+    long id;
-+    unsigned long args[6];
-+};
-+
- static __always_inline void save_cmd_args_to_buffer(const char *const *ptr)
- {
-     struct cmd_args_key key;
-@@ -36,29 +46,18 @@ static __always_inline void save_cmd_args_to_buffer(const char *const *ptr)
-     }
- }
- 
--SEC("kprobe/__x64_sys_execve")
--int kprobe__args_execve(struct pt_regs *ctx)
-+SEC("tracepoint/syscalls/sys_enter_execve")
-+int sys_enter_execve(struct tracepoint_raw_sys_enter *ctx)
- {
--    struct pt_regs *ctx2 = (struct pt_regs *)PT_REGS_PARM1(ctx);
--    unsigned long argv = READ_KERN(PT_REGS_PARM2(ctx2));
--
-     if (get_kubearmor_config(_MATCH_ARGS))
-     {
-+        unsigned long argv = ctx->args[1];
-         save_cmd_args_to_buffer((const char *const *)argv);
-     }
-+
+@@ -1159,95 +1159,6 @@ static __always_inline u32 init_context(sys_context_t *context)
+ #endif
      return 0;
  }
- 
--struct tracepoint_raw_sys_enter
--{
--    unsigned short common_type;
--    unsigned char common_flags;
--    unsigned char common_preempt_count;
--    int common_pid;
--    long id;
--    unsigned long args[6];
--};
+-// == Alert Throttling == //
 -
- SEC("tracepoint/syscalls/sys_enter_setns")
- int sys_enter_setns(struct tracepoint_raw_sys_enter *ctx)
- {
+-// To check if subsequent alerts should be dropped per container
+-static __always_inline bool should_drop_alerts_per_container(sys_context_t *context, struct pt_regs *ctx, u32 types, args_t *args)
+-{
+-#if LINUX_VERSION_CODE > KERNEL_VERSION(5, 2, 0)
+-
+-    // throttling for host in case of apparmor is handled in userspace
+-    if (context->pid_id == 0 && context->mnt_id == 0)
+-    {
+-        return false;
+-    }
+-
+-    u64 current_timestamp = bpf_ktime_get_ns();
+-
+-    struct outer_key key = {
+-        .pid_ns = context->pid_id,
+-        .mnt_ns = context->mnt_id};
+-
+-    struct alert_throttle_state *state = bpf_map_lookup_elem(&kubearmor_alert_throttle, &key);
+-
+-    if (!state)
+-    {
+-        struct alert_throttle_state new_state = {
+-            .event_count = 1,
+-            .first_event_timestamp = current_timestamp,
+-            .throttle = 0};
+-
+-        bpf_map_update_elem(&kubearmor_alert_throttle, &key, &new_state, BPF_ANY);
+-        return false;
+-    }
+-
+-    u64 throttle_sec = (u64)get_kubearmor_config(_THROTTLE_SEC);
+-    u64 throttle_nsec = throttle_sec * 1000000000L;
+-    u64 max = (u64)get_kubearmor_config(_MAX_ALERT_PER_SEC);
+-
+-    if (state->throttle)
+-    {
+-        u64 time_difference = current_timestamp - state->first_event_timestamp;
+-        if (time_difference < throttle_nsec)
+-        {
+-            return true;
+-        }
+-    }
+-
+-    u64 time_difference = current_timestamp - state->first_event_timestamp;
+-
+-    if (time_difference >= 1000000000L)
+-    { // 1 second
+-        state->first_event_timestamp = current_timestamp;
+-        state->event_count = 1;
+-        state->throttle = 0;
+-    }
+-    else
+-    {
+-        state->event_count++;
+-    }
+-
+-    if (state->event_count > max)
+-    {
+-        state->event_count = 0;
+-        state->throttle = 1;
+-        bpf_map_update_elem(&kubearmor_alert_throttle, &key, state, BPF_ANY);
+-
+-        // Generating Throttling Alert
+-        context->event_id = _DROPPING_ALERT;
+-        set_buffer_offset(DATA_BUF_TYPE, sizeof(sys_context_t));
+-
+-        bufs_t *bufs_p = get_buffer(DATA_BUF_TYPE);
+-        if (bufs_p == NULL)
+-        {
+-            return 0;
+-        }
+-
+-        save_context_to_buffer(bufs_p, (void *)context);
+-
+-        if (types != 0)
+-        {
+-            save_args_to_buffer(types, args);
+-        }
+-
+-        events_perf_submit(ctx, DATA_BUF_TYPE);
+-        return true;
+-    }
+-
+-    bpf_map_update_elem(&kubearmor_alert_throttle, &key, state, BPF_ANY);
+-#endif
+-    return false;
+-}
+ 
+ // ==== Container Exec Events ====
+ 
+@@ -1543,13 +1454,6 @@ int kretprobe__execve(struct pt_regs *ctx)
+         return 0;
+     }
+ 
+-    u32 types;
+-    args_t args = {};
+-    if (context.retval < 0 && !get_kubearmor_config(_ENFORCER_BPFLSM) && get_kubearmor_config(_ALERT_THROTTLING) && should_drop_alerts_per_container(&context, ctx, types, &args))
+-    {
+-        return 0;
+-    }
+-
+     set_buffer_offset(DATA_BUF_TYPE, sizeof(sys_context_t));
+ 
+     bufs_t *bufs_p = get_buffer(DATA_BUF_TYPE);
+@@ -1655,14 +1559,6 @@ int kretprobe__execveat(struct pt_regs *ctx)
+         return 0;
+     }
+ 
+-    u32 types;
+-    args_t args = {};
+-
+-    if (context.retval < 0 && !get_kubearmor_config(_ENFORCER_BPFLSM) && get_kubearmor_config(_ALERT_THROTTLING) && should_drop_alerts_per_container(&context, ctx, types, &args))
+-    {
+-        return 0;
+-    }
+-
+     set_buffer_offset(DATA_BUF_TYPE, sizeof(sys_context_t));
+ 
+     bufs_t *bufs_p = get_buffer(DATA_BUF_TYPE);
+@@ -1845,11 +1741,6 @@ static __always_inline int trace_ret_generic(u32 id, struct pt_regs *ctx, u64 ty
+         context.oid = owner.val;
+     }
+ 
+-    if (context.retval < 0 && !get_kubearmor_config(_ENFORCER_BPFLSM) && get_kubearmor_config(_ALERT_THROTTLING) && should_drop_alerts_per_container(&context, ctx, types, &args))
+-    {
+-        return 0;
+-    }
+-
+     set_buffer_offset(DATA_BUF_TYPE, sizeof(sys_context_t));
+ 
+     bufs_t *bufs_p = get_buffer(DATA_BUF_TYPE);
+@@ -2171,11 +2062,6 @@ int sys_exit_openat(struct tracepoint_syscalls_sys_exit_t *args)
+         return 0;
+     }
+ 
+-    if (context.retval < 0 && !get_kubearmor_config(_ENFORCER_BPFLSM) && get_kubearmor_config(_ALERT_THROTTLING) && should_drop_alerts_per_container(&context, (struct pt_regs *)args, types, &orig_args))
+-    {
+-        return 0;
+-    }
+-
+     set_buffer_offset(DATA_BUF_TYPE, sizeof(sys_context_t));
+ 
+     bufs_t *bufs_p = get_buffer(DATA_BUF_TYPE);
+@@ -2388,10 +2274,6 @@ int kretprobe__tcp_connect(struct pt_regs *ctx)
+     bpf_probe_read_str(proto_str, sizeof(proto_str), proto_str_p);
+ 
+     args.args[0] = (unsigned long)proto_str;
+-    if (context->retval < 0 && !get_kubearmor_config(_ENFORCER_BPFLSM) && get_kubearmor_config(_ALERT_THROTTLING) && should_drop_alerts_per_container(context, ctx, types, &args))
+-    {
+-        return 0;
+-    }
+ 
+     set_buffer_offset(DAT
 ```
 
-**File**: `KubeArmor/enforcer/bpflsm/enforcer.go` (modified, +3/-2)
+**File**: `KubeArmor/core/containerdHandler.go` (modified, +5/-1)
 ```diff
-@@ -28,6 +28,7 @@ import (
+@@ -513,10 +513,12 @@ func (dm *KubeArmorDaemon) UpdateContainerdContainer(ctx context.Context, contai
  
- //go:generate go run github.com/cilium/ebpf/cmd/bpf2go -cc clang enforcer ../../BPF/enforcer.bpf.c -- -I/usr/include/ -O2 -g -fno-stack-protector -Wno-missing-declarations
- //go:generate go run github.com/cilium/ebpf/cmd/bpf2go -cc clang enforcer_path ../../BPF/enforcer_path.bpf.c -- -I/usr/include/ -O2 -g -fno-stack-protector -Wno-missing-declarations
-+//go:generate go run github.com/cilium/ebpf/cmd/bpf2go -cc clang process_monitor ../../BPF/process_monitor.bpf.c -- -I/usr/include/ -O2 -g -fno-stack-protector -Wno-missing-declarations
+ 		if dm.SystemMonitor != nil && cfg.GlobalCfg.Policy {
+ 			// for throttling
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Lock()
+ 			dm.SystemMonitor.Logger.ContainerNsKey[containerID] = common.OuterKey{
+ 				MntNs: container.MntNS,
+ 				PidNs: container.PidNS,
+ 			}
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Unlock()
  
- // ===================== //
- // == BPFLSM Enforcer == //
-@@ -279,9 +280,9 @@ func NewBPFEnforcer(node tp.Node, pinpath string, logger *fd.Feeder, monitor *mo
- 	}); err != nil {
- 		be.Logger.Warnf("error loading process_monitor objects: %v", err)
- 	} else {
--		be.Probes["sys_execve_args"], err = link.Kprobe("sys_execve", be.objProcess.KprobeArgsExecve, nil)
-+		be.Probes["sys_enter_execve"], err = link.Tracepoint("syscalls", "sys_enter_execve", be.objProcess.SysEnterExecve, nil)
- 		if err != nil {
--			be.Logger.Warnf("opening kprobe sys_execve: %s", err)
-+			be.Logger.Warnf("opening tracepoint sys_enter_setns: %s", err)
+ 			// update NsMap
+ 			dm.SystemMonitor.AddContainerIDToNsMap(containerID, container.NamespaceName, container.PidNS, container.MntNS)
+@@ -596,9 +598,11 @@ func (dm *KubeArmorDaemon) UpdateContainerdContainer(ctx context.Context, contai
+ 		dm.EndPointsLock.Unlock()
+ 
+ 		if dm.SystemMonitor != nil && cfg.GlobalCfg.Policy {
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Lock()
+ 			outkey := dm.SystemMonitor.Logger.ContainerNsKey[containerID]
+-			dm.Logger.DeleteAlertMapKey(outkey)
+ 			delete(dm.SystemMonitor.Logger.ContainerNsKey, containerID)
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Unlock()
++			dm.Logger.DeleteAlertMapKey(outkey)
+ 			// update NsMap
+ 			dm.SystemMonitor.DeleteContainerIDFromNsMap(containerID, container.NamespaceName, container.PidNS, container.MntNS)
+ 			dm.RuntimeEnforcer.UnregisterContainer(containerID)
+```
+
+**File**: `KubeArmor/core/crioHandler.go` (modified, +5/-1)
+```diff
+@@ -291,10 +291,12 @@ func (dm *KubeArmorDaemon) UpdateCrioContainer(ctx context.Context, containerID,
+ 
+ 		if dm.SystemMonitor != nil && cfg.GlobalCfg.Policy {
+ 			// for throttling
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Lock()
+ 			dm.SystemMonitor.Logger.ContainerNsKey[containerID] = common.OuterKey{
+ 				MntNs: container.MntNS,
+ 				PidNs: container.PidNS,
+ 			}
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Unlock()
+ 
+ 			// update NsMap
+ 			dm.SystemMonitor.AddContainerIDToNsMap(containerID, container.NamespaceName, container.PidNS, container.MntNS)
+@@ -360,9 +362,11 @@ func (dm *KubeArmorDaemon) UpdateCrioContainer(ctx context.Context, containerID,
+ 		dm.EndPointsLock.Unlock()
+ 
+ 		if dm.SystemMonitor != nil && cfg.GlobalCfg.Policy {
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Lock()
+ 			outkey := dm.SystemMonitor.Logger.ContainerNsKey[containerID]
+-			dm.Logger.DeleteAlertMapKey(outkey)
+ 			delete(dm.SystemMonitor.Logger.ContainerNsKey, containerID)
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Unlock()
++			dm.Logger.DeleteAlertMapKey(outkey)
+ 			// update NsMap
+ 			dm.SystemMonitor.DeleteContainerIDFromNsMap(containerID, container.NamespaceName, container.PidNS, container.MntNS)
+ 			if dm.RuntimeEnforcer != nil {
+```
+
+**File**: `KubeArmor/core/dockerHandler.go` (modified, +7/-1)
+```diff
+@@ -471,10 +471,12 @@ func (dm *KubeArmorDaemon) GetAlreadyDeployedDockerContainers() {
+ 
+ 				if dm.SystemMonitor != nil && cfg.GlobalCfg.Policy {
+ 					// for throttling
++					dm.SystemMonitor.Logger.ContainerNsKeyLock.Lock()
+ 					dm.SystemMonitor.Logger.ContainerNsKey[container.ContainerID] = common.OuterKey{
+ 						MntNs: container.MntNS,
+ 						PidNs: container.PidNS,
+ 					}
++					dm.SystemMonitor.Logger.ContainerNsKeyLock.Unlock()
+ 
+ 					// update NsMap
+ 					dm.SystemMonitor.AddContainerIDToNsMap(container.ContainerID, container.NamespaceName, container.PidNS, container.MntNS)
+@@ -672,10 +674,12 @@ func (dm *KubeArmorDaemon) UpdateDockerContainer(containerID, action string) {
+ 
+ 		if dm.SystemMonitor != nil && cfg.GlobalCfg.Policy {
+ 			// for throttling
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Lock()
+ 			dm.SystemMonitor.Logger.ContainerNsKey[containerID] = common.OuterKey{
+ 				MntNs: container.MntNS,
+ 				PidNs: container.PidNS,
+ 			}
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Unlock()
+ 
+ 			// update NsMap
+ 			dm.SystemMonitor.AddContainerIDToNsMap(containerID, container.NamespaceName, container.PidNS, container.MntNS)
+@@ -766,9 +770,11 @@ func (dm *KubeArmorDaemon) UpdateDockerContainer(containerID, action string) {
  		}
  
- 		if !cfg.GlobalCfg.SystemMonitor {
+ 		if dm.SystemMonitor != nil && cfg.GlobalCfg.Policy {
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Lock()
+ 			outkey := dm.SystemMonitor.Logger.ContainerNsKey[containerID]
+-			dm.Logger.DeleteAlertMapKey(outkey)
+ 			delete(dm.SystemMonitor.Logger.ContainerNsKey, containerID)
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Unlock()
++			dm.Logger.DeleteAlertMapKey(outkey)
+ 			// update NsMap
+ 			dm.SystemMonitor.DeleteContainerIDFromNsMap(containerID, container.NamespaceName, container.PidNS, container.MntNS)
+ 			dm.RuntimeEnforcer.UnregisterContainer(containerID)
 ```
 
-**File**: `KubeArmor/enforcer/bpflsm/generate_amd64.go` (removed, +0/-9)
+**File**: `KubeArmor/core/hook_handlier_non_k8s.go` (modified, +5/-1)
 ```diff
-@@ -1,9 +0,0 @@
--//go:build amd64
--// +build amd64
--
--// SPDX-License-Identifier: Apache-2.0
--// Copyright 2026 Authors of KubeArmor
--
--package bpflsm
--
--//go:generate go run github.com/cilium/ebpf/cmd/bpf2go -cc clang process_monitor ../../BPF/process_monitor.bpf.c -- -I/usr/include/ -O2 -g -fno-stack-protector -Wno-missing-declarations -D__TARGET_ARCH_x86
-```
-
-**File**: `KubeArmor/enforcer/bpflsm/generate_arm64.go` (removed, +0/-9)
-```diff
-@@ -1,9 +0,0 @@
--//go:build arm64
--// +build arm64
--
--// SPDX-License-Identifier: Apache-2.0
--// Copyright 2026 Authors of KubeArmor
--
--package bpflsm
--
--//go:generate go run github.com/cilium/ebpf/cmd/bpf2go -cc clang process_monitor ../../BPF/process_monitor.bpf.c -- -I/usr/include/ -O2 -g -fno-stack-protector -Wno-missing-declarations -D__TARGET_ARCH_arm64
-```
-
-**File**: `KubeArmor/enforcer/bpflsm/process_monitor_bpfeb.go` (modified, +28/-4)
-```diff
-@@ -48,6 +48,30 @@ type process_monitorOuterKey struct {
- 	MntNs uint32
- }
+@@ -181,10 +181,12 @@ func (dm *KubeArmorDaemon) UpdateContainer(containerID string, container tp.Cont
  
-+// Names of all BPF objects in the ELF.
-+//
-+// Used for safe lookups in a Collection or CollectionSpec.
-+const (
-+	process_monitorMapArgsBufk               = "args_bufk"
-+	process_monitorMapBufk                   = "bufk"
-+	process_monitorMapBufs                   = "bufs"
-+	process_monitorMapBufsOff                = "bufs_off"
-+	process_monitorMapCmdArgsBuf             = "cmd_args_buf"
-+	process_monitorMapKubearmorAlertThrottle = "kubearmor_alert_throttle"
-+	process_monitorMapKubearmorArgsStore     = "kubearmor_args_store"
-+	process_monitorMapKubearmorArguments     = "kubearmor_arguments"
-+	process_monitorMapKubearmorConfig        = "kubearmor_config"
-+	process_monitorMapKubearmorContainers    = "kubearmor_containers"
-+	process_monitorMapKubearmorEvents        = "kubearmor_events"
-+	process_monitorMapKubearmorExecPids      = "kubearmor_exec_pids"
-+	process_monitorMapNsTransition           = "ns_transition"
-+	process_monitorProgSchedProcessExit      = "sched_process_exit"
-+	process_monitorProgSchedProcessFork      = "sched_process_fork"
-+	process_monitorProgSysEnterExecve        = "sys_enter_execve"
-+	process_monitorProgSysEnterSetns         = "sys_enter_setns"
-+	process_monitorProgSysExitSetns          = "sys_exit_setns"
-+)
-+
- // loadProcess_monitor returns the embedded CollectionSpec for process_monitor.
- func loadProcess_monitor() (*ebpf.CollectionSpec, error) {
- 	reader := bytes.NewReader(_Process_monitorBytes)
-@@ -68,7 +92,7 @@ func loadProcess_monitor() (*ebpf.CollectionSpec, error) {
- //	*process_monitorMaps
- //
- // See ebpf.CollectionSpec.LoadAndAssign documentation for details.
--func loadProcess_monitorObjects(obj interface{}, opts *ebpf.CollectionOptions) error {
-+func loadProcess_monitorObjects(obj any, opts *ebpf.CollectionOptions) error {
- 	spec, err := loadProcess_monitor()
+ 		if dm.SystemMonitor != nil && cfg.GlobalCfg.Policy {
+ 			// for throttling
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Lock()
+ 			dm.SystemMonitor.Logger.ContainerNsKey[containerID] = common.OuterKey{
+ 				MntNs: container.MntNS,
+ 				PidNs: container.PidNS,
+ 			}
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Unlock()
+ 
+ 			// update NsMap
+ 			dm.SystemMonitor.AddContainerIDToNsMap(containerID, container.NamespaceName, container.PidNS, container.MntNS)
+@@ -252,9 +254,11 @@ func (dm *KubeArmorDaemon) UpdateContainer(containerID string, container tp.Cont
+ 		}
+ 
+ 		if dm.SystemMonitor != nil && cfg.GlobalCfg.Policy {
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Lock()
+ 			outkey := dm.SystemMonitor.Logger.ContainerNsKey[containerID]
+-			dm.Logger.DeleteAlertMapKey(outkey)
+ 			delete(dm.SystemMonitor.Logger.ContainerNsKey, containerID)
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Unlock()
++			dm.Logger.DeleteAlertMapKey(outkey)
+ 			// update NsMap
+ 			dm.SystemMonitor.DeleteContainerIDFromNsMap(containerID, container.NamespaceName, container.PidNS, container.MntNS)
+ 			dm.RuntimeEnforcer.UnregisterContainer(containerID)
+```
+
+**File**: `KubeArmor/core/kubeArmor.go` (modified, +1/-1)
+```diff
+@@ -640,7 +640,7 @@ func KubeArmor() {
+ 	// == //
+ 
+ 	// health server — dedicated gRPC server for healthcheck since grpc probes are not supported with TLS
+-	healthLis, err := net.Listen("tcp", ":"+cfg.GlobalCfg.GRPCHealthPort)
++	healthLis, err := net.Listen("tcp", ":"+cfg.GlobalCfg.GRPCHealthPort) // #nosec G102
  	if err != nil {
- 		return err
-@@ -90,9 +114,9 @@ type process_monitorSpecs struct {
- //
- // It can be passed ebpf.CollectionSpec.Assign.
- type process_monitorProgramSpecs struct {
--	KprobeArgsExecve *ebpf.ProgramSpec `ebpf:"kprobe__args_execve"`
- 	SchedProcessExit *ebpf.ProgramSpec `ebpf:"sched_process_exit"`
- 	SchedProcessFork *ebpf.ProgramSpec `ebpf:"sched_process_fork"`
-+	SysEnterExecve   *ebpf.ProgramSpec `ebpf:"sys_enter_execve"`
- 	SysEnterSetns    *ebpf.ProgramSpec `ebpf:"sys_enter_setns"`
- 	SysExitSetns     *ebpf.ProgramSpec `ebpf:"sys_exit_setns"`
- }
-@@ -185,18 +209,18 @@ type process_monitorVariables struct {
- //
- // It can be passed to loadProcess_monitorObjects or ebpf.CollectionSpec.LoadAndAssign.
- type process_monitorPrograms struct {
--	KprobeArgsExecve *ebpf.Program `ebpf:"kprobe__args_execve"`
- 	SchedProcessExit *ebpf.Program `ebpf:"sched_process_exit"`
- 	SchedProcessFork *ebpf.Program `ebpf:"sched_process_fork"`
-+	SysEnterExecve   *ebpf.Program `ebpf:"sys_enter_execve"`
- 	SysEnterSetns    *ebpf.Program `ebpf:"sys_enter_setns"`
- 	SysExitSetns     *ebpf.Program `ebpf:"sys_exit_setns"`
- }
- 
- func (p *process_monitorPrograms) Close() error {
- 	return _Process_monitorClose(
--		p.KprobeArgsExecve,
- 		p.SchedProcessExit,
- 		p.SchedProcessFork,
-+		p.SysEnterExecve,
- 		p.SysEnterSetns,
- 		p.SysExitSetns,
- 	)
+ 		dm.Logger.Errf("Failed to listen on plaintext health port %s: %v", cfg.GlobalCfg.GRPCHealthPort, err)
+ 	} else {
 ```
 
-**File**: `KubeArmor/enforcer/bpflsm/process_monitor_bpfel.go` (modified, +28/-4)
+**File**: `KubeArmor/core/nriHandler.go` (modified, +5/-1)
 ```diff
-@@ -48,6 +48,30 @@ type process_monitorOuterKey struct {
- 	MntNs uint32
+@@ -385,10 +385,12 @@ func (dm *KubeArmorDaemon) MonitorNRIEvents() {
+ 
+ 		if dm.SystemMonitor != nil && cfg.GlobalCfg.Policy {
+ 			// for throttling
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Lock()
+ 			dm.SystemMonitor.Logger.ContainerNsKey[container.ContainerID] = common.OuterKey{
+ 				MntNs: container.MntNS,
+ 				PidNs: container.PidNS,
+ 			}
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Unlock()
+ 			// update NsMap
+ 			dm.SystemMonitor.AddContainerIDToNsMap(container.ContainerID, container.NamespaceName, container.PidNS, container.MntNS)
+ 			dm.RuntimeEnforcer.RegisterContainer(container.ContainerID, container.PidNS, container.MntNS)
+@@ -436,9 +438,11 @@ func (dm *KubeArmorDaemon) MonitorNRIEvents() {
+ 		dm.ContainersLock.Unlock()
+ 
+ 		if dm.SystemMonitor != nil && cfg.GlobalCfg.Policy {
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Lock()
+ 			outkey := dm.SystemMonitor.Logger.ContainerNsKey[container.ContainerID]
+-			dm.Logger.DeleteAlertMapKey(outkey)
+ 			delete(dm.SystemMonitor.Logger.ContainerNsKey, container.ContainerID)
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Unlock()
++			dm.Logger.DeleteAlertMapKey(outkey)
+ 			// update NsMap
+ 			dm.SystemMonitor.DeleteContainerIDFromNsMap(container.ContainerID, container.NamespaceName, container.PidNS, container.MntNS)
+ 			dm.RuntimeEnforcer.UnregisterContainer(container.ContainerID)
+```
+
+**File**: `KubeArmor/feeder/feeder.go` (modified, +11/-3)
+```diff
+@@ -265,7 +265,8 @@ type Feeder struct {
+ 	AlertMap     map[OuterKey]AlertThrottleState
+ 	AlertMapLock sync.RWMutex
+ 
+-	ContainerNsKey map[string]common.OuterKey
++	ContainerNsKey     map[string]common.OuterKey
++	ContainerNsKeyLock sync.RWMutex
  }
  
-+// Names of all BPF objects in the ELF.
-+//
-+// Used for safe lookups in a Collection or CollectionSpec.
-+const (
-+	process_monitorMapArgsBufk               = "args_bufk"
-+	process_monitorMapBufk                   = "bufk"
-+	process_monitorMapBufs                   = "bufs"
-+	process_monitorMapBufsOff                = "bufs_off"
-+	process_monitorMapCmdArgsBuf             = "cmd_args_buf"
-+	process_monitorMapKubearmorAlertThrottle = "kubearmor_alert_throttle"
-+	process_monitorMapKubearmorArgsStore     = "kubearmor_args_store"
-+	process_monitorMapKubearmorArguments     = "kubearmor_arguments"
-+	process_monitorMapKubearmorConfig        = "kubearmor_config"
-+	process_monitorMapKubearmorContainers    = "kubearmor_containers"
-+	process_monitorMapKubearmorEvents        = "kubearmor_events"
-+	process_monitorMapKubearmorExecPids      = "kubearmor_exec_pids"
-+	process_monitorMapNsTransition           = "ns_transition"
-+	process_monitorProgSchedProcessExit      = "sched_process_exit"
-+	process_monitorProgSchedProcessFork      = "sched_process_fork"
-+	process_monitorProgSysEnterExecve        = "sys_enter_execve"
-+	process_monitorProgSysEnterSetns         = "sys_enter_setns"
-+	process_monitorProgSysExitSetns          = "sys_exit_setns"
-+)
+ // NewFeeder Function
+@@ -409,6 +410,8 @@ func NewFeeder(node *tp.Node, nodeLock **sync.RWMutex) (feeder *Feeder) {
+ 		ttl:       10 * time.Minute,
+ 	}
+ 
++	fd.ContainerNsKey = make(map[string]common.OuterKey)
 +
- // loadProcess_monitor returns the embedded CollectionSpec for process_monitor.
- func loadProcess_monitor() (*ebpf.CollectionSpec, error) {
- 	reader := bytes.NewReader(_Process_monitorBytes)
-@@ -68,7 +92,7 @@ func loadProcess_monitor() (*ebpf.CollectionSpec, error) {
- //	*process_monitorMaps
- //
- // See ebpf.CollectionSpec.LoadAndAssign documentation for details.
--func loadProcess_monitorObjects(obj interface{}, opts *ebpf.CollectionOptions) error {
-+func loadProcess_monitorObjects(obj any, opts *ebpf.CollectionOptions) error {
- 	spec, err := loadProcess_monitor()
- 	if err != nil {
- 		return err
-@@ -90,9 +114,9 @@ type process_monitorSpecs struct {
- //
- // It can be passed ebpf.CollectionSpec.Assign.
- type process_monitorProgramSpecs struct {
--	KprobeArgsExecve *ebpf.ProgramSpec `ebpf:"kprobe__args_execve"`
- 	SchedProcessExit *ebpf.ProgramSpec `ebpf:"sched_process_exit"`
- 	SchedProcessFork *ebpf.ProgramSpec `ebpf:"sched_process_fork"`
-+	SysEnterExecve   *ebpf.ProgramSpec `ebpf:"sys_enter_execve"`
- 	SysEnterSetns    *ebpf.ProgramSpec `ebpf:"sys_enter_setns"`
- 	SysExitSetns     *ebpf.ProgramSpec `ebpf:"sys_exit_setns"`
- }
-@@ -185,18 +209,18 @@ type process_monitorVariables struct {
- //
- // It can be passed to loadProcess_monitorObjects or ebpf.CollectionSpec.LoadAndAssign.
- type process_monitorPrograms struct {
--	KprobeArgsExecve *ebpf.Program `ebpf:"kprobe__args_execve"`
- 	SchedProcessExit *ebpf.Program `ebpf:"sched_process_exit"`
- 	SchedProcessFork *ebpf.Program `ebpf:"sched_process_fork"`
-+	SysEnterExecve   *ebpf.Program `ebpf:"sys_enter_execve"`
- 	SysEnterSetns    *ebpf.Program `ebpf:"sys_enter_setns"`
- 	SysExitSetns     *ebpf.Program `ebpf:"sys_exit_setns"`
+ 	return fd
  }
  
- func (p *process_monitorPrograms) Close() error {
- 	return _Process_monitorClose(
--		p.KprobeArgsExecve,
- 		p.SchedProcessExit,
- 		p.SchedProcessFork,
-+		p.SysEnterExecve,
- 		p.SysEnterSetns,
- 		p.SysExitSetns,
- 	)
-```
-
-**File**: `KubeArmor/presets/anonmapexec/anonmapexec_bpfeb.go` (modified, +6/-2)
-```diff
-@@ -64,6 +64,7 @@ const (
- 	anonmapexecMapKubearmorContainers                  = "kubearmor_containers"
- 	anonmapexecMapKubearmorEvents                      = "kubearmor_events"
- 	anonmapexecMapKubearmorExecPids                    = "kubearmor_exec_pids"
-+	anonmapexecProgEnforceFileMprotect                 = "enforce_file_mprotect"
- 	anonmapexecProgEnforceMmapFile                     = "enforce_mmap_file"
- 	anonmapexecVarUnused                               = "unused"
- )
-@@ -110,7 +111,8 @@ type anonmapexecSpecs struct {
- //
- // It can be passed ebpf.CollectionSpec.Assign.
- type anonmapexecProgramSpecs struct {
--	EnforceMmapFile *ebpf.ProgramSpec `ebpf:"enforce_mmap_file"`
-+	EnforceFileMprotect *ebpf.ProgramSpec `ebpf:"enforce_file_mprotect"`
-+	EnforceMmapFile     *ebpf.ProgramSpec `ebpf:"enforce_mmap_file"`
- }
+@@ -774,9 +777,14 @@ func (fd *Feeder) PushLog(log tp.Log) {
+ 	// gRPC output
+ 	if log.Type == "MatchedPolicy" || log.Type == "MatchedHostPolicy" || log.Type == "SystemEvent" {
  
- // anonmapexecMapSpecs contains maps before they are loaded into the kernel.
-@@ -206,11 +208,13 @@ type anonmapexecVariables struct {
- //
- // It can be passed to loadAnonmapexecObjects or ebpf.CollectionSpec.LoadAndAssign.
- type anonmapexecPrograms struct {
--	EnforceMmapFile *ebpf.Program `ebpf:"enforce_mmap_file"`
-+	EnforceFileMprotect *ebpf.Program `ebpf:"enforce_file_mprotect"`
-+	EnforceMmapFile     *ebpf.Program `ebpf:"enforce_mmap_file"`
- }
- 
- func (p *anonmapexecPrograms) Close() error {
- 	return _AnonmapexecClose(
-+		p.EnforceFileMprotect,
- 		p.EnforceMmapFile,
- 	)
- }
-```
-
-**File**: `KubeArmor/presets/anonmapexec/anonmapexec_bpfel.go` (modified, +6/-2)
-```diff
-@@ -64,6 +64,7 @@ const (
- 	anonmapexecMapKubearmorContainers                  = "kubearmor_containers"
- 	anonmapexecMapKubearmorEvents                      = "kubearmor_events"
- 	anonmapexecMapKubearmorExecPids                    = "kubearmor_exec_pids"
-+	anonmapexecProgEnforceFileMprotect                 = "enforce_file_mprotect"
- 	anonmapexecProgEnforceMmapFile                     = "enforce_mmap_file"
- 	anonmapexecVarUnused                               = "unused"
- )
-@@ -110,7 +111,8 @@ type anonmapexecSpecs struct {
- //
- // It can be passed ebpf.CollectionSpec.Assign.
- type anonmapexecProgramSpecs struct {
--	EnforceMmapFile *ebpf.ProgramSpec `ebpf:"enforce_mmap_file"`
-+	EnforceFileMprotect *ebpf.ProgramSpec `ebpf:"enforce_file_mprotect"`
-+	EnforceMmapFile     *ebpf.ProgramSpec `ebpf:"enforce_mmap_file"`
- }
- 
- // anonmapexecMapSpecs contains maps before they are loaded into the kernel.
-@@ -206,11 +208,13 @@ type anonmapexecVariables struct {
- //
- // It can be passed to loadAnonmapexecObjects or ebpf.CollectionSpec.LoadAndAssign.
- type anonmapexecPrograms struct {
--	EnforceMmapFile *ebpf.Program `ebpf:"enforce_mmap_file"`
-+	EnforceFileMprotect *ebpf.Program `ebpf:"enforce_file_mprotect"`
-+	EnforceMmapFile     *ebpf.Program `ebpf:"enforce_mmap_file"`
- }
- 
- func (p *anonmapexecPrograms) Close() error {
- 	return _AnonmapexecClose(
-+		p.EnforceFileMprotect,
- 		p.EnforceMmapFile,
- 	)
- }
+-		// checking throttling condition for "Audit" alerts when enforcer is 'eBPF Monitor'
+-		if cfg.GlobalCfg.AlertThrottling && ((strings.Contains(log.Action, "Audit") && log.Enforcer == "eBPF Monitor") || (log.Type == "MatchedHostPolicy" && (log.Enforcer == "AppArmor" || log.Enforcer == "eBPF Monitor"))) {
++		// checking throttling condition for container and host policy alerts (excluding DefaultPosture)
++		if cfg.GlobalCfg.AlertThrottling &&
++			((log.Type == "MatchedPolicy" || log.Type == "MatchedHostPolicy") &&
++				(log.Enforcer == "AppArmor" || log.Enforcer == "SELinux" || log.Enforcer == "eBPF Monitor") &&
++				log.PolicyName != "DefaultPosture") {
++			fd.ContainerNsKeyLock.RLock()
+ 			nsKey := fd.ContainerNsKey[log.ContainerID]
++			fd.ContainerNsKeyLock.RUnlock()
+ 			alert, throttle := fd.ShouldDropAlertsPerContainer(nsKey.PidNs, nsKey.MntNs)
+ 			if alert && throttle {
+ 				return
 ```
 
 ---
 
-### Incident Patch 2: `51b3651e` (2026-10-22)
-**Commit Message**: Merge pull request #2939 from AryanBakliwal/fix-TraceSyscall-panic
+### Incident Patch 2: `8b515c08` (2026-10-22)
+**Commit Message**: bugfix: fix alertthrottling for apparmor default posture logs
 
-fix(monitor): TraceSyscall panic during shutdown
+Signed-off-by: charankamal20 <[REDACTED_EMAIL]>
 
-**File**: `Dockerfile` (modified, +1/-1)
+**File**: `KubeArmor/BPF/system_monitor.c` (modified, +0/-137)
 ```diff
-@@ -3,7 +3,7 @@
+@@ -1159,95 +1159,6 @@ static __always_inline u32 init_context(sys_context_t *context)
+ #endif
+     return 0;
+ }
+-// == Alert Throttling == //
+-
+-// To check if subsequent alerts should be dropped per container
+-static __always_inline bool should_drop_alerts_per_container(sys_context_t *context, struct pt_regs *ctx, u32 types, args_t *args)
+-{
+-#if LINUX_VERSION_CODE > KERNEL_VERSION(5, 2, 0)
+-
+-    // throttling for host in case of apparmor is handled in userspace
+-    if (context->pid_id == 0 && context->mnt_id == 0)
+-    {
+-        return false;
+-    }
+-
+-    u64 current_timestamp = bpf_ktime_get_ns();
+-
+-    struct outer_key key = {
+-        .pid_ns = context->pid_id,
+-        .mnt_ns = context->mnt_id};
+-
+-    struct alert_throttle_state *state = bpf_map_lookup_elem(&kubearmor_alert_throttle, &key);
+-
+-    if (!state)
+-    {
+-        struct alert_throttle_state new_state = {
+-            .event_count = 1,
+-            .first_event_timestamp = current_timestamp,
+-            .throttle = 0};
+-
+-        bpf_map_update_elem(&kubearmor_alert_throttle, &key, &new_state, BPF_ANY);
+-        return false;
+-    }
+-
+-    u64 throttle_sec = (u64)get_kubearmor_config(_THROTTLE_SEC);
+-    u64 throttle_nsec = throttle_sec * 1000000000L;
+-    u64 max = (u64)get_kubearmor_config(_MAX_ALERT_PER_SEC);
+-
+-    if (state->throttle)
+-    {
+-        u64 time_difference = current_timestamp - state->first_event_timestamp;
+-        if (time_difference < throttle_nsec)
+-        {
+-            return true;
+-        }
+-    }
+-
+-    u64 time_difference = current_timestamp - state->first_event_timestamp;
+-
+-    if (time_difference >= 1000000000L)
+-    { // 1 second
+-        state->first_event_timestamp = current_timestamp;
+-        state->event_count = 1;
+-        state->throttle = 0;
+-    }
+-    else
+-    {
+-        state->event_count++;
+-    }
+-
+-    if (state->event_count > max)
+-    {
+-        state->event_count = 0;
+-        state->throttle = 1;
+-        bpf_map_update_elem(&kubearmor_alert_throttle, &key, state, BPF_ANY);
+-
+-        // Generating Throttling Alert
+-        context->event_id = _DROPPING_ALERT;
+-        set_buffer_offset(DATA_BUF_TYPE, sizeof(sys_context_t));
+-
+-        bufs_t *bufs_p = get_buffer(DATA_BUF_TYPE);
+-        if (bufs_p == NULL)
+-        {
+-            return 0;
+-        }
+-
+-        save_context_to_buffer(bufs_p, (void *)context);
+-
+-        if (types != 0)
+-        {
+-            save_args_to_buffer(types, args);
+-        }
+-
+-        events_perf_submit(ctx, DATA_BUF_TYPE);
+-        return true;
+-    }
+-
+-    bpf_map_update_elem(&kubearmor_alert_throttle, &key, state, BPF_ANY);
+-#endif
+-    return false;
+-}
  
- ### Builder
+ // ==== Container Exec Events ====
  
--FROM golang:1.26-alpine3.23@sha256:10d148346b2da25f243a5cb3dd7a6e92df0f25224f072fba2821fa3ac1184601 AS builder
-+FROM golang:1.26-alpine3.23@sha256:a07f231c19b03e6106cf442f02a5bcf262147e744d15b7b5e4b6d81d420c70a0 AS builder
+@@ -1543,13 +1454,6 @@ int kretprobe__execve(struct pt_regs *ctx)
+         return 0;
+     }
  
- RUN apk --no-cache update && apk upgrade --no-cache libcrypto3 libssl3 zlib libexpat
- RUN apk add --no-cache git clang llvm make gcc protobuf protobuf-dev curl elfutils-dev libbpf-dev
+-    u32 types;
+-    args_t args = {};
+-    if (context.retval < 0 && !get_kubearmor_config(_ENFORCER_BPFLSM) && get_kubearmor_config(_ALERT_THROTTLING) && should_drop_alerts_per_container(&context, ctx, types, &args))
+-    {
+-        return 0;
+-    }
+-
+     set_buffer_offset(DATA_BUF_TYPE, sizeof(sys_context_t));
+ 
+     bufs_t *bufs_p = get_buffer(DATA_BUF_TYPE);
+@@ -1655,14 +1559,6 @@ int kretprobe__execveat(struct pt_regs *ctx)
+         return 0;
+     }
+ 
+-    u32 types;
+-    args_t args = {};
+-
+-    if (context.retval < 0 && !get_kubearmor_config(_ENFORCER_BPFLSM) && get_kubearmor_config(_ALERT_THROTTLING) && should_drop_alerts_per_container(&context, ctx, types, &args))
+-    {
+-        return 0;
+-    }
+-
+     set_buffer_offset(DATA_BUF_TYPE, sizeof(sys_context_t));
+ 
+     bufs_t *bufs_p = get_buffer(DATA_BUF_TYPE);
+@@ -1845,11 +1741,6 @@ static __always_inline int trace_ret_generic(u32 id, struct pt_regs *ctx, u64 ty
+         context.oid = owner.val;
+     }
+ 
+-    if (context.retval < 0 && !get_kubearmor_config(_ENFORCER_BPFLSM) && get_kubearmor_config(_ALERT_THROTTLING) && should_drop_alerts_per_container(&context, ctx, types, &args))
+-    {
+-        return 0;
+-    }
+-
+     set_buffer_offset(DATA_BUF_TYPE, sizeof(sys_context_t));
+ 
+     bufs_t *bufs_p = get_buffer(DATA_BUF_TYPE);
+@@ -2171,11 +2062,6 @@ int sys_exit_openat(struct tracepoint_syscalls_sys_exit_t *args)
+         return 0;
+     }
+ 
+-    if (context.retval < 0 && !get_kubearmor_config(_ENFORCER_BPFLSM) && get_kubearmor_config(_ALERT_THROTTLING) && should_drop_alerts_per_container(&context, (struct pt_regs *)args, types, &orig_args))
+-    {
+-        return 0;
+-    }
+-
+     set_buffer_offset(DATA_BUF_TYPE, sizeof(sys_context_t));
+ 
+     bufs_t *bufs_p = get_buffer(DATA_BUF_TYPE);
+@@ -2388,10 +2274,6 @@ int kretprobe__tcp_connect(struct pt_regs *ctx)
+     bpf_probe_read_str(proto_str, sizeof(proto_str), proto_str_p);
+ 
+     args.args[0] = (unsigned long)proto_str;
+-    if (context->retval < 0 && !get_kubearmor_config(_ENFORCER_BPFLSM) && get_kubearmor_config(_ALERT_THROTTLING) && should_drop_alerts_per_container(context, ctx, types, &args))
+-    {
+-        return 0;
+-    }
+ 
+     set_buffer_offset(DAT
 ```
 
-**File**: `KubeArmor/go.mod` (modified, +1/-1)
+**File**: `KubeArmor/core/containerdHandler.go` (modified, +5/-1)
 ```diff
-@@ -1,6 +1,6 @@
- module github.com/kubearmor/KubeArmor/KubeArmor
+@@ -513,10 +513,12 @@ func (dm *KubeArmorDaemon) UpdateContainerdContainer(ctx context.Context, contai
  
--go 1.26.9
-+go 1.26.10
- 
- replace (
- 	github.com/kubearmor/KubeArmor => ../../
-```
-
-**File**: `KubeArmor/monitor/systemMonitor.go` (modified, +8/-0)
-```diff
-@@ -1166,6 +1166,14 @@ func (mon *SystemMonitor) TraceSyscall() {
- 				}
+ 		if dm.SystemMonitor != nil && cfg.GlobalCfg.Policy {
+ 			// for throttling
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Lock()
+ 			dm.SystemMonitor.Logger.ContainerNsKey[containerID] = common.OuterKey{
+ 				MntNs: container.MntNS,
+ 				PidNs: container.PidNS,
  			}
- 			MonitorLock.Lock()
-+
-+			// status is true when the system monitor is running, false when it is being destroyed
-+			if !mon.Status {
-+				MonitorLock.Unlock()
-+				mon.Logger.Print("System monitor is being destroyed, exiting TraceSyscall")
-+				return
-+			}
-+
- 			// push the context to the channel for logging
- 			mon.ContextChan <- ContextCombined{ContainerID: containerID, ContextSys: ctx, ContextArgs: args, HashData: hashes}
- 			MonitorLock.Unlock()
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Unlock()
+ 
+ 			// update NsMap
+ 			dm.SystemMonitor.AddContainerIDToNsMap(containerID, container.NamespaceName, container.PidNS, container.MntNS)
+@@ -596,9 +598,11 @@ func (dm *KubeArmorDaemon) UpdateContainerdContainer(ctx context.Context, contai
+ 		dm.EndPointsLock.Unlock()
+ 
+ 		if dm.SystemMonitor != nil && cfg.GlobalCfg.Policy {
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Lock()
+ 			outkey := dm.SystemMonitor.Logger.ContainerNsKey[containerID]
+-			dm.Logger.DeleteAlertMapKey(outkey)
+ 			delete(dm.SystemMonitor.Logger.ContainerNsKey, containerID)
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Unlock()
++			dm.Logger.DeleteAlertMapKey(outkey)
+ 			// update NsMap
+ 			dm.SystemMonitor.DeleteContainerIDFromNsMap(containerID, container.NamespaceName, container.PidNS, container.MntNS)
+ 			dm.RuntimeEnforcer.UnregisterContainer(containerID)
 ```
 
-**File**: `deployments/go.mod` (modified, +1/-1)
+**File**: `KubeArmor/core/crioHandler.go` (modified, +5/-1)
 ```diff
-@@ -1,6 +1,6 @@
- module github.com/kubearmor/KubeArmor/deployments
+@@ -291,10 +291,12 @@ func (dm *KubeArmorDaemon) UpdateCrioContainer(ctx context.Context, containerID,
  
--go 1.26.9
-+go 1.26.10
- 
- replace (
- 	github.com/kubearmor/KubeArmor => ../
-```
-
-**File**: `deployments/podman/go.mod` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- module github.com/kubearmor/KubeArmor/deployments/podman
- 
--go 1.26.9
-+go 1.26.10
- 
- require (
- 	github.com/kubearmor/KubeArmor/KubeArmor v0.0.0-20260521154542-6789b83a8cee
-```
-
-**File**: `pkg/KubeArmorController/Dockerfile` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
- # Copyright 2026 Authors of KubeArmor
- 
- # Build the manager binary
--FROM golang:1.26.9@sha256:f1f0bcc2c524a3ced375fcb4d1ecb7aa371aa7070e112599aaca45cc02d0101b AS builder
-+FROM golang:1.26.10@sha256:fb456410ab4c979617acaf28c46b2b9fe60b11bcc3dc8ceea0eaeb3e7cd0f8a8 AS builder
- 
- WORKDIR /workspace
- # Copy the Go Modules manifests
-```
-
-**File**: `pkg/KubeArmorController/go.mod` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- module github.com/kubearmor/KubeArmor/pkg/KubeArmorController
- 
--go 1.26.9
-+go 1.26.10
- 
- replace github.com/go-jose/go-jose/v4 => github.com/go-jose/go-jose/v4 v4.1.4
- 
-```
-
-**File**: `pkg/KubeArmorOperator/Dockerfile` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: Apache-2.0
- # Copyright 2026 Authors of KubeArmor
- 
--FROM docker.io/golang:1.26.9@sha256:f1f0bcc2c524a3ced375fcb4d1ecb7aa371aa7070e112599aaca45cc02d0101b AS builder
-+FROM docker.io/golang:1.26.10@sha256:fb456410ab4c979617acaf28c46b2b9fe60b11bcc3dc8ceea0eaeb3e7cd0f8a8 AS builder
- ARG GOARCH
- ARG GOOS
- 
-```
-
----
-
-### Incident Patch 3: `c868e0e5` (2026-10-21)
-**Commit Message**: fix(monitor): TraceSyscall panic when during shutdown
-
-Signed-off-by: Aryan Bakliwal <[REDACTED_EMAIL]>
-
-**File**: `KubeArmor/monitor/systemMonitor.go` (modified, +8/-0)
-```diff
-@@ -1166,6 +1166,14 @@ func (mon *SystemMonitor) TraceSyscall() {
- 				}
+ 		if dm.SystemMonitor != nil && cfg.GlobalCfg.Policy {
+ 			// for throttling
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Lock()
+ 			dm.SystemMonitor.Logger.ContainerNsKey[containerID] = common.OuterKey{
+ 				MntNs: container.MntNS,
+ 				PidNs: container.PidNS,
  			}
- 			MonitorLock.Lock()
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Unlock()
+ 
+ 			// update NsMap
+ 			dm.SystemMonitor.AddContainerIDToNsMap(containerID, container.NamespaceName, container.PidNS, container.MntNS)
+@@ -360,9 +362,11 @@ func (dm *KubeArmorDaemon) UpdateCrioContainer(ctx context.Context, containerID,
+ 		dm.EndPointsLock.Unlock()
+ 
+ 		if dm.SystemMonitor != nil && cfg.GlobalCfg.Policy {
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Lock()
+ 			outkey := dm.SystemMonitor.Logger.ContainerNsKey[containerID]
+-			dm.Logger.DeleteAlertMapKey(outkey)
+ 			delete(dm.SystemMonitor.Logger.ContainerNsKey, containerID)
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Unlock()
++			dm.Logger.DeleteAlertMapKey(outkey)
+ 			// update NsMap
+ 			dm.SystemMonitor.DeleteContainerIDFromNsMap(containerID, container.NamespaceName, container.PidNS, container.MntNS)
+ 			if dm.RuntimeEnforcer != nil {
+```
+
+**File**: `KubeArmor/core/dockerHandler.go` (modified, +7/-1)
+```diff
+@@ -471,10 +471,12 @@ func (dm *KubeArmorDaemon) GetAlreadyDeployedDockerContainers() {
+ 
+ 				if dm.SystemMonitor != nil && cfg.GlobalCfg.Policy {
+ 					// for throttling
++					dm.SystemMonitor.Logger.ContainerNsKeyLock.Lock()
+ 					dm.SystemMonitor.Logger.ContainerNsKey[container.ContainerID] = common.OuterKey{
+ 						MntNs: container.MntNS,
+ 						PidNs: container.PidNS,
+ 					}
++					dm.SystemMonitor.Logger.ContainerNsKeyLock.Unlock()
+ 
+ 					// update NsMap
+ 					dm.SystemMonitor.AddContainerIDToNsMap(container.ContainerID, container.NamespaceName, container.PidNS, container.MntNS)
+@@ -672,10 +674,12 @@ func (dm *KubeArmorDaemon) UpdateDockerContainer(containerID, action string) {
+ 
+ 		if dm.SystemMonitor != nil && cfg.GlobalCfg.Policy {
+ 			// for throttling
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Lock()
+ 			dm.SystemMonitor.Logger.ContainerNsKey[containerID] = common.OuterKey{
+ 				MntNs: container.MntNS,
+ 				PidNs: container.PidNS,
+ 			}
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Unlock()
+ 
+ 			// update NsMap
+ 			dm.SystemMonitor.AddContainerIDToNsMap(containerID, container.NamespaceName, container.PidNS, container.MntNS)
+@@ -766,9 +770,11 @@ func (dm *KubeArmorDaemon) UpdateDockerContainer(containerID, action string) {
+ 		}
+ 
+ 		if dm.SystemMonitor != nil && cfg.GlobalCfg.Policy {
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Lock()
+ 			outkey := dm.SystemMonitor.Logger.ContainerNsKey[containerID]
+-			dm.Logger.DeleteAlertMapKey(outkey)
+ 			delete(dm.SystemMonitor.Logger.ContainerNsKey, containerID)
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Unlock()
++			dm.Logger.DeleteAlertMapKey(outkey)
+ 			// update NsMap
+ 			dm.SystemMonitor.DeleteContainerIDFromNsMap(containerID, container.NamespaceName, container.PidNS, container.MntNS)
+ 			dm.RuntimeEnforcer.UnregisterContainer(containerID)
+```
+
+**File**: `KubeArmor/core/hook_handlier_non_k8s.go` (modified, +5/-1)
+```diff
+@@ -181,10 +181,12 @@ func (dm *KubeArmorDaemon) UpdateContainer(containerID string, container tp.Cont
+ 
+ 		if dm.SystemMonitor != nil && cfg.GlobalCfg.Policy {
+ 			// for throttling
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Lock()
+ 			dm.SystemMonitor.Logger.ContainerNsKey[containerID] = common.OuterKey{
+ 				MntNs: container.MntNS,
+ 				PidNs: container.PidNS,
+ 			}
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Unlock()
+ 
+ 			// update NsMap
+ 			dm.SystemMonitor.AddContainerIDToNsMap(containerID, container.NamespaceName, container.PidNS, container.MntNS)
+@@ -252,9 +254,11 @@ func (dm *KubeArmorDaemon) UpdateContainer(containerID string, container tp.Cont
+ 		}
+ 
+ 		if dm.SystemMonitor != nil && cfg.GlobalCfg.Policy {
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Lock()
+ 			outkey := dm.SystemMonitor.Logger.ContainerNsKey[containerID]
+-			dm.Logger.DeleteAlertMapKey(outkey)
+ 			delete(dm.SystemMonitor.Logger.ContainerNsKey, containerID)
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Unlock()
++			dm.Logger.DeleteAlertMapKey(outkey)
+ 			// update NsMap
+ 			dm.SystemMonitor.DeleteContainerIDFromNsMap(containerID, container.NamespaceName, container.PidNS, container.MntNS)
+ 			dm.RuntimeEnforcer.UnregisterContainer(containerID)
+```
+
+**File**: `KubeArmor/core/kubeArmor.go` (modified, +1/-1)
+```diff
+@@ -640,7 +640,7 @@ func KubeArmor() {
+ 	// == //
+ 
+ 	// health server — dedicated gRPC server for healthcheck since grpc probes are not supported with TLS
+-	healthLis, err := net.Listen("tcp", ":"+cfg.GlobalCfg.GRPCHealthPort)
++	healthLis, err := net.Listen("tcp", ":"+cfg.GlobalCfg.GRPCHealthPort) // #nosec G102
+ 	if err != nil {
+ 		dm.Logger.Errf("Failed to listen on plaintext health port %s: %v", cfg.GlobalCfg.GRPCHealthPort, err)
+ 	} else {
+```
+
+**File**: `KubeArmor/core/nriHandler.go` (modified, +5/-1)
+```diff
+@@ -385,10 +385,12 @@ func (dm *KubeArmorDaemon) MonitorNRIEvents() {
+ 
+ 		if dm.SystemMonitor != nil && cfg.GlobalCfg.Policy {
+ 			// for throttling
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Lock()
+ 			dm.SystemMonitor.Logger.ContainerNsKey[container.ContainerID] = common.OuterKey{
+ 				MntNs: container.MntNS,
+ 				PidNs: container.PidNS,
+ 			}
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Unlock()
+ 			// update NsMap
+ 			dm.SystemMonitor.AddContainerIDToNsMap(container.ContainerID, container.NamespaceName, container.PidNS, container.MntNS)
+ 			dm.RuntimeEnforcer.RegisterContainer(container.ContainerID, container.PidNS, container.MntNS)
+@@ -436,9 +438,11 @@ func (dm *KubeArmorDaemon) MonitorNRIEvents() {
+ 		dm.ContainersLock.Unlock()
+ 
+ 		if dm.SystemMonitor != nil && cfg.GlobalCfg.Policy {
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Lock()
+ 			outkey := dm.SystemMonitor.Logger.ContainerNsKey[container.ContainerID]
+-			dm.Logger.DeleteAlertMapKey(outkey)
+ 			delete(dm.SystemMonitor.Logger.ContainerNsKey, container.ContainerID)
++			dm.SystemMonitor.Logger.ContainerNsKeyLock.Unlock()
++			dm.Logger.DeleteAlertMapKey(outkey)
+ 			// update NsMap
+ 			dm.SystemMonitor.DeleteContainerIDFromNsMap(container.ContainerID, container.NamespaceName, container.PidNS, container.MntNS)
+ 			dm.RuntimeEnforcer.UnregisterContainer(container.ContainerID)
+```
+
+**File**: `KubeArmor/feeder/feeder.go` (modified, +11/-3)
+```diff
+@@ -265,7 +265,8 @@ type Feeder struct {
+ 	AlertMap     map[OuterKey]AlertThrottleState
+ 	AlertMapLock sync.RWMutex
+ 
+-	ContainerNsKey map[string]common.OuterKey
++	ContainerNsKey     map[string]common.OuterKey
++	ContainerNsKeyLock sync.RWMutex
+ }
+ 
+ // NewFeeder Function
+@@ -409,6 +410,8 @@ func NewFeeder(node *tp.Node, nodeLock **sync.RWMutex) (feeder *Feeder) {
+ 		ttl:       10 * time.Minute,
+ 	}
+ 
++	fd.ContainerNsKey = make(map[string]common.OuterKey)
 +
-+			// status is true when the system monitor is running, false when it is being destroyed
-+			if !mon.Status {
-+				MonitorLock.Unlock()
-+				mon.Logger.Print("System monitor is being destroyed, exiting TraceSyscall")
-+				return
-+			}
-+
- 			// push the context to the channel for logging
- 			mon.ContextChan <- ContextCombined{ContainerID: containerID, ContextSys: ctx, ContextArgs: args, HashData: hashes}
- 			MonitorLock.Unlock()
+ 	return fd
+ }
+ 
+@@ -774,9 +777,14 @@ func (fd *Feeder) PushLog(log tp.Log) {
+ 	// gRPC output
+ 	if log.Type == "MatchedPolicy" || log.Type == "MatchedHostPolicy" || log.Type == "SystemEvent" {
+ 
+-		// checking throttling condition for "Audit" alerts when enforcer is 'eBPF Monitor'
+-		if cfg.GlobalCfg.AlertThrottling && ((strings.Contains(log.Action, "Audit") && log.Enforcer == "eBPF Monitor") || (log.Type == "MatchedHostPolicy" && (log.Enforcer == "AppArmor" || log.Enforcer == "eBPF Monitor"))) {
++		// checking throttling condition for container and host policy alerts (excluding DefaultPosture)
++		if cfg.GlobalCfg.AlertThrottling &&
++			((log.Type == "MatchedPolicy" || log.Type == "MatchedHostPolicy") &&
++				(log.Enforcer == "AppArmor" || log.Enforcer == "SELinux" || log.Enforcer == "eBPF Monitor") &&
++				log.PolicyName != "DefaultPosture") {
++			fd.ContainerNsKeyLock.RLock()
+ 			nsKey := fd.ContainerNsKey[log.ContainerID]
++			fd.ContainerNsKeyLock.RUnlock()
+ 			alert, throttle := fd.ShouldDropAlertsPerContainer(nsKey.PidNs, nsKey.MntNs)
+ 			if alert && throttle {
+ 				return
 ```
 
 #### Recent Merged Pull Requests:
@@ -3657,8 +3954,8 @@ Signed-off-by: Aryan Bakliwal <[REDACTED_EMAIL]>
 - **PR #2948** (2026-10-23): go generate fix, removed obj files, and added release related workflow tests to CI (@AryanBakliwal)
 - **PR #2947** (2026-10-22): fix(BPF): go generate on arm64 (@AryanBakliwal)
 - **PR #2946** (2026-10-22): bugfix(apparmor): fix pods not terminating in apparmor node (@charankamal20)
+- **PR #2945** (2026-10-28): bugfix(apparmor): fix alertthrottling for apparmor default posture logs (@charankamal20)
 - **PR #2942** (2026-10-21): fix(operator): detect containerd namespace and runtime socket reliably in snitch (@achrefbensaad)
-- **PR #2939** (2026-10-22): fix(monitor): TraceSyscall panic during shutdown (@AryanBakliwal)
 
 ---
 
@@ -3672,61 +3969,3 @@ Signed-off-by: Aryan Bakliwal <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. enforcer: Replace execve kprobe with tracepoint in process monitor
-
-**RULE**:
-When implementing operations in `KubeArmor/BPF/process_monitor.bpf.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubearmor/KubeArmor. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `e56e040a`: enforcer: Replace execve kprobe with tracepoint in process monitor. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `KubeArmor/BPF/process_monitor.bpf.c`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-// Verified production-grade fix pattern:
-struct tracepoint_raw_sys_enter
-{
-    unsigned short common_type;
-    unsigned char common_flags;
-    unsigned char common_preempt_count;
-    int common_pid;
-    long id;
-    unsigned long args[6];
-};
-
-SEC("tracepoint/syscalls/sys_enter_execve")
-int sys_enter_execve(struct tracepoint_raw_sys_enter *ctx)
-        unsigned long argv = ctx->args[1];
-
-```
-
-**NEGATIVE CONSTRAINT**:
-```go
-// Anti-pattern to NEVER write (induced failure mode):
-SEC("kprobe/__x64_sys_execve")
-int kprobe__args_execve(struct pt_regs *ctx)
-    struct pt_regs *ctx2 = (struct pt_regs *)PT_REGS_PARM1(ctx);
-    unsigned long argv = READ_KERN(PT_REGS_PARM2(ctx2));
-
-struct tracepoint_raw_sys_enter
-{
-    unsigned short common_type;
-    unsigned char common_flags;
-    unsigned char common_preempt_count;
-    int common_pid;
-    long id;
-    unsigned long args[6];
-};
-
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e56e040a` are properly handled with clean fallback behavior.

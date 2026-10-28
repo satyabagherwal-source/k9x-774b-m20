@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T16:19:27.486Z",
-  "total_cycles_completed": 5818,
-  "total_learnings_persisted": 5818,
+  "last_updated": "2026-10-28T16:27:16.866Z",
+  "total_cycles_completed": 5820,
+  "total_learnings_persisted": 5820,
   "total_rules_promoted": 5294,
   "history": [
-    {
-      "timestamp": "2026-10-28T01:58:39.185Z",
-      "repository": "skyhook-io/radar",
-      "learningId": "learn-github-skyhook-io-radar",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T02:04:58.002Z",
-      "repository": "vikejs/vike",
-      "learningId": "learn-github-vikejs-vike",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T02:05:07.643Z",
       "repository": "autotrust/GEV-26B-Decide",
@@ -1403,6 +1389,20 @@
       "repository": "sentence-transformers/all-mpnet-base-v2",
       "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T16:27:14.897Z",
+      "repository": "BAAI/bge-reranker-v2-m3",
+      "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T16:27:16.866Z",
+      "repository": "kubearmor/KubeArmor",
+      "learningId": "learn-github-kubearmor-kubearmor",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

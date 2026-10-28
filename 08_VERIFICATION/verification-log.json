@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-QK5P",
-    "timestamp": "2026-10-27T13:48:12.301Z",
-    "repository": "aio-libs/aiohttp",
-    "learningId": "learn-github-aio-libs-aiohttp",
-    "contentHash": "88ae448a08ad2731e232fcffe2a333640088bb3913bf2d954989a99ccc62bb27",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-QMHO",
-    "timestamp": "2026-10-27T13:48:15.324Z",
-    "repository": "streetwriters/notesnook",
-    "learningId": "learn-github-streetwriters-notesnook",
-    "contentHash": "d9c85f7436630f188b7d1ebf9d0fd5266a62e427d2f42346d75726b17175e4fc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-YH04",
     "timestamp": "2026-10-27T13:54:21.460Z",
     "repository": "dockview/dockview",
@@ -7492,6 +7462,36 @@
     "contentHash": "a5331c4f8ade384adb85e6f908581cb37c75b1c7a89859ef1a5f6d3554c1f6f6",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-UXXN",
+    "timestamp": "2026-10-28T16:27:14.891Z",
+    "repository": "BAAI/bge-reranker-v2-m3",
+    "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
+    "contentHash": "602b25911366677e5f5d04f4765fe3ce7722de1ca7697832b9e1dfafe0f944e7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-UZGB",
+    "timestamp": "2026-10-28T16:27:16.859Z",
+    "repository": "kubearmor/KubeArmor",
+    "learningId": "learn-github-kubearmor-kubearmor",
+    "contentHash": "8b064e874acc248eef5330a4decd55e04cafc3119782dfce53c3d63ee79d8b64",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -5841,3 +5841,5 @@
 | `CYCLE-20261028-KRZ2` | `2026-10-28T16:19:20.606Z` | `u-root/u-root` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5339` | Yes (`39eea9f7...`) |
 | `CYCLE-20261028-KW1C` | `2026-10-28T16:19:25.872Z` | `callstack/agent-device` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5340` | Yes (`6860af67...`) |
 | `CYCLE-20261028-KX9X` | `2026-10-28T16:19:27.477Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 858, Rule 5341` | Yes (`a5331c4f...`) |
+| `CYCLE-20261028-UXXN` | `2026-10-28T16:27:14.891Z` | `BAAI/bge-reranker-v2-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md` | Yes (`602b2591...`) |
+| `CYCLE-20261028-UZGB` | `2026-10-28T16:27:16.859Z` | `kubearmor/KubeArmor` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md` | Yes (`8b064e87...`) |

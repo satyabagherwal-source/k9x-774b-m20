@@ -5850,3 +5850,5 @@ Every entry in this ledger must capture:
 | `learn-github-u-root-u-root` | `https://github.com/u-root/u-root` | `91846b7c` | Multi-dimensional audit evidence | 2026-10-28T16:19:20.609Z |
 | `learn-github-callstack-agent-device` | `https://github.com/callstack/agent-device` | `3537dc54` | Multi-dimensional audit evidence | 2026-10-28T16:19:25.876Z |
 | `learn-huggingface-sentence-transformers-all-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/all-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-28T16:19:27.481Z |
+| `learn-huggingface-baai-bge-reranker-v2-m3` | `https://huggingface.co/BAAI/bge-reranker-v2-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-28T16:27:14.893Z |
+| `learn-github-kubearmor-kubearmor` | `https://github.com/kubearmor/KubeArmor` | `3b5c8f74` | Multi-dimensional audit evidence | 2026-10-28T16:27:16.862Z |

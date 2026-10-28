@@ -1115,8 +1115,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-reranker-v2-m3",
     "sourceVersion": "hf-baai-bge-reranker-v2-m3",
     "license": "Open-Source",
-    "contentHash": "bedd2d2e7eb264e31beefc628026ab6be9715c2d5b3d0aa2ba6f9c711485ec10",
-    "lastHarvestedAt": "2026-10-25T23:04:47.739Z",
+    "contentHash": "602b25911366677e5f5d04f4765fe3ce7722de1ca7697832b9e1dfafe0f944e7",
+    "lastHarvestedAt": "2026-10-28T16:27:14.893Z",
     "learningId": "learn-huggingface-baai-bge-reranker-v2-m3"
   },
   "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese": {
@@ -6093,10 +6093,10 @@
     "repository": "kubearmor/KubeArmor",
     "platform": "github",
     "sourceUrl": "https://github.com/kubearmor/KubeArmor",
-    "sourceVersion": "99518b0d",
+    "sourceVersion": "3b5c8f74",
     "license": "Apache-2.0",
-    "contentHash": "bc17368007b88137eaf711f29526156d4b9d957f630f364ef0df21367ee9fdf2",
-    "lastHarvestedAt": "2026-10-24T20:04:55.918Z",
+    "contentHash": "8b064e874acc248eef5330a4decd55e04cafc3119782dfce53c3d63ee79d8b64",
+    "lastHarvestedAt": "2026-10-28T16:27:16.862Z",
     "learningId": "learn-github-kubearmor-kubearmor"
   },
   "callstack-agent-device": {

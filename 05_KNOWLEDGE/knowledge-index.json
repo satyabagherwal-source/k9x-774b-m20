@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T16:19:27.404Z",
+  "last_updated": "2026-10-28T16:27:16.782Z",
   "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -17796,7 +17796,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-reranker-v2-m3",
       "source_version": "hf-baai-bge-reranker-v2-m3",
-      "content_hash": "bedd2d2e7eb264e31beefc628026ab6be9715c2d5b3d0aa2ba6f9c711485ec10",
+      "content_hash": "602b25911366677e5f5d04f4765fe3ce7722de1ca7697832b9e1dfafe0f944e7",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md",
       "promoted_rules": [
@@ -17833,7 +17833,7 @@
         "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv3yddzy",
         "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv4d3zyp"
       ],
-      "verified_at": "2026-10-25T23:04:47.673Z",
+      "verified_at": "2026-10-28T16:27:14.788Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33523,8 +33523,8 @@
       "slug": "kubearmor-kubearmor",
       "platform": "github",
       "source_url": "https://github.com/kubearmor/KubeArmor",
-      "source_version": "99518b0d",
-      "content_hash": "bc17368007b88137eaf711f29526156d4b9d957f630f364ef0df21367ee9fdf2",
+      "source_version": "3b5c8f74",
+      "content_hash": "8b064e874acc248eef5330a4decd55e04cafc3119782dfce53c3d63ee79d8b64",
       "dossier_path": "07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md",
       "promoted_rules": [
@@ -33544,7 +33544,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T20:04:55.880Z",
+      "verified_at": "2026-10-28T16:27:16.759Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
