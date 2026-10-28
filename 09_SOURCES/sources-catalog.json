@@ -385,8 +385,8 @@
     "sourceUrl": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
     "sourceVersion": "hf-xingchen-agi-xing4.0-29b-a4b",
     "license": "Open-Source",
-    "contentHash": "b3548a1629d50855be860b67a745ed1597a78df215fa75621b3d5ea7366fec3a",
-    "lastHarvestedAt": "2026-10-25T12:23:10.961Z",
+    "contentHash": "2562a60d95155c11cb472bb37daf5a4cfe2623d1e935db20d6ab6ba31d7afbc3",
+    "lastHarvestedAt": "2026-10-28T05:17:51.707Z",
     "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b"
   },
   "hf-supersoniclabs-julia-1": {
@@ -7293,10 +7293,10 @@
     "repository": "alibaba/zvec",
     "platform": "github",
     "sourceUrl": "https://github.com/alibaba/zvec",
-    "sourceVersion": "aed80691",
+    "sourceVersion": "4c2d07de",
     "license": "Apache-2.0",
-    "contentHash": "ae5cdba134745b22009072ac86b99d05144d67ab026c42398475127705653256",
-    "lastHarvestedAt": "2026-10-27T15:12:16.253Z",
+    "contentHash": "e3486c62caaf9f3a9bedefd0947a5c2dac8a25c7cf2c344cec70f0b0022dfeba",
+    "lastHarvestedAt": "2026-10-28T05:17:55.146Z",
     "learningId": "learn-github-alibaba-zvec"
   },
   "zenbu-labs-terminal-browser": {

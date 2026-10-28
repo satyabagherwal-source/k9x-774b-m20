@@ -5706,3 +5706,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf` | `https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf` | `hf-prism-m` | Multi-dimensional audit evidence | 2026-10-28T04:56:04.523Z |
 | `learn-huggingface-viggle-qwen-image-2-1-viggle-turbo` | `https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-10-28T05:03:37.472Z |
 | `learn-github-pubkey-rxdb` | `https://github.com/pubkey/rxdb` | `159a4a8c` | Multi-dimensional audit evidence | 2026-10-28T05:03:43.354Z |
+| `learn-huggingface-xingchen-agi-xing4-0-29b-a4b` | `https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B` | `hf-xingche` | Multi-dimensional audit evidence | 2026-10-28T05:17:51.707Z |
+| `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `4c2d07de` | Multi-dimensional audit evidence | 2026-10-28T05:17:55.146Z |

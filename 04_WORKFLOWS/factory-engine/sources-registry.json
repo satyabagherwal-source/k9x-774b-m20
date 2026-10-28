@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T05:03:48.858Z",
-    "lastVerified": "2026-10-28T05:03:48.858Z",
+    "lastChecked": "2026-10-28T05:17:57.682Z",
+    "lastVerified": "2026-10-28T05:17:57.682Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -297,9 +297,9 @@
   "nucleoidai-nucleoid": {
     "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "lastChecked": "2026-10-28T04:42:04.114Z",
+    "lastChecked": "2026-10-28T05:17:52.997Z",
     "revisionIdentifier": "73085699",
-    "lastVerified": "2026-10-28T04:42:04.114Z"
+    "lastVerified": "2026-10-28T05:17:52.997Z"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -1260,5 +1260,67 @@
     "lastChecked": "2026-10-28T05:03:46.332Z",
     "revisionIdentifier": "e6bd9f7b",
     "lastVerified": "2026-10-28T05:03:46.332Z"
+  },
+  "falkordb-falkordb": {
+    "name": "FalkorDB",
+    "officialUrl": "https://github.com/FalkorDB/FalkorDB",
+    "lastChecked": "2026-10-28T05:17:38.048Z",
+    "revisionIdentifier": "ca36bfa1",
+    "lastVerified": "2026-10-28T05:17:38.048Z"
+  },
+  "hf-xingchen-agi-xing4.0-29b-a4b": {
+    "name": "XingChen-AGI/Xing4.0-29B-A4B",
+    "officialUrl": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T05:17:40.561Z",
+    "lastVerified": "2026-10-28T05:17:40.561Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
+    "contentHash": "2562a60d95155c11cb472bb37daf5a4cfe2623d1e935db20d6ab6ba31d7afbc3",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "infinitered-reactotron": {
+    "name": "reactotron",
+    "officialUrl": "https://github.com/infinitered/reactotron",
+    "lastChecked": "2026-10-28T05:17:43.059Z",
+    "revisionIdentifier": "3e480ab0",
+    "lastVerified": "2026-10-28T05:17:43.059Z"
+  },
+  "loft-sh-vcluster": {
+    "name": "vcluster",
+    "officialUrl": "https://github.com/loft-sh/vcluster",
+    "lastChecked": "2026-10-28T05:17:45.553Z",
+    "revisionIdentifier": "2dd27678",
+    "lastVerified": "2026-10-28T05:17:45.553Z"
+  },
+  "sigstore-cosign": {
+    "name": "cosign",
+    "officialUrl": "https://github.com/sigstore/cosign",
+    "lastChecked": "2026-10-28T05:17:48.096Z",
+    "revisionIdentifier": "ef56e699",
+    "lastVerified": "2026-10-28T05:17:48.096Z"
+  },
+  "alibaba-zvec": {
+    "name": "alibaba/zvec",
+    "officialUrl": "https://github.com/alibaba/zvec",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-10-28T05:17:54.592Z",
+    "lastVerified": "2026-10-28T05:17:54.592Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-alibaba-zvec",
+    "contentHash": "e3486c62caaf9f3a9bedefd0947a5c2dac8a25c7cf2c344cec70f0b0022dfeba",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

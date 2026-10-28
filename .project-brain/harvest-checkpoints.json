@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T05:03:43.364Z",
+  "last_updated": "2026-10-28T05:17:55.153Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -455,14 +455,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
-      "content_hash": "b3548a1629d50855be860b67a745ed1597a78df215fa75621b3d5ea7366fec3a",
-      "verified_at": "2026-10-25T12:23:10.967Z",
+      "content_hash": "2562a60d95155c11cb472bb37daf5a4cfe2623d1e935db20d6ab6ba31d7afbc3",
+      "verified_at": "2026-10-28T05:17:51.713Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T12:23:10.967Z"
+      "last_updated": "2026-10-28T05:17:51.713Z"
     },
     "SupersonicLabs/Julia-1": {
       "repository": "SupersonicLabs/Julia-1",
@@ -10986,14 +10986,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-alibaba-zvec",
-      "content_hash": "ae5cdba134745b22009072ac86b99d05144d67ab026c42398475127705653256",
-      "verified_at": "2026-10-27T15:12:16.262Z",
+      "content_hash": "e3486c62caaf9f3a9bedefd0947a5c2dac8a25c7cf2c344cec70f0b0022dfeba",
+      "verified_at": "2026-10-28T05:17:55.152Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T15:12:16.262Z"
+      "last_updated": "2026-10-28T05:17:55.152Z"
     },
     "zenbu-labs/terminal-browser": {
       "repository": "zenbu-labs/terminal-browser",

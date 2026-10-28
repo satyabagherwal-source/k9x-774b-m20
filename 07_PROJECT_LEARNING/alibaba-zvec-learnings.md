@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/alibaba-zvec-learnings.md`  
 > **Source**: github ([https://github.com/alibaba/zvec](https://github.com/alibaba/zvec))  
-> **Source Version**: `aed80691`  
+> **Source Version**: `4c2d07de`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T15:12:15.683Z  
+> **Timestamp**: 2026-10-28T05:17:54.767Z  
 > **Learning ID**: `learn-github-alibaba-zvec`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/alibaba-zvec-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/alibaba/zvec](https://github.com/alibaba/zvec))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T15:12:15.108Z  
+> **Harvest Timestamp**: 2026-10-28T05:17:54.592Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A lightweight, lightning-fast, in-process vector database
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 16154 stars
+- **Stars / Engagement**: 16158 stars
 
 ---
 
@@ -1092,679 +1092,181 @@ class HolderCluster {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aed80691` (2026-10-27)
-**Commit Message**: perf: deduplicate string parameter constants (#846)
+### Incident Patch 1: `4c2d07de` (2026-10-28)
+**Commit Message**: fix(hnsw_rabitq): refine entry scores before level-0 search (#851)
 
-**File**: `src/core/algorithm/cluster/cluster_params.h` (modified, +90/-90)
+**File**: `src/core/algorithm/hnsw_rabitq/hnsw_rabitq_query_algorithm.cc` (modified, +5/-0)
 ```diff
-@@ -19,195 +19,195 @@ namespace zvec {
- namespace core {
+@@ -61,6 +61,11 @@ int HnswRabitqQueryAlgorithm::search(HnswRabitqQueryEntity *entity,
+     select_entry_point(cur_level, &entry_point, &curest, ctx, entity);
+   }
  
- //! General
--static const std::string GENERAL_CLUSTER_COUNT = "zvec.general.cluster.count";
--static const std::string GENERAL_THREAD_COUNT =
-+inline const std::string GENERAL_CLUSTER_COUNT = "zvec.general.cluster.count";
-+inline const std::string GENERAL_THREAD_COUNT =
-     "zvec.general.cluster.thread_count";
- 
- //! Optimize K-means
--static const std::string OPTKMEANS_CLUSTER_COUNT =
-+inline const std::string OPTKMEANS_CLUSTER_COUNT =
-     "zvec.optkmeans.cluster.count";
--static const std::string OPTKMEANS_CLUSTER_MAX_ITERATIONS =
-+inline const std::string OPTKMEANS_CLUSTER_MAX_ITERATIONS =
-     "zvec.optkmeans.cluster.max_iterations";
--static const std::string OPTKMEANS_CLUSTER_EPSILON =
-+inline const std::string OPTKMEANS_CLUSTER_EPSILON =
-     "zvec.optkmeans.cluster.epsilon";
--static const std::string OPTKMEANS_CLUSTER_SHARD_FACTOR =
-+inline const std::string OPTKMEANS_CLUSTER_SHARD_FACTOR =
-     "zvec.optkmeans.cluster.shard_factor";
--static const std::string OPTKMEANS_CLUSTER_PURGE_EMPTY =
-+inline const std::string OPTKMEANS_CLUSTER_PURGE_EMPTY =
-     "zvec.optkmeans.cluster.purge_empty";
--static const std::string OPTKMEANS_CLUSTER_MARKOV_CHAIN_LENGTH =
-+inline const std::string OPTKMEANS_CLUSTER_MARKOV_CHAIN_LENGTH =
-     "zvec.optkmeans.cluster.markov_chain_length";
--static const std::string OPTKMEANS_CLUSTER_ASSUMPTION_FREE =
-+inline const std::string OPTKMEANS_CLUSTER_ASSUMPTION_FREE =
-     "zvec.optkmeans.cluster.assumption_free";
- 
- //! K-means
--static const std::string KMEANS_CLUSTER_COUNT = "zvec.kmeans.cluster.count";
--static const std::string KMEANS_CLUSTER_SHARD_FACTOR =
-+inline const std::string KMEANS_CLUSTER_COUNT = "zvec.kmeans.cluster.count";
-+inline const std::string KMEANS_CLUSTER_SHARD_FACTOR =
-     "zvec.kmeans.cluster.shard_factor";
--static const std::string KMEANS_CLUSTER_EPSILON = "zvec.kmeans.cluster.epsilon";
--static const std::string KMEANS_CLUSTER_MAX_ITERATIONS =
-+inline const std::string KMEANS_CLUSTER_EPSILON = "zvec.kmeans.cluster.epsilon";
-+inline const std::string KMEANS_CLUSTER_MAX_ITERATIONS =
-     "zvec.kmeans.cluster.max_iterations";
--static const std::string KMEANS_CLUSTER_PURGE_EMPTY =
-+inline const std::string KMEANS_CLUSTER_PURGE_EMPTY =
-     "zvec.kmeans.cluster.purge_empty";
--static const std::string KMEANS_CLUSTER_BATCH = "zvec.kmeans.cluster.batch";
--static const std::string KMEANS_CLUSTER_SEEKER_CLASS =
-+inline const std::string KMEANS_CLUSTER_BATCH = "zvec.kmeans.cluster.batch";
-+inline const std::string KMEANS_CLUSTER_SEEKER_CLASS =
-     "zvec.kmeans.cluster.seeker_class";
--static const std::string KMEANS_CLUSTER_SEEKER_PARAMS =
-+inline const std::string KMEANS_CLUSTER_SEEKER_PARAMS =
-     "zvec.kmeans.cluster.seeker_params";
- 
- //! Mini Batch K-means
--static const std::string MINIBATCHKMEANS_CLUSTER_COUNT =
-+inline const std::string MINIBATCHKMEANS_CLUSTER_COUNT =
-     "zvec.minibatchkmeans.cluster.count";
--static const std::string MINIBATCHKMEANS_CLUSTER_SHARD_FACTOR =
-+inline const std::string MINIBATCHKMEANS_CLUSTER_SHARD_FACTOR =
-     "zvec.minibatchkmeans.cluster.shard_factor";
--static const std::string MINIBATCHKMEANS_CLUSTER_EPSILON =
-+inline const std::string MINIBATCHKMEANS_CLUSTER_EPSILON =
-     "zvec.minibatchkmeans.cluster.epsilon";
--static const std::string MINIBATCHKMEANS_CLUSTER_MAX_ITERATIONS =
-+inline const std::string MINIBATCHKMEANS_CLUSTER_MAX_ITERATIONS =
-     "zvec.minibatchkmeans.cluster.max_iterations";
--static const std::string MINIBATCHKMEANS_CLUSTER_PURGE_EMPTY =
-+inline const std::string MINIBATCHKMEANS_CLUSTER_PURGE_EMPTY =
-     "zvec.minibatchkmeans.cluster.purge_empty";
--static const std::string MINIBATCHKMEANS_CLUSTER_TRY_COUNT =
-+inline const std::string MINIBATCHKMEANS_CLUSTER_TRY_COUNT =
-     "zvec.minibatchkmeans.cluster.try_count";
--static const std::string MINIBATCHKMEANS_CLUSTER_BATCH_COUNT =
-+inline const std::string MINIBATCHKMEANS_CLUSTER_BATCH_COUNT =
-     "zvec.minibatchkmeans.cluster.batch_count";
--static const std::string MINIBATCHKMEANS_CLUSTER_SEEKER_CLASS =
-+inline const std::string MINIBATCHKMEANS_CLUSTER_SEEKER_CLASS =
-     "zvec.minibatchkmeans.cluster.seeker_class";
--static const std::string MINIBATCHKMEANS_CLUSTER_SEEKER_PARAMS =
-+inline const std::string MINIBATCHKMEANS_CLUSTER_SEEKER_PARAMS =
-     "zvec.minibatchkmeans.cluster.seeker_params";
- 
- //! K-means++
--static const std::string KMEANSPP_CLUSTER_COUNT = "zvec.kmeanspp.cluster.count";
--static const std::string KMEANSPP_CLUSTER_SHARD_FACTOR =
-+inline const std::string KMEANSPP_CLUSTER_COUNT = "zvec.kmeanspp.cluster.count";
-+inline const std::string KMEANSPP_CLUSTER_SHARD_FACTOR =
-     "zvec.kmeanspp.cluster.shard_factor";
--static const std::string KMEANSPP_CLUSTER_CLASS = "zvec.kmeanspp.cluster.class";
--static const std::string KMEANSPP_CLUSTER_PARAMS =
-+inline const std::string KMEANSPP_CLUSTER_CLASS = "zvec.kmeanspp.cluster.class";
-+inline const std::string KMEANSPP_CLUSTER_PARAMS =
-```
-
-**File**: `src/core/algorithm/diskann/diskann_params.h` (modified, +14/-14)
-```diff
-@@ -18,34 +18,34 @@
- namespace zvec {
- namespace core {
- 
--static const std::string PARAM_DISKANN_BUILDER_MAX_DEGREE(
-+inline const std::string PARAM_DISKANN_BUILDER_MAX_DEGREE(
-     "zvec.diskann.builder.max_degree");
--static const std::string PARAM_DISKANN_BUILDER_LIST_SIZE(
-+inline const std::string PARAM_DISKANN_BUILDER_LIST_SIZE(
-     "zvec.diskann.builder.list_size");
--static const std::string PARAM_DISKANN_BUILDER_MEMORY_LIMIT(
-+inline const std::string PARAM_DISKANN_BUILDER_MEMORY_LIMIT(
-     "zvec.diskann.builder.memory_limit");
--static const std::string PARAM_DISKANN_BUILDER_MEMORY_BUDGET(
-+inline const std::string PARAM_DISKANN_BUILDER_MEMORY_BUDGET(
-     "zvec.diskann.builder.memory_budget");
--static const std::string PARAM_DISKANN_BUILDER_DISK_PQ_DIM(
-+inline const std::string PARAM_DISKANN_BUILDER_DISK_PQ_DIM(
-     "zvec.diskann.builder.disk_pq_dim");
--static const std::string PARAM_DISKANN_BUILDER_THREAD_COUNT(
-+inline const std::string PARAM_DISKANN_BUILDER_THREAD_COUNT(
-     "zvec.diskann.builder.thread_count");
--static const std::string PARAM_DISKANN_BUILDER_MAX_TRAIN_SAMPLE_COUNT(
-+inline const std::string PARAM_DISKANN_BUILDER_MAX_TRAIN_SAMPLE_COUNT(
-     "zvec.diskann.builder.max_train_sample_count");
--static const std::string PARAM_DISKANN_BUILDER_TRAIN_SAMPLE_RATIO(
-+inline const std::string PARAM_DISKANN_BUILDER_TRAIN_SAMPLE_RATIO(
-     "zvec.diskann.builder.train_sample_ratio");
--static const std::string PARAM_DISKANN_BUILDER_MAX_PQ_CHUNK_NUM(
-+inline const std::string PARAM_DISKANN_BUILDER_MAX_PQ_CHUNK_NUM(
-     "zvec.diskann.builder.max_pq_chunk_num");
- 
--static const std::string PARAM_DISKANN_SEARCHER_LIST_SIZE(
-+inline const std::string PARAM_DISKANN_SEARCHER_LIST_SIZE(
-     "zvec.diskann.searcher.list_size");
--static const std::string PARAM_DISKANN_SEARCHER_CACHE_NODE_NUM(
-+inline const std::string PARAM_DISKANN_SEARCHER_CACHE_NODE_NUM(
-     "zvec.diskann.searcher.cache_node_num");
--static const std::string PARAM_DISKANN_REDUCER_INDEX_NAME(
-+inline const std::string PARAM_DISKANN_REDUCER_INDEX_NAME(
-     "zvec.diskann.reducer.index_name");
--static const std::string PARAM_DISKANN_REDUCER_WORKING_PATH(
-+inline const std::string PARAM_DISKANN_REDUCER_WORKING_PATH(
-     "zvec.diskann.reducer.working_path");
--static const std::string PARAM_DISKANN_REDUCER_NUM_OF_ADD_THREADS(
-+inline const std::string PARAM_DISKANN_REDUCER_NUM_OF_ADD_THREADS(
-     "zvec.diskann.reducer.num_of_add_threads");
- 
- }  // namespace core
-```
-
-**File**: `src/core/algorithm/hnsw/hnsw_params.h` (modified, +50/-50)
-```diff
-@@ -18,104 +18,104 @@
- namespace zvec {
- namespace core {
- 
--static const std::string PARAM_HNSW_BUILDER_THREAD_COUNT(
-+inline const std::string PARAM_HNSW_BUILDER_THREAD_COUNT(
-     "proxima.hnsw.builder.thread_count");
--static const std::string PARAM_HNSW_BUILDER_MEMORY_QUOTA(
-+inline const std::string PARAM_HNSW_BUILDER_MEMORY_QUOTA(
-     "proxima.hnsw.builder.memory_quota");
--static const std::string PARAM_HNSW_BUILDER_EFCONSTRUCTION(
-+inline const std::string PARAM_HNSW_BUILDER_EFCONSTRUCTION(
-     "proxima.hnsw.builder.efconstruction");
--static const std::string PARAM_HNSW_BUILDER_SCALING_FACTOR(
-+inline const std::string PARAM_HNSW_BUILDER_SCALING_FACTOR(
-     "proxima.hnsw.builder.scaling_factor");
--static const std::string PARAM_HNSW_BUILDER_CHECK_INTERVAL_SECS(
-+inline const std::string PARAM_HNSW_BUILDER_CHECK_INTERVAL_SECS(
-     "proxima.hnsw.builder.check_interval_secs");
--static const std::string PARAM_HNSW_BUILDER_NEIGHBOR_PRUNE_MULTIPLIER(
-+inline const std::string PARAM_HNSW_BUILDER_NEIGHBOR_PRUNE_MULTIPLIER(
-     "proxima.hnsw.builder.neighbor_prune_multiplier");
--static const std::string PARAM_HNSW_BUILDER_MIN_NEIGHBOR_COUNT(
-+inline const std::string PARAM_HNSW_BUILDER_MIN_NEIGHBOR_COUNT(
-     "proxima.hnsw.builder.min_neighbor_count");
--static const std::string PARAM_HNSW_BUILDER_MAX_NEIGHBOR_COUNT(
-+inline const std::string PARAM_HNSW_BUILDER_MAX_NEIGHBOR_COUNT(
-     "proxima.hnsw.builder.max_neighbor_count");
--static const std::string PARAM_HNSW_BUILDER_L0_MAX_NEIGHBOR_COUNT_MULTIPLIER(
-+inline const std::string PARAM_HNSW_BUILDER_L0_MAX_NEIGHBOR_COUNT_MULTIPLIER(
-     "proxima.hnsw.builder.l0_max_neighbor_count_multiplier");
- 
--static const std::string PARAM_HNSW_SEARCHER_EF("proxima.hnsw.searcher.ef");
--static const std::string PARAM_HNSW_SEARCHER_PO("proxima.hnsw.searcher.po");
--static const std::string PARAM_HNSW_SEARCHER_PL("proxima.hnsw.searcher.pl");
--static const std::string PARAM_HNSW_SEARCHER_BRUTE_FORCE_THRESHOLD(
-+inline const std::string PARAM_HNSW_SEARCHER_EF("proxima.hnsw.searcher.ef");
-+inline const std::string PARAM_HNSW_SEARCHER_PO("proxima.hnsw.searcher.po");
-+inline const std::string PARAM_HNSW_SEARCHER_PL("proxima.hnsw.searcher.pl");
-+inline const std::string PARAM_HNSW_SEARCHER_BRUTE_FORCE_THRESHOLD(
-     "proxima.hnsw.searcher.brute_force_threshold");
--static const std::string PARAM_HNSW_SEARCHER_NEIGHBORS_IN_MEMORY_ENABLE(
-+inline const std::string PARAM_HNSW_SEARCHER_NEIGHBORS_IN_MEMORY_ENABLE(
-     "proxima.hnsw.searcher.neighbors_in_memory_enable");
--static const std::string PARAM_HNSW_SEARCHER_MAX_SCAN_RATIO(
-+inline const std::string PARAM_HNSW_SEARCHER_MAX_SCAN_RATIO(
-     "proxima.hnsw.searcher.max_scan_ratio");
--static const std::string PARAM_HNSW_SEARCHER_CHECK_CRC_ENABLE(
-+inline const std::string PARAM_HNSW_SEARCHER_CHECK_CRC_ENABLE(
-     "proxima.hnsw.searcher.check_crc_enable");
--static const std::string PARAM_HNSW_SEARCHER_VISIT_BLOOMFILTER_ENABLE(
-+inline const std::string PARAM_HNSW_SEARCHER_VISIT_BLOOMFILTER_ENABLE(
-     "proxima.hnsw.searcher.visit_bloomfilter_enable");
--static const std::string PARAM_HNSW_SEARCHER_VISIT_BLOOMFILTER_NEGATIVE_PROB(
-+inline const std::string PARAM_HNSW_SEARCHER_VISIT_BLOOMFILTER_NEGATIVE_PROB(
-     "proxima.hnsw.searcher.visit_bloomfilter_negative_prob");
--static const std::string PARAM_HNSW_SEARCHER_FORCE_PADDING_RESULT_ENABLE(
-+inline const std::string PARAM_HNSW_SEARCHER_FORCE_PADDING_RESULT_ENABLE(
-     "proxima.hnsw.searcher.force_padding_result_enable");
- 
--static const std::string PARAM_HNSW_STREAMER_MAX_SCAN_RATIO(
-+inline const std::string PARAM_HNSW_STREAMER_MAX_SCAN_RATIO(
-     "proxima.hnsw.streamer.max_scan_ratio");
--static const std::string PARAM_HNSW_STREAMER_MIN_SCAN_LIMIT(
-+inline const std::string PARAM_HNSW_STREAMER_MIN_SCAN_LIMIT(
-     "proxima.hnsw.streamer.min_scan_limit");
--static const std::string PARAM_HNSW_STREAMER_MAX_SCAN_LIMIT(
-+inline const std::string PARAM_HNSW_STREAMER_MAX_SCAN_LIMIT(
-     "proxima.hnsw.streamer.max_scan_limit");
--static const std::string PARAM_HNSW_STREAMER_EF("proxima.hnsw.streamer.ef");
--static const std::string PARAM_HNSW_STREAMER_PO("proxima.hnsw.streamer.po");
--static const std::string PARAM_HNSW_STREAMER_PL("proxima.hnsw.streamer.pl");
--static const std::string PARAM_HNSW_STREAMER_EFCONSTRUCTION(
-+inline const std::string PARAM_HNSW_STREAMER_EF("proxima.hnsw.streamer.ef");
-+inline const std::string PARAM_HNSW_STREAMER_PO("proxima.hnsw.streamer.po");
-+inline const std::string PARAM_HNSW_STREAMER_PL("proxima.hnsw.streamer.pl");
-+inline const std::string PARAM_HNSW_STREAMER_EFCONSTRUCTION(
-     "proxima.hnsw.streamer.efconstruction");
--static const std::string PARAM_HNSW_STREAMER_MAX_NEIGHBOR_COUNT(
-+inline const std::string PARAM_HNSW_STREAMER_MAX_NEIGHBOR_COUNT(
-     "proxima.hnsw.streamer.max_neighbor_count");
--static const std::string PARAM_HNSW_STREAMER_L0_MAX_NEIGHBOR_COUNT_MULTIPLIER(
-+inline const std::string PARAM_HNSW_STREAMER_L0_MAX_NEIGHBOR_COUNT_
-```
-
-**File**: `src/core/algorithm/hnsw_rabitq/rabitq_params.h` (modified, +6/-6)
-```diff
-@@ -26,13 +26,13 @@ enum class RabitqMetricType {
- };
- 
- // RaBitQ Converter parameters
--static const std::string PARAM_RABITQ_NUM_CLUSTERS(
-+inline const std::string PARAM_RABITQ_NUM_CLUSTERS(
-     "proxima.rabitq.num_clusters");
--static const std::string PARAM_RABITQ_TOTAL_BITS("proxima.rabitq.total_bits");
--static const std::string PARAM_RABITQ_METRIC_NAME("proxima.rabitq.metric_name");
--static const std::string PARAM_RABITQ_ROTATOR_TYPE(
-+inline const std::string PARAM_RABITQ_TOTAL_BITS("proxima.rabitq.total_bits");
-+inline const std::string PARAM_RABITQ_METRIC_NAME("proxima.rabitq.metric_name");
-+inline const std::string PARAM_RABITQ_ROTATOR_TYPE(
-     "proxima.rabitq.rotator.type");
--static const std::string PARAM_RABITQ_SAMPLE_COUNT(
-+inline const std::string PARAM_RABITQ_SAMPLE_COUNT(
-     "proxima.rabitq.sample_count");
- 
- // Default values
-@@ -52,7 +52,7 @@ constexpr char kRabitqUnsupportedPlatform[] =
- 
- // Original vector dimension before converter (e.g., CosineNormalizeConverter)
- // modifies it. Used by IVF-RaBitQ to ignore extra dimensions from converter.
--static const std::string PARAM_RABITQ_GENERAL_DIMENSION(
-+inline const std::string PARAM_RABITQ_GENERAL_DIMENSION(
-     "proxima.rabitq.general.dimension");
- 
- }  // namespace core
-```
-
-**File**: `src/core/algorithm/hnsw_sparse/hnsw_sparse_params.h` (modified, +44/-44)
-```diff
-@@ -18,100 +18,100 @@
- namespace zvec {
- namespace core {
- 
--static const std::string PARAM_HNSW_SPARSE_BUILDER_THREAD_COUNT(
-+inline const std::string PARAM_HNSW_SPARSE_BUILDER_THREAD_COUNT(
-     "proxima.hnsw.sparse_builder.thread_count");
--static const std::string PARAM_HNSW_SPARSE_BUILDER_MEMORY_QUOTA(
-+inline const std::string PARAM_HNSW_SPARSE_BUILDER_MEMORY_QUOTA(
-     "proxima.hnsw.sparse_builder.memory_quota");
--static const std::string PARAM_HNSW_SPARSE_BUILDER_EFCONSTRUCTION(
-+inline const std::string PARAM_HNSW_SPARSE_BUILDER_EFCONSTRUCTION(
-     "proxima.hnsw.sparse_builder.efconstruction");
--static const std::string PARAM_HNSW_SPARSE_BUILDER_SCALING_FACTOR(
-+inline const std::string PARAM_HNSW_SPARSE_BUILDER_SCALING_FACTOR(
-     "proxima.hnsw.sparse_builder.scaling_factor");
--static const std::string PARAM_HNSW_SPARSE_BUILDER_CHECK_INTERVAL_SECS(
-+inline const std::string PARAM_HNSW_SPARSE_BUILDER_CHECK_INTERVAL_SECS(
-     "proxima.hnsw.sparse_builder.check_interval_secs");
--static const std::string PARAM_HNSW_SPARSE_BUILDER_NEIGHBOR_PRUNE_MULTIPLIER(
-+inline const std::string PARAM_HNSW_SPARSE_BUILDER_NEIGHBOR_PRUNE_MULTIPLIER(
-     "proxima.hnsw.sparse_builder.neighbor_prune_multiplier");
--static const std::string PARAM_HNSW_SPARSE_BUILDER_MIN_NEIGHBOR_COUNT(
-+inline const std::string PARAM_HNSW_SPARSE_BUILDER_MIN_NEIGHBOR_COUNT(
-     "proxima.hnsw.sparse_builder.min_neighbor_count");
--static const std::string PARAM_HNSW_SPARSE_BUILDER_MAX_NEIGHBOR_COUNT(
-+inline const std::string PARAM_HNSW_SPARSE_BUILDER_MAX_NEIGHBOR_COUNT(
-     "proxima.hnsw.sparse_builder.max_neighbor_count");
--static const std::string
-+inline const std::string
-     PARAM_HNSW_SPARSE_BUILDER_L0_MAX_NEIGHBOR_COUNT_MULTIPLIER(
-         "proxima.hnsw.sparse_builder.l0_max_neighbor_count_multiplier");
- 
--static const std::string PARAM_HNSW_SPARSE_SEARCHER_EF(
-+inline const std::string PARAM_HNSW_SPARSE_SEARCHER_EF(
-     "proxima.hnsw.sparse_searcher.ef");
--static const std::string PARAM_HNSW_SPARSE_SEARCHER_BRUTE_FORCE_THRESHOLD(
-+inline const std::string PARAM_HNSW_SPARSE_SEARCHER_BRUTE_FORCE_THRESHOLD(
-     "proxima.hnsw.sparse_searcher.brute_force_threshold");
--static const std::string PARAM_HNSW_SPARSE_SEARCHER_NEIGHBORS_IN_MEMORY_ENABLE(
-+inline const std::string PARAM_HNSW_SPARSE_SEARCHER_NEIGHBORS_IN_MEMORY_ENABLE(
-     "proxima.hnsw.sparse_searcher.neighbors_in_memory_enable");
--static const std::string PARAM_HNSW_SPARSE_SEARCHER_MAX_SCAN_RATIO(
-+inline const std::string PARAM_HNSW_SPARSE_SEARCHER_MAX_SCAN_RATIO(
-     "proxima.hnsw.sparse_searcher.max_scan_ratio");
--static const std::string PARAM_HNSW_SPARSE_SEARCHER_CHECK_CRC_ENABLE(
-+inline const std::string PARAM_HNSW_SPARSE_SEARCHER_CHECK_CRC_ENABLE(
-     "proxima.hnsw.sparse_searcher.check_crc_enable");
--static const std::string PARAM_HNSW_SPARSE_SEARCHER_VISIT_BLOOMFILTER_ENABLE(
-+inline const std::string PARAM_HNSW_SPARSE_SEARCHER_VISIT_BLOOMFILTER_ENABLE(
-     "proxima.hnsw.sparse_searcher.visit_bloomfilter_enable");
--static const std::string
-+inline const std::string
-     PARAM_HNSW_SPARSE_SEARCHER_VISIT_BLOOMFILTER_NEGATIVE_PROB(
-         "proxima.hnsw.sparse_searcher.visit_bloomfilter_negative_prob");
--static const std::string PARAM_HNSW_SPARSE_SEARCHER_FORCE_PADDING_RESULT_ENABLE(
-+inline const std::string PARAM_HNSW_SPARSE_SEARCHER_FORCE_PADDING_RESULT_ENABLE(
-     "proxima.hnsw.sparse_searcher.force_padding_result_enable");
--static const std::string PARAM_HNSW_SPARSE_SEARCHER_QUERY_FILTERING_RATIO(
-+inline const std::string PARAM_HNSW_SPARSE_SEARCHER_QUERY_FILTERING_RATIO(
-     "proxima.hnsw.sparse_searcher.query_filtering_ratio");
- 
--static const std::string PARAM_HNSW_SPARSE_STREAMER_MAX_SCAN_RATIO(
-+inline const std::string PARAM_HNSW_SPARSE_STREAMER_MAX_SCAN_RATIO(
-     "proxima.hnsw.sparse_streamer.max_scan_ratio");
--static const std::string PARAM_HNSW_SPARSE_STREAMER_MIN_SCAN_LIMIT(
-+inline const std::string PARAM_HNSW_SPARSE_STREAMER_MIN_SCAN_LIMIT(
-     "proxima.hnsw.sparse_streamer.min_scan_limit");
--static const std::string PARAM_HNSW_SPARSE_STREAMER_MAX_SCAN_LIMIT(
-+inline const std::string PARAM_HNSW_SPARSE_STREAMER_MAX_SCAN_LIMIT(
-     "proxima.hnsw.sparse_streamer.max_scan_limit");
--static const std::string PARAM_HNSW_SPARSE_STREAMER_EF(
-+inline const std::string PARAM_HNSW_SPARSE_STREAMER_EF(
-     "proxima.hnsw.sparse_streamer.ef");
--static const std::string PARAM_HNSW_SPARSE_STREAMER_EFCONSTRUCTION(
-+inline const std::string PARAM_HNSW_SPARSE_STREAMER_EFCONSTRUCTION(
-     "proxima.hnsw.sparse_streamer.efconstruction");
--static const std::string PARAM_HNSW_SPARSE_STREAMER_MAX_NEIGHBOR_COUNT(
-+inline const std::string PARAM_HNSW_SPARSE_STREAMER_MAX_NEIGHBOR_COUNT(
-     "proxima.hnsw.sparse_streamer.max_neighbor_count");
--static const std::string
-+inline const std::string
-     PARAM_HNSW_SPARSE_STREAMER_L0_MAX_NEIGHBOR_COUNT_MULTIPLIER(
-         "proxima.hnsw.sparse_streamer.l0_max_neighbor_count_multiplier");
--static const std::string PARA
-```
-
-**File**: `src/core/algorithm/ivf/ivf_params.h` (modified, +26/-26)
-```diff
-@@ -18,59 +18,59 @@
- namespace zvec {
- namespace core {
- 
--static const std::string SEPARATOR("/");
--static const std::string CENTROID_SEPERATOR = "*";
-+inline const std::string SEPARATOR("/");
-+inline const std::string CENTROID_SEPERATOR = "*";
- 
- // builder params
--static const std::string PARAM_IVF_BUILDER_CENTROID_COUNT(
-+inline const std::string PARAM_IVF_BUILDER_CENTROID_COUNT(
-     "proxima.ivf.builder.centroid_count");
--static const std::string PARAM_IVF_BUILDER_CLUSTER_CLASS(
-+inline const std::string PARAM_IVF_BUILDER_CLUSTER_CLASS(
-     "proxima.ivf.builder.cluster_class");
--static const std::string PARAM_IVF_BUILDER_THREAD_COUNT(
-+inline const std::string PARAM_IVF_BUILDER_THREAD_COUNT(
-     "proxima.ivf.builder.thread_count");
--static const std::string PARAM_IVF_BUILDER_CLUSTER_AUTO_TUNING(
-+inline const std::string PARAM_IVF_BUILDER_CLUSTER_AUTO_TUNING(
-     "proxima.ivf.builder.cluster_auto_tuning");
--static const std::string PARAM_IVF_BUILDER_TRAIN_SAMPLE_COUNT(
-+inline const std::string PARAM_IVF_BUILDER_TRAIN_SAMPLE_COUNT(
-     "proxima.ivf.builder.train_sample_count");
--static const std::string PARAM_IVF_BUILDER_TRAIN_SAMPLE_RATIO(
-+inline const std::string PARAM_IVF_BUILDER_TRAIN_SAMPLE_RATIO(
-     "proxima.ivf.builder.train_sample_ratio");
--static const std::string PARAM_IVF_BUILDER_CONVERTER_PARAMS(
-+inline const std::string PARAM_IVF_BUILDER_CONVERTER_PARAMS(
-     "proxima.ivf.builder.converter_params");
--static const std::string PARAM_IVF_BUILDER_CONVERTER_CLASS(
-+inline const std::string PARAM_IVF_BUILDER_CONVERTER_CLASS(
-     "proxima.ivf.builder.converter_class");
--static const std::string PARAM_IVF_BUILDER_STORE_ORIGINAL_FEATURES(
-+inline const std::string PARAM_IVF_BUILDER_STORE_ORIGINAL_FEATURES(
-     "proxima.ivf.builder.store_original_features");
--static const std::string PARAM_IVF_BUILDER_QUANTIZER_CLASS(
-+inline const std::string PARAM_IVF_BUILDER_QUANTIZER_CLASS(
-     "proxima.ivf.builder.quantizer_class");
--static const std::string PARAM_IVF_BUILDER_QUANTIZE_BY_CENTROID(
-+inline const std::string PARAM_IVF_BUILDER_QUANTIZE_BY_CENTROID(
-     "proxima.ivf.builder.quantize_by_centroid");
--static const std::string PARAM_IVF_BUILDER_QUANTIZER_PARAMS(
-+inline const std::string PARAM_IVF_BUILDER_QUANTIZER_PARAMS(
-     "proxima.ivf.builder.quantizer_params");
--static const std::string PARAM_IVF_BUILDER_CLUSTER_PARAMS_IN_LEVEL_PREFIX(
-+inline const std::string PARAM_IVF_BUILDER_CLUSTER_PARAMS_IN_LEVEL_PREFIX(
-     "proxima.ivf.builder.cluster_params_in_level_");
--static const std::string PARAM_IVF_BUILDER_OPTIMIZER_CLASS(
-+inline const std::string PARAM_IVF_BUILDER_OPTIMIZER_CLASS(
-     "proxima.ivf.builder.optimizer_class");
--static const std::string PARAM_IVF_BUILDER_OPTIMIZER_PARAMS(
-+inline const std::string PARAM_IVF_BUILDER_OPTIMIZER_PARAMS(
-     "proxima.ivf.builder.optimizer_params");
--static const std::string PARAM_IVF_BUILDER_OPTIMIZER_QUANTIZER_CLASS(
-+inline const std::string PARAM_IVF_BUILDER_OPTIMIZER_QUANTIZER_CLASS(
-     "proxima.ivf.builder.optimizer_quantizer_class");
--static const std::string PARAM_IVF_BUILDER_OPTIMIZER_QUANTIZER_PARAMS(
-+inline const std::string PARAM_IVF_BUILDER_OPTIMIZER_QUANTIZER_PARAMS(
-     "proxima.ivf.builder.optimizer_quantizer_params");
--static const std::string PARAM_IVF_BUILDER_BLOCK_VECTOR_COUNT(
-+inline const std::string PARAM_IVF_BUILDER_BLOCK_VECTOR_COUNT(
-     "proxima.ivf.builder.block_vector_count");
- 
- // searcher params
--static const std::string PARAM_IVF_SEARCHER_SCAN_RATIO(
-+inline const std::string PARAM_IVF_SEARCHER_SCAN_RATIO(
-     "proxima.ivf.searcher.scan_ratio");
--static const std::string PARAM_IVF_SEARCHER_BRUTE_FORCE_THRESHOLD(
-+inline const std::string PARAM_IVF_SEARCHER_BRUTE_FORCE_THRESHOLD(
-     "proxima.ivf.searcher.brute_force_threshold");
--static const std::string PARAM_IVF_SEARCHER_OPTIMIZER(
-+inline const std::string PARAM_IVF_SEARCHER_OPTIMIZER(
-     "proxima.ivf.searcher.optimizer");
--static const std::string PARAM_IVF_SEARCHER_OPTIMIZER_PARAMS(
-+inline const std::string PARAM_IVF_SEARCHER_OPTIMIZER_PARAMS(
-     "proxima.ivf.searcher.optimizer_params");
--static const std::string PARAM_IVF_SEARCHER_CONVERTER_REFORMER(
-+inline const std::string PARAM_IVF_SEARCHER_CONVERTER_REFORMER(
-     "proxima.ivf.searcher.converter_reformer");
--static const std::string PARAM_IVF_SEARCHER_NPROBE(
-+inline const std::string PARAM_IVF_SEARCHER_NPROBE(
-     "proxima.ivf.searcher.nprobe");
- 
- // Constants
-```
-
-**File**: `src/core/algorithm/ivf_rabitq/ivf_rabitq_params.h` (modified, +12/-12)
-```diff
-@@ -19,24 +19,24 @@ namespace zvec {
- namespace core {
- 
- // IVF RabitQ specific params
--static const std::string PARAM_IVF_RABITQ_NLIST("proxima.ivf_rabitq.nlist");
--static const std::string PARAM_IVF_RABITQ_NPROBE("proxima.ivf_rabitq.nprobe");
--static const std::string PARAM_IVF_RABITQ_SCAN_RATIO(
-+inline const std::string PARAM_IVF_RABITQ_NLIST("proxima.ivf_rabitq.nlist");
-+inline const std::string PARAM_IVF_RABITQ_NPROBE("proxima.ivf_rabitq.nprobe");
-+inline const std::string PARAM_IVF_RABITQ_SCAN_RATIO(
-     "proxima.ivf_rabitq.scan_ratio");
--static const std::string PARAM_IVF_RABITQ_BRUTE_FORCE_THRESHOLD(
-+inline const std::string PARAM_IVF_RABITQ_BRUTE_FORCE_THRESHOLD(
-     "proxima.ivf_rabitq.brute_force_threshold");
--static const std::string PARAM_IVF_RABITQ_BUILDER_THREAD_COUNT(
-+inline const std::string PARAM_IVF_RABITQ_BUILDER_THREAD_COUNT(
-     "proxima.ivf_rabitq.builder.thread_count");
- 
- // Segment IDs
--static const std::string IVF_RABITQ_HEADER_SEG_ID{"ivf_rabitq.header"};
--static const std::string IVF_RABITQ_BATCH_DATA_SEG_ID{"ivf_rabitq.batch_data"};
--static const std::string IVF_RABITQ_EX_DATA_SEG_ID{"ivf_rabitq.ex_data"};
--static const std::string IVF_RABITQ_CLUSTER_META_SEG_ID{
-+inline const std::string IVF_RABITQ_HEADER_SEG_ID{"ivf_rabitq.header"};
-+inline const std::string IVF_RABITQ_BATCH_DATA_SEG_ID{"ivf_rabitq.batch_data"};
-+inline const std::string IVF_RABITQ_EX_DATA_SEG_ID{"ivf_rabitq.ex_data"};
-+inline const std::string IVF_RABITQ_CLUSTER_META_SEG_ID{
-     "ivf_rabitq.cluster_meta"};
--static const std::string IVF_RABITQ_KEYS_SEG_ID{"ivf_rabitq.keys"};
--static const std::string IVF_RABITQ_MAPPING_SEG_ID{"ivf_rabitq.mapping"};
--static const std::string IVF_RABITQ_CENTROID_SEG_ID{"ivf_rabitq.centroid"};
-+inline const std::string IVF_RABITQ_KEYS_SEG_ID{"ivf_rabitq.keys"};
-+inline const std::string IVF_RABITQ_MAPPING_SEG_ID{"ivf_rabitq.mapping"};
-+inline const std::string IVF_RABITQ_CENTROID_SEG_ID{"ivf_rabitq.centroid"};
- 
- // Defaults
- constexpr uint32_t kDefaultIvfRabitqNlist = 1024;
-```
-
-**File**: `src/core/algorithm/vamana/vamana_params.h` (modified, +29/-29)
-```diff
-@@ -19,64 +19,64 @@ namespace zvec {
- namespace core {
- 
- // Builder parameters
--static const std::string PARAM_VAMANA_BUILDER_THREAD_COUNT(
-+inline const std::string PARAM_VAMANA_BUILDER_THREAD_COUNT(
-     "proxima.vamana.builder.thread_count");
--static const std::string PARAM_VAMANA_BUILDER_MEMORY_QUOTA(
-+inline const std::string PARAM_VAMANA_BUILDER_MEMORY_QUOTA(
-     "proxima.vamana.builder.memory_quota");
--static const std::string PARAM_VAMANA_BUILDER_MAX_DEGREE(
-+inline const std::string PARAM_VAMANA_BUILDER_MAX_DEGREE(
-     "proxima.vamana.builder.max_degree");
--static const std::string PARAM_VAMANA_BUILDER_SEARCH_LIST_SIZE(
-+inline const std::string PARAM_VAMANA_BUILDER_SEARCH_LIST_SIZE(
-     "proxima.vamana.builder.search_list_size");
--static const std::string PARAM_VAMANA_BUILDER_ALPHA(
-+inline const std::string PARAM_VAMANA_BUILDER_ALPHA(
-     "proxima.vamana.builder.alpha");
--static const std::string PARAM_VAMANA_BUILDER_MAX_OCCLUSION_SIZE(
-+inline const std::string PARAM_VAMANA_BUILDER_MAX_OCCLUSION_SIZE(
-     "proxima.vamana.builder.max_occlusion_size");
- 
- // Searcher parameters
--static const std::string PARAM_VAMANA_SEARCHER_SEARCH_LIST_SIZE(
-+inline const std::string PARAM_VAMANA_SEARCHER_SEARCH_LIST_SIZE(
-     "proxima.vamana.searcher.search_list_size");
--static const std::string PARAM_VAMANA_SEARCHER_BRUTE_FORCE_THRESHOLD(
-+inline const std::string PARAM_VAMANA_SEARCHER_BRUTE_FORCE_THRESHOLD(
-     "proxima.vamana.searcher.brute_force_threshold");
- 
- // Streamer parameters
--static const std::string PARAM_VAMANA_STREAMER_MAX_DEGREE(
-+inline const std::string PARAM_VAMANA_STREAMER_MAX_DEGREE(
-     "proxima.vamana.streamer.max_degree");
--static const std::string PARAM_VAMANA_STREAMER_SEARCH_LIST_SIZE(
-+inline const std::string PARAM_VAMANA_STREAMER_SEARCH_LIST_SIZE(
-     "proxima.vamana.streamer.search_list_size");
--static const std::string PARAM_VAMANA_STREAMER_ALPHA(
-+inline const std::string PARAM_VAMANA_STREAMER_ALPHA(
-     "proxima.vamana.streamer.alpha");
--static const std::string PARAM_VAMANA_STREAMER_MAX_OCCLUSION_SIZE(
-+inline const std::string PARAM_VAMANA_STREAMER_MAX_OCCLUSION_SIZE(
-     "proxima.vamana.streamer.max_occlusion_size");
--static const std::string PARAM_VAMANA_STREAMER_EF("proxima.vamana.streamer.ef");
--static const std::string PARAM_VAMANA_STREAMER_PO("proxima.vamana.streamer.po");
--static const std::string PARAM_VAMANA_STREAMER_PL("proxima.vamana.streamer.pl");
--static const std::string PARAM_VAMANA_STREAMER_BRUTE_FORCE_THRESHOLD(
-+inline const std::string PARAM_VAMANA_STREAMER_EF("proxima.vamana.streamer.ef");
-+inline const std::string PARAM_VAMANA_STREAMER_PO("proxima.vamana.streamer.po");
-+inline const std::string PARAM_VAMANA_STREAMER_PL("proxima.vamana.streamer.pl");
-+inline const std::string PARAM_VAMANA_STREAMER_BRUTE_FORCE_THRESHOLD(
-     "proxima.vamana.streamer.brute_force_threshold");
--static const std::string PARAM_VAMANA_STREAMER_MAX_SCAN_RATIO(
-+inline const std::string PARAM_VAMANA_STREAMER_MAX_SCAN_RATIO(
-     "proxima.vamana.streamer.max_scan_ratio");
--static const std::string PARAM_VAMANA_STREAMER_DOCS_HARD_LIMIT(
-+inline const std::string PARAM_VAMANA_STREAMER_DOCS_HARD_LIMIT(
-     "proxima.vamana.streamer.docs_hard_limit");
--static const std::string PARAM_VAMANA_STREAMER_DOCS_SOFT_LIMIT(
-+inline const std::string PARAM_VAMANA_STREAMER_DOCS_SOFT_LIMIT(
-     "proxima.vamana.streamer.docs_soft_limit");
--static const std::string PARAM_VAMANA_STREAMER_MAX_INDEX_SIZE(
-+inline const std::string PARAM_VAMANA_STREAMER_MAX_INDEX_SIZE(
-     "proxima.vamana.streamer.max_index_size");
--static const std::string PARAM_VAMANA_STREAMER_CHUNK_SIZE(
-+inline const std::string PARAM_VAMANA_STREAMER_CHUNK_SIZE(
-     "proxima.vamana.streamer.chunk_size");
--static const std::string PARAM_VAMANA_STREAMER_GET_VECTOR_ENABLE(
-+inline const std::string PARAM_VAMANA_STREAMER_GET_VECTOR_ENABLE(
-     "proxima.vamana.streamer.get_vector_enable");
--static const std::string PARAM_VAMANA_STREAMER_FORCE_PADDING_RESULT_ENABLE(
-+inline const std::string PARAM_VAMANA_STREAMER_FORCE_PADDING_RESULT_ENABLE(
-     "proxima.vamana.streamer.force_padding_result_enable");
--static const std::string PARAM_VAMANA_STREAMER_USE_ID_MAP(
-+inline const std::string PARAM_VAMANA_STREAMER_USE_ID_MAP(
-     "proxima.vamana.streamer.use_id_map");
--static const std::string PARAM_VAMANA_STREAMER_MAX_SCAN_LIMIT(
-+inline const std::string PARAM_VAMANA_STREAMER_MAX_SCAN_LIMIT(
-     "proxima.vamana.streamer.max_scan_limit");
--static const std::string PARAM_VAMANA_STREAMER_MIN_SCAN_LIMIT(
-+inline const std::string PARAM_VAMANA_STREAMER_MIN_SCAN_LIMIT(
-     "proxima.vamana.streamer.min_scan_limit");
--static const std::string PARAM_VAMANA_STREAMER_SATURATE_GRAPH(
-+inline const std::string PARAM_VAMANA_STREAMER_SATURATE_GRAPH(
-     "proxima.vamana.streamer.saturate_graph");
--static const std::string PARAM_VAMANA_STREAMER_USE_CONTIGUOUS_MEMORY(
-+inline const std::string PARAM_VAMANA_STREAMER_USE_CONTIGUOUS_MEMORY(
-    
-```
-
----
-
-### Incident Patch 2: `ea60a361` (2026-10-26)
-**Commit Message**: docs: simplify README badges and organize SDK installation tables (#844)
-
-**File**: `README.md` (modified, +11/-8)
-```diff
-@@ -13,9 +13,7 @@
-   <a href="https://codecov.io/github/alibaba/zvec"><img src="https://codecov.io/github/alibaba/zvec/graph/badge.svg?token=O81CT45B66" alt="Code Coverage"/></a>
-   <a href="https://github.com/alibaba/zvec/actions/workflows/01-ci-pipeline.yml"><img src="https://github.com/alibaba/zvec/actions/workflows/01-ci-pipeline.yml/badge.svg?branch=main" alt="Main"/></a>
-   <a href="https://github.com/alibaba/zvec/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="License"/></a>
--  <a href="https://pypi.org/project/zvec/"><img src="https://img.shields.io/pypi/v/zvec.svg" alt="PyPI Release"/></a>
--  <a href="https://pypi.org/project/zvec/"><img src="https://img.shields.io/badge/python-3.10%20~%203.14-blue.svg" alt="Python Versions"/></a>
--  <a href="https://www.npmjs.com/package/@zvec/zvec"><img src="https://img.shields.io/npm/v/@zvec/zvec.svg" alt="npm Release"/></a>
-+  <a href="https://github.com/alibaba/zvec/releases/latest"><img src="https://img.shields.io/github/v/release/alibaba/zvec?label=release" alt="Latest Release"/></a>
- </p>
- 
- <p align="center">
-@@ -64,11 +62,16 @@
- 
- Zvec offers official SDKs across multiple languages:
- 
--- **[Python](https://pypi.org/project/zvec/)**: `pip install zvec` (requires 64-bit Python 3.10–3.14)
--- **[Node.js](https://www.npmjs.com/package/@zvec/zvec)**: `npm install @zvec/zvec`
--- **[Go](https://github.com/zvec-ai/zvec-go)**: High-performance Go bindings.
--- **[Rust](https://crates.io/crates/zvec-rust)**: `cargo add zvec-rust`
--- **[Dart/Flutter](https://pub.dev/packages/zvec)**: `flutter pub add zvec`
-+| SDK | Install / Dependency | Source |
-+| --- | --- | --- |
-+| [Python](https://pypi.org/project/zvec/) | `pip install zvec` | [Source](https://github.com/alibaba/zvec/tree/main/python/zvec) |
-+| [Node.js](https://www.npmjs.com/package/@zvec/zvec) | `npm install @zvec/zvec` | [Source](https://github.com/zvec-ai/zvec-node) |
-+| [Go](https://pkg.go.dev/github.com/zvec-ai/zvec-go) | [Installation guide](https://github.com/zvec-ai/zvec-go#installation) | [Source](https://github.com/zvec-ai/zvec-go) |
-+| [Rust](https://crates.io/crates/zvec-rust) | `cargo add zvec-rust` | [Source](https://github.com/zvec-ai/zvec-rust) |
-+| [Java](https://central.sonatype.com/artifact/org.zvec/zvec-java) | `org.zvec:zvec-java` (Maven) | [Source](https://github.com/zvec-ai/zvec-java) |
-+| [Dart / Flutter](https://pub.dev/packages/zvec) | `flutter pub add zvec` | [Source](https://github.com/zvec-ai/zvec-dart) |
++  if (ex_bits_ > 0) {
++    // Use all quantization bits for the final entry before inserting it.
++    get_full_est(entity_.get_vector(entry_point), curest, *entity);
++  }
 +
-+Python requires 64-bit Python 3.10–3.14; Java requires Java 8+.
- 
- Searching code or documents? Try **[zvec-grep](https://github.com/zvec-ai/zvec-grep)** (`zg`) — a local-first search CLI that unifies ripgrep, BM25, and vector search, built for humans and AI agents.
- 
+   auto &topk_heap = ctx->topk_heap();
+   topk_heap.clear();
+   search_neighbors(0, &entry_point, &curest, topk_heap, ctx, entity);
 ```
 
-**File**: `README_CN.md` (modified, +11/-8)
+**File**: `tests/core/interface/hnsw_rabitq_index_test.cc` (added, +206/-0)
 ```diff
-@@ -13,9 +13,7 @@
-   <a href="https://codecov.io/github/alibaba/zvec"><img src="https://codecov.io/github/alibaba/zvec/graph/badge.svg?token=O81CT45B66" alt="代码覆盖率"/></a>
-   <a href="https://github.com/alibaba/zvec/actions/workflows/01-ci-pipeline.yml"><img src="https://github.com/alibaba/zvec/actions/workflows/01-ci-pipeline.yml/badge.svg?branch=main" alt="Main"/></a>
-   <a href="https://github.com/alibaba/zvec/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="许可证"/></a>
--  <a href="https://pypi.org/project/zvec/"><img src="https://img.shields.io/pypi/v/zvec.svg" alt="PyPI 版本"/></a>
--  <a href="https://pypi.org/project/zvec/"><img src="https://img.shields.io/badge/python-3.10%20~%203.14-blue.svg" alt="Python 版本"/></a>
--  <a href="https://www.npmjs.com/package/@zvec/zvec"><img src="https://img.shields.io/npm/v/@zvec/zvec.svg" alt="npm 版本"/></a>
-+  <a href="https://github.com/alibaba/zvec/releases/latest"><img src="https://img.shields.io/github/v/release/alibaba/zvec?label=release" alt="最新版本"/></a>
- </p>
- 
- <p align="center">
-@@ -67,11 +65,16 @@
- 
- Zvec 提供多语言官方 SDK：
- 
--- **[Python](https://pypi.org/project/zvec/)**：`pip install zvec`（需 64 位 Python 3.10–3.14）
--- **[Node.js](https://www.npmjs.com/package/@zvec/zvec)**：`npm install @zvec/zvec`
--- **[Go](https://github.com/zvec-ai/zvec-go)**：高性能的 Go 绑定。
--- **[Rust](https://crates.io/crates/zvec-rust)**：`cargo add zvec-rust`
--- **[Dart/Flutter](https://pub.dev/packages/zvec)**：`flutter pub add zvec`
-+| SDK | 安装 / 依赖 | 源码 |
-+| --- | --- | --- |
-+| [Python](https://pypi.org/project/zvec/) | `pip install zvec` | [源码](https://github.com/alibaba/zvec/tree/main/python/zvec) |
-+| [Node.js](https://www.npmjs.com/package/@zvec/zvec) | `npm install @zvec/zvec` | [源码](https://github.com/zvec-ai/zvec-node) |
-+| [Go](https://pkg.go.dev/github.com/zvec-ai/zvec-go) | [安装指南](https://github.com/zvec-ai/zvec-go/blob/main/README_CN.md#安装) | [源码](https://github.com/zvec-ai/zvec-go) |
-+| [Rust](https://crates.io/crates/zvec-rust) | `cargo add zvec-rust` | [源码](https://github.com/zvec-ai/zvec-rust) |
-+| [Java](https://central.sonatype.com/artifact/org.zvec/zvec-java) | `org.zvec:zvec-java`（Maven） | [源码](https://github.com/zvec-ai/zvec-java) |
-+| [Dart / Flutter](https://pub.dev/packages/zvec) | `flutter pub add zvec` | [源码](https://github.com/zvec-ai/zvec-dart) |
+@@ -0,0 +1,206 @@
++// Copyright 2025-present the zvec project
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
 +
-+Python 需 64 位 Python 3.10–3.14；Java 需 Java 8+。
- 
- 想搜索代码或文档？试试 **[zvec-grep](https://github.com/zvec-ai/zvec-grep)**（`zg`）— 本地优先的搜索 CLI，统一 ripgrep、BM25 与向量检索，为人类与 AI Agent 而设计。
- 
++#include <algorithm>
++#include <cmath>
++#include <cstdint>
++#include <memory>
++#include <random>
++#include <string>
++#include <vector>
++#include <gtest/gtest.h>
++
++#if RABITQ_SUPPORTED
++#include <rabitqlib/utils/cpu_features.hpp>
++#include "ailego/pattern/scope_guard.h"
++#include "algorithm/hnsw_rabitq/hnsw_rabitq_context.h"
++#include "algorithm/hnsw_rabitq/hnsw_rabitq_params.h"
++#include "algorithm/hnsw_rabitq/rabitq_converter.h"
++#include "tests/test_util.h"
++#include "zvec/core/framework/index_holder.h"
++#include "zvec/core/interface/index.h"
++#include "zvec/core/interface/index_param_builders.h"
++
++namespace zvec::core_interface {
++namespace {
++
++constexpr uint32_t kDimension = 128;
++constexpr uint32_t kTotalBits = 7;
++constexpr uint32_t kGraphDocCount =
++    core::HnswRabitqEntity::kDefaultBruteForceThreshold + 1;
++
++struct EntryScoreCase {
++  MetricType metric;
++  uint32_t doc_count;
++  const char *name;
++};
++
++class TestableHnswRabitqIndex : public HNSWRabitqIndex {
++ public:
++  explicit TestableHnswRabitqIndex(bool force_graph)
++      : force_graph_(force_graph) {}
++
++  using Index::init;
++
++  core::IndexContext::Pointer create_context() const {
++    return streamer_->create_context();
++  }
++
++ protected:
++  int create_and_init_streamer(const BaseIndexParam &param) override {
++    if (force_graph_) {
++      // A single-node index otherwise falls back to a linear scan.
++      proxima_index_params_.set(
++          core::PARAM_HNSW_RABITQ_STREAMER_BRUTE_FORCE_THRESHOLD, 0U);
++    }
++    return HNSWRabitqIndex::create_and_init_streamer(param);
++  }
++
++ private:
++  bool force_graph_;
++};
++
++class HnswRabitqIndexTest : public testing::TestWithParam<EntryScoreCase> {
++ protected:
++  void SetUp() override {
++    if (!rabitqlib::cpu::has_avx512_core() && !rabitqlib::cpu::has_avx2() &&
++        !rabitqlib::cpu::has_neon()) {
++      GTEST_SKIP() << "CPU does not support AVX2/FMA, AVX512F/BW/DQ, or NEON";
++    }
++    test_util::RemoveTestFiles(index_path() + "*");
++  }
++
++  void TearDown() override {
++    test_util::RemoveTestFiles(index_path() + "*");
++  }
++
++  std::string index_path() const {
++    return std::string("hnsw_rabitq_entry_score_") + GetParam().name;
++  }
++};
++
++TEST_P(HnswRabitqIndexTest, EntryScoreMatchesFullEstimate) {
++  const auto &test_case = GetParam();
++  auto holder = std::make_shared<
++      core::MultiPassIndexProvider<core::IndexMeta::DataType::DT_FP32>>(
++      kDimension);
++  std::vector<ailego::NumericalVector<float>> vectors;
++  std::mt19937 generator(20260319);
++  std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
++  // Keep a nonzero quantization residual even for the single-node index.
++  const uint32_t train_count = std::max(2U, test_case.doc_count);
++  for (uint32_t i = 0; i < train_count; ++i) {
++    ailego::NumericalVector<float> vector(kDimension);
++    float norm = 0.0f;
++    for (uint32_t j = 0; j < kDimension; ++j) {
++      vector[j] = distribution(generator);
++      norm += vector[j] * vector[j];
++    }
++    if (test_case.metric == MetricType::kCosine) {
++      norm = std::sqrt(norm);
++      for (uint32_t j = 0; j < kDimension; ++j) {
++        vector[j] /= norm;
++      }
++    }
++    vectors.push_back(vector);
++    ASSERT_TRUE(holder->emplace(i, vector));
++  }
++
++  core::IndexMeta meta(DataType::DT_FP32, kDimension);
++  meta.set_metric(
++      test_case.metric == MetricType::kCosine ? "Cosine" : "SquaredEuclidean",
++      0, ailego::Params());
++  ailego::Params converter_params;
++  converter_params.set(core::PARAM_RABITQ_TOTAL_BITS, kTotalBits);
++  converter_params.set(core::PARAM_RABITQ_NUM_CLUSTERS, 1U);
++  core::RabitqConverter converter;
++  ASSERT_EQ(0, converter.init(meta, converter_params));
++  ASSERT_EQ(0, converter.train(holder));
++  core::IndexReformer::Pointer reformer;
++  ASSERT_EQ(0, converter.to_reformer(&reformer));
++
++  auto param = HNSWRabitqIndexParamBuilder()
++                   .with_metric_type(test_case.metric)
++                   .with_data_type(DataType::DT_FP32)
++                   .with_dimension(kDimension)
++                   .with_m(16)
++                   .with_ef_construction(100)
++                   .with_total_bits(kTotalBits)
++                   .with_provider(holder)
++                   .with_reformer(reformer)
++                   .build();
++  TestableHnswRabitqIndex index(test_case.doc_count == 1);
++
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #851** (2026-10-28): fix(hnsw_rabitq): refine entry scores before level-0 search (@egolearner)
 - **PR #846** (2026-10-27): perf: deduplicate string parameter constants (@egolearner)
 - **PR #844** (2026-10-26): docs: simplify README badges and organize SDK installation tables (@JalinWang)
 - **PR #842** (closed): fix(flat): repopulate id_key_vector on reopen with use_id_map=false (#781) (@thlurte)
 - **PR #835** (2026-10-21): docs: clarify README platforms and Python example (@zhourrr)
 - **PR #834** (2026-10-21): fix(core): preserve index bytes on read-only close (@iaojnh)
-- **PR #832** (2026-10-21): Enable RaBitQ on Linux/macOS/Android/iOS ARM64 and macOS x86_64 (@egolearner)
 
 ---
 
@@ -1784,66 +1286,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deduplicate string parameter constants (#846)
+## X. hnsw_rabitq): refine entry scores before level-0 search (#851)
 
 **RULE**:
-When implementing operations in `src/core/algorithm/cluster/cluster_params.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in alibaba/zvec. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/core/algorithm/hnsw_rabitq/hnsw_rabitq_query_algorithm.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in alibaba/zvec. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `aed80691`: deduplicate string parameter constants (#846). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4c2d07de`: hnsw_rabitq): refine entry scores before level-0 search (#851). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/core/algorithm/cluster/cluster_params.h`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/core/algorithm/hnsw_rabitq/hnsw_rabitq_query_algorithm.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-inline const std::string GENERAL_CLUSTER_COUNT = "zvec.general.cluster.count";
-inline const std::string GENERAL_THREAD_COUNT =
-inline const std::string OPTKMEANS_CLUSTER_COUNT =
-inline const std::string OPTKMEANS_CLUSTER_MAX_ITERATIONS =
-inline const std::string OPTKMEANS_CLUSTER_EPSILON =
-inline const std::string OPTKMEANS_CLUSTER_SHARD_FACTOR =
-inline const std::string OPTKMEANS_CLUSTER_PURGE_EMPTY =
-inline const std::string OPTKMEANS_CLUSTER_MARKOV_CHAIN_LENGTH =
-inline const std::string OPTKMEANS_CLUSTER_ASSUMPTION_FREE =
-inline const std::string KMEANS_CLUSTER_COUNT = "zvec.kmeans.cluster.count";
-inline const std::string KMEANS_CLUSTER_SHARD_FACTOR =
-inline const std::string KMEANS_CLUSTER_EPSILON = "zvec.kmeans.cluster.epsilon";
-inline const std::string KMEANS_CLUSTER_MAX_ITERATIONS =
-inline const std::string KMEANS_CLUSTER_PURGE_EMPTY =
-inline const std::string KMEANS_CLUSTER_BATCH = "zvec.kmeans.cluster.batch";
-inline const std::string KMEANS_CLUSTER_SEEKER_CLASS =
-inline const std::string KMEANS_CLUSTER_SEEKER_PARAMS =
-inline const std::string MINIBATCHKMEANS_CLUSTER_COUNT =
-inline const std::string MINIBATCHKMEANS_CLUSTER_SHARD_FACTOR =
-inline const std::string MINIBATCHK
+  if (ex_bits_ > 0) {
+    // Use all quantization bits for the final entry before inserting it.
+    get_full_est(entity_.get_vector(entry_point), curest, *entity);
+  }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-static const std::string GENERAL_CLUSTER_COUNT = "zvec.general.cluster.count";
-static const std::string GENERAL_THREAD_COUNT =
-static const std::string OPTKMEANS_CLUSTER_COUNT =
-static const std::string OPTKMEANS_CLUSTER_MAX_ITERATIONS =
-static const std::string OPTKMEANS_CLUSTER_EPSILON =
-static const std::string OPTKMEANS_CLUSTER_SHARD_FACTOR =
-static const std::string OPTKMEANS_CLUSTER_PURGE_EMPTY =
-static const std::string OPTKMEANS_CLUSTER_MARKOV_CHAIN_LENGTH =
-static const std::string OPTKMEANS_CLUSTER_ASSUMPTION_FREE =
-static const std::string KMEANS_CLUSTER_COUNT = "zvec.kmeans.cluster.count";
-static const std::string KMEANS_CLUSTER_SHARD_FACTOR =
-static const std::string KMEANS_CLUSTER_EPSILON = "zvec.kmeans.cluster.epsilon";
-static const std::string KMEANS_CLUSTER_MAX_ITERATIONS =
-static const std::string KMEANS_CLUSTER_PURGE_EMPTY =
-static const std::string KMEANS_CLUSTER_BATCH = "zvec.kmeans.cluster.batch";
-static const std::string KMEANS_CLUSTER_SEEKER_CLASS =
-static const std::string KMEANS_CLUSTER_SEEKER_PARAMS =
-static const std::string MINIBATCHKMEANS_CLUSTER_COUNT =
-static const std::string MINIBATCHKMEANS_CLUSTER_SHARD_FACTOR =
-static const std::string MINIBATCHK
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `aed80691` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4c2d07de` are properly handled with clean fallback behavior.

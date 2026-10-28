@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T05:03:43.289Z",
+  "last_updated": "2026-10-28T05:17:55.101Z",
   "total_verified_learnings": 1156,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -1501,8 +1501,8 @@
       "slug": "alibaba-zvec",
       "platform": "github",
       "source_url": "https://github.com/alibaba/zvec",
-      "source_version": "aed80691",
-      "content_hash": "ae5cdba134745b22009072ac86b99d05144d67ab026c42398475127705653256",
+      "source_version": "4c2d07de",
+      "content_hash": "e3486c62caaf9f3a9bedefd0947a5c2dac8a25c7cf2c344cec70f0b0022dfeba",
       "dossier_path": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "promoted_rules": [
@@ -1540,6 +1540,11 @@
           "number": 4877,
           "title": "deduplicate string parameter constants (#846)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5184,
+          "title": "hnsw_rabitq): refine entry scores before level-0 search (#851)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -1547,7 +1552,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T15:12:16.135Z",
+      "verified_at": "2026-10-28T05:17:55.089Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28915,14 +28920,14 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
       "source_version": "hf-xingchen-agi-xing4.0-29b-a4b",
-      "content_hash": "b3548a1629d50855be860b67a745ed1597a78df215fa75621b3d5ea7366fec3a",
+      "content_hash": "2562a60d95155c11cb472bb37daf5a4cfe2623d1e935db20d6ab6ba31d7afbc3",
       "dossier_path": "07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
       "promoted_rules": [
         {
           "number": 2092,
           "title": "MLA KV-Cache Compression Invariant",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 2093,
@@ -28948,6 +28953,16 @@
           "number": 4288,
           "title": "YaRN RoPE Scaling for Context Extension",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5182,
+          "title": "YaRN RoPE Scaling Frequency Separation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5183,
+          "title": "MoE Expert Load Balancing via Sigmoid Gating",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -28968,7 +28983,7 @@
         "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv459bwg",
         "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv4ij129"
       ],
-      "verified_at": "2026-10-25T12:23:10.919Z",
+      "verified_at": "2026-10-28T05:17:51.652Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -94316,7 +94331,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T03:53:49.737Z"
+      "verified_at": "2026-10-28T05:17:51.652Z"
     },
     "rule-2093": {
       "learning_id": "rule-2093",
@@ -141895,6 +141910,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T05:03:43.276Z"
+    },
+    "rule-5182": {
+      "learning_id": "rule-5182",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5182,
+      "title": "YaRN RoPE Scaling Frequency Separation",
+      "source_url": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
+      "source_version": "hf-xingchen-agi-xing4.0-29b-a4b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T05:17:51.652Z"
+    },
+    "rule-5183": {
+      "learning_id": "rule-5183",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5183,
+      "title": "MoE Expert Load Balancing via Sigmoid Gating",
+      "source_url": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
+      "source_version": "hf-xingchen-agi-xing4.0-29b-a4b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T05:17:51.652Z"
+    },
+    "rule-5184": {
+      "learning_id": "rule-5184",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5184,
+      "title": "hnsw_rabitq): refine entry scores before level-0 search (#851)",
+      "source_url": "https://github.com/alibaba/zvec",
+      "source_version": "4c2d07de",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T05:17:55.089Z"
     }
   },
   "aliases": {
