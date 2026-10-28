@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source**: github ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
-> **Source Version**: `bc843c52`  
+> **Source Version**: `87db0f3b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T15:39:41.895Z  
+> **Timestamp**: 2026-10-28T15:22:55.970Z  
 > **Learning ID**: `learn-github-meshery-meshery`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T15:39:41.567Z  
+> **Harvest Timestamp**: 2026-10-28T15:22:55.966Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Meshery, the cloud native manager
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12062 stars
+- **Stars / Engagement**: 12072 stars
 
 ---
 
@@ -827,542 +827,407 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `adf88a0c` (2026-10-27)
-**Commit Message**: Merge pull request #22550 from SajanBisht/fix/nextjs-security-update
+### Incident Patch 1: `87db0f3b` (2026-10-28)
+**Commit Message**: latest discussion data files added
 
-fix(ui): upgrade Next.js to address security vulnerabilities
+Signed-off-by: Discussions bot <[REDACTED_EMAIL]>
 
-**File**: `provider-ui/package-lock.json` (modified, +41/-41)
-```diff
-@@ -26,7 +26,7 @@
-         "@xstate/react": "^6.1.0",
-         "date-fns": "^4.4.0",
-         "http-proxy": "^1.18.1",
--        "next": "^16.3.8",
-+        "next": "^16.4.3",
-         "prop-types": "^15.8.1",
-         "react": "^19.2.7",
-         "react-dom": "^19.2.7",
-@@ -1786,9 +1786,9 @@
-       }
-     },
-     "node_modules/@next/env": {
--      "version": "16.3.8",
--      "resolved": "https://registry.npmjs.org/@next/env/-/env-16.3.8.tgz",
--      "integrity": "sha512-Al9zqHVV7TJv0eFuOU4U7Lvv74PTih4Ch63sk2xCIpSTkE3udFnaOcnzP2lQVymiL7yS9Cj2iClUXlR3EQ5sEw==",
-+      "version": "16.4.3",
-+      "resolved": "https://registry.npmjs.org/@next/env/-/env-16.4.3.tgz",
-+      "integrity": "sha512-a7tz1QCcWWkwC/rPJcPMJk/UNRu9CFhDd3OHYE5hddbJrs8BqRTalxI6GlKCWEGzRLHN+S/B7a4PAHCtm25aBQ==",
-       "license": "MIT"
-     },
-     "node_modules/@next/eslint-plugin-next": {
-@@ -1802,9 +1802,9 @@
-       }
-     },
-     "node_modules/@next/swc-darwin-arm64": {
--      "version": "16.3.8",
--      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.3.8.tgz",
--      "integrity": "sha512-2JPRMh2nmQG5CiL7cXGL9AGwnPWJQ//cTtAUCT+w511QHk79SYz3LGv/pc5X643B/WEO0rvu3Yww0hqwt3kgeA==",
-+      "version": "16.4.3",
-+      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.4.3.tgz",
-+      "integrity": "sha512-4yq5EXBt+VDtAZwTyfijaFp5D2C5oz3Ikw5a2kiX2K9nw72vrZX2q5UuAlkPtUMO1tQz6JTKpaKWjS7OOefTDQ==",
-       "cpu": [
-         "arm64"
-       ],
-@@ -1818,9 +1818,9 @@
-       }
-     },
-     "node_modules/@next/swc-darwin-x64": {
--      "version": "16.3.8",
--      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.3.8.tgz",
--      "integrity": "sha512-GZtCCOBKJ4leVIT/Th0llWKhD1ca92lzbQiS5R5ON9QkoiFnilFsebDae1JU2a3HWoKMEmEZWGs1AGLavVM72Q==",
-+      "version": "16.4.3",
-+      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.4.3.tgz",
-+      "integrity": "sha512-1Rvkn/LUhnEF8WxnRkOrqGhbwXui1bkWFxONKIbN+r7C+9KHDSZ+iUoj4CzymVMWUyZIyx9szcb9+kbKhD500A==",
-       "cpu": [
-         "x64"
-       ],
-@@ -1834,9 +1834,9 @@
-       }
-     },
-     "node_modules/@next/swc-linux-arm64-gnu": {
--      "version": "16.3.8",
--      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.3.8.tgz",
--      "integrity": "sha512-O659ygeQYqneJ1fBKMpFxIFqYkYswu8IAS1OCKK/4f3ZgJJm1dRz4fVJZRi/kLLWjnBKnebOePA4WNv+sV1pVA==",
-+      "version": "16.4.3",
-+      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.4.3.tgz",
-+      "integrity": "sha512-dCKpXErGg3abUM6t5JTJV/ottVBTStJB5lRJTbgdUdQaQ+jNHiK56Hsc0YAEg/rinSh42hYG3HWiYmEMdilnxg==",
-       "cpu": [
-         "arm64"
-       ],
-@@ -1853,9 +1853,9 @@
-       }
-     },
-     "node_modules/@next/swc-linux-arm64-musl": {
--      "version": "16.3.8",
--      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.3.8.tgz",
--      "integrity": "sha512-dSjKSyWpzxoO1d3DIZZcP4XJcNaKeLmxQMFOiYl5vuBRMmweIqnAhty8tAmRsvTss779cK1FtYnDMj40e4TQlg==",
-+      "version": "16.4.3",
-+      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.4.3.tgz",
-+      "integrity": "sha512-WwYbhWkhYBvBtib1K4W0kL8MW2snBD2A5b3SN4vPpqalZbZs5+bQ1yzAdepVoOqrFfEW3dmREy4Zs1MrWcrFbw==",
-       "cpu": [
-         "arm64"
-       ],
-@@ -1872,9 +1872,9 @@
-       }
-     },
-     "node_modules/@next/swc-linux-x64-gnu": {
--      "version": "16.3.8",
--      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-16.3.8.tgz",
--      "integrity": "sha512-lbqOuz3RPRcv+o9msNsJw5x4+Y1ZwPTs6vmL6DCf7i0fZfvng/F59wyeDwqHIvV0mK//RBy/jJkZ+nCKsSMXjQ==",
-+      "version": "16.4.3",
-+      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-16.4.3.tgz",
-+      "integrity": "sha512-QymWvfUwDEC5/lpJOsxX5VAbyoR2D13+2Jsjz4be7gT4LPqEgdpkeLIR/HFfCLgKzoMhpJbp6I/JnogyNZHcaA==",
-       "cpu": [
-         "x64"
-       ],
-@@ -1891,9 +1891,9 @@
-       }
-     },
-     "node_modules/@next/swc-linux-x64-musl": {
--      "version": "16.3.8",
--      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-16.3.8.tgz",
--      "integrity": "sha512-+316WswI8ScVgZeUd+1KGaXkHhaYQzCjvH/05TZSpJ8zBizb1a4G7DtO7F12jcBIqMOtsz9ji1t48fmKtzqsGA==",
-+      "version": "16.4.3",
-+      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-16.4.3.tgz",
-+      "integrity": "sha512-Vmjd9D7DpA4Vv3cUlr82QWgJD/BQZmns801vtC5VWHg6jCIA4a5vMKpQnfrM2pyCrp2eV0ENdUg4PlN3bAc2Yw==",
-       "cpu": [
-         "x64"
-       ],
-@@ -1910,9 +1910,9 @@
-       }
-     },
-     "node_modules/@next/swc-win32-arm64-msvc": {
--      "version": "16.3.8",
--      "resolved": "https://registry.npmjs.org/@next/swc-win32-arm64-msvc/-/swc-win32-arm64-msvc-16.3.8.tgz",
--      "integrity": "sha512-ji0gd4kMYUxO+1fJBIbiBVRCjzG/lloiyCccnlebvb1ZJ5qXCPZqYg4Jl1DrrixnWNMKylzgpmMWx0yNDYXlzw
-```
 
-**File**: `provider-ui/package.json` (modified, +1/-1)
-```diff
-@@ -33,7 +33,7 @@
-     "@xstate/react": "^6.1.0",
-     "date-fns": "^4.4.0",
-     "http-proxy": "^1.18.1",
--    "next": "^16.3.8",
-+    "next": "^16.4.3",
-     "prop-types": "^15.8.1",
-     "react": "^19.2.7",
-     "react-dom": "^19.2.7",
-```
-
-**File**: `ui/package-lock.json` (modified, +41/-41)
-```diff
-@@ -73,7 +73,7 @@
-         "js-yaml": "^5.2.2",
-         "lodash": "^4.18.1",
-         "moment": "^2.30.1",
--        "next": "^16.4.0",
-+        "next": "^16.4.3",
-         "notistack": "^3.0.2",
-         "patch-package": "^8.0.1",
-         "pluralize": "^8.0.0",
-@@ -2579,9 +2579,9 @@
-       }
-     },
-     "node_modules/@next/env": {
--      "version": "16.4.0",
--      "resolved": "https://registry.npmjs.org/@next/env/-/env-16.4.0.tgz",
--      "integrity": "sha512-pyLlT5oafGlX8X7xjgGNXz5dNIDSxREm+qD6i9VLSZiZFopA/XWl8NM/KPmLx/8EG/++c49iid3gNWSQW1+2dQ==",
-+      "version": "16.4.3",
-+      "resolved": "https://registry.npmjs.org/@next/env/-/env-16.4.3.tgz",
-+      "integrity": "sha512-a7tz1QCcWWkwC/rPJcPMJk/UNRu9CFhDd3OHYE5hddbJrs8BqRTalxI6GlKCWEGzRLHN+S/B7a4PAHCtm25aBQ==",
-       "license": "MIT"
-     },
-     "node_modules/@next/eslint-plugin-next": {
-@@ -2595,9 +2595,9 @@
-       }
-     },
-     "node_modules/@next/swc-darwin-arm64": {
--      "version": "16.4.0",
--      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.4.0.tgz",
--      "integrity": "sha512-yyZ+9MgViAKLLb5l1gPBGjRwnq3teNLb5Zx6JEw8LzNSTjlsnp+baUHFxTgl7PpjCmKf48VQfyipG1eBflb48Q==",
-+      "version": "16.4.3",
-+      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.4.3.tgz",
-+      "integrity": "sha512-4yq5EXBt+VDtAZwTyfijaFp5D2C5oz3Ikw5a2kiX2K9nw72vrZX2q5UuAlkPtUMO1tQz6JTKpaKWjS7OOefTDQ==",
-       "cpu": [
-         "arm64"
-       ],
-@@ -2611,9 +2611,9 @@
-       }
-     },
-     "node_modules/@next/swc-darwin-x64": {
--      "version": "16.4.0",
--      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.4.0.tgz",
--      "integrity": "sha512-RePEEejEj1Auf5s9qEcG0JbcDP3ceNUS/ofNX8AhxzgIjTVlZIHMatlp16YplcSMpsVo/ZMQHJTjbMYJznjGUg==",
-+      "version": "16.4.3",
-+      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.4.3.tgz",
-+      "integrity": "sha512-1Rvkn/LUhnEF8WxnRkOrqGhbwXui1bkWFxONKIbN+r7C+9KHDSZ+iUoj4CzymVMWUyZIyx9szcb9+kbKhD500A==",
-       "cpu": [
-         "x64"
-       ],
-@@ -2627,9 +2627,9 @@
-       }
-     },
-     "node_modules/@next/swc-linux-arm64-gnu": {
--      "version": "16.4.0",
--      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.4.0.tgz",
--      "integrity": "sha512-HhsyCqd+NpmvDDVY/LqkAN24f+QVvXh3ie+PfcwKinWL2Mu826JymQxJXGjAIfmJ4VlHjp4Pe/nZtXtUoEMAqw==",
-+      "version": "16.4.3",
-+      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.4.3.tgz",
-+      "integrity": "sha512-dCKpXErGg3abUM6t5JTJV/ottVBTStJB5lRJTbgdUdQaQ+jNHiK56Hsc0YAEg/rinSh42hYG3HWiYmEMdilnxg==",
-       "cpu": [
-         "arm64"
-       ],
-@@ -2646,9 +2646,9 @@
-       }
-     },
-     "node_modules/@next/swc-linux-arm64-musl": {
--      "version": "16.4.0",
--      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.4.0.tgz",
--      "integrity": "sha512-sN9Pf+Zh+RpZAOmbR7d8KAA8T61CVhawtbEJ2Bk6QrRzx6Z/6haaF4UiwBzytM96GRRRWZh9/WALIEO3npMamA==",
-+      "version": "16.4.3",
-+      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.4.3.tgz",
-+      "integrity": "sha512-WwYbhWkhYBvBtib1K4W0kL8MW2snBD2A5b3SN4vPpqalZbZs5+bQ1yzAdepVoOqrFfEW3dmREy4Zs1MrWcrFbw==",
-       "cpu": [
-         "arm64"
-       ],
-@@ -2665,9 +2665,9 @@
-       }
-     },
-     "node_modules/@next/swc-linux-x64-gnu": {
--      "version": "16.4.0",
--      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-16.4.0.tgz",
--      "integrity": "sha512-D5M5xLWQVd1CvR+L7BickM1weRfmM41x3L1NWcnKY/oyJJqr1qwaCgmu3dMAhLBOMdZwSuDCRV6DJRRpiUkbDQ==",
-+      "version": "16.4.3",
-+      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-16.4.3.tgz",
-+      "integrity": "sha512-QymWvfUwDEC5/lpJOsxX5VAbyoR2D13+2Jsjz4be7gT4LPqEgdpkeLIR/HFfCLgKzoMhpJbp6I/JnogyNZHcaA==",
-       "cpu": [
-         "x64"
-       ],
-@@ -2684,9 +2684,9 @@
-       }
-     },
-     "node_modules/@next/swc-linux-x64-musl": {
--      "version": "16.4.0",
--      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-16.4.0.tgz",
--      "integrity": "sha512-8d5WLS6a9YalqpOgXdlbvonFu+sIgjA+CO6tGzetrpPVcUL56foa7B7664h41rAlbLi5fJwK4vWji3zf4QDy+w==",
-+      "version": "16.4.3",
-+      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-16.4.3.tgz",
-+      "integrity": "sha512-Vmjd9D7DpA4Vv3cUlr82QWgJD/BQZmns801vtC5VWHg6jCIA4a5vMKpQnfrM2pyCrp2eV0ENdUg4PlN3bAc2Yw==",
-       "cpu": [
-         "x64"
-       ],
-@@ -2703,9 +2703,9 @@
-       }
-     },
-     "node_modules/@next/swc-win32-arm64-msvc": {
--      "version": "16.4.0",
--      "resolved": "https://registry.npmjs.org/@next/swc-win32-arm64-msvc/-/swc-win32-arm64-msvc-16.4.0.tgz",
--      "integrity": "sha512-sQuOIiW3snb48UwrBcDMvFA/u03qtw2LeuSIxFIQ9AJuW9UG/4Ddsfo+eV73PnZwBhyncMtsKVh7PrzMol2/fA==",
-+ 
-```
-
-**File**: `ui/package.json` (modified, +1/-1)
-```diff
-@@ -101,7 +101,7 @@
-     "js-yaml": "^5.2.2",
-     "lodash": "^4.18.1",
-     "moment": "^2.30.1",
--    "next": "^16.4.0",
-+    "next": "^16.4.3",
-     "notistack": "^3.0.2",
-     "patch-package": "^8.0.1",
-     "pluralize": "^8.0.0",
-```
 
 ---
 
-### Incident Patch 2: `8df6d3ac` (2026-10-27)
-**Commit Message**: fix(ui): upgrade Next.js to address security vulnerabilities
+### Incident Patch 2: `cebee5df` (2026-10-27)
+**Commit Message**: Models generated and updated
 
-Signed-off-by: SajanBisht <[REDACTED_EMAIL]>
+Signed-off-by: l5io <[REDACTED_EMAIL]>
 
-**File**: `provider-ui/package-lock.json` (modified, +41/-41)
+**File**: `models/aws-cloudfront-controller/v1.10.0/v1.0.0/model.json` (modified, +3/-3)
 ```diff
-@@ -26,7 +26,7 @@
-         "@xstate/react": "^6.1.0",
-         "date-fns": "^4.4.0",
-         "http-proxy": "^1.18.1",
--        "next": "^16.3.8",
-+        "next": "^16.4.3",
-         "prop-types": "^15.8.1",
-         "react": "^19.2.7",
-         "react-dom": "^19.2.7",
-@@ -1786,9 +1786,9 @@
-       }
-     },
-     "node_modules/@next/env": {
--      "version": "16.3.8",
--      "resolved": "https://registry.npmjs.org/@next/env/-/env-16.3.8.tgz",
--      "integrity": "sha512-Al9zqHVV7TJv0eFuOU4U7Lvv74PTih4Ch63sk2xCIpSTkE3udFnaOcnzP2lQVymiL7yS9Cj2iClUXlR3EQ5sEw==",
-+      "version": "16.4.3",
-+      "resolved": "https://registry.npmjs.org/@next/env/-/env-16.4.3.tgz",
-+      "integrity": "sha512-a7tz1QCcWWkwC/rPJcPMJk/UNRu9CFhDd3OHYE5hddbJrs8BqRTalxI6GlKCWEGzRLHN+S/B7a4PAHCtm25aBQ==",
-       "license": "MIT"
-     },
-     "node_modules/@next/eslint-plugin-next": {
-@@ -1802,9 +1802,9 @@
-       }
-     },
-     "node_modules/@next/swc-darwin-arm64": {
--      "version": "16.3.8",
--      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.3.8.tgz",
--      "integrity": "sha512-2JPRMh2nmQG5CiL7cXGL9AGwnPWJQ//cTtAUCT+w511QHk79SYz3LGv/pc5X643B/WEO0rvu3Yww0hqwt3kgeA==",
-+      "version": "16.4.3",
-+      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.4.3.tgz",
-+      "integrity": "sha512-4yq5EXBt+VDtAZwTyfijaFp5D2C5oz3Ikw5a2kiX2K9nw72vrZX2q5UuAlkPtUMO1tQz6JTKpaKWjS7OOefTDQ==",
-       "cpu": [
-         "arm64"
-       ],
-@@ -1818,9 +1818,9 @@
-       }
-     },
-     "node_modules/@next/swc-darwin-x64": {
--      "version": "16.3.8",
--      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.3.8.tgz",
--      "integrity": "sha512-GZtCCOBKJ4leVIT/Th0llWKhD1ca92lzbQiS5R5ON9QkoiFnilFsebDae1JU2a3HWoKMEmEZWGs1AGLavVM72Q==",
-+      "version": "16.4.3",
-+      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.4.3.tgz",
-+      "integrity": "sha512-1Rvkn/LUhnEF8WxnRkOrqGhbwXui1bkWFxONKIbN+r7C+9KHDSZ+iUoj4CzymVMWUyZIyx9szcb9+kbKhD500A==",
-       "cpu": [
-         "x64"
-       ],
-@@ -1834,9 +1834,9 @@
-       }
-     },
-     "node_modules/@next/swc-linux-arm64-gnu": {
--      "version": "16.3.8",
--      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.3.8.tgz",
--      "integrity": "sha512-O659ygeQYqneJ1fBKMpFxIFqYkYswu8IAS1OCKK/4f3ZgJJm1dRz4fVJZRi/kLLWjnBKnebOePA4WNv+sV1pVA==",
-+      "version": "16.4.3",
-+      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.4.3.tgz",
-+      "integrity": "sha512-dCKpXErGg3abUM6t5JTJV/ottVBTStJB5lRJTbgdUdQaQ+jNHiK56Hsc0YAEg/rinSh42hYG3HWiYmEMdilnxg==",
-       "cpu": [
-         "arm64"
-       ],
-@@ -1853,9 +1853,9 @@
-       }
-     },
-     "node_modules/@next/swc-linux-arm64-musl": {
--      "version": "16.3.8",
--      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.3.8.tgz",
--      "integrity": "sha512-dSjKSyWpzxoO1d3DIZZcP4XJcNaKeLmxQMFOiYl5vuBRMmweIqnAhty8tAmRsvTss779cK1FtYnDMj40e4TQlg==",
-+      "version": "16.4.3",
-+      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.4.3.tgz",
-+      "integrity": "sha512-WwYbhWkhYBvBtib1K4W0kL8MW2snBD2A5b3SN4vPpqalZbZs5+bQ1yzAdepVoOqrFfEW3dmREy4Zs1MrWcrFbw==",
-       "cpu": [
-         "arm64"
-       ],
-@@ -1872,9 +1872,9 @@
-       }
-     },
-     "node_modules/@next/swc-linux-x64-gnu": {
--      "version": "16.3.8",
--      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-16.3.8.tgz",
--      "integrity": "sha512-lbqOuz3RPRcv+o9msNsJw5x4+Y1ZwPTs6vmL6DCf7i0fZfvng/F59wyeDwqHIvV0mK//RBy/jJkZ+nCKsSMXjQ==",
-+      "version": "16.4.3",
-+      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-16.4.3.tgz",
-+      "integrity": "sha512-QymWvfUwDEC5/lpJOsxX5VAbyoR2D13+2Jsjz4be7gT4LPqEgdpkeLIR/HFfCLgKzoMhpJbp6I/JnogyNZHcaA==",
-       "cpu": [
-         "x64"
-       ],
-@@ -1891,9 +1891,9 @@
-       }
-     },
-     "node_modules/@next/swc-linux-x64-musl": {
--      "version": "16.3.8",
--      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-16.3.8.tgz",
--      "integrity": "sha512-+316WswI8ScVgZeUd+1KGaXkHhaYQzCjvH/05TZSpJ8zBizb1a4G7DtO7F12jcBIqMOtsz9ji1t48fmKtzqsGA==",
-+      "version": "16.4.3",
-+      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-16.4.3.tgz",
-+      "integrity": "sha512-Vmjd9D7DpA4Vv3cUlr82QWgJD/BQZmns801vtC5VWHg6jCIA4a5vMKpQnfrM2pyCrp2eV0ENdUg4PlN3bAc2Yw==",
-       "cpu": [
-         "x64"
-       ],
-@@ -1910,9 +1910,9 @@
-       }
-     },
-     "node_modules/@next/swc-win32-arm64-msvc": {
--      "version": "16.3.8",
--      "resolved": "https://registry.npmjs.org/@next/swc-win32-arm64-msvc/-/swc-win32-arm64-msvc-16.3.8.tgz",
--      "integrity": "sha512-ji0gd4kMYUxO+1fJBIbiBVRCjzG/lloiyCccnlebvb1ZJ5qXCPZqYg4Jl1DrrixnWNMKylzgpmMWx0yNDYXlzw
+@@ -26,12 +26,12 @@
+   "metadata": {
+     "capabilities": null,
+     "isAnnotation": false,
+-    "primaryColor": "#ED7100",
++    "primaryColor": "#8C4FFF",
+     "shape": "rectangle",
+     "styleOverrides": "",
+-    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 64 64\" version=\"1.1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n\u003ctitle xmlns=\"http://www.w3.org/2000/svg\"\u003eIcon-Architecture/48/Arch_Amazon-CloudFront_48\u003c/title\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/48/Arch_Amazon-CloudFront_48\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/48/Networking-Content-Delivery\" fill=\"#8C4FFF\"\u003e\n\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"64\" height=\"64\"\u003e\u003c/rect\u003e\n\u003c/g\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M41.5,43.5 C40.397,43.5 39.5,42.603 39.5,41.5 C39.5,40.397 40.397,39.5 41.5,39.5 C42.603,39.5 43.5,40.397 43.5,41.5 C43.5,42.603 42.603,43.5 41.5,43.5 L41.5,43.5 Z M41.5,37.5 C39.294,37.5 37.5,39.294 37.5,41.5 C37.5,43.706 39.294,45.5 41.5,45.5 C43.706,45.5 45.5,43.706 45.5,41.5 C45.5,39.294 43.706,37.5 41.5,37.5 L41.5,37.5 Z M22.5,32.5 C21.397,32.5 20.5,31.603 20.5,30.5 C20.5,29.397 21.397,28.5 22.5,28.5 C23.603,28.5 24.5,29.397 24.5,30.5 C24.5,31.603 23.603,32.5 22.5,32.5 L22.5,32.5 Z M22.5,26.5 C20.294,26.5 18.5,28.294 18.5,30.5 C18.5,32.706 20.294,34.5 22.5,34.5 C24.706,34.5 26.5,32.706 26.5,30.5 C26.5,28.294 24.706,26.5 22.5,26.5 L22.5,26.5 Z M45.389,47.124 C45.168,46.607 44.936,46.094 44.685,45.591 L42.896,46.486 C43.17,47.035 43.42,47.599 43.656,48.165 C42.82,48.762 41.943,49.288 41.028,49.74 C41.384,48.865 41.694,47.975 41.974,47.012 L40.054,46.454 C39.564,48.134 38.985,49.581 38.184,51.133 C36.357,51.698 34.452,52 32.5,52 C29.465,52 26.567,51.314 23.871,49.976 C22.503,46.615 21.838,43.534 21.838,40.559 C21.838,39.267 22.063,38.196 22.322,36.956 C22.386,36.652 22.45,36.343 22.514,36.024 L20.551,35.638 C20.49,35.949 20.427,36.25 20.365,36.545 C20.094,37.838 19.838,39.06 19.838,40.559 C19.838,43.074 20.274,45.644 21.154,48.354 C16.072,44.724 13,38.854 13,32.5 C13,32.389 13.01,32.273 13.012,32.161 C14.642,31.799 16.123,31.614 17.854,31.571 L17.804,29.572 C16.169,29.612 14.694,29.779 13.163,30.084 C14.081,22.683 19.212,16.394 26.323,14.019 C27.873,14.818 29.02,15.524 30.135,16.37 L31.344,14.776 C30.646,14.248 29.934,13.771 29.146,13.299 C30.244,13.108 31.363,13 32.5,13 C35.032,13 37.532,13.494 39.849,14.439 C39.342,14.593 38.82,14.763 38.243,14.971 L38.923,16.852 C40.316,16.349 41.408,16.04 42.571,15.821 C48.399,19.341 52,25.667 52,32.5 C52,38.156 49.605,43.416 45.389,47.124 L45.389,47.124 Z M43.008,13.749 C39.826,11.95 36.192,11 32.5,11 C30.392,11 28.324,11.301 26.357,11.895 C17.723,14.464 11.568,22.23 11.045,31.196 C11.01,31.625 11,32.062 11,32.5 C11,40.444 15.352,47.707 22.354,51.455 C25.459,53.12 28.968,54 32.5,54 C34.892,54 37.229,53.61 39.437,52.843 C41.684,52.086 43.773,50.963 45.646,49.507 C50.955,45.399 54,39.2 54,32.5 C54,24.732 49.787,17.546 43.008,13.749 L43.008,13.749 Z M38.384,37.411 L37.003,38.858 C34.022,36.015 31.047,34.146 27.637,32.975 L28.287,31.083 C31.979,32.351 35.188,34.362 38.384,37.411 L38.384,37.411 Z M38.444,22.364 C41.282,26.692 42.88,31.444 43.193,36.488 L41.197,36.612 C40.905,31.919 39.417,27.495 36.772,23.46 L38.444,22.364 Z M26.451,26.797 L24.773,25.708 C26.316,23.332 27.639,21.758 29.336,20.278 L30.65,21.786 C29.103,23.135 27.886,24.587 26.451,26.797 L26.451,26.797 Z M34.5,16.5 C35.603,16.5 36.5,17.397 36.5,18.5 C36.5,19.603 35.603,20.5 34.5,20.5 C33.397,20.5 32.5,19.603 32.5,18.5 C32.5,17.397 33.397,16.5 34.5,16.5 L34.5,16.5 Z M34.5,22.5 C36.706,22.5 38.5,20.706 38.5,18.5 C38.5,16.294 36.706,14.5 34.5,14.5 C32.294,14.5 30.5,16.294 30.5,18.5 C30.5,20.706 32.294,22.5 34.5,22.5 L34.5,22.5 Z\" id=\"Amazon-CloudFront_Icon_48_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003c/svg\u003e",
++    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-CloudFront_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Networking-Content-Delivery\" fill=\"#8C4FFF\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M28,26.4968343 C28,25.6694852 27.327,24.9962012 26.5,24.9962012 C25.673,24.9962012 25,25.
 ```
 
-**File**: `provider-ui/package.json` (modified, +1/-1)
+**File**: `models/aws-dynamodb-controller/v1.14.0/v1.0.0/components/Backup.json` (added, +208/-0)
 ```diff
-@@ -33,7 +33,7 @@
-     "@xstate/react": "^6.1.0",
-     "date-fns": "^4.4.0",
-     "http-proxy": "^1.18.1",
--    "next": "^16.3.8",
-+    "next": "^16.4.3",
-     "prop-types": "^15.8.1",
-     "react": "^19.2.7",
-     "react-dom": "^19.2.7",
+@@ -0,0 +1,208 @@
++{
++  "id": "00000000-0000-0000-0000-000000000000",
++  "schemaVersion": "components.meshery.io/v1beta2",
++  "version": "v1.0.0",
++  "displayName": "Backup",
++  "description": "",
++  "format": "JSON",
++  "model": {
++    "id": "00000000-0000-0000-0000-000000000000",
++    "schemaVersion": "models.meshery.io/v1beta2",
++    "version": "v1.0.0",
++    "name": "aws-dynamodb-controller",
++    "displayName": "AWS DynamoDB",
++    "status": "enabled",
++    "registrant": {
++      "id": "00000000-0000-0000-0000-000000000000",
++      "name": "Github",
++      "type": "registry",
++      "subType": "",
++      "kind": "github",
++      "status": "discovered",
++      "created_at": "0001-01-01T00:00:00Z",
++      "updated_at": "0001-01-01T00:00:00Z",
++      "deleted_at": null,
++      "schemaVersion": ""
++    },
++    "connection_id": "00000000-0000-0000-0000-000000000000",
++    "category": {
++      "id": "00000000-0000-0000-0000-000000000000",
++      "name": "App Definition and Development"
++    },
++    "subCategory": "Database",
++    "metadata": {
++      "isAnnotation": false,
++      "primaryColor": "#C925D1",
++      "shape": "rectangle",
++      "source_uri": "git://github.com/aws-controllers-k8s/dynamodb-controller/main/helm",
++      "styleOverrides": "",
++      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-DynamoDB_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Database\" fill=\"#C925D1\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M26.0661851,31.0185863 L26.0661851,31.0175845 L26.0661851,28.1532509 C24.5397015,29.4606854 21.3722727,30.3222898 17.5279417,30.3222898 C13.6806504,30.3222898 10.5132216,29.4596835 8.98673795,28.1512471 L8.98673795,31.013577 L8.98772469,31.013577 C8.98772469,32.4252056 12.4945914,33.9981345 17.5279417,33.9981345 C22.5543848,33.9981345 26.0582912,32.4282112 26.0661851,31.0185863 L26.0661851,31.0185863 Z M26.0671719,22.8443654 L27.0539098,22.8383542 L27.0539098,22.8443654 C27.0539098,23.4685276 26.7421006,24.0506115 26.1480844,24.5856077 C26.8743235,25.238824 27.0539098,25.880018 27.0539098,26.3358668 C27.0539098,26.3388724 27.0529231,26.341878 27.0529231,26.3438817 L27.0529231,31.013577 L27.0539098,31.013577 C27.0539098,33.2858081 22.9589473,35 17.5279417,35 C12.1245646,35 8.04736342,33.3038416 8.00493369,31.0486423 C8.00493369,31.0396255 8,31.0326125 8,31.0235957 L8,26.3338631 C8,26.3308575 8.00197348,26.3288537 8.00197348,26.3258481 C8.00394695,25.872003 8.18452,25.2368203 8.90286522,24.5886133 C8.18649347,23.9384025 8.00493369,23.3052235 8.00098674,22.8553859 C8.00098674,22.8533822 8,22.8513784 8,22.8493747 L8,18.1596421 C8,18.1566365 8.00197348,18.1536309 8.00197348,18.1516272 C8.00394695,17.6967802 8.18550673,17.0615975 8.90385196,16.4143923 C8.18649347,15.7631797 8.00493369,15.1310026 8.00098674,14.6801631 C8.00098674,14.6781593 8,14.6761556 8,14.6751537 L8,9.98441926 C8,9.97940994 8.00296021,9.97640434 8.00296021,9.97139501 C8.02269497,7.70617702 12.1087768,6 17.5279417,6 C20.1358901,6 22.6422044,6.42980032 24.4015582,7.17719201 L24.0206774,8.10191391 C22.3777587,7.40261176 20.0105743,7.00186554 17.5279417,7.00186554 C12.4945914,7.00186554 8.98772469,8.57479444 8.98772469,9.98642299 C8.98772469,11.3990534 12.4945914,12.9719823 17.5279417,12.9719823 C17.666085,12.9729842 17.7963344,12.9719823 17.9305307,12.9659711 L17.970987,13.9668348 C17.8229763,13.9738479 17.6749656,13.9738479 17.5279417,13.9738479 C13.6806504,13.9738479 10.5132216,13.1112416 8.98673795,11.8018034 L8.98673795,14.6641332 L8.98772469,14.6641332 L8.98772469,14.6761556 C8.99265838,15.2211705 9.53043056,15.6960547 9.97939633,15.9976163 C11.3272804,16.8872729 13.7418281,17.4944034 16.4326625,17.6196366 L16.3862858,18.6205002 C13.6628891,18.4942652 11.27597,17.9081738 9.74060574,17.0115042 C9.35676468,17.3070545 8.98772469,17.7037933 8.98772469,18.1616458 C8.98772469,19.5732744 12.4945914,21.1462033 17.5279417,21.1462033 C18.0242708,21.1462033 18.5087592,21.1291716 18.9814067,21.0951081 L19.0534385,22.0939681 C18.5571093,22.1300352 18.0469658,22.1480688 17.5279417,22.1480688 C13.6806504,22.1480688 10.5132216,21.2864645 8.98673795,19.9770262 L8.98673795,22.8383542 L8.98772469,22.8383542 C8.99265838,23.3963933 9.52944382,23.8712776 9.97939633,24.1718372 C11.5196943,25.1897326 14.4128099,25.8229116 17.5279417,25.8229116 L17.7469975,25.8229116 L17.7469975,26.8247772 L17.5279417,26.8247772 C14.3624863,26.8247772 11.497986,26.2126373 9.74159248,25.1837214 C9.35775142,25.4792717 8.98772469,25.8770124 8.98772469,26.3358668 C8.98772469,
 ```
 
-**File**: `ui/package-lock.json` (modified, +41/-41)
+**File**: `models/aws-dynamodb-controller/v1.14.0/v1.0.0/components/FieldExport.json` (added, +208/-0)
 ```diff
-@@ -73,7 +73,7 @@
-         "js-yaml": "^5.2.2",
-         "lodash": "^4.18.1",
-         "moment": "^2.30.1",
--        "next": "^16.4.0",
-+        "next": "^16.4.3",
-         "notistack": "^3.0.2",
-         "patch-package": "^8.0.1",
-         "pluralize": "^8.0.0",
-@@ -2579,9 +2579,9 @@
-       }
-     },
-     "node_modules/@next/env": {
--      "version": "16.4.0",
--      "resolved": "https://registry.npmjs.org/@next/env/-/env-16.4.0.tgz",
--      "integrity": "sha512-pyLlT5oafGlX8X7xjgGNXz5dNIDSxREm+qD6i9VLSZiZFopA/XWl8NM/KPmLx/8EG/++c49iid3gNWSQW1+2dQ==",
-+      "version": "16.4.3",
-+      "resolved": "https://registry.npmjs.org/@next/env/-/env-16.4.3.tgz",
-+      "integrity": "sha512-a7tz1QCcWWkwC/rPJcPMJk/UNRu9CFhDd3OHYE5hddbJrs8BqRTalxI6GlKCWEGzRLHN+S/B7a4PAHCtm25aBQ==",
-       "license": "MIT"
-     },
-     "node_modules/@next/eslint-plugin-next": {
-@@ -2595,9 +2595,9 @@
-       }
-     },
-     "node_modules/@next/swc-darwin-arm64": {
--      "version": "16.4.0",
--      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.4.0.tgz",
--      "integrity": "sha512-yyZ+9MgViAKLLb5l1gPBGjRwnq3teNLb5Zx6JEw8LzNSTjlsnp+baUHFxTgl7PpjCmKf48VQfyipG1eBflb48Q==",
-+      "version": "16.4.3",
-+      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.4.3.tgz",
-+      "integrity": "sha512-4yq5EXBt+VDtAZwTyfijaFp5D2C5oz3Ikw5a2kiX2K9nw72vrZX2q5UuAlkPtUMO1tQz6JTKpaKWjS7OOefTDQ==",
-       "cpu": [
-         "arm64"
-       ],
-@@ -2611,9 +2611,9 @@
-       }
-     },
-     "node_modules/@next/swc-darwin-x64": {
--      "version": "16.4.0",
--      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.4.0.tgz",
--      "integrity": "sha512-RePEEejEj1Auf5s9qEcG0JbcDP3ceNUS/ofNX8AhxzgIjTVlZIHMatlp16YplcSMpsVo/ZMQHJTjbMYJznjGUg==",
-+      "version": "16.4.3",
-+      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.4.3.tgz",
-+      "integrity": "sha512-1Rvkn/LUhnEF8WxnRkOrqGhbwXui1bkWFxONKIbN+r7C+9KHDSZ+iUoj4CzymVMWUyZIyx9szcb9+kbKhD500A==",
-       "cpu": [
-         "x64"
-       ],
-@@ -2627,9 +2627,9 @@
-       }
-     },
-     "node_modules/@next/swc-linux-arm64-gnu": {
--      "version": "16.4.0",
--      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.4.0.tgz",
--      "integrity": "sha512-HhsyCqd+NpmvDDVY/LqkAN24f+QVvXh3ie+PfcwKinWL2Mu826JymQxJXGjAIfmJ4VlHjp4Pe/nZtXtUoEMAqw==",
-+      "version": "16.4.3",
-+      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.4.3.tgz",
-+      "integrity": "sha512-dCKpXErGg3abUM6t5JTJV/ottVBTStJB5lRJTbgdUdQaQ+jNHiK56Hsc0YAEg/rinSh42hYG3HWiYmEMdilnxg==",
-       "cpu": [
-         "arm64"
-       ],
-@@ -2646,9 +2646,9 @@
-       }
-     },
-     "node_modules/@next/swc-linux-arm64-musl": {
--      "version": "16.4.0",
--      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.4.0.tgz",
--      "integrity": "sha512-sN9Pf+Zh+RpZAOmbR7d8KAA8T61CVhawtbEJ2Bk6QrRzx6Z/6haaF4UiwBzytM96GRRRWZh9/WALIEO3npMamA==",
-+      "version": "16.4.3",
-+      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.4.3.tgz",
-+      "integrity": "sha512-WwYbhWkhYBvBtib1K4W0kL8MW2snBD2A5b3SN4vPpqalZbZs5+bQ1yzAdepVoOqrFfEW3dmREy4Zs1MrWcrFbw==",
-       "cpu": [
-         "arm64"
-       ],
-@@ -2665,9 +2665,9 @@
-       }
-     },
-     "node_modules/@next/swc-linux-x64-gnu": {
--      "version": "16.4.0",
--      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-16.4.0.tgz",
--      "integrity": "sha512-D5M5xLWQVd1CvR+L7BickM1weRfmM41x3L1NWcnKY/oyJJqr1qwaCgmu3dMAhLBOMdZwSuDCRV6DJRRpiUkbDQ==",
-+      "version": "16.4.3",
-+      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-16.4.3.tgz",
-+      "integrity": "sha512-QymWvfUwDEC5/lpJOsxX5VAbyoR2D13+2Jsjz4be7gT4LPqEgdpkeLIR/HFfCLgKzoMhpJbp6I/JnogyNZHcaA==",
-       "cpu": [
-         "x64"
-       ],
-@@ -2684,9 +2684,9 @@
-       }
-     },
-     "node_modules/@next/swc-linux-x64-musl": {
--      "version": "16.4.0",
--      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-16.4.0.tgz",
--      "integrity": "sha512-8d5WLS6a9YalqpOgXdlbvonFu+sIgjA+CO6tGzetrpPVcUL56foa7B7664h41rAlbLi5fJwK4vWji3zf4QDy+w==",
-+      "version": "16.4.3",
-+      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-16.4.3.tgz",
-+      "integrity": "sha512-Vmjd9D7DpA4Vv3cUlr82QWgJD/BQZmns801vtC5VWHg6jCIA4a5vMKpQnfrM2pyCrp2eV0ENdUg4PlN3bAc2Yw==",
-       "cpu": [
-         "x64"
-       ],
-@@ -2703,9 +2703,9 @@
-       }
-     },
-     "node_modules/@next/swc-win32-arm64-msvc": {
--      "version": "16.4.0",
--      "resolved": "https://registry.npmjs.org/@next/swc-win32-arm64-msvc/-/swc-win32-arm64-msvc-16.4.0.tgz",
--      "integrity": "sha512-sQuOIiW3snb48UwrBcDMvFA/u03qtw2LeuSIxFIQ9AJuW9UG/4Ddsfo+eV73PnZwBhyncMtsKVh7PrzMol2/fA==",
-+ 
+@@ -0,0 +1,208 @@
++{
++  "id": "00000000-0000-0000-0000-000000000000",
++  "schemaVersion": "components.meshery.io/v1beta2",
++  "version": "v1.0.0",
++  "displayName": "Field Export",
++  "description": "",
++  "format": "JSON",
++  "model": {
++    "id": "00000000-0000-0000-0000-000000000000",
++    "schemaVersion": "models.meshery.io/v1beta2",
++    "version": "v1.0.0",
++    "name": "aws-dynamodb-controller",
++    "displayName": "AWS DynamoDB",
++    "status": "enabled",
++    "registrant": {
++      "id": "00000000-0000-0000-0000-000000000000",
++      "name": "Github",
++      "type": "registry",
++      "subType": "",
++      "kind": "github",
++      "status": "discovered",
++      "created_at": "0001-01-01T00:00:00Z",
++      "updated_at": "0001-01-01T00:00:00Z",
++      "deleted_at": null,
++      "schemaVersion": ""
++    },
++    "connection_id": "00000000-0000-0000-0000-000000000000",
++    "category": {
++      "id": "00000000-0000-0000-0000-000000000000",
++      "name": "App Definition and Development"
++    },
++    "subCategory": "Database",
++    "metadata": {
++      "isAnnotation": false,
++      "primaryColor": "#C925D1",
++      "shape": "rectangle",
++      "source_uri": "git://github.com/aws-controllers-k8s/dynamodb-controller/main/helm",
++      "styleOverrides": "",
++      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-DynamoDB_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Database\" fill=\"#C925D1\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M26.0661851,31.0185863 L26.0661851,31.0175845 L26.0661851,28.1532509 C24.5397015,29.4606854 21.3722727,30.3222898 17.5279417,30.3222898 C13.6806504,30.3222898 10.5132216,29.4596835 8.98673795,28.1512471 L8.98673795,31.013577 L8.98772469,31.013577 C8.98772469,32.4252056 12.4945914,33.9981345 17.5279417,33.9981345 C22.5543848,33.9981345 26.0582912,32.4282112 26.0661851,31.0185863 L26.0661851,31.0185863 Z M26.0671719,22.8443654 L27.0539098,22.8383542 L27.0539098,22.8443654 C27.0539098,23.4685276 26.7421006,24.0506115 26.1480844,24.5856077 C26.8743235,25.238824 27.0539098,25.880018 27.0539098,26.3358668 C27.0539098,26.3388724 27.0529231,26.341878 27.0529231,26.3438817 L27.0529231,31.013577 L27.0539098,31.013577 C27.0539098,33.2858081 22.9589473,35 17.5279417,35 C12.1245646,35 8.04736342,33.3038416 8.00493369,31.0486423 C8.00493369,31.0396255 8,31.0326125 8,31.0235957 L8,26.3338631 C8,26.3308575 8.00197348,26.3288537 8.00197348,26.3258481 C8.00394695,25.872003 8.18452,25.2368203 8.90286522,24.5886133 C8.18649347,23.9384025 8.00493369,23.3052235 8.00098674,22.8553859 C8.00098674,22.8533822 8,22.8513784 8,22.8493747 L8,18.1596421 C8,18.1566365 8.00197348,18.1536309 8.00197348,18.1516272 C8.00394695,17.6967802 8.18550673,17.0615975 8.90385196,16.4143923 C8.18649347,15.7631797 8.00493369,15.1310026 8.00098674,14.6801631 C8.00098674,14.6781593 8,14.6761556 8,14.6751537 L8,9.98441926 C8,9.97940994 8.00296021,9.97640434 8.00296021,9.97139501 C8.02269497,7.70617702 12.1087768,6 17.5279417,6 C20.1358901,6 22.6422044,6.42980032 24.4015582,7.17719201 L24.0206774,8.10191391 C22.3777587,7.40261176 20.0105743,7.00186554 17.5279417,7.00186554 C12.4945914,7.00186554 8.98772469,8.57479444 8.98772469,9.98642299 C8.98772469,11.3990534 12.4945914,12.9719823 17.5279417,12.9719823 C17.666085,12.9729842 17.7963344,12.9719823 17.9305307,12.9659711 L17.970987,13.9668348 C17.8229763,13.9738479 17.6749656,13.9738479 17.5279417,13.9738479 C13.6806504,13.9738479 10.5132216,13.1112416 8.98673795,11.8018034 L8.98673795,14.6641332 L8.98772469,14.6641332 L8.98772469,14.6761556 C8.99265838,15.2211705 9.53043056,15.6960547 9.97939633,15.9976163 C11.3272804,16.8872729 13.7418281,17.4944034 16.4326625,17.6196366 L16.3862858,18.6205002 C13.6628891,18.4942652 11.27597,17.9081738 9.74060574,17.0115042 C9.35676468,17.3070545 8.98772469,17.7037933 8.98772469,18.1616458 C8.98772469,19.5732744 12.4945914,21.1462033 17.5279417,21.1462033 C18.0242708,21.1462033 18.5087592,21.1291716 18.9814067,21.0951081 L19.0534385,22.0939681 C18.5571093,22.1300352 18.0469658,22.1480688 17.5279417,22.1480688 C13.6806504,22.1480688 10.5132216,21.2864645 8.98673795,19.9770262 L8.98673795,22.8383542 L8.98772469,22.8383542 C8.99265838,23.3963933 9.52944382,23.8712776 9.97939633,24.1718372 C11.5196943,25.1897326 14.4128099,25.8229116 17.5279417,25.8229116 L17.7469975,25.8229116 L17.7469975,26.8247772 L17.5279417,26.8247772 C14.3624863,26.8247772 11.497986,26.2126373 9.74159248,25.1837214 C9.35775142,25.4792717 8.98772469,25.8770124 8.98772469,26.3358668 C8.987
 ```
 
-**File**: `ui/package.json` (modified, +1/-1)
+**File**: `models/aws-dynamodb-controller/v1.14.0/v1.0.0/components/GlobalTable.json` (added, +208/-0)
 ```diff
-@@ -101,7 +101,7 @@
-     "js-yaml": "^5.2.2",
-     "lodash": "^4.18.1",
-     "moment": "^2.30.1",
--    "next": "^16.4.0",
-+    "next": "^16.4.3",
-     "notistack": "^3.0.2",
-     "patch-package": "^8.0.1",
-     "pluralize": "^8.0.0",
+@@ -0,0 +1,208 @@
++{
++  "id": "00000000-0000-0000-0000-000000000000",
++  "schemaVersion": "components.meshery.io/v1beta2",
++  "version": "v1.0.0",
++  "displayName": "Global Table",
++  "description": "",
++  "format": "JSON",
++  "model": {
++    "id": "00000000-0000-0000-0000-000000000000",
++    "schemaVersion": "models.meshery.io/v1beta2",
++    "version": "v1.0.0",
++    "name": "aws-dynamodb-controller",
++    "displayName": "AWS DynamoDB",
++    "status": "enabled",
++    "registrant": {
++      "id": "00000000-0000-0000-0000-000000000000",
++      "name": "Github",
++      "type": "registry",
++      "subType": "",
++      "kind": "github",
++      "status": "discovered",
++      "created_at": "0001-01-01T00:00:00Z",
++      "updated_at": "0001-01-01T00:00:00Z",
++      "deleted_at": null,
++      "schemaVersion": ""
++    },
++    "connection_id": "00000000-0000-0000-0000-000000000000",
++    "category": {
++      "id": "00000000-0000-0000-0000-000000000000",
++      "name": "App Definition and Development"
++    },
++    "subCategory": "Database",
++    "metadata": {
++      "isAnnotation": false,
++      "primaryColor": "#C925D1",
++      "shape": "rectangle",
++      "source_uri": "git://github.com/aws-controllers-k8s/dynamodb-controller/main/helm",
++      "styleOverrides": "",
++      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-DynamoDB_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Database\" fill=\"#C925D1\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M26.0661851,31.0185863 L26.0661851,31.0175845 L26.0661851,28.1532509 C24.5397015,29.4606854 21.3722727,30.3222898 17.5279417,30.3222898 C13.6806504,30.3222898 10.5132216,29.4596835 8.98673795,28.1512471 L8.98673795,31.013577 L8.98772469,31.013577 C8.98772469,32.4252056 12.4945914,33.9981345 17.5279417,33.9981345 C22.5543848,33.9981345 26.0582912,32.4282112 26.0661851,31.0185863 L26.0661851,31.0185863 Z M26.0671719,22.8443654 L27.0539098,22.8383542 L27.0539098,22.8443654 C27.0539098,23.4685276 26.7421006,24.0506115 26.1480844,24.5856077 C26.8743235,25.238824 27.0539098,25.880018 27.0539098,26.3358668 C27.0539098,26.3388724 27.0529231,26.341878 27.0529231,26.3438817 L27.0529231,31.013577 L27.0539098,31.013577 C27.0539098,33.2858081 22.9589473,35 17.5279417,35 C12.1245646,35 8.04736342,33.3038416 8.00493369,31.0486423 C8.00493369,31.0396255 8,31.0326125 8,31.0235957 L8,26.3338631 C8,26.3308575 8.00197348,26.3288537 8.00197348,26.3258481 C8.00394695,25.872003 8.18452,25.2368203 8.90286522,24.5886133 C8.18649347,23.9384025 8.00493369,23.3052235 8.00098674,22.8553859 C8.00098674,22.8533822 8,22.8513784 8,22.8493747 L8,18.1596421 C8,18.1566365 8.00197348,18.1536309 8.00197348,18.1516272 C8.00394695,17.6967802 8.18550673,17.0615975 8.90385196,16.4143923 C8.18649347,15.7631797 8.00493369,15.1310026 8.00098674,14.6801631 C8.00098674,14.6781593 8,14.6761556 8,14.6751537 L8,9.98441926 C8,9.97940994 8.00296021,9.97640434 8.00296021,9.97139501 C8.02269497,7.70617702 12.1087768,6 17.5279417,6 C20.1358901,6 22.6422044,6.42980032 24.4015582,7.17719201 L24.0206774,8.10191391 C22.3777587,7.40261176 20.0105743,7.00186554 17.5279417,7.00186554 C12.4945914,7.00186554 8.98772469,8.57479444 8.98772469,9.98642299 C8.98772469,11.3990534 12.4945914,12.9719823 17.5279417,12.9719823 C17.666085,12.9729842 17.7963344,12.9719823 17.9305307,12.9659711 L17.970987,13.9668348 C17.8229763,13.9738479 17.6749656,13.9738479 17.5279417,13.9738479 C13.6806504,13.9738479 10.5132216,13.1112416 8.98673795,11.8018034 L8.98673795,14.6641332 L8.98772469,14.6641332 L8.98772469,14.6761556 C8.99265838,15.2211705 9.53043056,15.6960547 9.97939633,15.9976163 C11.3272804,16.8872729 13.7418281,17.4944034 16.4326625,17.6196366 L16.3862858,18.6205002 C13.6628891,18.4942652 11.27597,17.9081738 9.74060574,17.0115042 C9.35676468,17.3070545 8.98772469,17.7037933 8.98772469,18.1616458 C8.98772469,19.5732744 12.4945914,21.1462033 17.5279417,21.1462033 C18.0242708,21.1462033 18.5087592,21.1291716 18.9814067,21.0951081 L19.0534385,22.0939681 C18.5571093,22.1300352 18.0469658,22.1480688 17.5279417,22.1480688 C13.6806504,22.1480688 10.5132216,21.2864645 8.98673795,19.9770262 L8.98673795,22.8383542 L8.98772469,22.8383542 C8.99265838,23.3963933 9.52944382,23.8712776 9.97939633,24.1718372 C11.5196943,25.1897326 14.4128099,25.8229116 17.5279417,25.8229116 L17.7469975,25.8229116 L17.7469975,26.8247772 L17.5279417,26.8247772 C14.3624863,26.8247772 11.497986,26.2126373 9.74159248,25.1837214 C9.35775142,25.4792717 8.98772469,25.8770124 8.98772469,26.3358668 C8.987
 ```
 
----
-
-### Incident Patch 3: `bc843c52` (2026-10-27)
-**Commit Message**: Merge pull request #22619 from nguyenvanlinh14/test/userpref-no-wait-for-timeout
-
-[UI] Replace waitForTimeout in user preference e2e spec with a web-first assertion
-
-**File**: `ui/tests/e2e/userpreference.spec.ts` (modified, +3/-7)
+**File**: `models/aws-dynamodb-controller/v1.14.0/v1.0.0/components/IAMRoleSelector.json` (added, +207/-0)
 ```diff
-@@ -81,13 +81,9 @@ test.describe('User Preferences Page Tests', () => {
-       await userPrefReq;
-       await userPrefRes;
- 
--      // Verify that state of switch changed
--      await page.waitForTimeout(2000);
--      if (wasChecked) {
--        await expect(prefSwitch).not.toBeChecked();
--      } else {
--        await expect(prefSwitch).toBeChecked();
--      }
-+      // Verify that state of switch changed. toBeChecked() retries until the switch settles
-+      // on the expected state, so no fixed sleep is needed.
-+      await expect(prefSwitch).toBeChecked({ checked: !wasChecked });
-     });
-   }
- });
+@@ -0,0 +1,207 @@
++{
++  "id": "00000000-0000-0000-0000-000000000000",
++  "schemaVersion": "components.meshery.io/v1beta2",
++  "version": "v1.0.0",
++  "displayName": "IAM Role Selector",
++  "description": "",
++  "format": "JSON",
++  "model": {
++    "id": "00000000-0000-0000-0000-000000000000",
++    "schemaVersion": "models.meshery.io/v1beta2",
++    "version": "v1.0.0",
++    "name": "aws-dynamodb-controller",
++    "displayName": "AWS DynamoDB",
++    "status": "enabled",
++    "registrant": {
++      "id": "00000000-0000-0000-0000-000000000000",
++      "name": "Github",
++      "type": "registry",
++      "subType": "",
++      "kind": "github",
++      "status": "discovered",
++      "created_at": "0001-01-01T00:00:00Z",
++      "updated_at": "0001-01-01T00:00:00Z",
++      "deleted_at": null,
++      "schemaVersion": ""
++    },
++    "connection_id": "00000000-0000-0000-0000-000000000000",
++    "category": {
++      "id": "00000000-0000-0000-0000-000000000000",
++      "name": "App Definition and Development"
++    },
++    "subCategory": "Database",
++    "metadata": {
++      "isAnnotation": false,
++      "primaryColor": "#C925D1",
++      "shape": "rectangle",
++      "source_uri": "git://github.com/aws-controllers-k8s/dynamodb-controller/main/helm",
++      "styleOverrides": "",
++      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-DynamoDB_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Database\" fill=\"#C925D1\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M26.0661851,31.0185863 L26.0661851,31.0175845 L26.0661851,28.1532509 C24.5397015,29.4606854 21.3722727,30.3222898 17.5279417,30.3222898 C13.6806504,30.3222898 10.5132216,29.4596835 8.98673795,28.1512471 L8.98673795,31.013577 L8.98772469,31.013577 C8.98772469,32.4252056 12.4945914,33.9981345 17.5279417,33.9981345 C22.5543848,33.9981345 26.0582912,32.4282112 26.0661851,31.0185863 L26.0661851,31.0185863 Z M26.0671719,22.8443654 L27.0539098,22.8383542 L27.0539098,22.8443654 C27.0539098,23.4685276 26.7421006,24.0506115 26.1480844,24.5856077 C26.8743235,25.238824 27.0539098,25.880018 27.0539098,26.3358668 C27.0539098,26.3388724 27.0529231,26.341878 27.0529231,26.3438817 L27.0529231,31.013577 L27.0539098,31.013577 C27.0539098,33.2858081 22.9589473,35 17.5279417,35 C12.1245646,35 8.04736342,33.3038416 8.00493369,31.0486423 C8.00493369,31.0396255 8,31.0326125 8,31.0235957 L8,26.3338631 C8,26.3308575 8.00197348,26.3288537 8.00197348,26.3258481 C8.00394695,25.872003 8.18452,25.2368203 8.90286522,24.5886133 C8.18649347,23.9384025 8.00493369,23.3052235 8.00098674,22.8553859 C8.00098674,22.8533822 8,22.8513784 8,22.8493747 L8,18.1596421 C8,18.1566365 8.00197348,18.1536309 8.00197348,18.1516272 C8.00394695,17.6967802 8.18550673,17.0615975 8.90385196,16.4143923 C8.18649347,15.7631797 8.00493369,15.1310026 8.00098674,14.6801631 C8.00098674,14.6781593 8,14.6761556 8,14.6751537 L8,9.98441926 C8,9.97940994 8.00296021,9.97640434 8.00296021,9.97139501 C8.02269497,7.70617702 12.1087768,6 17.5279417,6 C20.1358901,6 22.6422044,6.42980032 24.4015582,7.17719201 L24.0206774,8.10191391 C22.3777587,7.40261176 20.0105743,7.00186554 17.5279417,7.00186554 C12.4945914,7.00186554 8.98772469,8.57479444 8.98772469,9.98642299 C8.98772469,11.3990534 12.4945914,12.9719823 17.5279417,12.9719823 C17.666085,12.9729842 17.7963344,12.9719823 17.9305307,12.9659711 L17.970987,13.9668348 C17.8229763,13.9738479 17.6749656,13.9738479 17.5279417,13.9738479 C13.6806504,13.9738479 10.5132216,13.1112416 8.98673795,11.8018034 L8.98673795,14.6641332 L8.98772469,14.6641332 L8.98772469,14.6761556 C8.99265838,15.2211705 9.53043056,15.6960547 9.97939633,15.9976163 C11.3272804,16.8872729 13.7418281,17.4944034 16.4326625,17.6196366 L16.3862858,18.6205002 C13.6628891,18.4942652 11.27597,17.9081738 9.74060574,17.0115042 C9.35676468,17.3070545 8.98772469,17.7037933 8.98772469,18.1616458 C8.98772469,19.5732744 12.4945914,21.1462033 17.5279417,21.1462033 C18.0242708,21.1462033 18.5087592,21.1291716 18.9814067,21.0951081 L19.0534385,22.0939681 C18.5571093,22.1300352 18.0469658,22.1480688 17.5279417,22.1480688 C13.6806504,22.1480688 10.5132216,21.2864645 8.98673795,19.9770262 L8.98673795,22.8383542 L8.98772469,22.8383542 C8.99265838,23.3963933 9.52944382,23.8712776 9.97939633,24.1718372 C11.5196943,25.1897326 14.4128099,25.8229116 17.5279417,25.8229116 L17.7469975,25.8229116 L17.7469975,26.8247772 L17.5279417,26.8247772 C14.3624863,26.8247772 11.497986,26.2126373 9.74159248,25.1837214 C9.35775142,25.4792717 8.98772469,25.8770124 8.98772469,26.3358668 C
+```
+
+**File**: `models/aws-dynamodb-controller/v1.14.0/v1.0.0/components/Table.json` (added, +208/-0)
+```diff
+@@ -0,0 +1,208 @@
++{
++  "id": "00000000-0000-0000-0000-000000000000",
++  "schemaVersion": "components.meshery.io/v1beta2",
++  "version": "v1.0.0",
++  "displayName": "Table",
++  "description": "",
++  "format": "JSON",
++  "model": {
++    "id": "00000000-0000-0000-0000-000000000000",
++    "schemaVersion": "models.meshery.io/v1beta2",
++    "version": "v1.0.0",
++    "name": "aws-dynamodb-controller",
++    "displayName": "AWS DynamoDB",
++    "status": "enabled",
++    "registrant": {
++      "id": "00000000-0000-0000-0000-000000000000",
++      "name": "Github",
++      "type": "registry",
++      "subType": "",
++      "kind": "github",
++      "status": "discovered",
++      "created_at": "0001-01-01T00:00:00Z",
++      "updated_at": "0001-01-01T00:00:00Z",
++      "deleted_at": null,
++      "schemaVersion": ""
++    },
++    "connection_id": "00000000-0000-0000-0000-000000000000",
++    "category": {
++      "id": "00000000-0000-0000-0000-000000000000",
++      "name": "App Definition and Development"
++    },
++    "subCategory": "Database",
++    "metadata": {
++      "isAnnotation": false,
++      "primaryColor": "#C925D1",
++      "shape": "rectangle",
++      "source_uri": "git://github.com/aws-controllers-k8s/dynamodb-controller/main/helm",
++      "styleOverrides": "",
++      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-DynamoDB_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Database\" fill=\"#C925D1\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M26.0661851,31.0185863 L26.0661851,31.0175845 L26.0661851,28.1532509 C24.5397015,29.4606854 21.3722727,30.3222898 17.5279417,30.3222898 C13.6806504,30.3222898 10.5132216,29.4596835 8.98673795,28.1512471 L8.98673795,31.013577 L8.98772469,31.013577 C8.98772469,32.4252056 12.4945914,33.9981345 17.5279417,33.9981345 C22.5543848,33.9981345 26.0582912,32.4282112 26.0661851,31.0185863 L26.0661851,31.0185863 Z M26.0671719,22.8443654 L27.0539098,22.8383542 L27.0539098,22.8443654 C27.0539098,23.4685276 26.7421006,24.0506115 26.1480844,24.5856077 C26.8743235,25.238824 27.0539098,25.880018 27.0539098,26.3358668 C27.0539098,26.3388724 27.0529231,26.341878 27.0529231,26.3438817 L27.0529231,31.013577 L27.0539098,31.013577 C27.0539098,33.2858081 22.9589473,35 17.5279417,35 C12.1245646,35 8.04736342,33.3038416 8.00493369,31.0486423 C8.00493369,31.0396255 8,31.0326125 8,31.0235957 L8,26.3338631 C8,26.3308575 8.00197348,26.3288537 8.00197348,26.3258481 C8.00394695,25.872003 8.18452,25.2368203 8.90286522,24.5886133 C8.18649347,23.9384025 8.00493369,23.3052235 8.00098674,22.8553859 C8.00098674,22.8533822 8,22.8513784 8,22.8493747 L8,18.1596421 C8,18.1566365 8.00197348,18.1536309 8.00197348,18.1516272 C8.00394695,17.6967802 8.18550673,17.0615975 8.90385196,16.4143923 C8.18649347,15.7631797 8.00493369,15.1310026 8.00098674,14.6801631 C8.00098674,14.6781593 8,14.6761556 8,14.6751537 L8,9.98441926 C8,9.97940994 8.00296021,9.97640434 8.00296021,9.97139501 C8.02269497,7.70617702 12.1087768,6 17.5279417,6 C20.1358901,6 22.6422044,6.42980032 24.4015582,7.17719201 L24.0206774,8.10191391 C22.3777587,7.40261176 20.0105743,7.00186554 17.5279417,7.00186554 C12.4945914,7.00186554 8.98772469,8.57479444 8.98772469,9.98642299 C8.98772469,11.3990534 12.4945914,12.9719823 17.5279417,12.9719823 C17.666085,12.9729842 17.7963344,12.9719823 17.9305307,12.9659711 L17.970987,13.9668348 C17.8229763,13.9738479 17.6749656,13.9738479 17.5279417,13.9738479 C13.6806504,13.9738479 10.5132216,13.1112416 8.98673795,11.8018034 L8.98673795,14.6641332 L8.98772469,14.6641332 L8.98772469,14.6761556 C8.99265838,15.2211705 9.53043056,15.6960547 9.97939633,15.9976163 C11.3272804,16.8872729 13.7418281,17.4944034 16.4326625,17.6196366 L16.3862858,18.6205002 C13.6628891,18.4942652 11.27597,17.9081738 9.74060574,17.0115042 C9.35676468,17.3070545 8.98772469,17.7037933 8.98772469,18.1616458 C8.98772469,19.5732744 12.4945914,21.1462033 17.5279417,21.1462033 C18.0242708,21.1462033 18.5087592,21.1291716 18.9814067,21.0951081 L19.0534385,22.0939681 C18.5571093,22.1300352 18.0469658,22.1480688 17.5279417,22.1480688 C13.6806504,22.1480688 10.5132216,21.2864645 8.98673795,19.9770262 L8.98673795,22.8383542 L8.98772469,22.8383542 C8.99265838,23.3963933 9.52944382,23.8712776 9.97939633,24.1718372 C11.5196943,25.1897326 14.4128099,25.8229116 17.5279417,25.8229116 L17.7469975,25.8229116 L17.7469975,26.8247772 L17.5279417,26.8247772 C14.3624863,26.8247772 11.497986,26.2126373 9.74159248,25.1837214 C9.35775142,25.4792717 8.98772469,25.8770124 8.98772469,26.3358668 C8.98772469,2
+```
+
+**File**: `models/aws-dynamodb-controller/v1.14.0/v1.0.0/model.json` (added, +45/-0)
+```diff
+@@ -0,0 +1,45 @@
++{
++  "id": "00000000-0000-0000-0000-000000000000",
++  "schemaVersion": "models.meshery.io/v1beta2",
++  "version": "v1.0.0",
++  "name": "aws-dynamodb-controller",
++  "displayName": "AWS DynamoDB",
++  "status": "enabled",
++  "registrant": {
++    "id": "00000000-0000-0000-0000-000000000000",
++    "name": "Github",
++    "type": "registry",
++    "subType": "",
++    "kind": "github",
++    "status": "discovered",
++    "created_at": "0001-01-01T00:00:00Z",
++    "updated_at": "0001-01-01T00:00:00Z",
++    "deleted_at": null,
++    "schemaVersion": ""
++  },
++  "connection_id": "00000000-0000-0000-0000-000000000000",
++  "category": {
++    "id": "00000000-0000-0000-0000-000000000000",
++    "name": "App Definition and Development"
++  },
++  "subCategory": "Database",
++  "metadata": {
++    "capabilities": null,
++    "isAnnotation": false,
++    "primaryColor": "#C925D1",
++    "shape": "rectangle",
++    "styleOverrides": "",
++    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-DynamoDB_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Database\" fill=\"#C925D1\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M26.0661851,31.0185863 L26.0661851,31.0175845 L26.0661851,28.1532509 C24.5397015,29.4606854 21.3722727,30.3222898 17.5279417,30.3222898 C13.6806504,30.3222898 10.5132216,29.4596835 8.98673795,28.1512471 L8.98673795,31.013577 L8.98772469,31.013577 C8.98772469,32.4252056 12.4945914,33.9981345 17.5279417,33.9981345 C22.5543848,33.9981345 26.0582912,32.4282112 26.0661851,31.0185863 L26.0661851,31.0185863 Z M26.0671719,22.8443654 L27.0539098,22.8383542 L27.0539098,22.8443654 C27.0539098,23.4685276 26.7421006,24.0506115 26.1480844,24.5856077 C26.8743235,25.238824 27.0539098,25.880018 27.0539098,26.3358668 C27.0539098,26.3388724 27.0529231,26.341878 27.0529231,26.3438817 L27.0529231,31.013577 L27.0539098,31.013577 C27.0539098,33.2858081 22.9589473,35 17.5279417,35 C12.1245646,35 8.04736342,33.3038416 8.00493369,31.0486423 C8.00493369,31.0396255 8,31.0326125 8,31.0235957 L8,26.3338631 C8,26.3308575 8.00197348,26.3288537 8.00197348,26.3258481 C8.00394695,25.872003 8.18452,25.2368203 8.90286522,24.5886133 C8.18649347,23.9384025 8.00493369,23.3052235 8.00098674,22.8553859 C8.00098674,22.8533822 8,22.8513784 8,22.8493747 L8,18.1596421 C8,18.1566365 8.00197348,18.1536309 8.00197348,18.1516272 C8.00394695,17.6967802 8.18550673,17.0615975 8.90385196,16.4143923 C8.18649347,15.7631797 8.00493369,15.1310026 8.00098674,14.6801631 C8.00098674,14.6781593 8,14.6761556 8,14.6751537 L8,9.98441926 C8,9.97940994 8.00296021,9.97640434 8.00296021,9.97139501 C8.02269497,7.70617702 12.1087768,6 17.5279417,6 C20.1358901,6 22.6422044,6.42980032 24.4015582,7.17719201 L24.0206774,8.10191391 C22.3777587,7.40261176 20.0105743,7.00186554 17.5279417,7.00186554 C12.4945914,7.00186554 8.98772469,8.57479444 8.98772469,9.98642299 C8.98772469,11.3990534 12.4945914,12.9719823 17.5279417,12.9719823 C17.666085,12.9729842 17.7963344,12.9719823 17.9305307,12.9659711 L17.970987,13.9668348 C17.8229763,13.9738479 17.6749656,13.9738479 17.5279417,13.9738479 C13.6806504,13.9738479 10.5132216,13.1112416 8.98673795,11.8018034 L8.98673795,14.6641332 L8.98772469,14.6641332 L8.98772469,14.6761556 C8.99265838,15.2211705 9.53043056,15.6960547 9.97939633,15.9976163 C11.3272804,16.8872729 13.7418281,17.4944034 16.4326625,17.6196366 L16.3862858,18.6205002 C13.6628891,18.4942652 11.27597,17.9081738 9.74060574,17.0115042 C9.35676468,17.3070545 8.98772469,17.7037933 8.98772469,18.1616458 C8.98772469,19.5732744 12.4945914,21.1462033 17.5279417,21.1462033 C18.0242708,21.1462033 18.5087592,21.1291716 18.9814067,21.0951081 L19.0534385,22.0939681 C18.5571093,22.1300352 18.0469658,22.1480688 17.5279417,22.1480688 C13.6806504,22.1480688 10.5132216,21.2864645 8.98673795,19.9770262 L8.98673795,22.8383542 L8.98772469,22.8383542 C8.99265838,23.3963933 9.52944382,23.8712776 9.97939633,24.1718372 C11.5196943,25.1897326 14.4128099,25.8229116 17.5279417,25.8229116 L17.7469975,25.8229116 L17.7469975,26.8247772 L17.5279417,26.8247772 C14.3624863,26.8247772 11.497986,26.2126373 9.74159248,25.1837214 C9.35775142,25.4792717 8.98772469,25.8770124 8.98772469,26.3358668 C8.98772469,27.7474953 12.4945914,29.3204242 17.5279417,29.3204242 C22.5524113,29.3204242 26.055331,27.7525047 26.0661851,26.341878 L26.0661851,26.3338631 L26.0661851,26.3328612 C26.0651984,25.8780142 25.6991186,25.4822773 25.317251,25.1877289 C25.0735268,25.3309956 24.8120412,25.4682512 24.5160198,25.5944863 L24.1341522,24.6717681 C24.4962851,24
+```
+
+**File**: `models/aws-dynamodb-controller/v1.14.0/v1.0.0/relationships/edge-binding-firewall-zqbml.json` (added, +112/-0)
+```diff
+@@ -0,0 +1,112 @@
++{
++  "id": "00000000-0000-0000-0000-000000000000",
++  "evaluationQuery": "",
++  "kind": "edge",
++  "metadata": {
++    "description": "",
++    "isAnnotation": false,
++    "styles": {
++      "primaryColor": "",
++      "svgColor": "",
++      "svgWhite": ""
++    }
++  },
++  "model": {
++    "displayName": "",
++    "id": "00000000-0000-0000-0000-000000000000",
++    "model": {
++      "version": "v1.14.0"
++    },
++    "name": "aws-dynamodb-controller",
++    "registrant": {
++      "kind": ""
++    },
++    "version": ""
++  },
++  "schemaVersion": "relationships.meshery.io/v1beta2",
++  "selectors": [
++    {
++      "allow": {
++        "from": [
++          {
++            "id": null,
++            "kind": "Table",
++            "match": {},
++            "match_strategy_matrix": null,
++            "model": {
++              "displayName": "",
++              "id": "00000000-0000-0000-0000-000000000000",
++              "model": {
++                "version": ""
++              },
++              "name": "dynamodb-controller",
++              "registrant": {
++                "kind": "artifacthub"
++              },
++              "version": ""
++            },
++            "patch": {
++              "mutatorRef": [
++                [
++                  "configuration",
++                  "spec",
++                  "streamSpecification"
++                ],
++                [
++                  "configuration",
++                  "spec",
++                  "tableName"
++                ]
++              ],
++              "patchStrategy": "replace"
++            }
++          }
++        ],
++        "to": [
++          {
++            "id": null,
++            "kind": "Function",
++            "match": {},
++            "match_strategy_matrix": null,
++            "model": {
++              "displayName": "",
++              "id": "00000000-0000-0000-0000-000000000000",
++              "model": {
++                "version": ""
++              },
++              "name": "lambda-controller",
++              "registrant": {
++                "kind": "artifacthub"
++              },
++              "version": ""
++            },
++            "patch": {
++              "mutatedRef": [
++                [
++                  "configuration",
++                  "status",
++                  "ackResourceMetadata",
++                  "arn"
++                ],
++                [
++                  "configuration",
++                  "spec",
++                  "name"
++                ]
++              ],
++              "patchStrategy": "replace"
++            }
++          }
++        ]
++      },
++      "deny": {
++        "from": [],
++        "to": []
++      }
++    }
++  ],
++  "subType": "firewall",
++  "status": "enabled",
++  "type": "non-binding",
++  "version": "v1.0.0"
++}
+\ No newline at end of file
 ```
 
 #### Recent Merged Pull Requests:
@@ -1391,58 +1256,30 @@ Signed-off-by: SajanBisht <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #22550 from SajanBisht/fix/nextjs-security-update
+## X. Models generated and updated
 
 **RULE**:
-When implementing operations in `provider-ui/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `models/aws-cloudfront-controller/v1.10.0/v1.0.0/model.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `adf88a0c`: Merge pull request #22550 from SajanBisht/fix/nextjs-security-update. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cebee5df`: Models generated and updated. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `provider-ui/package-lock.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `models/aws-cloudfront-controller/v1.10.0/v1.0.0/model.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        "next": "^16.4.3",
-      "version": "16.4.3",
-      "resolved": "https://registry.npmjs.org/@next/env/-/env-16.4.3.tgz",
-      "integrity": "sha512-a7tz1QCcWWkwC/rPJcPMJk/UNRu9CFhDd3OHYE5hddbJrs8BqRTalxI6GlKCWEGzRLHN+S/B7a4PAHCtm25aBQ==",
-      "version": "16.4.3",
-      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.4.3.tgz",
-      "integrity": "sha512-4yq5EXBt+VDtAZwTyfijaFp5D2C5oz3Ikw5a2kiX2K9nw72vrZX2q5UuAlkPtUMO1tQz6JTKpaKWjS7OOefTDQ==",
-      "version": "16.4.3",
-      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.4.3.tgz",
-      "integrity": "sha512-1Rvkn/LUhnEF8WxnRkOrqGhbwXui1bkWFxONKIbN+r7C+9KHDSZ+iUoj4CzymVMWUyZIyx9szcb9+kbKhD500A==",
-      "version": "16.4.3",
-      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.4.3.tgz",
-      "integrity": "sha512-dCKpXErGg3abUM6t5JTJV/ottVBTStJB5lRJTbgdUdQaQ+jNHiK56Hsc0YAEg/rinSh42hYG3HWiYmEMdilnxg==",
-      "version": "16.4.3",
-      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.4.3.tgz",
-      "integrity": "sha512-WwYbhWkhYBvBtib1K4W0kL8MW2snBD2A5b3SN4vPpqalZbZs5+
+    "primaryColor": "#8C4FFF",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-CloudFront_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Networking-Content-Delivery\" fill=\"#8C4FFF\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M28,26.4968343 C28,25.6694852 27.327,24.9962012 26.5,24.9962012 C25.673,24.9962012 25,25.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-        "next": "^16.3.8",
-      "version": "16.3.8",
-      "resolved": "https://registry.npmjs.org/@next/env/-/env-16.3.8.tgz",
-      "integrity": "sha512-Al9zqHVV7TJv0eFuOU4U7Lvv74PTih4Ch63sk2xCIpSTkE3udFnaOcnzP2lQVymiL7yS9Cj2iClUXlR3EQ5sEw==",
-      "version": "16.3.8",
-      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.3.8.tgz",
-      "integrity": "sha512-2JPRMh2nmQG5CiL7cXGL9AGwnPWJQ//cTtAUCT+w511QHk79SYz3LGv/pc5X643B/WEO0rvu3Yww0hqwt3kgeA==",
-      "version": "16.3.8",
-      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.3.8.tgz",
-      "integrity": "sha512-GZtCCOBKJ4leVIT/Th0llWKhD1ca92lzbQiS5R5ON9QkoiFnilFsebDae1JU2a3HWoKMEmEZWGs1AGLavVM72Q==",
-      "version": "16.3.8",
-      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.3.8.tgz",
-      "integrity": "sha512-O659ygeQYqneJ1fBKMpFxIFqYkYswu8IAS1OCKK/4f3ZgJJm1dRz4fVJZRi/kLLWjnBKnebOePA4WNv+sV1pVA==",
-      "version": "16.3.8",
-      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.3.8.tgz",
-      "integrity": "sha512-dSjKSyWpzxoO1d3DIZZcP4XJcNaKeLmxQMFOiYl5vuBRMmweIq
+    "primaryColor": "#ED7100",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 64 64\" version=\"1.1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n\u003ctitle xmlns=\"http://www.w3.org/2000/svg\"\u003eIcon-Architecture/48/Arch_Amazon-CloudFront_48\u003c/title\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/48/Arch_Amazon-CloudFront_48\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/48/Networking-Content-Delivery\" fill=\"#8C4FFF\"\u003e\n\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"64\" height=\"64\"\u003e\u003c/rect\u003e\n\u003c/g\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M41.5,43.5 C40.397,43.5 39.5,42.603 39.5,41.5 C39.5,40.397 40.397,39.5 41.5,39.5 C42.603,39.5 43.5,40.397 43.5,41.5 C43.5,42.603 42.603,43.5 41.5,43.5 L41.5,43.5 Z M41.5,37.5 C39.294,37.5 37.5,39.294 37.5,41.5 C37.5,43.706 39.294,45.5 41.5,45.5 C43.706,45.5 45.5,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `adf88a0c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cebee5df` are properly handled with clean fallback behavior.

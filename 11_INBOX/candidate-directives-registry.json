@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T14:22:26.409Z",
+  "last_updated": "2026-10-28T15:22:48.232Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3203,6 +3203,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-embassy-rs-embassy"
+    },
+    {
+      "id": "CD-K2EG",
+      "directive_title": "cuda-oxide): 7-stage SMEM pipeline and wave-tail tile balancing in gemm_sol_fina",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "NVIDIA/cuda-rust",
+      "source_commit": "a4a939a9",
+      "date_staged": "2026-10-28",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-nvidia-cuda-rust"
     }
   ]
 }

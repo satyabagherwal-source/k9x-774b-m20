@@ -5816,3 +5816,7 @@
 | `CYCLE-20261028-3755` | `2026-10-28T15:09:41.225Z` | `meta-llama/Llama-2-7b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md` | Yes (`005d0f91...`) |
 | `CYCLE-20261028-C3O1` | `2026-10-28T15:16:36.625Z` | `crossplane/crossplane` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2030` | Yes (`a92fe8c3...`) |
 | `CYCLE-20261028-C5BN` | `2026-10-28T15:16:38.771Z` | `deepseek-ai/DeepSeek-V3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5322, Rule 5323, Rule 5324` | Yes (`448f254f...`) |
+| `CYCLE-20261028-K0QG` | `2026-10-28T15:22:46.072Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | Yes (`1b7a1454...`) |
+| `CYCLE-20261028-K2E7` | `2026-10-28T15:22:48.223Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md` | Yes (`6827f340...`) |
+| `CYCLE-20261028-K8KL` | `2026-10-28T15:22:56.229Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5325` | Yes (`850dec4b...`) |
+| `CYCLE-20261028-KDR3` | `2026-10-28T15:23:02.943Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5326` | Yes (`4707d3ed...`) |

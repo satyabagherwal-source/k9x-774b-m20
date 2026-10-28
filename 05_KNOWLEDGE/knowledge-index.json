@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T15:16:38.708Z",
+  "last_updated": "2026-10-28T15:23:02.904Z",
   "total_verified_learnings": 1157,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8402,8 +8402,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "333cb672",
-      "content_hash": "5fcf496a90878e15b7a690c1c48327da5f5c132c6824baa1235f32e151f0658f",
+      "source_version": "74088ac3",
+      "content_hash": "4707d3ed96ad179955a89e15acb4958a1eda9dee0598ee3766618fd8ef533a59",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -8666,6 +8666,11 @@
           "number": 5321,
           "title": "docs(viz gallery): make the WPRDC 2-1-1 and Boston 311 Data Schematics live (#49",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5326,
+          "title": "docs(viz gallery): offer the qsv-clientd tray in the live how-tos (#4954)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8673,7 +8678,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T14:56:45.022Z",
+      "verified_at": "2026-10-28T15:23:02.895Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -18278,7 +18283,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/baidu/Unlimited-OCR",
       "source_version": "hf-baidu-unlimited-ocr",
-      "content_hash": "dc847eb4210547a18775ca5e702fab2e3170686087e0db2ff447d7c1a1e78c74",
+      "content_hash": "1b7a14547cc2956ffa2211641936f856825b952fd78010b1814e0d16fef09b70",
       "dossier_path": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md",
       "promoted_rules": [],
@@ -18299,7 +18304,7 @@
         "learn-huggingface-hf-baidu-unlimited-ocr-mv3x7ph4",
         "learn-huggingface-hf-baidu-unlimited-ocr-mv4bx9rt"
       ],
-      "verified_at": "2026-10-25T21:15:23.954Z",
+      "verified_at": "2026-10-28T15:22:46.008Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36750,8 +36755,8 @@
       "slug": "meshery-meshery",
       "platform": "github",
       "source_url": "https://github.com/meshery/meshery",
-      "source_version": "bc843c52",
-      "content_hash": "fec04798d122c275ec7c935a0ab29c3292c73d467e8fad2093c73e8c6b742e9e",
+      "source_version": "87db0f3b",
+      "content_hash": "850dec4bddce7b6cfed5b9697fd102bb314e88b1ec3222652c02941faf2fba85",
       "dossier_path": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "promoted_rules": [
@@ -36794,6 +36799,11 @@
           "number": 4891,
           "title": "Merge pull request #22550 from SajanBisht/fix/nextjs-security-update",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5325,
+          "title": "Models generated and updated",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36801,7 +36811,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T15:39:42.245Z",
+      "verified_at": "2026-10-28T15:22:56.186Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40618,8 +40628,8 @@
       "slug": "nvidia-cuda-rust",
       "platform": "github",
       "source_url": "https://github.com/NVIDIA/cuda-rust",
-      "source_version": "f8563500",
-      "content_hash": "bcf0c4b958194bee921d0949b2428a0b605f1c78156d3afd239b66741d82955e",
+      "source_version": "a4a939a9",
+      "content_hash": "6827f340668693dee5bcafa2cf33bde34c166aa1920eab97ac6643fcf5efcbe7",
       "dossier_path": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "promoted_rules": [
@@ -40674,7 +40684,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:14:13.850Z",
+      "verified_at": "2026-10-28T15:22:48.168Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -144693,6 +144703,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T15:16:38.695Z"
+    },
+    "rule-5325": {
+      "learning_id": "rule-5325",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5325,
+      "title": "Models generated and updated",
+      "source_url": "https://github.com/meshery/meshery",
+      "source_version": "87db0f3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T15:22:56.186Z"
+    },
+    "rule-5326": {
+      "learning_id": "rule-5326",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5326,
+      "title": "docs(viz gallery): offer the qsv-clientd tray in the live how-tos (#4954)",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "74088ac3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T15:23:02.895Z"
     }
   },
   "aliases": {

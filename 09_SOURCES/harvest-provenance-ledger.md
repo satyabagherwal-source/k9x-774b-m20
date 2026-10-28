@@ -5825,3 +5825,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-meta-llama-llama-2-7b` | `https://huggingface.co/meta-llama/Llama-2-7b` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-28T15:09:41.228Z |
 | `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `21e97313` | Multi-dimensional audit evidence | 2026-10-28T15:16:36.628Z |
 | `learn-huggingface-deepseek-ai-deepseek-v3` | `https://huggingface.co/deepseek-ai/DeepSeek-V3` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-28T15:16:38.774Z |
+| `learn-huggingface-baidu-unlimited-ocr` | `https://huggingface.co/baidu/Unlimited-OCR` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-10-28T15:22:46.075Z |
+| `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `a4a939a9` | Multi-dimensional audit evidence | 2026-10-28T15:22:48.226Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `87db0f3b` | Multi-dimensional audit evidence | 2026-10-28T15:22:56.232Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `74088ac3` | Multi-dimensional audit evidence | 2026-10-28T15:23:02.945Z |

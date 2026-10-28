@@ -1005,8 +1005,8 @@
     "sourceUrl": "https://huggingface.co/baidu/Unlimited-OCR",
     "sourceVersion": "hf-baidu-unlimited-ocr",
     "license": "Open-Source",
-    "contentHash": "dc847eb4210547a18775ca5e702fab2e3170686087e0db2ff447d7c1a1e78c74",
-    "lastHarvestedAt": "2026-10-25T21:15:24.022Z",
+    "contentHash": "1b7a14547cc2956ffa2211641936f856825b952fd78010b1814e0d16fef09b70",
+    "lastHarvestedAt": "2026-10-28T15:22:46.075Z",
     "learningId": "learn-huggingface-baidu-unlimited-ocr"
   },
   "hf-aleph-alpha-kolibri-1": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "333cb672",
+    "sourceVersion": "74088ac3",
     "license": "NOASSERTION",
-    "contentHash": "5fcf496a90878e15b7a690c1c48327da5f5c132c6824baa1235f32e151f0658f",
-    "lastHarvestedAt": "2026-10-28T14:56:45.108Z",
+    "contentHash": "4707d3ed96ad179955a89e15acb4958a1eda9dee0598ee3766618fd8ef533a59",
+    "lastHarvestedAt": "2026-10-28T15:23:02.945Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -5003,10 +5003,10 @@
     "repository": "meshery/meshery",
     "platform": "github",
     "sourceUrl": "https://github.com/meshery/meshery",
-    "sourceVersion": "bc843c52",
+    "sourceVersion": "87db0f3b",
     "license": "Apache-2.0",
-    "contentHash": "fec04798d122c275ec7c935a0ab29c3292c73d467e8fad2093c73e8c6b742e9e",
-    "lastHarvestedAt": "2026-10-27T15:39:42.320Z",
+    "contentHash": "850dec4bddce7b6cfed5b9697fd102bb314e88b1ec3222652c02941faf2fba85",
+    "lastHarvestedAt": "2026-10-28T15:22:56.232Z",
     "learningId": "learn-github-meshery-meshery"
   },
   "arangodb-arangodb": {
@@ -5773,10 +5773,10 @@
     "repository": "NVIDIA/cuda-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/NVIDIA/cuda-rust",
-    "sourceVersion": "f8563500",
+    "sourceVersion": "a4a939a9",
     "license": "Apache-2.0",
-    "contentHash": "bcf0c4b958194bee921d0949b2428a0b605f1c78156d3afd239b66741d82955e",
-    "lastHarvestedAt": "2026-10-27T13:14:13.921Z",
+    "contentHash": "6827f340668693dee5bcafa2cf33bde34c166aa1920eab97ac6643fcf5efcbe7",
+    "lastHarvestedAt": "2026-10-28T15:22:48.226Z",
     "learningId": "learn-github-nvidia-cuda-rust"
   },
   "typestack-routing-controllers": {

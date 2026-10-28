@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T15:16:38.783Z",
+  "last_updated": "2026-10-28T15:23:02.951Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1325,14 +1325,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baidu-unlimited-ocr",
-      "content_hash": "dc847eb4210547a18775ca5e702fab2e3170686087e0db2ff447d7c1a1e78c74",
-      "verified_at": "2026-10-25T21:15:24.030Z",
+      "content_hash": "1b7a14547cc2956ffa2211641936f856825b952fd78010b1814e0d16fef09b70",
+      "verified_at": "2026-10-28T15:22:46.080Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T21:15:24.030Z"
+      "last_updated": "2026-10-28T15:22:46.080Z"
     },
     "Aleph-Alpha/Kolibri-1": {
       "repository": "Aleph-Alpha/Kolibri-1",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "5fcf496a90878e15b7a690c1c48327da5f5c132c6824baa1235f32e151f0658f",
-      "verified_at": "2026-10-28T14:56:45.118Z",
+      "content_hash": "4707d3ed96ad179955a89e15acb4958a1eda9dee0598ee3766618fd8ef533a59",
+      "verified_at": "2026-10-28T15:23:02.951Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T14:56:45.118Z"
+      "last_updated": "2026-10-28T15:23:02.951Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -7626,14 +7626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meshery-meshery",
-      "content_hash": "fec04798d122c275ec7c935a0ab29c3292c73d467e8fad2093c73e8c6b742e9e",
-      "verified_at": "2026-10-27T15:39:42.329Z",
+      "content_hash": "850dec4bddce7b6cfed5b9697fd102bb314e88b1ec3222652c02941faf2fba85",
+      "verified_at": "2026-10-28T15:22:56.238Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T15:39:42.329Z"
+      "last_updated": "2026-10-28T15:22:56.238Z"
     },
     "arangodb/arangodb": {
       "repository": "arangodb/arangodb",
@@ -8781,14 +8781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nvidia-cuda-rust",
-      "content_hash": "bcf0c4b958194bee921d0949b2428a0b605f1c78156d3afd239b66741d82955e",
-      "verified_at": "2026-10-27T13:14:13.929Z",
+      "content_hash": "6827f340668693dee5bcafa2cf33bde34c166aa1920eab97ac6643fcf5efcbe7",
+      "verified_at": "2026-10-28T15:22:48.235Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:14:13.929Z"
+      "last_updated": "2026-10-28T15:22:48.235Z"
     },
     "typestack/routing-controllers": {
       "repository": "typestack/routing-controllers",
