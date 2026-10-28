@@ -115,8 +115,8 @@
     "sourceUrl": "https://huggingface.co/convaiinnovations/laya",
     "sourceVersion": "hf-convaiinnovations-laya",
     "license": "Open-Source",
-    "contentHash": "7ffbefa863f0fe765cf7903e1999e25f72946360afeee1f8c6f2b177f8df4270",
-    "lastHarvestedAt": "2026-10-28T02:13:18.409Z",
+    "contentHash": "e702af5da38c78e6fabb31508ecda255a175c6c1e118a2e12380f8b748fe5907",
+    "lastHarvestedAt": "2026-10-28T02:48:09.850Z",
     "learningId": "learn-huggingface-convaiinnovations-laya"
   },
   "hf-edge0-audio8-asr-infinite": {
@@ -6473,10 +6473,10 @@
     "repository": "Mintplex-Labs/anything-llm",
     "platform": "github",
     "sourceUrl": "https://github.com/Mintplex-Labs/anything-llm",
-    "sourceVersion": "9b1fcab1",
+    "sourceVersion": "0941fb03",
     "license": "MIT",
-    "contentHash": "2e3761b103ec6f360d7917f636377e223217a30ad777c261e5a86f8f9b517ae6",
-    "lastHarvestedAt": "2026-10-25T23:10:57.451Z",
+    "contentHash": "ad70d5e76be8019339067ee5dea5e4c5a011dd33bfd045f14c8a7a29ebd41037",
+    "lastHarvestedAt": "2026-10-28T02:48:15.772Z",
     "learningId": "learn-github-mintplex-labs-anything-llm"
   },
   "shadcn-ui-taxonomy": {
@@ -10273,10 +10273,10 @@
     "repository": "react/react-native",
     "platform": "github",
     "sourceUrl": "https://github.com/react/react-native",
-    "sourceVersion": "0941e953",
+    "sourceVersion": "eaf4c261",
     "license": "MIT",
-    "contentHash": "386ee13396ac5776997666740bcb0ac1d7577c393e81b94522472b64ce7bf9ba",
-    "lastHarvestedAt": "2026-10-27T12:10:49.100Z",
+    "contentHash": "12568cc57fd01ba3506f8ea69bc79657d6bddc6607c4a7fab1a32ffcffd55481",
+    "lastHarvestedAt": "2026-10-28T02:48:08.365Z",
     "learningId": "learn-github-react-react-native"
   },
   "faker-js-faker": {

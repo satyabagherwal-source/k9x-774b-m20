@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261026-NP1I",
-    "timestamp": "2026-10-26T13:58:18.246Z",
-    "repository": "Orange-OpenSource/hurl",
-    "learningId": "learn-github-orange-opensource-hurl",
-    "contentHash": "fdd9e5c62dc8baf761da530a7f630d5c4ab6a24bd980675a177b054cde4514c9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-NUML",
-    "timestamp": "2026-10-26T13:58:25.485Z",
-    "repository": "open-policy-agent/opa",
-    "learningId": "learn-github-open-policy-agent-opa",
-    "contentHash": "8cc1a8cfedde90ae3851a416aafadc46b5ebec3fb6e7c860bc59f2dc3017a9ad",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-UCU6",
-    "timestamp": "2026-10-26T14:03:29.022Z",
-    "repository": "InternScience/Sage-A1.5",
-    "learningId": "learn-huggingface-internscience-sage-a1-5",
-    "contentHash": "2c53b7d3c37e253d8e320898fe8e7185a2a897bfd7652882144a1637594e09c2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261026-2UOE",
     "timestamp": "2026-10-26T14:10:05.390Z",
     "repository": "Qwen/Qwen3-14B",
@@ -7490,6 +7445,51 @@
     "repository": "TanStack/router",
     "learningId": "learn-github-tanstack-router",
     "contentHash": "fb8e7af78e7d349cb2184f9eda9653c5bd77ffaad8b7c6887d4eaa8d79ba67d1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-LK8A",
+    "timestamp": "2026-10-28T02:48:08.362Z",
+    "repository": "react/react-native",
+    "learningId": "learn-github-react-react-native",
+    "contentHash": "12568cc57fd01ba3506f8ea69bc79657d6bddc6607c4a7fab1a32ffcffd55481",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-LLDI",
+    "timestamp": "2026-10-28T02:48:09.846Z",
+    "repository": "convaiinnovations/laya",
+    "learningId": "learn-huggingface-convaiinnovations-laya",
+    "contentHash": "e702af5da38c78e6fabb31508ecda255a175c6c1e118a2e12380f8b748fe5907",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-LPY1",
+    "timestamp": "2026-10-28T02:48:15.769Z",
+    "repository": "Mintplex-Labs/anything-llm",
+    "learningId": "learn-github-mintplex-labs-anything-llm",
+    "contentHash": "ad70d5e76be8019339067ee5dea5e4c5a011dd33bfd045f14c8a7a29ebd41037",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

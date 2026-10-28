@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source**: github ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
-> **Source Version**: `9b1fcab1`  
+> **Source Version**: `0941fb03`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T23:10:57.184Z  
+> **Timestamp**: 2026-10-28T02:48:15.332Z  
 > **Learning ID**: `learn-github-mintplex-labs-anything-llm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T23:10:57.179Z  
+> **Harvest Timestamp**: 2026-10-28T02:48:14.752Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Stop renting your intelligence. Own it with AnythingLLM. Everything you need for a powerful local-first agent experience 
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 67552 stars
+- **Stars / Engagement**: 67656 stars
 
 ---
 
@@ -1288,11 +1288,11 @@ module.exports = {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6821** (2026-10-23): **[BUG]: a.content.content.trim is not a function**
-  *Symptoms*: ### How are you running AnythingLLM?  AnythingLLM desktop app  ### What happened?  Hi, I just  started to try AnythingLLM using Desktop App (using apparmor) on Ubuntu 24. I set up th **Mistral large 4** model using API key. And when i tryed mus first prompt just saynig ("Hello"), the app seems to fail.  <img width="389" height="218" alt="Image" src="https://github.com/user-attachments/assets/fba0df08-ef63-40e6-8652-00050ad51770" />  Whe i click on home, the app looks to restart and i can see that empty Thread are created in the sidebar.  **With Mistral 3b-2512, no problems**  ### Are there known steps to reproduce?  Start the app and try a prompt  ### LLM Provider & Model (if applicable)  Mistral large 4  ### Embedder Provider & Model (if applicable)  _No response_
+- **Issue #6854** (2026-10-27): **[BUG]: OpenAI fallback model gpt-4.1-nano was shut down**
+  *Symptoms*: ### How are you running AnythingLLM?  All versions  ### What happened?  `gpt-4.1-nano` and `gpt-4` were shut down on October 23, 2026 (https://developers.openai.com/api/docs/deprecations). `gpt-4.1-nano` is still the fallback model when no OpenAI model is set, for both chat and agents:  - `server/models/systemSettings.js` - `server/utils/AiProviders/openAi/index.js` - `server/utils/agents/aibitat/providers/openai.js` - `server/utils/agents/ephemeral.js` - `server/utils/agents/index.js` (2 places) - `# OPEN_MODEL_PREF` in `server/.env.example` and `docker/.env.example`  OpenAI's listed replacement is `gpt-5.6-luna`. The generic OpenAI agent provider also defaults to `gpt-4.1-nano` in `server/utils/agents/aibitat/providers/genericOpenAi.js`.  ### Are there known steps to reproduce?  Select OpenAI as the LLM provider without picking a model, then send a chat or run an agent. The request goes out with `gpt-4.1-nano`, which OpenAI no longer serves.  ### LLM Provider & Model (if applicable)  OpenAI / `gpt-4.1-nano` (default fallback)  ### Embedder Provider & Model (if applicable)  _No response_ 
 
-- **Issue #6492** (2026-09-25): **Malformed agent WebSocket frame crashes the server**
-  *Symptoms*: Reported by @SounLabs via GHSA-2859-x4rv-jpw7. We're tracking and fixing it as a bug here.  ### What happens  A malformed frame sent over the agent WebSocket (`/agent-invocation/:uuid`) can crash the server process.  - `handleFeedback` in `server/utils/agents/aibitat/plugins/websocket.js` parses frames with a bare `JSON.parse` inside an `async` function. `relayToSocket` in `server/endpoints/agentWebsocket.js` never awaits or catches the returned promise. A frame like `{bad`, an empty frame or `null`, sent while the agent is waiting for feedback, becomes an unhandled rejection and Node exits. - A related path: the `ws` library delivers binary frames as a `Buffer`, and `safeJsonParse` throws a `TypeError` on a `Buffer` it can't parse. `handleToolToggle` runs on every frame, so a malformed binary frame crashes the process at any point in an agent session, not only while it's waiting for feedback.  Triggering either path requires an authenticated user with an active agent session.  ### Fix  - Use `safeJsonParse` in `handleFeedback` and return early when the input doesn't parse or isn't a feedback message. - Convert every incoming frame to a string in `relayToSocket` before it reaches any handler.  Thanks to @SounLabs for the report and the detailed reproduction. 
+- **Issue #6852** (2026-10-27): **[FEAT]: Make wide markdown tables horizontally scrollable on narrow screens**
+  *Symptoms*: ### What would you like to see?  ### What would you like to see?  Wide markdown tables in chat should be horizontally scrollable on small screens instead of being clipped at the message width.  ### Problem  On a phone or a narrow browser window, a markdown table with more than a few columns is cut off: columns beyond the message width are not visible and cannot be reached. The content is present in the response, but there is no horizontal scroll container.  This is not model-specific; it happens with any response that contains a wide table.  Reproduction:  1. Open AnythingLLM in a narrow viewport (phone or resized browser). 2. Ask for a markdown table with 5+ columns. 3. The table is clipped at the message width; there is no horizontal    scrollbar/swipe.  ### Proposed fix  Wrap rendered tables in a scroll container and let the table keep its natural width.  `frontend/src/utils/chat/markdown.js`:  ``` js markdown.renderer.rules.table_open = () => '<div class="table-scroll"><table>'; markdown.renderer.rules.table_close = () => '</table></div>'; ``` ``` css .markdown .table-scroll {   max-width: 100%;   overflow-x: auto;   -webkit-overflow-scrolling: touch; }  .markdown .table-scroll table {   width: max-content;   min-width: 100%;   overflow: visible; } ```  This keeps wide tables readable, scrolls only the table (not the whole message), and leaves the desktop layout unchanged.  A CSS-only alternative is display: block; overflow-x: auto on .markdown table, but the wrapper is c
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1309,29 +1309,281 @@ module.exports = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9b1fcab1` (2026-10-25)
-**Commit Message**: cross-env compat prisma reset command
+### Incident Patch 1: `9a70c14e` (2026-10-27)
+**Commit Message**: fix: skip unnamed header rows in the agent flow API Call block (#6835)
 
-**File**: `package.json` (modified, +1/-1)
+* fix: skip unnamed header rows in the agent flow API Call block
+
+* remove header comment in api-call executor
+
+---------
+
+Co-authored-by: Sean Hatfield <[REDACTED_EMAIL]>
+Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
+
+**File**: `server/__tests__/utils/agentFlows/executors/api-call.test.js` (modified, +19/-0)
 ```diff
-@@ -31,7 +31,7 @@
-     "prisma:migrate": "cd server && npx prisma migrate dev --name init",
-     "prisma:seed": "cd server && npx prisma db seed",
-     "prisma:setup": "yarn prisma:generate && yarn prisma:migrate && yarn prisma:seed",
--    "prisma:reset": "truncate -s 0 server/storage/anythingllm.db && yarn prisma:migrate",
-+    "prisma:reset": "node -e \"require('fs').writeFileSync('server/storage/anythingllm.db', '')\" && yarn prisma:migrate",
-     "prod:server": "cd server && yarn start",
-     "prod:frontend": "cd frontend && yarn build",
-     "translations:verify": "cd frontend/src/locales && node verifyTranslations.mjs",
+@@ -156,6 +156,25 @@ describe("executeApiCall", () => {
+       );
+     });
+ 
++    it("skips header rows without a name and trims header names", async () => {
++      const fetchMock = mockResponse("{}");
++      await executeApiCall(
++        {
++          url: "https://example.com/items",
++          method: "GET",
++          headers: [
++            { key: " Authorization ", value: "Bearer token" },
++            { key: "", value: "" },
++            { key: "   ", value: "ignored" },
++          ],
++        },
++        context
++      );
++      const [, requestConfig] = fetchMock.mock.calls[0];
++      expect(requestConfig.headers).toEqual({ Authorization: "Bearer token" });
++      expect(() => new Headers(requestConfig.headers)).not.toThrow();
++    });
++
+     it("does not attach a body to GET requests", async () => {
+       const fetchMock = mockResponse("{}");
+       await executeApiCall(
+```
+
+**File**: `server/utils/agentFlows/executors/api-call.js` (modified, +5/-1)
+```diff
+@@ -14,7 +14,11 @@ async function executeApiCall(config, context) {
+ 
+   const requestConfig = {
+     method,
+-    headers: headers.reduce((acc, h) => ({ ...acc, [h.key]: h.value }), {}),
++    headers: headers.reduce((acc, h) => {
++      const name = String(h?.key ?? "").trim();
++      if (name) acc[name] = h.value;
++      return acc;
++    }, {}),
+   };
+ 
+   if (["POST", "PUT", "PATCH"].includes(method)) {
+```
+
+---
+
+### Incident Patch 2: `85c7b523` (2026-10-27)
+**Commit Message**: fix(embed): apply enabled/allowlist/session checks to history routes (#6870)
+
+* fix(embed): apply enabled/allowlist/session checks to history routes (#6869)
+
+* remove embed history access test
+
+**File**: `server/endpoints/embed/index.js` (modified, +3/-2)
+```diff
+@@ -6,6 +6,7 @@ const { EmbedChats } = require("../../models/embedChats");
+ const {
+   validEmbedConfig,
+   canRespond,
++  canAccessHistory,
+   setConnectionMeta,
+ } = require("../../utils/middleware/embedMiddleware");
+ const {
+@@ -68,7 +69,7 @@ function embeddedEndpoints(app) {
+ 
+   app.get(
+     "/embed/:embedId/:sessionId",
+-    [validEmbedConfig],
++    [validEmbedConfig, canAccessHistory],
+     async (request, response) => {
+       try {
+         const { sessionId } = request.params;
+@@ -91,7 +92,7 @@ function embeddedEndpoints(app) {
+ 
+   app.delete(
+     "/embed/:embedId/:sessionId",
+-    [validEmbedConfig],
++    [validEmbedConfig, canAccessHistory],
+     async (request, response) => {
+       try {
+         const { sessionId } = request.params;
+```
+
+**File**: `server/utils/middleware/embedMiddleware.js` (modified, +75/-51)
+```diff
+@@ -40,60 +40,83 @@ async function validEmbedConfigId(request, response, next) {
+   next();
+ }
+ 
+-async function canRespond(request, response, next) {
+-  try {
+-    const embed = response.locals.embedConfig;
+-    if (!embed) {
+-      response.sendStatus(404).end();
+-      return;
+-    }
++// Shared access checks for any request that touches an embed's chat data.
++// Responds and returns false if the request should not proceed.
++function passesEmbedAccessControl(request, response) {
++  const embed = response.locals.embedConfig;
++  if (!embed) {
++    response.sendStatus(404).end();
++    return false;
++  }
+ 
+-    // Block if disabled by admin.
+-    if (!embed.enabled) {
+-      response.status(503).json({
+-        id: uuidv4(),
+-        type: "abort",
+-        textResponse: null,
+-        sources: [],
+-        close: true,
+-        error:
+-          "This chat has been disabled by the administrator - try again later.",
+-      });
+-      return;
+-    }
++  // Block if disabled by admin.
++  if (!embed.enabled) {
++    response.status(503).json({
++      id: uuidv4(),
++      type: "abort",
++      textResponse: null,
++      sources: [],
++      close: true,
++      error:
++        "This chat has been disabled by the administrator - try again later.",
++    });
++    return false;
++  }
+ 
+-    // Check if requester hostname is in the valid allowlist of domains.
+-    const host = request.headers.origin ?? "";
+-    const allowedHosts = EmbedConfig.parseAllowedHosts(embed);
+-
+-    // Optional hardening for when an embed with no allowlist is created.
+-    // This would mean the embed will accept requests from ANY origin (parseAllowedHosts returns
+-    // null). When EMBED_REQUIRE_ALLOWLIST is enabled, treat "no allowlist" as
+-    // deny-all instead of allow-all, so an embed cannot be queried cross-origin
+-    // until its owner explicitly sets the allowed domains.
+-    if (allowedHosts === null && "EMBED_REQUIRE_ALLOWLIST" in process.env) {
+-      response.status(401).json({
+-        id: uuidv4(),
+-        type: "abort",
+-        textResponse: null,
+-        sources: [],
+-        close: true,
+-        error: "Invalid request.",
+-      });
+-      return;
+-    }
++  // Check if requester hostname is in the valid allowlist of domains.
++  const host = request.headers.origin ?? "";
++  const allowedHosts = EmbedConfig.parseAllowedHosts(embed);
++
++  // Optional hardening for when an embed with no allowlist is created.
++  // This would mean the embed will accept requests from ANY origin (parseAllowedHosts returns
++  // null). When EMBED_REQUIRE_ALLOWLIST is enabled, treat "no allowlist" as
++  // deny-all instead of allow-all, so an embed cannot be queried cross-origin
++  // until its owner explicitly sets the allowed domains.
++  if (allowedHosts === null && "EMBED_REQUIRE_ALLOWLIST" in process.env) {
++    response.status(401).json({
++      id: uuidv4(),
++      type: "abort",
++      textResponse: null,
++      sources: [],
++      close: true,
++      error: "Invalid request.",
++    });
++    return false;
++  }
+ 
+-    if (allowedHosts !== null && !allowedHosts.includes(host)) {
+-      response.status(401).json({
+-        id: uuidv4(),
+-        type: "abort",
+-        textResponse: null,
+-        sources: [],
+-        close: true,
+-        error: "Invalid request.",
+-      });
+-      return;
+-    }
++  if (allowedHosts !== null && !allowedHosts.includes(host)) {
++    response.status(401).json({
++      id: uuidv4(),
++      type: "abort",
++      textResponse: null,
++      sources: [],
++      close: true,
++      error: "Invalid request.",
++    });
++    return false;
++  }
++
++  return true;
++}
++
++// Access control for the embed history routes (read/invalidate) where the
++// sessionId is a URL param and there is no message body.
++function canAccessHistory(request, response, next) {
++  if (!passesEmbedAccessControl(request, response)) return;
++
++  const { sessionId } = request.params;
++  if (typeof sessionId !== "string" || !validate(sessionId)) {
++    response.status(404).json({ error: "Invalid session ID." });
++    return;
++  }
++
++  next();
++}
++
++async function canRespond(request, response, next) {
++  try {
++    if (!passesEmbedAccessControl(request, response)) return;
++    const embed = response.locals.embedConfig;
+ 
+     const { sessionId, message } = reqBody(request);
+     if (typeof sessionId !== "string" || !validate(String(sessionId))) {
+@@ -193,4 +216,5 @@ module.exports = {
+   validEmbedConfig,
+   validEmbedConfigId,
+   canRespond,
++  canAccessHistory,
+ };
+```
+
+---
+
+### Incident Patch 3: `88ecba5f` (2026-10-27)
+**Commit Message**: fix(frontend): toPercentString should respect decimals instead of rounding first (#6861)
+
+Add files via upload
+
+**File**: `frontend/src/utils/numbers.js` (modified, +4/-2)
+```diff
+@@ -10,9 +10,11 @@ export function nFormatter(input) {
+ 
+ export function toPercentString(input = null, decimals = 0) {
+   if (isNaN(input) || input === null) return "";
+-  const percentage = Math.round(input * 100);
++  const percentage = input * 100;
+   return (
+-    (decimals > 0 ? percentage.toFixed(decimals) : percentage.toString()) + "%"
++    (decimals > 0
++      ? percentage.toFixed(decimals)
++      : Math.round(percentage).toString()) + "%"
+   );
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6825** (2026-10-23): fix(mistral): support Mistral reasoning models, dedupe model list, add thinking toggle (#6821) (@timothycarambat)
-- **PR #6824** (2026-10-23): Pg v1.19.0 (@timothycarambat)
-- **PR #6823** (2026-10-23): Render v1.19.0 (@timothycarambat)
-- **PR #6822** (2026-10-23): chore: bump version to 1.19.0 (@timothycarambat)
-- **PR #6819** (closed): fix: report native embedding worker failures and roll back vectors (@Tong-bit-art)
-- **PR #6817** (closed): chore(docker): bump Node.js from 18 (EOL) to 22 LTS in Docker images (@jhsmith409)
+- **PR #6872** (2026-10-27): feat(localai): read context window and capabilities from /v1/models/capabilities (@timothycarambat)
+- **PR #6870** (2026-10-27): fix(embed): apply enabled/allowlist/session checks to history routes (@timothycarambat)
+- **PR #6868** (2026-10-27): Stage hotdir uploads under unique names to prevent cross-request collisions (@timothycarambat)
+- **PR #6866** (closed): Add TopK vector database provider with hybrid search (@davidmyriel)
+- **PR #6865** (closed): fix(server): copy history before reversing in message compressors (@abining)
+- **PR #6861** (2026-10-27): fix(frontend): toPercentString should respect decimals instead of rounding first (@abining)
 
 ---
 
@@ -1351,28 +1603,46 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cross-env compat prisma reset command
+## X. skip unnamed header rows in the agent flow API Call block (#6835)
 
 **RULE**:
-When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/__tests__/utils/agentFlows/executors/api-call.test.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9b1fcab1`: cross-env compat prisma reset command. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9a70c14e`: skip unnamed header rows in the agent flow API Call block (#6835). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/__tests__/utils/agentFlows/executors/api-call.test.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-    "prisma:reset": "node -e \"require('fs').writeFileSync('server/storage/anythingllm.db', '')\" && yarn prisma:migrate",
+    it("skips header rows without a name and trims header names", async () => {
+      const fetchMock = mockResponse("{}");
+      await executeApiCall(
+        {
+          url: "https://example.com/items",
+          method: "GET",
+          headers: [
+            { key: " Authorization ", value: "Bearer token" },
+            { key: "", value: "" },
+            { key: "   ", value: "ignored" },
+          ],
+        },
+        context
+      );
+      const [, requestConfig] = fetchMock.mock.calls[0];
+      expect(requestConfig.headers).toEqual({ Authorization: "Bearer token" });
+      expect(() => new Headers(requestConfig.headers)).not.toThrow();
+    });
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-    "prisma:reset": "truncate -s 0 server/storage/anythingllm.db && yarn prisma:migrate",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9b1fcab1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9a70c14e` are properly handled with clean fallback behavior.

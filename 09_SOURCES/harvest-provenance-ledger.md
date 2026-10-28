@@ -5666,3 +5666,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-huggingfacebio-carbon-x` | `https://huggingface.co/HuggingFaceBio/Carbon-X` | `hf-hugging` | Multi-dimensional audit evidence | 2026-10-28T02:41:14.331Z |
 | `learn-github-pointfreeco-swift-composable-architecture` | `https://github.com/pointfreeco/swift-composable-architecture` | `bb175b54` | Multi-dimensional audit evidence | 2026-10-28T02:41:15.265Z |
 | `learn-github-tanstack-router` | `https://github.com/TanStack/router` | `da2adec7` | Multi-dimensional audit evidence | 2026-10-28T02:41:25.109Z |
+| `learn-github-react-react-native` | `https://github.com/react/react-native` | `eaf4c261` | Multi-dimensional audit evidence | 2026-10-28T02:48:08.365Z |
+| `learn-huggingface-convaiinnovations-laya` | `https://huggingface.co/convaiinnovations/laya` | `hf-convaii` | Multi-dimensional audit evidence | 2026-10-28T02:48:09.850Z |
+| `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `0941fb03` | Multi-dimensional audit evidence | 2026-10-28T02:48:15.772Z |

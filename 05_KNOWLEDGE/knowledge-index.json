@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T02:41:25.045Z",
+  "last_updated": "2026-10-28T02:48:15.711Z",
   "total_verified_learnings": 1155,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -19655,7 +19655,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/convaiinnovations/laya",
       "source_version": "hf-convaiinnovations-laya",
-      "content_hash": "7ffbefa863f0fe765cf7903e1999e25f72946360afeee1f8c6f2b177f8df4270",
+      "content_hash": "e702af5da38c78e6fabb31508ecda255a175c6c1e118a2e12380f8b748fe5907",
       "dossier_path": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
       "promoted_rules": [
@@ -19748,6 +19748,21 @@
         {
           "number": 5124,
           "title": "Dynamic Checkpoint Routing for Multilingual Efficiency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5141,
+          "title": "Non-Autoregressive Decision Heads for Latency-Critical Classification",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5142,
+          "title": "Reinforcement Learning for Probability Calibration (RLCD)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5143,
+          "title": "Language-Aware Routing for Multilingual Models",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -20093,7 +20108,7 @@
         "learn-huggingface-hf-convaiinnovations-laya-mv41qpya",
         "learn-huggingface-hf-convaiinnovations-laya-mv4flqk7"
       ],
-      "verified_at": "2026-10-28T02:13:18.309Z",
+      "verified_at": "2026-10-28T02:48:09.773Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37175,8 +37190,8 @@
       "slug": "mintplex-labs-anything-llm",
       "platform": "github",
       "source_url": "https://github.com/Mintplex-Labs/anything-llm",
-      "source_version": "9b1fcab1",
-      "content_hash": "2e3761b103ec6f360d7917f636377e223217a30ad777c261e5a86f8f9b517ae6",
+      "source_version": "0941fb03",
+      "content_hash": "ad70d5e76be8019339067ee5dea5e4c5a011dd33bfd045f14c8a7a29ebd41037",
       "dossier_path": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "promoted_rules": [
@@ -37214,6 +37229,11 @@
           "number": 4486,
           "title": "cross-env compat prisma reset command",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5144,
+          "title": "skip unnamed header rows in the agent flow API Call block (#6835)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37221,7 +37241,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T23:10:57.388Z",
+      "verified_at": "2026-10-28T02:48:15.698Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44390,8 +44410,8 @@
       "slug": "react-react-native",
       "platform": "github",
       "source_url": "https://github.com/react/react-native",
-      "source_version": "0941e953",
-      "content_hash": "386ee13396ac5776997666740bcb0ac1d7577c393e81b94522472b64ce7bf9ba",
+      "source_version": "eaf4c261",
+      "content_hash": "12568cc57fd01ba3506f8ea69bc79657d6bddc6607c4a7fab1a32ffcffd55481",
       "dossier_path": "07_PROJECT_LEARNING/react-react-native-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-react-native-learnings.md",
       "promoted_rules": [
@@ -44404,6 +44424,11 @@
           "number": 4734,
           "title": "Require constant initialization for native static state (#59489)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5140,
+          "title": "Sync OSS Fabric renderers for null-target native events (#59546)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44411,7 +44436,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:10:49.061Z",
+      "verified_at": "2026-10-28T02:48:08.291Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -141066,6 +141091,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T02:41:25.033Z"
+    },
+    "rule-5140": {
+      "learning_id": "rule-5140",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5140,
+      "title": "Sync OSS Fabric renderers for null-target native events (#59546)",
+      "source_url": "https://github.com/react/react-native",
+      "source_version": "eaf4c261",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:48:08.291Z"
+    },
+    "rule-5141": {
+      "learning_id": "rule-5141",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5141,
+      "title": "Non-Autoregressive Decision Heads for Latency-Critical Classification",
+      "source_url": "https://huggingface.co/convaiinnovations/laya",
+      "source_version": "hf-convaiinnovations-laya",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:48:09.773Z"
+    },
+    "rule-5142": {
+      "learning_id": "rule-5142",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5142,
+      "title": "Reinforcement Learning for Probability Calibration (RLCD)",
+      "source_url": "https://huggingface.co/convaiinnovations/laya",
+      "source_version": "hf-convaiinnovations-laya",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:48:09.773Z"
+    },
+    "rule-5143": {
+      "learning_id": "rule-5143",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5143,
+      "title": "Language-Aware Routing for Multilingual Models",
+      "source_url": "https://huggingface.co/convaiinnovations/laya",
+      "source_version": "hf-convaiinnovations-laya",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:48:09.773Z"
+    },
+    "rule-5144": {
+      "learning_id": "rule-5144",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5144,
+      "title": "skip unnamed header rows in the agent flow API Call block (#6835)",
+      "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+      "source_version": "0941fb03",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:48:15.698Z"
     }
   },
   "aliases": {

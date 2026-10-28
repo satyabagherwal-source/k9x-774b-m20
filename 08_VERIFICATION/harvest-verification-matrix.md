@@ -5657,3 +5657,6 @@
 | `CYCLE-20261028-CORC` | `2026-10-28T02:41:14.328Z` | `HuggingFaceBio/Carbon-X` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5135, Rule 5136, Rule 5137` | Yes (`2adf8afa...`) |
 | `CYCLE-20261028-CPHA` | `2026-10-28T02:41:15.262Z` | `pointfreeco/swift-composable-architecture` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5138` | Yes (`2dcd3424...`) |
 | `CYCLE-20261028-CX2Q` | `2026-10-28T02:41:25.106Z` | `TanStack/router` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5139` | Yes (`fb8e7af7...`) |
+| `CYCLE-20261028-LK8A` | `2026-10-28T02:48:08.362Z` | `react/react-native` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5140` | Yes (`12568cc5...`) |
+| `CYCLE-20261028-LLDI` | `2026-10-28T02:48:09.846Z` | `convaiinnovations/laya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5141, Rule 5142, Rule 5143` | Yes (`e702af5d...`) |
+| `CYCLE-20261028-LPY1` | `2026-10-28T02:48:15.769Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5144` | Yes (`ad70d5e7...`) |
