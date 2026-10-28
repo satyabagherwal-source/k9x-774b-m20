@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T02:54:53.958Z",
+  "last_updated": "2026-10-28T03:04:34.035Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2024,14 +2024,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-      "content_hash": "1fee073545039027bf3cc84763c23f454bf8539c9ca7b5904e276019787907c6",
-      "verified_at": "2026-10-28T02:27:17.824Z",
+      "content_hash": "b1540a850266e3c2df61c115737a3dd64f98de2c3412d8d3655d211c7ba5fb8d",
+      "verified_at": "2026-10-28T03:04:27.301Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T02:27:17.824Z"
+      "last_updated": "2026-10-28T03:04:27.301Z"
     },
     "iliyami/MacSai": {
       "repository": "iliyami/MacSai",
@@ -15456,14 +15456,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-storybookjs-storybook",
-      "content_hash": "4f00426c10c439646d5b6f106a99b087095d100c3da8591cf474f20c811e95fd",
-      "verified_at": "2026-10-27T12:21:48.330Z",
+      "content_hash": "48b2cd700e9b8b66dff819288edb86355433788f0423e6a2f29bfe93be6e9df7",
+      "verified_at": "2026-10-28T03:04:34.034Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T12:21:48.330Z"
+      "last_updated": "2026-10-28T03:04:34.034Z"
     },
     "enaqx/awesome-react": {
       "repository": "enaqx/awesome-react",

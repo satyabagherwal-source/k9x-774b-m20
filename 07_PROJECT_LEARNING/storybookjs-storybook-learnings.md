@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/storybookjs-storybook-learnings.md`  
 > **Source**: github ([https://github.com/storybookjs/storybook](https://github.com/storybookjs/storybook))  
-> **Source Version**: `029ff91d`  
+> **Source Version**: `37ded54a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T12:21:47.874Z  
+> **Timestamp**: 2026-10-28T03:04:33.396Z  
 > **Learning ID**: `learn-github-storybookjs-storybook`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/storybookjs-storybook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/storybookjs/storybook](https://github.com/storybookjs/storybook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T12:21:47.429Z  
+> **Harvest Timestamp**: 2026-10-28T03:04:33.389Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Storybook is the industry standard workshop for building, documenting, and testing UI components in isolation
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 91389 stars
+- **Stars / Engagement**: 91395 stars
 
 ---
 
@@ -576,223 +576,209 @@ export function isRecord(value: unknown): value is Record<string, unknown> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9f04046d` (2026-10-27)
-**Commit Message**: fix(ci): run Chromatic on every focus sandbox when a shared template story changes
+### Incident Patch 1: `da32ada3` (2026-10-27)
+**Commit Message**: fix(sandbox): pin typescript@^6 in the react-vite bench templates
 
-**File**: `.github/PULL_REQUEST_TEMPLATE.md` (modified, +1/-1)
-```diff
-@@ -50,7 +50,7 @@ Do not describe how YOU tested the PR code, but how a separate maintainer should
- 
- ## Checklist for Maintainers
- 
--- [ ] When this PR is ready for testing, add a `ci:focus`, `ci:normal`, or `ci:daily` GitHub label. `ci:focus` runs the typecheck, unit tests, and lint for the changed files, the end-to-end jobs whose paths changed, and one sandbox in full for each changed framework, renderer, builder, or library (default `react-vite/default-ts`), plus Chromatic on the other sandboxes that load it. `ci:normal` and `ci:daily` run the sandbox sets in `code/lib/cli-storybook/src/sandbox-templates.ts`. Add `ci:windows` to also run the Windows jobs, or on its own to iterate on Windows failures; it does not report `circleci-completion`, so a PR cannot merge on it alone.
-+- [ ] When this PR is ready for testing, add a `ci:focus`, `ci:normal`, or `ci:daily` GitHub label. `ci:focus` runs the typecheck, unit tests, and lint for the changed files, the end-to-end jobs whose paths changed, and one sandbox in full for each changed framework, renderer, builder, or library (default `react-vite/default-ts`), plus Chromatic on the other sandboxes that load it, or on every sandbox when a core or addon template story changes. `ci:normal` and `ci:daily` run the sandbox sets in `code/lib/cli-storybook/src/sandbox-templates.ts`. Add `ci:windows` to also run the Windows jobs, or on its own to iterate on Windows failures; it does not report `circleci-completion`, so a PR cannot merge on it alone.
- - [ ] Declare whether manual QA will be needed for this PR during the next release, through `qa:needed` or `qa:skip`
- - [ ] Make sure this PR contains **one** of the labels below:
-    <details>
-```
+Maintainer-requested (Sidnioulz, "Do it." on the bench-template thread):
+bench/react-vite-default-ts, -nodocs, and -test-build each define their
+own modifications object, which replaces the base template's — so the
+pin must be repeated in all three. Adds a bench pin test (suite now 6/6)
+and re-verifies the generated CircleCI config is unchanged.
 
-**File**: `scripts/ci/focus.test.ts` (modified, +13/-0)
+**File**: `code/lib/cli-storybook/src/sandbox-templates.test.ts` (modified, +15/-0)
 ```diff
-@@ -109,6 +109,19 @@ describe('selectChromaticSiblings', () => {
-     ).toEqual([]);
+@@ -1,6 +1,7 @@
+ import { describe, expect, it } from 'vitest';
+ 
+ import {
++  allTemplates,
+   baseTemplates,
+   docgenServerTemplates,
+   enablesDocgenServer,
+@@ -95,3 +96,17 @@ describe('React prerelease sandboxes', () => {
+     expect(webpack.minAgeGateExemptions).toEqual(['react', 'react-dom', 'scheduler']);
    });
- 
-+  it.each([
-+    'code/core/template/stories/args.stories.ts',
-+    'code/core/template/__mocks__/lodash-es.js',
-+    'code/addons/docs/template/stories/docspage/basic.stories.ts',
-+  ])('covers every other template that runs Chromatic when %s changes', (file) => {
-+    expect(selectChromaticSiblings(['react-vite/default-ts'], [file]).toSorted()).toEqual(
-+      FOCUS_TEMPLATES.filter(
-+        (key) =>
-+          key !== 'react-vite/default-ts' && !allTemplates[key].skipTasks?.includes('chromatic')
-+      ).toSorted()
-+    );
-+  });
+ });
 +
-   it.each(packageChanges)(
-     'covers every other template loading $dir that runs Chromatic',
-     ({ dir, file }) => {
++describe('React bench sandboxes', () => {
++  it('pin typescript to ^6 (their modifications replace the base template)', () => {
++    for (const key of [
++      'bench/react-vite-default-ts',
++      'bench/react-vite-default-ts-nodocs',
++      'bench/react-vite-default-ts-test-build',
++    ] as const) {
++      expect(allTemplates[key].modifications).toMatchObject({
++        extraDevDependencies: ['typescript@^6'],
++      });
++    }
++  });
++});
 ```
 
-**File**: `scripts/ci/focus.ts` (modified, +8/-2)
+**File**: `code/lib/cli-storybook/src/sandbox-templates.ts` (modified, +9/-0)
 ```diff
-@@ -109,16 +109,22 @@ export function selectFocusSandboxes(changedFiles: readonly string[]): TemplateK
-   return [DEFAULT_FOCUS_SANDBOX];
- }
- 
--/** Select the other templates that run Chromatic and load a changed package. */
-+/** Every sandbox that runs Chromatic links the core and addon template stories. */
-+const isSharedTemplateFile = (file: string) => /^code\/(core|addons\/[^/]+)\/template\//.test(file);
-+
-+/** Select the other templates that run Chromatic and load a changed package or shared story. */
- export function selectChromaticSiblings(
-   focused: readonly TemplateKey[],
-   changedFiles: readonly string[]
- ): TemplateKey[] {
-+  const sharedTemplateChanged = changedFiles.some(isSharedTemplateFile);
-+
-   return FOCUS_TEMPLATES.filter(
-     (sibling) =>
-       !focused.includes(sibling) &&
-       !allTemplates[sibling].skipTasks?.includes('chromatic') &&
--      isChanged(Object.values(templateDirs(sibling)).flat(), changedFiles)
-+      (sharedTemplateChanged ||
-+        isChanged(Object.values(templateDirs(sibling)).flat(), changedFiles))
-   );
- }
- 
+@@ -917,6 +917,9 @@ const benchTemplates = {
+     modifications: {
+       skipTemplateStories: true,
+       skipMocking: true,
++      // This modifications block replaces the base template's, so the pin must be repeated here.
++      // See `react-vite/default-ts` for why TypeScript is pinned to 6.
++      extraDevDependencies: ['typescript@^6'],
+     },
+     skipTasks: ['e2e-tests', 'e2e-tests-dev', 'chromatic', 'vitest-integration'],
+     typeCheck: false,
+@@ -939,6 +942,9 @@ const benchTemplates = {
+       skipTemplateStories: true,
+       disableDocs: true,
+       skipMocking: true,
++      // This modifications block replaces the base template's, so the pin must be repeated here.
++      // See `react-vite/default-ts` for why TypeScript is pinned to 6.
++      extraDevDependencies: ['typescript@^6'],
+     },
+     skipTasks: ['e2e-tests', 'e2e-tests-dev', 'chromatic', 'vitest-integration'],
+     typeCheck: false,
+@@ -951,6 +957,9 @@ const benchTemplates = {
+       skipTemplateStories: true,
+       testBuild: true,
+       skipMocking: true,
++      // This modifications block replaces the base template's, so the pin must be repeated here.
++      // See `react-vite/default-ts` for why TypeScript is pinned to 6.
++      extraDevDependencies: ['typescript@^6'],
+     },
+     skipTasks: ['e2e-tests', 'e2e-tests-dev', 'vitest-integration'],
+     typeCheck: false,
 ```
 
 ---
 
-### Incident Patch 2: `7629831d` (2026-10-27)
-**Commit Message**: fix(ci): restore the compile step on the Node 26 smoke job
+### Incident Patch 2: `07b5afed` (2026-10-27)
+**Commit Message**: fix(sandbox): pin typescript@^6 in react-vite/prerelease-ts too
 
-Vitest loads every package's vitest.config.ts at startup, and those
-configs import compiled workspace output (e.g.
-@storybook/addon-vitest/vitest-plugin and
-@storybook/svelte/internal/svelte-csf/transform). Without dist the
-suite fails with 'Failed to initialize projects'. #36881 dropped the
-step because unit tests resolve workspace packages to source, but that
-does not cover the configs Vitest itself loads.
+Blocking review finding: react-vite/prerelease-ts scaffolds the same
+create-vite react-ts template, so it also gets TypeScript ~7.0.2 from
+create-vite >= 9.3.3 and runs in the daily set. Applies the same pin as
+react-vite/default-ts, updates the toMatchObject expectation, and
+corrects the removal-condition comment (TS 7.0 has no compiler API;
+#37004 targets 7.1+).
 
-Re-insert the Compile step between the dependency install and the unit
-tests, and assert in main.test.ts that the generated daily config's
-node-26-smoke job carries the step, in position, with the exact
-command.
-
-**File**: `scripts/ci/common-jobs.ts` (modified, +10/-0)
+**File**: `code/lib/cli-storybook/src/sandbox-templates.test.ts` (modified, +6/-1)
 ```diff
-@@ -376,6 +376,16 @@ export const node26Smoke = defineJob('Node 26 smoke', () => ({
+@@ -67,7 +67,12 @@ describe('React prerelease sandboxes', () => {
+ 
+     expect(vite.modifications).toMatchObject({
+       extraDependencies: ['react@canary', 'react-dom@canary'],
+-      extraDevDependencies: ['prop-types', '@types/react@latest', '@types/react-dom@latest'],
++      extraDevDependencies: [
++        'prop-types',
++        '@types/react@latest',
++        '@types/react-dom@latest',
++        'typescript@^6',
++      ],
+       resolutions: {
+         '@types/react': 'npm:@types/react@latest',
+         '@types/react-dom': 'npm:@types/react-dom@latest',
+```
+
+**File**: `code/lib/cli-storybook/src/sandbox-templates.ts` (modified, +12/-4)
+```diff
+@@ -305,9 +305,11 @@ export const baseTemplates = {
+     },
+     modifications: {
+       useCsfFactory: true,
+-      // create-vite >= 9.3.3 scaffolds TypeScript 7, which core/docgen cannot parse yet. Overwrite
+-      // the scaffold's own devDependencies range with a pinned 6.x until docgen supports TS 7
+-      // (#36987, #37004); pinning via devDependencies avoids a conflicting duplicate entry.
++      // create-vite >= 9.3.3 scaffolds TypeScript 7.0, which Storybook's TS docgen cannot use
++      // (TS 7.0 has no compiler API; #37004 supports 7.1+). Keep this pin until docgen supports
++      // the TypeScript version that create-vite scaffolds (#36987, #37004). Overwrite the
++      // scaffold's own devDependencies range; pinning via devDependencies avoids a conflicting
++      // duplicate entry.
+       extraDevDependencies: [
+         'prop-types',
+         '@types/prop-types',
+@@ -341,7 +343,13 @@ export const baseTemplates = {
+     modifications: {
+       useCsfFactory: true,
+       extraDependencies: ['react@canary', 'react-dom@canary'],
+-      extraDevDependencies: ['prop-types', '@types/react@latest', '@types/react-dom@latest'],
++      extraDevDependencies: [
++        'prop-types',
++        '@types/react@latest',
++        '@types/react-dom@latest',
++        // See `react-vite/default-ts` for why TypeScript is pinned to 6.
++        'typescript@^6',
++      ],
+       resolutions: {
+         '@types/react': 'npm:@types/react@latest',
+         '@types/react-dom': 'npm:@types/react-dom@latest',
+```
+
+---
+
+### Incident Patch 3: `530a0dfe` (2026-10-27)
+**Commit Message**: Merge pull request #37036 from storybookjs/fix/node-26-smoke-sandbox-init-hang
+
+CI: Un-silence the Node 26 smoke sandbox builds and skip their Playwright install
+
+**File**: `scripts/ci/common-jobs.ts` (modified, +22/-12)
+```diff
+@@ -330,6 +330,26 @@ export const knip = defineJob(
+   [commonJobsNoOpJob]
+ );
+ 
++/**
++ * Builds a sandbox from scratch in the smoke job. Unlike the daily create jobs,
++ * the smoke job has no workspace restore and no saved task state, so
++ * `--start-from=auto` silently runs full sandbox creation (create → install →
++ * init), and init under `--yes` auto-installs Playwright Chromium via the
++ * vitest addon. Match the create jobs' guard (scripts/ci/sandboxes.ts): skip
++ * that installation, and pass `--debug` so `exec.ts` relays child output
++ * instead of piping it away. Piped output lets any slow init phase trip
++ * CircleCI's 10-min no-output deadline invisibly.
++ */
++const smokeSandboxBuildStep = (template: string, label: string) => ({
++  run: {
++    name: `Build ${label} sandbox`,
++    command: `yarn task build --template ${template} --start-from=auto --no-link --debug`,
++    environment: {
++      STORYBOOK_CLI_SKIP_PLAYWRIGHT_INSTALLATION: '1',
++    },
++  },
++});
++
+ /**
+  * One job, not a second sandbox matrix. The generated sandbox workflow is a job
+  * per template, so Node 26 only runs the unit suite plus one Vite build and one
+@@ -376,18 +396,8 @@ export const node26Smoke = defineJob('Node 26 smoke', () => ({
+         command: "yarn test --project '!storybook-ui' --project '!scripts'",
        },
      },
-     npm.install('.'),
-+    {
-+      run: {
-+        // Vitest loads each package's vitest.config.ts at startup, and those
-+        // configs import compiled workspace output (e.g.
-+        // `@storybook/addon-vitest/vitest-plugin`), so `dist` must exist
-+        // before the unit suite runs.
-+        name: 'Compile',
-+        command: 'yarn task --task compile --start-from=auto --no-link',
-+      },
-+    },
-     {
-       run: {
-         name: 'Run unit tests',
-```
-
-**File**: `scripts/ci/main.test.ts` (modified, +23/-0)
-```diff
-@@ -34,6 +34,29 @@ describe('main.ts under plain Node, as the CircleCI setup job runs it', () => {
-     expect(config).toContain('project/code/core/node_modules');
-   });
+-    {
+-      run: {
+-        name: 'Build React Vite sandbox',
+-        command: 'yarn task build --template react-vite/default-ts --start-from=auto --no-link',
+-      },
+-    },
+-    {
+-      run: {
+-        name: 'Build React Webpack sandbox',
+-        command: 'yarn task build --template react-webpack/18-ts --start-from=auto --no-link',
+-      },
+-    },
++    smokeSandboxBuildStep('react-vite/default-ts', 'React Vite'),
++    smokeSandboxBuildStep('react-webpack/18-ts', 'React Webpack'),
+   ],
+ }));
  
-+  it('compiles packages before running unit tests on node-26-smoke', () => {
-+    const result = generate('--workflow=daily', '--base-ref=HEAD');
-+
-+    expect(result.status, result.stderr).toBe(0);
-+    const config = JSON.parse(
-+      readFileSync(join(repoRoot, '.circleci/config.generated.yml'), 'utf8')
-+    );
-+    const steps: { name: string; command?: string }[] = config.jobs['node-26-smoke'].steps.map(
-+      (step: Record<string, { name?: string; command?: string }>) => ({
-+        name: step.run?.name ?? Object.keys(step)[0],
-+        command: step.run?.command,
-+      })
-+    );
-+    const installIndex = steps.findIndex((step) => step.name === 'node/install-packages');
-+    const compileIndex = steps.findIndex((step) => step.name === 'Compile');
-+    const unitTestsIndex = steps.findIndex((step) => step.name === 'Run unit tests');
-+    expect(compileIndex).toBeGreaterThan(installIndex);
-+    expect(compileIndex).toBeLessThan(unitTestsIndex);
-+    expect(steps[compileIndex].command).toBe(
-+      'yarn task --task compile --start-from=auto --no-link'
-+    );
-+  });
-+
-   it.each([{ args: [] }, { args: ['--workflow=unknown'] }])('rejects $args', ({ args }) => {
-     const result = generate(...args);
- 
-```
-
----
-
-### Incident Patch 3: `a4f4acc4` (2026-10-26)
-**Commit Message**: Merge pull request #36993 from storybookjs/julien/fix-extraction-service-unhandled-rejection
-
-Core: Skip extraction refresh when the story index fails to build
-
-**File**: `code/core/src/shared/open-service/services/docgen/server.test.ts` (modified, +30/-0)
-```diff
-@@ -298,6 +298,36 @@ describe('docgen open service', () => {
-         ])
-       );
-     });
-+
-+    it('skips the refresh when the story index cannot be built', async () => {
-+      const onUnhandledRejection = vi.fn();
-+      process.on('unhandledRejection', onUnhandledRejection);
-+      const provider = vi.fn<DocgenProvider>(async () => makeDocgenPayload());
-+      const resolveIndex = makeGetIndex([makeStoryEntry('button--primary', 'Button')]);
-+      let indexBroken = false;
-+      const getIndex = vi.fn(() =>
-+        indexBroken
-+          ? Promise.reject(new Error('Syntax error in button.stories.tsx'))
-+          : resolveIndex()
-+      );
-+      const service = registerDocgenService({ getIndex, docgenProvider: provider });
-+      subscribeDocgenToModuleGraphChanges({ getIndex, workingDir: process.cwd() });
-+
-+      await service.queries.docgen.loaded({ id: 'button' });
-+      const callsBeforeUpdate = getIndex.mock.calls.length;
-+      indexBroken = true;
-+
-+      const moduleGraph = getService('core/module-graph', { internal: true });
-+      await moduleGraph.commands._applyGraphUpdate({
-+        bumpedStoryFiles: ['./button.stories.tsx'],
-+      });
-+
-+      await vi.waitFor(() => expect(getIndex.mock.calls.length).toBeGreaterThan(callsBeforeUpdate));
-+      await new Promise((resolve) => setTimeout(resolve, 0));
-+      process.off('unhandledRejection', onUnhandledRejection);
-+      expect(onUnhandledRejection).not.toHaveBeenCalled();
-+      expect(provider).toHaveBeenCalledTimes(1);
-+    });
-   });
- 
-   describe('static build', () => {
-```
-
-**File**: `code/core/src/shared/open-service/services/extraction-service.server.ts` (modified, +7/-1)
-```diff
-@@ -111,8 +111,14 @@ export function subscribeExtractionServiceToModuleGraphChanges<
-       return;
-     }
- 
-+    // An unindexable story (e.g. a syntax error mid-edit) must not become an unhandled rejection.
-+    const index = await options.getIndex().catch(() => undefined);
-+    if (!index) {
-+      return;
-+    }
-+
-     const changedStoryFiles = new Set(data.storyFiles);
--    const entries = Object.values((await options.getIndex()).entries);
-+    const entries = Object.values(index.entries);
-     const affectedEntries =
-       changedStoryFiles.size === 0
-         ? entries
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #37043** (2026-10-27): Build: Keep the CircleCI config generator free of installed dependencies (@valentinpalkovic)
+- **PR #37036** (2026-10-27): CI: Un-silence the Node 26 smoke sandbox builds and skip their Playwright install (@obvious-autobuild[bot])
+- **PR #37035** (2026-10-27): CI: Pin TypeScript 6 in the react-vite TypeScript sandbox templates (@obvious-autobuild[bot])
 - **PR #37034** (2026-10-27): CI: Run Chromatic on every focus sandbox when a shared template story changes (@valentinpalkovic)
 - **PR #37033** (2026-10-27): CI: Restore the compile step on the Node 26 smoke job (@obvious-autobuild[bot])
 - **PR #37026** (2026-10-27): CI: Speed up the Windows unit test job (@valentinpalkovic)
-- **PR #37024** (2026-10-26): CI: Resolve the config generator's file reads on Windows (@valentinpalkovic)
-- **PR #37022** (2026-10-26): Sandboxes: Remove the duplicate JavaScript and the Ember sandbox templates (@valentinpalkovic)
-- **PR #37017** (2026-10-27): Nextjs-Vite: Preserve Async Cache Mock Implementations (@naveedsajjdawan)
 
 ---
 
@@ -812,28 +798,42 @@ Core: Skip extraction refresh when the story index fails to build
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): run Chromatic on every focus sandbox when a shared template story changes
+## X. sandbox): pin typescript@^6 in the react-vite bench templates
 
 **RULE**:
-When implementing operations in `.github/PULL_REQUEST_TEMPLATE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in storybookjs/storybook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `code/lib/cli-storybook/src/sandbox-templates.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in storybookjs/storybook. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9f04046d`: ci): run Chromatic on every focus sandbox when a shared template story changes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `da32ada3`: sandbox): pin typescript@^6 in the react-vite bench templates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/PULL_REQUEST_TEMPLATE.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `code/lib/cli-storybook/src/sandbox-templates.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-- [ ] When this PR is ready for testing, add a `ci:focus`, `ci:normal`, or `ci:daily` GitHub label. `ci:focus` runs the typecheck, unit tests, and lint for the changed files, the end-to-end jobs whose paths changed, and one sandbox in full for each changed framework, renderer, builder, or library (default `react-vite/default-ts`), plus Chromatic on the other sandboxes that load it, or on every sandbox when a core or addon template story changes. `ci:normal` and `ci:daily` run the sandbox sets in `code/lib/cli-storybook/src/sandbox-templates.ts`. Add `ci:windows` to also run the Windows jobs, or on its own to iterate on Windows failures; it does not report `circleci-completion`, so a PR cannot merge on it alone.
+  allTemplates,
+
+describe('React bench sandboxes', () => {
+  it('pin typescript to ^6 (their modifications replace the base template)', () => {
+    for (const key of [
+      'bench/react-vite-default-ts',
+      'bench/react-vite-default-ts-nodocs',
+      'bench/react-vite-default-ts-test-build',
+    ] as const) {
+      expect(allTemplates[key].modifications).toMatchObject({
+        extraDevDependencies: ['typescript@^6'],
+      });
+    }
+  });
+});
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-- [ ] When this PR is ready for testing, add a `ci:focus`, `ci:normal`, or `ci:daily` GitHub label. `ci:focus` runs the typecheck, unit tests, and lint for the changed files, the end-to-end jobs whose paths changed, and one sandbox in full for each changed framework, renderer, builder, or library (default `react-vite/default-ts`), plus Chromatic on the other sandboxes that load it. `ci:normal` and `ci:daily` run the sandbox sets in `code/lib/cli-storybook/src/sandbox-templates.ts`. Add `ci:windows` to also run the Windows jobs, or on its own to iterate on Windows failures; it does not report `circleci-completion`, so a PR cannot merge on it alone.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9f04046d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `da32ada3` are properly handled with clean fallback behavior.

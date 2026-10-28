@@ -5661,3 +5661,5 @@
 | `CYCLE-20261028-LLDI` | `2026-10-28T02:48:09.846Z` | `convaiinnovations/laya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5141, Rule 5142, Rule 5143` | Yes (`e702af5d...`) |
 | `CYCLE-20261028-LPY1` | `2026-10-28T02:48:15.769Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5144` | Yes (`ad70d5e7...`) |
 | `CYCLE-20261028-U96H` | `2026-10-28T02:54:53.945Z` | `Edge0/Audio8-ASR-Infinite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5145, Rule 995, Rule 5146` | Yes (`265fc7d9...`) |
+| `CYCLE-20261028-6JKO` | `2026-10-28T03:04:27.288Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md` | Yes (`b1540a85...`) |
+| `CYCLE-20261028-6ORN` | `2026-10-28T03:04:34.019Z` | `storybookjs/storybook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5147` | Yes (`48b2cd70...`) |

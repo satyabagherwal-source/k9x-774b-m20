@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T02:54:56.493Z",
-    "lastVerified": "2026-10-28T02:54:56.493Z",
+    "lastChecked": "2026-10-28T03:04:38.379Z",
+    "lastVerified": "2026-10-28T03:04:38.379Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -172,5 +172,74 @@
     "lastChecked": "2026-10-28T02:54:55.313Z",
     "revisionIdentifier": "acf15714",
     "lastVerified": "2026-10-28T02:54:55.313Z"
+  },
+  "herdrdev-herdr": {
+    "name": "herdr",
+    "officialUrl": "https://github.com/herdrdev/herdr",
+    "lastChecked": "2026-10-28T03:04:23.430Z",
+    "revisionIdentifier": "2713feb5",
+    "lastVerified": "2026-10-28T03:04:23.430Z"
+  },
+  "hf-abenzerps-qwen-image-2.1-uncensored-gguf": {
+    "name": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+    "officialUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T03:04:26.363Z",
+    "lastVerified": "2026-10-28T03:04:26.363Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
+    "contentHash": "b1540a850266e3c2df61c115737a3dd64f98de2c3412d8d3655d211c7ba5fb8d",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "storybookjs-storybook": {
+    "name": "storybookjs/storybook",
+    "officialUrl": "https://github.com/storybookjs/storybook",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-28T03:04:33.389Z",
+    "lastVerified": "2026-10-28T03:04:33.389Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-storybookjs-storybook",
+    "contentHash": "48b2cd700e9b8b66dff819288edb86355433788f0423e6a2f29bfe93be6e9df7",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 14,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "actions-actions-runner-controller": {
+    "name": "actions-runner-controller",
+    "officialUrl": "https://github.com/actions/actions-runner-controller",
+    "lastChecked": "2026-10-28T03:04:30.931Z",
+    "revisionIdentifier": "89f34c4f",
+    "lastVerified": "2026-10-28T03:04:30.931Z"
+  },
+  "microsoft-agent-governance-toolkit": {
+    "name": "agent-governance-toolkit",
+    "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
+    "lastChecked": "2026-10-28T03:04:33.478Z",
+    "revisionIdentifier": "9bfdd5f4",
+    "lastVerified": "2026-10-28T03:04:33.478Z"
+  },
+  "pathwaycom-llm-app": {
+    "name": "llm-app",
+    "officialUrl": "https://github.com/pathwaycom/llm-app",
+    "lastChecked": "2026-10-28T03:04:35.925Z",
+    "revisionIdentifier": "e2a7a09b",
+    "lastVerified": "2026-10-28T03:04:35.925Z"
+  },
+  "synalinks-synalinks-skills": {
+    "name": "synalinks-skills",
+    "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
+    "lastChecked": "2026-10-28T03:04:38.371Z",
+    "revisionIdentifier": "092970a5",
+    "lastVerified": "2026-10-28T03:04:38.371Z"
   }
 }

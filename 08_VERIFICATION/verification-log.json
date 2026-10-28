@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261026-BGET",
-    "timestamp": "2026-10-26T14:16:46.805Z",
-    "repository": "berkaycubuk/kitsune",
-    "learningId": "learn-github-berkaycubuk-kitsune",
-    "contentHash": "a09d116f95d8729ef540891ac289a4b429c97979e40255f4735c40e3c4ac014f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-JQA3",
-    "timestamp": "2026-10-26T14:23:12.843Z",
-    "repository": "react-bootstrap/react-bootstrap",
-    "learningId": "learn-github-react-bootstrap-react-bootstrap",
-    "contentHash": "04530f648f4994d1def0473d4dee6493ba4e4018fc403f6e1919e50fd599f8f5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261026-JWRL",
     "timestamp": "2026-10-26T14:23:21.249Z",
     "repository": "iPlug2/iPlug2",
@@ -7492,6 +7462,36 @@
     "contentHash": "265fc7d943e247cc55abc22e06e8b9d6384f93d83107269bd717fd6908d409ac",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-6JKO",
+    "timestamp": "2026-10-28T03:04:27.288Z",
+    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
+    "contentHash": "b1540a850266e3c2df61c115737a3dd64f98de2c3412d8d3655d211c7ba5fb8d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-6ORN",
+    "timestamp": "2026-10-28T03:04:34.019Z",
+    "repository": "storybookjs/storybook",
+    "learningId": "learn-github-storybookjs-storybook",
+    "contentHash": "48b2cd700e9b8b66dff819288edb86355433788f0423e6a2f29bfe93be6e9df7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
