@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/feathersjs-feathers-learnings.md`  
 > **Source**: github ([https://github.com/feathersjs/feathers](https://github.com/feathersjs/feathers))  
-> **Source Version**: `e73ad697`  
+> **Source Version**: `cd5e59b9`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T13:54:27.852Z  
+> **Timestamp**: 2026-10-28T05:24:35.707Z  
 > **Learning ID**: `learn-github-feathersjs-feathers`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/feathersjs-feathers-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/feathersjs/feathers](https://github.com/feathersjs/feathers))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T13:54:27.472Z  
+> **Harvest Timestamp**: 2026-10-28T05:24:35.700Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The API and real-time application framework
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 15255 stars
+- **Stars / Engagement**: 15256 stars
 
 ---
 
@@ -1129,892 +1129,364 @@ export default (event: ConnectionEvent) => async (context: HookContext, next: Ne
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `616e8850` (2026-10-25)
-**Commit Message**: fix(authentication-oauth): allow account linking from the configured oAuth origin
+### Incident Patch 1: `4c8650ce` (2026-10-28)
+**Commit Message**: fix(authentication-oauth): keep the OAuth token in the redirect fragment
 
-**File**: `packages/authentication-oauth/src/strategy.ts` (modified, +10/-3)
+**File**: `docs/api/authentication/oauth.md` (modified, +1/-1)
 ```diff
-@@ -8,6 +8,7 @@ import { Params } from '@feathersjs/feathers'
- import { NotAuthenticated } from '@feathersjs/errors'
- import { createDebug, _ } from '@feathersjs/commons'
- import qs from 'qs'
-+import { getGrantConfig } from './utils'
+@@ -205,7 +205,7 @@ A successful oAuth flow will redirect to the origin or redirect URL in the form
  
- const debug = createDebug('@feathersjs/authentication-oauth/strategy')
+ <BlockQuote type="info" label="Note">
  
-@@ -192,15 +193,17 @@ export class OAuthStrategy extends AuthenticationBaseStrategy {
-   }
+-The redirect is using a hash instead of a query string by default because it is not logged server side and can be easily read on the client. You can force query based redirect by adding a `?` to the end of the `redirect` option.
++The redirect is using a hash instead of a query string by default because it is not logged server side and can be easily read on the client. You can force query based redirect by adding a `?` to the end of the `redirect` option. This only applies to the configured option, a `redirect` query parameter always gets the hash.
  
-   /**
--   * Account linking with a `feathers_token` must be started from the app, since anyone can send a
--   * link with their own token. Override to allow linking from clients that send no referer.
-+   * Account linking with a `feathers_token` must be started from the app (the request host, the
-+   * configured oAuth origin or an allowed origin), since anyone can send a link with their own token.
-+   * Override to allow linking from clients that send no referer.
-    *
-    * @throws NotAuthenticated if the referer is missing or not an allowed origin
-    */
-   async validateLink(params: Params) {
-     const { redirect, origins = this.app.get('origins') } = this.authentication.configuration.oauth
-     const { referer, host } = params.headers || {}
-     const allowed = Array.isArray(origins) ? origins : redirect ? [redirect] : []
-+    const { origin } = getGrantConfig(this.authentication as any).defaults
-     let url: URL
+ </BlockQuote>
  
-     try {
-@@ -209,7 +212,11 @@ export class OAuthStrategy extends AuthenticationBaseStrategy {
-       throw new NotAuthenticated('Account linking must be started from an allowed origin.')
-     }
- 
--    if (url.host !== host && !allowed.some((origin: string) => isOriginAllowed(url.origin, origin))) {
-+    if (
-+      url.host !== host &&
-+      !isOriginAllowed(url.origin, origin) &&
-+      !allowed.some((current: string) => isOriginAllowed(url.origin, current))
-+    ) {
-       throw new NotAuthenticated('Account linking must be started from an allowed origin.')
-     }
-   }
 ```
 
-**File**: `packages/authentication-oauth/test/link.test.ts` (modified, +12/-0)
+**File**: `packages/authentication-oauth/src/strategy.ts` (modified, +2/-1)
 ```diff
-@@ -79,6 +79,18 @@ describe('@feathersjs/authentication-oauth account linking', () => {
-     assert.equal(data.user.gitlabId, 'test')
-   })
- 
-+  it('links the account behind a proxy that rewrites the Host header', async () => {
-+    const { user, token } = await createUser('user@example.com')
-+    const { data } = await linkFlow(token, {
-+      host: 'internal.example:3030',
-+      referer: `http://127.0.0.1:${port}/settings`
-+    })
-+
-+    assert.ok(data.accessToken)
-+    assert.equal(data.user.id, user.id)
-+    assert.equal(data.user.gitlabId, 'test')
-+  })
-+
-   it('uses the configured origins', async () => {
-     const oauth = app.get('authentication').oauth
-     const { token } = await createUser('user@example.com')
-```
-
----
-
-### Incident Patch 2: `1c29862c` (2026-10-25)
-**Commit Message**: fix(authentication-oauth): only link accounts from an allowed origin
-
-**File**: `packages/authentication-oauth/src/service.ts` (modified, +8/-1)
-```diff
-@@ -220,7 +220,14 @@ export class OAuthService {
+@@ -237,7 +237,8 @@ export class OAuthStrategy extends AuthenticationBaseStrategy {
      }
  
-     if (feathers_token) {
--      debug('Got feathers_token query parameter to link accounts', feathers_token)
-+      debug('Got feathers_token query parameter to link accounts')
-+      const strategy = this.service.getStrategy(params.route.provider) as OAuthStrategy
+     const redirectUrl = `${redirect}${queryRedirect}`
+-    const separator = redirectUrl.endsWith('?') ? '' : redirect.indexOf('#') !== -1 ? '?' : '#'
++    // Only the configured redirect can put the token in the query string, a client supplied redirect can not
++    const separator = redirect.endsWith('?') && !queryRedirect ? '' : redirect.indexOf('#') !== -1 ? '?' : '#'
+     const authResult: AuthenticationResult = data
+     const query = authResult.accessToken
+       ? { access_token: authResult.accessToken }
+```
+
+**File**: `packages/authentication-oauth/test/strategy.test.ts` (modified, +21/-1)
+```diff
+@@ -446,7 +446,13 @@ describe('@feathersjs/authentication-oauth/strategy', () => {
+         redirect: '/hi-there?'
+       }
+     )
+-    assert.equal(redirect, '/home/hi-there?access_token=testing')
++    assert.equal(redirect, '/home/hi-there?#access_token=testing')
 +
-+      if (typeof strategy?.validateLink !== 'function') {
-+        throw new NotAuthenticated('Account linking is not supported for this provider.')
++    redirect = await strategy.getRedirect({ accessToken: 'testing' }, { redirect: '?' })
++    assert.equal(redirect, '/home?#access_token=testing')
++
++    redirect = await strategy.getRedirect(new Error('something went wrong'), { redirect: '/hi-there?' })
++    assert.equal(redirect, '/home/hi-there?#error=something%20went%20wrong')
+ 
+     redirect = await strategy.getRedirect(new Error('something went wrong'))
+     assert.equal(redirect, '/home#error=something%20went%20wrong')
+@@ -459,6 +465,9 @@ describe('@feathersjs/authentication-oauth/strategy', () => {
+     redirect = await strategy.getRedirect({ accessToken: 'testing' })
+     assert.equal(redirect, '/home?access_token=testing')
+ 
++    redirect = await strategy.getRedirect({ accessToken: 'testing' }, { redirect: '/hi-there' })
++    assert.equal(redirect, '/home?/hi-there#access_token=testing')
++
+     delete app.get('authentication').oauth.redirect
+ 
+     redirect = await strategy.getRedirect({ accessToken: 'testing' })
+@@ -507,6 +516,17 @@ describe('@feathersjs/authentication-oauth/strategy', () => {
+     )
+     assert.equal(redirect, 'https://feathersjs.com/home#access_token=testing')
+ 
++    redirect = await strategy.getRedirect(
++      { accessToken: 'testing' },
++      {
++        redirect: '/home?',
++        headers: {
++          referer: 'https://feathersjs.com/somewhere'
++        }
 +      }
++    )
++    assert.equal(redirect, 'https://feathersjs.com/home?#access_token=testing')
 +
-+      await strategy.validateLink(params)
-       session.accessToken = feathers_token
-     }
- 
-```
-
-**File**: `packages/authentication-oauth/src/strategy.ts` (modified, +23/-0)
-```diff
-@@ -191,6 +191,29 @@ export class OAuthStrategy extends AuthenticationBaseStrategy {
-     return redirect
-   }
- 
-+  /**
-+   * Account linking with a `feathers_token` must be started from the app, since anyone can send a
-+   * link with their own token. Override to allow linking from clients that send no referer.
-+   *
-+   * @throws NotAuthenticated if the referer is missing or not an allowed origin
-+   */
-+  async validateLink(params: Params) {
-+    const { redirect, origins = this.app.get('origins') } = this.authentication.configuration.oauth
-+    const { referer, host } = params.headers || {}
-+    const allowed = Array.isArray(origins) ? origins : redirect ? [redirect] : []
-+    let url: URL
-+
-+    try {
-+      url = new URL(referer)
-+    } catch {
-+      throw new NotAuthenticated('Account linking must be started from an allowed origin.')
-+    }
-+
-+    if (url.host !== host && !allowed.some((origin: string) => isOriginAllowed(url.origin, origin))) {
-+      throw new NotAuthenticated('Account linking must be started from an allowed origin.')
-+    }
-+  }
-+
-   async getRedirect(
-     data: AuthenticationResult | Error,
-     params?: AuthenticationParams
-```
-
-**File**: `packages/authentication-oauth/test/link.test.ts` (added, +125/-0)
-```diff
-@@ -0,0 +1,125 @@
-+import { strict as assert } from 'assert'
-+import axios from 'axios'
-+import { CookieJar } from 'tough-cookie'
-+import { expressFixture } from './utils/fixture'
-+
-+describe('@feathersjs/authentication-oauth account linking', () => {
-+  const port = 9786
-+  const host = `http://localhost:${port}`
-+  const message = 'Account linking must be started from an allowed origin.'
-+  const req = axios.create({
-+    maxRedirects: 0,
-+    validateStatus: () => true
-+  })
-+  let app: Awaited<ReturnType<typeof expressFixture>>
-+
-+  const createUser = async (email: string) => {
-+    const user = await app.service('users').create({ email })
-+    const token = await app.service('authentication').createAccessToken({}, { subject: `${user.id}` })
-+
-+    return { user, token }
-+  }
-+
-+  const linkFlow = async (token: string | undefined, headers: Record<string, string> = {}) => {
-+    const query = token ? `?feathers_token=${token}` : ''
-+    const response = await req.get(`${host}/oauth/gitlab${query}`, { headers })
-+
-+    if (response.status !== 303) {
-+      return response
-+    }
-+
-+    const cookie = new CookieJar()
-+    response.headers['set-cookie']?.forEach((value) => cookie.setCookie(value, host))
-+
-+    const provider = await req.get(response.data.location)
-+
-+    return req.get(provider.headers.location, { headers: { cookie: await cookie.getCookieString(host) } })
-+  }
-+
-+  before(async () => {
-+    app = await expressFixture(port, 5124)
-+  })
-+
-+  after(async () => {
-+    await app.teardown()
-+  })
-+
-+  afterEach(async () => {
-+    const users = (await app.service('users').find({ paginate: false })) as any[]
-+
-+    for (const user of users) {
-+      await app.service('users').remove(user.id)
-+    }
-+  })
-+
-+  it('rejects a feathers_token link without a referer', async () => {
-+    const { user: attacker, token } = await createUser('attacker@example.com')
-+    const response = await linkFlow(token)
-+
-+    assert.equal(response.status, 401)
-+    assert.equal(response.data.message, message)
-+    assert.equal((await app.service('users').get(attacker.id)).gitlabId, undefined)
-+  })
-+
-+  it('rejects a feathers_token link from another origin', async () => {
-+    const { user: attacker, token } = await createUser('attacker@example.com')
-+    const response = await linkFlow(token, { referer: 'https://evil.example/page' })
-+
-+    assert.equal(response.status, 401)
-+    assert.equal(response.data.message, message)
-+    assert.equal((await app.service('users').get(attacker.id)).gitlabId, undefined)
-+  })
-+
-+  it('links the account when started from the API host', async () => {
-+    const { user, token } = await createUser('user@example.com')
-+    const { data } = await linkFlow(token, { referer: `${host}/settings` })
-+
-+    assert.ok(data.accessToken)
-+    assert.equal(data.user.id, user.id)
-+    assert.equal(data.user.gitlabId, 'test')
-+  })
-+
-+  it('uses the configured origins', async () => {
-+    const oauth = app.get('authentication').oauth
-+    const { token } = await createUser('user@example.com')
-+
-+    oauth.origins = ['http://localhost:3000']
-+
-+    try {
-+      const allowed = await req.get(`${host}/oauth/gitlab?feathers_token=${token}`, {
-+        headers: { referer: 'http://localhost:3000/settings' }
-+      })
-+      const denied = await req.get(`${host}/oauth/gitlab?feathers_token=${token}`, {
-+        headers: { referer: 'https://evil.example/' }
-+      })
-+
-+      assert.equal(allowed.status, 303)
-+      assert.equal(denied.status, 401)
-+    } finally {
-+      delete oauth.origins
-+    }
-+  })
-+
-+  it('sign in without feathers_token still works without a referer', async () => {
-+    const { data } = await linkFlow(undefined)
-+
-+    assert.ok(data.accessToken)
-+  })
-+
-+  it('validateLink can be overridden to allow clients without a referer', async () => {
-+    const strategy = app.service('authentication').getStrategy('gitlab') as any
-+    const original = strategy.validateLink
-+    const { user, token } = await createUser('user@example.com')
-+
-+    strategy.validateLink = async () => {}
-+
-+    try {
-+      const { data } = await linkFlow(token)
-+
-+      assert.equal(data.user.id, user.id)
-+      assert.equal(data.user.gitlabId, 'test')
-+    } finally {
-+      strategy.validateLink = original
-+    }
-+  })
-+})
+     await assert.rejects(
+       () =>
+         strategy.getRedirect(
 ```
 
 ---
 
-### Incident Patch 3: `3673cde9` (2026-10-23)
-**Commit Message**: fix(authentication-oauth): harden OAuth callback and profile handling
+### Incident Patch 2: `f3004612` (2026-10-27)
+**Commit Message**: fix(knex): omit queries from all database error messages (#3725)
 
-**File**: `package-lock.json` (modified, +2/-0)
+* fix(knex): omit query from PostgreSQL error messages
+
+The PostgreSQL branch of the error handler stripped the SQL from the raw driver error message but the constructed errors used the raw message, so the SQL still went through. Improved the SQL parsing and actually used it for the error construction.
+
+Fixes #3711
+
+* fix(knex): omit queries from all database error messages
+
+Closes #3711
+
+* fix(knex): omit queries from patch, count and compile errors
+
+* fix(knex): only strip queries from database driver errors
+
+---------
+
+Co-authored-by: ssande-fwd <[REDACTED_EMAIL]>
+
+**File**: `packages/knex/src/adapter.ts` (modified, +4/-2)
 ```diff
-@@ -30158,13 +30158,15 @@
-         "@feathersjs/schema": "^5.0.50",
-         "cookie-session": "^2.1.1",
-         "grant": "^5.4.24",
-+        "jsonwebtoken": "^9.0.3",
-         "koa-session": "^7.0.2",
-         "qs": "^6.16.0"
-       },
-       "devDependencies": {
-         "@feathersjs/memory": "^5.0.50",
-         "@types/cookie-session": "^2.0.49",
-         "@types/express": "^4.17.21",
-+        "@types/jsonwebtoken": "^9.0.10",
-         "@types/koa-session": "^6.4.5",
-         "@types/mocha": "^10.0.10",
-         "@types/node": "^26.0.0",
+@@ -199,7 +199,9 @@ export class KnexAdapter<
+     const data = filters.$limit === 0 ? [] : await builder.catch(errorHandler)
+ 
+     if (paginate && paginate.default) {
+-      const total = await countBuilder.then((count) => parseInt(count[0] ? count[0].total : 0))
++      const total = await countBuilder
++        .then((count) => parseInt(count[0] ? count[0].total : 0))
++        .catch(errorHandler)
+ 
+       return {
+         total,
+@@ -302,7 +304,7 @@ export class KnexAdapter<
+     }
+     const builder = this.createQuery(updateParams)
+ 
+-    await builder.update(data, [], { includeTriggerModifications: true })
++    await builder.update(data, [], { includeTriggerModifications: true }).catch(errorHandler)
+ 
+     const items = await this._findOrGet(null, updateParams)
+ 
 ```
 
-**File**: `packages/authentication-oauth/package.json` (modified, +2/-0)
+**File**: `packages/knex/src/error-handler.ts` (modified, +44/-7)
 ```diff
-@@ -63,13 +63,15 @@
-     "@feathersjs/schema": "^5.0.50",
-     "cookie-session": "^2.1.1",
-     "grant": "^5.4.24",
-+    "jsonwebtoken": "^9.0.3",
-     "koa-session": "^7.0.2",
-     "qs": "^6.16.0"
-   },
-   "devDependencies": {
-     "@feathersjs/memory": "^5.0.50",
-     "@types/cookie-session": "^2.0.49",
-     "@types/express": "^4.17.21",
-+    "@types/jsonwebtoken": "^9.0.10",
-     "@types/koa-session": "^6.4.5",
-     "@types/mocha": "^10.0.10",
-     "@types/node": "^26.0.0",
+@@ -2,8 +2,50 @@ import { errors } from '@feathersjs/errors'
+ 
+ export const ERROR = Symbol.for('@feathersjs/knex/error')
+ 
+-export function errorHandler(error: any) {
+-  const { message } = error
++/**
++ * Knex adds the query and its bound values to errors, as "<sql> - <message>" for driver
++ * errors and "<message> query: <sql>" for compile errors. Keep only the message so the
++ * query is not sent to the client.
++ */
++const omitQuery = (error: any) => {
++  const { message, code, sqlMessage } = error
++
++  if (typeof message !== 'string') {
++    return message
++  }
++
++  // MySQL drivers keep the original message
++  if (typeof sqlMessage === 'string' && sqlMessage !== '' && message.endsWith(sqlMessage)) {
++    const withCode = `${code}: ${sqlMessage}`
++
++    return message.endsWith(withCode) ? withCode : sqlMessage
++  }
++
++  if (message.startsWith('Undefined binding(s) detected')) {
++    const index = message.indexOf(' query: ')
++
++    return index === -1 ? message : message.slice(0, index)
++  }
++
++  // Only database driver errors have the query in front of the message
++  if (
++    code === undefined &&
++    error.errno === undefined &&
++    error.number === undefined &&
++    error.sqlState === undefined
++  ) {
++    return message
++  }
++
++  // SQLite messages start with the error code
++  const codeIndex = typeof code === 'string' ? message.lastIndexOf(` - ${code}: `) : -1
++  const index = codeIndex !== -1 ? codeIndex : message.lastIndexOf(' - ')
++
++  return index === -1 ? message : message.slice(index + 3)
++}
++
++export function errorHandler(error: any): never {
++  const message = omitQuery(error)
+   let feathersError = error
+ 
+   if (error.sqlState && error.sqlState.length) {
+@@ -64,11 +106,6 @@ export function errorHandler(error: any) {
+   } else if (typeof error.code === 'string' && error.severity && error.routine) {
+     // NOTE: Error codes taken from
+     // https://www.postgresql.org/docs/9.6/static/errcodes-appendix.html
+-    // Omit query information
+-    const messages = (error.message || '').split('-')
+-
+-    error.message = messages[messages.length - 1]
+-
+     switch (error.code.slice(0, 2)) {
+       case '22':
+         feathersError = new errors.NotFound(message)
 ```
 
-**File**: `packages/authentication-oauth/src/apple.ts` (added, +109/-0)
+**File**: `packages/knex/test/error-handler.test.ts` (modified, +240/-1)
 ```diff
-@@ -0,0 +1,109 @@
-+import { createPublicKey } from 'crypto'
-+import jsonwebtoken from 'jsonwebtoken'
-+import { createDebug } from '@feathersjs/commons'
-+import { NotAuthenticated } from '@feathersjs/errors'
-+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-+//@ts-ignore
-+import request from 'grant/lib/client'
-+
-+const debug = createDebug('@feathersjs/authentication-oauth/apple')
-+
-+const MAX_AGE = 60 * 60 * 1000
-+const MIN_REFRESH = 5 * 60 * 1000
-+const RETRY_AFTER = 30 * 1000
-+
-+/**
-+ * Apple's public keys for `id_token` signatures. They are refreshed after an hour, or at most
-+ * every few minutes for an unknown key id. A failed refresh keeps the previous keys and is
-+ * not retried for a few seconds.
-+ */
-+export const appleKeys = {
-+  url: 'https://appleid.apple.com/auth/keys',
-+  keys: [] as any[],
-+  fetchedAt: 0,
-+  failedAt: 0
-+}
-+
-+let refreshing: Promise<void> | null = null
-+
-+async function refreshAppleKeys() {
-+  try {
-+    const { body } = await request({ method: 'GET', url: appleKeys.url })
-+
-+    if (!Array.isArray(body?.keys) || !body.keys.length) {
-+      throw new Error('No keys in response')
-+    }
-+
-+    appleKeys.keys = body.keys
-+    appleKeys.fetchedAt = Date.now()
-+  } catch (error: any) {
-+    debug('Could not refresh Apple keys', error.message)
-+    appleKeys.failedAt = Date.now()
-+  }
-+}
-+
-+async function getAppleKey(kid: string) {
-+  const age = Date.now() - appleKeys.fetchedAt
-+  const findKey = () => appleKeys.keys.find((key) => key.kid === kid)
-+  const canRetry = Date.now() - appleKeys.failedAt > RETRY_AFTER
-+
-+  if (canRetry && (age > MAX_AGE || (!findKey() && age > MIN_REFRESH))) {
-+    refreshing ||= refreshAppleKeys().finally(() => (refreshing = null))
-+    await refreshing
-+  }
-+
-+  return findKey()
-+}
-+
-+/**
-+ * Apple sends the user's name (only on the first sign-in) as a JSON string in the callback body.
-+ */
-+function getAppleName(user: any) {
-+  try {
-+    return (typeof user === 'string' ? JSON.parse(user) : user)?.name
-+  } catch {
-+    return undefined
-+  }
-+}
-+
-+/**
-+ * Without a `profile_url`, Grant uses the `user` field of the Apple callback body as the
-+ * profile, which the client controls. Take the identity from the verified `id_token` instead
-+ * and only keep the name from the callback body.
-+ *
-+ * @throws NotAuthenticated if the `id_token` is missing or not valid for `clientId`
-+ */
-+export async function getAppleProfile(payload: any, clientId: string) {
-+  const idToken = payload.id_token || payload.raw?.id_token
-+  let claims: any
-+
-+  if (!clientId) {
-+    throw new NotAuthenticated('Could not get oAuth profile')
-+  }
-+
-+  try {
-+    const { header }: any = jsonwebtoken.decode(idToken, { complete: true })
-+    const jwk = await getAppleKey(header.kid)
-+
-+    claims = jsonwebtoken.verify(idToken, createPublicKey({ key: jwk, format: 'jwk' }), {
-+      algorithms: ['RS256'],
-+      issuer: 'https://appleid.apple.com',
-+      audience: clientId,
-+      clockTolerance: 60
-+    })
-+  } catch {
-+    throw new NotAuthenticated('Could not get oAuth profile')
-+  }
-+
-+  if (typeof claims.sub !== 'string' || claims.sub === '') {
-+    throw new NotAuthenticated('Could not get oAuth profile')
-+  }
-+
-+  const name = getAppleName(payload.profile)
-+
-+  return {
-+    sub: claims.sub,
-+    ...(claims.email ? { email: claims.email } : {}),
-+    ...(name ? { name } : {})
-+  }
-+}
-```
-
-**File**: `packages/authentication-oauth/src/service.ts` (modified, +54/-4)
-```diff
-@@ -4,12 +4,46 @@ import { FeathersError, GeneralError, NotAuthenticated } from '@feathersjs/error
- // eslint-disable-next-line @typescript-eslint/ban-ts-comment
- //@ts-ignore
- import Grant from 'grant/lib/grant'
-+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-+//@ts-ignore
-+import grantConfig from 'grant/lib/config'
- import { AuthenticationService } from '@feathersjs/authentication'
- import { OAuthStrategy } from './strategy'
--import { getGrantConfig, OauthSetupSettings } from './utils'
-+import { getAppleProfile } from './apple'
-+import { filterDynamic, getGrantConfig, OauthSetupSettings } from './utils'
+@@ -1,5 +1,6 @@
+ import assert from 'assert'
+-import { errorHandler } from '../src'
++import knex from 'knex'
++import { errorHandler, ERROR, KnexService } from '../src'
  
- const debug = createDebug('@feathersjs/authentication-oauth/services')
- 
-+const isValue = (value: any) => typeof value === 'string' && value !== ''
-+
-+/**
-+ * Grant treats a callback without an authorization code (OAuth2) or token (OAuth1) as a
-+ * successful response and exchanges the code with the provider the flow was started with.
-+ *
-+ * @throws NotAuthenticated if the callback is for a different provider or has no code or token
-+ */
-+function validateCallback(provider: any, params: OAuthParams) {
-+  const { query = {}, session, state, route } = params
-+  const input = Object.keys(query).length ? query : state?.oauthCallback || {}
-+
-+  if (session.grant?.provider && session.grant.provider !== route.provider) {
-+    throw new NotAuthenticated('Invalid oAuth callback provider.')
-+  }
-+
-+  if (input.error) {
-+    return
-+  }
-+
-+  if (provider.oauth === 2 && !isValue(input.code)) {
-+    throw new NotAuthenticated('Missing oAuth authorization code.')
-+  }
-+
-+  // Some OAuth1 providers store the request token code in the session instead
-+  if (provider.oauth === 1 && !isValue(input.oauth_token) && !session.grant?.request?.code) {
-+    throw new NotAuthenticated('Missing oAuth token.')
-+  }
-+}
-+
- export type GrantResponse = {
-   location: string
-   session: any
-@@ -80,19 +114,27 @@ export class OAuthService {
-       query,
-       route: { provider }
-     } = params
-+    const isCallback = override === 'callback'
-+    // Only the request that starts the flow sets dynamic provider options
-+    const options = isCallback ? null : grantConfig.provider(this.grant.config, { provider, override })
- 
-     const result: GrantResponse = await this.grant({
-       params: { provider, override },
-       state: state.grant,
-       session: session.grant,
--      query,
-+      query: filterDynamic(options, query),
-       method,
--      body
-+      body: filterDynamic(options, body)
+ describe('Knex Error handler', () => {
+   it('sqlState', () => {
+@@ -62,4 +63,242 @@ describe('Knex Error handler', () => {
+       name: 'GeneralError'
      })
- 
-     session.grant = result.session
-     state.grant = result.state
- 
-+    if (isCallback) {
-+      // Grant passes a callback without a code through, so authenticate validates its input
-+      state.oauthCallback = method === 'POST' ? body : {}
-+    }
+   })
 +
-     return result
-   }
- 
-@@ -128,10 +170,18 @@ export class OAuthService {
-     }
- 
-     try {
-+      const provider = grantConfig.provider(this.grant.config, grant || {}, params.state?.grant)
-+
-+      validateCallback(provider, params)
-+
-       if (payload.error) {
-         throw new GeneralError(payload.error_description || payload.error, payload)
-       }
- 
-+      if (provider.apple && !provider.profile_url && payload.profile) {
-+        authentication.profile = await getAppleProfile(payload, provider.key)
-+      }
-+
-       debug(`Calling ${authService}.create authentication with strategy ${name}`)
- 
-       const authResult = await this.service.create(authentication, authParams)
-@@ -149,7 +199,7 @@ export class OAuthService {
-         location
-       }
-     } catch (error: any) {
--      const location = await strategy.getRedirect(error, authParams)
-+      const location = strategy ? await strategy.getRedirect(error, authParams) : null
-       const e = new OAuthError(error.message, error.data, location)
- 
-       if (typeof params.session.destroy === 'function') {
-```
-
-**File**: `packages/authentication-oauth/src/strategy.ts` (modified, +17/-1)
-```diff
-@@ -120,8 +120,14 @@ export class OAuthStrategy extends AuthenticationBaseStrategy {
-   }
- 
-   async getEntityQuery(profile: OAuthProfile, _params: Params) {
-+    const id = profile.sub || profile.id
-+
-+    if (id === undefined || id === null) {
-+      throw new NotAuthenticated('oAuth profile has no id')
-+    }
-+
-     return {
--      [`${this.name}Id`]: profile.sub || profile.id
-+      [`${this.name}Id`]: id
-     }
-   }
- 
-@@ -132,6 +138,10 @@ export class OAuthStrategy extends AuthenticationBaseStrategy {
-   }
- 
-   async getProfile(data: AuthenticationRequest, _params: Params) {
-+    if (!data.profile || data.profile.error) {
-+      throw new NotAuthenticated('Could not get oAuth profile')
-+    }
-+
-     return data.profile
-   }
- 
-@@ -208,6 +218,12 @@ export class OAuthStrategy extends AuthenticationBaseStrategy {
- 
-   async findEntity(profile: OAuthProfile, params: Params) {
-     const query = await this.getEntityQuery(profile, params)
-+    const values = Object.values(query)
-+
-+    // Adapters drop undefined values, so an empty or undefined query returns any entity
-+    if (!values.length || values.includes(undefined)) {
-+      throw new NotAuthenticated('Invalid oAuth entity query')
-+    }
- 
-     debug('findEntity with query', query)
- 
-```
-
-**File**: `packages/authentication-oauth/src/utils.ts` (modified, +72/-0)
-```diff
-@@ -11,6 +11,60 @@ import koaCookieSession from 'koa-session'
- import { AuthenticationService } from '@feathersjs/authentication'
- import { GrantConfig } from 'grant'
- 
-+/**
-+ * Grant options a request must not override for providers with `dynamic: true`, since they
-+ * decide where tokens and profiles come from and how the response is checked.
-+ */
-+const PROTECTED_DYNAMIC_OPTIONS = [
-+  'request_url',
-+  'authorize_url',
-+  'access_url',
-+  'profile_url',
-+  'oauth',
-+  'origin',
-+  'prefix',
-+  'redirect_uri',
-+  'callback',
-+  'transport',
-+  'response',
-+  'key',
-+  'secret',
-+  'client_id',
-+  'client_secret',
-+  'consumer_key',
-+  'consumer_secret',
-+  'public_key',
-+  'private_key',
-+  'token_endpoint_auth_method',
-+  'token_endpoint_auth_signing_alg',
-+  'state',
-+  'nonce',
-+  'pkce',
-+  'subdomain',
-+  'name',
-+  'dynamic',
-+  'overrides'
-+]
-+
-+/**
-+ * Authorization parameters `custom_params` must not replace, since Grant copies it over them.
-+ */
-+const PROTECTED_CUSTOM_PARAMS = [
-+  'client_id',
-+  'app_id',
-+  'appid',
-+  'client_key',
-+  'redirect_uri',
-+  'response_type',
-+  'state',
-+  'nonce',
-+  'code_challenge',
-+  'code_challenge_method'
-+]
-+
-+const omit = (data: any, keys: string[]) =>
-+  Object.fromEntries(Object.entries(data).filter(([key]) => !keys.includes(key)))
-+
- export interface OauthSetupSettings {
-   linkStrategy: string
-   authService?: string
-@@ -65,6 +119,24 @@ export const getGrantConfig = (service: AuthenticationService): GrantConfig => {
-   return grant
- }
- 
-+/**
-+ * Remove protected options from the request data for providers (or overrides) that are
-+ * configured with `dynamic: true`. `options` is the provider configuration as resolved by Grant.
-+ */
-+export const filterDynamic = (options: any, data: any) => {
-+  if (options?.dynamic !== true || !data || typeof data !== 'object') {
-+    return data
-+  }
-+
-+  const result = omit(data, PROTECTED_DYNAMIC_OPTIONS)
-+
-+  if (result.custom_params && typeof result.custom_params === 'object') {
-+    result.custom_params = omit(result.custom_params, PROTECTED_CUSTOM_PARAMS)
-+  }
-+
-+  return result
-+}
-+
- export const setExpressParams: RequestHandler = (req, res, next) => {
-   req.session.destroy ||= () => {
-     req.session = null
-```
-
-**File**: `packages/authentication-oauth/test/apple.test.ts` (added, +194/-0)
-```diff
-@@ -0,0 +1,194 @@
-+import { strict as assert } from 'assert'
-+import crypto from 'crypto'
-+import http from 'http'
-+import { AddressInfo } from 'net'
-+import jsonwebtoken from 'jsonwebtoken'
-+import { appleKeys, getAppleProfile } from '../src/apple'
-+
-+describe('@feathersjs/authentication-oauth/apple', () => {
-+  const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', { modulusLength: 2048 })
-+  const otherKey = crypto.generateKeyPairSync('rsa', { modulusLength: 2048 }).privateKey
-+  const jwk = { ...publicKey.export({ format: 'jwk' }), kid: 'apple-key' }
-+  let server: http.Server
-+  let fetched = 0
-+  let respond = (res: http.ServerResponse) => {
-+    res.writeHead(200, { 'content-type': 'application/json' })
-+    res.end(JSON.stringify({ keys: [jwk] }))
-+  }
-+
-+  const idToken = (claims: any, { key = privateKey, keyid = 'apple-key' } = {}) =>
-+    jsonwebtoken.sign(
-+      {
-+        iss: 'https://appleid.apple.com',
-+        aud: 'some-key',
-+        exp: Math.floor(Date.now() / 1000) + 600,
-+        ...claims
-+      },
-+      key,
-+      {
-+        algorithm: 'RS256',
-+        keyid
-+      }
-+    )
-+
-+  before(async () => {
-+    server = http.createServer((_req, res) => {
-+      fetched++
-+      respond(res)
++  it('postgresqlError omits query information from the Feathers error', () => {
++    const pgError = (code: string, message: string) => ({
++      code,
++      message,
++      severity: 'ERROR',
++      routine: 'ExecConstraints'
 +    })
-+    await new Promise<void>((resolve) => server.listen(0, resolve))
-+    appleKeys.url = `http://localhost:${(server.address() as AddressInfo).port}/auth/keys`
-+  })
 +
-+  beforeEach(() => {
-+    appleKeys.keys = []
-+    appleKeys.fetchedAt = 0
-+    appleKeys.failedAt = 0
-+    fetched = 0
-+  })
-+
-+  after(() => {
-+    appleKeys.url = 'https://appleid.apple.com/auth/keys'
-+    server.close()
-+  })
-+
-+  it('takes sub and email from the id_token and keeps other profile fields', async () => {
-+    const profile = await getAppleProfile(
++    assert.throws(
++      () =>
++        errorHandler(
++          pgError(
++            '22P02',
++            'select "users".* from "users" where "id" = $1 limit $2 - invalid input syntax for type uuid: "1"'
++          )
++        ),
 +      {
-+        id_token: idToken({ sub: 'real', email: 'real@example.com' }),
-+        profile: { id: 'victim', sub: 'victim', email: 'victim@example.com', name: 'Jon' }
-+      },
-+      'some-key'
-+    )
-+
-+    assert.deepEqual(profile, { name: 'Jon', sub: 'real', email: 'real@example.com' })
-+  })
-+
-+  it('keeps only the name from the callback body, which Apple sends as a JSON string', async () => {
-+    const user = JSON.stringify({ name: { firstName: 'Jon', lastName: 'Doe' }, email: 'victim@example.com' })
-+    const fromString = await getAppleProfile(
-+      { id_token: idToken({ sub: 'real' }), profile: user },
-+      'some-key'
-+    )
-+    const fromObject = await getAppleProfile(
-+      { id_token: idToken({ sub: 'real' }), profile: { name: 'Jon', role: 'admin', email_verified: true } },
-+      'some-key'
-+    )
-+    const returning = await getAppleProfile(
-+      { id_token: idToken({ sub: 'real' }), profile: { error: 'Grant: No profile URL found!' } },
-+      'some-key'
-+    )
-+
-+    assert.deepEqual(fromString, { sub: 'real', name: { firstName: 'Jon', lastName: 'Doe' } })
-+    assert.deepEqual(fromObject, { sub: 'real', name: 'Jon' })
-+    assert.deepEqual(returning, { sub: 'real' })
-+  })
-+
-+  it('rejects id_tokens that do not verify', async () => {
-+    const unsigned = jsonwebtoken.sign(
-+      { sub: 'victim', iss: 'https://appleid.apple.com', aud: 'some-key' },
-+      '',
-+      {
-+        algorithm: 'none'
++        name: 'NotFound',
++        message: 'invalid input syntax for type uuid: "1"'
 +      }
 +    )
-+    const tokens = {
-+      missing: undefined as any,
-+      'signed with another key': idToken({ sub: 'victim' }, { key: otherKey }),
-+      'unknown key id': idToken({ sub: 'victim' }, { keyid: 'unknown' }),
-+      'unsigned (alg none)': unsigned,
-+      'wrong issuer': idToken({ sub: 'victim', iss: 'https://evil.example.com' }),
-+      'wrong audience': idToken({ sub: 'victim', aud: 'another-client' }),
-+      expired: idToken({ sub: 'victim', exp: Math.floor(Date.now() / 1000) - 3600 }),
-+      'missing subject': idToken({})
-+    }
 +
-+    for (const [description, token] of Object.entries(tokens)) {
-+      await assert.rejects(
-+        () => getAppleProfile({ id_token: token, profile: {} }, 'some-key'),
-+        { message: 'Could not get oAuth profile' },
-+        description
-+      )
-+    }
-+  })
-+
-+  it('rejects when no client id is configured', async () => {
-+    await assert.rejects(
-+      () => getAppleProfile({ id_token: idToken({ sub: 'x' }), profile: {} }, undefined as any),
++    assert.throws(
++      () =>
++        errorHandler(
++          pgError(
++            '23505',
++            'insert into "users" ("email") values ($1) returning * - duplicate key value violates unique constraint "users_email_unique"'
++          )
++        ),
 +      {
-+        message: 'Could not get oAuth profile'
++        name: 'BadRequest',
++        message: 'duplicate key value violates unique constraint "users_email_unique"'
++      }
++    )
++
++    // A " - " inside the SQL and a hyphen in the error text are both handled
++    assert.throws(
++      () =>
++        errorHandler(pgError('42703', 'select "a" - "b" from "t" - column "non-existent" does not exist')),
++      {
++        name: 'Unprocessable',
++        message: 'column "non-existent" does not exist'
 +      }
 +    )
 +  })
 +
-+  it('caches the keys and refreshes them for an unknown key id at most every few minutes', async () => {
-+    await getAppleProfile({ id_token: idToken({ sub: 'x' }), profile: {} }, 'some-key')
-+    await getAppleProfile({ id_token: idToken({ sub: 'x' }), profile: {} }, 'some-key')
-+    assert.equal(fetched, 1)
-+
-+    const unknown = { id_token: idToken({ sub: 'x' }, { keyid: 'unknown' }), profile: {} }
-+
-+    await assert.rejects(() => getAppleProfile(unknown, 'some-key'))
-+    assert.equal(fetched, 1)
-+
-+    appleKeys.fetchedAt -= 10 * 60 * 1000
-+    await assert.rejects(() => getAppleProfile(unknown, 'some-key'))
-+    assert.equal(fetched, 2)
-+ 
-```
-
-**File**: `packages/authentication-oauth/test/koa.test.ts` (added, +69/-0)
-```diff
-@@ -0,0 +1,69 @@
-+import { strict as assert } from 'assert'
-+import axios from 'axios'
-+import { CookieJar } from 'tough-cookie'
-+import { koaFixture } from './utils/fixture'
-+
-+describe('@feathersjs/authentication-oauth with Koa', () => {
-+  const port = 9785
-+  const host = `http://localhost:${port}`
-+  const req = axios.create({
-+    maxRedirects: 0,
-+    validateStatus: () => true
-+  })
-+  let app: Awaited<ReturnType<typeof koaFixture>>
-+
-+  // Start the oAuth flow and return the grant session cookie and the provider location
-+  const startFlow = async () => {
-+    const cookie = new CookieJar()
-+    const response = await req.get(`${host}/oauth/github`)
-+
-+    assert.equal(response.status, 303)
-+    response.headers['set-cookie']?.forEach((value) => cookie.setCookie(value, host))
-+
-+    return { cookie: await cookie.getCookieString(host), location: response.data.location }
-+  }
-+
-+  before(async () => {
-+    app = await koaFixture(port, 5123)
-+    await app.service('users').create({ email: 'admin@example.com' })
++  it('postgresqlError keeps the raw error for server-side handling', () => {
++    try {
++      errorHandler({
++        code: '23505',
++        message: 'insert into "users" ("email") values ($1) - duplicate key value',
++        severity: 'ERROR',
++        routine: 'ExecConstraints',
++        constraint: 'users_email_unique'
++      })
++      assert.fail('should have thrown')
++    } catch (error: any) {
++      assert.strictEqual(error[ERROR].code, '23505')
++      assert.strictEqual(error[ERROR].constraint, 'users_email_unique')
++    }
 +  })
 +
-+  after(async () => {
-+    await app.teardown()
-+  })
-+
-+  it('runs through the oAuth flow', async () => {
-+    const { cookie, location } = await startFlow()
-+    const provider = await req.get(location)
-+    const { data } = await req.get(provider.headers.location, { headers: { cookie } })
-+
-+    assert.ok(data.accessToken)
-+    assert.equal(data.user.githubId, 'test')
-+  })
-+
-+  it('rejects a GET callback without an authorization code', async () => {
-+    const { cookie } = await startFlow()
-+    const response = await req.get(`${host}/oauth/github/callback?code=&state=`, { headers: { cookie } })
-+
-+    assert.equal(response.status, 401)
-+    assert.equal(response.data.message, 'Missing oAuth authorization code.')
-+    assert.ok(!response.data.accessToken)
-+  })
-+
-+  it('accepts a POST callback with the code in the body and rejects one without', async () => {
-+    const valid = await req.post(
-+      `${host}/oauth/github/callback`,
-+      { code: 'code' },
-+      { headers: { cookie: (await startFlow()).cookie } }
++  it('sqlState errors omit query information', () => {
++    assert.throws(
++      () =>
++        errorHandler({
++          sqlState: '#23000',
++          message:
++            "insert into `users` (`email`) values ('a@example.com') - ER_DUP_ENTRY: Duplicate entry 'a@example.com' for key 'email'"
++        }),
++      { name: 'BadRequest', message: "ER_DUP_ENTRY: Duplicate entry 'a@example.com' for key 'email'" }
 +    )
-+    const empty = await req.post(
-+      `${host}/oauth/github/callback`,
-+      { user: { id: 'victim' } },
-+      { headers: { cookie: (await startFlow()).cookie } }
-+    )
-+
-+    assert.ok(valid.data.accessToken)
-+    assert.equal(empty.status, 401)
-+    assert.equal(empty.data.message, 'Missing oAuth authorization code.')
 +  })
-+})
++
++  it('SQLite errors omit query information', () => {
++    assert.throws(
++      () =>
++        errorHandler({
++          code: 'SQLITE_ERROR',
++          errno: 1,
++          message: "select `users`.* from `users` where `nope` = 'x' - SQLITE_ERROR: no such column: nope"
++        }),
++      { name: 'BadRequest', message: 'SQLITE_ERROR: no such column: nope' }
++    )
++  })
++
++  it('other database errors omit query information', () => {
++    assert.throws(
++      () =>
++        errorHandler({
++          code: 'SQLITE_CONSTRAINT',
++          errno: 19,
++          message:
++            "insert into `users` (`password`) values ('secret') - SQLITE_CONSTRAINT: UNIQUE constraint failed: users.email"
++        }),
++      { name: 'GeneralError', message: 'SQLITE_CONSTRAINT: UNIQUE constraint failed: users.email' }
++    )
++  })
++
++  it('MySQL errors keep the driver message when values contain " - "', () => {
++    assert.throws(
++      () =>
++        errorHandler({
++          code: 'ER_DUP_ENTRY',
++          errno: 1062,
++          sqlState: '23000',
++          sqlMessage: "Duplicate entry 'foo - bar' for key 'name'",
++          message:
++            "insert into `t` (`name`) values ('foo - bar') - ER_DUP_ENTRY: Duplicate entry 'foo - bar' for key 'name'"
++        }),
++      { name: 'BadRequest', message: "ER_DUP_ENTRY: Duplicate entry 'foo - bar' for key 'name'" }
++    )
++    assert.throws(
++      () =>
++        errorHandler({
++          code: 'ER_DUP_ENTRY',
++          errno: 1062,
++          sqlState: '23000',
++          sqlMessage: "Duplicate entry 'foo - bar' for key 'name'",
++          message:
++            "insert into `t` (`name`) values ('foo - bar') - Duplicate entry 'foo - bar' for key 'name'"
++        }),
++      { name: 'BadRequest', message: "Duplicate entry 'foo - bar' for key 'name'" }
++    )
++  })
++
++  it('SQLite errors keep the driver message when values contain " - "', () => {
++    assert.throws(
++      () =>
++        errorHandler({
++          code: 'SQLITE_CONSTRAINT',
++          errno: 19,
++          message:
++            "insert into `t` (`name`) values ('a - b') - SQLITE_CONSTRAINT: UNIQUE constraint failed: t.name - x"
++        }),
++      { name: 'GeneralError', message: 'SQLITE_CONSTRAINT: UNIQUE constraint failed: t.name - x' }
++    )
++  })
++
++  it('knex compile errors omit the query', () => 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3725** (2026-10-27): fix(knex): omit queries from all database error messages (@marshallswain)
 - **PR #3719** (2026-10-23): fix(create-feathers): Call app.setup in Deno and Bun apps (v6) (@fratzinger)
 - **PR #3718** (2026-10-23): fix(client): Stringify dates in queries as ISO strings (v6) (@fratzinger)
 - **PR #3717** (2026-10-23): fix(hooks): Allow synchronous functions to return null or undefined (v6) (@fratzinger)
 - **PR #3716** (2026-10-23): fix(http): Initialize context.http for HTTP service calls (v6) (@fratzinger)
 - **PR #3715** (2026-10-17): fix(http): Do not allow standard methods via method override header (v6) (@fratzinger)
-- **PR #3706** (2026-09-17): fix(authentication): reject leftover codegen params for user (#3599) (@tonycoder-hub)
 
 ---
 
@@ -2034,39 +1506,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. authentication-oauth): allow account linking from the configured oAuth origin
+## X. authentication-oauth): keep the OAuth token in the redirect fragment
 
 **RULE**:
-When implementing operations in `packages/authentication-oauth/src/strategy.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in feathersjs/feathers. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/api/authentication/oauth.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in feathersjs/feathers. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `616e8850`: authentication-oauth): allow account linking from the configured oAuth origin. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4c8650ce`: authentication-oauth): keep the OAuth token in the redirect fragment. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/authentication-oauth/src/strategy.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/api/authentication/oauth.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { getGrantConfig } from './utils'
-   * Account linking with a `feathers_token` must be started from the app (the request host, the
-   * configured oAuth origin or an allowed origin), since anyone can send a link with their own token.
-   * Override to allow linking from clients that send no referer.
-    const { origin } = getGrantConfig(this.authentication as any).defaults
-    if (
-      url.host !== host &&
-      !isOriginAllowed(url.origin, origin) &&
-      !allowed.some((current: string) => isOriginAllowed(url.origin, current))
-    ) {
+The redirect is using a hash instead of a query string by default because it is not logged server side and can be easily read on the client. You can force query based redirect by adding a `?` to the end of the `redirect` option. This only applies to the configured option, a `redirect` query parameter always gets the hash.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-   * Account linking with a `feathers_token` must be started from the app, since anyone can send a
-   * link with their own token. Override to allow linking from clients that send no referer.
-    if (url.host !== host && !allowed.some((origin: string) => isOriginAllowed(url.origin, origin))) {
+The redirect is using a hash instead of a query string by default because it is not logged server side and can be easily read on the client. You can force query based redirect by adding a `?` to the end of the `redirect` option.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `616e8850` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4c8650ce` are properly handled with clean fallback behavior.

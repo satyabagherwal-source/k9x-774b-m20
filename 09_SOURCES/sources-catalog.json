@@ -395,8 +395,8 @@
     "sourceUrl": "https://huggingface.co/SupersonicLabs/Julia-1",
     "sourceVersion": "hf-supersoniclabs-julia-1",
     "license": "Open-Source",
-    "contentHash": "3582f7c9b1a7671dba61d1e2fd1dd5fe51601e93ffe46a7e2116cb10fe010ce6",
-    "lastHarvestedAt": "2026-10-25T12:32:05.775Z",
+    "contentHash": "b61fc693d13e82eab735eed477b07aa2d177248b922b6764c174944a3db92931",
+    "lastHarvestedAt": "2026-10-28T05:24:29.517Z",
     "learningId": "learn-huggingface-supersoniclabs-julia-1"
   },
   "hf-apple-lensvlm-9b": {
@@ -2903,10 +2903,10 @@
     "repository": "feathersjs/feathers",
     "platform": "github",
     "sourceUrl": "https://github.com/feathersjs/feathers",
-    "sourceVersion": "e73ad697",
+    "sourceVersion": "cd5e59b9",
     "license": "MIT",
-    "contentHash": "2aaa8e8ddcdc5e157ee23979e629962908a74557bbd22e116f8eda2c1cc5e842",
-    "lastHarvestedAt": "2026-10-27T13:54:28.112Z",
+    "contentHash": "cf2877bcbfabfbff0e0a91889e71295bd1849257f7692ddc42dc240f00d2eae8",
+    "lastHarvestedAt": "2026-10-28T05:24:36.182Z",
     "learningId": "learn-github-feathersjs-feathers"
   },
   "litmuschaos-litmus": {
@@ -7353,10 +7353,10 @@
     "repository": "langchain4j/langchain4j",
     "platform": "github",
     "sourceUrl": "https://github.com/langchain4j/langchain4j",
-    "sourceVersion": "565e54d3",
+    "sourceVersion": "c36ae6f8",
     "license": "Apache-2.0",
-    "contentHash": "b9fd9dd447f7c7bf8b45cdc7a10f44c84b18c647795bfe7d98bde766341e574d",
-    "lastHarvestedAt": "2026-10-27T15:19:02.721Z",
+    "contentHash": "bbf12fb852f49b11183e0a8a7ef6421cb8f5be9a9fa65ab5935a1cecdf9f1317",
+    "lastHarvestedAt": "2026-10-28T05:24:45.740Z",
     "learningId": "learn-github-langchain4j-langchain4j"
   },
   "railwayapp-nixpacks": {

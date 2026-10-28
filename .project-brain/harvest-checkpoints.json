@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T05:17:55.153Z",
+  "last_updated": "2026-10-28T05:24:45.749Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -470,14 +470,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-supersoniclabs-julia-1",
-      "content_hash": "3582f7c9b1a7671dba61d1e2fd1dd5fe51601e93ffe46a7e2116cb10fe010ce6",
-      "verified_at": "2026-10-25T12:32:05.783Z",
+      "content_hash": "b61fc693d13e82eab735eed477b07aa2d177248b922b6764c174944a3db92931",
+      "verified_at": "2026-10-28T05:24:29.526Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T12:32:05.783Z"
+      "last_updated": "2026-10-28T05:24:29.526Z"
     },
     "apple/LensVLM-9B": {
       "repository": "apple/LensVLM-9B",
@@ -4491,14 +4491,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-feathersjs-feathers",
-      "content_hash": "2aaa8e8ddcdc5e157ee23979e629962908a74557bbd22e116f8eda2c1cc5e842",
-      "verified_at": "2026-10-27T13:54:28.118Z",
+      "content_hash": "cf2877bcbfabfbff0e0a91889e71295bd1849257f7692ddc42dc240f00d2eae8",
+      "verified_at": "2026-10-28T05:24:36.190Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:54:28.118Z"
+      "last_updated": "2026-10-28T05:24:36.190Z"
     },
     "litmuschaos/litmus": {
       "repository": "litmuschaos/litmus",
@@ -11076,14 +11076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-langchain4j-langchain4j",
-      "content_hash": "b9fd9dd447f7c7bf8b45cdc7a10f44c84b18c647795bfe7d98bde766341e574d",
-      "verified_at": "2026-10-27T15:19:02.730Z",
+      "content_hash": "bbf12fb852f49b11183e0a8a7ef6421cb8f5be9a9fa65ab5935a1cecdf9f1317",
+      "verified_at": "2026-10-28T05:24:45.748Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T15:19:02.730Z"
+      "last_updated": "2026-10-28T05:24:45.748Z"
     },
     "railwayapp/nixpacks": {
       "repository": "railwayapp/nixpacks",

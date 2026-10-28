@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T05:17:55.101Z",
+  "last_updated": "2026-10-28T05:24:45.675Z",
   "total_verified_learnings": 1156,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12069,8 +12069,8 @@
       "slug": "feathersjs-feathers",
       "platform": "github",
       "source_url": "https://github.com/feathersjs/feathers",
-      "source_version": "e73ad697",
-      "content_hash": "2aaa8e8ddcdc5e157ee23979e629962908a74557bbd22e116f8eda2c1cc5e842",
+      "source_version": "cd5e59b9",
+      "content_hash": "cf2877bcbfabfbff0e0a91889e71295bd1849257f7692ddc42dc240f00d2eae8",
       "dossier_path": "07_PROJECT_LEARNING/feathersjs-feathers-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/feathersjs-feathers-learnings.md",
       "promoted_rules": [
@@ -12083,6 +12083,11 @@
           "number": 4821,
           "title": "authentication-oauth): allow account linking from the configured oAuth origin",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5185,
+          "title": "authentication-oauth): keep the OAuth token in the redirect fragment",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12090,7 +12095,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:54:28.064Z",
+      "verified_at": "2026-10-28T05:24:36.078Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27548,7 +27553,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/SupersonicLabs/Julia-1",
       "source_version": "hf-supersoniclabs-julia-1",
-      "content_hash": "3582f7c9b1a7671dba61d1e2fd1dd5fe51601e93ffe46a7e2116cb10fe010ce6",
+      "content_hash": "b61fc693d13e82eab735eed477b07aa2d177248b922b6764c174944a3db92931",
       "dossier_path": "07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md",
       "promoted_rules": [
@@ -27629,7 +27634,7 @@
         "learn-huggingface-hf-supersoniclabs-julia-1-mv45d8ac",
         "learn-huggingface-hf-supersoniclabs-julia-1-mv4imrbh"
       ],
-      "verified_at": "2026-10-25T12:32:05.705Z",
+      "verified_at": "2026-10-28T05:24:29.419Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33591,8 +33596,8 @@
       "slug": "langchain4j-langchain4j",
       "platform": "github",
       "source_url": "https://github.com/langchain4j/langchain4j",
-      "source_version": "565e54d3",
-      "content_hash": "b9fd9dd447f7c7bf8b45cdc7a10f44c84b18c647795bfe7d98bde766341e574d",
+      "source_version": "c36ae6f8",
+      "content_hash": "bbf12fb852f49b11183e0a8a7ef6421cb8f5be9a9fa65ab5935a1cecdf9f1317",
       "dossier_path": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "promoted_rules": [
@@ -33630,6 +33635,11 @@
           "number": 4881,
           "title": "deps): bump postcss-selector-parser in /docs (#6860)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5186,
+          "title": "DefaultMcpClientTest compilation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33637,7 +33647,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T15:19:02.647Z",
+      "verified_at": "2026-10-28T05:24:45.662Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -141952,6 +141962,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T05:17:55.089Z"
+    },
+    "rule-5185": {
+      "learning_id": "rule-5185",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5185,
+      "title": "authentication-oauth): keep the OAuth token in the redirect fragment",
+      "source_url": "https://github.com/feathersjs/feathers",
+      "source_version": "cd5e59b9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T05:24:36.078Z"
+    },
+    "rule-5186": {
+      "learning_id": "rule-5186",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5186,
+      "title": "DefaultMcpClientTest compilation",
+      "source_url": "https://github.com/langchain4j/langchain4j",
+      "source_version": "c36ae6f8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T05:24:45.662Z"
     }
   },
   "aliases": {

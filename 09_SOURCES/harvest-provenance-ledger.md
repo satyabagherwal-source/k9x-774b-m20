@@ -5708,3 +5708,6 @@ Every entry in this ledger must capture:
 | `learn-github-pubkey-rxdb` | `https://github.com/pubkey/rxdb` | `159a4a8c` | Multi-dimensional audit evidence | 2026-10-28T05:03:43.354Z |
 | `learn-huggingface-xingchen-agi-xing4-0-29b-a4b` | `https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B` | `hf-xingche` | Multi-dimensional audit evidence | 2026-10-28T05:17:51.707Z |
 | `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `4c2d07de` | Multi-dimensional audit evidence | 2026-10-28T05:17:55.146Z |
+| `learn-huggingface-supersoniclabs-julia-1` | `https://huggingface.co/SupersonicLabs/Julia-1` | `hf-superso` | Multi-dimensional audit evidence | 2026-10-28T05:24:29.517Z |
+| `learn-github-feathersjs-feathers` | `https://github.com/feathersjs/feathers` | `cd5e59b9` | Multi-dimensional audit evidence | 2026-10-28T05:24:36.182Z |
+| `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `c36ae6f8` | Multi-dimensional audit evidence | 2026-10-28T05:24:45.740Z |

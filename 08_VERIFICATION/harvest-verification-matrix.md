@@ -5699,3 +5699,6 @@
 | `CYCLE-20261028-FX86` | `2026-10-28T05:03:43.350Z` | `pubkey/rxdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5181` | Yes (`b1e188ea...`) |
 | `CYCLE-20261028-Y3TL` | `2026-10-28T05:17:51.705Z` | `XingChen-AGI/Xing4.0-29B-A4B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2092, Rule 5182, Rule 5183` | Yes (`2562a60d...`) |
 | `CYCLE-20261028-Y6H4` | `2026-10-28T05:17:55.144Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5184` | Yes (`e3486c62...`) |
+| `CYCLE-20261028-6MRU` | `2026-10-28T05:24:29.514Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md` | Yes (`b61fc693...`) |
+| `CYCLE-20261028-6RWY` | `2026-10-28T05:24:36.178Z` | `feathersjs/feathers` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5185` | Yes (`cf2877bc...`) |
+| `CYCLE-20261028-6ZAG` | `2026-10-28T05:24:45.736Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5186` | Yes (`bbf12fb8...`) |
