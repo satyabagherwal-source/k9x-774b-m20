@@ -5930,3 +5930,5 @@
 | `CYCLE-20261028-1QYA` | `2026-10-28T20:44:28.978Z` | `NativeScript/NativeScript` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5401` | Yes (`237791fe...`) |
 | `CYCLE-20261028-1R6V` | `2026-10-28T20:44:29.287Z` | `Kong/kubernetes-ingress-controller` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md` | Yes (`4ac6ca7a...`) |
 | `CYCLE-20261028-1VLS` | `2026-10-28T20:44:35.008Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5402` | Yes (`25cc4e81...`) |
+| `CYCLE-20261028-9T6I` | `2026-10-28T20:50:45.114Z` | `ConwayResearch/Underdog-Saluki-27B-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md` | Yes (`cb94ac4a...`) |
+| `CYCLE-20261028-A0CJ` | `2026-10-28T20:50:54.403Z` | `flux-iac/tofu-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5403` | Yes (`10de6090...`) |

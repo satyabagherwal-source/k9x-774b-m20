@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T20:44:35.016Z",
-  "total_cycles_completed": 5907,
-  "total_learnings_persisted": 5907,
-  "total_rules_promoted": 5364,
+  "last_updated": "2026-10-28T20:50:54.410Z",
+  "total_cycles_completed": 5909,
+  "total_learnings_persisted": 5909,
+  "total_rules_promoted": 5365,
   "history": [
-    {
-      "timestamp": "2026-10-28T08:07:41.921Z",
-      "repository": "unsloth/Qwen-Image-2.1-GGUF",
-      "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T08:26:45.760Z",
-      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T08:45:46.953Z",
       "repository": "prithivMLmods/Gender-Classifier-Mini",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-28T20:44:35.016Z",
       "repository": "milvus-io/milvus",
       "learningId": "learn-github-milvus-io-milvus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T20:50:45.127Z",
+      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+      "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T20:50:54.410Z",
+      "repository": "flux-iac/tofu-controller",
+      "learningId": "learn-github-flux-iac-tofu-controller",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

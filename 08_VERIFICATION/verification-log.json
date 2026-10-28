@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-TEGH",
-    "timestamp": "2026-10-27T16:38:22.577Z",
-    "repository": "preactjs/preact",
-    "learningId": "learn-github-preactjs-preact",
-    "contentHash": "1bd0dbbe398fd103a86b4e4d47e21509b17ec1ae904bb85cf10dffff2ec66053",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-TM83",
-    "timestamp": "2026-10-27T16:38:32.643Z",
-    "repository": "infiniflow/infinity",
-    "learningId": "learn-github-infiniflow-infinity",
-    "contentHash": "29de8d75418468d79b9f70e290af18da17c5b66a8bf3e65a7fcf2f972ee4c377",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-1ZRF",
     "timestamp": "2026-10-27T16:45:03.435Z",
     "repository": "adobe/react-spectrum",
@@ -7490,6 +7460,36 @@
     "repository": "milvus-io/milvus",
     "learningId": "learn-github-milvus-io-milvus",
     "contentHash": "25cc4e816a9e8b488a1faf383f536695ff00f52713b2960546aef2e3635a5e8b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-9T6I",
+    "timestamp": "2026-10-28T20:50:45.114Z",
+    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+    "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+    "contentHash": "cb94ac4a8d1c62f07a2f8dbde543a24d37c3bd1af57b58aabd1290598552e017",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-A0CJ",
+    "timestamp": "2026-10-28T20:50:54.403Z",
+    "repository": "flux-iac/tofu-controller",
+    "learningId": "learn-github-flux-iac-tofu-controller",
+    "contentHash": "10de6090132bd4c9250deeba65e68b6e00845e1aec99103578a3467c53d8dd0d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

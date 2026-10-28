@@ -1175,8 +1175,8 @@
     "sourceUrl": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
     "sourceVersion": "hf-conwayresearch-underdog-saluki-27b-1.0",
     "license": "Open-Source",
-    "contentHash": "6081141d033525f7a5797eb5db67a863dc8142976ce857675708431b0a5a653d",
-    "lastHarvestedAt": "2026-10-26T00:18:22.977Z",
+    "contentHash": "cb94ac4a8d1c62f07a2f8dbde543a24d37c3bd1af57b58aabd1290598552e017",
+    "lastHarvestedAt": "2026-10-28T20:50:45.117Z",
     "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0"
   },
   "hf-google-gemma-4-26b-a4b-it": {
@@ -7043,10 +7043,10 @@
     "repository": "flux-iac/tofu-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/flux-iac/tofu-controller",
-    "sourceVersion": "ee95e83a",
+    "sourceVersion": "e2db61bd",
     "license": "Apache-2.0",
-    "contentHash": "e403308ebc4d82a48215a20ff15cccce28cf123f1f462872529b66fd6954bab1",
-    "lastHarvestedAt": "2026-10-27T21:29:02.702Z",
+    "contentHash": "10de6090132bd4c9250deeba65e68b6e00845e1aec99103578a3467c53d8dd0d",
+    "lastHarvestedAt": "2026-10-28T20:50:54.406Z",
     "learningId": "learn-github-flux-iac-tofu-controller"
   },
   "clockworklabs-spacetimedb": {

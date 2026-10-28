@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T20:44:37.556Z",
-    "lastVerified": "2026-10-28T20:44:37.556Z",
+    "lastChecked": "2026-10-28T20:50:56.940Z",
+    "lastVerified": "2026-10-28T20:50:56.940Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -291,9 +291,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-28T20:15:51.830Z",
+    "lastChecked": "2026-10-28T20:50:56.303Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-28T20:15:51.830Z"
+    "lastVerified": "2026-10-28T20:50:56.303Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -450,9 +450,9 @@
   "surrealdb-surrealdb": {
     "name": "surrealdb",
     "officialUrl": "https://github.com/surrealdb/surrealdb",
-    "lastChecked": "2026-10-28T03:24:32.893Z",
+    "lastChecked": "2026-10-28T20:50:54.764Z",
     "revisionIdentifier": "18971ffb",
-    "lastVerified": "2026-10-28T03:24:32.893Z"
+    "lastVerified": "2026-10-28T20:50:54.764Z"
   },
   "hf-baai-bge-small-en-v1.5": {
     "name": "BAAI/bge-small-en-v1.5",
@@ -571,9 +571,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-10-28T17:05:49.084Z",
+    "lastChecked": "2026-10-28T20:50:51.289Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-10-28T17:05:49.084Z"
+    "lastVerified": "2026-10-28T20:50:51.289Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -913,11 +913,21 @@
     "lastVerified": "2026-10-28T04:10:03.199Z"
   },
   "flux-iac-tofu-controller": {
-    "name": "tofu-controller",
+    "name": "flux-iac/tofu-controller",
     "officialUrl": "https://github.com/flux-iac/tofu-controller",
-    "lastChecked": "2026-10-28T04:10:05.595Z",
-    "revisionIdentifier": "ee95e83a",
-    "lastVerified": "2026-10-28T04:10:05.595Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-28T20:50:53.958Z",
+    "lastVerified": "2026-10-28T20:50:53.958Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-flux-iac-tofu-controller",
+    "contentHash": "10de6090132bd4c9250deeba65e68b6e00845e1aec99103578a3467c53d8dd0d",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "provablehq-snarkos": {
     "name": "aleo-labs-protocol/snarkOS",
@@ -6679,5 +6689,36 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "atanunq-viu": {
+    "name": "viu",
+    "officialUrl": "https://github.com/atanunq/viu",
+    "lastChecked": "2026-10-28T20:50:41.285Z",
+    "revisionIdentifier": "5733be5f",
+    "lastVerified": "2026-10-28T20:50:41.285Z"
+  },
+  "hf-conwayresearch-underdog-saluki-27b-1.0": {
+    "name": "ConwayResearch/Underdog-Saluki-27B-1.0",
+    "officialUrl": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T20:50:44.099Z",
+    "lastVerified": "2026-10-28T20:50:44.099Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+    "contentHash": "cb94ac4a8d1c62f07a2f8dbde543a24d37c3bd1af57b58aabd1290598552e017",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "linkwarden-linkwarden": {
+    "name": "linkwarden",
+    "officialUrl": "https://github.com/linkwarden/linkwarden",
+    "lastChecked": "2026-10-28T20:50:47.294Z",
+    "revisionIdentifier": "eff7c6b7",
+    "lastVerified": "2026-10-28T20:50:47.294Z"
   }
 }

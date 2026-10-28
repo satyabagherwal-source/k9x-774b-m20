@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md`  
 > **Source**: github ([https://github.com/flux-iac/tofu-controller](https://github.com/flux-iac/tofu-controller))  
-> **Source Version**: `ee95e83a`  
+> **Source Version**: `e2db61bd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T21:29:02.144Z  
+> **Timestamp**: 2026-10-28T20:50:53.963Z  
 > **Learning ID**: `learn-github-flux-iac-tofu-controller`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/flux-iac/tofu-controller](https://github.com/flux-iac/tofu-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T21:29:01.693Z  
+> **Harvest Timestamp**: 2026-10-28T20:50:53.958Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -995,153 +995,193 @@ package v1alpha1
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ee95e83a` (2026-10-27)
-**Commit Message**: fix: stop a pass hanging on a runner that never started (#1923)
+### Incident Patch 1: `e2db61bd` (2026-10-28)
+**Commit Message**: feat: support ExternalArtifact as a Terraform source (#1901)
 
-**File**: `cmd/manager/main.go` (modified, +2/-1)
+* feat: support ExternalArtifact as a Terraform source
+
+Flux 2.7 introduced the ExternalArtifact source kind, whose artifacts
+are produced by controllers other than source-controller, such as
+source-watcher's ArtifactGenerator. Using one as a Terraform source
+lets each Terraform object reconcile from an artifact holding only its
+own module, so a commit touching one module does not re-plan every
+Terraform object that reads the same repository.
+
+This change:
+
+- accepts ExternalArtifact as a v1alpha2 sourceRef kind and resolves it
+  in getSource;
+- indexes Terraform objects by the ExternalArtifact they reference and
+  watches ExternalArtifacts, so a new artifact revision triggers a
+  reconcile, as for the other source kinds;
+- grants the controller read access to externalartifacts in the
+  generated ClusterRole and the Helm chart's RBAC template;
+- lets `tfctl create --source` name an ExternalArtifact;
+- passes the manager's context to SetupWithManager for registering the
+  field indexes;
+- adds an envtest case that applies a Terraform object from an
+  ExternalArtifact and checks that a new revision is applied before the
+  
+
+**File**: `.github/workflows/e2e.yaml` (modified, +24/-0)
 ```diff
-@@ -122,7 +122,8 @@ func main() {
- 	flag.DurationVar(&runnerCreationTimeout, "runner-creation-timeout", 120*time.Second, "Timeout for creating a runner pod.")
- 	flag.DurationVar(&runnerRPCTimeout, "runner-rpc-timeout", 30*time.Minute,
- 		"Maximum duration for the batch of runner RPCs that set up Terraform (upload, "+
--			"backend config, init, workspace select). Bounds the reconcile so a runner pod "+
-+			"backend config, init, workspace select), and for finalizing the runner's secrets on "+
-+			"deletion. Bounds the reconcile so a runner pod "+
- 			"that dies mid-RPC surfaces as an error and requeues instead of hanging forever.")
- 	flag.DurationVar(&runnerUnreachableTimeout, "runner-unreachable-timeout", 5*time.Minute,
- 		"Cancel a runner RPC once the connection to a runner that was reachable has not been "+
+@@ -100,6 +100,7 @@ jobs:
+             "--log-encoding=json",
+             "--enable-leader-election",
+             "--concurrent=10",
++            "--feature-gates=ExternalArtifact=true",
+             "--cert-rotation-check-frequency=6m0s",
+           ]}]'
+ 
+@@ -165,6 +166,26 @@ jobs:
+ 
+           # delete after tests
+           kubectl -n tofu-system delete -f ./config/testdata/vars
++      - name: Run ExternalArtifact source tests
++        run: |
++          kustomize build ./config/testdata/source-watcher | kubectl apply --server-side -f -
++          kubectl -n tofu-system rollout status deploy/source-watcher --timeout=2m
++
++          kubectl -n tofu-system apply -f ./config/testdata/external-artifact/generator.yaml
++          kubectl -n tofu-system wait artifactgenerator/helloworld --for=condition=ready --timeout=4m
++
++          kubectl -n tofu-system apply -f ./config/testdata/external-artifact/terraform.yaml
++          kubectl -n tofu-system wait terraform/helloworld-external-artifact --for=condition=ready --timeout=4m
++
++          # the Terraform object must have applied the ExternalArtifact's revision
++          artifact_revision=$(kubectl -n tofu-system get externalartifact/helloworld-module -o jsonpath='{.status.artifact.revision}')
++          applied_revision=$(kubectl -n tofu-system get terraform/helloworld-external-artifact -o jsonpath='{.status.lastAppliedRevision}')
++          echo "artifact revision: $artifact_revision, applied revision: $applied_revision"
++          [[ -n "$artifact_revision" && "$applied_revision" == "$artifact_revision" ]]
++
++          # delete the Terraform object before its source: finalizing it needs the ExternalArtifact
++          kubectl -n tofu-system delete -f ./config/testdata/external-artifact/terraform.yaml --timeout=4m
++          kubectl -n tofu-system delete -f ./config/testdata/external-artifact/generator.yaml --timeout=2m
+       - name: Run multi-tenancy test
+         run: |
+           kubectl -n tofu-system scale --replicas=3 deploy/tofu-controller
+@@ -250,6 +271,7 @@ jobs:
+       - name: Logs
+         run: |
+           kubectl -n tofu-system logs deploy/source-controller
++          kubectl -n tofu-system logs deploy/source-watcher
+           kubectl -n tofu-system logs deploy/tofu-controller
+       - name: Debug failure
+         if: failure()
+@@ -260,6 +282,8 @@ jobs:
+           kubectl -n tofu-system logs deploy/source-controller
+           kubectl -n tofu-system describe deploy/source-controller
+           kubectl -n tofu-system describe pod source-controller
++          kubectl -n tofu-system logs deploy/source-watcher
++          kubectl -n tofu-system get artifactgenerators,externalartifacts -oyaml
+           kubectl -n tofu-system logs deploy/tofu-controller
+           kubectl -n tofu-system describe deploy/tofu-controller
+           kubectl -n tofu-system describe pod tofu-controller
 ```
 
-**File**: `controllers/finalize.go` (modified, +10/-5)
+**File**: `Makefile` (modified, +1/-0)
 ```diff
-@@ -133,23 +133,28 @@ func (r *TerraformReconciler) finalize(ctx context.Context, s *runnerSession, ob
- 		outputSecretName = obj.Spec.WriteOutputsToSecret.Name
- 	}
+@@ -85,6 +85,7 @@ download-crd-deps:
+ 	curl -s https://raw.githubusercontent.com/fluxcd/source-controller/${SOURCE_VER}/config/crd/bases/source.toolkit.fluxcd.io_gitrepositories.yaml > config/crd/bases/gitrepositories.yaml
+ 	curl -s https://raw.githubusercontent.com/fluxcd/source-controller/${SOURCE_VER}/config/crd/bases/source.toolkit.fluxcd.io_buckets.yaml > config/crd/bases/buckets.yaml
+ 	curl -s https://raw.githubusercontent.com/fluxcd/source-controller/${SOURCE_VER}/config/crd/bases/source.toolkit.fluxcd.io_ocirepositories.yaml > config/crd/bases/ocirepositories.yaml
++	curl -s https://raw.githubusercontent.com/fluxcd/source-controller/${SOURCE_VER}/config/crd/bases/source.toolkit.fluxcd.io_externalartifacts.yaml > config/crd/bases/externalartifacts.yaml
  
--	finalizeSecretsReply, err := s.client.FinalizeSecrets(ctx, &runner.FinalizeSecretsRequest{
-+	// Bound the call as setup does: without destroy, a runner that never came up
-+	// would block it forever.
-+	finalizeCtx, cancel := context.WithTimeout(ctx, r.RunnerRPCTimeout)
-+	defer cancel()
-+	finalizeSecretsReply, err := s.client.FinalizeSecrets(finalizeCtx, &runner.FinalizeSecretsRequest{
- 		Namespace:                obj.Namespace,
- 		Name:                     obj.Name,
- 		Workspace:                obj.WorkspaceName(),
- 		HasSpecifiedOutputSecret: hasSpecifiedOutputSecret,
- 		OutputSecretName:         outputSecretName,
- 	})
- 	if err != nil {
--		// Internal is transient and Unavailable means the runner could not be
--		// reached; both block deletion, as removing the finalizer now would leave
--		// the plan secrets behind. NotFound means there was nothing to delete.
-+		// Internal is transient, and Unavailable and DeadlineExceeded mean the
-+		// runner could not be reached; all block deletion, as removing the
-+		// finalizer now would leave the plan secrets behind. NotFound means there
-+		// was nothing to delete.
- 		// Anything else is reported as an event and deletion proceeds. That
- 		// includes PermissionDenied, which the runner reports when its service
- 		// account may not read or delete the secrets: retrying does not fix it,
- 		// so it must not block deletion forever.
- 		switch status.Code(err) {
--		case codes.Internal, codes.Unavailable:
-+		case codes.Internal, codes.Unavailable, codes.DeadlineExceeded:
- 			return ctrl.Result{}, err
- 		case codes.NotFound:
- 			// do nothing, fall through
+ TEST_SETTINGS=INSECURE_LOCAL_RUNNER=1 DISABLE_K8S_LOGS=1 DISABLE_TF_LOGS=1 DISABLE_TF_K8S_BACKEND=1 DISABLE_WEBHOOK_TLS_VERIFY=1 KUBEBUILDER_ASSETS="$(shell $(ENVTEST) --arch=$(ENVTEST_ARCH) use -i $(ENVTEST_KUBERNETES_VERSION) --bin-dir=$(ENVTEST_ASSETS_DIR) -p path)"
+ 
 ```
 
-**File**: `controllers/finalize_test.go` (modified, +30/-0)
+**File**: `api/v1alpha2/reference_types.go` (modified, +1/-1)
 ```diff
-@@ -385,6 +385,36 @@ func TestFinalizeSecretsUnavailableBlocksDeletion(t *testing.T) {
- 	g.Expect(drainEvents(f.r.EventRecorder.(*events.FakeRecorder))).To(BeEmpty())
- }
+@@ -18,7 +18,7 @@ type CrossNamespaceSourceReference struct {
+ 	APIVersion string `json:"apiVersion,omitempty"`
  
-+// TestFinalizeSecretsBlocksDeletionWhenRunnerNeverStarts checks a deletion
-+// against a runner that never serves times out and blocks deletion.
-+func TestFinalizeSecretsBlocksDeletionWhenRunnerNeverStarts(t *testing.T) {
-+	g := NewWithT(t)
-+	obj := fakeTerraform("finalize-secrets-runner-never-starts")
-+	f := newDeleteFixture(t, obj)
-+	f.r.RunnerRPCTimeout = 500 * time.Millisecond
-+	runnerClient := newWatchedRunnerClient(t, freeLocalAddr(t), 5*time.Minute)
-+	f.r.lookupOrCreateRunner = func(context.Context, *infrav1.Terraform, string) (runner.RunnerClient, func() error, error) {
-+		return runnerClient, func() error { return nil }, nil
-+	}
-+
-+	// Cancelled at the end only so a hung pass does not leak past the test.
-+	ctx, cancel := context.WithCancel(context.Background())
-+	defer cancel()
-+
-+	result := make(chan error, 1)
-+	go func() {
-+		_, err := f.r.Reconcile(ctx, ctrl.Request{NamespacedName: client.ObjectKeyFromObject(obj)})
-+		result <- err
-+	}()
-+
-+	var err error
-+	g.Eventually(result, 10*time.Second).Should(Receive(&err))
-+	g.Expect(status.Code(err)).To(Equal(codes.DeadlineExceeded))
-+	g.Expect(f.gone(t, obj)).To(BeFalse())
-+	g.Expect(stored(t, f.c, obj).Finalizers).To(ContainElement(infrav1.TerraformFinalizer))
-+	g.Expect(drainEvents(f.r.EventRecorder.(*events.FakeRecorder))).To(BeEmpty())
-+}
-+
- // TestFinalizeTreatsMissingDependencyAsReleased checks that a dependsOn target
- // that no longer exists has nothing to release, so deletion completes.
- func TestFinalizeTreatsMissingDependencyAsReleased(t *testing.T) {
+ 	// Kind of the referent.
+-	// +kubebuilder:validation:Enum=GitRepository;Bucket;OCIRepository
++	// +kubebuilder:validation:Enum=GitRepository;Bucket;OCIRepository;ExternalArtifact
+ 	// +required
+ 	Kind string `json:"kind"`
+ 
 ```
 
-**File**: `controllers/session.go` (modified, +8/-2)
+**File**: `api/v1alpha2/terraform_types.go` (modified, +7/-6)
 ```diff
-@@ -127,9 +127,15 @@ func (s *runnerSession) Close(ctx context.Context) {
- 	}
- }
+@@ -41,12 +41,13 @@ const (
+ 	CACertSecretName = "tf-controller.tls"
+ 	// RunnerTLSSecretName is the name of the secret containing a TLS cert that will be written to
+ 	// the namespace in which a terraform runner is created
+-	RunnerTLSSecretName     = "terraform-runner.tls"
+-	RunnerLabel             = "infra.contrib.fluxcd.io/terraform"
+-	GitRepositoryIndexKey   = ".metadata.gitRepository"
+-	BucketIndexKey          = ".metadata.bucket"
+-	OCIRepositoryIndexKey   = ".metadata.ociRepository"
+-	BreakTheGlassAnnotation = "break-the-glass.tf-controller/requestedAt"
++	RunnerTLSSecretName      = "terraform-runner.tls"
++	RunnerLabel              = "infra.contrib.fluxcd.io/terraform"
++	GitRepositoryIndexKey    = ".metadata.gitRepository"
++	BucketIndexKey           = ".metadata.bucket"
++	OCIRepositoryIndexKey    = ".metadata.ociRepository"
++	ExternalArtifactIndexKey = ".metadata.externalArtifact"
++	BreakTheGlassAnnotation  = "break-the-glass.tf-controller/requestedAt"
+ )
  
--// cleanupDir asks the runner to remove tmpDir, whatever its value. Callers
--// defer it before setup, which sets tmpDir.
-+// cleanupDir asks the runner to remove tmpDir. Callers defer it before setup,
-+// which sets tmpDir. It sends nothing while tmpDir is empty: there is no
-+// directory to name, and a runner that never came up would block the call
-+// forever (see runnerUnreachableInterceptor).
- func (s *runnerSession) cleanupDir(ctx context.Context) {
-+	if s.tmpDir == "" {
-+		return
-+	}
-+
- 	log := ctrl.LoggerFrom(ctx)
- 
- 	cleanupDirReply, err := s.client.CleanupDir(ctx, &runner.CleanupDirRequest{TmpDir: s.tmpDir})
+ type ReadInputsFromSecretSpec struct {
 ```
 
-**File**: `controllers/session_test.go` (modified, +20/-0)
+**File**: `charts/tofu-controller/README.md` (modified, +1/-0)
 ```diff
-@@ -84,6 +84,26 @@ func TestWorkingDirRemovedWhenSetupFails(t *testing.T) {
- 	g.Expect(fr.Requests("CleanupDir")).To(HaveLen(1))
- }
- 
-+// TestPassEndsWhenRunnerNeverStarts checks a pass against a runner that never
-+// serves ends once setup's RunnerRPCTimeout expires.
-+func TestPassEndsWhenRunnerNeverStarts(t *testing.T) {
-+	g := NewWithT(t)
-+	r, s, obj, _, _, _ := newLoggedPass(t, "runner-never-starts")
-+	r.RunnerRPCTimeout = 500 * time.Millisecond
-+	s.client = newWatchedRunnerClient(t, freeLocalAddr(t), 5*time.Minute)
-+
-+	// Cancelled at the end only so a hung pass does not leak past the test.
-+	ctx, cancel := context.WithCancel(context.Background())
-+	defer cancel()
-+
-+	result := make(chan error, 1)
-+	go func() { result <- r.reconcileNormal(ctx, s, obj, helloWorldSource(newArtifactServer(t))) }()
-+
-+	var err error
-+	g.Eventually(result, 10*time.Second).Should(Receive(&err))
-+	g.Expect(status.Code(err)).To(Equal(codes.DeadlineExceeded))
-+}
-+
- // TestRunnerErrorSetsReadyFalse checks that a runner error sets Ready False and
- // keeps Reconciling. The reason is RunnerQuotaExhausted on the quota retry
- // path and RunnerFailed otherwise; the message is the error text.
+@@ -50,6 +50,7 @@ __Note__: If you need to use the `imagePullSecrets` it would be best to set `ser
+ | eksSecurityGroupPolicy.ids | list | `[]` | List of AWS Security Group IDs |
+ | eventsAddress | string | `"http://notification-controller.flux-system.svc.cluster.local./"` | Argument for `--events-addr` (Controller). The event address, default to the address of the Notification Controller |
+ | extraEnv | object | `{}` | Additional container environment variables. |
++| featureGates.externalArtifact | bool | `false` | Argument for `--feature-gates=ExternalArtifact=...` (Controller).  Allow `ExternalArtifact` as a Terraform source. Requires Flux 2.7 or higher, whose `ExternalArtifact` CRD must be installed. |
+ | fullnameOverride | string | `""` | Provide a fullname |
+ | image.pullPolicy | string | `"IfNotPresent"` | Controller image pull policy |
+ | image.repository | string | `"ghcr.io/flux-iac/tofu-controller"` | Controller image repository |
+```
+
+**File**: `charts/tofu-controller/crds/crds.yaml` (modified, +1/-0)
+```diff
+@@ -11277,6 +11277,7 @@ spec:
+                     - GitRepository
+                     - Bucket
+                     - OCIRepository
++                    - ExternalArtifact
+                     type: string
+                   name:
+                     description: Name of the referent.
+```
+
+**File**: `charts/tofu-controller/templates/deployment.yaml` (modified, +1/-0)
+```diff
+@@ -55,6 +55,7 @@ spec:
+         - --quota-retry-enabled={{ .Values.quotaRetryEnabled }}
+         - --quota-retry-delay={{ .Values.quotaRetryDelay }}
+         - --quota-retry-jitter-factor={{ .Values.quotaRetryJitterFactor }}
++        - --feature-gates=ExternalArtifact={{ .Values.featureGates.externalArtifact }}
+         env:
+           {{- include "pod-namespace" . | indent 8 }}
+         - name: RUNNER_POD_IMAGE
+```
+
+**File**: `charts/tofu-controller/templates/rbac.yaml` (modified, +2/-0)
+```diff
+@@ -151,6 +151,7 @@ rules:
+   - source.toolkit.fluxcd.io
+   resources:
+   - buckets
++  - externalartifacts
+   - gitrepositories
+   - ocirepositories
+   verbs:
+@@ -165,6 +166,7 @@ rules:
+   - source.toolkit.fluxcd.io
+   resources:
+   - buckets/status
++  - externalartifacts/status
+   - gitrepositories/status
+   - ocirepositories/status
+   verbs:
 ```
 
 #### Recent Merged Pull Requests:
@@ -1170,29 +1210,44 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. stop a pass hanging on a runner that never started (#1923)
+## X. support ExternalArtifact as a Terraform source (#1901)
 
 **RULE**:
-When implementing operations in `cmd/manager/main.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flux-iac/tofu-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/e2e.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flux-iac/tofu-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ee95e83a`: stop a pass hanging on a runner that never started (#1923). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e2db61bd`: support ExternalArtifact as a Terraform source (#1901). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/manager/main.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/e2e.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			"backend config, init, workspace select), and for finalizing the runner's secrets on "+
-			"deletion. Bounds the reconcile so a runner pod "+
+            "--feature-gates=ExternalArtifact=true",
+      - name: Run ExternalArtifact source tests
+        run: |
+          kustomize build ./config/testdata/source-watcher | kubectl apply --server-side -f -
+          kubectl -n tofu-system rollout status deploy/source-watcher --timeout=2m
+
+          kubectl -n tofu-system apply -f ./config/testdata/external-artifact/generator.yaml
+          kubectl -n tofu-system wait artifactgenerator/helloworld --for=condition=ready --timeout=4m
+
+          kubectl -n tofu-system apply -f ./config/testdata/external-artifact/terraform.yaml
+          kubectl -n tofu-system wait terraform/helloworld-external-artifact --for=condition=ready --timeout=4m
+
+          # the Terraform object must have applied the ExternalArtifact's revision
+          artifact_revision=$(kubectl -n tofu-system get externalartifact/helloworld-module -o jsonpath='{.status.artifact.revision}')
+          applied_revision=$(kubectl -n tofu-system get terraform/helloworld-external-artifact -o jsonpath='{.status.lastAppliedRevision}')
+          echo "artifact revision: $artifact_revision, applied revision: $applied_revision"
+          [[ -n "$artifact_revision" && "$applied_revi
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-			"backend config, init, workspace select). Bounds the reconcile so a runner pod "+
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ee95e83a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e2db61bd` are properly handled with clean fallback behavior.

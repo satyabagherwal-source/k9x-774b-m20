@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T20:44:34.927Z",
+  "last_updated": "2026-10-28T20:50:54.355Z",
   "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12694,8 +12694,8 @@
       "slug": "flux-iac-tofu-controller",
       "platform": "github",
       "source_url": "https://github.com/flux-iac/tofu-controller",
-      "source_version": "ee95e83a",
-      "content_hash": "e403308ebc4d82a48215a20ff15cccce28cf123f1f462872529b66fd6954bab1",
+      "source_version": "e2db61bd",
+      "content_hash": "10de6090132bd4c9250deeba65e68b6e00845e1aec99103578a3467c53d8dd0d",
       "dossier_path": "07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
       "promoted_rules": [
@@ -12728,6 +12728,11 @@
           "number": 5022,
           "title": "stop a pass hanging on a runner that never started (#1923)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5403,
+          "title": "support ExternalArtifact as a Terraform source (#1901)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12735,7 +12740,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T21:29:02.610Z",
+      "verified_at": "2026-10-28T20:50:54.342Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -20560,7 +20565,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
       "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
-      "content_hash": "6081141d033525f7a5797eb5db67a863dc8142976ce857675708431b0a5a653d",
+      "content_hash": "cb94ac4a8d1c62f07a2f8dbde543a24d37c3bd1af57b58aabd1290598552e017",
       "dossier_path": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
       "promoted_rules": [
@@ -20661,7 +20666,7 @@
         "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv3z5aum",
         "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv4dr5p5"
       ],
-      "verified_at": "2026-10-26T00:18:22.929Z",
+      "verified_at": "2026-10-28T20:50:45.045Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -146238,6 +146243,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T20:44:34.911Z"
+    },
+    "rule-5403": {
+      "learning_id": "rule-5403",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5403,
+      "title": "support ExternalArtifact as a Terraform source (#1901)",
+      "source_url": "https://github.com/flux-iac/tofu-controller",
+      "source_version": "e2db61bd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T20:50:54.342Z"
     }
   },
   "aliases": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T20:44:35.020Z",
+  "last_updated": "2026-10-28T20:50:54.414Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1805,14 +1805,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
-      "content_hash": "6081141d033525f7a5797eb5db67a863dc8142976ce857675708431b0a5a653d",
-      "verified_at": "2026-10-26T00:18:22.982Z",
+      "content_hash": "cb94ac4a8d1c62f07a2f8dbde543a24d37c3bd1af57b58aabd1290598552e017",
+      "verified_at": "2026-10-28T20:50:45.129Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T00:18:22.982Z"
+      "last_updated": "2026-10-28T20:50:45.130Z"
     },
     "Qwen/Qwen-Image-2.1-Turbo": {
       "repository": "Qwen/Qwen-Image-2.1-Turbo",
@@ -10611,14 +10611,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-flux-iac-tofu-controller",
-      "content_hash": "e403308ebc4d82a48215a20ff15cccce28cf123f1f462872529b66fd6954bab1",
-      "verified_at": "2026-10-27T21:29:02.711Z",
+      "content_hash": "10de6090132bd4c9250deeba65e68b6e00845e1aec99103578a3467c53d8dd0d",
+      "verified_at": "2026-10-28T20:50:54.413Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T21:29:02.711Z"
+      "last_updated": "2026-10-28T20:50:54.413Z"
     },
     "clockworklabs/SpacetimeDB": {
       "repository": "clockworklabs/SpacetimeDB",

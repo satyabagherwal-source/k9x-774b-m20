@@ -5939,3 +5939,5 @@ Every entry in this ledger must capture:
 | `learn-github-nativescript-nativescript` | `https://github.com/NativeScript/NativeScript` | `c72e04d7` | Multi-dimensional audit evidence | 2026-10-28T20:44:28.982Z |
 | `learn-github-kong-kubernetes-ingress-controller` | `https://github.com/Kong/kubernetes-ingress-controller` | `5fa96bf0` | Multi-dimensional audit evidence | 2026-10-28T20:44:29.290Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `3f0e3b9a` | Multi-dimensional audit evidence | 2026-10-28T20:44:35.011Z |
+| `learn-huggingface-conwayresearch-underdog-saluki-27b-1-0` | `https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0` | `hf-conwayr` | Multi-dimensional audit evidence | 2026-10-28T20:50:45.117Z |
+| `learn-github-flux-iac-tofu-controller` | `https://github.com/flux-iac/tofu-controller` | `e2db61bd` | Multi-dimensional audit evidence | 2026-10-28T20:50:54.406Z |
