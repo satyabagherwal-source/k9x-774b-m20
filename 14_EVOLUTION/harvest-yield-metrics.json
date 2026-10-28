@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T11:36:17.955Z",
-  "total_cycles_completed": 5726,
-  "total_learnings_persisted": 5726,
-  "total_rules_promoted": 5211,
+  "last_updated": "2026-10-28T11:46:31.259Z",
+  "total_cycles_completed": 5728,
+  "total_learnings_persisted": 5728,
+  "total_rules_promoted": 5215,
   "history": [
-    {
-      "timestamp": "2026-10-27T21:22:27.640Z",
-      "repository": "autogluon/chronos-2",
-      "learningId": "learn-huggingface-autogluon-chronos-2",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T21:28:56.551Z",
-      "repository": "xotahal/react-native-material-ui",
-      "learningId": "learn-github-xotahal-react-native-material-ui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T21:28:59.286Z",
       "repository": "kirillzyusko/react-native-keyboard-controller",
@@ -1403,6 +1389,20 @@
       "repository": "Cloudflare/clef",
       "learningId": "learn-huggingface-cloudflare-clef",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T11:46:22.553Z",
+      "repository": "Cloudflare/clef-flash",
+      "learningId": "learn-huggingface-cloudflare-clef-flash",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T11:46:31.259Z",
+      "repository": "matrixorigin/matrixone",
+      "learningId": "learn-github-matrixorigin-matrixone",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

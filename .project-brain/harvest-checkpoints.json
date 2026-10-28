@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T11:36:17.958Z",
+  "last_updated": "2026-10-28T11:46:31.263Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -875,14 +875,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cloudflare-clef-flash",
-      "content_hash": "21a54f8f47eacca77d9c324faad7aa4c756552ca8d8d22689445af5506efedbf",
-      "verified_at": "2026-10-25T17:01:32.842Z",
+      "content_hash": "a5548a20aab4e8e5fda457c57fe986ca502e982ecf3407fc8354e58ae98aec70",
+      "verified_at": "2026-10-28T11:46:22.556Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T17:01:32.842Z"
+      "last_updated": "2026-10-28T11:46:22.556Z"
     },
     "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2": {
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -4881,14 +4881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-matrixorigin-matrixone",
-      "content_hash": "b30e14a4a5f3874ba667a814dc34f667dc4d6dc4c9a720f3828108ff18dc8d9e",
-      "verified_at": "2026-10-27T19:06:55.885Z",
+      "content_hash": "57463977226daf144b78aaf1a932ca7ebcd093627204306630d26ac54037674d",
+      "verified_at": "2026-10-28T11:46:31.262Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T19:06:55.885Z"
+      "last_updated": "2026-10-28T11:46:31.262Z"
     },
     "fallow-rs/fallow": {
       "repository": "fallow-rs/fallow",

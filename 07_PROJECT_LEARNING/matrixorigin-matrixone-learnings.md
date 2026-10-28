@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source**: github ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
-> **Source Version**: `935811ca`  
+> **Source Version**: `6c7813b5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T19:06:55.667Z  
+> **Timestamp**: 2026-10-28T11:46:30.803Z  
 > **Learning ID**: `learn-github-matrixorigin-matrixone`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T19:06:55.655Z  
+> **Harvest Timestamp**: 2026-10-28T11:46:30.562Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI-native HTAP database with Git-for-Data and built-in vector search, serving as the data and memory backbone for intelligent agents and applications.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 2061 stars
+- **Stars / Engagement**: 2062 stars
 
 ---
 
@@ -2296,11 +2296,11 @@ func runQueryStreams(ctx context.Context, db *sql.DB, first *sql.Conn, r WorkerR
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #31470** (2026-10-27): **test: make HNSW polling use read committed**
-  *Symptoms*: ## What type of PR is this?  - [x] Test and CI  ## Which issue(s) this PR relates to:  Refs #31449  ## What this PR does / why we need it:  #31457 already shortened the cross-CN freshness interval that caused the original CI timeout. This follow-up makes the BVT's explicit transaction use READ COMMITTED while polling for an asynchronously published HNSW generation, then restores the previous session isolation. With REPEATABLE READ the fixed transaction snapshot cannot see a publication committed after the transaction begins.  This hardens the test for sessions configured with REPEATABLE READ; it is not a claim that the original CI failure was caused by transaction isolation. The default pessimistic configuration uses READ COMMITTED.  ## Validation  - On a fresh local two-CN cluster, exact BVT: 61/61 passed, 9.39s. Both HNSW updates ran on CN1 and CN2 performed both stale-cache sweeps. - With the session initially set to REPEATABLE READ, the BVT plus an assertion that the original isolation was restored passed 63/63, 8.32s. - Negative control on main forced to REPEATABLE READ: asynchronous publication completed, but transaction polling failed (54/59); waits were shortened to 10s for this experiment. - `git diff --check` passed. The changes are SQL/result only; no Go behavior or production hot path changed.  The topology and session placement are not guaranteed by the SQL case on every run. These are macOS local results; Linux/proxy CI is pending. The pre-existing test-wide fre
+- **Issue #31590** (2026-10-28): **test(plan): reduce redundant legacy session proof work**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [ ] BUG - [x] Improvement - [ ] Documentation - [ ] Feature - [x] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Related to #27705.  ## What this PR does / why we need it:  The legacy float ALTER session race test took 17 minutes in [CI](https://github.com/matrixorigin/matrixone/actions/runs/40651421474/job/122728104084), extending the planner critical path. Its 37 precision/session scenarios each repeated full DUMP and raw-source budget proofs in addition to migration and supplied-definition analysis.  Keep all 37 scenarios, exact results for both defaults, migration, supplied-definition analysis, source immutability, session restoration and idempotence. Run the additional DUMP and raw-source budget proofs on the named session/origin cases and precision boundaries 0, 4, 8 and 30. Existing witness and memo tests continue to exercise forged payloads, budget errors, memo limits and fallback. Intermediate precisions still run the real migration under its visit cap; the separate raw-source budget assertion is no longer repeated for each of them. No production behavior or concurrency changes.  On the same host with race and CPU profiling, a representative intermediate-precision case fell from 10.74s to 5.37s; a boundary case retaining the full proof took 9.88s and 9.96s. These are local focused measurements, not a prediction of end-to-end CI savings.  Validation:  - Incremental SCA for `./pkg/sql/plan`: `make s
 
-- **Issue #31469** (2026-10-27): **[Bug]: shared CI assumes newer native outputs on 4.0-dev**
-  *Symptoms*: ### Is there an existing issue for the same bug?  - [x] I have checked the existing issues.  ### Branch Name  4.0-dev  ### Commit ID  0b598e37c494f3f8447bf46cf50cc1f24daec3c9 (base da7ad6be78eb48ee81b8b6c33c5a7651c9364587)  ### Other Environment Information  MatrixOne PR #31465 changes only the pinned molint installation version. Shared workflows are resolved from matrixorigin/CI main. Observed in [run 40493419821](https://github.com/matrixorigin/matrixone/actions/runs/40493419821).  ### Actual Behavior  Current reusable CI assumes newer MatrixOne native and packaging artifacts that 4.0-dev does not produce:  - [Shared build](https://github.com/matrixorigin/matrixone/actions/runs/40493419821/job/122152831584) builds the binary but fails packaging at `cp cgo/*.so lib/`; the checked-out 4.0 cgo Makefile builds `libmo.a` only. Its source also does not include the newer `dict` build output, which the packaging command unconditionally expects. - [SCA](https://github.com/matrixorigin/matrixone/actions/runs/40493419821/job/122152831546) fails immediately after `make cgo` in Prepare ENV, where CI requires `libroaring.a` and `cgo/libmo.so`; the 4.0 Makefiles do not build either. The silent failing `test` does not identify which check fired first. - [UT Coverage](https://github.com/matrixorigin/matrixone/actions/runs/40493419821/job/122152928086) fails native preparation before tests. Its uploaded `ut-coverage-phase-failure.txt` says `missing required CGO header: thirdparties/install/i
+- **Issue #31581** (2026-10-28): **[4.2.1-hotfix] fix(window): reuse unbounded aggregate frames**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [x] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Addresses #31530 on `release/v4.2.1-hotfix-20261026`.  ## What this PR does / why we need it:  Backport #31546 to the active 4.2.1 hotfix branch. Aggregate windows currently rescan unbounded frames for every output row, causing quadratic aggregate work, including with a `LIMIT` above the Window operator.  Compute a whole-partition aggregate once and broadcast its result. Reuse independent unfinalized states for supported cumulative COUNT/SUM/AVG and fixed-width MIN/MAX frames; RANGE includes the complete peer group. Preserve the existing evaluator for unsupported cumulative aggregates and frames, and keep the target branch's unrelated vector and lifecycle code unchanged.  Validation on the target branch, macOS arm64 and Go 1.26.4:  - Full Window package passed normally and with `-race`; tests cover aggregate values, NULLs, peers, partition isolation, varlen/DISTINCT full frames, work counts, cancellation and allocation failures. - Exact public SQL BVT passed twice on a two-CN cluster: 20/20 each, no skipped or failed statements, with database cleanup checked on both CNs. - Incremental 31-package `go vet`, `molint` and configured `golangci-lint` passed; lint reported zero issues. Molint printed six diagnostics in unchanged frontend/compile files; the same six were reproduced against the target ba
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2317,1008 +2317,13 @@ func runQueryStreams(ctx context.Context, db *sql.DB, first *sql.Conn, r WorkerR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9cf8743e` (2026-10-27)
-**Commit Message**: fix(sql): separate ODKU OK insert ID from session baseline (#28444)
-
-### Current verified conflict-maintenance update — 2026-10-23
-
-Published ordinary merge 8030407a39878935365e866b8d27beaa12ced2da, exact validated tree 2b5a190467752e49fa654037c38b8244a2a88120, fixed merge target d4c37f4d8722dd91b80f5f5547940004bf1b293f, parent source 47254e28e441e6cfb3a8b5263f45963a21e1bfcb. This completes the previously prepared real conflict composition; no history rewrite or additional main synchronization. Both main's explicit ELT lazy guard and this branch's recursive JSON capability admission remain before eager folding in both constant-fold owners.
-
-Independent root verification:245 focused named PASS events,5 full normal owning packages35789 named PASS events with2 retained existing skips (not passes), incremental29-Go-file/9-directory plus direct-consumer formatting/vet/lint PASS. Supported Go1.27.1 darwin/arm64 CPU CGo/native provenance verified. Normal canonical comparison of6 exact cases twice on the same SQL+ISCP-ready owned instance: ODKU128, hidden-key28, JSON consumer60, MAX_BY22, NTH_VALUE31 and HAVING91 per round, totaling720/720, zero failed/ignored/abnormal. Every run verifies 
-
-**File**: `docs/design/20261016-odku-distributed-result-protocol-r2-addendum.md` (added, +153/-0)
-```diff
-@@ -0,0 +1,153 @@
-+# Distributed ODKU Result Protocol: r2 alignment addendum
-+
-+Status: approved by independent scoped design review r2; see
-+`20261016-odku-distributed-result-protocol-review-v2.md`.
-+No build, regression, BVT, deployment, performance, or implementation acceptance
-+is claimed by this document. Root owns reviewer and lifecycle decisions.
-+
-+- Revision: r2, 2026-10-16, owner VioletQwQ-0, PR #28444 / issue #28162.
-+- Accepted source before this repair: `0c2090984b2aebef9cf10fba304465b14e3f5c77`.
-+- Necessary normal-merge target: `b3d6b21fe9d260c91e1777529a48a9d93061af33`.
-+- Original r1 inspected implementation: `286b60837041d819573a260f7ab6e346125c6d3a`.
-+- Original reviewed r1 content: Git blob `914d5ddd19635d07924ebbe22cbb5eaa6f192fa2`
-+  at head `038207ff2e5fd84d79d7d6c851c467b68b05a4e8`, SHA256
-+  `ddff85b82ca7775ce492d68fb904a3bd5952c59e4f6390a8733ddf347953e756`.
-+- The immutable [v1 approval record](20261016-odku-distributed-result-protocol-review-v1.md)
-+  remains an approval of that exact r1 content. It is not approval of this r2
-+  addendum or of the repaired implementation.
-+
-+## Subsequent candidate allocation overlay (not part of r2 approval)
-+
-+For the current conflict-repair candidate, actual main is
-+`861a2c4cb68961d8b6b01f18e0aa6ac52a3a505f`, whose capability prefix reaches
-+MORPC132. The candidate preserves every main allocation, including MORPC129
-+JSON ELT/opaque text, MORPC130 incomplete temporal strings and MORPC131 exact
-+weighted percentile dispatch and MORPC132 decimal/float conversions. The already
-+shared JSON expression contract stays at MORPC129; typed JSON MIN/MAX is
-+provisionally appended at MORPC133 and the complete ODKU/session-LAST_INSERT_ID
-+contract at MORPC134. Independent unpublished candidates do not implement each
-+other's features merely by assigning the same number; this is not a coordinated
-+allocation or cross-branch deployment guarantee. Revalidate it at authoritative
-+main admission.
-+This supersedes only the r2 allocation for the current candidate; it does not
-+claim design approval or implementation acceptance. The r2 review record and
-+allocation below remain historical and bound to their stated source and target.
-+
-+The maintenance merge is bound to source
-+`946ef84b38f259200aba81b2e5ad82e887e3780f` and the frozen main above.
-+Main's `pipeline.DedupJoin.dedup_key_exprs` retains tag30; the candidate's
-+unmerged ODKU suffix follows it:
-+
-+| Pipeline DedupJoin field | Current tag |
-+| --- | --- |
-+| `odku_target_auto_increment_col` | 31 |
-+| `odku_generated_col` | 32 |
-+| `odku_ordinal_col` | 33 |
-+| `odku_result_tracking` | 34 |
-+| `odku_generated_auto_increment_col` | 35 |
-+
-+Main's `plan.Node.dedup_key_exprs` tag95 and
-+`plan.PreInsertUkCtx.key_diagnostic_exprs` tag19 also remain intact. The current
-+source/cached/destination/receiver/actual-stream ODKU floor is134; JSON129,
-+main's temporal130/weighted-percentile131/decimal-float132 and typed MIN/MAX133 do not imply
-+ODKU support. This is append safety relative to actual main, not compatibility
-+with the earlier133 ODKU executable whose ProcessInfo ordinal used tag18,
-+earlier unmerged131 ODKU executables, or unmerged127 executables using
-+ODKU tags30..34. Do not mix those pre-resolution binaries based on the shared
-+numeric floor. Such interoperability is not certified by this merge or the
-+historical approvals. The approved ownership, coordinator ordering, reduction,
-+result policy, retry/quiescence and resource-budget choices are unchanged;
-+measured performance, real mixed binaries and deployment acceptance remain
-+separate gates.
-+
-+Main's `ProcessInfo.statement_runtime_select` retains tag17 and
-+`statement_runtime_dml` retains tag18. The candidate's `odku_ordinal_base`
-+moves to unused tag19, guarded by the complete ODKU134 contract. An ordinal
-+must never be interpreted as the main DML boolean, nor a main DML boolean as
-+an ODKU range. Schema, generated struct/marshal/size/unmarshal/descriptor and
-+the wire regression must agree. This maintenance overlay is not approval of
-+these new numbers or tags; both immutable approval records remain unchanged.
-+
-+The approved r2 addendum below supersedes only the allocation and compatibility
-+boundaries in the [retained r1 specification](20261016-odku-distributed-result-protocol.md).
-+The existing coordinator ordering, provenance, bounded reduction, transaction
-+publication, generation/retry ownership and performance budgets remain the
-+implementation's intended design. Their existing evidence keeps its original
-+revision binding; it is not automatically upgraded to r2 acceptance.
-+
-+## Approved historical r2 cumulative allocation
-+
-+| Capability | Current floor | Allocation owner |
-+| --- | --- | --- |
-+| Collation-aware LEAST/GREATEST overload 4 | MORPC117 | Authoritative merged target b3d6b21f |
-+| Selected JSON ELT and canonical opaque visible text | MORPC118 | Inherited JSON capability, moved after the target prefix |
-+| Typed JSON MIN/MAX a
-```
-
-**File**: `docs/design/20261016-odku-distributed-result-protocol-review-v1.md` (added, +36/-0)
-```diff
-@@ -0,0 +1,36 @@
-+# Independent Design Review Record v1
-+
-+## Decision
-+
-+- Reviewed artifact: `docs/design/20261016-odku-distributed-result-protocol.md`
-+- Source head examined: `038207ff2e5fd84d79d7d6c851c467b68b05a4e8` (PR #28444)
-+- Document Git blob: `914d5ddd19635d07924ebbe22cbb5eaa6f192fa2`
-+- Document SHA256: `ddff85b82ca7775ce492d68fb904a3bd5952c59e4f6390a8733ddf347953e756`
-+- Review date: 2026-10-16
-+- Reviewer: independent review session (`gpt-6.1-sol`, reasoning `high`), separate from design authorship and implementation work
-+- Conclusion: **PASS**, no design-approval conditions
-+
-+## Risk Decisions
-+
-+| Required gate | Decision |
-+| --- | --- |
-+| State ownership, transfer, boundaries, and cleanup | PASS |
-+| Coordinator ordering, ordinal reduction, and tie-breaking | PASS |
-+| Failure, retry, reset, generation, and leak semantics | PASS |
-+| Mixed-version behavior, MORPC gate, upgrade, and rollback | PASS |
-+| Alternatives and explicit tradeoffs | PASS |
-+| Performance acceptance metrics and budgets | PASS |
-+
-+## Scope and Limitations
-+
-+This record approves the design only. Implementation correctness, measured
-+performance, real mixed-version deployment, and QA acceptance were not executed
-+and remain separate gates. The review statically inspected the frozen document
-+and its cited implementation anchors; it ran no build, UT, BVT, benchmark,
-+service, or CI workload.
-+
-+The source checkout contained an untouched untracked `thirdparties/install`
-+symlink and the PR is Ready; neither affects the reviewed tracked document
-+content, whose Git blob and SHA256 match the values above. The design status
-+update from DRAFT to approved is record metadata and changes no design
-+decision.
-```
-
-**File**: `docs/design/20261016-odku-distributed-result-protocol-review-v2.md` (added, +50/-0)
-```diff
-@@ -0,0 +1,50 @@
-+# Distributed ODKU result protocol: independent r2 design decision
-+
-+Decision: **PASS**. Blocking design findings: **none**. Design approval conditions:
-+**none**. This is an independent approval of the r2 decisions and their integration
-+with r1, not inherited v1 approval or implementation/runtime acceptance.
-+
-+- Issue: #28162; implementation PR: #28444.
-+- Reviewer: independent Codex agent Popper, dispatch ID
-+  `01a14406-78af-7420-a83b-aabc68e36324`; not the r2 author.
-+- Review date: 2026-10-16; final binding check: `2026-10-16T09:28:26Z`.
-+- Reviewed source: `0c2090984b2aebef9cf10fba304465b14e3f5c77`.
-+- Integration target: `b3d6b21fe9d260c91e1777529a48a9d93061af33`.
-+- Reviewed staged candidate tree: `f07e9a39d185e6afa270a8464995cc839f411eef`.
-+- Reviewed r2: `20261016-odku-distributed-result-protocol-r2-addendum.md`,
-+  blob `f59e2d8da15c8be6407f939b8eb6854f5f8e1b41`, SHA256
-+  `3c7824f054e20328e46c7d6e818ea7b8425765124d1faadc734e7cc18f4d6a0a`.
-+- Retained r1 with its historical-scope preface: blob
-+  `0f41de5514cdfc38a5ae26e9d65898d24b54d7a6`, SHA256
-+  `7382036c352faacc0d5fbe711927fe5007d92ae8b9368e2cf49d70e2700f2735`.
-+- The immutable v1 approval record is unchanged. Its approval still applies only
-+  to original r1 blob `914d5ddd19635d07924ebbe22cbb5eaa6f192fa2`.
-+
-+After review, only r2's status metadata was changed to link this decision and to
-+keep implementation/runtime acceptance explicitly unclaimed. All substantive r2
-+decisions below the revision header retain their reviewed content. The original
-+PENDING status is superseded by this record; no old approval or runtime result
-+has been relabelled.
-+
-+| Reviewed decision | Result and rationale |
-+| --- | --- |
-+| Actual successful plan owns the result | PASS: select legacy scalar versus tracked summary from the final plan, including retry rebuild; empty summary never selects stale legacy state. |
-+| Multiple visible AUTO_INCREMENT columns | PASS: preserve accepted DML and allocate later columns normally; first visible column consistently owns provenance and fallback references. Later-only generation intentionally does not publish a modern ODKU session ID. This is a documented MatrixOne policy, not portable MySQL behavior. |
-+| Visible internal-looking SQL name | PASS: visibility/internal catalog ownership distinguishes user IDs from hidden allocator columns without weakening constraints or tenancy. |
-+| Cumulative protocol requirements | PASS: upstream117, JSON118, typed MINMAX119 and ODKU/baseline120 remain distinct; every admission/send/decode/stream owner composes their maximum. |
-+| Retry, rollback, ownership and resource bounds | PASS: r1 coordinator publication, quiescence, explicit-zero baseline, generation reset, reducer bounds and performance budgets are retained. No per-column result vectors or new unbounded state are introduced. |
-+| Alternatives and validation | PASS: AST/empty-summary dispatch, broad statement rejection, cross-column reduction, name-based ownership and old-floor reuse were considered; deterministic tests, real-client results, canonical BVT, binary/fault and performance obligations can falsify the selected design. |
-+
-+Implementation acceptance still requires executed owner/column/floor regressions,
-+raw OK/session/row assertions and normal comparisons of `on_duplicate_key_edge.sql`
-+and `last_insert_id_hidden_pk.sql`. Actual mixed binaries, ordered producer and
-+fault/retry qualification, r1's full measured capacity/performance matrix, CI and
-+deployment QA retain their separate owners and gates. None was executed by this
-+design review, and the complete candidate implementation was not approved.
-+
-+Root retained the full independent `REVIEW.md` and `REVIEW.json` in task evidence
-+`heartbeat-20261016-0834.qUtx67/design-review-28444-r2/`, independently checked the
-+document/candidate binding, and confirmed the reviewer stopped before this record
-+was added. This repository record makes the design decision reviewable without
-+requiring access to that private evidence directory. It does not resolve GitHub
-+threads, request another review, or change `CHANGES_REQUESTED`.
-```
-
-**File**: `docs/design/20261016-odku-distributed-result-protocol.md` (added, +405/-0)
-```diff
-@@ -0,0 +1,405 @@
-+# Distributed ODKU Result Protocol
-+
-+Current implementation alignment: [r2 addendum](20261016-odku-distributed-result-protocol-r2-addendum.md), with the subsequent candidate-allocation overlay recorded there.
-+Against frozen main `861a2c4cb68961d8b6b01f18e0aa6ac52a3a505f` (capability prefix
-+through MORPC132), the isolated candidate retains all main contracts, including
-+MORPC129 JSON ELT/opaque text, MORPC130 incomplete temporal strings and MORPC131
-+exact weighted percentile dispatch and MORPC132 decimal/float conversions.
-+The same JSON expression contract keeps main's MORPC129; typed JSON MIN/MAX is
-+provisionally appended at MORPC133 and the complete ODKU/session-baseline
-+contract at MORPC134. ProcessInfo preserves main's DML classification tag18 and
-+moves the candidate's ODKU ordinal to tag19. Independent unpublished candidates do not implement each other's
-+features merely by assigning the same number; these assignments do not establish
-+cross-branch deployment compatibility and must be revalidated at authoritative
-+main admission.
-+The r2 approval remains scoped to its earlier reviewed allocation; this overlay
-+does not claim new design approval.
-+
-+The r1 specification below is retained as historical design text. Its normative
-+references to MORPC119 describe the original inspected/reviewed revision, not
-+the current allocation. Use the r2 addendum for the changed boundaries. The
-+original reviewed content remains addressable by its immutable blob and head
-+below. The v1 approval record is unchanged and applies only to that reviewed r1
-+content. The [v2 approval record](20261016-odku-distributed-result-protocol-review-v2.md)
-+approves its stated historical r2 revision; neither approval automatically covers
-+the subsequent numeric allocation overlay. Pending/DRAFT statements in the
-+retained specification below describe that original publication, not the latest
-+approval status.
-+
-+## Retained r1 specification
-+
-+Status: r1 approved by independent design review v1; see `20261016-odku-distributed-result-protocol-review-v1.md`
-+
-+- Design revision: r1, 2026-10-16.
-+- Owner: VioletQwQ-0.
-+- Owning issue: [#28162](https://github.com/matrixorigin/matrixone/issues/28162).
-+- Implementation: [PR #28444](https://github.com/matrixorigin/matrixone/pull/28444).
-+- Inspected implementation revision: `286b60837041d819573a260f7ab6e346125c6d3a`.
-+- Design gate: [mo-bot assessment at the inspected revision](https://github.com/matrixorigin/matrixone/pull/28444#pullrequestreview-5543546119).
-+- Reviewed design revision: document blob `914d5ddd19635d07924ebbe22cbb5eaa6f192fa2`
-+  at head `038207ff2e5fd84d79d7d6c851c467b68b05a4e8`.
-+- Approval record: PASS with no conditions in
-+  `20261016-odku-distributed-result-protocol-review-v1.md`, bound to document
-+  SHA256 `ddff85b82ca7775ce492d68fb904a3bd5952c59e4f6390a8733ddf347953e756`.
-+
-+## Background / Problem
-+
-+An ODKU statement can allocate an AUTO_INCREMENT candidate, resolve a duplicate
-+against a different stored row, perform a changed update or a no-op, and finish
-+on a different CN from its input producer. Allocation order, numerical ID order,
-+RPC completion order, and logical input order are different orders. Taking a
-+minimum generated ID or the last remote reply cannot reliably identify the
-+client-visible result.
-+
-+The contract has two consumers: the insert ID in the successful MySQL OK packet,
-+and the session value read by a subsequent `LAST_INSERT_ID()`. An update fallback
-+may populate the packet without changing that session value. A failed attempt
-+must not populate the next attempt's result. Generated candidates consumed by
-+duplicate updates and hidden fake-primary-key allocation are not successful
-+user-column inserts.
-+
-+The existing [ordered ODKU design](20260906-ordered-odku-semantics.md) describes
-+action ordering, affected rows, constraints, and physical writes. This document
-+adds the distinct placement, provenance, reduction, and version contract. It is
-+a design proposal informed by existing code, not retrospective approval of that
-+code. Implementation acceptance remains blocked on independent design approval.
-+
-+## Non-goals
-+
-+- Change ODKU target arbitration, left-to-right assignments, affected-row rules,
-+  constraint enforcement, index maintenance, storage commit, or transaction retry policy.
-+- Make AUTO_INCREMENT allocation transactional or reclaim gaps after rollback.
-+- Define a deterministic SQL order for an unordered INSERT SELECT or tied ORDER
-+  BY keys. Require a total ORDER BY when applications need repeatable order.
-+- Add a durable result service, a new catalog format, a per-row result RPC, a
-+  new background worker, or a general distributed sequence allocator.
-+- Redesign side effects of `LAST_INSERT_ID(expr)`, multi-table INSERT, ordinary
-+  INSERT/REPLACE reporting, or unrelated expression protocols.
-+
-+## Current behavior and source binding
-+
-+All source references below are `file:line` at the in
-```
-
-**File**: `pkg/defines/const.go` (modified, +3/-1)
-```diff
-@@ -168,7 +168,9 @@ const (
- 	MORPCVersion130    int64 = 130 // incomplete temporal string overloads and rejection diagnostics
- 	MORPCVersion131    int64 = 131 // exact weighted percentile aggregate remote dispatch
- 	MORPCVersion132    int64 = 132 // decimal float rounding and strict textual float conversions
--	MORPCLatestVersion       = MORPCVersion132
-+	MORPCVersion133    int64 = 133 // typed JSON MIN/MAX aggregate comparison
-+	MORPCVersion134    int64 = 134 // ordered ODKU result summary and captured session LAST_INSERT_ID baseline
-+	MORPCLatestVersion       = MORPCVersion134
- )
- 
- // DefaultLockWaitTimeoutSeconds is shared by the frontend default and by
-```
-
-**File**: `pkg/frontend/multi_insert_last_insert_id_test.go` (modified, +107/-0)
-```diff
-@@ -55,6 +55,8 @@ func newLastInsertIDHarness(t *testing.T, targets int) (
- 	proc := &process.Process{Base: &process.BaseProcess{
- 		LastInsertID:          new(uint64),
- 		StatementLastInsertID: new(uint64),
-+		ODKUResult:            &process.ODKUResultState{},
-+		ODKUInputOrdinal:      new(uint64),
- 	}}
- 	proc.InitSeq()
- 	writer := &countingMysqlWriter{
-@@ -71,6 +73,81 @@ func newLastInsertIDHarness(t *testing.T, targets int) (
- 	return ses, proc, writer, NewMysqlResp(writer), execCtx
- }
- 
-+func newODKUInsertStatusHarness(t *testing.T) (
-+	*Session, *process.Process, *countingMysqlWriter, *MysqlResp, *ExecCtx,
-+) {
-+	ses, proc, writer, resper, execCtx := newLastInsertIDHarness(t, 0)
-+	execCtx.stmt = &tree.Insert{Rows: &tree.Select{Select: &tree.ValuesClause{}}, OnDuplicateUpdate: tree.UpdateExprs{&tree.UpdateExpr{}}}
-+	p := autoIncrPreInsertPlan(1)
-+	p.GetQuery().Nodes[0].PreInsertCtx.TrackOdkuResult = true
-+	execCtx.cw = &TxnComputationWrapper{plan: p}
-+	return ses, proc, writer, resper, execCtx
-+}
-+
-+func TestODKUStatusLegacyNoKeyPublishesStatementID(t *testing.T) {
-+	for _, generated := range []bool{false, true} {
-+		t.Run(map[bool]string{false: "explicit", true: "generated"}[generated], func(t *testing.T) {
-+			ses, proc, writer, resper, execCtx := newODKUInsertStatusHarness(t)
-+			execCtx.cw = &TxnComputationWrapper{plan: autoIncrPreInsertPlan(1)}
-+			ses.SetLastInsertID(700)
-+			proc.SetLastInsertID(700)
-+			want, session := uint64(0), uint64(700)
-+			if generated {
-+				proc.SetStatementLastInsertIDIfEarlier(1)
-+				want, session = 1, 1
-+			}
-+			require.NoError(t, resper.respStatus(ses, execCtx))
-+			require.Len(t, writer.responses, 1)
-+			require.Equal(t, want, writer.responses[0].lastInsertId)
-+			require.Equal(t, session, ses.GetLastInsertID())
-+			// The next statement is seeded from this durable session value.
-+			proc.SetLastInsertID(ses.GetLastInsertID())
-+			proc.SetStatementLastInsertID(0)
-+			require.Equal(t, session, proc.GetLastInsertID())
-+		})
-+	}
-+}
-+
-+func TestODKUStatusKeepsSessionValueForUpdateFallback(t *testing.T) {
-+	ses, proc, writer, resper, execCtx := newODKUInsertStatusHarness(t)
-+	ses.SetLastInsertID(500)
-+	proc.SetLastInsertID(500)
-+	proc.RecordODKUAction(0, 1, true)
-+
-+	require.NoError(t, resper.respStatus(ses, execCtx))
-+	require.Len(t, writer.responses, 1)
-+	require.Equal(t, uint64(1), writer.responses[0].lastInsertId)
-+	require.Equal(t, uint64(500), ses.GetLastInsertID())
-+	require.Equal(t, uint64(500), proc.GetLastInsertID())
-+}
-+
-+func TestODKUStatusNoopReturnsZeroAndKeepsSessionValue(t *testing.T) {
-+	ses, proc, writer, resper, execCtx := newODKUInsertStatusHarness(t)
-+	ses.SetLastInsertID(500)
-+	proc.SetLastInsertID(500)
-+	proc.RecordODKUAction(0, 1, false)
-+
-+	require.NoError(t, resper.respStatus(ses, execCtx))
-+	require.Len(t, writer.responses, 1)
-+	require.Zero(t, writer.responses[0].lastInsertId)
-+	require.Equal(t, uint64(500), ses.GetLastInsertID())
-+}
-+
-+func TestODKUStatusPublishesFirstGeneratedValue(t *testing.T) {
-+	ses, proc, writer, resper, execCtx := newODKUInsertStatusHarness(t)
-+	ses.SetLastInsertID(500)
-+	proc.SetLastInsertID(500)
-+	proc.RecordODKUGenerated(2, 3)
-+
-+	require.NoError(t, resper.respStatus(ses, execCtx))
-+	require.Len(t, writer.responses, 1)
-+	require.Equal(t, uint64(3), writer.responses[0].lastInsertId)
-+	require.Equal(t, uint64(3), ses.GetLastInsertID())
-+	// The process is normally discarded or refreshed after status emission;
-+	// the session object is the durable value used by the next statement.
-+	require.Equal(t, uint64(500), proc.GetLastInsertID())
-+}
-+
- // TestMultiInsertAmbiguousInsertIDLeavesNoProcessState is the regression for
- // the leak: with several AUTO_INCREMENT targets the statement reports no
- // insert id, and it must not leave the suppressed value on the process either.
-@@ -136,3 +213,33 @@ func TestMultiInsertNoAutoIncrTargetKeepsPreviousValue(t *testing.T) {
- 	require.Equal(t, uint64(51), ses.GetLastInsertID())
- 	require.Equal(t, uint64(51), proc.GetLastInsertID())
- }
-+
-+func TestODKUStatusDistinguishesValuesAndSelectFallback(t *testing.T) {
-+	for _, values := range []bool{true, false} {
-+		for _, generated := range []bool{false, true} {
-+			ses, proc, writer, resper, execCtx := newODKUInsertStatusHarness(t)
-+			ses.SetLastInsertID(700)
-+			proc.SetLastInsertID(700)
-+			if !values {
-+				execCtx.stmt.(*tree.Insert).Rows.Select = &tree.SelectClause{}
-+			}
-+			proc.RecordODKUAction(0, 90, true)
-+			proc.RecordODKUAction(1, 2, false) // final no-op, not ID magnitude/success ordinal
-+			want, session := uint64(2), uint64(700)
-+			if !values {
-+				want = 0
-+			}
-+			if generated {
-+				// Deliberately non-monotonic IDs distinguish input ordinal from
-+				// the legacy smallest-ID reduction and remote delivery order.
-+				proc.RecordODKUGenerated(8, 3)
-+				proc.RecordODKUGenerated(2, 91)
-+				want, session = 91, 91
-+			}
-+			require.NoError(t, resper.respStatus(ses, execCtx))
-+			require.Len(t, writer.responses, 1)
-```
-
-**File**: `pkg/frontend/mysql_cmd_executor.go` (modified, +13/-0)
-```diff
-@@ -6423,6 +6423,7 @@ func doComQuery(ses *Session, execCtx *ExecCtx, input *UserInput) (retErr error)
- 		TimeZone:               ses.GetTimeZone(),
- 		StorageEngine:          pu.StorageEngine,
- 		LastInsertID:           ses.GetLastInsertID(),
-+		LastInsertIDSet:        true,
- 		SqlHelper:              ses.GetSqlHelper(),
- 		CompilerContext:        ses.txnCompileCtx,
- 		Buf:                    ses.GetBuffer(),
-@@ -6710,6 +6711,18 @@ func doComQuery(ses *Session, execCtx *ExecCtx, input *UserInput) (retErr error)
- 		// packet, so clear it before executing each statement while leaving the
- 		// session-visible LAST_INSERT_ID state in LastInsertID untouched.
- 		proc.SetStatementLastInsertID(0)
-+		// A COM_QUERY may contain multiple statements.  The previous statement
-+		// can have published a generated ODKU value to the session after the
-+		// process was initialized, so reseed the expression-visible process
-+		// value before planning this statement.
-+		lastInsertID := ses.GetLastInsertID()
-+		proc.SetLastInsertID(lastInsertID)
-+		// Retry restoration uses the session snapshot carried by SessionInfo. Keep
-+		// that attempt baseline aligned when COM_QUERY reuses the process across
-+		// statements.
-+		proc.Base.SessionInfo.LastInsertID = lastInsertID
-+		proc.Base.SessionInfo.LastInsertIDSet = true
-+		proc.ResetODKUResult()
- 		if isTopLevelClientStatement(ses, execCtx, currentInput) {
- 			execCtx.captureDiagnosticCountsSnapshot(ses)
- 		}
-```
-
-**File**: `pkg/frontend/result_row_stmt_test.go` (modified, +37/-0)
-```diff
-@@ -420,3 +420,40 @@ func BenchmarkGetSelectColumns(b *testing.B) {
- 		}
- 	})
- }
-+
-+func TestODKUCommitFailureDoesNotPublishSessionOrOK(t *testing.T) {
-+	ctrl := gomock.NewController(t)
-+	ctx := defines.AttachAccountId(context.Background(), sysAccountID)
-+	ses := newTestSession(t, ctrl)
-+	defer ses.Close()
-+	writer := &countingMysqlWriter{testMysqlWriter: &testMysqlWriter{}, responses: make([]*Response, 0, 1)}
-+	resper := NewMysqlResp(writer)
-+	ses.respr = resper
-+	ses.SetLastInsertID(700)
-+	proc := ses.GetProc()
-+	proc.RecordODKUGenerated(0, 17)
-+	eng := mock_frontend.NewMockEngine(ctrl)
-+	eng.EXPECT().Hints().Return(engine.Hints{CommitOrRollbackTimeout: time.Second}).AnyTimes()
-+	ses.txnHandler.storage = eng
-+	txnOp := newTestTxnOp()
-+	txnOp.meta = txn.TxnMeta{ID: []byte{1, 2, 3, 4}, Status: txn.TxnStatus_Active}
-+	txnOp.commitErr = fmt.Errorf("ODKU commit failed")
-+	txnOp.wp.readonly = false
-+	ses.txnHandler.txnOp = txnOp
-+	ses.txnHandler.txnCtx = ctx
-+	ses.txnHandler.shareTxn = false
-+	stmt := &tree.Insert{OnDuplicateUpdate: tree.UpdateExprs{&tree.UpdateExpr{}}}
-+	execCtx := &ExecCtx{reqCtx: ctx, ses: ses, proc: proc, stmt: stmt,
-+		cw:     &TxnComputationWrapper{stmt: stmt, plan: autoIncrPreInsertPlan(1)},
-+		runner: &performTestRunner{result: &util.RunResult{AffectRows: 1}},
-+		resper: resper, txnOpt: FeTxnOption{autoCommit: true}}
-+	// Exercise the real statement runner and transaction finalizer. The caller
-+	// publishes status only after both return success; pipeline success alone
-+	// must leave the old session baseline and writer untouched.
-+	require.NoError(t, executeStatusStmt(ses, execCtx))
-+	require.Empty(t, writer.responses)
-+	require.Equal(t, uint64(700), ses.GetLastInsertID())
-+	require.ErrorContains(t, finishTxnFunc(ses, nil, execCtx), "ODKU commit failed")
-+	require.Empty(t, writer.responses)
-+	require.Equal(t, uint64(700), ses.GetLastInsertID())
-+}
-```
-
----
-
-### Incident Patch 2: `baa83f4b` (2026-10-27)
-**Commit Message**: fix(python): unify SDK execution contracts across 4.1.x and 4.2.x (#31322)
-
-## What type of PR is this?
-
-- [x] API-change
-- [x] BUG
-- [x] Improvement
-- [x] Documentation
-- [ ] Feature
-- [x] Test and CI
-- [x] Code Refactoring
-
-## Which issue(s) this PR fixes:
-
-Closes #30963
-Closes #31023
-Closes #31312
-Closes #31314
-Related to #30067, #30068, #30069 and #31262.
-
-## What this PR does / why we need it:
-
-Unify Python SDK execution and SQL construction across MatrixOne 4.1.x
-and 4.2.x. Immutable snapshot Selects remain cache-keyed through Client,
-Session and export compilation, including caller caches warmed before
-engine adoption. Preserve the caller's driver, dialect, pool and typed
-results. Shared-engine adoption preserves supported SQLAlchemy 1.4
-string execution. Compiler-owned late snapshot literals preserve
-percent/placeholder-like names, avoid caller parameter collisions, and
-prevent execution arguments from replacing snapshot identity. Raw/export
-compilation preserves escaped parameter names and their type processors
-across SQLAlchemy versions.
-
-Explicit configuration overrides take precedence over invalid
-lower-priority environment values. Buffered fetch sizes cannot rewind
-cur
-
-**File**: `.github/workflows/python-sdk.yml` (modified, +1/-0)
-```diff
-@@ -156,6 +156,7 @@ jobs:
-       MO_SDK_EXPECT_REVISION: ${{ vars.MO_SDK_EXPECT_REVISION }}
-       MO_SDK_EXPORT_DIR: ${{ vars.MO_SDK_EXPORT_DIR }}
-       MO_SDK_EXPORT_LOCAL_DIR: ${{ vars.MO_SDK_EXPORT_LOCAL_DIR }}
-+      MO_SDK_DISPOSABLE_SERVER: ${{ vars.MO_SDK_DISPOSABLE_SERVER }}
-       MO_ANALYTICS_ONLINE: '1'
-       MO_SDK_ONLINE: '1'
-       MO_SECOND_CN_PORT: ${{ vars.MO_SECOND_CN_PORT }}
-```
-
-**File**: `clients/python/TESTING.md` (modified, +21/-4)
-```diff
-@@ -25,17 +25,22 @@ checks exclude Arrow; analytics requires its separate optional dependency and
- supported Python version. Installing the core SDK must not require PyArrow.
- 
- Server contracts are explicitly configured; an offline green run does not prove
--server compatibility. Required online jobs select MatrixOne 4.2.5 or a built
--current-source server. Set these variables for an isolated disposable database:
-+server compatibility. Release qualification selects an exact MatrixOne 4.1.x or 4.2.x patch, or a built
-+current-source server. Use full contracts on 4.1.0, 4.1.6, 4.2.0 and 4.2.6,
-+and core contracts on every intermediate stable patch. Set these variables for an isolated disposable target:
- 
- - `MO_HOST`, `MO_PORT`, `MO_USER`, `MO_PASSWORD`.
--- `MO_SDK_EXPECT_VERSION`: `4.2.5` for that release, or the source server banner.
-+- `MO_SDK_EXPECT_VERSION`: the exact selected release, or the source server banner.
- - `MO_SDK_EXPECT_REVISION`: required for `current-source`, matching `git_version()`.
- - `MO_SDK_EXPORT_DIR`: directory visible to the server.
- - `MO_SDK_EXPORT_LOCAL_DIR`: the same directory visible to the test process.
-+- `MO_SDK_DISPOSABLE_SERVER=1`: required for full contracts, only when the server or tenant is disposable and
-+  exclusively owned by this test run. Case-mode tests change a tenant-global setting and must run serially; they
-+  restore it afterwards, but concurrent sessions could observe the temporary setting.
- 
- ```sh
--python scripts/run_contracts.py --server 4.2.5 --output release-contracts
-+python scripts/run_contracts.py --server 4.1.0 --suite full --output release-contracts
-+python scripts/run_contracts.py --server 4.2.3 --suite core --output core-contracts
- python scripts/run_contracts.py --server current-source --output source-contracts
- ```
- 
-@@ -171,3 +176,15 @@ tokens from triggering floating-point comparisons. Non-finite values and
- fixed-point representations exceeding 4096 characters are rejected before
- formatting; the expansion budget includes the sign and decimal point. This
- budget also conservatively rejects excessive positive-exponent zero inputs.
-+
-+
-+Release boundaries and deliberate compatibility restrictions are described in
-+[the release compatibility design](docs/design/release-quality.md). Core server
-+contracts do not require the export mount variables. Full contracts do. Neither
-+suite substitutes for optional TLS, S3, HNSW or multi-CN qualification.
-+
-+CLONE managers verify target existence after acknowledgement. Manager
-+`if_not_exists=True` uses a read-only catalog observation and never the native
-+flag, which can duplicate existing data. Raw clone builders reject that flag;
-+use `client.clone` or `session.clone` for the safe operation. Concurrent creation
-+can still produce a native error. Async clone steps share one query timeout.
-```
-
-**File**: `clients/python/docs/design/release-quality.md` (added, +117/-0)
-```diff
-@@ -0,0 +1,117 @@
-+# Python SDK release compatibility boundaries
-+
-+The SDK supports the 4.1.x and 4.2.x release families through common execution
-+and SQL construction contracts. Version banners identify test targets; they do
-+not establish that a server supports a feature. Explicit native operations stay
-+authoritative. Related issues: #30963, #31023, #30067, #30068, #30069.
-+
-+## SQL construction
-+
-+Administrative SQL distinguishes identifiers, grammar STRING tokens and SQL
-+expressions. One identifier decoder accepts complete legacy quoted components,
-+rejects trailing SQL and re-emits valid identifiers. One grammar token renderer
-+doubles apostrophes and rejects NUL/backslash where SQL mode would change their
-+meaning. Expression values retain the existing expression-literal renderer.
-+Managers and statement builders share these authorities. Unsupported server
-+catalog serialization remains an error; the SDK never changes SQL mode or
-+silently removes user input.
-+
-+## Typed queries and engine ownership
-+
-+Snapshot Selects are immutable annotations participating in SQLAlchemy structural
-+cache keys. The MatrixOne compiler handles the root query and all qualified JOIN
-+sources. Nested snapshot SELECTs and CTEs reject explicitly instead of returning
-+live rows. Compilation for export uses the same compiler. Bind and result
-+processors, including exact Decimal values, remain owned by the driver dialect.
-+
-+Engine adoption preserves the original dialect object, driver, pool and hooks.
-+A before_execute listener stamps typed statements with a compiler-contract
-+namespace so a caller cache warmed before adoption cannot reuse MySQL SQL without
-+snapshot hints. Caller cache entries remain intact. Engine-created and adopted
-+sync/async engines share the listener; raw driver SQL is unaffected.
-+Legacy SQLAlchemy 1.4 string execution passes through the listener unchanged.
-+Snapshot tokens inserted during typed compilation follow the active compiler's
-+percent-escaping policy; raw/export SQL retains the original snapshot name.
-+Compiler-local snapshot bindings avoid caller and expanded parameter names, and
-+execution parameters cannot replace the immutable snapshot annotation.
-+
-+Each live immutable statement retains at most one prepared annotation memo,
-+guarded by exact original identity and compiler-contract version. Generative
-+copies cannot reuse their parent's prepared SQL. The prepared copy drops any
-+inherited memo. Reused statements perform constant-time preparation and retain
-+their generated cache key; no global statement registry or per-execution growth
-+is introduced. Concurrent initial preparation can duplicate equivalent work but
-+never publishes partially constructed state.
-+
-+Buffered results use the driver's returns_rows flag, with an ORM row-result
-+fallback where that flag is absent. Both clients and Session owners preserve
-+rows, empty SELECTs and DML affected counts. QueryError retains the original
-+exception and native errno; existing QueryError instances are not rewrapped.
-+Cancellation remains cancellation rather than a query failure.
-+
-+## CLONE completion and no-op semantics
-+
-+Ordinary clone managers execute plain CLONE followed by SHOW CREATE on the same
-+executor. A missing target after acknowledgement is an explicit CloneError with
-+its original source. The SDK does not claim row identity from this existence
-+check, issue compensating DROP, or take transaction ownership from Session.
-+
-+Native CLONE IF NOT EXISTS can append data to an existing target in supported
-+releases. Safe manager if_not_exists therefore observes the target using bounded,
-+read-only information_schema queries on the same executor. Existing targets
-+return immediately. Missing targets use plain CLONE and verification. Names
-+are decoded and compared as binary catalog values, preserving exact spelling
-+when `lower_case_table_names=0` and using server LOWER for the other modes.
-+The operation introduces one query for an existing target, or three for a missing
-+target. Ordinary CLONE uses two queries.
-+
-+In tested 4.1 and 4.2 releases, the server's internal CLONE executor can still
-+lowercase a new target in mode 0. A conflicting lowercase sibling can therefore
-+cause a native error; the SDK propagates the error instead of reporting a no-op
-+for an absent exact target. In mode 2, native CLONE can create a lowercase name
-+while SHOW CREATE uses the requested spelling, causing verification to fail even
-+after creation. The SDK reports that failure rather than claiming success.
-+
-+This observation is not a race-free creation lock. A concurrent creator can win;
-+any native failure propagates, while an acknowledgement still requires target
-+existence verification. No duplicate-error recovery or automatic retry occurs.
-+Raw table/database builders cannot implement this multi-statement contract and
-+reject their if_not_exists flag at compilation, directing callers to managers.
-+
-+Snapshot convenience APIs delegate directl
-```
-
-**File**: `clients/python/matrixone/_query_compilation.py` (modified, +18/-6)
-```diff
-@@ -2,10 +2,10 @@
- # Licensed under the Apache License, Version 2.0.
- """Pure compilation shared by buffered sync/async queries and exports."""
- 
-+import copy
- import re
- from typing import Any, cast
- 
--from sqlalchemy.dialects.mysql import dialect
- from sqlalchemy.sql import visitors
- from sqlalchemy.sql.elements import ClauseElement
- from sqlalchemy.sql.compiler import SQLCompiler
-@@ -20,7 +20,7 @@ def render_fragment(sql, params=()):
-     return substitute_parameters(sql, params)
- 
- 
--def compile_expression(expression, model=None, alias=None, projection=False):
-+def compile_expression(expression, model=None, alias=None, projection=False, compiler_dialect=None):
-     if not isinstance(expression, ClauseElement) and hasattr(expression, '__clause_element__'):
-         expression = expression.__clause_element__()
-     if not isinstance(expression, ClauseElement):
-@@ -35,23 +35,35 @@ def replace(element, **kw):
-             return None
- 
-         expression = visitors.replacement_traverse(cast(Any, expression), {}, replace)
-+    from .sqlalchemy_ext.dialect import MatrixOneDialect
-+
-+    if compiler_dialect is None:
-+        compiler_dialect = MatrixOneDialect(paramstyle='qmark')
-+    else:
-+        # A string-producing API owns literal substitution, not DBAPI percent
-+        # expansion. Preserve the supplied dialect's types without mutating it.
-+        compiler_dialect = copy.copy(compiler_dialect)
-+        compiler_dialect.paramstyle = 'qmark'
-+        compiler_dialect.positional = True
-+        compiler_dialect.identifier_preparer = compiler_dialect.preparer(compiler_dialect)
-     compiled = cast(
-         SQLCompiler,
-         ClauseElement.compile(
-             expression,
--            dialect=dialect(paramstyle='qmark'),
-+            dialect=compiler_dialect,
-             compile_kwargs={'render_postcompile': True, 'within_columns_clause': projection},
-         ),
-     )
-     # SQLAlchemy owns expression syntax; our shared renderer owns value quoting.
--    parameters = compiled.params
--    processors = dict(compiled._bind_processors)
-     expanded = getattr(compiled, '_post_compile_expanded_state', None)
-+    parameters = expanded.parameters if expanded is not None else compiled.params
-+    processors = dict(compiled._bind_processors)
-     if expanded is not None:
-         processors.update(expanded.processors)
-     values = []
-     for key in compiled.positiontup or ():
--        value = parameters[key]
-+        parameter_key = key if expanded is not None else compiled.escaped_bind_names.get(key, key)
-+        value = parameters[parameter_key]
-         processor = processors.get(key)
-         if processor is not None:
-             if not callable(processor):
-```
-
-**File**: `clients/python/matrixone/_snapshot_sql.py` (modified, +6/-3)
-```diff
-@@ -9,7 +9,7 @@
- import re
- from typing import List, NamedTuple
- 
--from ._sql_literals import sql_literal
-+from ._sql_literals import sql_string_token
- 
- 
- class _Token(NamedTuple):
-@@ -89,7 +89,7 @@ def _tokens(sql):
-         raise ValueError('Unbalanced SQL parentheses')
- 
- 
--def rewrite_snapshot(sql, snapshot):
-+def rewrite_snapshot(sql, snapshot, *, snapshot_token=None):
-     if not isinstance(sql, str) or not isinstance(snapshot, str) or not snapshot:
-         raise ValueError('Snapshot queries require SQL text and a nonempty snapshot name')
-     tokens = list(_tokens(sql))
-@@ -141,7 +141,10 @@ def rewrite_snapshot(sql, snapshot):
-             if not (suffix.kind == 'word' and suffix.text.upper() in _BOUNDARIES) and suffix.text != ';':
-                 raise ValueError('Unsupported snapshot table-source suffix')
-         inserts.append(end)
--    hint = '{snapshot = ' + sql_literal(snapshot) + '}'
-+    # Raw SQL owns its literal token; typed SQL may supply a compiler-owned bind.
-+    # Validate the original name in both paths before accepting that token.
-+    literal_token = sql_string_token(snapshot, context='Snapshot')
-+    hint = '{snapshot = ' + (literal_token if snapshot_token is None else snapshot_token) + '}'
-     parts: List[str] = []
-     previous = 0
-     for end in inserts:
-```
-
-**File**: `clients/python/matrixone/_sql_literals.py` (modified, +43/-4)
-```diff
-@@ -63,21 +63,59 @@ def connection_sql_mode(connection):
- _RESERVED = MySQLIdentifierPreparer.reserved_words
- 
- 
--def sql_identifier(name, qualified=False):
-+def sql_identifier(name, qualified=False, *, force=False) -> str:
-     if not isinstance(name, str):
-         raise TypeError('SQL identifier must be a string')
-     parts = name.split('.') if qualified else [name]
-     quoted = []
-     for part in parts:
-         if not part or len(part) > 64 or '\x00' in part:
-             raise ValueError('SQL identifiers require 1..64 characters and no NUL')
--        if _SIMPLE_IDENTIFIER.fullmatch(part) and part.casefold() not in _RESERVED:
-+        if not force and _SIMPLE_IDENTIFIER.fullmatch(part) and part.casefold() not in _RESERVED:
-             quoted.append(part)  # Preserve ordinary legacy SQL rendering.
-         else:
-             quoted.append('`' + part.replace('`', '``') + '`')
-     return '.'.join(quoted)
- 
- 
-+def identifier_parts(name, qualified=False):
-+    """Normalize complete legacy quoted names, never trailing SQL fragments."""
-+    if not isinstance(name, str):
-+        raise TypeError('SQL identifier must be a string')
-+    if not name or len(name) > (261 if qualified else 130):
-+        raise ValueError('Invalid SQL object name')
-+    parts = []
-+    offset = 0
-+    while offset < len(name):
-+        if name[offset] in ('`', '"'):
-+            quote = name[offset]
-+            match = re.match(quote + r'((?:' + quote * 2 + '|[^' + quote + r'])*)' + quote, name[offset:])
-+            if match is None:
-+                raise ValueError('Unterminated quoted SQL identifier')
-+            part = match[1].replace(quote * 2, quote)
-+            offset += match.end()
-+            if offset < len(name) and name[offset] != '.':
-+                raise ValueError('Unexpected SQL after quoted identifier')
-+        else:
-+            end = name.find('.', offset) if qualified else -1
-+            if end < 0:
-+                end = len(name)
-+            part = name[offset:end]
-+            offset = end
-+        sql_identifier(part)  # Apply the same length/NUL contract to decoded parts.
-+        parts.append(part)
-+        if offset < len(name):
-+            if not qualified or len(parts) >= 2 or offset + 1 == len(name):
-+                raise ValueError('Expected an atomic name or database.table reference')
-+            offset += 1
-+    return tuple(parts)
-+
-+
-+def sql_object_name(name, qualified=False):
-+    """Render a manager name, including complete legacy backtick quoting."""
-+    return '.'.join(sql_identifier(part) for part in identifier_parts(name, qualified))
-+
-+
- def sql_literal(value):
-     if value is None:
-         return 'NULL'
-@@ -245,15 +283,16 @@ def substitute_parameters(sql, params, *, sql_mode=''):
-     return ''.join(output)
- 
- 
--def sql_string_token(value):
-+def sql_string_token(value, *, context='LOAD') -> str:
-     """Render a grammar STRING, rejecting SQL-mode-dependent escapes.
- 
-     LOAD's STRING positions cannot use CAST/hex or dollar-quoted expressions.
-     Inline data containing backslashes must use a caller-owned input file;
-     paths/options themselves must not contain backslashes or NUL bytes.
-     """
-     if not isinstance(value, str) or '\x00' in value or '\\' in value:
--        raise ValueError('LOAD string tokens require text without NUL or backslashes; use a file for such inline data')
-+        advice = '; use a file for such inline data' if context == 'LOAD' else ''
-+        raise ValueError(context + ' string tokens require text without NUL or backslashes' + advice)
-     return "'" + value.replace("'", "''") + "'"
- 
- 
-```
-
-**File**: `clients/python/matrixone/_utils.py` (modified, +8/-0)
-```diff
-@@ -161,3 +161,11 @@ def discard_unrestored_connection(conn):
-             conn.dialect.do_terminate(raw)
-         finally:
-             conn.invalidate()
-+
-+
-+def result_returns_rows(result):
-+    """CursorResult declares its shape; ORM row results expose keys/fetchall."""
-+    declared = getattr(result, 'returns_rows', None)
-+    if declared is not None:
-+        return bool(declared)
-+    return callable(getattr(result, 'keys', None)) and callable(getattr(result, 'fetchall', None))
-```
-
-**File**: `clients/python/matrixone/account.py` (modified, +36/-22)
-```diff
-@@ -167,7 +167,9 @@ def _build_drop_user_sql(self, user_name: str, if_exists: bool = False) -> str:
-         sql += self._client._escape_identifier(user_name)
-         return sql
- 
--    def _build_alter_user_sql(self, user_name: str, password: Optional[str] = None, comment: Optional[str] = None) -> str:
-+    def _build_alter_user_sql(
-+        self, user_name: str, password: Optional[str] = None, comment: Optional[str] = None
-+    ) -> str:
-         """Build ALTER USER SQL statement"""
-         sql_parts = [f"ALTER USER {self._client._escape_identifier(user_name)}"]
-         if password:
-@@ -325,7 +327,9 @@ def _get_executor(self):
-         return self.executor if self.executor else self._client
- 
-     # Account Management
--    def create_account(self, account_name: str, admin_name: str, password: str, comment: Optional[str] = None) -> Account:
-+    def create_account(
-+        self, account_name: str, admin_name: str, password: str, comment: Optional[str] = None
-+    ) -> Account:
-         """
-         Create a new account in MatrixOne
- 
-@@ -350,7 +354,7 @@ def create_account(self, account_name: str, admin_name: str, password: str, comm
-             return self.get_account(account_name)
- 
-         except Exception as e:
--            raise AccountError(f"Failed to create account '{account_name}': {e}") from None
-+            raise AccountError(f"Failed to create account '{account_name}': {e}") from e
- 
-     def drop_account(self, account_name: str, if_exists: bool = False) -> None:
-         """
-@@ -365,7 +369,7 @@ def drop_account(self, account_name: str, if_exists: bool = False) -> None:
-             sql = self._build_drop_account_sql(account_name, if_exists)
-             self._get_executor().execute(sql)
-         except Exception as e:
--            raise AccountError(f"Failed to drop account '{account_name}': {e}") from None
-+            raise AccountError(f"Failed to drop account '{account_name}': {e}") from e
- 
-     def alter_account(
-         self,
-@@ -396,7 +400,7 @@ def alter_account(
-             return self.get_account(account_name)
- 
-         except Exception as e:
--            raise AccountError(f"Failed to alter account '{account_name}': {e}") from None
-+            raise AccountError(f"Failed to alter account '{account_name}': {e}") from e
- 
-     def get_account(self, account_name: str) -> Account:
-         """Get account by name"""
-@@ -414,7 +418,7 @@ def get_account(self, account_name: str) -> Account:
-             raise AccountError(f"Account '{account_name}' not found") from None
- 
-         except Exception as e:
--            raise AccountError(f"Failed to get account '{account_name}': {e}") from None
-+            raise AccountError(f"Failed to get account '{account_name}': {e}") from e
- 
-     def list_accounts(self) -> List[Account]:
-         """List all accounts"""
-@@ -428,7 +432,7 @@ def list_accounts(self) -> List[Account]:
-             return [self._row_to_account(row) for row in result.rows]
- 
-         except Exception as e:
--            raise AccountError(f"Failed to list accounts: {e}") from None
-+            raise AccountError(f"Failed to list accounts: {e}") from e
- 
-     # User Management
-     def create_user(self, user_name: str, password: str, comment: Optional[str] = None) -> User:
-@@ -472,7 +476,7 @@ def create_user(self, user_name: str, password: str, comment: Optional[str] = No
-             )
- 
-         except Exception as e:
--            raise AccountError(f"Failed to create user '{user_name}': {e}") from None
-+            raise AccountError(f"Failed to create user '{user_name}': {e}") from e
- 
-     def drop_user(self, user_name: str, if_exists: bool = False) -> None:
-         """
-@@ -489,7 +493,7 @@ def drop_user(self, user_name: str, if_exists: bool = False) -> None:
-             self._get_executor().execute(sql)
- 
-         except Exception as e:
--            raise AccountError(f"Failed to drop user '{user_name}': {e}") from None
-+            raise AccountError(f"Failed to drop user '{user_name}': {e}") from e
- 
-     def alter_user(
-         self,
-@@ -551,7 +555,7 @@ def alter_user(
-             )
- 
-         except Exception as e:
--            raise AccountError(f"Failed to alter user '{user_name}': {e}") from None
-+            raise AccountError(f"Failed to alter user '{user_name}': {e}") from e
- 
-     def get_current_user(self) -> User:
-         """Get current user information"""
-@@ -584,7 +588,7 @@ def get_current_user(self) -> User:
-             )
- 
-         except Exception as e:
--            raise AccountError(f"Failed to get current user: {e}") from None
-+            raise AccountError(f"Failed to get current user: {e}") from e
- 
-     def list_users(self) -> List[User]:
-         """
-@@ -611,7 +615,7 @@ def list_users(self) -> List[User]:
-             return [User(name=current_user_name, host="%", account=current_account, status="OPEN")]
- 
-         except Exception as e:
--            raise AccountError(f"Failed to list users: {e}") from None
-+            raise Acco
-```
-
----
-
-### Incident Patch 3: `24c1ac89` (2026-10-26)
-**Commit Message**: fix: close proxy handoff and CI fixture ownership gaps (#31288)
+### Incident Patch 1: `9e29011e` (2026-10-28)
+**Commit Message**: fix: stabilize DDL atomicity tests during logtail reconnect (#31554)
 
 ## What type of PR is this?
 
 - [ ] API-change
-- [x] BUG
+- [ ] BUG
 - [ ] Improvement
 - [ ] Documentation
 - [ ] Feature
@@ -3327,780 +2332,1326 @@ cur
 
 ## Which issue(s) this PR fixes:
 
-Fixes #31144
-Fixes #31281
-
-Related #29249 and #30584.
+Related to #31542. The observed failure is on `4.2-dev`; this PR targets
+`main` and requires a separate backport to cover that branch.
 
 ## What this PR does / why we need it:
 
-Close the proxy response/publication race: a backend can finish FETCH
-before the forwarding Write returns, leaving a pending transfer without
-a later wakeup. At the existing response boundary, flush, reserve the
-transfer gate, drain publication through the existing condition
-variable, and recheck admission. Failed forwarding and closed pipes
-become terminal before waiters wake. Preserve the transfer deadline and
-earlier caller deadlines.
+`ddl_atomicity.sql` expected each DDL statement to succeed while
+randomly injecting logtail receive failures. A reconnect can
+intentionally abort the entire active transaction with
+`ErrRetryForCNRollingRestart`; when `DROP DATABASE` hits that window,
+the failed drop leaves state that makes subsequent assertions fail.
 
-Share embed's existing range/flock port-reservation authority with
-standalone test listeners through `pkg/testutil/portlease`. Both use the
-same bounded per-UID pool; legacy allocations retain leases across
-rollover and listener restarts. Keep explicit exhaustion and acquisition
-errors, without fallback or waiting. Cooperating processes must share
-the coordination filesystem.
+Keep the existing ordered DDL outcomes, remove the unrelated random
+fault injection from that success case, and clean up its database at
+entry and exit. Replace the lost fault coverage with a controlled SQL
+recovery test: hold a PK check across logtail reconnection, verify the
+concrete error rolls back earlier DDL and DML, and retry the entire
+transaction successfully. A focused frontend test verifies the error
+selects whole-transaction rollback 
 
-Share task backing-storage readin
-
-**File**: `pkg/embed/cluster.go` (modified, +21/-30)
+**File**: `pkg/frontend/txn_test.go` (modified, +30/-0)
 ```diff
-@@ -31,6 +31,7 @@ import (
- 	"github.com/matrixorigin/matrixone/pkg/common/moerr"
- 	"github.com/matrixorigin/matrixone/pkg/pb/metadata"
- 	"github.com/matrixorigin/matrixone/pkg/testutil/clusteradmission"
-+	"github.com/matrixorigin/matrixone/pkg/testutil/portlease"
- 	"github.com/matrixorigin/matrixone/pkg/util/fault"
- )
- 
-@@ -42,11 +43,10 @@ const (
- )
- 
- var (
--	minPort = uint64(10000)
--	maxPort = uint64(60000)
-+	clusterPortAllocator = portlease.Allocator{}
- 
- 	basePortStep  = uint64(20)
--	portLeaseSpan = uint64(1000)
-+	portLeaseSpan = portlease.Span
- 
- 	clusterID = getInitValue("mo-test.cluster")
- )
-@@ -66,7 +66,7 @@ const (
- type clusterPortLease struct {
- 	base uint64
- 	next atomic.Uint64
--	lock *flock.Flock
-+	lock *portlease.Lease
- }
- 
- type cluster struct {
-@@ -669,34 +669,25 @@ func (c *cluster) initTNServiceConfig() error {
- }
- 
- func acquireClusterPortLease() (*clusterPortLease, error) {
--	for base := minPort; base+portLeaseSpan <= maxPort; base += portLeaseSpan {
--		lease, locked, err := tryAcquireClusterPortLease(base)
--		if err != nil {
--			return nil, err
--		}
--		if locked {
--			return lease, nil
--		}
-+	lease, err := clusterPortAllocator.Acquire()
-+	if err != nil {
-+		return nil, err
+@@ -1444,6 +1444,36 @@ func TestCommitFailureAdvancesSessionGeneration(t *testing.T) {
  	}
--	return nil, moerr.NewInternalErrorNoCtx("no embedded-test port range is available")
-+	return wrapClusterPortLease(lease), nil
  }
  
- func tryAcquireClusterPortLease(base uint64) (*clusterPortLease, bool, error) {
--	dir := filepath.Join(os.TempDir(), "mo-test-port-leases")
--	if err := os.MkdirAll(dir, 0755); err != nil {
--		return nil, false, err
-+	lease, locked, err := clusterPortAllocator.TryAcquire(base)
-+	if err != nil || !locked {
-+		return nil, locked, err
- 	}
--	fl := flock.New(filepath.Join(dir, fmt.Sprintf("%d.lock", base)))
--	locked, err := fl.TryLock()
--	if err != nil {
--		return nil, false, err
--	}
--	if !locked {
--		return nil, false, fl.Close()
--	}
--	lease := &clusterPortLease{base: base, lock: fl}
--	lease.next.Store(base)
--	return lease, true, nil
-+	return wrapClusterPortLease(lease), true, nil
++func TestFinishTxnReconnectErrorRollsBackExplicitTxn(t *testing.T) {
++	ctrl := gomock.NewController(t)
++	ctx := defines.AttachAccountId(context.Background(), sysAccountID)
++	ses := newTestSession(t, ctrl)
++	defer ses.Close()
++	require.NoError(t, ses.SetSessionSysVar(ctx, "mo_rollback_txn_on_error", int64(0)))
++	eng := mock_frontend.NewMockEngine(ctrl)
++	eng.EXPECT().Hints().Return(engine.Hints{CommitOrRollbackTimeout: time.Second}).AnyTimes()
++	ses.txnHandler.storage = eng
++	op := newTestTxnOp()
++	op.meta = txn.TxnMeta{ID: []byte{1, 2, 3, 4}, Status: txn.TxnStatus_Active}
++	op.wp.SetHaveDDL(true)
++	op.wp.stack = []uint64{0}
++	op.wp.stmtId = 1
++	ses.txnHandler.txnOp = op
++	ses.txnHandler.txnCtx = ctx
++	ses.txnHandler.optionBits |= OPTION_BEGIN
++	ec := newTestExecCtx(ctx, ctrl)
++	ec.ses = ses
++	ec.stmt = &tree.Delete{}
++	ec.txnOpt = FeTxnOption{autoCommit: true}
++
++	reconnectErr := moerr.NewRetryForCNRollingRestart()
++	require.Same(t, reconnectErr, finishTxnFunc(ses, reconnectErr, ec))
++	require.Equal(t, 1, op.rollbackCalls)
++	require.Nil(t, ses.txnHandler.txnOp)
++	require.Equal(t, []uint64{0}, op.wp.stack, "whole-txn failure must not select statement-only rollback")
++	require.Equal(t, uint64(1), ses.getDDLVersion())
 +}
 +
-+func wrapClusterPortLease(lease *portlease.Lease) *clusterPortLease {
-+	result := &clusterPortLease{base: lease.Base(), lock: lease}
-+	result.next.Store(lease.Base())
-+	return result
- }
- 
- func portBaseCapacity() (uint64, error) {
-@@ -935,12 +926,12 @@ func getInitValue(name string) uint64 {
- 	if err != nil && err != io.EOF {
- 		panic(err)
- 	}
--	value := minPort
-+	value := portlease.MinPort
- 	if n > 0 {
- 		value = binary.BigEndian.Uint64(data)
- 	}
--	if value > maxPort {
--		value = minPort
-+	if value > portlease.MaxPort {
-+		value = portlease.MinPort
- 	}
- 	binary.BigEndian.PutUint64(data, value+1000)
- 
+ func TestRollbackDDLAdvancesSessionGeneration(t *testing.T) {
+ 	tests := []struct {
+ 		name            string
 ```
 
-**File**: `pkg/embed/cluster_test.go` (modified, +34/-6)
+**File**: `pkg/tests/issues/isolated/pk_check_reconnect_test.go` (added, +213/-0)
 ```diff
-@@ -25,6 +25,7 @@ import (
- 	"os/exec"
- 	"path/filepath"
- 	"sort"
-+	"strconv"
- 	"sync"
- 	"sync/atomic"
- 	"testing"
-@@ -37,7 +38,9 @@ import (
- 	"github.com/matrixorigin/matrixone/pkg/common/stopper"
- 	"github.com/matrixorigin/matrixone/pkg/container/vector"
- 	"github.com/matrixorigin/matrixone/pkg/pb/metadata"
-+	"github.com/matrixorigin/matrixone/pkg/tests"
- 	"github.com/matrixorigin/matrixone/pkg/testutil/clusteradmission"
-+	"github.com/matrixorigin/matrixone/pkg/testutil/portlease"
- 	"github.com/matrixorigin/matrixone/pkg/tnservice"
- 	"github.com/matrixorigin/matrixone/pkg/txn/rpc"
- 	"github.com/matrixorigin/matrixone/pkg/util/executor"
-@@ -755,7 +758,7 @@ func TestGetInitValueWithEmptyNameMustPanic(t *testing.T) {
- func TestClusterPortLeasesAreExclusive(t *testing.T) {
- 	// This lock-only test must own its namespace: other cluster processes may
- 	// legitimately acquire a released range before this test reacquires it.
--	t.Setenv("TMPDIR", t.TempDir())
-+	isolateClusterPortLeases(t)
- 	first, err := acquireClusterPortLease()
- 	require.NoError(t, err)
- 	firstCluster := &cluster{
-@@ -800,7 +803,7 @@ func TestClusterPortLeasesAreExclusive(t *testing.T) {
- }
- 
- func TestClusterStopRetainsPortLease(t *testing.T) {
--	t.Setenv("TMPDIR", t.TempDir())
-+	isolateClusterPortLeases(t)
- 	ports, err := acquireClusterPortLease()
- 	require.NoError(t, err)
- 	c := &cluster{portLease: ports, portLeaseBase: ports.base, portLeaseNext: ports.base,
-@@ -898,7 +901,7 @@ func TestNewClusterRejectsPortRangeExhaustion(t *testing.T) {
- }
- 
- func TestNextBasePortExhaustionDoesNotConsumeCapacity(t *testing.T) {
--	lease := &clusterPortLease{base: minPort}
-+	lease := &clusterPortLease{base: portlease.MinPort}
- 	lastValid := lease.base + portLeaseSpan - basePortStep
- 	lease.next.Store(lastValid)
- 	c := &cluster{id: 1, portLease: lease, portLeaseNext: lastValid}
-@@ -910,7 +913,7 @@ func TestNextBasePortExhaustionDoesNotConsumeCapacity(t *testing.T) {
- }
- 
- func TestStartNewCNServiceRejectsCapacityWithoutMutatingTopology(t *testing.T) {
--	lease := &clusterPortLease{base: minPort}
-+	lease := &clusterPortLease{base: portlease.MinPort}
- 	lastValid := lease.base + portLeaseSpan - basePortStep
- 	lease.next.Store(lastValid)
- 	c := &cluster{
-@@ -938,8 +941,8 @@ func TestClusterRejectsNegativeCNCounts(t *testing.T) {
- 	require.Nil(t, value)
- 	require.ErrorContains(t, err, "CN count cannot be negative")
- 
--	c := &cluster{state: started, portLease: &clusterPortLease{base: minPort}}
--	c.portLease.next.Store(minPort)
-+	c := &cluster{state: started, portLease: &clusterPortLease{base: portlease.MinPort}}
-+	c.portLease.next.Store(portlease.MinPort)
- 	err = c.StartNewCNService(-1)
- 	require.ErrorContains(t, err, "additional CN count cannot be negative")
- 	require.Zero(t, c.options.cn)
-@@ -1751,3 +1754,28 @@ load-to-mo = true
- 	require.NoError(t, c.Start())
- 	check(false)
- }
+@@ -0,0 +1,213 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
 +
-+func isolateClusterPortLeases(t *testing.T) {
-+	previous := clusterPortAllocator
-+	clusterPortAllocator = portlease.Allocator{Directory: t.TempDir()}
-+	t.Cleanup(func() { clusterPortAllocator = previous })
-+}
++package isolated
 +
-+func TestClusterAndLegacyPortAllocatorsShareLeases(t *testing.T) {
-+	clusterLease, err := acquireClusterPortLease()
-+	require.NoError(t, err)
-+	t.Cleanup(func() { require.NoError(t, clusterLease.lock.Close()) })
-+	port, err := tests.GetAvailablePort("127.0.0.1")
-+	require.NoError(t, err)
-+	value, err := strconv.ParseUint(port, 10, 64)
-+	require.NoError(t, err)
-+	require.True(t, value < clusterLease.base || value >= clusterLease.base+portLeaseSpan)
-+	// The legacy allocation remains reserved even though no listener was started.
-+	base := portlease.MinPort + (value-portlease.MinPort)/portlease.Span*portlease.Span
-+	contender, locked, err := tryAcquireClusterPortLease(base)
-+	require.NoError(t, err)
-+	if contender != nil {
-+		require.NoError(t, contender.lock.Close())
-+	}
-+	require.False(t, locked)
-+}
-```
-
-**File**: `pkg/embed/daemon_claim_test.go` (modified, +2/-1)
-```diff
-@@ -21,6 +21,7 @@ import (
- 
- 	"github.com/matrixorigin/matrixone/pkg/pb/task"
- 	"github.com/matrixorigin/matrixone/pkg/taskservice"
-+	"github.com/matrixorigin/matrixone/pkg/testutil"
- 	"github.com/stretchr/testify/require"
- )
- 
-@@ -31,7 +32,7 @@ func TestDaemonClaimSQLRoundTrip(t *testing.T) {
- 	RunSingleCNBaseClusterTests(t, func(c Cluster) {
- 		cn, err := c.GetCNService(0)
- 		require.NoError(t, err)
--		service, ok := cn.RawService().(taskServiceGetter).GetTaskService()
-+		service, ok := cn.RawService().(testutil.TaskServiceGetter).GetTaskService()
- 		require.True(t, ok)
- 		storage := service.GetStorage()
- 		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-```
-
-**File**: `pkg/embed/testing.go` (modified, +3/-34)
-```diff
-@@ -24,7 +24,7 @@ import (
- 
- 	"github.com/matrixorigin/matrixone/pkg/common/moerr"
- 	"github.com/matrixorigin/matrixone/pkg/pb/metadata"
--	"github.com/matrixorigin/matrixone/pkg/taskservice"
-+	"github.com/matrixorigin/matrixone/pkg/testutil"
- 	"github.com/matrixorigin/matrixone/pkg/util/metric/stats"
- )
- 
-@@ -648,56 +648,25 @@ func adjustTestingClusterTiming(svc ServiceOperator) {
- 	}
- }
- 
--type taskServiceGetter interface {
--	GetTaskService() (taskservice.TaskService, bool)
--}
--
- func waitBasicClusterTaskServices(ctx context.Context, c Cluster, cnCount int) error {
- 	for index := 0; index < cnCount; index++ {
- 		svc, err := c.GetCNService(index)
- 		if err != nil {
- 			return err
- 		}
--		getter, ok := svc.RawService().(taskServiceGetter)
-+		getter, ok := svc.RawService().(testutil.TaskServiceGetter)
- 		if !ok {
- 			return moerr.NewInternalErrorNoCtxf(
- 				"CN %s does not expose its task service", svc.ServiceID())
- 		}
--		if err := waitTaskServiceReady(ctx, getter, basicClusterServiceStartupRetryInterval); err != nil {
-+		if err := testutil.WaitTaskServiceReady(ctx, getter, basicClusterServiceStartupRetryInterval); err != nil {
- 			return errors.Join(moerr.NewInternalErrorNoCtxf(
- 				"CN %s task service did not become ready", svc.ServiceID()), err)
- 		}
- 	}
- 	return nil
- }
- 
--func waitTaskServiceReady(
--	ctx context.Context,
--	getter taskServiceGetter,
--	retryInterval time.Duration,
--) error {
--	for {
--		if err := ctx.Err(); err != nil {
--			return err
--		}
--		if service, ok := getter.GetTaskService(); ok && service != nil {
--			// Holder publication does not imply backing storage availability.
--			// Ping also succeeds with no store; a bounded read observes the real
--			// boundary and requests refresh without retrying any business write.
--			_, err := service.QueryDaemonTask(ctx, taskservice.WithTaskIDCond(taskservice.EQ, 0))
--			if ctx.Err() != nil {
--				return ctx.Err()
--			}
--			if err == nil || !errors.Is(err, taskservice.ErrNotReady) {
--				return err
--			}
--		}
--		if err := waitStartupRetry(ctx, retryInterval); err != nil {
--			return err
--		}
--	}
--}
--
- func basicClusterSetupTracer(t testReporter, cnCount int) func(string, time.Duration, error) {
- 	return func(phase string, duration time.Duration, err error) {
- 		status := "ready"
-```
-
-**File**: `pkg/embed/testing_test.go` (modified, +11/-164)
-```diff
-@@ -20,188 +20,27 @@ import (
- 	"fmt"
- 	"runtime"
- 	"strings"
--	"sync"
- 	"testing"
- 	"time"
- 
- 	mruntime "github.com/matrixorigin/matrixone/pkg/common/runtime"
- 	"github.com/matrixorigin/matrixone/pkg/pb/metadata"
--	"github.com/matrixorigin/matrixone/pkg/pb/task"
- 	"github.com/matrixorigin/matrixone/pkg/taskservice"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- )
- 
--type delayedTaskServiceGetter struct {
--	mu      sync.RWMutex
--	service taskservice.TaskService
--	called  chan struct{}
--	once    sync.Once
--}
--
--func newDelayedTaskServiceGetter() *delayedTaskServiceGetter {
--	return &delayedTaskServiceGetter{called: make(chan struct{})}
--}
--
--func (g *delayedTaskServiceGetter) GetTaskService() (taskservice.TaskService, bool) {
--	g.once.Do(func() { close(g.called) })
--	g.mu.RLock()
--	defer g.mu.RUnlock()
--	return g.service, g.service != nil
--}
--
--func (g *delayedTaskServiceGetter) set(service taskservice.TaskService) {
--	g.mu.Lock()
--	g.service = service
--	g.mu.Unlock()
--}
--
--func (g *delayedTaskServiceGetter) Start() error { return nil }
--func (g *delayedTaskServiceGetter) Close() error { return nil }
--
--func TestWaitTaskServiceReadyObservesOwnedService(t *testing.T) {
--	getter := newDelayedTaskServiceGetter()
--	service := taskservice.NewTaskService(
--		mruntime.DefaultRuntime(), taskservice.NewMemTaskStorage())
--	defer func() { require.NoError(t, service.Close()) }()
--	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
--	defer cancel()
--
--	done := make(chan error, 1)
--	go func() {
--		done <- waitTaskServiceReady(ctx, getter, time.Millisecond)
--	}()
--	<-getter.called
--	getter.set(service)
--	require.NoError(t, <-done)
--}
--
--func TestWaitTaskServiceReadyHonorsCancellation(t *testing.T) {
--	getter := newDelayedTaskServiceGetter()
--	ctx, cancel := context.WithCancel(context.Background())
--	done := make(chan error, 1)
--	go func() {
--		done <- waitTaskServiceReady(ctx, getter, time.Hour)
--	}()
--	<-getter.called
--	cancel()
--	require.ErrorIs(t, <-done, context.Canceled)
--}
--
--type readinessTaskStorage struct {
--	taskservice.TaskStorage
--	query func(context.Context) error
--}
--
--func (s *readinessTaskStorage) QueryDaemonTask(ctx context.Context, _ ...taskservice.Condition) ([]task.DaemonTask, error) {
--	return nil, s.query(ctx)
--}
--
--func TestWaitTaskServiceReadyObservesStorage(t *testing.T) {
--	ctx, cancel := context.WithTimeout(t.Context(), 5*time.Second)
--	defer cancel()
--	queried, release := make(chan struct{}), make(chan struct{})
--	store := taskservice.NewMemTaskStorage()
--	calls := 0
--	service := taskservice.NewTaskService(mruntime.DefaultRuntime(), &readinessTaskStorage{
--		TaskStorage: store,
--		query: func(ctx context.Context) error {
--			calls++
--			if calls == 1 {
--				return fmt.Errorf("initial refresh: %w", taskservice.ErrNotReady)
--			}
--			close(queried)
--			select {
--			case <-release:
--				return nil
--			case <-ctx.Done():
--				return ctx.Err()
--			}
--		},
--	})
--	defer func() { require.NoError(t, service.Close()) }()
--	getter := newDelayedTaskServiceGetter()
--	getter.set(service)
--	done := make(chan error, 1)
--	go func() {
--		err := waitTaskServiceReady(ctx, getter, 0)
--		if err == nil {
--			_, err = store.AddDaemonTask(ctx, task.DaemonTask{Metadata: task.TaskMetadata{ID: "once"}})
--		}
--		done <- err
--	}()
--	joined := false
--	defer func() {
--		cancel()
--		if !joined {
--			<-done
--		}
--	}()
--	select {
--	case <-queried:
--	case err := <-done:
--		joined = true
--		t.Fatalf("fixture admitted before storage observation: %v", err)
--	case <-ctx.Done():
--		t.Fatal("storage observation did not start")
--	}
--	rows, err := store.QueryDaemonTask(ctx)
--	require.NoError(t, err)
--	require.Empty(t, rows, "no business write before readiness")
--	close(release)
--	err = <-done
--	joined = true
--	require.NoError(t, err)
--	require.Equal(t, 2, calls)
--	rows, err = store.QueryDaemonTask(ctx)
--	require.NoError(t, err)
--	require.Len(t, rows, 1, "one business write after readiness")
--}
--
--func TestWaitTaskServiceReadyStorageErrors(t *testing.T) {
--	for _, name := range []string{"fatal", "cancel during read", "cancel while not ready"} {
--		t.Run(name, func(t *testing.T) {
--			ctx, cancel := context.WithCancel(t.Context())
--			defer cancel()
--			want := errors.New("storage failure")
--			calls := 0
--			service := taskservice.NewTaskService(mruntime.DefaultRuntime(), &readinessTaskStorage{
--				TaskStorage: taskservice.NewMemTaskStorage(),
--				query: func(context.Context) error {
--					calls++
--					if name == "fatal" {
--						return want
--					}
--					cancel()
--					if name == "cancel while not ready" {
--						return taskservice.ErrNotReady
--					}
--					return nil
--				},
--			})
--			defer func() { require.NoError(t, service.Close()) }()
--			getter := newDelayedTaskServiceGetter()
--			getter.set(service)
--			if name != "fatal" {
--				want = context.Canceled
--			}
--			require.ErrorIs(t, waitTaskServiceReady(ctx, getter, time.Hour), want)
--			require.Equal(t, 1, calls, "fatal error
-```
-
-**File**: `pkg/iscp/iteration_consumer_context_test.go` (modified, +31/-18)
-```diff
-@@ -21,6 +21,7 @@ import (
- 	"testing"
- 	"time"
- 
++import (
++	"bytes"
++	"context"
++	"database/sql"
++	"fmt"
++	"sync"
++	"sync/atomic"
++	"testing"
++	"time"
++
++	"github.com/go-sql-driver/mysql"
++	"github.com/matrixorigin/matrixone/pkg/cnservice"
 +	"github.com/matrixorigin/matrixone/pkg/common/moerr"
- 	"github.com/matrixorigin/matrixone/pkg/common/mpool"
- 	"github.com/matrixorigin/matrixone/pkg/container/batch"
- 	"github.com/matrixorigin/matrixone/pkg/container/types"
-@@ -341,24 +342,36 @@ func TestRunInitSQLTransactionRollsBackStatementsWhenStageWriteFails(t *testing.
- }
- 
- func TestRunInitSQLTransactionDoesNotWriteStageAfterStatementFailure(t *testing.T) {
--	txn := &iscpTxnForTest{}
--	wantErr := errors.New("init statement failed")
--	stageWritten := false
--
--	err := runInitSQLTransaction(
--		context.Background(),
--		txn,
--		func(context.Context, client.TxnOperator) error { return wantErr },
--		func(context.Context, client.TxnOperator) error {
--			stageWritten = true
--			return nil
--		},
--	)
--
--	require.ErrorIs(t, err, wantErr)
--	require.False(t, stageWritten)
--	require.False(t, txn.committed)
--	require.True(t, txn.rolledBack)
-+	for _, tc := range []struct {
-+		name string
-+		err  error
-+	}{
-+		{"fatal", errors.New("init statement failed")},
-+		{"rc_retry", moerr.NewTxnNeedRetryNoCtx()},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			txn := &iscpTxnForTest{}
-+			stageWritten := false
-+			attempts := 0
-+			err := runInitSQLTransaction(
-+				context.Background(),
-+				txn,
-+				func(context.Context, client.TxnOperator) error {
-+					attempts++
-+					return tc.err
-+				},
-+				func(context.Context, client.TxnOperator) error {
-+					stageWritten = true
-+					return nil
-+				},
-+			)
-+			require.ErrorIs(t, err, tc.err)
-+			require.Equal(t, 1, attempts, "the caller retries with a new transaction")
-+			require.False(t, stageWritten)
-+			require.False(t, txn.committed)
-+			require.True(t, txn.rolledBack)
++	moruntime "github.com/matrixorigin/matrixone/pkg/common/runtime"
++	"github.com/matrixorigin/matrixone/pkg/embed"
++	pblock "github.com/matrixorigin/matrixone/pkg/pb/lock"
++	"github.com/matrixorigin/matrixone/pkg/pb/timestamp"
++	"github.com/matrixorigin/matrixone/pkg/txn/client"
++	"github.com/matrixorigin/matrixone/pkg/vm/engine/disttae"
++	"github.com/stretchr/testify/require"
++)
++
++// A reconnect invalidates the subscription generation used by a PK check.
++// Exercise that error through the frontend after earlier DDL/DML, then retry
++// the entire transaction. The owned cluster isolates the reconnect callback
++// and admission interruption from other SQL tests.
++func TestPKCheckReconnectRollsBackAndFreshTxnSucceeds(t *testing.T) {
++	started := time.Now()
++	cluster, err := embed.StartTestCluster(embed.WithCNCount(1))
++	if cluster != nil {
++		t.Cleanup(func() {
++			closing := time.Now()
++			require.NoError(t, cluster.Close())
++			t.Logf("cluster teardown: %s", time.Since(closing))
 +		})
 +	}
++	require.NoError(t, err)
++	t.Logf("cluster startup: %s", time.Since(started))
++	bodyStarted := time.Now()
++	defer func() { t.Logf("SQL and recovery: %s", time.Since(bodyStarted)) }()
++	ctx, cancel := context.WithTimeout(t.Context(), 2*time.Minute)
++	defer cancel()
++	cnOp, err := cluster.GetCNService(0)
++	require.NoError(t, err)
++	cn := cnOp.RawService().(cnservice.Service)
++	pushClient := cn.GetEngine().(*disttae.Engine).PushClient()
++	db, err := sql.Open("mysql", fmt.Sprintf("dump:111@tcp(127.0.0.1:%d)/?timeout=10s&readTimeout=30s&writeTimeout=10s", cnOp.GetServiceConfig().CN.Frontend.Port))
++	require.NoError(t, err)
++	defer db.Close()
++	require.NoError(t, waitSystemBootstrap(ctx, db))
++	execSQLRequire(t, ctx, db, "create database reconnect_guard")
++	execSQLRequire(t, ctx, db, "create table reconnect_guard.t(id int primary key)")
++	execSQLRequire(t, ctx, db, "insert into reconnect_guard.t values (1)")
++	execSQLRequire(t, ctx, db, "create database reconnect_target")
++	execSQLRequire(t, ctx, db, "create table reconnect_target.retained(id int primary key)")
++	execSQLRequire(t, ctx, db, "insert into reconnect_target.retained values (10)")
++	var tableID uint64
++	require.NoError(t, db.QueryRowContext(ctx,
++		"select rel_id from mo_catalog.mo_tables where reldatabase='reconnect_guard' and relname='t'").Scan(&tableID))
++	writer, err := db.Conn(ctx)
++	require.NoError(t, err)
++	defer writer.Close()
++	_, err = writer.ExecContext(ctx, "set mo_rollback_txn_on_error=0")
++	require.NoError(t, err)
++	txn, err := writer.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelReadCommitted})
++	require.NoError(t, err)
++	defer txn.Rollback()
++	_, err = txn.ExecContext(ctx, "insert into reconnect_guard.t values (2)")
++	require.NoError(t, err)
++	_, err = txn.ExecContext(ctx, "drop database reconnect_target")
++	require.NoError(t, err)
++
++	locked := make(chan []byte, 1)
++	releaseLock, reconnecting, resumeReconnect := make(chan struct{}), make(chan struct{}), make(chan struct{})
++	var releaseLockOnce, resumeOnce, reconnectOnce sync.Once
++	unblockLock := func() { releaseLockOnce.Do(func() { close(releaseLock) }) }
++	unblockReconnect := func() { resumeOnce.Do(func() { close(resumeReconnect) }) }
++	defer unblockLock()
++	defer unblockReconnect()
++	pushClient.SetReconnectHandler(func() {
++		reconnectOnce.Do(func() { close(reconnecting) })
++		select {
++		case <-resumeReconnect:
++		case <-ctx.Done():
++		}
++	})
++	testingCtx := moruntime.MustGetTestingContext(cnOp.ServiceID())
++	before, adjust := testingCtx.GetBeforeLockFunc(), testingCtx.GetAdjustLockResultFunc()
++	defer testingCtx.SetBeforeLockFunc(before)
++	defer testingCtx.SetAdjustLockResultFunc(adjust)
++	testingCtx.SetBeforeLockFunc(func([]byte, uint64) {})
++	var armed atomic.Bool
++	var frontier timestamp.Timestamp
++	testingCtx.SetAdjustLockResultFunc(func(txnID []byte, id uint64, result *pblock.Result) {
++		if id != tableID || !armed.CompareAndSwap(false, true) {
++			return
++		}
++		locked <- bytes.Clone(txnID)
++		select {
++		case <-releaseLock:
++			// Model a granted conflicting lock with a frontier already applied
++			// before reconne
+```
+
+**File**: `pkg/vm/engine/disttae/logtail_consumer.go` (modified, +12/-3)
+```diff
+@@ -467,9 +467,20 @@ func (c *PushClient) init(
  }
  
- func TestRunInitSQLTransactionRollsBackCancellationBeforeStageWrite(t *testing.T) {
-```
-
-**File**: `pkg/iscp/watermark_contention_test.go` (modified, +25/-3)
-```diff
-@@ -49,7 +49,7 @@ func (p *watermarkSQLProbe) Exec(ctx context.Context, statement string, opts exe
- 	// still use the real service executor and the production statement options.
- 	statement = strings.ReplaceAll(statement, "mo_catalog.mo_iscp_log", "watermark_contention.jobs")
- 	result, err := p.SQLExecutor.Exec(ctx, statement, opts)
--	if err == nil && strings.Contains(statement, "AND table_id = 3 ") {
-+	if err == nil && result.AffectedRows == 1 && strings.Contains(statement, "AND table_id = 3 ") {
- 		p.once.Do(func() {
- 			close(p.held)
- 			select {
-@@ -87,6 +87,18 @@ func TestWatermarkBatchYieldsToRetirement(t *testing.T) {
- 		require.NoError(t, err, statement)
- 	}
- 	service := cn.RawService().(cnservice.Service)
-+	peerService := peer.RawService().(cnservice.Service)
-+	// Cross-CN sessions do not share a commit frontier. Fence each handoff
-+	// before creating the reader's transaction, using this test's own budget.
-+	syncCommit := func(reader, writer cnservice.Service) {
-+		t.Helper()
-+		commitTS := writer.GetTxnClient().GetLatestCommitTS()
-+		require.False(t, commitTS.IsEmpty())
-+		snapshot, err := reader.GetTxnClient().WaitLogTailAppliedAt(ctx, commitTS)
-+		require.NoError(t, err)
-+		require.True(t, snapshot.Greater(commitTS))
+ func (c *PushClient) SetReconnectHandler(handler func()) {
++	c.lifecycleMu.Lock()
++	defer c.lifecycleMu.Unlock()
+ 	c.reconnectHandler = handler
+ }
+ 
++func (c *PushClient) notifyReconnect() {
++	c.lifecycleMu.Lock()
++	handler := c.reconnectHandler
++	c.lifecycleMu.Unlock()
++	if handler != nil {
++		handler()
 +	}
-+	syncCommit(service, peerService)
- 	rt := moruntime.ServiceRuntime(cn.ServiceID())
- 	original, ok := rt.GetGlobalVariables(moruntime.InternalSQLExecutor)
- 	require.True(t, ok)
-@@ -103,17 +115,25 @@ func TestWatermarkBatchYieldsToRetirement(t *testing.T) {
- 	defer func() { cancel(); resume(); <-flushed }()
- 	select {
- 	case <-probe.held:
-+	case <-flushed:
-+		t.Fatalf("publisher exited before acquiring its first row: %v", flushErr)
- 	case <-ctx.Done():
- 		t.Fatal("publisher did not acquire its first row", ctx.Err())
- 	}
- 	retirement, err := db.BeginTx(ctx, nil)
- 	require.NoError(t, err)
- 	defer retirement.Rollback()
--	_, err = retirement.ExecContext(ctx, "update watermark_contention.jobs set drop_at=now() where account_id=1 and table_id=4 and job_name='second' and job_id=1")
-+	result, err := retirement.ExecContext(ctx, "update watermark_contention.jobs set drop_at=now() where account_id=1 and table_id=4 and job_name='second' and job_id=1")
-+	require.NoError(t, err)
-+	affected, err := result.RowsAffected()
- 	require.NoError(t, err)
-+	require.Equal(t, int64(1), affected)
- 	resume()
--	_, err = retirement.ExecContext(ctx, "update watermark_contention.jobs set drop_at=now() where account_id=1 and table_id=3 and job_name='first' and job_id=1")
-+	result, err = retirement.ExecContext(ctx, "update watermark_contention.jobs set drop_at=now() where account_id=1 and table_id=3 and job_name='first' and job_id=1")
- 	require.NoError(t, err, "retirement must acquire the row released by the publisher")
-+	affected, err = result.RowsAffected()
-+	require.NoError(t, err)
-+	require.Equal(t, int64(1), affected)
- 	require.NoError(t, retirement.Commit())
- 	<-flushed
- 	require.ErrorContains(t, flushErr, "wait policy is fast fail")
-@@ -122,7 +142,9 @@ func TestWatermarkBatchYieldsToRetirement(t *testing.T) {
- 	require.NoError(t, db.QueryRowContext(ctx, "select count(*) from watermark_contention.jobs where watermark='1-0' and cast(json_extract(job_status,'$.LSN') as unsigned)=5 and drop_at is not null").Scan(&rows))
- 	require.Equal(t, 2, rows, "no prefix of the failed batch may become durable")
- 	// A subsequent normal flush commits both rows through the same owner.
-+	syncCommit(service, peerService)
- 	require.NoError(t, flush())
-+	syncCommit(peerService, service)
- 	require.NoError(t, db.QueryRowContext(ctx, "select count(*) from watermark_contention.jobs where watermark='2-0' and cast(json_extract(job_status,'$.LSN') as unsigned)=6").Scan(&rows))
- 	require.Equal(t, 2, rows)
- 	_, err = db.ExecContext(ctx, "drop database watermark_contention")
++}
++
+ func (c *PushClient) validLogTailMustApplied(snapshotTS timestamp.Timestamp) {
+ 	// If the client is not ready, do not check. There is another checking logic
+ 	// before create a new transaction, so we do not need to check here if it
+@@ -1236,9 +1247,7 @@ func (c *PushClient) connect(ctx context.Context, e *Engine) {
+ 		logutil.Infof("%s %s: client init finished", logTag, c.serviceID)
+ 
+ 		// This is only for test.
+-		if c.reconnectHandler != nil {
+-			c.reconnectHandler()
+-		}
++		c.notifyReconnect()
+ 
+ 		// clean memory table.
+ 		err = e.init(ctx)
 ```
 
-**File**: `pkg/proxy/tunnel.go` (modified, +65/-9)
+**File**: `pkg/vm/engine/disttae/logtail_consumer_test.go` (modified, +42/-0)
 ```diff
-@@ -1063,7 +1063,7 @@ func (t *tunnel) admitTransferWithGate(sync bool, prearmed *pipe) (*pipe, bool)
- 	if prearmed != nil && !gateOwned {
- 		return nil, false
+@@ -64,6 +64,48 @@ type barrierTimestampWaiter struct {
+ 	get func(context.Context, timestamp.Timestamp) (timestamp.Timestamp, error)
+ }
+ 
++func TestReconnectHandlerConcurrentUpdate(t *testing.T) {
++	var c PushClient
++	var calls atomic.Int64
++	handler := func() { calls.Add(1) }
++	start := make(chan struct{})
++	var workers sync.WaitGroup
++	workers.Add(2)
++	go func() {
++		defer workers.Done()
++		<-start
++		for range 1000 {
++			c.SetReconnectHandler(handler)
++			c.SetReconnectHandler(nil)
++		}
++	}()
++	go func() {
++		defer workers.Done()
++		<-start
++		for range 1000 {
++			c.notifyReconnect()
++		}
++	}()
++	close(start)
++	workers.Wait()
++	c.SetReconnectHandler(handler)
++	c.notifyReconnect()
++	require.Positive(t, calls.Load())
++
++	// A callback can change the handler; notification must not retain the lock.
++	done := make(chan struct{})
++	c.SetReconnectHandler(func() {
++		c.SetReconnectHandler(nil)
++		close(done)
++	})
++	go c.notifyReconnect()
++	select {
++	case <-done:
++	case <-time.After(time.Second):
++		t.Fatal("reconnect callback could not update its handler")
++	}
++}
++
+ func (w *barrierTimestampWaiter) GetTimestamp(
+ 	ctx context.Context, ts timestamp.Timestamp,
+ ) (timestamp.Timestamp, error) {
+```
+
+**File**: `test/distributed/cases/pessimistic_transaction/ddl_atomicity.result` (modified, +2/-9)
+```diff
+@@ -1,9 +1,4 @@
+-select enable_fault_injection();
+-➤ enable_fault_injection()[-7,1,0]  𝄀
+-1
+-select add_fault_point('fj/cn/recv/err', ':::', 'echo', 5, 'mo_tables');
+-➤ add_fault_point(fj/cn/recv/err, :::, echo, 5, mo_tables)[-7,1,0]  𝄀
+-1
++drop database if exists db1;
+ create database db1;
+ use db1;
+ begin;
+@@ -103,6 +98,4 @@ insert into t1 values(2);
+ use db1;
+ alter table t2 drop foreign key fk_t2_t1;
+ commit;
+-select disable_fault_injection();
+-➤ disable_fault_injection()[-7,1,0]  𝄀
+-1
+\ No newline at end of file
++drop database db1;
+```
+
+**File**: `test/distributed/cases/pessimistic_transaction/ddl_atomicity.sql` (modified, +5/-3)
+```diff
+@@ -1,5 +1,7 @@
+-select enable_fault_injection();
+-select add_fault_point('fj/cn/recv/err', ':::', 'echo', 5, 'mo_tables');
++-- These ordered DDL cases require successful transactions. Logtail reconnect
++-- can abort an entire transaction; its rollback and fresh retry are covered by
++-- TestPKCheckReconnectRollsBackAndFreshTxnSucceeds, with deterministic barriers.
++drop database if exists db1;
+ create database db1;
+ use db1;
+ begin;
+@@ -145,4 +147,4 @@ alter table t2 drop foreign key fk_t2_t1;
+ -- @session}
+ commit;
+ 
+-select disable_fault_injection();
++drop database db1;
+```
+
+---
+
+### Incident Patch 2: `b888c218` (2026-10-28)
+**Commit Message**: fix(frontend,plan): restore FILEPATH in SHOW CREATE for file-based external tables; rework query-result dump-format lifecycle (#30570 #31261) (#31466)
+
+#30570: `MODUMP QUERY_RESULT '<query-id>' INTO '<path>'` always wrote CSV regardless of the
+output file's extension, because `doDumpQueryResult` (`pkg/frontend/query_result.go`) never set
+`ExportParam.ExportFormat` and never called the format validation — the suffix-driven logic
+(`inferFormatFromSuffix` / `validateExportFormat` in `pkg/frontend/export.go`) was only wired
+into the `SELECT ... INTO` / `EXPORT` path. The MODUMP path now calls `validateExportFormat`
+before writing, so `.jsonl`/`.jsonline`/`.ndjson` produce JSON Lines and `.parquet` produces
+Parquet through the existing shared `ExportConfig` write path (init → openNewFile → per-block
+write → finish). Unit tests verify the dumped bytes with a real Parquet reader readback
+(`TestDoDumpQueryResultHonorsFileSuffix`) and invalid-UTF8 JSON Lines rejection
+(`TestDoDumpQueryResultJsonlineRejectsInvalidUTF8`). The new BVT case
+`modump_query_result_error_reuse` additionally verifies that MODUMP against an unknown query id
+returns a deterministic error and the same connection stays 
+
+**File**: `pkg/frontend/query_result.go` (modified, +27/-1)
+```diff
+@@ -750,6 +750,13 @@ func doDumpQueryResult(ctx context.Context, ses *Session, eParam *tree.ExportPar
+ 	var blocks []objectio.BlockObject
+ 	var files []resultFileInfo
+ 
++	// MODUMP honors the output-file suffix the same way EXPORT does:
++	// .jsonl/.jsonline/.ndjson produce JSON Lines and .parquet produces
++	// Parquet; unsuffixed and other names keep the legacy CSV bytes (#30570).
++	if err = validateExportFormat(ctx, eParam); err != nil {
++		return err
++	}
++
+ 	//step1: open file handler
+ 	if columnDefs, err = openResultMeta(ctx, ses, eParam.QueryId); err != nil {
+ 		return err
+@@ -801,7 +808,9 @@ func doDumpQueryResult(ctx context.Context, ses *Session, eParam *tree.ExportPar
+ 	exportParam.DefaultBufSize = getPu(exportParam.service).SV.ExportDataDefaultFlushSize
+ 	exportParam.FileService = getPu(exportParam.service).FileService
+ 	exportParam.Ctx = ctx
+-	exportParam.ctx, exportParam.cancel = context.WithCancel(ctx)
++	exportParam.ctx = ctx
++	exportParam.init()
++	dumpExecCtx := &ExecCtx{reqCtx: ctx, ses: ses}
+ 	defer func() { err = exportParam.finish(err) }()
+ 
+ 	initExportFileParam(exportParam, mrs)
+@@ -838,6 +847,16 @@ func doDumpQueryResult(ctx context.Context, ses *Session, eParam *tree.ExportPar
+ 			defer release()
+ 			tmpBatch = bat
+ 
++			if exportParam.getExportFormat() != "csv" {
++				//step2.fmt: feed the decoded batch into the EXPORT format
++				//machinery (JSON Lines / Parquet writers) instead of the
++				//per-row CSV converter.
++				if err = exportParam.Write(dumpExecCtx, nil, tmpBatch); err != nil {
++					return err
++				}
++				continue
++			}
++
+ 			//step2.1: converts it into the csv string
+ 			//step2.2: writes the csv string into the outfile
+ 			n := tmpBatch.RowCount()
+@@ -864,6 +883,13 @@ func doDumpQueryResult(ctx context.Context, ses *Session, eParam *tree.ExportPar
+ 		}
  	}
--	if csp.mu.paused || scp.mu.paused {
-+	if csp.mu.closed || scp.mu.closed || csp.mu.paused || scp.mu.paused {
- 		return nil, false
+ 
++	if exportParam.getExportFormat() != "csv" {
++		// Finalize the JSON Lines / Parquet writers: flush pending buffered
++		// rows and close the writer before finish() reports success.
++		if err = exportAllDataFromBatches(exportParam); err != nil {
++			return err
++		}
++	}
+ 	return err
+ }
+ 
+```
+
+**File**: `pkg/frontend/query_result_dump_format_test.go` (added, +285/-0)
+```diff
+@@ -0,0 +1,285 @@
++// Copyright 2021-2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//      http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package frontend
++
++import (
++	"bytes"
++	"context"
++	"encoding/json"
++	"fmt"
++	"io"
++	"strings"
++	"testing"
++
++	"github.com/golang/mock/gomock"
++	"github.com/google/uuid"
++	parquet "github.com/parquet-go/parquet-go"
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++
++	"github.com/matrixorigin/matrixone/pkg/container/batch"
++	"github.com/matrixorigin/matrixone/pkg/container/types"
++	"github.com/matrixorigin/matrixone/pkg/container/vector"
++	"github.com/matrixorigin/matrixone/pkg/defines"
++	"github.com/matrixorigin/matrixone/pkg/fileservice"
++	"github.com/matrixorigin/matrixone/pkg/objectio/ioutil"
++	"github.com/matrixorigin/matrixone/pkg/pb/plan"
++	"github.com/matrixorigin/matrixone/pkg/sql/parsers"
++	"github.com/matrixorigin/matrixone/pkg/sql/parsers/dialect"
++	"github.com/matrixorigin/matrixone/pkg/sql/parsers/tree"
++	"github.com/matrixorigin/matrixone/pkg/testutil"
++	"github.com/matrixorigin/matrixone/pkg/util/trace/impl/motrace"
++	"github.com/matrixorigin/matrixone/pkg/vm/process"
++)
++
++// setupDumpTestProc wires the transaction compiler context the same way the
++// production dump path expects, mirroring Test_saveQueryResultMeta: MODUMP
++// resolves saved result files through the session's TxnCompilerContext.
++func setupDumpTestProc(t *testing.T, ses *Session) *process.Process {
++	proc := testutil.NewProcess(t)
++	proc.Base.FileService = getPu("").FileService
++	proc.Base.SessionInfo = process.SessionInfo{Account: sysAccountName}
++	ses.GetTxnCompileCtx().execCtx = &ExecCtx{
++		reqCtx: context.TODO(),
++		proc:   proc,
++	}
++	return proc
++}
++
++// saveIntResultForDump saves a 3-column int8 result (rows 0,1,2 per column)
++// as a query result of the session and returns its query id.
++func saveIntResultForDump(t *testing.T, ctx context.Context, ses *Session, proc *process.Process) string {
++	typs := []types.Type{
++		types.T_int8.ToType(),
++		types.T_int8.ToType(),
++		types.T_int8.ToType(),
++	}
++	colDefs := make([]*plan.ColDef, len(typs))
++	for i, ty := range typs {
++		colDefs[i] = &plan.ColDef{
++			Name: fmt.Sprintf("a_%d", i),
++			Typ:  plan.Type{Id: int32(ty.Oid), Scale: ty.Scale, Width: ty.Width},
++		}
++	}
++	ses.rs = &plan.ResultColDef{ResultCols: colDefs}
++	queryID := uuid.NullUUID{}.UUID.String()
++	ses.tStmt = &motrace.StatementInfo{StatementID: uuid.NullUUID{}.UUID}
++	asts, err := parsers.Parse(ctx, dialect.MYSQL, "select a,b,c from t", 1)
++	require.NoError(t, err)
++	ses.ast = asts[0]
++	ses.p = &plan.Plan{}
++	require.True(t, canSaveQueryResult(ctx, ses))
++	// saveBatch writes synchronously and does not take ownership: the test
++	// must release the batch's mpool allocations (see query_result_test.go).
++	bat := newBatch(typs, 3, proc)
++	defer bat.Clean(proc.Mp())
++	require.NoError(t, saveBatch(ctx, ses, bat))
++	require.NoError(t, saveMeta(ctx, ses))
++	return queryID
++}
++
++func dumpModumpToPath(t *testing.T, ctx context.Context, ses *Session, queryID, path string) error {
++	ep := &tree.ExportParam{
++		Outfile:  true,
++		QueryId:  queryID,
++		FilePath: path,
++		Fields: &tree.Fields{
++			Terminated: &tree.Terminated{Value: ","},
++			EnclosedBy: &tree.EnclosedBy{Value: '"'},
++		},
++		Lines:      &tree.Lines{TerminatedBy: &tree.Terminated{Value: "\n"}},
++		Header:     false,
++		ForceQuote: nil,
++	}
++	return doDumpQueryResult(ctx, ses, ep)
++}
++
++func readSharedExportFile(t *testing.T, ctx context.Context, path string) []byte {
++	fs := getPu("").FileService
++	var r io.ReadCloser
++	err := fs.Read(ctx, &fileservice.IOVector{
++		FilePath: path,
++		Entries: []fileservice.IOEntry{{
++			Offset:            0,
++			Size:              -1,
++			ReadCloserForRead: &r,
++		}},
++	})
++	require.NoError(t, err)
++	content, err := io.ReadAll(r)
++	require.NoError(t, err)
++	require.NoError(t, r.Close())
++	return content
++}
++
++// TestDoDumpQueryResultHonorsFileSuffix covers issue #30570: MODUMP
++// QUERY_RESULT must honor the output file suffix (.jsonl/.jsonline/.ndjson as
++// JSON Lines, .parquet as Parquet) instead of always writing CSV, while
++// unsuffixed and .csv outputs keep the legacy CSV bytes.
++func TestDoDumpQueryResultHonorsFileSuffix(t *testing.T) {
++	ioutil.RunPipelineTest(func() {
++		ctrl := gomock.NewController(t)
++		defer ctrl.Finish()
++		ses := newTestSession(t, ctrl)
++		defer ses.Close()
++		ses.proc.Base.SessionInfo.Account = sysAccountName
++		ses.proc.Base.SessionInfo.R
+```
+
+**File**: `pkg/sql/plan/build_show_util.go` (modified, +195/-28)
+```diff
+@@ -17,6 +17,7 @@ package plan
+ import (
+ 	"bytes"
+ 	"context"
++	"encoding/csv"
+ 	"encoding/json"
+ 	"fmt"
+ 	"strings"
+@@ -27,6 +28,7 @@ import (
+ 	"github.com/matrixorigin/matrixone/pkg/common/sqlquote"
+ 	"github.com/matrixorigin/matrixone/pkg/container/types"
+ 	"github.com/matrixorigin/matrixone/pkg/defines"
++	"github.com/matrixorigin/matrixone/pkg/fileservice"
+ 	"github.com/matrixorigin/matrixone/pkg/pb/partition"
+ 	"github.com/matrixorigin/matrixone/pkg/pb/plan"
+ 	sqldatastream "github.com/matrixorigin/matrixone/pkg/sql/datastream"
+@@ -1549,37 +1551,199 @@ func formatForeignTableOptionsForShowCreate(cfg foreignext.Config, sqlMode strin
+ 	return builder.String()
+ }
+ 
++// showCreateCredentialServiceArgKeys is the key=value service-argument
++// vocabulary that carries credentials, mirroring the parsing dispatch of
++// fileservice (parseFileServiceArguments → ObjectStorageArguments.SetFromString).
++// Key comparison is case-insensitive there, so it is here. Identity handles
++// (role-arn, external-id, ram-role, role-session-name) stay visible, matching
++// the explicit-S3 renderer in this file which shows role_arn/external_id.
++var showCreateCredentialServiceArgKeys = map[string]struct{}{
++	"key":        {},
++	"key-id":     {},
++	"secret":     {},
++	"key-secret": {},
++	"secret-id":  {},
++	// credential tokens are not distinguishable from user data except by
++	// these names, so every token alias is a credential-bearing argument
++	"bearer-token":      {},
++	"security-token":    {},
++	"token":             {},
++	"session-token":     {},
++	"kerberos-password": {},
++}
++
++// redactMalformedServiceClaim implements fail-closed handling for sections
++// that claim a known credential-bearing fileservice service but do not
++// survive the production service CSV grammar (unbalanced quote, embedded
++// newline record). Claim detection compares only the token before the FIRST
++// comma with all surrounding quote chars de-quoted, so an ordinary local
++// path can never trigger it: a path whose prefix is exactly `s3,`/
++// `s3-opts,`/... before the final colon sits inside the service grammar's
++// claim zone the production loader also treats as a service path. Unknown
++// claims pass through as-is.
++// s3-no-key is credential-free and left untouched.
++func redactMalformedServiceClaim(section, file, fp string) string {
++	claim, _, ok := strings.Cut(section, ",")
++	if !ok {
++		return fp
++	}
++	// Reviewer witness: the service field itself may be a fully quoted
++	// CSV token ("s3-opts",key=K,"secret=S:file) or carry escaped/bare
++	// quote chars; dequote all surrounding quote chars so the exact
++	// service-name equality below still claims them, while ordinary local
++	// paths (including quoted ones that do not dequote to a service name)
++	// are never rewritten.
++	claim = strings.Trim(claim, `"`)
++	switch strings.ToLower(claim) {
++	case "s3", "minio", "s3-opts", "opts", "options", "hdfs":
++		if file == "" {
++			return claim + ",<redacted>"
++		}
++		return fileservice.JoinPath(claim+",<redacted>", file)
++	}
++	return fp
++}
++
++// maskServiceArgumentCredentialsForShowCreate redacts credential-bearing
++// service arguments from a saved INFILE FILEPATH before SHOW CREATE renders
++// it. The saved path may use fileservice's service-qualified forms:
++//
++//	SERVICE,args...:file          (get.go: parseFileServiceArguments)
++//	s3,endpoint,region,bucket,key,secret,prefix[,name]:file
++//	s3-opts|opts|options|hdfs,key=value,...:file
++//
++// SHOW CREATE output feeds mo-dump and snapshot/PITR replay (#31261), so
++// embedded credentials must not ship; a restored table then carries a
++// non-secret path and the owner re-supplies credentials, mirroring the
++// redacted foreignext 'config' convention. Only recognized credential-bearing
++// services are rewritten; ordinary local paths and unknown services are
++// returned byte-for-byte unchanged (SHOW CREATE rendering is never the place
++// that validates or fails a stored path). Sections that claim a known
++// service while failing the production grammar are fail-closed redacted
++// (redactMalformedServiceClaim for CSV errors, the credential-zone
++// positional mask, the colonless claim path, and the encode-failure
++// fallback): CREATE admission (InitInfileParam) validates only option keys
++// and never parses the path grammar, so malformed-but-credential-bearing
++// forms can be stored and would otherwise be rendered raw. Splitting uses the same rules as parseService
++// (plain comma split, CSV reader for quoted sections) and the service-name
++// separator is the LAST colon, so files named a:b.csv round-trip.
++func maskServiceArgumentCredentialsForShowCreate(fp string) string {
++	const sep = ":"
++	i := strings.LastIndex(fp, sep)
++	if i <= 0 {
++		// Under the production grammar (fileservice.ParsePath) a string
++		// without a usable service separator is an ordinary local path and is
++		// preserved byte-for-byte — except a colonless credential-claimed
++		// service form (s3-opts,key=K,secret=
+```
+
+**File**: `pkg/sql/plan/build_show_util_external_replay_test.go` (added, +377/-0)
+```diff
+@@ -0,0 +1,377 @@
++// Copyright 2021-2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//      http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package plan
++
++import (
++	"testing"
++
++	"github.com/matrixorigin/matrixone/pkg/catalog"
++	plan "github.com/matrixorigin/matrixone/pkg/pb/plan"
++	dmysql "github.com/matrixorigin/matrixone/pkg/sql/parsers/dialect/mysql"
++	"github.com/matrixorigin/matrixone/pkg/sql/parsers/tree"
++	"github.com/stretchr/testify/require"
++)
++
++// TestFormatInfileExternalOptionsPreservesFilePathForPlainInfile covers issue
++// #31261: an ordinary read-only local infile external table must keep its
++// FILEPATH in SHOW CREATE TABLE output, otherwise the replayed DDL builds a
++// table that cannot read the source file.
++func TestFormatInfileExternalOptionsPreservesFilePathForPlainInfile(t *testing.T) {
++	param := &tree.ExternParam{ExParamConst: tree.ExParamConst{
++		Format:   tree.CSV,
++		Filepath: "/data/ext rows/rows.csv",
++	}}
++	out := formatInfileExternalOptionsForShowCreate(param, "")
++	require.Contains(t, out, "'FILEPATH'='/data/ext rows/rows.csv'")
++	require.Contains(t, out, "'FORMAT'='csv'")
++	// Empty optional keys must be omitted: the read-side option validator
++	// rejects e.g. 'JSONDATA'='', so emitting them breaks replayed tables.
++	require.NotContains(t, out, "JSONDATA")
++	require.NotContains(t, out, "COMPRESSION")
++}
++
++// TestFormatInfileExternalOptionsEscapesInfilePath: the emitted FILEPATH is a
++// SQL literal that reparses to the original path in the default SQL mode and
++// under NO_BACKSLASH_ESCAPES.
++func TestFormatInfileExternalOptionsEscapesInfilePath(t *testing.T) {
++	param := &tree.ExternParam{ExParamConst: tree.ExParamConst{
++		Format:   tree.CSV,
++		Filepath: `/data/o'brien\dir rows.csv`,
++	}}
++	out := formatInfileExternalOptionsForShowCreate(param, "")
++	require.Contains(t, out, `'FILEPATH'='/data/o''brien\\dir rows.csv'`)
++
++	outNoEsc := formatInfileExternalOptionsForShowCreate(param, "NO_BACKSLASH_ESCAPES")
++	require.Contains(t, outNoEsc, `'FILEPATH'='/data/o''brien\dir rows.csv'`)
++}
++
++// TestFormatInfileExternalOptionsKeepsHiveAndNonEmptyOptionals keeps the
++// #24372 shape: Hive-partitioned external tables retain FILEPATH plus the
++// HIVE_PARTITION* keys, and non-empty optional keys still round-trip.
++func TestFormatInfileExternalOptionsKeepsHiveAndNonEmptyOptionals(t *testing.T) {
++	param := &tree.ExternParam{ExParamConst: tree.ExParamConst{
++		Format:            tree.CSV,
++		Filepath:          "/data/test/",
++		CompressType:      "auto",
++		HivePartitioning:  true,
++		HivePartitionCols: []string{"part_id"},
++	}}
++	out := formatInfileExternalOptionsForShowCreate(param, "")
++	require.Contains(t, out, "'FILEPATH'='/data/test/'")
++	require.Contains(t, out, "'COMPRESSION'='auto'")
++	require.Contains(t, out, "'HIVE_PARTITIONING'='true'")
++	require.Contains(t, out, "'HIVE_PARTITION_COLUMNS'='part_id'")
++
++	// A JSON-format infile table must retain its non-empty JSONDATA option.
++	jsonParam := &tree.ExternParam{
++		ExParamConst: tree.ExParamConst{
++			Format:   "jsonline",
++			Filepath: "/data/x.jsonl",
++		},
++		ExParam: tree.ExParam{JsonData: "object"},
++	}
++	out = formatInfileExternalOptionsForShowCreate(jsonParam, "")
++	require.Contains(t, out, "'FILEPATH'='/data/x.jsonl'")
++	require.Contains(t, out, "'FORMAT'='jsonline'")
++	require.Contains(t, out, "'JSONDATA'='object'")
++}
++
++// TestFormatInfileExternalOptionsMasksServiceArgumentCredentials covers the
++// credential-disclosure case of #31261: an INFILE FILEPATH may embed
++// object-storage credentials in service-argument syntax
++// (fileservice path.go / get.go grammar), and SHOW CREATE output — which
++// mo-dump captures verbatim — must redact them while retaining ordinary
++// local paths and non-credential arguments byte-for-byte.
++func TestFormatInfileExternalOptionsMasksServiceArgumentCredentials(t *testing.T) {
++	type fn struct{ name, in, want string }
++	cases := []fn{
++		{
++			name: "s3-opts key-value credentials masked, location retained",
++			in:   "s3-opts,endpoint=https://owned.invalid,region=us-east-1,bucket=b,key=AKIAPROBE00001,secret=SECRET-PROBE-AAAA:rows.csv",
++			want: "s3-opts,endpoint=https://owned.invalid,region=us-east-1,bucket=b,key=<redacted>,secret=<redacted>:rows.csv",
++		},
++		{
++			name: "opts alias with upper-case keys masked",
++			in:   "OPTS,ENDPOINT=e,KEY=KEY-PROBE-BBBB,SECRET=SECRET-PROBE-BBBB:dir/a.csv",
++			want: "OPTS,ENDPOINT=e,KEY=<redacted>,SECRET=<redacted>:dir/a.csv",
++		},
++		{
++			name: "po
+```
+
+**File**: `pkg/sql/plan/build_show_util_test.go` (modified, +7/-5)
+```diff
+@@ -1188,18 +1188,20 @@ func TestShowCreateExternalWriteFilePattern(t *testing.T) {
+ 	require.NotContains(t, out, "JSONDATA")
+ 	require.NotContains(t, out, "''")
+ 
+-	// Read-only table: legacy output unchanged — no WRITE_FILE_PATTERN key,
+-	// FILEPATH masked, empty keys present.
++	// Read-only table (#31261): FILEPATH is preserved so the replayed DDL
++	// stays readable; empty optional keys are omitted like in the writable
++	// form; no WRITE_FILE_PATTERN key leaks in.
+ 	ro := &tree.ExternParam{ExParamConst: tree.ExParamConst{
+ 		Format:   tree.CSV,
+ 		Filepath: "/local/path.csv",
+ 		Option:   []string{"format", "csv"},
+ 	}}
+ 	roOut := formatInfileExternalOptionsForShowCreate(ro, "")
+ 	require.NotContains(t, roOut, "WRITE_FILE_PATTERN")
+-	require.Contains(t, roOut, "'FILEPATH'=''")
+-	require.NotContains(t, roOut, "/local/path.csv")
+-	require.Contains(t, roOut, "'JSONDATA'=''")
++	require.Contains(t, roOut, "'FILEPATH'='/local/path.csv'")
++	require.NotContains(t, roOut, "'FILEPATH'=''")
++	require.NotContains(t, roOut, "JSONDATA")
++	require.NotContains(t, roOut, "COMPRESSION")
+ 
+ 	// URL s3option{...} form.
+ 	s3 := &tree.ExternParam{
+```
+
+**File**: `test/distributed/cases/ddl/alter_table_add_drop_primary_key.result` (modified, +1/-1)
+```diff
+@@ -299,7 +299,7 @@ alter table ex_table_2_1 add constraint primary key (num_col1, num_col2);
+ invalid input: cannot create index on external table
+ show create table ex_table_2_1;
+ Table    Create Table
+-ex_table_2_1    CREATE EXTERNAL TABLE `ex_table_2_1` (\n  `num_col1` tinyint DEFAULT NULL,\n  `num_col2` smallint DEFAULT NULL,\n  `num_col3` int DEFAULT NULL,\n  `num_col4` bigint DEFAULT NULL,\n  `num_col5` tinyint unsigned DEFAULT NULL,\n  `num_col6` smallint unsigned DEFAULT NULL,\n  `num_col7` int unsigned DEFAULT NULL,\n  `num_col8` bigint unsigned DEFAULT NULL,\n  `num_col9` float(5,3) DEFAULT NULL,\n  `num_col10` double(6,5) DEFAULT NULL,\n  `num_col11` decimal(38,19) DEFAULT NULL\n) INFILE{'FILEPATH'='','COMPRESSION'='','FORMAT'='csv','JSONDATA'=''} FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n'
++ex_table_2_1    CREATE EXTERNAL TABLE `ex_table_2_1` (\n  `num_col1` tinyint DEFAULT NULL,\n  `num_col2` smallint DEFAULT NULL,\n  `num_col3` int DEFAULT NULL,\n  `num_col4` bigint DEFAULT NULL,\n  `num_col5` tinyint unsigned DEFAULT NULL,\n  `num_col6` smallint unsigned DEFAULT NULL,\n  `num_col7` int unsigned DEFAULT NULL,\n  `num_col8` bigint unsigned DEFAULT NULL,\n  `num_col9` float(5,3) DEFAULT NULL,\n  `num_col10` double(6,5) DEFAULT NULL,\n  `num_col11` decimal(38,19) DEFAULT NULL\n) INFILE{'FILEPATH'='$resources/external_table_file/ex_table_2_1.csv','FORMAT'='csv'} FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n'
+ select * from ex_table_2_1;
+ internal error: the input value 'abc' is not int8 type for column 0
+ drop table if exists droppri01;
+```
+
+**File**: `test/distributed/cases/ddl/alter_table_add_drop_primary_key.sql` (modified, +15/-0)
+```diff
+@@ -180,6 +180,21 @@ drop table temp01;
+ drop table if exists ex_table_2_1;
+ create external table ex_table_2_1(num_col1 tinyint,num_col2 smallint,num_col3 int,num_col4 bigint,num_col5 tinyint unsigned,num_col6 smallint unsigned,num_col7 int unsigned,num_col8 bigint unsigned ,num_col9 float(5,3),num_col10 double(6,5),num_col11 decimal(38,19))infile{"filepath"='$resources/external_table_file/ex_table_2_1.csv'} fields terminated by ',' enclosed by '\"' lines terminated by '\n';
+ alter table ex_table_2_1 add constraint primary key (num_col1, num_col2);
++-- @regex("CREATE EXTERNAL TABLE `ex_table_2_1`", true)
++-- @regex("`num_col1` tinyint DEFAULT NULL", true)
++-- @regex("`num_col2` smallint DEFAULT NULL", true)
++-- @regex("`num_col3` int DEFAULT NULL", true)
++-- @regex("`num_col4` bigint DEFAULT NULL", true)
++-- @regex("`num_col5` tinyint unsigned DEFAULT NULL", true)
++-- @regex("`num_col6` smallint unsigned DEFAULT NULL", true)
++-- @regex("`num_col7` int unsigned DEFAULT NULL", true)
++-- @regex("`num_col8` bigint unsigned DEFAULT NULL", true)
++-- @regex("`num_col9` float\(5,3\) DEFAULT NULL", true)
++-- @regex("`num_col10` double\(6,5\) DEFAULT NULL", true)
++-- @regex("`num_col11` decimal\(38,19\) DEFAULT NULL", true)
++-- @regex("FILEPATH'='[^']*external_table_file/ex_table_2_1\.csv'", true)
++-- @regex("'FORMAT'='csv'", true)
++-- @regex("FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\\n'", true)
+ show create table ex_table_2_1;
+ select * from ex_table_2_1;
+ 
+```
+
+**File**: `test/distributed/cases/ddl/alter_table_rename_column.result` (modified, +1/-1)
+```diff
+@@ -440,7 +440,7 @@ alter table ex_table_2_1 rename column num_col2 to `shurhenwjkrferveg`;
+ invalid input: cannot insert/update/delete from external table
+ show create table ex_table_2_1;
+ Table    Create Table
+-ex_table_2_1    CREATE EXTERNAL TABLE `ex_table_2_1` (\n  `num_col1` tinyint DEFAULT NULL,\n  `num_col2` smallint DEFAULT NULL,\n  `num_col3` int DEFAULT NULL,\n  `num_col4` bigint DEFAULT NULL,\n  `num_col5` tinyint unsigned DEFAULT NULL,\n  `num_col6` smallint unsigned DEFAULT NULL,\n  `num_col7` int unsigned DEFAULT NULL,\n  `num_col8` bigint unsigned DEFAULT NULL,\n  `num_col9` float(5,3) DEFAULT NULL,\n  `num_col10` double(6,5) DEFAULT NULL,\n  `num_col11` decimal(38,19) DEFAULT NULL\n) INFILE{'FILEPATH'='','COMPRESSION'='','FORMAT'='csv','JSONDATA'=''} FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n'
++ex_table_2_1    CREATE EXTERNAL TABLE `ex_table_2_1` (\n  `num_col1` tinyint DEFAULT NULL,\n  `num_col2` smallint DEFAULT NULL,\n  `num_col3` int DEFAULT NULL,\n  `num_col4` bigint DEFAULT NULL,\n  `num_col5` tinyint unsigned DEFAULT NULL,\n  `num_col6` smallint unsigned DEFAULT NULL,\n  `num_col7` int unsigned DEFAULT NULL,\n  `num_col8` bigint unsigned DEFAULT NULL,\n  `num_col9` float(5,3) DEFAULT NULL,\n  `num_col10` double(6,5) DEFAULT NULL,\n  `num_col11` decimal(38,19) DEFAULT NULL\n) INFILE{'FILEPATH'='$resources/external_table_file/ex_table_2_1.csv','FORMAT'='csv'} FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n'
+ select * from ex_table_2_1;
+ internal error: the input value 'abc' is not int8 type for column 0
+ drop table if exists view01;
+```
+
+---
+
+### Incident Patch 3: `66c9e762` (2026-10-28)
+**Commit Message**: fix: widen integer addition and multiplication (#31088)
+
+Integer column addition and multiplication currently retain narrow operand widths. For example, squaring a TINYINT value of 100 raises error 1690 instead of returning 10000. Resolve true integer `+` and `*` in signed or unsigned 64-bit execution domains, preserving checked overflow at the 64-bit boundary. Mixed signed/unsigned inputs retain their signs and use the existing checked mixed-integer overload.
+
+Track logical precision independently from physical execution width using optional, validated query metadata. This keeps wire type/flags/length, CTAS inference and view descriptors consistent with the original SQL expression. Preserve precision through casts, folding, query boundaries and prepared rebinding; retain effective parameter domains across NULL execution and keep metadata caches aligned. Internal grouping/window rewrites preserve expression identity, while real SQL references retain their own schema classification.
+
+Design submission: [Integer arithmetic execution width and logical precision — revision 1](https://github.com/iamlinjunhong/matrixone/blob/aa076bc6641235e983f803a844aff40dd9282022/docs/rfcs/00000000_int
+
+**File**: `docs/rfcs/00000000_integer_arithmetic_precision.md` (added, +287/-0)
+```diff
+@@ -0,0 +1,287 @@
++- Status: draft
++- Revision: 1 (2026-10-25)
++- Start Date: 2026-10-25
++- Authors: PR 31088 contributors
++- Implementation PR: https://github.com/matrixorigin/matrixone/pull/31088
++- Issue for this RFC: https://github.com/matrixorigin/matrixone/issues/31036
++- Implementation described: `f182916ca22c62b56046373303b8cf1fdcd1bab9`
++- Design approval: pending independent repository review; no approval is asserted.
++
++# Integer arithmetic execution width and logical precision
++
++## Summary and review boundary
++
++Use checked 64-bit integer execution for binary integer `+` and `*`, while
++preserving the source expression's logical precision independently for result
++presentation and schema inference. A query-owned, optional precision recipe graph
++survives folding and query boundaries without changing executable vector types.
++
++This revision documents the implementation already present in PR 31088. It
++responds to [review 5643764396](https://github.com/matrixorigin/matrixone/pull/31088#pullrequestreview-5643764396).
++It is a distinct design submission, not a claim that design-first approval
++occurred before the existing code. Implementation acceptance remains subject to
++independent design approval and subsequent implementation review. Future design
++changes must increment this revision and identify affected code and acceptance
++cases; publishing this document does not mark the RFC in progress or completed.
++
++## Motivation and acceptance boundary
++
++Issue 31036 records comparison against MySQL 8.0.46: a TINYINT column containing
++100 must yield 10000 for `b*b`, and INT multiplication must compute beyond
++int32. The previous resolver selected the wider operand width and the otherwise
++correct checked kernel rejected these values prematurely. Merely returning
++BIGINT everywhere fixes values but loses the issue's CTAS and prepared metadata
++requirements: for example `TINYINT*TINYINT` infers INT for CTAS, whereas
++`INT*INT` infers BIGINT. The issue supplies the compatibility baseline and
++reproduction; logical precision is not a proof of runtime value bounds.
++
++The invariants are:
++
++1. Executable arithmetic uses signed int64 for signed inputs, uint64 for unsigned
++   inputs, and the existing checked mixed-integer overload for mixed signs.
++   Negative unsigned results and actual 64-bit overflow still fail; NULL remains
++   NULL. Existing mixed-overload support is a deployment prerequisite.
++2. Metadata never narrows an executable vector or chooses an arithmetic kernel.
++   Logical precision may change CTAS/view column inference and MySQL display
++   length, but cannot make an overflowing integer computation succeed.
++3. Missing or unknown logical sources preserve physical typing rather than
++   inventing precision. Malformed present graphs are rejected at admission.
++4. A prepared statement retains effective source domains, not prior values.
++   NULL uses the previous admitted domain (or the inferred initial domain).
++   Packet/plan cache identity must reflect that effective domain.
++
++Non-goals are changing subtraction, division, decimal/string arithmetic,
++historical table/view migration, a general expression provenance replacement,
++a new cache framework, or a new mixed-integer protocol capability. Other numeric
++domains keep their existing owners. Compatibility here is the stated integer
++contract, not a claim of complete MySQL equivalence for every expression.
++
++## Technical design
++
++### Ownership and data flow
++
++| Owner | State and responsibility | Consumer / lifetime |
++| --- | --- | --- |
++| Function resolver | Physical input adapters, overload and 64-bit result type | Existing executor; independent of the graph |
++| `QueryBuilder.integerPrecision` | Source recipes, expression-to-ID and import maps | Bind-time query lifetime; not shared between sessions |
++| `OutputColumnProvenance.IntegerPrecisionID` | Reference into that builder's graph | Carries identity across projection/rewrite boundaries; not another type system |
++| `Query.IntegerPrecision` (protobuf field 20) | Optional canonical recipes and one output record per heading | Bound plan, deep copies, RPC admission and metadata evaluation |
++| `ColDef.IntegerResultPresentation` (field 24) | Optional evaluated display length | Central frontend column conversion; not execution or storage typing |
++| `PrepareStmt.integerArithmeticBindings` | Last admitted source binding per relevant parameter slot | Statement lifetime; released on CLOSE |
++
++Binding captures syntax before physical adapters or folding erase it. Explicit
++SQL casts are sealed sources; binder-generated physical casts are transparent.
++The existing provenance structure still owns column origin, flags and its other
++metadata. Integer IDs only add a reference to precision recipes; they do not
++replace `Expr.Typ`, alter source-column privileges, or duplicate executable plans.
++
++Ordinary derived tables, views, CTEs and set outputs establish SQL-reference
++classification. Int
+```
+
+**File**: `pkg/frontend/computation_wrapper.go` (modified, +3/-0)
+```diff
+@@ -1843,6 +1843,9 @@ func initExecuteStmtParamWithResolverInSession(
+ 		if err != nil {
+ 			return nil, nil, nil, originSQL, false, err
+ 		}
++		// Update only after the full protocol payload and typed bindings are
++		// admitted. The effective domain also owns the specialization/packet key.
++		prepareStmt.rememberIntegerArithmeticBindings(preparePlan.Plan, cwft.paramBindings, cwft.paramVals)
+ 		bindingKey := preparedExecutionBindingKey(cwft.paramBindings, cwft.paramVals)
+ 		key := preparedFieldBindingKey(bindingKey, fieldTypes)
+ 		var proof func(*plan.Expr) bool
+```
+
+**File**: `pkg/frontend/integer_arithmetic_metadata_test.go` (added, +114/-0)
+```diff
+@@ -0,0 +1,114 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package frontend
++
++import (
++	"context"
++	"strings"
++	"testing"
++
++	"github.com/matrixorigin/matrixone/pkg/container/types"
++	"github.com/matrixorigin/matrixone/pkg/defines"
++	pb "github.com/matrixorigin/matrixone/pkg/pb/plan"
++	plan2 "github.com/matrixorigin/matrixone/pkg/sql/plan"
++	"github.com/stretchr/testify/require"
++)
++
++func TestIntegerArithmeticPresentationPackets(t *testing.T) {
++	for _, tc := range []struct {
++		expr   string
++		length uint32
++	}{
++		{"2*3", 3}, {strings.Repeat("0", 69) + "2+1", 72}, {"cast(2 as unsigned)*2", 22},
++		{"case when rand()>0.5 then 00000002+1 else 3+4 end", 10},
++		{"case when rand()>0.5 then 00000002+1 else cast(null as signed) end", 21},
++		{"attr_seqnum*attr_seqnum", 7}, {"attnum+1", 12}, {"account_id*account_id", 20},
++	} {
++		t.Run(tc.expr, func(t *testing.T) {
++			conn := &prepareResponseCaptureConn{}
++			query := "select " + tc.expr + " as result"
++			compiler := plan2.CompilerContext(plan2.NewEmptyCompilerContext(newPlanTestProcess(t)))
++			if strings.Contains(tc.expr, "attr_seqnum") || strings.Contains(tc.expr, "attnum") || strings.Contains(tc.expr, "account_id") {
++				query += " from mo_catalog.mo_columns"
++				compiler = plan2.NewMockCompilerContext(false, newPlanTestProcess(t))
++			}
++			protocol, proc, stmt := newBinaryPrepareProtocolTestCaseWithConnAndContext(t, query, conn, compiler)
++			defer func() { proc.SetPrepareParams(nil); stmt.clearBinaryParamState(proc) }()
++			protocol.capability &^= CLIENT_DEPRECATE_EOF
++			require.NoError(t, protocol.SendPrepareResponse(context.Background(), stmt))
++			packets := splitProtocolPackets(t, conn.writes)
++			require.Len(t, packets, 3)
++			meta := parsePrepareColumnDefinition(t, packets[1])
++			require.Equal(t, defines.MYSQL_TYPE_LONGLONG, meta.typ)
++			require.Equal(t, tc.length, meta.length)
++			require.Zero(t, meta.decimals)
++			wantUnsigned := strings.Contains(tc.expr, "unsigned") || strings.Contains(tc.expr, "account_id")
++			require.Equal(t, wantUnsigned, meta.flags&uint16(defines.UNSIGNED_FLAG) != 0)
++			cols := plan2.GetResultColumnsFromPlan(stmt.PreparePlan.GetDcl().GetPrepare().Plan)
++			payloads, err := protocol.MakeColumnDefData(context.Background(), cols)
++			require.NoError(t, err)
++			require.Len(t, payloads, 1)
++			require.Equal(t, meta, parsePrepareColumnDefinition(t, payloads[0]), "direct and prepared central conversion")
++		})
++	}
++}
++
++func TestIntegerArithmeticDomainHistoryAndCacheKey(t *testing.T) {
++	q := &pb.Query{Headings: []string{"x"}, IntegerPrecision: &pb.IntegerPrecisionGraph{SourceBudget: 65, ParameterCount: 1, Nodes: []*pb.IntegerPrecisionNode{{Kind: pb.IntegerPrecisionNode_PARAMETER, Precision: 20, ParamPos: 0}, {Kind: pb.IntegerPrecisionNode_ADD, Inputs: []uint32{1, 1}, Arithmetic: true}}, Outputs: []*pb.IntegerPrecisionOutput{{Node: 2, RootClass: pb.IntegerPrecisionOutput_DIRECT_FUNCTION}}}}
++	p := &pb.Plan{Plan: &pb.Plan_Query{Query: q}}
++	stmt := new(PrepareStmt)
++	initial := []plan2.PreparedSourceBinding{{Position: 0}}
++	null := []any{plan2.ParamValue{Value: nil, IsBinaryProtocol: true}}
++	stmt.rememberIntegerArithmeticBindings(p, initial, null)
++	require.Equal(t, types.T_int64, initial[0].Type.Oid)
++	unsigned := []plan2.PreparedSourceBinding{{Position: 0, Type: types.T_uint64.ToType()}}
++	values := []any{plan2.ParamValue{Value: uint64(2), IsBinaryProtocol: true}}
++	stmt.rememberIntegerArithmeticBindings(p, unsigned, values)
++	unsignedKey := preparedExecutionBindingKey(unsigned, values)
++	next := []plan2.PreparedSourceBinding{{Position: 0}}
++	stmt.rememberIntegerArithmeticBindings(p, next, null)
++	require.Equal(t, types.T_uint64, next[0].Type.Oid)
++	signed := []plan2.PreparedSourceBinding{{Position: 0, Type: types.T_int64.ToType()}}
++	stmt.rememberIntegerArithmeticBindings(p, signed, values)
++	require.NotEqual(t, unsignedKey, preparedExecutionBindingKey(signed, values), "packet cache must distinguish effective signs")
++	decimal := []plan2.PreparedSourceBinding{{Position: 0, Type: types.New(types.T_decimal128, 10, 3)}}
++	stmt.rememberIntegerArithmeticBindings(p, decimal, values)
++	stmt.rememberIntegerArithmeticBindings(p, next, null)
++	require.Equal(t, decimal[0], next[0], "NULL must not restore stale integer metadata after a decimal transition")
++}
++
++func TestIntegerArithmeticDomainMalformedResetAndClose(t *testing.T) {
++	protocol, proc, stmt := newBinaryPreparePro
+```
+
+**File**: `pkg/frontend/prepared_execution.go` (modified, +33/-0)
+```diff
+@@ -215,3 +215,36 @@ func (cwft *TxnComputationWrapper) preparedExecutionRetry() *preparedExecutionRe
+ 		diagnosticFreeJoin: cwft.preparedJoinDiagnosticFree,
  	}
- 	if csp.clientMessageActive.Load() ||
-@@ -1230,6 +1230,14 @@ func (t *tunnel) transferSyncWithGate(ctx context.Context, gate *pipe) error {
- 		t.logger.Info("tunnel is already in transfer, skip sync transfer")
+ }
++
++// Keep inferred domains only for markers owned by integer +/* metadata. NULL
++// retains the previous effective domain; a valid non-NULL source replaces it,
++// including decimal/string transitions. This state belongs to the statement,
++// and is committed before SQL evaluation (an arithmetic error does not undo it).
++func (prepareStmt *PrepareStmt) rememberIntegerArithmeticBindings(p *plan2.Plan, bindings []plan2.PreparedSourceBinding, values []any) {
++	defaults := plan2.IntegerPrecisionParameterBindings(p)
++	if len(defaults) == 0 {
++		return
++	}
++	if len(prepareStmt.integerArithmeticBindings) != len(bindings) {
++		prepareStmt.integerArithmeticBindings = make([]plan2.PreparedSourceBinding, len(bindings))
++	}
++	for _, initial := range defaults {
++		pos := int(initial.Position)
++		if pos < 0 || pos >= len(bindings) || pos >= len(values) {
++			continue
++		}
++		value := values[pos]
++		if param, ok := value.(plan2.ParamValue); ok {
++			value = param.Value
++		}
++		if value == nil {
++			previous := prepareStmt.integerArithmeticBindings[pos]
++			if previous.Type.Oid == types.T_any {
++				previous = initial
++			}
++			bindings[pos] = previous
++		} else {
++			prepareStmt.integerArithmeticBindings[pos] = bindings[pos]
++		}
++	}
++}
+```
+
+**File**: `pkg/frontend/types.go` (modified, +9/-7)
+```diff
+@@ -292,13 +292,14 @@ type PrepareStmt struct {
+ 	sqlModeFlagsSet bool
+ 	// divPrecisionIncrementSet distinguishes a captured default value from
+ 	// legacy and minimal in-memory prepared-statement fixtures.
+-	divPrecisionIncrementSet bool
+-	ParamTypes               []byte
+-	ColDefData               [][]byte
+-	IsCloudNonuser           bool
+-	proc                     *process.Process
+-	remapDb                  map[string]string
+-	defaultDatabase          string
++	divPrecisionIncrementSet  bool
++	ParamTypes                []byte
++	integerArithmeticBindings []plan2.PreparedSourceBinding
++	ColDefData                [][]byte
++	IsCloudNonuser            bool
++	proc                      *process.Process
++	remapDb                   map[string]string
++	defaultDatabase           string
+ 
+ 	params              *vector.Vector
+ 	getFromSendLongData map[int]struct{}
+@@ -879,6 +880,7 @@ func (prepareStmt *PrepareStmt) Close() {
+ 	if prepareStmt.PrepareStmt != nil {
+ 		prepareStmt.PrepareStmt.Free()
+ 	}
++	prepareStmt.integerArithmeticBindings = nil
+ 	if prepareStmt.ParamTypes != nil {
+ 		prepareStmt.ParamTypes = nil
+ 	}
+```
+
+**File**: `pkg/frontend/util.go` (modified, +5/-0)
+```diff
+@@ -2842,6 +2842,11 @@ func colDef2MysqlColumn(ctx context.Context, col *plan.ColDef) (*MysqlColumn, er
+ 		c.SetLength(math.MaxUint16)
+ 	}
+ 	setColFlag(c, col)
++	if presentation := col.IntegerResultPresentation; presentation != nil && (typ.Oid == types.T_int64 || typ.Oid == types.T_uint64) {
++		c.SetLength(presentation.DisplayLength)
++		c.SetDecimal(0)
++	}
++
+ 	// MySQL represents predicate results as numeric 0/1 values. Keep native
+ 	// BOOLEAN columns on the dedicated BOOL path, but advertise a computed BOOL
+ 	// result as a regular TINYINT so JDBC clients do not reinterpret the
+```
+
+**File**: `pkg/pb/plan/collation_admission.pb.go` (modified, +3/-0)
+```diff
+@@ -1421,6 +1421,9 @@ func (v *legacyCollationVisitor) walkQuery(p *Query) error {
+ 	if v.visited(p) {
  		return nil
  	}
-+	ctx, cancel := context.WithTimeoutCause(ctx, defaultTransferTimeout, moerr.CauseTransferSync)
-+	defer cancel()
-+	if gate != nil {
-+		if err := gate.waitClientMessageClaim(ctx); err != nil {
-+			t.finishTransferAttempt()
-+			return moerr.AttachCause(ctx, err)
-+		}
++	if err := p.ValidateIntegerPrecision(); err != nil {
++		return err
 +	}
- 	// Must check if it is safe to start the transfer.
- 	csp, ok := t.admitTransferWithGate(true, gate)
- 	if !ok {
-@@ -1242,8 +1250,6 @@ func (t *tunnel) transferSyncWithGate(ctx context.Context, gate *pipe) error {
- 	start := time.Now()
- 	defer t.finishTransfer(start)
- 	t.logger.Info("transfer begin")
--	ctx, cancel := context.WithTimeoutCause(ctx, defaultTransferTimeout, moerr.CauseTransferSync)
--	defer cancel()
- 	if err := t.doReplaceConnection(ctx, true); err != nil {
- 		v2.ProxyTransferFailCounter.Inc()
- 		return moerr.AttachCause(ctx, err)
-@@ -1424,6 +1430,7 @@ func (p *pipe) kickoff(ctx context.Context, peer *pipe) (e error) {
- 		if e != nil {
- 			p.mu.closed = true
- 		}
-+		p.clientMessageActive.Store(false)
- 		p.mu.started = false
- 		p.mu.cond.Broadcast()
- 	}
-@@ -1574,7 +1581,7 @@ func (p *pipe) kickoff(ctx context.Context, peer *pipe) (e error) {
+ 	for _, item0 := range p.Nodes {
+ 		if err := v.walkNode(item0); err != nil {
  			return err
- 		}
- 		if p.name == pipeServerToClient && armSyncTransfer {
--			p.syncTransferArmed = peer.tryArmSyncTransfer()
-+			p.syncTransferArmed = peer.tryArmSyncTransfer(false)
- 		}
- 		if p.testHelper.beforeSend != nil {
- 			p.testHelper.beforeSend()
-@@ -1596,11 +1603,19 @@ func (p *pipe) kickoff(ctx context.Context, peer *pipe) (e error) {
- 
- 		handled, err := p.src.sendTo(p.dst)
- 		if err != nil {
--			if p.name == pipeClientToServer {
--				p.finishClientMessageClaim()
--			}
-+			// finish publishes the terminal pipe state before waking a waiter.
-+			// A failed write must not look like a successfully drained claim.
- 			return wrapPipeSendError(p.name, err)
- 		}
-+		if p.name == pipeServerToClient && armSyncTransfer && !p.syncTransferArmed {
-+			// A response can finish before the request's Write returns. Flush
-+			// the response before reserving the publication gate and waiting;
-+			// otherwise the client and request writer could wait on each other.
-+			if err := p.src.flushBufDst(); err != nil {
-+				return wrapPipeSendError(p.name, err)
-+			}
-+			p.syncTransferArmed = peer.tryArmSyncTransfer(true)
-+		}
- 		if p.name == pipeClientToServer {
- 			if handled {
- 				if !stopAfterSend {
-@@ -1668,7 +1683,43 @@ func (p *pipe) claimClientMessage(
- }
- 
- func (p *pipe) finishClientMessageClaim() {
-+	p.mu.Lock()
-+	defer p.mu.Unlock()
- 	p.clientMessageActive.Store(false)
-+	p.mu.cond.Broadcast()
-+}
+```
+
+**File**: `pkg/pb/plan/integer_precision.go` (added, +153/-0)
+```diff
+@@ -0,0 +1,153 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
 +
-+// The existing gate prevents a following request from publishing while the
-+// preceding request drains. Cancellation and pipe termination both wake cond.
-+func (p *pipe) waitClientMessageClaim(ctx context.Context) error {
-+	p.mu.Lock()
-+	defer p.mu.Unlock()
-+	if err := context.Cause(ctx); err != nil {
-+		return err
++package plan
++
++import (
++	"math"
++
++	"github.com/matrixorigin/matrixone/pkg/common/moerr"
++)
++
++// ValidateIntegerPrecision is an admission check, including after plan RPC
++// decoding. Derived nodes serialize recipes, not untrusted cached results.
++// Zero edges mean a valid but unknown source and prohibit narrowing downstream.
++func (q *Query) ValidateIntegerPrecision() error {
++	if q == nil || q.IntegerPrecision == nil {
++		return nil
 +	}
-+	if p.clientMessageActive.Load() {
-+		stop := context.AfterFunc(ctx, func() {
-+			p.mu.Lock()
-+			p.mu.cond.Broadcast()
-+			p.mu.Unlock()
-+		})
-+		defer stop()
-+		if onWait := p.testHelper.onSyncTransferWait; onWait != nil {
-+			p.mu.Unlock()
-+			onWait()
-+			p.mu.Lock()
++	g := q.IntegerPrecision
++	bad := func(reason string) error {
++		return moerr.NewInvalidInputNoCtxf("invalid integer precision graph: %s", reason)
++	}
++	if g.SourceBudget < 65 || g.SourceBudget > math.MaxUint32-2 {
++		return bad("source budget")
++	}
++	if uint64(g.ParameterCount) > g.SourceBudget {
++		return bad("parameter count")
++	}
++	if len(g.Outputs) != len(q.Headings) {
++		return bad("output arity")
++	}
++	arithmetic := make([]bool, len(g.Nodes))
++	for i, n := range g.Nodes {
++		if n == nil {
++			return bad("nil node")
 +		}
-+		for p.clientMessageActive.Load() && !p.mu.closed && !p.mu.paused && ctx.Err() == nil {
-+			p.mu.cond.Wait()
++		for _, edge := range n.Inputs {
++			if uint64(edge) > uint64(i) {
++				return bad("non-topological edge")
++			}
 +		}
++		leaf := false
++		eligible := false
++		switch n.Kind {
++		case IntegerPrecisionNode_DECLARED:
++			leaf = true
++			switch n.Precision {
++			case 3, 5, 8, 10:
++			case 19:
++				if n.Unsigned {
++					return bad("declared domain")
++				}
++			case 20:
++				if !n.Unsigned {
++					return bad("declared domain")
++				}
++			default:
++				return bad("declared precision")
++			}
++		case IntegerPrecisionNode_SQL_LITERAL:
++			leaf = true
++			if n.Precision == 0 || uint64(n.Precision) > g.SourceBudget {
++				return bad("literal precision")
++			}
++		case IntegerPrecisionNode_EXPLICIT_CAST, IntegerPrecisionNode_PARAMETER:
++			leaf = true
++			p := uint32(20)
++			if n.Unsigned {
++				p++
++			}
++			if n.Precision != p || n.Kind == IntegerPrecisionNode_PARAMETER && (n.ParamPos < 0 || uint64(n.ParamPos) >= uint64(g.ParameterCount)) {
++				return bad("cast/parameter domain")
++			}
++		case IntegerPrecisionNode_ADD, IntegerPrecisionNode_MUL:
++			if len(n.Inputs) != 2 || n.Unsigned {
++				return bad("arithmetic recipe")
++			}
++			eligible = true
++		case IntegerPrecisionNode_REFERENCE:
++			if len(n.Inputs) != 1 || n.Unsigned {
++				return bad("reference recipe")
++			}
++		case IntegerPrecisionNode_COMMON_INTEGER:
++			if len(n.Inputs) == 0 {
++				return bad("common arity")
++			}
++		default:
++			return bad("node kind")
++		}
++		if leaf {
++			if len(n.Inputs) != 0 {
++				return bad("leaf arity")
++			}
++		} else {
++			if n.Precision != 0 {
++				return bad("derived result must be evaluated")
++			}
++			for _, edge := range n.Inputs {
++				if edge != 0 {
++					eligible = eligible || arithmetic[edge-1]
++				}
++			}
++		}
++		if n.Arithmetic != eligible {
++			return bad("arithmetic provenance")
++		}
++		arithmetic[i] = eligible
 +	}
-+	if err := context.Cause(ctx); err != nil {
-+		return err
-+	}
-+	if p.mu.closed {
-+		return errPipeClosed
++	for _, out := range g.Outputs {
++		if out == nil || uint64(out.Node) > uint64(len(g.Nodes)) {
++			return bad("output index")
++		}
++		switch out.RootClass {
++		case IntegerPrecisionOutput_DECLARED_SOURCE, IntegerPrecisionOutput_DIRECT_FUNCTION, IntegerPrecisionOutput_SQL_REFERENCE, IntegerPrecisionOutput_SQL_LITERAL:
++		default:
++			return bad("root class")
++		}
++		if out.Node == 0 {
++			continue
++		}
++		kind := g.Nodes[out.Node-1].Kind
++		switch out.RootClass {
++		case IntegerPrecisionOutput_DECLARED_SOURCE:
++			if kind != IntegerPrecisionNode_DECLARED && kind != IntegerPrecisionNode_PARAMETER {
++				return bad("source root")
++			}
++		case IntegerPrecisionOutput_DIRECT_FUNCTION:
++			if kind != IntegerPrecisionNode_ADD && kind != IntegerPrecisionNode_MUL && kind != IntegerPrecisionNode_COMMON_INTEGER && kind != IntegerPrecisionNode_EXPLICIT_CAST {
++				return bad("function root")
++			}
++		case IntegerPrecisionOutput_SQL_REFERENCE:
++			if kind != IntegerPrecisionNode_REFERENCE && kind != IntegerPrecisionNode_COMMON_INTEGER {
++				return bad("reference root")
++			}
++		case IntegerPrecisionOutput_SQL_LITERAL:
++			if kind != IntegerPrecisionNode_SQL_LITERAL {
++				return bad("literal root")
++			}
++		}
 +	}
 +	return nil
- }
- 
- func (p *pipe) finishSyncTransfer() {
-@@ -1680,11 +1731,16 @@ func (p *pipe) finishSyncTransfer() {
- 	p.mu.Unlock()
- }
- 
--func (p *pipe) tryArmSyncTransfer() bool {
-+// Only the post-forwarding boundary may reserve the gate while an earlier
-+// request still owns publication. The transfer owner then joins that claim.
-+func (p *pipe) tryArmSyncTransfer(afterResponse bool) bool {
- 	p.mu.Lock()
- 	defer p.mu.Unlock()
- 	if p.mu.closed || p.mu.paused || p.mu.syncTransferDone != nil ||
--		p.clientMessageActive.Load() {
-+		(!afterResponse && p.clientMessageActive.Load()) {
-+		return false
-+	}
-+	if afterResponse && p.tun.hasUntransferableClientState() {
- 		return false
- 	}
- 	p.mu.syncTransferDone = make(chan struct{})
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #31470** (closed): test: make HNSW polling use read committed (@XuPeng-SH)
-- **PR #31465** (closed): [4.0] ci: pin molint version (@XuPeng-SH)
-- **PR #31464** (closed): [4.1] ci: pin molint version (@XuPeng-SH)
-- **PR #31461** (2026-10-27): fix(sysview): NULL charset/collation for binary-family columns and NULL UPDATE/CHECK time for fresh tables in information_schema (@aptend)
-- **PR #31457** (2026-10-27): test(hnsw): shorten the cross-CN freshness sweep in vector_hnsw_delete_insert (#31456) (@cpegeric)
-- **PR #31435** (2026-10-27): fix: refresh ALTER COPY after concurrent source writes (@iamlinjunhong)
+- **PR #31590** (2026-10-28): test(plan): reduce redundant legacy session proof work (@XuPeng-SH)
+- **PR #31581** (2026-10-28): [4.2.1-hotfix] fix(window): reuse unbounded aggregate frames (@XuPeng-SH)
+- **PR #31573** (2026-10-28): docs: redesign ordinary view metadata and semantic activation (@ck89119)
+- **PR #31571** (2026-10-28): [4.2-dev] fix: stabilize DDL atomicity during logtail reconnect (@XuPeng-SH)
+- **PR #31560** (closed): perf(fulltext2): bound positive-score streams with exact guarded top-k (@LeftHandCold)
+- **PR #31559** (2026-10-28): fix(frontend): honor column signedness when saving query results (#31498) (@aptend)
 
 ---
 
@@ -4120,41 +3671,48 @@ Share task backing-storage readin
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sql): separate ODKU OK insert ID from session baseline (#28444)
+## X. stabilize DDL atomicity tests during logtail reconnect (#31554)
 
 **RULE**:
-When implementing operations in `docs/design/20261016-odku-distributed-result-protocol-r2-addendum.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/frontend/txn_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9cf8743e`: sql): separate ODKU OK insert ID from session baseline (#28444). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9e29011e`: stabilize DDL atomicity tests during logtail reconnect (#31554). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/design/20261016-odku-distributed-result-protocol-r2-addendum.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/frontend/txn_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# Distributed ODKU Result Protocol: r2 alignment addendum
+func TestFinishTxnReconnectErrorRollsBackExplicitTxn(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	ctx := defines.AttachAccountId(context.Background(), sysAccountID)
+	ses := newTestSession(t, ctrl)
+	defer ses.Close()
+	require.NoError(t, ses.SetSessionSysVar(ctx, "mo_rollback_txn_on_error", int64(0)))
+	eng := mock_frontend.NewMockEngine(ctrl)
+	eng.EXPECT().Hints().Return(engine.Hints{CommitOrRollbackTimeout: time.Second}).AnyTimes()
+	ses.txnHandler.storage = eng
+	op := newTestTxnOp()
+	op.meta = txn.TxnMeta{ID: []byte{1, 2, 3, 4}, Status: txn.TxnStatus_Active}
+	op.wp.SetHaveDDL(true)
+	op.wp.stack = []uint64{0}
+	op.wp.stmtId = 1
+	ses.txnHandler.txnOp = op
+	ses.txnHandler.txnCtx = ctx
+	ses.txnHandler.optionBits |= OPTION_BEGIN
+	ec := newTestExecCtx(ctx, ctrl)
+	ec.ses = ses
+	ec.stmt = &tree.Delete{}
+	ec.txnOpt = FeTxnOption{autoCommit: true}
 
-Status: approved by independent scoped design review r2; see
-`20261016-odku-distributed-result-protocol-review-v2.md`.
-No build, regression, BVT, deployment, performance, or implementation acceptance
-is claimed by this document. Root owns reviewer and lifecycle decisions.
-
-- Revision: r2, 2026-10-16, owner VioletQwQ-0, PR #28444 / issue #28162.
-- Accepted source before this repair: `0c2090984b2aebef9cf10fba304465b14e3f5c77`.
-- Necessary normal-merge target: `b3d6b21fe9d260c91e1777529a48a9d93061af33`.
-- Original r1 inspected implementation: `286b60837041d819573a260f7ab6e346125c6d3a`.
-- Original reviewed r1 content: Git blob `914d5ddd19635d07924ebbe22cbb5eaa6f192fa2`
-  at head `038207ff2e5fd84d79d7d6c851c467b68b05a4e8`, SHA256
-  `ddff85b82ca7775ce492d68fb904a3bd5952c59e4f6390a8733ddf347953e756`.
-- The immutable [v1 approval record](20261016-odku-distributed-result-protocol-review-v1.md)
-  remains an approval of that exact r1 content. It is not approval of this r2
-  addendum or of the repaired implementation.
-
-## Subsequent candidate allocation overlay (not part of r2 approval)
-
-For the current conflict-repair candidate, actua
+	reconnectErr := moerr.NewRetryForCNRollingRestart()
+	require.Same(t, reconnectErr, finishTxnFunc(ses, reconnectErr, ec))
+	require.Equal(t, 1, op.rollbackCalls)
+	require.Nil(t, ses.txnHandler.txnOp)
+	require.Equal(t, []uint64{0}, op.wp.stack, "whole-txn failure must not select statement-only rollback")
+	require.Equal(t, uint64(1), ses.getDDLVer
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -4164,4 +3722,4 @@ For the current conflict-repair candidate, actua
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9cf8743e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9e29011e` are properly handled with clean fallback behavior.

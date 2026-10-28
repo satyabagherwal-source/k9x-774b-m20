@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T11:36:17.902Z",
+  "last_updated": "2026-10-28T11:46:31.185Z",
   "total_verified_learnings": 1157,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -18947,7 +18947,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cloudflare/clef-flash",
       "source_version": "hf-cloudflare-clef-flash",
-      "content_hash": "21a54f8f47eacca77d9c324faad7aa4c756552ca8d8d22689445af5506efedbf",
+      "content_hash": "a5548a20aab4e8e5fda457c57fe986ca502e982ecf3407fc8354e58ae98aec70",
       "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
       "promoted_rules": [
@@ -19137,6 +19137,21 @@
           "number": 4389,
           "title": "**Unambiguous Multimodal Token ID Allocation**",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5267,
+          "title": "**Deterministic Tokenization for Multimodal Inputs**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5268,
+          "title": "**Strict Separation of Backbone and Joint Head Parameters**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5269,
+          "title": "**Enforce Max Position Embedding Consistency**",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -19157,7 +19172,7 @@
         "learn-huggingface-hf-cloudflare-clef-flash-mv48lefr",
         "learn-huggingface-hf-cloudflare-clef-flash-mv4lz6vs"
       ],
-      "verified_at": "2026-10-25T17:01:32.764Z",
+      "verified_at": "2026-10-28T11:46:22.468Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35804,8 +35819,8 @@
       "slug": "matrixorigin-matrixone",
       "platform": "github",
       "source_url": "https://github.com/matrixorigin/matrixone",
-      "source_version": "935811ca",
-      "content_hash": "b30e14a4a5f3874ba667a814dc34f667dc4d6dc4c9a720f3828108ff18dc8d9e",
+      "source_version": "6c7813b5",
+      "content_hash": "57463977226daf144b78aaf1a932ca7ebcd093627204306630d26ac54037674d",
       "dossier_path": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "promoted_rules": [
@@ -35828,6 +35843,11 @@
           "number": 4372,
           "title": "python-sdk): preserve resolved ORM schemas in clone and branch builders (#31062)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5270,
+          "title": "stabilize DDL atomicity tests during logtail reconnect (#31554)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35835,7 +35855,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T19:06:55.776Z",
+      "verified_at": "2026-10-28T11:46:31.171Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -143568,6 +143588,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T11:36:17.891Z"
+    },
+    "rule-5267": {
+      "learning_id": "rule-5267",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5267,
+      "title": "**Deterministic Tokenization for Multimodal Inputs**",
+      "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+      "source_version": "hf-cloudflare-clef-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T11:46:22.468Z"
+    },
+    "rule-5268": {
+      "learning_id": "rule-5268",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5268,
+      "title": "**Strict Separation of Backbone and Joint Head Parameters**",
+      "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+      "source_version": "hf-cloudflare-clef-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T11:46:22.468Z"
+    },
+    "rule-5269": {
+      "learning_id": "rule-5269",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5269,
+      "title": "**Enforce Max Position Embedding Consistency**",
+      "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+      "source_version": "hf-cloudflare-clef-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T11:46:22.468Z"
+    },
+    "rule-5270": {
+      "learning_id": "rule-5270",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5270,
+      "title": "stabilize DDL atomicity tests during logtail reconnect (#31554)",
+      "source_url": "https://github.com/matrixorigin/matrixone",
+      "source_version": "6c7813b5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T11:46:31.171Z"
     }
   },
   "aliases": {

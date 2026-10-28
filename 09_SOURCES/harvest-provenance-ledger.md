@@ -5758,3 +5758,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf` | `https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | `hf-davidau` | Multi-dimensional audit evidence | 2026-10-28T11:23:52.707Z |
 | `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `4aef91ec` | Multi-dimensional audit evidence | 2026-10-28T11:32:27.455Z |
 | `learn-huggingface-cloudflare-clef` | `https://huggingface.co/Cloudflare/clef` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-10-28T11:36:17.951Z |
+| `learn-huggingface-cloudflare-clef-flash` | `https://huggingface.co/Cloudflare/clef-flash` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-10-28T11:46:22.548Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `6c7813b5` | Multi-dimensional audit evidence | 2026-10-28T11:46:31.254Z |

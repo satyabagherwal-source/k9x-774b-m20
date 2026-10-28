@@ -695,8 +695,8 @@
     "sourceUrl": "https://huggingface.co/Cloudflare/clef-flash",
     "sourceVersion": "hf-cloudflare-clef-flash",
     "license": "Open-Source",
-    "contentHash": "21a54f8f47eacca77d9c324faad7aa4c756552ca8d8d22689445af5506efedbf",
-    "lastHarvestedAt": "2026-10-25T17:01:32.834Z",
+    "contentHash": "a5548a20aab4e8e5fda457c57fe986ca502e982ecf3407fc8354e58ae98aec70",
+    "lastHarvestedAt": "2026-10-28T11:46:22.548Z",
     "learningId": "learn-huggingface-cloudflare-clef-flash"
   },
   "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
@@ -3173,10 +3173,10 @@
     "repository": "matrixorigin/matrixone",
     "platform": "github",
     "sourceUrl": "https://github.com/matrixorigin/matrixone",
-    "sourceVersion": "935811ca",
+    "sourceVersion": "6c7813b5",
     "license": "Apache-2.0",
-    "contentHash": "b30e14a4a5f3874ba667a814dc34f667dc4d6dc4c9a720f3828108ff18dc8d9e",
-    "lastHarvestedAt": "2026-10-27T19:06:55.874Z",
+    "contentHash": "57463977226daf144b78aaf1a932ca7ebcd093627204306630d26ac54037674d",
+    "lastHarvestedAt": "2026-10-28T11:46:31.254Z",
     "learningId": "learn-github-matrixorigin-matrixone"
   },
   "fallow-rs-fallow": {
