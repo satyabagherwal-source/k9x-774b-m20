@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source**: github ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
-> **Source Version**: `19bf3803`  
+> **Source Version**: `66017460`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T21:08:29.034Z  
+> **Timestamp**: 2026-10-28T03:49:43.376Z  
 > **Learning ID**: `learn-github-gardener-gardener`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T21:08:28.704Z  
+> **Harvest Timestamp**: 2026-10-28T03:49:43.369Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -732,11 +732,11 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
   > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/gardener/gardener/pull/16117#pullrequestreview-5669313010" title="Approved">oliver-goetz</a>*  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  The pull request process is described [here](https://gardener.cloud/docs/contribute/#pull-request-checklist)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)~~ [oliver-goetz]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
   > LGTM label has been added.  <details>Git tree hash: 24a86d9cf6b3827e75b10a16dca3f4574e257acf</details>
 
-- **Issue #16106** (2026-10-26): **[GEP-28] Rename `--token` to `--bootstrap-token` in `gardenadm reset`**
-  *Symptoms*: **How to categorize this PR?**  /area dev-productivity /kind cleanup  **What this PR does / why we need it**:  `gardenadm join` and `gardenadm connect` already use `--bootstrap-token`; `gardenadm reset` used `--token`, which was inconsistent. Rename the flag and adapt `gardenadm token create --print-reset-command`, which emits the full `gardenadm reset` command string.  **Which issue(s) this PR fixes**:  Part of #2906  **Special notes for your reviewer**:  /cc @ScheererJ  **Release note**: ```other operator NONE ```
+- **Issue #16111** (2026-10-27): **Update terminal-controller-manager to v0.40.0**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [gardener/terminal-controller-manager](https://redirect.github.com/gardener/terminal-controller-manager) |  | minor | `v0.39.0` → `v0.40.0` | ![age](https://developer.mend.io/api/mc/badges/age/github-releases/gardener%2fterminal-controller-manager/v0.40.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/github-releases/gardener%2fterminal-controller-manager/v0.39.0/v0.40.0?slim=true) | | [github.com/gardener/terminal-controller-manager](https://redirect.github.com/gardener/terminal-controller-manager) | require | minor | `v0.39.0` → `v0.40.0` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fgardener%2fterminal-controller-manager/v0.40.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fgardener%2fterminal-controller-manager/v0.39.0/v0.40.0?slim=true) |  ---  ### Release Notes  <details> <summary>gardener/terminal-controller-manager</summary>  ### [`v0.40.0`](https://redirect.github.com/gardener/terminal-controller-manager/releases/tag/v0.40.0)  [Compare Source](https://redirect.github.com/gardener/terminal-controller-manager/compare/v0.39.0...v0.40.0)  ##### application/spdx+json  - terminal-controller-manager-sbom-ref: `europe-docker.pkg.dev/gardener-project/rele
   **Post-Mortem & Fix Analysis**:
-  > /assign
-  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/gardener/gardener/pull/16106#pullrequestreview-5655850347" title="Approved">ScheererJ</a>*  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  The pull request process is described [here](https://gardener.cloud/docs/contribute/#pull-request-checklist)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)~~ [ScheererJ]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
+  > ### ℹ️ Artifact update notice  ##### File name: go.mod  In order to perform the update(s) described in the table above, Renovate ran the `go get` command, which resulted in the following additional change(s):   - 1 additional dependency was updated   Details:   | **Package**                             | **Change**               | | :-------------------------------------- | :----------------------- | | `github.com/gardener/gardener/pkg/apis` | `v1.149.0` -> `v1.154.0` |
+  > /lgtm
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -753,73 +753,449 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `058ba821` (2026-10-27)
-**Commit Message**: Fix copying of kind cluster kubeconfigs (#16080)
+### Incident Patch 1: `66017460` (2026-10-27)
+**Commit Message**: Update terminal-controller-manager to v0.40.0 (#16111)
 
-* Copy kubeconfig correctly
+* Update terminal-controller-manager to v0.40.0
 
-Signed-off-by: acumino <[REDACTED_EMAIL]>
-
-* Address Review
-
-Signed-off-by: acumino <[REDACTED_EMAIL]>
+* Run make tidy; Run make generate
 
 ---------
 
-Signed-off-by: acumino <[REDACTED_EMAIL]>
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
 
-**File**: `dev-setup/kind.sh` (modified, +19/-4)
+**File**: `go.mod` (modified, +2/-2)
 ```diff
-@@ -198,21 +198,36 @@ EOF
-     for path_kubeconfig in "${KUBECONFIG_SEED_CLUSTER:-}" "${KUBECONFIG_SEED2_CLUSTER:-}" "${KUBECONFIG_SEED_SECRET_PATH:-}"; do
-       [[ -z "$path_kubeconfig" ]] && continue
+@@ -22,10 +22,10 @@ require (
+ 	github.com/gardener/cert-management/pkg/apis v0.28.0
+ 	github.com/gardener/dependency-watchdog v1.8.0
+ 	github.com/gardener/etcd-druid/api v0.39.0
+-	github.com/gardener/gardener/pkg/apis v1.149.0
++	github.com/gardener/gardener/pkg/apis v1.154.0
+ 	github.com/gardener/machine-controller-manager v0.63.0
+ 	github.com/gardener/pvc-autoscaler v0.3.1
+-	github.com/gardener/terminal-controller-manager v0.39.0
++	github.com/gardener/terminal-controller-manager v0.40.0
+ 	github.com/go-jose/go-jose/v4 v4.1.5
+ 	github.com/go-logr/logr v1.4.4
+ 	github.com/go-test/deep v1.1.1
+```
+
+**File**: `go.sum` (modified, +2/-2)
+```diff
+@@ -277,8 +277,8 @@ github.com/gardener/machine-controller-manager v0.63.0 h1:0mfZiop6jStdfQhsMYyTdR
+ github.com/gardener/machine-controller-manager v0.63.0/go.mod h1:MU2Cyrwvh+jYYvRUGxUMx8LNmFUvGog01YHlpsCiRrM=
+ github.com/gardener/pvc-autoscaler v0.3.1 h1:XMapVWBh0wrJk9Ac8WCIj6Ze7RH0FB1gP8q9XbpcyxI=
+ github.com/gardener/pvc-autoscaler v0.3.1/go.mod h1:GVA7q8qiMi2UD/vcCBVbHEUijZvxVqZ1SGqiwKGHTE4=
+-github.com/gardener/terminal-controller-manager v0.39.0 h1:w+aKFvM5k5EobILX9vrxgs6VbA5gd88Gyx/3a5m7nVc=
+-github.com/gardener/terminal-controller-manager v0.39.0/go.mod h1:O9D8QFXUMRNGbkgpicaiqKWHgq/KXv6IsNhoGLQVFu8=
++github.com/gardener/terminal-controller-manager v0.40.0 h1:SKFzoVCFbX53LCq5RzqPhK5SLe+Jw1YtfH2cvltPhUY=
++github.com/gardener/terminal-controller-manager v0.40.0/go.mod h1:APfwoJ2Vpcri7uKH3+0e/QFaa6Upm+AoxK5ohMV+cUA=
+ github.com/ghodss/yaml v0.0.0-20150909031657-73d445a93680/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
+ github.com/gkampitakis/ciinfo v0.3.2 h1:JcuOPk8ZU7nZQjdUhctuhQofk7BGHuIy0c9Ez8BNhXs=
+ github.com/gkampitakis/ciinfo v0.3.2/go.mod h1:1NIwaOcFChN4fa/B0hEBdAb6npDlFL8Bwx4dfRLRqAo=
+```
+
+**File**: `imagevector/containers.yaml` (modified, +1/-1)
+```diff
+@@ -58,7 +58,7 @@ images:
+   - name: terminal-controller-manager
+     sourceRepository: github.com/gardener/terminal-controller-manager
+     repository: europe-docker.pkg.dev/gardener-project/releases/gardener/terminal-controller-manager
+-    tag: "v0.39.0"
++    tag: "v0.40.0"
+   # Seed bootstrap
+   - name: pause-container
+     sourceRepository: github.com/kubernetes/kubernetes/blob/master/build/pause/Dockerfile
+```
+
+**File**: `pkg/component/gardener/dashboard/terminal/assets/crd-dashboard.gardener.cloud_terminals.yaml` (modified, +3/-3)
+```diff
+@@ -448,15 +448,15 @@ spec:
+                                 it can only reference a ClusterRole.
+                               properties:
+                                 apiGroup:
+-                                  description: APIGroup is the group for the resource
++                                  description: apiGroup is the group for the resource
+                                     being referenced
+                                   type: string
+                                 kind:
+-                                  description: Kind is the type of resource being
++                                  description: kind is the type of resource being
+                                     referenced
+                                   type: string
+                                 name:
+-                                  description: Name is the name of resource being
++                                  description: name is the name of resource being
+                                     referenced
+                                   type: string
+                               required:
+```
+
+---
+
+### Incident Patch 2: `896be0dd` (2026-10-27)
+**Commit Message**: [GEP-28] Harden node reset in `gardener-node-agent` and `gardenadm` (#16105)
+
+* Harden pod sandbox teardown in `gardener-node-agent reset`
+
+- retry stopping/removing pod sandboxes with proper exponential backoff instead of a fixed loop
+- stopping a pod sandbox is best-effort: errors are logged but not returned, so a stuck sandbox does not block the reset
+- removing a pod sandbox is mandatory: errors are returned and fail the reset
+- stop and remove the pod sandboxes in parallel
+
+Assisted-by: Claude <[REDACTED_EMAIL]>
+Co-authored-by: Kostov6 <[REDACTED_EMAIL]>
+Signed-off-by: rfranzke <[REDACTED_EMAIL]>
+
+* `gardenadm reset`: Clean up remaining artifacts on node
+
+`gardener-node-agent reset` only cleans up its own and the kubelet's artifacts. Other directories created by Gardener components on the node (e.g. the `etcd` data directories or `/var/lib/static-pods`) remain on disk and prevent the node from re-joining a cluster from a clean state. Remove them as part of `gardenadm reset`, skipping any that are externally bind-mounted.
+
+Co-authored-by: Kostov6 <[REDACTED_EMAIL]>
+Signed-off-by: rfranzke <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: rfranzke <[REDACTED_EMAIL]>
+Co-authored-by: 
+
+**File**: `pkg/gardenadm/cmd/reset/reset.go` (modified, +88/-12)
+```diff
+@@ -7,19 +7,24 @@ package reset
+ import (
+ 	"bytes"
+ 	"context"
++	"errors"
+ 	"fmt"
+ 	"math"
+ 	"os/exec"
++	"strings"
+ 	"time"
  
--      if [[ "$(realpath "$KUBECONFIG")" != "$(realpath "$path_kubeconfig")" ]]; then
--        cp "$KUBECONFIG" "$path_kubeconfig"
-+      src="$(realpath "$KUBECONFIG")"
-+      dst="$(realpath "$path_kubeconfig")"
-+
-+      # Skip self-copies.
-+      [[ "$src" == "$dst" ]] && continue
-+
-+      # KUBECONFIG_SEED_CLUSTER is owned by kind-up (via KUBECONFIG_RUNTIME_CLUSTER).
-+      # Don't let kind2-up or other invocations overwrite it.
-+      if [[ -n "${KUBECONFIG_SEED_CLUSTER:-}" && "$dst" == "$(realpath "$KUBECONFIG_SEED_CLUSTER")" ]]; then
-+        [[ -z "${KUBECONFIG_RUNTIME_CLUSTER:-}" || "$src" != "$(realpath "$KUBECONFIG_RUNTIME_CLUSTER")" ]] && continue
-       fi
-+
-+      # KUBECONFIG_SEED2_CLUSTER is owned by kind2-up; skip if we're not that invocation.
-+      if [[ -n "${KUBECONFIG_SEED2_CLUSTER:-}" && "$dst" == "$(realpath "$KUBECONFIG_SEED2_CLUSTER")" ]]; then
-+        [[ "$src" != "$(realpath "$KUBECONFIG_SEED2_CLUSTER")" ]] && continue
-+      fi
-+
-+      cp "$KUBECONFIG" "$path_kubeconfig"
-       # Replace 127.0.0.1 in the kind cluster kubeconfig with  the container name of the Docker container for the second
-       # kind cluster. This will be referenced in the `Gardenlet` resource (which is meant to register the second kind
-       # cluster as Seed). `gardener-operator` will read this kubeconfig when attempting to deploy `gardenlet` into it.
-       # Since `gardener-operator` runs in a pod, 127.0.0.1 would not work to communicate with the second kind cluster - but
-       # the Docker container name is resolvable.
--      if [[ "$path_kubeconfig" == *"seed-local2"* ]]; then
-+      if [[ "$path_kubeconfig" == *"seed-local2"* ]] && [[ -f "$path_kubeconfig" ]]; then
-         sed "s/127\.0\.0\.1:[0-9]\+/gardener-local2-control-plane:6443/g" "$path_kubeconfig" > "${path_kubeconfig}-gardener-operator"
-       fi
+ 	"github.com/gardener/machine-controller-manager/pkg/util/provider/drain"
++	"github.com/go-logr/logr"
++	"github.com/spf13/afero"
+ 	"github.com/spf13/cobra"
+ 	corev1 "k8s.io/api/core/v1"
+ 	kubeinformers "k8s.io/client-go/informers"
+ 	"sigs.k8s.io/controller-runtime/pkg/client"
  
-       # Prepare a kubeconfig that can be used by provider-local as the provider credentials to always talk to the "main" kind cluster cluster.
-       # See docs/extensions/provider-local.md#credentials.
--      if [[ "$CLUSTER_NAME" == "gardener-local" ]] ; then
-+      if [[ "$CLUSTER_NAME" == "gardener-local" ]] && [[ -f "$path_kubeconfig" ]]; then
-         sed "s/\(127\.0\.0\.1\|\[::1\]\):[0-9]\+/$CLUSTER_NAME-control-plane:6443/g" "$path_kubeconfig" > "$(dirname "$0")/gardenconfig/components/credentials/secret-project-garden/kubeconfig/kubeconfig"
-         cp "$(dirname "$0")/gardenconfig/components/credentials/secret-project-garden/kubeconfig/kubeconfig" "$(dirname "$0")/gardenconfig/components/credentials/secret-project-local/kubeconfig/kubeconfig"
-       fi
+ 	nodeagentconfigv1alpha1 "github.com/gardener/gardener/pkg/apis/config/nodeagent/v1alpha1"
+ 	v1beta1constants "github.com/gardener/gardener/pkg/apis/core/v1beta1/constants"
++	gardenerextensions "github.com/gardener/gardener/pkg/extensions"
+ 	"github.com/gardener/gardener/pkg/gardenadm/botanist"
+ 	"github.com/gardener/gardener/pkg/gardenadm/cmd"
+ 	"github.com/gardener/gardener/pkg/nodeagent"
+@@ -70,6 +75,13 @@ func run(ctx context.Context, opts *Options) error {
+ 		return fmt.Errorf("failed initializing gardenadm botanist with temporary client set: %w", err)
+ 	}
+ 
++	b.Logger.Info("Fetching Shoot manifest from Cluster object")
++	cluster, err := gardenerextensions.GetCluster(ctx, b.ShootClientSet.Client(), b.Shoot.ControlPlaneNamespace)
++	if err != nil {
++		return fmt.Errorf("failed to read Cluster resource %s: %w", b.Shoot.ControlPlaneNamespace, err)
++	}
++	b.Shoot.SetInfo(cluster.Shoot)
++
+ 	node, err := nodeagent.FetchNodeByHostName(ctx, b.ShootClientSet.Client(), b.HostName)
+ 	if err != nil {
+ 		return fmt.Errorf("failed retrieving node for hostname %s: %w", b.HostName, err)
+@@ -96,25 +108,32 @@ func run(ctx context.Context, opts *Options) error {
+ 		// TODO(scheererj): If node is a control plane node, remove its machine IP from the Etcd's
+ 		// .spec.externallyManagedMemberAddresses[], decrease .spec.replicas, and wait for reconciliation
+ 
+-		deletedNode = g.Add(flow.Task{
+-			Name: "Deleting node from cluster",
+-			Fn: func(ctx context.Context) error {
+-				if err := b.ShootClientSet.Client().Delete(ctx, node); client.IgnoreNotFound(err) != nil {
+-					return fmt.Errorf("failed deleting node %s: %w", node.Name, err)
+-				}
+-				return nil
+-			},
+-			Dependencies: flow.NewTaskIDs(cordonAndDrainNodeComplete),
+-		})
+-		_ = g.Add(flow.Task{
++		resetGardenerNodeAgent = g.Add(flow.Task{
+ 			Name: "Executing 'gardener-node-agent reset'",
+ 			Fn: func(ctx context.Context) error {
+ 				out, err := exec.CommandContext(ctx, nodeagentconfigv1alpha1.BinaryDir+"/gardener-node-agent", "reset", "--config-dir", nodeagentconfigv1alpha1.BaseDir).CombinedOutput() // #nosec: G204 -- Static command and arguments.
+ 				b.Logger.Info("Executed gardener-node-agent reset:")
+ 				fmt.Fprintln(opts.ErrOut, string(out))
+ 				return err
+ 			},
+-			Dependencies: flow.NewTaskIDs(deletedNode),
++			Dependencies: flow.NewTaskIDs(cordonAndDrainNodeComplete),
++		})
++		cleanupRemainingArtifacts = g.Add(flow.Task{
++			Name: "Cleaning up remaining artifacts on node",
++			Fn: func(_ context.Context) error {
++				return cleanupRemainingArtifactsOnNode(b.Logger, b.FS)
++			},
++			Dependencies: flow.NewTaskIDs(resetGardenerNodeAgent),
++		})
++		_ = g.Add(flow.Task{
++			Name: "Deleting node object from cluster",
++			Fn: func(ctx context.Context) error {
++				if err := b.ShootClientSet.Client().Delete(ctx, node); client.IgnoreNotFound(err) != nil {
++					return fmt.Errorf("failed deleting node %s: %w", node.Name, err)
++				}
++				return nil
++			},
++			Dependencies: flow.NewTaskIDs(resetGardenerNodeAgent, cleanupRemainingArtifacts),
+ 		})
+ 	)
+ 
+@@ -208,3 +227,60 @@ func cordonAndDrainNode(ctx context.Context, b *botanist.GardenadmBotanist, node
+ 
+ 	return nil
+ }
++
++func cleanupRemainingArtifactsOnNode(log logr.Logger, fs afero.Afero) error {
++	mountPoints, err := readMountPoints(fs)
++	if err != nil {
++		return fmt.Errorf("failed reading mount points: %w", err)
++	}
++
++	var errs []error
++
++	// These directories created by Gardener components on a node which are not already cleaned up by
++	// `gardener-node-agent reset` and must be removed to allow the node to re-join the cluster from a clean state.
++	for _, dir := range []string{
++		"/var/lib/etcd",
++		"/var/lib/etcd-main",
++		"/var/lib/etcd-events",
++		"/var/lib/gardener-node-agent",
++		"/var/lib/gardener-user",
++		"/var/lib/kube-proxy",
++		"/var/lib/kubelet",
++		"/var/lib/node-exporter",
++		"/var/lib/sshd-ensurer",
++		"/var/lib/static-pods",
++	} {
++		if mountPoints[dir] {
++			log.Info("Skipping removal of externally bind-mounted directory", "path", dir)
++			continue
++		}
++		log.Info("Removing directory", "path", dir)
++		if err := fs.RemoveAll(dir); err != nil {
++			errs = append(errs, fmt.Errorf("failed removing directory %s: %w", dir, err))
++		}
++	}
++
++	if len(errs) > 0 {
++		return fmt.Errorf("failed cleaning up remaining artifacts: %w", errors.Join(errs...))
++	}
++
++	return nil
++}
++
++// readMountPoints returns a set of paths that are currently active mount points according to /proc/mounts.
++func readMountPoints(fs afero.Afero) (map[string]bool, error) {
++	data, err := fs.ReadFile("/proc/mounts")
++	if er
+```
+
+**File**: `pkg/nodeagent/reset/reset.go` (modified, +42/-27)
+```diff
+@@ -16,6 +16,7 @@ import (
+ 	"github.com/go-logr/logr"
+ 	"github.com/spf13/afero"
+ 	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/util/wait"
+ 	criclient "k8s.io/cri-client/pkg"
+ 
+ 	nodeagentconfigv1alpha1 "github.com/gardener/gardener/pkg/apis/config/nodeagent/v1alpha1"
+@@ -81,6 +82,14 @@ The node has been successfully cleaned from gardener-node-agent artifacts!
+ 	return nil
+ }
+ 
++// SandboxStopBackoff is the backoff used when stopping and removing pod sandboxes. Exposed for testing.
++var SandboxStopBackoff = wait.Backoff{
++	Duration: 500 * time.Millisecond,
++	Factor:   2,
++	Steps:    5,
++	Cap:      10 * time.Second,
++}
++
+ func stopContainers(ctx context.Context, log logr.Logger, dbus dbus.DBus) error {
+ 	log.Info("Stopping gardener-node-agent systemd unit")
+ 	if err := dbus.Stop(ctx, nil, nil, nodeagentconfigv1alpha1.UnitName); err != nil {
+@@ -93,7 +102,7 @@ func stopContainers(ctx context.Context, log logr.Logger, dbus dbus.DBus) error
+ 	}
+ 
+ 	log.Info("Stopping containers")
+-	runtimeService, err := NewRemoteRuntimeService(ctx, "unix:///var/run/containerd/containerd.sock", 2*time.Second, nil, false)
++	runtimeService, err := NewRemoteRuntimeService(ctx, "unix:///var/run/containerd/containerd.sock", 10*time.Second, nil, false)
+ 	if err != nil {
+ 		return fmt.Errorf("failed creating CRI client: %w", err)
+ 	}
+@@ -104,37 +113,43 @@ func stopContainers(ctx context.Context, log logr.Logger, dbus dbus.DBus) error
+ 		return fmt.Errorf("failed listing pod sandboxes: %w", err)
+ 	}
+ 
+-	var errs []error
++	stopTaskFns := make([]flow.TaskFn, 0, len(pods))
+ 	for _, pod := range pods {
+-		log.Info("Stopping pod sandbox", "podID", pod.GetId())
+-		var lastErr error
+-		for range 5 { // Retry up to 5 times
+-			if err := runtimeService.StopPodSandbox(ctx, pod.GetId()); err != nil {
+-				lastErr = err
+-				log.Error(err, "Failed stopping pod sandbox", "podID", pod.Id)
+-				continue
++		stopTaskFns = append(stopTaskFns, func(ctx context.Context) error {
++			log.Info("Stopping pod sandbox", "podID", pod.GetId())
++			if err := wait.ExponentialBackoffWithContext(ctx, SandboxStopBackoff, func(ctx context.Context) (bool, error) {
++				if err := runtimeService.StopPodSandbox(ctx, pod.GetId()); err != nil {
++					log.Error(err, "Failed stopping pod sandbox, retrying", "podID", pod.GetId())
++					return false, nil
++				}
++				return true, nil
++			}); err != nil {
++				log.Error(err, "Failed stopping pod sandbox, continuing", "podID", pod.GetId())
+ 			}
+-
+-			if err := runtimeService.RemovePodSandbox(ctx, pod.GetId()); err != nil {
+-				lastErr = err
+-				log.Error(err, "Failed removing pod sandbox", "podID", pod.Id)
+-				continue
+-			}
+-
+-			lastErr = nil
+-			break
+-		}
+-
+-		if lastErr != nil {
+-			errs = append(errs, lastErr)
+-		}
++			return nil
++		})
+ 	}
+-
+-	if len(errs) > 0 {
+-		return fmt.Errorf("failed stopping some pods: %w", errors.Join(errs...))
++	if err := flow.Parallel(stopTaskFns...)(ctx); err != nil {
++		return err
+ 	}
+ 
+-	return nil
++	removeTaskFns := make([]flow.TaskFn, 0, len(pods))
++	for _, pod := range pods {
++		removeTaskFns = append(removeTaskFns, func(ctx context.Context) error {
++			log.Info("Removing pod sandbox", "podID", pod.GetId())
++			if err := wait.ExponentialBackoffWithContext(ctx, SandboxStopBackoff, func(ctx context.Context) (bool, error) {
++				if err := runtimeService.RemovePodSandbox(ctx, pod.GetId()); err != nil {
++					log.Error(err, "Failed removing pod sandbox, retrying", "podID", pod.GetId())
++					return false, nil
++				}
++				return true, nil
++			}); err != nil {
++				return fmt.Errorf("failed removing pod sandbox %s: %w", pod.GetId(), err)
++			}
++			return nil
++		})
++	}
++	return flow.Parallel(removeTaskFns...)(ctx)
+ }
+ 
+ func cleanUpOperatingSystemConfig(ctx context.Context, log logr.Logger, fs afero.Afero, dbus dbus.DBus) error {
+```
+
+**File**: `pkg/nodeagent/reset/reset_test.go` (modified, +37/-1)
+```diff
+@@ -6,6 +6,7 @@ package reset_test
+ 
+ import (
+ 	"context"
++	"fmt"
+ 	"io/fs"
+ 	"time"
+ 
+@@ -16,12 +17,16 @@ import (
+ 	"go.opentelemetry.io/otel/trace"
+ 	"k8s.io/apimachinery/pkg/runtime"
+ 	jsonserializer "k8s.io/apimachinery/pkg/runtime/serializer/json"
++	"k8s.io/apimachinery/pkg/util/wait"
+ 	cri "k8s.io/cri-api/pkg/apis"
++	runtimeapi "k8s.io/cri-api/pkg/apis/runtime/v1"
++	apitest "k8s.io/cri-api/pkg/apis/testing"
+ 	fakecriclient "k8s.io/cri-client/pkg/fake"
+ 
+ 	extensionsv1alpha1 "github.com/gardener/gardener/pkg/apis/extensions/v1alpha1"
+ 	fakedbus "github.com/gardener/gardener/pkg/nodeagent/dbus/fake"
+ 	. "github.com/gardener/gardener/pkg/nodeagent/reset"
++	"github.com/gardener/gardener/pkg/utils/test"
+ )
+ 
+ var _ = Describe("Reset", func() {
+@@ -33,6 +38,8 @@ var _ = Describe("Reset", func() {
+ 			fakeFS   afero.Afero
+ 			fakeDBus *fakedbus.DBus
+ 
++			fakeRuntimeService *apitest.FakeRuntimeService
++
+ 			testEncoder runtime.Encoder
+ 
+ 			folders = []string{
+@@ -78,10 +85,17 @@ var _ = Describe("Reset", func() {
+ 
+ 			testEncoder = &jsonserializer.Serializer{}
+ 
++			fakeRuntimeService = fakecriclient.NewFakeRemoteRuntime().RuntimeService
++			fakeRuntimeService.SetFakeSandboxes([]*apitest.FakePodSandbox{
++				{PodSandboxStatus: runtimeapi.PodSandboxStatus{Id: "pod-1"}},
++				{PodSandboxStatus: runtimeapi.PodSandboxStatus{Id: "pod-2"}},
++			})
+ 			NewRemoteRuntimeService = func(_ context.Context, _ string, _ time.Duration, _ trace.TracerProvider, _ bool) (cri.RuntimeService, error) {
+-				return fakecriclient.NewFakeRemoteRuntime().RuntimeService, nil
++				return fakeRuntimeService, nil
+ 			}
+ 
++			DeferCleanup(test.WithVar(&SandboxStopBackoff, wait.Backoff{Steps: 5}))
++
+ 			Expect(fakeFS.MkdirAll("/opt/bin", fs.ModeDir)).To(Succeed())
+ 			Expect(fakeFS.MkdirAll("/my/random/path", fs.ModeDir)).To(Succeed())
+ 			Expect(fakeFS.MkdirAll("/proc", fs.ModeDir)).To(Succeed())
+@@ -128,6 +142,28 @@ var _ = Describe("Reset", func() {
+ 			}
+ 
+ 			Expect(fakeDBus.Actions).To(Equal(expectedSystemdActions))
++			Expect(fakeRuntimeService.GetCalls()).To(ContainElements("StopPodSandbox", "StopPodSandbox", "RemovePodSandbox", "RemovePodSandbox"))
++			Expect(fakeRuntimeService.Sandboxes).To(BeEmpty())
++		})
++
++		It("should not fail if stopping a pod sandbox permanently fails (best-effort)", func() {
++			// Two pod sandboxes are stopped in parallel, each retrying up to the backoff's number of steps.
++			for range 2 * 5 {
++				fakeRuntimeService.InjectError("StopPodSandbox", fmt.Errorf("fake stop error"))
++			}
++
++			Expect(Reset(ctx, log, fakeFS, fakeDBus)).To(Succeed())
++			Expect(fakeRuntimeService.GetCalls()).To(ContainElements("RemovePodSandbox", "RemovePodSandbox"))
++			Expect(fakeRuntimeService.Sandboxes).To(BeEmpty())
++		})
++
++		It("should fail if removing a pod sandbox permanently fails", func() {
++			// Two pod sandboxes are removed in parallel, each retrying up to the backoff's number of steps.
++			for range 2 * 5 {
++				fakeRuntimeService.InjectError("RemovePodSandbox", fmt.Errorf("fake remove error"))
++			}
++
++			Expect(Reset(ctx, log, fakeFS, fakeDBus)).To(MatchError(ContainSubstring("failed removing pod sandbox")))
+ 		})
+ 	})
+ })
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #16117** (2026-10-27): Update gcr.io/distroless/static-debian13:nonroot Docker digest to 18f4cc2 (@renovate[bot])
+- **PR #16111** (2026-10-27): Update terminal-controller-manager to v0.40.0 (@renovate[bot])
 - **PR #16106** (2026-10-26): [GEP-28] Rename `--token` to `--bootstrap-token` in `gardenadm reset` (@rfranzke)
+- **PR #16105** (2026-10-27): [GEP-28] Harden node reset in `gardener-node-agent` and `gardenadm` (@rfranzke)
 - **PR #16102** (2026-10-26): Enable `uniquemarkers` linter in kube-api-linter (@DobromirNPeev)
 - **PR #16101** (2026-10-27): Update vpa-components to v1.7.3 (@renovate[bot])
-- **PR #16099** (2026-10-27): Update quay.io/brancz/kube-rbac-proxy Docker tag to v0.23.1 (@renovate[bot])
-- **PR #16098** (2026-10-26): Update module k8s.io/autoscaler/vertical-pod-autoscaler to v1.7.3 (@renovate[bot])
 
 ---
 
@@ -839,49 +1215,30 @@ Signed-off-by: acumino <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. copying of kind cluster kubeconfigs (#16080)
+## X. Update terminal-controller-manager to v0.40.0 (#16111)
 
 **RULE**:
-When implementing operations in `dev-setup/kind.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `058ba821`: copying of kind cluster kubeconfigs (#16080). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `66017460`: Update terminal-controller-manager to v0.40.0 (#16111). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `dev-setup/kind.sh`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      src="$(realpath "$KUBECONFIG")"
-      dst="$(realpath "$path_kubeconfig")"
-
-      # Skip self-copies.
-      [[ "$src" == "$dst" ]] && continue
-
-      # KUBECONFIG_SEED_CLUSTER is owned by kind-up (via KUBECONFIG_RUNTIME_CLUSTER).
-      # Don't let kind2-up or other invocations overwrite it.
-      if [[ -n "${KUBECONFIG_SEED_CLUSTER:-}" && "$dst" == "$(realpath "$KUBECONFIG_SEED_CLUSTER")" ]]; then
-        [[ -z "${KUBECONFIG_RUNTIME_CLUSTER:-}" || "$src" != "$(realpath "$KUBECONFIG_RUNTIME_CLUSTER")" ]] && continue
-
-      # KUBECONFIG_SEED2_CLUSTER is owned by kind2-up; skip if we're not that invocation.
-      if [[ -n "${KUBECONFIG_SEED2_CLUSTER:-}" && "$dst" == "$(realpath "$KUBECONFIG_SEED2_CLUSTER")" ]]; then
-        [[ "$src" != "$(realpath "$KUBECONFIG_SEED2_CLUSTER")" ]] && continue
-      fi
-
-      cp "$KUBECONFIG" "$path_kubeconfig"
-      if [[ "$path_kubeconfig" == *"seed-local2"* ]] && [[ -f "$path_kubeconfig" ]]; then
-      if [[ "$CLUSTER_NAME" == "gardener-local" ]] && [[ -f "$path_kubeconfig" ]]; then
+	github.com/gardener/gardener/pkg/apis v1.154.0
+	github.com/gardener/terminal-controller-manager v0.40.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-      if [[ "$(realpath "$KUBECONFIG")" != "$(realpath "$path_kubeconfig")" ]]; then
-        cp "$KUBECONFIG" "$path_kubeconfig"
-      if [[ "$path_kubeconfig" == *"seed-local2"* ]]; then
-      if [[ "$CLUSTER_NAME" == "gardener-local" ]] ; then
+	github.com/gardener/gardener/pkg/apis v1.149.0
+	github.com/gardener/terminal-controller-manager v0.39.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `058ba821` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `66017460` are properly handled with clean fallback behavior.

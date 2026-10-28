@@ -265,8 +265,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
     "sourceVersion": "hf-deepseek-ai-deepseek-r1",
     "license": "Open-Source",
-    "contentHash": "b2457edfc7be59abbfe404af160bd87c4a4d2ec380164815733cfb42e1299a2d",
-    "lastHarvestedAt": "2026-10-25T08:57:57.163Z",
+    "contentHash": "f30344fe649b370c76be3a7aa0b28d25c26b7dc76fa6444625f37c5eff3c2bad",
+    "lastHarvestedAt": "2026-10-28T03:49:34.974Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-r1"
   },
   "hf-moonshotai-kimi-k3": {
@@ -2193,10 +2193,10 @@
     "repository": "react-hook-form/react-hook-form",
     "platform": "github",
     "sourceUrl": "https://github.com/react-hook-form/react-hook-form",
-    "sourceVersion": "a8e11030",
+    "sourceVersion": "70bfa3ae",
     "license": "MIT",
-    "contentHash": "dc13ba179e7657b7bfdaccfeb6caccb52dbf9e3db11848d59a1c1d6183b27a76",
-    "lastHarvestedAt": "2026-10-27T13:03:45.506Z",
+    "contentHash": "3199236986162bead61c38e2eb1f6f53770228fe084e3b74b41ad860e8ee5d51",
+    "lastHarvestedAt": "2026-10-28T03:49:40.475Z",
     "learningId": "learn-github-react-hook-form-react-hook-form"
   },
   "higress-group-higress": {
@@ -2253,10 +2253,10 @@
     "repository": "Automattic/harper",
     "platform": "github",
     "sourceUrl": "https://github.com/Automattic/harper",
-    "sourceVersion": "ebd0d4be",
+    "sourceVersion": "29200660",
     "license": "Apache-2.0",
-    "contentHash": "150927f2abf587f69c4b9b3d1908716359c3c970ddceca63b4003712d7a62234",
-    "lastHarvestedAt": "2026-10-27T21:18:31.568Z",
+    "contentHash": "9ef98ae24257670048fb24428afa2e0230eae069a7d96ce0e2a931e2e273eac7",
+    "lastHarvestedAt": "2026-10-28T03:49:35.203Z",
     "learningId": "learn-github-automattic-harper"
   },
   "sudheerj-reactjs-interview-questions": {
@@ -6893,10 +6893,10 @@
     "repository": "gardener/gardener",
     "platform": "github",
     "sourceUrl": "https://github.com/gardener/gardener",
-    "sourceVersion": "19bf3803",
+    "sourceVersion": "66017460",
     "license": "Apache-2.0",
-    "contentHash": "ac61b906db70a97e4c52176d48a309e367a491ba2daf7cf6c6d6029f084a88ff",
-    "lastHarvestedAt": "2026-10-27T21:08:29.589Z",
+    "contentHash": "da61f0054e8eaacf968cef60ecc343486191964b58f88c501edb9f959fcc1234",
+    "lastHarvestedAt": "2026-10-28T03:49:43.804Z",
     "learningId": "learn-github-gardener-gardener"
   },
   "nirdiamant-rag_techniques": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T03:43:07.065Z",
+  "last_updated": "2026-10-28T03:49:43.813Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -290,14 +290,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-r1",
-      "content_hash": "b2457edfc7be59abbfe404af160bd87c4a4d2ec380164815733cfb42e1299a2d",
-      "verified_at": "2026-10-25T08:57:57.174Z",
+      "content_hash": "f30344fe649b370c76be3a7aa0b28d25c26b7dc76fa6444625f37c5eff3c2bad",
+      "verified_at": "2026-10-28T03:49:34.982Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T08:57:57.174Z"
+      "last_updated": "2026-10-28T03:49:34.982Z"
     },
     "moonshotai/Kimi-K3": {
       "repository": "moonshotai/Kimi-K3",
@@ -3426,14 +3426,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-hook-form-react-hook-form",
-      "content_hash": "dc13ba179e7657b7bfdaccfeb6caccb52dbf9e3db11848d59a1c1d6183b27a76",
-      "verified_at": "2026-10-27T13:03:45.515Z",
+      "content_hash": "3199236986162bead61c38e2eb1f6f53770228fe084e3b74b41ad860e8ee5d51",
+      "verified_at": "2026-10-28T03:49:40.483Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:03:45.515Z"
+      "last_updated": "2026-10-28T03:49:40.483Z"
     },
     "higress-group/higress": {
       "repository": "higress-group/higress",
@@ -3516,14 +3516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-automattic-harper",
-      "content_hash": "150927f2abf587f69c4b9b3d1908716359c3c970ddceca63b4003712d7a62234",
-      "verified_at": "2026-10-27T21:18:31.575Z",
+      "content_hash": "9ef98ae24257670048fb24428afa2e0230eae069a7d96ce0e2a931e2e273eac7",
+      "verified_at": "2026-10-28T03:49:35.211Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T21:18:31.575Z"
+      "last_updated": "2026-10-28T03:49:35.211Z"
     },
     "sudheerj/reactjs-interview-questions": {
       "repository": "sudheerj/reactjs-interview-questions",
@@ -10401,14 +10401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gardener-gardener",
-      "content_hash": "ac61b906db70a97e4c52176d48a309e367a491ba2daf7cf6c6d6029f084a88ff",
-      "verified_at": "2026-10-27T21:08:29.598Z",
+      "content_hash": "da61f0054e8eaacf968cef60ecc343486191964b58f88c501edb9f959fcc1234",
+      "verified_at": "2026-10-28T03:49:43.812Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T21:08:29.598Z"
+      "last_updated": "2026-10-28T03:49:43.812Z"
     },
     "NirDiamant/RAG_Techniques": {
       "repository": "NirDiamant/RAG_Techniques",

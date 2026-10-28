@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T03:43:06.992Z",
+  "last_updated": "2026-10-28T03:49:43.744Z",
   "total_verified_learnings": 1156,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3792,8 +3792,8 @@
       "slug": "automattic-harper",
       "platform": "github",
       "source_url": "https://github.com/Automattic/harper",
-      "source_version": "ebd0d4be",
-      "content_hash": "150927f2abf587f69c4b9b3d1908716359c3c970ddceca63b4003712d7a62234",
+      "source_version": "29200660",
+      "content_hash": "9ef98ae24257670048fb24428afa2e0230eae069a7d96ce0e2a931e2e273eac7",
       "dossier_path": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "promoted_rules": [
@@ -3836,6 +3836,11 @@
           "number": 5012,
           "title": "ls): avoid config/doc_state lock-order deadlock (#4711)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5164,
+          "title": "build(deps): bump tree-sitter-haskell from 0.23.1 to 0.24.1 (#4720)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3843,7 +3848,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T21:18:31.492Z",
+      "verified_at": "2026-10-28T03:49:35.126Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -12959,8 +12964,8 @@
       "slug": "gardener-gardener",
       "platform": "github",
       "source_url": "https://github.com/gardener/gardener",
-      "source_version": "19bf3803",
-      "content_hash": "ac61b906db70a97e4c52176d48a309e367a491ba2daf7cf6c6d6029f084a88ff",
+      "source_version": "66017460",
+      "content_hash": "da61f0054e8eaacf968cef60ecc343486191964b58f88c501edb9f959fcc1234",
       "dossier_path": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "promoted_rules": [
@@ -13018,6 +13023,11 @@
           "number": 5011,
           "title": "copying of kind cluster kubeconfigs (#16080)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5166,
+          "title": "Update terminal-controller-manager to v0.40.0 (#16111)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13025,7 +13035,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T21:08:29.497Z",
+      "verified_at": "2026-10-28T03:49:43.730Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -20772,7 +20782,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
       "source_version": "hf-deepseek-ai-deepseek-r1",
-      "content_hash": "b2457edfc7be59abbfe404af160bd87c4a4d2ec380164815733cfb42e1299a2d",
+      "content_hash": "f30344fe649b370c76be3a7aa0b28d25c26b7dc76fa6444625f37c5eff3c2bad",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md",
       "promoted_rules": [
@@ -20832,7 +20842,7 @@
         "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv43zicx",
         "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv4h8dyv"
       ],
-      "verified_at": "2026-10-25T08:57:57.087Z",
+      "verified_at": "2026-10-28T03:49:34.874Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44141,8 +44151,8 @@
       "slug": "react-hook-form-react-hook-form",
       "platform": "github",
       "source_url": "https://github.com/react-hook-form/react-hook-form",
-      "source_version": "a8e11030",
-      "content_hash": "dc13ba179e7657b7bfdaccfeb6caccb52dbf9e3db11848d59a1c1d6183b27a76",
+      "source_version": "70bfa3ae",
+      "content_hash": "3199236986162bead61c38e2eb1f6f53770228fe084e3b74b41ad860e8ee5d51",
       "dossier_path": "07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
       "promoted_rules": [
@@ -44170,6 +44180,11 @@
           "number": 4784,
           "title": "🐞 fix(setValue): select empty-string checkbox options (#13950)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5165,
+          "title": "🐞 fix(useController): read the current unregistration option on unmount (#13956",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44177,7 +44192,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:03:45.417Z",
+      "verified_at": "2026-10-28T03:49:40.398Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -141553,6 +141568,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T03:43:06.978Z"
+    },
+    "rule-5164": {
+      "learning_id": "rule-5164",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5164,
+      "title": "build(deps): bump tree-sitter-haskell from 0.23.1 to 0.24.1 (#4720)",
+      "source_url": "https://github.com/Automattic/harper",
+      "source_version": "29200660",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T03:49:35.126Z"
+    },
+    "rule-5165": {
+      "learning_id": "rule-5165",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5165,
+      "title": "🐞 fix(useController): read the current unregistration option on unmount (#13956",
+      "source_url": "https://github.com/react-hook-form/react-hook-form",
+      "source_version": "70bfa3ae",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T03:49:40.398Z"
+    },
+    "rule-5166": {
+      "learning_id": "rule-5166",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5166,
+      "title": "Update terminal-controller-manager to v0.40.0 (#16111)",
+      "source_url": "https://github.com/gardener/gardener",
+      "source_version": "66017460",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T03:49:43.730Z"
     }
   },
   "aliases": {

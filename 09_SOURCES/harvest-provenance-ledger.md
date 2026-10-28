@@ -5683,3 +5683,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-black-forest-labs-flux-1-dev` | `https://huggingface.co/black-forest-labs/FLUX.1-dev` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-28T03:38:06.172Z |
 | `learn-github-dkhamsing-open-source-ios-apps` | `https://github.com/dkhamsing/open-source-ios-apps` | `28722ee0` | Multi-dimensional audit evidence | 2026-10-28T03:38:09.293Z |
 | `learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8` | `https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8` | `hf-tencent` | Multi-dimensional audit evidence | 2026-10-28T03:43:07.055Z |
+| `learn-huggingface-deepseek-ai-deepseek-r1` | `https://huggingface.co/deepseek-ai/DeepSeek-R1` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-28T03:49:34.974Z |
+| `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `29200660` | Multi-dimensional audit evidence | 2026-10-28T03:49:35.203Z |
+| `learn-github-react-hook-form-react-hook-form` | `https://github.com/react-hook-form/react-hook-form` | `70bfa3ae` | Multi-dimensional audit evidence | 2026-10-28T03:49:40.475Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `66017460` | Multi-dimensional audit evidence | 2026-10-28T03:49:43.804Z |

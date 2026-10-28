@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source**: github ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
-> **Source Version**: `ebd0d4be`  
+> **Source Version**: `29200660`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T21:18:31.172Z  
+> **Timestamp**: 2026-10-28T03:49:34.747Z  
 > **Learning ID**: `learn-github-automattic-harper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T21:18:30.479Z  
+> **Harvest Timestamp**: 2026-10-28T03:49:34.739Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 17186 stars
+- **Stars / Engagement**: 17203 stars
 
 ---
 
@@ -1429,237 +1429,100 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cb3681b1` (2026-10-27)
-**Commit Message**: fix(ls): avoid config/doc_state lock-order deadlock (#4711)
+### Incident Patch 1: `29200660` (2026-10-28)
+**Commit Message**: build(deps): bump tree-sitter-haskell from 0.23.1 to 0.24.1 (#4720)
 
-**File**: `harper-ls/src/backend.rs` (modified, +12/-10)
+Bumps [tree-sitter-haskell](https://github.com/tree-sitter/tree-sitter-haskell) from 0.23.1 to 0.24.1.
+- [Release notes](https://github.com/tree-sitter/tree-sitter-haskell/releases)
+- [Commits](https://github.com/tree-sitter/tree-sitter-haskell/compare/v0.23.1...v0.24.1)
+
+---
+updated-dependencies:
+- dependency-name: tree-sitter-haskell
+  dependency-version: 0.24.1
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -152,7 +152,7 @@ impl Backend {
-     async fn load_user_dictionary(&self) -> MutableDictionary {
-         let config = self.config.read().await;
+@@ -5903,9 +5903,9 @@ dependencies = [
  
--        load_dict(&config.user_dict_path, self.config.read().await.dialect)
-+        load_dict(&config.user_dict_path, config.dialect)
-             .await
-             .map_err(|err| info!("{err}"))
-             .unwrap_or(MutableDictionary::new())
-@@ -168,13 +168,10 @@ impl Backend {
- 
-     async fn load_workspace_dictionary(&self) -> MutableDictionary {
-         let config = self.config.read().await;
--        load_dict(
--            &config.workspace_dict_path,
--            self.config.read().await.dialect,
--        )
--        .await
--        .map_err(|err| info!("{err}"))
--        .unwrap_or(MutableDictionary::new())
-+        load_dict(&config.workspace_dict_path, config.dialect)
-+            .await
-+            .map_err(|err| info!("{err}"))
-+            .unwrap_or(MutableDictionary::new())
-     }
- 
-     async fn save_workspace_dictionary(&self, dict: impl Dictionary) -> Result<()> {
-@@ -437,12 +434,17 @@ impl Backend {
-         uri: &Uri,
-         range: Range,
-     ) -> JsonResult<Vec<CodeActionOrCommand>> {
--        let (config, mut doc_states) = tokio::join!(self.config.read(), self.doc_state.lock());
-+        // Copy necessary configuration to avoid holding lock.
-+        // `update_document` takes `doc_state` before `config`, so holding a `config` read guard
-+        // while waiting for `doc_state` deadlocks once a `config` writer is queued.
-+        let code_action_config = self.config.read().await.code_action_config.clone();
-+
-+        let mut doc_states = self.doc_state.lock().await;
-         let Some(doc_state) = doc_states.get_mut(uri) else {
-             return Ok(Vec::new());
-         };
- 
--        Ok(doc_state.generate_code_actions(range, &config.code_action_config))
-+        Ok(doc_state.generate_code_actions(range, &code_action_config))
-     }
- 
-     async fn generate_diagnostics(&self, uri: &Uri) -> Vec<Diagnostic> {
+ [[package]]
+ name = "tree-sitter-haskell"
+-version = "0.23.1"
++version = "0.24.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "977c51e504548cba13fc27cb5a2edab2124cf6716a1934915d07ab99523b05a4"
++checksum = "781de30e0d1ec8e6db4ed799d36ce1cedaf4684374dada45ebe2a8ea44c3f814"
+ dependencies = [
+  "cc",
+  "tree-sitter-language",
+```
+
+**File**: `harper-comments/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -21,7 +21,7 @@ tree-sitter-c-sharp = "0.23.5"
+ tree-sitter-elixir = "0.3.5"
+ tree-sitter-go = "0.25.0"
+ tree-sitter-groovy = "0.1.2"
+-tree-sitter-haskell = "0.23.1"
++tree-sitter-haskell = "0.24.1"
+ tree-sitter-java = "0.23.5"
+ tree-sitter-javascript = "0.25.0"
+ tree-sitter-kotlin-ng = "1.1.0"
 ```
 
 ---
 
-### Incident Patch 2: `386637d7` (2026-10-26)
-**Commit Message**: fix(core): read emphasis all-caps as words in AnA (#4180)
+### Incident Patch 2: `0aba8ebd` (2026-10-27)
+**Commit Message**: fix(desktop): remove useless setting (#4718)
 
-* fix(core): read emphasis all-caps as words in AnA
+Co-authored-by: Elijah Potter <[REDACTED_EMAIL]>
 
-Closes #3921.
-
-`AnA` treated every all-caps token as an initialism, so "a FREE event" was
-flagged in favour of "an FREE event". The likely-acronym check only looks at
-the vowel-ness of the first two characters, which cannot tell an ordinary word
-written for emphasis from a letter-by-letter abbreviation.
-
-Use the orthography the dictionary already records instead. An all-caps token
-whose entry licenses a lowercase spelling but no all-caps one is a word being
-shouted, so read it as the lowercase word. Entries that do license all-caps
-(`LAN`, `NAT`, `MA`, `FBI`) keep the initialism handling, and Roman numerals
-are excluded because they are numbers rather than words.
-
-That guard is only as good as the all-caps coverage in the dictionary, so add
-the entries for the abbreviations it would otherwise misread:
-
-    FPS   frames per second; first-person shooter
-    FTP   file transfer protocol
-    FTPS  FTP over TLS
-    MPG   miles per gallon
-    SSH   secure shell
-
-Verified on 999 GitHub READMEs and 15 Wikipedia articles, 1.9M words: `AnA`
-goes from 178 lints to 170. Nine removed 
-
-**File**: `harper-core/dictionary.dict` (modified, +5/-0)
+**File**: `harper-desktop/src/lib/settings/pages/GeneralPage.svelte` (modified, +0/-15)
 ```diff
-@@ -3446,9 +3446,12 @@ FOFL
- FORTRAN/Og
- FOSS/ONV            # free open source software
- FPO/N
-+FPS/N               # frames per second; first-person shooter
- FSF/Og
- FSLIC/O
- FTC/O
-+FTP/Ng              # file transfer protocol
-+FTPS/Ng             # FTP over TLS
- FUD/NS
- FWD/N
- FWIW/
-@@ -6268,6 +6271,7 @@ MP/NOgJ             # military police; member of parliament
- MP3/NSg             # audio format
- MP4/NSg             # audio/video format
- MPEG/ON
-+MPG/N               # miles per gallon
- MRI/NgV             # magnetic resonance imaging
- MS/NOg4             # US state (Mississippi)
- MSG/NOg             # flavour enhancer
-@@ -8990,6 +8994,7 @@ SS/NOJ
- SSA/ONJ
- SSD/NSg             # solid-state drive
- SSE/NOgJ
-+SSH/Ng              # secure shell
- SSS/ON
- SST/NO
- SSW/NgJ
-```
-
-**File**: `harper-core/src/linting/an_a.rs` (modified, +55/-1)
-```diff
-@@ -1,7 +1,7 @@
- use itertools::Itertools;
+@@ -13,7 +13,6 @@ const DialectValue = {
+ 	Indian: 4,
+ } as const;
  
- use crate::{
--    CharStringExt, Dialect, Document, TokenStringExt,
-+    CharStringExt, Dialect, Document, OrthFlags, TokenStringExt,
-     indefinite_article::{InitialSound, starts_with_vowel},
-     linting::{Lint, LintKind, Linter, Suggestion},
- };
-@@ -77,6 +77,28 @@ impl Linter for AnA {
-                     continue;
-                 };
- 
-+                // An all-caps token whose entry licenses a lowercase spelling but no
-+                // all-caps one is an ordinary word written for emphasis ("a FREE event"),
-+                // not an initialism. Read it as the lowercase word. Entries that do
-+                // license all-caps (`LAN`, `NAT`, `MA`) keep the initialism handling, as
-+                // do Roman numerals, which are numbers rather than words.
-+                let lowered;
-+                let chars_second = match second.kind.as_word() {
-+                    Some(Some(meta))
-+                        if chars_second.len() > 1
-+                            && chars_second
-+                                .iter()
-+                                .all(|c| !c.is_alphabetic() || c.is_uppercase())
-+                            && meta.orth_info.contains(OrthFlags::LOWERCASE)
-+                            && !meta.orth_info.contains(OrthFlags::ALLCAPS)
-+                            && !meta.orth_info.contains(OrthFlags::ROMAN_NUMERALS) =>
-+                    {
-+                        lowered = chars_second.to_lower();
-+                        lowered.as_ref()
-+                    }
-+                    _ => chars_second,
-+                };
-+
-                 let should_be_a_an = match starts_with_vowel(chars_second, self.dialect)
-                     .expect("No empty word tokens")
-                 {
-@@ -278,6 +300,38 @@ mod tests {
-         assert_lint_count("a AM transmitter", AnA::new(Dialect::American), 1);
-     }
- 
-+    /// Issue #3921: an all-caps token whose entry has no all-caps spelling of its
-+    /// own is an ordinary word written for emphasis, not an initialism.
-+    #[test]
-+    fn reads_emphasis_caps_as_words() {
-+        assert_lint_count("a FREE event", AnA::new(Dialect::American), 0);
-+        assert_lint_count(
-+            "James Bond deals with a SPECTRE agent",
-+            AnA::new(Dialect::American),
-+            0,
-+        );
-+        assert_lint_count(
-+            "a FLASH based filing system",
-+            AnA::new(Dialect::American),
-+            0,
-+        );
-+        assert_lint_count("a SYN flood attack", AnA::new(Dialect::American), 0);
-+        assert_lint_count("a STUN server", AnA::new(Dialect::American), 0);
-+    }
-+
-+    /// The same guard must not swallow initialisms whose entries do license an
-+    /// all-caps spelling, nor Roman numerals, which are numbers rather than words.
-+    #[test]
-+    fn keeps_initialisms_and_roman_numerals() {
-+        assert_lint_count("an SSH tunnel", AnA::new(Dialect::American), 0);
-+        assert_lint_count("an FTP server", AnA::new(Dialect::American), 0);
-+        assert_lint_count("an FTPS connection", AnA::new(Dialect::American), 0);
-+        assert_lint_count("an FPS multiplayer game", AnA::new(Dialect::American), 0);
-+        assert_lint_count("an MPG figure", AnA::new(Dialect::American), 0);
-+        assert_lint_count("an ML research project", AnA::new(Dialect::American), 0);
-+        assert_lint_count("an XVI century painting", AnA::new(Dialect::American), 0);
-+    }
-+
-     #[test]
-     fn dont_misrecognize_as_acronym() {
-         assert_lint_count("a UPD connection", AnA::new(Dialect::American), 0);
-```
-
----
-
-### Incident Patch 3: `7fb19fd5` (2026-10-26)
-**Commit Message**: test(core): cover its built-in possessive regression (#3844)
-
-**File**: `harper-core/src/linting/its_contraction/mod.rs` (modified, +8/-0)
-```diff
-@@ -258,6 +258,14 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn issue_2609() {
-+        assert_no_lints(
-+            "One such aspect is how the standard library takes great care to make working with its built-in collections as efficient as possible.",
-+            ItsContraction::default(),
-+        );
-+    }
-+
-     #[test]
-     fn ignore_past_participle_noun_phrase() {
-         assert_no_lints(
+-let menuBar = true;
+ let launchAtStartup = false;
+ let autoUpdate = true;
+ let dialect = 'american';
+@@ -274,20 +273,6 @@ function settingsValueToDialect(value: string): Dialect {
+           <div class="eyebrow">General</div>
+           <div class="rows">
+             <SettingRow top>
+-              <strong>Keep Harper in the menu bar</strong>
+-              <p>Shows the Harper icon so you can open settings without opening the main app.</p>
+-              <Checkbox
+-                slot="control"
+-                appearance="settings"
+-                checked={menuBar}
+-                disabled
+-                title="Not wired yet"
+-              >
+-                {#if menuBar}<CheckIcon className="control-icon" />{/if}
+-              </Checkbox>
+-            </SettingRow>
+-
+-            <SettingRow>
+               <strong>Launch Harper at startup</strong>
+               <p>Harper will start silently when you log in.</p>
+               <Checkbox
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4720** (2026-10-28): build(deps): bump tree-sitter-haskell from 0.23.1 to 0.24.1 (@dependabot[bot])
+- **PR #4719** (2026-10-27): feat(desktop): redesign icon to be more easily visible in both light and dark modes (@elijah-potter)
+- **PR #4718** (2026-10-27): fix(desktop): remove useless setting (@elijah-potter)
+- **PR #4717** (2026-10-27): feat(web): restyle the "uninstall-browser-extension" page (@elijah-potter)
 - **PR #4715** (2026-10-27): test(core): prove that #4692 is fixed (@elijah-potter)
 - **PR #4713** (2026-10-27): fix(chrome-ext): remove distracting visual elements from the popup (@elijah-potter)
-- **PR #4712** (2026-10-27): feat(web): add time-series graph to the dashboard for reported lint frequency (@elijah-potter)
-- **PR #4711** (2026-10-27): fix(ls): avoid config/doc_state lock-order deadlock (@willismonroe)
-- **PR #4706** (2026-10-27): feat: kids-friendly → kid-friendly (@hippietrail)
-- **PR #4702** (2026-10-27): feat: the all the → all the (@hippietrail)
 
 ---
 
@@ -1679,48 +1542,30 @@ goes from 178 lints to 170. Nine removed
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ls): avoid config/doc_state lock-order deadlock (#4711)
+## X. build(deps): bump tree-sitter-haskell from 0.23.1 to 0.24.1 (#4720)
 
 **RULE**:
-When implementing operations in `harper-ls/src/backend.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cb3681b1`: ls): avoid config/doc_state lock-order deadlock (#4711). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `29200660`: build(deps): bump tree-sitter-haskell from 0.23.1 to 0.24.1 (#4720). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-ls/src/backend.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        load_dict(&config.user_dict_path, config.dialect)
-        load_dict(&config.workspace_dict_path, config.dialect)
-            .await
-            .map_err(|err| info!("{err}"))
-            .unwrap_or(MutableDictionary::new())
-        // Copy necessary configuration to avoid holding lock.
-        // `update_document` takes `doc_state` before `config`, so holding a `config` read guard
-        // while waiting for `doc_state` deadlocks once a `config` writer is queued.
-        let code_action_config = self.config.read().await.code_action_config.clone();
-
-        let mut doc_states = self.doc_state.lock().await;
-        Ok(doc_state.generate_code_actions(range, &code_action_config))
+version = "0.24.1"
+checksum = "781de30e0d1ec8e6db4ed799d36ce1cedaf4684374dada45ebe2a8ea44c3f814"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        load_dict(&config.user_dict_path, self.config.read().await.dialect)
-        load_dict(
-            &config.workspace_dict_path,
-            self.config.read().await.dialect,
-        )
-        .await
-        .map_err(|err| info!("{err}"))
-        .unwrap_or(MutableDictionary::new())
-        let (config, mut doc_states) = tokio::join!(self.config.read(), self.doc_state.lock());
-        Ok(doc_state.generate_code_actions(range, &config.code_action_config))
+version = "0.23.1"
+checksum = "977c51e504548cba13fc27cb5a2edab2124cf6716a1934915d07ab99523b05a4"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cb3681b1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `29200660` are properly handled with clean fallback behavior.

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T03:43:07.061Z",
-  "total_cycles_completed": 5651,
-  "total_learnings_persisted": 5651,
-  "total_rules_promoted": 5100,
+  "last_updated": "2026-10-28T03:49:43.809Z",
+  "total_cycles_completed": 5655,
+  "total_learnings_persisted": 5655,
+  "total_rules_promoted": 5103,
   "history": [
-    {
-      "timestamp": "2026-10-27T18:36:18.947Z",
-      "repository": "webpack/webpack",
-      "learningId": "learn-github-webpack-webpack",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T18:36:19.504Z",
-      "repository": "astral-sh/ruff",
-      "learningId": "learn-github-astral-sh-ruff",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T18:36:23.115Z",
-      "repository": "rook/rook",
-      "learningId": "learn-github-rook-rook",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T18:36:27.658Z",
-      "repository": "lioensky/VCPToolBox",
-      "learningId": "learn-github-lioensky-vcptoolbox",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T18:36:29.918Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1403,6 +1375,34 @@
       "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
       "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T03:49:34.979Z",
+      "repository": "deepseek-ai/DeepSeek-R1",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T03:49:35.208Z",
+      "repository": "Automattic/harper",
+      "learningId": "learn-github-automattic-harper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T03:49:40.480Z",
+      "repository": "react-hook-form/react-hook-form",
+      "learningId": "learn-github-react-hook-form-react-hook-form",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T03:49:43.809Z",
+      "repository": "gardener/gardener",
+      "learningId": "learn-github-gardener-gardener",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

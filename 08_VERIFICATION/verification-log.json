@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261026-HENT",
-    "timestamp": "2026-10-26T18:05:21.401Z",
-    "repository": "mui/base-ui",
-    "learningId": "learn-github-mui-base-ui",
-    "contentHash": "bfda050ecf41d67dc3e8132480362a5c18f95ad5e07ba6461c46f387cc9518e7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-HLD8",
-    "timestamp": "2026-10-26T18:05:30.092Z",
-    "repository": "temporalio/temporal",
-    "learningId": "learn-github-temporalio-temporal",
-    "contentHash": "1d09a55f383ce34114b1c9eb229164ac185af2ae78ff512f8ef755abc9e4dbcd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-HOJV",
-    "timestamp": "2026-10-26T18:05:34.220Z",
-    "repository": "HelixDB/helix-db",
-    "learningId": "learn-github-helixdb-helix-db",
-    "contentHash": "0620b175b72f8795aa3632f980b2808df2e2b0fe54da651a3f3c42f866f5fba5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-HPDG",
-    "timestamp": "2026-10-26T18:05:35.284Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "1e789e541355f41075a002c4ccb3484520f1e63ef670a1c9bd91497fa855490c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261026-QM0M",
     "timestamp": "2026-10-26T18:12:30.838Z",
     "repository": "stakater/Reloader",
@@ -7492,6 +7432,66 @@
     "contentHash": "99608b7009081586baa1bb11f06f5f43568801ae61e393ba1eb87564b6ce4d3a",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-SKU2",
+    "timestamp": "2026-10-28T03:49:34.970Z",
+    "repository": "deepseek-ai/DeepSeek-R1",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
+    "contentHash": "f30344fe649b370c76be3a7aa0b28d25c26b7dc76fa6444625f37c5eff3c2bad",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-SL0F",
+    "timestamp": "2026-10-28T03:49:35.199Z",
+    "repository": "Automattic/harper",
+    "learningId": "learn-github-automattic-harper",
+    "contentHash": "9ef98ae24257670048fb24428afa2e0230eae069a7d96ce0e2a931e2e273eac7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-SP2W",
+    "timestamp": "2026-10-28T03:49:40.472Z",
+    "repository": "react-hook-form/react-hook-form",
+    "learningId": "learn-github-react-hook-form-react-hook-form",
+    "contentHash": "3199236986162bead61c38e2eb1f6f53770228fe084e3b74b41ad860e8ee5d51",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-SRND",
+    "timestamp": "2026-10-28T03:49:43.801Z",
+    "repository": "gardener/gardener",
+    "learningId": "learn-github-gardener-gardener",
+    "contentHash": "da61f0054e8eaacf968cef60ecc343486191964b58f88c501edb9f959fcc1234",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

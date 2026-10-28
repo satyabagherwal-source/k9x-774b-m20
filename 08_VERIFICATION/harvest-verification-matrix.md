@@ -5674,3 +5674,7 @@
 | `CYCLE-20261028-DTCP` | `2026-10-28T03:38:06.169Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5156, Rule 1072, Rule 5157` | Yes (`2526bce8...`) |
 | `CYCLE-20261028-DVRE` | `2026-10-28T03:38:09.290Z` | `dkhamsing/open-source-ios-apps` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5158, Rule 5159, Rule 5160` | Yes (`e38c342f...`) |
 | `CYCLE-20261028-K9IK` | `2026-10-28T03:43:07.052Z` | `tencent/Hy-SimulMT-30B-A3B-FP8` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5161, Rule 5162, Rule 5163` | Yes (`99608b70...`) |
+| `CYCLE-20261028-SKU2` | `2026-10-28T03:49:34.970Z` | `deepseek-ai/DeepSeek-R1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md` | Yes (`f30344fe...`) |
+| `CYCLE-20261028-SL0F` | `2026-10-28T03:49:35.199Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5164` | Yes (`9ef98ae2...`) |
+| `CYCLE-20261028-SP2W` | `2026-10-28T03:49:40.472Z` | `react-hook-form/react-hook-form` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5165` | Yes (`31992369...`) |
+| `CYCLE-20261028-SRND` | `2026-10-28T03:49:43.801Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5166` | Yes (`da61f005...`) |

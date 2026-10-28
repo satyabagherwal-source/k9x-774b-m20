@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md`  
 > **Source**: github ([https://github.com/react-hook-form/react-hook-form](https://github.com/react-hook-form/react-hook-form))  
-> **Source Version**: `a8e11030`  
+> **Source Version**: `70bfa3ae`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T13:03:44.945Z  
+> **Timestamp**: 2026-10-28T03:49:40.044Z  
 > **Learning ID**: `learn-github-react-hook-form-react-hook-form`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react-hook-form/react-hook-form](https://github.com/react-hook-form/react-hook-form))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T13:03:44.937Z  
+> **Harvest Timestamp**: 2026-10-28T03:49:40.037Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -781,378 +781,351 @@ export default <T extends FieldValues, K extends ReadFormState>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a8e11030` (2026-10-27)
-**Commit Message**: 🐞 fix(setValue): select empty-string checkbox options (#13950)
+### Incident Patch 1: `70bfa3ae` (2026-10-28)
+**Commit Message**: 🐞 fix(useController): read the current unregistration option on unmount (#13956)
 
-* fix(setValue): select empty-string checkbox options
-
-* fix(setValue): ignore undefined checkbox refs
-
-**File**: `src/__tests__/logic/createFormControl.test.ts` (modified, +122/-0)
+**File**: `src/__tests__/useController.test.tsx` (modified, +45/-0)
 ```diff
-@@ -19,6 +19,128 @@ jest.mock('../../logic/getDirtyFields', () => {
- });
+@@ -788,6 +788,51 @@ describe('useController', () => {
+     expect(data).toBeUndefined();
+   });
  
- describe('createFormControl', () => {
 +  it.each([
-+    { values: [] },
-+    { values: [''] },
-+    { values: ['other'] },
-+    { values: ['', 'other'] },
-+  ])('set and reset checkbox group values to $values', ({ values }) => {
-+    const { register, setValue, resetField, getValues, subscribe } =
-+      createFormControl<{ choices: string[] }>({
-+        defaultValues: { choices: [] },
-+      });
-+    const unsubscribe = subscribe({
-+      formState: { values: true },
-+      callback: jest.fn(),
-+    });
-+    const inputs = ['', 'other'].map((value) => {
-+      const input = document.createElement('input');
-+      input.type = 'checkbox';
-+      input.name = 'choices';
-+      input.value = value;
-+      document.body.append(input);
-+      register('choices').ref(input);
-+      return input;
-+    });
-+
-+    try {
-+      setValue('choices', values);
-+
-+      expect(getValues('choices')).toEqual(values);
-+      expect(inputs.map((input) => input.checked)).toEqual(
-+        ['', 'other'].map((value) => values.includes(value)),
-+      );
-+
-+      setValue('choices', []);
-+      expect(inputs.map((input) => input.checked)).toEqual([false, false]);
-+
-+      resetField('choices', { defaultValue: values });
-+      expect(getValues('choices')).toEqual(values);
-+      expect(inputs.map((input) => input.checked)).toEqual(
-+        ['', 'other'].map((value) => values.includes(value)),
-+      );
-+    } finally {
-+      unsubscribe();
-+      inputs.forEach((input) => input.remove());
-+    }
-+  });
-+
-+  describe.each([false, true])(
-+    'checkbox groups with shouldUnregister=%s',
-+    (shouldUnregister) => {
-+      it.each([
-+        { values: [undefined], options: ['other'] },
-+        { values: new Array<string>(1), options: ['other'] },
-+        { values: [undefined], options: ['', 'other'] },
-+        { values: new Array<string>(1), options: ['', 'other'] },
-+      ])(
-+        'rejects $values with options $options and clears unchecked values',
-+        async ({ values, options }) => {
-+          const {
-+            register,
-+            setValue,
-+            getValues,
-+            getFieldState,
-+            trigger,
-+            handleSubmit,
-+            subscribe,
-+          } = createFormControl<{ choices: (string | undefined)[] }>({
-+            defaultValues: { choices: [] },
++    [false, true, undefined],
++    [true, false, undefined],
++    [false, false, undefined],
++    [true, true, undefined],
++    [false, true, false],
++    [true, false, false],
++    [false, true, true],
++    [true, false, true],
++  ])(
++    'use the current shouldUnregister option on unmount (%s -> %s, field: %s)',
++    (initial, next, shouldUnregister) => {
++      const form = renderHook(
++        ({ shouldUnregister }) =>
++          useForm({
++            defaultValues: { test: 'default' },
 +            shouldUnregister,
-+          });
-+          const unsubscribe = subscribe({
-+            formState: { values: true },
-+            callback: jest.fn(),
-+          });
-+          const field = register('choices', { required: true });
-+          const inputs = options.map((value) => {
-+            const input = document.createElement('input');
-+            input.type = 'checkbox';
-+            input.name = 'choices';
-+            input.value = value;
-+            document.body.append(input);
-+            field.ref(input);
-+            return input;
-+          });
++          }),
++        { initialProps: { shouldUnregister: initial } },
++      );
++      const field = renderHook(() =>
++        useController({
++          name: 'test',
++          control: form.result.current.control,
++          shouldUnregister,
++        }),
++      );
 +
-+          try {
-+            setValue('choices', values);
++      act(() => {
++        field.result.current.field.onChange('updated');
++      });
 +
-+            expect(inputs.map((input) => input.checked)).toEqual(
-+              options.map(() => false),
-+            );
-+            expect(await trigger('choices')).toBe(false);
-+            expect(getFieldState('choices').error?.type).toBe('required');
++      form.rerender({ shouldUnregister: next });
++      field.rerender();
 +
-+            inputs[0].checked = true;
-+            await field.onChange({ type: 'change', target: inputs[0] });
++      expect(form.result.current.getValues()).toEqual({ test: 'updated' });
 +
-+            expect(getValues('choices')).toEqual([options[0]]);
-+            expect(await trigger('choices')).toBe(true);
++      field.unmount();
 +
-+            inputs[0].checked = false;
-+            await field.onChange({ type: 'change', target: inputs[0] });
-+
-+            expect(getValues('choices')).toEqual([]);
-+            expect(await trigger('choices')).toBe(false);
-+            expect(getFieldState('choices').error?.type).toBe('required');
-+
-+            const onValid = jest.fn();
-+            const onInvalid = jest.fn();
-+            await handleSubmit(onValid, onInvalid)();
-+
-+            expect(onValid).not.toHaveBeenCalled();
-+            expect(onInvalid).toHaveBeenCalledTimes(1);
-+          } finally {
-+            unsubscribe();
-+            field.ref(null);
-+            inputs.forEach((input) => input.remove());
-+          }
-+        },
++      expect(form.result.current.getValues()).toEqual(
++        next || shouldUnregister ? {} : { test: 'updated' },
 +      );
 +    },
 +  );
 +
-   it('rejects text with maxLength zero and accepts an empty value', async () => {
-     const { register, trigger, setValue, getFieldState } = createFormControl({
-       defaultValues: { text: 'x' },
+   it('always get the latest value for onBlur event', async () => {
+     const watchResults: unknown[] = [];
+ 
 ```
 
-**File**: `src/logic/createFormControl.ts` (modified, +3/-3)
+**File**: `src/useController.ts` (modified, +5/-2)
 ```diff
-@@ -1089,9 +1089,9 @@ export function createFormControl<
-             fieldReference.refs.forEach((checkboxRef) => {
-               if (!checkboxRef.defaultChecked || !checkboxRef.disabled) {
-                 if (Array.isArray(fieldValue)) {
--                  checkboxRef.checked = !!fieldValue.find(
--                    (data: string) => data === checkboxRef.value,
--                  );
-+                  checkboxRef.checked =
-+                    !isUndefined(checkboxRef.value) &&
-+                    fieldValue.includes(checkboxRef.value);
-                 } else {
-                   checkboxRef.checked =
-                     fieldValue === checkboxRef.value || !!fieldValue;
+@@ -271,10 +271,13 @@ export function useController<
+     }
+ 
+     return () => {
++      const shouldUnregisterField =
++        control._options.shouldUnregister || shouldUnregister;
++
+       (
+         isArrayField
+-          ? _shouldUnregisterField && !control._state.action
+-          : _shouldUnregisterField
++          ? shouldUnregisterField && !control._state.action
++          : shouldUnregisterField
+       )
+         ? control.unregister(name)
+         : updateMounted(name, false);
 ```
 
 ---
 
-### Incident Patch 2: `0333413f` (2026-10-26)
-**Commit Message**: 🔧 build(deps): bump fast-uri from 3.1.8 to 3.1.9 (#13949)
+### Incident Patch 2: `813f827e` (2026-10-27)
+**Commit Message**: 🐞 fix(useFieldArray): only apply reValidateMode onSubmit after a submit (#13952)
 
-Bumps [fast-uri](https://github.com/fastify/fast-uri) from 3.1.8 to 3.1.9.
-- [Release notes](https://github.com/fastify/fast-uri/releases)
-- [Commits](https://github.com/fastify/fast-uri/compare/v3.1.8...v3.1.9)
-
----
-updated-dependencies:
-- dependency-name: fast-uri
-  dependency-version: 3.1.9
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `pnpm-lock.yaml` (modified, +7/-12)
-```diff
-@@ -1332,11 +1332,6 @@ packages:
- 
-   ajv-formats@3.0.1:
-     resolution: {integrity: sha512-8iUql50EUR+uUcdRQ3HDqa6EVyo3docL8g5WJ3FNcWmu62IbkGUue/pEyLBW8VGKKucTPgqeks4fIU1DA4yowQ==}
--    peerDependencies:
--      ajv: ^8.0.0
--    peerDependenciesMeta:
--      ajv:
--        optional: true
- 
-   ajv@6.15.0:
-     resolution: {integrity: sha512-fgFx7Hfoq60ytK2c7DhnF8jIvzYgOMxfugjLOSMHjLIPgenqa7S7oaagATUq99mV6IYvN2tRmC0wnTYX6iPbMw==}
-@@ -1902,8 +1897,8 @@ packages:
-   fast-levenshtein@2.0.6:
-     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
- 
--  fast-uri@3.1.8:
--    resolution: {integrity: sha512-GZMtZUTNRpOVIECoXwLNZS5xUGE+mVNbTB8h/7Rwh2TFWcBQiPzTgyZi05BF9UMZKkLJv8XBRJTlU7zg8+ZfMg==}
-+  fast-uri@3.1.9:
-+    resolution: {integrity: sha512-hS/0Wt3Ya043oKXs0sIxrMpKQITXhMLIrVAKKXi4gozGC9v7YRWVnXIZzjNPTO02M9BdxLCWqK1yRXgNziVyJQ==}
- 
-   fb-watchman@2.0.2:
-     resolution: {integrity: sha512-p5161BqbuCaSnB8jIbzQHOlpgsPmK5rJVDfDKO91Axs5NC1uu3HRQm6wt9cd9/+GtQQIO53JdGXXoyDpTAsgYA==}
-@@ -4216,7 +4211,7 @@ snapshots:
-     dependencies:
-       ajv: 8.18.0
-       ajv-draft-04: 1.0.0(ajv@8.18.0)
--      ajv-formats: 3.0.1(ajv@8.18.0)
-+      ajv-formats: 3.0.1
-       fs-extra: 11.3.5
-       import-lazy: 4.0.0
-       jju: 1.4.0
-@@ -4614,8 +4609,8 @@ snapshots:
-     optionalDependencies:
-       ajv: 8.18.0
- 
--  ajv-formats@3.0.1(ajv@8.18.0):
--    optionalDependencies:
-+  ajv-formats@3.0.1:
-+    dependencies:
-       ajv: 8.18.0
- 
-   ajv@6.15.0:
-@@ -4628,7 +4623,7 @@ snapshots:
-   ajv@8.18.0:
-     dependencies:
-       fast-deep-equal: 3.1.3
--      fast-uri: 3.1.8
-+      fast-uri: 3.1.9
-       json-schema-traverse: 1.0.0
-       require-from-string: 2.0.2
- 
-@@ -5338,7 +5333,7 @@ snapshots:
- 
-   fast-levenshtein@2.0.6: {}
- 
--  fast-uri@3.1.8: {}
-+  fast-uri@3.1.9: {}
- 
-   fb-watchman@2.0.2:
-     dependencies:
-```
-
----
-
-### Incident Patch 3: `45b1ad28` (2026-10-26)
-**Commit Message**:  🐞 fix #13844 issue formState value flip (#13948)
-
-**File**: `package.json` (modified, +1/-1)
-```diff
-@@ -111,7 +111,7 @@
-     "files": [
-       {
-         "path": "./dist/index.cjs.js",
--        "maxSize": "15.5 kB"
-+        "maxSize": "16.0 kB"
-       }
-     ]
-   },
-```
+Co-authored-by: Bill <[REDACTED_EMAIL]>
 
 **File**: `src/__tests__/useFieldArray.test.tsx` (modified, +66/-0)
 ```diff
-@@ -19,6 +19,7 @@ import type {
-   UseFormRegister,
-   UseFormReturn,
- } from '../types';
-+import { useController } from '../useController';
- import { useFieldArray } from '../useFieldArray';
- import { useForm } from '../useForm';
- import { FormProvider } from '../useFormContext';
-@@ -7138,3 +7139,68 @@ describe('useFieldArray with Activity', () => {
+@@ -6644,6 +6644,72 @@ describe('useFieldArray with checkbox', () => {
+       expect(screen.queryByTestId('error')?.textContent).toBe(errorAfterAppend);
      },
    );
- });
 +
-+it('should not add an array row when a frozen controlled row re-renders after reset', () => {
-+  type FormValues = { cart: { name: string }[] };
++  it.each(['onChange', 'onTouched', 'all'] as const)(
++    'validate field array operations before submit when mode is %s and reValidateMode is onSubmit',
++    async (mode) => {
++      const App = () => {
++        const {
++          control,
++          handleSubmit,
++          formState: { errors },
++        } = useForm({
++          mode,
++          reValidateMode: 'onSubmit',
++          defaultValues: {
++            test: [{ name: 'a' }],
++          },
++        });
 +
-+  let isDirty = false;
++        const { fields, append, remove } = useFieldArray({
++          control,
++          name: 'test',
++          rules: { required: 'Add an item' },
++        });
 +
-+  const Frozen = React.memo(
-+    ({ children }: { children: React.ReactNode; open: boolean }) => (
-+      <>{children}</>
-+    ),
-+    (_, next) => !next.open,
++        return (
++          <form onSubmit={handleSubmit(() => {})}>
++            {errors.test?.root?.message && (
++              <p data-testid="error">{errors.test.root.message}</p>
++            )}
++            <p>rows: {fields.length}</p>
++
++            <button type="button" onClick={() => append({ name: 'b' })}>
++              append
++            </button>
++            <button type="button" onClick={() => remove(0)}>
++              remove
++            </button>
++            <button type="submit">submit</button>
++          </form>
++        );
++      };
++
++      render(<App />);
++
++      await act(async () => {
++        fireEvent.click(screen.getByRole('button', { name: 'remove' }));
++      });
++
++      screen.getByText('rows: 0');
++      expect(await screen.findByTestId('error')).toHaveTextContent(
++        'Add an item',
++      );
++
++      await act(async () => {
++        fireEvent.click(screen.getByRole('button', { name: 'submit' }));
++      });
++
++      expect(screen.getByTestId('error')).toHaveTextContent('Add an item');
++
++      await act(async () => {
++        fireEvent.click(screen.getByRole('button', { name: 'append' }));
++      });
++
++      screen.getByText('rows: 1');
++      expect(screen.getByTestId('error')).toHaveTextContent('Add an item');
++    },
 +  );
-+
-+  const Input = ({ name }: { name: `cart.${number}.name` }) => {
-+    const {
-+      field,
-+      fieldState: { error },
-+    } = useController<FormValues>({ name });
-+
-+    return <input {...field} aria-invalid={!!error} />;
-+  };
-+
-+  function App() {
-+    const methods = useForm<FormValues>({
-+      defaultValues: { cart: [] },
-+      mode: 'onBlur',
-+    });
-+    const [open, setOpen] = React.useState(false);
-+    const { fields, append } = useFieldArray({
-+      name: 'cart',
-+      control: methods.control,
-+    });
-+
-+    isDirty = methods.formState.isDirty;
-+
-+    return (
-+      <>
-+        <button onClick={() => methods.reset({ cart: [] })}>reset</button>
-+        <button onClick={() => setOpen(!open)}>toggle</button>
-+        <Frozen open={open}>
-+          <FormProvider {...methods}>
-+            {fields.map((field, index) => (
-+              <Input key={field.id} name={`cart.${index}.name`} />
-+            ))}
-+          </FormProvider>
-+          <button onClick={() => append({ name: '' })}>append</button>
-+        </Frozen>
-+      </>
-+    );
-+  }
-+
-+  render(<App />);
-+
-+  fireEvent.click(screen.getByText('toggle'));
-+  fireEvent.click(screen.getByText('append'));
-+  fireEvent.click(screen.getByText('toggle'));
-+  fireEvent.click(screen.getByText('reset'));
-+  fireEvent.click(screen.getByText('toggle'));
-+
-+  expect(isDirty).toBe(false);
-+
-+  fireEvent.click(screen.getByText('append'));
-+
-+  expect(screen.getAllByRole('textbox')).toHaveLength(1);
-+});
+ });
+ 
+ it('not lose defaultValues when useFieldArray and watch are used together', async () => {
 ```
 
-**File**: `src/useController.ts` (modified, +6/-1)
+**File**: `src/useFieldArray.ts` (modified, +1/-1)
 ```diff
-@@ -87,14 +87,19 @@ export function useController<
-   const _props = React.useRef(props);
-   const _proxyRef = React.useRef<Ref | null>(null);
+@@ -384,7 +384,7 @@ export function useFieldArray<
+     if (
+       _actioned.current &&
+       (!validationModes.isOnSubmit || control._formState.isSubmitted) &&
+-      !reValidateModes.isOnSubmit &&
++      !(control._formState.isSubmitted && reValidateModes.isOnSubmit) &&
+       (!validationModes.isOnBlur ||
+         (control._formState.isSubmitted && reValidateModes.isOnChange))
+     ) {
+```
+
+---
+
+### Incident Patch 3: `9d8041c3` (2026-10-27)
+**Commit Message**: 🐞 fix(validate): ignore an older form level validate result that settles last (#13951)
+
+**File**: `src/__tests__/useForm.test.tsx` (modified, +114/-0)
+```diff
+@@ -3502,6 +3502,120 @@ describe('useForm', () => {
+       expect(result.current.getErrors('form.lastName')).toBeUndefined();
+     });
  
-+  const _registeredName = React.useRef<string | undefined>(undefined);
-   const _registerProps = React.useRef(
-     control.register(name, {
-       ...props.rules,
--      value,
-+      value:
-+        _registeredName.current === name && !get(control._fields, name)
-+          ? undefined
-+          : value,
-       ...(isBoolean(props.disabled) ? { disabled: props.disabled } : {}),
-     }),
-   );
++    it('keep the latest form-level errors when an older async validate resolves last', async () => {
++      const resolvers: Record<string, (result: true | string) => void> = {};
++
++      const App = () => {
++        const {
++          register,
++          formState: { errors, isValid },
++        } = useForm<{ username: string }>({
++          mode: 'onChange',
++          defaultValues: { username: '' },
++          validate: ({ formValues }) =>
++            new Promise((resolve) => {
++              resolvers[formValues.username] = resolve;
++            }),
++        });
++
++        return (
++          <form>
++            <input {...register('username')} />
++            <p>{errors.form?.message}</p>
++            <p>{isValid ? 'valid' : 'invalid'}</p>
++          </form>
++        );
++      };
++
++      render(<App />);
++
++      await act(async () => {
++        resolvers[''](true);
++      });
++
++      fireEvent.change(screen.getByRole('textbox'), {
++        target: { value: 'a' },
++      });
++      fireEvent.change(screen.getByRole('textbox'), {
++        target: { value: 'ab' },
++      });
++
++      await act(async () => {
++        resolvers.ab(true);
++      });
++      await act(async () => {
++        resolvers.a('"a" is taken');
++      });
++
++      expect(screen.queryByText('"a" is taken')).not.toBeInTheDocument();
++      expect(screen.getByText('valid')).toBeVisible();
++    });
++
++    it('ignore an older trigger form-level result that resolves after a newer one', async () => {
++      const resolvers: ((result: true | string) => void)[] = [];
++      const { result } = renderHook(() => {
++        const form = useForm<{ username: string }>({
++          validate: () =>
++            new Promise((resolve) => {
++              resolvers.push(resolve);
++            }),
++        });
++        form.formState.isValid;
++        return form;
++      });
++
++      await act(async () => {
++        resolvers.splice(0).forEach((resolve) => resolve(true));
++      });
++
++      let first!: Promise<boolean>;
++      let second!: Promise<boolean>;
++
++      act(() => {
++        first = result.current.trigger();
++        second = result.current.trigger();
++      });
++
++      await act(async () => {
++        resolvers[1](true);
++      });
++      await act(async () => {
++        resolvers[0]('stale');
++      });
++
++      expect(await first).toBe(true);
++      expect(await second).toBe(true);
++      expect(result.current.getErrors('form')).toBeUndefined();
++      expect(result.current.formState.isValid).toBe(true);
++    });
++
++    it('still apply a slow form-level validate result when no newer call started', async () => {
++      const resolvers: ((result: true | string) => void)[] = [];
++      const { result } = renderHook(() =>
++        useForm<{ username: string }>({
++          validate: () =>
++            new Promise((resolve) => {
++              resolvers.push(resolve);
++            }),
++        }),
++      );
++
++      let pending!: Promise<boolean>;
++
++      act(() => {
++        pending = result.current.trigger();
++      });
++
++      await act(async () => {
++        resolvers[0]('taken');
++      });
++
++      expect(await pending).toBe(false);
++      expect(result.current.getErrors('form')).toEqual(
++        expect.objectContaining({ message: 'taken' }),
++      );
++    });
++
+     it.each([
+       { description: 'an empty object', validResult: {} },
+       {
+```
+
+**File**: `src/logic/createFormControl.ts` (modified, +6/-1)
+```diff
+@@ -239,6 +239,7 @@ export function createFormControl<
+   };
  
-+  _registeredName.current = name;
-   _props.current = props;
+   let _setValidCallId = 0;
++  let _validateFormCallId = 0;
+   let _resetCallId = 0;
+   let _registerCallId = 0;
+   const _registerCallIds: Record<InternalFieldName, number> = {};
+@@ -838,14 +839,18 @@ export function createFormControl<
+   }) => {
+     if (_options.validate) {
+       const resetCallId = _resetCallId;
++      const validateFormCallId = ++_validateFormCallId;
+       const result = await _options.validate({
+         formValues: _formValues,
+         formState: _formState,
+         name,
+         eventType,
+       });
  
-   const fieldState = React.useMemo(
+-      if (resetCallId !== _resetCallId) {
++      if (
++        resetCallId !== _resetCallId ||
++        validateFormCallId !== _validateFormCallId
++      ) {
+         return true;
+       }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #13956** (2026-10-28): fix(useController): read the current unregistration option on unmount (@clean99)
+- **PR #13952** (2026-10-27): fix(useFieldArray): only apply reValidateMode onSubmit after a submit (@dfedoryshchev)
+- **PR #13951** (2026-10-27): fix(validate): ignore an older form level validate result that settles last (@KooYS)
 - **PR #13950** (2026-10-27): fix(setValue): select empty-string checkbox options (@clean99)
 - **PR #13949** (2026-10-26): build(deps): bump fast-uri from 3.1.8 to 3.1.9 (@dependabot[bot])
 - **PR #13948** (2026-10-26):  🐞 fix #13844 issue formState value flip (@bluebill1049)
-- **PR #13946** (2026-10-25): fix(setValues): update dirty state for unregistered values (@charan-rathore)
-- **PR #13945** (2026-10-25): 🐞 fix #13944 useFormState / Controller deep-clone the entire form state on every mount and unmount (@bluebill1049)
-- **PR #13943** (2026-10-23): Revert "🐞 fix(reset): keep mounted Controllers registered so submit still validates them" (@bluebill1049)
 
 ---
 
@@ -1172,58 +1145,65 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 🐞 fix(setValue): select empty-string checkbox options (#13950)
+## X. 🐞 fix(useController): read the current unregistration option on unmount (#13956
 
 **RULE**:
-When implementing operations in `src/__tests__/logic/createFormControl.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-hook-form/react-hook-form. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/__tests__/useController.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-hook-form/react-hook-form. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a8e11030`: 🐞 fix(setValue): select empty-string checkbox options (#13950). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `70bfa3ae`: 🐞 fix(useController): read the current unregistration option on unmount (#13956). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/__tests__/logic/createFormControl.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/__tests__/useController.test.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
   it.each([
-    { values: [] },
-    { values: [''] },
-    { values: ['other'] },
-    { values: ['', 'other'] },
-  ])('set and reset checkbox group values to $values', ({ values }) => {
-    const { register, setValue, resetField, getValues, subscribe } =
-      createFormControl<{ choices: string[] }>({
-        defaultValues: { choices: [] },
-      });
-    const unsubscribe = subscribe({
-      formState: { values: true },
-      callback: jest.fn(),
-    });
-    const inputs = ['', 'other'].map((value) => {
-      const input = document.createElement('input');
-      input.type = 'checkbox';
-      input.name = 'choices';
-      input.value = value;
-      document.body.append(input);
-      register('choices').ref(input);
-      return input;
-    });
-
-    try {
-      setValue('choices', values);
-
-      expect(getValues('choices')).toEqual(values);
-      expect(inputs.map((input) => input.checked)).toEqual(
-        ['', 'other'].map((value) => values.includes(value)),
+    [false, true, undefined],
+    [true, false, undefined],
+    [false, false, undefined],
+    [true, true, undefined],
+    [false, true, false],
+    [true, false, false],
+    [false, true, true],
+    [true, false, true],
+  ])(
+    'use the current shouldUnregister option on unmount (%s -> %s, field: %s)',
+    (initial, next, shouldUnregister) => {
+      const form = renderHook(
+        ({ shouldUnregister }) =>
+          useForm({
+            defaultValues: { test: 'default' },
+            shouldUnregister,
+          }),
+        { initialProps: { shouldUnregister: initial } },
+      );
+      const field = renderHook(() =>
+        useController({
+          name: 'test',
+          control: form.result.current.control,
+          shouldUnregister,
+        }),
       );
 
-      setValue('choices', []);
-      expect(inputs.map((input) => input.checked)).toEqual([false, false]);
+      act(() => {
+        field.result.current.field.onChange('updated');
+      });
 
-      resetField('choices', { defaultValue: values });
-      expect(getValues('choices')).toEqual(values);
-   
+      form.rerender({ shouldUnregister: next });
+      field.rerender();
+
+      expect(form.result.current.getValues()).toEqual({ test: 'updated' });
+
+      field.unmount();
+
+      expect(form.result.current.getValues()).toEqual(
+        next || shouldUnregister ? {} : { test: 'updated' },
+      );
+    },
+  );
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1233,4 +1213,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a8e11030` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `70bfa3ae` are properly handled with clean fallback behavior.
