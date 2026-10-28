@@ -995,8 +995,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V3",
     "sourceVersion": "hf-deepseek-ai-deepseek-v3",
     "license": "Open-Source",
-    "contentHash": "e95ef162a3a9a489151c0ed80794867f53cf86473006a5dedddbc3ba69b4c2d2",
-    "lastHarvestedAt": "2026-10-25T21:08:40.803Z",
+    "contentHash": "448f254f69f2ad749345385a2e45a4789720b33d3953c040eaf8d8b58bf0d803",
+    "lastHarvestedAt": "2026-10-28T15:16:38.774Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v3"
   },
   "hf-baidu-unlimited-ocr": {
@@ -4963,10 +4963,10 @@
     "repository": "crossplane/crossplane",
     "platform": "github",
     "sourceUrl": "https://github.com/crossplane/crossplane",
-    "sourceVersion": "6dbabf1e",
+    "sourceVersion": "21e97313",
     "license": "Apache-2.0",
-    "contentHash": "8ba5d588de114d6a8b663eddc439fc829c8ac65adf2ea3301de15c3f5e234539",
-    "lastHarvestedAt": "2026-10-20T18:20:44.559Z",
+    "contentHash": "a92fe8c30a85aebf31c9bc37120963e80ec6ad882635f9be3bb1e8878c67b394",
+    "lastHarvestedAt": "2026-10-28T15:16:36.628Z",
     "learningId": "learn-github-crossplane-crossplane"
   },
   "apple-foundationdb": {

@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T15:09:52.691Z",
-    "lastVerified": "2026-10-28T15:09:52.691Z",
+    "lastChecked": "2026-10-28T15:16:41.308Z",
+    "lastVerified": "2026-10-28T15:16:41.308Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -118,12 +118,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "Bitterbot-AI/bitterbot-desktop",
+    "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-28T14:49:48.800Z",
-    "lastVerified": "2026-10-28T14:49:48.800Z",
+    "lastChecked": "2026-10-28T15:16:38.610Z",
+    "lastVerified": "2026-10-28T15:16:38.610Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -132,7 +132,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c22b2932"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -1329,12 +1330,12 @@
     "lastVerified": "2026-10-28T05:03:41.416Z"
   },
   "zama-ai-tfhe-rs": {
-    "name": "zama-ai/tfhe-rs",
+    "name": "tfhe-rs",
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T11:52:43.451Z",
-    "lastVerified": "2026-10-28T11:52:43.451Z",
+    "lastChecked": "2026-10-28T15:16:33.559Z",
+    "lastVerified": "2026-10-28T15:16:33.559Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -1343,7 +1344,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b07103df"
   },
   "memvid-memvid": {
     "name": "memvid",
@@ -4296,5 +4298,60 @@
     "lastChecked": "2026-10-28T15:09:50.339Z",
     "revisionIdentifier": "146d8664",
     "lastVerified": "2026-10-28T15:09:50.339Z"
+  },
+  "datadog-glommio": {
+    "name": "glommio",
+    "officialUrl": "https://github.com/DataDog/glommio",
+    "lastChecked": "2026-10-28T15:16:23.530Z",
+    "revisionIdentifier": "84348159",
+    "lastVerified": "2026-10-28T15:16:23.530Z"
+  },
+  "hf-deepseek-ai-deepseek-v3": {
+    "name": "deepseek-ai/DeepSeek-V3",
+    "officialUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V3",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T15:16:26.339Z",
+    "lastVerified": "2026-10-28T15:16:26.339Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
+    "contentHash": "448f254f69f2ad749345385a2e45a4789720b33d3953c040eaf8d8b58bf0d803",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "lingodotdev-lingo.dev": {
+    "name": "lingo.dev",
+    "officialUrl": "https://github.com/lingodotdev/lingo.dev",
+    "lastChecked": "2026-10-28T15:16:28.550Z",
+    "revisionIdentifier": "28435298",
+    "lastVerified": "2026-10-28T15:16:28.550Z"
+  },
+  "crossplane-crossplane": {
+    "name": "crossplane/crossplane",
+    "officialUrl": "https://github.com/crossplane/crossplane",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-28T15:16:36.201Z",
+    "lastVerified": "2026-10-28T15:16:36.201Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-crossplane-crossplane",
+    "contentHash": "a92fe8c30a85aebf31c9bc37120963e80ec6ad882635f9be3bb1e8878c67b394",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sfu-db-connector-x": {
+    "name": "connector-x",
+    "officialUrl": "https://github.com/sfu-db/connector-x",
+    "lastChecked": "2026-10-28T15:16:36.040Z",
+    "revisionIdentifier": "0f5ee234",
+    "lastVerified": "2026-10-28T15:16:36.040Z"
   }
 }

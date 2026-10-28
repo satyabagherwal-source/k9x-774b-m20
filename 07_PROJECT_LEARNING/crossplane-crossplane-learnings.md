@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crossplane-crossplane-learnings.md`  
 > **Source**: github ([https://github.com/crossplane/crossplane](https://github.com/crossplane/crossplane))  
-> **Source Version**: `6dbabf1e`  
+> **Source Version**: `21e97313`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T18:20:44.315Z  
+> **Timestamp**: 2026-10-28T15:16:36.320Z  
 > **Learning ID**: `learn-github-crossplane-crossplane`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crossplane-crossplane-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crossplane/crossplane](https://github.com/crossplane/crossplane))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T18:20:44.308Z  
+> **Harvest Timestamp**: 2026-10-28T15:16:36.201Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Cloud Native Control Plane
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12182 stars
+- **Stars / Engagement**: 12201 stars
 
 ---
 
@@ -1489,13 +1489,13 @@ type startCommand struct {
 	EnablePipelineInspector           bool `group:"Alpha Features:" help:"Enable support for emitting function pipeline execution data to a sidecar."`
 	EnableProviderDeletionProtection  bool `group:"Alpha Features:" help:"Enable automatic protection of Providers from deletion when they have active managed resources. Requires --enable-usages."`
 	EnablePipelineOCIReferences       bool `group:"Alpha Features:" help:"Enable support for referencing functions by OCI reference in Composition and Operation pipelines."`
+	EnableCompositionRevisionGC       bool `group:"Alpha Features:" help:"Enable garbage collection of unused CompositionRevisions."`
 
 	XfnCacheDir             string        `default:"/cache/xfn"                         env:"XFN_CACHE_DIR"             group:"Alpha Features:" help:"Directory used for caching function responses. Requires --enable-function-response-cache."`
 	XfnCacheMaxTTL          time.Duration `default:"24h"                                env:"XFN_CACHE_MAX_TTL"         group:"Alpha Features:" help:"Maximum TTL for cached function responses. Set to 0 to disable. Requires --enable-function-response-cache."`
 	PipelineInspectorSocket string        `default:"/var/run/pipeline-inspector/socket" env:"PIPELINE_INSPECTOR_SOCKET" group:"Alpha Features:" help:"Unix socket path for pipeline inspector sidecar. Requires --enable-pipeline-inspector."`
 
-	EnableDeploymentRuntimeConfigs          bool `default:"true" group:"Beta Features:" help:"Enable support for Deployment Runtime Configs."`
-	EnableUsages                            bool `defau
+	EnableDeploymentRuntimeConfigs          bool `default:"true"
 ```
 
 
@@ -1504,11 +1504,11 @@ type startCommand struct {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7921** (2026-10-22): **RBAC manager doesn't grant `/scale` for XRDs that declare a scale subresource**
+  *Symptoms*: ### What happened? Since #7004, XRDs can declare a scale subresource, so I expected users with crossplane-edit/crossplane-admin to be able to `kubectl scale` an XR. I attempted to use `kubectl scale` on an XR and got the following error: ``` ➭ kubectl scale modeldeployment glm -n ml-team --replicas=0 Error from server (Forbidden): modeldeployments.modelplane.ai "glm" is forbidden: User "upbound:user:dalorion" cannot patch resource "modeldeployments/scale" in API group "modelplane.ai" in the namespace "ml-team" ➭ k auth can-i --list -n ml-team | grep -E 'Resources|modeldeployments' Resources                                                                                Non-Resource URLs   Resource Names   Verbs modeldeployments.modelplane.ai/status                                                    []                  []               [get list watch *] modeldeployments.modelplane.ai                                                           []                  []               [get list watch *] ``` However I was able to patch the resource and scale down just fine:  ``` kubectl patch modeldeployment glm -n ml-team --type merge -p '{"spec":{"replicas":0}}' ```  ### How can we reproduce it? 1. Create a kind cluster ``` ➭ export KUBECONFIG=~/.kube/kubeconfig-scale-rbac ➭ kind create cluster --name scale-rbac --kubeconfig "$KUBECONFIG" ... ➭ k auth whoami  ATTRIBUTE                                           VALUE Username                                            kubernetes-admin
+
 - **Issue #7838** (2026-09-22): **Old revision not demoted for SA**
   *Symptoms*: ### What happened?  When trying to upgrade from v2.3.3 to v2.4.1, the functions and provider pods didn't start up. In all function/provider resources there are events messages like:  ```     Message:               Package runtime health is "False" with message: post establish runtime hook failed for package: cannot apply function package service account: ServiceAccount "function-sequencer" is invalid: metadata.ownerReferences: Invalid value: [{"apiVersion":"pkg.crossplane.io/v1","kind":"FunctionRevision","name":"function-sequencer-77518d1ebbf7","uid":"f866d50b-cddc-4fe6-90c2-462c76ac7cb9","controller":true,"blockOwnerDeletion":true},{"apiVersion":"pkg.crossplane.io/v1","kind":"FunctionRevision","name":"function-sequencer-bdbbc83b7f94","uid":"ca0276a5-0400-482e-972b-8333f8f093a7","controller":true,"blockOwnerDeletion":true}]: Only one reference can have Controller set to true. Found "true" in references for FunctionRevision/function-sequencer-77518d1ebbf7 and FunctionRevision/function-sequencer-bdbbc83b7f94 ```  SA already had old revision's `controller: true` ownerRef. New revision added another `controller: true`, which Kubernetes rejects.  ### How can we reproduce it?  Any 2.3.x to 2.4.x upgrade with running functions/providers should raise it.  ### What environment did it happen in? Crossplane version: v2.4.1 
-
-- **Issue #7756** (2026-09-25): **TestConfigurationPullFromPrivateRegistry is failing**
-  *Symptoms*: ### What happened?  On https://github.com/crossplane/crossplane/pull/7755, we noticed that the e2e test `TestConfigurationPullFromPrivateRegistry` is failing consistently with:  ``` DENIED: Permission 'artifactregistry.repositories.downloadArtifacts' denied on resource  '//artifactregistry.googleapis.com/projects/crossplane-playground/locations/us-west1/repositories/xp-install-test'  (or it may not exist). ```  Example failure in https://github.com/crossplane/crossplane/actions/runs/32150003551/job/95753219697?pr=7755  It looks like this test container repository `xp-install-test` in GCP that we use during the e2e tests for validating package pulls from a private repo has been accidentally deleted.  We need to figure out how to restore it or how to migrate it to a more permanent location.  ### How can we reproduce it?  Run any of the `pkg` area e2e tests and `TestConfigurationPullFromPrivateRegistry` will fail.  ### What environment did it happen in?  This is happening across all currently supported crossplane branches (1.20 -> 2.4 and main) 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1525,111 +1525,85 @@ type startCommand struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `58cb6a11` (2026-10-20)
+### Incident Patch 1: `a9ed0775` (2026-10-27)
 **Commit Message**: chore(deps): update vulnerable dependencies [security]
 
-**File**: `test/e2e/functions/revision-id/go.mod` (modified, +11/-11)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -53,19 +53,19 @@ require (
- 	go.uber.org/zap v1.27.0 // indirect
- 	go.yaml.in/yaml/v2 v2.4.2 // indirect
- 	go.yaml.in/yaml/v3 v3.0.4 // indirect
--	golang.org/x/mod v0.29.0 // indirect
--	golang.org/x/net v0.46.0 // indirect
--	golang.org/x/oauth2 v0.30.0 // indirect
--	golang.org/x/sync v0.17.0 // indirect
--	golang.org/x/sys v0.37.0 // indirect
--	golang.org/x/term v0.36.0 // indirect
--	golang.org/x/text v0.30.0 // indirect
-+	golang.org/x/mod v0.41.0 // indirect
-+	golang.org/x/net v0.60.0 // indirect
-+	golang.org/x/oauth2 v0.36.0 // indirect
-+	golang.org/x/sync v0.23.0 // indirect
-+	golang.org/x/sys v0.48.0 // indirect
-+	golang.org/x/term v0.46.0 // indirect
-+	golang.org/x/text v0.42.0 // indirect
- 	golang.org/x/time v0.11.0 // indirect
--	golang.org/x/tools v0.38.0 // indirect
-+	golang.org/x/tools v0.49.0 // indirect
- 	golang.org/x/tools/go/packages/packagestest v0.1.1-deprecated // indirect
--	google.golang.org/genproto/googleapis/rpc v0.0.0-20251007200510-49b9836ed3ff // indirect
--	google.golang.org/grpc v1.75.1 // indirect
--	google.golang.org/protobuf v1.36.10 // indirect
-+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
-+	google.golang.org/grpc v1.83.1 // indirect
-+	google.golang.org/protobuf v1.36.11 // indirect
- 	gopkg.in/inf.v0 v0.9.1 // indirect
- 	gopkg.in/yaml.v2 v2.4.0 // indirect
- 	gopkg.in/yaml.v3 v3.0.1 // indirect
+@@ -65,7 +65,7 @@ require (
+ 	github.com/dustin/go-humanize v1.0.1 // indirect
+ 	github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f // indirect
+ 	github.com/fxamacker/cbor/v2 v2.9.0 // indirect
+-	github.com/go-chi/chi/v5 v5.3.0 // indirect
++	github.com/go-chi/chi/v5 v5.4.0 // indirect
+ 	github.com/go-errors/errors v1.4.2 // indirect
+ 	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
+ 	github.com/go-openapi/analysis v0.25.2 // indirect
 ```
 
-**File**: `test/e2e/functions/revision-id/go.sum` (modified, +34/-34)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -144,16 +144,16 @@ github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9de
- github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
- go.opentelemetry.io/auto/sdk v1.2.1 h1:jXsnJ4Lmnqd11kwkBV2LgLoFMZKizbCi5fNZ/ipaZ64=
- go.opentelemetry.io/auto/sdk v1.2.1/go.mod h1:KRTj+aOaElaLi+wW1kO/DZRXwkF4C5xPbEe3ZiIhN7Y=
--go.opentelemetry.io/otel v1.38.0 h1:RkfdswUDRimDg0m2Az18RKOsnI8UDzppJAtj01/Ymk8=
--go.opentelemetry.io/otel v1.38.0/go.mod h1:zcmtmQ1+YmQM9wrNsTGV/q/uyusom3P8RxwExxkZhjM=
--go.opentelemetry.io/otel/metric v1.38.0 h1:Kl6lzIYGAh5M159u9NgiRkmoMKjvbsKtYRwgfrA6WpA=
--go.opentelemetry.io/otel/metric v1.38.0/go.mod h1:kB5n/QoRM8YwmUahxvI3bO34eVtQf2i4utNVLr9gEmI=
--go.opentelemetry.io/otel/sdk v1.37.0 h1:ItB0QUqnjesGRvNcmAcU0LyvkVyGJ2xftD29bWdDvKI=
--go.opentelemetry.io/otel/sdk v1.37.0/go.mod h1:VredYzxUvuo2q3WRcDnKDjbdvmO0sCzOvVAiY+yUkAg=
--go.opentelemetry.io/otel/sdk/metric v1.37.0 h1:90lI228XrB9jCMuSdA0673aubgRobVZFhbjxHHspCPc=
--go.opentelemetry.io/otel/sdk/metric v1.37.0/go.mod h1:cNen4ZWfiD37l5NhS+Keb5RXVWZWpRE+9WyVCpbo5ps=
--go.opentelemetry.io/otel/trace v1.38.0 h1:Fxk5bKrDZJUH+AMyyIXGcFAPah0oRcT+LuNtJrmcNLE=
--go.opentelemetry.io/otel/trace v1.38.0/go.mod h1:j1P9ivuFsTceSWe1oY+EeW3sc+Pp42sO++GHkg4wwhs=
-+go.opentelemetry.io/otel v1.44.0 h1:JjwHmHpA4iZ3wBxluu2fbbE7j4kqlE8jXyAyPXH7HqU=
-+go.opentelemetry.io/otel v1.44.0/go.mod h1:BMgjTHL9WPRlRjL2oZCBTL4whCGtXch2H4BhOPIAyYc=
-+go.opentelemetry.io/otel/metric v1.44.0 h1:1w0gILTcHdr3YI+ixLyjemwrVnsMURbTZFrSYCdDdmc=
-+go.opentelemetry.io/otel/metric v1.44.0/go.mod h1:8O7hanEPBNgEMmybD3s2VBKcgWOCsA6tzHBPODAiquo=
-+go.opentelemetry.io/otel/sdk v1.44.0 h1:nHYwb9lK+fJPU/dnT6s7W7Z8itMWyqrnVfbheVYrZ58=
-+go.opentelemetry.io/otel/sdk v1.44.0/go.mod h1:Osuydd3Se74nqjAKxid74N5eC+jfEqfTegHRnq58oK0=
-+go.opentelemetry.io/otel/sdk/metric v1.44.0 h1:3LlKgI+VjbVsjNRFZJZAJ30WjXC5VkNRks6si09iEfI=
-+go.opentelemetry.io/otel/sdk/metric v1.44.0/go.mod h1:5B5pMARnXxKhltooO4xUuCBorl65a4EpnTalObqOigA=
-+go.opentelemetry.io/otel/trace v1.44.0 h1:jxF5CsGYCe74MCRx2X4g7WsY/VBKRqqpNvXlX/6gtIk=
-+go.opentelemetry.io/otel/trace v1.44.0/go.mod h1:oLl1jrMQAVo6v3GAggN+1VH9VIz9iUSvW53sW1Q8PIE=
- go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
- go.uber.org/goleak v1.3.0/go.mod h1:CoHD4mav9JJNrW/WLlf7HGZPjdw8EucARQHekz1X6bE=
- go.uber.org/multierr v1.11.0 h1:blXXJkSxSSfBVBlC76pxqeO+LN3aDfLQo+309xJstO0=
-@@ -171,41 +171,41 @@ golang.org/x/exp v0.0.0-20251009144603-d2f985daa21b h1:18qgiDvlvH7kk8Ioa8Ov+K6xC
- golang.org/x/exp v0.0.0-20251009144603-d2f985daa21b/go.mod h1:j/pmGrbnkbPtQfxEe5D0VQhZC6qKbfKifgD0oM7sR70=
- golang.org/x/mod v0.2.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
- golang.org/x/mod v0.3.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
--golang.org/x/mod v0.29.0 h1:HV8lRxZC4l2cr3Zq1LvtOsi/ThTgWnUk/y64QSs8GwA=
--golang.org/x/mod v0.29.0/go.mod h1:NyhrlYXJ2H4eJiRy/WDBO6HMqZQ6q9nk4JzS3NuCK+w=
-+golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
-+golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
- golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
- golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
- golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
- golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
--golang.org/x/net v0.46.0 h1:giFlY12I07fugqwPuWJi68oOnpfqFnJIJzaIIm2JVV4=
--golang.org/x/net v0.46.0/go.mod h1:Q9BGdFy1y4nkUwiLvT5qtyhAnEHgnQ/zd8PfU6nc210=
--golang.org/x/oauth2 v0.30.0 h1:dnDm7JmhM45NNpd8FDDeLhK6FwqbOf4MLCM9zb1BOHI=
--golang.org/x/oauth2 v0.30.0/go.mod h1:B++QgG3ZKulg6sRPGD/mqlHQs5rB3Ml9erfeDY7xKlU=
-+golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
-+golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
-+golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
-+golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
- golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
--golang.org/x/sync v0.17.0 h1:l60nONMj9l5drqw6jlhIELNv9I0A4OFgRsG9k2oT9Ug=
--golang.org/x/sync v0.17.0/go.mod h1:9KTHXmSnoGruLpwFjVSX0lNNA75CykiMECbovNTZqGI=
-+golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
-+golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7w
+@@ -188,8 +188,8 @@ github.com/fsnotify/fsnotify v1.9.0 h1:2Ml+OJNzbYCTzsxtv8vKSFD9PbJjmhYF14k/jKC7S
+ github.com/fsnotify/fsnotify v1.9.0/go.mod h1:8jBTzvmWwFyi3Pb8djgCCO5IBqzKJ/Jwo8TRcHyHii0=
+ github.com/fxamacker/cbor/v2 v2.9.0 h1:NpKPmjDBgUfBms6tr6JZkTHtfFGcMKsw3eGcmD/sapM=
+ github.com/fxamacker/cbor/v2 v2.9.0/go.mod h1:vM4b+DJCtHn+zz7h3FFp/hDAI9WNWCsZj23V5ytsSxQ=
+-github.com/go-chi/chi/v5 v5.3.0 h1:halUjDxhshgXHMrao5bB8eNBXo/rnzwr8m5m36glehM=
+-github.com/go-chi/chi/v5 v5.3.0/go.mod h1:R+tYY2hNuVUUjxoPtqUdgBqevM9s9njzkTLutVsOCto=
++github.com/go-chi/chi/v5 v5.4.0 h1:+ufzvFTGKyin26Or5DLrlIDq4ygIDBVcj7oVNeeaYFE=
++github.com/go-chi/chi/v5 v5.4.0/go.mod h1:d1IG7GtKPSjPyBP365PH8sAGVHk3qfB/IhjFNRH1wWM=
+ github.com/go-errors/errors v1.4.2 h1:J6MZopCL4uSllY1OfXM374weqZFFItUbrImctkmUxIA=
+ github.com/go-errors/errors v1.4.2/go.mod h1:sIVyrIiJhuEF+Pj9Ebtd6P/rEYROXFi3BopGUQ5a5Og=
+ github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
+```
+
+**File**: `nix/vendor-hashes.nix` (modified, +1/-1)
+```diff
+@@ -12,7 +12,7 @@
+ # by hand.)
+ {
+   # Root module: github.com/crossplane/crossplane/v2
+-  root = "sha256-TgXWrBa2HNrnfvr5LFQyHiHEBjuE55l2wVQoam70Ca4=";
++  root = "sha256-YA6ZZHJvpOKVZKmBP/7oDfSzASPVgtz7rbI3khPv0yY=";
+ 
+   # apis module: github.com/crossplane/crossplane/apis/v2
+   apis = "sha256-jqLo8KpfkMdu2wl1MWkhLJ5dCXgnXyXv7xk9nZfIoWI=";
+```
+
+**File**: `test/e2e/functions/revision-id/go.mod` (modified, +1/-1)
+```diff
+@@ -64,7 +64,7 @@ require (
+ 	golang.org/x/tools v0.49.0 // indirect
+ 	golang.org/x/tools/go/packages/packagestest v0.1.1-deprecated // indirect
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
+-	google.golang.org/grpc v1.83.1 // indirect
++	google.golang.org/grpc v1.83.2 // indirect
+ 	google.golang.org/protobuf v1.36.11 // indirect
+ 	gopkg.in/inf.v0 v0.9.1 // indirect
+ 	gopkg.in/yaml.v2 v2.4.0 // indirect
+```
+
+**File**: `test/e2e/functions/revision-id/go.sum` (modified, +2/-2)
+```diff
+@@ -220,8 +220,8 @@ gonum.org/v1/gonum v0.17.0 h1:VbpOemQlsSMrYmn7T2OUvQ4dqxQXU+ouZFQsZOx50z4=
+ gonum.org/v1/gonum v0.17.0/go.mod h1:El3tOrEuMpv2UdMrbNlKEh9vd86bmQ6vqIcDwxEOc1E=
+ google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa h1:mZHHdPZl0dbGHCflZgAq/Q468DWVFcU2whhB2KAo8fk=
+ google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa/go.mod h1:4Hqkh8ycfw05ld/3BWL7rJOSfebL2Q+DVDeRgYgxUU8=
+-google.golang.org/grpc v1.83.1 h1:HIO0+BEtBP6soyqvqC8sNUjZ7bTs+0hFQuFF+RAy++Y=
+-google.golang.org/grpc v1.83.1/go.mod h1:kDyl6SKsiHKt0uylY5gtn5cEjkrIOhQOGDgIc4JGwzQ=
++google.golang.org/grpc v1.83.2 h1:EManeRomTObA0BU7I8vXgg/78uE5MJ9M8B39EX2WscU=
++google.golang.org/grpc v1.83.2/go.mod h1:YPI1hK3kDked6iHvgX3tR0y+nX/qpMFKhPgFsokw1S8=
+ google.golang.org/protobuf v1.36.11 h1:fV6ZwhNocDyBLK0dj+fg8ektcVegBBuEolpbTQyBNVE=
+ google.golang.org/protobuf v1.36.11/go.mod h1:HTf+CrKn2C3g5S8VImy6tdcUvCska2kB7j23XfzDpco=
+ gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7953** (2026-10-20): [release-2.2] build(deps): bump Go to 1.26.9 [security] (@lsviben)
-- **PR #7952** (2026-10-20): [release-2.3] build(deps): bump Go to 1.26.9 [security] (@lsviben)
-- **PR #7951** (2026-10-20): [release-2.4] build(deps): bump Go to 1.26.9 [security] (@lsviben)
-- **PR #7950** (2026-10-20): [Backport release-2.2] Don't cache truncated package downloads in `xpkg` (@ezgidemirel)
-- **PR #7940** (closed): Harden Helm Chart Runtime Security Defaults (@deepnemesis)
-- **PR #7937** (2026-10-20): fix(deps): update module github.com/alecthomas/kong to v1.16.1 (main) (@crossplane-renovate[bot])
+- **PR #7976** (2026-10-28): chore(deps): lock file maintenance (release-2.4) (@crossplane-renovate[bot])
+- **PR #7975** (2026-10-28): chore(deps): lock file maintenance (release-2.3) (@crossplane-renovate[bot])
+- **PR #7974** (2026-10-28): chore(deps): lock file maintenance (release-2.2) (@crossplane-renovate[bot])
+- **PR #7971** (2026-10-28): docs: add Wordfully to adopters (@vlbaluk)
+- **PR #7969** (2026-10-28): chore(deps): update module github.com/go-chi/chi/v5 to v5.4.0 [security] (release-2.4) (@crossplane-renovate[bot])
+- **PR #7968** (2026-10-28): chore(deps): update module github.com/go-chi/chi/v5 to v5.4.0 [security] (release-2.3) (@crossplane-renovate[bot])
 
 ---
 
@@ -1652,45 +1626,25 @@ Observed empirical fixes and code patches:
 ## X. deps): update vulnerable dependencies [security]
 
 **RULE**:
-When implementing operations in `test/e2e/functions/revision-id/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crossplane/crossplane. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crossplane/crossplane. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `58cb6a11`: deps): update vulnerable dependencies [security]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a9ed0775`: deps): update vulnerable dependencies [security]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/e2e/functions/revision-id/go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	golang.org/x/mod v0.41.0 // indirect
-	golang.org/x/net v0.60.0 // indirect
-	golang.org/x/oauth2 v0.36.0 // indirect
-	golang.org/x/sync v0.23.0 // indirect
-	golang.org/x/sys v0.48.0 // indirect
-	golang.org/x/term v0.46.0 // indirect
-	golang.org/x/text v0.42.0 // indirect
-	golang.org/x/tools v0.49.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
-	google.golang.org/grpc v1.83.1 // indirect
-	google.golang.org/protobuf v1.36.11 // indirect
+	github.com/go-chi/chi/v5 v5.4.0 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	golang.org/x/mod v0.29.0 // indirect
-	golang.org/x/net v0.46.0 // indirect
-	golang.org/x/oauth2 v0.30.0 // indirect
-	golang.org/x/sync v0.17.0 // indirect
-	golang.org/x/sys v0.37.0 // indirect
-	golang.org/x/term v0.36.0 // indirect
-	golang.org/x/text v0.30.0 // indirect
-	golang.org/x/tools v0.38.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20251007200510-49b9836ed3ff // indirect
-	google.golang.org/grpc v1.75.1 // indirect
-	google.golang.org/protobuf v1.36.10 // indirect
+	github.com/go-chi/chi/v5 v5.3.0 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `58cb6a11` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a9ed0775` are properly handled with clean fallback behavior.

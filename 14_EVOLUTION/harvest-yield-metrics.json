@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T15:09:41.231Z",
-  "total_cycles_completed": 5791,
-  "total_learnings_persisted": 5791,
-  "total_rules_promoted": 5271,
+  "last_updated": "2026-10-28T15:16:38.779Z",
+  "total_cycles_completed": 5793,
+  "total_learnings_persisted": 5793,
+  "total_rules_promoted": 5275,
   "history": [
-    {
-      "timestamp": "2026-10-28T01:00:07.097Z",
-      "repository": "Orange-OpenSource/hurl",
-      "learningId": "learn-github-orange-opensource-hurl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T01:00:10.565Z",
-      "repository": "arkivanov/Decompose",
-      "learningId": "learn-github-arkivanov-decompose",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T01:00:14.027Z",
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
@@ -1403,6 +1389,20 @@
       "repository": "meta-llama/Llama-2-7b",
       "learningId": "learn-huggingface-meta-llama-llama-2-7b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T15:16:36.633Z",
+      "repository": "crossplane/crossplane",
+      "learningId": "learn-github-crossplane-crossplane",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T15:16:38.779Z",
+      "repository": "deepseek-ai/DeepSeek-V3",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

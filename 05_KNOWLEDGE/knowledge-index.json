@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T15:09:41.154Z",
+  "last_updated": "2026-10-28T15:16:38.708Z",
   "total_verified_learnings": 1157,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7757,8 +7757,8 @@
       "slug": "crossplane-crossplane",
       "platform": "github",
       "source_url": "https://github.com/crossplane/crossplane",
-      "source_version": "6dbabf1e",
-      "content_hash": "8ba5d588de114d6a8b663eddc439fc829c8ac65adf2ea3301de15c3f5e234539",
+      "source_version": "21e97313",
+      "content_hash": "a92fe8c30a85aebf31c9bc37120963e80ec6ad882635f9be3bb1e8878c67b394",
       "dossier_path": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
       "promoted_rules": [
@@ -7778,7 +7778,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T18:20:44.490Z",
+      "verified_at": "2026-10-28T15:16:36.549Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -21126,10 +21126,26 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V3",
       "source_version": "hf-deepseek-ai-deepseek-v3",
-      "content_hash": "e95ef162a3a9a489151c0ed80794867f53cf86473006a5dedddbc3ba69b4c2d2",
+      "content_hash": "448f254f69f2ad749345385a2e45a4789720b33d3953c040eaf8d8b58bf0d803",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 5322,
+          "title": "Group-Limited Top-K Routing for MoE Load Balance",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5323,
+          "title": "Multi-Head Latent Attention (MLA) KV Cache Compression",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5324,
+          "title": "FP8 Quantization with Dynamic Activation Scaling",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -21147,7 +21163,7 @@
         "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv3x3khf",
         "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv4btd7d"
       ],
-      "verified_at": "2026-10-25T21:08:40.731Z",
+      "verified_at": "2026-10-28T15:16:38.694Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -94212,13 +94228,13 @@
       "rule_number": 2030,
       "title": "deps): update vulnerable dependencies [security]",
       "source_url": "https://github.com/crossplane/crossplane",
-      "source_version": "6dbabf1e",
+      "source_version": "21e97313",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-20T18:20:44.490Z"
+      "verified_at": "2026-10-28T15:16:36.549Z"
     },
     "rule-2031": {
       "learning_id": "rule-2031",
@@ -144635,6 +144651,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T14:56:45.022Z"
+    },
+    "rule-5322": {
+      "learning_id": "rule-5322",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5322,
+      "title": "Group-Limited Top-K Routing for MoE Load Balance",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V3",
+      "source_version": "hf-deepseek-ai-deepseek-v3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T15:16:38.695Z"
+    },
+    "rule-5323": {
+      "learning_id": "rule-5323",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5323,
+      "title": "Multi-Head Latent Attention (MLA) KV Cache Compression",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V3",
+      "source_version": "hf-deepseek-ai-deepseek-v3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T15:16:38.695Z"
+    },
+    "rule-5324": {
+      "learning_id": "rule-5324",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5324,
+      "title": "FP8 Quantization with Dynamic Activation Scaling",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V3",
+      "source_version": "hf-deepseek-ai-deepseek-v3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T15:16:38.695Z"
     }
   },
   "aliases": {

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-T4WI",
-    "timestamp": "2026-10-27T13:22:12.882Z",
-    "repository": "nodejs/undici",
-    "learningId": "learn-github-nodejs-undici",
-    "contentHash": "07b032a4c1156b323ed7a918a0d28d175b3a7714b9b310b34375f8318b54911c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-T4ZA",
-    "timestamp": "2026-10-27T13:22:12.982Z",
-    "repository": "cloudwego/volo",
-    "learningId": "learn-github-cloudwego-volo",
-    "contentHash": "f1ac5848331bef55cda361fe6e8fb2db9ededfc7d5ff1fb21f5f21f9fbd2dc77",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-T8A1",
     "timestamp": "2026-10-27T13:22:17.257Z",
     "repository": "karakeep-app/karakeep",
@@ -7492,6 +7462,36 @@
     "contentHash": "005d0f91a462d10cfd1750d120206f17c57693665e171eb2607a91ff13ba39ae",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-C3O1",
+    "timestamp": "2026-10-28T15:16:36.625Z",
+    "repository": "crossplane/crossplane",
+    "learningId": "learn-github-crossplane-crossplane",
+    "contentHash": "a92fe8c30a85aebf31c9bc37120963e80ec6ad882635f9be3bb1e8878c67b394",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-C5BN",
+    "timestamp": "2026-10-28T15:16:38.771Z",
+    "repository": "deepseek-ai/DeepSeek-V3",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
+    "contentHash": "448f254f69f2ad749345385a2e45a4789720b33d3953c040eaf8d8b58bf0d803",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
