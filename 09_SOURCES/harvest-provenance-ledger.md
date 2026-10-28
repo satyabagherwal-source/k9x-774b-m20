@@ -5780,3 +5780,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-compvis-stable-diffusion-v1-4` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-10-28T13:10:03.315Z |
 | `learn-github-dylanvann-react-native-fast-image` | `https://github.com/DylanVann/react-native-fast-image` | `58661d82` | Multi-dimensional audit evidence | 2026-10-28T13:10:03.951Z |
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `e3fe3b25` | Multi-dimensional audit evidence | 2026-10-28T13:10:11.865Z |
+| `learn-huggingface-hexgrad-kokoro-82m` | `https://huggingface.co/hexgrad/Kokoro-82M` | `hf-hexgrad` | Multi-dimensional audit evidence | 2026-10-28T13:16:35.818Z |
+| `learn-github-wasm-bindgen-wasm-pack` | `https://github.com/wasm-bindgen/wasm-pack` | `56d17868` | Multi-dimensional audit evidence | 2026-10-28T13:16:37.527Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `8c74dd4b` | Multi-dimensional audit evidence | 2026-10-28T13:16:53.586Z |

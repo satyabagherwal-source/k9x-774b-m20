@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T13:10:11.871Z",
+  "last_updated": "2026-10-28T13:16:53.594Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1070,14 +1070,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
-      "content_hash": "5293fa399a393463db8837c4a3675136a496cd49a8f9a34875c65add4c442671",
-      "verified_at": "2026-10-25T19:00:00.286Z",
+      "content_hash": "13fd4b2049b0c75108f530ae06f10f5b6d92fd4b3e28f4cdf20885e2f98dad22",
+      "verified_at": "2026-10-28T13:16:35.831Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T19:00:00.286Z"
+      "last_updated": "2026-10-28T13:16:35.831Z"
     },
     "openai/whisper-large-v3": {
       "repository": "openai/whisper-large-v3",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "fed3393918af7e6aabaae5c52bc0b6837b5b26a5d266dd5a47b60f8f55c78749",
-      "verified_at": "2026-10-28T07:24:15.255Z",
+      "content_hash": "aa82d8e16ce3d34602a0f35bf81d2e8514be3edc91ab914ab5229cda7b0a8bca",
+      "verified_at": "2026-10-28T13:16:53.593Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T07:24:15.255Z"
+      "last_updated": "2026-10-28T13:16:53.593Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -7296,14 +7296,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wasm-bindgen-wasm-pack",
-      "content_hash": "160073c7449c208f6196986b2d5dae7f3aaedd641d689c86c4545c89e70b9221",
-      "verified_at": "2026-10-25T16:54:35.562Z",
+      "content_hash": "8c27ec97b197ec69941ddcd623cf6687bad620eaa39002020ecaa1c244afe69b",
+      "verified_at": "2026-10-28T13:16:37.534Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T16:54:35.562Z"
+      "last_updated": "2026-10-28T13:16:37.534Z"
     },
     "software-mansion/react-native-gesture-handler": {
       "repository": "software-mansion/react-native-gesture-handler",

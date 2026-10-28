@@ -835,8 +835,8 @@
     "sourceUrl": "https://huggingface.co/hexgrad/Kokoro-82M",
     "sourceVersion": "hf-hexgrad-kokoro-82m",
     "license": "Open-Source",
-    "contentHash": "5293fa399a393463db8837c4a3675136a496cd49a8f9a34875c65add4c442671",
-    "lastHarvestedAt": "2026-10-25T19:00:00.281Z",
+    "contentHash": "13fd4b2049b0c75108f530ae06f10f5b6d92fd4b3e28f4cdf20885e2f98dad22",
+    "lastHarvestedAt": "2026-10-28T13:16:35.818Z",
     "learningId": "learn-huggingface-hexgrad-kokoro-82m"
   },
   "hf-openai-whisper-large-v3": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "9d3ad377",
+    "sourceVersion": "8c74dd4b",
     "license": "Apache-2.0",
-    "contentHash": "fed3393918af7e6aabaae5c52bc0b6837b5b26a5d266dd5a47b60f8f55c78749",
-    "lastHarvestedAt": "2026-10-28T07:24:15.246Z",
+    "contentHash": "aa82d8e16ce3d34602a0f35bf81d2e8514be3edc91ab914ab5229cda7b0a8bca",
+    "lastHarvestedAt": "2026-10-28T13:16:53.586Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -4783,10 +4783,10 @@
     "repository": "wasm-bindgen/wasm-pack",
     "platform": "github",
     "sourceUrl": "https://github.com/wasm-bindgen/wasm-pack",
-    "sourceVersion": "2fc9d066",
+    "sourceVersion": "56d17868",
     "license": "Apache-2.0",
-    "contentHash": "160073c7449c208f6196986b2d5dae7f3aaedd641d689c86c4545c89e70b9221",
-    "lastHarvestedAt": "2026-10-25T16:54:35.554Z",
+    "contentHash": "8c27ec97b197ec69941ddcd623cf6687bad620eaa39002020ecaa1c244afe69b",
+    "lastHarvestedAt": "2026-10-28T13:16:37.527Z",
     "learningId": "learn-github-wasm-bindgen-wasm-pack"
   },
   "software-mansion-react-native-gesture-handler": {

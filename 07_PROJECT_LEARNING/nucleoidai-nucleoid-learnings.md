@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `9d3ad377`  
+> **Source Version**: `8c74dd4b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T07:24:14.629Z  
+> **Timestamp**: 2026-10-28T13:16:53.193Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T07:18:08.787Z  
+> **Harvest Timestamp**: 2026-10-28T13:16:53.188Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -373,10 +373,15 @@ import "dotenv/config";
 import { start } from "./src/app";
 import * as terminal from "./src/lib/terminal";
 
-start(process.argv[2]).catch((error) => {
-  terminal.failure(error);
-  process.exitCode = 1;
-});
+start(process.argv[2])
+  .then((difference: number) => {
+    // Exit statuses keep eight bits, so 256 differences would read as 0.
+    process.exitCode = Math.min(difference, 255);
+  })
+  .catch((error) => {
+    terminal.failure(error);
+    process.exitCode = 1;
+  });
 
 ```
 
@@ -517,7 +522,7 @@ export async function start(puzzle_id: string = "0ca9ddb6") {
 
   const puzzle = JSON.parse(
     await readFile(
-      join(__dirname, "data", "training", `${puzzle_id}.json`),
+      join(__dirname, "..", "data", "training", `${puzzle_id}.json`),
       "utf8"
     )
   );
@@ -644,11 +649,14 @@ export async function start(puzzle_id: string = "0ca9ddb6") {
   terminal.section(3, "Compare", "Expected and predicted canvases");
   terminal.grid("Expected", test_output_matrix);
   terminal.grid("Result", result_matrix);
-  terminal.summary(
-    Matrix.difference(result_matrix, test_output_matrix),
-    performance.now() - startedAt
+
+  const difference: number = Matrix.difference(
+    result_matrix,
+    test_output_matrix
   );
-  return result_matrix;
+  terminal.summary(difference, performance.now() - startedAt);
+
+  return difference;
 }
 
 ```
@@ -934,73 +942,166 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9d3ad377` (2026-10-27)
-**Commit Message**: Return minified JSON string from dataset document()
+### Incident Patch 1: `8c74dd4b` (2026-10-28)
+**Commit Message**: Exit ARC runner with the difference score
 
-document() now returns a string: a JSON array of the dataset files, each validated and minified by stripping whitespace between tokens. String contents, numbers, and key order are preserved exactly as written.
+start() now returns the difference score instead of the result matrix. server.ts uses it as the process exit code, capped at 255 so scores of 256 or more don't wrap around to 0. A failed run still prints its error and exits with 1. The README documents the exit status behavior.
 
-llm.ts embeds the result directly instead of re-stringifying it. The README is updated to describe the new behavior.
-
-**File**: `arc/README.md` (modified, +3/-2)
+**File**: `arc/README.md` (modified, +5/-0)
 ```diff
-@@ -98,8 +98,9 @@ prompts, programs, matrices, provider settings, or scoring.
+@@ -454,6 +454,11 @@ different, missing, or extra cell adds one to the score: `0` means an exact
+ match, and higher scores are worse. An extra empty row counts as one shape
+ mismatch.
  
- The synchronous `document()` function reads every JSON file in `src\dataset`,
- alongside `instruct_dataset.ts`, on each call, independently of the working directory.
--Files are sorted by name and serialized as one
--`{"datasets": [...]}` document, with a separate array entry per file.
-+Files are sorted by name, validated, and minified by removing the whitespace
-+between JSON tokens; string contents, numbers, and key order stay exactly as
-+written. They are returned as one JSON array, with a separate entry per file.
- New files, including `dataset.core.2.json`, need no additional imports.
- Non-JSON files and subdirectories are ignored. An empty dataset directory,
- unreadable files, or malformed JSON fail explicitly; JSON errors name the file.
++`bun run start` exits with the same score, so a caller can check the exit
++status: `0` means an exact match. Exit statuses keep only eight bits, so scores
++above 255 exit with `255` instead of wrapping around to `0`. A failed run
++prints its error to standard error and exits with `1`.
++
+ ## Benchmark
+ 
+ ![Benchmark](https://github.com/user-attachments/assets/e9d30330-6d4f-461b-9b9e-c8d1b9eccaf5)
 ```
 
-**File**: `arc/src/dataset/instruct_dataset.ts` (modified, +5/-3)
+**File**: `arc/server.ts` (modified, +9/-4)
 ```diff
-@@ -1,7 +1,7 @@
- import { readdirSync, readFileSync } from "node:fs";
- import { join } from "node:path";
+@@ -2,7 +2,12 @@ import "dotenv/config";
+ import { start } from "./src/app";
+ import * as terminal from "./src/lib/terminal";
  
--export function document() {
-+export function document(): string {
-   const files = readdirSync(__dirname, { withFileTypes: true })
-     .filter((entry) => entry.isFile() && /\.json$/i.test(entry.name))
-     .map((entry) => entry.name)
-@@ -15,7 +15,7 @@ export function document() {
-     const source: string = readFileSync(join(__dirname, file), "utf8");
- 
-     try {
--      return JSON.parse(source);
-+      JSON.parse(source);
-     } catch (error) {
-       if (error instanceof SyntaxError) {
-         throw new SyntaxError(
-@@ -25,7 +25,9 @@ export function document() {
-       }
-       throw error;
-     }
+-start(process.argv[2]).catch((error) => {
+-  terminal.failure(error);
+-  process.exitCode = 1;
+-});
++start(process.argv[2])
++  .then((difference: number) => {
++    // Exit statuses keep eight bits, so 256 differences would read as 0.
++    process.exitCode = Math.min(difference, 255);
++  })
++  .catch((error) => {
++    terminal.failure(error);
++    process.exitCode = 1;
++  });
+```
+
+**File**: `arc/src/app.ts` (modified, +7/-4)
+```diff
+@@ -141,9 +141,12 @@ export async function start(puzzle_id: string = "0ca9ddb6") {
+   terminal.section(3, "Compare", "Expected and predicted canvases");
+   terminal.grid("Expected", test_output_matrix);
+   terminal.grid("Result", result_matrix);
+-  terminal.summary(
+-    Matrix.difference(result_matrix, test_output_matrix),
+-    performance.now() - startedAt
 +
-+    return source.replace(/("(?:[^"\\]|\\.)*")|\s+/g, "$1");
-   });
- 
--  return [...datasets];
-+  return `[${datasets.join(",")}]`;
++  const difference: number = Matrix.difference(
++    result_matrix,
++    test_output_matrix
+   );
+-  return result_matrix;
++  terminal.summary(difference, performance.now() - startedAt);
++
++  return difference;
  }
 ```
 
-**File**: `arc/src/lib/llm.ts` (modified, +1/-1)
+---
+
+### Incident Patch 2: `7922d615` (2026-10-28)
+**Commit Message**: Move ARC puzzle data path to arc/data
+
+The app now loads training puzzles from arc/data/training instead of arc/src/data/training, resolving the path relative to the parent of the source directory. Updated the arc-dataset agent instructions and the ARC README to reference the new location.
+
+**File**: `.claude/agents/arc-dataset.agent.md` (modified, +6/-6)
 ```diff
-@@ -8,7 +8,7 @@ export async function generate({ messages = [], document = true }) {
-       role: "assistant",
-       content: `
-         instruct_dataset:
--        ${JSON.stringify(dataset.document())}
-+        ${dataset.document()}
-       `,
-     });
-   }
+@@ -1,20 +1,20 @@
+ ---
+ name: arc-dataset
+-description: Write the ARC instruction dataset for a given training puzzle as synthesized example pairs that follow the rule of arc/src/data/training/<id>.json's train pairs with freshly sampled grid sizes, shapes, colors, and positions, never copies of grids in arc/src/data, annotated with a Nucleoid world model in arc/src/dataset/dataset.<id>.json.
++description: Write the ARC instruction dataset for a given training puzzle as synthesized example pairs that follow the rule of arc/data/training/<id>.json's train pairs with freshly sampled grid sizes, shapes, colors, and positions, never copies of grids in arc/data, annotated with a Nucleoid world model in arc/src/dataset/dataset.<id>.json.
+ tools: Read, Write, Edit, Glob, Grep, Bash, PowerShell
+ include-custom-instructions: true
+ ---
+ 
+ You write one ARC instruction dataset. Given a puzzle ID, infer the
+-transformation from the training pairs of `arc/src/data/training/<id>.json`,
++transformation from the training pairs of `arc/data/training/<id>.json`,
+ synthesize new example pairs that follow it, annotate them with an object-oriented
+ Nucleoid world model, and save them as `arc/src/dataset/dataset.<id>.json`.
+ Read and follow the [ARC instructions](../rules/arc.instructions.md).
+ 
+ ## Inputs
+ 
+ - Require an eight-character lowercase hexadecimal puzzle ID with a file in
+-  `arc/src/data/training/`. Report a missing or unknown ID instead of guessing.
++  `arc/data/training/`. Report a missing or unknown ID instead of guessing.
+ - If `arc/src/dataset/dataset.<id>.json` already exists, stop and report it;
+   overwrite it only when the caller explicitly asks.
+ 
+@@ -23,7 +23,7 @@ Read and follow the [ARC instructions](../rules/arc.instructions.md).
+ Never print or use the puzzle's `test` entries, including their dimensions.
+ Do not read the whole puzzle file; print only its `train` pairs:
+ 
+-    node -e "console.log(JSON.stringify(require('./arc/src/data/training/<id>.json').train))"
++    node -e "console.log(JSON.stringify(require('./arc/data/training/<id>.json').train))"
+ 
+ Use them only to infer the transformation. Only the collision check below
+ reads other puzzle data, and it prints no puzzle contents.
+@@ -43,7 +43,7 @@ output. Synthesize as many pairs as the puzzle has training pairs:
+ - Where shapes are free, draw new ones instead of reusing, recoloring, or
+   moving the puzzle's.
+ - No `input_matrix` or `output_matrix` may equal any grid under
+-  `arc/src/data/`: training or evaluation, input or output, train or test.
++  `arc/data/`: training or evaluation, input or output, train or test.
+ - Keep the pairs as informative as the puzzle's: if its pairs rule out an
+   alternative rule, such as mirroring instead of repeating, so must yours.
+ - Hand off the synthesizer's path and seed so the pairs can be reviewed and
+@@ -119,7 +119,7 @@ Verify with a throwaway script outside the repository; do not add tests:
+ 
+ - The file parses, and `document()` from `arc/src/dataset/instruct_dataset.ts`
+   loads it.
+-- No `input_matrix` or `output_matrix` equals a grid under `arc/src/data/`.
++- No `input_matrix` or `output_matrix` equals a grid under `arc/data/`.
+   The script compares every grid there but prints only the colliding dataset
+   matrix, never puzzle contents; on a collision, change the example.
+ - The synthesizer's transformation reproduces the output of every training
+```
+
+**File**: `arc/README.md` (modified, +4/-4)
+```diff
+@@ -47,7 +47,7 @@ documentation for the distinction.
+ 
+ Run the ARC example with `bun run start`, which defaults to puzzle `3aa6fb7a`.
+ Pass a puzzle ID as the first argument, for example `bun run start 0d3d703e`,
+-to load `src\data\training\0d3d703e.json`. This makes live OpenRouter calls;
++to load `data\training\0d3d703e.json`. This makes live OpenRouter calls;
+ type checking, linting, and offline inspection do not require model calls.
+ 
+ ## Terminal presentation
+@@ -114,7 +114,7 @@ cropped to the nonzero bounding box of their content. `dataset.28bf18c6.json`
+ is `FIT`; the other datasets are `EXACT`.
+ 
+ `dataset.cross.1.json` annotates only the three training pairs from
+-`src\data\training\0ca9ddb6.json`, with ten point instances in total.
++`data\training\0ca9ddb6.json`, with ten point instances in total.
+ Color-1 points gain color-7 orthogonal neighbors; color-2 points gain color-4
+ diagonal neighbors. Color-6 and color-8 points remain unchanged.
+ The declarative rules introduce `marker_color`, which is absent before the
+@@ -126,12 +126,12 @@ remain anchored to the input point. Orientation is 0 in both states because
+ the patterns are symmetric. Held-out inputs and outputs are not included.
+ The dataset is discovered automatically by `document()`.
+ 
+-`dataset.28bf18c6.json` follows the rule of `src\data\training\28bf18c6.json`
++`dataset.28bf18c6.json` follows the rule of `data\training\28bf18c6.json`
+ with three synthesized pairs instead of copies of its grids, one shape instance
+ per pair. A seeded generator sampled their canvas sizes (7 by 10, 6 by 5, and
+ 11 by 11, rows by columns), shape sizes (2 by 4, 4 by 2, and 2 by 3), colors,
+ and positions, all different from the puzzle's 8 by 8 canvases and 3 by 3
+-shapes, and no matrix equals a grid in `src\data`. Each shape is left-right
++shapes, and no matrix equals a grid in `data`. Each shape is left-right
+ asymmetric, so the pairs still distinguish repeating from mirroring.
+ Each output places two copies of the shape's crop side by side on a new canvas
+ twice as wide as the crop: 2 by 8, 4 by 4, and 2 by 6. Unconditional
 ```
 
 #### Recent Merged Pull Requests:
@@ -1029,13 +1130,13 @@ llm.ts embeds the result directly instead of re-stringifying it. The README is u
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Return minified JSON string from dataset document()
+## X. Exit ARC runner with the difference score
 
 **RULE**:
 When implementing operations in `arc/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9d3ad377`: Return minified JSON string from dataset document(). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8c74dd4b`: Exit ARC runner with the difference score. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/README.md`.
@@ -1043,17 +1144,18 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Files are sorted by name, validated, and minified by removing the whitespace
-between JSON tokens; string contents, numbers, and key order stay exactly as
-written. They are returned as one JSON array, with a separate entry per file.
+`bun run start` exits with the same score, so a caller can check the exit
+status: `0` means an exact match. Exit statuses keep only eight bits, so scores
+above 255 exit with `255` instead of wrapping around to `0`. A failed run
+prints its error to standard error and exits with `1`.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-Files are sorted by name and serialized as one
-`{"datasets": [...]}` document, with a separate array entry per file.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9d3ad377` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8c74dd4b` are properly handled with clean fallback behavior.
