@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source**: github ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
-> **Source Version**: `87ce233e`  
+> **Source Version**: `e0db02c5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T19:06:43.906Z  
+> **Timestamp**: 2026-10-28T22:52:12.320Z  
 > **Learning ID**: `learn-github-google-tcmalloc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T19:06:42.591Z  
+> **Harvest Timestamp**: 2026-10-28T22:52:12.313Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5394 stars
+- **Stars / Engagement**: 5395 stars
 
 ---
 
@@ -1222,11 +1222,15 @@ GOOGLE_MALLOC_SECTION_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1750** (2026-10-27): **Rebuild span state after being fully freed in fuzz test.**
-  *Symptoms*: Rebuild span state after being fully freed in fuzz test.  In `Dealloc::Perform`, `Span::FreelistPushBatch` returns `false` without pushing objects or decrementing `allocated_` when all live objects in the span are freed (`n == state.live_ptrs.size()`). Previously, `Dealloc::Perform` ignored this return value and cleared `state.live_ptrs`, desynchronizing `state.span->Allocated()` from `state.live_ptrs.size()` and permanently losing those objects across subsequent instructions.  - Check the return value of `FreelistPushBatch` in `Dealloc::Perform` and   rebuild the span freelist when the span becomes completely free. - Check `state.span->Allocated() == state.live_ptrs.size()` after each   instruction in `FuzzSpanInstructions`. - Add `FuzzSpanInstructionsFullDealloc` regression test. 
+- **Issue #1763** (2026-10-28): **No public description**
+  *Symptoms*: No public description 
+  **Post-Mortem & Fix Analysis**:
+  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1763/checks?check_run_id=122793666574) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
 
-- **Issue #1749** (2026-10-27): **Remove wider slabs support from CpuCache.**
-  *Symptoms*: Remove wider slabs support from CpuCache.  `UseWiderSlabs()` only enabled 512 KiB per-CPU slabs when `active_partitions() == 1`. With light security heap partitioning enabled by default in builds with alloc-token support (`active_partitions() == 2`), `UseWiderSlabs()` is no longer active. 
+- **Issue #1760** (2026-10-28): **No public description**
+  *Symptoms*: No public description 
+  **Post-Mortem & Fix Analysis**:
+  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1760/checks?check_run_id=122663110623) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1243,235 +1247,294 @@ GOOGLE_MALLOC_SECTION_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1bd58f7c` (2026-10-27)
-**Commit Message**: Acquire sample lock before graveyard lock in SampleRecorder::PushDead.
+### Incident Patch 1: `44822548` (2026-10-27)
+**Commit Message**: Track whether a non-default region factory has ever been installed via `has_custom_region_factory_` in `SystemAllocator`. When only the default `MmapRegion` anonymous memory factory (`MAP_ANONYMOUS`) has been used, `madvise(..., MADV_REMOVE)` always fails in the Linux kernel (`vma_is_anonymous(vma) -> -EINVAL`) after acquiring `mmap_read_lock`, walking the VMA tree, and checking VMA flags. Skip the guaranteed-failing `MADV_REMOVE` syscall on default anonymous mappings and issue `MADV_DONTNEED` directly.
 
-In `SampleRecorder::PushDead`, acquire `sample->lock` before `graveyard_.lock` (returning early if `sample->dead != nullptr`) so `graveyard_.lock` is held only across the two-pointer dead-list splice (`Register` already pops `graveyard_.dead` before acquiring `sample->lock`), and delegate `UnregisterAll` to `PushDead(sample)` so both paths share the `sample->lock` -> `graveyard_.lock` acquisition order (`ABSL_ACQUIRED_AFTER(T::lock)`).
+When compiled with `-DTCMALLOC_INTERNAL_LEGACY_LOCKING2`, `MADV_REMOVE` is attempted before `MADV_DONTNEED` on all mappings.
 
-PiperOrigin-RevId: 1007780388
+PiperOrigin-RevId: 1008399804
 
-**File**: `tcmalloc/internal/sampled_allocation_recorder.h` (modified, +22/-2)
+**File**: `tcmalloc/internal/system_allocator.h` (modified, +27/-12)
 ```diff
-@@ -134,8 +134,13 @@ class SampleRecorder {
-   // redeclares `lock` and `dead` so that `graveyard_.lock` is a distinct field
-   // from `T::lock` for -Wthread-safety-analysis lock-order annotations.
-   struct Graveyard : public T {
--    absl::base_internal::SpinLock lock ABSL_ACQUIRED_BEFORE(T::lock){
--        absl::base_internal::SCHEDULE_KERNEL_ONLY};
-+    absl::base_internal::SpinLock lock
-+#ifdef TCMALLOC_INTERNAL_LEGACY_LOCKING2
-+        ABSL_ACQUIRED_BEFORE(T::lock)
-+#else
-+        ABSL_ACQUIRED_AFTER(T::lock)
-+#endif
-+            {absl::base_internal::SCHEDULE_KERNEL_ONLY};
-     T* dead ABSL_GUARDED_BY(lock) = nullptr;
-   };
-   Graveyard graveyard_;
-@@ -177,8 +182,17 @@ void SampleRecorder<T, Allocator>::PushNew(T* sample) {
+@@ -224,6 +224,7 @@ class SystemAllocator {
  
- template <typename T, typename Allocator>
- void SampleRecorder<T, Allocator>::PushDead(T* sample) {
-+#ifdef TCMALLOC_INTERNAL_LEGACY_LOCKING2
-   AllocationGuardSpinLockHolder graveyard_lock(graveyard_.lock);
-   AllocationGuardSpinLockHolder sample_lock(sample->lock);
-+#else
-+  AllocationGuardSpinLockHolder sample_lock(sample->lock);
-+  // Already on the dead list; UnregisterAll visits every sample in `all_`.
-+  if (ABSL_PREDICT_FALSE(sample->dead != nullptr)) {
-+    return;
+   std::atomic<int> release_errors_{0};
+   std::atomic<MadvisePreference> madvise_{MadvisePreference::kNever};
++  std::atomic<bool> has_custom_region_factory_{false};
+   bool unlock_vmas_ = false;
+ 
+   void DiscardMappedRegions() ABSL_EXCLUSIVE_LOCKS_REQUIRED(spinlock_);
+@@ -392,6 +393,9 @@ void SystemAllocator<Topology, NormalPartitions>::SetRegionFactory(
+   AllocationGuardSpinLockHolder lock_holder(spinlock_);
+   DiscardMappedRegions();
+   region_factory_ = factory;
++  if (factory != &mmap_factory_.factory) {
++    has_custom_region_factory_.store(true, std::memory_order_relaxed);
 +  }
-+  AllocationGuardSpinLockHolder graveyard_lock(graveyard_.lock);
-+#endif
-   sample->dead = graveyard_.dead;
-   graveyard_.dead = sample;
  }
-@@ -227,16 +241,22 @@ void SampleRecorder<T, Allocator>::Unregister(T* sample) {
  
- template <typename T, typename Allocator>
- void SampleRecorder<T, Allocator>::UnregisterAll() {
-+#ifdef TCMALLOC_INTERNAL_LEGACY_LOCKING2
-   AllocationGuardSpinLockHolder graveyard_lock(graveyard_.lock);
-+#endif
-   T* sample = all_.load(std::memory_order_acquire);
-   while (sample != nullptr) {
-+#ifdef TCMALLOC_INTERNAL_LEGACY_LOCKING2
-     {
-       AllocationGuardSpinLockHolder sample_lock(sample->lock);
-       if (sample->dead == nullptr) {
-         sample->dead = graveyard_.dead;
-         graveyard_.dead = sample;
-       }
-     }
-+#else
-+    PushDead(sample);
-+#endif
-     sample = sample->next;
+ template <typename Topology, size_t NormalPartitions>
+@@ -958,23 +962,30 @@ SystemAllocator<Topology, NormalPartitions>::ReleasePages(void* start,
+     return ReleaseStatus::kFailure;
    }
+ 
+-  int ret;
+   // Note -- ignoring most return codes, because if this fails it
+   // doesn't matter...
+   // Moreover, MADV_REMOVE *will* fail (with EINVAL) on private memory,
+   // but that's harmless.
+ #ifdef MADV_REMOVE
+   // MADV_REMOVE deletes any backing storage for tmpfs or anonymous shared
+   // memory.
+-  do {
+-    ret = madvise(start, length, MADV_REMOVE);
+-  } while (ret == -1 && errno == EAGAIN);
++#ifndef TCMALLOC_INTERNAL_LEGACY_LOCKING2
++  if (ABSL_PREDICT_FALSE(
++          has_custom_region_factory_.load(std::memory_order_relaxed)))
++#endif
++  {
++    int ret;
++    do {
++      ret = madvise(start, length, MADV_REMOVE);
++    } while (ret == -1 && errno == EAGAIN);
+ 
+-  if (ret == 0) {
+-    return ReleaseStatus::kSuccess;
++    if (ret == 0) {
++      return ReleaseStatus::kSuccess;
++    }
+   }
+ #endif
+ 
++  ReleaseStatus status = ReleaseStatus::kFailure;
+ #ifdef MADV_FREE
+   const bool do_madvfree = [&]() {
+     switch (madvise_preference()) {
+@@ -990,12 +1001,16 @@ SystemAllocator<Topology, NormalPartitions>::ReleasePages(void* start,
+   }();
+ 
+   if (do_madvfree) {
++    int ret;
+     do {
+       ret = madvise(start, length, MADV_FREE);
+     } while (ret == -1 && errno == EAGAIN);
++
++    if (ret == 0) {
++      status = ReleaseStatus::kSuccess;
++    }
+   }
+ #endif
+-  ReleaseStatus status = ReleaseStatus::kFailure;
+ #ifdef MADV_DONTNEED
+   const bool do_madvdontneed = [&]() {
+     switch (madvise_preference()) {
+@@ -1013,18 +1028,18 @@ SystemAllocator<Topology, NormalPartitions>::ReleasePages(void* start,
+   // MADV_DONTNEED drops page table info and any anonymous pages.
+   if (do_madvdontneed) {
+     const int advice = system_allocator_internal::MadvDontNeedAdviceAvailable();
++    int ret;
+     do {
+       ret = madvise(start, length, advice);
+     } while (ret == -1 && errno == EAGAIN);
+ 
+-    if (advice == MADV_DONTNEED) {
+-      status = ReleaseStatus::kRetryAfterMunlock;
++    if (ret == 0) {
++      return ReleaseStatus::kSuccess;
+     }
++    status = advice == MADV_DONTNEED ? ReleaseStatus::kRetryAfterMunlock
++                                     : ReleaseStatus::kFailure;
+   }
+ #endif
+-  if (ret == 0) {
+-    return ReleaseStatus::kSuccess;
+-  }
+ 
+   return status;
  }
 ```
 
----
-
-### Incident Patch 2: `35aab08a` (2026-10-27)
-**Commit Message**: Rebuild span state after being fully freed in fuzz test.
-
-In `Dealloc::Perform`, `Span::FreelistPushBatch` returns `false` without
-pushing objects or decrementing `allocated_` when all live objects in the span
-are freed (`n == state.live_ptrs.size()`). Previously, `Dealloc::Perform`
-ignored this return value and cleared `state.live_ptrs`, desynchronizing
-`state.span->Allocated()` from `state.live_ptrs.size()` and permanently losing
-those objects across subsequent instructions.
-
-- Check the return value of `FreelistPushBatch` in `Dealloc::Perform` and
-  rebuild the span freelist when the span becomes completely free.
-- Check `state.span->Allocated() == state.live_ptrs.size()` after each
-  instruction in `FuzzSpanInstructions`.
-- Add `FuzzSpanInstructionsFullDealloc` regression test.
-
-PiperOrigin-RevId: 1008265820
-
-**File**: `tcmalloc/span_fuzz.cc` (modified, +33/-1)
+**File**: `tcmalloc/internal/system_allocator_test.cc` (modified, +91/-0)
 ```diff
-@@ -148,10 +148,25 @@ struct Dealloc {
-     Span::ObjectsToIdx(ptrs, state.span.get(), state.object_size,
-                        state.size_reciprocal, idx, state.bitmap_mode);
+@@ -198,6 +198,97 @@ TEST(SystemAllocatorTest, MmapAlignedRejectsOutOfPartitionSizeAndAlignment) {
+             nullptr);
+ }
  
--    (void)state.span->FreelistPushBatch(
-+    const bool span_nonempty = state.span->FreelistPushBatch(
-         absl::MakeSpan(idx).subspan(0, ptrs.size()), state.object_size,
-         state.bitmap_mode);
-     state.live_ptrs.resize(state.live_ptrs.size() - n);
-+    // FreelistPushBatch returns true while allocated objects remain in the
-+    // span, and false when the last allocated objects are returned (leaving
-+    // live_ptrs empty).
-+    TC_CHECK_EQ(span_nonempty, !state.live_ptrs.empty());
-+    if (!span_nonempty) {
-+      // When all allocated objects in the span are returned, FreelistPushBatch
-+      // returns false without pushing the batch onto the freelist or
-+      // decrementing allocated_ (in CentralFreeList, the empty span would be
-+      // deallocated to the page heap). Rebuild the freelist so subsequent
-+      // Alloc instructions in FuzzSpanInstructions can reuse state.span.
-+      TC_CHECK_EQ(
-+          state.span->BuildFreelist(state.object_size, state.objects_per_span,
-+                                    {}, state.bitmap_mode),
-+          0);
-+    }
-   }
- };
- 
-@@ -214,6 +229,23 @@ void FuzzSpanInstructions(size_t object_size_direct, Length num_pages_direct,
- 
-   for (const auto& instruction : instructions) {
-     std::visit([&](const auto& arg) { arg.Perform(state); }, instruction);
-+    TC_CHECK_EQ(state.span->Allocated(), state.live_ptrs.size());
++class SharedMemoryRegion final : public AddressRegion {
++ public:
++  SharedMemoryRegion(uintptr_t start, size_t size)
++      : start_(start), free_size_(size) {}
++
++  std::pair<void*, size_t> Alloc(size_t size, size_t alignment) override {
++    size = system_allocator_internal::RoundUp(size, kHugePageSize);
++    alignment = std::max(alignment, kHugePageSize);
++    uintptr_t end = start_ + free_size_;
++    if (size > free_size_) return {nullptr, 0};
++    uintptr_t result = (end - size) & ~(alignment - 1);
++    if (result < start_) return {nullptr, 0};
++    size_t actual_size = end - result;
++    void* ptr = mmap(reinterpret_cast<void*>(result), actual_size,
++                     PROT_READ | PROT_WRITE,
++                     MAP_FIXED | MAP_SHARED | MAP_ANONYMOUS, -1, 0);
++    if (ptr == MAP_FAILED) return {nullptr, 0};
++    free_size_ -= actual_size;
++    return {ptr, actual_size};
 +  }
++
++ private:
++  uintptr_t start_;
++  size_t free_size_;
++};
++
++class SharedMemoryRegionFactory final : public AddressRegionFactory {
++ public:
++  AddressRegion* Create(void* start, size_t size, UsageHint hint) override {
++    void* region_space = MallocInternal(sizeof(SharedMemoryRegion));
++    if (region_space == nullptr) return nullptr;
++    return new (region_space)
++        SharedMemoryRegion(reinterpret_cast<uintptr_t>(start), size);
++  }
++};
++
++TEST(SystemAllocatorTest, ReleaseCustomRegionAfterRestoringDefaultFactory) {
++  NumaTopology<2> topology;
++  topology.Init();
++  SystemAllocator<NumaTopology<2>, 1> allocator(topology, kMinMmapAlloc);
++
++  AddressRegionFactory* default_factory = allocator.GetRegionFactory();
++  ASSERT_NE(default_factory, nullptr);
++
++  SharedMemoryRegionFactory shared_factory;
++  allocator.SetRegionFactory(&shared_factory);
++
++  const size_t kPageSize = GetPageSize();
++  AddressRange res =
++      allocator.Allocate(kPageSize, kPageSize, MemoryTag::kNormal);
++  ASSERT_NE(res.ptr, nullptr);
++  memset(res.ptr, 0xAB, res.bytes);
++  ASSERT_EQ(static_cast<unsigned char*>(res.ptr)[0], 0xAB);
++
++  // Swap back to the default anonymous factory before releasing the shared
++  // region allocated from shared_factory. MADV_DONTNEED only unmaps PTEs on
++  // MAP_SHARED | MAP_ANONYMOUS without punching a hole in the underlying
++  // shmem page cache, whereas MADV_REMOVE punches a hole and zeroes the page.
++  allocator.SetRegionFactory(default_factory);
++
++  MemoryModifyStatus status = allocator.Release(res.ptr, res.bytes);
++  EXPECT_TRUE(status.success);
++  EXPECT_EQ(allocator.release_errors(), 0);
++  EXPECT_EQ(static_cast<unsigned char*>(res.ptr)[0], 0);
++  EXPECT_EQ(munmap(res.ptr, res.bytes), 0);
 +}
 +
-+TEST(SpanTest, FuzzSpanInstructionsFullDealloc) {
-+  const std::vector<Instruction> instructions = {
-+      Instruction{Alloc{64}},   Instruction{Dealloc{64}},
-+      Instruction{Alloc{64}},   Instruction{Alloc{64}},
-+      Instruction{Shuffle{}},   Instruction{Dealloc{32}},
-+      Instruction{Dealloc{64}}, Instruction{Dealloc{64}},
-+      Instruction{Alloc{64}},
-+  };
-+  for (size_t size : {8, 16, 24, 64, 128, 512, 4096}) {
-+    for (bool use_bitmap_for_small : {false, true}) {
-+      FuzzSpanInstructions(size, Length(0), 63, instructions,
-+                           use_bitmap_for_small);
-+    }
-   }
- }
- 
++void BM_ReleasePages(benchmark::State& state) {
++  static NumaTopology<2>* topology = [] {
++    auto* t = new NumaTopology<2>();
++    t->Init();
++    return t;
++  }();
++  static SystemAllocator<NumaTopology<2>, 1>* allocator =
++      new SystemAllocator<NumaTopology<2>, 1>(*topology, kMinMmapAlloc);
++  const size_t kPageSize = GetPageSize();
++  const size_t bytes = state.range(0) * kPageSize;
++  AddressRange res = allocator->Allocate(bytes, kPageSize, MemoryTag::kNormal);
++  TC_CHECK_NE(res.ptr, nullptr);
++  for (auto _ : state) {
++    MemoryModifyStatus st = allocator->Release(res.ptr, bytes);
++    benchmark::DoNotOptimize(st);
++  }
++}
++BENCHMARK(BM_ReleasePages)
++    ->Arg(1)
++    ->Arg(8)
++    ->Arg(64)
++    ->ThreadRange(1, 8)
++    ->UseRealTime();
++
+ }  // namespace
+ }  // namespace tcmalloc_internal
+ }  // namespace tcmalloc
 ```
 
 ---
 
-### Incident Patch 3: `87ce233e` (2026-10-27)
-**Commit Message**: Fix dead hpaa_subrelease checks in GetStatsTest.
+### Incident Patch 2: `e18f88dc` (2026-10-27)
+**Commit Message**: Fix modulo-4 low-bit sampling bias in `HugePageFiller::Contribute`.
 
-The `using_hpaa` guard looked for "HugePageAwareAllocator", which the stats
-never print, so its checks never ran (one searched the text output for a pbtxt
-field).  HPAA is the only page allocator, so check unconditionally.  Sampled
-and cold allocators always subrelease, so the enabled case checks that no
-allocator reports it disabled.
+When contributing a hugepage tracker, the filler steps a 48-bit linear congruential generator via `ExponentialBiased::NextRandom` and samples 1% of trackers for VMA tagging. Taking the remainder of the raw generator state modulo 100 depends on its low two bits, which cycle with period 4 because 100 is a multiple of 4. Starting from a zero seed, only contributions at index 3 modulo 4 could ever be sampled, which excluded three quarters of contributed hugepages.
 
-PiperOrigin-RevId: 1008278009
+Extract high-order bits via `ExponentialBiased::GetRandom` before taking the remainder modulo 100 so all modulo-4 contribution indices are sampled uniformly, and initialize the generator state to 42.
 
-**File**: `tcmalloc/testing/get_stats_test.cc` (modified, +5/-17)
+Co-authored-by: Chris Kennelly <[REDACTED_EMAIL]>
+PiperOrigin-RevId: 1008455755
+
+**File**: `tcmalloc/huge_page_filler.h` (modified, +3/-2)
 ```diff
-@@ -28,7 +28,6 @@
- #include "gmock/gmock.h"
- #include "gtest/gtest.h"
- #include "absl/base/config.h"
--#include "absl/strings/match.h"
- #include "absl/strings/str_cat.h"
- #include "absl/time/time.h"
- #include "tcmalloc/internal/logging.h"
-@@ -257,17 +256,11 @@ TEST_F(GetStatsTest, Parameters) {
-       TCMalloc_Internal_GetBackSmallAllocations();
-   TCMalloc_Internal_SetBackSmallAllocations(false);
+@@ -927,7 +927,7 @@ class HugePageFiller {
+   MemoryTagFunction& set_anon_vma_name_;
+   int max_backoff_delay_ ABSL_GUARDED_BY(pageheap_lock) = 1;
+   int current_backoff_delay_ ABSL_GUARDED_BY(pageheap_lock) = 0;
+-  uintptr_t rng_ = 0;
++  uint64_t rng_ = 42;
+   SubreleaseUnbackedMode subrelease_unbacked_mode_;
+ };
  
--  auto using_hpaa = [](absl::string_view sv) {
--    return absl::StrContains(sv, "HugePageAwareAllocator");
--  };
--
-   std::string buf = MallocExtension::GetStats();
-   std::string pbtxt = GetStatsInPbTxt();
+@@ -1224,7 +1224,8 @@ inline void HugePageFiller<TrackerType>::Contribute(
  
-   if (!tcmalloc_internal::kSanitizerPresent) {
--    if (using_hpaa(buf)) {
--      EXPECT_THAT(buf, HasSubstr(R"(PARAMETER hpaa_subrelease 1)"));
--    }
-+    EXPECT_THAT(buf, HasSubstr(R"(PARAMETER hpaa_subrelease 0)"));
-     EXPECT_THAT(buf,
-                 HasSubstr(R"(PARAMETER tcmalloc_guarded_sample_parameter -1)"));
- #ifdef TCMALLOC_DEPRECATED_PERTHREAD
-@@ -341,10 +334,8 @@ TEST_F(GetStatsTest, Parameters) {
-         buf, HasSubstr(R"(PARAMETER tcmalloc_prefer_backed_filler_pages 0)"));
-     EXPECT_THAT(
-         buf, HasSubstr(R"(PARAMETER tcmalloc_madvise_sampled_allocations 0)"));
--    if (using_hpaa(buf)) {
--      EXPECT_THAT(buf, HasSubstr(R"(using_hpaa_subrelease: false)"));
--    }
+   // Decide whether to sample this tracker for tagging.
+   rng_ = ExponentialBiased::NextRandom(rng_);
+-  pt->SetTagState({.sampled_for_tagging = (rng_ % 100 == 0)});
++  pt->SetTagState(
++      {.sampled_for_tagging = (ExponentialBiased::GetRandom(rng_) % 100 == 0)});
  
-+    EXPECT_THAT(pbtxt, HasSubstr(R"(using_hpaa_subrelease: false)"));
-     EXPECT_THAT(pbtxt, HasSubstr(R"(guarded_sample_parameter: -1)"));
-     EXPECT_THAT(pbtxt,
-                 HasSubstr(R"(tcmalloc_madvise_sampled_allocations: false)"));
-@@ -433,9 +424,8 @@ TEST_F(GetStatsTest, Parameters) {
-   pbtxt = GetStatsInPbTxt();
+   pages_allocated_[type] += pt->used_pages();
+   TC_ASSERT(!(type == AccessDensityPrediction::kDense && donated));
+```
+
+**File**: `tcmalloc/huge_page_filler_test.cc` (modified, +25/-0)
+```diff
+@@ -8629,6 +8629,31 @@ TEST_F(FillerTest, PreferBackedFillerPages) {
+   DeleteRaw(tail);
+ }
  
-   if (!tcmalloc_internal::kSanitizerPresent) {
--    if (using_hpaa(buf)) {
--      EXPECT_THAT(buf, HasSubstr(R"(PARAMETER hpaa_subrelease 1)"));
--    }
-+    // Sampled and cold allocators always report 1; check that none report 0.
-+    EXPECT_THAT(buf, Not(HasSubstr(R"(PARAMETER hpaa_subrelease 0)")));
-     EXPECT_THAT(buf,
-                 HasSubstr(R"(PARAMETER tcmalloc_guarded_sample_parameter 50)"));
-     EXPECT_THAT(
-@@ -477,9 +467,7 @@ TEST_F(GetStatsTest, Parameters) {
-     EXPECT_THAT(buf,
-                 HasSubstr(R"(PARAMETER tcmalloc_back_small_allocations 1)"));
- 
--    if (using_hpaa(buf)) {
--      EXPECT_THAT(pbtxt, HasSubstr(R"(using_hpaa_subrelease: true)"));
--    }
-+    EXPECT_THAT(pbtxt, Not(HasSubstr(R"(using_hpaa_subrelease: false)")));
-     EXPECT_THAT(pbtxt, HasSubstr(R"(guarded_sample_parameter: 50)"));
-     EXPECT_THAT(pbtxt, HasSubstr(R"(desired_usage_limit_bytes: -1)"));
-     EXPECT_THAT(pbtxt, HasSubstr(R"(hard_usage_limit_bytes: -1)"));
++TEST_F(FillerTest, ContributeSamplesAcrossModuloFourResidues) {
++  randomize_density_ = false;
++  set_anon_vma_name_.SetIgnoreName(true);
++
++  const Length kAlloc = kPagesPerHugePage / 2 + Length(1);
++  SpanAllocInfo sparse_info = {1, AccessDensityPrediction::kSparse};
++
++  // Raw NextRandom(rng_) % 100 == 0 could only ever sample contributions with
++  // index % 4 == 3 because 100 % 4 == 0 and the 48-bit LCG low 2 bits cycle
++  // with period 4. Verify all four mod-4 residues are sampled.
++  std::array<int, 4> residue_counts = {0, 0, 0, 0};
++  for (int i = 0; i < 4000; ++i) {
++    PAlloc p = AllocateWithSpanAllocInfo(kAlloc, sparse_info);
++    if (p.pt->GetTagState().sampled_for_tagging) {
++      ++residue_counts[i % 4];
++    }
++    DeleteRaw(p);
++  }
++  for (int r = 0; r < 4; ++r) {
++    EXPECT_GT(residue_counts[r], 0) << "residue " << r;
++  }
++  DrainFreedTrackers();
++  CheckStats();
++}
++
+ TEST(SkipSubreleaseIntervalsTest, EmptyIsNotEnabled) {
+   // When we have a limit hit, we pass SkipSubreleaseIntervals{} to the
+   // filler. Make sure it doesn't signal that we should skip the limit.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1750** (2026-10-27): Rebuild span state after being fully freed in fuzz test. (@copybara-service[bot])
-- **PR #1749** (2026-10-27): Remove wider slabs support from CpuCache. (@copybara-service[bot])
-- **PR #1745** (2026-10-27): Internal change. (@copybara-service[bot])
-- **PR #1743** (closed): No public description (@copybara-service[bot])
-- **PR #1740** (2026-10-27): Fix dead hpaa_subrelease checks in GetStatsTest. (@copybara-service[bot])
-- **PR #1737** (closed): No public description (@copybara-service[bot])
+- **PR #1763** (closed): No public description (@copybara-service[bot])
+- **PR #1760** (2026-10-28): No public description (@copybara-service[bot])
+- **PR #1758** (2026-10-28): Unback HugeRegion ranges with the lock dropped in ReleaseFuzz. (@copybara-service[bot])
+- **PR #1757** (2026-10-28): Tighten HugeRegionTest.ReleaseFuzz before it exercises lock drops. (@copybara-service[bot])
+- **PR #1756** (2026-10-28): Test HugeRegion operations that run while an unback is in flight. (@copybara-service[bot])
+- **PR #1755** (2026-10-27): Snapshot page allocator limit stats in ExtractStats under pageheap_lock (@copybara-service[bot])
 
 ---
 
@@ -1491,50 +1554,65 @@ PiperOrigin-RevId: 1008278009
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Acquire sample lock before graveyard lock in SampleRecorder::PushDead.
+## X. Track whether a non-default region factory has ever been installed via `has_cust
 
 **RULE**:
-When implementing operations in `tcmalloc/internal/sampled_allocation_recorder.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tcmalloc/internal/system_allocator.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1bd58f7c`: Acquire sample lock before graveyard lock in SampleRecorder::PushDead.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `44822548`: Track whether a non-default region factory has ever been installed via `has_custom_region_factory_` in `SystemAllocator`. When only the default `MmapRegion` anonymous memory factory (`MAP_ANONYMOUS`) has been used, `madvise(..., MADV_REMOVE)` always fails in the Linux kernel (`vma_is_anonymous(vma) -> -EINVAL`) after acquiring `mmap_read_lock`, walking the VMA tree, and checking VMA flags. Skip the guaranteed-failing `MADV_REMOVE` syscall on default anonymous mappings and issue `MADV_DONTNEED` directly.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/internal/sampled_allocation_recorder.h`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/internal/system_allocator.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    absl::base_internal::SpinLock lock
-#ifdef TCMALLOC_INTERNAL_LEGACY_LOCKING2
-        ABSL_ACQUIRED_BEFORE(T::lock)
-#else
-        ABSL_ACQUIRED_AFTER(T::lock)
-#endif
-            {absl::base_internal::SCHEDULE_KERNEL_ONLY};
-#ifdef TCMALLOC_INTERNAL_LEGACY_LOCKING2
-#else
-  AllocationGuardSpinLockHolder sample_lock(sample->lock);
-  // Already on the dead list; UnregisterAll visits every sample in `all_`.
-  if (ABSL_PREDICT_FALSE(sample->dead != nullptr)) {
-    return;
+  std::atomic<bool> has_custom_region_factory_{false};
+  if (factory != &mmap_factory_.factory) {
+    has_custom_region_factory_.store(true, std::memory_order_relaxed);
   }
-  AllocationGuardSpinLockHolder graveyard_lock(graveyard_.lock);
+#ifndef TCMALLOC_INTERNAL_LEGACY_LOCKING2
+  if (ABSL_PREDICT_FALSE(
+          has_custom_region_factory_.load(std::memory_order_relaxed)))
 #endif
-#ifdef TCMALLOC_INTERNAL_LEGACY_LOCKING2
-#endif
-#ifdef TCMALLOC_INTERNAL_LEGACY_LOCKING2
-#else
-    PushDead(sample);
-#endif
+  {
+    int ret;
+    do {
+      ret = madvise(start, length, MADV_REMOVE);
+    } while (ret == -1 && errno == EAGAIN);
+    if (ret == 0) {
+      return ReleaseStatus::kSuccess;
+    }
+  ReleaseStatus status = ReleaseStatus::kFailure;
+    int ret;
+
+    if (ret == 0) {
+      status = ReleaseStatus::kSuccess;
+    }
+    int ret;
+    if (ret == 0) {
+      return ReleaseStatus::kSuccess;
+    status = advice == MADV_DONTNEED ? ReleaseStatus::kRetryAfterMunlock
+                                     : ReleaseStatus::kFailure;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-    absl::base_internal::SpinLock lock ABSL_ACQUIRED_BEFORE(T::lock){
-        absl::base_internal::SCHEDULE_KERNEL_ONLY};
+  int ret;
+  do {
+    ret = madvise(start, length, MADV_REMOVE);
+  } while (ret == -1 && errno == EAGAIN);
+  if (ret == 0) {
+    return ReleaseStatus::kSuccess;
+  ReleaseStatus status = ReleaseStatus::kFailure;
+    if (advice == MADV_DONTNEED) {
+      status = ReleaseStatus::kRetryAfterMunlock;
+  if (ret == 0) {
+    return ReleaseStatus::kSuccess;
+  }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1bd58f7c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `44822548` are properly handled with clean fallback behavior.

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T22:45:52.274Z",
-  "total_cycles_completed": 5952,
-  "total_learnings_persisted": 5952,
-  "total_rules_promoted": 5406,
+  "last_updated": "2026-10-28T22:52:18.407Z",
+  "total_cycles_completed": 5955,
+  "total_learnings_persisted": 5955,
+  "total_rules_promoted": 5408,
   "history": [
-    {
-      "timestamp": "2026-10-28T13:23:29.994Z",
-      "repository": "microsoft/agent-governance-toolkit",
-      "learningId": "learn-github-microsoft-agent-governance-toolkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T13:30:06.884Z",
-      "repository": "openai/whisper-large-v3",
-      "learningId": "learn-huggingface-openai-whisper-large-v3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T13:30:22.231Z",
-      "repository": "MaterializeInc/materialize",
-      "learningId": "learn-github-materializeinc-materialize",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T13:36:48.641Z",
       "repository": "black-forest-labs/FLUX.1-schnell",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-28T22:45:52.274Z",
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T22:52:11.562Z",
+      "repository": "fishaudio/drama-3",
+      "learningId": "learn-huggingface-fishaudio-drama-3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T22:52:12.921Z",
+      "repository": "google/tcmalloc",
+      "learningId": "learn-github-google-tcmalloc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T22:52:18.407Z",
+      "repository": "thaw-app/Thaw",
+      "learningId": "learn-github-thaw-app-thaw",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

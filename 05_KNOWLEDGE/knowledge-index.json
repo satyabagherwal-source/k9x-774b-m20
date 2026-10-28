@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T22:45:52.209Z",
+  "last_updated": "2026-10-28T22:52:18.315Z",
   "total_verified_learnings": 1160,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -14458,8 +14458,8 @@
       "slug": "google-tcmalloc",
       "platform": "github",
       "source_url": "https://github.com/google/tcmalloc",
-      "source_version": "87ce233e",
-      "content_hash": "6c4c2f4c11ab18efa265470018fefdf5ab7469b07ace7725a978f3a8bb45ee4c",
+      "source_version": "e0db02c5",
+      "content_hash": "5928d835d9d7bb1eafcdbb12cdf3ecb461e260f4f525a008a98cde634c80a592",
       "dossier_path": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "promoted_rules": [
@@ -14497,6 +14497,11 @@
           "number": 4954,
           "title": "Acquire sample lock before graveyard lock in SampleRecorder::PushDead.",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5443,
+          "title": "Track whether a non-default region factory has ever been installed via `has_cust",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14504,7 +14509,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T19:06:44.243Z",
+      "verified_at": "2026-10-28T22:52:12.831Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51973,8 +51978,8 @@
       "slug": "thaw-app-thaw",
       "platform": "github",
       "source_url": "https://github.com/thaw-app/Thaw",
-      "source_version": "3e434793",
-      "content_hash": "b11a92717e62bfa4a6d195c120c80f2c55b5135936e204bb143ef76f1b407e40",
+      "source_version": "7adbc95f",
+      "content_hash": "c3c7e033aa9fb65b85e223f076458509e8631d9f7b31aa332282b05729e8813c",
       "dossier_path": "07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
       "promoted_rules": [
@@ -52002,6 +52007,11 @@
           "number": 4371,
           "title": "docs(issues): split the bug form by version and require a log from the moment it",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5444,
+          "title": "ci(release): promote a release candidate to stable without a rebuild (#1218)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52009,7 +52019,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T15:49:35.797Z",
+      "verified_at": "2026-10-28T22:52:18.299Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65488,7 +65498,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/fishaudio/drama-3",
       "source_version": "hf-fishaudio-drama-3",
-      "content_hash": "8d38b9a656e6d1ca27ef6e6154c3f4fcb9ba6a668130e10cb2b4124801be9c47",
+      "content_hash": "3a711a92eca89a128886e84499bc4e62f7130c3a1987a1d8ca3c7962b1c952e8",
       "dossier_path": "07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md",
       "promoted_rules": [
@@ -65513,7 +65523,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T19:38:29.163Z",
+      "verified_at": "2026-10-28T22:52:11.460Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -147058,6 +147068,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T22:45:52.199Z"
+    },
+    "rule-5443": {
+      "learning_id": "rule-5443",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5443,
+      "title": "Track whether a non-default region factory has ever been installed via `has_cust",
+      "source_url": "https://github.com/google/tcmalloc",
+      "source_version": "e0db02c5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T22:52:12.831Z"
+    },
+    "rule-5444": {
+      "learning_id": "rule-5444",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5444,
+      "title": "ci(release): promote a release candidate to stable without a rebuild (#1218)",
+      "source_url": "https://github.com/thaw-app/Thaw",
+      "source_version": "7adbc95f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T22:52:18.299Z"
     }
   },
   "aliases": {

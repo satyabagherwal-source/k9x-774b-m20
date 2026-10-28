@@ -5984,3 +5984,6 @@ Every entry in this ledger must capture:
 | `learn-github-meshtastic-meshtastic-android` | `https://github.com/meshtastic/Meshtastic-Android` | `aa6625eb` | Multi-dimensional audit evidence | 2026-10-28T22:45:45.940Z |
 | `learn-huggingface-liquidai-lfm2-5-24b-a2b` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-28T22:45:51.772Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `dbe91960` | Multi-dimensional audit evidence | 2026-10-28T22:45:52.270Z |
+| `learn-huggingface-fishaudio-drama-3` | `https://huggingface.co/fishaudio/drama-3` | `hf-fishaud` | Multi-dimensional audit evidence | 2026-10-28T22:52:11.551Z |
+| `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `e0db02c5` | Multi-dimensional audit evidence | 2026-10-28T22:52:12.916Z |
+| `learn-github-thaw-app-thaw` | `https://github.com/thaw-app/Thaw` | `7adbc95f` | Multi-dimensional audit evidence | 2026-10-28T22:52:18.402Z |

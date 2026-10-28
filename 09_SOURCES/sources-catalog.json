@@ -1455,8 +1455,8 @@
     "sourceUrl": "https://huggingface.co/fishaudio/drama-3",
     "sourceVersion": "hf-fishaudio-drama-3",
     "license": "Open-Source",
-    "contentHash": "8d38b9a656e6d1ca27ef6e6154c3f4fcb9ba6a668130e10cb2b4124801be9c47",
-    "lastHarvestedAt": "2026-10-25T19:38:29.231Z",
+    "contentHash": "3a711a92eca89a128886e84499bc4e62f7130c3a1987a1d8ca3c7962b1c952e8",
+    "lastHarvestedAt": "2026-10-28T22:52:11.551Z",
     "learningId": "learn-huggingface-fishaudio-drama-3"
   },
   "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8": {
@@ -7683,10 +7683,10 @@
     "repository": "google/tcmalloc",
     "platform": "github",
     "sourceUrl": "https://github.com/google/tcmalloc",
-    "sourceVersion": "87ce233e",
+    "sourceVersion": "e0db02c5",
     "license": "Apache-2.0",
-    "contentHash": "6c4c2f4c11ab18efa265470018fefdf5ab7469b07ace7725a978f3a8bb45ee4c",
-    "lastHarvestedAt": "2026-10-27T19:06:44.322Z",
+    "contentHash": "5928d835d9d7bb1eafcdbb12cdf3ecb461e260f4f525a008a98cde634c80a592",
+    "lastHarvestedAt": "2026-10-28T22:52:12.916Z",
     "learningId": "learn-github-google-tcmalloc"
   },
   "russhwolf-multiplatform-settings": {
@@ -7833,10 +7833,10 @@
     "repository": "thaw-app/Thaw",
     "platform": "github",
     "sourceUrl": "https://github.com/thaw-app/Thaw",
-    "sourceVersion": "3e434793",
+    "sourceVersion": "7adbc95f",
     "license": "GPL-3.0",
-    "contentHash": "b11a92717e62bfa4a6d195c120c80f2c55b5135936e204bb143ef76f1b407e40",
-    "lastHarvestedAt": "2026-10-25T15:49:35.886Z",
+    "contentHash": "c3c7e033aa9fb65b85e223f076458509e8631d9f7b31aa332282b05729e8813c",
+    "lastHarvestedAt": "2026-10-28T22:52:18.402Z",
     "learningId": "learn-github-thaw-app-thaw"
   },
   "rtk-ai-rtk": {

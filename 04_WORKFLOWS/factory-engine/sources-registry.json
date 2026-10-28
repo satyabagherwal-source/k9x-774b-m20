@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T22:45:54.798Z",
-    "lastVerified": "2026-10-28T22:45:54.798Z",
+    "lastChecked": "2026-10-28T22:52:22.748Z",
+    "lastVerified": "2026-10-28T22:52:22.748Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -204,8 +204,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T22:26:41.646Z",
-    "lastVerified": "2026-10-28T22:26:41.646Z",
+    "lastChecked": "2026-10-28T22:52:22.739Z",
+    "lastVerified": "2026-10-28T22:52:22.739Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1497,12 +1497,12 @@
     "lastVerified": "2026-10-28T22:39:35.538Z"
   },
   "alibaba-zvec": {
-    "name": "alibaba/zvec",
+    "name": "zvec",
     "officialUrl": "https://github.com/alibaba/zvec",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-10-28T05:17:54.592Z",
-    "lastVerified": "2026-10-28T05:17:54.592Z",
+    "lastChecked": "2026-10-28T22:52:20.219Z",
+    "lastVerified": "2026-10-28T22:52:20.219Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-alibaba-zvec",
@@ -1511,7 +1511,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "4c2d07de"
   },
   "michael-a-kuykendall-shimmy": {
     "name": "shimmy",
@@ -1664,12 +1665,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "projectdiscovery-nuclei": {
-    "name": "projectdiscovery/nuclei",
+    "name": "nuclei",
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T19:17:20.647Z",
-    "lastVerified": "2026-10-28T19:17:20.647Z",
+    "lastChecked": "2026-10-28T22:52:17.797Z",
+    "lastVerified": "2026-10-28T22:52:17.797Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -1678,7 +1679,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "a113cf0d"
   },
   "zilliztech-claude-context": {
     "name": "claude-context",
@@ -2000,9 +2002,9 @@
   "alexellis-k3sup": {
     "name": "k3sup",
     "officialUrl": "https://github.com/alexellis/k3sup",
-    "lastChecked": "2026-10-28T06:18:29.046Z",
+    "lastChecked": "2026-10-28T22:52:15.177Z",
     "revisionIdentifier": "07ee3911",
-    "lastVerified": "2026-10-28T06:18:29.046Z"
+    "lastVerified": "2026-10-28T22:52:15.177Z"
   },
   "paradedb-paradedb": {
     "name": "paradedb/paradedb",
@@ -7365,6 +7367,57 @@
     "contentHash": "f31856bc72fb68d81bc28e84b25205690875f2ab06c93f4c31baa0e009ad15f2",
     "promotedRulesCount": 1,
     "recentFixesCount": 10,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "google-tcmalloc": {
+    "name": "google/tcmalloc",
+    "officialUrl": "https://github.com/google/tcmalloc",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-10-28T22:52:12.313Z",
+    "lastVerified": "2026-10-28T22:52:12.313Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-google-tcmalloc",
+    "contentHash": "5928d835d9d7bb1eafcdbb12cdf3ecb461e260f4f525a008a98cde634c80a592",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-fishaudio-drama-3": {
+    "name": "fishaudio/drama-3",
+    "officialUrl": "https://huggingface.co/fishaudio/drama-3",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T22:52:10.293Z",
+    "lastVerified": "2026-10-28T22:52:10.293Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-fishaudio-drama-3",
+    "contentHash": "3a711a92eca89a128886e84499bc4e62f7130c3a1987a1d8ca3c7962b1c952e8",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "thaw-app-thaw": {
+    "name": "thaw-app/Thaw",
+    "officialUrl": "https://github.com/thaw-app/Thaw",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-28T22:52:17.839Z",
+    "lastVerified": "2026-10-28T22:52:17.839Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-thaw-app-thaw",
+    "contentHash": "c3c7e033aa9fb65b85e223f076458509e8631d9f7b31aa332282b05729e8813c",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 15,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T22:45:52.276Z",
+  "last_updated": "2026-10-28T22:52:18.410Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2257,14 +2257,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-fishaudio-drama-3",
-      "content_hash": "8d38b9a656e6d1ca27ef6e6154c3f4fcb9ba6a668130e10cb2b4124801be9c47",
-      "verified_at": "2026-10-25T19:38:29.239Z",
+      "content_hash": "3a711a92eca89a128886e84499bc4e62f7130c3a1987a1d8ca3c7962b1c952e8",
+      "verified_at": "2026-10-28T22:52:11.565Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T19:38:29.239Z"
+      "last_updated": "2026-10-28T22:52:11.565Z"
     },
     "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8": {
       "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
@@ -11571,14 +11571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-google-tcmalloc",
-      "content_hash": "6c4c2f4c11ab18efa265470018fefdf5ab7469b07ace7725a978f3a8bb45ee4c",
-      "verified_at": "2026-10-27T19:06:44.331Z",
+      "content_hash": "5928d835d9d7bb1eafcdbb12cdf3ecb461e260f4f525a008a98cde634c80a592",
+      "verified_at": "2026-10-28T22:52:12.924Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T19:06:44.331Z"
+      "last_updated": "2026-10-28T22:52:12.924Z"
     },
     "russhwolf/multiplatform-settings": {
       "repository": "russhwolf/multiplatform-settings",
@@ -11781,14 +11781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-thaw-app-thaw",
-      "content_hash": "b11a92717e62bfa4a6d195c120c80f2c55b5135936e204bb143ef76f1b407e40",
-      "verified_at": "2026-10-25T15:49:35.893Z",
+      "content_hash": "c3c7e033aa9fb65b85e223f076458509e8631d9f7b31aa332282b05729e8813c",
+      "verified_at": "2026-10-28T22:52:18.409Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T15:49:35.893Z"
+      "last_updated": "2026-10-28T22:52:18.409Z"
     },
     "rtk-ai/rtk": {
       "repository": "rtk-ai/rtk",

@@ -5975,3 +5975,6 @@
 | `CYCLE-20261028-DPW1` | `2026-10-28T22:45:45.938Z` | `meshtastic/Meshtastic-Android` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5438` | Yes (`f31856bc...`) |
 | `CYCLE-20261028-DUDY` | `2026-10-28T22:45:51.766Z` | `LiquidAI/LFM2.5-24B-A2B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5439, Rule 5440, Rule 5441` | Yes (`d3a7e2ee...`) |
 | `CYCLE-20261028-DURV` | `2026-10-28T22:45:52.267Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5442` | Yes (`a35fe5a0...`) |
+| `CYCLE-20261028-LZFG` | `2026-10-28T22:52:11.548Z` | `fishaudio/drama-3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md` | Yes (`3a711a92...`) |
+| `CYCLE-20261028-M0HD` | `2026-10-28T22:52:12.913Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5443` | Yes (`5928d835...`) |
+| `CYCLE-20261028-M4PR` | `2026-10-28T22:52:18.399Z` | `thaw-app/Thaw` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5444` | Yes (`c3c7e033...`) |
