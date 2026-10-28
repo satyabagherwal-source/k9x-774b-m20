@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T22:07:53.846Z",
+  "last_updated": "2026-10-28T22:14:08.006Z",
   "total_verified_learnings": 1159,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -38538,8 +38538,8 @@
       "slug": "moby-buildkit",
       "platform": "github",
       "source_url": "https://github.com/moby/buildkit",
-      "source_version": "6d392427",
-      "content_hash": "9bb261cd6543cbaf7e7570e6a6d89f5225e7e77392fccf73711a0ddf44612262",
+      "source_version": "c19b15f5",
+      "content_hash": "25e5735fa7fb06d89da4631f090956150566484856c7f025799d88bf7703b0c2",
       "dossier_path": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "promoted_rules": [
@@ -38572,6 +38572,11 @@
           "number": 5189,
           "title": "Merge pull request #7318 from infosiftr/expose-history",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5425,
+          "title": "Merge pull request #7332 from tonistiigi/fix-commit-cancel",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38579,7 +38584,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T05:30:58.186Z",
+      "verified_at": "2026-10-28T22:14:07.995Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42780,8 +42785,8 @@
       "slug": "oven-sh-bun",
       "platform": "github",
       "source_url": "https://github.com/oven-sh/bun",
-      "source_version": "9b8347a2",
-      "content_hash": "3b819d968eb012cf3e0d7c6bd12fb99e926c3e40ed239c05648096e982446d77",
+      "source_version": "73b53109",
+      "content_hash": "46b7ae9e84429e1d96881225ee4c2cd79336db5202373a86827d91297bc58956",
       "dossier_path": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "promoted_rules": [
@@ -42821,7 +42826,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T19:13:38.014Z",
+      "verified_at": "2026-10-28T22:14:01.253Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65019,7 +65024,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/JEV-35B",
       "source_version": "hf-autotrust-jev-35b",
-      "content_hash": "f6ede5f37ec1ca211f680a133e35656ee16f97637200b807d5228bea013d7efb",
+      "content_hash": "d8f57c2f5b8191bda0fa8d922e1c24bc446327a29ad44b348b704f0464220ae4",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md",
       "promoted_rules": [
@@ -65044,7 +65049,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T10:17:01.801Z",
+      "verified_at": "2026-10-28T22:13:58.389Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -146683,6 +146688,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T22:07:48.613Z"
+    },
+    "rule-5425": {
+      "learning_id": "rule-5425",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5425,
+      "title": "Merge pull request #7332 from tonistiigi/fix-commit-cancel",
+      "source_url": "https://github.com/moby/buildkit",
+      "source_version": "c19b15f5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T22:14:07.995Z"
     }
   },
   "aliases": {

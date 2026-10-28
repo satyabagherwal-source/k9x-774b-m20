@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T22:07:53.902Z",
-  "total_cycles_completed": 5935,
-  "total_learnings_persisted": 5935,
-  "total_rules_promoted": 5387,
+  "last_updated": "2026-10-28T22:14:08.057Z",
+  "total_cycles_completed": 5938,
+  "total_learnings_persisted": 5938,
+  "total_rules_promoted": 5388,
   "history": [
-    {
-      "timestamp": "2026-10-28T12:08:58.705Z",
-      "repository": "google-bert/bert-base-uncased",
-      "learningId": "learn-huggingface-google-bert-bert-base-uncased",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T12:15:31.230Z",
-      "repository": "BAAI/bge-m3",
-      "learningId": "learn-huggingface-baai-bge-m3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T12:27:18.227Z",
-      "repository": "Qwen/Qwen3-0.6B",
-      "learningId": "learn-huggingface-qwen-qwen3-0-6b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T12:39:58.534Z",
       "repository": "google-t5/t5-small",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-28T22:07:53.902Z",
       "repository": "tursodatabase/turso",
       "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T22:13:58.458Z",
+      "repository": "autotrust/JEV-35B",
+      "learningId": "learn-huggingface-autotrust-jev-35b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T22:14:01.339Z",
+      "repository": "oven-sh/bun",
+      "learningId": "learn-github-oven-sh-bun",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T22:14:08.057Z",
+      "repository": "moby/buildkit",
+      "learningId": "learn-github-moby-buildkit",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

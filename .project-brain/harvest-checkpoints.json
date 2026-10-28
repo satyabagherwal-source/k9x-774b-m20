@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T22:07:53.904Z",
+  "last_updated": "2026-10-28T22:14:08.060Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2111,14 +2111,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-jev-35b",
-      "content_hash": "f6ede5f37ec1ca211f680a133e35656ee16f97637200b807d5228bea013d7efb",
-      "verified_at": "2026-10-25T10:17:01.851Z",
+      "content_hash": "d8f57c2f5b8191bda0fa8d922e1c24bc446327a29ad44b348b704f0464220ae4",
+      "verified_at": "2026-10-28T22:13:58.460Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T10:17:01.851Z"
+      "last_updated": "2026-10-28T22:13:58.460Z"
     },
     "openbmb/MiniCPM-V-4.7-35B-A3B": {
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
@@ -3306,14 +3306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-moby-buildkit",
-      "content_hash": "9bb261cd6543cbaf7e7570e6a6d89f5225e7e77392fccf73711a0ddf44612262",
-      "verified_at": "2026-10-28T05:30:58.249Z",
+      "content_hash": "25e5735fa7fb06d89da4631f090956150566484856c7f025799d88bf7703b0c2",
+      "verified_at": "2026-10-28T22:14:08.059Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T05:30:58.249Z"
+      "last_updated": "2026-10-28T22:14:08.059Z"
     },
     "microsoft/agent-governance-toolkit": {
       "repository": "microsoft/agent-governance-toolkit",
@@ -11601,14 +11601,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oven-sh-bun",
-      "content_hash": "3b819d968eb012cf3e0d7c6bd12fb99e926c3e40ed239c05648096e982446d77",
-      "verified_at": "2026-10-27T19:13:38.122Z",
+      "content_hash": "46b7ae9e84429e1d96881225ee4c2cd79336db5202373a86827d91297bc58956",
+      "verified_at": "2026-10-28T22:14:01.341Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T19:13:38.122Z"
+      "last_updated": "2026-10-28T22:14:01.341Z"
     },
     "CodeEditApp/CodeEdit": {
       "repository": "CodeEditApp/CodeEdit",

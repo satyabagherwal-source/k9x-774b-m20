@@ -5967,3 +5967,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-10-28T22:07:47.922Z |
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `f2aca49f` | Multi-dimensional audit evidence | 2026-10-28T22:07:48.681Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `b0563444` | Multi-dimensional audit evidence | 2026-10-28T22:07:53.898Z |
+| `learn-huggingface-autotrust-jev-35b` | `https://huggingface.co/autotrust/JEV-35B` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-28T22:13:58.450Z |
+| `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `73b53109` | Multi-dimensional audit evidence | 2026-10-28T22:14:01.336Z |
+| `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `c19b15f5` | Multi-dimensional audit evidence | 2026-10-28T22:14:08.053Z |

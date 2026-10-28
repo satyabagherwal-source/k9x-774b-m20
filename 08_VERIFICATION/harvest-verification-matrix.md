@@ -5958,3 +5958,6 @@
 | `CYCLE-20261028-0W5S` | `2026-10-28T22:07:47.920Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5421, Rule 5422, Rule 5423` | Yes (`59902ba6...`) |
 | `CYCLE-20261028-0WQU` | `2026-10-28T22:07:48.678Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5424` | Yes (`a7e65e38...`) |
 | `CYCLE-20261028-10RS` | `2026-10-28T22:07:53.896Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5382` | Yes (`d1ffe8b8...`) |
+| `CYCLE-20261028-8U27` | `2026-10-28T22:13:58.447Z` | `autotrust/JEV-35B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md` | Yes (`d8f57c2f...`) |
+| `CYCLE-20261028-8WA3` | `2026-10-28T22:14:01.323Z` | `oven-sh/bun` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/oven-sh-bun-learnings.md` | Yes (`46b7ae9e...`) |
+| `CYCLE-20261028-91GY` | `2026-10-28T22:14:08.050Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5425` | Yes (`25e5735f...`) |

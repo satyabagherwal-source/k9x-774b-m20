@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source**: github ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
-> **Source Version**: `6d392427`  
+> **Source Version**: `c19b15f5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T05:30:57.875Z  
+> **Timestamp**: 2026-10-28T22:14:07.661Z  
 > **Learning ID**: `learn-github-moby-buildkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T05:30:57.728Z  
+> **Harvest Timestamp**: 2026-10-28T22:14:07.656Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: concurrent, cache-efficient, and Dockerfile-agnostic builder toolkit
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10343 stars
+- **Stars / Engagement**: 10346 stars
 
 ---
 
@@ -2299,11 +2299,11 @@ func isPathEscapesRootError(err error) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7330** (2026-10-28): **readme: improve the frontend overview**
-  *Symptoms*: Give frontends a dedicated section with short descriptions to help readers compare build languages and tools, including Docker Sandbox Kit.  Remove the unavailable JSON Gateway, refresh moved links, and note that Earthly is no longer actively maintained.
+- **Issue #7332** (2026-10-28): **cache: avoid losing finalize commit on cancel**
+  *Symptoms*: On the containerd worker the snapshotter is a gRPC client. If a build is cancelled while finalize is committing a lazy ref, containerd can apply the commit while the client returns Canceled. finalize then deleted the lease protecting the committed snapshot and kept equalMutable, so the record pointed at a mutable snapshot that no longer existed. Every later build using the record failed with "failed to stat active key during commit: snapshot ... does not exist" until the daemon restarted.  Run finalize without cancellation so the commit result is not lost. If Commit still returns an error, check whether the target snapshot was committed and, if so, complete the finalize. Keep the lease when that cannot be determined.
 
-- **Issue #7326** (2026-10-28): **vendor: golang.org/x/net v0.60.0**
-  *Symptoms*: Includes fixes for;  - CVE-2026-78659 / [GO-2026-6603] - CVE-2026-78660 / [GO-2026-6610] - CVE-2026-78669 / [GO-2026-6611] - CVE-2026-78663 / [GO-2026-6612] - CVE-2026-97032 / [GO-2026-6617]  full diff: full diff: https://github.com/golang/net/compare/v0.59.0...v0.60.0  [GO-2026-6603]: https://pkg.go.dev/vuln/GO-2026-6603 [GO-2026-6610]: https://pkg.go.dev/vuln/GO-2026-6610 [GO-2026-6611]: https://pkg.go.dev/vuln/GO-2026-6611 [GO-2026-6612]: https://pkg.go.dev/vuln/GO-2026-6612 [GO-2026-6617]: https://pkg.go.dev/vuln/GO-2026-6617
+- **Issue #7331** (2026-10-28): **vendor: update fsutil to ca65610c2295**
+  *Symptoms*: https://github.com/tonistiigi/fsutil/compare/83cac42c1c52...ca65610c2295
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2320,690 +2320,811 @@ func isPathEscapesRootError(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6d392427` (2026-10-28)
-**Commit Message**: Merge pull request #7318 from infosiftr/expose-history
+### Incident Patch 1: `c19b15f5` (2026-10-28)
+**Commit Message**: Merge pull request #7332 from tonistiigi/fix-commit-cancel
 
-Fix `EXPOSE` history to be valid syntax
+cache: avoid losing finalize commit on cancel
 
-**File**: `frontend/dockerfile/dockerfile2llb/convert_expose.go` (modified, +1/-1)
+**File**: `cache/manager_test.go` (modified, +102/-0)
 ```diff
-@@ -41,7 +41,7 @@ func dispatchExpose(d *dispatchState, c *instructions.ExposeCommand, opt *dispat
- 		d.image.Config.ExposedPorts[p] = struct{}{}
- 	}
- 
--	return commitToHistory(&d.image, fmt.Sprintf("EXPOSE %v", psp), false, nil, d.epoch)
-+	return commitToHistory(&d.image, fmt.Sprintf("EXPOSE %s", strings.Join(psp, " ")), false, nil, d.epoch)
+@@ -3015,6 +3015,108 @@ func TestLoadHalfFinalizedRef(t *testing.T) {
+ 	require.NoError(t, err)
  }
  
- type portSpecs struct {
++func TestFinalizeAlreadyCommitted(t *testing.T) {
++	// This test simulates a snapshotter commit that was applied but reported
++	// as failed (e.g. a canceled containerd RPC). Finalize must notice the
++	// committed snapshot instead of failing on the missing active snapshot.
++	t.Parallel()
++
++	ctx := namespaces.WithNamespace(t.Context(), "buildkit-test")
++
++	tmpdir := t.TempDir()
++
++	snapshotter, err := native.NewSnapshotter(filepath.Join(tmpdir, "snapshots"))
++	require.NoError(t, err)
++	t.Cleanup(func() {
++		require.NoError(t, snapshotter.Close())
++	})
++
++	co, cleanup, err := newCacheManager(ctx, t, cmOpt{
++		tmpdir:          tmpdir,
++		snapshotter:     snapshotter,
++		snapshotterName: "native",
++	})
++	require.NoError(t, err)
++	t.Cleanup(cleanup)
++	cm := co.manager.(*cacheManager)
++
++	mref, err := cm.New(ctx, nil, nil, CachePolicyRetain)
++	require.NoError(t, err)
++	mutRef := mref.(*mutableRef)
++
++	iref, err := mutRef.Commit(ctx)
++	require.NoError(t, err)
++	immutRef := iref.(*immutableRef)
++
++	err = cm.Snapshotter.Commit(ctx, immutRef.getSnapshotID(), mutRef.getSnapshotID())
++	require.NoError(t, err)
++
++	require.NoError(t, iref.Finalize(ctx))
++	require.Nil(t, immutRef.equalMutable)
++
++	// the committed snapshot must stay protected by the ref's lease
++	resources, err := co.lm.ListResources(ctx, leases.Lease{ID: immutRef.ID()})
++	require.NoError(t, err)
++	require.Contains(t, resources, leases.Resource{
++		ID:   immutRef.getSnapshotID(),
++		Type: "snapshots/" + cm.Snapshotter.Name(),
++	})
++
++	m, err := iref.Mount(ctx, true, nil)
++	require.NoError(t, err)
++	mnts, release, err := m.Mount()
++	require.NoError(t, err)
++	require.NotEmpty(t, mnts)
++	require.NoError(t, release())
++
++	require.NoError(t, mref.Release(ctx))
++	require.NoError(t, iref.Release(ctx))
++}
++
++func TestFinalizeCanceledContext(t *testing.T) {
++	// Finalize ignores cancellation, as a remote snapshotter may apply a commit
++	// that the caller observes as canceled.
++	t.Parallel()
++
++	ctx := namespaces.WithNamespace(t.Context(), "buildkit-test")
++
++	tmpdir := t.TempDir()
++
++	snapshotter, err := native.NewSnapshotter(filepath.Join(tmpdir, "snapshots"))
++	require.NoError(t, err)
++	t.Cleanup(func() {
++		require.NoError(t, snapshotter.Close())
++	})
++
++	co, cleanup, err := newCacheManager(ctx, t, cmOpt{
++		tmpdir:          tmpdir,
++		snapshotter:     snapshotter,
++		snapshotterName: "native",
++	})
++	require.NoError(t, err)
++	t.Cleanup(cleanup)
++	cm := co.manager.(*cacheManager)
++
++	mref, err := cm.New(ctx, nil, nil, CachePolicyRetain)
++	require.NoError(t, err)
++
++	iref, err := mref.Commit(ctx)
++	require.NoError(t, err)
++	immutRef := iref.(*immutableRef)
++
++	cctx, cancel := context.WithCancelCause(ctx)
++	cancel(errors.WithStack(context.Canceled))
++	require.NoError(t, iref.Finalize(cctx))
++	require.Nil(t, immutRef.equalMutable)
++
++	info, err := cm.Snapshotter.Stat(ctx, immutRef.getSnapshotID())
++	require.NoError(t, err)
++	require.Equal(t, snapshots.KindCommitted, info.Kind)
++
++	require.NoError(t, mref.Release(ctx))
++	require.NoError(t, iref.Release(ctx))
++}
++
+ func TestMountReadOnly(t *testing.T) {
+ 	t.Parallel()
+ 	if runtime.GOOS != "linux" {
 ```
 
-**File**: `frontend/dockerfile/dockerfile_history_test.go` (modified, +1/-1)
+**File**: `cache/refs.go` (modified, +20/-6)
 ```diff
-@@ -132,7 +132,7 @@ EXPOSE 2375 5000 1234/udp
- 	require.Equal(t, false, ociimg.History[historyOffset+4].EmptyLayer)
- 	require.NotNil(t, ociimg.History[historyOffset+4].Created)
- 	// On Windows, EXPOSE may be formatted differently in history
--	expectedExpose := integration.UnixOrWindows("EXPOSE [1234/udp 2375/tcp 5000/tcp]", "EXPOSE")
-+	expectedExpose := integration.UnixOrWindows("EXPOSE 1234/udp 2375/tcp 5000/tcp", "EXPOSE")
- 	require.Contains(t, ociimg.History[historyOffset+5].CreatedBy, expectedExpose)
- 	require.Equal(t, true, ociimg.History[historyOffset+5].EmptyLayer)
- 	require.NotNil(t, ociimg.History[historyOffset+5].Created)
+@@ -1538,6 +1538,11 @@ func (cr *cacheRecord) finalize(ctx context.Context) error {
+ 		return nil
+ 	}
+ 
++	// The snapshotter may apply the commit even when the caller sees a
++	// cancellation (e.g. a containerd RPC canceled in flight), leaving the
++	// mutable snapshot gone while the record still points to it.
++	ctx = context.WithoutCancel(ctx)
++
+ 	_, err := cr.cm.LeaseManager.Create(ctx, func(l *leases.Lease) error {
+ 		l.ID = cr.ID()
+ 		l.Labels = map[string]string{
+@@ -1555,23 +1560,32 @@ func (cr *cacheRecord) finalize(ctx context.Context) error {
+ 		ID:   cr.getSnapshotID(),
+ 		Type: "snapshots/" + cr.cm.Snapshotter.Name(),
+ 	}); err != nil {
+-		_ = cr.cm.LeaseManager.Delete(context.WithoutCancel(ctx), leases.Lease{ID: cr.ID()})
++		_ = cr.cm.LeaseManager.Delete(ctx, leases.Lease{ID: cr.ID()})
+ 		return errors.Wrapf(err, "failed to add snapshot %s to lease", cr.getSnapshotID())
+ 	}
+ 
+ 	if err := cr.cm.Snapshotter.Commit(ctx, cr.getSnapshotID(), mutable.getSnapshotID()); err != nil {
+-		_ = cr.cm.LeaseManager.Delete(context.WithoutCancel(ctx), leases.Lease{ID: cr.ID()})
+-		return errors.Wrapf(err, "failed to commit %s to %s during finalize", mutable.getSnapshotID(), cr.getSnapshotID())
++		// the commit may still have been applied, e.g. if the response was lost
++		info, statErr := cr.cm.Snapshotter.Stat(ctx, cr.getSnapshotID())
++		if statErr != nil || info.Kind != snapshots.KindCommitted {
++			// keep the lease if it is unknown whether the commit was applied
++			if statErr == nil || errors.Is(statErr, cerrdefs.ErrNotFound) {
++				_ = cr.cm.LeaseManager.Delete(ctx, leases.Lease{ID: cr.ID()})
++			} else {
++				bklog.G(ctx).WithError(statErr).Warnf("failed to check snapshot %s after commit error, keeping lease", cr.getSnapshotID())
++			}
++			return errors.Wrapf(err, "failed to commit %s to %s during finalize", mutable.getSnapshotID(), cr.getSnapshotID())
++		}
++		bklog.G(ctx).WithError(err).Warnf("snapshot %s was committed to %s despite commit error", mutable.getSnapshotID(), cr.getSnapshotID())
+ 	}
+ 	cr.mountCache = nil
+ 
+ 	mutable.dead = true
+ 	go func() {
+ 		cr.cm.mu.Lock()
+ 		defer cr.cm.mu.Unlock()
+-		cleanupCtx := context.WithoutCancel(ctx)
+-		if err := mutable.remove(cleanupCtx, true); err != nil {
+-			bklog.G(cleanupCtx).Error(err)
++		if err := mutable.remove(ctx, true); err != nil {
++			bklog.G(ctx).Error(err)
+ 		}
+ 	}()
+ 
 ```
 
 ---
 
-### Incident Patch 2: `dfa0ec11` (2026-10-28)
-**Commit Message**: Merge pull request #7326 from thaJeztah/bump_x_net
+### Incident Patch 2: `55f04a2c` (2026-10-28)
+**Commit Message**: Merge pull request #7325 from tonistiigi/race-fixes
 
-vendor: golang.org/x/net v0.60.0
+data race and correctness fixes
 
-**File**: `go.mod` (modified, +1/-1)
+**File**: `client/client_test.go` (modified, +2/-0)
 ```diff
-@@ -107,7 +107,7 @@ require (
- 	golang.org/x/crypto v0.57.0
- 	golang.org/x/exp v0.0.0-20260603202125-055de637280b
- 	golang.org/x/mod v0.41.0
--	golang.org/x/net v0.59.0
-+	golang.org/x/net v0.60.0
- 	golang.org/x/sync v0.23.0
- 	golang.org/x/sys v0.48.0
- 	golang.org/x/time v0.16.0
+@@ -274,9 +274,11 @@ func TestClientGatewayIntegration(t *testing.T) {
+ 		testClientGatewayContainerPID1Exit,
+ 		testClientGatewayContainerPID1Fail,
+ 		testClientGatewayContainerPID1Tty,
++		testClientGatewayContainerResizeSignal,
+ 		testClientGatewayContainerSignal,
+ 		testClientGatewayExecError,
+ 		testClientGatewaySharedExecError,
++		testClientGatewayExecErrorReleasedDuringLoad,
+ 		testClientGatewayExecFileActionError,
+ 		testClientGatewaySlowCacheExecError,
+ 
 ```
 
-**File**: `go.sum` (modified, +2/-2)
+**File**: `client/gateway_container_exec_test.go` (modified, +99/-0)
 ```diff
-@@ -593,8 +593,8 @@ golang.org/x/exp v0.0.0-20260603202125-055de637280b h1:v1uXiEBHo8QA0LiGCo7UgHMzH
- golang.org/x/exp v0.0.0-20260603202125-055de637280b/go.mod h1:d2fgXJLVs4dYDHUk5lwMIfzRzSrWCfGZb0ZqeLa/Vcw=
- golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
- golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
--golang.org/x/net v0.59.0 h1:5zfYln+w5XCxwrnMMJPufRgNoXEaGxl0wo5GqPXyues=
--golang.org/x/net v0.59.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
-+golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
-+golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
- golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
- golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
- golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
-```
-
-**File**: `vendor/golang.org/x/net/http2/flow.go` (modified, +79/-24)
-```diff
-@@ -10,6 +10,9 @@ package http2
- // flow control window update.
- const inflowMinRefresh = 4 << 10
- 
-+// maxFlowWindow is the maximum size of a flow control window.
-+const maxFlowWindow = (1 << 31) - 1
-+
- // inflow accounts for an inbound flow control window.
- // It tracks both the latest window sent to the peer (used for enforcement)
- // and the accumulated unsent window.
-@@ -74,47 +77,99 @@ func takeInflows(f1, f2 *inflow, n uint32) bool {
- 	return true
+@@ -942,6 +942,105 @@ func testClientGatewayContainerSignal(t *testing.T, sb integration.Sandbox) {
+ 	checkAllReleasable(t, c, sb, true)
  }
  
--// outflow is the outbound flow control window's size.
-+// connOutflow is connection-level outbound flow control.
-+type connOutflow struct {
-+	initial int32 // SETTINGS_INITIAL_WINDOW_SIZE, changes with settings updates
-+	n       int32 // connection-level flow control window
-+	flowErr bool  // set when a flow control error is encountered
-+}
++// Linux signal numbers. The container is always Linux, and syscall does not
++// define these when the test binary is built for other platforms.
++const (
++	linuxSIGUSR1  = syscall.Signal(10)
++	linuxSIGWINCH = syscall.Signal(28)
++)
 +
-+func (f *connOutflow) init() {
-+	f.initial = initialWindowSize // initial stream window size
-+	f.n = initialWindowSize       // current connection window size
-+}
++// testClientGatewayContainerResizeSignal resizes and signals a container
++// process concurrently.
++func testClientGatewayContainerResizeSignal(t *testing.T, sb integration.Sandbox) {
++	requiresLinux(t)
++	ctx := sb.Context()
 +
-+func (f *connOutflow) changeInitialWindowSize(size int64) bool {
-+	if size > maxFlowWindow {
-+		f.flowErr = true
-+		return false
-+	}
-+	f.initial = int32(size)
-+	return true
-+}
++	c, err := New(ctx, sb.Address())
++	require.NoError(t, err)
++	defer c.Close()
 +
-+func (f *connOutflow) add(n int32) bool {
-+	sum := int64(f.n) + int64(n)
-+	if sum > maxFlowWindow {
-+		f.flowErr = true
-+		return false
-+	}
-+	f.n += n
-+	return true
-+}
++	product := "buildkit_test"
 +
-+// outflow is the stream-level outbound flow control window's size.
- type outflow struct {
- 	_ incomparable
- 
--	// n is the number of DATA bytes we're allowed to send.
--	// An outflow is kept both on a conn and a per-stream.
--	n int32
-+	// delta is the difference between the stream's flow control window and
-+	// the connection's initial window size (conn.initial).
-+	//
-+	// Another view is that delta is the number of flow control bytes provided to this
-+	// stream in WINDOW_UPDATE frames, less the number of bytes sent on the stream.
-+	delta int32
- 
- 	// conn points to the shared connection-level outflow that is
--	// shared by all streams on that conn. It is nil for the outflow
--	// that's on the conn directly.
--	conn *outflow
-+	// shared by all streams on that conn.
-+	conn *connOutflow
- }
- 
--func (f *outflow) setConnFlow(cf *outflow) { f.conn = cf }
--
--func (f *outflow) available() int32 {
--	n := f.n
--	if f.conn != nil && f.conn.n < n {
--		n = f.conn.n
-+func (f *outflow) available() (int32, bool) {
-+	if f.conn == nil {
-+		return maxFlowWindow, true // only happens in tests
- 	}
--	return n
-+	if f.conn.flowErr {
-+		// Block all sending once any stream observes a flow control error.
-+		return 0, false
-+	}
-+	n := int64(f.conn.initial) + int64(f.delta)
-+	if n > maxFlowWindow {
-+		f.conn.flowErr = true
-+		return 0, false
-+	}
-+	return min(int32(n), f.conn.n), true
- }
- 
- func (f *outflow) take(n int32) {
--	if n > f.available() {
--		panic("internal error: took too much")
-+	if f.conn == nil {
-+		return // only happens in tests
- 	}
--	f.n -= n
--	if f.conn != nil {
--		f.conn.n -= n
-+	avail, _ := f.available()
-+	if n > avail {
-+		panic("internal error: took too much")
- 	}
-+	f.delta -= n
-+	f.conn.n -= n
- }
- 
- // add adds n bytes (positive or negative) to the flow control window.
- // It returns false if the sum would exceed 2^31-1.
- func (f *outflow) add(n int32) bool {
--	sum := f.n + n
--	if (sum > n) == (f.n > 0) {
--		f.n = sum
--		return true
-+	if f.conn == nil {
-+		return true // only happens in tests
-+	}
-+	avail := int64(f.conn.initial) + int64(f.delta)
-+	if avail > maxFlowWindow {
-+		// An earlier change to the initial window pushed this stream over the limit.
-+		// This is a connection-level flow control error.
-+		f.conn.flowErr = true
-+		return false
- 	}
--	return false
-+	if avail+int64(n) > maxFlowWindow {
-+		// This update would push the stream over the limit.
-+		// This is a stream-level flow control error.
-+		return false
-+	}
-+	f.delta += n
-+	return true
- }
-```
-
-**File**: `vendor/golang.org/x/net/http2/frame.go` (modified, +25/-9)
-```diff
-@@ -1711,7 +1711,8 @@ func (fr *Framer) readMetaFrame(hf *HeadersFrame) (Frame, error) {
- 	mh := &MetaHeadersFrame{
- 		HeadersFrame: hf,
- 	}
--	var remainSize = fr.maxHeaderListSize()
-+	var headersRemainSize = fr.maxHeaderListSize()
-+	var trailersRemainSize = fr.maxHeaderListSize()
- 	var sawRegular bool
- 
- 	var invalid error // pseudo header field errors
-@@ -1743,14 +1744,29 @@ func (fr *Framer) readMetaFrame(hf *HeadersFrame) (Frame, error) {
- 			return
- 		}
- 
--		size := hf.Size()
--		if size > remainSize {
-+		var remainSize *uint32
-+		var size uint32
-+		if hf.Name == "trailer" {
-+			remainSize = &trailersRemainSize
-+			fieldCount := strings.Count(hf.Value, ",") + 1
-+			// Rather than actually constructing hpack.HeaderField for each
-+			// trailer field and cumulatively adding its Size, just do the math
-+			// manually to avoid unnecessary work. This does make it so
-+			// whitespaces after comma are counted against the budget, but that
-+			// should be innocuous.
-+			size = uint32(len(hf.Value)-fieldCount+1) + uint32(fieldCount)*hpack.HeaderField{}.Size()
-+		} else {
-+			remainSize = &headersRemainSize
-+			size = hf.Size()
++	b := func(ctx context.Context, c client.Client) (*client.Result, error) {
++		ctx, timeout := context.WithTimeoutCause(ctx, 30*time.Second, nil)
++		defer timeout()
++
++		def, err := llb.Image("busybox:latest").Marshal(ctx)
++		if err != nil {
++			return nil, errors.Wrap(err, "failed to marshal state")
 +		}
-+		if size > *remainSize {
- 			hdec.SetEmitEnabled(false)
- 			mh.Truncated = true
--			remainSize = 0
-+			headersRemainSize = 0
-+			trailersRemainSize = 0
- 			return
- 		}
--		remainSize -= size
-+		*remainSize -= size
- 
- 		mh.Fields = append(mh.Fields, hf)
- 	})
-@@ -1766,10 +1782,10 @@ func (fr *Framer) readMetaFrame(hf *HeadersFrame) (Frame, error) {
- 		// skip parsing the fragment and close the connection.
- 		//
- 		// "Too much" is either any CONTINUATION frame after we've already
--		// exceeded the max header list size (in which case remainSize is 0),
--		// or a frame whose encoded size is more than twice the remaining
--		// header list bytes we're willing to accept.
--		if int64(len(frag)) > int64(2*remainSize) {
-+		// exceeded the max header list size (if so, both budgets are 0), or a
-+		// frame whose encoded size is more than twice the remaining header
-+		// list bytes we're willing to accept.
-+		if int64(len(frag)) > 2*int64(headersRemainSize+trailersRemainSize) {
- 			if VerboseLogs {
- 				log.Printf("http2: header list too large")
- 			}
-```
-
-**File**: `vendor/golang.org/x/net/http2/server.go` (modified, +66/-44)
-```diff
-@@ -280,7 +280,6 @@ func (s *Server) serveConn(c net.Conn, opts *ServeConnOpts, newf func(*serverCon
- 		doneServing:                 make(chan struct{}),
- 		clientMaxStreams:            math.MaxUint32, // Section 6.5.2: "Initially, there is no limit to this value"
- 		advMaxStreams:               conf.MaxConcurrentStreams,
--		initialStreamSendWindowSize: initialWindowSize,
- 		initialStreamRecvWindowSize: conf.MaxUploadBufferPerStream,
- 		maxFrameSize:                initialMaxFrameSize,
- 		pingTimeout:                 conf.PingTimeout,
-@@ -320,7 +319,7 @@ func (s *Server) serveConn(c net.Conn, opts *ServeConnOpts, newf func(*serverCon
- 	// These start at the RFC-specified defaults. If there is a higher
- 	// configured value for inflow, that will be updated when we send a
- 	// WINDOW_UPDATE shortly after sending SETTINGS.
--	sc.flow.add(initialWindowSize)
-+	sc.flow.init()
- 	sc.inflow.init(initialWindowSize)
- 	sc.hpackEncoder = hpack.NewEncoder(&sc.headerWriteBuf)
- 	sc.hpackEncoder.SetMaxDynamicTableSizeLimit(conf.MaxEncoderHeaderTableSize)
-@@ -427,7 +426,7 @@ type serverConn struct {
- 	wroteFrameCh     chan frameWriteResult  // from writeFrameAsync -> serve, tickles more frame writes
- 	bodyReadCh       chan bodyReadMsg       // from handlers -> serve
- 	serveMsgCh       chan interface{}       // misc messages & code to send to / run on the serve loop
--	flow             outflow                // conn-wide (not stream-specific) outbound flow control
-+	flow             connOutflow            // conn-wide (not stream-specific) outbound flow control
- 	inflow           inflow                 // conn-wide inbound flow control
- 	tlsState         *tls.ConnectionState   // shared by all handlers, like net/http
- 	remoteAddrStr    string
-@@ -441,6 +440,9 @@ type serverConn struct {
- 	sawFirstSettings            bool // got the initial SETTINGS frame after the preface
- 	needToSendSettingsAck       bool
- 	unackedSettings             int    // how many SETTINGS have we sent without ACKs?
-+	pendingEncoderTableSize     bool   // peer changed SETTINGS_HEADER_TABLE_SIZE; apply to hpackEncoder before the next frame write
-+	encoderTableSizeMin         uint32 // smallest SETTINGS_HEADER_TABLE_SIZE since the last apply
-+	encoderTableSize            uint32 // latest SETTINGS_HEADER_TABLE_SIZE
- 	queuedControlFrames         int    // control frames in the writeSched queue
- 	clientMaxStreams            uint32 // SETTINGS_MAX_CONCURRENT_STREAMS from client (our PUSH_PROMISE limit)
- 	advMaxStreams               uint32 // our SETTINGS_MAX_CONCURRENT_STREAMS advertised the client
-@@ -451,7 +453,6 @@ type serverConn struct {
- 	maxPushPromiseID            uint32 // ID of the last push promise (even), or 0 if there have been no pushes
- 	streams                     map[uint32]*stream
- 	unstartedHandlers           []unstartedHandler
--	initialStreamSendWindowSize int32
- 	initialStreamRecvWindowSize int32
- 	maxFrameSize                int32
- 	peerMaxHeaderListSize       uint32            // zero means unknown (default)
-@@ -521,7 +522,8 @@ type stream struct {
- 	// immutable:
- 	sc        *serverConn
- 	id        uint32
--	body      *pipe       // non-nil if expecting DATA frames
-+	body      *pipe // non-nil if expecting DATA frames
-+	reqBody   *requestBody
- 	cw        closeWaiter // closed wait stream transitions to closed state
- 	ctx       context.Context
- 	cancelCtx func()
-@@ -1172,6 +1174,16 @@ func (sc *serverConn) startFrameWrite(wr FrameWriteRequest) {
- 
- 	sc.writingFrame = true
- 	sc.needsFrameFlush = true
-+	if sc.pendingEncoderTableSize {
-+		// hpackEncoder may be in use by writeFrameAsync, so SETTINGS
-+		// changes to it are deferred until no frame is being written.
-+		// Replaying the smallest size before the latest one keeps the
-+		// encoder's view identical to having applied every change
-+		// (RFC 7541, Section 4.2).
-+		sc.pendingEncoderTableSize = false
-+		sc.hpackEncoder.SetMaxDynamicTableSize(sc.encoderTableSizeMin)
-+		sc.hpackEncoder.SetMaxDynamicTableSize(sc.encoderTableSize)
-+	}
- 	if wr.write.staysWithinBuffer(sc.bw.Available()) {
- 		sc.writingFrameAsync = false
- 		err := wr.write.writeFrame(sc)
-@@ -1271,6 +1283,11 @@ func (sc *serverConn) scheduleFrameWrite() {
- 	}
- 	sc.inFrameScheduleLoop = true
- 	for !sc.writingFrameAsync {
-+		if sc.flow.flowErr && (!sc.inGoAway || sc.goAwayCode == ErrCodeNo) {
-+			sc.inGoAway = true
-+			sc.needToSendGoAway = true
-+			sc.goAwayCode = ErrCodeFlowControl
++
++		r, err := c.Solve(ctx, client.SolveRequest{
++			Definition: def.ToPB(),
++		})
++		if err != nil {
++			return nil, errors.Wrap(err, "failed to solve")
 +		}
- 		if sc.needToSendGoAway {
- 			sc.needToSendGoAway = false
- 			sc.startFrameWrite(FrameWriteRequest{
-@@ -1294,6 +1311,9 @@ func (sc *serverConn) scheduleFrameWrite() {
- 				sc.startFrameWrite(wr)
- 				continue
- 			}
-+			if sc.flow.flowErr {
-+				continue
++
++		ctr, err := c.NewContainer(ctx, client.NewContainerRequest{
++			Mounts: []client.Mount{{
++				Dest:      "/",
++				MountType: pb.MountType_BIND,
++				Ref:       r.Ref,
++			}},
++		})
++		require.NoError(t, err)
++		defer ctr.Release(ctx)
++
++		// outlive the test timeout, killed explicitly below
++		pid1, err := ctr.Start(ctx, client.StartRequest{
++			Args: []string{"sleep", "60"},
++		})
++		require.NoError(t, err)
++
++		// keep running until all events have been sent, stdio is needed as the
++		// runc executor fails tty processes without it
++		pid2, err := ctr.Start(ctx, client.StartRequest{
++			Args:   []string{"sh", "-c", `trap 'exit 0' USR1; while true; do sleep 0.1; done`},
++			Tty:    true,
++			Stdout: &iohelper.NopWriteCloser{Writer: io.Discard},
++			Stderr: &iohelper.NopWriteCloser{Writer: io.Discard},
++		})
++		require.NoError(t, err)
++
++		// allow for the shell script to setup the trap before we signal it
++		time.Sleep(time.Second)
++
++		var wg sync.WaitGroup
++		var resizeErr, signalErr error
++		wg.Go(func() {
++			for i := range 100 {
++				if resizeErr = pid2.Resize(ctx, client.WinSize{Rows: uint32(20 + i), Cols: uint32(80 + i)}); resizeErr != nil {
++					return
++				}
 +			}
- 		}
- 		if sc.needsFrameFlush {
- 			sc.startFrameWrite(FrameWriteRequest{write: flushFrameWriter{}})
-@@ -1526,6 +1546,10 @@ func (sc *serverConn) processWindowUpdate(f *WindowUpdateFrame) error {
- 			return nil
- 		}
- 		if !st.flow.add(int32(f.Increment)) {
-+			if st.flow.conn.flowErr {
-
++		})
++		wg.Go(func() {
++			for range 100 {
++				// ignored by sh
++				if signalErr = pid2.Signal(ctx, linuxSIGWINCH); signalErr != nil {
++					return
++				}
++			}
++		})
++		wg.Wait()
++		require.NoError(t, resizeErr)
++		require.NoError(t, signalErr)
++
++		require.NoError(t, pid2.Signal(ctx, linuxSIGUSR1))
++		require.NoError(t, pid2.Wait())
++
++		require.NoError(t, pid1.Signal(ctx, syscall.SIGKILL))
++		pid1.Wait()
++		return &client.Result{}, nil
++	}
++
++	_, err = c.Build(ctx, SolveOpt{}, product, b, nil)
++	require.NoError(t, err)
++
++	checkAllReleasable(t, c, sb, true)
++}
++
+ // testClientGatewayExecError is testing gateway exec to recreate the container
+ // process for a failed execop.
+ func testClientGatewayExecError(t *testing.T, sb integration.Sandbox) {
 ```
 
-**File**: `vendor/golang.org/x/net/http2/transport.go` (modified, +94/-48)
+**File**: `client/gateway_shared_error_test.go` (modified, +79/-0)
 ```diff
-@@ -27,6 +27,7 @@ import (
- 	"net/http"
- 	"net/http/httptrace"
- 	"net/textproto"
-+	"slices"
- 	"strconv"
- 	"sync"
- 	"sync/atomic"
-@@ -203,7 +204,7 @@ type ClientConn struct {
+@@ -2,6 +2,8 @@ package client
  
- 	mu               sync.Mutex // guards following
- 	cond             *sync.Cond // hold mu; broadcast on flow/closed changes
--	flow             outflow    // our conn-level flow control quota (cs.outflow is per stream)
-+	flow             connOutflow // our conn-level flow control quota (cs.outflow is per stream)
- 	inflow           inflow     // peer's conn-level flow control
- 	doNotReuse       bool       // whether conn is marked to not be reused for any future requests
- 	closing          bool
-@@ -227,7 +228,6 @@ type ClientConn struct {
- 	maxConcurrentStreams        uint32
- 	peerMaxHeaderListSize       uint64
- 	peerMaxHeaderTableSize      uint32
--	initialWindowSize           uint32
- 	initialStreamRecvWindowSize int32
- 	readIdleTimeout             time.Duration
- 	pingTimeout                 time.Duration
-@@ -472,7 +472,6 @@ func (t *Transport) newClientConn(c net.Conn, singleUse bool, internalStateHook
- 		readerDone:                  make(chan struct{}),
- 		nextStreamID:                1,
- 		maxFrameSize:                16 << 10, // spec default
--		initialWindowSize:           65535,    // spec default
- 		initialStreamRecvWindowSize: conf.MaxUploadBufferPerStream,
- 		maxConcurrentStreams:        initialMaxConcurrentStreams, // "infinite", per spec. Use a smaller value until we have received server settings.
- 		strictMaxConcurrentStreams:  conf.StrictMaxConcurrentRequests,
-@@ -497,7 +496,7 @@ func (t *Transport) newClientConn(c net.Conn, singleUse bool, internalStateHook
- 	}
+ import (
+ 	"context"
++	"strings"
++	"sync"
+ 	"testing"
+ 	"time"
  
- 	cc.cond = sync.NewCond(&cc.mu)
--	cc.flow.add(int32(initialWindowSize))
-+	cc.flow.init()
- 
- 	// TODO: adjust this writer size to account for frame size +
- 	// MTU + crypto/tls record padding.
-@@ -876,6 +875,33 @@ func (cc *ClientConn) sendGoAway() error {
- 	return nil
+@@ -104,3 +106,80 @@ func testClientGatewaySharedExecError(t *testing.T, sb integration.Sandbox) {
+ 	require.NoError(t, eg.Wait())
+ 	checkAllReleasable(t, c, sb, true)
  }
- 
-+func (cc *ClientConn) goAwayAndClose(code ErrCode) {
-+	cc.mu.Lock()
-+	closed := cc.closed
-+	cc.closing = true
-+	cc.closed = true
-+	cc.mu.Unlock()
-+	if closed {
-+		return
-+	}
-+	if f := cc.fr.countError; f != nil {
-+		f(fmt.Sprintf("conn_close_error_%s", code.stringToken()))
-+	}
-+	done := make(chan struct{})
++
++// testClientGatewayExecErrorReleasedDuringLoad checks that the refs of a failed
++// exec are released when the gateway discards a lazy result while the exec is
++// still running.
++func testClientGatewayExecErrorReleasedDuringLoad(t *testing.T, sb integration.Sandbox) {
++	requiresLinux(t)
++	ctx, cancel := context.WithTimeoutCause(sb.Context(), time.Minute, errors.New("released exec error test timed out"))
++	defer cancel()
++
++	c, err := New(ctx, sb.Address())
++	require.NoError(t, err)
++	defer c.Close()
++
++	id := identity.NewID()
++	// The exec fails only after a marker appears in a shared cache mount. The
++	// marker is written by a second build once the first one has returned, so
++	// the result is always discarded while the exec is still running.
++	cache := llb.AsPersistentCacheDir(id, llb.CacheMountShared)
++	def, err := llb.Image("busybox:latest").Run(
++		llb.Shlexf("sh -c 'echo %s; i=0; while [ ! -e /cache/go ] && [ $i -lt 300 ]; do sleep 0.1; i=$((i+1)); done; exit 1'", id),
++		llb.AddMount("/cache", llb.Scratch(), cache),
++	).Root().Marshal(ctx)
++	require.NoError(t, err)
++	markerDef, err := llb.Image("busybox:latest").Run(
++		llb.Shlexf("sh -c 'echo %s; touch /cache/go'", id),
++		llb.AddMount("/cache", llb.Scratch(), cache),
++	).Root().Marshal(ctx)
++	require.NoError(t, err)
++
++	started := make(chan struct{})
++	statusCh := make(chan *SolveStatus)
++	statusDone := make(chan struct{})
 +	go func() {
-+		defer close(done)
-+		cc.wmu.Lock()
-+		cc.fr.WriteGoAway(0, code, nil)
-+		cc.bw.Flush()
-+		cc.wmu.Unlock()
-+	}()
-+	select {
-+	case <-done:
-+	case <-time.After(250 * time.Millisecond):
-+	}
-+	cc.closeForError(fmt.Errorf("http2: closing connection with %v", code))
-+}
-+
- // closes the client connection immediately. In-flight requests are interrupted.
- // err is sent to streams.
- func (cc *ClientConn) closeForError(err error) {
-@@ -1319,7 +1345,9 @@ func (cs *clientStream) cleanupWriteRequest(err error) {
- 	}
- 	if err != nil {
- 		cs.abortStream(err) // possibly redundant, but harmless
--		if cs.sentHeaders {
-+		if ce, ok := err.(ConnectionError); ok {
-+			cc.goAwayAndClose(ErrCode(ce))
-+		} else if cs.sentHeaders {
- 			if se, ok := err.(StreamError); ok {
- 				if se.Cause != errFromPeer {
- 					cc.writeStreamReset(cs.ID, se.Code, false, err)
-@@ -1648,8 +1676,12 @@ func (cs *clientStream) awaitFlowControl(maxBytes int) (taken int32, err error)
- 			return 0, errRequestCanceled
- 		default:
- 		}
--		if a := cs.flow.available(); a > 0 {
--			take := a
-+		avail, ok := cs.flow.available()
-+		if !ok {
-+			return 0, ConnectionError(ErrCodeFlowControl)
++		defer close(statusDone)
++		var once sync.Once
++		for st := range statusCh {
++			for _, v := range st.Vertexes {
++				if v.Started != nil && strings.Contains(v.Name, id) {
++					once.Do(func() { close(started) })
++				}
++			}
 +		}
-+		if avail > 0 {
-+			take := avail
- 			if int(take) > maxBytes {
- 
- 				take = int32(maxBytes) // can't truncate int; take is int32
-@@ -1710,8 +1742,7 @@ type resAndError struct {
- 
- // requires cc.mu be held.
- func (cc *ClientConn) addStreamLocked(cs *clientStream) {
--	cs.flow.add(int32(cc.initialWindowSize))
--	cs.flow.setConnFlow(&cc.flow)
-+	cs.flow.conn = &cc.flow
- 	cs.inflow.init(cc.initialStreamRecvWindowSize)
- 	cs.ID = cc.nextStreamID
- 	cc.nextStreamID += 2
-@@ -2095,18 +2126,42 @@ func (rl *clientConnReadLoop) handleResponse(cs *clientStream, f *MetaHeadersFra
- 		return nil, nil
- 	}
- 
-+	// Delete various headers that might mess up framing for HTTP/1. This is
-+	// not a problem for HTTP/2, but someone might use HTTP/2 transport as a
-+	// reverse proxy which forwards the response to an HTTP/1 client. Our
-+	// HTTP/1 client transport will properly reject improper headers such as
-+	// multiple conflicting Content-Length headers, but other implementations
-+	// might not.
-+	// TODO: just reject such responses? We deleted them for compatibility
-+	// since this was done in a security fix (go.dev/issue/81115). However,
-+	// rejecting them seems entirely reasonable and relatively safe.
++	}()
 +
-+	// Connection-specific header fields must not appear in an HTTP/2 message,
-+	// and any message containing them is malformed. RFC 9113, Section 8.2.2.
-+	for _, k := range connHeaders {
-+		delete(res.Header, k)
-+	}
- 	res.ContentLength = -1
--	if clens := res.Header["Content-Length"]; len(clens) == 1 {
--		if cl, err := strconv.ParseUint(clens[0], 10, 63); err 
++	readErr := make(chan error, 1)
++	_, err = c.Build(ctx, SolveOpt{}, "buildkit_test", func(ctx context.Context, gc gwclient.Client) (*gwclient.Result, error) {
++		res, err := gc.Solve(ctx, gwclient.SolveRequest{Definition: def.ToPB()})
++		if err != nil {
++			return nil, err
++		}
++		ref, err := res.SingleRef()
++		if err != nil {
++			return nil, err
++		}
++		// reading from the lazy ref runs the exec
++		go func() {
++			_, err := ref.ReadFile(ctx, gwclient.ReadRequest{Filename: "/etc/passwd"})
++			readErr <- err
++		}()
++		// return while the exec is running so the gateway discards the ref
++		select {
++		case <-started:
++		case <-ctx.Done():
++			return nil, errors.WithStack(context.Cause(ctx))
++		}
++		return gwclient.NewResult(), nil
++	}, statusCh)
++	require.NoError(t, err)
++	<-statusDone
++
++	// the ref has been discarded, let the exec fail
++	_, err = c.Solve(ctx, markerDef, SolveOpt{}, nil)
++	require.NoError(t, err)
++	require.ErrorContains(t, <-readErr, "evaluating released result")
++
++	checkAllReleasable(t, c, sb, true)
++}
 ```
 
-**File**: `vendor/golang.org/x/net/http2/transport_wrap.go` (modified, +194/-20)
+**File**: `executor/containerdexecutor/executor.go` (modified, +2/-4)
 ```diff
-@@ -119,33 +119,27 @@ type http2TransportContextKey struct{}
- 
- // DialFromContext dials a new connection using the http2.Transport's DialTLS/DialTLSContext.
- func (t transportConfig) DialFromContext(ctx context.Context, network, address string) (net.Conn, error) {
--	if ctx.Value(http2TransportContextKey{}) == nil {
-+	dial, _ := ctx.Value(http2TransportContextKey{}).(*transportRoundTripState)
-+	if dial == nil {
- 		// We're being called from a RoundTrip that did not start with an http2.Transport.
- 		// Use the http.Transport's dialer.
- 		return nil, errors.ErrUnsupported
- 	}
--
--	tlsConf := t.t.TLSClientConfig
--	if tlsConf == nil {
--		tlsConf = &tls.Config{}
--	} else {
--		tlsConf = tlsConf.Clone()
--	}
--	if !slices.Contains(tlsConf.NextProtos, "h2") {
--		tlsConf.NextProtos = append([]string{"h2"}, tlsConf.NextProtos...)
--	}
--	if tlsConf.ServerName == "" {
--		host, _, err := net.SplitHostPort(address)
--		if err == nil {
--			tlsConf.ServerName = host
--		}
--	}
--	return t.t.dialTLS(ctx, network, address, tlsConf)
-+	return t.t.dialForRoundTrip(ctx, dial, network, address)
+@@ -426,8 +426,7 @@ func (w *containerdExecutor) runProcess(ctx context.Context, p ctd.Process, resi
+ 				if !ok {
+ 					return // chan closed
+ 				}
+-				err = p.Resize(eventCtx, size.Cols, size.Rows)
+-				if err != nil {
++				if err := p.Resize(eventCtx, size.Cols, size.Rows); err != nil {
+ 					bklog.G(eventCtx).Warnf("Failed to resize %s: %s", p.ID(), err)
+ 				}
+ 			}
+@@ -442,8 +441,7 @@ func (w *containerdExecutor) runProcess(ctx context.Context, p ctd.Process, resi
+ 				if !ok {
+ 					return // chan closed
+ 				}
+-				err = p.Kill(eventCtx, sig)
+-				if err != nil {
++				if err := p.Kill(eventCtx, sig); err != nil {
+ 					bklog.G(eventCtx).Warnf("Failed to signal %s: %s", p.ID(), err)
+ 				}
+ 			}
+```
+
+**File**: `frontend/dockerfile/dockerfile_provenance_test.go` (modified, +91/-0)
+```diff
+@@ -2722,6 +2722,97 @@ COPY --from=base /out /
+ 	require.Equal(t, platforms.FormatAll(platforms.Normalize(platforms.DefaultSpec())), stmt.Predicate.BuildDefinition.InternalParameters.TargetPlatform)
  }
  
- type transportInternal struct {
- 	initOnce sync.Once
- 	lazyt1   *http.Transport
++// testProvenanceMultipleExporters verifies that every exporter of a build
++// gets valid provenance when the exporters run in parallel.
++func testProvenanceMultipleExporters(t *testing.T, sb integration.Sandbox) {
++	integration.SkipOnPlatform(t, "windows", "local export with provenance is not supported on Windows")
++	workers.CheckFeatureCompat(t, sb, workers.FeatureProvenance, workers.FeatureOCIExporter)
++	ctx := sb.Context()
 +
-+	dialMu sync.Mutex
-+	dials  map[string]*transportDialState
-+}
++	c, err := client.New(ctx, sb.Address())
++	require.NoError(t, err)
++	defer c.Close()
 +
-+type transportDialState struct {
-+	dialc   chan struct{} // close when dial returns
-+	dialErr error         // dial result, set before dialc is closed
-+	rtdonec chan struct{} // closed when RoundTrip initiating the dial returns
- }
- 
- func (t *Transport) init() *http.Transport {
-@@ -167,6 +161,52 @@ func (t *Transport) configure(t1 *http.Transport) {
- 	}
- }
- 
-+// transportRoundTripState is the state of the dial for an http2.Transport.RoundTrip.
-+type transportRoundTripState struct {
-+	mu       sync.Mutex
-+	rtdone   bool          // set when RoundTrip returns
-+	rtdonec  chan struct{} // closed when RoundTrip returns
-+	gotconnc chan struct{} // closed when GotConn hook is called
-+}
++	f := getFrontend(t, sb)
 +
-+// startDial is called when a dial starts.
-+//
-+// It returns done=true if the RoundTrip has already returned,
-+// in which case we should skip dialing.
-+func (dial *transportRoundTripState) startDial() (gotconnc chan struct{}, done bool) {
-+	dial.mu.Lock()
-+	defer dial.mu.Unlock()
-+	if dial.rtdone {
-+		return nil, true
-+	}
-+	if dial.rtdonec == nil {
-+		dial.rtdonec = make(chan struct{})
-+	}
-+	dial.gotconnc = make(chan struct{})
-+	return dial.gotconnc, false
-+}
++	dockerfile := []byte(`
++FROM busybox:latest AS base
++COPY <<EOF /out/foo
++ok
++EOF
 +
-+// gotConn is called when RoundTrip gets a connection.
-+// This may happen multiple times per RoundTrip, if a request is retried.
-+func (dial *transportRoundTripState) gotConn() {
-+	dial.mu.Lock()
-+	defer dial.mu.Unlock()
-+	if dial.gotconnc != nil {
-+		close(dial.gotconnc)
-+		dial.gotconnc = nil
-+	}
-+}
++FROM scratch
++COPY --from=base /out /
++`)
++	dir := integration.Tmpdir(
++		t,
++		fstest.CreateFile("Dockerfile", dockerfile, 0600),
++	)
 +
-+// roundTripDone is called when RoundTrip returns.
-+func (dial *transportRoundTripState) roundTripDone() {
-+	dial.mu.Lock()
-+	defer dial.mu.Unlock()
-+	dial.rtdone = true
-+	if dial.rtdonec != nil {
-+		close(dial.rtdonec)
-+	}
-+}
-+
- func (t *Transport) roundTripOpt(req *http.Request, opt RoundTripOpt) (*http.Response, error) {
- 	t1 := t.init()
- 
-@@ -186,12 +226,146 @@ func (t *Transport) roundTripOpt(req *http.Request, opt RoundTripOpt) (*http.Res
- 	// Both http.Transport and http2.Transport allow the user to provide a custom
- 	// dial function, and historically you only get the dial function from the
- 	// Transport you're calling RoundTrip on.
--	ctx := context.WithValue(req.Context(), http2TransportContextKey{}, t)
-+	//
-+	// In addition, http2.Transport coalesces dials, which http.Transport historically
-+	// has not.
-+	dial := &transportRoundTripState{}
-+	defer dial.roundTripDone()
-+	ctx := context.WithValue(req.Context(), http2TransportContextKey{}, dial)
-+	ctx = httptrace.WithClientTrace(ctx, &httptrace.ClientTrace{
-+		GotConn: func(httptrace.GotConnInfo) {
-+			// Tell dialForRoundTrip that we have received a connection.
-+			dial.gotConn()
++	destDir, destDir2, ociDir := t.TempDir(), t.TempDir(), t.TempDir()
++	_, err = f.Solve(sb.Context(), c, client.SolveOpt{
++		LocalMounts: map[string]fsutil.FS{
++			dockerui.DefaultLocalNameDockerfile: dir,
++			dockerui.DefaultLocalNameContext:    dir,
 +		},
-+	})
- 	req = req.WithContext(ctx)
--
- 	return t1.RoundTrip(req)
- }
- 
-+var errCoalescedDialAbandoned = errors.New("http2: abandoned coalesced dial")
++		FrontendAttrs: map[string]string{
++			"attest:provenance": "mode=max,capture-usage=true",
++		},
++		Exports: []client.ExportEntry{
++			{
++				Type:      client.ExporterLocal,
++				OutputDir: destDir,
++			},
++			{
++				Type:      client.ExporterLocal,
++				OutputDir: destDir2,
++			},
++			{
++				Type:      client.ExporterOCI,
++				OutputDir: ociDir,
++				Attrs: map[string]string{
++					"tar": "false",
++				},
++			},
++		},
++	}, nil)
++	require.NoError(t, err)
 +
-+const coalescedDialRetryTimeout = 50 * time.Millisecond
-+
-+// dialForRoundTrip is called (indirectly) by net/http when dialing a new connection
-+// for a request call which originated as an http2.Transport.RoundTrip call.
-+//
-+// It uses the http2.Transport's Dial hooks and coalesces dials.
-+func (t *Transport) dialForRoundTrip(ctx context.Context, dial *transportRoundTripState, network, address string) (net.Conn, error) {
-+	gotconnc, rtdone := dial.startDial()
-+	if rtdone {
-+		// RoundTrip returned, no need for this dial to proceed.
-+		return nil, errCoalescedDialAbandoned
++	var dts [][]byte
++	for _, d := range []string{destDir, destDir2} {
++		dt, err := os.ReadFile(filepath.Join(d, "provenance.json"))
++		require.NoError(t, err)
++		dts = append(dts, dt)
 +	}
 +
-+	var state *transportDialState
-+	for {
-+		// The first dial to an address registers itself with t.dials.
-+		// When the dial finishes, it records the outcome and removes itself from t.dials
-+		// so future dials will start a new round of coalescing.
-+		//
-+		// Subsequent dials observe that a dial is in progress, and skip dialing.
-+		t.dialMu.Lock()
-+		if t.dials == nil {
-+			t.dials = make(ma
++	var index ocispecs.Index
++	dt, err := os.ReadFile(filepath.Join(ociDir, ocispecs.ImageIndexFile))
++	require.NoError(t, err)
++	require.NoError(t, json.Unmarshal(dt, &index))
++	require.Len(t, index.Manifests, 1)
++
++	store, err := local.NewStore(ociDir)
++	require.NoError(t, err)
++	imgs, err := testutil.ReadImages(ctx, store, index.Manifests[0])
++	require.NoError(t, err)
++	att := imgs.Find("unknown/unknown")
++	require.NotNil(t, att)
++	require.Len(t, att.LayersRaw, 1)
++	dts = append(dts, att.LayersRaw[0])
++
++	for _, dt := range dts {
++		var stmt struct {
++			Predicate provenancetypes.ProvenancePredicateSLSA1 `json:"predicate"`
++		}
++		require.NoError(t, json.Unmarshal(dt, &stmt))
++		metadata := stmt.Predicate.RunDetails.Metadata
++		require.NotNil(t, metadata)
++		require.NotNil(t, metadata.FinishedOn)
++		require.NotEmpty(t, metadata.BuildKitMetadata.Layers)
++		require.NotEmpty(t, metadata.BuildKitMetadata.SysUsage)
++	}
++}
++
+ /*
+ testProvenanceExportLocalForceSplit verifies that the local exporter writes build output and a
+ valid provenance.json (SLSA v1) into a platform-specific subdirectory (e.g., linux_amd64/)
 ```
 
-**File**: `vendor/golang.org/x/net/http2/writesched.go` (modified, +4/-3)
+**File**: `frontend/dockerfile/dockerfile_test.go` (modified, +1/-0)
 ```diff
-@@ -79,10 +79,11 @@ func (wr FrameWriteRequest) Consume(n int32) (FrameWriteRequest, FrameWriteReque
- 	}
+@@ -221,6 +221,7 @@ var allTests = integration.TestFuncs(
+ 	testFrontendDeduplicateSources,
+ 	testDuplicateLayersProvenance,
+ 	testProvenanceExportLocal,
++	testProvenanceMultipleExporters,
+ 	testProvenanceExportLocalForceSplit,
+ 	testProvenanceExportLocalMultiPlatform,
+ 	testProvenanceExportLocalMultiPlatformNoSplit,
+```
+
+**File**: `solver/llbsolver/errdefs/exec.go` (modified, +19/-5)
+```diff
+@@ -3,6 +3,7 @@ package errdefs
+ import (
+ 	"context"
+ 	"runtime"
++	"sync"
  
- 	// Might need to split after applying limits.
--	allowed := wr.stream.flow.available()
--	if n < allowed {
--		allowed = n
-+	avail, ok := wr.stream.flow.available()
-+	if !ok {
-+		return empty, empty, 0
+ 	"github.com/moby/buildkit/solver"
+ 	"github.com/moby/buildkit/util/bklog"
+@@ -14,6 +15,8 @@ type ExecError struct {
+ 	Inputs        []solver.Result
+ 	Mounts        []solver.Result
+ 	OwnerBorrowed bool
++
++	mu sync.Mutex // protects OwnerBorrowed
+ }
+ 
+ func (e *ExecError) Unwrap() error {
+@@ -49,16 +52,27 @@ func (e *ExecError) EachRef(fn func(solver.Result) error) (err error) {
+ 	return err
+ }
+ 
+-func (e *ExecError) Release() error {
++// Borrow marks the error's refs as owned by a caller, so the finalizer and
++// Release do not release them. The same error can be shared by multiple
++// callers; Borrow returns false if the refs were already borrowed.
++func (e *ExecError) Borrow() bool {
++	e.mu.Lock()
++	defer e.mu.Unlock()
+ 	if e.OwnerBorrowed {
++		return false
++	}
++	e.OwnerBorrowed = true
++	return true
++}
++
++func (e *ExecError) Release() error {
++	if !e.Borrow() {
+ 		return nil
  	}
-+	allowed := min(n, avail)
- 	if wr.stream.sc.maxFrameSize < allowed {
- 		allowed = wr.stream.sc.maxFrameSize
+-	err := e.EachRef(func(r solver.Result) error {
++	return e.EachRef(func(r solver.Result) error {
+ 		r.Release(context.TODO())
+ 		return nil
+ 	})
+-	e.OwnerBorrowed = true
+-	return err
+ }
+ 
+ func WithExecError(err error, inputs, mounts []solver.Result) error {
+@@ -75,7 +89,7 @@ func WithExecErrorWithContext(ctx context.Context, err error, inputs, mounts []s
+ 		Mounts: mounts,
  	}
+ 	runtime.SetFinalizer(ee, func(e *ExecError) {
+-		if !e.OwnerBorrowed {
++		if e.Borrow() {
+ 			e.EachRef(func(r solver.Result) error {
+ 				bklog.G(ctx).Warn("leaked execError detected and released")
+ 				r.Release(context.TODO())
+```
+
+**File**: `solver/llbsolver/errdefs/exec_test.go` (added, +35/-0)
+```diff
+@@ -0,0 +1,35 @@
++package errdefs
++
++import (
++	"sync"
++	"sync/atomic"
++	"testing"
++
++	"github.com/pkg/errors"
++	"github.com/stretchr/testify/require"
++)
++
++// TestExecErrorBorrowOnce checks that concurrent callers sharing the same
++// ExecError can mark it borrowed safely and that only one call reports it.
++func TestExecErrorBorrowOnce(t *testing.T) {
++	t.Parallel()
++
++	ee := &ExecError{error: errors.New("exec failed")}
++	var won atomic.Int32
++	var wg sync.WaitGroup
++	start := make(chan struct{})
++	for range 16 {
++		wg.Go(func() {
++			<-start
++			if ee.Borrow() {
++				won.Add(1)
++			}
++		})
++	}
++	close(start)
++	wg.Wait()
++
++	require.Equal(t, int32(1), won.Load())
++	require.False(t, ee.Borrow())
++	require.NoError(t, ee.Release())
++}
+```
+
+---
+
+### Incident Patch 3: `a868d259` (2026-10-27)
+**Commit Message**: containerdexecutor: fix race on err in event loops
+
+The resize and signal goroutines in runProcess both assigned the err
+variable of the enclosing function, so concurrent Resize and Signal
+calls on a process raced, and either goroutine could log the other's
+error. Use a local error in each goroutine.
+
+Signed-off-by: Tonis Tiigi <[REDACTED_EMAIL]>
+
+**File**: `client/client_test.go` (modified, +1/-0)
+```diff
+@@ -274,6 +274,7 @@ func TestClientGatewayIntegration(t *testing.T) {
+ 		testClientGatewayContainerPID1Exit,
+ 		testClientGatewayContainerPID1Fail,
+ 		testClientGatewayContainerPID1Tty,
++		testClientGatewayContainerResizeSignal,
+ 		testClientGatewayContainerSignal,
+ 		testClientGatewayExecError,
+ 		testClientGatewaySharedExecError,
+```
+
+**File**: `client/gateway_container_exec_test.go` (modified, +99/-0)
+```diff
+@@ -942,6 +942,105 @@ func testClientGatewayContainerSignal(t *testing.T, sb integration.Sandbox) {
+ 	checkAllReleasable(t, c, sb, true)
+ }
+ 
++// Linux signal numbers. The container is always Linux, and syscall does not
++// define these when the test binary is built for other platforms.
++const (
++	linuxSIGUSR1  = syscall.Signal(10)
++	linuxSIGWINCH = syscall.Signal(28)
++)
++
++// testClientGatewayContainerResizeSignal resizes and signals a container
++// process concurrently.
++func testClientGatewayContainerResizeSignal(t *testing.T, sb integration.Sandbox) {
++	requiresLinux(t)
++	ctx := sb.Context()
++
++	c, err := New(ctx, sb.Address())
++	require.NoError(t, err)
++	defer c.Close()
++
++	product := "buildkit_test"
++
++	b := func(ctx context.Context, c client.Client) (*client.Result, error) {
++		ctx, timeout := context.WithTimeoutCause(ctx, 30*time.Second, nil)
++		defer timeout()
++
++		def, err := llb.Image("busybox:latest").Marshal(ctx)
++		if err != nil {
++			return nil, errors.Wrap(err, "failed to marshal state")
++		}
++
++		r, err := c.Solve(ctx, client.SolveRequest{
++			Definition: def.ToPB(),
++		})
++		if err != nil {
++			return nil, errors.Wrap(err, "failed to solve")
++		}
++
++		ctr, err := c.NewContainer(ctx, client.NewContainerRequest{
++			Mounts: []client.Mount{{
++				Dest:      "/",
++				MountType: pb.MountType_BIND,
++				Ref:       r.Ref,
++			}},
++		})
++		require.NoError(t, err)
++		defer ctr.Release(ctx)
++
++		// outlive the test timeout, killed explicitly below
++		pid1, err := ctr.Start(ctx, client.StartRequest{
++			Args: []string{"sleep", "60"},
++		})
++		require.NoError(t, err)
++
++		// keep running until all events have been sent, stdio is needed as the
++		// runc executor fails tty processes without it
++		pid2, err := ctr.Start(ctx, client.StartRequest{
++			Args:   []string{"sh", "-c", `trap 'exit 0' USR1; while true; do sleep 0.1; done`},
++			Tty:    true,
++			Stdout: &iohelper.NopWriteCloser{Writer: io.Discard},
++			Stderr: &iohelper.NopWriteCloser{Writer: io.Discard},
++		})
++		require.NoError(t, err)
++
++		// allow for the shell script to setup the trap before we signal it
++		time.Sleep(time.Second)
++
++		var wg sync.WaitGroup
++		var resizeErr, signalErr error
++		wg.Go(func() {
++			for i := range 100 {
++				if resizeErr = pid2.Resize(ctx, client.WinSize{Rows: uint32(20 + i), Cols: uint32(80 + i)}); resizeErr != nil {
++					return
++				}
++			}
++		})
++		wg.Go(func() {
++			for range 100 {
++				// ignored by sh
++				if signalErr = pid2.Signal(ctx, linuxSIGWINCH); signalErr != nil {
++					return
++				}
++			}
++		})
++		wg.Wait()
++		require.NoError(t, resizeErr)
++		require.NoError(t, signalErr)
++
++		require.NoError(t, pid2.Signal(ctx, linuxSIGUSR1))
++		require.NoError(t, pid2.Wait())
++
++		require.NoError(t, pid1.Signal(ctx, syscall.SIGKILL))
++		pid1.Wait()
++		return &client.Result{}, nil
++	}
++
++	_, err = c.Build(ctx, SolveOpt{}, product, b, nil)
++	require.NoError(t, err)
++
++	checkAllReleasable(t, c, sb, true)
++}
++
+ // testClientGatewayExecError is testing gateway exec to recreate the container
+ // process for a failed execop.
+ func testClientGatewayExecError(t *testing.T, sb integration.Sandbox) {
+```
+
+**File**: `executor/containerdexecutor/executor.go` (modified, +2/-4)
+```diff
+@@ -426,8 +426,7 @@ func (w *containerdExecutor) runProcess(ctx context.Context, p ctd.Process, resi
+ 				if !ok {
+ 					return // chan closed
+ 				}
+-				err = p.Resize(eventCtx, size.Cols, size.Rows)
+-				if err != nil {
++				if err := p.Resize(eventCtx, size.Cols, size.Rows); err != nil {
+ 					bklog.G(eventCtx).Warnf("Failed to resize %s: %s", p.ID(), err)
+ 				}
+ 			}
+@@ -442,8 +441,7 @@ func (w *containerdExecutor) runProcess(ctx context.Context, p ctd.Process, resi
+ 				if !ok {
+ 					return // chan closed
+ 				}
+-				err = p.Kill(eventCtx, sig)
+-				if err != nil {
++				if err := p.Kill(eventCtx, sig); err != nil {
+ 					bklog.G(eventCtx).Warnf("Failed to signal %s: %s", p.ID(), err)
+ 				}
+ 			}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7332** (2026-10-28): cache: avoid losing finalize commit on cancel (@tonistiigi)
+- **PR #7331** (2026-10-28): vendor: update fsutil to ca65610c2295 (@tonistiigi)
 - **PR #7330** (2026-10-28): readme: improve the frontend overview (@crazy-max)
 - **PR #7326** (2026-10-28): vendor: golang.org/x/net v0.60.0 (@thaJeztah)
+- **PR #7325** (2026-10-28): data race and correctness fixes (@tonistiigi)
 - **PR #7324** (closed): source: negotiate manifest media types for image blobs (@cdupuis)
-- **PR #7322** (2026-10-26): Fixes for data races. (@tonistiigi)
-- **PR #7321** (2026-10-26): build(deps): bump docker/login-action from 4.6.0 to 4.7.0 (@dependabot[bot])
-- **PR #7320** (closed): cache: update media type metadata when linking blob with matching digest (@AdamMagued)
 
 ---
 
@@ -3023,28 +3144,67 @@ vendor: golang.org/x/net v0.60.0
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #7318 from infosiftr/expose-history
+## X. Merge pull request #7332 from tonistiigi/fix-commit-cancel
 
 **RULE**:
-When implementing operations in `frontend/dockerfile/dockerfile2llb/convert_expose.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cache/manager_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6d392427`: Merge pull request #7318 from infosiftr/expose-history. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c19b15f5`: Merge pull request #7332 from tonistiigi/fix-commit-cancel. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `frontend/dockerfile/dockerfile2llb/convert_expose.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cache/manager_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	return commitToHistory(&d.image, fmt.Sprintf("EXPOSE %s", strings.Join(psp, " ")), false, nil, d.epoch)
+func TestFinalizeAlreadyCommitted(t *testing.T) {
+	// This test simulates a snapshotter commit that was applied but reported
+	// as failed (e.g. a canceled containerd RPC). Finalize must notice the
+	// committed snapshot instead of failing on the missing active snapshot.
+	t.Parallel()
+
+	ctx := namespaces.WithNamespace(t.Context(), "buildkit-test")
+
+	tmpdir := t.TempDir()
+
+	snapshotter, err := native.NewSnapshotter(filepath.Join(tmpdir, "snapshots"))
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		require.NoError(t, snapshotter.Close())
+	})
+
+	co, cleanup, err := newCacheManager(ctx, t, cmOpt{
+		tmpdir:          tmpdir,
+		snapshotter:     snapshotter,
+		snapshotterName: "native",
+	})
+	require.NoError(t, err)
+	t.Cleanup(cleanup)
+	cm := co.manager.(*cacheManager)
+
+	mref, err := cm.New(ctx, nil, nil, CachePolicyRetain)
+	require.NoError(t, err)
+	mutRef := mref.(*mutableRef)
+
+	iref, err := mutRef.Commit(ctx)
+	require.NoError(t, err)
+	immutRef := iref.(*immutableRef)
+
+	err = cm.Snapshotter.Commit(ctx, immutRef.getSnapshotID(), mutRef.getSnapshotID())
+	require.NoError(t, err)
+
+	require.NoError(t, iref.Finalize(ctx))
+	require.Nil(t, immutRef.equalMutable)
+
+	// the committed snapshot must stay
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	return commitToHistory(&d.image, fmt.Sprintf("EXPOSE %v", psp), false, nil, d.epoch)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6d392427` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c19b15f5` are properly handled with clean fallback behavior.
