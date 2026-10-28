@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T04:28:32.792Z",
+  "last_updated": "2026-10-28T04:35:28.742Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -380,14 +380,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
-      "content_hash": "1e1d688c3ea9d22241bb39fb30d33029cea193d5b6694cb26f74d4c353d60632",
-      "verified_at": "2026-10-25T11:34:42.312Z",
+      "content_hash": "d4ed4555f2dfd1e151b90cc602f4cfc680ea4138df6b753759f466b54266fc94",
+      "verified_at": "2026-10-28T04:35:27.292Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T11:34:42.312Z"
+      "last_updated": "2026-10-28T04:35:27.292Z"
     },
     "nvidia/Nemotron-3-Diarization": {
       "repository": "nvidia/Nemotron-3-Diarization",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "89d5e85644f6633f0e88d9ab1152eed28a9ef666322b74a3798e2191952a7634",
-      "verified_at": "2026-10-27T22:06:21.607Z",
+      "content_hash": "85734e854871c5a85ffc83db5006f35738dbd196621e06cc36432fb923f7f913",
+      "verified_at": "2026-10-28T04:35:28.741Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T22:06:21.607Z"
+      "last_updated": "2026-10-28T04:35:28.741Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",

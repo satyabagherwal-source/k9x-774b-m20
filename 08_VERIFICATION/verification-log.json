@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-P6L9",
-    "timestamp": "2026-10-27T07:15:13.437Z",
-    "repository": "thetahealth/mirobody",
-    "learningId": "learn-github-thetahealth-mirobody",
-    "contentHash": "7ac0cc7e87963dd0fd706252babc14592bba3013142b7b7dc68b2b62021c026c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-WLK5",
-    "timestamp": "2026-10-27T07:20:59.429Z",
-    "repository": "sourcey/sourcey",
-    "learningId": "learn-github-sourcey-sourcey",
-    "contentHash": "d0a4336e9784e076ac57e9e44ef6e97e6106e61cbcc5c7f00b9a2422e5a62c4e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-ROCO",
     "timestamp": "2026-10-27T07:45:09.384Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7490,6 +7460,36 @@
     "repository": "tursodatabase/turso",
     "learningId": "learn-github-tursodatabase-turso",
     "contentHash": "df728f2fcfabe5db630d388a04114c4b88aaaec73267129b83f6bb4e75911ad6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-FKIX",
+    "timestamp": "2026-10-28T04:35:27.273Z",
+    "repository": "Contrastive-LM/CLM-v0.1-8B",
+    "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
+    "contentHash": "d4ed4555f2dfd1e151b90cc602f4cfc680ea4138df6b753759f466b54266fc94",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-FLNC",
+    "timestamp": "2026-10-28T04:35:28.728Z",
+    "repository": "codewhale-hq/Codewhale",
+    "learningId": "learn-github-codewhale-hq-codewhale",
+    "contentHash": "85734e854871c5a85ffc83db5006f35738dbd196621e06cc36432fb923f7f913",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

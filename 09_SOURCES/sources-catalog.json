@@ -325,8 +325,8 @@
     "sourceUrl": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
     "sourceVersion": "hf-contrastive-lm-clm-v0.1-8b",
     "license": "Open-Source",
-    "contentHash": "1e1d688c3ea9d22241bb39fb30d33029cea193d5b6694cb26f74d4c353d60632",
-    "lastHarvestedAt": "2026-10-25T11:34:42.304Z",
+    "contentHash": "d4ed4555f2dfd1e151b90cc602f4cfc680ea4138df6b753759f466b54266fc94",
+    "lastHarvestedAt": "2026-10-28T04:35:27.277Z",
     "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b"
   },
   "hf-nvidia-nemotron-3-diarization": {
@@ -2603,10 +2603,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/Hmbown/Codewhale",
-    "sourceVersion": "3a72047c",
+    "sourceVersion": "07ea16b4",
     "license": "MIT",
-    "contentHash": "89d5e85644f6633f0e88d9ab1152eed28a9ef666322b74a3798e2191952a7634",
-    "lastHarvestedAt": "2026-10-27T22:06:21.601Z",
+    "contentHash": "85734e854871c5a85ffc83db5006f35738dbd196621e06cc36432fb923f7f913",
+    "lastHarvestedAt": "2026-10-28T04:35:28.732Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "zulip-zulip": {

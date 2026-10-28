@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
-> **Source Version**: `3a72047c`  
+> **Source Version**: `07ea16b4`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T22:06:21.408Z  
+> **Timestamp**: 2026-10-28T04:35:28.156Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T22:06:19.856Z  
+> **Harvest Timestamp**: 2026-10-28T04:35:28.148Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1777,11 +1777,11 @@ pub use codewhale_protocol::request::*;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7072** (2026-10-25): **codewhale review accepts DeepSeek's leaked DSML tool-call markup as the review and exits 0 with no tally**
-  *Symptoms*: **Version:** 0.10.2 (`ff466b2ed0bf`, npm build), Linux. Provider `deepseek`, model `deepseek-flash`, `reasoning_effort = "high"`, UI locale zh-Hans. **Target:** 0.10.3 · Related: #7067  ## Repro Same setup as #7067: a one-file +10/−1 working-tree diff with no sensitive paths, so triage classes it as Low risk, which offers **0 tools**. Run `codewhale review`. In 1 of 4 runs it printed this as the entire review and exited normally:  ``` <｜｜DSML｜｜ calls> <｜｜DSML｜｜ invoke name="read_file"> <｜｜DSML｜｜ parameter name="path" string="true">tides.py</｜｜DSML｜｜ parameter> </｜｜DSML｜｜ invoke> <｜｜DSML｜｜ invoke name="search_repository"> <｜｜DSML｜｜ parameter name="query" string="true">parse_reading\|high_tides\|low_tides\|tides</｜｜DSML｜｜ parameter> </｜｜DSML｜｜ invoke> </｜｜DSML｜｜ calls> ```  There were no findings, no "Checked, nothing wrong" section and no `<!-- codewhale-review: … -->` tally. The other three runs hit the #7067 output cap.  ## Cause - The engine already knows this shape. `crates/tui/src/core/engine/streaming.rs:~586` says: "DeepSeek also emits a doubled-delimiter form (`<｜｜DSML｜｜ calls>`) when a request offers no tools; one-shot `codewhale exec` printed it verbatim as the answer." It's handled there through `TOOL_CALL_MARKER_PAIRS` and `contains_fake_tool_wrapper` (`streaming.rs:717`). - The review path builds its own requests in `crates/tui/src/tools/review_core.rs` and never applies that check. Neither `review_core.rs`, `review.rs` nor the CLI path in `lib.rs` references `con
+- **Issue #7102** (2026-10-27): **install.sh downloads the same binary twice, and installs a second identical copy**
+  *Symptoms*: ### Before you start  - [x] I searched existing issues and this is not a duplicate. 我已搜索过现有 issue。  ### What happened? 发生了什么？  Two costs, both from the same alias, and I am reporting them as two separate questions because they have very different risk profiles.  **1. `curl -fsSL https://codewhale.net/install.sh | sh` downloads the same bytes twice.** The script fetches three files and verifies each one separately:  ```sh download "$release_base/$manifest_asset" "$tmpdir/$manifest_asset" download "$release_base/$cli_asset"      "$tmpdir/codewhale" download "$release_base/$shim_asset"     "$tmpdir/codew" ```  On v0.10.2, `codewhale-linux-x64` and `codew-linux-x64` are both 105.1 MiB (110.3 MB) and carry the same SHA-256, so a fresh Linux x64 install transfers ~210 MiB — and ~257 MiB on Windows x64 — to install one program. Grouping the published manifest by digest gives one digest for three names, on all seven targets:  ``` 28ac984a…  codew-linux-x64  codewhale-linux-x64  codewhale-tui-linux-x64 b7c55e36…  codew-linux-arm64  codewhale-linux-arm64  codewhale-tui-linux-arm64 … (7/7 targets, v0.10.2) ```  **2. It then installs those bytes twice**, as two independent 105.1 MiB files, so the install directory also carries ~210 MiB for one program.  Neither is a surprise on the release side — `release-artifacts.yml` builds the alias asset with `cp` plus a `cmp` self-check ("Materialize codew command alias"), and the `codewhale-tui-*` names are kept so installed v0.9.4 clients can sti
 
-- **Issue #7069** (2026-10-25): **Composer history ignores CODEWHALE_HOME: typed prompts go to $HOME/.codewhale and are shared across isolated homes**
-  *Symptoms*: **Version:** 0.10.2 (`ff466b2ed0bf`, npm build), Linux. **Target:** 0.10.3  ## Repro ```sh export CODEWHALE_HOME=/tmp/cw-isolated   # an explicit, isolated home codewhale                                # type and send any prompt, then quit ls ~/.codewhale/composer_history.jsonl   # exists, and holds the prompt ls /tmp/cw-isolated/composer_history.jsonl  # absent ``` I saw this across several sessions, each with its own `CODEWHALE_HOME`. All their prompts went to one `$HOME/.codewhale/composer_history.jsonl`, so Up-arrow history in each "isolated" home shows the others' prompts.  ## Cause `composer_history::default_history_path()` builds the path from `effective_home_dir()` (the user's `$HOME`) plus `.codewhale` (`crates/tui/src/composer_history.rs:43-72`). It never consults `CODEWHALE_HOME`. It can also fall back to `~/.deepseek/composer_history.jsonl` when that file exists.  ## Why it matters - `docs/REBRAND.md` says: "An explicit `CODEWHALE_HOME` intentionally isolates that home and disables the ambient `~/.deepseek` fallback." Composer history breaks both halves of that. - History holds everything the user typed, which can include pasted secrets. People use a separate home for CI, demos, classrooms or per-client separation, and they don't expect prompts to land in, or be read back from, the shared ambient home.  ## Expected When `CODEWHALE_HOME` is set, read and write `$CODEWHALE_HOME/composer_history.jsonl`, with no `~/.deepseek` fallback. Keep today's resolution only whe
+- **Issue #7096** (2026-10-27): **Endpoint identity is keyed to the base URL: opencode-go's 1M window falls back to 128K after the host migration**
+  *Symptoms*: ### Before you start  - [x] I searched existing issues and this is not a duplicate. 我已搜索过现有 issue。  ### What happened? 发生了什么？  `/setup` reports a **128K** context window for `opencode-go / deepseek-v4.1-flash`. models.dev documents `limit.context = 1000000` for the same id.  The descriptor still points at the old host:  ``` provider_descriptors.json   opencode-go.base_url = https://opencode.ai/zen/go/v1 official docs + models.dev  https://opencode.ai/inference/go/openai/v1 ```  The models.dev row holds the correct 1M limit on disk. It is rejected during catalog merging, because `complete_from` only inherits facts when the lower row's base-URL fingerprint matches the provider roster's. Two hosts produce two fingerprints, nothing is inherited, and the window falls back to `LEGACY_DEEPSEEK_CONTEXT_WINDOW_TOKENS` (128,000).  Both hosts serve the same backend: `zen/go/v1/models` and `inference/go/v1/models` return the same model list, differing only in `created`.      ### Steps to reproduce 复现步骤  1. Run `/setup`, select `opencode-go`, open the model list: `deepseek-v4.1-flash` shows 128K. 2. But models.dev documents 1,000,000 for the same id.  ### Codewhale version 版本  codewhale 0.10.2  ### Where did it happen? 在哪里出现？  TUI (terminal interface)  ### Operating system 操作系统  Linux  ### How did you get Codewhale? 获取方式  Official script (codewhale.net/install.sh)  ### Provider and model 提供商和模型  opencode-go / deepseek-v4.1-flash  ### Terminal and shell 终端  xfce4-terminal  ### codewhale do
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1798,850 +1798,330 @@ pub use codewhale_protocol::request::*;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0cf390f0` (2026-10-27)
-**Commit Message**: feat(tui): change mode and permissions mid-turn; record steering in Unreleased (CW-7552)
+### Incident Patch 1: `cf10ca14` (2026-10-28)
+**Commit Message**: fix(security): bound MCP catalog revalidation and harden hunk patch parsing
 
-Mode and permission posture can now change while a turn is running. Tab,
-Shift+Tab, Alt shortcuts, /mode, the hotbar, /auto and /config mode|approval*
-no longer hit the #2982 turn lock; model, thinking and provider stay locked
-because they change the route the in-flight request is on.
+Pre-launch security review 2026-10-27 (two of its findings, plus hygiene):
 
-Decision: a change applies at the engine's next step in the same turn, not at
-the next turn and not by restarting the streaming response. The engine already
-drains the live authority snapshot before each tool batch, at every approval
-gate and at the per-step preparation boundary; a call nobody approved, or one
-whose approval is narrowed, is returned to the model to retry. New: the
-preparation boundary now records the mode notice (and Operate contract) via
-Engine::record_mode_context, so the next model request is told the new mode
-and the notice is a session message (model-visible means logged). While a turn
-runs, the TUI shows "<Mode> · <permissions> — applies at the agent's next step
-in this turn"; the engine's existing "Permissions: … · <mode>" status confirms
-the apply.
+- mcp: a server-supplied list ttlMs had no floor, so ttlMs 0 made the
+  catalog stale on every 5s tick, and revalidation runs discovery while
+  holding the MCP pool lock. Any configured server could keep every MCP
+  operation waiting. Catalog TTLs are now clamped to at least 60s.
+  Still open: running discovery outside the lock, and rate-limiting
+  list_changed-driven revalidation.
+- runtime_api/git: validated_patch sliced the first byte off each @@
+  range token, which panicked on a multi-byte character and fired the
+  process panic hook. It now strips the expected -/+ sign and refuses
+  anything else as a malformed @@ line.
+- .gitignore: ignore private key and certificate files, with an
+  exception for the existing test-only fixture key.
 
-Reference comparison (CW/refs): Codex 
+Verified: scripts/dev-test.sh runtime_api/git.rs git_ -> 146 tests run:
+146 passed (includes git_routes_drive_a_real_workspace_repo and
+git_write_preconditions_reject_stale_state); scripts/dev-test.sh mcp.rs
+mcp:: -> 405 tests run: 405 passed. No new tests, per repo policy.
 
-**File**: `CHANGELOG.md` (modified, +2/-0)
+Co-Authored-By: Clau
+
+**File**: `.gitignore` (modified, +9/-0)
 ```diff
-@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ## [Unreleased]
- 
-+- **Change mode and permissions while the agent works:** Tab, Shift+Tab, `/mode`, the hotbar and `/config mode` no longer refuse while a turn is running. A response that is already streaming is not restarted; the change applies at the agent's next step in the same turn (before its next tool batch, at every approval gate, and before its next model request, which carries the new mode notice). The status line says so until it applies. A call still waiting for approval goes back to the model under the new posture, and a call you already approved runs only if the new posture is equal or broader. Model, thinking level and provider stay locked until the turn ends. (CW-7552)
-+- **Steering interrupts thinking:** a steer (Ctrl+Enter, or Enter twice after queueing) now closes the in-flight model request at once, whether the model is waiting on headers, reasoning, writing text or emitting a tool call, and continues the same turn with your message. Text already shown is kept as interrupted output; unfinished reasoning and partial tool calls are discarded, never run. (CW-7552)
- - **Switching provider lands on its current model:** `/provider stepfun` now selects Step 5 Preview instead of the older Step 3.7 Flash; a model you saved for a provider is still kept. `/model` now lists the current provider's own models (bundled and live, newest first, up to 20) instead of only the selected one. Search also matches ids typed without separators (`step5`). While you search, Shift+P and Shift+F type their letters rather than pinning or adding to Fleet, so `Step-5-Preview` can be typed in full; Ctrl+P and Ctrl+F pin or add the highlighted row at any time.
- - **Remote control works again:** `codewhale rc` (`/rc`) can attach to the hosted control plane for web Chat again. The control plane had only accepted the retired 0.9.13 runtime identity, so every 0.10.x Engine was refused with `runner_runtime_identity_unavailable`; it now accepts the exact released runtime identity (commit, image and digest) and fails closed when they are not configured.
- - **Modern MCP client:** MCP servers now connect through the official MCP SDK (2.4) behind Codewhale's Rust broker by default (`mcp_backend = "host"`; `"rust"` stays available for one release). Servers that speak the 2026-07-28 revision are discovered with `server/discover`; other stdio and HTTP servers fall back to the legacy `initialize` handshake, and configured SSE servers keep theirs. Rust keeps process, network, credential, catalog, approval and cancellation authority. (CW-6713)
-```
-
-**File**: `crates/tui/CHANGELOG.md` (modified, +2/-0)
-```diff
-@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ## [Unreleased]
- 
-+- **Change mode and permissions while the agent works:** Tab, Shift+Tab, `/mode`, the hotbar and `/config mode` no longer refuse while a turn is running. A response that is already streaming is not restarted; the change applies at the agent's next step in the same turn (before its next tool batch, at every approval gate, and before its next model request, which carries the new mode notice). The status line says so until it applies. A call still waiting for approval goes back to the model under the new posture, and a call you already approved runs only if the new posture is equal or broader. Model, thinking level and provider stay locked until the turn ends. (CW-7552)
-+- **Steering interrupts thinking:** a steer (Ctrl+Enter, or Enter twice after queueing) now closes the in-flight model request at once, whether the model is waiting on headers, reasoning, writing text or emitting a tool call, and continues the same turn with your message. Text already shown is kept as interrupted output; unfinished reasoning and partial tool calls are discarded, never run. (CW-7552)
- - **Switching provider lands on its current model:** `/provider stepfun` now selects Step 5 Preview instead of the older Step 3.7 Flash; a model you saved for a provider is still kept. `/model` now lists the current provider's own models (bundled and live, newest first, up to 20) instead of only the selected one. Search also matches ids typed without separators (`step5`). While you search, Shift+P and Shift+F type their letters rather than pinning or adding to Fleet, so `Step-5-Preview` can be typed in full; Ctrl+P and Ctrl+F pin or add the highlighted row at any time.
- - **Remote control works again:** `codewhale rc` (`/rc`) can attach to the hosted control plane for web Chat again. The control plane had only accepted the retired 0.9.13 runtime identity, so every 0.10.x Engine was refused with `runner_runtime_identity_unavailable`; it now accepts the exact released runtime identity (commit, image and digest) and fails closed when they are not configured.
- - **Modern MCP client:** MCP servers now connect through the official MCP SDK (2.4) behind Codewhale's Rust broker by default (`mcp_backend = "host"`; `"rust"` stays available for one release). Servers that speak the 2026-07-28 revision are discovered with `server/discover`; other stdio and HTTP servers fall back to the legacy `initialize` handshake, and configured SSE servers keep theirs. Rust keeps process, network, credential, catalog, approval and cancellation authority. (CW-6713)
-```
-
-**File**: `crates/tui/src/commands/config_main_host.rs` (modified, +15/-33)
-```diff
-@@ -1656,18 +1656,16 @@ fn subagents_runtime_action(
- ///
- /// `default_mode` is deliberately absent: it is a restart default that
- /// `set_config_value` explicitly does *not* apply to the live session, so
--/// refusing it would lock a key that cannot affect the turn.
-+/// refusing it would lock a key that cannot affect the turn. `mode` and the
-+/// approval keys are absent too: the engine applies a posture change at its
-+/// next step boundary in the running turn.
- fn live_route_setting_subject(key: &str) -> Option<MessageId> {
-     match key {
--        "mode" => Some(MessageId::SettingSubjectMode),
-         // `default_model` is not merely a startup default: for the DeepSeek
-         // routes `set_config_value` installs it as the live model.
-         "model" | "default_model" => Some(MessageId::SettingSubjectModel),
-         "reasoning_effort" | "effort" => Some(MessageId::SettingSubjectThinking),
-         "provider" => Some(MessageId::SettingSubjectProvider),
--        "approval_mode" | "approval_policy" | "approval" => {
--            Some(MessageId::SettingSubjectPermissions)
--        }
-         _ => None,
-     }
- }
-@@ -3433,55 +3431,39 @@ mod tests {
-     }
- 
-     /// The refusal list is the contract for #2982 on the slash surfaces. Keep
--    /// restart-only `default_mode` out of it: `set_config_value` deliberately
--    /// does not apply that key to the live session.
-+    /// restart-only `default_mode` out of it, and mode and permissions, which
-+    /// the engine applies at its next step boundary mid-turn.
-     #[test]
-     fn live_route_key_list_covers_every_route_mutating_alias() {
-         for key in [
--            "mode",
-             "model",
-             "default_model",
-             "reasoning_effort",
-             "effort",
-             "provider",
--            "approval_mode",
--            "approval_policy",
--            "approval",
-         ] {
-             assert!(
-                 live_route_setting_subject(key).is_some(),
-                 "{key} mutates the active route and must be locked mid-turn"
-             );
-         }
--        for key in ["default_mode", "theme", "calm_mode", "rail_panel"] {
-+        for key in [
-+            "default_mode",
-+            "mode",
-+            "approval_mode",
-+            "approval_policy",
-+            "approval",
-+            "theme",
-+            "calm_mode",
-+            "rail_panel",
-+        ] {
-             assert!(
-                 live_route_setting_subject(key).is_none(),
-                 "{key} does not mutate the active route and must stay settable"
-             );
-         }
-     }
- 
--    #[test]
--    fn approval_aliases_are_inert_while_a_turn_is_running() {
--        let mut app = create_test_app();
--        app.approval_mode = ApprovalMode::Suggest;
--        app.is_loading = true;
--
--        for key in ["approval_mode", "approval_policy", "approval"] {
--            let result = set_config_value(&mut app, key, "never", false);
--            assert!(result.is_error, "{key} must be refused mid-turn");
--            assert!(
--                result
--                    .message
--                    .as_deref()
--                    .is_some_and(|message| message.contains("locked while a turn is running")),
--                "unexpected refusal for {key}: {:?}",
--                result.message
--            );
--            assert_eq!(app.approval_mode, ApprovalMode::Suggest);
--        }
--    }
--
-     #[test]
-     fn config_preset_calm_applies_bundle_to_session_and_keeps_evidence() {
-         let mut app = create_test_app();
-```
-
-**File**: `crates/tui/src/core/engine.rs` (modified, +28/-17)
-```diff
-@@ -7101,23 +7101,7 @@ impl Engine {
-                 });
-             }
- 
--            self.record_mode_notice(mode);
--
--            // The Operate contract (docs/MODES.md) precedes the first Operate
--            // prompt. KV-cache effect: append-only history, one user-role runtime
--            // message; it is derived from the session log rather than a flag so a
--            // cleared, restored, or compacted session gets it again exactly once
--            // and every later Operate turn does not repeat it.
--            if mode == AppMode::Operate
--                && !self
--                    .session
--                    .messages
--                    .iter()
--                    .any(crate::runtime_handoff::is_current_operate_contract_message)
--            {
--                self.session
--                    .add_message(crate::runtime_handoff::operate_contract_runtime_message());
--            }
-+            self.record_mode_context(mode);
- 
-             self.session
-                 .working_set
-@@ -9139,6 +9123,33 @@ impl Engine {
-     /// new one is appended whenever the mode differs from the latest. Restored
-     /// Operate contracts also require a current notice after leaving Operate.
-     /// Child and RLM hosts get none: their mode is fixed by their parent.
-+    /// Record the mode notice and, on entering Operate, the Operate contract
-+    /// (docs/MODES.md), which precedes the first Operate prompt. KV-cache
-+    /// effect: append-only history, user-role runtime messages; derived from
-+    /// the session log rather than a flag so a cleared, restored, or compacted
-+    /// session gets the contract again exactly once and every later Operate
-+    /// step does not repeat it. Runs at turn start and before every model
-+    /// request, so a mode switched mid-turn reaches the next request. Known
-+    /// limitation: a response already streaming is not restarted for a mode
-+    /// change; it finishes under the notice it was sent with, and its tool
-+    /// calls are planned under the new posture. Returns whether anything was
-+    /// appended.
-+    fn record_mode_context(&mut self, mode: AppMode) -> bool {
-+        let before = self.session.messages.len();
-+        self.record_mode_notice(mode);
-+        if mode == AppMode::Operate
-+            && !self
-+                .session
-+                .messages
-+                .iter()
-+                .any(crate::runtime_handoff::is_current_operate_contract_message)
-+        {
-+            self.session
-+                .add_message(crate::runtime_handoff::operate_contract_runtime_message());
-+        }
-+        self.session.messages.len() != before
-+    }
+@@ -181,3 +181,12 @@ orca-evidence/
+ # Portable pet build entry points are source.
+ !pet/**/*.sh
+ !pet/verify.sh
 +
-     fn record_mode_notice(&mut self, mode: AppMode) {
-         if self.child_host.is_some() || self.rlm_host.is_some() {
-             return;
++# Private keys and certificates never belong in the tree.
++*.pem
++*.key
++*.p12
++*.p8
++id_rsa*
++id_ed25519*
++!docs/cloud-facts/fixtures/test-only-signing-key.pem
 ```
 
-**File**: `crates/tui/src/core/engine/turn_loop/preparation.rs` (modified, +3/-0)
+**File**: `crates/tui/src/mcp.rs` (modified, +3/-1)
 ```diff
-@@ -59,6 +59,9 @@ impl Engine {
+@@ -1738,6 +1738,7 @@ pub(crate) trait McpTransport: Send + Sync {
+ const MAX_MCP_CATALOG_PAGES: usize = 64;
+ const MAX_MCP_CATALOG_ITEMS: usize = 4_096;
+ const MAX_MCP_CATALOG_BYTES: usize = 32 * 1024 * 1024;
++const MIN_MCP_CATALOG_TTL_MS: u64 = 60_000;
+ const MAX_MCP_CATALOG_TTL_MS: u64 = 86_400_000;
+ 
+ pub(crate) fn is_mcp_list_changed_method(method: &str) -> bool {
+@@ -2466,7 +2467,8 @@ impl McpConnection {
+         self.prompts = prompts.unwrap_or_default();
+         self.skills = skills.unwrap_or_default();
+         self.catalog_fresh_until = budget.ttl_ms.map(|ttl| {
+-            std::time::Instant::now() + Duration::from_millis(ttl.min(MAX_MCP_CATALOG_TTL_MS))
++            std::time::Instant::now()
++                + Duration::from_millis(ttl.clamp(MIN_MCP_CATALOG_TTL_MS, MAX_MCP_CATALOG_TTL_MS))
+         });
+         self.catalog_stale = false;
+         Ok(())
+```
+
+**File**: `crates/tui/src/runtime_api/git.rs` (modified, +2/-2)
+```diff
+@@ -1928,8 +1928,8 @@ fn validated_patch(patch: &str, path: &str) -> Result<(), ApiError> {
+             if !(seen_old && seen_new) {
+                 return refuse(&format!("must start with --- a/{path} and +++ b/{path}"));
              }
-             progress.mode = self.current_mode;
-         }
-+        if self.record_mode_context(self.current_mode) {
-+            self.emit_session_updated().await;
-+        }
- 
-         let mut accepted_steer = false;
-         while let Some(pending) = self.next_turn_steer() {
-```
-
-**File**: `crates/tui/src/tui/app.rs` (modified, +9/-24)
-```diff
-@@ -3485,9 +3485,6 @@ impl App {
-     /// permission surface and refuses here; otherwise this behaves like
-     /// [`Self::select_mode`] and persists the mode actually installed (Act).
-     pub fn select_yolo_compat(&mut self) -> SettingSelection {
--        if self.reject_setting_change_while_busy(MessageId::SettingSubjectMode) {
--            return SettingSelection::Refused;
--        }
-         if self.approval_policy_locked() {
-             self.push_status_toast(
-                 "Permissions are controlled by config or managed requirements".to_string(),
-@@ -3562,28 +3559,21 @@ impl App {
-     /// What is persisted is `self.mode` — the mode `set_mode` actually
-     /// installed — not the requested enum.
-     ///
--    /// The outcome is typed, not a bool, because three things can happen and
--    /// only one of them means "nothing was saved":
-+    /// The outcome is typed, not a bool, so callers can tell a live change
-+    /// from a selection that only saved the startup default:
-     ///
-     /// - [`SettingSelection::Changed`] — live mode moved *and* the startup
-     ///   default was queued.
-     /// - [`SettingSelection::PersistedSame`] — live mode was already the
-     ///   requested one, but the startup default was still queued. This is a
-     ///   real, reportable action: after a session restore the live mode and the
-     ///   startup default routinely disagree.
--    /// - [`SettingSelection::Refused`] — the #2982 turn lock rejected it and
--    ///   nothing was written anywhere.
-     ///
--    /// A bool collapsed the last two, so every caller (slash `/mode`, the
--    /// Alt+A/P/Y shortcuts, the hotbar mode rows) reported a refusal and a
--    /// successful same-mode save identically — as "already in that mode", with
--    /// no receipt for the write that did happen.
-+    /// Mode is not turn-locked: a change during a running turn is sent to the
-+    /// engine, which applies it at its next step boundary in that turn.
-     ///
-     /// [`StartupDefaultsWriter`]: crate::tui::startup_defaults::StartupDefaultsWriter
-     pub fn select_mode(&mut self, mode: AppMode) -> SettingSelection {
--        if self.reject_setting_change_while_busy(MessageId::SettingSubjectMode) {
--            return SettingSelection::Refused;
--        }
-         let changed = self.set_mode(mode);
-         // Persist an explicit selection even when it matches the live mode.
-         // A restored session can be Operate while the startup default remains
-@@ -3695,11 +3685,12 @@ impl App {
-         );
-     }
- 
--    /// Whether mode/thinking selection is locked because a turn is in flight.
-+    /// Whether a route setting is locked because a turn is in flight.
-     ///
--    /// While `is_loading`, the model/permission surface the engine is acting on
--    /// must not shift underneath it, so user-initiated mode and thinking changes
--    /// are refused (#2982). Returns true (and posts a concise status message) if
-+    /// While `is_loading`, the model, provider and thinking the engine is
-+    /// acting on must not shift underneath it, so those changes are refused
-+    /// (#2982). Mode and permissions are not locked: the engine applies them
-+    /// at its next step boundary in the same turn. Returns true (and posts a concise status message) if
-     /// the change should be rejected — the caller leaves the selection unchanged
-     /// so the chip "twitches" back instead of moving.
-     ///
-@@ -3991,9 +3982,6 @@ impl App {
-     }
- 
-     fn next_approval_posture(&mut self, allow_root_policy: bool) -> Option<ApprovalMode> {
--        if self.reject_setting_change_while_busy(MessageId::SettingSubjectPermissions) {
--            return None;
--        }
-         // Plan used to refuse the change outright, which welded the two axes
-         // together on the keyboard: Tab cycles the mode, Shift+Tab cycles the
-         // posture, and in Plan the second key silently did nothing. They are
-@@ -4104,9 +4092,6 @@ impl App {
-     /// landing on it; Plan stays read-only and only the Act baseline moves.
-     /// Shared by `/auto` and the Plan hand-off.
-     pub fn apply_agent_posture(&mut self, next: ApprovalMode) -> Result<(), String> {
--        if self.reject_setting_change_while_busy(MessageId::SettingSubjectPermissions) {
--            return Err(self.setting_locked_message(MessageId::SettingSubjectPermissions));
--        }
-         if self.approval_policy_locked() {
-             return Err("Permissions are controlled by config or managed requirements".to_string());
-         }
-```
-
-**File**: `crates/tui/src/tui/app/tests.rs` (modified, +27/-38)
-```diff
-@@ -645,17 +645,18 @@ fn auto_reasoning_change_invalidates_the_previous_route_and_receipt() {
- }
- 
- #[test]
--fn mode_and_thinking_are_locked_while_a_turn_is_running() {
--    // #2982: while a turn is in flight, user-initiated mode/thinking changes
--    // are refused with a concise message instead of shifting the surface the
--    // engine is acting on.
-+fn thinking_is_locked_but_mode_moves_while_a_turn_is_running() {
-     let mut app = App::new(test_options(false), &Config::default());
-     app.mode = AppMode::Agent;
-     app.reasoning_effort = ReasoningEffort::Max;
-     app.is_loading = true;
- 
--    app.cycle_mode();
--    assert_eq!(app.mode, AppMode::Agent, "mode must not change while busy");
-+    let before_effort = app.reasoning_effort;
-+    app.cycle_effort();
-+    assert_eq!(
-+        app.reasoning_effort, before_effort,
-+        "thinking must not change while busy"
-+    );
-     assert!(
-         app.status_message
-             .as_deref()
-@@ -665,17 +666,8 @@ fn mode_and_thinking_are_locked_while_a_turn_is_running() {
-         app.status_message
-     );
- 
--    let before_effort = app.reasoning_effort;
--    app.cycle_effort();
--    assert_eq!(
--        app.reasoning_effort, before_effort,
--        "thinking must not change while busy"
--    );
--
--    // Once the turn finishes, the same gesture works again.
--    app.is_loading = false;
-     app.cycle_mode();
--    assert_ne!(app.mode, AppMode::Agent, "mode should change when idle");
-+    assert_ne!(app.mode, AppMode::Agent, "mode changes mid-turn");
- }
- 
- #[test]
-@@ -4157,7 +4149,7 @@ fn plan_permission_cycle_moves_the_baseline_and_leaves_plan_read_only() {
- }
- 
- #[test]
--fn busy_permission_cycle_changes_neither_runtime_nor_persistence() {
-+fn busy_permission_cycle_moves_the_live_posture() {
-     let _env_lock = lock_test_env();
-     let tmp = tempfile::tempdir().expect("tempdir");
-     let config_path = tmp.path().join("config.toml");
-@@ -4168,12 +4160,10 @@ fn busy_permission_cycle_changes_neither_runtime_nor_persistence() {
-     let before = app.approval_mode;
-     app.is_loading = true;
- 
--    assert!(!app.cycle_approval_posture());
--    assert_eq!(app.approval_mode, before);
--    assert_eq!(app.mode_prefs.agent_approval_mode, before);
--    assert!(!tmp.path().join("settings.toml").exists());
-+    assert!(app.cycle_approval_posture());
-+    assert_ne!(app.mode_prefs.agent_approval_mode, before);
-     assert!(
--        app.status_message
-+        !app.status_message
-             .as_deref()
-             .is_some_and(|message| message.contains("locked"))
-     );
-@@ -6928,7 +6918,7 @@ fn reselecting_restored_live_mode_updates_the_startup_default() {
- }
- 
- #[test]
--fn mode_change_refused_while_a_turn_runs_persists_nothing() {
-+fn mode_change_while_a_turn_runs_is_live_and_persisted() {
-     let _lock = lock_test_env();
-     let tmp = tempfile::TempDir::new().expect("tempdir");
-     let _env = sealed_settings_home(tmp.path());
-@@ -6938,12 +6928,13 @@ fn mode_change_refused_while_a_turn_runs_persists_nothing() {
-     app.select_mode(AppMode::Plan);
-     app.is_loading = true;
-     app.cycle_mode();
-+    app.startup_defaults.flush();
- 
--    assert_eq!(app.mode, AppMode::Plan, "#2982 lock still holds");
-+    assert_eq!(app.mode, AppMode::Plan.next());
-     assert_eq!(
-         Settings::load().expect("reload").default_mode,
--        "plan",
--        "a refused change must not be persisted"
-+        app.mode.as_setting(),
-+        "a mid-turn change is a real selection"
-     );
- }
- 
-@@ -7394,7 +7385,7 @@ fn mode_cycling_in_an_unsealed_test_writes_nothing() {
- // hotbar. `/set` and `/config <key> <value>` reached the same live route through
- // a different door, and both are reachable mid-turn: the composer accepts
- // Shift+Enter and the slash menu while `is_loading`. So during a running turn a
--// slash command could swap the model, thinking level, mode, or provider out from
-+// slash command could swap the model, thinking level, or provider out from
- // under the engine *and* persist it. The refusal now sits in one place, above
- // every disk write and every `App` mutation.
- 
-@@ -7438,7 +7429,6 @@ fn slash_config_and_set_refuse_every_live_route_key_while_a_turn_runs() {
-             ("default_model", "deepseek-v4-pro"),
-             ("reasoning_effort", "high"),
-             ("effort", "high"),
--            ("mode", "operate"),
-             ("provider", "openai"),
-         ] {
-             let result = crate::commands::set_config_value(&mut app, key, value, persist);
-@@ -7637,15 +7627,15 @@ fn mode_selection_reports_refusal_change_and_persisted_same_distinctly() {
-     );
- 
-     app.is_loading = true;
--    assert_eq!(app.select_mode(AppMode::Plan), SettingSelection::Refused);
-+    assert_eq!(app.select_mode(AppMode::Plan), SettingSelection::Changed);
-     assert!(!SettingSelection::Refused.accepted());
--    assert_eq!(app.mode, AppMode::Operate, "a refusal changes nothing");
-+    assert_eq!(app.mode, AppMode::Plan, "mode is not turn-locked");
- }
- 
--/// Eve
-```
-
-**File**: `crates/tui/src/tui/ui/provider_routes.rs` (modified, +12/-1)
-```diff
-@@ -627,7 +627,7 @@ pub(crate) fn reasoning_effort_receipt_for_route(
-     .unwrap_or(EffectiveReasoningEffort::Tier(tier))
- }
- 
--pub(crate) async fn sync_mode_update(app: &App, engine_handle: &EngineHandle) {
-+pub(crate) async fn sync_mode_update(app: &mut App, engine_handle: &EngineHandle) {
-     // #6150: non-blocking send on the input path. ChangeMode is safe to drop
-     // on a full channel — `try_send` still publishes the live authority
-     // snapshot, which the drain applies before the next queued op.
-@@ -639,6 +639,17 @@ pub(crate) async fn sync_mode_update(app: &App, engine_handle: &EngineHandle) {
-         approval_mode: app.approval_mode,
-         configured_sandbox_mode: app.configured_sandbox_mode.clone(),
-     });
-+    if app.is_loading {
-+        app.push_status_toast(
-+            format!(
-+                "{} · {} — applies at the agent's next step in this turn",
-+                crate::tui::app::AppModeUi::display_name_localized(app.mode, app.ui_locale),
-+                app.effective_permission_label(),
-+            ),
-+            StatusToastLevel::Info,
-+            Some(6_000),
-+        );
-+    }
- }
- 
- /// Apply a `/provider` switch by resolving a complete route candidate before
+-            let mut counts = range.split_whitespace().take(2).map(|side| {
+-                let side = &side[1..];
++            let mut counts = range.split_whitespace().zip(['-', '+']).map(|(side, sign)| {
++                let side = side.strip_prefix(sign)?;
+                 match side.split_once(',') {
+                     Some((_, count)) => count.parse::<usize>().ok(),
+                     None => side.parse::<usize>().ok().map(|_| 1),
 ```
 
 ---
 
-### Incident Patch 2: `f75bb12d` (2026-10-27)
-**Commit Message**: fix(dependencies): a version probe that outlives its deadline means installed, not missing (CW-7525)
+### Incident Patch 2: `0e9c5beb` (2026-10-28)
+**Commit Message**: fix(sandbox): protect git hooks, git config and .codewhale from sandboxed writes
 
-tools::subagent::tests::root_operate_dispatch_delegates_builtin_verification_but_not_shell
-failed under load: Cargo::resolve() (and resolve_executable_path for
-git/pandoc) run `<tool> --version` with the 3 s VERSION_PROBE_TIMEOUT,
-and on a busy machine the rustup `cargo` shim can take longer. The
-timeout was treated as "not installed" and cached in the resolver's
-OnceLock for the whole process, so run_tests reported cargo missing for
-the rest of the session. That is a product bug, not a test bug.
+Security review E5 (codewhale-ops/security/PRE-LAUNCH-REVIEW-20261027.md;
+founder-accepted D13, 2026-10-27). In workspace-write mode a sandboxed
+command could write .git/hooks/* or .git/config (for example
+core.hooksPath), which later runs outside the sandbox on the next git
+operation; and .codewhale/ was protected only if it already existed.
 
-probe_executable_with_flag and resolve_executable_path now share
-probe_found(): a successful exit means present, a failed launch or a
-failing exit means absent, and a probe that launched and was still
-running at its deadline means present (it is killed with its process
-tree as before). The deadline still bounds how long resolution waits;
-it no longer decides presence. Banner capture
-(probe_executable_capturing) is unchanged and still returns None on
-timeout.
+- Every writable root now gets `.git/hooks` and `.git/config` as
+  read-only subpaths when it holds a git dir; a linked worktree's
+  gitdir/commondir roots get their own `hooks` and `config`.
+- Workspace roots (cwd and configured writable roots) always protect
+  `.codewhale/`, even before it exists. Seatbelt rules work on
+  nonexistent paths; their parameter now resolves through the
+  canonical parent so /var vs /private/var cannot slip past.
+- bwrap can only bind existing paths: prepare_bwrap creates the
+  workspace's `.codewhale/` first, and read-only exceptions may now be
+  files (`.git/config`), not only directories.
+- The seatbelt policy test matched the old single-exclusion text
+  exactly; it now checks the root-plus-first-exclusion prefix.
 
-Verification: same nextest batch as 8084ead09c (frozen source) ->
-142 passed, including 55 dependencies:: tests and the subagent te
+Verified with 
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **Uninstall on every install route:** `codewhale uninstall` previews receipt-owned release files and `--yes` removes only checked files, with the running command last. Both Unix installers and the Windows archive installer record command ownership; self-update renews existing receipts on both. On Windows the running `codewhale.exe` is renamed and deleted once the command exits. Package-managed copies are left alone, and the command prints their exact removal command: npm with its prefix, Cargo with its root, the Homebrew formula, `scoop uninstall codewhale`, `winget uninstall --id HunterBown.CodeWhale`, or the Windows setup's `Uninstall.exe`. Every other `codewhale`/`codew` still on PATH is listed. User data is kept unless you add `--purge-data`, which previews and then deletes only `~/.codewhale` (or a `CODEWHALE_HOME` named `.codewhale`) and `~/.deepseek/snapshots`, refusing symlinks, home ancestors and directories owned by another user. Windows removal is compile-checked but not yet exercised on a Windows host. (Refs #7091)
+@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
- - **GitHub Action needs an explicit provider:** the Action's `provider` input no longer defaults to the `codewhale` account relay. Name your BYOK provider (or `codewhale` for a separately verified account machine key); a missing provider stops with `configuration_missing` before any download or model call. The repository's own (disabled) review workflow now pins CLI `v0.10.2` by default instead of `v0.10.0`.
-+- **Slow tools are not reported missing:** a tool whose `--version` probe is still running at its 3-second deadline (for example the `cargo` rustup shim on a busy machine) now counts as installed instead of being cached as missing for the rest of the session.
- - **GitHub Action reviews:** analysis can export a structured Engine review for a separate trusted publisher job. The publisher checks the current PR revision and line anchors, deduplicates its findings, and keeps uncertain or preexisting claims out of inline comments.
- - **Telegram recovery:** prompts and their initiating identity are durable before the polling cursor advances. Restart recovery reuses the original Engine operation, questions preserve human ownership, and uncertain final replies remain available through `/status` without an automatic resend.
- - **DingTalk bridge:** an optional internal-app Stream adapter reuses the same Engine, shared admission and approval helpers. Tenant/staff allowlists, durable acceptance before acknowledgement and retained uncertain deliveries protect recovery. Managed account linking is separate from this advanced self-hosted bridge.
+ ## [Unreleased]
+ 
++- **Sandboxed commands cannot plant git hooks or edit git config:** in workspace-write mode, `.git/hooks` and `.git/config` (and a linked worktree's shared `hooks` and `config`) are read-only to sandboxed commands, so a command cannot leave a hook or `core.hooksPath` that later runs outside the sandbox. The workspace's `.codewhale/` is protected even before it exists (on Linux it is created first, because bubblewrap can only protect existing paths). `git commit` and ordinary file writes are unaffected; `git config` writes and hook edits need an approved unsandboxed command.
+ - **Interrupted session hint stays visible (#7095):** when a plain `codewhale` launch finds an in-flight session snapshot, the "Run `codewhale --continue` to resume it" hint now appears in the TUI's status line instead of being printed to the terminal just before the TUI covered it.
+ - **Crate split S24a (internal):** the workshop byte-budget slot moves to `codewhale-runtime`, `AutoRouteDecisionEvidence` to `codewhale-models`, and cost-status session persistence to a tui `usage_persistence` module, so billing no longer reaches the session manager or model routing. No behavior change. (CW-6129)
+ - **Nested and deletable threads (Runtime API):** a fork (including a backtrack fork) records `parent_thread_id`, `POST /v1/threads` accepts one naming an existing thread, and `GET /v1/threads/summary` returns it so clients can nest child conversations. `DELETE /v1/threads/{id}` removes an idle thread with its turns, items, events and goal, and its saved session unless another thread shares it or a terminal holds it open; a running thread answers 409.
+```
+
+**File**: `crates/sandbox/src/bwrap.rs` (modified, +1/-1)
+```diff
+@@ -348,7 +348,7 @@ fn safe_mounts(writable_roots: &[WritableRoot]) -> (Vec<PathBuf>, Vec<PathBuf>)
+         writable.insert(canonical_root.clone());
+ 
+         for exception in &root.read_only_subpaths {
+-            let Some(canonical_exception) = existing_directory(exception) else {
++            let Some(canonical_exception) = exception.canonicalize().ok() else {
+                 continue;
+             };
+             if canonical_exception.starts_with(&canonical_root) {
+```
+
+**File**: `crates/sandbox/src/lib.rs` (modified, +3/-0)
+```diff
+@@ -885,6 +885,9 @@ impl SandboxManager {
+         let writable_roots = if self.readable_paths.is_some() {
+             vec![policy::WritableRoot::new(spec.cwd.clone())]
+         } else {
++            if matches!(spec.sandbox_policy, SandboxPolicy::WorkspaceWrite { .. }) {
++                let _ = std::fs::create_dir(spec.cwd.join(".codewhale"));
++            }
+             spec.sandbox_policy.get_writable_roots(&spec.cwd)
+         };
+         let command = bwrap::build_bwrap_command_with_read_paths(
+```
+
+**File**: `crates/sandbox/src/policy.rs` (modified, +21/-3)
+```diff
+@@ -317,20 +317,25 @@ impl SandboxPolicy {
+                 ..
+             } => {
+                 let mut roots: Vec<PathBuf> = writable_roots.clone();
++                let mut workspace_roots = roots.clone();
+ 
+                 // Add the current working directory
+                 if let Ok(canonical_cwd) = cwd.canonicalize() {
+                     roots.push(canonical_cwd);
+                 } else {
+                     roots.push(cwd.to_path_buf());
+                 }
++                workspace_roots.extend(roots.last().cloned());
+ 
+                 // Git worktrees keep mutable metadata outside the worktree
+                 // directory. Allow only the gitdir and commondir derived from
+                 // a workspace `.git` pointer, preserving the workspace boundary
+                 // for all other external paths.
++                let mut git_dir_roots = Vec::new();
+                 for root in roots.clone() {
+-                    roots.extend(resolve_git_worktree_writable_roots(&root));
++                    let git_dirs = resolve_git_worktree_writable_roots(&root);
++                    git_dir_roots.extend(git_dirs.iter().cloned());
++                    roots.extend(git_dirs);
+                 }
+ 
+                 // Add /tmp unless excluded
+@@ -352,15 +357,28 @@ impl SandboxPolicy {
+                     .map(|root| {
+                         let mut read_only_subpaths = Vec::new();
+ 
+-                        // Protect .codewhale/ and .deepseek/ directories from modification
++                        // Protect .codewhale/ and .deepseek/ from modification, and
++                        // the git hooks and config that later run or configure
++                        // commands outside the sandbox. A workspace root protects
++                        // .codewhale/ even before it exists.
++                        let workspace = workspace_roots.contains(&root);
+                         let codewhale_dir = root.join(".codewhale");
+-                        if codewhale_dir.is_dir() {
++                        if workspace || codewhale_dir.is_dir() {
+                             read_only_subpaths.push(codewhale_dir);
+                         }
+                         let deepseek_dir = root.join(".deepseek");
+                         if deepseek_dir.is_dir() {
+                             read_only_subpaths.push(deepseek_dir);
+                         }
++                        let git_dir = if git_dir_roots.contains(&root) {
++                            root.clone()
++                        } else {
++                            root.join(".git")
++                        };
++                        if git_dir.is_dir() {
++                            read_only_subpaths.push(git_dir.join("hooks"));
++                            read_only_subpaths.push(git_dir.join("config"));
++                        }
+ 
+                         WritableRoot {
+                             root,
+```
+
+**File**: `crates/sandbox/src/seatbelt.rs` (modified, +9/-1)
+```diff
+@@ -479,7 +479,15 @@ fn generate_params(policy: &SandboxPolicy, cwd: &Path) -> Vec<(String, PathBuf)>
+ 
+         // Add parameters for read-only subpaths
+         for (subpath_index, subpath) in root.read_only_subpaths.iter().enumerate() {
+-            let canonical_subpath = subpath.canonicalize().unwrap_or_else(|_| subpath.clone());
++            let canonical_subpath = subpath.canonicalize().unwrap_or_else(|_| {
++                match (
++                    subpath.parent().map(Path::canonicalize),
++                    subpath.file_name(),
++                ) {
++                    (Some(Ok(parent)), Some(name)) => parent.join(name),
++                    _ => subpath.clone(),
++                }
++            });
+             params.push((
+                 format!("WRITABLE_ROOT_{index}_RO_{subpath_index}"),
+                 canonical_subpath,
+```
+
+**File**: `crates/sandbox/src/seatbelt/tests.rs` (modified, +1/-1)
+```diff
+@@ -39,7 +39,7 @@ fn file_provider_extensions_intersect_each_workspace_root_and_exclusions() {
+ 
+     for root_index in 0..=1 {
+         let expected = format!(
+-            r#"(require-all (extension "com.apple.app-sandbox.read-write") (subpath (param "WRITABLE_ROOT_{root_index}")) (require-not (subpath (param "WRITABLE_ROOT_{root_index}_RO_0"))))"#
++            r#"(require-all (extension "com.apple.app-sandbox.read-write") (subpath (param "WRITABLE_ROOT_{root_index}")) (require-not (subpath (param "WRITABLE_ROOT_{root_index}_RO_0")))"#
+         );
+         assert!(
+             workspace_write.contains(&expected),
 ```
 
 **File**: `crates/tui/CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **Uninstall on every install route:** `codewhale uninstall` previews receipt-owned release files and `--yes` removes only checked files, with the running command last. Both Unix installers and the Windows archive installer record command ownership; self-update renews existing receipts on both. On Windows the running `codewhale.exe` is renamed and deleted once the command exits. Package-managed copies are left alone, and the command prints their exact removal command: npm with its prefix, Cargo with its root, the Homebrew formula, `scoop uninstall codewhale`, `winget uninstall --id HunterBown.CodeWhale`, or the Windows setup's `Uninstall.exe`. Every other `codewhale`/`codew` still on PATH is listed. User data is kept unless you add `--purge-data`, which previews and then deletes only `~/.codewhale` (or a `CODEWHALE_HOME` named `.codewhale`) and `~/.deepseek/snapshots`, refusing symlinks, home ancestors and directories owned by another user. Windows removal is compile-checked but not yet exercised on a Windows host. (Refs #7091)
+@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
- - **GitHub Action needs an explicit provider:** the Action's `provider` input no longer defaults to the `codewhale` account relay. Name your BYOK provider (or `codewhale` for a separately verified account machine key); a missing provider stops with `configuration_missing` before any download or model call. The repository's own (disabled) review workflow now pins CLI `v0.10.2` by default instead of `v0.10.0`.
-+- **Slow tools are not reported missing:** a tool whose `--version` probe is still running at its 3-second deadline (for example the `cargo` rustup shim on a busy machine) now counts as installed instead of being cached as missing for the rest of the session.
- - **GitHub Action reviews:** analysis can export a structured Engine review for a separate trusted publisher job. The publisher checks the current PR revision and line anchors, deduplicates its findings, and keeps uncertain or preexisting claims out of inline comments.
- - **Telegram recovery:** prompts and their initiating identity are durable before the polling cursor advances. Restart recovery reuses the original Engine operation, questions preserve human ownership, and uncertain final replies remain available through `/status` without an automatic resend.
- - **DingTalk bridge:** an optional internal-app Stream adapter reuses the same Engine, shared admission and approval helpers. Tenant/staff allowlists, durable acceptance before acknowledgement and retained uncertain deliveries protect recovery. Managed account linking is separate from this advanced self-hosted bridge.
-```
-
-**File**: `crates/tui/src/dependencies.rs` (modified, +12/-3)
-```diff
-@@ -70,7 +70,17 @@ pub fn probe_executable_with_flag(spec: &str, version_flag: &str) -> bool {
-     };
-     let mut cmd = version_probe_command(program);
-     cmd.args(parts).arg(version_flag);
--    matches!(probe_output(&mut cmd, false, VERSION_PROBE_TIMEOUT), Ok(output) if output.status.success())
-+    probe_found(&mut cmd)
-+}
-+
-+/// A probe that launched and was still running at its deadline found an
-+/// installed tool that is slow under load; only a failed launch or a failing
-+/// exit means the tool is absent.
-+fn probe_found(command: &mut Command) -> bool {
-+    match probe_output(command, false, VERSION_PROBE_TIMEOUT) {
-+        Ok(output) => output.status.success(),
-+        Err(error) => error.kind() == std::io::ErrorKind::TimedOut,
-+    }
- }
+ ## [Unreleased]
  
- /// Probe a single executable and capture its version banner in one spawn.
-@@ -244,8 +254,7 @@ fn resolve_executable_path(spec: &str, version_flag: &str) -> Option<String> {
-         let mut cmd = version_probe_command(&candidate);
-         cmd.args(&args).arg(version_flag);
- 
--        if matches!(probe_output(&mut cmd, false, VERSION_PROBE_TIMEOUT), Ok(output) if output.status.success())
--        {
-+        if probe_found(&mut cmd) {
-             return Some(candidate.to_string_lossy().into_owned());
-         }
-     }
++- **Sandboxed commands cannot plant git hooks or edit git config:** in workspace-write mode, `.git/hooks` and `.git/config` (and a linked worktree's shared `hooks` and `config`) are read-only to sandboxed commands, so a command cannot leave a hook or `core.hooksPath` that later runs outside the sandbox. The workspace's `.codewhale/` is protected even before it exists (on Linux it is created first, because bubblewrap can only protect existing paths). `git commit` and ordinary file writes are unaffected; `git config` writes and hook edits need an approved unsandboxed command.
+ - **Interrupted session hint stays visible (#7095):** when a plain `codewhale` launch finds an in-flight session snapshot, the "Run `codewhale --continue` to resume it" hint now appears in the TUI's status line instead of being printed to the terminal just before the TUI covered it.
+ - **Crate split S24a (internal):** the workshop byte-budget slot moves to `codewhale-runtime`, `AutoRouteDecisionEvidence` to `codewhale-models`, and cost-status session persistence to a tui `usage_persistence` module, so billing no longer reaches the session manager or model routing. No behavior change. (CW-6129)
+ - **Nested and deletable threads (Runtime API):** a fork (including a backtrack fork) records `parent_thread_id`, `POST /v1/threads` accepts one naming an existing thread, and `GET /v1/threads/summary` returns it so clients can nest child conversations. `DELETE /v1/threads/{id}` removes an idle thread with its turns, items, events and goal, and its saved session unless another thread shares it or a terminal holds it open; a running thread answers 409.
 ```
 
 ---
 
-### Incident Patch 3: `ccda7072` (2026-10-27)
-**Commit Message**: perf(tui): an idle session relaxes its poll during prompts and background jobs (#6728)
+### Incident Patch 3: `7bde7462` (2026-10-28)
+**Commit Message**: fix(extension-host): a runtime bwrap cannot execute is a start failure, so auto falls back to Node
 
-The event loop only reached its 250 ms quiet poll when nothing at all was
-live, so the states an idle user actually sits in kept the 24-48 ms poll:
-- an approval, elevation or question card on top (the turn is still
-  loading, so the active 24 ms poll applied);
-- a running background job (durable task) or a once-a-second label, which
-  counted as "animating" or "busy" even though the frame requester already
-  wakes the loop at the next frame deadline.
+On Linux the Native host probe ran `<runtime> --version` inside bwrap and
+treated any failure as "no verified OS sandbox", a hard error raised while
+preparing the launch, before runtime = "auto"'s Bun-to-Node fallback (which
+only covers spawn failures). A runtime that is a script or shim (asdf's bash
+shims; the test's #!/bin/sh fake Bun) cannot execute in the sandbox because
+its interpreter is not among the Native read grants, and bwrap reports
+`bwrap: execvp <runtime>: No such file or directory`. bwrap has already built
+its namespaces at that point, so the sandbox is verified: the probe now
+accepts that line, the real host spawn fails as an ordinary runtime start
+failure, and auto falls back to Node with its existing diagnostic. Explicit
+bun or node still never fall back; genuine bwrap failures (namespaces, uid
+map, missing binary, timeout) remain hard errors.
 
-Now a waiting decision prompt takes the idle path and counts as quiescent;
-only motion faster than the quiet poll counts as animation (slower motion
-is woken by its frame deadline); a live durable task no longer blocks the
-quiet poll (the task panel refreshes on its own 2.5 s cadence). The
-terminal input thread polls every 200 ms instead of 50 ms after 5 s
-without input, which keeps the child-terminal pause ack well inside its
-500 ms timeout. `decision_prompt_waiting` replaces the duplicated
-ModalKind match in status_animation_interval_ms.
+Paths: crates/tui/src/extension_host/supervisor.rs (bwrap_probe_verdict, its
+doc comment, one assertion added to the existing
+missing_verified_sandbox_refuses_native_but_reports_pinned_builtin_exception body)
 
-Known limits: the loop is still polled, not woken, so an engine event, a
-remote decision or a prompt timeout
+Verified by the
 
-**File**: `CHANGELOG.md` (modified, +11/-0)
+**File**: `crates/tui/src/extension_host/supervisor.rs` (modified, +15/-1)
 ```diff
-@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ## [Unreleased]
- 
-+- **Nested and deletable threads (Runtime API):** a fork (including a backtrack fork) records `parent_thread_id`, `POST /v1/threads` accepts one, and `GET /v1/threads/summary` returns it so clients can nest child conversations. `DELETE /v1/threads/{id}` removes an idle thread with its turns, items, events and goal, and its saved session unless another thread shares it or a terminal holds it open; a running thread answers 409.
-+- **Hunk actions in Review (Runtime API):** `POST /v1/git/stage`, `/v1/git/unstage` and `/v1/git/discard` take `hunks` (the `@@ … @@` headers from `GET /v1/diff`) with one path and apply only those hunks through `git apply`, honouring the same `expect` preconditions as whole-path writes. A hunk that no longer exists answers `409 git_state_changed` with `stale_hunks`, and nothing is written unless git accepts the whole patch.
- - **Provider pre-cuts B (internal):** client wire helpers, reasoning-effort mapping and the Ollama catalog parsers move into their own client modules, and test-only provider gates use the shared test-isolation predicate. No behavior change. (CW-6129)
- - **`codewhale-dependencies`, `codewhale-snapshot`, `codewhale-lsp`, `codewhale-repl` crates:** external-tool resolution, workspace snapshots, the language-server client and the Python REPL runtime moved out of `codewhale-tui` into their own crates; `write_context_file` now lives in `codewhale-repl`. No behavior change. (CW-6129)
- - **`codewhale-skill-install` crate:** the community-skill installer, package content digest and `SKILL.md` frontmatter reader move out of `codewhale-tui` into a new crate; the install SSRF guard and timeouts are unchanged in production builds. (CW-6129)
-@@ -171,6 +173,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   seconds without input or engine events, as it already did in an idle
-   session, instead of starting about a dozen git processes every 2 seconds for
-   as long as the job lives (#6728).
-+- An idle session wakes less often. While an approval, elevation or question
-+  prompt waits on you, while a background job runs, or while only a
-+  once-a-second label ticks, the event loop now relaxes to its 250 ms quiet
-+  poll instead of polling every 24 to 48 ms; animations and the prompt's
-+  timeout still wake it on their own deadlines. The terminal input thread
-+  polls every 200 ms instead of 50 ms after 5 seconds without input. Measured
-+  on macOS with release builds: an approval wait went from 29 to 12 timer
-+  wakeups per second, a background job from 32 to 16 and an idle composer
-+  from 25 to 11 (#6728).
- - `write` over an existing file now says when it kept that file's CRLF or LF
-   line endings, so the agent no longer reports a line-ending conversion that
-   did not happen (#7070).
-```
-
-**File**: `crates/tui/CHANGELOG.md` (modified, +11/-0)
-```diff
-@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ## [Unreleased]
- 
-+- **Nested and deletable threads (Runtime API):** a fork (including a backtrack fork) records `parent_thread_id`, `POST /v1/threads` accepts one, and `GET /v1/threads/summary` returns it so clients can nest child conversations. `DELETE /v1/threads/{id}` removes an idle thread with its turns, items, events and goal, and its saved session unless another thread shares it or a terminal holds it open; a running thread answers 409.
-+- **Hunk actions in Review (Runtime API):** `POST /v1/git/stage`, `/v1/git/unstage` and `/v1/git/discard` take `hunks` (the `@@ … @@` headers from `GET /v1/diff`) with one path and apply only those hunks through `git apply`, honouring the same `expect` preconditions as whole-path writes. A hunk that no longer exists answers `409 git_state_changed` with `stale_hunks`, and nothing is written unless git accepts the whole patch.
- - **Provider pre-cuts B (internal):** client wire helpers, reasoning-effort mapping and the Ollama catalog parsers move into their own client modules, and test-only provider gates use the shared test-isolation predicate. No behavior change. (CW-6129)
- - **`codewhale-dependencies`, `codewhale-snapshot`, `codewhale-lsp`, `codewhale-repl` crates:** external-tool resolution, workspace snapshots, the language-server client and the Python REPL runtime moved out of `codewhale-tui` into their own crates; `write_context_file` now lives in `codewhale-repl`. No behavior change. (CW-6129)
- - **`codewhale-skill-install` crate:** the community-skill installer, package content digest and `SKILL.md` frontmatter reader move out of `codewhale-tui` into a new crate; the install SSRF guard and timeouts are unchanged in production builds. (CW-6129)
-@@ -171,6 +173,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   seconds without input or engine events, as it already did in an idle
-   session, instead of starting about a dozen git processes every 2 seconds for
-   as long as the job lives (#6728).
-+- An idle session wakes less often. While an approval, elevation or question
-+  prompt waits on you, while a background job runs, or while only a
-+  once-a-second label ticks, the event loop now relaxes to its 250 ms quiet
-+  poll instead of polling every 24 to 48 ms; animations and the prompt's
-+  timeout still wake it on their own deadlines. The terminal input thread
-+  polls every 200 ms instead of 50 ms after 5 seconds without input. Measured
-+  on macOS with release builds: an approval wait went from 29 to 12 timer
-+  wakeups per second, a background job from 32 to 16 and an idle composer
-+  from 25 to 11 (#6728).
- - `write` over an existing file now says when it kept that file's CRLF or LF
-   line endings, so the agent no longer reports a line-ending conversion that
-   did not happen (#7070).
-```
-
-**File**: `crates/tui/src/tui/ui/event_loop.rs` (modified, +25/-22)
-```diff
-@@ -5081,13 +5081,19 @@ pub(crate) async fn run_event_loop(
-         let underwater_motion =
-             underwater_ambient_motion || underwater_completion_motion || launch_motion;
-         let animation_active = status_motion || underwater_motion;
-+        let animation_interval = Duration::from_millis(animation_interval_ms(
-+            app,
-+            status_motion,
-+            underwater_motion,
-+            cadence_tier,
-+        ));
-         // #6728: what the loop knows about its own quiet. Anything that
-         // wants a prompt reaction moves `last_ui_activity`; the idle poll
-         // and the automation scan back off from it.
-         let idle_facts = IdleFacts {
-             has_running_agents,
--            animation_active,
--            durable_tasks_active,
-+            animation_active: animation_active
-+                && animation_interval < Duration::from_millis(UI_QUIESCENT_POLL_MS),
-             input_pending: !pending_terminal_events.is_empty(),
-             pending_engine_op: pending_subagent_list_refresh,
-         };
-@@ -5113,12 +5119,6 @@ pub(crate) async fn run_event_loop(
-                 ),
-             ));
-         }
--        let animation_interval = Duration::from_millis(animation_interval_ms(
--            app,
--            status_motion,
--            underwater_motion,
--            cadence_tier,
--        ));
-         let motion_policy = app.motion_policy();
-         if animation_active && last_status_frame.elapsed() >= animation_interval {
-             let translation_animated = streaming_thinking::animate_pending_translation(
-@@ -5325,20 +5325,23 @@ pub(crate) async fn run_event_loop(
-             }
-         }
- 
--        let mut poll_timeout =
--            if app.is_loading || has_running_agents || app.is_compacting || app.is_purging {
--                Duration::from_millis(active_poll_ms(app))
--            } else {
--                // Relaxes only once the UI has been quiescent and quiet for
--                // `UI_QUIESCENT_AFTER` (#6728); every deadline below still
--                // shortens it, and input returns the loop at once.
--                idle_poll_duration(
--                    app,
--                    &idle_facts,
--                    now,
--                    now.saturating_duration_since(last_ui_activity),
--                )
--            };
-+        let mut poll_timeout = if (app.is_loading && !decision_prompt_waiting(app))
-+            || has_running_agents
-+            || app.is_compacting
-+            || app.is_purging
-+        {
-+            Duration::from_millis(active_poll_ms(app))
-+        } else {
-+            // Relaxes only once the UI has been quiescent and quiet for
-+            // `UI_QUIESCENT_AFTER` (#6728); every deadline below still
-+            // shortens it, and input returns the loop at once.
-+            idle_poll_duration(
-+                app,
-+                &idle_facts,
-+                now,
-+                now.saturating_duration_since(last_ui_activity),
-+            )
-+        };
-         if let Some(until_flush) = app.paste_burst_next_flush_delay_if_enabled(now) {
-             poll_timeout = poll_timeout.min(until_flush);
-         }
-```
-
-**File**: `crates/tui/src/tui/ui/motion.rs` (modified, +5/-7)
-```diff
-@@ -158,13 +158,11 @@ pub(crate) fn rail_min_chat_width(idle_empty: bool) -> u16 {
- pub(crate) fn status_animation_interval_ms(app: &App) -> u64 {
-     if app.effective_low_motion_for_status() {
-         crate::tui::display_refresh::adaptive_animation_interval_ms(true)
--    } else if matches!(
--        app.view_stack.top_kind(),
--        Some(ModalKind::Approval | ModalKind::Elevation | ModalKind::UserInput)
--    ) || !(app.is_loading
--        || app.is_compacting
--        || app.is_purging
--        || crate::tui::subagent_routing::running_agent_count(app) > 0)
-+    } else if decision_prompt_waiting(app)
-+        || !(app.is_loading
-+            || app.is_compacting
-+            || app.is_purging
-+            || crate::tui::subagent_routing::running_agent_count(app) > 0)
-     {
-         UI_QUIET_STATUS_ANIMATION_MS
-     } else {
-```
-
-**File**: `crates/tui/src/tui/ui/terminal.rs` (modified, +15/-15)
-```diff
-@@ -821,10 +821,10 @@ pub(crate) const UI_QUIESCENT_POLL_MS: u64 = 250;
- pub(crate) struct IdleFacts {
-     /// Live sub-agents (`running_agent_count(app) > 0`).
-     pub(crate) has_running_agents: bool,
--    /// A spinner, the underwater scene, or a launch animation wants frames.
-+    /// A spinner, the underwater scene, or a launch animation wants frames
-+    /// faster than [`UI_QUIESCENT_POLL_MS`]; slower motion is woken by its
-+    /// own frame deadline.
-     pub(crate) animation_active: bool,
--    /// Durable tasks queued, running or waiting.
--    pub(crate) durable_tasks_active: bool,
-     /// A terminal event is already buffered for this iteration.
-     pub(crate) input_pending: bool,
-     /// A sub-agent list refresh is waiting for room in the engine mailbox.
-@@ -837,18 +837,18 @@ pub(crate) struct IdleFacts {
- /// the list errs towards "busy".
- pub(crate) fn ui_state_is_quiescent(app: &App, facts: &IdleFacts, now: Instant) -> bool {
-     let toast_live = |toast: &StatusToast| toast.ttl_ms.is_some() && !toast.is_expired(now);
--    !(app.is_loading
-+    let deciding = decision_prompt_waiting(app);
-+    !((app.is_loading && !deciding)
-         || app.is_compacting
-         || app.is_purging
--        || app.turn_started_at.is_some()
--        || matches!(app.runtime_turn_status.as_deref(), Some("in_progress"))
-+        || (app.turn_started_at.is_some() && !deciding)
-+        || (matches!(app.runtime_turn_status.as_deref(), Some("in_progress")) && !deciding)
-         || facts.has_running_agents
-         || facts.animation_active
--        || facts.durable_tasks_active
-         || facts.input_pending
-         || facts.pending_engine_op
-         || app.needs_redraw
--        || !app.view_stack.is_empty()
-+        || (!app.view_stack.is_empty() && !deciding)
-         || app.onboarding != OnboardingState::None
-         || app.redaction_gate
-         || !app.queued_messages.is_empty()
-@@ -862,6 +862,13 @@ pub(crate) fn ui_state_is_quiescent(app: &App, facts: &IdleFacts, now: Instant)
-         || app.sticky_status.as_ref().is_some_and(toast_live))
+@@ -1174,7 +1174,10 @@ fn probe_bwrap(command: &[String], cwd: &Path, env: &[(String, String)]) -> Resu
  }
  
-+pub(crate) fn decision_prompt_waiting(app: &App) -> bool {
-+    matches!(
-+        app.view_stack.top_kind(),
-+        Some(ModalKind::Approval | ModalKind::Elevation | ModalKind::UserInput)
-+    )
-+}
-+
- /// The idle poll for this iteration: [`idle_poll_ms`] normally, relaxed to
- /// [`UI_QUIESCENT_POLL_MS`] once the UI has been quiescent (see
- /// [`ui_state_is_quiescent`]) and quiet for [`UI_QUIESCENT_AFTER`]. `quiet_for`
-@@ -991,13 +998,6 @@ mod idle_poll_tests {
-                 },
-                 "something is animating",
-             ),
--            (
--                IdleFacts {
--                    durable_tasks_active: true,
--                    ..IdleFacts::default()
--                },
--                "a durable task is live",
--            ),
-             (
-                 IdleFacts {
-                     input_pending: true,
-```
-
-**File**: `crates/tui/src/tui/ui/terminal_input.rs` (modified, +10/-1)
-```diff
-@@ -12,6 +12,8 @@ use std::time::{Duration, Instant};
- use crossterm::event::{self, Event};
+ /// What a wrapped `<runtime> --version` run says about bwrap here: `Ok` when
+-/// it ran, otherwise the reason `/plugin` and doctor show — bwrap's first
++/// it ran, or when bwrap built the sandbox and only the runtime failed to
++/// execute in it (a script shim whose interpreter is not granted): the host
++/// spawn then reports that as a runtime start failure, which `auto` answers
++/// by falling back to Node. Otherwise the reason `/plugin` and doctor show — bwrap's first
+ /// line of stderr (or the exit status), and a hint when that line is about
+ /// the user namespace bwrap could not create. Pure.
+ #[cfg(any(test, all(target_os = "linux", not(target_env = "ohos"))))]
+@@ -1183,6 +1186,9 @@ fn bwrap_probe_verdict(succeeded: bool, status: &str, stderr: &str) -> Result<()
+         return Ok(());
+     }
+     let first = stderr.lines().map(str::trim).find(|line| !line.is_empty());
++    if first.is_some_and(|line| line.starts_with("bwrap: execvp ")) {
++        return Ok(());
++    }
+     let mut detail: String = first.map_or_else(
+         || status.to_string(),
+         |line| line.chars().take(240).collect(),
+@@ -2646,6 +2652,14 @@ mod tests {
  
- const TERMINAL_INPUT_POLL_INTERVAL: Duration = Duration::from_millis(50);
-+const TERMINAL_INPUT_IDLE_POLL_INTERVAL: Duration = Duration::from_millis(200);
-+const TERMINAL_INPUT_IDLE_AFTER: Duration = Duration::from_secs(5);
- const TERMINAL_INPUT_HEARTBEAT_INTERVAL: Duration = Duration::from_millis(500);
- pub(super) const TERMINAL_INPUT_STALL_TIMEOUT: Duration = Duration::from_secs(5);
- pub(super) const TERMINAL_INPUT_RECOVERY_COOLDOWN: Duration = Duration::from_secs(10);
-@@ -186,18 +188,25 @@ impl TerminalInputPump {
-             .name("codewhale-terminal-input".to_string())
-             .spawn(move || {
-                 let mut last_heartbeat = Instant::now();
-+                let mut last_event = last_heartbeat;
-                 while !thread_stop.load(Ordering::Acquire) {
-                     if thread_paused.load(Ordering::Acquire) {
-                         thread_paused_ack.store(true, Ordering::Release);
-                         thread::sleep(TERMINAL_INPUT_CHILD_PAUSE_POLL_INTERVAL);
-                         continue;
-                     }
-                     thread_paused_ack.store(false, Ordering::Release);
--                    match event::poll(TERMINAL_INPUT_POLL_INTERVAL) {
-+                    let poll_interval = if last_event.elapsed() < TERMINAL_INPUT_IDLE_AFTER {
-+                        TERMINAL_INPUT_POLL_INTERVAL
-+                    } else {
-+                        TERMINAL_INPUT_IDLE_POLL_INTERVAL
-+                    };
-+                    match event::poll(poll_interval) {
-                         Ok(true) if thread_stop.load(Ordering::Acquire) => break,
-                         Ok(true) => match event::read() {
-                             Ok(event) => {
-                                 last_heartbeat = Instant::now();
-+                                last_event = last_heartbeat;
-                                 let observed = ObservedTerminalEvent::new(event, last_heartbeat);
-                                 if tx.send(TerminalInputMessage::Event(observed)).is_err() {
-                                     break;
+         // A probe that ran keeps the wrapper.
+         assert_eq!(bwrap_probe_verdict(true, "exit status: 0", ""), Ok(()));
++        assert_eq!(
++            bwrap_probe_verdict(
++                false,
++                "exit status: 1",
++                "bwrap: execvp /tmp/.tmp1/bun: No such file or directory\n",
++            ),
++            Ok(())
++        );
+         let command: Vec<String> = ["/usr/bin/bwrap", "--unshare-all", "--die-with-parent", "--"]
+             .iter()
+             .map(ToString::to_string)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7104** (2026-10-27): docs(i18n): refresh README source stamps after 4cf2d2cff (@Aboysky)
-- **PR #7097** (2026-10-27): fix(tui): resolve the state root before opening session-side state (@SparkofSpike)
-- **PR #7090** (2026-10-25): fix(tui): don't print an unpriced session cost as $0.0000 in /status (@Lstarsky0)
-- **PR #7089** (2026-10-26): fix(tui): only say "Goal cleared." when there was a goal to clear (@Lstarsky0)
-- **PR #7087** (2026-10-25): fix(tui): keep the /diff pager's place when the terminal is resized (@Lstarsky0)
-- **PR #7086** (2026-10-27): feat(context): per-scope instruction budgets with visible truncation (#6526) (@7jrxt42BxFZo4iAnN4CX)
+- **PR #7112** (2026-10-27): fix(tui): shed to the folder name before clipping the launch card's path (@Lstarsky0)
+- **PR #7111** (2026-10-28): chore(deps): bump the npm_and_yarn group across 2 directories with 1 update (@dependabot[bot])
+- **PR #7110** (2026-10-27): fix(commands): don't total unreported cache tokens as 0 in /cache (@Lstarsky0)
+- **PR #7109** (closed): fix(ci): preserve DSH receipt bytes on Windows (@ddlw)
+- **PR #7108** (2026-10-27): style(tui): apply rustfmt to mcp (@ddlw)
+- **PR #7107** (2026-10-27): fix(installer): avoid downloading identical codew asset twice (@ddlw)
 
 ---
 
@@ -2661,22 +2141,29 @@ remote decision or a prompt timeout
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tui): change mode and permissions mid-turn; record steering in Unreleased (CW-75
+## X. security): bound MCP catalog revalidation and harden hunk patch parsing
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.gitignore`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0cf390f0`: tui): change mode and permissions mid-turn; record steering in Unreleased (CW-7552). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cf10ca14`: security): bound MCP catalog revalidation and harden hunk patch parsing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.gitignore`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **Change mode and permissions while the agent works:** Tab, Shift+Tab, `/mode`, the hotbar and `/config mode` no longer refuse while a turn is running. A response that is already streaming is not restarted; the change applies at the agent's next step in the same turn (before its next tool batch, at every approval gate, and before its next model request, which carries the new mode notice). The status line says so until it applies. A call still waiting for approval goes back to the model under the new posture, and a call you already approved runs only if the new posture is equal or broader. Model, thinking level and provider stay locked until the turn ends. (CW-7552)
-- **Steering interrupts thinking:** a steer (Ctrl+Enter, or Enter twice after queueing) now closes the in-flight model request at once, whether the model is waiting on headers, reasoning, writing text or emitting a tool call, and continues the same turn with your message. Text already shown is kept as interrupted output; unfinished reasoning and partial tool calls are discarded, never run. (CW-7552)
+
+# Private keys and certificates never belong in the tree.
+*.pem
+*.key
+*.p12
+*.p8
+id_rsa*
+id_ed25519*
+!docs/cloud-facts/fixtures/test-only-signing-key.pem
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2686,4 +2173,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0cf390f0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cf10ca14` are properly handled with clean fallback behavior.

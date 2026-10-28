@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T04:28:32.720Z",
+  "last_updated": "2026-10-28T04:35:28.655Z",
   "total_verified_learnings": 1156,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7129,8 +7129,8 @@
       "slug": "hmbown-codewhale",
       "platform": "github",
       "source_url": "https://github.com/Hmbown/Codewhale",
-      "source_version": "3a72047c",
-      "content_hash": "89d5e85644f6633f0e88d9ab1152eed28a9ef666322b74a3798e2191952a7634",
+      "source_version": "07ea16b4",
+      "content_hash": "85734e854871c5a85ffc83db5006f35738dbd196621e06cc36432fb923f7f913",
       "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
       "promoted_rules": [
@@ -7208,6 +7208,11 @@
           "number": 4974,
           "title": "tui): change mode and permissions mid-turn; record steering in Unreleased (CW-75",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 5174,
+          "title": "security): bound MCP catalog revalidation and harden hunk patch parsing",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7215,7 +7220,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T22:06:21.549Z",
+      "verified_at": "2026-10-28T04:35:28.637Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -19620,7 +19625,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
       "source_version": "hf-contrastive-lm-clm-v0.1-8b",
-      "content_hash": "1e1d688c3ea9d22241bb39fb30d33029cea193d5b6694cb26f74d4c353d60632",
+      "content_hash": "d4ed4555f2dfd1e151b90cc602f4cfc680ea4138df6b753759f466b54266fc94",
       "dossier_path": "07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md",
       "promoted_rules": [
@@ -19690,7 +19695,7 @@
         "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv44mqua",
         "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv4hvkw7"
       ],
-      "verified_at": "2026-10-25T11:34:42.218Z",
+      "verified_at": "2026-10-28T04:35:27.166Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -141743,6 +141748,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T04:28:32.699Z"
+    },
+    "rule-5174": {
+      "learning_id": "rule-5174",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5174,
+      "title": "security): bound MCP catalog revalidation and harden hunk patch parsing",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "07ea16b4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T04:35:28.637Z"
     }
   },
   "aliases": {

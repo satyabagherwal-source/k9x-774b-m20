@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T04:28:35.309Z",
-    "lastVerified": "2026-10-28T04:28:35.309Z",
+    "lastChecked": "2026-10-28T04:35:38.251Z",
+    "lastVerified": "2026-10-28T04:35:38.251Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -238,9 +238,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-28T04:03:49.268Z",
+    "lastChecked": "2026-10-28T04:35:38.244Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-28T04:03:49.268Z"
+    "lastVerified": "2026-10-28T04:35:38.244Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -960,5 +960,67 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hmbown-codewhale": {
+    "name": "codewhale-hq/Codewhale",
+    "officialUrl": "https://github.com/Hmbown/Codewhale",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T04:35:28.148Z",
+    "lastVerified": "2026-10-28T04:35:28.148Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-codewhale-hq-codewhale",
+    "contentHash": "85734e854871c5a85ffc83db5006f35738dbd196621e06cc36432fb923f7f913",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 22,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-contrastive-lm-clm-v0.1-8b": {
+    "name": "Contrastive-LM/CLM-v0.1-8B",
+    "officialUrl": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T04:35:26.151Z",
+    "lastVerified": "2026-10-28T04:35:26.151Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
+    "contentHash": "d4ed4555f2dfd1e151b90cc602f4cfc680ea4138df6b753759f466b54266fc94",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "maotoumao-musicfree": {
+    "name": "MusicFree",
+    "officialUrl": "https://github.com/maotoumao/MusicFree",
+    "lastChecked": "2026-10-28T04:35:28.281Z",
+    "revisionIdentifier": "d118b18b",
+    "lastVerified": "2026-10-28T04:35:28.281Z"
+  },
+  "zeromicro-go-zero": {
+    "name": "go-zero",
+    "officialUrl": "https://github.com/zeromicro/go-zero",
+    "lastChecked": "2026-10-28T04:35:30.809Z",
+    "revisionIdentifier": "4fce4e76",
+    "lastVerified": "2026-10-28T04:35:30.809Z"
+  },
+  "rustcrypto-hashes": {
+    "name": "hashes",
+    "officialUrl": "https://github.com/RustCrypto/hashes",
+    "lastChecked": "2026-10-28T04:35:33.239Z",
+    "revisionIdentifier": "23d8e40e",
+    "lastVerified": "2026-10-28T04:35:33.239Z"
+  },
+  "neondatabase-neon": {
+    "name": "neon",
+    "officialUrl": "https://github.com/neondatabase/neon",
+    "lastChecked": "2026-10-28T04:35:35.751Z",
+    "revisionIdentifier": "fa504217",
+    "lastVerified": "2026-10-28T04:35:35.751Z"
   }
 }
