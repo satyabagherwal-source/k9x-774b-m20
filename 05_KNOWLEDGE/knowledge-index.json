@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T23:05:28.748Z",
+  "last_updated": "2026-10-28T23:18:58.330Z",
   "total_verified_learnings": 1160,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -34311,8 +34311,8 @@
       "slug": "lancedb-lancedb",
       "platform": "github",
       "source_url": "https://github.com/lancedb/lancedb",
-      "source_version": "45f987a2",
-      "content_hash": "c5cdbbc31d6ea30155cfb8a31726eb0b9f0086e0b7e4b76241314fb6c75346dd",
+      "source_version": "741cb9ad",
+      "content_hash": "4fbc6f7d791cba5b646d24136267690ed92ba8250c0caa93bfb70fcd80933744",
       "dossier_path": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "promoted_rules": [
@@ -34360,6 +34360,11 @@
           "number": 5191,
           "title": "use SQL for all remote materialized view APIs (#4673)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5452,
+          "title": "docs: add guide for using LanceDB in VS Code extensions",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34367,7 +34372,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T05:42:24.617Z",
+      "verified_at": "2026-10-28T23:18:58.312Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64367,7 +64372,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
       "source_version": "hf-liquidai-lfm2.5-24b-a2b-gguf",
-      "content_hash": "bb8925a35b26941beb4768a5421690a0836959e4619eed0343bb6146488994a1",
+      "content_hash": "8136ffdf55dfd718e9c115dc22a222c38113eeeb8b0d2a943820fc52ef5e11a7",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md",
       "promoted_rules": [
@@ -64420,6 +64425,16 @@
           "number": 4477,
           "title": "Quantization-Aware Distillation (QAD) Parity Attestation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5450,
+          "title": "Self-Describing Inference Artifact Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5451,
+          "title": "Quantization-Aware Distillation (QAD) Recovery Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -64427,7 +64442,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T22:41:43.514Z",
+      "verified_at": "2026-10-28T23:18:53.842Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -147191,6 +147206,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T23:05:28.736Z"
+    },
+    "rule-5450": {
+      "learning_id": "rule-5450",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5450,
+      "title": "Self-Describing Inference Artifact Invariant",
+      "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "source_version": "hf-liquidai-lfm2.5-24b-a2b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T23:18:53.842Z"
+    },
+    "rule-5451": {
+      "learning_id": "rule-5451",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5451,
+      "title": "Quantization-Aware Distillation (QAD) Recovery Invariant",
+      "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "source_version": "hf-liquidai-lfm2.5-24b-a2b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T23:18:53.842Z"
+    },
+    "rule-5452": {
+      "learning_id": "rule-5452",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5452,
+      "title": "docs: add guide for using LanceDB in VS Code extensions",
+      "source_url": "https://github.com/lancedb/lancedb",
+      "source_version": "741cb9ad",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T23:18:58.312Z"
     }
   },
   "aliases": {

@@ -5994,3 +5994,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-vllm-sr-d3` | `https://huggingface.co/vllm-sr/d3` | `hf-vllm-sr` | Multi-dimensional audit evidence | 2026-10-28T23:05:17.808Z |
 | `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `3816c112` | Multi-dimensional audit evidence | 2026-10-28T23:05:19.139Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `f7c1b8e5` | Multi-dimensional audit evidence | 2026-10-28T23:05:28.798Z |
+| `learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-28T23:18:53.937Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `741cb9ad` | Multi-dimensional audit evidence | 2026-10-28T23:18:58.439Z |

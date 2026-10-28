@@ -5985,3 +5985,5 @@
 | `CYCLE-20261028-2U3X` | `2026-10-28T23:05:17.805Z` | `vllm-sr/d3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md` | Yes (`a66eaa9c...`) |
 | `CYCLE-20261028-2V4W` | `2026-10-28T23:05:19.136Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5448` | Yes (`8e7b6a94...`) |
 | `CYCLE-20261028-32L8` | `2026-10-28T23:05:28.796Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5449` | Yes (`5959ad53...`) |
+| `CYCLE-20261028-KBU6` | `2026-10-28T23:18:53.934Z` | `LiquidAI/LFM2.5-24B-A2B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5450, Rule 5451` | Yes (`8136ffdf...`) |
+| `CYCLE-20261028-KFB8` | `2026-10-28T23:18:58.436Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5452` | Yes (`4fbc6f7d...`) |

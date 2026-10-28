@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T23:05:28.805Z",
+  "last_updated": "2026-10-28T23:18:58.448Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2361,14 +2361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
-      "content_hash": "bb8925a35b26941beb4768a5421690a0836959e4619eed0343bb6146488994a1",
-      "verified_at": "2026-10-25T22:41:43.616Z",
+      "content_hash": "8136ffdf55dfd718e9c115dc22a222c38113eeeb8b0d2a943820fc52ef5e11a7",
+      "verified_at": "2026-10-28T23:18:53.945Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T22:41:43.616Z"
+      "last_updated": "2026-10-28T23:18:53.945Z"
     },
     "amplifthq/openmeld": {
       "repository": "amplifthq/openmeld",
@@ -11196,14 +11196,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lancedb-lancedb",
-      "content_hash": "c5cdbbc31d6ea30155cfb8a31726eb0b9f0086e0b7e4b76241314fb6c75346dd",
-      "verified_at": "2026-10-28T05:42:24.719Z",
+      "content_hash": "4fbc6f7d791cba5b646d24136267690ed92ba8250c0caa93bfb70fcd80933744",
+      "verified_at": "2026-10-28T23:18:58.447Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T05:42:24.719Z"
+      "last_updated": "2026-10-28T23:18:58.447Z"
     },
     "agent-of-empires/agent-of-empires": {
       "repository": "agent-of-empires/agent-of-empires",

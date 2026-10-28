@@ -1525,8 +1525,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
     "sourceVersion": "hf-liquidai-lfm2.5-24b-a2b-gguf",
     "license": "Open-Source",
-    "contentHash": "bb8925a35b26941beb4768a5421690a0836959e4619eed0343bb6146488994a1",
-    "lastHarvestedAt": "2026-10-25T22:41:43.608Z",
+    "contentHash": "8136ffdf55dfd718e9c115dc22a222c38113eeeb8b0d2a943820fc52ef5e11a7",
+    "lastHarvestedAt": "2026-10-28T23:18:53.937Z",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf"
   },
   "amplifthq-openmeld": {
@@ -7433,10 +7433,10 @@
     "repository": "lancedb/lancedb",
     "platform": "github",
     "sourceUrl": "https://github.com/lancedb/lancedb",
-    "sourceVersion": "45f987a2",
+    "sourceVersion": "741cb9ad",
     "license": "Apache-2.0",
-    "contentHash": "c5cdbbc31d6ea30155cfb8a31726eb0b9f0086e0b7e4b76241314fb6c75346dd",
-    "lastHarvestedAt": "2026-10-28T05:42:24.710Z",
+    "contentHash": "4fbc6f7d791cba5b646d24136267690ed92ba8250c0caa93bfb70fcd80933744",
+    "lastHarvestedAt": "2026-10-28T23:18:58.439Z",
     "learningId": "learn-github-lancedb-lancedb"
   },
   "agent-of-empires-agent-of-empires": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source**: github ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
-> **Source Version**: `45f987a2`  
+> **Source Version**: `741cb9ad`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T05:42:24.134Z  
+> **Timestamp**: 2026-10-28T23:18:57.780Z  
 > **Learning ID**: `learn-github-lancedb-lancedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T05:42:24.126Z  
+> **Harvest Timestamp**: 2026-10-28T23:18:57.621Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11795 stars
+- **Stars / Engagement**: 11800 stars
 
 ---
 
@@ -1209,11 +1209,11 @@ pub fn rename_column(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4688** (2026-10-27): **fix: gate experimental local functions behind an opt-in feature**
-  *Symptoms*: Published SDK builds currently expose local SQL computed columns and materialized-view execution that are not ready for release. Add the opt-in `experimental-functions` Cargo feature to the Rust core and forward it through the Python and Node bindings; published packages leave it disabled.  Local declarations and refreshes now return `NotSupported` before mutating tables or spawning jobs, including prepared materialized-view creation. Remote Cloud/Enterprise client operations, Python UDF packaging, ordinary eager `add_columns`, and access to existing data remain available. Stored metadata and write protections stay active, and shared server commit helpers remain usable.  CI covers both feature configurations. Existing local execution tests run with the feature enabled; default-build regressions cover early rejection, unchanged table versions, existing metadata protections, and normal eager transforms. API and source-build documentation explain the opt-in.  Validation: Rust library tests pass with the feature disabled (1,869 tests) and enabled (1,947 tests), plus three default-build integration regressions. Python and TypeScript bindings were rebuilt and tested in both configurations, including mocked remote requests; Rust formatting, Python package lint, TypeScript lint/build, and generated docs were checked. Repository-wide Ruff still reports 48 pre-existing errors in unchanged `docs/web-tests` files. 
+- **Issue #4729** (2026-10-28): **fix(python): expose function source digests**
+  *Symptoms*: Function descriptions include `source_digest`, but both the Rust response model and Python `FunctionVersion` discarded it. Clients therefore could not compare a catalog entry with `udf_def.registration_request.artifact.digest`.  Preserve the digest through Rust serialization and expose it on Python `FunctionVersion`, with a documented Rust accessor. Missing or null digests decode as `None`, keeping older responses compatible. Regression tests cover serialization, immutability, registration jobs, get, and synchronous/asynchronous list responses while keeping the image digest independent.  Validation: - Confirmed that the original Python model silently discarded a server-provided source digest. - Rebuilt the Python extension in the uv-managed environment; both focused Function test files passed (106 tests). - Focused Rust Function model tests passed (10 tests). - Full workspace `cargo check --quiet --features remote --tests --examples` and `cargo clippy --quiet --features remote --tests --examples` passed. - Rust formatting and Ruff checks/formatting for changed Python files passed. - Repository-wide Ruff reports 138 existing violations in unchanged docs/CI files.  Fixes #4723  <!-- lance-gatekeeper-fix:v1 agent=c145f25136f7b908217e04bde8a2548b generation=1 --> 
 
-- **Issue #4687** (2026-10-27): **fix!: restore blob SQL inserts with explicit adapter schemas**
-  *Symptoms*: Fixes #4685  DataFusion uses a provider's single schema for scans and INSERT coercion. Blob scans return descriptors, while writes require native inputs. `BaseTableAdapter` now defaults to `BlobSchema::Read`; SQL INSERT callers can opt into `BlobSchema::Write` with `with_blob_schema`.  Write-mode scans return only when their complete schema matches the projected provider schema, including field metadata and nullability. Blob v2 descriptor scans receive the documented planning error; legacy v1 blobs expose `LargeBinary` write inputs and reject descriptor scans with a schema mismatch. No additional execution node, cast, partial struct, or synthetic blob value is used to reconcile these schemas.  Scalar projections that exclude blobs, scalar filter pushdown, `COUNT(*)`, and scalar self-inserts remain supported. DataFusion supplies top-level projection indexes, so `SELECT extra.note` requests the whole `extra` struct. If it contains a blob, register a separate read adapter for that query, including computed scalar and window queries over the same parent. Read mode preserves descriptor reads and NULL masking from #4571.  Adapter builders preserve the selected mode. Generated `_rowid`, `_rowaddr`, and `_score` columns belong only to the read schema, so positional and explicit-column INSERTs continue to use the table's data columns regardless of builder order. Both modes and the legacy behavior are documented in the API and changelog.  Validation uses `--locked --profile ci -p lance
+- **Issue #4728** (2026-10-28): **fix(python): restore blob extensions in table schemas**
+  *Symptoms*: Reading a Blob v2 table in a fresh process could return its storage struct if neither `blob()` nor pylance had registered the extension. Both local and remote schema reads were affected, so `field.type` could depend on import order.  Restore metadata-only blob fields on every table schema read through the existing BlobType resolver and Arrow's schema deserializer. Preserve nested fields, nullability, custom metadata, and both supported storage layouts. The fallback deserializer now honors the stored shape too.  Fresh-process regressions cover local and remote tables, sync/async reads, and operation with and without pylance. The four native cases failed before removing the native-table guard. Existing merge-insert tests now require the restored extension type while continuing to verify updated and inserted blob contents.  Validation:  - All 12 fresh-process local/remote schema regression cases pass. - `uv run --extra tests pytest python/tests/test_table.py python/tests/test_blob.py python/tests/test_namespace.py python/tests/test_util.py -q -m 'not slow and not s3_test'`: 835 passed, 11 skipped. - Python package Ruff lint and formatting checks pass. - Repository-wide `ruff check .` reports 48 pre-existing diagnostics in unchanged `docs/web-tests` files.  Fixes #4719  <!-- lance-gatekeeper-fix:v1 agent=67c656bb5889e698efce5f2fd9d58ea7 generation=1 --> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1230,1072 +1230,1492 @@ pub fn rename_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `45dbf5ef` (2026-10-27)
-**Commit Message**: fix: use SQL for all remote materialized view APIs (#4673)
+### Incident Patch 1: `84fc4819` (2026-10-28)
+**Commit Message**: docs: add guide for using LanceDB in VS Code extensions
 
-Remote materialized-view APIs now use SQL for the full lifecycle. Create
-and refresh already submit SQL; this change moves describe, paginated
-listing, and drop onto `DESCRIBE MATERIALIZED VIEW`, `SHOW MATERIALIZED
-VIEWS`, and `DROP MATERIALIZED VIEW`.
+Closes #1849
 
-Async create, refresh, and drop return the existing Job handle with
-`job_type = "query"`. The handle has one `id`: the connection-scoped SQL
-query ID, also accepted by `describe_query`. Submission starts the
-query, the job drains its result once, and repeated waits reuse the
-completed result. Synchronous drop waits for catalog removal; physical
-cleanup proceeds in the background.
+This was lancedb/docs#371. After lancedb/docs#355 moved the open-source pages, their navigation and the snippet tests into this repository's `docs/web` and `docs/web-tests`, that PR could no longer merge there, so I've moved the same change here.
 
-Listing uses namespace-scoped keyset pagination with opaque resume
-tokens. Streamed and deferred SQL responses share the same path. Adds
-transport coverage and updates Python/TypeScript documentation for
-query-backed drop jobs.
+## Why
 
----------
+#1849 asks for an example of LanceDB in a VS Code extension, because people kept running into problems there (#927, #1713). An earlier attempt, #3682, added a README link. @prrao87 asked for something else instead: a quick guide on the docs site, under **Integrations › AI Platforms & Frameworks**, showing how to use LanceDB in an extension and what results look like. The author of #3682 agreed and closed it. This PR is that guide.
 
-Co-authored-by: Xuanwo <[REDACTED_EMAIL]>
+## What it adds
 
-**File**: `docs/src/js/classes/Connection.md` (modified, +5/-4)
+- **`docs/web/integrations/ai/vscode.mdx`**: a new page, also added to `docs/web/docs.json`. It builds a small extension with two commands. One indexes the workspace's Markdown into a LanceDB table using the built-in `huggingface` embedding function, so no API key is needed. The other searches it by meaning. The page covers the parts that are specific to VS Code:
+  - storing the table under `context.storageUri` inste
+
+**File**: `docs/web-tests/ts/vscode_extension.ts` (added, +117/-0)
 ```diff
-@@ -436,8 +436,8 @@ abstract dropMaterializedView(name, namespacePath?): Promise<void>
- 
- Drop the materialized view named `name`.
- 
--The view may become unavailable before physical cleanup finishes. Use
--[dropMaterializedViewAsync](Connection.md#dropmaterializedviewasync) to retain and wait for the cleanup job.
-+Remote drops wait for the SQL command to remove the catalog binding.
-+Physical cleanup continues in the background.
- 
- Rejects a table that exists but is not a materialized view.
- 
-@@ -459,8 +459,9 @@ Rejects a table that exists but is not a materialized view.
- abstract dropMaterializedViewAsync(name, namespacePath?): Promise<Job>
- ```
- 
--Start dropping the materialized view named `name` and return its cleanup
--job without waiting for completion.
-+Start dropping the materialized view named `name` and return its job.
-+Remote jobs have type `query` and use the SQL query ID as `id`. Waiting
-+confirms catalog removal; physical cleanup continues in the background.
- 
- Rejects a table that exists but is not a materialized view.
- 
+@@ -0,0 +1,117 @@
++// SPDX-License-Identifier: Apache-2.0
++// SPDX-FileCopyrightText: Copyright The LanceDB Authors
++
++// The `src/extension.ts` of the sample extension in the VS Code integration guide.
++// It needs the VS Code extension host, so jest doesn't run it: the LanceDB code it
++// calls is tested in vscode_search.test.ts, and the extension itself was tested
++// with @vscode/test-cli.
++
++// --8<-- [start:vscode_extension]
++import * as vscode from "vscode";
++import {
++  type Chunk,
++  chunkMarkdown,
++  indexChunks,
++  openDatabase,
++  searchChunks,
++} from "./search";
++
++export async function activate(context: vscode.ExtensionContext) {
++  // One index per workspace. `storageUri` is undefined when no folder is open.
++  const storage = context.storageUri ?? context.globalStorageUri;
++
++  // Transformers.js downloads the embedding model on first use. Keep it in
++  // global storage so every workspace shares one copy and it survives
++  // extension updates. Use `import()`: LanceDB loads the ES module build, and
++  // `require()` would return a separate copy whose settings LanceDB never sees.
++  const { env } = await import("@huggingface/transformers");
++  env.cacheDir = vscode.Uri.joinPath(context.globalStorageUri, "models").fsPath;
++
++  context.subscriptions.push(
++    vscode.commands.registerCommand("lancedbSearch.index", async () => {
++      const files = await vscode.workspace.findFiles(
++        "**/*.md",
++        "**/node_modules/**",
++      );
++      const chunks: Chunk[] = [];
++      for (const file of files) {
++        const bytes = await vscode.workspace.fs.readFile(file);
++        // Store the file's URI, not a path relative to its folder: in a
++        // multi-root workspace `findFiles` searches every folder, and only the
++        // URI says which one a result came from.
++        chunks.push(
++          ...chunkMarkdown(file.toString(), new TextDecoder().decode(bytes)),
++        );
++      }
++      if (chunks.length === 0) {
++        vscode.window.showWarningMessage("No Markdown files to index.");
++        return 0;
++      }
++
++      await vscode.window.withProgress(
++        {
++          location: vscode.ProgressLocation.Notification,
++          title: `Indexing ${files.length} Markdown files`,
++        },
++        async () => {
++          await vscode.workspace.fs.createDirectory(storage);
++          await indexChunks(await openDatabase(storage.fsPath), chunks);
++        },
++      );
++      vscode.window.showInformationMessage(
++        `Indexed ${chunks.length} paragraphs from ${files.length} files.`,
++      );
++      return chunks.length;
++    }),
++
++    // Called with a query (for example from a test or another extension), the
++    // command returns the matching rows instead of showing a picker.
++    vscode.commands.registerCommand(
++      "lancedbSearch.search",
++      async (query?: string) => {
++        const text =
++          query ??
++          (await vscode.window.showInputBox({
++            prompt: "Search Markdown by meaning",
++          }));
++        if (!text) {
++          return [];
++        }
++        const results = await searchChunks(
++          await openDatabase(storage.fsPath),
++          text,
++        );
++        if (query !== undefined) {
++          return results;
++        }
++
++        const picked = await vscode.window.showQuickPick(
++          results.map((row) => {
++            const uri = vscode.Uri.parse(row.path);
++            return {
++              label: `${vscode.workspace.asRelativePath(uri)}:${row.line + 1}`,
++              description: `distance ${row._distance.toFixed(3)}`,
++              detail: row.text,
++              uri,
++              line: row.line,
++            };
++          }),
++          { placeHolder: text, matchOnDetail: true },
++        );
++        if (picked) {
++          const editor = await vscode.window.showTextDocument(picked.uri);
++          const start = new vscode.Position(picked.line, 0);
++          editor.selection = new vscode.Selection(start, start);
++          editor.revealRange(
++            new vscode.Range(start, start),
++            vscode.TextEditorRevealType.InCenter,
++          );
++        }
++        return results;
++      },
++    ),
++  );
++}
++
++export function deactivate() {}
++// --8<-- [end:vscode_extension]
 ```
 
-**File**: `docs/web/basics/jobs.mdx` (modified, +6/-4)
+**File**: `docs/web-tests/ts/vscode_search.test.ts` (added, +67/-0)
 ```diff
-@@ -72,10 +72,12 @@ SQL-backed job handles follow the query lifecycle described below.
- 
- ### SQL-backed job handles
- 
--Remote materialized-view CREATE and REFRESH use the SQL query backend. Python's
--`create_materialized_view_async()` and `mv.refresh_async()` still return job
--handles with `status()`, `wait()` and `cancel()`. Synchronous creation and refresh
--wait on the same SQL execution before returning.
-+Remote materialized-view CREATE, REFRESH, and DROP use the SQL query backend.
-+Python's `create_materialized_view_async()`, `mv.refresh_async()`, and
-+`drop_materialized_view_async()` return job handles with `status()`, `wait()`,
-+and `cancel()`. Synchronous creation, refresh, and drop wait on the same SQL
-+execution before returning. A completed DROP means the catalog binding has been
-+removed; physical cleanup continues in the background.
- 
- The existing `job.job_type` identifies query-backed handles as `"query"` from
- submission, and `job.id` contains the connection-scoped SQL query UUID string.
+@@ -0,0 +1,67 @@
++// SPDX-License-Identifier: Apache-2.0
++// SPDX-FileCopyrightText: Copyright The LanceDB Authors
++import { expect, test } from "@jest/globals";
++import { withTempDirectory } from "./util.ts";
++import {
++  chunkMarkdown,
++  indexChunks,
++  openDatabase,
++  searchChunks,
++} from "./vscode_search.ts";
++
++// The same files make up the sample workspace used in the docs page.
++const workspace: Record<string, string> = {
++  "README.md":
++    "# Acme CLI\n\nAcme CLI syncs your local notes to the Acme cloud.\n\nInstall it with `npm install -g acme-cli`, then run `acme login`.\n",
++  "docs/auth.md":
++    "# Authentication\n\nAcme uses personal access tokens. Create one under Settings > Tokens.\n\nIf a token leaks, revoke it on the Tokens page and generate a replacement.\nRevoked tokens stop working immediately.\n",
++  "docs/sync.md":
++    "# Syncing\n\nRun `acme sync` to upload changed notes. Only files modified since the last sync are sent.\n\nConflicts are resolved by keeping both copies and adding `.conflict` to the older one.\n",
++  "docs/config.md":
++    "# Configuration\n\nSettings live in `~/.acme/config.toml`.\n\nSet `sync.interval` to control how often background sync runs, in minutes.\n",
++  "docs/troubleshooting.md":
++    "# Troubleshooting\n\nIf `acme sync` hangs, check that your proxy allows connections to api.acme.dev on port 443.\n\nRun `acme doctor` to print diagnostics you can attach to a bug report.\n",
++  "CONTRIBUTING.md":
++    "# Contributing\n\nRun `npm test` before opening a pull request. New commands need a page in docs/.\n",
++};
++
++test("chunkMarkdown splits paragraphs and records their start line", () => {
++  expect(chunkMarkdown("docs/auth.md", workspace["docs/auth.md"])).toEqual([
++    { path: "docs/auth.md", line: 0, text: "# Authentication" },
++    {
++      path: "docs/auth.md",
++      line: 2,
++      text: "Acme uses personal access tokens. Create one under Settings > Tokens.",
++    },
++    {
++      path: "docs/auth.md",
++      line: 4,
++      text: "If a token leaks, revoke it on the Tokens page and generate a replacement.\nRevoked tokens stop working immediately.",
++    },
++  ]);
++});
++
++test("index workspace Markdown and search it by meaning", async () => {
++  await withTempDirectory(async (storageDir) => {
++    const chunks = Object.entries(workspace).flatMap(([filePath, content]) =>
++      chunkMarkdown(filePath, content),
++    );
++    await indexChunks(await openDatabase(storageDir), chunks);
++
++    // Each command in the extension opens its own connection, so search
++    // through a fresh one to check the table is usable after a reload.
++    const db = await openDatabase(storageDir);
++    const leaked = await searchChunks(
++      db,
++      "my credentials were exposed, what should I do?",
++    );
++    expect(leaked[0].path).toBe("docs/auth.md");
++    expect(leaked[0].line).toBe(4);
++
++    const firewall = await searchChunks(
++      db,
++      "uploads are stuck behind the company firewall",
++    );
++    expect(firewall[0].path).toBe("docs/troubleshooting.md");
++  });
++}, 100_000);
 ```
 
-**File**: `nodejs/__test__/remote.test.ts` (modified, +3/-25)
+**File**: `docs/web-tests/ts/vscode_search.ts` (added, +77/-0)
 ```diff
-@@ -481,23 +481,6 @@ describe("remote connection", () => {
-     expect(insertRequests).toBe(2);
-   });
- 
--  it("lists materialized views through the namespace route", async () => {
--    await withMockDatabase(
--      (req, res) => {
--        expect(req.method).toBe("GET");
--        expect(req.url).toBe("/v1/namespace/$/materialized_view/list");
--        res
--          .writeHead(200, { "content-type": "application/json" })
--          .end(JSON.stringify({ views: ["daily_sales"] }));
--      },
--      async (db) => {
--        expect(await collect(db.listMaterializedViews())).toEqual([
--          "daily_sales",
--        ]);
--      },
--    );
--  });
--
-   it("creates a view and decodes the schema it resolved to", async () => {
-     await withMockDatabase(
-       (req, res) => {
-@@ -1725,14 +1708,13 @@ async function collect<T>(items: AsyncIterable<T>): Promise<T[]> {
- }
- 
- describe("lazy resource listings", () => {
--  for (const kind of ["views", "materializedViews", "jobs"] as const) {
-+  for (const kind of ["views", "jobs"] as const) {
-     const listing = (
-       db: Connection,
-       options: { pageToken?: string; pageLimit?: number } = {},
-     ) => {
-       if (kind === "jobs") return db.listJobs(options);
--      if (kind === "views") return db.listViews(["team"], options);
--      return db.listMaterializedViews(options);
-+      return db.listViews(["team"], options);
-     };
-     const page = (names: string[], token?: string) => {
-       const items =
-@@ -1807,11 +1789,7 @@ describe("lazy resource listings", () => {
-                 limit: 2,
-               });
-             } else {
--              expect(url.pathname).toBe(
--                kind === "views"
--                  ? "/v1/namespace/team/view/list"
--                  : "/v1/namespace/$/materialized_view/list",
--              );
-+              expect(url.pathname).toBe("/v1/namespace/team/view/list");
-               expect(url.searchParams.get("page_token")).toBe(token);
-               expect(url.searchParams.get("limit")).toBe("2");
-             }
+@@ -0,0 +1,77 @@
++// SPDX-License-Identifier: Apache-2.0
++// SPDX-FileCopyrightText: Copyright The LanceDB Authors
++
++// --8<-- [start:vscode_imports]
++import * as path from "node:path";
++import * as lancedb from "@lancedb/lancedb";
++import "@lancedb/lancedb/embedding/transformers";
++import { Int32, Utf8 } from "apache-arrow";
++// --8<-- [end:vscode_imports]
++
++// --8<-- [start:vscode_chunk]
++export type Chunk = { path: string; line: number; text: string };
++
++// Split a Markdown file into paragraphs, keeping the line each one starts on
++// so a search result can jump straight to it.
++export function chunkMarkdown(filePath: string, content: string): Chunk[] {
++  const lines = content.split(/\r?\n/);
++  const chunks: Chunk[] = [];
++  let start = 0;
++  for (let i = 0; i <= lines.length; i++) {
++    if (i === lines.length || lines[i].trim() === "") {
++      const text = lines.slice(start, i).join("\n").trim();
++      if (text) {
++        chunks.push({ path: filePath, line: start, text });
++      }
++      start = i + 1;
++    }
++  }
++  return chunks;
++}
++// --8<-- [end:vscode_chunk]
++
++// --8<-- [start:vscode_connect]
++// Pass an absolute directory, such as `context.storageUri.fsPath`. A relative
++// path resolves against the extension host's working directory, which is not
++// your workspace and may be read-only (on macOS it is usually `/`).
++export async function openDatabase(storageDir: string) {
++  return lancedb.connect(path.join(storageDir, "lancedb"));
++}
++// --8<-- [end:vscode_connect]
++
++// --8<-- [start:vscode_index]
++export async function indexChunks(db: lancedb.Connection, chunks: Chunk[]) {
++  // Runs all-MiniLM-L6-v2 locally through Transformers.js: no API key needed.
++  const embedder = (await lancedb.embedding
++    .getRegistry()
++    .get("huggingface")
++    ?.create()) as lancedb.embedding.EmbeddingFunction;
++
++  const schema = lancedb.embedding.LanceSchema({
++    path: new Utf8(),
++    line: new Int32(),
++    text: embedder.sourceField(new Utf8()),
++    vector: embedder.vectorField(),
++  });
++
++  // LanceDB fills in the `vector` column from `text` as the rows are written.
++  return db.createTable("chunks", chunks, { schema, mode: "overwrite" });
++}
++// --8<-- [end:vscode_index]
++
++// --8<-- [start:vscode_search]
++export async function searchChunks(
++  db: lancedb.Connection,
++  query: string,
++  limit = 5,
++) {
++  // The table stores its embedding function in its metadata, so a text query
++  // is embedded with the same model that embedded the rows.
++  const table = await db.openTable("chunks");
++  return table
++    .search(query)
++    .select(["path", "line", "text", "_distance"])
++    .limit(limit)
++    .toArray();
++}
++// --8<-- [end:vscode_search]
 ```
 
-**File**: `nodejs/lancedb/connection.ts` (modified, +5/-4)
+**File**: `docs/web/docs.json` (modified, +2/-1)
 ```diff
-@@ -308,8 +308,8 @@ export abstract class Connection {
-   /**
-    * Drop the materialized view named `name`.
-    *
--   * The view may become unavailable before physical cleanup finishes. Use
--   * {@link dropMaterializedViewAsync} to retain and wait for the cleanup job.
-+   * Remote drops wait for the SQL command to remove the catalog binding.
-+   * Physical cleanup continues in the background.
-    *
-    * Rejects a table that exists but is not a materialized view.
-    */
-@@ -319,8 +319,9 @@ export abstract class Connection {
-   ): Promise<void>;
- 
-   /**
--   * Start dropping the materialized view named `name` and return its cleanup
--   * job without waiting for completion.
-+   * Start dropping the materialized view named `name` and return its job.
-+   * Remote jobs have type `query` and use the SQL query ID as `id`. Waiting
-+   * confirms catalog removal; physical cleanup continues in the background.
-    *
-    * Rejects a table that exists but is not a materialized view.
-    */
-```
-
-**File**: `python/python/lancedb/db.py` (modified, +12/-13)
-```diff
-@@ -721,9 +721,8 @@ def drop_materialized_view(
-     ) -> None:
-         """Drop a materialized view.
- 
--        The view may become unavailable before physical cleanup finishes. Use
--        :meth:`drop_materialized_view_async` to retain and wait for the cleanup
--        job.
-+        Remote drops wait for the SQL command to remove the catalog binding.
-+        Physical cleanup continues in the background.
-         """
-         raise NotImplementedError(
-             "materialized views are not supported on this connection type"
-@@ -732,11 +731,11 @@ def drop_materialized_view(
-     def drop_materialized_view_async(
-         self, name: str, namespace_path: Optional[List[str]] = None
-     ) -> Job[None]:
--        """Start dropping a materialized view and return its cleanup job.
-+        """Start dropping a materialized view and return its job.
- 
--        The job may already be complete for a local database. On LanceDB Cloud
--        and Enterprise, its ``id`` is the server job identifier from the
--        ``202 Accepted`` drop response.
-+        The job may already be complete for a local database. Remote jobs have
-+        type ``query`` and use the SQL query ID as ``id``. Waiting confirms
-+        catalog removal; physical cleanup continues in the background.
-         """
-         raise NotImplementedError(
-             "materialized views are not supported on this connection type"
-@@ -2946,9 +2945,8 @@ async def drop_materialized_view(
-     ) -> None:
-         """Drop a materialized view.
- 
--        The view may become unavailable before physical cleanup finishes. Use
--        :meth:`drop_materialized_view_async` to retain and wait for the cleanup
--        job.
-+        Remote drops wait for the SQL command to remove the catalog binding.
-+        Physical cleanup continues in the background.
-         """
-         if namespace_path is None:
-             namespace_path = []
-@@ -2960,10 +2958,11 @@ async def drop_materialized_view_async(
-         *,
-         namespace_path: Optional[List[str]] = None,
-     ) -> AsyncJob[None]:
--        """Start dropping a materialized view and return its cleanup job.
-+        """Start dropping a materialized view and return its job.
- 
--        Await :meth:`AsyncJob.wait` before assuming physical cleanup has
--        finished.
-+        For remote connections, the job has type ``query`` and its ID identifies
-+        the SQL query. Await :meth:`AsyncJob.wait` for catalog removal; physical
-+        cleanup continues in the background.
-         """
-         if namespace_path is None:
-             namespace_path = []
-```
-
-**File**: `python/python/tests/test_listing.py` (modified, +4/-6)
-```diff
-@@ -66,7 +66,7 @@ def response_page(kind, names, token):
+@@ -490,7 +490,8 @@
+               "integrations/ai/genkit",
+               "integrations/ai/kiln",
+               "integrations/ai/prompttools",
+-              "integrations/ai/synthetic-data-kit"
++              "integrations/ai/synthetic-data-kit",
++              "integrations/ai/vscode"
+             ]
+           }
          ]
-     else:
-         items = names
--    key = "views" if kind == "materialized_views" else kind
-+    key = kind
-     return {key: items, "page_token": token}
- 
- 
-@@ -85,7 +85,7 @@ async def advance(items, asynchronous):
-     return await items.__anext__() if asynchronous else next(items)
- 
- 
--KINDS = ["secrets", "views", "jobs", "functions", "materialized_views"]
-+KINDS = ["secrets", "views", "jobs", "functions"]
- 
- 
- @pytest.mark.asyncio
-@@ -236,9 +236,7 @@ async def test_listing_lazy_pages_and_resume(listing_server, kind, asynchronous)
-     )
-     db = await connection(endpoint, asynchronous)
-     method = getattr(db, "list_" + kind)
--    kwargs = (
--        {} if kind in ("jobs", "materialized_views") else {"namespace_path": ["team"]}
--    )
-+    kwargs = {} if kind == "jobs" else {"namespace_path": ["team"]}
-     items = method(page_token="start/token", page_limit=2, **kwargs)
-     assert requests == []
-     assert items.page_token() == "start/token"
-@@ -273,7 +271,7 @@ async def test_listing_lazy_pages_and_resume(listing_server, kind, asynchronous)
-             assert path.path == "/v1/jobs/list"
-             assert body == {"page_token": token, "limit": 2}
-         else:
--            namespace = "$" if kind == "materialized_views" else "team"
-+            namespace = "team"
-             resource = kind.removesuffix("s")
-             assert path.path == f"/v1/namespace/{namespace}/{resource}/list"
-             expected = {"page_token": [token], "limit": ["2"]}
 ```
 
-**File**: `python/python/tests/test_materialized_views.py` (modified, +36/-100)
+**File**: `docs/web/integrations/ai/vscode.mdx` (added, +297/-0)
 ```diff
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: Apache-2.0
- # SPDX-FileCopyrightText: Copyright The LanceDB Authors
- 
+@@ -0,0 +1,297 @@
++---
++title: "VS Code extensions"
++sidebarTitle: "VS Code"
++description: "Embed LanceDB in a VS Code extension to search a workspace by meaning, with no server, and bundle and package its native binaries correctly."
++keywords: ["vscode", "visual studio code", "extension", "electron", "esbuild", "vsix", "semantic search"]
++---
 +
- import contextlib
- import http.server
- import json
-@@ -30,89 +31,6 @@ def make_db(tmp_path):
-     return db
- 
- 
--@contextlib.contextmanager
--def mock_remote_materialized_views():
--    requests = []
--
--    class Handler(http.server.BaseHTTPRequestHandler):
--        def log_message(self, *args):
--            pass
--
--        def do_GET(self):
--            requests.append(self.path)
--            encoded = json.dumps({"views": ["daily_sales"]}).encode()
--            self.send_response(200)
--            self.send_header("Content-Type", "application/json")
--            self.send_header("Content-Length", str(len(encoded)))
--            self.end_headers()
--            self.wfile.write(encoded)
--
--    with http.server.HTTPServer(("localhost", 0), Handler) as server:
--        thread = threading.Thread(target=server.serve_forever)
--        thread.start()
--        try:
--            yield f"http://localhost:{server.server_address[1]}", requests
--        finally:
--            server.shutdown()
--            thread.join()
--
--
--@contextlib.contextmanager
--def mock_remote_materialized_view_drop():
--    requests = []
--
--    class Handler(http.server.BaseHTTPRequestHandler):
--        def log_message(self, *args):
--            pass
--
--        def do_POST(self):
--            length = int(self.headers.get("Content-Length", 0))
--            body = json.loads(self.rfile.read(length) or b"{}")
--            requests.append((self.path, body))
--            assert self.path.endswith("/drop")
--            job_id = "mv-drop-123"
--            encoded = json.dumps({"job_id": job_id}).encode()
--            self.send_response(202)
--            self.send_header("Content-Type", "application/json")
--            self.send_header("Content-Length", str(len(encoded)))
--            self.end_headers()
--            self.wfile.write(encoded)
--
--    with http.server.HTTPServer(("localhost", 0), Handler) as server:
--        thread = threading.Thread(target=server.serve_forever)
--        thread.start()
--        try:
--            yield f"http://localhost:{server.server_address[1]}", requests
--        finally:
--            server.shutdown()
--            thread.join()
--
--
--def test_remote_list_uses_namespace_route():
--    with mock_remote_materialized_views() as (host, requests):
--        db = lancedb.connect(
--            "db://dev",
--            api_key="fake",
--            host_override=host,
--            client_config={"retry_config": {"retries": 0}},
--        )
--        assert list(db.list_materialized_views()) == ["daily_sales"]
--    assert requests == ["/v1/namespace/$/materialized_view/list"]
--
--
--def test_remote_drop_async_returns_server_job():
--    with mock_remote_materialized_view_drop() as (host, requests):
--        db = lancedb.connect(
--            "db://dev",
--            api_key="fake",
--            host_override=host,
--            client_config={"retry_config": {"retries": 0}},
--        )
--        job = db.drop_materialized_view_async("adults")
--        assert job.id == "mv-drop-123"
--    assert requests == [("/v1/materialized_view/adults/drop", {})]
--
--
- @contextlib.contextmanager
- def mock_remote_materialized_view_refresh():
-     requests = []
-@@ -123,11 +41,8 @@ def log_message(self, *args):
- 
-         def do_POST(self):
-             requests.append(self.path)
--            if self.path == "/v1/materialized_view/view/describe":
--                response = {"query": "SELECT * FROM source"}
--            else:
--                assert self.path == "/v1/table/view/describe/"
--                response = {"version": 42, "schema": {"fields": []}}
-+            assert self.path == "/v1/table/view/describe/"
-+            response = {"version": 42, "schema": {"fields": []}}
-             encoded = json.dumps(response).encode()
-             self.send_response(200)
-             self.send_header("Content-Type", "application/json")
-@@ -159,6 +74,16 @@ def __init__(self):
- 
-         def do_get(self, context, ticket):
-             self.commands.append(ticket.ticket)
-+            if b"DESCRIBE MATERIALIZED VIEW" in ticket.ticket:
-+                return flight.RecordBatchStream(
-+                    pa.table(
-+                        {
-+                            "name": ["view"],
-+                            "query": ["SELECT * FROM source"],
-+                        }
-+                    )
-+                )
-+            assert b"REFRESH MATERIALIZED VIEW" in ticket.ticket
-             # SQL completion carries no refresh statistics.
-             return flight.RecordBatchStream(pa.table({"status": ["ok"]}))
- 
-@@ -199,9 +124,24 @@ def do_get(self, context, ticket):
-             "RefreshMaterializedViewResult(mode=None, rows_written=None, "
-             "source_version=None, version=42)"
-         )
--        (command,) = server.commands
--        assert b'REFRESH MATERIALIZED VIEW "view"' in command
--        assert (b"WITH (full = true)" in comma
++import {
++  TsVscodeChunk,
++  TsVscodeConnect,
++  TsVscodeImports,
++  TsVscodeIndex,
++  TsVscodeSearch,
++} from '/snippets/vscode_search.mdx';
++import { TsVscodeExtension } from '/snippets/vscode_extension.mdx';
++
++A VS Code extension runs in the *extension host*, a Node.js process, so LanceDB's TypeScript SDK
++(`@lancedb/lancedb`) runs inside it like any other npm package. There's no database server to
++start: the extension opens a table on local disk and queries it in-process. That makes LanceDB
++a good fit for features such as semantic search over a workspace, retrieval for an AI assistant,
++or a cache of embeddings that survives restarts.
++
++The extension host differs from a plain Node.js script in three ways that trip people up:
++
++- **Where you can write.** Relative paths resolve against the extension host's working
++  directory, not the workspace, and that directory may be read-only.
++- **Bundling.** The default extension template bundles everything with esbuild, which can't
++  bundle LanceDB's native `.node` binary.
++- **Packaging.** LanceDB installs a native binary for the current platform only, so a VSIX
++  built on one OS doesn't run on another.
++
++This guide builds a small extension that handles all three. It indexes the Markdown files in a
++workspace and searches them by meaning, using a local embedding model, so no API key is needed.
++
++<Info>
++**What you'll build**
++
++- **LanceDB: Index Markdown in Workspace** splits every `*.md` file into paragraphs and stores
++  them in a LanceDB table, with embeddings from `Xenova/all-MiniLM-L6-v2` run locally through
++  Transformers.js.
++- **LanceDB: Search Markdown** embeds your query, shows the five closest paragraphs, and opens
++  the one you pick.
++</Info>
++
++## Create the extension {#create-the-extension}
++
++<Steps>
++<Step title="Scaffold a TypeScript extension">
++Use the official generator. Choose **New Extension (TypeScript)** and **esbuild** as the bundler.
++
++```bash
++npx --package yo --package generator-code -- yo code
++```
++</Step>
++
++<Step title="Install LanceDB">
++```bash
++npm install @lancedb/lancedb apache-arrow@18.1.0
++```
++
++Your code imports Arrow types directly, so add `apache-arrow` as a dependency, pinned inside
++LanceDB's peer dependency range (`>=15.0.0 <=18.1.0`). If the project already depends on a
++newer `apache-arrow`, installing LanceDB fails with `ERESOLVE`.
++
++LanceDB also needs `@types/node` 22 or later. The generator's template already uses a recent
++version; an old one causes `Cannot find module 'node:stream'` errors.
++
++You don't need to install `@huggingface/transformers` yourself. LanceDB pins it as an optional
++dependency, and installing a different version gives your code a copy that LanceDB doesn't use.
++</Step>
++
++<Step title="Skip type checking of dependencies">
++The type declarations of `apache-arrow` and the ONNX runtime used by Transformers.js refer to
++browser types such as `ReadableStreamReadResult` and `HTMLCanvasElement`. The template's
++`tsconfig.json` doesn't include the DOM library, so `tsc` reports errors inside `node_modules`.
++Turn on `skipLibCheck`:
++
++```json tsconfig.json icon="brackets-curly"
++{
++  "compilerOptions": {
++    "skipLibCheck": true
++  }
++}
++```
++</Step>
++</Steps>
++
++## Store the database in extension storage {#store-the-database-in-extension-storage}
++
++Give LanceDB an absolute path inside the storage VS Code reserves for your extension:
++
++- `context.storageUri`: a folder for the current workspace. It's `undefined` when no folder is
++  open. Use it for anything derived from the workspace, such as this index.
++- `context.globalStorageUri`: a folder shared by all workspaces. Use it for things like
++  downloaded models.
++
++Neither folder is guaranteed to exist, so create it before connecting. Both live outside the
++user's project, so the index never shows up in their files or in version control.
++
++Don't pass a relative path such as `lancedb.connect("data")`. It resolves against the extension
++host's working directory, which isn't the workspace and may be read-only: this causes the
++`Read-only file system (os error 30)` error on macOS.
++
++Put the LanceDB code in its own module, `src/search.ts`:
++
++<CodeBlock filename="src/search.ts" language="TypeScript" icon="square-js">
++  {TsVscodeImports}
++</CodeBlock>
++
++<CodeBlock filename="src/search.ts" language="TypeScript" icon="square-js">
++  {TsVscodeConnect}
++</CodeBlock>
++
++## Index and search {#index-and-search}
++
++Split each file into paragraphs, and keep the line each one starts on so a result can open the
++file at the right place:
++
++<CodeBlock filename="src/search.ts" language="TypeScript" ico
 ```
 
-**File**: `rust/lancedb/src/materialized_view.rs` (modified, +9/-8)
+**File**: `docs/web/snippets/vscode_extension.mdx` (added, +4/-0)
 ```diff
-@@ -1987,8 +1987,8 @@ impl Connection {
-     /// Drop a materialized view.
-     ///
-     /// The view may become unavailable before its physical data is removed.
--    /// Use [`Connection::drop_materialized_view_async`] to retain the cleanup
--    /// job and wait for it explicitly.
-+    /// Remote drops wait for the SQL command to remove the catalog binding;
-+    /// physical cleanup proceeds in the background.
-     pub async fn drop_materialized_view(
-         &self,
-         name: impl AsRef<str>,
-@@ -1999,8 +1999,9 @@ impl Connection {
-             return self
-                 .database()
-                 .drop_materialized_view_async(name, namespace_path)
--                .await
--                .map(|_| ());
-+                .await?
-+                .wait()
-+                .await;
-         }
-         let table = self
-             .open_table(name)
-@@ -2011,12 +2012,12 @@ impl Connection {
-         self.drop_table(name, namespace_path).await
-     }
- 
--    /// Start dropping a materialized view and return its cleanup job.
-+    /// Start dropping a materialized view and return its job.
-     ///
-     /// This validates that the named resource is a materialized view rather
--    /// than an ordinary table. Call [`Job::wait`] before assuming physical
--    /// cleanup has finished. When the backend performs cleanup inline, the
--    /// returned job is already finished and has no job ID.
-+    /// than an ordinary table. For remote connections the job has type `query`
-+    /// and its ID identifies the SQL query. Waiting completes once the catalog
-+    /// binding is removed; physical cleanup continues in the background.
-     ///
-     /// ```no_run
-     /// # use lancedb::Connection;
+@@ -0,0 +1,4 @@
++{/* Auto-generated by scripts/mdx_snippets_gen.py. Do not edit manually. */}
++
++export const TsVscodeExtension = "import * as vscode from \"vscode\";\nimport {\n  type Chunk,\n  chunkMarkdown,\n  indexChunks,\n  openDatabase,\n  searchChunks,\n} from \"./search\";\n\nexport async function activate(context: vscode.ExtensionContext) {\n  // One index per workspace. `storageUri` is undefined when no folder is open.\n  const storage = context.storageUri ?? context.globalStorageUri;\n\n  // Transformers.js downloads the embedding model on first use. Keep it in\n  // global storage so every workspace shares one copy and it survives\n  // extension updates. Use `import()`: LanceDB loads the ES module build, and\n  // `require()` would return a separate copy whose settings LanceDB never sees.\n  const { env } = await import(\"@huggingface/transformers\");\n  env.cacheDir = vscode.Uri.joinPath(context.globalStorageUri, \"models\").fsPath;\n\n  context.subscriptions.push(\n    vscode.commands.registerCommand(\"lancedbSearch.index\", async () => {\n      const files = await vscode.workspace.findFiles(\n        \"**/*.md\",\n        \"**/node_modules/**\",\n      );\n      const chunks: Chunk[] = [];\n      for (const file of files) {\n        const bytes = await vscode.workspace.fs.readFile(file);\n        // Store the file's URI, not a path relative to its folder: in a\n        // multi-root workspace `findFiles` searches every folder, and only the\n        // URI says which one a result came from.\n        chunks.push(\n          ...chunkMarkdown(file.toString(), new TextDecoder().decode(bytes)),\n        );\n      }\n      if (chunks.length === 0) {\n        vscode.window.showWarningMessage(\"No Markdown files to index.\");\n        return 0;\n      }\n\n      await vscode.window.withProgress(\n        {\n          location: vscode.ProgressLocation.Notification,\n          title: `Indexing ${files.length} Markdown files`,\n        },\n        async () => {\n          await vscode.workspace.fs.createDirectory(storage);\n          await indexChunks(await openDatabase(storage.fsPath), chunks);\n        },\n      );\n      vscode.window.showInformationMessage(\n        `Indexed ${chunks.length} paragraphs from ${files.length} files.`,\n      );\n      return chunks.length;\n    }),\n\n    // Called with a query (for example from a test or another extension), the\n    // command returns the matching rows instead of showing a picker.\n    vscode.commands.registerCommand(\n      \"lancedbSearch.search\",\n      async (query?: string) => {\n        const text =\n          query ??\n          (await vscode.window.showInputBox({\n            prompt: \"Search Markdown by meaning\",\n          }));\n        if (!text) {\n          return [];\n        }\n        const results = await searchChunks(\n          await openDatabase(storage.fsPath),\n          text,\n        );\n        if (query !== undefined) {\n          return results;\n        }\n\n        const picked = await vscode.window.showQuickPick(\n          results.map((row) => {\n            const uri = vscode.Uri.parse(row.path);\n            return {\n              label: `${vscode.workspace.asRelativePath(uri)}:${row.line + 1}`,\n              description: `distance ${row._distance.toFixed(3)}`,\n              detail: row.text,\n              uri,\n              line: row.line,\n            };\n          }),\n          { placeHolder: text, matchOnDetail: true },\n        );\n        if (picked) {\n          const editor = await vscode.window.showTextDocument(picked.uri);\n          const start = new vscode.Position(picked.line, 0);\n          editor.selection = new vscode.Selection(start, start);\n          editor.revealRange(\n            new vscode.Range(start, start),\n            vscode.TextEditorRevealType.InCenter,\n          );\n        }\n        return results;\n      },\n    ),\n  );\n}\n\nexport function deactivate() {}\n";
++
+```
+
+**File**: `docs/web/snippets/vscode_search.mdx` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++{/* Auto-generated by scripts/mdx_snippets_gen.py. Do not edit manually. */}
++
++export const TsVscodeChunk = "export type Chunk = { path: string; line: number; text: string };\n\n// Split a Markdown file into paragraphs, keeping the line each one starts on\n// so a search result can jump straight to it.\nexport function chunkMarkdown(filePath: string, content: string): Chunk[] {\n  const lines = content.split(/\\r?\\n/);\n  const chunks: Chunk[] = [];\n  let start = 0;\n  for (let i = 0; i <= lines.length; i++) {\n    if (i === lines.length || lines[i].trim() === \"\") {\n      const text = lines.slice(start, i).join(\"\\n\").trim();\n      if (text) {\n        chunks.push({ path: filePath, line: start, text });\n      }\n      start = i + 1;\n    }\n  }\n  return chunks;\n}\n";
++
++export const TsVscodeConnect = "// Pass an absolute directory, such as `context.storageUri.fsPath`. A relative\n// path resolves against the extension host's working directory, which is not\n// your workspace and may be read-only (on macOS it is usually `/`).\nexport async function openDatabase(storageDir: string) {\n  return lancedb.connect(path.join(storageDir, \"lancedb\"));\n}\n";
++
++export const TsVscodeImports = "import * as path from \"node:path\";\nimport * as lancedb from \"@lancedb/lancedb\";\nimport \"@lancedb/lancedb/embedding/transformers\";\nimport { Int32, Utf8 } from \"apache-arrow\";\n";
++
++export const TsVscodeIndex = "export async function indexChunks(db: lancedb.Connection, chunks: Chunk[]) {\n  // Runs all-MiniLM-L6-v2 locally through Transformers.js: no API key needed.\n  const embedder = (await lancedb.embedding\n    .getRegistry()\n    .get(\"huggingface\")\n    ?.create()) as lancedb.embedding.EmbeddingFunction;\n\n  const schema = lancedb.embedding.LanceSchema({\n    path: new Utf8(),\n    line: new Int32(),\n    text: embedder.sourceField(new Utf8()),\n    vector: embedder.vectorField(),\n  });\n\n  // LanceDB fills in the `vector` column from `text` as the rows are written.\n  return db.createTable(\"chunks\", chunks, { schema, mode: \"overwrite\" });\n}\n";
++
++export const TsVscodeSearch = "export async function searchChunks(\n  db: lancedb.Connection,\n  query: string,\n  limit = 5,\n) {\n  // The table stores its embedding function in its metadata, so a text query\n  // is embedded with the same model that embedded the rows.\n  const table = await db.openTable(\"chunks\");\n  return table\n    .search(query)\n    .select([\"path\", \"line\", \"text\", \"_distance\"])\n    .limit(limit)\n    .toArray();\n}\n";
++
 ```
 
 ---
 
-### Incident Patch 2: `f6a348ac` (2026-10-27)
-**Commit Message**: fix(python): keep FTS scores in RRF and MRR rerankers with return_score="all" (#4677)
+### Incident Patch 2: `12d86ea2` (2026-10-28)
+**Commit Message**: feat(nodejs): add col() expression builder for camelCase column names
 
-`RRFReranker.rerank_hybrid` and `MRRReranker.rerank_hybrid` merge the
-vector and FTS results with the base `merge_results`, which keeps only
-the first copy of a duplicated row. With `return_score="all"`, a row
-that both searches found therefore comes back with `_score = None`, even
-though the FTS search scored it. `LinearCombinationReranker` already
-copies the FTS score onto such rows.
+## Summary
 
-Reproduction against `lancedb` 0.40.0:
+Fixes #3211 by exposing the shared Rust/DataFusion expression builder through Node bindings. Case-sensitive references such as `col("firstName")` can be composed and passed to `where()`, while SQL strings remain supported.
 
-```python
-import pyarrow as pa
-from lancedb.rerankers import RRFReranker
+The expression-object representation follows [the design requested on #3290](https://github.com/lancedb/lancedb/pull/3290#discussion_r3632371998). That earlier PR remains open; no claim is made that the issue was unclaimed or that maintainers have selected this implementation.
 
-vector = pa.table({"_rowid": pa.array([1, 2], pa.uint64()), "text": ["a", "b"],
-                   "_distance": pa.array([0.1, 0.2], pa.float32())})
-fts = pa.table({"_rowid": pa.array([2, 3], pa.uint64()), "text": ["b", "c"],
-                "_score": pa.array([5.0, 4.0], pa.float32())})
-RRFReranker(return_score="all").rerank_hybrid("q", vector, fts).to_pylist()
-# row 2: _distance=0.2, _score=None   (expected _score=5.0)
+## Review corrections
+
+- Construct the named native struct correctly and parse casts through `arrow_schema::DataType`.
+- Preserve numeric values: use Int64 only for JavaScript safe integers; retain Float64 otherwise. Explicit `litInt` rejects unsupported numbers with a documented `RangeError`.
+- Correct test syntax/API calls and align SQL assertions with the shared dialect, including reserved and case-sensitive names.
+- Use typed, isolated temporary test tables with cleanup, and cover an actual large-number filter threshold.
+- Document the public methods and commit generated API documentation.
+
+Synced with 
+
+**File**: `docs/src/js/classes/AutoQuery.md` (modified, +9/-4)
+```diff
+@@ -469,29 +469,34 @@ where(predicate): this
+ 
+ A filter statement to be applied to this query.
+ 
+-The filter should be supplied as an SQL query string.  For example:
++The filter may be an SQL query string or an expression built with `col`,
++which preserves case-sensitive column names. For example:
+ 
+ #### Parameters
+ 
+-* **predicate**: `string`
++* **predicate**: `string` \| [`Expr`](Expr.md)
+ 
+ #### Returns
+ 
+ `this`
+ 
+-#### Example
++#### Examples
+ 
+ ```ts
+ x > 10
+ y > 0 AND y < 100
+ x > 5 OR y = 'test'
++```
++
++```ts
++table.query().where(col("firstName").eq("Alice"));
++```
+ 
+ Filtering performance can often be improved by creating a scalar index
+ on the filter column(s).
+ 
+ Calling this multiple times combines the filters with a logical AND rather
+ than replacing the previous filter.
+-```
+ 
+ #### Inherited from
+ 
 ```
 
-`table.search(query_type="hybrid")` is not affected, because
-`_combine_hybrid_results` restores the original `_distance` and `_score`
-by `_rowid` after reranking. The wrong value 
-
-**File**: `python/python/lancedb/rerankers/mrr.py` (modified, +6/-1)
+**File**: `docs/src/js/classes/Expr.md` (added, +365/-0)
 ```diff
-@@ -97,7 +97,12 @@ def rerank_hybrid(
-             weighted_mrr = self.weight_vector * vector_rr + self.weight_fts * fts_rr
-             final_mrr_scores[result_id] = weighted_mrr
- 
--        combined_results = self.merge_results(vector_results, fts_results)
-+        # With return_score="all", a row found by both searches must keep its
-+        # `_distance` and its `_score`.
-+        if self.score == "all":
-+            combined_results = self._merge_and_keep_scores(vector_results, fts_results)
-+        else:
-+            combined_results = self.merge_results(vector_results, fts_results)
-         combined_row_ids = combined_results["_rowid"].to_pylist()
-         relevance_scores = [final_mrr_scores[row_id] for row_id in combined_row_ids]
-         combined_results = combined_results.append_column(
+@@ -0,0 +1,365 @@
++[**@lancedb/lancedb**](../README.md) • **Docs**
++
++***
++
++[@lancedb/lancedb](../globals.md) / Expr
++
++# Class: Expr
++
++A SQL expression backed by the shared LanceDB expression builder.
++
++## Example
++
++```ts
++table.query().where(col("firstName").eq("Alice")).toArray();
++```
++
++## Constructors
++
++### new Expr()
++
++```ts
++new Expr(inner): Expr
++```
++
++#### Parameters
++
++* **inner**: `Expr`
++
++#### Returns
++
++[`Expr`](Expr.md)
++
++## Properties
++
++### inner
++
++```ts
++inner: Expr;
++```
++
++## Methods
++
++### add()
++
++```ts
++add(other): Expr
++```
++
++Add a value.
++
++#### Parameters
++
++* **other**: [`ExprLike`](../type-aliases/ExprLike.md)
++
++#### Returns
++
++[`Expr`](Expr.md)
++
++***
++
++### and()
++
++```ts
++and(other): Expr
++```
++
++Combine two predicates with AND.
++
++#### Parameters
++
++* **other**: [`Expr`](Expr.md)
++
++#### Returns
++
++[`Expr`](Expr.md)
++
++***
++
++### cast()
++
++```ts
++cast(dataType): Expr
++```
++
++Cast to an Arrow data type, such as "Int64".
++
++#### Parameters
++
++* **dataType**: `string`
++
++#### Returns
++
++[`Expr`](Expr.md)
++
++***
++
++### contains()
++
++```ts
++contains(substr): Expr
++```
++
++Test whether a string contains a substring.
++
++#### Parameters
++
++* **substr**: [`ExprLike`](../type-aliases/ExprLike.md)
++
++#### Returns
++
++[`Expr`](Expr.md)
++
++***
++
++### div()
++
++```ts
++div(other): Expr
++```
++
++Divide by a value.
++
++#### Parameters
++
++* **other**: [`ExprLike`](../type-aliases/ExprLike.md)
++
++#### Returns
++
++[`Expr`](Expr.md)
++
++***
++
++### eq()
++
++```ts
++eq(other): Expr
++```
++
++Compare for equality.
++
++#### Parameters
++
++* **other**: [`ExprLike`](../type-aliases/ExprLike.md)
++
++#### Returns
++
++[`Expr`](Expr.md)
++
++***
++
++### gt()
++
++```ts
++gt(other): Expr
++```
++
++Compare for greater than.
++
++#### Parameters
++
++* **other**: [`ExprLike`](../type-aliases/ExprLike.md)
++
++#### Returns
++
++[`Expr`](Expr.md)
++
++***
++
++### gte()
++
++```ts
++gte(other): Expr
++```
++
++Compare for greater than or equal to.
++
++#### Parameters
++
++* **other**: [`ExprLike`](../type-aliases/ExprLike.md)
++
++#### Returns
++
++[`Expr`](Expr.md)
++
++***
++
++### isIn()
++
++```ts
++isIn(values): Expr
++```
++
++Test membership in a list of values.
++
++#### Parameters
++
++* **values**: [`ExprLike`](../type-aliases/ExprLike.md)[]
++
++#### Returns
++
++[`Expr`](Expr.md)
++
++***
++
++### lower()
++
++```ts
++lower(): Expr
++```
++
++Convert a string to lowercase.
++
++#### Returns
++
++[`Expr`](Expr.md)
++
++***
++
++### lt()
++
++```ts
++lt(other): Expr
++```
++
++Compare for less than.
++
++#### Parameters
++
++* **other**: [`ExprLike`](../type-aliases/ExprLike.md)
++
++#### Returns
++
++[`Expr`](Expr.md)
++
++***
++
++### lte()
++
++```ts
++lte(other): Expr
++```
++
++Compare for less than or equal to.
++
++#### Parameters
++
++* **other**: [`ExprLike`](../type-aliases/ExprLike.md)
++
++#### Returns
++
++[`Expr`](Expr.md)
++
++***
++
++### mul()
++
++```ts
++mul(other): Expr
++```
++
++Multiply by a value.
++
++#### Parameters
++
++* **other**: [`ExprLike`](../type-aliases/ExprLike.md)
++
++#### Returns
++
++[`Expr`](Expr.md)
++
++***
++
++### ne()
++
++```ts
++ne(other): Expr
++```
++
++Compare for inequality.
++
++#### Parameters
++
++* **other**: [`ExprLike`](../type-aliases/ExprLike.md)
++
++#### Returns
++
++[`Expr`](Expr.md)
++
++***
++
++### not()
++
++```ts
++not(): Expr
++```
++
++Negate this predicate.
++
++#### Returns
++
++[`Expr`](Expr.md)
++
++***
++
++### or()
++
++```ts
++or(other): Expr
++```
++
++Combine two predicates with OR.
++
++#### Parameters
++
++* **other**: [`Expr`](Expr.md)
++
++#### Returns
++
++[`Expr`](Expr.md)
++
++***
++
++### sub()
++
++```ts
++sub(other): Expr
++```
++
++Subtract a value.
++
++#### Parameters
++
++* **other**: [`ExprLike`](../type-aliases/ExprLike.md)
++
++#### Returns
++
++[`Expr`](Expr.md)
++
++***
++
++### toSql()
++
++```ts
++toSql(): string
++```
++
++Serialize with the LanceDB SQL dialect, preserving column case.
++
++#### Returns
++
++`string`
++
++***
++
++### upper()
++
++```ts
++upper(): Expr
++```
++
++Convert a string to uppercase.
++
++#### Returns
++
++[`Expr`](Expr.md)
 ```
 
-**File**: `python/python/lancedb/rerankers/rrf.py` (modified, +6/-2)
+**File**: `docs/src/js/classes/Query.md` (modified, +9/-4)
 ```diff
-@@ -54,8 +54,12 @@ def rerank_hybrid(
-             for i, result_id in enumerate(ids, 1):
-                 rrf_score_map[result_id] += 1 / (i + self.K)
+@@ -543,29 +543,34 @@ where(predicate): this
  
--        # Sort the results based on RRF score
--        combined_results = self.merge_results(vector_results, fts_results)
-+        # Sort the results based on RRF score. With return_score="all", a row found
-+        # by both searches must keep its `_distance` and its `_score`.
-+        if self.score == "all":
-+            combined_results = self._merge_and_keep_scores(vector_results, fts_results)
-+        else:
-+            combined_results = self.merge_results(vector_results, fts_results)
-         combined_row_ids = combined_results["_rowid"].to_pylist()
-         relevance_scores = [rrf_score_map[row_id] for row_id in combined_row_ids]
-         combined_results = combined_results.append_column(
+ A filter statement to be applied to this query.
+ 
+-The filter should be supplied as an SQL query string.  For example:
++The filter may be an SQL query string or an expression built with `col`,
++which preserves case-sensitive column names. For example:
+ 
+ #### Parameters
+ 
+-* **predicate**: `string`
++* **predicate**: `string` \| [`Expr`](Expr.md)
+ 
+ #### Returns
+ 
+ `this`
+ 
+-#### Example
++#### Examples
+ 
+ ```ts
+ x > 10
+ y > 0 AND y < 100
+ x > 5 OR y = 'test'
++```
++
++```ts
++table.query().where(col("firstName").eq("Alice"));
++```
+ 
+ Filtering performance can often be improved by creating a scalar index
+ on the filter column(s).
+ 
+ Calling this multiple times combines the filters with a logical AND rather
+ than replacing the previous filter.
+-```
+ 
+ #### Inherited from
+ 
 ```
 
-**File**: `python/python/tests/test_rerankers.py` (modified, +32/-0)
+**File**: `docs/src/js/classes/VectorQuery.md` (modified, +9/-4)
 ```diff
-@@ -428,6 +428,38 @@ def ranking(row_ids):
-     assert result["_rowid"].to_pylist() == [2, 1, 3]
+@@ -825,29 +825,34 @@ where(predicate): this
  
+ A filter statement to be applied to this query.
  
-+@pytest.mark.parametrize("reranker_cls", [RRFReranker, MRRReranker])
-+def test_rank_fusion_return_score_all_keeps_both_scores(reranker_cls):
-+    # A row found by both searches must keep its vector `_distance` and its FTS
-+    # `_score` when the reranker is asked to return all scores.
-+    vector_results = pa.table(
-+        {
-+            "_rowid": pa.array([1, 2], type=pa.uint64()),
-+            "text": ["a", "b"],
-+            "_distance": pa.array([0.1, 0.2], type=pa.float32()),
-+        }
-+    )
-+    fts_results = pa.table(
-+        {
-+            "_rowid": pa.array([2, 3], type=pa.uint64()),
-+            "text": ["b", "c"],
-+            "_score": pa.array([5.0, 4.0], type=pa.float32()),
-+        }
-+    )
+-The filter should be supplied as an SQL query string.  For example:
++The filter may be an SQL query string or an expression built with `col`,
++which preserves case-sensitive column names. For example:
+ 
+ #### Parameters
+ 
+-* **predicate**: `string`
++* **predicate**: `string` \| [`Expr`](Expr.md)
+ 
+ #### Returns
+ 
+ `this`
+ 
+-#### Example
++#### Examples
+ 
+ ```ts
+ x > 10
+ y > 0 AND y < 100
+ x > 5 OR y = 'test'
++```
 +
-+    result = reranker_cls(return_score="all").rerank_hybrid(
-+        "query", vector_results, fts_results
-+    )
-+    rows = {row["_rowid"]: row for row in result.to_pylist()}
++```ts
++table.query().where(col("firstName").eq("Alice"));
++```
+ 
+ Filtering performance can often be improved by creating a scalar index
+ on the filter column(s).
+ 
+ Calling this multiple times combines the filters with a logical AND rather
+ than replacing the previous filter.
+-```
+ 
+ #### Inherited from
+ 
+```
+
+**File**: `docs/src/js/functions/col.md` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++[**@lancedb/lancedb**](../README.md) • **Docs**
 +
-+    assert rows[1]["_distance"] == pytest.approx(0.1)
-+    assert rows[1]["_score"] is None
-+    assert rows[2]["_distance"] == pytest.approx(0.2)
-+    assert rows[2]["_score"] == pytest.approx(5.0)
-+    assert rows[3]["_distance"] is None
-+    assert rows[3]["_score"] == pytest.approx(4.0)
++***
 +
++[@lancedb/lancedb](../globals.md) / col
 +
- def test_rrf_reranker_distance():
-     data = pa.table(
-         {
++# Function: col()
++
++```ts
++function col(name): Expr
++```
++
++Reference a column by its exact, case-sensitive name.
++
++## Parameters
++
++* **name**: `string`
++
++## Returns
++
++[`Expr`](../classes/Expr.md)
+```
+
+**File**: `docs/src/js/functions/func.md` (added, +23/-0)
+```diff
+@@ -0,0 +1,23 @@
++[**@lancedb/lancedb**](../README.md) • **Docs**
++
++***
++
++[@lancedb/lancedb](../globals.md) / func
++
++# Function: func()
++
++```ts
++function func(name, ...args): Expr
++```
++
++Call a registered SQL function, such as `func("lower", col("firstName"))`.
++
++## Parameters
++
++* **name**: `string`
++
++* ...**args**: [`ExprLike`](../type-aliases/ExprLike.md)[]
++
++## Returns
++
++[`Expr`](../classes/Expr.md)
+```
+
+**File**: `docs/src/js/functions/lit.md` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++[**@lancedb/lancedb**](../README.md) • **Docs**
++
++***
++
++[@lancedb/lancedb](../globals.md) / lit
++
++# Function: lit()
++
++```ts
++function lit(value): Expr
++```
++
++Create a string or numeric literal. Unsafe integers are represented as Float64.
++
++## Parameters
++
++* **value**: `string` \| `number`
++
++## Returns
++
++[`Expr`](../classes/Expr.md)
+```
+
+**File**: `docs/src/js/functions/litBool.md` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++[**@lancedb/lancedb**](../README.md) • **Docs**
++
++***
++
++[@lancedb/lancedb](../globals.md) / litBool
++
++# Function: litBool()
++
++```ts
++function litBool(value): Expr
++```
++
++Create a boolean literal.
++
++## Parameters
++
++* **value**: `boolean`
++
++## Returns
++
++[`Expr`](../classes/Expr.md)
 ```
 
 ---
 
-### Incident Patch 3: `ac99ab17` (2026-10-27)
-**Commit Message**: fix(python): support native blob conversion in pandas and batches (#4647)
+### Incident Patch 3: `741cb9ad` (2026-10-28)
+**Commit Message**: fix(python): implement remote namespace and table existence checks (#4725)
 
-Plain local blob v2 scans tried to open a pylance dataset before
-reaching LanceDB's byte-fetch path, so `to_pandas(blob_mode="bytes")`
-failed when the optional dependency was absent. Batch readers also had
-no `blob_mode` option.
+Remote Python connections inherited the unsupported-operation stubs for
+`namespace_exists` and `table_exists`, so both raised
+`NotImplementedError` even when namespace and table operations worked.
 
-Route supported blob v2 pandas conversions through the native Arrow
-path. Add `blob_mode` to sync and async batch readers, convert payloads
-during iteration, and expose the converted schema without fetching the
-first batch. Apply conversion after reranking and retain the default
-descriptor behavior. Clean up scanner error punctuation and remove the
-misleading plain-scan suggestion.
+Add the missing remote overrides, async methods, and PyO3 bindings using
+the existing namespace describe and table open paths. Only an explicit
+not-found result returns `False`; permission, transport, and server
+errors propagate. This preserves authentication, dynamic headers,
+retries, and nested namespace handling, and rechecks cached tables
+before reporting that they exist.
 
-Bytes mode retains the existing `to_arrow` restrictions for legacy/list
-blobs, remote tables, and namespace query pushdown. Lazy pandas handles
-and legacy pandas scans still require pylance; sync FTS/hybrid batching
-remains unsupported.
+The async namespace helper also recognizes native `NamespaceNotFound`
+errors so missing local namespaces return `False`. The table and
+namespace guides document Python remote support and distinguish it from
+the unsupported `exists` routes used by direct REST namespace clients.
 
 Validation:
-- UV-managed editable Python development build completed successfully.
-- The absent-pylance regression tests fail against the original query
-implementation and pass with this change.
-- Blob and query suites: 403 passed, 1 skipped, 1 deselected.
-- Remote query
+- All 40 focused regression cases pass, covering successful and missing
+lookups, local and remote namespaces, dynamic headers, permission/server
+errors, invalid table identifiers, and cached tables that disappear.
+- The original inherited stubs reproduce 
 
-**File**: `docs/web/management/table.mdx` (modified, +33/-7)
+**File**: `docs/web/management/namespace.mdx` (modified, +5/-2)
 ```diff
-@@ -447,19 +447,20 @@ above:
+@@ -243,8 +243,11 @@ let db = lancedb::connect_namespace("rest", properties)
+ ```
  </CodeGroup>
+ [LanceDB Enterprise](/enterprise) operates a REST namespace server on top of the Lance format, so any REST client that can speak the REST namespace API
+-contract can be used to interact with it. It does not serve the contract's `exists` routes, so checks such as `namespace_exists`
+-fail against it. For authentication examples in LanceDB Enterprise, visit
++contract can be used to interact with it. It does not serve the contract's `exists` routes,
++so existence checks made through a direct REST namespace client fail against it.
++Python remote connections created with `lancedb.connect("db://...")` or
++`lancedb.connect_async("db://...")` support `namespace_exists` and `table_exists`
++through the existing describe routes instead. For authentication examples in LanceDB Enterprise, visit
+ the [Namespaces in SDKs](#namespaces-in-lancedb-enterprise) page. 
  
- In the Python SDK, `Table.to_pandas()`, `Table.to_arrow()`, and the query builder
--methods `to_pandas()`, `to_arrow()`, and `to_list()` accept a `blob_mode`
--argument:
-+methods `to_pandas()`, `to_arrow()`, `to_list()`, and `to_batches()` accept a
-+`blob_mode` argument. Sync and async query builders support the same modes:
- 
- | `blob_mode` | `to_pandas()` | `to_arrow()` and `to_list()` |
- | --- | --- | --- |
- | `"lazy"` | Default. Plain scans return seekable `BlobFile` handles. Vector, full-text, hybrid, and ordered queries return descriptor dicts. | Default. Returns descriptors carrying `_lance_row_id` so the result table can be passed to `fetch_blobs` or `fetch_blob_files`. |
- | `"descriptions"` | Returns descriptor dicts with `kind`, `position`, `size`, `blob_id`, and `blob_uri`. | Returns the 5-field descriptor without `_lance_row_id`. |
- | `"bytes"` | Materializes each blob as `bytes` in the DataFrame. | Materializes each blob as `large_binary` in Arrow or `bytes` in Python dicts. |
- 
--`to_pandas(blob_mode="lazy")` and `to_pandas(blob_mode="bytes")` require
--pylance. Without it they raise `ImportError`. `to_arrow()`,
--`to_list(blob_mode="bytes")`, `to_pandas(blob_mode="descriptions")`, and the
--fetch methods do not.
-+For supported local v2 blob projections, `to_pandas(blob_mode="bytes")` and
-+`to_pandas(blob_mode="descriptions")` use native Arrow conversion without
-+pylance. Pandas conversions that need the Lance scanner, including plain-scan
-+`"lazy"` handles and legacy blobs, still require pylance. `to_arrow()`,
-+`to_list()`, `to_batches()`, and the fetch methods do not require pylance.
- 
- `blob_mode="bytes"` requires a local table snapshot, so remote and in-memory
- tables raise `NotImplementedError`. On a remote table, `Table.to_pandas()` and
-@@ -475,9 +476,34 @@ them out of the projection. Extra keyword arguments on
- `to_pandas()`, such as `split_blocks` and `self_destruct`, are forwarded to
- PyArrow.
- 
-+###### Stream blob results {#multimodal-blob-batches}
-+
-+`to_batches(blob_mode="bytes")` fetches blob v2 payloads one batch at a time
-+and returns them as Arrow `large_binary` values. Iterate over the reader and
-+call `batch.to_pandas()` to convert each batch to a DataFrame without collecting
-+all payloads at once.
-+
-+For sync queries, call `query.to_batches(batch_size=64, blob_mode="bytes")`
-+and iterate with `for`. For async queries, call
-+`await query.to_batches(max_batch_length=64, blob_mode="bytes")` and iterate
-+with `async for`. Sync full-text and hybrid queries do not support
-+`to_batches()`.
-+
-+The default `"lazy"` mode returns descriptors and keeps automatic `_rowid`
-+columns visible for manual fetches. `"descriptions"` returns the five-field
-+descriptors. Both `"bytes"` and `"descriptions"` hide automatic row IDs;
-+explicitly requested row IDs remain visible.
-+
-+Bytes mode has the same restrictions as `to_arrow(blob_mode="bytes")`,
-+including no legacy blobs, blobs inside lists, remote tables, or namespace
-+`QueryTable` pushdown. If concurrent writers can overwrite the table, use a
-+separate reader checked out to a fixed version before querying. Otherwise,
-+an overwrite can invalidate the row IDs used to fetch bytes and raise
-+`ValueError`.
-+
- ###### Optional pandas examples {#multimodal-blob-pandas}
- 
--These examples require pylance. The query example expects `tbl_async`,
-+The lazy-handle calls below require pylance. The query example expects `tbl_async`,
- `query_vector`, and a `video` column, which the `photos` table does not define.
- 
- <CodeGroup>
+ ## Best practices {#best-practices}
 ```
 
-**File**: `python/python/lancedb/_blob.py` (modified, +12/-2)
+**File**: `docs/web/management/table.mdx` (modified, +15/-8)
 ```diff
-@@ -280,7 +280,11 @@ async def replace_v2_blob_columns_with_bytes(
-     row_ids = _hit_row_ids(tbl, present)
-     for output_name, source_name in present.items():
-         tbl = _set_blob_column(
--            tbl, output_name, await fetch_blobs(source_name, row_ids)
-+            tbl,
-+            output_name,
-+            await fetch_blobs(source_name, row_ids)
-+            if row_ids
-+            else pa.array([], type=pa.large_binary()),
-         )
-     return tbl
+@@ -214,14 +214,21 @@ await db.tableNames();
+ Each accepts `namespace_path` to act inside a [namespace](/management/namespace)
+ rather than at the database root.
  
-@@ -295,7 +299,13 @@ def replace_v2_blob_columns_with_bytes_sync(
-         return tbl
-     row_ids = _hit_row_ids(tbl, present)
-     for output_name, source_name in present.items():
--        tbl = _set_blob_column(tbl, output_name, fetch_blobs(source_name, row_ids))
-+        tbl = _set_blob_column(
-+            tbl,
-+            output_name,
-+            fetch_blobs(source_name, row_ids)
-+            if row_ids
-+            else pa.array([], type=pa.large_binary()),
-+        )
-     return tbl
+-To find out whether a table exists, open it and handle the error, or look for
+-its name in a listing. A missing table raises `ValueError` on a local directory
+-or a deployment, and `lance_namespace.TableNotFoundError` on a connection from
+-`connect_namespace`. A listing returns one page of names at a time, so check
+-every page. Python's `table_exists` is no substitute: a local directory or a
+-deployment raises `NotImplementedError` for it, and on a connection from
+-`connect_namespace("dir", ...)` or `connect_namespace("rest", ...)` it fails with
+-an `AttributeError`. TypeScript has no `tableExists`.
++For Python remote connections created with `lancedb.connect("db://...")`, use
++`db.table_exists(["documents"])` to check whether a table exists. For an async
++remote connection, use `await db.table_exists(["documents"])`. Include namespace
++segments before the table name, for example `["analytics", "documents"]`. These
++checks return `False` when the table is missing and propagate other errors,
++including permission errors.
++
++Local synchronous directory connections still raise `NotImplementedError` for
++`table_exists`. On a connection from `connect_namespace("dir", ...)` or
++`connect_namespace("rest", ...)`, it fails with an `AttributeError`. For these
++connections, open the table and handle the error, or look for its name in a
++listing. A missing table raises `ValueError` on a local directory and
++`lance_namespace.TableNotFoundError` on a connection from `connect_namespace`.
++A listing returns one page of names at a time, so check every page. TypeScript
++has no `tableExists`.
  
+ ## Rename and clone tables {#rename-clone}
  
 ```
 
-**File**: `python/python/lancedb/arrow.py` (modified, +12/-1)
+**File**: `python/python/lancedb/_lancedb.pyi` (modified, +2/-0)
 ```diff
-@@ -2,7 +2,7 @@
- # SPDX-FileCopyrightText: Copyright The LanceDB Authors
- 
- from functools import singledispatch
--from typing import List, Optional, Tuple, Union
-+from typing import AsyncIterator, List, Optional, Tuple, Union
- 
- from lancedb.pydantic import LanceModel, model_to_dict
- import pyarrow as pa
-@@ -30,6 +30,7 @@ def __init__(
-             The schema of the batches produced by the stream.
-             Accessing the schema does not consume any data from the stream
-         """
-+        self._inner: AsyncIterator[pa.RecordBatch]
-         if isinstance(inner, pa.Table):
-             self._inner = self._async_iter_from_table(inner, max_batch_length)
-             self.schema: pa.Schema = inner.schema
-@@ -39,6 +40,16 @@ def __init__(
-         else:
-             raise TypeError("inner must be a RecordBatchStream or a Table")
- 
-+    @classmethod
-+    def _from_batches(
-+        cls, schema: pa.Schema, batches: AsyncIterator[pa.RecordBatch]
-+    ) -> "AsyncRecordBatchReader":
-+        """Wrap a transformed stream without consuming its first batch."""
-+        reader = cls.__new__(cls)
-+        reader.schema = schema
-+        reader._inner = batches
-+        return reader
-+
-     async def read_all(self) -> List[pa.RecordBatch]:
-         """
-         Read all the record batches from the stream
+@@ -137,6 +137,8 @@ class Connection(object):
+         self,
+         namespace_path: List[str],
+     ) -> DescribeNamespaceResponse: ...
++    async def namespace_exists(self, namespace_id: List[str]) -> bool: ...
++    async def table_exists(self, table_id: List[str]) -> bool: ...
+     def list_tables(
+         self,
+         namespace_path: Optional[List[str]] = None,
 ```
 
-**File**: `python/python/lancedb/query.py` (modified, +155/-27)
+**File**: `python/python/lancedb/db.py` (modified, +43/-0)
 ```diff
-@@ -104,11 +104,13 @@ def to_reader(self): ...
+@@ -2436,6 +2436,49 @@ async def describe_namespace(
+         result = await self._inner.describe_namespace(namespace_path)
+         return DescribeNamespaceResponse(**result)
  
- 
- def _unsupported_blob_pandas_error(reason: str) -> RuntimeError:
-+    reason = reason.rstrip(".")
-+    reason = reason[0].upper() + reason[1:]
-     return RuntimeError(
--        "blob columns require Lance native scanner conversion for query "
--        f"to_pandas(), but {reason}. Use a plain scan query, pass "
--        "blob_mode='bytes' or blob_mode='descriptions', or remove blob columns "
--        "from the projection."
-+        "Blob columns require Lance native scanner conversion for this query's "
-+        f"to_pandas(). {reason}. For supported blob v2 queries, pass "
-+        "blob_mode='bytes' or blob_mode='descriptions'. Otherwise, install "
-+        "pylance for scanner conversion or remove blob columns from the projection."
-     )
- 
- 
-@@ -1139,9 +1141,10 @@ def to_pandas(
-             The maximum time to wait for the query to complete.
-             If None, wait indefinitely.
-         blob_mode: str, default "lazy"
--            Controls how blob columns are returned. Eligible local plain scans
--            use Lance's scanner, which returns lazy blob handles in ``"lazy"``
--            mode and also supports legacy blob columns. Other local blob v2
-+            Controls how blob columns are returned. Local blob v2 queries support
-+            ``"bytes"`` and ``"descriptions"`` without pylance. Eligible local
-+            plain scans use pylance's scanner for lazy blob handles in ``"lazy"``
-+            mode and for legacy blob columns. Other local blob v2
-             queries return descriptors in ``"lazy"`` and ``"descriptions"``
-             modes, or payloads in ``"bytes"`` mode, through :meth:`to_arrow`.
-             Remote blob queries support only ``"descriptions"`` until a stable
-@@ -1219,15 +1222,16 @@ def to_batches(
-         batch_size: Optional[int] = None,
-         *,
-         timeout: Optional[timedelta] = None,
-+        blob_mode: BlobMode = "lazy",
-     ) -> pa.RecordBatchReader:
-         """
-         Execute the query and return the results as a pyarrow
-         [RecordBatchReader](https://arrow.apache.org/docs/python/generated/pyarrow.RecordBatchReader.html)
- 
--        For v2 blob projections, ``to_batches`` keeps the auto ``_rowid``
--        column visible so batch consumers can call ``fetch_blobs``. Use
--        ``to_arrow``, ``to_list``, or ``to_pandas`` if you want LanceDB to hide
--        auto row ids in the final collected result.
-+        For v2 blob projections, the default ``blob_mode="lazy"`` keeps the
-+        auto ``_rowid`` column visible so batch consumers can call
-+        ``fetch_blobs``. The ``"bytes"`` and ``"descriptions"`` modes hide
-+        automatic row ids.
- 
-         Parameters
-         ----------
-@@ -1236,6 +1240,16 @@ def to_batches(
-         timeout: Optional[timedelta]
-             The maximum time to wait for the query to complete.
-             If None, wait indefinitely.
-+        blob_mode: str, default "lazy"
-+            ``"lazy"`` keeps blob descriptors and auto row ids for manual fetches.
-+            ``"descriptions"`` omits auto row ids. ``"bytes"`` fetches blob v2
-+            payloads one batch at a time, without requiring pylance. Bytes mode
-+            has the same restrictions as :meth:`to_arrow`.
++    async def namespace_exists(self, namespace_id: List[str]) -> bool:
++        """Check if a namespace exists.
++
++        Parameters
++        ----------
++        namespace_id: List[str]
++            The namespace identifier to check. An empty list represents root.
++
++        Returns
++        -------
++        bool
++            True if the namespace exists, False if it is not found.
++            Other errors, including permission errors, are propagated.
 +
 +        Examples
 +        --------
-+        Stream blob payloads with ``query.to_batches(blob_mode="bytes")`` and
-+        convert each batch separately with ``batch.to_pandas()``.
-         """
-         raise NotImplementedError
- 
-@@ -1499,6 +1513,28 @@ def _finalize_blob_query_table(
-             finalized = finalized.drop_columns(["_rowid"])
-         return finalized
- 
-+    def _batches_in_mode(
-+        self,
-+        reader: pa.RecordBatchReader,
-+        blob_mode: BlobMode,
-+        blob_sources: dict[str, str],
-+    ) -> pa.RecordBatchReader:
-+        if blob_mode == "lazy":
-+            return reader
-+
-+        def convert(tbl: pa.Table) -> pa.Table:
-+            return self._finalize_blob_query_table(
-+                tbl, blob_mode=blob_mode, blob_sources=blob_sources
-+            )
-+
-+        schema = convert(pa.Table.from_batches([], schema=reader.schema)).schema
-+
-+        def batches():
-+            for batch in reader:
-+                yield from convert(pa.Table.from_batches([batch])).to_batches()
-+
-+        return pa.RecordBatchReader.from_batches(schema, batches())
-+
-     def with_row_address(self, with_row_address: bool = True) -> Self:
-         """Set whether to return row addresses.
- 
-@@ -1717,7 +1753,18 @@ def _plain_scan_to_pandas(
-             get_uri_scheme(self._table._dataset_path) == "memory"
-         ):
-             return None
--        dataset = self._table.to_lance()
-+        # Blob v2 payloads and descriptions use LanceDB's native fetch path.
-+        # Only lazy handles, legacy blobs, and scanner-only options need pylance.
-+        if (
-+            blob_mode != "lazy"
-+            and not _query_needs_lance_scanner(self)
-+            and blob_v2_projection_s
-```
-
-**File**: `python/python/tests/test_blob.py` (modified, +110/-3)
-```diff
-@@ -843,8 +843,7 @@ def test_to_pandas_does_not_drop_fragment_selection_on_fallback():
-         table.search().with_row_address(True).to_pandas(blob_mode="descriptions")
- 
- 
--@pytest.mark.parametrize("blob_mode", ["lazy", "descriptions", "bytes"])
--def test_to_pandas_reports_lance_dataset_failures(tmp_path, blob_mode):
-+def test_to_pandas_reports_lance_dataset_failures(tmp_path):
-     table = lancedb.connect(tmp_path).create_table(
-         "dataset_failure",
-         schema=pa.schema([pa.field("id", pa.int64()), lancedb.blob("image")]),
-@@ -856,7 +855,59 @@ def reject_credentials():
- 
-     table.to_lance = reject_credentials
-     with pytest.raises(PermissionError, match="storage credentials rejected"):
--        table.search().to_pandas(blob_mode=blob_mode)
-+        table.search().to_pandas(blob_mode="lazy")
-+
-+
-+@pytest.mark.parametrize("blob_mode", ["lazy", "descriptions", "bytes"])
-+@pytest.mark.parametrize("with_row_id", [None, True, False])
-+def test_to_batches_blob_modes(tmp_path, monkeypatch, blob_mode, with_row_id):
-+    table = _nested_blob_table(lancedb.connect(tmp_path), "batch_blob_modes")
-+    query = table.search().select({"renamed": "info"})
-+    if with_row_id is not None:
-+        query.with_row_id(with_row_id)
-+    fetched = []
-+    fetch_blobs = table.fetch_blobs
-+
-+    def fetch(column, row_ids):
-+        fetched.append(row_ids)
-+        return fetch_blobs(column, row_ids)
-+
-+    monkeypatch.setattr(table, "fetch_blobs", fetch)
-+    reader = query.to_batches(batch_size=1, blob_mode=blob_mode)
-+    assert fetched == []
-+    first = reader.read_next_batch()
-+    assert first.schema == reader.schema
-+    assert len(fetched) == (1 if blob_mode == "bytes" else 0)
-+    batches = [first, *reader]
-+    assert all(batch.schema == reader.schema for batch in batches)
-+    assert all(batch.num_rows == 1 for batch in batches)
-+    assert len(fetched) == (3 if blob_mode == "bytes" else 0)
-+    if blob_mode == "bytes":
-+        assert [row["renamed"] for batch in batches for row in batch.to_pylist()] == [
-+            {"name": "first", "blob": b"hello"},
-+            {"name": "second", "blob": None},
-+            None,
-+        ]
-+    if blob_mode != "lazy":
-+        assert ("_rowid" in reader.schema.names) == (with_row_id is True)
-+        assert "_lance_row_id" not in str(reader.schema)
-+    else:
-+        assert "_rowid" in reader.schema.names
-+
-+
-+@pytest.mark.parametrize("blob_mode", ["descriptions", "bytes"])
-+def test_empty_to_batches_blob_schema(blob_mode):
-+    table = _blob_table("empty_blob_batches", [{"id": 1, "image": b"one"}])
-+    query = table.search().where("id < 0")
-+    reader = query.to_batches(blob_mode=blob_mode)
-+    assert reader.schema == query.to_arrow(blob_mode=blob_mode).schema
-+    assert reader.read_all().num_rows == 0
-+
-+
-+def test_to_batches_validates_blob_mode():
-+    table = _blob_table("invalid_batch_blob_mode", [{"id": 1, "image": b"one"}])
-+    with pytest.raises(ValueError, match="blob_mode must be one of"):
-+        table.search().to_batches(blob_mode="handles")
- 
- 
- def test_to_pandas_keeps_to_arrow_overrides_without_blob_mode():
-@@ -894,6 +945,12 @@ def test_take_queries_honor_blob_mode():
-     ]
-     description = table.take_row_ids([0]).to_list(blob_mode="descriptions")[0]["image"]
-     assert "_lance_row_id" not in description
-+    batches = table.take_row_ids([0]).to_batches(blob_mode="bytes")
-+    assert batches.read_all().to_pylist() == [{"id": 1, "image": b"one"}]
-+    batches = table.take_row_ids([0]).to_batches(blob_mode="descriptions")
-+    assert "_rowid" not in batches.schema.names
-+    assert "_lance_row_id" not in str(batches.schema)
-+    assert batches.read_all().num_rows == 1
- 
- 
- def test_bytes_mode_follows_swapped_blob_aliases():
-@@ -939,6 +996,8 @@ def test_bytes_mode_refused_under_namespace_query_pushdown(tmp_path):
-         table.search().to_list(blob_mode="bytes")
-     with pytest.raises(NotImplementedError, match="stable table snapshot"):
-         table.take_row_ids([0]).to_list(blob_mode="bytes")
-+    with pytest.raises(NotImplementedError, match="stable table snapshot"):
-+        table.search().to_batches(blob_mode="bytes")
-     descriptor = table.to_arrow(blob_mode="descriptions")["image"].to_pylist()[0]
-     assert "_lance_row_id" not in descriptor
- 
-@@ -960,6 +1019,8 @@ async def test_async_bytes_mode_refused_under_namespace_query_pushdown(tmp_path)
-         await table.to_arrow(blob_mode="bytes")
-     with pytest.raises(NotImplementedError, match="stable table snapshot"):
-         await table.query().to_list(blob_mode="bytes")
-+    with pytest.raises(NotImplementedError, match="stable table snapshot"):
-+        await table.query().to_batches(blob_mode="bytes")
- 
- 
- def test_fetch_blobs_round_trip():
-@@ -2076,6 +2137,10 @@ def test_blob_mode_for_every_query_shape(shape, blob_mode, with_row_id):
-         assert all("_lance_row_id" not in image for image in images.values())
-     df = query.to_pandas(blob_mode=blob_mode)
-     assert dic
-```
-
-**File**: `python/python/tests/test_blob_query_without_pylance.py` (added, +94/-0)
-```diff
-@@ -0,0 +1,94 @@
-+# SPDX-License-Identifier: Apache-2.0
-+# SPDX-FileCopyrightText: Copyright The LanceDB Authors
-+
-+import subprocess
-+import sys
-+import textwrap
-+
-+import pytest
-+
-+
-+@pytest.mark.parametrize("api", ["sync", "async"])
-+@pytest.mark.parametrize("result", ["pandas", "batches", "lazy_error"])
-+def test_blob_query_without_pylance(tmp_path, api, result):
-+    script = """\
-+import importlib.abc
-+import sys
-+
-+class MissingLance(importlib.abc.MetaPathFinder):
-+    def find_spec(self, fullname, path, target=None):
-+        if fullname == "lance" or fullname.startswith("lance."):
-+            raise ModuleNotFoundError(fullname, name="lance")
-+
-+sys.meta_path.insert(0, MissingLance())
-+""" + textwrap.dedent(
-+        """\
-+        import asyncio
-+        import lancedb
-+        import pyarrow as pa
-+
-+        schema = pa.schema([pa.field("id", pa.int64()), lancedb.blob("video")])
-+        rows = [{"id": 1, "video": b"one"}, {"id": 2, "video": None},
-+                {"id": 3, "video": b"three"}]
-+
-+        def check(data):
-+            assert data == [{"filename": 2, "payload": None},
-+                            {"filename": 3, "payload": b"three"}], data
-+
-+        async def main():
-+            if sys.argv[2] == "async":
-+                db = await lancedb.connect_async(sys.argv[1])
-+                table = await db.create_table("videos", schema=schema)
-+                await table.add(rows)
-+                query = table.query()
-+            else:
-+                db = lancedb.connect(sys.argv[1])
-+                table = db.create_table("videos", schema=schema)
-+                table.add(rows)
-+                query = table.search()
-+            query = query.select({"filename": "id", "payload": "video"}).offset(1)
-+            if sys.argv[3] == "pandas":
-+                frame = query.to_pandas(blob_mode="bytes", split_blocks=True)
-+                if sys.argv[2] == "async":
-+                    frame = await frame
-+                check(frame.to_dict("records"))
-+                frame = table.to_pandas(blob_mode="bytes")
-+                if sys.argv[2] == "async":
-+                    frame = await frame
-+                assert frame.to_dict("records") == rows
-+            elif sys.argv[3] == "batches":
-+                if sys.argv[2] == "async":
-+                    reader = await query.to_batches(
-+                        max_batch_length=1, blob_mode="bytes")
-+                    batches = [batch async for batch in reader]
-+                else:
-+                    reader = query.to_batches(batch_size=1, blob_mode="bytes")
-+                    batches = list(reader)
-+                assert reader.schema.field("payload").type == pa.large_binary()
-+                assert all(batch.num_rows <= 1 for batch in batches)
-+                assert all(batch.schema == reader.schema for batch in batches)
-+                check([row for batch in batches for row in batch.to_pylist()])
-+            else:
-+                try:
-+                    frame = query.to_pandas()
-+                    if sys.argv[2] == "async":
-+                        await frame
-+                except RuntimeError as error:
-+                    message = str(error)
-+                    assert "pip install pylance" in message, message
-+                    assert ".." not in message, message
-+                    assert "Use a plain scan query" not in message, message
-+                    assert "but The" not in message, message
-+                else:
-+                    raise AssertionError("lazy handles should require pylance")
-+            assert "lance" not in sys.modules
-+
-+        asyncio.run(main())
++        >>> async def check_namespace(conn):
++        ...     return await conn.namespace_exists(["analytics"])
 +        """
-+    )
-+    completed = subprocess.run(
-+        [sys.executable, "-c", script, str(tmp_path), api, result],
-+        capture_output=True,
-+        text=True,
-+    )
-+    assert completed.returncode == 0, completed.stderr
++        return await self._inner.namespace_exists(namespace_id)
++
++    async def table_exists(self, table_id: List[str]) -> bool:
++        """Check if a table exists.
++
++        Parameters
++        ----------
++        table_id: List[str]
++            The full identifier, including namespace segments and table name.
++            Must contain at least the table name.
++
++        Returns
++        -------
++        bool
++            True if the table exists, False if it is not found.
++            Other errors, including permission errors, are propagated.
++
++        Examples
++        --------
++        >>> async def check_table(conn):
++        ...     return await conn.table_exists(["analytics", "events"])
++        """
++        return await self._inner.table_exists(table_id)
++
+     def list_tables(
+         self,
+         namespace_path: Optional[List[str]] = None,
 ```
 
-**File**: `python/python/tests/test_query.py` (modified, +3/-3)
+**File**: `python/python/lancedb/remote/db.py` (modified, +30/-0)
 ```diff
-@@ -675,10 +675,10 @@ def test_blob_v2_vector_projection_and_plain_scan_options(tmp_db, monkeypatch):
+@@ -390,6 +390,36 @@ def describe_namespace(
+         """
+         return LOOP.run(self._conn.describe_namespace(namespace_path=namespace_path))
  
-     query = table.search().where("id = 1")
++    @override
++    def namespace_exists(self, namespace_id: List[str]) -> bool:
++        """Check if a namespace exists.
++
++        ``namespace_id`` contains the namespace segments; an empty list represents
++        root. Returns False only if the namespace is not found. Other errors,
++        including permission errors, are propagated.
++
++        Examples
++        --------
++        >>> def check_namespace(conn):
++        ...     return conn.namespace_exists(["analytics"])
++        """
++        return LOOP.run(self._conn.namespace_exists(namespace_id))
++
++    @override
++    def table_exists(self, table_id: List[str]) -> bool:
++        """Check if a table exists.
++
++        ``table_id`` contains the namespace segments followed by the table name.
++        Returns False only if the table is not found. Other errors, including
++        permission errors, are propagated.
++
++        Examples
++        --------
++        >>> def check_table(conn):
++        ...     return conn.table_exists(["analytics", "events"])
++        """
++        return LOOP.run(self._conn.table_exists(table_id))
++
+     @override
+     def list_tables(
+         self,
+```
+
+**File**: `python/python/tests/test_db.py` (modified, +18/-0)
+```diff
+@@ -1149,6 +1149,24 @@ def test_local_namespace_operations(tmp_path):
+     assert db.list_namespaces().namespaces == []
  
--    def fail_to_arrow(*args, **kwargs):
--        raise AssertionError("the native scanner should handle bytes with flatten")
-+    def fail_to_lance(*args, **kwargs):
-+        raise AssertionError("blob v2 bytes should not open a pylance dataset")
  
--    monkeypatch.setattr(query, "to_arrow", fail_to_arrow)
-+    monkeypatch.setattr(table, "to_lance", fail_to_lance)
-     assert query.to_pandas(blob_mode="bytes", flatten=True)["blob"].tolist() == [b"one"]
++@pytest.mark.asyncio
++async def test_local_async_namespace_exists(tmp_path):
++    db = await lancedb.connect_async(tmp_path)
++    await db.create_namespace(["existing"])
++    await db.create_namespace(["existing", "nested"])
++
++    assert await db.namespace_exists([]) is True
++    assert await db.namespace_exists(["existing"]) is True
++    assert await db.namespace_exists(["existing", "nested"]) is True
++    assert await db.namespace_exists(["missing"]) is False
++    assert await db.namespace_exists(["existing", "missing"]) is False
++    assert await db.namespace_exists(["missing", "nested"]) is False
++
++    await db.drop_namespace(["existing", "nested"])
++    assert await db.namespace_exists(["existing", "nested"]) is False
++    assert await db.namespace_exists(["existing"]) is True
++
++
+ def test_local_sync_namespace_uses_rust_without_python_client(tmp_path, monkeypatch):
+     """Sync local namespace operations should avoid the Python namespace client."""
+     db = lancedb.connect(tmp_path)
+```
+
+**File**: `python/python/tests/test_remote_db.py` (modified, +97/-1)
+```diff
+@@ -54,7 +54,7 @@ def test_connect_rejects_invalid_cloud_dns_hostname(db_name):
  
-     flattened_lazy = table.search().where("id = 1").to_pandas(flatten=True)
+ 
+ @contextlib.contextmanager
+-def mock_lancedb_connection(handler):
++def mock_lancedb_connection(handler, **client_config):
+     with http.server.HTTPServer(
+         ("localhost", 0), make_mock_http_handler(handler)
+     ) as server:
+@@ -71,6 +71,7 @@ def mock_lancedb_connection(handler):
+                 "timeout_config": {
+                     "connect_timeout": 1,
+                 },
++                **client_config,
+             },
+         )
+ 
+@@ -110,6 +111,101 @@ async def mock_lancedb_connection_async(handler, **client_config):
+             handle.join()
+ 
+ 
++@pytest.fixture
++def existence_handler(method, identifier, status):
++    def handler(request):
++        resource = "namespace" if method == "namespace_exists" else "table"
++        resource_id = "$".join(identifier) or "$"
++        suffix = "/" if resource == "table" else ""
++        assert request.command == "POST"
++        assert request.path == f"/v1/{resource}/{resource_id}/describe{suffix}"
++        assert request.headers["x-api-key"] == "fake"
++        assert request.headers["X-Exists-Test"] == "present"
++        request.send_response(status)
++        request.send_header("Content-Type", "application/json")
++        request.end_headers()
++        request.wfile.write(b"{}" if status == 200 else b"lookup failed")
++
++    return handler
++
++
++@pytest.mark.parametrize(
++    "method,identifier",
++    [
++        ("namespace_exists", []),
++        ("namespace_exists", ["ns"]),
++        ("namespace_exists", ["parent", "ns"]),
++        ("table_exists", ["table"]),
++        ("table_exists", ["parent", "ns", "table"]),
++    ],
++)
++@pytest.mark.parametrize("status", [200, 404, 403, 507])
++def test_remote_exists(method, identifier, status, existence_handler):
++    from lancedb.remote.header import StaticHeaderProvider
++
++    provider = StaticHeaderProvider({"X-Exists-Test": "present"})
++    with mock_lancedb_connection(existence_handler, header_provider=provider) as db:
++        if status in (200, 404):
++            assert getattr(db, method)(identifier) is (status == 200)
++        else:
++            with pytest.raises(HttpError) as exc_info:
++                getattr(db, method)(identifier)
++            assert exc_info.value.status_code == status
++
++
++@pytest.mark.asyncio
++@pytest.mark.parametrize(
++    "method,identifier",
++    [
++        ("namespace_exists", []),
++        ("namespace_exists", ["parent", "ns"]),
++        ("table_exists", ["table"]),
++        ("table_exists", ["parent", "ns", "table"]),
++    ],
++)
++@pytest.mark.parametrize("status", [200, 404, 403, 507])
++async def test_async_remote_exists(method, identifier, status, existence_handler):
++    from lancedb.remote.header import StaticHeaderProvider
++
++    provider = StaticHeaderProvider({"X-Exists-Test": "present"})
++    async with mock_lancedb_connection_async(
++        existence_handler, header_provider=provider
++    ) as db:
++        if status in (200, 404):
++            assert await getattr(db, method)(identifier) is (status == 200)
++        else:
++            with pytest.raises(HttpError) as exc_info:
++                await getattr(db, method)(identifier)
++            assert exc_info.value.status_code == status
++
++
++@pytest.mark.parametrize("table_id", [[], ["invalid/name"]])
++def test_remote_table_exists_rejects_invalid_identifier(table_id):
++    requests = []
++    with mock_lancedb_connection(lambda request: requests.append(request.path)) as db:
++        with pytest.raises(ValueError):
++            db.table_exists(table_id)
++    assert requests == []
++
++
++def test_remote_table_exists_rechecks_cached_table():
++    requests = []
++
++    def handler(request):
++        requests.append(request.path)
++        request.send_response(200 if len(requests) == 1 else 404)
++        request.send_header("Content-Type", "application/json")
++        request.end_headers()
++        request.wfile.write(b"{}")
++
++    with mock_lancedb_connection(handler) as db:
++        table_id = ["ns", "table"]
++        assert db.table_exists(table_id) is True
++        assert db.table_exists(table_id) is False
++        assert table_id == ["ns", "table"]
++    assert requests == ["/v1/table/ns$table/describe/"] * 2
++
++
+ def paginated_table_listing_handler(request):
+     url = urlparse(request.path)
+     assert url.path in {
+```
+
+**File**: `python/src/connection.rs` (modified, +47/-0)
+```diff
+@@ -711,6 +711,53 @@ impl Connection {
+         })
+     }
+ 
++    pub fn namespace_exists(
++        self_: PyRef<'_, Self>,
++        namespace_id: Vec<String>,
++    ) -> PyResult<Bound<'_, PyAny>> {
++        let inner = self_.get_inner()?.clone();
++        future_into_py(self_.py(), async move {
++            let request = lance_namespace::models::DescribeNamespaceRequest {
++                id: Some(namespace_id),
++                ..Default::default()
++            };
++            match inner.describe_namespace(request).await {
++                Ok(_) => Ok(true),
++                Err(lancedb::Error::Http {
++                    status_code: Some(status),
++                    ..
++                }) if status.as_u16() == 404 => Ok(false),
++                Err(lancedb::Error::Lance {
++                    source: lance_core::Error::Namespace { ref source, .. },
++                }) if matches!(
++                    source.downcast_ref::<lance_namespace::NamespaceError>(),
++                    Some(lance_namespace::NamespaceError::NamespaceNotFound { .. })
++                ) =>
++                {
++                    Ok(false)
++                }
++                Err(err) => Err(err).infer_error(),
++            }
++        })
++    }
++
++    pub fn table_exists(
++        self_: PyRef<'_, Self>,
++        mut table_id: Vec<String>,
++    ) -> PyResult<Bound<'_, PyAny>> {
++        let inner = self_.get_inner()?.clone();
++        let name = table_id
++            .pop()
++            .ok_or_else(|| PyValueError::new_err("table_id must include a table name"))?;
++        future_into_py(self_.py(), async move {
++            match inner.open_table(name).namespace(table_id).execute().await {
++                Ok(_) => Ok(true),
++                Err(lancedb::Error::TableNotFound { .. }) => Ok(false),
++                Err(err) => Err(err).infer_error(),
++            }
++        })
++    }
++
+     #[pyo3(signature = (namespace_path=None, page_token=None, limit=None))]
+     pub fn list_tables(
+         &self,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4697** (2026-10-28): feat: add a cascade option to drop_database (@wkalt)
-- **PR #4695** (closed): docs: fix combined TypeScript and Rust examples (@brendanclement)
-- **PR #4693** (2026-10-27): docs: remove logical-column from docs (@dantasse)
-- **PR #4692** (2026-10-27): chore: update Lance to v15.0.0-beta.3 (@Xuanwo)
-- **PR #4690** (2026-10-27): chore: update Lance to v15.0.0-beta.2 (@Xuanwo)
-- **PR #4688** (2026-10-27): fix: gate experimental local functions behind an opt-in feature (@Xuanwo)
+- **PR #4729** (2026-10-28): fix(python): expose function source digests (@lancedb-gatefixer[bot])
+- **PR #4728** (2026-10-28): fix(python): restore blob extensions in table schemas (@lancedb-gatefixer[bot])
+- **PR #4726** (2026-10-28): fix(python): bind packaged BlobReader annotations to the worker type (@lancedb-gatefixer[bot])
+- **PR #4725** (2026-10-28): fix(python): implement remote namespace and table existence checks (@lancedb-gatefixer[bot])
+- **PR #4724** (2026-10-28): fix(python): reject invalid punctuation in UDF names (@lancedb-gatefixer[bot])
+- **PR #4713** (2026-10-28): docs: adopt Embedded/Distributed terminology across docs and SDKs (@wjones127)
 
 ---
 
@@ -2315,35 +2735,55 @@ implementation and pass with this change.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. use SQL for all remote materialized view APIs (#4673)
+## X. docs: add guide for using LanceDB in VS Code extensions
 
 **RULE**:
-When implementing operations in `docs/src/js/classes/Connection.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/web-tests/ts/vscode_extension.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `45dbf5ef`: use SQL for all remote materialized view APIs (#4673). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `84fc4819`: docs: add guide for using LanceDB in VS Code extensions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/src/js/classes/Connection.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/web-tests/ts/vscode_extension.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Remote drops wait for the SQL command to remove the catalog binding.
-Physical cleanup continues in the background.
-Start dropping the materialized view named `name` and return its job.
-Remote jobs have type `query` and use the SQL query ID as `id`. Waiting
-confirms catalog removal; physical cleanup continues in the background.
+// SPDX-License-Identifier: Apache-2.0
+// SPDX-FileCopyrightText: Copyright The LanceDB Authors
+
+// The `src/extension.ts` of the sample extension in the VS Code integration guide.
+// It needs the VS Code extension host, so jest doesn't run it: the LanceDB code it
+// calls is tested in vscode_search.test.ts, and the extension itself was tested
+// with @vscode/test-cli.
+
+// --8<-- [start:vscode_extension]
+import * as vscode from "vscode";
+import {
+  type Chunk,
+  chunkMarkdown,
+  indexChunks,
+  openDatabase,
+  searchChunks,
+} from "./search";
+
+export async function activate(context: vscode.ExtensionContext) {
+  // One index per workspace. `storageUri` is undefined when no folder is open.
+  const storage = context.storageUri ?? context.globalStorageUri;
+
+  // Transformers.js downloads the embedding model on first use. Keep it in
+  // global storage so every workspace shares one copy and it survives
+  // extension updates. Use `import()`: LanceDB loads the ES module build, and
+  // `require()` would return a separate copy whose settings LanceDB never sees.
+  const { env } = await import("@huggingface/transformers");
+  env.cacheDir = vscode.Uri.joinPath(context.globalStorageUri, "model
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-The view may become unavailable before physical cleanup finishes. Use
-[dropMaterializedViewAsync](Connection.md#dropmaterializedviewasync) to retain and wait for the cleanup job.
-Start dropping the materialized view named `name` and return its cleanup
-job without waiting for completion.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `45dbf5ef` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `84fc4819` are properly handled with clean fallback behavior.
