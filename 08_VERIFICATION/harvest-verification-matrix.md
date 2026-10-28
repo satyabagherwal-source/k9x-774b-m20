@@ -5905,3 +5905,4 @@
 | `CYCLE-20261028-GFSY` | `2026-10-28T19:31:55.522Z` | `google/embeddinggemma-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1870, Rule 537, Rule 5381` | Yes (`5326aa75...`) |
 | `CYCLE-20261028-GFUI` | `2026-10-28T19:31:55.578Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5381` | Yes (`733db592...`) |
 | `CYCLE-20261028-GK5L` | `2026-10-28T19:32:01.161Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5382` | Yes (`dc280eae...`) |
+| `CYCLE-20261028-PFF2` | `2026-10-28T19:38:54.926Z` | `canberkkkkkk/ema-lightning` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md` | Yes (`2ff5e104...`) |

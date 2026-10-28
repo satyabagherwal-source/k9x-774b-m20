@@ -5914,3 +5914,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-google-embeddinggemma-2` | `https://huggingface.co/google/embeddinggemma-2` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-28T19:31:55.526Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `8ed43f1f` | Multi-dimensional audit evidence | 2026-10-28T19:31:55.582Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `b0563444` | Multi-dimensional audit evidence | 2026-10-28T19:32:01.164Z |
+| `learn-huggingface-canberkkkkkk-ema-lightning` | `https://huggingface.co/canberkkkkkk/ema-lightning` | `hf-canberk` | Multi-dimensional audit evidence | 2026-10-28T19:38:54.930Z |

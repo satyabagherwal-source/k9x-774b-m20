@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T19:32:03.716Z",
-    "lastVerified": "2026-10-28T19:32:03.716Z",
+    "lastChecked": "2026-10-28T19:39:06.443Z",
+    "lastVerified": "2026-10-28T19:39:06.443Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -193,8 +193,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T18:57:48.876Z",
-    "lastVerified": "2026-10-28T18:57:48.876Z",
+    "lastChecked": "2026-10-28T19:39:06.434Z",
+    "lastVerified": "2026-10-28T19:39:06.434Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -250,9 +250,9 @@
   "actions-actions-runner-controller": {
     "name": "actions-runner-controller",
     "officialUrl": "https://github.com/actions/actions-runner-controller",
-    "lastChecked": "2026-10-28T03:04:30.931Z",
+    "lastChecked": "2026-10-28T19:38:58.886Z",
     "revisionIdentifier": "89f34c4f",
-    "lastVerified": "2026-10-28T03:04:30.931Z"
+    "lastVerified": "2026-10-28T19:38:58.886Z"
   },
   "microsoft-agent-governance-toolkit": {
     "name": "microsoft/agent-governance-toolkit",
@@ -1789,9 +1789,9 @@
   "mitmproxy-mitmproxy": {
     "name": "mitmproxy",
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
-    "lastChecked": "2026-10-28T15:58:22.493Z",
+    "lastChecked": "2026-10-28T19:39:01.719Z",
     "revisionIdentifier": "df14a286",
-    "lastVerified": "2026-10-28T15:58:22.493Z"
+    "lastVerified": "2026-10-28T19:39:01.719Z"
   },
   "oceanbase-oceanbase": {
     "name": "oceanbase",
@@ -6282,5 +6282,43 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ouch-org-ouch": {
+    "name": "ouch",
+    "officialUrl": "https://github.com/ouch-org/ouch",
+    "lastChecked": "2026-10-28T19:38:52.396Z",
+    "revisionIdentifier": "6df14b05",
+    "lastVerified": "2026-10-28T19:38:52.396Z"
+  },
+  "hf-canberkkkkkk-ema-lightning": {
+    "name": "canberkkkkkk/ema-lightning",
+    "officialUrl": "https://huggingface.co/canberkkkkkk/ema-lightning",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T19:38:53.780Z",
+    "lastVerified": "2026-10-28T19:38:53.780Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
+    "contentHash": "2ff5e1043683e9eb168ee210d0a3cea8c0f1a16e6c6cf81f797755a2076337df",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jetbrains-kotlinconf-app": {
+    "name": "kotlinconf-app",
+    "officialUrl": "https://github.com/JetBrains/kotlinconf-app",
+    "lastChecked": "2026-10-28T19:38:57.482Z",
+    "revisionIdentifier": "907ce238",
+    "lastVerified": "2026-10-28T19:38:57.482Z"
+  },
+  "open-source-legal-opencontracts": {
+    "name": "OpenContracts",
+    "officialUrl": "https://github.com/Open-Source-Legal/OpenContracts",
+    "lastChecked": "2026-10-28T19:39:03.907Z",
+    "revisionIdentifier": "6652e8dd",
+    "lastVerified": "2026-10-28T19:39:03.907Z"
   }
 }

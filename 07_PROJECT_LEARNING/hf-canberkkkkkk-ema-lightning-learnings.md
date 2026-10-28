@@ -3,7 +3,7 @@
 > **Source Version**: `hf-canberkkk`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T16:28:20.673Z  
+> **Timestamp**: 2026-10-28T19:38:54.676Z  
 > **Learning ID**: `learn-huggingface-canberkkkkkk-ema-lightning`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/canberkkkkkk/ema-lightning](https://huggingface.co/canberkkkkkk/ema-lightning))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T16:28:19.818Z  
+> **Harvest Timestamp**: 2026-10-28T19:38:53.780Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-to-speech
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 63008 downloads | 445 likes
+- **Stars / Engagement**: 74680 downloads | 449 likes
 
 ---
 
