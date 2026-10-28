@@ -5856,3 +5856,4 @@ Every entry in this ledger must capture:
 | `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `c4d3ad3d` | Multi-dimensional audit evidence | 2026-10-28T16:33:38.303Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `ea12b738` | Multi-dimensional audit evidence | 2026-10-28T16:33:47.482Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `7e354c62` | Multi-dimensional audit evidence | 2026-10-28T16:33:53.374Z |
+| `learn-huggingface-facebookai-xlm-roberta-base` | `https://huggingface.co/FacebookAI/xlm-roberta-base` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-10-28T16:45:14.816Z |

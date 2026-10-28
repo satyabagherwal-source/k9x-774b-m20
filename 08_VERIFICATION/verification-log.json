@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-2WAC",
-    "timestamp": "2026-10-27T13:57:47.892Z",
-    "repository": "frankbria/ralph-claude-code",
-    "learningId": "learn-github-frankbria-ralph-claude-code",
-    "contentHash": "d2a8297fb6b166a4de6942c79a5c4017e76f55133f3f39efa8d33dd28aa5e7c3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-2ZQF",
     "timestamp": "2026-10-27T13:57:52.359Z",
     "repository": "ntegrals/openbrowser",
@@ -7492,6 +7477,21 @@
     "contentHash": "5309c3901a2225789354b5746b011c03cbfca1899343cba282348da73771a228",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-I37H",
+    "timestamp": "2026-10-28T16:45:14.813Z",
+    "repository": "FacebookAI/xlm-roberta-base",
+    "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
+    "contentHash": "75d099df89bf2b9b757235feac407fccc25971128f1ff13a85b75efdcaad3f65",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

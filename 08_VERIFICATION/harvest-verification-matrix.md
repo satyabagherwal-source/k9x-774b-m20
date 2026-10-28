@@ -5847,3 +5847,4 @@
 | `CYCLE-20261028-35RW` | `2026-10-28T16:33:38.300Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5342` | Yes (`f8c01793...`) |
 | `CYCLE-20261028-3CUV` | `2026-10-28T16:33:47.479Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5343` | Yes (`d751ae03...`) |
 | `CYCLE-20261028-3HEJ` | `2026-10-28T16:33:53.371Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5344` | Yes (`5309c390...`) |
+| `CYCLE-20261028-I37H` | `2026-10-28T16:45:14.813Z` | `FacebookAI/xlm-roberta-base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md` | Yes (`75d099df...`) |
