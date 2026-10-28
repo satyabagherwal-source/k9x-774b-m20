@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T15:43:25.912Z",
-  "total_cycles_completed": 5804,
-  "total_learnings_persisted": 5804,
-  "total_rules_promoted": 5282,
+  "last_updated": "2026-10-28T15:50:45.010Z",
+  "total_cycles_completed": 5807,
+  "total_learnings_persisted": 5807,
+  "total_rules_promoted": 5285,
   "history": [
-    {
-      "timestamp": "2026-10-28T01:29:12.501Z",
-      "repository": "zai-org/GLM-5.3",
-      "learningId": "learn-huggingface-zai-org-glm-5-3",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T01:29:18.493Z",
-      "repository": "ytsaurus/ytsaurus",
-      "learningId": "learn-github-ytsaurus-ytsaurus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T01:35:55.824Z",
-      "repository": "o2sh/onefetch",
-      "learningId": "learn-github-o2sh-onefetch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T01:36:04.534Z",
       "repository": "mudler/locate-anything.cpp-gguf",
@@ -1403,6 +1382,27 @@
       "repository": "apache/shardingsphere",
       "learningId": "learn-github-apache-shardingsphere",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T15:50:33.898Z",
+      "repository": "ntex-rs/ntex",
+      "learningId": "learn-github-ntex-rs-ntex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T15:50:40.280Z",
+      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T15:50:45.010Z",
+      "repository": "rqlite/rqlite",
+      "learningId": "learn-github-rqlite-rqlite",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

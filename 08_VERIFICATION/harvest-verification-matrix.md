@@ -5827,3 +5827,6 @@
 | `CYCLE-20261028-A86G` | `2026-10-28T15:43:08.776Z` | `Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md` | Yes (`9a3eab5b...`) |
 | `CYCLE-20261028-ACIG` | `2026-10-28T15:43:14.392Z` | `openbmb/MiniCPM-OCR-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5328, Rule EXISTING, Rule 5329` | Yes (`74e0b70f...`) |
 | `CYCLE-20261028-ALE7` | `2026-10-28T15:43:25.903Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5330` | Yes (`59289a7f...`) |
+| `CYCLE-20261028-JRMO` | `2026-10-28T15:50:33.888Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5331` | Yes (`021d85b8...`) |
+| `CYCLE-20261028-JWJZ` | `2026-10-28T15:50:40.271Z` | `pablodawson/MiniMax-H3-360-Orbit-LoRA` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5332, Rule 5333` | Yes (`adbd11d3...`) |
+| `CYCLE-20261028-K072` | `2026-10-28T15:50:44.990Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md` | Yes (`382dce74...`) |

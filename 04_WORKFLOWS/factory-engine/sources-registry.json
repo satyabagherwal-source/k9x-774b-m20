@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T15:43:28.444Z",
-    "lastVerified": "2026-10-28T15:43:28.444Z",
+    "lastChecked": "2026-10-28T15:50:47.536Z",
+    "lastVerified": "2026-10-28T15:50:47.536Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -188,12 +188,12 @@
     "lastVerified": "2026-10-28T02:54:52.757Z"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T15:23:02.659Z",
-    "lastVerified": "2026-10-28T15:23:02.659Z",
+    "lastChecked": "2026-10-28T15:50:41.963Z",
+    "lastVerified": "2026-10-28T15:50:41.963Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -202,7 +202,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "74088ac3"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1684,9 +1685,9 @@
   "tailscale-tailscale": {
     "name": "tailscale",
     "officialUrl": "https://github.com/tailscale/tailscale",
-    "lastChecked": "2026-10-28T12:36:54.549Z",
+    "lastChecked": "2026-10-28T15:50:37.038Z",
     "revisionIdentifier": "3a38840c",
-    "lastVerified": "2026-10-28T12:36:54.549Z"
+    "lastVerified": "2026-10-28T15:50:37.038Z"
   },
   "oramasearch-orama": {
     "name": "orama",
@@ -4580,6 +4581,71 @@
     "contentHash": "59289a7f64515d0b6b5e836af1749143d89a0d3662716aa1070fe692f1cf27b2",
     "promotedRulesCount": 1,
     "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ntex-rs-ntex": {
+    "name": "ntex-rs/ntex",
+    "officialUrl": "https://github.com/ntex-rs/ntex",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T15:50:33.023Z",
+    "lastVerified": "2026-10-28T15:50:33.023Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-ntex-rs-ntex",
+    "contentHash": "021d85b8deb9795c788f9abdcfbe41efe7011e78ce405aa8463f6d11795ad1e0",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-pablodawson-minimax-h3-360-orbit-lora": {
+    "name": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+    "officialUrl": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T15:50:29.192Z",
+    "lastVerified": "2026-10-28T15:50:29.192Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
+    "contentHash": "adbd11d3a7f2766b779648e849740d2a8e8a5ea407aa9fba6799f23fe76157eb",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "rcbyr-keen-slider": {
+    "name": "keen-slider",
+    "officialUrl": "https://github.com/rcbyr/keen-slider",
+    "lastChecked": "2026-10-28T15:50:31.693Z",
+    "revisionIdentifier": "520c757a",
+    "lastVerified": "2026-10-28T15:50:31.693Z"
+  },
+  "aquasecurity-tfsec": {
+    "name": "tfsec",
+    "officialUrl": "https://github.com/aquasecurity/tfsec",
+    "lastChecked": "2026-10-28T15:50:34.333Z",
+    "revisionIdentifier": "b692c20b",
+    "lastVerified": "2026-10-28T15:50:34.333Z"
+  },
+  "rqlite-rqlite": {
+    "name": "rqlite/rqlite",
+    "officialUrl": "https://github.com/rqlite/rqlite",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-28T15:50:44.500Z",
+    "lastVerified": "2026-10-28T15:50:44.500Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-rqlite-rqlite",
+    "contentHash": "382dce74826b2f3e80e50e89df3419d05e87eb871642355d04fb193e15d201f3",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T15:43:25.916Z",
+  "last_updated": "2026-10-28T15:50:45.014Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1400,14 +1400,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
-      "content_hash": "c2ee9d907d3025b7f231df94882b8e6a3f335158c42f52c7d85314e6600c5dcb",
-      "verified_at": "2026-10-25T22:00:41.879Z",
+      "content_hash": "adbd11d3a7f2766b779648e849740d2a8e8a5ea407aa9fba6799f23fe76157eb",
+      "verified_at": "2026-10-28T15:50:40.284Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T22:00:41.879Z"
+      "last_updated": "2026-10-28T15:50:40.284Z"
     },
     "Venastine-Research/Xing4.0-29B-A4B-GGUF": {
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
@@ -7491,14 +7491,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rqlite-rqlite",
-      "content_hash": "ff4730875f434bc49b59013b332527edf471f85daee8778ce8e4f8582578a3da",
-      "verified_at": "2026-10-27T11:09:23.052Z",
+      "content_hash": "382dce74826b2f3e80e50e89df3419d05e87eb871642355d04fb193e15d201f3",
+      "verified_at": "2026-10-28T15:50:45.013Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T11:09:23.052Z"
+      "last_updated": "2026-10-28T15:50:45.013Z"
     },
     "arco-design/arco-design": {
       "repository": "arco-design/arco-design",
@@ -8811,14 +8811,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ntex-rs-ntex",
-      "content_hash": "eab86212b914cca0f060f2882aa345060cf14533d1a27a29f2b5b0654dfbb359",
-      "verified_at": "2026-10-27T13:17:55.056Z",
+      "content_hash": "021d85b8deb9795c788f9abdcfbe41efe7011e78ce405aa8463f6d11795ad1e0",
+      "verified_at": "2026-10-28T15:50:33.901Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:17:55.056Z"
+      "last_updated": "2026-10-28T15:50:33.901Z"
     },
     "learnapollo/learnapollo": {
       "repository": "learnapollo/learnapollo",

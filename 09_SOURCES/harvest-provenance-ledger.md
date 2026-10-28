@@ -5836,3 +5836,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw` | `https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | `hf-infatos` | Multi-dimensional audit evidence | 2026-10-28T15:43:08.780Z |
 | `learn-huggingface-openbmb-minicpm-ocr-1-0` | `https://huggingface.co/openbmb/MiniCPM-OCR-1.0` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-28T15:43:14.396Z |
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `5c3acbfd` | Multi-dimensional audit evidence | 2026-10-28T15:43:25.907Z |
+| `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `feb17a0d` | Multi-dimensional audit evidence | 2026-10-28T15:50:33.892Z |
+| `learn-huggingface-pablodawson-minimax-h3-360-orbit-lora` | `https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA` | `hf-pabloda` | Multi-dimensional audit evidence | 2026-10-28T15:50:40.275Z |
+| `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `ce215261` | Multi-dimensional audit evidence | 2026-10-28T15:50:44.994Z |

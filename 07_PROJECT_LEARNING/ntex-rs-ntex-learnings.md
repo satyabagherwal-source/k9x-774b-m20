@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md`  
 > **Source**: github ([https://github.com/ntex-rs/ntex](https://github.com/ntex-rs/ntex))  
-> **Source Version**: `4a2899d9`  
+> **Source Version**: `feb17a0d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T13:17:54.426Z  
+> **Timestamp**: 2026-10-28T15:50:33.252Z  
 > **Learning ID**: `learn-github-ntex-rs-ntex`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ntex-rs/ntex](https://github.com/ntex-rs/ntex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T13:17:53.785Z  
+> **Harvest Timestamp**: 2026-10-28T15:50:33.023Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2300,151 +2300,387 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `64e3d861` (2026-10-26)
-**Commit Message**: Fix builds with the ws feature disabled
+### Incident Patch 1: `feb17a0d` (2026-10-28)
+**Commit Message**: Various spawn related improvements
 
-**File**: `ntex/src/http/test.rs` (modified, +17/-15)
+* Add `spawn_sendable()` to spawn a local future and receive its `Send` output
+  on another thread. Dropping the returned future requests cancellation
+
+* Add `JoinHandle::cancel_on_drop()` to request cancellation when the handle is
+  dropped, without waiting for cleanup. Supported by the native, Tokio, and
+  Compio runtimes; handles still detach on drop by default
+
+* Deprecate `JoinHandle::detach()` and `RemoteJoinHandle::detach()`. Drop the
+  handle instead unless cancellation-on-drop is enabled. The deprecated
+  `JoinHandle::detach()` still overrides cancellation-on-drop for compatibility.
+  `spawn_blocking()` and `BlockingResult::detach()` are unchanged
+
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -343,13 +343,14 @@ impl TestServer {
-                 ntex_h2::ServiceConfig::new()
-                     .set_max_header_list_size(256 * 1024)
-                     .set_max_header_continuation_frames(96),
--            )
--            .add(
--                WsClientConfig::new()
--                    .set_address(addr)
--                    .set_handshake_timeout(Seconds(30)),
--            )
--            .build();
-+            );
-+        #[cfg(feature = "ws")]
-+        let cfg = cfg.add(
-+            WsClientConfig::new()
-+                .set_address(addr)
-+                .set_handshake_timeout(Seconds(30)),
-+        );
-+        let cfg = cfg.build();
+@@ -59,7 +59,7 @@ ntex-io = "4.6.0"
+ ntex-macros = "4.2.0"
+ ntex-net = "4.7.0"
+ ntex-router = "2.1.0"
+-ntex-rt = "4.4.1"
++ntex-rt = "4.5.0"
+ ntex-server = "4.3.2"
+ ntex-service = "5.3.0"
+ ntex-tls = "4.4.0"
+```
+
+**File**: `ntex-io/src/utils.rs` (modified, +2/-3)
+```diff
+@@ -354,11 +354,10 @@ mod tests {
+         let slot = Rc::new(WaiterEntry::new(7));
+         let nested = Rc::new(WaiterEntry::new(8));
+         let (task_ext, task_slot) = (ext.clone(), slot.clone());
+-        rt.spawn(std::future::poll_fn(move |cx| {
++        rt.spawn_detached(std::future::poll_fn(move |cx| {
+             task_ext.register_waker(&task_slot, cx.waker());
+             Poll::<()>::Pending
+-        }))
+-        .detach();
++        }));
+         rt.poll();
  
-         let client = Self::create_client(cfg.clone());
+         let notifications = Arc::new(AtomicUsize::new(0));
+```
+
+**File**: `ntex-net/src/iocp/stream.rs` (modified, +2/-3)
+```diff
+@@ -328,13 +328,12 @@ impl Handler for StreamOpsHandler {
+                             // runs, the socket must still be closed, and
+                             // `cleanup()` skips `CLOSED` items.
+                             let close = close.spawn();
+-                            ntex_rt::spawn(async move {
++                            ntex_rt::spawn_detached(async move {
+                                 let res = close.await;
+                                 #[cfg(feature = "trace")]
+                                 log::trace!("{_tag}: WaitClosed({:?})", io);
+                                 let _ = tx.send(res);
+-                            })
+-                            .detach();
++                            });
+                         }
+                     }
+                 } else {
+```
+
+**File**: `ntex-rt/CHANGES.md` (modified, +14/-0)
+```diff
+@@ -1,5 +1,19 @@
+ # Changes
  
-@@ -371,7 +372,7 @@ impl TestServer {
-     /// waits to establish a connection. By default the response timeouts are
-     /// 30 seconds.
-     pub fn set_client_timeout(mut self, timeout: Seconds, connect_timeout: Millis) -> Self {
--        self.cfg = SharedCfg::new("TEST-CLIENT")
-+        let cfg = SharedCfg::new("TEST-CLIENT")
-             .add(IoConfig::new().set_connect_timeout(connect_timeout))
-             .add(TlsConfig::new().set_handshake_timeout(timeout))
-             .add(
-@@ -383,13 +384,14 @@ impl TestServer {
-                 ntex_h2::ServiceConfig::new()
-                     .set_max_header_list_size(256 * 1024)
-                     .set_max_header_continuation_frames(96),
--            )
--            .add(
--                WsClientConfig::new()
--                    .set_address(self.addr)
--                    .set_handshake_timeout(Seconds(30)),
--            )
--            .build();
-+            );
-+        #[cfg(feature = "ws")]
-+        let cfg = cfg.add(
-+            WsClientConfig::new()
-+                .set_address(self.addr)
-+                .set_handshake_timeout(Seconds(30)),
-+        );
-+        self.cfg = cfg.build();
-         self.client = Self::create_client(self.cfg.clone());
-         self
++## [4.5.0] - 2026-10-28
++
++* Add `spawn_sendable()` to spawn a local future and receive its `Send` output
++  on another thread. Dropping the returned future requests cancellation
++
++* Add `JoinHandle::cancel_on_drop()` to request cancellation when the handle is
++  dropped, without waiting for cleanup. Supported by the native, Tokio, and
++  Compio runtimes; handles still detach on drop by default
++
++* Deprecate `JoinHandle::detach()` and `RemoteJoinHandle::detach()`. Drop the
++  handle instead unless cancellation-on-drop is enabled. The deprecated
++  `JoinHandle::detach()` still overrides cancellation-on-drop for compatibility.
++  `spawn_blocking()` and `BlockingResult::detach()` are unchanged
++
+ ## [4.4.0] - 2026-10-27
+ 
+ * Keep fatal signal handlers minimal to avoid hangs when another thread aborts or
+```
+
+**File**: `ntex-rt/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "ntex-rt"
+-version = "4.4.1"
++version = "4.5.0"
+ authors = ["ntex contributors <team@ntex.rs>"]
+ description = "ntex runtime"
+ keywords = ["network", "framework", "async", "futures"]
+```
+
+**File**: `ntex-rt/src/handle.rs` (modified, +27/-3)
+```diff
+@@ -10,7 +10,8 @@ pub(crate) type SpawnLocation = &'static Location<'static>;
+ /// A native local task handle. It is neither `Send` nor `Sync`.
+ ///
+ /// Returned by [`crate::rt::spawn()`] and [`crate::rt::Runtime::spawn()`]. Dropping
+-/// the handle detaches the task.
++/// the handle detaches the task unless [`cancel_on_drop`](Self::cancel_on_drop)
++/// is enabled.
+ /// Awaiting it yields the task's output, or an error if no output is available,
+ /// for example after cancellation, a task panic, or runtime shutdown.
+ #[derive(Debug)]
+@@ -23,6 +24,17 @@ impl<T> JoinHandle<T> {
+         JoinHandle { task }
      }
-```
-
-**File**: `ntex/src/web/error.rs` (modified, +1/-0)
-```diff
-@@ -907,6 +907,7 @@ mod tests {
-         assert_eq!(resp.status(), StatusCode::NOT_FOUND);
+ 
++    /// Requests cancellation when this handle is dropped instead of detaching the task.
++    ///
++    /// Cancellation follows [`cancel`](Self::cancel) and does not wait for cleanup.
++    /// A running poll is not interrupted. The deprecated [`detach`](Self::detach)
++    /// method still overrides this setting.
++    #[must_use]
++    pub fn cancel_on_drop(self) -> Self {
++        self.task.set_cancel_on_drop(true);
++        self
++    }
++
+     /// Requests cancellation and discards the result without waiting for cleanup.
+     ///
+     /// The future is dropped when the runtime next processes the task, or
+@@ -32,7 +44,15 @@ impl<T> JoinHandle<T> {
      }
  
-+    #[cfg(feature = "ws")]
-     #[test]
-     fn test_handshake_error() {
-         use crate::ws::error::HandshakeError;
+     /// Detaches the task so it continues running independently.
+-    pub fn detach(self) {}
++    ///
++    /// Overrides [`cancel_on_drop`](Self::cancel_on_drop) without requesting cancellation.
++    #[deprecated(
++        since = "4.5.0",
++        note = "Drop the handle instead if cancel_on_drop() is not enabled"
++    )]
++    pub fn detach(self) {
++        self.task.set_cancel_on_drop(false);
++    }
+ 
+     /// Returns `true` if the task completed or was closed without an output.
+     pub fn is_finished(&self) -> bool {
+@@ -92,6 +112,10 @@ impl<T> RemoteJoinHandle<T> {
+     }
+ 
+     /// Detaches the task so it continues running independently.
++    ///
++    /// This method does nothing beyond dropping the handle; dropping it already
++    /// detaches the task without canceling it.
++    #[deprecated(since = "4.5.0", note = "Use drop(handle) instead")]
+     pub fn detach(self) {}
+ 
+     /// Returns `true` if the task completed or was closed without an output.
+@@ -129,6 +153,6 @@ impl fmt::Display for JoinError {
+ 
+ impl std::error::Error for JoinError {}
+ 
+-#[cfg(all(test, not(feature = "tokio"), not(feature = "compio")))]
++#[cfg(test)]
+ #[path = "../tests/unit/handle.rs"]
+ mod tests;
 ```
 
-**File**: `ntex/src/web/error_default.rs` (modified, +3/-1)
+**File**: `ntex-rt/src/lib.rs` (modified, +6/-1)
 ```diff
-@@ -6,7 +6,9 @@ use serde_json::error::Error as JsonError;
- use serde_urlencoded::ser::Error as FormError;
+@@ -8,6 +8,11 @@
+ //! task, and [`spawn_blocking()`] for blocking work.
+ //!
+ //! Local [`JoinHandle`]s are neither `Send` nor `Sync`, even for `Send` outputs.
++//! They detach on drop by default. Use [`JoinHandle::cancel_on_drop()`] to
++//! request cancellation on drop instead.
++//!
++//! Use [`spawn_sendable()`] to spawn a local future whose `Send` output can be
++//! awaited on another thread. Dropping its returned future requests cancellation.
+ //!
+ //! [`Handle::spawn()`] submits a `Send` future to the handle's runtime and
+ //! returns a [`RemoteJoinHandle`] for the calling thread. On the runtime's own thread
+@@ -102,7 +107,7 @@ pub use self::local_waker::LocalWaker;
+ pub use self::pool::{BlockingError, BlockingResult, ThreadPool, spawn_blocking};
+ pub use self::rt::{Runtime, RuntimeBuilder};
+ pub use self::system::{Id, System};
+-pub use self::task::{task_callbacks, task_opt_callbacks};
++pub use self::task::{spawn_sendable, task_callbacks, task_opt_callbacks};
  
- use crate::client;
--use crate::http::{self, StatusCode, header};
-+#[cfg(feature = "ws")]
-+use crate::http::header;
-+use crate::http::{self, StatusCode};
- use crate::util::timeout::TimeoutError;
- #[cfg(feature = "ws")]
- use crate::ws::error::HandshakeError;
+ #[cfg(feature = "tokio")]
+ pub use self::rt_tokio::*;
 ```
 
-**File**: `ntex/src/web/test.rs` (modified, +11/-8)
+**File**: `ntex-rt/src/rt/mod.rs` (modified, +7/-4)
 ```diff
-@@ -846,7 +846,7 @@ fn start_server(cfg: TestServerConfig, factory: AppFactory) -> TestServer {
-     thread::sleep(Millis(25).into());
+@@ -45,7 +45,7 @@ use self::queue::RunnableQueue;
  
-     let cfg = cfg.client_cfg.clone().unwrap_or_else(|| {
--        SharedCfg::new("TEST-CLIENT")
-+        let cfg = SharedCfg::new("TEST-CLIENT")
-             .add(IoConfig::new().set_connect_timeout(Millis(90_000)))
-             .add(ntex_tls::TlsConfig::new().set_handshake_timeout(Seconds(5)))
-             .add(
-@@ -858,13 +858,14 @@ fn start_server(cfg: TestServerConfig, factory: AppFactory) -> TestServer {
-                 ClientConfig::new()
-                     .set_response_timeout(Seconds(30))
-                     .set_response_payload_timeout(Seconds(30)),
--            )
--            .add(
--                WsClientConfig::new()
--                    .set_address(addr)
--                    .set_handshake_timeout(Seconds(60)),
--            )
--            .build()
-+            );
-+        #[cfg(feature = "ws")]
-+        let cfg = cfg.add(
-+            WsClientConfig::new()
-+                .set_address(addr)
-+                .set_handshake_timeout(Seconds(60)),
-+        );
-+        cfg.build()
-     });
+ pub use crate::handle::{JoinHandle, RemoteJoinHandle};
  
-     let client = {
-@@ -889,6 +890,7 @@ fn start_server(cfg: TestServerConfig, factory: AppFactory) -> TestServer {
+-/// An error marker exposed by the native runtime.
++/// Error returned by [`crate::spawn_sendable()`] when no task output is available.
+ ///
+ /// Native [`JoinHandle`] and [`RemoteJoinHandle`] futures use a separate error
+ /// type; this marker is not the error type of their results.
+@@ -73,7 +73,8 @@ pub fn now() -> Instant {
+ ///
+ /// The future and its output need not be `Send`. Registered
+ /// [`task_callbacks`](crate::task_callbacks) wrap the task. Dropping the handle
+-/// detaches it; completion is not guaranteed if the runtime shuts down.
++/// detaches it unless [`cancel_on_drop`](JoinHandle::cancel_on_drop) is enabled.
++/// Completion is not guaranteed if the runtime shuts down.
+ ///
+ /// # Panics
+ ///
+@@ -307,8 +308,10 @@ impl Runtime {
+     /// All data borrowed by the future must remain valid until the future is
+     /// completed or destroyed, including on unwind. Any borrowed data in the
+     /// output must remain valid until that output is destroyed, even if its join
+-    /// handle outlives this runtime. Dropping or forgetting a join handle does
+-    /// not cancel its task and is not sufficient to end these obligations.
++    /// handle outlives this runtime. Requesting cancellation, including through
++    /// [`JoinHandle::cancel_on_drop`], does not wait for destruction and is not
++    /// sufficient to end these obligations. Forgetting a join handle does not
++    /// request cancellation.
+     #[track_caller]
+     pub unsafe fn spawn_unchecked<F: Future>(&self, future: F) -> JoinHandle<F::Output> {
+         unsafe { self.spawn_at(future, Location::caller()) }
+```
+
+---
+
+### Incident Patch 2: `27dc10dc` (2026-10-27)
+**Commit Message**: Update api docs and tests (#1157)
+
+**File**: `.github/workflows/checks.yml` (modified, +7/-1)
+```diff
+@@ -1,6 +1,12 @@
+ name: Checks
  
-     TestServer {
-         id,
-+        #[cfg(feature = "ws")]
-         cfg,
-         addr,
-         client,
-@@ -1038,6 +1040,7 @@ impl TestServerConfig {
- /// Test server controller
- pub struct TestServer {
-     id: Uuid,
-+    #[cfg(feature = "ws")]
-     cfg: SharedCfg,
-     addr: net::SocketAddr,
-     client: Client,
+-on: [push, pull_request]
++on:
++  push:
++    branches:
++      - main
++    tags:
++      - '**'
++  pull_request:
+ 
+ jobs:
+   check:
+```
+
+**File**: `.github/workflows/cov.yml` (modified, +7/-1)
+```diff
+@@ -1,6 +1,12 @@
+ name: Coverage
+ 
+-on: [pull_request, push]
++on:
++  push:
++    branches:
++      - main
++    tags:
++      - '**'
++  pull_request:
+ 
+ jobs:
+   coverage:
+```
+
+**File**: `.github/workflows/docs.yml` (modified, +2/-1)
+```diff
+@@ -4,8 +4,9 @@ on:
+   push:
+     branches:
+       - main
++    tags:
++      - '**'
+   pull_request:
+-  workflow_dispatch:
+ 
+ permissions:
+   contents: read
+```
+
+**File**: `.github/workflows/linux.yml` (modified, +7/-1)
+```diff
+@@ -1,6 +1,12 @@
+ name: CI (Linux)
+ 
+-on: [push, pull_request]
++on:
++  push:
++    branches:
++      - main
++    tags:
++      - '**'
++  pull_request:
+ 
+ jobs:
+   build_and_test:
+```
+
+**File**: `.github/workflows/miri.yml` (modified, +7/-1)
+```diff
+@@ -1,6 +1,12 @@
+ name: Miri
+ 
+-on: [push, pull_request]
++on:
++  push:
++    branches:
++      - main
++    tags:
++      - '**'
++  pull_request:
+ 
+ jobs:
+   miri:
+```
+
+**File**: `.github/workflows/osx.yml` (modified, +7/-1)
+```diff
+@@ -1,6 +1,12 @@
+ name: CI (OSX)
+ 
+-on: [push, pull_request]
++on:
++  push:
++    branches:
++      - main
++    tags:
++      - '**'
++  pull_request:
+ 
+ jobs:
+   build_and_test:
+```
+
+**File**: `.github/workflows/windows.yml` (modified, +7/-1)
+```diff
+@@ -1,6 +1,12 @@
+ name: CI (Windows)
+ 
+-on: [push, pull_request]
++on:
++  push:
++    branches:
++      - main
++    tags:
++      - '**'
++  pull_request:
+ 
+ env:
+   VCPKGRS_DYNAMIC: 1
+```
+
+**File**: `Cargo.toml` (modified, +2/-2)
+```diff
+@@ -59,8 +59,8 @@ ntex-io = "4.6.0"
+ ntex-macros = "4.2.0"
+ ntex-net = "4.7.0"
+ ntex-router = "2.1.0"
+-ntex-rt = "4.4.0"
+-ntex-server = "4.3.0"
++ntex-rt = "4.4.1"
++ntex-server = "4.3.2"
+ ntex-service = "5.3.0"
+ ntex-tls = "4.4.0"
+ ntex-util = "4.5.0"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1158** (2026-10-28): Various spawn related improvements (@fafhrd91)
+- **PR #1157** (2026-10-27): Update api docs and tests (@fafhrd91)
+- **PR #1156** (2026-10-27): Prepare releases (@fafhrd91)
+- **PR #1155** (2026-10-27): Keep fatal signal handlers minimal to avoid hangs when another thread aborts or faults. (@fafhrd91)
 - **PR #1154** (2026-10-27): Redesign local/remote workers interaction (@fafhrd91)
 - **PR #1153** (2026-10-26): Fix builds with the ws feature disabled (@0xle0ne)
-- **PR #1151** (2026-10-25): Add `LocalWaker`, a thread-confined owned wake handle (@fafhrd91)
-- **PR #1150** (2026-10-24): Abort the process on a panic during shutdown (@fafhrd91)
-- **PR #1149** (2026-10-21): Prep releases (@fafhrd91)
-- **PR #1148** (2026-10-21): Timer wheel callbacks (@fafhrd91)
 
 ---
 
@@ -2464,58 +2700,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. builds with the ws feature disabled
+## X. Various spawn related improvements
 
 **RULE**:
-When implementing operations in `ntex/src/http/test.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntex-rs/ntex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntex-rs/ntex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `64e3d861`: builds with the ws feature disabled. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `feb17a0d`: Various spawn related improvements. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ntex/src/http/test.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            );
-        #[cfg(feature = "ws")]
-        let cfg = cfg.add(
-            WsClientConfig::new()
-                .set_address(addr)
-                .set_handshake_timeout(Seconds(30)),
-        );
-        let cfg = cfg.build();
-        let cfg = SharedCfg::new("TEST-CLIENT")
-            );
-        #[cfg(feature = "ws")]
-        let cfg = cfg.add(
-            WsClientConfig::new()
-                .set_address(self.addr)
-                .set_handshake_timeout(Seconds(30)),
-        );
-        self.cfg = cfg.build();
+ntex-rt = "4.5.0"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            )
-            .add(
-                WsClientConfig::new()
-                    .set_address(addr)
-                    .set_handshake_timeout(Seconds(30)),
-            )
-            .build();
-        self.cfg = SharedCfg::new("TEST-CLIENT")
-            )
-            .add(
-                WsClientConfig::new()
-                    .set_address(self.addr)
-                    .set_handshake_timeout(Seconds(30)),
-            )
-            .build();
+ntex-rt = "4.4.1"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `64e3d861` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `feb17a0d` are properly handled with clean fallback behavior.

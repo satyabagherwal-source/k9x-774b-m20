@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T15:22:48.232Z",
+  "last_updated": "2026-10-28T15:50:45.007Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3214,6 +3214,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-nvidia-cuda-rust"
+    },
+    {
+      "id": "CD-K07J",
+      "directive_title": "Update CHANGELOG.md",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "rqlite/rqlite",
+      "source_commit": "ce215261",
+      "date_staged": "2026-10-28",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-rqlite-rqlite"
     }
   ]
 }

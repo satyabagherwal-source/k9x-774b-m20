@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T15:43:25.813Z",
+  "last_updated": "2026-10-28T15:50:44.910Z",
   "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -25983,7 +25983,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
       "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
-      "content_hash": "c2ee9d907d3025b7f231df94882b8e6a3f335158c42f52c7d85314e6600c5dcb",
+      "content_hash": "adbd11d3a7f2766b779648e849740d2a8e8a5ea407aa9fba6799f23fe76157eb",
       "dossier_path": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "promoted_rules": [
@@ -26066,6 +26066,16 @@
           "number": 4464,
           "title": "Prompt-Weighted Motion Decoupling",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5332,
+          "title": "Topological Closure Constraint in Generative Trajectories",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5333,
+          "title": "Motion Isolation via Semantic Negative Constraints",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -26085,7 +26095,7 @@
         "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv3xukgu",
         "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv4ckgca"
       ],
-      "verified_at": "2026-10-25T22:00:41.776Z",
+      "verified_at": "2026-10-28T15:50:40.170Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40392,8 +40402,8 @@
       "slug": "ntex-rs-ntex",
       "platform": "github",
       "source_url": "https://github.com/ntex-rs/ntex",
-      "source_version": "4a2899d9",
-      "content_hash": "eab86212b914cca0f060f2882aa345060cf14533d1a27a29f2b5b0654dfbb359",
+      "source_version": "feb17a0d",
+      "content_hash": "021d85b8deb9795c788f9abdcfbe41efe7011e78ce405aa8463f6d11795ad1e0",
       "dossier_path": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "promoted_rules": [
@@ -40431,6 +40441,11 @@
           "number": 4794,
           "title": "builds with the ws feature disabled",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5331,
+          "title": "Various spawn related improvements",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40438,7 +40453,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:17:54.955Z",
+      "verified_at": "2026-10-28T15:50:33.788Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46155,8 +46170,8 @@
       "slug": "rqlite-rqlite",
       "platform": "github",
       "source_url": "https://github.com/rqlite/rqlite",
-      "source_version": "a742e3f8",
-      "content_hash": "ff4730875f434bc49b59013b332527edf471f85daee8778ce8e4f8582578a3da",
+      "source_version": "ce215261",
+      "content_hash": "382dce74826b2f3e80e50e89df3419d05e87eb871642355d04fb193e15d201f3",
       "dossier_path": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "promoted_rules": [
@@ -46191,7 +46206,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T11:09:23.000Z",
+      "verified_at": "2026-10-28T15:50:44.885Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -144840,6 +144855,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T15:43:25.795Z"
+    },
+    "rule-5331": {
+      "learning_id": "rule-5331",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5331,
+      "title": "Various spawn related improvements",
+      "source_url": "https://github.com/ntex-rs/ntex",
+      "source_version": "feb17a0d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T15:50:33.788Z"
+    },
+    "rule-5332": {
+      "learning_id": "rule-5332",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5332,
+      "title": "Topological Closure Constraint in Generative Trajectories",
+      "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T15:50:40.170Z"
+    },
+    "rule-5333": {
+      "learning_id": "rule-5333",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5333,
+      "title": "Motion Isolation via Semantic Negative Constraints",
+      "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T15:50:40.170Z"
     }
   },
   "aliases": {
