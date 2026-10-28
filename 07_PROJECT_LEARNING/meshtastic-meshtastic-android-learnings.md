@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md`  
 > **Source**: github ([https://github.com/meshtastic/Meshtastic-Android](https://github.com/meshtastic/Meshtastic-Android))  
-> **Source Version**: `1bedc5de`  
+> **Source Version**: `aa6625eb`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T15:38:16.481Z  
+> **Timestamp**: 2026-10-28T22:45:45.547Z  
 > **Learning ID**: `learn-github-meshtastic-meshtastic-android`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshtastic/Meshtastic-Android](https://github.com/meshtastic/Meshtastic-Android))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T15:38:16.207Z  
+> **Harvest Timestamp**: 2026-10-28T22:45:45.543Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Android application for Meshtastic
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1884 stars
+- **Stars / Engagement**: 1892 stars
 
 ---
 
@@ -1311,11 +1311,11 @@ class AndroidBluetoothRepository(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7778** (2026-10-27): **[Bug]: Weather radar is drawn in 1 km squares when zoomed in**
+  *Symptoms*: ### Steps to reproduce the bug  1. Open the map, turn on the Weather Radar overlay somewhere in the lower 48 with rain on it. 2. Zoom in past about zoom 8.  ### Actual behavior  Rain is drawn as a grid of squares about 1 km across, with stepped edges.  ### Expected behavior  Showers read as rounded shapes with clean edges, keeping NOAA's color scale.  ### Additional information  The radar's data is a grid of roughly 1 km cells (0.01° of longitude). The overlay asks NCEP's WMS for every tile at 256 by 256, and once a tile pixel is finer than a cell the server scales the cells up by copying them, so the squares come from the server: https://github.com/meshtastic/Meshtastic-Android/blob/d0a924d67cb1ab3f532a9e50bc3131e0c81538be/feature/map/src/commonMain/kotlin/org/meshtastic/feature/map/tiles/MapTileCatalogue.kt#L146-L162  The colors are a continuous scale (about a hundred shades), not bands, so contouring them the way the coverage bands were cleaned up in #7767 would change the look. What worked on iOS:  - When a tile pixel is finer than a cell, ask the server for one pixel per cell instead (cells across = tile width in Mercator meters / 1113.2; cells down uses a cell height of 1113.2 / cos(latitude)), with the bounding box padded by one cell on every side so neighboring tiles meet without a seam. - Premultiply, blur by about half a cell (Gaussian, sigma 0.5 cells), scale up to the tile with a cubic B-spline, then crop the padding off. - Draw the edge where the rain is half the
+
 - **Issue #7756** (2026-10-24): **[Bug]: Coverage overlay floor ignores the receiver sensitivity, so the outer edge is wrong**
   *Symptoms*: ### Steps to reproduce the bug  1. Connect to a radio on the LongFast preset and open the Site Planner from the map (the receiver sensitivity is prefilled as -139 dBm). 2. Run an estimate. 3. Optionally, set the receiver sensitivity to -120 dBm and run it again.  ### Actual behavior  The lowest band always starts at -130 dBm, whatever the receiver sensitivity is. With LongFast, everything between -139 and -130 dBm, where a node can still hear the site, is left off the map, so the outer edge of coverage is drawn too small. With a sensitivity of -120 dBm, areas between -130 and -120 dBm are drawn as coverage even though a node there could not hear the site.  ### Expected behavior  The outermost band starts at the receiver sensitivity, as the comment on `toGeoJson` says: the outer edge means "a node here can hear this site at all."  ### Additional information  The style uses fixed `minDbm` / `maxDbm` defaults of -130 / -80 that the form never changes: https://github.com/meshtastic/Meshtastic-Android/blob/48cd68879c88abf193b8f6ad75ca71f58a566dd4/feature/coverage/src/commonMain/kotlin/org/meshtastic/feature/coverage/SitePlannerEstimate.kt#L87-L92 https://github.com/meshtastic/Meshtastic-Android/blob/48cd68879c88abf193b8f6ad75ca71f58a566dd4/feature/map/src/commonMain/kotlin/org/meshtastic/feature/map/component/SitePlannerParams.kt#L46-L47  The sensitivity is prefilled from the preset: https://github.com/meshtastic/Meshtastic-Android/blob/48cd68879c88abf193b8f6ad75ca71f58a566dd4/fea
-
-- **Issue #7755** (2026-10-24): **[Bug]: Coverage estimates don't credit the Mapterhorn terrain they are built from**
-  *Symptoms*: ### Steps to reproduce the bug  1. With hillshade and contours off (or no offline terrain downloaded), open the map. 2. Run a Site Planner coverage estimate and let the overlay load. 3. Look at the map's attribution and the Site Planner form.  ### Actual behavior  The overlay is computed from Mapterhorn terrain (built from CC-BY sources), but nothing on the map or in the form credits it. The Mapterhorn credit only shows while the offline hillshade or contour layer is drawing.  ### Expected behavior  Whenever a coverage overlay is shown, the map credits Mapterhorn the same way it does for hillshade, or the Site Planner form says where the terrain comes from.  ### Additional information  The credit is gated on the offline terrain layers: https://github.com/meshtastic/Meshtastic-Android/blob/48cd68879c88abf193b8f6ad75ca71f58a566dd4/androidApp/src/google/kotlin/org/meshtastic/app/map/MapView.kt#L1031-L1045 https://github.com/meshtastic/Meshtastic-Android/blob/48cd68879c88abf193b8f6ad75ca71f58a566dd4/feature/map-maplibre/src/commonMain/kotlin/org/meshtastic/feature/map/maplibre/layers/TerrainLayers.kt#L102-L103  The estimate's terrain source: https://github.com/meshtastic/Meshtastic-Android/blob/48cd68879c88abf193b8f6ad75ca71f58a566dd4/feature/coverage/src/commonMain/kotlin/org/meshtastic/feature/coverage/MapterhornTiles.kt#L70-L71  Suggested fix: add `MapterhornEndpoints.ATTRIBUTION` to the attribution list whenever a coverage layer is visible (Google flavor), set `attributionHtm
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1332,232 +1332,326 @@ class AndroidBluetoothRepository(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `10297408` (2026-10-22)
-**Commit Message**: chore(deps): update bouncycastle [security] (#7733)
+### Incident Patch 1: `bf71efaa` (2026-10-27)
+**Commit Message**: fix(data): report a failed startup name backfill instead of crashing (#7776)
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `gradle/libs.versions.toml` (modified, +1/-1)
+**File**: `androidApp/proguard-rules.pro` (modified, +3/-0)
 ```diff
-@@ -99,7 +99,7 @@ google-services-gradle = "4.5.0"
- markdown = "0.7.18"
- markdownRenderer = "0.46.0"
- okio = "3.18.2"
--bouncycastle = "1.80"
-+bouncycastle = "1.85"
- uri-kmp = "0.0.21"
- spotless = "8.10.4"
- sceneview = "4.62.0"
+@@ -60,6 +60,9 @@
+ -keepnames class org.meshtastic.app.analytics.GooglePlatformAnalytics*
+ -keepnames class co.touchlab.kermit.**
+ 
++# A stable name keeps withDb timeouts in one Crashlytics/Datadog issue across builds.
++-keepnames class org.meshtastic.core.database.DatabaseOperationTimeoutException
++
+ # ---- Networking (transitive references from Ktor on Android) ----------------
+ 
+ -dontwarn org.conscrypt.**
+```
+
+**File**: `core/data/src/commonMain/kotlin/org/meshtastic/core/data/repository/NodeRepositoryImpl.kt` (modified, +4/-2)
+```diff
+@@ -37,6 +37,7 @@ import kotlinx.coroutines.withContext
+ import org.koin.core.annotation.Named
+ import org.koin.core.annotation.Single
+ import org.meshtastic.core.common.di.PROCESS_LIFECYCLE
++import org.meshtastic.core.common.util.handledLaunch
+ import org.meshtastic.core.data.datasource.NodeInfoReadDataSource
+ import org.meshtastic.core.data.datasource.NodeInfoWriteDataSource
+ import org.meshtastic.core.database.entity.MetadataEntity
+@@ -115,8 +116,9 @@ class NodeRepositoryImpl(
+             .stateIn(processLifecycle.coroutineScope, SharingStarted.Eagerly, emptyMap())
+ 
+     init {
+-        // Backfill denormalized name columns for existing nodes on startup
+-        processLifecycle.coroutineScope.launch {
++        // Backfill denormalized name columns for existing nodes on startup. A withDb timeout or SQL failure here is
++        // reported, not fatal: this scope has no exception handler.
++        processLifecycle.coroutineScope.handledLaunch {
+             processLifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
+                 withContext(dispatchers.io) { nodeInfoWriteDataSource.backfillDenormalizedNames() }
+             }
+```
+
+**File**: `core/data/src/commonTest/kotlin/org/meshtastic/core/data/repository/CommonNodeRepositoryTest.kt` (modified, +29/-0)
+```diff
+@@ -21,7 +21,9 @@ import androidx.lifecycle.LifecycleOwner
+ import androidx.lifecycle.LifecycleRegistry
+ import dev.mokkery.MockMode
+ import dev.mokkery.answering.returns
++import dev.mokkery.answering.throws
+ import dev.mokkery.every
++import dev.mokkery.everySuspend
+ import dev.mokkery.mock
+ import kotlinx.coroutines.Dispatchers
+ import kotlinx.coroutines.flow.MutableStateFlow
+@@ -31,6 +33,7 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
+ import kotlinx.coroutines.test.resetMain
+ import kotlinx.coroutines.test.runTest
+ import kotlinx.coroutines.test.setMain
++import org.meshtastic.core.common.util.Exceptions
+ import org.meshtastic.core.data.datasource.NodeInfoReadDataSource
+ import org.meshtastic.core.data.datasource.NodeInfoWriteDataSource
+ import org.meshtastic.core.database.entity.MyNodeEntity
+@@ -122,4 +125,30 @@ abstract class CommonNodeRepositoryTest {
+ 
+         assertEquals(remoteNodeNum, result)
+     }
++
++    @Test
++    fun `a failing startup name backfill is reported instead of escaping the process scope`() =
++        runTest(testDispatcher) {
++            val failure = IllegalStateException("withDb callback did not finish")
++            val reported = mutableListOf<Throwable>()
++            val previousReporter = Exceptions.reporter
++            Exceptions.reporter = { throwable, _, _ -> reported += throwable }
++            try {
++                val failingWriteDataSource = mock<NodeInfoWriteDataSource>(MockMode.autofill)
++                everySuspend { failingWriteDataSource.backfillDenormalizedNames() } throws failure
++
++                NodeRepositoryImpl(
++                    lifecycleOwner.lifecycle,
++                    readDataSource,
++                    failingWriteDataSource,
++                    dispatchers,
++                    localStatsDataSource,
++                )
++
++                // Coroutine stack-trace recovery may report a copy, so compare what was reported, not identity.
++                assertEquals(listOf(failure.message), reported.map { it.message })
++            } finally {
++                Exceptions.reporter = previousReporter
++            }
++        }
+ }
 ```
 
 ---
 
-### Incident Patch 2: `bb78b38b` (2026-10-24)
-**Commit Message**: fix(coverage): Site Planner estimate placement, floor, offline terrain, threads and credit (#7758)
+### Incident Patch 2: `cb700507` (2026-10-27)
+**Commit Message**: fix(connections): load connect-time card labels without blocking the main thread (#7775)
 
-Co-authored-by: Matt Van Horn <[REDACTED_EMAIL]>
-
-**File**: `.skills/compose-ui/strings-index.txt` (modified, +1/-0)
+**File**: `feature/connections/src/commonMain/kotlin/org/meshtastic/feature/connections/ui/ConnectionsScreen.kt` (modified, +28/-16)
 ```diff
-@@ -1914,6 +1914,7 @@ site_planner_section_receiver
- site_planner_section_simulation
- site_planner_section_transmitter
- site_planner_subtitle
-+site_planner_terrain_credit
- site_planner_tx_power_watts
- site_planner_use_current_location
- site_planner_use_map_center
-```
-
-**File**: `androidApp/src/fdroid/kotlin/org/meshtastic/app/map/component/SitePlannerSlot.kt` (modified, +11/-1)
-```diff
-@@ -17,16 +17,20 @@
- package org.meshtastic.app.map.component
- 
- import androidx.compose.runtime.Composable
-+import androidx.compose.runtime.LaunchedEffect
+@@ -45,6 +45,7 @@ import androidx.compose.runtime.Composable
+ import androidx.compose.runtime.LaunchedEffect
  import androidx.compose.runtime.getValue
-+import androidx.compose.runtime.remember
+ import androidx.compose.runtime.mutableStateOf
++import androidx.compose.runtime.produceState
+ import androidx.compose.runtime.remember
+ import androidx.compose.runtime.setValue
+ import androidx.compose.ui.Alignment
+@@ -54,6 +55,9 @@ import androidx.compose.ui.text.style.TextAlign
+ import androidx.compose.ui.unit.dp
+ import androidx.lifecycle.compose.LifecycleStartEffect
  import androidx.lifecycle.compose.collectAsStateWithLifecycle
++import org.jetbrains.compose.resources.ResourceEnvironment
++import org.jetbrains.compose.resources.getString
++import org.jetbrains.compose.resources.rememberResourceEnvironment
+ import org.jetbrains.compose.resources.stringResource
  import org.koin.compose.viewmodel.koinViewModel
- import org.maplibre.spatialk.geojson.Position
- import org.meshtastic.app.map.MapViewModel
-+import org.meshtastic.feature.coverage.RegionTerrain
- import org.meshtastic.feature.coverage.rememberCoverageEstimate
- import org.meshtastic.feature.map.SharedMapViewModel
- import org.meshtastic.feature.map.component.SitePlannerHost
- import org.meshtastic.feature.map.component.toSitePlannerParams
- import org.meshtastic.feature.map.maplibre.SitePlannerSession
-+import org.meshtastic.feature.map.maplibre.terrain.OfflineTerrainRepository
+ import org.meshtastic.core.model.ConnectionState
+@@ -146,6 +150,7 @@ import org.meshtastic.feature.connections.ui.components.EventFirmwareCard
+ import org.meshtastic.feature.connections.ui.components.LiveUpdateSection
+ import org.meshtastic.feature.connections.ui.components.TransportSelector
+ import org.meshtastic.feature.connections.ui.components.loraSummary
++import org.meshtastic.proto.Config
  
  /**
-  * Runs the Site Planner for the F-Droid map. The estimate becomes a GeoJSON map layer and the map moves to the
-@@ -48,9 +52,15 @@ fun SitePlannerSlot(session: SitePlannerSession) {
-     // A deep link names the node to plan for; a toolbar launch plans for whatever we are connected to.
-     val subject = session.nodeNum?.let { num -> nodes.firstOrNull { it.num == num } } ?: ourNode
- 
-+    val terrain = OfflineTerrainRepository.default
-+    LaunchedEffect(terrain) { terrain.refresh() }
-+    val terrainRegion by terrain.region.collectAsStateWithLifecycle()
-+    val offlineTerrain =
-+        remember(terrainRegion) { listOfNotNull(terrainRegion?.let { RegionTerrain(terrain.tileStore, it.bounds) }) }
+  * Fixed minimum height for the "connected device" card at the top of the Connections screen. Shared across the three UI
+@@ -411,23 +416,19 @@ fun ConnectionsScreen(
+     // Work around CMP-6615 in Compose Multiplatform 1.11.1: Android stringResource enters a blocking resource state.
+     // Keep these stable slots outside AnimatedContent so connection-state transitions do not re-enter resource loading
+     // while the main thread is applying an animation frame.
+-    val firmwareVersion =
+-        ourNode
+-            ?.metadata
+-            ?.firmware_version
+-            ?.takeIf { it.isNotBlank() }
+-            ?.let { stringResource(Res.string.firmware_version, it) }
++    // Labels that first appear on connect load with suspend getString: a first-time stringResource load parks the main
++    // thread until Dispatchers.Default is free, and the handshake keeps it busy.
++    val resourceEnvironment = rememberResourceEnvironment()
++    val rawFirmwareVersion = ourNode?.metadata?.firmware_version?.takeIf { it.isNotBlank() }
++    val firmwareVersion by
++        produceState<String?>(null, rawFirmwareVersion, resourceEnvironment) {
++            value = rawFirmwareVersion?.let { getString(resourceEnvironment, Res.string.firmware_version, it) }
++        }
+     val lora = localConfig.lora
+-    val loraSummaryText =
+-        loraSummary(
+-            lora = lora,
+-            presetLabel = lora?.modem_preset?.schemaLabelRes()?.let { stringResource(it) },
+-            regionLabel = lora?.region?.schemaLabelRes()?.let { stringResource(it) },
+-            customLabel = stringResource(Res.string.lora_preset_custom),
+-        )
+-            ?.let { parts ->
+-                parts.region?.let { stringResource(Res.string.lora_preset_region, parts.preset, it) } ?: parts.preset
+-            }
++    val loraSummaryText by
++        produceState<String?>(null, lora, resourceEnvironment) {
++            value = lora?.let { loraSummaryText(resourceEnvironment, it) }
++        }
+     val currentlyConnectedText =
+         CurrentlyConnectedText(
+             unknownLabel = stringResource(Res.string.unknown),
+@@ -970,3 +971,14 @@ private enum class ConnectionUiState {
+     /** Connected with node info available. */
+     CONNECTED_WITH_NODE,
+ }
 +
-     SitePlannerHost(
-         initialParams = subject.toSitePlannerParams(channelSet),
--        estimate = rememberCoverageEstimate(),
-+        estimate = rememberCoverageEstimate(offlineTerrain),
-         onDismiss = session.onDismiss,
-         onImport = { name, geoJson, latitude, longitude ->
-             mapViewModel.addGeoJsonLayer(name, geoJson)
++private suspend fun loraSummaryText(environment: ResourceEnvironment, lora: Config.LoRaConfig): String? {
++    val parts =
++        loraSummary(
++            lora = lora,
++            presetLabel = lora.modem_preset.schemaLabelRes()?.let { getString(environment, it) },
++            regionLabel = lora.region.schemaLabelRes()?.let { getString(environment, it) },
++            customLabel = getString(environment, Res.string.lora_preset_custom),
++        ) ?: return null
++    return parts.region?.let { getString(environment, Res.string.lora_preset_region, parts.preset, it) } ?: parts.preset
++}
 ```
 
-**File**: `androidApp/src/google/kotlin/org/meshtastic/app/map/MapView.kt` (modified, +19/-3)
-```diff
-@@ -193,6 +193,7 @@ import org.meshtastic.core.ui.util.formatAgo
- import org.meshtastic.core.ui.util.formatPositionTime
- import org.meshtastic.core.ui.util.rememberLocationPermissionState
- import org.meshtastic.core.ui.util.showToast
-+import org.meshtastic.feature.coverage.RegionTerrain
- import org.meshtastic.feature.coverage.rememberCoverageEstimate
- import org.meshtastic.feature.map.BaseMapViewModel.MapFilterState
- import org.meshtastic.feature.map.MapBounds
-@@ -225,6 +226,7 @@ import org.meshtastic.feature.map.layers.MapLayerItem
- import org.meshtastic.feature.map.layers.opacityOf
- import org.meshtastic.feature.map.layers.toPickedMapFile
- import org.meshtastic.feature.map.mergeStationaryRuns
-+import org.meshtastic.feature.map.terrain.GeoBounds
- import org.meshtastic.feature.map.terrain.MapterhornEndpoints
- import org.meshtastic.feature.map.tiles.mapAttributionText
- import org.meshtastic.feature.map.tracerouteNodeSelection
-@@ -1027,12 +1029,14 @@ fun MapView(
-         // alone: an on-disk-only attribution is invisible to anyone who never opens the offline-region manager
-         // sheet, which is exactly the gap this mirrors from the sibling iOS app's own terrain layer. The offline
-         // terrain layer's own credit (Mapterhorn) is folded in the same way, whenever hillshade or contours are
--        // actually rendering.
-+        // actually rendering, or a coverage estimate built from that terrain is shown.
-         val attributionCoveringRegion =
-             cameraPositionState.projection?.visibleRegion?.latLngBounds?.let { mapViewModel.offlineRegionCovering(it) }
-         val offlineRegionActive = offlineOverlayEnabled && attributionCoveringRegion != null
--        val terrainActive =
-+        val terrainDrawn =
-             attributionCoveringRegion?.hasTerrain == true && (terrainHillshadeEnabled || terrainContoursEnabled)
-+        val coverageShown = mapLayers.any { it.layerType == LayerType.COVERAGE && it.isVisible }
-+        val terrainActive = terrainDrawn || coverageShown
-         val attributionText =
-             remember(currentRasterBasemap, enabledOverlayIds, offlineRegionActive, terrainActive) {
-                 val baseAttribution =
-@@ -1234,9 +1238,21 @@ fun MapView(
-         // Route launches retain the selected node; manual map launches continue following our connected node.
-         val onUseNodeLocation: (() -> Pair<Double, Double>)? =
-             launch.nodeLocation(ourNodeInfo)?.let { location -> { location } }
-+        val offlineRegions by mapViewModel.offlineRegions.collectAsStateWithLifecycle()
-+        val offlineTerrain =
-+            remember(offlineRegions) {
-+                offlineRegions
-+                    .filter { it.hasTerrain }
-+                    .map { region ->
-+                        RegionTerrain(
-+                            store = mapViewModel.terrainStoreForRegion(region.id),
-+                            bounds = GeoBounds(region.southLat, region.westLon, region.northLat, region.eastLon),
-+                        )
-+                    }
-+            }
-         SitePlannerHost(
-             initialParams = launch.initialParams,
--            estimate = rememberCoverageEstimate(),
-+            estimate = rememberCoverageEstimate(offlineTerrain),
-             onDismiss = { sitePlannerLaunch = null },
-             onImport = { name, geoJson, latitude, longitude ->
-                 mapViewModel.addGeoJsonLayer(name, geoJson)
-```
+---
 
-**File**: `core/resources/src/commonMain/composeResources/values/strings.xml` (modified, +1/-0)
-```diff
-@@ -1980,6 +1980,7 @@
-     <string name="site_planner_section_simulation">Simulation Options</string>
-     <string name="site_planner_section_transmitter">Site / Transmitter</string>
-     <string name="site_planner_subtitle">Estimate RF coverage for a transmitter</string>
-+    <string name="site_planner_terrain_credit">Terrain data © Mapterhorn</string>
-     <string name="site_planner_tx_power_watts">TX power (W)</string>
-     <string name="site_planner_use_current_location">Use current location</string>
-     <string name="site_planner_use_map_center">Use map center</string>
-```
+### Incident Patch 3: `f9bd3b1d` (2026-10-27)
+**Commit Message**: fix(map): draw weather radar smooth when zoomed in (#7779)
 
-**File**: `desktopApp/src/main/kotlin/org/meshtastic/desktop/map/DesktopSitePlannerSlot.kt` (modified, +11/-1)
+**File**: `androidApp/src/google/kotlin/org/meshtastic/app/map/tiles/RasterTileProvider.kt` (modified, +31/-1)
 ```diff
-@@ -17,17 +17,21 @@
- package org.meshtastic.desktop.map
+@@ -19,11 +19,16 @@ package org.meshtastic.app.map.tiles
+ import co.touchlab.kermit.Logger
+ import com.google.android.gms.maps.model.Tile
+ import com.google.android.gms.maps.model.TileProvider
++import kotlinx.coroutines.CancellationException
++import kotlinx.coroutines.runBlocking
+ import okhttp3.OkHttpClient
+ import okhttp3.Request
++import org.meshtastic.feature.map.tiles.RadarSmoothRequest
+ import org.meshtastic.feature.map.tiles.RasterTileSpec
++import org.meshtastic.feature.map.tiles.smoothedRadarTileSize
+ import org.meshtastic.feature.map.tiles.tileUrl
+ import java.io.IOException
++import kotlin.coroutines.EmptyCoroutineContext
  
- import androidx.compose.runtime.Composable
-+import androidx.compose.runtime.LaunchedEffect
- import androidx.compose.runtime.getValue
-+import androidx.compose.runtime.remember
- import androidx.lifecycle.compose.collectAsStateWithLifecycle
- import org.koin.compose.koinInject
- import org.koin.compose.viewmodel.koinViewModel
- import org.maplibre.spatialk.geojson.Position
-+import org.meshtastic.feature.coverage.RegionTerrain
- import org.meshtastic.feature.coverage.rememberCoverageEstimate
- import org.meshtastic.feature.map.SharedMapViewModel
- import org.meshtastic.feature.map.component.SitePlannerHost
- import org.meshtastic.feature.map.component.toSitePlannerParams
- import org.meshtastic.feature.map.layers.MapLayersManager
- import org.meshtastic.feature.map.maplibre.SitePlannerSession
-+import org.meshtastic.feature.map.maplibre.terrain.OfflineTerrainRepository
+ private val logger = Logger.withTag("RasterTileProvider")
  
- /** Runs the Site Planner for the desktop map; the estimate becomes a GeoJSON map layer and the map moves to it. */
- @Composable
-@@ -42,9 +46,15 @@ fun DesktopSitePlannerSlot(session: SitePlannerSession) {
-     // A deep link names the node to plan for; a toolbar launch plans for whatever we are connected to.
-     val subject = session.nodeNum?.let { num -> nodes.firstOrNull { it.num == num } } ?: ourNode
- 
-+    val terrain = OfflineTerrainRepository.default
-+    LaunchedEffect(terrain) { terrain.refresh() }
-+    val terrainRegion by terrain.region.collectAsStateWithLifecycle()
-+    val offlineTerrain =
-+        remember(terrainRegion) { listOfNotNull(terrainRegion?.let { RegionTerrain(terrain.tileStore, it.bounds) }) }
+@@ -41,7 +46,32 @@ class RasterTileProvider(private val spec: RasterTileSpec, private val client: O
+         // NO_TILE means "there is definitively nothing here" and is cached as such; a zoom outside the source's range
+         // is exactly that, whereas a failed fetch below is not and must stay retryable.
+         val url = spec.tileUrl(x, y, zoom) ?: return TileProvider.NO_TILE
+-        return fetch(url)
++        // A smoothed tile that fails stays a failure: falling back to the plain tile would leave a blocky one cached
++        // beside its smooth neighbors.
++        val smooth = RadarSmoothRequest.from(url)
++        return if (smooth == null) fetch(url) else smoothed(smooth)
++    }
 +
-     SitePlannerHost(
-         initialParams = subject.toSitePlannerParams(channelSet),
--        estimate = rememberCoverageEstimate(),
-+        estimate = rememberCoverageEstimate(offlineTerrain),
-         onDismiss = session.onDismiss,
-         onImport = { name, geoJson, latitude, longitude ->
-             layersManager.addGeoJsonLayer(name, geoJson)
++    // Google calls this off the main thread, so blocking on the render is the same wait the plain fetch below has.
++    private fun smoothed(request: RadarSmoothRequest): Tile? = runBlocking {
++        try {
++            request.render(EmptyCoroutineContext, ::fetchBytes)
++        } catch (e: CancellationException) {
++            throw e
++        } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
++            logger.d(e) { "Radar tile render failed" }
++            null
++        }
++    }
++        ?.let { Tile(smoothedRadarTileSize(spec.tileSize), smoothedRadarTileSize(spec.tileSize), it) }
++
++    private fun fetchBytes(url: String): ByteArray? = try {
++        client.newCall(Request.Builder().url(url).build()).execute().use { response ->
++            if (response.isSuccessful) response.body.bytes() else null
++        }
++    } catch (e: IOException) {
++        logger.d(e) { "Radar cell fetch failed" }
++        null
+     }
+ 
+     private fun fetch(url: String): Tile? = try {
 ```
 
-**File**: `feature/coverage/build.gradle.kts` (modified, +7/-3)
+**File**: `feature/map-maplibre/build.gradle.kts` (modified, +4/-0)
 ```diff
-@@ -34,17 +34,21 @@ kotlin {
-             implementation(libs.kp1812)
-             implementation(libs.kotlinx.coroutines.core)
-             implementation(projects.feature.map)
--            implementation(projects.feature.mapTerrain)
-+            // api: the estimate's public signatures take a TerrainTileStore.
-+            api(projects.feature.mapTerrain)
+@@ -16,6 +16,7 @@
+  */
+ plugins {
+     alias(libs.plugins.meshtastic.kmp.feature)
++    alias(libs.plugins.meshtastic.kmp.jvm.android)
+     alias(libs.plugins.meshtastic.kotlinx.serialization)
+ }
+ 
+@@ -37,6 +38,7 @@ kotlin {
+     sourceSets {
+         commonMain.dependencies {
              implementation(projects.core.common)
--            implementation(projects.core.di)
++            implementation(projects.core.di)
+             implementation(projects.core.model)
+             implementation(projects.core.repository)
+             implementation(projects.core.resources)
+@@ -48,6 +50,8 @@ kotlin {
+             implementation(projects.feature.mapTerrain)
+ 
+             implementation(libs.kotlinx.collections.immutable)
++            // The radar smoothing fetches NOAA's cells through the app's shared client.
++            implementation(libs.ktor.client.core)
+             // The KML conversion cache lives on disk; Okio is how common code reaches it.
              implementation(libs.okio)
-             implementation(libs.ktor.client.core)
+             // Imported layers can name an icon image by URL; Coil fetches and decodes it.
+```
+
+**File**: `feature/map-maplibre/src/commonMain/kotlin/org/meshtastic/feature/map/maplibre/MeshMap.kt` (modified, +2/-0)
+```diff
+@@ -89,6 +89,7 @@ import org.meshtastic.feature.map.maplibre.style.MapColors
+ import org.meshtastic.feature.map.maplibre.style.MapOverlay
+ import org.meshtastic.feature.map.maplibre.style.toBaseStyle
+ import org.meshtastic.feature.map.maplibre.style.zoomRange
++import org.meshtastic.feature.map.maplibre.tiles.InstallRadarSmoothing
+ import kotlin.math.floor
+ import kotlin.time.Duration.Companion.seconds
+ import org.maplibre.compose.layers.LocationIndicatorDefaults as CoreLocationIndicatorDefaults
+@@ -153,6 +154,7 @@ fun rememberMeshMapState(
+             MapNodePolicy.visibleNodes(nodes, filterState, nowSeconds, myNodeInfo?.myNodeNum)
          }
  
-         jvmMain.dependencies { implementation(libs.ktor.client.java) }
-         androidMain.dependencies { implementation(libs.ktor.client.okhttp) }
++    InstallRadarSmoothing()
+     val mapState =
+         rememberMapState(baseStyle = basemap.toBaseStyle(), initialCameraPosition = initialCameraPosition) {
+             val state = checkNotNull(LocalMapState.current)
+```
+
+**File**: `feature/map-maplibre/src/commonMain/kotlin/org/meshtastic/feature/map/maplibre/SecondaryMapScaffold.kt` (modified, +5/-2)
+```diff
+@@ -46,6 +46,7 @@ import org.meshtastic.feature.map.maplibre.layers.RasterBasemapLayer
+ import org.meshtastic.feature.map.maplibre.style.Basemap
+ import org.meshtastic.feature.map.maplibre.style.toBaseStyle
+ import org.meshtastic.feature.map.maplibre.style.zoomRange
++import org.meshtastic.feature.map.maplibre.tiles.InstallRadarSmoothing
+ import org.maplibre.compose.overlay.MapOverlay as MaplibreOverlay
  
--        commonTest.dependencies { implementation(libs.kotlinx.coroutines.test) }
-+        commonTest.dependencies {
-+            implementation(libs.kotlinx.coroutines.test)
-+            implementation(libs.ktor.client.mock)
-+            implementation(libs.okio.fakefilesystem)
-+        }
-         jvmTest.dependencies { implementation(libs.kotlinx.coroutines.test) }
+ /**
+@@ -72,11 +73,13 @@ internal fun rememberSecondaryMapState(
+     basemaps: BasemapSelection,
+     initialCameraPosition: CameraPosition = CameraPosition(),
+     content: @Composable () -> Unit,
+-): MapState =
+-    rememberMapState(baseStyle = basemaps.current.toBaseStyle(), initialCameraPosition = initialCameraPosition) {
++): MapState {
++    InstallRadarSmoothing()
++    return rememberMapState(baseStyle = basemaps.current.toBaseStyle(), initialCameraPosition = initialCameraPosition) {
+         (basemaps.current as? Basemap.Raster)?.let { RasterBasemapLayer(it) }
+         content()
      }
- }
++}
+ 
+ /**
+  * The map surface the maps outside the main one all draw on.
 ```
 
-**File**: `feature/coverage/src/androidMain/kotlin/org/meshtastic/feature/coverage/CoverageCompute.android.kt` (added, +19/-0)
+**File**: `feature/map-maplibre/src/commonMain/kotlin/org/meshtastic/feature/map/maplibre/tiles/RadarSmoothing.kt` (added, +42/-0)
 ```diff
-@@ -0,0 +1,19 @@
+@@ -0,0 +1,42 @@
 +/*
 + * Copyright (c) 2026 Meshtastic LLC
 + *
@@ -1574,75 +1668,37 @@ Co-authored-by: Matt Van Horn <[REDACTED_EMAIL]>
 + * You should have received a copy of the GNU General Public License
 + * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 + */
-+package org.meshtastic.feature.coverage
++package org.meshtastic.feature.map.maplibre.tiles
 +
-+internal actual fun processorCount(): Int = Runtime.getRuntime().availableProcessors()
-```
-
-**File**: `feature/coverage/src/commonMain/kotlin/org/meshtastic/feature/coverage/CoverageCompute.kt` (added, +32/-0)
-```diff
-@@ -0,0 +1,32 @@
-+/*
-+ * Copyright (c) 2026 Meshtastic LLC
-+ *
-+ * This program is free software: you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation, either version 3 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-+ */
-+package org.meshtastic.feature.coverage
-+
-+import kotlinx.coroutines.CoroutineDispatcher
-+import kotlinx.coroutines.Dispatchers
++import androidx.compose.runtime.Composable
++import androidx.compose.runtime.remember
++import io.ktor.client.HttpClient
++import org.koin.compose.koinInject
++import org.meshtastic.core.di.CoroutineDispatchers
++import kotlin.coroutines.CoroutineContext
 +
 +/**
-+ * Where a coverage estimate's CPU work runs: [Dispatchers.Default] with one worker held back. The mesh service shares
-+ * Default, and a sweep queues hundreds of radials, so an unlimited one would leave incoming radio data waiting on it.
++ * Draws NOAA's weather radar smooth where its 1 km cells would otherwise show as squares.
++ *
++ * Installs a resource provider on MapLibre's process-wide runtime, so it must run before the first map composes; both
++ * map entry points call it ahead of `rememberMapState`. Safe to call on every composition.
 + */
-+@Suppress("InjectDispatcher") // the sweep and tile decode are built outside DI
-+internal val coverageComputeDispatcher: CoroutineDispatcher by lazy {
-+    Dispatchers.Default.limitedParallelism(maxOf(1, processorCount() - 1))
++@Composable
++internal fun InstallRadarSmoothing() {
++    val client: HttpClient = koinInject()
++    val dispatchers: CoroutineDispatchers = koinInject()
++    remember(client) { installRadarSmoothing(client, dispatchers.default) }
 +}
 +
-+/** CPU cores available to the process; common code has no API for it. */
-+internal expect fun processorCount(): Int
++/**
++ * Puts the radar provider on MapLibre's default runtime, once per process. Does nothing where the runtime lacks one.
++ */
++internal expect fun installRadarSmoothing(client: HttpClient, renderContext: CoroutineContext)
 ```
 
----
-
-### Incident Patch 3: `1bedc5de` (2026-10-24)
-**Commit Message**: fix(coverage): Mapterhorn credit on MapLibre and antimeridian regions (#7759)
-
-**File**: `feature/coverage/src/commonMain/kotlin/org/meshtastic/feature/coverage/RegionTerrain.kt` (modified, +9/-2)
+**File**: `feature/map-maplibre/src/iosMain/kotlin/org/meshtastic/feature/map/maplibre/tiles/RadarSmoothing.ios.kt` (added, +22/-0)
 ```diff
-@@ -36,5 +36,12 @@ internal fun TileIndex.bounds(): GeoBounds {
-     )
- }
- 
--internal fun GeoBounds.intersects(other: GeoBounds): Boolean =
--    west < other.east && other.west < east && south < other.north && other.south < north
-+/** Whether the two overlap. A box whose west is east of its east crosses the antimeridian. */
-+internal fun GeoBounds.intersects(other: GeoBounds): Boolean = south < other.north &&
-+    other.south < north &&
-+    longitudeSpans().any { (w, e) -> other.longitudeSpans().any { (ow, oe) -> w < oe && ow < e } }
-+
-+private fun GeoBounds.longitudeSpans(): List<Pair<Double, Double>> =
-+    if (west <= east) listOf(west to east) else listOf(west to MAX_LONGITUDE, -MAX_LONGITUDE to east)
-+
-+private const val MAX_LONGITUDE = 180.0
-```
-
-**File**: `feature/coverage/src/commonTest/kotlin/org/meshtastic/feature/coverage/RegionTerrainTest.kt` (added, +44/-0)
-```diff
-@@ -0,0 +1,44 @@
+@@ -0,0 +1,22 @@
 +/*
 + * Copyright (c) 2026 Meshtastic LLC
 + *
@@ -1659,239 +1715,160 @@ Co-authored-by: Matt Van Horn <[REDACTED_EMAIL]>
 + * You should have received a copy of the GNU General Public License
 + * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 + */
-+package org.meshtastic.feature.coverage
++package org.meshtastic.feature.map.maplibre.tiles
 +
-+import org.meshtastic.feature.map.terrain.GeoBounds
-+import kotlin.test.Test
-+import kotlin.test.assertFalse
-+import kotlin.test.assertTrue
++import io.ktor.client.HttpClient
++import kotlin.coroutines.CoroutineContext
 +
-+class RegionTerrainTest {
++internal actual fun installRadarSmoothing(client: HttpClient, renderContext: CoroutineContext) = Unit
+```
+
+**File**: `feature/map-maplibre/src/jvmAndroidMain/kotlin/org/meshtastic/feature/map/maplibre/tiles/RadarSmoothing.jvmAndroid.kt` (added, +88/-0)
+```diff
+@@ -0,0 +1,88 @@
++/*
++ * Copyright (c) 2026 Meshtastic LLC
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
++ */
++package org.meshtastic.feature.map.maplibre.tiles
 +
-+    // Fiji, west 177 to east -178: across the antimeridian.
-+    private val acrossTheAntimeridian = GeoBounds(south = -19.0, west = 177.0, north = -16.0, east = -178.0)
++import co.touchlab.kermit.Logger
++import io.ktor.client.HttpClient
++import io.ktor.client.request.get
++import io.ktor.client.statement.bodyAsBytes
++import io.ktor.http.isSuccess
++import kotlinx.coroutines.CancellationException
++import org.maplibre.compose.map.DefaultMapRuntime
++import org.maplibre.compose.resource.MapResourceError
++import org.maplibre.compose.resource.MapResourceKind
++import org.maplibre.compose.resource.MapResourceLoad
++import org.maplibre.compose.resource.MapResourceLoadRequest
++import org.maplibre.compose.resource.MapResourceProvider
++import org.maplibre.compose.resource.MapResourceRequest
++import org.meshtastic.feature.map.tiles.RadarSmoothRequest
++import kotlin.concurrent.atomics.AtomicBoolean
++import kotlin.concurrent.atomics.ExperimentalAtomicApi
++import kotlin.coroutines.CoroutineContext
++import kotlin.time.Clock
++import kotlin.time.Duration.Companion.minutes
 +
-+    @Test
-+    fun aWrappedRegionMeetsGroundOnBothSidesOfTheLine() {
-+        assertTrue(acrossTheAntimeridian.intersects(GeoBounds(-18.0, 178.0, -17.0, 179.0)))
-+        assertTrue(acrossTheAntimeridian.intersects(GeoBounds(-18.0, -179.5, -17.0, -179.0)))
++private val logger = Logger.withTag("RadarSmoothing")
++
++/** NOAA serves the radar with `max-age=120`; a smoothed tile is as fresh as the one it was cut from. */
++private val RADAR_TILE_LIFETIME = 2.minutes
++
++@OptIn(ExperimentalAtomicApi::class)
++private val installed = AtomicBoolean(false)
++
++@OptIn(ExperimentalAtomicApi::class)
++internal actual fun installRadarSmoothing(client: HttpClient, renderContext: CoroutineContext) {
++    if (!installed.compareAndSet(expectedValue = false, newValue = true)) return
++    runCatching { DefaultMapRuntime.configure { resourceProvider = RadarResourceProvider(client, renderContext) } }
++        .onFailure { logger.w(it) { "Could not install the radar resource provider" } }
++}
++
++/**
++ * Serves the radar's tiles smoothed once a tile pixel is finer than a radar cell, and declines everything else so
++ * MapLibre fetches it natively: other layers, other hosts, and radar tiles zoomed out far enough to need nothing.
++ */
++internal class RadarResourceProvider(private val client: HttpClient, private val renderContext: CoroutineContext) :
++    MapResourceProvider {
++    override fun accepts(request: MapResourceRequest): Boolean =
++        request.kind == MapResourceKind.Tile && RadarSmoothRequest.from(request.url) != null
++
++    override suspend fun load(request: MapResourceLoadRequest): MapResourceLoad {
++        val smooth =
++            RadarSmoothRequest.from(request.url) ?: return failed(MapResourceError.Other, "Not a smoothable radar tile")
++        val bytes =
++            try {
++                smooth.render(renderContext, ::fetch)
++            } catch (e: CancellationException) {
++                throw e
++            } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
++                logger.d(e) { "Radar tile render failed" }
++                null
++            }
++        return if (bytes == null) {
++            failed(MapResourceError.Connection, "Radar tile unavailable")
++        } else {
++            MapResourceLoad.Bytes(bytes = bytes, expires = Clock.System.now() + RADAR_TILE_LIFETIME)
++        }
 +    }
 +
-+    @Test
-+    fun aWrappedRegionMissesGroundBetweenItsEnds() {
-+        assertFalse(acrossTheAntimeridian.intersects(GeoBounds(-18.0, 0.0, -17.0, 1.0)))
++    private suspend fun fetch(url: String): ByteArray? {
++        val response = client.get(url)
++        return if (response.status.isSuccess()) response.bodyAsBytes() else null
 +    }
 +
-+    @Test
-+    fun boxesThatOnlyTouchDoNotIntersect() {
-+        assertFalse(GeoBounds(0.0, 0.0, 1.0, 1.0).intersects(GeoBounds(0.0, 1.0, 1.0, 2.0)))
-+    }
++    private fun failed(reason: MapResourceError, message: String) = MapResourceLoad.Failed(reason, message)
 +}
 ```
 
-**File**: `feature/map-maplibre/src/commonMain/kotlin/org/meshtastic/feature/map/maplibre/MapLibreMapViewProvider.kt` (modified, +3/-1)
+**File**: `feature/map/src/androidMain/kotlin/org/meshtastic/feature/map/tiles/RasterPixels.android.kt` (added, +41/-0)
 ```diff
-@@ -147,6 +147,7 @@ class MapLibreMapViewProvider(
-         val location = rememberLocationControls()
-         val waypoints = rememberWaypointEditing()
-         val screen = rememberMapScreenState(waypointId = waypointId, sitePlannerNodeNum = sitePlannerNodeNum)
-+        val layers = customLayers()
- 
-         val mapState =
-             rememberMapScreenMapState(
-@@ -155,7 +156,7 @@ class MapLibreMapViewProvider(
-                 screen = screen,
-                 waypoints = waypoints,
-                 location = location,
--                customLayers = customLayers(),
-+                customLayers = layers,
-                 navigateToNodeDetails = navigateToNodeDetails,
-             )
- 
-@@ -170,6 +171,7 @@ class MapLibreMapViewProvider(
-                 mapState = mapState,
-                 modifier = Modifier.fillMaxSize(),
-                 basemap = basemaps.current,
-+                extraCredits = layers.mapNotNull { it.attributionHtml },
-                 onMapLongClick = waypoints.onLongPress,
-                 onMapClick = waypoints.onMapTap,
-             )
-```
-
-**File**: `feature/map-maplibre/src/commonMain/kotlin/org/meshtastic/feature/map/maplibre/MeshMap.kt` (modified, +6/-2)
-```diff
-@@ -73,7 +73,7 @@ import org.meshtastic.feature.map.BaseMapViewModel
- import org.meshtastic.feature.map.MapNodePolicy
- import org.meshtastic.feature.map.component.MapEngineUnavailable
- import org.meshtastic.feature.map.component.MeshMapFitPadding
--import org.meshtastic.feature.map.maplibre.component.MeshMapOrnaments
-+import org.meshtastic.feature.map.maplibre.component.meshMapOrnaments
- import org.meshtastic.feature.map.maplibre.geojson.ClusterMember
- import org.meshtastic.feature.map.maplibre.geojson.rememberFeatureSource
- import org.meshtastic.feature.map.maplibre.layers.CustomLayer
-@@ -222,6 +222,8 @@ fun MeshMap(
-     mapState: MapState,
-     modifier: Modifier = Modifier,
-     basemap: Basemap = Basemaps.default,
-+    /** HTML credits for drawn data no style source carries; see [meshMapOrnaments]. */
-+    extraCredits: List<String> = emptyList(),
-     /** Called with the pressed position on a long press, which is how a new waypoint gets placed. */
-     onMapLongClick: (Position) -> Unit = {},
-     /** Called with the tapped position. Used to collect the two corners of a waypoint's geofence bounding box. */
-@@ -240,6 +242,8 @@ fun MeshMap(
-     }
- 
-     val zoomRange = basemap.zoomRange()
-+    val credits = extraCredits.distinct()
-+    val ornaments = remember(credits) { meshMapOrnaments(credits) }
-     MaplibreMap(
-         modifier = modifier,
-         state = mapState,
-@@ -267,7 +271,7 @@ fun MeshMap(
-                 }
-             }
-         },
--        overlay = { include(MeshMapOrnaments) },
-+        overlay = { include(ornaments) },
-     )
- }
- 
-```
-
-**File**: `feature/map-maplibre/src/commonMain/kotlin/org/meshtastic/feature/map/maplibre/NodeTrackMap.kt` (modified, +1/-1)
-```diff
-@@ -173,7 +173,7 @@ fun MapLibreNodeTrackMap(
-                 ?.let { selected -> positions.firstOrNull { it.time == selected } },
-             displayUnits = displayUnits,
-             // Clear of the wordmark and attribution button along the bottom edge, which every map shows.
--            // See MeshMapOrnaments.
-+            // See meshMapOrnaments.
-             modifier =
-             Modifier.align(Alignment.BottomStart)
-                 .padding(start = CARD_INSET.dp, end = CARD_INSET.dp, bottom = ORNAMENT_CLEARANCE.dp),
-```
-
-**File**: `feature/map-maplibre/src/commonMain/kotlin/org/meshtastic/feature/map/maplibre/SecondaryMaps.kt` (modified, +1/-1)
-```diff
-@@ -449,7 +449,7 @@ internal const val CARD_INSET = 8
- /**
-  * Height to leave for the map's wordmark and attribution button, which every map shows.
-  *
-- * See [org.meshtastic.feature.map.maplibre.component.MeshMapOrnaments].
-+ * See [org.meshtastic.feature.map.maplibre.component.meshMapOrnaments].
-  */
- internal const val ORNAMENT_CLEARANCE = 40
- private const val CARD_PADDING = 8
-```
-
-**File**: `feature/map-maplibre/src/commonMain/kotlin/org/meshtastic/feature/map/maplibre/component/MapOrnaments.kt` (modified, +25/-10)
-```diff
-@@ -69,8 +69,11 @@ import org.maplibre.compose.overlay.MapOverlay as MaplibreOverlay
-  *
-  * Scale-bar units are left to the library, which picks them by region — the same locale-driven approach the rest of the
-  * app takes through `localeUnitsProvider`.
+@@ -0,0 +1,41 @@
++/*
++ * Copyright (c) 2026 Meshtastic LLC
 + *
-+ * [extraCredits] are HTML credits for data no style source carries, such as the terrain under a coverage estimate,
-+ * which is drawn from a GeoJSON source that has no attribution field. They join the style's own, deduplicated.
-  */
--internal val MeshMapOrnaments: MaplibreOverlay = MaplibreOverlay {
-+internal fun meshMapOrnaments(extraCredits: List<String>): MaplibreOverlay = MaplibreOverlay {
-     val mapState = checkNotNull(LocalMapState.current)
-     val viewportInsets = LocalViewportInsets.current
- 
-@@ -89,18 +92,24 @@ internal val MeshMapOrnaments: MaplibreOverlay = MaplibreOverlay {
-             zoom = { mapState.cameraPosition.zoom },
-             modifier = Modifier.align(Alignment.TopStart),
-         )
-+        if (extraCredits.isNotEmpty()) {
-+            // Ours rather than the library's button, which draws nothing when the style itself credits nobody, as a
-+            // custom raster basemap may not.
-+            MaplibreLogo(Modifier.align(Alignment.BottomStart))
-+            CreditButton(Modifier.align(Alignment.BottomEnd), extraCredits = extraCredits, startExpanded = true)
-+        }
-     }
- 
-     // The logo and the attribution button, in the places `MapOverlay.Default` puts them.
--    include(MaplibreOverlay.AttributionOnly)
-+    if (extraCredits.isEmpty()) include(MaplibreOverlay.AttributionOnly)
- }
- 
- /**
-  * `MapOverlay.Default` with the credit collapsed, for a map too small to host the credit without it overflowing: the
-  * scale bar, the wordmark and the button all stay, and the button is what reveals the text.
-  *
-- * Composed rather than reached for because the library cannot be asked for it — [CollapsedAttributionButton] says why —
-- * and the insets are spelled out because its `DefaultControls` is internal to it.
-+ * Composed rather than reached for because the library cannot be asked for it — [CreditButton] says why — and the
-+ * insets are spelled out because its `DefaultControls` is internal to it.
-  */
- internal val CollapsedAttributionOrnaments: MaplibreOverlay = MaplibreOverlay {
-     val mapState = checkNotNull(LocalMapState.current)
-@@ -119,7 +128,7 @@ internal val CollapsedAttributionOrnaments: MaplibreOverlay = MaplibreOverlay {
-             modifier = Modifier.align(Alignment.TopStart),
-         )
-         MaplibreLogo(Modifier.align(Alignment.BottomStart))
--        CollapsedAttributionButton(Modifier.align(Alignment.BottomEnd))
-+        CreditButton(Modifier.align(Alignment.BottomEnd))
-     }
- }
- 
-@@ -130,22 +139,28 @@ internal val CollapsedAttributionOrnaments: MaplibreOverlay = MaplibreOverlay {
- private const val CREDIT_WIDTH_FRACTION = 0.55f
- 
- /**
-- * The library's attribution button, starting collapsed.
-+ * The library's attribution button, with the expanded state and the credit list held here.
-  *
-  * `ExpandingAttributionButton` holds its own `expanded` flag, initialised to `true` and not settable from outside, so
-  * `collapsedStyle` only styles the branch it is already in and the credit still opens. Holding the flag here is what
-- * makes it start shut; everything else — icon, label, links — still comes from the library.
-+ * lets it start shut; everything else — icon, label, links — still comes from the library. It also returns before
-+ * drawing anything when the style credits nobody, which would drop [extraCredits] with it.
-  */
- @Composable
--private fun CollapsedAttributionButton(modifier: Modifier = Modifier) {
-+private fun CreditButton(
-+    modifier: Modifier = Modifier,
-+    extraCredits: List<String> = emptyList(),
-+    startExpanded: Boolean = false,
-+) {
-     val mapState = checkNotNull(LocalMapState.current)
-     val mapStyle = mapState.style
-     // Derived, not remembered: a basemap arrives as a style URL, so its sources are still empty on the first
-     // composition and a remembered list would never re-read. As in the library's own button.
--    val attributions by remember(mapStyle) { derivedStateOf { mapStyle.attributions() } }
-+    val attributions by
-+        remember(mapStyle, extraCredits) { derivedStateOf { (mapStyle.attributions() + extraCredits).distinct() } }
-     if (attributions.isEmpty()) return
- 
--    var expanded by remember(mapStyle) { mutableStateOf(false) }
-+    var expanded by remember(mapStyle) { mutableStateOf(startExpanded) }
- 
-     // As the library's button: a gesture closes the credit, so it does not sit over a short map after a pan. Narrowed
-     // to gestures, or the programmatic moves our own zoom controls make would fold it away mid-animation.
-```
-
-**File**: `feature/map-maplibre/src/commonMain/kotlin/org/meshtastic/feature/map/maplibre/component/ZoomControls.kt` (modified, +1/-1)
-```diff
-@@ -51,7 +51,7 @@ private const val ZOOM_BOTTOM_INSET = 56
-  * somewhere else.
-  *
-  * Lifted clear of the wordmark and attribution button along the bottom edge, which every map shows. See
-- * [MeshMapOrnaments] for why the main map carries the credit outright and the small maps behind the button.
-+ * [meshMapOrnaments] for why the main map carries the credit outright and the small maps behind the button.
-  */
- @Composable
- internal fun BoxScope.MapZoom(mapState: MapState, basemap: Basemap) {
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
++ */
++package org.meshtastic.feature.map.tiles
++
++import android.graphics.Bitmap
++import android.graphics.BitmapFactory
++import java.io.ByteArrayOutputStream
++
++private const val PNG_QUALITY = 100
++
++internal actual fun decodePngPixels(bytes: ByteArray): RasterPixels? {
++    // inPremultiplied = false keeps the colour of a faint pixel intact for the smoothing, which premultiplies itself.
++    val options = BitmapFactory.Options().apply { inPremultiplied = false }
++    val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size, options) ?: return null
++    val pixels = IntArray(bitmap.width * bitmap.height)
++    bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
++    return RasterPixels(bitmap.width, bitmap.height, pixels).also { bitmap.recycle() }
++}
++
++internal actual fun encodePngPixels(pixels: RasterPixels): ByteArray {
++    val bitmap = Bitmap.createBitmap(pixels.width, pixels.height, Bitmap.Config.ARGB_8888)
++    bitmap.setPixels(pixels.argb, 0, pixels.width, 0, 0, pixels.width, pixels.height)
++    val stream = ByteArrayOutputStream()
++    bitmap.compress(Bitmap.CompressFormat.PNG, PNG_QUALITY, stream)
++    bitmap.recycle()
++    return stream.toByteArray()
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7759** (2026-10-24): fix(coverage): Mapterhorn credit on MapLibre and antimeridian regions (@jamesarich)
-- **PR #7758** (2026-10-24): fix(coverage): Site Planner estimate placement, floor, offline terrain, threads and credit (@jamesarich)
-- **PR #7757** (closed): fix: center coverage bands on computed grid samples (@mvanhorn)
-- **PR #7751** (2026-10-24): chore(deps): update org.meshtastic:kp1812 to v0.2.0 (@renovate[bot])
-- **PR #7750** (2026-10-23): chore(claude): route the commit and push hooks through gradle-queue (@jamesarich)
-- **PR #7749** (2026-10-23): fix: surface routing NAKs on remote admin and node requests (@jamesarich)
+- **PR #7799** (2026-10-28): chore(deps): update org.meshtastic:protobufs to v2.8.1.22-gc858ad1-snapshot (@renovate[bot])
+- **PR #7797** (2026-10-28): chore: Scheduled updates (Firmware, Hardware, Translations) (@jamesarich)
+- **PR #7796** (2026-10-28): chore: Scheduled updates (Firmware, Hardware, Translations) (@jamesarich)
+- **PR #7791** (2026-10-28): chore(deps): update org.meshtastic:protobufs to v2.8.1.21-gf4c4ff9-snapshot (@renovate[bot])
+- **PR #7790** (2026-10-28): chore(deps): update com.android.tools:common to v32.5.0 (@renovate[bot])
+- **PR #7789** (2026-10-28): chore(deps): update agp to v9.5.0 (@renovate[bot])
 
 ---
 
@@ -1911,28 +1888,30 @@ Co-authored-by: Matt Van Horn <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update bouncycastle [security] (#7733)
+## X. data): report a failed startup name backfill instead of crashing (#7776)
 
 **RULE**:
-When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshtastic/Meshtastic-Android. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `androidApp/proguard-rules.pro`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshtastic/Meshtastic-Android. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `10297408`: deps): update bouncycastle [security] (#7733). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bf71efaa`: data): report a failed startup name backfill instead of crashing (#7776). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `androidApp/proguard-rules.pro`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-bouncycastle = "1.85"
+# A stable name keeps withDb timeouts in one Crashlytics/Datadog issue across builds.
+-keepnames class org.meshtastic.core.database.DatabaseOperationTimeoutException
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-bouncycastle = "1.80"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `10297408` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bf71efaa` are properly handled with clean fallback behavior.

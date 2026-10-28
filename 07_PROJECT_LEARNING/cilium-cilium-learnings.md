@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `028bd9d9`  
+> **Source Version**: `dbe91960`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T18:57:49.942Z  
+> **Timestamp**: 2026-10-28T22:45:51.881Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T18:57:49.934Z  
+> **Harvest Timestamp**: 2026-10-28T22:45:51.660Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25728 stars
+- **Stars / Engagement**: 25729 stars
 
 ---
 
@@ -1260,7 +1260,7 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
 - **Issue #49691** (2026-10-28): **docs: document Standalone DNS Proxy trust limitation**
-  *Symptoms*: Describe how node host-network access to the unauthenticated localhost gRPC API permits DNS mapping injection, FQDN egress-policy bypass, and node DNS policy disclosure for Standalone DNS Proxy.  ```release-note docs: document Standalone DNS Proxy trust limitation ``` AIL: 1
+  *Symptoms*: Describe how node host-network access to the unauthenticated localhost gRPC API permits DNS mapping injection, FQDN egress-policy bypass, and node DNS policy disclosure for Standalone DNS Proxy.  ```release-note docs: document Standalone DNS Proxy trust limitation ``` AIL: 1  Reported-by: @r0binak
   **Post-Mortem & Fix Analysis**:
   > /test
 
@@ -1282,53 +1282,211 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `028bd9d9` (2026-10-28)
-**Commit Message**: docs: document Standalone DNS Proxy trust limitation
+### Incident Patch 1: `dbe91960` (2026-10-02)
+**Commit Message**: fqdn: move mark-alive check into TestZombiesDumpAlive
 
-Describe how node host-network access to the unauthenticated localhost
-gRPC API permits DNS mapping injection, FQDN egress-policy bypass, and
-node DNS policy disclosure.
+TestZombiesDumpAlive already tests a CT GC run that marks zombies
+alive. Add the missing follow-up there and drop the same check from
+the new test, which now only covers the grace-period boundary and is
+renamed to TestZombiesGracePeriod.
 
-Signed-off-by: Vipul Singh <[REDACTED_EMAIL]>
+Signed-off-by: henockt <[REDACTED_EMAIL]>
 
-**File**: `Documentation/security/standalone-dns-proxy.rst` (modified, +3/-0)
+**File**: `pkg/fqdn/cache_test.go` (modified, +33/-46)
 ```diff
-@@ -212,6 +212,9 @@ Limitations
+@@ -1065,6 +1065,16 @@ func TestZombiesDumpAlive(t *testing.T) {
+ 	cidrMatcher = func(a netip.Addr) bool { return prefix.Contains(a) }
+ 	alive = zombies.DumpAlive(cidrMatcher)
+ 	require.Empty(t, alive)
++
++	// A later CT GC run that does not mark 1.1.1.1 and 2.2.2.2 alive
++	// supersedes the earlier mark, they are no longer alive. 1.1.1.2 only
++	// survives because CT GC has not completed two runs since it was added.
++	now = now.Add(5 * time.Minute)
++	zombies.SetCTGCTime(now, now.Add(5*time.Minute))
++	alive = zombies.DumpAlive(nil)
++	assertZombiesContain(t, alive, map[string][]string{
++		"1.1.1.2": {"test2.com"},
++	})
+ }
  
- The Standalone DNS Proxy alpha release has the following known limitations:
+ func TestOverlimitPreferNewerEntries(t *testing.T) {
+@@ -1552,14 +1562,10 @@ func TestZombieDeepCopyDoesNotShareNames(t *testing.T) {
+ 		"mutating the copy must not affect the original")
+ }
  
-+* The Standalone DNS Proxy's unauthenticated localhost gRPC API allows processes
-+  with node host-network access, including ``hostNetwork`` pods, to inject DNS
-+  mappings, bypass FQDN egress policies, and read node DNS policy state.
- * The standalone DNS proxy uses the agent's DNS configuration. The ``dnsProxy.proxyPort`` 
-   must be explicitly set to a non-zero value when the standalone DNS proxy is enabled 
-   (it does not automatically select a free port).
+-// TestZombieLivenessConditions pins the liveness boundaries of isConnectionAlive.
+-// A zombie is dead only once all of these hold:
+-// 1. CT GC ran after DeletePendingAt plus the configured grace period,
+-// 2. that CT GC run did not mark the zombie alive, and
+-// 3. CT GC has run at least twice since the zombie was added.
+-//
+-// This test pins the exact boundaries of conditions 1 and 2.
+-func TestZombieLivenessConditions(t *testing.T) {
++// TestZombiesGracePeriod pins the grace-period deletion condition of
++// isConnectionAlive. a zombie may only be deleted once CT GC has run strictly
++// after DeletePendingAt plus the configured grace period.
++func TestZombiesGracePeriod(t *testing.T) {
+ 	logger := hivetest.Logger(t)
+ 
+ 	grace := 5 * time.Minute
+@@ -1573,45 +1579,26 @@ func TestZombieLivenessConditions(t *testing.T) {
+ 	now := time.Now()
+ 	addr := netip.MustParseAddr("1.1.1.1")
+ 
+-	// newZombie returns a mapping with a single zombie whose DeletePendingAt
+-	// is now, i.e. it becomes eligible for deletion once CT GC passes
+-	// now+grace.
+-	newZombie := func() *DNSZombieMappings {
+-		zombies := NewDNSZombieMappings(logger, defaults.ToFQDNsMaxDeferredConnectionDeletes, defaults.ToFQDNsMaxIPsPerHost)
+-		zombies.Upsert(now, addr, "test.com")
+-		return zombies
+-	}
+-	isAlive := func(zombies *DNSZombieMappings) bool {
++	// The zombie's DeletePendingAt is now, i.e. it becomes eligible for
++	// deletion once CT GC passes now+grace.
++	zombies := NewDNSZombieMappings(logger, defaults.ToFQDNsMaxDeferredConnectionDeletes, defaults.ToFQDNsMaxIPsPerHost)
++	zombies.Upsert(now, addr, "test.com")
++	isAlive := func() bool {
+ 		return len(zombies.DumpAlive(nil)) == 1
+ 	}
+ 
+-	t.Run("grace period boundary", func(t *testing.T) {
+-		zombies := newZombie()
+-		// Two CT GC runs, the last one at exactly DeletePendingAt+grace:
+-		// not *after* the grace period, so the zombie stays alive.
+-		zombies.SetCTGCTime(now.Add(grace-time.Minute), now.Add(2*grace))
+-		zombies.SetCTGCTime(now.Add(grace), now.Add(2*grace))
+-		require.True(t, isAlive(zombies), "zombie must stay alive until CT GC runs strictly after DeletePendingAt+grace")
+-
+-		// One nanosecond past the grace period the zombie is dead.
+-		zombies.SetCTGCTime(now.Add(grace+time.Nanosecond), now.Add(2*grace))
+-		require.False(t, isAlive(zombies))
+-		alive, dead := zombies.GC()
+-		require.Empty(t, alive)
+-		assertZombiesContain(t, dead, map[string][]string{"1.1.1.1": {"test.com"}})
+-	})
+-
+-	t.Run("mark alive precedence", func(t *testing.T) {
+-		zombies := newZombie()
+-		// Both CT GC runs are past the grace period, but the second run marks
+-		// the zombie alive: AliveAt >= lastCTGCUpdate keeps it alive.
+-		zombies.SetCTGCTime(now.Add(grace+time.Hour), now.Add(grace+2*time.Hour))
+-		zombies.MarkAlive(now.Add(grace+2*time.Hour), addr)
+-		zombies.SetCTGCTime(now.Add(grace+2*time.Hour), now.Add(grace+3*time.Hour))
+-		require.True(t, isAlive(zombies), "zombie marked alive by CT GC must survive")
+-
+-		// A later CT GC run without a MarkAlive kills it.
+-		zombies.SetCTGCTime(now.Add(grace+3*time.Hour), now.Add(grace+4*time.Hour))
+-		require.False(t, isAlive(zombies))
+-	})
++	// Two CT GC runs, the last one at exactly DeletePendingAt+grace. not
++	// after the grace period, so the zombie stays alive. Two runs also
++	// satisfy the two-GC-runs deletion condition, so from here on only the
++	// grace period keeps the zombie alive.
++	zombies.SetCTGCTime(now.Add(grace-time.Minute), now.Add(2*grace))
++	zombies.SetCTGCTime(now.Add(grace), now.Add(2*grace))
++	require.True(t, isAlive(), "zombie must stay alive until CT GC runs strictly after DeletePendingAt+grace")
++
++	// One nanosecond past the grace period the zombie is dead.
++	zombies.SetCTGCTime(now.Add(grace+time.Nanosecond), now.Add(2*grace))
++	require.False(t, isAlive())
++	alive, dead := zombies.GC()
++	require.Empty(t, alive)
++	assertZombiesContain(t, dead, map[string][]string{"1.1.1.1": {"test.com"}})
+ }
 ```
 
 ---
 
-### Incident Patch 2: `bc428575` (2026-10-27)
-**Commit Message**: network-driver: check if at least one family is enabled
+### Incident Patch 2: `e9759b52` (2026-09-03)
+**Commit Message**: fqdn: test zombie liveness boundaries
 
-if we use multi-pool ipam we need to have at least one of the families
-enabled otherwise no ip will be allocated at runtime
+Add tests for the grace-period deadline and the mark-alive boundary of
+isConnectionAlive ahead of the FQDN garbage collection refactor.
 
-Signed-off-by: Andrea Terzolo <[REDACTED_EMAIL]>
+Ref: #45849
 
-**File**: `pkg/networkdriver/ipam/ipam.go` (modified, +5/-0)
+Signed-off-by: henockt <[REDACTED_EMAIL]>
+
+**File**: `pkg/fqdn/cache_test.go` (modified, +65/-0)
 ```diff
-@@ -33,6 +33,11 @@ func newMultiPoolManager(
- 		return nil, nil
- 	}
+@@ -19,6 +19,7 @@ import (
  
-+	if !driverConf.IPv4Enabled && !driverConf.IPv6Enabled {
-+		return nil,
-+			fmt.Errorf("both IPv4 and IPv6 are disabled, at least one must be enabled to get IP addresses from pools")
+ 	"github.com/cilium/cilium/pkg/defaults"
+ 	"github.com/cilium/cilium/pkg/ip"
++	"github.com/cilium/cilium/pkg/option"
+ )
+ 
+ // TestUpdateLookup tests that we can insert DNS data and retrieve it. We
+@@ -1550,3 +1551,67 @@ func TestZombieDeepCopyDoesNotShareNames(t *testing.T) {
+ 	require.Equal(t, []string{"alpha.example.com", "zeta.example.com"}, zombie.Names.Sorted(),
+ 		"mutating the copy must not affect the original")
+ }
++
++// TestZombieLivenessConditions pins the liveness boundaries of isConnectionAlive.
++// A zombie is dead only once all of these hold:
++// 1. CT GC ran after DeletePendingAt plus the configured grace period,
++// 2. that CT GC run did not mark the zombie alive, and
++// 3. CT GC has run at least twice since the zombie was added.
++//
++// This test pins the exact boundaries of conditions 1 and 2.
++func TestZombieLivenessConditions(t *testing.T) {
++	logger := hivetest.Logger(t)
++
++	grace := 5 * time.Minute
++	oldGrace := option.Config.ToFQDNsIdleConnectionGracePeriod
++	option.Config.ToFQDNsIdleConnectionGracePeriod = grace
++
++	t.Cleanup(func() {
++		option.Config.ToFQDNsIdleConnectionGracePeriod = oldGrace
++	})
++
++	now := time.Now()
++	addr := netip.MustParseAddr("1.1.1.1")
++
++	// newZombie returns a mapping with a single zombie whose DeletePendingAt
++	// is now, i.e. it becomes eligible for deletion once CT GC passes
++	// now+grace.
++	newZombie := func() *DNSZombieMappings {
++		zombies := NewDNSZombieMappings(logger, defaults.ToFQDNsMaxDeferredConnectionDeletes, defaults.ToFQDNsMaxIPsPerHost)
++		zombies.Upsert(now, addr, "test.com")
++		return zombies
++	}
++	isAlive := func(zombies *DNSZombieMappings) bool {
++		return len(zombies.DumpAlive(nil)) == 1
 +	}
 +
- 	// TODO: we need to implement the pre-allocation logic
- 	preallocMap, err := ipam.ParseMultiPoolPreAllocMap(nil)
- 	if err != nil {
++	t.Run("grace period boundary", func(t *testing.T) {
++		zombies := newZombie()
++		// Two CT GC runs, the last one at exactly DeletePendingAt+grace:
++		// not *after* the grace period, so the zombie stays alive.
++		zombies.SetCTGCTime(now.Add(grace-time.Minute), now.Add(2*grace))
++		zombies.SetCTGCTime(now.Add(grace), now.Add(2*grace))
++		require.True(t, isAlive(zombies), "zombie must stay alive until CT GC runs strictly after DeletePendingAt+grace")
++
++		// One nanosecond past the grace period the zombie is dead.
++		zombies.SetCTGCTime(now.Add(grace+time.Nanosecond), now.Add(2*grace))
++		require.False(t, isAlive(zombies))
++		alive, dead := zombies.GC()
++		require.Empty(t, alive)
++		assertZombiesContain(t, dead, map[string][]string{"1.1.1.1": {"test.com"}})
++	})
++
++	t.Run("mark alive precedence", func(t *testing.T) {
++		zombies := newZombie()
++		// Both CT GC runs are past the grace period, but the second run marks
++		// the zombie alive: AliveAt >= lastCTGCUpdate keeps it alive.
++		zombies.SetCTGCTime(now.Add(grace+time.Hour), now.Add(grace+2*time.Hour))
++		zombies.MarkAlive(now.Add(grace+2*time.Hour), addr)
++		zombies.SetCTGCTime(now.Add(grace+2*time.Hour), now.Add(grace+3*time.Hour))
++		require.True(t, isAlive(zombies), "zombie marked alive by CT GC must survive")
++
++		// A later CT GC run without a MarkAlive kills it.
++		zombies.SetCTGCTime(now.Add(grace+3*time.Hour), now.Add(grace+4*time.Hour))
++		require.False(t, isAlive(zombies))
++	})
++}
 ```
 
 #### Recent Merged Pull Requests:
@@ -1357,30 +1515,72 @@ Signed-off-by: Andrea Terzolo <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: document Standalone DNS Proxy trust limitation
+## X. fqdn: move mark-alive check into TestZombiesDumpAlive
 
 **RULE**:
-When implementing operations in `Documentation/security/standalone-dns-proxy.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/fqdn/cache_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `028bd9d9`: docs: document Standalone DNS Proxy trust limitation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dbe91960`: fqdn: move mark-alive check into TestZombiesDumpAlive. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Documentation/security/standalone-dns-proxy.rst`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/fqdn/cache_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-* The Standalone DNS Proxy's unauthenticated localhost gRPC API allows processes
-  with node host-network access, including ``hostNetwork`` pods, to inject DNS
-  mappings, bypass FQDN egress policies, and read node DNS policy state.
+
+	// A later CT GC run that does not mark 1.1.1.1 and 2.2.2.2 alive
+	// supersedes the earlier mark, they are no longer alive. 1.1.1.2 only
+	// survives because CT GC has not completed two runs since it was added.
+	now = now.Add(5 * time.Minute)
+	zombies.SetCTGCTime(now, now.Add(5*time.Minute))
+	alive = zombies.DumpAlive(nil)
+	assertZombiesContain(t, alive, map[string][]string{
+		"1.1.1.2": {"test2.com"},
+	})
+// TestZombiesGracePeriod pins the grace-period deletion condition of
+// isConnectionAlive. a zombie may only be deleted once CT GC has run strictly
+// after DeletePendingAt plus the configured grace period.
+func TestZombiesGracePeriod(t *testing.T) {
+	// The zombie's DeletePendingAt is now, i.e. it becomes eligible for
+	// deletion once CT GC passes now+grace.
+	zombies := NewDNSZombieMappings(logger, defaults.ToFQDNsMaxDeferredConnectionDeletes, defaults.ToFQDNsMaxIPsPerHost)
+	zombies.Upsert(now, addr, "test.com")
+	isAlive := func() bool {
+	// Two CT GC runs, the last one at exactly DeletePendingAt+grace. not
+	// after the grace period, so the zombie stays alive. Two runs also
+	// satisfy the two-GC-runs deletion condition, so from here on only the
+	// grace period keeps the 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// TestZombieLivenessConditions pins the liveness boundaries of isConnectionAlive.
+// A zombie is dead only once all of these hold:
+// 1. CT GC ran after DeletePendingAt plus the configured grace period,
+// 2. that CT GC run did not mark the zombie alive, and
+// 3. CT GC has run at least twice since the zombie was added.
+//
+// This test pins the exact boundaries of conditions 1 and 2.
+func TestZombieLivenessConditions(t *testing.T) {
+	// newZombie returns a mapping with a single zombie whose DeletePendingAt
+	// is now, i.e. it becomes eligible for deletion once CT GC passes
+	// now+grace.
+	newZombie := func() *DNSZombieMappings {
+		zombies := NewDNSZombieMappings(logger, defaults.ToFQDNsMaxDeferredConnectionDeletes, defaults.ToFQDNsMaxIPsPerHost)
+		zombies.Upsert(now, addr, "test.com")
+		return zombies
+	}
+	isAlive := func(zombies *DNSZombieMappings) bool {
+	t.Run("grace period boundary", func(t *testing.T) {
+		zombies := newZombie()
+		// Two CT GC runs, the last one at exactly DeletePendingAt+grace:
+		// not *after* the grace period, so the zombie stays alive.
+		zombies.SetCTGCTime(now.Add(grace-time.Minute), now.Add(2*grace))
+		zombies.SetCTGCTime(now.Add(grace), now.Add(2*grace))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `028bd9d9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dbe91960` are properly handled with clean fallback behavior.

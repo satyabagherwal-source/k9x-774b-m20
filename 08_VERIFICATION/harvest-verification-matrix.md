@@ -5971,3 +5971,7 @@
 | `CYCLE-20261028-5N1B` | `2026-10-28T22:39:28.991Z` | `autotrust/JEV-35B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md` | Yes (`cde24f79...`) |
 | `CYCLE-20261028-5OBV` | `2026-10-28T22:39:30.667Z` | `apache/arrow` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/apache-arrow-learnings.md` | Yes (`1922c1b7...`) |
 | `CYCLE-20261028-5UP6` | `2026-10-28T22:39:38.922Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5436` | Yes (`020f7c2e...`) |
+| `CYCLE-20261028-DNTV` | `2026-10-28T22:45:43.267Z` | `meta/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5437` | Yes (`bf94f8ea...`) |
+| `CYCLE-20261028-DPW1` | `2026-10-28T22:45:45.938Z` | `meshtastic/Meshtastic-Android` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5438` | Yes (`f31856bc...`) |
+| `CYCLE-20261028-DUDY` | `2026-10-28T22:45:51.766Z` | `LiquidAI/LFM2.5-24B-A2B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5439, Rule 5440, Rule 5441` | Yes (`d3a7e2ee...`) |
+| `CYCLE-20261028-DURV` | `2026-10-28T22:45:52.267Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5442` | Yes (`a35fe5a0...`) |

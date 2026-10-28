@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T22:39:38.932Z",
+  "last_updated": "2026-10-28T22:45:52.276Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2242,14 +2242,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
-      "content_hash": "16f7a60c68eb142058af41a45f37d562591ca6225fa01135eb8009574688e611",
-      "verified_at": "2026-10-25T23:10:53.437Z",
+      "content_hash": "d3a7e2ee09e363efd68166336f0f723c7953e25465e3b19a04dd0e1b15af3c5a",
+      "verified_at": "2026-10-28T22:45:51.777Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T23:10:53.437Z"
+      "last_updated": "2026-10-28T22:45:51.777Z"
     },
     "fishaudio/drama-3": {
       "repository": "fishaudio/drama-3",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "025cd2958a6cc231f3ee708b7a098b572b293e0cf7aa594f03c69045ebd6a510",
-      "verified_at": "2026-10-28T18:57:50.577Z",
+      "content_hash": "a35fe5a0ddf983daab3329e9a8f115a0c85fc81000cdeeed20431d05cdca07c8",
+      "verified_at": "2026-10-28T22:45:52.275Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T18:57:50.577Z"
+      "last_updated": "2026-10-28T22:45:52.275Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -11751,14 +11751,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meshtastic-meshtastic-android",
-      "content_hash": "609280e6c71fcdd062eb21d2432cf792a4ca42acd6c8cbc27fdf31cd886e5af1",
-      "verified_at": "2026-10-25T15:38:16.821Z",
+      "content_hash": "f31856bc72fb68d81bc28e84b25205690875f2ab06c93f4c31baa0e009ad15f2",
+      "verified_at": "2026-10-28T22:45:45.946Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T15:38:16.821Z"
+      "last_updated": "2026-10-28T22:45:45.946Z"
     },
     "astral-sh/uv": {
       "repository": "astral-sh/uv",
@@ -17174,6 +17174,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-28T20:57:33.319Z"
+    },
+    "meta/folly": {
+      "repository": "meta/folly",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-meta-folly",
+      "content_hash": "bf94f8eaae2a0793584929119d488296d28d72e74fafc34a18a2c9d5cd6156dc",
+      "verified_at": "2026-10-28T22:45:43.275Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-28T22:45:43.275Z"
     }
   },
   "repos": {

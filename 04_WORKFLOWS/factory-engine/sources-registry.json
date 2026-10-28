@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T22:39:41.451Z",
-    "lastVerified": "2026-10-28T22:39:41.451Z",
+    "lastChecked": "2026-10-28T22:45:54.798Z",
+    "lastVerified": "2026-10-28T22:45:54.798Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -124,8 +124,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-28T22:14:10.002Z",
-    "lastVerified": "2026-10-28T22:14:10.002Z",
+    "lastChecked": "2026-10-28T22:45:50.740Z",
+    "lastVerified": "2026-10-28T22:45:50.740Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1437,9 +1437,9 @@
   "memvid-memvid": {
     "name": "memvid",
     "officialUrl": "https://github.com/memvid/memvid",
-    "lastChecked": "2026-10-28T05:03:46.332Z",
+    "lastChecked": "2026-10-28T22:45:48.224Z",
     "revisionIdentifier": "e6bd9f7b",
-    "lastVerified": "2026-10-28T05:03:46.332Z"
+    "lastVerified": "2026-10-28T22:45:48.224Z"
   },
   "falkordb-falkordb": {
     "name": "FalkorDB",
@@ -1576,12 +1576,12 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T18:57:49.934Z",
-    "lastVerified": "2026-10-28T18:57:49.934Z",
+    "lastChecked": "2026-10-28T22:45:51.660Z",
+    "lastVerified": "2026-10-28T22:45:51.660Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "025cd2958a6cc231f3ee708b7a098b572b293e0cf7aa594f03c69045ebd6a510",
+    "contentHash": "a35fe5a0ddf983daab3329e9a8f115a0c85fc81000cdeeed20431d05cdca07c8",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -1928,9 +1928,9 @@
   "kubeedge-kubeedge": {
     "name": "kubeedge",
     "officialUrl": "https://github.com/kubeedge/kubeedge",
-    "lastChecked": "2026-10-28T06:11:43.575Z",
+    "lastChecked": "2026-10-28T22:45:43.332Z",
     "revisionIdentifier": "1e5b0d26",
-    "lastVerified": "2026-10-28T06:11:43.575Z"
+    "lastVerified": "2026-10-28T22:45:43.332Z"
   },
   "aleo-labs-protocol-snarkos": {
     "name": "aleo-labs-protocol/snarkOS",
@@ -7317,5 +7317,56 @@
     "lastChecked": "2026-10-28T22:39:30.514Z",
     "revisionIdentifier": "b972d50f",
     "lastVerified": "2026-10-28T22:39:30.514Z"
+  },
+  "facebook-folly": {
+    "name": "meta/folly",
+    "officialUrl": "https://github.com/facebook/folly",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-10-28T22:45:42.619Z",
+    "lastVerified": "2026-10-28T22:45:42.619Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-meta-folly",
+    "contentHash": "bf94f8eaae2a0793584929119d488296d28d72e74fafc34a18a2c9d5cd6156dc",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 7,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-liquidai-lfm2.5-24b-a2b": {
+    "name": "LiquidAI/LFM2.5-24B-A2B",
+    "officialUrl": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T22:45:38.447Z",
+    "lastVerified": "2026-10-28T22:45:38.447Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
+    "contentHash": "d3a7e2ee09e363efd68166336f0f723c7953e25465e3b19a04dd0e1b15af3c5a",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "meshtastic-meshtastic-android": {
+    "name": "meshtastic/Meshtastic-Android",
+    "officialUrl": "https://github.com/meshtastic/Meshtastic-Android",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-10-28T22:45:45.543Z",
+    "lastVerified": "2026-10-28T22:45:45.543Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-meshtastic-meshtastic-android",
+    "contentHash": "f31856bc72fb68d81bc28e84b25205690875f2ab06c93f4c31baa0e009ad15f2",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 10,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

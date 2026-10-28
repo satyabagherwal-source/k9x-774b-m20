@@ -1445,8 +1445,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
     "sourceVersion": "hf-liquidai-lfm2.5-24b-a2b",
     "license": "Open-Source",
-    "contentHash": "16f7a60c68eb142058af41a45f37d562591ca6225fa01135eb8009574688e611",
-    "lastHarvestedAt": "2026-10-25T23:10:53.428Z",
+    "contentHash": "d3a7e2ee09e363efd68166336f0f723c7953e25465e3b19a04dd0e1b15af3c5a",
+    "lastHarvestedAt": "2026-10-28T22:45:51.772Z",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b"
   },
   "hf-fishaudio-drama-3": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "028bd9d9",
+    "sourceVersion": "dbe91960",
     "license": "Apache-2.0",
-    "contentHash": "025cd2958a6cc231f3ee708b7a098b572b293e0cf7aa594f03c69045ebd6a510",
-    "lastHarvestedAt": "2026-10-28T18:57:50.568Z",
+    "contentHash": "a35fe5a0ddf983daab3329e9a8f115a0c85fc81000cdeeed20431d05cdca07c8",
+    "lastHarvestedAt": "2026-10-28T22:45:52.270Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -7660,14 +7660,14 @@
     "learningId": "learn-github-msasikanth-twine"
   },
   "facebook-folly": {
-    "repository": "facebook/folly",
+    "repository": "meta/folly",
     "platform": "github",
     "sourceUrl": "https://github.com/facebook/folly",
-    "sourceVersion": "595b4e62",
+    "sourceVersion": "32b95e96",
     "license": "Apache-2.0",
-    "contentHash": "ab8cdc682d73881ceaed44800a1f38e401b130b89bef8b97aea5ddd65e6ce231",
-    "lastHarvestedAt": "2026-10-27T18:59:37.246Z",
-    "learningId": "learn-github-facebook-folly"
+    "contentHash": "bf94f8eaae2a0793584929119d488296d28d72e74fafc34a18a2c9d5cd6156dc",
+    "lastHarvestedAt": "2026-10-28T22:45:43.269Z",
+    "learningId": "learn-github-meta-folly"
   },
   "kotlin-kmp-production-sample": {
     "repository": "Kotlin/kmp-production-sample",
@@ -7813,10 +7813,10 @@
     "repository": "meshtastic/Meshtastic-Android",
     "platform": "github",
     "sourceUrl": "https://github.com/meshtastic/Meshtastic-Android",
-    "sourceVersion": "1bedc5de",
+    "sourceVersion": "aa6625eb",
     "license": "GPL-3.0",
-    "contentHash": "609280e6c71fcdd062eb21d2432cf792a4ca42acd6c8cbc27fdf31cd886e5af1",
-    "lastHarvestedAt": "2026-10-25T15:38:16.814Z",
+    "contentHash": "f31856bc72fb68d81bc28e84b25205690875f2ab06c93f4c31baa0e009ad15f2",
+    "lastHarvestedAt": "2026-10-28T22:45:45.940Z",
     "learningId": "learn-github-meshtastic-meshtastic-android"
   },
   "astral-sh-uv": {

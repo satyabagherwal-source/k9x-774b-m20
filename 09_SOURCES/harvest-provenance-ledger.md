@@ -5980,3 +5980,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autotrust-jev-35b-nvfp4` | `https://huggingface.co/autotrust/JEV-35B-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-28T22:39:28.994Z |
 | `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `16ebf1a4` | Multi-dimensional audit evidence | 2026-10-28T22:39:30.670Z |
 | `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `632225ea` | Multi-dimensional audit evidence | 2026-10-28T22:39:38.925Z |
+| `learn-github-meta-folly` | `https://github.com/facebook/folly` | `32b95e96` | Multi-dimensional audit evidence | 2026-10-28T22:45:43.269Z |
+| `learn-github-meshtastic-meshtastic-android` | `https://github.com/meshtastic/Meshtastic-Android` | `aa6625eb` | Multi-dimensional audit evidence | 2026-10-28T22:45:45.940Z |
+| `learn-huggingface-liquidai-lfm2-5-24b-a2b` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-28T22:45:51.772Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `dbe91960` | Multi-dimensional audit evidence | 2026-10-28T22:45:52.270Z |

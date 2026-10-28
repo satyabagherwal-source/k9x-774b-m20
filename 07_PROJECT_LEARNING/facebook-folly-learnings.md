@@ -1,10 +1,10 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source**: github ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
-> **Source Version**: `595b4e62`  
+> **Source Version**: `32b95e96`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T18:59:36.777Z  
-> **Learning ID**: `learn-github-facebook-folly`  
+> **Timestamp**: 2026-10-28T22:45:42.872Z  
+> **Learning ID**: `learn-github-meta-folly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -12,22 +12,22 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): facebook/folly
+# Forensic Learning Record (Deep Inspection): meta/folly
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T18:59:36.386Z  
+> **Harvest Timestamp**: 2026-10-28T22:45:42.619Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
-- **Repository / Resource**: `facebook/folly`
+- **Repository / Resource**: `meta/folly`
 - **Description**: An open-source C++ library developed and used at Facebook.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 30553 stars
+- **Stars / Engagement**: 30552 stars
 
 ---
 
@@ -2368,425 +2368,250 @@ class WriteFileAtomicOptions {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c8c7adb7` (2026-10-26)
-**Commit Message**: Make signal stack-trace test TSAN-compatible
+### Incident Patch 1: `995db944` (2026-10-28)
+**Commit Message**: Fix distributed_mutex_interference_size_test build with GCC < 12
 
 Summary:
-[🤖 Metamate] Make `StackTraceTest.Signal` signal-safe so it can run under TSAN rather than report a runtime skip or be compiled out.
+`DistributedMutexInterferenceSizeTest.cpp` (added in D127710426) emulates a standard library that provides `std::hardware_destructive_interference_size` by defining `__cpp_lib_hardware_interference_size` before including folly. `folly/lang/Align.h` then takes the branch that disables `-Winterference-size`, which GCC < 12 does not know, so the build fails under `mode/opt-gcc` (fbcode GCC 11.2) with `-Werror=pragmas`.
 
-The handler captures only `getStackTraceSafe()` into fixed storage and publishes its count with a statically verified lock-free atomic. Preserve `errno` in the handler and restore the previous signal action after the test. Perform symbolization and assertions after `raise()` returns, checking errno preservation and that the captured trace includes the handler and interrupted caller in order. `Simple` continues comparing all three stack-trace APIs outside signal context.
+Only emulate on clang or GCC >= 12. On older GCC the test still runs as a plain `lock()`/`lock_combine()` stress test.
 
-___
+Reviewed By: YifanYuan3
 
-landed-with-radar-review
+Differential Revision: D127844061
 
-Differential Revision: D127472550
+fbshipit-source-id: bc703d87cacc63337d13692ac64f4adeb33ff99d
 
-fbshipit-source-id: da7c1eb3b5bdc5bdf8fd6a12c88492aa6a8747c4
-
-**File**: `folly/debugging/symbolizer/test/StackTraceTest.cpp` (modified, +57/-19)
+**File**: `folly/synchronization/test/DistributedMutexInterferenceSizeTest.cpp` (modified, +4/-1)
 ```diff
-@@ -14,8 +14,11 @@
-  * limitations under the License.
-  */
+@@ -29,7 +29,10 @@
+ #include <cstddef>
+ #include <new>
  
-+#include <algorithm>
- #include <array>
- #include <atomic>
-+#include <cerrno>
-+#include <csignal>
- #include <cstdint>
- #include <cstring>
- #include <limits>
-@@ -651,31 +654,66 @@ void foo2() {
-   verifyStackTraces();
- }
- 
--volatile bool handled = false;
--void handler(int /* num */, siginfo_t* /* info */, void* /* ctx */) {
--  // Yes, getStackTrace and VLOG aren't async-signal-safe, but signals
--  // raised with raise() aren't "async" signals.
-+TEST(StackTraceTest, Simple) {
-   foo1();
--  handled = true;
- }
- 
--TEST(StackTraceTest, Simple) {
--  foo1();
-+namespace {
-+
-+// NOLINTNEXTLINE
-+std::array<uintptr_t, 100> signalAddresses{};
-+std::atomic<ssize_t> signalFrameCount{-1};
-+static_assert(decltype(signalFrameCount)::is_always_lock_free);
-+
-+FOLLY_NOINLINE void captureSignalStackTrace(int) {
-+  const int savedErrno = errno;
-+  signalFrameCount.store(
-+      getStackTraceSafe(signalAddresses.data(), signalAddresses.size()),
-+      std::memory_order_release);
-+  errno = savedErrno;
-+}
-+
-+FOLLY_NOINLINE int raiseSignalForStackTrace() {
-+  const int result = raise(SIGUSR1);
-+  compiler_must_not_elide(result);
-+  return result;
- }
- 
-+} // namespace
-+
- TEST(StackTraceTest, Signal) {
--  if (folly::kIsSanitizeThread) {
--    // TSAN doesn't like signal-unsafe functions in a signal handler regardless
--    // of how the signal is raised. So skip the test in that case.
--    SKIP() << "Not supported for TSAN";
--  }
--  struct sigaction sa;
--  memset(&sa, 0, sizeof(sa));
--  sa.sa_sigaction = handler;
--  sa.sa_flags = SA_RESETHAND | SA_SIGINFO;
--  CHECK_ERR(sigaction(SIGUSR1, &sa, nullptr));
--  raise(SIGUSR1);
--  EXPECT_TRUE(handled);
-+  struct sigaction sa{};
-+  sa.sa_handler = captureSignalStackTrace;
-+  sigemptyset(&sa.sa_mask);
-+  struct sigaction previous{};
-+  ASSERT_EQ(sigaction(SIGUSR1, &sa, &previous), 0);
-+  SCOPE_EXIT {
-+    CHECK_ERR(sigaction(SIGUSR1, &previous, nullptr));
-+  };
-+
-+  signalFrameCount.store(-1, std::memory_order_relaxed);
-+  errno = EDOM;
-+  const int result = raiseSignalForStackTrace();
-+  const int signalErrno = errno;
-+  ASSERT_EQ(result, 0);
-+  EXPECT_EQ(signalErrno, EDOM);
-+  const auto count = signalFrameCount.load(std::memory_order_acquire);
-+  ASSERT_GT(count, 0);
-+  ASSERT_LE(count, static_cast<ssize_t>(signalAddresses.size()));
-+
-+  FrameArray<signalAddresses.size()> frames;
-+  frames.frameCount = static_cast<size_t>(count);
-+  std::copy_n(signalAddresses.begin(), frames.frameCount, frames.addresses);
-+  Symbolizer symbolizer;
-+  symbolizer.symbolize(frames);
-+  StringSymbolizePrinter printer;
-+  printer.println(frames);
-+  const auto stackTrace = printer.str();
-+  const auto handler = stackTrace.find("captureSignalStackTrace");
-+  const auto caller = stackTrace.find("raiseSignalForStackTrace");
-+  ASSERT_NE(handler, std::string::npos) << stackTrace;
-+  ASSERT_NE(caller, std::string::npos) << stackTrace;
-+  EXPECT_LT(handler, caller) << stackTrace;
- }
- 
- ssize_t read_all(int fd, uint8_t* buffer, size_t size) {
+-#if !defined(__cpp_lib_hardware_interference_size)
++// GCC < 12 does not know -Winterference-size, which Align.h disables when the
++// standard library provides the constant
++#if !defined(__cpp_lib_hardware_interference_size) && \
++    (defined(__clang__) || __GNUC__ >= 12)
+ #define __cpp_lib_hardware_interference_size 201703L
+ namespace std {
+ inline constexpr std::size_t hardware_destructive_interference_size = 64;
 ```
 
 ---
 
-### Incident Patch 2: `8e65d37c` (2026-10-26)
-**Commit Message**: Gather commit-message background without a fixed outline
+### Incident Patch 2: `1f39ef69` (2026-10-28)
+**Commit Message**: Preserve F14 fallback variants throughout CI builds
 
 Summary:
-The reason for a change often comes from the task discussion, not the
-diff. Background notes should help explain the change, not dictate what the
-Summary must cover.
+Forward `preprocessor_flags` through the xplat test wrapper so the F14 fallback and concurrent-map no-SIMD variants retain their intended configuration. Apply `FOLLY_F14_FORCE_FALLBACK` to each fallback variant's entire CI dependency graph: test-only flags otherwise give `ThreadEntrySet` incompatible F14 layouts and can deadlock the no-SIMD map tests under TSAN.
 
-Authors can now gather that background without a required format. The shared
-guide selects what belongs in the introduction. Independent reviewers get the
-facts they need, not the author's proposed wording or conclusions.
+Keep existing schedules and architecture coverage when mapping the CI configurations, and preserve the stress-test sanitizer exclusions.
 
-___
+Reviewed By: DanielC314
 
-landed-with-radar-review
+Differential Revision: D127879404
 
-Differential Revision: D127637714
+fbshipit-source-id: 0135a67b0603eedec2394222739acb301025428a
 
-fbshipit-source-id: 0fe58bac30103b96355aaf79c33f72322495dead
-
-**File**: `folly/agents/critic-iterate.md` (modified, +9/-10)
+**File**: `folly/concurrency/test/BUCK` (modified, +14/-1)
 ```diff
-@@ -17,6 +17,9 @@ Author and orchestrator sessions load these package files:
- - `rule-design.md`: before agent-rule work.
- - `design-vetting.md`: before choosing a substantive design or correctness fix.
+@@ -18,6 +18,18 @@ _TSAN_INCOMPATIBLE_LABELS = ci.labels(
+     ),
+ )
  
-+For commit or diff messages under critic-iterate, gather task context before
-+drafting by following `{FA}/write/commit-summary/c-i-author.md`.
++_F14_FALLBACK_CI_CONFIG = ci.map(
++    ci.buckconfig("cxx.extra_cxxflags", "-DFOLLY_F14_FORCE_FALLBACK=1"),
++)
++_F14_FALLBACK_CI_LABELS = ci.labels(_F14_FALLBACK_CI_CONFIG)
++_TSAN_INCOMPATIBLE_F14_FALLBACK_CI_LABELS = ci.labels(
++    ci.remove(
++        ci.linux(ci.mode("fbcode//mode/dev-tsan")),
++        ci.linux(ci.mode("fbcode//mode/opt-tsan")),
++    ),
++    _F14_FALLBACK_CI_CONFIG,
++)
 +
- If a required file is unavailable, stop and report the missing dependency.
- Runtime reviewer roles instead load only the inputs their task permits; their
- preamble defines the role-specific rules.
-@@ -252,13 +255,10 @@ launches a cold reader. Use the same pair below this threshold when the user
- requests a cold read or the artifact follows a known first-read comprehension
- failure. "Fresh" means unprimed by the author's diagnosis, not context-free.
- 
--**Commit / diff messages.** Before opening the author draft or cold report, put
--a complete independent message, including its Test Plan, in `REVIEW FRAME:`.
--Then follow the general comparison, triage, and closure rules.
--
--**Context packet discipline (commit messages).** Before drafting a commit or
--diff message, the author or orchestrator must follow
--`{FA}/write/commit-summary/c-i-author.md`.
-+**Commit / diff messages.** The fresh reviewer puts a complete independent
-+message, including its Test Plan, in `REVIEW FRAME:` before opening the author
-+draft or cold report. It then follows the general comparison, triage, and
-+closure rules.
- 
- To prepare a fresh review, follow `{FA}/critic-iterate/fresh-review.md`.
- 
-@@ -366,9 +366,8 @@ for cases that need them:
- - **Commit messages:** fresh review is required when the change affects ≥1
-   sentence of substantive content. Mechanically forced version bumps, renames,
-   and pure config-value changes are exempt when one sentence says everything the
--  reader needs, the context packet adds no other `Reader must know` fact, and
--  the author checks the message against the diff. A design choice or known
--  comprehension failure restores fresh review.
-+  reader needs and the author checks the message against the diff. A design
-+  choice or known comprehension failure restores fresh review.
- - **Rule-doc edits** in the rules package containing this file or another
-   personal or project rule document: fresh review is required for every semantic
-   or readability change; there is no size threshold.
+ fb_dirsync_cpp_binary(
+     name = "cache_locality_benchmark",
+     srcs = ["CacheLocalityBenchmark.cpp"],
+@@ -154,7 +166,7 @@ fb_dirsync_cpp_unittest(
+         tpx_labels.serialize,
+         "slow",
+     ]
+-    + _TSAN_INCOMPATIBLE_LABELS,
++    + _TSAN_INCOMPATIBLE_F14_FALLBACK_CI_LABELS,
+     preprocessor_flags = ["-DFOLLY_F14_FORCE_FALLBACK=1"],
+     supports_static_listing = False,
+     deps = [
+@@ -169,6 +181,7 @@ fb_dirsync_cpp_unittest(
+ fb_dirsync_cpp_unittest(
+     name = "concurrent_hash_map_test_no_simd",
+     srcs = ["ConcurrentHashMapTest.cpp"],
++    labels = _F14_FALLBACK_CI_LABELS,
+     preprocessor_flags = ["-DFOLLY_F14_FORCE_FALLBACK=1"],
+     supports_static_listing = False,
+     deps = [
 ```
 
-**File**: `folly/agents/write/CONTRIB.md` (modified, +3/-1)
+**File**: `folly/container/test/BUCK` (modified, +7/-0)
 ```diff
-@@ -19,4 +19,6 @@ can change without redefining the review process.
+@@ -9,6 +9,7 @@ load("@fbsource//tools/build_defs/dirsync:fb_dirsync_cpp_benchmark.bzl", "fb_dir
+ load("@fbsource//tools/build_defs/dirsync:fb_dirsync_cpp_binary.bzl", "fb_dirsync_cpp_binary")
+ load("@fbsource//tools/build_defs/dirsync:fb_dirsync_cpp_library.bzl", "fb_dirsync_cpp_library")
+ load("@fbsource//tools/build_defs/dirsync:fb_dirsync_cpp_unittest.bzl", "fb_dirsync_cpp_unittest")
++load("@fbsource//tools/target_determinator/macros:ci.bzl", "ci")
+ load(
+     "../../defs.bzl",
+     "FBANDROID_CXXFLAGS",
+@@ -17,6 +18,10 @@ load(
  
- Commit and diff messages need a useful introduction before the reader opens the
- diff. [author.md](commit-summary/author.md) owns that standard with or without
--critic-iterate.
-+critic-iterate. The commit-summary review files gather and select context for
-+that introduction. Context supplies facts and reasons, not a list of details the
-+message must repeat.
+ oncall("fbcode_entropy_wardens_folly")
+ 
++_F14_FALLBACK_CI_LABELS = ci.labels(
++    ci.map(ci.buckconfig("cxx.extra_cxxflags", "-DFOLLY_F14_FORCE_FALLBACK=1")),
++)
++
+ fb_dirsync_cpp_unittest(
+     name = "dynamic_ring_queue_test",
+     srcs = ["DynamicRingQueueTest.cpp"],
+@@ -602,6 +607,7 @@ fb_dirsync_cpp_unittest(
+     srcs = [
+         "F14MapTest.cpp",
+     ],
++    labels = _F14_FALLBACK_CI_LABELS,
+     preprocessor_flags = ["-DFOLLY_F14_FORCE_FALLBACK=1"],
+     deps = [
+         "fbsource//third-party/glog:glog",
+@@ -655,6 +661,7 @@ fb_dirsync_cpp_unittest(
+     srcs = [
+         "F14SetTest.cpp",
+     ],
++    labels = _F14_FALLBACK_CI_LABELS,
+     preprocessor_flags = ["-DFOLLY_F14_FORCE_FALLBACK=1"],
+     deps = [
+         "fbsource//third-party/glog:glog",
 ```
 
-**File**: `folly/agents/write/commit-summary/c-i-author.md` (modified, +12/-33)
+**File**: `folly/defs.bzl` (modified, +3/-0)
 ```diff
-@@ -1,36 +1,15 @@
--# Build commit-message context
-+# Gather commit-message context
+@@ -266,6 +266,7 @@ def folly_xplat_cxx_test(name, srcs, raw_headers = [], headers = [], deps = [],
+     labels = kwargs.get("labels", None)
+     modifiers = kwargs.get("modifiers", None)
+     compiler_flags = kwargs.get("compiler_flags", None)
++    preprocessor_flags = kwargs.get("preprocessor_flags", None)
+     linker_flags = kwargs.get("linker_flags", None)
+     link_style = kwargs.get("link_style", None)
  
--The author or orchestrator builds a context packet for commit messages.
--Structure it into three named sections so the author can scan it predictably.
-+For critic-iterate, gather relevant task context before drafting. Reread the
-+active workstream ledger when one exists.
- 
--Before constructing the packet, reread the active workstream ledger when one
--exists. Build from current task inputs relevant to Stack context, Reader must
--know, or Decision trail, including any ledger goal and unsuperseded requirements
--or rationale. Before using the packet, treat every input as a claim or
--requirement, not approved wording. Apply "Evidence" when a false claim could
--change the message, then check each input against the intended reader's starting
--knowledge. Keep code identifiers when they anchor a fact or help find the
--relevant code. Explain the concrete actor, condition, action, or outcome hidden
--by unfamiliar shorthand, and define unavoidable technical terms on first use.
--Raw input may be overcomplete, but not opaque.
-+Use the current request, unsuperseded decisions and sources to recover the goal,
-+reason for the work, and constraints or choices that explain the approach. The
-+reason can matter even when it is not itself changed by the diff. Check factual
-+claims using critic-iterate's Evidence rules when an error could change the
-+message.
- 
--- **Stack context** — for diffs in a stack: what predecessors covered and what
--  follow-ons will do.
--- **Reader must know** — the few facts whose absence would make a reader act
--  wrongly or misunderstand the change, plus the artifact goal and intended
--  readers. Past three or four facts, reapply that test to each; do not merge
--  distinct causal facts into an abstract label. The final message may compress
--  detail and wording only while preserving the reader's needed model.
--- **Decision trail** — for a design choice not mechanically forced by the spec
--  or bug, collect only the choices, constraints, or reversals needed to explain
--  the final shape. Typical candidates are a rejected alternative whose trade-off
--  is not clear from the diff, a constraint that pinned the choice, or a reversal
--  that explains a surprising result. Do not inventory the rest of the
--  discussion.
--
--The Decision trail is RAW input — the inner loop selects only the facts needed
--for the reader's task, then applies the cut test (typically the load-bearing
--constraint or rejected alternative; see `write.md` "## What evergreen context
--means"). The packet-vs-final-message split is input-vs-keep, not a different
--taxonomy. Omitting a decision the reader needs starves the loop; forcing process
--history the reader does not need invents motivation and adds noise.
-+Use `{FA}/write/commit-summary/author.md` to select and explain what the message
-+needs. Context is input, not a list of facts the Summary must contain. No
-+particular context format is required; supply facts and reasons, not approved
-+wording.
-```
-
-**File**: `folly/agents/write/commit-summary/c-i-fresh-review.md` (modified, +5/-4)
-```diff
-@@ -4,10 +4,11 @@ Require `{FA}/write/commit-summary/author.md` as an input.
- 
- Before constructing the task note, reread the active workstream ledger when one
- exists. Use the short task note defined in
--`{FA}/critic-iterate/fresh-review.md`. Never pass the whole author packet,
--ledger paths, or raw ledger contents.
-+`{FA}/critic-iterate/fresh-review.md`. Never pass the author's full context
-+notes, ledger paths, or raw ledger contents.
- 
- Include review-affecting predecessor framing or follow-on plans; omit mechanics
- not needed to understand the current diff. Include a fact only when the reviewer
--needs it to verify correctness and cannot derive it from the sources it may
--read.
-+needs it to check a claim or establish the reader's context and cannot derive it
-+from the sources it may read. Supply facts, not proposed wording or a preferred
-+conclusion.
+@@ -280,6 +281,8 @@ def folly_xplat_cxx_test(name, srcs, raw_headers = [], headers = [], deps = [],
+         extra_kwargs["modifiers"] = modifiers
+     if compiler_flags != None:
+         extra_kwargs["compiler_flags"] = compiler_flags
++    if preprocessor_flags != None:
++        extra_kwargs["preprocessor_flags"] = preprocessor_flags
+     extra_kwargs["linker_flags"] = (linker_flags if linker_flags != None else []) + select({
+         "DEFAULT": [],
+         "ovr_config//compiler:cl-windows": ["/INCLUDE:main"],
 ```
 
 ---
 
-### Incident Patch 3: `6ca6d347` (2026-10-26)
-**Commit Message**: io_uring: require liburing 2.10 headers, and 2.15 for zero-copy receive
+### Incident Patch 3: `37fe0c3e` (2026-10-28)
+**Commit Message**: FBPythonBinary: let a Python executable change between zipapp, pex and dir in one build tree
 
 Summary:
-Folly's open-source CMake build turns on its io_uring code whenever `<liburing.h>` exists, and fails with liburing headers that are too old for it. Ubuntu 24.04's `liburing-dev` is 2.5, which lacks `io_uring_set_iowait()` and `io_uring_buf_ring_head()` and, in its copy of the kernel header, `IORING_OP_RECV_ZC`, `IOU_PBUF_RING_INC` and other constants that folly uses, so 13 of folly's source files don't compile. liburing 2.10 is the first release with all of them, so `FOLLY_HAS_LIBURING` now requires 2.10, read from `liburing/io_uring_version.h`, and older headers build folly without io_uring, as a host without liburing does.
+A build tree that built an FB-style Python executable as one type can't rebuild it as another. Before a `TYPE dir` build, `add_fb_python_executable()` clears the output with `cmake -E remove_directory`, which leaves a zipapp file in place, so `make_fbpy_archive.py`'s rename of the new directory onto it fails. The other way, `os.replace()` can't put a zipapp where a directory is. And going back to a type the tree built before, neither Make nor Ninja reruns the step at all: the leftover output is newer than every input, and Ninja's log already has that command for that path. D125301407 makes eden's `edenfsctl.real` a directory when thrift-python is found, so an eden build tree hits these when it's rebuilt with thrift-python after a build without it, and when it builds a commit from before D125301407.
 
-With liburing 2.10 to 2.14, such as CentOS Stream 9's `liburing-devel-2.12`, the build still fails in `IoUringZeroCopyBufferPool.cpp`, which uses the ZCRX query and control APIs whenever `<liburing.h>` exists; those first shipped in 2.15. The new `FOLLY_HAS_LIBURING_ZCRX` checks for 2.15 the same way, rather than probing for `liburing/io_uring/query.h`, because liburing 2.13 and 2.14 already ship that header without the ZCRX APIs. The internal stub reports 2.15, so internal build
+`make_fbpy_archive.py` now removes whatever an earlier build left at the output path, a file, a symlink or a directory, right before it moves the new output there, for every type, which replaces the `remove_directory`. And each executable's build step depends on a `<target>.py_type` fi
 
-**File**: `folly/io/async/IoUringBufferPoolSharing.cpp` (modified, +4/-4)
+**File**: `build/fbcode_builder/CMake/FBPythonBinary.cmake` (modified, +7/-4)
 ```diff
-@@ -41,10 +41,10 @@ struct EbBackend {
- // Runs `setupStep` on `evb` and reports whether it succeeded.
- //
- // The catch is load-bearing, not defensive: IoUringZeroCopyBufferPool::create()
--// and ::importHandle() never return null, they throw on failure, so throwing is
--// the only way create/import can report a problem. Left uncaught it would
--// propagate on the EventBase worker and terminate the thread. `setupStep`
--// itself reports failure by returning false.
-+// and ::importHandle() throw when setup fails, and return null only when folly
-+// is built without ZCRX support. Left uncaught, an exception would propagate on
-+// the EventBase worker and terminate the thread. `setupStep` itself reports
-+// failure by returning false.
- bool runSetupStepOnEventBase(
-     folly::EventBase* evb, folly::FunctionRef<bool()> setupStep) {
-   bool succeeded = false;
+@@ -160,17 +160,19 @@ function(add_fb_python_executable TARGET)
+       set(zipapp_output_file "${zipapp_output}/__main__.py")
+       # Update output_file to match zipapp_output_file for dir type
+       set(output_file "${zipapp_output_file}")
+-      list(APPEND
+-        extra_cmd_params
+-        COMMAND "${CMAKE_COMMAND}" -E remove_directory "${zipapp_output}"
+-      )
+     endif()
+   endif()
+ 
+   if(DEFINED ARG_MAIN_MODULE)
+     list(APPEND make_py_args "--main" "${ARG_MAIN_MODULE}")
+   endif()
+ 
++  # Rebuild when the type changes. Otherwise an output that an earlier build
++  # made with another type looks up to date: a directory where a zipapp is
++  # expected, for example.
++  set(type_file "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}.py_type")
++  file(GENERATE OUTPUT "${type_file}" CONTENT "${ARG_TYPE}")
++
+   add_custom_command(
+     OUTPUT "${zipapp_output_file}"
+     ${extra_cmd_params}
+@@ -182,6 +184,7 @@ function(add_fb_python_executable TARGET)
+       ${source_files}
+       "${TARGET}.main_lib.py_sources_built"
+       "${FB_MAKE_PYTHON_ARCHIVE}"
++      "${type_file}"
+   )
+ 
+   if(WIN32)
 ```
 
-**File**: `folly/io/async/IoUringZeroCopyBufferPool.cpp` (modified, +57/-1)
+**File**: `build/fbcode_builder/CMake/make_fbpy_archive.py` (modified, +13/-0)
 ```diff
-@@ -17,6 +17,7 @@
- #include <folly/io/async/IoUringZeroCopyBufferPool.h>
+@@ -124,6 +124,15 @@ def install_file(info):
+             pass
  
- #include <mutex>
-+#include <stdexcept>
  
- #include <folly/Conv.h>
- #include <folly/GLog.h>
-@@ -26,7 +27,7 @@
- #include <folly/portability/SysMman.h>
- #include <folly/synchronization/DistributedMutex.h>
++def remove_output(path):
++    """Remove an earlier build's output, which is a directory if that build
++    used a different --type."""
++    if os.path.isdir(path) and not os.path.islink(path):
++        shutil.rmtree(path)
++    elif os.path.lexists(path):
++        os.unlink(path)
++
++
+ def build_pex(args, path_map):
+     """Create a self executing python binary using the PEX tool
  
--#if FOLLY_HAS_LIBURING
-+#if FOLLY_HAS_LIBURING_ZCRX
+@@ -151,6 +160,7 @@ def build_pex(args, path_map):
+             + ["-e", args.main]
+         )
  
- // TODO: T264228475: remove this once liburing/uapi headers are updated.
- #define ZCRX_REG_NODEV 2
-@@ -812,4 +813,59 @@ void IoUringZeroCopyBufferPool::flushRefillQueueIfNeeded() noexcept {
++        remove_output(args.output)
+         os.replace(tmp_output, args.output)
  
- } // namespace folly
  
-+#elif FOLLY_HAS_LIBURING
-+
-+// TODO: T294823393: remove these stand-ins along with FOLLY_HAS_LIBURING_ZCRX.
-+
-+namespace folly {
-+
-+bool IoUringZeroCopyBufferPool::kernelZeroCopyRxSupported() {
-+  return false;
-+}
-+
-+/* static */ IoUringZeroCopyBufferPool::UniquePtr
-+IoUringZeroCopyBufferPool::create(Params) {
-+  return nullptr;
-+}
-+
-+/* static */ IoUringZeroCopyBufferPool::UniquePtr
-+IoUringZeroCopyBufferPool::importHandle(ExportHandle, struct io_uring*) {
-+  return nullptr;
-+}
-+
-+IoUringZeroCopyBufferPool::ExportHandle
-+IoUringZeroCopyBufferPool::exportHandle() const {
-+  throw std::runtime_error(
-+      "io_uring zero-copy receive is not supported by these liburing headers");
-+}
-+
-+IoUringZeroCopyBufferPool::~IoUringZeroCopyBufferPool() = default;
-+
-+IoUringZeroCopyBufferPool::Result IoUringZeroCopyBufferPool::getIoBuf(
-+    const struct io_uring_cqe*, const struct io_uring_zcrx_cqe*) noexcept {
-+  return {nullptr, false};
-+}
-+
-+void IoUringZeroCopyBufferPool::processNotificationCqe(
-+    const struct io_uring_cqe*) noexcept {}
-+
-+uint64_t IoUringZeroCopyBufferPool::getAndResetCopyFallbackCount() noexcept {
-+  return 0;
-+}
-+
-+uint64_t IoUringZeroCopyBufferPool::getAndResetCopyFallbackBytes() noexcept {
-+  return 0;
-+}
-+
-+uint32_t IoUringZeroCopyBufferPool::getAndResetNoBufferCount() noexcept {
-+  return 0;
-+}
-+
-+IoUringZeroCopyBufferPool::Diagnostics
-+IoUringZeroCopyBufferPool::getDiagnostics() noexcept {
-+  return {};
-+}
-+
-+} // namespace folly
-+
- #endif
-```
-
-**File**: `folly/io/async/Liburing.h` (modified, +20/-1)
-```diff
-@@ -16,8 +16,27 @@
+@@ -171,6 +181,7 @@ def build_zipapp(args, path_map):
+         zipapp.create_archive(
+             inst_dir, target=tmp_output, interpreter=args.python, main=args.main
+         )
++        remove_output(args.output)
+         os.replace(tmp_output, args.output)
  
- #pragma once
  
--#if defined(__linux__) && __has_include(<liburing.h>)
-+#if defined(__linux__) && __has_include(<liburing/io_uring_version.h>)
-+#include <liburing/io_uring_version.h>
-+#endif
-+
-+// TODO: T294823393: remove these version checks once every liburing that folly
-+// builds against is 2.15 or newer.
-+// folly's io_uring code uses APIs that first shipped in liburing 2.10, such as
-+// io_uring_set_iowait().
-+#if defined(IO_URING_VERSION_MAJOR) && \
-+    (IO_URING_VERSION_MAJOR > 2 ||     \
-+     (IO_URING_VERSION_MAJOR == 2 && IO_URING_VERSION_MINOR >= 10))
- #define FOLLY_HAS_LIBURING 1
- #else
- #define FOLLY_HAS_LIBURING 0
- #endif
-+
-+// The ZCRX query and control APIs first shipped in liburing 2.15.
-+#if FOLLY_HAS_LIBURING &&          \
-+    (IO_URING_VERSION_MAJOR > 2 || \
-+     (IO_URING_VERSION_MAJOR == 2 && IO_URING_VERSION_MINOR >= 15))
-+#define FOLLY_HAS_LIBURING_ZCRX 1
-+#else
-+#define FOLLY_HAS_LIBURING_ZCRX 0
-+#endif
+@@ -208,6 +219,8 @@ def build_install_dir(args, path_map):
+         inst_dir = os.path.join(tmpdir, "tree")
+         populate_install_tree(inst_dir, path_map)
+         create_main_module(args, inst_dir, path_map)
++        os.utime(os.path.join(inst_dir, "__main__.py"), None)
++        remove_output(args.output)
+         os.rename(inst_dir, args.output)
+ 
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2731** (closed): Work around GCC < 13 TBAA miscompile in InlineFunctionRef (@Nicoshev)
 - **PR #2730** (closed): Make DistributedMutex Waiter layout independent of interference size (@Nicoshev)
 - **PR #2726** (closed): Fix FixedString literal macros with MSVC's conforming preprocessor (@tinadu1018)
 - **PR #2719** (closed): [coro] Fix CO_ASSERT_FALSE with released GoogleTest (@Hrushikesh-ramilla)
 - **PR #2718** (closed): Stop Wait.multipleWait racing a timer (@vitaut)
 - **PR #2717** (closed): Fix the remaining Windows test failures (@vitaut)
-- **PR #2715** (closed): reverse iterator (#2715) (@DenisYaroshevskiy)
 
 ---
 
@@ -2806,86 +2631,31 @@ With liburing 2.10 to 2.14, such as CentOS Stream 9's `liburing-devel-2.12`, the
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Make signal stack-trace test TSAN-compatible
+## X. distributed_mutex_interference_size_test build with GCC < 12
 
 **RULE**:
-When implementing operations in `folly/debugging/symbolizer/test/StackTraceTest.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in facebook/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `folly/synchronization/test/DistributedMutexInterferenceSizeTest.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c8c7adb7`: Make signal stack-trace test TSAN-compatible. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `995db944`: distributed_mutex_interference_size_test build with GCC < 12. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `folly/debugging/symbolizer/test/StackTraceTest.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `folly/synchronization/test/DistributedMutexInterferenceSizeTest.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-#include <algorithm>
-#include <cerrno>
-#include <csignal>
-TEST(StackTraceTest, Simple) {
-namespace {
-
-// NOLINTNEXTLINE
-std::array<uintptr_t, 100> signalAddresses{};
-std::atomic<ssize_t> signalFrameCount{-1};
-static_assert(decltype(signalFrameCount)::is_always_lock_free);
-
-FOLLY_NOINLINE void captureSignalStackTrace(int) {
-  const int savedErrno = errno;
-  signalFrameCount.store(
-      getStackTraceSafe(signalAddresses.data(), signalAddresses.size()),
-      std::memory_order_release);
-  errno = savedErrno;
-}
-
-FOLLY_NOINLINE int raiseSignalForStackTrace() {
-  const int result = raise(SIGUSR1);
-  compiler_must_not_elide(result);
-  return result;
-} // namespace
-
-  struct sigaction sa{};
-  sa.sa_handler = captureSignalStackTrace;
-  sigemptyset(&sa.sa_mask);
-  struct sigaction previous{};
-  ASSERT_EQ(sigaction(SIGUSR1, &sa, &previous), 0);
-  SCOPE_EXIT {
-    CHECK_ERR(sigaction(SIGUSR1, &previous, nullptr));
-  };
-
-  signalFrameCount.store(-1, std::memory_order_relaxed);
-  errno = EDOM;
-  const int result = raiseSignalForStackTrace();
-  const int signalErrno = errno;
-  ASSERT_EQ(result, 0);
-  EXPECT_EQ(signalErrno, EDOM);
-  const auto count = signalFrameCount.load(std::memory_order_acqui
+// GCC < 12 does not know -Winterference-size, which Align.h disables when the
+// standard library provides the constant
+#if !defined(__cpp_lib_hardware_interference_size) && \
+    (defined(__clang__) || __GNUC__ >= 12)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-volatile bool handled = false;
-void handler(int /* num */, siginfo_t* /* info */, void* /* ctx */) {
-  // Yes, getStackTrace and VLOG aren't async-signal-safe, but signals
-  // raised with raise() aren't "async" signals.
-  handled = true;
-TEST(StackTraceTest, Simple) {
-  foo1();
-  if (folly::kIsSanitizeThread) {
-    // TSAN doesn't like signal-unsafe functions in a signal handler regardless
-    // of how the signal is raised. So skip the test in that case.
-    SKIP() << "Not supported for TSAN";
-  }
-  struct sigaction sa;
-  memset(&sa, 0, sizeof(sa));
-  sa.sa_sigaction = handler;
-  sa.sa_flags = SA_RESETHAND | SA_SIGINFO;
-  CHECK_ERR(sigaction(SIGUSR1, &sa, nullptr));
-  raise(SIGUSR1);
-  EXPECT_TRUE(handled);
+#if !defined(__cpp_lib_hardware_interference_size)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c8c7adb7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `995db944` are properly handled with clean fallback behavior.

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T22:39:38.869Z",
-  "total_verified_learnings": 1159,
+  "last_updated": "2026-10-28T22:45:52.209Z",
+  "total_verified_learnings": 1160,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -6449,8 +6449,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "028bd9d9",
-      "content_hash": "025cd2958a6cc231f3ee708b7a098b572b293e0cf7aa594f03c69045ebd6a510",
+      "source_version": "dbe91960",
+      "content_hash": "a35fe5a0ddf983daab3329e9a8f115a0c85fc81000cdeeed20431d05cdca07c8",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -6598,6 +6598,11 @@
           "number": 5375,
           "title": "docs: document Standalone DNS Proxy trust limitation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5442,
+          "title": "fqdn: move mark-alive check into TestZombiesDumpAlive",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6605,7 +6610,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T18:57:50.475Z",
+      "verified_at": "2026-10-28T22:45:52.199Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37123,8 +37128,8 @@
       "slug": "meshtastic-meshtastic-android",
       "platform": "github",
       "source_url": "https://github.com/meshtastic/Meshtastic-Android",
-      "source_version": "1bedc5de",
-      "content_hash": "609280e6c71fcdd062eb21d2432cf792a4ca42acd6c8cbc27fdf31cd886e5af1",
+      "source_version": "aa6625eb",
+      "content_hash": "f31856bc72fb68d81bc28e84b25205690875f2ab06c93f4c31baa0e009ad15f2",
       "dossier_path": "07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
       "promoted_rules": [
@@ -37142,6 +37147,11 @@
           "number": 4366,
           "title": "deps): update bouncycastle [security] (#7733)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5438,
+          "title": "data): report a failed startup name backfill instead of crashing (#7776)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37149,7 +37159,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T15:38:16.741Z",
+      "verified_at": "2026-10-28T22:45:45.884Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64594,7 +64604,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
       "source_version": "hf-liquidai-lfm2.5-24b-a2b",
-      "content_hash": "16f7a60c68eb142058af41a45f37d562591ca6225fa01135eb8009574688e611",
+      "content_hash": "d3a7e2ee09e363efd68166336f0f723c7953e25465e3b19a04dd0e1b15af3c5a",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md",
       "promoted_rules": [
@@ -64627,6 +64637,21 @@
           "number": 4484,
           "title": "Tied Embedding Memory Consistency Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5439,
+          "title": "Hybrid Layer Interleaving Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5440,
+          "title": "MoE Expert Load Balancing & Bias Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5441,
+          "title": "Fixed-Size Convolutional State Cache Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -64634,7 +64659,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T23:10:53.369Z",
+      "verified_at": "2026-10-28T22:45:51.712Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -146916,6 +146941,123 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T22:39:38.850Z"
+    },
+    "learn-github-meta-folly": {
+      "learning_id": "learn-github-meta-folly",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "meta/folly",
+      "repository": "meta/folly",
+      "slug": "facebook-folly",
+      "platform": "github",
+      "source_url": "https://github.com/facebook/folly",
+      "source_version": "32b95e96",
+      "content_hash": "bf94f8eaae2a0793584929119d488296d28d72e74fafc34a18a2c9d5cd6156dc",
+      "dossier_path": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 5437,
+          "title": "distributed_mutex_interference_size_test build with GCC < 12",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-28T22:45:43.213Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-5437": {
+      "learning_id": "rule-5437",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5437,
+      "title": "distributed_mutex_interference_size_test build with GCC < 12",
+      "source_url": "https://github.com/facebook/folly",
+      "source_version": "32b95e96",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T22:45:43.213Z"
+    },
+    "rule-5438": {
+      "learning_id": "rule-5438",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5438,
+      "title": "data): report a failed startup name backfill instead of crashing (#7776)",
+      "source_url": "https://github.com/meshtastic/Meshtastic-Android",
+      "source_version": "aa6625eb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T22:45:45.885Z"
+    },
+    "rule-5439": {
+      "learning_id": "rule-5439",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5439,
+      "title": "Hybrid Layer Interleaving Invariant",
+      "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
+      "source_version": "hf-liquidai-lfm2.5-24b-a2b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T22:45:51.712Z"
+    },
+    "rule-5440": {
+      "learning_id": "rule-5440",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5440,
+      "title": "MoE Expert Load Balancing & Bias Invariant",
+      "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
+      "source_version": "hf-liquidai-lfm2.5-24b-a2b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T22:45:51.712Z"
+    },
+    "rule-5441": {
+      "learning_id": "rule-5441",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5441,
+      "title": "Fixed-Size Convolutional State Cache Invariant",
+      "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
+      "source_version": "hf-liquidai-lfm2.5-24b-a2b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T22:45:51.712Z"
+    },
+    "rule-5442": {
+      "learning_id": "rule-5442",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5442,
+      "title": "fqdn: move mark-alive check into TestZombiesDumpAlive",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "dbe91960",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T22:45:52.199Z"
     }
   },
   "aliases": {
