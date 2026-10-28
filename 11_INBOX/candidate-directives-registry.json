@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T11:12:07.705Z",
+  "last_updated": "2026-10-28T13:10:03.319Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3181,6 +3181,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-dathere-qsv"
+    },
+    {
+      "id": "CD-TCMV",
+      "directive_title": "Model Card & License Compliance Invariant",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "CompVis/stable-diffusion-v1-4",
+      "source_commit": "hf-compvis-s",
+      "date_staged": "2026-10-28",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-compvis-stable-diffusion-v1-4"
     }
   ]
 }

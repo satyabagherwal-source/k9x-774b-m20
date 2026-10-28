@@ -5776,3 +5776,7 @@ Every entry in this ledger must capture:
 | `learn-github-wcandillon-react-native-skia` | `https://github.com/Shopify/react-native-skia` | `8e30d2ee` | Multi-dimensional audit evidence | 2026-10-28T12:57:06.551Z |
 | `learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k` | `https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k` | `hf-timm-mo` | Multi-dimensional audit evidence | 2026-10-28T13:03:31.518Z |
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `1783110b` | Multi-dimensional audit evidence | 2026-10-28T13:03:45.581Z |
+| `learn-github-pimalaya-himalaya` | `https://github.com/pimalaya/himalaya` | `84136bbb` | Multi-dimensional audit evidence | 2026-10-28T13:09:56.152Z |
+| `learn-huggingface-compvis-stable-diffusion-v1-4` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-10-28T13:10:03.315Z |
+| `learn-github-dylanvann-react-native-fast-image` | `https://github.com/DylanVann/react-native-fast-image` | `58661d82` | Multi-dimensional audit evidence | 2026-10-28T13:10:03.951Z |
+| `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `e3fe3b25` | Multi-dimensional audit evidence | 2026-10-28T13:10:11.865Z |

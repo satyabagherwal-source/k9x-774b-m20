@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source**: github ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
-> **Source Version**: `3a2a460c`  
+> **Source Version**: `e3fe3b25`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T20:20:17.603Z  
+> **Timestamp**: 2026-10-28T13:10:11.467Z  
 > **Learning ID**: `learn-github-risingwavelabs-risingwave`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T20:20:17.175Z  
+> **Harvest Timestamp**: 2026-10-28T13:10:11.462Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Event streaming platform for agentic AI. Continuously ingest, transform, and serve event streams in real time, at scale.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9390 stars
+- **Stars / Engagement**: 9394 stars
 
 ---
 
@@ -1077,278 +1077,642 @@ pub(crate) use def_path_lookup;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3a2a460c` (2026-10-27)
-**Commit Message**: chore(stream): check in debug builds that executors output no rows below their watermarks (#27559)
+### Incident Patch 1: `e3fe3b25` (2026-10-28)
+**Commit Message**: fix(iceberg): honor compaction interval between pk-index batches (#27625)
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/stream/src/executor/wrapper.rs` (modified, +4/-1)
+**File**: `src/meta/src/manager/iceberg_compaction/schedule.rs` (modified, +33/-11)
 ```diff
-@@ -22,6 +22,7 @@ mod schema_check;
- mod stream_node_metrics;
- mod trace;
- mod update_check;
-+mod watermark_check;
+@@ -337,7 +337,8 @@ impl CompactionTrack {
+     /// Determines if compaction should be triggered.
+     ///
+     /// Trigger conditions:
+-    /// - An active automatic round is controlled only by its next-attempt time.
++    /// - An active automatic round follows its next-attempt time. PK-index batches
++    ///   can also continue without new commits or trigger early at the commit threshold.
+     /// - Otherwise, pending commit threshold or an interval with pending commits
+     ///   can trigger a task.
+     ///
+@@ -370,15 +371,17 @@ impl CompactionTrack {
+         };
  
- /// [`WrapperExecutor`] will do some sanity checks and logging for the wrapped executor.
- pub struct WrapperExecutor {
-@@ -40,7 +41,9 @@ impl WrapperExecutor {
-         stream: impl MessageStream + 'static,
-     ) -> impl MessageStream + 'static {
-         // Update check
--        let stream = update_check::update_check(info, stream);
-+        let stream = update_check::update_check(info.clone(), stream);
-+        // Watermark check
-+        let stream = watermark_check::watermark_check(info, stream);
+         let time_ready = now >= next_compaction_time;
++        let commit_ready = self.demand.commit_count >= self.config.trigger_snapshot_count;
++        let has_commits = self.demand.commit_count > 0;
+         if self.round.is_some() {
+-            // Active work remains schedulable without new commits. PK-index batches
+-            // consume new demand when they advance their boundary; legacy rounds
+-            // retain a fixed boundary. Neither can bypass failure backoff.
+-            return time_ready;
++            // Continue immediately below the same PK-index boundary when no new
++            // commits are pending. Advancing the boundary must honor the cooldown
++            // or commit threshold, including commits received after success.
++            // Neither continuation nor new demand can bypass failure backoff.
++            return time_ready
++                || (self.config.pk_index_coordinated && (commit_ready || !has_commits));
+         }
  
-         stream
-     }
-```
-
-**File**: `src/stream/src/executor/wrapper/watermark_check.rs` (added, +112/-0)
-```diff
-@@ -0,0 +1,112 @@
-+// Copyright 2026 RisingWave Labs
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+use std::collections::BTreeMap;
-+use std::sync::Arc;
-+
-+use futures::StreamExt;
-+use risingwave_common::array::Op;
-+use risingwave_common::row::{Row, RowExt};
-+use risingwave_common::types::{DefaultOrd, ScalarImpl};
-+use risingwave_pb::stream_plan::stream_node::PbStreamKind;
-+
-+use crate::executor::{ExecutorInfo, Message, MessageStream};
-+
-+/// Streams wrapped by `watermark_check` will check that no row falls below a watermark emitted
-+/// earlier on the same column. A delete of an upsert stream is not checked, as only its stream key
-+/// identifies the row it deletes.
-+///
-+/// It is a combinator rather than a generator, which would deepen the stack of every executor in
-+/// debug builds.
-+pub fn watermark_check(info: Arc<ExecutorInfo>, input: impl MessageStream) -> impl MessageStream {
-+    let mut watermarks = BTreeMap::<usize, ScalarImpl>::new();
-+    input.inspect(move |message| match message {
-+        Ok(Message::Watermark(watermark)) => {
-+            let emitted = watermarks
-+                .entry(watermark.col_idx)
-+                .or_insert_with(|| watermark.val.clone());
-+            if watermark.val.default_cmp(emitted).is_gt() {
-+                *emitted = watermark.val.clone();
-+            }
-+        }
-+        Ok(Message::Chunk(chunk)) if !watermarks.is_empty() => {
-+            for (op, row) in chunk.rows() {
-+                if info.stream_kind == PbStreamKind::Upsert
-+                    && matches!(op, Op::Delete | Op::UpdateDelete)
-+                {
-+                    continue;
-+                }
-+                for (&col_idx, watermark) in &watermarks {
-+                    if let Some(value) = row.datum_at(col_idx) {
-+                        debug_assert!(
-+                            value.default_cmp(&watermark.as_scalar_ref_impl()).is_ge(),
-+                            "row below a watermark emitted earlier
-+row: {}
-+op: {:?}
-+column: {}
-+watermark: {:?}
-+executor: {}",
-+                            row.display(),
-+                            op,
-+                            col_idx,
-+                            watermark,
-+                            info.identity
-+                        );
-+                    }
-+                }
-+            }
-+        }
-+        _ => {}
-+    })
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use futures::pin_mut;
-+    use risingwave_common::array::StreamChunk;
-+    use risingwave_common::array::stream_chunk::StreamChunkTestExt;
-+    use risingwave_common::catalog::{Field, Schema};
-+    use risingwave_common::types::DataType;
-+
-+    use super::*;
-+    use crate::executor::test_utils::MockSource;
-+
-+    /// Runs `chunk` after `Watermark(10)` on the only column through the check.
-+    async fn check_after_watermark(stream_kind: PbStreamKind, chunk: &str) {
-+        let (mut tx, source) = MockSource::channel();
-+        let source =
-+            source.into_executor(Schema::new(vec![Field::unnamed(DataType::Int64)]), vec![]);
-+        let mut info = source.info().clone();
-+        info.stream_kind = stream_kind;
-+        tx.push_int64_watermark(0, 10);
-+        tx.push_chunk(StreamChunk::from_pretty(chunk));
-+
-+        let checked = watermark_check(info.into(), source.execute());
-+        pin_mut!(checked);
-+        checked.next().await.unwrap().unwrap();
-+        checked.next().await.unwrap().unwrap();
-+    }
-+
-+    #[should_panic(expected = "row below a watermark emitted earlier")]
-+    #[tokio::test]
-+    async fn test_row_below_watermark() {
-+        check_after_watermark(PbStreamKind::Retract, " I\n + 10\n - 9").await;
-+    }
-+
-+    #[tokio::test]
-+    async fn test_rows_not_below_watermark() {
-+        check_after_watermark(PbStreamKind::Retract, " I\n + 10\n + 11\n + .").await;
-+        check_after_watermark(PbStreamKind::Upsert, " I\n - 9").await;
-+    }
-+}
-```
-
----
-
-### Incident Patch 2: `51098d22` (2026-10-27)
-**Commit Message**: fix(meta): send notification service responses zstd-compressed (#27654)
-
-Co-authored-by: Yuhao Su <[REDACTED_EMAIL]>
-Co-authored-by: Claude Fable 5 <[REDACTED_EMAIL]>
-
-**File**: `src/meta/node/src/server.rs` (modified, +8/-1)
-```diff
-@@ -828,7 +828,14 @@ pub async fn start_service_as_election_leader(
-         .add_service(
-             HummockManagerServiceServer::new(hummock_srv).max_decoding_message_size(usize::MAX),
-         )
--        .add_service(NotificationServiceServer::new(notification_srv))
-+        // Compress notifications with zstd for clients that accept it (older clients still
-+        // get uncompressed responses). The initial `MetaSnapshot` carries the full hummock
-+        // version; uncompressed messages larger than `i32::MAX` bytes are silently reset by
-+        // hyper/h2, so compression keeps large snapshots deliverable.
-+        .add_service(
-+            NotificationServiceServer::new(notification_srv)
-+                .send_compressed(tonic::codec::CompressionEncoding::Zstd),
-+        )
-         .add_service(MetaMemberServiceServer::new(meta_member_srv))
-         .add_service(DdlServiceServer::new(ddl_srv).max_decoding_message_size(usize::MAX))
-         .add_service(UserServiceServer::new(user_srv))
-```
-
-**File**: `src/rpc_client/src/meta_client.rs` (modified, +6/-2)
-```diff
-@@ -2343,8 +2343,12 @@ impl GrpcMetaClientCore {
-             DdlServiceClient::new(channel.clone()).max_decoding_message_size(usize::MAX);
-         let hummock_client =
-             HummockManagerServiceClient::new(channel.clone()).max_decoding_message_size(usize::MAX);
--        let notification_client =
--            NotificationServiceClient::new(channel.clone()).max_decoding_message_size(usize::MAX);
-+        // Accept zstd-compressed notifications: the initial `MetaSnapshot` on `Subscribe`
-+        // carries the full hummock version, and a single uncompressed gRPC message larger
-+        // than `i32::MAX` bytes is silently reset by hyper/h2 and can never be delivered.
-+        let notification_client = NotificationServiceClient::new(channel.clone())
-+            .accept_compressed(tonic::codec::CompressionEncoding::Zstd)
-+            .max_decoding_message_size(usize::MAX);
-         let stream_client =
-             StreamManagerServiceClient::new(channel.clone()).max_decoding_message_size(usize::MAX);
-         let user_client = UserServiceClient::new(channel.clone());
-```
-
----
-
-### Incident Patch 3: `dea532d7` (2026-10-27)
-**Commit Message**: refactor(optimizer): remove column pruning workaround in GroupingSetsToExpandRule (#27652)
-
-**File**: `src/frontend/src/optimizer/rule/grouping_sets_to_expand_rule.rs` (modified, +1/-41)
-```diff
-@@ -12,7 +12,6 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
+-        let commit_ready = self.demand.commit_count >= self.config.trigger_snapshot_count;
+-        let has_commits = self.demand.commit_count > 0;
+         if self.config.pk_index_coordinated {
+             // An empty manual Full can finish before the first snapshot is observed.
+             return self.latest_observed_snapshot.is_some()
+@@ -674,8 +677,8 @@ impl CompactionTrack {
  
--use fixedbitset::FixedBitSet;
- use itertools::Itertools;
- use risingwave_common::types::DataType;
- use risingwave_common::util::column_index_mapping::ColIndexMapping;
-@@ -28,44 +27,6 @@ impl GroupingSetsToExpandRule {
-     pub fn create() -> BoxedRule {
-         Box::new(Self {})
-     }
--
--    /// TODO: Remove this method when we support column pruning for `Expand`.
--    fn prune_column_for_agg(agg: &LogicalAgg) -> LogicalAgg {
--        let group_key_required_cols = agg.group_key().to_bitset();
--        let agg_call_required_cols = {
--            let input_cnt = agg.input().schema().len();
--            let mut tmp = FixedBitSet::with_capacity(input_cnt);
--
--            agg.agg_calls().iter().for_each(|agg_call| {
--                tmp.extend(agg_call.inputs.iter().map(|x| x.index()));
--                tmp.extend(agg_call.order_by.iter().map(|x| x.column_index));
--                // collect columns used in aggregate filter expressions
--                for i in &agg_call.filter.conjunctions {
--                    tmp.union_with(&i.collect_input_refs(input_cnt));
--                }
--            });
--            tmp
--        };
--
--        let input_required_cols = {
--            let mut tmp = FixedBitSet::with_capacity(agg.input().schema().len());
--            tmp.union_with(&group_key_required_cols);
--            tmp.union_with(&agg_call_required_cols);
--            tmp.ones().collect_vec()
--        };
--        let input_col_change = ColIndexMapping::with_remaining_columns(
--            &input_required_cols,
--            agg.input().schema().len(),
--        );
--        let input =
--            LogicalProject::with_out_col_idx(agg.input(), input_required_cols.iter().cloned())
--                .into();
--
--        let (new_agg, output_col_change) =
--            agg.rewrite_with_input_agg(input, agg.agg_calls(), input_col_change);
--        assert!(output_col_change.is_identity());
--        new_agg
--    }
+         self.config.trigger_interval_sec = new_interval_sec;
+         if self.round.is_some() {
+-            // The new interval applies after the round drains. The current deadline
+-            // already represents either immediate continuation or retry backoff.
++            // The new interval applies after the next successful batch or when the
++            // round drains. Preserve the current continuation/cooldown/retry deadline.
+             return;
+         }
+ 
+@@ -704,8 +707,19 @@ impl CompactionTrack {
+             // Success means this attempt made progress, but only `Drained`
+             // proves that no work remains below this attempt's boundary.
+             self.health.record_progress();
++            // Beneficial PK-index batches can advance their boundary on new commits,
++            // so continuous ingestion may prevent the round from ever draining.
++            // Keep the cooldown even if commits arrive only after this success.
++            // should_trigger still allows immediate continuation without new commits
++            // to finish deferred plans and the empty scan. Full keeps a fixed boundary.
++            let delay =
++                if attempt.pk_index_coordinated && attempt.policy.task_type != TaskType::Full {
++                    Duration::from_secs(self.config.trigger_interval_sec)
++                } else {
++                    Duration::ZERO
++                };
+             self.state = CompactionTrackState::Idle {
+-                next_compaction_time: now,
++                next_compaction_time: now + delay,
+                 manual_task_type: None,
+             };
+         } else {
+@@ -1669,7 +1683,15 @@ impl IcebergCompactionManager {
+                         ..
+                     } = &track.state
+                 {
+-                    candidates.push((*sink_id, *next_compaction_time));
++                    // Active PK-index work can be eligible before its cooldown.
++                    // Sort it as ready now without changing the stored deadline.
++                    let eligible_at = if track.round.is_some() && track.config.pk_index_coordinated
++                    {
++                        (*next_compaction_time).min(now)
++                    } else {
++                        *next_compaction_time
++                    };
++                    candidates.push((*sink_id, eligible_at));
+                 }
+             }
+ 
+```
+
+**File**: `src/meta/src/manager/iceberg_compaction/schedule/tests.rs` (modified, +480/-23)
+```diff
+@@ -2115,28 +2115,31 @@ fn test_pk_index_commit_events_ignore_duplicates_and_maintenance() {
+ 
+ #[test]
+ fn test_pk_index_retry_gate_cannot_be_bypassed_by_commits_or_force() {
+-    let now = Instant::now();
+-    let mut track = pk_index_track(now, false);
+-    track.config.trigger_snapshot_count = 1;
+-    track.finish_failed(now, "boom".to_owned());
+-    record_commits(&mut track, 10);
+-    track.record_force_compaction(now, None);
+-    assert!(!track.should_trigger(now));
+-    let first_retry = track.retry.not_before.unwrap();
+-    assert!(
+-        (Duration::from_secs(1)..=Duration::from_millis(1250))
+-            .contains(&first_retry.duration_since(now))
+-    );
+-    assert!(track.should_trigger(first_retry));
+-    start_in_flight(&mut track, 10, first_retry);
+-    track.finish_failed(first_retry, "boom".to_owned());
+-    assert!(!track.should_trigger(first_retry + Duration::from_secs(1)));
+-    let second_retry = track.retry.not_before.unwrap();
+-    assert!(
+-        (Duration::from_secs(2)..=Duration::from_millis(2500))
+-            .contains(&second_retry.duration_since(first_retry))
+-    );
+-    assert!(track.should_trigger(second_retry));
++    for bounded in [false, true] {
++        let now = Instant::now();
++        let mut track = pk_index_track(now, bounded);
++        track.config.trigger_snapshot_count = 1;
++        track.finish_failed(now, "boom".to_owned());
++        record_commits(&mut track, 10);
++        assert!(!track.should_trigger(now));
++        track.record_force_compaction(now, None);
++        assert!(!track.should_trigger(now));
++        let first_retry = track.retry.not_before.unwrap();
++        assert!(
++            (Duration::from_secs(1)..=Duration::from_millis(1250))
++                .contains(&first_retry.duration_since(now))
++        );
++        assert!(track.should_trigger(first_retry));
++        start_in_flight(&mut track, 10, first_retry);
++        track.finish_failed(first_retry, "boom".to_owned());
++        assert!(!track.should_trigger(first_retry + Duration::from_secs(1)));
++        let second_retry = track.retry.not_before.unwrap();
++        assert!(
++            (Duration::from_secs(2)..=Duration::from_millis(2500))
++                .contains(&second_retry.duration_since(first_retry))
++        );
++        assert!(track.should_trigger(second_retry));
++    }
  }
  
- impl Rule<Logical> for GroupingSetsToExpandRule {
-@@ -74,9 +35,8 @@ impl Rule<Logical> for GroupingSetsToExpandRule {
-         if agg.grouping_sets().is_empty() {
+ #[tokio::test]
+@@ -2766,7 +2769,8 @@ fn test_pk_index_batches_include_new_writes_without_changing_active_attempt() {
+     assert_eq!(track.round_boundary(), Some(10));
+     assert!(!track.should_trigger(now));
+     track.finish_success(now);
+-    assert!(track.should_trigger(now));
++    assert!(!track.should_trigger(now));
++    assert!(track.should_trigger(now + Duration::from_secs(120)));
+     let second = track.start_attempt();
+     assert_eq!(second.max_file_sequence_number, Some(20));
+     assert_eq!(
+@@ -2782,6 +2786,358 @@ fn test_pk_index_batches_include_new_writes_without_changing_active_attempt() {
+     assert_eq!(track.demand.commit_count, 1);
+ }
+ 
++#[test]
++fn test_pk_index_successful_batches_wait_for_interval_under_continuous_commits() {
++    for task_type in [
++        TaskType::Auto,
++        TaskType::SmallFiles,
++        TaskType::FilesWithDelete,
++    ] {
++        for (interval_sec, trigger_snapshot_count) in [(1, 3), (60, 3), (120, 3), (120, usize::MAX)]
++        {
++            for applying in [false, true] {
++                let now = Instant::now();
++                let mut track = new_round_track(now, interval_sec, trigger_snapshot_count, 1);
++                track.config.pk_index_coordinated = true;
++                track.config.policy.task_type = task_type;
++                track.record_observed_snapshot(committed_snapshot(10, 1000));
++                let mut now = now + Duration::from_secs(interval_sec);
++
++                for batch in 0..3 {
++                    assert!(track.should_trigger(now));
++                    let boundary = track.latest_observed_snapshot.as_ref().unwrap().snapshot_id;
++                    let task_id = IcebergCompactionTaskId::new(9 + batch);
++                    start_in_flight(&mut track, task_id, now);
++                    assert_eq!(track.round_boundary(), Some(boundary));
++                    assert_eq!(track.demand.commit_count, 0);
++                    now += Duration::from_secs(5);
++                    commit_update(boundary + 1, 2000).apply_to_track(&mut track, now);
++                    if applying {
++                        let CompactionTrackState::InFlight { attempt, .. } = &track.state else {
++                            unreachable!()
++                        };
++                        track.state = CompactionTrackState::Applying {
++                            task_id,
++                            attempt: attempt.clone(),
++                        };
++                    }
++                    track.finish_success(now);
++                    assert!(!track.should_trigger(now));
++                    assert_eq!(track.round_boundary(), Some(bou
+```
+
+---
+
+### Incident Patch 2: `f9f50e79` (2026-10-28)
+**Commit Message**: fix(sqlparser): parse IS [NOT] DISTINCT FROM tighter than AND and OR (#27694)
+
+**File**: `e2e_test/batch/basic/precedence.slt.part` (modified, +18/-0)
+```diff
+@@ -23,6 +23,24 @@ select pg_typeof(-2147483648 * 1);
+ ----
+ integer
+ 
++query T
++select null is distinct from true and false; -- is distinct from then and
++----
++f
++
++query T
++select null is not distinct from false or true; -- is not distinct from then or
++----
++t
++
++query T
++select null is distinct from false = false; -- equals then is distinct from
++----
++t
++
++statement error syntax error at or near
++select false is distinct from null is null; -- is is non-associative
++
+ 
+ # query I
+ # select @ 1 - 2; -- minus then abs
+```
+
+**File**: `src/sqlparser/src/parser.rs` (modified, +16/-2)
+```diff
+@@ -1389,11 +1389,11 @@ impl Parser<'_> {
+                     } else if self.parse_keywords(&[Keyword::NOT, Keyword::NULL]) {
+                         Ok(Expr::IsNotNull(Box::new(expr)))
+                     } else if self.parse_keywords(&[Keyword::DISTINCT, Keyword::FROM]) {
+-                        let expr2 = self.parse_expr()?;
++                        let expr2 = self.parse_is_distinct_from_rhs()?;
+                         Ok(Expr::IsDistinctFrom(Box::new(expr), Box::new(expr2)))
+                     } else if self.parse_keywords(&[Keyword::NOT, Keyword::DISTINCT, Keyword::FROM])
+                     {
+-                        let expr2 = self.parse_expr()?;
++                        let expr2 = self.parse_is_distinct_from_rhs()?;
+                         Ok(Expr::IsNotDistinctFrom(Box::new(expr), Box::new(expr2)))
+                     } else {
+                         let negated = self.parse_keyword(Keyword::NOT);
+@@ -1575,6 +1575,20 @@ impl Parser<'_> {
+         }
+     }
+ 
++    /// Parses the right operand of `IS [NOT] DISTINCT FROM`.
++    ///
++    /// Like PostgreSQL, where `IS` is non-associative, rejects another `IS`, `ISNULL`, or
++    /// `NOTNULL` right after the operand.
++    fn parse_is_distinct_from_rhs(&mut self) -> ModalResult<Expr> {
++        let expr = self.parse_subexpr(Precedence::Is)?;
++
++        if self.get_next_precedence()? == Precedence::Is {
++            parser_err!("syntax error at or near {}", self.peek_token().token);
++        }
++
++        Ok(expr)
++    }
++
+     /// Parses the optional constraints following the `IS [NOT] JSON` predicate
+     pub fn parse_is_json(&mut self, expr: Expr, negated: bool) -> ModalResult<Expr> {
+         let item_type = match self.peek_token().token {
+```
+
+**File**: `src/sqlparser/tests/testdata/precedence.yaml` (modified, +25/-0)
+```diff
+@@ -14,3 +14,28 @@
+ - input: select |/ 4 + 12
+   formatted_sql: SELECT |/ 4 + 12
+   formatted_ast: 'Query(Query { with: None, body: Select(Select { distinct: All, projection: [UnnamedExpr(UnaryOp { op: Custom("|/"), expr: BinaryOp { left: Value(Number("4")), op: Plus, right: Value(Number("12")) } })], from: [], lateral_views: [], selection: None, group_by: [], having: None, window: [] }), order_by: [], limit: None, offset: None, fetch: None })'
++- input: select a is distinct from b and c
++  formatted_sql: SELECT a IS DISTINCT FROM b AND c
++  formatted_ast: 'Query(Query { with: None, body: Select(Select { distinct: All, projection: [UnnamedExpr(BinaryOp { left: IsDistinctFrom(Identifier(Ident { value: "a", quote_style: None }), Identifier(Ident { value: "b", quote_style: None })), op: And, right: Identifier(Ident { value: "c", quote_style: None }) })], from: [], lateral_views: [], selection: None, group_by: [], having: None, window: [] }), order_by: [], limit: None, offset: None, fetch: None })'
++- input: select a is not distinct from b or c
++  formatted_sql: SELECT a IS NOT DISTINCT FROM b OR c
++  formatted_ast: 'Query(Query { with: None, body: Select(Select { distinct: All, projection: [UnnamedExpr(BinaryOp { left: IsNotDistinctFrom(Identifier(Ident { value: "a", quote_style: None }), Identifier(Ident { value: "b", quote_style: None })), op: Or, right: Identifier(Ident { value: "c", quote_style: None }) })], from: [], lateral_views: [], selection: None, group_by: [], having: None, window: [] }), order_by: [], limit: None, offset: None, fetch: None })'
++- input: select a is distinct from b = c
++  formatted_sql: SELECT a IS DISTINCT FROM b = c
++  formatted_ast: 'Query(Query { with: None, body: Select(Select { distinct: All, projection: [UnnamedExpr(IsDistinctFrom(Identifier(Ident { value: "a", quote_style: None }), BinaryOp { left: Identifier(Ident { value: "b", quote_style: None }), op: Eq, right: Identifier(Ident { value: "c", quote_style: None }) }))], from: [], lateral_views: [], selection: None, group_by: [], having: None, window: [] }), order_by: [], limit: None, offset: None, fetch: None })'
++- input: select a is null is distinct from b
++  formatted_sql: SELECT a IS NULL IS DISTINCT FROM b
++  formatted_ast: 'Query(Query { with: None, body: Select(Select { distinct: All, projection: [UnnamedExpr(IsDistinctFrom(IsNull(Identifier(Ident { value: "a", quote_style: None })), Identifier(Ident { value: "b", quote_style: None })))], from: [], lateral_views: [], selection: None, group_by: [], having: None, window: [] }), order_by: [], limit: None, offset: None, fetch: None })'
++- input: select a is distinct from (b is null)
++  formatted_sql: SELECT a IS DISTINCT FROM (b IS NULL)
++  formatted_ast: 'Query(Query { with: None, body: Select(Select { distinct: All, projection: [UnnamedExpr(IsDistinctFrom(Identifier(Ident { value: "a", quote_style: None }), Nested(IsNull(Identifier(Ident { value: "b", quote_style: None })))))], from: [], lateral_views: [], selection: None, group_by: [], having: None, window: [] }), order_by: [], limit: None, offset: None, fetch: None })'
++- input: select a is distinct from b is null
++  error_msg: |-
++    sql parser error: syntax error at or near is
++    LINE 1: select a is distinct from b is null
++                                        ^
++- input: select a is not distinct from b is null
++  error_msg: |-
++    sql parser error: syntax error at or near is
++    LINE 1: select a is not distinct from b is null
++                                            ^
+```
+
+---
+
+### Incident Patch 3: `decbbdf0` (2026-10-28)
+**Commit Message**: fix(streaming): correlated ARRAY subquery emits transient NULL in MV (#26655)
+
+Co-authored-by: maingoh <[REDACTED_EMAIL]>
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
+
+**File**: `e2e_test/streaming/bug_fixes/issue_26654.slt` (added, +64/-0)
+```diff
+@@ -0,0 +1,64 @@
++# https://github.com/risingwavelabs/risingwave/issues/26654
++# A correlated ARRAY(SELECT ...) subquery must never emit a transient NULL in the change stream.
++# `flush` + `select` only observes the settled state, so capture the changes with a force-append-only sink.
++
++statement ok
++create table t1 (id int primary key);
++
++statement ok
++create table t2 (id int primary key, t1_id int, val varchar);
++
++statement ok
++create materialized view mv as
++select t1.id, array(select t2.val from t2 where t2.t1_id = t1.id) as arr from t1;
++
++statement ok
++create table cap (id int, arr varchar[]) append only;
++
++statement ok
++create sink s into cap from mv with (type = 'append-only', force_append_only = 'true');
++
++statement ok
++insert into t1 values (1);
++
++statement ok
++flush;
++
++statement ok
++insert into t2 values (10, 1, 'alpha');
++
++statement ok
++flush;
++
++statement ok
++delete from t2;
++
++statement ok
++flush;
++
++sleep 3s
++
++query I
++select count(*) from cap where arr is null;
++----
++0
++
++query IT
++select id, arr from mv;
++----
++1 {}
++
++statement ok
++drop sink s;
++
++statement ok
++drop table cap;
++
++statement ok
++drop materialized view mv;
++
++statement ok
++drop table t2;
++
++statement ok
++drop table t1;
+```
+
+**File**: `src/frontend/planner_test/tests/testdata/input/subquery_expr_correlated.yaml` (modified, +23/-1)
+```diff
+@@ -716,4 +716,26 @@
+     select * from s1.users where exists (select 1 from s2.users where s2.users.id = s1.users.id and s2.users.is_active = false);
+   expected_outputs:
+     - logical_plan
+-    - batch_plan
+\ No newline at end of file
++    - batch_plan
++
++- name: array subquery uses inner join
++  sql: |
++    create table t1(id int primary key);
++    create table t2(id int primary key, t1_id int, val varchar);
++    select t1.id, array(select t2.val from t2 where t2.t1_id = t1.id) as arr from t1;
++  expected_outputs:
++    - batch_plan
++    - stream_plan
++
++- name: mixing array and scalar subqueries keeps left outer join
++  sql: |
++    create table t1(id int primary key);
++    create table t2(id int primary key, t1_id int, val varchar);
++    select
++      t1.id,
++      array(select t2.val from t2 where t2.t1_id = t1.id) as arr,
++      (select max(t2.val) from t2 where t2.t1_id = t1.id) as mx
++    from t1;
++  expected_outputs:
++    - batch_plan
++    - stream_plan
+```
+
+**File**: `src/frontend/planner_test/tests/testdata/output/subquery.yaml` (modified, +3/-3)
+```diff
+@@ -863,9 +863,9 @@
+   sql: |
+     select Array(select 1 union select 2);
+   batch_plan: |-
+-    BatchNestedLoopJoin { type: LeftOuter, predicate: true, output: all }
+-    ├─BatchValues { rows: [[]] }
+-    └─BatchProject { exprs: [Coalesce(array_agg(1:Int32), ARRAY[]:List(Int32)) as $expr1] }
++    BatchProject { exprs: [Coalesce(array_agg(1:Int32), ARRAY[]:List(Int32)) as $expr1] }
++    └─BatchNestedLoopJoin { type: Inner, predicate: true, output: all }
++      ├─BatchValues { rows: [[]] }
+       └─BatchSimpleAgg { aggs: [array_agg(1:Int32)] }
+         └─BatchExchange { order: [], dist: Single }
+           └─BatchHashAgg { group_key: [1:Int32], aggs: [] }
+```
+
+**File**: `src/frontend/planner_test/tests/testdata/output/subquery_expr_correlated.yaml` (modified, +161/-62)
+```diff
+@@ -998,10 +998,10 @@
+     select Array(select c from t2 where b = d) arr from t1;
+   batch_plan: |-
+     BatchExchange { order: [], dist: Single }
+-    └─BatchHashJoin { type: LeftOuter, predicate: t1.b IS NOT DISTINCT FROM t1.b, output: [$expr1] }
+-      ├─BatchExchange { order: [], dist: HashShard(t1.b) }
+-      │ └─BatchScan { table: t1, columns: [t1.b], distribution: SomeShard }
+-      └─BatchProject { exprs: [t1.b, Coalesce(array_agg(t2.c) filter(IsNotNull(1:Int32)), ARRAY[]:List(Int32)) as $expr1] }
++    └─BatchProject { exprs: [Coalesce(array_agg(t2.c) filter(IsNotNull(1:Int32)), ARRAY[]:List(Int32)) as $expr1] }
++      └─BatchHashJoin { type: Inner, predicate: t1.b IS NOT DISTINCT FROM t1.b, output: all }
++        ├─BatchExchange { order: [], dist: HashShard(t1.b) }
++        │ └─BatchScan { table: t1, columns: [t1.b], distribution: SomeShard }
+         └─BatchHashAgg { group_key: [t1.b], aggs: [array_agg(t2.c) filter(IsNotNull(1:Int32))] }
+           └─BatchHashJoin { type: LeftOuter, predicate: t1.b IS NOT DISTINCT FROM t2.d, output: [t1.b, t2.c, 1:Int32] }
+             ├─BatchHashAgg { group_key: [t1.b], aggs: [] }
+@@ -1012,12 +1012,12 @@
+                 └─BatchFilter { predicate: IsNotNull(t2.d) }
+                   └─BatchScan { table: t2, columns: [t2.c, t2.d], distribution: SomeShard }
+   stream_plan: |-
+-    StreamMaterialize { columns: [arr, t1._row_id(hidden), t1.b(hidden), t1.b#1(hidden)], stream_key: [t1._row_id, t1.b], pk_columns: [t1._row_id, t1.b], pk_conflict: NoCheck }
+-    └─StreamExchange { dist: HashShard(t1._row_id, t1.b) }
+-      └─StreamHashJoin { type: LeftOuter, predicate: t1.b IS NOT DISTINCT FROM t1.b, output: [$expr1, t1._row_id, t1.b, t1.b] }
++    StreamMaterialize { columns: [arr, t1._row_id(hidden), t1.b(hidden)], stream_key: [t1._row_id, t1.b], pk_columns: [t1._row_id, t1.b], pk_conflict: NoCheck }
++    └─StreamProject { exprs: [Coalesce(array_agg(t2.c) filter(IsNotNull(1:Int32)), ARRAY[]:List(Int32)) as $expr1, t1._row_id, t1.b] }
++      └─StreamHashJoin { type: Inner, predicate: t1.b IS NOT DISTINCT FROM t1.b, output: [t1.b, t1.b, array_agg(t2.c) filter(IsNotNull(1:Int32)), t1._row_id] }
+         ├─StreamExchange { dist: HashShard(t1.b) }
+         │ └─StreamTableScan { table: t1, columns: [t1.b, t1._row_id], stream_scan_type: SnapshotBackfill, stream_key: [t1._row_id], pk: [_row_id], dist: UpstreamHashShard(t1._row_id) }
+-        └─StreamProject { exprs: [t1.b, Coalesce(array_agg(t2.c) filter(IsNotNull(1:Int32)), ARRAY[]:List(Int32)) as $expr1] }
++        └─StreamProject { exprs: [t1.b, array_agg(t2.c) filter(IsNotNull(1:Int32))] }
+           └─StreamHashAgg { group_key: [t1.b], aggs: [array_agg(t2.c) filter(IsNotNull(1:Int32)), count] }
+             └─StreamHashJoin { type: LeftOuter, predicate: t1.b IS NOT DISTINCT FROM t2.d, output: [t1.b, t2.c, 1:Int32, t2._row_id] }
+               ├─StreamProject { exprs: [t1.b], noop_update_hint: true }
+@@ -1044,34 +1044,33 @@
+     ORDER BY 1;
+   batch_plan: |-
+     BatchExchange { order: [rw_users.name ASC], dist: Single }
+-    └─BatchProject { exprs: [rw_users.name, rw_users.is_super, true:Boolean, rw_users.create_user, rw_users.create_db, rw_users.can_login, -1:Int32, null:Timestamptz, $expr1, true:Boolean, true:Boolean] }
++    └─BatchProject { exprs: [rw_users.name, rw_users.is_super, true:Boolean, rw_users.create_user, rw_users.create_db, rw_users.can_login, -1:Int32, null:Timestamptz, Coalesce(array_agg(rw_users.name) filter(IsNotNull(1:Int32)), ARRAY[]:List(Varchar)) as $expr1, true:Boolean, true:Boolean] }
+       └─BatchSort { order: [rw_users.name ASC] }
+-        └─BatchHashJoin { type: LeftOuter, predicate: rw_users.id IS NOT DISTINCT FROM rw_users.id, output: all }
++        └─BatchHashJoin { type: Inner, predicate: rw_users.id IS NOT DISTINCT FROM rw_users.id, output: all }
+           ├─BatchExchange { order: [], dist: HashShard(rw_users.id) }
+           │ └─BatchFilter { predicate: Not(RegexpEq(rw_users.name, '^pg_':Varchar)) }
+           │   └─BatchSysScan { table: rw_users, columns: [rw_users.id, rw_users.name, rw_users.is_super, rw_users.create_db, rw_users.create_user, rw_users.can_login], distribution: Single }
+-          └─BatchProject { exprs: [rw_users.id, Coalesce(array_agg(rw_users.name) filter(IsNotNull(1:Int32)), ARRAY[]:List(Varchar)) as $expr1] }
+-            └─BatchHashAgg { group_key: [rw_users.id], aggs: [array_agg(rw_users.name) filter(IsNotNull(1:Int32))] }
+-              └─BatchHashJoin { type: LeftOuter, predicate: rw_users.id IS NOT DISTINCT FROM rw_users.id, output: [rw_users.id, rw_users.name, 1:Int32] }
+-                ├─BatchHashAgg { group_key: [rw_users.id], aggs: [] }
+-                │ └─BatchExchange { order: [], dist: HashShard(rw_users.id) }
+-                │   └─BatchFilter { predicate: Not(RegexpEq(rw_users.name, '^pg_':Varchar)) }
+-                │     └─BatchSysScan { table: rw_users, columns: [rw_users.id, rw_users.name], distribution: Single }
+-                └─BatchExcha
+```
+
+**File**: `src/frontend/planner_test/tests/testdata/output/vector_search.yaml` (modified, +34/-34)
+```diff
+@@ -381,17 +381,17 @@
+     from events;
+   logical_plan: |-
+     LogicalProject { exprs: [events.event_id, $expr3, events.time] }
+-    └─LogicalApply { type: LeftOuter, on: true, correlated_id: 1, max_one_row: true }
++    └─LogicalApply { type: Inner, on: true, correlated_id: 1, max_one_row: true }
+       ├─LogicalScan { table: events, columns: [events.event_id, events.time, events.embedding, events._rw_timestamp] }
+       └─LogicalProject { exprs: [Coalesce(array_agg($expr1 order_by($expr2 ASC)), ARRAY[]:List(Struct(Int32, Varchar))) as $expr3] }
+         └─LogicalAgg { aggs: [array_agg($expr1 order_by($expr2 ASC))] }
+           └─LogicalTopN { order: [$expr2 ASC], limit: 3, offset: 0 }
+             └─LogicalProject { exprs: [Row(items.id, items.name) as $expr1, CosineDistance(CorrelatedInputRef { index: 2, correlated_id: 1 }, items.embedding) as $expr2] }
+               └─LogicalScan { table: items, columns: [items.id, items.name, items.embedding, items._rw_timestamp] }
+   optimized_logical_plan_for_batch: |-
+-    LogicalJoin { type: LeftOuter, on: IsNotDistinctFrom(events.embedding, events.embedding), output: [events.event_id, $expr3, events.time] }
+-    ├─LogicalScan { table: events, columns: [events.event_id, events.time, events.embedding] }
+-    └─LogicalProject { exprs: [events.embedding, Coalesce(array_agg($expr1 order_by($expr2 ASC)) filter(IsNotNull(1:Int32)), ARRAY[]:List(Struct(Int32, Varchar))) as $expr3] }
++    LogicalProject { exprs: [events.event_id, Coalesce(array_agg($expr1 order_by($expr2 ASC)) filter(IsNotNull(1:Int32)), ARRAY[]:List(Struct(Int32, Varchar))) as $expr3, events.time] }
++    └─LogicalJoin { type: Inner, on: IsNotDistinctFrom(events.embedding, events.embedding), output: all }
++      ├─LogicalScan { table: events, columns: [events.event_id, events.time, events.embedding] }
+       └─LogicalAgg { group_key: [events.embedding], aggs: [array_agg($expr1 order_by($expr2 ASC)) filter(IsNotNull(1:Int32))] }
+         └─LogicalJoin { type: LeftOuter, on: IsNotDistinctFrom(events.embedding, events.embedding), output: [events.embedding, $expr1, $expr2, 1:Int32] }
+           ├─LogicalAgg { group_key: [events.embedding], aggs: [] }
+@@ -405,10 +405,10 @@
+                   └─LogicalScan { table: items, columns: [items.id, items.name, items.embedding] }
+   batch_plan: |-
+     BatchExchange { order: [], dist: Single }
+-    └─BatchHashJoin { type: LeftOuter, predicate: events.embedding IS NOT DISTINCT FROM events.embedding, output: [events.event_id, $expr3, events.time] }
+-      ├─BatchExchange { order: [], dist: HashShard(events.embedding) }
+-      │ └─BatchScan { table: events, columns: [events.event_id, events.time, events.embedding], distribution: UpstreamHashShard(events.event_id) }
+-      └─BatchProject { exprs: [events.embedding, Coalesce(array_agg($expr1 order_by($expr2 ASC)) filter(IsNotNull(1:Int32)), ARRAY[]:List(Struct(Int32, Varchar))) as $expr3] }
++    └─BatchProject { exprs: [events.event_id, Coalesce(array_agg($expr1 order_by($expr2 ASC)) filter(IsNotNull(1:Int32)), ARRAY[]:List(Struct(Int32, Varchar))) as $expr3, events.time] }
++      └─BatchHashJoin { type: Inner, predicate: events.embedding IS NOT DISTINCT FROM events.embedding, output: all }
++        ├─BatchExchange { order: [], dist: HashShard(events.embedding) }
++        │ └─BatchScan { table: events, columns: [events.event_id, events.time, events.embedding], distribution: UpstreamHashShard(events.event_id) }
+         └─BatchHashAgg { group_key: [events.embedding], aggs: [array_agg($expr1 order_by($expr2 ASC)) filter(IsNotNull(1:Int32))] }
+           └─BatchHashJoin { type: LeftOuter, predicate: events.embedding IS NOT DISTINCT FROM events.embedding, output: [events.embedding, $expr1, $expr2, 1:Int32] }
+             ├─BatchHashAgg { group_key: [events.embedding], aggs: [] }
+@@ -439,17 +439,17 @@
+     as related_info from events;
+   logical_plan: |-
+     LogicalProject { exprs: [events.event_id, events.time, events.embedding, $expr3] }
+-    └─LogicalApply { type: LeftOuter, on: true, correlated_id: 1, max_one_row: true }
++    └─LogicalApply { type: Inner, on: true, correlated_id: 1, max_one_row: true }
+       ├─LogicalScan { table: events, columns: [events.event_id, events.time, events.embedding, events._rw_timestamp] }
+       └─LogicalProject { exprs: [Coalesce(array_agg($expr1 order_by($expr2 ASC)), ARRAY[]:List(Struct(Int32, Varchar))) as $expr3] }
+         └─LogicalAgg { aggs: [array_agg($expr1 order_by($expr2 ASC))] }
+           └─LogicalTopN { order: [$expr2 ASC], limit: 3, offset: 0 }
+             └─LogicalProject { exprs: [Row(items.id, items.name) as $expr1, CosineDistance(items.embedding, CorrelatedInputRef { index: 2, correlated_id: 1 }) as $expr2] }
+               └─LogicalScan { table: items, columns: [items.id, items.name, items.embedding, items._rw_timestamp] }
+   optimized_logical_plan_for_batch: |-
+-    LogicalJoin { type: LeftOuter, on: IsNotDistinctFrom(events.embedding, events.embedding), output: [event
+```
+
+**File**: `src/frontend/src/optimizer/rule/correlated_topn_to_vector_search.rs` (modified, +2/-2)
+```diff
+@@ -41,8 +41,8 @@ impl CorrelatedTopNToVectorSearchRule {
+ impl Rule<Logical> for CorrelatedTopNToVectorSearchRule {
+     fn apply(&self, plan: PlanRef) -> Option<PlanRef> {
+         let apply = plan.as_logical_apply()?;
+-        // match pattern LogicalApply { type: LeftOuter, on: true, correlated_id, max_one_row: true }
+-        if apply.join_type() != JoinType::LeftOuter {
++        // match pattern LogicalApply { type: LeftOuter | Inner, on: true, correlated_id, max_one_row: true }
++        if !matches!(apply.join_type(), JoinType::LeftOuter | JoinType::Inner) {
              return None;
          }
--        let agg = Self::prune_column_for_agg(agg);
-         let (old_agg_calls, old_group_keys, grouping_sets, input, enable_two_phase) =
--            agg.decompose();
-+            agg.clone().decompose();
+         if !apply.max_one_row() {
+```
+
+**File**: `src/frontend/src/planner/select.rs` (modified, +24/-2)
+```diff
+@@ -438,13 +438,23 @@ impl Planner {
+                 _ => bail_not_implemented!(issue = 1343, "{:?}", subquery.kind),
+             };
  
-         let old_input_schema_len = input.schema().len();
-         let flag_col_idx = old_group_keys.len();
++            // `Array` subqueries decorrelate to a scalar aggregate with
++            // `Coalesce(array_agg, ARRAY[])`, guaranteeing one row per outer key, so
++            // `Inner` is equivalent to `LeftOuter` in batch. `Inner` also avoids the
++            // streaming transient-NULL caused by `StreamHashJoin(LeftOuter)`
++            // null-padding the outer row before the right-side aggregate arrives.
++            let join_type = if matches!(subquery.kind, SubqueryKind::Array) {
++                JoinType::Inner
++            } else {
++                JoinType::LeftOuter
++            };
+             root = Self::create_apply(
+                 correlated_id,
+                 correlated_indices,
+                 root,
+                 right,
+                 ExprImpl::literal_bool(true),
+-                JoinType::LeftOuter,
++                join_type,
+                 true,
+             );
+         }
+@@ -518,6 +528,7 @@ impl Planner {
+             .collect();
+ 
+         let mut right = None;
++        let mut all_array_subqueries = true;
+ 
+         for subquery in rewriter.subqueries {
+             let return_type = subquery.return_type();
+@@ -547,6 +558,9 @@ impl Planner {
+                 SubqueryKind::Array => subroot.into_array_agg()?,
+                 _ => bail_not_implemented!(issue = 1343, "{:?}", subquery.kind),
+             };
++            if !matches!(subquery.kind, SubqueryKind::Array) {
++                all_array_subqueries = false;
++            }
+             if right.is_none() {
+                 right = Some(subplan);
+             } else {
+@@ -569,13 +583,21 @@ impl Planner {
+             correlated_indices.sort();
+             correlated_indices.dedup();
+ 
++            // Same reasoning as `substitute_subqueries_in_left_deep_tree_way`:
++            // only safe when every combined subquery is `Array` (Scalar/Existential
++            // legitimately need `LeftOuter` null-padding).
++            let join_type = if all_array_subqueries {
++                JoinType::Inner
++            } else {
++                JoinType::LeftOuter
++            };
+             Self::create_apply(
+                 rewriter.correlated_id.expect("must have a correlated id"),
+                 correlated_indices,
+                 root,
+                 right,
+                 ExprImpl::literal_bool(true),
+-                JoinType::LeftOuter,
++                join_type,
+                 true,
+             )
+         } else {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #27670** (2026-10-27): chore(deps): Bump uuid from 1.26.1 to 1.28.0 (@dependabot[bot])
-- **PR #27668** (closed): feat(batch): opt in to latest locally committed point reads (@zwang28)
-- **PR #27667** (closed): perf(optimizer): pull up correlated COUNT aggregates without a domain (@chenzl25)
-- **PR #27664** (2026-10-27): fix(batch): avoid extra NULL rows in full outer hash join with non-equi condition (@chenzl25)
-- **PR #27663** (2026-10-27): perf(storage): avoid version waits for readable batch query epochs (#27661) (@risingwave-ci)
-- **PR #27662** (closed): fix: batch query epoch readiness and Pub/Sub credentials fixes to release-3.1 (@zwang28)
+- **PR #27698** (2026-10-28): fix(meta): do not serialize secret store private key in MetaOpts (#27586) (@risingwave-ci)
+- **PR #27697** (2026-10-28): fix(meta): do not serialize secret store private key in MetaOpts (#27586) (@risingwave-ci)
+- **PR #27694** (2026-10-28): fix(sqlparser): parse IS [NOT] DISTINCT FROM tighter than AND and OR (@howenyap)
+- **PR #27693** (2026-10-28): fix(meta): send notification service responses zstd-compressed (#27654) (@risingwave-ci)
+- **PR #27690** (2026-10-28): cherry-pick fix(cdc): commit offsets persisted on non-checkpoint barriers (#27640) to release-3.0 (@yuhao-su)
+- **PR #27674** (2026-10-28): chore(deps): Bump next from 16.3.8 to 16.4.1 in /dashboard (@dependabot[bot])
 
 ---
 
@@ -1368,31 +1732,53 @@ Co-authored-by: Claude Fable 5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. stream): check in debug builds that executors output no rows below their waterma
+## X. iceberg): honor compaction interval between pk-index batches (#27625)
 
 **RULE**:
-When implementing operations in `src/stream/src/executor/wrapper.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/meta/src/manager/iceberg_compaction/schedule.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3a2a460c`: stream): check in debug builds that executors output no rows below their watermarks (#27559). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e3fe3b25`: iceberg): honor compaction interval between pk-index batches (#27625). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/stream/src/executor/wrapper.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/meta/src/manager/iceberg_compaction/schedule.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-mod watermark_check;
-        let stream = update_check::update_check(info.clone(), stream);
-        // Watermark check
-        let stream = watermark_check::watermark_check(info, stream);
+    /// - An active automatic round follows its next-attempt time. PK-index batches
+    ///   can also continue without new commits or trigger early at the commit threshold.
+        let commit_ready = self.demand.commit_count >= self.config.trigger_snapshot_count;
+        let has_commits = self.demand.commit_count > 0;
+            // Continue immediately below the same PK-index boundary when no new
+            // commits are pending. Advancing the boundary must honor the cooldown
+            // or commit threshold, including commits received after success.
+            // Neither continuation nor new demand can bypass failure backoff.
+            return time_ready
+                || (self.config.pk_index_coordinated && (commit_ready || !has_commits));
+            // The new interval applies after the next successful batch or when the
+            // round drains. Preserve the current continuation/cooldown/retry deadline.
+            // Beneficial PK-index batches can advance their boundary on new commits,
+            // so continuous ingestion may prevent the round from ever draining.
+            // Keep the cooldown even if commits arrive only after this success.
+            // shou
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        let stream = update_check::update_check(info, stream);
+    /// - An active automatic round is controlled only by its next-attempt time.
+            // Active work remains schedulable without new commits. PK-index batches
+            // consume new demand when they advance their boundary; legacy rounds
+            // retain a fixed boundary. Neither can bypass failure backoff.
+            return time_ready;
+        let commit_ready = self.demand.commit_count >= self.config.trigger_snapshot_count;
+        let has_commits = self.demand.commit_count > 0;
+            // The new interval applies after the round drains. The current deadline
+            // already represents either immediate continuation or retry backoff.
+                next_compaction_time: now,
+                    candidates.push((*sink_id, *next_compaction_time));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3a2a460c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e3fe3b25` are properly handled with clean fallback behavior.

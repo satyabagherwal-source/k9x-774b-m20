@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-NJPC",
-    "timestamp": "2026-10-27T12:21:52.896Z",
-    "repository": "mitmproxy/mitmproxy",
-    "learningId": "learn-github-mitmproxy-mitmproxy",
-    "contentHash": "ecaff472851dcfefb6b16964bef91465dbb3603f1089c6d176b80dc1e2f00d5d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-NNQF",
-    "timestamp": "2026-10-27T12:21:58.119Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "753de2a8c60fab1bd5d41cce11c1456f3020e20a4028e159776304785595186c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-NO99",
-    "timestamp": "2026-10-27T12:21:58.797Z",
-    "repository": "ydb-platform/ydb",
-    "learningId": "learn-github-ydb-platform-ydb",
-    "contentHash": "32fc7a9ed96dacff6f2cd178b4e327ad4a794a83470ead9cd0570644a6e1381e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-Y6B2",
-    "timestamp": "2026-10-27T12:30:08.750Z",
-    "repository": "YoanWai/agent-manager",
-    "learningId": "learn-github-yoanwai-agent-manager",
-    "contentHash": "8e49582c35e166024ffa807958268bab7032bf2e958bbb2ba9933c3d36e5cbea",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-Y7TB",
     "timestamp": "2026-10-27T12:30:10.703Z",
     "repository": "7onez/cti-expert",
@@ -7490,6 +7430,66 @@
     "repository": "rustls/rustls",
     "learningId": "learn-github-rustls-rustls",
     "contentHash": "a615eb3512908e4815143021d1b70b179422d0e153c8d07ec77055d1b98a0dc7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-T73Q",
+    "timestamp": "2026-10-28T13:09:56.150Z",
+    "repository": "pimalaya/himalaya",
+    "learningId": "learn-github-pimalaya-himalaya",
+    "contentHash": "39af4dfd6276777bfb6489ef5d2bb51ecfd05bb56e47c788594cd6ecf5ed1594",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-TCMP",
+    "timestamp": "2026-10-28T13:10:03.313Z",
+    "repository": "CompVis/stable-diffusion-v1-4",
+    "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
+    "contentHash": "897f8b51d96fa2becd0662212561c088965367ef1960c25d0034964535ad5a0b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-TD45",
+    "timestamp": "2026-10-28T13:10:03.941Z",
+    "repository": "DylanVann/react-native-fast-image",
+    "learningId": "learn-github-dylanvann-react-native-fast-image",
+    "contentHash": "d5f13bce027e0619d0c3873dcfd9215a7fd16bf6d1edbea1fe1deeb8d193fe7c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-TJ86",
+    "timestamp": "2026-10-28T13:10:11.862Z",
+    "repository": "risingwavelabs/risingwave",
+    "learningId": "learn-github-risingwavelabs-risingwave",
+    "contentHash": "809da9937b702b7e1e6882b458797d8173df516a0f8d0fe1f4c131e998db21b1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

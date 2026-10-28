@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T13:03:48.109Z",
-    "lastVerified": "2026-10-28T13:03:48.109Z",
+    "lastChecked": "2026-10-28T13:10:14.406Z",
+    "lastVerified": "2026-10-28T13:10:14.406Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -96,9 +96,9 @@
   "gravitl-netmaker": {
     "name": "netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
-    "lastChecked": "2026-10-28T06:24:50.274Z",
+    "lastChecked": "2026-10-28T13:10:00.842Z",
     "revisionIdentifier": "f20acf34",
-    "lastVerified": "2026-10-28T06:24:50.274Z"
+    "lastVerified": "2026-10-28T13:10:00.842Z"
   },
   "mintplex-labs-anything-llm": {
     "name": "Mintplex-Labs/anything-llm",
@@ -259,9 +259,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-28T12:36:59.178Z",
+    "lastChecked": "2026-10-28T13:10:05.680Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-28T12:36:59.178Z"
+    "lastVerified": "2026-10-28T13:10:05.680Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -3237,5 +3237,80 @@
     "lastChecked": "2026-10-28T13:03:40.339Z",
     "revisionIdentifier": "cb995107",
     "lastVerified": "2026-10-28T13:03:40.339Z"
+  },
+  "pimalaya-himalaya": {
+    "name": "pimalaya/himalaya",
+    "officialUrl": "https://github.com/pimalaya/himalaya",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T13:09:55.550Z",
+    "lastVerified": "2026-10-28T13:09:55.550Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-pimalaya-himalaya",
+    "contentHash": "39af4dfd6276777bfb6489ef5d2bb51ecfd05bb56e47c788594cd6ecf5ed1594",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-compvis-stable-diffusion-v1-4": {
+    "name": "CompVis/stable-diffusion-v1-4",
+    "officialUrl": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T13:09:53.316Z",
+    "lastVerified": "2026-10-28T13:09:53.316Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
+    "contentHash": "897f8b51d96fa2becd0662212561c088965367ef1960c25d0034964535ad5a0b",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "dylanvann-react-native-fast-image": {
+    "name": "DylanVann/react-native-fast-image",
+    "officialUrl": "https://github.com/DylanVann/react-native-fast-image",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-28T13:10:03.329Z",
+    "lastVerified": "2026-10-28T13:10:03.329Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-dylanvann-react-native-fast-image",
+    "contentHash": "d5f13bce027e0619d0c3873dcfd9215a7fd16bf6d1edbea1fe1deeb8d193fe7c",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "apptainer-singularity": {
+    "name": "singularity",
+    "officialUrl": "https://github.com/apptainer/singularity",
+    "lastChecked": "2026-10-28T13:09:58.367Z",
+    "revisionIdentifier": "9dceb424",
+    "lastVerified": "2026-10-28T13:09:58.367Z"
+  },
+  "risingwavelabs-risingwave": {
+    "name": "risingwavelabs/risingwave",
+    "officialUrl": "https://github.com/risingwavelabs/risingwave",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T13:10:11.462Z",
+    "lastVerified": "2026-10-28T13:10:11.462Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-risingwavelabs-risingwave",
+    "contentHash": "809da9937b702b7e1e6882b458797d8173df516a0f8d0fe1f4c131e998db21b1",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T13:03:45.522Z",
+  "last_updated": "2026-10-28T13:10:11.817Z",
   "total_verified_learnings": 1157,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10104,8 +10104,8 @@
       "slug": "dylanvann-react-native-fast-image",
       "platform": "github",
       "source_url": "https://github.com/DylanVann/react-native-fast-image",
-      "source_version": "3eef0244",
-      "content_hash": "49684705479f3e5ba55697b133d5f643faa6493bcc980a50f772bb5c14e6ece0",
+      "source_version": "58661d82",
+      "content_hash": "d5f13bce027e0619d0c3873dcfd9215a7fd16bf6d1edbea1fe1deeb8d193fe7c",
       "dossier_path": "07_PROJECT_LEARNING/dylanvann-react-native-fast-image-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dylanvann-react-native-fast-image-learnings.md",
       "promoted_rules": [
@@ -10128,6 +10128,11 @@
           "number": 4919,
           "title": "android): keep bitmaps for very large views under Android's drawing limit (#1379",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5289,
+          "title": "ios): load data uris as other images, off the main thread and cached",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10135,7 +10140,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T17:16:53.229Z",
+      "verified_at": "2026-10-28T13:10:03.887Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -19689,7 +19694,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
       "source_version": "hf-compvis-stable-diffusion-v1-4",
-      "content_hash": "93d9d2f03d3f0164e733243634d005078d44b01a2cfd4a1859c2525fd15518e7",
+      "content_hash": "897f8b51d96fa2becd0662212561c088965367ef1960c25d0034964535ad5a0b",
       "dossier_path": "07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md",
       "promoted_rules": [
@@ -19748,6 +19753,11 @@
           "number": 3424,
           "title": "VAE Decoder Precision & Overflow Guard",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5288,
+          "title": "Binary Artifact Serialization Security & Performance Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -19768,7 +19778,7 @@
         "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv49semm",
         "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv4n5mw6"
       ],
-      "verified_at": "2026-10-25T18:34:44.329Z",
+      "verified_at": "2026-10-28T13:10:03.254Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42987,14 +42997,19 @@
       "slug": "pimalaya-himalaya",
       "platform": "github",
       "source_url": "https://github.com/pimalaya/himalaya",
-      "source_version": "4df380ba",
-      "content_hash": "211c6784b4ee1421c45570fdcc88eeb259c52779d3b55a31c10f3f5213f298b8",
+      "source_version": "84136bbb",
+      "content_hash": "39af4dfd6276777bfb6489ef5d2bb51ecfd05bb56e47c788594cd6ecf5ed1594",
       "dossier_path": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
       "promoted_rules": [
         {
           "number": 2001,
           "title": "message): sanitize the human-readable message view (#783)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5287,
+          "title": "build: bump crates flagged by new RustSec advisories",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -43003,7 +43018,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T02:03:10.837Z",
+      "verified_at": "2026-10-28T13:09:56.093Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45746,8 +45761,8 @@
       "slug": "risingwavelabs-risingwave",
       "platform": "github",
       "source_url": "https://github.com/risingwavelabs/risingwave",
-      "source_version": "3a2a460c",
-      "content_hash": "78fb211ce3b1d08efa8d41f3b607c1cff8914c6cae76c7d31bb75a932804bfaa",
+      "source_version": "e3fe3b25",
+      "content_hash": "809da9937b702b7e1e6882b458797d8173df516a0f8d0fe1f4c131e998db21b1",
       "dossier_path": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "promoted_rules": [
@@ -45790,6 +45805,11 @@
           "number": 4985,
           "title": "stream): check in debug builds that executors output no rows below their waterma",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5290,
+          "title": "iceberg): honor compaction interval between pk-index batches (#27625)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45797,7 +45817,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T20:20:18.053Z",
+      "verified_at": "2026-10-28T13:10:11.806Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -143964,6 +143984,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T13:03:45.507Z"
+    },
+    "rule-5287": {
+      "learning_id": "rule-5287",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5287,
+      "title": "build: bump crates flagged by new RustSec advisories",
+      "source_url": "https://github.com/pimalaya/himalaya",
+      "source_version": "84136bbb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T13:09:56.093Z"
+    },
+    "rule-5288": {
+      "learning_id": "rule-5288",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5288,
+      "title": "Binary Artifact Serialization Security & Performance Invariant",
+      "source_url": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
+      "source_version": "hf-compvis-stable-diffusion-v1-4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T13:10:03.254Z"
+    },
+    "rule-5289": {
+      "learning_id": "rule-5289",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5289,
+      "title": "ios): load data uris as other images, off the main thread and cached",
+      "source_url": "https://github.com/DylanVann/react-native-fast-image",
+      "source_version": "58661d82",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T13:10:03.887Z"
+    },
+    "rule-5290": {
+      "learning_id": "rule-5290",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5290,
+      "title": "iceberg): honor compaction interval between pk-index batches (#27625)",
+      "source_url": "https://github.com/risingwavelabs/risingwave",
+      "source_version": "e3fe3b25",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T13:10:11.806Z"
     }
   },
   "aliases": {
