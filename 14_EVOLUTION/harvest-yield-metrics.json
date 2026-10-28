@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T03:18:06.410Z",
-  "total_cycles_completed": 5644,
-  "total_learnings_persisted": 5644,
-  "total_rules_promoted": 5084,
+  "last_updated": "2026-10-28T03:24:45.358Z",
+  "total_cycles_completed": 5645,
+  "total_learnings_persisted": 5645,
+  "total_rules_promoted": 5086,
   "history": [
-    {
-      "timestamp": "2026-10-27T18:03:37.565Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T18:10:11.020Z",
       "repository": "dubzzz/fast-check",
@@ -1403,6 +1396,13 @@
       "repository": "milvus-io/milvus",
       "learningId": "learn-github-milvus-io-milvus",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T03:24:45.358Z",
+      "repository": "BAAI/bge-small-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

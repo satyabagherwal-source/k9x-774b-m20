@@ -5667,3 +5667,4 @@
 | `CYCLE-20261028-NYQV` | `2026-10-28T03:18:00.104Z` | `appwrite/appwrite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5148` | Yes (`2b93e8de...`) |
 | `CYCLE-20261028-O1YQ` | `2026-10-28T03:18:04.274Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 998, Rule 5149, Rule 5150` | Yes (`2057185c...`) |
 | `CYCLE-20261028-O3LM` | `2026-10-28T03:18:06.394Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md` | Yes (`41e41169...`) |
+| `CYCLE-20261028-WNFP` | `2026-10-28T03:24:45.349Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 314, Rule 315` | Yes (`8dafd97d...`) |

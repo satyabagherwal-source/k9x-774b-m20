@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261026-0DNB",
-    "timestamp": "2026-10-26T17:52:06.935Z",
-    "repository": "opentofu/opentofu",
-    "learningId": "learn-github-opentofu-opentofu",
-    "contentHash": "a87f6d8231b886d09e429ffe3a5767569940befeb558e65852f1cfd16f9fe03b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261026-8DIO",
     "timestamp": "2026-10-26T17:58:20.016Z",
     "repository": "GitoxideLabs/gitoxide",
@@ -7492,6 +7477,21 @@
     "contentHash": "41e411693cfade2630fae49ca225593865d908cec9d0607b722c0e5d3f51fb9e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-WNFP",
+    "timestamp": "2026-10-28T03:24:45.349Z",
+    "repository": "BAAI/bge-small-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
+    "contentHash": "8dafd97d4261e051a77f90e0b98dadfedd08b2cea9bff1ff2c36fcd8b4caa308",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

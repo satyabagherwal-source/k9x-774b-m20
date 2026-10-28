@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T03:18:06.303Z",
+  "last_updated": "2026-10-28T03:24:45.277Z",
   "total_verified_learnings": 1155,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -17600,16 +17600,19 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-small-en-v1.5",
       "source_version": "hf-baai-bge-small-en-v1.5",
-      "content_hash": "03351615b630a95aa8707a32d0b4509e73a620ea169ba50d6baa75aa18c2738f",
+      "content_hash": "8dafd97d4261e051a77f90e0b98dadfedd08b2cea9bff1ff2c36fcd8b4caa308",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md",
       "promoted_rules": [
         {
           "number": 314,
           "title": "Semantic Embedding Dimensionality & Precision Invariant",
-          "status": "ALREADY_PRESENT_VERIFIED",
-          "source_learning_id": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv42wvjy",
-          "verified_at": "2026-10-11T17:10:20.413Z"
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 315,
+          "title": "Tokenizer Truncation & Padding Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 323,
@@ -18031,7 +18034,7 @@
         "learn-huggingface-hf-baai-bge-small-en-v1-5-mv42wvjy",
         "learn-huggingface-hf-baai-bge-small-en-v1-5-mv4g4zgk"
       ],
-      "verified_at": "2026-10-25T06:38:24.004Z",
+      "verified_at": "2026-10-28T03:24:45.256Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60564,28 +60567,28 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 314,
       "title": "Semantic Embedding Dimensionality & Precision Invariant",
-      "source_url": "https://huggingface.co/BAAI/bge-large-en-v1.5",
-      "source_version": "hf-baai-bge-large-en-v1.5",
+      "source_url": "https://huggingface.co/BAAI/bge-small-en-v1.5",
+      "source_version": "hf-baai-bge-small-en-v1.5",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-25T04:38:12.485Z"
+      "verified_at": "2026-10-28T03:24:45.256Z"
     },
     "rule-315": {
       "learning_id": "rule-315",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 315,
       "title": "Tokenizer Truncation & Padding Invariant",
-      "source_url": "https://huggingface.co/BAAI/bge-large-en-v1.5",
-      "source_version": "hf-baai-bge-large-en-v1.5",
+      "source_url": "https://huggingface.co/BAAI/bge-small-en-v1.5",
+      "source_version": "hf-baai-bge-small-en-v1.5",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-25T04:38:12.485Z"
+      "verified_at": "2026-10-28T03:24:45.256Z"
     },
     "rule-316": {
       "learning_id": "rule-316",

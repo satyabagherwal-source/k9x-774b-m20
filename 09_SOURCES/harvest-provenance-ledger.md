@@ -5676,3 +5676,4 @@ Every entry in this ledger must capture:
 | `learn-github-appwrite-appwrite` | `https://github.com/appwrite/appwrite` | `4bd8931f` | Multi-dimensional audit evidence | 2026-10-28T03:18:00.107Z |
 | `learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2` | `https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2` | `hf-cross-e` | Multi-dimensional audit evidence | 2026-10-28T03:18:04.278Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `e6aff936` | Multi-dimensional audit evidence | 2026-10-28T03:18:06.397Z |
+| `learn-huggingface-baai-bge-small-en-v1-5` | `https://huggingface.co/BAAI/bge-small-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-28T03:24:45.353Z |

@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T03:18:08.940Z",
-    "lastVerified": "2026-10-28T03:18:08.940Z",
+    "lastChecked": "2026-10-28T03:24:47.944Z",
+    "lastVerified": "2026-10-28T03:24:47.944Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -169,9 +169,9 @@
   "dathere-qsv": {
     "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
-    "lastChecked": "2026-10-28T02:54:55.313Z",
+    "lastChecked": "2026-10-28T03:24:47.937Z",
     "revisionIdentifier": "acf15714",
-    "lastVerified": "2026-10-28T02:54:55.313Z"
+    "lastVerified": "2026-10-28T03:24:47.937Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -372,5 +372,57 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "surrealdb-surrealdb": {
+    "name": "surrealdb",
+    "officialUrl": "https://github.com/surrealdb/surrealdb",
+    "lastChecked": "2026-10-28T03:24:32.893Z",
+    "revisionIdentifier": "18971ffb",
+    "lastVerified": "2026-10-28T03:24:32.893Z"
+  },
+  "hf-baai-bge-small-en-v1.5": {
+    "name": "BAAI/bge-small-en-v1.5",
+    "officialUrl": "https://huggingface.co/BAAI/bge-small-en-v1.5",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T03:24:35.439Z",
+    "lastVerified": "2026-10-28T03:24:35.439Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
+    "contentHash": "8dafd97d4261e051a77f90e0b98dadfedd08b2cea9bff1ff2c36fcd8b4caa308",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "laurent22-joplin": {
+    "name": "joplin",
+    "officialUrl": "https://github.com/laurent22/joplin",
+    "lastChecked": "2026-10-28T03:24:37.914Z",
+    "revisionIdentifier": "b613d006",
+    "lastVerified": "2026-10-28T03:24:37.914Z"
+  },
+  "open-policy-agent-gatekeeper": {
+    "name": "gatekeeper",
+    "officialUrl": "https://github.com/open-policy-agent/gatekeeper",
+    "lastChecked": "2026-10-28T03:24:40.399Z",
+    "revisionIdentifier": "e492e24c",
+    "lastVerified": "2026-10-28T03:24:40.399Z"
+  },
+  "nolabs-ai-nono": {
+    "name": "nono",
+    "officialUrl": "https://github.com/nolabs-ai/nono",
+    "lastChecked": "2026-10-28T03:24:42.849Z",
+    "revisionIdentifier": "46349d39",
+    "lastVerified": "2026-10-28T03:24:42.849Z"
+  },
+  "vectifyai-pageindex": {
+    "name": "PageIndex",
+    "officialUrl": "https://github.com/VectifyAI/PageIndex",
+    "lastChecked": "2026-10-28T03:24:45.361Z",
+    "revisionIdentifier": "b81465d9",
+    "lastVerified": "2026-10-28T03:24:45.361Z"
   }
 }
