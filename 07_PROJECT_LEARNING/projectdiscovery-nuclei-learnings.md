@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `26ce6d2e`  
+> **Source Version**: `a113cf0d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T17:23:42.441Z  
+> **Timestamp**: 2026-10-28T19:17:20.654Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T17:23:41.418Z  
+> **Harvest Timestamp**: 2026-10-28T19:17:20.647Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32367 stars
+- **Stars / Engagement**: 32402 stars
 
 ---
 
@@ -1445,413 +1445,417 @@ func isEmptyDir(dir string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `26ce6d2e` (2026-10-27)
-**Commit Message**: Merge pull request #7959 from arxhr007/fix/7949-validate-missing-path
+### Incident Patch 1: `a113cf0d` (2026-10-28)
+**Commit Message**: Merge pull request #7962 from je-bugshell/feat/no-redact-flag
 
-fix(loader): fail -validate when a template path can't be found
+Add -no-redact to disable the built-in credential redaction
 
-**File**: `pkg/catalog/loader/loader.go` (modified, +10/-4)
+**File**: `README.md` (modified, +1/-0)
 ```diff
-@@ -631,10 +631,10 @@ func (store *Store) noteMissingCapabilities(templatePath string, missingCaps []t
- // erroring out on discovering any faulty templates.
- func (store *Store) ValidateTemplates() error {
- 	templatePaths, errs := store.config.Catalog.GetTemplatesPath(store.finalTemplates)
--	store.logErroredTemplates(errs)
-+	notFound := store.logErroredTemplates(errs)
+@@ -221,6 +221,7 @@ OUTPUT:
+    -jle, -jsonl-export string    file to export results in JSONL(ine) format
+    -pe, -pdf-export string       file to export results in PDF format
+    -rd, -redact string[]         redact given list of keys from query parameter, request header and body
++   -nrd, -no-redact              disable the built-in redaction of credential headers (Authorization, Cookie, Set-Cookie, ...) in output; keys given with -redact are still redacted
  
- 	workflowPaths, errs := store.config.Catalog.GetTemplatesPath(store.finalWorkflows)
--	store.logErroredTemplates(errs)
-+	notFound += store.logErroredTemplates(errs)
- 
- 	templatePathsMap := make(map[string]struct{}, len(templatePaths))
- 	for _, path := range templatePaths {
-@@ -646,7 +646,8 @@ func (store *Store) ValidateTemplates() error {
- 		workflowPathsMap[path] = struct{}{}
- 	}
- 
--	if store.areTemplatesValid(templatePathsMap) && store.areWorkflowsValid(workflowPathsMap) {
-+	// a path that can't be resolved is not validated, so it can't count as valid
-+	if store.areTemplatesValid(templatePathsMap) && store.areWorkflowsValid(workflowPathsMap) && notFound == 0 {
- 		return nil
- 	}
- 
-@@ -1056,10 +1057,15 @@ func workflowContainsProtocol(workflow []*workflows.WorkflowTemplate) bool {
- 	return false
- }
- 
--func (s *Store) logErroredTemplates(erred map[string]error) {
-+// logErroredTemplates logs the templates that could not be found and returns
-+// how many of them were not handled by the NotFoundCallback.
-+func (s *Store) logErroredTemplates(erred map[string]error) int {
-+	notFound := 0
- 	for template, err := range erred {
- 		if s.NotFoundCallback == nil || !s.NotFoundCallback(template) {
- 			s.logger.Error().Msgf("Could not find template '%s': %s", template, err)
-+			notFound++
- 		}
- 	}
-+	return notFound
- }
+ CONFIGURATIONS:
+    -config string                        path to the nuclei configuration file
 ```
 
-**File**: `pkg/catalog/loader/loader_test.go` (modified, +43/-20)
+**File**: `README_CN.md` (modified, +1/-0)
 ```diff
-@@ -176,25 +176,8 @@ func TestLoadTemplatesOnlyMetadataLogsCachedTemplateParseErrors(t *testing.T) {
- 	require.Contains(t, output.String(), "Could not load template")
+@@ -219,6 +219,7 @@ OUTPUT:
+    -jle, -jsonl-export string    file to export results in JSONL(ine) format
+    -pe, -pdf-export string       file to export results in PDF format
+    -rd, -redact string[]         redact given list of keys from query parameter, request header and body
++   -nrd, -no-redact              disable the built-in redaction of credential headers (Authorization, Cookie, Set-Cookie, ...) in output; keys given with -redact are still redacted
+ 
+ CONFIGURATIONS:
+    -config string                        path to the nuclei configuration file
+```
+
+**File**: `README_ES.md` (modified, +1/-0)
+```diff
+@@ -219,6 +219,7 @@ OUTPUT:
+    -jle, -jsonl-export string    file to export results in JSONL(ine) format
+    -pe, -pdf-export string       file to export results in PDF format
+    -rd, -redact string[]         redact given list of keys from query parameter, request header and body
++   -nrd, -no-redact              disable the built-in redaction of credential headers (Authorization, Cookie, Set-Cookie, ...) in output; keys given with -redact are still redacted
+ 
+ CONFIGURATIONS:
+    -config string                        path to the nuclei configuration file
+```
+
+**File**: `README_FA.md` (modified, +1/-0)
+```diff
+@@ -236,6 +236,7 @@ OUTPUT:
+    -jle, -jsonl-export string    file to export results in JSONL(ine) format
+    -pe, -pdf-export string       file to export results in PDF format
+    -rd, -redact string[]         redact given list of keys from query parameter, request header and body
++   -nrd, -no-redact              disable the built-in redaction of credential headers (Authorization, Cookie, Set-Cookie, ...) in output; keys given with -redact are still redacted
+ 
+ CONFIGURATIONS:
+    -config string                        path to the nuclei configuration file
+```
+
+**File**: `README_ID.md` (modified, +1/-0)
+```diff
+@@ -219,6 +219,7 @@ OUTPUT:
+    -jle, -jsonl-export string    file to export results in JSONL(ine) format
+    -pe, -pdf-export string       file to export results in PDF format
+    -rd, -redact string[]         redact given list of keys from query parameter, request header and body
++   -nrd, -no-redact              disable the built-in redaction of credential headers (Authorization, Cookie, Set-Cookie, ...) in output; keys given with -redact are still redacted
+ 
+ CONFIGURATIONS:
+    -config string                        path to the nuclei configuration file
+```
+
+**File**: `README_JP.md` (modified, +1/-0)
+```diff
+@@ -219,6 +219,7 @@ OUTPUT:
+    -jle, -jsonl-export string    file to export results in JSONL(ine) format
+    -pe, -pdf-export string       file to export results in PDF format
+    -rd, -redact string[]         redact given list of keys from query parameter, request header and body
++   -nrd, -no-redact              disable the built-in redaction of credential headers (Authorization, Cookie, Set-Cookie, ...) in output; keys given with -redact are still redacted
+ 
+ CONFIGURATIONS:
+    -config string                        path to the nuclei configuration file
+```
+
+**File**: `README_KR.md` (modified, +1/-0)
+```diff
+@@ -219,6 +219,7 @@ OUTPUT:
+    -jle, -jsonl-export string    file to export results in JSONL(ine) format
+    -pe, -pdf-export string       file to export results in PDF format
+    -rd, -redact string[]         redact given list of keys from query parameter, request header and body
++   -nrd, -no-redact              disable the built-in redaction of credential headers (Authorization, Cookie, Set-Cookie, ...) in output; keys given with -redact are still redacted
+ 
+ CONFIGURATIONS:
+    -config string                        path to the nuclei configuration file
+```
+
+**File**: `README_PT-BR.md` (modified, +1/-0)
+```diff
+@@ -219,6 +219,7 @@ OUTPUT:
+    -jle, -jsonl-export string    file to export results in JSONL(ine) format
+    -pe, -pdf-export string       file to export results in PDF format
+    -rd, -redact string[]         redact given list of keys from query parameter, request header and body
++   -nrd, -no-redact              disable the built-in redaction of credential headers (Authorization, Cookie, Set-Cookie, ...) in output; keys given with -redact are still redacted
+ 
+ CONFIGURATIONS:
+    -config string                        path to the nuclei configuration file
+```
+
+---
+
+### Incident Patch 2: `8d29c12e` (2026-10-28)
+**Commit Message**: fix redaction
+
+**File**: `pkg/output/output.go` (modified, +81/-36)
+```diff
+@@ -90,10 +90,10 @@ type StandardWriter struct {
+ 	// NoRedact skips the default credential keys; KeysToRedact still apply.
+ 	NoRedact bool
+ 
+-	// redactPatterns caches the compiled credential-redaction regexes so they
++	// redactSet caches the compiled credential-redaction regexes so they
+ 	// are not recompiled on every Write call.
+ 	redactPatternsOnce sync.Once
+-	redactPatterns     []*regexp.Regexp
++	redactSet          compiledRedaction
+ 
+ 	// JSONLogRequestHook is a hook that can be used to log request/response
+ 	// when using custom server code with output
+@@ -368,12 +368,12 @@ func (w *StandardWriter) Write(event *ResultEvent) error {
+ 	// user-supplied -redact keys. patterns are compiled once and cached to
+ 	// avoid recompiling regexes on every event in the write hot path.
+ 	patterns := w.redactionPatterns()
+-	event.Request = redactWithPatterns(event.Request, patterns)
+-	event.Response = redactWithPatterns(event.Response, patterns)
+-	event.CURLCommand = redactWithPatterns(event.CURLCommand, patterns)
+-	event.Matched = redactWithPatterns(event.Matched, patterns)
++	event.Request = redactWithSet(event.Request, patterns)
++	event.Response = redactWithSet(event.Response, patterns)
++	event.CURLCommand = redactWithSet(event.CURLCommand, patterns)
++	event.Matched = redactWithSet(event.Matched, patterns)
+ 	for _, field := range event.Info.FilledFields(event.TemplateInfo) {
+-		*field.Value = redactWithPatterns(*field.Value, patterns)
++		*field.Value = redactWithSet(*field.Value, patterns)
+ 	}
+ 
+ 	event.Timestamp = time.Now()
+@@ -425,47 +425,92 @@ var defaultRedactKeys = []string{
+ 	"X-Api-Key",
  }
  
--func TestValidateTemplatesRejectsRuntimeCompilationError(t *testing.T) {
--	templatePath := filepath.Join(t.TempDir(), "invalid-regex-group.yaml")
--	require.NoError(t, os.WriteFile(templatePath, []byte(`id: invalid-regex-group
--
--info:
--  name: Invalid Regex Group
--  author: pdteam
--  severity: info
--
--http:
--  - method: GET
--    path:
--      - "{{BaseURL}}"
--    extractors:
--      - type: regex
--        group: -1
--        regex:
--          - "(a)(b)"
--`), 0o600))
-+func newValidateStore(t *testing.T, executionID, templatePath string) (*Store, *bytes.Buffer) {
-+	t.Helper()
- 
- 	options := testutils.DefaultOptions.Copy()
- 	var output bytes.Buffer
-@@ -203,7 +186,7 @@ http:
- 	logger.SetWriter(&utils.CaptureWriter{Buffer: &output})
- 	logger.SetMaxLevel(levels.LevelDebug)
- 	options.Logger = logger
--	options.ExecutionId = "loader-invalid-regex-group"
-+	options.ExecutionId = executionID
- 	options.Templates = []string{templatePath}
- 	options.Validate = true
- 	options.TemplateLoadingConcurrency = 1
-@@ -226,10 +209,50 @@ http:
- 
- 	store, err := New(NewConfig(options, catalog, executerOpts))
- 	require.NoError(t, err)
-+	return store, &output
+-// defaultRedactPatterns are the precompiled regexes for defaultRedactKeys.
+-var defaultRedactPatterns = compileRedactPatterns(defaultRedactKeys)
++// cookieHeaderValue is the value of one Cookie or Set-Cookie header, stopping
++// at a quote so a curl -H 'Cookie: ...' does not swallow the rest of the line.
++var cookieHeaderValue = regexp.MustCompile(`(?i)((?:Cookie|Set-Cookie)\s*:\s*)([^"'\r\n]*)`)
++
++// compiledRedaction holds the three shapes a key can take. A header value is
++// masked to the end of the line. Inside a cookie header, key=value stops at
++// the next cookie delimiter so neighbouring cookies stay. A query value keeps
++// an embedded ';' and runs to '&', a quote, or whitespace.
++type compiledRedaction struct {
++	headers []*regexp.Regexp
++	cookies []*regexp.Regexp
++	queries []*regexp.Regexp
 +}
 +
-+func TestValidateTemplatesRejectsRuntimeCompilationError(t *testing.T) {
-+	templatePath := filepath.Join(t.TempDir(), "invalid-regex-group.yaml")
-+	require.NoError(t, os.WriteFile(templatePath, []byte(`id: invalid-regex-group
-+
-+info:
-+  name: Invalid Regex Group
-+  author: pdteam
-+  severity: info
-+
-+http:
-+  - method: GET
-+    path:
-+      - "{{BaseURL}}"
-+    extractors:
-+      - type: regex
-+        group: -1
-+        regex:
-+          - "(a)(b)"
-+`), 0o600))
-+
-+	store, output := newValidateStore(t, "loader-invalid-regex-group", templatePath)
- 	require.Error(t, store.ValidateTemplates())
- 	require.Contains(t, output.String(), "regex extractor group must be >= 0")
++func (c compiledRedaction) empty() bool {
++	return len(c.headers) == 0 && len(c.cookies) == 0 && len(c.queries) == 0
++}
+ 
+ // compileRedactPatterns builds the credential-redaction regexes for the given keys.
+-// A header value (`Key: ...`) is masked to the end of the line. A cookie or query
+-// parameter (`key=...`) is masked up to the next cookie delimiter (`; name=` or a
+-// bare `; flag`), `&`, whitespace, quote or line break, so its neighbours stay in
+-// place while a `;` inside the value is kept as part of it.
+-func compileRedactPatterns(keys []string) []*regexp.Regexp {
+-	patterns := make([]*regexp.Regexp, 0, len(keys))
++func compileRedactPatterns(keys []string) compiledRedaction {
++	var set compiledRedaction
+ 	for _, key := range keys {
+-		patterns = append(patterns,
+-			regexp.MustCompile(fmt.Sprintf(`(?i)(%s\s*:\s*["']?)([^"'\r\n&]+)(["'\r\n]?)`, regexp.QuoteMeta(key))),
+-			regexp.MustCompile(fmt.Sprintf(`(?i)(%s\s*=\s*["']?)([^"'\r\n&\s]*?)(;\s*[\w.-]+(?:=|;|\r|\n)|["'\r\n&\s]|$)`, regexp.QuoteMeta(key))),
+-		)
++		quoted := regexp.QuoteMeta(key)
++		set.headers = append(set.headers, regexp.MustCompile(fmt.Sprintf(`(?i)(%s\s*:\s*["']?)([^"'&\r\n]+)(["'\r\n]|$)`, quoted)))
++		set.cookies = append(set.cookies, regexp.MustCompile(fmt.Sprintf(`(?i)(%s\s*=\s*["']?)([^"'&\r\n\s]*?)(;\s*[\w.-]+(?:=|;|\r|\n|$)|["'&\r\n\s]|$)`, quoted)))
++		set.queries = append(set.queries, regexp.MustCompile(fmt.Sprintf(`(?i)(%s\s*=\s*["']?)([^"'&\r\n\s]*)(["'&\r\n\s]|$)`, quoted)))
+ 	}
+-	return patterns
++	return set
  }
  
-+func TestValidateTemplatesRejectsMissingTemplatePath(t *testing.T) {
-+	templatePath := filepath.Join(t.TempDir(), "no-such-templates")
-+
-+	store, output := newValidateStore(t, "loader-missing-template-path", templatePath)
-+	require.Error(t, store.ValidateTemplates())
-+	require.Contains(t, output.String(), "Could not find template")
-+}
-+
-+func TestValidateTemplatesAcceptsMissingPathHandledByCallback(t *testing.T) {
-+	templatePath := filepath.Join(t.TempDir(), "no-such-templates")
-+
-+	store, _ := newValidateStore(t, "loader-missing-path-callback", templatePath)
-+	store.NotFoundCallback = func(string) bool { return true }
-+	require.NoError(t, store.ValidateTemplates())
-+}
-+
- func TestRemoteTemplates(t *testing.T) {
- 	catalog := disk.NewCatalog("")
+-// redactionPatterns returns the cached set of redaction patterns for this
+-// writer (default keys unless -no-redact is set, plus any user-supplied
+-// -redact keys), compiling them on first use.
+-func (w *StandardWriter) redactionPatterns() []*regexp.Regexp {
++// redactionPatterns returns the cached redaction set for this writer (default
++// keys unless -no-redact is set, plus any user-supplied -redact keys).
++func (w *StandardWriter) redactionPatterns() compiledRedaction {
+ 	w.redactPatternsOnce.Do(func() {
+-		var defaults []*regexp.Regexp
++		keys := make([]string, 0, len(defaultRedactKeys)+len(w.KeysToRedact))
+ 		if !w.NoRedact {
+-			defaults = defaultRedactPatterns
+-		}
+-		if len(w.KeysToRedact) == 0 {
+-			w.redactPatterns = defaults
+-			return
++			keys = append(keys, defaultRedactKeys...)
+ 		}
+-		patterns := make([]*regexp.Regexp, 0, len(defaults)+len(w.KeysToRedact))
+-		patterns = append(patterns, defaults...)
+-		patterns = append(patterns, compileRedactPatterns(w.KeysToRedact)...)
+-		w.redactPatte
+```
+
+**File**: `pkg/output/output_test.go` (modified, +11/-9)
+```diff
+@@ -129,18 +129,20 @@ func TestStandardWriterNoRedact(t *testing.T) {
+ 
+ // A `;` inside a query value is part of the value; in a cookie header it is a delimiter.
+ func TestRedactKeepsSemicolonInsideValue(t *testing.T) {
+-	patterns := compileRedactPatterns([]string{"password"})
+ 	cases := map[string]string{
+-		"GET /?password=;s3cr3t&x=2 HTTP/1.1":          "GET /?password=***&x=2 HTTP/1.1",
+-		"GET /?password=a;b HTTP/1.1":                  "GET /?password=*** HTTP/1.1",
+-		"https://example.com/?password=a;b":            "https://example.com/?password=***",
+-		"Cookie: password=x; session=abc\r\n":          "Cookie: password=***; session=abc\r\n",
+-		"Set-Cookie: password=x; Path=/; HttpOnly\r\n": "Set-Cookie: password=***; Path=/; HttpOnly\r\n",
+-		"Set-Cookie: password=x; HttpOnly\r\n":         "Set-Cookie: password=***; HttpOnly\r\n",
+-		"password=a;b&user=u":                          "password=***&user=u",
++		"GET /?password=;s3cr3t&x=2 HTTP/1.1":             "GET /?password=***&x=2 HTTP/1.1",
++		"GET /?password=a;b HTTP/1.1":                     "GET /?password=*** HTTP/1.1",
++		"GET /?password=super;secret=hidden&x=1 HTTP/1.1": "GET /?password=***&x=1 HTTP/1.1",
++		"https://example.com/?password=a;b":               "https://example.com/?password=***",
++		"https://example.com/?password=a;session=abc":     "https://example.com/?password=***",
++		"Cookie: password=x; session=abc\r\n":             "Cookie: password=***; session=abc\r\n",
++		"Set-Cookie: password=x; Path=/; HttpOnly\r\n":    "Set-Cookie: password=***; Path=/; HttpOnly\r\n",
++		"Set-Cookie: password=x; HttpOnly\r\n":            "Set-Cookie: password=***; HttpOnly\r\n",
++		"password=a;b&user=u":                             "password=***&user=u",
++		"curl -H 'Cookie: password=x; session=abc' 'https://example.com/?password=super;secret=hidden&x=1'": "curl -H 'Cookie: password=***; session=abc' 'https://example.com/?password=***&x=1'",
+ 	}
+ 	for in, want := range cases {
+-		require.Equal(t, want, redactWithPatterns(in, patterns), in)
++		require.Equal(t, want, redactKeys(in, []string{"password"}), in)
+ 	}
+ }
  
 ```
 
 ---
 
-### Incident Patch 2: `a4afaa41` (2026-10-27)
-**Commit Message**: fix(loader): fail -validate when a template path can't be found
+### Incident Patch 3: `3f341f02` (2026-10-28)
+**Commit Message**: Add -no-redact to disable the built-in credential redaction
 
-`nuclei -validate -t /no/such/path` logged "Could not find template" and
-then still printed "All templates validated successfully" and exited 0,
-so a mistyped path in a CI step passed. ValidateTemplates ignored the
-paths that GetTemplatesPath could not resolve.
+Since #7469 the output writer always masks Authorization, Proxy-Authorization,
+Cookie, Set-Cookie and X-Api-Key, which leaves exported findings without the
+data needed to reproduce them by hand. -no-redact turns the built-in list off;
+keys given with -redact are still masked.
 
-Count the paths that aren't handled by NotFoundCallback and return the
-validation error when there is any. Paths the callback resolves are
-still accepted.
-
-Fixes #7949
-
-**File**: `pkg/catalog/loader/loader.go` (modified, +10/-4)
+**File**: `README.md` (modified, +1/-0)
 ```diff
-@@ -631,10 +631,10 @@ func (store *Store) noteMissingCapabilities(templatePath string, missingCaps []t
- // erroring out on discovering any faulty templates.
- func (store *Store) ValidateTemplates() error {
- 	templatePaths, errs := store.config.Catalog.GetTemplatesPath(store.finalTemplates)
--	store.logErroredTemplates(errs)
-+	notFound := store.logErroredTemplates(errs)
+@@ -221,6 +221,7 @@ OUTPUT:
+    -jle, -jsonl-export string    file to export results in JSONL(ine) format
+    -pe, -pdf-export string       file to export results in PDF format
+    -rd, -redact string[]         redact given list of keys from query parameter, request header and body
++   -nrd, -no-redact              disable the built-in redaction of credential headers (Authorization, Cookie, Set-Cookie, ...) in output; keys given with -redact are still redacted
  
- 	workflowPaths, errs := store.config.Catalog.GetTemplatesPath(store.finalWorkflows)
--	store.logErroredTemplates(errs)
-+	notFound += store.logErroredTemplates(errs)
+ CONFIGURATIONS:
+    -config string                        path to the nuclei configuration file
+```
+
+**File**: `cmd/nuclei/main.go` (modified, +1/-0)
+```diff
+@@ -355,6 +355,7 @@ on extensive configurability, massive extensibility and ease of use.`)
+ 		flagSet.StringVarP(&options.JSONLExport, "jsonl-export", "jle", "", "file to export results in JSONL(ine) format"),
+ 		flagSet.StringVarP(&options.PDFExport, "pdf-export", "pe", "", "file to export results in PDF format"),
+ 		flagSet.StringSliceVarP(&options.Redact, "redact", "rd", nil, "redact given list of keys from query parameter, request header and body", goflags.CommaSeparatedStringSliceOptions),
++		flagSet.BoolVarP(&options.NoRedact, "no-redact", "nrd", false, "disable the built-in redaction of credential headers (Authorization, Cookie, Set-Cookie, ...) in output; keys given with -redact are still redacted"),
+ 	)
  
- 	templatePathsMap := make(map[string]struct{}, len(templatePaths))
- 	for _, path := range templatePaths {
-@@ -646,7 +646,8 @@ func (store *Store) ValidateTemplates() error {
- 		workflowPathsMap[path] = struct{}{}
+ 	flagSet.CreateGroup("configs", "Configurations",
+```
+
+**File**: `pkg/output/output.go` (modified, +14/-7)
+```diff
+@@ -87,6 +87,8 @@ type StandardWriter struct {
+ 	DisableStdout         bool
+ 	AddNewLinesOutputFile bool // by default this is only done for stdout
+ 	KeysToRedact          []string
++	// NoRedact skips the default credential keys; KeysToRedact still apply.
++	NoRedact bool
+ 
+ 	// redactPatterns caches the compiled credential-redaction regexes so they
+ 	// are not recompiled on every Write call.
+@@ -306,6 +308,7 @@ func NewStandardWriter(options *types.Options) (*StandardWriter, error) {
+ 		storeResponseDir:  options.StoreResponseDir,
+ 		omitTemplate:      options.OmitTemplate,
+ 		KeysToRedact:      options.Redact,
++		NoRedact:          options.NoRedact,
  	}
  
--	if store.areTemplatesValid(templatePathsMap) && store.areWorkflowsValid(workflowPathsMap) {
-+	// a path that can't be resolved is not validated, so it can't count as valid
-+	if store.areTemplatesValid(templatePathsMap) && store.areWorkflowsValid(workflowPathsMap) && notFound == 0 {
- 		return nil
- 	}
- 
-@@ -1056,10 +1057,15 @@ func workflowContainsProtocol(workflow []*workflows.WorkflowTemplate) bool {
- 	return false
+ 	if v := os.Getenv("DISABLE_STDOUT"); v == "true" || v == "1" {
+@@ -412,8 +415,8 @@ func (w *StandardWriter) Write(event *ResultEvent) error {
+ 	return nil
  }
  
--func (s *Store) logErroredTemplates(erred map[string]error) {
-+// logErroredTemplates logs the templates that could not be found and returns
-+// how many of them were not handled by the NotFoundCallback.
-+func (s *Store) logErroredTemplates(erred map[string]error) int {
-+	notFound := 0
- 	for template, err := range erred {
- 		if s.NotFoundCallback == nil || !s.NotFoundCallback(template) {
- 			s.logger.Error().Msgf("Could not find template '%s': %s", template, err)
-+			notFound++
+-// defaultRedactKeys are header and parameter names that are always redacted
+-// from output regardless of the -redact flag.
++// defaultRedactKeys are header and parameter names that are redacted from
++// output regardless of the -redact flag, unless -no-redact is set.
+ var defaultRedactKeys = []string{
+ 	"Authorization",
+ 	"Proxy-Authorization",
+@@ -435,16 +438,20 @@ func compileRedactPatterns(keys []string) []*regexp.Regexp {
+ }
+ 
+ // redactionPatterns returns the cached set of redaction patterns for this
+-// writer (default keys plus any user-supplied -redact keys), compiling them on
+-// first use.
++// writer (default keys unless -no-redact is set, plus any user-supplied
++// -redact keys), compiling them on first use.
+ func (w *StandardWriter) redactionPatterns() []*regexp.Regexp {
+ 	w.redactPatternsOnce.Do(func() {
++		var defaults []*regexp.Regexp
++		if !w.NoRedact {
++			defaults = defaultRedactPatterns
++		}
+ 		if len(w.KeysToRedact) == 0 {
+-			w.redactPatterns = defaultRedactPatterns
++			w.redactPatterns = defaults
+ 			return
  		}
- 	}
-+	return notFound
- }
+-		patterns := make([]*regexp.Regexp, 0, len(defaultRedactPatterns)+len(w.KeysToRedact))
+-		patterns = append(patterns, defaultRedactPatterns...)
++		patterns := make([]*regexp.Regexp, 0, len(defaults)+len(w.KeysToRedact))
++		patterns = append(patterns, defaults...)
+ 		patterns = append(patterns, compileRedactPatterns(w.KeysToRedact)...)
+ 		w.redactPatterns = patterns
+ 	})
 ```
 
-**File**: `pkg/catalog/loader/loader_test.go` (modified, +43/-20)
+**File**: `pkg/output/output_test.go` (modified, +36/-0)
 ```diff
-@@ -176,25 +176,8 @@ func TestLoadTemplatesOnlyMetadataLogsCachedTemplateParseErrors(t *testing.T) {
- 	require.Contains(t, output.String(), "Could not load template")
+@@ -72,6 +72,42 @@ func TestStandardWriterRedactsFilledInfo(t *testing.T) {
+ 	require.Equal(t, "send the password: header", static.Info.Description)
  }
  
--func TestValidateTemplatesRejectsRuntimeCompilationError(t *testing.T) {
--	templatePath := filepath.Join(t.TempDir(), "invalid-regex-group.yaml")
--	require.NoError(t, os.WriteFile(templatePath, []byte(`id: invalid-regex-group
--
--info:
--  name: Invalid Regex Group
--  author: pdteam
--  severity: info
--
--http:
--  - method: GET
--    path:
--      - "{{BaseURL}}"
--    extractors:
--      - type: regex
--        group: -1
--        regex:
--          - "(a)(b)"
--`), 0o600))
-+func newValidateStore(t *testing.T, executionID, templatePath string) (*Store, *bytes.Buffer) {
-+	t.Helper()
- 
- 	options := testutils.DefaultOptions.Copy()
- 	var output bytes.Buffer
-@@ -203,7 +186,7 @@ http:
- 	logger.SetWriter(&utils.CaptureWriter{Buffer: &output})
- 	logger.SetMaxLevel(levels.LevelDebug)
- 	options.Logger = logger
--	options.ExecutionId = "loader-invalid-regex-group"
-+	options.ExecutionId = executionID
- 	options.Templates = []string{templatePath}
- 	options.Validate = true
- 	options.TemplateLoadingConcurrency = 1
-@@ -226,10 +209,50 @@ http:
- 
- 	store, err := New(NewConfig(options, catalog, executerOpts))
- 	require.NoError(t, err)
-+	return store, &output
++// Credential headers are masked by default; -no-redact keeps them while keys
++// given with -redact are still masked.
++func TestStandardWriterNoRedact(t *testing.T) {
++	const request = "GET / HTTP/1.1\r\nCookie: session=abc\r\nX-Token: secret\r\n\r\n"
++	const response = "HTTP/1.1 200 OK\r\nSet-Cookie: session=abc\r\n\r\n"
++
++	cases := []struct {
++		name     string
++		options  *types.Options
++		request  string
++		response string
++	}{
++		{"default", &types.Options{}, "GET / HTTP/1.1\r\nCookie: ***\r\nX-Token: secret\r\n\r\n", "HTTP/1.1 200 OK\r\nSet-Cookie: ***\r\n\r\n"},
++		{"no-redact", &types.Options{NoRedact: true}, request, response},
++		{"no-redact with keys", &types.Options{NoRedact: true, Redact: goflags.StringSlice{"X-Token"}}, "GET / HTTP/1.1\r\nCookie: session=abc\r\nX-Token: ***\r\n\r\n", response},
++	}
++	for _, tc := range cases {
++		t.Run(tc.name, func(t *testing.T) {
++			w, err := NewStandardWriter(tc.options)
++			require.NoError(t, err)
++			w.DisableStdout = true
++
++			event := &ResultEvent{Request: request, Response: response, CURLCommand: "curl -H 'Cookie: session=abc' https://example.com"}
++			require.NoError(t, w.Write(event))
++
++			require.Equal(t, tc.request, event.Request)
++			require.Equal(t, tc.response, event.Response)
++			if tc.options.NoRedact {
++				require.Equal(t, "curl -H 'Cookie: session=abc' https://example.com", event.CURLCommand)
++			} else {
++				require.Equal(t, "curl -H 'Cookie: ***' https://example.com", event.CURLCommand)
++			}
++		})
++	}
 +}
 +
-+func TestValidateTemplatesRejectsRuntimeCompilationError(t *testing.T) {
-+	templatePath := filepath.Join(t.TempDir(), "invalid-regex-group.yaml")
-+	require.NoError(t, os.WriteFile(templatePath, []byte(`id: invalid-regex-group
-+
-+info:
-+  name: Invalid Regex Group
-+  author: pdteam
-+  severity: info
-+
-+http:
-+  - method: GET
-+    path:
-+      - "{{BaseURL}}"
-+    extractors:
-+      - type: regex
-+        group: -1
-+        regex:
-+          - "(a)(b)"
-+`), 0o600))
-+
-+	store, output := newValidateStore(t, "loader-invalid-regex-group", templatePath)
- 	require.Error(t, store.ValidateTemplates())
- 	require.Contains(t, output.String(), "regex extractor group must be >= 0")
- }
- 
-+func TestValidateTemplatesRejectsMissingTemplatePath(t *testing.T) {
-+	templatePath := filepath.Join(t.TempDir(), "no-such-templates")
-+
-+	store, output := newValidateStore(t, "loader-missing-template-path", templatePath)
-+	require.Error(t, store.ValidateTemplates())
-+	require.Contains(t, output.String(), "Could not find template")
-+}
-+
-+func TestValidateTemplatesAcceptsMissingPathHandledByCallback(t *testing.T) {
-+	templatePath := filepath.Join(t.TempDir(), "no-such-templates")
-+
-+	store, _ := newValidateStore(t, "loader-missing-path-callback", templatePath)
-+	store.NotFoundCallback = func(string) bool { return true }
-+	require.NoError(t, store.ValidateTemplates())
-+}
-+
- func TestRemoteTemplates(t *testing.T) {
- 	catalog := disk.NewCatalog("")
- 
+ // The mongo exporter serializes results with bson, which ignores json tags.
+ func TestResultEventKeepsTemplateInfoOutOfBSON(t *testing.T) {
+ 	written := model.Info{Description: "{{host}} is exposed"}
 ```
 
----
-
-### Incident Patch 3: `0f34b1b6` (2026-10-27)
-**Commit Message**: Merge pull request #7960 from projectdiscovery/fix/7957-exclude-hosts-match
-
-fix exclude-hosts matching unrelated hosts at dial time
-
-**File**: `pkg/protocols/common/protocolstate/state.go` (modified, +30/-1)
+**File**: `pkg/types/types.go` (modified, +3/-0)
 ```diff
-@@ -5,11 +5,14 @@ import (
- 	"fmt"
- 	"net"
- 	"net/url"
-+	"regexp"
- 	"slices"
-+	"strings"
- 	"time"
- 
- 	"github.com/go-sql-driver/mysql"
- 	"github.com/pkg/errors"
-+	"golang.org/x/net/idna"
- 	"golang.org/x/net/proxy"
- 
- 	"github.com/projectdiscovery/fastdialer/fastdialer"
-@@ -18,6 +21,7 @@ import (
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/http/httpcache"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/types"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/utils/expand"
-+	iputil "github.com/projectdiscovery/utils/ip"
- 	mapsutil "github.com/projectdiscovery/utils/maps"
- )
- 
-@@ -101,8 +105,10 @@ func initDialers(options *types.Options) error {
- 		switch {
- 		case asn.IsASN(excludeTarget):
- 			expandedDenyList = append(expandedDenyList, expand.ASN(excludeTarget)...)
--		default:
-+		case iputil.IsIP(excludeTarget) || iputil.IsCIDR(excludeTarget):
- 			expandedDenyList = append(expandedDenyList, excludeTarget)
-+		default:
-+			expandedDenyList = append(expandedDenyList, excludeHostRules(excludeTarget)...)
- 		}
- 	}
- 
-@@ -335,3 +341,26 @@ func Close(executionId string) {
- 		StopActiveMemGuardian()
- 	}
- }
-+
-+// excludeHostRules turns an exclude entry into network policy deny rules.
-+// networkpolicy treats non-IP entries as unanchored regexes, so a plain
-+// "test.com" would also deny "latest.com". Plain hostnames match the host and
-+// its subdomains instead; entries with regex syntax are kept as given.
-+func excludeHostRules(target string) []string {
-+	if strings.ContainsAny(target, `\^$*+?()[]{}|`) {
-+		return []string{target}
-+	}
-+
-+	host := strings.TrimSuffix(target, ".")
-+	hosts := []string{host}
-+	// the network DSL helpers only normalize plain rules, so add the IDNA form here
-+	if ascii, err := idna.ToASCII(strings.ToLower(host)); err == nil && !strings.EqualFold(ascii, host) {
-+		hosts = append(hosts, ascii)
-+	}
-+
-+	rules := make([]string, 0, len(hosts))
-+	for _, h := range hosts {
-+		rules = append(rules, `(?i)(^|\.)`+regexp.QuoteMeta(h)+`\.?$`)
-+	}
-+	return rules
-+}
-```
-
-**File**: `pkg/protocols/common/protocolstate/state_test.go` (added, +29/-0)
-```diff
-@@ -0,0 +1,29 @@
-+package protocolstate
-+
-+import (
-+	"testing"
-+
-+	"github.com/projectdiscovery/nuclei/v3/pkg/types"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestExcludeTargetsMatchExactHost(t *testing.T) {
-+	opts := types.DefaultOptions()
-+	opts.ExecutionId = "test-exclude-targets"
-+	opts.ExcludeTargets = []string{"test.com", "192.0.2.0/24", `^regex\.example$`, "bücher.example"}
-+	require.NoError(t, Init(opts))
-+	defer Close(opts.ExecutionId)
-+
-+	np := GetDialersWithId(opts.ExecutionId).NetworkPolicy
-+	require.False(t, np.Validate("test.com"))
-+	require.False(t, np.Validate("TEST.com"))
-+	require.False(t, np.Validate("test.com."))
-+	require.False(t, np.Validate("sub.test.com"))
-+	require.False(t, np.Validate("192.0.2.10"))
-+	require.False(t, np.Validate("regex.example"))
-+	require.False(t, np.Validate("xn--bcher-kva.example"))
-+	require.True(t, np.Validate("latest.com"))
-+	require.True(t, np.Validate("test.com.example.org"))
-+	require.True(t, np.Validate("testXcom"))
-+	require.True(t, np.Validate("sub.regex.example"))
-+}
+@@ -281,6 +281,8 @@ type Options struct {
+ 	PDFExport string
+ 	// Redact redacts given keys in
+ 	Redact goflags.StringSlice
++	// NoRedact disables the built-in redaction of credential headers in output
++	NoRedact bool
+ 	// EnableProgressBar enables progress bar
+ 	EnableProgressBar bool
+ 	// TemplateDisplay displays the template contents
+@@ -717,6 +719,7 @@ func (options *Options) Copy() *Options {
+ 		JSONLExport:                    options.JSONLExport,
+ 		PDFExport:                      options.PDFExport,
+ 		Redact:                         options.Redact,
++		NoRedact:                       options.NoRedact,
+ 		EnableProgressBar:              options.EnableProgressBar,
+ 		TemplateDisplay:                options.TemplateDisplay,
+ 		TemplateList:                   options.TemplateList,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7962** (2026-10-28): Add -no-redact to disable the built-in credential redaction (@je-bugshell)
 - **PR #7960** (2026-10-27): fix exclude-hosts matching unrelated hosts at dial time (@dogancanbakir)
 - **PR #7959** (2026-10-27): fix(loader): fail -validate when a template path can't be found (@arxhr007)
 - **PR #7956** (closed): fix(http): bound large Flow request body memory (@knakul853)
 - **PR #7947** (2026-10-26): fix(trackers): follow X-Next-Page in gitlab duplicate search (@dwisiswant0)
 - **PR #7945** (2026-10-27): fix(trackers): gitea reporter pagination (@shifttymike)
-- **PR #7943** (2026-10-26): chore(deps): bump crate-ci/typos from 1.49.0 to 1.51.1 in the workflows group (@dependabot[bot])
 
 ---
 
@@ -1871,40 +1875,28 @@ fix exclude-hosts matching unrelated hosts at dial time
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #7959 from arxhr007/fix/7949-validate-missing-path
+## X. Merge pull request #7962 from je-bugshell/feat/no-redact-flag
 
 **RULE**:
-When implementing operations in `pkg/catalog/loader/loader.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `26ce6d2e`: Merge pull request #7959 from arxhr007/fix/7949-validate-missing-path. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a113cf0d`: Merge pull request #7962 from je-bugshell/feat/no-redact-flag. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/catalog/loader/loader.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	notFound := store.logErroredTemplates(errs)
-	notFound += store.logErroredTemplates(errs)
-	// a path that can't be resolved is not validated, so it can't count as valid
-	if store.areTemplatesValid(templatePathsMap) && store.areWorkflowsValid(workflowPathsMap) && notFound == 0 {
-// logErroredTemplates logs the templates that could not be found and returns
-// how many of them were not handled by the NotFoundCallback.
-func (s *Store) logErroredTemplates(erred map[string]error) int {
-	notFound := 0
-			notFound++
-	return notFound
+   -nrd, -no-redact              disable the built-in redaction of credential headers (Authorization, Cookie, Set-Cookie, ...) in output; keys given with -redact are still redacted
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	store.logErroredTemplates(errs)
-	store.logErroredTemplates(errs)
-	if store.areTemplatesValid(templatePathsMap) && store.areWorkflowsValid(workflowPathsMap) {
-func (s *Store) logErroredTemplates(erred map[string]error) {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `26ce6d2e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a113cf0d` are properly handled with clean fallback behavior.

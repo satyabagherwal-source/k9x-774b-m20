@@ -95,8 +95,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/JEV-27B-VL",
     "sourceVersion": "hf-autotrust-jev-27b-vl",
     "license": "Open-Source",
-    "contentHash": "d7c2ba43d51602823f52a2238142c53e5839d2c6b495d9416a1c94cad7e0e0c0",
-    "lastHarvestedAt": "2026-10-28T01:58:34.815Z",
+    "contentHash": "211ca5d4504695d06faef9a042c31bc8296d21f7864e4a7179c755a47a9e781a",
+    "lastHarvestedAt": "2026-10-28T19:17:09.487Z",
     "learningId": "learn-huggingface-autotrust-jev-27b-vl"
   },
   "hf-autotrust-gev-26b-decide": {
@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "26ce6d2e",
+    "sourceVersion": "a113cf0d",
     "license": "MIT",
-    "contentHash": "8e14ff949ada5d7e1b7e2770e66f80d6e432072fc9117a87cec2352bc7f501c2",
-    "lastHarvestedAt": "2026-10-27T17:23:42.873Z",
+    "contentHash": "213d8b8ddb98805591a33e58fdf2dd2193a0bb7fd4e4b8b3a5a0426119faf3a7",
+    "lastHarvestedAt": "2026-10-28T19:17:21.267Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -6073,10 +6073,10 @@
     "repository": "ClickHouse/ClickHouse",
     "platform": "github",
     "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
-    "sourceVersion": "b4fae473",
+    "sourceVersion": "6f2ed958",
     "license": "Apache-2.0",
-    "contentHash": "17245f320a993426351f647356fb7c634ef76e4ba285f737ebace42e5b4d4ded",
-    "lastHarvestedAt": "2026-10-28T02:34:08.777Z",
+    "contentHash": "7085872d11094bf33227e91288037ca8e4a4957258adbbf828ddd04a8dd97aca",
+    "lastHarvestedAt": "2026-10-28T19:17:25.370Z",
     "learningId": "learn-github-clickhouse-clickhouse"
   },
   "dockview-dockview": {
@@ -6413,10 +6413,10 @@
     "repository": "prometheus/prometheus",
     "platform": "github",
     "sourceUrl": "https://github.com/prometheus/prometheus",
-    "sourceVersion": "3861d587",
+    "sourceVersion": "3cb40f50",
     "license": "Apache-2.0",
-    "contentHash": "ae2fe82e8859945185fb1b064d7be7fe461734c7f7a0e6b7a02c1d858594061b",
-    "lastHarvestedAt": "2026-10-27T19:56:22.064Z",
+    "contentHash": "de3689fdf351f3bf0b2b36140286555b68a21cdefc42dffae6d971917210d900",
+    "lastHarvestedAt": "2026-10-28T19:17:19.993Z",
     "learningId": "learn-github-prometheus-prometheus"
   },
   "meilisearch-meilisearch": {

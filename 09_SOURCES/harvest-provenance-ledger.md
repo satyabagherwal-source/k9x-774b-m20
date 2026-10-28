@@ -5904,3 +5904,7 @@ Every entry in this ledger must capture:
 | `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `0cc587fa` | Multi-dimensional audit evidence | 2026-10-28T18:57:47.160Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `028bd9d9` | Multi-dimensional audit evidence | 2026-10-28T18:57:50.568Z |
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `6287a4e5` | Multi-dimensional audit evidence | 2026-10-28T18:57:52.087Z |
+| `learn-huggingface-autotrust-jev-27b-vl` | `https://huggingface.co/autotrust/JEV-27B-VL` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-28T19:17:09.487Z |
+| `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `3cb40f50` | Multi-dimensional audit evidence | 2026-10-28T19:17:19.993Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `a113cf0d` | Multi-dimensional audit evidence | 2026-10-28T19:17:21.267Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `6f2ed958` | Multi-dimensional audit evidence | 2026-10-28T19:17:25.370Z |

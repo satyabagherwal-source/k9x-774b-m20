@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T18:57:52.097Z",
+  "last_updated": "2026-10-28T19:17:25.379Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1775,14 +1775,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-jev-27b-vl",
-      "content_hash": "d7c2ba43d51602823f52a2238142c53e5839d2c6b495d9416a1c94cad7e0e0c0",
-      "verified_at": "2026-10-28T01:58:34.823Z",
+      "content_hash": "211ca5d4504695d06faef9a042c31bc8296d21f7864e4a7179c755a47a9e781a",
+      "verified_at": "2026-10-28T19:17:09.502Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T01:58:34.823Z"
+      "last_updated": "2026-10-28T19:17:09.502Z"
     },
     "autotrust/GEV-26B-Decide": {
       "repository": "autotrust/GEV-26B-Decide",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "8e14ff949ada5d7e1b7e2770e66f80d6e432072fc9117a87cec2352bc7f501c2",
-      "verified_at": "2026-10-27T17:23:42.881Z",
+      "content_hash": "213d8b8ddb98805591a33e58fdf2dd2193a0bb7fd4e4b8b3a5a0426119faf3a7",
+      "verified_at": "2026-10-28T19:17:21.278Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T17:23:42.881Z"
+      "last_updated": "2026-10-28T19:17:21.278Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -9231,14 +9231,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clickhouse-clickhouse",
-      "content_hash": "17245f320a993426351f647356fb7c634ef76e4ba285f737ebace42e5b4d4ded",
-      "verified_at": "2026-10-28T02:34:08.785Z",
+      "content_hash": "7085872d11094bf33227e91288037ca8e4a4957258adbbf828ddd04a8dd97aca",
+      "verified_at": "2026-10-28T19:17:25.378Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T02:34:08.785Z"
+      "last_updated": "2026-10-28T19:17:25.378Z"
     },
     "dockview/dockview": {
       "repository": "dockview/dockview",
@@ -9711,14 +9711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-prometheus-prometheus",
-      "content_hash": "ae2fe82e8859945185fb1b064d7be7fe461734c7f7a0e6b7a02c1d858594061b",
-      "verified_at": "2026-10-27T19:56:22.073Z",
+      "content_hash": "de3689fdf351f3bf0b2b36140286555b68a21cdefc42dffae6d971917210d900",
+      "verified_at": "2026-10-28T19:17:20.002Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T19:56:22.073Z"
+      "last_updated": "2026-10-28T19:17:20.002Z"
     },
     "meilisearch/meilisearch": {
       "repository": "meilisearch/meilisearch",

@@ -5895,3 +5895,7 @@
 | `CYCLE-20261028-8J9X` | `2026-10-28T18:57:47.157Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5374` | Yes (`aa7ec950...`) |
 | `CYCLE-20261028-8LWK` | `2026-10-28T18:57:50.564Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5375` | Yes (`025cd295...`) |
 | `CYCLE-20261028-8N2R` | `2026-10-28T18:57:52.083Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5376` | Yes (`1cbdaa46...`) |
+| `CYCLE-20261028-XG4R` | `2026-10-28T19:17:09.483Z` | `autotrust/JEV-27B-VL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md` | Yes (`211ca5d4...`) |
+| `CYCLE-20261028-XO8M` | `2026-10-28T19:17:19.990Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5377` | Yes (`de3689fd...`) |
+| `CYCLE-20261028-XP7Z` | `2026-10-28T19:17:21.263Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5378` | Yes (`213d8b8d...`) |
+| `CYCLE-20261028-XSDZ` | `2026-10-28T19:17:25.367Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5379` | Yes (`7085872d...`) |

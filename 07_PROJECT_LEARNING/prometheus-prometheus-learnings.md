@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source**: github ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
-> **Source Version**: `3861d587`  
+> **Source Version**: `3cb40f50`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T19:56:21.500Z  
+> **Timestamp**: 2026-10-28T19:17:19.379Z  
 > **Learning ID**: `learn-github-prometheus-prometheus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T19:56:21.104Z  
+> **Harvest Timestamp**: 2026-10-28T19:17:19.372Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Prometheus monitoring system and time series database.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 66812 stars
+- **Stars / Engagement**: 66831 stars
 
 ---
 
@@ -1005,12 +1005,12 @@ const (
 )
 
 type chunkWriteJob struct {
-	cutFile   bool
 	seriesRef HeadSeriesRef
 	mint      int64
 	maxt      int64
 	chk       chunkenc.Chunk
 	ref       ChunkDiskMapperRef
+	cutFile   bool
 	isOOO     bool
 	callback  func(error)
 }
@@ -1500,13 +1500,14 @@ func openDir(path string) (fd syscall.Handle, err error) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20208** (2026-10-27): **release-3.16: Bump rc version for CI**
-  *Symptoms*: Signed-off-by: Owen Williams <owen.williams@grafana.com>  ```release-notes NONE ``` 
-  **Post-Mortem & Fix Analysis**:
-  > still a spurious test error, merging anyway
+- **Issue #20215** (2026-10-28): **ui: support PromQL bitwise operators**
+  *Symptoms*: <!--     - Please give your PR a title in the form "area: short description".  For example "tsdb: reduce disk usage by 95%"      - Please sign CNCF's Developer Certificate of Origin and sign-off your commits by adding the -s / --signoff flag to `git commit`. See https://github.com/apps/dco for more information.      - If the PR adds or changes a behaviour or fixes a bug of an exported API it would need a unit/e2e test.      - Where possible use only exported APIs for tests to simplify the review and make it as close as possible to an actual library usage.      - Performance improvements would need a benchmark test to prove it.      - All exposed objects should have a comment.      - All comments should start with a capital letter and end with a full stop.  -->  #### Which issue(s) does the PR fix: <!-- If it applies. Automatically closes linked issue when PR is merged. Usage: `Fixes #<issue number>`, or `Fixes (paste link of issue)`. More at https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword -->  #### Release notes for end users (**ALL** commits must be considered). *Reviewers should verify clarity and quality.*  <!-- Write NONE only if there is no user-facing change.  Otherwise use one of: [FEATURE] [ENHANCEMENT] [PERF] [BUGFIX] [SECURITY] [CHANGE] Following the pattern `[TYPE] Component: description.`  Example: [FEATURE] API: Add 
 
-- **Issue #20201** (2026-10-27): **ci: pass --security-opt seccomp=unconfined to 386 test container**
-  *Symptoms*: Ubuntu 26.04 runners currently ship Docker 29.4.2, whose default seccomp profile blocks `socketcall(2)` with `ENOSYS` ([actions/runner-images#14790](https://github.com/actions/runner-images/issues/14790)). Since Go on `linux/386` still uses `socketcall(2)` for socket operations ([golang/go#79200](https://github.com/golang/go/issues/79200)), tests opening sockets fail with `socket: function not implemented` when `ubuntu-latest` resolves to `ubuntu-26.04`.  Commits: - `ci: pass --security-opt seccomp=unconfined to 386 test container`  ```release-notes NONE ```
+- **Issue #20209** (2026-10-28): **release-3.16: Cherrypick 32bit CI fix**
+  *Symptoms*: cherry pick of  https://github.com/prometheus/prometheus/pull/20201. Also bumps rc version.  ```release-notes NONE ``` 
+  **Post-Mortem & Fix Analysis**:
+  > /prombench 3.15.1
+  > Incorrect `/prombench` syntax;  command requires one argument that matches `(master|main|v[0-9]+\.[0-9]+\.[0-9]+\S*)` regex.  **Available Commands:** * To start benchmark: `/prombench <branch or git tag to compare with>` * To restart benchmark: `/prombench <branch or git tag to compare with>` * To stop benchmark: `/prombench cancel` * To print help: `/prombench help`  **Advanced Flags for `start` and `restart` Commands:** * `--bench.directory=<sub-directory of github.com/prometheus/test-infra/prombench`   * See the details [here](https://github.com/prometheus/test-infra/tree/master/prombench/manifests/prombench#benchmarking-from-the-different-directory), defaults to `manifests/prombench`. * `--bench.version=<branch | @commit>`   * See the details [here](https://github.com/prometheus/test-infra/tree/master/prombench/manifests/prombench#benchmarking-from-the-custom-test-infra-commitbranch), defaults to `master`.  **Examples:** * `/prombench v3.0.0` * `/prombench v3.0.0 --bench.version=@a
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1523,214 +1524,751 @@ func openDir(path string) (fd syscall.Handle, err error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c21fd394` (2026-10-27)
-**Commit Message**: ci: pass --security-opt seccomp=unconfined to 386 test container
+### Incident Patch 1: `660c56b1` (2026-10-28)
+**Commit Message**: ui: support unquoted Unicode and dotted PromQL names (#20170)
 
-Ubuntu 26.04 runners currently ship Docker 29.4.2, whose default seccomp profile blocks socketcall(2) with ENOSYS (actions/runner-images#14790). Since Go on linux/386 still uses socketcall(2) for socket operations (golang/go#79200), all tests opening sockets fail with 'socket: function not implemented' when ubuntu-latest lands on ubuntu-26.04.
+Signed-off-by: Julien Pivotto <[REDACTED_EMAIL]>
 
-Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/ci.yml` (modified, +4/-0)
+**File**: `web/ui/module/codemirror-promql/src/complete/hybrid.test.ts` (modified, +67/-43)
 ```diff
-@@ -54,6 +54,10 @@ jobs:
-     runs-on: ubuntu-latest
-     container:
-       image: quay.io/prometheus/golang-builder:1.27-base
-+      # Docker 29.4.2 on ubuntu-26.04 blocks socketcall(2) in its default seccomp profile
-+      # (https://github.com/actions/runner-images/issues/14790), which Go on linux/386
-+      # still uses for socket operations (https://github.com/golang/go/issues/79200).
-+      options: --security-opt seccomp=unconfined
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
+@@ -35,6 +35,30 @@ import nock from 'nock';
+ 
+ describe('analyzeCompletion test', () => {
+   const testCases = [
++    {
++      title: 'dotted Unicode metric completion',
++      expr: '温度.total',
++      pos: 8,
++      expectedContext: [
++        { kind: ContextKind.MetricName, metricName: '温度.total' },
++        { kind: ContextKind.Function },
++        { kind: ContextKind.Aggregation },
++        { kind: ContextKind.Number },
++      ],
++    },
++    {
++      title: 'dotted Unicode label value completion',
++      expr: '温度.total{場所.name="東"}',
++      pos: 19,
++      expectedContext: [
++        {
++          kind: ContextKind.LabelValue,
++          metricName: '温度.total',
++          labelName: '場所.name',
++          matchers: [{ name: '場所.name', type: EqlSingle, value: '東' }],
++        },
++      ],
++    },
+     {
+       title: 'complete bitand operator',
+       expr: 'metric bitand',
+@@ -1147,7 +1171,7 @@ describe('autocomplete promQL test', () => {
+         options: ([] as Completion[]).concat(functionIdentifierTerms, aggregateOpTerms, numberTerms, snippets),
+         from: 0,
+         to: 0,
+-        validFor: /^[a-zA-Z0-9_:]+$/,
++        validFor: /^[\p{L}0-9_:.]+$/u,
+       },
+     },
+     {
+@@ -1158,7 +1182,7 @@ describe('autocomplete promQL test', () => {
+         options: ([] as Completion[]).concat(functionIdentifierTerms, aggregateOpTerms, numberTerms, snippets),
+         from: 0,
+         to: 3,
+-        validFor: /^[a-zA-Z0-9_:]+$/,
++        validFor: /^[\p{L}0-9_:.]+$/u,
+       },
+     },
+     {
+@@ -1169,7 +1193,7 @@ describe('autocomplete promQL test', () => {
+         options: ([] as Completion[]).concat(functionIdentifierTerms, aggregateOpTerms, snippets),
+         from: 4,
+         to: 4,
+-        validFor: /^[a-zA-Z0-9_:]+$/,
++        validFor: /^[\p{L}0-9_:.]+$/u,
+       },
+     },
+     {
+@@ -1180,7 +1204,7 @@ describe('autocomplete promQL test', () => {
+         options: ([] as Completion[]).concat(aggregateOpModifierTerms, binOpTerms),
+         from: 5,
+         to: 5,
+-        validFor: /^[a-zA-Z0-9_:]+$/,
++        validFor: /^[\p{L}0-9_:.]+$/u,
+       },
+     },
+     {
+@@ -1191,7 +1215,7 @@ describe('autocomplete promQL test', () => {
+         options: binOpTerms,
+         from: 13,
+         to: 13,
+-        validFor: /^[a-zA-Z0-9_:]+$/,
++        validFor: /^[\p{L}0-9_:.]+$/u,
+       },
+     },
+     {
+@@ -1202,7 +1226,7 @@ describe('autocomplete promQL test', () => {
+         options: ([] as Completion[]).concat(functionIdentifierTerms, aggregateOpTerms, snippets),
+         from: 4,
+         to: 6,
+-        validFor: /^[a-zA-Z0-9_:]+$/,
++        validFor: /^[\p{L}0-9_:.]+$/u,
+       },
+     },
+     {
+@@ -1213,7 +1237,7 @@ describe('autocomplete promQL test', () => {
+         options: ([] as Completion[]).concat(functionIdentifierTerms, aggregateOpTerms, snippets),
+         from: 4,
+         to: 28, // should extend to end of 'coredns_cache_hits_total'
+-        validFor: /^[a-zA-Z0-9_:]+$/,
++        validFor: /^[\p{L}0-9_:.]+$/u,
+       },
+     },
+     {
+@@ -1224,7 +1248,7 @@ describe('autocomplete promQL test', () => {
+         options: ([] as Completion[]).concat(functionIdentifierTerms, aggregateOpTerms, snippets),
+         from: 5,
+         to: 29, // should extend to end of 'coredns_cache_hits_total'
+-        validFor: /^[a-zA-Z0-9_:]+$/,
++        validFor: /^[\p{L}0-9_:.]+$/u,
+       },
+     },
+     {
+@@ -1235,7 +1259,7 @@ describe('autocomplete promQL test', () => {
+         options: ([] as Completion[]).concat(functionIdentifierTerms, aggregateOpTerms, snippets),
+         from: 9,
+         to: 9,
+-        validFor: /^[a-zA-Z0-9_:]+$/,
++        validFor: /^[\p{L}0-9_:.]+$/u,
+       },
+     },
+     {
+@@ -1246,7 +1270,7 @@ describe('autocomplete promQL test', () => {
+         options: ([] as Completion[]).concat(aggregateOpModifierTerms, binOpTerms),
+         from: 18,
+         to: 18,
+-        validFor: /^[a-zA-Z0-9_:]+$/,
++        validFor: /^[\p{L}0-9_:.]+$/u,
+       },
+     },
+     {
+@@ -1257,7 +1281,7 @@ describe('autocomplete promQL test', () => {
+         options: ([] as Completion[]).concat(functionIdentifierTerms, aggregateOpTerms, snippets),
+         from: 25,
+         to: 33,
+-        validFor: /^[a-zA-Z0-9_:]+$/,
++        validFor: /^[\p{L}0-9_:.]+$/u,
+       },
+     },
+     {
+@@ -1268,7 +1292,7 @@ describe('autocomplete promQL test', () => {
+         options: ([] as Completion[]).concat(functionIdentifierTerms, aggregateOpTerms, binOpModifierTerms, numberTerms, snippets),
+         from: 14,
+         to: 19,
+-        validFor: /^[a-zA-Z0-9_:]+$/,
++        validFor: /^[\p{L}0-9_:.]+$/u,
+       },
+     },
+     {
+@@ -1279,7 +1303,7 @@ describe('autocomplete promQL test', () => {
+         options: ([] as Completion[]).concat(functionIdentifierTerms, aggregateOpTerms, binOpModifierTerms, numberTerms, snippets),
+         from: 40,
+         to: 41,
+-        validFor: /^[a-zA-Z0-9_:]+$/,
++        validFor: /^[\p{L}0-9_:.]+$/u,
+       },
+     },
+     {
+@@ -1290,7 +1314,7 @@ describe('au
 ```
 
----
-
-### Incident Patch 2: `56d89290` (2026-10-20)
-**Commit Message**: discovery/file: drain watcher events continuously to prevent Windows deadlock
-
-On Windows, fsnotify's Watcher.Add (called in refresh -> watchFiles) blocks waiting for the single readEvents IOCP goroutine, which itself blocks sending to Watcher.Events or Watcher.Errors when the 50-event buffer fills up. Previously, only stop() drained Events and Errors concurrently around Watcher.Close(), leaving Run() vulnerable to deadlocking inside refresh -> watchFiles when a watched directory received a burst of events.
-
-Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
-
-**File**: `discovery/file/file.go` (modified, +50/-35)
+**File**: `web/ui/module/codemirror-promql/src/complete/hybrid.ts` (modified, +17/-1)
 ```diff
-@@ -244,7 +244,55 @@ func (d *Discovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
- 		return
- 	}
- 	d.watcher = watcher
--	defer d.stop()
-+
-+	// Drain watcher events and errors in a dedicated goroutine for the entire
-+	// lifetime of the watcher. Closing or adding watches (e.g. on Windows in
-+	// refresh -> watchFiles) will deadlock unless all events and errors are
-+	// continuously drained while the watcher's backend goroutine is active.
-+	refreshCh := make(chan struct{}, 1)
-+	done := make(chan struct{})
-+	var wg sync.WaitGroup
-+	wg.Go(func() {
-+		for {
-+			select {
-+			case event, ok := <-d.watcher.Events:
-+				if !ok {
-+					return
-+				}
-+				// fsnotify sometimes sends a bunch of events without name or operation.
-+				// It's unclear what they are and why they are sent - filter them out.
-+				if event.Name == "" {
-+					break
-+				}
-+				// Everything but a chmod requires rereading.
-+				if event.Op^fsnotify.Chmod == 0 {
-+					break
-+				}
-+				// Changes to a file can spawn various sequences of events with
-+				// different combinations of operations. For all practical purposes
-+				// this is inaccurate.
-+				// The most reliable solution is to reload everything if anything happens.
-+				select {
-+				case refreshCh <- struct{}{}:
-+				default:
-+				}
-+			case err, ok := <-d.watcher.Errors:
-+				if !ok {
-+					return
-+				}
-+				if err != nil {
-+					d.logger.Error("Error watching file", "err", err)
-+				}
-+			case <-done:
-+				return
-+			}
-+		}
-+	})
-+	defer func() {
-+		d.stop()
-+		close(done)
-+		wg.Wait()
-+	}()
- 
- 	d.refresh(ctx, ch)
- 
-@@ -256,31 +304,13 @@ func (d *Discovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
- 		case <-ctx.Done():
- 			return
- 
--		case event := <-d.watcher.Events:
--			// fsnotify sometimes sends a bunch of events without name or operation.
--			// It's unclear what they are and why they are sent - filter them out.
--			if event.Name == "" {
--				break
--			}
--			// Everything but a chmod requires rereading.
--			if event.Op^fsnotify.Chmod == 0 {
--				break
--			}
--			// Changes to a file can spawn various sequences of events with
--			// different combinations of operations. For all practical purposes
--			// this is inaccurate.
--			// The most reliable solution is to reload everything if anything happens.
-+		case <-refreshCh:
- 			d.refresh(ctx, ch)
- 
- 		case <-ticker.C:
- 			// Setting a new watch after an update might fail. Make sure we don't lose
- 			// those files forever.
- 			d.refresh(ctx, ch)
--
--		case err := <-d.watcher.Errors:
--			if err != nil {
--				d.logger.Error("Error watching file", "err", err)
--			}
- 		}
- 	}
+@@ -177,7 +177,7 @@ function arrayToCompletionResult(data: Completion[], from: number, to: number, i
+     from: from,
+     to: to,
+     options: options,
+-    validFor: span ? /^[a-zA-Z0-9_:]+$/ : undefined,
++    validFor: span ? new RegExp('^[\\p{L}0-9_:.]+$', 'u') : undefined,
+   } as CompletionResult;
  }
-@@ -301,23 +331,8 @@ func (d *Discovery) deleteTimestamp(filename string) {
- func (d *Discovery) stop() {
- 	d.logger.Debug("Stopping file discovery...", "paths", fmt.Sprintf("%v", d.paths))
  
--	done := make(chan struct{})
--	defer close(done)
--
- 	d.metrics.fileSDTimeStamp.removeDiscoverer(d)
- 
--	// Closing the watcher will deadlock unless all events and errors are drained.
--	go func() {
--		for {
--			select {
--			case <-d.watcher.Errors:
--			case <-d.watcher.Events:
--				// Drain all events and errors.
--			case <-done:
--				return
--			}
--		}
--	}()
- 	if err := d.watcher.Close(); err != nil {
- 		d.logger.Error("Error closing file watcher", "paths", fmt.Sprintf("%v", d.paths), "err", err)
- 	}
-```
-
-**File**: `discovery/file/file_test.go` (modified, +22/-0)
-```diff
-@@ -517,3 +517,25 @@ func TestRemoveFile(t *testing.T) {
- 		},
- 	)
+@@ -258,6 +258,16 @@ function hasCompleteDurationUnit(state: EditorState, node: SyntaxNode): boolean
+   return durationWithUnitRegexp.test(nodeContent);
  }
-+
-+func TestFileUpdateBurst(t *testing.T) {
-+	t.Parallel()
-+
-+	runner := newTestRunner(t)
-+	sdFile := runner.copyFile("fixtures/valid.yml")
-+
-+	runner.run("*.yml")
-+	defer runner.stop()
-+
-+	runner.requireUpdate(time.Time{}, validTg(sdFile))
-+
-+	// Generate more events than fsnotify's 50-event buffer in the watched
-+	// directory while discovery is refreshing and re-adding directory watches.
-+	ref := runner.lastReceive()
-+	noiseFile := filepath.Join(runner.dir, "noise.txt")
-+	for range 100 {
-+		require.NoError(t, os.WriteFile(noiseFile, []byte("x"), 0o600))
-+	}
-+	runner.copyFileTo("fixtures/valid2.yml", "valid.yml")
-+	runner.requireUpdate(ref, valid2Tg(sdFile))
+ 
++// External name tokens may leave a bare error node after a complete duration.
++// Preserve function completion for an unfinished name such as the final s in foo[5mss].
++function isDurationFunctionFragment(state: EditorState, node: SyntaxNode): boolean {
++  return (
++    node.type.id === 0 &&
++    [MatrixSelector, SubqueryExpr, OffsetExpr, DurationExpr].includes(node.parent?.type.id ?? -1) &&
++    /^[a-zA-Z_]+$/.test(state.sliceDoc(node.from, node.to))
++  );
 +}
++
+ // computeStartCompleteLabelPositionInLabelMatcherOrInGroupingLabel calculates the start position only when the node is a LabelMatchers or a GroupingLabels
+ function computeStartCompleteLabelPositionInLabelMatcherOrInGroupingLabel(node: SyntaxNode, pos: number): number {
+   // Here we can have two different situations:
+@@ -282,6 +292,8 @@ export function computeStartCompletePosition(state: EditorState, node: SyntaxNod
+   let start = node.from;
+   if (isAfterClosedFunctionCallBody(state, node, pos)) {
+     start = pos;
++  } else if (isDurationFunctionFragment(state, node)) {
++    start = node.from;
+   } else if (node.type.id === LabelMatchers || node.type.id === GroupingLabels) {
+     start = computeStartCompleteLabelPositionInLabelMatcherOrInGroupingLabel(node, pos);
+   } else if (
+@@ -334,6 +346,10 @@ export function analyzeCompletion(state: EditorState, node: SyntaxNode, pos: num
+   const result: Context[] = [];
+   switch (node.type.id) {
+     case 0: {
++      if (isDurationFunctionFragment(state, node)) {
++        result.push({ kind: ContextKind.DurationExpr });
++        break;
++      }
+       // 0 is the id of the error node
+       if (
+         node.parent?.type.id === OffsetExpr ||
+```
+
+**File**: `web/ui/module/codemirror-promql/src/parser/parser.test.ts` (modified, +40/-0)
+```diff
+@@ -19,6 +19,46 @@ import { ValueType } from '../types';
+ 
+ describe('promql operations', () => {
+   const testCases = [
++    {
++      expr: 'foo{service.name="api"}',
++      expectedValueType: ValueType.vector,
++      expectedDiag: [] as Diagnostic[],
++    },
++    {
++      expr: 'sum by (service.name, équipe) (rate(http.server.requests[5m]))',
++      expectedValueType: ValueType.vector,
++      expectedDiag: [] as Diagnostic[],
++    },
++    {
++      expr: '温度{場所="東京"}',
++      expectedValueType: ValueType.vector,
++      expectedDiag: [] as Diagnostic[],
++    },
++    {
++      expr: '𐐀{𐐀="x"}',
++      expectedValueType: ValueType.vector,
++      expectedDiag: [] as Diagnostic[],
++    },
++    {
++      expr: 'requests_total + on (service.name) group_left (équipe) service_info',
++      expectedValueType: ValueType.vector,
++      expectedDiag: [] as Diagnostic[],
++    },
++    {
++      expr: 'foo > bool.5',
++      expectedValueType: ValueType.vector,
++      expectedDiag: [] as Diagnostic[],
++    },
++    {
++      expr: 'topK',
++      expectedValueType: ValueType.vector,
++      expectedDiag: [] as Diagnostic[],
++    },
++    {
++      expr: 'Inf.total + Inf',
++      expectedValueType: ValueType.vector,
++      expectedDiag: [] as Diagnostic[],
++    },
+     {
+       expr: '5 bitand 3',
+       expectedValueType: ValueType.scalar,
+```
+
+**File**: `web/ui/module/lezer-promql/src/promql.grammar` (modified, +2/-2)
+```diff
+@@ -359,8 +359,6 @@ durationPrimary[@inline] {
+     ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" ) ( std.digit+ "ms" )? ) |
+     ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" )? ( std.digit+ "ms" ) )
+   }
+-  Identifier { (std.asciiLetter | "_" | ":") (std.asciiLetter | std.digit | "_" | ":" )*}
+-  LabelName { (std.asciiLetter | "_") (std.asciiLetter | std.digit | "_")* }
+ 
+   // Operator
+   Sub { "-" }
+@@ -385,6 +383,8 @@ durationPrimary[@inline] {
+   At { "@" }
+ }
+ 
++@external tokens names from "./tokens" { Identifier, LabelName }
++
+ // Keywords
+ 
+ @external specialize {Identifier} specializeIdentifier from "./tokens" {
+```
+
+**File**: `web/ui/module/lezer-promql/src/tokens.js` (modified, +41/-0)
+```diff
+@@ -11,7 +11,11 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
++import { ExternalTokenizer } from "@lezer/lr";
++
+ import {
++  Identifier,
++  LabelName,
+   And,
+   Avg,
+   Atan2,
+@@ -54,6 +58,40 @@ import {
+   FillRight,
+ } from "./parser.terms.js";
+ 
++// Name starts are Unicode letters or underscores; combining marks require quotes.
++const nameStart = /[\p{L}_]/u;
++
++// InputStream exposes UTF-16 code units; names may contain astral letters.
++function readCodePoint(input) {
++  const first = input.next;
++  if (first >= 0xd800 && first <= 0xdbff) {
++    const second = input.peek(1);
++    if (second >= 0xdc00 && second <= 0xdfff) {
++      return 0x10000 + ((first - 0xd800) << 10) + second - 0xdc00;
++    }
++  }
++  return first;
++}
++
++function isNameStart(ch) {
++  return ch >= 0 && nameStart.test(String.fromCodePoint(ch));
++}
++
++export const names = new ExternalTokenizer(
++  (input, stack) => {
++    const label = stack.canShift(LabelName);
++    let ch = readCodePoint(input);
++    if (!isNameStart(ch) && (label || ch !== 58)) return;
++    // Dots and ASCII digits can follow; only metric names allow colons.
++    do {
++      input.advance(ch > 0xffff ? 2 : 1);
++      ch = readCodePoint(input);
++    } while (isNameStart(ch) || (ch >= 48 && ch <= 57) || ch === 46 || (!label && ch === 58));
++    input.acceptToken(label ? LabelName : Identifier);
++  },
++  { contextual: true }
++);
++
+ const keywordTokens = {
+   inf: inf,
+   nan: nan,
+@@ -66,6 +104,7 @@ const keywordTokens = {
+ };
+ 
+ export const specializeIdentifier = (value, stack) => {
++  if (/[^\x00-\x7f]/.test(value)) return -1;
+   return keywordTokens[value.toLowerCase()] || -1;
+ };
+ 
+@@ -101,6 +140,8 @@ const contextualKeywordTokens = {
+ };
+ 
+ export const extendIdentifier = (value, stack) => {
++  // Unicode letters that lowercase to ASCII must remain names, not keywords.
++  if (/[^\x00-\x7f]/.test(value)) return -1;
+   if (value === "start" && stack.canShift(StartFn)) {
+     return StartFn;
+   }
+```
+
+**File**: `web/ui/module/lezer-promql/test/promql.test.js` (modified, +48/-0)
+```diff
+@@ -14,3 +14,51 @@ for (const file of fs.readdirSync(caseDir)) {
+         for (const { name, run } of fileTests(fs.readFileSync(path.join(caseDir, file), 'utf8'), file)) it(name, () => run(parser));
+     });
+ }
++
++// Parse strictly so error recovery cannot hide a backend/frontend mismatch.
++describe('unquoted UTF-8 names', () => {
++    const strictParser = parser.configure({ strict: true });
++    const valid = [
++        'http.server.request.duration{service.name="api"}',
++        '温度{場所="東京"}',
++        '𐐀{𐐀="x"}',
++        'a𐐀9{__名="x"}',
++        'sum by (service.name, équipe) (rate(http.server.requests[5m]))',
++        'sum without (場所) (温度)',
++        'requests_total + on (service.name) group_left (équipe) service_info',
++        'requests_total + ignoring (service.name) group_right (équipe) service_info',
++        'foo{a..="b"}',
++        '_:温度.total',
++        'foo.',
++        'foo..bar',
++        'Inf.total + Inf',
++        'NaN.total or foo',
++        'http.server.requests[5m:1m] offset 5m',
++        'http.server.requests @ 0.5',
++        'http.server.requests + .5',
++        'foo > bool.5',
++        'sum by ("a:b", "ö", "😀") (foo)',
++        'foo{".name"="x", "ö"="y", "😀"="z"}',
++    ];
++    for (const query of valid) {
++        it(`accepts ${query}`, () => {
++            expect(() => strictParser.parse(query)).not.toThrow();
++        });
++    }
++    const invalid = [
++        '.foo', '5foo', 'foo{.label="x"}', 'foo{5label="x"}', 'foo{a:b="x"}',
++        'foo😀', 'foo١', 'foo²', 'o\u0308', 'foo·bar', 'foo\u200dbar', 'foo\ufffd',
++        'foo\ud800', 'foo\udc00', 'sum by (o\u0308) (foo)', 'foo{é😀="x"}',
++        'sum by (a:b) (foo)', 'foo + on (a:b) bar', 'topK(1, foo)',
++    ];
++    for (const query of invalid) {
++        it(`rejects ${query}`, () => {
++            expect(() => strictParser.parse(query)).toThrow();
++        });
++    }
++    for (const name of ['İnf', 'topK', 'İGNORING', 'on.total', 'sum.total', '𐐀']) {
++        it(`preserves ${name} as a metric name`, () => {
++            expect(strictParser.parse(name).toString()).toBe('PromQL(VectorSelector(Identifier))');
++        });
++    }
++});
 ```
 
 ---
 
-### Incident Patch 3: `670a4af2` (2026-10-27)
-**Commit Message**: Merge pull request #20201 from prometheus/bwplotka/ci-fix-386-seccomp
+### Incident Patch 2: `516bc947` (2026-10-28)
+**Commit Message**: discovery/linode: fix transfer allowance conversion (#20206)
 
-ci: pass --security-opt seccomp=unconfined to 386 test container
+Signed-off-by: Fayez Bast <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/ci.yml` (modified, +4/-0)
+**File**: `discovery/linode/linode.go` (modified, +1/-1)
 ```diff
-@@ -54,6 +54,10 @@ jobs:
-     runs-on: ubuntu-latest
-     container:
-       image: quay.io/prometheus/golang-builder:1.27-base
-+      # Docker 29.4.2 on ubuntu-26.04 blocks socketcall(2) in its default seccomp profile
-+      # (https://github.com/actions/runner-images/issues/14790), which Go on linux/386
-+      # still uses for socket operations (https://github.com/golang/go/issues/79200).
-+      options: --security-opt seccomp=unconfined
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
+@@ -352,7 +352,7 @@ func (d *Discovery) refreshData(ctx context.Context) ([]*targetgroup.Group, erro
+ 			linodeLabelSpecsDiskBytes:     model.LabelValue(strconv.FormatInt(int64(instance.Specs.Disk)<<20, 10)),
+ 			linodeLabelSpecsMemoryBytes:   model.LabelValue(strconv.FormatInt(int64(instance.Specs.Memory)<<20, 10)),
+ 			linodeLabelSpecsVCPUs:         model.LabelValue(strconv.Itoa(instance.Specs.VCPUs)),
+-			linodeLabelSpecsTransferBytes: model.LabelValue(strconv.FormatInt(int64(instance.Specs.Transfer)<<20, 10)),
++			linodeLabelSpecsTransferBytes: model.LabelValue(strconv.FormatInt(int64(instance.Specs.Transfer)<<30, 10)),
+ 		}
+ 
+ 		addr := net.JoinHostPort(publicIPv4, strconv.FormatUint(uint64(d.port), 10))
+```
+
+**File**: `discovery/linode/linode_test.go` (modified, +7/-7)
+```diff
+@@ -61,7 +61,7 @@ func TestLinodeSDRefresh(t *testing.T) {
+ 				"__meta_linode_specs_disk_bytes":     model.LabelValue("85899345920"),
+ 				"__meta_linode_specs_memory_bytes":   model.LabelValue("4294967296"),
+ 				"__meta_linode_specs_vcpus":          model.LabelValue("2"),
+-				"__meta_linode_specs_transfer_bytes": model.LabelValue("4194304000"),
++				"__meta_linode_specs_transfer_bytes": model.LabelValue("4294967296000"),
+ 				"__meta_linode_extra_ips":            model.LabelValue(",96.126.108.16,192.168.201.25,"),
+ 			},
+ 			{
+@@ -86,7 +86,7 @@ func TestLinodeSDRefresh(t *testing.T) {
+ 				"__meta_linode_specs_disk_bytes":     model.LabelValue("85899345920"),
+ 				"__meta_linode_specs_memory_bytes":   model.LabelValue("4294967296"),
+ 				"__meta_linode_specs_vcpus":          model.LabelValue("2"),
+-				"__meta_linode_specs_transfer_bytes": model.LabelValue("4194304000"),
++				"__meta_linode_specs_transfer_bytes": model.LabelValue("4294967296000"),
+ 			},
+ 			{
+ 				"__address__":                        model.LabelValue("192.53.120.25:80"),
+@@ -110,7 +110,7 @@ func TestLinodeSDRefresh(t *testing.T) {
+ 				"__meta_linode_specs_disk_bytes":     model.LabelValue("53687091200"),
+ 				"__meta_linode_specs_memory_bytes":   model.LabelValue("2147483648"),
+ 				"__meta_linode_specs_vcpus":          model.LabelValue("1"),
+-				"__meta_linode_specs_transfer_bytes": model.LabelValue("2097152000"),
++				"__meta_linode_specs_transfer_bytes": model.LabelValue("2147483648000"),
+ 				"__meta_linode_ipv6_ranges":          model.LabelValue(",2600:3c04:e001:456::/64,"),
+ 			},
+ 			{
+@@ -135,7 +135,7 @@ func TestLinodeSDRefresh(t *testing.T) {
+ 				"__meta_linode_specs_disk_bytes":     model.LabelValue("26843545600"),
+ 				"__meta_linode_specs_memory_bytes":   model.LabelValue("1073741824"),
+ 				"__meta_linode_specs_vcpus":          model.LabelValue("1"),
+-				"__meta_linode_specs_transfer_bytes": model.LabelValue("1048576000"),
++				"__meta_linode_specs_transfer_bytes": model.LabelValue("1073741824000"),
+ 				"__meta_linode_extra_ips":            model.LabelValue(",172.104.18.104,"),
+ 				"__meta_linode_ipv6_ranges":          model.LabelValue(",2600:3c03:e000:123::/64,"),
+ 			},
+@@ -163,7 +163,7 @@ func TestLinodeSDRefresh(t *testing.T) {
+ 				"__meta_linode_specs_disk_bytes":     model.LabelValue("85899345920"),
+ 				"__meta_linode_specs_memory_bytes":   model.LabelValue("4294967296"),
+ 				"__meta_linode_specs_vcpus":          model.LabelValue("2"),
+-				"__meta_linode_specs_transfer_bytes": model.LabelValue("4194304000"),
++				"__meta_linode_specs_transfer_bytes": model.LabelValue("4294967296000"),
+ 				"__meta_linode_extra_ips":            model.LabelValue(",96.126.108.16,192.168.201.25,"),
+ 			},
+ 			{
+@@ -188,7 +188,7 @@ func TestLinodeSDRefresh(t *testing.T) {
+ 				"__meta_linode_specs_disk_bytes":     model.LabelValue("26843545600"),
+ 				"__meta_linode_specs_memory_bytes":   model.LabelValue("1073741824"),
+ 				"__meta_linode_specs_vcpus":          model.LabelValue("1"),
+-				"__meta_linode_specs_transfer_bytes": model.LabelValue("1048576000"),
++				"__meta_linode_specs_transfer_bytes": model.LabelValue("1073741824000"),
+ 				"__meta_linode_extra_ips":            model.LabelValue(",172.104.18.104,"),
+ 				"__meta_linode_ipv6_ranges":          model.LabelValue(",2600:3c03:e000:123::/64,"),
+ 			},
+@@ -216,7 +216,7 @@ func TestLinodeSDRefresh(t *testing.T) {
+ 				"__meta_linode_specs_disk_bytes":     model.LabelValue("53687091200"),
+ 				"__meta_linode_specs_memory_bytes":   model.LabelValue("2147483648"),
+ 				"__meta_linode_specs_vcpus":          model.LabelValue("1"),
+-				"__meta_linode_specs_transfer_bytes": model.LabelValue("2097152000"),
++				"__meta_linode_specs_transfer_bytes": model.LabelValue("2147483648000"),
+ 				"__meta_linode_ipv6_ranges":          model.LabelValue(",2600:3c04:e001:456::/64,"),
+ 			},
+ 		}},
+```
+
+---
+
+### Incident Patch 3: `74e50be2` (2026-10-28)
+**Commit Message**: ui: support PromQL bitwise operators (#20215)
+
+Signed-off-by: Julien Pivotto <[REDACTED_EMAIL]>
+
+**File**: `web/ui/mantine-ui/src/promql/ast.ts` (modified, +3/-0)
+```diff
+@@ -48,6 +48,9 @@ export enum binaryOperatorType {
+   or = "or",
+   unless = "unless",
+   atan2 = "atan2",
++  bitand = "bitand",
++  bitor = "bitor",
++  bitxor = "bitxor",
+ }
+ 
+ export const compOperatorTypes: binaryOperatorType[] = [
+```
+
+**File**: `web/ui/mantine-ui/src/promql/binOp.test.ts` (modified, +46/-2)
+```diff
+@@ -6,6 +6,8 @@ import {
+   filteredSampleValue,
+   fnv1a,
+   resultMetric,
++  scalarBinOp,
++  vectorElemBinop,
+ } from "./binOp";
+ import {
+   VectorMatching,
+@@ -3328,11 +3330,53 @@ const testCases: TestCase[] = [
+ ];
+ 
+ describe("binOp", () => {
++  describe("bitwise operators", () => {
++    it.each([
++      [binaryOperatorType.bitand, 5, 3, 1],
++      [binaryOperatorType.bitor, 5, 3, 7],
++      [binaryOperatorType.bitxor, 5, 3, 6],
++      [binaryOperatorType.bitand, 4294967297, 4294967296, 4294967296],
++      [
++        binaryOperatorType.bitor,
++        4503599627370496,
++        4503599627370495,
++        Number.MAX_SAFE_INTEGER,
++      ],
++      [
++        binaryOperatorType.bitxor,
++        Number.MAX_SAFE_INTEGER,
++        4503599627370496,
++        4503599627370495,
++      ],
++    ] as const)("%s(%s, %s) = %s", (op, lhs, rhs, expected) => {
++      expect(scalarBinOp(op, lhs, rhs)).toBe(expected);
++      expect(vectorElemBinop(op, lhs, rhs)).toEqual({
++        value: expected,
++        keep: true,
++      });
++    });
++
++    it.each([
++      binaryOperatorType.bitand,
++      binaryOperatorType.bitor,
++      binaryOperatorType.bitxor,
++    ])("%s returns NaN for invalid operands", (op) => {
++      for (const invalid of [-1, 1.5, NaN, Infinity, -Infinity, 2 ** 53]) {
++        expect(scalarBinOp(op, invalid, 1)).toBeNaN();
++        expect(scalarBinOp(op, 1, invalid)).toBeNaN();
++      }
++    });
++  });
++
+   describe("resultMetric", () => {
+-    it("should drop metric name for operations that change meaning", () => {
++    it.each([
++      binaryOperatorType.add,
++      binaryOperatorType.bitand,
++      binaryOperatorType.bitor,
++      binaryOperatorType.bitxor,
++    ])("should drop metric name for %s", (op) => {
+       const lhs: Metric = { __name__: "metric_a", label1: "value1" };
+       const rhs: Metric = { __name__: "metric_b", label2: "value2" };
+-      const op = binaryOperatorType.add;
+       const matching = {
+         card: vectorMatchCardinality.oneToMany,
+         on: true,
+```
+
+**File**: `web/ui/mantine-ui/src/promql/binOp.ts` (modified, +30/-0)
+```diff
+@@ -181,6 +181,33 @@ export const vectorElemBinop = (
+       return { value: lhs, keep: lhs <= rhs };
+     case binaryOperatorType.atan2:
+       return { value: Math.atan2(lhs, rhs), keep: true };
++    case binaryOperatorType.bitand:
++    case binaryOperatorType.bitor:
++    case binaryOperatorType.bitxor: {
++      if (
++        !Number.isSafeInteger(lhs) ||
++        !Number.isSafeInteger(rhs) ||
++        lhs < 0 ||
++        rhs < 0
++      ) {
++        return { value: NaN, keep: true };
++      }
++      // BigInt avoids the 32-bit truncation of JavaScript number bitwise operators.
++      const l = BigInt(lhs);
++      const r = BigInt(rhs);
++      let value: bigint;
++      switch (op) {
++        case binaryOperatorType.bitand:
++          value = l & r;
++          break;
++        case binaryOperatorType.bitor:
++          value = l | r;
++          break;
++        default:
++          value = l ^ r;
++      }
++      return { value: Number(value), keep: true };
++    }
+     default:
+       throw new Error("invalid binop");
+   }
+@@ -196,6 +223,9 @@ const shouldDropMetricName = (op: binaryOperatorType): boolean =>
+     binaryOperatorType.pow,
+     binaryOperatorType.mod,
+     binaryOperatorType.atan2,
++    binaryOperatorType.bitand,
++    binaryOperatorType.bitor,
++    binaryOperatorType.bitxor,
+   ].includes(op);
+ 
+ // Compute the time series labels for the result metric.
+```
+
+**File**: `web/ui/mantine-ui/src/promql/format.tsx` (modified, +9/-1)
+```diff
+@@ -451,7 +451,15 @@ const formatNodeInternal = (
+               showChildren,
+               childMaxDepth
+             )}{" "}
+-          {["atan2", "and", "or", "unless"].includes(node.op) ? (
++          {[
++            "atan2",
++            "bitand",
++            "bitor",
++            "bitxor",
++            "and",
++            "or",
++            "unless",
++          ].includes(node.op) ? (
+             <span className="promql-keyword">{node.op}</span>
+           ) : (
+             <span className="promql-operator">{node.op}</span>
+```
+
+**File**: `web/ui/mantine-ui/src/promql/utils.ts` (modified, +3/-0)
+```diff
+@@ -43,6 +43,9 @@ const binOpPrecedence = {
+   [binaryOperatorType.or]: 6,
+   [binaryOperatorType.unless]: 5,
+   [binaryOperatorType.atan2]: 2,
++  [binaryOperatorType.bitand]: 2,
++  [binaryOperatorType.bitor]: 2,
++  [binaryOperatorType.bitxor]: 2,
+ };
+ 
+ export const maybeParenthesizeBinopChild = (
+```
+
+**File**: `web/ui/module/codemirror-promql/src/complete/hybrid.test.ts` (modified, +18/-0)
+```diff
+@@ -35,6 +35,24 @@ import nock from 'nock';
+ 
+ describe('analyzeCompletion test', () => {
+   const testCases = [
++    {
++      title: 'complete bitand operator',
++      expr: 'metric bitand',
++      pos: 13,
++      expectedContext: [{ kind: ContextKind.BinOp }],
++    },
++    {
++      title: 'complete bitor operator',
++      expr: 'metric bitor',
++      pos: 12,
++      expectedContext: [{ kind: ContextKind.BinOp }],
++    },
++    {
++      title: 'complete bitxor operator',
++      expr: 'metric bitxor',
++      pos: 13,
++      expectedContext: [{ kind: ContextKind.BinOp }],
++    },
+     {
+       title: 'empty expr',
+       expr: '',
+```
+
+**File**: `web/ui/module/codemirror-promql/src/complete/hybrid.ts` (modified, +6/-0)
+```diff
+@@ -20,6 +20,9 @@ import {
+   AggregateModifier,
+   And,
+   BinaryExpr,
++  BitAnd,
++  BitOr,
++  BitXor,
+   BoolModifier,
+   Div,
+   Eql,
+@@ -683,6 +686,9 @@ export function analyzeCompletion(state: EditorState, node: SyntaxNode, pos: num
+     case And:
+     case Unless:
+     case Or:
++    case BitAnd:
++    case BitOr:
++    case BitXor:
+     case BinaryExpr:
+       result.push({ kind: ContextKind.BinOp });
+       break;
+```
+
+**File**: `web/ui/module/codemirror-promql/src/complete/promql.terms.ts` (modified, +3/-0)
+```diff
+@@ -48,6 +48,9 @@ export const binOpTerms = [
+   { label: '<=' },
+   { label: '!=' },
+   { label: 'atan2' },
++  { label: 'bitand' },
++  { label: 'bitor' },
++  { label: 'bitxor' },
+   { label: 'and' },
+   { label: 'or' },
+   { label: 'unless' },
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #20215** (2026-10-28): ui: support PromQL bitwise operators (@roidelapluie)
+- **PR #20209** (2026-10-28): release-3.16: Cherrypick 32bit CI fix (@ywwg)
 - **PR #20208** (2026-10-27): release-3.16: Bump rc version for CI (@ywwg)
+- **PR #20206** (2026-10-28): discovery/linode: fix transfer allowance conversion (@FayezBast)
+- **PR #20203** (2026-10-28): fix(ui):zero-only histogram rendering (@FayezBast)
 - **PR #20201** (2026-10-27): ci: pass --security-opt seccomp=unconfined to 386 test container (@bwplotka)
-- **PR #20200** (2026-10-27): chore: ignore GitHub Bot accounts in pr-triage-board (@bwplotka)
-- **PR #20198** (2026-10-27): release-3.16: Set changelog date (@ywwg)
-- **PR #20197** (closed): model/histogram: preserve integer bucket counts during float conversion (@umtong)
-- **PR #20196** (2026-10-27): tsdb/agent: preserve metadata for stale samples in AppenderV2 (@roidelapluie)
 
 ---
 
@@ -1750,31 +2288,76 @@ ci: pass --security-opt seccomp=unconfined to 386 test container
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: pass --security-opt seccomp=unconfined to 386 test container
+## X. ui: support unquoted Unicode and dotted PromQL names (#20170)
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `web/ui/module/codemirror-promql/src/complete/hybrid.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c21fd394`: ci: pass --security-opt seccomp=unconfined to 386 test container. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `660c56b1`: ui: support unquoted Unicode and dotted PromQL names (#20170). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `web/ui/module/codemirror-promql/src/complete/hybrid.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      # Docker 29.4.2 on ubuntu-26.04 blocks socketcall(2) in its default seccomp profile
-      # (https://github.com/actions/runner-images/issues/14790), which Go on linux/386
-      # still uses for socket operations (https://github.com/golang/go/issues/79200).
-      options: --security-opt seccomp=unconfined
+    {
+      title: 'dotted Unicode metric completion',
+      expr: '温度.total',
+      pos: 8,
+      expectedContext: [
+        { kind: ContextKind.MetricName, metricName: '温度.total' },
+        { kind: ContextKind.Function },
+        { kind: ContextKind.Aggregation },
+        { kind: ContextKind.Number },
+      ],
+    },
+    {
+      title: 'dotted Unicode label value completion',
+      expr: '温度.total{場所.name="東"}',
+      pos: 19,
+      expectedContext: [
+        {
+          kind: ContextKind.LabelValue,
+          metricName: '温度.total',
+          labelName: '場所.name',
+          matchers: [{ name: '場所.name', type: EqlSingle, value: '東' }],
+        },
+      ],
+    },
+        validFor: /^[\p{L}0-9_:.]+$/u,
+        validFor: /^[\p{L}0-9_:.]+$/u,
+        validFor: /^[\p{L}0-9_:.]+$/u,
+        validFor: /^[\p{L}0-9_:.]+$/u,
+        validFor: /^[\p{L}0-9_:.]+$/u,
+        validFor: /^[\p{L}0-9_:.]+$/u,
+        validFor: /^[\p{L}0-9_:.]+$/u,
+        validFor: /^[\p{L}0-9_:.]+$/u,
+        validFor: /^[\p{L}0-9_:.]+$/u,
+        validFor: /^[\p{L}0-9_:.]+$/u,
+        validFor: /^[\p{L}0-9_:.]+$/u,
+        validFor: /^[\p{L}0-9_:.]+$/u,
+        validFor: /^[\p{L}0-9_:.]+$/u,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        validFor: /^[a-zA-Z0-9_:]+$/,
+        validFor: /^[a-zA-Z0-9_:]+$/,
+        validFor: /^[a-zA-Z0-9_:]+$/,
+        validFor: /^[a-zA-Z0-9_:]+$/,
+        validFor: /^[a-zA-Z0-9_:]+$/,
+        validFor: /^[a-zA-Z0-9_:]+$/,
+        validFor: /^[a-zA-Z0-9_:]+$/,
+        validFor: /^[a-zA-Z0-9_:]+$/,
+        validFor: /^[a-zA-Z0-9_:]+$/,
+        validFor: /^[a-zA-Z0-9_:]+$/,
+        validFor: /^[a-zA-Z0-9_:]+$/,
+        validFor: /^[a-zA-Z0-9_:]+$/,
+        validFor: /^[a-zA-Z0-9_:]+$/,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c21fd394` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `660c56b1` are properly handled with clean fallback behavior.

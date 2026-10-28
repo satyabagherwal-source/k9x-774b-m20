@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T18:57:52.012Z",
+  "last_updated": "2026-10-28T19:17:25.298Z",
   "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6761,8 +6761,8 @@
       "slug": "clickhouse-clickhouse",
       "platform": "github",
       "source_url": "https://github.com/ClickHouse/ClickHouse",
-      "source_version": "b4fae473",
-      "content_hash": "17245f320a993426351f647356fb7c634ef76e4ba285f737ebace42e5b4d4ded",
+      "source_version": "6f2ed958",
+      "content_hash": "7085872d11094bf33227e91288037ca8e4a4957258adbbf828ddd04a8dd97aca",
       "dossier_path": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "promoted_rules": [
@@ -6820,6 +6820,11 @@
           "number": 5134,
           "title": "Merge pull request #126486 from fallintoplace/fix/parse-datetime-day-digits-1264",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5379,
+          "title": "Merge pull request #127994 from groeneai/fix-04666-run-query-in-background-darwi",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6827,7 +6832,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T02:34:08.703Z",
+      "verified_at": "2026-10-28T19:17:25.280Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -17502,7 +17507,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
       "source_version": "hf-autotrust-jev-27b-vl",
-      "content_hash": "d7c2ba43d51602823f52a2238142c53e5839d2c6b495d9416a1c94cad7e0e0c0",
+      "content_hash": "211ca5d4504695d06faef9a042c31bc8296d21f7864e4a7179c755a47a9e781a",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
       "promoted_rules": [
@@ -17598,7 +17603,7 @@
         "learn-huggingface-hf-autotrust-jev-27b-vl-mv41j8wr",
         "learn-huggingface-hf-autotrust-jev-27b-vl-mv4fdvg8"
       ],
-      "verified_at": "2026-10-28T01:58:34.733Z",
+      "verified_at": "2026-10-28T19:17:09.388Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44159,8 +44164,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "26ce6d2e",
-      "content_hash": "8e14ff949ada5d7e1b7e2770e66f80d6e432072fc9117a87cec2352bc7f501c2",
+      "source_version": "a113cf0d",
+      "content_hash": "213d8b8ddb98805591a33e58fdf2dd2193a0bb7fd4e4b8b3a5a0426119faf3a7",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -44228,6 +44233,11 @@
           "number": 4924,
           "title": "Merge pull request #7959 from arxhr007/fix/7949-validate-missing-path",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5378,
+          "title": "Merge pull request #7962 from je-bugshell/feat/no-redact-flag",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44235,7 +44245,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T17:23:42.798Z",
+      "verified_at": "2026-10-28T19:17:21.173Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44252,8 +44262,8 @@
       "slug": "prometheus-prometheus",
       "platform": "github",
       "source_url": "https://github.com/prometheus/prometheus",
-      "source_version": "3861d587",
-      "content_hash": "ae2fe82e8859945185fb1b064d7be7fe461734c7f7a0e6b7a02c1d858594061b",
+      "source_version": "3cb40f50",
+      "content_hash": "de3689fdf351f3bf0b2b36140286555b68a21cdefc42dffae6d971917210d900",
       "dossier_path": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "promoted_rules": [
@@ -44301,6 +44311,11 @@
           "number": 4976,
           "title": "ci: pass --security-opt seccomp=unconfined to 386 test container",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5377,
+          "title": "ui: support unquoted Unicode and dotted PromQL names (#20170)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44308,7 +44323,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T19:56:21.968Z",
+      "verified_at": "2026-10-28T19:17:19.899Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -145744,6 +145759,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T18:57:51.993Z"
+    },
+    "rule-5377": {
+      "learning_id": "rule-5377",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5377,
+      "title": "ui: support unquoted Unicode and dotted PromQL names (#20170)",
+      "source_url": "https://github.com/prometheus/prometheus",
+      "source_version": "3cb40f50",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T19:17:19.899Z"
+    },
+    "rule-5378": {
+      "learning_id": "rule-5378",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5378,
+      "title": "Merge pull request #7962 from je-bugshell/feat/no-redact-flag",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "a113cf0d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T19:17:21.173Z"
+    },
+    "rule-5379": {
+      "learning_id": "rule-5379",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5379,
+      "title": "Merge pull request #127994 from groeneai/fix-04666-run-query-in-background-darwi",
+      "source_url": "https://github.com/ClickHouse/ClickHouse",
+      "source_version": "6f2ed958",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T19:17:25.280Z"
     }
   },
   "aliases": {

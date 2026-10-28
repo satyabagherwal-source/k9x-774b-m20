@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source**: github ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
-> **Source Version**: `b4fae473`  
+> **Source Version**: `6f2ed958`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T02:34:08.366Z  
+> **Timestamp**: 2026-10-28T19:17:24.788Z  
 > **Learning ID**: `learn-github-clickhouse-clickhouse`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T02:34:08.134Z  
+> **Harvest Timestamp**: 2026-10-28T19:17:24.780Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ClickHouse® is a real-time analytics database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 50635 stars
+- **Stars / Engagement**: 50653 stars
 
 ---
 
@@ -1338,75 +1338,304 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fc4f18f8` (2026-10-27)
-**Commit Message**: Merge pull request #126486 from fallintoplace/fix/parse-datetime-day-digits-126438
+### Incident Patch 1: `c8d762c4` (2026-10-28)
+**Commit Message**: Merge pull request #127994 from groeneai/fix-04666-run-query-in-background-darwin-timeout
 
-Fix(DateTime): Reject non-digit input for parseDateTime %d
+Overlap the slow CREATE AS SELECT cases of 04666_run_query_in_background and run it on macOS again
 
-**File**: `src/Functions/parseDateTime.cpp` (modified, +1/-1)
+**File**: `tests/queries/0_stateless/04666_run_query_in_background.lib` (modified, +12/-12)
 ```diff
-@@ -1128,7 +1128,7 @@ namespace
-             static PosOrError mysqlDayOfMonth(Pos cur, Pos end, const String & fragment, ParsedValue<error_handling, return_type> & parsed_value)
-             {
-                 Int32 day_of_month = 0;
--                ASSIGN_RESULT_OR_RETURN_ERROR(cur, (readNumber2<Int32, NeedCheckSpace::Yes>(cur, end, fragment, day_of_month)))
-+                ASSIGN_RESULT_OR_RETURN_ERROR(cur, readDayOfMonthNumber(cur, end, fragment, day_of_month))
-                 RETURN_ERROR_IF_FAILED(parsed_value.setDayOfMonth(day_of_month))
-                 return cur;
-             }
-```
-
-**File**: `tests/queries/0_stateless/04120_parseDateTime_format_specifiers.reference` (modified, +7/-0)
-```diff
-@@ -45,6 +45,13 @@
- 2024-11-02 00:00:00
- 2024-11-06 00:00:00.000000
- 2024-11-02 00:00:00.000000
-+--- mysqlDayOfMonth: %d requires two digits ---
-+2024-11-06 10:00:00
-+2024-11-06 10:00:00
-+1
-+1
-+1
-+1
- --- 12-hour format: %h / %I + %p ---
- 1970-01-01 23:30:00
- 1970-01-01 11:30:00
-```
-
-**File**: `tests/queries/0_stateless/04120_parseDateTime_format_specifiers.sql` (modified, +15/-0)
-```diff
-@@ -94,6 +94,21 @@ SELECT parseDateTime64('2024-11-0:', '%F', 'UTC'); -- { serverError CANNOT_PARSE
- SELECT parseDateTime64('11/02/24', '%D', 'UTC');
- SELECT parseDateTime64('11/0:/24', '%D', 'UTC'); -- { serverError CANNOT_PARSE_DATETIME }
+@@ -61,33 +61,33 @@ function shared_native_and_http_tests()
+     [[ -z "$out" ]] && echo "no output"
  
-+SELECT '--- mysqlDayOfMonth: %d requires two digits ---';
-+SELECT parseDateTime('2024-11-06 10:00:00', '%Y-%m-%d %H:%i:%s', 'UTC');
-+SELECT parseDateTime('2024-11-6 10:00:00', '%Y-%m-%d %H:%i:%s', 'UTC'); -- { serverError CANNOT_PARSE_DATETIME }
-+SELECT parseDateTime('2024-11-0: 10:00:00', '%Y-%m-%d %H:%i:%s', 'UTC'); -- { serverError CANNOT_PARSE_DATETIME }
-+SELECT parseDateTime('2024-11-/6 10:00:00', '%Y-%m-%d %H:%i:%s', 'UTC'); -- { serverError CANNOT_PARSE_DATETIME }
-+SELECT parseDateTime('', '%d', 'UTC'); -- { serverError CANNOT_PARSE_DATETIME }
-+SELECT parseDateTime('6', '%d', 'UTC'); -- { serverError CANNOT_PARSE_DATETIME }
-+SELECT parseDateTime('a6', '%d', 'UTC'); -- { serverError CANNOT_PARSE_DATETIME }
-+SELECT parseDateTime('6a', '%d', 'UTC'); -- { serverError CANNOT_PARSE_DATETIME }
-+SELECT parseDateTime('2024-11-6 10:00:00', '%Y-%m-%e %H:%i:%s', 'UTC') SETTINGS parsedatetime_e_requires_space_padding = 0;
-+SELECT isNull(parseDateTimeOrNull('2024-11-6 10:00:00', '%Y-%m-%d %H:%i:%s', 'UTC'));
-+SELECT parseDateTimeOrZero('2024-11-6 10:00:00', '%Y-%m-%d %H:%i:%s', 'UTC') = toDateTime('1970-01-01', 'UTC');
-+SELECT isNull(parseDateTime64OrNull('2024-11-0: 10:00:00', '%Y-%m-%d %H:%i:%s', 'UTC'));
-+SELECT parseDateTime64OrZero('2024-11-0: 10:00:00', '%Y-%m-%d %H:%i:%s', 'UTC') = toDateTime64('1970-01-01 00:00:00', 6, 'UTC');
+     echo '--- CREATE TABLE AS SELECT returns as soon as the SELECT has started'
+-    local slow_select="SELECT number AS n FROM numbers(100) WHERE NOT ignore(sleepEachRow(0.1)) SETTINGS max_block_size = 1"
++    local slow_select="SELECT number AS n FROM numbers(10) WHERE NOT ignore(sleepEachRow(1)) SETTINGS max_block_size = 1"
+     local ctas_id="ctas_${run}_${CLICKHOUSE_DATABASE}"
+     out=$($run "CREATE TABLE t_ctas_slow_${run} ENGINE = MergeTree ORDER BY n AS $slow_select" "$ctas_id")
+     [[ -z "$out" ]] && echo "no output"
+     wait_for "count() = 1 FROM system.processes WHERE query_id = '$ctas_id'"
+     echo "still populating after the client returned"
+-    wait_for "count() = 100 FROM t_ctas_slow_${run}"
+-    echo "created with rows"
+-    $CLICKHOUSE_CLIENT -q "DROP TABLE t_ctas_slow_${run}"
+ 
+     echo '--- CREATE OR REPLACE TABLE AS SELECT returns as soon as the SELECT has started'
+     local replace_id="replace_${run}_${CLICKHOUSE_DATABASE}"
+-    $CLICKHOUSE_CLIENT -q "CREATE TABLE t_ctas_slow_${run} (n UInt64) ENGINE = MergeTree ORDER BY n"
+-    out=$($run "CREATE OR REPLACE TABLE t_ctas_slow_${run} ENGINE = MergeTree ORDER BY n AS $slow_select" "$replace_id")
++    $CLICKHOUSE_CLIENT -q "CREATE TABLE t_replace_slow_${run} (n UInt64) ENGINE = MergeTree ORDER BY n"
++    out=$($run "CREATE OR REPLACE TABLE t_replace_slow_${run} ENGINE = MergeTree ORDER BY n AS $slow_select" "$replace_id")
+     [[ -z "$out" ]] && echo "no output"
+     wait_for "count() = 1 FROM system.processes WHERE query_id = '$replace_id'"
+     echo "still populating after the client returned"
+-    wait_for "count() = 100 FROM t_ctas_slow_${run}"
+-    echo "replaced with rows"
+-    $CLICKHOUSE_CLIENT -q "DROP TABLE t_ctas_slow_${run}"
+ 
+     echo '--- EXECUTE AS CREATE TABLE AS SELECT returns as soon as the SELECT has started'
+-    out=$($run "EXECUTE AS default CREATE TABLE t_ctas_slow_${run} ENGINE = MergeTree ORDER BY n AS $slow_select" "execute_as_$ctas_id")
++    out=$($run "EXECUTE AS default CREATE TABLE t_execute_as_slow_${run} ENGINE = MergeTree ORDER BY n AS $slow_select" "execute_as_$ctas_id")
+     [[ -z "$out" ]] && echo "no output"
+     wait_for "count() = 1 FROM system.processes WHERE query_id = 'execute_as_$ctas_id'"
+-    wait_for "count() = 100 FROM t_ctas_slow_${run}"
+-    $CLICKHOUSE_CLIENT -q "DROP TABLE t_ctas_slow_${run}"
 +
- SELECT '--- 12-hour format: %h / %I + %p ---';
- SELECT parseDateTime('11:30:00 PM', '%h:%i:%s %p', 'UTC');
- SELECT parseDateTime('11:30:00 AM', '%h:%i:%s %p', 'UTC');
++    echo '--- the CREATE ... AS SELECT queries above fill their tables'
++    wait_for "count() = 10 FROM t_ctas_slow_${run}"
++    echo "created with rows"
++    wait_for "count() = 10 FROM t_replace_slow_${run}"
++    echo "replaced with rows"
++    wait_for "count() = 10 FROM t_execute_as_slow_${run}"
++    $CLICKHOUSE_CLIENT -q "DROP TABLE t_ctas_slow_${run}; DROP TABLE t_replace_slow_${run}; DROP TABLE t_execute_as_slow_${run}"
+ 
+     echo '--- enabling the setting for a whole session is rejected'
+     $run "SET run_query_in_background = 1" "" 0 | grep -o -m1 "run_query_in_background cannot be changed with SET"
+```
+
+**File**: `tests/queries/0_stateless/04666_run_query_in_background_http.reference` (modified, +3/-2)
+```diff
+@@ -12,13 +12,14 @@ no output
+ --- CREATE TABLE AS SELECT returns as soon as the SELECT has started
+ no output
+ still populating after the client returned
+-created with rows
+ --- CREATE OR REPLACE TABLE AS SELECT returns as soon as the SELECT has started
+ no output
+ still populating after the client returned
+-replaced with rows
+ --- EXECUTE AS CREATE TABLE AS SELECT returns as soon as the SELECT has started
+ no output
++--- the CREATE ... AS SELECT queries above fill their tables
++created with rows
++replaced with rows
+ --- enabling the setting for a whole session is rejected
+ run_query_in_background cannot be changed with SET
+ --- a query that cannot run in the background fails synchronously
+```
+
+**File**: `tests/queries/0_stateless/04666_run_query_in_background_http.sh` (modified, +1/-2)
+```diff
+@@ -1,6 +1,5 @@
+ #!/usr/bin/env bash
+-# Tags: no-ordinary-database, no-darwin
+-# no-darwin: hangs until the timeout on macOS ARM, https://github.com/ClickHouse/ClickHouse/issues/127841
++# Tags: no-ordinary-database
+ 
+ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+ # shellcheck source=../shell_config.sh
+```
+
+**File**: `tests/queries/0_stateless/04666_run_query_in_background_tcp.reference` (modified, +3/-2)
+```diff
+@@ -12,13 +12,14 @@ no output
+ --- CREATE TABLE AS SELECT returns as soon as the SELECT has started
+ no output
+ still populating after the client returned
+-created with rows
+ --- CREATE OR REPLACE TABLE AS SELECT returns as soon as the SELECT has started
+ no output
+ still populating after the client returned
+-replaced with rows
+ --- EXECUTE AS CREATE TABLE AS SELECT returns as soon as the SELECT has started
+ no output
++--- the CREATE ... AS SELECT queries above fill their tables
++created with rows
++replaced with rows
+ --- enabling the setting for a whole session is rejected
+ run_query_in_background cannot be changed with SET
+ --- a query that cannot run in the background fails synchronously
+```
+
+**File**: `tests/queries/0_stateless/04666_run_query_in_background_tcp.sh` (modified, +1/-2)
+```diff
+@@ -1,6 +1,5 @@
+ #!/usr/bin/env bash
+-# Tags: no-ordinary-database, no-darwin
+-# no-darwin: hangs until the timeout on macOS ARM, https://github.com/ClickHouse/ClickHouse/issues/127841
++# Tags: no-ordinary-database
+ 
+ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+ # shellcheck source=../shell_config.sh
+```
+
+---
+
+### Incident Patch 2: `89663e80` (2026-10-28)
+**Commit Message**: Merge pull request #128010 from groeneai/fix-flaky-admission-timeout-shared-budget
+
+Fix flaky test `test_admission_timeout_shared_budget_across_slot_and_memory`: time the waiter on the server
+
+**File**: `tests/integration/test_scheduler_memory/test.py` (modified, +16/-9)
+```diff
+@@ -487,7 +487,7 @@ def test_admission_timeout_shared_budget_across_slot_and_memory():
+     # acquire a CONTENDED memory reservation with only the REMAINING budget, so it times out on
+     # memory near the ORIGINAL deadline (~T total). A regression that recomputed the deadline before
+     # constructing MemoryReservation would instead give the memory wait a fresh full T, so the query
+-    # would fail at ~slot_wait + T — which the elapsed-time bound below rejects.
++    # would fail at ~slot_wait + T — which the server-side duration bound below rejects.
+     node.query(
+         """
+         create resource query (query);
+@@ -514,10 +514,10 @@ def hold_memory():
+ 
+     def hold_slot():
+         try:
+-            # Holds the single 'production' query slot for ~3s, then releases it (well within the 5s
++            # Holds the single 'production' query slot for ~4s, then releases it (still within the 5s
+             # budget) so the waiter acquires the slot with budget to spare and reaches the memory wait.
+             node.query(
+-                "select sleepEachRow(1) from numbers(3) "
++                "select sleepEachRow(1) from numbers(4) "
+                 "settings max_block_size=1, workload='production'",
+                 query_id="shared_budget_slot_holder",
+             )
+@@ -547,23 +547,30 @@ def hold_slot():
+         ):
+             time.sleep(0.1)
+ 
+-        start = time.time()
+         error = node.query_and_get_error(
+             "select count(*) from numbers(100) "
+             f"settings workload='production', reserve_memory='80Mi', workload_admission_timeout_ms={T_MS}",
+             query_id="shared_budget_waiter",
+         )
+-        elapsed = time.time() - start
+ 
+         # Reached the memory phase (the slot wait did NOT consume a separate full budget) and timed
+         # out there...
+         assert "MEMORY_RESERVATION_ACQUISITION_TIMEOUT" in error, error
++        # The client process around the query takes over a second under sanitizers, so time it on the server.
++        node.query("SYSTEM FLUSH LOGS")
++        waited_ms = node.query(
++            "select query_duration_ms from system.query_log "
++            "where query_id = 'shared_budget_waiter' and type = 'ExceptionBeforeStart' "
++            "order by query_start_time_microseconds desc limit 1"
++        ).strip()
++        assert waited_ms != "", "shared_budget_waiter not found in query_log"
++        waited_ms = int(waited_ms)
+         # ...within ONE shared budget (~5s). A per-resource deadline would give ~slot_wait + T (~8s).
+-        assert elapsed < 6.5, (
+-            f"admission budget not shared across resources: waited {elapsed:.1f}s "
+-            f"(one shared budget is ~{T_MS / 1000}s; a per-resource deadline would be ~8s)"
++        assert waited_ms < T_MS + 1000, (
++            f"admission budget not shared across resources: waited {waited_ms} ms "
++            f"(one shared budget is {T_MS} ms; a per-resource deadline would be ~8000 ms)"
+         )
+-        assert elapsed > 4.0, f"timed out too early to have used the shared budget: {elapsed:.1f}s"
++        assert waited_ms > T_MS - 1000, f"timed out too early to have used the shared budget: {waited_ms} ms"
+     finally:
+         node.query(
+             "kill query where query_id = 'shared_budget_mem_holder' sync "
+```
+
+---
+
+### Incident Patch 3: `0dd5990e` (2026-10-28)
+**Commit Message**: Merge pull request #127666 from groeneai/fix-kafka-no-holes-write-suffix-failed
+
+Inject the Keeper failure at commit in test_kafka_no_holes_when_write_suffix_failed
+
+**File**: `tests/integration/test_storage_kafka/test_batch_fast.py` (modified, +27/-24)
+```diff
+@@ -13,7 +13,6 @@
+ 
+ from helpers.client import QueryRuntimeException
+ from helpers.cluster import ClickHouseCluster
+-from helpers.network import PartitionManager
+ from helpers.test_tools import TSV, assert_eq_with_retry
+ from google.protobuf.internal.encoder import _VarintBytes
+ from helpers.kafka import message_with_repeated_pb2
+@@ -2507,17 +2506,19 @@ def test_kafka_lot_of_partitions_partial_commit_of_bulk(
+         """)
+ 
+ 
+-# TODO(antaljanosbenjamin): find another way to make insertion fail
+ @pytest.mark.parametrize(
+-    "create_query_generator",
++    "create_query_generator, log_line",
+     [
+-        k.generate_old_create_table_query,
+-        # k.generate_new_create_table_query,
++        (k.generate_new_create_table_query, "Saved offset 22"),
++        (k.generate_old_create_table_query, "Committed offset 22"),
+     ],
+ )
+-def test_kafka_no_holes_when_write_suffix_failed(kafka_cluster, create_query_generator):
++def test_kafka_no_holes_when_write_suffix_failed(
++    kafka_cluster, create_query_generator, log_line
++):
+     suffix = k.random_string(6)
+     kafka_table = f"kafka_{suffix}"
++    definer = f"{kafka_table}_definer"
+ 
+     admin_client = k.get_admin_client(kafka_cluster)
+     topic_name = "no_holes_when_write_suffix_failed" + k.get_topic_postfix(
+@@ -2547,28 +2548,29 @@ def test_kafka_no_holes_when_write_suffix_failed(kafka_cluster, create_query_gen
+             CREATE TABLE test.{kafka_table}_view (key UInt64, value String)
+                 ENGINE = ReplicatedMergeTree('/clickhouse/kafkatest/tables/{topic_name}', 'node1')
+                 ORDER BY key;
+-        """)
+ 
+-        # init PartitionManager (it starts container) earlier
+-        instance.query(f"""
+-            CREATE MATERIALIZED VIEW test.{kafka_table}_consumer TO test.{kafka_table}_view AS
+-                SELECT * FROM test.{kafka_table}
+-                WHERE NOT sleepEachRow(0.25);
++            CREATE USER {definer} SETTINGS insert_keeper_fault_injection_probability = 1;
++            GRANT SELECT ON test.{kafka_table} TO {definer};
++            GRANT INSERT ON test.{kafka_table}_view TO {definer};
++
++            CREATE MATERIALIZED VIEW test.{kafka_table}_consumer TO test.{kafka_table}_view
++                DEFINER = {definer} SQL SECURITY DEFINER
++                AS SELECT * FROM test.{kafka_table};
+         """)
+ 
+-        instance.wait_for_log_line(f"{kafka_table}.*Polled batch of 20 messages")
+-        # the tricky part here is that disconnect should happen after write prefix, but before write suffix
+-        # we have 0.25 (sleepEachRow) * 20 ( Rows ) = 5 sec window after "Polled batch of 20 messages"
+-        # while materialized view is working to inject zookeeper failure
+-        with PartitionManager() as pm:
+-            pm.drop_instance_zk_connections(instance)
+-            # FIXME: we need to make sure that this happens during writing to RMT
+-            instance.wait_for_log_line(
+-                "Error.*(Connection loss|Coordination::Exception|DB::Exception: Coordination error: Operation timeout).*while pushing to view",
+-                timeout=60,
+-            )
++        # The push runs as the definer, so it fails at its first Keeper request. No push can
++        # succeed before the setting is switched off, so a written part proves that the failure
++        # came after the write.
++        instance.wait_for_log_line(
++            f"Fault injection before operation.*while pushing to view test.{kafka_table}_consumer",
++            timeout=60,
++        )
++        assert instance.contains_in_log(f"{kafka_table}_view.*Wrote block with")
++        instance.query(
++            f"ALTER USER {definer} SETTINGS insert_keeper_fault_injection_probability = 0"
++        )
+ 
+-        instance.wait_for_log_line(f"{kafka_table}.*Committed offset 22")
++        instance.wait_for_log_line(f"{kafka_table}.*{log_line}")
+ 
+         result = instance.query(
+             f"SELECT count(), uniqExact(key), max(key) FROM test.{kafka_table}_view"
+@@ -2580,6 +2582,7 @@ def test_kafka_no_holes_when_write_suffix_failed(kafka_cluster, create_query_gen
+         instance.query(f"""
+             DROP TABLE test.{kafka_table}_consumer;
+             DROP TABLE test.{kafka_table}_view SYNC;
++            DROP USER {definer};
+         """)
+ 
+         assert TSV(result) == TSV("22\t22\t22")
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #128038** (closed): Do not apply TTL in a merge while TTL merges are stopped (@buggins)
+- **PR #128035** (2026-10-28): Backport #124702 to 26.10: Speed up `ORDER BY` over lazily replicated `JOIN` columns (@robot-clickhouse-ci-2)
+- **PR #128032** (2026-10-28): Docs: regenerate reference documentation from source (@clickhouse-gh[bot])
+- **PR #128022** (2026-10-28): Perf CI: confirm a flagged change only if it reproduces at two of three stack placements (@groeneai)
 - **PR #128011** (2026-10-28): Backport #119353 to 26.8: Respect `remote_url_allow_hosts` in the Hive metastore catalog (@robot-ch-test-poll2)
-- **PR #127976** (2026-10-27): Backport #125698 to 26.9: Stop AI functions mid-block on `KILL QUERY` and `max_execution_time` (@robot-ch-test-poll2)
-- **PR #127975** (2026-10-27): Backport #125698 to 26.8: Stop AI functions mid-block on `KILL QUERY` and `max_execution_time` (@robot-ch-test-poll2)
-- **PR #127973** (2026-10-27): Cherry pick #125698 to 26.9: Stop AI functions mid-block on `KILL QUERY` and `max_execution_time` (@robot-clickhouse-ci-1)
-- **PR #127972** (2026-10-27): Cherry pick #125698 to 26.8: Stop AI functions mid-block on `KILL QUERY` and `max_execution_time` (@robot-clickhouse-ci-1)
-- **PR #127970** (2026-10-27): Backport #125510 to 26.10: Do not share line editor state between concurrent embedded client sessions (@robot-clickhouse-ci-2)
+- **PR #128010** (2026-10-28): Fix flaky test `test_admission_timeout_shared_budget_across_slot_and_memory`: time the waiter on the server (@groeneai)
 
 ---
 
@@ -1426,28 +1655,50 @@ Fix(DateTime): Reject non-digit input for parseDateTime %d
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #126486 from fallintoplace/fix/parse-datetime-day-digits-1264
+## X. Merge pull request #127994 from groeneai/fix-04666-run-query-in-background-darwi
 
 **RULE**:
-When implementing operations in `src/Functions/parseDateTime.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/queries/0_stateless/04666_run_query_in_background.lib`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fc4f18f8`: Merge pull request #126486 from fallintoplace/fix/parse-datetime-day-digits-126438. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c8d762c4`: Merge pull request #127994 from groeneai/fix-04666-run-query-in-background-darwin-timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Functions/parseDateTime.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/queries/0_stateless/04666_run_query_in_background.lib`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-                ASSIGN_RESULT_OR_RETURN_ERROR(cur, readDayOfMonthNumber(cur, end, fragment, day_of_month))
+    local slow_select="SELECT number AS n FROM numbers(10) WHERE NOT ignore(sleepEachRow(1)) SETTINGS max_block_size = 1"
+    $CLICKHOUSE_CLIENT -q "CREATE TABLE t_replace_slow_${run} (n UInt64) ENGINE = MergeTree ORDER BY n"
+    out=$($run "CREATE OR REPLACE TABLE t_replace_slow_${run} ENGINE = MergeTree ORDER BY n AS $slow_select" "$replace_id")
+    out=$($run "EXECUTE AS default CREATE TABLE t_execute_as_slow_${run} ENGINE = MergeTree ORDER BY n AS $slow_select" "execute_as_$ctas_id")
+
+    echo '--- the CREATE ... AS SELECT queries above fill their tables'
+    wait_for "count() = 10 FROM t_ctas_slow_${run}"
+    echo "created with rows"
+    wait_for "count() = 10 FROM t_replace_slow_${run}"
+    echo "replaced with rows"
+    wait_for "count() = 10 FROM t_execute_as_slow_${run}"
+    $CLICKHOUSE_CLIENT -q "DROP TABLE t_ctas_slow_${run}; DROP TABLE t_replace_slow_${run}; DROP TABLE t_execute_as_slow_${run}"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-                ASSIGN_RESULT_OR_RETURN_ERROR(cur, (readNumber2<Int32, NeedCheckSpace::Yes>(cur, end, fragment, day_of_month)))
+    local slow_select="SELECT number AS n FROM numbers(100) WHERE NOT ignore(sleepEachRow(0.1)) SETTINGS max_block_size = 1"
+    wait_for "count() = 100 FROM t_ctas_slow_${run}"
+    echo "created with rows"
+    $CLICKHOUSE_CLIENT -q "DROP TABLE t_ctas_slow_${run}"
+    $CLICKHOUSE_CLIENT -q "CREATE TABLE t_ctas_slow_${run} (n UInt64) ENGINE = MergeTree ORDER BY n"
+    out=$($run "CREATE OR REPLACE TABLE t_ctas_slow_${run} ENGINE = MergeTree ORDER BY n AS $slow_select" "$replace_id")
+    wait_for "count() = 100 FROM t_ctas_slow_${run}"
+    echo "replaced with rows"
+    $CLICKHOUSE_CLIENT -q "DROP TABLE t_ctas_slow_${run}"
+    out=$($run "EXECUTE AS default CREATE TABLE t_ctas_slow_${run} ENGINE = MergeTree ORDER BY n AS $slow_select" "execute_as_$ctas_id")
+    wait_for "count() = 100 FROM t_ctas_slow_${run}"
+    $CLICKHOUSE_CLIENT -q "DROP TABLE t_ctas_slow_${run}"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fc4f18f8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c8d762c4` are properly handled with clean fallback behavior.

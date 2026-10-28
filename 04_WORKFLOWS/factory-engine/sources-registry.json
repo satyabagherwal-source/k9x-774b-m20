@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T18:57:54.637Z",
-    "lastVerified": "2026-10-28T18:57:54.637Z",
+    "lastChecked": "2026-10-28T19:17:27.919Z",
+    "lastVerified": "2026-10-28T19:17:27.919Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -281,9 +281,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-28T18:34:43.150Z",
+    "lastChecked": "2026-10-28T19:17:20.839Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-28T18:34:43.150Z"
+    "lastVerified": "2026-10-28T19:17:20.839Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1580,11 +1580,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "projectdiscovery-nuclei": {
-    "name": "nuclei",
+    "name": "projectdiscovery/nuclei",
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
-    "lastChecked": "2026-10-28T15:36:38.221Z",
-    "revisionIdentifier": "26ce6d2e",
-    "lastVerified": "2026-10-28T15:36:38.221Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-28T19:17:20.647Z",
+    "lastVerified": "2026-10-28T19:17:20.647Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-projectdiscovery-nuclei",
+    "contentHash": "213d8b8ddb98805591a33e58fdf2dd2193a0bb7fd4e4b8b3a5a0426119faf3a7",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "zilliztech-claude-context": {
     "name": "claude-context",
@@ -6088,6 +6098,71 @@
     "contentHash": "1cbdaa46855fdf478c318b7f41b5798d4ce8b141b1118068c17c49858ecdc719",
     "promotedRulesCount": 1,
     "recentFixesCount": 5,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "crate-ci-typos": {
+    "name": "typos",
+    "officialUrl": "https://github.com/crate-ci/typos",
+    "lastChecked": "2026-10-28T19:17:05.865Z",
+    "revisionIdentifier": "7f9d0819",
+    "lastVerified": "2026-10-28T19:17:05.865Z"
+  },
+  "hf-autotrust-jev-27b-vl": {
+    "name": "autotrust/JEV-27B-VL",
+    "officialUrl": "https://huggingface.co/autotrust/JEV-27B-VL",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T19:17:08.526Z",
+    "lastVerified": "2026-10-28T19:17:08.526Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-autotrust-jev-27b-vl",
+    "contentHash": "211ca5d4504695d06faef9a042c31bc8296d21f7864e4a7179c755a47a9e781a",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "vercel-swr": {
+    "name": "swr",
+    "officialUrl": "https://github.com/vercel/swr",
+    "lastChecked": "2026-10-28T19:17:10.887Z",
+    "revisionIdentifier": "8148ef01",
+    "lastVerified": "2026-10-28T19:17:10.887Z"
+  },
+  "prometheus-prometheus": {
+    "name": "prometheus/prometheus",
+    "officialUrl": "https://github.com/prometheus/prometheus",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-28T19:17:19.372Z",
+    "lastVerified": "2026-10-28T19:17:19.372Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-prometheus-prometheus",
+    "contentHash": "de3689fdf351f3bf0b2b36140286555b68a21cdefc42dffae6d971917210d900",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 4,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "clickhouse-clickhouse": {
+    "name": "ClickHouse/ClickHouse",
+    "officialUrl": "https://github.com/ClickHouse/ClickHouse",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-10-28T19:17:24.780Z",
+    "lastVerified": "2026-10-28T19:17:24.780Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-clickhouse-clickhouse",
+    "contentHash": "7085872d11094bf33227e91288037ca8e4a4957258adbbf828ddd04a8dd97aca",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 17,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
