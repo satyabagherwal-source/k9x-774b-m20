@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T04:03:49.273Z",
-    "lastVerified": "2026-10-28T04:03:49.273Z",
+    "lastChecked": "2026-10-28T04:10:13.607Z",
+    "lastVerified": "2026-10-28T04:10:13.607Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -297,9 +297,9 @@
   "nucleoidai-nucleoid": {
     "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "lastChecked": "2026-10-28T03:38:09.419Z",
+    "lastChecked": "2026-10-28T04:10:13.094Z",
     "revisionIdentifier": "73085699",
-    "lastVerified": "2026-10-28T03:38:09.419Z"
+    "lastVerified": "2026-10-28T04:10:13.094Z"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -764,5 +764,57 @@
     "lastChecked": "2026-10-28T04:03:46.998Z",
     "revisionIdentifier": "185688a5",
     "lastVerified": "2026-10-28T04:03:46.998Z"
+  },
+  "burntsushi-ripgrep": {
+    "name": "ripgrep",
+    "officialUrl": "https://github.com/BurntSushi/ripgrep",
+    "lastChecked": "2026-10-28T04:09:58.115Z",
+    "revisionIdentifier": "91f5d22e",
+    "lastVerified": "2026-10-28T04:09:58.115Z"
+  },
+  "hf-meta-llama-llama-3.1-8b-instruct": {
+    "name": "meta-llama/Llama-3.1-8B-Instruct",
+    "officialUrl": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T04:10:00.692Z",
+    "lastVerified": "2026-10-28T04:10:00.692Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
+    "contentHash": "729119fec601a54b415c11f8aafb0d941cb326455f647b9720c14b4886a0b6e7",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nervjs-taro": {
+    "name": "taro",
+    "officialUrl": "https://github.com/NervJS/taro",
+    "lastChecked": "2026-10-28T04:10:03.199Z",
+    "revisionIdentifier": "c4e9c548",
+    "lastVerified": "2026-10-28T04:10:03.199Z"
+  },
+  "flux-iac-tofu-controller": {
+    "name": "tofu-controller",
+    "officialUrl": "https://github.com/flux-iac/tofu-controller",
+    "lastChecked": "2026-10-28T04:10:05.595Z",
+    "revisionIdentifier": "ee95e83a",
+    "lastVerified": "2026-10-28T04:10:05.595Z"
+  },
+  "provablehq-snarkos": {
+    "name": "snarkOS",
+    "officialUrl": "https://github.com/ProvableHQ/snarkOS",
+    "lastChecked": "2026-10-28T04:10:08.144Z",
+    "revisionIdentifier": "6b124303",
+    "lastVerified": "2026-10-28T04:10:08.144Z"
+  },
+  "chroma-core-chroma": {
+    "name": "chroma",
+    "officialUrl": "https://github.com/chroma-core/chroma",
+    "lastChecked": "2026-10-28T04:10:10.766Z",
+    "revisionIdentifier": "52ce8448",
+    "lastVerified": "2026-10-28T04:10:10.766Z"
   }
 }

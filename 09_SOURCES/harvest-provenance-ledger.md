@@ -5690,3 +5690,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-moonshotai-kimi-k3` | `https://huggingface.co/moonshotai/Kimi-K3` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-10-28T03:56:16.152Z |
 | `learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0` | `https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0` | `hf-stabili` | Multi-dimensional audit evidence | 2026-10-28T04:03:37.916Z |
 | `learn-github-mattermost-mattermost` | `https://github.com/mattermost/mattermost` | `7709b2f9` | Multi-dimensional audit evidence | 2026-10-28T04:03:46.696Z |
+| `learn-huggingface-meta-llama-llama-3-1-8b-instruct` | `https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-28T04:10:11.077Z |
