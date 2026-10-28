@@ -5788,3 +5788,5 @@
 | `CYCLE-20261028-HFKU` | `2026-10-28T13:56:46.494Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | Yes (`dab231a8...`) |
 | `CYCLE-20261028-HM13` | `2026-10-28T13:56:54.855Z` | `software-mansion/react-native-gesture-handler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5299` | Yes (`b2668ffa...`) |
 | `CYCLE-20261028-HOZL` | `2026-10-28T13:56:58.689Z` | `DefGuard/defguard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5300` | Yes (`111cb24b...`) |
+| `CYCLE-20261028-WO1W` | `2026-10-28T14:08:37.316Z` | `transact-rs/sqlx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5301` | Yes (`cf7866b9...`) |
+| `CYCLE-20261028-WOB1` | `2026-10-28T14:08:37.645Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md` | Yes (`291ca9a5...`) |

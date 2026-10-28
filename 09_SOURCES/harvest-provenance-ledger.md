@@ -5797,3 +5797,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-deepseek-ai-deepseek-v4-pro` | `https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-28T13:56:46.498Z |
 | `learn-github-software-mansion-react-native-gesture-handler` | `https://github.com/software-mansion/react-native-gesture-handler` | `b19e2331` | Multi-dimensional audit evidence | 2026-10-28T13:56:54.858Z |
 | `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `12508b40` | Multi-dimensional audit evidence | 2026-10-28T13:56:58.693Z |
+| `learn-github-transact-rs-sqlx` | `https://github.com/transact-rs/sqlx` | `e5cbd61a` | Multi-dimensional audit evidence | 2026-10-28T14:08:37.322Z |
+| `learn-huggingface-tongyi-mai-z-image-turbo` | `https://huggingface.co/Tongyi-MAI/Z-Image-Turbo` | `hf-tongyi-` | Multi-dimensional audit evidence | 2026-10-28T14:08:37.648Z |

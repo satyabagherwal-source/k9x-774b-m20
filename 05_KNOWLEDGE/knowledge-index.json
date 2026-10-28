@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T13:56:58.617Z",
+  "last_updated": "2026-10-28T14:08:37.586Z",
   "total_verified_learnings": 1157,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -28322,7 +28322,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
       "source_version": "hf-tongyi-mai-z-image-turbo",
-      "content_hash": "fdedf69475127885e1267152f5daed2fff736d899f0a1f2db2fc1dfb12fca68d",
+      "content_hash": "291ca9a5deb053fee48a8e2a9a2ae5a6a04b0adf4063d9aa2bc227f6eece351b",
       "dossier_path": "07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
       "promoted_rules": [
@@ -28405,7 +28405,7 @@
         "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv4ar4th",
         "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv4o4v7p"
       ],
-      "verified_at": "2026-10-25T19:51:48.726Z",
+      "verified_at": "2026-10-28T14:08:37.573Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52411,8 +52411,8 @@
       "slug": "transact-rs-sqlx",
       "platform": "github",
       "source_url": "https://github.com/transact-rs/sqlx",
-      "source_version": "242eb8ca",
-      "content_hash": "97953ba01cb4153bede6b805d8f22ad410c2358fa03c4c82c907edb947e63c8e",
+      "source_version": "e5cbd61a",
+      "content_hash": "cf7866b9014ade9ca67cccca0508b4f2b6353f442c87371593d7ae3b09b669be",
       "dossier_path": "07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md",
       "promoted_rules": [
@@ -52425,6 +52425,11 @@
           "number": 4733,
           "title": "incorrect paths and typos in docs and comments (#4413)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5301,
+          "title": "postgres): Bind encodes result-format count from the wrong field (#4477)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52432,7 +52437,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:10:43.223Z",
+      "verified_at": "2026-10-28T14:08:37.241Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -144235,6 +144240,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T13:56:58.597Z"
+    },
+    "rule-5301": {
+      "learning_id": "rule-5301",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5301,
+      "title": "postgres): Bind encodes result-format count from the wrong field (#4477)",
+      "source_url": "https://github.com/transact-rs/sqlx",
+      "source_version": "e5cbd61a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T14:08:37.241Z"
     }
   },
   "aliases": {

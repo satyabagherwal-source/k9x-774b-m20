@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T13:56:58.698Z",
-  "total_cycles_completed": 5765,
-  "total_learnings_persisted": 5765,
-  "total_rules_promoted": 5250,
+  "last_updated": "2026-10-28T14:08:37.658Z",
+  "total_cycles_completed": 5767,
+  "total_learnings_persisted": 5767,
+  "total_rules_promoted": 5251,
   "history": [
-    {
-      "timestamp": "2026-10-27T23:59:30.638Z",
-      "repository": "apple/foundationdb",
-      "learningId": "learn-github-apple-foundationdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T00:05:51.643Z",
-      "repository": "flox/flox",
-      "learningId": "learn-github-flox-flox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T00:05:58.081Z",
       "repository": "authzed/spicedb",
@@ -1403,6 +1389,20 @@
       "repository": "DefGuard/defguard",
       "learningId": "learn-github-defguard-defguard",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T14:08:37.327Z",
+      "repository": "transact-rs/sqlx",
+      "learningId": "learn-github-transact-rs-sqlx",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T14:08:37.658Z",
+      "repository": "Tongyi-MAI/Z-Image-Turbo",
+      "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

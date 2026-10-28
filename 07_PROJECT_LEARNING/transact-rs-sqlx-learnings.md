@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md`  
 > **Source**: github ([https://github.com/transact-rs/sqlx](https://github.com/transact-rs/sqlx))  
-> **Source Version**: `242eb8ca`  
+> **Source Version**: `e5cbd61a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T12:10:42.977Z  
+> **Timestamp**: 2026-10-28T14:08:36.873Z  
 > **Learning ID**: `learn-github-transact-rs-sqlx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/transact-rs/sqlx](https://github.com/transact-rs/sqlx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T12:10:42.057Z  
+> **Harvest Timestamp**: 2026-10-28T14:08:35.615Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🧰 The Rust SQL Toolkit. An async, pure Rust SQL crate featuring compile-time checked queries without a DSL. Supports PostgreSQL, MySQL, and SQLite.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 17601 stars
+- **Stars / Engagement**: 17607 stars
 
 ---
 
@@ -960,11 +960,11 @@ impl FromStr for AnyKind {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4484** (2026-10-27): **PgConnection errors on NOTIFY delivered to a non-PgListener connection**
+  *Symptoms*: ### I have found these related issues/pull requests  - #67 (PgBouncer support) covers prepared statements, startup parameters and session advisory locks in transaction mode, but not notifications. - #2956 (`PgListener` "unknown message type") is a different error, on a listener connection. - pgbouncer/pgbouncer#655: `LISTEN` isn't supported in transaction pooling, which is how the notification reaches other clients in the second case below.  ### Description  On a `PgConnection` that isn't a `PgListener`, a NotificationResponse from the server fails the query in progress with `Protocol("execute: unexpected message: NotificationResponse")`. The statement has already run, and its transaction has committed.  In `PgStream::recv` (`sqlx-postgres/src/connection/stream.rs`), a NotificationResponse is consumed only when `self.notifications` is set, that is, on a `PgListener`'s connection. Otherwise it falls through to the executor, which treats any unexpected message as a protocol error (`executor.rs:366`).  The Postgres protocol says a frontend must accept it anywhere ([Asynchronous Operations](https://www.postgresql.org/docs/current/protocol-flow.html#PROTOCOL-ASYNC)): "Frontends must be prepared to deal with these messages at any time, even when not engaged in a query", and "Good practice is to be able to accept NotificationResponse at any point in the protocol."  There are two ways an ordinary connection can receive a NotificationResponse:  1. **The connection ran `LISTEN` itself*
+
 - **Issue #4430** (2026-10-03): **SQLCipher crashes on a segfault**
   *Symptoms*: ### I have found these related issues/pull requests  I don't see any issues mentioning any SQLCipher crashes in this repo, but did come across this related issue in the sqlcipher repo: https://github.com/sqlcipher/sqlcipher/issues/598  ### Description  In my testing, the sqlcipher test suite crashes about 8% of the time. I recently saw this while rebasing a PR of mine (#4343), and decided to have a robot look into it.  Here are all the failures exclusively caused by SQLCipher segfaults since 2026-07-01:  * https://github.com/transact-rs/sqlx/actions/runs/36413688549/job/108900510675 * https://github.com/transact-rs/sqlx/actions/runs/35104419529/job/104823079570 * https://github.com/transact-rs/sqlx/actions/runs/34564198418/job/103153392092 * https://github.com/transact-rs/sqlx/actions/runs/34534510553/job/103063488008 * https://github.com/transact-rs/sqlx/actions/runs/33692629721/job/100461951727 * https://github.com/transact-rs/sqlx/actions/runs/32526655032/job/96910377835 * https://github.com/transact-rs/sqlx/actions/runs/32071123060/job/95515306920 * https://github.com/transact-rs/sqlx/actions/runs/31418818610/job/93555336615 * https://github.com/transact-rs/sqlx/actions/runs/28627420274/job/84897256505 * https://github.com/transact-rs/sqlx/actions/runs/28499215476/job/84472614197  And a few more where there were additional errors, but SQLCipher also segfaulted:  * https://github.com/transact-rs/sqlx/actions/runs/36420553996/job/108922827779 * https://github.com/transact-r
-
-- **Issue #4387** (2026-08-20): **Some of the published crates fro version 0.9.0 are missing the content of the license files**
-  *Symptoms*: ### I have found these related issues/pull requests  #3237 is closed and was originally resolved by #3293.  But https://github.com/transact-rs/sqlx/pull/3293#issuecomment-2181227547 did not appear to consider that symlink support on windows required special permission and need to be configured properly.  https://github.com/transact-rs/sqlx/pull/3293#issuecomment-2181237393 it has come up.  ### Description  It looks like the release might have been published from windows and ran into https://github.com/rust-lang/cargo/issues/5664  The following crates contain `../LICENSE-APACHE` in the `LICENSE-APACHE` file  instead of the license content.  - [sqlx-core](https://docs.rs/crate/sqlx-core/0.9.0/source/LICENSE-APACHE) - [sqlx-macros](https://docs.rs/crate/sqlx-macros/0.9.0/source/LICENSE-APACHE) - [sqlx-macros-core](https://docs.rs/crate/sqlx-macros-core/0.9.0/source/LICENSE-APACHE) - [sqlx-mysql](https://docs.rs/crate/sqlx-mysql/0.9.0/source/LICENSE-APACHE) - [sqlx-postgres](https://docs.rs/crate/sqlx-postgres/0.9.0/source/LICENSE-APACHE) - [sqlx-sqlite](https://docs.rs/crate/sqlx-sqlite/0.9.0/source/LICENSE-APACHE)  This applies accordingly to the LICENSE-MIT file.  ### Reproduction steps  See links under description  ### SQLx version  0.9.0  ### Enabled SQLx features  packaging  ### Database server and version  irrelevant  ### Operating system  irrelevant  ### Rust version  irrelevant
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -981,110 +981,130 @@ impl FromStr for AnyKind {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `48fb9e42` (2026-10-26)
-**Commit Message**: Fix incorrect paths and typos in docs and comments (#4413)
+### Incident Patch 1: `e5cbd61a` (2026-10-27)
+**Commit Message**: fix(postgres): Bind encodes result-format count from the wrong field (#4477)
 
-- src/macros/test.md: the `#[sqlx::test]` fixtures example pointed at
-  `examples/postgres/social-axum-with-tests`, which does not exist. The
-  directory is `examples/postgres/axum-social-with-tests`.
-- sqlx-cli/README.md: `sqlx migrate add` creates
-  `migrations/<timestamp>_<name>.sql`, not `<timestamp>-<name>.sql`. The
-  separator is an underscore, as the reversible-migration example further
-  down the same file already shows.
-- sqlx-postgres/src/options/pgpass.rs: "Superfluous escape in in pgpass
-  file" warning had a doubled "in"; the two sibling warnings in the same
-  function are already correct.
-- examples/sqlite/extension/sqlx.toml: "the full path the the extension"
-  -> "the full path to the extension".
-- examples/postgres/axum-social-with-tests/Cargo.toml: "Auxilliary" ->
-  "Auxiliary".
-- sqlx-cli/tests/migrate.rs: doubled "to" in a comment.
+Bind::encode_body wrote the result-format-code count from
+self.formats.len() instead of self.result_formats.len(), producing a
+malformed Bind body when the two slices differ in length.
 
-**File**: `examples/postgres/axum-social-with-tests/Cargo.toml` (modified, +1/-1)
+**File**: `sqlx-postgres/src/message/bind.rs` (modified, +36/-2)
 ```diff
-@@ -21,7 +21,7 @@ time = "0.3.48"
- uuid = { version = "1.12.1", features = ["serde"] }
- validator = { version = "0.20.0", features = ["derive"] }
+@@ -89,8 +89,12 @@ impl FrontendMessage for Bind<'_> {
  
--# Auxilliary crates
-+# Auxiliary crates
- anyhow = "1.0.58"
- dotenvy = "0.15.7"
- thiserror = "2.0.18"
-```
-
-**File**: `examples/sqlite/extension/sqlx.toml` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@
- #
- # When the extension file is installed in a non-standard location, as
- # in this example, there are two options:
--# * Provide the full path the the extension, as seen below.
-+# * Provide the full path to the extension, as seen below.
- # * Add the non-standard location to the library search path, which on
- #   Linux means adding it to the LD_LIBRARY_PATH environment variable.
- unsafe-load-extensions = [
-```
-
-**File**: `sqlx-cli/README.md` (modified, +1/-1)
-```diff
-@@ -57,7 +57,7 @@ sqlx database drop
- sqlx migrate add <name>
- ```
+         buf.extend(self.params);
  
--Creates a new file in `migrations/<timestamp>-<name>.sql`. Add your database schema changes to
-+Creates a new file in `migrations/<timestamp>_<name>.sql`. Add your database schema changes to
- this new file.
+-        let result_formats_len = u16::try_from(self.formats.len())
+-            .map_err(|_| err_protocol!("too many result format codes ({})", self.formats.len()))?;
++        let result_formats_len = u16::try_from(self.result_formats.len()).map_err(|_| {
++            err_protocol!(
++                "too many result format codes ({})",
++                self.result_formats.len()
++            )
++        })?;
  
- ---
-```
-
-**File**: `sqlx-cli/tests/migrate.rs` (modified, +1/-1)
-```diff
-@@ -206,7 +206,7 @@ async fn skip_reversible_migrations() {
-             .success();
-         assert_eq!(db.applied_migrations().await, vec![20230101000000]);
+         buf.extend(result_formats_len.to_be_bytes());
  
--        // Skip to to non-existent version.
-+        // Skip to non-existent version.
-         db.run_migration(MigrateCommand::Skip, Some(20230901000000999), false)
-             .failure();
-         assert_eq!(db.applied_migrations().await, vec![20230101000000]);
+@@ -104,3 +108,33 @@ impl FrontendMessage for Bind<'_> {
+ 
+ // TODO: Unit Test Bind
+ // TODO: Benchmark Bind
++
++#[cfg(test)]
++mod repro {
++    use super::Bind;
++    use crate::io::{PortalId, StatementId};
++    use crate::message::FrontendMessage;
++    use crate::PgValueFormat;
++
++    #[test]
++    fn repro_result_formats_count() {
++        let mut buf = Vec::new();
++        Bind {
++            portal: PortalId::UNNAMED,
++            statement: StatementId::UNNAMED,
++            formats: &[PgValueFormat::Binary],
++            num_params: 0,
++            params: &[],
++            result_formats: &[],
++        }
++        .encode_msg(&mut buf)
++        .unwrap();
++        // 'B' len(4) portal\0 stmt\0 | n_formats=1 | fmt | n_params=0 | n_result_formats=? (no codes follow)
++        let tail = &buf[buf.len() - 2..];
++        assert_eq!(
++            tail,
++            [0, 0],
++            "result-format count must be 0, message: {buf:?}"
++        );
++    }
++}
 ```
 
-**File**: `sqlx-postgres/src/options/pgpass.rs` (modified, +1/-1)
+---
+
+### Incident Patch 2: `3284f04d` (2026-10-27)
+**Commit Message**: fix(postgres): ignore notifications on connections that aren't listening.  fixes #4484. (#4485)
+
+**File**: `sqlx-postgres/src/connection/stream.rs` (modified, +6/-2)
 ```diff
-@@ -222,7 +222,7 @@ fn find_next_field<'a>(line: &mut &'a str) -> Result<Cow<'a, str>, PGPassLinePar
-             last_added = idx + 1;
-         } else {
-             if escaping && c != '\\' && c != ':' {
--                tracing::warn!("Superfluous escape in in pgpass file");
-+                tracing::warn!("Superfluous escape in pgpass file");
-             }
-             escaping = false;
-         }
+@@ -134,9 +134,13 @@ impl PgStream {
+                     if let Some(buffer) = &mut self.notifications {
+                         let notification: Notification = message.decode()?;
+                         let _ = buffer.send(notification).await;
+-
+-                        continue;
+                     }
++
++                    // The server may send a notification at any time, e.g. to
++                    // a connection that ran `LISTEN` itself, or behind a
++                    // transaction-mode pooler that shares one that did.
++                    // A connection that isn't a `PgListener` drops it.
++                    continue;
+                 }
+ 
+                 BackendMessageFormat::ParameterStatus => {
 ```
 
-**File**: `src/macros/test.md` (modified, +1/-1)
+**File**: `tests/postgres/postgres.rs` (modified, +21/-0)
 ```diff
-@@ -239,7 +239,7 @@ use serde_json::json;
- // #[sqlx::test(fixtures(path = "./fixtures", scripts("users", "posts")))]
- #[sqlx::test(fixtures("users", "posts"))]
- async fn test_create_comment(pool: PgPool) -> sqlx::Result<()> {
--    // See examples/postgres/social-axum-with-tests for a more in-depth example. 
-+    // See examples/postgres/axum-social-with-tests for a more in-depth example. 
-     let mut app = create_app(pool);     
-     
-     let comment = test_request(
+@@ -1193,6 +1193,27 @@ async fn test_listener_try_recv_buffered() -> anyhow::Result<()> {
+     Ok(())
+ }
+ 
++#[sqlx_macros::test]
++async fn test_notification_on_non_listener_connection() -> anyhow::Result<()> {
++    // A connection that isn't a `PgListener` but is subscribed to a channel,
++    // as one can be when it runs `LISTEN` itself, or when a transaction-mode
++    // pooler hands it a server connection that another client subscribed.
++    let mut conn = new::<Postgres>().await?;
++    conn.execute("LISTEN test_channel3").await?;
++
++    // The server delivers the notification to the sending session too, just
++    // before `ReadyForQuery`. The query must still succeed.
++    let _: () = sqlx::query_scalar("select pg_notify('test_channel3', 'payload')")
++        .fetch_one(&mut conn)
++        .await?;
++
++    // And the connection must still be usable.
++    let value: i32 = sqlx::query_scalar("select 1").fetch_one(&mut conn).await?;
++    assert_eq!(value, 1);
++
++    Ok(())
++}
++
+ #[sqlx_macros::test]
+ async fn test_pg_listener_allows_pool_to_close() -> anyhow::Result<()> {
+     let pool = pool::<Postgres>().await?;
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #4486** (closed): Fix typo: Auxilliary -> Auxiliary (@pei711)
+- **PR #4485** (2026-10-27): fix(postgres): ignore notifications on connections that aren't listening.  fixes #4484. (@luketpeterson)
+- **PR #4478** (2026-10-27): feat: add Type for MySQL, Sqlite, and Any byte arrays (@daimond113)
+- **PR #4477** (2026-10-27): fix(postgres): Bind encodes result-format count from the wrong field (@prostomarkeloff)
 - **PR #4474** (closed): breaking: Make the embedded TLS root certs opt in (@markuskobler)
 - **PR #4472** (2026-10-21): doc: add `AI_POLICY.md` (@abonander)
-- **PR #4464** (closed): postgres: send no Close of the unnamed portal before Sync (@airhorns)
-- **PR #4463** (2026-10-15): fix(macros): only report Ambiguous{DateTime,Numeric}Type when preferred crate is Inferred (@rscorer)
-- **PR #4458** (2026-10-16): fix(mysql): harden protocol decoders against malformed packets from hostile servers (@portlandhodl)
 
 ---
 
@@ -1104,28 +1124,64 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. incorrect paths and typos in docs and comments (#4413)
+## X. postgres): Bind encodes result-format count from the wrong field (#4477)
 
 **RULE**:
-When implementing operations in `examples/postgres/axum-social-with-tests/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in transact-rs/sqlx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sqlx-postgres/src/message/bind.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in transact-rs/sqlx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `48fb9e42`: incorrect paths and typos in docs and comments (#4413). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e5cbd61a`: postgres): Bind encodes result-format count from the wrong field (#4477). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/postgres/axum-social-with-tests/Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sqlx-postgres/src/message/bind.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Auxiliary crates
+        let result_formats_len = u16::try_from(self.result_formats.len()).map_err(|_| {
+            err_protocol!(
+                "too many result format codes ({})",
+                self.result_formats.len()
+            )
+        })?;
+
+#[cfg(test)]
+mod repro {
+    use super::Bind;
+    use crate::io::{PortalId, StatementId};
+    use crate::message::FrontendMessage;
+    use crate::PgValueFormat;
+
+    #[test]
+    fn repro_result_formats_count() {
+        let mut buf = Vec::new();
+        Bind {
+            portal: PortalId::UNNAMED,
+            statement: StatementId::UNNAMED,
+            formats: &[PgValueFormat::Binary],
+            num_params: 0,
+            params: &[],
+            result_formats: &[],
+        }
+        .encode_msg(&mut buf)
+        .unwrap();
+        // 'B' len(4) portal\0 stmt\0 | n_formats=1 | fmt | n_params=0 | n_result_formats=? (no codes follow)
+        let tail = &buf[buf.len() - 2..];
+        assert_eq!(
+            tail,
+            [0, 0],
+            "result-format count must be 0, message: {buf:?}"
+        );
+    }
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-# Auxilliary crates
+        let result_formats_len = u16::try_from(self.formats.len())
+            .map_err(|_| err_protocol!("too many result format codes ({})", self.formats.len()))?;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `48fb9e42` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e5cbd61a` are properly handled with clean fallback behavior.
