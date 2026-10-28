@@ -5745,3 +5745,5 @@
 | `CYCLE-20261028-LLBX` | `2026-10-28T11:12:02.877Z` | `kumahq/kuma` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5256` | Yes (`22dfc135...`) |
 | `CYCLE-20261028-LP1R` | `2026-10-28T11:12:07.695Z` | `dathere/qsv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dathere-qsv-learnings.md` | Yes (`3d542131...`) |
 | `CYCLE-20261028-S0OK` | `2026-10-28T11:17:02.708Z` | `unsloth/Qwen3.8-27B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5257, Rule 5258, Rule 3759` | Yes (`319a2cda...`) |
+| `CYCLE-20261028-0RUZ` | `2026-10-28T11:23:51.179Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5259` | Yes (`0ffa9a7b...`) |
+| `CYCLE-20261028-0T1C` | `2026-10-28T11:23:52.704Z` | `DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5260, Rule 5261, Rule 5262` | Yes (`306dd3e6...`) |

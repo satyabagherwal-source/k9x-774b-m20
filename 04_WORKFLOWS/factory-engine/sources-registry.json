@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T11:17:05.245Z",
-    "lastVerified": "2026-10-28T11:17:05.245Z",
+    "lastChecked": "2026-10-28T11:23:55.259Z",
+    "lastVerified": "2026-10-28T11:23:55.259Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -248,9 +248,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-28T10:17:58.517Z",
+    "lastChecked": "2026-10-28T11:23:54.251Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-28T10:17:58.517Z"
+    "lastVerified": "2026-10-28T11:23:54.251Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1095,9 +1095,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-10-28T04:41:59.187Z",
+    "lastChecked": "2026-10-28T11:23:49.236Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-10-28T04:41:59.187Z"
+    "lastVerified": "2026-10-28T11:23:49.236Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -2595,5 +2595,60 @@
     "lastChecked": "2026-10-28T11:11:59.728Z",
     "revisionIdentifier": "accdcdb5",
     "lastVerified": "2026-10-28T11:11:59.728Z"
+  },
+  "ekzhang-bore": {
+    "name": "bore",
+    "officialUrl": "https://github.com/ekzhang/bore",
+    "lastChecked": "2026-10-28T11:23:39.198Z",
+    "revisionIdentifier": "00a735a8",
+    "lastVerified": "2026-10-28T11:23:39.198Z"
+  },
+  "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf": {
+    "name": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+    "officialUrl": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T11:23:41.889Z",
+    "lastVerified": "2026-10-28T11:23:41.889Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+    "contentHash": "306dd3e645f1d1c179068b17173522c117d339bcbcaea4f481428003d4001df0",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "oblador-react-native-animatable": {
+    "name": "react-native-animatable",
+    "officialUrl": "https://github.com/oblador/react-native-animatable",
+    "lastChecked": "2026-10-28T11:23:44.189Z",
+    "revisionIdentifier": "dfd74137",
+    "lastVerified": "2026-10-28T11:23:44.189Z"
+  },
+  "skyhook-io-radar": {
+    "name": "skyhook-io/radar",
+    "officialUrl": "https://github.com/skyhook-io/radar",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-28T11:23:50.392Z",
+    "lastVerified": "2026-10-28T11:23:50.392Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-skyhook-io-radar",
+    "contentHash": "0ffa9a7ba0a6f216b6d8ed1d6a5dc4d86aa3306060a28a6f7ec74ab9412700f3",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "tensorchord-pgvecto.rs": {
+    "name": "pgvecto.rs",
+    "officialUrl": "https://github.com/tensorchord/pgvecto.rs",
+    "lastChecked": "2026-10-28T11:23:51.778Z",
+    "revisionIdentifier": "2b290b34",
+    "lastVerified": "2026-10-28T11:23:51.778Z"
   }
 }

@@ -5754,3 +5754,5 @@ Every entry in this ledger must capture:
 | `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `1bf742fe` | Multi-dimensional audit evidence | 2026-10-28T11:12:02.881Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `b923415f` | Multi-dimensional audit evidence | 2026-10-28T11:12:07.699Z |
 | `learn-huggingface-unsloth-qwen3-8-27b-gguf` | `https://huggingface.co/unsloth/Qwen3.8-27B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-28T11:17:02.712Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `868e06fa` | Multi-dimensional audit evidence | 2026-10-28T11:23:51.182Z |
+| `learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf` | `https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | `hf-davidau` | Multi-dimensional audit evidence | 2026-10-28T11:23:52.707Z |

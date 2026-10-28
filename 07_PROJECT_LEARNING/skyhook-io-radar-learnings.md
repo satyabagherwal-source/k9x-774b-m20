@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
-> **Source Version**: `46376e81`  
+> **Source Version**: `868e06fa`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T01:58:38.724Z  
+> **Timestamp**: 2026-10-28T11:23:50.588Z  
 > **Learning ID**: `learn-github-skyhook-io-radar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T01:58:38.716Z  
+> **Harvest Timestamp**: 2026-10-28T11:23:50.392Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3930 stars
+- **Stars / Engagement**: 3933 stars
 
 ---
 
@@ -2207,11 +2207,11 @@ export function AWSMachineRenderer({ data }: Props) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2411** (2026-10-28): **The update from the app isn’t working**
+  *Symptoms*: ## Describe the bug  The update from the app isn’t working.  ## To reproduce  Steps to reproduce the behavior:  1. Run radar.exe 2. Click on check for updates 3. See the error in the screenshot  ## Expected behavior  I expected the program to update and restart automatically.  ## Screenshots  <img width="381" height="148" alt="Image" src="https://github.com/user-attachments/assets/4f00f96d-72cc-4089-b580-08b1390ac980" /> 
+
 - **Issue #2302** (2026-10-25): **Issues flags completed Job/CronJob pods as a warning (“Controller reports a problem”: `Ready: PodCompleted`)**
   *Symptoms*: ### What happens  Every pod created by a CronJob or Job shows up in Issues as a warning, "Controller reports a problem" (category `operator_condition_failed`), after it finishes successfully. The detail reads:  > Ready: PodCompleted > present since creation or first reconciliation  The pod is `Succeeded` and its Job is `Complete 1/1`. Nothing is wrong. A finished pod has `Ready=False` with reason `PodCompleted`, and the Issues engine treats that as a failed condition.  <img width="1538" height="436" alt="Image" src="https://github.com/user-attachments/assets/75fefb95-f9aa-4d7d-a6b1-814cc1676fc2" />  ### Why it's noisy  With a CronJob on a short schedule, this puts a fresh warning in the list every run, and it stays until the Job's TTL or history limit removes the pod. In my cluster an every-5-minutes CronJob keeps one or two of these showing at all times, which buries real issues.  ### Steps to reproduce  1. Create a CronJob whose container exits 0, for example `busybox` running `true`, on a `*/5 * * * *` schedule. 2. Wait for a run to finish. 3. Open Issues. The completed pod appears as a warning with `Ready: PodCompleted`.  ### Expected  Pods in phase `Succeeded` (or with Ready reason `PodCompleted`) should be skipped by the condition-based issue detection, since a Job pod ending in that state is the normal outcome. Failed Job pods (phase `Failed`, `BackoffLimitExceeded`, etc.) should still be reported.  ### Notes  - Radar already treats this as expected elsewhere. `package
-
-- **Issue #2236** (2026-10-25): **Live Traffic Source Selection**
-  *Symptoms*: ## Describe the bug and snapshot  Try the radar both v1.16 and v1.17 and face below issues. I have istio and hubble for my live traffic. If I select to Istio, then I could not choose back to hubble anymore.  ##   <img width="342" height="129" alt="Image" src="https://github.com/user-attachments/assets/a90bbf4c-d2c2-4814-8361-6dfb0e09e068" /> <img width="267" height="50" alt="Image" src="https://github.com/user-attachments/assets/36bbb5ef-63f3-4985-bb8b-ec2651ea569f" /> <img width="116" height="46" alt="Image" src="https://github.com/user-attachments/assets/cead954c-f945-46d0-bb47-47586dc16818" />  Can you guide how to do the selection. If this is a bug, can you help fix it.  Thanks a lot! 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2228,435 +2228,187 @@ export function AWSMachineRenderer({ data }: Props) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dabf6dc0` (2026-10-27)
-**Commit Message**: Speed up the dev-loop test runs (#2383)
+### Incident Patch 1: `868e06fa` (2026-10-28)
+**Commit Message**: Fix Windows desktop in-app updates (checksum format and relaunch) (#2415)
 
-## Summary
+Fixes #2411. Radar Desktop on Windows has never been able to update
+itself: "Check for updates" fails with `checksum verification: no
+checksum found for radar-desktop_vX_windows_amd64.zip`.
 
-Shortens the local test loop. The `packages/k8s-ui` suite goes from
-about 95 s to about 30 s. Repeat web runs skip most module transforms
-(on a loaded machine: 222 s cold → 149 s warm). `make test-changed`
-stops re-running Go packages whose inputs haven't changed.
+## Why
 
-## What changed
+`sha256sum` on the Windows release runner writes binary mode, `<hash>
+*<name>`. On the Windows line:
 
-**Go: the iteration tier uses Go's test cache.**
-`scripts/test-changed.sh` no longer passes `-count=1`, so a package
-whose code and dependencies haven't changed reports `(cached)` instead
-of running again. `GO_TEST_FRESH=1` forces a real run, e.g. to recheck a
-flaky test. CI is unchanged.
-
-**k8s-ui: most test files share a worker without isolation.** k8s-ui had
-no Vitest config, so every file ran in a fresh worker; that is where
-most of the 95 s went. The new `packages/k8s-ui/vitest.config.ts`
-defines two projects:
-
-- `shared` (`isolate: false`): every test file except the ones below.
-Vitest still gives each environment (node / jsdom) its own workers.
-- `isolated`: files that call `vi.mock` / `vi.doMock`, detected from
-their source when the config loads (12 today). Without isolation, Vitest
-resets neither the mock registry nor the module cache between 
-
-**File**: `.claude/commands/qa.md` (modified, +11/-0)
-```diff
-@@ -17,6 +17,8 @@ check a small fix.
- It vets and tests only the changed Go packages (root and `pkg/` modules), runs
- `tsc` for `web/` and `packages/k8s-ui`, and `vitest related` on the changed
- frontend files. Typically minutes rather than the ~20 a full run takes.
-+Go results come from the test cache when nothing a package depends on changed;
-+`GO_TEST_FRESH=1` forces a real run (e.g. to recheck a flaky test).
- `GO_TEST_RUN=<regexp>` narrows a big package (`internal/server` alone takes
- ~4.5 min); use it when the change only touches one area there. **Never**
- `npm run lint` (broken).
-@@ -36,6 +38,15 @@ verification rounds.
-   otherwise: rerun that file alone (`npx vitest run <file>` / `go test -run`)
-   before investigating. Several UI suites (e.g. `ResourcesView.kind-view`) and
-   `TestUpgradeReadinessEndpointLargeMetrics` are timing-sensitive.
-+- Vitest keeps transformed modules in `.vitest-cache/` in each project (one per
-+  worktree, gitignored), so a second run skips most transforms.
-+- `packages/k8s-ui` runs most test files without isolation: a worker reuses its
-+  modules across files (`vitest.config.ts`). Files that call `vi.mock` run
-+  isolated, picked automatically from their source. A test that passes alone but
-+  fails in the suite is probably leaking or reading module state from another
-+  file: reset that state in the tests (see `touch-intent.test.ts`). Shuffling
-+  the file order finds such pairs:
-+  `npx vitest run --project shared --sequence.shuffle.files --sequence.seed=<n>`.
- - Node 25: run vitest with `NODE_OPTIONS=--no-experimental-webstorage`
-   (the script sets it).
- 
+```
+b70493e9…f8e13 *radar-desktop_v1.18.2_windows_amd64.zip
 ```
 
-**File**: `.gitignore` (modified, +1/-0)
+`VerifyChecksum` matches the name exactly, so it never finds
+`radar-desktop_v1.18.2_windows_amd64.zip`. The hash itself is right
+(checked against the published v1.18.2 zip). macOS and Linux lines use
+the two-space form and work.
+
+## What changes
+
+- **Release workflow:** the Windows checksum is written as `<hash>
+<name>`. Installed builds download the latest release's
+`checksums-desktop.txt` and run the old parser, so this is what lets
+every existing Windows install update in-app to the next release.
+- **Release guard:** before upload, the merge step fails the release
+unless every line is in the two-space form, each `radar-desktop_*` asset
+is listed exactly once, and `sha256sum --check --strict` passes.
+Exercised on fixtures with GNU tools: a good fi
+
+**File**: `.github/workflows/release-desktop.yml` (modified, +17/-1)
 ```diff
-@@ -10,6 +10,7 @@ vendor/
+@@ -202,7 +202,9 @@ jobs:
+         shell: bash
+         run: |
+           VERSION="${GITHUB_REF_NAME}"
+-          sha256sum "radar-desktop_${VERSION}_windows_amd64.zip" >> checksums-windows.txt
++          # sha256sum on Windows marks binary files with "*" before the name.
++          # Installed Radar Desktop builds may only read the two-space form.
++          sha256sum "radar-desktop_${VERSION}_windows_amd64.zip" | sed 's/ \*/  /' >> checksums-windows.txt
  
- # Node
- node_modules/
-+.vitest-cache/
- web/node_modules/
- web/dist/
- packages/*/node_modules/
+       - name: Upload artifact
+         uses: actions/upload-artifact@v7
+@@ -362,6 +364,20 @@ jobs:
+           rm -f checksums-darwin.txt checksums-windows.txt checksums-linux.txt
+           echo "=== Desktop checksums ==="
+           cat checksums-desktop.txt
++          # Every installed Radar Desktop verifies its update against this file,
++          # and some builds accept only "<sha256>  <name>". Check the format,
++          # that each uploaded asset is listed once, and the hashes.
++          if grep -vqE '^[0-9a-f]{64}  radar-desktop_[^ *]+$' checksums-desktop.txt; then
++            echo "::error::checksums-desktop.txt has a line older Radar Desktop builds cannot read"
++            exit 1
++          fi
++          for f in radar-desktop_*; do
++            if [ "$(awk -v f="$f" '$2 == f' checksums-desktop.txt | wc -l)" -ne 1 ]; then
++              echo "::error::$f is not listed exactly once in checksums-desktop.txt"
++              exit 1
++            fi
++          done
++          sha256sum --check --strict checksums-desktop.txt
+ 
+       - name: Wait for GitHub Release to exist
+         env:
 ```
 
-**File**: `packages/k8s-ui/src/components/ui/Tooltip.touch.test.tsx` (modified, +2/-0)
+**File**: `internal/updater/apply_windows.go` (modified, +4/-1)
 ```diff
-@@ -14,6 +14,8 @@ afterEach(() => {
-   act(() => root?.unmount())
-   host?.remove()
-   vi.useRealTimers()
-+  // The last touch time is module state; a key press clears it for the next file.
-+  document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }))
- })
+@@ -85,7 +85,10 @@ func Relaunch() error {
+ 	}
  
- function render(child: React.ReactNode) {
+ 	log.Printf("[updater] Executing trampoline: %s", bat)
+-	cmd := exec.Command("cmd", "/C", "start", "/MIN", bat)
++	// start reads its first quoted argument as the window title, and the
++	// path is quoted whenever TEMP has a space (as under C:\Users\Jane Doe),
++	// so give it an empty title first.
++	cmd := exec.Command("cmd", "/C", "start", "", "/MIN", bat)
+ 	if err := cmd.Start(); err != nil {
+ 		return fmt.Errorf("start trampoline: %w", err)
+ 	}
 ```
 
-**File**: `packages/k8s-ui/src/utils/touch-intent.test.ts` (modified, +9/-4)
+**File**: `internal/version/download.go` (modified, +20/-16)
 ```diff
-@@ -1,5 +1,5 @@
- // @vitest-environment jsdom
--import { describe, expect, it } from 'vitest'
-+import { beforeEach, describe, expect, it } from 'vitest'
- import { isTouchIntent } from './touch-intent'
- 
- function press(pointerType: string) {
-@@ -8,8 +8,13 @@ function press(pointerType: string) {
-   document.body.dispatchEvent(e)
+@@ -152,6 +152,23 @@ func DownloadAsset(ctx context.Context, url string, dest string, progress Progre
+ 	return nil
  }
  
--// Order matters: the module keeps the last touch time, so the mouse case
--// runs before any touch has been recorded.
-+function pressKey() {
-+  document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }))
++// checksumFor reads sha256sum output ("hash  name", or "hash *name" in binary
++// mode, which is what sha256sum writes on Windows) and returns the hash for
++// assetName.
++func checksumFor(r io.Reader, assetName string) (string, error) {
++	scanner := bufio.NewScanner(r)
++	for scanner.Scan() {
++		parts := strings.Fields(scanner.Text())
++		if len(parts) == 2 && strings.TrimPrefix(parts[1], "*") == assetName {
++			return parts[0], nil
++		}
++	}
++	if err := scanner.Err(); err != nil {
++		return "", fmt.Errorf("read checksums: %w", err)
++	}
++	return "", fmt.Errorf("no checksum found for %s", assetName)
 +}
 +
-+// The module keeps the last touch time across tests and files; a key press clears it.
-+beforeEach(pressKey)
-+
- describe('isTouchIntent', () => {
-   it('ignores mouse presses', () => {
-     press('mouse')
-@@ -28,7 +33,7 @@ describe('isTouchIntent and the keyboard', () => {
-   it('ends the tap window on a key press', () => {
-     press('touch')
-     expect(isTouchIntent()).toBe(true)
--    document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }))
-+    pressKey()
-     expect(isTouchIntent()).toBe(false)
-   })
- })
+ // VerifyChecksum downloads the checksums file from the release and verifies
+ // that the given asset matches its expected SHA256 hash.
+ func VerifyChecksum(ctx context.Context, release *githubReleaseWithAssets, assetPath string, assetName string) error {
+@@ -185,22 +202,9 @@ func VerifyChecksum(ctx context.Context, release *githubReleaseWithAssets, asset
+ 		return fmt.Errorf("checksums download returned HTTP %d", resp.StatusCode)
+ 	}
+ 
+-	// Parse checksum file (format: "sha256hash  filename")
+-	var expectedHash string
+-	scanner := bufio.NewScanner(resp.Body)
+-	for scanner.Scan() {
+-		line := scanner.Text()
+-		parts := strings.Fields(line)
+-		if len(parts) == 2 && parts[1] == assetName {
+-			expectedHash = parts[0]
+-			break
+-		}
+-	}
+-	if err := scanner.Err(); err != nil {
+-		return fmt.Errorf("read checksums: %w", err)
+-	}
+-	if expectedHash == "" {
+-		return fmt.Errorf("no checksum found for %s", assetName)
++	expectedHash, err := checksumFor(resp.Body, assetName)
++	if err != nil {
++		return err
+ 	}
+ 
+ 	// Hash the downloaded file
 ```
 
-**File**: `packages/k8s-ui/vitest.config.ts` (added, +34/-0)
+**File**: `internal/version/download_test.go` (added, +31/-0)
 ```diff
-@@ -0,0 +1,34 @@
-+import { readdirSync, readFileSync } from 'fs'
-+import path from 'path'
-+import { configDefaults, defineConfig } from 'vitest/config'
+@@ -0,0 +1,31 @@
++package version
 +
-+// Most test files run without isolation: a worker reuses its module registry
-+// across files (Vitest still gives each environment its own workers), which cuts
-+// the suite from ~95s to ~35s. Without isolation Vitest resets neither the mock
-+// registry nor the module cache between files, so a file that mocks a module
-+// would miss it when an earlier file loaded it and leak the mock into later
-+// files. Those files run isolated, picked from their source.
-+function testFiles(dir: string): string[] {
-+  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
-+    if (entry.name.startsWith('.') || entry.name === 'node_modules' || entry.name === 'dist') return []
-+    const file = path.join(dir, entry.name)
-+    if (entry.isDirectory()) return testFiles(file)
-+    return /\.(test|spec)\.[cm]?[jt]sx?$/.test(entry.name) ? [file] : []
-+  })
++import (
++	"strings"
++	"testing"
++)
++
++// The desktop checksums for v1.18.2 as published: sha256sum on the Windows
++// runner wrote the binary-mode "*" before the zip's name.
++const publishedDesktopChecksums = `647bba90b20ad52e7110fe855cb00d3cc8bcf7645581a9bd7e3774c5a875c44d  radar-desktop_v1.18.2_darwin_universal.zip
++b70493e93022c42fde4db0a037cd5ccee6025602972af46851438d3d718f8e13 *radar-desktop_v1.18.2_windows_amd64.zip
++64e1ec60c2bba88c08252bfa00698ce96f0cab8b4e5d3912fcfb78165eb5356b  radar-desktop_v1.18.2_linux_amd64.tar.gz
++`
++
++func TestChecksumForReadsBothSha256sumForms(t *testing.T) {
++	for name, want := range map[string]string{
++		"radar-desktop_v1.18.2_windows_amd64.zip":    "b70493e93022c42fde4db0a037cd5ccee6025602972af46851438d3d718f8e13",
++		"radar-desktop_v1.18.2_darwin_universal.zip": "647bba90b20ad52e7110fe855cb00d3cc8bcf7645581a9bd7e3774c5a875c44d",
++	} {
++		got, err := checksumFor(strings.NewReader(publishedDesktopChecksums), name)
++		if err != nil || got != want {
++			t.Errorf("checksumFor(%s) = %q, %v; want %q", name, got, err, want)
++		}
++	}
 +}
-+const mockingTests = testFiles(__dirname)
-+  .filter((file) => /\bvi\s*\.\s*(mock|doMock)\s*\(/.test(readFileSync(file, 'utf8')))
-+  .map((file) => path.relative(__dirname, file).split(path.sep).join('/'))
 +
-+export default defineConfig({
-+  test: {
-+    fsModuleCache: true,
-+    // Worktrees symlink node_modules to one checkout, so the default cache
-+    // location would be shared by every worktree.
-+    fsModuleCachePath: path.resolve(__dirname, '.vitest-cache'),
-+    projects: [
-+      { extends: true, test: { name: 'shared', isolate: false, exclude: [...configDefaults.exclude, ...mockingTests] } },
-+      { extends: true, test: { name: 'isolated', include: mockingTests } },
-+    ],
-+  },
-+})
-```
-
-**File**: `scripts/test-changed.sh` (modified, +5/-2)
-```diff
-@@ -16,6 +16,8 @@
- #
- # This is the iteration tier. The completion check is CI on the pushed head
- # (or, for a branch CI doesn't run, `make test` plus both full vitest suites once).
-+# Go test results come from Go's test cache when nothing they depend on changed;
-+# GO_TEST_FRESH=1 runs them anyway (-count=1), e.g. to recheck a flaky test.
- # GO_TEST_RUN=<regexp> passes -run to go test, e.g. to keep internal/server short.
- # Works with the bash 3.2 macOS ships.
- set -euo pipefail
-@@ -51,6 +53,7 @@ done <<< "$changed"
- dedup() { tr ' ' '\n' <<< "$1" | sed '/^$/d' | sort -u | tr '\n' ' '; }
- pkg_pkgs=$(dedup "$pkg_pkgs"); root_pkgs=$(dedup "$root_pkgs")
- run_flag=(); [ -n "${GO_TEST_RUN:-}" ] && run_flag=(-run "$GO_TEST_RUN")
-+[ -n "${GO_TEST_FRESH:-}" ] && run_flag+=(-count=1)
- 
- # Node 25 exposes a localStorage global that breaks jsdom's.
- if [ "$(node -p 'process.versions.node.split(".")[0]' 2>/dev/null || echo 0)" -ge 25 ]; then
-@@ -64,11 +67,11 @@ fi
-   if [ "$root_module" = 1 ]; then echo "== go: go.mod changed, build + vet ./..."; go build ./... && go vet ./...; fi
-   if [ -n "$pkg_pkgs" ]; then
-     echo "== go (pkg module): $pkg_pkgs"
--    (cd pkg && go vet $pkg_pkgs && go test -count=1 ${run_flag[@]+"${run_flag[@]}"} $pkg_pkgs)
-+    (cd pkg && go vet $pkg_pkgs && go test ${run_flag[@]+"${run_flag[@]}"} $pkg_pkgs)
-   fi
-   if [ -n "$root_pkgs" ]; then
-     echo "== go: $root_pkgs"
--    go vet $root_pkgs && go test -count=1 ${run_flag[@]+"${run_flag[@]}"} $root_pkgs
-+    go vet $root_pkgs && go test ${run_flag[@]+"${run_flag[@]}"} $root_pkgs
-   fi
-   if [ -n "$k8sui$web" ] || [ "$fe_config" = 1 ]; then
-     echo "== tsc"
-```
-
-**File**: `web/vite.config.ts` (modified, +7/-0)
-```diff
-@@ -1,3 +1,4 @@
-+/// <reference types="vitest/config" />
- import { defineConfig } from 'vite'
- import react from '@vitejs/plugin-react'
- import tailwindcss from '@tailwindcss/vite'
-@@ -52,4 +53,10 @@ export default defineConfig({
-   },
-   // Handle client-side routing - serve index.html for all routes
-   appType: 'spa',
-+  test: {
-+    fsModuleCache: true,
-+    // Worktrees symlink node_modules to one checkout, so the default cache
-+    // location would be shared by every worktree.
-+    fsModuleCachePath: path.resolve(__dirname, '.vitest-cache'),
-+  },
- })
-```
-
----
-
-### Incident Patch 2: `145a6915` (2026-10-27)
-**Commit Message**: Fast dev loop: make test-changed, with the full suite once at the end (#2371)
-
-Agents and people iterating on Radar have been running the full suites
-after every fix: about 20 minutes per branch (`internal/server` alone
-takes ~4.5 minutes, and the two vitest suites are about 7,700 tests). A
-focused run of the same change takes about 2 minutes. This makes the
-fast tier the default and says when the full run is needed.
-
-### What changed
-
-- **`make test-changed`** (`scripts/test-changed.sh [base]`, default
-`origin/main`). It takes the files changed since the merge base, plus
-staged, unstaged and untracked files, and runs:
-- `go vet` + `go test` on the changed Go packages only, in both the root
-and `pkg/` modules. `GO_TEST_RUN=<regexp>` narrows a big package such as
-`internal/server`.
-- A deleted Go file still selects its package; a `testdata/` file
-selects the Go package that owns it.
-- Each project's `npm run tsc` (TypeScript 7, as in CI) when frontend
-files changed, then `vitest related --run` on the changed files,
-including shared `testdata/` fixtures the frontend tests import.
-- `go.mod`/`go.sum` changes build and vet the whole module. A frontend
-config change (package.json, tscon
-
-**File**: `.claude/commands/qa.md` (modified, +32/-6)
-```diff
-@@ -7,11 +7,37 @@ description: Radar verification — type-check, tests, and visual-test only when
- What "verify this change" means in radar. Run the checks that fit the *delta*;
- skip the rest. Don't run everything reflexively.
- 
--## Code changed → type-check + tests
--- `make tsc` — frontend type-check. **Never** `npm run lint` (broken).
--- `make test` — unit tests.
--- `make build` — only before a PR, or when Go changed (does FE build + embed +
--  binary; heavier, so not every round).
-+## Fast dev loop first — the full suite runs once
-+
-+Verification has two tiers. Use the fast one while iterating; run the full one
-+once, at the end. A fast loop is the priority: never wait on a full suite to
-+check a small fix.
-+
-+**Iteration (every round): `make test-changed`** (`scripts/test-changed.sh`).
-+It vets and tests only the changed Go packages (root and `pkg/` modules), runs
-+`tsc` for `web/` and `packages/k8s-ui`, and `vitest related` on the changed
-+frontend files. Typically minutes rather than the ~20 a full run takes.
-+`GO_TEST_RUN=<regexp>` narrows a big package (`internal/server` alone takes
-+~4.5 min); use it when the change only touches one area there. **Never**
-+`npm run lint` (broken).
-+
-+**Completion (once, after the final batch):** CI on the pushed head is the full
-+run: push and let it go; don't repeat it locally. Run the full local suite
-+(`make test` plus `npm run test` in `web/` and `packages/k8s-ui`) only for a
-+branch CI won't run (e.g. a PR stacked on another PR's branch), and then only
-+once. `make build` is for running the binary (visual or live checks), not for
-+verification rounds.
-+
-+**Keep it fast in practice:**
-+- Batch fixes, then run the fast tier once for the batch, not after each edit.
-+- Don't run suites while other heavy work (builds, other test runs, agents)
-+  runs on the machine: it slows everything and creates false failures.
-+- A failure in a file the change doesn't touch, under load, is load until shown
-+  otherwise: rerun that file alone (`npx vitest run <file>` / `go test -run`)
-+  before investigating. Several UI suites (e.g. `ResourcesView.kind-view`) and
-+  `TestUpgradeReadinessEndpointLargeMetrics` are timing-sensitive.
-+- Node 25: run vitest with `NODE_OPTIONS=--no-experimental-webstorage`
-+  (the script sets it).
- 
- ## UI changed → `/visual-test` (lean toward it for feature-scale UI; skip is OK for small)
- For a change that adds or meaningfully changes **rendered surfaces** — a new
-@@ -34,4 +60,4 @@ it (below). (Aligns with radar's CLAUDE.md "consider visual-test" note.)
- - **Skipped** → say so with the reason: `visual-test: skipped (no UI delta)`.
- 
- ## Pure backend / util / type / docs
--`make tsc` / `make test` as relevant — no visual-test.
-+`make test-changed` — no visual-test. Docs-only: nothing to run.
-```
-
-**File**: `CLAUDE.md` (modified, +2/-0)
-```diff
-@@ -91,6 +91,8 @@ web/src → (npm run build) → web/dist → (make embed) → internal/static/di
- 
- `make help` lists every target — read the Makefile when uncertain. The day-to-day set: `make build` (frontend + embed + binary), `make restart` (full rebuild + restart) / `make restart-fe` (frontend + embed + restart), `make watch-backend` / `make watch-frontend` (Air :9280 + Vite :9273), `make test`, `make tsc`, `make lint` (`go vet` on both Go modules, the root and `pkg/`). `go run ./cmd/explorer --dev` serves the frontend from `web/dist` without the embed step. Web unit tests: `cd web && npm test` (`vitest run src`); a bare `npx vitest run` also collects the Playwright specs in `web/e2e` and reports them as failed files.
- 
-+**Fast dev loop above all.** While iterating, run `make test-changed` (only the changed Go packages, tsc, and `vitest related` for changed frontend files) once per batch of fixes, not a full suite per edit. The full run happens once at the end, and CI on the pushed head is that run; run the full suite locally only for a branch CI won't test, such as a stacked PR. Don't run suites alongside other heavy work; a failure in an untouched file under load gets rerun alone before anyone debugs it. Details: `.claude/commands/qa.md`.
-+
- ### Visual Testing
- ```bash
- ./scripts/visual-test-start.sh          # Build + launch on random port (9300-9399)
-```
-
-**File**: `Makefile` (modified, +7/-1)
-```diff
-@@ -1,4 +1,4 @@
--.PHONY: build install clean dev frontend backend test test-e2e test-chart lint help restart restart-fe kill watch-backend watch-frontend loadtest
-+.PHONY: build install clean dev frontend backend test test-changed test-e2e test-chart lint help restart restart-fe kill watch-backend watch-frontend loadtest
- .PHONY: calico-demo calico-demo-down calico-demo-status
- .PHONY: kueue-demo kueue-demo-down kueue-demo-status kueue-demo-verify
- .PHONY: cilium-demo cilium-demo-down cilium-demo-status
-@@ -158,6 +158,11 @@ test:
- 	go test -v ./...
- 	cd pkg && go test -v ./...
- 
-+# Fast dev loop: vet/test only the changed Go packages, tsc, and `vitest related`
-+# for changed frontend files. BASE defaults to origin/main. Not a completion check.
-+test-changed:
-+	./scripts/test-changed.sh $(BASE)
-+
- # Run e2e tests against the current kubeconfig cluster (on-demand, not in CI)
- test-e2e:
- 	go test -tags e2e -v -timeout 5m ./internal/k8s/
-@@ -527,6 +532,7 @@ help:
- 	@echo "  make watch-backend   - Go with air hot reload (port 9280)"
- 	@echo "  make run             - Run built binary"
- 	@echo "  make test            - Run tests"
-+	@echo "  make test-changed    - Fast loop: only what the change touches (BASE=origin/main)"
- 	@echo ""
- 	@echo "Demo clusters:"
- 	@echo "  make gitops-demo      - GitOps fixtures (Argo CD + Flux)"
-```
-
-**File**: `scripts/test-changed.sh` (added, +81/-0)
-```diff
-@@ -0,0 +1,81 @@
-+#!/usr/bin/env bash
-+# Fast dev-loop checks: only what the change touches.
-+#
-+#   scripts/test-changed.sh [base]     (default base: origin/main)
-+#
-+# Changed files = committed since the merge base with <base>, plus staged,
-+# unstaged and untracked files. For each side that changed it runs:
-+#   Go:       go vet + go test on the changed packages only (root and pkg/ modules).
-+#             A deleted file still selects its package; a testdata file selects the
-+#             package that owns the testdata directory.
-+#   Frontend: each project's `npm run tsc`, then `vitest related` on the changed files
-+#             (including shared testdata fixtures the tests import).
-+#   Config:   go.mod/go.sum → build + vet the whole module; a frontend config
-+#             (package.json, tsconfig, vite/vitest config) → both type-checks, and a
-+#             notice that the full vitest suite is needed once.
-+#
-+# This is the iteration tier. The completion check is CI on the pushed head
-+# (or, for a branch CI doesn't run, `make test` plus both full vitest suites once).
-+# GO_TEST_RUN=<regexp> passes -run to go test, e.g. to keep internal/server short.
-+# Works with the bash 3.2 macOS ships.
-+set -euo pipefail
-+cd "$(git rev-parse --show-toplevel)"
-+
-+base=$(git merge-base "${1:-origin/main}" HEAD)
-+changed=$({ git diff --name-only "$base"; git diff --name-only HEAD; git ls-files --others --exclude-standard; } | sort -u)
-+[ -z "$changed" ] && { echo "no changes"; exit 0; }
-+
-+pkg_pkgs=""; root_pkgs=""; k8sui=""; web=""
-+root_module=0; pkg_module=0; fe_config=0
-+add_go() { # $1 = repo-relative package directory
-+  [ -d "$1" ] && ls "$1"/*.go >/dev/null 2>&1 || return 0
-+  case "$1" in
-+    pkg/*) pkg_pkgs="$pkg_pkgs ./${1#pkg/}" ;;
-+    pkg) pkg_pkgs="$pkg_pkgs ." ;;
-+    *) root_pkgs="$root_pkgs ./$1" ;;
-+  esac
++func TestChecksumForMissingAsset(t *testing.T) {
++	if _, err := checksumFor(strings.NewReader(publishedDesktopChecksums), "radar-desktop_v1.18.2_linux_amd64.deb"); err == nil {
++		t.Error("expected an error for an asset the file doesn't list")
++	}
 +}
-+while IFS= read -r f; do
-+  case "$f" in
-+    go.mod|go.sum) root_module=1 ;;
-+    pkg/go.mod|pkg/go.sum) pkg_module=1 ;;
-+    package.json|package-lock.json|web/package.json|packages/k8s-ui/package.json|web/tsconfig*.json|packages/k8s-ui/tsconfig*.json|web/vite*.config.*|web/vitest*.config.*|packages/k8s-ui/vite*.config.*|packages/k8s-ui/vitest*.config.*) fe_config=1 ;;
-+    */testdata/*)
-+      add_go "${f%%/testdata/*}"
-+      [ -e "$f" ] && k8sui="$k8sui ../../$f" && web="$web ../$f" ;;
-+    *.go) add_go "$(dirname "$f")" ;;
-+    packages/k8s-ui/*.ts|packages/k8s-ui/*.tsx|packages/k8s-ui/*.json) [ -e "$f" ] && k8sui="$k8sui ${f#packages/k8s-ui/}" ;;
-+    web/*.ts|web/*.tsx|web/*.json) [ -e "$f" ] && web="$web ${f#web/}" ;;
-+  esac
-+done <<< "$changed"
-+dedup() { tr ' ' '\n' <<< "$1" | sed '/^$/d' | sort -u | tr '\n' ' '; }
-+pkg_pkgs=$(dedup "$pkg_pkgs"); root_pkgs=$(dedup "$root_pkgs")
-+run_flag=(); [ -n "${GO_TEST_RUN:-}" ] && run_flag=(-run "$GO_TEST_RUN")
-+
-+# Node 25 exposes a localStorage global that breaks jsdom's.
-+if [ "$(node -p 'process.versions.node.split(".")[0]' 2>/dev/null || echo 0)" -ge 25 ]; then
-+  export NODE_OPTIONS="${NODE_OPTIONS:-} --no-experimental-webstorage"
-+fi
-+
-+# Word splitting of the package and file lists below is intended.
-+# shellcheck disable=SC2086
-+{
-+  if [ "$pkg_module" = 1 ]; then echo "== go (pkg module): go.mod changed, build + vet ./..."; (cd pkg && go build ./... && go vet ./...); fi
-+  if [ "$root_module" = 1 ]; then echo "== go: go.mod changed, build + vet ./..."; go build ./... && go vet ./...; fi
-+  if [ -n "$pkg_pkgs" ]; then
-+    echo "== go (pkg module): $pkg_pkgs"
-+    (cd pkg && go vet $pkg_pkgs && go test -count=1 ${run_flag[@]+"${run_flag[@]}"} $pkg_pkgs)
-+  fi
-+  if [ -n "$root_pkgs" ]; then
-+    echo "== go: $root_pkgs"
-+    go vet $root_pkgs && go test -count=1 ${run_flag[@]+"${run_flag[@]}"} $root_pkgs
-+  fi
-+  if [ -n "$k8sui$web" ] || [ "$fe_config" = 1 ]; then
-+    echo "== tsc"
-+    (cd web && npm run --silent tsc) && (cd packages/k8s-ui && npm run --silent tsc)
-+    if [ -n "$k8sui" ]; then echo "== vitest related (k8s-ui)"; (cd packages/k8s-ui && npx vitest related --run $k8sui); fi
-+    if [ -n "$web" ]; then echo "== vitest related (web)"; (cd web && npx vitest related --run $web); fi
-+    if [ "$fe_config" = 1 ]; then echo "!! frontend config changed: run the full vitest suites once (npm run test in web/ and packages/k8s-ui)"; fi
-+  fi
-+}
-+echo "== done"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2415** (2026-10-28): Fix Windows desktop in-app updates (checksum format and relaunch) (@nadaverell)
+- **PR #2400** (2026-10-28): Run the settings browser journeys in parallel on two workers (@nadaverell)
+- **PR #2399** (2026-10-28): Stop more slow Go tests waiting on production timers (@nadaverell)
 - **PR #2395** (2026-10-28): Stop the slowest internal/server tests waiting on production timers (@nadaverell)
+- **PR #2394** (2026-10-28): Fold Radar's routine read limits beneath Still open in investigation findings (@nadaverell)
 - **PR #2390** (closed): [temporary] Benchmark web test isolation — do not merge (@nadaverell)
-- **PR #2389** (2026-10-28): Run web unit tests without per-file isolation (@nadaverell)
-- **PR #2387** (2026-10-27): Create the AI scratch root on the first run, not at construction (@nadaverell)
-- **PR #2385** (2026-10-27): deps(go): bump github.com/go-jose/go-jose/v4 from 4.1.4 to 4.1.6 (@dependabot[bot])
-- **PR #2384** (2026-10-27): Trim the settings browser CI job (@nadaverell)
 
 ---
 
@@ -2676,38 +2428,44 @@ config change (package.json, tscon
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Speed up the dev-loop test runs (#2383)
+## X. Windows desktop in-app updates (checksum format and relaunch) (#2415)
 
 **RULE**:
-When implementing operations in `.claude/commands/qa.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/release-desktop.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dabf6dc0`: Speed up the dev-loop test runs (#2383). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `868e06fa`: Windows desktop in-app updates (checksum format and relaunch) (#2415). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/commands/qa.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release-desktop.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-Go results come from the test cache when nothing a package depends on changed;
-`GO_TEST_FRESH=1` forces a real run (e.g. to recheck a flaky test).
-- Vitest keeps transformed modules in `.vitest-cache/` in each project (one per
-  worktree, gitignored), so a second run skips most transforms.
-- `packages/k8s-ui` runs most test files without isolation: a worker reuses its
-  modules across files (`vitest.config.ts`). Files that call `vi.mock` run
-  isolated, picked automatically from their source. A test that passes alone but
-  fails in the suite is probably leaking or reading module state from another
-  file: reset that state in the tests (see `touch-intent.test.ts`). Shuffling
-  the file order finds such pairs:
-  `npx vitest run --project shared --sequence.shuffle.files --sequence.seed=<n>`.
+          # sha256sum on Windows marks binary files with "*" before the name.
+          # Installed Radar Desktop builds may only read the two-space form.
+          sha256sum "radar-desktop_${VERSION}_windows_amd64.zip" | sed 's/ \*/  /' >> checksums-windows.txt
+          # Every installed Radar Desktop verifies its update against this file,
+          # and some builds accept only "<sha256>  <name>". Check the format,
+          # that each uploaded asset is listed once, and the hashes.
+          if grep -vqE '^[0-9a-f]{64}  radar-desktop_[^ *]+$' checksums-desktop.txt; then
+            echo "::error::checksums-desktop.txt has a line older Radar Desktop builds cannot read"
+            exit 1
+          fi
+          for f in radar-desktop_*; do
+            if [ "$(awk -v f="$f" '$2 == f' checksums-desktop.txt | wc -l)" -ne 1 ]; then
+              echo "::error::$f is not listed exactly once in checksums-desktop.txt"
+              exit 1
+            fi
+          done
+          sha256sum --check --strict checksums-desktop.txt
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+          sha256sum "radar-desktop_${VERSION}_windows_amd64.zip" >> checksums-windows.txt
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dabf6dc0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `868e06fa` are properly handled with clean fallback behavior.

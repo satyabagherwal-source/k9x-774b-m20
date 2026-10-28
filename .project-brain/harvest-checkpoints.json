@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T11:17:02.721Z",
+  "last_updated": "2026-10-28T11:23:52.717Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -800,14 +800,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-      "content_hash": "b5e065a62ea585837b9c3648ebde119512cc96714c5bb0070faecbead1fa1bd1",
-      "verified_at": "2026-10-25T16:21:49.902Z",
+      "content_hash": "306dd3e645f1d1c179068b17173522c117d339bcbcaea4f481428003d4001df0",
+      "verified_at": "2026-10-28T11:23:52.716Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T16:21:49.902Z"
+      "last_updated": "2026-10-28T11:23:52.716Z"
     },
     "canberkkkkkk/ema-lightning": {
       "repository": "canberkkkkkk/ema-lightning",
@@ -5211,14 +5211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-skyhook-io-radar",
-      "content_hash": "0125d197b3a2f087a553040fcd9f1609327cac1fc10eeb7fe7b20bd9cc66ac1b",
-      "verified_at": "2026-10-28T01:58:39.188Z",
+      "content_hash": "0ffa9a7ba0a6f216b6d8ed1d6a5dc4d86aa3306060a28a6f7ec74ab9412700f3",
+      "verified_at": "2026-10-28T11:23:51.191Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T01:58:39.188Z"
+      "last_updated": "2026-10-28T11:23:51.191Z"
     },
     "mitmproxy/mitmproxy": {
       "repository": "mitmproxy/mitmproxy",

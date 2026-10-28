@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T11:17:02.644Z",
+  "last_updated": "2026-10-28T11:23:52.633Z",
   "total_verified_learnings": 1157,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -20831,7 +20831,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
       "source_version": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-      "content_hash": "b5e065a62ea585837b9c3648ebde119512cc96714c5bb0070faecbead1fa1bd1",
+      "content_hash": "306dd3e645f1d1c179068b17173522c117d339bcbcaea4f481428003d4001df0",
       "dossier_path": "07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md",
       "promoted_rules": [
@@ -20864,6 +20864,21 @@
           "number": 1384,
           "title": "Reasoning Loop Token-Budget Termination Guard",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5260,
+          "title": "Quantization Calibration Invariant (Dual-Imatrix Requirement)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5261,
+          "title": "Thinking Token Suppression Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5262,
+          "title": "GGUF Metadata Integrity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -20884,7 +20899,7 @@
         "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv4825ix",
         "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv4lbpn7"
       ],
-      "verified_at": "2026-10-25T16:21:49.827Z",
+      "verified_at": "2026-10-28T11:23:52.615Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48194,8 +48209,8 @@
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "46376e81",
-      "content_hash": "0125d197b3a2f087a553040fcd9f1609327cac1fc10eeb7fe7b20bd9cc66ac1b",
+      "source_version": "868e06fa",
+      "content_hash": "0ffa9a7ba0a6f216b6d8ed1d6a5dc4d86aa3306060a28a6f7ec74ab9412700f3",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "promoted_rules": [
@@ -48243,6 +48258,11 @@
           "number": 5115,
           "title": "Speed up the dev-loop test runs (#2383)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5259,
+          "title": "Windows desktop in-app updates (checksum format and relaunch) (#2415)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48250,7 +48270,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T01:58:39.088Z",
+      "verified_at": "2026-10-28T11:23:51.090Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -143416,6 +143436,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T11:17:02.630Z"
+    },
+    "rule-5259": {
+      "learning_id": "rule-5259",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5259,
+      "title": "Windows desktop in-app updates (checksum format and relaunch) (#2415)",
+      "source_url": "https://github.com/skyhook-io/radar",
+      "source_version": "868e06fa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T11:23:51.090Z"
+    },
+    "rule-5260": {
+      "learning_id": "rule-5260",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5260,
+      "title": "Quantization Calibration Invariant (Dual-Imatrix Requirement)",
+      "source_url": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+      "source_version": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T11:23:52.615Z"
+    },
+    "rule-5261": {
+      "learning_id": "rule-5261",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5261,
+      "title": "Thinking Token Suppression Invariant",
+      "source_url": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+      "source_version": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T11:23:52.615Z"
+    },
+    "rule-5262": {
+      "learning_id": "rule-5262",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5262,
+      "title": "GGUF Metadata Integrity Invariant",
+      "source_url": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+      "source_version": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T11:23:52.615Z"
     }
   },
   "aliases": {
