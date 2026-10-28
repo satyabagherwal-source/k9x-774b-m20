@@ -1465,8 +1465,8 @@
     "sourceUrl": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
     "sourceVersion": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8",
     "license": "Open-Source",
-    "contentHash": "aa7294eec6d07e53a111e3c852964c329ea17a6d692286afa34eb1ebe576272e",
-    "lastHarvestedAt": "2026-10-25T12:38:58.001Z",
+    "contentHash": "17e709faa90a7e313ab28b35a730513eca3da84637e07acde4d2174add79ea58",
+    "lastHarvestedAt": "2026-10-28T22:58:57.143Z",
     "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8"
   },
   "amplifthq-opentag": {
@@ -1493,10 +1493,10 @@
     "repository": "nguyenphutrong/quotio",
     "platform": "github",
     "sourceUrl": "https://github.com/nguyenphutrong/quotio",
-    "sourceVersion": "210cdb00",
+    "sourceVersion": "c9555ad4",
     "license": "MIT",
-    "contentHash": "871525d88a20911bb5d57cb15c3bbdeb735ac995ed34940af0fc827e8ea846a4",
-    "lastHarvestedAt": "2026-10-25T08:58:12.469Z",
+    "contentHash": "5e8ebec68884375ee4f1c93b4c5796e26d26e15073ffa35ad70ebfc85c4db7b2",
+    "lastHarvestedAt": "2026-10-28T22:58:58.475Z",
     "learningId": "learn-github-nguyenphutrong-quotio"
   },
   "pathwaycom-serviette": {
@@ -2503,10 +2503,10 @@
     "repository": "authzed/spicedb",
     "platform": "github",
     "sourceUrl": "https://github.com/authzed/spicedb",
-    "sourceVersion": "759295c3",
+    "sourceVersion": "3d36f6ee",
     "license": "Apache-2.0",
-    "contentHash": "9ffc0209b7ae867a50cb47be25812331ba0cbd99130b2feb77ae6e28d8b4a66b",
-    "lastHarvestedAt": "2026-10-28T00:05:58.076Z",
+    "contentHash": "d285d027494ac53b7635c474bcd7b18d6335a61bf06235674d0ba56f449345b4",
+    "lastHarvestedAt": "2026-10-28T22:59:06.583Z",
     "learningId": "learn-github-authzed-spicedb"
   },
   "hashicorp-boundary": {
@@ -7353,10 +7353,10 @@
     "repository": "langchain4j/langchain4j",
     "platform": "github",
     "sourceUrl": "https://github.com/langchain4j/langchain4j",
-    "sourceVersion": "c36ae6f8",
+    "sourceVersion": "3eabc2b8",
     "license": "Apache-2.0",
-    "contentHash": "bbf12fb852f49b11183e0a8a7ef6421cb8f5be9a9fa65ab5935a1cecdf9f1317",
-    "lastHarvestedAt": "2026-10-28T05:24:45.740Z",
+    "contentHash": "24db3cda644cef48be90c37bda4832d6fd6f0133f782776dc5a37588644c2b37",
+    "lastHarvestedAt": "2026-10-28T22:59:11.456Z",
     "learningId": "learn-github-langchain4j-langchain4j"
   },
   "railwayapp-nixpacks": {

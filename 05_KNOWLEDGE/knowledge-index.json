@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T22:52:18.315Z",
+  "last_updated": "2026-10-28T22:59:11.353Z",
   "total_verified_learnings": 1160,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3799,8 +3799,8 @@
       "slug": "authzed-spicedb",
       "platform": "github",
       "source_url": "https://github.com/authzed/spicedb",
-      "source_version": "759295c3",
-      "content_hash": "9ffc0209b7ae867a50cb47be25812331ba0cbd99130b2feb77ae6e28d8b4a66b",
+      "source_version": "3d36f6ee",
+      "content_hash": "d285d027494ac53b7635c474bcd7b18d6335a61bf06235674d0ba56f449345b4",
       "dossier_path": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "promoted_rules": [
@@ -3828,6 +3828,11 @@
           "number": 5066,
           "title": "checkbaseline): satisfy mutex and SQL row analyzers",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5446,
+          "title": "satisfy panic, must-call and mutex analyzers",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3835,7 +3840,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T00:05:58.000Z",
+      "verified_at": "2026-10-28T22:59:06.481Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34439,8 +34444,8 @@
       "slug": "langchain4j-langchain4j",
       "platform": "github",
       "source_url": "https://github.com/langchain4j/langchain4j",
-      "source_version": "c36ae6f8",
-      "content_hash": "bbf12fb852f49b11183e0a8a7ef6421cb8f5be9a9fa65ab5935a1cecdf9f1317",
+      "source_version": "3eabc2b8",
+      "content_hash": "24db3cda644cef48be90c37bda4832d6fd6f0133f782776dc5a37588644c2b37",
       "dossier_path": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "promoted_rules": [
@@ -34483,6 +34488,11 @@
           "number": 5186,
           "title": "DefaultMcpClientTest compilation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5447,
+          "title": "Update dependency com.google.guava:guava to v33 [SECURITY] (#6877)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34490,7 +34500,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T05:24:45.662Z",
+      "verified_at": "2026-10-28T22:59:11.328Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64192,8 +64202,8 @@
       "slug": "nguyenphutrong-quotio",
       "platform": "github",
       "source_url": "https://github.com/nguyenphutrong/quotio",
-      "source_version": "210cdb00",
-      "content_hash": "871525d88a20911bb5d57cb15c3bbdeb735ac995ed34940af0fc827e8ea846a4",
+      "source_version": "c9555ad4",
+      "content_hash": "5e8ebec68884375ee4f1c93b4c5796e26d26e15073ffa35ad70ebfc85c4db7b2",
       "dossier_path": "07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md",
       "promoted_rules": [
@@ -64241,6 +64251,11 @@
           "number": 4208,
           "title": "Isolated State Continuation Lifetime and Cancellation Guarding in Asynchronous Streams",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5445,
+          "title": "docs(macos): note Antigravity quota fix in changelog",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -64248,7 +64263,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T08:58:12.400Z",
+      "verified_at": "2026-10-28T22:58:58.342Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65340,7 +65355,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
       "source_version": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8",
-      "content_hash": "aa7294eec6d07e53a111e3c852964c329ea17a6d692286afa34eb1ebe576272e",
+      "content_hash": "17e709faa90a7e313ab28b35a730513eca3da84637e07acde4d2174add79ea58",
       "dossier_path": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md",
       "promoted_rules": [],
@@ -65349,7 +65364,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T12:38:57.916Z",
+      "verified_at": "2026-10-28T22:58:57.015Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -147096,6 +147111,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T22:52:18.299Z"
+    },
+    "rule-5445": {
+      "learning_id": "rule-5445",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5445,
+      "title": "docs(macos): note Antigravity quota fix in changelog",
+      "source_url": "https://github.com/nguyenphutrong/quotio",
+      "source_version": "c9555ad4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T22:58:58.343Z"
+    },
+    "rule-5446": {
+      "learning_id": "rule-5446",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5446,
+      "title": "satisfy panic, must-call and mutex analyzers",
+      "source_url": "https://github.com/authzed/spicedb",
+      "source_version": "3d36f6ee",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T22:59:06.481Z"
+    },
+    "rule-5447": {
+      "learning_id": "rule-5447",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5447,
+      "title": "Update dependency com.google.guava:guava to v33 [SECURITY] (#6877)",
+      "source_url": "https://github.com/langchain4j/langchain4j",
+      "source_version": "3eabc2b8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T22:59:11.328Z"
     }
   },
   "aliases": {

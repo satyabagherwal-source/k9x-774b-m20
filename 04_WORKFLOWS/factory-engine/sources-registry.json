@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T22:52:22.748Z",
-    "lastVerified": "2026-10-28T22:52:22.748Z",
+    "lastChecked": "2026-10-28T22:59:13.995Z",
+    "lastVerified": "2026-10-28T22:59:13.995Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -292,9 +292,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-28T22:33:05.198Z",
+    "lastChecked": "2026-10-28T22:59:08.505Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-28T22:33:05.198Z"
+    "lastVerified": "2026-10-28T22:59:08.505Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1594,14 +1594,14 @@
     "officialUrl": "https://github.com/langchain4j/langchain4j",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-10-28T05:24:45.304Z",
-    "lastVerified": "2026-10-28T05:24:45.304Z",
+    "lastChecked": "2026-10-28T22:59:10.759Z",
+    "lastVerified": "2026-10-28T22:59:10.759Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-langchain4j-langchain4j",
-    "contentHash": "bbf12fb852f49b11183e0a8a7ef6421cb8f5be9a9fa65ab5935a1cecdf9f1317",
+    "contentHash": "24db3cda644cef48be90c37bda4832d6fd6f0133f782776dc5a37588644c2b37",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1742,8 +1742,8 @@
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T19:24:31.575Z",
-    "lastVerified": "2026-10-28T19:24:31.575Z",
+    "lastChecked": "2026-10-28T22:59:03.538Z",
+    "lastVerified": "2026-10-28T22:59:03.538Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -2075,11 +2075,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "authzed-spicedb": {
-    "name": "spicedb",
+    "name": "authzed/spicedb",
     "officialUrl": "https://github.com/authzed/spicedb",
-    "lastChecked": "2026-10-28T06:24:47.683Z",
-    "revisionIdentifier": "759295c3",
-    "lastVerified": "2026-10-28T06:24:47.683Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-28T22:59:05.889Z",
+    "lastVerified": "2026-10-28T22:59:05.889Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-authzed-spicedb",
+    "contentHash": "d285d027494ac53b7635c474bcd7b18d6335a61bf06235674d0ba56f449345b4",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 5,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "volcengine-minecontext": {
     "name": "MineContext",
@@ -7421,5 +7431,46 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nguyenphutrong-quotio": {
+    "name": "nguyenphutrong/quotio",
+    "officialUrl": "https://github.com/nguyenphutrong/quotio",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T22:58:57.771Z",
+    "lastVerified": "2026-10-28T22:58:57.771Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-nguyenphutrong-quotio",
+    "contentHash": "5e8ebec68884375ee4f1c93b4c5796e26d26e15073ffa35ad70ebfc85c4db7b2",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8": {
+    "name": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+    "officialUrl": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T22:58:56.088Z",
+    "lastVerified": "2026-10-28T22:58:56.088Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
+    "contentHash": "17e709faa90a7e313ab28b35a730513eca3da84637e07acde4d2174add79ea58",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "gao-sun-eul": {
+    "name": "eul",
+    "officialUrl": "https://github.com/gao-sun/eul",
+    "lastChecked": "2026-10-28T22:58:58.538Z",
+    "revisionIdentifier": "b5c3bd0a",
+    "lastVerified": "2026-10-28T22:58:58.538Z"
   }
 }

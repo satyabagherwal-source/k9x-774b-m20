@@ -5987,3 +5987,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-fishaudio-drama-3` | `https://huggingface.co/fishaudio/drama-3` | `hf-fishaud` | Multi-dimensional audit evidence | 2026-10-28T22:52:11.551Z |
 | `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `e0db02c5` | Multi-dimensional audit evidence | 2026-10-28T22:52:12.916Z |
 | `learn-github-thaw-app-thaw` | `https://github.com/thaw-app/Thaw` | `7adbc95f` | Multi-dimensional audit evidence | 2026-10-28T22:52:18.402Z |
+| `learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-10-28T22:58:57.143Z |
+| `learn-github-nguyenphutrong-quotio` | `https://github.com/nguyenphutrong/quotio` | `c9555ad4` | Multi-dimensional audit evidence | 2026-10-28T22:58:58.475Z |
+| `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `3d36f6ee` | Multi-dimensional audit evidence | 2026-10-28T22:59:06.583Z |
+| `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `3eabc2b8` | Multi-dimensional audit evidence | 2026-10-28T22:59:11.456Z |

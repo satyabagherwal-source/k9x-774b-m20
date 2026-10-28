@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T22:52:18.407Z",
-  "total_cycles_completed": 5955,
-  "total_learnings_persisted": 5955,
-  "total_rules_promoted": 5408,
+  "last_updated": "2026-10-28T22:59:11.461Z",
+  "total_cycles_completed": 5959,
+  "total_learnings_persisted": 5959,
+  "total_rules_promoted": 5411,
   "history": [
-    {
-      "timestamp": "2026-10-28T13:36:48.641Z",
-      "repository": "black-forest-labs/FLUX.1-schnell",
-      "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T13:43:32.247Z",
-      "repository": "MiniMaxAI/MiniMax-H3",
-      "learningId": "learn-huggingface-minimaxai-minimax-h3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T13:43:34.647Z",
-      "repository": "kucherenko/jscpd",
-      "learningId": "learn-github-kucherenko-jscpd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T13:43:43.294Z",
-      "repository": "zarf-dev/zarf",
-      "learningId": "learn-github-zarf-dev-zarf",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T13:43:44.411Z",
       "repository": "nolabs-ai/nono",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-28T22:52:18.407Z",
       "repository": "thaw-app/Thaw",
       "learningId": "learn-github-thaw-app-thaw",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T22:58:57.153Z",
+      "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T22:58:58.480Z",
+      "repository": "nguyenphutrong/quotio",
+      "learningId": "learn-github-nguyenphutrong-quotio",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T22:59:06.588Z",
+      "repository": "authzed/spicedb",
+      "learningId": "learn-github-authzed-spicedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T22:59:11.461Z",
+      "repository": "langchain4j/langchain4j",
+      "learningId": "learn-github-langchain4j-langchain4j",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

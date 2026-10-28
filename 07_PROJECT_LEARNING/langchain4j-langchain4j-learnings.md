@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source**: github ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
-> **Source Version**: `c36ae6f8`  
+> **Source Version**: `3eabc2b8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T05:24:45.312Z  
+> **Timestamp**: 2026-10-28T22:59:10.766Z  
 > **Learning ID**: `learn-github-langchain4j-langchain4j`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T05:24:45.304Z  
+> **Harvest Timestamp**: 2026-10-28T22:59:10.759Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: LangChain4j is an idiomatic, open-source Java library for building LLM-powered applications on the JVM. It offers a unified API over popular LLM providers and vector stores, and makes implementing tool calling (including MCP support), agents and RAG easy. It integrates seamlessly with enterprise Java frameworks like Quarkus and Spring Boot.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13313 stars
+- **Stars / Engagement**: 13318 stars
 
 ---
 
@@ -838,93 +838,408 @@ public class TokenStreamToStringFlowAdapter : TokenStreamAdapter {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `98f6a44f` (2026-10-27)
-**Commit Message**: Fix DefaultMcpClientTest compilation
+### Incident Patch 1: `ae867994` (2026-10-28)
+**Commit Message**: Update dependency com.google.guava:guava to v33 [SECURITY] (#6877)
 
-#6703 added tests that stub McpTransport.executeOperationWithResponse(...),
-which #6824 removed in favour of sendRequest(...). Both PRs were green on
-their own, but main no longer compiled after both were merged.
+This PR contains the following updates:
 
-**File**: `langchain4j-mcp/src/test/java/dev/langchain4j/mcp/client/DefaultMcpClientTest.java` (modified, +11/-11)
+| Package | Change |
+[Age](https://docs.renovatebot.com/merge-confidence/) |
+[Confidence](https://docs.renovatebot.com/merge-confidence/) |
+|---|---|---|---|
+| [com.google.guava:guava](https://redirect.github.com/google/guava) |
+`32.1.3-jre` → `33.7.2-jre` |
+![age](https://developer.mend.io/api/mc/badges/age/maven/com.google.guava:guava/33.7.2-android?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/com.google.guava:guava/32.1.3-jre/33.7.2-jre?slim=true)
+|
+
+---
+
+> [!WARNING]
+> Some dependencies could not be looked up. Check the [Dependency
+Dashboard](../issues/2069) for more information.
+
+---
+
+### Guava vulnerable to insecure use of temporary directory
+[CVE-2023-2976](https://nvd.nist.gov/vuln/detail/CVE-2023-2976) /
+[GHSA-7g45-4rm6-3mm3](https://redirect.github.com/advisories/GHSA-7g45-4rm6-3mm3)
+
+<details>
+<summary>More information</summary>
+
+#### Details
+Use of Java's default temporary directory for file creation in
+`FileBackedOutputStream` in Google Guava versions 1.0 to 31.1 on Unix
+systems and Android Ice Cream Sandwich allows other u
+
+**File**: `langchain4j-qdrant/pom.xml` (modified, +1/-1)
 ```diff
-@@ -580,7 +580,7 @@ public void async_tool_timeout_cancellation_is_supplied_with_its_context_before_
-     private static List<String> verifyTimeoutCancellationOrder(
-             java.util.function.Consumer<DefaultMcpClient> operation) {
-         final McpTransport transport = getMinimalMcpTransportMock();
--        when(transport.executeOperationWithResponse(any(McpCallContext.class)))
-+        when(transport.sendRequest(any(McpCallContext.class)))
-                 .thenAnswer(invocation -> new CompletableFuture<>());
-         List<String> events = java.util.Collections.synchronizedList(new ArrayList<>());
-         AtomicReference<Long> toolCallId = new AtomicReference<>();
-@@ -1331,9 +1331,9 @@ public void mrtr_max_retries_exceeded_should_throw() throws Exception {
-     public void mrtr_max_retries_exceeded_should_be_reported_to_listeners() {
-         final McpTransport transport = getModernMcpTransportMock();
-         ObjectNode inputRequired = buildInputRequiredResponse(true, false);
--        when(transport.executeOperationWithResponse(any(McpCallContext.class)))
--                .thenReturn(CompletableFuture.completedFuture(getDiscoverResult()))
--                .thenReturn(CompletableFuture.completedFuture(inputRequired));
-+        when(transport.sendRequest(any(McpCallContext.class)))
-+                .thenReturn(CompletableFuture.completedFuture(getDiscoverResult().toString()))
-+                .thenReturn(CompletableFuture.completedFuture(inputRequired.toString()));
-         McpClientListener listener = mock(McpClientListener.class);
-         DefaultMcpClient client = createMcpClient(transport, listener);
+@@ -40,7 +40,7 @@
+         <dependency>
+             <groupId>com.google.guava</groupId>
+             <artifactId>guava</artifactId>
+-            <version>32.1.3-jre</version>
++            <version>33.7.2-jre</version>
+         </dependency>
  
-@@ -1352,9 +1352,9 @@ public void mrtr_max_retries_exceeded_should_be_reported_to_listeners() {
-     public void mrtr_max_retries_exceeded_for_resource_should_be_reported_to_listeners() {
-         final McpTransport transport = getModernMcpTransportMock();
-         ObjectNode inputRequired = buildInputRequiredResponse(true, false);
--        when(transport.executeOperationWithResponse(any(McpCallContext.class)))
--                .thenReturn(CompletableFuture.completedFuture(getDiscoverResult()))
--                .thenReturn(CompletableFuture.completedFuture(inputRequired));
-+        when(transport.sendRequest(any(McpCallContext.class)))
-+                .thenReturn(CompletableFuture.completedFuture(getDiscoverResult().toString()))
-+                .thenReturn(CompletableFuture.completedFuture(inputRequired.toString()));
-         McpClientListener listener = mock(McpClientListener.class);
-         DefaultMcpClient client = createMcpClient(transport, listener);
- 
-@@ -1368,7 +1368,7 @@ public void mrtr_max_retries_exceeded_for_resource_should_be_reported_to_listene
-     @Test
-     public void interrupted_tool_execution_should_be_reported_to_listeners() {
-         final McpTransport transport = getMinimalMcpTransportMock();
--        when(transport.executeOperationWithResponse(any(McpCallContext.class)))
-+        when(transport.sendRequest(any(McpCallContext.class)))
-                 .thenAnswer(invocation -> new CompletableFuture<>());
-         McpClientListener listener = mock(McpClientListener.class);
-         DefaultMcpClient client = new DefaultMcpClient.Builder()
-@@ -1414,7 +1414,7 @@ public void interrupted_prompt_get_should_be_reported_to_listeners() {
- 
-     private static DefaultMcpClient createClientWithPendingOperations(McpClientListener listener) {
-         final McpTransport transport = getMinimalMcpTransportMock();
--        when(transport.executeOperationWithResponse(any(McpCallContext.class)))
-+        when(transport.sendRequest(any(McpCallContext.class)))
-                 .thenAnswer(invocation -> new CompletableFuture<>());
-         return new DefaultMcpClient.Builder()
-                 .transport(transport)
-@@ -1436,7 +1436,7 @@ private static void runInterrupted(ThrowingCallable operation) {
-     @Test
-     public void tool_timeout_cancellation_is_supplied_with_the_invocation_context_of_the_tool_call() {
-         final McpTransport transport = getMinimalMcpTransportMock();
--        when(transport.executeOperationWithResponse(any(McpCallContext.class)))
-+        when(transport.sendRequest(any(McpCallContext.class)))
-                 .thenAnswer(invocation -> new CompletableFuture<>());
-         InvocationContext invocationContext = InvocationContext.builder().build();
-         AtomicReference<McpCallContext> cancellationContext = new AtomicReference<>();
-@@ -1463,7 +1463,7 @@ public void tool_timeout_cancellation_is_supplied_with_the_invocation_context_of
-     public void async_tool_execution_failing_to_send_should_be_reported_to_listeners() {
-         final McpTransport transport = getMinimalMcpTransportMock();
-         IllegalStateException failure = new IllegalStateException("transport is closed");
--        when(transport.executeOperationWithResponse(any(McpCallContext.class))).thenThrow(failure);
-+        when(transport.sendRequest(any(McpCallContext.class))).thenThrow(failure);
+         <!-- test dependencies -->
+```
 
+---
+
+### Incident Patch 2: `e3804fc6` (2026-10-28)
+**Commit Message**: fix(agentic): handle multimodal user messages in the agentic context (#6873)
+
+## Issue
+
+Closes #6872
+
+## Change
+
+The context features of agentic systems called
+`UserMessage.singleText()` on user messages that can be multimodal, so
+they failed with `RuntimeException: Expecting single text content` as
+soon as an agent received an image, like the agents of
+`MultimodalAgentsIT`:
+
+- an agent declaring `context(...)` or `summarizedContext(...)` failed
+when it received an image itself (`UserMessageTransformer.apply`);
+- once a multimodal agent had run, every later agent using
+`summarizedContext(...)`, and a supervisor using the `SUMMARIZATION` or
+`CHAT_MEMORY_AND_SUMMARIZATION` context strategy, failed while building
+the conversation (`DefaultAgenticScope.contextAsConversation`).
+
+This PR follows what
+`DefaultAiServices.appendOutputFormatInstructions(...)` does for the
+output format instructions (#3581): change one text content and keep
+everything else.
+
+- `UserMessageTransformer`: the transformation is applied to the first
+text content of the user message, the other contents (images, ...) stay
+in place, and the message is copied with `toBuilder()`, so its name and
+attributes are kept too
+
+**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/internal/UserMessageTransformer.java` (modified, +47/-1)
+```diff
+@@ -1,10 +1,16 @@
+ package dev.langchain4j.agentic.internal;
+ 
++import static dev.langchain4j.internal.Utils.isNullOrEmpty;
++
+ import dev.langchain4j.data.message.ChatMessage;
++import dev.langchain4j.data.message.Content;
++import dev.langchain4j.data.message.TextContent;
+ import dev.langchain4j.data.message.UserMessage;
+ import dev.langchain4j.model.chat.request.ChatRequest;
++import java.util.ArrayList;
+ import java.util.List;
+ import java.util.function.BiFunction;
++import java.util.stream.Collectors;
+ 
+ @FunctionalInterface
+ public interface UserMessageTransformer extends BiFunction<ChatRequest, Object, ChatRequest> {
+@@ -14,7 +20,7 @@ default ChatRequest apply(ChatRequest chatRequest, Object memoryId) {
+         List<ChatMessage> messages = chatRequest.messages();
+         for (int i = messages.size() - 1; i >= 0; i--) {
+             if (messages.get(i) instanceof UserMessage userMessage) {
+-                UserMessage transformedMessage = UserMessage.from(transformUserMessage(userMessage.singleText(), memoryId));
++                UserMessage transformedMessage = transformText(userMessage, memoryId);
+                 List<ChatMessage> modifiedMessages = chatRequest.messages().stream()
+                         .map(message -> message == userMessage ? transformedMessage : message)
+                         .toList();
+@@ -27,5 +33,45 @@ default ChatRequest apply(ChatRequest chatRequest, Object memoryId) {
+         return chatRequest;
+     }
+ 
++    /**
++     * Transforms the text of the given user message, as returned by {@link #text(UserMessage)}, keeping its other
++     * contents, like images, as well as its name and attributes. The transformed text replaces all the text contents
++     * with a single one, in the position of the first of them. A message without any text, like a message made only
++     * of an image, gets the transformation of an empty text as its first content, unless it is empty.
++     */
++    private UserMessage transformText(UserMessage userMessage, Object memoryId) {
++        String transformedText = transformUserMessage(text(userMessage), memoryId);
++
++        List<Content> contents = new ArrayList<>();
++        boolean textAdded = false;
++        for (Content content : userMessage.contents()) {
++            if (!(content instanceof TextContent)) {
++                contents.add(content);
++            } else if (!textAdded) {
++                contents.add(TextContent.from(transformedText));
++                textAdded = true;
++            }
++        }
++
++        if (!textAdded) {
++            if (isNullOrEmpty(transformedText)) {
++                return userMessage;
++            }
++            contents.add(0, TextContent.from(transformedText));
++        }
++        return userMessage.toBuilder().contents(contents).build();
++    }
++
++    /**
++     * The text contents of the given user message joined by new lines, or an empty string if it has none: the
++     * message can also have other contents, like the image sent to a multimodal agent.
++     */
++    static String text(UserMessage userMessage) {
++        return userMessage.contents().stream()
++                .filter(TextContent.class::isInstance)
++                .map(content -> ((TextContent) content).text())
++                .collect(Collectors.joining("\n"));
++    }
++
+     String transformUserMessage(String userMessage, Object memoryId);
+ }
+```
+
+**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/scope/DefaultAgenticScope.java` (modified, +18/-1)
+```diff
+@@ -14,6 +14,7 @@
+ import dev.langchain4j.agentic.declarative.TypedKey;
+ import dev.langchain4j.agentic.internal.DeferredResponse;
+ import dev.langchain4j.agentic.internal.DelayedResponse;
++import dev.langchain4j.agentic.internal.UserMessageTransformer;
+ import dev.langchain4j.agentic.observability.AgentListener;
+ import dev.langchain4j.agentic.planner.AgentInstance;
+ import dev.langchain4j.data.message.AiMessage;
+@@ -30,6 +31,7 @@
+ import java.util.Arrays;
+ import java.util.Collections;
+ import java.util.List;
++import java.util.Locale;
+ import java.util.Map;
+ import java.util.Set;
+ import java.util.concurrent.ConcurrentHashMap;
+@@ -358,7 +360,7 @@ private String contextAsConversation(Predicate<String> agentFilter) {
+             }
+             ChatMessage message = agentMessage.message();
+             if (message instanceof UserMessage userMessage) {
+-                sb.append("User: \"").append(userMessage.singleText()).append("\"\n");
++                sb.append("User: \"").append(text(userMessage)).append("\"\n");
+             } else if (message instanceof AiMessage aiMessage) {
+                 sb.append(agentMessage.agentName())
+                         .append(" agent: \"")
+@@ -372,6 +374,21 @@ private String contextAsConversation(Predicate<String> agentFilter) {
+         return contextAsConversation;
+     }
+ 
++    /**
++     * The same text of the given user message that a {@link UserMessageTransformer} transforms, or, for a message
++     * without any text, like a message made only of an image, the types of its contents, like {@code [image]}, so
++     * that the conversation still tells that the user sent something.
++     */
++    private static String text(UserMessage userMessage) {
++        String text = UserMessageTransformer.text(userMessage);
++        if (!text.isEmpty() || userMessage.contents().isEmpty()) {
++            return text;
++        }
++        return userMessage.contents().stream()
++                .map(content -> "[" + content.type().name().toLowerCase(Locale.ROOT) + "]")
++                .collect(Collectors.joining(" "));
++    }
++
+     @Override
+     public List<AgentInvocation> agentInvocations() {
+         return Collections.unmodifiableList(agentInvocations);
+```
+
+**File**: `langchain4j-agentic/src/test/java/dev/langchain4j/agentic/MultimodalAgentContextTest.java` (added, +192/-0)
+```diff
+@@ -0,0 +1,192 @@
++package dev.langchain4j.agentic;
++
++import static org.assertj.core.api.Assertions.assertThat;
++
++import dev.langchain4j.data.message.AiMessage;
++import dev.langchain4j.data.message.Content;
++import dev.langchain4j.data.message.ImageContent;
++import dev.langchain4j.data.message.TextContent;
++import dev.langchain4j.model.chat.mock.ChatModelMock;
++import dev.langchain4j.model.chat.request.ChatRequest;
++import dev.langchain4j.service.UserMessage;
++import dev.langchain4j.service.V;
++import java.util.List;
++import java.util.Map;
++import org.junit.jupiter.api.Test;
++
++class MultimodalAgentContextTest {
++
++    private static final ImageContent IMAGE = ImageContent.from("https://example.com/llamas.png");
++
++    public interface ImageDescriber {
++
++        @UserMessage("Describe the image.")
++        @Agent(outputKey = "description")
++        String describe(@UserMessage @V("image") ImageContent image);
++    }
++
++    public interface ImageOnlyDescriber {
++
++        @Agent(outputKey = "description")
++        String describe(@UserMessage @V("image") ImageContent image);
++    }
++
++    public interface ContentsDescriber {
++
++        @Agent(outputKey = "description")
++        String describe(@UserMessage @V("contents") List<Content> contents);
++    }
++
++    public interface PoemWriter {
++
++        @UserMessage("Write a poem about the described image.")
++        @Agent(outputKey = "poem")
++        String write();
++    }
++
++    @Test
++    void should_add_the_context_to_a_multimodal_user_message() {
++        ChatModelMock model = ChatModelMock.thatAlwaysResponds("Three llamas.");
++        ImageDescriber describer = AgenticServices.agentBuilder(ImageDescriber.class)
++                .chatModel(model)
++                .context(scope -> "The user loves llamas.")
++                .build();
++        UntypedAgent workflow = AgenticServices.sequenceBuilder()
++                .subAgents(describer)
++                .outputKey("description")
++                .build();
++
++        assertThat(workflow.invoke(Map.of("image", IMAGE))).isEqualTo("Three llamas.");
++
++        assertThat(userMessage(model.request()).contents())
++                .containsExactly(
++                        TextContent.from("Considering this context \"The user loves llamas.\"\nDescribe the image."),
++                        IMAGE);
++    }
++
++    @Test
++    void should_add_the_context_to_a_user_message_without_text() {
++        ChatModelMock model = ChatModelMock.thatAlwaysResponds("Three llamas.");
++        ImageOnlyDescriber describer = AgenticServices.agentBuilder(ImageOnlyDescriber.class)
++                .chatModel(model)
++                .context(scope -> "The user loves llamas.")
++                .build();
++        UntypedAgent workflow = AgenticServices.sequenceBuilder()
++                .subAgents(describer)
++                .outputKey("description")
++                .build();
++
++        assertThat(workflow.invoke(Map.of("image", IMAGE))).isEqualTo("Three llamas.");
++
++        assertThat(userMessage(model.request()).contents())
++                .containsExactly(TextContent.from("Considering this context \"The user loves llamas.\"\n"), IMAGE);
++    }
++
++    @Test
++    void should_leave_a_user_message_without_text_unchanged_when_the_context_is_empty() {
++        ChatModelMock model = ChatModelMock.thatAlwaysResponds("Three llamas.");
++        ImageOnlyDescriber describer = AgenticServices.agentBuilder(ImageOnlyDescriber.class)
++                .chatModel(model)
++                .context(scope -> "")
++                .build();
++        UntypedAgent workflow = AgenticServices.sequenceBuilder()
++                .subAgents(describer)
++                .outputKey("description")
++                .build();
++
++        assertThat(workflow.invoke(Map.of("image", IMAGE))).isEqualTo("Three llamas.");
++
++        assertThat(userMessage(model.request()).contents()).containsExactly(IMAGE);
++    }
++
++    @Test
++    void should_add_the_context_to_all_the_text_of_a_user_message_with_several_text_contents() {
++        ChatModelMock model = ChatModelMock.thatAlwaysResponds("Three llamas.");
++        ContentsDescriber describer = AgenticServices.agentBuilder(ContentsDescriber.class)
++                .chatModel(model)
++                .context(scope -> "The user loves llamas.")
++                .build();
++        UntypedAgent workflow = AgenticServices.sequenceBuilder()
++                .subAgents(describer)
++                .outputKey("description")
++                .build();
++
++        List<Content> contents = List.of(TextContent.from("Describe"), IMAGE, TextContent.from("in one sentence."));
++        assertThat(workflow.invoke(Map.of("contents", contents))).isEqualTo("Three llamas.");
++
++        assertThat(userMessage(model.request()).contents())
++                .containsExactly(
++                        TextContent.from(
++                                "Considering this context \"The user loves llamas.\"\nDescribe\nin one sentence."),
++                     
+```
+
+---
+
+### Incident Patch 3: `ab1dacc5` (2026-10-28)
+**Commit Message**: Docs: explain the Windows msvcp140.dll requirement of ONNX Runtime
+
+ONNX Runtime 1.21.0 and newer needs msvcp140.dll 14.40 or newer on Windows.
+JDKs that ship an older copy in their bin folder fail to load onnxruntime.dll
+with "A dynamic link library (DLL) initialization routine failed".
+
+**File**: `docs/docs/integrations/embedding-models/1-in-process.md` (modified, +7/-0)
+```diff
+@@ -40,6 +40,13 @@ Embedding embedding = response.content();
+ 
+ The complete list of all embedding models can be found [here](https://github.com/langchain4j/langchain4j/tree/main/embeddings).
+ 
++:::note Windows
++ONNX runtime needs version 14.40 or newer of the Microsoft Visual C++ runtime library `msvcp140.dll`.
++Many JDKs ship their own copy of this file in their `bin` folder, and Windows uses that copy first.
++If your JDK ships an older copy, the model fails to load, and the root cause of the error is
++`java.lang.UnsatisfiedLinkError: ...\onnxruntime.dll: A dynamic link library (DLL) initialization routine failed`.
++To fix it, update your JDK to a recent build that ships `msvcp140.dll` version 14.40 or newer.
++:::
+ 
+ ## Parallelization
+ 
+```
+
+**File**: `docs/docs/integrations/scoring-reranking-models/in-process.md` (modified, +8/-0)
+```diff
+@@ -35,6 +35,14 @@ Double score = response.content();
+ 
+ `OnnxScoringModel` implements `AutoCloseable`; close it when it is no longer needed to release its native resources.
+ 
++:::note Windows
++ONNX runtime needs version 14.40 or newer of the Microsoft Visual C++ runtime library `msvcp140.dll`.
++Many JDKs ship their own copy of this file in their `bin` folder, and Windows uses that copy first.
++If your JDK ships an older copy, the model fails to load, and the root cause of the error is
++`java.lang.UnsatisfiedLinkError: ...\onnxruntime.dll: A dynamic link library (DLL) initialization routine failed`.
++To fix it, update your JDK to a recent build that ships `msvcp140.dll` version 14.40 or newer.
++:::
++
+ If you want to use the GPU, `onnxruntime_gpu` version can be found
+ [here](https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html).
+ ```xml
+```
+
+**File**: `docs/docs/tutorials/rag.md` (modified, +2/-0)
+```diff
+@@ -108,6 +108,8 @@ adjusting and customizing more and more aspects.
+     <version>1.22.0-beta32</version>
+ </dependency>
+ ```
++On Windows, Easy RAG needs a recent JDK, because it runs an in-process embedding model.
++See the Windows note on the [In-process (ONNX)](/integrations/embedding-models/in-process) page.
+ 
+ 2. Let's load your documents:
+ ```java
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6896** (2026-10-28): Validate the types of metadata filter comparison values (@dliubarskyi)
+- **PR #6895** (2026-10-28): Bind metadata filter values as parameters (pgvector, MariaDB) and map them strictly (Milvus, MongoDB Atlas, Chroma) (@dliubarskyi)
+- **PR #6879** (2026-10-28): Also skip Vespa integration test when the flag -DskipITs is used (@mariofusco)
+- **PR #6877** (2026-10-28): Update dependency com.google.guava:guava to v33 [SECURITY] (@renovate[bot])
 - **PR #6876** (2026-10-27): Skills: follow symbolic links only within the skill directory (@dliubarskyi)
 - **PR #6875** (2026-10-27): Report to agent listeners the model response of each invocation, also when the same agent runs concurrently (@mariofusco)
-- **PR #6861** (2026-10-27): Agentic: don't report a token total of several models under one model name (@dliubarskyi)
-- **PR #6860** (2026-10-27): chore(deps): bump postcss-selector-parser in /docs (@dependabot[bot])
-- **PR #6853** (2026-10-27): Update dependency org.jacoco:jacoco-maven-plugin to v0.8.16 (@renovate[bot])
-- **PR #6852** (2026-10-27): Update dependency org.infinispan.protostream:protostream-processor to v6.0.12 (@renovate[bot])
 
 ---
 
@@ -944,48 +1259,28 @@ their own, but main no longer compiled after both were merged.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. DefaultMcpClientTest compilation
+## X. Update dependency com.google.guava:guava to v33 [SECURITY] (#6877)
 
 **RULE**:
-When implementing operations in `langchain4j-mcp/src/test/java/dev/langchain4j/mcp/client/DefaultMcpClientTest.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `langchain4j-qdrant/pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `98f6a44f`: DefaultMcpClientTest compilation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ae867994`: Update dependency com.google.guava:guava to v33 [SECURITY] (#6877). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `langchain4j-mcp/src/test/java/dev/langchain4j/mcp/client/DefaultMcpClientTest.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `langchain4j-qdrant/pom.xml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-        when(transport.sendRequest(any(McpCallContext.class)))
-        when(transport.sendRequest(any(McpCallContext.class)))
-                .thenReturn(CompletableFuture.completedFuture(getDiscoverResult().toString()))
-                .thenReturn(CompletableFuture.completedFuture(inputRequired.toString()));
-        when(transport.sendRequest(any(McpCallContext.class)))
-                .thenReturn(CompletableFuture.completedFuture(getDiscoverResult().toString()))
-                .thenReturn(CompletableFuture.completedFuture(inputRequired.toString()));
-        when(transport.sendRequest(any(McpCallContext.class)))
-        when(transport.sendRequest(any(McpCallContext.class)))
-        when(transport.sendRequest(any(McpCallContext.class)))
-        when(transport.sendRequest(any(McpCallContext.class))).thenThrow(failure);
+            <version>33.7.2-jre</version>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-        when(transport.executeOperationWithResponse(any(McpCallContext.class)))
-        when(transport.executeOperationWithResponse(any(McpCallContext.class)))
-                .thenReturn(CompletableFuture.completedFuture(getDiscoverResult()))
-                .thenReturn(CompletableFuture.completedFuture(inputRequired));
-        when(transport.executeOperationWithResponse(any(McpCallContext.class)))
-                .thenReturn(CompletableFuture.completedFuture(getDiscoverResult()))
-                .thenReturn(CompletableFuture.completedFuture(inputRequired));
-        when(transport.executeOperationWithResponse(any(McpCallContext.class)))
-        when(transport.executeOperationWithResponse(any(McpCallContext.class)))
-        when(transport.executeOperationWithResponse(any(McpCallContext.class)))
-        when(transport.executeOperationWithResponse(any(McpCallContext.class))).thenThrow(failure);
+            <version>32.1.3-jre</version>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `98f6a44f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ae867994` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T22:52:18.410Z",
+  "last_updated": "2026-10-28T22:59:11.465Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2272,14 +2272,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-      "content_hash": "aa7294eec6d07e53a111e3c852964c329ea17a6d692286afa34eb1ebe576272e",
-      "verified_at": "2026-10-25T12:38:58.009Z",
+      "content_hash": "17e709faa90a7e313ab28b35a730513eca3da84637e07acde4d2174add79ea58",
+      "verified_at": "2026-10-28T22:58:57.157Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T12:38:58.009Z"
+      "last_updated": "2026-10-28T22:58:57.157Z"
     },
     "amplifthq/opentag": {
       "repository": "amplifthq/opentag",
@@ -2316,14 +2316,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nguyenphutrong-quotio",
-      "content_hash": "871525d88a20911bb5d57cb15c3bbdeb735ac995ed34940af0fc827e8ea846a4",
-      "verified_at": "2026-10-25T08:58:12.480Z",
+      "content_hash": "5e8ebec68884375ee4f1c93b4c5796e26d26e15073ffa35ad70ebfc85c4db7b2",
+      "verified_at": "2026-10-28T22:58:58.483Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T08:58:12.480Z"
+      "last_updated": "2026-10-28T22:58:58.483Z"
     },
     "pathwaycom/serviette": {
       "repository": "pathwaycom/serviette",
@@ -3891,14 +3891,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-authzed-spicedb",
-      "content_hash": "9ffc0209b7ae867a50cb47be25812331ba0cbd99130b2feb77ae6e28d8b4a66b",
-      "verified_at": "2026-10-28T00:05:58.084Z",
+      "content_hash": "d285d027494ac53b7635c474bcd7b18d6335a61bf06235674d0ba56f449345b4",
+      "verified_at": "2026-10-28T22:59:06.592Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T00:05:58.084Z"
+      "last_updated": "2026-10-28T22:59:06.592Z"
     },
     "hashicorp/boundary": {
       "repository": "hashicorp/boundary",
@@ -11076,14 +11076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-langchain4j-langchain4j",
-      "content_hash": "bbf12fb852f49b11183e0a8a7ef6421cb8f5be9a9fa65ab5935a1cecdf9f1317",
-      "verified_at": "2026-10-28T05:24:45.748Z",
+      "content_hash": "24db3cda644cef48be90c37bda4832d6fd6f0133f782776dc5a37588644c2b37",
+      "verified_at": "2026-10-28T22:59:11.465Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T05:24:45.748Z"
+      "last_updated": "2026-10-28T22:59:11.465Z"
     },
     "railwayapp/nixpacks": {
       "repository": "railwayapp/nixpacks",

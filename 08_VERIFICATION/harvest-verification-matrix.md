@@ -5978,3 +5978,7 @@
 | `CYCLE-20261028-LZFG` | `2026-10-28T22:52:11.548Z` | `fishaudio/drama-3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md` | Yes (`3a711a92...`) |
 | `CYCLE-20261028-M0HD` | `2026-10-28T22:52:12.913Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5443` | Yes (`5928d835...`) |
 | `CYCLE-20261028-M4PR` | `2026-10-28T22:52:18.399Z` | `thaw-app/Thaw` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5444` | Yes (`c3c7e033...`) |
+| `CYCLE-20261028-UODV` | `2026-10-28T22:58:57.139Z` | `dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md` | Yes (`17e709fa...`) |
+| `CYCLE-20261028-UPEV` | `2026-10-28T22:58:58.471Z` | `nguyenphutrong/quotio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5445` | Yes (`5e8ebec6...`) |
+| `CYCLE-20261028-UVO3` | `2026-10-28T22:59:06.579Z` | `authzed/spicedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5446` | Yes (`d285d027...`) |
+| `CYCLE-20261028-UZFG` | `2026-10-28T22:59:11.452Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5447` | Yes (`24db3cda...`) |
