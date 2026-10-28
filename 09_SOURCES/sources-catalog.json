@@ -515,8 +515,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4.1-flash",
     "license": "Open-Source",
-    "contentHash": "9d31fed7497129d49bbffd92e5c857cd22e6130a32bcf02deccb160668affa3c",
-    "lastHarvestedAt": "2026-10-25T14:44:27.917Z",
+    "contentHash": "a0497ef37b2f4a78dc1de2cc23b1fa368de508d1bc9a78d965e3f120f5eb3b85",
+    "lastHarvestedAt": "2026-10-28T07:23:17.077Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash"
   },
   "hf-akatz-ai-minimax-h3-character-swap-lora": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "73085699",
+    "sourceVersion": "9d3ad377",
     "license": "Apache-2.0",
-    "contentHash": "ef973ae5ed53d005ea72d39c611fc33312fa495285a7da565243ecb37c3c9545",
-    "lastHarvestedAt": "2026-10-27T20:11:41.865Z",
+    "contentHash": "fed3393918af7e6aabaae5c52bc0b6837b5b26a5d266dd5a47b60f8f55c78749",
+    "lastHarvestedAt": "2026-10-28T07:24:15.246Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2293,10 +2293,10 @@
     "repository": "Ontos-AI/knowhere",
     "platform": "github",
     "sourceUrl": "https://github.com/Ontos-AI/knowhere",
-    "sourceVersion": "e025ca1a",
+    "sourceVersion": "23ab68c2",
     "license": "Apache-2.0",
-    "contentHash": "b2658a611c3bd8b95f348fef620e09bd867e4702e88c41d42a5db18414d4ac3c",
-    "lastHarvestedAt": "2026-10-27T16:58:49.504Z",
+    "contentHash": "bd8dbcf028e3e669538ed8664b388c3456844d0a9bd51f073671b74eab62601b",
+    "lastHarvestedAt": "2026-10-28T07:20:51.355Z",
     "learningId": "learn-github-ontos-ai-knowhere"
   },
   "bitterbot-ai-bitterbot-desktop": {
@@ -3613,10 +3613,10 @@
     "repository": "1jehuang/jcode",
     "platform": "github",
     "sourceUrl": "https://github.com/1jehuang/jcode",
-    "sourceVersion": "a3ef562f",
+    "sourceVersion": "2c4efdb0",
     "license": "MIT",
-    "contentHash": "db0a5fb44e5914f57bd742260d16560ee903f2ab1a2dd93832e6f22f59fab998",
-    "lastHarvestedAt": "2026-10-28T00:46:44.844Z",
+    "contentHash": "7763c7900f7c37eed469c789d592e2475159302437737e56cd246b9fcd04455c",
+    "lastHarvestedAt": "2026-10-28T07:22:17.170Z",
     "learningId": "learn-github-1jehuang-jcode"
   },
   "wix-detox": {

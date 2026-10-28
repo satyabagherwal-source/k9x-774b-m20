@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `73085699`  
+> **Source Version**: `9d3ad377`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T20:11:41.660Z  
+> **Timestamp**: 2026-10-28T07:24:14.629Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T20:11:41.385Z  
+> **Harvest Timestamp**: 2026-10-28T07:18:08.787Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -664,7 +664,7 @@ export { document } from "./instruct_dataset";
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
-export function document() {
+export function document(): string {
   const files = readdirSync(__dirname, { withFileTypes: true })
     .filter((entry) => entry.isFile() && /\.json$/i.test(entry.name))
     .map((entry) => entry.name)
@@ -678,7 +678,7 @@ export function document() {
     const source: string = readFileSync(join(__dirname, file), "utf8");
 
     try {
-      return JSON.parse(source);
+      JSON.parse(source);
     } catch (error) {
       if (error instanceof SyntaxError) {
         throw new SyntaxError(
@@ -688,9 +688,11 @@ export function document() {
       }
       throw error;
     }
+
+    return source.replace(/("(?:[^"\\]|\\.)*")|\s+/g, "$1");
   });
 
-  return [...datasets];
+  return `[${datasets.join(",")}]`;
 }
 
 ```
@@ -932,691 +934,73 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `73085699` (2026-10-27)
-**Commit Message**: Synthesize ARC dataset pairs instead of copying
+### Incident Patch 1: `9d3ad377` (2026-10-27)
+**Commit Message**: Return minified JSON string from dataset document()
 
-Update the arc-dataset agent instructions so datasets contain freshly synthesized example pairs that follow the puzzle's rule, rather than verbatim copies of training grids. The agent must sample new grid sizes, shapes, colors and positions, and no matrix may equal any grid under arc/src/data. It must also record the synthesizer path and seed, add an output_canvas field, and normalize numbers in the runtime JSON output.
+document() now returns a string: a JSON array of the dataset files, each validated and minified by stripping whitespace between tokens. String contents, numbers, and key order are preserved exactly as written.
 
-Regenerate dataset.28bf18c6.json with three synthesized pairs and update the matching README paragraph. Also fix two README sentences on Matrix crop and pad validation, and change the default puzzle ID in app.ts to 0ca9ddb6.
+llm.ts embeds the result directly instead of re-stringifying it. The README is updated to describe the new behavior.
 
-**File**: `.claude/agents/arc-dataset.agent.md` (modified, +49/-16)
+**File**: `arc/README.md` (modified, +3/-2)
 ```diff
-@@ -1,12 +1,13 @@
- ---
- name: arc-dataset
--description: Write the ARC instruction dataset for a given training puzzle, annotating the train pairs of arc/src/data/training/<id>.json with a Nucleoid world model in arc/src/dataset/dataset.<id>.json.
-+description: Write the ARC instruction dataset for a given training puzzle as synthesized example pairs that follow the rule of arc/src/data/training/<id>.json's train pairs with freshly sampled grid sizes, shapes, colors, and positions, never copies of grids in arc/src/data, annotated with a Nucleoid world model in arc/src/dataset/dataset.<id>.json.
- tools: Read, Write, Edit, Glob, Grep, Bash, PowerShell
- ---
+@@ -98,8 +98,9 @@ prompts, programs, matrices, provider settings, or scoring.
  
--You write one ARC instruction dataset. Given a puzzle ID, annotate the
--training pairs of `arc/src/data/training/<id>.json` with an object-oriented
--Nucleoid world model and save them as `arc/src/dataset/dataset.<id>.json`.
-+You write one ARC instruction dataset. Given a puzzle ID, infer the
-+transformation from the training pairs of `arc/src/data/training/<id>.json`,
-+synthesize new example pairs that follow it, annotate them with an object-oriented
-+Nucleoid world model, and save them as `arc/src/dataset/dataset.<id>.json`.
- Read and follow the [ARC instructions](../rules/arc.instructions.md).
- 
- ## Inputs
-@@ -18,20 +19,43 @@ Read and follow the [ARC instructions](../rules/arc.instructions.md).
- 
- ## Training pairs only
- 
--Never open, print, or use the puzzle's `test` entries, including their
--dimensions. Do not read the whole puzzle file; print only its `train` pairs:
-+Never print or use the puzzle's `test` entries, including their dimensions.
-+Do not read the whole puzzle file; print only its `train` pairs:
- 
-     node -e "console.log(JSON.stringify(require('./arc/src/data/training/<id>.json').train))"
- 
--The dataset contains only those pairs, copied verbatim and in order.
-+Use them only to infer the transformation. Only the collision check below
-+reads other puzzle data, and it prints no puzzle contents.
-+
-+## Synthesize new examples
-+
-+Never copy the puzzle's examples. Write a throwaway synthesizer outside the
-+repository: a seeded generator for the inferred transformation that samples
-+every parameter the transformation leaves free and renders each input and its
-+output. Synthesize as many pairs as the puzzle has training pairs:
-+
-+- Sample grid sizes, object sizes, object counts, colors, and positions, not
-+  only colors and positions. Wherever the transformation allows, vary sizes
-+  across pairs and away from the puzzle's, within ARC's 1 to 30 cells per
-+  side. Keep everything it depends on: a rule that repeats one object keeps
-+  one object, but its canvas and the object may take any size.
-+- Where shapes are free, draw new ones instead of reusing, recoloring, or
-+  moving the puzzle's.
-+- No `input_matrix` or `output_matrix` may equal any grid under
-+  `arc/src/data/`: training or evaluation, input or output, train or test.
-+- Keep the pairs as informative as the puzzle's: if its pairs rule out an
-+  alternative rule, such as mirroring instead of repeating, so must yours.
-+- Hand off the synthesizer's path and seed so the pairs can be reviewed and
-+  regenerated.
- 
- ## Follow the existing datasets
- 
- Before writing, read `arc/src/dataset/dataset.28bf18c6.json`, at least one
- other dataset, and the "Instruction datasets" and "Analysis" sections of
- `arc/README.md`. Match their structure, key order, and formatting exactly:
- 
--- Top level: `declarations`, then `dataset` with one entry per training pair.
-+- Top level: `declarations`, `output_canvas` (`EXACT` or `FIT`, inferred from
-+  the pairs), then `dataset` with one entry per pair.
- - Each pair: `input_matrix`, `output_matrix`, `instances`.
- - Each instance: `instance_name`, `input_x`, `output_x`, `input_y`,
-   `output_y`, `input_orientation`, `output_orientation`,
-@@ -48,8 +72,8 @@ other dataset, and the "Instruction datasets" and "Analysis" sections of
-   transformation needs, such as categorical colors.
- - The remaining declarations are declarative `$Obj` rules, using `if` for
-   conditions and `$Obj.x@first` for a property's value before the rules ran.
--  One rule set must explain every training pair: no per-pair or per-instance
--  cases, puzzle IDs, or hard-coded grids. Properties created by rules stay
-+  One rule set must explain the training pairs and every new pair: no per-pair
-+  or per-instance cases, puzzle IDs, or hard-coded grids. Properties created by rules stay
-   absent from input states rather than receiving artificial defaults.
- - A tag is `l` followed by four digits and names a geometry. Reuse the tag an
-   existing dataset uses for the same geometry; otherwise mint one unused
-@@ -84,34 +108,43 @@ instead of writing a partial or special-cased dataset.
-   `nucleoid --json <file>`. For `input_value` the file holds `declarations[0]`
-   and the implementation; for `output_value`, all declarations and the
-   implementation, joined by blank lines. Keep program files in a temporar
+ The synchronous `document()` function reads every JSON file in `src\dataset`,
+ alongside `instruct_dataset.ts`, on each call, independently of the working directory.
+-Files are sorted by name and serialized as one
+-`{"datasets": [...]}` document, with a separate array entry per file.
++Files are sorted by name, validated, and minified by removing the whitespace
++between JSON tokens; string contents, numbers, and key order stay exactly as
++written. They are returned as one JSON array, with a separate entry per file.
+ New files, including `dataset.core.2.json`, need no additional imports.
+ Non-JSON files and subdirectories are ignored. An empty dataset directory,
+ unreadable files, or malformed JSON fail explicitly; JSON errors name the file.
 ```
 
-**File**: `arc/README.md` (modified, +20/-16)
+**File**: `arc/src/dataset/instruct_dataset.ts` (modified, +5/-3)
 ```diff
-@@ -125,17 +125,23 @@ remain anchored to the input point. Orientation is 0 in both states because
- the patterns are symmetric. Held-out inputs and outputs are not included.
- The dataset is discovered automatically by `document()`.
- 
--`dataset.28bf18c6.json` annotates only the three training pairs from
--`src\data\training\28bf18c6.json`, with one shape instance per pair.
--Each output places two copies of the shape's crop side by side on a new
--3 by 6 canvas. Unconditional class-level rules hold for every instance,
--whatever its `color`: they introduce `repeat_count` (2, the total number of
--copies) and `repeat_direction` (`right`), which are absent before the rules
--run, and move `x` and `y` to the output origin 0. Tags identify the geometry:
--`l9100` is a single shape and `l4305` is the shape repeated side by side.
--Input masks retain the 8 by 8 input canvas and output masks the 3 by 6 output
--canvas. Orientation is 0 in both states because the shapes are not rotated.
--Held-out inputs and outputs are not included.
-+`dataset.28bf18c6.json` follows the rule of `src\data\training\28bf18c6.json`
-+with three synthesized pairs instead of copies of its grids, one shape instance
-+per pair. A seeded generator sampled their canvas sizes (7 by 10, 6 by 5, and
-+11 by 11, rows by columns), shape sizes (2 by 4, 4 by 2, and 2 by 3), colors,
-+and positions, all different from the puzzle's 8 by 8 canvases and 3 by 3
-+shapes, and no matrix equals a grid in `src\data`. Each shape is left-right
-+asymmetric, so the pairs still distinguish repeating from mirroring.
-+Each output places two copies of the shape's crop side by side on a new canvas
-+twice as wide as the crop: 2 by 8, 4 by 4, and 2 by 6. Unconditional
-+class-level rules hold for every instance, whatever its `color`: they introduce
-+`repeat_count` (2, the total number of copies) and `repeat_direction`
-+(`right`), which are absent before the rules run, and move `x` and `y` to the
-+output origin 0. Tags identify the geometry: `l9100` is a single shape and
-+`l4305` is the shape repeated side by side. Input masks retain each pair's
-+input canvas and output masks its output canvas. Orientation is 0 in both
-+states because the shapes are not rotated. Held-out inputs and outputs are not
-+included.
- 
- ## ARC proposal agent
- 
-@@ -415,8 +421,7 @@ input's dimensions, and `FIT` crops it to its nonzero bounding box with
- around all nonzero cells. All-zero borders are removed from all four sides:
- top, bottom, left, and right. Internal zeros and empty rows or columns between
- occupied cells are preserved. Empty and all-zero matrices return `[]`. The input
--is not modified. Ragged matrices and non-finite or nonnumeric cells are rejected
--explicitly.
-+is not modified. Ragged matrices are rejected explicitly.
- This standalone utility does not change the full-size instance masks or return
- position metadata. Use `Matrix.locate` to retain the original position with
- the crop.
-@@ -434,9 +439,8 @@ minimums, placing the input at the required zero-based column and row offsets
- and filling the remaining cells with zeros. Each dimension grows as needed to
- include the entire input and its placement offset instead of rejecting an
- undersized reference. It does not center or modify the input. Empty matrices
--can be padded to an all-zero canvas. Invalid matrices and dimensions or offsets
--that are not non-negative safe integers are still rejected, including unsafe
--expanded dimensions.
-+can be padded to an all-zero canvas. Ragged matrices and negative dimensions or
-+offsets are still rejected.
- 
- The same prediction path replays every training pair before predicting the
- held-out input. A training mismatch stops the run. Held-out predictions are
-```
-
-**File**: `arc/src/app.ts` (modified, +1/-1)
-```diff
-@@ -7,7 +7,7 @@ import * as nucleoid from "./lib/nucleoid";
- import * as terminal from "./lib/terminal";
- 
- // Genesis puzzle_id: 3aa6fb7a
--export async function start(puzzle_id: string = "3aa6fb7a") {
-+export async function start(puzzle_id: string = "0ca9ddb6") {
-   if (!/^[0-9a-f]{8}$/.test(puzzle_id)) {
-     throw new Error("Puzzle ID must be eight lowercase hexadecimal characters");
-   }
-```
-
-**File**: `arc/src/dataset/dataset.28bf18c6.json` (modified, +78/-80)
-```diff
-@@ -11,139 +11,137 @@
-   "dataset": [
-     {
-       "input_matrix": [
--        [0, 0, 0, 0, 0, 0, 0, 0],
--        [0, 8, 8, 0, 0, 0, 0, 0],
--        [0, 0, 8, 0, 0, 0, 0, 0],
--        [0, 8, 8, 8, 0, 0, 0, 0],
--        [0, 0, 0, 0, 0, 0, 0, 0],
--        [0, 0, 0, 0, 0, 0, 0, 0],
--        [0, 0, 0, 0, 0, 0, 0, 0],
--        [0, 0, 0, 0, 0, 0, 0, 0]
-+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-+        [0, 0, 0, 7, 7, 7, 7, 0, 0, 0],
-+        [0, 0, 0, 7, 0, 7, 7, 0, 0, 0],
-+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-       ],
-       "output_matrix": [
--        [8, 8, 0, 8, 8, 0],
--        [0, 8, 0, 0, 8, 0],
--        [8, 8, 8, 8, 8, 8]
-+        [7, 7, 7, 7, 7, 7, 7, 7],
-+        [7, 0, 7, 7, 7, 0, 7, 7]
-       ],
-       "instances": [
-         {
--          "instance_name": "obj9ceabcd1c8a0",
--          "input_x": 1,
-+          "instance_name": "obj8341be96ecca",
-+          "input_x": 3,
-           "output_x": 0,
-           "input_y": 1,
-           "output_y": 0,
-           "input_orientation": 0,
-           "output_orientation": 0,
-           "input_instance_matrix": [
--            [0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 8, 8, 0, 0, 0, 0, 0],
--            [0, 0, 8, 0, 0, 0, 0, 0],
--            [0, 8, 8, 8, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0]
-+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 7, 7, 7, 7, 0, 0, 0],
-+            [0, 0, 0, 7, 0, 7, 7, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-           ],
-           "output_instance_matrix": [
--            [8, 8, 0, 8, 8, 0],
--            [0, 8, 0, 0, 8, 0],
--            [8, 8, 8, 8, 8, 8]
-+            [7, 7, 7, 7, 7, 7, 7, 7],
-+            [7, 0, 7, 7, 7, 0, 7, 7]
-           ],
--          "implementation": "obj9ceabcd1c8a0 = Obj(x=1, y=1, orientation=0, color=8)",
--          "input_value": {"id":"obj9ceabcd1c8a0","x":1,"y":1,"orientation":0,"tag":"l9100","color":8},
--          "output_value": {"id":"obj9ceabcd1c8a0","x":0,"y":0,"orientation":0,"tag":"l4305","color":8,"repeat_count":2,"repeat_direction":"right"}
-+          "implementation": "obj8341be96ecca = Obj(x=3, y=1, orientation=0, color=7)",
-+          "input_value": {"color":7,"id":"obj8341be96ecca","orientation":0,"tag":"l9100","x":3,"y":1},
-+          "output_value": {"color":7,"id":"obj8341be96ecca","orientation":0,"repeat_count":2,"repeat_direction":"right","tag":"l4305","x":0,"y":0}
-         }
-       ]
-     },
-     {
-       "input_matrix": [
--        [0, 0, 0, 0, 0, 0, 0, 0],
--        [0, 0, 0, 0, 0, 0, 0, 0],
--        [0, 0, 0, 0, 0, 0, 0, 0],
--        [0, 0, 0, 0, 0, 0, 0, 0],
--        [0, 0, 0, 0, 0, 0, 0, 0],
--        [0, 0, 0, 2, 0, 0, 0, 0],
--        [0, 0, 2, 2, 2, 0, 0, 0],
--        [0, 0, 2, 2, 0, 0, 0, 0]
-+        [0, 0, 0, 0, 0],
-+        [0, 9, 0, 0, 0],
-+        [0, 9, 9, 0, 0],
-+        [0, 9, 9, 0, 0],
-+        [0, 9, 9, 0, 0],
-+        [0, 0, 0, 0, 0]
-       ],
-       "output_matrix": [
--        [0, 2, 0, 0, 2, 0],
--        [2, 2, 2, 2, 2, 2],
--        [2, 2, 0, 2, 2, 0]
-+        [9, 0, 9, 0],
-+        [9, 9, 9, 9],
-+        [9, 9, 9, 9],
-+        [9, 9, 9, 9]
-       ],
-       "instances": [
-         {
--          "instance_name": "objdcb1dc9fa330",
--          "input_x": 2,
-+          "instance_name": "objb3dd8f0e2e42",
-+          "input_x": 1,
-           "output_x": 0,
--          "input_y": 5,
-+          "input_y": 1,
-           "output_y": 0,
-           "input_orientation": 0,
-           "output_orientation": 0,
-           "input_instance_matrix": [
--            [0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 0, 0, 0, 0, 0],
--            [0, 0, 0, 2, 0, 0, 0, 0],
--            [0, 0, 2, 2, 2, 0, 0, 0],
--            [0, 0, 2, 2, 0, 0, 0, 0]
-+            [0, 0, 0, 0, 0],
-+            [0, 9, 0, 0, 0],
-+            [0, 9, 9, 0, 0],
-+            [0, 9, 9, 0, 0],
-+            [0, 9, 9, 0, 0],
-+            [0, 0, 0, 0, 0]
-           ],
-           "output_instance_matrix": [
--            [0, 2, 0, 0, 2, 0],
--            [2, 2, 2, 2, 2, 2],
--            [2, 2, 0, 2, 2, 0]
-+            [9, 0, 9, 0],
-+            [9, 9, 9, 9],
-+            [9, 9, 9, 9],
-+            [9, 9, 9, 9]
-           ],
--          "implementation": "objdcb1dc9fa330 = Obj(x=2, y=5, orientation=0, color=2)",
--          "input_value": {"id":"objdcb1dc9fa330","x":2,"y":5,"orientation":0,"tag":"l9100","color":2},
--          "output_value": {"id":"objdcb1dc9fa330","x":0,"y":0,"orientation":0,"tag":"l4305","color":2,"repeat_count":2,"repeat_direction":"right"}
-+          "implementation": "objb3dd8f0e2e42 =
-```
-
----
-
-### Incident Patch 2: `e3de6006` (2026-10-27)
-**Commit Message**: Add primitive type annotations to arc sources
-
-Annotate primitive string, number, and boolean values on parameters, callback parameters, locals, loop counters, and synchronous return types across arc/src. Arrays, objects, destructured bindings, and async return types remain inferred.
-
-Drop redundant runtime type checks (typeof, Array.isArray, Number.isFinite/isSafeInteger) in Matrix, nucleoid, openrouter and terminal, keeping value and shape guards such as non-negative offsets and rectangular rows.
-
-The default puzzle_id in app.ts is now 3aa6fb7a, matching the Genesis comment. Also reformat a few long lines in openrouter.ts, and document the typing conventions in the README.
-
-**File**: `arc/README.md` (modified, +10/-2)
-```diff
-@@ -3,8 +3,16 @@
- ## Development
- 
- The application keeps `.ts` source files and runs directly on Node.js using
--`tsx`, without generating JavaScript files. Sources use JavaScript syntax without
--explicit TypeScript types; the TypeScript check uses non-strict inference.
-+`tsx`, without generating JavaScript files. Primitive values carry inline
-+`string`, `number`, or `boolean` annotations on parameters, including callback
-+parameters, on local variables and loop counters, and on the return types of
-+synchronous functions. Everything else stays inferred: arrays, objects,
-+destructured bindings, callback results, async return types, and payload
-+fields whose type is checked at runtime. Runtime guards check values and
-+shapes, such as non-negative offsets and rectangular rows, without repeating
-+type checks like `typeof`, `Array.isArray`, or `Number.isSafeInteger`. Sources
-+declare no interfaces, type aliases, or generics, and the TypeScript check uses
-+non-strict inference.
- Use Bun to install dependencies from the committed lockfile:
- 
- ```sh
-```
-
-**File**: `arc/src/analyzer.ts` (modified, +1/-1)
-```diff
-@@ -54,7 +54,7 @@ export async function instances({ declarations, input_matrix, output_matrix }) {
-     ],
-   });
- 
--  instances.forEach((instance, index) => {
-+  instances.forEach((instance, index: number) => {
-     terminal.grid(
-       `Object ${index + 1} · Input`,
-       instance.input_instance_matrix
-```
-
-**File**: `arc/src/app.ts` (modified, +8/-5)
-```diff
-@@ -7,7 +7,7 @@ import * as nucleoid from "./lib/nucleoid";
- import * as terminal from "./lib/terminal";
- 
- // Genesis puzzle_id: 3aa6fb7a
--export async function start(puzzle_id = "28bf18c6") {
-+export async function start(puzzle_id: string = "3aa6fb7a") {
-   if (!/^[0-9a-f]{8}$/.test(puzzle_id)) {
-     throw new Error("Puzzle ID must be eight lowercase hexadecimal characters");
-   }
-@@ -30,7 +30,7 @@ export async function start(puzzle_id = "28bf18c6") {
-     })),
-   };
- 
--  const startedAt = performance.now();
-+  const startedAt: number = performance.now();
-   terminal.header({ version: await nucleoid.version() });
-   terminal.puzzle({ train, testInput: test_input_matrix });
-   terminal.section(
-@@ -39,7 +39,7 @@ export async function start(puzzle_id = "28bf18c6") {
-     "Infer reusable objects and transformation rules"
-   );
- 
--  let instance_index = 0;
-+  let instance_index: number = 0;
- 
-   const { declarations, output_canvas } = await analyzer.declarations({
-     train_dataset: training_input,
-@@ -63,7 +63,10 @@ export async function start(puzzle_id = "28bf18c6") {
-     });
- 
-     for (const { input_instance_matrix, output_instance_matrix } of instances) {
--      const instance_name = `obj${String(instance_index++).padStart(12, "0")}`;
-+      const instance_name: string = `obj${String(instance_index++).padStart(
-+        12,
-+        "0"
-+      )}`;
- 
-       const { implementation, input_value, output_value } =
-         await analyzer.value({
-@@ -96,7 +99,7 @@ export async function start(puzzle_id = "28bf18c6") {
-     test_input_matrix,
-   });
- 
--  let test_index = 0;
-+  let test_index: number = 0;
- 
-   let result_matrix = Array.from({ length: test_input_matrix.length }, () =>
-     Array(test_input_matrix[0].length).fill(0)
-```
-
-**File**: `arc/src/dataset/instruct_dataset.ts` (modified, +2/-2)
-```diff
-@@ -11,8 +11,8 @@ export function document() {
-     throw new Error(`No JSON instruction datasets found in ${__dirname}`);
-   }
- 
--  const datasets = files.map((file) => {
--    const source = readFileSync(join(__dirname, file), "utf8");
-+  const datasets = files.map((file: string) => {
-+    const source: string = readFileSync(join(__dirname, file), "utf8");
- 
-     try {
-       return JSON.parse(source);
-```
-
-**File**: `arc/src/lib/Markdown.ts` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--export function json(markdown) {
-+export function json(markdown: string) {
-   const matches = [...markdown.matchAll(/```json([^`]+)```/g)];
- 
-   if (matches.length > 0) {
-```
-
-**File**: `arc/src/lib/Matrix.ts` (modified, +43/-61)
-```diff
-@@ -3,26 +3,20 @@ export function crop(matrix) {
- }
- 
- export function locate(matrix) {
--  if (!Array.isArray(matrix)) {
--    throw new Error("Matrix must be an array for cropping");
--  }
--  const rows = matrix.length;
--  const cols = matrix[0]?.length ?? 0;
--  let top = rows;
--  let bottom = -1;
--  let left = cols;
--  let right = -1;
--
--  for (let y = 0; y < rows; y++) {
-+  const rows: number = matrix.length;
-+  const cols: number = matrix[0]?.length ?? 0;
-+  let top: number = rows;
-+  let bottom: number = -1;
-+  let left: number = cols;
-+  let right: number = -1;
-+
-+  for (let y: number = 0; y < rows; y++) {
-     const row = matrix[y];
--    if (!Array.isArray(row) || row.length !== cols) {
-+    if (row.length !== cols) {
-       throw new Error("Matrix must be rectangular for cropping");
-     }
--    for (let x = 0; x < cols; x++) {
--      const value = row[x];
--      if (!Number.isFinite(value)) {
--        throw new Error("Matrix must contain finite numbers for cropping");
--      }
-+    for (let x: number = 0; x < cols; x++) {
-+      const value: number = row[x];
-       if (value === 0) continue;
-       top = Math.min(top, y);
-       bottom = y;
-@@ -41,48 +35,34 @@ export function locate(matrix) {
-   };
- }
- 
--export function pad(matrix, rows, cols, left, top) {
--  if (!Array.isArray(matrix)) {
--    throw new Error("Matrix must be an array for padding");
--  }
--  if (
--    !Number.isSafeInteger(rows) ||
--    !Number.isSafeInteger(cols) ||
--    rows < 0 ||
--    cols < 0
--  ) {
--    throw new Error("Padding dimensions must be non-negative safe integers");
-+export function pad(
-+  matrix,
-+  rows: number,
-+  cols: number,
-+  left: number,
-+  top: number
-+) {
-+  if (rows < 0 || cols < 0) {
-+    throw new Error("Padding dimensions must be non-negative");
-   }
--  if (
--    !Number.isSafeInteger(left) ||
--    !Number.isSafeInteger(top) ||
--    left < 0 ||
--    top < 0
--  ) {
--    throw new Error("Padding offsets must be non-negative safe integers");
--  }
--  const sourceRows = matrix.length;
--  const sourceCols = matrix[0]?.length ?? 0;
--  const paddedRows = Math.max(rows, top + sourceRows);
--  const paddedCols = Math.max(cols, left + sourceCols);
--  if (!Number.isSafeInteger(paddedRows) || !Number.isSafeInteger(paddedCols)) {
--    throw new Error("Expanded padding dimensions must be safe integers");
-+  if (left < 0 || top < 0) {
-+    throw new Error("Padding offsets must be non-negative");
-   }
-+  const sourceRows: number = matrix.length;
-+  const sourceCols: number = matrix[0]?.length ?? 0;
-+  const paddedRows: number = Math.max(rows, top + sourceRows);
-+  const paddedCols: number = Math.max(cols, left + sourceCols);
-   const result = Array.from({ length: paddedRows }, () =>
-     Array(paddedCols).fill(0)
-   );
- 
--  for (let y = 0; y < sourceRows; y++) {
-+  for (let y: number = 0; y < sourceRows; y++) {
-     const row = matrix[y];
--    if (!Array.isArray(row) || row.length !== sourceCols) {
-+    if (row.length !== sourceCols) {
-       throw new Error("Matrix must be rectangular for padding");
-     }
--    for (let x = 0; x < sourceCols; x++) {
--      const value = row[x];
--      if (!Number.isFinite(value)) {
--        throw new Error("Matrix must contain finite numbers for padding");
--      }
--      result[y + top][x + left] = value;
-+    for (let x: number = 0; x < sourceCols; x++) {
-+      result[y + top][x + left] = row[x];
-     }
-   }
- 
-@@ -93,15 +73,17 @@ export function merge(...matrices) {
-   if (matrices.length === 0) {
-     throw new Error("At least one matrix is required for merging");
-   }
--  const numRows = Math.max(...matrices.map((matrix) => matrix.length));
--  const numCols = Math.max(...matrices.map((matrix) => matrix[0]?.length ?? 0));
-+  const numRows: number = Math.max(...matrices.map((matrix) => matrix.length));
-+  const numCols: number = Math.max(
-+    ...matrices.map((matrix) => matrix[0]?.length ?? 0)
-+  );
- 
-   const result = Array.from({ length: numRows }, () => Array(numCols).fill(0));
- 
-   for (const matrix of matrices) {
-     const padded = pad(matrix, numRows, numCols, 0, 0);
--    for (let i = 0; i < numRows; i++) {
--      for (let j = 0; j < numCols; j++) {
-+    for (let i: number = 0; i < numRows; i++) {
-+      for (let j: number = 0; j < numCols; j++) {
-         if (padded[i][j] !== 0) {
-           result[i][j] = padded[i][j];
-         }
-@@ -112,7 +94,7 @@ export function merge(...matrices) {
-   return result;
- }
- 
--export function canvas(matrix, type) {
-+export function canvas(matrix, type: string) {
-   switch (type) {
-     case "EXACT":
-       return matrix;
-@@ -123,11 +105,11 @@ export function canvas(matrix, type) {
-   }
- }
- 
--export function difference(matrix1, matrix2) {
--  let mismatches = 0;
--  const rows = Math.max(matrix1.length, matrix2.length);
-+export function difference(matrix1, matrix2): number {
-+  let mismatches: number = 0;
-+  const rows: number = Math.max(matrix1.length, matrix2.length);
- 
--  for (let i = 0; i < rows; i++) {
-+  for (let i: number = 0; i < rows; i++
-```
-
-**File**: `arc/src/lib/Zoom.ts` (modified, +11/-11)
-```diff
-@@ -1,14 +1,14 @@
- export function focus(matrix) {
--  const rows = matrix.length;
--  const cols = matrix[0].length;
-+  const rows: number = matrix.length;
-+  const cols: number = matrix[0].length;
- 
--  let xOffset = -1,
--    yOffset = -1,
--    xLength = 0,
--    yLength = 0;
-+  let xOffset: number = -1,
-+    yOffset: number = -1,
-+    xLength: number = 0,
-+    yLength: number = 0;
- 
--  for (let i = 0; i < rows; i++) {
--    for (let j = 0; j < cols; j++) {
-+  for (let i: number = 0; i < rows; i++) {
-+    for (let j: number = 0; j < cols; j++) {
-       if (matrix[i][j] !== 0) {
-         if (yOffset === -1) {
-           yOffset = i;
-@@ -34,13 +34,13 @@ export function focus(matrix) {
-   };
- }
- 
--export function enlarge(matrix, rows, cols) {
-+export function enlarge(matrix, rows: number, cols: number) {
-   const { x_position: xOffset, y_position: yOffset, object_matrix } = matrix;
- 
-   const originalArray = Array.from({ length: rows }, () => Array(cols).fill(0));
- 
--  for (let i = 0; i < object_matrix.length; i++) {
--    for (let j = 0; j < object_matrix[i].length; j++) {
-+  for (let i: number = 0; i < object_matrix.length; i++) {
-+    for (let j: number = 0; j < object_matrix[i].length; j++) {
-       originalArray[yOffset + i][xOffset + j] = object_matrix[i][j];
-     }
-   }
-```
-
-**File**: `arc/src/lib/nucleoid.ts` (modified, +8/-11)
-```diff
-@@ -4,15 +4,15 @@ import { tmpdir } from "node:os";
+@@ -1,7 +1,7 @@
+ import { readdirSync, readFileSync } from "node:fs";
  import { join } from "node:path";
  
- async function execute(args) {
--  const executable =
-+  const executable: string =
-     process.env.NUCLEOID_EXECUTABLE ??
-     String.raw`C:\Users\canmi\dev\Nucleoid\target\debug\nucleoid.exe`;
--  const stdout = await new Promise((resolve, reject) => {
-+  const stdout: string = await new Promise((resolve, reject) => {
-     execFile(
-       executable,
-       args,
-       { encoding: "utf8", windowsHide: true },
--      (error, stdout, stderr) => {
-+      (error, stdout: string, stderr: string) => {
-         if (error) {
-           reject(
-             new Error(
-@@ -27,28 +27,25 @@ async function execute(args) {
-     );
-   });
- 
--  if (typeof stdout !== "string") {
--    throw new Error("Nucleoid returned non-text output");
--  }
-   return stdout;
- }
- 
- export async function version() {
--  const stdout = await execute(["--version"]);
-+  const stdout: string = await execute(["--version"]);
-   const match = /^nucleoid\s+(\S+)\s*$/.exec(stdout);
-   if (!match) {
-     throw new Error("Nucleoid returned invalid version output");
-   }
-   return match[1];
- }
- 
--export async function run(source) {
--  const directory = await mkdtemp(join(tmpdir(), "nuc-arc-"));
-+export async function run(source: string) {
-+  const directory: string = await mkdtemp(join(tmpdir(), "nuc-arc-"));
- 
-   try {
--    const file = join(directory, "program.nuc");
-+    const file: string = join(directory, "program.nuc");
-     await writeFile(file, source, "utf8");
--    const stdout = await execute(["--json", file]);
-+    const stdout: string = await execute(["--json", file]);
+-export function document() {
++export function document(): string {
+   const files = readdirSync(__dirname, { withFileTypes: true })
+     .filter((entry) => entry.isFile() && /\.json$/i.test(entry.name))
+     .map((entry) => entry.name)
+@@ -15,7 +15,7 @@ export function document() {
+     const source: string = readFileSync(join(__dirname, file), "utf8");
  
      try {
-       const result = JSON.parse(stdout);
+-      return JSON.parse(source);
++      JSON.parse(source);
+     } catch (error) {
+       if (error instanceof SyntaxError) {
+         throw new SyntaxError(
+@@ -25,7 +25,9 @@ export function document() {
+       }
+       throw error;
+     }
++
++    return source.replace(/("(?:[^"\\]|\\.)*")|\s+/g, "$1");
+   });
+ 
+-  return [...datasets];
++  return `[${datasets.join(",")}]`;
+ }
+```
+
+**File**: `arc/src/lib/llm.ts` (modified, +1/-1)
+```diff
+@@ -8,7 +8,7 @@ export async function generate({ messages = [], document = true }) {
+       role: "assistant",
+       content: `
+         instruct_dataset:
+-        ${JSON.stringify(dataset.document())}
++        ${dataset.document()}
+       `,
+     });
+   }
 ```
 
 #### Recent Merged Pull Requests:
@@ -1645,52 +1029,31 @@ The default puzzle_id in app.ts is now 3aa6fb7a, matching the Genesis comment. A
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Synthesize ARC dataset pairs instead of copying
+## X. Return minified JSON string from dataset document()
 
 **RULE**:
-When implementing operations in `.claude/agents/arc-dataset.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `arc/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `73085699`: Synthesize ARC dataset pairs instead of copying. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9d3ad377`: Return minified JSON string from dataset document(). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/arc-dataset.agent.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-description: Write the ARC instruction dataset for a given training puzzle as synthesized example pairs that follow the rule of arc/src/data/training/<id>.json's train pairs with freshly sampled grid sizes, shapes, colors, and positions, never copies of grids in arc/src/data, annotated with a Nucleoid world model in arc/src/dataset/dataset.<id>.json.
-You write one ARC instruction dataset. Given a puzzle ID, infer the
-transformation from the training pairs of `arc/src/data/training/<id>.json`,
-synthesize new example pairs that follow it, annotate them with an object-oriented
-Nucleoid world model, and save them as `arc/src/dataset/dataset.<id>.json`.
-Never print or use the puzzle's `test` entries, including their dimensions.
-Do not read the whole puzzle file; print only its `train` pairs:
-Use them only to infer the transformation. Only the collision check below
-reads other puzzle data, and it prints no puzzle contents.
-
-## Synthesize new examples
-
-Never copy the puzzle's examples. Write a throwaway synthesizer outside the
-repository: a seeded generator for the inferred transformation that samples
-every parameter the transformation leaves free and renders each input and its
-output. Sy
+Files are sorted by name, validated, and minified by removing the whitespace
+between JSON tokens; string contents, numbers, and key order stay exactly as
+written. They are returned as one JSON array, with a separate entry per file.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-description: Write the ARC instruction dataset for a given training puzzle, annotating the train pairs of arc/src/data/training/<id>.json with a Nucleoid world model in arc/src/dataset/dataset.<id>.json.
-You write one ARC instruction dataset. Given a puzzle ID, annotate the
-training pairs of `arc/src/data/training/<id>.json` with an object-oriented
-Nucleoid world model and save them as `arc/src/dataset/dataset.<id>.json`.
-Never open, print, or use the puzzle's `test` entries, including their
-dimensions. Do not read the whole puzzle file; print only its `train` pairs:
-The dataset contains only those pairs, copied verbatim and in order.
-- Top level: `declarations`, then `dataset` with one entry per training pair.
-  One rule set must explain every training pair: no per-pair or per-instance
-  cases, puzzle IDs, or hard-coded grids. Properties created by rules stay
+Files are sorted by name and serialized as one
+`{"datasets": [...]}` document, with a separate array entry per file.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `73085699` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9d3ad377` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source**: github ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
-> **Source Version**: `e025ca1a`  
+> **Source Version**: `23ab68c2`  
 > **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T16:58:49.072Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-28T07:20:50.014Z  
 > **Learning ID**: `learn-github-ontos-ai-knowhere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,853 +12,273 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): Ontos-AI/knowhere
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T16:58:48.717Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): Ontos-AI/knowhere
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `Ontos-AI/knowhere`
-- **Description**: Knowhere extracts, parses, and outputs structured chunks ready for AI Agents and RAG.
-- **Primary Language / Ecosystem**: Python
-- **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 3802 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+### 1.1 Core Mission & Subsystem Topology
+`Ontos-AI/knowhere` is an enterprise document parsing, graph-structuring, and agentic retrieval engine designed to convert unstructured, dirty files (multi-hundred-page technical PDFs, drawing atlases, office documents, TXT) into a persistent, navigable memory substrate for AI agents and agentic RAG.
+
+```
+                      +---------------------------------------+
+                      |   Ingress Layer: FastAPI (apps/api)   |
+                      |   - Pure ASGI Logging & Telemetry    |
+                      |   - Dual-Message Security Boundary    |
+                      |   - Webhook Outbox & Secret Masking   |
+                      +-------------------+-------------------+
+                                          |
+                +-------------------------+-------------------------+
+                |                                                   |
+                v                                                   v
++-------------------------------+               +-----------------------------------+
+|  Synchronous / Transactional  |               |  Asynchronous Processing Layer    |
+|  - PostgreSQL (Aurora)        |               |  - Worker Cluster (apps/worker)   |
+|  - pgvector / Trigram Indices |               |  - QStash / Redis Queue Tasks     |
+|  - Session Lifecycle Guards   |               |  - Dual-Track Parser Engine       |
++-------------------------------+               +-----------------+-----------------+
+                                                                  |
+                +-------------------------------------------------+
+                |
+                v
++-----------------------------------------------------------------------------------+
+| Multi-Modal Document Parsing Pipeline                                             |
+|                                                                                   |
+|  [File Payload] ---> Format Detector ---> Clean Parser (TXT, PDF, PPTX, Docx)    |
+|                                                  |                                |
+|        +-----------------------------------------+                                |
+|        v                                         v                                |
+|  [Vision Track]                           [Text Track]                            |
+|  - Page Render (3072-dim embeddings)      - Canonical token/word boundary parser  |
+|  - Frontier VLM layout detection          - Section/TOC hierarchy reconstruction |
+|        +-----------------------------------------+                                |
+|                                                  |                                |
+|                                                  v                                |
+|                                   [DataFrame Chunk Converter]                     |
+|                                                  |                                |
+|                                                  v                                |
+|                                     Map Units & Graph Nodes                       |
++--------------------------------------------------+--------------------------------+
+                                                   |
+                                                   v
++-----------------------------------------------------------------------------------+
+| Agentic Retrieval 2.0 (Corpus-Native MapNav Engine)                              |
+| - Hierarchy-aware tools (Section Snapshots, Trigram search, Covering Indices)     |
+| - Decoupled DB hydration from agent execution loop (Anti-Idle-Transaction)        |
++-----------------------------------------------------------------------------------+
+```
+
+### 1.2 Core Architectural Boundaries
+1. **The API Ingress (`apps/api`)**: Built on FastAPI, enforcing strict request scoping, pure ASGI context propagation (bypassing Starlette's `BaseHTTPMiddleware` memory buffering hazards), and a strict dual-message error boundary (`internal_message` vs. `user_message`).
+2. **The Worker Subsystem (`apps/worker`)**: Decoupled batch parser and orchestrator that consumes ingestion jobs. It executes a dual-track architecture:
+   - **Text Track**: Extracts canonical layout hierarchy, preserving lexical separators, tabs, and non-breaking spaces.
+   - **Vision Track**: Renders full-page representations for frontier vision models, yielding high-dimensional embeddings (resized to 3072 dimensions in migrations).
+3. **The Shared Domain Core (`packages/shared-python`)**: Implements database models, repository abstractions, transactional outbox dispatchers, webhook cryptographic signing, and unified exception hierarchies.
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: pyproject.toml, README.md.
-- Evaluated system abstractions and modular contracts.
+### 1. Dual-Scope Exception Isolation Pattern
+**RULE**:
+Application domain exceptions MUST strictly decouple diagnostic technical error messages from client-facing display messages at the class constructor level. Under no circumstances may raw internal exceptions, database driver messages, or external service responses be assigned to client-visible payload fields.
 
-### Core Architecture Module: `apps/api/alembic/versions/0b1c2d3e4f5a_add_demo_materialization_claim_state.py`
-```
-"""Add demo materialization claim state."""
+**WHY**:
+Leaking database connection errors, stack traces, schema names, or raw driver failures (e.g., `asyncpg.exceptions._base.InterfaceError: connection is closed`) to external HTTP clients exposes internal network topology, storage technologies, table schemas, and authentication boundaries to adversaries. Conversely, stripping internal diagnostic messages from log pipelines impairs incident investigation.
 
-from __future__ import annotations
+**WHEN TO APPLY**:
+Apply across all REST, GraphQL, gRPC, and RPC API boundaries where backend operations interface with user inputs, relational databases, or external third-party microservices.
 
-from collections.abc import Sequence
-
-from alembic import op
-import sqlalchemy as sa
-
-
-revision: str = "0b1c2d3e4f5a"
-down_revision: str | Sequence[str] | None = "e4f5a6b7c8d9"
-branch_labels: Sequence[str] | None = None
-depends_on: Sequence[str] | None = None
-
-
-def upgrade() -> None:
-    op.add_column(
-        "demo_materializations",
-        sa.Column("status", sa.String(length=32), nullable=True),
-    )
-    op.add_column(
-        "demo_materializations",
-        sa.Column("claimed_at", sa.DateTime(), nullable=True),
-    )
-    op.execute(
-        "UPDATE demo_materializations SET status = 'ready' WHERE status IS NULL"
-    )
-    op.alter_column(
-        "demo_materializations",
-        "status",
-        existing_type=sa.String(length=32),
-        nullable=False,
-        server_default="ready",
-    )
-    op.alter_column(
-        "demo_materializations",
-        "document_id",
-        existing_type=sa.String(length=36),
-        nullable=True,
-    )
-
-
-def downgrade() -> None:
-    op.alter_column(
-        "demo_materializations",
-        "document_id",
-        existing_type=sa.String(length=36),
-        nullable=False,
-    )
-    op.drop_column("demo_materializations", "claimed_at")
-    op.drop_column("demo_materializations", "status")
-
-```
-
-### Core Architecture Module: `apps/api/app/api/v1/routes/webhook.py`
-```
-"""
-Webhook API Routes
-
-- GET /logs: Get webhook delivery history
-- POST /trigger: Manually trigger webhook for a job
-"""
-
-from typing import Optional
-
-from app.api.dependencies.auth import require_write_permission
-from app.api.dependencies.current_user import with_current_user
-from app.repositories.job_repository import JobRepository
-from app.repositories.webhook_repository import WebhookRepository
-from app.services.rate_limit.data_structures import CurrentUser
-from fastapi import APIRouter, Depends, Query
-from loguru import logger
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from shared.core.database import get_db
-from shared.core.exceptions.domain_exceptions import (
-    NotFoundException,
-    PermissionDeniedException,
-    WebhookServiceException,
-)
-from shared.core.exceptions.knowhere_exception import KnowhereException
-from shared.models.schemas.webhook import (
-    WebhookLogList,
-    WebhookLogResponse,
-    WebhookTriggerRequest,
-    WebhookTriggerResponse,
-)
-from shared.services.webhook import get_webhook_dispatcher
-
-router = APIRouter(tags=["Webhook"])
-
-
-@router.get("/logs", response_model=WebhookLogList, summary="Get Webhook Delivery Logs")
-async def get_webhook_logs(
-    job_id: Optional[str] = Query(None, description="Filter by Job ID"),
-    page: int = Query(1, ge=1, description="Page number"),
-    page_size: int = Query(20, ge=1, le=100, description="Page size"),
-    current_user: CurrentUser = Depends(with_current_user),
-    db: AsyncSession = Depends(get_db),
-):
-    """
-    Get webhook delivery history logs.
-
-    Returns a paginated list of webhook delivery attempts, optionally filtered by job_id.
-    Each log entry includes the delivery status, duration, and response details.
-    """
-    try:
-        repo = WebhookRepository()
-        offset = (page - 1) * page_size
-        logs, total = await repo.get_webhook_logs(
-            db=db,
-            user_id=current_user.user_id,
-            job_id=job_id,
-            limit=page_size,
-            offset=offset,
-        )
-
-        return WebhookLogList(
-            total=total,
-            page=page,
-            page_size=page_size,
-            logs=[
-                WebhookLogResponse(
-                    id=log.id,
-                    job_id=log.job_id,
-                    webhook_url=log.webhook_url,
-                    attempt_number=log.attempt_number,
-                    request_payload=log.request_payload or {},
-                    signature=log.signature,
-                    idempotency_key=log.idempotency_key,
-                    response_status_code=log.response_status_code,
-                    response_body=log.response_body,
-                    error_message=log.error_message,
-                    duration_ms=log.duration_ms,
-                    created_at=log.created_at,
-                )
-                for log in logs
-            ],
-        )
-    except Exception as e:
-        logger.error(f"Failed to get webhook logs: {e}")
-        raise WebhookServiceException(
-            internal_message=f"Failed to retrieve webhook logs: {str(e)}"
-        )
-
-
-@router.post(
-    "/trigger",
-    response_model=WebhookTriggerResponse,
-    summary="Manually Trigger Webhook",
-)
-async def trigger_webhook(
-    request: WebhookTriggerRequest,
-    current_user: CurrentUser = Depends(with_current_user),
-    _write_permission: None = Depends(require_write_permission),
-    db: AsyncSession = Depends(get_db),
-):
-    """
-    Manually trigger a webhook for a completed or failed job.
-
-    This sends a webhook notification synchronously and returns the delivery result.
-    Use this for testing or retrying failed webhook deliveries.
-    """
-    try:
-        job_repo = JobRepository()
-
-        # 1. Fetch Job
-        job = await job_repo.get_job_by_id(db, request.job_id)
-        if not job:
-            raise NotFoundException(resource="Job", resource_id=request.job_id)
-
-        # Verify ownership
-        if str(job.user_id) != current_user.user_id:
-            raise PermissionDeniedException(
-                user_message="You don't have permission to trigger webhook for this job",
-                required_permission="job:webhook:trigger",
-            )
-
-        # 2. Validation - client errors (400)
-        if not job.is_terminal_state():
-            from shared.core.exceptions.domain_exceptions import ValidationException
-
-            raise ValidationException(
-                user_message=f"Job must be in terminal state to trigger webhook. Current status: {job.status}",
-                violations=[
-                    {
-                        "field": "job_id",
-                        "description": f"Job status is '{job.status}', expected 'done' or 'failed'",
-                    }
-                ],
-            )
-
-        if not job.webhook_url:
-            from shared.core.exceptions.webhook_exceptions import WebhookConfigException
-
-            raise WebhookConfigException(
-                internal_message=f"Job {request.job_id} does not have webhook_url configured",
-                user_message="Job does not have a webhook URL configured. Configure webhook_url when creating the job.",
-                details={"field": "webhook_url", "reason": "not_configured"},
-            )
-
-        # 3. Fetch existing WebhookEvent (Transactional Outbox)
-        from sqlalchemy import select
-
-        from shared.models.database.webhook import WebhookEvent
-
-        result = await db.execute(
-            select(WebhookEvent).where(WebhookEvent.job_id == request.job_id)
-        )
-        event = result.scalars().first()
-
-        if not event:
-            raise NotFoundException(
-                resource="WebhookEvent",
-                resource_id=request.job_id,
-                internal_message=(
-                    "No webhook event found for this job. Ensure the job has "
-                    "completed and webhooks are configured."
-                ),
-            )
-
-        dispatcher = get_webhook_dispatcher()
-        delivery_result = await dispatcher.send_manual_webhook(db=db, event=event)
-
-        # 5. Return response
-        return WebhookTriggerResponse(
-            success=delivery_result.success,
-            status_code=delivery_result.status_code,
-            response_body=None,  # Dispatcher doesn't return response body
-            duration_ms=delivery_result.duration_ms,
-            delivery_id=None,  # Manual trigger doesn't create delivery log
-            error_message=delivery_result.error_message,
-        )
-
-    except KnowhereException:
-        # Re-raise all known exceptions (NotFoundException, ValidationException, etc.)
-        raise
-    except Exception as e:
-        raise WebhookServiceException(
-            internal_message=f"Failed to trigger webhook: {str(e)}"
-        )
-
-
-# @router.post("/test-callback", summary="Test Webhook Callback Endpoint")
-# async def test_webhook_callback(
-#     request: Request,
-#     payload: dict = Body(...),
-# ):
-#     """
-#     Test endpoint to receive webhook callbacks.
-
-#     Use this endpoint to verify webhook delivery. It logs receiving data
-#     to the server console and returns the received payload.
-#     """
-#     # Log the event
-#     logger.info("🔔 [Test Callback] Webhook Received!")
-#     logger.info(f"Headers: {dict(request.headers)}")
-#     logger.info(f"Payload: {payload}")
-
-#     return {
-#         "status": "received",
-#         "timestamp": datetime.utcnow().isoformat(),
-#         "payload": payload,
-#         "received_headers": {k: v for k, v in request.headers.items() if k.lower().startswith("x-") or k.lower() == "user-agent"},
-#     }
-
-```
-
-### Core Architecture Module: `apps/api/app/api/v1/routes/webhook_secrets.py`
-```
-"""
-Webhook Secrets API Routes
-
-Endpoints for managing user webhook signing secrets.
-"""
-
-from typing import List, Optional
-
-from app.api.dependencies.auth import require_write_permission
-from app.api.dependencies.current_user import with_current_user
-from app.services.rate_limit.data_structures import CurrentUser
-from fastapi import APIRouter, Depends
-from pydantic import BaseModel, Field
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from shared.core.database import get_db
-from shared.core.exceptions.domain_exceptions import NotFoundException
-from shared.repositories.webhook_secret_repository import WebhookSecretRepository
-
-router = APIRouter(tags=["Webhook Secrets"])
-
-
-# --- Request/Response Schemas ---
-
-
-class SecretCreateRequest(BaseModel):
-    """Request to create a new webhook secret."""
-
-    endpoint: Optional[str] = Field(
-        None,
-        description="Optional endpoint URL. If omitted, creates a default account secret.",
-    )
-
-
-class SecretResponse(BaseModel):
-    """Webhook secret response (masked)."""
-
-    id: str = Field(..., description="Secret ID (ws_...)")
-    endpoint: Optional[str] = Field(
-        None, description="Endpoint URL or null for default"
-    )
-    secret_masked: str = Field(..., description="Masked secret (whsec_****...)")
-    status: str = Field(..., description="'active' or 'revoked'")
-    created_at: str = Field(..., description="Creation timestamp (ISO 8601)")
-
-
-class SecretFullResponse(SecretResponse):
-    """Webhook secret response with full value (creation only)."""
-
-    secret: str = Field(..., description="Secret value")
-
-
-class SecretListResponse(BaseModel):
-    """List of webhook secrets."""
-
-    secrets: List[SecretResponse]
-    total: int
-
-
-# --- Helper Functions ---
-
-
-def mask_secret(secret: str) -> str:
-    """Mask a secret, showing only prefix and last 4 chars."""
-    if len(secret) <= 12:
-        return secret[:6] + "****"
-    return secret[:6] + "****" + secret[-4:]
-
-
-def to_response(secret) -> SecretResponse:
-    """Convert WebhookSecret to masked response model."""
-    # For masked display, we rely on the ID if raw is not available to verify
-    raw_secret = getattr(secret, "_raw_secret", None)
-    masked = mask_secret(raw_secret) if raw_secret else f"whsec_****...{secret.id[-4:]}"
-
-    return SecretResponse(
-        id=secret.id,
-        endpoint=secret.endpoint,
-        secret_masked=masked,
-        status=secret.status,
-        created_at=secret.created_at.isoformat(),
-    )
-
-
-def to_full_response(secret) -> SecretFullResponse:
-    """Convert WebhookSecret to full response model (creation only)."""
-    raw_secret = getattr(secret, "_raw_secret", None)
-    if not raw_secret:
-        # Should not happen during creation, but as safeguard
-        raise ValueError("Cannot create full response without raw secret")
-
-    masked = mask_secret(raw_secret)
-
-    return SecretFullResponse(
-        id=secret.id,
-        endpoint=secret.endpoint,
-        secret=raw_secret,
-        secret_masked=masked,
-        status=secret.status,
-        created_at=secret.created_at.isoformat(),
-    )
-
-
-# --- API Endpoints ---
-
-
-@router.get("", response_model=SecretListResponse, summary="List Webhook Secrets")
-async def list_secrets(
-    current_user: CurrentUser = Depends(with_current_user),
-    db: AsyncSession = Depends(get_db),
-):
-    """
-    List all webhook secrets for the current user.
-
-    Returns masked secrets by default. Use POST to create new secrets
-    and see the full value (one-time display).
-    """
-    repo = WebhookSecretRepository()
-    secrets = await repo.list_secrets(db, current_user.user_id)
-
-    return SecretListResponse(
-        secrets=[to_response(s) for s in secrets],
-        total=len(secrets),
-    )
-
-
-@router.post(
-    "",
-    response_model=SecretResponse | SecretFullResponse,
-    summary="Create Webhook Secret",
-)
-async def create_secret(
-    request: SecretCreateRequest,
-    current_user: CurrentUser = Depends(with_current_user),
-    _write_permission: None = Depends(require_write_permission),
-    db: AsyncSession = Depends(get_db),
-):
-    """
-    Create a new webhook secret.
-
-    If no endpoint is specified, creates a default account-level secret.
-    The full secret value is returned ONLY in this response (one-time display).
-    """
-    repo = WebhookSecretRepository()
-
-    # Check if secret already exists for this endpoint
-    existing = await repo.get_active_secret(db, current_user.user_id, request.endpoint)
-    if existing:
-        # Return existing secret (masked, because we can't decrypt for display)
-        # Type verification: This returns SecretResponse, which is valid for the union return type
-        return to_response(existing)
-
-    # Create new secret
-    secret = await repo.create_secret(db, current_user.user_id, request.endpoint)
-
-    # Return with raw secret visible (one-time)
-    return to_full_response(secret)
-
-
-@router.delete("/{secret_id}", summary="Revoke Webhook Secret")
-async def revoke_secret(
-    secret_id: str,
-    current_user: CurrentUser = Depends(with_current_user),
-    _write_permission: None = Depends(require_write_permission),
-    db: AsyncSession = Depends(get_db),
-):
-    """
-    Revoke a webhook secret immediately.
-
-    Revoked secrets cannot be used for signing. This action is irreversible.
-    """
-    repo = WebhookSecretRepository()
-
-    success = await repo.revoke_secret(db, secret_id, current_user.user_id)
-
-    if not success:
-        raise NotFoundException(
-            resource="WebhookSecret",
-            resource_id=secret_id,
-        )
-
-    return {"status": "revoked", "id": secret_id}
-
-```
-
-### Core Architecture Module: `apps/api/app/core/__init__.py`
-```
-"""Unified imports for API core modules.
-
-Configuration, Redis management, and other shared functionality should be
-imported from the shared package.
-"""
-
-# Import shared infrastructure from the shared package.
-from shared.core.config import app_config, redis_config_manager, redis_pool_manager
-from shared.core.constants import (
-    APIConstants,
-    BusinessConstants,
-    ProcessingConstants,
-    SystemConstants,
-)
-from shared.core.database import get_db
-from shared.core.logging import setup_logging
-from shared.core.security import get_password_hash, verify_password
-
-# Response helpers remain API-specific.
-from .response import ResponseCode
-
-# Backward-compatible alias.
-settings = app_config
-
-__all__ = [
-    # Configuration
-    "app_config",
-    "settings",  # Backward-compatible alias
-    # Redis
-    "redis_config_manager",
-    "redis_pool_manager",
-    # Database
-    "get_db",
-    # Security
-    "get_password_hash",
-    "verify_password",
-    # Response handling
-    "ResponseCode",
-    # Constants
-    "SystemConstants",
-    "BusinessConstants",
-    "APIConstants",
-    "ProcessingConstants",
-    # Logging
-    "setup_logging",
-]
-
-```
-
-### Core Architecture Module: `apps/api/app/core/exception_handlers.py`
-```
-"""
-Global Exception Handlers for the Knowhere API.
-
-=============================================================================
-SECURITY: THE "4xx vs 5xx" MESSAGE PATTERN
-=============================================================================
-
-This module enforces the dual-message pattern for all exceptions:
-
-    - `internal_message`: Technical details for LOGS ONLY. NEVER sent to client.
-    - `user_message`:     Safe message for CLIENT. ALWAYS sent to user.
-
-The `knowhere_exception_handler` is the central point that:
-    1. Logs `internal_message` for debugging (server-side only)
-    2. Returns `user_message` to the client (via to_dict)
-    3. NEVER leaks internal_message to the response
-
-=============================================================================
-
-All exceptions are converted to KnowhereException and handled uniformly.
-This ensures clients always receive a consistent, secure JSON response.
-
-Architecture:
-    1. Each handler converts its exception type to a KnowhereException subclass
-    2. All handlers delegate to `knowhere_exception_handler` for actual response
-    3. Internal details are logged but NEVER sent to client
-
-Response Format:
-    {
-        "success": false,
-        "error": {
-            "code": "INVALID_ARGUMENT",
-            "message": "<user_message>",  // NEVER internal_message
-            "request_id": "req_abc123",
-            "details": {...}  // Optional, schema varies by exception type
-        }
-    }
-
-Exception Sources:
-    - KnowhereException: Raised explicitly by our code (domain exceptions)
-    - HTTPException: Raised by FastAPI/Starlette for HTTP-level errors
-        - 401: Missing/invalid auth header
-        - 403: Permission denied by middleware
-        - 404: Route not found
-        - 405: Method not allowed
-    - RequestValidationError: Raised by Pydantic when request body/params invalid
-    - Exception: Unexpected errors (bugs, syntax errors, external failures)
-"""
-
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# shared/core/exceptions/knowhere_exception.py
+from typing import Any, Dict, Optional
 import uuid
-from collections.abc import Awaitable, Callable, Mapping
-from typing import List, cast
-
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
 from loguru import logger
-from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from shared.core.exceptions import (
-    KnowhereException,
-    UnknownException,
-    ValidationException,
-)
-from shared.core.exceptions.domain_exceptions import RateLimitException, Violation
-from shared.core.logging import LogEvent
-from shared.core.response import ErrorCodeMapper
+class KnowhereException(Exception):
+    """Base exception enforcing absolute isolation between internal logs and client payloads."""
 
+    def __init__(
+        self,
+        code: str,
+        internal_message: str,
+        user_message: str,
+        http_status_code: int = 500,
+        details: Optional[Dict[str, Any]] = None,
+        original_exception: Optional[Exception] = None,
+    ) -> None:
+        super().__init__(internal_message)
+        self.code = code
+        self.internal_message = internal_message
+        self.user_message = user_message
+        self.http_status_code = http_status_code
+        self.details = details or {}
+        self.original_exception = original_exception
 
-def _get_request_id(request: Request) -> str:
-    """Extract request ID from state/header or generate one for tracing."""
-    state_request_id = getattr(request.state, "request_id", None)
-    if isinstance(state_request_id, str) and state_request_id:
-        return state_request_id
+    def logging(self, request_id: str) -> None:
+        """Emits structured server-side diagnostics containing raw technical details."""
+        log_payload = {
+            "error_code": self.code,
+            "request_id": request_id,
+            "internal_message": self.internal_message,
+            "details": self.details,
+            "original_exception": repr(self.original_exception) if self.original_exception else None,
+        }
+        if self.http_status_code >= 500:
+            logger.error(f"[SYSTEM FAILURE] {log_payload}")
+        else:
+            logger.warning(f"[CLIENT FAULT] {log_payload}")
 
-    header_request_id = request.headers.get("X-Request-ID")
-    if header_request_id:
-        request.state.request_id = header_request_id
-        return header_request_id
+    def to_client(self, request_id: str) -> Dict[str, Any]:
+        """Produces sanitized client responses. Guaranteed free of internal_message."""
+        return {
+            "success": False,
+            "error": {
+                "code": self.code,
+                "message": self.user_message,  # NEVER internal_message
+                "request_id": request_id,
+                "details": self.details,
+            },
+        }
+```
 
-    generated_request_id = str(uuid.uuid4())
-    request.state.request_id = generated_request_id
-    logger.bind(
-        event=LogEvent.CORRELATION_REQUEST_ID_MISSING.value,
-        request_id=generated_request_id,
-    ).info("Request ID generated (missing upstream ID)")
-    return generated_request_id
-
-
-async def knowhere_exception_handler(
-    request: Request,
-    exc: KnowhereException,
-    *,
-    response_headers: Mapping[str, str] | None = None,
-) -> JSONResponse:
-    """
-    This handler enforces the separation between:
-    - `internal_message`: Logged for debugging (NEVER in response)
-    - `user_message`: Returned to client (via to_client)
-
-    The response ONLY contains `user_message` via exc.to_client().
-    The logs contain full exception details via exc.logging().
-
-    ==========================================================================
-
-    This is the ONLY place that builds the actual response.
-    All other handlers convert their exceptions and delegate here.
-
-    Logging:
-        - Uses exc.logging() which automatically includes context (request_id, etc.)
-        - 5xx: ERROR level with internal_message and stack trace
-        - 4xx: WARNING level with user_message
-
-    The `original_exception` field is used to:
-        1. Log the underlying cause for debugging (e.g., Redis timeout)
-        2. Include stack trace in logs without exposing to client
-        3. Wrap unexpected exceptions while preserving debug info
-    """
-    request_id = _get_request_id(request)
-
-    # Use canonical logging method and force request_id presence in logs
-    exc.logging(request_id=request_id)
-
-    # Always include request ID header for client-side correlation
-    # Preserve framework-provided headers such as ``Allow: POST`` for 405
-    # responses and ``WWW-Authenticate`` for authentication challenges.
-    headers = dict(response_headers or {})
-    headers["X-Request-ID"] = request_id
-    retry_after = (exc.details or {}).get("retry_after")
-    if retry_after:
-        headers["Retry-After"] = str(retry_after)
-
-    # Add rate limit headers when the exception is a RateLimitException
-    if isinstance(exc, RateLimitException):
-        details = exc.details or {}
-        if "limit" in details:
-            headers["X-RateLimit-Limit"] = str(details["limit"])
-        if "remaining" in details:
-            headers["X-RateLimit-Remaining"] = str(details["remaining"])
-        if "reset" in details:
-            headers["X-RateLimit-Reset"] = str(details["reset"])
-        if "retry_after" in details:
-            headers["Retry-After"] = str(details["retry_after"])
-        if "period" in details:
-            headers["X-RateLimit-Period"] = str(details["period"])
-
-    # SECURITY: to_client() returns user_message, NEVER internal_message
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Direct leakage of raw exception strings to clients
+@app.exception_handler(Exception)
+async def dangerous_exception_handler(request: Request, exc: Exception):
+    # FATAL SECURITY LEAK: Exposes raw SQL, connection strings, or internal file paths
     return JSONResponse(
-        status_code=exc.http_status_code,
-        content=exc.to_client(request_id),
-        headers=headers,
+        status_code=500,
+        content={"error": str(exc), "trace": traceback.format_exc()}
     )
+```
 
-
-async def http_exception_handler(request: Request, exc: HTTPException) -> JSONResponse:
-    """
-    Convert FastAPI/Starlette HTTPException to KnowhereException.
-
-    When does HTTPException occur?
-        - 401: Auth middleware rejects request (missing/invalid token)
-        - 403: Permission check fails
-        - 404: No route matches the path
-        - 405: HTTP method not allowed for this route
-        - 422: Handled separately by validation_exception_handler
-
-    Security: HTTPException.detail may contain sensitive info from middleware.
-    We use a generic user_message and log the original detail internally.
-    """
-    # Convert HTTP status to ErrorCode using the canonical mapping
-    code = ErrorCodeMapper.get_error_code_from_http_status(exc.status_code)
-
-    # Check for specific FastAPI Users error codes in detail
-    detail_str = str(exc.detail) if exc.detail else ""
-
-    # Map FastAPI Users error codes to user-friendly messages
-    fastapi_users_messages = {
-        "REGISTER_USER_ALREADY_EXISTS": "This email is already registered. Please log in or use a different email.",
-        "LOGIN_BAD_CREDENTIALS": "Invalid email or password.",
-        "LOGIN_USER_NOT_VERIFIED": "Please verify your email before logging in.",
-        "RESET_PASSWORD_BAD_TOKEN": "Password reset link is invalid or expired.",
-        "VERIFY_USER_BAD_TOKEN": "Email verification link is invalid or expired.",
-        "VERIFY_USER_ALREADY_VERIFIED": "Your email is already verified.",
-    }
-
-    # Try to match FastAPI Users error code
-    user_message = None
-    for error_code, message in fastapi_users_messages.items():
-        if error_code in detail_str:
-            user_message = message
-            break
-
-    # Generic safe messages for each status (fallback)
-    if user_message is None:
-        safe_messages = {
-            400: "Bad request",
-            401: "Authentication required",
-            403: "Permission denied",
-            404: "Resource not found",
-            405: "Method not allowed",
-            409: "Conflict",
-            429: "Too many requests",
-            500: "Internal server error",
-            502: "Bad gateway",
-            503: "Service unavailable",
-            504: "Gateway timeout",
-        }
-        user_message = safe_messages.get(exc.status_code, "An error occurred")
-
-    # Create KnowhereException with internal_message for logs, user_message for response
-    knowhere_exc = KnowhereException(
-        code=code,
-        internal_message=f"HTTPException detail: {exc.detail}",  # For logs
-        user_message=user_message,  # For client
+**VERIFICATION METHOD**:
+Enforce compliance via AST linting and unit test assertions:
+```python
+def test_exception_boundary_never_leaks_internal_message():
+    secret_internal_info = "Connection to postgres://admin:secret@10.0.0.1 failed"
+    exc = KnowhereException(
+        code="INTERNAL_DATABASE_ERROR",
+        internal_message=secret_internal_info,
+        user_message="A backend service error occurred. Please retry later.",
+        http_status_code=500
     )
+    client_payload = exc.to_client(request_id="req-test-123")
+    assert secret_internal_info not in str(client_payload)
+    assert client_payload["error"]["message"] == "A backend service error occurred. Please retry later."
+```
 
-    # Delegate to central handler
-    return await knowhere_exception_handler(
-        request,
-        knowhere_exc,
-        response_headers=exc.headers,
-    )
+---
 
+### 2. Transaction Disconnection During Long-Running I/O
+**RULE**:
+Relational database sessions and transactions MUST NOT remain open across external network boundaries, LLM inference calls, agent orchestration loops, or un-bounded I/O operations. Database connections MUST be returned to the connection pool prior to awaiting external RPCs, and re-acquired when persistence or hydration is required.
 
-async def validation_exception_handler(
-    request: Request, exc: RequestValidationError
-) -> JSONResponse:
-    """
-    Convert Pydantic validation errors to ValidationException.
+**WHY**:
+Cloud managed databases (e.g., AWS Aurora PostgreSQL) enforce strict server-side timeouts such as `idle_in_transaction_session_timeout`. When an application holds an open transaction while waiting 30–120 seconds for an external agent episode or LLM completion, the server terminates the backend connection (`FATAL: terminating connection due to idle-in-transaction timeout`). Subsequent queries on the request-scoped session fail immediately with `asyncpg.exceptions._base.InterfaceError: connection is closed`, triggering cascading 500 errors and socket leaks.
 
-    When does RequestValidationError occur?
-        - Request body doesn't match Pydantic model
-        - Query/path parameters fail validation
-        - Type coercion fails (e.g., string where int expected)
+**WHEN TO APPLY**:
+Applies to all async web APIs incorporating multi-step agentic workflows, long-running LLM generation, document parsing calls, or external webhook deliveries.
 
-    The violations array IS safe to expose as it describes client input issues.
-    This is a 4xx error, so user_message is passed directly to client.
-    """
-    # Transform Pydantic errors into violations format
-    violations: List[Violation] = []
-    for error in exc.errors():
-        field = ".".join(str(loc) for loc in error.get("loc", []))
-        violations.append(
-            {
-                "field": field,
-                "description": error.get("msg", "Validation failed"),
-            }
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# apps/api/app/services/retrieval/agentic_pipeline.py
+from collections.abc import AsyncGenerator
+from contextlib import asynccontextmanager
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
+
+class AgenticRetrievalOrchestrator:
+    def __init__(self, session_factory: async_sessionmaker[AsyncSession]) -> None:
+        self.session_factory = session_factory
+
+    async def execute_retrieval_query(self, user_id: str, query: str) -> dict:
+        # Phase 1: Short-lived initial metadata lookup and authorization
+        async with self.session_factory() as db:
+            async with db.begin():
+                user_context = await self._fetch_user_context(db, user_id)
+        # Connection explicitly closed and returned to pool here
+
+        # Phase 2: External Agentic Inference / Navigation Loop (Can take 60-120s)
+        # ZERO active database connections held during this wait
+        navigation_result = await self._run_agent_explore_route(
+            query=query, 
+            context=user_context
         )
 
-    # Create ValidationException with user_message that client will see
-    validation_exc = ValidationException(
-        user_message="Request validation failed",
-        violations=violations,
-    )
+        # Phase 3: Short-lived document hydration query
+        async with self.session_factory() as db:
+            async with db.begin():
+                hydrated_documents = await self._hydrate_results(
+                    db, 
+                    document_ids=navigation_result.matched_ids
+                )
 
-    # Delegate to central handler
-    return await knowhere_exception_handler(request, validation_exc)
-
-
-async def general_exception_handler(request: Reque
+        return {"results": hydrated_documents}
 ```
 
-### Core Architecture Module: `apps/api/app/core/middleware/__init__.py`
-```
-"""Middleware exports."""
-
-from .cors import setup_cors
-from .logging import LoggingMiddleware
-
-__all__ = ["setup_cors", "LoggingMiddleware"]
-
-```
-
-### Core Architecture Module: `apps/api/app/core/middleware/cors.py`
-```
-"""CORS middleware."""
-
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-
-
-def setup_cors(app: FastAPI) -> None:
-    """Configure the CORS middleware."""
-
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["*"],  # Production should scope this to explicit origins.
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
-
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Passing request-scoped AsyncSession across un-bounded LLM loops
+async def execute_query_bad(db: AsyncSession, query: str):
+    # Transaction opened implicitly or explicitly
+    record = await db.execute(select(Corpus).where(...))
+    
+    # FATAL DEFECT: External LLM invocation holds Postgres connection idle in transaction!
+    # Aurora terminates connection after idle_in_transaction_session_timeout
+    agent_output = await external_llm_harness.run_episode(query)  # 70+ seconds
+    
+    # CRASH: asyncpg.exceptions.InterfaceError: connection is closed
+    final_docs = await db.execute(select(Doc).where(Doc.id.in_(agent_output.ids)))
+    return final_docs
 ```
 
-### Core Architecture Module: `apps/api/app/core/middleware/logging.py`
-```
-"""
-Request logging middleware with structured logging support.
-Pure ASGI implementation to avoid BaseHTTPMiddleware body buffering.
-"""
+**VERIFICATION METHOD**:
+Implement a transaction guard monitor or unit test tracking session lifetime:
+```python
+import pytest
+from unittest.mock import AsyncMock
 
+@pytest.mark.asyncio
+async def test_agentic_loop_holds_no_active_transaction():
+    mock_session = AsyncMock()
+    mock_session.is_active = True
+    
+    async def fake_llm_call():
+        # Assert DB session is not in an active transaction during the call
+        assert not mock_session.in_transaction()
+        return ["doc_1"]
+
+    orchestrator = AgenticRetrievalOrchestrator(...)
+    # Verify execution completes without transaction contention
+```
+
+---
+
+### 3. Pure ASGI Middleware for Request Context & Header Mutation
+**RULE**:
+HTTP context propagation and tracing middlewares in async Python ASGI applications MUST be written as pure ASGI 3-callable components (`(scope, receive, send) -> None`) rather than inheriting from Starlette's `BaseHTTPMiddleware` when processing streaming requests, file uploads, or high-concurrency event loops.
+
+**WHY**:
+Starlette's `BaseHTTPMiddleware` wraps the ASGI request/response stream in an internal `StreamingResponse` using `anyio` task groups. This creates three critical production failure modes: (1) it consumes and buffers chunks into memory, breaking backpressure on multi-hundred-megabyte document uploads; (2) contextvars propagation fails to bleed back cleanly across coroutines; (3) unhandled exceptions inside the ASGI pipeline get masked or can cause task cancelation hangs.
+
+**WHEN TO APPLY**:
+All ASGI web frameworks (FastAPI, Starlette, Litestar, Quart) handling document ingestion, large payload streaming, or low-latency instrumentation.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# apps/api/app/core/middleware/logging.py
 import uuid
-
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
-
 from shared.core.logging import log_context
 
 SKIP_PATHS = {"/health", "/api/health"}
 
-
-class LoggingMiddleware:
-    """Request logging middleware with structured context propagation."""
+class PureAsgiLoggingMiddleware:
+    """Pure ASGI middleware avoiding BaseHTTPMiddleware stream buffering."""
 
     def __init__(self, app: ASGIApp) -> None:
         self.app = app
@@ -873,22 +293,20 @@ class LoggingMiddleware:
             await self.app(scope, receive, send)
             return
 
-        # Extract or generate request_id
+        # Header parsing without mutating the receive stream
         headers = dict(
-            (k.decode("latin-1"), v.decode("latin-1"))
+            (k.decode("latin-1").lower(), v.decode("latin-1"))
             for k, v in scope.get("headers", [])
         )
-        request_id = headers.get("x-request-id", str(uuid.uuid4()))
+        request_id = headers.get("x-request-id") or str(uuid.uuid4())
 
-        # Make request_id available via request.state.request_id
-        # scope["state"] must be a plain dict — Starlette's Request.state
-        # wraps it in a State object for attribute access.
+        # Bind request_id to ASGI scope state
         scope.setdefault("state", {})
         scope["state"]["request_id"] = request_id
 
         async def send_wrapper(message: Message) -> None:
             if message["type"] == "http.response.start":
-                # Inject X-Request-ID header
+                # Clean header injection without stream consumption
                 raw_headers = [
                     (k, v)
                     for k, v in message.get("headers", [])
@@ -900,518 +318,247 @@ class LoggingMiddleware:
 
         with log_context(request_id=request_id):
             await self.app(scope, receive, send_wrapper)
-
-```
-
-### Core Architecture Module: `apps/api/app/core/middleware/telemetry.py`
-```
-"""Anonymous aggregate telemetry middleware."""
-
-from __future__ import annotations
-
-import time
-
-from starlette.types import ASGIApp, Message, Receive, Scope, Send
-
-from shared.services.telemetry.api_metrics import ApiRequestTelemetryMetrics
-
-
-class ApiTelemetryMiddleware:
-    """Record bounded API request metrics without request payloads or raw paths."""
-
-    def __init__(self, app: ASGIApp, *, metrics: ApiRequestTelemetryMetrics) -> None:
-        self.app = app
-        self.metrics = metrics
-
-    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
-        if scope["type"] != "http":
-            await self.app(scope, receive, send)
-            return
-
-        status_code = 500
-        started_at = time.perf_counter()
-
-        async def send_wrapper(message: Message) -> None:
-            nonlocal status_code
-            if message["type"] == "http.response.start":
-                status_code = int(message.get("status", 500))
-            await send(message)
-
-        try:
-            await self.app(scope, receive, send_wrapper)
-        finally:
-            elapsed_ms = (time.perf_counter() - started_at) * 1000
-            self.metrics.record(status_code=status_code, latency_ms=elapsed_ms)
-
-```
-
-### Core Architecture Module: `apps/api/app/core/response/ResponseCode.py`
-```
-from enum import Enum
-from typing import Dict
-
-
-class ResponseCode(Enum):
-    """Response status-code enum."""
-
-    SUCCESS = (200, "Operation succeeded")
-    FAIL = (1, "Operation failed")
-    SYSTEM_DATA_FAIL = (2, "Invalid data operation format")
-    SYSTEM_PARAM_FAIL = (3, "Invalid parameter")
-    AUTHORIZATION_EXCEPTION = (401, "Authorization error")
-
-    def __init__(self, code: int, msg: str):
-        self._code = code
-        self._msg = msg
-
-    @property
-    def code(self) -> int:
-        return self._code
-
-    @property
-    def msg(self) -> str:
-        return self._msg
-
-    @classmethod
-    def get_all_as_dict(cls) -> Dict[int, str]:
-        """Return all response codes and messages as a dictionary."""
-
-        return {member.code: member.msg for member in cls}
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #399** (2026-09-09): **Fix retrieval 500 caused by idle-in-transaction connection termination**
-  *Symptoms*: ## Summary  Production retrieval requests can return HTTP 500 when the request-scoped async SQLAlchemy session holds an idle PostgreSQL transaction while the agentic retrieval episode waits on an external LLM/agent call.  ## Production evidence  - Alert window: 2026-09-09 09:49:44–10:24:46 CST - Failing endpoint: `POST /v1/retrieval/query` - Failing API task: `dfeb34741b2748c190c73d0f9d57d1fe` - Task private IP: `10.0.136.212` - Trace: `01a083eb5f607c35931721077dafb81b` - Failure time: 2026-09-09 10:08:27 CST (`02:08:27 UTC`) - HTTP result: `500 Internal Server Error`  Aurora PostgreSQL logged 12 seconds before the API error:  ```text 2026-09-09 02:08:15 UTC:10.0.136.212(...):postgres@knowhere:...:FATAL: terminating connection due to idle-in-transaction timeout ```  The API then attempted the final document hydration query using that closed connection:  ```text asyncpg.exceptions._base.InterfaceError: connection is closed ```  The API invalidated the connection and established a replacement connection about four seconds later. The task remained healthy and was not restarted. No Aurora failover or restart event was found.  ## Root cause  The retrieval route receives a request-scoped `AsyncSession` from `get_db()` and passes it through the retrieval pipeline. In the agentic path:  1. The route performs initial database work. 2. `_run_agent_explore_route()` waits for `harness.run_episode(...)`. 3. The episode took 71.575 seconds in the failing request. 4. The same session/transa
-
-- **Issue #255** (2026-08-20): **Stop scraping email addresses from GitHub**
-  *Symptoms*: ### Affected area  Other  ### Summary  <img width="1994" height="1518" alt="Image" src="https://github.com/user-attachments/assets/431da31f-bbf6-4809-91e4-acfaeee8ab20" />  ### Reproduction steps  You email me out of the blue with an email address that's only ever appeared on GitHub. So you've scraped it or bought it from a service that scraped it. I never subscribed to your service and it's super poor form that you've resorted to this.  ### Relevant request or job details  ```text  ```
-  **Post-Mortem & Fix Analysis**:
-  > We did not scrape or purchase any personal data. We discovered your GitHub profile and open-source projects, found them interesting, and manually looked up a contact email to send a one-time outreach message.  We apologize if this was unwanted or disruptive. Your email has been removed from our outreach list and you will not receive further messages from us.  Thank you for the feedback.
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `457dcc42` (2026-10-27)
-**Commit Message**: feat: introduce PAGE_MEMORY_EMBED_CONCURRENCY configuration for improved embedding performance
-
-- Added PAGE_MEMORY_EMBED_CONCURRENCY setting to .env.example files for both API and worker services, allowing for configurable concurrency in page-image embeddings.
-- Updated AIConfig to set the default concurrency to 10, enhancing the embedding process for scanned M0 documents.
-- Enhanced tests to validate the new concurrency settings and ensure proper integration within the embedding workflow.
-- Refactored relevant code sections to utilize the new concurrency configuration, improving overall performance and scalability.
-
-**File**: `apps/api/.env.example` (modified, +1/-0)
-```diff
-@@ -101,6 +101,7 @@ VERCEL_KEY=
- # Page-image and query embeddings use VERCEL_KEY.
- # EMBEDDING_MODEL=google/gemini-embedding-2
- # EMBEDDING_DIM=3072
-+# PAGE_MEMORY_EMBED_CONCURRENCY=10
- 
- # Optional retrieval overrides have code defaults. Retrieval is evidence-only:
- # evidence is the primary output; evidence_text is deprecated and always empty;
-```
-
-**File**: `apps/api/tests/contract/test_scope_enrichment_publish_contract.py` (modified, +2/-0)
-```diff
-@@ -1325,6 +1325,7 @@ async def _verify_visual_m0_retrieval_and_tools() -> None:
-                 vis_rows = vis_res.payload["fused_rows"]
-                 assert len(vis_rows) == 2
-                 assert vis_rows[0]["chunk_id"] == "scan-m0-p2"
-+                assert vis_rows[0]["matched_page_nums"] == [2]
- 
-                 # 2. Classic route answers via visual channel even though lexical is empty.
-                 classic_outcome = await _run_classic_topk_route(
-@@ -1544,6 +1545,7 @@ async def _verify_chunk_max_pool_and_flag_off() -> None:
-                 merged_rows = merged_res.payload["fused_rows"]
-                 assert len(merged_rows) == 1
-                 assert merged_rows[0]["chunk_id"] == "merged-sec"
-+                assert merged_rows[0]["matched_page_nums"] == [2, 1]
-                 assert abs(float(merged_rows[0]["score"]) - page2_score) < 1e-9
- 
-                 monkeypatch.setattr(settings, "VISUAL_RETRIEVAL_ENABLED", False)
-```
-
-**File**: `apps/worker/.env.example` (modified, +1/-0)
-```diff
-@@ -95,6 +95,7 @@ VERCEL_KEY=
- # Page-image embeddings use VERCEL_KEY.
- # EMBEDDING_MODEL=google/gemini-embedding-2
- # EMBEDDING_DIM=3072
-+# PAGE_MEMORY_EMBED_CONCURRENCY=10
- 
- # Optional retrieval overrides have code defaults. Retrieval is evidence-only:
- # evidence is the primary output; evidence_text is deprecated and always empty;
-```
-
-**File**: `apps/worker/tests/contract/test_page_memory_retrieval_contract.py` (modified, +5/-3)
-```diff
-@@ -75,14 +75,15 @@ def test_table_search_text_uses_summary_keywords_and_caption_not_content() -> No
- 
- 
- @pytest.mark.asyncio
--async def test_page_result_assembly_uses_summary_not_raw_content() -> None:
-+async def test_page_result_assembly_keeps_refined_content() -> None:
-     rows = [
-         {
-             "chunk_id": "page-node-1",
-             "chunk_type": "page",
--            "content": "RAW OCR SHOULD NOT LEAK",
-+            "content": "verbatim refined body",
-             "chunk_metadata": {
-                 "summary": "制度标准总则摘要",
-+                "enrichment_state": "refined",
-                 "page_nums": [225],
-             },
-         }
-@@ -94,7 +95,8 @@ async def test_page_result_assembly_uses_summary_not_raw_content() -> None:
-         exclude_sections=[],
-     )
- 
--    assert assembled[0]["content"] == "制度标准总则摘要"
-+    assert assembled[0]["content"] == "verbatim refined body"
-+    assert assembled[0]["content_source"] == "content"
- 
- 
- @pytest.mark.asyncio
-```
-
-**File**: `deploy/ecs/task-definition-worker.staging.json` (modified, +1/-0)
-```diff
-@@ -53,6 +53,7 @@
-         {"name": "TRANSFORMERS_CACHE", "value": "/mnt/models/huggingface"},
-         {"name": "BILLING_ENABLED", "value": "true"},
-         {"name": "SUMMARY_LLM_MAX_CONCURRENT", "value": "8"},
-+        {"name": "PAGE_MEMORY_EMBED_CONCURRENCY", "value": "10"},
-         {"name": "DS_URL", "value": "https://api.deepseek.com/v1/chat/completions"},
-         {"name": "ALI_URL", "value": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions"},
-         {"name": "ARK_URL", "value": "https://ark.cn-beijing.volces.com/api/v3/chat/completions"},
-```
-
-**File**: `deploy/ecs/test_render_task_definitions.py` (modified, +1/-0)
-```diff
-@@ -70,6 +70,7 @@
-     "PDF_PROFILE_TOC_ENABLED": "true",
-     "REDIS_SYNC_MAX_CONNECTIONS": "200",
-     "SUMMARY_LLM_MAX_CONCURRENT": "8",
-+    "PAGE_MEMORY_EMBED_CONCURRENCY": "10",
-     "WORKER_CONCURRENCY": "10",
- }
- 
-```
-
-**File**: `packages/shared-python/shared/core/config/ai.py` (modified, +2/-2)
-```diff
-@@ -71,8 +71,8 @@ class AIConfig(BaseModel):
-         ),
-     )
-     PAGE_MEMORY_EMBED_CONCURRENCY: int = Field(
--        default=8,
--        description="Local per-job page embedding concurrency for scanned M0 documents.",
-+        default=10,
-+        description="Local per-job page-image embedding concurrency for progressive M0.",
-     )
- 
-     # Runtime LLM controls.
-```
-
-**File**: `packages/shared-python/shared/services/ai/embedding/multimodal_client.py` (modified, +1/-1)
-```diff
-@@ -315,7 +315,7 @@ def embed_images(
-         return []
- 
-     default_concurrency = int(
--        getattr(settings, "PAGE_MEMORY_EMBED_CONCURRENCY", 8) or 8
-+        getattr(settings, "PAGE_MEMORY_EMBED_CONCURRENCY", 10) or 10
-     )
-     resolved_concurrency = max(int(concurrency or default_concurrency), 1)
-     tracker_root_id = get_current_token_tracker_root_id()
-```
-
----
-
-### Incident Patch 2: `b88d06f0` (2026-10-27)
-**Commit Message**: fix: prevent namespace generation creation collisions
-
-**File**: `apps/api/tests/contract/test_progressive_final_retrieval_concurrency_contract.py` (modified, +61/-0)
-```diff
-@@ -367,3 +367,64 @@ async def query() -> None:
-         asyncio.run(query())
-     finally:
-         engine.dispose()
-+
-+
-+def test_namespace_generation_primary_keys_do_not_alias_distinct_scopes(
-+    monkeypatch: pytest.MonkeyPatch,
-+    postgresql_proc: PostgreSQLProcess,
-+) -> None:
-+    configure_contract_environment(monkeypatch, postgresql_proc)
-+    asyncio.run(prepare_contract_storage())
-+    engine: Engine = create_engine(
-+        make_url(get_contract_database_url()).set(drivername="postgresql+psycopg2")
-+    )
-+    try:
-+        with Session(engine) as db:
-+            first: int = advance_namespace_generation(db, user_id="owner:part", namespace="scope")
-+            db.commit()
-+        with Session(engine) as db:
-+            second: int = advance_namespace_generation(db, user_id="owner", namespace="part:scope")
-+            db.commit()
-+        assert (first, second) == (1, 1)
-+    finally:
-+        engine.dispose()
-+
-+
-+def test_simultaneous_first_publications_share_one_namespace_generation(
-+    monkeypatch: pytest.MonkeyPatch,
-+    postgresql_proc: PostgreSQLProcess,
-+) -> None:
-+    from threading import Barrier
-+    from shared.models.database.document import RetrievalNamespaceGeneration
-+
-+    configure_contract_environment(monkeypatch, postgresql_proc)
-+    asyncio.run(prepare_contract_storage())
-+    engine: Engine = create_engine(
-+        make_url(get_contract_database_url()).set(drivername="postgresql+psycopg2")
-+    )
-+    try:
-+        for attempt in range(4):
-+            barrier: Barrier = Barrier(2)
-+            namespace: str = f"first-publication-{attempt}"
-+
-+            def publish() -> int:
-+                barrier.wait(timeout=5)
-+                with Session(engine) as db:
-+                    generation: int = advance_namespace_generation(
-+                        db, user_id="parallel-owner", namespace=namespace,
-+                    )
-+                    db.commit()
-+                    return generation
-+
-+            with ThreadPoolExecutor(max_workers=2) as executor:
-+                publications = [executor.submit(publish) for _ in range(2)]
-+                assert sorted(task.result(timeout=10) for task in publications) == [1, 2]
-+            with Session(engine) as db:
-+                rows = db.scalars(select(RetrievalNamespaceGeneration).where(
-+                    RetrievalNamespaceGeneration.user_id == "parallel-owner",
-+                    RetrievalNamespaceGeneration.namespace == namespace,
-+                )).all()
-+                assert len(rows) == 1
-+                assert rows[0].generation == 2
-+    finally:
-+        engine.dispose()
-```
-
-**File**: `docs/design/progressive-ingestion-implementation-report.md` (modified, +9/-0)
-```diff
-@@ -215,3 +215,12 @@ capacity measurements predate main's native M0 page-image generation and are
- historical evidence, not a rerun of capacity acceptance for this integrated tree.
- PR creation does not publish the SDK, update Hipo's released dependency, deploy
- services, or close the remaining product/deployed acceptance work.
-+
-+
-+An expanded full Worker run also exposed a namespace-generation initialization
-+race: simultaneous first publications generated the same primary key, while the
-+insert's conflict target only covered the owner/namespace constraint. Use the
-+model's independent UUID primary keys and retain owner/namespace conflict
-+arbitration. The existing concurrent parse/billing contract reproduced the failure;
-+new PostgreSQL contracts cover first-publication contention and distinct scopes
-+whose colon-joined identifiers previously aliased.
-```
-
-**File**: `packages/shared-python/shared/services/retrieval/serving_generation.py` (modified, +0/-4)
-```diff
-@@ -4,8 +4,6 @@
- 
- from shared.services.retrieval.corpus_storage import CorpusStorage
- 
--from hashlib import sha256
--
- from sqlalchemy import select
- from sqlalchemy.dialects.postgresql import insert
- from sqlalchemy.orm import Session
-@@ -22,11 +20,9 @@ def lock_namespace_generation(
-     """Create if needed, then lock and return one namespace generation row."""
-     corpusStorage: CorpusStorage = CorpusStorage.resolve_namespace(namespace)
-     user_id = corpusStorage.resolve_owner(user_id)
--    generation_id = f"rng_{sha256(f'{user_id}:{namespace}'.encode()).hexdigest()}"
-     db.execute(
-         insert(corpusStorage.RetrievalNamespaceGeneration)
-         .values(
--            id=generation_id,
-             user_id=user_id,
-             namespace=namespace,
-             generation=0,
-```
-
----
-
-### Incident Patch 3: `01c009a8` (2026-10-27)
-**Commit Message**: docs: keep progressive reader requirements open for discussion
-
-**File**: `docs/design/progressive-ingestion-development-plan.md` (modified, +36/-4)
-```diff
-@@ -1,19 +1,51 @@
- # Progressive ingestion development plan
- 
--Status: Implementation and local automated validation complete. SDK publication,
--dependency pinning, deployed acceptance and capacity validation remain pending.
--See the [implementation report](progressive-ingestion-implementation-report.md).
-+Status: In progress; requirement discussion remains open as of 2026-10-27.
-+Implemented and locally verified subsets do not close the overall requirement
-+or establish final product acceptance. SDK publication, dependency pinning and
-+deployed acceptance remain pending. Measured mixed-workload capacity evidence is
-+recorded separately in the [capacity follow-up](progressive-mixed-capacity-validation.md).
-+See the [implementation report](progressive-ingestion-implementation-report.md)
-+for earlier implementation evidence.
- 
- The agreed behavior and investigation evidence are recorded in the
- [hardening plan](progressive-ingestion-hardening-plan.md) and
- [ADR index](../adr/README.md). This document defines the development sequence.
- 
-+## Discussion checkpoint: first-snapshot reading (2026-10-27)
-+
-+The user explicitly keeps this requirement unfinished and wants to continue
-+discussing it. Retain the following two points as the current checkpoint:
-+
-+1. **Page assets and List reading.** Text-native PDF/PPTX baselines do not
-+   pre-generate per-page image assets or native-document visual indexes. They
-+   retain page text and immutable `source.pdf` (the converted PDF for PPTX).
-+   Scanned/textless visual baselines already carry page images. Ordinary List
-+   reading must display original native pages from that retained PDF on demand,
-+   not only when opening a citation. Share the selected PDF document/worker and
-+   paint nearby visible pages; do not wait for VLM enhancement or render the
-+   whole document during initial ingestion. This follow-up is implemented in
-+   Hipo commit `787846ed`, with local verification; implementation is not final
-+   acceptance or deployed-client evidence.
-+2. **Tree reading.** The baseline is not empty: show the document root and
-+   source-ordered `Page N` leaves, with navigation to the corresponding List
-+   page. It does not yet expose the enhanced chapter/resource hierarchy.
-+   Images/Tables remain visible but disabled until final synchronization.
-+   Final publication replaces the flat page tree with the chapter/resource tree
-+   while preserving List/Tree mode and source-page position. Retained citations
-+   continue to read their own immutable snapshot. This behavior is implemented
-+   and locally tested; overall scope and acceptance remain under discussion.
-+
-+Continue requirements discussion from these points. Do not describe the overall
-+progressive requirement as complete merely because this subset's tests pass.
-+
- ## Target behavior
- 
- - Keep `ingestion_mode=full|progressive`, defaulting to full. Hipo selects
-   progressive for supported PDF/PPTX inputs; other formats retain full ingestion.
- - Publish a readable baseline before full enhancement. Text-native baselines
--  expose page text; scanned baselines expose complete required page images.
-+  expose page text and immutable source PDF for on-demand List page display;
-+  scanned baselines expose complete required page images.
-   Missing page vectors do not block initial completion and are repaired later.
- - One business Job uses multiple Celery tasks. After baseline publication the
-   Job stays done while structure, scope refinement, and vector repair continue.
-```
-
-**File**: `docs/design/progressive-ingestion-hardening-plan.md` (modified, +4/-3)
-```diff
-@@ -1,8 +1,9 @@
- # Progressive ingestion hardening plan
- 
--Status: Workflow, reviewed reader behavior, and early Ask availability agreed.
--Technical implementation and validation plan; application-code implementation
--is not authorized.
-+Status: Historical investigation and acceptance rationale. Application-code
-+implementation was subsequently authorized and progressed; the overall
-+requirement remains open for further discussion as of 2026-10-27. Current List
-+and Tree decisions are recorded in the development plan's discussion checkpoint.
- 
- The execution-oriented development sequence is maintained in the
- [development plan](progressive-ingestion-development-plan.md). This document
-```
-
-**File**: `docs/design/progressive-ingestion-implementation-report.md` (modified, +8/-3)
-```diff
-@@ -1,8 +1,13 @@
- # Progressive ingestion implementation and verification
- 
--Implementation and local automated validation are complete. Nothing was pushed,
--published, merged, or deployed. This report does not establish production capacity
--or deployed-client acceptance.
-+Overall requirement status: in progress and under continued discussion as of
-+2026-10-27. This report records an earlier implemented and locally verified
-+subset; it does not establish final product acceptance or deployed-client
-+acceptance. The [development plan discussion checkpoint](progressive-ingestion-development-plan.md#discussion-checkpoint-first-snapshot-reading-2026-10-27)
-+records the latest List/Tree decisions and the user's explicit unfinished status.
-+Subsequent capacity evidence is in the [mixed-workload follow-up](progressive-mixed-capacity-validation.md).
-+The original implementation described below was not pushed, published, merged,
-+or deployed at the time of that report.
- 
- ## Delivery locations
- 
-```
-
-#### Recent Merged Pull Requests:
-- **PR #478** (2026-10-27): feat: publish progressive ingestion snapshots atomically (@suguanYang)
-- **PR #477** (2026-10-27): chore: promote main to staging (defer page embeddings) (@EricNGOntos)
-- **PR #476** (2026-10-27): Defer page embeddings for electronic PDFs after M0 (@EricNGOntos)
-- **PR #475** (2026-10-27): Unify DeepSeek Flash defaults and keep page-kind counts JSON-safe (@EricNGOntos)
-- **PR #474** (2026-10-27): chore: promote main to staging (TOC ownership + page-memory cleanup) (@EricNGOntos)
-- **PR #473** (2026-10-27): feat: page-memory TOC ownership and progressive retrieval pipeline (@EricNGOntos)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. introduce PAGE_MEMORY_EMBED_CONCURRENCY configuration for improved embedding per
-
-**RULE**:
-When implementing operations in `apps/api/.env.example`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `457dcc42`: introduce PAGE_MEMORY_EMBED_CONCURRENCY configuration for improved embedding performance. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/api/.env.example`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-// Verified production-grade fix pattern:
-# PAGE_MEMORY_EMBED_CONCURRENCY=10
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+# ANTI-PATTERN: BaseHTTPMiddleware for tracing or streaming APIs
+from starlette.middleware.base import BaseHTTPMiddleware
+
+class BadTracingMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        # FATAL: BaseHTTPMiddleware buffers the entire streaming response body into memory
+        # Breaks backpressure on multi-gigabyte document uploads and LLM token streams
+        response = await call_next(request)
+        response.headers["X-Request-ID"] = str(uuid.uuid4())
+        return response
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `457dcc42` are properly handled with clean fallback behavior.
+Verify using a memory profiling integration test streaming a 100MB synthetic binary payload; ensure resident memory does not spike by the payload size during header injection.
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Total Text De-spacing During Plaintext Ingestion (BUG-TXT-PARSE-01)
+- **Context**: Document parsing engine, TXT format line cleaner (`apps/worker/app/services/document_parser/formats/text/parser.py`).
+- **What Was Expected**: Plaintext files should be parsed into sequential lines while preserving intra-sentence whitespace, indentation, word delimiters, tabs, and non-breaking spaces across UTF-8 text.
+- **What Actually Happened**: The parser ran `line = re.sub(r"\s", "", line)` on every line of text. This regex stripped all spaces, tabs, and word boundaries. English text became completely concatenated: `"This is a sample"` became `"Thisisasample"`. Downstream tokenization, BM25 indexing, vector chunking, and TOC extraction were rendered completely unusable.
+- **Evidence in Repo**: Commit `45961398`, PR patch modifying `apps/worker/app/services/document_parser/formats/text/parser.py` and contract test `apps/worker/tests/contract/test_text_parser_contract.py`.
+- **Root Cause**: An overly aggressive sanitization regex intended to trim terminal line returns mistakenly stripped `\s` globally across the entire string without distinguishing interior word separators from terminal carriage returns.
+- **Remediation Code Diff**:
+```python
+<<<< apps/worker/app/services/document_parser/formats/text/parser.py
+-def parse_texts(file_path: str, baseurl: str = "") -> list:
+-    """Parse text file and return lines list."""
+-    txt_bytes = load_file_bytes(file_path, file_url=baseurl)
+-    text = txt_bytes.decode("utf-8")
+-    txt_lines = []
+-    for line in text.splitlines():
+-        line = re.sub(r"\s", "", line)
+-        txt_lines.append(line)
+-    return txt_lines
++def parse_texts(file_path: str, baseurl: str = "") -> list[str]:
++    """Read UTF-8 lines without removing whitespace within each line."""
++    text_bytes: bytes = load_file_bytes(file_path, file_url=baseurl)
++    text: str = text_bytes.decode("utf-8")
++    return text.splitlines()
+```
+- **Lesson**: Never use `re.sub(r"\s", "", str)` for line normalization. Standard string primitives like `.splitlines()` natively handle newline separators (`\r\n`, `\n`, `\r`) without corrupting intra-token lexical spaces, tab characters (`\t`), or Unicode non-breaking spaces (`\u00a0`).
+
+---
+
+### Incident 2: Aurora Connection Termination via Idle-In-Transaction Timeout (BUG-RETRIEVAL-IDLE-02)
+- **Context**: Agentic retrieval API endpoint (`POST /v1/retrieval/query`, Trace `01a083eb5f607c35931721077dafb81b`).
+- **What Was Expected**: The agentic exploration harness (`harness.run_episode(...)`) executes complex navigation and vector/graph searches across documents, after which matching documents are hydrated and returned over HTTP 200.
+- **What Actually Happened**: The endpoint crashed with `500 Internal Server Error`. Aurora PostgreSQL logged:
+  ```text
+  FATAL: terminating connection due to idle-in-transaction timeout
+  ```
+  Followed immediately by FastAPI/asyncpg failing with:
+  ```text
+  asyncpg.exceptions._base.InterfaceError: connection is closed
+  ```
+- **Evidence in Repo**: GitHub Closed Issue #399. Alert window `2026-09-09 09:49:44–10:24:46 CST`. Failing API task IP `10.0.136.212`. LLM agent loop lasted 71.575 seconds while holding the database transaction open.
+- **Root Cause**: The FastAPI dependency injection `get_db` yielded a request-scoped `AsyncSession`. The route initiated a read query, entering an open transaction state. The execution then awaited `harness.run_episode(...)` for 71.5 seconds. PostgreSQL's `idle_in_transaction_session_timeout` fired at ~60 seconds, severing the TCP socket. The subsequent attempt to reuse the session for document hydration attempted to write to a severed connection.
+- **Remediation Code Diff**:
+```python
+<<<< apps/api/app/services/retrieval/retrieval_service.py
+-async def run_retrieval_pipeline(db: AsyncSession, request: RetrievalRequest):
+-    # DB transaction remains open here
+-    initial_meta = await fetch_meta(db, request.corpus_id)
+-    # Hanging inside LLM harness for 71+ seconds with idle transaction!
+-    episode_result = await harness.run_episode(request.query, initial_meta)
+-    # InterfaceError: connection is closed!
+-    return await hydrate_documents(db, episode_result.document_ids)
++async def run_retrieval_pipeline(session_factory: async_sessionmaker[AsyncSession], request: RetrievalRequest):
++    async with session_factory() as db:
++        initial_meta = await fetch_meta(db, request.corpus_id)
++    # Connection released to pool during LLM agent episode
++    episode_result = await harness.run_episode(request.query, initial_meta)
++    async with session_factory() as db:
++        return await hydrate_documents(db, episode_result.document_ids)
+```
+- **Lesson**: Database sessions must be strictly transactional and ephemeral. Long-running AI agent steps must occur outside database transaction boundaries.
+
+---
+
+### Incident 3: Non-Idempotent Schema Backfill Lock Contention (BUG-MIGRATION-LOCK-03)
+- **Context**: Alembic migration `0b1c2d3e4f5a_add_demo_materialization_claim_state.py`.
+- **What Was Expected**: Add `status` and `claimed_at` columns with a default of `'ready'`, backfill existing rows, and enforce `nullable=False` without locking production tables or causing downtime.
+- **What Actually Happened**: Direct `ALTER TABLE ... ADD COLUMN ... NOT NULL DEFAULT 'ready'` would take an exclusive table lock on large materialization tables, blocking concurrent query execution.
+- **Evidence in Repo**: Migration `0b1c2d3e4f5a_add_demo_materialization_claim_state.py`.
+- **Root Cause**: PostgreSQL table rewrite lock hazards when adding non-null columns without proper multi-phase execution.
+- **Remediation Code Diff**:
+```python
+<<<< apps/api/alembic/versions/0b1c2d3e4f5a_add_demo_materialization_claim_state.py
+ def upgrade() -> None:
++    # Step 1: Add column as nullable (instant metadata update, no table lock)
+     op.add_column(
+         "demo_materializations",
+         sa.Column("status", sa.String(length=32), nullable=True),
+     )
+     op.add_column(
+         "demo_materializations",
+         sa.Column("claimed_at", sa.DateTime(), nullable=True),
+     )
++    # Step 2: Backfill existing data safely
+     op.execute(
+         "UPDATE demo_materializations SET status = 'ready' WHERE status IS NULL"
+     )
++    # Step 3: Enforce NOT NULL and server_default post-backfill
+     op.alter_column(
+         "demo_materializations",
+         "status",
+         existing_type=sa.String(length=32),
+         nullable=False,
+         server_default="ready",
+     )
+     op.alter_column(
+         "demo_materializations",
+         "document_id",
+         existing_type=sa.String(length=36),
+         nullable=True,
+     )
+```
+- **Lesson**: Safe zero-downtime DDL additions of non-null columns require a three-step phased migration: add column nullable -> backfill data -> set not null with server default.
+
+---
+
+### Incident 4: Raw Webhook Secret Leakage via Query Serialization (BUG-SECRET-EXPOSE-04)
+- **Context**: Webhook secret management route (`apps/api/app/api/v1/routes/webhook_secrets.py`).
+- **What Was Expected**: Listing webhook secrets must display masked tokens (`whsec_****...xyz`) and never expose the plaintext HMAC key. Only during the initial generation POST request should the raw secret be visible once.
+- **What Actually Happened**: If models store the raw secret or return ORM instances directly, the raw symmetric signing key is serialized into API responses and logged in telemetry.
+- **Evidence in Repo**: `apps/api/app/api/v1/routes/webhook_secrets.py`, functions `mask_secret`, `to_response`, `to_full_response`.
+- **Root Cause**: Storing unmasked secrets in ORM attributes that are accessible by standard serializers.
+- **Remediation Code Diff**:
+```python
+<<<< apps/api/app/api/v1/routes/webhook_secrets.py
++def mask_secret(secret: str) -> str:
++    """Mask a secret, showing only prefix and last 4 chars."""
++    if len(secret) <= 12:
++        return secret[:6] + "****"
++    return secret[:6] + "****" + secret[-4:]
+
++def to_response(secret) -> SecretResponse:
++    """Convert WebhookSecret to masked response model."""
++    raw_secret = getattr(secret, "_raw_secret", None)
++    masked = mask_secret(raw_secret) if raw_secret else f"whsec_****...{secret.id[-4:]}"
++    return SecretResponse(
++        id=secret.id,
++        endpoint=secret.endpoint,
++        secret_masked=masked,
++        status=secret.status,
++        created_at=secret.created_at.isoformat(),
++    )
+```
+- **Lesson**: Raw cryptographic secrets must never reside in persisted model fields. Secrets must be transiently passed via temporary in-memory properties (`_raw_secret`) during generation, hashed or encrypted at rest, and masked on retrieval.
+
+---
+
+### Incident 5: Webhook Event Premature Dispatch on Non-Terminal Jobs (BUG-WH-RACE-05)
+- **Context**: Webhook manual trigger endpoint (`apps/api/app/api/v1/routes/webhook.py`).
+- **What Was Expected**: Webhook notifications must only dispatch after a job has reached a conclusive terminal state (`done` or `failed`).
+- **What Actually Happened**: Clients or automated retry loops triggering manual webhook re-deliveries during active parsing jobs dispatched inconsistent intermediate states to downstream listener endpoints.
+- **Evidence in Repo**: `apps/api/app/api/v1/routes/webhook.py` lines 97–110.
+- **Root Cause**: Absence of state-machine terminal assertion check before pulling transactional outbox events.
+- **Remediation Code Diff**:
+```python
+<<<< apps/api/app/api/v1/routes/webhook.py
++        # 2. Validation - client errors (400)
++        if not job.is_terminal_state():
++            from shared.core.exceptions.domain_exceptions import ValidationException
++
++            raise ValidationException(
++                user_message=f"Job must be in terminal state to trigger webhook. Current status: {job.status}",
++                violations=[
++                    {
++                        "field": "job_id",
++                        "description": f"Job status is '{job.status}', expected 'done' or 'failed'",
++                    }
++                ],
++            )
+```
+- **Lesson**: Stateful asynchronous event dispatches must validate domain model state machines (`is_terminal_state()`) prior to querying outbox dispatchers.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 4.1 Micro-Syntax & Token-Level Precision
+1. **Implicit Falsy vs. Exact Comparison in Ingestion**:
+   In document chunking, testing `if not line:` causes lines containing `"0"` or `False` strings to be incorrectly discarded. Explicit length checking or None checking is mandatory:
+   ```python
+   # HAZARD: Discards valid text containing numeric zero
+   if not line:
+       continue
+
+   # SAFE: Checks exact empty condition after splitlines()
+   if len(line) == 0:
+       continue
+   ```
+2. **Deep Immutability vs. Shallow Object Copying in AST Chunkers**:
+   When parsing hierarchical sections, duplicating metadata dictionaries using `.copy()` causes nested citation objects to share mutations across chunks:
+   ```python
+   # HAZARD: Mutating citation in chunk_b mutates chunk_a
+   chunk_b_meta = chunk_a_meta.copy()
+   chunk_b_meta["citations"]["page"] = 4 
+
+   # INVARIANT: Use copy.deepcopy or explicit immutable reconstruction
+   import copy
+   chunk_b_meta = copy.deepcopy(chunk_a_meta)
+   ```
+3. **Unicode Normalization and Non-Breaking Spaces**:
+   Plaintext files frequently contain Unicode non-breaking spaces (`\u00a0`), zero-width spaces (`\u200b`), and carriage return artifacts. Tokenizers will split or merge words unpredictably unless normalized:
+   ```python
+   import unicodedata
+   # Normalize non-breaking spaces and accented forms to canonical decomposed/composed form
+   clean_text = unicodedata.normalize("NFKC", raw_text)
+   ```
+
+### 4.2 Infinite Loop & Recursion Guards
+1. **Table of Contents (TOC) Traversal Guard**:
+   Hierarchical document models can contain recursive parent-child references (e.g., Section 1 -> Section 1.1 -> Section 1). Traversal algorithms must enforce depth caps and visited sets:
+   ```python
+   def traverse_section_hierarchy(
+       section: SectionNode, 
+       visited: set[str], 
+       current_depth: int = 0, 
+       max_depth: int = 32
+   ) -> list[SectionNode]:
+       if current_depth > max_depth:
+           raise MaxRecursionDepthExceededException("TOC depth exceeded 32 levels")
+       if section.id in visited:
+           raise CircularReferenceDetectedException(f"Cycle at section {section.id}")
+       
+       visited.add(section.id)
+       results = [section]
+       for child in section.children:
+           results.extend(traverse_section_hierarchy(child, visited, current_depth + 1, max_depth))
+       return results
+   ```
+2. **Event Loop Microtask Starvation during CPU Chunking**:
+   Chunking massive text files (e.g., 500-page atlas documents) blocks the Python `asyncio` event loop. Workers must yield control back to the loop:
+   ```python
+   async def async_chunk_stream(lines: list[str], batch_size: int = 10

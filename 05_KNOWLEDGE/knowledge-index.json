@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T06:52:52.030Z",
+  "last_updated": "2026-10-28T07:24:15.172Z",
   "total_verified_learnings": 1156,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -92,8 +92,8 @@
       "slug": "1jehuang-jcode",
       "platform": "github",
       "source_url": "https://github.com/1jehuang/jcode",
-      "source_version": "a3ef562f",
-      "content_hash": "db0a5fb44e5914f57bd742260d16560ee903f2ab1a2dd93832e6f22f59fab998",
+      "source_version": "2c4efdb0",
+      "content_hash": "7763c7900f7c37eed469c789d592e2475159302437737e56cd246b9fcd04455c",
       "dossier_path": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "promoted_rules": [
@@ -146,6 +146,21 @@
           "number": 5079,
           "title": "cloud): carry private runtime for development CLI recovery",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5219,
+          "title": "Zero-Cost Fallible State Fingerprinting via Structural Equivalence",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5220,
+          "title": "Triaged Classification of Missing Files vs. Deserialization Corruptions",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5221,
+          "title": "Non-Blocking Ephemeral Caches with Resident Source-of-Truth Transcripts",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -153,7 +168,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T00:46:44.796Z",
+      "verified_at": "2026-10-28T07:22:17.077Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -21055,7 +21070,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
       "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
-      "content_hash": "9d31fed7497129d49bbffd92e5c857cd22e6130a32bcf02deccb160668affa3c",
+      "content_hash": "a0497ef37b2f4a78dc1de2cc23b1fa368de508d1bc9a78d965e3f120f5eb3b85",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
       "promoted_rules": [
@@ -21125,6 +21140,21 @@
           "number": 4352,
           "title": "SWA Bounded Replay for Local Context Reconstruction",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5222,
+          "title": "Bounded Sliding Window KV Replay Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5223,
+          "title": "Block-Quantized Scale Invariant (`ue8m0` Normalization Guard)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5224,
+          "title": "Layer-Decoupled Latent State Projection Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -21145,7 +21175,7 @@
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv46mzeq",
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv4jxf1e"
       ],
-      "verified_at": "2026-10-25T14:44:27.858Z",
+      "verified_at": "2026-10-28T07:23:16.983Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39997,8 +40027,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "73085699",
-      "content_hash": "ef973ae5ed53d005ea72d39c611fc33312fa495285a7da565243ecb37c3c9545",
+      "source_version": "9d3ad377",
+      "content_hash": "fed3393918af7e6aabaae5c52bc0b6837b5b26a5d266dd5a47b60f8f55c78749",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -40101,6 +40131,11 @@
           "number": 4945,
           "title": "Add genesis puzzle ID comment to app start",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5225,
+          "title": "Return minified JSON string from dataset document()",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40108,7 +40143,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T20:11:41.771Z",
+      "verified_at": "2026-10-28T07:24:15.154Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40873,8 +40908,8 @@
       "slug": "ontos-ai-knowhere",
       "platform": "github",
       "source_url": "https://github.com/Ontos-AI/knowhere",
-      "source_version": "e025ca1a",
-      "content_hash": "b2658a611c3bd8b95f348fef620e09bd867e4702e88c41d42a5db18414d4ac3c",
+      "source_version": "23ab68c2",
+      "content_hash": "bd8dbcf028e3e669538ed8664b388c3456844d0a9bd51f073671b74eab62601b",
       "dossier_path": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "promoted_rules": [
@@ -40897,6 +40932,21 @@
           "number": 4911,
           "title": "introduce PAGE_MEMORY_EMBED_CONCURRENCY configuration for improved embedding per",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5216,
+          "title": "Dual-Scope Exception Isolation Pattern",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5217,
+          "title": "Transaction Disconnection During Long-Running I/O",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5218,
+          "title": "Pure ASGI Middleware for Request Context & Header Mutation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40904,7 +40954,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T16:58:49.425Z",
+      "verified_at": "2026-10-28T07:20:51.262Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -142566,6 +142616,146 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T06:52:52.012Z"
+    },
+    "rule-5216": {
+      "learning_id": "rule-5216",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5216,
+      "title": "Dual-Scope Exception Isolation Pattern",
+      "source_url": "https://github.com/Ontos-AI/knowhere",
+      "source_version": "23ab68c2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T07:20:51.262Z"
+    },
+    "rule-5217": {
+      "learning_id": "rule-5217",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5217,
+      "title": "Transaction Disconnection During Long-Running I/O",
+      "source_url": "https://github.com/Ontos-AI/knowhere",
+      "source_version": "23ab68c2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T07:20:51.262Z"
+    },
+    "rule-5218": {
+      "learning_id": "rule-5218",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5218,
+      "title": "Pure ASGI Middleware for Request Context & Header Mutation",
+      "source_url": "https://github.com/Ontos-AI/knowhere",
+      "source_version": "23ab68c2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T07:20:51.262Z"
+    },
+    "rule-5219": {
+      "learning_id": "rule-5219",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5219,
+      "title": "Zero-Cost Fallible State Fingerprinting via Structural Equivalence",
+      "source_url": "https://github.com/1jehuang/jcode",
+      "source_version": "2c4efdb0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T07:22:17.077Z"
+    },
+    "rule-5220": {
+      "learning_id": "rule-5220",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5220,
+      "title": "Triaged Classification of Missing Files vs. Deserialization Corruptions",
+      "source_url": "https://github.com/1jehuang/jcode",
+      "source_version": "2c4efdb0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T07:22:17.077Z"
+    },
+    "rule-5221": {
+      "learning_id": "rule-5221",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5221,
+      "title": "Non-Blocking Ephemeral Caches with Resident Source-of-Truth Transcripts",
+      "source_url": "https://github.com/1jehuang/jcode",
+      "source_version": "2c4efdb0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T07:22:17.077Z"
+    },
+    "rule-5222": {
+      "learning_id": "rule-5222",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5222,
+      "title": "Bounded Sliding Window KV Replay Invariant",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+      "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T07:23:16.983Z"
+    },
+    "rule-5223": {
+      "learning_id": "rule-5223",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5223,
+      "title": "Block-Quantized Scale Invariant (`ue8m0` Normalization Guard)",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+      "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T07:23:16.983Z"
+    },
+    "rule-5224": {
+      "learning_id": "rule-5224",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5224,
+      "title": "Layer-Decoupled Latent State Projection Invariant",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+      "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T07:23:16.983Z"
+    },
+    "rule-5225": {
+      "learning_id": "rule-5225",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5225,
+      "title": "Return minified JSON string from dataset document()",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "9d3ad377",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T07:24:15.154Z"
     }
   },
   "aliases": {

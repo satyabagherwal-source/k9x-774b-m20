@@ -5732,3 +5732,7 @@ Every entry in this ledger must capture:
 | `learn-github-ratatui-ratatui` | `https://github.com/ratatui/ratatui` | `cdcb0c01` | Multi-dimensional audit evidence | 2026-10-28T06:52:40.395Z |
 | `learn-huggingface-inclusionai-ming-image-0-1-design` | `https://huggingface.co/inclusionAI/Ming-Image-0.1-Design` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-10-28T06:52:47.784Z |
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `c273f2a5` | Multi-dimensional audit evidence | 2026-10-28T06:52:52.106Z |
+| `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `23ab68c2` | Multi-dimensional audit evidence | 2026-10-28T07:20:51.355Z |
+| `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `2c4efdb0` | Multi-dimensional audit evidence | 2026-10-28T07:22:17.170Z |
+| `learn-huggingface-deepseek-ai-deepseek-v4-1-flash` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-28T07:23:17.077Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `9d3ad377` | Multi-dimensional audit evidence | 2026-10-28T07:24:15.246Z |

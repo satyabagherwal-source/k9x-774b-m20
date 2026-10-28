@@ -5723,3 +5723,7 @@
 | `CYCLE-20261028-C18N` | `2026-10-28T06:52:40.391Z` | `ratatui/ratatui` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/ratatui-ratatui-learnings.md` | Yes (`b025385b...`) |
 | `CYCLE-20261028-C6XW` | `2026-10-28T06:52:47.780Z` | `inclusionAI/Ming-Image-0.1-Design` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5212, Rule 5213, Rule 5214` | Yes (`756ca41d...`) |
 | `CYCLE-20261028-CA9Z` | `2026-10-28T06:52:52.103Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5215` | Yes (`9dc98a70...`) |
+| `CYCLE-20261028-C9ZS` | `2026-10-28T07:20:51.352Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5216, Rule 5217, Rule 5218` | Yes (`bd8dbcf0...`) |
+| `CYCLE-20261028-E47J` | `2026-10-28T07:22:17.167Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5219, Rule 5220, Rule 5221` | Yes (`7763c790...`) |
+| `CYCLE-20261028-FEFL` | `2026-10-28T07:23:17.073Z` | `deepseek-ai/DeepSeek-V4.1-Flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5222, Rule 5223, Rule 5224` | Yes (`a0497ef3...`) |
+| `CYCLE-20261028-GNBF` | `2026-10-28T07:24:15.243Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5225` | Yes (`fed33939...`) |

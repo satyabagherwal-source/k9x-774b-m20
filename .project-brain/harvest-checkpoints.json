@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T06:52:52.116Z",
+  "last_updated": "2026-10-28T07:24:15.256Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -635,14 +635,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-      "content_hash": "9d31fed7497129d49bbffd92e5c857cd22e6130a32bcf02deccb160668affa3c",
-      "verified_at": "2026-10-25T14:44:27.930Z",
+      "content_hash": "a0497ef37b2f4a78dc1de2cc23b1fa368de508d1bc9a78d965e3f120f5eb3b85",
+      "verified_at": "2026-10-28T07:23:17.085Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T14:44:27.930Z"
+      "last_updated": "2026-10-28T07:23:17.085Z"
     },
     "akatz-ai/MiniMax-H3-Character-Swap-LoRA": {
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "ef973ae5ed53d005ea72d39c611fc33312fa495285a7da565243ecb37c3c9545",
-      "verified_at": "2026-10-27T20:11:41.874Z",
+      "content_hash": "fed3393918af7e6aabaae5c52bc0b6837b5b26a5d266dd5a47b60f8f55c78749",
+      "verified_at": "2026-10-28T07:24:15.255Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T20:11:41.874Z"
+      "last_updated": "2026-10-28T07:24:15.255Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -3576,14 +3576,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ontos-ai-knowhere",
-      "content_hash": "b2658a611c3bd8b95f348fef620e09bd867e4702e88c41d42a5db18414d4ac3c",
-      "verified_at": "2026-10-27T16:58:49.516Z",
+      "content_hash": "bd8dbcf028e3e669538ed8664b388c3456844d0a9bd51f073671b74eab62601b",
+      "verified_at": "2026-10-28T07:20:51.364Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T16:58:49.516Z"
+      "last_updated": "2026-10-28T07:20:51.364Z"
     },
     "Bitterbot-AI/bitterbot-desktop": {
       "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -5541,14 +5541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-1jehuang-jcode",
-      "content_hash": "db0a5fb44e5914f57bd742260d16560ee903f2ab1a2dd93832e6f22f59fab998",
-      "verified_at": "2026-10-28T00:46:44.849Z",
+      "content_hash": "7763c7900f7c37eed469c789d592e2475159302437737e56cd246b9fcd04455c",
+      "verified_at": "2026-10-28T07:22:17.179Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T00:46:44.849Z"
+      "last_updated": "2026-10-28T07:22:17.179Z"
     },
     "wix/Detox": {
       "repository": "wix/Detox",
