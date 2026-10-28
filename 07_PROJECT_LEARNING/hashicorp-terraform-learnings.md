@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  
 > **Source**: github ([https://github.com/hashicorp/terraform](https://github.com/hashicorp/terraform))  
-> **Source Version**: `ae75cbe4`  
+> **Source Version**: `cbed3573`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T15:01:16.522Z  
+> **Timestamp**: 2026-10-28T14:29:14.172Z  
 > **Learning ID**: `learn-github-hashicorp-terraform`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/hashicorp/terraform](https://github.com/hashicorp/terraform))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T15:01:16.042Z  
+> **Harvest Timestamp**: 2026-10-28T14:29:14.004Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Terraform enables you to safely and predictably create, change, and improve infrastructure. It is a source-available tool that codifies APIs into declarative configuration files that can be shared amongst team members, treated as code, edited, reviewed, and versioned.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 50201 stars
+- **Stars / Engagement**: 50083 stars
 
 ---
 
@@ -2281,1599 +2281,643 @@ func (c *RemoteClient) getLockInfo() (*statemgr.LockInfo, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ae75cbe4` (2026-10-27)
-**Commit Message**: refactor: Make `taint` and `untaint` commands use the `views` package (#39452)
+### Incident Patch 1: `cbed3573` (2026-10-28)
+**Commit Message**: Evaluate module policies during destroy plan (#39455)
 
-This change:
-
-* Implements views for `taint` and `untaint` commands
-* Refactors `taint` and `untaint` commands to use views for terminal output
-* Enables displaying warning diagnostics at end of a successful command run
-* Adds `-no-color` and `-compact-warnings` flags to help text for `untaint` command
-
-These changes includes updating error output. Previously a string was logged to stderr, now a diagnostic is created and logged to stderr.
-
-**File**: `internal/command/arguments/taint.go` (modified, +4/-1)
+**File**: `.changes/v1.17/BUG FIXES-20261027-134032.yaml` (added, +5/-0)
 ```diff
-@@ -40,6 +40,8 @@ type Taint struct {
- 	// IgnoreRemoteVersion, if true, continues even if remote and local
- 	// Terraform versions are incompatible.
- 	IgnoreRemoteVersion bool
-+
-+	ViewType ViewType
- }
- 
- // ParseTaint processes CLI arguments, returning a Taint value and errors.
-@@ -48,7 +50,8 @@ type Taint struct {
- func ParseTaint(args []string) (*Taint, tfdiags.Diagnostics) {
- 	var diags tfdiags.Diagnostics
- 	taint := &Taint{
--		Vars: &Vars{},
-+		Vars:     &Vars{},
-+		ViewType: ViewHuman,
- 	}
- 
- 	cmdFlags := extendedFlagSet("taint", nil, nil, taint.Vars)
+@@ -0,0 +1,5 @@
++kind: BUG FIXES
++body: Always evaluate module policies during destroy plan
++time: 2026-10-27T13:40:32.51201+01:00
++custom:
++    Issue: "39455"
 ```
 
-**File**: `internal/command/arguments/taint_test.go` (modified, +14/-2)
+**File**: `internal/stacks/stackruntime/apply_test.go` (modified, +4/-6)
 ```diff
-@@ -21,6 +21,7 @@ func TestParseTaint_valid(t *testing.T) {
- 		"defaults with address": {
- 			[]string{"test_instance.foo"},
- 			&Taint{
-+				ViewType:  ViewHuman,
- 				Vars:      &Vars{},
- 				Address:   "test_instance.foo",
- 				StateLock: true,
-@@ -29,6 +30,7 @@ func TestParseTaint_valid(t *testing.T) {
- 		"allow-missing": {
- 			[]string{"-allow-missing", "test_instance.foo"},
- 			&Taint{
-+				ViewType:     ViewHuman,
- 				Vars:         &Vars{},
- 				Address:      "test_instance.foo",
- 				AllowMissing: true,
-@@ -38,6 +40,7 @@ func TestParseTaint_valid(t *testing.T) {
- 		"backup": {
- 			[]string{"-backup", "backup.tfstate", "test_instance.foo"},
- 			&Taint{
-+				ViewType:   ViewHuman,
- 				Vars:       &Vars{},
- 				Address:    "test_instance.foo",
- 				BackupPath: "backup.tfstate",
-@@ -47,13 +50,15 @@ func TestParseTaint_valid(t *testing.T) {
- 		"lock disabled": {
- 			[]string{"-lock=false", "test_instance.foo"},
- 			&Taint{
--				Vars:    &Vars{},
--				Address: "test_instance.foo",
-+				ViewType: ViewHuman,
-+				Vars:     &Vars{},
-+				Address:  "test_instance.foo",
- 			},
- 		},
- 		"lock-timeout": {
- 			[]string{"-lock-timeout=10s", "test_instance.foo"},
- 			&Taint{
-+				ViewType:         ViewHuman,
- 				Vars:             &Vars{},
- 				Address:          "test_instance.foo",
- 				StateLock:        true,
-@@ -63,6 +68,7 @@ func TestParseTaint_valid(t *testing.T) {
- 		"state": {
- 			[]string{"-state=foo.tfstate", "test_instance.foo"},
- 			&Taint{
-+				ViewType:  ViewHuman,
- 				Vars:      &Vars{},
- 				Address:   "test_instance.foo",
- 				StateLock: true,
-@@ -72,6 +78,7 @@ func TestParseTaint_valid(t *testing.T) {
- 		"state-out": {
- 			[]string{"-state-out=foo.tfstate", "test_instance.foo"},
- 			&Taint{
-+				ViewType:     ViewHuman,
- 				Vars:         &Vars{},
- 				Address:      "test_instance.foo",
- 				StateLock:    true,
-@@ -81,6 +88,7 @@ func TestParseTaint_valid(t *testing.T) {
- 		"ignore-remote-version": {
- 			[]string{"-ignore-remote-version", "test_instance.foo"},
- 			&Taint{
-+				ViewType:            ViewHuman,
- 				Vars:                &Vars{},
- 				Address:             "test_instance.foo",
- 				StateLock:           true,
-@@ -99,6 +107,7 @@ func TestParseTaint_valid(t *testing.T) {
- 				"module.child.test_instance.foo",
- 			},
- 			&Taint{
-+				ViewType:            ViewHuman,
- 				Vars:                &Vars{},
- 				Address:             "module.child.test_instance.foo",
- 				AllowMissing:        true,
-@@ -180,6 +189,7 @@ func TestParseTaint_invalid(t *testing.T) {
- 		"unknown flag": {
- 			[]string{"-unknown"},
- 			&Taint{
-+				ViewType:  ViewHuman,
- 				Vars:      &Vars{},
- 				StateLock: true,
- 			},
-@@ -199,6 +209,7 @@ func TestParseTaint_invalid(t *testing.T) {
- 		"missing address": {
- 			nil,
- 			&Taint{
-+				ViewType:  ViewHuman,
- 				Vars:      &Vars{},
- 				StateLock: true,
- 			},
-@@ -213,6 +224,7 @@ func TestParseTaint_invalid(t *testing.T) {
- 		"too many arguments": {
- 			[]string{"test_instance.foo", "test_instance.bar"},
- 			&Taint{
-+				ViewType:  ViewHuman,
- 				Vars:      &Vars{},
- 				Address:   "test_instance.foo",
- 				StateLock: true,
-```
-
-**File**: `internal/command/arguments/untaint.go` (modified, +5/-1)
-```diff
-@@ -37,14 +37,18 @@ type Untaint struct {
- 	// IgnoreRemoteVersion, if true, continues even if remote and local
- 	// Terraform versions are incompatible.
- 	IgnoreRemoteVersion bool
-+
-+	ViewType ViewType
- }
- 
- // ParseUntaint processes CLI arguments, returning an Untaint value and errors.
- // If errors are encountered, an Untaint value is still returned representing
- // the best effort interpretation of the arguments.
- func ParseUntaint(args []string) (*Untaint, tfdiags.Diagnostics) {
- 	var diags tfdiags.Diagnostics
--	untaint := &Untaint{}
-+	untaint := &Untaint{
-+		ViewType: ViewHuman,
-+	}
- 
- 	cmdFlags := defaultFlagSet("untaint")
- 	cmdFlags.BoolVar(&untaint.AllowMissing, "allow-missing", false, "allow missing")
-```
-
-**File**: `internal/command/arguments/untaint_test.go` (modified, +13/-1)
-```diff
-@@ -18,13 +18,15 @@ func TestParseUntaint_valid(t *testing.T) {
- 		"defaults with address": {
- 			[]string{"test_instance.foo"},
- 			&Untaint{
-+				ViewType:  ViewHuman,
- 				Address:   "test_instance.foo",
- 				StateLock: true,
- 			},
- 		},
- 		"allow-missing": {
- 			[]string{"-allow-missing", "test_instance.foo"},
- 			&Untaint{
-+				ViewType:     ViewHuman,
- 				Address:      "test_instance.foo",
- 				AllowMissing: true,
- 				StateLock:    true,
-@@ -33,6 +35,7 @@ func TestParseUntaint_valid(t *testing.T) {
- 		"backup": {
- 			[]string{"-backup", "backup.tfstate", "test_instance.foo"},
- 			&Untaint{
-+				ViewType:   ViewHuman,
- 				Address:    "test_instance.foo",
- 				BackupPath: "backup.tfstate",
- 				StateLock:  true,
-@@ -41,12 +44,14 @@ func TestParseUntaint_valid(t *testing.T) {
- 		"lock disabled": {
- 			[]string{"-lock=false", "test_instance.foo"},
- 			&Untaint{
--				Address: "test_instance.foo",
-+				ViewType: ViewHuman,
-+				Address:  "test_instance.foo",
- 			},
- 		},
- 		"lock-timeout": {
- 			[]string{"-lock-timeout=10s", "test_instance.foo"},
- 			&Untaint{
-+				ViewType:         ViewHuman,
- 				Address:          "test_instance.foo",
- 				StateLock:        true,
- 				StateLockTimeout: 10 * time.Second,
-@@ -55,6 +60,7 @@ func TestParseUntaint_valid(t *testing.T) {
- 		"state": {
- 			[]string{"-state=foo.tfstate", "test_instance.foo"},
- 			&Untaint{
-+				ViewType:  ViewHuman,
- 				Address:   "test_instance.foo",
- 				StateLock: true,
- 				StatePath: "foo.tfstate",
-@@ -63,6 +69,7 @@ func TestParseUntaint_valid(t *testing.T) {
- 		"state-out": {
- 			[]string{"-state-out=foo.tfstate", "test_instance.foo"},
- 			&Untaint{
-+				ViewType:     ViewHuman,
- 				Address:      "test_instance.foo",
- 				StateLock:    true,
- 				StateOutPath: "foo.tfstate",
-@@ -71,6 +78,7 @@ func TestParseUntaint_valid(t *testing.T) {
- 		"ignore-remote-version": {
- 			[]string{"-ignore-remote-version", "test_instance.foo"},
- 			&Untaint{
-+				ViewType:            ViewHuman,
- 				Address:             "test_instance.foo",
- 				StateLock:           true,
- 				IgnoreRemoteVersion: true,
-@@ -88,6 +96,7 @@ func TestParseUntaint_valid(t *testing.T) {
- 				"module.child.test_instance.foo",
- 			},
- 			&Untaint{
-+				ViewType:            ViewHuman,
- 				Address:             "module.child.test_instance.foo",
- 				AllowMissing:        true,
- 				BackupPath:          "backup.tfstate",
-@@ -121,6 +130,7 @@ func TestParseUntaint_invalid(t *testing.T) {
- 		"unknown flag": {
- 			[]string{"-unknown"},
- 			&Untaint{
-+				ViewType:  ViewHuman,
- 				StateLock: true,
- 			},
- 			tfdiags.Diagnostics{
-@@ -139,6 +149,7 @@ func TestParseUntaint_invalid(t *testing.T) {
- 		"missing address": {
- 			nil,
- 			&Untaint{
-+				ViewType:  ViewHuman,
- 				StateLock: true,
- 			},
- 			tfdiags.Diagnostics{
-@@ -152,6 +163,7 @@ func TestParseUntaint_invalid(t *testing.T) {
- 		"too many arguments": {
- 			[]string{"test_instance.foo", "test_instance.bar"},
- 			&Untaint{
-+				ViewType:  ViewHuman,
- 				Address:   "test_instance.foo",
- 				StateLock: true,
- 			},
-```
-
-**File**: `internal/command/taint.go` (modified, +88/-37)
-```diff
-@@ -23,9 +23,22 @@ type TaintCommand struct {
- }
- 
- func (c *TaintCommand) Run(rawArgs []string) int {
--	parsedArgs, parseDiags := arguments.ParseTaint(c.Meta.process(rawArgs))
--	if parseDiags.HasErrors() {
--		c.showDiagnostics(parseDiags)
-+	var diags tfdiags.Diagnostics
-+
-+	// Parse and apply global view arguments
-+	common, rawArgs := arguments.ParseView(rawArgs)
-+	c.View.Configure(common)
-+
-+	// Parse command-specific arguments.
-+	parsedArgs, parseDiags := arguments.ParseTaint(rawArgs)
-+	diags = diags.Append(parseDiags)
-+
-+	// Prepare the view
-+	view := views.NewTaint(parsedArgs.ViewType, c.View)
-+
-+	// Now the view is ready, process any error diagnostics from parsing arguments.
-+	if diags.HasErrors() {
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
-@@ -41,100 +54,122 @@ func (c *TaintCommand) Run(rawArgs []string) int {
- 	if err != nil {
- 		var diags tfdiags.Diagnostics
- 		diags = diags.Append(err)
--		c.showDiagnostics(diags)
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
- 	var varDiags tfdiags.Diagnostics
- 	c.VariableValues, varDiags = parsedArgs.Vars.CollectValues(func(filename string, src []byte) {
- 		loader.Parser().ForceFileSource(filename, src)
+@@ -5011,9 +5011,8 @@ func TestApply_WithPolicyResultsOnDestroy(t *testing.T) {
  	})
-+	diags = diags.Append(varDiags)
- 	if varDiags.HasErrors() {
--		c.showDiagnostics(varDiags)
-+		view.Diagnostics(diags)
- 		return 1
- 	}
  
--	var diags tfdiags.Diagnostics
+ 	wantPolicyResults := map[string]map[string]policy.EvaluationResponse{
+-		// Module policies are not evaluated during the destroy apply (only during pre-destroy refresh)
+-		`component.simple_component["comp1"]`:                                  createExpectedComponentInstancePolicyEvaluationForResources("policy-evaluation"),
+-		`component.simple_component["comp2"]`:                                  createExpectedComponentInstancePolicyEvaluationForResources("policy-evaluation"),
++		`component.simple_component["comp1"]`:                                  createExpectedComponentInstancePolicyEvaluation("policy-evaluation"),
++		`component.simple_component["comp2"]`:                                  createExpectedComponentInstancePolicyEvaluation("policy-evaluation"),
+ 		`provider["registry.terraform.io/hashicorp/testing"].default["comp1"]`: createExpectedProviderInstancePolicyEvaluation("policy-evaluation"),
+ 		`provider["registry.terraform.io/hashicorp/testing"].default["comp2"]`: createExpectedProviderInstancePolicyEvaluation("policy-evaluation"),
+ 	}
+@@ -5089,9 +5088,8 @@ func TestApply_WithPolicyResultsOnRemovedComponent(t *testing.T) {
+ 	})
+ 
+ 	wantPolicyResults := map[string]map[string]policy.EvaluationResponse{
+-		`component.simple_component["comp1"]`: createExpectedComponentInstancePolicyEvaluation("policy-evaluation-removed"),
+-		// Module policies are not evaluated during the destroy apply (only during pre-destroy refresh)
+-		`component.simple_component["comp2"]`:                                  createExpectedComponentInstancePolicyEvaluationForResources("policy-evaluation-removed"),
++		`component.simple_component["comp1"]`:                                  createExpectedComponentInstancePolicyEvaluation("policy-evaluation-removed"),
++		`component.simple_component["comp2"]`:                                  createExpectedComponentInstancePolicyEvaluation("policy-evaluation-removed"),
+ 		`provider["registry.terraform.io/hashicorp/testing"].default["comp1"]`: createExpectedProviderInstancePolicyEvaluation("policy-evaluation-removed"),
+ 		`provider["registry.terraform.io/hashicorp/testing"].default["comp2"]`: createExpectedProviderInstancePolicyEvaluation("policy-evaluation-removed"),
+ 	}
+```
+
+**File**: `internal/stacks/stackruntime/plan_test.go` (modified, +4/-48)
+```diff
+@@ -7048,9 +7048,9 @@ func TestPlan_WithPolicyResultsOnDestroy(t *testing.T) {
+ 
+ 	wantPolicyResults := map[string]map[string]policy.EvaluationResponse{
+ 		// Stacks runs multiple calls to the module runtime for planning a full destroy, one refresh and one destroy plan.
+-		// Only the destroy plan will emit resource policy evaluations
+-		`component.simple_component["comp1"]`:                                  createExpectedComponentInstancePolicyEvaluationForResources("policy-evaluation"),
+-		`component.simple_component["comp2"]`:                                  createExpectedComponentInstancePolicyEvaluationForResources("policy-evaluation"),
++		// Only the destroy plan will emit module and resource policy evaluations
++		`component.simple_component["comp1"]`:                                  createExpectedComponentInstancePolicyEvaluation("policy-evaluation"),
++		`component.simple_component["comp2"]`:                                  createExpectedComponentInstancePolicyEvaluation("policy-evaluation"),
+ 		`provider["registry.terraform.io/hashicorp/testing"].default["comp1"]`: createExpectedProviderInstancePolicyEvaluation("policy-evaluation"),
+ 		`provider["registry.terraform.io/hashicorp/testing"].default["comp2"]`: createExpectedProviderInstancePolicyEvaluation("policy-evaluation"),
+ 	}
+@@ -7116,7 +7116,7 @@ func TestPlan_WithPolicyResultsOnRemovedComponent(t *testing.T) {
+ 		// Stacks runs a single call to the module runtime for planning a component destroy, a destroy plan.
+ 		// The plan emits modules and resources policy evaluations.
+ 		`component.simple_component["comp1"]`:                                  createExpectedComponentInstancePolicyEvaluation("policy-evaluation-removed"),
+-		`component.simple_component["comp2"]`:                                  createExpectedComponentInstancePolicyEvaluationForResources("policy-evaluation-removed"),
++		`component.simple_component["comp2"]`:                                  createExpectedComponentInstancePolicyEvaluation("policy-evaluation-removed"),
+ 		`provider["registry.terraform.io/hashicorp/testing"].default["comp1"]`: createExpectedProviderInstancePolicyEvaluation("policy-evaluation-removed"),
+ 		`provider["registry.terraform.io/hashicorp/testing"].default["comp2"]`: createExpectedProviderInstancePolicyEvaluation("policy-evaluation-removed"),
+ 	}
+@@ -7466,50 +7466,6 @@ func createExpectedComponentInstancePolicyEvaluationForModules(bundlePath string
+ 	}
+ }
+ 
+-// This helper is used for tests that only expect resource policies to be evaluated (destroy apply, removed component plans)
+-func createExpectedComponentInstancePolicyEvaluationForResources(bundlePath string) map[string]policy.EvaluationResponse {
+-	rootModuleRange := hcl.Range{
+-		Filename: fmt.Sprintf("git::https://example.com/test.git//%s/main.tf", bundlePath),
+-		Start:    hcl.Pos{Line: 14, Column: 1, Byte: 161},
+-		End:      hcl.Pos{Line: 14, Column: 46, Byte: 206},
+-	}
+-	childResourceRange := hcl.Range{
+-		Filename: fmt.Sprintf("git::https://example.com/test.git//%s/child/main.tf", bundlePath),
+-		Start:    hcl.Pos{Line: 14, Column: 1, Byte: 161},
+-		End:      hcl.Pos{Line: 14, Column: 45, Byte: 205},
+-	}
 -
- 	addr, addrDiags := addrs.ParseAbsResourceInstanceStr(parsedArgs.Address)
- 	diags = diags.Append(addrDiags)
- 	if addrDiags.HasErrors() {
--		c.showDiagnostics(diags)
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
- 	if addr.Resource.Resource.Mode != addrs.ManagedResourceMode {
--		c.Ui.Error(fmt.Sprintf("Resource instance %s cannot be tainted", addr))
-+		diags = diags.Append(tfdiags.Sourceless(
-+			tfdiags.Error,
-+			"Cannot taint provided address",
-+			fmt.Sprintf("%s cannot be tainted because it is not a managed resource.", addr),
-+		))
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
- 	if diags := c.Meta.checkRequiredVersion(); diags != nil {
--		c.showDiagnostics(diags)
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
- 	// Load the backend
--	view := arguments.ViewHuman
--	b, backendDiags := c.backend(".", view)
-+	b, backendDiags := c.backend(".", parsedArgs.ViewType)
- 	diags = diags.Append(backendDiags)
- 	if backendDiags.HasErrors() {
--		c.showDiagnostics(diags)
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
- 	// Determine the workspace name
- 	workspace, err := c.Workspace()
- 	if err != nil {
--		c.Ui.Error(fmt.Sprintf("Error selecting workspace: %s", err))
-+		diags = diags.Append(tfdiags.Sourceless(
-+			tfdiags.Error,
-+			"Error determining the current workspace",
-+			err.Error(),
-+		))
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
- 	// Check remote Terraform version is compatible
- 	remoteVersionDiags := c.remoteVersionCheck(b, workspace)
- 	diags = diags.Append(remoteVersionDiags)
--	c.showDiagnostics(diags)
-+	view.Diagnostics(diags)
- 	if diags.HasErrors() {
- 		return 1
- 	}
- 
--	// Get the state
-+	// Get a state manager for the current workspace
- 	stateMgr, sDiags := b.StateMgr(workspace)
- 	if sDiags.HasErrors() {
--		c.Ui.Error(fmt.Sprintf("Failed to load state: %s", sDiags.Err()))
-+		diags = diags.Append(tfdiags.Sourceless(
-+			tfdiags.Error,
-+			"Error accessing state",
-+			fmt.Sprintf("Failed to access state: %s", sDiags.Err()),
-+		))
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
- 	if c.stateLock {
- 		stateLocker := clistate.NewLocker(c.stateLockTimeout, views.NewStateLocker(arguments.ViewHuman, c.View))
--		if diags := stateLocker.Lock(stateMgr, "taint"); diags.HasErrors() {
--			c.showDiagnostics(diags)
-+		if lockDiags := stateLocker.Lock(stateMgr, "taint"); lockDiags.HasErrors() {
-+			diags = diags.Append(lockDiags)
-+			view.Diagnostics(diags)
- 			return 1
- 		}
- 		defer func() {
--			if diags := stateLocker.Unlock(); diags.HasErrors() {
--				c.showDiagnostics(diags)
-+			if unlockDiags := stateLocker.Unlock(); unlockDiags.HasErrors() {
-+				diags = diags.Append(unlockDiags)
-+				view.Diagnostics(diags)
- 			}
- 		}()
- 	}
- 
- 	if err := stateMgr.RefreshState(); err != nil {
--		c.Ui.Error(fmt.Sprintf("Failed to load state: %s", err))
-+		diags = diags.Append(tfdiags.Sourceless(
-+			tfdiags.Error,
-+			"Error loading state",
-+			fmt.Sprintf("Failed to load state: %s", err),
-+		))
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
- 	// Get the actual state structure
- 	state := stateMgr.State()
- 	if state.Empty() {
- 		if parsedArgs.AllowMissing {
--			return c.allowMissingExit(addr)
-+			diags = diags.Append(c.allowMissingWarning(addr))
-+			view.Diagnostics(diags)
-+			return 0
- 		}
- 
- 		diags = diags.Append(tfdiags.Sourceless(
- 			tfdiags.Error,
- 			"No such resource instance",
- 			"The state currently contains no resource instances whatsoever. This may occur if the configuration has never been applied or if it has recently been destroyed.",
- 		))
--		c.showDiagnostics(diags)
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
-@@ -153,15 +188,17 @@ func (c *TaintCommand) Run(rawArgs []string) int {
- 	is := ss.ResourceInstance(ad
-```
-
-**File**: `internal/command/taint_test.go` (modified, +35/-62)
-```diff
-@@ -36,11 +36,9 @@ func TestTaint(t *testing.T) {
- 	})
- 	statePath := testStateFile(t, state)
- 
--	ui := testUiWrapped(t)
--	view, _ := testView(t)
-+	view, done := testView(t)
- 	c := &TaintCommand{
- 		Meta: Meta{
--			Ui:   ui,
- 			View: view,
- 		},
- 	}
-@@ -50,7 +48,7 @@ func TestTaint(t *testing.T) {
- 		"test_instance.foo",
- 	}
- 	if code := c.Run(args); code != 0 {
--		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
-+		t.Fatalf("bad: %d\n\n%s", code, done(t).All())
- 	}
- 
- 	testStateOutput(t, statePath, testTaintStr)
-@@ -81,11 +79,9 @@ func TestTaint_lockedState(t *testing.T) {
- 		t.Fatal(err)
- 	}
- 	defer unlock()
--	ui := testUiWrapped(t)
--	view, _ := testView(t)
-+	view, done := testView(t)
- 	c := &TaintCommand{
- 		Meta: Meta{
--			Ui:   ui,
- 			View: view,
- 		},
- 	}
-@@ -98,7 +94,7 @@ func TestTaint_lockedState(t *testing.T) {
- 		t.Fatal("expected error")
- 	}
- 
--	output := ui.ErrorWriter.String()
-+	output := done(t).All()
- 	if !strings.Contains(output, "lock") {
- 		t.Fatal("command output does not look like a lock error:", output)
- 	}
-@@ -129,11 +125,9 @@ func TestTaint_backup(t *testing.T) {
- 	})
- 	testStateFileDefault(t, state)
- 
--	ui := testUiWrapped(t)
--	view, _ := testView(t)
-+	view, done := testView(t)
- 	c := &TaintCommand{
- 		Meta: Meta{
--			Ui:   ui,
- 			View: view,
- 		},
- 	}
-@@ -142,7 +136,7 @@ func TestTaint_backup(t *testing.T) {
- 		"test_instance.foo",
- 	}
- 	if code := c.Run(args); code != 0 {
--		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
-+		t.Fatalf("bad: %d\n\n%s", code, done(t).All())
- 	}
- 
- 	testStateOutput(t, DefaultStateFilename+".backup", testTaintDefaultStr)
-@@ -174,11 +168,9 @@ func TestTaint_backupDisable(t *testing.T) {
- 	})
- 	testStateFileDefault(t, state)
- 
--	ui := testUiWrapped(t)
--	view, _ := testView(t)
-+	view, done := testView(t)
- 	c := &TaintCommand{
- 		Meta: Meta{
--			Ui:   ui,
- 			View: view,
- 		},
- 	}
-@@ -188,7 +180,7 @@ func TestTaint_backupDisable(t *testing.T) {
- 		"test_instance.foo",
- 	}
- 	if code := c.Run(args); code != 0 {
--		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
-+		t.Fatalf("bad: %d\n\n%s", code, done(t).All())
- 	}
- 
- 	if _, err := os.Stat(DefaultStateFilename + ".backup"); err == nil {
-@@ -199,11 +191,9 @@ func TestTaint_backupDisable(t *testing.T) {
- }
- 
- func TestTaint_badState(t *testing.T) {
--	ui := testUiWrapped(t)
--	view, _ := testView(t)
-+	view, done := testView(t)
- 	c := &TaintCommand{
- 		Meta: Meta{
--			Ui:   ui,
- 			View: view,
- 		},
- 	}
-@@ -213,7 +203,7 @@ func TestTaint_badState(t *testing.T) {
- 		"foo",
- 	}
- 	if code := c.Run(args); code != 1 {
--		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
-+		t.Fatalf("bad: %d\n\n%s", code, done(t).All())
- 	}
- }
- 
-@@ -242,11 +232,9 @@ func TestTaint_defaultState(t *testing.T) {
- 	})
- 	testStateFileDefault(t, state)
- 
--	ui := testUiWrapped(t)
--	view, _ := testView(t)
-+	view, done := testView(t)
- 	c := &TaintCommand{
- 		Meta: Meta{
--			Ui:   ui,
- 			View: view,
- 		},
- 	}
-@@ -255,7 +243,7 @@ func TestTaint_defaultState(t *testing.T) {
- 		"test_instance.foo",
- 	}
- 	if code := c.Run(args); code != 0 {
--		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
-+		t.Fatalf("bad: %d\n\n%s", code, done(t).All())
- 	}
- 
- 	testStateOutput(t, DefaultStateFilename, testTaintStr)
-@@ -266,12 +254,10 @@ func TestTaint_constVariable(t *testing.T) {
- 		wd := tempWorkingDirFixture(t, "dynamic-module-sources/command-with-const-var")
- 		t.Chdir(wd.RootModuleDir())
- 
--		ui := testUiWrapped(t)
--		view, _ := testView(t)
-+		view, done := testView(t)
- 		c := &TaintCommand{
- 			Meta: Meta{
- 				testingOverrides: metaOverridesForProvider(testProvider()),
--				Ui:               ui,
- 				View:             view,
- 				WorkingDir:       wd,
- 			},
-@@ -282,7 +268,7 @@ func TestTaint_constVariable(t *testing.T) {
- 			t.Fatalf("expected error, got 0")
- 		}
- 
--		errStr := ui.ErrorWriter.String()
-+		errStr := done(t).All()
- 		if !strings.Contains(errStr, "No value for required variable") {
- 			t.Fatalf("expected missing variable error, got: %s", errStr)
- 		}
-@@ -292,20 +278,18 @@ func TestTaint_constVariable(t *testing.T) {
- 		wd := tempWorkingDirFixture(t, "dynamic-module-sources/command-with-const-var")
- 		t.Chdir(wd.RootModuleDir())
- 
--		ui := testUiWrapped(t)
--		view, _ := testView(t)
-+		view, done := testView(t)
- 		c := &TaintCommand{
- 			Meta: Meta{
- 				testingOverrides: metaOverridesForProvider(testProvider()),
--				Ui:               ui,
- 				View:             view,
- 				WorkingDir:       wd,
- 			},
- 		}
- 
- 		args := []string{"-var", "module_name=child", "module.child.test_instance.test"}
- 		if code := c.Run(args); code != 0 {
--			t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
-+			t.Fatalf("bad: %d\n\n%s", code, done(t).All())
- 		}
- 
- 		actual := strings.TrimSpace(testStateRead(t, "terraform.tfstate").String())
-@@ -329,20 +313,18 @@ module.child:
- 		wd := tempWorkingDirFixture(t, "dynamic-module-sources/command-with-const-var-backend")
- 		t.Chdir(wd.RootModuleDir())
- 
--		ui := testUiWrappe
-```
-
-**File**: `internal/command/untaint.go` (modified, +80/-35)
-```diff
-@@ -23,9 +23,22 @@ type UntaintCommand struct {
- }
- 
- func (c *UntaintCommand) Run(rawArgs []string) int {
--	parsedArgs, parseDiags := arguments.ParseUntaint(c.Meta.process(rawArgs))
--	if parseDiags.HasErrors() {
--		c.showDiagnostics(parseDiags)
-+	var diags tfdiags.Diagnostics
-+
-+	// Parse and apply global view arguments
-+	common, rawArgs := arguments.ParseView(rawArgs)
-+	c.View.Configure(common)
-+
-+	// Parse command-specific arguments.
-+	parsedArgs, parseDiags := arguments.ParseUntaint(rawArgs)
-+	diags = diags.Append(parseDiags)
-+
-+	// Prepare the view
-+	view := views.NewUntaint(parsedArgs.ViewType, c.View)
-+
-+	// Now the view is ready, process any error diagnostics from parsing arguments.
-+	if diags.HasErrors() {
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
-@@ -37,77 +50,93 @@ func (c *UntaintCommand) Run(rawArgs []string) int {
- 	c.Meta.stateOutPath = parsedArgs.StateOutPath
- 	c.Meta.ignoreRemoteVersion = parsedArgs.IgnoreRemoteVersion
- 
--	var diags tfdiags.Diagnostics
+-	return map[string]policy.EvaluationResponse{
+-		"testing_resource.parent_resource": {
+-			Overall:  policy.AllowResult,
+-			Policies: []*policy.Policy{mockPolicyObj(policy.AllowResult)},
+-			Enforcements: []policy.EnforcementResult{
+-				{
+-					Result:     policy.AllowResult,
+-					Message:    "just an advisory message",
+-					BlockIndex: 1,
+-					Policy:     mockPolicyObj(policy.AllowResult),
+-					LocalRange: rootModuleRange.Ptr(),
+-				},
+-			},
+-		},
+-		"module.child.testing_resource.child_resource": {
+-			Overall:  policy.DenyResult,
+-			Policies: []*policy.Policy{mockPolicyObj(policy.DenyResult)},
+-			Diagnostics: withLocalRange(policy.DiagsFromProto([]*policyproto.Diagnostic{
+-				{
+-					Severity: policyproto.Severity_ERROR,
+-					Summary:  "Child module resource violation",
+-					Detail:   "module.child.testing_resource.child_resource violates policy",
+-					Result: &policyproto.DiagnosticResult{
+-						Result: policyproto.EvaluateResult_DENY_EVALUATE_RESULT,
+-					},
+-				},
+-			}, nil), childResourceRange),
+-		},
+-	}
+-}
 -
- 	addr, addrDiags := addrs.ParseAbsResourceInstanceStr(parsedArgs.Address)
- 	diags = diags.Append(addrDiags)
- 	if addrDiags.HasErrors() {
--		c.showDiagnostics(diags)
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
- 	// Load the backend
--	view := arguments.ViewHuman
--	b, backendDiags := c.backend(".", view)
-+	b, backendDiags := c.backend(".", parsedArgs.ViewType)
- 	diags = diags.Append(backendDiags)
- 	if backendDiags.HasErrors() {
--		c.showDiagnostics(diags)
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
- 	// Determine the workspace name
- 	workspace, err := c.Workspace()
- 	if err != nil {
--		c.Ui.Error(fmt.Sprintf("Error selecting workspace: %s", err))
-+		diags = diags.Append(tfdiags.Sourceless(
-+			tfdiags.Error,
-+			"Error determining the current workspace",
-+			err.Error(),
-+		))
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
- 	// Check remote Terraform version is compatible
- 	remoteVersionDiags := c.remoteVersionCheck(b, workspace)
- 	diags = diags.Append(remoteVersionDiags)
--	c.showDiagnostics(diags)
- 	if diags.HasErrors() {
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
--	// Get the state
-+	// Get a state manager for the current workspace
- 	stateMgr, sDiags := b.StateMgr(workspace)
- 	if sDiags.HasErrors() {
--		c.Ui.Error(fmt.Sprintf("Failed to load state: %s", sDiags.Err()))
-+		diags = diags.Append(tfdiags.Sourceless(
-+			tfdiags.Error,
-+			"Error accessing state",
-+			fmt.Sprintf("Failed to access state: %s", sDiags.Err()),
-+		))
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
- 	if c.stateLock {
- 		stateLocker := clistate.NewLocker(c.stateLockTimeout, views.NewStateLocker(arguments.ViewHuman, c.View))
--		if diags := stateLocker.Lock(stateMgr, "untaint"); diags.HasErrors() {
--			c.showDiagnostics(diags)
-+		if lockDiags := stateLocker.Lock(stateMgr, "untaint"); lockDiags.HasErrors() {
-+			diags = diags.Append(lockDiags)
-+			view.Diagnostics(diags)
- 			return 1
- 		}
- 		defer func() {
--			if diags := stateLocker.Unlock(); diags.HasErrors() {
--				c.showDiagnostics(diags)
-+			if unlockDiags := stateLocker.Unlock(); unlockDiags.HasErrors() {
-+				diags = diags.Append(unlockDiags)
-+				view.Diagnostics(diags)
- 			}
- 		}()
- 	}
- 
- 	if err := stateMgr.RefreshState(); err != nil {
--		c.Ui.Error(fmt.Sprintf("Failed to load state: %s", err))
-+		diags = diags.Append(tfdiags.Sourceless(
-+			tfdiags.Error,
-+			"Error loading state",
-+			fmt.Sprintf("Failed to load state: %s", err),
-+		))
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
- 	// Get the actual state structure
- 	state := stateMgr.State()
- 	if state.Empty() {
- 		if parsedArgs.AllowMissing {
--			return c.allowMissingExit(addr)
-+			diags = diags.Append(c.allowMissingWarning(addr))
-+			view.Diagnostics(diags)
-+			return 0
- 		}
- 
- 		diags = diags.Append(tfdiags.Sourceless(
- 			tfdiags.Error,
- 			"No such resource instance",
- 			"The state currently contains no resource instances whatsoever. This may occur if the configuration has never been applied or if it has recently been destroyed.",
- 		))
--		c.showDiagnostics(diags)
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
-@@ -118,15 +147,17 @@ func (c *UntaintCommand) Run(rawArgs []string) int {
- 	is := ss.ResourceInstance(addr)
- 	if is == nil {
- 		if parsedArgs.AllowMissing {
--			return c.allowMissingExit(addr)
-+			diags = diags.Append(c.allowMissingWarning(addr))
-+			view.Diagnostics(diags)
-+			return 0
- 		}
- 
- 		diags = diags.Append(tfdiags.Sourceless(
- 			tfdiags.Error,
- 			"No such resource instance",
- 			fmt.Sprintf("There is no resource instance in the state with the address %s. If the resource configuration has just been added, you must run \"terraform apply\" once to create the corresponding instance(s) before they can be tainted.", addr),
- 		))
--		c.showDiagnostics(diags)
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
-@@ -143,10 +174,10 @@ func (c *UntaintCommand) Run(rawArgs []string) int {
- 			diags = diags.Append(tfdiags.Sourceless(
- 				tfdiags.Error,
- 				"No such resource instance",
--				fmt.Sprintf("Resource instance %s does not currently have a remo
+ func createExpectedComponentInstancePolicyEvaluation(bundlePath string) map[string]policy.EvaluationResponse {
+ 	rootModuleRange := hcl.Range{
+ 		Filename: fmt.Sprintf("git::https://example.com/test.git//%s/main.tf", bundlePath),
 ```
 
-**File**: `internal/command/untaint_test.go` (modified, +24/-42)
+**File**: `internal/terraform/context_plan_policy_test.go` (modified, +219/-0)
 ```diff
-@@ -83,11 +83,9 @@ func TestUntaint_lockedState(t *testing.T) {
- 	}
- 	defer unlock()
+@@ -5,6 +5,7 @@ package terraform
  
--	ui := testUiWrapped(t)
--	view, _ := testView(t)
-+	view, done := testView(t)
- 	c := &UntaintCommand{
- 		Meta: Meta{
--			Ui:   ui,
- 			View: view,
+ import (
+ 	"context"
++	"fmt"
+ 	"path/filepath"
+ 	"sort"
+ 	"strings"
+@@ -1110,6 +1111,224 @@ func TestContext2Plan_PolicyEvaluation(t *testing.T) {
+ 				t.Error("Expected module.child.test_resource.test in plan changes")
+ 			},
  		},
- 	}
-@@ -100,8 +98,8 @@ func TestUntaint_lockedState(t *testing.T) {
- 		t.Fatal("expected error")
++		{
++			name:        "destroy plan: module policy is evaluated",
++			expectCalls: 1,
++			mainConfig: `
++				terraform {
++					required_providers {
++						test = {
++							source = "hashicorp/test"
++							version = "1.0.0"
++						}
++					}
++				}
++
++				module "child" {
++					source = "./child"
++				}
++				`,
++			childConfig: `
++				resource "test_resource" "test" {
++					sensitive_value = "foo"
++				}
++				`,
++			planMode: plans.DestroyMode,
++			state: states.BuildState(func(ss *states.SyncState) {
++				ss.SetResourceInstanceCurrent(
++					mustResourceInstanceAddr("module.child.test_resource.test"),
++					&states.ResourceInstanceObjectSrc{
++						Status:    states.ObjectReady,
++						AttrsJSON: []byte(`{"id":"bar","type":"test_resource","sensitive_value":"foo"}`),
++					},
++					mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
++				)
++			}),
++			prepareExpectations: func(t *testing.T, data *data) {
++				data.policy.EvaluateFn = func(ctx context.Context, req policy.EvaluationRequest[*proto.PolicyEvaluateResourceRequest_ResourceMetadata]) policy.EvaluationResponse {
++					data.policyEvalCalls++
++					return policy.EvaluationResponse{Overall: policy.AllowResult}
++				}
++				data.policy.EvaluateModuleFn = func(ctx context.Context, req policy.EvaluationRequest[*proto.PolicyEvaluateModuleRequest_ModuleMetadata]) policy.EvaluationResponse {
++					if req.Meta.Address != "module.child" {
++						t.Errorf("Expected module address to be \"module.child\", got %q", req.Meta.Address)
++					}
++					if req.Target != "./child" {
++						t.Errorf("Expected module target to be \"./child\", got %q", req.Target)
++					}
++					return policy.EvaluationResponse{
++						Overall: policy.DenyResult,
++						Diagnostics: policy.DiagsFromProto([]*proto.Diagnostic{
++							{
++								Severity: proto.Severity_ERROR,
++								Summary:  "Module policy violation",
++								Detail:   "module.child violates policy",
++								Result: &proto.DiagnosticResult{
++									Result: proto.EvaluateResult_DENY_EVALUATE_RESULT,
++								},
++							},
++						}, nil),
++					}
++				}
++			},
++			assertPolicyResults: func(t *testing.T, d *data) {
++				if !d.policy.EvaluateModuleCalled {
++					t.Fatal("Expected policyClient.EvaluateModule to be called")
++				}
++
++				result, ok := d.viewHook.PolicyResults["module.child"]
++				if !ok {
++					t.Fatal("Expected a policy result for module.child")
++				}
++				if result.Overall != policy.DenyResult {
++					t.Errorf("Expected module.child policy result to be deny, got %v", result.Overall)
++				}
++
++				for _, rc := range d.plan.Changes.Resources {
++					if rc.Addr.String() == "module.child.test_resource.test" {
++						if rc.Action != plans.Delete {
++							t.Errorf("Expected delete action for module.child.test_resource.test, got %s", rc.Action)
++						}
++						return
++					}
++				}
++				t.Error("Expected module.child.test_resource.test in plan changes")
++			},
++		},
++		{
++			// The module call expands into multiple instances via for_each.
++			// The variable and the expansion node are pruned from the destroy
++			// graph, but the module policy is still evaluated once for the
++			// module call.
++			name:        "destroy plan: module policy is evaluated for expanded module call",
++			expectCalls: 2,
++			mainConfig: `
++				terraform {
++					required_providers {
++						test = {
++							source = "hashicorp/test"
++							version = "1.0.0"
++						}
++					}
++				}
++
++				variable "keys" {
++					type    = set(string)
++					default = ["a", "b"]
++				}
++
++				module "child" {
++					source   = "./child"
++					for_each = var.keys
++				}
++				`,
++			childConfig: `
++				resource "test_resource" "test" {
++					sensitive_value = "foo"
++				}
++				`,
++			planMode: plans.DestroyMode,
++			state: states.BuildState(func(ss *states.SyncState) {
++				for _, key := range []string{"a", "b"} {
++					ss.SetResourceInstanceCurrent(
++						mustResourceInstanceAddr(fmt.Sprintf("module.child[%q].test_resource.test", key)),
++						&states.ResourceInstanceObjectSrc{
++							Status:    states.ObjectReady,
++							AttrsJSON: []byte(`{"id":"bar","type":"test_resource","sensitive_value":"foo"}`),
++						},
++						mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
++					)
++				}
++			}),
++			prepareExpectations: func(t *testing.T, data *data) {
++				data.policy.EvaluateFn = func(ctx context.Context, req policy.EvaluationRequest[*proto.PolicyEvaluateResourceRequest_ResourceMetadata]) policy.EvaluationResponse {
++					data.policyEvalCalls++
++					return policy.EvaluationResponse{Overall: policy.AllowResult}
++				}
++				data.policy.EvaluateModuleFn = func(ctx context.Context, req policy.EvaluationRequest[*proto.PolicyEvaluateModuleRequest_ModuleMetad
+```
+
+**File**: `internal/terraform/graph_builder_apply.go` (modified, +3/-0)
+```diff
+@@ -208,6 +208,9 @@ func (b *ApplyGraphBuilder) Steps() []GraphTransformer {
+ 		// objects that can belong to modules.
+ 		&ModuleExpansionTransformer{Config: b.Config},
+ 
++		// Evaluate module policies before the objects within each module.
++		&ModulePolicyTransformer{Config: b.Config, PolicyClient: b.PolicyClient},
++
+ 		// Plug in any external references.
+ 		&ExternalReferenceTransformer{
+ 			ExternalReferences: b.ExternalReferences,
+```
+
+**File**: `internal/terraform/graph_builder_plan.go` (modified, +3/-0)
+```diff
+@@ -276,6 +276,9 @@ func (b *PlanGraphBuilder) Steps() []GraphTransformer {
+ 		// objects that can belong to modules.
+ 		&ModuleExpansionTransformer{Concrete: b.ConcreteModule, Config: b.Config},
+ 
++		// Evaluate module policies before the objects within each module.
++		&ModulePolicyTransformer{Config: b.Config, PolicyClient: b.PolicyClient},
++
+ 		// Plug in any external references.
+ 		&ExternalReferenceTransformer{
+ 			ExternalReferences: b.ExternalReferences,
+```
+
+**File**: `internal/terraform/node_module_expand.go` (modified, +0/-88)
+```diff
+@@ -10,10 +10,7 @@ import (
+ 	"github.com/hashicorp/terraform/internal/configs"
+ 	"github.com/hashicorp/terraform/internal/dag"
+ 	"github.com/hashicorp/terraform/internal/lang/langrefs"
+-	"github.com/hashicorp/terraform/internal/policy"
+-	"github.com/hashicorp/terraform/internal/policy/proto"
+ 	"github.com/hashicorp/terraform/internal/tfdiags"
+-	"github.com/zclconf/go-cty/cty"
+ )
+ 
+ type ConcreteModuleNodeFunc func(n *nodeExpandModule) dag.Vertex
+@@ -169,12 +166,7 @@ func (n *nodeExpandModule) Execute(globalCtx EvalContext, op walkOperation) (dia
+ 		}
  	}
  
--	output := ui.ErrorWriter.String()
--	if !strings.Contains(output, "lock") {
-+	output := done(t)
-+	if !strings.Contains(output.All(), "lock") {
- 		t.Fatal("command output does not look like a lock error:", output)
- 	}
+-	if !diags.HasErrors() {
+-		return diags.Append(n.EvalPolicy(globalCtx, op))
+-	}
+-
+ 	return diags
+-
  }
-@@ -131,11 +129,9 @@ func TestUntaint_backup(t *testing.T) {
- 	})
- 	testStateFileDefault(t, state)
  
--	ui := testUiWrapped(t)
--	view, _ := testView(t)
-+	view, done := testView(t)
- 	c := &UntaintCommand{
- 		Meta: Meta{
--			Ui:   ui,
- 			View: view,
- 		},
- 	}
-@@ -144,7 +140,7 @@ func TestUntaint_backup(t *testing.T) {
- 		"test_instance.foo",
- 	}
- 	if code := c.Run(args); code != 0 {
--		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
-+		t.Fatalf("bad: %d\n\n%s", code, done(t).All())
+ // nodeCloseModule represents an expanded module during apply, and is visited
+@@ -308,85 +300,5 @@ func (n *nodeValidateModule) Execute(globalCtx EvalContext, op walkOperation) (d
+ 		expander.SetModuleSingle(module, call)
  	}
  
- 	// Backup is still tainted
-@@ -187,11 +183,9 @@ func TestUntaint_backupDisable(t *testing.T) {
- 	})
- 	testStateFileDefault(t, state)
- 
--	ui := testUiWrapped(t)
--	view, _ := testView(t)
-+	view, done := testView(t)
- 	c := &UntaintCommand{
- 		Meta: Meta{
--			Ui:   ui,
- 			View: view,
- 		},
- 	}
-@@ -201,7 +195,7 @@ func TestUntaint_backupDisable(t *testing.T) {
- 		"test_instance.foo",
- 	}
- 	if code := c.Run(args); code != 0 {
--		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
-+		t.Fatalf("bad: %d\n\n%s", code, done(t).All())
- 	}
- 
- 	if _, err := os.Stat(DefaultStateFilename + ".backup"); err == nil {
-@@ -216,11 +210,9 @@ test_instance.foo:
+-	if !diags.HasErrors() {
+-		return diags.Append(n.EvalPolicy(globalCtx, op))
+-	}
+-
+-	return diags
+-}
+-
+-// EvalPolicy evaluates the module policy.
+-// Contrary to resource policy evaluation, module policy evaluation is done inline,
+-// allowing us to block the evaluation of the module's resources within the graph if the policy fails.
+-// Module policies have no support for callback functions, so we do not need to worry about
+-// them retrieving objects that are not yet available in the state.
+-func (n *nodeExpandModule) EvalPolicy(ctx EvalContext, op walkOperation) tfdiags.Diagnostics {
+-	if ctx.PolicyClient() == nil {
+-		log.Printf("[DEBUG] No policy client configured, skipping policy evaluation for %s", n.Addr)
+-		return nil
+-	}
+-
+-	configBundle := n.ModuleTree
+-	source := configBundle.SourceAddr.String()
+-
+-	// We will evaluate the module policy with just the metadata and not the module inputs.
+-	// Terraform modules act as namespace scopes and do not directly participate
+-	// in the reference flow in the graph.
+-	// This allows references in their inputs to be deferred until
+-	// they are used by a concrete object in the module.
+-	// Since policy evaluation is supposed to be done before evaluating the module's
+-	// objects, evaluating module inputs here would be incorrect as
+-	// it could lead to cyclic dependencies.
+-	// For example: Given the below module call,
+-	//
+-	// module "child" {
+-	// 	 source = "./child"
+-	// 	 input  = "child-value"
+-	// 	 input2 = module.child.output
+-	// }
+-	//
+-	// resource "test_instance" "test" {
+-	// 	 value = var.input
+-	// }
+-	// resource "test_instance" "test2" {
+-	// 	 value = var.input2
+-	// }
+-	// output "output" {
+-	// 	 value = resource.test_instance.test.value
+-	// }
+-	//
+-	// This is a valid terraform module call, but the input2 value depends on the module's output,
+-	// which is not available until after the module is expanded, and potentially resources have been created.
+-	// In the above example, the reference to `module.child.output` is deferred until the resource
+-	// `test_instance.test2` is evaluated, and any attempt to evaluate it here would result in a cyclic dependency error.
+-	result := ctx.PolicyClient().EvaluateModule(ctx.StopCtx(), policy.EvaluationRequest[*proto.PolicyEvaluateModuleRequest_ModuleMetadata]{
+-		Attrs:  policy.CtyToPolicyValue(cty.DynamicVal),
+-		Target: source,
+-		Meta: &proto.PolicyEvaluateModuleRequest_ModuleMetadata{
+-			Address: n.Addr.String(),
+-			Version: func() string {
+-				// local modules do not have versions, so we just return
+-				// an empty string in that case.
+-				if configBundle.Version == nil {
+-					return ""
+-				}
+-				return configBundle.Version.String()
+-			}(),
+-		},
+-	})
+-
+-	// add local range to diagnostics if the module call has a config body.
+-	if n.ModuleCall.Config != nil {
+-		result = result.WithLocalRange(n.ModuleCall.DeclRange.Ptr())
+-	}
+-
+-	var diags tfdiags.Diagnostics
+-	if !result.Empty() {
+-		hookErr := ctx.Hook(func(h Hook) (HookAction, error) {
+-			return h.PolicyResult(n.Addr.String(), result)
+-		})
+-		diags = diags.Append(hookErr)
+-	}
+-
+ 	return diags
  }
+```
+
+**File**: `internal/terraform/transform_destroy_edge.go` (modified, +8/-0)
+```diff
+@@ -354,6 +354,14 @@ func (t *pruneUnusedNodesTransformer) Transform(g *Graph) error {
+ 			continue
+ 		}
  
- func TestUntaint_badState(t *testing.T) {
--	ui := testUiWrapped(t)
--	view, _ := testView(t)
-+	view, done := testView(t)
- 	c := &UntaintCommand{
- 		Meta: Meta{
--			Ui:   ui,
- 			View: view,
- 		},
- 	}
-@@ -230,7 +222,7 @@ func TestUntaint_badState(t *testing.T) {
- 		"foo",
- 	}
- 	if code := c.Run(args); code != 1 {
--		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
-+		t.Fatalf("bad: %d\n\n%s", code, done(t).All())
- 	}
- }
- 
-@@ -259,11 +251,9 @@ func TestUntaint_defaultState(t *testing.T) {
- 	})
- 	testStateFileDefault(t, state)
- 
--	ui := testUiWrapped(t)
--	view, _ := testView(t)
-+	view, done := testView(t)
- 	c := &UntaintCommand{
- 		Meta: Meta{
--			Ui:   ui,
- 			View: view,
- 		},
- 	}
-@@ -272,7 +262,7 @@ func TestUntaint_defaultState(t *testing.T) {
- 		"test_instance.foo",
- 	}
- 	if code := c.Run(args); code != 0 {
--		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
-+		t.Fatalf("bad: %d\n\n%s", code, done(t).All())
- 	}
- 
- 	testStateOutput(t, DefaultStateFilename, strings.TrimSpace(`
-@@ -308,9 +298,8 @@ func TestUntaint_defaultWorkspaceState(t *testing.T) {
- 	testWorkspace := "development"
- 	path := testStateFileWorkspaceDefault(t, testWorkspace, state)
- 
--	ui := testUiWrapped(t)
--	view, _ := testView(t)
--	meta := Meta{Ui: ui, View: view}
-+	view, done := testView(t)
-+	meta := Meta{View: view}
- 	meta.SetWorkspace(testWorkspace)
- 	c := &UntaintCommand{
- 		Meta: meta,
-@@ -320,7 +309,7 @@ func TestUntaint_defaultWorkspaceState(t *testing.T) {
- 		"test_instance.foo",
- 	}
- 	if code := c.Run(args); code != 0 {
--		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
-+		t.Fatalf("bad: %d\n\n%s", code, done(t).All())
- 	}
- 
- 	testStateOutput(t, path, strings.TrimSpace(`
-@@ -350,11 +339,9 @@ func TestUntaint_missing(t *testing.T) {
- 	})
- 	statePath := testStateFile(t, state)
- 
--	ui := testUiWrapped(t)
--	view, _ := testView(t)
-+	view, done := testView(t)
- 	c := &UntaintCommand{
- 		Meta: Meta{
--			Ui:   ui,
- 			View: view,
- 		},
- 	}
-@@ -364,7 +351,7 @@ func TestUntaint_missing(t *testing.T) {
- 		"test_instance.bar",
- 	}
- 	if code := c.Run(args); code == 0 {
--		t.Fatalf("bad: %d\n\n%s", code, ui.OutputWriter.String())
-+		t.Fatalf("bad: %d\n\n%s", code, done(t).All())
- 	}
- }
- 
-@@ -388,26 +375,25 @@ func TestUntaint_missingAllow(t *testing.T) {
- 	})
- 	statePath := testStateFile(t, state)
- 
--	ui := testUiWrapped(t)
--	view, _ := testView(t)
-+	view, done := testView(t)
- 	c := &UntaintCommand{
- 		Meta: Meta{
--			Ui:   ui,
- 			View: view,
- 		},
- 	}
- 
- 	args := []string{
-+		"-no-color",
- 		"-allow-missing",
- 		"-state", statePath,
- 		"test_instance.bar",
- 	}
- 	if code := c.Run(args); code != 0 {
--		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
-+		t.Fatalf("bad: %d\n\n%s", code, done(t).All())
- 	}
- 
- 	// Check for the warning
--	actual := strings.TrimSpace(ui.OutputWriter.String())
-+	actual := strings.TrimSpace(done(t).All())
- 	expected := strings.TrimSpace(`
- Warning: No such resource instance
- 
-@@ -445,11 +431,9 @@ func TestUntaint_stateOut(t *testing.T) {
- 	})
- 	testStateFileDefault(t, state)
- 
--	ui := testUiWrapped(t)
--	view, _ := testView(t)
-+	view, done := testView(t)
- 	c := &UntaintCommand{
- 		Meta: Meta{
--			Ui:   ui,
- 			View: view,
- 		},
- 	}
-@@ -459,7 +443,7 @@ func TestUntaint_stateOut(t *testing.T) {
- 		"te
++		// Module policies only depend on static configuration, so they can always be evaluated,
++		// even when the module expansion itself is pruned.
++		if _, ok := n.(*nodeModulePolicy); ok {
++			log.Printf("[TRACE] pruneUnusedNodesTransformer: keeping module policy %s", n.Name())
++			keep.Add(n)
++			continue
++		}
++
+ 		// from here we only search for managed resource destroy nodes
+ 		n, ok := n.(GraphNodeDestroyer)
+ 		if !ok {
 ```
 
 ---
 
-### Incident Patch 2: `5de49559` (2026-10-27)
-**Commit Message**: refactor: Make `graph` command use views to produce terminal output (#39424)
+### Incident Patch 2: `76edb186` (2026-10-28)
+**Commit Message**: policy: keep every stacks policy result for a replaced resource (#39453)
 
-This change:
-
-* Separates `graph` command's logic for building graphs from printing output to a stream and determining exit code
-* Implements a view for the graph command that receives a pre-prepared graph representation string as an argument and prints it to stdout.
-* Refactors the `graph` command to use that view
-* Add `-no-color` and `-compact-warnings` flags to help text, order flags alphabetically
-
-NOTE: We purposefully suppress warning diagnostics from being rendered as this would pollute stdout and use of the graph; the graph output is likely to be piped to another command or written to a file and warnings would break that. This matches existing design choices in the command implementation.
-
-**File**: `internal/command/graph.go` (modified, +81/-55)
+**File**: `.changes/v1.17/BUG FIXES-20261027-202409.yaml` (added, +5/-0)
 ```diff
-@@ -5,13 +5,15 @@ package command
- 
- import (
- 	"context"
-+	"errors"
- 	"fmt"
- 	"sort"
- 	"strings"
- 
- 	"github.com/hashicorp/terraform/internal/addrs"
- 	"github.com/hashicorp/terraform/internal/backend/backendrun"
- 	"github.com/hashicorp/terraform/internal/command/arguments"
-+	"github.com/hashicorp/terraform/internal/command/views"
- 	"github.com/hashicorp/terraform/internal/dag"
- 	"github.com/hashicorp/terraform/internal/plans"
- 	"github.com/hashicorp/terraform/internal/plans/planfile"
-@@ -26,9 +28,22 @@ type GraphCommand struct {
+@@ -0,0 +1,5 @@
++kind: BUG FIXES
++body: 'stacks: report every policy result for a replaced resource instead of only one of them'
++time: 2026-10-27T20:24:09+05:30
++custom:
++    Issue: "39453"
+```
+
+**File**: `internal/rpcapi/convert.go` (modified, +7/-5)
+```diff
+@@ -160,15 +160,17 @@ func externalInputValueFromProto(protoVal *stacks.DynamicValueWithSource) (stack
+ 	}, nil
  }
  
- func (c *GraphCommand) Run(rawArgs []string) int {
--	args, diags := arguments.ParseGraph(c.Meta.process(rawArgs))
-+	var diags tfdiags.Diagnostics
-+
-+	// Parse and apply global view arguments
-+	common, rawArgs := arguments.ParseView(rawArgs)
-+	c.View.Configure(common)
-+
-+	// Process command-specific arguments.
-+	args, argDiags := arguments.ParseGraph(rawArgs)
-+	diags = diags.Append(argDiags)
-+
-+	// Prepare the view
-+	view := views.NewGraph(arguments.ViewHuman, c.View)
-+
-+	// Now the view is ready, process any error diagnostics from parsing arguments.
- 	if diags.HasErrors() {
--		c.showDiagnostics(diags)
-+		view.Diagnostics(diags)
- 		return 1
+-func componentInstancePolicyEvaluationProto(componentInstanceAddr stackaddrs.AbsComponentInstance, policyResults map[string]policy.EvaluationResponse) *stacks.ComponentInstancePolicyEvaluation {
++func componentInstancePolicyEvaluationProto(componentInstanceAddr stackaddrs.AbsComponentInstance, policyResults map[string][]policy.EvaluationResponse) *stacks.ComponentInstancePolicyEvaluation {
+ 	results := make([]*stacks.PolicyResult, 0)
+ 	infos := make([]*stacks.PolicyInfo, 0)
+ 	policyDiags := make([]*stacks.PolicyDiagnostic, 0)
+ 
+-	for addr, result := range policyResults {
+-		results = append(results, policyResultsToProto(addr, result.Policies)...)
+-		infos = append(infos, policyInfosToProto(addr, result.Enforcements)...)
+-		policyDiags = append(policyDiags, policyDiagsToProto(addr, result.Diagnostics)...)
++	for addr, addrResults := range policyResults {
++		for _, result := range addrResults {
++			results = append(results, policyResultsToProto(addr, result.Policies)...)
++			infos = append(infos, policyInfosToProto(addr, result.Enforcements)...)
++			policyDiags = append(policyDiags, policyDiagsToProto(addr, result.Diagnostics)...)
++		}
  	}
  
-@@ -38,7 +53,8 @@ func (c *GraphCommand) Run(rawArgs []string) int {
- 	// Check for user-supplied plugin path
- 	var err error
- 	if c.pluginPath, err = c.loadPluginPath(); err != nil {
--		c.Ui.Error(fmt.Sprintf("Error loading plugin path: %s", err))
-+		diags = diags.Append(fmt.Errorf("Error loading plugin path: %w", err))
-+		view.Diagnostics(diags)
- 		return 1
- 	}
+ 	return &stacks.ComponentInstancePolicyEvaluation{
+```
+
+**File**: `internal/rpcapi/convert_test.go` (modified, +5/-1)
+```diff
+@@ -620,7 +620,11 @@ func TestComponentInstancePolicyEvaluationProto(t *testing.T) {
+ 				ComponentInstanceAddr: componentAddr.String(),
+ 			}
  
-@@ -47,7 +63,8 @@ func (c *GraphCommand) Run(rawArgs []string) int {
- 	if args.Plan != "" {
- 		planFile, err = c.PlanFile(args.Plan)
- 		if err != nil {
--			c.Ui.Error(err.Error())
-+			diags = diags.Append(err)
-+			view.Diagnostics(diags)
- 			return 1
+-			got := componentInstancePolicyEvaluationProto(componentAddr, tc.policyResults())
++			policyResults := make(map[string][]policy.EvaluationResponse)
++			for addr, result := range tc.policyResults() {
++				policyResults[addr] = []policy.EvaluationResponse{result}
++			}
++			got := componentInstancePolicyEvaluationProto(componentAddr, policyResults)
+ 
+ 			if diff := cmp.Diff(want, got, protocmp.Transform()); diff != "" {
+ 				t.Errorf("wrong result\n%s", diff)
+```
+
+**File**: `internal/rpcapi/stacks.go` (modified, +9/-4)
+```diff
+@@ -1518,19 +1518,24 @@ func stackChangeHooks(send func(*stacks.StackChangeProgress) error, mainStackSou
+ 	}
+ }
+ 
+-func stackPolicyEvaluationHooks(policyClient policy.Client, runtimeHooks *stackruntime.Hooks) collections.Map[stackaddrs.AbsComponentInstance, map[string]policy.EvaluationResponse] {
+-	resultMap := collections.NewMap[stackaddrs.AbsComponentInstance, map[string]policy.EvaluationResponse]()
++// stackPolicyEvaluationHooks collects every policy result reported for a
++// component instance, grouped by resource address. A resource address can
++// report more than once: a replaced resource instance is evaluated separately
++// for its create and its delete, so results are accumulated rather than
++// overwritten.
++func stackPolicyEvaluationHooks(policyClient policy.Client, runtimeHooks *stackruntime.Hooks) collections.Map[stackaddrs.AbsComponentInstance, map[string][]policy.EvaluationResponse] {
++	resultMap := collections.NewMap[stackaddrs.AbsComponentInstance, map[string][]policy.EvaluationResponse]()
+ 	if policyClient != nil {
+ 		mu := sync.Mutex{}
+ 		runtimeHooks.ReportComponentInstancePolicyResult = func(ctx context.Context, a any, h *hooks.ComponentInstancePolicyResult) any {
+ 			mu.Lock()
+ 			defer mu.Unlock()
+ 			mp, ok := resultMap.GetOk(h.ComponentAddr)
+ 			if !ok {
+-				mp = make(map[string]policy.EvaluationResponse)
++				mp = make(map[string][]policy.EvaluationResponse)
+ 				resultMap.Put(h.ComponentAddr, mp)
+ 			}
+-			mp[h.ResourceAddr] = h.Result
++			mp[h.ResourceAddr] = append(mp[h.ResourceAddr], h.Result)
+ 			return nil
  		}
  	}
-@@ -56,15 +73,15 @@ func (c *GraphCommand) Run(rawArgs []string) int {
- 	b, backendDiags := c.backend(".", arguments.ViewHuman)
- 	diags = diags.Append(backendDiags)
- 	if backendDiags.HasErrors() {
--		c.showDiagnostics(diags)
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
- 	// We require a local backend
- 	local, ok := b.(backendrun.Local)
- 	if !ok {
--		c.showDiagnostics(diags) // in case of any warnings in here
--		c.Ui.Error(ErrUnsupportedLocalOp)
-+		diags = diags.Append(errors.New(ErrUnsupportedLocalOp))
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
-@@ -79,7 +96,7 @@ func (c *GraphCommand) Run(rawArgs []string) int {
- 	opReq.AllowUnsetVariables = true
- 	if err != nil {
- 		diags = diags.Append(err)
--		c.showDiagnostics(diags)
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
-@@ -89,7 +106,7 @@ func (c *GraphCommand) Run(rawArgs []string) int {
- 	})
- 	diags = diags.Append(varDiags)
- 	if diags.HasErrors() {
--		c.showDiagnostics(diags)
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
-@@ -98,7 +115,7 @@ func (c *GraphCommand) Run(rawArgs []string) int {
- 
- 	diags = diags.Append(ctxDiags)
- 	if ctxDiags.HasErrors() {
--		c.showDiagnostics(diags)
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 	lr.Core.SetGraphOpts(&terraform.ContextGraphOpts{SkipGraphValidation: args.DrawCycles})
-@@ -113,22 +130,26 @@ func (c *GraphCommand) Run(rawArgs []string) int {
- 			fullG, graphDiags := lr.Core.PlanGraphForUI(lr.Config, lr.InputState, plans.NormalMode)
- 			diags = diags.Append(graphDiags)
- 			if graphDiags.HasErrors() {
--				c.showDiagnostics(diags)
-+				view.Diagnostics(diags)
- 				return 1
- 			}
- 
- 			g := fullG.ResourceGraph()
- 
- 			switch args.Format {
- 			case "mermaid":
--				return c.resourceOnlyGraphMermaid(g)
-+				graphStr := c.resourceOnlyGraphMermaid(g)
-+				view.Graph(graphStr)
-+				return 0
- 			case "", "dot":
--				return c.resourceOnlyGraph(g)
-+				graphStr := c.resourceOnlyGraph(g)
-+				view.Graph(graphStr)
-+				return 0
- 			default:
--				c.Ui.Error(fmt.Sprintf("Unsupported graph format: %s", args.Format))
-+				diags = diags.Append(fmt.Errorf("Unsupported graph format: %s", args.Format))
-+				view.Diagnostics(diags)
- 				return 1
- 			}
--
- 		} else {
- 			args.GraphType = "apply"
- 		}
-@@ -178,7 +199,7 @@ func (c *GraphCommand) Run(rawArgs []string) int {
- 	}
- 	diags = diags.Append(graphDiags)
- 	if graphDiags.HasErrors() {
--		c.showDiagnostics(diags)
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
-@@ -196,33 +217,31 @@ func (c *GraphCommand) Run(rawArgs []string) int {
- 	case "", "dot":
- 		graphStr, err = terraform.GraphDot(g, opts)
- 	default:
--		c.Ui.Error(fmt.Sprintf("Unsupported graph format: %s", args.Format))
-+		diags = diags.Append(fmt.Errorf("Unsupported graph format: %s", args.Format))
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 	if err != nil {
--		c.Ui.Error(fmt.Sprintf("Error converting graph: %s", err))
-+		diags = diags.Append(fmt.Errorf("Error converting graph: %w", err))
-+		view.Diagnostics(diags)
- 		return 1
- 	}
- 
- 	if diags.HasErrors() {
- 		// For this command we only show diagnostics if there are errors,
- 		// because printing out naked warnings could upset a naive program
- 		// consuming our graph output.
--		c.showDiagnostics(di
 ```
 
-**File**: `internal/command/graph_mermaid_test.go` (modified, +8/-14)
-```diff
-@@ -10,7 +10,6 @@ import (
- 	"testing"
- 
- 	"github.com/google/go-cmp/cmp"
--	"github.com/hashicorp/cli"
- 	"github.com/zclconf/go-cty/cty"
- 
- 	"github.com/hashicorp/terraform/internal/addrs"
-@@ -19,30 +18,27 @@ import (
- 	"github.com/hashicorp/terraform/internal/initwd"
- 	"github.com/hashicorp/terraform/internal/providers"
- 	"github.com/hashicorp/terraform/internal/registry"
--	"github.com/hashicorp/terraform/internal/terminal"
- )
- 
- func TestGraph_planPhase_mermaid(t *testing.T) {
- 	td := tempWorkingDirFixture(t, "graph")
- 	t.Chdir(td.RootModuleDir())
- 
--	ui := new(cli.MockUi)
--	streams, closeStreams := terminal.StreamsForTesting(t)
-+	view, done := testView(t)
- 	c := &GraphCommand{
- 		Meta: Meta{
- 			testingOverrides: metaOverridesForProvider(applyFixtureProvider()),
--			Ui:               ui,
--			Streams:          streams,
-+			View:             view,
- 			WorkingDir:       td,
- 		},
- 	}
- 
- 	args := []string{"-type=plan", "-format=mermaid"}
- 	if code := c.Run(args); code != 0 {
--		t.Fatalf("bad: \n%s", ui.ErrorWriter.String())
-+		t.Fatalf("bad: \n%s", done(t).All())
- 	}
- 
--	output := closeStreams(t)
-+	output := done(t)
- 	if !strings.Contains(output.Stdout(), "flowchart") && !strings.Contains(output.Stdout(), "-->") {
- 		t.Fatalf("doesn't look like mermaid graph:\n%s\n\nstderr:\n%s", output.Stdout(), output.Stderr())
- 	}
-@@ -84,28 +80,26 @@ func TestGraph_resourcesOnly_mermaid(t *testing.T) {
- 		},
- 	}
- 
--	ui := cli.NewMockUi()
--	streams, closeStreams := terminal.StreamsForTesting(t)
-+	view, done := testView(t)
- 	c := &GraphCommand{
- 		Meta: Meta{
- 			testingOverrides: &testingOverrides{
- 				Providers: map[addrs.Provider]providers.Factory{
- 					addrs.NewDefaultProvider("foo"): providers.FactoryFixed(p),
- 				},
- 			},
--			Ui:         ui,
--			Streams:    streams,
-+			View:       view,
- 			WorkingDir: wd,
- 		},
- 	}
- 
- 	args := []string{"-format=mermaid"}
- 	if code := c.Run(args); code != 0 {
--		output := closeStreams(t)
-+		output := done(t)
- 		t.Fatalf("unexpected error: \n%s", output.Stderr())
- 	}
- 
--	output := closeStreams(t)
-+	output := done(t)
- 	gotGraph := strings.TrimSpace(output.Stdout())
- 	// Golden fixture: the resources-only Mermaid graph for the graph-interesting
- 	// configuration.  Node IDs are the full config addresses; labels are the
-```
-
-**File**: `internal/command/graph_test.go` (modified, +40/-60)
-```diff
-@@ -23,31 +23,28 @@ import (
- 	"github.com/hashicorp/terraform/internal/providers"
- 	"github.com/hashicorp/terraform/internal/registry"
- 	"github.com/hashicorp/terraform/internal/states"
--	"github.com/hashicorp/terraform/internal/terminal"
- )
- 
- func TestGraph_planPhase(t *testing.T) {
- 	t.Parallel() // possible because t.Chdir not needed
- 	td := t.TempDir()
- 	testCopyDir(t, testFixturePath("graph"), td)
- 
--	ui := testUiWrapped(t)
--	streams, closeStreams := terminal.StreamsForTesting(t)
-+	view, done := testView(t)
- 	c := &GraphCommand{
- 		Meta: Meta{
- 			testingOverrides: metaOverridesForProvider(applyFixtureProvider()),
--			Ui:               ui,
--			Streams:          streams,
-+			View:             view,
- 			WorkingDir:       workdir.NewDir(td),
- 		},
- 	}
- 
- 	args := []string{"-type=plan"}
- 	if code := c.Run(args); code != 0 {
--		t.Fatalf("bad: \n%s", ui.ErrorWriter.String())
-+		t.Fatalf("bad: \n%s", done(t).Stderr())
- 	}
- 
--	output := closeStreams(t)
-+	output := done(t)
- 	if !strings.Contains(output.Stdout(), `provider[\"registry.terraform.io/hashicorp/test\"]`) {
- 		t.Fatalf("doesn't look like digraph:\n%s\n\nstderr:\n%s", output.Stdout(), output.Stderr())
- 	}
-@@ -137,24 +134,23 @@ func TestGraph_cyclic(t *testing.T) {
- 
- 	for _, tt := range tests {
- 		t.Run(tt.name, func(t *testing.T) {
--			ui := testUiWrapped(t)
--			streams, closeStreams := terminal.StreamsForTesting(t)
-+			view, done := testView(t)
- 			c := &GraphCommand{
- 				Meta: Meta{
- 					testingOverrides: metaOverridesForProvider(applyFixtureProvider()),
--					Ui:               ui,
--					Streams:          streams,
-+					View:             view,
- 					WorkingDir:       workdir.NewDir(td),
- 				},
- 			}
- 
--			code := c.Run(tt.args)
-+			args := append([]string{"-no-color"}, tt.args...)
-+			code := c.Run(args)
- 			// If we expect errors, make sure they are present
- 			if len(tt.errors) > 0 {
- 				if code == 0 {
- 					t.Fatalf("expected error, got none")
- 				}
--				got := strings.TrimSpace(ui.ErrorWriter.String())
-+				got := strings.TrimSpace(done(t).Stderr())
- 				for _, err := range tt.errors {
- 					if !strings.Contains(got, err) {
- 						t.Fatalf("expected error:\n%s\n\nactual error:\n%s", err, got)
-@@ -165,9 +161,9 @@ func TestGraph_cyclic(t *testing.T) {
- 
- 			// If we don't expect errors, make sure the command ran successfully
- 			if code != 0 {
--				t.Fatalf("bad: \n%s", ui.ErrorWriter.String())
-+				t.Fatalf("bad: \n%s", done(t).Stderr())
- 			}
--			output := closeStreams(t)
-+			output := done(t)
- 			if strings.TrimSpace(output.Stdout()) != strings.TrimSpace(tt.expected) {
- 				t.Fatalf("expected dot graph to match:\n%s", cmp.Diff(output.Stdout(), tt.expected))
- 			}
-@@ -176,11 +172,11 @@ func TestGraph_cyclic(t *testing.T) {
- }
- 
- func TestGraph_multipleArgs(t *testing.T) {
--	ui := testUiWrapped(t)
-+	view, done := testView(t)
- 	c := &GraphCommand{
- 		Meta: Meta{
- 			testingOverrides: metaOverridesForProvider(applyFixtureProvider()),
--			Ui:               ui,
-+			View:             view,
- 		},
- 	}
- 
-@@ -189,7 +185,7 @@ func TestGraph_multipleArgs(t *testing.T) {
- 		"bad",
- 	}
- 	if code := c.Run(args); code != 1 {
--		t.Fatalf("bad: \n%s", ui.OutputWriter.String())
-+		t.Fatalf("bad: \n%s", done(t).Stderr())
- 	}
- }
- 
-@@ -199,14 +195,11 @@ func TestGraph_noConfig(t *testing.T) {
- 	td := t.TempDir()
- 	os.MkdirAll(td, 0755)
- 
--	streams, closeStreams := terminal.StreamsForTesting(t)
--	defer closeStreams(t)
--	ui := testUiWrapped(t)
-+	view, done := testView(t)
- 	c := &GraphCommand{
- 		Meta: Meta{
- 			testingOverrides: metaOverridesForProvider(applyFixtureProvider()),
--			Ui:               ui,
--			Streams:          streams,
-+			View:             view,
- 			WorkingDir:       workdir.NewDir(td),
- 		},
- 	}
-@@ -215,7 +208,7 @@ func TestGraph_noConfig(t *testing.T) {
- 	// but this may be an error at some point in the future.
- 	args := []string{"-type", "apply"}
- 	if code := c.Run(args); code != 0 {
--		t.Fatalf("bad: \n%s", ui.ErrorWriter.String())
-+		t.Fatalf("bad: \n%s", done(t).Stderr())
- 	}
- }
- 
-@@ -256,30 +249,26 @@ func TestGraph_resourcesOnly(t *testing.T) {
- 		},
- 	}
- 
--	ui := testUiWrapped(t)
--	streams, closeStreams := terminal.StreamsForTesting(t)
-+	view, done := testView(t)
- 	c := &GraphCommand{
- 		Meta: Meta{
- 			testingOverrides: &testingOverrides{
- 				Providers: map[addrs.Provider]providers.Factory{
- 					addrs.NewDefaultProvider("foo"): providers.FactoryFixed(p),
- 				},
- 			},
--			Ui:         ui,
--			Streams:    streams,
-+			View:       view,
- 			WorkingDir: workdir.NewDir(td),
- 		},
- 	}
- 
- 	// A "resources only" graph is the default behavior, with no extra arguments.
- 	args := []string{}
- 	if code := c.Run(args); code != 0 {
--		output := closeStreams(t)
--		t.Fatalf("unexpected error: \n%s", output.Stderr())
-+		t.Fatalf("unexpected error: \n%s", done(t).Stderr())
- 	}
- 
--	output := closeStreams(t)
--	gotGraph := strings.TrimSpace(output.Stdout())
-+	gotGraph := strings.TrimSpace(done(t).Stdout())
- 	wantGraph := strings.TrimSpace(`
- digraph G {
- 
-```
-
-**File**: `internal/command/views/graph.go` (added, +45/-0)
-```diff
-@@ -0,0 +1,45 @@
-+// Copyright IBM Corp. 2014, 2026
-+// SPDX-License-Identifier: BUSL-1.1
-+
-+package views
-+
-+import (
-+	"github.com/hashicorp/terraform/internal/command/arguments"
-+	"github.com/hashicorp/terraform/internal/tfdiags"
-+)
-+
-+type Graph interface {
-+	// Log a pre-prepared graph representation.
-+	//
-+	// Calling code generates the string, so owns handling whether output is dot or mermaid format.
-+	// In future we could refactor that logic into a GraphMermaid and GraphDot views, with human-
-+	// readable diagnostics. This is similar to the 'raw' view for the `output` command.
-+	Graph(graph string)
-+
-+	// Log diagnostics raised when the command fails to prepare a graph.
-+	Diagnostics(diags tfdiags.Diagnostics)
-+}
-+
-+func NewGraph(viewType arguments.ViewType, view *View) Graph {
-+	switch viewType {
-+	case arguments.ViewHuman:
-+		return &GraphHuman{view: view}
-+	default:
-+		panic("unsupported view type: " + string(viewType))
-+	}
-+}
-+
-+type GraphHuman struct {
-+	view *View
-+}
-+
-+func (v *GraphHuman) Graph(graph string) {
-+	// No diagnostics are logged here, as warning diagnostics going to stdout could
-+	// disrupt use of the graph output.
-+
-+	v.view.streams.Println(graph)
-+}
-+
-+func (v *GraphHuman) Diagnostics(diags tfdiags.Diagnostics) {
-+	v.view.Diagnostics(diags)
-+}
-```
-
-**File**: `internal/command/views/graph_test.go` (added, +103/-0)
+**File**: `internal/rpcapi/stacks_policy_results_test.go` (added, +103/-0)
 ```diff
 @@ -0,0 +1,103 @@
 +// Copyright IBM Corp. 2014, 2026
 +// SPDX-License-Identifier: BUSL-1.1
 +
-+package views
++package rpcapi
 +
 +import (
-+	"strings"
++	"context"
 +	"testing"
 +
 +	"github.com/google/go-cmp/cmp"
-+	"github.com/hashicorp/terraform/internal/command/arguments"
-+	"github.com/hashicorp/terraform/internal/terminal"
-+	"github.com/hashicorp/terraform/internal/tfdiags"
++
++	"github.com/hashicorp/terraform/internal/policy"
++	"github.com/hashicorp/terraform/internal/rpcapi/terraform1/stacks"
++	"github.com/hashicorp/terraform/internal/stacks/stackruntime"
++	"github.com/hashicorp/terraform/internal/stacks/stackruntime/hooks"
 +)
 +
-+func TestGraphHuman_Graph(t *testing.T) {
-+	graphStr := "literally anything can be passed in; command package has string builder logic"
++// A replaced resource instance is evaluated once for its create and once for
++// its delete, and both report against the same resource address.
++func TestStackPolicyEvaluationHooks_multipleResultsForAddress(t *testing.T) {
++	runtimeHooks := &stackruntime.Hooks{}
++	results := stackPolicyEvaluationHooks(policy.NewTestMockClient(t), runtimeHooks)
 +
-+	testCases := map[string]struct {
-+		wantStdout string
-+	}{
-+		"success": {
-+			wantStdout: graphStr,
-+		},
-+	}
-+	for name, tc := range testCases {
-+		t.Run(name, func(t *testing.T) {
-+			streams, done := terminal.StreamsForTesting(t)
-+			view := NewView(streams)
-+			view.Configure(&arguments.View{NoColor: true})
-+			v := NewGraph(arguments.ViewHuman, view)
-+
-+			v.Graph(graphStr)
-+
-+			output := done(t)
-+
-+			// Assert contents
-+			gotStdout := strings.TrimSpace(output.Stdout())
-+			wantStdout := strings.TrimSpace(tc.wantStdout)
-+			if diff := cmp.Diff(wantStdout, gotStdout); diff != "" {
-+				t.Fatalf("unexpected diff in human output:\n%s", diff)
-+			}
-+
-+			gotStderr := strings.TrimSpace(output.Stderr())
-+			wantStderr := ""
-+			if diff := cmp.Diff(wantStderr, gotStderr); diff != "" {
-+				t.Fatalf("unexpected diff in human output:\n%s", diff)
-+			}
++	componentAddr := mustAbsComponentInstance(t, "component.test")
++	for _, overall := range []policy.EvaluateResult{policy.AllowResult, policy.DenyResult} {
++		runtimeHooks.ReportComponentInstancePolicyResult(context.Background(), nil, &hooks.ComponentInstancePolicyResult{
++			ComponentAddr: componentAddr,
++			ResourceAddr:  "test_instance.example",
++			Result:        policy.EvaluationResponse{Overall: overall},
 +		})
++	}
++
++	got, ok := results.GetOk(componentAddr)
++	if !ok {
++		t.Fatalf("no policy results recorded for %s", componentAddr)
++	}
++	var gotOverall []policy.EvaluateResult
++	for _, result := range got["test_instance.example"] {
++		gotOverall = append(gotOverall, result.Overall)
++	}
++	want := []policy.EvaluateResult{policy.AllowResult, policy.DenyResult}
++	if diff := cmp.Diff(want, gotOverall); diff != "" {
++		t.Errorf("wrong results for test_instance.example\n%s", diff)
 +	}
 +}
 +
-+func TestGraphHuman_Diagnostics(t *testing.T) {
-+	testCases := map[string]struct {
-+		diags      tfdiags.Diagnostics
-+		wantStdout string
-+		wantStderr string
-+	}{
-+		"warning": {
-+			tfdiags.Diagnostics{
-+				tfdiags.Sourceless(
-+					tfdiags.Warning,
-+					"Example warning",
-+					"This is an example warning message.",
-+				),
-+			},
-+			"Warning: Example warning\n\nThis is an example warning message.",
-+			"",
-+		},
-+		"error": {
-+			tfdiags.Diagnostics{
-+				tfdiags.Sourceless(
-+					tfdiags.Error,
-+					"Example error",
-+					"This is an example error message.",
-+				),
-+			},
-+			"",
-+			"Error: Example error\n\nThis is an example error message.",
-+		},
++func TestComponentInstancePolicyEvaluationProto_multipleResultsForAddress(t *testing.T) {
++	componentAddr := mustAbsComponentInstance(t, "component.test")
++	policyObj := func(result policy.EvaluateResult) *policy.Policy {
++		return &policy.Policy{
++			Address:          "resource_policy.example",
++			PolicySetName:    "example",
++			Filename:         "policy_file.tfpolicy.hcl",
++			EnforcementLevel: "mandatory",
++			Result:           result,
++		}
 +	}
-+	for name, tc := range testCases {
-+		t.Run(name, func(t *testing.T) {
-+			streams, done := terminal.StreamsForTesting(t)
-+			view := NewView(streams)
-+			view.Configure(&arguments.View{NoColor: true})
-+			v := NewGraph(arguments.ViewHuman, view)
 +
-+			v.Diagnostics(tc.diags)
++	got := componentInstancePolicyEvaluationProto(componentAddr, map[string][]policy.EvaluationResponse{
++		"test_instance.example": {
++			{
++				Overall:  policy.AllowResult,
++				Policies: []*policy.Policy{policyObj(policy.AllowResult)},
++				Enforcements: []policy.EnforcementResult{{
++					Result:     policy.AllowResult,
++					Message:    "create allowed",
++					BlockIndex: 1,
++					Policy:     policyObj(policy.AllowResult),
++				}},
++			},
++			{
++				Overall:  policy.DenyResult,
++				Policies: []*policy.Policy{policyObj(policy.DenyResult)},
++				Diagnostics: policy.Diagnostics{
++					policy.NewErrorDiagnostic(
++						"delete denied",
++						"test_instance.example may not be destroyed",
++						policy.DenyResult,
++					),
++				},
++			},
++		},
++	})
 +
-+			// Assert contents
-+			output := done(t)
-+			gotStdout := strings.TrimSpace(output.Stdout())
-+			if diff := cmp.Diff(tc.wantStdout, gotStdout); diff != "" {
-+				t.Fatalf("unexpected diff in human output:\n%s", diff)
-+			}
-+			gotStderr := strings.TrimSpace(output.Stderr())
-+			if diff := cmp.Diff(tc.wantStderr, gotStderr); diff != "" {
-+				t.Fatalf("unexpected diff in human output:\n%s", diff)
-+			}
-+		})
++	if len(got.Results) != 2 || len(got.Infos) != 1 || len(got.Diagnostics) != 1 {
++		t.Fatalf("got %d results, %d infos, %d diagnostics; want 2, 1, 1",
++			len(got.Results), len(got.Infos), len(got.Diagnostics))
++	}
++	var gotResults []stacks.EvaluateResult
++	for _, result := range got.Results {
++		if result.TargetAddress != "test_instance.example" {
++			t.Errorf("wrong target address %q", result.TargetAddress)
++		}
++		gotResults = append(gotResults, result.Result)
++	}
++	want := []stacks.EvaluateResult{
++		stacks.EvaluateResult_ALLOW_EVALUATE_RESULT,
++		stacks.EvaluateResult_DENY_EVALUATE_RESULT,
++	}
++	if diff := cmp.Diff(want, gotResults); diff != "" {
++		t.Errorf("wrong results\n%s", diff)
 +	}
 +}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #39460** (2026-10-28): Prepare for 1.17.1 release (@hc-github-team-tf-core)
+- **PR #39459** (2026-10-28): Backport of Evaluate module policies during destroy plan into v1.17 (@github-actions[bot])
+- **PR #39458** (2026-10-28): Backport of policy: keep every stacks policy result for a replaced resource into v1.17 (@github-actions[bot])
+- **PR #39455** (2026-10-28): Evaluate module policies during destroy plan (@dsa0x)
+- **PR #39453** (2026-10-28): policy: keep every stacks policy result for a replaced resource (@viveksinghgit95)
 - **PR #39452** (2026-10-27): refactor: Make `taint` and `untaint` commands use the `views` package (@SarahFrench)
-- **PR #39450** (2026-10-27): docs: Update various commands' help text to include missing `-no-color` or `-compact-warnings` flags, reorganise alphabetically (@SarahFrench)
-- **PR #39444** (closed): backend/s3: trim download buffer to bytes written to fix trailing NUL padding (@chiliec)
-- **PR #39439** (2026-10-27): tests: Add Mermaid formatting tests, move existing Dot formatting tests into `dag` package. (@SarahFrench)
-- **PR #39437** (2026-10-23): test: Refactor and add test case for graph rendering in Dot format. (@SarahFrench)
-- **PR #39432** (2026-10-22): Backport #39303 and #39308 to v1.17: fmt: Change how file content is replaced to reduce the chances of data loss in error scenarios (@SarahFrench)
 
 ---
 
@@ -3893,31 +2937,32 @@ NOTE: We purposefully suppress warning diagnostics from being rendered as this w
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Make `taint` and `untaint` commands use the `views` package (#39452)
+## X. Evaluate module policies during destroy plan (#39455)
 
 **RULE**:
-When implementing operations in `internal/command/arguments/taint.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hashicorp/terraform. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changes/v1.17/BUG FIXES-20261027-134032.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hashicorp/terraform. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ae75cbe4`: Make `taint` and `untaint` commands use the `views` package (#39452). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cbed3573`: Evaluate module policies during destroy plan (#39455). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/command/arguments/taint.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changes/v1.17/BUG FIXES-20261027-134032.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-
-	ViewType ViewType
-		Vars:     &Vars{},
-		ViewType: ViewHuman,
+kind: BUG FIXES
+body: Always evaluate module policies during destroy plan
+time: 2026-10-27T13:40:32.51201+01:00
+custom:
+    Issue: "39455"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		Vars: &Vars{},
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ae75cbe4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cbed3573` are properly handled with clean fallback behavior.

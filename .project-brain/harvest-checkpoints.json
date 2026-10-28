@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T14:22:31.580Z",
+  "last_updated": "2026-10-28T14:29:21.657Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1205,14 +1205,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-zai-org-glm-5-2",
-      "content_hash": "5d96b458ecf0ab0fc7f3a0aa02c21cc4f70227fbb971919f255003ecf900e8e1",
-      "verified_at": "2026-10-25T20:11:24.503Z",
+      "content_hash": "0eb1304cbecfdaf6a32a32eeb9d30e4f61d7ef845ba692c9032741f4074ab165",
+      "verified_at": "2026-10-28T14:29:11.312Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T20:11:24.503Z"
+      "last_updated": "2026-10-28T14:29:11.312Z"
     },
     "stabilityai/stable-diffusion-3-medium": {
       "repository": "stabilityai/stable-diffusion-3-medium",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "3d54213137f2bbb772fcd16947d7c0b5b8d79bb65814e310814f5aa50c3c83b2",
-      "verified_at": "2026-10-28T11:12:07.710Z",
+      "content_hash": "2db4dd951ba81e5687ae8b5f6089e8427d724bb366f94390b9b4c01b52226277",
+      "verified_at": "2026-10-28T14:29:21.657Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T11:12:07.710Z"
+      "last_updated": "2026-10-28T14:29:21.657Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -7041,14 +7041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-hashicorp-terraform",
-      "content_hash": "a1f66b6acef9656a5a0962dd98b5ea3fabfad771044c36e396692f7f8ef92bba",
-      "verified_at": "2026-10-27T15:01:16.963Z",
+      "content_hash": "79d8a189e8ac6672eb49cdce7355f8fdb3c42e53007c2d9f4cef9d63aae7bf19",
+      "verified_at": "2026-10-28T14:29:14.624Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T15:01:16.963Z"
+      "last_updated": "2026-10-28T14:29:14.624Z"
     },
     "TaKO8Ki/gobang": {
       "repository": "TaKO8Ki/gobang",

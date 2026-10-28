@@ -5796,3 +5796,6 @@
 | `CYCLE-20261028-ECXB` | `2026-10-28T14:22:22.703Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md` | Yes (`8719c035...`) |
 | `CYCLE-20261028-EFS0` | `2026-10-28T14:22:26.400Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md` | Yes (`86105545...`) |
 | `CYCLE-20261028-EJRK` | `2026-10-28T14:22:31.568Z` | `ZSeven-W/openpencil` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5307` | Yes (`4cc98072...`) |
+| `CYCLE-20261028-N473` | `2026-10-28T14:29:11.295Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`0eb1304c...`) |
+| `CYCLE-20261028-N6R8` | `2026-10-28T14:29:14.612Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5308` | Yes (`79d8a189...`) |
+| `CYCLE-20261028-NC6L` | `2026-10-28T14:29:21.645Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5309` | Yes (`2db4dd95...`) |

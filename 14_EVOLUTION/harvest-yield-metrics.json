@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T14:22:31.576Z",
-  "total_cycles_completed": 5773,
-  "total_learnings_persisted": 5773,
-  "total_rules_promoted": 5257,
+  "last_updated": "2026-10-28T14:29:21.653Z",
+  "total_cycles_completed": 5776,
+  "total_learnings_persisted": 5776,
+  "total_rules_promoted": 5259,
   "history": [
-    {
-      "timestamp": "2026-10-28T00:19:32.076Z",
-      "repository": "CrawlCove/hreflang-checker",
-      "learningId": "learn-github-crawlcove-hreflang-checker",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T00:19:33.649Z",
-      "repository": "necolas/react-native-web",
-      "learningId": "learn-github-necolas-react-native-web",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T00:26:18.318Z",
-      "repository": "zeronsh/zeron",
-      "learningId": "learn-github-zeronsh-zeron",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T00:26:18.944Z",
       "repository": "CrawlCove/robots-txt-tester",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-28T14:22:31.576Z",
       "repository": "ZSeven-W/openpencil",
       "learningId": "learn-github-zseven-w-openpencil",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T14:29:11.309Z",
+      "repository": "zai-org/GLM-5.2",
+      "learningId": "learn-huggingface-zai-org-glm-5-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T14:29:14.621Z",
+      "repository": "hashicorp/terraform",
+      "learningId": "learn-github-hashicorp-terraform",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T14:29:21.653Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

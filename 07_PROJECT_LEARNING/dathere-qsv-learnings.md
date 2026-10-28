@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `b923415f`  
+> **Source Version**: `94ffc059`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T11:12:07.473Z  
+> **Timestamp**: 2026-10-28T14:29:21.202Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T11:12:07.295Z  
+> **Harvest Timestamp**: 2026-10-28T14:29:21.194Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,116 +2203,206 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8e852921` (2026-10-28)
-**Commit Message**: build(polars): use the serde feature instead of serde-lazy (#4951)
+### Incident Patch 1: `94ffc059` (2026-10-28)
+**Commit Message**: fix(viz): keep blank-qualifier rows in the region-click drill-down (#4953)
 
-* build(polars): use the serde feature instead of serde-lazy
+* fix(viz): keep blank-qualifier rows in the region-click drill-down
 
-qsv only serializes polars Schema/DataType (the .pschema.json cache in
-util/special_format.rs), which polars-core derives under either feature.
-serde-lazy also turned on serde for polars-plan/lazy/ops/time/defs (the
-whole DSL/IR), which qsv never serializes.
+With qualified county-name aliases (#4481), the data viewer's region filter
+ANDs the qualifier column with the spellings seen for the clicked feature.
+Blank qualifiers were never recorded, so a row placed on the map without a
+state (its county name unique nationally) was counted there but dropped from
+the drill-down, and a county whose rows all lacked a state filtered to zero.
 
-Clean `cargo test --no-run -F all_features`: 2,789 -> 2,353 CPU-seconds
-(-16%), 4m06s -> 3m48s wall (single run each). Full all_features suite
-passes; qsvdp and qsvmcp compile.
+Record "" as a qualifier spelling for matched rows, and emit it as
+SearchBuilder's "Empty" (null) condition instead of `= ""`.
+
+Found by roborev on the WPRDC 2-1-1 gallery page (#4952): 54 blank-state
+rows; McKean's only 2 requests both lack a state. Verified in-browser on a
+WPRDC slice: McKean 0 -> 2 rows, Allegheny 161 -> 200, toggle still clears.
+Regression test mutation-checked against each half of the fix.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* docs(changelog): cite #4951
+* docs(changelog): cite #4953
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
----------
+* fix(viz): match whitespace-only qualifiers as written in the drill-down
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+roborev 6001: trimming a whitespace-only state 
 
-**File**: `CHANGELOG.md` (modified, +3/-0)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- ### Added
- - `viz smart`: a Data Schematic embedded in an iframe now reports its own height to the embedding page (`postMessage({qsvVizHeight: <px>}, "*")`), so a host such as CKAN can size the iframe to its content without injecting a script. It reports only when framed, on load, on resize (including the data viewer drawer opening and closing, so the iframe grows and shrinks), and when its content reflows. The data viewer now accepts the embedding page's `qsvVizViewport` answer only from that page. The gallery generator injects only its scroll-forwarding script into these pages. ([#4949](https://github.com/dathere/qsv/pull/4949))
+@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - Build: Polars is built with its `serde` feature instead of `serde-lazy`. qsv only serializes Polars schemas (the `.pschema.json` cache), which `serde` covers; `serde-lazy` also generated serialization code for Polars' whole query-plan layer, which qsv never uses. A clean `-F all_features` debug build takes about 16% less CPU time. No behavior change. ([#4951](https://github.com/dathere/qsv/pull/4951))
  
-+### Changed
-+- Build: Polars is built with its `serde` feature instead of `serde-lazy`. qsv only serializes Polars schemas (the `.pschema.json` cache), which `serde` covers; `serde-lazy` also generated serialization code for Polars' whole query-plan layer, which qsv never uses. A clean `-F all_features` debug build takes about 16% less CPU time. No behavior change. ([#4951](https://github.com/dathere/qsv/pull/4951))
-+
  ### Fixed
++- `viz smart`: clicking a region on a county-name map now keeps the rows whose state is blank. When county names are qualified by a state column, the data viewer filter required one of the state spellings seen for that county, so a row the map had placed without a state (its county name unique on its own) was counted on the map but dropped from the drill-down; a county whose rows all lacked a state showed no rows at all. Blank states now match through the filter's "Empty" condition. Found on the WPRDC 2-1-1 gallery page (#4952). ([#4953](https://github.com/dathere/qsv/pull/4953))
  - **`viz smart`: a map in a sandboxed iframe now says why it's blank** ([#4947](https://github.com/dathere/qsv/pull/4947), [#4946](https://github.com/dathere/qsv/issues/4946)). Embedded in an `<iframe sandbox>` without `allow-same-origin` (the CKAN Webpage view the wiki recommends), every MapLibre map panel stayed empty with no error: the map library bundled with plotly.js 3.x rejects its own worker's messages when the page's origin is `null`. The schematic now shows a note above each such map telling the viewer to open it in its own tab. Pages opened from a file aren't affected. Rendering the maps there needs a plotly.js upgrade; #4946 tracks it.
  - `get`: overwriting an existing file with `--output` (`get`, `get cache-fetch`) no longer briefly exposes the new contents: the temp file that replaces it is owner-only (`0600`) while the data is written, and takes the old file's mode only afterwards. It also keeps the old file's group, so a group-readable file isn't handed to a different group; where the group can't be kept, the new file isn't group-readable, and other users get no access the old file denied its group. Setuid/setgid bits aren't carried over, as an in-place overwrite would have cleared them. Follow-up to [#4945](https://github.com/dathere/qsv/pull/4945). ([#4948](https://github.com/dathere/qsv/pull/4948))
-```
-
-**File**: `Cargo.lock` (modified, +0/-8)
-```diff
-@@ -2511,9 +2511,6 @@ name = "either"
- version = "1.19.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "0e9c71c2167ca323c882b99918929403426e2373ea17242ff5653e0d5e1058be"
--dependencies = [
-- "serde",
--]
- 
- [[package]]
- name = "email_address"
-@@ -6213,7 +6210,6 @@ dependencies = [
-  "polars-core",
-  "polars-error",
-  "polars-utils",
-- "serde",
-  "strum_macros 0.28.0",
- ]
- 
-@@ -6554,8 +6550,6 @@ dependencies = [
-  "rayon",
-  "recursive",
-  "regex",
-- "serde",
-- "serde_json",
-  "sha2 0.11.1",
-  "slotmap",
-  "strum_macros 0.28.0",
-@@ -6711,7 +6705,6 @@ dependencies = [
-  "polars-utils",
-  "rayon",
-  "regex",
-- "serde",
-  "strum_macros 0.28.0",
- ]
- 
-@@ -8715,7 +8708,6 @@ version = "1.1.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "bdd58c3c93c3d278ca835519292445cb4b0d4dc59ccfdf7ceadaab3f8aeb4038"
- dependencies = [
-- "serde",
-  "version_check",
- ]
  
 ```
 
-**File**: `Cargo.toml` (modified, +6/-1)
+**File**: `src/cmd/viz.rs` (modified, +22/-8)
 ```diff
-@@ -400,7 +400,12 @@ polars = { version = "0.55", features = [
-     # "'ROWS <n> PRECEDING' window frames require the 'rolling_window' feature".
-     "rolling_window",
-     "semi_anti_join",
--    "serde-lazy",
-+    # "serde" (not "serde-lazy"): qsv only serializes polars Schema/DataType
-+    # (the .pschema.json cache in util/special_format.rs), which polars-core
-+    # derives under either feature. "serde-lazy" also turned on serde for
-+    # polars-plan/lazy/ops/time (the whole DSL/IR), which qsv never serializes,
-+    # and cost ~16% of the CPU time of a clean all_features build.
-+    "serde",
-     "strings",
-     "string_normalize",
-     # "string_pad",
+@@ -16736,7 +16736,12 @@ const CHORO_FILTER_CHROME: &str = r##"<script>
+   }
+   function keyOf(c) { return JSON.stringify(normCrit(c)); }
+   function anyOf(title, values) {
+-    var mk = function (v) { return { condition: "=", data: title, value: [v] }; };
++    // "" stands for a blank cell (a qualifier the row lacked); SearchBuilder matches blank
++    // cells with its "Empty" condition, not with `=`
++    var mk = function (v) {
++      return v === "" ? { condition: "null", data: title, value: [] }
++                      : { condition: "=", data: title, value: [v] };
++    };
+     return values.length === 1 ? mk(values[0]) : { logic: "OR", criteria: values.map(mk) };
+   }
+   function critFor(title, qtitle, loc) {
+@@ -32527,14 +32532,23 @@ fn build_smart_summary_choropleth_panels(
+                     variants.push(raw.to_string());
+                 }
+             }
++            // A BLANK qualifier is recorded too: a row whose region spelling is unique on its own
++            // still matched without one, and the map counts it, so the drawer filter must keep it.
++            // Without it, clicking such a region drops those rows — every row, for a region whose
++            // rows all lack a qualifier. A truly empty cell is recorded as "", which the JS side
++            // turns into SearchBuilder's "Empty" condition; a whitespace-only cell is recorded
++            // as-is, because the drawer keeps the spaces and "Empty" only matches zero length.
+             if let Some(qcol) = qualifier_col {
+-                let cell = cell_to_string(record.get(qcol));
+-                let cell = cell.trim();
+-                if !cell.is_empty() {
+-                    let seen = qual_raws_by_cand[ci].entry(k.clone()).or_default();
+-                    if !seen.iter().any(|v| v == cell) {
+-                        seen.push(cell.to_string());
+-                    }
++                let full = cell_to_string(record.get(qcol));
++                let trimmed = full.trim();
++                let cell = if trimmed.is_empty() {
++                    full.as_str()
++                } else {
++                    trimmed
++                };
++                let seen = qual_raws_by_cand[ci].entry(k.clone()).or_default();
++                if !seen.iter().any(|v| v == cell) {
++                    seen.push(cell.to_string());
+                 }
+             }
+             match counts[ci].get_mut(&k) {
+```
+
+**File**: `tests/test_viz_county_names.rs` (modified, +94/-0)
+```diff
+@@ -616,6 +616,100 @@ fn viz_smart_county_names_region_filter_is_qualified() {
+     });
+ }
+ 
++/// A row with a BLANK qualifier whose region spelling is unique nationally still resolves and is
++/// counted on the map, so the drawer's region filter must keep it: the feature's qualifier
++/// spellings carry "" (the chrome turns it into SearchBuilder's "Empty" condition). Without it,
++/// clicking the region dropped those rows, and every row of a region whose rows all lack a state.
++#[test]
++#[serial]
++fn viz_smart_county_names_region_filter_keeps_blank_qualifier() {
++    const DICT: &str = r#"{
++  "$schema": "https://json-schema.org/draft/2020-12/schema",
++  "type": "object",
++  "properties": {
++    "county": { "type": "string", "x-qsv": { "qsv_type": "String", "role": "dimension", "concept": "geo.county" } },
++    "state": { "type": ["string", "null"], "x-qsv": { "qsv_type": "String", "role": "dimension", "concept": "geo.state" } },
++    "cases": { "type": "number", "x-qsv": { "qsv_type": "Integer", "role": "measure", "concept": "measure.amount" } }
++  }
++}"#;
++    let wrk = Workdir::new("viz_smart_county_names_region_filter_keeps_blank_qualifier");
++    wrk.create_from_string(
++        "c.csv",
++        "county,state,cases\nWashington County,PA,10\nWashington County,PA,12\nWashington \
++         County,MD,30\nWashington County,MD,32\nAllegheny County,PA,40\nAllegheny County,,42\n",
++    );
++    wrk.create_from_string("dict.schema.json", DICT);
++    let cache_dir = wrk.path("qsv-cache");
++    std::fs::create_dir_all(&cache_dir).expect("create cache dir");
++    with_mock_tigerweb(|base, _observed| {
++        let mut cmd = wrk.command("viz");
++        cmd.args(["smart", "c.csv", "--geojson", "auto", "--dictionary"])
++            .arg(wrk.path("dict.schema.json"))
++            .env("QSV_CENSUS_TIGERWEB_URL", base)
++            .env("QSV_CACHE_DIR", &cache_dir);
++        let out = wrk.output(&mut cmd);
++        let stderr = String::from_utf8_lossy(&out.stderr).to_string();
++        assert!(out.status.success(), "smart run failed: {stderr}");
++        let html = String::from_utf8_lossy(&out.stdout).to_string();
++        assert!(
++            html.contains("var QUAL_COL = 1;"),
++            "region filter was not qualified: {stderr}"
++        );
++        // the blank-state Allegheny row is kept alongside the PA one, in first-seen order
++        assert!(
++            html.contains(r#""42003":["PA",""]"#),
++            "blank qualifier missing for 42003: {stderr}"
++        );
++        // and the chrome maps "" to SearchBuilder's Empty condition
++        assert!(
++            html.contains(r#"condition: "null""#),
++            "blank qualifier has no Empty criterion: {stderr}"
++        );
++    });
++}
++
++/// A WHITESPACE-ONLY qualifier is not an empty cell to the drawer: it keeps the spaces, and
++/// SearchBuilder's "Empty" condition matches only zero-length values. So the filter must carry the
++/// cell as written (an exact `=` match), not trimmed to "" — otherwise a region whose rows all hold
++/// "   " as their state would filter to zero rows.
++#[test]
++#[serial]
++fn viz_smart_county_names_region_filter_keeps_whitespace_qualifier() {
++    const DICT: &str = r#"{
++  "$schema": "https://json-schema.org/draft/2020-12/schema",
++  "type": "object",
++  "properties": {
++    "county": { "type": "string", "x-qsv": { "qsv_type": "String", "role": "dimension", "concept": "geo.county" } },
++    "state": { "type": ["string", "null"], "x-qsv": { "qsv_type": "String", "role": "dimension", "concept": "geo.state" } },
++    "cases": { "type": "number", "x-qsv": { "qsv_type": "Integer", "role": "measure", "concept": "measure.amount" } }
++  }
++}"#;
++    let wrk = Workdir::new("viz_smart_county_names_region_filter_keeps_whitespace_qualifier");
++    wrk.create_from_string(
++        "c.csv",
++        "county,state,cases\nWashington County,PA,10\nWashington County,PA,12\nWashington \
++         County,MD,30\nWashington County,MD,32\nAllegheny County,   ,40\nAllegheny County,   ,42\n",
++    );
++    wrk.create_from_string("dict.schema.json", DICT);
++    let cache_dir = wrk.path("qsv-cache");
++    std::fs::create_dir_all(&cache_dir).expect("create cache dir");
++    with_mock_tigerweb(|base, _observed| {
++        let mut cmd = wrk.command("viz");
++        cmd.args(["smart", "c.csv", "--geojson", "auto", "--dictionary"])
++            .arg(wrk.path("dict.schema.json"))
++            .env("QSV_CENSUS_TIGERWEB_URL", base)
++            .env("QSV_CACHE_DIR", &cache_dir);
++        let out = wrk.output(&mut cmd);
++        let stderr = String::from_utf8_lossy(&out.stderr).to_string();
++        assert!(out.status.success(), "smart run failed: {stderr}");
++        let html = String::from_utf8_lossy(&out.stdout).to_string();
++        assert!(
++            html.contains(r#""42003":["   "]"#),
++            "whitespace-only qualifier not kept as written for 42003: {stderr}"
++        );
++    });
++}
++
+ /// A region-CODE column publishes no aliases, so the drawer
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4953** (2026-10-28): fix(viz): keep blank-qualifier rows in the region-click drill-down (@jqnatividad)
 - **PR #4951** (2026-10-28): build(polars): use the serde feature instead of serde-lazy (@jqnatividad)
 - **PR #4950** (2026-10-27): docs(benchmarks): regenerate Data Schematic for the 27.0.1 run (@jqnatividad)
 - **PR #4949** (2026-10-27): feat(viz): smart Data Schematics report their own height when framed (@jqnatividad)
 - **PR #4948** (2026-10-27): fix(get): --output overwrite temp starts owner-only and keeps the group (@jqnatividad)
 - **PR #4947** (2026-10-27): fix(viz): explain blank map panels in sandboxed iframes (@jqnatividad)
-- **PR #4945** (2026-10-27): fix(get): --output files follow the umask, not the cache's 0600 (@jqnatividad)
 
 ---
 
@@ -2332,13 +2422,13 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(polars): use the serde feature instead of serde-lazy (#4951)
+## X. viz): keep blank-qualifier rows in the region-click drill-down (#4953)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8e852921`: build(polars): use the serde feature instead of serde-lazy (#4951). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `94ffc059`: viz): keep blank-qualifier rows in the region-click drill-down (#4953). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2346,9 +2436,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-### Changed
-- Build: Polars is built with its `serde` feature instead of `serde-lazy`. qsv only serializes Polars schemas (the `.pschema.json` cache), which `serde` covers; `serde-lazy` also generated serialization code for Polars' whole query-plan layer, which qsv never uses. A clean `-F all_features` debug build takes about 16% less CPU time. No behavior change. ([#4951](https://github.com/dathere/qsv/pull/4951))
-
+- `viz smart`: clicking a region on a county-name map now keeps the rows whose state is blank. When county names are qualified by a state column, the data viewer filter required one of the state spellings seen for that county, so a row the map had placed without a state (its county name unique on its own) was counted on the map but dropped from the drill-down; a county whose rows all lacked a state showed no rows at all. Blank states now match through the filter's "Empty" condition. Found on the WPRDC 2-1-1 gallery page (#4952). ([#4953](https://github.com/dathere/qsv/pull/4953))
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2358,4 +2446,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8e852921` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `94ffc059` are properly handled with clean fallback behavior.

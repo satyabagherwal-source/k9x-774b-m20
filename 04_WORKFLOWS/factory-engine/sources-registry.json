@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T14:22:34.260Z",
-    "lastVerified": "2026-10-28T14:22:34.260Z",
+    "lastChecked": "2026-10-28T14:29:24.181Z",
+    "lastVerified": "2026-10-28T14:29:24.181Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -177,22 +177,21 @@
     "lastVerified": "2026-10-28T02:54:52.757Z"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T13:56:57.780Z",
-    "lastVerified": "2026-10-28T13:56:57.780Z",
+    "lastChecked": "2026-10-28T14:29:21.194Z",
+    "lastVerified": "2026-10-28T14:29:21.194Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "3d54213137f2bbb772fcd16947d7c0b5b8d79bb65814e310814f5aa50c3c83b2",
-    "promotedRulesCount": 0,
+    "contentHash": "2db4dd951ba81e5687ae8b5f6089e8427d724bb366f94390b9b4c01b52226277",
+    "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "b923415f"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -878,9 +877,9 @@
   "provablehq-snarkos": {
     "name": "snarkOS",
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
-    "lastChecked": "2026-10-28T10:17:53.729Z",
+    "lastChecked": "2026-10-28T14:29:12.176Z",
     "revisionIdentifier": "6b124303",
-    "lastVerified": "2026-10-28T10:17:53.729Z"
+    "lastVerified": "2026-10-28T14:29:12.176Z"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -3902,5 +3901,60 @@
     "lastChecked": "2026-10-28T14:22:31.636Z",
     "revisionIdentifier": "481af058",
     "lastVerified": "2026-10-28T14:22:31.636Z"
+  },
+  "telemt-telemt": {
+    "name": "telemt",
+    "officialUrl": "https://github.com/telemt/telemt",
+    "lastChecked": "2026-10-28T14:29:02.169Z",
+    "revisionIdentifier": "9d5b896b",
+    "lastVerified": "2026-10-28T14:29:02.169Z"
+  },
+  "hf-zai-org-glm-5.2": {
+    "name": "zai-org/GLM-5.2",
+    "officialUrl": "https://huggingface.co/zai-org/GLM-5.2",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T14:29:04.674Z",
+    "lastVerified": "2026-10-28T14:29:04.674Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-zai-org-glm-5-2",
+    "contentHash": "0eb1304cbecfdaf6a32a32eeb9d30e4f61d7ef845ba692c9032741f4074ab165",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "czy0729-bangumi": {
+    "name": "Bangumi",
+    "officialUrl": "https://github.com/czy0729/Bangumi",
+    "lastChecked": "2026-10-28T14:29:07.061Z",
+    "revisionIdentifier": "f58a6465",
+    "lastVerified": "2026-10-28T14:29:07.061Z"
+  },
+  "hashicorp-terraform": {
+    "name": "hashicorp/terraform",
+    "officialUrl": "https://github.com/hashicorp/terraform",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-28T14:29:14.004Z",
+    "lastVerified": "2026-10-28T14:29:14.004Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-hashicorp-terraform",
+    "contentHash": "79d8a189e8ac6672eb49cdce7355f8fdb3c42e53007c2d9f4cef9d63aae7bf19",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "vlcn-io-cr-sqlite": {
+    "name": "cr-sqlite",
+    "officialUrl": "https://github.com/vlcn-io/cr-sqlite",
+    "lastChecked": "2026-10-28T14:29:14.580Z",
+    "revisionIdentifier": "43ab94ca",
+    "lastVerified": "2026-10-28T14:29:14.580Z"
   }
 }

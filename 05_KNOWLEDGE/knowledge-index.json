@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T14:22:31.497Z",
+  "last_updated": "2026-10-28T14:29:21.585Z",
   "total_verified_learnings": 1157,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8387,8 +8387,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "b923415f",
-      "content_hash": "3d54213137f2bbb772fcd16947d7c0b5b8d79bb65814e310814f5aa50c3c83b2",
+      "source_version": "94ffc059",
+      "content_hash": "2db4dd951ba81e5687ae8b5f6089e8427d724bb366f94390b9b4c01b52226277",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -8641,6 +8641,11 @@
           "number": 5042,
           "title": "docs(benchmarks): regenerate Data Schematic for the 27.0.1 run (#4950)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5309,
+          "title": "viz): keep blank-qualifier rows in the region-click drill-down (#4953)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8648,7 +8653,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T11:12:07.597Z",
+      "verified_at": "2026-10-28T14:29:21.572Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15392,8 +15397,8 @@
       "slug": "hashicorp-terraform",
       "platform": "github",
       "source_url": "https://github.com/hashicorp/terraform",
-      "source_version": "ae75cbe4",
-      "content_hash": "a1f66b6acef9656a5a0962dd98b5ea3fabfad771044c36e396692f7f8ef92bba",
+      "source_version": "cbed3573",
+      "content_hash": "79d8a189e8ac6672eb49cdce7355f8fdb3c42e53007c2d9f4cef9d63aae7bf19",
       "dossier_path": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "promoted_rules": [
@@ -15436,6 +15441,11 @@
           "number": 4870,
           "title": "Make `taint` and `untaint` commands use the `views` package (#39452)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5308,
+          "title": "Evaluate module policies during destroy plan (#39455)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15443,7 +15453,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T15:01:16.876Z",
+      "verified_at": "2026-10-28T14:29:14.537Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29458,7 +29468,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/zai-org/GLM-5.2",
       "source_version": "hf-zai-org-glm-5.2",
-      "content_hash": "5d96b458ecf0ab0fc7f3a0aa02c21cc4f70227fbb971919f255003ecf900e8e1",
+      "content_hash": "0eb1304cbecfdaf6a32a32eeb9d30e4f61d7ef845ba692c9032741f4074ab165",
       "dossier_path": "07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md",
       "promoted_rules": [
@@ -29511,7 +29521,7 @@
         "learn-huggingface-hf-zai-org-glm-5-2-mv4b2bic",
         "learn-huggingface-hf-zai-org-glm-5-2-mv4og5jo"
       ],
-      "verified_at": "2026-10-25T20:11:24.410Z",
+      "verified_at": "2026-10-28T14:29:11.223Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -144369,6 +144379,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T14:22:31.475Z"
+    },
+    "rule-5308": {
+      "learning_id": "rule-5308",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5308,
+      "title": "Evaluate module policies during destroy plan (#39455)",
+      "source_url": "https://github.com/hashicorp/terraform",
+      "source_version": "cbed3573",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T14:29:14.537Z"
+    },
+    "rule-5309": {
+      "learning_id": "rule-5309",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5309,
+      "title": "viz): keep blank-qualifier rows in the region-click drill-down (#4953)",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "94ffc059",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T14:29:21.572Z"
     }
   },
   "aliases": {
