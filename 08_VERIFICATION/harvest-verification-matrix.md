@@ -5856,3 +5856,4 @@
 | `CYCLE-20261028-8GPW` | `2026-10-28T17:05:45.380Z` | `Ataraxy-Labs/sem` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5349` | Yes (`9ea765ab...`) |
 | `CYCLE-20261028-8MEA` | `2026-10-28T17:05:52.738Z` | `kcl-lang/kcl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5350` | Yes (`138f1855...`) |
 | `CYCLE-20261028-8SM1` | `2026-10-28T17:06:00.793Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5351` | Yes (`348ea3d4...`) |
+| `CYCLE-20261028-HDVQ` | `2026-10-28T17:12:41.606Z` | `google/gemma-4-26B-A4B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md` | Yes (`0149ffe5...`) |

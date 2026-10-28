@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T17:06:03.341Z",
-    "lastVerified": "2026-10-28T17:06:03.341Z",
+    "lastChecked": "2026-10-28T17:12:52.852Z",
+    "lastVerified": "2026-10-28T17:12:52.852Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -123,8 +123,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-28T16:45:25.625Z",
-    "lastVerified": "2026-10-28T16:45:25.625Z",
+    "lastChecked": "2026-10-28T17:12:52.844Z",
+    "lastVerified": "2026-10-28T17:12:52.844Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -604,12 +604,12 @@
     "lastVerified": "2026-10-28T03:38:01.911Z"
   },
   "defguard-defguard": {
-    "name": "DefGuard/defguard",
+    "name": "defguard",
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T13:56:58.068Z",
-    "lastVerified": "2026-10-28T13:56:58.068Z",
+    "lastChecked": "2026-10-28T17:12:48.061Z",
+    "lastVerified": "2026-10-28T17:12:48.061Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -618,7 +618,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "12508b40"
   },
   "topoteretes-cognee": {
     "name": "cognee",
@@ -5241,5 +5242,50 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sentrux-sentrux": {
+    "name": "sentrux",
+    "officialUrl": "https://github.com/sentrux/sentrux",
+    "lastChecked": "2026-10-28T17:12:37.754Z",
+    "revisionIdentifier": "6f8ff3c1",
+    "lastVerified": "2026-10-28T17:12:37.754Z"
+  },
+  "hf-google-gemma-4-26b-a4b-it": {
+    "name": "google/gemma-4-26B-A4B-it",
+    "officialUrl": "https://huggingface.co/google/gemma-4-26B-A4B-it",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T17:12:40.538Z",
+    "lastVerified": "2026-10-28T17:12:40.538Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
+    "contentHash": "0149ffe568dc74abdd1b7d8aaa9c099dce4d1b87d7828d8d808f188bdf640e84",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hungps-flutter_pokedex": {
+    "name": "flutter_pokedex",
+    "officialUrl": "https://github.com/hungps/flutter_pokedex",
+    "lastChecked": "2026-10-28T17:12:44.858Z",
+    "revisionIdentifier": "7e2b6d49",
+    "lastVerified": "2026-10-28T17:12:44.858Z"
+  },
+  "cycloidio-terracognita": {
+    "name": "terracognita",
+    "officialUrl": "https://github.com/cycloidio/terracognita",
+    "lastChecked": "2026-10-28T17:12:45.361Z",
+    "revisionIdentifier": "802bd4b5",
+    "lastVerified": "2026-10-28T17:12:45.361Z"
+  },
+  "netflix-dynomite": {
+    "name": "dynomite",
+    "officialUrl": "https://github.com/Netflix/dynomite",
+    "lastChecked": "2026-10-28T17:12:51.406Z",
+    "revisionIdentifier": "2046b05e",
+    "lastVerified": "2026-10-28T17:12:51.406Z"
   }
 }

@@ -5865,3 +5865,4 @@ Every entry in this ledger must capture:
 | `learn-github-ataraxy-labs-sem` | `https://github.com/Ataraxy-Labs/sem` | `f28b2311` | Multi-dimensional audit evidence | 2026-10-28T17:05:45.384Z |
 | `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `fcdc928b` | Multi-dimensional audit evidence | 2026-10-28T17:05:52.742Z |
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `2db7fac9` | Multi-dimensional audit evidence | 2026-10-28T17:06:00.797Z |
+| `learn-huggingface-google-gemma-4-26b-a4b-it` | `https://huggingface.co/google/gemma-4-26B-A4B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-28T17:12:41.609Z |
