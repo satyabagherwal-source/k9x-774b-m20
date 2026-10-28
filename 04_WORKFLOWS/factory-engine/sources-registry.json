@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T06:24:55.084Z",
-    "lastVerified": "2026-10-28T06:24:55.084Z",
+    "lastChecked": "2026-10-28T06:35:58.344Z",
+    "lastVerified": "2026-10-28T06:35:58.344Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -110,9 +110,9 @@
   "bitterbot-ai-bitterbot-desktop": {
     "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "lastChecked": "2026-10-28T05:55:14.163Z",
+    "lastChecked": "2026-10-28T06:31:17.289Z",
     "revisionIdentifier": "fce458c1",
-    "lastVerified": "2026-10-28T05:55:14.163Z"
+    "lastVerified": "2026-10-28T06:31:17.289Z"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -155,9 +155,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-10-28T02:54:50.202Z",
+    "lastChecked": "2026-10-28T06:31:12.248Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-10-28T02:54:50.202Z"
+    "lastVerified": "2026-10-28T06:31:12.248Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch",
@@ -1834,5 +1834,50 @@
     "lastChecked": "2026-10-28T06:24:52.640Z",
     "revisionIdentifier": "171c7a9e",
     "lastVerified": "2026-10-28T06:24:52.640Z"
+  },
+  "zeronsh-zeron": {
+    "name": "zeron",
+    "officialUrl": "https://github.com/zeronsh/zeron",
+    "lastChecked": "2026-10-28T06:31:02.364Z",
+    "revisionIdentifier": "ab189159",
+    "lastVerified": "2026-10-28T06:31:02.364Z"
+  },
+  "hf-akhilaaa3-jev-omni": {
+    "name": "akhilaaa3/Jev-Omni",
+    "officialUrl": "https://huggingface.co/akhilaaa3/Jev-Omni",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T06:31:04.959Z",
+    "lastVerified": "2026-10-28T06:31:04.959Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-akhilaaa3-jev-omni",
+    "contentHash": "f340b2848415c1a5859df4a077158dd89abb9af20d6be9878b59acd253aa53da",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "alibaba-formily": {
+    "name": "formily",
+    "officialUrl": "https://github.com/alibaba/formily",
+    "lastChecked": "2026-10-28T06:31:07.365Z",
+    "revisionIdentifier": "d9a46442",
+    "lastVerified": "2026-10-28T06:31:07.365Z"
+  },
+  "nats-io-nats.go": {
+    "name": "nats.go",
+    "officialUrl": "https://github.com/nats-io/nats.go",
+    "lastChecked": "2026-10-28T06:31:09.833Z",
+    "revisionIdentifier": "9868714c",
+    "lastVerified": "2026-10-28T06:31:09.833Z"
+  },
+  "infiniflow-infinity": {
+    "name": "infinity",
+    "officialUrl": "https://github.com/infiniflow/infinity",
+    "lastChecked": "2026-10-28T06:31:14.844Z",
+    "revisionIdentifier": "6e4ce04b",
+    "lastVerified": "2026-10-28T06:31:14.844Z"
   }
 }

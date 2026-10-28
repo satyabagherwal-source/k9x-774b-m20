@@ -5727,3 +5727,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-comfy-org-qwen-image-2-1` | `https://huggingface.co/Comfy-Org/Qwen-Image-2.1` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-28T06:24:43.600Z |
 | `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `54548685` | Multi-dimensional audit evidence | 2026-10-28T06:24:44.633Z |
 | `learn-github-openreplay-openreplay` | `https://github.com/openreplay/openreplay` | `2be0a4f8` | Multi-dimensional audit evidence | 2026-10-28T06:24:49.820Z |
+| `learn-huggingface-akhilaaa3-jev-omni` | `https://huggingface.co/akhilaaa3/Jev-Omni` | `hf-akhilaa` | Multi-dimensional audit evidence | 2026-10-28T06:35:55.815Z |

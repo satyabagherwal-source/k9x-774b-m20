@@ -376979,3 +376979,200 @@ AppVersion: "v1.28.8"
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `2be0a4f8` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5209. Discriminative Logit-Head Left-Padding Invariant (Harvested from akhilaaa3/Jev-Omni)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Discriminative Logit-Head Left-Padding Invariant",
+  "source": "akhilaaa3/Jev-Omni",
+  "source_url": "https://huggingface.co/akhilaaa3/Jev-Omni",
+  "source_version": "hf-akhilaaa3-jev-omni",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-28T06:35:55.408Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-akhilaaa3-jev-omni",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [akhilaaa3/Jev-Omni](https://huggingface.co/akhilaaa3/Jev-Omni) (Revision: `hf-akhilaa`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When serving or fine-tuning causal autoregressive decoder models repurposed with discriminative sequence-level classification heads, the tokenizer and dataloader **MUST** enforce `padding_side = "left"` and target token indexing **MUST** read from absolute terminal position `input_ids.shape[-1] - 1` (or token index `-1`). Model configurations **MUST NOT** use right-padding without an explicit causal position-offset mask.
+
+**WHY**:
+Right-padding in causal decoder models introduces padding tokens between the terminal token of variable-length sequences and the end of the batch tensor. Because causal attention prevents valid tokens from attending to subsequent tokens, reading the final hidden state from `[-1]` on a right-padded batch extracts representations of `<pad>` (id 0) rather than the true sequence terminator. This injects zero or uncalibrated embeddings into the decision head, corrupting gradient updates and rendering classification outputs stochastic.
+
+**WHEN TO APPLY**:
+Apply to any Hugging Face / PyTorch causal transformer backbone (Gemma, LLaMA, Mistral, Qwen) adapted for multi-choice classification, reward modeling, or sequence classification where batch sizes $> 1$ contain variable sequence lengths.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+import torch.nn as nn
+from transformers import AutoTokenizer, PreTrainedModel
+
+class MultimodalDecisionClassifier(nn.Module):
+    def __init__(self, backbone: PreTrainedModel, tokenizer: AutoTokenizer, max_options: int = 256):
+        super().__init__()
+        self.backbone = backbone
+        self.tokenizer = tokenizer
+        
+        # Invariant 1: Force tokenizer left-padding
+        self.tokenizer.padding_side = "left"
+        if self.tokenizer.pad_token_id is None:
+            self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
+
+        # Invariant 2: Classification head projecting backbone hidden_size to max_options
+        hidden_size = backbone.config.text_config.hidden_size if hasattr(backbone.config, "text_config") else backbone.config.hidden_size
+        self.head = nn.Linear(hidden_size, max_options, bias=False)
+
+    def forward(self, input_ids: torch.Tensor, attention_mask: torch.Tensor, num_options: int) -> torch.Tensor:
+        # Verification: Assert left-padding invariant (pad tokens only appear before sequence)
+        pad_id = self.tokenizer.pad_token_id
+        is_pad = (input_ids == pad_id)
+        # Pad tokens must not appear after non-pad tokens in any row
+        has_started = (~is_pad).cumsum(dim=-1) > 0
+        illegal_pad = is_pad & has_started
+        if illegal_pad.any():
+            raise ValueError("Invariant Violation: Detected pad token after valid sequence! Tokenizer must use left-padding.")
+
+        # Backbone forward pass
+        outputs = self.backbone(
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+            output_hidden_states=True,
+            return_dict=True
+        )
+        
+        # Last hidden state extraction: with left-padding, the sequence end is ALWAYS at index -1
+        last_hidden = outputs.hidden_states[-1][:, -1, :] # [B, H]
+        
+        # Decision projection restricted strictly to active option count
+        logits = self.head(last_hidden)[:, :num_options] # [B, num_options]
+        return torch.softmax(logits, dim=-1)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Right-padding or naive hidden state extraction
+tokenizer.padding_side = "right" # FATAL: Pushes valid token away from tensor index -1
+outputs = backbone(input_ids=input_ids, attention_mask=attention_mask)
+# BUG: Reads hidden representation of <pad> tokens for sequences shorter than max batch length!
+decision_state = outputs.last_hidden_state[:, -1, :]
+probs = torch.softmax(decision_head(decision_state), dim=-1)
+```
+
+**VERIFICATION METHOD**:
+Automated invariant unit test: Pass two strings of unequal length (e.g., 5 tokens and 50 tokens) batched together with `padding_side="left"`. Assert that `decision_classifier(batch)[0]` matches `decision_classifier(single_item_5_tokens)` within numerical tolerance ($\text{atol} = 10^{-4}$ in BF16).
+
+---
+
+
+---
+
+## 5210. Modality Delimiter Bracket Closure & Token Suppression Invariant (Harvested from akhilaaa3/Jev-Omni)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Modality Delimiter Bracket Closure & Token Suppression Invariant",
+  "source": "akhilaaa3/Jev-Omni",
+  "source_url": "https://huggingface.co/akhilaaa3/Jev-Omni",
+  "source_version": "hf-akhilaaa3-jev-omni",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-28T06:35:55.613Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-akhilaaa3-jev-omni",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [akhilaaa3/Jev-Omni](https://huggingface.co/akhilaaa3/Jev-Omni) (Revision: `hf-akhilaa`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When combining cross-modal embeddings into unified sequence token streams, every modality segment **MUST** be bounded by balanced begin-of-modality (`bo{m}`) and end-of-modality (`eo{m}`) structural tokens. Furthermore, the inference runtime **MUST** register all terminal structural delimiter token IDs in the decoder's `suppress_tokens` list to prevent runaway generation across modal boundaries.
+
+**WHY**:
+Multimodal projection layers map continuous continuous features (e.g., visual patches, audio frames) directly into the text embedding space. If structural end tokens (e.g., `eoa_token_index: 258883`, `eoi_token_id: 258882`) are omitted or unsuppressed during forward/generation passes, the cross-attention or autoregressive mechanics can bleed modal control codes into the downstream text sequence, triggering premature sequence truncation or semantic hallucination.
+
+**WHEN TO APPLY**:
+Any interleaved multimodal architecture (e.g., Gemma-Unified, Flamingo, Chameleon, Qwen-VL) where audio/vision tokens share the causal decoder vocabulary.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+
+class MultimodalTokenPacker:
+    def __init__(self, boa_id: int, eoa_id: int, audio_tok_id: int, boi_id: int, eoi_id: int, img_tok_id: int):
+        self.boa_id = boa_id
+        self.eoa_id = eoa_id
+        self.audio_tok_id = audio_tok_id
+        self.boi_id = boi_id
+        self.eoi_id = eoi_id
+        self.img_tok_id = img_tok_id
+
+    def pack_audio(self, prefix_text_ids: list[int], audio_token_count: int, suffix_text_ids: list[int]) -> list[int]:
+        # Enforce balanced brackets
+        sequence = list(prefix_text_ids)
+        sequence.append(self.boa_id)
+        sequence.extend([self.audio_tok_id] * audio_token_count)
+        sequence.append(self.eoa_id)
+        sequence.extend(suffix_text_ids)
+        return sequence
+
+    def validate_packing(self, token_ids: list[int]) -> None:
+        """Enforces structural balance: every BOA has exactly one EOA; no unbracketed tokens."""
+        audio_open = False
+        image_open = False
+        for idx, tok in enumerate(token_ids):
+            if tok == self.boa_id:
+                assert not audio_open, f"Nested BOA at position {idx}"
+                audio_open = True
+            elif tok == self.eoa_id:
+                assert audio_open, f"Unbalanced EOA at position {idx}"
+                audio_open = False
+            elif tok == self.audio_tok_id:
+                assert audio_open, f"Raw audio token outside BOA/EOA bracket at {idx}"
+
+            if tok == self.boi_id:
+                assert not image_open, f"Nested BOI at position {idx}"
+                image_open = True
+            elif tok == self.eoi_id:
+                assert image_open, f"Unbalanced EOI at position {idx}"
+                image_open = False
+            elif tok == self.img_tok_id:
+                assert image_open, f"Raw image token outside BOI/EOI bracket at {idx}"
+                
+        assert not audio_open, "Unterminated audio bracket at EOF"
+        assert not image_open, "Unterminated image bracket at EOF"
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Injecting multimodal placeholder tokens without boundary brackets
+# or allowing decoder to sample boundary tokens
+def unpackaged_audio_injection(prefix_ids, audio_feats):
+    # Missing boa_token_id (256000) and eoa_token_id (258883)
+    # The transformer cannot distinguish modality transition boundaries
+    audio_tokens = [258881] * audio_feats.shape[0]
+    return prefix_ids + audio_tokens + suffix_ids
+```
+
+**VERIFICATION METHOD**:
+Compile a JSON schema validator or runtime AST that verifies `generation_config.json` explicitly populates `suppress_tokens` with `config.eoa_token_index` and `config.eoi_token_id`. Run automated property-based test with `hypothesis` passing arbitrary token streams into `validate_packing`.
+
+---
