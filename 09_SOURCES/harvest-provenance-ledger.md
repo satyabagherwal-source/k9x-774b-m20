@@ -5919,3 +5919,4 @@ Every entry in this ledger must capture:
 | `learn-github-tencent-tds-kuiklyui` | `https://github.com/Tencent-TDS/KuiklyUI` | `2fcb6f77` | Multi-dimensional audit evidence | 2026-10-28T19:46:48.194Z |
 | `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `a052bc26` | Multi-dimensional audit evidence | 2026-10-28T19:46:50.452Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `1f4eee02` | Multi-dimensional audit evidence | 2026-10-28T19:46:53.277Z |
+| `learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark` | `https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-28T19:54:30.020Z |

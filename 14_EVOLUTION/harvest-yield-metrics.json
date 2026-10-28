@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T19:46:53.283Z",
-  "total_cycles_completed": 5887,
-  "total_learnings_persisted": 5887,
+  "last_updated": "2026-10-28T19:54:30.028Z",
+  "total_cycles_completed": 5888,
+  "total_learnings_persisted": 5888,
   "total_rules_promoted": 5347,
   "history": [
-    {
-      "timestamp": "2026-10-28T05:59:55.309Z",
-      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T06:11:52.938Z",
       "repository": "orcarouter/OrcaSAQ-2-27B",
@@ -1403,6 +1396,13 @@
       "repository": "aleo-labs-protocol/snarkOS",
       "learningId": "learn-github-aleo-labs-protocol-snarkos",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T19:54:30.028Z",
+      "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+      "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

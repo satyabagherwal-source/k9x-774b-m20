@@ -4,8 +4,8 @@
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T16:12:25.377Z",
-    "lastVerified": "2026-10-28T16:12:25.377Z",
+    "lastChecked": "2026-10-28T19:54:36.276Z",
+    "lastVerified": "2026-10-28T19:54:36.276Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T19:46:55.817Z",
-    "lastVerified": "2026-10-28T19:46:55.817Z",
+    "lastChecked": "2026-10-28T19:54:41.286Z",
+    "lastVerified": "2026-10-28T19:54:41.286Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -352,8 +352,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T19:24:36.451Z",
-    "lastVerified": "2026-10-28T19:24:36.451Z",
+    "lastChecked": "2026-10-28T19:54:41.278Z",
+    "lastVerified": "2026-10-28T19:54:41.278Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -409,9 +409,9 @@
   "kubernetes-sigs-aws-load-balancer-controller": {
     "name": "aws-load-balancer-controller",
     "officialUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
-    "lastChecked": "2026-10-28T03:17:57.353Z",
+    "lastChecked": "2026-10-28T19:54:33.800Z",
     "revisionIdentifier": "d19307cc",
-    "lastVerified": "2026-10-28T03:17:57.353Z"
+    "lastVerified": "2026-10-28T19:54:33.800Z"
   },
   "smallstep-cli": {
     "name": "cli",
@@ -6378,5 +6378,43 @@
     "lastChecked": "2026-10-28T19:46:49.756Z",
     "revisionIdentifier": "83c386bc",
     "lastVerified": "2026-10-28T19:46:49.756Z"
+  },
+  "str4d-rage": {
+    "name": "rage",
+    "officialUrl": "https://github.com/str4d/rage",
+    "lastChecked": "2026-10-28T19:54:26.210Z",
+    "revisionIdentifier": "b5b68c4f",
+    "lastVerified": "2026-10-28T19:54:26.210Z"
+  },
+  "hf-autotrust-glm5.3-flash-e224-dgx-spark": {
+    "name": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+    "officialUrl": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T19:54:28.845Z",
+    "lastVerified": "2026-10-28T19:54:28.845Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
+    "contentHash": "775ee31f47b3306064f977af717f4a555b16621c1603af5b79603c752b683406",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "joreilly-peopleinspace": {
+    "name": "PeopleInSpace",
+    "officialUrl": "https://github.com/joreilly/PeopleInSpace",
+    "lastChecked": "2026-10-28T19:54:31.273Z",
+    "revisionIdentifier": "8b77f91d",
+    "lastVerified": "2026-10-28T19:54:31.273Z"
+  },
+  "pathwaycom-serviette": {
+    "name": "serviette",
+    "officialUrl": "https://github.com/pathwaycom/serviette",
+    "lastChecked": "2026-10-28T19:54:38.884Z",
+    "revisionIdentifier": "e2a7a09b",
+    "lastVerified": "2026-10-28T19:54:38.884Z"
   }
 }
