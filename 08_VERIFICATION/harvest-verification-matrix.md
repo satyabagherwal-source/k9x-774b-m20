@@ -5801,3 +5801,6 @@
 | `CYCLE-20261028-NC6L` | `2026-10-28T14:29:21.645Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5309` | Yes (`2db4dd95...`) |
 | `CYCLE-20261028-VRNR` | `2026-10-28T14:35:54.951Z` | `openai/gpt-oss-20b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | Yes (`f09340f4...`) |
 | `CYCLE-20261028-VYHV` | `2026-10-28T14:36:03.811Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5310` | Yes (`299e5133...`) |
+| `CYCLE-20261028-4ODW` | `2026-10-28T14:42:50.612Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5311` | Yes (`a27e64fa...`) |
+| `CYCLE-20261028-4OYP` | `2026-10-28T14:42:51.361Z` | `bigscience/bloom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5312, Rule 5313, Rule 5314` | Yes (`251058e0...`) |
+| `CYCLE-20261028-4RV8` | `2026-10-28T14:42:55.124Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5315` | Yes (`d9be5f78...`) |

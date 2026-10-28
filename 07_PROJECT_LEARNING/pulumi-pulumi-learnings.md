@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source**: github ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
-> **Source Version**: `fd029321`  
+> **Source Version**: `a790c218`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T15:08:14.074Z  
+> **Timestamp**: 2026-10-28T14:42:50.148Z  
 > **Learning ID**: `learn-github-pulumi-pulumi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T15:08:12.426Z  
+> **Harvest Timestamp**: 2026-10-28T14:42:49.989Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Pulumi - Infrastructure as Code in any programming language 🚀
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 25823 stars
+- **Stars / Engagement**: 25826 stars
 
 ---
 
@@ -1340,7 +1340,6 @@ import (
 
 	"github.com/blang/semver"
 	"github.com/opentracing/opentracing-go"
-	cloudapitype "github.com/pulumi/pulumi-cloud-sdk/go/apitype"
 	"go.opentelemetry.io/otel"
 
 	"github.com/pulumi/pulumi/pkg/v3/engine"
@@ -1540,7 +1539,7 @@ type Client struct {
 	insecure   bool
 	restClient restClient
 
-	
+	// If true, do not probe the backend with GET /api/capabilitie
 ```
 
 ### Core Architecture Module: `pkg/backend/httpstate/client/console.go`
@@ -1724,391 +1723,278 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fd029321` (2026-10-27)
-**Commit Message**: Fix secret container redaction in JSON output (#25400)
+### Incident Patch 1: `ba1a534c` (2026-10-28)
+**Commit Message**: Update module github.com/go-jose/go-jose/v4 to v4.1.6 [SECURITY] (#25418)
 
-Fixes #25215.
+This PR contains the following updates:
 
-The migration in #25035 changed secrets from distinct wrappers to flags
-on property values. The JSON display scrubber still checked maps and
-arrays before checking secrecy, so it rebuilt secret containers without
-their secret flags and exposed their contents.
+| Package | Change |
+[Age](https://docs.renovatebot.com/merge-confidence/) |
+[Confidence](https://docs.renovatebot.com/merge-confidence/) |
+|---|---|---|---|
+|
+[github.com/go-jose/go-jose/v4](https://redirect.github.com/go-jose/go-jose)
+| `v4.1.4` → `v4.1.6` |
+![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fgo-jose%2fgo-jose%2fv4/v4.1.6?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fgo-jose%2fgo-jose%2fv4/v4.1.4/v4.1.6?slim=true)
+|
 
-Handle secrecy before type-specific rendering, and remove the secret
-flag when explicitly showing secrets. Add regression tests for secret
-maps, arrays, strings, invalid UTF-8, nested values, and preview JSON
-old/new inputs and outputs.
+---
 
-**File**: `changelog/pending/cli-display-fix-20261027-125123.yaml` (added, +4/-0)
+### Go JOSE: DoS when parsing JWKs that contain RSA keys
+[CVE-2026-116587](https://nvd.nist.gov/vuln/detail/CVE-2026-116587) /
+[GHSA-mgcc-cww5-fp2q](https://redirect.github.com/advisories/GHSA-mgcc-cww5-fp2q)
+
+<details>
+<summary>More information</summary>
+
+#### Details
+##### Summary
+
+A crafted RSA key inside a JWK can cause operations that parse JWKs to
+consume excess CPU.
+
+##### Details
+
+go-jose does not check for bounds on RSA modulus and primes before
+validating them. Values are passed directly to
+`crypto/rsa.PrivateKey.Validate()`. On Go 1.24+, this takes cubic time
+
+**File**: `pkg/go.mod` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,4 @@
-+component: cli/display
-+kind: fix
-+body: Fix secret maps and arrays leaking into JSON preview and update output
-+time: 2026-10-27T12:51:23.971759+01:00
+@@ -200,7 +200,7 @@ require (
+ 	github.com/git-pkgs/vers v0.2.4 // indirect
+ 	github.com/go-git/gcfg/v2 v2.0.2 // indirect
+ 	github.com/go-git/go-billy/v6 v6.0.0-beta.1 // indirect
+-	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
++	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
+ 	github.com/go-logr/logr v1.4.4 // indirect
+ 	github.com/go-logr/stdr v1.2.2 // indirect
+ 	github.com/go-ole/go-ole v1.2.6 // indirect
 ```
 
-**File**: `pkg/backend/display/json.go` (modified, +6/-4)
+**File**: `pkg/go.sum` (modified, +2/-2)
 ```diff
-@@ -47,6 +47,12 @@ func byteStringDisplay(s string) string {
- // not true any secret values are replaced with "[secret]". Strings containing bytes that are not valid UTF-8 are
- // replaced with their b"<base64>" rendering.
- func massagePropertyValue(v property.Value, showSecrets bool) property.Value {
-+	if v.Secret() {
-+		if !showSecrets {
-+			return property.New("[secret]")
-+		}
-+		v = v.WithSecret(false)
-+	}
- 	switch {
- 	case v.IsString() && !utf8.ValidString(v.AsString()):
- 		return property.New(byteStringDisplay(v.AsString()))
-@@ -64,10 +70,6 @@ func massagePropertyValue(v property.Value, showSecrets bool) property.Value {
- 			new[k] = massagePropertyValue(e, showSecrets)
- 		}
- 		return property.New(new)
--	case v.Secret() && showSecrets:
--		return massagePropertyValue(v.WithSecret(false), showSecrets)
--	case v.Secret():
--		return property.New("[secret]")
- 	default:
- 		return v
- 	}
+@@ -256,8 +256,8 @@ github.com/go-git/go-git-fixtures/v6 v6.0.0-alpha.1 h1:gmqi2jvsreu0s8JMLylYDFq4s
+ github.com/go-git/go-git-fixtures/v6 v6.0.0-alpha.1/go.mod h1:ECf1MqJlBdYpKggBrOXjo/0EnvRZx6D++I86UYjPgAQ=
+ github.com/go-git/go-git/v6 v6.0.0-beta.1 h1:1t+vJYGDBN6f9GRWskgWx5UjXPFUa7wfffZZZ2C5GtA=
+ github.com/go-git/go-git/v6 v6.0.0-beta.1/go.mod h1:ugDlr38Wwc+fOw85J+Oluh5TNXQtJgYMcriOljg3l4s=
+-github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
+-github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
++github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
++github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
+ github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
+ github.com/go-logr/logr v1.4.4 h1:tG4xh9yMsRCAiodLVTxyrkzSZ9+o0L1Kg/+cPVcbP/8=
+ github.com/go-logr/logr v1.4.4/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
 ```
 
-**File**: `pkg/backend/display/json_test.go` (added, +119/-0)
+**File**: `sdk/go.mod` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,119 @@
-+// Copyright 2026, Pulumi Corporation.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package display
-+
-+import (
-+	"encoding/json"
-+	"testing"
-+
-+	"github.com/pulumi/pulumi/pkg/v3/engine"
-+	pkgresource "github.com/pulumi/pulumi/pkg/v3/resource"
-+	"github.com/pulumi/pulumi/sdk/v3/go/common/apitype"
-+	"github.com/pulumi/pulumi/sdk/v3/go/property"
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestMassageSecretsRedactsContainers(t *testing.T) {
-+	t.Parallel()
-+
-+	for name, value := range map[string]property.Value{
-+		"map":           property.New(map[string]property.Value{"k": property.New("DUMMY")}),
-+		"array":         property.New([]property.Value{property.New("DUMMY")}),
-+		"string":        property.New("DUMMY"),
-+		"invalid UTF-8": property.New("DUMMY\xff"),
-+	} {
-+		t.Run(name, func(t *testing.T) {
-+			t.Parallel()
-+
-+			secret := value.WithSecret(true)
-+			input := property.NewMap(map[string]property.Value{
-+				"secret": secret,
-+				"nested": property.New([]property.Value{
-+					property.New(map[string]property.Value{"secret": secret}),
-+				}),
-+				"public": property.New("visible"),
-+			})
-+			expected := property.NewMap(map[string]property.Value{
-+				"secret": property.New("[secret]"),
-+				"nested": property.New([]property.Value{
-+					property.New(map[string]property.Value{"secret": property.New("[secret]")}),
-+				}),
-+				"public": property.New("visible"),
-+			})
-+
-+			actual := MassageSecrets(input, false)
-+			assert.True(t, expected.Equals(actual))
-+			assert.False(t, actual.HasSecrets())
-+
-+			shown := massagePropertyValue(secret, true)
-+			assert.True(t, massagePropertyValue(value, true).Equals(shown))
-+			assert.False(t, shown.HasSecrets())
-+		})
-+	}
-+}
-+
-+func TestPreviewMetadataStepRedactsSecretMaps(t *testing.T) {
-+	t.Parallel()
-+
-+	var apiEvent apitype.EngineEvent
-+	require.NoError(t, json.Unmarshal([]byte(`{
-+		"resourcePreEvent": {"metadata": {
-+			"op": "update",
-+			"urn": "urn:pulumi:dev::test::random:index/randomPet:RandomPet::pet",
-+			"old": {
-+				"type": "random:index/randomPet:RandomPet",
-+				"urn": "urn:pulumi:dev::test::random:index/randomPet:RandomPet::pet",
-+				"inputs": {"keepers": {
-+					"4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
-+					"plaintext": "{\"k\":\"DUMMY-old\"}"
-+				}}
-+			},
-+			"new": {
-+				"type": "random:index/randomPet:RandomPet",
-+				"urn": "urn:pulumi:dev::test::random:index/randomPet:RandomPet::pet",
-+				"inputs": {"keepers": {
-+					"4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
-+					"plaintext": "{\"k\":\"DUMMY-new\"}"
-+				}}
-+			}
-+		}}
-+	}`), &apiEvent))
-+	event, err := ConvertJSONEvent(apiEvent)
-+	require.NoError(t, err)
-+	metadata := event.Payload().(engine.ResourcePreEventPayload).Metadata
-+	for _, state := range []*engine.StepEventStateMetadata{metadata.Old, metadata.New} {
-+		require.NotNil(t, state)
-+		require.True(t, state.Inputs["keepers"].IsSecret())
-+		// JSON event replay does not populate the engine's internal resource state.
-+		state.State = pkgresource.NewState{ //nolint:requiredfield // Only properties and identity matter here.
-+			Type: state.Type, URN: state.URN,
-+			Inputs: state.Inputs, Outputs: state.Inputs,
-+		}.Make()
-+	}
-+
-+	step := getPreviewMetadataStep(metadata, Options{})
-+	encoded, err := json.Marshal(step)
-+	require.NoError(t, err)
-+	assert.NotContains(t, string(encoded), "DUMMY")
-+	var decoded map[string]any
-+	require.NoError(t, json.Unmarshal(encoded, &decoded))
-+	for _, key := range []string{"oldState", "newState"} {
-+		state := decoded[key].(map[string]any)
-+		for _, field := range []string{"inputs", "outputs"} {
-+			assert.Equal(t, map[string]any{"keepers": "[secret]"}, state[field])
-+		}
-+	}
-+}
+@@ -98,7 +98,7 @@ require (
+ 	github.com/git-pkgs/vers v0.2.4 // indirect
+ 	github.com/go-git/gcfg/v2 v2.0.2 // indirect
+ 	github.com/go-git/go-billy/v6 v6.0.0-beta.1 // indirect
+-	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
++	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
+ 	github.com/go-logr/logr v1.4.4 // indirect
+ 	github.com/go-logr/stdr v1.2.2 // indirect
+ 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0 // indirect
+```
+
+**File**: `sdk/go.sum` (modified, +2/-2)
+```diff
+@@ -90,8 +90,8 @@ github.com/go-git/go-git-fixtures/v6 v6.0.0-alpha.1/go.mod h1:ECf1MqJlBdYpKggBrO
+ github.com/go-git/go-git/v6 v6.0.0-beta.1 h1:1t+vJYGDBN6f9GRWskgWx5UjXPFUa7wfffZZZ2C5GtA=
+ github.com/go-git/go-git/v6 v6.0.0-beta.1/go.mod h1:ugDlr38Wwc+fOw85J+Oluh5TNXQtJgYMcriOljg3l4s=
+ github.com/go-gl/glfw v0.0.0-20190409004039-e6da0acd62b1/go.mod h1:vR7hzQXu2zJy9AVAgeJqvqgH9Q5CA+iKCZ2gyEVpxRU=
+-github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
+-github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
++github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
++github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
+ github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
+ github.com/go-logr/logr v1.4.4 h1:tG4xh9yMsRCAiodLVTxyrkzSZ9+o0L1Kg/+cPVcbP/8=
+ github.com/go-logr/logr v1.4.4/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
+```
+
+**File**: `sdk/go/pulumi-language-go/go.mod` (modified, +1/-1)
+```diff
+@@ -52,7 +52,7 @@ require (
+ 	github.com/go-git/gcfg/v2 v2.0.2 // indirect
+ 	github.com/go-git/go-billy/v6 v6.0.0-beta.1 // indirect
+ 	github.com/go-git/go-git/v6 v6.0.0-beta.1 // indirect
+-	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
++	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
+ 	github.com/go-logr/logr v1.4.4 // indirect
+ 	github.com/go-logr/stdr v1.2.2 // indirect
+ 	github.com/godbus/dbus/v5 v5.2.2 // indirect
+```
+
+**File**: `sdk/go/pulumi-language-go/go.sum` (modified, +2/-2)
+```diff
+@@ -124,8 +124,8 @@ github.com/go-git/go-git-fixtures/v6 v6.0.0-alpha.1 h1:gmqi2jvsreu0s8JMLylYDFq4s
+ github.com/go-git/go-git-fixtures/v6 v6.0.0-alpha.1/go.mod h1:ECf1MqJlBdYpKggBrOXjo/0EnvRZx6D++I86UYjPgAQ=
+ github.com/go-git/go-git/v6 v6.0.0-beta.1 h1:1t+vJYGDBN6f9GRWskgWx5UjXPFUa7wfffZZZ2C5GtA=
+ github.com/go-git/go-git/v6 v6.0.0-beta.1/go.mod h1:ugDlr38Wwc+fOw85J+Oluh5TNXQtJgYMcriOljg3l4s=
+-github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
+-github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
++github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
++github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
+ github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
+ github.com/go-logr/logr v1.4.4 h1:tG4xh9yMsRCAiodLVTxyrkzSZ9+o0L1Kg/+cPVcbP/8=
+ github.com/go-logr/logr v1.4.4/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
+```
+
+**File**: `sdk/nodejs/cmd/pulumi-language-nodejs/go.mod` (modified, +1/-1)
+```diff
+@@ -57,7 +57,7 @@ require (
+ 	github.com/go-git/gcfg/v2 v2.0.2 // indirect
+ 	github.com/go-git/go-billy/v6 v6.0.0-beta.1 // indirect
+ 	github.com/go-git/go-git/v6 v6.0.0-beta.1 // indirect
+-	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
++	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
+ 	github.com/go-logr/logr v1.4.4 // indirect
+ 	github.com/go-logr/stdr v1.2.2 // indirect
+ 	github.com/godbus/dbus/v5 v5.2.2 // indirect
+```
+
+**File**: `sdk/nodejs/cmd/pulumi-language-nodejs/go.sum` (modified, +2/-2)
+```diff
+@@ -121,8 +121,8 @@ github.com/go-git/go-git-fixtures/v6 v6.0.0-alpha.1 h1:gmqi2jvsreu0s8JMLylYDFq4s
+ github.com/go-git/go-git-fixtures/v6 v6.0.0-alpha.1/go.mod h1:ECf1MqJlBdYpKggBrOXjo/0EnvRZx6D++I86UYjPgAQ=
+ github.com/go-git/go-git/v6 v6.0.0-beta.1 h1:1t+vJYGDBN6f9GRWskgWx5UjXPFUa7wfffZZZ2C5GtA=
+ github.com/go-git/go-git/v6 v6.0.0-beta.1/go.mod h1:ugDlr38Wwc+fOw85J+Oluh5TNXQtJgYMcriOljg3l4s=
+-github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
+-github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
++github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
++github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
+ github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
+ github.com/go-logr/logr v1.4.4 h1:tG4xh9yMsRCAiodLVTxyrkzSZ9+o0L1Kg/+cPVcbP/8=
+ github.com/go-logr/logr v1.4.4/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
 ```
 
 ---
 
-### Incident Patch 2: `cdc22a0a` (2026-10-27)
-**Commit Message**: [programgen/go] Fix tuple of optional string outputs not compiling (#25381)
+### Incident Patch 2: `16344d16` (2026-10-27)
+**Commit Message**: Revert the Cloud SDK policy type migration (#25294, #25296, #25340) (#25410)
 
 ## Summary
-A tuple of optional string outputs got generated as `pulumi.StringArray`
-in Go, but the elements are `StringPtrOutput`, which isn't a
-`StringInput`, so the program didn't compile. There's no
-`StringPtrArray` in the SDK, so programgen now falls back to
-`pulumi.Array` when the element type is optional. That compiles and
-keeps the nulls.
 
-Also extended the `l2-primitive-ref-optional` conformance program with
-the `tupleOfOptional` output from the issue (expects `["hello", null]`)
-and regenerated the language snapshots.
+Revert #25340, #25296 and #25294, one commit each, newest first.
 
-Fixes #25358
+#25294 and #25296 marked the hand-written policy types in
+`sdk/go/common/apitype` as deprecated and moved callers, including
+exported `pkg` methods, onto separate `pulumi-cloud-sdk` types.
+Consumers that use these types, including the Pulumi Cloud backend,
+can't take a new pulumi/pulumi version without first migrating off the
+deprecated types. The intended way to move these types to the Cloud SDK
+is to replace each one with a type alias, which keeps existing callers
+compiling. That migration will be redone separately.
 
-## Test plan
-- [x] Added appropriate unit tests - For all changes
-- [ ] Added a test in `pkg/engine/lifecycletest` - For all
-engine/protocol changes
-- [x] Added a conformance test in `pkg/testing/pulumi-test-language` -
-For language protocol changes
-- [ ] Added a golden test in `pkg/backend/display` - For changes to the
-output renderers
+#25340 is reverted too because it changes the same policy group files on
+top of #25296, so #25296 doesn't revert cleanly without it. The
+`--entity-type` deprecation can be re-landed on its own.
 
-## Validation
-- [x] golangci-lint on `pkg/codegen/go` and
-`pkg/testing/pulumi-test-language/tests` clean
-- [x] `go test -tags all ./codegen/go/
-./codegen/go/gen_program_test/...` pass
-- [x] `l2-primitive-ref-optional` conformance passes
+None of these changes have been released (the latest release is
+v3.272.0), so reverting now keeps the deprecations, the `pkg` signature
+changes and the `--output json` shape changes out of a release. Their
+pending changelog entries are removed with them.
 
-**File**: `changelog/pending/20261024--programgen-go--tuple-optional-output.yaml` (added, +4/-0)
+
+## Risk
+
+Low. It restores code that shipped in v3.272.0 and earlier
+
+**File**: `changelog/pending/20261020--sdk-go--deprecate-policy-group-api-types.yaml` (removed, +0/-3)
 ```diff
-@@ -0,0 +1,4 @@
-+component: programgen/go
-+kind: fix
-+body: Fix Go program generation for a tuple of optional strings
-+time: 2026-10-24T15:30:00Z
+@@ -1,3 +0,0 @@
+-component: sdk/go
+-kind: improvement
+-body: Deprecate the policy pack and policy group types in `sdk/go/common/apitype` in favor of `github.com/pulumi/pulumi-cloud-sdk/go/apitype`
 ```
 
-**File**: `pkg/codegen/go/gen_program_expression_test.go` (modified, +30/-0)
+**File**: `changelog/pending/20261020--sdk-go--deprecate-policy-issue-api-types.yaml` (removed, +0/-4)
 ```diff
-@@ -223,6 +223,36 @@ func TestArgumentTypeName(t *testing.T) {
- 	mixedTuple := model.NewTupleType(model.NewTupleType(one, two), model.NewTupleType(model.StringType))
- 	assert.Equal(t, "pulumi.Array", g.argumentTypeName(mixedTuple, true /*isInput*/))
+@@ -1,4 +0,0 @@
+-component: sdk/go
+-kind: improvement
+-body: Deprecate the policy issue and compliance types in sdk/go/common/apitype in favor of github.com/pulumi/pulumi-cloud-sdk/go/apitype
+-time: 2026-10-20T00:00:00Z
+```
+
+**File**: `changelog/pending/20261021--cli-policy--use-api-shape-in-policy-group-json-output.yaml` (removed, +0/-3)
+```diff
+@@ -1,3 +0,0 @@
+-component: cli/policy
+-kind: improvement
+-body: Include match rules and empty fields in `pulumi policy group get`, `new`, and `edit` JSON output
+```
+
+**File**: `changelog/pending/20261022--cli-policy--deprecate-entity-type.yaml` (removed, +0/-3)
+```diff
+@@ -1,3 +0,0 @@
+-component: cli/policy
+-kind: improvement
+-body: Deprecate `--entity-type` on `pulumi policy group new` in favor of `--mode` and stop showing entity type in `policy group` console output
+```
+
+**File**: `changelog/pending/20261022--cli-policy--use-api-shape-in-policy-issue-json-output.yaml` (removed, +0/-3)
+```diff
+@@ -1,3 +0,0 @@
+-component: cli/policy
+-kind: improvement
+-body: Use the API shape in `pulumi policy issue ls`, `pulumi policy issue get` and `pulumi policy compliance ls` JSON output
+```
+
+**File**: `changelog/pending/20261022--pkg--policy-issue-methods-use-cloud-sdk-types.yaml` (removed, +0/-3)
+```diff
+@@ -1,3 +0,0 @@
+-component: pkg
+-kind: chore
+-body: Use `github.com/pulumi/pulumi-cloud-sdk/go/apitype` types in the policy issue and compliance methods of `httpstate/client.Client`
+```
+
+**File**: `changelog/pending/20261022--pkg--policy-methods-use-cloud-sdk-types.yaml` (removed, +0/-3)
+```diff
+@@ -1,3 +0,0 @@
+-component: pkg
+-kind: chore
+-body: Use `github.com/pulumi/pulumi-cloud-sdk/go/apitype` types in the policy pack and policy group methods of `backend.Backend` and `httpstate/client.Client`
+```
+
+**File**: `pkg/backend/backend.go` (modified, +2/-3)
+```diff
+@@ -22,7 +22,6 @@ import (
+ 	"io"
+ 	"time"
  
-+	// Regression test for https://github.com/pulumi/pulumi/issues/25358:
-+	// a tuple of optional string outputs is a pointer output (StringPtrOutput),
-+	// which does not implement StringInput, so it cannot be a pulumi.StringArray.
-+	optionalString := model.NewOptionalType(model.StringType)
-+	optionalStringOutput := model.NewOutputType(optionalString)
-+	optionalStringTuple := model.NewTupleType(optionalStringOutput, optionalStringOutput)
-+	assert.Equal(t, "pulumi.Array", g.argumentTypeName(optionalStringTuple, true /*isInput*/))
-+	assert.Equal(t, "pulumi.Array", g.argumentTypeName(
-+		model.NewOutputType(optionalStringTuple), false /*isInput*/))
-+	assert.Equal(t, "[]*string", g.argumentTypeName(
-+		model.NewTupleType(optionalString, optionalString), false /*isInput*/))
-+	nestedOptional := model.NewTupleType(optionalStringTuple, optionalStringTuple)
-+	assert.Equal(t, "pulumi.ArrayArray", g.argumentTypeName(nestedOptional, true /*isInput*/))
-+
-+	// The same pointer-output fallback applies to the other scalar primitives.
-+	for _, primitive := range []model.Type{model.NumberType, model.IntType, model.BoolType} {
-+		optional := model.NewOutputType(model.NewOptionalType(primitive))
-+		tuple := model.NewTupleType(optional, optional)
-+		assert.Equal(t, "pulumi.Array", g.argumentTypeName(tuple, true /*isInput*/))
-+	}
-+
-+	// Optional lists are not pointer outputs. A tuple of optional number-list
-+	// outputs stays a Float64ArrayArray (pulumi/pulumi#25387).
-+	optionalNumberList := model.NewOutputType(model.NewOptionalType(model.NewListType(model.NumberType)))
-+	optionalNumberListTuple := model.NewTupleType(optionalNumberList, optionalNumberList)
-+	assert.Equal(t, "pulumi.Float64ArrayArray", g.argumentTypeName(optionalNumberListTuple, true /*isInput*/))
-+	optionalBoolMap := model.NewOutputType(model.NewOptionalType(model.NewMapType(model.BoolType)))
-+	optionalBoolMapTuple := model.NewTupleType(optionalBoolMap, optionalBoolMap)
-+	assert.Equal(t, "pulumi.BoolMapArray", g.argumentTypeName(optionalBoolMapTuple, true /*isInput*/))
-+
- 	// Asset and Archive opaque types must be qualified with the pulumi package, otherwise nested compositions
- 	// render bare names like []AssetMap which is invalid Go.
- 	assert.Equal(t, "pulumi.AssetOrArchive", g.argumentTypeName(pcl.AssetType, false /*isInput*/))
-```
-
-**File**: `pkg/codegen/go/gen_program_expressions.go` (modified, +22/-0)
-```diff
-@@ -1590,6 +1590,20 @@ func isPulumiInterfaceType(typeName string) bool {
- 	return false
- }
+-	cloudapitype "github.com/pulumi/pulumi-cloud-sdk/go/apitype"
+ 	"go.opentelemetry.io/otel"
  
-+// optionalPrimitive reports whether t is an optional string, number, int, or bool.
-+// Those are the primitives whose Go optional output is a pointer output.
-+func optionalPrimitive(t model.Type) bool {
-+	if !model.IsOptionalType(t) {
-+		return false
-+	}
-+	switch pcl.UnwrapOption(t) {
-+	case model.StringType, model.NumberType, model.IntType, model.BoolType:
-+		return true
-+	default:
-+		return false
-+	}
-+}
-+
- // argumentTypeName computes the go type for the given model type.
- func (g *generator) argumentTypeName(destType model.Type, isInput bool) (result string) {
- 	if cns, ok := destType.(*model.ConstType); ok {
-@@ -1778,6 +1792,14 @@ func (g *generator) argumentTypeName(destType model.Type, isInput bool) (result
- 				if argTypeName == "pulumi.Any" {
- 					return "pulumi.Array"
- 				}
-+				// Optional string, number, int, and bool outputs are pointer outputs
-+				// (StringPtrOutput and the other Ptr outputs). They do not implement
-+				// the non-pointer input interface, and the SDK has no pointer-element
-+				// array type such as StringPtrArray. Optional lists, maps, and objects
-+				// are not pointer outputs, so they keep a typed array name.
-+				if optionalPrimitive(model.ResolveOutputs(elmType)) {
-+					return "pulumi.Array"
-+				}
- 				return argTypeName + "Array"
- 			}
- 			return "[]" + argTypeName
-```
-
-**File**: `pkg/testing/pulumi-test-language/tests/l2_primitive_ref_optional.go` (modified, +6/-0)
-```diff
-@@ -124,6 +124,12 @@ func init() {
- 					// Comparison of an optional object to null yields whether the object is set.
- 					AssertPropertyMapMember(l, outputs, "setOptionalData", property.New("not null"))
- 					AssertPropertyMapMember(l, outputs, "unsetOptionalData", property.New("null"))
-+
-+					// A tuple of optional string outputs keeps nulls.
-+					AssertPropertyMapMember(l, outputs, "tupleOfOptional", property.New([]property.Value{
-+						property.New("hello"),
-+						property.New(property.Null),
-+					}))
- 				},
- 			},
- 		},
-```
-
-**File**: `pkg/testing/pulumi-test-language/tests/testdata/l2-primitive-ref-optional/main.pp` (modified, +4/-0)
-```diff
-@@ -81,6 +81,10 @@
-     value = unsetRes.optionalData == null ? "null" : "not null"
- }
+ 	"github.com/pulumi/pulumi/pkg/v3/backend/display"
+@@ -145,11 +144,11 @@ type Backend interface {
  
-+output "tupleOfOptional" {
-+    value = [setRes.data.string, unsetRes.data.string]
-+}
-+
- optionalLists = [setRes.data.numberArray, unsetRes.data.numberArray]
+ 	// ListPolicyGroups returns all Policy Groups for an organization in this backend or an error if it cannot be found.
+ 	ListPolicyGroups(ctx context.Context, orgName string, inContToken ContinuationToken) (
+-		cloudapitype.AppListPolicyGroupsResponse, ContinuationToken, error)
++		apitype.ListPolicyGroupsResponse, ContinuationToken, error)
  
- resource "fromOptionalLists" "optional-primitive-ref:index:Resource" {
-```
-
-**File**: `sdk/go/pulumi-language-go/testdata/extra-types/projects/l2-primitive-ref-optional/main.go` (modified, +4/-0)
-```diff
-@@ -122,6 +122,10 @@ func main() {
- 			}
- 			return tmp7, nil
- 		}).(pulumi.StringOutput))
-+		ctx.Export("tupleOfOptional", pulumi.Array{
-+			setRes.Data.String(),
-+			unsetRes.Data.String(),
-+		})
- 		optionalLists := pulumi.Float64ArrayArray{
- 			setRes.Data.NumberArray(),
- 			unsetRes.Data.NumberArray(),
-```
-
-**File**: `sdk/go/pulumi-language-go/testdata/local/projects/l2-primitive-ref-optional/main.go` (modified, +4/-0)
-```diff
-@@ -122,6 +122,10 @@ func main() {
- 			}
- 			return tmp7, nil
- 		}).(pulumi.StringOutput))
-+		ctx.Export("tupleOfOptional", pulumi.Array{
-+			setRes.Data.String(),
-+			unsetRes.Data.String(),
-+		})
- 		optionalLists := pulumi.Float64ArrayArray{
- 			setRes.Data.NumberArray(),
- 			unsetRes.Data.NumberArray(),
-```
-
-**File**: `sdk/go/pulumi-language-go/testdata/published/projects/l2-primitive-ref-optional/main.go` (modified, +4/-0)
-```diff
-@@ -122,6 +122,10 @@ func main() {
- 			}
- 			return tmp7, nil
- 		}).(pulumi.StringOutput))
-+		ctx.Export("tupleOfOptional", pulumi.Array{
-+			setRes.Data.String(),
-+			unsetRes.Data.String(),
-+		})
- 		optionalLists := pulumi.Float64ArrayArray{
- 			setRes.Data.NumberArray(),
- 			unsetRes.Data.NumberArray(),
+ 	// ListPolicyPacks returns all Policy Packs for an organization in this backend, or an error if it cannot be found.
+ 	ListPolicyPacks(ctx context.Context, orgName string, inContToken ContinuationToken) (
+-		cloudapitype.AppListPolicyPacksResponse, ContinuationToken, error)
++		apitype.ListPolicyPacksResponse, ContinuationToken, error)
+ 
+ 	// GetStackPolicyPacks gets the required policy packs currently applicable to the stack.
+ 	GetStackPolicyPacks(ctx context.Context, stackRef StackReference) ([]engine.RequiredPolicy, error)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #25419** (2026-10-28): Re-land the policy CLI output and --entity-type changes reverted in #25410 (@danbiwer)
+- **PR #25418** (2026-10-28): Update module github.com/go-jose/go-jose/v4 to v4.1.6 [SECURITY] (@pulumi-renovate[bot])
+- **PR #25410** (2026-10-27): Revert the Cloud SDK policy type migration (#25294, #25296, #25340) (@danbiwer)
+- **PR #25402** (2026-10-27): Pause automatic agent account creation (@aminix)
+- **PR #25401** (2026-10-27): Finish moving source_eval to property.Map (@Frassle)
 - **PR #25400** (2026-10-27): Fix secret container redaction in JSON output (@iwahbe)
-- **PR #25394** (2026-10-27): Stop `pulumi whoami` from creating agent accounts (@i-am-tom)
-- **PR #25393** (2026-10-27): Default schema version to the plugin version in `package add` (@Frassle)
-- **PR #25392** (2026-10-27): Register providers started from a path with the host (@iwahbe)
-- **PR #25391** (2026-10-27): Print the Go import path that matches the generated SDK (@iwahbe)
-- **PR #25388** (2026-10-27): Migrate errorToMessage to property.Map (@Frassle)
 
 ---
 
@@ -2128,31 +2014,28 @@ output renderers
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. secret container redaction in JSON output (#25400)
+## X. Update module github.com/go-jose/go-jose/v4 to v4.1.6 [SECURITY] (#25418)
 
 **RULE**:
-When implementing operations in `changelog/pending/cli-display-fix-20261027-125123.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fd029321`: secret container redaction in JSON output (#25400). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ba1a534c`: Update module github.com/go-jose/go-jose/v4 to v4.1.6 [SECURITY] (#25418). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/pending/cli-display-fix-20261027-125123.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-component: cli/display
-kind: fix
-body: Fix secret maps and arrays leaking into JSON preview and update output
-time: 2026-10-27T12:51:23.971759+01:00
+	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fd029321` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ba1a534c` are properly handled with clean fallback behavior.

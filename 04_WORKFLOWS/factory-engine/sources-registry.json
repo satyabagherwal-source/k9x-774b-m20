@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T14:36:06.351Z",
-    "lastVerified": "2026-10-28T14:36:06.351Z",
+    "lastChecked": "2026-10-28T14:42:57.663Z",
+    "lastVerified": "2026-10-28T14:42:57.663Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -325,22 +325,21 @@
     "lastVerified": "2026-10-28T03:11:25.935Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T14:15:29.793Z",
-    "lastVerified": "2026-10-28T14:15:29.793Z",
+    "lastChecked": "2026-10-28T14:42:54.559Z",
+    "lastVerified": "2026-10-28T14:42:54.559Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "aa82d8e16ce3d34602a0f35bf81d2e8514be3edc91ab914ab5229cda7b0a8bca",
+    "contentHash": "d9be5f788a923f8990400563c788efa10a2015e901602a6f8c42df743c8a5fb3",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "8c74dd4b"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -1011,9 +1010,9 @@
   "cryfs-cryfs": {
     "name": "cryfs",
     "officialUrl": "https://github.com/cryfs/cryfs",
-    "lastChecked": "2026-10-28T11:02:11.844Z",
+    "lastChecked": "2026-10-28T14:42:44.956Z",
     "revisionIdentifier": "ad1f72d5",
-    "lastVerified": "2026-10-28T11:02:11.844Z"
+    "lastVerified": "2026-10-28T14:42:44.956Z"
   },
   "tursodatabase-turso": {
     "name": "tursodatabase/turso",
@@ -4011,5 +4010,60 @@
     "lastChecked": "2026-10-28T14:36:03.265Z",
     "revisionIdentifier": "3a76cfee",
     "lastVerified": "2026-10-28T14:36:03.265Z"
+  },
+  "smol-rs-smol": {
+    "name": "smol",
+    "officialUrl": "https://github.com/smol-rs/smol",
+    "lastChecked": "2026-10-28T14:42:35.233Z",
+    "revisionIdentifier": "41579301",
+    "lastVerified": "2026-10-28T14:42:35.233Z"
+  },
+  "hf-bigscience-bloom": {
+    "name": "bigscience/bloom",
+    "officialUrl": "https://huggingface.co/bigscience/bloom",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T14:42:37.831Z",
+    "lastVerified": "2026-10-28T14:42:37.831Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-bigscience-bloom",
+    "contentHash": "251058e0d4977d04874e735a5815216cb31ed4f8e236c38363dde8c6f92a1db4",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "crazycodeboy-react-native-splash-screen": {
+    "name": "react-native-splash-screen",
+    "officialUrl": "https://github.com/crazycodeboy/react-native-splash-screen",
+    "lastChecked": "2026-10-28T14:42:39.972Z",
+    "revisionIdentifier": "b4719762",
+    "lastVerified": "2026-10-28T14:42:39.972Z"
+  },
+  "pulumi-pulumi": {
+    "name": "pulumi/pulumi",
+    "officialUrl": "https://github.com/pulumi/pulumi",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-28T14:42:49.989Z",
+    "lastVerified": "2026-10-28T14:42:49.989Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-pulumi-pulumi",
+    "contentHash": "a27e64fa6707f20a4659e64ae1671c5e906857e2798f8cb15a4681fd2ccc39b4",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "slatedb-slatedb": {
+    "name": "slatedb",
+    "officialUrl": "https://github.com/slatedb/slatedb",
+    "lastChecked": "2026-10-28T14:42:47.511Z",
+    "revisionIdentifier": "d1dc56f1",
+    "lastVerified": "2026-10-28T14:42:47.511Z"
   }
 }

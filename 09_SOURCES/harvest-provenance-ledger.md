@@ -5810,3 +5810,6 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `94ffc059` | Multi-dimensional audit evidence | 2026-10-28T14:29:21.648Z |
 | `learn-huggingface-openai-gpt-oss-20b` | `https://huggingface.co/openai/gpt-oss-20b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-28T14:35:54.954Z |
 | `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `4cdb2db6` | Multi-dimensional audit evidence | 2026-10-28T14:36:03.814Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `a790c218` | Multi-dimensional audit evidence | 2026-10-28T14:42:50.616Z |
+| `learn-huggingface-bigscience-bloom` | `https://huggingface.co/bigscience/bloom` | `hf-bigscie` | Multi-dimensional audit evidence | 2026-10-28T14:42:51.364Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `ba276435` | Multi-dimensional audit evidence | 2026-10-28T14:42:55.129Z |

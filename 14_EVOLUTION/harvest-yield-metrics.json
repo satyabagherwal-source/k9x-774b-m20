@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T14:36:03.820Z",
-  "total_cycles_completed": 5778,
-  "total_learnings_persisted": 5778,
-  "total_rules_promoted": 5260,
+  "last_updated": "2026-10-28T14:42:55.134Z",
+  "total_cycles_completed": 5781,
+  "total_learnings_persisted": 5781,
+  "total_rules_promoted": 5265,
   "history": [
-    {
-      "timestamp": "2026-10-28T00:32:49.299Z",
-      "repository": "StarRocks/starrocks",
-      "learningId": "learn-github-starrocks-starrocks",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T00:33:34.437Z",
-      "repository": "CrawlCove/xml-sitemap-validator",
-      "learningId": "learn-github-crawlcove-xml-sitemap-validator",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T00:40:06.819Z",
-      "repository": "primer/react",
-      "learningId": "learn-github-primer-react",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T00:40:09.290Z",
       "repository": "ratatui/ratatui",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-28T14:36:03.820Z",
       "repository": "aquasecurity/trivy",
       "learningId": "learn-github-aquasecurity-trivy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T14:42:50.621Z",
+      "repository": "pulumi/pulumi",
+      "learningId": "learn-github-pulumi-pulumi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T14:42:51.370Z",
+      "repository": "bigscience/bloom",
+      "learningId": "learn-huggingface-bigscience-bloom",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T14:42:55.134Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

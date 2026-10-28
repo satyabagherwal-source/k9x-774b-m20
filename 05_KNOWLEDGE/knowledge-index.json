@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T14:36:03.750Z",
+  "last_updated": "2026-10-28T14:42:55.061Z",
   "total_verified_learnings": 1157,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -18302,7 +18302,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/bigscience/bloom",
       "source_version": "hf-bigscience-bloom",
-      "content_hash": "98dbfab91ea5ec27c1f6195908c7a0f8c234970bb68e24d8a83d9c602633f63b",
+      "content_hash": "251058e0d4977d04874e735a5815216cb31ed4f8e236c38363dde8c6f92a1db4",
       "dossier_path": "07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
       "promoted_rules": [
@@ -18335,6 +18335,21 @@
           "number": 3465,
           "title": "KV Cache Memory Management Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5312,
+          "title": "FP32 Softmax Invariant for Numerical Stability in Attention",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5313,
+          "title": "Left-Padding Invariant for Batched Causal Language Models",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5314,
+          "title": "KV Cache Invariant for Autoregressive Generation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -18354,7 +18369,7 @@
         "learn-huggingface-hf-bigscience-bloom-mv3wl1kr",
         "learn-huggingface-hf-bigscience-bloom-mv4ba34m"
       ],
-      "verified_at": "2026-10-25T20:23:37.539Z",
+      "verified_at": "2026-10-28T14:42:51.283Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40389,8 +40404,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "8c74dd4b",
-      "content_hash": "aa82d8e16ce3d34602a0f35bf81d2e8514be3edc91ab914ab5229cda7b0a8bca",
+      "source_version": "ba276435",
+      "content_hash": "d9be5f788a923f8990400563c788efa10a2015e901602a6f8c42df743c8a5fb3",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -40503,6 +40518,11 @@
           "number": 5292,
           "title": "Exit ARC runner with the difference score",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5315,
+          "title": "Rework /arc-purposal into per-puzzle NUC workflow",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40510,7 +40530,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T13:16:53.519Z",
+      "verified_at": "2026-10-28T14:42:55.047Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44170,8 +44190,8 @@
       "slug": "pulumi-pulumi",
       "platform": "github",
       "source_url": "https://github.com/pulumi/pulumi",
-      "source_version": "fd029321",
-      "content_hash": "8def4060b1fd6a71ea559a0652132eda989bcac2bcfc1ee9dda75467db724fdb",
+      "source_version": "a790c218",
+      "content_hash": "a27e64fa6707f20a4659e64ae1671c5e906857e2798f8cb15a4681fd2ccc39b4",
       "dossier_path": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "promoted_rules": [
@@ -44229,6 +44249,11 @@
           "number": 4874,
           "title": "secret container redaction in JSON output (#25400)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5311,
+          "title": "Update module github.com/go-jose/go-jose/v4 to v4.1.6 [SECURITY] (#25418)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44236,7 +44261,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T15:08:14.531Z",
+      "verified_at": "2026-10-28T14:42:50.535Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -144426,6 +144451,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T14:36:03.737Z"
+    },
+    "rule-5311": {
+      "learning_id": "rule-5311",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5311,
+      "title": "Update module github.com/go-jose/go-jose/v4 to v4.1.6 [SECURITY] (#25418)",
+      "source_url": "https://github.com/pulumi/pulumi",
+      "source_version": "a790c218",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T14:42:50.535Z"
+    },
+    "rule-5312": {
+      "learning_id": "rule-5312",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5312,
+      "title": "FP32 Softmax Invariant for Numerical Stability in Attention",
+      "source_url": "https://huggingface.co/bigscience/bloom",
+      "source_version": "hf-bigscience-bloom",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T14:42:51.283Z"
+    },
+    "rule-5313": {
+      "learning_id": "rule-5313",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5313,
+      "title": "Left-Padding Invariant for Batched Causal Language Models",
+      "source_url": "https://huggingface.co/bigscience/bloom",
+      "source_version": "hf-bigscience-bloom",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T14:42:51.283Z"
+    },
+    "rule-5314": {
+      "learning_id": "rule-5314",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5314,
+      "title": "KV Cache Invariant for Autoregressive Generation",
+      "source_url": "https://huggingface.co/bigscience/bloom",
+      "source_version": "hf-bigscience-bloom",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T14:42:51.283Z"
+    },
+    "rule-5315": {
+      "learning_id": "rule-5315",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5315,
+      "title": "Rework /arc-purposal into per-puzzle NUC workflow",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "ba276435",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T14:42:55.047Z"
     }
   },
   "aliases": {
