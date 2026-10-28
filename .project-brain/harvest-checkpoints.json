@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T16:27:16.869Z",
+  "last_updated": "2026-10-28T16:33:53.380Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1490,14 +1490,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "content_hash": "bd4696f0e0950b9e907295bf941b131c283c6cd78ce5e3045788bc02b140d2b7",
-      "verified_at": "2026-10-25T23:17:15.711Z",
+      "content_hash": "f04fc88b6dc5e44e1e28ddc34bff7f0c6288e3788135dad2a15d46672123d3dc",
+      "verified_at": "2026-10-28T16:33:36.326Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T23:17:15.711Z"
+      "last_updated": "2026-10-28T16:33:36.326Z"
     },
     "FacebookAI/xlm-roberta-base": {
       "repository": "FacebookAI/xlm-roberta-base",
@@ -3321,14 +3321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-agent-governance-toolkit",
-      "content_hash": "5e7ccda7762de991baf6cadefe643f46fba9fa5dc8070c792d3baeff8275f50a",
-      "verified_at": "2026-10-28T13:23:29.997Z",
+      "content_hash": "d751ae03a042e8ffda6b8c1f3d30bcdafa1f938ac15ee33406e36bf6a05e2ee2",
+      "verified_at": "2026-10-28T16:33:47.489Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T13:23:29.997Z"
+      "last_updated": "2026-10-28T16:33:47.489Z"
     },
     "SynaLinks/synalinks-skills": {
       "repository": "SynaLinks/synalinks-skills",
@@ -7956,14 +7956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-starrocks-starrocks",
-      "content_hash": "6ddac598a9a2d3645af1f636c999bda1e04b30de8d85467a4c6eb6a451c32d2d",
-      "verified_at": "2026-10-28T00:32:49.301Z",
+      "content_hash": "5309c3901a2225789354b5746b011c03cbfca1899343cba282348da73771a228",
+      "verified_at": "2026-10-28T16:33:53.380Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T00:32:49.301Z"
+      "last_updated": "2026-10-28T16:33:53.380Z"
     },
     "lobehub/lobe-ui": {
       "repository": "lobehub/lobe-ui",
@@ -9336,14 +9336,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dicklesworthstone-destructive_command_guard",
-      "content_hash": "e6e4c27d2f8da2ff395f4a1d4400dac896e622975b7cfeae4f960fc4ba281beb",
-      "verified_at": "2026-10-27T13:54:23.871Z",
+      "content_hash": "f8c017933134131e5e763b336daa4d28011b9e35dec0a00a3d34ee5a82b5d0e4",
+      "verified_at": "2026-10-28T16:33:38.309Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:54:23.871Z"
+      "last_updated": "2026-10-28T16:33:38.309Z"
     },
     "xinthink/react-native-material-kit": {
       "repository": "xinthink/react-native-material-kit",

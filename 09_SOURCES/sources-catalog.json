@@ -1125,8 +1125,8 @@
     "sourceUrl": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
     "sourceVersion": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
     "license": "Open-Source",
-    "contentHash": "bd4696f0e0950b9e907295bf941b131c283c6cd78ce5e3045788bc02b140d2b7",
-    "lastHarvestedAt": "2026-10-25T23:17:15.702Z",
+    "contentHash": "f04fc88b6dc5e44e1e28ddc34bff7f0c6288e3788135dad2a15d46672123d3dc",
+    "lastHarvestedAt": "2026-10-28T16:33:36.315Z",
     "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese"
   },
   "hf-facebookai-xlm-roberta-base": {
@@ -2123,10 +2123,10 @@
     "repository": "microsoft/agent-governance-toolkit",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/agent-governance-toolkit",
-    "sourceVersion": "4eca1f5b",
+    "sourceVersion": "ea12b738",
     "license": "MIT",
-    "contentHash": "5e7ccda7762de991baf6cadefe643f46fba9fa5dc8070c792d3baeff8275f50a",
-    "lastHarvestedAt": "2026-10-28T13:23:29.989Z",
+    "contentHash": "d751ae03a042e8ffda6b8c1f3d30bcdafa1f938ac15ee33406e36bf6a05e2ee2",
+    "lastHarvestedAt": "2026-10-28T16:33:47.482Z",
     "learningId": "learn-github-microsoft-agent-governance-toolkit"
   },
   "synalinks-synalinks-skills": {
@@ -5223,10 +5223,10 @@
     "repository": "StarRocks/starrocks",
     "platform": "github",
     "sourceUrl": "https://github.com/StarRocks/starrocks",
-    "sourceVersion": "41983afe",
+    "sourceVersion": "7e354c62",
     "license": "Apache-2.0",
-    "contentHash": "6ddac598a9a2d3645af1f636c999bda1e04b30de8d85467a4c6eb6a451c32d2d",
-    "lastHarvestedAt": "2026-10-28T00:32:49.294Z",
+    "contentHash": "5309c3901a2225789354b5746b011c03cbfca1899343cba282348da73771a228",
+    "lastHarvestedAt": "2026-10-28T16:33:53.374Z",
     "learningId": "learn-github-starrocks-starrocks"
   },
   "lobehub-lobe-ui": {
@@ -6143,10 +6143,10 @@
     "repository": "Dicklesworthstone/destructive_command_guard",
     "platform": "github",
     "sourceUrl": "https://github.com/Dicklesworthstone/destructive_command_guard",
-    "sourceVersion": "5c060064",
+    "sourceVersion": "c4d3ad3d",
     "license": "NOASSERTION",
-    "contentHash": "e6e4c27d2f8da2ff395f4a1d4400dac896e622975b7cfeae4f960fc4ba281beb",
-    "lastHarvestedAt": "2026-10-27T13:54:23.864Z",
+    "contentHash": "f8c017933134131e5e763b336daa4d28011b9e35dec0a00a3d34ee5a82b5d0e4",
+    "lastHarvestedAt": "2026-10-28T16:33:38.303Z",
     "learningId": "learn-github-dicklesworthstone-destructive_command_guard"
   },
   "xinthink-react-native-material-kit": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source**: github ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
-> **Source Version**: `41983afe`  
+> **Source Version**: `7e354c62`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T00:32:49.142Z  
+> **Timestamp**: 2026-10-28T16:33:52.982Z  
 > **Learning ID**: `learn-github-starrocks-starrocks`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T00:32:47.819Z  
+> **Harvest Timestamp**: 2026-10-28T16:33:52.977Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The world's fastest open query engine for sub-second analytics both on and off the data lakehouse. With the flexibility to support nearly any scenario, StarRocks provides best-in-class performance for multi-dimensional analytics, real-time analytics, and ad-hoc queries. A Linux Foundation project.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12209 stars
+- **Stars / Engagement**: 12213 stars
 
 ---
 
@@ -1818,570 +1818,143 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `41983afe` (2026-10-27)
-**Commit Message**: [Doc] Fix the Japanese Tableau connector page (#81688)
+### Incident Patch 1: `99d51e09` (2026-10-28)
+**Commit Message**: [BugFix][RB-654] Stop two Iceberg FE hangs: profile explain partition listing and OSS read-ahead wait (#81711)
 
-Signed-off-by: DanRoscigno <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: tqqq <[REDACTED_EMAIL]>
+Co-authored-by: tqqq <[REDACTED_EMAIL]>
 
-**File**: `docs/ja/integrations/BI_integrations/Tableau_Desktop.md` (modified, +12/-12)
+**File**: `fe/fe-core/src/main/java/com/starrocks/planner/IcebergScanNode.java` (modified, +31/-22)
 ```diff
-@@ -14,25 +14,25 @@ StarRocks Tableau JDBC Connector は、Tableau Desktop および Tableau Server
+@@ -399,28 +399,7 @@ protected String getNodeExplainString(String prefix, TExplainLevel detailLevel)
+         }
  
- ### 主な機能
+         if (detailLevel == TExplainLevel.VERBOSE && !isResourceMappingCatalog(icebergTable.getCatalogName())) {
+-            ConnectorMetadataRequestContext requestContext = new ConnectorMetadataRequestContext();
+-            requestContext.setTableVersionRange(tvrVersionRange);
+-            List<String> partitionNames = GlobalStateMgr.getCurrentState().getMetadataMgr().listPartitionNames(
+-                    icebergTable.getCatalogName(), icebergTable.getCatalogDBName(),
+-                    icebergTable.getCatalogTableName(), requestContext);
+-
+-            if (selectedPartitionCount == -1) {
+-                if (scanRangeSource != null) {
+-                    // we have to consume all scan ranges to know how many partition been selected.
+-                    while (scanRangeSource.hasMoreOutput()) {
+-                        scanRangeSource.getOutputs(1000);
+-                    }
+-                    selectedPartitionCount = scanRangeSource.selectedPartitionCount();
+-                } else {
+-                    selectedPartitionCount = 0;
+-                }
+-            }
+-
+-            output.append(prefix).append(
+-                    String.format("partitions=%s/%s", selectedPartitionCount,
+-                            partitionNames.isEmpty() ? 1 : partitionNames.size()));
+-            output.append("\n");
++            appendPartitionsExplain(output, prefix);
  
--- LDAP サポート： 安全な認証のためのパスワードプロンプト付きの LDAP ログインを可能にします。
--- 高い互換性： TDVT (Tableau Design Verification Tool) テストで 99.99% の互換性を達成。
-+- LDAP サポート: 安全な認証のためのパスワードプロンプト付きの LDAP ログインを可能にします。
-+- 高い互換性: TDVT (Tableau Design Verification Tool) テストで 99.99% の互換性を達成しており、失敗するのは軽微なケース 1 件のみです。
- 
- ## 前提条件
- 
--先に進む前に、以下の要件が満たされていることを確認してください：
-+先に進む前に、以下の要件が満たされていることを確認してください。
- 
--- Tableau バージョン： Tableau 2020.4 以降
-+- Tableau バージョン: Tableau 2020.4 以降
- - StarRocks バージョン: v3.2 以降
- 
--## Tableau Desktop 用 Connector のインストール
-+## Tableau Desktop 用コネクタのインストール
- 
- 1. [MySQL JDBC Driver 8.0.33](https://downloads.mysql.com/archives/c-j/) をダウンロードします。
- 2. ドライバファイルを以下のディレクトリに保存します（ディレクトリが存在しない場合は作成します）：
- 
-    - macOS: `~/Library/Tableau/Drivers`
-    - Windows: `C:\Program Files\Tableau\Drivers`
- 
--3. [StarRocks Tableau JDBC Connector file](https://exchange.tableau.com/products/1079) をダウンロードします。
-+3. [StarRocks Tableau JDBC Connector ファイル](https://exchange.tableau.com/products/1079) をダウンロードします。
- 4. コネクタファイルを以下のディレクトリに保存します：
- 
-    - macOS: `~/Documents/My Tableau Repository/Connectors`
-@@ -41,7 +41,7 @@ StarRocks Tableau JDBC Connector は、Tableau Desktop および Tableau Server
- 5. Tableau Desktop を起動します。
- 6. **Connect** -> **To a Server** -> **StarRocks JDBC by CelerData** に移動します。
- 
--## Tableau Server 用 Connector のインストール
-+## Tableau Server 用コネクタのインストール
- 
- 1. [MySQL JDBC Driver 8.0.33](https://downloads.mysql.com/archives/c-j/) をダウンロードします。
- 2. ドライバファイルを以下のディレクトリに保存します（ディレクトリが存在しない場合は作成します）：
-@@ -51,7 +51,7 @@ StarRocks Tableau JDBC Connector は、Tableau Desktop および Tableau Server
- 
-    :::info
- 
--   Linux では、「Tableau」 ユーザがディレクトリにアクセスすることを許可する必要があります。
-+   Linux では、"Tableau" ユーザーにディレクトリへのアクセスを許可する必要があります。
- 
-    以下の手順に従ってください：
- 
-@@ -60,11 +60,11 @@ StarRocks Tableau JDBC Connector は、Tableau Desktop および Tableau Server
-       ```Bash
-       sudo mkdir -p /opt/tableau/tableau_driver/jdbc
- 
--      # Replace <path_to_driver_file_name> with the absolute path of the driver file.
-+      # <path_to_driver_file_name> をドライバファイルの絶対パスに置き換えてください。
-       sudo cp /<path_to_driver_file_name>.jar /opt/tableau/tableau_driver/jdbc
-       ```
-   
--   2. Tableau "ユーザーにアクセス許可を与える。
-+   2. "Tableau" ユーザーに権限を付与します。
- 
-       ```Bash
-       # <driver_file_name> をドライバファイル名に置き換えてください。
-@@ -73,7 +73,7 @@ StarRocks Tableau JDBC Connector は、Tableau Desktop および Tableau Server
- 
-    :::
- 
--3. [StarRocks Tableau JDBC Connector file](https://exchange.tableau.com/products/1079) をダウンロードします。
-+3. [StarRocks Tableau JDBC Connector ファイル](https://exchange.tableau.com/products/1079) をダウンロードします。
- 4. 各ノードの以下のディレクトリにコネクタファイルを保存します：
- 
-    - Linux: `/opt/tableau/connectors`
-@@ -91,6 +91,6 @@ StarRocks Tableau JDBC Connector は、Tableau Desktop および Tableau Server
- 
-    :::
- 
--## Usage notes
-+## 使用上の注意
- 
- LDAP ログインのサポートが必要な場合は、設定中に **Advanced** タブの **Enable LDAP** スイッチにチェックを入れることができます。
-```
-
----
-
-### Incident Patch 2: `a65b666c` (2026-10-27)
-**Commit Message**: [BugFix] Fix Kafka routine load EOF tracking and empty-load offsets (#81412)
-
-Signed-off-by: meegoo <[REDACTED_EMAIL]>
-Co-authored-by: mervinsr <[REDACTED_EMAIL]>
-Co-authored-by: meegoo <[REDACTED_EMAIL]>
-Co-authored-by: wanpengfei-git <[REDACTED_EMAIL]>
-
-**File**: `be/src/data_workflows/load/routine_load/data_consumer.cpp` (modified, +22/-5)
-```diff
-@@ -172,7 +172,8 @@ Status KafkaDataConsumer::assign_topic_partitions(const std::map<int32_t, int64_
-         topic_partitions.push_back(tp1);
-         ss << "[" << entry.first << ": " << entry.second << "] ";
+             //record scan metrics, should cosume all scan ranges too.
+             //print scan metrics
+@@ -446,6 +425,36 @@ protected String getNodeExplainString(String prefix, TExplainLevel detailLevel)
+         return output.toString();
      }
--    _non_eof_partition_count = topic_partitions.size();
-+    _assigned_partition_count = topic_partitions.size();
-+    _eof_partitions.clear();
  
-     LOG(INFO) << "consumer: " << _id << ", grp: " << _grp_id << " assign topic partitions: " << topic << ", "
-               << ss.str();
-@@ -204,13 +205,15 @@ Status KafkaDataConsumer::group_consume(TimedBlockingQueue<RdKafka::Message*>* q
-     int64_t received_rows = 0;
-     int64_t put_rows = 0;
-     Status st = Status::OK();
-+    const char* finish_reason = "time limit";
-     MonotonicStopWatch consumer_watch;
-     MonotonicStopWatch watch;
-     watch.start();
-     while (true) {
-         {
-             std::unique_lock<std::mutex> l(_lock);
-             if (_cancelled) {
-+                finish_reason = "cancelled";
-                 break;
-             }
-         }
-@@ -227,8 +230,10 @@ Status KafkaDataConsumer::group_consume(TimedBlockingQueue<RdKafka::Message*>* q
-         consumer_watch.stop();
-         switch (msg->err()) {
-         case RdKafka::ERR_NO_ERROR:
-+            _eof_partitions.erase(msg->partition());
-             if (!queue->blocking_put(msg.get())) {
-                 // queue is shutdown
-+                finish_reason = "queue closed";
-                 done = true;
-             } else {
-                 ++put_rows;
-@@ -245,6 +250,7 @@ Status KafkaDataConsumer::group_consume(TimedBlockingQueue<RdKafka::Message*>* q
-             break;
-         }
-         case RdKafka::ERR_OFFSET_OUT_OF_RANGE: {
-+            finish_reason = "error";
-             done = true;
-             std::stringstream ss;
-             ss << msg->errstr() << ", this is no data in partition: " << msg->partition()
-@@ -258,7 +264,10 @@ Status KafkaDataConsumer::group_consume(TimedBlockingQueue<RdKafka::Message*>* q
-             break;
-         }
-         case RdKafka::ERR__PARTITION_EOF: {
--            _non_eof_partition_count--;
-+            // The receiving thread can delete the message as soon as it is
-+            // queued, so read its partition before handing over ownership.
-+            _eof_partitions.insert(msg->partition());
-+            const bool all_partitions_eof = _eof_partitions.size() == _assigned_partition_count;
-             // For transaction producer, producer will append one control msg to the group of msgs,
-             // but the control msg will not return to consumer,
-             // so we use the offset of eof to compute the last offset.
-@@ -267,16 +276,19 @@ Status KafkaDataConsumer::group_consume(TimedBlockingQueue<RdKafka::Message*>* q
-             // The goal of put the EOF msg to queue is that:
-             // we will calculate the last offset of the partition using offset of EOF msg
-             if (!queue->blocking_put(msg.get())) {
-+                finish_reason = "queue closed";
-                 done = true;
--            } else if (_non_eof_partition_count <= 0) {
-+            } else if (all_partitions_eof) {
-                 msg.release();
-+                finish_reason = "all partitions EOF";
-                 done = true;
-             } else {
-                 msg.release();
-             }
-             break;
-         }
-         case RdKafka::ERR_TOPIC_AUTHORIZATION_FAILED: {
-+            finish_reason = "error";
-             LOG(WARNING) << "kafka consume failed: " << _id << ", msg: " << msg->errstr();
-             done = true;
-             st = Status::InternalError(fmt::format(
-@@ -285,6 +297,7 @@ Status KafkaDataConsumer::group_consume(TimedBlockingQueue<RdKafka::Message*>* q
-             break;
-         }
-         case RdKafka::ERR_GROUP_AUTHORIZATION_FAILED: {
-+            finish_reason = "error";
-             LOG(WARNING) << "kafka consume failed: " << _id << ", msg: " << msg->errstr();
-             done = true;
-             st = Status::InternalError(fmt::format(
-@@ -295,6 +308,7 @@ Status KafkaDataConsumer::group_consume(TimedBlockingQueue<RdKafka::Message*>* q
-             break;
-         }
-         default:
-+            finish_reason = "error";
-             LOG(WARNING) << "kafka consume failed: " << _id << ", msg: " << msg->errstr();
-             done = true;
-             st = Status::InternalError(fmt::format("kafka consume failed, err: {}", msg->errstr()));
-@@ -310,7 +324,9 @@ Status KafkaDataConsumer::group_consume(TimedBlockingQueue<RdKafka::Message*>* q
-     LOG(INFO) << "kafka consume done: " << _id << ", grp: " << _grp_id << ". cancelled: " << _cancelled
-               << ", left time(ms): " << left_time << ", total cost(ms): " << watch.elapsed_time() / 1000 / 1000
-               << ", consume cost(ms): " << consumer_watch.elapsed_time() / 1000 / 1000
--              << ", received rows: " << received_rows << ", put rows: " << put_rows;
-+              << ", received rows: " << received_rows << ", put rows: "
-```
-
-**File**: `be/src/data_workflows/load/routine_load/data_consumer.h` (modified, +4/-1)
-```diff
-@@ -37,6 +37,7 @@
- #include <ctime>
- #include <mutex>
- #include <unordered_map>
-+#include <unordered_set>
- 
- #include "base/concurrency/blocking_queue.hpp"
- #include "base/uid_util.h"
-@@ -187,7 +188,9 @@ class KafkaDataConsumer : public DataConsumer {
-     std::string _group_id;
-     std::unordered_map<std::string, std::string> _custom_properties;
- 
--    size_t _non_eof_partition_count = 0;
-+    size_t _assigned_partition_count = 0;
-+    // Partitions whose latest delivered event is EOF; new data clears the state.
-+    std::unordered_set<int32_t> _eof_partitions;
-     KafkaEventCb _k_event_cb;
-     RdKafka::KafkaConsumer* _k_consumer = nullptr;
- };
-```
-
-**File**: `be/test/data_workflows/load/routine_load/data_consumer_test.cpp` (modified, +202/-1)
-```diff
-@@ -14,11 +14,18 @@
- 
- #include "data_workflows/load/routine_load/data_consumer.h"
- 
--#include <gtest/gtest.h>
-+#include <chrono>
-+#include <map>
-+#include <thread>
- 
-+#include "gtest/gtest.h"
-+
-+// Routine load dependencies.
- #include "base/testutil/assert.h"
- #include "data_workflows/load/routine_load/data_consumer_group.h"
- #include "exec/exec_env.h"
-+#include "librdkafka/rdkafka.h"
-+#include "librdkafka/rdkafka_mock.h"
- #include "runtime/byte_buffer.h"
- 
- #ifndef __APPLE__
-@@ -29,6 +36,200 @@ namespace starrocks {
- 
- class KafkaDataConsumerTest : public testing::Test {};
- 
-+// Exercise the public consumer API against librdkafka's in-process mock broker.
-+// A small receiving queue hands off message ownership to the test immediately.
-+class KafkaDataConsumerEofTest : public testing::Test {
-+protected:
-+    void SetUp() override {
-+        std::string error;
-+        std::unique_ptr<RdKafka::Conf> conf(RdKafka::Conf::create(RdKafka::Conf::CONF_GLOBAL));
-+        ASSERT_EQ(RdKafka::Conf::CONF_OK, conf->set("test.mock.num.brokers", "1", error));
-+        ASSERT_EQ(RdKafka::Conf::CONF_OK, conf->set("log_level", "0", error));
-+        ASSERT_EQ(RdKafka::Conf::CONF_OK, conf->set("linger.ms", "0", error));
-+        ASSERT_EQ(RdKafka::Conf::CONF_OK, conf->set("batch.num.messages", "1", error));
-+        _producer.reset(RdKafka::Producer::create(conf.get(), error));
-+        ASSERT_NE(nullptr, _producer) << error;
-+        auto* cluster = rd_kafka_handle_mock_cluster(_producer->c_ptr());
-+        ASSERT_NE(nullptr, cluster);
-+        ASSERT_EQ(RD_KAFKA_RESP_ERR_NO_ERROR, rd_kafka_mock_topic_create(cluster, _topic.c_str(), 3, 1));
-+
-+        TKafkaLoadInfo info;
-+        info.brokers = rd_kafka_mock_cluster_bootstraps(cluster);
-+        info.topic = _topic;
-+        info.properties = {{"group.id", "routine-load-eof-test"}, {"enable.auto.commit", "false"},
-+                           {"fetch.wait.max.ms", "10"},           {"fetch.message.max.bytes", "1024"},
-+                           {"queued.min.messages", "100000"},     {"queued.max.messages.kbytes", "64"},
-+                           {"fetch.queue.backoff.ms", "10"}};
-+        _context = std::make_unique<StreamLoadContext>(nullptr);
-+        _context->kafka_info = std::make_unique<KafkaLoadInfo>(info);
-+        _consumer = std::make_unique<KafkaDataConsumer>(_context.get());
-+        ASSERT_OK(_consumer->init(_context.get()));
-+    }
-+
-+    RdKafka::ErrorCode produce(int32_t partition, int count) {
-+        std::string payload(1024, 'x');
-+        for (int i = 0; i < count; ++i) {
-+            auto error = _producer->produce(_topic, partition, RdKafka::Producer::RK_MSG_COPY, payload.data(),
-+                                            payload.size(), nullptr, 0, 0, nullptr);
-+            if (error != RdKafka::ERR_NO_ERROR) {
-+                return error;
++    // Lists every partition of the table and may plan all scan ranges. Skipped when the finished query's plan is
++    // rendered into its profile: nothing bounds that metadata read once the query has ended.
++    private void appendPartitionsExplain(StringBuilder output, String prefix) {
++        ConnectContext connectContext = ConnectContext.get();
++        if (connectContext != null && connectContext.isExplainForProfile()) {
++            return;
++        }
++        ConnectorMetadataRequestContext requestContext = new ConnectorMetadataRequestContext();
++        requestContext.setTableVersionRange(tvrVersionRange);
++        List<String> partitionNames = GlobalStateMgr.getCurrentState().getMetadataMgr().listPartitionNames(
++                icebergTable.getCatalogName(), icebergTable.getCatalogDBName(),
++                icebergTable.getCatalogTableName(), requestContext);
++        if (selectedPartitionCount == -1) {
++            if (scanRangeSource != null) {
++                // we have to consume all scan ranges to know how many partition been selected.
++                while (scanRangeSource.hasMoreOutput()) {
++                    scanRangeSource.getOutputs(1000);
++                }
++                selectedPartitionCount = scanRangeSource.selectedPartitionCount();
++            } else {
++                selectedPartitionCount = 0;
 +            }
 +        }
-+        return _producer->flush(10000);
++
++        output.append(prefix).append(
++                String.format("partitions=%s/%s", selectedPartitionCount,
++                        partitionNames.isEmpty() ? 1 : partitionNames.size()));
++        output.append("\n");
 +    }
 +
-+    struct BatchResult {
-+        Status status;
-+        std::map<int32_t, int> data_rows;
-+        std::map<int32_t, int> eof_events;
-+        bool data_after_eof = false;
-+        RdKafka::ErrorCode produce_error = RdKafka::ERR_NO_ERROR;
-+    };
-+
-+    BatchResult consume_batch(const std::map<int32_t, int64_t>& offsets, int records_after_first_eof = 0) {
-+        BatchResult result;
-+        result.status = _consumer->assign_topic_partitions(offsets, _topic, _context.get());
-+        if (!result.status.ok()) {
-+            return result;
-+        }
-+        TimedBlockingQueue<RdKafka::Message*> queue(1);
-+        std::thread worker([&] {
-+            result.status = _consumer->group_consume(&queue, 30000);
-+            queue.shutdown();
-+        });
-+        RdKafka::Message* raw_message;
-+        while (queue.blocking_get(&raw_message)) {
-+            std::unique_ptr<RdKafka::Message> message(raw_message);
-+            const int32_t partition = message->partition();
-+            if (message->err() == RdKafka::ERR_NO_ERROR) {
-+                ++result.data_rows[partition];
-+                if (partition == 0 && result.eof_events[0] > 0) {
-+                    result.data_after_eof = true;
-+                }
-+                // Keep the other partition backlogged while the caught-up
-+                // partition produces EOF -> data -> EOF through the real SDK.
-+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
-+            } else if (message->err() == RdKafka::ERR__PARTITION_EOF) {
-+                ++result.eof_events[partition];
-+                if (records_after_first_eof > 0 && partition == 0 && result.eof_events[0] == 1) {
-+                    result.produce_error = produce(0, records_after_first_eof);
-+                    if (result.produce_error != RdKafka::ERR_NO_ERROR) {
-+                        queue.shutdown();
-+                    }
-+                }
-+            }
-+        }
-+        worker.join();
-+        return result;
-+    }
-+
-+    const std::string _topic = "routine_load_eof_test";
-+    s
+     @Override
+     protected void toThrift(TPlanNode msg) {
+         msg.node_type = TPlanNodeType.HDFS_SCAN_NODE;
 ```
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/transaction/DatabaseTransactionMgr.java` (modified, +17/-1)
+**File**: `fe/fe-core/src/main/java/com/starrocks/qe/ConnectContext.java` (modified, +12/-0)
 ```diff
-@@ -64,6 +64,7 @@
- import com.starrocks.common.util.concurrent.lock.Locker;
- import com.starrocks.lake.LakeTableHelper;
- import com.starrocks.load.loadv2.ManualLoadTxnCommitAttachment;
-+import com.starrocks.load.routineload.KafkaProgress;
- import com.starrocks.load.routineload.RLTaskTxnCommitAttachment;
- import com.starrocks.memory.estimate.Estimator;
- import com.starrocks.metric.MetricRepo;
-@@ -393,9 +394,12 @@ public void prepareTransaction(long transactionId,
-             // too: an empty-partition range rewrite produces zero rows but must still commit so the flip
-             // can anchor an empty op_schema_change@W on that partition (the BE converter tolerates an empty
-             // source). Without this it would abort with ERR_NO_ROWS_IMPORTED and cancel the schema change.
-+            // Kafka routine load must also commit successful empty batches carrying consumption progress:
-+            // aborting them prevents the BE from committing the corresponding Kafka consumer-group offsets.
-             if (Config.empty_load_as_error && tabletCommitInfos.isEmpty()
-                     && transactionState.getSourceType() != TransactionState.LoadJobSourceType.INSERT_STREAMING
--                    && !transactionState.isShadowRewrite()) {
-+                    && !transactionState.isShadowRewrite()
-+                    && !canCommitEmptyKafkaRoutineLoad(transactionState, txnCommitAttachment)) {
-                 throw new TransactionCommitFailedException(ERR_NO_ROWS_IMPORTED.formatErrorMsg());
+@@ -234,6 +234,10 @@ public class ConnectContext {
+ 
+     protected StatementBase.ExplainLevel explainLevel;
+ 
++    // Set while the finished query's plan is rendered into its profile; scan nodes skip explain lines that read
++    // remote metadata, since nothing bounds that read after the query has ended.
++    protected boolean explainForProfile = false;
++
+     protected TWorkGroup resourceGroup;
+ 
+     protected volatile boolean isPending = false;
+@@ -1132,6 +1136,14 @@ public void setExplainLevel(StatementBase.ExplainLevel explainLevel) {
+         this.explainLevel = explainLevel;
+     }
+ 
++    public boolean isExplainForProfile() {
++        return explainForProfile;
++    }
++
++    public void setExplainForProfile(boolean explainForProfile) {
++        this.explainForProfile = explainForProfile;
++    }
++
+     public TWorkGroup getResourceGroup() {
+         return resourceGroup;
+     }
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/qe/StmtExecutor.java` (modified, +2/-0)
+```diff
+@@ -1823,8 +1823,10 @@ private void maybeEmbedExplainPlanInProfile(RuntimeProfile profile, ExecPlan pla
+             String explainPlan;
+             try {
+                 sv.setEnableDesensitizeExplain(forceDesensitize);
++                context.setExplainForProfile(true);
+                 explainPlan = plan.getExplainString(TExplainLevel.COSTS);
+             } finally {
++                context.setExplainForProfile(false);
+                 sv.setEnableDesensitizeExplain(prevDesensitize);
              }
- 
-@@ -1111,6 +1115,18 @@ public List<TransactionStateBatch> getReadyToPublishTxnListBatch() {
-         return result;
-     }
- 
-+    private static boolean canCommitEmptyKafkaRoutineLoad(TransactionState transactionState,
-+                                                          TxnCommitAttachment attachment) {
-+        if (transactionState.getSourceType() != TransactionState.LoadJobSourceType.ROUTINE_LOAD_TASK
-+                || !(attachment instanceof RLTaskTxnCommitAttachment)) {
-+            return false;
-+        }
-+        RLTaskTxnCommitAttachment routineLoadAttachment = (RLTaskTxnCommitAttachment) attachment;
-+        return routineLoadAttachment.getLoadedRows() == 0
-+                && !routineLoadAttachment.isNonRetryable()
-+                && routineLoadAttachment.getProgress() instanceof KafkaProgress;
-+    }
-+
-     // check whether transaction can be finished or not
-     // for each tablet of load txn, if most replicas version publish successed
-     // the trasaction can be treated as successful and can be finished
+             // Defense in depth: also strip credential-bearing literals (e.g. FILES("...")
 ```
 
-**File**: `fe/fe-core/src/test/java/com/starrocks/transaction/DatabaseTransactionMgrTest.java` (modified, +157/-0)
+**File**: `fe/fe-core/src/test/java/com/starrocks/qe/StmtExecutorTest.java` (modified, +1/-0)
 ```diff
-@@ -72,6 +72,10 @@
- import com.starrocks.common.util.concurrent.lock.Locker;
- import com.starrocks.ha.FrontendNodeType;
- import com.starrocks.lake.compaction.CompactionMgr;
-+import com.starrocks.load.loadv2.ManualLoadTxnCommitAttachment;
-+import com.starrocks.load.routineload.KafkaProgress;
-+import com.starrocks.load.routineload.KafkaRoutineLoadJob;
-+import com.starrocks.load.routineload.KafkaTaskInfo;
- import com.starrocks.load.routineload.RLTaskTxnCommitAttachment;
- import com.starrocks.metric.MetricRepo;
- import com.starrocks.persist.EditLog;
-@@ -84,8 +88,13 @@
- import com.starrocks.sql.ast.AggregateType;
- import com.starrocks.sql.ast.KeysType;
- import com.starrocks.system.ComputeNode;
-+import com.starrocks.thrift.TKafkaRLTaskProgress;
-+import com.starrocks.thrift.TLoadSourceType;
-+import com.starrocks.thrift.TPulsarRLTaskProgress;
-+import com.starrocks.thrift.TRLTaskTxnCommitAttachment;
- import com.starrocks.thrift.TStorageMedium;
- import com.starrocks.thrift.TStorageType;
-+import com.starrocks.thrift.TUniqueId;
- import com.starrocks.type.FloatType;
- import com.starrocks.type.IntegerType;
- import mockit.Invocation;
-@@ -103,6 +112,7 @@
- import java.util.HashMap;
- import java.util.List;
- import java.util.Map;
-+import java.util.UUID;
- import java.util.concurrent.CountDownLatch;
- import java.util.concurrent.TimeUnit;
- import java.util.concurrent.atomic.AtomicBoolean;
-@@ -112,6 +122,7 @@
- import static org.hamcrest.CoreMatchers.containsString;
- import static org.hamcrest.MatcherAssert.assertThat;
- import static org.junit.jupiter.api.Assertions.assertEquals;
-+import static org.junit.jupiter.api.Assertions.assertFalse;
- import static org.junit.jupiter.api.Assertions.assertNotNull;
- import static org.junit.jupiter.api.Assertions.assertNull;
- import static org.junit.jupiter.api.Assertions.assertThrows;
-@@ -798,6 +809,152 @@ public void testEmptyShadowRewriteTxnCommitsWithoutNoRowsError() throws StarRock
-         }
-     }
- 
-+    @ParameterizedTest
-+    @ValueSource(longs = {0, 10})
-+    public void testEmptyKafkaRoutineLoadTxnCommitsAndBecomesVisible(long unselectedRows) throws StarRocksException {
-+        boolean savedEmptyLoadAsError = Config.empty_load_as_error;
-+        Config.empty_load_as_error = true;
-+        try {
-+            DatabaseTransactionMgr masterDbTransMgr =
-+                    masterTransMgr.getDatabaseTransactionMgr(GlobalStateMgrTestUtil.testDbId1);
-+            long jobId = 20000;
-+            KafkaRoutineLoadJob job = new KafkaRoutineLoadJob(jobId, "empty_kafka_job",
-+                    GlobalStateMgrTestUtil.testDbId1, GlobalStateMgrTestUtil.testTableId1, "broker:9092", "topic");
-+            masterTransMgr.getCallbackFactory().addCallback(job);
-+            long txnId = masterTransMgr.beginTransaction(GlobalStateMgrTestUtil.testDbId1,
-+                    Lists.newArrayList(GlobalStateMgrTestUtil.testTableId1), "empty_kafka_label", null,
-+                    transactionSource, TransactionState.LoadJobSourceType.ROUTINE_LOAD_TASK, jobId,
-+                    Config.stream_load_default_timeout_second);
-+            UUID taskId = UUID.randomUUID();
-+            KafkaTaskInfo task = new KafkaTaskInfo(taskId, job, 10000, 0, Map.of(0, 100L), 60000);
-+            Deencapsulation.setField(task, "txnId", txnId);
-+            Deencapsulation.setField(job, "routineLoadTaskInfoList", Lists.newArrayList(task));
-+            RLTaskTxnCommitAttachment attachment = new RLTaskTxnCommitAttachment(
-+                    emptyKafkaRoutineLoadAttachment(jobId, taskId, unselectedRows));
-+
-+            // Both WHERE-only filtering and a control-record-only batch must commit their consumed positions.
-+            masterTransMgr.commitTransaction(GlobalStateMgrTestUtil.testDbId1, txnId,
-+                    Lists.newArrayList(), Lists.newArrayList(), attachment);
-+            assertEquals(TransactionStatus.COMMITTED, masterDbTransMgr.getTxnState(txnId).getStatus());
-+            assertEquals(110L, ((KafkaProgress) job.getProgress()).getOffsetByPartition(0));
-+            masterDbTransMgr.finishTransaction(txnId, Sets.newHashSet(), 0);
-+            assertEquals(TransactionStatus.VISIBLE, masterDbTransMgr.getTxnState(txnId).getStatus());
-+        } finally {
-+            Config.empty_load_as_error = savedEmptyLoadAsError;
-+        }
-+    }
-+
-+    private static TRLTaskTxnCommitAttachment emptyKafkaRoutineLoadAttachment(long jobId, UUID taskId,
-+                                                                              long unselectedRows) {
-+        TKafkaRLTaskProgress progress = new TKafkaRLTaskProgress();
-+        progress.setPartitionCmtOffset(Map.of(0, 109L));
-+        progress.setPartitionCmtOffsetTimestamp(Map.of(0, 1000L));
-+        TRLTaskTxnCommitAttachment attachment = new TRLTaskTxnCommitAttachment();
-+        attachment.setJobId(jobId);
-+        attachment.setId(new TUniqueId(taskId.getMostSignificantBits(), taskId.getLeastSignificantBits()));
-+        attachment.setLoadSourceType(TLoadSourceType
+@@ -1373,6 +1373,7 @@ public String getWarehouseComputeResourceName(ComputeResource computeResource) {
+         String embedded = onSummary.getInfoString(ProfileKeyDictionary.EXPLAIN_PLAN);
+         Assertions.assertNotNull(embedded,
+                 "ExplainPlan must be embedded when enable_explain_in_profile is true");
++        Assertions.assertFalse(onCtx.isExplainForProfile(), "Embedding must reset explainForProfile after rendering");
+         Assertions.assertTrue(embedded.contains("PLAN FRAGMENT"),
+                 "Embedded explain plan should contain rendered fragment headers");
+         Assertions.assertTrue(embedded.contains("OlapScanNode"),
 ```
 
----
-
-### Incident Patch 3: `3239bdb0` (2026-10-27)
-**Commit Message**: [BugFix] Keep a projected column deferred only if its child still defers it (#81509)
-
-Signed-off-by: Hyper-FF <[REDACTED_EMAIL]>
-Co-authored-by: stdpain <[REDACTED_EMAIL]>
-Co-authored-by: Hyper-FF <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Co-authored-by: kangkaisen <[REDACTED_EMAIL]>
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/rule/tree/lazymaterialize/GlobalLateMaterializationRewriter.java` (modified, +28/-5)
+**File**: `fe/fe-core/src/test/java/com/starrocks/sql/plan/IcebergExplainInProfileTest.java` (added, +41/-0)
 ```diff
-@@ -500,11 +500,22 @@ private void collectEarlyMaterialized(CollectorContext context, AliasResolver re
-         }
- 
-         Map<ColumnRefOperator, ColumnRefOperator> buildUnMaterializedAlias(CollectorContext context,
--                                                                           AliasResolver resolver) {
-+                                                                           AliasResolver resolver,
-+                                                                           ColumnRefSet childDeferred) {
-             Map<ColumnRefOperator, ColumnRefOperator> alias = Maps.newHashMap();
-             resolver.resolved.forEach((k, v) -> {
--                if (!k.equals(v) && context.columnSources.containsKey(v)) {
--                    alias.put(k, v);
-+                // `resolver` only knows this projection, so `v` is the column as the child names it, which is a
-+                // scan column only when the child is the scan. A deferred column renamed more than once on its way
-+                // up (scan col -> a -> b) reaches the second rename as another projection's output; resolve it
-+                // through the aliases collected below to land back on the scan column. Without that the second
-+                // rename is dropped: `b` never becomes deferred here, while the Rewriter, which follows the rename
-+                // at every projection, still defers the column and strips it, leaving the consumer above reading a
-+                // column nothing produces.
-+                //
-+                // Only a column the child still defers gets an alias; one materialized below is just a value.
-+                final ColumnRefOperator origin = context.getOriginColumnRef(v);
-+                if (!k.equals(origin) && childDeferred.contains(v) && context.columnSources.containsKey(origin)) {
-+                    alias.put(k, origin);
-                 }
-             });
-             return alias;
-@@ -515,6 +526,10 @@ public Void visitPhysicalProject(OptExpression optExpression, CollectorContext c
-             visitChildren(optExpression, context);
-             PhysicalProjectOperator op = (PhysicalProjectOperator) optExpression.getOp();
- 
-+            // the columns the child hands up still deferred
-+            final ColumnRefSet childDeferred = new ColumnRefSet();
-+            context.unMaterializedColumns.values().forEach(childDeferred::union);
-+
-             AliasResolver resolver = new AliasResolver();
-             resolver.addProjection(op.getCommonSubOperatorMap());
-             resolver.addProjection(op.getColumnRefMap());
-@@ -525,15 +540,23 @@ public Void visitPhysicalProject(OptExpression optExpression, CollectorContext c
-             collectEarlyMaterialized(context, resolver, op.getColumnRefMap(), earlyMaterializedColumns);
- 
-             // collect un-materialized columns
--            final Map<ColumnRefOperator, ColumnRefOperator> alias = buildUnMaterializedAlias(context, resolver);
-+            final Map<ColumnRefOperator, ColumnRefOperator> alias =
-+                    buildUnMaterializedAlias(context, resolver, childDeferred);
-             context.alias.putAll(alias);
- 
-             recordMaterializedBefore(earlyMaterializedColumns, op, context);
- 
--            // remove un-projected un-materialized columns
-+            // An output stays deferred only when the column it reads, as the child names it, is still deferred
-+            // by the child. Matching the id against columnSources alone is not enough: an aggregate outputs its
-+            // group key under the scan column's id, and above it that id can be a different value.
-+            final ColumnRefSet childUnMaterialized = new ColumnRefSet();
-+            context.unMaterializedColumns.values().forEach(childUnMaterialized::union);
-             context.unMaterializedColumns.clear();
- 
-             for (ColumnRefOperator columnRefOperator : op.getColumnRefMap().keySet()) {
-+                if (!childUnMaterialized.contains(resolver.resolve(columnRefOperator))) {
-+                    continue;
-+                }
-                 final ColumnRefOperator origin = context.getOriginColumnRef(columnRefOperator);
-                 if (context.columnSources.containsKey(origin)) {
-                     final IdentifyOperator identifyOperator = context.columnSources.get(origin);
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/sql/plan/GlobalLateMaterializeGroupingSetTest.java` (added, +114/-0)
-```diff
-@@ -0,0 +1,114 @@
+@@ -0,0 +1,41 @@
 +// Copyright 2021-present StarRocks, Inc. All rights reserved.
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -2398,335 +1971,787 @@ Co-authored-by: kangkaisen <[REDACTED_EMAIL]>
 +
 +package com.starrocks.sql.plan;
 +
-+import com.starrocks.qe.SessionVariable;
-+import org.junit.jupiter.api.AfterAll;
-+import org.junit.jupiter.api.BeforeAll;
++import org.junit.jupiter.api.Assertions;
 +import org.junit.jupiter.api.Test;
 +
-+// PushDownAggregateGroupingSetsRule's union outputs the aggregation's group keys, which keep the scan columns'
-+// ids. A grouping() filter that folds the full-key branch away leaves a rolled-up key as a NULL constant under
-+// that id. Global late materialization must not take it for the scan column and defer it, or the fetch is
-+// pushed down to the constant and tryPushDownFetch fails its checkState.
-+public class GlobalLateMaterializeGroupingSetTest extends TPCDS1TTestBase {
-+
-+    @BeforeAll
-+    public static void beforeClass() throws Exception {
-+        TPCDS1TTestBase.beforeClass();
-+        SessionVariable sv = connectContext.getSessionVariable();
-+        sv.setEnableGlobalLateMaterialization(true);
-+        sv.setEnableGlobalLateMaterializationCostBased(false);
-+        sv.setCboPushDownGroupingSet(true);
-+    }
-+
-+    @AfterAll
-+    public static void afterClass() {
-+        SessionVariable sv = connectContext.getSessionVariable();
-+        sv.setEnableGlobalLateMaterialization(false);
-+        sv.setEnableGlobalLateMaterializationCostBased(true);
-+        sv.setCboPushDownGroupingSet(false);
-+        TPCDS1TTestBase.afterClass();
-+    }
-+
-+    // TPC-DS Q67's rollup; g = 1 prunes the push-down's branch that still has s_store_id
-+    private static final String DW1 = "(select i_category, i_class, i_brand, i_product_name, d_year, d_qoy, " +
-+            "d_moy, s_store_id, sum(coalesce(ss_sales_price*ss_quantity,0)) sumsales, grouping(s_store_id) g " +
-+            "from store_sales, date_dim, store, item " +
-+            "where ss_sold_date_sk=d_date_sk and ss_item_sk=i_item_sk and ss_store_sk = s_store_sk " +
-+            "and d_month_seq between 1200 and 1200+11 " +
-+            "group by rollup(i_category, i_class, i_brand, i_product_name, d_year, d_qoy, d_moy, s_store_id)) dw1 ";
-+
-+    // ranked as in Q67; the window keeps the NULL projection apart from any projection above it
-+    private static final String DW2 = "(select i_category, i_class, i_brand, i_product_name, d_year, d_qoy, " +
-+            "d_moy, s_store_id, sumsales, rank() over (partition by i_category order by sumsales desc) rk " +
-+            "from " + DW1 + "where g = 1) dw2 ";
-+
-+    // a projection above the window that computes other columns and only passes s_store_id through
-+    private static final String PASS_THROUGH = "(select s_store_id, i_category, concat(i_brand, '#') b, rk + 1 r " +
-+            "from " + DW2 + "where rk <= 100) t ";
++/**
++ * The partition line of an Iceberg scan lists every partition of the table. The plan embedded into a finished
++ * query's profile (enable_explain_in_profile) skips it, since nothing bounds that metadata read after the query.
++ */
++public class IcebergExplainInProfileTest extends ConnectorPlanTestBase {
 +
 +    @Test
-+    public void testNullKeyUnderTopN() throws Exception {
-+        String sql = "select i_category, i_brand, s_store_id, sumsales from " + DW1 +
-+                "where g = 1 order by s_store_id, i_category limit 100";
-+        assertContains(getFragmentPlan(sql), "TOP-N");
-+    }
++    public void testExplainForProfileSkipsPartitionLine() throws Exception {
++        String sql = "select * from iceberg0.unpartitioned_db.t0";
++        String plan = getVerboseExplain(sql);
++        Assertions.assertTrue(plan.contains("partitions="), plan);
 +
-+    @Test
-+    public void testRankedNullKeyUnderTopN() throws Exception {
-+        String sql = "select * from " + DW2 + "where rk <= 100 " +
-+                "order by i_category, i_class, i_brand, i_product_name, d_year, d_qoy, d_moy, s_store_id, " +
-+                "sumsales, rk limit 100";
-+        assertContains(getFragmentPlan(sql), "TOP-N");
++        connectContext.setExplainForProfile(true);
++        try {
++            plan = getVerboseExplain(sql);
++        } finally {
++            connectContext.setExplainForProfile(false);
++        }
++        Assertions.assertTrue(plan.contains("IcebergScanNode"), plan);
++        Assertions.assertFalse(plan.contains("partitions="), plan);
 +    }
-+
-+    // The projection above the window does not compute s_store_id, but it must not defer it again either: a
-+    // projection below has already turned it into a value.
-+    @Test
-+    public void testPassThroughNullKeyUnderTopN() throws Exception {
-+        String sql = "select s_store_id, i_category, b, r from " + PASS_THROUGH +
-+                "order by s_store_id, i_category, b, r limit 100";
-+        assertContains(getFragmentPlan(sql), "TOP-N");
-+    }
-+
-+    @Test
-+    public void testPassThroughNullKeyInJoin() throws Exception {
-+        String sql = "select t.s_store_id, t.b, s.s_store_name from " + PASS_THROUGH +
-+                "join store s on t.s_store_id = s.s_store_id limit 100";
-+        assertContains(getFragmentPlan(sql), "HASH JOIN");
-+    }
-+
-+    @Test
-+    public void testPassThroughNullKeyInWindowPartition() throws Exception {
-+        String sql = "select s_store_id, b, sum(r) over (partition by s_store_id) w from " + PASS_THROUGH +
-+                "limit 100";
-+     
++}
 ```
 
-**File**: `fe/fe-core/src/test/java/com/starrocks/sql/plan/GlobalLateMaterializeNativeTest.java` (modified, +77/-0)
+**File**: `java-extensions/hadoop-ext/src/main/java/org/apache/hadoop/fs/aliyun/oss/ReadBuffer.java` (added, +125/-0)
 ```diff
-@@ -315,6 +315,83 @@ public void testGroupBy() throws Exception {
-         assertContains(plan, "FETCH");
+@@ -0,0 +1,125 @@
++// Copyright 2021-present StarRocks, Inc. All rights reserved.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     https://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++// This file is based on code available under the Apache license here:
++// https://github.com/apache/hadoop/blob/rel/release-3.4.3/hadoop-tools/hadoop-aliyun/src/main/java/org/apache/hadoop/fs/aliyun/oss/ReadBuffer.java
++
++/*
++ * Licensed to the Apache Software Foundation (ASF) under one
++ * or more contributor license agreements.  See the NOTICE file
++ * distributed with this work for additional information
++ * regarding copyright ownership.  The ASF licenses this file
++ * to you under the Apache License, Version 2.0 (the
++ * "License"); you may not use this file except in compliance
++ * with the License.  You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package org.apache.hadoop.fs.aliyun.oss;
++
++import org.slf4j.Logger;
++import org.slf4j.LoggerFactory;
++
++import java.util.concurrent.TimeUnit;
++import java.util.concurrent.locks.Condition;
++import java.util.concurrent.locks.ReentrantLock;
++
++/**
++ * This class is used by {@link AliyunOSSInputStream}
++ * and {@link AliyunOSSFileReaderTask} to buffer data that read from oss.
++ *
++ * StarRocks: {@link #await} is bounded. AliyunOSSInputStream.reopen() waits here for the read-ahead task to fill the
++ * buffer, but that task can be lost without signalling: a shut-down executor only logs the rejected task, and an
++ * Error thrown inside the task skips signalAll(). The reader then parked forever with no timeout. After the bound,
++ * the buffer is marked ERROR, so reopen() fails with an IOException instead.
++ */
++public class ReadBuffer {
++    private static final Logger LOG = LoggerFactory.getLogger(ReadBuffer.class);
++
++    // Far above a 512 KB part read that succeeds or fails through the OSS client's own timeouts and retries.
++    static long awaitTimeoutNanos = TimeUnit.MINUTES.toNanos(10);
++
++    enum STATUS {
++        INIT, SUCCESS, ERROR
++    }
++
++    private final ReentrantLock lock = new ReentrantLock();
++
++    private Condition readyCondition = lock.newCondition();
++
++    private byte[] buffer;
++    private STATUS status;
++    private long byteStart;
++    private long byteEnd;
++
++    public ReadBuffer(long byteStart, long byteEnd) {
++        this.buffer = new byte[(int) (byteEnd - byteStart) + 1];
++
++        this.status = STATUS.INIT;
++        this.byteStart = byteStart;
++        this.byteEnd = byteEnd;
++    }
++
++    public void lock() {
++        lock.lock();
++    }
++
++    public void unlock() {
++        lock.unlock();
++    }
++
++    public void await(STATUS waitStatus) throws InterruptedException {
++        long remainingNanos = awaitTimeoutNanos;
++        while (this.status == waitStatus) {
++            if (remainingNanos <= 0) {
++                LOG.warn("Read-ahead of bytes [{}, {}] did not finish within {} s, failing the read",
++                        byteStart, byteEnd, TimeUnit.NANOSECONDS.toSeconds(awaitTimeoutNanos));
++                this.status = STATUS.ERROR;
++                return;
++            }
++            remainingNanos = readyCondition.awaitNanos(remainingNanos);
++        }
++    }
++
++    public void signalAll() {
++        readyCondition.signalAll();
++    }
++
++    public byte[] getBuffer() {
++        return buffer;
++    }
++
++    public STATUS getStatus() {
++        return status;
++    }
++
++    public void setStatus(STATUS status) {
++        this.status = status;
++    }
++
++    public long getByteStart() {
++        return byteStart;
++    }
++
++    public long getByteEnd() {
++        return byteEnd;
++    }
++}
+```
+
+**File**: `java-extensions/hadoop-ext/src/test/java/org/apache/hadoop/fs/aliyun/oss/ReadBufferTest.java` (added, +76/-0)
+```diff
+@@ -0,0 +1,76 @@
++// Copyright 2021-present StarRocks, Inc. All rights reserved.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     https://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package org.apache.hadoop.fs.aliyun.oss;
++
++import org.junit.jupiter.api.AfterEach;
++import org.junit.jupiter.api.Assertions;
++import org.junit.jupiter.api.BeforeEach;
++import org.junit.jupiter.api.Test;
++
++import java.util.concurrent.TimeUnit;
++
++public class ReadBufferTest {
++    private long previousTimeoutNanos;
++
++    @BeforeEach
++    public void setUp() {
++        previousTimeoutNanos = ReadBuffer.awaitTimeoutNanos;
++    }
++
++    @AfterEach
++    public void tearDown() {
++        ReadBuffer.awaitTimeoutNanos = previousTimeoutNanos;
++    }
++
++    @Test
++    public void testLostReadAheadTaskFailsTheWaitInsteadOfHanging() throws Exception {
++        ReadBuffer.awaitTimeoutNanos = TimeUnit.MILLISECONDS.toNanos(100);
++        // No task ever fills or signals this buffer, as when the executor dropped it.
++        ReadBuffer readBuffer = new ReadBuffer(0, 9);
++        readBuffer.lock();
++        try {
++            readBuffer.await(ReadBuffer.STATUS.INIT);
++        } finally {
++            readBuffer.unlock();
++        }
++        Assertions.assertEquals(ReadBuffer.STATUS.ERROR, readBuffer.getStatus());
++    }
++
++    @Test
++    public void testSignalledReadAheadTaskEndsTheWait() throws Exception {
++        ReadBuffer.awaitTimeoutNanos = TimeUnit.MINUTES.toNanos(1);
++        ReadBuffer readBuffer = new ReadBuffer(0, 9);
++        Thread task = new Thread(() -> {
++            readBuffer.lock();
++            try {
++                readBuffer.setStatus(ReadBuffer.STATUS.SUCCESS);
++                readBuffer.signalAll();
++            } finally {
++                readBuffer.unlock();
++            }
++        });
++        long start = System.nanoTime();
++        readBuffer.lock();
++        try {
++            task.start();
++            readBuffer.await(ReadBuffer.STATUS.INIT);
++        } finally {
++            readBuffer.unlock();
++        }
++        task.join();
++        Assertions.assertEquals(ReadBuffer.STATUS.SUCCESS, readBuffer.getStatus());
++        Assertions.assertTrue(System.nanoTime() - start < TimeUnit.SECONDS.toNanos(30));
++    }
++}
+```
+
+---
+
+### Incident Patch 2: `7e354c62` (2026-10-28)
+**Commit Message**: [BugFix] Account buffered pass-through chunks in query and process memory (#80910)
+
+Signed-off-by: Drake Wang <[REDACTED_EMAIL]>
+Co-authored-by: trueeyu <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `be/src/compute_env/data_stream/data_stream_recvr.cpp` (modified, +1/-1)
+```diff
+@@ -187,7 +187,7 @@ DataStreamRecvr::DataStreamRecvr(DataStreamMgr* stream_mgr, RuntimeState* runtim
+ 
+     _metrics.resize(degree_of_parallelism);
+ 
+-    _pass_through_context.init();
++    _pass_through_context.init(_query_mem_tracker);
+     if (runtime_state->query_options().__isset.transmission_encode_level) {
+         _encode_level = runtime_state->query_options().transmission_encode_level;
+     }
+```
+
+**File**: `be/src/compute_env/data_stream/local_pass_through_buffer.cpp` (modified, +51/-14)
+```diff
+@@ -22,15 +22,37 @@
+ 
+ namespace starrocks {
+ 
++// A buffered chunk is allocated by the sender thread and freed by the receiver thread. While it waits in
++// the channel it belongs to neither instance, so it is parked on the query tracker, the common ancestor
++// of both instances: the query, resource group, query pool and process trackers keep counting it, and
++// only the instance trackers change. The global passthrough tracker is not part of the tracker tree; it
++// mirrors the parked bytes for diagnosis. Without a query tracker, fall back to the process tracker, the
++// common ancestor of every tracker, so the process tracker still counts the bytes.
++static MemTracker* parking_tracker(MemTracker* query_mem_tracker) {
++    return query_mem_tracker != nullptr ? query_mem_tracker : RuntimeEnv::GetInstance()->process_mem_tracker();
++}
++
++static void park_buffered_bytes(MemTracker* query_mem_tracker, int64_t bytes) {
++    CurrentThread::current().mem_transfer_to(parking_tracker(query_mem_tracker), bytes);
++    RuntimeEnv::GetInstance()->passthrough_mem_tracker()->consume(bytes);
++}
++
++// Hand parked bytes to the current thread's tracker, which then frees them or keeps them as its own.
++static void unpark_buffered_bytes(MemTracker* query_mem_tracker, int64_t bytes) {
++    CurrentThread::current().mem_transfer_from(parking_tracker(query_mem_tracker), bytes);
++    RuntimeEnv::GetInstance()->passthrough_mem_tracker()->release(bytes);
++}
++
+ // channel per [sender_id]
+ class PassThroughSenderChannel {
+ public:
+-    PassThroughSenderChannel(std::atomic_int64_t& total_bytes) : _total_bytes(total_bytes) {}
++    // `query_mem_tracker` is owned by the PassThroughChannel, which outlives this sender channel.
++    PassThroughSenderChannel(std::atomic_int64_t& total_bytes, MemTracker* query_mem_tracker)
++            : _total_bytes(total_bytes), _query_mem_tracker(query_mem_tracker) {}
+ 
+     ~PassThroughSenderChannel() {
+         if (_physical_bytes > 0) {
+-            CurrentThread::current().mem_consume(_physical_bytes);
+-            RuntimeEnv::GetInstance()->passthrough_mem_tracker()->release(_physical_bytes);
++            unpark_buffered_bytes(_query_mem_tracker, _physical_bytes);
+         }
      }
  
-+    // A deferred column may be renamed more than once on its way up the plan: the projection over the
-+    // scan names the (json-subfield) scan column, and the projection that feeds an aggregate renames it
-+    // again. ColumnCollector used to record only the first rename, because the second one's target is a
-+    // projection output rather than a scan column -- so nothing above could register a fetch position for
-+    // the column, while the Rewriter still deferred it and stripped it from both projections. The
-+    // aggregate was then left reading a column no operator produced and the plan failed validation with
-+    // "Input dependency cols check failed" (or, with the validator off, at fragment building).
-+    //
-+    // The LIMIT is load-bearing (GLM only engages with one) and so is the join (it keeps the rename that
-+    // feeds the aggregate in its own projection above the join). Reproduced first on a live cluster,
-+    // where the plan carried exactly this shape:
-+    //
-+    //   AGG max(20)
-+    //     PROJECT {1->1, 20 -> 22}            <- second rename, dropped by the collector
-+    //       JOIN
-+    //         PROJECT {1->1, 22 -> 23: j.a}   <- first rename, the only one recorded
-+    //           SCAN [1: k, 23: j.a]
+@@ -40,8 +62,7 @@ class PassThroughSenderChannel {
+         auto clone = chunk->clone_unique();
+         int64_t physical_bytes = CurrentThread::current().get_consumed_bytes() - before_bytes;
+         DCHECK_GE(physical_bytes, 0);
+-        CurrentThread::current().mem_release(physical_bytes);
+-        RuntimeEnv::GetInstance()->passthrough_mem_tracker()->consume(physical_bytes);
++        park_buffered_bytes(_query_mem_tracker, physical_bytes);
+ 
+         std::unique_lock lock(_mutex);
+         _buffer.emplace_back(std::make_pair(std::move(clone), driver_sequence));
+@@ -53,22 +74,19 @@ class PassThroughSenderChannel {
+         std::unique_lock lock(_mutex);
+         chunks->swap(_buffer);
+         bytes->swap(_bytes);
+-        RuntimeEnv::GetInstance()->passthrough_mem_tracker()->release(_physical_bytes);
+-        // Consume physical bytes in current MemTracker, since later it would be released
+-        CurrentThread::current().mem_consume(_physical_bytes);
++        unpark_buffered_bytes(_query_mem_tracker, _physical_bytes);
+         _total_bytes -= _physical_bytes;
+         _physical_bytes = 0;
+     }
+     // Drop everything buffered without handing it to a consumer. Used when the receiver is
+     // cancelled/closed: nobody will ever pull these chunks, so free them now instead of
+     // holding the memory until query teardown. The accounting mirrors the destructor:
+-    // pre-charge the physical bytes to the current MemTracker so the immediate _buffer.clear()
+-    // frees net-zero on it, and release them from the global passthrough tracker.
++    // transfer ownership without changing common ancestors. The immediate _buffer.clear() then
++    // frees net-zero on the current tracker.
+     void clear() {
+         std::unique_lock lock(_mutex);
+         if (_physical_bytes > 0) {
+-            CurrentThread::current().mem_consume(_physical_bytes);
+-            RuntimeEnv::GetInstance()->passthrough_mem_tracker()->release(_physical_bytes);
++            unpark_buffered_bytes(_query_mem_tracker, _physical_bytes);
+             _total_bytes -= _physical_bytes;
+             _physical_bytes = 0;
+         }
+@@ -82,6 +100,7 @@ class PassThroughSenderChannel {
+     std::vector<size_t> _bytes;
+     int64_t _physical_bytes = 0; // Physical consumed bytes for each chunk
+     std::atomic_int64_t& _total_bytes;
++    MemTracker* const _query_mem_tracker;
+ };
+ 
+ // channel per [fragment_instance_id, dest_node_id]
+@@ -91,7 +110,7 @@ class PassThroughChannel {
+         std::unique_lock lock(_mutex);
+         auto it = _sender_id_to_channel.find(sender_id);
+         if (it == _sender_id_to_channel.end()) {
+-            auto* channel = new PassThroughSenderChannel(_total_bytes);
++            auto* channel = new PassThroughSenderChannel(_total_
+```
+
+**File**: `be/src/compute_env/data_stream/local_pass_through_buffer.h` (modified, +7/-1)
+```diff
+@@ -26,6 +26,8 @@
+ 
+ namespace starrocks {
+ 
++class MemTracker;
++
+ // To manage pass through chunks between sink/sources in the same process.
+ using ChunkUniquePtrVector = std::vector<std::pair<ChunkUniquePtr, int32_t>>;
+ class PassThroughChannel;
+@@ -69,7 +71,11 @@ class PassThroughContext {
+ public:
+     PassThroughContext(PassThroughChunkBuffer* chunk_buffer, const TUniqueId& fragment_instance_id, PlanNodeId node_id)
+             : _chunk_buffer(chunk_buffer), _fragment_instance_id(fragment_instance_id), _node_id(node_id) {}
+-    void init();
++    // `query_mem_tracker` is the query tracker shared by the sender and receiver instances (they always
++    // belong to the same query on this BE). Buffered chunks are parked on it while they wait in the
++    // channel, so they stay inside the query, resource group and process budgets. Without it the
++    // chunks are only tracked by the global passthrough tracker, outside the process tree.
++    void init(std::shared_ptr<MemTracker> query_mem_tracker = nullptr);
+     void append_chunk(int sender_id, const Chunk* chunk, size_t chunk_size, int32_t driver_sequence);
+     void pull_chunks(int sender_id, ChunkUniquePtrVector* chunks, std::vector<size_t>* bytes);
+     int64_t total_bytes() const;
+```
+
+**File**: `be/src/exec/pipeline/exchange/exchange_sink_operator.cpp` (modified, +4/-4)
+```diff
+@@ -126,7 +126,7 @@ class ExchangeSinkOperator::Channel {
+     Status _close_internal(RuntimeState* state, FragmentContext* fragment_ctx);
+ 
+     bool _check_use_pass_through();
+-    void _prepare_pass_through();
++    void _prepare_pass_through(RuntimeState* state);
+     // Account the memory retained by _chunks[driver_sequence] into the parent's profile counter.
+     // Container (capacity) usage is re-read each time, which is O(#columns); memory referenced by
+     // out-of-line objects (JSON, bitmap, HLL, ...) is only measured for the rows just appended and
+@@ -186,8 +186,8 @@ bool ExchangeSinkOperator::Channel::_check_use_pass_through() {
+     return is_local();
+ }
+ 
+-void ExchangeSinkOperator::Channel::_prepare_pass_through() {
+-    _pass_through_context.init();
++void ExchangeSinkOperator::Channel::_prepare_pass_through(RuntimeState* state) {
++    _pass_through_context.init(state->query_mem_tracker_ptr());
+     _use_pass_through = _check_use_pass_through();
+ }
+ 
+@@ -217,7 +217,7 @@ Status ExchangeSinkOperator::Channel::init(RuntimeState* state) {
+         return Status::InternalError(msg);
+     }
+ 
+-    _prepare_pass_through();
++    _prepare_pass_through(state);
+     _ignore_local_data = _enable_exchange_perf && is_local();
+ 
+     _is_inited = true;
+```
+
+**File**: `be/src/http/default_path_handlers.cpp` (modified, +2/-1)
+```diff
+@@ -189,7 +189,8 @@ void MemTrackerWebPageHandler::handle(const RuntimeEnv& runtime_env, MemTracker*
+             auto* update_item = update_mem_tracker->get_snapshot(&obj_pool, upper_level);
+             update_item->parent = root;
+ 
+-            // passthrough memory tracker not in RootMemTrackerTree
++            // passthrough memory tracker not in RootMemTrackerTree. It only mirrors bytes that the query
++            // trackers (and so the process tracker) already count, so it is shown for diagnosis only.
+             MemTracker* passthrough_mem_tracker = runtime_env.passthrough_mem_tracker();
+             auto* passthrough_item = passthrough_mem_tracker->get_snapshot(&obj_pool, upper_level);
+             passthrough_item->parent = root;
+```
+
+**File**: `be/src/runtime/current_thread.h` (modified, +41/-0)
+```diff
+@@ -196,6 +196,28 @@ class CurrentThread {
+             }
+         }
+ 
++        void transfer_to(MemTracker* tracker, int64_t size) {
++            commit(false);
++            if (auto* current = CurrentThread::mem_tracker(); current != nullptr) {
++                current->transfer_to(tracker, size);
++            } else {
++                tracker->consume(size);
++            }
++            _deallocated_cache_size += size;
++            _total_consumed_bytes -= size;
++        }
++
++        void transfer_from(MemTracker* tracker, int64_t size) {
++            commit(false);
++            if (auto* current = CurrentThread::mem_tracker(); current != nullptr) {
++                tracker->transfer_to(current, size);
++            } else {
++                tracker->release(size);
++            }
++            _allocated_cache_size += size;
++            _total_consumed_bytes += size;
++        }
++
+         void commit(bool is_ctx_shift) {
+             MemTracker* cur_tracker = CurrentThread::mem_tracker();
+             if (cur_tracker != nullptr) {
+@@ -366,6 +388,25 @@ class CurrentThread {
+         }
+     }
+ 
++    // Transfer already-accounted bytes (e.g. a get_consumed_bytes() delta) to another tracker.
++    // This is not a free: do not recycle the charge into the thread's reservation. Flush
++    // pending allocations, then leave all common ancestors unchanged during the transfer.
++    void mem_transfer_to(MemTracker* tracker, int64_t size) {
++        DCHECK_GE(size, 0);
++        if (size != 0) {
++            _mem_cache_manager.transfer_to(tracker, size);
++        }
++    }
++
++    // Receive already-accounted memory. This is not an allocation and must not consume a
++    // reservation; the eventual free will release this transferred charge normally.
++    void mem_transfer_from(MemTracker* tracker, int64_t size) {
++        DCHECK_GE(size, 0);
++        if (size != 0) {
++            _mem_cache_manager.transfer_from(tracker, size);
++        }
++    }
++
+     static void mem_consume_without_cache(int64_t size) {
+         MemTracker* cur_tracker = mem_tracker();
+         if (cur_tracker != nullptr && size != 0) {
+```
+
+**File**: `be/src/runtime/mem_tracker.h` (modified, +20/-0)
+```diff
+@@ -221,6 +221,26 @@ class MemTracker {
+         }
+     }
+ 
++    // Reclassify live memory without changing any shared ancestor (in particular process).
++    // The two tracker paths are immutable. Their common suffix must not be debited/credited,
++    // even temporarily: concurrent limit checks observe those counters.
++    void transfer_to(MemTracker* dst, int64_t bytes) {
++        DCHECK(dst != nullptr);
++        DCHECK_GE(bytes, 0);
++        size_t src_end = _all_trackers.size();
++        size_t dst_end = dst->_all_trackers.size();
++        while (src_end > 0 && dst_end > 0 && _all_trackers[src_end - 1] == dst->_all_trackers[dst_end - 1]) {
++            --src_end;
++            --dst_end;
++        }
++        for (size_t i = 0; i < src_end; ++i) {
++            _all_trackers[i]->_consumption->add(-bytes);
++        }
++        for (size_t i = 0; i < dst_end; ++i) {
++            dst->_all_trackers[i]->_consumption->add(bytes);
++        }
++    }
++
+     // the function can be used to transform memory stats from process mem_tracker to child mem_tracker
+     void consume_without_root(int64_t bytes) {
+         if (bytes == 0) {
+```
+
+**File**: `be/src/runtime/runtime_env.cpp` (modified, +3/-0)
+```diff
+@@ -318,6 +318,9 @@ Status RuntimeEnv::_init_mem_tracker(MetricRegistry* metrics) {
+     _jit_cache_mem_tracker = regist_tracker(MemTrackerType::JIT_CACHE, -1, process_mem_tracker());
+     _update_mem_tracker = regist_tracker(MemTrackerType::UPDATE, calc_max_update_memory(bytes_limit), nullptr);
+     _update_mem_tracker->set_level(2);
++    // Diagnostic only: mirrors the bytes buffered in local pass-through channels. Those bytes are
++    // already accounted on the query tracker (or the process tracker as a fallback), so keep this
++    // tracker out of the tree, or they would be counted twice.
+     _passthrough_mem_tracker = regist_tracker(MemTrackerType::PASSTHROUGH, -1, nullptr);
+     _passthrough_mem_tracker->set_level(2);
+     _brpc_iobuf_mem_tracker = regist_tracker(MemTrackerType::BRPC_IOBUF, -1, nullptr);
+```
+
+---
+
+### Incident Patch 3: `e568fbf8` (2026-10-28)
+**Commit Message**: [BugFix][RB-225] Keep Iceberg equality deletes applied when identity column optimize is off (#81760)
+
+Co-authored-by: tqqq <[REDACTED_EMAIL]>
+Co-authored-by: tqqq <[REDACTED_EMAIL]>
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/rule/transformation/IcebergEqualityDeleteRewriteRule.java` (modified, +7/-0)
+```diff
+@@ -477,6 +477,13 @@ private static Set<String> runtimeFilterPruningColumns(OptimizerContext context,
+         if (!context.getSessionVariable().isEnableIcebergEqDeleteRuntimeFilterPruning()) {
+             return Set.of();
+         }
++        // only the delete scan always takes these columns from partition metadata; with the switch off the data-file
++        // scan reads them from the file, which may not store them (e.g. migrated Hive files), and a NULL never matches,
++        // so match by $partition_key instead, unless a real column of that name leaves no partition match at all
++        if (!context.getSessionVariable().getEnableIcebergIdentityColumnOptimize() &&
++                icebergTable.getNativeTable().schema().caseInsensitiveFindField(PARTITION_KEY) == null) {
++            return Set.of();
++        }
+         Set<String> scanColumnNames = scan.getColRefToColumnMetaMap().values().stream()
+                 .map(Column::getName)
+                 .collect(Collectors.toSet());
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/sql/optimizer/rule/transformation/IcebergEqualityDeleteRewriteRuleTest.java` (modified, +67/-18)
+```diff
+@@ -22,6 +22,7 @@
+ import com.starrocks.connector.exception.StarRocksConnectorException;
+ import com.starrocks.connector.iceberg.IcebergApiConverter;
+ import com.starrocks.connector.iceberg.IcebergDeleteSchema;
++import com.starrocks.qe.ConnectContext;
+ import com.starrocks.sql.ast.expression.BinaryType;
+ import com.starrocks.sql.optimizer.OptExpression;
+ import com.starrocks.sql.optimizer.OptimizerFactory;
+@@ -346,10 +347,72 @@ private void collectBinaryTypes(ScalarOperator op, Map<String, BinaryType> out)
+     // VARCHAR $partition_key: the data-file scan reads it next to the key, and the delete scan takes it as a slot.
+     @Test
+     public void testPartitionColumnReplacesPartitionKeyWhenNotSelected() {
+-        Schema schema = new Schema(
++        OptExpression antiJoin = rewriteEqDeleteScanSelectingV(new ConnectContext());
++        LogicalIcebergScanOperator withDeleteScan = antiJoin.inputAt(0).getOp().cast();
++        LogicalIcebergEqualityDeleteScanOperator eqDeleteScan = antiJoin.inputAt(1).getOp().cast();
++        Set<String> withDeleteColumns = Set.copyOf(withDeleteScan.getColumnNameToColRefMap().keySet());
++        Assertions.assertTrue(withDeleteColumns.containsAll(Set.of("id", "p", "v")), withDeleteColumns.toString());
++        Assertions.assertFalse(withDeleteColumns.contains(PARTITION_KEY), withDeleteColumns.toString());
++        Assertions.assertEquals(Set.of("p"), eqDeleteScan.getRuntimeFilterPruningColumns());
++
++        Map<String, BinaryType> onTypes = new HashMap<>();
++        collectBinaryTypes(((LogicalJoinOperator) antiJoin.getOp())
++                .getOnPredicate(), onTypes);
++        Assertions.assertEquals(Map.of("id", BinaryType.EQ_FOR_NULL, "p", BinaryType.EQ_FOR_NULL,
++                DATA_SEQUENCE_NUMBER, BinaryType.LT), onTypes);
++    }
++
++    // With enable_iceberg_identity_column_optimize off the data-file scan reads the partition column from the file,
++    // which may not store it, so the match falls back to $partition_key instead of a NULL that never matches.
 +    @Test
-+    public void testAggregateOverTwiceRenamedDeferredColumn() throws Exception {
-+        boolean pruneJsonSubfield = connectContext.getSessionVariable().isCboPruneJsonSubfield();
-+        boolean lowCardinality = connectContext.getSessionVariable().isEnableLowCardinalityOptimize();
-+        boolean mockDict = FeConstants.USE_MOCK_DICT_MANAGER;
-+        // The json read has to survive as a plain rename for this shape to exist at all. The mock dict
-+        // manager this class installs pretends every string column has a global dictionary, which turns
-+        // the read into a DictMapping expression -- a derived value, which the collector already handles
-+        // correctly -- and hides the defect entirely. A real cluster has no dictionary on a json subfield.
-+        connectContext.getSessionVariable().setEnableLowCardinalityOptimize(false);
-+        FeConstants.USE_MOCK_DICT_MANAGER = false;
-+        connectContext.getSessionVariable().setCboPruneJsonSubfield(true);
-+        try {
-+            String sql;
-+            String plan;
++    public void testPartitionKeyKeptWhenIdentityColumnOptimizeOff() {
++        ConnectContext connectContext = new ConnectContext();
++        connectContext.getSessionVariable().setEnableIcebergIdentityColumnOptimize(false);
++        OptExpression antiJoin = rewriteEqDeleteScanSelectingV(connectContext);
++        LogicalIcebergScanOperator withDeleteScan = antiJoin.inputAt(0).getOp().cast();
++        LogicalIcebergEqualityDeleteScanOperator eqDeleteScan = antiJoin.inputAt(1).getOp().cast();
++        Set<String> withDeleteColumns = Set.copyOf(withDeleteScan.getColumnNameToColRefMap().keySet());
++        Assertions.assertTrue(withDeleteColumns.contains(PARTITION_KEY), withDeleteColumns.toString());
++        Assertions.assertEquals(Set.of(), eqDeleteScan.getRuntimeFilterPruningColumns());
 +
-+            // max() over the renamed column -- the shape that used to produce an invalid plan.
-+            sql = "select v_int, max(a) from (select t.v_int as v_int, get_json_string(t.v_json, '$.a') as a "
-+                    + "from tjson t join t0 d on d.v1 = t.v_int) x group by v_int limit 5";
-+            plan = getFragmentPlan(sql);
-+            assertContains(plan, "max");
++        Map<String, BinaryType> onTypes = new HashMap<>();
++        collectBinaryTypes(((LogicalJoinOperator) antiJoin.getOp())
++                .getOnPredicate(), onTypes);
++        Assertions.assertEquals(Map.of("id", BinaryType.EQ_FOR_NULL, PARTITION_KEY, BinaryType.EQ,
++                DATA_SEQUENCE_NUMBER, BinaryType.LT), onTypes);
++    }
 +
-+            // A numeric subfield is the same defect. It used to be masked in production because the
-+            // cost model declines to defer a small all-numeric set -- so the bug looked type-dependent
-+            // when the type only decided whether the gate let GLM run at all. With the gate off, as it
-+            // is in this class, it fails exactly like the varchar one.
-+            sql = "select v_int, max(n) from (select t.v_int as v_int, get_json_double(t.v_json, '$.n') as n "
-+                    + "from tjson t join t0 d on d.v1 = t.v_int) x group by v_int limit 5";
-+            getFragmentPlan(sql);
++    // A real $partition_key column leaves no $partition_key match, so the identity column keeps the match even with
++    // enable_iceberg_identity_column_optimize off; dropping it would let a delete reach rows of other partitions.
++    @Test
++    public void testIdentityColumnKeptWithPartitionKeyColumnWhenIdentityColumnOptimizeOff() {
++        ConnectContext connectContext = new ConnectContext();
++        connectContext.getSessionVariable().setEnableIcebergIdentityColumnOptimize(false);
++        OptExpression antiJoin = rewriteEqDeleteScanSelectingV(connectContext, new Schema(
++                Types.NestedField.optional(1, "id", Types.IntegerType.get()),
++                Types.NestedField.optional(2, "p", Types.IntegerType.get()),
++                Types.NestedField.optional(3, "v", Types.IntegerType.get()),
++                Types.NestedField.optional(4, PARTITION_KEY, Types.StringType.get())));
++        LogicalIcebergEqualityDeleteScanOperator eqDeleteScan = antiJoin.inputAt(1).getOp().cast();
++        Assertions.assertEquals(Set.of("p"), eqDeleteScan.getRuntimeFilterPruningColumns());
 +
-+            // Neighbouring shapes. These plan on their own today -- the optimizer lays their
-+            // projections out differently and no second rename survives -- but they are one plan-shape
-+            // change away from the same path, so keep them as guard rails rather than as repros.
-+            sql = "select v_int, any_value(a) from (select t.v_int as v_int, get_json_string(t.v_json, '$.a') as a "
-+                    + "from tjson t join t0 d on d.v1 = t.v_int) x group by v_int limit 5";
-+            getFragmentPlan(sql);
++        Map<String, BinaryType> onTypes = new HashMap<>();
++        collectBinaryTypes(((LogicalJoinOperator) antiJoin.getOp())
++                .getOnPredicate(), onTypes);
++        Assertions.assertEquals(Map.of("id", BinaryType.EQ_FOR_NULL, "p", BinaryType.EQ_FOR_NULL,
++                DATA_SEQUENCE_NUMBER, BinaryType.LT), onTypes);
++    }
 +
-+            sql = "select v_int, a from (select t.v_int as v_int, get_json_string(t.v_json, '$.a') as a "
-+                    + "from tjson t join t0 d on d.v1 = t.v_int) x group by v_int, a limit 5";
-+            getFragmentPlan(sql);
-+
-+            // An expression over the renamed column keeps the projection non-trivial, so the collector
-+            // records the base column through collectEarlyMaterialized and this shape always planned.
-+            sql = "select v_int, max(concat(a, 'x')) from (select t.v_int as v_int, "
-+                    + "get_json_string(t.v_json, '$.a') as a from tjson t join t0 d on d.v1 = t.v_int) x "
-+                    + "group by v_int limit 5";
-+            getFragmentPlan(sql);
-+
-+            // Without the limit GLM never engages at all.
-+            sql = "select v_int, max(a) from (select t.v_int as v_int, get_json_string(t.v_json, '$.a') as a "
-+                    + "from tjson t join t0 d on d.v1 = t.v_int) x group by v_int";
-+      
++    // rewrites a scan of tb(id, p, v) partitioned by identity(p) with an equality delete on id, selecting v only, as
++    // `select sum(v) from tb` does after column pruning; returns the anti join
++    private static OptExpression rewriteEqDeleteScanSelectingV(ConnectContext connectContext) {
++        return rewriteEqDeleteScanSelectingV(connectCo
 ```
 
-**File**: `test/sql/test_global_late_mterialization/R/test_glm_agg_renamed_column` (added, +97/-0)
+**File**: `test/sql/test_iceberg/R/test_iceberg_eq_delete_rf_pruning` (modified, +65/-0)
 ```diff
-@@ -0,0 +1,97 @@
-+-- name: test_glm_agg_renamed_column
-+CREATE TABLE `tj` (
-+  `k` int(11) NOT NULL COMMENT "",
-+  `j` json NULL COMMENT "",
-+  `s` varchar(64) NULL COMMENT ""
-+) ENGINE=OLAP
-+DUPLICATE KEY(`k`)
-+DISTRIBUTED BY HASH(`k`) BUCKETS 4
-+PROPERTIES (
-+"replication_num" = "1");
+@@ -319,6 +319,62 @@ select m.* from iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.mixed m join dim_p d on
+ set enable_read_iceberg_equality_delete_with_partition_evolution = false;
+ -- result:
+ -- !result
++create table hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated_src(
++    id int,
++    v string,
++    p int
++) partition by(p) properties ("location" = "oss://${oss_bucket}/eq_rf_db_${uuid0}/migrated_src");
 +-- result:
 +-- !result
-+CREATE TABLE `td` (
-+  `k` int(11) NOT NULL COMMENT "",
-+  `d` int(11) NULL COMMENT ""
-+) ENGINE=OLAP
-+DUPLICATE KEY(`k`)
-+DISTRIBUTED BY HASH(`k`) BUCKETS 4
-+PROPERTIES (
-+"replication_num" = "1");
++insert into hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated_src values (1, 'a1', 1), (2, 'a2', 1), (1, 'b1', 2), (2, 'b2', 2);
 +-- result:
 +-- !result
-+insert into tj values (1, '{"a": "x", "n": 1.5}', 'p'), (2, '{"a": "y", "n": 2.5}', 'q'), (3, '{"a": "z", "n": 3.5}', 'r');
++create table iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated(
++    id int,
++    v string,
++    p int
++) partition by(p) properties ("format-version" = "2");
 +-- result:
 +-- !result
-+insert into td values (1, 10), (2, 20), (3, 30);
++alter table iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated execute add_files(location="oss://${oss_bucket}/eq_rf_db_${uuid0}/migrated_src", file_format="parquet");
 +-- result:
 +-- !result
-+set enable_global_late_materialization = true;
++create table hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated_deletes(
++    id int,
++    p int
++) partition by(p) properties ("location" = "oss://${oss_bucket}/eq_rf_db_${uuid0}/migrated_deletes");
 +-- result:
 +-- !result
-+set cbo_prune_json_subfield = true;
++insert into hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated_deletes values (1, 1), (2, 2);
 +-- result:
 +-- !result
-+set enable_global_late_materialization_cost_based = false;
++alter table iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated execute add_equality_delete_files(location="oss://${oss_bucket}/eq_rf_db_${uuid0}/migrated_deletes", file_format="parquet", equality_columns="id");
 +-- result:
 +-- !result
-+select k, m from (select k, max(a) as m from (select t.k as k, get_json_string(t.j, '$.a') as a from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
++select v from iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated order by v;
 +-- result:
-+1	x
-+2	y
-+3	z
++a2
++b1
 +-- !result
-+select k, m from (select k, max(n) as m from (select t.k as k, get_json_double(t.j, '$.n') as n from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
-+-- result:
-+1	1.5
-+2	2.5
-+3	3.5
-+-- !result
-+select k, a from (select k, a from (select t.k as k, get_json_string(t.j, '$.a') as a from tj t join td d on d.k = t.k) x group by k, a limit 5) y order by k;
-+-- result:
-+1	x
-+2	y
-+3	z
-+-- !result
-+select k, m from (select k, any_value(a) as m from (select t.k as k, get_json_string(t.j, '$.a') as a from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
-+-- result:
-+1	x
-+2	y
-+3	z
-+-- !result
-+select k, m from (select k, max(concat(a, '!')) as m from (select t.k as k, get_json_string(t.j, '$.a') as a from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
-+-- result:
-+1	x!
-+2	y!
-+3	z!
-+-- !result
-+select k, m from (select k, max(s) as m from (select t.k as k, t.s as s from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
-+-- result:
-+1	p
-+2	q
-+3	r
-+-- !result
-+set enable_global_late_materialization_cost_based = true;
++set enable_iceberg_identity_column_optimize = false;
 +-- result:
 +-- !result
-+select k, m from (select k, max(a) as m from (select t.k as k, get_json_string(t.j, '$.a') as a from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
++function: assert_explain_contains('select v from iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated', '$partition_key')
 +-- result:
-+1	x
-+2	y
-+3	z
++None
 +-- !result
-+select k, m from (select k, max(n) as m from (select t.k as k, get_json_double(t.j, '$.n') as n from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
++select v from iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated order by v;
 +-- result:
-+1	1.5
-+2	2.5
-+3	3.5
++a2
++b1
 +-- !result
-+set enable_global_late_materialization = false;
++select count(*) from iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated;
++-- result:
++2
++-- !result
++set enable_iceberg_identity_column_optimize = true;
 +-- result:
 +-- !result
-+select k, m from (select k, max(a) as m from (select t.k as k, get_json_string(t.j, '$.a') as a from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
+ function: assert_explain_not_contains("delete from iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.fact where p in (select p from db_${uuid0}.dim_p) and v = 'a2'", 'Runtime filter pruning columns')
+ -- result:
+ None
+@@ -358,6 +414,15 @@ drop table hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.mixed_global_deletes force;
+ drop table hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.mixed_part_deletes force;
+ -- result:
+ -- !result
++drop table iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated force;
 +-- result:
-+1	x
-+2	y
-+3	z
 +-- !result
-\ No newline at end of file
++drop table hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated_src force;
++-- result:
++-- !result
++drop table hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated_deletes force;
++-- result:
++-- !result
+ drop database iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0};
+ -- result:
+ -- !result
 ```
 
-**File**: `test/sql/test_global_late_mterialization/T/test_glm_agg_renamed_column` (added, +53/-0)
+**File**: `test/sql/test_iceberg/T/test_iceberg_eq_delete_rf_pruning` (modified, +37/-0)
 ```diff
-@@ -0,0 +1,53 @@
-+-- name: test_glm_agg_renamed_column
-+CREATE TABLE `tj` (
-+  `k` int(11) NOT NULL COMMENT "",
-+  `j` json NULL COMMENT "",
-+  `s` varchar(64) NULL COMMENT ""
-+) ENGINE=OLAP
-+DUPLICATE KEY(`k`)
-+DISTRIBUTED BY HASH(`k`) BUCKETS 4
-+PROPERTIES (
-+"replication_num" = "1");
+@@ -178,6 +178,40 @@ function: assert_explain_not_contains('select m.* from iceberg_eq_rf_${uuid0}.eq
+ select m.* from iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.mixed m join dim_p d on m.p = d.p order by m.id;
+ set enable_read_iceberg_equality_delete_with_partition_evolution = false;
+ 
++-- data files without the partition column (hive-written, registered with add_files): with
++-- enable_iceberg_identity_column_optimize off the data-file scan would read p as NULL, so the match keeps $partition_key
++create table hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated_src(
++    id int,
++    v string,
++    p int
++) partition by(p) properties ("location" = "oss://${oss_bucket}/eq_rf_db_${uuid0}/migrated_src");
 +
-+CREATE TABLE `td` (
-+  `k` int(11) NOT NULL COMMENT "",
-+  `d` int(11) NULL COMMENT ""
-+) ENGINE=OLAP
-+DUPLICATE KEY(`k`)
-+DISTRIBUTED BY HASH(`k`) BUCKETS 4
-+PROPERTIES (
-+"replication_num" = "1");
++insert into hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated_src values (1, 'a1', 1), (2, 'a2', 1), (1, 'b1', 2), (2, 'b2', 2);
 +
-+insert into tj values (1, '{"a": "x", "n": 1.5}', 'p'), (2, '{"a": "y", "n": 2.5}', 'q'), (3, '{"a": "z", "n": 3.5}', 'r');
-+insert into td values (1, 10), (2, 20), (3, 30);
++create table iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated(
++    id int,
++    v string,
++    p int
++) partition by(p) properties ("format-version" = "2");
 +
-+set enable_global_late_materialization = true;
-+set cbo_prune_json_subfield = true;
++alter table iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated execute add_files(location="oss://${oss_bucket}/eq_rf_db_${uuid0}/migrated_src", file_format="parquet");
 +
-+-- A json subfield read is a column rename, and the projection that feeds the aggregate renames it a
-+-- second time. GLM used to record only the first rename, defer the column anyway, and emit a plan whose
-+-- aggregate read a column no operator produced -- "Input dependency cols check failed", no rows at all.
-+-- Both selects below were red before the fix.
-+set enable_global_late_materialization_cost_based = false;
-+select k, m from (select k, max(a) as m from (select t.k as k, get_json_string(t.j, '$.a') as a from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
-+-- A numeric subfield is the SAME defect. In production it looked type-dependent only because the cost
-+-- model declines to defer a small all-numeric set, so the gate happened to keep GLM away from it.
-+select k, m from (select k, max(n) as m from (select t.k as k, get_json_double(t.j, '$.n') as n from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
++create table hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated_deletes(
++    id int,
++    p int
++) partition by(p) properties ("location" = "oss://${oss_bucket}/eq_rf_db_${uuid0}/migrated_deletes");
 +
-+-- Neighbouring shapes. These planned before the fix too -- the optimizer lays their projections out
-+-- differently and no second rename survives -- but they sit one plan-shape change from the same path.
-+select k, a from (select k, a from (select t.k as k, get_json_string(t.j, '$.a') as a from tj t join td d on d.k = t.k) x group by k, a limit 5) y order by k;
-+select k, m from (select k, any_value(a) as m from (select t.k as k, get_json_string(t.j, '$.a') as a from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
-+select k, m from (select k, max(concat(a, '!')) as m from (select t.k as k, get_json_string(t.j, '$.a') as a from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
-+-- a plain varchar column is renamed only once and always worked
-+select k, m from (select k, max(s) as m from (select t.k as k, t.s as s from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
++insert into hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated_deletes values (1, 1), (2, 2);
 +
-+-- The same queries with the cost model on, which is the default. On this corpus the gate keeps GLM out,
-+-- so these are a smoke test of the default path rather than a repro.
-+set enable_global_late_materialization_cost_based = true;
-+select k, m from (select k, max(a) as m from (select t.k as k, get_json_string(t.j, '$.a') as a from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
-+select k, m from (select k, max(n) as m from (select t.k as k, get_json_double(t.j, '$.n') as n from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
++alter table iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated execute add_equality_delete_files(location="oss://${oss_bucket}/eq_rf_db_${uuid0}/migrated_deletes", file_format="parquet", equality_columns="id");
 +
-+-- and with GLM off, which is the workaround the defect used to need
-+set enable_global_late_materialization = false;
-+select k, m from (select k, max(a) as m from (select t.k as k, get_json_string(t.j, '$.a') as a from tj t join td d on d.k = t.k) x group by k limit 5) y order by k;
++select v from iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated order by v;
++set enable_iceberg_identity_column_optimize = false;
++function: assert_explain_contains('select v from iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated', '$partition_key')
++select v from iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated order by v;
++select count(*) from iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated;
++set enable_iceberg_identity_column_optimize = true;
++
+ -- a DML target keeps every delete
+ function: assert_explain_not_contains("delete from iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.fact where p in (select p from db_${uuid0}.dim_p) and v = 'a2'", 'Runtime filter pruning columns')
+ delete from iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.fact where p in (select p from db_${uuid0}.dim_p) and v = 'a2';
+@@ -192,6 +226,9 @@ drop table iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.fact_null force;
+ drop table hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.fact_null_deletes force;
+ drop table hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.mixed_global_deletes force;
+ drop table hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.mixed_part_deletes force;
++drop table iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated force;
++drop table hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated_src force;
++drop table hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated_deletes force;
+ drop database iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0};
+ drop database db_${uuid0};
+ drop catalog iceberg_eq_rf_${uuid0};
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #81693** (2026-10-27): [Doc] Give the general monitoring metrics one sidebar entry (backport #81690) (@mergify[bot])
-- **PR #81692** (2026-10-27): [Doc] Give the general monitoring metrics one sidebar entry (backport #81690) (@DanRoscigno)
-- **PR #81691** (2026-10-27): [Doc] Give the general monitoring metrics one sidebar entry (backport #81690) (@DanRoscigno)
-- **PR #81690** (2026-10-27): [Doc] Give the general monitoring metrics one sidebar entry (@DanRoscigno)
-- **PR #81688** (2026-10-27): [Doc] Fix the Japanese Tableau connector page (@DanRoscigno)
-- **PR #81685** (2026-10-27): [Refactor] Remove disabled multi-shape code from geo_types (@trueeyu)
+- **PR #81780** (2026-10-28): [BugFix] Account buffered pass-through chunks in query and process memory (backport #80910) (@mergify[bot])
+- **PR #81764** (2026-10-28): [Enhancement][RB-424] Support rollups, synchronous MVs and sort-key changes on range tables with AUTO_INCREMENT (backport #81757) (@mergify[bot])
+- **PR #81760** (2026-10-28): [BugFix][RB-225] Keep Iceberg equality deletes applied when identity column optimize is off (@starrocks-bot[bot])
+- **PR #81759** (2026-10-28): [Enhancement][RB-225] Cut the Iceberg equality-delete anti join cost: fixed-width partition match and key filters on the delete scan (@starrocks-bot[bot])
+- **PR #81757** (2026-10-28): [Enhancement][RB-424] Support rollups, synchronous MVs and sort-key changes on range tables with AUTO_INCREMENT (@starrocks-bot[bot])
+- **PR #81755** (closed): [Tool] Set fe version to 4.2.0 (@huailiu1122)
 
 ---
 
@@ -2746,50 +2771,66 @@ Co-authored-by: kangkaisen <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [Doc] Fix the Japanese Tableau connector page (#81688)
+## X. [BugFix][RB-654] Stop two Iceberg FE hangs: profile explain partition listing an
 
 **RULE**:
-When implementing operations in `docs/ja/integrations/BI_integrations/Tableau_Desktop.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `fe/fe-core/src/main/java/com/starrocks/planner/IcebergScanNode.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `41983afe`: [Doc] Fix the Japanese Tableau connector page (#81688). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `99d51e09`: [BugFix][RB-654] Stop two Iceberg FE hangs: profile explain partition listing and OSS read-ahead wait (#81711). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/ja/integrations/BI_integrations/Tableau_Desktop.md`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `fe/fe-core/src/main/java/com/starrocks/planner/IcebergScanNode.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-- LDAP サポート: 安全な認証のためのパスワードプロンプト付きの LDAP ログインを可能にします。
-- 高い互換性: TDVT (Tableau Design Verification Tool) テストで 99.99% の互換性を達成しており、失敗するのは軽微なケース 1 件のみです。
-先に進む前に、以下の要件が満たされていることを確認してください。
-- Tableau バージョン: Tableau 2020.4 以降
-## Tableau Desktop 用コネクタのインストール
-3. [StarRocks Tableau JDBC Connector ファイル](https://exchange.tableau.com/products/1079) をダウンロードします。
-## Tableau Server 用コネクタのインストール
-   Linux では、"Tableau" ユーザーにディレクトリへのアクセスを許可する必要があります。
-      # <path_to_driver_file_name> をドライバファイルの絶対パスに置き換えてください。
-   2. "Tableau" ユーザーに権限を付与します。
-3. [StarRocks Tableau JDBC Connector ファイル](https://exchange.tableau.com/products/1079) をダウンロードします。
-## 使用上の注意
+            appendPartitionsExplain(output, prefix);
+    // Lists every partition of the table and may plan all scan ranges. Skipped when the finished query's plan is
+    // rendered into its profile: nothing bounds that metadata read once the query has ended.
+    private void appendPartitionsExplain(StringBuilder output, String prefix) {
+        ConnectContext connectContext = ConnectContext.get();
+        if (connectContext != null && connectContext.isExplainForProfile()) {
+            return;
+        }
+        ConnectorMetadataRequestContext requestContext = new ConnectorMetadataRequestContext();
+        requestContext.setTableVersionRange(tvrVersionRange);
+        List<String> partitionNames = GlobalStateMgr.getCurrentState().getMetadataMgr().listPartitionNames(
+                icebergTable.getCatalogName(), icebergTable.getCatalogDBName(),
+                icebergTable.getCatalogTableName(), requestContext);
+        if (selectedPartitionCount == -1) {
+            if (scanRangeSource != null) {
+                // we have to consume all scan ranges to know how many partition been selected.
+                while (scanRangeSource.hasMoreOutput()) {
+                    scanRangeSour
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-- LDAP サポート： 安全な認証のためのパスワードプロンプト付きの LDAP ログインを可能にします。
-- 高い互換性： TDVT (Tableau Design Verification Tool) テストで 99.99% の互換性を達成。
-先に進む前に、以下の要件が満たされていることを確認してください：
-- Tableau バージョン： Tableau 2020.4 以降
-## Tableau Desktop 用 Connector のインストール
-3. [StarRocks Tableau JDBC Connector file](https://exchange.tableau.com/products/1079) をダウンロードします。
-## Tableau Server 用 Connector のインストール
-   Linux では、「Tableau」 ユーザがディレクトリにアクセスすることを許可する必要があります。
-      # Replace <path_to_driver_file_name> with the absolute path of the driver file.
-   2. Tableau "ユーザーにアクセス許可を与える。
-3. [StarRocks Tableau JDBC Connector file](https://exchange.tableau.com/products/1079) をダウンロードします。
-## Usage notes
+            ConnectorMetadataRequestContext requestContext = new ConnectorMetadataRequestContext();
+            requestContext.setTableVersionRange(tvrVersionRange);
+            List<String> partitionNames = GlobalStateMgr.getCurrentState().getMetadataMgr().listPartitionNames(
+                    icebergTable.getCatalogName(), icebergTable.getCatalogDBName(),
+                    icebergTable.getCatalogTableName(), requestContext);
+
+            if (selectedPartitionCount == -1) {
+                if (scanRangeSource != null) {
+                    // we have to consume all scan ranges to know how many partition been selected.
+                    while (scanRangeSource.hasMoreOutput()) {
+                        scanRangeSource.getOutputs(1000);
+                    }
+                    selectedPartitionCount = scanRangeSource.selectedPartitionCount();
+                } else {
+                    selectedPartitionCount = 0;
+                }
+            }
+
+            output.append(prefix).append(
+                    String.format("partitions=%s/%s", selectedPartitionCount,
+                            partitionNames.isEmpty() ? 1 : partitionNames.size()));
+            output.append("\n"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `41983afe` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `99d51e09` are properly handled with clean fallback behavior.

@@ -5852,3 +5852,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-sentence-transformers-all-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/all-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-28T16:19:27.481Z |
 | `learn-huggingface-baai-bge-reranker-v2-m3` | `https://huggingface.co/BAAI/bge-reranker-v2-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-28T16:27:14.893Z |
 | `learn-github-kubearmor-kubearmor` | `https://github.com/kubearmor/KubeArmor` | `3b5c8f74` | Multi-dimensional audit evidence | 2026-10-28T16:27:16.862Z |
+| `learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese` | `https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | `hf-jonatas` | Multi-dimensional audit evidence | 2026-10-28T16:33:36.315Z |
+| `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `c4d3ad3d` | Multi-dimensional audit evidence | 2026-10-28T16:33:38.303Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `ea12b738` | Multi-dimensional audit evidence | 2026-10-28T16:33:47.482Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `7e354c62` | Multi-dimensional audit evidence | 2026-10-28T16:33:53.374Z |

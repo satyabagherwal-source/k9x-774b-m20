@@ -5843,3 +5843,7 @@
 | `CYCLE-20261028-KX9X` | `2026-10-28T16:19:27.477Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 858, Rule 5341` | Yes (`a5331c4f...`) |
 | `CYCLE-20261028-UXXN` | `2026-10-28T16:27:14.891Z` | `BAAI/bge-reranker-v2-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md` | Yes (`602b2591...`) |
 | `CYCLE-20261028-UZGB` | `2026-10-28T16:27:16.859Z` | `kubearmor/KubeArmor` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md` | Yes (`8b064e87...`) |
+| `CYCLE-20261028-348O` | `2026-10-28T16:33:36.312Z` | `jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md` | Yes (`f04fc88b...`) |
+| `CYCLE-20261028-35RW` | `2026-10-28T16:33:38.300Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5342` | Yes (`f8c01793...`) |
+| `CYCLE-20261028-3CUV` | `2026-10-28T16:33:47.479Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5343` | Yes (`d751ae03...`) |
+| `CYCLE-20261028-3HEJ` | `2026-10-28T16:33:53.371Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5344` | Yes (`5309c390...`) |

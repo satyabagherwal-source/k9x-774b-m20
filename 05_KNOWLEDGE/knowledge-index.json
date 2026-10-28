@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T16:27:16.782Z",
+  "last_updated": "2026-10-28T16:33:53.323Z",
   "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9100,8 +9100,8 @@
       "slug": "dicklesworthstone-destructive_command_guard",
       "platform": "github",
       "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
-      "source_version": "5c060064",
-      "content_hash": "e6e4c27d2f8da2ff395f4a1d4400dac896e622975b7cfeae4f960fc4ba281beb",
+      "source_version": "c4d3ad3d",
+      "content_hash": "f8c017933134131e5e763b336daa4d28011b9e35dec0a00a3d34ee5a82b5d0e4",
       "dossier_path": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "promoted_rules": [
@@ -9139,6 +9139,11 @@
           "number": 4820,
           "title": "deps): realign ast-grep core with the vendored language adapter again",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5342,
+          "title": "security): keep grants bound to original requests and preserve DCG argv ownershi",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9146,7 +9151,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:54:23.816Z",
+      "verified_at": "2026-10-28T16:33:38.240Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23439,7 +23444,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
       "source_version": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "content_hash": "bd4696f0e0950b9e907295bf941b131c283c6cd78ce5e3045788bc02b140d2b7",
+      "content_hash": "f04fc88b6dc5e44e1e28ddc34bff7f0c6288e3788135dad2a15d46672123d3dc",
       "dossier_path": "07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
       "promoted_rules": [
@@ -23486,7 +23491,7 @@
         "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv3yhjko",
         "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv4d7mje"
       ],
-      "verified_at": "2026-10-25T23:17:15.631Z",
+      "verified_at": "2026-10-28T16:33:36.247Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37163,8 +37168,8 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "4eca1f5b",
-      "content_hash": "5e7ccda7762de991baf6cadefe643f46fba9fa5dc8070c792d3baeff8275f50a",
+      "source_version": "ea12b738",
+      "content_hash": "d751ae03a042e8ffda6b8c1f3d30bcdafa1f938ac15ee33406e36bf6a05e2ee2",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
@@ -37252,6 +37257,11 @@
           "number": 5293,
           "title": "agent-sre): write CRD field names in GitOps rollout specs (#4461)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5343,
+          "title": "agent-sre): stop blue-green validation at its timeout (#4470)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37259,7 +37269,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T13:23:29.891Z",
+      "verified_at": "2026-10-28T16:33:47.416Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49560,8 +49570,8 @@
       "slug": "starrocks-starrocks",
       "platform": "github",
       "source_url": "https://github.com/StarRocks/starrocks",
-      "source_version": "41983afe",
-      "content_hash": "6ddac598a9a2d3645af1f636c999bda1e04b30de8d85467a4c6eb6a451c32d2d",
+      "source_version": "7e354c62",
+      "content_hash": "5309c3901a2225789354b5746b011c03cbfca1899343cba282348da73771a228",
       "dossier_path": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "promoted_rules": [
@@ -49604,6 +49614,11 @@
           "number": 4727,
           "title": "[BugFix] Bump lastSchemaUpdateTime before shared-data schema change swaps indexe",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5344,
+          "title": "[BugFix][RB-654] Stop two Iceberg FE hangs: profile explain partition listing an",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49611,7 +49626,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T00:32:49.219Z",
+      "verified_at": "2026-10-28T16:33:53.312Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -145054,6 +145069,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T16:19:27.385Z"
+    },
+    "rule-5342": {
+      "learning_id": "rule-5342",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5342,
+      "title": "security): keep grants bound to original requests and preserve DCG argv ownershi",
+      "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
+      "source_version": "c4d3ad3d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T16:33:38.240Z"
+    },
+    "rule-5343": {
+      "learning_id": "rule-5343",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5343,
+      "title": "agent-sre): stop blue-green validation at its timeout (#4470)",
+      "source_url": "https://github.com/microsoft/agent-governance-toolkit",
+      "source_version": "ea12b738",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T16:33:47.416Z"
+    },
+    "rule-5344": {
+      "learning_id": "rule-5344",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5344,
+      "title": "[BugFix][RB-654] Stop two Iceberg FE hangs: profile explain partition listing an",
+      "source_url": "https://github.com/StarRocks/starrocks",
+      "source_version": "7e354c62",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T16:33:53.312Z"
     }
   },
   "aliases": {

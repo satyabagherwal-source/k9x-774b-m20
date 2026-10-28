@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-YH04",
-    "timestamp": "2026-10-27T13:54:21.460Z",
-    "repository": "dockview/dockview",
-    "learningId": "learn-github-dockview-dockview",
-    "contentHash": "3eeb8f2497e1b3f9a612987b1ce346d6d5ce1d0de86bdb86a716a663f49270d2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-YIUT",
-    "timestamp": "2026-10-27T13:54:23.861Z",
-    "repository": "Dicklesworthstone/destructive_command_guard",
-    "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
-    "contentHash": "e6e4c27d2f8da2ff395f4a1d4400dac896e622975b7cfeae4f960fc4ba281beb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-YM4U",
-    "timestamp": "2026-10-27T13:54:28.110Z",
-    "repository": "feathersjs/feathers",
-    "learningId": "learn-github-feathersjs-feathers",
-    "contentHash": "2aaa8e8ddcdc5e157ee23979e629962908a74557bbd22e116f8eda2c1cc5e842",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-YRMP",
-    "timestamp": "2026-10-27T13:54:35.233Z",
-    "repository": "meilisearch/meilisearch",
-    "learningId": "learn-github-meilisearch-meilisearch",
-    "contentHash": "8366daacca0fa102a572950b85c19c99d2e65121fea4a62cb273e046015058fa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-2WAC",
     "timestamp": "2026-10-27T13:57:47.892Z",
     "repository": "frankbria/ralph-claude-code",
@@ -7492,6 +7432,66 @@
     "contentHash": "8b064e874acc248eef5330a4decd55e04cafc3119782dfce53c3d63ee79d8b64",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-348O",
+    "timestamp": "2026-10-28T16:33:36.312Z",
+    "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+    "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+    "contentHash": "f04fc88b6dc5e44e1e28ddc34bff7f0c6288e3788135dad2a15d46672123d3dc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-35RW",
+    "timestamp": "2026-10-28T16:33:38.300Z",
+    "repository": "Dicklesworthstone/destructive_command_guard",
+    "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
+    "contentHash": "f8c017933134131e5e763b336daa4d28011b9e35dec0a00a3d34ee5a82b5d0e4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-3CUV",
+    "timestamp": "2026-10-28T16:33:47.479Z",
+    "repository": "microsoft/agent-governance-toolkit",
+    "learningId": "learn-github-microsoft-agent-governance-toolkit",
+    "contentHash": "d751ae03a042e8ffda6b8c1f3d30bcdafa1f938ac15ee33406e36bf6a05e2ee2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-3HEJ",
+    "timestamp": "2026-10-28T16:33:53.371Z",
+    "repository": "StarRocks/starrocks",
+    "learningId": "learn-github-starrocks-starrocks",
+    "contentHash": "5309c3901a2225789354b5746b011c03cbfca1899343cba282348da73771a228",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
