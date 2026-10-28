@@ -5647,3 +5647,5 @@
 | `CYCLE-20261028-2FFP` | `2026-10-28T02:05:16.069Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5120` | Yes (`ce46c98f...`) |
 | `CYCLE-20261028-CQBR` | `2026-10-28T02:13:16.743Z` | `msasikanth/twine` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5121` | Yes (`a5866c2b...`) |
 | `CYCLE-20261028-CRLX` | `2026-10-28T02:13:18.405Z` | `convaiinnovations/laya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5122, Rule 5123, Rule 5124` | Yes (`7ffbefa8...`) |
+| `CYCLE-20261028-LVFH` | `2026-10-28T02:20:23.261Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5125` | Yes (`d8ce4214...`) |
+| `CYCLE-20261028-M8HM` | `2026-10-28T02:20:40.186Z` | `Edge0/Audio8-ASR-Infinite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5126, Rule 5127, Rule 5128` | Yes (`3ff07436...`) |

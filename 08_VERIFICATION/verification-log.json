@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261026-LY1P",
-    "timestamp": "2026-10-26T13:28:56.989Z",
-    "repository": "ant-design/pro-components",
-    "learningId": "learn-github-ant-design-pro-components",
-    "contentHash": "36a3ceb2aa7397d9744ba9098f0a11d512f75cdd50e609f387d6a96b0d20050c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-M1OL",
-    "timestamp": "2026-10-26T13:29:01.701Z",
-    "repository": "superhighfives/pika",
-    "learningId": "learn-github-superhighfives-pika",
-    "contentHash": "eb85ffa9bafae230442a9b076186c756ec070e1fdc89732adcfdf66e78cf682d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261026-M43A",
     "timestamp": "2026-10-26T13:29:04.822Z",
     "repository": "argoproj/argo-workflows",
@@ -7490,6 +7460,36 @@
     "repository": "convaiinnovations/laya",
     "learningId": "learn-huggingface-convaiinnovations-laya",
     "contentHash": "7ffbefa863f0fe765cf7903e1999e25f72946360afeee1f8c6f2b177f8df4270",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-LVFH",
+    "timestamp": "2026-10-28T02:20:23.261Z",
+    "repository": "genkit-ai/genkit",
+    "learningId": "learn-github-genkit-ai-genkit",
+    "contentHash": "d8ce421490b823e78423709a241248b92ffe71d80d9788d0833fa220d10f04ac",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-M8HM",
+    "timestamp": "2026-10-28T02:20:40.186Z",
+    "repository": "Edge0/Audio8-ASR-Infinite",
+    "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
+    "contentHash": "3ff07436711e26497f34fe7e46c906392fd3a226a3735f5b5442c50ed0e1938c",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

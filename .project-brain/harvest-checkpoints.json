@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T02:13:18.419Z",
+  "last_updated": "2026-10-28T02:20:40.199Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -52,14 +52,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-edge0-audio8-asr-infinite",
-      "content_hash": "8fc16d44e404b5948280e1c286c9fd1736fcde500f0a69c7fc5d9426b19e7e67",
-      "verified_at": "2026-10-25T05:46:03.028Z",
+      "content_hash": "3ff07436711e26497f34fe7e46c906392fd3a226a3735f5b5442c50ed0e1938c",
+      "verified_at": "2026-10-28T02:20:40.199Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T05:46:03.028Z"
+      "last_updated": "2026-10-28T02:20:40.199Z"
     },
     "abenzerps/Qwen-Image-2.1-Uncensored-GGUF": {
       "repository": "abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
@@ -9081,14 +9081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-genkit-ai-genkit",
-      "content_hash": "9bf1edde8872cbafa42d05c5f163c0de75690bb2b5cddaa2aed83efd18f3a51c",
-      "verified_at": "2026-10-27T13:14:23.953Z",
+      "content_hash": "d8ce421490b823e78423709a241248b92ffe71d80d9788d0833fa220d10f04ac",
+      "verified_at": "2026-10-28T02:20:23.274Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:14:23.953Z"
+      "last_updated": "2026-10-28T02:20:23.274Z"
     },
     "guokaigdg/animal-island-ui": {
       "repository": "guokaigdg/animal-island-ui",

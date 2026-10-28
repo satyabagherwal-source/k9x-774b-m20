@@ -125,8 +125,8 @@
     "sourceUrl": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
     "sourceVersion": "hf-edge0-audio8-asr-infinite",
     "license": "Open-Source",
-    "contentHash": "8fc16d44e404b5948280e1c286c9fd1736fcde500f0a69c7fc5d9426b19e7e67",
-    "lastHarvestedAt": "2026-10-25T05:46:03.022Z",
+    "contentHash": "3ff07436711e26497f34fe7e46c906392fd3a226a3735f5b5442c50ed0e1938c",
+    "lastHarvestedAt": "2026-10-28T02:20:40.190Z",
     "learningId": "learn-huggingface-edge0-audio8-asr-infinite"
   },
   "hf-abenzerps-qwen-image-2.1-uncensored-gguf": {
@@ -5973,10 +5973,10 @@
     "repository": "genkit-ai/genkit",
     "platform": "github",
     "sourceUrl": "https://github.com/genkit-ai/genkit",
-    "sourceVersion": "ec961caa",
+    "sourceVersion": "c62077e5",
     "license": "Apache-2.0",
-    "contentHash": "9bf1edde8872cbafa42d05c5f163c0de75690bb2b5cddaa2aed83efd18f3a51c",
-    "lastHarvestedAt": "2026-10-27T13:14:23.945Z",
+    "contentHash": "d8ce421490b823e78423709a241248b92ffe71d80d9788d0833fa220d10f04ac",
+    "lastHarvestedAt": "2026-10-28T02:20:23.265Z",
     "learningId": "learn-github-genkit-ai-genkit"
   },
   "guokaigdg-animal-island-ui": {

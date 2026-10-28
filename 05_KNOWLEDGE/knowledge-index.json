@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T02:13:18.333Z",
+  "last_updated": "2026-10-28T02:20:40.114Z",
   "total_verified_learnings": 1154,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13125,8 +13125,8 @@
       "slug": "genkit-ai-genkit",
       "platform": "github",
       "source_url": "https://github.com/genkit-ai/genkit",
-      "source_version": "ec961caa",
-      "content_hash": "9bf1edde8872cbafa42d05c5f163c0de75690bb2b5cddaa2aed83efd18f3a51c",
+      "source_version": "c62077e5",
+      "content_hash": "d8ce421490b823e78423709a241248b92ffe71d80d9788d0833fa220d10f04ac",
       "dossier_path": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "promoted_rules": [
@@ -13159,6 +13159,11 @@
           "number": 4791,
           "title": "js/plugins/google-genai): Remove client side restriction (#6904)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5125,
+          "title": "js/plugins/google-genai): send output settings as response_format (#6910)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13166,7 +13171,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:14:23.875Z",
+      "verified_at": "2026-10-28T02:20:23.173Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -20990,7 +20995,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
       "source_version": "hf-edge0-audio8-asr-infinite",
-      "content_hash": "8fc16d44e404b5948280e1c286c9fd1736fcde500f0a69c7fc5d9426b19e7e67",
+      "content_hash": "3ff07436711e26497f34fe7e46c906392fd3a226a3735f5b5442c50ed0e1938c",
       "dossier_path": "07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
       "promoted_rules": [
@@ -21032,6 +21037,21 @@
         {
           "number": 1899,
           "title": "Semantic VAD for Turn Detection",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5126,
+          "title": "Constant-Memory Streaming via Rolling KV Cache",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5127,
+          "title": "Frame-Length Conditioning for Multi-Rate Streaming",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5128,
+          "title": "Semantic VAD for Intelligent Turn-Taking",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -21375,7 +21395,7 @@
         "learn-huggingface-hf-edge0-audio8-asr-infinite-mv41u2xc",
         "learn-huggingface-hf-edge0-audio8-asr-infinite-mv4fpi3i"
       ],
-      "verified_at": "2026-10-25T05:46:02.944Z",
+      "verified_at": "2026-10-28T02:20:40.097Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -140766,6 +140786,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T02:13:18.309Z"
+    },
+    "rule-5125": {
+      "learning_id": "rule-5125",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5125,
+      "title": "js/plugins/google-genai): send output settings as response_format (#6910)",
+      "source_url": "https://github.com/genkit-ai/genkit",
+      "source_version": "c62077e5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:20:23.173Z"
+    },
+    "rule-5126": {
+      "learning_id": "rule-5126",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5126,
+      "title": "Constant-Memory Streaming via Rolling KV Cache",
+      "source_url": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
+      "source_version": "hf-edge0-audio8-asr-infinite",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:20:40.097Z"
+    },
+    "rule-5127": {
+      "learning_id": "rule-5127",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5127,
+      "title": "Frame-Length Conditioning for Multi-Rate Streaming",
+      "source_url": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
+      "source_version": "hf-edge0-audio8-asr-infinite",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:20:40.097Z"
+    },
+    "rule-5128": {
+      "learning_id": "rule-5128",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5128,
+      "title": "Semantic VAD for Intelligent Turn-Taking",
+      "source_url": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
+      "source_version": "hf-edge0-audio8-asr-infinite",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:20:40.097Z"
     }
   },
   "aliases": {

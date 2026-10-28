@@ -5656,3 +5656,5 @@ Every entry in this ledger must capture:
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `bc4e2fc4` | Multi-dimensional audit evidence | 2026-10-28T02:05:16.072Z |
 | `learn-github-msasikanth-twine` | `https://github.com/msasikanth/twine` | `4b3aa942` | Multi-dimensional audit evidence | 2026-10-28T02:13:16.747Z |
 | `learn-huggingface-convaiinnovations-laya` | `https://huggingface.co/convaiinnovations/laya` | `hf-convaii` | Multi-dimensional audit evidence | 2026-10-28T02:13:18.409Z |
+| `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `c62077e5` | Multi-dimensional audit evidence | 2026-10-28T02:20:23.265Z |
+| `learn-huggingface-edge0-audio8-asr-infinite` | `https://huggingface.co/Edge0/Audio8-ASR-Infinite` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-10-28T02:20:40.190Z |
