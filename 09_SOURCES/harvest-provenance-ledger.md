@@ -5822,3 +5822,4 @@ Every entry in this ledger must capture:
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `b57c621c` | Multi-dimensional audit evidence | 2026-10-28T14:56:39.015Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `333cb672` | Multi-dimensional audit evidence | 2026-10-28T14:56:45.108Z |
 | `learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1` | `https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1` | `hf-mistral` | Multi-dimensional audit evidence | 2026-10-28T15:03:19.461Z |
+| `learn-huggingface-meta-llama-llama-2-7b` | `https://huggingface.co/meta-llama/Llama-2-7b` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-28T15:09:41.228Z |

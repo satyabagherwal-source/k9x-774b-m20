@@ -5813,3 +5813,4 @@
 | `CYCLE-20261028-MFKZ` | `2026-10-28T14:56:39.011Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5320` | Yes (`76982cdb...`) |
 | `CYCLE-20261028-MKA8` | `2026-10-28T14:56:45.104Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5321` | Yes (`5fcf496a...`) |
 | `CYCLE-20261028-V0KJ` | `2026-10-28T15:03:19.459Z` | `mistralai/Mixtral-8x7B-Instruct-v0.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md` | Yes (`41d3dc17...`) |
+| `CYCLE-20261028-3755` | `2026-10-28T15:09:41.225Z` | `meta-llama/Llama-2-7b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md` | Yes (`005d0f91...`) |

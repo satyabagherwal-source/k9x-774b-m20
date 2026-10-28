@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T15:03:19.465Z",
-  "total_cycles_completed": 5790,
-  "total_learnings_persisted": 5790,
+  "last_updated": "2026-10-28T15:09:41.231Z",
+  "total_cycles_completed": 5791,
+  "total_learnings_persisted": 5791,
   "total_rules_promoted": 5271,
   "history": [
-    {
-      "timestamp": "2026-10-28T00:53:43.145Z",
-      "repository": "GreptimeTeam/greptimedb",
-      "learningId": "learn-github-greptimeteam-greptimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T01:00:07.097Z",
       "repository": "Orange-OpenSource/hurl",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-28T15:03:19.465Z",
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
       "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T15:09:41.231Z",
+      "repository": "meta-llama/Llama-2-7b",
+      "learningId": "learn-huggingface-meta-llama-llama-2-7b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T15:03:31.008Z",
-    "lastVerified": "2026-10-28T15:03:31.008Z",
+    "lastChecked": "2026-10-28T15:09:52.691Z",
+    "lastVerified": "2026-10-28T15:09:52.691Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -335,12 +335,12 @@
     "lastVerified": "2026-10-28T03:11:25.935Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T14:42:54.559Z",
-    "lastVerified": "2026-10-28T14:42:54.559Z",
+    "lastChecked": "2026-10-28T15:09:52.684Z",
+    "lastVerified": "2026-10-28T15:09:52.684Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -349,7 +349,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ba276435"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -1268,9 +1269,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-10-28T11:46:23.582Z",
+    "lastChecked": "2026-10-28T15:09:48.157Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-10-28T11:46:23.582Z"
+    "lastVerified": "2026-10-28T15:09:48.157Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -4250,5 +4251,50 @@
     "lastChecked": "2026-10-28T15:03:28.377Z",
     "revisionIdentifier": "7dc1af6b",
     "lastVerified": "2026-10-28T15:03:28.377Z"
+  },
+  "async-rs-async-std": {
+    "name": "async-std",
+    "officialUrl": "https://github.com/async-rs/async-std",
+    "lastChecked": "2026-10-28T15:09:37.826Z",
+    "revisionIdentifier": "844b5525",
+    "lastVerified": "2026-10-28T15:09:37.826Z"
+  },
+  "hf-meta-llama-llama-2-7b": {
+    "name": "meta-llama/Llama-2-7b",
+    "officialUrl": "https://huggingface.co/meta-llama/Llama-2-7b",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T15:09:40.291Z",
+    "lastVerified": "2026-10-28T15:09:40.291Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-meta-llama-llama-2-7b",
+    "contentHash": "005d0f91a462d10cfd1750d120206f17c57693665e171eb2607a91ff13ba39ae",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "flipkart-recyclerlistview": {
+    "name": "recyclerlistview",
+    "officialUrl": "https://github.com/Flipkart/recyclerlistview",
+    "lastChecked": "2026-10-28T15:09:42.989Z",
+    "revisionIdentifier": "3485036e",
+    "lastVerified": "2026-10-28T15:09:42.989Z"
+  },
+  "encoredev-encore": {
+    "name": "encore",
+    "officialUrl": "https://github.com/encoredev/encore",
+    "lastChecked": "2026-10-28T15:09:45.311Z",
+    "revisionIdentifier": "c2881447",
+    "lastVerified": "2026-10-28T15:09:45.311Z"
+  },
+  "skytable-skytable": {
+    "name": "skytable",
+    "officialUrl": "https://github.com/skytable/skytable",
+    "lastChecked": "2026-10-28T15:09:50.339Z",
+    "revisionIdentifier": "146d8664",
+    "lastVerified": "2026-10-28T15:09:50.339Z"
   }
 }
