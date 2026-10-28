@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fastify-fastify-learnings.md`  
 > **Source**: github ([https://github.com/fastify/fastify](https://github.com/fastify/fastify))  
-> **Source Version**: `2a64ae16`  
+> **Source Version**: `5df959f3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T03:59:29.271Z  
+> **Timestamp**: 2026-10-28T00:40:10.000Z  
 > **Learning ID**: `learn-github-fastify-fastify`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fastify-fastify-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fastify/fastify](https://github.com/fastify/fastify))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T03:59:29.264Z  
+> **Harvest Timestamp**: 2026-10-28T00:40:09.221Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast and low overhead web framework, for Node.js
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 37299 stars
+- **Stars / Engagement**: 37312 stars
 
 ---
 
@@ -1303,186 +1303,68 @@ fastify.listen({ port: 3000 }, (err, address) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce41dc0f` (2026-10-22)
-**Commit Message**: fix(types): allow socket path strings in addresses (#6842)
+### Incident Patch 1: `5df959f3` (2026-10-25)
+**Commit Message**: docs: fix syntax errors in code examples (#7159)
 
-<!--
-Thank you for your pull request. Please provide a description above and
-review
-the requirements below.
+Two code examples in the docs have syntax errors that break
+parsing when copied:
 
-Bug fixes and new features should include tests and possibly benchmarks.
+- docs/Guides/Migration-Guide-V5.md: both `hasRoute` examples
+  (the v4 and v5 snippets) are missing the closing `}` of the
+  options object before `)); // true`.
+- docs/Reference/Validation-and-Serialization.md: the response
+  content-types schema example is missing a comma after the
+  `description` string, before `content:`.
 
-Contributors guide:
-https://github.com/fastify/fastify/blob/main/CONTRIBUTING.md
+Each fixed example was verified to parse with the TypeScript
+compiler. Docs only.
 
-By making a contribution to this project, I certify that:
+---------
 
-* (a) The contribution was created in whole or in part by me and I
-  have the right to submit it under the open source license
-  indicated in the file; or
+Signed-off-by: Mayur Dhavan <[REDACTED_EMAIL]>
 
-* (b) The contribution is based upon previous work that, to the best
-  of my knowledge, is covered under an appropriate open source
-  license and I have the right under that license to submit that
-  work with modifications, whether created in whole or in part
-  by me, under the same open source license (unless I am
-  permitted to submit under a different license), as indicated
-  in the file; or
-
-* (c) The contribution was provided directly to me by some other
-  person who certified (a), (b) or (c) and I have not modified
-  it.
-
-* (d) I understand and agree that this project and the contribution
-  are public and that a record of the contribution (includ
-
-**File**: `test/types/instance.tst.ts` (modified, +1/-1)
+**File**: `docs/Guides/Migration-Guide-V5.md` (modified, +2/-2)
 ```diff
-@@ -29,7 +29,7 @@ expect(server.addSchema({ schemas: [] })).type.toBe<FastifyInstance>()
- expect(server.pluginName).type.toBe<string>()
+@@ -405,7 +405,7 @@ fastify.get('/example/:file(^\\d+).png', function (request, reply) { })
+ console.log(fastify.hasRoute({
+   method: 'GET',
+   url: '/example/12345.png'
+-)); // true
++})); // true
+ ```
  
- expect(server.getSchemas()).type.toBe<Record<string, unknown>>()
--expect(server.addresses()).type.toBe<AddressInfo[]>()
-+expect(server.addresses()).type.toBe<Array<AddressInfo | string>>()
- expect(server.getSchema('SchemaId')).type.toBe<unknown>()
- expect(server.printRoutes()).type.toBe<string>()
- expect(server.printPlugins()).type.toBe<string>()
+ ```js
+@@ -416,7 +416,7 @@ fastify.get('/example/:file(^\\d+).png', function (request, reply) { })
+ console.log(fastify.hasRoute({
+   method: 'GET',
+   url: '/example/:file(^\\d+).png'
+-)); // true
++})); // true
+ ```
+ 
+ ### Removal of some non-standard HTTP methods
 ```
 
-**File**: `types/instance.d.ts` (modified, +1/-1)
+**File**: `docs/Reference/Validation-and-Serialization.md` (modified, +1/-1)
 ```diff
-@@ -130,7 +130,7 @@ export interface FastifyInstance<
-   version: string;
-   log: Logger;
-   listeningOrigin: string;
--  addresses(): AddressInfo[]
-+  addresses(): Array<AddressInfo | string>
-   withTypeProvider<Provider extends FastifyTypeProvider>(): FastifyInstance<RawServer, RawRequest, RawReply, Logger,
-     Provider>;
- 
-```
-
----
-
-### Incident Patch 2: `2a64ae16` (2026-10-24)
-**Commit Message**: fix(decorators): evaluate instance getters once in getDecorator (#7124)
-
-**File**: `lib/decorate.js` (modified, +4/-3)
-```diff
-@@ -38,11 +38,12 @@ function getInstanceDecorator (name) {
-     throw new FST_ERR_DEC_UNDECLARED(name, 'instance')
-   }
- 
--  if (typeof this[name] === 'function') {
--    return this[name].bind(this)
-+  const decorator = this[name]
-+  if (typeof decorator === 'function') {
-+    return decorator.bind(this)
-   }
- 
--  return this[name]
-+  return decorator
- }
- 
- function decorateConstructor (konstructor, name, fn, dependencies) {
-```
-
-**File**: `test/decorator.test.js` (modified, +29/-0)
-```diff
-@@ -1328,3 +1328,32 @@ test('Request.setDecorator should update an existing decorator', (t, done) => {
-     })
-   })
- })
-+
-+test('getDecorator should evaluate a getter once', async t => {
-+  const fastify = Fastify()
-+  t.after(() => fastify.close())
-+  let calls = 0
-+  fastify.decorate('value', {
-+    getter () {
-+      return ++calls
-+    }
-+  })
-+
-+  t.assert.strictEqual(fastify.getDecorator('value'), 1)
-+  t.assert.strictEqual(calls, 1)
-+})
-+
-+test('getDecorator should bind the function returned by a getter once', async t => {
-+  const fastify = Fastify()
-+  t.after(() => fastify.close())
-+  let calls = 0
-+  fastify.decorate('method', {
-+    getter () {
-+      calls++
-+      return function () { return this }
-+    }
-+  })
-+
-+  t.assert.strictEqual(fastify.getDecorator('method')(), fastify)
-+  t.assert.strictEqual(calls, 1)
-+})
-```
-
----
-
-### Incident Patch 3: `5c1f3935` (2026-10-23)
-**Commit Message**: fix(types): add logSerializers to RouteShorthandOptions
-
-The runtime accepts logSerializers as a per-route option
-(lib/route.js) and it is documented under the shared options in
-docs/Reference/Routes.md, but RouteShorthandOptions did not include
-it. The serializers are passed as pino child logger bindings, so the
-return type is widened to match pino serializer semantics: serializer
-functions may return objects as well as strings.
-
-**File**: `test/types/route.tst.ts` (modified, +16/-0)
-```diff
-@@ -83,6 +83,22 @@ fastify().get(
-   }
- )
- 
-+fastify().get(
-+  '/',
-+  { logLevel: 'info', logSerializers: { test: (value: number) => 'X' + value } },
-+  routeHandler
-+)
-+
-+fastify().route({
-+  method: 'GET',
-+  url: '/',
-+  logSerializers: {
-+    // serializers may return objects as well as strings
-+    req: (req: FastifyRequest) => ({ url: req.url })
-+  },
-+  handler: routeHandler
-+})
-+
- type LowerCaseHTTPMethods = 'delete' | 'get' | 'head' | 'patch' | 'post' | 'put' |
-   'options' | 'query' | 'propfind' | 'proppatch' | 'mkcol' | 'copy' | 'move' | 'lock' |
-   'unlock' | 'trace' | 'search' | 'mkcalendar' | 'report'
-```
-
-**File**: `types/route.d.ts` (modified, +1/-0)
-```diff
-@@ -68,6 +68,7 @@ export interface RouteShorthandOptions<
-   bodyLimit?: number;
-   handlerTimeout?: number;
-   logLevel?: LogLevel;
-+  logSerializers?: Record<string, (value: any) => any>;
-   config?: FastifyContextConfig & ContextConfig;
-   constraints?: RouteConstraint,
-   prefixTrailingSlash?: 'slash' | 'no-slash' | 'both';
+@@ -799,7 +799,7 @@ For example:
+ const schema = {
+   response: {
+     200: {
+-      description: 'Response schema that support different content types'
++      description: 'Response schema that support different content types',
+       content: {
+         'application/json': {
+           schema: {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7160** (2026-10-25): [Backport 5.x] docs: fix syntax errors in code examples (@github-actions[bot])
+- **PR #7159** (2026-10-25): docs: fix syntax errors in code examples (@mayur-dhavan)
+- **PR #7158** (2026-10-25): [Backport 5.x] docs: clarify that maxParamLength does not prevent ReDoS (@github-actions[bot])
 - **PR #7154** (2026-10-24): [Backport 5.x] fix(decorators): evaluate instance getters once in getDecorator (@github-actions[bot])
 - **PR #7153** (2026-10-24): [Backport 5.x] perf(request): hoist port regex to module level (@github-actions[bot])
 - **PR #7152** (2026-10-24): [Backport 5.x] docs: remove plugins that do not support Fastify v5 (@Tony133)
-- **PR #7151** (2026-10-24): [Backport 5.x] docs(reply): reorganize Reply reference by properties and methods (@Tony133)
-- **PR #7150** (2026-10-24): [Backport 5.x] docs(request): reorganize Request reference by properties and methods (@Tony133)
-- **PR #7149** (2026-10-24): [Backport 5.x] test: do not assert a HEAD response body through inject() (@github-actions[bot])
 
 ---
 
@@ -1502,28 +1384,30 @@ functions may return objects as well as strings.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. types): allow socket path strings in addresses (#6842)
+## X. docs: fix syntax errors in code examples (#7159)
 
 **RULE**:
-When implementing operations in `test/types/instance.tst.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fastify/fastify. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/Guides/Migration-Guide-V5.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fastify/fastify. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce41dc0f`: types): allow socket path strings in addresses (#6842). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5df959f3`: docs: fix syntax errors in code examples (#7159). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/types/instance.tst.ts`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/Guides/Migration-Guide-V5.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-expect(server.addresses()).type.toBe<Array<AddressInfo | string>>()
+})); // true
+})); // true
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-expect(server.addresses()).type.toBe<AddressInfo[]>()
+)); // true
+)); // true
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce41dc0f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5df959f3` are properly handled with clean fallback behavior.

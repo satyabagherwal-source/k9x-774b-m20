@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T00:33:34.440Z",
+  "last_updated": "2026-10-28T00:40:17.829Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3141,14 +3141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fastify-fastify",
-      "content_hash": "80df53976bb41362a23b66f54adf3402754c7a8a90a671b061050b1e737488cb",
-      "verified_at": "2026-10-25T03:59:29.752Z",
+      "content_hash": "68686cc77fd7887aeb2e755b13eb02254e81dea2267b7496595508ab03d98c35",
+      "verified_at": "2026-10-28T00:40:10.634Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T03:59:29.752Z"
+      "last_updated": "2026-10-28T00:40:10.634Z"
     },
     "expressjs/express": {
       "repository": "expressjs/express",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "f134c334fdb4a8aef0c09471bd3f3ecbeecba011368e60ada45fab30e6660445",
-      "verified_at": "2026-10-27T20:45:24.867Z",
+      "content_hash": "24e1a84c5d10bcff650ba43a197fa33735c5f97049392510833d8c356347dc93",
+      "verified_at": "2026-10-28T00:40:17.828Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T20:45:24.867Z"
+      "last_updated": "2026-10-28T00:40:17.828Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -5451,14 +5451,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ratatui-ratatui",
-      "content_hash": "5e447f10f5690677e501c6e0fbd0664a4cfef8bb3a38da1924b299f2d23f1d66",
-      "verified_at": "2026-10-25T13:57:08.792Z",
+      "content_hash": "6f539dfe39b4200e5e461f15f3db0d688c94c4f2b806d9fd4d983b973fc91259",
+      "verified_at": "2026-10-28T00:40:09.294Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T13:57:08.792Z"
+      "last_updated": "2026-10-28T00:40:09.294Z"
     },
     "invertase/react-native-firebase": {
       "repository": "invertase/react-native-firebase",
@@ -7821,14 +7821,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-primer-react",
-      "content_hash": "35d8c706aad5c35ad416fa27d93275356dbfa0e1f4abc12e6772914622a733bc",
-      "verified_at": "2026-10-27T11:56:06.047Z",
+      "content_hash": "f190b7cc4d51f7f2f22d34dc2b672a4764dcd1626392e02654cba075f77e83bf",
+      "verified_at": "2026-10-28T00:40:06.823Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T11:56:06.047Z"
+      "last_updated": "2026-10-28T00:40:06.823Z"
     },
     "smol-rs/smol": {
       "repository": "smol-rs/smol",
@@ -10896,14 +10896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tencent-tds-kuiklyui",
-      "content_hash": "779e19819e90fb97e3912ca6729de371a2a4973f7a25c7caff61234acf18ca55",
-      "verified_at": "2026-10-25T12:32:00.737Z",
+      "content_hash": "82cf314822b6db6f049f46443a927b5ae2fc218bea12a4bc0e2837cde3608041",
+      "verified_at": "2026-10-28T00:40:13.042Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T12:32:00.737Z"
+      "last_updated": "2026-10-28T00:40:13.042Z"
     },
     "SeaQL/sea-orm": {
       "repository": "SeaQL/sea-orm",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T00:33:34.386Z",
+  "last_updated": "2026-10-28T00:40:17.749Z",
   "total_verified_learnings": 1154,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6289,8 +6289,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "a80937a2",
-      "content_hash": "f134c334fdb4a8aef0c09471bd3f3ecbeecba011368e60ada45fab30e6660445",
+      "source_version": "9c5e56ae",
+      "content_hash": "24e1a84c5d10bcff650ba43a197fa33735c5f97049392510833d8c356347dc93",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -6428,6 +6428,11 @@
           "number": 4997,
           "title": "ipam/resynctest: generalize the resync race helper",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5078,
+          "title": "pkg/k8s): Remove redundant DeepCopy in GetPodMetadata",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6435,7 +6440,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T20:45:24.784Z",
+      "verified_at": "2026-10-28T00:40:17.727Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42687,7 +42692,7 @@
       "platform": "github",
       "source_url": "https://github.com/primer/react",
       "source_version": "f733dcb2",
-      "content_hash": "35d8c706aad5c35ad416fa27d93275356dbfa0e1f4abc12e6772914622a733bc",
+      "content_hash": "f190b7cc4d51f7f2f22d34dc2b672a4764dcd1626392e02654cba075f77e83bf",
       "dossier_path": "07_PROJECT_LEARNING/primer-react-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/primer-react-learnings.md",
       "promoted_rules": [
@@ -42742,7 +42747,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T11:56:05.963Z",
+      "verified_at": "2026-10-28T00:40:06.706Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43601,8 +43606,8 @@
       "slug": "ratatui-ratatui",
       "platform": "github",
       "source_url": "https://github.com/ratatui/ratatui",
-      "source_version": "490c9a7e",
-      "content_hash": "5e447f10f5690677e501c6e0fbd0664a4cfef8bb3a38da1924b299f2d23f1d66",
+      "source_version": "b80480c1",
+      "content_hash": "6f539dfe39b4200e5e461f15f3db0d688c94c4f2b806d9fd4d983b973fc91259",
       "dossier_path": "07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
       "promoted_rules": [
@@ -43635,6 +43640,11 @@
           "number": 4318,
           "title": "build(deps): require patched lru 0.18.2 (#2825)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5075,
+          "title": "build(deps): bump release-plz/action from 0.5.142 to 0.5.145 (#2860)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43642,7 +43652,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T13:57:08.747Z",
+      "verified_at": "2026-10-28T00:40:09.175Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50266,8 +50276,8 @@
       "slug": "tencent-tds-kuiklyui",
       "platform": "github",
       "source_url": "https://github.com/Tencent-TDS/KuiklyUI",
-      "source_version": "dc92c104",
-      "content_hash": "779e19819e90fb97e3912ca6729de371a2a4973f7a25c7caff61234acf18ca55",
+      "source_version": "f0d0389c",
+      "content_hash": "82cf314822b6db6f049f46443a927b5ae2fc218bea12a4bc0e2837cde3608041",
       "dossier_path": "07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md",
       "promoted_rules": [
@@ -50295,6 +50305,11 @@
           "number": 4289,
           "title": "ios): keep fontWeight and italic on font resolution fallback and add font family",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5077,
+          "title": "android): destroy render layer after pageWillDestroy (#1834)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50302,7 +50317,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T12:32:00.658Z",
+      "verified_at": "2026-10-28T00:40:12.931Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -89667,8 +89682,8 @@
       "slug": "fastify-fastify",
       "platform": "github",
       "source_url": "https://github.com/fastify/fastify",
-      "source_version": "2a64ae16",
-      "content_hash": "80df53976bb41362a23b66f54adf3402754c7a8a90a671b061050b1e737488cb",
+      "source_version": "5df959f3",
+      "content_hash": "68686cc77fd7887aeb2e755b13eb02254e81dea2267b7496595508ab03d98c35",
       "dossier_path": "07_PROJECT_LEARNING/fastify-fastify-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fastify-fastify-learnings.md",
       "promoted_rules": [
@@ -89686,6 +89701,11 @@
           "number": 4032,
           "title": "types): allow socket path strings in addresses (#6842)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5076,
+          "title": "docs: fix syntax errors in code examples (#7159)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -89693,7 +89713,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T03:59:29.653Z",
+      "verified_at": "2026-10-28T00:40:10.498Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -114144,7 +114164,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-27T11:56:05.964Z"
+      "verified_at": "2026-10-28T00:40:06.706Z"
     },
     "rule-3484": {
       "learning_id": "rule-3484",
@@ -139796,6 +139816,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T00:26:28.744Z"
+    },
+    "rule-5075": {
+      "learning_id": "rule-5075",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5075,
+      "title": "build(deps): bump release-plz/action from 0.5.142 to 0.5.145 (#2860)",
+      "source_url": "https://github.com/ratatui/ratatui",
+      "source_version": "b80480c1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T00:40:09.175Z"
+    },
+    "rule-5076": {
+      "learning_id": "rule-5076",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5076,
+      "title": "docs: fix syntax errors in code examples (#7159)",
+      "source_url": "https://github.com/fastify/fastify",
+      "source_version": "5df959f3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T00:40:10.498Z"
+    },
+    "rule-5077": {
+      "learning_id": "rule-5077",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5077,
+      "title": "android): destroy render layer after pageWillDestroy (#1834)",
+      "source_url": "https://github.com/Tencent-TDS/KuiklyUI",
+      "source_version": "f0d0389c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T00:40:12.931Z"
+    },
+    "rule-5078": {
+      "learning_id": "rule-5078",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5078,
+      "title": "pkg/k8s): Remove redundant DeepCopy in GetPodMetadata",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "9c5e56ae",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T00:40:17.727Z"
     }
   },
   "aliases": {

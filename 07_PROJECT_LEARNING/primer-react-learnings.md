@@ -3,7 +3,7 @@
 > **Source Version**: `f733dcb2`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T11:56:05.731Z  
+> **Timestamp**: 2026-10-28T00:40:06.412Z  
 > **Learning ID**: `learn-github-primer-react`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/primer-react-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/primer/react](https://github.com/primer/react))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T11:56:04.329Z  
+> **Harvest Timestamp**: 2026-10-28T00:40:05.035Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1362,12 +1362,12 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8626** (closed): chore(deps): bump the react group with 4 updates (@dependabot[bot])
 - **PR #8617** (closed): feat(Avatar): add placeholder prop for text display without image src (@Kavi274)
 - **PR #8616** (2026-10-23): chore(deps): bump next from 16.3.8 to 16.4.3 (@dependabot[bot])
 - **PR #8613** (2026-10-26): SelectPanel: Improve rendering performance (@alexus37)
 - **PR #8604** (2026-10-23): chore(deps-dev): bump @vitest/browser from 5.0.0 to 5.0.5 (@dependabot[bot])
 - **PR #8603** (closed): chore(deps-dev): bump storybook from 10.5.10 to 10.6.2 in /packages/react (@dependabot[bot])
-- **PR #8602** (2026-10-21): chore(deps-dev): bump rolldown from 1.2.13 to 1.2.14 in the rolldown group (@dependabot[bot])
 
 ---
 

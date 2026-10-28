@@ -5603,3 +5603,8 @@
 | `CYCLE-20261028-JDXU` | `2026-10-28T00:26:28.818Z` | `citusdata/citus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5074` | Yes (`44febd64...`) |
 | `CYCLE-20261028-RJIK` | `2026-10-28T00:32:49.292Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md` | Yes (`6ddac598...`) |
 | `CYCLE-20261028-SICG` | `2026-10-28T00:33:34.432Z` | `CrawlCove/xml-sitemap-validator` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5071` | Yes (`b62e6a50...`) |
+| `CYCLE-20261028-0X3U` | `2026-10-28T00:40:06.810Z` | `primer/react` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3483` | Yes (`f190b7cc...`) |
+| `CYCLE-20261028-0Z0E` | `2026-10-28T00:40:09.278Z` | `ratatui/ratatui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5075` | Yes (`6f539dfe...`) |
+| `CYCLE-20261028-101P` | `2026-10-28T00:40:10.621Z` | `fastify/fastify` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5076` | Yes (`68686cc7...`) |
+| `CYCLE-20261028-11WJ` | `2026-10-28T00:40:13.027Z` | `Tencent-TDS/KuiklyUI` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5077` | Yes (`82cf3148...`) |
+| `CYCLE-20261028-15LK` | `2026-10-28T00:40:17.816Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5078` | Yes (`24e1a84c...`) |

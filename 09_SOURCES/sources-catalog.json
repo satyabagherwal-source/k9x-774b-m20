@@ -2003,10 +2003,10 @@
     "repository": "fastify/fastify",
     "platform": "github",
     "sourceUrl": "https://github.com/fastify/fastify",
-    "sourceVersion": "2a64ae16",
+    "sourceVersion": "5df959f3",
     "license": "MIT",
-    "contentHash": "80df53976bb41362a23b66f54adf3402754c7a8a90a671b061050b1e737488cb",
-    "lastHarvestedAt": "2026-10-25T03:59:29.739Z",
+    "contentHash": "68686cc77fd7887aeb2e755b13eb02254e81dea2267b7496595508ab03d98c35",
+    "lastHarvestedAt": "2026-10-28T00:40:10.625Z",
     "learningId": "learn-github-fastify-fastify"
   },
   "expressjs-express": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "a80937a2",
+    "sourceVersion": "9c5e56ae",
     "license": "Apache-2.0",
-    "contentHash": "f134c334fdb4a8aef0c09471bd3f3ecbeecba011368e60ada45fab30e6660445",
-    "lastHarvestedAt": "2026-10-27T20:45:24.859Z",
+    "contentHash": "24e1a84c5d10bcff650ba43a197fa33735c5f97049392510833d8c356347dc93",
+    "lastHarvestedAt": "2026-10-28T00:40:17.820Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -3553,10 +3553,10 @@
     "repository": "ratatui/ratatui",
     "platform": "github",
     "sourceUrl": "https://github.com/ratatui/ratatui",
-    "sourceVersion": "490c9a7e",
+    "sourceVersion": "b80480c1",
     "license": "MIT",
-    "contentHash": "5e447f10f5690677e501c6e0fbd0664a4cfef8bb3a38da1924b299f2d23f1d66",
-    "lastHarvestedAt": "2026-10-25T13:57:08.788Z",
+    "contentHash": "6f539dfe39b4200e5e461f15f3db0d688c94c4f2b806d9fd4d983b973fc91259",
+    "lastHarvestedAt": "2026-10-28T00:40:09.283Z",
     "learningId": "learn-github-ratatui-ratatui"
   },
   "invertase-react-native-firebase": {
@@ -5135,8 +5135,8 @@
     "sourceUrl": "https://github.com/primer/react",
     "sourceVersion": "f733dcb2",
     "license": "MIT",
-    "contentHash": "35d8c706aad5c35ad416fa27d93275356dbfa0e1f4abc12e6772914622a733bc",
-    "lastHarvestedAt": "2026-10-27T11:56:06.039Z",
+    "contentHash": "f190b7cc4d51f7f2f22d34dc2b672a4764dcd1626392e02654cba075f77e83bf",
+    "lastHarvestedAt": "2026-10-28T00:40:06.814Z",
     "learningId": "learn-github-primer-react"
   },
   "smol-rs-smol": {
@@ -7233,10 +7233,10 @@
     "repository": "Tencent-TDS/KuiklyUI",
     "platform": "github",
     "sourceUrl": "https://github.com/Tencent-TDS/KuiklyUI",
-    "sourceVersion": "dc92c104",
+    "sourceVersion": "f0d0389c",
     "license": "NOASSERTION",
-    "contentHash": "779e19819e90fb97e3912ca6729de371a2a4973f7a25c7caff61234acf18ca55",
-    "lastHarvestedAt": "2026-10-25T12:32:00.728Z",
+    "contentHash": "82cf314822b6db6f049f46443a927b5ae2fc218bea12a4bc0e2837cde3608041",
+    "lastHarvestedAt": "2026-10-28T00:40:13.031Z",
     "learningId": "learn-github-tencent-tds-kuiklyui"
   },
   "seaql-sea-orm": {

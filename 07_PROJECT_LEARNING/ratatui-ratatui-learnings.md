@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ratatui-ratatui-learnings.md`  
 > **Source**: github ([https://github.com/ratatui/ratatui](https://github.com/ratatui/ratatui))  
-> **Source Version**: `490c9a7e`  
+> **Source Version**: `b80480c1`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T13:57:08.552Z  
+> **Timestamp**: 2026-10-28T00:40:08.651Z  
 > **Learning ID**: `learn-github-ratatui-ratatui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ratatui-ratatui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ratatui/ratatui](https://github.com/ratatui/ratatui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T13:57:08.236Z  
+> **Harvest Timestamp**: 2026-10-28T00:40:08.056Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Rust crate for cooking up terminal user interfaces (TUIs) 👨‍🍳🐀 https://ratatui.rs
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 23082 stars
+- **Stars / Engagement**: 23103 stars
 
 ---
 
@@ -940,14 +940,15 @@ impl StatefulWidget for CounterWidget {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2856** (2026-10-24): **docs(release): fix demo2 recording commands**
-  *Symptoms*: ## What Fix the demo2 recording commands in `RELEASE.md`.  ## Why `demo2` is a workspace package, and its VHS tape is under `examples/vhs/`.  ## Implementation Use `cargo build -p demo2` and `vhs examples/vhs/demo2.tape`.  AI assistance: ChatGPT helped prepare this documentation change. The commands were checked against the workspace manifest and current tape path.
-
-- **Issue #2853** (2026-10-23): **feat(buffer): add per-cell hyperlinks behind a cell-extensions feature**
-  *Symptoms*: ## Summary  This adds per-cell OSC 8 hyperlinks behind a new `cell-extensions` feature, which is off by default. A cell can now carry a hyperlink, and the backends emit it when they draw.  ```rust buf.set_string(0, 0, "ratatui.rs", Style::new().underlined()); buf.set_hyperlink(Rect::new(0, 0, 10, 1), Some(&Hyperlink::new("https://ratatui.rs"))); ```  Today the usual workaround is to put the escape sequence into a cell's symbol. That throws off width calculation and diffing, and it breaks when a link wraps or is only partly redrawn. With this change the link sits beside the symbol, so `Cell::symbol` stays a plain grapheme.  ## What's included  - **ratatui-core:**   - `Hyperlink` (`Hyperlink::new(uri).with_id(id)`) and a `CellExt` extension slot on `Cell`.   - `Cell::set_hyperlink`, `Buffer::set_hyperlink(area, Option<&Hyperlink>)`, `set_span_with_hyperlink` and `set_line_with_hyperlink`.   - Writing a new symbol into a cell clears its link. - **Backends:**   - crossterm, termion and termina write OSC 8. A link opens when it changes from one cell to the next and is closed at the end of each draw, so links that wrap across rows or are partly redrawn still come out as one link.   - termwiz maps the link to its native hyperlink support.   - `TestBackend` records the links. - **Example:** the `hyperlink` example now uses cell hyperlinks instead of embedding escape codes. - **Tests and benchmarks:**   - A `Cell` size assertion.   - Benchmarks for buffer diff and crossterm draw outpu
+- **Issue #2866** (2026-10-26): **build(deps): bump taiki-e/install-action from 2.87.29 to 2.87.31**
+  *Symptoms*: Bumps [taiki-e/install-action](https://github.com/taiki-e/install-action) from 2.87.29 to 2.87.31. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/taiki-e/install-action/releases">taiki-e/install-action's releases</a>.</em></p> <blockquote> <h2>2.87.31</h2> <ul> <li> <p>Downgrade <code>cargo-sort@latest</code> to 2.1.3.</p> </li> <li> <p>Update <code>vacuum@latest</code> to 0.35.0.</p> </li> <li> <p>Update <code>xh@latest</code> to 0.26.3.</p> </li> <li> <p>Update <code>uv@latest</code> to 0.13.5.</p> </li> <li> <p>Update <code>ubi@latest</code> to 0.13.0.</p> </li> <li> <p>Update <code>trivy@latest</code> to 0.76.1.</p> </li> <li> <p>Update <code>tombi@latest</code> to 1.9.0.</p> </li> <li> <p>Update <code>release-plz@latest</code> to 0.3.174.</p> </li> <li> <p>Update <code>prek@latest</code> to 0.5.7.</p> </li> <li> <p>Update <code>mise@latest</code> to 2026.10.17.</p> </li> <li> <p>Update <code>jaq@latest</code> to 3.1.2.</p> </li> <li> <p>Update <code>espup@latest</code> to 0.17.1.</p> </li> <li> <p>Update <code>cargo-zigbuild@latest</code> to 0.24.0.</p> </li> <li> <p>Update <code>cargo-nextest@latest</code> to 0.9.149.</p> </li> <li> <p>Update <code>biome@latest</code> to 2.6.2.</p> </li> </ul> <h2>2.87.30</h2> <ul> <li> <p>Update <code>zizmor@latest</code> to 1.31.1.</p> </li> <li> <p>Update <code>wasmtime@latest</code> to 50.0.0.</p> </li> <li> <p>Update <code>vacuum@latest</code> to 0.33.2.</p> </li> <li> <p>Update <code>uv@
   **Post-Mortem & Fix Analysis**:
-  > Closing this in favor of discussing the design in an issue first, per CONTRIBUTING.md. If the approach is agreed, I'll follow up with a series of smaller PRs (each under 500 lines). The full branch stays at WeirdBrains/ratatui:multi-char-cells for reference.
-  > ## [Codecov](https://app.codecov.io/gh/ratatui/ratatui/pull/2853?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui) Report :x: Patch coverage is `97.97571%` with `15 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 93.1%. Comparing base ([`0297560`](https://app.codecov.io/gh/ratatui/ratatui/commit/0297560d8d77871c0281a39182e4e650856e2ffd?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui)) to head ([`0357ae6`](https://app.codecov.io/gh/ratatui/ratatui/commit/0357ae641d9706a99eec2abc712c531970c49b9b?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui)). :warning: Report is 8 commits behind head on main.  | [Files with missing lines](https://app.codecov.io/gh/ratatui/ratatui/pull/2853?dropdown=coverage&src=pr&el=tree
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/ratatui/ratatui/pull/2866?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_start -->  No actionable comments were generated in the recent review.  <details> <summary><strong><picture><img src="https://storage.googleapis.com/coderabbit_public_assets
+
+- **Issue #2865** (2026-10-26): **build(deps): bump octocrab from 0.54.4 to 0.54.5**
+  *Symptoms*: Bumps [octocrab](https://github.com/XAMPPRocky/octocrab) from 0.54.4 to 0.54.5. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/XAMPPRocky/octocrab/releases">octocrab's releases</a>.</em></p> <blockquote> <h2>v0.54.5</h2> <h3>Other</h3> <ul> <li>Feature/missing handlers (<a href="https://redirect.github.com/XAMPPRocky/octocrab/pull/988">#988</a>)</li> </ul> </blockquote> </details> <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/XAMPPRocky/octocrab/blob/main/CHANGELOG.md">octocrab's changelog</a>.</em></p> <blockquote> <h2><a href="https://github.com/XAMPPRocky/octocrab/compare/v0.54.4...v0.54.5">0.54.5</a> - 2026-10-16</h2> <h3>Other</h3> <ul> <li>Feature/missing handlers (<a href="https://redirect.github.com/XAMPPRocky/octocrab/pull/988">#988</a>)</li> </ul> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/XAMPPRocky/octocrab/commit/b15540cf8c644f90b6d89971da5e6c54d634cd14"><code>b15540c</code></a> chore: release v0.54.5 (<a href="https://redirect.github.com/XAMPPRocky/octocrab/issues/989">#989</a>)</li> <li><a href="https://github.com/XAMPPRocky/octocrab/commit/aa7667b7a6a269ee89b372e5f2909414fa0935b5"><code>aa7667b</code></a> Feature/missing handlers (<a href="https://redirect.github.com/XAMPPRocky/octocrab/issues/988">#988</a>)</li> <li>See full diff in <a href="https://github.com/XAMPPRocky/octocrab/compare/v0.54.4...v0.54.5">compare view</
+  **Post-Mortem & Fix Analysis**:
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- This is an auto-generated comment: skip review by coderabbit.ai -->  > [!IMPORTANT] > ## Review skipped >  > Review was skipped due to path filters >  > <details> > <summary><strong>:no_entry: Files ignored due to path filters: 1</strong></summary> > <dl> > <dd> >  > * `Cargo.lock` is excluded by `!**/*.lock` >  > </dd> > </dl> > </details> >  > CodeRabbit blocks several paths by default. You can override this behavior by explicitly including those paths in the path filters. For example, including `**/dist/**` will override the default block on the `dist` directory, by removing the pattern from both the lists. >  > <details> > <summary><strong><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-comment-icons-v1/cog-dark.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-commen
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -964,247 +965,252 @@ impl StatefulWidget for CounterWidget {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6d6ced53` (2026-10-24)
-**Commit Message**: build(deps): require patched lru 0.18.2 (#2825)
+### Incident Patch 1: `65679a6a` (2026-10-26)
+**Commit Message**: build(deps): bump release-plz/action from 0.5.142 to 0.5.145 (#2860)
 
-Raise the workspace `lru` requirement from `0.18` to `0.18.2` so
-downstream resolution through `ratatui-core` cannot select 0.18.0 or
-0.18.1, which are affected by
-[RUSTSEC-2026-0253](https://rustsec.org/advisories/RUSTSEC-2026-0253.html).
-This retains the widest compatible range with a patched minimum. The
-lockfile already selects 0.18.5 and stays unchanged.
+Bumps [release-plz/action](https://github.com/release-plz/action) from
+0.5.142 to 0.5.145.
+<details>
+<summary>Release notes</summary>
+<p><em>Sourced from <a
+href="https://github.com/release-plz/action/releases">release-plz/action's
+releases</a>.</em></p>
+<blockquote>
+<h2>v0.5.145</h2>
+<h2>What's Changed</h2>
+<ul>
+<li>chore(deps): update dependency taiki-e/install-action to v2.87.30 by
+<a href="https://github.com/renovate"><code>@​renovate</code></a>[bot]
+in <a
+href="https://redirect.github.com/release-plz/action/pull/579">release-plz/action#579</a></li>
+<li>Update to 0.4.0 by <a
+href="https://github.com/marcoieni"><code>@​marcoieni</code></a> in <a
+href="https://redirect.github.com/release-plz/action/pull/580">release-plz/action#580</a></li>
+<li>update release-plz tag by <a
+href="https://github.com/marcoieni"><code>@​marcoieni</code></a> in <a
+href="https://redirect.github.com/release-plz/action/pull/581">release-plz/action#581</a></li>
+</ul>
+<p><strong>Full Changelog</strong>: <a
+href="https://github.com/release-plz/action/compare/v0.5.144...v0.5.145">https://github.com/release-plz/action/compare/v0.5.144...v0.5
 
-The advisory concerns panic safety in `LruCache::pop()`: a stored key's
-destructor must panic, unwinding must be caught, and the cache must
-subsequently be used to reach the reported memory-safety failure. This
-is dependency-floor maintenance, not a claim of demonstrated
-exploitability in Ratatui.
-
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `.github/workflows/release-plz.yml` (modified, +2/-2)
 ```diff
-@@ -44,7 +44,7 @@ instability = "0.3.7"
- itertools = { version = "0.15", default-features = false, features = ["use_alloc"] }
- kasuari = { version = "0.4.9", default-features = false }
- line-clipping = "0.3.8"
--lru = "0.18"
-+lru = "0.18.2"
- octocrab = "0.54"
- palette = { version = "0.7.7", default-features = false, features = ["libm"] }
- portable-atomic-util = { version = "0.2.4", default-features = false }
+@@ -35,7 +35,7 @@ jobs:
+       - uses: rust-lang/crates-io-auth-action@c6f97d42243bad5fab37ca0427f495c86d5b1a18 # v1
+         id: auth
+       - name: Run release-plz
+-        uses: release-plz/action@8921286633dfa0c4020f7f30bd1c14fe19cbb10e # v0.5
++        uses: release-plz/action@7ef5e4d4b0420630cfcaeb182c01e13651d4c577 # v0.5
+         with:
+           command: release
+         env:
+@@ -64,7 +64,7 @@ jobs:
+         with:
+           toolchain: stable
+       - name: Run release-plz
+-        uses: release-plz/action@8921286633dfa0c4020f7f30bd1c14fe19cbb10e # v0.5
++        uses: release-plz/action@7ef5e4d4b0420630cfcaeb182c01e13651d4c577 # v0.5
+         with:
+           command: release-pr
+         env:
 ```
 
 ---
 
-### Incident Patch 2: `b5224b27` (2026-10-24)
-**Commit Message**: fix(table): clip rendering to buffer bounds (#2851)
+### Incident Patch 2: `b80480c1` (2026-10-26)
+**Commit Message**: build(deps): bump Swatinem/rust-cache from 2.9.2 to 2.9.3 (#2859)
 
-Table can panic or render out of bounds when drawing into an area
-extending outside the buffer. Clip Table to the buffer before drawing
-blocks and items, and return when the intersection is empty.
+Bumps [Swatinem/rust-cache](https://github.com/swatinem/rust-cache) from
+2.9.2 to 2.9.3.
+<details>
+<summary>Release notes</summary>
+<p><em>Sourced from <a
+href="https://github.com/swatinem/rust-cache/releases">Swatinem/rust-cache's
+releases</a>.</em></p>
+<blockquote>
+<h2>v2.9.3</h2>
+<h2>What's Changed</h2>
+<ul>
+<li>Issue-375: stop cleanup timestamp pruning after the first entry by
+<a
+href="https://github.com/TethysSvensson"><code>@​TethysSvensson</code></a>
+in <a
+href="https://redirect.github.com/Swatinem/rust-cache/pull/377">Swatinem/rust-cache#377</a></li>
+<li>fix: log rustup toolchain list failure as info instead of warning by
+<a href="https://github.com/SDAChess"><code>@​SDAChess</code></a> in <a
+href="https://redirect.github.com/Swatinem/rust-cache/pull/394">Swatinem/rust-cache#394</a></li>
+</ul>
+<h2>New Contributors</h2>
+<ul>
+<li><a
+href="https://github.com/TethysSvensson"><code>@​TethysSvensson</code></a>
+made their first contribution in <a
+href="https://redirect.github.com/Swatinem/rust-cache/pull/377">Swatinem/rust-cache#377</a></li>
+<li><a href="https://github.com/SDAChess"><code>@​SDAChess</code></a>
+made
 
-Add direct rendering tests for empty/disjoint areas and partial overlap
-with an offset buffer for Table.
-
-Completes the buffer bounds clipping pass across widgets from
-#2817-#2821, #2841, and #2850.
-
-Signed-off-by: Ronit Gupta <[REDACTED_EMAIL]>
-Co-authored-by: Orhun Parmaksız <[REDACTED_EMAIL]>
-
-**File**: `ratatui-widgets/src/table.rs` (modified, +46/-0)
+**File**: `.github/workflows/ci.yml` (modified, +12/-12)
 ```diff
-@@ -774,6 +774,11 @@ impl StatefulWidget for &Table<'_> {
-     type State = TableState;
+@@ -36,7 +36,7 @@ jobs:
+         with:
+           toolchain: nightly
+           components: rustfmt
+-      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
++      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+       - uses: tombi-toml/setup-tombi@73552b752982de9c40393832cef2dc8a43013e6b # v1.9.1
+         with:
+           version: "0.9.19"
+@@ -104,7 +104,7 @@ jobs:
+       - uses: taiki-e/install-action@1e29709c0ec63babbe8f266397a465f29a825f91 # v2.87.31
+         with:
+           tool: cargo-udeps
+-      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
++      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+       - run: cargo xtask udeps
  
-     fn render(self, area: Rect, buf: &mut Buffer, state: &mut Self::State) {
-+        let area = area.intersection(buf.area);
-+        if area.is_empty() {
-+            return;
-+        }
-+
-         buf.set_style(area, self.style);
-         self.block.as_ref().render(area, buf);
-         let table_area = self.block.inner_if_some(area);
-@@ -3044,4 +3049,45 @@ mod tests {
-             assert_eq!(buf, Buffer::with_lines(expected));
-         }
-     }
-+
-+    #[rstest]
-+    fn render_table_outside_buffer_is_noop(
-+        #[values(
-+            Rect::new(0, 10, 10, 8),
-+            Rect::new(40, 10, 10, 8),
-+            Rect::new(10, 0, 30, 10),
-+            Rect::new(10, 18, 30, 8),
-+            Rect::new(10, 10, 0, 8),
-+            Rect::new(10, 10, 30, 0)
-+        )]
-+        area: Rect,
-+    ) {
-+        let buffer_area = Rect::new(10, 10, 30, 8);
-+        let mut buf = Buffer::filled(buffer_area, ratatui_core::buffer::Cell::new("x"));
-+        let expected = buf.clone();
-+        Widget::render(
-+            Table::new(
-+                [Row::new(["one", "two"])],
-+                [Constraint::Length(5), Constraint::Length(5)],
-+            ),
-+            area,
-+            &mut buf,
-+        );
-+        assert_eq!(buf, expected, "rendering into {area:?}");
-+    }
-+
-+    #[test]
-+    fn render_table_clips_to_offset_buffer() {
-+        let area = Rect::new(10, 10, 30, 8);
-+        let mut buf = Buffer::empty(area);
-+        let mut expected = Buffer::empty(area);
-+        let widget = Table::new(
-+            [Row::new(["one", "two"])],
-+            [Constraint::Length(5), Constraint::Length(5)],
-+        );
-+        Widget::render(&widget, Rect::new(9, 9, 40, 10), &mut buf);
-+        Widget::render(&widget, area, &mut expected);
-+        assert_eq!(buf, expected);
-+        assert_ne!(buf, Buffer::empty(area));
-+    }
- }
+   # Run cargo clippy.
+@@ -128,7 +128,7 @@ jobs:
+         with:
+           toolchain: ${{ matrix.toolchain }}
+           components: clippy
+-      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
++      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+       - run: cargo xtask clippy
+         env:
+           RUSTUP_TOOLCHAIN: ${{ matrix.toolchain }}
+@@ -163,7 +163,7 @@ jobs:
+       - uses: taiki-e/install-action@1e29709c0ec63babbe8f266397a465f29a825f91 # v2.87.31
+         with:
+           tool: cargo-llvm-cov
+-      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
++      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+       - run: cargo xtask coverage
+       - uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+         with:
+@@ -189,7 +189,7 @@ jobs:
+       - uses: taiki-e/install-action@1e29709c0ec63babbe8f266397a465f29a825f91 # v2.87.31
+         with:
+           tool: cargo-hack
+-      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
++      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+       - run: cargo xtask check --all-features
+         env:
+           RUSTUP_TOOLCHAIN: ${{ matrix.toolchain }}
+@@ -208,7 +208,7 @@ jobs:
+       - uses: taiki-e/install-action@1e29709c0ec63babbe8f266397a465f29a825f91 # v2.87.31
+         with:
+           tool: cargo-minimal-versions,cargo-hack
+-      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
++      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+       - run: cargo minimal-versions check --direct --workspace --all-features --all-targets
+ 
+   build-no-std:
+@@ -222,7 +222,7 @@ jobs:
+         with:
+           toolchain: stable
+           targets: x86_64-unknown-none, thumbv6m-none-eabi
+-      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
++      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+       # This makes it easier to debug the exact versions of the dependencies
+       - run: cargo tree --target x86_64-unknown-none -p ratatui-core
+       - run: cargo tree --target x86_64-unknown-none -p ratatui-widgets
+@@ -250,7 +250,7 @@ jobs:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with:
+           persist-credentials: false
+-      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
++      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+       - uses: taiki-e/install-action@1e29709c0ec63babbe8f266397a465f29a825f91 # v2.87.31
+         with:
+           tool: cargo-rdme
+@@ -277,7 +277,7 @@ jobs:
+       - uses: taiki-e/install-action@1e29709c0ec63babbe8f266397a465f29a825f91 # v2.87.31
+         with:
+           tool: cargo-hack
+-      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
++      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+       - run: cargo xtask docs
+ 
+   # Run cargo test on the documentation of the crate. This will catch any code examples that don't
+@@ -295,7 +295,7 @@ jobs:
+       - uses: taiki-e/install-action@1e29709c0ec63babbe8f266397a465f29a825f91 # v2.87.31
+         with:
+           tool: cargo-hack
+-      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
++      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+       - run: cargo xtask test-docs
+ 
+   # Run cargo test on the libraries of the crate.
+@@ -317,7 +317,7 @@ jobs:
+       - uses: taiki-e/install-action@1e29709c0ec63babbe8f266397a465f29a825f91 # v2.87.31
+         with:
+           tool: cargo-hack
+-      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
++      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+       - run: cargo xtask test-libs
+ 
+   # Run cargo test on all the backends.
+@@ -340,7 +340,7 @@ jobs:
+       - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8
+         with:
+           toolchain: stable
+-      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
++      - uses: 
 ```
 
 ---
 
-### Incident Patch 3: `6fbb0199` (2026-10-24)
-**Commit Message**: fix(list): clip rendering to buffer bounds (#2841)
+### Incident Patch 3: `5e46f4ce` (2026-10-26)
+**Commit Message**: build(deps): bump tombi-toml/setup-tombi from 1.8.5 to 1.9.1 (#2858)
 
-`List` and `RatatuiLogo` can panic when rendering into an area extending
-outside the buffer. Clip both widgets to the buffer before styling or
-drawing their blocks and inner contents, and return when the
-intersection is empty.
+Bumps
+[tombi-toml/setup-tombi](https://github.com/tombi-toml/setup-tombi) from
+1.8.5 to 1.9.1.
+<details>
+<summary>Release notes</summary>
+<p><em>Sourced from <a
+href="https://github.com/tombi-toml/setup-tombi/releases">tombi-toml/setup-tombi's
+releases</a>.</em></p>
+<blockquote>
+<h2>v1.9.1</h2>
+<p>This setup-tombi release matches <a
+href="https://github.com/tombi-toml/tombi/releases/tag/v1.9.1">tombi
+v1.9.1</a>.</p>
+<p><strong>Full Changelog</strong>: <a
+href="https://github.com/tombi-toml/setup-tombi/compare/v1.9.0...v1.9.1">https://github.com/tombi-toml/setup-tombi/compare/v1.9.0...v1.9.1</a></p>
+<h2>v1.9.0</h2>
+<p>This setup-tombi release matches <a
+href="https://github.com/tombi-toml/tombi/releases/tag/v1.9.0">tombi
+v1.9.0</a>.</p>
+<p><strong>Full Changelog</strong>: <a
+href="https://github.com/tombi-toml/setup-tombi/compare/v1.8.10...v1.9.0">https://github.com/tombi-toml/setup-tombi/compare/v1.8.10...v1.9.0</a></p>
+<h2>v1.8.10</h2>
+<p>This setup-tombi release matches <a
+href="https://github.com/tombi-toml/tombi/releases/tag/v1.8.10">tombi
+v1.8.10</a>.</p>
+<p><strong>Full Changelog</strong>: <a
+href="https://
 
-Add direct rendering tests for empty/disjoint areas and partial overlap
-with an offset buffer for both widgets.
-
-Completes the buffer bounds clipping pass across widgets from #2817,
-#2818, #2819, #2820, and #2821.
-
-Signed-off-by: Ronit Gupta <[REDACTED_EMAIL]>
-
-**File**: `ratatui-widgets/src/list/rendering.rs` (modified, +40/-0)
+**File**: `.github/workflows/ci.yml` (modified, +1/-1)
 ```diff
-@@ -31,6 +31,11 @@ impl StatefulWidget for &List<'_> {
-     type State = ListState;
- 
-     fn render(self, area: Rect, buf: &mut Buffer, state: &mut Self::State) {
-+        let area = area.intersection(buf.area);
-+        if area.is_empty() {
-+            return;
-+        }
-+
-         buf.set_style(area, self.style);
-         self.block.as_ref().render(area, buf);
-         let list_area = self.block.inner_if_some(area);
-@@ -1269,4 +1274,39 @@ mod tests {
-         StatefulWidget::render(list, single_line_buf.area, &mut single_line_buf, &mut state);
-         assert_eq!(single_line_buf, Buffer::with_lines([expected]));
-     }
-+
-+    #[rstest]
-+    fn render_list_outside_buffer_is_noop(
-+        #[values(
-+            Rect::new(0, 10, 10, 8),
-+            Rect::new(40, 10, 10, 8),
-+            Rect::new(10, 0, 30, 10),
-+            Rect::new(10, 18, 30, 8),
-+            Rect::new(10, 10, 0, 8),
-+            Rect::new(10, 10, 30, 0)
-+        )]
-+        area: Rect,
-+    ) {
-+        let buffer_area = Rect::new(10, 10, 30, 8);
-+        let mut buf = Buffer::filled(buffer_area, ratatui_core::buffer::Cell::new("x"));
-+        let expected = buf.clone();
-+        let widget = List::new(["item 1", "item 2"]);
-+        let mut state = ListState::default();
-+        StatefulWidget::render(&widget, area, &mut buf, &mut state);
-+        assert_eq!(buf, expected, "rendering into {area:?}");
-+    }
-+
-+    #[test]
-+    fn render_list_clips_to_offset_buffer() {
-+        let area = Rect::new(10, 10, 30, 8);
-+        let mut buf = Buffer::empty(area);
-+        let mut expected = Buffer::empty(area);
-+        let widget = List::new(["item 1", "item 2"]);
-+        let mut state1 = ListState::default();
-+        let mut state2 = ListState::default();
-+        StatefulWidget::render(&widget, Rect::new(9, 9, 40, 10), &mut buf, &mut state1);
-+        StatefulWidget::render(&widget, area, &mut expected, &mut state2);
-+        assert_eq!(buf, expected);
-+        assert_ne!(buf, Buffer::empty(area));
-+    }
- }
-```
-
-**File**: `ratatui-widgets/src/logo.rs` (modified, +35/-0)
-```diff
-@@ -143,6 +143,11 @@ impl RatatuiLogo {
- 
- impl Widget for RatatuiLogo {
-     fn render(self, area: Rect, buf: &mut Buffer) {
-+        let area = area.intersection(buf.area);
-+        if area.is_empty() {
-+            return;
-+        }
-+
-         let logo = self.size.as_str();
-         Text::raw(logo).render(area, buf);
-     }
-@@ -257,4 +262,34 @@ mod tests {
-         // This should not panic, even if the buffer has zero size.
-         logo.render(buffer.area, &mut buffer);
-     }
-+
-+    #[rstest]
-+    fn render_logo_outside_buffer_is_noop(
-+        #[values(
-+            Rect::new(0, 10, 10, 8),
-+            Rect::new(40, 10, 10, 8),
-+            Rect::new(10, 0, 30, 10),
-+            Rect::new(10, 18, 30, 8),
-+            Rect::new(10, 10, 0, 8),
-+            Rect::new(10, 10, 30, 0)
-+        )]
-+        area: Rect,
-+    ) {
-+        let buffer_area = Rect::new(10, 10, 30, 8);
-+        let mut buf = Buffer::filled(buffer_area, ratatui_core::buffer::Cell::new("x"));
-+        let expected = buf.clone();
-+        RatatuiLogo::tiny().render(area, &mut buf);
-+        assert_eq!(buf, expected, "rendering into {area:?}");
-+    }
-+
-+    #[test]
-+    fn render_logo_clips_to_offset_buffer() {
-+        let area = Rect::new(10, 10, 30, 8);
-+        let mut buf = Buffer::empty(area);
-+        let mut expected = Buffer::empty(area);
-+        RatatuiLogo::tiny().render(Rect::new(9, 9, 40, 10), &mut buf);
-+        RatatuiLogo::tiny().render(area, &mut expected);
-+        assert_eq!(buf, expected);
-+        assert_ne!(buf, Buffer::empty(area));
-+    }
- }
+@@ -37,7 +37,7 @@ jobs:
+           toolchain: nightly
+           components: rustfmt
+       - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
+-      - uses: tombi-toml/setup-tombi@be97456589cb1f9c6c8a419bd7fe825b40a9df50 # v1.8.5
++      - uses: tombi-toml/setup-tombi@73552b752982de9c40393832cef2dc8a43013e6b # v1.9.1
+         with:
+           version: "0.9.19"
+       - run: cargo xtask format --check
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2856** (2026-10-24): docs(release): fix demo2 recording commands (@fallintoplace)
-- **PR #2853** (closed): feat(buffer): add per-cell hyperlinks behind a cell-extensions feature (@m3talsmith)
-- **PR #2851** (2026-10-24): fix(table): clip rendering to buffer bounds (@ronitgupta138)
-- **PR #2850** (2026-10-21): fix(buffer): guard set_stringn against out-of-area coordinates (#2810) (@ronitgupta138)
-- **PR #2849** (2026-10-20): chore(ci): restrict release workflow to main (@orhun)
-- **PR #2847** (2026-10-19): build(deps): bump zizmorcore/zizmor-action from 0.6.4 to 0.7.1 (@dependabot[bot])
+- **PR #2866** (2026-10-26): build(deps): bump taiki-e/install-action from 2.87.29 to 2.87.31 (@dependabot[bot])
+- **PR #2865** (2026-10-26): build(deps): bump octocrab from 0.54.4 to 0.54.5 (@dependabot[bot])
+- **PR #2864** (2026-10-26): build(deps): bump lru from 0.18.5 to 0.19.0 (@dependabot[bot])
+- **PR #2863** (2026-10-26): build(deps): bump rust-lang/crates-io-auth-action from 1.0.5 to 1.0.6 (@dependabot[bot])
+- **PR #2862** (2026-10-26): build(deps): bump zizmorcore/zizmor-action from 0.7.1 to 0.8.0 (@dependabot[bot])
+- **PR #2861** (2026-10-26): build(deps): bump rstest from 0.27.0 to 0.28.0 (@dependabot[bot])
 
 ---
 
@@ -1224,28 +1230,30 @@ Signed-off-by: Ronit Gupta <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): require patched lru 0.18.2 (#2825)
+## X. build(deps): bump release-plz/action from 0.5.142 to 0.5.145 (#2860)
 
 **RULE**:
-When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ratatui/ratatui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/release-plz.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ratatui/ratatui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6d6ced53`: build(deps): require patched lru 0.18.2 (#2825). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `65679a6a`: build(deps): bump release-plz/action from 0.5.142 to 0.5.145 (#2860). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release-plz.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-lru = "0.18.2"
+        uses: release-plz/action@7ef5e4d4b0420630cfcaeb182c01e13651d4c577 # v0.5
+        uses: release-plz/action@7ef5e4d4b0420630cfcaeb182c01e13651d4c577 # v0.5
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-lru = "0.18"
+        uses: release-plz/action@8921286633dfa0c4020f7f30bd1c14fe19cbb10e # v0.5
+        uses: release-plz/action@8921286633dfa0c4020f7f30bd1c14fe19cbb10e # v0.5
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6d6ced53` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `65679a6a` are properly handled with clean fallback behavior.

@@ -5612,3 +5612,8 @@ Every entry in this ledger must capture:
 | `learn-github-citusdata-citus` | `https://github.com/citusdata/citus` | `1aba449a` | Multi-dimensional audit evidence | 2026-10-28T00:26:28.821Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `41983afe` | Multi-dimensional audit evidence | 2026-10-28T00:32:49.294Z |
 | `learn-github-crawlcove-xml-sitemap-validator` | `https://github.com/CrawlCove/crawlcove-sitemap-validator` | `8aeca12b` | Multi-dimensional audit evidence | 2026-10-28T00:33:34.434Z |
+| `learn-github-primer-react` | `https://github.com/primer/react` | `f733dcb2` | Multi-dimensional audit evidence | 2026-10-28T00:40:06.814Z |
+| `learn-github-ratatui-ratatui` | `https://github.com/ratatui/ratatui` | `b80480c1` | Multi-dimensional audit evidence | 2026-10-28T00:40:09.283Z |
+| `learn-github-fastify-fastify` | `https://github.com/fastify/fastify` | `5df959f3` | Multi-dimensional audit evidence | 2026-10-28T00:40:10.625Z |
+| `learn-github-tencent-tds-kuiklyui` | `https://github.com/Tencent-TDS/KuiklyUI` | `f0d0389c` | Multi-dimensional audit evidence | 2026-10-28T00:40:13.031Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `9c5e56ae` | Multi-dimensional audit evidence | 2026-10-28T00:40:17.820Z |

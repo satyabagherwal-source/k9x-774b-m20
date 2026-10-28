@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `a80937a2`  
+> **Source Version**: `9c5e56ae`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T20:45:24.443Z  
+> **Timestamp**: 2026-10-28T00:40:17.222Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T20:45:23.194Z  
+> **Harvest Timestamp**: 2026-10-28T00:40:17.215Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25719 stars
+- **Stars / Engagement**: 25721 stars
 
 ---
 
@@ -1259,11 +1259,11 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #49662** (2026-10-27): **ipam: Only release ENI prefixes acknowledged by the agent**
+  *Symptoms*: Please ensure your pull request adheres to the following guidelines:  - [x] For first time contributors, read [Submitting a pull request] - [x] All code is covered by unit and/or runtime tests where feasible. - [x] All commits contain a well written commit description including a title,       description and a `Fixes: #XXX` line if the commit addresses a particular       GitHub issue. - [x] If your commit description contains a `Fixes: <commit-id>` tag, then       please add the commit author[s] as reviewer[s] to this issue. (not applicable) - [x] All commits are signed off. See the section [Developer’s Certificate of Origin] - [x] Provide a title or release-note blurb suitable for the release notes. - [x] Describe how you have tested this change in a live environment such as       [kind], if applicable. - [x] Disclose use of machine learning models (including LLMs and other generative AI)       in accordance with the [Cilium AI Policy], and indicate the rating using       [AI Influence Level].       Example: "This PR was prepared with AIL:N. I personally checked X." - [x] Thanks for contributing!   With ENI prefix delegation and `aws-release-excess-ips`, the operator released a prefix as soon as any of its IPs was acknowledged as `ready-for-release`, even if the agent answered `do-not-release` for other IPs of that prefix or had not answered yet. Pods using those IPs lost connectivity.  `handleIPRelease` now only releases prefixes whose IPs were all ack
+
 - **Issue #49654** (2026-10-27): **Add CRD-managed SPIRE registration and shared-root HA**
   *Symptoms*: 
-
-- **Issue #49648** (2026-10-27): **test commit: do not merge**
-  *Symptoms*: if joe sees this message : do not the commit :>  Please ensure your pull request adheres to the following guidelines:  - [ ] For first time contributors, read [Submitting a pull request] - [ ] All code is covered by unit and/or runtime tests where feasible. - [ ] All commits contain a well written commit description including a title,       description and a `Fixes: #XXX` line if the commit addresses a particular       GitHub issue. - [ ] If your commit description contains a `Fixes: <commit-id>` tag, then       please add the commit author[s] as reviewer[s] to this issue. - [ ] All commits are signed off. See the section [Developer’s Certificate of Origin] - [ ] Provide a title or release-note blurb suitable for the release notes. - [ ] Describe how you have tested this change in a live environment such as       [kind], if applicable. - [ ] Disclose use of machine learning models (including LLMs and other generative AI)       in accordance with the [Cilium AI Policy], and indicate the rating using       [AI Influence Level].       Example: "This PR was prepared with AIL:N. I personally checked X." - [ ] Thanks for contributing!  <!-- Description of change -->  Fixes: #issue-number  ```release-note <!-- Enter the release note text here or remove this release-note section from your PR description. Do NOT put an "empty" release note here --> ```  [AI Influence Level]: https://danielmiessler.com/blog/ai-influence-level-ail [Cilium AI Policy]: https://github.com/cilium/community/
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1280,145 +1280,36 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4584f51a` (2026-10-23)
-**Commit Message**: ipam/resynctest: generalize the resync race helper
+### Incident Patch 1: `9c5e56ae` (2026-10-09)
+**Commit Message**: fix(pkg/k8s): Remove redundant DeepCopy in GetPodMetadata
 
-Rename RunDuringFullResync to RunDuringResync because the helper can also
-exercise partial refreshes through a resyncer adapter.
+pkg/k8s/labels.go GetPodMetadata calls DeepCopy for Pod's labels map
+before passing it to SanitizePodLabels which passes it to
+RemoveCiliumLabels which returns a copy anyway.
 
-This lays the foundation for further testing in the subsequent commits.
+Signed-off-by: Patryk Piętka <[REDACTED_EMAIL]>
 
-Signed-off-by: Fabio Falzoi <[REDACTED_EMAIL]>
-
-**File**: `pkg/aws/ipam/instances_resync_test.go` (modified, +1/-1)
+**File**: `pkg/k8s/labels.go` (modified, +1/-2)
 ```diff
-@@ -74,7 +74,7 @@ func TestFullResync(t *testing.T) {
- 		require.NotEmpty(t, addrs)
- 		released := addrs[0]
+@@ -43,8 +43,7 @@ func GetPodMetadata(logger *slog.Logger, clusterInfo cmtypes.ClusterInfo, k8sNs
+ 		logfields.K8sPodName, pod.Name,
+ 	)
  
--		resynctest.RunDuringFullResync(t, mngr, hooked.setHook,
-+		resynctest.RunDuringResync(t, mngr, hooked.setHook,
- 			func() error {
- 				return ec2api.UnassignPrivateIpAddresses(context.Background(), eniID, []string{released})
- 			},
-```
-
-**File**: `pkg/ipam/resynctest/resynctest.go` (modified, +27/-19)
-```diff
-@@ -1,8 +1,8 @@
- // SPDX-License-Identifier: Apache-2.0
- // Copyright Authors of Cilium
+-	objMetaCpy := pod.ObjectMeta.DeepCopy()
+-	labels := k8sUtils.SanitizePodLabels(objMetaCpy.Labels, k8sNs, pod.Spec.ServiceAccountName, clusterInfo.Name)
++	labels := k8sUtils.SanitizePodLabels(pod.ObjectMeta.Labels, k8sNs, pod.Spec.ServiceAccountName, clusterInfo.Name)
  
--// Package resynctest checks that an IPAM cache update made during a full
--// cloud API resync survives it.
-+// Package resynctest checks that an IPAM cache update made during a full or
-+// partial cloud API resync survives it.
- package resynctest
- 
- import (
-@@ -19,14 +19,17 @@ type resyncer interface {
- 	Resync(ctx context.Context) (time.Time, error)
- }
- 
--// RunDuringFullResync runs cloudSetup and then cacheUpdate inside the cloud fetch window of a full resync.
--// setHook installs the function the fake cloud API calls when the full resync's fetch returns.
--func RunDuringFullResync(t *testing.T, mngr resyncer, setHook func(func()), cloudSetup func() error, cacheUpdate func()) {
-+// RunDuringResync runs cloudSetup and then cacheUpdate while a full or partial
-+// resync holds its cloud snapshot before publishing it. setHook installs the
-+// function the fake cloud API calls after capturing the snapshot and before
-+// returning it to the resync.
-+func RunDuringResync(t *testing.T, mngr resyncer, setHook func(func()), cloudSetup func() error, cacheUpdate func()) {
- 	t.Helper()
- 
--	// An unguarded cacheUpdate must land within this much of the fetch window for the resync to drop it.
-+	// Give an unguarded cacheUpdate time to finish before the delayed snapshot
-+	// returns, allowing the resync to expose a stale overwrite.
- 	const detectionBudget = 2 * time.Second
--	// Only a locking regression keeps cloudSetup or cacheUpdate waiting this long.
-+	// Bound waits for cloud setup, snapshot publication, and the cache update.
- 	const progressTimeout = 10 * time.Second
- 
- 	var setupErr error
-@@ -35,7 +38,8 @@ func RunDuringFullResync(t *testing.T, mngr resyncer, setHook func(func()), clou
- 	done := make(chan struct{})
- 	hookReturned := make(chan struct{})
- 
--	// The resync goroutine runs this hook, so it records what it saw and never calls t itself.
-+	// The resync goroutine runs this hook. Record progress here and report
-+	// failures from the test goroutine.
- 	setHook(func() {
- 		defer close(hookReturned)
- 		go func() {
-@@ -47,7 +51,7 @@ func RunDuringFullResync(t *testing.T, mngr resyncer, setHook func(func()), clou
- 			cacheUpdate()
- 		}()
- 
--		// Keep the cloud calls out of the budget below, and never wait on a setup that gave up.
-+		// Wait for cloudSetup before starting the cache-update detection window.
- 		select {
- 		case <-atCacheUpdate:
- 		case <-done:
-@@ -57,7 +61,8 @@ func RunDuringFullResync(t *testing.T, mngr resyncer, setHook func(func()), clou
- 			return
- 		}
- 
--		// A guarded cacheUpdate waits for resyncLock, so this select always spends the whole budget.
-+		// A serialized cacheUpdate waits for the resync to finish. Let the
-+		// snapshot return when the detection budget expires so it can proceed.
- 		select {
- 		case <-done:
- 		case <-time.After(detectionBudget):
-@@ -71,26 +76,29 @@ func RunDuringFullResync(t *testing.T, mngr resyncer, setHook func(func()), clou
- 		resynced <- err
- 	}()
- 
--	// The hook owns progressTimeout plus the budget, so wait that out before blaming the resync.
-+	// Allow time for cloudSetup and the detection window before checking
-+	// whether the resync returned from its snapshot hook.
- 	select {
- 	case <-hookReturned:
- 	case <-time.After(progressTimeout + detectionBudget + time.Second):
--		t.Fatalf("the full resync did not reach its cloud fetch hook within %v", progressTimeout)
-+		t.Fatalf("resync did not return from its cloud snapshot hook within %v", progressTimeout+detectionBudget+time.Second)
- 	}
- 	require.False(t, setupStalled, "cloud setup neither reached the cache update nor failed within %v", progressTimeout)
- 
--	// A cacheUpdate that takes the locks in the wrong order deadlocks the publish after the hook.
-+	// Wait for snapshot publication. A cacheUpdate that takes locks in the
-+	// wrong order can block the resync after its snapshot hook returns.
- 	select {
- 	case err := <-resynced:
- 		require.NoError(t, err)
- 	case <-time.After(progressTimeout):
--		t.Fatalf("the full resync did not publish within %v of its fetch window; cacheUpdate holds a lock it needs", progressTimeout)
-+		t.Fatalf("resync did not publish within %v after its snapshot hook returned; cacheUpdate may hold a lock it needs", progressTimeout)
- 	}
- 
-+	// Once the resync completes, a serialized cacheUpdate must also finish.
- 	select {
- 	case <-done:
- 	case <-time.After(progressTimeout):
--		t.Fatalf("cache update still blocked %v after the full resync released resyncLock", progressTimeout)
-+		t.Fatalf("cache update still blocked %v after the resync completed", progressTimeout)
- 	}
- 
- 	setHook(nil)
-@@ -103,7 +111,7 @@ type eniCache[E any] interface {
- 	UpdateENI(instanceID string, eni E)
- }
- 
--// ENIUpdate checks that an ENI attached inside the cloud fetch window of a full resync survives it.
-+// ENIUpdate checks that an ENI attached while a resync holds its cloud snapshot survives it.
- func ENIUpdate[E any](t *test
+ 	namedPorts = make(ciliumTypes.NamedPortMap)
+ 	for _, containers := range pod.Spec.Containers {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #49662** (closed): ipam: Only release ENI prefixes acknowledged by the agent (@norbjert)
 - **PR #49654** (closed): Add CRD-managed SPIRE registration and shared-root HA (@Arleee1)
 - **PR #49648** (closed): test commit: do not merge (@Artyop)
 - **PR #49645** (2026-10-27): l2announcer: Fix deadlock between stop() and leader events (@aanm)
 - **PR #49642** (2026-10-27): renovate: Bump go-control-plane/envoy with cilium-envoy (@aanm)
 - **PR #49637** (2026-10-27): v1.19 Backports 2026-10-27 (@christarazi)
-- **PR #49636** (2026-10-27): v1.18 Backports 2026-10-27 (@christarazi)
 
 ---
 
@@ -1438,28 +1329,29 @@ Signed-off-by: Fabio Falzoi <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ipam/resynctest: generalize the resync race helper
+## X. pkg/k8s): Remove redundant DeepCopy in GetPodMetadata
 
 **RULE**:
-When implementing operations in `pkg/aws/ipam/instances_resync_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/k8s/labels.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4584f51a`: ipam/resynctest: generalize the resync race helper. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9c5e56ae`: pkg/k8s): Remove redundant DeepCopy in GetPodMetadata. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/aws/ipam/instances_resync_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/k8s/labels.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		resynctest.RunDuringResync(t, mngr, hooked.setHook,
+	labels := k8sUtils.SanitizePodLabels(pod.ObjectMeta.Labels, k8sNs, pod.Spec.ServiceAccountName, clusterInfo.Name)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		resynctest.RunDuringFullResync(t, mngr, hooked.setHook,
+	objMetaCpy := pod.ObjectMeta.DeepCopy()
+	labels := k8sUtils.SanitizePodLabels(objMetaCpy.Labels, k8sNs, pod.Spec.ServiceAccountName, clusterInfo.Name)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4584f51a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9c5e56ae` are properly handled with clean fallback behavior.
