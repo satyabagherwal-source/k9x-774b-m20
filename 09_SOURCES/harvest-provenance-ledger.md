@@ -5651,3 +5651,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autotrust-jev-27b-vl` | `https://huggingface.co/autotrust/JEV-27B-VL` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-28T01:58:34.815Z |
 | `learn-github-crosspaste-crosspaste-desktop` | `https://github.com/CrossPaste/crosspaste-desktop` | `5d07b610` | Multi-dimensional audit evidence | 2026-10-28T01:58:36.532Z |
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `46376e81` | Multi-dimensional audit evidence | 2026-10-28T01:58:39.179Z |
+| `learn-github-vikejs-vike` | `https://github.com/vikejs/vike` | `94b12bd6` | Multi-dimensional audit evidence | 2026-10-28T02:04:57.998Z |
+| `learn-huggingface-autotrust-gev-26b-decide` | `https://huggingface.co/autotrust/GEV-26B-Decide` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-28T02:05:07.639Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `bc4e2fc4` | Multi-dimensional audit evidence | 2026-10-28T02:05:16.072Z |

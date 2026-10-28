@@ -5642,3 +5642,6 @@
 | `CYCLE-20261028-TTTO` | `2026-10-28T01:58:34.812Z` | `autotrust/JEV-27B-VL` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5112, Rule 5113` | Yes (`d7c2ba43...`) |
 | `CYCLE-20261028-TV5C` | `2026-10-28T01:58:36.528Z` | `CrossPaste/crosspaste-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5114` | Yes (`49517915...`) |
 | `CYCLE-20261028-TX6W` | `2026-10-28T01:58:39.176Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5115` | Yes (`0125d197...`) |
+| `CYCLE-20261028-21GL` | `2026-10-28T02:04:57.957Z` | `vikejs/vike` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5116` | Yes (`ba457740...`) |
+| `CYCLE-20261028-28XG` | `2026-10-28T02:05:07.636Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5117, Rule 5118, Rule 5119` | Yes (`b7c3e0f3...`) |
+| `CYCLE-20261028-2FFP` | `2026-10-28T02:05:16.069Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5120` | Yes (`ce46c98f...`) |

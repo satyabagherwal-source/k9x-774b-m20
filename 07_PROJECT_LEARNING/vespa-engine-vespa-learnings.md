@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source**: github ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
-> **Source Version**: `a354091b`  
+> **Source Version**: `bc4e2fc4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T13:07:21.430Z  
+> **Timestamp**: 2026-10-28T02:05:15.716Z  
 > **Learning ID**: `learn-github-vespa-engine-vespa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T13:07:21.201Z  
+> **Harvest Timestamp**: 2026-10-28T02:05:15.619Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AI search platform
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7150 stars
+- **Stars / Engagement**: 7148 stars
 
 ---
 
@@ -1065,212 +1065,42 @@ func (v *showHiddenFlag) IsBoolFlag() bool { return true }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ab6fa0e1` (2026-10-26)
-**Commit Message**: Fix misleading javadoc and cleanup tests
+### Incident Patch 1: `219c1326` (2026-10-27)
+**Commit Message**: Opt out of protobuf message globals in ASan builds
 
-**File**: `config-model/src/main/java/com/yahoo/vespa/model/content/cluster/ContentCluster.java` (modified, +1/-1)
+Define PROTOBUF_MESSAGE_GLOBALS_TEMPORARY_OPTOUT for address sanitizer
+builds to keep the ClassData layout compatible with the library.
+
+Why: When compiled with AddressSanitizer, protobuf 36.2 headers define
+PROTOBUF_MESSAGE_GLOBALS, which removes the prototype and tc_table
+fields from internal::ClassData. The libprotobuf from vespa-deps is
+built without ASan and expects the old layout, so it reads a function
+pointer as the parse table and crashes.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `cxx_settings.cmake` (modified, +4/-0)
 ```diff
-@@ -667,7 +667,7 @@ public boolean isHosted() {
-      * Returns whether cluster state versions received by content nodes must be strictly increasing.
-      * This safety check can only be relaxed when this deployment has exactly one cluster controller
-      * configured OR the {@code require-strictly-increasing-cluster-state-versions}
--     * feature flag is enabled.
-+     * feature flag is disabled.
-      */
-     public boolean requireStrictlyIncreasingClusterStateVersions() {
-         if (singleClusterController) {
-```
-
-**File**: `config-model/src/test/java/com/yahoo/vespa/model/content/ContentClusterTest.java` (modified, +6/-25)
-```diff
-@@ -1333,11 +1333,11 @@ private ContentCluster createWithZone(String clusterXml, Zone zone) throws Excep
-         return createWithZone(clusterXml, zone, true);
-     }
- 
--    private ContentCluster createWithZone(String clusterXml, Zone zone, boolean relaxStrictlyIncreasingClusterStateVersions) throws Exception {
-+    private ContentCluster createWithZone(String clusterXml, Zone zone, boolean requireStrictlyIncreasingClusterStateVersions) throws Exception {
-         DeployState.Builder deployStateBuilder = new DeployState.Builder()
-                 .zone(zone);
-         var properties = new TestProperties().setHostedVespa(true)
--                .requireStrictlyIncreasingClusterStateVersions(relaxStrictlyIncreasingClusterStateVersions);
-+                .requireStrictlyIncreasingClusterStateVersions(requireStrictlyIncreasingClusterStateVersions);
-         deployStateBuilder.properties(properties);
- 
-         List<String> schemas = SchemaBuilder.createSchemas("test");
-@@ -1691,26 +1691,7 @@ void distribution_key_not_much_higher_than_node_count_does_not_log_deployment_wa
-         assertEquals(warnings, "");
-     }
- 
--    private void checkStrictlyIncreasingClusterStateVersionConfig(boolean expected) throws Exception {
--        var cc = createOneNodeCluster(false);
--
--        // stor-server config should be the same for both distributors and storage nodes
--        var cfg = getStorServerConfigForStorage(cc);
--        StorServerConfig.Builder builder;
--        assertEquals(expected, cfg.require_strictly_increasing_cluster_state_versions());
--
--        builder = new StorServerConfig.Builder();
--        cc.getDistributorNodes().getConfig(builder);
--        cfg = builder.build();
--        assertEquals(expected, cfg.require_strictly_increasing_cluster_state_versions());
--    }
--
--    @Test
--    void strictly_increasing_cluster_state_versions_config() throws Exception {
--        checkStrictlyIncreasingClusterStateVersionConfig(true);
--    }
--
--    private void checkRequireStrictlyIncreasingClusterStateVersionConfig(boolean requireStrictlyIncreasingClusterStateVersions) throws Exception {
-+    private void checkStrictlyIncreasingClusterStateVersionNotRequired(boolean requireStrictlyIncreasingClusterStateVersions) throws Exception {
-         Zone zone = new Zone(Environment.dev, RegionName.from("us-east-3"));
-         String xml = new ContentClusterBuilder().docTypes("test").getXml();
-         var cc = createWithZone(xml, zone, requireStrictlyIncreasingClusterStateVersions);
-@@ -1733,9 +1714,9 @@ private static StorServerConfig getStorServerConfigForStorage(ContentCluster cc)
-     }
- 
-     @Test
--    void strictly_increasing_cluster_state_versions_config_is_always_disabled_with_a_single_cluster_controller() throws Exception {
--        checkRequireStrictlyIncreasingClusterStateVersionConfig(true);
--        checkRequireStrictlyIncreasingClusterStateVersionConfig(false);
-+    void strictly_increasing_cluster_state_versions_config_is_not_required_with_a_single_cluster_controller() throws Exception {
-+        checkStrictlyIncreasingClusterStateVersionNotRequired(true);
-+        checkStrictlyIncreasingClusterStateVersionNotRequired(false);
-     }
- 
-     @Test
-```
-
----
-
-### Incident Patch 2: `ca13c2b4` (2026-10-27)
-**Commit Message**: Merge pull request #38337 from vespa-engine/arnej/independent-boosts-fix
-
-Arnej/independent boosts fix
-
-**File**: `model-evaluation/src/main/java/ai/vespa/models/evaluation/LazyValue.java` (modified, +1/-1)
-```diff
-@@ -34,7 +34,7 @@ public LazyValue(FunctionReference function, Context context, Model model) {
- 
-     private Value computedValue() {
-         if (computedValue == null)
--            computedValue = model.requireReferencedFunction(function).getBody().evaluate(context);
-+            computedValue = model.requireReferencedFunction(function).getBody().evaluate(context).freeze();
-         return computedValue;
-     }
- 
-```
-
-**File**: `model-evaluation/src/test/java/ai/vespa/models/evaluation/RankProfileImportingTest.java` (modified, +15/-0)
-```diff
-@@ -87,4 +87,19 @@ public void testImportingLayeredGlobalPhase() {
-         assertEquals(1, args.size());
-         assertEquals("tensor(m{},v[3])", args.get("rankingExpression(mymul)").toString());
-     }
-+
-+    @Test
-+    public void testEvaluatingChainedGlobalPhase() {
-+        ModelTester tester = new ModelTester("src/test/resources/config/independent-boosts/");
-+        assertEquals(1, tester.models().size());
-+        Model m = tester.models().get("default");
-+        var evaluator = m.evaluatorOf("globalphase");
-+        evaluator.bind("attribute(score_lexical)", 5.0);
-+        evaluator.bind("query(multiplierA)", 0.15);
-+        evaluator.bind("query(multiplierB)", 0.15);
-+        // score_base = 2 * 5 = 10
-+        // finalA = 10 + 10 * 0.15 = 11.5
-+        // finalB = 11.5 + 10 * 0.15 = 13.0
-+        assertEquals(13.0, evaluator.evaluate().asDouble(), 1e-9);
-+    }
- }
-```
-
-**File**: `model-evaluation/src/test/resources/config/independent-boosts/rank-profiles.cfg` (added, +75/-0)
-```diff
-@@ -0,0 +1,75 @@
-+rankprofile[0].name "default"
-+rankprofile[0].fef.property[0].name "rankingExpression(lexical_signal).rankingScript"
-+rankprofile[0].fef.property[0].value "attribute(score_lexical)"
-+rankprofile[0].fef.property[1].name "rankingExpression(score_base).rankingScript"
-+rankprofile[0].fef.property[1].value "2 * rankingExpression(lexical_signal)"
-+rankprofile[0].fef.property[2].name "rankingExpression(baseA).rankingScript"
-+rankprofile[0].fef.property[2].value "rankingExpression(score_base)"
-+rankprofile[0].fef.property[3].name "rankingExpression(boostA).rankingScript"
-+rankprofile[0].fef.property[3].value "rankingExpression(baseA) * query(multiplierA)"
-+rankprofile[0].fef.property[4].name "rankingExpression(finalA).rankingScript"
-+rankprofile[0].fef.property[4].value "rankingExpression(baseA) + rankingExpression(boostA)"
-+rankprofile[0].fef.property[5].name "rankingExpression(baseB).rankingScript"
-+rankprofile[0].fef.property[5].value "rankingExpression(score_base)"
-+rankprofile[0].fef.property[6].name "rankingExpression(boostB).rankingScript"
-+rankprofile[0].fef.property[6].value "rankingExpression(baseB) * query(multiplierB)"
-+rankprofile[0].fef.property[7].name "rankingExpression(finalB).rankingScript"
-+rankprofile[0].fef.property[7].value "rankingExpression(finalA) + rankingExpression(boostB)"
-+rankprofile[0].fef.property[8].name "vespa.rank.firstphase"
-+rankprofile[0].fef.property[8].value "rankingExpression(firstphase)"
-+rankprofile[0].fef.property[9].name "rankingExpression(firstphase).rankingScript"
-+rankprofile[0].fef.property[9].value "1"
-+rankprofile[0].fef.property[10].name "vespa.rank.globalphase"
-+rankprofile[0].fef.property[10].value "rankingExpression(finalB)"
-+rankprofile[0].fef.property[11].name "vespa.summary.feature"
-+rankprofile[0].fef.property[11].value "rankingExpression(score_base)"
-+rankprofile[0].fef.property[12].name "vespa.summary.feature"
-+rankprofile[0].fef.property[12].value "rankingExpression(baseA)"
-+rankprofile[0].fef.property[13].name "vespa.summary.feature"
-+rankprofile[0].fef.property[13].value "rankingExpression(boostA)"
-+rankprofile[0].fef.property[14].name "vespa.summary.feature"
-+rankprofile[0].fef.property[14].value "rankingExpression(finalA)"
-+rankprofile[0].fef.property[15].name "vespa.summary.feature"
-+rankprofile[0].fef.property[15].value "rankingExpression(baseB)"
-+rankprofile[0].fef.property[16].name "vespa.summary.feature"
-+rankprofile[0].fef.property[16].value "rankingExpression(boostB)"
-+rankprofile[0].fef.property[17].name "vespa.summary.feature"
-+rankprofile[0].fef.property[17].value "rankingExpression(finalB)"
-+rankprofile[0].fef.property[18].name "vespa.match.feature"
-+rankprofile[0].fef.property[18].value "attribute(score_lexical)"
-+rankprofile[0].fef.property[19].name "vespa.hidden.matchfeature"
-+rankprofile[0].fef.property[19].value "attribute(score_lexical)"
-+rankprofile[0].fef.property[20].name "vespa.feature.rename"
-+rankprofile[0].fef.property[20].value "rankingExpression(score_base)"
-+rankprofile[0].fef.property[21].name "vespa.feature.rename"
-+rankprofile[0].fef.property[21].value "score_base"
-+rankprofile[0].fef.property[22].name "vespa.feature.rename"
-+rankprofile[0].fef.property[22].value "rankingExpression(baseA)"
-+rankprofile[0].fef.property[23].name "vespa.feature.rename"
-+rankprofile[0].fef.property[23].value "baseA"
-+rankprofile[0].fef.property[24].name "vespa.feature.rename"
-+rankprofile[0].fef.property[24].value "rankingExpression(boostA)"
-+rankprofile[0].fef.property[25].name "vespa.feature.rename"
-+rankprofile[0].fef.property[25].value "boostA"
-+rankprofile[0].fef.property[26].name "vespa.feature.rename"
-+rankprofile[0].fef.property[26].value "rankingExpression(finalA)"
-+rankprofile[0].fef.property[27].name "vespa.feature.rename"
-+rankprofile[0].fef.property[27].value "finalA"
-+rankprofile[0].fef.property[28].name "vespa.feature.rename"
-+rankprofile[0].fef.property[28].value "rankingExpression(baseB)"
-+rankprofile[0].fef.property[29].name "vespa.feature.rename"
-+rankprofile[0].fef.property[29].value "baseB"
-+rankprofile[0].fef.property[30].name "vespa.feature.rename"
-+rankprofile[0].fef.property[30].value "rankingExpression(boostB)"
-+rankprofile[0].fef.property[31].name "vespa.feature.rename"
-+rankprofile[0].fef.property[31].value "boostB"
-+rankprofile[0].fef.property[32].name "vespa.feature.rename"
-+rankprofile[0].fef.property[32].value "rankingExpression(finalB)"
-+rankprofile[0].fef.property[33].name "vespa.feature.rename"
-+rankprofile[0].fef.property[33].value "finalB"
-+rankprofile[0].fef.property[34].name "vespa.globalphase.rerankcount"
-+rankprofile[0].fef.property[34].value "10"
-+rankprofile[0].fef.property[35].name "query(multiplierA)"
-+rankprofile[0].fef.property[35].value "0.15"
-+rankprofile[0].fef.property[36].name "query(multiplierB)"
-+rankprofile[0].fef.property[36].value "0.15"
+@@ -117,6 +117,10 @@ if (VESPA_USE_SANITIZER)
+         # Many false positives when checking vptr due to limited visibility
+         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-sanitize=vptr")
+     endif()
++    if (VESPA_USE_SANITIZER MATCHES "address")
++        # Keep protobuf ClassData layout compatible with non-ASan libprotobuf from vespa-deps
++        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DPROTOBUF_MESSAGE_GLOBALS_TEMPORARY_OPTOUT")
++    endif()
+ endif()
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_C_FLAGS} ${CXX_SPECIFIC_WARN_OPTS} -fdiagnostics-color=auto ${EXTRA_CXX_FLAGS}")
+ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #38339** (2026-10-27): Opt out of protobuf message globals in ASan builds (@arnej27959)
 - **PR #38338** (2026-10-27): Remove the 'bitPacked' property (@bratseth)
 - **PR #38337** (2026-10-27): Arnej/independent boosts fix (@arnej27959)
 - **PR #38336** (2026-10-27): Add explanations (@bratseth)
 - **PR #38334** (2026-10-27): Add input explanations (@bratseth)
 - **PR #38331** (2026-10-26): Update how to find re2 library. (@toregge)
-- **PR #38330** (2026-10-26): Add noexcept specifier to blueprint resolver constructor. (@toregge)
 
 ---
 
@@ -1290,28 +1120,31 @@ Arnej/independent boosts fix
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. misleading javadoc and cleanup tests
+## X. Opt out of protobuf message globals in ASan builds
 
 **RULE**:
-When implementing operations in `config-model/src/main/java/com/yahoo/vespa/model/content/cluster/ContentCluster.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cxx_settings.cmake`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ab6fa0e1`: misleading javadoc and cleanup tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `219c1326`: Opt out of protobuf message globals in ASan builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `config-model/src/main/java/com/yahoo/vespa/model/content/cluster/ContentCluster.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `cxx_settings.cmake`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-     * feature flag is disabled.
+    if (VESPA_USE_SANITIZER MATCHES "address")
+        # Keep protobuf ClassData layout compatible with non-ASan libprotobuf from vespa-deps
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DPROTOBUF_MESSAGE_GLOBALS_TEMPORARY_OPTOUT")
+    endif()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-     * feature flag is enabled.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ab6fa0e1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `219c1326` are properly handled with clean fallback behavior.

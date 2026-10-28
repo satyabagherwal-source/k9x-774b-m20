@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T01:58:39.189Z",
+  "last_updated": "2026-10-28T02:05:16.080Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1790,14 +1790,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-gev-26b-decide",
-      "content_hash": "3834786f33d4ea38ff0848523c1c9dd97ed62f34f22088dc507a795821837465",
-      "verified_at": "2026-10-25T05:27:45.433Z",
+      "content_hash": "b7c3e0f3457b75f0487ff8e4128ccd8fdc2574266a1dca281d54f7cf01f07e85",
+      "verified_at": "2026-10-28T02:05:07.646Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T05:27:45.433Z"
+      "last_updated": "2026-10-28T02:05:07.646Z"
     },
     "ConwayResearch/Underdog-Saluki-27B-1.0": {
       "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -8766,14 +8766,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vikejs-vike",
-      "content_hash": "653d01f586d24a74fb99c74c2b7df565789421b99038c2ad553f6dd3dd43c100",
-      "verified_at": "2026-10-27T13:17:54.480Z",
+      "content_hash": "ba45774097cf66e0f47f1b370a59bcf00853e0bd9ef6cc46d05eac22638271a9",
+      "verified_at": "2026-10-28T02:04:58.005Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:17:54.480Z"
+      "last_updated": "2026-10-28T02:04:58.005Z"
     },
     "NVIDIA/cuda-rust": {
       "repository": "NVIDIA/cuda-rust",
@@ -8931,14 +8931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vespa-engine-vespa",
-      "content_hash": "ca172c0e033c47c0600ea4926b8592b40fe3df9011df6a8439e93b7b4231cce1",
-      "verified_at": "2026-10-27T13:07:21.853Z",
+      "content_hash": "ce46c98fc9f50371c450eb0ffd82559559f154124c94bc884fc836f16d6309cc",
+      "verified_at": "2026-10-28T02:05:16.079Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:07:21.853Z"
+      "last_updated": "2026-10-28T02:05:16.079Z"
     },
     "radix-ui/themes": {
       "repository": "radix-ui/themes",

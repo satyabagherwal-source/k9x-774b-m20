@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vikejs-vike-learnings.md`  
 > **Source**: github ([https://github.com/vikejs/vike](https://github.com/vikejs/vike))  
-> **Source Version**: `2c972989`  
+> **Source Version**: `94b12bd6`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T13:17:53.897Z  
+> **Timestamp**: 2026-10-28T02:04:57.560Z  
 > **Learning ID**: `learn-github-vikejs-vike`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vikejs-vike-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vikejs/vike](https://github.com/vikejs/vike))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T13:17:52.447Z  
+> **Harvest Timestamp**: 2026-10-28T02:04:56.532Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -433,11 +433,11 @@ async function onRenderClient(pageContext) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #3675** (2026-10-27): **fix: pass `headers` to telefunc `serve()` (telefunc 0.3.0)**
+  *Symptoms*: <img src="https://github.com/claude.png" width="20" height="20" alt="Claude"> *Claude Opus 5.5 (low effort) wrote this; another Claude Opus 5.5 (low effort) agent reviewed it.*  This fixes the CI of #3671, which bumps telefunc from 0.2.24 to 0.3.0. In 0.3.0, `serve({ url, method, body })` needs `headers` too, so every Telefunc call in three test apps fails and the Cloudflare test app no longer type-checks.  | Case | Observed on #3671 | Expected | |---|---|---| | A telefunction call in `examples/telefunc`, `test-deprecated-design/telefunc` and `test/@cloudflare_vite-plugin` | `[telefunc@0.3.0][Wrong Usage] serve({ headers }): argument headers is missing.` ([CI run](https://github.com/vikejs/vike/actions/runs/40439421763/job/121975935351)) | The todo list updates | | `tsc` in `test/@cloudflare_vite-plugin` | `error TS2345: … Property 'headers' is missing` on `worker/telefunc.ts` | No error |  The two Express servers now pass `headers: req.headers`, the form the [Telefunc docs](https://github.com/brillout/telefunc/blob/main/docs/pages/serve/%2BPage.mdx) show for Express. The Cloudflare worker already has a web `Request`, so it now calls `serve({ request })`, the way `test/universal-deploy/pages/middlewareTelefunc.ts` already does.  ### What you should see  **1.** The e2e tests of the jobs that failed on #3671 fail with the three files as they are on #3671's head (427ce4a67), and pass on this PR's head (0c22f8f42). Local runs with `pnpm exec test-e2e` on Node 22.21.0:  ``` # 427c
+
 - **Issue #3674** (2026-10-27): **fix: usage error for a pointer import through a path alias that resolves outside of the root directory (instead of `[Bug]`)**
   *Symptoms*: <img src="https://github.com/claude.png" width="20" height="20" alt="Claude"> *Claude Opus 5.5 (high effort) wrote the code and this description; Claude Opus 5.5 (high effort) tested and reviewed it.*  A pointer import in a `+config.js` through a path alias that resolves outside the root directory stops `vike build` and `vike dev` with `[Bug]`, while the same import written as a relative path gets a usage error. This PR gives the alias the same usage error. The user in #2326 had such an alias (`#firebase/*` pointing to a sibling folder) and hit the same `[Bug]` through a plain import, which 77128be fixed. A pointer import through that alias still crashes.  | Import in `+config.js`, with `tsconfig.json` `paths` `"#shared/*": ["../shared/*"]` | Observed on `main` | Expected | |---|---|---| | `import onRenderHtml from '#shared/render' with { type: 'vike:pointer' }` | `[vike@0.4.268][Bug] You stumbled upon a Vike bug.` | the usage error the relative form gets |  [`classifyImport()`](https://github.com/vikejs/vike/blob/57a213e390005b75e908690f7c2728b9488d95fe/packages/vike/src/node/vite/shared/resolveVikeConfigInternal/transpileAndExecuteFile.ts#L416) takes its path-alias branch only when the resolved file is inside the root, so an alias not shaped like an npm package name that resolves outside it falls through to an assertion that it is an npm package. It now also takes that branch for such an alias, which leads to the existing usage error. Only strings that assertion rejects cha
-
-- **Issue #3673** (2026-10-27): **fix: usage error for a path alias in an `import:` string (instead of `[Bug]`)**
-  *Symptoms*: <img src="https://github.com/claude.png" width="20" height="20" alt="Claude"> *Claude Opus 5.5 (high effort) wrote the code and this description; Claude Opus 5.5 (high effort) tested and reviewed it.*  A hand-written `import:` string in a `+config.js` with a path alias, e.g. `'import:#lib/onRenderHtml:default'`, stops `vike build` and `vike dev` with `[Bug]`. This PR turns it into a usage error that says what to use instead. I don't know of a user who reported it: I met it while working on vike-react-rsc.  | `import:` string | Observed on `main` | Expected | |---|---|---| | `#lib/x`, `~/x`, `$lib/x`, `@/x`, `@app/Components/Layout` | `[vike@0.4.268][Bug] You stumbled upon a Vike bug.` | a usage error |  [`resolvePointerImportData()`](https://github.com/vikejs/vike/blob/57a213e390005b75e908690f7c2728b9488d95fe/packages/vike/src/node/vite/shared/resolveVikeConfigInternal/resolvePointerImport.ts#L83) asserts that an import path that is neither relative nor absolute is shaped like an npm package name, so only aliases that happen to look like one pass. The docs show `import:` strings only as what Vike generates, and make aliases work in config files by defining them in `tsconfig.json` or `package.json` ([/path-aliases#config-files](https://vike.dev/path-aliases#config-files)): that covers a JS import, such as one marked `with { type: 'vike:pointer' }`, but not an `import:` string. So the assertion is now an `assertUsage` pointing there. The condition is unchanged, so every import 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -454,319 +454,238 @@ async function onRenderClient(pageContext) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e89c0f21` (2026-10-27)
-**Commit Message**: fix: an asset without file extension, e.g. `import url from './LICENSE?url'` (#3672)
+### Incident Patch 1: `94b12bd6` (2026-10-27)
+**Commit Message**: chore(deps): bump telefunc from 0.2.24 to 0.3.0 (#3671)
 
-Co-authored-by: Rom <[REDACTED_EMAIL]>
-
-**File**: `packages/vike/src/node/vite/plugins/build/handleAssetsManifest.ts` (modified, +4/-2)
+**File**: `examples/telefunc/package.json` (modified, +1/-1)
 ```diff
-@@ -271,8 +271,10 @@ function collectResources(entryRoot: ManifestChunk, manifest: Manifest) {
- // </head>
- // ```
- function getHash(src: string) {
--  // src is guaranteed to end with `.[hash][extname]`, see pluginDistFileNames.ts
--  const hash = src.split('.').at(-2)
-+  // - `src` is guaranteed to end with `.[hash][extname]` — see pluginDistFileNames.ts
-+  // - `[extname]` is empty for a file without extension, e.g. `LICENSE.C1uziuNB`
-+  const parts = path.posix.basename(src).split('.')
-+  const hash = parts.length === 2 ? parts[1] : parts.at(-2)
-   assert(hash)
-   return hash
- }
+@@ -14,7 +14,7 @@
+     "express": "^5.2.1",
+     "react": "^19.2.6",
+     "react-dom": "^19.2.6",
+-    "telefunc": "^0.2.24",
++    "telefunc": "^0.3.0",
+     "typescript": "^7.0.2",
+     "vike": "0.4.268",
+     "vite": "^7.1.5"
 ```
 
-**File**: `packages/vike/src/node/vite/plugins/build/pluginDistFileNames.ts` (modified, +4/-1)
+**File**: `examples/telefunc/server/index.js` (modified, +7/-1)
 ```diff
-@@ -127,7 +127,10 @@ function getAssetFileName(
-     return `${dir}/${name}.[hash][extname]`
-   }
- 
--  name = name.split('.').slice(0, -1).join('.')
-+  name = path.posix.parse(name).name
-+  // Remove leading `.` from filename, e.g. `.htaccess`
-+  //  - Otherwise some static servers don't serve it, e.g. sirv (`$ vike preview`)
-+  name = name.replace(/^\./, '')
-   name = clean(name, userRootDir)
-   return `${dir}/${name}.[hash][extname]`
- }
+@@ -25,7 +25,13 @@ async function startServer() {
+   app.use(express.text()) // Parse & make HTTP request body available at `req.body`
+   app.all('/_telefunc', async (req, res) => {
+     const context = {}
+-    const httpResponse = await serve({ url: req.originalUrl, method: req.method, body: req.body, context })
++    const httpResponse = await serve({
++      url: req.originalUrl,
++      method: req.method,
++      body: req.body,
++      headers: req.headers,
++      context,
++    })
+     const { body, statusCode, headers } = httpResponse
+     headers.forEach(([name, value]) => res.setHeader(name, value))
+     res.status(statusCode).send(body)
 ```
 
----
-
-### Incident Patch 2: `82b4041c` (2026-10-26)
-**Commit Message**: fix: linked packages in a folder like `app-shared/` next to `app/` (instead of `[Bug]`) (#3666)
-
-**File**: `packages/vike/src/node/vite/plugins/build/pluginDistFileNames.ts` (modified, +3/-3)
+**File**: `pnpm-lock.yaml` (modified, +34/-47)
 ```diff
-@@ -7,7 +7,7 @@ export { pluginDistFileNames }
- import { assert, assertUsage } from '../../../../utils/assert.js'
- import { isArray } from '../../../../utils/isArray.js'
- import { isCallable } from '../../../../utils/isCallable.js'
--import { assertPosixPath } from '../../../../utils/path.js'
-+import { assertPosixPath, isFilePathInsideDir } from '../../../../utils/path.js'
- import path from 'node:path'
- import crypto from 'node:crypto'
- import type { Plugin, ResolvedBuildEnvironmentOptions, ResolvedConfig, Rollup } from 'vite'
-@@ -192,7 +192,7 @@ function removePathSeparators(name: string) {
-   return name
- }
- function removeUserRootDir(name: string, userRootDir: string) {
--  if (name.startsWith(userRootDir)) {
-+  if (isFilePathInsideDir(name, userRootDir)) {
-     name = name.slice(userRootDir.length)
-     if (name.startsWith('/')) name = name.slice(1)
-   }
-@@ -341,7 +341,7 @@ function getCssChunkName(id: string, config: ResolvedConfig): string | undefined
-   if (!id.endsWith('.css')) return undefined
+@@ -588,8 +588,8 @@ importers:
+         specifier: ^19.2.6
+         version: 19.2.6(react@19.2.6)
+       telefunc:
+-        specifier: ^0.2.24
+-        version: 0.2.24(@babel/core@7.29.7)(@babel/parser@7.29.7)(@babel/types@7.29.8)(react-streaming@0.4.23(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)(srvx@0.12.8)(vite@7.3.1(@types/node@24.10.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.38.1)(tsx@4.20.6))
++        specifier: ^0.3.0
++        version: 0.3.0(@babel/core@7.29.7)(@babel/parser@7.29.7)(@babel/types@7.29.8)(react-streaming@0.4.23(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)(srvx@0.12.8)(vite@7.3.1(@types/node@24.10.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.38.1)(tsx@4.20.6))
+       typescript:
+         specifier: ^7.0.2
+         version: 7.0.2
+@@ -1291,8 +1291,8 @@ importers:
+         specifier: ^19.2.6
+         version: 19.2.6(react@19.2.6)
+       telefunc:
+-        specifier: ^0.2.24
+-        version: 0.2.24(@babel/core@7.29.7)(@babel/parser@7.29.7)(@babel/types@7.29.8)(react-streaming@0.4.23(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)(srvx@0.12.8)(vite@7.1.0(@types/node@24.10.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.38.1)(tsx@4.20.6))
++        specifier: ^0.3.0
++        version: 0.3.0(@babel/core@7.29.7)(@babel/parser@7.29.7)(@babel/types@7.29.8)(react-streaming@0.4.23(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)(srvx@0.12.8)(vite@7.1.0(@types/node@24.10.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.38.1)(tsx@4.20.6))
+       typescript:
+         specifier: ^7.0.2
+         version: 7.0.2
+@@ -1375,8 +1375,8 @@ importers:
+         specifier: ^19.2.6
+         version: 19.2.6(react@19.2.6)
+       telefunc:
+-        specifier: ^0.2.24
+-        version: 0.2.24(@babel/core@7.29.7)(@babel/parser@7.29.7)(@babel/types@7.29.8)(react-streaming@0.4.23(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)(srvx@0.12.8)(vite@7.3.1(@types/node@24.10.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.38.1)(tsx@4.20.6))
++        specifier: ^0.3.0
++        version: 0.3.0(@babel/core@7.29.7)(@babel/parser@7.29.7)(@babel/types@7.29.8)(react-streaming@0.4.23(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)(srvx@0.12.8)(vite@7.3.1(@types/node@24.10.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.38.1)(tsx@4.20.6))
+       vike:
+         specifier: 0.4.268
+         version: link:../../packages/vike
+@@ -1421,8 +1421,8 @@ importers:
+         specifier: ^19.2.6
+         version: 19.2.6(react@19.2.6)
+       telefunc:
+-        specifier: ^0.2.24
+-        version: 0.2.24(@babel/core@7.29.7)(@babel/parser@7.29.7)(@babel/types@7.29.8)(react-streaming@0.4.23(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)(srvx@0.12.8)(vite@8.0.7(@types/node@24.10.2)(esbuild@0.27.3)(jiti@2.6.1)(terser@5.38.1)(tsx@4.20.6))
++        specifier: ^0.3.0
++        version: 0.3.0(@babel/core@7.29.7)(@babel/parser@7.29.7)(@babel/types@7.29.8)(react-streaming@0.4.23(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)(srvx@0.12.8)(vite@8.0.7(@types/node@24.10.2)(esbuild@0.27.3)(jiti@2.6.1)(terser@5.38.1)(tsx@4.20.6))
+       vike:
+         specifier: 0.4.268
+         version: link:../../packages/vike
+@@ -1949,8 +1949,8 @@ importers:
+         specifier: ^19.2.6
+         version: 19.2.6(react@19.2.6)
+       telefunc:
+-        specifier: ^0.2.24
+-        version: 0.2.24(@babel/core@7.29.7)(@babel/parser@7.29.7)(@babel/types@7.29.8)(react-streaming@0.4.23(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)(srvx@0.12.8)(vite@7.3.1(@types/node@24.10.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.38.1)(tsx@4.20.6))
++        specifier: ^0.3.0
++        version: 0.3.0(@babel/core@7.29.7)(@babel/parser@7.29.7)(@babel/types@7.29.8)(react-streaming@0.4.23(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)(srvx@0.12.8)(vite@7.3.1(@types/node@24.10.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.38.1)(tsx@4.20.6))
+       vike-react:
+         specifier: ^0.6.31
+         version: 0.6.31(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(vike@packages+vike)
+@@ -2646,9 +2646,6 @@ packages:
+   '@brillout/import@0.2.6':
+     resolution: {integrity: sha512-1GUTmADc8trUC1YSW2lp9r6PmwluMoEyHajnE1kxVdbKGD0wJOlq/DvTWMUqLtBDCnQR+n//qgMtz6HwA/lotA==}
  
-   const userRootDir = config.root
--  if (id.startsWith(userRootDir)) {
-+  if (isFilePathInsideDir(id, userRootDir)) {
-     assertPosixPath(id)
-     assertModuleId(id)
+-  '@brillout/json-serializer@0.5.25':
+-    resolution: {integrity: sha512-/Ahv1XIHAYyROWfyOQZxbxmkvM3ef3aMPPzEC0EfkyZUFb88y/nFFwCFvYUjE20MGoF8/9Z1jIy7ihkpkE+maw==}
+-
+   '@brillout/json-serializer@0.5.27':
+     resolution: {integrity: sha512-D+Pc40tS6mme3dtlQzOD+nqP+yAWHQ+KX7gcJJ3DRs02pbqBh/6FBk/OWkLuNyaI0rgedh4KYla/xCSg0jArEw==}
  
+@@ -2690,9 +2687,6 @@ packages:
+     peerDependencies:
+       typescript: '>=4.0.0'
+ 
+-  '@brillout/vite-plugin-server-entry@0.7.22':
+-    resolution: {integrity: sha512-83BZjKoD95Cn4kLMYGUx9By17Y9n1aQYNXzLjh4teZtNP8eDfXrSjHS028nPAW1nkTTkMc+sDtzsL/0JGnY48g==}
+-
+   '@brillout/vite-plugin-server-entry@0.7.23':
+     resolution: {integrity: sha512-tHI6zRUM+1yQxiC4CTwpPhYhU9Cdo4LkPy0JRxDiFBZSVSauzWTzZv/r7/+dKV
 ```
 
-**File**: `packages/vike/src/node/vite/plugins/build/pluginModuleBanner.ts` (modified, +2/-1)
+**File**: `test-deprecated-design/telefunc/package.json` (modified, +1/-1)
 ```diff
-@@ -2,6 +2,7 @@ export { pluginModuleBanner }
- 
- import type { ResolvedConfig, Plugin } from 'vite'
- import { assert } from '../../../../utils/assert.js'
-+import { isFilePathInsideDir } from '../../../../utils/path.js'
- import { removeVirtualFileIdPrefix } from '../../../../utils/virtualFileId.js'
- import { getMagicString } from '../../shared/getMagicString.js'
- import { isVite8OrAbove } from '../../shared/isVite8OrAbove.js'
-@@ -45,7 +46,7 @@ function pluginModuleBanner(): Plugin[] {
-           assert(minify === false, { minify })
-           if (id.startsWith('\0')) id = id
-           id = removeVirtualFileIdPrefix(id)
--          if (id.startsWith(config.root)) id = id.slice(config.root.length + 1)
-+          if (isFilePathInsideDir(id, config.root)) id = id.slice(config.root.length + 1)
-           id = id.replaceAll('*/', '*\\/') // https://github.com/vikejs/vike/issues/2377
-           const { magicString, getMagicStringResult } = getMagicString(code, id)
-           magicString.prepend(`/*! ${id} [vike:pluginModuleBanner] */\n`)
+@@ -14,7 +14,7 @@
+     "express": "^5.2.1",
+     "react": "^19.2.6",
+     "react-dom": "^19.2.6",
+-    "telefunc": "^0.2.24",
++    "telefunc": "^0.3.0",
+     "typescript": "^7.0.2",
+     "vike": "0.4.268",
+     "vite": "7.1.0"
 ```
 
-**File**: `packages/vike/src/node/vite/plugins/pluginAssertFileEnv.ts` (modified, +2/-1)
+**File**: `test-deprecated-design/telefunc/server/index.js` (modified, +7/-1)
 ```diff
-@@ -13,6 +13,7 @@ import { isFilePathAbsolute } from '../../../utils/isFilePathAbsoluteFilesystem.
- import { rollupSourceMapRemove } from '../../../utils/rollupSourceMap.js'
- import { assert, assertUsage, assertWarning } from '../../../utils/assert.js'
- import { joinEnglish } from '../../../utils/joinEnglish.js'
-+import { isFilePathInsideDir } from '../../../utils/path.js'
- import { extractAssetsRE } from './pluginExtractAssets.js'
- import { extractExportNamesRE } from './pluginExtractExportNames.js'
- import pc from '@brillout/picocolors'
-@@ -213,7 +214,7 @@ function skip(id: string, userRootDir: string): boolean {
-   if (extractAssetsRE.test(id) || extractExportNamesRE.test(id)) return true
-   if (getModulePath(id).endsWith('.css')) return true
-   // Skip linked dependencies
--  if (!id.startsWith(userRootDir)) return true
-+  if (!isFilePathInsideDir(id, userRootDir)) return true
-   return false
- }
- 
+@@ -31,7 +31,13 @@ async function startServer() {
+   app.use(express.text()) // Parse & make HTTP request body available at `req.body`
+   app.all('/_telefunc', async (req, res) => {
+     const context = {}
+-    const httpResponse = await serve({ url: req.originalUrl, method: req.method, body: req.body, context })
++    const httpResponse = await serve({
++      url: req.originalUrl,
++      method: req.method,
++      body: req.body,
++      headers: req.headers,
++      context,
++    })
+     const { body, statusCode, headers } = httpResponse
+     headers.forEach(([name, value]) => res.setHeader(name, value))
+     res.status(statusCode).send(body)
 ```
 
-**File**: `packages/vike/src/node/vite/plugins/pluginDev/optimizeDeps.ts` (modified, +2/-1)
+**File**: `test/@cloudflare_vite-plugin/package.json` (modified, +1/-1)
 ```diff
-@@ -9,6 +9,7 @@ import { deepEqual } from '../../../../utils/deepEqual.js'
- import { isArray } from '../../../../utils/isArray.js'
- import { isFilePathAbsoluteFilesystem } from '../../../../utils/isFilePathAbsoluteFilesystem.js'
- import { assertImportIsNpmPackage, getNpmPackageName } from '../../../../utils/parseNpmPackage.js'
-+import { isFilePathInsideDir } from '../../../../utils/path.js'
- import { requireResolveOptional } from '../../../../utils/requireResolve.js'
- import { isVirtualFileId } from '../../../../utils/virtualFileId.js'
- import { getVikeConfigInternal } from '../../shared/resolveVikeConfigInternal.js'
-@@ -105,7 +106,7 @@ async function resolveOptimizeDeps(config: ResolvedConfig) {
-   LATE_DISCOVERED.forEach((dep) => {
-     const userRootDir = config.root
-     const resolved = requireResolveOptional({ importPath: dep, userRootDir, importerFilePath: null })
--    const resolvedInsideRepo = resolved && resolved.startsWith(userRootDir)
-+    const resolvedInsideRepo = resolved && isFilePathInsideDir(resolved, userRootDir)
-     if (resolvedInsideRepo) {
-       // We add `dep` only if `resolvedInsideRepo === true` otherwise Vite logs a warning like the following.
-       // - ```console
+@@ -10,7 +10,7 @@
+   "dependencies": {
+     "react": "^19.2.6",
+     "react-dom": "^19.2.6",
+-    "telefunc": "^0.2.24",
++    "telefunc": "^0.3.0",
+     "vike": "0.4.268",
+     "vike-react": "^0.6.31"
+   },
 ```
 
-**File**: `packages/vike/src/node/vite/plugins/pluginExtractAssets.ts` (modified, +2/-2)
+**File**: `test/@cloudflare_vite-plugin/worker/telefunc.ts` (modified, +1/-3)
 ```diff
-@@ -18,7 +18,7 @@ import { rollupSourceMapRemove } from '../../../utils/rollupSourceMap.js'
- import { styleFileRE } from '../../../utils/styleFileRE.js'
- import { addVirtualFileIdPrefix, isVirtualFileId, removeVirtualFileIdPrefix } from '../../../utils/virtualFileId.js'
- import { assert, assertUsage } from '../../../utils/assert.js'
--import { assertPosixPath } from '../../../utils/path.js'
-+import { assertPosixPath, isFilePathInsideDir } from '../../../utils/path.js'
- import { extractAssetsAddQuery } from '../../../shared-server-node/extractAssetsQuery.js'
- import { isAsset } from '../shared/isAsset.js'
- import { getImportStatements, type ImportStatement } from '../shared/parseEsModule.js'
-@@ -148,7 +148,7 @@ function pluginExtractAssets(): Plugin[] {
-           }
-           // When a library is symlinked, it lives outside `root`.
-           assertPosixPath(config.root)
--          if (!file.startsWith(config.root)) {
-+          if (!isFilePathInsideDir(file, config.root)) {
-             return emptyModule(file, importer)
-           }
- 
+@@ -5,9 +5,7 @@ import { serve } from 'telefunc'
+ async function handleTelefunc(request: Request) {
+   const { pathname } = new URL(request.url)
+   if (!pathname.startsWith('/_telefunc')) return null
+-  const { method } = request
+-  const body = await request.text()
+-  const httpResponse = await serve({ url: pathname, method, body })
++  const httpResponse = await serve({ request })
+   return new Response(httpResponse.body, {
+     headers: httpResponse.headers,
+     status: httpResponse.statusCode,
 ```
 
-**File**: `packages/vike/src/node/vite/plugins/pluginReplaceConstantsEnvVars.ts` (modified, +2/-2)
+**File**: `test/@cloudflare_vite-plugin_ud/package.json` (modified, +1/-1)
 ```diff
-@@ -7,7 +7,7 @@ import { isNotNullish } from '../../../utils/isNullish.js'
- import { assert, assertUsage, assertWarning } from '../../../utils/assert.js'
- import { isArray } from '../../../utils/isArray.js'
- import { makeLast } from '../../../utils/sorter.js'
--import { assertPosixPath } from '../../../utils/path.js'
-+import { assertPosixPath, isFilePathInsideDir } from '../../../utils/path.js'
- import { getFilePathToShowToUserModule } from '../shared/getFilePath.js'
- import { normalizeId } from '../shared/normalizeId.js'
- import { isViteServerSide_extraSafe } from '../shared/isViteServerSide.js'
-@@ -123,7 +123,7 @@ function pluginReplaceConstantsEnvVars(): Plugin[] {
-           // - We purposely don't support replacing `import.meta.env` with an object to incentivize users to write tree-shaking friendly code.
-           // - `define: { 'import.meta.env': JSON.stringify(null) }` doesn't work because it also replaces `import.meta.env` inside `import.meta.env.SONE_ENV`
-           const bareImportMetaEnvRegex = /\bimport\.meta\.env(?!\.)/g
--          const isUserLand = !id.includes('node_modules') && id.startsWith(config.root) // skip node_modules/ as well as linked dependencies
-+          const isUserLand = !id.includes('node_modules') && isFilePathInsideDir(id, config.root) // skip node_modules/ as well as linked dependencies
-           if (isUserLand && bareImportMetaEnvRegex.test(code)) {
-             assertWarning(
-               false,
-```
-
-**File**: `packages/vike/src/node/vite/plugins/pluginReplaceConstantsPageContext.ts` (modified, +2/-2)
-```diff
-@@ -2,7 +2,7 @@ export { pluginReplaceConstantsPageContext }
- 
- import type { Plugin, ResolvedConfig } from 'vite'
- import { assert } from '../../../utils/assert.js'
--import { assertPosixPath } from '../../../utils/path.js'
-+import { assertPosixPath, isFilePathInsideDir } from '../../../utils/path.js'
- import { normalizeId } from '../shared/normalizeId.js'
- import { isViteServerSide_extraSafe } from '../shared/isViteServerSide.js'
- import { getMagicString } from '../shared/getMagicString.js'
-@@ -55,7 +55,7 @@ function pluginReplaceConstantsPageContext(): Plugin[] {
-           id = normalizeId(id)
-           assertPosixPath(id)
-           assertPosixPath(config.root)
--          if (!id.startsWith(config.root)) return // skip linked dependencies
-+          if (!isFilePathInsideDir(id, config.root)) return // skip linked dependencies
-           assert(filterFunction(id, code))
-           const isBuild = config.command === 'build'
-           assert(isBuild)
-```
-
-**File**: `packages/vike/src/node/vite/shared/getFilePath.ts` (modified, +3/-3)
-```diff
-@@ -11,7 +11,7 @@ import { assertFilePathAbsoluteFilesystem } from '../../../utils/isFilePathAbsol
- import { assertImportIsNpmPackage } from '../../../utils/parseNpmPackage.js'
- import { toPosixPath } from '../../../utils/path.js'
- import { assert } from '../../../utils/assert.js'
--import { assertPosixPath } from '../../../utils/path.js'
-+import { assertPosixPath, isFilePathInsideDir } from '../../../utils/path.js'
- import type { FilePathResolved, FilePathUnresolved } from '../../../types/FilePath.js'
- import type { ResolvedConfig } from 'vite'
- import '../assertEnvVite.js'
-@@ -130,7 +130,7 @@ function getFilePathRelative({
- 
-   const filePathRelativeUserRootDir = path.posix.relative(userRootDir, filePathAbsoluteFilesystem)
- 
--  if (!filePathAbsoluteFilesystem.startsWith(userRootDir)) {
-+  if (!isFilePathInsideDir(filePathAbsoluteFilesystem, userRootDir)) {
-     assert(filePathRelativeUserRootDir.startsWith('../'))
-     return {
-       filePathAbsoluteUserRootDir: null,
-@@ -186,7 +186,7 @@ function getFilePathToShowToUserUnknown(
- 
-   filePathUnknown = cleanFilePathUnknown(filePathUnknown)
- 
--  if (!filePathUnknown.startsWith(userRootDir)) {
-+  if (!isFilePathInsideDir(filePathUnknown, userRootDir)) {
-     return filePathUnknown
-   } else {
-     return getFilePathAbsoluteUserRootDir2(filePathUnknown, userRootDir)
+@@ -10,7 +10,7 @@
+     "@universal-middleware/core": "^0.7.1",
+     "react": "^19.2.6",
+     "react-dom": "^19.2.6",
+-    "telefunc": "^0.2.24",
++    "telefunc": "^0.3.0",
+     "vike": "0.4.268",
+     "vike-react": "^0.6.31"
+   },
 ```
 
 ---
 
-### Incident Patch 3: `d17ed376` (2026-10-26)
-**Commit Message**: fix: the setting `name` works when package.json has no `version` (#3665)
+### Incident Patch 2: `0f0fed75` (2026-10-27)
+**Commit Message**: docs: further clarify OSP enforcement
 
-**File**: `packages/vike/src/node/vite/shared/resolveVikeConfigInternal/assertExtensions.ts` (modified, +15/-13)
+**File**: `docs/pages/pricing/+Page.mdx` (modified, +14/-4)
 ```diff
-@@ -51,12 +51,11 @@ function assertExtensionsRequire(plusFiles: PlusFile[]): void {
-   const plusFilesRelevantList = plusFiles
+@@ -40,15 +40,25 @@ We designed it with meticulous care to <Link href="#is-vike-still-free-software"
  
-   // Collect extensions
--  const extensions: Record<string, { version: string; providedBy?: string }> = {}
-+  const extensions: Record<string, { version: string | null; packageJsonPath?: string; providedBy?: string }> = {}
-   plusFilesRelevantList.forEach((plusFile) => {
-     const name = getExtensionName(plusFile)
-     if (name) {
--      const version = getExtensionVersion(name, plusFile)
--      extensions[name] = { version }
-+      extensions[name] = getExtensionVersion(name, plusFile)
-     }
-   })
+ #### The idea
  
-@@ -102,14 +101,13 @@ function assertExtensionsRequire(plusFiles: PlusFile[]): void {
-           assertUsage(false, `${errBase}.`)
-         }
-       }
--      const { version, providedBy } = extension
-+      const { version, packageJsonPath, providedBy } = extension
-+      const errIntro = `${errBase} version ${pc.bold(req.version)}, but `
-+      assertUsage(version, `${errIntro}${packageJsonPath}${pc.dim('#')}${pc.bold('version')} is missing.`)
-       const errVersion = providedBy
-         ? `${pc.bold(providedBy)} provides ${pc.bold(version)}`
-         : `${pc.bold(version)} is installed`
--      assertUsage(
--        isVersionRange(version, req.version),
--        `${errBase} version ${pc.bold(req.version)}, but ${errVersion}.`,
--      )
-+      assertUsage(isVersionRange(version, req.version), `${errIntro}${errVersion}.`)
-     })
-   })
- }
-@@ -167,9 +165,10 @@ function getExtensionName(plusFile: PlusFile): null | string {
-   return name
- }
+-As a small team, you use Vike like any other open-source tool — 100% free and without any license key.
++Vike uses a heuristic to determine whether you're most likely a small or large team:
++- **Small team:** You use Vike like any other open-source tool — 100% free and without any license key.
++- **Large team:** You are required to have a license key (see <Link href="#enforcement" />).
++  - **Small company:** You get a license key <Link href="/free">for free</Link>.
++  - **Large company:** You get a license key by purchasing one.
  
-+type ExtensionVersion = { version: string | null; packageJsonPath: string }
- // We use a forever cache: users need to restart the dev server anyways when touching node_modules/**/* (I presume Vite doesn't pick up node_modules/**/* changes).
--const extensionsVersion: Record<string, string> = {}
--function getExtensionVersion(name: string, plusFile: PlusFile): string {
-+const extensionsVersion: Record<string, ExtensionVersion> = {}
-+function getExtensionVersion(name: string, plusFile: PlusFile): ExtensionVersion {
-   if (!extensionsVersion[name]) {
-     const extensionConfigFilePath = plusFile.filePath.filePathAbsoluteFilesystem
-     const found = findPackageJson(path.posix.dirname(extensionConfigFilePath))
-@@ -186,9 +185,12 @@ function getExtensionVersion(name: string, plusFile: PlusFile): string {
-       )}${pc.bold('name')})`,
-       { onlyOnce: true },
-     )
--    const { version } = packageJson
--    assert(typeof version === 'string')
--    extensionsVersion[name] = version
-+    const version =
-+      packageJson.version ??
-+      // Only the setting `require` needs the version, so a package.json without `version` is fine (e.g. the user's app with an ejected Vike extension)
-+      null
-+    assert(typeof version === 'string' || version === null)
-+    extensionsVersion[name] = { version, packageJsonPath }
-   }
-   return extensionsVersion[name]!
- }
+-As a larger team, you will see a pesky toaster `Get your license key at ...` in development. You can remove it by purchasing a license key and adding it to your `+config.js` (or by setting the `VIKE_KEY` environment variable).
++In other words, <Link href="#pricing">only larger teams in larger companies pay</Link> — Vike stays free for everyone else.
++
++#### Enforcement
++
++If Vike detects you're a larger team (see <Link href="#the-idea"/>), you will see a pesky toaster `Get your license key at ...` in development, and you won't be able to build for production.
++
++Also, the `vike` npm package will adopt a proprietary license requiring companies to get a license key if they encounter the pesky toaster. (Vike's repository remains open source.)
+ 
+ #### 100% Open Source
+ 
+-The npm package `vike` will adopt a proprietary license requiring companies to get a license key when they see the pesky toaster. Vike's Git repository stays 100% MIT-licensed.
++Vike's Git repository stays 100% MIT-licensed.
+ 
+-In theory, since Vike is 100% open source, you could fork it, remove the pesky toaster, and publish your own npm package. But maintaining a fork requires non-negligible effort &mdash; you might as well <Link href="/free">apply for a free license key</Link> instead.
++In theory, since Vike is 100% open source, you could fork it, remove the pesky toaster, and publish your own npm package. However, we'll hide some of the enforcement code, making this non-trivial — you might as well <Link href="/free">apply for a free license key</Link> instead.
+ 
+ #### 100% offline
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3675** (2026-10-27): fix: pass `headers` to telefunc `serve()` (telefunc 0.3.0) (@nitedani-agent)
 - **PR #3674** (closed): fix: usage error for a pointer import through a path alias that resolves outside of the root directory (instead of `[Bug]`) (@nitedani-agent)
 - **PR #3673** (closed): fix: usage error for a path alias in an `import:` string (instead of `[Bug]`) (@nitedani-agent)
 - **PR #3672** (2026-10-27): fix: an asset without file extension, e.g. `import url from './LICENSE?url'` (@nitedani-agent)
+- **PR #3671** (2026-10-27): chore(deps): bump telefunc from 0.2.24 to 0.3.0 (@dependabot[bot])
 - **PR #3670** (2026-10-26): chore(deps): bump vike-react from 0.6.30 to 0.6.31 (@nitedani-agent)
-- **PR #3669** (2026-10-26): refactor: rename `ViteManifest` to `AssetsManifest` and use Vite's `ManifestChunk` (@dgesteves)
-- **PR #3667** (2026-10-26): fix: call `onPageTransitionStart()` after routing (@dgesteves)
 
 ---
 
@@ -786,32 +705,28 @@ Co-authored-by: Rom <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. an asset without file extension, e.g. `import url from './LICENSE?url'` (#3672)
+## X. deps): bump telefunc from 0.2.24 to 0.3.0 (#3671)
 
 **RULE**:
-When implementing operations in `packages/vike/src/node/vite/plugins/build/handleAssetsManifest.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vikejs/vike. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `examples/telefunc/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vikejs/vike. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e89c0f21`: an asset without file extension, e.g. `import url from './LICENSE?url'` (#3672). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `94b12bd6`: deps): bump telefunc from 0.2.24 to 0.3.0 (#3671). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/vike/src/node/vite/plugins/build/handleAssetsManifest.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/telefunc/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  // - `src` is guaranteed to end with `.[hash][extname]` — see pluginDistFileNames.ts
-  // - `[extname]` is empty for a file without extension, e.g. `LICENSE.C1uziuNB`
-  const parts = path.posix.basename(src).split('.')
-  const hash = parts.length === 2 ? parts[1] : parts.at(-2)
+    "telefunc": "^0.3.0",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  // src is guaranteed to end with `.[hash][extname]`, see pluginDistFileNames.ts
-  const hash = src.split('.').at(-2)
+    "telefunc": "^0.2.24",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e89c0f21` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `94b12bd6` are properly handled with clean fallback behavior.

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T01:58:39.185Z",
-  "total_cycles_completed": 5619,
-  "total_learnings_persisted": 5619,
-  "total_rules_promoted": 5044,
+  "last_updated": "2026-10-28T02:05:16.076Z",
+  "total_cycles_completed": 5622,
+  "total_learnings_persisted": 5622,
+  "total_rules_promoted": 5049,
   "history": [
-    {
-      "timestamp": "2026-10-27T17:05:09.987Z",
-      "repository": "DNSControl/dnscontrol",
-      "learningId": "learn-github-dnscontrol-dnscontrol",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T17:05:12.231Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T17:05:13.804Z",
-      "repository": "tickernelz/opencode-mem",
-      "learningId": "learn-github-tickernelz-opencode-mem",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T17:10:00.944Z",
       "repository": "cosscom/coss",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-28T01:58:39.185Z",
       "repository": "skyhook-io/radar",
       "learningId": "learn-github-skyhook-io-radar",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T02:04:58.002Z",
+      "repository": "vikejs/vike",
+      "learningId": "learn-github-vikejs-vike",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T02:05:07.643Z",
+      "repository": "autotrust/GEV-26B-Decide",
+      "learningId": "learn-huggingface-autotrust-gev-26b-decide",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T02:05:16.076Z",
+      "repository": "vespa-engine/vespa",
+      "learningId": "learn-github-vespa-engine-vespa",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

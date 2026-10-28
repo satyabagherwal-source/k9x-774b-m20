@@ -105,8 +105,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/GEV-26B-Decide",
     "sourceVersion": "hf-autotrust-gev-26b-decide",
     "license": "Open-Source",
-    "contentHash": "3834786f33d4ea38ff0848523c1c9dd97ed62f34f22088dc507a795821837465",
-    "lastHarvestedAt": "2026-10-25T05:27:45.419Z",
+    "contentHash": "b7c3e0f3457b75f0487ff8e4128ccd8fdc2574266a1dca281d54f7cf01f07e85",
+    "lastHarvestedAt": "2026-10-28T02:05:07.639Z",
     "learningId": "learn-huggingface-autotrust-gev-26b-decide"
   },
   "hf-convaiinnovations-laya": {
@@ -5763,10 +5763,10 @@
     "repository": "vikejs/vike",
     "platform": "github",
     "sourceUrl": "https://github.com/vikejs/vike",
-    "sourceVersion": "2c972989",
+    "sourceVersion": "94b12bd6",
     "license": "MIT",
-    "contentHash": "653d01f586d24a74fb99c74c2b7df565789421b99038c2ad553f6dd3dd43c100",
-    "lastHarvestedAt": "2026-10-27T13:17:54.467Z",
+    "contentHash": "ba45774097cf66e0f47f1b370a59bcf00853e0bd9ef6cc46d05eac22638271a9",
+    "lastHarvestedAt": "2026-10-28T02:04:57.998Z",
     "learningId": "learn-github-vikejs-vike"
   },
   "nvidia-cuda-rust": {
@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "a354091b",
+    "sourceVersion": "bc4e2fc4",
     "license": "Apache-2.0",
-    "contentHash": "ca172c0e033c47c0600ea4926b8592b40fe3df9011df6a8439e93b7b4231cce1",
-    "lastHarvestedAt": "2026-10-27T13:07:21.844Z",
+    "contentHash": "ce46c98fc9f50371c450eb0ffd82559559f154124c94bc884fc836f16d6309cc",
+    "lastHarvestedAt": "2026-10-28T02:05:16.072Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {

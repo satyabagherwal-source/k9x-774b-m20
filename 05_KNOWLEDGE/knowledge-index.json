@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T01:58:39.102Z",
+  "last_updated": "2026-10-28T02:05:16.019Z",
   "total_verified_learnings": 1154,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -16899,7 +16899,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide",
       "source_version": "hf-autotrust-gev-26b-decide",
-      "content_hash": "3834786f33d4ea38ff0848523c1c9dd97ed62f34f22088dc507a795821837465",
+      "content_hash": "b7c3e0f3457b75f0487ff8e4128ccd8fdc2574266a1dca281d54f7cf01f07e85",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md",
       "promoted_rules": [
@@ -16942,6 +16942,21 @@
           "number": 4078,
           "title": "MoE Expert Routing Sparsity for Inference Latency",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5117,
+          "title": "Hybrid Attention Context Windowing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5118,
+          "title": "Structured Output Regex Delimiter Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5119,
+          "title": "MoE Expert Routing Sparsity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16961,7 +16976,7 @@
         "learn-huggingface-hf-autotrust-gev-26b-decide-mv41mus8",
         "learn-huggingface-hf-autotrust-gev-26b-decide-mv4fhk3v"
       ],
-      "verified_at": "2026-10-25T05:27:45.350Z",
+      "verified_at": "2026-10-28T02:05:07.575Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52946,8 +52961,8 @@
       "slug": "vespa-engine-vespa",
       "platform": "github",
       "source_url": "https://github.com/vespa-engine/vespa",
-      "source_version": "a354091b",
-      "content_hash": "ca172c0e033c47c0600ea4926b8592b40fe3df9011df6a8439e93b7b4231cce1",
+      "source_version": "bc4e2fc4",
+      "content_hash": "ce46c98fc9f50371c450eb0ffd82559559f154124c94bc884fc836f16d6309cc",
       "dossier_path": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "promoted_rules": [
@@ -52990,6 +53005,11 @@
           "number": 4786,
           "title": "misleading javadoc and cleanup tests",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5120,
+          "title": "Opt out of protobuf message globals in ASan builds",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52997,7 +53017,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:07:21.769Z",
+      "verified_at": "2026-10-28T02:05:16.008Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53087,8 +53107,8 @@
       "slug": "vikejs-vike",
       "platform": "github",
       "source_url": "https://github.com/vikejs/vike",
-      "source_version": "2c972989",
-      "content_hash": "653d01f586d24a74fb99c74c2b7df565789421b99038c2ad553f6dd3dd43c100",
+      "source_version": "94b12bd6",
+      "content_hash": "ba45774097cf66e0f47f1b370a59bcf00853e0bd9ef6cc46d05eac22638271a9",
       "dossier_path": "07_PROJECT_LEARNING/vikejs-vike-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vikejs-vike-learnings.md",
       "promoted_rules": [
@@ -53131,6 +53151,11 @@
           "number": 4793,
           "title": "an asset without file extension, e.g. `import url from './LICENSE?url'` (#3672)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5116,
+          "title": "deps): bump telefunc from 0.2.24 to 0.3.0 (#3671)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53138,7 +53163,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:17:54.371Z",
+      "verified_at": "2026-10-28T02:04:57.846Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -140595,6 +140620,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T01:58:39.088Z"
+    },
+    "rule-5116": {
+      "learning_id": "rule-5116",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5116,
+      "title": "deps): bump telefunc from 0.2.24 to 0.3.0 (#3671)",
+      "source_url": "https://github.com/vikejs/vike",
+      "source_version": "94b12bd6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:04:57.846Z"
+    },
+    "rule-5117": {
+      "learning_id": "rule-5117",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5117,
+      "title": "Hybrid Attention Context Windowing Invariant",
+      "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide",
+      "source_version": "hf-autotrust-gev-26b-decide",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:05:07.575Z"
+    },
+    "rule-5118": {
+      "learning_id": "rule-5118",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5118,
+      "title": "Structured Output Regex Delimiter Invariant",
+      "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide",
+      "source_version": "hf-autotrust-gev-26b-decide",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:05:07.575Z"
+    },
+    "rule-5119": {
+      "learning_id": "rule-5119",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5119,
+      "title": "MoE Expert Routing Sparsity Invariant",
+      "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide",
+      "source_version": "hf-autotrust-gev-26b-decide",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:05:07.575Z"
+    },
+    "rule-5120": {
+      "learning_id": "rule-5120",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5120,
+      "title": "Opt out of protobuf message globals in ASan builds",
+      "source_url": "https://github.com/vespa-engine/vespa",
+      "source_version": "bc4e2fc4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:05:16.008Z"
     }
   },
   "aliases": {
