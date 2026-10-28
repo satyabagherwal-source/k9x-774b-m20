@@ -5812,3 +5812,4 @@
 | `CYCLE-20261028-MCPK` | `2026-10-28T14:56:35.288Z` | `react/metro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5319` | Yes (`3eaf25f2...`) |
 | `CYCLE-20261028-MFKZ` | `2026-10-28T14:56:39.011Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5320` | Yes (`76982cdb...`) |
 | `CYCLE-20261028-MKA8` | `2026-10-28T14:56:45.104Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5321` | Yes (`5fcf496a...`) |
+| `CYCLE-20261028-V0KJ` | `2026-10-28T15:03:19.459Z` | `mistralai/Mixtral-8x7B-Instruct-v0.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md` | Yes (`41d3dc17...`) |

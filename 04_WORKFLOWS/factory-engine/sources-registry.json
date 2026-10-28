@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T14:56:47.647Z",
-    "lastVerified": "2026-10-28T14:56:47.647Z",
+    "lastChecked": "2026-10-28T15:03:31.008Z",
+    "lastVerified": "2026-10-28T15:03:31.008Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -278,9 +278,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-28T14:36:05.852Z",
+    "lastChecked": "2026-10-28T15:03:31.001Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-28T14:36:05.852Z"
+    "lastVerified": "2026-10-28T15:03:31.001Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1216,9 +1216,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-10-28T11:32:20.643Z",
+    "lastChecked": "2026-10-28T15:03:25.990Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-10-28T11:32:20.643Z"
+    "lastVerified": "2026-10-28T15:03:25.990Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -4205,5 +4205,50 @@
     "lastChecked": "2026-10-28T14:56:37.265Z",
     "revisionIdentifier": "42a4b418",
     "lastVerified": "2026-10-28T14:56:37.265Z"
+  },
+  "ekzhang-rustpad": {
+    "name": "rustpad",
+    "officialUrl": "https://github.com/ekzhang/rustpad",
+    "lastChecked": "2026-10-28T15:03:15.882Z",
+    "revisionIdentifier": "54e4a938",
+    "lastVerified": "2026-10-28T15:03:15.882Z"
+  },
+  "hf-mistralai-mixtral-8x7b-instruct-v0.1": {
+    "name": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "officialUrl": "https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T15:03:18.474Z",
+    "lastVerified": "2026-10-28T15:03:18.474Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
+    "contentHash": "41d3dc17502bd9979ff911af4162533c554bbe144b9f3ebd0781cdef34408f7b",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "thecodingmachine-react-native-boilerplate": {
+    "name": "react-native-boilerplate",
+    "officialUrl": "https://github.com/thecodingmachine/react-native-boilerplate",
+    "lastChecked": "2026-10-28T15:03:20.966Z",
+    "revisionIdentifier": "1a8b1d5b",
+    "lastVerified": "2026-10-28T15:03:20.966Z"
+  },
+  "infracost-infracost": {
+    "name": "infracost",
+    "officialUrl": "https://github.com/infracost/infracost",
+    "lastChecked": "2026-10-28T15:03:23.528Z",
+    "revisionIdentifier": "98c9711f",
+    "lastVerified": "2026-10-28T15:03:23.528Z"
+  },
+  "orbitinghail-sqlsync": {
+    "name": "sqlsync",
+    "officialUrl": "https://github.com/orbitinghail/sqlsync",
+    "lastChecked": "2026-10-28T15:03:28.377Z",
+    "revisionIdentifier": "7dc1af6b",
+    "lastVerified": "2026-10-28T15:03:28.377Z"
   }
 }
