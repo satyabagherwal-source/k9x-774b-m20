@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T13:23:29.994Z",
-  "total_cycles_completed": 5753,
-  "total_learnings_persisted": 5753,
-  "total_rules_promoted": 5241,
+  "last_updated": "2026-10-28T13:30:22.231Z",
+  "total_cycles_completed": 5755,
+  "total_learnings_persisted": 5755,
+  "total_rules_promoted": 5242,
   "history": [
-    {
-      "timestamp": "2026-10-27T23:10:09.326Z",
-      "repository": "FalkorDB/FalkorDB",
-      "learningId": "learn-github-falkordb-falkordb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T23:10:18.914Z",
-      "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
-      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T23:21:53.918Z",
       "repository": "etcd-io/etcd",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-28T13:23:29.994Z",
       "repository": "microsoft/agent-governance-toolkit",
       "learningId": "learn-github-microsoft-agent-governance-toolkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T13:30:06.884Z",
+      "repository": "openai/whisper-large-v3",
+      "learningId": "learn-huggingface-openai-whisper-large-v3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T13:30:22.231Z",
+      "repository": "MaterializeInc/materialize",
+      "learningId": "learn-github-materializeinc-materialize",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

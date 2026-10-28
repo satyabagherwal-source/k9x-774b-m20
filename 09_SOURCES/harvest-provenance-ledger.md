@@ -5785,3 +5785,5 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `8c74dd4b` | Multi-dimensional audit evidence | 2026-10-28T13:16:53.586Z |
 | `learn-huggingface-meta-llama-meta-llama-3-8b` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-28T13:23:22.794Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `4eca1f5b` | Multi-dimensional audit evidence | 2026-10-28T13:23:29.989Z |
+| `learn-huggingface-openai-whisper-large-v3` | `https://huggingface.co/openai/whisper-large-v3` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-28T13:30:06.879Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `ed0467e4` | Multi-dimensional audit evidence | 2026-10-28T13:30:22.226Z |

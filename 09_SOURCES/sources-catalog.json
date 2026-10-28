@@ -845,8 +845,8 @@
     "sourceUrl": "https://huggingface.co/openai/whisper-large-v3",
     "sourceVersion": "hf-openai-whisper-large-v3",
     "license": "Open-Source",
-    "contentHash": "2eb621946b1db8442fc54789c7cc27857859b9ce1b7284420b8bcb63a33672cc",
-    "lastHarvestedAt": "2026-10-25T19:12:49.506Z",
+    "contentHash": "51c38df9690d79279bba4ffad29544bcb278d7a7c5647d91ef96665c960ff033",
+    "lastHarvestedAt": "2026-10-28T13:30:06.879Z",
     "learningId": "learn-huggingface-openai-whisper-large-v3"
   },
   "hf-black-forest-labs-flux.1-schnell": {
@@ -3923,10 +3923,10 @@
     "repository": "MaterializeInc/materialize",
     "platform": "github",
     "sourceUrl": "https://github.com/MaterializeInc/materialize",
-    "sourceVersion": "60cc748f",
+    "sourceVersion": "ed0467e4",
     "license": "NOASSERTION",
-    "contentHash": "ebb8d099247296685a6cf40149b014d2e34a35e0868838bca71377055869e92d",
-    "lastHarvestedAt": "2026-10-27T20:45:27.339Z",
+    "contentHash": "822a6f5037bd8758176642827c8bc03a7bb956f316701670ca366e9701ca5f6c",
+    "lastHarvestedAt": "2026-10-28T13:30:22.226Z",
     "learningId": "learn-github-materializeinc-materialize"
   },
   "react-bootstrap-react-bootstrap": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T13:23:29.904Z",
+  "last_updated": "2026-10-28T13:30:22.147Z",
   "total_verified_learnings": 1157,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -25432,7 +25432,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/whisper-large-v3",
       "source_version": "hf-openai-whisper-large-v3",
-      "content_hash": "2eb621946b1db8442fc54789c7cc27857859b9ce1b7284420b8bcb63a33672cc",
+      "content_hash": "51c38df9690d79279bba4ffad29544bcb278d7a7c5647d91ef96665c960ff033",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md",
       "promoted_rules": [],
@@ -25454,7 +25454,7 @@
         "learn-huggingface-hf-openai-whisper-large-v3-mv4a7pcw",
         "learn-huggingface-hf-openai-whisper-large-v3-mv4nl1uq"
       ],
-      "verified_at": "2026-10-25T19:12:49.443Z",
+      "verified_at": "2026-10-28T13:30:06.756Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35832,8 +35832,8 @@
       "slug": "materializeinc-materialize",
       "platform": "github",
       "source_url": "https://github.com/MaterializeInc/materialize",
-      "source_version": "60cc748f",
-      "content_hash": "ebb8d099247296685a6cf40149b014d2e34a35e0868838bca71377055869e92d",
+      "source_version": "ed0467e4",
+      "content_hash": "822a6f5037bd8758176642827c8bc03a7bb956f316701670ca366e9701ca5f6c",
       "dossier_path": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "promoted_rules": [
@@ -35881,6 +35881,11 @@
           "number": 4998,
           "title": "build(deps): bump tokio from 1.53.3 to 1.54.1 (#40171)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5294,
+          "title": "build(deps): bump axios from 1.18.1 to 1.20.0 in /console (#40292)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35888,7 +35893,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T20:45:27.264Z",
+      "verified_at": "2026-10-28T13:30:22.129Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -144097,6 +144102,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T13:23:29.892Z"
+    },
+    "rule-5294": {
+      "learning_id": "rule-5294",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5294,
+      "title": "build(deps): bump axios from 1.18.1 to 1.20.0 in /console (#40292)",
+      "source_url": "https://github.com/MaterializeInc/materialize",
+      "source_version": "ed0467e4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T13:30:22.129Z"
     }
   },
   "aliases": {

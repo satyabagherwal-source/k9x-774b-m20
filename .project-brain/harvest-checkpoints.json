@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T13:23:29.998Z",
+  "last_updated": "2026-10-28T13:30:22.235Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1085,14 +1085,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-whisper-large-v3",
-      "content_hash": "2eb621946b1db8442fc54789c7cc27857859b9ce1b7284420b8bcb63a33672cc",
-      "verified_at": "2026-10-25T19:12:49.513Z",
+      "content_hash": "51c38df9690d79279bba4ffad29544bcb278d7a7c5647d91ef96665c960ff033",
+      "verified_at": "2026-10-28T13:30:06.887Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T19:12:49.513Z"
+      "last_updated": "2026-10-28T13:30:06.887Z"
     },
     "black-forest-labs/FLUX.1-schnell": {
       "repository": "black-forest-labs/FLUX.1-schnell",
@@ -6006,14 +6006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-materializeinc-materialize",
-      "content_hash": "ebb8d099247296685a6cf40149b014d2e34a35e0868838bca71377055869e92d",
-      "verified_at": "2026-10-27T20:45:27.347Z",
+      "content_hash": "822a6f5037bd8758176642827c8bc03a7bb956f316701670ca366e9701ca5f6c",
+      "verified_at": "2026-10-28T13:30:22.234Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T20:45:27.347Z"
+      "last_updated": "2026-10-28T13:30:22.234Z"
     },
     "react-bootstrap/react-bootstrap": {
       "repository": "react-bootstrap/react-bootstrap",

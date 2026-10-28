@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source**: github ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
-> **Source Version**: `60cc748f`  
+> **Source Version**: `ed0467e4`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T20:45:26.927Z  
+> **Timestamp**: 2026-10-28T13:30:21.604Z  
 > **Learning ID**: `learn-github-materializeinc-materialize`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T20:45:26.340Z  
+> **Harvest Timestamp**: 2026-10-28T13:30:21.597Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -938,13 +938,11 @@ export default async function fetchStatementLoggingMaxSampleRate({
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40243** (2026-10-27): **build(deps): bump the simple group across 2 directories with 9 updates**
-  *Symptoms*: Bumps the simple group with 8 updates in the /misc/mcp-materialize directory:  | Package | From | To | | --- | --- | --- | | [aiohttp](https://github.com/aio-libs/aiohttp) | `3.14.3` | `3.14.5` | | [aiorwlock](https://github.com/aio-libs/aiorwlock) | `1.5.0` | `1.5.1` | | [fastapi](https://github.com/fastapi/fastapi) | `0.135.2` | `0.162.0` | | [psycopg-pool](https://github.com/psycopg/psycopg) | `3.2.6` | `3.3.3` | | [pytest](https://github.com/pytest-dev/pytest) | `9.0.3` | `9.1.1` | | [pytest-asyncio](https://github.com/pytest-dev/pytest-asyncio) | `1.3.0` | `1.4.0` | | [requests](https://github.com/psf/requests) | `2.33.0` | `2.34.2` | | [hatch](https://github.com/pypa/hatch) | `1.14.1` | `1.18.1` |  Bumps the simple group with 5 updates in the /misc/mcp-materialize-agents directory:  | Package | From | To | | --- | --- | --- | | [psycopg-pool](https://github.com/psycopg/psycopg) | `3.2.6` | `3.3.3` | | [pytest](https://github.com/pytest-dev/pytest) | `9.0.3` | `9.1.1` | | [pytest-asyncio](https://github.com/pytest-dev/pytest-asyncio) | `1.3.0` | `1.4.0` | | [hatch](https://github.com/pypa/hatch) | `1.14.2` | `1.18.1` | | [pydantic](https://github.com/pydantic/pydantic) | `2.11.10` | `2.14.1` |   Updates `aiohttp` from 3.14.3 to 3.14.5 Updates `aiorwlock` from 1.5.0 to 1.5.1 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/aio-libs/aiorwlock/releases">aiorwlock's releases</a>.</em></p> <blockquote> <h2>v1.5.1</h2> <ul> <li>Fixed a
+- **Issue #40303** (2026-10-28): **race condition test: Make load generator tables, not just sources**
+  *Symptoms*: Revealed through https://github.com/MaterializeInc/materialize/pull/40152 which caused a test timeout here: https://buildkite.com/materialize/nightly/builds/18607#01a17fb3-3cb4-4fec-bcde-96b0a290a071  Test run: https://buildkite.com/materialize/nightly/builds/18611 (edit: green)
 
-- **Issue #40226** (2026-10-27): **test: restart environmentd after replacing an MV behind a stalled sink**
-  *Symptoms*: Add a cluster workflow that stalls a Kafka sink by removing its cluster's replicas, replaces the sink's upstream materialized view, and restarts environmentd. After APPLY REPLACEMENT the sink's dependency resolves to the replacement, whose since is its as_of. That is past the stalled sink's write frontier, so bootstrap currently panics on the soft assert that keeps a dependency's since below its dependent's upper.  Related: [SS-346](https://linear.app/materializeinc/issue/SS-346)
-  **Post-Mortem & Fix Analysis**:
-  >  Addressed in https://github.com/MaterializeInc/materialize/pull/40181
+- **Issue #40302** (2026-10-28): **ci: Detect another incremental build failure and handle it**
+  *Symptoms*: Seen in https://buildkite.com/materialize/test/builds/141187#01a181d9-bd8b-47ac-a558-16fb52e3a5b7 & https://buildkite.com/materialize/test/builds/141201#01a181e4-ba88-4ad9-a39b-47f753a90f43  and unify the logic so that it lives in a single spot
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -961,288 +959,335 @@ export default async function fetchStatementLoggingMaxSampleRate({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b59b9f8c` (2026-10-27)
-**Commit Message**: build(deps): bump the simple group across 2 directories with 9 updates (#40243)
+### Incident Patch 1: `7b42d3bc` (2026-10-28)
+**Commit Message**: build(deps): bump axios from 1.18.1 to 1.20.0 in /console (#40292)
 
-Bumps the simple group with 8 updates in the /misc/mcp-materialize
-directory:
-
-| Package | From | To |
-| --- | --- | --- |
-| [aiohttp](https://github.com/aio-libs/aiohttp) | `3.14.3` | `3.14.5` |
-| [aiorwlock](https://github.com/aio-libs/aiorwlock) | `1.5.0` | `1.5.1`
-|
-| [fastapi](https://github.com/fastapi/fastapi) | `0.135.2` | `0.162.0`
-|
-| [psycopg-pool](https://github.com/psycopg/psycopg) | `3.2.6` | `3.3.3`
-|
-| [pytest](https://github.com/pytest-dev/pytest) | `9.0.3` | `9.1.1` |
-| [pytest-asyncio](https://github.com/pytest-dev/pytest-asyncio) |
-`1.3.0` | `1.4.0` |
-| [requests](https://github.com/psf/requests) | `2.33.0` | `2.34.2` |
-| [hatch](https://github.com/pypa/hatch) | `1.14.1` | `1.18.1` |
-
-Bumps the simple group with 5 updates in the
-/misc/mcp-materialize-agents directory:
-
-| Package | From | To |
-| --- | --- | --- |
-| [psycopg-pool](https://github.com/psycopg/psycopg) | `3.2.6` | `3.3.3`
-|
-| [pytest](https://github.com/pytest-dev/pytest) | `9.0.3` | `9.1.1` |
-| [pytest-asyncio](https://github.com/pytest-dev/pytest-asyncio) |
-`1.3.0` | `1.4.0` |
-| [hatch](https://github.com/pypa/hatch) |
-
-
-
----
-
-### Incident Patch 2: `363ee9bb` (2026-10-27)
-**Commit Message**: build(deps): bump tokio from 1.53.3 to 1.54.1 (#40171)
-
-Bumps [tokio](https://github.com/tokio-rs/tokio) from 1.53.3 to 1.54.1.
+Bumps [axios](https://github.com/axios/axios) from 1.18.1 to 1.20.0.
 <details>
 <summary>Release notes</summary>
 <p><em>Sourced from <a
-href="https://github.com/tokio-rs/tokio/releases">tokio's
+href="https://github.com/axios/axios/releases">axios's
 releases</a>.</em></p>
 <blockquote>
-<h2>Tokio v1.54.1</h2>
-<h1>1.54.1 (October 21st, 2026)</h1>
-<h3>Fixed</h3>
+<h2>v1.20.0 — August 19, 2026</h2>
+<p>This release hardens runtime option handling, adds RFC 9110
+status-code aliases, fixes Node.js and XHR reliability issues, and
+refreshes project tooling and documentation.</p>
+<h2>⚠️ Breaking Changes &amp; Deprecations</h2>
 <ul>
-<li>time: revert &quot;remove the runtime handle from timers&quot; (<a
-href="https://redirect.github.com/tokio-rs/tokio/issues/8692">#8692</a>)</li>
+<li>HTTP Status Naming: Added ContentTooLarge (413) and
+UnprocessableContent (422), while retaining PayloadTooLarge and
+UnprocessableEntity as backward-compatible deprecated aliases. (<a
+href="https://redirect.github.com/axios/axios/issues/11082">#11082</a>)</li>
 </ul>
-<p><a
-href="https://redirect.github.com/tokio-rs/tokio/issues/8692">#8692</a>:
-<a
-href="https://redirect.github.com/tokio-rs/tokio/pull/8692">tokio-rs/tokio#8692</a></p>
-<h2>Tokio v1.54.0</h2>
-<h1>1.54.0 (October 19th, 2026)</h1>
-<p>The 1.54.0 release includes all changes up to 1.53.3.</p>
-<p>The MSRV is increased to 1.85. (<a
-href="https://redirect.github.com/tokio-rs/tokio/issues/8514">#8514</a>)</p>
-<h3>Added</h3>
+<h2>🔒 Security Fixes</h2>
 <ul>
-<li>fs: add <code>File::set_times</code>,
-<code>File::set_modified</code>, and <code>fs::FileTimes</code> (<a
-href="https://redirect.github.com/tokio-rs/tokio/issues/8504">#8504</a>)</li>
-<li>net: implement <code>Default</code> for
-<code>named_pipe::{
+<li>Runtime Option Handling: Hardened behavioral configuration reads
+against shared and foreign prototype pollution and normalized unsafe
+interceptor replacement objects. This also clarifies Fetch redirect and
+custom implementation behavior, HTTP/2 DNS and proxy handling,
+CIDR-based NO_PROXY matching, and malformed data URI rejection; 
 
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `console/yarn.lock` (modified, +5/-5)
 ```diff
-@@ -13660,9 +13660,9 @@ checksum = "cda74da7e1a664f795bb1f8a87ec406fb89a02522cf6e50620d016add6dbbf5c"
+@@ -6664,14 +6664,14 @@ __metadata:
+   linkType: hard
  
- [[package]]
- name = "tokio"
--version = "1.53.3"
-+version = "1.54.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ce3335fa71841cda333a58d7615b03901380ecf09d59b3296d21f8bbac0dde4e"
-+checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
- dependencies = [
-  "bytes",
-  "libc",
+ "axios@npm:^1.7.4":
+-  version: 1.18.1
+-  resolution: "axios@npm:1.18.1"
++  version: 1.20.0
++  resolution: "axios@npm:1.20.0"
+   dependencies:
+     follow-redirects: "npm:^1.16.0"
+-    form-data: "npm:^4.0.5"
++    form-data: "npm:^4.0.6"
+     https-proxy-agent: "npm:^5.0.1"
+     proxy-from-env: "npm:^2.1.0"
+-  checksum: 10c0/9d9378a3af0d0ad730a52ad9d15ec7201f3926ad6e7e8bbffc5ae21ca2835ad11d1d9598698f5dd9718917486039f55ea1d7dc23d8e44fa827a55cc3262c02fc
++  checksum: 10c0/976088acf532286356f4c2e65df1ef47ba7da3936d83e928d0d64357bbf5370456abd3eb5826c15df322335fcb1fe200d4a84b4fcf20ffccdd63b40d80fa495c
+   languageName: node
+   linkType: hard
+ 
+@@ -9534,7 +9534,7 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"form-data@npm:^4.0.5":
++"form-data@npm:^4.0.6":
+   version: 4.0.6
+   resolution: "form-data@npm:4.0.6"
+   dependencies:
 ```
 
 ---
 
-### Incident Patch 3: `7b8aef1e` (2026-10-27)
-**Commit Message**: build(deps): bump the simple1 group across 1 directory with 10 updates (#40168)
+### Incident Patch 2: `ce918fb2` (2026-10-28)
+**Commit Message**: build(deps): bump the simple group across 2 directories with 18 updates (#40298)
 
-Bumps the simple1 group with 10 updates in the / directory:
+Bumps the simple group with 15 updates in the /ci/builder directory:
 
 | Package | From | To |
 | --- | --- | --- |
-| [annotate-snippets](https://github.com/rust-lang/annotate-snippets-rs)
-| `0.12.16` | `0.12.17` |
-| [aws-credential-types](https://github.com/smithy-lang/smithy-rs) |
-`1.3.0` | `1.3.1` |
-| [aws-smithy-http-client](https://github.com/smithy-lang/smithy-rs) |
-`1.5.0` | `1.5.1` |
-| [aws-smithy-runtime-api](https://github.com/smithy-lang/smithy-rs) |
-`1.19.0` | `1.19.1` |
-| [aws-smithy-types](https://github.com/smithy-lang/smithy-rs) | `1.8.1`
-| `1.9.0` |
-| [crc32fast](https://github.com/srijs/rust-crc32fast) | `1.5.2` |
-`1.5.3` |
-| [jaq-core](https://github.com/01mf02/jaq) | `3.1.1` | `3.1.2` |
-| [jaq-std](https://github.com/01mf02/jaq) | `3.0.3` | `3.0.4` |
+| [boto3-stubs](https://github.com/youtype/mypy_boto3_builder) |
+`1.41.5` | `1.43.118` |
+| [click](https://github.com/pallets/click) | `8.1.3` | `8.5.0` |
+| [matplotlib-stubs](https://github.com/hoel-bagard/matplotlib-stubs) |
+`0.3.4` | `0.3.11` |
+| [networkx](https://github.com/networkx/networkx) | `3.4.2` | `3.7` |
+| [numpy](https://github.com/numpy/numpy) | `2.4.2` | `2.5.4` |
+| [psycopg](https://github.com/psycopg/psycopg) | `3.3.3` | `3.3.6` |
+| [psycopg-binary](https://github.com/psycopg/psycopg) | `3.3.3` |
+`3.3.6` |
+| [pydantic](https://github.com/pydantic/pydantic) | `2.12.5` | `2.14.1`
 |
-[launchdarkly-server-sdk](https://github.com/launchdarkly/rust-server-sdk)
-| `3.3.1` | `3.3.2` |
-| [libc](https://github.com/rust-lang/libc) | `0.2.190` | `0.2.191` |
+| [pytest](https://github.com/pytest-dev/pytest) | `9.0.3` | `9.1.1` |
+| ruamel-yaml | `0.18.17` | `0.19.1` |
+| [ruff](https://github.com/astral-sh/ruff) | `0.16.5` | `0.17.2` |
+| [scipy](https://github.com/scipy/scipy) | `1.17.1` | `1.18.1` |
+| [scipy-stubs](https://github.com/scipy/scipy-stubs) | `1.15.3.0` |
+`1.18.1.1` |
+|
+[confluent-kafka](https://github.com/confluentinc/confluent-kafka-pytho
 
-
-Updates `annotate-snippets` from 0.12.16 to 0.12.17
-<details>
-<summary>Changelog</summary>
-<p><em>Sourced from <a
-href="https://github.com/rust-lang/annotate-snippets-rs/blob/mai
-
-**File**: `Cargo.lock` (modified, +26/-27)
+**File**: `ci/builder/requirements.txt` (modified, +15/-15)
 ```diff
-@@ -137,9 +137,9 @@ checksum = "4b46cbb362ab8752921c97e041f5e366ee6297bd428a31275b9fcf1e380f7299"
+@@ -14,9 +14,9 @@
+ aiohttp==3.14.5
+ black==26.10.1
+ # Pulls in dependencies that make launchdarkly/cloud tests fail, keep for now
+-boto3-stubs[ec2,iam,kinesis,s3,sqs,ssm,sts,s3tables]==1.41.5
++boto3-stubs[ec2,iam,kinesis,s3,sqs,ssm,sts,s3tables]==1.43.118
+ boto3==1.43.118
+-click==8.1.3
++click==8.5.0
+ cryptography==50.0.2
+ colored==2.3.2
+ docker==7.2.0
+@@ -35,13 +35,13 @@ launchdarkly-api==25.0.0
+ # NOTE matplotlib 3.10.9 is required for Python 3.10 compatibility
+ matplotlib==3.10.9; python_version < "3.11"
+ matplotlib==3.11.2; python_version >= "3.11"
+-matplotlib-stubs==0.3.4
++matplotlib-stubs==0.3.11
+ # Keep on 3.4.2 for Python 3.10 compatibility
+-networkx==3.4.2
++networkx==3.7
+ networkx-stubs==0.0.1
+ # NOTE numpy 2.2.6 is required for Python 3.10 compatibility
+ numpy==2.2.6; python_version < "3.11"
+-numpy==2.4.2; python_version >= "3.11"
++numpy==2.5.4; python_version >= "3.11"
+ pandas==3.1.0
+ pandas-stubs==2.3.3.260113
+ parameterized==0.9.0
+@@ -50,22 +50,22 @@ pdoc==16.0.0
+ pg8000==1.31.6
+ prettytable==3.18.0
+ psutil==7.2.2
+-psycopg==3.3.3
+-psycopg-binary==3.3.3
+-pydantic==2.12.5
++psycopg==3.3.6
++psycopg-binary==3.3.6
++pydantic==2.14.1
+ pyelftools==0.33
+ pyjwt==2.15.1
+ PyMySQL==1.2.3
+-pytest==9.0.3
++pytest==9.1.1
+ pytest-split==0.11.0
+ pyyaml==6.0.3
+ requests==2.34.2
+-ruamel.yaml==0.18.17
+-ruff==0.16.5
++ruamel.yaml==0.19.1
++ruff==0.17.2
+ # NOTE scipy 1.15 is required for Python 3.10 compatibility
+ scipy==1.15.3; python_version < "3.11"
+-scipy==1.17.1; python_version >= "3.11"
+-scipy-stubs==1.15.3.0
++scipy==1.18.1; python_version >= "3.11"
++scipy-stubs==1.18.1.1
+ semver==3.1.0
+ shtab==1.13.0
+ sqlparse==0.6.0
+@@ -84,12 +84,12 @@ xxhash==4.0.2
+ yamllint==1.38.0
+ # NOTE confluent-kafka only has wheels for a few python versions
+ confluent-kafka==2.6.1; python_version < "3.13"
+-confluent-kafka[schema-registry]==2.13.2; python_version >= "3.13"
++confluent-kafka[schema-registry]==2.16.0; python_version >= "3.13"
+ fastavro==1.13.1
+ websocket-client==1.9.2
+ pyarrow-stubs==20.0.0.20260819
+ pyarrow==26.0.0
+-minio==7.2.15
++minio==7.2.20
+ zstandard==0.25.0
+ build==1.6.1
+ hatchling==1.32.4
+```
+
+**File**: `misc/python/materialize/cli/optbench.py` (modified, +25/-13)
+```diff
+@@ -12,7 +12,7 @@
+ import tempfile
+ from contextlib import closing
+ from pathlib import Path
+-from typing import cast
++from typing import Any, cast
+ 
+ import click
+ import numpy as np
+@@ -62,12 +62,12 @@ def _required_path_callback(
+ 
+ 
+ class Arg:
+-    scenario = dict(
++    scenario: dict[str, Any] = dict(
+         type=click.Choice(scenarios()),
+         callback=_scenario_callback,
+     )
+ 
+-    base = dict(
++    base: dict[str, Any] = dict(
+         type=click.Path(
+             exists=True,
+             file_okay=True,
+@@ -79,7 +79,7 @@ class Arg:
+         callback=_path_callback,
+     )
+ 
+-    diff = dict(
++    diff: dict[str, Any] = dict(
+         type=click.Path(
+             exists=True,
+             file_okay=True,
+@@ -93,7 +93,7 @@ class Arg:
+ 
+ 
+ class Opt:
+-    repository = dict(
++    repository: dict[str, Any] = dict(
+         default=Path(tempfile.gettempdir()),
+         type=click.Path(
+             exists=True,
+@@ -107,21 +107,33 @@ class Opt:
+         callback=_required_path_callback,
+     )
+ 
+-    samples = dict(default=11, help="Samples per query.")
++    samples: dict[str, Any] = dict(default=11, help="Samples per query.")
+ 
+-    print_results = dict(default=False, help="Print the experiment results.")
++    print_results: dict[str, Any] = dict(
++        default=False, help="Print the experiment results."
++    )
+ 
+-    no_indexes = dict(default=False, help="Skip CREATE [DEFAULT]/DROP INDEX DDL.")
++    no_indexes: dict[str, Any] = dict(
++        default=False, help="Skip CREATE [DEFAULT]/DROP INDEX DDL."
++    )
+ 
+-    db_port = dict(default=6875, help="DB connection port.", envvar="PGPORT")
++    db_port: dict[str, Any] = dict(
++        default=6875, help="DB connection port.", envvar="PGPORT"
++    )
+ 
+-    db_host = dict(default="localhost", help="DB connection host.", envvar="PGHOST")
++    db_host: dict[str, Any] = dict(
++        default="localhost", help="DB connection host.", envvar="PGHOST"
++    )
+ 
+-    db_user = dict(default="materialize", help="DB connection user.", envvar="PGUSER")
++    db_user: dict[str, Any] = dict(
++        default="materialize", help="DB connection user.", envvar="PGUSER"
++    )
+ 
+-    db_pass = dict(default=None, help="DB connection password.", envvar="PGPASSWORD")
++    db_pass: dict[str, Any] = dict(
++        default=None, help="DB connection password.", envvar="PGPASSWORD"
++    )
+ 
+-    db_require_ssl = dict(
++    db_require_ssl: dict[str, Any] = dict(
+         is_flag=True,
+         help="DB connection requires SSL.",
+         envvar="PGREQUIRESSL",
+```
+
+**File**: `test/terraform/azure-temporary/requirements.txt` (modified, +3/-3)
+```diff
+@@ -1,5 +1,5 @@
+-azure-cli==2.69.0
++azure-cli==2.91.0
+ azure-mgmt-storage==25.3.0
+-azure-storage-blob==12.24.1
+-azure-identity==1.19.0
++azure-storage-blob==12.31.0
++azure-identity==1.26.0
+ azure-keyvault==4.2.0
+```
+
+---
+
+### Incident Patch 3: `d5372a42` (2026-10-28)
+**Commit Message**: build(deps): bump urllib3 from 2.7.0 to 2.8.0 in /misc/mcp-materialize (#40279)
+
+Bumps [urllib3](https://github.com/urllib3/urllib3) from 2.7.0 to 2.8.0.
+<details>
+<summary>Release notes</summary>
+<p><em>Sourced from <a
+href="https://github.com/urllib3/urllib3/releases">urllib3's
+releases</a>.</em></p>
+<blockquote>
+<h2>2.8.0</h2>
+<h2>🚀 urllib3 is fundraising for HTTP/2 support</h2>
+<p><a
+href="https://sethmlarson.dev/urllib3-is-fundraising-for-http2-support">urllib3
+is raising ~$40,000 USD</a> to release HTTP/2 support and ensure
+long-term sustainable maintenance of the project. If your company or
+organization uses Python and would benefit from HTTP/2 support in
+Requests, pip, cloud SDKs, and thousands of other projects <a
+href="https://opencollective.com/urllib3">please consider contributing
+financially</a> to ensure HTTP/2 support is developed sustainably and
+maintained for the long-haul.</p>
+<p>Thank you for your support.</p>
+<h2>Security</h2>
+<p>Fixed the following security issues:</p>
+<ul>
+<li>The TLS configuration for HTTPS proxies could be ignored or
+overridden. (High severity, GHSA-8988-9cw3-xx77)</li>
+<li><code>HTTPResponse.stream()</code> and <code>read_chunked()</code>
+
+
+**File**: `misc/mcp-materialize/uv.lock` (modified, +3/-3)
+```diff
+@@ -1508,11 +1508,11 @@ wheels = [
  
  [[package]]
- name = "annotate-snippets"
--version = "0.12.16"
-+version = "0.12.17"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f211a51805bc641f3ad5b7664c77d2547af685cc33b4cd8d31964027a46f13f1"
-+checksum = "b2a5b0a5ab8561c603f16c3b78c24a386b1f70e7fc1b1b1e8c15738828e4a176"
- dependencies = [
-  "anstyle",
-  "memchr",
-@@ -713,9 +713,9 @@ dependencies = [
- 
- [[package]]
- name = "aws-credential-types"
--version = "1.3.0"
-+version = "1.3.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e93964ffdaf57857f544be3666a5f57570bb699e934700f11b49708f61bb556e"
-+checksum = "576e8da35751dc85409ec1cd15999f692c277a1fbe9336780fe6f15e49dd637d"
- dependencies = [
-  "aws-smithy-async",
-  "aws-smithy-runtime-api",
-@@ -984,9 +984,9 @@ dependencies = [
- 
- [[package]]
- name = "aws-smithy-async"
--version = "1.3.0"
-+version = "1.3.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f02e407fb3b54891734224b9ffac8a71fdd35f542500fa1af95754a6b2beb316"
-+checksum = "de681a9df7ff79823b759ee17061076ec049cd61a8fa28ece4293d89c9f6964e"
- dependencies = [
-  "futures-util",
-  "pin-project-lite",
-@@ -1049,9 +1049,9 @@ dependencies = [
- 
- [[package]]
- name = "aws-smithy-http-client"
--version = "1.5.0"
-+version = "1.5.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "51c89cc3f1f281d659a67a519a1b5c6d445b5ce09fa7e5aee40c2c2707e9509d"
-+checksum = "aeca69f65362f7375891008ea525fd440ad6db1836458ac188c87b126804114e"
- dependencies = [
-  "aws-smithy-async",
-  "aws-smithy-protocol-test",
-@@ -1166,9 +1166,9 @@ dependencies = [
- 
- [[package]]
- name = "aws-smithy-runtime-api"
--version = "1.19.0"
-+version = "1.19.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "c0730c16f91124c6a2abb4932c77e299288b3dd9f967ea2e9ec48cc6731e87a4"
-+checksum = "06788004dea79018413f381891da6dcca23196acd79c4d51b767fbdacc76eae4"
- dependencies = [
-  "aws-smithy-async",
-  "aws-smithy-runtime-api-macros",
-@@ -1205,9 +1205,9 @@ dependencies = [
- 
- [[package]]
- name = "aws-smithy-types"
--version = "1.8.1"
-+version = "1.9.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "69bb407740a197147da48238ecc94498493c9e85445732360cec180296ca45f1"
-+checksum = "55752025c39c0e094962fd73f1c57014b191f678612e517f219468e575af9822"
- dependencies = [
-  "base64-simd",
-  "bytes",
-@@ -1219,7 +1219,6 @@ dependencies = [
-  "itoa",
-  "num-integer",
-  "pin-project-lite",
-- "pin-utils",
-  "ryu",
-  "serde",
-  "time",
-@@ -2384,9 +2383,9 @@ dependencies = [
- 
- [[package]]
- name = "crc32fast"
--version = "1.5.2"
-+version = "1.5.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "01a7799fd6b852db0e61728dde9a204c423b44d689dbd432522543614b490e78"
-+checksum = "0ba106e844045ddc02c20768ac4b0b7cb45f2cc2ecbd833ac9f5dacb183c2055"
- dependencies = [
-  "cfg-if",
+ name = "urllib3"
+-version = "2.7.0"
++version = "2.8.0"
+ source = { registry = "https://pypi.org/simple" }
+-sdist = { url = "https://files.pythonhosted.org/packages/53/0c/06f8b233b8fd13b9e5ee11424ef85419ba0d8ba0b3138bf360be2ff56953/urllib3-2.7.0.tar.gz", hash = "sha256:231e0ec3b63ceb14667c67be60f2f2c40a518cb38b03af60abc813da26505f4c", size = 433602, upload-time = "2026-05-07T16:13:18.596Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/e3/05/b17359e1cefb4f909b5e40b1b90a496d987258916dbbf88e842c729f510e/urllib3-2.8.0.tar.gz", hash = "sha256:63bf2ead4c879426ebf22ef2a781eeb4aa3b4ae798a0435506f8687fd5bb9b63", size = 458972, upload-time = "2026-09-15T19:29:36.253Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/7f/3e/5db95bcf282c52709639744ca2a8b149baccf648e39c8cc87553df9eae0c/urllib3-2.7.0-py3-none-any.whl", hash = "sha256:9fb4c81ebbb1ce9531cce37674bbc6f1360472bc18ca9a553ede278ef7276897", size = 131087, upload-time = "2026-05-07T16:13:17.151Z" },
++    { url = "https://files.pythonhosted.org/packages/92/9d/c4e665119135114480843e7ab388fa94d8480650450e6f8e26b70d323a4c/urllib3-2.8.0-py3-none-any.whl", hash = "sha256:0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3", size = 135717, upload-time = "2026-09-15T19:29:34.577Z" },
  ]
-@@ -5199,9 +5198,9 @@ checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
  
  [[package]]
- name = "jaq-core"
--version = "3.1.1"
-+version = "3.1.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f72ba7158fe9fc1bc4baace1b71e6d0d3d27c6839dd87dc1f233dd408f5dd85b"
-+checksum = "723ad9253808e95daa2d10ad5b258ac4e65c07003e223e08d1d8734c2942d606"
- dependencies = [
-  "dyn-clone",
-  "once_cell",
-@@ -5229,9 +5228,9 @@ dependencies = [
- 
- [[package]]
- name = "jaq-std"
--version = "3.0.3"
-+version = "3.0.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9f90e485abfd3189510c996e77be55056a51038b0fa5805e6c97b5dcf0d9ab55"
-+checksum = "56b378d4f7587d332111a92608348db6d6b9b8f7cb5ee1d2bd162ec715d7c5bf"
- dependencies = [
-  "aho-corasick",
-  "base64 0.22.1",
-@@ -5623,9 +5622,9 @@ dependencies = [
- 
- [[package]]
- name = "launchdarkly-server-sdk"
--version = "3.3.1"
-+version = "3.3.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "831983987c39eb960757d15d359b4e6633066a3c84637baf8ca7c3359d04360c"
-+checksum = "483baff208ad1b887fe2bd1b3c0d26768798fd37d4467fc1c7a262339841061b"
- dependencies = [
-  "aws-lc-rs",
-  "bitflags 2.13.2",
-@@ -5654,9 +5653,9 @@ dependencies = [
- 
- [[package]]
- name = "launchdarkly-server-sdk-evaluation"
--version = "2.2.1"
-+version = "2.2.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "76560a130b2a7e7fdb9c56043168844cde483e08e7f0e4a5e178e3888edc4336"
-+checksum = "2053cf4f8cb49a823b08c4bfa711359762d7fde80fb1dbd1fe223dcb37975488"
- dependencies = [
-  "base16ct",
-  "chrono",
-@@ -5768,9 +5767,9 @@ checksum = "2c4a545a15244c7d945065b5d392b2d2d7f21526fba56ce51467b06ed445e8f7"
- 
- [[package]]
- name = "libc"
--version = "0.2.190"
-+version = "0.2.191"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ce5d3ddc6d3fa000eb1536d85e147bfe31aacaba692ed6a876f95cb7c855be78"
-+checksum = "65cd87c9a6d60536580b316ad98572
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40243** (2026-10-27): build(deps): bump the simple group across 2 directories with 9 updates (@dependabot[bot])
-- **PR #40226** (closed): test: restart environmentd after replacing an MV behind a stalled sink (@martykulma)
-- **PR #40221** (2026-10-27): ci: ignore the expected marker halt in the 0dt restarted-in-place test (@ggevay)
-- **PR #40214** (2026-10-27): test: accept openssl and rustls wording for tls verify failures (@jasonhernandez)
-- **PR #40213** (2026-10-27): deps: bump zip to 9.1.2 (@jasonhernandez)
-- **PR #40212** (2026-10-27): build(deps-dev): update setuptools requirement from >=84.0.0 to >=84.2.1 in /misc/dbt-materialize (@dependabot[bot])
+- **PR #40303** (2026-10-28): race condition test: Make load generator tables, not just sources (@def-)
+- **PR #40302** (2026-10-28): ci: Detect another incremental build failure and handle it (@def-)
+- **PR #40301** (2026-10-28): Fix duplicate source-map-js yarn.lock entry (@def-)
+- **PR #40299** (closed): ci: bump pg8000 to 1.31.6 for scramp 1.5.0 (@antiguru)
+- **PR #40298** (2026-10-28): build(deps): bump the simple group across 2 directories with 18 updates (@dependabot[bot])
+- **PR #40297** (2026-10-28): build(deps): bump certifi from 2025.10.5 to 2026.10.18 in /misc/mcp-materialize-agents (@dependabot[bot])
 
 ---
 
@@ -1262,30 +1307,36 @@ href="https://github.com/rust-lang/annotate-snippets-rs/blob/mai
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump tokio from 1.53.3 to 1.54.1 (#40171)
+## X. build(deps): bump axios from 1.18.1 to 1.20.0 in /console (#40292)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `console/yarn.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `363ee9bb`: build(deps): bump tokio from 1.53.3 to 1.54.1 (#40171). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7b42d3bc`: build(deps): bump axios from 1.18.1 to 1.20.0 in /console (#40292). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `console/yarn.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.54.1"
-checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
+  version: 1.20.0
+  resolution: "axios@npm:1.20.0"
+    form-data: "npm:^4.0.6"
+  checksum: 10c0/976088acf532286356f4c2e65df1ef47ba7da3936d83e928d0d64357bbf5370456abd3eb5826c15df322335fcb1fe200d4a84b4fcf20ffccdd63b40d80fa495c
+"form-data@npm:^4.0.6":
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "1.53.3"
-checksum = "ce3335fa71841cda333a58d7615b03901380ecf09d59b3296d21f8bbac0dde4e"
+  version: 1.18.1
+  resolution: "axios@npm:1.18.1"
+    form-data: "npm:^4.0.5"
+  checksum: 10c0/9d9378a3af0d0ad730a52ad9d15ec7201f3926ad6e7e8bbffc5ae21ca2835ad11d1d9598698f5dd9718917486039f55ea1d7dc23d8e44fa827a55cc3262c02fc
+"form-data@npm:^4.0.5":
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `363ee9bb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7b42d3bc` are properly handled with clean fallback behavior.

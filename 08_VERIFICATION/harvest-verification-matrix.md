@@ -5776,3 +5776,5 @@
 | `CYCLE-20261028-2573` | `2026-10-28T13:16:53.583Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5292` | Yes (`aa82d8e1...`) |
 | `CYCLE-20261028-AHIF` | `2026-10-28T13:23:22.791Z` | `meta-llama/Meta-Llama-3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md` | Yes (`0cdfa303...`) |
 | `CYCLE-20261028-AN2A` | `2026-10-28T13:23:29.986Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5293` | Yes (`5e7ccda7...`) |
+| `CYCLE-20261028-J5B0` | `2026-10-28T13:30:06.876Z` | `openai/whisper-large-v3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | Yes (`51c38df9...`) |
+| `CYCLE-20261028-JH5A` | `2026-10-28T13:30:22.222Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5294` | Yes (`822a6f50...`) |

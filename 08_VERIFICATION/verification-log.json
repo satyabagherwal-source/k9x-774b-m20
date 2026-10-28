@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-8XP3",
-    "timestamp": "2026-10-27T12:38:30.807Z",
-    "repository": "laurent22/joplin",
-    "learningId": "learn-github-laurent22-joplin",
-    "contentHash": "d039810c5a5ae12d4b6acf651ce00ea0592bd94a7f1c36b8508aa4f558cc17c4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-F4RH",
-    "timestamp": "2026-10-27T12:43:19.901Z",
-    "repository": "grpc/grpc-rust",
-    "learningId": "learn-github-grpc-grpc-rust",
-    "contentHash": "a1a6cc71ee5ba75a4d6fc68096ce4ba53c7da7fb986746143c16528619d9bd02",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-J9FV",
     "timestamp": "2026-10-27T12:46:32.587Z",
     "repository": "carbon-design-system/carbon-components-svelte",
@@ -7490,6 +7460,36 @@
     "repository": "microsoft/agent-governance-toolkit",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
     "contentHash": "5e7ccda7762de991baf6cadefe643f46fba9fa5dc8070c792d3baeff8275f50a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-J5B0",
+    "timestamp": "2026-10-28T13:30:06.876Z",
+    "repository": "openai/whisper-large-v3",
+    "learningId": "learn-huggingface-openai-whisper-large-v3",
+    "contentHash": "51c38df9690d79279bba4ffad29544bcb278d7a7c5647d91ef96665c960ff033",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-JH5A",
+    "timestamp": "2026-10-28T13:30:22.222Z",
+    "repository": "MaterializeInc/materialize",
+    "learningId": "learn-github-materializeinc-materialize",
+    "contentHash": "822a6f5037bd8758176642827c8bc03a7bb956f316701670ca366e9701ca5f6c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
