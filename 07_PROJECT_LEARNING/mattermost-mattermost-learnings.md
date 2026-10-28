@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mattermost-mattermost-learnings.md`  
 > **Source**: github ([https://github.com/mattermost/mattermost](https://github.com/mattermost/mattermost))  
-> **Source Version**: `43f954c2`  
+> **Source Version**: `7709b2f9`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T13:10:41.968Z  
+> **Timestamp**: 2026-10-28T04:03:46.212Z  
 > **Learning ID**: `learn-github-mattermost-mattermost`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mattermost-mattermost-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mattermost/mattermost](https://github.com/mattermost/mattermost))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T13:10:41.475Z  
+> **Harvest Timestamp**: 2026-10-28T04:03:46.206Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Mattermost is an open source platform for secure collaboration across the entire software development lifecycle..
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 39450 stars
+- **Stars / Engagement**: 39454 stars
 
 ---
 
@@ -1592,192 +1592,715 @@ func allocateCacheTargets[T any](l int) []any {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f563142f` (2026-10-26)
-**Commit Message**: fix(e2e): repair group_message_creation_members.spec.ts on master (#39384)
+### Incident Patch 1: `e190c0f1` (2026-10-27)
+**Commit Message**: Migrate product Buttons from shared to compass-ui (#38903)
 
-* fix(e2e): wait for the Direct Messages modal search before selecting a user
+* Migrate modal and save-panel Buttons from shared to compass-ui
 
-DirectChannelsModal.fillSearchInput returned as soon as the term was typed.
-The modal first lists locally matching users, then (after its 250ms debounce
-and 100ms search timeout) replaces every row with a loading screen while
-POST /api/v4/users/search runs. selectUser clicked the local row right away,
-so the click could land as the row unmounted and select nobody, failing
-'Remove <username>' in MM-T467 / MM-T460.
+Continue the leaf-first Button migration by moving GenericModal,
+standalone modal leaves, SaveChangesPanel/SaveButton, SpinnerButton,
+and the component library demo onto @mattermost/compass-ui Button.
+Replace confirmButtonVariant with a destructive boolean on ConfirmModal
+and GenericModal, and update agent/style docs to prefer compass-ui for
+new and migrated call sites.
 
-fillSearchInput now waits for the users/search response for the typed term,
-which covers selectUser and openSelfDirectMessage.
+Co-authored-by: Matthew Birtch <[REDACTED_EMAIL]>
 
-Co-authored-by: yasser.khan <[REDACTED_EMAIL]>
+* Fix modal footer button spacing after compass-ui migration
 
-* fix(e2e): match the untrimmed search term when waiting for the modal user search
+Replace Bootstrap .btn+.btn margin with flex gap on .modal-footer so
+compass-ui Buttons keep the 8px horizontal spacing. Drop the redundant
+ChannelNotificationModal nested footer so buttons are direct flex children.
+
+Co-authored-by: Matthew Birtch <[REDACTED_EMAIL]>
+
+* Neutralize Bootstrap clearfix on flex modal footers
+
+Bootstrap 3 ::before/::after clearfix pseudos were participating in
+.modal-footer flex layout and adding extra 8px gap spacing. Hide them
+so only real footer buttons receive the gap.
+
+Co-authored-by: Matthew Birtch <[REDACTED_EMAIL]>
+
+* Fix multi-select Go button 
+
+**File**: `e2e-tests/cypress/tests/integration/channels/accessibility/accessibility_account_settings_spec.js` (modified, +12/-5)
+```diff
+@@ -176,13 +176,20 @@ describe('Verify Accessibility Support in different sections in Settings and Pro
+         cy.get('#changeInterfaceLanguageLabel').should('be.visible').and('have.text', 'Change interface language');
+ 
+         // # When space key is pressed on dropdown, it should expand and should collapse when esc key is pressed
+-        cy.get('@inputEl').typeWithForce(' ');
+-        cy.findByRole('listbox').should('have.class', 'react-select__menu-list').as('listBox');
++        // Menu is portaled to document.body (outside the aria-modal dialog), so query by class
++        // and assert role=listbox rather than findByRole (inaccessible outside the modal).
++        cy.get('@inputEl').focus().typeWithForce(' ');
++        cy.get('.react-select__menu-list').
++            should('be.visible').
++            and('have.attr', 'role', 'listbox').
++            and('have.class', 'react-select__menu-list').
++            as('listBox');
+         cy.get('@inputEl').typeWithForce('{esc}');
+         cy.get('@listBox').should('not.exist');
+ 
+         // # Press down arrow twice and check aria label
+-        cy.get('@inputEl').typeWithForce(' ');
++        cy.get('@inputEl').focus().typeWithForce(' ');
++        cy.get('.react-select__menu-list').should('be.visible');
+         cy.get('@inputEl').typeWithForce('{downarrow}{downarrow}');
+         cy.get('#displayLanguage').within(($el) => {
+             cy.wrap($el).findByRole('log').should('have.attr', 'aria-live', 'assertive').as('ariaEl');
+@@ -276,15 +283,15 @@ describe('Verify Accessibility Support in different sections in Settings and Pro
+         // * Check Tab behavior in MFA section
+         cy.get('#mfaEdit').click();
+         cy.get('#passwordEdit').focus().tab({shift: true}).tab().tab();
+-        cy.get('.setting-list button.btn').should('have.class', 'a11y--active a11y--focused').tab();
++        cy.get('.setting-list').findByRole('button', {name: /Add|Remove/i}).should('have.class', 'a11y--active a11y--focused').tab();
+         cy.get('#cancelSetting').should('have.class', 'a11y--active a11y--focused');
+ 
+         // * Check Tab behavior in Sign-In Method if its available
+         cy.get('.user-settings').then((el) => {
+             if (el.find('#signinEdit').length) {
+                 cy.get('#signinEdit').click();
+                 cy.get('#mfaEdit').focus().tab({shift: true}).tab().tab();
+-                cy.get('.setting-list a.btn').should('have.class', 'a11y--active a11y--focused').tab();
++                cy.get('.setting-list').findByRole('link').should('have.class', 'a11y--active a11y--focused').tab();
+                 cy.get('#cancelSetting').should('have.class', 'a11y--active a11y--focused');
+             }
+         });
+```
+
+**File**: `e2e-tests/cypress/tests/integration/channels/collapsed_reply_threads/replies_spec.ts` (modified, +3/-3)
+```diff
+@@ -145,16 +145,16 @@ describe('Collapsed Reply Threads', () => {
+         cy.uiGetPostThreadFooter(postForAvatar.id).find('.Avatars').find('button').first().click();
+ 
+         // * Profile popover should be visible and close on ESC
+-        cy.get('div.user-profile-popover').first().should('be.visible').find('button.btn-primary.btn-sm').type('{esc}');
++        cy.get('div.user-profile-popover').first().should('be.visible').find('.user-popover__bottom-row-container button').type('{esc}');
+ 
+         // # Visit global threads
+         cy.uiClickSidebarItem('threads');
+ 
+         // * Find the first avatar and click it
+         cy.get('div.ThreadItem').find('.activity').find('.Avatars').find('button').first().click();
+ 
+-        // * Profile popover should be visible and close on ESC
+-        cy.get('div.user-profile-popover').first().should('be.visible').find('button.btn-primary.btn-sm');
++        // * Profile popover should be visible
++        cy.get('div.user-profile-popover').first().should('be.visible').find('.user-popover__bottom-row-container button');
+     });
+ 
+     it('MM-T4143 Emoji reaction - type +:+1:', () => {
+```
+
+**File**: `e2e-tests/cypress/tests/integration/channels/emoji/custom_emoji_1_1_spec.ts` (modified, +2/-2)
+```diff
+@@ -55,7 +55,7 @@ describe('Custom emojis', () => {
+         cy.uiOpenCustomEmoji();
+ 
+         // # Click on add custom emoji
+-        cy.findByRole('button', {name: 'Add Custom Emoji'}).should('be.visible').click();
++        cy.findByRole('link', {name: 'Add Custom Emoji'}).should('be.visible').click();
+ 
+         // # Type emoji name
+         cy.get('#name').type(customEmojiWithColons);
+@@ -122,5 +122,5 @@ function saveCustomEmoji(teamName: string) {
+ 
+     // * Should return to list of custom emojis
+     cy.url().should('include', `${teamName}/emoji`);
+-    cy.findByRole('button', {name: 'Add Custom Emoji'}).should('be.visible');
++    cy.findByRole('link', {name: 'Add Custom Emoji'}).should('be.visible');
+ }
+```
+
+**File**: `e2e-tests/cypress/tests/integration/channels/emoji/custom_emoji_1_spec.ts` (modified, +2/-2)
+```diff
+@@ -105,7 +105,7 @@ describe('Custom emojis', () => {
+         cy.uiOpenCustomEmoji();
+ 
+         // # Click on add custom emoji
+-        cy.findByRole('button', {name: 'Add Custom Emoji'}).should('be.visible').click();
++        cy.findByRole('link', {name: 'Add Custom Emoji'}).should('be.visible').click();
+ 
+         // # Type emoji name
+         cy.get('#name').should('be.visible').type(customEmojiWithColons);
+@@ -180,5 +180,5 @@ function saveCustomEmoji(teamName: string) {
+ 
+     // * Should return to list of custom emojis
+     cy.url().should('include', `${teamName}/emoji`);
+-    cy.findByRole('button', {name: 'Add Custom Emoji'}).should('be.visible');
++    cy.findByRole('link', {name: 'Add Custom Emoji'}).should('be.visible');
+ }
+```
+
+**File**: `e2e-tests/cypress/tests/integration/channels/enterprise/guest_accounts/guest_invitation_ui_more_spec.ts` (modified, +1/-1)
+```diff
+@@ -136,7 +136,7 @@ describe('Guest Account - Guest User Invitation Flow', () => {
+             // * Update email outside whitelisted domain and verify error message
+             cy.get('#resetEmailModal').should('be.visible').within(() => {
+                 cy.get('input[type="email"]').type(email);
+-                cy.get('button.btn-primary.confirm').click();
++                cy.get('button.GenericModal__button.confirm').click();
+                 cy.get('.error').should('be.visible').and('have.text', 'The email you provided does not belong to an accepted domain for guest accounts. Please contact your administrator or sign up with a different email.');
+                 cy.get('.close').click();
+             });
+```
+
+**File**: `e2e-tests/cypress/tests/integration/channels/enterprise/guest_accounts/system_console_manage_guest_spec.ts` (modified, +1/-1)
+```diff
+@@ -87,7 +87,7 @@ describe('Guest Account - Verify Manage Guest Users', () => {
+         const email = `temp-${getRandomId()}@mattermost.com`;
+         cy.get('#resetEmailModal').should('be.visible').within(() => {
+             cy.get('input[type="email"]').type(email);
+-            cy.get('button.btn-primary.confirm').click();
++            cy.get('button.GenericModal__button.confirm').click();
+         });
+ 
+         // * Verify if Guest's email was updated
+```
+
+**File**: `e2e-tests/cypress/tests/integration/channels/enterprise/system_console/archived_channels_spec.js` (modified, +3/-3)
+```diff
+@@ -62,7 +62,7 @@ describe('Archived channels', () => {
+         cy.visit(`/admin_console/user_management/channels/${testChannel.id}`);
+ 
+         // * Verify the Unarchive Channel button is visible
+-        cy.get('button.btn-secondary', {timeout: TIMEOUTS.TWO_SEC}).should('have.text', 'Unarchive Channel').should('be.visible').should('be.enabled');
++        cy.findByRole('button', {name: 'Unarchive Channel', timeout: TIMEOUTS.TWO_SEC}).should('be.visible').should('be.enabled');
+ 
+         // * Verify that only one widget is visible
+         cy.get('div.AdminPanel').should('be.visible').and('have.length', 1);
+@@ -73,10 +73,10 @@ describe('Archived channels', () => {
+         cy.visit(`/admin_console/user_management/channels/${testChannel.id}`);
+ 
+         // # Click Unarchive Channel button
+-        cy.get('button.btn-secondary', {timeout: TIMEOUTS.TWO_SEC}).findAllByText('Unarchive Channel').click();
++        cy.findByRole('button', {name: 'Unarchive Channel', timeout: TIMEOUTS.TWO_SEC}).click();
+ 
+         // * Verify the Archive Channel button is visible
+-        cy.get('button.btn-secondary.btn-danger', {timeout: TIMEOUTS.TWO_SEC}).findAllByText('Archive Channel').should('be.visible');
++        cy.findByRole('button', {name: 'Archive Channel', timeout: TIMEOUTS.TWO_SEC}).should('be.visible');
+ 
+         // * Verify that the other widget appears
+         cy.get('div.AdminPanel').should('be.visible').should('have.length', 5);
+```
+
+**File**: `e2e-tests/cypress/tests/integration/channels/integrations/custom_slash_commands/slash_commands_spec.js` (modified, +1/-1)
+```diff
+@@ -155,7 +155,7 @@ describe('Slash commands page', () => {
+         cy.get('#url').clear().type('http://mattermost.com');
+ 
+         // # Click on Cancel
+-        cy.get('a').contains('Cancel').click();
++        cy.findByRole('link', {name: 'Cancel'}).click();
+ 
+         // # Click on edit again
+         cy.get('a[href*="/edit"]').click();
+```
+
+---
+
+### Incident Patch 2: `85158380` (2026-10-27)
+**Commit Message**: [MM-71093] Fix managed channel categories vanishing from the sidebar after the first restart (#39017)
+
+* [MM-71093] Pin the managed category property group to version 2
+
+A fresh install registered the managed_channel_categories property group at
+PropertyGroupVersionV2 but recorded the setup flag as the legacy "true". The
+next startup read that flag as pre-v2 and ran an unconditional
+IncrementVersion, leaving the group at version 3. The properties API only
+serves a group whose version is exactly 2, so it answered 404 for the group
+and the webapp stopped before it fetched the managed category mappings,
+emptying the sidebar of managed categories.
+
+The fresh-install path now records the current migration version, and the
+existing-install path pins the group to version 2 instead of incrementing it,
+which also repairs servers already sitting at version 3. IncrementVersion had
+no other caller, so it is replaced by SetVersion.
+
+Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
+
+* [MM-71093] Assert the managed category migration does not rewrite a v2 group
+
+Pinning version 2 onto a group that is already there leaves identical state
+behind, so the steady-state no-write is only observable th
+
+**File**: `server/channels/api4/properties_test.go` (modified, +29/-0)
+```diff
+@@ -197,6 +197,35 @@ func TestPropertyRoutesWithPostAttributesFlag(t *testing.T) {
+ 	})
+ }
+ 
++// This is the request the sidebar makes first: the webapp loads the managed
++// category field before it asks for a team's channel-to-category mappings, so a
++// group version the endpoint will not serve hides managed categories entirely
++// even though the mappings are intact (MM-71093).
++func TestManagedCategoryFieldsRequireGroupAtV2(t *testing.T) {
++	mainHelper.Parallel(t)
++
++	th := SetupConfig(t, func(cfg *model.Config) {
++		cfg.FeatureFlags.ManagedChannelCategories = true
++	}).InitBasic(t)
++
++	groupName := model.ManagedCategoryPropertyGroupName
++	search := model.PropertyFieldSearch{TargetType: "system"}
++
++	// The state server startup leaves behind.
++	fields, resp, err := th.SystemAdminClient.GetPropertyFields(context.Background(), groupName, model.PropertyValueTargetTypeChannel, search)
++	require.NoError(t, err)
++	CheckOKStatus(t, resp)
++	require.Len(t, fields, 1)
++	require.Equal(t, model.ManagedCategoryPropertyFieldName, fields[0].Name)
++
++	// The state an affected server booted into.
++	require.NoError(t, th.App.Srv().Store().PropertyGroup().SetVersion(groupName, model.PropertyGroupVersionV2+1))
++
++	_, resp, err = th.SystemAdminClient.GetPropertyFields(context.Background(), groupName, model.PropertyValueTargetTypeChannel, search)
++	require.Error(t, err)
++	CheckNotFoundStatus(t, resp)
++}
++
+ // The gate is an OR across every Properties feature flag, so the off case is
+ // only meaningful with all of them disabled — ClassificationMarkings defaults to
+ // true. This is the half that backs "off by default exposes nothing".
+```
+
+**File**: `server/channels/app/migrations.go` (modified, +42/-9)
+```diff
+@@ -1061,16 +1061,14 @@ func (s *Server) doSetupManagedCategoryProperties() error {
+ 	}
+ 
+ 	if data != nil {
+-		if data.Value == managedCategoryMigrationVersion {
+-			return s.cacheManagedCategoryIDs()
++		if versionErr := s.ensureManagedCategoryGroupVersion(); versionErr != nil {
++			return versionErr
+ 		}
+ 
+-		if incrementErr := s.Store().PropertyGroup().IncrementVersion(model.ManagedCategoryPropertyGroupName); incrementErr != nil {
+-			return fmt.Errorf("failed to increment managed category group version: %w", incrementErr)
+-		}
+-
+-		if saveErr := s.Store().System().SaveOrUpdate(&model.System{Name: managedCategorySetupDoneKey, Value: managedCategoryMigrationVersion}); saveErr != nil {
+-			return fmt.Errorf("failed to save managed category setup done flag: %w", saveErr)
++		if data.Value != managedCategoryMigrationVersion {
++			if saveErr := s.Store().System().SaveOrUpdate(&model.System{Name: managedCategorySetupDoneKey, Value: managedCategoryMigrationVersion}); saveErr != nil {
++				return fmt.Errorf("failed to save managed category setup done flag: %w", saveErr)
++			}
+ 		}
+ 
+ 		return s.cacheManagedCategoryIDs()
+@@ -1080,6 +1078,15 @@ func (s *Server) doSetupManagedCategoryProperties() error {
+ 	if err != nil {
+ 		return fmt.Errorf("failed to register managed category group: %w", err)
+ 	}
++
++	// Registering an existing group returns its row without touching the version,
++	// so a run that finds no setup flag over a group that has already drifted
++	// still has to pin it. This has to happen before the field below, which is
++	// validated against the group's version.
++	if versionErr := s.ensureManagedCategoryGroupVersion(); versionErr != nil {
++		return versionErr
++	}
++
+ 	rctx := properties.SystemCallerContext(request.EmptyContext(s.Log()))
+ 
+ 	_, err = s.propertyService.GetPropertyFieldByNameForObjectType(rctx, group.ID, "", model.PropertyValueTargetTypeChannel, model.ManagedCategoryPropertyFieldName)
+@@ -1104,13 +1111,39 @@ func (s *Server) doSetupManagedCategoryProperties() error {
+ 		}
+ 	}
+ 
+-	if err := s.Store().System().SaveOrUpdate(&model.System{Name: managedCategorySetupDoneKey, Value: "true"}); err != nil {
++	if err := s.Store().System().SaveOrUpdate(&model.System{Name: managedCategorySetupDoneKey, Value: managedCategoryMigrationVersion}); err != nil {
+ 		return fmt.Errorf("failed to save managed category setup done flag: %w", err)
+ 	}
+ 
+ 	return s.cacheManagedCategoryIDs()
+ }
+ 
++// ensureManagedCategoryGroupVersion brings the managed category property group to
++// PropertyGroupVersionV2, which is the only version the properties API serves it
++// at. Installs that ran the original v1 setup need the upgrade; installs that were
++// bumped past v2 by an earlier unconditional increment need to come back down.
++func (s *Server) ensureManagedCategoryGroupVersion() error {
++	group, err := s.Store().PropertyGroup().Get(model.ManagedCategoryPropertyGroupName)
++	if err != nil {
++		return fmt.Errorf("failed to get managed category group: %w", err)
++	}
++
++	if group.IsPSAv2() {
++		return nil
++	}
++
++	if err := s.Store().PropertyGroup().SetVersion(model.ManagedCategoryPropertyGroupName, model.PropertyGroupVersionV2); err != nil {
++		return fmt.Errorf("failed to set managed category group version: %w", err)
++	}
++
++	// The fresh-install arm has just cached the drifted row via
++	// RegisterPropertyGroup, and field writes are version-checked against it.
++	group.Version = model.PropertyGroupVersionV2
++	s.propertyService.CacheGroup(group)
++
++	return nil
++}
++
+ func (s *Server) doSetupCPADisplayNameBackfill(rctx request.CTX) error {
+ 	var nfErr *store.ErrNotFound
+ 	data, err := s.Store().System().GetByName(cpaDisplayNameBackfillKey)
+```
+
+**File**: `server/channels/app/migrations_test.go` (modified, +160/-27)
+```diff
+@@ -7,6 +7,7 @@ import (
+ 	"encoding/json"
+ 	"maps"
+ 	"sync"
++	"sync/atomic"
+ 	"testing"
+ 
+ 	"github.com/mattermost/mattermost/server/public/model"
+@@ -17,68 +18,200 @@ import (
+ )
+ 
+ func TestDoSetupManagedCategoryProperties(t *testing.T) {
+-	t.Run("should register the property group and field on fresh install", func(t *testing.T) {
+-		th := Setup(t)
++	// The properties API only serves a group that is exactly at
++	// PropertyGroupVersionV2 (see PropertyGroup.IsPSAv2 and getV2Group in api4),
++	// and the webapp loads the managed category field before it asks for the
++	// channel mappings. So every case below asserts the absolute version rather
++	// than a delta: any other version takes the sidebar's managed categories down.
++	assertGroupServableAtV2 := func(t *testing.T, th *TestHelper) {
++		t.Helper()
+ 
+ 		group, appErr := th.App.GetPropertyGroup(th.Context, model.ManagedCategoryPropertyGroupName)
+ 		require.Nil(t, appErr)
+-		require.NotNil(t, group)
+-		require.Equal(t, model.ManagedCategoryPropertyGroupName, group.Name)
++		require.Equal(t, model.PropertyGroupVersionV2, group.Version)
++
++		// Field writes are version-checked against the property service's cached
++		// copy of the group, not the row above.
++		cached, err := th.Server.propertyService.GroupByID(group.ID)
++		require.NoError(t, err)
++		require.Equal(t, model.PropertyGroupVersionV2, cached.Version)
+ 
+ 		propertyFields, appErr := th.App.SearchPropertyFields(th.Context, group.ID, model.PropertyFieldSearchOpts{PerPage: 100})
+ 		require.Nil(t, appErr)
+ 		require.Len(t, propertyFields, 1)
+ 		require.Equal(t, model.ManagedCategoryPropertyFieldName, propertyFields[0].Name)
+ 
++		// Reading and writing a channel's managed category goes through these
++		// cached IDs, so a startup that leaves them empty breaks the feature too.
++		require.Equal(t, group.ID, th.Server.Channels().managedCategoryGroupID)
++		require.Equal(t, propertyFields[0].ID, th.Server.Channels().managedCategoryFieldID)
++	}
++
++	assertSetupFlagAtCurrentVersion := func(t *testing.T, th *TestHelper) {
++		t.Helper()
++
+ 		data, sysErr := th.Store.System().GetByName(managedCategorySetupDoneKey)
+ 		require.NoError(t, sysErr)
+-		require.NotEmpty(t, data.Value)
+-	})
++		require.Equal(t, managedCategoryMigrationVersion, data.Value)
++	}
++
++	// Setup(t) has already cached the IDs, so clear them to make the assertion
++	// above answer whether the run under test repopulated them.
++	runSetup := func(t *testing.T, th *TestHelper) {
++		t.Helper()
+ 
+-	t.Run("should upgrade from a pre-v2 setup by incrementing the group version and updating the system key", func(t *testing.T) {
++		th.Server.Channels().managedCategoryGroupID = ""
++		th.Server.Channels().managedCategoryFieldID = ""
++
++		require.NoError(t, th.Server.doSetupManagedCategoryProperties())
++	}
++
++	t.Run("should register the property group and field on fresh install", func(t *testing.T) {
+ 		th := Setup(t)
+ 
+ 		group, appErr := th.App.GetPropertyGroup(th.Context, model.ManagedCategoryPropertyGroupName)
+ 		require.Nil(t, appErr)
++		require.NotNil(t, group)
++		require.Equal(t, model.ManagedCategoryPropertyGroupName, group.Name)
+ 
+-		// Simulate the pre-v2 state where the migration has run with the legacy "true" marker.
++		assertGroupServableAtV2(t, th)
++		assertSetupFlagAtCurrentVersion(t, th)
++	})
++
++	t.Run("should leave a fresh install at v2 across later startups without rewriting the version", func(t *testing.T) {
++		th := Setup(t)
++		spy := installSetVersionSpy(t, th)
++
++		// Setup(t) has already run the fresh-install path, so this stands in for
++		// the restarts that follow a new deployment.
++		for range 2 {
++			runSetup(t, th)
++
++			assertGroupServableAtV2(t, th)
++			assertSetupFlagAtCurrentVersion(t, th)
++			require.Zero(t, spy.calls.Load())
++		}
++	})
++
++	t.Run("should upgrade a pre-v2 install to v2 and update the system key", func(t *testing.T) {
++		th := Setup(t)
++
++		// Simulate the original v1 setup: the legacy "true" marker over a v1 group.
+ 		sysErr := th.Store.System().SaveOrUpdate(&model.System{Name: managedCategorySetupDoneKey, Value: "true"})
+ 		require.NoError(t, sysErr)
+-		initialVersion := group.Version
++		require.NoError(t, th.Store.PropertyGroup().SetVersion(model.ManagedCategoryPropertyGroupName, model.PropertyGroupVersionV1))
+ 
+-		err := th.Server.doSetupManagedCategoryProperties()
+-		require.NoError(t, err)
++		runSetup(t, th)
+ 
+-		group, appErr = th.App.GetPropertyGroup(th.Context, model.ManagedCategoryPropertyGroupName)
+-		require.Nil(t, appErr)
+-		require.Equal(t, initialVersion+1, group.Version)
++		assertGroupServableAtV2(t, th)
++		assertSetupFlagAtCurrentVersion(t, th)
++	})
+ 
+-		data, sysErr := th.Store.System().GetByName(managedCategorySetupDoneKey)
++	t.Run("should upgrade a pre-v2 group even when the system key already reads v2", func(t *testing.T) {
++		th := Setup(t)
++
++		// The group's own version decides whether it needs work; the marker only
++		// says the migration has run before.
++		sysErr := th.Store.System().SaveOr
+```
+
+**File**: `server/channels/app/properties/property_group.go` (modified, +7/-0)
+```diff
+@@ -68,6 +68,13 @@ func (ps *PropertyService) RegisterPropertyGroup(group *model.PropertyGroup) (*m
+ 	return registered, nil
+ }
+ 
++// CacheGroup replaces the cached copy of a group whose row was changed
++// directly through the store.
++func (ps *PropertyService) CacheGroup(group *model.PropertyGroup) {
++	ps.groupCache.Store(group.Name, group)
++	ps.groupIDCache.Store(group.ID, group)
++}
++
+ func (ps *PropertyService) GetPropertyGroup(name string) (*model.PropertyGroup, error) {
+ 	return ps.groupStore.Get(name)
+ }
+```
+
+**File**: `server/channels/store/retrylayer/retrylayer.go` (modified, +10/-10)
+```diff
+@@ -11672,42 +11672,42 @@ func (s *RetryLayerPropertyGroupStore) GetByID(id string) (*model.PropertyGroup,
+ 
+ }
+ 
+-func (s *RetryLayerPropertyGroupStore) IncrementVersion(name string) error {
++func (s *RetryLayerPropertyGroupStore) Register(group *model.PropertyGroup) (*model.PropertyGroup, error) {
+ 
+ 	tries := 0
+ 	for {
+-		err := s.PropertyGroupStore.IncrementVersion(name)
++		result, err := s.PropertyGroupStore.Register(group)
+ 		if err == nil {
+-			return nil
++			return result, nil
+ 		}
+ 		if !isRepeatableError(err) {
+-			return err
++			return result, err
+ 		}
+ 		tries++
+ 		if tries >= 3 {
+ 			err = errors.Wrap(err, "giving up after 3 consecutive repeatable transaction failures")
+-			return err
++			return result, err
+ 		}
+ 		timepkg.Sleep(100 * timepkg.Millisecond)
+ 	}
+ 
+ }
+ 
+-func (s *RetryLayerPropertyGroupStore) Register(group *model.PropertyGroup) (*model.PropertyGroup, error) {
++func (s *RetryLayerPropertyGroupStore) SetVersion(name string, version int) error {
+ 
+ 	tries := 0
+ 	for {
+-		result, err := s.PropertyGroupStore.Register(group)
++		err := s.PropertyGroupStore.SetVersion(name, version)
+ 		if err == nil {
+-			return result, nil
++			return nil
+ 		}
+ 		if !isRepeatableError(err) {
+-			return result, err
++			return err
+ 		}
+ 		tries++
+ 		if tries >= 3 {
+ 			err = errors.Wrap(err, "giving up after 3 consecutive repeatable transaction failures")
+-			return result, err
++			return err
+ 		}
+ 		timepkg.Sleep(100 * timepkg.Millisecond)
+ 	}
+```
+
+**File**: `server/channels/store/sqlstore/property_group_store.go` (modified, +3/-3)
+```diff
+@@ -58,15 +58,15 @@ func (s *SqlPropertyGroupStore) Register(group *model.PropertyGroup) (*model.Pro
+ 	return group, nil
+ }
+ 
+-func (s *SqlPropertyGroupStore) IncrementVersion(name string) error {
++func (s *SqlPropertyGroupStore) SetVersion(name string, version int) error {
+ 	builder := s.getQueryBuilder().
+ 		Update("PropertyGroups").
+-		Set("Version", sq.Expr("Version + 1")).
++		Set("Version", version).
+ 		Where(sq.Eq{"Name": name})
+ 
+ 	_, err := s.GetMaster().ExecBuilder(builder)
+ 	if err != nil {
+-		return errors.Wrap(err, "property_group_increment_version_exec")
++		return errors.Wrap(err, "property_group_set_version_exec")
+ 	}
+ 
+ 	return nil
+```
+
+**File**: `server/channels/store/store.go` (modified, +1/-1)
+```diff
+@@ -1209,7 +1209,7 @@ type ScheduledPostStore interface {
+ 
+ type PropertyGroupStore interface {
+ 	Register(group *model.PropertyGroup) (*model.PropertyGroup, error)
+-	IncrementVersion(name string) error
++	SetVersion(name string, version int) error
+ 	Get(name string) (*model.PropertyGroup, error)
+ 	GetByID(id string) (*model.PropertyGroup, error)
+ }
+```
+
+**File**: `server/channels/store/storetest/mocks/PropertyGroupStore.go` (modified, +18/-18)
+```diff
+@@ -74,24 +74,6 @@ func (_m *PropertyGroupStore) GetByID(id string) (*model.PropertyGroup, error) {
+ 	return r0, r1
+ }
+ 
+-// IncrementVersion provides a mock function with given fields: name
+-func (_m *PropertyGroupStore) IncrementVersion(name string) error {
+-	ret := _m.Called(name)
+-
+-	if len(ret) == 0 {
+-		panic("no return value specified for IncrementVersion")
+-	}
+-
+-	var r0 error
+-	if rf, ok := ret.Get(0).(func(string) error); ok {
+-		r0 = rf(name)
+-	} else {
+-		r0 = ret.Error(0)
+-	}
+-
+-	return r0
+-}
+-
+ // Register provides a mock function with given fields: group
+ func (_m *PropertyGroupStore) Register(group *model.PropertyGroup) (*model.PropertyGroup, error) {
+ 	ret := _m.Called(group)
+@@ -122,6 +104,24 @@ func (_m *PropertyGroupStore) Register(group *model.PropertyGroup) (*model.Prope
+ 	return r0, r1
+ }
+ 
++// SetVersion provides a mock function with given fields: name, version
++func (_m *PropertyGroupStore) SetVersion(name string, version int) error {
++	ret := _m.Called(name, version)
++
++	if len(ret) == 0 {
++		panic("no return value specified for SetVersion")
++	}
++
++	var r0 error
++	if rf, ok := ret.Get(0).(func(string, int) error); ok {
++		r0 = rf(name, version)
++	} else {
++		r0 = ret.Error(0)
++	}
++
++	return r0
++}
++
+ // NewPropertyGroupStore creates a new instance of PropertyGroupStore. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
+ // The first argument is typically a *testing.T value.
+ func NewPropertyGroupStore(t interface {
+```
+
+---
+
+### Incident Patch 3: `84b0c547` (2026-10-27)
+**Commit Message**: Fix flaky TestMigrateLinkCPAFieldToGlobalAttributeTemplate_ConcurrentEditIsNotClobbered (#39208)
+
+* Fix flaky TestMigrateLinkCPAFieldToGlobalAttributeTemplate_ConcurrentEditIsNotClobbered
+
+The test injects a concurrent PropertyField.Update between Get and the
+link-write to prove optimistic concurrency rejects the stale write.
+UpdateAt is stamped with model.GetMillis() (1ms), so when the injected
+write lands in the same millisecond as the value Get just read, OCC
+matches and the link silently overwrites the concurrent rename. Wait
+until GetMillis advances before the injected write so the lock can
+observe it. Tests-only change.
+
+Verified with `go test -run '^TestMigrateLinkCPAFieldToGlobalAttributeTemplate_ConcurrentEditIsNotClobbered$' -race -count=100` locally.
+
+Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
+
+* Retrigger CI after unrelated Enterprise FIPS test failure.
 
 Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
 
 ---------
 
 Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
-Co-authored-by: yasser.khan <[REDACTED_EMAIL]>
 Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
 
-**File**: `e2e-tests/playwright/lib/src/ui/components/channels/direct_channels_modal.ts` (modified, +16/-0)
+**File**: `server/channels/app/properties/migrations_test.go` (modified, +7/-0)
 ```diff
-@@ -69,8 +69,24 @@ export default class DirectChannelsModal {
-         ).toHaveCount(count);
-     }
+@@ -7,6 +7,7 @@ import (
+ 	"fmt"
+ 	"strings"
+ 	"testing"
++	"time"
  
-+    /**
-+     * Types into the search input and waits for the modal's server-side user search for that term.
-+     * The modal first lists locally matching users, then swaps every row for a loading screen while
-+     * that search runs, so a row clicked before it answers can be unmounted mid-click.
-+     */
-     async fillSearchInput(text: string) {
-+        const searchResponse = text
-+            ? this.container
-+                  .page()
-+                  .waitForResponse(
-+                      (response) =>
-+                          response.url().endsWith('/api/v4/users/search') &&
-+                          response.request().postDataJSON()?.term === text,
-+                  )
-+            : undefined;
-+
-         await this.searchInput.fill(text);
-+        await searchResponse;
-     }
+ 	"github.com/pkg/errors"
  
-     getUserResult(username: string) {
-```
-
----
-
-### Incident Patch 2: `55d3bcf3` (2026-10-25)
-**Commit Message**: Fix flaky TestRemoteProviderDoAccept (#39292)
-
-Unquoted base64url invite codes can start with "--", so parseNamedArgs
-treats them as a flag and the accept command replies "Missing or empty
-invite" instead of exercising AcceptInvitation. Quote invite values in
-the accept tests so the conflict (and sibling) assertions always run.
-
-Tests-only change. Verified with `go test -run '^TestRemoteProviderDoAccept$'
--count=100` and `-race -count=100` on the failing subtest locally.
-
-Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
-Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
-
-**File**: `server/channels/app/slashcommands/command_remote_test.go` (modified, +23/-17)
-```diff
-@@ -35,6 +35,12 @@ func runCommand(th *TestHelper, provider app.CommandProvider, userID, channelID,
- 	return provider.DoCommand(th.App, th.Context, args, "").Text
- }
- 
-+// quoteArg double-quotes a slash-command value so parseNamedArgs does not
-+// treat a token that starts with "--" (for example a base64url invite) as a flag.
-+func quoteArg(s string) string {
-+	return `"` + s + `"`
-+}
-+
- // LastPingAt defaults to zero, so the remote is offline and invitations to it are stored
- // as pending instead of being sent over the network.
- func seedRemoteCluster(t *testing.T, th *TestHelper, opts ...func(rc *model.RemoteCluster)) *model.RemoteCluster {
-@@ -248,8 +254,8 @@ func TestRemoteProviderDoAccept(t *testing.T) {
- 			missing string
- 			command string
- 		}{
--			{"password", "/secure-connection accept --name remote1 --invite " + code},
--			{"name", "/secure-connection accept --password " + password + " --invite " + code},
-+			{"password", "/secure-connection accept --name remote1 --invite " + quoteArg(code)},
-+			{"name", "/secure-connection accept --password " + password + " --invite " + quoteArg(code)},
- 			{"invite", "/secure-connection accept --name remote1 --password " + password},
- 		} {
- 			t.Run(tc.missing, func(t *testing.T) {
-@@ -261,20 +267,20 @@ func TestRemoteProviderDoAccept(t *testing.T) {
- 
- 	t.Run("wrong password", func(t *testing.T) {
- 		code, _ := makeInvite(t, "https://remote.example.com")
--		text := runCommand(th, &RemoteProvider{}, adminID, th.BasicChannel.Id, "/secure-connection accept --name remote1 --password wrong --invite "+code)
-+		text := runCommand(th, &RemoteProvider{}, adminID, th.BasicChannel.Id, "/secure-connection accept --name remote1 --password wrong --invite "+quoteArg(code))
- 
- 		require.Equal(t, T("api.command_remote.decode_invitation.error", map[string]any{"Error": T("api.remote_cluster.invite_decrypt_error")}), text)
- 	})
- 
- 	t.Run("malformed invite", func(t *testing.T) {
--		text := runCommand(th, &RemoteProvider{}, adminID, th.BasicChannel.Id, "/secure-connection accept --name remote1 --password "+password+" --invite not*base64")
-+		text := runCommand(th, &RemoteProvider{}, adminID, th.BasicChannel.Id, "/secure-connection accept --name remote1 --password "+password+" --invite "+quoteArg("not*base64"))
- 
- 		require.Equal(t, T("api.command_remote.decode_invitation.error", map[string]any{"Error": T("api.remote_cluster.base64_decode_error")}), text)
- 	})
- 
- 	t.Run("invalid name replies with the translated validation error", func(t *testing.T) {
- 		code, remoteID := makeInvite(t, "https://remote.example.com")
--		text := runCommand(th, &RemoteProvider{}, adminID, th.BasicChannel.Id, "/secure-connection accept --name bad!name --password "+password+" --invite "+code)
-+		text := runCommand(th, &RemoteProvider{}, adminID, th.BasicChannel.Id, "/secure-connection accept --name bad!name --password "+password+" --invite "+quoteArg(code))
- 
- 		require.Equal(t, T("api.command_remote.accept_invitation.error", map[string]any{"Error": T("model.cluster.is_valid.name.app_error")}), text)
- 		_, appErr := th.App.GetRemoteCluster(remoteID, true)
-@@ -288,7 +294,7 @@ func TestRemoteProviderDoAccept(t *testing.T) {
- 		code, appErr := th.App.CreateRemoteClusterInvite(existing.RemoteId, "https://remote.example.com", model.NewId(), password)
- 		require.Nil(t, appErr)
- 
--		text := runCommand(th, &RemoteProvider{}, adminID, th.BasicChannel.Id, "/secure-connection accept --name "+existing.Name+" --password "+password+" --invite "+code)
-+		text := runCommand(th, &RemoteProvider{}, adminID, th.BasicChannel.Id, "/secure-connection accept --name "+existing.Name+" --password "+password+" --invite "+quoteArg(code))
- 
- 		require.Equal(t, T("api.command_remote.accept_invitation.error", map[string]any{"Error": T("api.remote_cluster.save_not_unique.app_error")}), text)
- 		rc, appErr := th.App.GetRemoteCluster(existing.RemoteId, false)
-@@ -300,7 +306,7 @@ func TestRemoteProviderDoAccept(t *testing.T) {
- 		ts := httptest.NewServer(http.NotFoundHandler())
- 		ts.Close()
- 		code, remoteID := makeInvite(t, ts.URL)
--		text := runCommand(th, &RemoteProvider{}, adminID, th.BasicChannel.Id, "/secure-connection accept --name remote1 --password "+password+" --invite "+code)
-+		text := runCommand(th, &RemoteProvider{}, adminID, th.BasicChannel.Id, "/secure-connection accept --name remote1 --password "+password+" --invite "+quoteArg(code))
- 
- 		unreachable := T("api.remote_cluster.accept_invitation.unreachable.app_error", map[string]any{"URL": ts.URL + "/" + remotecluster.ConfirmInviteURL})
- 		require.Equal(t, T("api.command_remote.accept_invitation.error", map[string]any{"Error": unreachable}), text)
-@@ -315,7 +321,7 @@ func TestRemoteProviderDoAccept(t *testing.T) {
- 		}))
- 		t.Cleanup(ts.Close)
- 		code, remoteID := makeInvite(t, ts.URL)
--		text := runCommand(th, &RemoteProvider{}, adminID, th.BasicChannel.Id, "/secure-connection accept --name remote1 --password "+password+" --invite "+code)
-+		text := runCommand(th, &Remot
-```
-
-**File**: `server/channels/app/slashcommands/util_test.go` (modified, +2/-0)
-```diff
-@@ -41,6 +41,8 @@ func TestParseNamedArgs(t *testing.T) {
- 		{"quoted spaces with embedded quote", "remote add --arg1 \"Bob O'Brien's remote\"", map[string]string{ActionKey: "add", "arg1": "Bob O'Brien's remote"}},
- 		{"single quoted with embedded apostrophe", "remote add --arg1 'O'Brien'", map[string]string{ActionKey: "add", "arg1": "O'Brien"}},
- 		{"quoted value that looks like a flag", "remote add --arg1 \"--arg2\"", map[string]string{ActionKey: "add", "arg1": "--arg2"}},
-+		{"unquoted dashes-prefixed invite is treated as a flag", "remote accept --name remote1 --password s3cret --invite --abc123", map[string]string{ActionKey: "accept", "name": "remote1", "password": "s3cret", "invite": "", "abc123": ""}},
-+		{"quoted dashes-prefixed invite is kept", "remote accept --name remote1 --password s3cret --invite \"--abc123\"", map[string]string{ActionKey: "accept", "name": "remote1", "password": "s3cret", "invite": "--abc123"}},
- 		{"single quote closes only before whitespace", "remote add --arg1 'a'b c'", map[string]string{ActionKey: "add", "arg1": "a'b c"}},
- 		{"double quoted value containing a flag", "remote add --arg1 \"use --arg2 here\" --arg3 val3", map[string]string{ActionKey: "add", "arg1": "use --arg2 here", "arg3": "val3"}},
- 		{"curly double quoted value containing a flag", "remote add --arg1 \u201cuse --arg2 here\u201d", map[string]string{ActionKey: "add", "arg1": "use --arg2 here"}},
-```
-
----
-
-### Incident Patch 3: `6437bb74` (2026-10-26)
-**Commit Message**: docs: fix the v12 changelog overview link (#39409)
-
-**File**: `docs/main/product-overview/mattermost-v12-changelog.mdx` (modified, +1/-1)
-```diff
-@@ -126,7 +126,7 @@ New setting options were added to ``config.json``. Below is a list of the additi
- 
- ### Improvements
- 
--See [this blog post](https://mattermost.com/blog/mattermost-v12-0-is-now-available/) on the highlights in our latest release.
-+See the [Mattermost v12 overview](https://mattermost.com/v12-ecosystem-that-comes-to-the-mission/) for highlights of this release.
- 
- #### User Interface
-  - Pre-packaged Calls plugin version [v1.12.5](https://github.com/mattermost/mattermost-plugin-calls/releases/tag/v1.12.5).
+@@ -829,6 +830,12 @@ func TestMigrateLinkCPAFieldToGlobalAttributeTemplate_ConcurrentEditIsNotClobber
+ 			// Simulate another HA node committing an admin edit to this same
+ 			// field in the window between this node's read (just above) and
+ 			// its own link-write below.
++			//
++			// UpdateAt is model.GetMillis() (1ms). Wait until it differs from
++			// the value Get just read, otherwise OCC cannot observe the write.
++			for model.GetMillis() <= seeded.UpdateAt {
++				time.Sleep(time.Millisecond)
++			}
+ 			concurrentEdit := *seeded
+ 			concurrentEdit.Name = "department_renamed_concurrently"
+ 			_, updateErr := realStore.Update(th.CPAGroupID, []*model.PropertyField{&concurrentEdit}, nil)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #39449** (2026-10-27): Automated cherry pick of #39431 (@mattermost-build)
-- **PR #39446** (2026-10-27): Cherry pick #38766 to release-11.7 (@mattermost-code)
-- **PR #39444** (2026-10-27): Automated cherry pick of #39418 (@mattermost-build)
-- **PR #39443** (2026-10-27): Automated cherry pick of #37503 (@mattermost-build)
-- **PR #39442** (2026-10-27): [release-11.7] Import the docs tree for the offline documentation bundle (@esarafianou)
-- **PR #39441** (2026-10-27): Automated cherry pick of #39430 (@mattermost-build)
+- **PR #39480** (closed): Add attribute Combobox helpers (@marianunez)
+- **PR #39464** (2026-10-27): Fix clean-docker removing stale Postgres 14 volume name (@JulienTant)
+- **PR #39462** (2026-10-27): Add the GetThreadFollowers and SetThreadFollowing plugin APIs (@asaadmahmood)
+- **PR #39455** (2026-10-27): Automated cherry pick of #39252 (@mattermost-build)
+- **PR #39454** (2026-10-27): Bumping prepackaged boards version to v10.1.0 (@avasconcelos114)
+- **PR #39451** (closed): [THROWAWAY] Test FIPS config fix for #39301 (@agarciamontoro)
 
 ---
 
@@ -1797,43 +2320,43 @@ Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. e2e): repair group_message_creation_members.spec.ts on master (#39384)
+## X. Migrate product Buttons from shared to compass-ui (#38903)
 
 **RULE**:
-When implementing operations in `e2e-tests/playwright/lib/src/ui/components/channels/direct_channels_modal.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mattermost/mattermost. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `e2e-tests/cypress/tests/integration/channels/accessibility/accessibility_account_settings_spec.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mattermost/mattermost. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f563142f`: e2e): repair group_message_creation_members.spec.ts on master (#39384). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e190c0f1`: Migrate product Buttons from shared to compass-ui (#38903). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e-tests/playwright/lib/src/ui/components/channels/direct_channels_modal.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e-tests/cypress/tests/integration/channels/accessibility/accessibility_account_settings_spec.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    /**
-     * Types into the search input and waits for the modal's server-side user search for that term.
-     * The modal first lists locally matching users, then swaps every row for a loading screen while
-     * that search runs, so a row clicked before it answers can be unmounted mid-click.
-     */
-        const searchResponse = text
-            ? this.container
-                  .page()
-                  .waitForResponse(
-                      (response) =>
-                          response.url().endsWith('/api/v4/users/search') &&
-                          response.request().postDataJSON()?.term === text,
-                  )
-            : undefined;
-
-        await searchResponse;
+        // Menu is portaled to document.body (outside the aria-modal dialog), so query by class
+        // and assert role=listbox rather than findByRole (inaccessible outside the modal).
+        cy.get('@inputEl').focus().typeWithForce(' ');
+        cy.get('.react-select__menu-list').
+            should('be.visible').
+            and('have.attr', 'role', 'listbox').
+            and('have.class', 'react-select__menu-list').
+            as('listBox');
+        cy.get('@inputEl').focus().typeWithForce(' ');
+        cy.get('.react-select__menu-list').should('be.visible');
+        cy.get('.setting-list').findByRole('button', {name: /Add|Remove/i}).should('have.class', 'a11y--active a11y--focused').tab();
+                cy.get('.setting-list').findByRole('link').should('have.class', 'a11y--active a11y--focused').tab();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        cy.get('@inputEl').typeWithForce(' ');
+        cy.findByRole('listbox').should('have.class', 'react-select__menu-list').as('listBox');
+        cy.get('@inputEl').typeWithForce(' ');
+        cy.get('.setting-list button.btn').should('have.class', 'a11y--active a11y--focused').tab();
+                cy.get('.setting-list a.btn').should('have.class', 'a11y--active a11y--focused').tab();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f563142f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e190c0f1` are properly handled with clean fallback behavior.

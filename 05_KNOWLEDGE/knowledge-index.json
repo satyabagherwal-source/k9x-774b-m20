@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T03:56:16.069Z",
+  "last_updated": "2026-10-28T04:03:46.618Z",
   "total_verified_learnings": 1156,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -27387,7 +27387,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
       "source_version": "hf-stabilityai-stable-diffusion-xl-base-1.0",
-      "content_hash": "0d3171e686841fd01d464dd9e1114ff656852a88070e72ee8c118ce616c7e9b8",
+      "content_hash": "3b03c8864e4f11c295ad225ef0168479ba0062dbc7cb6bf36f86d9eaecd90fbc",
       "dossier_path": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md",
       "promoted_rules": [
@@ -27485,7 +27485,7 @@
         "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv446z5h",
         "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv4hg90r"
       ],
-      "verified_at": "2026-10-25T10:36:25.573Z",
+      "verified_at": "2026-10-28T04:03:37.817Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35437,8 +35437,8 @@
       "slug": "mattermost-mattermost",
       "platform": "github",
       "source_url": "https://github.com/mattermost/mattermost",
-      "source_version": "43f954c2",
-      "content_hash": "fcf228ce9a33c7f7253a5d08ae01cb710d8d421d3fe9b1b74b4d13307740d539",
+      "source_version": "7709b2f9",
+      "content_hash": "00790357f4ab07e951990a96b13e06e3ec032aeedc81dabdc168b19c48d43f72",
       "dossier_path": "07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
       "promoted_rules": [
@@ -35471,6 +35471,11 @@
           "number": 4787,
           "title": "e2e): repair group_message_creation_members.spec.ts on master (#39384)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5167,
+          "title": "Migrate product Buttons from shared to compass-ui (#38903)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35478,7 +35483,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:10:42.281Z",
+      "verified_at": "2026-10-28T04:03:46.603Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -141610,6 +141615,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T03:49:43.730Z"
+    },
+    "rule-5167": {
+      "learning_id": "rule-5167",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5167,
+      "title": "Migrate product Buttons from shared to compass-ui (#38903)",
+      "source_url": "https://github.com/mattermost/mattermost",
+      "source_version": "7709b2f9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T04:03:46.603Z"
     }
   },
   "aliases": {

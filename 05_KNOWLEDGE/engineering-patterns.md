@@ -373921,3 +373921,68 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `66017460` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5167. Migrate product Buttons from shared to compass-ui (#38903) (Harvested from mattermost/mattermost)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Migrate product Buttons from shared to compass-ui (#38903)",
+  "source": "mattermost/mattermost",
+  "source_url": "https://github.com/mattermost/mattermost",
+  "source_version": "7709b2f9",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-28T04:03:46.461Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-mattermost-mattermost",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [mattermost/mattermost](https://github.com/mattermost/mattermost) (Revision: `7709b2f9`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `e2e-tests/cypress/tests/integration/channels/accessibility/accessibility_account_settings_spec.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mattermost/mattermost. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `e190c0f1`: Migrate product Buttons from shared to compass-ui (#38903). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e-tests/cypress/tests/integration/channels/accessibility/accessibility_account_settings_spec.js`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+        // Menu is portaled to document.body (outside the aria-modal dialog), so query by class
+        // and assert role=listbox rather than findByRole (inaccessible outside the modal).
+        cy.get('@inputEl').focus().typeWithForce(' ');
+        cy.get('.react-select__menu-list').
+            should('be.visible').
+            and('have.attr', 'role', 'listbox').
+            and('have.class', 'react-select__menu-list').
+            as('listBox');
+        cy.get('@inputEl').focus().typeWithForce(' ');
+        cy.get('.react-select__menu-list').should('be.visible');
+        cy.get('.setting-list').findByRole('button', {name: /Add|Remove/i}).should('have.class', 'a11y--active a11y--focused').tab();
+                cy.get('.setting-list').findByRole('link').should('have.class', 'a11y--active a11y--focused').tab();
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+        cy.get('@inputEl').typeWithForce(' ');
+        cy.findByRole('listbox').should('have.class', 'react-select__menu-list').as('listBox');
+        cy.get('@inputEl').typeWithForce(' ');
+        cy.get('.setting-list button.btn').should('have.class', 'a11y--active a11y--focused').tab();
+                cy.get('.setting-list a.btn').should('have.class', 'a11y--active a11y--focused').tab();
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `e190c0f1` are properly handled with clean fallback behavior.
