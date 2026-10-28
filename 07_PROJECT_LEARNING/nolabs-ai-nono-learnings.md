@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source**: github ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
-> **Source Version**: `46349d39`  
+> **Source Version**: `081a4090`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T22:06:30.379Z  
+> **Timestamp**: 2026-10-28T13:43:44.020Z  
 > **Learning ID**: `learn-github-nolabs-ai-nono`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T22:06:29.571Z  
+> **Harvest Timestamp**: 2026-10-28T13:43:44.013Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: agent runtime security - zero trust, zero setup, zero latency agent sandboxing
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4708 stars
+- **Stars / Engagement**: 4717 stars
 
 ---
 
@@ -2971,209 +2971,256 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `46349d39` (2026-10-27)
-**Commit Message**: fix(proxy): prevent UTF-8 nonce parsing panic (#2216)
+### Incident Patch 1: `081a4090` (2026-10-28)
+**Commit Message**: feat(sandbox): detect Landlock ABI up to V9, keep enforcement at V6 (#2217)
 
-Use checked string slicing when parsing credential nonces so malformed multibyte input cannot abort the proxy. Add regression coverage and document the remaining audit durability limitation as planned future work.
+* feat(sandbox): detect Landlock ABI up to V9, keep enforcement at V6
 
-Signed-off-by: Aleksy Siek <[REDACTED_EMAIL]>
+Detection now checks the kernel from V9 down to V1, but the access rights
+and scopes nono applies stay capped at MAX_ENFORCED_ABI (V6). If nono
+enforced the detected ABI directly, a V9 kernel would apply
+LANDLOCK_ACCESS_FS_RESOLVE_UNIX with no rules allowing it, and every
+pathname UNIX socket connect would fail with EACCES.
 
-**File**: `crates/nono-proxy/src/tls_intercept/handle.rs` (modified, +29/-1)
+- Bump landlock to 0.4.7 (the first release that defines ABI V7-V9)
+- Add DetectedAbi::enforced_abi() and use it in both enforcement paths
+- Add kernel_abi_version() to report the raw kernel ABI, so kernels
+  newer than the crate (V10+) can be named; diagnostics only
+- Fix has_execute() returning false on kernels at V7 and above
+- Add has_audit_log_flags/has_tsync/has_resolve_unix; nono setup shows
+  them as detected but not yet enforced
+- Tests: a check that fails when a crate upgrade adds an ABI nono
+  doesn't list, the enforcement cap, and a pathname UNIX socket
+  connect regression test
+
+Signed-off-by: Luke Hinds <[REDACTED_EMAIL]>
+
+* fix(sandbox): bound Landlock ABI detection by kernel version
+
+Kernel Landlock 
+
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -1653,7 +1653,9 @@ pub(crate) fn resolve_nonce_in_header_value(
-     if end > value.len() {
-         return None;
-     }
--    let nonce = &value[start..end];
-+    // The fixed byte window may end inside a UTF-8 codepoint. Treat malformed
-+    // candidates as non-matches instead of panicking.
-+    let nonce = value.get(start..end)?;
-     if !nonce[NONCE_PREFIX.len()..]
-         .bytes()
-         .all(|b| b.is_ascii_hexdigit())
-@@ -3287,6 +3289,32 @@ mod tests {
-         assert_eq!(result, Some(format!("é{filler}REAL")));
-     }
+@@ -49,7 +49,7 @@ globset = "0.4"
  
-+    #[test]
-+    fn multibyte_nonce_candidate_does_not_panic() {
-+        // The 69-byte nonce window ends inside the final euro sign.
-+        let value = format!("nono_{}", "€".repeat(22));
-+        assert_eq!(value.len(), 71);
-+        let resolver = test_resolver(&make_nonce(), b"REAL");
-+
-+        assert!(
-+            resolve_nonce_in_header_value(&value, "proxy.anthropic", CONSUMER_PATH, &resolver)
-+                .is_none(),
-+            "a non-ASCII nonce candidate must fail closed"
-+        );
-+    }
-+
-+    #[test]
-+    fn valid_nonce_surrounded_by_multibyte_text_resolves() {
-+        let nonce = make_nonce();
-+        let resolver = test_resolver(&nonce, b"REAL");
-+        let value = format!("préfix-{nonce}-süffix");
-+
-+        assert_eq!(
-+            resolve_nonce_in_header_value(&value, "proxy.anthropic", CONSUMER_PATH, &resolver),
-+            Some("préfix-REAL-süffix".to_string())
-+        );
-+    }
-+
-     #[test]
-     fn route_resolves_only_listed_credential() {
-         // Route-authoritative gate: the phantom resolves because the route lists
+ # Shared system dependencies
+ nix = "0.31.3"
+-landlock = "0.4"
++landlock = "0.4.7"
+ url = "2"
+ idna = "1"
+ getrandom = "0.4"
 ```
 
-**File**: `docs/cli/internals/security-model.mdx` (modified, +5/-3)
+**File**: `crates/nono-cli/src/setup.rs` (modified, +12/-0)
 ```diff
-@@ -309,11 +309,13 @@ The invariant matches the filesystem model: **if anything goes wrong, the child
+@@ -189,6 +189,18 @@ impl SetupRunner {
+         println!("  * Landlock enabled (syscall probe)");
  
- ### Audit Durability Boundary
+         println!("  * {}", detected);
++        if let Some(kernel) = nono::kernel_abi_version()
++            && kernel > detected.abi as u32
++        {
++            println!(
++                "  * Kernel reports Landlock ABI V{kernel}; this nono build recognises up to {}",
++                detected.version_string()
++            );
++        }
++        println!(
++            "  * Enforcing Landlock {} access rights and scopes",
++            detected.enforced_version_string()
++        );
+         println!("  * Available features:");
  
--Network proxy events are captured during the session, but the durable append-only audit log is finalized after the session ends rather than updated on every proxied request.
-+Network proxy events are captured during a session, but `session.json` and the global ledger entry are written only at finalization. The event file may therefore exist before the session is discoverable through `nono audit list` or `nono audit show`.
- 
--This is an intentional performance tradeoff: the live request path only pays the cost of lightweight event capture, while the append-only hash chain and Merkleized audit summary are written during session finalization. The result is good post-run audit integrity, but not per-request durability.
-+Completed sessions have post-run audit integrity. Incomplete sessions do not yet have a durable, discoverable start record.
- 
--The security implication is narrow but real: if the supervisor or proxy is forcibly terminated mid-session, recent network events may be lost before they are committed into the append-only audit record. This does not weaken sandbox enforcement or credential isolation, but it does leave a temporary gap in forensic durability. Tightening that window is future work.
-+If the supervisor or proxy terminates before finalization, recent events may be lost and surviving event files can remain unreferenced. The session may be absent from normal audit discovery, and rollback metadata may remain incomplete. This does not weaken sandbox enforcement or credential isolation, but it can leave a permanent gap in the audit trail.
-+
-+Crash-resistant audit durability remains planned future work. It will require recording session start before untrusted execution and recovering orphaned event logs and rollback state after abnormal termination. Until then, operators requiring this guarantee should export audit evidence to an independently supervised system.
- 
- ## macOS Model
- 
+         for feature in detected.feature_names() {
 ```
 
----
-
-### Incident Patch 2: `e9e7d4ab` (2026-10-27)
-**Commit Message**: fix(sandbox): deny io_uring during AF_UNIX mediation (#2215)
-
-Return EPERM for io_uring setup, enter, and register operations when pathname socket filtering is active. Add regression coverage for both seccomp filter paths.
-
-Signed-off-by: Aleksy Siek <[REDACTED_EMAIL]>
-
-**File**: `crates/nono/src/sandbox/linux.rs` (modified, +212/-122)
+**File**: `crates/nono/src/lib.rs` (modified, +2/-2)
 ```diff
-@@ -1615,6 +1615,7 @@ const BPF_RET: u16 = 0x06;
- const SECCOMP_RET_ERRNO: u32 = 0x0005_0000;
- const SECCOMP_RET_USER_NOTIF: u32 = 0x7fc0_0000;
- const SECCOMP_RET_ALLOW: u32 = 0x7fff_0000;
-+const SECCOMP_RET_IO_URING_DENIED: u32 = SECCOMP_RET_ERRNO | (libc::EPERM as u32);
- 
- const SECCOMP_DATA_ARCH_OFFSET: u32 = 4;
- const X32_SYSCALL_BIT: u32 = 0x4000_0000;
-@@ -1642,6 +1643,10 @@ const SYS_SOCKET: i32 = libc::SYS_socket as i32;
- const SYS_SOCKETPAIR: i32 = libc::SYS_socketpair as i32;
+@@ -95,8 +95,8 @@ pub use path::try_canonicalize;
+ pub use resource::ResourceLimits;
  #[cfg(target_os = "linux")]
- const SYS_IO_URING_SETUP: i32 = libc::SYS_io_uring_setup as i32;
-+#[cfg(target_os = "linux")]
-+const SYS_IO_URING_ENTER: i32 = libc::SYS_io_uring_enter as i32;
-+#[cfg(target_os = "linux")]
-+const SYS_IO_URING_REGISTER: i32 = libc::SYS_io_uring_register as i32;
+ pub use sandbox::{
+-    DetectedAbi, LandlockScopePolicy, NamespaceProbe, NamespaceProbeStage, NamespaceSpec,
+-    SeccompOpts, detect_abi, is_wsl2, landlock_scope_policy,
++    DetectedAbi, LandlockScopePolicy, MAX_ENFORCED_ABI, NamespaceProbe, NamespaceProbeStage,
++    NamespaceSpec, SeccompOpts, detect_abi, is_wsl2, kernel_abi_version, landlock_scope_policy,
+ };
+ pub use sandbox::{Sandbox, SupportInfo};
+ pub use scrub::{
+```
+
+**File**: `crates/nono/src/sandbox/linux.rs` (modified, +319/-19)
+```diff
+@@ -323,7 +323,7 @@ impl DetectedAbi {
+     /// Whether execute access control is supported strongly enough for command sandbox execution.
+     #[must_use]
+     pub fn has_execute(&self) -> bool {
+-        matches!(self.abi, ABI::V3 | ABI::V4 | ABI::V5 | ABI::V6)
++        self.abi >= ABI::V3
+     }
  
- // Syscall numbers for connect/bind (public for CLI supervisor handler)
- #[cfg(target_os = "linux")]
-@@ -3044,7 +3049,10 @@ fn selected_static_network_filter(
- /// `socket()` allows all `AF_UNIX` types and only TCP streams for
- /// `AF_INET`/`AF_INET6`.
- /// `socketpair()` is allowed only for `AF_UNIX`.
--/// `io_uring_setup()` is denied.
+     /// Whether TCP network filtering is supported (V4+).
+@@ -344,18 +344,44 @@ impl DetectedAbi {
+         !Scope::from_all(self.abi).is_empty()
+     }
+ 
++    /// Whether audit logging control flags for `landlock_restrict_self` are supported (V7+).
++    #[must_use]
++    pub fn has_audit_log_flags(&self) -> bool {
++        self.abi >= ABI::V7
++    }
++
++    /// Whether enforcing a ruleset on all threads at once (TSYNC) is supported (V8+).
++    #[must_use]
++    pub fn has_tsync(&self) -> bool {
++        self.abi >= ABI::V8
++    }
++
++    /// Whether pathname UNIX socket connect control is supported (V9+).
++    #[must_use]
++    pub fn has_resolve_unix(&self) -> bool {
++        AccessFs::from_all(self.abi).contains(AccessFs::ResolveUnix)
++    }
++
++    /// The ABI whose access rights and scopes nono enforces on this kernel.
++    ///
++    /// This is the detected ABI clamped to [`MAX_ENFORCED_ABI`]. Detection may
++    /// report a newer ABI, but its features are not handled until nono
++    /// integrates them.
++    #[must_use]
++    pub fn enforced_abi(&self) -> ABI {
++        self.abi.min(MAX_ENFORCED_ABI)
++    }
++
+     /// Return a human-readable version string (e.g., "V4").
+     #[must_use]
+     pub fn version_string(&self) -> &'static str {
+-        match self.abi {
+-            ABI::V1 => "V1",
+-            ABI::V2 => "V2",
+-            ABI::V3 => "V3",
+-            ABI::V4 => "V4",
+-            ABI::V5 => "V5",
+-            ABI::V6 => "V6",
+-            _ => "unknown",
+-        }
++        abi_version_string(self.abi)
++    }
++
++    /// Return the version string of [`DetectedAbi::enforced_abi`].
++    #[must_use]
++    pub fn enforced_version_string(&self) -> &'static str {
++        abi_version_string(self.enforced_abi())
+     }
+ 
+     /// Return a list of available feature names at this ABI level.
+@@ -380,10 +406,39 @@ impl DetectedAbi {
+         if self.has_scoping() {
+             features.push("Signal and abstract UNIX socket scoping".to_string());
+         }
++        if self.has_audit_log_flags() {
++            features.push(format!("Audit logging flags {NOT_YET_ENFORCED}"));
++        }
++        if self.has_tsync() {
++            features.push(format!("All-thread enforcement (TSYNC) {NOT_YET_ENFORCED}"));
++        }
++        if self.has_resolve_unix() {
++            features.push(format!(
++                "Pathname UNIX socket control (ResolveUnix) {NOT_YET_ENFORCED}"
++            ));
++        }
+         features
+     }
+ }
+ 
++/// Suffix for detected kernel features above [`MAX_ENFORCED_ABI`].
++const NOT_YET_ENFORCED: &str = "[detected, not yet enforced by nono]";
++
++fn abi_version_string(abi: ABI) -> &'static str {
++    match abi {
++        ABI::V1 => "V1",
++        ABI::V2 => "V2",
++        ABI::V3 => "V3",
++        ABI::V4 => "V4",
++        ABI::V5 => "V5",
++        ABI::V6 => "V6",
++        ABI::V7 => "V7",
++        ABI::V8 => "V8",
++        ABI::V9 => "V9",
++        _ => "unknown",
++    }
++}
++
+ /// Report the Landlock scope policy that would be applied for these capabilities.
+ ///
+ /// # Errors
+@@ -422,13 +477,61 @@ impl std::fmt::Display for DetectedAbi {
+     }
+ }
+ 
++/// Highest Landlock ABI whose access rights and scopes nono enforces.
 +///
-+/// The three io_uring syscalls return `EPERM`, preventing queued socket
-+/// operations from bypassing mediation through new or inherited rings.
-+/// `EPERM` allows compatible runtimes to fall back to synchronous I/O.
- fn build_seccomp_proxy_filter(_has_bind_ports: bool) -> ArchGuarded<Vec<SockFilterInsn>> {
-     let errno_ret = SECCOMP_RET_ERRNO | (libc::EACCES as u32);
++/// Detection reports the kernel's ABI up to the newest the `landlock` crate
++/// knows, but handled access rights are derived from this cap. A newer ABI can
++/// add rights that are denied by default once handled: V9's
++/// `LANDLOCK_ACCESS_FS_RESOLVE_UNIX` would block every pathname UNIX socket
++/// connect unless nono also emits allow rules for it. Raise this only together
++/// with the capability and rule mapping for the new ABI's features.
++pub const MAX_ENFORCED_ABI: ABI = ABI::V6;
++
+ /// ABI probe order: highest to lowest.
+-const ABI_PROBE_ORDER: [ABI; 6] = [ABI::V6, ABI::V5, ABI::V4, ABI::V3, ABI::V2, ABI::V1];
++const ABI_PROBE_ORDER: [ABI; 9] = [
++    ABI::V9,
++    ABI::V8,
++    ABI::V7,
++    ABI::V6,
++    ABI::V5,
++    ABI::V4,
++    ABI::V3,
++    ABI::V2,
++    ABI::V1,
++];
++
++/// `landlock_create_ruleset` flag that returns the kernel's ABI version.
++const LANDLOCK_CREATE_RULESET_VERSION: u32 = 1 << 0;
++
++/// Return the raw Landlock ABI version reported by the kernel.
++///
++/// Unlike [`detect_abi`], this is not limited to ABIs the `landlock` crate
++/// knows, so it identifies kernels newer than nono recognises. Detection uses
++/// it only as an upper bound on probed candidates; it never selects enforced
++/// access rights, which stay capped at [`MAX_ENFORCED_ABI`].
++///
++/// Returns `None` if Landlock is unavailable.
++#[must_use]
++pub fn kernel_abi_version() -> Option<u32> {
++    // SAFETY: with a NULL attr pointer, zero size, and the VERSION flag, the
++   
+```
+
+**File**: `crates/nono/src/sandbox/mod.rs` (modified, +2/-1)
+```diff
+@@ -23,7 +23,8 @@ pub use macos::{extension_consume, extension_issue_file, extension_release};
+ // Re-export Linux Landlock ABI detection and scope policy reporting
+ #[cfg(target_os = "linux")]
+ pub use linux::{
+-    DetectedAbi, LandlockScopePolicy, detect_abi, landlock_scope_policy, restrict_execute,
++    DetectedAbi, LandlockScopePolicy, MAX_ENFORCED_ABI, detect_abi, kernel_abi_version,
++    landlock_scope_policy, restrict_execute,
+ };
  
-@@ -3069,36 +3077,38 @@ fn build_seccomp_proxy_filter(_has_bind_ports: bool) -> ArchGuarded<Vec<SockFilt
-     // A six-instruction architecture guard is prepended after this tail is
-     // built; every target shifts equally, so these relative jumps stay valid:
-     //  0: ld [nr]
--    //  1: jeq SOCKET     jt=9  -> insn 11
--    //  2: jeq CONNECT    jt=16 -> insn 19
--    //  3: jeq BIND       jt=16 -> insn 20
--    //  4: jeq SOCKETPAIR jt=11 -> insn 16
--    //  5: jeq SENDTO     jt=15 -> insn 21
--    //  6: jeq SENDMSG    jt=14 -> insn 21
--    //  7: jeq SENDMMSG   jt=13 -> insn 21
--    //  8: jeq IO_URING   jt=1  -> insn 10
--    //  9: ret ALLOW
--    // 10: ret ERRNO
--    // 11: ld [args[0]]
--    // 12: jeq AF_UNIX    jt=17 -> insn 30
--    // 13: jeq AF_INET    jt=8  -> insn 22
--    // 14: jeq AF_INET6   jt=7  -> insn 22
--    // 15: ret ERRNO            (bad socket family)
--    // 16: ld [args[0]]
--    // 17: jeq AF_UNIX    jt=12 -> insn 30
--    // 18: ret ERRNO            (bad socketpair family)
--    // 19: ret USER_NOTIF       (connect)
--    // 20: ret bind_action      (bind)
--    // 21: ret USER_NOTIF       (sendto/sendmsg/sendmmsg)
--    // 22: ld [args[1]]         (Internet socket type)
--    // 23: and SOCK_TYPE_MASK
--    // 24: jeq SOCK_STREAM -> insn 26
--    // 25: ret ERRNO            (UDP/raw/non-stream Internet socket)
--    // 26: ld [args[2]]         (Internet socket protocol)
--    // 27: jeq 0 -> insn 30
--    // 28: jeq IPPROTO_TCP -> insn 30
--    // 29: ret ERRNO            (non-TCP stream protocol)
--    // 30: ret ALLOW            (validated socket/socketpair)
-+    //  1: jeq SOCKET          jt=11 -> insn 13
-+    //  2: jeq CONNECT         jt=18 -> insn 21
-+    //  3: jeq BIND            jt=18 -> insn 22
-+    //  4: jeq SOCKETPAIR      jt=13 -> insn 18
-+    //  5: jeq SENDTO          jt=17 -> insn 23
-+    //  6: jeq SENDMSG         jt=16 -> insn 23
-+    //  7: jeq SENDMMSG        jt=15 -> insn 23
-+    //  8: jeq IO_URING_SETUP  jt=3  -> insn 12
-+    //  9: jeq IO_URING_ENTER  jt=2  -> insn 12
-+    // 10: jeq IO_URING_REGISTER jt=1 -> insn 12
-+    // 11: ret ALLOW
-+    // 12: ret ERRNO(EPERM)
-+    // 13: ld [args[0]]
-+    // 14: jeq AF_UNIX         jt=17 -> insn 32
-+    // 15: jeq AF_INET         jt=8  -> insn 24
-+    // 16: jeq AF_INET6        jt=7  -> insn 24
-+    // 17: ret ERRNO                 (bad socket family)
-+    // 18: ld [args[0]]
-+    // 19: jeq AF_UNIX         jt=12 -> insn 32
-+    // 20: ret ERRNO                 (bad socketpair family)
-+    // 21: ret USER_NOTIF            (connect)
-+    // 22: ret bind_action           (bind)
-+    // 23: ret USER_NOTIF            (sendto/sendmsg/sendmmsg)
-+    // 24: ld [args[1]]              (Internet socket type)
-+    // 25: and SOCK_TYPE_MASK
-+    // 26: jeq SOCK_STREAM -> insn 28
-+    // 27: ret ERRNO                 (UDP/raw/non-stream Internet socket)
-+    // 28: ld [args[2]]              (Internet socket protocol)
-+    // 29: jeq 0 -> insn 32
-+    // 30: jeq IPPROTO_TCP -> insn 32
-+    // 31: ret ERRNO                 (non-TCP stream protocol)
-+    // 32: ret ALLOW                 (validated socket/socketpair)
- 
-     let filter = vec![
-         // 0: ld [nr]
-@@ -3108,210 +3118,224 @@ fn build_seccomp_proxy_filter(_has_bind_ports: bool) -> ArchGuarded<Vec<SockFilt
-             jf: 0,
-             k: SECCOMP_DATA_NR_OFFSET,
-         },
--        // 1: jeq SYS_SOCKET -> 11 (jt = 11-1-1 = 9)
-+        // 1: jeq SYS_SOCKET -> 13 (jt = 13-1-1 = 11)
-         SockFilte
+ // Re-export Linux opt-in namespace isolation mechanism (NEP-0004)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2217** (2026-10-28): feat(sandbox): detect Landlock ABI up to V9, keep enforcement at V6 (@lukehinds)
 - **PR #2216** (2026-10-27): fix(proxy): prevent UTF-8 nonce parsing panic (@SequeI)
 - **PR #2215** (2026-10-27): fix(sandbox): deny io_uring during AF_UNIX mediation (@SequeI)
 - **PR #2212** (2026-10-27): chore(deps): bump the routine-rust group across 1 directory with 9 updates (@dependabot[bot])
 - **PR #2210** (2026-10-27): chore: clean up workspace dependencies and build configuration (@SequeI)
 - **PR #2206** (2026-10-27): chore(deps): bump vt100 from 0.16.2 to 0.18.1 (@dependabot[bot])
-- **PR #2205** (2026-10-27): chore(deps): bump jsonschema from 0.58.6 to 0.60.1 (@dependabot[bot])
 
 ---
 
@@ -3193,56 +3240,28 @@ Signed-off-by: Aleksy Siek <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. proxy): prevent UTF-8 nonce parsing panic (#2216)
+## X. sandbox): detect Landlock ABI up to V9, keep enforcement at V6 (#2217)
 
 **RULE**:
-When implementing operations in `crates/nono-proxy/src/tls_intercept/handle.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `46349d39`: proxy): prevent UTF-8 nonce parsing panic (#2216). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `081a4090`: sandbox): detect Landlock ABI up to V9, keep enforcement at V6 (#2217). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-proxy/src/tls_intercept/handle.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    // The fixed byte window may end inside a UTF-8 codepoint. Treat malformed
-    // candidates as non-matches instead of panicking.
-    let nonce = value.get(start..end)?;
-    #[test]
-    fn multibyte_nonce_candidate_does_not_panic() {
-        // The 69-byte nonce window ends inside the final euro sign.
-        let value = format!("nono_{}", "€".repeat(22));
-        assert_eq!(value.len(), 71);
-        let resolver = test_resolver(&make_nonce(), b"REAL");
-
-        assert!(
-            resolve_nonce_in_header_value(&value, "proxy.anthropic", CONSUMER_PATH, &resolver)
-                .is_none(),
-            "a non-ASCII nonce candidate must fail closed"
-        );
-    }
-
-    #[test]
-    fn valid_nonce_surrounded_by_multibyte_text_resolves() {
-        let nonce = make_nonce();
-        let resolver = test_resolver(&nonce, b"REAL");
-        let value = format!("préfix-{nonce}-süffix");
-
-        assert_eq!(
-            resolve_nonce_in_header_value(&value, "proxy.anthropic", CONSUMER_PATH, &resolver),
-            Some("préfix-REAL-süffix".to_string())
-        );
-    }
-
+landlock = "0.4.7"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    let nonce = &value[start..end];
+landlock = "0.4"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `46349d39` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `081a4090` are properly handled with clean fallback behavior.

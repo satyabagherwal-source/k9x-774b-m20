@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T13:36:48.645Z",
+  "last_updated": "2026-10-28T13:43:44.415Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1115,14 +1115,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-minimaxai-minimax-h3",
-      "content_hash": "3a3ebbaa035e5ea99d8c446a967ded6d78e1477171d5cfe5380890845d5a55f6",
-      "verified_at": "2026-10-25T19:25:30.977Z",
+      "content_hash": "8ba6f3359b9624b0e98cde1b25a89a760ceb99a20a6e7a6ef5eef5895704c8d7",
+      "verified_at": "2026-10-28T13:43:32.249Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T19:25:30.977Z"
+      "last_updated": "2026-10-28T13:43:32.249Z"
     },
     "Qwen/Qwen3.8-Flash-Next": {
       "repository": "Qwen/Qwen3.8-Flash-Next",
@@ -3666,14 +3666,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nolabs-ai-nono",
-      "content_hash": "baace9ff8a12d93875940b05689fbfe6fe0b9a52442d42e3a6d24c3538576ec8",
-      "verified_at": "2026-10-27T22:06:30.647Z",
+      "content_hash": "b32a4b83d89b0bc7e79b63ec6b18d4969d5dc0bafc7ee6feac0eeac76f996353",
+      "verified_at": "2026-10-28T13:43:44.414Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T22:06:30.647Z"
+      "last_updated": "2026-10-28T13:43:44.414Z"
     },
     "dathere/qsv": {
       "repository": "dathere/qsv",
@@ -6816,14 +6816,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zarf-dev-zarf",
-      "content_hash": "74b0dcfc7ad210ee0afa29138c3b944c4928ca4f6944d9da6e9ac07567e33f3f",
-      "verified_at": "2026-10-27T14:50:28.662Z",
+      "content_hash": "1cbbb380e3a3fd1dabf7c08626a95fc79da906b6b28342f2fbe0a695ab6581bf",
+      "verified_at": "2026-10-28T13:43:43.297Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T14:50:28.662Z"
+      "last_updated": "2026-10-28T13:43:43.297Z"
     },
     "vlcn-io/cr-sqlite": {
       "repository": "vlcn-io/cr-sqlite",
@@ -7596,14 +7596,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kucherenko-jscpd",
-      "content_hash": "b7c8d1759995d4c6a8d7532887cb4d5c64cd3b7cd68e85a44aad105b0b07bdde",
-      "verified_at": "2026-10-27T11:27:20.659Z",
+      "content_hash": "60269540fd80e2cea64ddbe079ac02a58a46da28f89fddd3890d6a5c16768549",
+      "verified_at": "2026-10-28T13:43:34.650Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T11:27:20.659Z"
+      "last_updated": "2026-10-28T13:43:34.650Z"
     },
     "akveo/kittenTricks": {
       "repository": "akveo/kittenTricks",

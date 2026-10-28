@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T13:36:48.566Z",
+  "last_updated": "2026-10-28T13:43:44.356Z",
   "total_verified_learnings": 1157,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -24735,7 +24735,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
       "source_version": "hf-minimaxai-minimax-h3",
-      "content_hash": "3a3ebbaa035e5ea99d8c446a967ded6d78e1477171d5cfe5380890845d5a55f6",
+      "content_hash": "8ba6f3359b9624b0e98cde1b25a89a760ceb99a20a6e7a6ef5eef5895704c8d7",
       "dossier_path": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md",
       "promoted_rules": [
@@ -24768,7 +24768,7 @@
         "learn-huggingface-hf-minimaxai-minimax-h3-mv4afpk5",
         "learn-huggingface-hf-minimaxai-minimax-h3-mv4nsqyu"
       ],
-      "verified_at": "2026-10-25T19:25:30.900Z",
+      "verified_at": "2026-10-28T13:43:32.161Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33677,8 +33677,8 @@
       "slug": "kucherenko-jscpd",
       "platform": "github",
       "source_url": "https://github.com/kucherenko/jscpd",
-      "source_version": "fb3bfac8",
-      "content_hash": "b7c8d1759995d4c6a8d7532887cb4d5c64cd3b7cd68e85a44aad105b0b07bdde",
+      "source_version": "ef979746",
+      "content_hash": "60269540fd80e2cea64ddbe079ac02a58a46da28f89fddd3890d6a5c16768549",
       "dossier_path": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "promoted_rules": [
@@ -33731,6 +33731,11 @@
           "number": 4708,
           "title": "Merge pull request #1256 from kucherenko/fix/knip-config-files",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5295,
+          "title": "lsp): put JSX ignore markers in {/* */} and outside tags",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33738,7 +33743,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T11:27:20.573Z",
+      "verified_at": "2026-10-28T13:43:34.580Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40061,8 +40066,8 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "46349d39",
-      "content_hash": "baace9ff8a12d93875940b05689fbfe6fe0b9a52442d42e3a6d24c3538576ec8",
+      "source_version": "081a4090",
+      "content_hash": "b32a4b83d89b0bc7e79b63ec6b18d4969d5dc0bafc7ee6feac0eeac76f996353",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
@@ -40115,6 +40120,11 @@
           "number": 5037,
           "title": "proxy): prevent UTF-8 nonce parsing panic (#2216)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5297,
+          "title": "sandbox): detect Landlock ABI up to V9, keep enforcement at V6 (#2217)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40122,7 +40132,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T22:06:30.596Z",
+      "verified_at": "2026-10-28T13:43:44.344Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56099,8 +56109,8 @@
       "slug": "zarf-dev-zarf",
       "platform": "github",
       "source_url": "https://github.com/zarf-dev/zarf",
-      "source_version": "d2830dca",
-      "content_hash": "74b0dcfc7ad210ee0afa29138c3b944c4928ca4f6944d9da6e9ac07567e33f3f",
+      "source_version": "a70762de",
+      "content_hash": "1cbbb380e3a3fd1dabf7c08626a95fc79da906b6b28342f2fbe0a695ab6581bf",
       "dossier_path": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "promoted_rules": [
@@ -56138,6 +56148,11 @@
           "number": 4860,
           "title": "cmd): don't redefine vendored tool flag shorthands (#5496)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5296,
+          "title": "deps): bump actions/create-github-app-token from 3.2.0 to 3.3.0 in the actions-o",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56145,7 +56160,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T14:50:28.550Z",
+      "verified_at": "2026-10-28T13:43:43.226Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -144121,6 +144136,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T13:30:22.129Z"
+    },
+    "rule-5295": {
+      "learning_id": "rule-5295",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5295,
+      "title": "lsp): put JSX ignore markers in {/* */} and outside tags",
+      "source_url": "https://github.com/kucherenko/jscpd",
+      "source_version": "ef979746",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T13:43:34.580Z"
+    },
+    "rule-5296": {
+      "learning_id": "rule-5296",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5296,
+      "title": "deps): bump actions/create-github-app-token from 3.2.0 to 3.3.0 in the actions-o",
+      "source_url": "https://github.com/zarf-dev/zarf",
+      "source_version": "a70762de",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T13:43:43.226Z"
+    },
+    "rule-5297": {
+      "learning_id": "rule-5297",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5297,
+      "title": "sandbox): detect Landlock ABI up to V9, keep enforcement at V6 (#2217)",
+      "source_url": "https://github.com/nolabs-ai/nono",
+      "source_version": "081a4090",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T13:43:44.344Z"
     }
   },
   "aliases": {

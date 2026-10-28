@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-JBQN",
-    "timestamp": "2026-10-27T12:46:35.567Z",
-    "repository": "cheeriojs/dom-serializer",
-    "learningId": "learn-github-cheeriojs-dom-serializer",
-    "contentHash": "6bfe8bf37d60bc34e8f92aa39c87af9487bd65bab2744342f118d43d948cde34",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-JF0M",
-    "timestamp": "2026-10-27T12:46:39.814Z",
-    "repository": "appwrite/appwrite",
-    "learningId": "learn-github-appwrite-appwrite",
-    "contentHash": "c540c8c9de1d48feb6f22c1df1b89cbd4466b0544a787f36f36aacdf704b549c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-JHWI",
-    "timestamp": "2026-10-27T12:46:43.554Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "996c07471cfc335a2bd8d3fe808e6eda64d37849f29dff150239f25c2f50e07c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-NY2W",
-    "timestamp": "2026-10-27T12:50:11.144Z",
-    "repository": "papersgpt/papersgpt-for-zotero",
-    "learningId": "learn-github-papersgpt-papersgpt-for-zotero",
-    "contentHash": "162c9f3ce81e61eb82c72b98fe7df9e064fc886da09d8f6b72992e94ac7a24f6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-O8P9",
     "timestamp": "2026-10-27T12:50:24.909Z",
     "repository": "expo/expo",
@@ -7492,6 +7432,66 @@
     "contentHash": "e123aec246da4161a9ed9fcd98de0a4afcc735edbcacca6b0719ebb86b776995",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-0EQ8",
+    "timestamp": "2026-10-28T13:43:32.240Z",
+    "repository": "MiniMaxAI/MiniMax-H3",
+    "learningId": "learn-huggingface-minimaxai-minimax-h3",
+    "contentHash": "8ba6f3359b9624b0e98cde1b25a89a760ceb99a20a6e7a6ef5eef5895704c8d7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-0GKV",
+    "timestamp": "2026-10-28T13:43:34.639Z",
+    "repository": "kucherenko/jscpd",
+    "learningId": "learn-github-kucherenko-jscpd",
+    "contentHash": "60269540fd80e2cea64ddbe079ac02a58a46da28f89fddd3890d6a5c16768549",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-0N93",
+    "timestamp": "2026-10-28T13:43:43.287Z",
+    "repository": "zarf-dev/zarf",
+    "learningId": "learn-github-zarf-dev-zarf",
+    "contentHash": "1cbbb380e3a3fd1dabf7c08626a95fc79da906b6b28342f2fbe0a695ab6581bf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-0O44",
+    "timestamp": "2026-10-28T13:43:44.404Z",
+    "repository": "nolabs-ai/nono",
+    "learningId": "learn-github-nolabs-ai-nono",
+    "contentHash": "b32a4b83d89b0bc7e79b63ec6b18d4969d5dc0bafc7ee6feac0eeac76f996353",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

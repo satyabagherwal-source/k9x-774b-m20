@@ -5788,3 +5788,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openai-whisper-large-v3` | `https://huggingface.co/openai/whisper-large-v3` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-28T13:30:06.879Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `ed0467e4` | Multi-dimensional audit evidence | 2026-10-28T13:30:22.226Z |
 | `learn-huggingface-black-forest-labs-flux-1-schnell` | `https://huggingface.co/black-forest-labs/FLUX.1-schnell` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-28T13:36:48.637Z |
+| `learn-huggingface-minimaxai-minimax-h3` | `https://huggingface.co/MiniMaxAI/MiniMax-H3` | `hf-minimax` | Multi-dimensional audit evidence | 2026-10-28T13:43:32.243Z |
+| `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `ef979746` | Multi-dimensional audit evidence | 2026-10-28T13:43:34.642Z |
+| `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `a70762de` | Multi-dimensional audit evidence | 2026-10-28T13:43:43.290Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `081a4090` | Multi-dimensional audit evidence | 2026-10-28T13:43:44.407Z |

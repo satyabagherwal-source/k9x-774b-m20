@@ -5779,3 +5779,7 @@
 | `CYCLE-20261028-J5B0` | `2026-10-28T13:30:06.876Z` | `openai/whisper-large-v3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | Yes (`51c38df9...`) |
 | `CYCLE-20261028-JH5A` | `2026-10-28T13:30:22.222Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5294` | Yes (`822a6f50...`) |
 | `CYCLE-20261028-RRAY` | `2026-10-28T13:36:48.634Z` | `black-forest-labs/FLUX.1-schnell` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1507, Rule 919` | Yes (`e123aec2...`) |
+| `CYCLE-20261028-0EQ8` | `2026-10-28T13:43:32.240Z` | `MiniMaxAI/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md` | Yes (`8ba6f335...`) |
+| `CYCLE-20261028-0GKV` | `2026-10-28T13:43:34.639Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5295` | Yes (`60269540...`) |
+| `CYCLE-20261028-0N93` | `2026-10-28T13:43:43.287Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5296` | Yes (`1cbbb380...`) |
+| `CYCLE-20261028-0O44` | `2026-10-28T13:43:44.404Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5297` | Yes (`b32a4b83...`) |

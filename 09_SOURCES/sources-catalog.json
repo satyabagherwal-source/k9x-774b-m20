@@ -865,8 +865,8 @@
     "sourceUrl": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
     "sourceVersion": "hf-minimaxai-minimax-h3",
     "license": "Open-Source",
-    "contentHash": "3a3ebbaa035e5ea99d8c446a967ded6d78e1477171d5cfe5380890845d5a55f6",
-    "lastHarvestedAt": "2026-10-25T19:25:30.968Z",
+    "contentHash": "8ba6f3359b9624b0e98cde1b25a89a760ceb99a20a6e7a6ef5eef5895704c8d7",
+    "lastHarvestedAt": "2026-10-28T13:43:32.243Z",
     "learningId": "learn-huggingface-minimaxai-minimax-h3"
   },
   "hf-qwen-qwen3.8-flash-next": {
@@ -2353,10 +2353,10 @@
     "repository": "nolabs-ai/nono",
     "platform": "github",
     "sourceUrl": "https://github.com/nolabs-ai/nono",
-    "sourceVersion": "46349d39",
+    "sourceVersion": "081a4090",
     "license": "Apache-2.0",
-    "contentHash": "baace9ff8a12d93875940b05689fbfe6fe0b9a52442d42e3a6d24c3538576ec8",
-    "lastHarvestedAt": "2026-10-27T22:06:30.641Z",
+    "contentHash": "b32a4b83d89b0bc7e79b63ec6b18d4969d5dc0bafc7ee6feac0eeac76f996353",
+    "lastHarvestedAt": "2026-10-28T13:43:44.407Z",
     "learningId": "learn-github-nolabs-ai-nono"
   },
   "dathere-qsv": {
@@ -4463,10 +4463,10 @@
     "repository": "zarf-dev/zarf",
     "platform": "github",
     "sourceUrl": "https://github.com/zarf-dev/zarf",
-    "sourceVersion": "d2830dca",
+    "sourceVersion": "a70762de",
     "license": "Apache-2.0",
-    "contentHash": "74b0dcfc7ad210ee0afa29138c3b944c4928ca4f6944d9da6e9ac07567e33f3f",
-    "lastHarvestedAt": "2026-10-27T14:50:28.653Z",
+    "contentHash": "1cbbb380e3a3fd1dabf7c08626a95fc79da906b6b28342f2fbe0a695ab6581bf",
+    "lastHarvestedAt": "2026-10-28T13:43:43.290Z",
     "learningId": "learn-github-zarf-dev-zarf"
   },
   "vlcn-io-cr-sqlite": {
@@ -4983,10 +4983,10 @@
     "repository": "kucherenko/jscpd",
     "platform": "github",
     "sourceUrl": "https://github.com/kucherenko/jscpd",
-    "sourceVersion": "fb3bfac8",
+    "sourceVersion": "ef979746",
     "license": "MIT",
-    "contentHash": "b7c8d1759995d4c6a8d7532887cb4d5c64cd3b7cd68e85a44aad105b0b07bdde",
-    "lastHarvestedAt": "2026-10-27T11:27:20.651Z",
+    "contentHash": "60269540fd80e2cea64ddbe079ac02a58a46da28f89fddd3890d6a5c16768549",
+    "lastHarvestedAt": "2026-10-28T13:43:34.642Z",
     "learningId": "learn-github-kucherenko-jscpd"
   },
   "akveo-kittentricks": {
