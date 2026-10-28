@@ -5672,3 +5672,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-edge0-audio8-asr-infinite` | `https://huggingface.co/Edge0/Audio8-ASR-Infinite` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-10-28T02:54:53.948Z |
 | `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-10-28T03:04:27.292Z |
 | `learn-github-storybookjs-storybook` | `https://github.com/storybookjs/storybook` | `37ded54a` | Multi-dimensional audit evidence | 2026-10-28T03:04:34.023Z |
+| `learn-huggingface-sentence-transformers-all-minilm-l6-v2` | `https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-28T03:11:26.772Z |

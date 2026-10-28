@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T03:04:33.944Z",
+  "last_updated": "2026-10-28T03:11:26.700Z",
   "total_verified_learnings": 1155,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -26476,7 +26476,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
       "source_version": "hf-sentence-transformers-all-minilm-l6-v2",
-      "content_hash": "98aac2a78a7f1e865bf452cbea0577f11caad81afb54ac62d139c8693fc90a7b",
+      "content_hash": "14ba29c79d03a04b711d69f5ab35dd18015998e50b831966483427c7a068e6d3",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md",
       "promoted_rules": [
@@ -26859,7 +26859,7 @@
         "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv42ove4",
         "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv4fxe65"
       ],
-      "verified_at": "2026-10-25T05:58:42.217Z",
+      "verified_at": "2026-10-28T03:11:26.679Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -78521,15 +78521,15 @@
       "learning_id": "rule-996",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 996,
-      "title": "Masked Mean Pooling Invariant for Variable-Length Sequences",
-      "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-      "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+      "title": "Masked Mean Pooling Invariant",
+      "source_url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
+      "source_version": "hf-sentence-transformers-all-minilm-l6-v2",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-28T01:00:13.935Z"
+      "verified_at": "2026-10-28T03:11:26.679Z"
     },
     "rule-997": {
       "learning_id": "rule-997",

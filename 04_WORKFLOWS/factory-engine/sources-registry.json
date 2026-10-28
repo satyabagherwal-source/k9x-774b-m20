@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T03:04:38.379Z",
-    "lastVerified": "2026-10-28T03:04:38.379Z",
+    "lastChecked": "2026-10-28T03:11:29.299Z",
+    "lastVerified": "2026-10-28T03:11:29.299Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -241,5 +241,64 @@
     "lastChecked": "2026-10-28T03:04:38.371Z",
     "revisionIdentifier": "092970a5",
     "lastVerified": "2026-10-28T03:04:38.371Z"
+  },
+  "lapce-lapce": {
+    "name": "lapce",
+    "officialUrl": "https://github.com/lapce/lapce",
+    "lastChecked": "2026-10-28T03:11:13.350Z",
+    "revisionIdentifier": "f66ffaa9",
+    "lastVerified": "2026-10-28T03:11:13.350Z"
+  },
+  "hf-sentence-transformers-all-minilm-l6-v2": {
+    "name": "sentence-transformers/all-MiniLM-L6-v2",
+    "officialUrl": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T03:11:15.932Z",
+    "lastVerified": "2026-10-28T03:11:15.932Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
+    "contentHash": "14ba29c79d03a04b711d69f5ab35dd18015998e50b831966483427c7a068e6d3",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "enaqx-awesome-react": {
+    "name": "awesome-react",
+    "officialUrl": "https://github.com/enaqx/awesome-react",
+    "lastChecked": "2026-10-28T03:11:18.351Z",
+    "revisionIdentifier": "e6fd973e",
+    "lastVerified": "2026-10-28T03:11:18.351Z"
+  },
+  "nginx-kubernetes-ingress": {
+    "name": "kubernetes-ingress",
+    "officialUrl": "https://github.com/nginx/kubernetes-ingress",
+    "lastChecked": "2026-10-28T03:11:20.917Z",
+    "revisionIdentifier": "f45222fb",
+    "lastVerified": "2026-10-28T03:11:20.917Z"
+  },
+  "openziti-zrok": {
+    "name": "zrok",
+    "officialUrl": "https://github.com/openziti/zrok",
+    "lastChecked": "2026-10-28T03:11:23.306Z",
+    "revisionIdentifier": "09ed814e",
+    "lastVerified": "2026-10-28T03:11:23.306Z"
+  },
+  "run-llama-llama_index": {
+    "name": "llama_index",
+    "officialUrl": "https://github.com/run-llama/llama_index",
+    "lastChecked": "2026-10-28T03:11:25.935Z",
+    "revisionIdentifier": "619d7466",
+    "lastVerified": "2026-10-28T03:11:25.935Z"
+  },
+  "nucleoidai-nucleoid": {
+    "name": "Nucleoid",
+    "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
+    "lastChecked": "2026-10-28T03:11:28.340Z",
+    "revisionIdentifier": "73085699",
+    "lastVerified": "2026-10-28T03:11:28.340Z"
   }
 }

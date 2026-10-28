@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T03:04:34.028Z",
-  "total_cycles_completed": 5640,
-  "total_learnings_persisted": 5640,
-  "total_rules_promoted": 5078,
+  "last_updated": "2026-10-28T03:11:26.777Z",
+  "total_cycles_completed": 5641,
+  "total_learnings_persisted": 5641,
+  "total_rules_promoted": 5080,
   "history": [
-    {
-      "timestamp": "2026-10-27T17:56:51.332Z",
-      "repository": "avajs/ava",
-      "learningId": "learn-github-avajs-ava",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T17:56:55.320Z",
       "repository": "kcl-lang/kcl",
@@ -1403,6 +1396,13 @@
       "repository": "storybookjs/storybook",
       "learningId": "learn-github-storybookjs-storybook",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T03:11:26.777Z",
+      "repository": "sentence-transformers/all-MiniLM-L6-v2",
+      "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
