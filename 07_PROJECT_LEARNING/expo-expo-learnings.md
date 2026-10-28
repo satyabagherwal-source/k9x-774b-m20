@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/expo-expo-learnings.md`  
 > **Source**: github ([https://github.com/expo/expo](https://github.com/expo/expo))  
-> **Source Version**: `a476ff07`  
+> **Source Version**: `142ce925`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T12:50:24.399Z  
+> **Timestamp**: 2026-10-28T03:31:29.194Z  
 > **Learning ID**: `learn-github-expo-expo`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/expo-expo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/expo/expo](https://github.com/expo/expo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T12:50:24.396Z  
+> **Harvest Timestamp**: 2026-10-28T03:31:28.981Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source framework for making universal native apps with React. Expo runs on Android, iOS, and the web.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 53114 stars
+- **Stars / Engagement**: 53130 stars
 
 ---
 
@@ -674,399 +674,620 @@ object AsyncCondition {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `597d7423` (2026-10-27)
-**Commit Message**: [ui][android] Fix crash when dragging Slider and VerticalSlider (#52376)
+### Incident Patch 1: `e1c3f315` (2026-10-27)
+**Commit Message**: [ui] Apply themeVariant and draw no container behind the inline community DateTimePicker on Android (#52323)
 
 # Why
 
-On Android, dragging a `Slider` (or `VerticalSlider`) crashes the app as
-soon as the drag starts, in release builds (R8):
+On Android, the inline community `DateTimePicker` draws Material 3's
+container color behind the calendar. On iOS, the inline picker has no
+background of its own. So on Android the picker shows as a tinted block
+on the screen or sheet that holds it.
 
-```
-NullPointerException: Attempt to invoke interface method 'java.lang.String kotlin.reflect.KProperty.getName()' on a null object reference
-```
+Also, `themeVariant` has no effect on Android. The community
+`DateTimePicker` passes it to SwiftUI on iOS, but it does not pass it to
+the Compose `Host` on Android. Android therefore always follows the
+device color scheme, even when the app uses a different one.
 
-`SliderContent` and `VerticalSliderContent` create their event
-dispatchers with `val x by remember { EventDispatcher<T>() }` inside the
-composable. When an event is dispatched, `ViewEventDelegate.getValue`
-reads `property.name`, and the property reference it receives there is
-null. Debug builds aren't affected.
-
-# How
-
-Declare `onValueChange` and `onValueChangeFinished` with `val x by
-Event<T>()` in the `ExpoUIView` definitions in `ExpoUIModule`, and pass
-the handlers into `SliderContent` and `VerticalSliderContent`. This
-matches how `ToggleButton` and `TextField` dispatch their events. The
-now-unused `expo.modules.kotlin.viewevent.getValue` imports are removed.
-
-# Test Plan
-
-Applied as a patch to `@expo/ui` 58.0.23 in an app (built from source
-with `expo.autolinking.android.buildFromSource: ["expo-ui"]`). In
-release builds, dragging `Sl
-
-**File**: `.changeset/expo-ui-android-slider-crash.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+"@expo/ui": patch
-+---
-+
-+[Android] Fix a crash when dragging `Slider` or `VerticalSlider` in release builds. Their `onValueChange` and `onValueChangeFinished` events are now declared with `Event<T>()` in the view definition, as `ToggleButton` and `TextField` already do.
-```
-
-**File**: `packages/expo-ui/android/src/main/java/expo/modules/ui/ExpoUIModule.kt` (modified, +6/-4)
-```diff
-@@ -359,18 +359,20 @@ class ExpoUIModule : Module() {
-     }
- 
-     ExpoUIView<SliderProps>("SliderView") {
--      Events("onValueChange", "onValueChangeFinished")
-+      val onValueChange by Event<SliderValueChangedEvent>()
-+      val onValueChangeFinished by Event<Unit>()
- 
-       Content { props ->
--        SliderContent(props)
-+        SliderContent(props, { onValueChange(it) }, { onValueChangeFinished(it) })
-       }
-     }
- 
-     ExpoUIView<VerticalSliderProps>("VerticalSliderView") {
--      Events("onValueChange", "onValueChangeFinished")
-+      val onValueChange by Event<SliderValueChangedEvent>()
-+      val onValueChangeFinished by Event<Unit>()
- 
-       Content { props ->
--        VerticalSliderContent(props)
-+        VerticalSliderContent(props, { onValueChange(it) }, { onValueChangeFinished(it) })
-       }
-     }
- 
-```
-
-**File**: `packages/expo-ui/android/src/main/java/expo/modules/ui/SliderView.kt` (modified, +5/-4)
-```diff
-@@ -14,7 +14,6 @@ import androidx.compose.runtime.remember
- import androidx.compose.runtime.setValue
- import expo.modules.kotlin.records.Field
- import expo.modules.kotlin.records.Record
--import expo.modules.kotlin.viewevent.getValue
- import expo.modules.kotlin.views.ComposeProps
- import expo.modules.kotlin.views.FunctionalComposableScope
- import expo.modules.kotlin.types.OptimizedRecord
-@@ -58,9 +57,11 @@ data class SliderValueChangedEvent(
- 
- @OptIn(ExperimentalMaterial3Api::class)
- @Composable
--fun FunctionalComposableScope.SliderContent(props: SliderProps) {
--  val onValueChange by remember { this@SliderContent.EventDispatcher<SliderValueChangedEvent>() }
--  val onValueChangeFinished by remember { this@SliderContent.EventDispatcher<Unit>() }
-+fun FunctionalComposableScope.SliderContent(
-+  props: SliderProps,
-+  onValueChange: (SliderValueChangedEvent) -> Unit,
-+  onValueChangeFinished: (Unit) -> Unit
-+) {
-   val interactionSource = remember { MutableInteractionSource() }
- 
-   val effectiveLower = maxOf(props.min, props.lowerLimit ?: Float.NEGATIVE_INFINITY)
-```
-
-**File**: `packages/expo-ui/android/src/main/java/expo/modules/ui/VerticalSliderView.kt` (modified, +5/-4)
-```diff
-@@ -12,7 +12,6 @@ import androidx.compose.runtime.getValue
- import androidx.compose.runtime.mutableFloatStateOf
- import androidx.compose.runtime.remember
- import androidx.compose.runtime.setValue
--import expo.modules.kotlin.viewevent.getValue
- import expo.modules.kotlin.views.ComposeProps
- import expo.modules.kotlin.views.FunctionalComposableScope
- import expo.modules.kotlin.views.OptimizedComposeProps
-@@ -33,9 +32,11 @@ data class VerticalSliderProps(
- 
- @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
- @Composable
--fun FunctionalComposableScope.VerticalSliderContent(props: VerticalSliderProps) {
--  val onValueChange by remember { this@VerticalSliderContent.EventDispatcher<SliderValueChangedEvent>() }
--  val onValueChangeFinished by remember { this@VerticalSliderContent.EventDispatcher<Unit>() }
-+fun FunctionalComposableScope.VerticalSliderContent(
-+  props: VerticalSliderProps,
-+  onValueChange: (SliderValueChangedEvent) -> Unit,
-+  onValueChangeFinished: (Unit) -> Unit
-+) {
-   val interactionSource = remember { MutableInteractionSource() }
- 
-   val effectiveLower = maxOf(props.min, props.lowerLimit ?: Float.NEGATIVE_INFINITY)
-```
-
----
-
-### Incident Patch 2: `8bc17627` (2026-10-27)
-**Commit Message**: [ui][android] Don't nest a ListItem row in another ListItem in FieldGroup.Section (#51030)
-
-# Why
-
-Fixes #50086.
-
-On Android, `FieldGroup.Section` wraps every row in a Compose `ListItem`
-with the section's container color and rounded clip. The universal
-`ListItem` renders its own Compose `ListItem`, so a `ListItem` row ended
-up nested in a second one: two stacked surfaces, two sets of content
-padding (taller than a `Switch` row), and a ripple/tap target inset from
-the rounded row.
+The two problems are related. The inline picker can only drop its
+container if its text stays readable on the app's background. That needs
+`themeVariant` on Android.
 
 # How
 
-In `FieldSection.android.tsx`, when a row is a universal `ListItem`
-element, clone it instead of wrapping it:
+This pull request has two commits. They depend on each other, and a pull
+request from a fork cannot use another fork branch as its base. So they
+are in one pull request, not a stack.
 
-- `colors`: the section's `surfaceContainer` as `containerColor`,
-overridden by the item's own `colors`.
-- `modifiers`: `fillMaxWidth()` and the position-aware `clip(...)`, then
-`clickable(onPress)` (moved out of `onPress`), then the item's own
-`modifiers`. `ListItem.android` puts `clickable` first, which would draw
-the ripple outside the rounded clip, so it's applied here after `clip`
-instead. The item's modifiers still come after `clickable`, as they do
-in `ListItem`.
+1. **Apply `themeVariant` on Android.** The community `DateTimePicker`
+sets `colorScheme={themeVariant}` on its `Host`, for the inline picker
+and both dialogs. `Host.colorScheme` has existed since #41413. The
+dr
 
-Other rows (`Switch`, etc.) are still wrapped as before. A `ListItem`
-wrapped in a custom component isn't detected and 
-
-**File**: `.changeset/expo-ui-fieldsection-listitem-android.md` (added, +5/-0)
+**File**: `.changeset/expo-ui-datetimepicker-android-inline-container.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +'@expo/ui': patch
 +---
 +
-+[Android] Fix a `ListItem` inside `FieldGroup.Section` being rendered inside a second Material `ListItem`, which drew an inset inner card, made the row taller than other rows and shrank its tap target. The `ListItem` is now styled as the section's row, and its ripple follows the row's rounded shape.
++[Android] The community `DateTimePicker` with `presentation="inline"` no longer draws Material 3's container color, matching iOS. The view behind the picker now shows through. Previously, the inline picker always showed on a tinted surface. To keep that surface, use `DateTimePicker` from `@expo/ui/jetpack-compose` instead.
 ```
 
-**File**: `packages/expo-ui/src/universal/FieldGroup/FieldSection.android.tsx` (modified, +28/-2)
+**File**: `.changeset/expo-ui-datetimepicker-android-theme-variant.md` (added, +5/-0)
 ```diff
-@@ -4,8 +4,10 @@ import {
-   ListItem,
-   useMaterialColors,
- } from '@expo/ui/jetpack-compose';
--import { clip, fillMaxWidth, padding, Shapes } from '@expo/ui/jetpack-compose/modifiers';
-+import { clickable, clip, fillMaxWidth, padding, Shapes } from '@expo/ui/jetpack-compose/modifiers';
-+import { cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react';
- 
-+import { ListItem as UniversalListItem, type ListItemProps } from '../ListItem';
- import { useUniversalLifecycle } from '../hooks';
- import { getUserSizingOverrides } from '../modifierUtils';
- import { transformToModifiers } from '../transformStyle';
-@@ -77,11 +79,31 @@ export function FieldSection({
-         <ComposeColumn verticalArrangement={{ spacedBy: 2 }} modifiers={[fillMaxWidth()]}>
-           {rows.map((child, index) => {
-             const position = getFieldItemPosition(index, rows.length);
-+            const rowModifiers = [
-+              fillMaxWidth(),
-+              clip(Shapes.RoundedCorner(cornerRadii(position))),
-+            ];
-+            if (isUniversalListItem(child)) {
-+              // A `ListItem` already renders a Compose `ListItem`. Style it as the row instead of
-+              // nesting it in another one, which would draw a second surface with its own padding.
-+              const { onPress, modifiers, colors: itemColors } = child.props;
-+              return cloneElement(child, {
-+                key: index,
-+                onPress: undefined,
-+                colors: { containerColor: colors.surfaceContainer, ...itemColors },
-+                // Clip before `clickable` so the ripple follows the rounded row.
-+                modifiers: [
-+                  ...rowModifiers,
-+                  ...(onPress ? [clickable(onPress)] : []),
-+                  ...(modifiers ?? []),
-+                ],
-+              });
-+            }
-             return (
-               <ListItem
-                 key={index}
-                 colors={{ containerColor: colors.surfaceContainer }}
--                modifiers={[fillMaxWidth(), clip(Shapes.RoundedCorner(cornerRadii(position)))]}>
-+                modifiers={rowModifiers}>
-                 <ListItem.HeadlineContent>{child}</ListItem.HeadlineContent>
-               </ListItem>
-             );
-@@ -93,6 +115,10 @@ export function FieldSection({
+@@ -0,0 +1,5 @@
++---
++'@expo/ui': patch
++---
++
++[Android] The community `DateTimePicker` now applies `themeVariant` to the inline picker and its dialogs. Previously, `themeVariant` worked only on iOS, and on Android the picker always followed the device color scheme.
+```
+
+**File**: `apps/native-component-list/src/screens/UI/CommunityDateTimePickerScreen.tsx` (modified, +10/-0)
+```diff
+@@ -105,6 +105,7 @@ export default function CommunityDateTimePickerScreen() {
+   const [timeZoneName, setTimeZoneName] = useState<string | undefined>();
+   const [positiveLabel, setPositiveLabel] = useState('');
+   const [negativeLabel, setNegativeLabel] = useState('');
++  const [themeVariant, setThemeVariant] = useState<'system' | 'light' | 'dark'>('system');
+   const [presentation, setPresentation] = useState<'inline' | 'dialog'>(
+     Platform.OS === 'android' ? 'dialog' : 'inline'
    );
- }
+@@ -196,6 +197,14 @@ export default function CommunityDateTimePickerScreen() {
+           />
+         </View>
  
-+function isUniversalListItem(node: ReactNode): node is ReactElement<ListItemProps> {
-+  return isValidElement(node) && node.type === UniversalListItem;
-+}
++        {/* themeVariant */}
++        <ThemedText style={styles.label}>themeVariant:</ThemedText>
++        <SegmentedButtons
++          values={['system', 'light', 'dark']}
++          selected={themeVariant}
++          onSelect={(v) => setThemeVariant(v)}
++        />
 +
- /**
-  * Per-position corner radii used to produce the Material 3 grouped-list look.
-  *
+         {/* disabled (iOS) */}
+         {Platform.OS === 'ios' && (
+           <View style={styles.row}>
+@@ -301,6 +310,7 @@ export default function CommunityDateTimePickerScreen() {
+               minimumDate={minimumDate}
+               maximumDate={maximumDate}
+               accentColor={accentColor || undefined}
++              themeVariant={themeVariant === 'system' ? undefined : themeVariant}
+               disabled={disabled}
+               locale="en-US"
+               timeZoneName={timeZoneName}
 ```
 
-**File**: `packages/expo-ui/src/universal/FieldGroup/__tests__/FieldSection.test.android.tsx` (added, +62/-0)
+**File**: `docs/pages/versions/unversioned/sdk/ui/drop-in-replacements/datetimepicker.mdx` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,62 @@
-+import { render } from '@testing-library/react-native';
+@@ -15,7 +15,7 @@ A `DateTimePicker` component with an API compatible with `@react-native-communit
+ 
+ `DateTimePicker` component is fully declarative. Use the `presentation` prop to render the picker `'inline'` directly in the view hierarchy or as a `'dialog'` on Android. There is no Android imperative API (`DateTimePickerAndroid.open()`).
+ 
+-On Android, the inline picker shows no title or headline, as on iOS. To show Material 3's "Select date" title and selected-date headline, use the [Jetpack Compose `DateTimePicker`](../jetpack-compose/datetimepicker#datetimepicker) directly.
++On Android, the inline picker shows no title, headline, or container color, as on iOS. The view behind the picker shows through. If your app's color scheme can differ from the device's, set `themeVariant` to your app's color scheme. Then the picker's text stays readable on your background. To show Material 3's "Select date" title, selected-date headline, and container color, use the [Jetpack Compose `DateTimePicker`](../jetpack-compose/datetimepicker#datetimepicker) directly.
+ 
+ Under the hood this component wraps the platform-specific `@expo/ui` primitives:
+ 
+```
+
+**File**: `docs/public/static/data/unversioned/expo-ui/community/datetime-picker.json` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-{"schemaVersion":"2.0","name":"expo-ui/community/datetime-picker","variant":"project","kind":1,"children":[{"name":"DateTimePickerProps","variant":"declaration","kind":256,"children":[{"name":"accentColor","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Accent/tint color applied to the picker.\nMaps to "},{"kind":"code","text":"`color`"},{"kind":"text","text":" on Android and "},{"kind":"code","text":"`tint`"},{"kind":"text","text":" on iOS."}]},"type":{"type":"intrinsic","name":"string"}},{"name":"disabled","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Whether the picker is disabled."}],"blockTags":[{"tag":"@platform","content":[{"kind":"text","text":"ios"}]}]},"type":{"type":"intrinsic","name":"boolean"}},{"name":"display","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Display style. Android supports "},{"kind":"code","text":"`'default' | 'spinner'`"},{"kind":"text","text":" — "},{"kind":"code","text":"`'spinner'`"},{"kind":"text","text":" shows a text input\nrather than a scroll wheel (Material 3 does not have a wheel-style picker).\niOS supports "},{"kind":"code","text":"`'default' | 'spinner' | 'compact' | 'inline'`"},{"kind":"text","text":"."}],"blockTags":[{"tag":"@default","content":[{"kind":"text","text":"'default'"}]}]},"type":{"type":"union","types":[{"type":"literal","value":"default"},{"type":"literal","value":"compact"},{"type":"literal","value":"inline"},{"type":"literal","value":"spinner"},{"type":"literal","value":"calendar"},{"type":"literal","value":"clock"}]}},{"name":"is24Hour","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Use 24-hour format."}],"blockTags":[{"tag":"@platform","content":[{"kind":"text","text":"android"}]}]},"type":{"type":"intrinsic","name":"boolean"}},{"name":"locale","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Locale identifier (e.g. 'en_US', 'fr_FR') for the picker display."}],"blockTags":[{"tag":"@platform","content":[{"kind":"text","text":"ios"}]}]},"type":{"type":"intrinsic","name":"string"}},{"name":"maximumDate","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"The latest selectable date."}]},"type":{"type":"reference","target":{"packageName":"typescript","packagePath":"lib/lib.es5.d.ts","qualifiedName":"Date"},"name":"Date","package":"typescript"}},{"name":"minimumDate","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"The earliest selectable date."}]},"type":{"type":"reference","target":{"packageName":"typescript","packagePath":"lib/lib.es5.d.ts","qualifiedName":"Date"},"name":"Date","package":"typescript"}},{"name":"mode","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"The picker mode."}],"blockTags":[{"tag":"@default","content":[{"kind":"text","text":"'date'"}]}]},"type":{"type":"union","types":[{"type":"literal","value":"time"},{"type":"literal","value":"date"},{"type":"literal","value":"datetime"}]}},{"name":"negativeButton","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Set the negative (cancel) button label."}],"blockTags":[{"tag":"@platform","content":[{"kind":"text","text":"android"}]}]},"type":{"type":"reflection","declaration":{"name":"__type","variant":"declaration","kind":65536,"children":[{"name":"label","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"intrinsic","name":"string"}}]}}},{"name":"onChange","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Called when the user changes the date/time or dismisses the picker.\nThe event type is encoded in "},{"kind":"code","text":"`event.type`"},{"kind":"text","text":".\nIf the new specific listeners are provided, they take precedence."}],"blockTags":[{"tag":"@deprecated","content":[{"kind":"text","text":"Use "},{"kind":"code","text":"`onValueChange`"},{"kind":"text","text":" and "},{"kind":"code","text":"`onDismiss`"},{"kind":"text","text":" instead."}]}]},"type":{"type":"reflection","declaration":{"name":"__type","variant":"declaration","kind":65536,"signatures":[{"name":"__type","variant":"signature","kind":4096,"parameters":[{"name":"event","variant":"param","kind":32768,"type":{"type":"reference","name":"DateTimePickerEvent","package":"@expo/ui"}},{"name":"date","variant":"param","kind":32768,"flags":{"isOptional":true},"type":{"type":"reference","target":{"packageName":"typescript","packagePath":"lib/lib.es5.d.ts","qualifiedName":"Date"},"name":"Date","package":"typescript"}}],"type":{"type":"intrinsic","name":"void"}}]}}},{"name":"onDismiss","variant":
+```
+
+**File**: `packages/expo-ui/src/community/datetime-picker/DateTimePicker.android.tsx` (modified, +6/-3)
+```diff
+@@ -48,6 +48,7 @@ export function DateTimePicker(props: DateTimePickerProps) {
+     testID,
+     style,
+     accentColor,
++    themeVariant,
+     presentation = 'dialog',
+     positiveButton,
+     negativeButton,
+@@ -102,13 +103,13 @@ export function DateTimePicker(props: DateTimePickerProps) {
+   if (presentation === 'dialog') {
+     if (mode === 'time') {
+       return (
+-        <Host style={style}>
++        <Host colorScheme={themeVariant} style={style}>
+           <AndroidTimePickerDialog {...dialogProps} is24Hour={is24Hour} />
+         </Host>
+       );
+     }
+     return (
+-      <Host style={style}>
++      <Host colorScheme={themeVariant} style={style}>
+         <AndroidDatePickerDialog
+           {...dialogProps}
+           variant={displayToAndroidVariant(display)}
+@@ -119,14 +120,16 @@ export function DateTimePicker(props: DateTimePickerProps) {
+   }
+ 
+   return (
+-    <Host matchContents={{ vertical: true }} style={style}>
++    <Host matchContents={{ vertical: true }} colorScheme={themeVariant} style={style}>
+       <AndroidPicker
+         initialDate={initialDate}
+         displayedComponents={modeToDisplayedComponents(mode)}
+         variant={displayToAndroidVariant(display)}
+         selectableDates={selectableDates}
+         is24Hour={is24Hour}
+         color={accentColor}
++        // Match iOS, where the inline picker has no background of its own.
++        elementColors={{ containerColor: 'transparent' }}
+         onDateSelected={onDateSelected}
+         showVariantToggle={false}
+         // Match iOS, where the inline picker has no label: hide Material 3's "Select date" title
+```
+
+**File**: `packages/expo-ui/src/community/datetime-picker/__tests__/DateTimePicker.test.android.tsx` (modified, +26/-2)
+```diff
+@@ -3,10 +3,14 @@ import { render } from '@testing-library/react-native';
+ import { DateTimePicker } from '..';
+ 
+ const mockNativeViewFn = jest.fn();
++const mockHostFn = jest.fn();
+ 
+-// Host reads the native Material palette; these tests only look at the picker's props.
++// Host reads the native Material palette; these tests only look at the props it receives.
+ jest.mock('../../../jetpack-compose/Host', () => ({
+-  Host: ({ children }: { children: React.ReactNode }) => children,
++  Host: ({ children, ...props }: { children: React.ReactNode }) => {
++    mockHostFn(props);
++    return children;
++  },
+ }));
+ 
+ jest.mock('expo', () => ({
+@@ -23,6 +27,7 @@ jest.mock('expo', () => ({
+ 
+ beforeEach(() => {
+   mockNativeViewFn.mockClear();
++  mockHostFn.mockClear();
+ });
+ 
+ function getNativeProps(viewName: string) {
+@@ -40,6 +45,14 @@ describe('DateTimePicker (Android)', () => {
+     );
+   });
+ 
++  it('has no container color when inline, like iOS', async () => {
++    await render(<DateTimePicker value={value} presentation="inline" />);
 +
-+import { FieldGroup } from '..';
-+import { renderedNativeViews } from '../../../__mocks__/expo';
-+import { ListItem } from '../../ListItem';
-+import { Switch } from '../../Switch';
-+
-+jest.mock('expo');
-+
-+function renderedListItems() {
-+  return renderedNativeViews.mock.calls
-+    .filter(([name]) => name === 'ListItemView')
-+    .map(([, props]) => props);
-+}
-+
-+function modifierTypes(props: Record<string, any>) {
-+  return (props.modifiers ?? []).map((modifier: { $type: string }) => modifier.$type);
-+}
-+
-+describe('FieldGroup.Section on Android', () => {
-+  it('renders a ListItem row as a single Compose ListItem', async () => {
-+    const onPress = jest.fn();
-+    await render(
-+      <FieldGroup.Section>
-+        <ListItem onPress={onPress}>Row A</ListItem>
-+        <ListItem>Row B</ListItem>
-+      </FieldGroup.Section>
++    expect(getNativeProps('DateTimePickerView')).toEqual(
++      expect.objectContaining({ elementColors: { containerColor: 'transparent' } })
 +    );
-+
-+    const listItems = renderedListItems();
-+    expect(listItems).toHaveLength(2);
-+    // The row's shape is clipped before the click handler, so the ripple follows the rounded row.
-+    expect(modifierTypes(listItems[0])).toEqual(['fillMaxWidth', 'clip', 'clickable']);
-+    expect(modifierTypes(listItems[1])).toEqual(['fillMaxWidth', 'clip']);
 +  });
 +
-+  it('keeps the modifiers and colors set on the ListItem', async () => {
-+    await render(
-+      <FieldGroup.Section>
-+        <ListItem
-+          colors={{ contentColor: '#ff0000' }}
-+          modifiers={[{ $type: 'testTag', tag: 'row' } as any]}>
-+          Row
-+        </ListItem>
-+      </FieldGroup.Section>
-+    );
+   it('keeps the dialog title and headline', async () => {
+     await render(<DateTimePicker value={value} presentation="dialog" />);
+ 
+@@ -48,4 +61,15 @@ describe('DateTimePicker (Android)', () => {
+     expect(props).not.toHaveProperty('showTitle');
+     expect(props).not.toHaveProperty('showHeadline');
+   });
 +
-+    const [listItem] = renderedListItems();
-+    expect(modifierTypes(listItem)).toEqual(['fillMaxWidth', 'clip', 'testTag']);
-+    expect(listItem.colors).toEqual(expect.objectContaining({ contentColor: '#ff0000' }));
-+  });
++  it.each(['inline', 'dialog'] as const)(
++    'applies themeVariant as the %s picker color scheme',
++    async (presentation) => {
++      await render(
++        <DateTimePicker value={value} presentation={presentation} themeVariant="dark" />
++      );
 +
-+  it('still wraps other rows in a Compose ListItem', async () => {
-+    await render(
-+      <FieldGroup.Section>
-+        <Switch label="Toggle" value={false} onValueChange={() => {}} />
-+      </FieldGroup.Section>
-+    );
-+
-+    expect(renderedListItems()).toHaveLength(1);
-+  });
-+});
++      expect(mockHostFn).toHaveBeenCalledWith(expect.objectContaining({ colorScheme: 'dark' }));
++    }
++  );
+ });
+```
+
+**File**: `packages/expo-ui/src/community/datetime-picker/types.tsx` (modified, +0/-1)
+```diff
+@@ -93,7 +93,6 @@ export interface DateTimePickerProps extends Pick<ViewProps, 'style'> {
+   locale?: string;
+   /**
+    * Force a specific color scheme on the picker.
+-   * @platform ios
+    */
+   themeVariant?: 'dark' | 'light';
+   /**
 ```
 
 ---
 
-### Incident Patch 3: `b2271b3f` (2026-10-27)
-**Commit Message**: [ios][file-system] Fix `'QLPreviewController' has no member 'canPreview'` on Mac Catalyst (#52359)
+### Incident Patch 2: `f4bd60f6` (2026-10-27)
+**Commit Message**: fix(router): allow retrying failed async route loads (#51741)
 
 # Why
 
-`expo-file-system` fails to compile for Mac Catalyst:
+An async route whose chunk fails to download once stays broken until the
+page reloads. Retrying the error boundary or opening the route again
+shows the same error, and the browser does not request the chunk again.
 
-```text
-Type 'QLPreviewController' has no member 'canPreview'
-```
+`getQualifiedRouteComponent()` creates one `React.lazy()` per route and
+keeps it in `qualifiedStore`. Once rejected, a `React.lazy()` stays
+rejected, so every render after this re-throws the first error without
+calling `loadRoute()` again. The chunk loader itself however can retry;
+`buildAsyncRequire()` removes a failed chunk from its cache.
 
-Mac Catalyst, which detected in `os(iOS)`, exposes this method as
-`canPreviewItem(_:)` instead of `canPreview(_:)` with the same
-functionalities, as listed in [Apple’s Quick Look
-documentation](https://developer.apple.com/documentation/quicklook/qlpreviewcontroller/canpreview%28_%3A%29).
-
-<img width="1716" height="892" alt="01"
-src="https://github.com/user-attachments/assets/e7d4449c-cae3-4588-8c67-42a0bed8ca81"
-/>
+Fixes #51729.
 
 # How
 
-Route that preview checks through one private helper.
+When the load rejects, the `React.lazy()` now resolves to a small
+`FailedAsyncRoute` component instead of rejecting. It uses a layout
+effect to replace the route's `React.lazy()` with a fresh one and throw
+the original error to the nearest error boundary. The next load starts
+only when the boundary retries or the route mounts again.
 
-The helper uses `#if targetEnvironment(macCatalyst)` to select
-`canPreviewItem(_:)` on Mac Catalyst and `canPreview(_:)` on iOS. This
-keeps platform selection in one place and happens at compile time.
+Resetting the lazy inside the rejection handler is not safe. React
+re-renders the suspended screen right after the rejection, picks up the
+new lazy, and loads again before any boundary sees the error. With a
+chun
 
-# Test Plan
-
-Tested with
-- `expo-file-system` 58.0.11
-- `expo` 58.0.19
-- Xcode 27.1
-- macOS 27.0 (Mac Catalyst)
-
-After patched: build pass on both Mac Catalyst and regular iOS device
-(both Debug and Release configurations).
-
-# Screenshots
-
-<img width="2479" height="1047" alt="02"
-src="h
-
-**File**: `.changeset/file-system-catalyst-preview.md` (added, +5/-0)
+**File**: `.changeset/router-retry-failed-async-route.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+'expo-file-system': patch
++'expo-router': patch
 +---
 +
-+Fix Mac Catalyst builds failing with `Type 'QLPreviewController' has no member 'canPreview'`.
++Allow retrying async route loads after a route chunk fails to download.
 ```
 
-**File**: `packages/expo-file-system/ios/FileSystemModule.swift` (modified, +10/-2)
+**File**: `packages/expo-router/src/__tests__/useScreens.test.web.tsx` (added, +107/-0)
 ```diff
-@@ -61,12 +61,20 @@ public final class FileSystemModule: Module {
-   }
- 
-   #if os(iOS)
-+  private func canPreviewItem(_ item: FileSystemPreviewItem) -> Bool {
-+    #if targetEnvironment(macCatalyst)
-+    return QLPreviewController.canPreviewItem(item)
-+    #else
-+    return QLPreviewController.canPreview(item)
-+    #endif
-+  }
+@@ -0,0 +1,107 @@
++/** @jest-environment jsdom */
 +
-   private func canPreview(file: FileSystemFile) throws -> Bool {
-     return try file.withCorrectTypeAndScopedAccess(permission: .read) {
-       guard file.exists else {
-         return false
-       }
--      return QLPreviewController.canPreview(FileSystemPreviewItem(url: file.url, title: nil))
-+      return canPreviewItem(FileSystemPreviewItem(url: file.url, title: nil))
-     }
-   }
++import type { LoadedRoute, RouteNode } from '../Route';
++import { act, renderRouter } from '../testing-library';
++import { createAsyncScreenComponent } from '../useScreens';
++import { Slot } from '../views/Navigator';
++import type { ErrorBoundaryProps } from '../views/Try';
++
++function createRoute(loadRoute: () => LoadedRoute | PromiseLike<LoadedRoute>) {
++  const route: RouteNode = {
++    type: 'route',
++    route: 'index',
++    contextKey: './index.tsx',
++    children: [],
++    dynamic: null,
++    // @ts-expect-error RouteNode declares loadRoute as synchronous, but lazy routes return promises.
++    loadRoute,
++  };
++  return route;
++}
++
++async function retry(boundary: jest.Mock<null, [ErrorBoundaryProps]>) {
++  await act(() => {
++    // A failed retry can leave this promise pending; let act flush the boundary update instead.
++    void boundary.mock.lastCall![0].retry();
++  });
++}
++
++describe(createAsyncScreenComponent, () => {
++  afterEach(() => {
++    // Restore timers before Testing Library's outer cleanup hook flushes microtasks.
++    jest.useRealTimers();
++  });
++
++  it('retries failed route loads and reuses the loaded screen on remount', async () => {
++    const firstError = new Error('First download failed');
++    const secondError = new Error('Second download failed');
++    const LoadedScreen = jest.fn(() => null);
++    const ErrorBoundary = jest.fn((_props: ErrorBoundaryProps) => null);
++    const SuspenseFallback = jest.fn(() => null);
++    const loadRoute = jest
++      .fn<Promise<LoadedRoute>, []>()
++      .mockRejectedValueOnce(firstError)
++      .mockRejectedValueOnce(secondError)
++      .mockResolvedValue({ default: LoadedScreen });
++    const Screen = createAsyncScreenComponent(createRoute(loadRoute));
++    const routes = {
++      _layout: { default: () => <Slot />, ErrorBoundary, SuspenseFallback },
++      index: () => <Screen />,
++    };
++    const view = await renderRouter(routes);
++
++    expect(ErrorBoundary.mock.lastCall?.[0].error).toBe(firstError);
++    expect(loadRoute).toHaveBeenCalledTimes(1);
++    expect(LoadedScreen).not.toHaveBeenCalled();
++
++    await retry(ErrorBoundary);
++
++    expect(ErrorBoundary.mock.lastCall?.[0].error).toBe(secondError);
++    expect(loadRoute).toHaveBeenCalledTimes(2);
++    expect(LoadedScreen).not.toHaveBeenCalled();
++
++    await retry(ErrorBoundary);
++
++    expect(loadRoute).toHaveBeenCalledTimes(3);
++    expect(LoadedScreen).toHaveBeenCalled();
++
++    await view.unmount();
++    LoadedScreen.mockClear();
++    ErrorBoundary.mockClear();
++    SuspenseFallback.mockClear();
++    await renderRouter(routes);
++
++    expect(LoadedScreen).toHaveBeenCalled();
++    expect(ErrorBoundary).not.toHaveBeenCalled();
++    expect(SuspenseFallback).not.toHaveBeenCalled();
++    expect(loadRoute).toHaveBeenCalledTimes(3);
++  });
++
++  it('resolves an already-loaded module without rendering the loading fallback on retry', async () => {
++    const loadError = new Error('Loading route chunk failed');
++    const LoadedScreen = jest.fn(() => null);
++    const ErrorBoundary = jest.fn((_props: ErrorBoundaryProps) => null);
++    const SuspenseFallback = jest.fn(() => null);
++    const loadRoute = jest
++      .fn<LoadedRoute | Promise<LoadedRoute>, []>()
++      .mockRejectedValueOnce(loadError)
++      .mockReturnValue({ default: LoadedScreen });
++    const Screen = createAsyncScreenComponent(createRoute(loadRoute));
++
++    await renderRouter({
++      _layout: { default: () => <Slot />, ErrorBoundary, SuspenseFallback },
++      index: () => <Screen />,
++    });
++
++    expect(ErrorBoundary.mock.lastCall?.[0].error).toBe(loadError);
++    expect(loadRoute).toHaveBeenCalledTimes(1);
++    expect(LoadedScreen).not.toHaveBeenCalled();
++    SuspenseFallback.mockClear();
++
++    await retry(ErrorBoundary);
++
++    expect(LoadedScreen).toHaveBeenCalled();
++    expect(SuspenseFallback).not.toHaveBeenCalled();
++    expect(loadRoute).toHaveBeenCalledTimes(2);
++  });
++});
+```
+
+**File**: `packages/expo-router/src/useScreens.tsx` (modified, +50/-21)
+```diff
+@@ -1,6 +1,6 @@
+ 'use client';
  
-@@ -98,7 +106,7 @@ public final class FileSystemModule: Module {
-         throw FilePreviewFileNotFoundException(file.url)
-       }
-       let item = FileSystemPreviewItem(url: file.url, title: options?.title)
--      guard QLPreviewController.canPreview(item) else {
-+      guard canPreviewItem(item) else {
-         throw FilePreviewUnsupportedException(file.url)
-       }
-       items.append(item)
+-import React, { use, useEffect, useMemo } from 'react';
++import React, { use, useEffect, useLayoutEffect, useMemo } from 'react';
+ 
+ import type { LoadedRoute, RouteNode } from './Route';
+ import {
+@@ -277,26 +277,7 @@ export function getQualifiedRouteComponent(value: RouteNode) {
+ 
+   // TODO: This ensures sync doesn't use React.lazy, but it's not ideal.
+   if (process.env.EXPO_ROUTER_IMPORT_MODE === 'lazy') {
+-    ScreenComponent = React.lazy<React.ComponentType<any>>(() => {
+-      const res = value.loadRoute() as LoadedRoute | PromiseLike<LoadedRoute>;
+-      // NOTE(@kitten): React.lazy supports promise likes, which we can use to ensure that
+-      // the route is synchronously available, if the `loadRoute` method returns a loaded route
+-      // synchronously
+-      if (!('then' in res)) {
+-        return {
+-          then(resolve) {
+-            const ret = fromImport(value, res);
+-            return Promise.resolve(resolve ? resolve(ret) : ret);
+-          },
+-        } as PromiseLike<{ default: React.ComponentType<any> }>;
+-      } else {
+-        return res.then(fromImport.bind(null, value));
+-      }
+-    });
+-
+-    if (__DEV__) {
+-      ScreenComponent.displayName = `AsyncRoute(${value.route})`;
+-    }
++    ScreenComponent = createAsyncScreenComponent(value);
+   } else {
+     const res = value.loadRoute() as LoadedRoute;
+     const result = fromImport(value, res);
+@@ -445,6 +426,54 @@ export function getQualifiedRouteComponent(value: RouteNode) {
+   return BaseRoute;
+ }
+ 
++/** Loads the route with `React.lazy` when the screen renders, and again after a failed load. */
++export function createAsyncScreenComponent(value: RouteNode): React.ComponentType<any> {
++  const createLazyScreen = () => {
++    const Lazy: React.ComponentType<any> = React.lazy<React.ComponentType<any>>(() => {
++      const res = value.loadRoute() as LoadedRoute | PromiseLike<LoadedRoute>;
++      // NOTE(@kitten): React.lazy supports promise likes, which we can use to ensure that
++      // the route is synchronously available, if the `loadRoute` method returns a loaded route
++      // synchronously
++      if (!('then' in res)) {
++        return {
++          then(resolve) {
++            const ret = fromImport(value, res);
++            return Promise.resolve(resolve ? resolve(ret) : ret);
++          },
++        } as PromiseLike<{ default: React.ComponentType<any> }>;
++      } else {
++        return res.then(fromImport.bind(null, value), (error: unknown) => ({
++          default: createFailedScreen(error, () => {
++            LazyScreen = createLazyScreen();
++          }),
++        }));
++      }
++    });
++
++    if (__DEV__) {
++      Lazy.displayName = `AsyncRoute(${value.route})`;
++    }
++    return Lazy;
++  };
++  let LazyScreen = createLazyScreen();
++
++  return function AsyncScreen(props: object) {
++    return <LazyScreen {...props} />;
++  };
++}
++
++/** Throws a failed route load to the nearest error boundary after commit, once `reset` has prepared the next load. */
++function createFailedScreen(error: unknown, reset: () => void) {
++  return function FailedAsyncRoute() {
++    useLayoutEffect(() => {
++      // A rejected `React.lazy` stays rejected, and a reset before commit makes React load the route again at once.
++      reset();
++      throw error;
++    }, []);
++    return null;
++  };
++}
++
+ // A separate component, so reading focus does not rerender the screen on focus changes.
+ function AllRoutesProtectedWarning() {
+   const isFocused = useIsFocused();
+```
+
+---
+
+### Incident Patch 3: `f5288529` (2026-10-27)
+**Commit Message**: fix(metro-config): Fix CSS transformer output when (unstable) graph optimization is enabled (#52126)
+
+## Summary
+
+Resolves #49502
+
+Regression triggers when our Metro transformer wraps CSS in JS. As such,
+the module is renamed to `*.css.js`, but with the graph optimization
+enabled, the worker leaves wrapping unfinished and skips this. The
+serializer however also skips the module, since it still sees the
+original `*.css` extension.
+
+This follows from #31304 then #45657. However, the former PR adds the
+filename mismatch that triggers the above issue.
+
+When applied, this fix just looks at the `reconcile` metadata instead of
+the filename.
+
+## Set of changes
+
+- Add test covering the issue
+- Replace `reconcile` bail in serializer plugin
+
+---------
+
+Co-authored-by: kitten-agent <[REDACTED_EMAIL]>
+
+**File**: `.changeset/fix-css-transformer-reconciliation.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++'@expo/metro-config': patch
++---
++
++Fix invalid CSS transformer output when (unstable) graph optimization is enabled
+```
+
+**File**: `packages/@expo/metro-config/src/serializer/__tests__/reconcileTransformSerializerPlugin.test.ts` (added, +64/-0)
+```diff
+@@ -0,0 +1,64 @@
++import { Script } from 'node:vm';
++
++import * as worker from '../../transform-worker/transform-worker';
++import { serializeToWithGraph } from '../fork/__tests__/serializer-test-utils';
++import { reconcileTransformSerializerPlugin } from '../reconcileTransformSerializerPlugin';
++import { treeShakeSerializer } from '../treeShakeSerializerPlugin';
++
++jest.mock('../../transform-worker/transform-worker', () => {
++  const worker = jest.requireActual('../../transform-worker/transform-worker');
++  return { ...worker, transform: jest.fn(worker.transform) };
++});
++
++jest.mock('../../utils/findUpPackageJsonPath', () => ({
++  findUpPackageJsonPath: jest.fn(() => null),
++}));
++
++it.each([
++  { optimize: false, treeshake: false },
++  { optimize: true, treeshake: false },
++  { optimize: true, treeshake: true },
++])(
++  'wraps JavaScript produced by a CSS transformer (optimize: $optimize, treeshake: $treeshake)',
++  async ({ optimize, treeshake }) => {
++    const { transform } = jest.requireActual<typeof worker>(
++      '../../transform-worker/transform-worker'
++    );
++    jest
++      .mocked(worker.transform)
++      .mockImplementation((config, projectRoot, filename, data, options) => {
++        if (filename.endsWith('.css')) {
++          return transform(
++            config,
++            projectRoot,
++            `${filename}.js`,
++            Buffer.from(
++              `import { registerStyles } from './styles-runtime';
++               registerStyles(${JSON.stringify(data.toString('utf8'))});`
++            ),
++            options
++          );
++        }
++        return transform(config, projectRoot, filename, data, options);
++      });
++
++    const [[, , graph], bundle] = await serializeToWithGraph(
++      {
++        fs: {
++          'index.js': `import './styles.css';`,
++          'styles.css': '.container { background-color: white; }',
++          'styles-runtime.js': `export function registerStyles(css) {
++            globalThis.__REGISTERED_STYLES__ = css;
++          }`,
++        },
++        options: { platform: 'ios', dev: false, optimize, treeshake, output: 'static' },
++      },
++      [treeShakeSerializer, reconcileTransformSerializerPlugin]
++    );
++
++    const stylesheet = graph.dependencies.get('/app/styles.css')!;
++    expect(stylesheet).toBeDefined();
++    expect(stylesheet.output[0].data.code).toMatch(/^__d\(/);
++    expect(() => new Script(bundle[0].source)).not.toThrow();
++  }
++);
+```
+
+**File**: `packages/@expo/metro-config/src/serializer/reconcileTransformSerializerPlugin.ts` (modified, +3/-9)
+```diff
+@@ -168,19 +168,13 @@ export async function reconcileTransformSerializerPlugin(
+     value: Module<MixedOutput>,
+     outputItem: ExpoJsOutput
+   ): Promise<ExpoJsOutput> {
+-    if (
+-      outputItem.type !== 'js/module' ||
+-      value.path.endsWith('.json') ||
+-      value.path.match(/\.(s?css|sass)$/)
+-    ) {
+-      return outputItem;
+-    }
+-
+     // This should be cached by the transform worker for use here to ensure close to consistent
+     // results between the tree-shake and the final transform.
+     const reconcile = outputItem.data.reconcile;
+ 
+-    assert(reconcile, 'reconcile settings are required in the module graph for post transform.');
++    if (outputItem.type !== 'js/module' || !reconcile) {
++      return outputItem;
++    }
+ 
+     let ast = outputItem.data.ast;
+     assert(ast, 'Missing AST for module: ' + value.path);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #52379** (2026-10-27): [android][updates] Remove the BouncyCastle dependency (@lukmccall)
-- **PR #52377** (2026-10-27): [expo-camera] Keep ML Kit registrar constructors in R8 release builds (@alanjhughes)
-- **PR #52376** (2026-10-27): [ui][android] Fix crash when dragging Slider and VerticalSlider (@dorupopacaliman)
-- **PR #52374** (2026-10-27): [expo-web-browser] Present POPOVER as a form sheet on iPadOS 27 (@alanjhughes)
-- **PR #52372** (closed): [metro-config] Move the web asset srcset changelog entry to a changeset (@expo-bot)
-- **PR #52371** (2026-10-27): [fingerprint] Keep config modules from linked dependencies (@expo-tuft[bot])
+- **PR #52408** (2026-10-27): [verify] Bump verify engine to 0.11.21 (@brentvatne)
+- **PR #52406** (2026-10-27): chore(metro-config): Update to `noxcturnal@^0.1.11` and apply new visitor APIs (@kitten)
+- **PR #52405** (2026-10-27): [verify] Bump verify engine to 0.11.20 (@brentvatne)
+- **PR #52401** (2026-10-27): [android][sqlite] Reduce the native library size (@lukmccall)
+- **PR #52398** (2026-10-27): chore(ci): Bump Ruby to `3.4.11` (@ramonclaudio)
+- **PR #52388** (2026-10-27): [sdk-58] fix(cli): Listen on `127.0.0.1` when `--localhost` is passed (@ramonclaudio)
 
 ---
 
@@ -1086,25 +1307,25 @@ src="h
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [ui][android] Fix crash when dragging Slider and VerticalSlider (#52376)
+## X. [ui] Apply themeVariant and draw no container behind the inline community DateTi
 
 **RULE**:
-When implementing operations in `.changeset/expo-ui-android-slider-crash.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in expo/expo. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/expo-ui-datetimepicker-android-inline-container.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in expo/expo. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `597d7423`: [ui][android] Fix crash when dragging Slider and VerticalSlider (#52376). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e1c3f315`: [ui] Apply themeVariant and draw no container behind the inline community DateTimePicker on Android (#52323). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/expo-ui-android-slider-crash.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/expo-ui-datetimepicker-android-inline-container.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
 ---
-"@expo/ui": patch
+'@expo/ui': patch
 ---
 
-[Android] Fix a crash when dragging `Slider` or `VerticalSlider` in release builds. Their `onValueChange` and `onValueChangeFinished` events are now declared with `Event<T>()` in the view definition, as `ToggleButton` and `TextField` already do.
+[Android] The community `DateTimePicker` with `presentation="inline"` no longer draws Material 3's container color, matching iOS. The view behind the picker now shows through. Previously, the inline picker always showed on a tinted surface. To keep that surface, use `DateTimePicker` from `@expo/ui/jetpack-compose` instead.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1114,4 +1335,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `597d7423` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e1c3f315` are properly handled with clean fallback behavior.

@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T03:24:47.944Z",
-    "lastVerified": "2026-10-28T03:24:47.944Z",
+    "lastChecked": "2026-10-28T03:31:34.738Z",
+    "lastVerified": "2026-10-28T03:31:34.738Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -238,9 +238,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-28T03:04:38.371Z",
+    "lastChecked": "2026-10-28T03:31:33.221Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-28T03:04:38.371Z"
+    "lastVerified": "2026-10-28T03:31:33.221Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -424,5 +424,77 @@
     "lastChecked": "2026-10-28T03:24:45.361Z",
     "revisionIdentifier": "b81465d9",
     "lastVerified": "2026-10-28T03:24:45.361Z"
+  },
+  "iii-hq-iii": {
+    "name": "iii",
+    "officialUrl": "https://github.com/iii-hq/iii",
+    "lastChecked": "2026-10-28T03:31:18.305Z",
+    "revisionIdentifier": "8dd73dfc",
+    "lastVerified": "2026-10-28T03:31:18.305Z"
+  },
+  "hf-qwen-qwen3.8-27b": {
+    "name": "Qwen/Qwen3.8-27B",
+    "officialUrl": "https://huggingface.co/Qwen/Qwen3.8-27B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T03:31:20.865Z",
+    "lastVerified": "2026-10-28T03:31:20.865Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-qwen-qwen3-8-27b",
+    "contentHash": "aab339483193ee7783bcbffb9f0038d89fa2793cdbb04d2d56ba0969bab538d6",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "expo-expo": {
+    "name": "expo/expo",
+    "officialUrl": "https://github.com/expo/expo",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-28T03:31:28.981Z",
+    "lastVerified": "2026-10-28T03:31:28.981Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-expo-expo",
+    "contentHash": "3f2da62970527b8f2278cdb801cdb9541fe95df1b6e690d83b92e7eb96623077",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 7,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "projectcontour-contour": {
+    "name": "projectcontour/contour",
+    "officialUrl": "https://github.com/projectcontour/contour",
+    "sourceType": "github",
+    "technology": "HTML",
+    "lastChecked": "2026-10-28T03:31:30.854Z",
+    "lastVerified": "2026-10-28T03:31:30.854Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-projectcontour-contour",
+    "contentHash": "20ca2582db3703601a738708a6f85b068a6623fe32a804e1a8cfcf5dbb076f50",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hashicorp-boundary": {
+    "name": "boundary",
+    "officialUrl": "https://github.com/hashicorp/boundary",
+    "lastChecked": "2026-10-28T03:31:28.331Z",
+    "revisionIdentifier": "eeb38a1a",
+    "lastVerified": "2026-10-28T03:31:28.331Z"
+  },
+  "qdrant-qdrant": {
+    "name": "qdrant",
+    "officialUrl": "https://github.com/qdrant/qdrant",
+    "lastChecked": "2026-10-28T03:31:30.963Z",
+    "revisionIdentifier": "222b2e44",
+    "lastVerified": "2026-10-28T03:31:30.963Z"
   }
 }

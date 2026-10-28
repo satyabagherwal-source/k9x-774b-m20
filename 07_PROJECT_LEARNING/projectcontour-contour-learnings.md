@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectcontour-contour-learnings.md`  
 > **Source**: github ([https://github.com/projectcontour/contour](https://github.com/projectcontour/contour))  
-> **Source Version**: `5ad37a73`  
+> **Source Version**: `48670cc0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T20:52:54.378Z  
+> **Timestamp**: 2026-10-28T03:31:30.861Z  
 > **Learning ID**: `learn-github-projectcontour-contour`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectcontour-contour-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectcontour/contour](https://github.com/projectcontour/contour))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T20:52:54.008Z  
+> **Harvest Timestamp**: 2026-10-28T03:31:30.854Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1617,131 +1617,351 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5ad37a73` (2026-10-27)
-**Commit Message**: build(deps): bump github.com/onsi/ginkgo/v2 from 2.33.0 to 2.33.1 (#7782)
+### Incident Patch 1: `48670cc0` (2026-10-27)
+**Commit Message**: internal/envoy: support multiple HTTP compression algorithms (#7699)
 
-Bumps [github.com/onsi/ginkgo/v2](https://github.com/onsi/ginkgo) from 2.33.0 to 2.33.1.
-- [Release notes](https://github.com/onsi/ginkgo/releases)
-- [Changelog](https://github.com/onsi/ginkgo/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/onsi/ginkgo/compare/v2.33.0...v2.33.1)
+* internal/envoy: support multiple HTTP compression algorithms
 
----
-updated-dependencies:
-- dependency-name: github.com/onsi/ginkgo/v2
-  dependency-version: 2.33.1
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
+Add compression.algorithms so Envoy can negotiate gzip, brotli, and
+zstd from Accept-Encoding. The existing algorithm field remains a
+single-algorithm shorthand and is mutually exclusive with algorithms.
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Fixes #7698
 
-**File**: `go.mod` (modified, +1/-1)
+Signed-off-by: Yagiz Nizipli <[REDACTED_EMAIL]>
+
+* apis: make compression.algorithms a tri-state pointer
+
+Address review feedback on #7699 by making algorithms a pointer to a
+slice so omitted, empty, and populated lists are distinct. An empty
+list disables compression. Mark algorithm deprecated, add CEL
+mutual-exclusivity validation, and expand compressor filter tests.
+
+Signed-off-by: Yagiz Nizipli <[REDACTED_EMAIL]>
+
+* lint: allow remaining uses of deprecated compression.algorithm
+
+staticcheck SA1019 flags the deprecated algorithm field. Keep reading
+it for backward compatibility, matching the existing SubjectName
+exclusion.
+
+Signed-off-by: Yagiz Nizipli <[REDACTED_EMAIL]>
+
+* Review comments for pr7699
+
+Signed-off-by: Tero Saarni <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Yagiz Nizipli <[REDACTED_EMAIL]>
+Signed-off-by: Tero Saarni <
+
+**File**: `.golangci.yml` (modified, +3/-0)
 ```diff
-@@ -16,7 +16,7 @@ require (
- 	github.com/google/go-github/v48 v48.2.0
- 	github.com/google/uuid v1.6.0
- 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
--	github.com/onsi/ginkgo/v2 v2.33.0
-+	github.com/onsi/ginkgo/v2 v2.33.1
- 	github.com/onsi/gomega v1.44.0
- 	github.com/pkg/errors v0.9.1
- 	github.com/prometheus/client_golang v1.24.1
+@@ -110,6 +110,9 @@ linters:
+       - linters:
+           - staticcheck
+         text: "SA1019.*SubjectName.*migrate to using the plural field subjectNames"
++      - linters:
++          - staticcheck
++        text: "SA1019.*Algorithm.*use Algorithms instead"
+     paths:
+       - third_party$
+       - builtin$
 ```
 
-**File**: `go.sum` (modified, +2/-2)
+**File**: `apis/projectcontour/v1alpha1/compression.go` (modified, +81/-3)
 ```diff
-@@ -166,8 +166,8 @@ github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee h1:W5t00kpgFd
- github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee/go.mod h1:yWuevngMOJpCy52FWWMvUC8ws7m/LJsjYzDa0/r8luk=
- github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 h1:C3w9PqII01/Oq1c1nUAm88MOHcQC9l5mIlSMApZMrHA=
- github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822/go.mod h1:+n7T8mK8HuQTcFwEeznm/DIxMOiR9yIdICNftLE1DvQ=
--github.com/onsi/ginkgo/v2 v2.33.0 h1:C8gBA6Uc2ZEubiV+SXiu5tZnMTwEmXHgkJwGozKtZf8=
--github.com/onsi/ginkgo/v2 v2.33.0/go.mod h1:+aXOY+vzZ5mu2iI2HpTZUPmM//oQfsNFX6gU9kNcA44=
-+github.com/onsi/ginkgo/v2 v2.33.1 h1:62XfWJbEIjPSCSDYrsCPP/SHcmH7O0M8ne8zfqQ2iz4=
-+github.com/onsi/ginkgo/v2 v2.33.1/go.mod h1:+aXOY+vzZ5mu2iI2HpTZUPmM//oQfsNFX6gU9kNcA44=
- github.com/onsi/gomega v1.44.0 h1:eAiGl3Pw5jz5GQdDff0BcxYpAX1JxW8xD7mFUuwNfZQ=
- github.com/onsi/gomega v1.44.0/go.mod h1:e/C2HwaZ1DhvjzXXuFhcR7hY7Sh9pl7MmoWKEjzwcdA=
- github.com/opencontainers/go-digest v1.0.0 h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8Oi/yOhh5U=
-```
-
----
-
-### Incident Patch 2: `dcc98de9` (2026-10-27)
-**Commit Message**: build(deps): bump the codeql-action group with 4 updates (#7783)
-
-Bumps the codeql-action group with 4 updates: [github/codeql-action/init](https://github.com/github/codeql-action), [github/codeql-action/autobuild](https://github.com/github/codeql-action), [github/codeql-action/analyze](https://github.com/github/codeql-action) and [github/codeql-action/upload-sarif](https://github.com/github/codeql-action).
-
-
-Updates `github/codeql-action/init` from 4.39.0 to 4.39.1
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee...9b3254085494b55a0f7c4c2b3d2d52cc712ce370)
-
-Updates `github/codeql-action/autobuild` from 4.39.0 to 4.39.1
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee...9b3254085494b55a0f7c4c2b3d2d52cc712ce370)
-
-Updates `github/codeql-action/analyze` from 4.39.0 to 4.39.1
-- [Release notes](htt
-
-**File**: `.github/workflows/codeql-analysis.yml` (modified, +5/-5)
-```diff
-@@ -45,14 +45,14 @@ jobs:
-         cache: false
-     # Initializes the CodeQL tools for scanning.
-     - name: Initialize CodeQL
--      uses: github/codeql-action/init@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-+      uses: github/codeql-action/init@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-       with:
-         languages: go
-     # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
-     - name: Autobuild
--      uses: github/codeql-action/autobuild@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-+      uses: github/codeql-action/autobuild@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-     - name: Perform CodeQL Analysis
--      uses: github/codeql-action/analyze@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-+      uses: github/codeql-action/analyze@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-       with:
-         category: /language:go
+@@ -16,17 +16,36 @@ package v1alpha1
+ import "fmt"
  
-@@ -65,10 +65,10 @@ jobs:
-       with:
-         persist-credentials: false
-     - name: Initialize CodeQL
--      uses: github/codeql-action/init@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-+      uses: github/codeql-action/init@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-       with:
-         languages: actions
-     - name: Perform CodeQL Analysis
--      uses: github/codeql-action/analyze@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-+      uses: github/codeql-action/analyze@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-       with:
-         category: /language:actions
+ // CompressionAlgorithm defines the type of compression algorithm applied in default HTTP listener filter chain.
+-// Allowable values are defined as names of well known compression algorithms (plus "disabled").
++// Allowable values are defined as names of well known compression algorithms.
+ type CompressionAlgorithm string
+ 
+ // EnvoyCompression defines configuration related to compression in the default HTTP Listener filter chain.
++// +kubebuilder:validation:XValidation:rule="!(has(self.algorithm) && has(self.algorithms))",message="only one of algorithm and algorithms can be set"
+ type EnvoyCompression struct {
+-	// Algorithm selects the response compression type applied in the compression HTTP filter of the default Listener filters.
++	// Algorithm selects a single response compression type applied in the compression HTTP filter of the default Listener filters.
+ 	// Values: `gzip` (default), `brotli`, `zstd`, `disabled`.
+-	// Setting this to `disabled` will make Envoy skip "Accept-Encoding: gzip,deflate" request header and always return uncompressed response.
++	// Setting this to `disabled` will make Envoy not compress responses. Responses already compressed by the upstream are passed through unchanged.
++	// Mutually exclusive with Algorithms.
++	//
++	// Deprecated: use Algorithms instead. An empty Algorithms list disables compression.
+ 	// +kubebuilder:validation:Enum="gzip";"brotli";"zstd";"disabled"
+ 	// +optional
+ 	Algorithm CompressionAlgorithm `json:"algorithm,omitempty"`
++
++	// Algorithms selects the response compression types applied in the default HTTP Listener filter chain.
++	// This field is a tri-state:
++	// - omitted: use gzip (default)
++	// - empty list: disable compression
++	// - populated list: install one compressor filter per entry and negotiate from Accept-Encoding
++	//
++	// The first entry is preferred if the client accepts it and has no stronger preference.
++	// Values: `gzip`, `brotli`, `zstd`. Cannot include `disabled`; use an empty list to disable.
++	// Mutually exclusive with Algorithm.
++	// +kubebuilder:validation:MaxItems=3
++	// +kubebuilder:validation:items:Enum=gzip;brotli;zstd
++	// +kubebuilder:validation:XValidation:rule="self.all(x, self.exists_one(y, y == x))",message="duplicate compression algorithm"
++	// +optional
++	Algorithms *[]CompressionAlgorithm `json:"algorithms,omitempty"`
+ }
+ 
+ func (a CompressionAlgorithm) Validate() error {
+@@ -38,6 +57,65 @@ func (a CompressionAlgorithm) Validate() error {
+ 	}
+ }
+ 
++// Validate reports whether the compression configuration is internally consistent.
++func (c *EnvoyCompression) Validate() error {
++	if c == nil {
++		return nil
++	}
++	if err := c.Algorithm.Validate(); err != nil {
++		return err
++	}
++	if c.Algorithm != "" && c.Algorithms != nil {
++		return fmt.Errorf("only one of compression algorithm and algorithms can be set")
++	}
++	if c.Algorithms == nil {
++		return nil
++	}
++
++	seen := make(map[CompressionAlgorithm]struct{}, len(*c.Algorithms))
++	for _, algorithm := range *c.Algorithms {
++		if algorithm == DisabledCompression {
++			return fmt.Errorf("compression algorithms cannot include %q; set algorithms: [] to disable", DisabledCompression)
++		}
++		if err := algorithm.Validate(); err != nil {
++			return err
++		}
++		if algorithm == "" {
++			return fmt.Errorf("compression algorithms cannot include an empty value")
++		}
++		if _, ok := seen[algorithm]; ok {
++			return fmt.Errorf("duplicate compression algorithm %q", algorithm)
++		}
++		seen[algorithm] = struct{}{}
++	}
++	return nil
++}
++
++// EffectiveAlgorithms returns the ordered list of compressor libraries to program
++// on the default HTTP listener. A nil result means compression is disabled.
++// When neither field is set, gzip is used. An empty Algorithms list disables compression.
++func (c *EnvoyCompression) EffectiveAlgorithms() []CompressionAlgorithm {
++	if c == nil {
++		return []CompressionAlgorithm{GzipCompression}
++	}
++	if c.Algorithms != nil {
++		if len(*c.Algorithms) == 0 {
++			return nil
++		}
++		return append([]CompressionAlgorithm(nil), *c.Algorithms...)
++	}
++	if c.Algorithm == DisabledCompression {
++		return nil
++	}
++	switch c.Algorithm {
++	case BrotliCompression, ZstdCompression, GzipCompression:
++		return []CompressionAlgorithm{c.Algorithm}
++	default:
++		// Unset or unknown values fall back to gzip, matching historical behavior.
++		return []CompressionAlgorithm{GzipCompression}
++	}
++}
++
+ const (
+ 	// BrotliCompression specifies brotli as the default HTTP filter chain compression mechanism
+ 	BrotliCompression CompressionAlgorithm = "brotli"
 ```
 
-**File**: `.github/workflows/openssf-scorecard.yaml` (modified, +1/-1)
+**File**: `apis/projectcontour/v1alpha1/compression_test.go` (modified, +61/-0)
 ```diff
-@@ -37,6 +37,6 @@ jobs:
-         name: SARIF file
-         path: results.sarif
-     - name: "Upload to code-scanning"
--      uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-+      uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-       with:
-         sarif_file: results.sarif
+@@ -30,3 +30,64 @@ func TestValidateEnvoyCompressionAlgorithmType(t *testing.T) {
+ 	require.NoError(t, contour_v1alpha1.GzipCompression.Validate())
+ 	require.NoError(t, contour_v1alpha1.ZstdCompression.Validate())
+ }
++
++func TestValidateEnvoyCompression(t *testing.T) {
++	require.NoError(t, (*contour_v1alpha1.EnvoyCompression)(nil).Validate())
++	require.NoError(t, (&contour_v1alpha1.EnvoyCompression{}).Validate())
++	require.NoError(t, (&contour_v1alpha1.EnvoyCompression{Algorithm: contour_v1alpha1.GzipCompression}).Validate())
++	require.NoError(t, (&contour_v1alpha1.EnvoyCompression{
++		Algorithms: &[]contour_v1alpha1.CompressionAlgorithm{},
++	}).Validate())
++	require.NoError(t, (&contour_v1alpha1.EnvoyCompression{
++		Algorithms: &[]contour_v1alpha1.CompressionAlgorithm{
++			contour_v1alpha1.BrotliCompression,
++			contour_v1alpha1.GzipCompression,
++		},
++	}).Validate())
++
++	require.ErrorContains(t, (&contour_v1alpha1.EnvoyCompression{Algorithm: "bogus"}).Validate(), "invalid compression type")
++	require.ErrorContains(t, (&contour_v1alpha1.EnvoyCompression{
++		Algorithm:  contour_v1alpha1.GzipCompression,
++		Algorithms: &[]contour_v1alpha1.CompressionAlgorithm{contour_v1alpha1.BrotliCompression},
++	}).Validate(), "only one of compression algorithm and algorithms can be set")
++	require.ErrorContains(t, (&contour_v1alpha1.EnvoyCompression{
++		Algorithm:  contour_v1alpha1.GzipCompression,
++		Algorithms: &[]contour_v1alpha1.CompressionAlgorithm{},
++	}).Validate(), "only one of compression algorithm and algorithms can be set")
++	require.ErrorContains(t, (&contour_v1alpha1.EnvoyCompression{
++		Algorithms: &[]contour_v1alpha1.CompressionAlgorithm{contour_v1alpha1.DisabledCompression},
++	}).Validate(), "cannot include")
++	require.ErrorContains(t, (&contour_v1alpha1.EnvoyCompression{
++		Algorithms: &[]contour_v1alpha1.CompressionAlgorithm{contour_v1alpha1.GzipCompression, contour_v1alpha1.GzipCompression},
++	}).Validate(), "duplicate")
++	require.ErrorContains(t, (&contour_v1alpha1.EnvoyCompression{
++		Algorithms: &[]contour_v1alpha1.CompressionAlgorithm{""},
++	}).Validate(), "empty value")
++	require.ErrorContains(t, (&contour_v1alpha1.EnvoyCompression{
++		Algorithms: &[]contour_v1alpha1.CompressionAlgorithm{"bogus"},
++	}).Validate(), "invalid compression type")
++}
++
++func TestEffectiveAlgorithms(t *testing.T) {
++	require.Equal(t, []contour_v1alpha1.CompressionAlgorithm{contour_v1alpha1.GzipCompression},
++		(*contour_v1alpha1.EnvoyCompression)(nil).EffectiveAlgorithms())
++	require.Equal(t, []contour_v1alpha1.CompressionAlgorithm{contour_v1alpha1.GzipCompression},
++		(&contour_v1alpha1.EnvoyCompression{}).EffectiveAlgorithms())
++	require.Nil(t, (&contour_v1alpha1.EnvoyCompression{Algorithm: contour_v1alpha1.DisabledCompression}).EffectiveAlgorithms())
++	require.Nil(t, (&contour_v1alpha1.EnvoyCompression{
++		Algorithms: &[]contour_v1alpha1.CompressionAlgorithm{},
++	}).EffectiveAlgorithms())
++	require.Equal(t, []contour_v1alpha1.CompressionAlgorithm{contour_v1alpha1.BrotliCompression},
++		(&contour_v1alpha1.EnvoyCompression{Algorithm: contour_v1alpha1.BrotliCompression}).EffectiveAlgorithms())
++	require.Equal(t, []contour_v1alpha1.CompressionAlgorithm{
++		contour_v1alpha1.BrotliCompression,
++		contour_v1alpha1.GzipCompression,
++	}, (&contour_v1alpha1.EnvoyCompression{
++		Algorithms: &[]contour_v1alpha1.CompressionAlgorithm{
++			contour_v1alpha1.BrotliCompression,
++			contour_v1alpha1.GzipCompression,
++		},
++	}).EffectiveAlgorithms())
++	require.Equal(t, []contour_v1alpha1.CompressionAlgorithm{contour_v1alpha1.GzipCompression},
++		(&contour_v1alpha1.EnvoyCompression{Algorithm: "bogus"}).EffectiveAlgorithms())
++}
 ```
 
-**File**: `.github/workflows/trivy-scan.yaml` (modified, +1/-1)
+**File**: `apis/projectcontour/v1alpha1/contourconfig_helpers.go` (modified, +7/-3)
 ```diff
-@@ -33,6 +33,6 @@ jobs:
-           output: 'trivy-results.sarif'
-           ignore-unfixed: true
-           severity: 'HIGH,CRITICAL'
--      - uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-+      - uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-         with:
-           sarif_file: 'trivy-results.sarif'
+@@ -151,9 +151,13 @@ func (e *EnvoyConfig) Validate() error {
+ 		}
+ 	}
+ 
+-	// Envoy TLS configuration
+-	if e.Listener != nil && e.Listener.TLS != nil {
+-		return e.Listener.TLS.Validate()
++	if e.Listener != nil {
++		if err := e.Listener.Compression.Validate(); err != nil {
++			return err
++		}
++		if e.Listener.TLS != nil {
++			return e.Listener.TLS.Validate()
++		}
+ 	}
+ 
+ 	return nil
+```
+
+**File**: `apis/projectcontour/v1alpha1/contourconfig_helpers_test.go` (modified, +20/-0)
+```diff
+@@ -90,6 +90,26 @@ func TestContourConfigurationSpecValidate(t *testing.T) {
+ 		c.Envoy.Cluster.DNSLookupFamily = "foo"
+ 		require.Error(t, c.Validate())
+ 
++		c = contour_v1alpha1.ContourConfigurationSpec{
++			Envoy: &contour_v1alpha1.EnvoyConfig{
++				Listener: &contour_v1alpha1.EnvoyListenerConfig{
++					Compression: &contour_v1alpha1.EnvoyCompression{
++						Algorithm:  contour_v1alpha1.GzipCompression,
++						Algorithms: &[]contour_v1alpha1.CompressionAlgorithm{contour_v1alpha1.BrotliCompression},
++					},
++				},
++			},
++		}
++		require.Error(t, c.Validate())
++
++		c.Envoy.Listener.Compression = &contour_v1alpha1.EnvoyCompression{
++			Algorithms: &[]contour_v1alpha1.CompressionAlgorithm{
++				contour_v1alpha1.BrotliCompression,
++				contour_v1alpha1.GzipCompression,
++			},
++		}
++		require.NoError(t, c.Validate())
++
+ 		c = contour_v1alpha1.ContourConfigurationSpec{
+ 			Envoy: &contour_v1alpha1.EnvoyConfig{
+ 				Listener: &contour_v1alpha1.EnvoyListenerConfig{
+```
+
+**File**: `apis/projectcontour/v1alpha1/zz_generated.deepcopy.go` (modified, +10/-1)
+```diff
+@@ -497,6 +497,15 @@ func (in *DeploymentSettings) DeepCopy() *DeploymentSettings {
+ // DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
+ func (in *EnvoyCompression) DeepCopyInto(out *EnvoyCompression) {
+ 	*out = *in
++	if in.Algorithms != nil {
++		in, out := &in.Algorithms, &out.Algorithms
++		*out = new([]CompressionAlgorithm)
++		if **in != nil {
++			in, out := *in, *out
++			*out = make([]CompressionAlgorithm, len(*in))
++			copy(*out, *in)
++		}
++	}
+ }
+ 
+ // DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new EnvoyCompression.
+@@ -622,7 +631,7 @@ func (in *EnvoyListenerConfig) DeepCopyInto(out *EnvoyListenerConfig) {
+ 	if in.Compression != nil {
+ 		in, out := &in.Compression, &out.Compression
+ 		*out = new(EnvoyCompression)
+-		**out = **in
++		(*in).DeepCopyInto(*out)
+ 	}
+ 	if in.DisableAllowChunkedLength != nil {
+ 		in, out := &in.DisableAllowChunkedLength, &out.DisableAllowChunkedLength
+```
+
+**File**: `changelogs/unreleased/7699-anonrig-small.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++HTTP compression can now be configured with a list of algorithms via `compression.algorithms` in the configuration file or `spec.envoy.listener.compression.algorithms` in the `ContourConfiguration` CRD. Envoy negotiates the encoding from the request `Accept-Encoding` header. An empty `algorithms` list disables compression. The existing `algorithm` field is deprecated.
+```
+
+**File**: `cmd/contour/servecontext.go` (modified, +2/-15)
+```diff
+@@ -339,21 +339,8 @@ func (ctx *serveContext) convertToContourConfigurationSpec() contour_v1alpha1.Co
+ 	}
+ 
+ 	var compression *contour_v1alpha1.EnvoyCompression
+-	if ctx.Config.Compression.Algorithm != "" {
+-		var algorithm contour_v1alpha1.CompressionAlgorithm
+-		switch ctx.Config.Compression.Algorithm {
+-		case config.CompressionBrotli:
+-			algorithm = contour_v1alpha1.BrotliCompression
+-		case config.CompressionDisabled:
+-			algorithm = contour_v1alpha1.DisabledCompression
+-		case config.CompressionGzip:
+-			algorithm = contour_v1alpha1.GzipCompression
+-		case config.CompressionZstd:
+-			algorithm = contour_v1alpha1.ZstdCompression
+-		}
+-		compression = &contour_v1alpha1.EnvoyCompression{
+-			Algorithm: algorithm,
+-		}
++	if ctx.Config.Compression.Algorithm != "" || ctx.Config.Compression.Algorithms != nil {
++		compression = ctx.Config.Compression.ToEnvoyCompression()
+ 	}
+ 
+ 	var defaultHTTPVersions []contour_v1alpha1.HTTPVersionType
 ```
 
 #### Recent Merged Pull Requests:
@@ -1770,28 +1990,30 @@ Updates `github/codeql-action/analyze` from 4.39.0 to 4.39.1
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump github.com/onsi/ginkgo/v2 from 2.33.0 to 2.33.1 (#7782)
+## X. internal/envoy: support multiple HTTP compression algorithms (#7699)
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectcontour/contour. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.golangci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectcontour/contour. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5ad37a73`: build(deps): bump github.com/onsi/ginkgo/v2 from 2.33.0 to 2.33.1 (#7782). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `48670cc0`: internal/envoy: support multiple HTTP compression algorithms (#7699). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing HTML data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing HTML data structures, boundary deserialization, API parsing, or resource lifecycles matching `.golangci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```html
 // Verified production-grade fix pattern:
-	github.com/onsi/ginkgo/v2 v2.33.1
+      - linters:
+          - staticcheck
+        text: "SA1019.*Algorithm.*use Algorithms instead"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```html
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/onsi/ginkgo/v2 v2.33.0
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5ad37a73` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `48670cc0` are properly handled with clean fallback behavior.

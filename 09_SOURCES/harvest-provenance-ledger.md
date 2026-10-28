@@ -5677,3 +5677,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2` | `https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2` | `hf-cross-e` | Multi-dimensional audit evidence | 2026-10-28T03:18:04.278Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `e6aff936` | Multi-dimensional audit evidence | 2026-10-28T03:18:06.397Z |
 | `learn-huggingface-baai-bge-small-en-v1-5` | `https://huggingface.co/BAAI/bge-small-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-28T03:24:45.353Z |
+| `learn-github-expo-expo` | `https://github.com/expo/expo` | `142ce925` | Multi-dimensional audit evidence | 2026-10-28T03:31:29.784Z |
+| `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `48670cc0` | Multi-dimensional audit evidence | 2026-10-28T03:31:31.433Z |
+| `learn-huggingface-qwen-qwen3-8-27b` | `https://huggingface.co/Qwen/Qwen3.8-27B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-28T03:31:32.203Z |

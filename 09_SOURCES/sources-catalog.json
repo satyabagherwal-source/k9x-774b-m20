@@ -205,8 +205,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3.8-27B",
     "sourceVersion": "hf-qwen-qwen3.8-27b",
     "license": "Open-Source",
-    "contentHash": "56ba0a6f4fcc6b971e6be76466a88ef8469d426b3c9622139049f0d9d4f88837",
-    "lastHarvestedAt": "2026-10-25T07:18:16.471Z",
+    "contentHash": "aab339483193ee7783bcbffb9f0038d89fa2793cdbb04d2d56ba0969bab538d6",
+    "lastHarvestedAt": "2026-10-28T03:31:32.203Z",
     "learningId": "learn-huggingface-qwen-qwen3-8-27b"
   },
   "hf-black-forest-labs-flux.1-dev": {
@@ -6793,10 +6793,10 @@
     "repository": "projectcontour/contour",
     "platform": "github",
     "sourceUrl": "https://github.com/projectcontour/contour",
-    "sourceVersion": "5ad37a73",
+    "sourceVersion": "48670cc0",
     "license": "Apache-2.0",
-    "contentHash": "d3e6cc5f8143db64147ec0c717c27dd45c870bead03fc500db2d410221b43481",
-    "lastHarvestedAt": "2026-10-27T20:52:54.924Z",
+    "contentHash": "20ca2582db3703601a738708a6f85b068a6623fe32a804e1a8cfcf5dbb076f50",
+    "lastHarvestedAt": "2026-10-28T03:31:31.433Z",
     "learningId": "learn-github-projectcontour-contour"
   },
   "topoteretes-cognee": {
@@ -10333,10 +10333,10 @@
     "repository": "expo/expo",
     "platform": "github",
     "sourceUrl": "https://github.com/expo/expo",
-    "sourceVersion": "a476ff07",
+    "sourceVersion": "142ce925",
     "license": "MIT",
-    "contentHash": "cb24b128928a03768b98255d9602181b7e463e3227520b324374c60f0eb908ad",
-    "lastHarvestedAt": "2026-10-27T12:50:24.913Z",
+    "contentHash": "3f2da62970527b8f2278cdb801cdb9541fe95df1b6e690d83b92e7eb96623077",
+    "lastHarvestedAt": "2026-10-28T03:31:29.784Z",
     "learningId": "learn-github-expo-expo"
   },
   "vercel-swr": {

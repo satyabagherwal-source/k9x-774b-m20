@@ -5668,3 +5668,6 @@
 | `CYCLE-20261028-O1YQ` | `2026-10-28T03:18:04.274Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 998, Rule 5149, Rule 5150` | Yes (`2057185c...`) |
 | `CYCLE-20261028-O3LM` | `2026-10-28T03:18:06.394Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md` | Yes (`41e41169...`) |
 | `CYCLE-20261028-WNFP` | `2026-10-28T03:24:45.349Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 314, Rule 315` | Yes (`8dafd97d...`) |
+| `CYCLE-20261028-5BHX` | `2026-10-28T03:31:29.781Z` | `expo/expo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5151` | Yes (`3f2da629...`) |
+| `CYCLE-20261028-5CRP` | `2026-10-28T03:31:31.429Z` | `projectcontour/contour` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5152` | Yes (`20ca2582...`) |
+| `CYCLE-20261028-5DD4` | `2026-10-28T03:31:32.200Z` | `Qwen/Qwen3.8-27B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5153, Rule 5154, Rule 5155` | Yes (`aab33948...`) |

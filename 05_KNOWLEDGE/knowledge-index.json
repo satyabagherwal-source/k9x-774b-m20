@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T03:24:45.277Z",
+  "last_updated": "2026-10-28T03:31:32.126Z",
   "total_verified_learnings": 1155,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11519,8 +11519,8 @@
       "slug": "expo-expo",
       "platform": "github",
       "source_url": "https://github.com/expo/expo",
-      "source_version": "a476ff07",
-      "content_hash": "cb24b128928a03768b98255d9602181b7e463e3227520b324374c60f0eb908ad",
+      "source_version": "142ce925",
+      "content_hash": "3f2da62970527b8f2278cdb801cdb9541fe95df1b6e690d83b92e7eb96623077",
       "dossier_path": "07_PROJECT_LEARNING/expo-expo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/expo-expo-learnings.md",
       "promoted_rules": [
@@ -11538,6 +11538,11 @@
           "number": 4764,
           "title": "[ui][android] Fix crash when dragging Slider and VerticalSlider (#52376)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5151,
+          "title": "[ui] Apply themeVariant and draw no container behind the inline community DateTi",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11545,7 +11550,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:50:24.821Z",
+      "verified_at": "2026-10-28T03:31:29.657Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26299,7 +26304,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3.8-27B",
       "source_version": "hf-qwen-qwen3.8-27b",
-      "content_hash": "56ba0a6f4fcc6b971e6be76466a88ef8469d426b3c9622139049f0d9d4f88837",
+      "content_hash": "aab339483193ee7783bcbffb9f0038d89fa2793cdbb04d2d56ba0969bab538d6",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md",
       "promoted_rules": [
@@ -26332,6 +26337,21 @@
           "number": 4141,
           "title": "Partial Rotary Dimension (Partial-RoPE) Stride Alignment Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5153,
+          "title": "Hybrid Attention Layer Periodicity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5154,
+          "title": "Linear Attention Gating & Stability Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5155,
+          "title": "Multi-Token Prediction (MTP) Inference Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -26352,7 +26372,7 @@
         "learn-huggingface-hf-qwen-qwen3-8-27b-mv43c1y3",
         "learn-huggingface-hf-qwen-qwen3-8-27b-mv4gkm75"
       ],
-      "verified_at": "2026-10-25T07:18:16.400Z",
+      "verified_at": "2026-10-28T03:31:32.103Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43123,8 +43143,8 @@
       "slug": "projectcontour-contour",
       "platform": "github",
       "source_url": "https://github.com/projectcontour/contour",
-      "source_version": "5ad37a73",
-      "content_hash": "d3e6cc5f8143db64147ec0c717c27dd45c870bead03fc500db2d410221b43481",
+      "source_version": "48670cc0",
+      "content_hash": "20ca2582db3703601a738708a6f85b068a6623fe32a804e1a8cfcf5dbb076f50",
       "dossier_path": "07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
       "promoted_rules": [
@@ -43147,6 +43167,11 @@
           "number": 5000,
           "title": "build(deps): bump github.com/onsi/ginkgo/v2 from 2.33.0 to 2.33.1 (#7782)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5152,
+          "title": "internal/envoy: support multiple HTTP compression algorithms (#7699)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43154,7 +43179,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T20:52:54.836Z",
+      "verified_at": "2026-10-28T03:31:31.332Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -141278,6 +141303,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T03:18:04.182Z"
+    },
+    "rule-5151": {
+      "learning_id": "rule-5151",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5151,
+      "title": "[ui] Apply themeVariant and draw no container behind the inline community DateTi",
+      "source_url": "https://github.com/expo/expo",
+      "source_version": "142ce925",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T03:31:29.657Z"
+    },
+    "rule-5152": {
+      "learning_id": "rule-5152",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5152,
+      "title": "internal/envoy: support multiple HTTP compression algorithms (#7699)",
+      "source_url": "https://github.com/projectcontour/contour",
+      "source_version": "48670cc0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T03:31:31.332Z"
+    },
+    "rule-5153": {
+      "learning_id": "rule-5153",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5153,
+      "title": "Hybrid Attention Layer Periodicity Invariant",
+      "source_url": "https://huggingface.co/Qwen/Qwen3.8-27B",
+      "source_version": "hf-qwen-qwen3.8-27b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T03:31:32.103Z"
+    },
+    "rule-5154": {
+      "learning_id": "rule-5154",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5154,
+      "title": "Linear Attention Gating & Stability Invariant",
+      "source_url": "https://huggingface.co/Qwen/Qwen3.8-27B",
+      "source_version": "hf-qwen-qwen3.8-27b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T03:31:32.103Z"
+    },
+    "rule-5155": {
+      "learning_id": "rule-5155",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5155,
+      "title": "Multi-Token Prediction (MTP) Inference Consistency",
+      "source_url": "https://huggingface.co/Qwen/Qwen3.8-27B",
+      "source_version": "hf-qwen-qwen3.8-27b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T03:31:32.103Z"
     }
   },
   "aliases": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T03:24:45.363Z",
+  "last_updated": "2026-10-28T03:31:32.212Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -215,14 +215,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-8-27b",
-      "content_hash": "56ba0a6f4fcc6b971e6be76466a88ef8469d426b3c9622139049f0d9d4f88837",
-      "verified_at": "2026-10-25T07:18:16.483Z",
+      "content_hash": "aab339483193ee7783bcbffb9f0038d89fa2793cdbb04d2d56ba0969bab538d6",
+      "verified_at": "2026-10-28T03:31:32.212Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T07:18:16.483Z"
+      "last_updated": "2026-10-28T03:31:32.212Z"
     },
     "black-forest-labs/FLUX.1-dev": {
       "repository": "black-forest-labs/FLUX.1-dev",
@@ -10251,14 +10251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectcontour-contour",
-      "content_hash": "d3e6cc5f8143db64147ec0c717c27dd45c870bead03fc500db2d410221b43481",
-      "verified_at": "2026-10-27T20:52:54.933Z",
+      "content_hash": "20ca2582db3703601a738708a6f85b068a6623fe32a804e1a8cfcf5dbb076f50",
+      "verified_at": "2026-10-28T03:31:31.441Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T20:52:54.933Z"
+      "last_updated": "2026-10-28T03:31:31.441Z"
     },
     "topoteretes/cognee": {
       "repository": "topoteretes/cognee",
@@ -15516,14 +15516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-expo-expo",
-      "content_hash": "cb24b128928a03768b98255d9602181b7e463e3227520b324374c60f0eb908ad",
-      "verified_at": "2026-10-27T12:50:24.922Z",
+      "content_hash": "3f2da62970527b8f2278cdb801cdb9541fe95df1b6e690d83b92e7eb96623077",
+      "verified_at": "2026-10-28T03:31:29.792Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T12:50:24.922Z"
+      "last_updated": "2026-10-28T03:31:29.792Z"
     },
     "vercel/swr": {
       "repository": "vercel/swr",
