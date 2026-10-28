@@ -1265,8 +1265,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
     "sourceVersion": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
     "license": "Open-Source",
-    "contentHash": "737fcb88ebcea4d946e0cd8a1538985e40b2e50d312446c7f68f9a259d57c54c",
-    "lastHarvestedAt": "2026-10-25T04:18:44.344Z",
+    "contentHash": "56c38c0b9b2761541b0dbecc2a6bb45c2dcbdb8da987c924c15b761210448cc9",
+    "lastHarvestedAt": "2026-10-28T01:00:14.023Z",
     "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2"
   },
   "autonomous-ai-openharness": {
@@ -3733,10 +3733,10 @@
     "repository": "Orange-OpenSource/hurl",
     "platform": "github",
     "sourceUrl": "https://github.com/Orange-OpenSource/hurl",
-    "sourceVersion": "7e5c9d63",
+    "sourceVersion": "4b465615",
     "license": "Apache-2.0",
-    "contentHash": "fdd9e5c62dc8baf761da530a7f630d5c4ab6a24bd980675a177b054cde4514c9",
-    "lastHarvestedAt": "2026-10-26T13:58:18.250Z",
+    "contentHash": "3587a635561a965c3e8d5a682fdec4fb1369cda765fad7caa2f215b630d5c35d",
+    "lastHarvestedAt": "2026-10-28T01:00:07.093Z",
     "learningId": "learn-github-orange-opensource-hurl"
   },
   "gregberge-svgr": {
@@ -5423,10 +5423,10 @@
     "repository": "ydb-platform/ydb",
     "platform": "github",
     "sourceUrl": "https://github.com/ydb-platform/ydb",
-    "sourceVersion": "df783638",
+    "sourceVersion": "e389d007",
     "license": "Apache-2.0",
-    "contentHash": "32fc7a9ed96dacff6f2cd178b4e327ad4a794a83470ead9cd0570644a6e1381e",
-    "lastHarvestedAt": "2026-10-27T12:21:58.799Z",
+    "contentHash": "4865a7ee73a7334ce323ac13aeae3d9064a9f93747797661423aee049758c8c5",
+    "lastHarvestedAt": "2026-10-28T01:00:20.993Z",
     "learningId": "learn-github-ydb-platform-ydb"
   },
   "arco-design-arco-design-vue": {
@@ -7343,10 +7343,10 @@
     "repository": "arkivanov/Decompose",
     "platform": "github",
     "sourceUrl": "https://github.com/arkivanov/Decompose",
-    "sourceVersion": "d500db80",
+    "sourceVersion": "42fd8933",
     "license": "Apache-2.0",
-    "contentHash": "1df3589982b5320a64d5acf546b233f2765da87a2cb7af98eea4bde28cb0ac65",
-    "lastHarvestedAt": "2026-10-19T08:40:57.001Z",
+    "contentHash": "4d6f82f869d5ee5ca9c049c72107c6ef1cbad437714576c1606ab0dd9c4702a5",
+    "lastHarvestedAt": "2026-10-28T01:00:10.561Z",
     "learningId": "learn-github-arkivanov-decompose"
   },
   "langchain4j-langchain4j": {

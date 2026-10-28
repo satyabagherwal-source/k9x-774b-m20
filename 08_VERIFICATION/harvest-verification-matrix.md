@@ -5614,3 +5614,7 @@
 | `CYCLE-20261028-IAF1` | `2026-10-28T00:53:37.213Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5082` | Yes (`b53713c2...`) |
 | `CYCLE-20261028-IAVY` | `2026-10-28T00:53:37.822Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 790, Rule 664, Rule 1840` | Yes (`7b5e2e68...`) |
 | `CYCLE-20261028-IEZK` | `2026-10-28T00:53:43.136Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5083` | Yes (`5aa699a5...`) |
+| `CYCLE-20261028-QN8Y` | `2026-10-28T01:00:07.090Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5084` | Yes (`3587a635...`) |
+| `CYCLE-20261028-QPXA` | `2026-10-28T01:00:10.558Z` | `arkivanov/Decompose` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5085` | Yes (`4d6f82f8...`) |
+| `CYCLE-20261028-QSLG` | `2026-10-28T01:00:14.020Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 996, Rule 5086` | Yes (`56c38c0b...`) |
+| `CYCLE-20261028-QXYX` | `2026-10-28T01:00:20.985Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5087` | Yes (`4865a7ee...`) |

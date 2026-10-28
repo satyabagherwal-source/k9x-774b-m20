@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T00:53:43.065Z",
+  "last_updated": "2026-10-28T01:00:20.919Z",
   "total_verified_learnings": 1154,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3102,8 +3102,8 @@
       "slug": "arkivanov-decompose",
       "platform": "github",
       "source_url": "https://github.com/arkivanov/Decompose",
-      "source_version": "d500db80",
-      "content_hash": "1df3589982b5320a64d5acf546b233f2765da87a2cb7af98eea4bde28cb0ac65",
+      "source_version": "42fd8933",
+      "content_hash": "4d6f82f869d5ee5ca9c049c72107c6ef1cbad437714576c1606ab0dd9c4702a5",
       "dossier_path": "07_PROJECT_LEARNING/arkivanov-decompose-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arkivanov-decompose-learnings.md",
       "promoted_rules": [
@@ -3121,6 +3121,11 @@
           "number": 2429,
           "title": "Deep-Link Activity Re-Initialization State Guard",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5085,
+          "title": "Merge pull request #1049 from arkivanov/DefaultComponentContext-lifecycle-nullab",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3128,7 +3133,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T08:40:56.969Z",
+      "verified_at": "2026-10-28T01:00:10.476Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26851,7 +26856,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
       "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "content_hash": "737fcb88ebcea4d946e0cd8a1538985e40b2e50d312446c7f68f9a259d57c54c",
+      "content_hash": "56c38c0b9b2761541b0dbecc2a6bb45c2dcbdb8da987c924c15b761210448cc9",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md",
       "promoted_rules": [
@@ -26872,7 +26877,7 @@
         },
         {
           "number": 996,
-          "title": "Masked Mean Pooling Invariant",
+          "title": "Masked Mean Pooling Invariant for Variable-Length Sequences",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
@@ -26883,6 +26888,11 @@
         {
           "number": 3160,
           "title": "Tokenizer-Model Dimensional Consistency Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5086,
+          "title": "Tokenizer Special Token Consistency Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -26902,7 +26912,7 @@
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv40nmqt",
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv4emaqx"
       ],
-      "verified_at": "2026-10-25T04:18:44.290Z",
+      "verified_at": "2026-10-28T01:00:13.935Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41172,8 +41182,8 @@
       "slug": "orange-opensource-hurl",
       "platform": "github",
       "source_url": "https://github.com/Orange-OpenSource/hurl",
-      "source_version": "7e5c9d63",
-      "content_hash": "fdd9e5c62dc8baf761da530a7f630d5c4ab6a24bd980675a177b054cde4514c9",
+      "source_version": "4b465615",
+      "content_hash": "3587a635561a965c3e8d5a682fdec4fb1369cda765fad7caa2f215b630d5c35d",
       "dossier_path": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "promoted_rules": [
@@ -41206,6 +41216,11 @@
           "number": 4618,
           "title": "Minor stylistic fix.",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5084,
+          "title": "Update docs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41213,7 +41228,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T13:58:18.175Z",
+      "verified_at": "2026-10-28T01:00:07.007Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54501,8 +54516,8 @@
       "slug": "ydb-platform-ydb",
       "platform": "github",
       "source_url": "https://github.com/ydb-platform/ydb",
-      "source_version": "df783638",
-      "content_hash": "32fc7a9ed96dacff6f2cd178b4e327ad4a794a83470ead9cd0570644a6e1381e",
+      "source_version": "e389d007",
+      "content_hash": "4865a7ee73a7334ce323ac13aeae3d9064a9f93747797661423aee049758c8c5",
       "dossier_path": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "promoted_rules": [
@@ -54545,6 +54560,11 @@
           "number": 4748,
           "title": "tiering compatibility (#57038)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5087,
+          "title": "B2: Columnshard start: build the schema history from the diffs (#56671)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54552,7 +54572,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:21:58.729Z",
+      "verified_at": "2026-10-28T01:00:20.900Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -78206,15 +78226,15 @@
       "learning_id": "rule-996",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 996,
-      "title": "Masked Mean Pooling Invariant",
-      "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-      "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+      "title": "Masked Mean Pooling Invariant for Variable-Length Sequences",
+      "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+      "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-25T17:08:04.954Z"
+      "verified_at": "2026-10-28T01:00:13.935Z"
     },
     "rule-997": {
       "learning_id": "rule-997",
@@ -139977,6 +139997,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T00:53:43.047Z"
+    },
+    "rule-5084": {
+      "learning_id": "rule-5084",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5084,
+      "title": "Update docs",
+      "source_url": "https://github.com/Orange-OpenSource/hurl",
+      "source_version": "4b465615",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:00:07.007Z"
+    },
+    "rule-5085": {
+      "learning_id": "rule-5085",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5085,
+      "title": "Merge pull request #1049 from arkivanov/DefaultComponentContext-lifecycle-nullab",
+      "source_url": "https://github.com/arkivanov/Decompose",
+      "source_version": "42fd8933",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:00:10.476Z"
+    },
+    "rule-5086": {
+      "learning_id": "rule-5086",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5086,
+      "title": "Tokenizer Special Token Consistency Invariant",
+      "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+      "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:00:13.935Z"
+    },
+    "rule-5087": {
+      "learning_id": "rule-5087",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5087,
+      "title": "B2: Columnshard start: build the schema history from the diffs (#56671)",
+      "source_url": "https://github.com/ydb-platform/ydb",
+      "source_version": "e389d007",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:00:20.900Z"
     }
   },
   "aliases": {

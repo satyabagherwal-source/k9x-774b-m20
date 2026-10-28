@@ -5623,3 +5623,7 @@ Every entry in this ledger must capture:
 | `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `e8e3d347` | Multi-dimensional audit evidence | 2026-10-28T00:53:37.216Z |
 | `learn-huggingface-baai-bge-base-en-v1-5` | `https://huggingface.co/BAAI/bge-base-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-28T00:53:37.825Z |
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `62ebf71f` | Multi-dimensional audit evidence | 2026-10-28T00:53:43.140Z |
+| `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `4b465615` | Multi-dimensional audit evidence | 2026-10-28T01:00:07.093Z |
+| `learn-github-arkivanov-decompose` | `https://github.com/arkivanov/Decompose` | `42fd8933` | Multi-dimensional audit evidence | 2026-10-28T01:00:10.561Z |
+| `learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-28T01:00:14.023Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `e389d007` | Multi-dimensional audit evidence | 2026-10-28T01:00:20.993Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source**: github ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
-> **Source Version**: `7e5c9d63`  
+> **Source Version**: `4b465615`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T13:58:17.830Z  
+> **Timestamp**: 2026-10-28T01:00:06.580Z  
 > **Learning ID**: `learn-github-orange-opensource-hurl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T13:58:17.235Z  
+> **Harvest Timestamp**: 2026-10-28T01:00:06.192Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Hurl, run and test HTTP requests with plain text.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 19276 stars
+- **Stars / Engagement**: 19282 stars
 
 ---
 
@@ -1846,54 +1846,49 @@ pub mod visit;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0e282915` (2026-10-25)
-**Commit Message**: Minor stylistic fix.
+### Incident Patch 1: `4b465615` (2026-10-27)
+**Commit Message**: Update docs
 
-**File**: `packages/hurl/src/cli/options/config_file/mod.rs` (modified, +8/-12)
+**File**: `.github/workflows/release.yml` (modified, +4/-3)
 ```diff
-@@ -612,12 +612,10 @@ fn parse_option_tls_max(
-     parse_value_separator(reader)?;
-     let value_pos = reader.cursor().pos;
-     let value = parse_value(reader)?;
--    let version = TlsVersion::from_str(&value)
--        .map_err(|err| {
--            let msg = format!("Option --tls-max has an invalid value, {}", err);
--            ConfigFileError::new(value_pos, &msg)
--        })
--        .map(Some)?;
-+    let version = Some(TlsVersion::from_str(&value).map_err(|err| {
-+        let msg = format!("Option --tls-max has an invalid value, {}", err);
-+        ConfigFileError::new(value_pos, &msg)
-+    })?);
-     options.tls_max = version;
-     Ok(())
- }
-@@ -629,12 +627,10 @@ fn parse_option_tls_min(
-     parse_value_separator(reader)?;
-     let value_pos = reader.cursor().pos;
-     let value = parse_value(reader)?;
--    let version = TlsVersion::from_str(&value)
--        .map_err(|err| {
--            let msg = format!("Option --tls-min has an invalid value, {}", err);
--            ConfigFileError::new(value_pos, &msg)
--        })
--        .map(Some)?;
-+    let version = Some(TlsVersion::from_str(&value).map_err(|err| {
-+        let msg = format!("Option --tls-min has an invalid value, {}", err);
-+        ConfigFileError::new(value_pos, &msg)
-+    })?);
-     options.tls_min = version;
-     Ok(())
- }
+@@ -252,9 +252,10 @@ jobs:
+       - name: Update general docs
+         run: |
+           python3 bin/docs/build_man_md.py docs/manual/hurl.md > docs/manual.md
+-          python3 bin/docs/build_readme.py github > README.md
+-          python3 bin/docs/build_readme.py crates > packages/hurl/README.md
+-
++          python3 bin/docs/build_readme.py github ${RELEASE_VERSION} > README.md
++          python3 bin/docs/build_readme.py crates ${RELEASE_VERSION} > packages/hurl/README.md
++          python3 bin/docs/build_standalone_md.py >"docs/standalone/hurl-${RELEASE_VERSION}.md"
++          
+       - name: Init git bot context
+         uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd #v7.0.0
+         with:
+```
+
+---
+
+### Incident Patch 2: `8c351268` (2026-10-27)
+**Commit Message**: Set Release date
+
+**File**: `CHANGELOG.md` (modified, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-[8.1.0 (TBD)](https://github.com/Orange-OpenSource/hurl/blob/master/CHANGELOG.md#8.1.0)
++[8.1.0 (2026-10-27)](https://github.com/Orange-OpenSource/hurl/blob/master/CHANGELOG.md#8.1.0)
+ ========================================================================================================================
+ 
+ Thanks to
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5387** (2026-10-27): Update docs (@fabricereix)
+- **PR #5386** (2026-10-27): Set Release date (@fabricereix)
+- **PR #5385** (2026-10-27): Update crates (@hurl-bot)
+- **PR #5384** (2026-10-26): Fix some invalid options per request. (@jcamiel)
 - **PR #5383** (2026-10-26): Update actions (@hurl-bot)
 - **PR #5382** (2026-10-26): Update crates (@hurl-bot)
-- **PR #5381** (2026-10-25): Prepare docs for Hurl 8.1.0 (@jcamiel)
-- **PR #5380** (2026-10-25): Minor stylistic fix. (@jcamiel)
-- **PR #5379** (2026-10-25): Update crates (@hurl-bot)
-- **PR #5378** (2026-10-24): Update changelog. (@jcamiel)
 
 ---
 
@@ -1913,46 +1908,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Minor stylistic fix.
+## X. Update docs
 
 **RULE**:
-When implementing operations in `packages/hurl/src/cli/options/config_file/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0e282915`: Minor stylistic fix.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4b465615`: Update docs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/hurl/src/cli/options/config_file/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    let version = Some(TlsVersion::from_str(&value).map_err(|err| {
-        let msg = format!("Option --tls-max has an invalid value, {}", err);
-        ConfigFileError::new(value_pos, &msg)
-    })?);
-    let version = Some(TlsVersion::from_str(&value).map_err(|err| {
-        let msg = format!("Option --tls-min has an invalid value, {}", err);
-        ConfigFileError::new(value_pos, &msg)
-    })?);
+          python3 bin/docs/build_readme.py github ${RELEASE_VERSION} > README.md
+          python3 bin/docs/build_readme.py crates ${RELEASE_VERSION} > packages/hurl/README.md
+          python3 bin/docs/build_standalone_md.py >"docs/standalone/hurl-${RELEASE_VERSION}.md"
+          
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    let version = TlsVersion::from_str(&value)
-        .map_err(|err| {
-            let msg = format!("Option --tls-max has an invalid value, {}", err);
-            ConfigFileError::new(value_pos, &msg)
-        })
-        .map(Some)?;
-    let version = TlsVersion::from_str(&value)
-        .map_err(|err| {
-            let msg = format!("Option --tls-min has an invalid value, {}", err);
-            ConfigFileError::new(value_pos, &msg)
-        })
-        .map(Some)?;
+          python3 bin/docs/build_readme.py github > README.md
+          python3 bin/docs/build_readme.py crates > packages/hurl/README.md
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0e282915` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4b465615` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T00:53:43.150Z",
+  "last_updated": "2026-10-28T01:00:21.001Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1670,14 +1670,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "content_hash": "737fcb88ebcea4d946e0cd8a1538985e40b2e50d312446c7f68f9a259d57c54c",
-      "verified_at": "2026-10-25T04:18:44.351Z",
+      "content_hash": "56c38c0b9b2761541b0dbecc2a6bb45c2dcbdb8da987c924c15b761210448cc9",
+      "verified_at": "2026-10-28T01:00:14.030Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T04:18:44.351Z"
+      "last_updated": "2026-10-28T01:00:14.030Z"
     },
     "Bingsu/adetailer": {
       "repository": "Bingsu/adetailer",
@@ -5721,14 +5721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-orange-opensource-hurl",
-      "content_hash": "fdd9e5c62dc8baf761da530a7f630d5c4ab6a24bd980675a177b054cde4514c9",
-      "verified_at": "2026-10-26T13:58:18.258Z",
+      "content_hash": "3587a635561a965c3e8d5a682fdec4fb1369cda765fad7caa2f215b630d5c35d",
+      "verified_at": "2026-10-28T01:00:07.100Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T13:58:18.258Z"
+      "last_updated": "2026-10-28T01:00:07.100Z"
     },
     "gregberge/svgr": {
       "repository": "gregberge/svgr",
@@ -8256,14 +8256,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ydb-platform-ydb",
-      "content_hash": "32fc7a9ed96dacff6f2cd178b4e327ad4a794a83470ead9cd0570644a6e1381e",
-      "verified_at": "2026-10-27T12:21:58.807Z",
+      "content_hash": "4865a7ee73a7334ce323ac13aeae3d9064a9f93747797661423aee049758c8c5",
+      "verified_at": "2026-10-28T01:00:21.000Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T12:21:58.807Z"
+      "last_updated": "2026-10-28T01:00:21.000Z"
     },
     "arco-design/arco-design-vue": {
       "repository": "arco-design/arco-design-vue",
@@ -11061,14 +11061,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-arkivanov-decompose",
-      "content_hash": "1df3589982b5320a64d5acf546b233f2765da87a2cb7af98eea4bde28cb0ac65",
-      "verified_at": "2026-10-19T08:40:57.005Z",
+      "content_hash": "4d6f82f869d5ee5ca9c049c72107c6ef1cbad437714576c1606ab0dd9c4702a5",
+      "verified_at": "2026-10-28T01:00:10.568Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T08:40:57.005Z"
+      "last_updated": "2026-10-28T01:00:10.568Z"
     },
     "langchain4j/langchain4j": {
       "repository": "langchain4j/langchain4j",
