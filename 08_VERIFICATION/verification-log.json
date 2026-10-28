@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-ZK5V",
-    "timestamp": "2026-10-27T14:23:11.827Z",
-    "repository": "ooples/token-optimizer-mcp",
-    "learningId": "learn-github-ooples-token-optimizer-mcp",
-    "contentHash": "b4140bcc4d54484c9325e02d3fabeae090017a088aa3c1382165d053ef0a957e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-3RMI",
-    "timestamp": "2026-10-27T14:26:28.122Z",
-    "repository": "Ataraxy-Labs/sem",
-    "learningId": "learn-github-ataraxy-labs-sem",
-    "contentHash": "8a4470177454f716f19750e3e8e4a65a05e20a93b8c68b0511131074641c5d20",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-3WAQ",
-    "timestamp": "2026-10-27T14:26:34.178Z",
-    "repository": "projectdiscovery/nuclei",
-    "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "9a2955f4d38ddd289ba410c49b7aafc7fe5226d23f456c6a9f4bf5fd819b99d6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-8010",
     "timestamp": "2026-10-27T14:29:45.636Z",
     "repository": "fastapi/fastapi",
@@ -7492,6 +7447,51 @@
     "contentHash": "204302ceb403baf987288409b1e31924f68341d859c2103650999e122d7938e5",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-CAUG",
+    "timestamp": "2026-10-28T18:04:43.624Z",
+    "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+    "contentHash": "e216f53ee73f432b58ea906a1c800b31c9111d3190db21d822945abd3a4cc9a7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-CBOS",
+    "timestamp": "2026-10-28T18:04:44.716Z",
+    "repository": "open-policy-agent/opa",
+    "learningId": "learn-github-open-policy-agent-opa",
+    "contentHash": "d41b9d948c3facce3019c7273c5f8a5a6ea5c2bbe9bdc4e0871ac4ba466fef4b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-CFWQ",
+    "timestamp": "2026-10-28T18:04:50.186Z",
+    "repository": "MariaDB/server",
+    "learningId": "learn-github-mariadb-server",
+    "contentHash": "917c10c8c2fe112ec9b098b6d93ee8adf0ded0c9828b7acfb5227afe25617dff",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

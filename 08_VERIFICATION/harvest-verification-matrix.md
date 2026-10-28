@@ -5869,3 +5869,6 @@
 | `CYCLE-20261028-SV2A` | `2026-10-28T17:49:36.706Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md` | Yes (`d1d27dfd...`) |
 | `CYCLE-20261028-T4S3` | `2026-10-28T17:49:49.299Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5356` | Yes (`a29309b3...`) |
 | `CYCLE-20261028-1SMA` | `2026-10-28T17:56:33.442Z` | `google/gemma-4-31B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md` | Yes (`204302ce...`) |
+| `CYCLE-20261028-CAUG` | `2026-10-28T18:04:43.624Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 372, Rule 5357` | Yes (`e216f53e...`) |
+| `CYCLE-20261028-CBOS` | `2026-10-28T18:04:44.716Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5358` | Yes (`d41b9d94...`) |
+| `CYCLE-20261028-CFWQ` | `2026-10-28T18:04:50.186Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5359` | Yes (`917c10c8...`) |

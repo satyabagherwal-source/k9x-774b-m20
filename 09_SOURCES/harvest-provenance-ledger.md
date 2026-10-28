@@ -5878,3 +5878,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-baai-bge-base-en-v1-5` | `https://huggingface.co/BAAI/bge-base-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-28T17:49:36.709Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `657cff6c` | Multi-dimensional audit evidence | 2026-10-28T17:49:49.302Z |
 | `learn-huggingface-google-gemma-4-31b-it` | `https://huggingface.co/google/gemma-4-31B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-28T17:56:33.446Z |
+| `learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-28T18:04:43.628Z |
+| `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `d6b52e2e` | Multi-dimensional audit evidence | 2026-10-28T18:04:44.720Z |
+| `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `825a9ba9` | Multi-dimensional audit evidence | 2026-10-28T18:04:50.189Z |

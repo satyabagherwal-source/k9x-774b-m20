@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source**: github ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
-> **Source Version**: `c894d977`  
+> **Source Version**: `825a9ba9`  
 > **License**: GPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T05:21:20.153Z  
+> **Timestamp**: 2026-10-28T18:04:49.604Z  
 > **Learning ID**: `learn-github-mariadb-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T05:21:19.952Z  
+> **Harvest Timestamp**: 2026-10-28T18:04:49.596Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: MariaDB server is a community developed fork of MySQL server. Started by core members of the original MySQL team, MariaDB actively works with outside developers to deliver the most featureful, stable, and sanely licensed open SQL server in the industry.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 8445 stars
+- **Stars / Engagement**: 8470 stars
 
 ---
 
@@ -1595,13 +1595,11 @@ C_MODE_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5973** (2026-10-24): **DuckDB: read VARCHAR values without a per-cell cast (P-Core Change #1)**
-  *Symptoms*: `store_duckdb_field_in_mysql_format()` got the text of a result cell with `Value::GetValue<string>()`. In DuckDB that is `ToString()`, which runs `DefaultCastAs(VARCHAR)` for every cell, also when the value already is a VARCHAR. SET, ENUM and (var)char columns arrive as VARCHAR, so every cell of such a column paid for a cast that returns the same string.  This adds `value_as_string()`, which returns the string of a VARCHAR value by reference and converts any other type as before. It is used for the (var)char, ENUM, SET and DECIMAL branches. The date and time branches and the BLOB branches are unchanged. The text stored in the field is the same, so there is no change in results. Only `storage/duckdb/convertor/duckdb_select.cc` changes (+22/-3).  Measured on a debug build of current 11.4, 50000 rows, median of 15 runs after subtracting the connection cost, two runs each (ms):  | select | before | after | |---|---|---| | varchar column | 202 / 210 | 150 / 153 | | SET column | 239 / 241 | 178 / 184 | | ENUM column | 223 / 225 | 170 / 177 | | `select *` | 651 / 665 | 504 / 505 | | int / bigint column | 70 / 71 | 70 / 71 | | `select *` on the same rows in InnoDB (control) | 310 / 311 | 317 |  These are debug build numbers on a laptop, so they show the relative gain and not release build speed.  Checks: - a `group_concat` md5 over id, varchar, SET and ENUM of all 50000 rows is equal between the DuckDB table and an InnoDB copy - `duckdb.create_table_column`, `duckdb.feature_duckdb_da
-  **Post-Mortem & Fix Analysis**:
-  > Closing: rebased on 11.4 with #5970 and measured; returning the string by reference gives no measurable gain over #5970's copy (debug build, 50k rows, strings up to 1000 chars).
+- **Issue #6018** (2026-10-28): **MDEV-41665 InnoDB assertion with result != FTS_INVALID on DELETE IGNORE with FK cascades on tables with FULLTEXT indexes**
+  *Symptoms*: Problem: ======= A foreign key cascade records its FTS operations (FTS_DELETE, FTS_INSERT) with fts_trx_add_op() while the cascade is still being processed, before it is known whether the row operation succeeds. If the row operation then fails with an error that the statement survives, row_mysql_handle_errors() rolls back the data to the row savepoint. The FTS state is not rolled back, because fts_savepoint_rollback_last_stmt() is only called when the whole statement is rolled back.  The stale FTS operations stay in trx->fts_trx. When the next row cascades into the same child row, the same operation is recorded again and fts_trx_row_get_new_state() hits an invalid transition (FTS_DELETE -> FTS_DELETE), which crashes the server.  Solution: ======== Defer the FTS operations of a cascade until the row operation has succeeded.  fts_trx_defer_op(): Queues the statement fts operation in fts_trx_t::pending, and row_update_for_mysql_using_upd_graph() applies them with fts_trx_flush_pending() after row_upd_step() succeeds, before the row's own FTS operations. The queue is discarded at the flushing operation and in error handling part.
 
-- **Issue #5970** (2026-10-24): **MDEV-41208: SIGABRT in duckdb::DuckDBAssertInternal**
-  *Symptoms*: stringify non-VARCHAR DuckDB values for MariaDB string fields  Mixed COALESCE is VARCHAR in MariaDB and INTEGER in DuckDB, so GetValueUnsafe<string>() asserted PhysicalType::VARCHAR. Convert with ToString() unless DuckDB actually stored a string.  https://jira.mariadb.org/browse/MDEV-41208
+- **Issue #6016** (2026-10-28): **MDEV-36295 backport followup, wrong version marker in test file**
+  *Symptoms*: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1618,136 +1616,113 @@ C_MODE_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9cdcb266` (2026-10-01)
-**Commit Message**: MDEV-41240 I_S.TABLES crash with TABLE_NAME and a subquery
+### Incident Patch 1: `825a9ba9` (2026-10-02)
+**Commit Message**: MDEV-41372 Grant_tables::open_and_lock() leaves tables with a dangling pos_in_table_list
 
-Do not use the fast path when the query has a subquery. Evaluating
-that predicate while get_all_tables() uses a temporary MEM_ROOT
-freed the subquery JOIN before outer JOIN cleanup.
+Grant_tables::open_and_lock() allocated the TABLE_LIST array with
+my_malloc() and freed it before returning. The opened privilege
+tables stay on thd->open_tables until close_mysql_tables() or the
+end of the statement, and their TABLE::pos_in_table_list still
+pointed into the freed array.
 
-**File**: `mysql-test/main/mdev_31342.result` (modified, +64/-0)
+Allocate the array on thd->mem_root instead, so it lives as long
+as the statement. It still stays off the stack, so the MDEV-34388
+fix holds.
+
+**File**: `mysql-test/suite/innodb/r/global_priv_to_innodb.result` (added, +23/-0)
 ```diff
-@@ -919,3 +919,67 @@ information_schema.TABLES.TABLE_NAME	user	user	4	4	0	0	4.0000	NULL	ENUM('user')
- # MDEV-41204: client cursor protocol uses fallback
- # (also covered by running this test with --cursor-protocol)
- #
-+#
-+# MDEV-41240: exact TABLE_NAME lookup plus a materialised subquery
-+#
-+CREATE DATABASE mdev41240;
-+CREATE TABLE mdev41240.t1(a INT);
-+EXPLAIN FORMAT=JSON SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
-+WHERE TABLE_SCHEMA='mdev41240' AND TABLE_NAME='t1'
-+  AND TABLE_NAME IN (SELECT 't1' UNION SELECT 'x');
-+EXPLAIN
-+{
-+  "query_block": {
-+    "select_id": 1,
-+    "cost": 0.01423506,
-+    "nested_loop": [
-+      {
-+        "table": {
-+          "table_name": "TABLES",
-+          "access_type": "ALL",
-+          "key": "TABLE_SCHEMA,TABLE_NAME",
-+          "loops": 1,
-+          "cost": 0.01423506,
-+          "attached_condition": "information_schema.`TABLES`.TABLE_SCHEMA = 'mdev41240' and information_schema.`TABLES`.`TABLE_NAME` = 't1' and <in_optimizer>(information_schema.`TABLES`.`TABLE_NAME`,<exists>(subquery#2))",
-+          "skip_open_table": true,
-+          "scanned_databases": 0
-+        }
-+      }
-+    ],
-+    "subqueries": [
-+      {
-+        "query_block": {
-+          "union_result": {
-+            "table_name": "<union2,3>",
-+            "access_type": "ALL",
-+            "query_specifications": [
-+              {
-+                "query_block": {
-+                  "select_id": 2,
-+                  "table": {
-+                    "message": "No tables used"
-+                  }
-+                }
-+              },
-+              {
-+                "query_block": {
-+                  "select_id": 3,
-+                  "operation": "UNION",
-+                  "table": {
-+                    "message": "No tables used"
-+                  }
-+                }
-+              }
-+            ]
-+          }
-+        }
-+      }
-+    ]
-+  }
-+}
-+SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
-+WHERE TABLE_SCHEMA='mdev41240' AND TABLE_NAME='t1'
-+  AND TABLE_NAME IN (SELECT 't1' UNION SELECT 'x');
-+TABLE_NAME
-+t1
-+DROP DATABASE mdev41240;
+@@ -0,0 +1,23 @@
++CREATE USER 'gp_admin'@'localhost' IDENTIFIED BY 'Admin123!';
++GRANT ALL PRIVILEGES ON *.* TO 'gp_admin'@'localhost' WITH GRANT OPTION;
++RENAME TABLE mysql.global_priv TO mysql.global_priv_local;
++CREATE TABLE IF NOT EXISTS mysql.global_priv (
++Host CHAR(255) BINARY NOT NULL,
++User CHAR(128) BINARY NOT NULL,
++Priv JSON NOT NULL,
++PRIMARY KEY (Host, User)
++) ENGINE=InnoDB CHARACTER SET utf8mb3 COLLATE utf8mb3_bin;
++SELECT engine
++FROM information_schema.tables
++WHERE table_schema = 'mysql' AND table_name = 'global_priv';
++engine
++InnoDB
++INSERT INTO mysql.global_priv SELECT * FROM mysql.global_priv_local;
++FLUSH PRIVILEGES;
++connect  joiner, localhost, gp_admin, Admin123!;
++USE mysql;
++disconnect joiner;
++connection default;
++DROP TABLE mysql.global_priv;
++RENAME TABLE mysql.global_priv_local TO mysql.global_priv;
++DROP USER 'gp_admin'@'localhost';
 ```
 
-**File**: `mysql-test/main/mdev_31342.test` (modified, +14/-0)
+**File**: `mysql-test/suite/innodb/t/global_priv_to_innodb.test` (added, +29/-0)
 ```diff
-@@ -396,3 +396,17 @@ WHERE TABLE_SCHEMA='mysql' AND TABLE_NAME='user' PROCEDURE ANALYSE();
- --echo # MDEV-41204: client cursor protocol uses fallback
- --echo # (also covered by running this test with --cursor-protocol)
- --echo #
+@@ -0,0 +1,29 @@
++--source include/have_innodb.inc
 +
-+--echo #
-+--echo # MDEV-41240: exact TABLE_NAME lookup plus a materialised subquery
-+--echo #
-+CREATE DATABASE mdev41240;
-+CREATE TABLE mdev41240.t1(a INT);
-+--replace_regex /`tables`/`TABLES`/ /"tables"/"TABLES"/
-+EXPLAIN FORMAT=JSON SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
-+WHERE TABLE_SCHEMA='mdev41240' AND TABLE_NAME='t1'
-+  AND TABLE_NAME IN (SELECT 't1' UNION SELECT 'x');
-+SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
-+WHERE TABLE_SCHEMA='mdev41240' AND TABLE_NAME='t1'
-+  AND TABLE_NAME IN (SELECT 't1' UNION SELECT 'x');
-+DROP DATABASE mdev41240;
++CREATE USER 'gp_admin'@'localhost' IDENTIFIED BY 'Admin123!';
++GRANT ALL PRIVILEGES ON *.* TO 'gp_admin'@'localhost' WITH GRANT OPTION;
++
++RENAME TABLE mysql.global_priv TO mysql.global_priv_local;
++
++CREATE TABLE IF NOT EXISTS mysql.global_priv (
++  Host CHAR(255) BINARY NOT NULL,
++  User CHAR(128) BINARY NOT NULL,
++  Priv JSON NOT NULL,
++  PRIMARY KEY (Host, User)
++) ENGINE=InnoDB CHARACTER SET utf8mb3 COLLATE utf8mb3_bin;
++
++SELECT engine
++  FROM information_schema.tables
++ WHERE table_schema = 'mysql' AND table_name = 'global_priv';
++
++INSERT INTO mysql.global_priv SELECT * FROM mysql.global_priv_local;
++FLUSH PRIVILEGES;
++
++connect (joiner, localhost, gp_admin, Admin123!);
++USE mysql;
++disconnect joiner;
++
++connection default;
++DROP TABLE mysql.global_priv;
++RENAME TABLE mysql.global_priv_local TO mysql.global_priv;
++DROP USER 'gp_admin'@'localhost';
 ```
 
-**File**: `sql/sql_show.cc` (modified, +11/-0)
+**File**: `sql/sql_acl.cc` (modified, +2/-5)
 ```diff
-@@ -4272,6 +4272,17 @@ static bool is_simple_is_query(THD *thd)
-     DBUG_PRINT("info", ("SQL_BUFFER_RESULT, using fallback path"));
-     return false;
+@@ -2751,10 +2751,8 @@ class Grant_tables
+   {
+     DBUG_ENTER("Grant_tables::open_and_lock");
+ 
+-    TABLE_LIST *first= nullptr, *tables=
+-      static_cast<TABLE_LIST*>(my_malloc(PSI_NOT_INSTRUMENTED,
+-                                         (USER_TABLE + 1) * sizeof *tables,
+-                                         MYF(MY_WME)));
++    TABLE_LIST *first= nullptr,
++               *tables= thd->calloc<TABLE_LIST>(USER_TABLE + 1);
+     int res= -1;
+     uint counter;
+ 
+@@ -2814,7 +2812,6 @@ class Grant_tables
+     }
+ 
+ func_exit:
+-    my_free(tables);
+     DBUG_RETURN(res);
    }
-+  /*
-+    A subquery in WHERE is evaluated from schema_table_store_record()
-+    while get_all_tables() may be using a temporary MEM_ROOT. Freeing
-+    that root leaves the subquery JOIN dangling.
-+  */
-+  if (sel->first_inner_unit() ||
-+      (sel->where && sel->where->with_subquery()))
-+  {
-+    DBUG_PRINT("info", ("subquery in I_S query, using fallback path"));
-+    return false;
-+  }
-   /*
-     Only allow no LIMIT, or LIMIT 1 exactly. Any other explicit LIMIT n
-     is rejected until a general LIMIT implementation is validated.
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5973** (closed): DuckDB: read VARCHAR values without a per-cell cast (P-Core Change #1) (@GoldenEmperor1177)
-- **PR #5970** (2026-10-24): MDEV-41208: SIGABRT in duckdb::DuckDBAssertInternal (@itzanway)
-- **PR #5967** (closed): MDEV-41684: Embedded: prepared TIME parameter reports column length 16 instead of 23 (@Omar-Abdo1)
-- **PR #5962** (2026-10-23): Fix a UBSAN runtime error on MacOSX. (@gkodinov)
-- **PR #5961** (2026-10-23): MDEV-41566 Allow ROW_NUMBER as unquoted column name (@sanja-byelkin)
-- **PR #5959** (closed): MDEV-41566 Allow ROW_NUMBER as unquoted column name (@sanja-byelkin)
+- **PR #6018** (2026-10-28): MDEV-41665 InnoDB assertion with result != FTS_INVALID on DELETE IGNORE with FK cascades on tables with FULLTEXT indexes (@Thirunarayanan)
+- **PR #6016** (2026-10-28): MDEV-36295 backport followup, wrong version marker in test file (@mariadb-RexJohnston)
+- **PR #6010** (2026-10-27): Fixup be807b2d047: match GnuTLS only in SSL test skips (@vaintroub)
+- **PR #6006** (2026-10-27): Fix SSL test failures with GnuTLS client (11.4) (@midenok)
+- **PR #6005** (2026-10-28): MDEV-38981 Galera loses wsrep_gtid_domain_id after pc.recovery restart (@sjaakola)
+- **PR #6003** (2026-10-27): Fix SSL test failures with GnuTLS client (10.11) (@midenok)
 
 ---
 
@@ -1767,58 +1742,43 @@ freed the subquery JOIN before outer JOIN cleanup.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. MDEV-41240 I_S.TABLES crash with TABLE_NAME and a subquery
+## X. MDEV-41372 Grant_tables::open_and_lock() leaves tables with a dangling pos_in_ta
 
 **RULE**:
-When implementing operations in `mysql-test/main/mdev_31342.result`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `mysql-test/suite/innodb/r/global_priv_to_innodb.result`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9cdcb266`: MDEV-41240 I_S.TABLES crash with TABLE_NAME and a subquery. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `825a9ba9`: MDEV-41372 Grant_tables::open_and_lock() leaves tables with a dangling pos_in_table_list. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `mysql-test/main/mdev_31342.result`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `mysql-test/suite/innodb/r/global_priv_to_innodb.result`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-#
-# MDEV-41240: exact TABLE_NAME lookup plus a materialised subquery
-#
-CREATE DATABASE mdev41240;
-CREATE TABLE mdev41240.t1(a INT);
-EXPLAIN FORMAT=JSON SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
-WHERE TABLE_SCHEMA='mdev41240' AND TABLE_NAME='t1'
-  AND TABLE_NAME IN (SELECT 't1' UNION SELECT 'x');
-EXPLAIN
-{
-  "query_block": {
-    "select_id": 1,
-    "cost": 0.01423506,
-    "nested_loop": [
-      {
-        "table": {
-          "table_name": "TABLES",
-          "access_type": "ALL",
-          "key": "TABLE_SCHEMA,TABLE_NAME",
-          "loops": 1,
-          "cost": 0.01423506,
-          "attached_condition": "information_schema.`TABLES`.TABLE_SCHEMA = 'mdev41240' and information_schema.`TABLES`.`TABLE_NAME` = 't1' and <in_optimizer>(information_schema.`TABLES`.`TABLE_NAME`,<exists>(subquery#2))",
-          "skip_open_table": true,
-          "scanned_databases": 0
-        }
-      }
-    ],
-    "subqueries": [
-      {
-        "query_block": {
-          "union_result": {
-            "table_name": "<union2,3>",
-            "access_type": "ALL",
-            "query_specifications": [
-              {
-                "query_block": {
-                  "select_id": 2,
-                  "t
+CREATE USER 'gp_admin'@'localhost' IDENTIFIED BY 'Admin123!';
+GRANT ALL PRIVILEGES ON *.* TO 'gp_admin'@'localhost' WITH GRANT OPTION;
+RENAME TABLE mysql.global_priv TO mysql.global_priv_local;
+CREATE TABLE IF NOT EXISTS mysql.global_priv (
+Host CHAR(255) BINARY NOT NULL,
+User CHAR(128) BINARY NOT NULL,
+Priv JSON NOT NULL,
+PRIMARY KEY (Host, User)
+) ENGINE=InnoDB CHARACTER SET utf8mb3 COLLATE utf8mb3_bin;
+SELECT engine
+FROM information_schema.tables
+WHERE table_schema = 'mysql' AND table_name = 'global_priv';
+engine
+InnoDB
+INSERT INTO mysql.global_priv SELECT * FROM mysql.global_priv_local;
+FLUSH PRIVILEGES;
+connect  joiner, localhost, gp_admin, Admin123!;
+USE mysql;
+disconnect joiner;
+connection default;
+DROP TABLE mysql.global_priv;
+RENAME TABLE mysql.global_priv_local TO mysql.global_priv;
+DROP USER 'gp_admin'@'localhost';
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1828,4 +1788,4 @@ EXPLAIN
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9cdcb266` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `825a9ba9` are properly handled with clean fallback behavior.

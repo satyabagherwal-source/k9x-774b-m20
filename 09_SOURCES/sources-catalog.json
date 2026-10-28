@@ -1265,8 +1265,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
     "sourceVersion": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
     "license": "Open-Source",
-    "contentHash": "56c38c0b9b2761541b0dbecc2a6bb45c2dcbdb8da987c924c15b761210448cc9",
-    "lastHarvestedAt": "2026-10-28T01:00:14.023Z",
+    "contentHash": "e216f53ee73f432b58ea906a1c800b31c9111d3190db21d822945abd3a4cc9a7",
+    "lastHarvestedAt": "2026-10-28T18:04:43.628Z",
     "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2"
   },
   "autonomous-ai-openharness": {
@@ -5823,10 +5823,10 @@
     "repository": "MariaDB/server",
     "platform": "github",
     "sourceUrl": "https://github.com/MariaDB/server",
-    "sourceVersion": "c894d977",
+    "sourceVersion": "825a9ba9",
     "license": "GPL-2.0",
-    "contentHash": "907d3ccf5933241d59b09456489399828165c4b36e81b80859140701a44468c7",
-    "lastHarvestedAt": "2026-10-25T05:21:20.611Z",
+    "contentHash": "917c10c8c2fe112ec9b098b6d93ee8adf0ded0c9828b7acfb5227afe25617dff",
+    "lastHarvestedAt": "2026-10-28T18:04:50.189Z",
     "learningId": "learn-github-mariadb-server"
   },
   "ng-zorro-ng-zorro-antd": {
@@ -6113,10 +6113,10 @@
     "repository": "open-policy-agent/opa",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/opa",
-    "sourceVersion": "21c9f6de",
+    "sourceVersion": "d6b52e2e",
     "license": "Apache-2.0",
-    "contentHash": "a100afcf87bbf0a01eb8e86c6e279bc27821f8119fdf62cdcc32f3e15815d9f4",
-    "lastHarvestedAt": "2026-10-27T19:06:50.303Z",
+    "contentHash": "d41b9d948c3facce3019c7273c5f8a5a6ea5c2bbe9bdc4e0871ac4ba466fef4b",
+    "lastHarvestedAt": "2026-10-28T18:04:44.720Z",
     "learningId": "learn-github-open-policy-agent-opa"
   },
   "dragonflydb-dragonfly": {

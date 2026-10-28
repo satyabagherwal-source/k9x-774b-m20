@@ -3,7 +3,7 @@
 > **Source Version**: `hf-sentence-`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-28T01:00:13.371Z  
+> **Timestamp**: 2026-10-28T18:04:42.857Z  
 > **Learning ID**: `learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,279 +17,196 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-This repository is not a software application but a **pre-trained neural network artifact** (weights + tokenizer configuration) designed to solve the **Semantic Similarity** problem across 50+ languages. It maps variable-length natural language text into a fixed-dimensional (768) dense vector space where Euclidean distance or Cosine Similarity correlates with semantic meaning.
+This repository is not a traditional software application but a **pre-trained neural network artifact** (weights + configuration) designed to solve the **Semantic Similarity** and **Sentence Embedding** problem. It maps variable-length natural language text (across 50+ languages) into a fixed-dimensional dense vector space (768 dimensions). The core architectural challenge it addresses is the **aggregation of contextual token embeddings** into a single, meaningful sentence representation that preserves semantic meaning while discarding syntactic noise.
 
 **Architectural Boundaries:**
-1.  **Model Core**: An `XLMRobertaModel` (XLM-RoBERTa) architecture. It is a Transformer Encoder-only model.
-2.  **Tokenizer**: A SentencePiece-based tokenizer (`XLMRobertaTokenizer`) that handles sub-word tokenization for multilingual text, including right-to-left scripts (Arabic, Hebrew) and complex scripts (Thai, Hindi).
-3.  **Pooling Layer**: The critical architectural decision is **Mean Pooling**. Unlike BERT which uses the `[CLS]` token, this model aggregates information from *all* non-padding tokens to create the final sentence embedding.
-4.  **Inference Boundary**: The model is stateless during inference. It accepts a batch of tokenized inputs and returns a batch of vectors. There is no internal state management (like KV-cache for generation) because it is an encoder, not a decoder.
+1.  **Input Boundary:** Raw text strings. The boundary is defined by the `XLMRobertaTokenizer`, which handles multilingual tokenization, padding, and truncation (max length 512).
+2.  **Processing Core:** The `XLMRobertaModel` (Transformer Encoder). It processes tokens in parallel, applying self-attention mechanisms to capture contextual dependencies.
+3.  **Aggregation Layer (The Critical Abstraction):** The model does not output a single vector directly. It outputs a sequence of token embeddings. The **Pooling Operation** (specifically **Mean Pooling**) is the critical architectural decision that reduces the sequence dimension to a single vector.
+4.  **Output Boundary:** A 768-dimensional float vector. This vector is invariant to the length of the input sentence (within the 512 token limit), enabling direct comparison via cosine similarity.
 
 **Critical Subsystem Abstractions:**
-*   **Tokenization Pipeline**: Text $\rightarrow$ Unicode Normalization $\rightarrow$ SentencePiece Tokenization $\rightarrow$ Padding/Truncation $\rightarrow$ Tensor.
-*   **Embedding Aggregation**: Token Embeddings (Sequence, Hidden) $\rightarrow$ Masked Mean Pooling $\rightarrow$ Sentence Embedding (Batch, Hidden).
-*   **Normalization**: The output vectors are typically L2-normalized (cosine similarity ready) in the `sentence-transformers` wrapper, though the raw model output is not normalized by default in the `transformers` library.
-
----
+*   **Tokenizer:** Converts text to integer IDs. Crucially, it generates an `attention_mask` which is the *only* source of truth for which tokens are real content vs. padding.
+*   **Transformer Backbone:** `XLMRobertaModel`. It is a frozen, pre-trained encoder.
+*   **Pooling Function:** A mathematical reduction operation. In this specific model, it is **Mean Pooling with Masking**. This is the "glue" that makes the model a *sentence* transformer rather than just a *word* transformer.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Masked Mean Pooling Invariant for Variable-Length Sequences
+### 1. The Masked Mean Pooling Invariant
 **RULE**:
-When aggregating token-level embeddings into a sentence-level embedding using mean pooling, you **MUST** apply the attention mask to both the numerator (sum of embeddings) and the denominator (count of valid tokens). You **MUST NOT** divide by the total sequence length including padding tokens.
+When aggregating variable-length sequences into a fixed-size vector using mean pooling, you **MUST** multiply the token embeddings by the attention mask before summing, and you **MUST** divide by the *count of non-padding tokens* (derived from the mask), not the total sequence length. You **MUST NOT** use a simple arithmetic mean of the entire tensor row.
 
 **WHY**:
-Padding tokens (usually ID 1 or 0) have arbitrary or zero embeddings. Including them in the average dilutes the semantic signal of the actual content. If a sentence is short but padded to the max length, the embedding will be skewed towards the padding vector, destroying similarity metrics. The denominator must be the count of *valid* tokens, clamped to prevent division by zero.
+Padding tokens (usually ID 0 or 1) have arbitrary or zero embeddings. Including them in the numerator adds noise, and including them in the denominator dilutes the signal of the actual content. If you divide by the padded length, the magnitude of the embedding vector becomes dependent on the sentence length, breaking the geometric properties required for cosine similarity (where direction matters, not magnitude, but consistent scaling is required for stable gradients and comparisons).
 
 **WHEN TO APPLY**:
-Any Transformer-based encoder model where the input sequence length varies and padding is used to batch inputs. Applies to BERT, RoBERTa, XLM-R, DistilBERT, etc.
+Any NLP pipeline that converts variable-length token sequences into fixed-size sentence embeddings (e.g., Sentence-BERT, DistilBERT, MPNet).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import torch
 
 def mean_pooling(model_output, attention_mask):
-    # model_output[0] is the last_hidden_state: (batch_size, seq_len, hidden_size)
+    # model_output[0] is the 'last_hidden_state' tensor of shape (batch, seq_len, hidden_size)
     token_embeddings = model_output[0]
     
-    # Expand mask to match embedding dimensions: (batch_size, seq_len, 1)
+    # Expand mask to match embedding dimensions: (batch, seq_len, 1)
+    # This allows broadcasting multiplication across the hidden dimension
     input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
     
-    # Numerator: Sum of valid embeddings
-    numerator = torch.sum(token_embeddings * input_mask_expanded, dim=1)
+    # Sum the masked embeddings
+    sum_embeddings = torch.sum(token_embeddings * input_mask_expanded, dim=1)
     
-    # Denominator: Count of valid tokens per sequence
-    # Clamp min=1e-9 to prevent division by zero if a sequence is entirely padding
-    denominator = torch.clamp(input_mask_expanded.sum(dim=1), min=1e-9)
+    # Calculate the count of non-padding tokens per sentence
+    # Clamp min=1e-9 to prevent division by zero if a sentence is empty or all padding
+    count = torch.clamp(input_mask_expanded.sum(dim=1), min=1e-9)
     
-    return numerator / denominator
+    # Perform the masked mean
+    return sum_embeddings / count
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Naive mean pooling ignoring padding
+# ANTI-PATTERN: Simple mean ignoring padding
 def bad_mean_pooling(model_output, attention_mask):
     token_embeddings = model_output[0]
-    # This divides by seq_len, which includes padding tokens
-    # If seq_len=512 but only 10 tokens are real, 99% of the vector is noise
+    # This includes padding tokens in the average, corrupting the semantic vector
     return torch.mean(token_embeddings, dim=1) 
 ```
 
 **VERIFICATION METHOD**:
-1.  Create a batch with two sentences: one short ("Hi"), one long ("This is a very long sentence...").
-2.  Pad both to the same length.
-3.  Compute embeddings using the correct masked pooling.
-4.  Assert that the embedding of the short sentence is **not** significantly closer to the zero vector than the long sentence (which would happen if padding was averaged in).
-5.  Unit test: Pass a sequence where `attention_mask` is all zeros. Assert the output is zero (or handled gracefully) and no `NaN`/`Inf` is produced.
+1.  Create two identical sentences, one padded to length 10 and one to length 50.
+2.  Compute embeddings using the correct masked pooling.
+3.  Assert that the cosine similarity between the two embeddings is exactly 1.0 (or within floating-point epsilon).
+4.  If using the bad pattern, the similarity will be < 1.0 because the padding noise differs.
 
-### 2. Tokenizer Special Token Consistency Invariant
+### 2. The Tokenizer-Model Contract Invariant
 **RULE**:
-The `cls_token`, `sep_token`, and `pad_token` IDs in the tokenizer configuration **MUST** match the model's expected special token IDs. For XLM-RoBERTa, `cls_token` is `<s>` (ID 0) and `sep_token` is `</s>` (ID 2). You **MUST NOT** assume standard BERT tokens (`[CLS]`, `[SEP]`) unless explicitly configured.
+The `attention_mask` generated by the tokenizer **MUST** be passed explicitly to the pooling function. You **MUST NOT** assume that the model output contains a valid mask or that padding tokens are zero in the embedding space. The mask is the *only* reliable indicator of valid content.
 
 **WHY**:
-XLM-RoBERTa uses SentencePiece, which has different special token conventions than WordPiece (BERT). If the tokenizer adds `[CLS]` (ID 101 in BERT) but the model expects `<s>` (ID 0), the model will treat the start of the sentence as a regular sub-word or unknown token, leading to degraded performance or complete failure in semantic alignment.
+Transformer models often initialize padding embeddings to non-zero values or learn specific representations for padding tokens. Relying on the assumption that "padding = 0" is a latent bug that manifests only when the model is fine-tuned or when using specific architectures where padding embeddings are not strictly zero.
 
 **WHEN TO APPLY**:
-When loading any model from the Hugging Face Hub, especially those based on SentencePiece (XLM-R, T5, mBART).
+Any system using Hugging Face Transformers or similar libraries where tokenization and model inference are decoupled.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-from transformers import AutoTokenizer
-
-tokenizer = AutoTokenizer.from_pretrained('sentence-transformers/paraphrase-multilingual-mpnet-base-v2')
-
-# Verify special tokens
-print(f"BOS: {tokenizer.bos_token} (ID: {tokenizer.bos_token_id})") # <s> (0)
-print(f"EOS: {tokenizer.eos_token} (ID: {tokenizer.eos_token_id})") # </s> (2)
-print(f"PAD: {tokenizer.pad_token} (ID: {tokenizer.pad_token_id})") # <pad> (1)
-
-# Ensure padding side is correct for the task
-# For sentence similarity, padding is usually on the right
-tokenizer.padding_side = "right"
+# Correct: Explicitly pass the mask from the tokenizer output
+encoded_input = tokenizer(sentences, padding=True, truncation=True, return_tensors='pt')
+model_output = model(**encoded_input)
+# Use encoded_input['attention_mask'] for pooling
+embeddings = mean_pooling(model_output, encoded_input['attention_mask'])
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Hardcoding BERT tokens for XLM-R
-tokenizer.cls_token = "[CLS]"  # This will break XLM-R
-tokenizer.sep_token = "[SEP]"  # This will break XLM-R
+# ANTI-PATTERN: Assuming padding is zero or ignoring the mask
+# This fails if the model learns non-zero embeddings for <pad> tokens
+embeddings = model_output[0].mean(dim=1) # No mask used
 ```
 
 **VERIFICATION METHOD**:
-1.  Load the tokenizer.
-2.  Assert `tokenizer.bos_token_id == 0` and `tokenizer.eos_token_id == 2` for this specific model.
-3.  Tokenize a simple sentence and verify the first token ID is 0 and the last is 2.
-
----
+1.  Inspect the `model_output[0]` tensor at positions where `attention_mask` is 0.
+2.  Assert that these values are NOT necessarily zero.
+3.  Verify that the pooling function accepts and utilizes the `attention_mask` argument.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: Since no specific commit diffs or bug issues were provided in the input data, the following incidents are derived from **known production pitfalls** associated with this specific model architecture and the `sentence-transformers` library, which are standard forensic findings in this domain.*
+*Note: As this is a static model repository, there are no runtime "incidents" in the traditional sense. However, we can identify **Architectural Defects** and **Common User Errors** that are effectively "production bugs" in the ecosystem.*
 
-### Incident 1: Division by Zero in Empty or All-Padding Batches (BUG-POOL-01)
-- **Context**: `mean_pooling` function in inference pipeline.
-- **What Was Expected**: Graceful handling of empty sequences or sequences that are entirely padding.
-- **What Actually Happened**: `RuntimeError: division by zero` or `NaN` values in embeddings when a batch contains a sequence with no valid tokens (e.g., empty string `""` which might tokenize to just padding if not handled).
-- **Evidence in Repo**: The `README.md` shows `torch.clamp(input_mask_expanded.sum(1), min=1e-9)`. This clamp is the fix.
-- **Root Cause**: `attention_mask.sum(1)` returns 0 for sequences with no valid tokens. Dividing by 0 in PyTorch results in `NaN` or `Inf`.
+### Incident 1: The "Diluted Embedding" Bug (BUG-DILUTE-01)
+- **Context**: User implementation of sentence embeddings using Hugging Face Transformers directly (without `sentence-transformers` library).
+- **What Was Expected**: Sentence embeddings should be comparable via cosine similarity regardless of sentence length.
+- **What Actually Happened**: Users who used `torch.mean(model_output[0], dim=1)` found that shorter sentences had higher similarity to each other than longer sentences, and overall similarity scores were lower than expected.
+- **Evidence in Repo**: The README explicitly provides the `mean_pooling` function with masking, implying that the naive approach is incorrect.
+- **Root Cause**: Padding tokens were included in the mean calculation. Since padding tokens have arbitrary embeddings, they added noise. Furthermore, dividing by the padded length (e.g., 512) instead of the actual token count (e.g., 10) scaled down the vector magnitude, making it dependent on length.
 - **Remediation Code Diff**:
 ```python
-// - Buggy code
-denominator = input_mask_expanded.sum(1)
-return torch.sum(token_embeddings * input_mask_expanded, 1) / denominator
+// - Buggy code: Naive mean
+// embeddings = model_output[0].mean(dim=1)
 
-// + Fixed pattern
-denominator = torch.clamp(input_mask_expanded.sum(1), min=1e-9)
-return torch.sum(token_embeddings * input_mask_expanded, 1) / denominator
+// + Fixed pattern: Masked mean
+// input_mask_expanded = attention_mask.unsqueeze(-1).expand(model_output[0].size()).float()
+// embeddings = torch.sum(model_output[0] * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
 ```
-- **Lesson**: Always clamp denominators in pooling operations to prevent numerical instability.
+- **Lesson**: Always mask out padding tokens when aggregating variable-length sequences.
 
-### Incident 2: Incorrect Pooling Strategy Leading to Poor Similarity Scores (BUG-POOL-02)
-- **Context**: User implementation of sentence embeddings.
-- **What Was Expected**: High cosine similarity for paraphrases.
-- **What Actually Happened**: Low similarity scores, model appears "broken".
-- **Evidence in Repo**: The model is trained with **Mean Pooling**. If a user uses `[CLS]` token pooling (common in BERT), the performance drops significantly.
-- **Root Cause**: Mismatch between training-time pooling strategy and inference-time pooling strategy.
+### Incident 2: The "Division by Zero" Crash (BUG-DIVZERO-02)
+- **Context**: Edge case where an input sentence is empty or consists entirely of padding tokens.
+- **What Was Expected**: The model should handle empty inputs gracefully or raise a clear error.
+- **What Actually Happened**: `RuntimeError: division by zero` or `NaN` values in the output embeddings.
+- **Evidence in Repo**: The README code uses `torch.clamp(input_mask_expanded.sum(1), min=1e-9)`.
+- **Root Cause**: If a sentence has no valid tokens, `input_mask_expanded.sum(1)` is 0. Dividing by 0 results in `inf` or `NaN`.
 - **Remediation Code Diff**:
 ```python
-// - Buggy code (using CLS token)
-sentence_embedding = model_output[0][:, 0]
+// - Buggy code:
+// count = input_mask_expanded.sum(1)
+// embeddings = sum_embeddings / count
 
-// + Fixed pattern (using mean pooling)
-sentence_embedding = mean_pooling(model_output, attention_mask)
+// + Fixed pattern:
+// count = torch.clamp(input_mask_expanded.sum(1), min=1e-9)
+// embeddings = sum_embeddings / count
 ```
-- **Lesson**: Always verify the pooling strategy used during training. For `sentence-transformers` models, check the model card or source code.
-
-### Incident 3: Tokenizer Truncation Cutting Off Critical Context (BUG-TOK-03)
-- **Context**: Processing long documents.
-- **What Was Expected**: Embedding of the full document.
-- **What Actually Happened**: Embedding only reflects the first 512 tokens, ignoring the rest.
-- **Evidence in Repo**: `config.json` shows `max_position_embeddings: 514` and `tokenizer_config.json` shows `model_max_length: 512`.
-- **Root Cause**: The model has a fixed context window. If input exceeds this, it is truncated.
-- **Remediation Code Diff**:
-```python
-// - Buggy code (no truncation handling)
-encoded_input = tokenizer(sentences, padding=True, return_tensors='pt')
-
-// + Fixed pattern (explicit truncation)
-encoded_input = tokenizer(sentences, padding=True, truncation=True, max_length=512, return_tensors='pt')
-```
-- **Lesson**: Always explicitly set `truncation=True` and `max_length` to match the model's limit.
-
-### Incident 4: Mixed Precision Inference Causing Numerical Drift (BUG-PREC-04)
-- **Context**: GPU inference with `float16`.
-- **What Was Expected**: Stable embeddings.
-- **What Actually Happened**: Slight variations in embeddings between runs, or `NaN` values in some cases.
-- **Evidence in Repo**: The TEI usage example uses `--dtype float16`.
-- **Root Cause**: `float16` has limited precision. Accumulating sums in `float16` can lead to overflow or loss of precision.
-- **Remediation Code Diff**:
-```python
-// - Buggy code (accumulating in float16)
-model = AutoModel.from_pretrained(..., torch_dtype=torch.float16)
-
-// + Fixed pattern (accumulating in float32, casting at end)
-model = AutoModel.from_pretrained(..., torch_dtype=torch.float32)
-# Or use autocast
-with torch.autocast(device_type="cuda", dtype=torch.float16):
-    model_output = model(**encoded_input)
-```
-- **Lesson**: Use `float32` for accumulation in pooling operations, even if the model weights are `float16`.
-
-### Incident 5: Language-Specific Tokenization Failures (BUG-TOK-05)
-- **Context**: Processing text with special characters (e.g., emojis, rare Unicode).
-- **What Was Expected**: Proper tokenization.
-- **What Actually Happened**: `UnicodeDecodeError` or unexpected token IDs.
-- **Evidence in Repo**: The model supports 50+ languages, but SentencePiece may not handle all Unicode characters gracefully.
-- **Root Cause**: SentencePiece tokenizer may not have tokens for all Unicode characters, leading to `<unk>` tokens or errors.
-- **Remediation Code Diff**:
-```python
-// - Buggy code (no error handling)
-encoded_input = tokenizer(sentences, padding=True, truncation=True, return_tensors='pt')
-
-// + Fixed pattern (sanitize input)
-import re
-def sanitize_text(text):
-    # Remove non-printable characters
-    return re.sub(r'[^\x20-\x7E]', '', text)
-
-sentences = [sanitize_text(s) for s in sentences]
-encoded_input = tokenizer(sentences, padding=True, truncation=True, return_tensors='pt')
-```
-- **Lesson**: Sanitize input text to remove non-printable characters before tokenization.
-
----
+- **Lesson**: Always guard against division by zero in normalization steps, especially when dealing with variable-length inputs.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
 1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Invariant**: `attention_mask` must be of type `torch.int64` or `torch.bool`. If it is `float`, `unsqueeze` and `expand` will work, but `sum` will return `float`. Ensure consistent dtype.
-    *   **Trap**: `torch.clamp(min=1e-9)` is critical. If you use `min=0`, you get division by zero. If you use `min=1`, you get incorrect scaling for short sequences.
-    *   **Code**:
-        ```python
-        # Correct
-        mask = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
-        # Incorrect (if attention_mask is int, .float() is needed for multiplication with float embeddings)
-        mask = attention_mask.unsqueeze(-1).expand(token_embeddings.size())
-        ```
+    *   **Type Coercition**: `attention_mask` is an integer tensor (0/1). It **MUST** be cast to `.float()` before multiplication with the float embedding tensor. If not, PyTorch may upcast the embeddings to integer, causing precision loss or errors.
+    *   **Broadcasting**: `attention_mask.unsqueeze(-1)` creates a tensor of shape `(batch, seq_len, 1)`. This is critical for broadcasting against `(batch, seq_len, hidden_size)`. Forgetting `.unsqueeze(-1)` will cause a shape mismatch error.
 
 2.  **Infinite Loop & Recursion Guards**:
-    *   **Invariant**: N/A for this model (no recursion). However, in the `sentence-transformers` library, the `encode` method may have internal batching logic. Ensure `batch_size` is not 0.
-    *   **Guard**: `if batch_size <= 0: raise ValueError("Batch size must be positive")`.
+    *   **N/A**: This is a feed-forward neural network. There are no loops or recursion in the inference path. The only "loop" is the internal iteration over transformer layers, which is fixed at 12 layers.
 
 3.  **UI & UX Micro-Mechanics**:
-    *   **Invariant**: N/A (backend model).
+    *   **N/A**: This is a backend model. No UI components.
 
 4.  **Backend Concurrency & Memory Safety**:
-    *   **Invariant**: The model is stateless. However, if using `torch.no_grad()`, ensure that no gradients are accidentally computed, which would increase memory usage.
-    *   **Guard**:
-        ```python
-        with torch.no_grad():
-            model_output = model(**encoded_input)
-        ```
+    *   **Memory Leak Prevention**: The `model_output` tensor holds the full sequence of token embeddings. If you process a large batch, this tensor can be very large. **MUST** ensure that `model_output` is not retained in memory after pooling. Use `del model_output` or let it go out of scope.
+    *   **GPU Memory**: If using GPU, ensure that `torch.no_grad()` is used during inference to prevent the computation graph from being stored, which would cause a memory leak.
 
 5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Invariant**: Check for `NaN` or `Inf` in the output embeddings.
-    *   **Guard**:
-        ```python
-        if not torch.all(torch.isfinite(sentence_embeddings)):
-            raise ValueError("Embeddings contain NaN or Inf values")
-        ```
-
----
+    *   **Null/Undefined Chaining**: Ensure that `model_output[0]` exists. If the model is configured to return only logits (not hidden states), `model_output[0]` might be the logits, not the embeddings. **MUST** verify the model's output structure.
+    *   **Off-by-One**: `max_position_embeddings` is 514, but `model_max_length` is 512. This is because XLM-RoBERTa adds special tokens (BOS, EOS). **MUST** ensure that the tokenizer truncates to 512, not 514, to avoid index out of bounds errors in the position embeddings.
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: Encoder-only Transformer (XLM-RoBERTa). 12 layers, 12 heads, 768 hidden size. No decoder, no KV-cache.
-2.  **Core Abstractions**: `XLMRobertaModel`, `XLMRobertaTokenizer`, `mean_pooling`.
-3.  **Error Handling**: `torch.clamp` for division by zero. `truncation=True` for length overflow.
-4.  **Testing**: Unit tests for pooling function with various mask patterns. Integration tests for similarity scores on known paraphrase pairs.
-5.  **Security**: No direct security risks, but input sanitization is needed to prevent tokenizer errors.
-6.  **Performance**: `float16` for GPU inference. `torch.no_grad()` for inference. Batching for throughput.
-7.  **Deployment**: Docker images for TEI (Text Embeddings Inference). `config.json` and `tokenizer_config.json` are critical for reproducibility.
-8.  **Agent Patterns**: N/A (not an agent).
-9.  **Data Flow**: Text $\rightarrow$ Tokenizer $\rightarrow$ Tensor $\rightarrow$ Model $\rightarrow$ Pooling $\rightarrow$ Embedding.
-
----
+1.  **Architecture**: The model is a **Transformer Encoder** (XLM-RoBERTa). It is a **frozen** model, meaning its weights are not updated during inference. The architecture is **symmetric** in the sense that it processes all tokens in parallel, but the **pooling** step introduces an asymmetry by aggregating the sequence.
+2.  **Core Abstractions**: The core abstraction is the **Sentence Embedding**. This is a 768-dimensional vector that represents the semantic meaning of a sentence. The **Attention Mask** is the second core abstraction, which defines the boundary between valid content and padding.
+3.  **Error Handling**: The model itself does not handle errors. Error handling is the responsibility of the **caller**. The caller must handle:
+    *   Empty inputs (division by zero).
+    *   Inputs longer than 512 tokens (truncation).
+    *   Invalid token IDs (tokenizer error).
+4.  **Testing**: The model is tested by evaluating its performance on standard benchmarks like STS (Semantic Textual Similarity). The **masked pooling** function is tested by ensuring that identical sentences with different padding lengths produce identical embeddings.
+5.  **Security**: The model is a static artifact. There are no security vulnerabilities in the model itself. However, the **tokenizer** can be a vector for attack if it is not properly sanitized. For example, extremely long inputs can cause memory exhaustion.
+6.  **Performance**: The model is optimized for **batch inference**. The **mean pooling** operation is O(N) where N is the sequence length. The **cosine similarity** calculation is O(D) where D is the embedding dimension (768). The model is **not** optimized for real-time, single-sentence inference on CPU.
+7.  **Deployment**: The model is deployed as a **Hugging Face Hub** artifact. It can be loaded using `AutoModel.from_pretrained`. The model is **quantized** to `float16` in the TEI (Text Embeddings Inference) deployment, which reduces memory usage by 50% with minimal loss in accuracy.
+8.  **Agent Patterns**: The model can be used as a **tool** in an AI agent. The agent can use the model to embed documents and then perform semantic search. The **context budget** is limited to 512 tokens per sentence.
+9.  **Data Flow**: The data flow is:
+    1.  Raw text -> Tokenizer -> Token IDs + Attention Mask.
+    2.  Token IDs -> Transformer -> Token Embeddings.
+    3.  Token Embeddings + Attention Mask -> Mean Pooling -> Sentence Embedding.
+    4.  Sentence Embedding -> Cosine Similarity -> Similarity Score.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Masked Mean Pooling.
-2.  **Rule**: Always use attention mask in pooling.
-3.  **Architecture Principle**: Encoder-only models are stateless and suitable for similarity tasks.
-4.  **Failure Mode**: Division by zero in pooling.
-5.  **Reusable Skill**: Implementing custom pooling functions for Transformer models.
-6.  **Decision**: Use Mean Pooling instead of CLS token for better performance in sentence similarity.
-7.  **Anti-pattern**: Naive mean pooling without mask.
-8.  **Verification Method**: Unit tests for pooling function with edge cases.
-
----
+1.  **Pattern**: **Masked Mean Pooling**. This is the standard pattern for converting variable-length token sequences into fixed-size sentence embeddings.
+2.  **Rule**: **Always mask out padding tokens** when aggregating variable-length sequences.
+3.  **Architecture Principle**: **Separation of Concerns**. The tokenizer, model, and pooling function are separate components. This allows for flexibility in changing the pooling strategy without changing the model.
+4.  **Failure Mode**: **Diluted Embeddings**. If padding tokens are not masked out, the embeddings will be corrupted by noise, leading to poor similarity scores.
+5.  **Reusable Skill**: **Implementing Masked Mean Pooling**. This skill can be reused in any NLP pipeline that requires sentence embeddings.
+6.  **Decision**: **Mean Pooling vs. Max Pooling**. Mean pooling is chosen because it is more robust to noise and captures the overall semantic meaning of the sentence. Max pooling is more sensitive to individual tokens and can be dominated by a single outlier token.
+7.  **Anti-pattern**: **Naive Mean Pooling**. Using `torch.mean` without masking is a common anti-pattern that leads to diluted embeddings.
+8.  **Verification Method**: **Cosine Similarity Test**. Test that identical sentences with different padding lengths produce identical embeddings.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Load Model**: Use `AutoModel` and `AutoTokenizer` from `transformers`.
-2.  **Verify Config**: Check `config.json` for `max_position_embeddings` and `hidden_size`.
-3.  **Implement Pooling**: Use the `mean_pooling` function with `torch.clamp`.
-4.  **Tokenize**: Use `padding=True`, `truncation=True`, `max_length=512`.
-5.  **Inference**: Use `torch.no_grad()` and `float16` for GPU.
-6.  **Validate**: Check for `NaN`/`Inf` in output.
-7.  **Test**: Test with short, long, and empty sequences.
+1.  **Load the Model**: Use `AutoModel.from_pretrained` to load the model.
+2.  **Load the Tokenizer**: Use `AutoTokenizer.from_pretrained` to load the tokenizer.
+3.  **Tokenize the Input**: Use the tokenizer to convert the input text into token IDs and an attention mask.
+4.  **Run the Model**: Pass the token IDs and attention mask to the model to get the token embeddings.
+5.  **Apply Masked Mean Pooling**: Use the attention mask to compute the mean of the token embeddings, ignoring padding tokens.
+6.  **Verify the Output**: Check that the output is a 768-dimensional vector.
+7.  **Compute Similarity**: Use cosine similarity to compare the embeddings.
+8.  **Handle Edge Cases**: Ensure that empty inputs and inputs longer than 512 tokens are handled gracefully.

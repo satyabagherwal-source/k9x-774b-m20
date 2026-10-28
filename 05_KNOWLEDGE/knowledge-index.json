@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T17:56:33.330Z",
+  "last_updated": "2026-10-28T18:04:50.117Z",
   "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -27697,13 +27697,18 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
       "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "content_hash": "56c38c0b9b2761541b0dbecc2a6bb45c2dcbdb8da987c924c15b761210448cc9",
+      "content_hash": "e216f53ee73f432b58ea906a1c800b31c9111d3190db21d822945abd3a4cc9a7",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md",
       "promoted_rules": [
         {
           "number": "EXISTING",
           "title": "Attention-Masked Mean Pooling Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 372,
+          "title": "The Masked Mean Pooling Invariant",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
@@ -27735,6 +27740,11 @@
           "number": 5086,
           "title": "Tokenizer Special Token Consistency Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5357,
+          "title": "The Tokenizer-Model Contract Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -27753,7 +27763,7 @@
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv40nmqt",
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv4emaqx"
       ],
-      "verified_at": "2026-10-28T01:00:13.935Z",
+      "verified_at": "2026-10-28T18:04:43.532Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35908,8 +35918,8 @@
       "slug": "mariadb-server",
       "platform": "github",
       "source_url": "https://github.com/MariaDB/server",
-      "source_version": "c894d977",
-      "content_hash": "907d3ccf5933241d59b09456489399828165c4b36e81b80859140701a44468c7",
+      "source_version": "825a9ba9",
+      "content_hash": "917c10c8c2fe112ec9b098b6d93ee8adf0ded0c9828b7acfb5227afe25617dff",
       "dossier_path": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "promoted_rules": [
@@ -35932,6 +35942,11 @@
           "number": 4075,
           "title": "MDEV-41240 I_S.TABLES crash with TABLE_NAME and a subquery",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5359,
+          "title": "MDEV-41372 Grant_tables::open_and_lock() leaves tables with a dangling pos_in_ta",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35939,7 +35954,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T05:21:20.526Z",
+      "verified_at": "2026-10-28T18:04:50.099Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41685,8 +41700,8 @@
       "slug": "open-policy-agent-opa",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/opa",
-      "source_version": "21c9f6de",
-      "content_hash": "a100afcf87bbf0a01eb8e86c6e279bc27821f8119fdf62cdcc32f3e15815d9f4",
+      "source_version": "d6b52e2e",
+      "content_hash": "d41b9d948c3facce3019c7273c5f8a5a6ea5c2bbe9bdc4e0871ac4ba466fef4b",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "promoted_rules": [
@@ -41729,6 +41744,11 @@
           "number": 4955,
           "title": "build(deps): bump markdown-it and markdownlint-cli2 in /docs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5358,
+          "title": "ast: add regression test for rule conflict reporting (#9443)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41736,7 +41756,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T19:06:50.227Z",
+      "verified_at": "2026-10-28T18:04:44.625Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62441,15 +62461,15 @@
       "learning_id": "rule-372",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 372,
-      "title": "The Masked Mean Pooling Invariant (Harvested from sentence-transformers/all-MiniLM-L6-v2)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "The Masked Mean Pooling Invariant",
+      "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+      "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-13T17:43:04.598Z"
+      "verified_at": "2026-10-28T18:04:43.532Z"
     },
     "rule-373": {
       "learning_id": "rule-373",
@@ -145354,6 +145374,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T17:49:49.211Z"
+    },
+    "rule-5357": {
+      "learning_id": "rule-5357",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5357,
+      "title": "The Tokenizer-Model Contract Invariant",
+      "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+      "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T18:04:43.532Z"
+    },
+    "rule-5358": {
+      "learning_id": "rule-5358",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5358,
+      "title": "ast: add regression test for rule conflict reporting (#9443)",
+      "source_url": "https://github.com/open-policy-agent/opa",
+      "source_version": "d6b52e2e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T18:04:44.625Z"
+    },
+    "rule-5359": {
+      "learning_id": "rule-5359",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5359,
+      "title": "MDEV-41372 Grant_tables::open_and_lock() leaves tables with a dangling pos_in_ta",
+      "source_url": "https://github.com/MariaDB/server",
+      "source_version": "825a9ba9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T18:04:50.099Z"
     }
   },
   "aliases": {

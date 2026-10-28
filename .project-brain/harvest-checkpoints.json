@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T17:56:33.462Z",
+  "last_updated": "2026-10-28T18:04:50.200Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1670,14 +1670,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "content_hash": "56c38c0b9b2761541b0dbecc2a6bb45c2dcbdb8da987c924c15b761210448cc9",
-      "verified_at": "2026-10-28T01:00:14.030Z",
+      "content_hash": "e216f53ee73f432b58ea906a1c800b31c9111d3190db21d822945abd3a4cc9a7",
+      "verified_at": "2026-10-28T18:04:43.636Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T01:00:14.030Z"
+      "last_updated": "2026-10-28T18:04:43.636Z"
     },
     "Bingsu/adetailer": {
       "repository": "Bingsu/adetailer",
@@ -8856,14 +8856,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mariadb-server",
-      "content_hash": "907d3ccf5933241d59b09456489399828165c4b36e81b80859140701a44468c7",
-      "verified_at": "2026-10-25T05:21:20.624Z",
+      "content_hash": "917c10c8c2fe112ec9b098b6d93ee8adf0ded0c9828b7acfb5227afe25617dff",
+      "verified_at": "2026-10-28T18:04:50.199Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T05:21:20.624Z"
+      "last_updated": "2026-10-28T18:04:50.199Z"
     },
     "NG-ZORRO/ng-zorro-antd": {
       "repository": "NG-ZORRO/ng-zorro-antd",
@@ -9291,14 +9291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-policy-agent-opa",
-      "content_hash": "a100afcf87bbf0a01eb8e86c6e279bc27821f8119fdf62cdcc32f3e15815d9f4",
-      "verified_at": "2026-10-27T19:06:50.311Z",
+      "content_hash": "d41b9d948c3facce3019c7273c5f8a5a6ea5c2bbe9bdc4e0871ac4ba466fef4b",
+      "verified_at": "2026-10-28T18:04:44.729Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T19:06:50.311Z"
+      "last_updated": "2026-10-28T18:04:44.729Z"
     },
     "dragonflydb/dragonfly": {
       "repository": "dragonflydb/dragonfly",

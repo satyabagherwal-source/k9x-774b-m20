@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T17:56:44.923Z",
-    "lastVerified": "2026-10-28T17:56:44.923Z",
+    "lastChecked": "2026-10-28T18:04:52.737Z",
+    "lastVerified": "2026-10-28T18:04:52.737Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -342,8 +342,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T17:35:20.034Z",
-    "lastVerified": "2026-10-28T17:35:20.034Z",
+    "lastChecked": "2026-10-28T18:04:46.241Z",
+    "lastVerified": "2026-10-28T18:04:46.241Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1118,9 +1118,9 @@
   "rustcrypto-hashes": {
     "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-10-28T14:49:39.982Z",
+    "lastChecked": "2026-10-28T18:04:41.278Z",
     "revisionIdentifier": "23d8e40e",
-    "lastVerified": "2026-10-28T14:49:39.982Z"
+    "lastVerified": "2026-10-28T18:04:41.278Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -5607,5 +5607,70 @@
     "lastChecked": "2026-10-28T17:56:42.462Z",
     "revisionIdentifier": "f432041f",
     "lastVerified": "2026-10-28T17:56:42.462Z"
+  },
+  "pauljuliusmartinez-jless": {
+    "name": "jless",
+    "officialUrl": "https://github.com/PaulJuliusMartinez/jless",
+    "lastChecked": "2026-10-28T18:04:31.175Z",
+    "revisionIdentifier": "e6cdef71",
+    "lastVerified": "2026-10-28T18:04:31.175Z"
+  },
+  "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2": {
+    "name": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+    "officialUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T18:04:33.848Z",
+    "lastVerified": "2026-10-28T18:04:33.848Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+    "contentHash": "e216f53ee73f432b58ea906a1c800b31c9111d3190db21d822945abd3a4cc9a7",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kotest-kotest": {
+    "name": "kotest",
+    "officialUrl": "https://github.com/kotest/kotest",
+    "lastChecked": "2026-10-28T18:04:36.353Z",
+    "revisionIdentifier": "cde3ab9c",
+    "lastVerified": "2026-10-28T18:04:36.353Z"
+  },
+  "open-policy-agent-opa": {
+    "name": "open-policy-agent/opa",
+    "officialUrl": "https://github.com/open-policy-agent/opa",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-28T18:04:43.719Z",
+    "lastVerified": "2026-10-28T18:04:43.719Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-open-policy-agent-opa",
+    "contentHash": "d41b9d948c3facce3019c7273c5f8a5a6ea5c2bbe9bdc4e0871ac4ba466fef4b",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mariadb-server": {
+    "name": "MariaDB/server",
+    "officialUrl": "https://github.com/MariaDB/server",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-10-28T18:04:49.596Z",
+    "lastVerified": "2026-10-28T18:04:49.596Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-mariadb-server",
+    "contentHash": "917c10c8c2fe112ec9b098b6d93ee8adf0ded0c9828b7acfb5227afe25617dff",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
