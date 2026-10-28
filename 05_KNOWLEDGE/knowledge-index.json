@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T21:30:04.871Z",
+  "last_updated": "2026-10-28T21:37:22.759Z",
   "total_verified_learnings": 1159,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4554,8 +4554,8 @@
       "slug": "biomejs-biome",
       "platform": "github",
       "source_url": "https://github.com/biomejs/biome",
-      "source_version": "ade98454",
-      "content_hash": "3fabbb5c95160c0106ac5adcfcdb4627fc730ca6af80b065fb32704f2ace53a1",
+      "source_version": "824df15e",
+      "content_hash": "8a8adf314b4fbed9c23151c09da3cd309a35859bfc59a9c218ba30fb7fbaf50c",
       "dossier_path": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "promoted_rules": [
@@ -4593,6 +4593,11 @@
           "number": 4947,
           "title": "markdown_parser): continue block quotes inside deep list items (#12575)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5410,
+          "title": "fix advisory (#12730)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4600,7 +4605,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T18:43:33.797Z",
+      "verified_at": "2026-10-28T21:37:11.007Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25312,7 +25317,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
       "source_version": "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2",
-      "content_hash": "5c12e79ea551716fa7d1c479f00a18fbeb2df7dab09a0822c886befddd6134d5",
+      "content_hash": "2cf7e82d823a47f93b8b17341303190bfdb3e956c27b2cbda687114ba8e31aba",
       "dossier_path": "07_PROJECT_LEARNING/hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2-learnings.md",
       "promoted_rules": [
@@ -25351,7 +25356,7 @@
         "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv47ewm0",
         "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv4kon4a"
       ],
-      "verified_at": "2026-10-25T15:38:20.160Z",
+      "verified_at": "2026-10-28T21:37:07.957Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55175,8 +55180,8 @@
       "slug": "weaviate-weaviate",
       "platform": "github",
       "source_url": "https://github.com/weaviate/weaviate",
-      "source_version": "ad54fb8b",
-      "content_hash": "e4de1c5a6fe57aa2fec9869f42d5058d883551e4867f7d3f4086561048c48567",
+      "source_version": "d923b9b0",
+      "content_hash": "72f00540277944fc4190da5608cd61e3808330fc8a4d5710f75b51f670b86cc3",
       "dossier_path": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "promoted_rules": [
@@ -55189,6 +55194,11 @@
           "number": 4848,
           "title": "Merge pull request #13593 from weaviate/namespace_drop_vector",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5411,
+          "title": "security: bump github.com/go-jose/go-jose/v4 to v4.1.6",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -55196,7 +55206,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T14:29:59.536Z",
+      "verified_at": "2026-10-28T21:37:22.734Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -146398,6 +146408,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T21:30:04.852Z"
+    },
+    "rule-5410": {
+      "learning_id": "rule-5410",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5410,
+      "title": "fix advisory (#12730)",
+      "source_url": "https://github.com/biomejs/biome",
+      "source_version": "824df15e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T21:37:11.007Z"
+    },
+    "rule-5411": {
+      "learning_id": "rule-5411",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5411,
+      "title": "security: bump github.com/go-jose/go-jose/v4 to v4.1.6",
+      "source_url": "https://github.com/weaviate/weaviate",
+      "source_version": "d923b9b0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T21:37:22.734Z"
     }
   },
   "aliases": {

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T21:30:04.952Z",
-  "total_cycles_completed": 5918,
-  "total_learnings_persisted": 5918,
-  "total_rules_promoted": 5371,
+  "last_updated": "2026-10-28T21:37:22.841Z",
+  "total_cycles_completed": 5921,
+  "total_learnings_persisted": 5921,
+  "total_rules_promoted": 5373,
   "history": [
-    {
-      "timestamp": "2026-10-28T11:05:02.472Z",
-      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T11:12:02.886Z",
-      "repository": "kumahq/kuma",
-      "learningId": "learn-github-kumahq-kuma",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T11:12:07.706Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T11:17:02.717Z",
       "repository": "unsloth/Qwen3.8-27B-GGUF",
@@ -1403,6 +1382,27 @@
       "repository": "FrancisRing/Prism",
       "learningId": "learn-huggingface-francisring-prism",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T21:37:08.072Z",
+      "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+      "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T21:37:11.107Z",
+      "repository": "biomejs/biome",
+      "learningId": "learn-github-biomejs-biome",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T21:37:22.841Z",
+      "repository": "weaviate/weaviate",
+      "learningId": "learn-github-weaviate-weaviate",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

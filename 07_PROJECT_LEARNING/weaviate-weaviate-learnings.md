@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source**: github ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
-> **Source Version**: `ad54fb8b`  
+> **Source Version**: `d923b9b0`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T14:29:59.258Z  
+> **Timestamp**: 2026-10-28T21:37:22.188Z  
 > **Learning ID**: `learn-github-weaviate-weaviate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T14:29:58.940Z  
+> **Harvest Timestamp**: 2026-10-28T21:37:22.181Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Weaviate is an open-source vector database that stores both objects and vectors, allowing for the combination of vector search with structured filtering with the fault tolerance and scalability of a cloud-native database​.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 16921 stars
+- **Stars / Engagement**: 16925 stars
 
 ---
 
@@ -1711,11 +1711,11 @@ func (s *State) SetGraphQLIfCurrent(gql graphql.GraphQL, gen uint64) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #12935** (2026-09-07): **HNSW: panic in packedconn.decodeInto — ACORN search reads a neighbor's connections without its lock**
-  *Symptoms*: ## Summary  `hnsw/search.go:425` (the ACORN filter branch) iterates a **neighbor** vertex's connections while holding only the *candidate* vertex's mutex. `packedconn.Connections` has no internal lock, so a concurrent writer holding the neighbor's mutex tears the read and the decode indexes past the end of the connection data.  The panic is recovered by the errgroup wrapper, so the node survives and the query fails.  Observed on 2026-09-04 on a WCS dev cluster:  ``` Recovered from panic: shard: NjlDaweeJExh, collection: SimClass, vectorIndex: vectors_alt_vector, panic: runtime error: index out of range [0] with length 0 ```  ``` github.com/weaviate/weaviate/entities/vectorindex/hnsw/packedconn.decodeInto(...) 	entities/vectorindex/hnsw/packedconn/connections.go:242 github.com/weaviate/weaviate/entities/vectorindex/hnsw/packedconn.decodeValues(...) 	entities/vectorindex/hnsw/packedconn/connections.go:276 github.com/weaviate/weaviate/entities/vectorindex/hnsw/packedconn.(*Connections).ElementIterator(...) 	entities/vectorindex/hnsw/packedconn/connections.go:637 github.com/weaviate/weaviate/adapters/repos/db/vector/hnsw.(*hnsw).searchLayerByVectorWithDistancerWithStrategy.func3(...) 	adapters/repos/db/vector/hnsw/search.go:425 github.com/weaviate/weaviate/adapters/repos/db/vector/hnsw.(*hnsw).knnSearchByVector(...) 	adapters/repos/db/vector/hnsw/search.go:1008 github.com/weaviate/weaviate/adapters/repos/db.(*Shard).ObjectVectorSearch.func2() 	adapters/repos/db/shard_read.go:774 
+- **Issue #13618** (2026-10-28): **gRPC health check rejected when OPERATIONAL_MODE=ReadOnly, so clients fail to connect**
+  *Symptoms*: ### How to reproduce this bug?  1. Start Weaviate 1.39.12 with `OPERATIONAL_MODE: ReadOnly` 2. Connect with the Python client 4.23.1 using defaults (`skip_init_checks=False`):    `weaviate.connect_to_custom(http_host="localhost", http_port=8080, grpc_host="localhost", grpc_port=50051, ...)` 3. The connection fails during the gRPC health check.  ### What is the expected behavior?  The client connects. Health checks (`/grpc.health.v1.Health/*`) should skip the operational mode check and work in all modes (ReadWrite, ReadOnly, WriteOnly, ScaleOut). ReadOnly should block writes only.  ### What is the actual behavior?  The gRPC health check is rejected as a write operation:  ``` StatusCode.UNAVAILABLE read-only mode is enabled temporally at the config level: write operations are not allowed during this time ```  The Python client then raises `WeaviateGRPCUnavailableError`. The only workaround is `skip_init_checks=True`.  ### Supporting information  Root cause:  - `usecases/config/operational_mode.go:69-77`: only `Search`, `Aggregate` and `TenantsGet` count as reads. `IsGRPCWrite` is `!IsGRPCRead`, so every other method, including ones that aren't on the list, counts as a write. - `adapters/handlers/grpc/server.go:302-305`: in `ReadOnly` and `ScaleOut`, any "write" method is rejected with `codes.Unavailable`. - `adapters/handlers/grpc/server.go:142`: the standard `grpc_health_v1` service is registered. It's not on the read list, so its calls are treated as writes and blocked.  `Wri
 
-- **Issue #12749** (2026-08-24): **gRPC batch stream: recv goroutine leaks on unbuffered errCh/reqCh send when the stream ends via context cancellation**
-  *Symptoms*: ## Summary  The gRPC batch-stream handler leaks one goroutine every time a stream ends through context cancellation. The `recv` helper's child goroutine blocks forever on an unbuffered channel send that no one will ever read. Observed on a 1.39.0 production cluster; the code is unchanged on `main`.  ## Evidence  5-node cluster, v1.39.0, batch-stream ingest whose client streams ended abnormally (the client aborted stream starts after its 60 s timeout). `debug/pprof/goroutine` on the three nodes that had been up longest showed 16, 9, and 10 goroutines parked in:  ``` 16 @ 0x48ee4e 0x41ba3c 0x41b637 0x2e20bb1 0xb2e753 0x496f21 #	github.com/weaviate/weaviate/adapters/handlers/grpc/v1/batch.(*StreamHandler).recv.func1+0xd0  adapters/handlers/grpc/v1/batch/stream.go:387 #	github.com/weaviate/weaviate/entities/errors.GoWrapper.func1+0x52                              entities/errors/go_wrapper.go:35 ```  No `Handle`/`sender`/`receiver` goroutines existed at the same time — these are orphans of streams that ended long before. Each leak correlates with a `"context cancelled, closing stream"` log line. Nodes that restarted recently had none; counts only grow.  ## Root cause  [`stream.go#L372-L394` (v1.39.0)](https://github.com/weaviate/weaviate/blob/v1.39.0/adapters/handlers/grpc/v1/batch/stream.go#L372-L394):  ```go func (h *StreamHandler) recv(stream pb.Weaviate_BatchStreamServer) (chan *pb.BatchStreamRequest, chan error) { 	reqCh := make(chan *pb.BatchStreamRequest) 	errCh := make(ch
+- **Issue #13605** (2026-10-28): **len(array)==0 omits missing array properties when length index is enabled**
+  *Symptoms*: ### How to reproduce this bug?  Run [reproduce.py](https://github.com/user-attachments/files/33944592/reproduce.py).   Triggered by MR testing. - **MR:** An absent array and an explicit empty array both have length zero - **Input:** length index enabled; rows with [alpha], [], [beta,gamma], and missing tags; len(tags)==0  ### What is the expected behavior?  Both [] and missing rows.  ### What is the actual behavior?  Only explicit [] row.  ### Supporting information  _No response_  ### Server Version  1.40.2  ### Weaviate Setup  Single Node  ### Nodes count  _No response_  ### Code of Conduct  - [x] I have read and agree to the Weaviate's [Contributor Guide](https://docs.weaviate.io/contributor-guide) and [Code of Conduct](https://weaviate.io/service/code-of-conduct)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1732,821 +1732,575 @@ func (s *State) SetGraphQLIfCurrent(gql graphql.GraphQL, gen uint64) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ad54fb8b` (2026-10-27)
-**Commit Message**: Merge pull request #13593 from weaviate/namespace_drop_vector
+### Incident Patch 1: `9e34d6d0` (2026-10-28)
+**Commit Message**: security: bump github.com/go-jose/go-jose/v4 to v4.1.6
 
-Namespace: Make supend compatible with drop named vector
-
-**File**: `adapters/handlers/rest/configure_api.go` (modified, +1/-1)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -1268,7 +1268,7 @@ func initReindexAndDistributedTasks(
- 	// is missing (crash, upgrade, or restore).
- 	enterrors.GoWrapper(func() {
- 		runDropVectorIndexReconciliation(
--			serverShutdownCtx, appState.SchemaManager, dropVectorEnqueuer, appState.Logger,
-+			serverShutdownCtx, appState.SchemaManager, dropVectorEnqueuer, appState.NamespacesController, appState.Logger,
- 			appState.ServerConfig.Config.DistributedTasks.DropVectorReconcileInterval,
- 			appState.ClusterService.IsLeader, dropVectorReconcileNudge)
- 	}, appState.Logger)
+@@ -35,7 +35,7 @@ require (
+ 	github.com/fortytw2/leaktest v1.3.0
+ 	github.com/getsentry/sentry-go v0.30.0
+ 	github.com/go-ego/gse v0.80.3
+-	github.com/go-jose/go-jose/v4 v4.1.4
++	github.com/go-jose/go-jose/v4 v4.1.6
+ 	github.com/go-openapi/errors v0.22.4
+ 	github.com/go-openapi/loads v0.23.2
+ 	github.com/go-openapi/runtime v0.29.2
 ```
 
-**File**: `adapters/handlers/rest/drop_vector_index_enqueuer.go` (modified, +12/-5)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -26,7 +26,9 @@ import (
- 	"github.com/weaviate/weaviate/entities/models"
- 	"github.com/weaviate/weaviate/entities/modelsext"
- 	entschema "github.com/weaviate/weaviate/entities/schema"
-+	"github.com/weaviate/weaviate/usecases/namespaces"
- 	"github.com/weaviate/weaviate/usecases/schema"
-+	"github.com/weaviate/weaviate/usecases/schema/namespacing"
- 	"github.com/weaviate/weaviate/usecases/sharding"
- )
- 
-@@ -505,9 +507,11 @@ type dropVectorReconcileClient interface {
- // reconcileDroppedVectorIndexes enqueues cleanup for every "none" marker with no
- // in-flight task — recovery for a crash between marker apply and enqueue, an
- // upgrade with pre-existing markers, or a restore. Idempotent: the active-task
--// check + the ConflictDetector dedupe across nodes running it at startup.
-+// check + the ConflictDetector dedupe across nodes running it at startup. It
-+// skips a class whose namespace is not active and leaves its markers for a round
-+// after resume.
- func reconcileDroppedVectorIndexes(ctx context.Context, classes []*models.Class,
--	enq dropVectorReconcileClient, logger logrus.FieldLogger,
-+	enq dropVectorReconcileClient, namespacesExister namespaces.Exister, logger logrus.FieldLogger,
- ) {
- 	tasks, err := enq.ListDistributedTasks(ctx)
- 	if err != nil {
-@@ -518,6 +522,9 @@ func reconcileDroppedVectorIndexes(ctx context.Context, classes []*models.Class,
- 		if class == nil {
- 			continue
- 		}
-+		if err := namespaces.RequireActive(namespacesExister, namespacing.NamespaceFromQualified(class.Class)); err != nil {
-+			continue
-+		}
- 		for name, cfg := range class.VectorConfig {
- 			if !modelsext.IsVectorIndexDropped(cfg) {
- 				continue
-@@ -539,8 +546,8 @@ func reconcileDroppedVectorIndexes(ctx context.Context, classes []*models.Class,
- // goroutine. lister reads the local schema: eventually consistent is fine for
- // this idempotent safety net.
- func runDropVectorIndexReconciliation(ctx context.Context, lister local.ClassReader,
--	enq dropVectorReconcileClient, logger logrus.FieldLogger, interval time.Duration,
--	isLeader func() bool, nudge <-chan struct{},
-+	enq dropVectorReconcileClient, namespacesExister namespaces.Exister, logger logrus.FieldLogger,
-+	interval time.Duration, isLeader func() bool, nudge <-chan struct{},
- ) {
- 	const attempts = 30
- 	for i := 0; i < attempts; i++ {
-@@ -580,7 +587,7 @@ func runDropVectorIndexReconciliation(ctx context.Context, lister local.ClassRea
- 				return
- 			}
- 			if classes := lister.ReadOnlySchema().Classes; len(classes) > 0 {
--				reconcileDroppedVectorIndexes(ctx, classes, enq, logger)
-+				reconcileDroppedVectorIndexes(ctx, classes, enq, namespacesExister, logger)
- 			}
- 		}()
- 		select {
+@@ -244,8 +244,8 @@ github.com/go-ini/ini v1.67.0 h1:z6ZrTEZqSWOTyH2FlglNbNgARyHG8oLW9gMELqKr06A=
+ github.com/go-ini/ini v1.67.0/go.mod h1:ByCAeIL28uOIIG0E3PJtZPDL8WnHpFKFOtgjp+3Ies8=
+ github.com/go-jose/go-jose/v3 v3.0.5 h1:BLLJWbC4nMZOfuPVxoZIxeYsn6Nl2r1fITaJ78UQlVQ=
+ github.com/go-jose/go-jose/v3 v3.0.5/go.mod h1:5b+7YgP7ZICgJDBdfjZaIt+H/9L9T/YQrVfLAMboGkQ=
+-github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
+-github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
++github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
++github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
+ github.com/go-kit/kit v0.8.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
+ github.com/go-kit/kit v0.9.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
+ github.com/go-kit/log v0.1.0/go.mod h1:zbhenjAZHb184qTLMA9ZjW7ThYL0H2mk7Q6pNt4vbaY=
 ```
 
-**File**: `adapters/handlers/rest/drop_vector_index_enqueuer_test.go` (modified, +29/-6)
+**File**: `test/acceptance_with_go_client/go.mod` (modified, +1/-1)
 ```diff
-@@ -25,11 +25,13 @@ import (
- 	"github.com/stretchr/testify/require"
- 	"github.com/weaviate/weaviate/adapters/repos/db"
- 	"github.com/weaviate/weaviate/cluster/distributedtask"
-+	api "github.com/weaviate/weaviate/cluster/proto/api"
- 	"github.com/weaviate/weaviate/cluster/schema/leader"
- 	"github.com/weaviate/weaviate/cluster/schema/local"
- 	"github.com/weaviate/weaviate/entities/models"
- 	"github.com/weaviate/weaviate/entities/modelsext"
- 	"github.com/weaviate/weaviate/entities/versioned"
-+	"github.com/weaviate/weaviate/usecases/namespaces"
- 	"github.com/weaviate/weaviate/usecases/sharding"
- )
- 
-@@ -91,7 +93,7 @@ func TestReconcile_EnqueuesMissingTasks(t *testing.T) {
- 	}
- 	enq := &fakeReconcileEnqueuer{active: map[string]bool{}}
- 
--	reconcileDroppedVectorIndexes(context.Background(), classes, enq, logger)
-+	reconcileDroppedVectorIndexes(context.Background(), classes, enq, nil, logger)
- 
- 	require.ElementsMatch(t, []string{"A/v1", "B/v2"}, enq.enqueued,
- 		"every dropped marker without a live task is enqueued; non-dropped vectors are skipped")
-@@ -116,7 +118,7 @@ func TestReconcile_ListError_SkipsRound(t *testing.T) {
- 	}
- 	enq := &listErrEnqueuer{fakeReconcileEnqueuer: &fakeReconcileEnqueuer{active: map[string]bool{}}}
- 
--	reconcileDroppedVectorIndexes(context.Background(), classes, enq, logger)
-+	reconcileDroppedVectorIndexes(context.Background(), classes, enq, nil, logger)
- 
- 	require.Empty(t, enq.enqueued, "an unreadable task list must skip the round, not enqueue blind")
- }
-@@ -128,11 +130,32 @@ func TestReconcile_SkipsClassesWithLiveTasks(t *testing.T) {
- 	}
- 	enq := &fakeReconcileEnqueuer{active: map[string]bool{"A/v1": true}} // v1 already in flight
- 
--	reconcileDroppedVectorIndexes(context.Background(), classes, enq, logger)
-+	reconcileDroppedVectorIndexes(context.Background(), classes, enq, nil, logger)
- 
- 	require.Equal(t, []string{"A/v2"}, enq.enqueued, "only the marker without a live task is enqueued")
- }
- 
-+func TestReconcile_SkipsClassesWithoutActiveNamespace(t *testing.T) {
-+	logger, _ := test.NewNullLogger()
-+	classes := []*models.Class{
-+		{Class: "ns1:A", VectorConfig: map[string]models.VectorConfig{"v1": dropped()}},
-+		{Class: "ns2:B", VectorConfig: map[string]models.VectorConfig{"v1": dropped()}},
-+		{Class: "C", VectorConfig: map[string]models.VectorConfig{"v1": dropped()}},
-+		{Class: "ns3:D", VectorConfig: map[string]models.VectorConfig{"v1": dropped()}},
-+	}
-+	exister := namespaces.NewMockExisterInState(t, map[string]api.NamespaceState{
-+		"ns1": api.NamespaceStateSuspended,
-+		"ns2": api.NamespaceStateActive,
-+		"ns3": api.NamespaceStateDeleting,
-+	})
-+	enq := &fakeReconcileEnqueuer{active: map[string]bool{}}
-+
-+	reconcileDroppedVectorIndexes(context.Background(), classes, enq, exister, logger)
-+
-+	require.Equal(t, []string{"ns2:B/v1", "C/v1"}, enq.enqueued,
-+		"a class whose namespace is not active is skipped, and the round continues past it")
-+}
-+
- // probeRecordingEnqueuer flags when the DTM probe has run, so the order test can
- // assert the schema is read only afterwards.
- type probeRecordingEnqueuer struct {
-@@ -178,7 +201,7 @@ func TestReconciliationAtStartup_ReadsSchemaAfterProbe(t *testing.T) {
- 	// One round: the loop exits via ctx after the first pass.
- 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
- 	defer cancel()
--	runDropVectorIndexReconciliation(ctx, lister, enq, logger, time.Hour,
-+	runDropVectorIndexReconciliation(ctx, lister, enq, nil, logger, time.Hour,
- 		func() bool { return true }, nil)
- 
- 	require.True(t, orderOK, "schema must be read AFTER the DTM readiness probe")
-@@ -202,7 +225,7 @@ func TestReconciliation_FollowerSkipsRound(t *testing.T) {
- 
- 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
- 	defer cancel()
--	runDropVectorIndexReconciliation(ctx, lister, enq, logger, time.Hour,
-+	runDropVectorIndexReconciliation(ctx, lister, enq, nil, logger, time.Hour,
- 		func() bool { return false }, nil)
- 
- 	require.Empty(t, enq.enqueued, "a non-leader must not enqueue")
-@@ -1094,7 +1117,7 @@ func TestReconciliation_NudgeWakesBeforeInterval(t *testing.T) {
- 	defer cancel()
- 	// Interval far beyond the ctx timeout: a second round can only come from
- 	// the nudge.
--	runDropVectorIndexReconciliation(ctx, lister, enq, logger, time.Hour,
-+	runDropVectorIndexReconciliation(ctx, lister, enq, nil, logger, time.Hour,
- 		func() bool { return true }, nudge)
- 
- 	require.GreaterOrEqual(t, len(enq.enqueued), 2, "the nudge must trigger a follow-up round within the interval")
+@@ -88,7 +88,7 @@ require (
+ 	github.com/felixge/httpsnoop v1.0.4 // indirect
+ 	github.com/getsentry/sentry-go v0.30.0 // indirect
+ 	github.com/go-ini/ini v1.67.0 // indirect
+-	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
++	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
+ 	github.com/go-logr/logr v1.4.3 // indirect
+ 	github.com/go-logr/stdr v1.2.2 // indirect
+ 	github.com/go-ole/go-ole v1.3.0 // indirect
 ```
 
-**File**: `adapters/repos/db/drop_vector_index_provider.go` (modified, +51/-38)
+**File**: `test/acceptance_with_go_client/go.sum` (modified, +2/-2)
 ```diff
-@@ -243,7 +243,7 @@ func (p *DropVectorIndexProvider) processUnits(
- 	ctx context.Context, task *distributedtask.Task,
- 	payload *DropVectorIndexTaskPayload, localUnits []string,
- ) {
--	buckets := p.localBuckets(ctx, payload, localUnits)
-+	buckets, resolveErr := p.localBuckets(ctx, payload, localUnits)
- 
- 	pending := make([]string, 0, len(localUnits))
- 	for _, unitID := range localUnits {
-@@ -253,6 +253,11 @@ func (p *DropVectorIndexProvider) processUnits(
- 		pending = append(pending, unitID)
- 	}
- 
-+	if resolveErr != nil {
-+		p.failPending(ctx, task, pending, "resolve objects buckets: "+resolveErr.Error())
-+		return
-+	}
-+
- 	// Last check before the destructive ops arm: the marker commit and the task
- 	// enqueue are not atomic, so the class may have been deleted+re-created (or the
- 	// entry otherwise revived) since. Arming against a live vector would strip user
-@@ -261,12 +266,7 @@ func (p *DropVectorIndexProvider) processUnits(
- 	// drain poll: a momentary leader blip must not fail a whole drop task.
- 	stillDropped, verifyErr := p.targetsStillDroppedWithRetry(ctx, payload)
- 	if verifyErr != nil {
--		if ctx.Err() != nil {
--			return // shutdown: leave units in place, the task resumes after restart
--		}
--		for _, unitID := range pending {
--			p.failUnit(ctx, task, unitID, "verify targets still marked dropped: "+verifyErr.Error())
--		}
-+		p.failPending(ctx, task, pending, "verify targets still marked dropped: "+verifyErr.Error())
- 		return
- 	}
- 	if !stillDropped {
-@@ -299,21 +299,15 @@ func (p *DropVectorIndexProvider) processUnits(
- }
- 
- // localBuckets resolves the objects bucket for every local unit's shard in one
--// walk. Returns nil on a lookup error; per-unit handling then fails the units.
-+// walk.
- func (p *DropVectorIndexProvider) localBuckets(
- 	ctx context.Context, payload *DropVectorIndexTaskPayload, localUnits []string,
--) map[string]editOpBucket {
-+) (map[string]editOpBucket, error) {
- 	shardNames := make([]string, 0, len(localUnits))
- 	for _, unitID := range localUnits {
- 		shardNames = append(shardNames, payload.UnitToShard[unitID])
- 	}
--	buckets, err := p.shards.EditOpBucketsForShards(ctx, payload.Collection, shardNames)
--	if err != nil {
--		p.logger.WithField("collection", payload.Collection).
--			Errorf("drop-vector: resolve objects buckets: %v", err)
--		return nil
--	}
--	return buckets
-+	return p.shards.EditOpBucketsForShards(ctx, payload.Collection, shardNames)
- }
- 
- // armUnit registers the edit op on the unit's shard, reporting whether the unit
-@@ -342,7 +336,11 @@ func (p *DropVectorIndexProvider) armUnit(
- 		CreatedAt: time.Now().UnixNano(),
- 	}
- 	if err := bucket.RegisterEditOp(payload.OpID, desc); err != nil {
--		p.failUnit(ctx, task, unitID, "register drop edit op: "+err.Error())
-+		msg := "register drop edit op: " + err.Error()
-+		if !p.bucketStillLoaded(payload.Collection, payload.UnitToShard[unitID], bucket) {
-+			msg += shardGoneReason
-+		}
-+		p.failUnit(ctx, task, unitID, msg)
- 		return false
- 	}
- 	return true
-@@ -354,20 +352,17 @@ func (p *DropVectorIndexProvider) drainUnit(
- 	payload *DropVectorIndexTaskPayload, unitID string, bucket editOpBucket,
- ) {
- 	shardGone := func() bool {
--		return !p.shardLocallyLoaded(payload.Collection, payload.UnitToShard[unitID])
-+		return !p.bucketStillLoaded(payload.Collection, payload.UnitToShard[unitID], bucket)
- 	}
- 	if err := p.pollUntilEmpty(ctx, bucket, task, unitID, payload.OpID, shardGone); err != nil {
- 		if ctx.Err() != nil {
- 			return // shutdown: resume after restart, do not mark failed
- 		}
- 		msg := "drain pending segments: " + err.Error()
--		// Tenant lifecycle is decoupled from cleanups (see CheckTenantMutation):
--		// a mid-strip deactivation surfaces here as persistent read errors on
--		// the closed sidecar. Name the real cause — this failure is an expected
--		// hand-off to the next reconcile round, not a fault.
--		if shard := payload.UnitToShard[unitID]; !p.shardLocallyLoaded(payload.Collection, shard) {
--			msg += " (shard no longer locally available — tenant deactivated, offloaded, or deleted; " +
--				"reconciliation re-covers the remaining shards and the tenant on reactivation)"
-+		// Neither a tenant deactivation (see CheckTenantMutation) nor a namespace
-+		// suspend waits for this drain, so a gone shard is the likely cause.
-+		if shardGone() {
-+			msg += shardGoneReason
- 		}
- 		p.failUnit(ctx, task, unitID, msg)
- 		return
-@@ -384,8 +379,8 @@ func (p *DropVectorIndexProvider) drainUnit(
- 		}
- 		msg := "clear dimension rows: " + err.Error()
- 		if errors.Is(err, errDimensionsShardNotLoaded) {
--			msg += " (tenant deactivated, offloaded, or deleted after its drain; reconciliation " +
--				"re-covers the tenant on reactivation, and loading it clears the rows)"
-+			msg += " (" + shardUnloadedCause + ", after its drain; reconciliation " +
-+				"re-covers the shard on reactivation or resume, and loading it clears the rows)"
- 		}
- 		p.failUnit(ctx, task, unitID, msg)
- 		return
-@@ -423,11 +418,9 @@ func (p *DropVectorIndex
+@@ -183,8 +183,8 @@ github.com/go-errors/errors v1.4.2 h1:J6MZopCL4uSllY1OfXM374weqZFFItUbrImctkmUxI
+ github.com/go-errors/errors v1.4.2/go.mod h1:sIVyrIiJhuEF+Pj9Ebtd6P/rEYROXFi3BopGUQ5a5Og=
+ github.com/go-ini/ini v1.67.0 h1:z6ZrTEZqSWOTyH2FlglNbNgARyHG8oLW9gMELqKr06A=
+ github.com/go-ini/ini v1.67.0/go.mod h1:ByCAeIL28uOIIG0E3PJtZPDL8WnHpFKFOtgjp+3Ies8=
+-github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
+-github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
++github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
++github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
+ github.com/go-kit/kit v0.8.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
+ github.com/go-kit/kit v0.9.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
+ github.com/go-kit/log v0.1.0/go.mod h1:zbhenjAZHb184qTLMA9ZjW7ThYL0H2mk7Q6pNt4vbaY=
 ```
 
-**File**: `adapters/repos/db/drop_vector_index_provider_test.go` (modified, +133/-1)
+**File**: `test/benchmark_bm25/go.sum` (modified, +2/-2)
 ```diff
-@@ -51,11 +51,15 @@ type fakeEditOpBucket struct {
- 	pendingErr     error                          // when set, EditOpPending returns it
- 	pendingFn      func(string) ([]string, error) // when set, overrides all other pending sources
- 	polled         chan struct{}                  // if set, a non-blocking signal per EditOpPending call
-+	registerErr    error                          // when set, RegisterEditOp returns it
- }
- 
- func (f *fakeEditOpBucket) RegisterEditOp(opID string, desc lsmkv.OpDescriptor) error {
- 	f.mu.Lock()
- 	defer f.mu.Unlock()
-+	if f.registerErr != nil {
-+		return f.registerErr
-+	}
- 	if f.registered == nil {
- 		f.registered = map[string]lsmkv.OpDescriptor{}
- 	}
-@@ -151,7 +155,9 @@ type fakeShards struct {
- 	bucket     editOpBucket
- 	buckets    map[string]editOpBucket // per-shard override; takes precedence over bucket
- 	bucketErr  error
--	resolveErr error // when set, the bucket resolution itself fails
-+	resolveErr error                   // when set, the bucket resolution itself fails
-+	loaded     map[string]editOpBucket // when non-nil, what EditOpBucketsForLoadedShards alone returns
-+	loadedErr  error                   // when set, EditOpBucketsForLoadedShards alone fails
- 	mu         sync.Mutex
- 	removed    []removedCall
- 	removeErr  map[string]error // per-shard EnsureDroppedVectorFilesRemoved error
-@@ -185,6 +191,12 @@ func (f *fakeShards) EditOpBucketsForShards(ctx context.Context, collection stri
- }
- 
- func (f *fakeShards) EditOpBucketsForLoadedShards(collection string, shardNames []string) (map[string]editOpBucket, error) {
-+	if f.loadedErr != nil {
-+		return nil, f.loadedErr
-+	}
-+	if f.loaded != nil {
-+		return f.loaded, nil
-+	}
- 	return f.resolve(shardNames)
- }
- 
-@@ -579,6 +591,126 @@ func TestStartTask_BucketLookupFails_UnitFailed(t *testing.T) {
- 	require.Empty(t, rec.completed)
- }
- 
-+// TestStartTask_BucketResolutionFails_FailsUnitWithReason pins that the lookup
-+// error itself, not a missing-shard reason, is what GET /v1/tasks shows.
-+func TestStartTask_BucketResolutionFails_FailsUnitWithReason(t *testing.T) {
-+	shards := &fakeShards{resolveErr: errors.New(`index for collection "Collection" not found`)}
-+	rec := newFakeRecorder()
-+	p := newTestDropProvider(shards, &fakeFinalizer{}, rec)
-+
-+	task := dropTask(distributedtask.TaskStatusStarted, map[string]*distributedtask.Unit{
-+		"u1": {ID: "u1", Status: distributedtask.UnitStatusPending},
-+	})
-+	h, err := p.StartTask(task)
-+	require.NoError(t, err)
-+	waitDone(t, h)
-+
-+	require.Contains(t, rec.failed, "u1")
-+	require.Contains(t, rec.failed["u1"], `index for collection "Collection" not found`)
-+	require.Empty(t, rec.completed)
-+}
-+
-+// TestStartTask_ShutdownDuringBucketResolution_LeavesUnitUnfailed pins that a
-+// lookup error seen during a shutdown leaves the unit for the task's resume.
-+func TestStartTask_ShutdownDuringBucketResolution_LeavesUnitUnfailed(t *testing.T) {
-+	shards := &fakeShards{resolveErr: errors.New("listing failed")}
-+	rec := newFakeRecorder()
-+	ctx, cancel := context.WithCancel(context.Background())
-+	cancel()
-+	p := newTestDropProviderCtx(shards, &fakeFinalizer{}, rec, ctx)
-+
-+	task := dropTask(distributedtask.TaskStatusStarted, map[string]*distributedtask.Unit{
-+		"u1": {ID: "u1", Status: distributedtask.UnitStatusPending},
-+	})
-+	h, err := p.StartTask(task)
-+	require.NoError(t, err)
-+	waitDone(t, h)
-+
-+	require.Empty(t, rec.failed, "shutdown must not fail the unit")
-+	require.Empty(t, rec.completed)
-+}
-+
-+// TestStartTask_ShardUnloaded_ReasonNamesSuspend pins that a unit's failure
-+// reason names a suspended namespace only when the shard no longer holds the
-+// unit's bucket. A shard a resume reopened under a new bucket no longer holds it.
-+func TestStartTask_ShardUnloaded_ReasonNamesSuspend(t *testing.T) {
-+	registerErr := errors.New("bucket is shutting down")
-+	readErr := errors.New("database not open")
-+	unloaded := map[string]editOpBucket{}
-+	reopened := map[string]editOpBucket{"shard1": &fakeEditOpBucket{}}
-+
-+	tests := []struct {
-+		name         string
-+		bucket       *fakeEditOpBucket
-+		loaded       map[string]editOpBucket
-+		loadedErr    error
-+		dimsErr      error
-+		wantReason   string // a substring of the unit's reason
-+		namesSuspend bool
-+	}{
-+		{
-+			name:         "before arming",
-+			bucket:       &fakeEditOpBucket{registerErr: registerErr},
-+			loaded:       unloaded,
-+			wantReason:   "register drop edit op: bucket is shutting down",
-+			namesSuspend: true,
-+		},
-+		{
-+			name:       "register fails on a loaded shard",
-+			bucket:     &fakeEditOpBucket{registerErr: registerErr},
-+			wantReason: "register drop edit op: bucket is shutting down",
-+		},
-+		{
-+			name:         "resumed mid-drain",
-+			bucket:       &fakeEditOpBucket{pendingErr: readErr},
-+			loaded:       reopened,
-+			wantReason:   "shard no longer locally loaded",
-+			namesSuspend: true,
-+		},
-+		{
-+			name:       "loaded-shard lookup fails",
-+			bucket:     &fakeEditOpBucket{pendingErr: readErr},
-+			loadedErr:  er
-```
-
-**File**: `adapters/repos/db/drop_vector_index_wiring.go` (modified, +6/-0)
-```diff
-@@ -39,13 +39,19 @@ import (
- // explicitly with the error surfaced — never via Store()'s panicking mustLoad
- // — acceptable for a drop, a rare operator-initiated action that must touch
- // every shard once anyway.
-+//
-+// Before each shard it refuses a collection whose namespace is not active, so
-+// a namespace suspended while it runs stops it at the next shard.
- func (db *DB) EditOpBucketsForShards(ctx context.Context, collection string, shardNames []string) (map[string]editOpBucket, error) {
- 	idx := db.GetIndex(entschema.ClassName(collection))
- 	if idx == nil {
- 		return nil, fmt.Errorf("index for collection %q not found", collection)
- 	}
- 	buckets := make(map[string]editOpBucket, len(shardNames))
- 	for _, name := range shardNames {
-+		if err := idx.requireNamespaceAllowsShardLoad(callerUserRequest); err != nil {
-+			return nil, fmt.Errorf("collection %q: %w", collection, err)
-+		}
- 		if b := db.loadEditOpBucket(ctx, idx, collection, name); b != nil {
- 			buckets[name] = b
- 		}
-```
-
-**File**: `adapters/repos/db/drop_vector_index_wiring_test.go` (modified, +71/-0)
-```diff
-@@ -21,9 +21,11 @@ import (
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- 
-+	"github.com/weaviate/weaviate/cluster/proto/api"
- 	"github.com/weaviate/weaviate/entities/schema"
- 	enthnsw "github.com/weaviate/weaviate/entities/vectorindex/hnsw"
- 	"github.com/weaviate/weaviate/usecases/memwatch"
-+	"github.com/weaviate/weaviate/usecases/namespaces"
- )
- 
- const editOpColdShard = "cold"
-@@ -70,6 +72,54 @@ func TestEditOpBucketsForShardsOnShutDownIndex(t *testing.T) {
- 	require.False(t, cold.isLoaded())
- }
- 
-+func TestEditOpBucketsForShardsRefusesInactiveNamespace(t *testing.T) {
-+	tests := []struct {
-+		name  string
-+		state api.NamespaceState
-+		// suspendOnColdLoad suspends the namespace while EditOpBucketsForShards
-+		// loads the cold shard, and fails that load.
-+		suspendOnColdLoad bool
-+		shardNames        func(loaded ShardLike) []string
-+	}{
-+		{
-+			name:       "suspended, cold and loaded shard",
-+			state:      api.NamespaceStateSuspended,
-+			shardNames: func(loaded ShardLike) []string { return []string{editOpColdShard, loaded.Name()} },
-+		},
-+		{
-+			name:       "suspended, shard absent from the node",
-+			state:      api.NamespaceStateSuspended,
-+			shardNames: func(ShardLike) []string { return []string{"absent"} },
-+		},
-+		{
-+			name:              "suspended mid-call",
-+			state:             api.NamespaceStateActive,
-+			suspendOnColdLoad: true,
-+			shardNames:        func(loaded ShardLike) []string { return []string{editOpColdShard, loaded.Name()} },
-+		},
-+	}
-+	for _, tc := range tests {
-+		t.Run(tc.name, func(t *testing.T) {
-+			ctx := testCtx()
-+			states := map[string]api.NamespaceState{"alpha": tc.state}
-+			var allocChecker memwatch.AllocChecker
-+			if tc.suspendOnColdLoad {
-+				allocChecker = loadProbeAllocChecker{memwatch.NewDummyMonitor(), func() {
-+					states["alpha"] = api.NamespaceStateSuspended
-+				}}
-+			}
-+			db, idx, loaded, cold := newEditOpTestIndex(t, ctx, allocChecker)
-+			idx.namespace = "alpha"
-+			idx.namespacesExister = namespaces.NewMockExisterInState(t, states)
-+
-+			buckets, err := db.EditOpBucketsForShards(ctx, idx.Config.ClassName.String(), tc.shardNames(loaded))
-+			require.ErrorIs(t, err, namespaces.ErrNamespaceSuspended)
-+			require.Empty(t, buckets)
-+			require.False(t, cold.isLoaded())
-+		})
-+	}
-+}
-+
- func TestEditOpBucketsForLoadedShards(t *testing.T) {
- 	ctx := testCtx()
- 	db, idx, loaded, cold := newEditOpTestIndex(t, ctx, nil)
-@@ -82,6 +132,27 @@ func TestEditOpBucketsForLoadedShards(t *testing.T) {
- 	require.False(t, cold.isLoaded())
- }
- 
-+// TestEditOpBucketsForLoadedShards_ReturnsResolvedBucket pins that a shard's
-+// loaded lookup returns the bucket EditOpBucketsForShards resolved for it, which
-+// is how bucketStillLoaded tells a still-loaded shard from a reopened one.
-+func TestEditOpBucketsForLoadedShards_ReturnsResolvedBucket(t *testing.T) {
-+	ctx := testCtx()
-+	db, idx, loaded, cold := newEditOpTestIndex(t, ctx, nil)
-+	t.Cleanup(func() { cold.Shutdown(context.Background()) })
-+	class := idx.Config.ClassName.String()
-+	names := []string{loaded.Name(), editOpColdShard}
-+
-+	resolved, err := db.EditOpBucketsForShards(ctx, class, names)
-+	require.NoError(t, err)
-+	require.Len(t, resolved, 2)
-+
-+	current, err := db.EditOpBucketsForLoadedShards(class, names)
-+	require.NoError(t, err)
-+	for _, name := range names {
-+		require.Same(t, resolved[name], current[name], "shard %s", name)
-+	}
-+}
-+
- // newEditOpTestIndex returns a DB over an index holding one loaded shard and the
- // lazy shard editOpColdShard, not yet loaded, whose loads check allocChecker.
- // A nil allocChecker takes the index's own.
-```
-
-**File**: `adapters/repos/db/namespace_guard.go` (modified, +3/-1)
-```diff
-@@ -58,7 +58,9 @@ var (
- type shardLoadCaller int
- 
- const (
--	// callerUserRequest is a load driven by a user request. It gets the full check.
-+	// callerUserRequest is a load driven by a user request, or by
-+	// DB.EditOpBucketsForShards resolving a drop-vector task's buckets. It gets
-+	// the full check.
- 	callerUserRequest shardLoadCaller = iota
- 	// callerResume is a resuming namespace reopening its own shards. It is still
- 	// refused for a namespace that keeps no shards open, so a stale reopen cannot
+@@ -44,8 +44,8 @@ github.com/getsentry/sentry-go v0.30.0 h1:lWUwDnY7sKHaVIoZ9wYqRHJ5iEmoc0pqcRqFko
+ github.com/getsentry/sentry-go v0.30.0/go.mod h1:WU9B9/1/sHDqeV8T+3VwwbjeR5MSXs/6aqG3mqZrezA=
+ github.com/go-errors/errors v1.4.2 h1:J6MZopCL4uSllY1OfXM374weqZFFItUbrImctkmUxIA=
+ github.com/go-errors/errors v1.4.2/go.mod h1:sIVyrIiJhuEF+Pj9Ebtd6P/rEYROXFi3BopGUQ5a5Og=
+-github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
+-github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
++github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
++github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
+ github.com/go-kit/kit v0.8.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
+ github.com/go-kit/kit v0.9.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
+ github.com/go-kit/log v0.1.0/go.mod h1:zbhenjAZHb184qTLMA9ZjW7ThYL0H2mk7Q6pNt4vbaY=
 ```
 
 ---
 
-### Incident Patch 2: `ad0f4b18` (2026-10-27)
-**Commit Message**: Merge pull request #13614 from weaviate/merge-stable-v1.40-into-main
+### Incident Patch 2: `687a2113` (2026-10-28)
+**Commit Message**: Merge pull request #13629 from weaviate/fix-authz-batch-refs-log-flake
 
-Merge stable/v1.40 into main
+test(authz): wait for pending authz logs before measuring batch refs
 
-**File**: `.github/workflows/pull_requests.yaml` (modified, +28/-5)
+**File**: `test/acceptance/authz/batch_refs_test.go` (modified, +1/-1)
 ```diff
-@@ -718,7 +718,6 @@ jobs:
-         env:
-           WCS_DUMMY_CI_PW: ${{ secrets.WCS_DUMMY_CI_PW }}
-           WCS_DUMMY_CI_PW_2: ${{ secrets.WCS_DUMMY_CI_PW_2 }}
--          WEAVIATE_LICENSE_KEY: ${{ secrets.WEAVIATE_LICENSE_KEY }}
-           REPLICATION_GRPC_ENABLED: ${{ matrix.grpc_replication || '' }}
-         run: ./test/run.sh ${{ matrix.test }}
-   Acceptance-Tests-4-cores:
-@@ -756,8 +755,6 @@ jobs:
-             test: "--acceptance-self-recovery-intact"
-           - name: "python"
-             test: "--acceptance-only-python"
--          - name: "python-namespaces"
--            test: "--acceptance-only-python-namespaces"
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-       - name: Set up Go
-@@ -781,7 +778,7 @@ jobs:
-         env:
-           MATRIX_TEST: ${{ matrix.name }}
-         run: |
--          if [[ "$MATRIX_TEST" == "replica-slow" || "$MATRIX_TEST" == "replica-slow-grpc" || "$MATRIX_TEST" == "fast-group-4" || "$MATRIX_TEST" == "fast-group-5" || "$MATRIX_TEST" == "recovery" || "$MATRIX_TEST" == "self-recovery" || "$MATRIX_TEST" == "self-recovery-lazy" || "$MATRIX_TEST" == "self-recovery-intact" || "$MATRIX_TEST" == "distributed-tasks" || "$MATRIX_TEST" == "compaction" || "$MATRIX_TEST" == "python-namespaces" ]]; then
-+          if [[ "$MATRIX_TEST" == "replica-slow" || "$MATRIX_TEST" == "replica-slow-grpc" || "$MATRIX_TEST" == "fast-group-4" || "$MATRIX_TEST" == "fast-group-5" || "$MATRIX_TEST" == "recovery" || "$MATRIX_TEST" == "self-recovery" || "$MATRIX_TEST" == "self-recovery-lazy" || "$MATRIX_TEST" == "self-recovery-intact" || "$MATRIX_TEST" == "distributed-tasks" || "$MATRIX_TEST" == "compaction" ]]; then
-             echo "test_timeout_minutes=45" >> $GITHUB_ENV
-           else
-             echo "test_timeout_minutes=15" >> $GITHUB_ENV
-@@ -790,12 +787,38 @@ jobs:
-         uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4
-         env:
-           REPLICATION_GRPC_ENABLED: ${{ matrix.grpc_replication || '' }}
--          WEAVIATE_LICENSE_KEY: ${{ secrets.WEAVIATE_LICENSE_KEY }}
-         with:
-           timeout_minutes: ${{ env.test_timeout_minutes }}
-           max_attempts: ${{ env.retry_max_attempts }}
-           command: ./test/run.sh ${{ matrix.test }}
-           on_retry_command: ./test/run.sh --cleanup
-+  Acceptance-With-License-Tests:
-+    name: acceptance with license (${{ matrix.name }})
-+    runs-on: ubicloud-standard-4-ubuntu-2404
-+    # Forks and Dependabot cannot read WEAVIATE_LICENSE_KEY.
-+    if: ${{ (github.event_name != 'push' || github.ref_type != 'branch') && !github.event.pull_request.head.repo.fork && github.actor != 'dependabot[bot]' }}
-+    strategy:
-+      fail-fast: false
-+      matrix:
-+        include:
-+          - name: "licensed"
-+            test: "--acceptance-licensed"
-+          - name: "python-namespaces"
-+            test: "--acceptance-only-python-namespaces"
-+    steps:
-+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-+      - name: Set up Go
-+        uses: ./.github/actions/setup-go
-+      - name: Login to Docker Hub
-+        uses: ./.github/actions/docker-login
-+        with:
-+          username: ${{secrets.DOCKER_USERNAME}}
-+          password: ${{secrets.DOCKER_PASSWORD}}
-+      - name: Acceptance tests with license
-+        timeout-minutes: 45
-+        env:
-+          WEAVIATE_LICENSE_KEY: ${{ secrets.WEAVIATE_LICENSE_KEY }}
-+        run: ./test/run.sh ${{ matrix.test }}
-   Acceptance-Reindex-Tests:
-     name: reindex (${{ matrix.name }})
-     runs-on: ubicloud-standard-4-ubuntu-2404
+@@ -69,7 +69,7 @@ func TestAuthZBatchRefAuthZCalls(t *testing.T) {
+ 	helper.CreateObjectAuth(t, &models.Object{ID: UUID1, Class: className2}, adminKey)
+ 
+ 	ls := newLogScanner(containers[0].Container())
+-	ls.GetAuthzLogs(t) // startup and object class creation logs that are irrelevant
++	ls.SkipAuthzLogs(t) // startup and object class creation logs that are irrelevant
+ 
+ 	from := beaconStart + className1 + "/" + UUID1.String() + "/ref"
+ 	to := beaconStart + UUID1
 ```
 
-**File**: `test/acceptance/authn/dynamic_users_test.go` (modified, +1/-242)
+**File**: `test/acceptance/authz/helper.go` (modified, +17/-0)
 ```diff
-@@ -14,21 +14,16 @@ package authn
- import (
- 	"context"
- 	"errors"
--	"slices"
+@@ -17,6 +17,7 @@ import (
+ 	"fmt"
+ 	"strings"
  	"testing"
- 	"time"
++	"time"
  
--	"github.com/go-openapi/strfmt"
--
- 	"github.com/weaviate/weaviate/entities/models"
+ 	"github.com/testcontainers/testcontainers-go"
+ 	"google.golang.org/grpc/metadata"
+@@ -256,3 +257,19 @@ func (s *logScanner) GetAuthzLogs(t *testing.T) []string {
  
- 	"github.com/weaviate/weaviate/test/docker"
+ 	return newLines
+ }
++
++// SkipAuthzLogs consumes authz lines until a read finds none. Docker delivers
++// container logs asynchronously, so a single read can miss lines of requests
++// that already returned, and the next read would count them for the wrong
++// request.
++func (s *logScanner) SkipAuthzLogs(t *testing.T) {
++	t.Helper()
++
++	for deadline := time.Now().Add(10 * time.Second); time.Now().Before(deadline); {
++		time.Sleep(200 * time.Millisecond)
++		if len(s.GetAuthzLogs(t)) == 0 {
++			return
++		}
++	}
++	t.Fatal("authz logs still arriving after 10s")
++}
+```
+
+---
+
+### Incident Patch 3: `ba635e72` (2026-10-27)
+**Commit Message**: Merge pull request #13612 from weaviate/fix-recount-properties-single-store-open
+
+perf(db): open and walk each shard once for all startup rebuilds before load
+
+**File**: `adapters/repos/db/index.go` (modified, +1/-2)
+```diff
+@@ -605,8 +605,7 @@ func (i *Index) initAndStoreShards(ctx context.Context, class *models.Class,
+ 			withDirs = append(withDirs, shard.name)
+ 		}
+ 	}
+-	i.prepareDimensionsOfShards(ctx, class, withDirs)
+-	i.recountPropertyLengthsOfShards(ctx, class, withDirs)
++	i.rebuildShardsBeforeLoad(ctx, class, withDirs)
  
--	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- 	"github.com/weaviate/weaviate/client/users"
- 	"github.com/weaviate/weaviate/test/helper"
--	"github.com/weaviate/weaviate/usecases/auth/authorization"
+ 	hotShardNames := make([]string, 0, len(localShards))
+ 
+```
+
+**File**: `adapters/repos/db/shard_dimension_recalculation.go` (modified, +111/-105)
+```diff
+@@ -35,45 +35,21 @@ import (
+ 	"github.com/weaviate/weaviate/entities/storobj"
  )
  
- // TestDynamicUsers boots a single Weaviate container shared across the dynamic
-@@ -50,89 +45,18 @@ func TestDynamicUsers(t *testing.T) {
- 		WithUserApiKey("static-user", "static-key").
- 		WithDbUsers().
- 		WithRBAC().WithRbacRoots(adminUser).
--		WithLicenseKeyFile().
- 		Start(ctx)
- 	require.Nil(t, err)
- 	helper.SetupClient(compose.GetWeaviate().URI())
- 	defer func() {
- 		helper.ResetClient()
--		// testExpiration waits for a key to expire and restarts the node, which
--		// can outlast the ctx Start ran under.
--		terminateCtx, terminateCancel := context.WithTimeout(context.Background(), 2*time.Minute)
--		defer terminateCancel()
--		require.NoError(t, compose.Terminate(terminateCtx))
-+		require.NoError(t, compose.Terminate(ctx))
- 		cancel()
- 	}()
- 
- 	t.Run("create_user", testCreateUser)
- 	t.Run("with_static_user", testWithStaticUser)
- 	t.Run("suspend_and_activate", testSuspendAndActivate)
--	t.Run("expiration", func(t *testing.T) { testExpiration(t, compose) })
+-// prepareDimensionsOfShards migrates or rebuilds the dimensions buckets of active and
+-// cold shards before they load, without loading them. A failed shard is retried at load.
+-func (i *Index) prepareDimensionsOfShards(ctx context.Context, class *models.Class, shardNames []string) {
+-	reindex := i.Config.DimensionsReindex
+-	if !i.Config.TrackVectorDimensions || len(shardNames) == 0 ||
+-		(!i.Config.MigrateDimensionsToRoaringSet && (reindex == nil || !reindex.enabled)) {
+-		return
+-	}
+-
+-	i.rebuildShardsBeforeLoad(ctx, "prepare_dimensions", "dimensions buckets prepared", shardNames,
+-		func(logger logrus.FieldLogger, name string) { i.prepareShardDimensions(ctx, logger, class, name) })
 -}
 -
--// testExpiration runs last in TestDynamicUsers, because its last subtest
--// restarts the node without a license key.
--func testExpiration(t *testing.T, compose *docker.DockerCompose) {
--	adminKey := "admin-key"
--	in24h := helper.ExpiryIn(24 * time.Hour)
--
--	ownInfo := func(t *testing.T, key string) error {
--		_, err := helper.Client(t).Users.GetOwnInfo(users.NewGetOwnInfoParams(), helper.CreateAuth(key))
--		return err
--	}
--
--	t.Run("create with expiresAt shows it on GET, list and own-info", func(t *testing.T) {
--		const userID = "exp-user"
--		helper.DeleteUser(t, userID, adminKey)
--		apiKey := helper.CreateUserWithExpiry(t, userID, adminKey, &in24h)
--
--		want := (*strfmt.DateTime)(&in24h)
--		require.Equal(t, want, helper.GetUser(t, userID, adminKey).ExpiresAt)
--		listed := helper.ListAllUsers(t, adminKey)
--		i := slices.IndexFunc(listed, func(u *models.DBUserInfo) bool { return *u.UserID == userID })
--		require.NotEqual(t, -1, i, "%s not listed", userID)
--		require.Equal(t, want, listed[i].ExpiresAt)
--		require.Equal(t, want, helper.GetInfoForOwnUser(t, apiKey).ExpiresAt)
--	})
--
--	t.Run("expiry holds after the node restarts without a license key", func(t *testing.T) {
--		const userID = "exp-restart"
--		helper.DeleteUser(t, userID, adminKey)
--		in10s := helper.ExpiryIn(10 * time.Second)
--		apiKey := helper.CreateUserWithExpiry(t, userID, adminKey, &in10s)
--
--		var unauthorized *users.GetOwnInfoUnauthorized
--		require.EventuallyWithT(t, func(c *assert.CollectT) {
--			assert.ErrorAs(c, ownInfo(t, apiKey), &unauthorized)
--		}, 30*time.Second, 500*time.Millisecond)
--
--		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Minute)
--		defer cancel()
--		require.NoError(t, compose.SetLicenseKeyFileAt(ctx, 0, ""))
--		grace := 10 * time.Second
--		require.NoError(t, compose.RestartAt(ctx, 0, &grace))
--		helper.SetupClient(compose.GetWeaviate().URI())
--
--		require.ErrorAs(t, ownInfo(t, apiKey), &unauthorized)
--		require.Equal(t, (*strfmt.DateTime)(&in10s), helper.GetUser(t, userID, adminKey).ExpiresAt)
--		require.Equal(t, (*strfmt.DateTime)(&in24h), helper.GetUser(t, "exp-user", adminKey).ExpiresAt)
--
--		in48h := helper.ExpiryIn(48 * time.Hour)
--		_, err := helper.Client(t).Users.SetUserExpiration(
--			users.NewSetUserExpirationParams().WithUserID("exp-user").WithBody(users.SetUserExpirationBody{ExpiresAt: (*strfmt.DateTime)(&in48h)}),
--			helper.CreateAuth(adminKey),
--		)
--		var putForbidden *users.SetUserExpirationForbidden
--		require.ErrorAs(t, err, &putForbidden)
--		require.Contains(t, putForbidden.Payload.Error[0].Message, "license key")
--
--		_, err = helper.Client(t).Users.CreateUser(
--			users.NewCreateUserParams().WithUserID("exp-unlicensed").WithBody(users.CreateUserBody{ExpiresAt: (*strfmt.DateTime)(&in48h)}),
--			helper.CreateAuth(adminKey),
--		)
--		var createForbidden *users.CreateUserForbidden
--		require.ErrorAs(t, err, &createForbidden)
--	})
- }
+-func (i *Index) prepareShardDimensions(ctx context.Context, logger logrus.FieldLogger, class *models.Class, name string) {
+-	reindex := i.Config.DimensionsReindex
+-	rebuild := reindex.pending(i.ID(), name)
++// prepareShardDimensions migrates the dimensions bucket of a shard that is not loaded,
++// if asked to. It reports whether the dimensions of the shard are to be reindexed.
++func (i *Index) prepareShardDimensions(ctx context.Context, logger logrus.FieldLogger, name string) bool {
++	reindex := i.Config.DimensionsReindex.pending(i.ID(), name)
  
- func testCreateUser(t *testing.T) {
-@@ -449,168 +373,3 @@ func testSuspendAndActivate(t *testing.T) {
- 		require.True(t, errors.As(err, &conflict))
- 	})
- }
--
--func TestCreateUser_Namespaces(t *testing.T) {
--	const (
--		adminKey  = "admin-key"
--		adminUser = "admin-user"
--	)
--
--	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
--	// NS clusters require RBAC; adminUser is the root that creates namespaces and
--	// namespaced DB users.
--	compose, err := docker.New().WithWeaviate().
--		WithApiKey().WithRBAC().WithUserApiKey(adminUser, adminKey).WithRbacRoots(adminUser).
--		WithDbUsers().
--		WithNamespaces().
--		S
-```
-
-**File**: `test/acceptance/authz/auto_tenancy_test.go` (modified, +2/-2)
-```diff
-@@ -402,7 +402,7 @@ func TestAuthzAutoSchemaCollectionCreation(t *testing.T) {
- 	// auto-schema path actually runs.
- 	_, teardown := composeUpWithSettings(t,
- 		map[string]string{existingUser: existingKey}, map[string]string{customUser: customKey}, nil,
--		false, map[string]string{"AUTOSCHEMA_ENABLED": "true"}, false, false)
-+		false, map[string]string{"AUTOSCHEMA_ENABLED": "true"}, false)
- 
- 	className := "AutoCreated"
- 	obj := articles.NewParagraph().WithID("00000000-0000-0000-0000-000000000010").Object()
-@@ -528,7 +528,7 @@ func TestAuthzAutoSchemaPropertyAdd(t *testing.T) {
- 	// so the property-add path runs.
- 	_, teardown := composeUpWithSettings(t,
- 		map[string]string{existingUser: existingKey}, map[string]string{customUser: customKey}, nil,
--		false, map[string]string{"AUTOSCHEMA_ENABLED": "true"}, false, false)
-+		false, map[string]string{"AUTOSCHEMA_ENABLED": "true"}, false)
- 
- 	cls := articles.ParagraphsClass()
- 	obj := articles.NewParagraph().WithID("00000000-0000-0000-0000-000000000020").Object()
-```
-
-**File**: `test/acceptance/authz/setup_test.go` (modified, +1/-4)
-```diff
-@@ -27,7 +27,7 @@ func composeUpWithSettings(t *testing.T,
- 	viewers map[string]string,
- 	enableMCP bool,
- 	weaviateEnvs map[string]string,
--	withDbUsers, withNamespaces bool,
-+	withDbUsers bool,
- ) (*docker.DockerCompose, func()) {
- 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
- 
-@@ -39,9 +39,6 @@ func composeUpWithSettings(t *testing.T,
- 	if withDbUsers {
- 		builder = builder.WithDbUsers()
+-	// a rebuild writes a RoaringSet bucket anyway
+-	migrated, err := i.prepareUnloadedDimensionsBucket(ctx, name, i.Config.MigrateDimensionsToRoaringSet && !rebuild)
++	// a reindex writes a RoaringSet bucket anyway
++	migrated, err := i.prepareUnloadedDimensionsBucket(ctx, name, i.Config.MigrateDimensionsToRoaringSet && !reindex)
+ 	if err != nil {
+ 		logger.Errorf("could not prepare dimensions: %v", err)
+-		return
++		return false
  	}
--	if withNamespaces {
--		builder = builder.WithNamespaces()
+ 	if migrated {
+ 		i.removeComputedUsage(logger, name)
+ 	}
+-	if !rebuild {
+-		return
 -	}
+-
+-	start := time.Now()
+-	objects, err := i.rebuildUnloadedShardDimensions(ctx, class, name)
+-	reindex.record(i.ID(), name, objects, err == nil)
+-	if err != nil {
+-		logger.Errorf("could not reindex dimensions: %v", err)
+-		return
+-	}
+-	i.removeComputedUsage(logger, name)
+-	logger.WithField("objects", objects).WithField("took", time.Since(start)).Info("dimensions reindexed")
++	return reindex
+ }
  
- 	// Enable MCP server if requested
- 	if enableMCP {
+ func (i *Index) prepareUnloadedDimensionsBucket(ctx context.Context, name string, migrate bool) (bool, error) {
+@@ -92,18 +68,42 @@ func (i *Index) removeComputedUsage(logger logrus.FieldLogger, name string) {
+ 	}
+ }
+ 
+-// rebuildUnloadedShardDimensions rebuilds on a shard with only the objects and
+-// dimensions buckets open.
+-func (i *Index) rebuildUnloadedShardDimensions(ctx context.Context, class *models.Class, name string) (int, error) {
+-	if i.unloadedShardIsEmpty(name) {
+-		return 0, nil
++// unloadedDimensionsReindex reindexes the dimensions of a shard before it loads.
++type unloadedDimensionsReindex struct {
++	index   *Index
++	name    string
++	logger  logrus.FieldLogger
++	rebuild *dimensionsRebuild
++}
++
++func (r *unloadedDimensionsReindex) empty() error {
++	return nil
++}
++
++func (r *unloadedDimensionsReindex) begin(ctx context.Context, s *Shard) (objectsVisitor, error) {
++	if err := s.loadDimensionsBucket(ctx, helpers.DimensionsBucketLSM); err != nil {
++		return nil, err
+ 	}
+-	return i.rebuildUnloadedShard(ctx, class, name, func(s *Shard) (int, error) {
+-		if err := s.loadDimensionsBucket(ctx, helpers.DimensionsBucketLSM); err != nil {
+-			return 0, err
+-		}
+-		return s.recalculateDimensions(ctx)
+-	})
++	rebuild, err := s.beginDimensionsRebuild(ctx)
++	if err != nil {
++		return nil, err
++	}
++	r.rebuild = rebuild
++	return rebuild, nil
++}
++
++func (r *unloadedDimensionsReindex) end(ctx context.Context, walkErr error) error {
++	return r.rebuild.end(ctx, walkErr)
++}
++
++func (r *unloadedDimensionsReindex) conclude(objects int, took time.Duration, err error) {
++	r.index.Config.DimensionsReindex.record(r.index.ID(), r.name, objects, err == nil)
++	if err != nil {
++		r.logger.Errorf("could not reindex dimensions: %v", err)
++		return
++	}
++	r.index.removeComputedUsage(r.logger, r.name)
++	r.logger.WithField("objects", objects).WithField("took", took).Info("dimensions reindexed")
+ }
+ 
+ // openUnloadedShard opens only the objects bucket of a shard that is not loaded,
+@@ -187,41 +187,35 @@ func (s *Shard) reindexDimensionsOnLoad(ctx context.Context) error {
+ }
+ 
+ // recalculateDimensions must not run while the shard serves.
+-func (s *Shard) recalculateDimensions(ctx context.Context) (objects int, err error) {
+-	// a usage scan of the unloaded shard runs migration recovery, which removes a
+-	// replacement bucket that has no bucket moved aside next to it
+-	unlock, err := shardusage.LockUnloadedDimensionsBucket(ctx, s.index.path(), s.name)
+-	if err != nil {
+-		return 0, err
+-	}
+-	defer unlock()
+-
+-	rows, objects, err := s.scanObjectDimensions(ctx)
++func (s *Shard) recalculateDimensions(ctx context.Context) (int, error) {
++	rebuild, err := s.beginDimensionsRebuild(ctx)
+ 	if err != nil {
+ 		return 0, 
 ```
 
-**File**: `test/acceptance/licensed/authn/create_user_namespaces_test.go` (added, +191/-0)
+**File**: `adapters/repos/db/shard_recount_property_lengths.go` (modified, +68/-86)
 ```diff
-@@ -0,0 +1,191 @@
+@@ -22,11 +22,8 @@ import (
+ 
+ 	"github.com/sirupsen/logrus"
+ 
+-	"github.com/weaviate/weaviate/adapters/repos/db/helpers"
+ 	"github.com/weaviate/weaviate/adapters/repos/db/inverted"
+-	"github.com/weaviate/weaviate/adapters/repos/db/lsmkv"
+ 	"github.com/weaviate/weaviate/entities/additional"
+-	"github.com/weaviate/weaviate/entities/models"
+ 	"github.com/weaviate/weaviate/entities/storobj"
+ )
+ 
+@@ -35,56 +32,39 @@ const (
+ 	propLengthsRecountFile = propLengthsFile + ".recount"
+ )
+ 
+-// recountPropertyLengthsOfShards recounts the property lengths of active and cold
+-// shards before they load, without loading them. A failed shard is retried at load.
+-func (i *Index) recountPropertyLengthsOfShards(ctx context.Context, class *models.Class, shardNames []string) {
+-	recount := i.Config.PropertyLengthsRecount
+-	if recount == nil || !recount.enabled || len(shardNames) == 0 {
+-		return
++// unloadedPropertyLengthsRecount recounts the property lengths of a shard before it loads.
++type unloadedPropertyLengthsRecount struct {
++	index     *Index
++	name      string
++	logger    logrus.FieldLogger
++	recounter *propertyLengthsRecounter
++}
++
++func (r *unloadedPropertyLengthsRecount) empty() error {
++	if r.recounter.trackerReadable() {
++		return nil
+ 	}
++	return r.recounter.writeEmpty()
++}
+ 
+-	i.logger.WithField("action", "recount_property_lengths").WithField("shards", len(shardNames)).
+-		Warn("Recounting property lengths before the shards load. It cannot be cancelled, and " +
+-			"runs on every startup while environment variable RECOUNT_PROPERTIES_AT_STARTUP is set")
+-	i.rebuildShardsBeforeLoad(ctx, "recount_property_lengths", "property lengths recount before load finished",
+-		shardNames, func(logger logrus.FieldLogger, name string) {
+-			i.recountUnloadedShardPropertyLengths(ctx, logger, class, name)
+-		})
++func (r *unloadedPropertyLengthsRecount) begin(_ context.Context, s *Shard) (objectsVisitor, error) {
++	return r.recounter, r.recounter.begin(s)
+ }
+ 
+-func (i *Index) recountUnloadedShardPropertyLengths(ctx context.Context, logger logrus.FieldLogger,
+-	class *models.Class, name string,
+-) {
+-	recount := i.Config.PropertyLengthsRecount
+-	if !recount.pending(i.ID(), name) {
+-		return
++func (r *unloadedPropertyLengthsRecount) end(_ context.Context, walkErr error) error {
++	if err := r.recounter.end(walkErr); err != nil {
++		return err
+ 	}
++	return r.recounter.replaceTrackerFile()
++}
+ 
+-	start := time.Now()
+-	objects, err := i.recountUnloadedShard(ctx, class, name)
+-	recount.record(i.ID(), name, objects, err == nil)
++func (r *unloadedPropertyLengthsRecount) conclude(objects int, took time.Duration, err error) {
++	r.index.Config.PropertyLengthsRecount.record(r.index.ID(), r.name, objects, err == nil)
+ 	if err != nil {
+-		logger.Errorf("could not recount property lengths, retrying when the shard loads: %v", err)
++		r.logger.Errorf("could not recount property lengths, retrying when the shard loads: %v", err)
+ 		return
+ 	}
+-	logger.WithField("objects", objects).WithField("took", time.Since(start)).Info("property lengths recounted")
+-}
+-
+-func (i *Index) recountUnloadedShard(ctx context.Context, class *models.Class, name string) (int, error) {
+-	r := newPropertyLengthsRecounter(shardPath(i.path(), name), i.logger)
+-	if i.unloadedShardIsEmpty(name) {
+-		if r.trackerReadable() {
+-			return 0, nil
+-		}
+-		return 0, r.writeEmpty()
+-	}
+-	return i.rebuildUnloadedShard(ctx, class, name, func(s *Shard) (int, error) {
+-		objects, err := r.count(ctx, s)
+-		if err != nil {
+-			return 0, err
+-		}
+-		return objects, r.replaceTrackerFile()
+-	})
++	r.logger.WithField("objects", objects).WithField("took", took).Info("property lengths recounted")
+ }
+ 
+ // recountPropertyLengthsOnLoad recounts a shard the recount before load missed. It
+@@ -129,6 +109,11 @@ type propertyLengthsRecounter struct {
+ 	logger      logrus.FieldLogger
+ 	trackerPath string
+ 	recountPath string
++
++	// set from begin to end
++	shard    *Shard
++	previous *inverted.JsonShardMetaData
++	tracker  *inverted.JsonShardMetaData
+ }
+ 
+ func newPropertyLengthsRecounter(shardPath string, logger logrus.FieldLogger) *propertyLengthsRecounter {
+@@ -143,24 +128,41 @@ func newPropertyLengthsRecounter(shardPath string, logger logrus.FieldLogger) *p
+ // file, so a failure or a crash halfway leaves the previous ones in place. It
+ // returns the number of objects counted.
+ func (r *propertyLengthsRecounter) count(ctx context.Context, s *Shard) (int, error) {
+-	tracker, err := r.createRecountTracker()
+-	if err != nil {
++	if err := r.begin(s); err != nil {
+ 		return 0, err
+ 	}
++	objects, errs := s.walkObjects(ctx, r)
++	if err := r.end(errs[0]); err != nil {
++		return 0, err
++	}
++	return objects, nil
++}
+ 
+-	// the shard does not serve yet, so nothing else uses its tracker meanwhile
+-	previous := s.propLenTracker
++// begin points the tracker of s at a new recount file, for visit to fill. The shard
++// does not serve yet, so nothing else uses its tracker meanwhile.
++func (r *propertyLengthsRecounter) be
+```
+
+**File**: `adapters/repos/db/shard_recount_property_lengths_test.go` (modified, +2/-2)
+```diff
+@@ -266,7 +266,7 @@ func TestRecountPropertyLengthsBeforeLoad_FailureRetriedOnLoad(t *testing.T) {
+ 	idx.Config.PropertyLengthsRecount = recount
+ 	// a non-empty directory cannot be removed as a leftover recount file
+ 	require.NoError(t, os.MkdirAll(filepath.Join(recountFileOf(trackerPath), "blocker"), 0o755))
+-	idx.recountPropertyLengthsOfShards(testCtx(), class, []string{name})
++	idx.rebuildShardsBeforeLoad(testCtx(), class, []string{name})
+ 	_, failed, _ := recount.summary()
+ 	require.Equal(t, 1, failed)
+ 	sum, count := diskTally(t, trackerPath)
+@@ -294,7 +294,7 @@ func TestRecountPropertyLengthsBeforeLoad_UnreadableTrackerOfEmptyShard(t *testi
+ 	require.NoError(t, os.WriteFile(trackerPath, nil, 0o644))
+ 
+ 	idx.Config.PropertyLengthsRecount = &startupRebuild{enabled: true}
+-	idx.recountPropertyLengthsOfShards(testCtx(), class, []string{name})
++	idx.rebuildShardsBeforeLoad(testCtx(), class, []string{name})
+ 	sum, count := diskTally(t, trackerPath)
+ 	require.Equal(t, []int{0, 0}, []int{sum, count})
+ 
+```
+
+**File**: `adapters/repos/db/startup_rebuild.go` (modified, +222/-20)
+```diff
+@@ -13,15 +13,19 @@ package db
+ 
+ import (
+ 	"context"
++	"errors"
++	"fmt"
+ 	"os"
+ 	"slices"
+ 	"sync"
+ 	"time"
+ 
+-	"github.com/sirupsen/logrus"
+-
++	"github.com/weaviate/weaviate/adapters/repos/db/helpers"
++	"github.com/weaviate/weaviate/adapters/repos/db/lsmkv"
++	"github.com/weaviate/weaviate/entities/additional"
+ 	enterrors "github.com/weaviate/weaviate/entities/errors"
+ 	"github.com/weaviate/weaviate/entities/models"
++	"github.com/weaviate/weaviate/entities/storobj"
+ )
+ 
+ // startupRebuild makes REINDEX_VECTOR_DIMENSIONS_AT_STARTUP or
+@@ -41,8 +45,12 @@ type rebuiltShard struct {
+ 	index, shard string
+ }
+ 
++func (r *startupRebuild) isEnabled() bool {
++	return r != nil && r.enabled
++}
++
+ func (r *startupRebuild) pending(index, shard string) bool {
+-	if r == nil || !r.enabled {
++	if !r.isEnabled() {
+ 		return false
+ 	}
+ 	r.mu.Lock()
+@@ -104,44 +112,238 @@ func (r *startupRebuild) summary() (rebuilt, failed int, objects int64) {
+ 	return rebuilt, failed, r.objects
+ }
+ 
+-// rebuildShardsBeforeLoad runs rebuild on each of the shards that has a dir,
+-// _NUMCPU at a time.
+-func (i *Index) rebuildShardsBeforeLoad(ctx context.Context, action, finished string, shardNames []string,
+-	rebuild func(logger logrus.FieldLogger, name string),
+-) {
++// rebuildShardsBeforeLoad prepares the dimensions and recounts the property lengths of
++// active and cold shards before they load, without loading them, _NUMCPU shards at a
++// time. A failed shard is retried at load.
++func (i *Index) rebuildShardsBeforeLoad(ctx context.Context, class *models.Class, shardNames []string) {
++	dimensions := i.Config.TrackVectorDimensions &&
++		(i.Config.MigrateDimensionsToRoaringSet || i.Config.DimensionsReindex.isEnabled())
++	recount := i.Config.PropertyLengthsRecount.isEnabled()
++	if len(shardNames) == 0 || (!dimensions && !recount) {
++		return
++	}
++
++	if recount {
++		i.logger.WithField("action", "recount_property_lengths").WithField("shards", len(shardNames)).
++			Warn("Recounting property lengths before the shards load. It cannot be cancelled, and " +
++				"runs on every startup while environment variable RECOUNT_PROPERTIES_AT_STARTUP is set")
++	}
+ 	start := time.Now()
+ 	eg := enterrors.NewErrorGroupWrapper(i.logger)
+ 	eg.SetLimit(_NUMCPU)
+ 	for _, name := range shardNames {
+ 		eg.Go(func() error {
+-			logger := i.logger.WithField("action", action).WithField("shard", name)
+ 			if _, err := os.Stat(shardPath(i.path(), name)); err != nil {
+ 				if !os.IsNotExist(err) {
+-					logger.Errorf("could not stat shard dir: %v", err)
++					i.logger.WithField("action", "rebuild_shard_before_load").WithField("shard", name).
++						Errorf("could not stat shard dir: %v", err)
+ 				}
+ 				return nil
+ 			}
+-			rebuild(logger, name)
++			i.rebuildShardBeforeLoad(ctx, class, name, dimensions, recount)
+ 			return nil
+ 		}, name)
+ 	}
+ 	_ = eg.Wait()
+-	i.logger.WithField("action", action).WithField("shards", len(shardNames)).
+-		WithField("took", time.Since(start)).Info(finished)
++
++	took := time.Since(start)
++	if dimensions {
++		i.logger.WithField("action", "prepare_dimensions").WithField("shards", len(shardNames)).
++			WithField("took", took).Info("dimensions buckets prepared")
++	}
++	if recount {
++		i.logger.WithField("action", "recount_property_lengths").WithField("shards", len(shardNames)).
++			WithField("took", took).Info("property lengths recount before load finished")
++	}
++}
++
++// rebuildShardBeforeLoad runs the pending rebuilds of a shard on one walk over its
++// objects. Each records and logs its own outcome.
++func (i *Index) rebuildShardBeforeLoad(ctx context.Context, class *models.Class, name string, dimensions, recount bool) {
++	var rebuilds []unloadedShardRebuild
++	if dimensions {
++		logger := i.logger.WithField("action", "prepare_dimensions").WithField("shard", name)
++		if i.prepareShardDimensions(ctx, logger, name) {
++			rebuilds = append(rebuilds, &unloadedDimensionsReindex{index: i, name: name, logger: logger})
++		}
++	}
++	if recount && i.Config.PropertyLengthsRecount.pending(i.ID(), name) {
++		rebuilds = append(rebuilds, &unloadedPropertyLengthsRecount{
++			index:     i,
++			name:      name,
++			logger:    i.logger.WithField("action", "recount_property_lengths").WithField("shard", name),
++			recounter: newPropertyLengthsRecounter(shardPath(i.path(), name), i.logger),
++		})
++	}
++	if len(rebuilds) == 0 {
++		return
++	}
++
++	start := time.Now()
++	objects, errs := i.rebuildUnloadedShard(ctx, class, name, rebuilds)
++	for j, rebuild := range rebuilds {
++		rebuild.conclude(objects, time.Since(start), errs[j])
++	}
++}
++
++// unloadedShardRebuild is a rebuild of a shard before it loads.
++type unloadedShardRebuild interface {
++	// empty takes the place of the rebuild on a shard that never held objects.
++	empty() error
++	// begin readies the rebuild on the shard opened by openUnloadedShard, and returns
++	// what the walk over its objects feeds.
++	begin(ctx context.Context, s *Shard) (objectsVisitor, error)
++	// end writes out the rebuild, unless walkErr is set.
+
+```
+
+**File**: `adapters/repos/db/startup_rebuild_test.go` (added, +345/-0)
+```diff
+@@ -0,0 +1,345 @@
 +//                           _       _
 +// __      _____  __ ___   ___  __ _| |_ ___
 +// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
@@ -2558,412 +2312,147 @@ Merge stable/v1.40 into main
 +//  CONTACT: hello@weaviate.io
 +//
 +
-+package authn
++//go:build integrationTest
++
++package db
 +
 +import (
++	"bytes"
 +	"context"
 +	"errors"
++	"os"
++	"path/filepath"
 +	"testing"
 +	"time"
 +
 +	"github.com/go-openapi/strfmt"
-+	"github.com/stretchr/testify/require"
-+	"github.com/weaviate/weaviate/client/users"
-+	"github.com/weaviate/weaviate/test/docker"
-+	"github.com/weaviate/weaviate/test/helper"
-+	"github.com/weaviate/weaviate/usecases/auth/authorization"
-+)
-+
-+func TestCreateUser_Namespaces(t *testing.T) {
-+	const (
-+		adminKey  = "admin-key"
-+		adminUser = "admin-user"
-+	)
-+
-+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
-+	// NS clusters require RBAC; adminUser is the root that creates namespaces and
-+	// namespaced DB users.
-+	compose, err := docker.New().WithWeaviate().
-+		WithApiKey().WithRBAC().WithUserApiKey(adminUser, adminKey).WithRbacRoots(adminUser).
-+		WithDbUsers().
-+		WithNamespaces().
-+		Start(ctx)
-+	require.NoError(t, err)
-+	helper.SetupClient(compose.GetWeaviate().URI())
-+	defer func() {
-+		helper.ResetClient()
-+		require.NoError(t, compose.Terminate(ctx))
-+		cancel()
-+	}()
-+
-+	helper.CreateNamespace(t, "ns1", adminKey)
-+	helper.CreateNamespace(t, "ns2", adminKey)
-+
-+	t.Run("happy path: create user bound to ns1", func(t *testing.T) {
-+		const (
-+			userID  = "u1"
-+			fullKey = "ns1:u1" // operator-facing form for namespaced users
-+		)
-+		helper.DeleteUser(t, fullKey, adminKey)
-+
-+		resp, err := helper.Client(t).Users.CreateUser(
-+			users.NewCreateUserParams().WithUserID(fullKey).WithBody(users.CreateUserBody{}),
-+			helper.CreateAuth(adminKey),
-+		)
-+		require.NoError(t, err)
-+		require.NotNil(t, resp.Payload.Apikey)
-+
-+		// admin is a static API key (global operator) — namespace must be returned.
-+		// The storage/operator-addressable key is the namespace-prefixed form.
-+		got := helper.GetUser(t, fullKey, adminKey)
-+		require.Equal(t, "ns1", got.Namespace)
-+
-+		// The bare short id must not address a namespaced user. This locks
-+		// the prefix-only addressing contract: an operator who omits the
-+		// namespace gets 404, not the user from a different namespace (or
-+		// any user at all).
-+		_, err = helper.Client(t).Users.GetUserInfo(
-+			users.NewGetUserInfoParams().WithUserID(userID),
-+			helper.CreateAuth(adminKey),
-+		)
-+		require.Error(t, err)
-+		var notFound *users.GetUserInfoNotFound
-+		require.True(t, errors.As(err, &notFound), "expected GetUserInfoNotFound, got %T: %v", err, err)
-+
-+		helper.DeleteUser(t, fullKey, adminKey)
-+	})
-+
-+	t.Run("missing namespace rejects", func(t *testing.T) {
-+		_, err := helper.Client(t).Users.CreateUser(
-+			users.NewCreateUserParams().WithUserID("u-missing"),
-+			helper.CreateAuth(adminKey),
-+		)
-+		require.Error(t, err)
-+		var unproc *users.CreateUserUnprocessableEntity
-+		require.True(t, errors.As(err, &unproc), "expected CreateUserUnprocessableEntity, got %T: %v", err, err)
-+	})
-+
-+	t.Run("empty namespace prefix rejected", func(t *testing.T) {
-+		_, err := helper.Client(t).Users.CreateUser(
-+			users.NewCreateUserParams().WithUserID(":u-empty-ns").WithBody(users.CreateUserBody{}),
-+			helper.CreateAuth(adminKey),
-+		)
-+		require.Error(t, err)
-+		var unproc *users.CreateUserUnprocessableEntity
-+		require.True(t, errors.As(err, &unproc), "expected CreateUserUnprocessableEntity, got %T: %v", err, err)
-+	})
-+
-+	t.Run("empty user part rejected", func(t *testing.T) {
-+		_, err := helper.Client(t).Users.CreateUser(
-+			users.NewCreateUserParams().WithUserID("ns1:").WithBody(users.CreateUserBody{}),
-+			helper.CreateAuth(adminKey),
-+		)
-+		require.Error(t, err)
-+		var unproc *users.CreateUserUnprocessableEntity
-+		require.True(t, errors.As(err, &unproc), "expected CreateUserUnprocessableEntity, got %T: %v", err, err)
-+	})
-+
-+	t.Run("multi-colon name rejected", func(t *testing.T) {
-+		// First ':' is the ns separator; "user:extra" then fails the user-name regex.
-+		_, err := helper.Client(t).Users.CreateUser(
-+			users.NewCreateUserParams().WithUserID("ns1:user:extra").WithBody(users.CreateUserBody{}),
-+			helper.CreateAuth(adminKey),
-+		)
-+		require.Error(t, err)
-+		var unproc *users.CreateUserUnprocessableEntity
-+		require.True(t, errors.As(err, &unproc), "expected CreateUserUnprocessableEntity, got %T: %v", err, err)
-+	})
-+
-+	t.Run("unknown namespace rejects", func(t *testing.T) {
-+		_, err := helper.Client(t).Users.CreateUser(
-+			users.NewCreateUserParams().WithUserID("ns404:u-unknown").WithBody(users.CreateUserBody{}),
-+			helper.CreateAuth(adminKey),
-+		)
-+		require.Error(t, err)
-+		var unproc *users.CreateUserUnprocessableEntity
-+		require.True(t, errors.As(err, &unproc), "expected CreateUserUnprocessableEntity, got %T: %v", err, err)
-+	})
-+
-+	t.Run("import on NS-enabled cluster reject
-```
-
-**File**: `test/acceptance/licensed/authn/user_expiration_test.go` (added, +113/-0)
-```diff
-@@ -0,0 +1,113 @@
-+//                           _       _
-+// __      _____  __ ___   ___  __ _| |_ ___
-+// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
-+//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
-+//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
-+//
-+//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
-+//
-+//  CONTACT: hello@weaviate.io
-+//
-+
-+package authn
-+
-+import (
-+	"context"
-+	"slices"
-+	"testing"
-+	"time"
-+
-+	"github.com/go-openapi/strfmt"
++	"github.com/google/uuid"
 +	"github.com/stretchr/testify/assert"
 +	"github.com/stretchr/testify/require"
-+	"github.com/weaviate/weaviate/client/users"
++
++	"github.com/weaviate/weaviate/adapters/repos/db/helpers"
++	"github.com/weaviate/weaviate/adapters/repos/db/lsmkv"
++	shardusage "github.com/weaviate/weaviate/adapters/repos/db/shard_usage"
++	"github.com/weaviate/weaviate/entities/additional"
 +	"github.com/weaviate/weaviate/entities/models"
-+	"github.com/weaviate/weaviate/test/docker"
-+	"github.com/weaviate/weaviate/test/helper"
++	"github.com/weaviate/weaviate/entities/schema"
++	"github.com/weaviate/weaviate/entities/storobj"
 +)
 +
-+// TestUserExpiration covers DB user expiry, which needs a license key. Its last
-+// subtest restarts the node without one.
-+func TestUserExpiration(t *testing.T) {
-+	adminUser, adminKey := "admin-user", "admin-key"
++func TestRebuildShardsBeforeLoad(t *testing.T) {
++	// the objects of the recount tests, each with a vector of 3 dimensions
++	const wantDims = 2 * 3
 +
-+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
-+	defer cancel()
-+	compose, err := docker.New().WithWeaviate().
-+		WithApiKey().
-+		WithUserApiKey(adminUser, adminKey).
-+		WithDbUsers().
-+		WithRBAC().WithRbacRoots(adminUser).
-+		WithLicenseKeyFile().
-+		Start(ctx)
-+	require.NoError(t, err)
-+	helper.SetupClient(compose.GetWeaviate().URI())
-+	defer func() {
-+		helper.ResetClient()
-+		// The test waits for a key to expire and restarts the node, which can
-+		// outlast the ctx Start ran under.
-+		terminateCtx, terminateCancel := context.WithTimeout(context.Background(), 2*time.Minute)
-+		defer terminateCancel()
-+		require.NoError(t, compose.Terminate(terminateCtx))
-+	}()
-+
-+	in24h := helper.ExpiryIn(24 * time.Hour)
-+
-+	ownInfo := func(t *testing.T, key string) error {
-+		_, err := helper.Client(t).Users.GetOwnInfo(users.NewGetOwnInfoParams(), helper.CreateAuth(key))
-+		return err
++	type outcomes struct{ rebuilt, failed int }
++	tests := []struct {
++		name             string
++		reindex, recount bool
++		// breakRebuild makes a rebuild fail, and restores what the others need.
++		breakRebuild func(t *testing.T, shard *Shard, schemaGetter *fakeSchemaGetter) (restore func())
++		// keepDimensions keeps the dimensions bucket, which is otherwise lost before the restart.
++		keepDimensions bool
++		// wantAnalyzed is the number of objects the recount analyzes with both enabled.
++		wantAnalyzed int
++		wantDims     int
++		wantTally    []int
++		wantReindex  outcomes
++		wantRecount  outcomes
++	}{
++		{
++			name:        "dimensions reindex only",
++			reindex:     true,
++			wantDims:    wantDims,
++			wantTally:   []int{5 + 100, 2 + 1},
++			wantReindex: outcomes{rebuilt: 1},
++		},
++		{
++			name:        "property lengths recount only",
++			recount:     true,
++			wantTally:   []int{5, 2},
++			wantRecount: outcomes{rebuilt: 1},
++		},
++		{
++			name:    "both",
++			reindex: true, recount: true,
++			wantAnalyzed: 2,
++			wantDims:     wantDims,
++			wantTally:    []int{5, 2},
++			wantReindex:  outcomes{rebuilt: 1},
++			wantRecount:  outcomes{rebuilt: 1},
++		},
++		{
++			name:    "both, recount cannot start",
++			reindex: true, recount: true,
++			breakRebuild: func(t *testing.T, shard *Shard, _ *fakeSchemaGetter) func() {
++				// a non-empty directory cannot be removed as a leftover recount file
++				blocker := filepath.Join(shard.path(), propLengthsRecountFile, "blocker")
++				require.NoError(t, os.MkdirAll(blocker, 0o755))
++				return func() {}
++			},
++			wantDims:    wantDims,
++			wantTally:   []int{5 + 100, 2 + 1},
++			wantReindex: outcomes{rebuilt: 1},
++			wantRecount: outcomes{failed: 1},
++		},
++		{
++			name:    "both, recount fails during the walk",
++			reindex: true, recount: true,
++			wantAnalyzed: 1,
++			breakRebuild: func(_ *testing.T, _ *Shard, schemaGetter *fakeSchemaGetter) func() {
++				previous := schemaGetter.schema
++				schemaGetter.schema = schema.Schema{Objects: &models.Schema{}}
++				return func() { schemaGetter.schema = previous }
++			},
++			wantDims:    wantDims,
++			wantTally:   []int{5 + 100, 2 + 1},
++			wantReindex: outcomes{rebuilt: 1},
++			wantRecount: outcomes{failed: 1},
++		},
++		{
++			name:    "both, dimensions reindex fails",
++			reindex: true, recount: true,
++			breakRebuild: func(t *testing.T, shard *Shard, _ *fakeSchemaGetter) func() {
++				// a leftover replacement bucket that cannot be removed fails the switch
++				stuck := filepath.Join(shard.pathLSM(), helpers.DimensionsBucketLSM+"__to_roaringset_ready", "stuck")
++				require.NoError(t, os.MkdirAll(stuck, 0o700))
++				require.NoError(t, os.WriteFile(filepath.Join(stuck, "file"), []byte("x"), 0o600))
++				require.NoError(t, os.Chmod(stuck, 0o500))
++				return func() { _ = os.Chmod(stuck, 0o700) }
++			},
++			keepDimensions: true,
++			wantAnalyzed:   2,
++			wantDims:       wantDims,
++			wantTally:      []int{5, 2},
++			wantReindex:    outcomes{failed: 1},
++			wantRecount:    outcomes{rebuilt: 1},
++		},
 +	}
-+
-+	t.Run("create with expiresAt shows it on GET, list and own-info", func(t *testing.T) {
-+		const userID = "exp-user"
-+		helper.DeleteUser(t, userID, adminKey)
-+		apiKey := helper.CreateUserWithExpiry(t, userID, adminKey, &in24h)
-+
-+		want := (*strfmt.DateTime)(&in24h)
-+		require.Equal(t, want, helper.GetUser(t, userID, adminKey).ExpiresAt)
-+		listed := helper.ListAllUsers(t, adminKey)
-+		i := slices.IndexFunc(listed, func(u *models.DBUserInfo) bool { return *u.UserID == userID })
-+		require.NotEqual(t, -1, i, "%s not listed", userID)
-+		require.Equal(t, want, listed[i].ExpiresAt)
-+		require.Equal(t, want, helper.GetInfoForOwnUser(t, apiKey).ExpiresAt)
-+	})
-+
-+	t.Run("expiry holds after the node restarts without a license key", func(t *testing.T) {
-+		const userID = "exp-restart"
-+		helper.DeleteUser(t, userID, adminKey)
-+		in10s := helper.ExpiryIn(10 * time.Second)
-+		apiKey := helper.CreateUserWithExpiry(t, userID, adminKey, &in10s)
-+
-+		var unauthorized *users.GetOwnInfoUnauthorized
-+		require.EventuallyWithT(t, func(c *assert.CollectT) {
-+			assert.ErrorAs(c, ownInfo(t, apiKey), &unauthorized)
-+		}, 30*time.Second, 500*time.Millisecond)
-+
-+		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Minute)
-+		defer cancel()
-+		require.NoError(t, compose.SetLicenseKeyFileAt(ctx, 0, ""))
-+		grace := 10 * time.Second
-+		require.NoError(t, compose.RestartAt(ctx, 0, &grace))
-+		helper.SetupClient(compose.GetWeaviate().URI())
-+
-+		require.ErrorAs(t, ownInfo(t, apiKey), &unauthorized)
-+		require.Equal(t, (*strfmt.DateTime)(&in10s), helper.GetUser(t, userID, adminKey).ExpiresAt)
-+		require.Equal(t, (*strfmt.DateTime)(&in24h), helper.GetUser(t, "exp-user", adminKey).ExpiresAt)
-+
-+		in48h := helper.ExpiryIn(48 * time.Hour)
-+		_, err := helper.Client(t).Users.SetUserExpiration(
-+			users.NewSetUserExpirationParams().WithUserID("exp-user").WithBody(users.SetUserExpirationBody{ExpiresAt: (*strfmt.DateTime)(&in48h)}),
-+			helper.CreateAuth(adminKey),
-+		)
-+		var putForbidden *users.SetUserExpirationForbidden
-+		require.ErrorAs(t, err, &putForbidden)
-+		require.Contains(t, putForbidden.Payload.Error[0].Message, "license key")
-+
-+		_, err = helper.Client(t).Users.CreateUser(
-+			users.NewCreateUserParams().WithUserID("exp-unlicensed").WithBody(users.CreateUserBody{ExpiresAt: (*strfmt.DateTime)(&in48h)}),
-+			helper.CreateAuth(adminKey),
-+		)
-+		var createForbidden *users.CreateUserForbidden
-+		require.ErrorAs(t, err, &createForbidden)
-+	})
-+}
-```
-
-**File**: `test/acceptance/licensed/authz/namespaces_test.go` (renamed, +9/-14)
-```diff
-@@ -36,18 +36,13 @@ func TestAuthzNamespaces(t *testing.T) {
- 	noPermsUser := "no-perms-user"
- 	noPermsKey := "no-perms-key"
- 
--	_, down := composeUpWithSettings(t,
-+	down := composeUp(t,
- 		map[string]string{adminUser: adminKey},
- 		map[string]string{
- 			manageUser:       manageKey,
- 			scopedManageUser: scopedManageKey,
- 			noPermsUser:      noPermsKey,
- 		},
--		nil,
--		false,
--		nil,
--		true, // withDbUsers — needed for the namespace-scoping subtests below.
--		true, // withNamespaces
- 	)
- 	defer down()
- 
-@@ -232,7 +227,7 @@ func TestAuthzNamespaces(t *testing.T) {
- 	// user can only create within their own namespace.
- 	const bootstrapRole = "ns-bootstrap-create"
- 	helper.CreateRole(t, adminKey, &models.Role{
--		Name: String(bootstrapRole),
-+		Name: new(bootstrapRole),
- 		Permissions: []*models.Permission{
- 			helper.NewCollectionsPermission().WithAction(authorization.CreateCollections).WithCollection("*").Permission(),
- 			helper.NewAliasesPermission().WithAction(authorization.CreateAliases).WithCollection("*").WithAlias("*").Permission(),
-@@ -259,7 +254,7 @@ func TestAuthzNamespaces(t *testing.T) {
- 	t.Run("read_collections wildcard scope: namespaced caller can read own-NS collection by unqualified name", func(t *testing.T) {
- 		const role = "read-all"
- 		helper.CreateRole(t, adminKey, &models.Role{
--			Name: String(role),
-+			Name: new(role),
- 			Permissions: []*models.Permission{
- 				helper.NewCollectionsPermission().WithAction(authorization.ReadCollections).WithCollection("*").Permission(),
- 			},
-@@ -274,7 +269,7 @@ func TestAuthzNamespaces(t *testing.T) {
- 	t.Run("read_collections regex scope (Movies*): matches in own namespace only", func(t *testing.T) {
- 		const role = "read-movies-prefix"
- 		helper.CreateRole(t, adminKey, &models.Role{
--			Name: String(role),
-+			Name: new(role),
- 			Permissions: []*models.Permission{
- 				helper.NewCollectionsPermission().WithAction(authorization.ReadCollections).WithCollection("Movies*").Permission(),
- 			},
-@@ -296,7 +291,7 @@ func TestAuthzNamespaces(t *testing.T) {
- 	t.Run("read_collections exact scope (Movies): allows only Movies in own namespace", func(t *testing.T) {
- 		const role = "read-movies-exact"
- 		helper.CreateRole(t, adminKey, &models.Role{
--			Name: String(role),
-+			Name: new(role),
- 			Permissions: []*models.Permission{
- 				helper.NewCollectionsPermission().WithAction(authorization.ReadCollections).WithCollection("Movies").Permission(),
- 			},
-@@ -317,7 +312,7 @@ func TestAuthzNamespaces(t *testing.T) {
- 	t.Run("schema dump filters to own namespace for namespaced caller", func(t *testing.T) {
- 		const role = "read-all-for-dump"
- 		helper.CreateRole(t, adminKey, &models.Role{
--			Name: String(role),
-+			Name: new(role),
- 			Permissions: []*models.Permission{
- 				helper.NewCollectionsPermission().WithAction(authorization.ReadCollections).WithCollection("*").Permission(),
- 			},
-@@ -354,7 +349,7 @@ func TestAuthzNamespaces(t *testing.T) {
- 
- 		const role = "read-aliases-all"
- 		helper.CreateRole(t, adminKey, &models.Role{
--			Name: String(role),
-+			Name: new(role),
- 			Permissions: []*models.Permission{
- 				helper.NewAliasesPermission().WithAction(authorization.ReadAliases).WithCollection("*").WithAlias("*").Permission(),
- 			},
-@@ -393,7 +388,7 @@ func TestAuthzNamespaces(t *testing.T) {
- 		// Role creation rejects qualified resource paths for now
- 		const role = "own-info-strip"
- 		helper.CreateRole(t, adminKey, &models.Role{
--			Name: String(role),
-+			Name: new(role),
- 			Permissions: []*models.Permission{
- 				helper.NewCollectionsPermission().WithAction(authorization.ReadCollections).WithCollection("*").Permission(),
- 				helper.NewAliasesPermission().WithAction(authorization.ReadAliases).WithCollection("*").WithAlias("*").Permission(),
-@@ -470,7 +465,7 @@ func TestAuthzNamespaces(t *testing.T) {
- 		const role = "qualified-path-role"
- 		_, err := helper.Client(t).Authz.CreateRole(
- 			authz.NewCreateRoleParams().WithBody(&models.Role{
--				Name: String(role),
-+				Name: new(role),
- 				Permissions: []*models.Permission{
- 					helper.NewCollectionsPermission().WithAction(authorization.ReadCollections).WithCollection(ns1 + ":Movies").Permission(),
- 				},
-```
-
-**File**: `test/acceptance/licensed/authz/setup_test.go` (added, +51/-0)
-```diff
-@@ -0,0 +1,51 @@
-+//                           _       _
-+// __      _____  __ ___   ___  __ _| |_ ___
-+// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
-+//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
-+//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
-+//
-+//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
-+//
-+//  CONTACT: hello@weaviate.io
-+//
-+
-+package authz
-+
-+import (
-+	"context"
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/require"
-+	"github.com/weaviate/weaviate/test/docker"
-+	"github.com/weaviate/weaviate/test/helper"
-+)
-+
-+// composeUp starts a namespace-enabled RBAC node with DB users, the admins as
-+// RBAC roots and the users as plain API-key users.
-+func composeUp(t *testing.T, admins, users map[string]string) func() {
-+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
-+
-+	builder := docker.New().WithWeaviateEnv("AUTOSCHEMA_ENABLED", "false").WithWeaviate().
-+		WithRBAC().WithApiKey().WithDbUsers().WithNamespaces()
-+	adminUserNames := make([]string, 0, len(admins))
-+	for userName, key := range admins {
-+		builder = builder.WithUserApiKey(userName, key)
-+		adminUserNames = append(adminUserNames, userName)
-+	}
-+	builder = builder.WithRbacRoots(adminUserNames...)
-+	for userName, key := range users {
-+		builder = builder.WithUserApiKey(userName, key)
-+	}
-+	compose, err := builder.Start(ctx)
-+	require.NoError(t, err)
-+
-+	helper.SetupClient(compose.GetWeaviate().URI())
-+	return func() {
-+		helper.ResetClient()
-+		if err := compose.Terminate(ctx); err != nil {
-+			t.Fatalf("failed to terminate test containers: %v", err)
-+		}
-+		cancel()
-+	}
-+}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			repo, schemaGetter := openRecountTestDB(t, t.TempDir(), singleShardState(), false, false)
++			defer repo.Shutdown(context.Background())
++			for _, name := range recountTestNames {
++				require.NoError(t, repo.PutObject(testCtx(), &models.Object{
++					Class:      recountTestClass,
++					ID:         strfmt.UUID(uuid.NewString()),
++					Properties: map[string]any{"name": name},
++				}, []float32{1, 2, 3}, nil, nil, nil, 0))
++			}
++			shard := recountTestShard(t, repo)
++			idx, name, class := shard.index, shard.name, shard.class
++			trackerPath := shard.GetPropertyLengthTracker().FileName()
++			require.NoError(t, shard.Shutdown(testCtx()))
++			idx.shards.LoadAndDelete(name)
++			inflateTracker(t, tracker
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13621** (2026-10-27): chore: adjust macOS swagger lib download in tools/gen-code-from-swagger.sh script (@antas-marcin)
-- **PR #13616** (2026-10-27): Merge stable/v1.38 into stable/v1.39 (@antas-marcin)
-- **PR #13615** (2026-10-27): test(lazy-load): stop periodic flushes from counting warmup seed objects (@antas-marcin)
-- **PR #13614** (2026-10-27): Merge stable/v1.40 into main (@antas-marcin)
-- **PR #13613** (2026-10-27): Allow a minute for new DB user keys in namespace acceptance tests (@dirkkul)
-- **PR #13612** (2026-10-27): perf(db): open and walk each shard once for all startup rebuilds before load (@antas-marcin)
+- **PR #13636** (2026-10-28): Merge stable/v1.39 into stable/v1.40 (@antas-marcin)
+- **PR #13635** (2026-10-28): Merge stable/v1.38 into stable/v1.39 (@antas-marcin)
+- **PR #13634** (2026-10-28): Fixes missing propery length for empty arrays (@dirkkul)
+- **PR #13632** (2026-10-28): security: bump github.com/go-jose/go-jose/v4 to v4.1.6 (@antas-marcin)
+- **PR #13630** (2026-10-28): Merge stable/v1.40 into main (@antas-marcin)
+- **PR #13629** (2026-10-28): test(authz): wait for pending authz logs before measuring batch refs (@antas-marcin)
 
 ---
 
@@ -2983,28 +2472,28 @@ Merge stable/v1.40 into main
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #13593 from weaviate/namespace_drop_vector
+## X. security: bump github.com/go-jose/go-jose/v4 to v4.1.6
 
 **RULE**:
-When implementing operations in `adapters/handlers/rest/configure_api.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ad54fb8b`: Merge pull request #13593 from weaviate/namespace_drop_vector. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9e34d6d0`: security: bump github.com/go-jose/go-jose/v4 to v4.1.6. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `adapters/handlers/rest/configure_api.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			serverShutdownCtx, appState.SchemaManager, dropVectorEnqueuer, appState.NamespacesController, appState.Logger,
+	github.com/go-jose/go-jose/v4 v4.1.6
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-			serverShutdownCtx, appState.SchemaManager, dropVectorEnqueuer, appState.Logger,
+	github.com/go-jose/go-jose/v4 v4.1.4
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ad54fb8b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9e34d6d0` are properly handled with clean fallback behavior.

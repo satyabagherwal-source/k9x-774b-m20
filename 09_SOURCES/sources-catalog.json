@@ -585,8 +585,8 @@
     "sourceUrl": "https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
     "sourceVersion": "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2",
     "license": "Open-Source",
-    "contentHash": "5c12e79ea551716fa7d1c479f00a18fbeb2df7dab09a0822c886befddd6134d5",
-    "lastHarvestedAt": "2026-10-25T15:38:20.235Z",
+    "contentHash": "2cf7e82d823a47f93b8b17341303190bfdb3e956c27b2cbda687114ba8e31aba",
+    "lastHarvestedAt": "2026-10-28T21:37:08.062Z",
     "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2"
   },
   "hf-psrben-visionhope": {
@@ -6853,10 +6853,10 @@
     "repository": "weaviate/weaviate",
     "platform": "github",
     "sourceUrl": "https://github.com/weaviate/weaviate",
-    "sourceVersion": "ad54fb8b",
+    "sourceVersion": "d923b9b0",
     "license": "NOASSERTION",
-    "contentHash": "e4de1c5a6fe57aa2fec9869f42d5058d883551e4867f7d3f4086561048c48567",
-    "lastHarvestedAt": "2026-10-27T14:29:59.597Z",
+    "contentHash": "72f00540277944fc4190da5608cd61e3808330fc8a4d5710f75b51f670b86cc3",
+    "lastHarvestedAt": "2026-10-28T21:37:22.836Z",
     "learningId": "learn-github-weaviate-weaviate"
   },
   "topgrade-rs-topgrade": {
@@ -7643,10 +7643,10 @@
     "repository": "biomejs/biome",
     "platform": "github",
     "sourceUrl": "https://github.com/biomejs/biome",
-    "sourceVersion": "ade98454",
+    "sourceVersion": "824df15e",
     "license": "Apache-2.0",
-    "contentHash": "3fabbb5c95160c0106ac5adcfcdb4627fc730ca6af80b065fb32704f2ace53a1",
-    "lastHarvestedAt": "2026-10-27T18:43:33.890Z",
+    "contentHash": "8a8adf314b4fbed9c23151c09da3cd309a35859bfc59a9c218ba30fb7fbaf50c",
+    "lastHarvestedAt": "2026-10-28T21:37:11.102Z",
     "learningId": "learn-github-biomejs-biome"
   },
   "msasikanth-twine": {

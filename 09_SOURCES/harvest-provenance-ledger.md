@@ -5950,3 +5950,6 @@ Every entry in this ledger must capture:
 | `learn-github-crosspaste-crosspaste-desktop` | `https://github.com/CrossPaste/crosspaste-desktop` | `bc806010` | Multi-dimensional audit evidence | 2026-10-28T21:11:22.656Z |
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `687a38c6` | Multi-dimensional audit evidence | 2026-10-28T21:29:53.519Z |
 | `learn-huggingface-francisring-prism` | `https://huggingface.co/FrancisRing/Prism` | `hf-francis` | Multi-dimensional audit evidence | 2026-10-28T21:30:04.947Z |
+| `learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2` | `https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | `hf-nerkyor` | Multi-dimensional audit evidence | 2026-10-28T21:37:08.062Z |
+| `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `824df15e` | Multi-dimensional audit evidence | 2026-10-28T21:37:11.102Z |
+| `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `d923b9b0` | Multi-dimensional audit evidence | 2026-10-28T21:37:22.836Z |
