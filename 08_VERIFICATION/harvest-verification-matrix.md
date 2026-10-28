@@ -5753,3 +5753,7 @@
 | `CYCLE-20261028-TXAQ` | `2026-10-28T11:46:31.250Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5270` | Yes (`57463977...`) |
 | `CYCLE-20261028-1U9N` | `2026-10-28T11:52:40.571Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 858, Rule 5271` | Yes (`9509d73f...`) |
 | `CYCLE-20261028-1X4R` | `2026-10-28T11:52:44.283Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5272` | Yes (`ff1e2614...`) |
+| `CYCLE-20261028-DRXC` | `2026-10-28T12:01:57.408Z` | `mfontanini/presenterm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5273` | Yes (`a419bb33...`) |
+| `CYCLE-20261028-DX6H` | `2026-10-28T12:02:04.217Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5274` | Yes (`67455395...`) |
+| `CYCLE-20261028-DZJV` | `2026-10-28T12:02:07.291Z` | `google/electra-base-discriminator` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5275, Rule 5276, Rule 5277` | Yes (`a452015b...`) |
+| `CYCLE-20261028-E0RF` | `2026-10-28T12:02:08.859Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5278` | Yes (`e32d49ea...`) |

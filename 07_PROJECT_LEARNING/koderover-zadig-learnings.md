@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/koderover-zadig-learnings.md`  
 > **Source**: github ([https://github.com/koderover/zadig](https://github.com/koderover/zadig))  
-> **Source Version**: `a1fe8122`  
+> **Source Version**: `0462edd7`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T02:27:19.092Z  
+> **Timestamp**: 2026-10-28T12:02:03.497Z  
 > **Learning ID**: `learn-github-koderover-zadig`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/koderover-zadig-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/koderover/zadig](https://github.com/koderover/zadig))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T02:27:18.863Z  
+> **Harvest Timestamp**: 2026-10-28T12:02:03.490Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Zadig: An AI-powered, cloud-native, distributed DevOps platform designed for developers
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 3260 stars
+- **Stars / Engagement**: 3263 stars
 
 ---
 
@@ -1158,178 +1158,461 @@ func FileExists(filePath string) (bool, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a1fe8122` (2026-10-28)
-**Commit Message**: Merge pull request #5042 from leozhang2018/basic-image-deletion
+### Incident Patch 1: `0462edd7` (2026-10-28)
+**Commit Message**: Merge pull request #5040 from Cynthia-0203/fix/image-rollback-check-logging-and-short-name
 
-feat: enhance basic image deletion logic and error handling.
+fix: improve rollback image checks and error logging
 
-**File**: `pkg/microservice/aslan/core/system/service/basic_images.go` (modified, +167/-36)
+**File**: `pkg/microservice/aslan/core/common/service/registry/service.go` (modified, +23/-2)
 ```diff
-@@ -18,17 +18,25 @@ package service
+@@ -273,13 +273,19 @@ func (c *authClient) listTags(repoName string) (tags []string, err error) {
+ func (c *authClient) tagExists(repoName, tag string) (bool, error) {
+ 	repo, err := c.getRepository(repoName)
+ 	if err != nil {
++		c.log.Errorf("failed to get repository for image %s/%s:%s: %v", c.endpoint.Addr, repoName, tag, err)
+ 		return false, err
+ 	}
  
- import (
- 	"fmt"
-+	"strings"
- 	"time"
+ 	_, err = repo.Tags(c.ctx).Get(c.ctx, tag)
+ 	if err == nil {
+ 		return true, nil
+ 	}
++	details, marshalErr := json.Marshal(err)
++	if marshalErr != nil {
++		c.log.Errorf("failed to encode registry error for image %s/%s:%s: %v", c.endpoint.Addr, repoName, tag, marshalErr)
++	}
++	c.log.Errorf("failed to get registry image %s/%s:%s: %v, details: %s", c.endpoint.Addr, repoName, tag, err, details)
+ 	if isRegistryImageNotFound(err) {
+ 		return false, nil
+ 	}
+@@ -575,27 +581,39 @@ func (s *v2RegistryService) GetImageInfo(option GetRepoImageDetailOption, log *z
+ func (s *v2RegistryService) CheckImageExist(option CheckImageExistOption, log *zap.SugaredLogger) (bool, error) {
+ 	cli, err := s.createClient(option.Endpoint, log)
+ 	if err != nil {
++		log.Errorf("failed to create registry client for image %s/%s/%s (tag: %s, digest: %s): %v", option.Addr, option.Namespace, option.Image, option.Tag, option.Digest, err)
+ 		return false, err
+ 	}
  
- 	"go.uber.org/zap"
+ 	repoName := strings.Trim(strings.Join([]string{option.Namespace, option.Image}, "/"), "/")
+ 	if option.Digest == "" {
+-		return cli.tagExists(repoName, option.Tag)
++		exists, err := cli.tagExists(repoName, option.Tag)
++		if err != nil {
++			log.Errorf("failed to check registry image %s/%s:%s: %v", option.Addr, repoName, option.Tag, err)
++		}
++		return exists, err
+ 	}
  
+ 	dgst, err := digest.Parse(option.Digest)
+ 	if err != nil {
++		log.Errorf("failed to parse image digest %s (registry: %s, repository: %s): %v", option.Digest, option.Addr, repoName, err)
+ 		return false, err
+ 	}
+ 	repo, err := cli.getRepository(repoName)
+ 	if err != nil {
++		log.Errorf("failed to get repository for image %s/%s@%s: %v", option.Addr, repoName, option.Digest, err)
+ 		return false, err
+ 	}
+ 	manifestService, err := repo.Manifests(cli.ctx)
+ 	if err != nil {
++		log.Errorf("failed to get manifest service for image %s/%s@%s: %v", option.Addr, repoName, option.Digest, err)
+ 		return false, err
+ 	}
+-	return manifestService.Exists(cli.ctx, dgst)
++	exists, err := manifestService.Exists(cli.ctx, dgst)
++	if err != nil {
++		log.Errorf("failed to check registry manifest %s/%s@%s: %v", option.Addr, repoName, option.Digest, err)
++	}
++	return exists, err
+ }
+ 
+ type ReverseStringSlice []string
+@@ -783,6 +801,7 @@ func (s *swrService) CheckImageExist(option CheckImageExistOption, log *zap.Suga
+ 	}
+ 	repoTags, err := swrCli.ListRepositoryTags(request)
+ 	if err != nil {
++		log.Errorf("failed to list SWR image tags (registry: %s, namespace: %s, repository: %s, tag: %s, digest: %s): %v", option.Addr, option.Namespace, option.Image, option.Tag, option.Digest, err)
+ 		return false, err
+ 	}
+ 	if repoTags.Body == nil {
+@@ -933,6 +952,7 @@ func (s *ecrService) GetImageInfo(option GetRepoImageDetailOption, log *zap.Suga
+ func (s *ecrService) CheckImageExist(option CheckImageExistOption, log *zap.SugaredLogger) (bool, error) {
+ 	svc, err := s.getECRService(option.Endpoint, log)
+ 	if err != nil {
++		log.Errorf("failed to create ECR client for image %s/%s (tag: %s, digest: %s): %v", option.Addr, option.Image, option.Tag, option.Digest, err)
+ 		return false, err
+ 	}
+ 	imageID := &ecr.ImageIdentifier{}
+@@ -946,6 +966,7 @@ func (s *ecrService) CheckImageExist(option CheckImageExistOption, log *zap.Suga
+ 		RepositoryName: aws.String(option.Image),
+ 	})
+ 	if err != nil {
++		log.Errorf("failed to describe ECR image (registry: %s, repository: %s, tag: %s, digest: %s): %v", option.Addr, option.Image, option.Tag, option.Digest, err)
+ 		if awsErr, ok := err.(awserr.Error); ok && awsErr.Code() == ecr.ErrCodeImageNotFoundException {
+ 			return false, nil
+ 		}
+```
+
+**File**: `pkg/microservice/aslan/core/common/service/version.go` (modified, +19/-14)
+```diff
+@@ -308,6 +308,7 @@ type CheckRollbackEnvServiceVersionResponse struct {
+ func checkRollbackImages(containers []*commonmodels.Container, log *zap.SugaredLogger) ([]string, error) {
+ 	registryInfos, err := ListRegistryNamespaces("", false, log)
+ 	if err != nil {
++		log.Errorf("failed to list registries for rollback image check: %v", err)
+ 		return nil, fmt.Errorf("failed to list registries for rollback image check: %w", err)
+ 	}
+ 
+@@ -320,7 +321,7 @@ func checkRollbackImages(containers []*commonmodels.Container, log *zap.SugaredL
+ 	for _, registryInfo := range registryInfos {
+ 		registryAddress, err := registryInfo.GetRegistryAddress()
+ 		if err != nil {
+-			log.Warnf("skip invalid registry %s during rollback image check: %v", registryInfo.ID.Hex(), err)
++			log.Errorf("skip invalid registry %s during rollback image check: %v", registryInfo.ID.Hex(), err)
+ 			continue
+ 		}
+ 
+@@ -341,16 +342,17 @@ func checkRollbackImages(containers []*commonmodels.Container, log *zap.SugaredL
+ 
+ 		named, err := reference.ParseNormalizedNamed(container.Image)
+ 		if err != nil {
++			log.Errorf("invalid rollback image %s: %v", container.Image, err)
+ 			missingImages = append(missingImages, container.Image)
+ 			continue
+ 		}
+-		imageRegistry, err := ExtractImageRegistry(container.Image)
+-		if err != nil {
+-			missingImages = append(missingImages, container.Image)
+-			continue
++		imageRegistry := reference.Domain(named)
++		imagePath := reference.Path(named)
++		imageNamespace := ""
++		if i := strings.LastIndex(imagePath, "/"); i >= 0 {
++			imageNamespace = imagePath[:i]
+ 		}
+-		imageRegistry = strings.Split(strings.Trim(imageRegistry, "/"), "/")[0]
+-		imageNamespace := strings.Trim(ExtractRegistryNamespace(container.Image), "/")
++		log.Infof("checking rollback image %s (normalized: %s)", container.Image, named.String())
+ 		var matchedRegistry *rollbackImageRegistry
+ 		for _, registry := range registries {
+ 			if !strings.EqualFold(imageRegistry, registry.host) {
+@@ -365,7 +367,7 @@ func checkRollbackImages(containers []*commonmodels.Container, log *zap.SugaredL
+ 			}
+ 		}
+ 		if matchedRegistry == nil {
+-			log.Warnf("no matching registry configured for rollback image %s, skip image existence check", container.Image)
++			log.Errorf("no matching registry configured for rollback image %s, skip image existence check", container.Image)
+ 			continue
+ 		}
+ 
+@@ -374,21 +376,21 @@ func checkRollbackImages(containers []*commonmodels.Container, log *zap.SugaredL
+ 		if !ok {
+ 			registryInfo, err = FindRegistryById(registryID, true, log)
+ 			if err != nil {
+-				log.Warnf("failed to get credentials for rollback image %s from registry %s: %v", container.Image, matchedRegistry.host, err)
++				log.Errorf("failed to get credentials for rollback image %s from registry %s: %v", container.Image, matchedRegistry.host, err)
+ 				continue
+ 			}
+ 			credentialRegistries[registryID] = registryInfo
+ 		}
+ 
+-		repositoryName := reference.Path(named)
++		repositoryName := imagePath
+ 		namespace := strings.Trim(registryInfo.Namespace, "/")
+ 		if namespace != "" {
+ 			repositoryName = strings.TrimPrefix(repositoryName, namespace+"/")
+ 		}
+ 
+-		tag := ExtractImageTag(container.Image)
+-		if tag == "" {
+-			tag = "latest"
++		tag := "latest"
++		if tagged, ok := named.(reference.Tagged); ok {
++			tag = tagged.Tag()
+ 		}
+ 
+ 		tlsEnabled, tlsCert := true, ""
+@@ -409,10 +411,11 @@ func checkRollbackImages(containers []*commonmodels.Container, log *zap.SugaredL
+ 			Tag:   tag,
+ 		}, log)
+ 		if err != nil {
+-			log.Warnf("failed to check whether rollback image %s exists: %v", container.Image, err)
++			log.Errorf("failed to check whether rollback image %s exists: %v", container.Image, err)
+ 			continue
+ 		}
+ 		if !exists {
++			log.Errorf("rollback image %s does not exist", container.Image)
+ 			missingImages = append(missingImages, container.Image)
+ 		}
+ 	}
+@@ -423,6 +426,7 @@ func checkRollbackImages(containers []*commonmodels.Container, log *zap.SugaredL
+ func CheckRollbackEnvServiceVersion(projectName, envName, serviceName string, revision int64, isHelmChart, isProduction bool, log *zap.SugaredLogger) (*CheckRollbackEnvServiceVersionResponse, error) {
+ 	envSvcVersion, err := mongodb.NewEnvServiceVersionColl().Find(projectName, envName, serviceName, isHelmChart, isProduction, revision)
+ 	if err != nil {
++		log.Errorf("failed to find service version for rollback image check: %v", err)
+ 		if mongodb.IsErrNoDocuments(err) {
+ 			return nil, fmt.Errorf("历史版本 %d 不存在", revision)
+ 		}
+@@ -431,6 +435,7 @@ func CheckRollbackEnvServiceVersion(projectName, envName, serviceName string, re
+ 
+ 	unavailableImages, err := checkRollbackImages(envSvcVersion.Service.Containers, log)
+ 	if err != nil {
++		log.Errorf("rollback image check failed: %v", err)
+ 		return nil, err
+ 	}
+ 	return &CheckRollbackEnvServiceVersionResponse{
+```
+
+---
+
+### Incident Patch 2: `e145a8e5` (2026-10-28)
+**Commit Message**: Merge pull request #5034 from huanghongbo-hhb/fix/host-build-registry-validation
+
+fix(workflow): allow host builds without registry
+
+**File**: `pkg/microservice/aslan/core/workflow/service/workflow/controller/job/job_build.go` (modified, +32/-10)
+```diff
+@@ -30,6 +30,7 @@ import (
  	"github.com/koderover/zadig/v2/pkg/microservice/aslan/config"
  	commonmodels "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/repository/models"
  	commonrepo "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/repository/mongodb"
 +	templaterepo "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/repository/mongodb/template"
- 	"github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/service/base"
+ 	commonservice "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/service"
+ 	"github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/service/repository"
+ 	templ "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/service/template"
+@@ -324,9 +325,17 @@ func (j BuildJobController) ClearSelection() {
+ func (j BuildJobController) ToTask(taskID int64) ([]*commonmodels.JobTask, error) {
+ 	logger := log.SugaredLogger()
+ 	resp := make([]*commonmodels.JobTask, 0)
+-	registry, err := commonservice.FindRegistryById(j.jobSpec.DockerRegistryID, true, logger)
++	project, err := templaterepo.NewProductColl().Find(j.workflow.Project)
+ 	if err != nil {
+-		return nil, fmt.Errorf("find docker registry: %s error: %v", j.jobSpec.DockerRegistryID, err)
++		return nil, fmt.Errorf("failed to find project %s, err: %v", j.workflow.Project, err)
++	}
++	needRegistry := !project.IsCVMProduct() || j.jobSpec.DockerRegistryID != ""
++	registry := &commonmodels.RegistryNamespace{}
++	if needRegistry {
++		registry, err = commonservice.FindRegistryById(j.jobSpec.DockerRegistryID, true, logger)
++		if err != nil {
++			return nil, fmt.Errorf("find docker registry: %s error: %v", j.jobSpec.DockerRegistryID, err)
++		}
+ 	}
+ 
+ 	registries, err := commonservice.ListRegistryNamespaces("", true, logger)
+@@ -352,20 +361,26 @@ func (j BuildJobController) ToTask(taskID int64) ([]*commonmodels.JobTask, error
+ 	for jobSubTaskID, build := range j.jobSpec.ServiceAndBuilds {
+ 		imageTag := commonservice.ReleaseCandidate(build.Repos, taskID, j.workflow.Project, build.ServiceModule, "", build.ImageName, "image")
+ 
+-		image := fmt.Sprintf("%s/%s", registry.RegAddr, imageTag)
+-		if len(registry.Namespace) > 0 {
+-			image = fmt.Sprintf("%s/%s/%s", registry.RegAddr, registry.Namespace, imageTag)
+-		}
++		image := ""
++		if needRegistry {
++			image = fmt.Sprintf("%s/%s", registry.RegAddr, imageTag)
++			if len(registry.Namespace) > 0 {
++				image = fmt.Sprintf("%s/%s/%s", registry.RegAddr, registry.Namespace, imageTag)
++			}
+ 
+-		image = strings.TrimPrefix(image, "http://")
+-		image = strings.TrimPrefix(image, "https://")
++			image = strings.TrimPrefix(image, "http://")
++			image = strings.TrimPrefix(image, "https://")
++		}
+ 
+ 		pkgFile := fmt.Sprintf("%s.tar.gz", commonservice.ReleaseCandidate(build.Repos, taskID, j.workflow.Project, build.ServiceModule, "", build.ImageName, "tar"))
+ 
+ 		buildInfo, err := buildSvc.GetBuild(build.BuildName, build.ServiceName, build.ServiceModule)
+ 		if err != nil {
+ 			return nil, fmt.Errorf("find build: %s error: %v", build.BuildName, err)
+ 		}
++		if !needRegistry && buildInfo.PostBuild != nil && buildInfo.PostBuild.DockerBuild != nil {
++			return nil, fmt.Errorf("build %s/%s has docker build configured but no docker registry selected", build.ServiceName, build.ServiceModule)
++		}
+ 		basicImage, err := commonrepo.NewBasicImageColl().Find(buildInfo.PreBuild.ImageID)
+ 		if err != nil {
+ 			return nil, fmt.Errorf("find base image: %s error: %v", buildInfo.PreBuild.ImageID, err)
+@@ -567,7 +582,10 @@ func (j BuildJobController) ToTask(taskID int64) ([]*commonmodels.JobTask, error
+ 		if jobTask.Infrastructure == setting.JobVMInfrastructure {
+ 			scripts = append(scripts, strings.Split(replaceWrapLine(buildInfo.Scripts), "\n")...)
+ 		} else {
+-			scripts = append([]string{dockerLoginCmd}, strings.Split(replaceWrapLine(buildInfo.Scripts), "\n")...)
++			if needRegistry {
++				scripts = append(scripts, dockerLoginCmd)
++			}
++			scripts = append(scripts, strings.Split(replaceWrapLine(buildInfo.Scripts), "\n")...)
+ 			scripts = append(scripts, outputScript(outputs, jobTask.Infrastructure)...)
+ 		}
+ 		scriptStep := &commonmodels.StepTask{
+@@ -719,7 +737,11 @@ func (j BuildJobController) ToTask(taskID int64) ([]*commonmodels.JobTask, error
+ 
+ 		// init post build shell step
+ 		if buildInfo.PostBuild != nil && buildInfo.PostBuild.Scripts != "" {
+-			scripts := append([]string{dockerLoginCmd}, strings.Split(replaceWrapLine(buildInfo.PostBuild.Scripts), "\n")...)
++			scripts := make([]string, 0)
++			if needRegistry {
++				scripts = append(scripts, dockerLoginCmd)
++			}
++			scripts = append(scripts, strings.Split(replaceWrapLine(buildInfo.PostBuild.Scripts), "\n")...)
+ 			shellStep := &commonmodels.StepTask{
+ 				Name:     build.ServiceName + "-post-shell",
+ 				JobName:  jobTask.Name,
+```
+
+---
+
+### Incident Patch 3: `e15828ec` (2026-10-28)
+**Commit Message**: Merge pull request #5031 from PetrusZ/fix/build_vars
+
+fix: isolate cached build and template configurations
+
+**File**: `pkg/microservice/aslan/core/common/service/build.go` (modified, +15/-2)
+```diff
+@@ -31,6 +31,7 @@ import (
  	e "github.com/koderover/zadig/v2/pkg/tool/errors"
+ 	"github.com/koderover/zadig/v2/pkg/tool/log"
+ 	"github.com/koderover/zadig/v2/pkg/types"
++	"github.com/koderover/zadig/v2/pkg/util"
  )
  
-+type basicImageRef struct {
-+	productName string
-+	resource    string
-+	name        string
-+}
-+
- func InitbasicImageInfos() []*commonmodels.BasicImage {
- 	basicImageInfos := []*commonmodels.BasicImage{
- 		{
-@@ -135,58 +143,181 @@ func UpdateBasicImage(id string, args *commonmodels.BasicImage, log *zap.Sugared
- 
- func DeleteBasicImage(id string, log *zap.SugaredLogger) error {
- 	// 检查该镜像是否被引用
--	buildOpt := &commonrepo.BuildListOption{BasicImageID: id}
--	builds, err := commonrepo.NewBuildColl().List(buildOpt)
--	if err == nil && len(builds) != 0 {
--		log.Errorf("BasicImage has been used by build, image id:%s, product name:%s, build name:%s", id, builds[0].ProductName, builds[0].Name)
--		return e.ErrDeleteUsedBasicImage
-+	refs := make([]basicImageRef, 0)
-+	seen := make(map[string]struct{})
-+	var listErr error
-+
-+	builds, err := commonrepo.NewBuildColl().List(&commonrepo.BuildListOption{BasicImageID: id})
-+	if err != nil {
-+		log.Errorf("list builds by basic image %s error: %v", id, err)
-+		listErr = err
-+	}
-+	for _, build := range builds {
-+		if build == nil {
-+			continue
-+		}
-+		refs = appendBasicImageRef(refs, seen, basicImageRef{
-+			productName: build.ProductName,
-+			resource:    "构建",
-+			name:        build.Name,
-+		})
+ func CreateBuild(username string, build *commonmodels.Build, log *zap.SugaredLogger) error {
+@@ -271,10 +272,15 @@ func (c *BuildService) GetBuild(buildName, serviceName, serviceModule string) (*
+ 		buildInfo = buildMapValue.(*commonmodels.Build)
  	}
  
--	testOpt := &commonrepo.ListTestOption{BasicImageID: id}
--	tests, err := commonrepo.NewTestingColl().List(testOpt)
--	if err == nil && len(tests) != 0 {
--		log.Errorf("BasicImage has been used by testing, image id:%s, product name:%s, testing name:%s", id, tests[0].ProductName, tests[0].Name)
--		return e.ErrDeleteUsedBasicImage
-+	tests, err := commonrepo.NewTestingColl().List(&commonrepo.ListTestOption{BasicImageID: id})
-+	if err != nil {
-+		log.Errorf("list testings by basic image %s error: %v", id, err)
-+		if listErr == nil {
-+			listErr = err
-+		}
+-	if err := FillBuildDetail(buildInfo, serviceName, serviceModule, &c.BuildTemplateMap); err != nil {
++	// Deep copy so service overrides and caller mutations cannot change the cached Build.
++	buildCopy := new(commonmodels.Build)
++	if err := util.DeepCopy(buildCopy, buildInfo); err != nil {
++		return nil, fmt.Errorf("copy build %s: %w", buildName, err)
 +	}
-+	for _, test := range tests {
-+		if test == nil {
-+			continue
-+		}
-+		refs = appendBasicImageRef(refs, seen, basicImageRef{
-+			productName: test.ProductName,
-+			resource:    "测试",
-+			name:        test.Name,
-+		})
++	if err := FillBuildDetail(buildCopy, serviceName, serviceModule, &c.BuildTemplateMap); err != nil {
+ 		return nil, err
  	}
+-	return buildInfo, nil
++	return buildCopy, nil
+ }
  
- 	pipelines, err := commonrepo.NewPipelineColl().List(&commonrepo.PipelineListOption{})
--	if err == nil {
--		for _, pipeline := range pipelines {
--			for _, subTask := range pipeline.SubTasks {
--				pre, err := base.ToPreview(subTask)
--				if err != nil {
-+	if err != nil {
-+		log.Errorf("list pipelines for basic image %s error: %v", id, err)
-+		if listErr == nil {
-+			listErr = err
-+		}
-+	}
-+	for _, pipeline := range pipelines {
-+		if pipeline == nil {
-+			continue
-+		}
-+		for _, subTask := range pipeline.SubTasks {
-+			pre, err := base.ToPreview(subTask)
-+			if err != nil {
-+				continue
-+			}
-+			switch pre.TaskType {
-+			case config.TaskBuild:
-+				// 校验是否被服务工作流的构建使用
-+				task, err := base.ToBuildTask(subTask)
-+				if err != nil || task == nil || task.ImageID != id {
-+					continue
-+				}
-+				name := pipeline.Name
-+				if task.ServiceName != "" {
-+					name = fmt.Sprintf("%s（构建 %s）", pipeline.Name, task.ServiceName)
-+				}
-+				refs = appendBasicImageRef(refs, seen, basicImageRef{
-+					productName: pipeline.ProductName,
-+					resource:    "工作流",
-+					name:        name,
-+				})
-+			case config.TaskTestingV2:
-+				// 校验是否被服务工作流的测试使用
-+				testing, err := base.ToTestingTask(subTask)
-+				if err != nil || testing == nil || testing.ImageID != id {
- 					continue
- 				}
--				switch pre.TaskType {
--				case config.TaskBuild:
--					// 校验是否被服务工作流的构建使用
--					task, err := base.ToBuildTask(subTask)
--					if err != nil || task == nil {
--						continue
--					}
--					if task.ImageID == id {
--						log.Errorf("BasicImage has been used by pipeline build, image id:%s, pipeline name:%s", id, pipeline.Name)
--						return e.ErrDeleteUsedBasicImage
--					}
--				case config.TaskTestingV2:
--					// 校验是否被服务工作流的测试使用
--					testing, err := base.ToTestingTask(subTask)
--					if err != nil || testing == nil {
--						continue
--					}
--					if testing.ImageID == id {
--						log.Errorf("BasicImage has been used by pipeline testing, image id:%s, pipeline name:%s", id, pipeline.Name)
--						return e.ErrDeleteUsedBasicImage
--					}
-+				name := pipeline.Name
-+				if testing.TestName != "" {
-+					name = fmt.Sprintf("%s（测试 %s）", pipeline.Name, testing.TestName)
- 				}
-+				refs = appendBasicImageRef(refs, seen, basicImageRef{
-+					productName: pipeline.ProductName,
-+					resource:    "工作流",
-+					name:        name,
-+				})
- 			}
+ func FillBuildDetail(moduleBuild *commonmodels.Build, serviceName, serviceModule string, cacheMap *sync.Map) error {
+@@ -307,6 +313,13 @@ func FillBuildDetail(moduleBuild *commonmodels.Build, serviceName, serviceModule
  		}
  	}
  
-+	i
++	// Build copying does not cover template pointers assigned below; copy the template to keep its cache immutable.
++	templateCopy := new(commonmodels.BuildTemplate)
++	if err := util.DeepCopy(templateCopy, buildTemplate); err != nil {
++		return fmt.Errorf("copy build template %s: %w", moduleBuild.TemplateID, err)
++	}
++	buildTemplate = templateCopy
++
+ 	moduleBuild.Timeout = buildTemplate.Timeout
+ 	moduleBuild.PreBuild = buildTemplate.PreBuild
+ 	moduleBuild.JenkinsBuild = buildTemplate.JenkinsBuild
+```
+
+**File**: `pkg/microservice/aslan/core/common/service/build_test.go` (added, +90/-0)
+```diff
+@@ -0,0 +1,90 @@
++/*
++Copyright 2026 The KodeRover Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package service
++
++import (
++	"reflect"
++	"testing"
++
++	commonmodels "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/repository/models"
++	"github.com/koderover/zadig/v2/pkg/util"
++)
++
++func TestGetBuildDoesNotMutateCaches(t *testing.T) {
++	for _, templateID := range []string{"", "template"} {
++		t.Run("template="+templateID, func(t *testing.T) {
++			cached := &commonmodels.Build{
++				TemplateID: templateID,
++				PreBuild: &commonmodels.PreBuild{Envs: commonmodels.KeyValList{
++					{Key: "ENV", Value: "default", ChoiceOption: []string{"default", "A"}},
++				}},
++				Targets: []*commonmodels.ServiceModuleTarget{
++					{
++						ServiceWithModule: commonmodels.ServiceWithModule{ServiceName: "A", ServiceModule: "a"},
++						Envs:              commonmodels.KeyValList{{Key: "ENV", Value: "A"}},
++					},
++					{ServiceWithModule: commonmodels.ServiceWithModule{ServiceName: "B", ServiceModule: "b"}},
++				},
++			}
++			template := &commonmodels.BuildTemplate{PreBuild: cached.PreBuild}
++			svc := NewBuildService()
++			svc.BuildMap.Store("build", cached)
++			svc.BuildTemplateMap.Store(templateID, template)
++			originalBuild := new(commonmodels.Build)
++			originalTemplate := new(commonmodels.BuildTemplate)
++			if err := util.DeepCopy(originalBuild, cached); err != nil {
++				t.Fatal(err)
++			}
++			if err := util.DeepCopy(originalTemplate, template); err != nil {
++				t.Fatal(err)
++			}
++
++			a, err := svc.GetBuild("build", "A", "a")
++			if err != nil {
++				t.Fatal(err)
++			}
++			wantA := "default"
++			if templateID != "" {
++				wantA = "A"
++			}
++			if got := a.PreBuild.Envs[0].Value; got != wantA {
++				t.Fatalf("A ENV = %q, want %q", got, wantA)
++			}
++			b, err := svc.GetBuild("build", "B", "b")
++			if err != nil {
++				t.Fatal(err)
++			}
++			if got := b.PreBuild.Envs[0].Value; got != "default" {
++				t.Errorf("B inherited A's ENV: got %q, want default", got)
++			}
++			if got := a.PreBuild.Envs[0].Value; got != wantA {
++				t.Errorf("reading B changed A's ENV: got %q, want %q", got, wantA)
++			}
++			a.PreBuild.Envs[0].Value = "caller mutation"
++			a.PreBuild.Envs[0].ChoiceOption[0] = "caller mutation"
++			if got := b.PreBuild.Envs[0].Value; got != "default" {
++				t.Errorf("mutating A changed B's ENV: %q", got)
++			}
++			if !reflect.DeepEqual(cached, originalBuild) {
++				t.Error("cached build was mutated")
++			}
++			if !reflect.DeepEqual(template, originalTemplate) {
++				t.Error("cached template was mutated")
++			}
++		})
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #5047** (2026-10-26): cherry pick #5045 to release 5.0.0 (@PetrusZ)
+- **PR #5046** (2026-10-28): feat(codehost): support bot identities on project codehosts (@huanghongbo-hhb)
 - **PR #5045** (2026-10-26): perf: batch test report queries in workflow task history (@PetrusZ)
 - **PR #5044** (2026-10-26): cherry pick #5041 to release 5.0.0 (@PetrusZ)
 - **PR #5042** (2026-10-28): feat: enhance basic image deletion logic and error handling. (@leozhang2018)
 - **PR #5041** (2026-10-23): fix: use target Kubernetes version when rendering Helm charts (@PetrusZ)
-- **PR #5036** (2026-10-23): feat(codehost): support bot identities for AI review comments (@huanghongbo-hhb)
 
 ---
 
@@ -1349,97 +1632,46 @@ feat: enhance basic image deletion logic and error handling.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #5042 from leozhang2018/basic-image-deletion
+## X. Merge pull request #5040 from Cynthia-0203/fix/image-rollback-check-logging-and-
 
 **RULE**:
-When implementing operations in `pkg/microservice/aslan/core/system/service/basic_images.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/microservice/aslan/core/common/service/registry/service.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a1fe8122`: Merge pull request #5042 from leozhang2018/basic-image-deletion. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0462edd7`: Merge pull request #5040 from Cynthia-0203/fix/image-rollback-check-logging-and-short-name. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/microservice/aslan/core/system/service/basic_images.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/microservice/aslan/core/common/service/registry/service.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"strings"
-	templaterepo "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/repository/mongodb/template"
-type basicImageRef struct {
-	productName string
-	resource    string
-	name        string
-}
-
-	refs := make([]basicImageRef, 0)
-	seen := make(map[string]struct{})
-	var listErr error
-
-	builds, err := commonrepo.NewBuildColl().List(&commonrepo.BuildListOption{BasicImageID: id})
-	if err != nil {
-		log.Errorf("list builds by basic image %s error: %v", id, err)
-		listErr = err
+		c.log.Errorf("failed to get repository for image %s/%s:%s: %v", c.endpoint.Addr, repoName, tag, err)
+	details, marshalErr := json.Marshal(err)
+	if marshalErr != nil {
+		c.log.Errorf("failed to encode registry error for image %s/%s:%s: %v", c.endpoint.Addr, repoName, tag, marshalErr)
 	}
-	for _, build := range builds {
-		if build == nil {
-			continue
+	c.log.Errorf("failed to get registry image %s/%s:%s: %v, details: %s", c.endpoint.Addr, repoName, tag, err, details)
+		log.Errorf("failed to create registry client for image %s/%s/%s (tag: %s, digest: %s): %v", option.Addr, option.Namespace, option.Image, option.Tag, option.Digest, err)
+		exists, err := cli.tagExists(repoName, option.Tag)
+		if err != nil {
+			log.Errorf("failed to check registry image %s/%s:%s: %v", option.Addr, repoName, option.Tag, err)
 		}
-		refs = appendBasicImageRef(refs, seen, basicImageRef{
-			productName: build.ProductName,
-			resource:    "构建",
-			name:        build.Name,
-		})
-	tests, err := commonrepo.NewTestingColl().List(&commonrepo.ListTestOption{BasicImageID: id})
+		return exists, err
+		log.Errorf("failed to parse image digest %s (registry: %s, repository: %s): %v", option.Digest, option.Addr, repoName, err)
+		log.Errorf("failed to get repository for image %s/%s@%s: %v", option.Addr, repoName, option.Digest, err)
+		log.Errorf("failed to get manifest service for image %s/%s@%s: %v", option.Addr, repoName, option.Digest, err)
+	exists, err := manifestService.Exists(cli.ctx, dgst)
 	if err != nil {
-		log.Errorf("list testings by basic image %s error: %v", id, err)
-		if listErr == nil {
-			listErr = err
-		}
-	}
-	for _, test := range tests {
-		if test == nil {
-			continue
-		}
-		refs = appendBasicImageRef(refs, seen, basicImageRef{
-			productName: test.ProductName,
-			resource:    "测试",
-			name:        test.Name,
-		})
-	if err != nil {
-		log.Errorf("list pipelines for basic im
+		log.Er
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	buildOpt := &commonrepo.BuildListOption{BasicImageID: id}
-	builds, err := commonrepo.NewBuildColl().List(buildOpt)
-	if err == nil && len(builds) != 0 {
-		log.Errorf("BasicImage has been used by build, image id:%s, product name:%s, build name:%s", id, builds[0].ProductName, builds[0].Name)
-		return e.ErrDeleteUsedBasicImage
-	testOpt := &commonrepo.ListTestOption{BasicImageID: id}
-	tests, err := commonrepo.NewTestingColl().List(testOpt)
-	if err == nil && len(tests) != 0 {
-		log.Errorf("BasicImage has been used by testing, image id:%s, product name:%s, testing name:%s", id, tests[0].ProductName, tests[0].Name)
-		return e.ErrDeleteUsedBasicImage
-	if err == nil {
-		for _, pipeline := range pipelines {
-			for _, subTask := range pipeline.SubTasks {
-				pre, err := base.ToPreview(subTask)
-				if err != nil {
-				switch pre.TaskType {
-				case config.TaskBuild:
-					// 校验是否被服务工作流的构建使用
-					task, err := base.ToBuildTask(subTask)
-					if err != nil || task == nil {
-						continue
-					}
-					if task.ImageID == id {
-						log.Errorf("BasicImage has been used by pipeline build, image id:%s, pipeline name:%s", id, pipeline.Name)
-						return e.ErrDeleteUsedBasicImage
-					}
-				case config.Tas
+		return cli.tagExists(repoName, option.Tag)
+	return manifestService.Exists(cli.ctx, dgst)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a1fe8122` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0462edd7` are properly handled with clean fallback behavior.

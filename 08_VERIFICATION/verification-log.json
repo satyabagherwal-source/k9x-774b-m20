@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-5A69",
-    "timestamp": "2026-10-27T12:07:40.737Z",
-    "repository": "lobehub/lobe-ui",
-    "learningId": "learn-github-lobehub-lobe-ui",
-    "contentHash": "060061c23ade6ec42b518e1d94edea36b72971df3bba266f596b93ffa70cf377",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-5DGE",
-    "timestamp": "2026-10-27T12:07:44.990Z",
-    "repository": "lxml/lxml",
-    "learningId": "learn-github-lxml-lxml",
-    "contentHash": "dfe92188afb1d4b2fad67ecb255b85612890d4bfd9b7d790371c22b586803bcc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-5HEZ",
-    "timestamp": "2026-10-27T12:07:50.123Z",
-    "repository": "kubeedge/kubeedge",
-    "learningId": "learn-github-kubeedge-kubeedge",
-    "contentHash": "e6109a1398d9f83b95ea43c450e72b07732bec453231374918b9761bbb4d09ae",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-970F",
-    "timestamp": "2026-10-27T12:10:43.263Z",
-    "repository": "transact-rs/sqlx",
-    "learningId": "learn-github-transact-rs-sqlx",
-    "contentHash": "97953ba01cb4153bede6b805d8f22ad410c2358fa03c4c82c907edb947e63c8e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-9BIH",
     "timestamp": "2026-10-27T12:10:49.097Z",
     "repository": "react/react-native",
@@ -7490,6 +7430,66 @@
     "repository": "zama-ai/tfhe-rs",
     "learningId": "learn-github-zama-ai-tfhe-rs",
     "contentHash": "ff1e2614c0e17cc61847a1a8535877a20a6cfd1df4a272d928f281abf13afa34",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-DRXC",
+    "timestamp": "2026-10-28T12:01:57.408Z",
+    "repository": "mfontanini/presenterm",
+    "learningId": "learn-github-mfontanini-presenterm",
+    "contentHash": "a419bb33f510cf60995efa906099efd60d1875a61a6964000eab1fa10d414a91",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-DX6H",
+    "timestamp": "2026-10-28T12:02:04.217Z",
+    "repository": "koderover/zadig",
+    "learningId": "learn-github-koderover-zadig",
+    "contentHash": "67455395300af59245fd7f1ae68e149a49185baac42b770ba8d749ab70e94bae",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-DZJV",
+    "timestamp": "2026-10-28T12:02:07.291Z",
+    "repository": "google/electra-base-discriminator",
+    "learningId": "learn-huggingface-google-electra-base-discriminator",
+    "contentHash": "a452015b220b088fa5ab0949c7612857a0318da03e79d05125e9e51b0fec6ec6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-E0RF",
+    "timestamp": "2026-10-28T12:02:08.859Z",
+    "repository": "doobidoo/mcp-memory-service",
+    "learningId": "learn-github-doobidoo-mcp-memory-service",
+    "contentHash": "e32d49eac0eda450c831db107b88926aab4db679731651bae826d36a15f3b239",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

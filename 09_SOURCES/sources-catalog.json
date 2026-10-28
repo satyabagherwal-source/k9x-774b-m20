@@ -725,8 +725,8 @@
     "sourceUrl": "https://huggingface.co/google/electra-base-discriminator",
     "sourceVersion": "hf-google-electra-base-discriminator",
     "license": "Open-Source",
-    "contentHash": "8361e1a126976942919f65f11d758cb67b221ba851a340add62bdf5abe872cc4",
-    "lastHarvestedAt": "2026-10-25T17:20:53.497Z",
+    "contentHash": "a452015b220b088fa5ab0949c7612857a0318da03e79d05125e9e51b0fec6ec6",
+    "lastHarvestedAt": "2026-10-28T12:02:07.296Z",
     "learningId": "learn-huggingface-google-electra-base-discriminator"
   },
   "hf-baai-bge-m3": {
@@ -3293,10 +3293,10 @@
     "repository": "doobidoo/mcp-memory-service",
     "platform": "github",
     "sourceUrl": "https://github.com/doobidoo/mcp-memory-service",
-    "sourceVersion": "9cab16d5",
+    "sourceVersion": "52568d90",
     "license": "Apache-2.0",
-    "contentHash": "ec7265a317ca5543a7564a5219a0367bb1a3cd43c9c07ee851af2a75e01311cf",
-    "lastHarvestedAt": "2026-10-27T19:20:22.157Z",
+    "contentHash": "e32d49eac0eda450c831db107b88926aab4db679731651bae826d36a15f3b239",
+    "lastHarvestedAt": "2026-10-28T12:02:08.863Z",
     "learningId": "learn-github-doobidoo-mcp-memory-service"
   },
   "21st-dev-magic-mcp": {
@@ -3633,10 +3633,10 @@
     "repository": "koderover/zadig",
     "platform": "github",
     "sourceUrl": "https://github.com/koderover/zadig",
-    "sourceVersion": "a1fe8122",
+    "sourceVersion": "0462edd7",
     "license": "NOASSERTION",
-    "contentHash": "d35b3f8a900d303e950b53745ce35a3bb52128b621a8402e38a692e00c67cd78",
-    "lastHarvestedAt": "2026-10-28T02:27:19.568Z",
+    "contentHash": "67455395300af59245fd7f1ae68e149a49185baac42b770ba8d749ab70e94bae",
+    "lastHarvestedAt": "2026-10-28T12:02:04.222Z",
     "learningId": "learn-github-koderover-zadig"
   },
   "trufflesecurity-trufflehog": {
@@ -4333,10 +4333,10 @@
     "repository": "mfontanini/presenterm",
     "platform": "github",
     "sourceUrl": "https://github.com/mfontanini/presenterm",
-    "sourceVersion": "5f8add11",
+    "sourceVersion": "87990adb",
     "license": "BSD-2-Clause",
-    "contentHash": "fd7a3e8f139290ed7ea06280a12147722478c06fca396c4f2375f0a19d53f85c",
-    "lastHarvestedAt": "2026-10-19T01:07:12.875Z",
+    "contentHash": "a419bb33f510cf60995efa906099efd60d1875a61a6964000eab1fa10d414a91",
+    "lastHarvestedAt": "2026-10-28T12:01:57.413Z",
     "learningId": "learn-github-mfontanini-presenterm"
   },
   "ritz078-transform": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md`  
 > **Source**: github ([https://github.com/mfontanini/presenterm](https://github.com/mfontanini/presenterm))  
-> **Source Version**: `5f8add11`  
+> **Source Version**: `87990adb`  
 > **License**: BSD-2-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T01:07:12.651Z  
+> **Timestamp**: 2026-10-28T12:01:56.686Z  
 > **Learning ID**: `learn-github-mfontanini-presenterm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mfontanini/presenterm](https://github.com/mfontanini/presenterm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T01:07:12.643Z  
+> **Harvest Timestamp**: 2026-10-28T12:01:56.161Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A markdown terminal slideshow tool
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 8926 stars
+- **Stars / Engagement**: 8940 stars
 
 ---
 
@@ -760,7 +760,7 @@ use crate::{
         text_style::{Color, Colors, TextStyle},
     },
     terminal::image::Image,
-    theme::{Alignment, Margin},
+    theme::{Alignment, Margin, raw::BackgroundImageFit},
 };
 use std::{
     fmt::Debug,
@@ -769,6 +769,7 @@ use std::{
 };
 
 const DEFAULT_IMAGE_Z_INDEX: i32 = -2;
+const BACKGROUND_IMAGE_Z_INDEX: i32 = -3;
 
 /// A line of preformatted text to be rendered.
 #[derive(Clone, Debug, PartialEq)]
@@ -885,6 +886,18 @@ impl Default for ImageRenderProperties {
     }
 }
 
+impl ImageRenderProperties {
+    pub(crate) fn background(size: ImageSize) -> Self {
+        Self {
+            z_index: BACKGROUND_IMAGE_Z_INDEX,
+            size,
+            restore_cursor: true,
+            background_color: None,
+            position: ImagePosition::Cursor,
+        }
+    }
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) enum ImagePosition {
     Cursor,
@@ -901,6 +914,19 @@ pub(crate) enum ImageSize {
     WidthScaled {
         ratio: f64,
     },
+    Stretch,
+    Cover,
+    Contain,
+}
+
+impl From<BackgroundImageFit> for ImageSize {
+    fn from(fit: BackgroundImageFit) -> Self {
+        match fit {
+            BackgroundImageFit::Stretch => Self::Stretch,
+            BackgroundImageFit::Cover => Self::Cover,
+            BackgroundImageFit::Contain => Self::Contain,
+        }
+    }
 }
 
 /// Slide properties, set on initialization.
@@ -1840,11 +1866,13 @@ impl CommandsRunner {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #913** (2026-08-10): **feat: load local syntaxes from bat's config directory**
-  *Symptoms*: Any `.sublime-syntax` file under `$(bat --config-dir)/syntaxes` is now loaded on startup, in addition to the syntaxes we bundle. Syntaxes are looked up recursively and take precedence over the bundled ones, and unlike bat there's no need to run `bat cache --build` first.  Languages we don't know about are now looked up by name/extension in the syntax set rather than defaulting to plain text, which is what makes locally installed syntaxes usable. As a side effect, syntaxes bat bundles but presenterm doesn't support natively can now be used as well.
+- **Issue #925** (2026-10-28): **docs: add Simplified Chinese README translation (README_zh.md)**
+  *Symptoms*: ### What this does  Adds a Simplified Chinese translation of the README as `README_zh.md` to help Chinese-speaking developers discover and adopt presenterm.  - Purely additive: one new file, no existing files modified. - Preserved unchanged (byte-for-byte): the entire setext title block (`presenterm` / `===`); the two badge reference lines (`[![crates-badge]][crates-package] … [![winget-badge]][winget-package]`) with every reference label intact; **every reference-style link definition** (all `[brew-badge]: …`, `[nix-badge]: …` shields URLs with `logo=nixos&labelColor=73C3D5`, all `[docs-*]: https://mfontanini.github.io/presenterm/…` URLs including their `#fragment`s, the `[scoop-package]` `#/apps?q=…&id=…` URL, and the YouTube/GitHub talk links); the empty-alt image `![](/docs/src/assets/demo.gif)`; the relative link targets `/examples/demo.md` and `/examples`; the `<!-- links -->` comment; all reference labels used inline (`[docs-images]`, `[docs-themes]`, … `[docs-speaker-notes]`, `[it-can-run-ratatui]`, …); the italic tool/product names (`_presenterm_`, `_kitty_`, `_iterm2_`, `_wezterm_`, `_ghostty_`, `_foot_`, `_LaTeX_`, `_typst_`); and every URL. - The eight "in action" bullet lines are left in English because they are talk/video titles and author names, not prose. - Translated: the intro paragraph, the section headings (文档 / 特性 / presenterm 实战), the feature bullet list, the closing "Gave a talk…" call-to-action, and human-readable link **display** text — while keeping 
 
-- **Issue #911** (2026-07-27): **Migrate PTY terminal backend from vt100 to rio-vt**
-  *Symptoms*: Swaps the PTY snippet's terminal backend from vt100 to [rio-vt](https://crates.io/crates/rio-vt), Rio's terminal engine.  The `ui/execution/pty` module parsed PTY output with vt100 and read each cell's contents and style to build `TextStyle`s. rio-vt does the same, exposed here through a small `PtyParser`/`PtyScreen`/`PtyCell` adapter that mirrors the vt100 surface this module used. rio-vt stores cells as packed handles into the grid style table, so the screen is resolved into owned cells on snapshot; rendering behavior is unchanged.  rio-vt is a full terminal engine (scrollback, wide chars/graphemes, sixel/Kitty/iTerm2 image protocols) rather than a parser plus screen model, and it parses and serializes a bit faster.  Benchmark against vt100 and alacritty_terminal: https://github.com/raphamorim/rio-vt-benchmark  Background on the engine and why it was split out of Rio: https://rioterm.com/blog/2026/07/27/rio-vt-and-librio 
+- **Issue #923** (2026-10-28): **Add --serve to expose the presentation over HTTP**
+  *Symptoms*: Adds a `--serve` flag to serve the presentation as a self-contained HTML page over HTTP so it can be viewed in a browser. Images are embedded inline.      presenterm --serve examples/demo.md 
+  **Post-Mortem & Fix Analysis**:
+  > Thanks for the contribution, but I don't really see the point in this. You can already do this this way, no need for a feature:  ```bash presenterm -E examples/demo.md -o /tmp/index.html python -m http.server -d /tmp ```
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1861,216 +1889,159 @@ impl CommandsRunner {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3334f3f6` (2026-04-18)
-**Commit Message**: fix: fail export gracefully if async tasks fail (#877)
+### Incident Patch 1: `c6820d42` (2026-10-28)
+**Commit Message**: fix: include speaker notes from imported markdown (#921)
 
-**File**: `src/export/exporter.rs` (modified, +23/-6)
+## What changed
+
+Speaker-notes-only rendering handled note commands from the main
+Markdown file but ignored `include` commands, so notes stored in
+imported Markdown files were missing from speaker-notes output.
+
+Included elements are now processed through speaker-notes mode when that
+mode is active. This preserves nested include handling and
+source-position errors while collecting notes from imported files. A
+regression test covers the behavior.
+
+## Validation
+
+- `cargo fmt --all --check`
+- `cargo test include_speaker_notes`
+- Full suite: 482 tests passed; 5 environment-dependent
+command-execution tests require `sh` or a discoverable `rustc` on this
+Windows host
+
+**File**: `src/presentation/builder/comment.rs` (modified, +26/-3)
 ```diff
-@@ -137,8 +137,8 @@ impl<'a> Exporter<'a> {
-         let mut render = ExportRenderer::new(self.dimensions, output_directory, renderer);
-         Self::log("waiting for images to be generated and code to be executed, if any...")?;
-         match self.snippet_policy {
--            SnippetsExportPolicy::Parallel => Self::wait_async_renders_parallel(&mut presentation),
--            SnippetsExportPolicy::Sequential => Self::wait_async_renders_sequential(&mut presentation),
-+            SnippetsExportPolicy::Parallel => Self::wait_async_renders_parallel(&mut presentation)?,
-+            SnippetsExportPolicy::Sequential => Self::wait_async_renders_sequential(&mut presentation)?,
+@@ -26,7 +26,7 @@ impl PresentationBuilder<'_, '_> {
          };
  
-         for (index, slide) in presentation.into_slides().into_iter().enumerate() {
-@@ -216,7 +216,7 @@ impl<'a> Exporter<'a> {
+         if self.options.render_speaker_notes_only {
+-            self.process_comment_command_speaker_notes_mode(command);
++            self.process_comment_command_speaker_notes_mode(command, source_position)?;
+         } else {
+             self.process_comment_command_presentation_mode(command, source_position)?;
+         }
+@@ -139,7 +139,11 @@ impl PresentationBuilder<'_, '_> {
          Ok(())
      }
  
--    fn wait_async_renders_parallel(presentation: &mut Presentation) {
-+    fn wait_async_renders_parallel(presentation: &mut Presentation) -> Result<(), ExportError> {
-         let poller = Poller::launch();
-         let mut pollables = Vec::new();
-         for (index, slide) in presentation.iter_slides().enumerate() {
-@@ -231,7 +231,13 @@ impl<'a> Exporter<'a> {
+-    fn process_comment_command_speaker_notes_mode(&mut self, comment_command: CommentCommand) {
++    fn process_comment_command_speaker_notes_mode(
++        &mut self,
++        comment_command: CommentCommand,
++        source_position: SourcePosition,
++    ) -> BuildResult {
+         match comment_command {
+             CommentCommand::SpeakerNote(note) => {
+                 for line in note.lines() {
+@@ -151,8 +155,10 @@ impl PresentationBuilder<'_, '_> {
+             CommentCommand::EndSlide => self.terminate_slide(),
+             CommentCommand::Pause => self.push_pause(),
+             CommentCommand::SkipSlide => self.slide_state.skip_slide = true,
++            CommentCommand::Include(path) => self.process_include(path, source_position)?,
+             _ => {}
+         }
++        Ok(())
+     }
  
-         // Poll until they're all done
-         for mut pollable in pollables {
--            while let PollableState::Unmodified | PollableState::Modified = pollable.poll() {}
-+            loop {
-+                match pollable.poll() {
-+                    PollableState::Unmodified | PollableState::Modified => continue,
-+                    PollableState::Done => break,
-+                    PollableState::Failed { error } => return Err(ExportError::RenderAsync(error)),
-+                }
+     fn should_ignore_comment(&self, comment: &str) -> bool {
+@@ -194,7 +200,11 @@ impl PresentationBuilder<'_, '_> {
+                 return Err(self.invalid_presentation(source_position, InvalidPresentation::IncludeFrontMatter));
+             }
+             self.slide_state.ignore_element_line_break = false;
+-            self.process_element_for_presentation_mode(element)?;
++            if self.options.render_speaker_notes_only {
++                self.process_element_for_speaker_notes_mode(element)?;
++            } else {
++                self.process_element_for_presentation_mode(element)?;
 +            }
-         }
- 
-         // Replace render asyncs with new operations that contains the replaced image
-@@ -245,9 +251,10 @@ impl<'a> Exporter<'a> {
-                 }
+             if !self.slide_state.ignore_element_line_break {
+                 self.push_line_break();
              }
-         }
-+        Ok(())
+@@ -883,6 +893,19 @@ hi
+         assert_eq!(lines, expected);
      }
  
--    fn wait_async_renders_sequential(presentation: &mut Presentation) {
-+    fn wait_async_renders_sequential(presentation: &mut Presentation) -> Result<(), ExportError> {
-         let poller = Poller::launch();
-         for (index, slide) in presentation.iter_slides_mut().enumerate() {
-             for op in slide.iter_operations_mut() {
-@@ -257,7 +264,13 @@ impl<'a> Exporter<'a> {
- 
-                     // Poll until it's done
-                     let mut pollable = inner.pollable();
--                    while let PollableState::Unmodified | PollableState::Modified = pollable.poll() {}
-+                    loop {
-+                        match pollable.poll() {
-+                            PollableState::Unmodified | PollableState::Modified => continue,
-+                            PollableState::Done => break,
-+                            PollableState::Failed { error } => return Err(ExportError::RenderAsync(error)),
-+                        }
-+                    }
- 
-                     // Replace it with its contents
-                     let window_size = WindowSize { rows: 0, columns: 0, width: 0, height: 0 };
-@@ -266,6 +279,7 @@ impl<'a> Exporter<'a> {
-                 }
-             }
-         }
-+        Ok(())
-     }
- 
-     fn validate_weasyprint_exists() -> Result<(), ExportError> {
-@@ -323,6 +337,9 @@ pub enum ExportError {
-     #[error(transparent)]
-     Execution(#[from] ExecutionError),
- 
-+    #[error("async render failed: {0}")]
-+    RenderAsync(String),
++    #[test]
++    fn include_speaker_notes() {
++        let dir = tempdir().expect("failed to create tempdir");
++        let path = dir.path();
 +
-     #[error("weasyprint not found")]
-     WeasyprintMissing,
- 
++        fs::write(path.join("included.md"), "<!-- speaker_note: included note -->\n").unwrap();
++        let input = "<!-- include: included.md -->";
++        let options = PresentationBuilderOptions { render_speaker_notes_only: true, ..Default::default() };
++
++        let lines = Test::new(input).resources_path(path).options(options).render().rows(2).columns(13).into_lines();
++        assert_eq!(lines, &["             ", "included note"]);
++    }
++
+     #[test]
+     fn self_include() {
+         let dir = tempdir().expect("failed to created tempdir");
 ```
 
 ---
 
-### Incident Patch 2: `ed98477a` (2026-04-15)
-**Commit Message**: fix: fail gracefully if async tasks fail
+### Incident Patch 2: `87990adb` (2026-10-28)
+**Commit Message**: fix: add pytest as an alternative executor for python (#892)
 
-**File**: `src/export/exporter.rs` (modified, +23/-6)
+Documentation currently claims that pytest is an available alternative
+executor but it is not. This commit adds pytest as an executor.
+
+[Issue](https://github.com/mfontanini/presenterm/issues/891)
+
+**File**: `executors.yaml` (modified, +4/-0)
 ```diff
-@@ -137,8 +137,8 @@ impl<'a> Exporter<'a> {
-         let mut render = ExportRenderer::new(self.dimensions, output_directory, renderer);
-         Self::log("waiting for images to be generated and code to be executed, if any...")?;
-         match self.snippet_policy {
--            SnippetsExportPolicy::Parallel => Self::wait_async_renders_parallel(&mut presentation),
--            SnippetsExportPolicy::Sequential => Self::wait_async_renders_sequential(&mut presentation),
-+            SnippetsExportPolicy::Parallel => Self::wait_async_renders_parallel(&mut presentation)?,
-+            SnippetsExportPolicy::Sequential => Self::wait_async_renders_sequential(&mut presentation)?,
-         };
- 
-         for (index, slide) in presentation.into_slides().into_iter().enumerate() {
-@@ -216,7 +216,7 @@ impl<'a> Exporter<'a> {
-         Ok(())
-     }
- 
--    fn wait_async_renders_parallel(presentation: &mut Presentation) {
-+    fn wait_async_renders_parallel(presentation: &mut Presentation) -> Result<(), ExportError> {
-         let poller = Poller::launch();
-         let mut pollables = Vec::new();
-         for (index, slide) in presentation.iter_slides().enumerate() {
-@@ -231,7 +231,13 @@ impl<'a> Exporter<'a> {
- 
-         // Poll until they're all done
-         for mut pollable in pollables {
--            while let PollableState::Unmodified | PollableState::Modified = pollable.poll() {}
-+            loop {
-+                match pollable.poll() {
-+                    PollableState::Unmodified | PollableState::Modified => continue,
-+                    PollableState::Done => break,
-+                    PollableState::Failed { error } => return Err(ExportError::RenderAsync(error)),
-+                }
-+            }
-         }
- 
-         // Replace render asyncs with new operations that contains the replaced image
-@@ -245,9 +251,10 @@ impl<'a> Exporter<'a> {
-                 }
-             }
-         }
-+        Ok(())
-     }
- 
--    fn wait_async_renders_sequential(presentation: &mut Presentation) {
-+    fn wait_async_renders_sequential(presentation: &mut Presentation) -> Result<(), ExportError> {
-         let poller = Poller::launch();
-         for (index, slide) in presentation.iter_slides_mut().enumerate() {
-             for op in slide.iter_operations_mut() {
-@@ -257,7 +264,13 @@ impl<'a> Exporter<'a> {
- 
-                     // Poll until it's done
-                     let mut pollable = inner.pollable();
--                    while let PollableState::Unmodified | PollableState::Modified = pollable.poll() {}
-+                    loop {
-+                        match pollable.poll() {
-+                            PollableState::Unmodified | PollableState::Modified => continue,
-+                            PollableState::Done => break,
-+                            PollableState::Failed { error } => return Err(ExportError::RenderAsync(error)),
-+                        }
-+                    }
- 
-                     // Replace it with its contents
-                     let window_size = WindowSize { rows: 0, columns: 0, width: 0, height: 0 };
-@@ -266,6 +279,7 @@ impl<'a> Exporter<'a> {
-                 }
-             }
-         }
-+        Ok(())
-     }
- 
-     fn validate_weasyprint_exists() -> Result<(), ExportError> {
-@@ -323,6 +337,9 @@ pub enum ExportError {
-     #[error(transparent)]
-     Execution(#[from] ExecutionError),
- 
-+    #[error("async render failed: {0}")]
-+    RenderAsync(String),
-+
-     #[error("weasyprint not found")]
-     WeasyprintMissing,
- 
+@@ -192,6 +192,10 @@ python:
+       filename: "snippet.py"
+       commands:
+         - ["uv", "run", "--script", "-q", "$pwd/snippet.py"]
++    pytest:
++      filename: "test_snippet.py"
++      commands:
++        - ["pytest", "$pwd/test_snippet.py"]
+ r:
+   filename: snippet.R
+   commands:
 ```
 
 ---
 
-### Incident Patch 3: `d4c29336` (2026-04-24)
-**Commit Message**: chore: revert assumptions about size
+### Incident Patch 3: `d20da38f` (2026-10-28)
+**Commit Message**: fix: progress bar footer shows actual progress now, fixes issue #900 (#904)
 
-**File**: `src/main.rs` (modified, +1/-10)
+The current behaviour stems from
+[footer.rs#119](https://github.com/mfontanini/presenterm/blob/5f8add11a24af9d257fd18da48c8004dd9c516f8/src/ui/footer.rs#L119)
+that increments the current slide counter by 1, thus completely filling
+the progress bar one slide before the presentation ends.
+
+By reducing both `current_slide` and `total_slides` by 1,
+`progress_ratio` remains the same, but the progress bar ends (and
+starts!) at the proper time.
+
+Fixes issue #900
+
+**File**: `src/ui/footer.rs` (modified, +1/-1)
 ```diff
-@@ -457,16 +457,7 @@ fn run(cli: Cli) -> Result<(), Box<dyn std::error::Error>> {
-                 height: dimensions.rows * DEFAULT_EXPORT_PIXELS_PER_ROW,
-                 width: dimensions.columns * DEFAULT_EXPORT_PIXELS_PER_COLUMN,
-             },
--            None => {
--                const DEFAULT_EXPORT_ROWS: u16 = 40;
--                const DEFAULT_EXPORT_COLUMNS: u16 = 120;
--                WindowSize {
--                    rows: DEFAULT_EXPORT_ROWS,
--                    columns: DEFAULT_EXPORT_COLUMNS,
--                    height: DEFAULT_EXPORT_ROWS * DEFAULT_EXPORT_PIXELS_PER_ROW,
--                    width: DEFAULT_EXPORT_COLUMNS * DEFAULT_EXPORT_PIXELS_PER_COLUMN,
--                }
--            }
-+            None => WindowSize::current(config.defaults.terminal_font_size)?,
-         };
-         let exporter = Exporter::new(
-             parser,
+@@ -116,7 +116,7 @@ impl AsRenderOperations for FooterGenerator {
+             ProgressBar { character, style } => {
+                 let character = character.to_string();
+                 let total_columns = dimensions.columns as usize / character.width();
+-                let progress_ratio = (self.current_slide + 1) as f64 / self.total_slides as f64;
++                let progress_ratio = (self.current_slide - 1) as f64 / (self.total_slides - 1) as f64;
+                 let columns_ratio = (total_columns as f64 * progress_ratio).ceil();
+                 let bar = character.repeat(columns_ratio as usize);
+                 let bar = Text::new(bar, *style);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #913** (closed): feat: load local syntaxes from bat's config directory (@gregerolsson)
-- **PR #911** (closed): Migrate PTY terminal backend from vt100 to rio-vt (@raphamorim)
-- **PR #897** (closed): doc: Very small typo in the install command (@arthuRHD)
-- **PR #895** (2026-05-22): feat: add exec support for ocaml (@kevinschweikert)
-- **PR #887** (2026-05-02): feat: add exec support for scala 3 (@hoop33)
-- **PR #885** (2026-04-25): feat: allow passing in env file to snippet (@mfontanini)
+- **PR #925** (closed): docs: add Simplified Chinese README translation (README_zh.md) (@WanderLandWalker)
+- **PR #923** (closed): Add --serve to expose the presentation over HTTP (@qjoly)
+- **PR #921** (2026-10-28): fix: include speaker notes from imported markdown (@jesko2004)
+- **PR #920** (2026-10-28): feat: add Lean lang support (@StamesJames)
+- **PR #916** (2026-10-28): feat: add Odin lang support (@rivethorn)
+- **PR #915** (2026-10-28): docs: add talk "Are we Ratatui yet?" (@sermuns)
 
 ---
 
@@ -2090,54 +2061,55 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fail export gracefully if async tasks fail (#877)
+## X. include speaker notes from imported markdown (#921)
 
 **RULE**:
-When implementing operations in `src/export/exporter.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mfontanini/presenterm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/presentation/builder/comment.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mfontanini/presenterm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3334f3f6`: fail export gracefully if async tasks fail (#877). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c6820d42`: include speaker notes from imported markdown (#921). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/export/exporter.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/presentation/builder/comment.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            SnippetsExportPolicy::Parallel => Self::wait_async_renders_parallel(&mut presentation)?,
-            SnippetsExportPolicy::Sequential => Self::wait_async_renders_sequential(&mut presentation)?,
-    fn wait_async_renders_parallel(presentation: &mut Presentation) -> Result<(), ExportError> {
-            loop {
-                match pollable.poll() {
-                    PollableState::Unmodified | PollableState::Modified => continue,
-                    PollableState::Done => break,
-                    PollableState::Failed { error } => return Err(ExportError::RenderAsync(error)),
-                }
+            self.process_comment_command_speaker_notes_mode(command, source_position)?;
+    fn process_comment_command_speaker_notes_mode(
+        &mut self,
+        comment_command: CommentCommand,
+        source_position: SourcePosition,
+    ) -> BuildResult {
+            CommentCommand::Include(path) => self.process_include(path, source_position)?,
+        Ok(())
+            if self.options.render_speaker_notes_only {
+                self.process_element_for_speaker_notes_mode(element)?;
+            } else {
+                self.process_element_for_presentation_mode(element)?;
             }
-        Ok(())
-    fn wait_async_renders_sequential(presentation: &mut Presentation) -> Result<(), ExportError> {
-                    loop {
-                        match pollable.poll() {
-                            PollableState::Unmodified | PollableState::Modified => continue,
-                            PollableState::Done => break,
-                            PollableState::Failed { error } => return Err(ExportError::RenderAsync(error)),
-                        }
-                    }
-        Ok(())
-    #[error("async render failed: {0}")]
-    RenderAsync(Str
+    #[test]
+    fn include_speaker_notes() {
+        let dir = tempdir().expect("failed to create tempdir");
+        let path = dir.path();
+
+        fs::write(path.join("included.md"), "<!-- speaker_note: included note -->\n").unwrap();
+        let input = "<!-- include: included.md -->";
+        let options = PresentationBuilderOptions { render_speaker_notes_only: true, ..Default::default() };
+
+        let lines = Test::new(input).resources_path(path).options(options).render().rows(2).columns(13).into_lines();
+        assert_eq!(lines, &["             ", "included note"]);
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            SnippetsExportPolicy::Parallel => Self::wait_async_renders_parallel(&mut presentation),
-            SnippetsExportPolicy::Sequential => Self::wait_async_renders_sequential(&mut presentation),
-    fn wait_async_renders_parallel(presentation: &mut Presentation) {
-            while let PollableState::Unmodified | PollableState::Modified = pollable.poll() {}
-    fn wait_async_renders_sequential(presentation: &mut Presentation) {
-                    while let PollableState::Unmodified | PollableState::Modified = pollable.poll() {}
+            self.process_comment_command_speaker_notes_mode(command);
+    fn process_comment_command_speaker_notes_mode(&mut self, comment_command: CommentCommand) {
+            self.process_element_for_presentation_mode(element)?;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3334f3f6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c6820d42` are properly handled with clean fallback behavior.

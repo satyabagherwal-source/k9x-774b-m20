@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T11:52:44.291Z",
+  "last_updated": "2026-10-28T12:02:08.874Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -920,14 +920,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-electra-base-discriminator",
-      "content_hash": "8361e1a126976942919f65f11d758cb67b221ba851a340add62bdf5abe872cc4",
-      "verified_at": "2026-10-25T17:20:53.503Z",
+      "content_hash": "a452015b220b088fa5ab0949c7612857a0318da03e79d05125e9e51b0fec6ec6",
+      "verified_at": "2026-10-28T12:02:07.306Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T17:20:53.503Z"
+      "last_updated": "2026-10-28T12:02:07.306Z"
     },
     "BAAI/bge-m3": {
       "repository": "BAAI/bge-m3",
@@ -5061,14 +5061,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-doobidoo-mcp-memory-service",
-      "content_hash": "ec7265a317ca5543a7564a5219a0367bb1a3cd43c9c07ee851af2a75e01311cf",
-      "verified_at": "2026-10-27T19:20:22.165Z",
+      "content_hash": "e32d49eac0eda450c831db107b88926aab4db679731651bae826d36a15f3b239",
+      "verified_at": "2026-10-28T12:02:08.873Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T19:20:22.165Z"
+      "last_updated": "2026-10-28T12:02:08.873Z"
     },
     "21st-dev/magic-mcp": {
       "repository": "21st-dev/magic-mcp",
@@ -5571,14 +5571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-koderover-zadig",
-      "content_hash": "d35b3f8a900d303e950b53745ce35a3bb52128b621a8402e38a692e00c67cd78",
-      "verified_at": "2026-10-28T02:27:19.578Z",
+      "content_hash": "67455395300af59245fd7f1ae68e149a49185baac42b770ba8d749ab70e94bae",
+      "verified_at": "2026-10-28T12:02:04.232Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T02:27:19.578Z"
+      "last_updated": "2026-10-28T12:02:04.232Z"
     },
     "trufflesecurity/trufflehog": {
       "repository": "trufflesecurity/trufflehog",
@@ -6621,14 +6621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mfontanini-presenterm",
-      "content_hash": "fd7a3e8f139290ed7ea06280a12147722478c06fca396c4f2375f0a19d53f85c",
-      "verified_at": "2026-10-19T01:07:12.880Z",
+      "content_hash": "a419bb33f510cf60995efa906099efd60d1875a61a6964000eab1fa10d414a91",
+      "verified_at": "2026-10-28T12:01:57.423Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T01:07:12.880Z"
+      "last_updated": "2026-10-28T12:01:57.423Z"
     },
     "ritz078/transform": {
       "repository": "ritz078/transform",

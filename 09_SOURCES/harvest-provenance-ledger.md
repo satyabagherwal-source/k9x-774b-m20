@@ -5762,3 +5762,7 @@ Every entry in this ledger must capture:
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `6c7813b5` | Multi-dimensional audit evidence | 2026-10-28T11:46:31.254Z |
 | `learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-28T11:52:40.573Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `b07103df` | Multi-dimensional audit evidence | 2026-10-28T11:52:44.286Z |
+| `learn-github-mfontanini-presenterm` | `https://github.com/mfontanini/presenterm` | `87990adb` | Multi-dimensional audit evidence | 2026-10-28T12:01:57.413Z |
+| `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `0462edd7` | Multi-dimensional audit evidence | 2026-10-28T12:02:04.222Z |
+| `learn-huggingface-google-electra-base-discriminator` | `https://huggingface.co/google/electra-base-discriminator` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-28T12:02:07.296Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `52568d90` | Multi-dimensional audit evidence | 2026-10-28T12:02:08.863Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source**: github ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
-> **Source Version**: `9cab16d5`  
+> **Source Version**: `52568d90`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T19:20:21.796Z  
+> **Timestamp**: 2026-10-28T12:02:08.252Z  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T19:20:20.249Z  
+> **Harvest Timestamp**: 2026-10-28T12:02:07.843Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2051 stars
+- **Stars / Engagement**: 2052 stars
 
 ---
 
@@ -2932,560 +2932,217 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9cab16d5` (2026-10-27)
-**Commit Message**: fix(reasoning): clear four reasoning modules of unsanitised log calls (#1146) (#1698)
+### Incident Patch 1: `52568d90` (2026-10-28)
+**Commit Message**: chore(deps): bump the uv group with 7 updates (#1700)
 
-* fix(reasoning): clear four reasoning modules of unsanitised log calls (#1146)
+Bumps the uv group with 7 updates:
 
-inference.py, entity_linker.py, nli.py and multi_strategy.py logged, through
-f-strings, the hash a caller hands the public SemanticReasoner methods, the
-entity names EntityExtractor pulls out of a memory's content and tags, and
-the exception text of the graph backend or of a failed search strategy.
-Those go through _sanitize_log_value; the link cap, the edge count and the
-content hash the service computed itself become lazy %-style. The four
-modules join GUARDED_MODULES, entity_name joins EXTERNAL_NAMES, and a caplog
-test per module forges the newline without storage or a model.
+| Package | From | To |
+| --- | --- | --- |
+| [certifi](https://github.com/certifi/python-certifi) | `2026.10.19` | `2026.10.23` |
+| [fastapi](https://github.com/fastapi/fastapi) | `0.143.3` | `0.162.0` |
+| [sse-starlette](https://github.com/sysid/sse-starlette) | `3.5.0` | `3.5.1` |
+| [ruff](https://github.com/astral-sh/ruff) | `0.17.1` | `0.17.2` |
+| [sentence-transformers](https://github.com/huggingface/sentence-transformers) | `6.1.0` | `6.2.0` |
+| [transformers](https://github.com/huggingface/transformers) | `5.20.1` | `5.20.2` |
+| [huggingface-hub](https://github.com/huggingface/huggingface_hub) | `1.33.0` | `2.3.0` |
 
-* changelog: fragment for #1698
 
----------
+Updates `certifi` from 2026.10.19 to 2026.10.23
+- [Commits](https://github.com/certifi/python-certifi/compare/2026.10.19...2026.10.23)
 
-Co-authored-by: massimiliano1991 <[REDACTED_EMAIL]>
+Updates `fastapi` from 0.143.3 to 0.162.0
+- [Release notes](https://github.com/fastapi/fastapi/releases)
+- [Commits](https://github.com/fastapi/fastapi/compare/0.143.3...0.162.0)
 
-**File**: `changelog.d/1698.fixed.md` (added, +7/-0)
+Updates `sse-starlette` from 3.5.0 to 3.5.1
+- [Release notes](https://github.com/sysid/sse-starlette/releases)
+- [Commits](https://github.com/sysid/sse-starlet
+
+**File**: `uv.lock` (modified, +159/-41)
 ```diff
-@@ -0,0 +1,7 @@
-+- **Reasoning modules logged caller hashes, entity names and backend errors unsanitised (#1146, #1698, massimiliano1991).**
-+  `reasoning/inference.py`, `entity_linker.py`, `nli.py` and `multi_strategy.py` put the hash
-+  handed to the `SemanticReasoner` lookups, the entity names extracted from memory content and
-+  tags, and the exception text of the graph backend or a failed search strategy into the log
-+  through f-strings, so a newline in any of them forged a log line. They go through
-+  `_sanitize_log_value` now; the four modules are in the guard's `GUARDED_MODULES` list and a
-+  test per module fails if the newline comes back.
-```
-
-**File**: `src/mcp_memory_service/reasoning/entity_linker.py` (modified, +6/-4)
-```diff
-@@ -11,6 +11,8 @@
- import os
- from typing import List
+@@ -396,11 +396,11 @@ wheels = [
  
-+from ..compat import _sanitize_log_value
-+
- logger = logging.getLogger(__name__)
- 
- # Cap to prevent O(N²) edge explosion for common entities
-@@ -54,7 +56,7 @@ async def link_by_entities(
-             try:
-                 existing_hashes = await graph_storage.find_memories_by_entity(entity_name)
-             except Exception as e:
--                logger.debug(f"Failed to query entity '{entity_name}': {e}")
-+                logger.debug("Failed to query entity '%s': %s", _sanitize_log_value(entity_name), _sanitize_log_value(e))
-                 continue
- 
-             # Defensive: handle None or non-iterable return
-@@ -68,7 +70,7 @@ async def link_by_entities(
-                     continue
-                 if linked_count >= MAX_LINKS_PER_ENTITY:
-                     logger.debug(
--                        f"EntityLinker: hit cap ({MAX_LINKS_PER_ENTITY}) for entity '{entity_name}'"
-+                        "EntityLinker: hit cap (%s) for entity '%s'", MAX_LINKS_PER_ENTITY, _sanitize_log_value(entity_name)
-                     )
-                     break
- 
-@@ -91,10 +93,10 @@ async def link_by_entities(
-                         edges_created += 1
-                         linked_count += 1
-                 except Exception as e:
--                    logger.debug(f"Failed to create shares_entity edge: {e}")
-+                    logger.debug("Failed to create shares_entity edge: %s", _sanitize_log_value(e))
- 
-         if edges_created:
-             logger.info(
--                f"EntityLinker: created {edges_created} shares_entity edges for {memory_hash}"
-+                "EntityLinker: created %s shares_entity edges for %s", edges_created, memory_hash
-             )
-         return edges_created
-```
-
-**File**: `src/mcp_memory_service/reasoning/inference.py` (modified, +5/-5)
-```diff
-@@ -73,7 +73,7 @@ async def _get_connected(self, hash: str, rel_type: str, direction: str = "both"
-             # connected is List[Tuple[str, int]]
-             return [mem_hash for mem_hash, distance in connected]
-         except Exception as e:
--            logger.error(f"Failed to get connected memories: {e}")
-+            logger.error("Failed to get connected memories: %s", _sanitize_log_value(e))
-             return []
- 
-     async def detect_contradictions(self, hash: str) -> List[str]:
-@@ -94,7 +94,7 @@ async def detect_contradictions(self, hash: str) -> List[str]:
-             # Find memories with "contradicts" relationship
-             return await self._get_connected(hash, "contradicts")
-         except Exception as e:
--            logger.error(f"Failed to detect contradictions for {hash}: {e}")
-+            logger.error("Failed to detect contradictions for %s: %s", _sanitize_log_value(hash), _sanitize_log_value(e))
-             return []
- 
-     async def find_fixes(self, error_hash: str) -> List[str]:
-@@ -116,7 +116,7 @@ async def find_fixes(self, error_hash: str) -> List[str]:
-             # Use direction="incoming" to find sources that fix this target
-             return await self._get_connected(error_hash, "fixes", direction="incoming")
-         except Exception as e:
--            logger.error(f"Failed to find fixes for {error_hash}: {e}")
-+            logger.error("Failed to find fixes for %s: %s", _sanitize_log_value(error_hash), _sanitize_log_value(e))
-             return []
- 
-     async def find_causes(self, error_hash: str) -> List[str]:
-@@ -138,7 +138,7 @@ async def find_causes(self, error_hash: str) -> List[str]:
-             # Use direction="incoming" to find what caused this error
-             return await self._get_connected(error_hash, "causes", direction="incoming")
-         except Exception as e:
--            logger.error(f"Failed to find causes for {error_hash}: {e}")
-+            logger.error("Failed to find causes for %s: %s", _sanitize_log_value(error_hash), _sanitize_log_value(e))
-             return []
- 
-     async def abstract_to_concept(self, hash: str) -> Optional[str]:
-@@ -203,7 +203,7 @@ async def infer_transitive(
-                 for src, tgt, dist in results
-             ]
-         except Exception as e:
--            logger.error(f"Failed to infer transitive relationships: {e}")
-+            logger.error("Failed to infer transitive relationships: %s", _sanitize_log_value(e))
-             return []
- 
-     async def abduct(self, effect_hash: str, max_depth: int = 2) -> List[Dict[str, Any]]:
-```
-
-**File**: `src/mcp_memory_service/reasoning/multi_strategy.py` (modified, +3/-1)
-```diff
-@@ -4,6 +4,8 @@
- import logging
- from typing import Any, Dict, List, Optional, Tuple
- 
-+from ..compat import _sanitize_log_value
-+
- logger = logging.getLogger(__name__)
- 
- 
-@@ -76,7 +78,7 @@ async def multi_strategy_search(
- 
-     for result in results:
-         if isinstance(result, Exception):
--            logger.warning(f"Strategy failed: {result}")
-+            logger.warning("Strategy failed: %s", _sanitize_log_value(result))
-             continue
-         hashes, mem_map = result
-         if hashes:
-```
-
-**File**: `src/mcp_memory_service/reasoning/nli.py` (modified, +1/-1)
-```diff
-@@ -356,6 +356,6 @@ async def detect_contradictions_nli(
-                 )
-                 result["conflicts_registered"] += 1
-             except Exception as e:
--                logger.debug(f"Failed to register conflict: {e}")
-+                logger.debug("Failed to register conflict: %s", _sanitize_log_value(e))
- 
-     return result
-```
-
-**File**: `tests/unit/test_log_injection_guard.py` (modified, +25/-0)
-```diff
-@@ -89,6 +89,10 @@
-     "mcp_memory_service/ingestion/csv_loader.py",
-     "mcp_memory_service/ingestion/text_loader.py",
-     "mcp_memory_service/ingestion/pdf_loader.py",
-+    "mcp_memory_service/reasoning/inference.py",
-+    "mcp_memory_service/reasoning/entity_linker.py",
-+    "mcp_memory_service/reasoning/nli.py",
-+    "mcp_memory_service/reasoning/multi_strategy.py",
+ [[package]]
+ name = "certifi"
+-version = "2026.10.19"
++version = "2026.10.23"
+ source = { registry = "https://pypi.org/simple" }
+-sdist = { url = "https://files.pythonhosted.org/packages/a6/bd/1436c50cc46699de0230fbaacc1d1de7bfec413176099949e9d5112e88f2/certifi-2026.10.19.tar.gz", hash = "sha256:035c1e85572b141bf1c3a3eff0e33a8eb74917522f2559075ff8d2fea780a1ae", size = 137598, upload-time = "2026-10-20T02:24:16.604Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/fd/11/b524cbd9bbdaca58608e4cf4053fd463417549e1959fa8d3aa18319f9555/certifi-2026.10.23.tar.gz", hash = "sha256:a9895e6e2758b371e0545e321a3a8fd1fcfd9829ada8824a936dfb16aaaf36cd", size = 136225, upload-time = "2026-10-23T11:36:16.478Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/c4/51/29046e48f693c54e5b7412216d447a1d8362c9653148d98c02cdf65fa733/certifi-2026.10.19-py3-none-any.whl", hash = "sha256:42d35340cc5b9ba78e818ddbff0c5b1c2b779de448a340fd1b989f5fa8670e1b", size = 136464, upload-time = "2026-10-20T02:24:15.072Z" },
++    { url = "https://files.pythonhosted.org/packages/32/d1/a3652fe2c19134d0d15922177821d863cbd7e842d53a21bbe7e8e3a1b5ac/certifi-2026.10.23-py3-none-any.whl", hash = "sha256:e9b54de76e530bb6cf0ccd036787103acb58fd42ba930ea8bf948ddbaa2f61d1", size = 135082, upload-time = "2026-10-23T11:36:14.763Z" },
  ]
  
- # The levels check 6.5 looks at, verbatim.
-@@ -188,6 +192,11 @@
-     # the name bare in a %-style call, so listing it decides for nobody else.
-     # `error_msg` above already covers the stderr of the semtools subprocess.
-     "file_path",
-+    # An entity name EntityExtractor pulled out of a memory's content or tags
-+    # (reasoning/entity_linker.py logs it when the lookup fails and when the
-+    # per-entity link cap is hit). No guarded module logs the name bare in a
-+    # %-style call, so listing it decides for nobody else.
-+    "entity_name",
- })
+ [[package]]
+@@ -969,7 +969,7 @@ wheels = [
  
- # Fields of an outside object that cannot carry injectable text. An HTTP status
-@@ -610,3 +619,19 @@ def test_lazy_scan_flags_ingestion_file_path():
-     assert _lazy_findings(bare)
-     assert not _lazy_findings(wrapped)
-     assert not _lazy_findings('logger.debug("Successfully parsed %s, extracted %d characters", _sanitize_log_value(file_path), len(markdown_content))\n')
+ [[package]]
+ name = "fastapi"
+-version = "0.143.3"
++version = "0.162.0"
+ source = { registry = "https://pypi.org/simple" }
+ dependencies = [
+     { name = "annotated-doc" },
+@@ -979,9 +979,9 @@ dependencies = [
+     { name = "typing-extensions" },
+     { name = "typing-inspection" },
+ ]
+-sdist = { url = "https://files.pythonhosted.org/packages/38/d5/b0aeb0b303650ac87b0411de4aaf3f901b06042dcc3fb00f30b97b7ff585/fastapi-0.143.3.tar.gz", hash = "sha256:b9ab567ee57afb4454004ce04c889f8f0160ac47946b99795887cd6e88484848", size = 469834, upload-time = "2026-10-16T14:14:13.31Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/e9/eb/2cf8c80abf09b2800aef0a83b41066fbfda8ee5495b7a08b9d1af40f7046/fastapi-0.162.0.tar.gz", hash = "sha256:6a22c1e2e6e32e0633ee7e170f00009a29b8228b16feb219ee42f32fd8d88a8f", size = 527867, upload-time = "2026-10-23T18:47:33.264Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/2c/1a/03d246befcf307219bb2161c97d8c5d314f84125bf7dd245730a28589828/fastapi-0.143.3-py3-none-any.whl", hash = "sha256:75e8bd68e2f52f77d29b2879749c257d64de2d85282d25270caf2bfccce5efe5", size = 144849, upload-time = "2026-10-16T14:14:11.763Z" },
++    { url = "https://files.pythonhosted.org/packages/b4/4f/3f2c25c9b43970b5e9a08beb5e04776247edea684ddc0930f4f02f0bb6cb/fastapi-0.162.0-py3-none-any.whl", hash = "sha256:3785963de305dd09912426cb81f2d230fce98ab3521cdfe97265c8d14983128c", size = 148912, upload-time = "2026-10-23T18:47:31.734Z" },
+ ]
+ 
+ [[package]]
+@@ -1255,6 +1255,50 @@ wheels = [
+     { url = "https://files.pythonhosted.org/packages/7e/f5/f66802a942d491edb555dd61e3a9961140fd64c90bce1eafd741609d334d/httpcore-1.0.9-py3-none-any.whl", hash = "sha256:2d400746a40668fc9dec9810239072b40b4484b640a8c38fd654a024c7a1bf55", size = 78784, upload-time = "2025-04-24T22:06:20.566Z" },
+ ]
+ 
++[[package]]
++name = "httpcore2"
++version = "2.14.0"
++source = { registry = "https://pypi.org/simple" }
++resolution-markers = [
++    "python_full_version < '3.11' and sys_platform == 'linux'",
++    "python_full_version < '3.11' and sys_platform != 'linux'",
++]
++dependencies = [
++    { name = "h11" },
++    { name = "truststore" },
++]
++sdist = { url = "https://files.pythonhosted.org/packages/30/ff/b53af1b49bb2cb5fa97c92215614b173ca5c1a99ded80e2d52f15a94fa6d/httpcore2-2.14.0.tar.gz", hash = "sha256:4f57a1a8249fe6af589d935cfd456f1d13bbdcb0f0fc72af9142368fc94811d7", size = 69096, upload-time = "2026-10-18T16:29:21.898Z" }
++wheels = [
++    { url = "https://files.pythonhosted.org/packages/02/06/a8d6a8f90d11b76d9086242b6bb0ee4b503473bfc8be34c2d5b067275c22/httpcore2-2.14.0-py3-none-any.whl", hash = "sha256:4c4f64f4b544afeb778c42c0ffb5941b29e671157e90ed3f6dc787c4bca90cd1", size = 84291, upload-time = "2026-10-18T16:29:19.743Z" },
++]
 +
-+
-+@pytest.mark.unit
-+def test_lazy_scan_flags_reasoning_entity_name():
-+    """An entity name pulled out of memory content, logged by reasoning/entity_linker.py.
-+
-+    Both guarded logger calls that carry it already wrap it, so the module scans
-+    stay green whether or not the name is listed. This is the sample that fails
-+    if `entity_name` is dropped from EXTERNAL_NAMES; the link cap and the edge
-+    count logged next to it stay unlisted on purpose.
-+    """
-+    bare = 'logger.debug("EntityLinker: hit cap (%s) for entity \'%s\'", MAX_LINKS_PER_ENTITY, entity_name)\n'
-+    wrapped = 'logger.debug("EntityLinker: hit cap (%s) for entity \'%s\'", MAX_LINKS_PER_ENTITY, _sanitize_log_value(entity_name))\n'
-+    assert _lazy_findings(bare)
-+    assert not _lazy_findings(wrapped)
-+    assert not _lazy_findings('logger.info("EntityLinker: created %s shares_entity edges for %s", edges_created, memory_hash)\n')
-```
-
-**File**: `tests/unit/test_reasoning_logging.py` (added, +156/-0)
-```diff
-@@ -0,0 +1,156 @@
-+"""
-+Log-injection tests for the reasoning/ modules (#1146).
-+
-+What these modules log and did not produce themselves: the hash a caller hands
-+the public ``SemanticReasoner`` methods, the entity names ``EntityExtractor``
-+pulls out of a memory's content and tags, and the exception text of the graph
-+backend or of a failed search strategy. A newline in any of those must not
-+reach the log as a line break.
-+
-+No storage and no model: the graph backend, the search strategy and the NLI
-+classification step are stubs that raise or return forged text.
-+"""
-+
-+import logging
-+import sys
-+import types
-+from types import SimpleNamespace
-+from unittest.mock import AsyncMock, MagicMock
-+
-+import pytest
-+
-+from mcp_memory_service.reasoning import entity_linker as entity_linker_module
-+from mcp_memory_service.reasoning import multi_strategy as multi_strategy_module
-+from mcp_memory_service.reasoning import nli as nli_module
-+from mcp_memory_service.reasoning.entity_linker import EntityLinker
-+from mcp_memory_service.reasoning.inference import SemanticReasoner
-+
-+FORGED = "FORGED reasoning verified"
-+LOGGERS = "mcp_memory_service.reasoning"
-+FORGED_HASH = f"abc123\n{FORGED}"
-+
-+
-+def _messages(caplog):
-+    return [record.getMessage() for record in caplog.records]
-+
-+
-+def _assert_clean(caplog, *expected):
-+    messages = _messages(caplog)
-+    for text in expected:
-+        assert any(text in m for m in messages), (text, messages)
-+    assert not any(f"\n{FORGED}" in m for m in messages), messages
-+
-+
-+def _escaped(text):
-+    return text.replace("\n", "\\n")
-+
-+
-+def _failing(message):
-+    return AsyncMock(side_effect=ValueError(f"{message}\n{FORGED}"))
-+
-+
-+@pytest.mark.asyncio
-+async def test_semantic_reasoner_logs_do_not_carry_newlines(monkeypatch, caplog):
-+    graph = MagicMock()
-+    graph.find_connected = _failing("backend said")
-+    graph.transitive_closure = _failing("closure said")
-+    reasoner = SemanticReasoner(graph)
-+
-+    with caplog.at_level(logging.DEBUG, logger=LOGGERS):
-+        assert await reasoner._get_connected(FORGED_HASH, "contradicts") == []
-+        assert await reasoner.infer_transitive("causes", 2) == []
-+
-+        # _get_connected swallows its own errors, so the three wrappers only log
-+        # when it raises: make it raise to reach their except branches.
-+        monkeypatch.setattr(reasoner, "_get_connected", _failing("lookup said"))
-+        assert await reasoner.detect_contradictions(FORGED_HASH) == []
-+        assert await reasoner.find_fixes(FORGED_HASH) == []
-+        assert await reasoner.find_causes(FORGED_HASH) == []
-+
-+    shown = _escaped(FORGED_HASH)
-+    _assert_clean(
-+        caplog,
-+        f"Failed to get connected memories: backend said\\n{FORGED}",
-+        f"Failed to infer transitive relationships: closure said\\n{FORGED}",
-+        f"Failed to detect contradictions for {shown}: lookup said\\n{FORGED}",
-+        f"Failed to find fixes for {shown}: lookup said\\n{FORGED}",
-+        f"Failed to find causes for {shown}: lookup said\\n{FORGED}",
-+    )
-+
-+
-+@pytest.mark.asyncio
-+async def test_entity_linker_logs_do_not_carry_newlines(monkeypatch, caplog):
-+    forged_entity = f"Acme\n{FORGED}"
-+    linker = EntityLinker()
-+
-+    failing_graph = MagicMock()
-+    failing_graph.find_memories_by_entity = _failing("entity lookup said")
-+
-+    monkeypatch.setattr(entity_linker_module, "MAX_LINKS_PER_ENTITY", 1)
-+    capped_graph = MagicMock()
-+    capped_graph.find_memories_by_entity = AsyncMock(return_value=["h1", "h2"])
-+    capped_graph.store_association = AsyncMock(return_value=True)
-+
-+    edge_failing_graph = MagicMock()
-+    edge_failing_graph.find_memories_by_entity = AsyncMock(return_value=["h1"])
-+    edge_failing_graph.store_association = _failing("edge said")
-+
-+    with caplog.at_level(logging.DEBUG, logger=LOGGERS):
-+        assert await linker.link_by_entities("self", [forged_entity], failing_graph) == 0
-+        assert await linker.link_by_entities("self", [forged_entity], capped_graph) == 1
-+        assert await linker.link_by_entities("self", [forged_entity], edge_failing_graph) == 0
-+
-+    shown = _escaped(forged_entity)
-+    _assert_clean(
-+        caplog,
-+        f"Failed to query entity '{shown}': entity lookup said\\n{FORGED}",
-+        f"EntityLinker: hit cap (1) for entity '{shown}'",
-+        "EntityLinker: created 1 shares_entity edges for self",
-+        f"Failed to create shares_entity edge: edge said\\n{FORGED}",
-+    )
-+
-+
-+@pytest.mark.asyncio
-+async def test_nli_conflict_registration_log_does_not_carry_newlines(monkeypatch, caplog):
-+    monkeypatch.setenv("MCP_NLI_ENABLED", "true")
-+
-+    mem_a = MagicMock()
-+    mem_a.content = "the feature is enabled"
-+    mem_a.metadata = {"entities": ["feature"]}
-+    storage = MagicMock()
-+    storage.get_by_hash = AsyncMock(return_value=mem_a)
-+    storage.search_memories = AsyncMock(return_value={
-+        "memories": [{"content_hash": "hashB", "content": "the feature is disabl
++[[package]]
++name = "httpcore2"
++version = "2.16.0"
++source = { registry = "https://pypi.org/simple" }
++resolution-markers = [
++    "python_full_version >= '3.14' and sys_platform == 'linux'",
++    "python_full_version >= '3.14' and sys_platform == 'win32'",
++    "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
++    "python_full_version == '3.13.*' and sys_platform == 'linux'",
++    "python_full_version == '3.13.*' and sys_platform == 'win32'",
++    "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
++    "python_full_version == '3.12.*' and sys_platform == 'linux'",
++    "python_full_version == '3.12.*' and sys_platform == 'win32'",
++    "python_full_version == '3.1
 ```
 
 ---
 
-### Incident Patch 2: `ef25b93d` (2026-10-26)
-**Commit Message**: fix(beliefs): read contradicts edges so belief derivation sees contradictions (#1657) (#1692)
+### Incident Patch 2: `f7fafb6d` (2026-10-28)
+**Commit Message**: chore(deps): bump filelock to 4.2.4 (GHSA-v4x8-3wr5-3wq8) (#1702)
 
-_find_contradictions() returned [] for every group: it looked for the
-graph on storage.graph, which no storage class assigns, called a
-get_edges() that GraphStorage does not have, and asked for a
-CONTRADICTED_BY edge type nothing writes. Every belief was derived with
-contradicted_by empty.
+* chore(deps): bump filelock to 4.2.4 (GHSA-v4x8-3wr5-3wq8)
 
-BeliefService now takes the graph handle, the scheduler (the only caller
-of derive_beliefs) passes the consolidator's, and contradictions are
-read by following "contradicts" edges one hop with find_connected().
+Dependabot alerts 223-225 flag filelock 3.24.3. 4.2.1 is the first fixed
+release, but it requires Python 3.11, so the 3.10 resolution only moves to
+4.1.0 and stays inside the advisory range. Nothing in src/ or scripts/ imports
+filelock; it arrives through torch and huggingface-hub.
 
-**File**: `changelog.d/1657.fixed.md` (added, +7/-0)
+* docs(changelog): fragment for the filelock bump
+
+---------
+
+Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
+
+**File**: `changelog.d/1702.internal.md` (added, +6/-0)
 ```diff
-@@ -0,0 +1,7 @@
-+- **Belief derivation never saw a contradiction (#1657, debashishthakur).**
-+  `_find_contradictions()` looked for the graph on `storage.graph`, which no storage
-+  class sets, called a `get_edges()` that `GraphStorage` does not have, and asked for a
-+  `CONTRADICTED_BY` edge type that nothing writes, so every belief was derived with
-+  `contradicted_by: []`. `BeliefService` now takes the graph handle, the scheduler passes
-+  the consolidator's, and contradictions are read from the `contradicts` edges that
-+  contradiction detection writes.
+@@ -0,0 +1,6 @@
++- **filelock moved off 3.24.3 (#1702).** Dependabot flagged three filelock advisories
++  (GHSA-v4x8-3wr5-3wq8 high, GHSA-567q-5qvw-pf92 and GHSA-9vhv-jxww-xfm5 low), all
++  in `ReadWriteLock` and `SoftFileLock`, neither of which this project calls; filelock
++  only arrives through torch and huggingface-hub. Python 3.11 and up now resolve to
++  4.2.4. The fix requires Python 3.11, so the 3.10 resolution stops at 4.1.0, which is
++  still inside the advisory range.
 ```
 
-**File**: `src/mcp_memory_service/consolidation/belief_service.py` (modified, +19/-15)
+**File**: `uv.lock` (modified, +89/-56)
 ```diff
-@@ -103,8 +103,11 @@ class BeliefService:
-     SIMILARITY_THRESHOLD = 0.85
-     """Derives and manages beliefs from observations."""
+@@ -1,5 +1,5 @@
+ version = 1
+-revision = 5
++revision = 3
+ requires-python = ">=3.10"
+ resolution-markers = [
+     "python_full_version >= '3.14' and sys_platform == 'linux'",
+@@ -622,7 +622,7 @@ name = "coloredlogs"
+ version = "15.0.1"
+ source = { registry = "https://pypi.org/simple" }
+ dependencies = [
+-    { name = "humanfriendly" },
++    { name = "humanfriendly", marker = "python_full_version < '3.11'" },
+ ]
+ sdist = { url = "https://files.pythonhosted.org/packages/cc/c7/eed8f27100517e8c0e6b923d5f0845d0cb99763da6fdee00478f91db7325/coloredlogs-15.0.1.tar.gz", hash = "sha256:7c991aa71a4577af2f82600d8f8f3a89f936baeaf9b50a9c197da014e5bf16b0", size = 278520, upload-time = "2021-06-11T10:22:45.202Z" }
+ wheels = [
+@@ -822,7 +822,7 @@ name = "cuda-bindings"
+ version = "13.3.1"
+ source = { registry = "https://pypi.org/simple" }
+ dependencies = [
+-    { name = "cuda-pathfinder" },
++    { name = "cuda-pathfinder", marker = "sys_platform == 'linux'" },
+ ]
+ wheels = [
+     { url = "https://files.pythonhosted.org/packages/a9/21/8464d133752951c154feafb3b65c297e7d80f301183d220bec4c830f1441/cuda_bindings-13.3.1-cp310-cp310-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:120fcc53d57903df529c3486962c56528cba5b7d6c57c99537320ed9922c8b86", size = 6073403, upload-time = "2026-05-29T23:11:36.22Z" },
+@@ -857,43 +857,43 @@ wheels = [
  
--    def __init__(self, storage):
-+    def __init__(self, storage, graph=None):
-         self.storage = storage
-+        # Graph handle for contradiction lookups. It lives beside the memory
-+        # storage, not on it, so callers that derive beliefs pass it in.
-+        self.graph = graph
-         # Parsed with the repo's fallback pattern: an invalid value logs an
-         # error and keeps the default rather than raising out of __init__ and
-         # disabling belief derivation.
-@@ -360,26 +363,27 @@ async def _group_observations(self, observations) -> dict:
-         return groups
- 
-     async def _find_contradictions(self, observations) -> List[dict]:
--        """Find contradicting observations using existing graph edges."""
--        contradicting = []
--        if not hasattr(self.storage, "graph") or not self.storage.graph:
--            return contradicting
-+        """Find observations linked to the group by a ``contradicts`` edge.
- 
-+        Contradiction detection stores ``contradicts`` edges; following them in
-+        both directions finds the other side whichever memory came first.
-+        """
-+        if not self.graph:
-+            return []
-+
-+        contradicting_hashes = []
-         for obs in observations:
-             content_hash = obs.content_hash if hasattr(obs, "content_hash") else obs.get("content_hash", "")
-             if not content_hash:
-                 continue
--            try:
--                edges = await self.storage.graph.get_edges(content_hash, "CONTRADICTED_BY")
--                for edge in edges:
--                    target_hash = edge.get("target") or edge.get("to_hash", "")
--                    if target_hash:
--                        mems = await self._get_observations_by_hashes([target_hash])
--                        contradicting.extend(mems)
--            except Exception:
--                continue
-+            connected = await self.graph.find_connected(
-+                content_hash, max_hops=1, relationship_type="contradicts"
-+            )
-+            for other_hash, _distance in connected:
-+                if other_hash not in contradicting_hashes:
-+                    contradicting_hashes.append(other_hash)
- 
--        return contradicting
-+        return await self._get_observations_by_hashes(contradicting_hashes)
- 
-     def _obs_to_dict(self, obs) -> dict:
-         """Convert Memory object to dict for derive_confidence."""
-```
-
-**File**: `src/mcp_memory_service/consolidation/scheduler.py` (modified, +4/-1)
-```diff
-@@ -743,7 +743,10 @@ async def _run_consolidation_job(self, time_horizon: str):
-             beliefs_enabled = os.getenv("MCP_BELIEFS_ENABLED", "false").lower() in ("true", "1", "yes")
-             if beliefs_enabled and hasattr(self.consolidator, 'storage'):
-                 try:
--                    belief_svc = BeliefService(self.consolidator.storage)
-+                    belief_svc = BeliefService(
-+                        self.consolidator.storage,
-+                        graph=getattr(self.consolidator, "graph_storage", None),
-+                    )
-                     belief_stats = await belief_svc.derive_beliefs()
-                 except Exception as be:
-                     self.logger.warning("Belief derivation error (non-fatal): %s", _sanitize_log_value(be))
-```
-
-**File**: `tests/consolidation/test_dead_storage_calls.py` (modified, +73/-3)
-```diff
-@@ -11,7 +11,7 @@
- 
- import pytest
- 
--from mcp_memory_service.consolidation.belief_service import BeliefService
-+from mcp_memory_service.consolidation.belief_service import BeliefService, _hash_content
- from mcp_memory_service.consolidation.insights import InsightCard, store_insights
- from mcp_memory_service.models.memory import Memory
- from mcp_memory_service.storage.cloudflare import CloudflareStorage
-@@ -26,8 +26,10 @@ async def _storage(temp_db_path):
-     return storage
- 
- 
--async def _store(storage, text):
--    memory = Memory(content=text, content_hash=generate_content_hash(text), tags=["test"])
-+async def _store(storage, text, memory_type=None):
-+    memory = Memory(
-+        content=text, content_hash=generate_content_hash(text), tags=["test"], memory_type=memory_type
-+    )
-     ok, msg = await storage.store(memory)
-     assert ok, msg
-     return memory.content_hash
-@@ -312,3 +314,71 @@ async def test_cloudflare_storage_supports_consolidation_delete():
- 
-     assert await storage.delete_memory("abc123") is True
-     storage.delete.assert_awaited_once_with("abc123")
-+
-+
-+async def _contradiction_fixture(temp_db_path):
-+    """Three unrelated observations; the first two are linked by a contradicts
-+    edge, written the way contradiction detection writes it."""
-+    storage = await _storage(temp_db_path)
-+    texts = [
-+        "The nightly backup job runs at 02:00 against the NAS share.",
-+        "Backups were moved off the NAS to the Storj bucket last week.",
-+        "Grafana alerts route to the on-call Slack channel.",
-+    ]
-+    hashes = [await _store(storage, t, memory_type="observation") for t in texts]
-+    graph = GraphStorage(storage.db_path)
-+    await graph.store_association(
-+        hashes[1], hashes[0], 0.7, ["contradiction"], relationship_type="contradicts"
-+    )
-+    return storage, graph, texts, hashes
-+
-+
-+async def _belief_for(svc, text):
-+    belief = await svc._get_belief(_hash_content(text))
-+    assert belief is not None, f"no belief derived for {text!r}"
-+    return belief
-+
-+
-+@pytest.mark.asyncio
-+async def test_derive_beliefs_sees_contradicts_edges(temp_db_path):
-+    """_find_contradictions read storage.graph, which no storage class assigns,
-+    called get_edges(), which GraphStorage does not have, and asked for a
-+    CONTRADICTED_BY edge type that nothing writes. Every belief was derived as
-+    if no observation had ever been contradicted."""
-+    storage, graph, texts, hashes = await _contradiction_fixture(temp_db_path)
-+    svc = BeliefService(storage, graph=graph)
-+
-+    await svc.derive_beliefs()
-+
-+    contested = await _belief_for(svc, texts[0])
-+    other_side = await _belief_for(svc, texts[1])
-+    clean = await _belief_for(svc, texts[2])
-+    assert json.loads(contested["contradicted_by"]) == [hashes[1]]
-+    assert json.loads(other_side["contradicted_by"]) == [hashes[0]]
-+    assert json.loads(clean["contradicted_by"]) == []
-+    assert contested["confidence"] < clean["confidence"]
-+
-+
-+@pytest.mark.asyncio
-+async def test_scheduler_hands_the_graph_to_belief_derivation(temp_db_path, monkeypatch):
-+    """The scheduler is the only caller of derive_beliefs(); it has to pass the
-+    consolidator's graph handle, or contradictions stay invisible."""
-+    from types import SimpleNamespace
-+
-+    from mcp_memory_service.consolidation.scheduler import ConsolidationScheduler
-+
-+    storage, graph, texts, hashes = await _contradiction_fixture(temp_db_path)
-+    report = SimpleNamespace(
-+        memories_processed=3, associations_discovered=0, clusters_created=0,
-+        memories_compressed=0, memories_archived=0, errors=[],
-+    )
-+    consolidator = SimpleNamespace(
-+        storage=storage, graph_storage=graph, consolidate=AsyncMock(return_value=report)
-+    )
-+    monkeypatch.setenv("MCP_BELIEFS_ENABLED", "true")
-+
-+    scheduler = ConsolidationScheduler(consolidator, schedule_config={}, enabled=False)
-+    await scheduler._run_consolidation_job("weekly")
-+
-+    contested = await _belief_for(BeliefService(storage), texts[0])
-+    assert json.loads(contested["contradicted_by"]) == [hashes[1]]
-```
-
-**File**: `tests/unit/test_silent_failures_are_logged.py` (modified, +1/-1)
-```diff
-@@ -25,7 +25,7 @@ async def test_job_record_carries_belief_stats(monkeypatch):
- 
-     fake_service = MagicMock()
-     fake_service.derive_beliefs = AsyncMock(return_value={"beliefs_derived": 3})
--    monkeypatch.setattr(sched_mod, "BeliefService", lambda storage: fake_service)
-+    monkeypatch.setattr(sched_mod, "BeliefService", lambda storage, graph=None: fake_service)
-     monkeypatch.setenv("MCP_BELIEFS_ENABLED", "true")
- 
-     scheduler = sched_mod.ConsolidationScheduler(consolidator, schedule_config={}, enabled=False)
+ [package.optional-dependencies]
+ cublas = [
+-    { name = "nvidia-cublas", marker = "platform_machine == 'aarch64' or platform_machine == 'x86_64'" },
+-    { name = "nvidia-cuda-nvrtc", marker = "platform_machine == 'aarch64' or platform_machine == 'x86_64'" },
++    { name = "nvidia-cublas", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
++    { name = "nvidia-cuda-nvrtc", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
+ ]
+ cudart = [
+-    { name = "nvidia-cuda-runtime", marker = "platform_machine == 'aarch64' or platform_machine == 'x86_64'" },
++    { name = "nvidia-cuda-runtime", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
+ ]
+ cufft = [
+-    { name = "nvidia-cufft", marker = "platform_machine == 'aarch64' or platform_machine == 'x86_64'" },
+-    { name = "nvidia-nvjitlink", marker = "platform_machine == 'aarch64' or platform_machine == 'x86_64'" },
++    { name = "nvidia-cufft", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
++    { name = "nvidia-nvjitlink", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
+ ]
+ cufile = [
+-    { name = "nvidia-cufile", marker = "platform_machine == 'aarch64' or platform_machine == 'x86_64'" },
++    { name = "nvidia-cufile", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
+ ]
+ cupti = [
+-    { name = "nvidia-cuda-cupti", marker = "platform_machine == 'aarch64' or platform_machine == 'x86_64'" },
++    { name = "nvidia-cuda-cupti", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
+ ]
+ curand = [
+-    { name = "nvidia-curand", marker = "platform_machine == 'aarch64' or platform_machine == 'x86_64'" },
++    { name = "nvidia-curand", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
+ ]
+ cusolver = [
+-    { name = "nvidia-cublas", marker = "platform_machine == 'aarch64' or platform_machine == 'x86_64'" },
+-    { name = "nvidia-cusolver", marker = "platform_machine == 'aarch64' or platform_machine == 'x86_64'" },
+-    { name = "nvidia-cusparse", marker = "platform_machine == 'aarch64' or platform_machine == 'x86_64'" },
+-    { name = "nvidia-nvjitlink", marker = "platform_machine == 'aarch64' or platform_machine == 'x86_64'" },
++    { name = "nvidia-cublas", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
++    { name = "nvidia-cusolver", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
++    { name = "nvidia-cusparse", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
++    { name = "nvidia-nvjitlink", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
+ ]
+ cusparse = [
+-    { name = "nvidia-cusparse", marker = "platform_machine == 'aarch64' or platform_machine == 'x86_64'" },
+-    { name = "nvidia-nvjitlink", marker = "platfo
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1702** (2026-10-28): chore(deps): bump filelock to 4.2.4 (GHSA-v4x8-3wr5-3wq8) (@doobidoo)
+- **PR #1700** (2026-10-28): chore(deps): bump the uv group with 7 updates (@dependabot[bot])
+- **PR #1699** (2026-10-28): chore(deps): bump the actions group with 3 updates (@dependabot[bot])
 - **PR #1698** (2026-10-27): fix(reasoning): clear four reasoning modules of unsanitised log calls (#1146) (@massimiliano1991)
 - **PR #1697** (2026-10-27): bench: rerank the negation pairs from #1674 (+24.0 p.p. pairwise over cosine, implicit negation still below chance) (@filhocf)
 - **PR #1696** (2026-10-26): bench: measure resonance search against cosine retrieval (#1674) (@doobidoo)
-- **PR #1695** (2026-10-26): feat(web): auto-refresh dashboard after delta-sync cycles (@Parth-Jadhav-2004)
-- **PR #1694** (2026-10-26): feat(web): show delta-sync destinations and cycle status (@Parth-Jadhav-2004)
-- **PR #1693** (2026-10-26): docs(site): update the test count to 5,265 (@doobidoo)
 
 ---
 
@@ -3505,34 +3162,38 @@ read by following "contradicts" edges one hop with find_connected().
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. reasoning): clear four reasoning modules of unsanitised log calls (#1146) (#1698
+## X. deps): bump the uv group with 7 updates (#1700)
 
 **RULE**:
-When implementing operations in `changelog.d/1698.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `uv.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9cab16d5`: reasoning): clear four reasoning modules of unsanitised log calls (#1146) (#1698). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `52568d90`: deps): bump the uv group with 7 updates (#1700). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1698.fixed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `uv.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **Reasoning modules logged caller hashes, entity names and backend errors unsanitised (#1146, #1698, massimiliano1991).**
-  `reasoning/inference.py`, `entity_linker.py`, `nli.py` and `multi_strategy.py` put the hash
-  handed to the `SemanticReasoner` lookups, the entity names extracted from memory content and
-  tags, and the exception text of the graph backend or a failed search strategy into the log
-  through f-strings, so a newline in any of them forged a log line. They go through
-  `_sanitize_log_value` now; the four modules are in the guard's `GUARDED_MODULES` list and a
-  test per module fails if the newline comes back.
+version = "2026.10.23"
+sdist = { url = "https://files.pythonhosted.org/packages/fd/11/b524cbd9bbdaca58608e4cf4053fd463417549e1959fa8d3aa18319f9555/certifi-2026.10.23.tar.gz", hash = "sha256:a9895e6e2758b371e0545e321a3a8fd1fcfd9829ada8824a936dfb16aaaf36cd", size = 136225, upload-time = "2026-10-23T11:36:16.478Z" }
+    { url = "https://files.pythonhosted.org/packages/32/d1/a3652fe2c19134d0d15922177821d863cbd7e842d53a21bbe7e8e3a1b5ac/certifi-2026.10.23-py3-none-any.whl", hash = "sha256:e9b54de76e530bb6cf0ccd036787103acb58fd42ba930ea8bf948ddbaa2f61d1", size = 135082, upload-time = "2026-10-23T11:36:14.763Z" },
+version = "0.162.0"
+sdist = { url = "https://files.pythonhosted.org/packages/e9/eb/2cf8c80abf09b2800aef0a83b41066fbfda8ee5495b7a08b9d1af40f7046/fastapi-0.162.0.tar.gz", hash = "sha256:6a22c1e2e6e32e0633ee7e170f00009a29b8228b16feb219ee42f32fd8d88a8f", size = 527867, upload-time = "2026-10-23T18:47:33.264Z" }
+    { url = "https://files.pythonhosted.org/packages/b4/4f/3f2c25c9b43970b5e9a08beb5e04776247edea684ddc0930f4f02f0bb6cb/fastapi-0.162.0-py3-none-any.whl", hash = "sha256:3785963de305dd09912426cb81f2d230fce98ab3521cdfe97265c8d14983128c", size = 148912, upload-time = "2026-10-23
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+version = "2026.10.19"
+sdist = { url = "https://files.pythonhosted.org/packages/a6/bd/1436c50cc46699de0230fbaacc1d1de7bfec413176099949e9d5112e88f2/certifi-2026.10.19.tar.gz", hash = "sha256:035c1e85572b141bf1c3a3eff0e33a8eb74917522f2559075ff8d2fea780a1ae", size = 137598, upload-time = "2026-10-20T02:24:16.604Z" }
+    { url = "https://files.pythonhosted.org/packages/c4/51/29046e48f693c54e5b7412216d447a1d8362c9653148d98c02cdf65fa733/certifi-2026.10.19-py3-none-any.whl", hash = "sha256:42d35340cc5b9ba78e818ddbff0c5b1c2b779de448a340fd1b989f5fa8670e1b", size = 136464, upload-time = "2026-10-20T02:24:15.072Z" },
+version = "0.143.3"
+sdist = { url = "https://files.pythonhosted.org/packages/38/d5/b0aeb0b303650ac87b0411de4aaf3f901b06042dcc3fb00f30b97b7ff585/fastapi-0.143.3.tar.gz", hash = "sha256:b9ab567ee57afb4454004ce04c889f8f0160ac47946b99795887cd6e88484848", size = 469834, upload-time = "2026-10-16T14:14:13.31Z" }
+    { url = "https://files.pythonhosted.org/packages/2c/1a/03d246befcf307219bb2161c97d8c5d314f84125bf7dd245730a28589828/fastapi-0.143.3-py3-none-any.whl", hash = "sha256:75e8bd68e2f52f77d29b2879749c257d64de2d85282d25270caf2bfccce5efe5", size = 144849, upload-time = "2026-10-16T
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9cab16d5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `52568d90` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T11:52:44.246Z",
+  "last_updated": "2026-10-28T12:02:08.781Z",
   "total_verified_learnings": 1157,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9655,8 +9655,8 @@
       "slug": "doobidoo-mcp-memory-service",
       "platform": "github",
       "source_url": "https://github.com/doobidoo/mcp-memory-service",
-      "source_version": "9cab16d5",
-      "content_hash": "ec7265a317ca5543a7564a5219a0367bb1a3cd43c9c07ee851af2a75e01311cf",
+      "source_version": "52568d90",
+      "content_hash": "e32d49eac0eda450c831db107b88926aab4db679731651bae826d36a15f3b239",
       "dossier_path": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "promoted_rules": [
@@ -9704,6 +9704,11 @@
           "number": 4962,
           "title": "reasoning): clear four reasoning modules of unsanitised log calls (#1146) (#1698",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5278,
+          "title": "deps): bump the uv group with 7 updates (#1700)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9711,7 +9716,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T19:20:22.097Z",
+      "verified_at": "2026-10-28T12:02:08.759Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -22133,7 +22138,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/electra-base-discriminator",
       "source_version": "hf-google-electra-base-discriminator",
-      "content_hash": "8361e1a126976942919f65f11d758cb67b221ba851a340add62bdf5abe872cc4",
+      "content_hash": "a452015b220b088fa5ab0949c7612857a0318da03e79d05125e9e51b0fec6ec6",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md",
       "promoted_rules": [
@@ -22160,6 +22165,21 @@
           "number": 2378,
           "title": "Numerical Stability and Epsilon Clamping in Low-Precision LayerNorm",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5275,
+          "title": "Discriminator Output Dimensionality Reduction Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5276,
+          "title": "Token Replacement Mask Consistency Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5277,
+          "title": "Lowercase Tokenization Invariant for Pre-trained Models",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -22180,7 +22200,7 @@
         "learn-huggingface-hf-google-electra-base-discriminator-mv48xaja",
         "learn-huggingface-hf-google-electra-base-discriminator-mv4maybt"
       ],
-      "verified_at": "2026-10-25T17:20:53.432Z",
+      "verified_at": "2026-10-28T12:02:07.174Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32807,8 +32827,8 @@
       "slug": "koderover-zadig",
       "platform": "github",
       "source_url": "https://github.com/koderover/zadig",
-      "source_version": "a1fe8122",
-      "content_hash": "d35b3f8a900d303e950b53745ce35a3bb52128b621a8402e38a692e00c67cd78",
+      "source_version": "0462edd7",
+      "content_hash": "67455395300af59245fd7f1ae68e149a49185baac42b770ba8d749ab70e94bae",
       "dossier_path": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "promoted_rules": [
@@ -32841,6 +32861,11 @@
           "number": 5130,
           "title": "Merge pull request #5042 from leozhang2018/basic-image-deletion",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5274,
+          "title": "Merge pull request #5040 from Cynthia-0203/fix/image-rollback-check-logging-and-",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32848,7 +32873,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T02:27:19.466Z",
+      "verified_at": "2026-10-28T12:02:04.083Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36776,14 +36801,19 @@
       "slug": "mfontanini-presenterm",
       "platform": "github",
       "source_url": "https://github.com/mfontanini/presenterm",
-      "source_version": "5f8add11",
-      "content_hash": "fd7a3e8f139290ed7ea06280a12147722478c06fca396c4f2375f0a19d53f85c",
+      "source_version": "87990adb",
+      "content_hash": "a419bb33f510cf60995efa906099efd60d1875a61a6964000eab1fa10d414a91",
       "dossier_path": "07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md",
       "promoted_rules": [
         {
           "number": 1950,
           "title": "fail export gracefully if async tasks fail (#877)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5273,
+          "title": "include speaker notes from imported markdown (#921)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -36792,7 +36822,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T01:07:12.821Z",
+      "verified_at": "2026-10-28T12:01:57.302Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -143687,6 +143717,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T11:52:44.238Z"
+    },
+    "rule-5273": {
+      "learning_id": "rule-5273",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5273,
+      "title": "include speaker notes from imported markdown (#921)",
+      "source_url": "https://github.com/mfontanini/presenterm",
+      "source_version": "87990adb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T12:01:57.302Z"
+    },
+    "rule-5274": {
+      "learning_id": "rule-5274",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5274,
+      "title": "Merge pull request #5040 from Cynthia-0203/fix/image-rollback-check-logging-and-",
+      "source_url": "https://github.com/koderover/zadig",
+      "source_version": "0462edd7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T12:02:04.083Z"
+    },
+    "rule-5275": {
+      "learning_id": "rule-5275",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5275,
+      "title": "Discriminator Output Dimensionality Reduction Invariant",
+      "source_url": "https://huggingface.co/google/electra-base-discriminator",
+      "source_version": "hf-google-electra-base-discriminator",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T12:02:07.174Z"
+    },
+    "rule-5276": {
+      "learning_id": "rule-5276",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5276,
+      "title": "Token Replacement Mask Consistency Invariant",
+      "source_url": "https://huggingface.co/google/electra-base-discriminator",
+      "source_version": "hf-google-electra-base-discriminator",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T12:02:07.174Z"
+    },
+    "rule-5277": {
+      "learning_id": "rule-5277",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5277,
+      "title": "Lowercase Tokenization Invariant for Pre-trained Models",
+      "source_url": "https://huggingface.co/google/electra-base-discriminator",
+      "source_version": "hf-google-electra-base-discriminator",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T12:02:07.174Z"
+    },
+    "rule-5278": {
+      "learning_id": "rule-5278",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5278,
+      "title": "deps): bump the uv group with 7 updates (#1700)",
+      "source_url": "https://github.com/doobidoo/mcp-memory-service",
+      "source_version": "52568d90",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T12:02:08.759Z"
     }
   },
   "aliases": {
