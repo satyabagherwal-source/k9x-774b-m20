@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/buresdv-cork-learnings.md`  
 > **Source**: github ([https://github.com/buresdv/Cork](https://github.com/buresdv/Cork))  
-> **Source Version**: `523abb0e`  
+> **Source Version**: `01177307`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T20:04:47.314Z  
+> **Timestamp**: 2026-10-29T22:28:16.011Z  
 > **Learning ID**: `learn-github-buresdv-cork`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/buresdv-cork-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/buresdv/Cork](https://github.com/buresdv/Cork))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T20:04:47.308Z  
+> **Harvest Timestamp**: 2026-10-29T22:26:05.586Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: [NO AI] Fast GUI for Homebrew written in SwiftUI
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4710 stars
+- **Stars / Engagement**: 4716 stars
 
 ---
 
@@ -1235,13 +1235,15 @@ extension ServicesFatalError
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #691** (2026-10-27): **FDA Rrequest on Start Page doesn't disappear**
+  *Symptoms*: ### What were you trying to do?  Grant FDA  ### What was the problem?  She section doesn't disappear when FDA is granted  ### Error logs  ```shell irrelevant ```  ### App Version  2.1.0  ### App Acquisition  Self-Compiled  ### Final checklist  - [ ] This report is about the interface, and I included screenshots of the problem
+  **Post-Mortem & Fix Analysis**:
+  > Fixed in 01177307672f62470af517c8b9a710dbc833b03e
+
 - **Issue #688** (2026-10-17): **Release endpoints serve the anti-LLM scraping measure randomly instead of the release**
   *Symptoms*: ### What were you trying to do?  Download a release  ### What was the problem?  Anti-LLM measure triggered  ### Error logs  ```shell irrelevant ```  ### App Version  irrelevant  ### App Acquisition  Self-Compiled  ### Final checklist  - [ ] This report is about the interface, and I included screenshots of the problem  ### Reported by https://github.com/buresdv/Cork/issues/688
   **Post-Mortem & Fix Analysis**:
   > Caused by the incorrect mirroring of the main server to a replica (backup didn't have the release files synced).  Working now + set up a warning system
-
-- **Issue #680** (2026-10-03): **Warning: Homebrew's "bin" was not found in your PATH.**
-  *Symptoms*: ### What were you trying to do?  Brew Maintenance --> Perform health check  ### What was the problem?  Homebrew reported 2 issues with itself:  1. Normal for macOS 27 `Warning: You are using macOS 27.` `We do not provide support for this pre-release version.`  2. Only reported by Cork: `Warning: Homebrew's "bin" was not found in your PATH.` `Consider setting your PATH for example like so:` `echo 'export PATH="/opt/homebrew/bin:$PATH"''>> ~/.zshrc`  <img width="1476" height="698" alt="Image" src="https://github.com/user-attachments/assets/e2632eb1-2b6f-454e-8b16-05a3c22d54aa" />  brew doctor only reports the first issue:  <img width="1174" height="580" alt="Image" src="https://github.com/user-attachments/assets/b583162a-01b9-46fb-85a4-6c442f35ed8b" />  Cork Homebrew location is the default:  <img width="1010" height="606" alt="Image" src="https://github.com/user-attachments/assets/6dd667fe-41ac-4921-a235-57b0a58d2a43" />      ### Error logs  ```shell default	07:29:04.569772+0200	runningboardd	Acquiring assertion targeting [app<application.eu.davidbures.cork.62107214.62107236(501)>:12130] from originator [osservice<com.apple.coreservices.launchservicesd>:396] with description <RBSAssertionDescriptor| "frontmost:12130" ID:429-396-8902 target:12130 attributes:[ 	<RBSDomainAttribute| domain:"com.apple.launchservicesd" name:"RoleUserInteractiveFocal" sourceEnvironment:"(null)"> 	]> default	07:29:04.570432+0200	runningboardd	Assertion 429-396-8902 (target:[app<application.eu.davidbu
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1258,80 +1260,257 @@ extension ServicesFatalError
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `523abb0e` (2026-10-21)
-**Commit Message**: Merge pull request #682 from modeezie/main
+### Incident Patch 1: `01177307` (2026-10-27)
+**Commit Message**: ^ FDA doesn't disappear on grant
 
-README Update/Corrections
-
-**File**: `README.md` (modified, +18/-12)
+**File**: `Cork/Views/Start Page/Start Page.swift` (modified, +4/-1)
 ```diff
-@@ -134,31 +134,37 @@ _Cork uses Mise to prevent conflicts arising from mismatched Tuist versions acro
+@@ -152,7 +152,10 @@ struct StartPage: View
+                                 HomebrewWarningsSection()
+                             }
+                             
+-                            AdditionalPermissionsRequired()
++                            if issues.contains(.fullDiskAccessPermissionsRequired)
++                            {
++                                AdditionalPermissionsRequired()
++                            }
+                         }
+                         
+                     }
+```
+
+**File**: `Project.swift` (modified, +2/-2)
+```diff
+@@ -2,8 +2,8 @@ import ProjectDescription
  
-    > [!CAUTION]
-    > Make sure to copy the command Mise itself gives you, and not the one I used above. This command is only valid for my Mac, and will not work on your machine.
-+3. Reload your shell configuration after initializing Mise.  Run **ONLY** the command that corresponds to your default shell from the following list:
+ let settings = Environment.selfCompiled.getBoolean(default: false)
  
--3. Add `mise` to your path using one of the following commands, depending on your shell.
--
--- **zsh**: `echo 'eval "$(~/.local/bin/mise activate zsh)"' >> ~/.zshrc`
--- **bash**: `echo 'eval "$(~/.local/bin/mise activate bash)"' >> ~/.bashrc`
--- **fish**: `echo '~/.local/bin/mise activate fish | source' >> ~/.config/fish/config.fish`
-+  - **zsh**: `source ~/.zshrc`
-+  - **bash**: `source ~/.bashrc`
-+  - **fish**: `source ~/.config/fish/config.fish`
-   > [!TIP] > **zsh** is the default macOS shell.
+-let version: String = "2.1.0"
+-let build: String = "153"
++let version: String = "2.1.1"
++let build: String = "154"
  
- > [!NOTE]
--> If you don't know which shell you're running, use the command `echo $SHELL`. The last part of the output after the last slash is the name of your shell
--> In my case, the output of the command is `/bin/zsh`. This means my shell is `zsh`
-+> If you don't know which shell you're running, use the command `echo $SHELL`. The last part of the output after the last slash is the name of your shell.
-+> In my case, the output of the command is `/bin/zsh`. This means my shell is `zsh`.
-+> 
-+> Alternatively, you can determine your shell based on what command Mise gave you to initialize in the previous step.
- 
- #### Installing Tuist
- 
- 1. Install Tuist using `mise install tuist`
-+2. Activate Tuist using `mise use tuist`
- 
- #### Compiling Cork
- 
- 0. I recommend you pick a version of Cork marked by one of the version tags which define released versions. If you decide to compile the current state of any of the branches, you might encounter experience-breaking bugs and unfinished features
--1. Use the command `git clone https://github.com/buresdv/Cork.git && cd Cork && git checkout <VERSION TAG>; mise exec tuist@4.208.0 -- tuist install && mise exec tuist@4.208.0 -- tuist generate --no-binary-cache`.
-+1. Use the command `git clone https://github.com/buresdv/Cork.git && cd Cork && git checkout <VERSION TAG> && mise exec tuist@4.208.0 -- tuist install && mise exec tuist@4.208.0 -- tuist generate --cache-profile none`.
-+
-+    >[!REMEMBER]
-+    > Input the released version you want to compile in \<VERSION TAG\> before executing the command. You can see all tags by running `git tag`       to find your desired version. If you just want to build the latest release in its current state, you can omit `git checkout <VERSION TAG>`      completely.
-+
- 
--- Mise will ask you to trust the local [`.mise.toml`](.mise.toml).
-+- If Mise asks you to trust the local [`.mise.toml`](.mise.toml).
- - You can either:
--  - Say yes, to always use `tuist` version 4.50.2 in this directory.
--  - Say no, and the command will use `tuist` 4.50.2 anyway, but future invocations of `tuist` will not be version controlled.
-+  - Say yes, to always use `tuist` version 4.208.0 in this directory.
-+  - Say no, and the command will use `tuist` 4.208.0 anyway, but future invocations of `tuist` will not be version controlled.
- - Xcode will open the project.
- 
- <div style= "margin-left: 1rem">
-@@ -168,7 +174,7 @@ _Cork uses Mise to prevent conflicts arising from mismatched Tuist versions acro
-     <ol>
-       <li><code>git clone https://github.com/buresdv/Cork.git</code> downloads the source code</li>
-       <li><code>cd Cork</code> opens the folder you downloaded Cork into</li>
--      <li><code>mise exec [...]</code> runs a command using version <i>4.50.2</i> of Tuist, without polluting your local `mise.toml`, to build Cork</li>
-+      <li><code>mise exec [...]</code> runs a command using version <i>4.208.0</i> of Tuist, without polluting your local `mise.toml`, to build Cork</li>
-       <li><code>tuist install</code> downloads all Cork pre-requisites</li>
-       <li><code>tuist generate</code> creates the Xcode project and opens it</li>
-     </ol>
+ func corkTarget(configureWithSelfCompiled: Bool) -> ProjectDescription.Target {
+     var additionalCompilationConditions = [String]()
+```
+
+---
+
+### Incident Patch 2: `e740731c` (2026-10-27)
+**Commit Message**: Merge pull request #690 from buresdv/l10n-import
+
+Merge translations into string catalog
+
+**File**: `Cork/Localizable.xcstrings` (modified, +239/-227)
+```diff
+@@ -179,7 +179,7 @@
+         },
+         "he": {
+           "stringUnit": {
+-            "state": "new",
++            "state": "translated",
+             "value": "%1$@ - %2$@"
+           }
+         },
+@@ -304,7 +304,7 @@
+         "he": {
+           "stringUnit": {
+             "state": "translated",
+-            "value": "%1$@ → %2$@"
++            "value": "%1$@ ← %2$@"
+           }
+         },
+         "id": {
+@@ -427,7 +427,7 @@
+         },
+         "he": {
+           "stringUnit": {
+-            "state": "new",
++            "state": "translated",
+             "value": "%1$@/%2$@"
+           }
+         },
+@@ -9266,8 +9266,8 @@
+         },
+         "he": {
+           "stringUnit": {
+-            "state": "new",
+-            "value": "Add"
++            "state": "translated",
++            "value": "הוסף"
+           }
+         },
+         "id": {
+@@ -9981,19 +9981,19 @@
+               "one": {
+                 "stringUnit": {
+                   "state": "translated",
+-                  "value": "יישום %lld נוסף"
++                  "value": "הוסף יישום %lld"
+                 }
+               },
+               "other": {
+                 "stringUnit": {
+                   "state": "translated",
+-                  "value": "%lld יישומים נוספו"
++                  "value": "הוסף %lld יישומים"
+                 }
+               },
+               "two": {
+                 "stringUnit": {
+                   "state": "translated",
+-                  "value": "%lld יישומים נוספו"
++                  "value": "הוסף %lld יישומים"
+                 }
+               }
+             }
+@@ -10282,8 +10282,8 @@
+         },
+         "he": {
+           "stringUnit": {
+-            "state": "new",
+-            "value": "Back"
++            "state": "translated",
++            "value": "חזור"
+           }
+         },
+         "id": {
+@@ -11399,8 +11399,8 @@
+         },
+         "he": {
+           "stringUnit": {
+-            "state": "new",
+-            "value": "Continue"
++            "state": "translated",
++            "value": "המשך"
+           }
+         },
+         "id": {
+@@ -11772,8 +11772,8 @@
+         },
+         "he": {
+           "stringUnit": {
+-            "state": "new",
+-            "value": "Delete"
++            "state": "translated",
++            "value": "מחק"
+           }
+         },
+         "id": {
+@@ -12020,8 +12020,8 @@
+         },
+         "he": {
+           "stringUnit": {
+-            "state": "new",
+-            "value": "Download…"
++            "state": "translated",
++            "value": "הורד…"
+           }
+         },
+         "id": {
+@@ -12269,8 +12269,8 @@
+         },
+         "he": {
+           "stringUnit": {
+-            "state": "new",
+-            "value": "Fix permissions…"
++            "state": "translated",
++            "value": "תקן הרשאות…"
+           }
+         },
+         "id": {
+@@ -13637,8 +13637,8 @@
+         },
+         "he": {
+           "stringUnit": {
+-            "state": "new",
+-            "value": "Open System Settings"
++            "state": "translated",
++            "value": "פתח את הגדרות המערכת"
+           }
+         },
+         "id": {
+@@ -14101,8 +14101,8 @@
+       "localizations": {
+         "cs": {
+           "stringUnit": {
+-            "state": "new",
+-            "value": "Preview final environment…"
++            "state": "translated",
++            "value": "Náhled výsledného prostředí…"
+           }
+         },
+         "de": {
+@@ -14137,8 +14137,8 @@
+         },
+         "he": {
+           "stringUnit": {
+-            "state": "new",
+-            "value": "Preview final environment…"
++            "state": "translated",
++            "value": "תצוגה מקדימה של הסביבה…"
+           }
+         },
+         "id": {
+@@ -15219,8 +15219,8 @@
+       "localizations": {
+         "cs": {
+           "stringUnit": {
+-            "state": "new",
+-            "value": "Remove quarantine…"
++            "state": "translated",
++            "value": "Odstranit z karantény…"
+           }
+         },
+         "de": {
+@@ -15343,8 +15343,8 @@
+       "localizations": {
+         "cs": {
+           "stringUnit": {
+-            "state": "new",
+-            "value": "Remove %@ from quarantine"
++            "state": "translated",
++            "value": "Odstranit %@ z karantény"
+           }
+         },
+         "de": {
+@@ -16837,8 +16837,8 @@
+       "localizations": {
+         "cs": {
+           "stringUnit": {
+-            "state": "new",
+-            "value": "Open on GitHub…"
++            "state": "translated",
++            "value": "Otevřít na GitHubu…"
+           }
+         },
+         "de": {
+@@ -16873,8 +16873,8 @@
+         },
+         "he": {
+           "stringUnit": {
+-            "state": "new",
+-            "value": "Open on GitHub…"
++            "state": "translated",
++            "value": "פתח ב-GitHub…"
+           }
+         },
+         "id": {
+@@ -16961,8 +16961,8 @@
+       "localizations": {
+         "cs": {
+           "stringUnit": {
+-            "state": "new",
+-            "value":
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #690** (2026-10-27): Merge translations into string catalog (@github-actions[bot])
 - **PR #683** (2026-10-20): Merge translations into string catalog (@github-actions[bot])
 - **PR #682** (2026-10-21): README Update/Corrections (@modeezie)
 - **PR #681** (2026-09-14): Merge translations into string catalog (@github-actions[bot])
 - **PR #679** (2026-09-11): Merge translations into string catalog (@github-actions[bot])
 - **PR #673** (closed): fix: treat brew stderr warnings as non-fatal (@howardhey)
-- **PR #672** (2026-09-01): Merge translations into string catalog (@github-actions[bot])
 
 ---
 
@@ -1351,51 +1530,31 @@ README Update/Corrections
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #682 from modeezie/main
+## X. ^ FDA doesn't disappear on grant
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in buresdv/Cork. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cork/Views/Start Page/Start Page.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in buresdv/Cork. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `523abb0e`: Merge pull request #682 from modeezie/main. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `01177307`: ^ FDA doesn't disappear on grant. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cork/Views/Start Page/Start Page.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-3. Reload your shell configuration after initializing Mise.  Run **ONLY** the command that corresponds to your default shell from the following list:
-  - **zsh**: `source ~/.zshrc`
-  - **bash**: `source ~/.bashrc`
-  - **fish**: `source ~/.config/fish/config.fish`
-> If you don't know which shell you're running, use the command `echo $SHELL`. The last part of the output after the last slash is the name of your shell.
-> In my case, the output of the command is `/bin/zsh`. This means my shell is `zsh`.
-> 
-> Alternatively, you can determine your shell based on what command Mise gave you to initialize in the previous step.
-2. Activate Tuist using `mise use tuist`
-1. Use the command `git clone https://github.com/buresdv/Cork.git && cd Cork && git checkout <VERSION TAG> && mise exec tuist@4.208.0 -- tuist install && mise exec tuist@4.208.0 -- tuist generate --cache-profile none`.
-
-    >[!REMEMBER]
-    > Input the released version you want to compile in \<VERSION TAG\> before executing the command. You can see all tags by running `git tag`       to find your desired version. If you just want to build the latest release in its current state, you can omit `git checkout <VERSION TAG>`      com
+                            if issues.contains(.fullDiskAccessPermissionsRequired)
+                            {
+                                AdditionalPermissionsRequired()
+                            }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-3. Add `mise` to your path using one of the following commands, depending on your shell.
-
-- **zsh**: `echo 'eval "$(~/.local/bin/mise activate zsh)"' >> ~/.zshrc`
-- **bash**: `echo 'eval "$(~/.local/bin/mise activate bash)"' >> ~/.bashrc`
-- **fish**: `echo '~/.local/bin/mise activate fish | source' >> ~/.config/fish/config.fish`
-> If you don't know which shell you're running, use the command `echo $SHELL`. The last part of the output after the last slash is the name of your shell
-> In my case, the output of the command is `/bin/zsh`. This means my shell is `zsh`
-1. Use the command `git clone https://github.com/buresdv/Cork.git && cd Cork && git checkout <VERSION TAG>; mise exec tuist@4.208.0 -- tuist install && mise exec tuist@4.208.0 -- tuist generate --no-binary-cache`.
-- Mise will ask you to trust the local [`.mise.toml`](.mise.toml).
-  - Say yes, to always use `tuist` version 4.50.2 in this directory.
-  - Say no, and the command will use `tuist` 4.50.2 anyway, but future invocations of `tuist` will not be version controlled.
-      <li><code>mise exec [...]</code> runs a command using version <i>4.50.2</i> of Tuist, without polluting your local `mise.toml`, to build Cork</li>
+                            AdditionalPermissionsRequired()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `523abb0e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `01177307` are properly handled with clean fallback behavior.

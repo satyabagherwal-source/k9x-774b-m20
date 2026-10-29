@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T22:19:23.432Z",
+  "last_updated": "2026-10-29T22:28:16.580Z",
   "total_verified_learnings": 1169,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4680,8 +4680,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "ecc86c07",
-      "content_hash": "e0492d8fb856c21ed067a7a99861ebf53e4d6826ede3a1afe5fb9195d4019dd2",
+      "source_version": "04bc81f1",
+      "content_hash": "96be491081376668b181a5f9ff8ddf05c4c90dad203f072cfce29d82471f00c3",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -4774,6 +4774,11 @@
           "number": 5496,
           "title": "memory): evidence telemetry and shadow decision traces (PLAN-59 Phase 0) (#322)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5545,
+          "title": "memory): default evidence telemetry to shadow mode (#328)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4781,7 +4786,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T11:44:05.600Z",
+      "verified_at": "2026-10-29T22:26:15.330Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -5219,8 +5224,8 @@
       "slug": "buresdv-cork",
       "platform": "github",
       "source_url": "https://github.com/buresdv/Cork",
-      "source_version": "523abb0e",
-      "content_hash": "87048aa7a243e6046f08d0dc8a015c3ba8c10e3e9424051ef1172d26b17ae73f",
+      "source_version": "01177307",
+      "content_hash": "13f985b45dd5939437606aa330efd6eb03fc01fe887006ece96e69af68a2e59a",
       "dossier_path": "07_PROJECT_LEARNING/buresdv-cork-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/buresdv-cork-learnings.md",
       "promoted_rules": [
@@ -5238,6 +5243,11 @@
           "number": 4438,
           "title": "Merge pull request #682 from modeezie/main",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5546,
+          "title": "^ FDA doesn't disappear on grant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5245,7 +5255,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T20:04:47.622Z",
+      "verified_at": "2026-10-29T22:28:16.562Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15657,8 +15667,8 @@
       "slug": "hashicorp-terraform",
       "platform": "github",
       "source_url": "https://github.com/hashicorp/terraform",
-      "source_version": "cbed3573",
-      "content_hash": "79d8a189e8ac6672eb49cdce7355f8fdb3c42e53007c2d9f4cef9d63aae7bf19",
+      "source_version": "becd2816",
+      "content_hash": "e95c12fa64aab6b555cb40a3bf4266574eff017f7495a43fefa52dbbeff21722",
       "dossier_path": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "promoted_rules": [
@@ -15706,6 +15716,11 @@
           "number": 5308,
           "title": "Evaluate module policies during destroy plan (#39455)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5543,
+          "title": "Address reported security vulnerabilities in dependencies. (#39462)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15713,7 +15728,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T14:29:14.537Z",
+      "verified_at": "2026-10-29T22:26:08.171Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15803,8 +15818,8 @@
       "slug": "helixdb-helix-db",
       "platform": "github",
       "source_url": "https://github.com/HelixDB/helix-db",
-      "source_version": "2052f24e",
-      "content_hash": "0620b175b72f8795aa3632f980b2808df2e2b0fe54da651a3f3c42f866f5fba5",
+      "source_version": "42946e05",
+      "content_hash": "d37fee1faf04a78fd51353c2d8749cb5c99d38ac0155354e6a987c4948b36317",
       "dossier_path": "07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
       "promoted_rules": [
@@ -15827,6 +15842,11 @@
           "number": 4638,
           "title": "docs: bring Helix Foundry up to date with prod: Helix MCP, API sources, AI model",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5544,
+          "title": "fsync every write to local disk storage (#1228)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15834,7 +15854,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T18:05:34.134Z",
+      "verified_at": "2026-10-29T22:26:12.657Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -149209,6 +149229,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T22:19:23.413Z"
+    },
+    "rule-5543": {
+      "learning_id": "rule-5543",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5543,
+      "title": "Address reported security vulnerabilities in dependencies. (#39462)",
+      "source_url": "https://github.com/hashicorp/terraform",
+      "source_version": "becd2816",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T22:26:08.171Z"
+    },
+    "rule-5544": {
+      "learning_id": "rule-5544",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5544,
+      "title": "fsync every write to local disk storage (#1228)",
+      "source_url": "https://github.com/HelixDB/helix-db",
+      "source_version": "42946e05",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T22:26:12.657Z"
+    },
+    "rule-5545": {
+      "learning_id": "rule-5545",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5545,
+      "title": "memory): default evidence telemetry to shadow mode (#328)",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "04bc81f1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T22:26:15.330Z"
+    },
+    "rule-5546": {
+      "learning_id": "rule-5546",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5546,
+      "title": "^ FDA doesn't disappear on grant",
+      "source_url": "https://github.com/buresdv/Cork",
+      "source_version": "01177307",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T22:28:16.562Z"
     }
   },
   "aliases": {

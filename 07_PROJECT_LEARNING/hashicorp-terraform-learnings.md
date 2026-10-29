@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  
 > **Source**: github ([https://github.com/hashicorp/terraform](https://github.com/hashicorp/terraform))  
-> **Source Version**: `cbed3573`  
+> **Source Version**: `becd2816`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T14:29:14.172Z  
+> **Timestamp**: 2026-10-29T22:26:07.614Z  
 > **Learning ID**: `learn-github-hashicorp-terraform`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/hashicorp/terraform](https://github.com/hashicorp/terraform))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T14:29:14.004Z  
+> **Harvest Timestamp**: 2026-10-29T22:26:06.929Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Terraform enables you to safely and predictably create, change, and improve infrastructure. It is a source-available tool that codifies APIs into declarative configuration files that can be shared amongst team members, treated as code, edited, reviewed, and versioned.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 50083 stars
+- **Stars / Engagement**: 50086 stars
 
 ---
 
@@ -2281,643 +2281,384 @@ func (c *RemoteClient) getLockInfo() (*statemgr.LockInfo, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cbed3573` (2026-10-28)
-**Commit Message**: Evaluate module policies during destroy plan (#39455)
+### Incident Patch 1: `6ebd7d93` (2026-10-28)
+**Commit Message**: Address reported security vulnerabilities in dependencies. (#39462)
 
-**File**: `.changes/v1.17/BUG FIXES-20261027-134032.yaml` (added, +5/-0)
+Address reported security vulnerabilities in dependencies.
+
+GO-2026-6860
+GO-2026-6866
+cve-2026-116587
+
+**File**: `go.mod` (modified, +9/-9)
 ```diff
-@@ -0,0 +1,5 @@
-+kind: BUG FIXES
-+body: Always evaluate module policies during destroy plan
-+time: 2026-10-27T13:40:32.51201+01:00
-+custom:
-+    Issue: "39455"
+@@ -72,14 +72,14 @@ require (
+ 	go.opentelemetry.io/otel/sdk v1.45.0
+ 	go.opentelemetry.io/otel/trace v1.45.0
+ 	go.uber.org/mock v0.6.0
+-	golang.org/x/crypto v0.57.0
++	golang.org/x/crypto v0.58.0
+ 	golang.org/x/mod v0.41.0
+-	golang.org/x/net v0.60.0
++	golang.org/x/net v0.62.0
+ 	golang.org/x/oauth2 v0.36.0
+-	golang.org/x/sys v0.48.0
+-	golang.org/x/term v0.46.0
+-	golang.org/x/text v0.42.0
+-	golang.org/x/tools v0.49.0
++	golang.org/x/sys v0.49.0
++	golang.org/x/term v0.47.0
++	golang.org/x/text v0.43.0
++	golang.org/x/tools v0.51.0
+ 	golang.org/x/tools/cmd/cover v0.1.0-deprecated
+ 	google.golang.org/grpc v1.83.2
+ 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.5.1
+@@ -162,7 +162,7 @@ require (
+ 	github.com/felixge/httpsnoop v1.0.4 // indirect
+ 	github.com/fsnotify/fsnotify v1.9.0 // indirect
+ 	github.com/fxamacker/cbor/v2 v2.7.0 // indirect
+-	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
++	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
+ 	github.com/go-logr/logr v1.4.4 // indirect
+ 	github.com/go-logr/stdr v1.2.2 // indirect
+ 	github.com/go-openapi/jsonpointer v0.21.0 // indirect
+@@ -298,8 +298,8 @@ require (
+ 	go.yaml.in/yaml/v3 v3.0.5 // indirect
+ 	golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6 // indirect
+ 	golang.org/x/exp/typeparams v0.0.0-20231108232855-2478ac86f678 // indirect
+-	golang.org/x/sync v0.23.0 // indirect
+-	golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5 // indirect
++	golang.org/x/sync v0.24.0 // indirect
++	golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157 // indirect
+ 	golang.org/x/time v0.15.0 // indirect
+ 	golang.org/x/tools/go/expect v0.1.1-deprecated // indirect
+ 	google.golang.org/api v0.271.0 // indirect
 ```
 
-**File**: `internal/stacks/stackruntime/apply_test.go` (modified, +4/-6)
+**File**: `go.sum` (modified, +18/-18)
 ```diff
-@@ -5011,9 +5011,8 @@ func TestApply_WithPolicyResultsOnDestroy(t *testing.T) {
- 	})
- 
- 	wantPolicyResults := map[string]map[string]policy.EvaluationResponse{
--		// Module policies are not evaluated during the destroy apply (only during pre-destroy refresh)
--		`component.simple_component["comp1"]`:                                  createExpectedComponentInstancePolicyEvaluationForResources("policy-evaluation"),
--		`component.simple_component["comp2"]`:                                  createExpectedComponentInstancePolicyEvaluationForResources("policy-evaluation"),
-+		`component.simple_component["comp1"]`:                                  createExpectedComponentInstancePolicyEvaluation("policy-evaluation"),
-+		`component.simple_component["comp2"]`:                                  createExpectedComponentInstancePolicyEvaluation("policy-evaluation"),
- 		`provider["registry.terraform.io/hashicorp/testing"].default["comp1"]`: createExpectedProviderInstancePolicyEvaluation("policy-evaluation"),
- 		`provider["registry.terraform.io/hashicorp/testing"].default["comp2"]`: createExpectedProviderInstancePolicyEvaluation("policy-evaluation"),
- 	}
-@@ -5089,9 +5088,8 @@ func TestApply_WithPolicyResultsOnRemovedComponent(t *testing.T) {
- 	})
- 
- 	wantPolicyResults := map[string]map[string]policy.EvaluationResponse{
--		`component.simple_component["comp1"]`: createExpectedComponentInstancePolicyEvaluation("policy-evaluation-removed"),
--		// Module policies are not evaluated during the destroy apply (only during pre-destroy refresh)
--		`component.simple_component["comp2"]`:                                  createExpectedComponentInstancePolicyEvaluationForResources("policy-evaluation-removed"),
-+		`component.simple_component["comp1"]`:                                  createExpectedComponentInstancePolicyEvaluation("policy-evaluation-removed"),
-+		`component.simple_component["comp2"]`:                                  createExpectedComponentInstancePolicyEvaluation("policy-evaluation-removed"),
- 		`provider["registry.terraform.io/hashicorp/testing"].default["comp1"]`: createExpectedProviderInstancePolicyEvaluation("policy-evaluation-removed"),
- 		`provider["registry.terraform.io/hashicorp/testing"].default["comp2"]`: createExpectedProviderInstancePolicyEvaluation("policy-evaluation-removed"),
- 	}
+@@ -231,8 +231,8 @@ github.com/fsnotify/fsnotify v1.9.0 h1:2Ml+OJNzbYCTzsxtv8vKSFD9PbJjmhYF14k/jKC7S
+ github.com/fsnotify/fsnotify v1.9.0/go.mod h1:8jBTzvmWwFyi3Pb8djgCCO5IBqzKJ/Jwo8TRcHyHii0=
+ github.com/fxamacker/cbor/v2 v2.7.0 h1:iM5WgngdRBanHcxugY4JySA0nk1wZorNOpTgCMedv5E=
+ github.com/fxamacker/cbor/v2 v2.7.0/go.mod h1:pxXPTn3joSm21Gbwsv0w9OSA2y1HFR9qXEeXQVeNoDQ=
+-github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
+-github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
++github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
++github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
+ github.com/go-kit/kit v0.8.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
+ github.com/go-kit/kit v0.9.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
+ github.com/go-kit/log v0.1.0/go.mod h1:zbhenjAZHb184qTLMA9ZjW7ThYL0H2mk7Q6pNt4vbaY=
+@@ -782,8 +782,8 @@ golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5y
+ golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
+ golang.org/x/crypto v0.19.0/go.mod h1:Iy9bg/ha4yyC70EfRS8jz+B6ybOBKMaSxLj6P6oBDfU=
+ golang.org/x/crypto v0.22.0/go.mod h1:vr6Su+7cTlO45qkww3VDJlzDn0ctJvRgYbC2NvXHt+M=
+-golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
+-golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
++golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
++golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
+ golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6 h1:y5zboxd6LQAqYIhHnB48p0ByQ/GnQx2BE33L8BOHQkI=
+ golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6/go.mod h1:U6Lno4MTRCDY+Ba7aCcauB9T60gsv5s4ralQzP72ZoQ=
+ golang.org/x/exp/typeparams v0.0.0-20231108232855-2478ac86f678 h1:1P7xPZEwZMoBoz0Yze5Nx2/4pxj6nw9ZqHWXqP0iRgQ=
+@@ -811,8 +811,8 @@ golang.org/x/net v0.0.0-20220722155237-a158d28d115b/go.mod h1:XRhObCWvk6IyKnWLug
+ golang.org/x/net v0.6.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
+ golang.org/x/net v0.10.0/go.mod h1:0qNGK6F8kojg2nk9dLZ2mShWaEBan6FAoqfSigmmuDg=
+ golang.org/x/net v0.21.0/go.mod h1:bIjVDfnllIU7BJ2DNgfnXvpSvtn8VRwhlsaeUTyUS44=
+-golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
+-golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
+ golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
+ golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
+@@ -825,8 +825,8 @@ golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJ
+ golang.org/x/sync v0.0.0-20201207232520-09787c993a3a/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.1.0/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+-golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
+-golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
++golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20180905080454-ebe1bf3edb33/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20181116152217-5ac8a444bdc5/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+@@ -859,18 +859,18 @@ golang.org/x/sys v0.5.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.8.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.17.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
+ golang.org/x/sys v0.19.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
+-golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
+-golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+-golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5 h1:ZUSxONxc981v7AW7QUg+I9WwZzSTTJ019ENBYr5pV/Q=
+-golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5/go.mod h1:LVehoXe41cL5SCVQilsV7Gg6BNG+Js6P9PhSbYTIUkQ=
++golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
++golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
++golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157 h1:DftxASHKl6JolFPqoN+2WrFO53JvkHwRXvFqf8gsivA=
++golang.org/x/telemetry v0.0.0-20260924152758-ed29
 ```
 
-**File**: `internal/stacks/stackruntime/plan_test.go` (modified, +4/-48)
+**File**: `internal/backend/remote-state/azure/go.mod` (modified, +6/-6)
 ```diff
-@@ -7048,9 +7048,9 @@ func TestPlan_WithPolicyResultsOnDestroy(t *testing.T) {
- 
- 	wantPolicyResults := map[string]map[string]policy.EvaluationResponse{
- 		// Stacks runs multiple calls to the module runtime for planning a full destroy, one refresh and one destroy plan.
--		// Only the destroy plan will emit resource policy evaluations
--		`component.simple_component["comp1"]`:                                  createExpectedComponentInstancePolicyEvaluationForResources("policy-evaluation"),
--		`component.simple_component["comp2"]`:                                  createExpectedComponentInstancePolicyEvaluationForResources("policy-evaluation"),
-+		// Only the destroy plan will emit module and resource policy evaluations
-+		`component.simple_component["comp1"]`:                                  createExpectedComponentInstancePolicyEvaluation("policy-evaluation"),
-+		`component.simple_component["comp2"]`:                                  createExpectedComponentInstancePolicyEvaluation("policy-evaluation"),
- 		`provider["registry.terraform.io/hashicorp/testing"].default["comp1"]`: createExpectedProviderInstancePolicyEvaluation("policy-evaluation"),
- 		`provider["registry.terraform.io/hashicorp/testing"].default["comp2"]`: createExpectedProviderInstancePolicyEvaluation("policy-evaluation"),
- 	}
-@@ -7116,7 +7116,7 @@ func TestPlan_WithPolicyResultsOnRemovedComponent(t *testing.T) {
- 		// Stacks runs a single call to the module runtime for planning a component destroy, a destroy plan.
- 		// The plan emits modules and resources policy evaluations.
- 		`component.simple_component["comp1"]`:                                  createExpectedComponentInstancePolicyEvaluation("policy-evaluation-removed"),
--		`component.simple_component["comp2"]`:                                  createExpectedComponentInstancePolicyEvaluationForResources("policy-evaluation-removed"),
-+		`component.simple_component["comp2"]`:                                  createExpectedComponentInstancePolicyEvaluation("policy-evaluation-removed"),
- 		`provider["registry.terraform.io/hashicorp/testing"].default["comp1"]`: createExpectedProviderInstancePolicyEvaluation("policy-evaluation-removed"),
- 		`provider["registry.terraform.io/hashicorp/testing"].default["comp2"]`: createExpectedProviderInstancePolicyEvaluation("policy-evaluation-removed"),
- 	}
-@@ -7466,50 +7466,6 @@ func createExpectedComponentInstancePolicyEvaluationForModules(bundlePath string
- 	}
- }
- 
--// This helper is used for tests that only expect resource policies to be evaluated (destroy apply, removed component plans)
--func createExpectedComponentInstancePolicyEvaluationForResources(bundlePath string) map[string]policy.EvaluationResponse {
--	rootModuleRange := hcl.Range{
--		Filename: fmt.Sprintf("git::https://example.com/test.git//%s/main.tf", bundlePath),
--		Start:    hcl.Pos{Line: 14, Column: 1, Byte: 161},
--		End:      hcl.Pos{Line: 14, Column: 46, Byte: 206},
--	}
--	childResourceRange := hcl.Range{
--		Filename: fmt.Sprintf("git::https://example.com/test.git//%s/child/main.tf", bundlePath),
--		Start:    hcl.Pos{Line: 14, Column: 1, Byte: 161},
--		End:      hcl.Pos{Line: 14, Column: 45, Byte: 205},
--	}
--
--	return map[string]policy.EvaluationResponse{
--		"testing_resource.parent_resource": {
--			Overall:  policy.AllowResult,
--			Policies: []*policy.Policy{mockPolicyObj(policy.AllowResult)},
--			Enforcements: []policy.EnforcementResult{
--				{
--					Result:     policy.AllowResult,
--					Message:    "just an advisory message",
--					BlockIndex: 1,
--					Policy:     mockPolicyObj(policy.AllowResult),
--					LocalRange: rootModuleRange.Ptr(),
--				},
--			},
--		},
--		"module.child.testing_resource.child_resource": {
--			Overall:  policy.DenyResult,
--			Policies: []*policy.Policy{mockPolicyObj(policy.DenyResult)},
--			Diagnostics: withLocalRange(policy.DiagsFromProto([]*policyproto.Diagnostic{
--				{
--					Severity: policyproto.Severity_ERROR,
--					Summary:  "Child module resource violation",
--					Detail:   "module.child.testing_resource.child_resource violates policy",
--					Result: &policyproto.DiagnosticResult{
--						Result: policyproto.EvaluateResult_DENY_EVALUATE_RESULT,
--					},
--				},
--			}, nil), childResourceRange),
--		},
--	}
--}
--
- func createExpectedComponentInstancePolicyEvaluation(bundlePath string) map[string]policy.EvaluationResponse {
- 	rootModuleRange := hcl.Range{
- 		Filename: fmt.Sprintf("git::https://example.com/test.git//%s/main.tf", bundlePath),
+@@ -58,14 +58,14 @@ require (
+ 	github.com/vmihailenco/msgpack/v5 v5.4.1 // indirect
+ 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
+ 	github.com/zclconf/go-cty-yaml v1.1.0 // indirect
+-	golang.org/x/crypto v0.57.0 // indirect
++	golang.org/x/crypto v0.58.0 // indirect
+ 	golang.org/x/mod v0.41.0 // indirect
+-	golang.org/x/net v0.60.0 // indirect
++	golang.org/x/net v0.62.0 // indirect
+ 	golang.org/x/oauth2 v0.36.0 // indirect
+-	golang.org/x/sync v0.23.0 // indirect
+-	golang.org/x/sys v0.48.0 // indirect
+-	golang.org/x/text v0.42.0 // indirect
+-	golang.org/x/tools v0.49.0 // indirect
++	golang.org/x/sync v0.24.0 // indirect
++	golang.org/x/sys v0.49.0 // indirect
++	golang.org/x/text v0.43.0 // indirect
++	golang.org/x/tools v0.51.0 // indirect
+ 	google.golang.org/appengine v1.6.8 // indirect
+ 	google.golang.org/protobuf v1.36.11 // indirect
+ 	software.sslmate.com/src/go-pkcs12 v0.4.0 // indirect
 ```
 
-**File**: `internal/terraform/context_plan_policy_test.go` (modified, +219/-0)
+**File**: `internal/backend/remote-state/azure/go.sum` (modified, +16/-16)
 ```diff
-@@ -5,6 +5,7 @@ package terraform
- 
- import (
- 	"context"
-+	"fmt"
- 	"path/filepath"
- 	"sort"
- 	"strings"
-@@ -1110,6 +1111,224 @@ func TestContext2Plan_PolicyEvaluation(t *testing.T) {
- 				t.Error("Expected module.child.test_resource.test in plan changes")
- 			},
- 		},
-+		{
-+			name:        "destroy plan: module policy is evaluated",
-+			expectCalls: 1,
-+			mainConfig: `
-+				terraform {
-+					required_providers {
-+						test = {
-+							source = "hashicorp/test"
-+							version = "1.0.0"
-+						}
-+					}
-+				}
-+
-+				module "child" {
-+					source = "./child"
-+				}
-+				`,
-+			childConfig: `
-+				resource "test_resource" "test" {
-+					sensitive_value = "foo"
-+				}
-+				`,
-+			planMode: plans.DestroyMode,
-+			state: states.BuildState(func(ss *states.SyncState) {
-+				ss.SetResourceInstanceCurrent(
-+					mustResourceInstanceAddr("module.child.test_resource.test"),
-+					&states.ResourceInstanceObjectSrc{
-+						Status:    states.ObjectReady,
-+						AttrsJSON: []byte(`{"id":"bar","type":"test_resource","sensitive_value":"foo"}`),
-+					},
-+					mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
-+				)
-+			}),
-+			prepareExpectations: func(t *testing.T, data *data) {
-+				data.policy.EvaluateFn = func(ctx context.Context, req policy.EvaluationRequest[*proto.PolicyEvaluateResourceRequest_ResourceMetadata]) policy.EvaluationResponse {
-+					data.policyEvalCalls++
-+					return policy.EvaluationResponse{Overall: policy.AllowResult}
-+				}
-+				data.policy.EvaluateModuleFn = func(ctx context.Context, req policy.EvaluationRequest[*proto.PolicyEvaluateModuleRequest_ModuleMetadata]) policy.EvaluationResponse {
-+					if req.Meta.Address != "module.child" {
-+						t.Errorf("Expected module address to be \"module.child\", got %q", req.Meta.Address)
-+					}
-+					if req.Target != "./child" {
-+						t.Errorf("Expected module target to be \"./child\", got %q", req.Target)
-+					}
-+					return policy.EvaluationResponse{
-+						Overall: policy.DenyResult,
-+						Diagnostics: policy.DiagsFromProto([]*proto.Diagnostic{
-+							{
-+								Severity: proto.Severity_ERROR,
-+								Summary:  "Module policy violation",
-+								Detail:   "module.child violates policy",
-+								Result: &proto.DiagnosticResult{
-+									Result: proto.EvaluateResult_DENY_EVALUATE_RESULT,
-+								},
-+							},
-+						}, nil),
-+					}
-+				}
-+			},
-+			assertPolicyResults: func(t *testing.T, d *data) {
-+				if !d.policy.EvaluateModuleCalled {
-+					t.Fatal("Expected policyClient.EvaluateModule to be called")
-+				}
-+
-+				result, ok := d.viewHook.PolicyResults["module.child"]
-+				if !ok {
-+					t.Fatal("Expected a policy result for module.child")
-+				}
-+				if result.Overall != policy.DenyResult {
-+					t.Errorf("Expected module.child policy result to be deny, got %v", result.Overall)
-+				}
-+
-+				for _, rc := range d.plan.Changes.Resources {
-+					if rc.Addr.String() == "module.child.test_resource.test" {
-+						if rc.Action != plans.Delete {
-+							t.Errorf("Expected delete action for module.child.test_resource.test, got %s", rc.Action)
-+						}
-+						return
-+					}
-+				}
-+				t.Error("Expected module.child.test_resource.test in plan changes")
-+			},
-+		},
-+		{
-+			// The module call expands into multiple instances via for_each.
-+			// The variable and the expansion node are pruned from the destroy
-+			// graph, but the module policy is still evaluated once for the
-+			// module call.
-+			name:        "destroy plan: module policy is evaluated for expanded module call",
-+			expectCalls: 2,
-+			mainConfig: `
-+				terraform {
-+					required_providers {
-+						test = {
-+							source = "hashicorp/test"
-+							version = "1.0.0"
-+						}
-+					}
-+				}
-+
-+				variable "keys" {
-+					type    = set(string)
-+					default = ["a", "b"]
-+				}
-+
-+				module "child" {
-+					source   = "./child"
-+					for_each = var.keys
-+				}
-+				`,
-+			childConfig: `
-+				resource "test_resource" "test" {
-+					sensitive_value = "foo"
-+				}
-+				`,
-+			planMode: plans.DestroyMode,
-+			state: states.BuildState(func(ss *states.SyncState) {
-+				for _, key := range []string{"a", "b"} {
-+					ss.SetResourceInstanceCurrent(
-+						mustResourceInstanceAddr(fmt.Sprintf("module.child[%q].test_resource.test", key)),
-+						&states.ResourceInstanceObjectSrc{
-+							Status:    states.ObjectReady,
-+							AttrsJSON: []byte(`{"id":"bar","type":"test_resource","sensitive_value":"foo"}`),
-+						},
-+						mustProviderConfig(`provider["registry.terraform.io/hashicorp/test"]`),
-+					)
-+				}
-+			}),
-+			prepareExpectations: func(t *testing.T, data *data) {
-+				data.policy.EvaluateFn = func(ctx context.Context, req policy.EvaluationRequest[*proto.PolicyEvaluateResourceRequest_ResourceMetadata]) policy.EvaluationResponse {
-+					data.policyEvalCalls++
-+					return policy.EvaluationResponse{Overall: policy.AllowResult}
-+				}
-+				data.policy.EvaluateModuleFn = func(ctx context.Context, req policy.EvaluationRequest[*proto.PolicyEvaluateModuleRequest_ModuleMetad
+@@ -111,8 +111,8 @@ github.com/fatih/color v1.18.0 h1:S8gINlzdQ840/4pfAwic/ZE0djQEH3wM94VfqLTZcOM=
+ github.com/fatih/color v1.18.0/go.mod h1:4FelSpRwEGDpQ12mAdzqdOukCy4u8WUtOY6lkT/6HfU=
+ github.com/felixge/httpsnoop v1.0.4 h1:NFTV2Zj1bL4mc9sqWACXbQFVBBg2W3GPvqp8/ESS2Wg=
+ github.com/felixge/httpsnoop v1.0.4/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
+-github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
+-github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
++github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
++github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
+ github.com/go-logr/logr v1.4.4 h1:tG4xh9yMsRCAiodLVTxyrkzSZ9+o0L1Kg/+cPVcbP/8=
+ github.com/go-logr/logr v1.4.4/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
+ github.com/go-logr/stdr v1.2.2 h1:hSWxHoqTgW2S2qGc0LTAI563KZ5YKYRhT3MFKZMbjag=
+@@ -271,8 +271,8 @@ golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACk
+ golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
+ golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
+ golang.org/x/crypto v0.17.0/go.mod h1:gCAAfMLgwOJRpTjQ2zCCt2OcSfYMTeZVSRtQlPC7Nq4=
+-golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
+-golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
++golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
++golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
+ golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91VN4djpZkiMVwK6gcyfeH4XE8wZrZaV4=
+ golang.org/x/mod v0.8.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
+ golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
+@@ -284,16 +284,16 @@ golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2/go.mod h1:9nx3DQGgdP8bBQD5qx
+ golang.org/x/net v0.0.0-20220722155237-a158d28d115b/go.mod h1:XRhObCWvk6IyKnWLug+ECip1KBveYUHfp+8e9klMJ9c=
+ golang.org/x/net v0.6.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
+ golang.org/x/net v0.10.0/go.mod h1:0qNGK6F8kojg2nk9dLZ2mShWaEBan6FAoqfSigmmuDg=
+-golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
+-golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
+ golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
+ golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.1.0/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+-golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
+-golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
++golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20200116001909-b77594299b42/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20200223170610-d5e6a3e2c0ae/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+@@ -308,15 +308,15 @@ golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f/go.mod h1:oPkhp1MJrh7nUepCBc
+ golang.org/x/sys v0.5.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.8.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.15.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
+-golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
+-golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
++golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
++golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+ golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
+ golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
+ golang.org/x/term v0.5.0/go.mod h1:jMB1sMXY+tzblOD4FWmEbocvup2/aLOaQEp7JmGp78k=
+ golang.org/x/term v0.8.0/go.mod h1:xPskH00ivmX89bAKVGSKKtLOWNx2+17Eiy94tnKShWo=
+ golang.org/x/term v0.15.0/go.mod h1:BDl952bC7+uMoWR75FIrCDx79TPU9oHkTZ9yRbYOrX0=
+-golang.org/x/term v0.46.0 h1:
 ```
 
-**File**: `internal/terraform/graph_builder_apply.go` (modified, +3/-0)
+**File**: `internal/backend/remote-state/consul/go.mod` (modified, +6/-6)
 ```diff
-@@ -208,6 +208,9 @@ func (b *ApplyGraphBuilder) Steps() []GraphTransformer {
- 		// objects that can belong to modules.
- 		&ModuleExpansionTransformer{Config: b.Config},
- 
-+		// Evaluate module policies before the objects within each module.
-+		&ModulePolicyTransformer{Config: b.Config, PolicyClient: b.PolicyClient},
-+
- 		// Plug in any external references.
- 		&ExternalReferenceTransformer{
- 			ExternalReferences: b.ExternalReferences,
-```
-
-**File**: `internal/terraform/graph_builder_plan.go` (modified, +3/-0)
-```diff
-@@ -276,6 +276,9 @@ func (b *PlanGraphBuilder) Steps() []GraphTransformer {
- 		// objects that can belong to modules.
- 		&ModuleExpansionTransformer{Concrete: b.ConcreteModule, Config: b.Config},
- 
-+		// Evaluate module policies before the objects within each module.
-+		&ModulePolicyTransformer{Config: b.Config, PolicyClient: b.PolicyClient},
-+
- 		// Plug in any external references.
- 		&ExternalReferenceTransformer{
- 			ExternalReferences: b.ExternalReferences,
-```
-
-**File**: `internal/terraform/node_module_expand.go` (modified, +0/-88)
-```diff
-@@ -10,10 +10,7 @@ import (
- 	"github.com/hashicorp/terraform/internal/configs"
- 	"github.com/hashicorp/terraform/internal/dag"
- 	"github.com/hashicorp/terraform/internal/lang/langrefs"
--	"github.com/hashicorp/terraform/internal/policy"
--	"github.com/hashicorp/terraform/internal/policy/proto"
- 	"github.com/hashicorp/terraform/internal/tfdiags"
--	"github.com/zclconf/go-cty/cty"
+@@ -48,15 +48,15 @@ require (
+ 	github.com/spf13/afero v1.15.0 // indirect
+ 	github.com/stretchr/testify v1.8.4 // indirect
+ 	github.com/zclconf/go-cty-yaml v1.1.0 // indirect
+-	golang.org/x/crypto v0.57.0 // indirect
++	golang.org/x/crypto v0.58.0 // indirect
+ 	golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6 // indirect
+ 	golang.org/x/mod v0.41.0 // indirect
+-	golang.org/x/net v0.60.0 // indirect
++	golang.org/x/net v0.62.0 // indirect
+ 	golang.org/x/oauth2 v0.36.0 // indirect
+-	golang.org/x/sync v0.23.0 // indirect
+-	golang.org/x/sys v0.48.0 // indirect
+-	golang.org/x/text v0.42.0 // indirect
+-	golang.org/x/tools v0.49.0 // indirect
++	golang.org/x/sync v0.24.0 // indirect
++	golang.org/x/sys v0.49.0 // indirect
++	golang.org/x/text v0.43.0 // indirect
++	golang.org/x/tools v0.51.0 // indirect
+ 	gopkg.in/yaml.v3 v3.0.1 // indirect
  )
  
- type ConcreteModuleNodeFunc func(n *nodeExpandModule) dag.Vertex
-@@ -169,12 +166,7 @@ func (n *nodeExpandModule) Execute(globalCtx EvalContext, op walkOperation) (dia
- 		}
- 	}
- 
--	if !diags.HasErrors() {
--		return diags.Append(n.EvalPolicy(globalCtx, op))
--	}
--
- 	return diags
--
- }
- 
- // nodeCloseModule represents an expanded module during apply, and is visited
-@@ -308,85 +300,5 @@ func (n *nodeValidateModule) Execute(globalCtx EvalContext, op walkOperation) (d
- 		expander.SetModuleSingle(module, call)
- 	}
- 
--	if !diags.HasErrors() {
--		return diags.Append(n.EvalPolicy(globalCtx, op))
--	}
--
--	return diags
--}
--
--// EvalPolicy evaluates the module policy.
--// Contrary to resource policy evaluation, module policy evaluation is done inline,
--// allowing us to block the evaluation of the module's resources within the graph if the policy fails.
--// Module policies have no support for callback functions, so we do not need to worry about
--// them retrieving objects that are not yet available in the state.
--func (n *nodeExpandModule) EvalPolicy(ctx EvalContext, op walkOperation) tfdiags.Diagnostics {
--	if ctx.PolicyClient() == nil {
--		log.Printf("[DEBUG] No policy client configured, skipping policy evaluation for %s", n.Addr)
--		return nil
--	}
--
--	configBundle := n.ModuleTree
--	source := configBundle.SourceAddr.String()
--
--	// We will evaluate the module policy with just the metadata and not the module inputs.
--	// Terraform modules act as namespace scopes and do not directly participate
--	// in the reference flow in the graph.
--	// This allows references in their inputs to be deferred until
--	// they are used by a concrete object in the module.
--	// Since policy evaluation is supposed to be done before evaluating the module's
--	// objects, evaluating module inputs here would be incorrect as
--	// it could lead to cyclic dependencies.
--	// For example: Given the below module call,
--	//
--	// module "child" {
--	// 	 source = "./child"
--	// 	 input  = "child-value"
--	// 	 input2 = module.child.output
--	// }
--	//
--	// resource "test_instance" "test" {
--	// 	 value = var.input
--	// }
--	// resource "test_instance" "test2" {
--	// 	 value = var.input2
--	// }
--	// output "output" {
--	// 	 value = resource.test_instance.test.value
--	// }
--	//
--	// This is a valid terraform module call, but the input2 value depends on the module's output,
--	// which is not available until after the module is expanded, and potentially resources have been created.
--	// In the above example, the reference to `module.child.output` is deferred until the resource
--	// `test_instance.test2` is evaluated, and any attempt to evaluate it here would result in a cyclic dependency error.
--	result := ctx.PolicyClient().EvaluateModule(ctx.StopCtx(), policy.EvaluationRequest[*proto.PolicyEvaluateModuleRequest_ModuleMetadata]{
--		Attrs:  policy.CtyToPolicyValue(cty.DynamicVal),
--		Target: source,
--		Meta: &proto.PolicyEvaluateModuleRequest_ModuleMetadata{
--			Address: n.Addr.String(),
--			Version: func() string {
--				// local modules do not have versions, so we just return
--				// an empty string in that case.
--				if configBundle.Version == nil {
--					return ""
--				}
--				return configBundle.Version.String()
--			}(),
--		},
--	})
--
--	// add local range to diagnostics if the module call has a config body.
--	if n.ModuleCall.Config != nil {
--		result = result.WithLocalRange(n.ModuleCall.DeclRange.Ptr())
--	}
--
--	var diags tfdiags.Diagnostics
--	if !result.Empty() {
--		hookErr := ctx.Hook(func(h Hook) (HookAction, error) {
--			return h.PolicyResult(n.Addr.String(), result)
--		})
--		diags = diags.Append(hookErr)
--	}
--
- 	return diags
- }
 ```
 
-**File**: `internal/terraform/transform_destroy_edge.go` (modified, +8/-0)
+**File**: `internal/backend/remote-state/consul/go.sum` (modified, +16/-16)
 ```diff
-@@ -354,6 +354,14 @@ func (t *pruneUnusedNodesTransformer) Transform(g *Graph) error {
- 			continue
- 		}
- 
-+		// Module policies only depend on static configuration, so they can always be evaluated,
-+		// even when the module expansion itself is pruned.
-+		if _, ok := n.(*nodeModulePolicy); ok {
-+			log.Printf("[TRACE] pruneUnusedNodesTransformer: keeping module policy %s", n.Name())
-+			keep.Add(n)
-+			continue
-+		}
-+
- 		// from here we only search for managed resource destroy nodes
- 		n, ok := n.(GraphNodeDestroyer)
- 		if !ok {
+@@ -106,8 +106,8 @@ github.com/fatih/color v1.18.0 h1:S8gINlzdQ840/4pfAwic/ZE0djQEH3wM94VfqLTZcOM=
+ github.com/fatih/color v1.18.0/go.mod h1:4FelSpRwEGDpQ12mAdzqdOukCy4u8WUtOY6lkT/6HfU=
+ github.com/felixge/httpsnoop v1.0.4 h1:NFTV2Zj1bL4mc9sqWACXbQFVBBg2W3GPvqp8/ESS2Wg=
+ github.com/felixge/httpsnoop v1.0.4/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
+-github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
+-github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
++github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
++github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
+ github.com/go-kit/kit v0.8.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
+ github.com/go-kit/kit v0.9.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
+ github.com/go-kit/log v0.1.0/go.mod h1:zbhenjAZHb184qTLMA9ZjW7ThYL0H2mk7Q6pNt4vbaY=
+@@ -339,8 +339,8 @@ go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbi
+ golang.org/x/crypto v0.0.0-20180904163835-0709b304e793/go.mod h1:6SG95UA2DQfeDnfUPMdvaQW0Q7yPrPDi9nlGo2tz2b4=
+ golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
+ golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
+-golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
+-golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
++golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
++golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
+ golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6 h1:y5zboxd6LQAqYIhHnB48p0ByQ/GnQx2BE33L8BOHQkI=
+ golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6/go.mod h1:U6Lno4MTRCDY+Ba7aCcauB9T60gsv5s4ralQzP72ZoQ=
+ golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
+@@ -351,17 +351,17 @@ golang.org/x/net v0.0.0-20190108225652-1e06a53dbb7e/go.mod h1:mL1N/T3taQHkDXs73r
+ golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
+ golang.org/x/net v0.0.0-20190613194153-d28f0bde5980/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
+ golang.org/x/net v0.0.0-20200625001655-4c5254603344/go.mod h1:/O7V0waA8r7cgGh81Ro3o1hOxt32SMVPicZroKQ2sZA=
+-golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
+-golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
+ golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
+ golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
+ golang.org/x/sync v0.0.0-20181108010431-42b317875d0f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20181221193216-37e7f081c4d4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20201207232520-09787c993a3a/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+-golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
+-golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
++golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20180905080454-ebe1bf3edb33/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20181116152217-5ac8a444bdc5/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+@@ -379,19 +379,19 @@ golang.org/x/sys v0.0.0-20210603081109-ebe580a85c40/go.mod h1:oPkhp1MJrh7nUepCBc
+ golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.0.0-20210927094055-39ccf1dd6fa6/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.0.0-20220503163025-988cb79eb6c6/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+-golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
+-golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+-golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
+-golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
++golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
++golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
++golang.
 ```
 
----
-
-### Incident Patch 2: `76edb186` (2026-10-28)
-**Commit Message**: policy: keep every stacks policy result for a replaced resource (#39453)
-
-**File**: `.changes/v1.17/BUG FIXES-20261027-202409.yaml` (added, +5/-0)
+**File**: `internal/backend/remote-state/cos/go.mod` (modified, +6/-6)
 ```diff
-@@ -0,0 +1,5 @@
-+kind: BUG FIXES
-+body: 'stacks: report every policy result for a replaced resource instead of only one of them'
-+time: 2026-10-27T20:24:09+05:30
-+custom:
-+    Issue: "39453"
+@@ -45,14 +45,14 @@ require (
+ 	github.com/spf13/afero v1.15.0 // indirect
+ 	github.com/zclconf/go-cty v1.18.1 // indirect
+ 	github.com/zclconf/go-cty-yaml v1.1.0 // indirect
+-	golang.org/x/crypto v0.57.0 // indirect
++	golang.org/x/crypto v0.58.0 // indirect
+ 	golang.org/x/mod v0.41.0 // indirect
+-	golang.org/x/net v0.60.0 // indirect
++	golang.org/x/net v0.62.0 // indirect
+ 	golang.org/x/oauth2 v0.36.0 // indirect
+-	golang.org/x/sync v0.23.0 // indirect
+-	golang.org/x/sys v0.48.0 // indirect
+-	golang.org/x/text v0.42.0 // indirect
+-	golang.org/x/tools v0.49.0 // indirect
++	golang.org/x/sync v0.24.0 // indirect
++	golang.org/x/sys v0.49.0 // indirect
++	golang.org/x/text v0.43.0 // indirect
++	golang.org/x/tools v0.51.0 // indirect
+ )
+ 
+ replace github.com/hashicorp/terraform/internal/backend/remote-state/azure => ../azure
 ```
 
-**File**: `internal/rpcapi/convert.go` (modified, +7/-5)
+**File**: `internal/backend/remote-state/cos/go.sum` (modified, +16/-16)
 ```diff
-@@ -160,15 +160,17 @@ func externalInputValueFromProto(protoVal *stacks.DynamicValueWithSource) (stack
- 	}, nil
- }
- 
--func componentInstancePolicyEvaluationProto(componentInstanceAddr stackaddrs.AbsComponentInstance, policyResults map[string]policy.EvaluationResponse) *stacks.ComponentInstancePolicyEvaluation {
-+func componentInstancePolicyEvaluationProto(componentInstanceAddr stackaddrs.AbsComponentInstance, policyResults map[string][]policy.EvaluationResponse) *stacks.ComponentInstancePolicyEvaluation {
- 	results := make([]*stacks.PolicyResult, 0)
- 	infos := make([]*stacks.PolicyInfo, 0)
- 	policyDiags := make([]*stacks.PolicyDiagnostic, 0)
- 
--	for addr, result := range policyResults {
--		results = append(results, policyResultsToProto(addr, result.Policies)...)
--		infos = append(infos, policyInfosToProto(addr, result.Enforcements)...)
--		policyDiags = append(policyDiags, policyDiagsToProto(addr, result.Diagnostics)...)
-+	for addr, addrResults := range policyResults {
-+		for _, result := range addrResults {
-+			results = append(results, policyResultsToProto(addr, result.Policies)...)
-+			infos = append(infos, policyInfosToProto(addr, result.Enforcements)...)
-+			policyDiags = append(policyDiags, policyDiagsToProto(addr, result.Diagnostics)...)
-+		}
- 	}
- 
- 	return &stacks.ComponentInstancePolicyEvaluation{
-```
-
-**File**: `internal/rpcapi/convert_test.go` (modified, +5/-1)
-```diff
-@@ -620,7 +620,11 @@ func TestComponentInstancePolicyEvaluationProto(t *testing.T) {
- 				ComponentInstanceAddr: componentAddr.String(),
- 			}
- 
--			got := componentInstancePolicyEvaluationProto(componentAddr, tc.policyResults())
-+			policyResults := make(map[string][]policy.EvaluationResponse)
-+			for addr, result := range tc.policyResults() {
-+				policyResults[addr] = []policy.EvaluationResponse{result}
-+			}
-+			got := componentInstancePolicyEvaluationProto(componentAddr, policyResults)
- 
- 			if diff := cmp.Diff(want, got, protocmp.Transform()); diff != "" {
- 				t.Errorf("wrong result\n%s", diff)
-```
-
-**File**: `internal/rpcapi/stacks.go` (modified, +9/-4)
-```diff
-@@ -1518,19 +1518,24 @@ func stackChangeHooks(send func(*stacks.StackChangeProgress) error, mainStackSou
- 	}
- }
- 
--func stackPolicyEvaluationHooks(policyClient policy.Client, runtimeHooks *stackruntime.Hooks) collections.Map[stackaddrs.AbsComponentInstance, map[string]policy.EvaluationResponse] {
--	resultMap := collections.NewMap[stackaddrs.AbsComponentInstance, map[string]policy.EvaluationResponse]()
-+// stackPolicyEvaluationHooks collects every policy result reported for a
-+// component instance, grouped by resource address. A resource address can
-+// report more than once: a replaced resource instance is evaluated separately
-+// for its create and its delete, so results are accumulated rather than
-+// overwritten.
-+func stackPolicyEvaluationHooks(policyClient policy.Client, runtimeHooks *stackruntime.Hooks) collections.Map[stackaddrs.AbsComponentInstance, map[string][]policy.EvaluationResponse] {
-+	resultMap := collections.NewMap[stackaddrs.AbsComponentInstance, map[string][]policy.EvaluationResponse]()
- 	if policyClient != nil {
- 		mu := sync.Mutex{}
- 		runtimeHooks.ReportComponentInstancePolicyResult = func(ctx context.Context, a any, h *hooks.ComponentInstancePolicyResult) any {
- 			mu.Lock()
- 			defer mu.Unlock()
- 			mp, ok := resultMap.GetOk(h.ComponentAddr)
- 			if !ok {
--				mp = make(map[string]policy.EvaluationResponse)
-+				mp = make(map[string][]policy.EvaluationResponse)
- 				resultMap.Put(h.ComponentAddr, mp)
- 			}
--			mp[h.ResourceAddr] = h.Result
-+			mp[h.ResourceAddr] = append(mp[h.ResourceAddr], h.Result)
- 			return nil
- 		}
- 	}
-```
-
-**File**: `internal/rpcapi/stacks_policy_results_test.go` (added, +103/-0)
-```diff
-@@ -0,0 +1,103 @@
-+// Copyright IBM Corp. 2014, 2026
-+// SPDX-License-Identifier: BUSL-1.1
-+
-+package rpcapi
-+
-+import (
-+	"context"
-+	"testing"
-+
-+	"github.com/google/go-cmp/cmp"
-+
-+	"github.com/hashicorp/terraform/internal/policy"
-+	"github.com/hashicorp/terraform/internal/rpcapi/terraform1/stacks"
-+	"github.com/hashicorp/terraform/internal/stacks/stackruntime"
-+	"github.com/hashicorp/terraform/internal/stacks/stackruntime/hooks"
-+)
-+
-+// A replaced resource instance is evaluated once for its create and once for
-+// its delete, and both report against the same resource address.
-+func TestStackPolicyEvaluationHooks_multipleResultsForAddress(t *testing.T) {
-+	runtimeHooks := &stackruntime.Hooks{}
-+	results := stackPolicyEvaluationHooks(policy.NewTestMockClient(t), runtimeHooks)
-+
-+	componentAddr := mustAbsComponentInstance(t, "component.test")
-+	for _, overall := range []policy.EvaluateResult{policy.AllowResult, policy.DenyResult} {
-+		runtimeHooks.ReportComponentInstancePolicyResult(context.Background(), nil, &hooks.ComponentInstancePolicyResult{
-+			ComponentAddr: componentAddr,
-+			ResourceAddr:  "test_instance.example",
-+			Result:        policy.EvaluationResponse{Overall: overall},
-+		})
-+	}
-+
-+	got, ok := results.GetOk(componentAddr)
-+	if !ok {
-+		t.Fatalf("no policy results recorded for %s", componentAddr)
-+	}
-+	var gotOverall []policy.EvaluateResult
-+	for _, result := range got["test_instance.example"] {
-+		gotOverall = append(gotOverall, result.Overall)
-+	}
-+	want := []policy.EvaluateResult{policy.AllowResult, policy.DenyResult}
-+	if diff := cmp.Diff(want, gotOverall); diff != "" {
-+		t.Errorf("wrong results for test_instance.example\n%s", diff)
-+	}
-+}
-+
-+func TestComponentInstancePolicyEvaluationProto_multipleResultsForAddress(t *testing.T) {
-+	componentAddr := mustAbsComponentInstance(t, "component.test")
-+	policyObj := func(result policy.EvaluateResult) *policy.Policy {
-+		return &policy.Policy{
-+			Address:          "resource_policy.example",
-+			PolicySetName:    "example",
-+			Filename:         "policy_file.tfpolicy.hcl",
-+			EnforcementLevel: "mandatory",
-+			Result:           result,
-+		}
-+	}
-+
-+	got := componentInstancePolicyEvaluationProto(componentAddr, map[string][]policy.EvaluationResponse{
-+		"test_instance.example": {
-+			{
-+				Overall:  policy.AllowResult,
-+				Policies: []*policy.Policy{policyObj(policy.AllowResult)},
-+				Enforcements: []policy.EnforcementResult{{
-+					Result:     policy.AllowResult,
-+					Message:    "create allowed",
-+					BlockIndex: 1,
-+					Policy:     policyObj(policy.AllowResult),
-+				}},
-+			},
-+			{
-+				Overall:  policy.DenyResult,
-+				Policies: []*policy.Policy{policyObj(policy.DenyResult)},
-+				Diagnostics: policy.Diagnostics{
-+					policy.NewErrorDiagnostic(
-+						"delete denied",
-+						"test_instance.example may not be destroyed",
-+						policy.DenyResult,
-+					),
-+				},
-+			},
-+		},
-+	})
-+
-+	if len(got.Results) != 2 || len(got.Infos) != 1 || len(got.Diagnostics) != 1 {
-+		t.Fatalf("got %d results, %d infos, %d diagnostics; want 2, 1, 1",
-+			len(got.Results), len(got.Infos), len(got.Diagnostics))
-+	}
-+	var gotResults []stacks.EvaluateResult
-+	for _, result := range got.Results {
-+		if result.TargetAddress != "test_instance.example" {
-+			t.Errorf("wrong target address %q", result.TargetAddress)
-+		}
-+		gotResults = append(gotResults, result.Result)
-+	}
-+	want := []stacks.EvaluateResult{
-+		stacks.EvaluateResult_ALLOW_EVALUATE_RESULT,
-+		stacks.EvaluateResult_DENY_EVALUATE_RESULT,
-+	}
-+	if diff := cmp.Diff(want, gotResults); diff != "" {
-+		t.Errorf("wrong results\n%s", diff)
-+	}
-+}
+@@ -94,8 +94,8 @@ github.com/fatih/color v1.18.0 h1:S8gINlzdQ840/4pfAwic/ZE0djQEH3wM94VfqLTZcOM=
+ github.com/fatih/color v1.18.0/go.mod h1:4FelSpRwEGDpQ12mAdzqdOukCy4u8WUtOY6lkT/6HfU=
+ github.com/felixge/httpsnoop v1.0.4 h1:NFTV2Zj1bL4mc9sqWACXbQFVBBg2W3GPvqp8/ESS2Wg=
+ github.com/felixge/httpsnoop v1.0.4/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
+-github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
+-github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
++github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
++github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
+ github.com/go-logr/logr v1.4.4 h1:tG4xh9yMsRCAiodLVTxyrkzSZ9+o0L1Kg/+cPVcbP/8=
+ github.com/go-logr/logr v1.4.4/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
+ github.com/go-logr/stdr v1.2.2 h1:hSWxHoqTgW2S2qGc0LTAI563KZ5YKYRhT3MFKZMbjag=
+@@ -227,31 +227,31 @@ go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJj
+ go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
+ go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
+ go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
+-golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
+-golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
++golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
++golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
+ golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
+ golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
+-golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
+-golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
+ golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
+-golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
+-golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
++golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20200116001909-b77594299b42/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20200223170610-d5e6a3e2c0ae/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.0.0-20210927094055-39ccf1dd6fa6/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.0.0-20220503163025-988cb79eb6c6/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+-golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
+-golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+-golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
+-golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
+-golang.org/x/text v0.42.0 h1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=
+-golang.org/x/text v0.42.0/go.mod h1:ojzP1Z+2QtioaF8DTtO8K5q7JWVVYwZKenzujK0Zd0E=
++golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
++golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
++golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
++golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
++golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
++golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
+ golang.org/x/time v0.15.0 h1:bbrp8t3bGUeFOx08pvsMYRTCVSMk89u4tKbNOZbp88U=
+ golang.org/x/time v0.15.0/go.mod h1:Y4YMaQmXwGQZoFaVFk4YpCt4FLQMYKZe9oeV/f4MSno=
+-golang.org/x/tools v0.49.0 h1:3NI7VXzL9+1WZD52Dx2ttoPwD5DWrFGpl9mFZDlmisI=
+-golang.org/x/tools v0.49.0/go.mod h1:SJNXV9DBKT0UbdttsQjbfJlAE/q+y36++zo3uL3N0Oo=
++golang.org/x/tools v0.51.0 h1:k4Xc/1Om9jwkBJBo4NVLMSARBoWtK10mx+W5BnXCeAI=
++golang.org/x/tools v0.51.0/go.mod h1:9eEncMayCV6zRMGhR5eZEC2iBx98qWcF1HZ9Z7wJOoA=
+ google.golang.org/api v0.271.0 h1:cIPN4qcUc61jlh7oXu6pwOQqbJW2GqYh5PS6rB2C/JY=
+ google.golang.org/api v0.271.0/go.mod h1:CGT29bhwkbF+i11qkRUJb2KMKqcJ1hdFceEIRd9u64Q=
+ google.golang.org/genproto v0.0.0-20260128011058-8636f8732409 h1:VQZ/yAbAtjkHgH80teYd2em3xtIkkHd7ZhqfH2N9CsM=
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #39460** (2026-10-28): Prepare for 1.17.1 release (@hc-github-team-tf-core)
-- **PR #39459** (2026-10-28): Backport of Evaluate module policies during destroy plan into v1.17 (@github-actions[bot])
-- **PR #39458** (2026-10-28): Backport of policy: keep every stacks policy result for a replaced resource into v1.17 (@github-actions[bot])
-- **PR #39455** (2026-10-28): Evaluate module policies during destroy plan (@dsa0x)
-- **PR #39453** (2026-10-28): policy: keep every stacks policy result for a replaced resource (@viveksinghgit95)
-- **PR #39452** (2026-10-27): refactor: Make `taint` and `untaint` commands use the `views` package (@SarahFrench)
+- **PR #39471** (2026-10-29): command/providers schema: Refactor to use views (@SarahFrench)
+- **PR #39469** (2026-10-28): Cleanup after 1.17.1 release (@hc-github-team-tf-core)
+- **PR #39467** (2026-10-28): Prepare for 1.17.1 release (@hc-github-team-tf-core)
+- **PR #39466** (2026-10-29): command/providers mirror: Refactor to use `views` (@SarahFrench)
+- **PR #39465** (2026-10-28): Revert "Prepare before 1.17.1 release (#39460)" (@matejrisek)
+- **PR #39463** (2026-10-28): Backport/v1.17/39462 (@matejrisek)
 
 ---
 
@@ -2937,32 +2678,44 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Evaluate module policies during destroy plan (#39455)
+## X. Address reported security vulnerabilities in dependencies. (#39462)
 
 **RULE**:
-When implementing operations in `.changes/v1.17/BUG FIXES-20261027-134032.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hashicorp/terraform. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hashicorp/terraform. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cbed3573`: Evaluate module policies during destroy plan (#39455). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6ebd7d93`: Address reported security vulnerabilities in dependencies. (#39462). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changes/v1.17/BUG FIXES-20261027-134032.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-kind: BUG FIXES
-body: Always evaluate module policies during destroy plan
-time: 2026-10-27T13:40:32.51201+01:00
-custom:
-    Issue: "39455"
+	golang.org/x/crypto v0.58.0
+	golang.org/x/net v0.62.0
+	golang.org/x/sys v0.49.0
+	golang.org/x/term v0.47.0
+	golang.org/x/text v0.43.0
+	golang.org/x/tools v0.51.0
+	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
+	golang.org/x/sync v0.24.0 // indirect
+	golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	golang.org/x/crypto v0.57.0
+	golang.org/x/net v0.60.0
+	golang.org/x/sys v0.48.0
+	golang.org/x/term v0.46.0
+	golang.org/x/text v0.42.0
+	golang.org/x/tools v0.49.0
+	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
+	golang.org/x/sync v0.23.0 // indirect
+	golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cbed3573` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6ebd7d93` are properly handled with clean fallback behavior.

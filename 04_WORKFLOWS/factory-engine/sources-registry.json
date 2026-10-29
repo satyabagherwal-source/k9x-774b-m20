@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-29T22:19:26.058Z",
-    "lastVerified": "2026-10-29T22:19:26.058Z",
+    "lastChecked": "2026-10-29T22:28:19.206Z",
+    "lastVerified": "2026-10-29T22:28:19.206Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -139,22 +139,21 @@
     "revisionIdentifier": "0941fb03"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "bitterbot-desktop",
+    "name": "Bitterbot-AI/bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-29T17:23:41.255Z",
-    "lastVerified": "2026-10-29T17:23:41.255Z",
+    "lastChecked": "2026-10-29T22:26:14.795Z",
+    "lastVerified": "2026-10-29T22:26:14.795Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "e0492d8fb856c21ed067a7a99861ebf53e4d6826ede3a1afe5fb9195d4019dd2",
+    "contentHash": "96be491081376668b181a5f9ff8ddf05c4c90dad203f072cfce29d82471f00c3",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "ecc86c07"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "sxyazi/yazi",
@@ -620,9 +619,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-10-29T00:41:29.344Z",
+    "lastChecked": "2026-10-29T22:26:05.446Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-10-29T00:41:29.344Z"
+    "lastVerified": "2026-10-29T22:26:05.446Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -2284,9 +2283,9 @@
   "sharkdp-hyperfine": {
     "name": "hyperfine",
     "officialUrl": "https://github.com/sharkdp/hyperfine",
-    "lastChecked": "2026-10-28T06:41:56.991Z",
+    "lastChecked": "2026-10-29T22:25:55.260Z",
     "revisionIdentifier": "c5161524",
-    "lastVerified": "2026-10-28T06:41:56.991Z"
+    "lastVerified": "2026-10-29T22:25:55.260Z"
   },
   "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b": {
     "name": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
@@ -3897,11 +3896,21 @@
     "lastVerified": "2026-10-29T16:48:12.413Z"
   },
   "helixdb-helix-db": {
-    "name": "helix-db",
+    "name": "HelixDB/helix-db",
     "officialUrl": "https://github.com/HelixDB/helix-db",
-    "lastChecked": "2026-10-28T13:36:50.569Z",
-    "revisionIdentifier": "2052f24e",
-    "lastVerified": "2026-10-28T13:36:50.569Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-29T22:26:11.984Z",
+    "lastVerified": "2026-10-29T22:26:11.984Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-helixdb-helix-db",
+    "contentHash": "d37fee1faf04a78fd51353c2d8749cb5c99d38ac0155354e6a987c4948b36317",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "kucherenko-jscpd": {
     "name": "kucherenko/jscpd",
@@ -4289,14 +4298,14 @@
     "officialUrl": "https://github.com/hashicorp/terraform",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T14:29:14.004Z",
-    "lastVerified": "2026-10-28T14:29:14.004Z",
+    "lastChecked": "2026-10-29T22:26:06.929Z",
+    "lastVerified": "2026-10-29T22:26:06.929Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-hashicorp-terraform",
-    "contentHash": "79d8a189e8ac6672eb49cdce7355f8fdb3c42e53007c2d9f4cef9d63aae7bf19",
+    "contentHash": "e95c12fa64aab6b555cb40a3bf4266574eff017f7495a43fefa52dbbeff21722",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8530,5 +8539,29 @@
     "lastChecked": "2026-10-29T22:19:10.834Z",
     "revisionIdentifier": "2209b0fd",
     "lastVerified": "2026-10-29T22:19:10.834Z"
+  },
+  "lokoe-mehdi-scouter": {
+    "name": "scouter",
+    "officialUrl": "https://github.com/lokoe-mehdi/scouter",
+    "lastChecked": "2026-10-29T22:25:57.809Z",
+    "revisionIdentifier": "e8edc3c5",
+    "lastVerified": "2026-10-29T22:25:57.809Z"
+  },
+  "buresdv-cork": {
+    "name": "buresdv/Cork",
+    "officialUrl": "https://github.com/buresdv/Cork",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-29T22:26:05.586Z",
+    "lastVerified": "2026-10-29T22:26:05.586Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-buresdv-cork",
+    "contentHash": "13f985b45dd5939437606aa330efd6eb03fc01fe887006ece96e69af68a2e59a",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-BCC4",
-    "timestamp": "2026-10-27T22:00:15.412Z",
-    "repository": "crawlseo/crawlseo",
-    "learningId": "learn-github-crawlseo-crawlseo",
-    "contentHash": "25beda912f70da0c8146d06d572b1aa95fc9de76714cd98b393681ba62cb7216",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-J6VZ",
-    "timestamp": "2026-10-27T22:06:21.599Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "89d5e85644f6633f0e88d9ab1152eed28a9ef666322b74a3798e2191952a7634",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-JDV3",
-    "timestamp": "2026-10-27T22:06:30.639Z",
-    "repository": "nolabs-ai/nono",
-    "learningId": "learn-github-nolabs-ai-nono",
-    "contentHash": "baace9ff8a12d93875940b05689fbfe6fe0b9a52442d42e3a6d24c3538576ec8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-LWFV",
-    "timestamp": "2026-10-27T22:36:27.643Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "6b099d696de29b98f3a8f1d9de52633959e8976ce91addbd78ed594f1c27794b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-TZ7E",
     "timestamp": "2026-10-27T22:42:44.474Z",
     "repository": "slatedb/slatedb",
@@ -7490,6 +7430,66 @@
     "repository": "MaterializeInc/materialize",
     "learningId": "learn-github-materializeinc-materialize",
     "contentHash": "2be09102bb4777b21b89fe57ee0525dc3354c5c02ac80e3c41f27a17c263508f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-4BUT",
+    "timestamp": "2026-10-29T22:26:08.261Z",
+    "repository": "hashicorp/terraform",
+    "learningId": "learn-github-hashicorp-terraform",
+    "contentHash": "e95c12fa64aab6b555cb40a3bf4266574eff017f7495a43fefa52dbbeff21722",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-4FBI",
+    "timestamp": "2026-10-29T22:26:12.750Z",
+    "repository": "HelixDB/helix-db",
+    "learningId": "learn-github-helixdb-helix-db",
+    "contentHash": "d37fee1faf04a78fd51353c2d8749cb5c99d38ac0155354e6a987c4948b36317",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-4HDP",
+    "timestamp": "2026-10-29T22:26:15.421Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "96be491081376668b181a5f9ff8ddf05c4c90dad203f072cfce29d82471f00c3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-72X8",
+    "timestamp": "2026-10-29T22:28:16.652Z",
+    "repository": "buresdv/Cork",
+    "learningId": "learn-github-buresdv-cork",
+    "contentHash": "13f985b45dd5939437606aa330efd6eb03fc01fe887006ece96e69af68a2e59a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

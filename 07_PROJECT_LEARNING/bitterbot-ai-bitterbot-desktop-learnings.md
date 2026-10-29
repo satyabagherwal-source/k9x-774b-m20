@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `ecc86c07`  
+> **Source Version**: `04bc81f1`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T11:44:05.070Z  
+> **Timestamp**: 2026-10-29T22:26:14.803Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T11:44:03.262Z  
+> **Harvest Timestamp**: 2026-10-29T22:26:14.795Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,194 +1799,32 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ecc86c07` (2026-10-29)
-**Commit Message**: feat(memory): evidence telemetry and shadow decision traces (PLAN-59 Phase 0) (#322)
+### Incident Patch 1: `04bc81f1` (2026-10-29)
+**Commit Message**: feat(memory): default evidence telemetry to shadow mode (#328)
 
-An opt-out observational layer under the curiosity and dream system that
-changes no behaviour. Migration v79 adds retrieval_hits, surfacing_events,
-decision_traces and evidence_meta. Every owner memory search records its
-top-K chunk ids, ranks, fused score and channel ranks under a keyed digest
-(HMAC-SHA256, node-local key; query text is never stored). Voiced curiosity
-findings, proactive-recall facts, anticipation briefs and the daily dream
-digest record a `delivered` row; curiosity.dismiss labels it `explicit`.
-In shadow mode the dream engine also records what seed ranking and mode
-selection would be with the GCCRF term zeroed, next to the legacy decision
-(same random draws, so divergence reflects the weights only).
+Shadow mode writes the dream-engine decision traces (seed rank and mode
+selection with and without the GCCRF term) next to the retrieval hits and
+surfacing events that observe mode already records. Those traces are the
+evidence for the pending decision on whether GCCRF stays a live ranking
+term or is retired to a diagnostic, and they only accumulate if nodes run
+in shadow mode. Shadow changes no behaviour and adds a few rows per dream
+cycle, so it becomes the default; a mode typo now falls back to shadow.
 
-Config memory.curiosity.evidence { mode, retentionDays, topK } with defaults
-observe / 90 / 10; a bad mode falls back to observe. Pruning is chunked with
-event-loop yields on the consolidation tick. curiosity.status reports the
-row counts. The writer re-binds after an atomic reindex swaps the database.
+Tests pin the new default; docs and the configuration reference updated.
 
-Gate (benchmarks/live-recall/evidence-gate.mts) on a VACUUM INTO copy of a
-real 
+Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
-**File**: `benchmarks/live-recall/evidence-gate.mts` (added, +499/-0)
+**File**: `docs/gateway/configuration-reference.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,499 @@
-+/**
-+ * PLAN-59 Phase 0 engineering gate: evidence telemetry against a copy of a real store.
-+ *
-+ * Never touches the live database. `--copy-from` opens the live file READ-ONLY
-+ * and takes a `VACUUM INTO` snapshot under the gate work dir; `--db` points at
-+ * an existing copy. Any `--db` path under ~/.bitterbot is refused.
-+ *
-+ * Measures and prints (JSON + a markdown table):
-+ *   1. migration wall time on the copy (v78 -> v79 on a 2026-10 store);
-+ *   2. search wall time p50/p95 with evidence mode `off` vs `observe`, the same
-+ *      real queries, `--reps` repetitions each, interleaved per query;
-+ *   3. observation neutrality: the ordered chunk-id list is identical between
-+ *      the two modes for every query and repetition (hard fail otherwise);
-+ *   4. rows written == min(topK, returned) per observe search; zero rows after
-+ *      the off-mode pass;
-+ *   5. prune removes rows older than retention and leaves newer ones;
-+ *   6. stats() matches COUNT(*).
-+ *
-+ * Queries: a jsonl file with a `query` (journal replay, extract-journal-queries.mts)
-+ * or `question` (make-questions.mts) field per line, loaded exactly as run.mts
-+ * and replay-judge.mts load theirs. The file is private; only counts, hashes,
-+ * ranks and timings leave this script.
-+ *
-+ *   node --import tsx benchmarks/live-recall/evidence-gate.mts \
-+ *     --copy-from ~/.bitterbot/memory/main.sqlite \
-+ *     --queries ~/.bitterbot/benchmarks/live-recall/journal-queries-2026-10-27.jsonl \
-+ *     --reps 3 [--max-results 10] [--out <json>] [--work-dir <dir>] [--keep]
-+ */
-+import { execSync } from "node:child_process";
-+import { createHash } from "node:crypto";
-+import { existsSync, mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
-+import { homedir } from "node:os";
-+import { dirname, join, resolve } from "node:path";
-+import { performance } from "node:perf_hooks";
-+import { DatabaseSync } from "node:sqlite";
-+import { parseArgs } from "node:util";
-+import { resolveApiKeyForProvider } from "../../src/agents/model-auth.js";
-+import type { BitterbotConfig } from "../../src/config/config.js";
-+import { loadConfig } from "../../src/config/io.js";
-+import { EvidenceTelemetry } from "../../src/memory/evidence-telemetry.js";
-+import { MemoryIndexManager } from "../../src/memory/manager.js";
-+import { runMigrations } from "../../src/memory/migrations.js";
-+import type { MemorySearchResult } from "../../src/memory/types.js";
-+
-+const DEFAULT_WORK_DIR =
-+  "/tmp/claude-1000/-mnt-d-Bitterbot-bitterbot-desktop/50d3c3a2-52de-4c6c-b556-d6fde8b9c93d/scratchpad/plan59-gate";
-+
-+const { values: args } = parseArgs({
-+  options: {
-+    "copy-from": { type: "string" },
-+    db: { type: "string" },
-+    queries: { type: "string" },
-+    reps: { type: "string", default: "3" },
-+    "max-results": { type: "string", default: "10" },
-+    "top-k": { type: "string", default: "10" },
-+    out: { type: "string" },
-+    "work-dir": { type: "string", default: DEFAULT_WORK_DIR },
-+    keep: { type: "boolean", default: false },
-+  },
-+  strict: true,
-+});
-+
-+if ((!args["copy-from"] && !args.db) || !args.queries) {
-+  throw new Error(
-+    "usage: (--copy-from <live sqlite> | --db <copy>) --queries <jsonl> [--reps 3] [--max-results 10]",
-+  );
-+}
-+const reps = Math.max(1, Number(args.reps));
-+const maxResults = Number(args["max-results"]);
-+const topK = Number(args["top-k"]);
-+const workDir = resolve(args["work-dir"]!);
-+mkdirSync(workDir, { recursive: true });
-+
-+const bitterbotHome = resolve(join(homedir(), ".bitterbot"));
-+const underHome = (p: string) =>
-+  resolve(p).startsWith(`${bitterbotHome}/`) || resolve(p) === bitterbotHome;
-+if (args.db && underHome(args.db)) {
-+  throw new Error(
-+    `refusing to operate on ${args.db}: paths under ~/.bitterbot are never written by the gate`,
-+  );
-+}
-+if (resolve(workDir).startsWith(`${bitterbotHome}/`)) {
-+  throw new Error(`refusing a work dir under ~/.bitterbot`);
-+}
-+
-+const sha = (s: string | Buffer) => createHash("sha256").update(s).digest("hex");
-+const ms = (x: number) => Number(x.toFixed(2));
-+function percentile(sorted: number[], p: number): number {
-+  if (sorted.length === 0) {
-+    return 0;
-+  }
-+  const idx = Math.min(sorted.length - 1, Math.max(0, Math.ceil((p / 100) * sorted.length) - 1));
-+  return sorted[idx]!;
-+}
-+function gitCommit(): string | null {
-+  try {
-+    const head = execSync("git rev-parse --short HEAD", { encoding: "utf-8" }).trim();
-+    const dirty = execSync("git status --porcelain --untracked-files=no", {
-+      encoding: "utf-8",
-+    }).trim();
-+    return dirty ? `${head}+dirty` : head;
-+  } catch {
-+    return null;
-+  }
-+}
-+
-+// ── 0. snapshot ──
-+let copyPath: string;
-+let snapshotMs: number | null = null;
-+if (args["copy-from"]) {
-+  const src = resolve(args["copy-from"]);
-+  copyPath = join(workDir, `store-copy-${Date.now()}.sqlite`);
-+  if (existsSync(copyPath)) {
-+    rmSync(copyPath);
-+  }
-+  const t0 = performance.now();
-+
-```
-
-**File**: `docs/docs.json` (modified, +1/-0)
-```diff
-@@ -723,6 +723,7 @@
-                   "memory/dream-engine",
-                   "memory/curiosity-and-search",
-                   "memory/curiosity-reward",
-+                  "memory/evidence-telemetry",
-                   "memory/emotional-system",
-                   "memory/biological-identity"
-                 ]
-```
-
-**File**: `docs/gateway/configuration-reference.md` (modified, +23/-0)
-```diff
-@@ -1943,6 +1943,29 @@ The same notice is not repeated within 30 minutes.
- 
- ---
- 
-+## Memory
-+
-+The memory subsystems (`memory.dream`, `memory.consolidation`, `memory.curiosity`, ...) are documented with the memory system itself; see [How the memory works](/memory/how-the-memory-works) and [Curiosity and search](/memory/curiosity-and-search). One key is listed here because it is a telemetry switch rather than a behaviour:
-+
-+### `memory.curiosity.evidence`
-+
-+```json5
-+{
-+  memory: {
-+    curiosity: {
-+      evidence: {
-+        mode: "observe", // "off" | "observe" | "shadow" (default "observe")
-+        retentionDays: 90, // prune rows older than this on the consolidation tick
-+        topK: 10, // retrieval rows kept per search
-+      },
-+    },
-+  },
-+}
-+```
-+
-+- `off`: nothing is written. `observe`: retrieval hits and surfacing events. `shadow`: also dream-engine decision traces.
-+- Observation changes no behaviour in any mode. Query text is never stored; queries and session keys appear only as node-keyed digests. See [Evidence telemetry](/memory/evidence-telemetry).
-+
- ## Browser
- 
- ```json5
+@@ -1954,7 +1954,7 @@ The memory subsystems (`memory.dream`, `memory.consolidation`, `memory.curiosity
+   memory: {
+     curiosity: {
+       evidence: {
+-        mode: "observe", // "off" | "observe" | "shadow" (default "observe")
++        mode: "shadow", // "off" | "observe" | "shadow" (default "shadow")
+         retentionDays: 90, // prune rows older than this on the consolidation tick
+         topK: 10, // retrieval rows kept per search
+       },
 ```
 
 **File**: `docs/memory/curiosity-and-search.md` (modified, +1/-1)
@@ -1995,146 +1833,118 @@ real
  
  Budget: `maxPerDay` (10) questions per UTC day, +2 when dopamine > 0.65, −2 when cortisol > 0.65 (cortisol also raises the confidence floor by 0.1). Pause state lives in `memory_meta`.
  
--Use ledger (`src/memory/curiosity-use.ts`): memory search and proactive recall call `recordCuriosityUse` for any self-learned chunk they return; `curiosityRoiByRegion` feeds step 1. RPCs: `curiosity.status`, `curiosity.list`, `curiosity.pause`, `curiosity.resume`, `curiosity.dismiss`, `curiosity.ask`, `curiosity.runNow`; the same from the terminal as [`bitterbot curiosity`](/cli/curiosity).
-+Use ledger (`src/memory/curiosity-use.ts`): memory search and proactive recall call `recordCuriosityUse` for any self-learned chunk they return; `curiosityRoiByRegion` feeds step 1. Evidence layer (`memory.curiosity.evidence`, default `observe`): every owner search writes its top-K chunk ids under a keyed query digest, every voiced finding, proactive-recall fact and dream brief writes a `delivered` row, and a dismiss labels it `explicit`; see [Evidence telemetry](/memory/evidence-telemetry). RPCs: `curiosity.status`, `curiosity.list`, `curiosity.pause`, `curiosity.resume`, `curiosity.dismiss`, `curiosity.ask`, `curiosity.runNow`; the same from the terminal as [`bitterbot curiosity`](/cli/curiosity).
+-Use ledger (`src/memory/curiosity-use.ts`): memory search and proactive recall call `recordCuriosityUse` for any self-learned chunk they return; `curiosityRoiByRegion` feeds step 1. Evidence layer (`memory.curiosity.evidence`, default `observe`): every owner search writes its top-K chunk ids under a keyed query digest, every voiced finding, proactive-recall fact and dream brief writes a `delivered` row, and a dismiss labels it `explicit`; see [Evidence telemetry](/memory/evidence-telemetry). RPCs: `curiosity.status`, `curiosity.list`, `curiosity.pause`, `curiosity.resume`, `curiosity.dismiss`, `curiosity.ask`, `curiosity.runNow`; the same from the terminal as [`bitterbot curiosity`](/cli/curiosity).
++Use ledger (`src/memory/curiosity-use.ts`): memory search and proactive recall call `recordCuriosityUse` for any self-learned chunk they return; `curiosityRoiByRegion` feeds step 1. Evidence layer (`memory.curiosity.evidence`, default `shadow`): every owner search writes its top-K chunk ids under a keyed query digest, every voiced finding, proactive-recall fact and dream brief writes a `delivered` row, and a dismiss labels it `explicit`; see [Evidence telemetry](/memory/evidence-telemetry). RPCs: `curiosity.status`, `curiosity.list`, `curiosity.pause`, `curiosity.resume`, `curiosity.dismiss`, `curiosity.ask`, `curiosity.runNow`; the same from the terminal as [`bitterbot curiosity`](/cli/curiosity).
  
  Private names come from the knowledge graph's `person`, `organization` and `project` entities. A "person" that is not a name ("here", "commands", a peer id) is filed as a `concept` at write time (`looksLikePersonName`) and migration v75 reclassified existing rows, so the filter blocks people, not ordinary words.
  
 ```
 
-**File**: `docs/memory/curiosity-reward.md` (modified, +4/-0)
+**File**: `docs/memory/evidence-telemetry.md` (modified, +4/-4)
 ```diff
-@@ -6,6 +6,10 @@ The Geodesic Crystal-Field Curiosity Reward Function (GCCRF) is Bitterbot's intr
+@@ -13,7 +13,7 @@ Code: `src/memory/evidence-telemetry.ts` (writer), migration v79 in `src/memory/
+   memory: {
+     curiosity: {
+       evidence: {
+-        mode: "observe", // "off" | "observe" | "shadow"; default "observe"
++        mode: "shadow", // "off" | "observe" | "shadow"; default "shadow"
+         retentionDays: 90, // rows older than this are pruned on the consolidation tick
+         topK: 10, // at most this many retrieval rows per search
+       },
+@@ -23,10 +23,10 @@ Code: `src/memory/evidence-telemetry.ts` (writer), migration v79 in `src/memory/
+ ```
  
- Unlike simple keyword matching or random exploration, the curiosity engine computes curiosity from five neuroscience-grounded components that together model how biological curiosity actually works. The GCCRF reward function is invoked internally by `CuriosityEngine.assessChunk()` — there is no separate scoring path.
+ - `off`: nothing is written. The tables still exist (the migration creates them) and old rows are still pruned.
+-- `observe` (default): retrieval hits and surfacing events.
+-- `shadow`: observe plus decision traces from the dream engine.
++- `observe`: retrieval hits and surfacing events.
++- `shadow` (default): observe plus decision traces from the dream engine. Shadow is the default so the divergence traces that decide whether GCCRF stays a live ranking term or becomes a diagnostic accumulate on every node; the traces are a few rows per dream cycle and change nothing the engine does.
  
-+## Where the score is read, and how that is measured
-+
-+Every place on main that reads the score is listed in [Evidence telemetry](/memory/evidence-telemetry), together with the surfaces the agent uses to put self-learned material in front of the owner. With `memory.curiosity.evidence.mode: "shadow"` the two dream-engine readers (mode selection weight and seed ranking) also record what they would have decided with the GCCRF term removed, next to what they did decide. This is observation only: the score keeps steering exactly as described on this page in every mode.
-+
- ## The Five Components
+-A mode that is not one of the three falls back to `observe` with a warning; a non-positive `retentionDays` or `topK` falls back to the default. The layer works whether or not `memory.curiosity.enabled` is on; `evidence.mode: "off"` is its own switch.
++A mode that is not one of the three falls back to `shadow` with a warning; a non-positive `retentionDays` or `topK` falls back to the default. The layer works whether or not `memory.curiosity.enabled` is on; `evidence.mode: "off"` is its own switch.
  
- ### 1. Prediction Error ("How surprising is this?")
+ ## The three tables
+ 
 ```
 
-**File**: `docs/memory/evidence-telemetry.md` (added, +185/-0)
+**File**: `src/memory/curiosity-types.ts` (modified, +5/-2)
 ```diff
-@@ -0,0 +1,185 @@
-+# Evidence Telemetry
-+
-+An observational layer under the curiosity and dream system. It records what retrieval surfaced, what the agent proactively surfaced to the owner and what came of it, and (in shadow mode) what a "GCCRF as diagnostic only" routing would have decided in the dream engine next to what the legacy routing actually decided. It changes no behaviour in any mode: retrieval order, dream seeds, dream mode choice, hormone events and target closure are exactly what they were before it existed. Later phases read these tables; this phase only writes them.
-+
-+Code: `src/memory/evidence-telemetry.ts` (writer), migration v79 in `src/memory/migrations.ts`, call sites in `src/memory/manager.ts` and `src/memory/dream-engine.ts`.
-+
-+## Modes and defaults
-+
-+`memory.curiosity.evidence` in `bitterbot.json`:
-+
-+```json5
-+{
-+  memory: {
-+    curiosity: {
-+      evidence: {
-+        mode: "observe", // "off" | "observe" | "shadow"; default "observe"
-+        retentionDays: 90, // rows older than this are pruned on the consolidation tick
-+        topK: 10, // at most this many retrieval rows per search
-+      },
-+    },
-+  },
-+}
-+```
-+
-+- `off`: nothing is written. The tables still exist (the migration creates them) and old rows are still pruned.
-+- `observe` (default): retrieval hits and surfacing events.
-+- `shadow`: observe plus decision traces from the dream engine.
-+
-+A mode that is not one of the three falls back to `observe` with a warning; a non-positive `retentionDays` or `topK` falls back to the default. The layer works whether or not `memory.curiosity.enabled` is on; `evidence.mode: "off"` is its own switch.
-+
-+## The three tables
-+
-+### `retrieval_hits`
-+
-+One row per returned result, at most `topK` per search, written in one transaction after the final ordering (fusion, boosts, superseded demotion) is fixed. Guest searches (`guestSearch`) are never recorded.
-+
-+| column               | meaning                                                                                             |
-+| -------------------- | --------------------------------------------------------------------------------------------------- |
-+| `query_id`           | random id shared by the rows of one search                                                          |
-+| `query_digest`       | HMAC-SHA256 (first 32 hex chars) of the trimmed query under the node-local key                      |
-+| `session_digest`     | same digest of the session key, or NULL when the call had none                                      |
-+| `caller`             | short call-site tag (`memory_search`, `deep_recall`, `rlm_context`) or NULL                         |
-+| `query_len`          | length of the query in characters                                                                   |
-+| `chunk_id`, `rank`   | the chunk and its 1-based position in the returned list                                             |
-+| `fused_score`        | the score as returned                                                                               |
-+| `channel_ranks_json` | per-channel 1-based ranks (`vector`, `keyword`, `graph`) where the channels are in scope            |
-+| `injected`, `cited`  | NULL in Phase 0 (no cheap signal exists yet; later phases fill them)                                |
-+| `embedding_model`    | the query embedding model                                                                           |
-+| `scoring_version`    | `gccrf_state.scoring_version` at write time (`gccrf-v2`), so rows can be split by scorer generation |
-+| `created_at`         | epoch ms                                                                                            |
-+
-+Indexes: `created_at`; `(chunk_id, created_at)`; `query_id`.
-+
-+### `surfacing_events`
-+
-+What the agent put in front of the owner, and separately what the owner did about it.
-+
-+| column             | meaning                                                                                                   |
-+| ------------------ | --------------------------------------------------------------------------------------------------------- |
-+| `event_id`         | idempotency key (`INSERT OR IGNORE`), for example `cf:<finding id>:<hour bucket>`                         |
-+| `kind`             | `curiosity_finding`, `proactive_recall`, `dream_brief`, `dream_digest`, `curiosity_target`                |
-+| `ref_id`           | the surfaced item (finding id, chunk id, brief id, notification key)                                      |
-+| `arm`              | `legacy` in Phase 0; later phases add arms                                                                |
-+| `opportunity_id`   | the curiosity target a finding answered, so a dismiss by target id finds the delivery                     |
-+| `session_digest`   | digest of the conversation the item was surfaced in, when known                                           |
-+| `stage`            | `eligible`, `assigned`, `de
+@@ -107,7 +107,10 @@ export type CuriosityWeights = {
+ export type CuriosityEvidenceMode = "off" | "observe" | "shadow";
+ 
+ export type CuriosityEvidenceConfig = {
+-  /** Default: "observe". */
++  /**
++   * Default: "shadow" (every tier of evidence, so the GCCRF retirement decision
++   * in PLAN-59 section 7 can be evaluated on any node without a config change).
++   */
+   mode?: CuriosityEvidenceMode;
+   /** Rows older than this are pruned on the consolidation tick. Default: 90. */
+   retentionDays?: number;
+@@ -155,7 +158,7 @@ export type CuriosityConfig = {
+    * what the agent proactively surfaced to the owner and what came of it,
+    * and (shadow mode only) what a GCCRF-as-diagnostic routing would have
+    * decided next to what the legacy routing did. Observation changes no
+-   * behaviour in any mode. Default mode `observe`.
++   * behaviour in any mode. Default mode `shadow`.
+    */
+   evidence?: CuriosityEvidenceConfig;
+   /** GCCRF reward function configuration. When provided, GCCRF replaces heuristic scoring. */
 ```
 
-**File**: `src/agents/rlm/context-builder.ts` (modified, +1/-0)
+**File**: `src/memory/evidence-telemetry.test.ts` (modified, +3/-2)
 ```diff
-@@ -630,6 +630,7 @@ export async function buildDeepRecallContext(params: {
-         const results = await params.memoryManager.search(q, {
-           maxResults: 20,
-           tagSuperseded: params.tagSuperseded === true,
-+          caller: "rlm_context",
-         });
-         for (const r of results) {
-           const key = r.snippet.slice(0, 100);
+@@ -61,7 +61,8 @@ afterEach(async () => {
+ });
+ 
+ describe("resolveEvidenceConfig", () => {
+-  it("defaults to observe / 90 days / topK 10", () => {
++  it("defaults to shadow / 90 days / topK 10", () => {
++    expect(EVIDENCE_DEFAULTS).toEqual({ mode: "shadow", retentionDays: 90, topK: 10 });
+     expect(resolveEvidenceConfig(undefined, quiet)).toEqual(EVIDENCE_DEFAULTS);
+     expect(resolveEvidenceConfig({}, quiet)).toEqual(EVIDENCE_DEFAULTS);
+   });
+@@ -80,7 +81,7 @@ describe("resolveEvidenceConfig", () => {
+   it("falls back to the default on a mode typo, retention 0 and garbage numbers", () => {
+     const warned: string[] = [];
+     const log = { debug: () => {}, warn: (m: string) => warned.push(m) };
+-    expect(resolveEvidenceConfig({ mode: "shadwo" }, log).mode).toBe("observe");
++    expect(resolveEvidenceConfig({ mode: "shadwo" }, log).mode).toBe("shadow");
+     expect(warned).toHaveLength(1);
+     expect(resolveEvidenceConfig({ retentionDays: 0 }, quiet).retentionDays).toBe(90);
+     expect(resolveEvidenceConfig({ retentionDays: -3 }, quiet).retentionDays).toBe(90);
 ```
 
-**File**: `src/agents/tools/deep-recall-tool.ts` (modified, +3/-0)
+**File**: `src/memory/evidence-telemetry.ts` (modified, +2/-3)
 ```diff
-@@ -501,6 +501,7 @@ export function createDeepRecallTool(options: {
-             maxResults: 5,
-             // PLAN-55: superseded tags carry ledger values; owner only.
-             tagSuperseded: options.senderIsOwner === true,
-+            caller: "deep_recall",
-           });
-           // Only shortcut if we have 3+ genuinely high-confidence results.
-           // manager.search may ignore minScore (e.g. RRF strategy), so filter here.
-@@ -550,6 +551,7 @@ export function createDeepRecallTool(options: {
-           const results = await mgr.search(q, {
-             maxResults: opts?.maxResults ?? 10,
-             tagSuperseded: options.senderIsOwner === true,
-+            caller: "deep_recall",
-           });
-           return results.map((r) => ({
-             snippet: r.snippet,
-@@ -655,6 +657,7 @@ export function createDeepRecallTool(options: {
-           const quickResults = await memManager.search(query, {
-             maxResults: 10,
-             tagSuperseded: options.senderIsOwner === true,
-+            caller: "deep_recall",
-           });
-           if (quickResults.length >= 3 && memManager.db) {
-             const db = memManager.db;
+@@ -44,7 +44,7 @@ export type ResolvedEvidenceConfig = {
+ };
+ 
+ export const EVIDENCE_DEFAULTS: ResolvedEvidenceConfig = {
+-  mode: "observe",
++  mode: "shadow",
+   retentionDays: 90,
+   topK: 10,
+ };
+@@ -57,8 +57,7 @@ const DAY_MS = 24 * 60 * 60 * 1000;
+ /**
+  * Coerce the raw `memory.curiosity.evidence` value. The config schema keeps
+  * `memory` passthrough, so anything can arrive here: a typo in `mode` falls
+- * back to the default (observe) rather than silently disabling or enabling the
+- * shadow traces; non-positive or non-numeric retention/topK fall back too.
++ * back to the default (shadow) rather than silently disabling the traces; non-positive or non-numeric retention/topK fall back too.
+  */
+ export function resolveEvidenceConfig(
+   raw: unknown,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #328** (2026-10-29): feat(memory): default evidence telemetry to shadow mode (@VGIL77)
 - **PR #322** (2026-10-29): feat(memory): evidence telemetry and shadow decision traces (PLAN-59 Phase 0) (@VGIL77)
 - **PR #321** (2026-10-28): fix(memory): GCCRF and curiosity-target defects (@VGIL77)
 - **PR #320** (2026-10-28): fix(p2p): fail-closed skill ingest and publish gates (@VGIL77)
 - **PR #318** (2026-10-28): feat(benchmarks): LongMemEval runner on the official protocol (@VGIL77)
 - **PR #317** (2026-10-27): bench(live-recall): replay the agent's real memory_search queries under each boost scale (@VGIL77)
-- **PR #316** (2026-10-27): fix(gateway): restarted gateway outlives its parent's lock instead of dying at the 5 s timeout (@VGIL77)
 
 ---
 
@@ -2154,48 +1964,28 @@ real
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. memory): evidence telemetry and shadow decision traces (PLAN-59 Phase 0) (#322)
+## X. memory): default evidence telemetry to shadow mode (#328)
 
 **RULE**:
-When implementing operations in `benchmarks/live-recall/evidence-gate.mts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/gateway/configuration-reference.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ecc86c07`: memory): evidence telemetry and shadow decision traces (PLAN-59 Phase 0) (#322). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `04bc81f1`: memory): default evidence telemetry to shadow mode (#328). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `benchmarks/live-recall/evidence-gate.mts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/gateway/configuration-reference.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-/**
- * PLAN-59 Phase 0 engineering gate: evidence telemetry against a copy of a real store.
- *
- * Never touches the live database. `--copy-from` opens the live file READ-ONLY
- * and takes a `VACUUM INTO` snapshot under the gate work dir; `--db` points at
- * an existing copy. Any `--db` path under ~/.bitterbot is refused.
- *
- * Measures and prints (JSON + a markdown table):
- *   1. migration wall time on the copy (v78 -> v79 on a 2026-10 store);
- *   2. search wall time p50/p95 with evidence mode `off` vs `observe`, the same
- *      real queries, `--reps` repetitions each, interleaved per query;
- *   3. observation neutrality: the ordered chunk-id list is identical between
- *      the two modes for every query and repetition (hard fail otherwise);
- *   4. rows written == min(topK, returned) per observe search; zero rows after
- *      the off-mode pass;
- *   5. prune removes rows older than retention and leaves newer ones;
- *   6. stats() matches COUNT(*).
- *
- * Queries: a jsonl file with a `query` (journal replay, extract-journal-queries.mts)
- * or `question` (make-questions.mts) field per line, loaded exactly as run.mts
- * and replay-judge.mts load theirs. The file is private; only
+        mode: "shadow", // "off" | "observe" | "shadow" (default "shadow")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        mode: "observe", // "off" | "observe" | "shadow" (default "observe")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ecc86c07` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `04bc81f1` are properly handled with clean fallback behavior.

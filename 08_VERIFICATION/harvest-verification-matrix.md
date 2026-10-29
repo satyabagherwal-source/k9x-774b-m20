@@ -6064,3 +6064,7 @@
 | `CYCLE-20261029-VAAR` | `2026-10-29T22:19:06.339Z` | `CherryHQ/cherry-studio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5540` | Yes (`7dfd98f0...`) |
 | `CYCLE-20261029-VLW7` | `2026-10-29T22:19:21.367Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5541` | Yes (`dd1117ea...`) |
 | `CYCLE-20261029-VNJL` | `2026-10-29T22:19:23.505Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5542` | Yes (`2be09102...`) |
+| `CYCLE-20261029-4BUT` | `2026-10-29T22:26:08.261Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5543` | Yes (`e95c12fa...`) |
+| `CYCLE-20261029-4FBI` | `2026-10-29T22:26:12.750Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5544` | Yes (`d37fee1f...`) |
+| `CYCLE-20261029-4HDP` | `2026-10-29T22:26:15.421Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5545` | Yes (`96be4910...`) |
+| `CYCLE-20261029-72X8` | `2026-10-29T22:28:16.652Z` | `buresdv/Cork` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5546` | Yes (`13f985b4...`) |

@@ -6073,3 +6073,7 @@ Every entry in this ledger must capture:
 | `learn-github-cherryhq-cherry-studio` | `https://github.com/CherryHQ/cherry-studio` | `d6a221e6` | Multi-dimensional audit evidence | 2026-10-29T22:19:06.343Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `6880db1c` | Multi-dimensional audit evidence | 2026-10-29T22:19:21.371Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `820c7511` | Multi-dimensional audit evidence | 2026-10-29T22:19:23.509Z |
+| `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `becd2816` | Multi-dimensional audit evidence | 2026-10-29T22:26:08.264Z |
+| `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `42946e05` | Multi-dimensional audit evidence | 2026-10-29T22:26:12.753Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `04bc81f1` | Multi-dimensional audit evidence | 2026-10-29T22:26:15.424Z |
+| `learn-github-buresdv-cork` | `https://github.com/buresdv/Cork` | `01177307` | Multi-dimensional audit evidence | 2026-10-29T22:28:16.656Z |

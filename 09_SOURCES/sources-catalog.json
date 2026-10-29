@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "ecc86c07",
+    "sourceVersion": "04bc81f1",
     "license": "MIT",
-    "contentHash": "e0492d8fb856c21ed067a7a99861ebf53e4d6826ede3a1afe5fb9195d4019dd2",
-    "lastHarvestedAt": "2026-10-29T11:44:05.694Z",
+    "contentHash": "96be491081376668b181a5f9ff8ddf05c4c90dad203f072cfce29d82471f00c3",
+    "lastHarvestedAt": "2026-10-29T22:26:15.424Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -3973,10 +3973,10 @@
     "repository": "HelixDB/helix-db",
     "platform": "github",
     "sourceUrl": "https://github.com/HelixDB/helix-db",
-    "sourceVersion": "2052f24e",
+    "sourceVersion": "42946e05",
     "license": "Apache-2.0",
-    "contentHash": "0620b175b72f8795aa3632f980b2808df2e2b0fe54da651a3f3c42f866f5fba5",
-    "lastHarvestedAt": "2026-10-26T18:05:34.223Z",
+    "contentHash": "d37fee1faf04a78fd51353c2d8749cb5c99d38ac0155354e6a987c4948b36317",
+    "lastHarvestedAt": "2026-10-29T22:26:12.753Z",
     "learningId": "learn-github-helixdb-helix-db"
   },
   "microsoft-fluentui": {
@@ -4613,10 +4613,10 @@
     "repository": "hashicorp/terraform",
     "platform": "github",
     "sourceUrl": "https://github.com/hashicorp/terraform",
-    "sourceVersion": "cbed3573",
+    "sourceVersion": "becd2816",
     "license": "NOASSERTION",
-    "contentHash": "79d8a189e8ac6672eb49cdce7355f8fdb3c42e53007c2d9f4cef9d63aae7bf19",
-    "lastHarvestedAt": "2026-10-28T14:29:14.616Z",
+    "contentHash": "e95c12fa64aab6b555cb40a3bf4266574eff017f7495a43fefa52dbbeff21722",
+    "lastHarvestedAt": "2026-10-29T22:26:08.264Z",
     "learningId": "learn-github-hashicorp-terraform"
   },
   "tako8ki-gobang": {
@@ -8253,10 +8253,10 @@
     "repository": "buresdv/Cork",
     "platform": "github",
     "sourceUrl": "https://github.com/buresdv/Cork",
-    "sourceVersion": "523abb0e",
+    "sourceVersion": "01177307",
     "license": "NOASSERTION",
-    "contentHash": "87048aa7a243e6046f08d0dc8a015c3ba8c10e3e9424051ef1172d26b17ae73f",
-    "lastHarvestedAt": "2026-10-25T20:04:47.693Z",
+    "contentHash": "13f985b45dd5939437606aa330efd6eb03fc01fe887006ece96e69af68a2e59a",
+    "lastHarvestedAt": "2026-10-29T22:28:16.656Z",
     "learningId": "learn-github-buresdv-cork"
   },
   "productdevbook-port-killer": {
