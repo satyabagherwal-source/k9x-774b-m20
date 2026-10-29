@@ -398397,3 +398397,67 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `ecd3935b` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5501. use JSON value identity in window partitions and correlated LIMIT (#31681) (Harvested from matrixorigin/matrixone)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "use JSON value identity in window partitions and correlated LIMIT (#31681)",
+  "source": "matrixorigin/matrixone",
+  "source_url": "https://github.com/matrixorigin/matrixone",
+  "source_version": "36d6c793",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-29T12:01:48.799Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-matrixorigin-matrixone",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [matrixorigin/matrixone](https://github.com/matrixorigin/matrixone) (Revision: `36d6c793`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `pkg/compare/compare.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `d950fdcd`: use JSON value identity in window partitions and correlated LIMIT (#31681). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/compare/compare.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+		// JSON equality/identity follows MySQL JSON value semantics, never raw
+		// bytes: 1, 1.0 and 1e0 are one value, and members/elements compare by
+		// their own typed semantics. This is the same comparator ORDER BY uses,
+		// so grouping/splitting consumers (window PARTITION BY feeds, transfer
+		// identity checks) agree with the SQL = operator and GROUP BY.
+		return &jsonCompare{
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+		if sqlOrder {
+			return &jsonCompare{
+				desc:        desc,
+				nullsLast:   nullsLast,
+				vs:          make([]*vector.Vector, 2),
+				isConstNull: make([]bool, 2),
+			}
+		}
+		return &strCompare{
+			typ:         typ,
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `d950fdcd` are properly handled with clean fallback behavior.

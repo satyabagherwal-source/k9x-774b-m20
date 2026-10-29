@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-29T11:52:53.220Z",
-    "lastVerified": "2026-10-29T11:52:53.220Z",
+    "lastChecked": "2026-10-29T12:01:51.653Z",
+    "lastVerified": "2026-10-29T12:01:51.653Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -321,9 +321,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-29T10:59:08.055Z",
+    "lastChecked": "2026-10-29T11:56:29.288Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-29T10:59:08.055Z"
+    "lastVerified": "2026-10-29T11:56:29.288Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1571,9 +1571,9 @@
   "sigstore-cosign": {
     "name": "cosign",
     "officialUrl": "https://github.com/sigstore/cosign",
-    "lastChecked": "2026-10-28T22:39:35.538Z",
+    "lastChecked": "2026-10-29T11:56:24.454Z",
     "revisionIdentifier": "ef56e699",
-    "lastVerified": "2026-10-28T22:39:35.538Z"
+    "lastVerified": "2026-10-29T11:56:24.454Z"
   },
   "alibaba-zvec": {
     "name": "zvec",
@@ -1596,9 +1596,9 @@
   "michael-a-kuykendall-shimmy": {
     "name": "shimmy",
     "officialUrl": "https://github.com/Michael-A-Kuykendall/shimmy",
-    "lastChecked": "2026-10-28T05:24:25.651Z",
+    "lastChecked": "2026-10-29T11:56:14.282Z",
     "revisionIdentifier": "d64d0c8e",
-    "lastVerified": "2026-10-28T05:24:25.651Z"
+    "lastVerified": "2026-10-29T11:56:14.282Z"
   },
   "hf-supersoniclabs-julia-1": {
     "name": "SupersonicLabs/Julia-1",
@@ -3092,14 +3092,14 @@
     "officialUrl": "https://github.com/matrixorigin/matrixone",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T11:46:30.562Z",
-    "lastVerified": "2026-10-28T11:46:30.562Z",
+    "lastChecked": "2026-10-29T11:56:36.050Z",
+    "lastVerified": "2026-10-29T11:56:36.050Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-matrixorigin-matrixone",
-    "contentHash": "57463977226daf144b78aaf1a932ca7ebcd093627204306630d26ac54037674d",
+    "contentHash": "f44d9d40eb560c0f169cbef4741a282dfc8c8bd502e7d641acddc3217a30c6c2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 23,
+    "recentFixesCount": 21,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3449,9 +3449,9 @@
   "go-chassis-go-chassis": {
     "name": "go-chassis",
     "officialUrl": "https://github.com/go-chassis/go-chassis",
-    "lastChecked": "2026-10-28T12:46:34.229Z",
+    "lastChecked": "2026-10-29T11:56:21.878Z",
     "revisionIdentifier": "6bcf5150",
-    "lastVerified": "2026-10-28T12:46:34.229Z"
+    "lastVerified": "2026-10-29T11:56:21.878Z"
   },
   "dingodb-dingo": {
     "name": "dingo",
@@ -8141,5 +8141,19 @@
     "lastChecked": "2026-10-29T11:47:31.705Z",
     "revisionIdentifier": "39c6fd17",
     "lastVerified": "2026-10-29T11:47:31.705Z"
+  },
+  "seo-skills-seo-audit-skill": {
+    "name": "seo-audit-skill",
+    "officialUrl": "https://github.com/seo-skills/seo-audit-skill",
+    "lastChecked": "2026-10-29T11:56:16.781Z",
+    "revisionIdentifier": "fac4b75f20",
+    "lastVerified": "2026-10-29T11:56:16.781Z"
+  },
+  "vanniktech-gradle-maven-publish-plugin": {
+    "name": "gradle-maven-publish-plugin",
+    "officialUrl": "https://github.com/vanniktech/gradle-maven-publish-plugin",
+    "lastChecked": "2026-10-29T11:56:19.366Z",
+    "revisionIdentifier": "6ba9aead",
+    "lastVerified": "2026-10-29T11:56:19.366Z"
   }
 }

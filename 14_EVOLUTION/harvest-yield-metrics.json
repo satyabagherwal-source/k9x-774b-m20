@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-29T11:52:50.686Z",
-  "total_cycles_completed": 6008,
-  "total_learnings_persisted": 6008,
-  "total_rules_promoted": 5465,
+  "last_updated": "2026-10-29T12:01:49.117Z",
+  "total_cycles_completed": 6009,
+  "total_learnings_persisted": 6009,
+  "total_rules_promoted": 5466,
   "history": [
-    {
-      "timestamp": "2026-10-28T15:58:18.457Z",
-      "repository": "Xudong-Huang/may",
-      "learningId": "learn-github-xudong-huang-may",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T16:05:09.715Z",
       "repository": "NaiveAI/Naive-N0.5-Flash",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-29T11:52:50.686Z",
       "repository": "zama-ai/tfhe-rs",
       "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T12:01:49.117Z",
+      "repository": "matrixorigin/matrixone",
+      "learningId": "learn-github-matrixorigin-matrixone",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

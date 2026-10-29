@@ -6040,3 +6040,4 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `244d8dc8` | Multi-dimensional audit evidence | 2026-10-29T11:47:48.372Z |
 | `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `1c0e6c8d` | Multi-dimensional audit evidence | 2026-10-29T11:52:34.694Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `ecd3935b` | Multi-dimensional audit evidence | 2026-10-29T11:52:50.681Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `36d6c793` | Multi-dimensional audit evidence | 2026-10-29T12:01:49.113Z |

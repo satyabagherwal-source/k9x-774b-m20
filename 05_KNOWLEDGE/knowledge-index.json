@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T11:52:50.589Z",
+  "last_updated": "2026-10-29T12:01:49.030Z",
   "total_verified_learnings": 1163,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -36407,8 +36407,8 @@
       "slug": "matrixorigin-matrixone",
       "platform": "github",
       "source_url": "https://github.com/matrixorigin/matrixone",
-      "source_version": "6c7813b5",
-      "content_hash": "57463977226daf144b78aaf1a932ca7ebcd093627204306630d26ac54037674d",
+      "source_version": "36d6c793",
+      "content_hash": "f44d9d40eb560c0f169cbef4741a282dfc8c8bd502e7d641acddc3217a30c6c2",
       "dossier_path": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "promoted_rules": [
@@ -36436,6 +36436,11 @@
           "number": 5270,
           "title": "stabilize DDL atomicity tests during logtail reconnect (#31554)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5501,
+          "title": "use JSON value identity in window partitions and correlated LIMIT (#31681)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36443,7 +36448,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T11:46:31.171Z",
+      "verified_at": "2026-10-29T12:01:49.003Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -148243,6 +148248,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T11:52:50.563Z"
+    },
+    "rule-5501": {
+      "learning_id": "rule-5501",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5501,
+      "title": "use JSON value identity in window partitions and correlated LIMIT (#31681)",
+      "source_url": "https://github.com/matrixorigin/matrixone",
+      "source_version": "36d6c793",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T12:01:49.003Z"
     }
   },
   "aliases": {

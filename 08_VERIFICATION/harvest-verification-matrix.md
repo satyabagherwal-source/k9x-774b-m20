@@ -6031,3 +6031,4 @@
 | `CYCLE-20261029-BFGX` | `2026-10-29T11:47:48.369Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5498` | Yes (`85177014...`) |
 | `CYCLE-20261029-HKEA` | `2026-10-29T11:52:34.690Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5499` | Yes (`10e5cf30...`) |
 | `CYCLE-20261029-HWQD` | `2026-10-29T11:52:50.677Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5500` | Yes (`369b3482...`) |
+| `CYCLE-20261029-TG6T` | `2026-10-29T12:01:49.109Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5501` | Yes (`f44d9d40...`) |
