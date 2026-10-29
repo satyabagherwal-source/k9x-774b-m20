@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-29T12:16:50.151Z",
-  "total_cycles_completed": 6015,
-  "total_learnings_persisted": 6015,
-  "total_rules_promoted": 5473,
+  "last_updated": "2026-10-29T12:19:52.901Z",
+  "total_cycles_completed": 6018,
+  "total_learnings_persisted": 6018,
+  "total_rules_promoted": 5476,
   "history": [
-    {
-      "timestamp": "2026-10-28T16:19:20.615Z",
-      "repository": "u-root/u-root",
-      "learningId": "learn-github-u-root-u-root",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T16:19:25.881Z",
-      "repository": "callstack/agent-device",
-      "learningId": "learn-github-callstack-agent-device",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T16:19:27.486Z",
-      "repository": "sentence-transformers/all-mpnet-base-v2",
-      "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T16:27:14.897Z",
       "repository": "BAAI/bge-reranker-v2-m3",
@@ -1403,6 +1382,27 @@
       "repository": "unhappychoice/gitlogue",
       "learningId": "learn-github-unhappychoice-gitlogue",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T12:19:43.268Z",
+      "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+      "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T12:19:47.465Z",
+      "repository": "trufflesecurity/trufflehog",
+      "learningId": "learn-github-trufflesecurity-trufflehog",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T12:19:52.901Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

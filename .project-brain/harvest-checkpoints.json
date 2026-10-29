@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-29T12:16:50.155Z",
+  "last_updated": "2026-10-29T12:19:52.904Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "851770144d79fcc403218d3828fd90c1c30c612487dd379d320c97f832ac9ff0",
-      "verified_at": "2026-10-29T11:47:48.380Z",
+      "content_hash": "52b116edca0f183dc8f86b91cf4d86dd0190851e9a01ec65ec6827c130aa712b",
+      "verified_at": "2026-10-29T12:19:52.903Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T11:47:48.380Z"
+      "last_updated": "2026-10-29T12:19:52.903Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -5586,14 +5586,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "7ed54f3a94400d5035ba4632980f89b1f691c8becbd27eb779ec004f511565a3",
-      "verified_at": "2026-10-28T05:42:21.264Z",
+      "content_hash": "4fbdccf50b57f74b03b2f267bb4491d815349462d5aef27481a24bf70afab409",
+      "verified_at": "2026-10-29T12:19:47.468Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T05:42:21.264Z"
+      "last_updated": "2026-10-29T12:19:47.468Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",
@@ -17234,6 +17234,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-29T11:29:28.131Z"
+    },
+    "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF": {
+      "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
+      "content_hash": "7eee584774bb7ea48f050275e3d282ce7ec65ca9ec48bf238fc979bec4bb25ae",
+      "verified_at": "2026-10-29T12:19:43.271Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-29T12:19:43.271Z"
     }
   },
   "repos": {

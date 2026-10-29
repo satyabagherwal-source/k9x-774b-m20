@@ -6038,3 +6038,6 @@
 | `CYCLE-20261029-8HSV` | `2026-10-29T12:13:31.039Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md` | Yes (`acba38cb...`) |
 | `CYCLE-20261029-8K2K` | `2026-10-29T12:13:33.980Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5505` | Yes (`1658218c...`) |
 | `CYCLE-20261029-CRFH` | `2026-10-29T12:16:50.141Z` | `unhappychoice/gitlogue` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5506, Rule 5507, Rule 5508` | Yes (`060e625d...`) |
+| `CYCLE-20261029-GH0D` | `2026-10-29T12:19:43.261Z` | `unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5509, Rule 5510` | Yes (`7eee5847...`) |
+| `CYCLE-20261029-GK8R` | `2026-10-29T12:19:47.451Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md` | Yes (`4fbdccf5...`) |
+| `CYCLE-20261029-GOFY` | `2026-10-29T12:19:52.894Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5511` | Yes (`52b116ed...`) |

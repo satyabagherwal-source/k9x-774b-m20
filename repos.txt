@@ -4676,3 +4676,7 @@ https://github.com/fabio-rovai/open-ontologies
 # --- Automatically Discovered by AI Scout Engine [2026-10-29T11:28:52.326Z] ---
 # [HUGGINGFACE-AI-MODELS] LiquidAI/LFM3-VL-2B (3490 score) - Verified Hugging Face Model: LiquidAI/LFM3-VL-2B (149 likes, 4193 downloads)
 https://huggingface.co/LiquidAI/LFM3-VL-2B
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-29T12:19:27.372Z] ---
+# [HUGGINGFACE-AI-MODELS] unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF (3450 score) - Verified Hugging Face Model: unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF (145 like
+https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF

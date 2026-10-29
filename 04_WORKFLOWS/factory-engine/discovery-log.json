@@ -19714,5 +19714,17 @@
     "downloads": 4193,
     "qualityScore": 3490,
     "discoveredAt": "2026-10-29T11:28:52.325Z"
+  },
+  {
+    "name": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+    "fullName": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+    "url": "https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF (145 likes, 90640 downloads)",
+    "likes": 145,
+    "downloads": 90640,
+    "qualityScore": 3450,
+    "discoveredAt": "2026-10-29T12:19:27.371Z"
   }
 ]

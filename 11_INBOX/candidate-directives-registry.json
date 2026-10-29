@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-29T12:13:31.048Z",
+  "last_updated": "2026-10-29T12:19:47.464Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3269,6 +3269,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **VERIFICATION METHOD** automated verification protocol",
       "learning_id": "learn-github-projectdiscovery-nuclei"
+    },
+    {
+      "id": "CD-GK94",
+      "directive_title": "Clean up Docker source logging for per-source debug (#5494)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "trufflesecurity/trufflehog",
+      "source_commit": "87adc84b",
+      "date_staged": "2026-10-29",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-trufflesecurity-trufflehog"
     }
   ]
 }

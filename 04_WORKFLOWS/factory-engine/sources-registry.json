@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-29T12:16:52.702Z",
-    "lastVerified": "2026-10-29T12:16:52.702Z",
+    "lastChecked": "2026-10-29T12:19:55.428Z",
+    "lastVerified": "2026-10-29T12:19:55.428Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -224,14 +224,14 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T11:47:46.359Z",
-    "lastVerified": "2026-10-29T11:47:46.359Z",
+    "lastChecked": "2026-10-29T12:19:51.984Z",
+    "lastVerified": "2026-10-29T12:19:51.984Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "851770144d79fcc403218d3828fd90c1c30c612487dd379d320c97f832ac9ff0",
+    "contentHash": "52b116edca0f183dc8f86b91cf4d86dd0190851e9a01ec65ec6827c130aa712b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1826,22 +1826,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "trufflesecurity-trufflehog": {
-    "name": "trufflehog",
+    "name": "trufflesecurity/trufflehog",
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T22:59:03.538Z",
-    "lastVerified": "2026-10-28T22:59:03.538Z",
+    "lastChecked": "2026-10-29T12:19:46.955Z",
+    "lastVerified": "2026-10-29T12:19:46.955Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "7ed54f3a94400d5035ba4632980f89b1f691c8becbd27eb779ec004f511565a3",
-    "promotedRulesCount": 1,
+    "contentHash": "4fbdccf50b57f74b03b2f267bb4491d815349462d5aef27481a24bf70afab409",
+    "promotedRulesCount": 0,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "0301dc36"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lancedb-lancedb": {
     "name": "lancedb/lancedb",
@@ -3285,9 +3284,9 @@
   "seekstorm-seekstorm": {
     "name": "SeekStorm",
     "officialUrl": "https://github.com/SeekStorm/SeekStorm",
-    "lastChecked": "2026-10-28T12:08:54.438Z",
+    "lastChecked": "2026-10-29T12:19:45.323Z",
     "revisionIdentifier": "ab61bc73",
-    "lastVerified": "2026-10-28T12:08:54.438Z"
+    "lastVerified": "2026-10-29T12:19:45.323Z"
   },
   "pemistahl-grex": {
     "name": "grex",
@@ -3623,9 +3622,9 @@
   "apptainer-singularity": {
     "name": "singularity",
     "officialUrl": "https://github.com/apptainer/singularity",
-    "lastChecked": "2026-10-28T13:09:58.367Z",
+    "lastChecked": "2026-10-29T12:19:40.357Z",
     "revisionIdentifier": "9dceb424",
-    "lastVerified": "2026-10-28T13:09:58.367Z"
+    "lastVerified": "2026-10-29T12:19:40.357Z"
   },
   "risingwavelabs-risingwave": {
     "name": "risingwavelabs/risingwave",
@@ -8192,5 +8191,36 @@
     "lastChecked": "2026-10-29T12:13:20.476Z",
     "revisionIdentifier": "af388bd3",
     "lastVerified": "2026-10-29T12:13:20.476Z"
+  },
+  "anonymousaak-seo-skills": {
+    "name": "seo-skills",
+    "officialUrl": "https://github.com/anonymousAAK/seo-skills",
+    "lastChecked": "2026-10-29T12:19:35.283Z",
+    "revisionIdentifier": "8673ec753e",
+    "lastVerified": "2026-10-29T12:19:35.283Z"
+  },
+  "igorescodro-alkaa": {
+    "name": "alkaa",
+    "officialUrl": "https://github.com/igorescodro/alkaa",
+    "lastChecked": "2026-10-29T12:19:37.840Z",
+    "revisionIdentifier": "8524e062",
+    "lastVerified": "2026-10-29T12:19:37.840Z"
+  },
+  "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf": {
+    "name": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+    "officialUrl": "https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-29T12:19:32.858Z",
+    "lastVerified": "2026-10-29T12:19:32.858Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
+    "contentHash": "7eee584774bb7ea48f050275e3d282ce7ec65ca9ec48bf238fc979bec4bb25ae",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

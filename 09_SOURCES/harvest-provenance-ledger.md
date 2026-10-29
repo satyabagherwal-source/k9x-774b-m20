@@ -6047,3 +6047,6 @@ Every entry in this ledger must capture:
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `3ee4f0f4` | Multi-dimensional audit evidence | 2026-10-29T12:13:31.042Z |
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `9d8b9f06` | Multi-dimensional audit evidence | 2026-10-29T12:13:33.983Z |
 | `learn-github-unhappychoice-gitlogue` | `https://github.com/unhappychoice/gitlogue` | `640973f9` | Multi-dimensional audit evidence | 2026-10-29T12:16:50.145Z |
+| `learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf` | `https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-29T12:19:43.264Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `87adc84b` | Multi-dimensional audit evidence | 2026-10-29T12:19:47.454Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `6ea1cb4c` | Multi-dimensional audit evidence | 2026-10-29T12:19:52.897Z |

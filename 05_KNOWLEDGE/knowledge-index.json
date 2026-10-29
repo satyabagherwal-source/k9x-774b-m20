@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T12:16:50.064Z",
-  "total_verified_learnings": 1163,
+  "last_updated": "2026-10-29T12:19:52.847Z",
+  "total_verified_learnings": 1164,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -8532,8 +8532,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "244d8dc8",
-      "content_hash": "851770144d79fcc403218d3828fd90c1c30c612487dd379d320c97f832ac9ff0",
+      "source_version": "6ea1cb4c",
+      "content_hash": "52b116edca0f183dc8f86b91cf4d86dd0190851e9a01ec65ec6827c130aa712b",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -8806,6 +8806,11 @@
           "number": 5498,
           "title": "add Codacy badge",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5511,
+          "title": "ci: pin third-party actions to SHAs, fix bench shell injection, drop unused MCP",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8813,7 +8818,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T11:47:48.251Z",
+      "verified_at": "2026-10-29T12:19:52.834Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53445,8 +53450,8 @@
       "slug": "trufflesecurity-trufflehog",
       "platform": "github",
       "source_url": "https://github.com/trufflesecurity/trufflehog",
-      "source_version": "0301dc36",
-      "content_hash": "7ed54f3a94400d5035ba4632980f89b1f691c8becbd27eb779ec004f511565a3",
+      "source_version": "87adc84b",
+      "content_hash": "4fbdccf50b57f74b03b2f267bb4491d815349462d5aef27481a24bf70afab409",
       "dossier_path": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "promoted_rules": [
@@ -53521,7 +53526,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T05:42:21.159Z",
+      "verified_at": "2026-10-29T12:19:47.365Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -148395,6 +148400,86 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T12:16:50.045Z"
+    },
+    "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf": {
+      "learning_id": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+      "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+      "slug": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+      "source_version": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf",
+      "content_hash": "7eee584774bb7ea48f050275e3d282ce7ec65ca9ec48bf238fc979bec4bb25ae",
+      "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 5509,
+          "title": "Quantization-Aware Tool-Call Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5510,
+          "title": "Edge-Device Memory Budget Enforcement",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-29T12:19:43.201Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-5509": {
+      "learning_id": "rule-5509",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5509,
+      "title": "Quantization-Aware Tool-Call Integrity",
+      "source_url": "https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+      "source_version": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T12:19:43.201Z"
+    },
+    "rule-5510": {
+      "learning_id": "rule-5510",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5510,
+      "title": "Edge-Device Memory Budget Enforcement",
+      "source_url": "https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+      "source_version": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T12:19:43.201Z"
+    },
+    "rule-5511": {
+      "learning_id": "rule-5511",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5511,
+      "title": "ci: pin third-party actions to SHAs, fix bench shell injection, drop unused MCP",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "6ea1cb4c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T12:19:52.834Z"
     }
   },
   "aliases": {

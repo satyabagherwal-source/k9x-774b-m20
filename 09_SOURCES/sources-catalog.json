@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "244d8dc8",
+    "sourceVersion": "6ea1cb4c",
     "license": "NOASSERTION",
-    "contentHash": "851770144d79fcc403218d3828fd90c1c30c612487dd379d320c97f832ac9ff0",
-    "lastHarvestedAt": "2026-10-29T11:47:48.372Z",
+    "contentHash": "52b116edca0f183dc8f86b91cf4d86dd0190851e9a01ec65ec6827c130aa712b",
+    "lastHarvestedAt": "2026-10-29T12:19:52.897Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3643,10 +3643,10 @@
     "repository": "trufflesecurity/trufflehog",
     "platform": "github",
     "sourceUrl": "https://github.com/trufflesecurity/trufflehog",
-    "sourceVersion": "0301dc36",
+    "sourceVersion": "87adc84b",
     "license": "AGPL-3.0",
-    "contentHash": "7ed54f3a94400d5035ba4632980f89b1f691c8becbd27eb779ec004f511565a3",
-    "lastHarvestedAt": "2026-10-28T05:42:21.255Z",
+    "contentHash": "4fbdccf50b57f74b03b2f267bb4491d815349462d5aef27481a24bf70afab409",
+    "lastHarvestedAt": "2026-10-29T12:19:47.454Z",
     "learningId": "learn-github-trufflesecurity-trufflehog"
   },
   "neural-maze-ava-whatsapp-agent-course": {
@@ -11458,5 +11458,15 @@
     "contentHash": "a6733be8c58afaae5e9654d0e141c44e0b76842c84f7eae57b344e5c676d81a7",
     "lastHarvestedAt": "2026-10-29T11:29:28.117Z",
     "learningId": "learn-huggingface-liquidai-lfm3-vl-2b"
+  },
+  "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf": {
+    "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+    "sourceVersion": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf",
+    "license": "Open-Source",
+    "contentHash": "7eee584774bb7ea48f050275e3d282ce7ec65ca9ec48bf238fc979bec4bb25ae",
+    "lastHarvestedAt": "2026-10-29T12:19:43.264Z",
+    "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf"
   }
 }
