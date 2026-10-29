@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source**: github ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
-> **Source Version**: `e3fe3b25`  
+> **Source Version**: `8197b045`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T13:10:11.467Z  
+> **Timestamp**: 2026-10-29T17:23:44.930Z  
 > **Learning ID**: `learn-github-risingwavelabs-risingwave`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T13:10:11.462Z  
+> **Harvest Timestamp**: 2026-10-29T17:23:44.527Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Event streaming platform for agentic AI. Continuously ingest, transform, and serve event streams in real time, at scale.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9394 stars
+- **Stars / Engagement**: 9393 stars
 
 ---
 
@@ -1077,642 +1077,811 @@ pub(crate) use def_path_lookup;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e3fe3b25` (2026-10-28)
-**Commit Message**: fix(iceberg): honor compaction interval between pk-index batches (#27625)
+### Incident Patch 1: `0d6da6fc` (2026-10-29)
+**Commit Message**: fix(iceberg): honor commit checkpoint interval for v3 jobs (#27616)
 
-**File**: `src/meta/src/manager/iceberg_compaction/schedule.rs` (modified, +33/-11)
+**File**: `e2e_test/iceberg/README.md` (modified, +7/-1)
 ```diff
-@@ -337,7 +337,8 @@ impl CompactionTrack {
-     /// Determines if compaction should be triggered.
-     ///
-     /// Trigger conditions:
--    /// - An active automatic round is controlled only by its next-attempt time.
-+    /// - An active automatic round follows its next-attempt time. PK-index batches
-+    ///   can also continue without new commits or trigger early at the commit threshold.
-     /// - Otherwise, pending commit threshold or an interval with pending commits
-     ///   can trigger a task.
-     ///
-@@ -370,15 +371,17 @@ impl CompactionTrack {
+@@ -78,12 +78,18 @@ scheduling and maintenance options, including activation without new writes.
+ It also reattaches a table with existing snapshots and verifies that reconciliation
+ finishes without new ingestion after the independent job becomes ready.
+ Alter the table, not its internal sink. Online changes to `commit_checkpoint_interval`
+-and `compaction.write_parquet_*` are currently rejected for PK-index sinks because
++update the Meta-side checkpoint pacing while preserving pending epochs.
++`compaction.write_parquet_*` changes are still rejected for PK-index sinks because
+ their running writers do not reload these options.
+ The ordinary-sink knobs `compaction.max_snapshots_num` and
+ `compaction.delete_files_count_threshold` are also rejected by this ALTER path;
+ PK-index compaction uses `compaction.delete_ratio_percent` for delete selection.
+ 
++PK-index jobs now honor their configured commit interval, including after recovery.
++Existing sinks with the frontend default of 60 therefore change from committing every
++checkpoint to every 60 checkpoints after upgrade. Set `commit_checkpoint_interval = 1`
++to retain the previous commit frequency.
++
+ These tests only need MinIO and the connector libs. Start with fresh RiseDev data,
+ as the profile uses an in-memory meta store:
+ 
+```
+
+**File**: `e2e_test/iceberg/pk_index_compaction_round.slt` (modified, +6/-2)
+```diff
+@@ -50,10 +50,14 @@ CREATE TABLE pk_compaction_round(id INT, part INT, v INT, PRIMARY KEY (part, id)
+ statement error use ALTER TABLE
+ ALTER SINK __iceberg_sink_pk_compaction_round CONNECTOR WITH (enable_compaction = 'true');
+ 
+-# Options that require rebuilding the running writer must fail before catalog changes.
+-statement error not supported for Iceberg sinks with PK index
++# Commit intervals are updated in Meta without rebuilding the writer.
++statement ok
+ ALTER TABLE pk_compaction_round CONNECTOR WITH (commit_checkpoint_interval = '2');
+ 
++statement ok
++ALTER TABLE pk_compaction_round CONNECTOR WITH (commit_checkpoint_interval = '1');
++
++# Options that require rebuilding the running writer must fail before catalog changes.
+ statement error not supported for Iceberg sinks with PK index
+ ALTER TABLE pk_compaction_round CONNECTOR WITH (compaction.write_parquet_compression = 'snappy');
+ 
+```
+
+**File**: `e2e_test/iceberg/test_case/pure_slt/iceberg_v2_with_pk_index.slt` (modified, +18/-7)
+```diff
+@@ -34,6 +34,15 @@ insert into t_v2 values(1, 'alice', 100), (2, 'bob', 200), (3, 'charlie', 300);
+ statement ok
+ flush;
+ 
++# Wait for the initial Iceberg commit so later changes produce position deletes.
++query I retry 6 backoff 1s
++select sum(record_count) from rw_iceberg_files
++where schema_name = 'public'
++  and source_name = '__iceberg_source_t_v2'
++  and content = 'Data';
++----
++3
++
+ statement ok
+ update t_v2 set v1 = 150 where id = 1;
+ 
+@@ -63,7 +72,7 @@ where schema_name = 'public'
+ ----
+ t
+ 
+-query ??? rowsort retry 3 backoff 1s
++query ??? rowsort retry 6 backoff 1s
+ select * from t_v2;
+ ----
+ 1 alice 150
+@@ -76,6 +85,13 @@ delete from t_v2 where id = 1;
+ statement ok
+ FLUSH;
+ 
++# FLUSH does not wait for the three-checkpoint Iceberg commit interval.
++# Wait for the delete to be visible before checking the absence of equality deletes.
++query ??? rowsort retry 6 backoff 1s
++select * from t_v2;
++----
++3 charlie 300
++
+ query ?? retry 6 backoff 1s
+ select count(*) = 0 from rw_iceberg_files
+ where schema_name = 'public'
+@@ -84,11 +100,6 @@ where schema_name = 'public'
+ ----
+ t
+ 
+-query ??? rowsort retry 3 backoff 1s
+-select * from t_v2;
+-----
+-3 charlie 300
+-
+ statement ok
+ DROP TABLE t_v2;
+ 
+@@ -125,7 +136,7 @@ insert into t_v2_storage values(1, 'alice'), (2, 'bob');
+ statement ok
+ flush;
+ 
+-query ??? rowsort retry 3 backoff 1s
++query ??? rowsort retry 6 backoff 1s
+ select * from t_v2_storage;
+ ----
+ 1 alice
+```
+
+**File**: `e2e_test/iceberg/test_case/pure_slt/iceberg_v3/derive_pk.slt` (modified, +6/-0)
+```diff
+@@ -30,6 +30,7 @@ WITH (
+     create_table_if_not_exists = 'true',
+     write_mode = 'merge-on-read',
+     format_version = '3',
++    commit_checkpoint_interval = '1000000',
+     enable_pk_index = 'true'
+ );
+ 
+@@ -62,6 +63,10 @@ CREATE SOURCE iceberg_derive_pk_source WITH (
+     s3.secret.key = 'hummockadmin'
+ );
+ 
++# Lowering the sink's interval must release pending writes without recovery.
++statement ok
++ALTER SINK s_v3_derive_pk CONNECTOR WITH (commit_checkpoint_interval = '1');
++
+ # Both orders for user 1 must be preserved. The iceberg pk is derived from the
+ # upstream stream key (user_id, order_id), so rows sharing user_id are not overwritten.
+ query ????? rowsort retry 11 backoff 1s
+@@ -151,6 +156,7 @@ WITH (
+     create_table_if_not_exists = 'true',
+     write_mode = 'merge-on-read',
+     format_version = '3',
++    commit_checkpoint_interval = '1',
+     enable_pk_index = 'true'
+ );
+ 
+```
+
+**File**: `e2e_test/iceberg/test_case/pure_slt/iceberg_v3/sink_no_partition.slt` (modified, +16/-9)
+```diff
+@@ -25,6 +25,7 @@ WITH (
+     create_table_if_not_exists = 'true',
+     write_mode = 'merge-on-read',
+     format_version = '3',
++    commit_checkpoint_interval = '1',
+     enable_pk_index = 'true'
+ );
+ 
+@@ -41,15 +42,6 @@ INSERT INTO t_v3_no_partition_pk_index VALUES
+ statement ok
+ FLUSH;
+ 
+-statement ok
+-DELETE FROM t_v3_no_partition_pk_index WHERE v1 IN (2, 8);
+-
+-statement ok
+-INSERT INTO t_v3_no_partition_pk_index VALUES (1, 1, 50, '1-50', '2022-03-11'), (1, 13, 130, '13-130', '2022-03-13');
+-
+-statement ok
+-FLUSH;
+-
+ statement ok
+ CREATE SOURCE iceberg_no_partition_v3_pk_index_source WITH (
+     connector = 'iceberg',
+@@ -64,6 +56,21 @@ CREATE SOURCE iceberg_no_partition_v3_pk_index_source WITH (
+     s3.secret.key = 'hummockadmin'
+ );
+ 
++# Commit the initial rows before deleting so the test exercises deletion vectors.
++query I retry 11 backoff 1s
++select count(*) from iceberg_no_partition_v3_pk_index_source;
++----
++7
++
++statement ok
++DELETE FROM t_v3_no_partition_pk_index WHERE v1 IN (2, 8);
++
++statement ok
++INSERT INTO t_v3_no_partition_pk_index VALUES (1, 1, 50, '1-50', '2022-03-11'), (1, 13, 130, '13-130', '2022-03-13');
++
++statement ok
++FLUSH;
++
+ query ????? rowsort retry 11 backoff 1s
+ select * from iceberg_no_partition_v3_pk_index_source;
+ ----
+```
+
+**File**: `e2e_test/iceberg/test_case/pure_slt/iceberg_v3/sink_range_partition.slt` (modified, +16/-9)
+```diff
+@@ -26,6 +26,7 @@ WITH (
+     partition_by = 'day(v4)',
+     write_mode = 'merge-on-read',
+     format_version = '3',
++    commit_checkpoint_interval = '1',
+     enable_pk_index = 'true'
+ );
+ 
+@@ -42,15 +43,6 @@ INSERT INTO t_v3_range_partition_pk_index VALUES
+ statement ok
+ FLUSH;
+ 
+-statement ok
+-DELETE FROM t_v3_range_partition_pk_index WHERE v1 IN (2, 8);
+-
+-statement ok
+-INSERT INTO t_v3_range_partition_pk_index VALUES (1, 1, 50, '1-50', '2022-03-11'), (1, 13, 130, '13-130', '2022-03-23');
+-
+-statement ok
+-FLUSH;
+-
+ statement ok
+ CREATE SOURCE iceberg_range_partition_v3_pk_index_source WITH (
+     connector = 'iceberg',
+@@ -65,6 +57,21 @@ CREATE SOURCE iceberg_range_partition_v3_pk_index_source WITH (
+     s3.secret.key = 'hummockadmin'
+ );
+ 
++# Commit the initial rows before deleting so the test exercises deletion vectors.
++query I retry 11 backoff 1s
++select count(*) from iceberg_range_partition_v3_pk_index_source;
++----
++7
++
++statement ok
++DELETE FROM t_v3_range_partition_pk_index WHERE v1 IN (2, 8);
++
++statement ok
++INSERT INTO t_v3_range_partition_pk_index VALUES (1, 1, 50, '1-50', '2022-03-11'), (1, 13, 130, '13-130', '2022-03-23');
++
++statement ok
++FLUSH;
++
+ query ????? rowsort retry 11 backoff 1s
+ select * from iceberg_range_partition_v3_pk_index_source;
+ ----
+```
+
+**File**: `e2e_test/iceberg/test_case/pure_slt/iceberg_v3/sink_sparse_partition.slt` (modified, +16/-9)
+```diff
+@@ -26,6 +26,7 @@ WITH (
+     partition_by = 'v1,v2,truncate(2,v3)',
+     write_mode = 'merge-on-read',
+     format_version = '3',
++    commit_checkpoint_interval = '1',
+     enable_pk_index = 'true'
+ );
+ 
+@@ -42,15 +43,6 @@ INSERT INTO t_v3_partition_pk_index VALUES
+ statement ok
+ FLUSH;
+ 
+-statement ok
+-DELETE FROM t_v3_partition_pk_index WHERE v1 IN (2, 8);
+-
+-statement ok
+-INSERT INTO t_v3_partition_pk_index VALUES (1, 1, 50, '1-50', '2022-03-11'), (1, 13, 130, '13-130', '2022-03-13');
+-
+-statement ok
+-FLUSH;
+-
+ statement ok
+ CREATE SOURCE iceberg_partition_v3_pk_index_source WITH (
+     connector = 'iceberg',
+@@ -65,6 +57,21 @@ CREATE SOURCE iceberg_partition_v3_pk_index_source WITH (
+     s3.secret.key = 'hummockadmin'
+ );
+ 
++# Commit the initial rows before deleting so the test exercises deletion vectors.
++query I retry 11 backoff 1s
++select count(*) from iceberg_partition_v3_pk_index_source;
++----
++7
++
++statement ok
++DELETE FROM t_v3_partition_pk_index WHERE v1 IN (2, 8);
++
++statement ok
++INSERT INTO t_v3_partition_pk_index VALUES (1, 1, 50, '1-50', '2022-03-11'), (1, 13, 130, '13-130', '2022-03-13');
++
++statement ok
++FLUSH;
++
+ query ????? rowsort retry 11 backoff 1s
+ select * from iceberg_partition_v3_pk_index_source;
+ ----
+```
+
+**File**: `e2e_test/iceberg/test_case/pure_slt/iceberg_v3/with_pk_index.slt` (modified, +24/-9)
+```diff
+@@ -34,6 +34,15 @@ insert into t_v3 values(1, 'alice', 100), (2, 'bob', 200), (3, 'charlie', 300);
+ statement ok
+ flush;
+ 
++# Wait for the initial Iceberg commit so later changes produce deletion vectors.
++query I retry 6 backoff 1s
++select sum(record_count) from rw_iceberg_files
++where schema_name = 'public'
++  and source_name = '__iceberg_source_t_v3'
++  and content = 'Data';
++----
++3
++
+ statement ok
+ update t_v3 set v1 = 150 where id = 1;
+ 
+@@ -59,19 +68,26 @@ where schema_name = 'public'
+ ----
+ t
+ 
+-query ??? rowsort retry 3 backoff 1s
++query ??? rowsort retry 6 backoff 1s
+ select * from t_v3;
+ ----
+ 1 alice 150
+ 3 charlie 300
+ 
+-# generate eq deletes to test the reader of mixed delete files in v3
++# Another delete across a new checkpoint should still only use deletion vectors.
+ statement ok
+ delete from t_v3 where id = 1;
+ 
+ statement ok
+ FLUSH;
+ 
++# FLUSH does not wait for the three-checkpoint Iceberg commit interval.
++# Wait for the delete to be visible before checking the absence of equality deletes.
++query ??? rowsort retry 6 backoff 1s
++select * from t_v3;
++----
++3 charlie 300
++
+ query ?? retry 6 backoff 1s
+ select count(*) > 0 from rw_iceberg_files
+ where schema_name = 'public'
+@@ -80,11 +96,6 @@ where schema_name = 'public'
+ ----
+ f
+ 
+-query ??? rowsort retry 3 backoff 1s
+-select * from t_v3;
+-----
+-3 charlie 300
+-
+ # ---- Compaction havn't been supported for v3 ----
+ # # This compaction won't clean up puffin files, but only generate new data files.
+ # statement ok
+@@ -140,7 +151,7 @@ set iceberg_engine_connection = 'public.storage_catalog_conn';
+ statement ok
+ create table t_v3_storage(id int primary key, name varchar)
+ with(
+-    commit_checkpoint_interval = 2,
++    commit_checkpoint_interval = 1000000,
+     format_version = 3,
+     enable_pk_index = 'true'
+ ) engine = iceberg;
+@@ -151,7 +162,11 @@ insert into t_v3_storage values(1, 'alice'), (2, 'bob');
+ statement ok
+ flush;
+ 
+-query ??? rowsort retry 3 backoff 1s
++# Lowering the interval must release pending writes without recovery.
++statement ok
++ALTER TABLE t_v3_storage CONNECTOR WITH (commit_checkpoint_interval = '1');
++
++query ??? rowsort retry 6 backoff 1s
+ select * from t_v3_storage;
+ ----
+ 1 alice
+```
+
+---
+
+### Incident Patch 2: `3cb1a41a` (2026-10-28)
+**Commit Message**: fix(connector): parse kinesis reader retry intervals from strings (#27686)
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: Xiaochong(Eddy) Wei <[REDACTED_EMAIL]>
+
+**File**: `src/connector/src/source/kinesis/mod.rs` (modified, +8/-0)
+```diff
+@@ -69,12 +69,14 @@ pub struct KinesisReaderConfig {
+         rename = "kinesis.reader.eof_retry_interval_ms",
+         default = "kinesis_reader_default_eof_retry_interval_ms"
+     )]
++    #[serde_as(as = "DisplayFromStr")]
+     pub eof_retry_interval_ms: u64,
+ 
+     #[serde(
+         rename = "kinesis.reader.error_retry_interval_ms",
+         default = "kinesis_reader_default_error_retry_interval_ms"
+     )]
++    #[serde_as(as = "DisplayFromStr")]
+     pub error_retry_interval_ms: u64,
+ }
+ 
+@@ -152,6 +154,8 @@ mod test {
          };
  
-         let time_ready = now >= next_compaction_time;
-+        let commit_ready = self.demand.commit_count >= self.config.trigger_snapshot_count;
-+        let has_commits = self.demand.commit_count > 0;
-         if self.round.is_some() {
--            // Active work remains schedulable without new commits. PK-index batches
--            // consume new demand when they advance their boundary; legacy rounds
--            // retain a fixed boundary. Neither can bypass failure backoff.
--            return time_ready;
-+            // Continue immediately below the same PK-index boundary when no new
-+            // commits are pending. Advancing the boundary must honor the cooldown
-+            // or commit threshold, including commits received after success.
-+            // Neither continuation nor new demand can bypass failure backoff.
-+            return time_ready
-+                || (self.config.pk_index_coordinated && (commit_ready || !has_commits));
-         }
+         assert_eq!(kinesis_props.common.sdk_connect_timeout_ms, 10000);
++        assert_eq!(kinesis_props.reader_config.eof_retry_interval_ms, 1000);
++        assert_eq!(kinesis_props.reader_config.error_retry_interval_ms, 200);
  
--        let commit_ready = self.demand.commit_count >= self.config.trigger_snapshot_count;
--        let has_commits = self.demand.commit_count > 0;
-         if self.config.pk_index_coordinated {
-             // An empty manual Full can finish before the first snapshot is observed.
-             return self.latest_observed_snapshot.is_some()
-@@ -674,8 +677,8 @@ impl CompactionTrack {
+         let with_options = btreemap! {
+             "connector".to_owned() => "kinesis".to_owned(),
+@@ -162,6 +166,8 @@ mod test {
+             "aws.credentials.access_key_id".to_owned() => "access_key".to_owned(),
+             "aws.credentials.secret_access_key".to_owned() => "secret_key".to_owned(),
+             "kinesis.sdk.connect_timeout_ms".to_owned() => "20000".to_owned(),
++            "kinesis.reader.eof_retry_interval_ms".to_owned() => "5000".to_owned(),
++            "kinesis.reader.error_retry_interval_ms".to_owned() => "1000".to_owned(),
+         };
+         let connector_props = ConnectorProperties::extract(
+             WithOptionsSecResolved::without_secrets(with_options),
+@@ -173,5 +179,7 @@ mod test {
+         };
  
-         self.config.trigger_interval_sec = new_interval_sec;
-         if self.round.is_some() {
--            // The new interval applies after the round drains. The current deadline
--            // already represents either immediate continuation or retry backoff.
-+            // The new interval applies after the next successful batch or when the
-+            // round drains. Preserve the current continuation/cooldown/retry deadline.
-             return;
-         }
- 
-@@ -704,8 +707,19 @@ impl CompactionTrack {
-             // Success means this attempt made progress, but only `Drained`
-             // proves that no work remains below this attempt's boundary.
-             self.health.record_progress();
-+            // Beneficial PK-index batches can advance their boundary on new commits,
-+            // so continuous ingestion may prevent the round from ever draining.
-+            // Keep the cooldown even if commits arrive only after this success.
-+            // should_trigger still allows immediate continuation without new commits
-+            // to finish deferred plans and the empty scan. Full keeps a fixed boundary.
-+            let delay =
-+                if attempt.pk_index_coordinated && attempt.policy.task_type != TaskType::Full {
-+                    Duration::from_secs(self.config.trigger_interval_sec)
-+                } else {
-+                    Duration::ZERO
-+                };
-             self.state = CompactionTrackState::Idle {
--                next_compaction_time: now,
-+                next_compaction_time: now + delay,
-                 manual_task_type: None,
-             };
-         } else {
-@@ -1669,7 +1683,15 @@ impl IcebergCompactionManager {
-                         ..
-                     } = &track.state
-                 {
--                    candidates.push((*sink_id, *next_compaction_time));
-+                    // Active PK-index work can be eligible before its cooldown.
-+                    // Sort it as ready now without changing the stored deadline.
-+                    let eligible_at = if track.round.is_some() && track.config.pk_index_coordinated
-+                    {
-+                        (*next_compaction_time).min(now)
-+                    } else {
-+                        *next_compaction_time
-+                    };
-+                    candidates.push((*sink_id, eligible_at));
-                 }
-             }
- 
-```
-
-**File**: `src/meta/src/manager/iceberg_compaction/schedule/tests.rs` (modified, +480/-23)
-```diff
-@@ -2115,28 +2115,31 @@ fn test_pk_index_commit_events_ignore_duplicates_and_maintenance() {
- 
- #[test]
- fn test_pk_index_retry_gate_cannot_be_bypassed_by_commits_or_force() {
--    let now = Instant::now();
--    let mut track = pk_index_track(now, false);
--    track.config.trigger_snapshot_count = 1;
--    track.finish_failed(now, "boom".to_owned());
--    record_commits(&mut track, 10);
--    track.record_force_compaction(now, None);
--    assert!(!track.should_trigger(now));
--    let first_retry = track.retry.not_before.unwrap();
--    assert!(
--        (Duration::from_secs(1)..=Duration::from_millis(1250))
--            .contains(&first_retry.duration_since(now))
--    );
--    assert!(track.should_trigger(first_retry));
--    start_in_flight(&mut track, 10, first_retry);
--    track.finish_failed(first_retry, "boom".to_owned());
--    assert!(!track.should_trigger(first_retry + Duration::from_secs(1)));
--    let second_retry = track.retry.not_before.unwrap();
--    assert!(
--        (Duration::from_secs(2)..=Duration::from_millis(2500))
--            .contains(&second_retry.duration_since(first_retry))
--    );
--    assert!(track.should_trigger(second_retry));
-+    for bounded in [false, true] {
-+        let now = Instant::now();
-+        let mut track = pk_index_track(now, bounded);
-+        track.config.trigger_snapshot_count = 1;
-+        track.finish_failed(now, "boom".to_owned());
-+        record_commits(&mut track, 10);
-+        assert!(!track.should_trigger(now));
-+        track.record_force_compaction(now, None);
-+        assert!(!track.should_trigger(now));
-+        let first_retry = track.retry.not_before.unwrap();
-+        assert!(
-+            (Duration::from_secs(1)..=Duration::from_millis(1250))
-+                .contains(&first_retry.duration_since(now))
-+        );
-+        assert!(track.should_trigger(first_retry));
-+        start_in_flight(&mut track, 10, first_retry);
-+        track.finish_failed(first_retry, "boom".to_owned());
-+        assert!(!track.should_trigger(first_retry + Duration::from_secs(1)));
-+        let second_retry = track.retry.not_before.unwrap();
-+        assert!(
-+            (Duration::from_secs(2)..=Duration::from_millis(2500))
-+                .contains(&second_retry.duration_since(first_retry))
-+        );
-+        assert!(track.should_trigger(second_retry));
-+    }
- }
- 
- #[tokio::test]
-@@ -2766,7 +2769,8 @@ fn test_pk_index_batches_include_new_writes_without_changing_active_attempt() {
-     assert_eq!(track.round_boundary(), Some(10));
-     assert!(!track.should_trigger(now));
-     track.finish_success(now);
--    assert!(track.should_trigger(now));
-+    assert!(!track.should_trigger(now));
-+    assert!(track.should_trigger(now + Duration::from_secs(120)));
-     let second = track.start_attempt();
-     assert_eq!(second.max_file_sequence_number, Some(20));
-     assert_eq!(
-@@ -2782,6 +2786,358 @@ fn test_pk_index_batches_include_new_writes_without_changing_active_attempt() {
-     assert_eq!(track.demand.commit_count, 1);
- }
- 
-+#[test]
-+fn test_pk_index_successful_batches_wait_for_interval_under_continuous_commits() {
-+    for task_type in [
-+        TaskType::Auto,
-+        TaskType::SmallFiles,
-+        TaskType::FilesWithDelete,
-+    ] {
-+        for (interval_sec, trigger_snapshot_count) in [(1, 3), (60, 3), (120, 3), (120, usize::MAX)]
-+        {
-+            for applying in [false, true] {
-+                let now = Instant::now();
-+                let mut track = new_round_track(now, interval_sec, trigger_snapshot_count, 1);
-+                track.config.pk_index_coordinated = true;
-+                track.config.policy.task_type = task_type;
-+                track.record_observed_snapshot(committed_snapshot(10, 1000));
-+                let mut now = now + Duration::from_secs(interval_sec);
-+
-+                for batch in 0..3 {
-+                    assert!(track.should_trigger(now));
-+                    let boundary = track.latest_observed_snapshot.as_ref().unwrap().snapshot_id;
-+                    let task_id = IcebergCompactionTaskId::new(9 + batch);
-+                    start_in_flight(&mut track, task_id, now);
-+                    assert_eq!(track.round_boundary(), Some(boundary));
-+                    assert_eq!(track.demand.commit_count, 0);
-+                    now += Duration::from_secs(5);
-+                    commit_update(boundary + 1, 2000).apply_to_track(&mut track, now);
-+                    if applying {
-+                        let CompactionTrackState::InFlight { attempt, .. } = &track.state else {
-+                            unreachable!()
-+                        };
-+                        track.state = CompactionTrackState::Applying {
-+                            task_id,
-+                            attempt: attempt.clone(),
-+                        };
-+                    }
-+                    track.finish_success(now);
-+                    assert!(!track.should_trigger(now));
-+                    assert_eq!(track.round_boundary(), Some(bou
-```
-
----
-
-### Incident Patch 2: `f9f50e79` (2026-10-28)
-**Commit Message**: fix(sqlparser): parse IS [NOT] DISTINCT FROM tighter than AND and OR (#27694)
-
-**File**: `e2e_test/batch/basic/precedence.slt.part` (modified, +18/-0)
-```diff
-@@ -23,6 +23,24 @@ select pg_typeof(-2147483648 * 1);
- ----
- integer
- 
-+query T
-+select null is distinct from true and false; -- is distinct from then and
-+----
-+f
-+
-+query T
-+select null is not distinct from false or true; -- is not distinct from then or
-+----
-+t
-+
-+query T
-+select null is distinct from false = false; -- equals then is distinct from
-+----
-+t
-+
-+statement error syntax error at or near
-+select false is distinct from null is null; -- is is non-associative
-+
- 
- # query I
- # select @ 1 - 2; -- minus then abs
-```
-
-**File**: `src/sqlparser/src/parser.rs` (modified, +16/-2)
-```diff
-@@ -1389,11 +1389,11 @@ impl Parser<'_> {
-                     } else if self.parse_keywords(&[Keyword::NOT, Keyword::NULL]) {
-                         Ok(Expr::IsNotNull(Box::new(expr)))
-                     } else if self.parse_keywords(&[Keyword::DISTINCT, Keyword::FROM]) {
--                        let expr2 = self.parse_expr()?;
-+                        let expr2 = self.parse_is_distinct_from_rhs()?;
-                         Ok(Expr::IsDistinctFrom(Box::new(expr), Box::new(expr2)))
-                     } else if self.parse_keywords(&[Keyword::NOT, Keyword::DISTINCT, Keyword::FROM])
-                     {
--                        let expr2 = self.parse_expr()?;
-+                        let expr2 = self.parse_is_distinct_from_rhs()?;
-                         Ok(Expr::IsNotDistinctFrom(Box::new(expr), Box::new(expr2)))
-                     } else {
-                         let negated = self.parse_keyword(Keyword::NOT);
-@@ -1575,6 +1575,20 @@ impl Parser<'_> {
-         }
+         assert_eq!(kinesis_props.common.sdk_connect_timeout_ms, 20000);
++        assert_eq!(kinesis_props.reader_config.eof_retry_interval_ms, 5000);
++        assert_eq!(kinesis_props.reader_config.error_retry_interval_ms, 1000);
      }
- 
-+    /// Parses the right operand of `IS [NOT] DISTINCT FROM`.
-+    ///
-+    /// Like PostgreSQL, where `IS` is non-associative, rejects another `IS`, `ISNULL`, or
-+    /// `NOTNULL` right after the operand.
-+    fn parse_is_distinct_from_rhs(&mut self) -> ModalResult<Expr> {
-+        let expr = self.parse_subexpr(Precedence::Is)?;
-+
-+        if self.get_next_precedence()? == Precedence::Is {
-+            parser_err!("syntax error at or near {}", self.peek_token().token);
-+        }
-+
-+        Ok(expr)
-+    }
-+
-     /// Parses the optional constraints following the `IS [NOT] JSON` predicate
-     pub fn parse_is_json(&mut self, expr: Expr, negated: bool) -> ModalResult<Expr> {
-         let item_type = match self.peek_token().token {
-```
-
-**File**: `src/sqlparser/tests/testdata/precedence.yaml` (modified, +25/-0)
-```diff
-@@ -14,3 +14,28 @@
- - input: select |/ 4 + 12
-   formatted_sql: SELECT |/ 4 + 12
-   formatted_ast: 'Query(Query { with: None, body: Select(Select { distinct: All, projection: [UnnamedExpr(UnaryOp { op: Custom("|/"), expr: BinaryOp { left: Value(Number("4")), op: Plus, right: Value(Number("12")) } })], from: [], lateral_views: [], selection: None, group_by: [], having: None, window: [] }), order_by: [], limit: None, offset: None, fetch: None })'
-+- input: select a is distinct from b and c
-+  formatted_sql: SELECT a IS DISTINCT FROM b AND c
-+  formatted_ast: 'Query(Query { with: None, body: Select(Select { distinct: All, projection: [UnnamedExpr(BinaryOp { left: IsDistinctFrom(Identifier(Ident { value: "a", quote_style: None }), Identifier(Ident { value: "b", quote_style: None })), op: And, right: Identifier(Ident { value: "c", quote_style: None }) })], from: [], lateral_views: [], selection: None, group_by: [], having: None, window: [] }), order_by: [], limit: None, offset: None, fetch: None })'
-+- input: select a is not distinct from b or c
-+  formatted_sql: SELECT a IS NOT DISTINCT FROM b OR c
-+  formatted_ast: 'Query(Query { with: None, body: Select(Select { distinct: All, projection: [UnnamedExpr(BinaryOp { left: IsNotDistinctFrom(Identifier(Ident { value: "a", quote_style: None }), Identifier(Ident { value: "b", quote_style: None })), op: Or, right: Identifier(Ident { value: "c", quote_style: None }) })], from: [], lateral_views: [], selection: None, group_by: [], having: None, window: [] }), order_by: [], limit: None, offset: None, fetch: None })'
-+- input: select a is distinct from b = c
-+  formatted_sql: SELECT a IS DISTINCT FROM b = c
-+  formatted_ast: 'Query(Query { with: None, body: Select(Select { distinct: All, projection: [UnnamedExpr(IsDistinctFrom(Identifier(Ident { value: "a", quote_style: None }), BinaryOp { left: Identifier(Ident { value: "b", quote_style: None }), op: Eq, right: Identifier(Ident { value: "c", quote_style: None }) }))], from: [], lateral_views: [], selection: None, group_by: [], having: None, window: [] }), order_by: [], limit: None, offset: None, fetch: None })'
-+- input: select a is null is distinct from b
-+  formatted_sql: SELECT a IS NULL IS DISTINCT FROM b
-+  formatted_ast: 'Query(Query { with: None, body: Select(Select { distinct: All, projection: [UnnamedExpr(IsDistinctFrom(IsNull(Identifier(Ident { value: "a", quote_style: None })), Identifier(Ident { value: "b", quote_style: None })))], from: [], lateral_views: [], selection: None, group_by: [], having: None, window: [] }), order_by: [], limit: None, offset: None, fetch: None })'
-+- input: select a is distinct from (b is null)
-+  formatted_sql: SELECT a IS DISTINCT FROM (b IS NULL)
-+  formatted_ast: 'Query(Query { with: None, body: Select(Select { distinct: All, projection: [UnnamedExpr(IsDistinctFrom(Identifier(Ident { value: "a", quote_style: None }), Nested(IsNull(Identifier(Ident { value: "b", quote_style: None })))))], from: [], lateral_views: [], selection: None, group_by: [], having: None, window: [] }), order_by: [], limit: None, offset: None, fetch: None })'
-+- input: select a is distinct from b is null
-+  error_msg: |-
-+    sql parser error: syntax error at or near is
-+    LINE 1: select a is distinct from b is null
-+                                        ^
-+- input: select a is not distinct from b is null
-+  error_msg: |-
-+    sql parser error: syntax error at or near is
-+    LINE 1: select a is not distinct from b is null
-+                                            ^
+ }
 ```
 
 ---
 
-### Incident Patch 3: `decbbdf0` (2026-10-28)
-**Commit Message**: fix(streaming): correlated ARRAY subquery emits transient NULL in MV (#26655)
+### Incident Patch 3: `0ff82f14` (2026-10-28)
+**Commit Message**: fix(cdc): keep table names unsanitized in Debezium topic names (#27671)
 
-Co-authored-by: maingoh <[REDACTED_EMAIL]>
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `e2e_test/streaming/bug_fixes/issue_26654.slt` (added, +64/-0)
+**File**: `e2e_test/source_inline/cdc/mysql/mysql_sanitized_table_name.slt` (added, +94/-0)
 ```diff
-@@ -0,0 +1,64 @@
-+# https://github.com/risingwavelabs/risingwave/issues/26654
-+# A correlated ARRAY(SELECT ...) subquery must never emit a transient NULL in the change stream.
-+# `flush` + `select` only observes the settled state, so capture the changes with a force-append-only sink.
+@@ -0,0 +1,94 @@
++control substitution on
 +
 +statement ok
-+create table t1 (id int primary key);
++drop source if exists s_mysql_sanitized_name cascade;
++
++system ok
++mysql --default-character-set=utf8mb4 <<'EOF'
++DROP USER IF EXISTS 'sanitized_name_cdc'@'%';
++DROP DATABASE IF EXISTS mysql_sanitized_name;
++CREATE DATABASE mysql_sanitized_name;
++CREATE USER 'sanitized_name_cdc'@'%' IDENTIFIED BY 'sanitized_name_cdc_pwd';
++GRANT SELECT, RELOAD, SHOW DATABASES, REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'sanitized_name_cdc'@'%';
++USE mysql_sanitized_name;
++CREATE TABLE `t_1` (id INT PRIMARY KEY, v VARCHAR(20));
++CREATE TABLE `t$1` (id INT PRIMARY KEY, v VARCHAR(20));
++CREATE TABLE `t#1` (id INT PRIMARY KEY, v VARCHAR(20));
++CREATE TABLE `t中1` (id INT PRIMARY KEY, v VARCHAR(20));
++INSERT INTO `t_1` VALUES (10, 'snapshot');
++INSERT INTO `t$1` VALUES (20, 'snapshot');
++INSERT INTO `t#1` VALUES (30, 'snapshot');
++INSERT INTO `t中1` VALUES (40, 'snapshot');
++EOF
 +
 +statement ok
-+create table t2 (id int primary key, t1_id int, val varchar);
++create source s_mysql_sanitized_name with (
++  ${RISEDEV_MYSQL_WITH_OPTIONS_COMMON},
++  username = 'sanitized_name_cdc',
++  password = 'sanitized_name_cdc_pwd',
++  database.name = 'mysql_sanitized_name'
++);
++
++control substitution off
 +
 +statement ok
-+create materialized view mv as
-+select t1.id, array(select t2.val from t2 where t2.t1_id = t1.id) as arr from t1;
++create table rw_underscore (id int primary key, v varchar)
++from s_mysql_sanitized_name table 'mysql_sanitized_name.t_1';
 +
 +statement ok
-+create table cap (id int, arr varchar[]) append only;
++create table rw_dollar (id int primary key, v varchar)
++from s_mysql_sanitized_name table 'mysql_sanitized_name.t$1';
 +
 +statement ok
-+create sink s into cap from mv with (type = 'append-only', force_append_only = 'true');
++create table rw_hash (id int primary key, v varchar)
++from s_mysql_sanitized_name table 'mysql_sanitized_name.t#1';
 +
 +statement ok
-+insert into t1 values (1);
++create table rw_non_ascii (id int primary key, v varchar)
++from s_mysql_sanitized_name table 'mysql_sanitized_name.t中1';
 +
-+statement ok
-+flush;
-+
-+statement ok
-+insert into t2 values (10, 1, 'alpha');
-+
-+statement ok
-+flush;
-+
-+statement ok
-+delete from t2;
-+
-+statement ok
-+flush;
-+
-+sleep 3s
-+
-+query I
-+select count(*) from cap where arr is null;
++query TIT retry 10 backoff 1s
++select 'underscore', * from rw_underscore
++union all select 'dollar', * from rw_dollar
++union all select 'hash', * from rw_hash
++union all select 'non_ascii', * from rw_non_ascii
++order by 2;
 +----
-+0
++underscore 10 snapshot
++dollar 20 snapshot
++hash 30 snapshot
++non_ascii 40 snapshot
 +
-+query IT
-+select id, arr from mv;
++system ok
++mysql --default-character-set=utf8mb4 <<'EOF'
++USE mysql_sanitized_name;
++INSERT INTO `t$1` VALUES (21, 'stream');
++INSERT INTO `t#1` VALUES (31, 'stream');
++INSERT INTO `t中1` VALUES (41, 'stream');
++INSERT INTO `t_1` VALUES (11, 'stream');
++EOF
++
++query TIT retry 10 backoff 1s
++select 'underscore', * from rw_underscore
++union all select 'dollar', * from rw_dollar
++union all select 'hash', * from rw_hash
++union all select 'non_ascii', * from rw_non_ascii
++order by 2;
 +----
-+1 {}
++underscore 10 snapshot
++underscore 11 stream
++dollar 20 snapshot
++dollar 21 stream
++hash 30 snapshot
++hash 31 stream
++non_ascii 40 snapshot
++non_ascii 41 stream
 +
 +statement ok
-+drop sink s;
++drop source s_mysql_sanitized_name cascade;
++
++system ok
++mysql -e "
++    DROP DATABASE IF EXISTS mysql_sanitized_name;
++    DROP USER IF EXISTS 'sanitized_name_cdc'@'%';
++"
+```
+
+**File**: `e2e_test/source_inline/cdc/postgres/postgres_sanitized_table_name.slt` (added, +107/-0)
+```diff
+@@ -0,0 +1,107 @@
++statement ok
++drop source if exists pg_sanitized_name_source cascade;
++
++system ok
++PGDATABASE=${PGDATABASE:-postgres} psql -q <<'EOF'
++SELECT pg_terminate_backend(active_pid) FROM pg_replication_slots
++WHERE slot_name = 'sanitized_name_slot' AND active_pid IS NOT NULL;
++SELECT pg_sleep(1);
++SELECT pg_drop_replication_slot(slot_name) FROM pg_replication_slots WHERE slot_name = 'sanitized_name_slot';
++DROP PUBLICATION IF EXISTS sanitized_name_pub;
++DROP SCHEMA IF EXISTS sanitized_name CASCADE;
++CREATE SCHEMA sanitized_name;
++CREATE TABLE sanitized_name."t_1" (id INT PRIMARY KEY, v VARCHAR);
++CREATE TABLE sanitized_name."t$1" (id INT PRIMARY KEY, v VARCHAR);
++CREATE TABLE sanitized_name."t#1" (id INT PRIMARY KEY, v VARCHAR);
++CREATE TABLE sanitized_name."t中1" (id INT PRIMARY KEY, v VARCHAR);
++INSERT INTO sanitized_name."t_1" VALUES (10, 'snapshot');
++INSERT INTO sanitized_name."t$1" VALUES (20, 'snapshot');
++INSERT INTO sanitized_name."t#1" VALUES (30, 'snapshot');
++INSERT INTO sanitized_name."t中1" VALUES (40, 'snapshot');
++EOF
++
++control substitution on
 +
 +statement ok
-+drop table cap;
++create source pg_sanitized_name_source with (
++    connector = 'postgres-cdc',
++    hostname = '${PGHOST:localhost}',
++    port = '${PGPORT:5432}',
++    username = '${PGUSER:$USER}',
++    password = '${PGPASSWORD:}',
++    database.name = '${PGDATABASE:postgres}',
++    schema.name = 'sanitized_name',
++    publication.name = 'sanitized_name_pub',
++    slot.name = 'sanitized_name_slot'
++);
++
++control substitution off
 +
 +statement ok
-+drop materialized view mv;
++create table rw_underscore (id int primary key, v varchar)
++from pg_sanitized_name_source table 'sanitized_name.t_1';
 +
 +statement ok
-+drop table t2;
++create table rw_dollar (id int primary key, v varchar)
++from pg_sanitized_name_source table 'sanitized_name.t$1';
 +
 +statement ok
-+drop table t1;
-```
-
-**File**: `src/frontend/planner_test/tests/testdata/input/subquery_expr_correlated.yaml` (modified, +23/-1)
-```diff
-@@ -716,4 +716,26 @@
-     select * from s1.users where exists (select 1 from s2.users where s2.users.id = s1.users.id and s2.users.is_active = false);
-   expected_outputs:
-     - logical_plan
--    - batch_plan
-\ No newline at end of file
-+    - batch_plan
++create table rw_hash (id int primary key, v varchar)
++from pg_sanitized_name_source table 'sanitized_name.t#1';
 +
-+- name: array subquery uses inner join
-+  sql: |
-+    create table t1(id int primary key);
-+    create table t2(id int primary key, t1_id int, val varchar);
-+    select t1.id, array(select t2.val from t2 where t2.t1_id = t1.id) as arr from t1;
-+  expected_outputs:
-+    - batch_plan
-+    - stream_plan
++statement ok
++create table rw_non_ascii (id int primary key, v varchar)
++from pg_sanitized_name_source table 'sanitized_name.t中1';
 +
-+- name: mixing array and scalar subqueries keeps left outer join
-+  sql: |
-+    create table t1(id int primary key);
-+    create table t2(id int primary key, t1_id int, val varchar);
-+    select
-+      t1.id,
-+      array(select t2.val from t2 where t2.t1_id = t1.id) as arr,
-+      (select max(t2.val) from t2 where t2.t1_id = t1.id) as mx
-+    from t1;
-+  expected_outputs:
-+    - batch_plan
-+    - stream_plan
++query TIT retry 30 backoff 1s
++select 'underscore', * from rw_underscore
++union all select 'dollar', * from rw_dollar
++union all select 'hash', * from rw_hash
++union all select 'non_ascii', * from rw_non_ascii
++order by 2;
++----
++underscore 10 snapshot
++dollar 20 snapshot
++hash 30 snapshot
++non_ascii 40 snapshot
++
++system ok
++PGDATABASE=${PGDATABASE:-postgres} psql -q <<'EOF'
++INSERT INTO sanitized_name."t$1" VALUES (21, 'stream');
++INSERT INTO sanitized_name."t#1" VALUES (31, 'stream');
++INSERT INTO sanitized_name."t中1" VALUES (41, 'stream');
++INSERT INTO sanitized_name."t_1" VALUES (11, 'stream');
++EOF
++
++# `non_ascii 41 stream` is missing because Debezium 3.2.4 decodes pgoutput relation names byte by byte
++# instead of as UTF-8, so `t中1` arrives garbled and matches no table. Add the row back once Debezium
++# includes https://github.com/debezium/dbz/issues/2710.
++query TIT retry 30 backoff 1s
++select 'underscore', * from rw_underscore
++union all select 'dollar', * from rw_dollar
++union all select 'hash', * from rw_hash
++union all select 'non_ascii', * from rw_non_ascii
++order by 2;
++----
++underscore 10 snapshot
++underscore 11 stream
++dollar 20 snapshot
++dollar 21 stream
++hash 30 snapshot
++hash 31 stream
++non_ascii 40 snapshot
++
++statement ok
++drop source pg_sanitized_name_source cascade;
++
++sleep 2s
++
++system ok
++PGDATABASE=${PGDATABASE:-postgres} psql -q <<'EOF'
++SELECT pg_terminate_backend(active_pid) FROM pg_replication_slots
++WHERE slot_name = 'sanitized_name_slot' AND active_pid IS NOT NULL;
++SELECT pg_sleep(1);
++SELECT pg_drop_replication_slot(slot_name) FROM pg_replication_slots WHERE slot_name = 'sanitized_name_slot';
++DROP PUBLICATION IF EXISTS sanitized_name_pub;
++DROP SCHEMA IF EXISTS sanitized_name CASCADE;
++EOF
 ```
 
-**File**: `src/frontend/planner_test/tests/testdata/output/subquery.yaml` (modified, +3/-3)
+**File**: `e2e_test/source_inline/cdc/sql_server/sql_server_sanitized_table_name.slt.serial` (added, +72/-0)
 ```diff
-@@ -863,9 +863,9 @@
-   sql: |
-     select Array(select 1 union select 2);
-   batch_plan: |-
--    BatchNestedLoopJoin { type: LeftOuter, predicate: true, output: all }
--    ├─BatchValues { rows: [[]] }
--    └─BatchProject { exprs: [Coalesce(array_agg(1:Int32), ARRAY[]:List(Int32)) as $expr1] }
-+    BatchProject { exprs: [Coalesce(array_agg(1:Int32), ARRAY[]:List(Int32)) as $expr1] }
-+    └─BatchNestedLoopJoin { type: Inner, predicate: true, output: all }
-+      ├─BatchValues { rows: [[]] }
-       └─BatchSimpleAgg { aggs: [array_agg(1:Int32)] }
-         └─BatchExchange { order: [], dist: Single }
-           └─BatchHashAgg { group_key: [1:Int32], aggs: [] }
+@@ -0,0 +1,72 @@
++control substitution on
++
++system ok
++sqlcmd -C -d master -Q "IF DB_ID('sanitized_name_db') IS NOT NULL BEGIN ALTER DATABASE sanitized_name_db SET SINGLE_USER WITH ROLLBACK IMMEDIATE; DROP DATABASE sanitized_name_db; END; CREATE DATABASE sanitized_name_db;" -b
++
++system ok
++sqlcmd -C -d sanitized_name_db -i e2e_test/source_inline/cdc/sql_server/sql_server_sanitized_table_name_prepare.sql -b
++
++statement ok
++create source mssql_sanitized_name_source with (
++    connector = 'sqlserver-cdc',
++    hostname = '${SQLCMDSERVER:sqlserver-server}',
++    port = '${SQLCMDPORT:1433}',
++    username = '${SQLCMDUSER:SA}',
++    password = '${SQLCMDPASSWORD}',
++    database.name = 'sanitized_name_db',
++);
++
++control substitution off
++
++statement ok
++create table rw_underscore (id int primary key, v varchar)
++from mssql_sanitized_name_source table 'sanitized_name_db.dbo.t_1';
++
++statement ok
++create table rw_dollar (id int primary key, v varchar)
++from mssql_sanitized_name_source table 'sanitized_name_db.dbo.t$1';
++
++statement ok
++create table rw_hash (id int primary key, v varchar)
++from mssql_sanitized_name_source table 'sanitized_name_db.dbo.t#1';
++
++statement ok
++create table rw_non_ascii (id int primary key, v varchar)
++from mssql_sanitized_name_source table 'sanitized_name_db.dbo.t中1';
++
++query TIT retry 30 backoff 1s
++select 'underscore', * from rw_underscore
++union all select 'dollar', * from rw_dollar
++union all select 'hash', * from rw_hash
++union all select 'non_ascii', * from rw_non_ascii
++order by 2;
++----
++underscore 10 snapshot
++dollar 20 snapshot
++hash 30 snapshot
++non_ascii 40 snapshot
++
++system ok
++sqlcmd -C -d sanitized_name_db -i e2e_test/source_inline/cdc/sql_server/sql_server_sanitized_table_name_insert.sql -b
++
++query TIT retry 60 backoff 1s
++select 'underscore', * from rw_underscore
++union all select 'dollar', * from rw_dollar
++union all select 'hash', * from rw_hash
++union all select 'non_ascii', * from rw_non_ascii
++order by 2;
++----
++underscore 10 snapshot
++underscore 11 stream
++dollar 20 snapshot
++dollar 21 stream
++hash 30 snapshot
++hash 31 stream
++non_ascii 40 snapshot
++non_ascii 41 stream
++
++statement ok
++drop source mssql_sanitized_name_source cascade;
++
++system ok
++sqlcmd -C -d master -Q "IF DB_ID('sanitized_name_db') IS NOT NULL BEGIN ALTER DATABASE sanitized_name_db SET SINGLE_USER WITH ROLLBACK IMMEDIATE; DROP DATABASE sanitized_name_db; END;" -b
 ```
 
-**File**: `src/frontend/planner_test/tests/testdata/output/subquery_expr_correlated.yaml` (modified, +161/-62)
+**File**: `e2e_test/source_inline/cdc/sql_server/sql_server_sanitized_table_name_insert.sql` (added, +6/-0)
 ```diff
-@@ -998,10 +998,10 @@
-     select Array(select c from t2 where b = d) arr from t1;
-   batch_plan: |-
-     BatchExchange { order: [], dist: Single }
--    └─BatchHashJoin { type: LeftOuter, predicate: t1.b IS NOT DISTINCT FROM t1.b, output: [$expr1] }
--      ├─BatchExchange { order: [], dist: HashShard(t1.b) }
--      │ └─BatchScan { table: t1, columns: [t1.b], distribution: SomeShard }
--      └─BatchProject { exprs: [t1.b, Coalesce(array_agg(t2.c) filter(IsNotNull(1:Int32)), ARRAY[]:List(Int32)) as $expr1] }
-+    └─BatchProject { exprs: [Coalesce(array_agg(t2.c) filter(IsNotNull(1:Int32)), ARRAY[]:List(Int32)) as $expr1] }
-+      └─BatchHashJoin { type: Inner, predicate: t1.b IS NOT DISTINCT FROM t1.b, output: all }
-+        ├─BatchExchange { order: [], dist: HashShard(t1.b) }
-+        │ └─BatchScan { table: t1, columns: [t1.b], distribution: SomeShard }
-         └─BatchHashAgg { group_key: [t1.b], aggs: [array_agg(t2.c) filter(IsNotNull(1:Int32))] }
-           └─BatchHashJoin { type: LeftOuter, predicate: t1.b IS NOT DISTINCT FROM t2.d, output: [t1.b, t2.c, 1:Int32] }
-             ├─BatchHashAgg { group_key: [t1.b], aggs: [] }
-@@ -1012,12 +1012,12 @@
-                 └─BatchFilter { predicate: IsNotNull(t2.d) }
-                   └─BatchScan { table: t2, columns: [t2.c, t2.d], distribution: SomeShard }
-   stream_plan: |-
--    StreamMaterialize { columns: [arr, t1._row_id(hidden), t1.b(hidden), t1.b#1(hidden)], stream_key: [t1._row_id, t1.b], pk_columns: [t1._row_id, t1.b], pk_conflict: NoCheck }
--    └─StreamExchange { dist: HashShard(t1._row_id, t1.b) }
--      └─StreamHashJoin { type: LeftOuter, predicate: t1.b IS NOT DISTINCT FROM t1.b, output: [$expr1, t1._row_id, t1.b, t1.b] }
-+    StreamMaterialize { columns: [arr, t1._row_id(hidden), t1.b(hidden)], stream_key: [t1._row_id, t1.b], pk_columns: [t1._row_id, t1.b], pk_conflict: NoCheck }
-+    └─StreamProject { exprs: [Coalesce(array_agg(t2.c) filter(IsNotNull(1:Int32)), ARRAY[]:List(Int32)) as $expr1, t1._row_id, t1.b] }
-+      └─StreamHashJoin { type: Inner, predicate: t1.b IS NOT DISTINCT FROM t1.b, output: [t1.b, t1.b, array_agg(t2.c) filter(IsNotNull(1:Int32)), t1._row_id] }
-         ├─StreamExchange { dist: HashShard(t1.b) }
-         │ └─StreamTableScan { table: t1, columns: [t1.b, t1._row_id], stream_scan_type: SnapshotBackfill, stream_key: [t1._row_id], pk: [_row_id], dist: UpstreamHashShard(t1._row_id) }
--        └─StreamProject { exprs: [t1.b, Coalesce(array_agg(t2.c) filter(IsNotNull(1:Int32)), ARRAY[]:List(Int32)) as $expr1] }
-+        └─StreamProject { exprs: [t1.b, array_agg(t2.c) filter(IsNotNull(1:Int32))] }
-           └─StreamHashAgg { group_key: [t1.b], aggs: [array_agg(t2.c) filter(IsNotNull(1:Int32)), count] }
-             └─StreamHashJoin { type: LeftOuter, predicate: t1.b IS NOT DISTINCT FROM t2.d, output: [t1.b, t2.c, 1:Int32, t2._row_id] }
-               ├─StreamProject { exprs: [t1.b], noop_update_hint: true }
-@@ -1044,34 +1044,33 @@
-     ORDER BY 1;
-   batch_plan: |-
-     BatchExchange { order: [rw_users.name ASC], dist: Single }
--    └─BatchProject { exprs: [rw_users.name, rw_users.is_super, true:Boolean, rw_users.create_user, rw_users.create_db, rw_users.can_login, -1:Int32, null:Timestamptz, $expr1, true:Boolean, true:Boolean] }
-+    └─BatchProject { exprs: [rw_users.name, rw_users.is_super, true:Boolean, rw_users.create_user, rw_users.create_db, rw_users.can_login, -1:Int32, null:Timestamptz, Coalesce(array_agg(rw_users.name) filter(IsNotNull(1:Int32)), ARRAY[]:List(Varchar)) as $expr1, true:Boolean, true:Boolean] }
-       └─BatchSort { order: [rw_users.name ASC] }
--        └─BatchHashJoin { type: LeftOuter, predicate: rw_users.id IS NOT DISTINCT FROM rw_users.id, output: all }
-+        └─BatchHashJoin { type: Inner, predicate: rw_users.id IS NOT DISTINCT FROM rw_users.id, output: all }
-           ├─BatchExchange { order: [], dist: HashShard(rw_users.id) }
-           │ └─BatchFilter { predicate: Not(RegexpEq(rw_users.name, '^pg_':Varchar)) }
-           │   └─BatchSysScan { table: rw_users, columns: [rw_users.id, rw_users.name, rw_users.is_super, rw_users.create_db, rw_users.create_user, rw_users.can_login], distribution: Single }
--          └─BatchProject { exprs: [rw_users.id, Coalesce(array_agg(rw_users.name) filter(IsNotNull(1:Int32)), ARRAY[]:List(Varchar)) as $expr1] }
--            └─BatchHashAgg { group_key: [rw_users.id], aggs: [array_agg(rw_users.name) filter(IsNotNull(1:Int32))] }
--              └─BatchHashJoin { type: LeftOuter, predicate: rw_users.id IS NOT DISTINCT FROM rw_users.id, output: [rw_users.id, rw_users.name, 1:Int32] }
--                ├─BatchHashAgg { group_key: [rw_users.id], aggs: [] }
--                │ └─BatchExchange { order: [], dist: HashShard(rw_users.id) }
--                │   └─BatchFilter { predicate: Not(RegexpEq(rw_users.name, '^pg_':Varchar)) }
--                │     └─BatchSysScan { table: rw_users, columns: [rw_users.id, rw_users.name], distribution: Single }
--                └─BatchExcha
+@@ -0,0 +1,6 @@
++SET NOCOUNT ON;
++
++INSERT INTO [t$1] VALUES (21, 'stream');
++INSERT INTO [t#1] VALUES (31, 'stream');
++INSERT INTO [t中1] VALUES (41, 'stream');
++INSERT INTO [t_1] VALUES (11, 'stream');
 ```
 
-**File**: `src/frontend/planner_test/tests/testdata/output/vector_search.yaml` (modified, +34/-34)
+**File**: `e2e_test/source_inline/cdc/sql_server/sql_server_sanitized_table_name_prepare.sql` (added, +18/-0)
 ```diff
-@@ -381,17 +381,17 @@
-     from events;
-   logical_plan: |-
-     LogicalProject { exprs: [events.event_id, $expr3, events.time] }
--    └─LogicalApply { type: LeftOuter, on: true, correlated_id: 1, max_one_row: true }
-+    └─LogicalApply { type: Inner, on: true, correlated_id: 1, max_one_row: true }
-       ├─LogicalScan { table: events, columns: [events.event_id, events.time, events.embedding, events._rw_timestamp] }
-       └─LogicalProject { exprs: [Coalesce(array_agg($expr1 order_by($expr2 ASC)), ARRAY[]:List(Struct(Int32, Varchar))) as $expr3] }
-         └─LogicalAgg { aggs: [array_agg($expr1 order_by($expr2 ASC))] }
-           └─LogicalTopN { order: [$expr2 ASC], limit: 3, offset: 0 }
-             └─LogicalProject { exprs: [Row(items.id, items.name) as $expr1, CosineDistance(CorrelatedInputRef { index: 2, correlated_id: 1 }, items.embedding) as $expr2] }
-               └─LogicalScan { table: items, columns: [items.id, items.name, items.embedding, items._rw_timestamp] }
-   optimized_logical_plan_for_batch: |-
--    LogicalJoin { type: LeftOuter, on: IsNotDistinctFrom(events.embedding, events.embedding), output: [events.event_id, $expr3, events.time] }
--    ├─LogicalScan { table: events, columns: [events.event_id, events.time, events.embedding] }
--    └─LogicalProject { exprs: [events.embedding, Coalesce(array_agg($expr1 order_by($expr2 ASC)) filter(IsNotNull(1:Int32)), ARRAY[]:List(Struct(Int32, Varchar))) as $expr3] }
-+    LogicalProject { exprs: [events.event_id, Coalesce(array_agg($expr1 order_by($expr2 ASC)) filter(IsNotNull(1:Int32)), ARRAY[]:List(Struct(Int32, Varchar))) as $expr3, events.time] }
-+    └─LogicalJoin { type: Inner, on: IsNotDistinctFrom(events.embedding, events.embedding), output: all }
-+      ├─LogicalScan { table: events, columns: [events.event_id, events.time, events.embedding] }
-       └─LogicalAgg { group_key: [events.embedding], aggs: [array_agg($expr1 order_by($expr2 ASC)) filter(IsNotNull(1:Int32))] }
-         └─LogicalJoin { type: LeftOuter, on: IsNotDistinctFrom(events.embedding, events.embedding), output: [events.embedding, $expr1, $expr2, 1:Int32] }
-           ├─LogicalAgg { group_key: [events.embedding], aggs: [] }
-@@ -405,10 +405,10 @@
-                   └─LogicalScan { table: items, columns: [items.id, items.name, items.embedding] }
-   batch_plan: |-
-     BatchExchange { order: [], dist: Single }
--    └─BatchHashJoin { type: LeftOuter, predicate: events.embedding IS NOT DISTINCT FROM events.embedding, output: [events.event_id, $expr3, events.time] }
--      ├─BatchExchange { order: [], dist: HashShard(events.embedding) }
--      │ └─BatchScan { table: events, columns: [events.event_id, events.time, events.embedding], distribution: UpstreamHashShard(events.event_id) }
--      └─BatchProject { exprs: [events.embedding, Coalesce(array_agg($expr1 order_by($expr2 ASC)) filter(IsNotNull(1:Int32)), ARRAY[]:List(Struct(Int32, Varchar))) as $expr3] }
-+    └─BatchProject { exprs: [events.event_id, Coalesce(array_agg($expr1 order_by($expr2 ASC)) filter(IsNotNull(1:Int32)), ARRAY[]:List(Struct(Int32, Varchar))) as $expr3, events.time] }
-+      └─BatchHashJoin { type: Inner, predicate: events.embedding IS NOT DISTINCT FROM events.embedding, output: all }
-+        ├─BatchExchange { order: [], dist: HashShard(events.embedding) }
-+        │ └─BatchScan { table: events, columns: [events.event_id, events.time, events.embedding], distribution: UpstreamHashShard(events.event_id) }
-         └─BatchHashAgg { group_key: [events.embedding], aggs: [array_agg($expr1 order_by($expr2 ASC)) filter(IsNotNull(1:Int32))] }
-           └─BatchHashJoin { type: LeftOuter, predicate: events.embedding IS NOT DISTINCT FROM events.embedding, output: [events.embedding, $expr1, $expr2, 1:Int32] }
-             ├─BatchHashAgg { group_key: [events.embedding], aggs: [] }
-@@ -439,17 +439,17 @@
-     as related_info from events;
-   logical_plan: |-
-     LogicalProject { exprs: [events.event_id, events.time, events.embedding, $expr3] }
--    └─LogicalApply { type: LeftOuter, on: true, correlated_id: 1, max_one_row: true }
-+    └─LogicalApply { type: Inner, on: true, correlated_id: 1, max_one_row: true }
-       ├─LogicalScan { table: events, columns: [events.event_id, events.time, events.embedding, events._rw_timestamp] }
-       └─LogicalProject { exprs: [Coalesce(array_agg($expr1 order_by($expr2 ASC)), ARRAY[]:List(Struct(Int32, Varchar))) as $expr3] }
-         └─LogicalAgg { aggs: [array_agg($expr1 order_by($expr2 ASC))] }
-           └─LogicalTopN { order: [$expr2 ASC], limit: 3, offset: 0 }
-             └─LogicalProject { exprs: [Row(items.id, items.name) as $expr1, CosineDistance(items.embedding, CorrelatedInputRef { index: 2, correlated_id: 1 }) as $expr2] }
-               └─LogicalScan { table: items, columns: [items.id, items.name, items.embedding, items._rw_timestamp] }
-   optimized_logical_plan_for_batch: |-
--    LogicalJoin { type: LeftOuter, on: IsNotDistinctFrom(events.embedding, events.embedding), output: [event
+@@ -0,0 +1,18 @@
++SET NOCOUNT ON;
++
++EXEC sys.sp_cdc_enable_db;
++
++CREATE TABLE [t_1] (id INT PRIMARY KEY, v VARCHAR(20));
++CREATE TABLE [t$1] (id INT PRIMARY KEY, v VARCHAR(20));
++CREATE TABLE [t#1] (id INT PRIMARY KEY, v VARCHAR(20));
++CREATE TABLE [t中1] (id INT PRIMARY KEY, v VARCHAR(20));
++
++EXEC sys.sp_cdc_enable_table @source_schema = 'dbo', @source_name = N't_1', @role_name = NULL;
++EXEC sys.sp_cdc_enable_table @source_schema = 'dbo', @source_name = N't$1', @role_name = NULL;
++EXEC sys.sp_cdc_enable_table @source_schema = 'dbo', @source_name = N't#1', @role_name = NULL;
++EXEC sys.sp_cdc_enable_table @source_schema = 'dbo', @source_name = N't中1', @role_name = NULL;
++
++INSERT INTO [t_1] VALUES (10, 'snapshot');
++INSERT INTO [t$1] VALUES (20, 'snapshot');
++INSERT INTO [t#1] VALUES (30, 'snapshot');
++INSERT INTO [t中1] VALUES (40, 'snapshot');
 ```
 
-**File**: `src/frontend/src/optimizer/rule/correlated_topn_to_vector_search.rs` (modified, +2/-2)
+**File**: `java/connector-node/risingwave-connector-service/src/main/resources/mysql.properties` (modified, +3/-0)
 ```diff
-@@ -41,8 +41,8 @@ impl CorrelatedTopNToVectorSearchRule {
- impl Rule<Logical> for CorrelatedTopNToVectorSearchRule {
-     fn apply(&self, plan: PlanRef) -> Option<PlanRef> {
-         let apply = plan.as_logical_apply()?;
--        // match pattern LogicalApply { type: LeftOuter, on: true, correlated_id, max_one_row: true }
--        if apply.join_type() != JoinType::LeftOuter {
-+        // match pattern LogicalApply { type: LeftOuter | Inner, on: true, correlated_id, max_one_row: true }
-+        if !matches!(apply.join_type(), JoinType::LeftOuter | JoinType::Inner) {
-             return None;
-         }
-         if !apply.max_one_row() {
-```
-
-**File**: `src/frontend/src/planner/select.rs` (modified, +24/-2)
-```diff
-@@ -438,13 +438,23 @@ impl Planner {
-                 _ => bail_not_implemented!(issue = 1343, "{:?}", subquery.kind),
-             };
+@@ -17,6 +17,9 @@ schema.history.internal.store.only.captured.databases.ddl=true
+ schema.history.internal=com.risingwave.connector.cdc.debezium.internal.OpendalSchemaHistory
+ snapshot.mode.custom.name=no_data_recovery
  
-+            // `Array` subqueries decorrelate to a scalar aggregate with
-+            // `Coalesce(array_agg, ARRAY[])`, guaranteeing one row per outer key, so
-+            // `Inner` is equivalent to `LeftOuter` in batch. `Inner` also avoids the
-+            // streaming transient-NULL caused by `StreamHashJoin(LeftOuter)`
-+            // null-padding the outer row before the right-side aggregate arrives.
-+            let join_type = if matches!(subquery.kind, SubqueryKind::Array) {
-+                JoinType::Inner
-+            } else {
-+                JoinType::LeftOuter
-+            };
-             root = Self::create_apply(
-                 correlated_id,
-                 correlated_indices,
-                 root,
-                 right,
-                 ExprImpl::literal_bool(true),
--                JoinType::LeftOuter,
-+                join_type,
-                 true,
-             );
-         }
-@@ -518,6 +528,7 @@ impl Planner {
-             .collect();
- 
-         let mut right = None;
-+        let mut all_array_subqueries = true;
- 
-         for subquery in rewriter.subqueries {
-             let return_type = subquery.return_type();
-@@ -547,6 +558,9 @@ impl Planner {
-                 SubqueryKind::Array => subroot.into_array_agg()?,
-                 _ => bail_not_implemented!(issue = 1343, "{:?}", subquery.kind),
-             };
-+            if !matches!(subquery.kind, SubqueryKind::Array) {
-+                all_array_subqueries = false;
-+            }
-             if right.is_none() {
-                 right = Some(subplan);
-             } else {
-@@ -569,13 +583,21 @@ impl Planner {
-             correlated_indices.sort();
-             correlated_indices.dedup();
- 
-+            // Same reasoning as `substitute_subqueries_in_left_deep_tree_way`:
-+            // only safe when every combined subquery is `Array` (Scalar/Existential
-+            // legitimately need `LeftOuter` null-padding).
-+            let join_type = if all_array_subqueries {
-+                JoinType::Inner
-+            } else {
-+                JoinType::LeftOuter
-+            };
-             Self::create_apply(
-                 rewriter.correlated_id.expect("must have a correlated id"),
-                 correlated_indices,
-                 root,
-                 right,
-                 ExprImpl::literal_bool(true),
--                JoinType::LeftOuter,
-+                join_type,
-                 true,
-             )
-         } else {
++# keep table names unsanitized in topic names, which route change events to tables
++topic.naming.strategy=com.risingwave.connector.cdc.debezium.internal.RisingWaveTopicNamingStrategy
++
+ # default to disable schema change events
+ include.schema.changes=${auto.schema.change:-false}
+ database.server.id=${server.id}
+```
+
+**File**: `java/connector-node/risingwave-connector-service/src/main/resources/oracle.properties` (modified, +2/-0)
+```diff
+@@ -21,6 +21,8 @@ schema.history.internal.store.only.captured.tables.ddl=true
+ schema.history.internal.store.only.captured.databases.ddl=true
+ # default to disable schema change events
+ include.schema.changes=${debezium.include.schema.changes:-false}
++# keep table names unsanitized in topic names, which route change events to tables
++topic.naming.strategy=com.risingwave.connector.cdc.debezium.internal.RisingWaveSchemaTopicNamingStrategy
+ # In sharing CDC source mode, table filtering is removed by DbzConnectorConfig.
+ name=${hostname}:${port}:${database.name}.${database.pdb.name}.${schema.name}.${table.name:-RW_CDC_Sharing}
+ provide.transaction.metadata=${transactional:-false}
+```
+
+**File**: `java/connector-node/risingwave-connector-service/src/main/resources/postgres.properties` (modified, +2/-0)
+```diff
+@@ -13,6 +13,8 @@ database.dbname=${database.name}
+ database.sslmode=${ssl.mode:-prefer}
+ table.include.list=${schema.name}.${table.name}
+ include.schema.changes=${auto.schema.change:-false}
++# keep table names unsanitized in topic names, which route change events to tables
++topic.naming.strategy=com.risingwave.connector.cdc.debezium.internal.RisingWaveSchemaTopicNamingStrategy
+ # The name of the PostgreSQL replication slot
+ slot.name=${slot.name}
+ # default plugin name is 'pgoutput'
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #27716** (2026-10-29): fix(sqlparser): correctly parse escaped double-quoted identifiers (#25601) (@cyliu0)
+- **PR #27715** (2026-10-29): fix(ci): bump cargo-dylint to 6.3.0 for the clippy branch rename (#27703) (@cyliu0)
+- **PR #27703** (2026-10-28): fix(ci): bump cargo-dylint to 6.3.0 for the clippy branch rename (@anlowee)
+- **PR #27702** (2026-10-29): refactor(meta): drop pk-index compaction position-delete coalescing (@silver-ymz)
 - **PR #27698** (2026-10-28): fix(meta): do not serialize secret store private key in MetaOpts (#27586) (@risingwave-ci)
 - **PR #27697** (2026-10-28): fix(meta): do not serialize secret store private key in MetaOpts (#27586) (@risingwave-ci)
-- **PR #27694** (2026-10-28): fix(sqlparser): parse IS [NOT] DISTINCT FROM tighter than AND and OR (@howenyap)
-- **PR #27693** (2026-10-28): fix(meta): send notification service responses zstd-compressed (#27654) (@risingwave-ci)
-- **PR #27690** (2026-10-28): cherry-pick fix(cdc): commit offsets persisted on non-checkpoint barriers (#27640) to release-3.0 (@yuhao-su)
-- **PR #27674** (2026-10-28): chore(deps): Bump next from 16.3.8 to 16.4.1 in /dashboard (@dependabot[bot])
 
 ---
 
@@ -1732,53 +1901,34 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. iceberg): honor compaction interval between pk-index batches (#27625)
+## X. iceberg): honor commit checkpoint interval for v3 jobs (#27616)
 
 **RULE**:
-When implementing operations in `src/meta/src/manager/iceberg_compaction/schedule.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `e2e_test/iceberg/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e3fe3b25`: iceberg): honor compaction interval between pk-index batches (#27625). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0d6da6fc`: iceberg): honor commit checkpoint interval for v3 jobs (#27616). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/meta/src/manager/iceberg_compaction/schedule.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e_test/iceberg/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// - An active automatic round follows its next-attempt time. PK-index batches
-    ///   can also continue without new commits or trigger early at the commit threshold.
-        let commit_ready = self.demand.commit_count >= self.config.trigger_snapshot_count;
-        let has_commits = self.demand.commit_count > 0;
-            // Continue immediately below the same PK-index boundary when no new
-            // commits are pending. Advancing the boundary must honor the cooldown
-            // or commit threshold, including commits received after success.
-            // Neither continuation nor new demand can bypass failure backoff.
-            return time_ready
-                || (self.config.pk_index_coordinated && (commit_ready || !has_commits));
-            // The new interval applies after the next successful batch or when the
-            // round drains. Preserve the current continuation/cooldown/retry deadline.
-            // Beneficial PK-index batches can advance their boundary on new commits,
-            // so continuous ingestion may prevent the round from ever draining.
-            // Keep the cooldown even if commits arrive only after this success.
-            // shou
+update the Meta-side checkpoint pacing while preserving pending epochs.
+`compaction.write_parquet_*` changes are still rejected for PK-index sinks because
+PK-index jobs now honor their configured commit interval, including after recovery.
+Existing sinks with the frontend default of 60 therefore change from committing every
+checkpoint to every 60 checkpoints after upgrade. Set `commit_checkpoint_interval = 1`
+to retain the previous commit frequency.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    /// - An active automatic round is controlled only by its next-attempt time.
-            // Active work remains schedulable without new commits. PK-index batches
-            // consume new demand when they advance their boundary; legacy rounds
-            // retain a fixed boundary. Neither can bypass failure backoff.
-            return time_ready;
-        let commit_ready = self.demand.commit_count >= self.config.trigger_snapshot_count;
-        let has_commits = self.demand.commit_count > 0;
-            // The new interval applies after the round drains. The current deadline
-            // already represents either immediate continuation or retry backoff.
-                next_compaction_time: now,
-                    candidates.push((*sink_id, *next_compaction_time));
+and `compaction.write_parquet_*` are currently rejected for PK-index sinks because
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e3fe3b25` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0d6da6fc` are properly handled with clean fallback behavior.

@@ -6064,3 +6064,6 @@ Every entry in this ledger must capture:
 | `learn-github-flox-flox` | `https://github.com/flox/flox` | `55536b5d` | Multi-dimensional audit evidence | 2026-10-29T17:04:36.108Z |
 | `learn-github-tach-org-tach` | `https://github.com/tach-org/tach` | `7c27c816` | Multi-dimensional audit evidence | 2026-10-29T17:16:39.872Z |
 | `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `e1ee0571` | Multi-dimensional audit evidence | 2026-10-29T17:16:50.002Z |
+| `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `1b58f5dd` | Multi-dimensional audit evidence | 2026-10-29T17:23:31.862Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `e14fe198` | Multi-dimensional audit evidence | 2026-10-29T17:23:41.699Z |
+| `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `8197b045` | Multi-dimensional audit evidence | 2026-10-29T17:23:45.549Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source**: github ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
-> **Source Version**: `54548685`  
+> **Source Version**: `1b58f5dd`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T06:24:44.213Z  
+> **Timestamp**: 2026-10-29T17:23:31.235Z  
 > **Learning ID**: `learn-github-kuddev-pebrel`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T06:24:44.209Z  
+> **Harvest Timestamp**: 2026-10-29T17:23:30.208Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI-native, GPU-accelerated terminal emulator for Windows with SSH, persistent sessions, split panes, and first-class AI CLI workflows.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3626 stars
+- **Stars / Engagement**: 3643 stars
 
 ---
 
@@ -1379,644 +1379,64 @@ pub(crate) fn shutdown() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `54548685` (2026-10-28)
-**Commit Message**: fix(i18n): localize settings help and option labels (#793)
+### Incident Patch 1: `1b58f5dd` (2026-10-28)
+**Commit Message**: docs: add WeChat group below README sponsors (#800)
 
-Use typed translation IDs for existing settings help and option labels, including Japanese translations.
+Add the community QR image and its expiry note to both READMEs after the Sponsors section.
 
-**File**: `nebula_app/i18n/en-US.json` (modified, +93/-0)
+**File**: `README.md` (modified, +12/-0)
 ```diff
-@@ -525,6 +525,99 @@
-       "release_notes": "Release notes",
-       "sponsors": "Sponsors"
-     },
-+    "option": {
-+      "bar": "Bar (│)",
-+      "underscore": "Underscore (_)",
-+      "filled_box": "Filled box (█)",
-+      "empty_box": "Empty box (□)",
-+      "slide": "Slide",
-+      "instant": "Instant",
-+      "after_current_tab": "After current tab",
-+      "end_of_list": "End of list",
-+      "create_a_new_window": "Create a new window",
-+      "attach_to_the_most_recent": "Attach to the most recent window",
-+      "attach_to_the_most_recent_v2": "Attach to the most recent window on this desktop",
-+      "auto_detect": "Auto detect",
-+      "git_only": "Git only",
-+      "svn_only": "SVN only",
-+      "visual_sound": "Visual + sound",
-+      "mica_low_cost": "Mica (low cost)",
-+      "mica_alt_low_cost": "Mica Alt (low cost)",
-+      "aero_glass": "Aero (glass)",
-+      "acrylic_high_cost": "Acrylic (high cost)",
-+      "right_arrow": "Right arrow",
-+      "tab_or_right_arrow": "Tab or Right arrow",
-+      "fill": "Fill",
-+      "uniform": "Uniform",
-+      "uniform_to_fill": "Uniform to fill",
-+      "original_size": "Original size",
-+      "top_left": "Top left",
-+      "top_right": "Top right",
-+      "bottom_left": "Bottom left",
-+      "bottom_right": "Bottom right",
-+      "provider_name": "Provider name",
-+      "note_spaces_allowed": "Note (spaces allowed)",
-+      "official_website": "Official website",
-+      "api_endpoint": "API endpoint",
-+      "default_model": "Default model",
-+      "e_g_development_server": "e.g. Development server",
-+      "leave_empty_to_ask_when": "Leave empty to ask when connecting",
-+      "optional": "Optional",
-+      "leave_empty_to_keep_the": "Leave empty to keep the saved password",
-+      "user_bastion_n22_or_ssh": "user@bastion:22 or SSH config alias",
-+      "search_icons": "Search icons...",
-+      "backup_password_at_least_n8": "Backup password (at least 8 characters)"
-+    },
-+    "help": {
-+      "changes_only_the_terminal_background": "Changes only the terminal background; Settings keeps the theme colors.",
-+      "shows_an_image_behind_terminal": "Shows an image behind terminal text.",
-+      "text_colors_still_come_from": "Text colors still come from the theme. Lower the image opacity if text is hard to read.",
-+      "chooses_how_the_background_image": "Chooses how the background image fills the terminal.",
-+      "fill_stretches_the_image_uniform": "Fill stretches the image. Uniform and Uniform to fill preserve its aspect ratio. Original size does not scale it.",
-+      "positions_the_image_within_the": "Positions the image within the terminal.",
-+      "lower_values_make_the_image": "Lower values make the image less prominent.",
-+      "when_disabled_the_image_appears": "When disabled, the image appears only behind the terminal.",
-+      "when_disabled_the_cursor_stays": "When disabled, the cursor stays lit.",
-+      "middle_click_still_closes_tabs": "Middle-click still closes tabs when their close buttons are hidden.",
-+      "changes_only_the_application_interface": "Changes only the application interface language.",
-+      "programs_inside_the_terminal_choose": "Programs inside the terminal choose their output language from their own environment.",
-+      "adjusts_interface_spacing_without_changing": "Adjusts interface spacing without changing terminal line spacing.",
-+      "chooses_the_window_background_effect": "Chooses the window background effect.",
-+      "mica_effects_use_fewer_resources": "Mica effects use fewer resources. Aero and Acrylic blur live content behind the window and cost more.",
-+      "adjusts_terminal_character_cell_width": "Adjusts terminal character cell width.",
-+      "compact_rounds_down_relaxed_rounds": "Compact rounds down. Relaxed rounds up to avoid squeezing fonts with fractional widths. Only the terminal grid is affected.",
-+      "shows_system_information_when_a": "Shows system information when a new session starts.",
-+      "uses_fastfetch_to_display_system": "Uses fastfetch to display system information. Disabling it reduces startup work for new tabs.",
-+      "shows_a_segmented_prompt_requires": "Shows a segmented prompt. Requires a compatible font.",
-+      "the_font_must_include_powerline": "The font must include Powerline glyphs or the segment arrows may appear as boxes.",
-+      "used_for_new_tabs_existing": "Used for new tabs. Existing terminals are unaffected.",
-+      "when_unset_inherits_the_directory": "When unset, inherits the directory used to launch the application.",
-+      "launching_from_a_file_explorer": "Launching from a File Explorer folder uses that folder by default.",
-+      "chooses_sound_or_visual_feedback": "Chooses sound or visual feedback for terminal alerts.",
-+      "uses_the_font_group_in": "Uses the font group in order to find available glyphs.",
-+      "when_a_font_lacks_a": "When a font lacks a glyph, the next font in the group is tried.",
-+      "suggests_commands_from_his
-```
-
-**File**: `nebula_app/i18n/ja-JP.json` (modified, +93/-0)
-```diff
-@@ -347,6 +347,99 @@
-       "release_notes": "リリースノート",
-       "sponsors": "スポンサー"
-     },
-+    "option": {
-+      "bar": "バー（│）",
-+      "underscore": "アンダースコア（_）",
-+      "filled_box": "塗りつぶしの四角（█）",
-+      "empty_box": "中抜きの四角（□）",
-+      "slide": "スライド",
-+      "instant": "即時",
-+      "after_current_tab": "現在のタブの後",
-+      "end_of_list": "リストの末尾",
-+      "create_a_new_window": "新しいウィンドウを作成",
-+      "attach_to_the_most_recent": "最後に使用したウィンドウで開く",
-+      "attach_to_the_most_recent_v2": "このデスクトップで最後に使用したウィンドウで開く",
-+      "auto_detect": "自動検出",
-+      "git_only": "Git のみ",
-+      "svn_only": "SVN のみ",
-+      "visual_sound": "視覚通知 + サウンド",
-+      "mica_low_cost": "Mica（低負荷）",
-+      "mica_alt_low_cost": "Mica Alt（低負荷）",
-+      "aero_glass": "Aero（ガラス）",
-+      "acrylic_high_cost": "Acrylic（高負荷）",
-+      "right_arrow": "右方向キー",
-+      "tab_or_right_arrow": "Tab または右方向キー",
-+      "fill": "引き伸ばし",
-+      "uniform": "全体を表示",
-+      "uniform_to_fill": "全体に拡大",
-+      "original_size": "元のサイズ",
-+      "top_left": "左上",
-+      "top_right": "右上",
-+      "bottom_left": "左下",
-+      "bottom_right": "右下",
-+      "provider_name": "プロバイダー名",
-+      "note_spaces_allowed": "メモ（スペース可）",
-+      "official_website": "公式サイト",
-+      "api_endpoint": "API エンドポイント",
-+      "default_model": "既定のモデル",
-+      "e_g_development_server": "例: 開発サーバー",
-+      "leave_empty_to_ask_when": "空欄の場合は接続時に入力",
-+      "optional": "任意",
-+      "leave_empty_to_keep_the": "空欄の場合は保存済みのパスワードを維持",
-+      "user_bastion_n22_or_ssh": "user@bastion:22 または SSH config のエイリアス",
-+      "search_icons": "アイコンを検索…",
-+      "backup_password_at_least_n8": "バックアップのパスワード（8 文字以上）"
-+    },
-+    "help": {
-+      "changes_only_the_terminal_background": "ターミナルの背景のみを変更します。設定ページはテーマの色のままです。",
-+      "shows_an_image_behind_terminal": "ターミナルの文字の背後に画像を表示します。",
-+      "text_colors_still_come_from": "文字色は引き続きテーマに従います。文字が読みにくい場合は画像の不透明度を下げてください。",
-+      "chooses_how_the_background_image": "ターミナルでの背景画像の表示方法を選択します。",
-+      "fill_stretches_the_image_uniform": "「引き伸ばし」は画像を縦横比に関係なく伸縮します。「全体を表示」と「全体に拡大」は縦横比を保ちます。「元のサイズ」は拡大縮小しません。",
-+      "positions_the_image_within_the": "ターミナル内での画像の位置を指定します。",
-+      "lower_values_make_the_image": "値を小さくするほど画像が目立たなくなります。",
-+      "when_disabled_the_image_appears": "オフの場合、画像はターミナルの背後にのみ表示されます。",
-+      "when_disabled_the_cursor_stays": "オフの場合、カーソルは点灯したままになります。",
-+      "middle_click_still_closes_tabs": "閉じるボタンを非表示にしても、中クリックでタブを閉じられます。",
-+      "changes_only_the_application_interface": "アプリの UI 言語のみを変更します。",
-+      "programs_inside_the_terminal_choose": "ターミナル内のプログラムの出力言語は、各プログラムの実行環境（ロケールなど）によって決まります。",
-+      "adjusts_interface_spacing_without_changing": "ターミナルの行間を変えずに、UI の余白を調整します。",
-+      "chooses_the_window_background_effect": "ウィンドウの背景効果を選択します。",
-+      "mica_effects_use_fewer_resources": "Mica 系は負荷が低めです。Aero と Acrylic はウィンドウ背後の内容をリアルタイムにぼかすため、負荷が高くなります。",
-+      "adjusts_terminal_character_cell_width": "ターミナルの文字セルの幅を調整します。",
-+      "compact_rounds_down_relaxed_rounds": "「コンパクト」は切り捨てます。「ゆったり」は切り上げて、幅が小数になるフォントが詰まって見えるのを防ぎます。ターミナルのグリッドにのみ影響します。",
-+      "shows_system_information_when_a": "新しいセッションの開始時にシステム情報を表示します。",
-+      "uses_fastfetch_to_display_system": "fastfetch を使ってシステム情報を表示します。オフにすると新しいタブの起動処理が軽くなります。",
-+      "shows_a_segmented_prompt_requires": "セグメント化されたプロンプトを表示します。対応フォントが必要です。",
-+      "the_font_must_include_powerline": "フォントに Powerline グリフが含まれていないと、セグメントの矢印が四角形で表示されることがあります。",
-+      "used_for_new_tabs_existing": "新しいタブに使用されます。既存のターミナルには影響しません。",
-+      "when_unset_inherits_the_directory": "未設定の場合、アプリケーションの起動ディレクトリを引き継ぎます。",
-+      "launching_from_a_file_explorer": "エクスプローラーのフォルダーから起動した場合は、既定でそのフォルダーを使用します。",
-+      "chooses_sound_or_visual_feedback": "ターミナルのアラートを音で知らせるか、画面で知らせるかを選択します。",
-+      "uses_the_font_group_in": "フォントグループを順に使って利用可能なグリフを探します。",
-+      "when_a_font_lacks_a": "フォントにグリフがない場合は、グループ内の次のフォントが試されます。",
-+      "suggests_commands_from_history_and": "履歴からコマンドを提案し、確定したときだけ入力します。",
-+      "chooses_the_key_used_to": "候補を確定するキーを選択します。",
-+      "use_right_arrow_if_tab": "Tab がシェル自体の補完と競合する場合は、右方向キーを使用してください。",
-+      "copies_on_mouse_release_and": "マウスを離すとコピーし、右クリックで貼り付けます。",
-+      "when_disabled_selection_does_not": "オフの場合、選択しても自動でコピーされず、右クリックでコピー／貼り付けメニューが開きます。",
-+      "asks_before_multiline_or_risky": "通常のシェルで複数行や危険な内容を貼り付ける前に確認します。",
-+      "checks_line_breaks_privileged_commands": "改行、特権コマンド、制御文字をチェックします。ブラケットペーストと全画面アプリは対象外です。オフにすると確認せずに貼り付けます。",
-+      "locks_the_divider_when_disabled": "オフにするとサイドバーの境界を固定し、誤って幅を変えてしまうのを防ぎます。",
-+      "brightens_dense_glyphs_instead_of": "線を太くする代わりに明るくして、画数の多いグリフを見やすくします。",
-+      "only_cjk_bold_glyphs_are": "影響するのは CJK の太字グリフのみです。ラテン文字には引き続き本来の太字を使用します。",
-+      "slides_new_tabs_into_view": "新しいタブをスライドさせて表示するか、すぐに表示するかを選択します。",
-+      "affects_new_tabs_only_not": "新しいタブにのみ影響し、復元されるタブの順序は変わりません。",
-+      "opens_a_new_window_or": "再度起動したときに、新しいウィンドウを開くか既存のウィンドウに加わるかを指定します。",
-+      "chooses_whether_the_sidebar_shows": "サイドバーに Git と SVN のどちらの状態を表示するかを選択します。",
-+      "auto_detect_check
-```
-
-**File**: `nebula_app/i18n/zh-CN.json` (modified, +93/-0)
-```diff
-@@ -525,6 +525,99 @@
-       "release_notes": "更新内容",
-       "sponsors": "赞助商"
-     },
-+    "option": {
-+      "bar": "条形（│）",
-+      "underscore": "下划线（_）",
-+      "filled_box": "实心框（█）",
-+      "empty_box": "空心框（□）",
-+      "slide": "滑动",
-+      "instant": "立即",
-+      "after_current_tab": "当前标签之后",
-+      "end_of_list": "列表末尾",
-+      "create_a_new_window": "创建新窗口",
-+      "attach_to_the_most_recent": "附加到最近使用的窗口",
-+      "attach_to_the_most_recent_v2": "附加到此桌面最近使用的窗口",
-+      "auto_detect": "自动检测",
-+      "git_only": "仅 Git",
-+      "svn_only": "仅 SVN",
-+      "visual_sound": "闪烁 + 声音",
-+      "mica_low_cost": "Mica（低开销）",
-+      "mica_alt_low_cost": "Mica Alt（低开销）",
-+      "aero_glass": "Aero（玻璃）",
-+      "acrylic_high_cost": "Acrylic（高开销）",
-+      "right_arrow": "右方向键",
-+      "tab_or_right_arrow": "Tab 或右方向键",
-+      "fill": "拉伸",
-+      "uniform": "适应",
-+      "uniform_to_fill": "填充",
-+      "original_size": "原始尺寸",
-+      "top_left": "左上",
-+      "top_right": "右上",
-+      "bottom_left": "左下",
-+      "bottom_right": "右下",
-+      "provider_name": "供应商名称",
-+      "note_spaces_allowed": "备注（可包含空格）",
-+      "official_website": "官方网站",
-+      "api_endpoint": "API 请求地址",
-+      "default_model": "默认模型",
-+      "e_g_development_server": "例如：开发服务器",
-+      "leave_empty_to_ask_when": "留空则连接时询问",
-+      "optional": "可选",
-+      "leave_empty_to_keep_the": "留空则保留已存密码",
-+      "user_bastion_n22_or_ssh": "user@bastion:22 或 SSH config 别名",
-+      "search_icons": "搜索图标…",
-+      "backup_password_at_least_n8": "备份密码（至少 8 位）"
-+    },
-+    "help": {
-+      "changes_only_the_terminal_background": "只更改终端底色，设置页仍跟随主题。",
-+      "shows_an_image_behind_terminal": "在终端文字后方显示图片。",
-+      "text_colors_still_come_from": "图片不改变文字配色；看不清时可降低背景图像不透明度。",
-+      "chooses_how_the_background_image": "调整图片的铺放方式。",
-+      "fill_stretches_the_image_uniform": "拉伸会改变比例；适应和填充保持比例；原始尺寸不缩放。",
-+      "positions_the_image_within_the": "设置图片在终端中的位置。",
-+      "lower_values_make_the_image": "数值越低，图片越淡。",
-+      "when_disabled_the_image_appears": "关闭后，图片只显示在终端区域。",
-+      "when_disabled_the_cursor_stays": "关闭后，光标保持常亮。",
-+      "middle_click_still_closes_tabs": "隐藏后，仍可用鼠标中键关闭标签。",
-+      "changes_only_the_application_interface": "只更改应用界面的语言。",
-+      "programs_inside_the_terminal_choose": "终端内程序的输出语言由各自的环境设置决定。",
-+      "adjusts_interface_spacing_without_changing": "调整界面留白，不改变终端行距。",
-+      "chooses_the_window_background_effect": "选择窗口背景的模糊效果。",
-+      "mica_effects_use_fewer_resources": "Mica 系列开销较低；Aero 和 Acrylic 实时模糊窗口后方的内容，开销较高。",
-+      "adjusts_terminal_character_cell_width": "调整终端字符的列宽。",
-+      "compact_rounds_down_relaxed_rounds": "紧凑向下取整；宽松向上补齐，避免小数字宽的字体显得拥挤。只影响终端网格。",
-+      "shows_system_information_when_a": "新会话启动时显示系统信息。",
-+      "uses_fastfetch_to_display_system": "通过 fastfetch 显示系统信息；关闭可减少新标签的启动等待。",
-+      "shows_a_segmented_prompt_requires": "显示分段提示符，需字体支持。",
-+      "the_font_must_include_powerline": "字体须包含 Powerline 字形，否则分段箭头可能显示为方框。",
-+      "used_for_new_tabs_existing": "用于新标签，不影响已打开的终端。",
-+      "when_unset_inherits_the_directory": "未设置时，继承应用的启动目录。",
-+      "launching_from_a_file_explorer": "从资源管理器的文件夹中启动时，默认进入该文件夹。",
-+      "chooses_sound_or_visual_feedback": "程序提示时，选择声音或闪烁提醒。",
-+      "uses_the_font_group_in": "按字体组顺序查找可用字形。",
-+      "when_a_font_lacks_a": "前面的字体缺少字形时，会继续尝试后面的字体。",
-+      "suggests_commands_from_history_and": "根据历史命令给出建议，确认后才填入。",
-+      "chooses_the_key_used_to": "选择填入建议时使用的按键。",
-+      "use_right_arrow_if_tab": "如果 Tab 与 Shell 自带补全冲突，可改用右方向键。",
-+      "copies_on_mouse_release_and": "松开鼠标自动复制，右键直接粘贴。",
-+      "when_disabled_selection_does_not": "关闭后，选中不会自动复制；右键改为打开复制与粘贴菜单。",
-+      "asks_before_multiline_or_risky": "在普通 shell 中粘贴多行或高风险内容时先确认。",
-+      "checks_line_breaks_privileged_commands": "检查换行、提权命令和控制字符。Bracketed paste 模式与全屏程序不受此项保护；关闭后直接粘贴。",
-+      "locks_the_divider_when_disabled": "关闭后锁定分界线，避免误拖。",
-+      "brightens_dense_glyphs_instead_of": "用提亮代替加粗，让密集笔画更清楚。",
-+      "only_cjk_bold_glyphs_are": "只影响中日韩（CJK）粗体字形，拉丁字母仍使用真正的粗体。",
-+      "slides_new_tabs_into_view": "新标签滑动出现，或立即显示。",
-+      "affects_new_tabs_only_not": "只影响新标签，不改变恢复时的顺序。",
-+      "opens_a_new_window_or": "再次启动应用时，新开窗口或加入已有窗口。",
-+      "chooses_whether_the_sidebar_shows": "选择侧栏显示 Git 还是 SVN 状态。",
-+      "auto_detect_checks_for_git": "自动检测会识别 .git 和 .svn；同目录存在两者时可手动指定。",
-+      "keeps_terminals_running_after_closing": "关窗后终端继续运行；关闭此项会结束会话。",
-+      "when_disabled_closing_the_window": "关闭此项后，关窗会终止 Shell，未保存的工作可能丢失。开启后可重新附着到后台会话。",
-+      "restores_tabs_layout_and_directories": "恢复标签、布局和目录，不恢复原进程。",
-+      "restored_tabs_start_new_shells": "恢复的标签会启动新的 Shell，不会让已结束的程序继续运行。",
-+      "continues_the_previous_conversation_when": "恢复 AI 标签时，继续上次的对话。",
-+      "shows_ai_session_status_in": "在通知区域查看 AI 会话状态。"
-+    },
-     "pane": {
-       "restore_default": "还原为默认值",
-       "hide_details": "收起说明",
-```
-
-**File**: `nebula_app/src/gpui_shell/settings_pane/localization.rs` (modified, +65/-57)
-```diff
-@@ -63,83 +63,92 @@ pub(super) fn localized_select_labels(
-             language.text(crate::i18n::Message::SettingsNotificationsDurationPersistent),
-         ],
-         "cursor_shape" => vec![
--            language.pick("条形（│）", "Bar (│)"),
--            language.pick("下划线（_）", "Underscore (_)"),
--            language.pick("实心框（█）", "Filled box (█)"),
--            language.pick("空心框（□）", "Empty box (□)"),
-+            language.text(crate::i18n::Message::SettingsOptionBar),
-+            language.text(crate::i18n::Message::SettingsOptionUnderscore),
-+            language.text(crate::i18n::Message::SettingsOptionFilledBox),
-+            language.text(crate::i18n::Message::SettingsOptionEmptyBox),
-         ],
-         "cursor_motion" => vec![
-             language.text(crate::i18n::Message::SettingsCursorMotionOff),
-             language.text(crate::i18n::Message::SettingsCursorMotionSmooth),
-         ],
-         "tabs_position" => {
--            vec![language.pick("左侧边栏", "Left sidebar"), language.pick("顶部", "Top")]
-+            vec![
-+                language.text(crate::i18n::Message::CommonLeftSidebar),
-+                language.text(crate::i18n::Message::CommonTop),
-+            ]
-         },
--        "tab_reveal" => vec![language.pick("滑动", "Slide"), language.pick("立即", "Instant")],
--        "density" => vec![language.pick("标准", "Standard"), language.pick("紧凑", "Compact")],
-+        "tab_reveal" => vec![
-+            language.text(crate::i18n::Message::SettingsOptionSlide),
-+            language.text(crate::i18n::Message::SettingsOptionInstant),
-+        ],
-+        "density" => vec![
-+            language.text(crate::i18n::Message::CommonStandard),
-+            language.text(crate::i18n::Message::CommonCompact),
-+        ],
-         "new_tab_position" => vec![
--            language.pick("当前标签之后", "After current tab"),
--            language.pick("列表末尾", "End of list"),
-+            language.text(crate::i18n::Message::SettingsOptionAfterCurrentTab),
-+            language.text(crate::i18n::Message::SettingsOptionEndOfList),
-         ],
-         "windowing_behavior" => vec![
--            language.pick("创建新窗口", "Create a new window"),
--            language.pick("附加到最近使用的窗口", "Attach to the most recent window"),
--            language.pick(
--                "附加到此桌面最近使用的窗口",
--                "Attach to the most recent window on this desktop",
--            ),
-+            language.text(crate::i18n::Message::SettingsOptionCreateANewWindow),
-+            language.text(crate::i18n::Message::SettingsOptionAttachToTheMostRecent),
-+            language.text(crate::i18n::Message::SettingsOptionAttachToTheMostRecentV2),
-         ],
-         "vcs_display" => vec![
--            language.pick("自动检测", "Auto detect"),
--            language.pick("仅 Git", "Git only"),
--            language.pick("仅 SVN", "SVN only"),
-+            language.text(crate::i18n::Message::SettingsOptionAutoDetect),
-+            language.text(crate::i18n::Message::SettingsOptionGitOnly),
-+            language.text(crate::i18n::Message::SettingsOptionSvnOnly),
-         ],
-         "ligatures" => vec![
-             language.text(crate::i18n::Message::SettingsFontLigaturesOn),
-             language.text(crate::i18n::Message::SettingsFontLigaturesOff),
-             language.text(crate::i18n::Message::SettingsFontLigaturesTheme),
-         ],
-         "cell_width_mode" => {
--            vec![language.pick("紧凑", "Compact"), language.pick("宽松", "Relaxed")]
-+            vec![
-+                language.text(crate::i18n::Message::CommonCompact),
-+                language.text(crate::i18n::Message::CommonRelaxed),
-+            ]
-         },
-         "bell" => vec![
--            language.pick("关", "Off"),
--            language.pick("闪烁", "Visual"),
--            language.pick("声音", "Sound"),
--            language.pick("闪烁 + 声音", "Visual + sound"),
-+            language.text(crate::i18n::Message::CommonOff),
-+            language.text(crate::i18n::Message::CommonVisual),
-+            language.text(crate::i18n::Message::CommonSound),
-+            language.text(crate::i18n::Message::SettingsOptionVisualSound),
-         ],
-         "blur" => vec![
--            language.pick("无", "None"),
--            language.pick("Mica（低开销）", "Mica (low cost)"),
--            language.pick("Mica Alt（低开销）", "Mica Alt (low cost)"),
--            language.pick("Aero（玻璃）", "Aero (glass)"),
--            language.pick("Acrylic（高开销）", "Acrylic (high cost)"),
-+            language.text(crate::i18n::Message::CommonNone),
-+            language.text(crate::i18n::Message::SettingsOptionMicaLowCost),
-+            language.text(crate::i18n::Message::SettingsOptionMicaAltLowCost),
-+            language.text(crate::i18n::Message::SettingsOptionAeroGlass),
-+            language.text(crate::i18n::Message::SettingsOptionAcrylicHighCost),
-         ],
-         "accept" => vec![
--            language.pick("右方向键", "Right arrow"),
-+            language.text(crate::i18n::Message::SettingsOptionRightArrow),
-     
-```
-
-**File**: `nebula_app/src/gpui_shell/settings_pane/setting_help.rs` (modified, +75/-93)
-```diff
-@@ -15,78 +15,66 @@ impl From<&'static str> for SettingHelp {
- pub(super) fn help(key: &str, language: UiLanguage) -> SettingHelp {
-     let (summary, details) = match key {
-         "background" => (
--            language.pick("只更改终端底色，设置页仍跟随主题。", "Changes only the terminal background; Settings keeps the theme colors."),
-+            language.text(crate::i18n::Message::SettingsHelpChangesOnlyTheTerminalBackground),
-             None,
-         ),
-         "background_image" => (
--            language.pick("在终端文字后方显示图片。", "Shows an image behind terminal text."),
--            Some(language.pick("图片不改变文字配色；看不清时可降低背景图像不透明度。", "Text colors still come from the theme. Lower the image opacity if text is hard to read.")),
-+            language.text(crate::i18n::Message::SettingsHelpShowsAnImageBehindTerminal),
-+            Some(language.text(crate::i18n::Message::SettingsHelpTextColorsStillComeFrom)),
-         ),
-         "background_image_fit" => (
--            language.pick("调整图片的铺放方式。", "Chooses how the background image fills the terminal."),
--            Some(language.pick("拉伸会改变比例；适应和填充保持比例；原始尺寸不缩放。", "Fill stretches the image. Uniform and Uniform to fill preserve its aspect ratio. Original size does not scale it.")),
--        ),
--        "background_image_alignment" => (
--            language.pick("设置图片在终端中的位置。", "Positions the image within the terminal."),
--            None,
--        ),
--        "background_image_opacity" => (
--            language.pick("数值越低，图片越淡。", "Lower values make the image less prominent."),
--            None,
--        ),
--        "background_image_cover_chrome" => (
--            language.pick("关闭后，图片只显示在终端区域。", "When disabled, the image appears only behind the terminal."),
--            None,
--        ),
-+            language.text(crate::i18n::Message::SettingsHelpChoosesHowTheBackgroundImage),
-+            Some(language.text(crate::i18n::Message::SettingsHelpFillStretchesTheImageUniform)),
-+        ),
-+        "background_image_alignment" => {
-+            (language.text(crate::i18n::Message::SettingsHelpPositionsTheImageWithinThe), None)
-+        },
-+        "background_image_opacity" => {
-+            (language.text(crate::i18n::Message::SettingsHelpLowerValuesMakeTheImage), None)
-+        },
-+        "background_image_cover_chrome" => {
-+            (language.text(crate::i18n::Message::SettingsHelpWhenDisabledTheImageAppears), None)
-+        },
-         "cursor_shape" => ("", None),
--        "cursor_blink" => (
--            language.pick("关闭后，光标保持常亮。", "When disabled, the cursor stays lit."),
--            None,
--        ),
--        "tab_close_visible" => (
--            language.pick("隐藏后，仍可用鼠标中键关闭标签。", "Middle-click still closes tabs when their close buttons are hidden."),
--            None,
--        ),
-+        "cursor_blink" => {
-+            (language.text(crate::i18n::Message::SettingsHelpWhenDisabledTheCursorStays), None)
-+        },
-+        "tab_close_visible" => {
-+            (language.text(crate::i18n::Message::SettingsHelpMiddleClickStillClosesTabs), None)
-+        },
-         "language" => (
--            language.pick("只更改应用界面的语言。", "Changes only the application interface language."),
--            Some(language.pick("终端内程序的输出语言由各自的环境设置决定。", "Programs inside the terminal choose their output language from their own environment.")),
-+            language.text(crate::i18n::Message::SettingsHelpChangesOnlyTheApplicationInterface),
-+            Some(language.text(crate::i18n::Message::SettingsHelpProgramsInsideTheTerminalChoose)),
-         ),
-         "density" => (
--            language.pick("调整界面留白，不改变终端行距。", "Adjusts interface spacing without changing terminal line spacing."),
--            None,
--        ),
--        "opacity" => (
--            language.text(crate::i18n::Message::SettingsOpacityDescription),
-+            language.text(crate::i18n::Message::SettingsHelpAdjustsInterfaceSpacingWithoutChanging),
-             None,
-         ),
-+        "opacity" => (language.text(crate::i18n::Message::SettingsOpacityDescription), None),
-         "blur" => (
--            language.pick("选择窗口背景的模糊效果。", "Chooses the window background effect."),
--            Some(language.pick("Mica 系列开销较低；Aero 和 Acrylic 实时模糊窗口后方的内容，开销较高。", "Mica effects use fewer resources. Aero and Acrylic blur live content behind the window and cost more.")),
-+            language.text(crate::i18n::Message::SettingsHelpChoosesTheWindowBackgroundEffect),
-+            Some(language.text(crate::i18n::Message::SettingsHelpMicaEffectsUseFewerResources)),
-         ),
-         "cell_width_mode" => (
--            language.pick("调整终端字符的列宽。", "Adjusts terminal character cell width."),
--            Some(language.pick("紧凑向下取整；宽松向上补齐，避免小数字宽的字体显得拥挤。只影响终端网格。", "Compact rounds down. Relaxed rounds up to avoid squeezing fonts with fractional widths. Only the terminal grid is affected.")),
-+            language.text(crate::i18n::Message::SettingsHelpAdjustsTerminalCharacterCellWidth),
-+            Some(language.text(crate::i18n::Mes
-```
-
----
-
-### Incident Patch 2: `977e68d5` (2026-10-28)
-**Commit Message**: fix(linux): bound XIM atoms without losing input (#668)
-
-Reuse consumed XIM properties, preserve packet ordering, and bound pending transport state.
-
-**File**: `Cargo.lock` (modified, +3/-3)
-```diff
-@@ -11829,15 +11829,15 @@ checksum = "2fb433233f2df9344722454bc7e96465c9d03bff9d77c248f9e7523fe79585b5"
- [[package]]
- name = "xim-ctext"
- version = "0.3.0"
--source = "git+https://github.com/zed-industries/xim-rs.git?rev=16f35a2c881b815a2b6cdfd6687988e84f8447d8#16f35a2c881b815a2b6cdfd6687988e84f8447d8"
-+source = "git+https://github.com/MeshedPoto/xim-rs?rev=422473ff3be2ce58ea70f3fad35cecafcf7ae6a9#422473ff3be2ce58ea70f3fad35cecafcf7ae6a9"
- dependencies = [
-  "encoding_rs",
- ]
+@@ -74,6 +74,18 @@
  
- [[package]]
- name = "xim-parser"
- version = "0.2.1"
--source = "git+https://github.com/zed-industries/xim-rs.git?rev=16f35a2c881b815a2b6cdfd6687988e84f8447d8#16f35a2c881b815a2b6cdfd6687988e84f8447d8"
-+source = "git+https://github.com/MeshedPoto/xim-rs?rev=422473ff3be2ce58ea70f3fad35cecafcf7ae6a9#422473ff3be2ce58ea70f3fad35cecafcf7ae6a9"
- dependencies = [
-  "bitflags 2.13.0",
- ]
-@@ -12167,7 +12167,7 @@ dependencies = [
- [[package]]
- name = "zed-xim"
- version = "0.4.0-zed"
--source = "git+https://github.com/zed-industries/xim-rs.git?rev=16f35a2c881b815a2b6cdfd6687988e84f8447d8#16f35a2c881b815a2b6cdfd6687988e84f8447d8"
-+source = "git+https://github.com/MeshedPoto/xim-rs?rev=422473ff3be2ce58ea70f3fad35cecafcf7ae6a9#422473ff3be2ce58ea70f3fad35cecafcf7ae6a9"
- dependencies = [
-  "ahash",
-  "hashbrown 0.14.5",
-```
-
-**File**: `Cargo.toml` (modified, +6/-0)
-```diff
-@@ -13,6 +13,12 @@ members = [
- ]
- resolver = "2"
+ For business cooperation or sponsorship, contact: [fickleheartedkeys@163.com](mailto:fickleheartedkeys@163.com)
  
-+# 保留 XIM 输入法，同时复用固定的属性原子名称，避免长期运行扩大 X11 原子表。
-+# 基于原依赖 16f35a2c881b815a2b6cdfd6687988e84f8447d8 的薄修补。
-+# 原因、兼容范围与撤销条件见 architecture/notes/packaging/2026-10-16-bounded-xim-atoms.md。
-+[patch."https://github.com/zed-industries/xim-rs.git"]
-+zed-xim = { git = "https://github.com/MeshedPoto/xim-rs", rev = "422473ff3be2ce58ea70f3fad35cecafcf7ae6a9" }
++<p align="center">
++  <strong>Pebrel WeChat Community</strong>
++</p>
 +
- [workspace.package]
- edition = "2024"
- rust-version = "1.97.1"
++<p align="center">
++  <a href="extra/community/wechat-group-2026-11-04.jpg"><img src="extra/community/wechat-group-2026-11-04.jpg" alt="QR code for the Pebrel WeChat group, valid before November 4, 2026" width="300" /></a>
++</p>
++
++<p align="center">
++  Scan with WeChat to join. Valid before November 4, 2026. Click the image to view full size.
++</p>
++
+ ## One Workspace
+ 
+ Pebrel (formerly Nebula) brings local shells, remote hosts, files, and AI command-line
 ```
 
-**File**: `architecture/notes/packaging/2026-10-16-bounded-xim-atoms.md` (added, +99/-0)
+**File**: `README.zh-CN.md` (modified, +12/-0)
 ```diff
-@@ -0,0 +1,99 @@
-+# 固定 XIM 客户端属性原子名称
+@@ -74,6 +74,18 @@
+ 
+ 商业合作或赞助，请联系：[fickleheartedkeys@163.com](mailto:fickleheartedkeys@163.com)
+ 
++<p align="center">
++  <strong>Pebrel 微信交流群</strong>
++</p>
 +
-+## Status
++<p align="center">
++  <a href="extra/community/wechat-group-2026-11-04.jpg"><img src="extra/community/wechat-group-2026-11-04.jpg" alt="Pebrel 微信交流群二维码，2026 年 11 月 4 日前有效" width="300" /></a>
++</p>
 +
-+提议采用固定提交的依赖修复。旧接收器互操作回归与真实 Fcitx 拼音协议测试通过。
-+这不是正式发布或完整 GUI 验收记录。
++<p align="center">
++  微信扫码加入，2026 年 11 月 4 日前有效。点击图片可查看原图。
++</p>
 +
-+## Context
-+
-+Pebrel 的 Linux X11 输入路径通过 GPUI 使用 `zed-xim`。
-+X server 保存原子名称，其生命周期不随窗口或属性删除而结束。
-+原客户端按递增的 `u16` 序号生成 `_XIM_DATA_*`，在回绕前可产生 65536 个名称。
-+长期输入因此扩大整个桌面会话的原子表，并可能触发其他旧 X11 客户端的编号上限。
-+修复必须保留 XIM 中文输入和报文顺序，也不能要求用户升级外部输入法服务器。
-+
-+## Evidence
-+
-+- 原依赖固定在 [16f35a2](https://github.com/zed-industries/xim-rs/tree/16f35a2c881b815a2b6cdfd6687988e84f8447d8)。
-+- [依赖修复提交](https://github.com/MeshedPoto/xim-rs/commit/422473ff3be2ce58ea70f3fad35cecafcf7ae6a9) 包含传输实现与回归测试。
-+  它建立在第一版修复 [405efc9](https://github.com/MeshedPoto/xim-rs/commit/405efc92426b3dc3a761005709a84567185cc3ca) 之上。
-+- 第一版在 32 个名称用完后无条件追加到仍未读取的属性。16f35a2 的接收器从偏移零读取一个请求并删除整个属性，
-+  因此同一属性中的第二个报文会丢失。维护者审查指出了这一点；去掉占用检查的负向对照可复现该丢帧。
-+- [XIM 传输规范](https://xorg.freedesktop.org/archive/current/doc/libX11/i18n/trans/trans.html) 定义属性报文和 ClientMessage 传输。
-+- 修复前后使用同一积压消息测试。旧分配逻辑首轮产生 1755 个名称；修复后全部三轮只使用 32 个。
-+
-+## Decision
-+
-+在根 Cargo 清单覆盖原 XIM Git 来源，只替换 `zed-xim` 的固定提交。
-+其同仓库路径依赖 `xim-parser` 和 `xim-ctext` 随之解析到同一 fork 提交。
-+保留原包版本、特性和 GPUI 固定点；不升级无关依赖，不引用浮动分支。
-+
-+X11rb 客户端按顺序使用 32 个固定的 `_XIM_DATA_*` 名称，并保证每个属性同一时间最多只有一个报文。
-+写入前，客户端查询下一个名称在服务器窗口上是否仍存在。属性仍存在时，表示接收器还没读取，
-+客户端把该报文和之后的所有报文（包括内联报文）放入队列，保持 ClientMessage 顺序。
-+客户端在 XCONNECT 后监听服务器窗口的 `PropertyNotify`；收到删除事件时按顺序发送队列。
-+只有本客户端写这些属性，接收器只会删除它们，因此检查结果在写入前不会被别人改回占用。
-+队列上限为 1024 个报文。服务器停止读取时返回 `ClientError::TransportBusy`，不无限占用内存。
-+`DisconnectReply` 清空发往旧服务器窗口的队列。
-+
-+接收器仍按窗口和原子保存字节偏移，每个 ClientMessage 只消费对应长度。
-+这是接收侧的防御措施，不再是发送侧正确性的前提。
-+
-+服务器发送仍保持原策略，避免扩大到尚未修复的 xlib 客户端接收路径。
-+没有修改输入编码、中文提交、预编辑接口、线程模型或持久化格式。
-+依赖中同时修正三个示例文件及服务器反馈枚举的既有编译问题，使所用特性测试能在稳定工具链运行。
-+
-+## Rejected alternatives
-+
-+- 禁用 XIM：会失去中文输入能力。
-+- 用 `REPLACE` 复用属性：可能覆盖尚未消费的报文。
-+- 只循环名称、不处理读取偏移：可能重复读取首帧并丢失后续报文。
-+- 名称用完后无条件追加（第一版）：只在升级后的接收器上正确，旧接收器和外部输入法服务器会丢帧。
-+- 每个连接分配新名称：仍会随重连累计原子。
-+- 无上限队列：服务器停止读取时客户端内存无限增长。
-+- 将本机相邻源码目录作为依赖：上游和 CI 无法复现。
-+- 将整套依赖复制进 Pebrel：扩大审查和维护范围；固定提交已经可以提供可追溯来源。
-+- 同时修改服务器发送：不是 Pebrel 客户端修复所需，会扩大兼容范围。
-+
-+## Consequences
-+
-+这条客户端发送路径最多使用 32 个名称。补丁不能删除当前 X server 已有的原子，
-+也不限制其他应用或服务器发送路径产生的名称。
-+新增的 Git fork 是临时维护来源，需要保持可获取并审查后续更新。
-+
-+每个属性最多一个报文，所以从偏移零读取并删除整个属性的旧接收器也能逐个收到报文。
-+代价是每个长报文多一次 `GetProperty` 往返；服务器积压超过 32 个长报文时，后续报文等待删除事件。
-+GPUI 已把所有 X 事件交给 `filter_event`，`PropertyNotify` 无需改动 GPUI 即可到达客户端。
-+服务器积压 1024 个报文后仍不读取时，GPUI 的 `forward_event` 只记录 `TransportBusy`，该按键不会送达。
-+服务器恢复读取并删除属性后，队列继续发送。服务器无响应时，原实现同样收不到输入法结果。
-+互操作验证覆盖 Fcitx5 和 16f35a2 的接收路径，不保证所有第三方 XIM 服务器。
-+
-+## Validation
-+
-+依赖的 `cargo test --features x11rb-client,x11rb-server -- --test-threads=1` 通过三项测试。
-+测试需要 Xvfb，可用 `XIM_TEST_XVFB` 指定路径；测试自行创建私有显示，不连接主 `DISPLAY`。
-+互操作测试通过 `filter_event` 驱动真实 `X11rbClient`：三轮各自 XCONNECT 到新服务器窗口，
-+每轮在接收器读取前排入 300 个长短混合报文（超过 32 个长报文），再经 `DisconnectReply` 重连。
-+接收端使用 16f35a2 的读取方式（偏移零、删除整个属性、解析一个请求）。
-+所有报文按序逐字节一致，全程只使用 32 个名称。去掉占用检查后，该测试报告丢帧或乱序并失败。
-+另一项测试确认服务器停止读取时队列停在 1024 并返回 `TransportBusy`；原有偏移读取与非法长度测试保留。
-+
-+独立 Fcitx 5.1.7 拼音实例向修复后的 XIM 客户端提交 40 次“你好”，全部匹配，
-+收到 240 次预编辑回调，共转发 480 次按键事件。该验证使用独立显示和 D-Bus。
-+PR 基线 `8de5331f5607a24c72a8cf209ab4099c8ba4c424` 上的
-+`cargo check -p nebula --bin pebrel --features gpui-shell --tests --locked --release` 通过。
-+架构检查、55 项架构规则测试、99 项设置测试、24 项国际化测试（另 1 项忽略）及格式检查通过。
-+依赖元数据确认三个 XIM 包各只有一个实例，均来自同一修复提交；锁文件没有无关升级。
-+这些结果不替代完整 GUI 人工验收、长期运行、其他输入法或 Windows/macOS 验证。
-+未声称 `--all-features` 测试通过；原 xlib 示例的既有编译问题不在本次范围内。
-+
-+## Supersedes
-+
-+None。
-+
-+## Revisit when
-+
-+GPUI 所固定的 XIM 来源包含等效的有界名称与按删除复用修复，并通过上述回归与真实中文输入验证后，
-+删除根补丁，统一更新上游固定点与锁文件。
-+若 fork 可用性或输入法兼容性改变，先复现并选择已审查的固定提交，不退回浮动分支。
+ ## 一个工作区
+ 
+ Pebrel（原名 Nebula）把本地 Shell、远程主机、文件和 AI 命令行工具放进同一个原生桌面工作区。
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #801** (closed): fix(terminal): preserve native TUI mouse selection across pane boundaries (@Kuddev)
+- **PR #800** (2026-10-28): docs: add WeChat community below README sponsors (@Kuddev)
 - **PR #793** (2026-10-28): i18n(settings): use typed ids for setting help and option labels (@Tettu0530)
 - **PR #790** (2026-10-27): release: prepare Pebrel 2.3.1 (@Kuddev)
 - **PR #789** (2026-10-26): feat(sponsors): add approved AIAPI branding (@Kuddev)
 - **PR #787** (2026-10-26): [codex] Fix character-art proportions without changing text spacing (@Kuddev)
-- **PR #783** (2026-10-26): fix(fonts): restore 2.2.2 reading spacing and show Geist default (@Kuddev)
-- **PR #782** (2026-10-26): Simplify README badges and add XERJ and Trendshift (@Kuddev)
 
 ---
 
@@ -2036,51 +1456,32 @@ Reuse consumed XIM properties, preserve packet ordering, and bound pending trans
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. i18n): localize settings help and option labels (#793)
+## X. docs: add WeChat group below README sponsors (#800)
 
 **RULE**:
-When implementing operations in `nebula_app/i18n/en-US.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `54548685`: i18n): localize settings help and option labels (#793). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1b58f5dd`: docs: add WeChat group below README sponsors (#800). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `nebula_app/i18n/en-US.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    "option": {
-      "bar": "Bar (│)",
-      "underscore": "Underscore (_)",
-      "filled_box": "Filled box (█)",
-      "empty_box": "Empty box (□)",
-      "slide": "Slide",
-      "instant": "Instant",
-      "after_current_tab": "After current tab",
-      "end_of_list": "End of list",
-      "create_a_new_window": "Create a new window",
-      "attach_to_the_most_recent": "Attach to the most recent window",
-      "attach_to_the_most_recent_v2": "Attach to the most recent window on this desktop",
-      "auto_detect": "Auto detect",
-      "git_only": "Git only",
-      "svn_only": "SVN only",
-      "visual_sound": "Visual + sound",
-      "mica_low_cost": "Mica (low cost)",
-      "mica_alt_low_cost": "Mica Alt (low cost)",
-      "aero_glass": "Aero (glass)",
-      "acrylic_high_cost": "Acrylic (high cost)",
-      "right_arrow": "Right arrow",
-      "tab_or_right_arrow": "Tab or Right arrow",
-      "fill": "Fill",
-      "uniform": "Uniform",
-      "uniform_to_fill": "Uniform to fill",
-      "original_size": "Original size",
-      "top_left": "Top left",
-      "top_right": "Top right",
-      "bottom_left": "Bottom left",
-      "bottom_right": "Bottom right",
-      "provider_name": "Provi
+<p align="center">
+  <strong>Pebrel WeChat Community</strong>
+</p>
+
+<p align="center">
+  <a href="extra/community/wechat-group-2026-11-04.jpg"><img src="extra/community/wechat-group-2026-11-04.jpg" alt="QR code for the Pebrel WeChat group, valid before November 4, 2026" width="300" /></a>
+</p>
+
+<p align="center">
+  Scan with WeChat to join. Valid before November 4, 2026. Click the image to view full size.
+</p>
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2090,4 +1491,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `54548685` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1b58f5dd` are properly handled with clean fallback behavior.

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-GXR4",
-    "timestamp": "2026-10-27T21:36:36.832Z",
-    "repository": "makecindy/cindy",
-    "learningId": "learn-github-makecindy-cindy",
-    "contentHash": "269ed3435abe182b501541a019614794eb73cc5313092da5a32ca9a7a57b8cdb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-H0BX",
-    "timestamp": "2026-10-27T21:36:40.173Z",
-    "repository": "Comfy-Org/MOSS-Image",
-    "learningId": "learn-huggingface-comfy-org-moss-image",
-    "contentHash": "7dcd89662ec7369c901f0a36205e8de0cbb3dd59220da13c39366063f1732ea4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-RQJL",
-    "timestamp": "2026-10-27T21:45:00.705Z",
-    "repository": "lingui/js-lingui",
-    "learningId": "learn-github-lingui-js-lingui",
-    "contentHash": "733cf0c32cc8c001ac68cf579e966ea7cecd0820f63305bb62ffedf1afab759a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-RR0C",
     "timestamp": "2026-10-27T21:45:01.308Z",
     "repository": "BurntSushi/ripgrep",
@@ -7490,6 +7445,51 @@
     "repository": "pixeltable/pixeltable",
     "learningId": "learn-github-pixeltable-pixeltable",
     "contentHash": "cff5d829548d8e0e8d388732cef157791e2cbe56246d398596b2ba010adbfe2c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-B6AA",
+    "timestamp": "2026-10-29T17:23:31.858Z",
+    "repository": "Kuddev/pebrel",
+    "learningId": "learn-github-kuddev-pebrel",
+    "contentHash": "cdf93f8a20dfd632d648f68990ab7f18267983372a731da35a77d9d89fed0f05",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-BDVJ",
+    "timestamp": "2026-10-29T17:23:41.695Z",
+    "repository": "microsoft/agent-governance-toolkit",
+    "learningId": "learn-github-microsoft-agent-governance-toolkit",
+    "contentHash": "a0193d8ee2e08cdb6d941002171f97c270897fa067f39cac56aeba954da0c84e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-BGUI",
+    "timestamp": "2026-10-29T17:23:45.546Z",
+    "repository": "risingwavelabs/risingwave",
+    "learningId": "learn-github-risingwavelabs-risingwave",
+    "contentHash": "a789a2bca8d1587335dfa6016cb271ea0b0edfc6c7f45490602fc2dc9896ca6a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

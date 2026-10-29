@@ -6055,3 +6055,6 @@
 | `CYCLE-20261029-MTXK` | `2026-10-29T17:04:36.104Z` | `flox/flox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5529` | Yes (`3ad8e210...`) |
 | `CYCLE-20261029-2CE4` | `2026-10-29T17:16:39.868Z` | `tach-org/tach` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5530` | Yes (`56887a81...`) |
 | `CYCLE-20261029-2K7I` | `2026-10-29T17:16:49.998Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5531` | Yes (`cff5d829...`) |
+| `CYCLE-20261029-B6AA` | `2026-10-29T17:23:31.858Z` | `Kuddev/pebrel` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5532` | Yes (`cdf93f8a...`) |
+| `CYCLE-20261029-BDVJ` | `2026-10-29T17:23:41.695Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5533` | Yes (`a0193d8e...`) |
+| `CYCLE-20261029-BGUI` | `2026-10-29T17:23:45.546Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5534` | Yes (`a789a2bc...`) |

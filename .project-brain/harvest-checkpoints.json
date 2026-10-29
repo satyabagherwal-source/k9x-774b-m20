@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-29T17:16:50.012Z",
+  "last_updated": "2026-10-29T17:23:45.559Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3321,14 +3321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-agent-governance-toolkit",
-      "content_hash": "cbfc8107ff09908a04c24b077058e03320036cf8fd762f9a3c21063cb1ce7e98",
-      "verified_at": "2026-10-28T20:15:51.286Z",
+      "content_hash": "a0193d8ee2e08cdb6d941002171f97c270897fa067f39cac56aeba954da0c84e",
+      "verified_at": "2026-10-29T17:23:41.707Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T20:15:51.286Z"
+      "last_updated": "2026-10-29T17:23:41.707Z"
     },
     "SynaLinks/synalinks-skills": {
       "repository": "SynaLinks/synalinks-skills",
@@ -5181,14 +5181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kuddev-pebrel",
-      "content_hash": "5d4f8c4adf9792b55807e36bc78a190666492e60aa5444954817ebdbbd767c32",
-      "verified_at": "2026-10-28T06:24:44.648Z",
+      "content_hash": "cdf93f8a20dfd632d648f68990ab7f18267983372a731da35a77d9d89fed0f05",
+      "verified_at": "2026-10-29T17:23:31.870Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T06:24:44.648Z"
+      "last_updated": "2026-10-29T17:23:31.870Z"
     },
     "alibaba/formily": {
       "repository": "alibaba/formily",
@@ -5781,14 +5781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-risingwavelabs-risingwave",
-      "content_hash": "809da9937b702b7e1e6882b458797d8173df516a0f8d0fe1f4c131e998db21b1",
-      "verified_at": "2026-10-28T13:10:11.871Z",
+      "content_hash": "a789a2bca8d1587335dfa6016cb271ea0b0edfc6c7f45490602fc2dc9896ca6a",
+      "verified_at": "2026-10-29T17:23:45.558Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T13:10:11.871Z"
+      "last_updated": "2026-10-29T17:23:45.558Z"
     },
     "mertJF/tailblocks": {
       "repository": "mertJF/tailblocks",

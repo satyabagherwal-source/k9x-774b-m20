@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-29T17:16:50.008Z",
-  "total_cycles_completed": 6032,
-  "total_learnings_persisted": 6032,
-  "total_rules_promoted": 5496,
+  "last_updated": "2026-10-29T17:23:45.555Z",
+  "total_cycles_completed": 6035,
+  "total_learnings_persisted": 6035,
+  "total_rules_promoted": 5499,
   "history": [
-    {
-      "timestamp": "2026-10-28T17:06:00.802Z",
-      "repository": "ydb-platform/ydb",
-      "learningId": "learn-github-ydb-platform-ydb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T17:12:41.619Z",
-      "repository": "google/gemma-4-26B-A4B-it",
-      "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T17:20:37.002Z",
-      "repository": "intfloat/multilingual-e5-small",
-      "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T17:28:12.531Z",
       "repository": "argmaxinc/whisperkit-coreml",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-29T17:16:50.008Z",
       "repository": "pixeltable/pixeltable",
       "learningId": "learn-github-pixeltable-pixeltable",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T17:23:31.867Z",
+      "repository": "Kuddev/pebrel",
+      "learningId": "learn-github-kuddev-pebrel",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T17:23:41.704Z",
+      "repository": "microsoft/agent-governance-toolkit",
+      "learningId": "learn-github-microsoft-agent-governance-toolkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T17:23:45.555Z",
+      "repository": "risingwavelabs/risingwave",
+      "learningId": "learn-github-risingwavelabs-risingwave",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

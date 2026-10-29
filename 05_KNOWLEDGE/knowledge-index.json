@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T17:16:49.921Z",
+  "last_updated": "2026-10-29T17:23:45.472Z",
   "total_verified_learnings": 1167,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -34247,8 +34247,8 @@
       "slug": "kuddev-pebrel",
       "platform": "github",
       "source_url": "https://github.com/Kuddev/pebrel",
-      "source_version": "54548685",
-      "content_hash": "5d4f8c4adf9792b55807e36bc78a190666492e60aa5444954817ebdbbd767c32",
+      "source_version": "1b58f5dd",
+      "content_hash": "cdf93f8a20dfd632d648f68990ab7f18267983372a731da35a77d9d89fed0f05",
       "dossier_path": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "promoted_rules": [
@@ -34271,6 +34271,11 @@
           "number": 5207,
           "title": "i18n): localize settings help and option labels (#793)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5532,
+          "title": "docs: add WeChat group below README sponsors (#800)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34278,7 +34283,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T06:24:44.549Z",
+      "verified_at": "2026-10-29T17:23:31.768Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37568,8 +37573,8 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "1b680536",
-      "content_hash": "cbfc8107ff09908a04c24b077058e03320036cf8fd762f9a3c21063cb1ce7e98",
+      "source_version": "e14fe198",
+      "content_hash": "a0193d8ee2e08cdb6d941002171f97c270897fa067f39cac56aeba954da0c84e",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
@@ -37667,6 +37672,11 @@
           "number": 5393,
           "title": "agent-sre): prefer the higher-quality model at equal cost in CostOptimizer.recom",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5533,
+          "title": "agent-sre): reject chaos blackout times that cannot be read (#4473)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37674,7 +37684,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T20:15:51.176Z",
+      "verified_at": "2026-10-29T17:23:41.604Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46508,8 +46518,8 @@
       "slug": "risingwavelabs-risingwave",
       "platform": "github",
       "source_url": "https://github.com/risingwavelabs/risingwave",
-      "source_version": "e3fe3b25",
-      "content_hash": "809da9937b702b7e1e6882b458797d8173df516a0f8d0fe1f4c131e998db21b1",
+      "source_version": "8197b045",
+      "content_hash": "a789a2bca8d1587335dfa6016cb271ea0b0edfc6c7f45490602fc2dc9896ca6a",
       "dossier_path": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "promoted_rules": [
@@ -46557,6 +46567,11 @@
           "number": 5290,
           "title": "iceberg): honor compaction interval between pk-index batches (#27625)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5534,
+          "title": "iceberg): honor commit checkpoint interval for v3 jobs (#27616)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46564,7 +46579,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T13:10:11.806Z",
+      "verified_at": "2026-10-29T17:23:45.454Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -148944,6 +148959,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T17:16:49.902Z"
+    },
+    "rule-5532": {
+      "learning_id": "rule-5532",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5532,
+      "title": "docs: add WeChat group below README sponsors (#800)",
+      "source_url": "https://github.com/Kuddev/pebrel",
+      "source_version": "1b58f5dd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T17:23:31.768Z"
+    },
+    "rule-5533": {
+      "learning_id": "rule-5533",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5533,
+      "title": "agent-sre): reject chaos blackout times that cannot be read (#4473)",
+      "source_url": "https://github.com/microsoft/agent-governance-toolkit",
+      "source_version": "e14fe198",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T17:23:41.604Z"
+    },
+    "rule-5534": {
+      "learning_id": "rule-5534",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5534,
+      "title": "iceberg): honor commit checkpoint interval for v3 jobs (#27616)",
+      "source_url": "https://github.com/risingwavelabs/risingwave",
+      "source_version": "8197b045",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T17:23:45.454Z"
     }
   },
   "aliases": {
