@@ -2353,10 +2353,10 @@
     "repository": "nolabs-ai/nono",
     "platform": "github",
     "sourceUrl": "https://github.com/nolabs-ai/nono",
-    "sourceVersion": "081a4090",
+    "sourceVersion": "6880db1c",
     "license": "Apache-2.0",
-    "contentHash": "b32a4b83d89b0bc7e79b63ec6b18d4969d5dc0bafc7ee6feac0eeac76f996353",
-    "lastHarvestedAt": "2026-10-28T13:43:44.407Z",
+    "contentHash": "dd1117eaa358836c8f551cea68a6d6ad633c71c57d82e17a58dfbc8c0c242430",
+    "lastHarvestedAt": "2026-10-29T22:19:21.371Z",
     "learningId": "learn-github-nolabs-ai-nono"
   },
   "dathere-qsv": {
@@ -3923,10 +3923,10 @@
     "repository": "MaterializeInc/materialize",
     "platform": "github",
     "sourceUrl": "https://github.com/MaterializeInc/materialize",
-    "sourceVersion": "ed0467e4",
+    "sourceVersion": "820c7511",
     "license": "NOASSERTION",
-    "contentHash": "822a6f5037bd8758176642827c8bc03a7bb956f316701670ca366e9701ca5f6c",
-    "lastHarvestedAt": "2026-10-28T13:30:22.226Z",
+    "contentHash": "2be09102bb4777b21b89fe57ee0525dc3354c5c02ac80e3c41f27a17c263508f",
+    "lastHarvestedAt": "2026-10-29T22:19:23.509Z",
     "learningId": "learn-github-materializeinc-materialize"
   },
   "react-bootstrap-react-bootstrap": {
@@ -11508,5 +11508,15 @@
     "contentHash": "0ae39dc48e2bf53608c737e88651bf7651662320a18cff731dcab3a06b044855",
     "lastHarvestedAt": "2026-10-29T22:11:49.875Z",
     "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview"
+  },
+  "cherryhq-cherry-studio": {
+    "repository": "CherryHQ/cherry-studio",
+    "platform": "github",
+    "sourceUrl": "https://github.com/CherryHQ/cherry-studio",
+    "sourceVersion": "d6a221e6",
+    "license": "AGPL-3.0",
+    "contentHash": "7dfd98f02d01c2f39f46ec92bc770b04016b8ee7082438a975d64686a3715d17",
+    "lastHarvestedAt": "2026-10-29T22:19:06.343Z",
+    "learningId": "learn-github-cherryhq-cherry-studio"
   }
 }

@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-29T22:11:52.431Z",
-    "lastVerified": "2026-10-29T22:11:52.431Z",
+    "lastChecked": "2026-10-29T22:19:26.058Z",
+    "lastVerified": "2026-10-29T22:19:26.058Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -402,8 +402,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T17:16:45.823Z",
-    "lastVerified": "2026-10-29T17:16:45.823Z",
+    "lastChecked": "2026-10-29T22:19:20.850Z",
+    "lastVerified": "2026-10-29T22:19:20.850Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -526,22 +526,21 @@
     "lastVerified": "2026-10-28T20:01:30.040Z"
   },
   "nolabs-ai-nono": {
-    "name": "nono",
+    "name": "nolabs-ai/nono",
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T00:29:47.773Z",
-    "lastVerified": "2026-10-29T00:29:47.773Z",
+    "lastChecked": "2026-10-29T22:19:19.451Z",
+    "lastVerified": "2026-10-29T22:19:19.451Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
-    "contentHash": "b32a4b83d89b0bc7e79b63ec6b18d4969d5dc0bafc7ee6feac0eeac76f996353",
+    "contentHash": "dd1117eaa358836c8f551cea68a6d6ad633c71c57d82e17a58dfbc8c0c242430",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "081a4090"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "vectifyai-pageindex": {
     "name": "PageIndex",
@@ -3847,14 +3846,14 @@
     "officialUrl": "https://github.com/MaterializeInc/materialize",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T13:30:21.597Z",
-    "lastVerified": "2026-10-28T13:30:21.597Z",
+    "lastChecked": "2026-10-29T22:19:22.537Z",
+    "lastVerified": "2026-10-29T22:19:22.537Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-materializeinc-materialize",
-    "contentHash": "822a6f5037bd8758176642827c8bc03a7bb956f316701670ca366e9701ca5f6c",
+    "contentHash": "2be09102bb4777b21b89fe57ee0525dc3354c5c02ac80e3c41f27a17c263508f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 23,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4243,9 +4242,9 @@
   "openyurtio-openyurt": {
     "name": "openyurt",
     "officialUrl": "https://github.com/openyurtio/openyurt",
-    "lastChecked": "2026-10-28T14:22:26.803Z",
+    "lastChecked": "2026-10-29T22:19:13.393Z",
     "revisionIdentifier": "83ce3925",
-    "lastVerified": "2026-10-28T14:22:26.803Z"
+    "lastVerified": "2026-10-29T22:19:13.393Z"
   },
   "cozodb-cozo": {
     "name": "cozo",
@@ -8500,5 +8499,36 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "cherryhq-cherry-studio": {
+    "name": "CherryHQ/cherry-studio",
+    "officialUrl": "https://github.com/CherryHQ/cherry-studio",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-29T22:19:04.547Z",
+    "lastVerified": "2026-10-29T22:19:04.547Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-cherryhq-cherry-studio",
+    "contentHash": "7dfd98f02d01c2f39f46ec92bc770b04016b8ee7082438a975d64686a3715d17",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 16,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "seobserver-crawlobserver": {
+    "name": "crawlobserver",
+    "officialUrl": "https://github.com/SEObserver/crawlobserver",
+    "lastChecked": "2026-10-29T22:19:08.415Z",
+    "revisionIdentifier": "64b6a78344",
+    "lastVerified": "2026-10-29T22:19:08.415Z"
+  },
+  "productdevbook-port-killer": {
+    "name": "port-killer",
+    "officialUrl": "https://github.com/productdevbook/port-killer",
+    "lastChecked": "2026-10-29T22:19:10.834Z",
+    "revisionIdentifier": "2209b0fd",
+    "lastVerified": "2026-10-29T22:19:10.834Z"
   }
 }

@@ -19780,5 +19780,20 @@
     "downloads": 1030,
     "qualityScore": 2420,
     "discoveredAt": "2026-10-29T22:04:39.364Z"
+  },
+  {
+    "name": "cherry-studio",
+    "fullName": "CherryHQ/cherry-studio",
+    "url": "https://github.com/CherryHQ/cherry-studio",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Your AI workspace for models, agents, and productivity.",
+    "stars": 53086,
+    "forks": 5142,
+    "openIssues": 2267,
+    "language": "TypeScript",
+    "qualityScore": 28436,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-29T22:15:24.349Z"
   }
 ]

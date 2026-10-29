@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source**: github ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
-> **Source Version**: `ed0467e4`  
+> **Source Version**: `820c7511`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T13:30:21.604Z  
+> **Timestamp**: 2026-10-29T22:19:22.891Z  
 > **Learning ID**: `learn-github-materializeinc-materialize`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T13:30:21.597Z  
+> **Harvest Timestamp**: 2026-10-29T22:19:22.537Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The live data layer for apps and AI agents. Create up-to-the-second views into your business, just using SQL
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 6391 stars
+- **Stars / Engagement**: 6390 stars
 
 ---
 
@@ -880,7 +880,7 @@ export async function fetchClusterReplicasWithUtilization(
 
 ```
 
-### Core Architecture Module: `console/src/api/materialize/query-history/statementLoggingMaxSampleRate.ts`
+### Core Architecture Module: `console/src/api/materialize/cluster/workerCpu.ts`
 ```
 // Copyright Materialize, Inc. and contributors. All rights reserved.
 //
@@ -891,43 +891,169 @@ export async function fetchClusterReplicasWithUtilization(
 // the Business Source License, use of this software will be governed
 // by the Apache License, Version 2.0.
 
-import { QueryKey } from "@tanstack/react-query";
-import { sql } from "kysely";
+import { RawBuilder, sql } from "kysely";
 
-import { executeSqlV2, queryBuilder } from "~/api/materialize";
+import { queryBuilder } from "~/api/materialize";
+import { buildSubscribeQuery } from "~/api/materialize/buildSubscribeQuery";
 
-export const buildStatementLoggingMaxSampleRateQuery = () => {
-  return sql<{
-    statement_logging_max_sample_rate: string;
-  }>`SHOW statement_logging_max_sample_rate`;
-};
+// These read a replica's introspection relations, so they must run in
+// a session pinned to that replica (`cluster` and `cluster_replica`). They then
+// run on that cluster, not on `mz_catalog_server`.
+//
+// A dataflow's root operator (an address of length one) accounts for all the
+// time spent in the regions and operators it contains, so summing roots counts
+// each nanosecond once. Summing every operator would count it once per level
+// of nesting.
+
+/** The unit the subscribes round elapsed time down to, in nanoseconds. */
+export const ELAPSED_UNIT_NS = 10_000_000;
+
+// Every dataflow's counter grows each second, idle or not, so unrounded these
+// send an update per dataflow and worker each second. In 10 ms units an idle
+// dataflow's value stops changing and the subscribe sends nothing for it:
+// measured 22 rows/s unrounded against 1.2 on an idle 11-dataflow, 2-worker
+// replica. A difference of two values is then off by under 10 ms per
+// dataflow, 0.02% of a core over the minute a measurement spans at least, and
+// a dataflow that runs under 10 ms in all reads as idle. 100 ms would be 2% of
+// what two workers 5% busy spend in a minute.
+const roundedElapsedNs = (elapsedNs: RawBuilder<unknown>) =>
+  sql<
+    number | null
+  >`(floor(${elapsedNs} / ${sql.lit(ELAPSED_UNIT_NS)}) * ${sql.lit(ELAPSED_UNIT_NS)})::float8`;
+
+const dataflowIdOfRoot = sql`${sql.ref("a.address")}[1]`;
+const isRootOperator = sql<boolean>`list_length(${sql.ref("a.address")}) = 1`;
+
+/** One dataflow's cumulative time on one worker. */
+export interface DataflowWorkerCpuRow {
+  dataflowId: string;
+  workerId: number;
+  elapsedNs: number;
+}
+
+/** An object a dataflow maintains. */
+export interface DataflowExportRow {
+  objectId: string;
+  dataflowId: string;
+  /** The connection id of a subscribe's session, or null for other exports. */
+  connectionId: number | null;
+  /** The dataflow's name, for a transient (`t`) export. */
+  dataflowName: string | null;
+}
+
+/** A row of `buildWorkerCpuSubscribe`. */
+export type WorkerCpuRow =
+  | ({ kind: "elapsed" } & DataflowWorkerCpuRow & {
+        objectId: null;
+        connectionId: null;
+        dataflowName: null;
+      })
+  | ({ kind: "export" } & DataflowExportRow & {
+        workerId: null;
+        elapsedNs: null;
+      });
+
+/** Each dataflow's cumulative time on each worker, in 10 ms units. */
+export function buildDataflowElapsedQuery() {
+  // NOTE: roots are filtered before counting, joined on the full key of both
+  // relations' indexes. Counting through `mz_scheduling_elapsed_per_worker`
+  // keeps a count per operator and worker in the subscribe's dataflow:
+  // measured 94 against 13 ms/s of CPU per worker, and 92 against 0.7 MB, on
+  // 500 dataflows over 8 workers.
+  return queryBuilder
+    .selectFrom("mz_scheduling_elapsed_raw as r")
+    .innerJoin("mz_dataflow_addresses_per_worker as a", (join) =>
+      join.onRef("a.id", "=", "r.id").onRef("a.worker_id", "=", "r.worker_id"),
+    )
+    .where(isRootOperator)
+    .groupBy([dataflowIdOfRoot, "r.worker_id"])
+    .select([
+      sql<WorkerCpuRow["kind"]>`'elapsed'`.as("kind"),
+      sql<string>`${dataflowIdOfRoot}::text`.as("dataflowId"),
+      sql<number | null>`${sql.ref("r.worker_id")}::int4`.as("workerId"),
+      roundedElapsedNs(sql`count(*)`).as("elapsedNs"),
+      sql<string | null>`NULL::text`.as("objectId"),
+      sql<number | null>`NULL::uint4`.as("connectionId"),
+      sql<string | null>`NULL::text`.as("dataflowName"),
+    ]);
+}
 
 /**
- * Fetches the system-wide cap on the statement logging sample rate. The effective rate is
- * `min(session statement_logging_sample_rate, this)`, so a value of `0` means statement
- * logging is off for everyone and query history can never have rows.
- *
- * Returns `null` if the variable could not be read as a number.
+ * What each dataflow maintains: user objects (`u` ids) and transient
+ * dataflows (`t` ids), named so a caller can tell a session's queries and
+ * subscribes from the coordinator's own. System dataflows still count toward
+ * each worker's total, but have nothing to name.
  */
-export default async function fetchStatementLoggingMaxSampleRate({
-  queryKey,
-  requestOptions,
-}: {
-  queryKey: QueryKey;
-  requestOptions: RequestInit;
-}) {
-  const compiledQuery =
-    buildStatementLoggingMaxSampleRateQuery().compile(queryBuilder);
+export function buildDataflowExportsQuery() {
+  // NOTE: names are joined per worker, on the full key of the operators'
+  // index. Through `mz_dataflows`, which keeps worker 0, the subscribe
+  // arranges every operator's name.
+  const transientNames = queryBuilder
+    .selectFrom("mz_compute_exports_per_worker as xw")
+    .innerJoin("mz_dataflow_addresses_per_worker as a", (join) =>
+      join
+        .onRef("a.worker_id", "=", "xw.worker_id")
+        .on(sql<boolean>`${dataflowIdOfRoot} = ${sql.ref("xw.dataflow_id")}`)
+        .on(isRootOperator),
+    )
+    .innerJoin("mz_dataflow_operators_per_worker as o", (join) =>
+      join.onRef("o.id", "=", "a.id").onRef("o.worker_id", "=", "a.worker_id"),
+    )
+    .where("xw.export_id", "like", "t%")
+    .select(["xw.export_id as exportId", "o.name"])
+    .distinct();
+  return queryBuilder
+    .selectFrom("mz_compute_exports as x")
+    .leftJoin("mz_subscriptions as s", "s.id", "x.export_id")
+    .leftJoin("mz_sessions as ss", "ss.id", "s.session_id")
+    .leftJoin(transientNames.as("n"), "n.exportId", "x.export_id")
+    .where((eb) =>
+      eb.or([eb("x.export_id", "like", "u%"), eb("x.export_id", "like", "t%")]),
+    )
+    .select([
+      sql<WorkerCpuRow["kind"]>`'export'`.as("kind"),
+      sql<string>`${sql.ref("x.dataflow_id")}::text`.as("dataflowId"),
+      sql<number | null>`NULL::int4`.as("workerId"),
+      sql<number | null>`NULL::float8`.as("elapsedNs"),
+      sql<string | null>`${sql.ref("x.export_id")}`.as("objectId"),
+      sql<number | null>`${sql.ref("ss.connection_id")}`.as("connectionId"),
+      sql<string | null>`${sql.ref("n.name")}`.as("dataflowName"),
+    ]);
+}
 
-  const response = await executeSqlV2({
-    queries: compiledQuery,
-    queryKey,
-    requestOptions,
-  });
+/**
+ * Each dataflow's time on each worker and what each dataflow maintains, in
+ * one subscribe that ends on its own once its frontier passes `upToMs`, so a
+ * client that stops reading without closing it stops costing the replica.
+ */
+export function buildWorkerCpuSubscribe(upToMs: number) {
+  return buildSubscribeQuery<WorkerCpuRow>(
+    buildDataflowElapsedQuery().unionAll(buildDataflowExportsQuery()),
+    {
+      upsertKey: ["kind", "dataflowId", "workerId", "objectId"],
+      upToMs,
+    },
+  );
+}
 
-  const rate = parseFloat(response.rows[0]?.statement_logging_max_sample_rate);
+/** A `buildWorkerCpuSubscribe` row's upsert key. */
+export const workerCpuRowKey = (row: WorkerCpuRow) =>
+  `${row.kind}|${row.dataflowId}|${row.workerId}|${row.objectId}`;
 
-  return Number.isFinite(rate) ? rate : null;
+/** `buildWorkerCpuSubscribe`'s rows, split by kind. */
+export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
+  const dataflows: DataflowWorkerCpuRow[] = [];
+  const exports: DataflowExportRow[] = [];
+  for (const row of rows) {
+    if (row.kind === "elapsed") {
+      const { dataflowId, workerId, elapsedNs } = row;
+      dataflows.push({ dataflowId, workerId, elapsedNs });
+    } else {
+      const { objectId, dataflowId, connectionId, dataflowName } = row;
+      exports.push({ objectId, dataflowId, connectionId, dataflowName });
+    }
+  }
+  return { dataflows, exports };
 }
 
 ```
@@ -938,11 +1064,11 @@ export default async function fetchStatementLoggingMaxSampleRate({
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40303** (2026-10-28): **race condition test: Make load generator tables, not just sources**
-  *Symptoms*: Revealed through https://github.com/MaterializeInc/materialize/pull/40152 which caused a test timeout here: https://buildkite.com/materialize/nightly/builds/18607#01a17fb3-3cb4-4fec-bcde-96b0a290a071  Test run: https://buildkite.com/materialize/nightly/builds/18611 (edit: green)
+- **Issue #40358** (2026-10-29): **adapter: don't force a group commit when a session ends**
+  *Symptoms*: Closes: [DB-234](https://linear.app/materializeinc/issue/DB-234)  ### Motivation  When a session ends, `handle_terminate` retracts its `mz_sessions` row with `BuiltinTableAppend::defer`, which triggers a group commit right away. Internal system writes skip the group committer's throttle, and every group commit moves every system table to a new timestamp. So each closed session hands every dataflow on `mz_catalog_server` a new timestamp on every worker, and connection churn costs catalog server CPU per connection. Clients that open a connection per query hit this, and so does the Console, which runs each `/api/sql` request in its own session. In production, bursts of a few hundred connections a minute have pushed a 31-core catalog server from about 23% to 77% of its CPU limit.  #31309 fixed the same problem for session start by moving the insert to `background()`. This makes the retraction at session end match, so it rides the next group commit. Nothing waited on this write before (its notify was already dropped). The trade-off is that a closed session can stay visible in `mz_sessions` for up to about a second.  ### Measurements  Local `bin/environmentd --optimized`, `mz_catalog_server` at 8 workers, 700 connections at 13 per second, each running `SELECT 1`, same binary with and without the change:  | | Before | After | | -- | -- | -- | | Catalog server CPU while connections churn | 65.6% of 8 workers | 13.0% | | Catalog server CPU per connection | 326 ms | 3 ms | | Group comm
 
-- **Issue #40302** (2026-10-28): **ci: Detect another incremental build failure and handle it**
-  *Symptoms*: Seen in https://buildkite.com/materialize/test/builds/141187#01a181d9-bd8b-47ac-a558-16fb52e3a5b7 & https://buildkite.com/materialize/test/builds/141201#01a181e4-ba88-4ad9-a39b-47f753a90f43  and unify the logic so that it lives in a single spot
+- **Issue #40356** (2026-10-29): **ci: Ignore CLA for devin bot**
+  *Symptoms*: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -959,335 +1085,384 @@ export default async function fetchStatementLoggingMaxSampleRate({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7b42d3bc` (2026-10-28)
-**Commit Message**: build(deps): bump axios from 1.18.1 to 1.20.0 in /console (#40292)
+### Incident Patch 1: `2f061db0` (2026-10-29)
+**Commit Message**: build(deps): bump anthropics/claude-code-action from 1.0.262 to 1.0.263 in the simple group (#40340)
 
-Bumps [axios](https://github.com/axios/axios) from 1.18.1 to 1.20.0.
+Bumps the simple group with 1 update:
+[anthropics/claude-code-action](https://github.com/anthropics/claude-code-action).
+
+Updates `anthropics/claude-code-action` from 1.0.262 to 1.0.263
 <details>
 <summary>Release notes</summary>
 <p><em>Sourced from <a
-href="https://github.com/axios/axios/releases">axios's
+href="https://github.com/anthropics/claude-code-action/releases">anthropics/claude-code-action's
 releases</a>.</em></p>
 <blockquote>
-<h2>v1.20.0 — August 19, 2026</h2>
-<p>This release hardens runtime option handling, adds RFC 9110
-status-code aliases, fixes Node.js and XHR reliability issues, and
-refreshes project tooling and documentation.</p>
-<h2>⚠️ Breaking Changes &amp; Deprecations</h2>
+<h2>v1.0.263</h2>
+<p><strong>Full Changelog</strong>: <a
+href="https://github.com/anthropics/claude-code-action/compare/v1.0.262...v1.0.263">https://github.com/anthropics/claude-code-action/compare/v1.0.262...v1.0.263</a></p>
+</blockquote>
+</details>
+<details>
+<summary>Commits</summary>
 <ul>
-<li>HTTP Status Naming: Added ContentTooLarge (413) and
-UnprocessableContent (422), while retaining PayloadTooLarge and
-UnprocessableEntity as backward-compatible deprecated aliases. (<a
-href="https://redirect.github.com/axios/axios/issues/11082">#11082</a>)</li>
+<li><a
+href="https://github.com/anthropics/claude-code-action/commit/8041f1d17e0e7d2f2cfe35002962e9f26237c0bb"><code>8041f1d</code></a>
+chore: bump Claude Code to 2.1.311 and Agent SDK to 0.3.311</li>
+<li>See full diff in <a
+href="https://github.com/anthropics/claude-code-action/compare/925afb53776cf1a2b738c6bdbed37b4d4000ef13...8041f1d17e0e7d2f2cfe35002962e9f26237c0bb">compare
+view</a></li>
 </ul>
-<h2>🔒 Security Fixes</h2>
-<ul>
-<li>Runtime Option Handling: Hardened behavioral configuration reads
-against shared and foreign prototype pollution and normalized unsafe
-interceptor replacement objects. This also clarifies Fetch redirect and
-custom implementation behavior, HTTP/2 DNS and proxy handling,
-CIDR-based NO_PROXY matching, and malformed data URI rejection; 
+</details>
+<br />
 
-**File**: `console/yarn.lock` (modified, +5/-5)
+
+
+**File**: `.github/workflows/claude.yml` (modified, +1/-1)
 ```diff
-@@ -6664,14 +6664,14 @@ __metadata:
-   linkType: hard
- 
- "axios@npm:^1.7.4":
--  version: 1.18.1
--  resolution: "axios@npm:1.18.1"
-+  version: 1.20.0
-+  resolution: "axios@npm:1.20.0"
-   dependencies:
-     follow-redirects: "npm:^1.16.0"
--    form-data: "npm:^4.0.5"
-+    form-data: "npm:^4.0.6"
-     https-proxy-agent: "npm:^5.0.1"
-     proxy-from-env: "npm:^2.1.0"
--  checksum: 10c0/9d9378a3af0d0ad730a52ad9d15ec7201f3926ad6e7e8bbffc5ae21ca2835ad11d1d9598698f5dd9718917486039f55ea1d7dc23d8e44fa827a55cc3262c02fc
-+  checksum: 10c0/976088acf532286356f4c2e65df1ef47ba7da3936d83e928d0d64357bbf5370456abd3eb5826c15df322335fcb1fe200d4a84b4fcf20ffccdd63b40d80fa495c
-   languageName: node
-   linkType: hard
- 
-@@ -9534,7 +9534,7 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"form-data@npm:^4.0.5":
-+"form-data@npm:^4.0.6":
-   version: 4.0.6
-   resolution: "form-data@npm:4.0.6"
-   dependencies:
+@@ -51,7 +51,7 @@ jobs:
+       # branch.
+       - name: Run Claude Code
+         id: claude
+-        uses: anthropics/claude-code-action@925afb53776cf1a2b738c6bdbed37b4d4000ef13 # v1.0.262
++        uses: anthropics/claude-code-action@8041f1d17e0e7d2f2cfe35002962e9f26237c0bb # v1.0.263
+         with:
+           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+           additional_permissions: |
 ```
 
 ---
 
-### Incident Patch 2: `ce918fb2` (2026-10-28)
-**Commit Message**: build(deps): bump the simple group across 2 directories with 18 updates (#40298)
+### Incident Patch 2: `76d959be` (2026-10-29)
+**Commit Message**: build(deps): bump the simple group across 1 directory with 2 updates (#40343)
 
-Bumps the simple group with 15 updates in the /ci/builder directory:
+Bumps the simple group with 2 updates in the /test/adbc directory:
+[adbc-driver-manager](https://github.com/apache/arrow-adbc) and
+[adbc-driver-postgresql](https://github.com/apache/arrow-adbc).
 
-| Package | From | To |
-| --- | --- | --- |
-| [boto3-stubs](https://github.com/youtype/mypy_boto3_builder) |
-`1.41.5` | `1.43.118` |
-| [click](https://github.com/pallets/click) | `8.1.3` | `8.5.0` |
-| [matplotlib-stubs](https://github.com/hoel-bagard/matplotlib-stubs) |
-`0.3.4` | `0.3.11` |
-| [networkx](https://github.com/networkx/networkx) | `3.4.2` | `3.7` |
-| [numpy](https://github.com/numpy/numpy) | `2.4.2` | `2.5.4` |
-| [psycopg](https://github.com/psycopg/psycopg) | `3.3.3` | `3.3.6` |
-| [psycopg-binary](https://github.com/psycopg/psycopg) | `3.3.3` |
-`3.3.6` |
-| [pydantic](https://github.com/pydantic/pydantic) | `2.12.5` | `2.14.1`
-|
-| [pytest](https://github.com/pytest-dev/pytest) | `9.0.3` | `9.1.1` |
-| ruamel-yaml | `0.18.17` | `0.19.1` |
-| [ruff](https://github.com/astral-sh/ruff) | `0.16.5` | `0.17.2` |
-| [scipy](https://github.com/scipy/scipy) | `1.17.1` | `1.18.1` |
-| [scipy-stubs](https://github.com/scipy/scipy-stubs) | `1.15.3.0` |
-`1.18.1.1` |
-|
-[confluent-kafka](https://github.com/confluentinc/confluent-kafka-pytho
-
-**File**: `ci/builder/requirements.txt` (modified, +15/-15)
-```diff
-@@ -14,9 +14,9 @@
- aiohttp==3.14.5
- black==26.10.1
- # Pulls in dependencies that make launchdarkly/cloud tests fail, keep for now
--boto3-stubs[ec2,iam,kinesis,s3,sqs,ssm,sts,s3tables]==1.41.5
-+boto3-stubs[ec2,iam,kinesis,s3,sqs,ssm,sts,s3tables]==1.43.118
- boto3==1.43.118
--click==8.1.3
-+click==8.5.0
- cryptography==50.0.2
- colored==2.3.2
- docker==7.2.0
-@@ -35,13 +35,13 @@ launchdarkly-api==25.0.0
- # NOTE matplotlib 3.10.9 is required for Python 3.10 compatibility
- matplotlib==3.10.9; python_version < "3.11"
- matplotlib==3.11.2; python_version >= "3.11"
--matplotlib-stubs==0.3.4
-+matplotlib-stubs==0.3.11
- # Keep on 3.4.2 for Python 3.10 compatibility
--networkx==3.4.2
-+networkx==3.7
- networkx-stubs==0.0.1
- # NOTE numpy 2.2.6 is required for Python 3.10 compatibility
- numpy==2.2.6; python_version < "3.11"
--numpy==2.4.2; python_version >= "3.11"
-+numpy==2.5.4; python_version >= "3.11"
- pandas==3.1.0
- pandas-stubs==2.3.3.260113
- parameterized==0.9.0
-@@ -50,22 +50,22 @@ pdoc==16.0.0
- pg8000==1.31.6
- prettytable==3.18.0
- psutil==7.2.2
--psycopg==3.3.3
--psycopg-binary==3.3.3
--pydantic==2.12.5
-+psycopg==3.3.6
-+psycopg-binary==3.3.6
-+pydantic==2.14.1
- pyelftools==0.33
- pyjwt==2.15.1
- PyMySQL==1.2.3
--pytest==9.0.3
-+pytest==9.1.1
- pytest-split==0.11.0
- pyyaml==6.0.3
- requests==2.34.2
--ruamel.yaml==0.18.17
--ruff==0.16.5
-+ruamel.yaml==0.19.1
-+ruff==0.17.2
- # NOTE scipy 1.15 is required for Python 3.10 compatibility
- scipy==1.15.3; python_version < "3.11"
--scipy==1.17.1; python_version >= "3.11"
--scipy-stubs==1.15.3.0
-+scipy==1.18.1; python_version >= "3.11"
-+scipy-stubs==1.18.1.1
- semver==3.1.0
- shtab==1.13.0
- sqlparse==0.6.0
-@@ -84,12 +84,12 @@ xxhash==4.0.2
- yamllint==1.38.0
- # NOTE confluent-kafka only has wheels for a few python versions
- confluent-kafka==2.6.1; python_version < "3.13"
--confluent-kafka[schema-registry]==2.13.2; python_version >= "3.13"
-+confluent-kafka[schema-registry]==2.16.0; python_version >= "3.13"
- fastavro==1.13.1
- websocket-client==1.9.2
- pyarrow-stubs==20.0.0.20260819
- pyarrow==26.0.0
--minio==7.2.15
-+minio==7.2.20
- zstandard==0.25.0
- build==1.6.1
- hatchling==1.32.4
-```
-
-**File**: `misc/python/materialize/cli/optbench.py` (modified, +25/-13)
-```diff
-@@ -12,7 +12,7 @@
- import tempfile
- from contextlib import closing
- from pathlib import Path
--from typing import cast
-+from typing import Any, cast
- 
- import click
- import numpy as np
-@@ -62,12 +62,12 @@ def _required_path_callback(
- 
- 
- class Arg:
--    scenario = dict(
-+    scenario: dict[str, Any] = dict(
-         type=click.Choice(scenarios()),
-         callback=_scenario_callback,
-     )
- 
--    base = dict(
-+    base: dict[str, Any] = dict(
-         type=click.Path(
-             exists=True,
-             file_okay=True,
-@@ -79,7 +79,7 @@ class Arg:
-         callback=_path_callback,
-     )
- 
--    diff = dict(
-+    diff: dict[str, Any] = dict(
-         type=click.Path(
-             exists=True,
-             file_okay=True,
-@@ -93,7 +93,7 @@ class Arg:
- 
- 
- class Opt:
--    repository = dict(
-+    repository: dict[str, Any] = dict(
-         default=Path(tempfile.gettempdir()),
-         type=click.Path(
-             exists=True,
-@@ -107,21 +107,33 @@ class Opt:
-         callback=_required_path_callback,
-     )
- 
--    samples = dict(default=11, help="Samples per query.")
-+    samples: dict[str, Any] = dict(default=11, help="Samples per query.")
- 
--    print_results = dict(default=False, help="Print the experiment results.")
-+    print_results: dict[str, Any] = dict(
-+        default=False, help="Print the experiment results."
-+    )
- 
--    no_indexes = dict(default=False, help="Skip CREATE [DEFAULT]/DROP INDEX DDL.")
-+    no_indexes: dict[str, Any] = dict(
-+        default=False, help="Skip CREATE [DEFAULT]/DROP INDEX DDL."
-+    )
- 
--    db_port = dict(default=6875, help="DB connection port.", envvar="PGPORT")
-+    db_port: dict[str, Any] = dict(
-+        default=6875, help="DB connection port.", envvar="PGPORT"
-+    )
- 
--    db_host = dict(default="localhost", help="DB connection host.", envvar="PGHOST")
-+    db_host: dict[str, Any] = dict(
-+        default="localhost", help="DB connection host.", envvar="PGHOST"
-+    )
- 
--    db_user = dict(default="materialize", help="DB connection user.", envvar="PGUSER")
-+    db_user: dict[str, Any] = dict(
-+        default="materialize", help="DB connection user.", envvar="PGUSER"
-+    )
- 
--    db_pass = dict(default=None, help="DB connection password.", envvar="PGPASSWORD")
-+    db_pass: dict[str, Any] = dict(
-+        default=None, help="DB connection password.", envvar="PGPASSWORD"
-+    )
- 
--    db_require_ssl = dict(
-+    db_require_ssl: dict[str, Any] = dict(
-         is_flag=True,
-         help="DB connection requires SSL.",
-         envvar="PGREQUIRESSL",
-```
-
-**File**: `test/terraform/azure-temporary/requirements.txt` (modified, +3/-3)
-```diff
-@@ -1,5 +1,5 @@
--azure-cli==2.69.0
-+azure-cli==2.91.0
- azure-mgmt-storage==25.3.0
--azure-storage-blob==12.24.1
--azure-identity==1.19.0
-+azure-storage-blob==12.31.0
-+azure-identity==1.26.0
- azure-keyvault==4.2.0
-```
-
----
-
-### Incident Patch 3: `d5372a42` (2026-10-28)
-**Commit Message**: build(deps): bump urllib3 from 2.7.0 to 2.8.0 in /misc/mcp-materialize (#40279)
-
-Bumps [urllib3](https://github.com/urllib3/urllib3) from 2.7.0 to 2.8.0.
+Updates `adbc-driver-manager` from 1.12.0 to 1.13.0
 <details>
-<summary>Release notes</summary>
+<summary>Changelog</summary>
 <p><em>Sourced from <a
-href="https://github.com/urllib3/urllib3/releases">urllib3's
-releases</a>.</em></p>
+href="https://github.com/apache/arrow-adbc/blob/main/CHANGELOG.md">adbc-driver-manager's
+changelog</a>.</em></p>
 <blockquote>
-<h2>2.8.0</h2>
-<h2>🚀 urllib3 is fundraising for HTTP/2 support</h2>
-<p><a
-href="https://sethmlarson.dev/urllib3-is-fundraising-for-http2-support">urllib3
-is raising ~$40,000 USD</a> to release HTTP/2 support and ensure
-long-term sustainable maintenance of the project. If your company or
-organization uses Python and would benefit from HTTP/2 support in
-Requests, pip, cloud SDKs, and thousands of other projects <a
-href="https://opencollective.com/urllib3">please consider contributing
-financially</a> to ensure HTTP/2 support is developed sustainably and
-maintained for the long-haul.</p>
-<p>Thank you for your support.</p>
-<h2>Security</h2>
-<p>Fixed the following security issues:</p>
+<!-- raw HTML omitted -->
+<h1>ADBC Changelog</h1>
+<h2>ADBC Libraries 0.1.0 (2022-12-25)</h2>
+<h3>Fix</h3>
 <ul>
-<li>The TLS configuration for HTTPS proxies could be ignored or
-overridden. (High severity, GHSA-8988-9cw3-xx77)</li>
-<li><code>HTTPResponse.stream()</code> and <code>read_chunked()</code>
+<li><strong>python</strong>: make package names consistent (<a
+href="https://redirect.github.com/apache/arrow-adbc/issues/258">#258</a>)</li>
+<li><strong>c/driver_manager</strong>: accept connection options
+pre-Init (<a
+href="https://redirect.github.com/apache/arrow-adbc/issues/230">#230</a>)</li>
+<li><strong>c/driver_manager,c/driver/postgres</strong>: fix version
+inference from Git tags (<a
+href="https://redirect.github.com/apache/arrow-adbc/issues/184">#184</a>)</li>
+<li><strong>c/driver/postgres</strong>: fix duplicate symbols; add note
+about PKG_CONFIG_PATH (<a
+h
 
-
-**File**: `misc/mcp-materialize/uv.lock` (modified, +3/-3)
+**File**: `test/adbc/requirements.txt` (modified, +2/-2)
 ```diff
-@@ -1508,11 +1508,11 @@ wheels = [
+@@ -1,4 +1,4 @@
+-adbc-driver-manager==1.12.0
+-adbc-driver-postgresql==1.12.0
++adbc-driver-manager==1.13.0
++adbc-driver-postgresql==1.13.0
+ duckdb==2.0.0
+ pyarrow==26.0.0
+```
+
+---
+
+### Incident Patch 3: `077d0f3a` (2026-10-29)
+**Commit Message**: Report SQL string 'NULL' for table column defaults (#40316)
+
+Before, tables whose columns' defaults were undefined we'd store their
+`mz_columns` default value as the SQL string 'NULL' but would store it
+as NULL for other relation objects. In #40001 , we decided to unify the
+behavior and store it as NULL for tables too. However, this created a
+regression in our terraform provider where it'd drop and create tables
+with no defaults on their columns because of a schema mismatch. Thus we
+change it back to the SQL string `NULL`.
+
+### Motivation
+
+Closes: [SQL-839](https://linear.app/materializeinc/issue/SQL-839)
+
+### Verification
+
+We still get pg compatibility by just changing the definition of the
+information_schema / pg views. This is why we don't need to update any
+of the SLT tests related to those views.
+
+---------
+
+Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
+
+**File**: `doc/user/content/sql/system-catalog/mz_catalog.md` (modified, +1/-1)
+```diff
+@@ -162,7 +162,7 @@ Field            | Type        | Meaning
+ `position`       | [`uint8`]   | The 1-indexed position of the column in its containing table, source, or view.
+ `nullable`       | [`boolean`] | Can the column contain a `NULL` value?
+ `type`           | [`text`]    | The data type of the column.
+-`default`        | [`text`]    | The default expression of the column, or `NULL` if it has none.
++`default`        | [`text`]    | The default expression of the column. A table column without one reads as the string `NULL`.
+ `type_oid`       | [`oid`]     | The OID of the type of the column (references `mz_types`).
+ `type_mod`       | [`integer`] | The packed type identifier of the column.
  
- [[package]]
- name = "urllib3"
--version = "2.7.0"
-+version = "2.8.0"
- source = { registry = "https://pypi.org/simple" }
--sdist = { url = "https://files.pythonhosted.org/packages/53/0c/06f8b233b8fd13b9e5ee11424ef85419ba0d8ba0b3138bf360be2ff56953/urllib3-2.7.0.tar.gz", hash = "sha256:231e0ec3b63ceb14667c67be60f2f2c40a518cb38b03af60abc813da26505f4c", size = 433602, upload-time = "2026-05-07T16:13:18.596Z" }
-+sdist = { url = "https://files.pythonhosted.org/packages/e3/05/b17359e1cefb4f909b5e40b1b90a496d987258916dbbf88e842c729f510e/urllib3-2.8.0.tar.gz", hash = "sha256:63bf2ead4c879426ebf22ef2a781eeb4aa3b4ae798a0435506f8687fd5bb9b63", size = 458972, upload-time = "2026-09-15T19:29:36.253Z" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/7f/3e/5db95bcf282c52709639744ca2a8b149baccf648e39c8cc87553df9eae0c/urllib3-2.7.0-py3-none-any.whl", hash = "sha256:9fb4c81ebbb1ce9531cce37674bbc6f1360472bc18ca9a553ede278ef7276897", size = 131087, upload-time = "2026-05-07T16:13:17.151Z" },
-+    { url = "https://files.pythonhosted.org/packages/92/9d/c4e665119135114480843e7ab388fa94d8480650450e6f8e26b70d323a4c/urllib3-2.8.0-py3-none-any.whl", hash = "sha256:0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3", size = 135717, upload-time = "2026-09-15T19:29:34.577Z" },
- ]
+```
+
+**File**: `misc/python/materialize/checks/all_checks/item_columns.py` (modified, +1/-39)
+```diff
+@@ -93,12 +93,7 @@ def manipulate(self) -> list[Testdrive]:
  
- [[package]]
+     def validate(self) -> Testdrive:
+         return Testdrive(dedent("""
+-                # On releases before 26.49 mz_columns is a table the adapter packs,
+-                # which reports the string NULL for a table column without a default.
+-                # From 26.49 on it is a materialized view over the stored CREATE TABLE,
+-                # where no default reads as SQL NULL. Upgrade scenarios validate on
+-                # both sides of that line.
+-                >[version<2604900] SELECT r.name, c.position, c.name, c.nullable, c.type, c.default, t.name, c.type_mod
++                > SELECT r.name, c.position, c.name, c.nullable, c.type, c.default, t.name, c.type_mod
+                   FROM mz_columns c
+                   JOIN mz_relations r ON r.id = c.id
+                   JOIN mz_types t ON t.oid = c.type_oid
+@@ -131,39 +126,6 @@ def validate(self) -> Testdrive:
+                 item_columns_middle_table 2 b true item_columns_list NULL item_columns_list -1
+                 item_columns_middle_table 3 c true text NULL text -1
+ 
+-                >[version>=2604900] SELECT r.name, c.position, c.name, c.nullable, c.type, c.default, t.name, c.type_mod
+-                  FROM mz_columns c
+-                  JOIN mz_relations r ON r.id = c.id
+-                  JOIN mz_types t ON t.oid = c.type_oid
+-                  WHERE r.name LIKE 'item_columns_%'
+-                  ORDER BY r.name, c.position
+-                item_columns_final_view 1 a true integer <null> int4 -1
+-                item_columns_final_view 2 b true item_columns_list <null> item_columns_list -1
+-                item_columns_final_view 3 c true text <null> text -1
+-                item_columns_initial_mv 1 a false integer <null> int4 -1
+-                item_columns_initial_mv 2 b true text <null> text -1
+-                item_columns_initial_mv 3 c1 true numeric <null> numeric -1
+-                item_columns_initial_table 1 a false integer <null> int4 -1
+-                item_columns_initial_table 2 b true text 'b' text -1
+-                item_columns_initial_table 3 c true numeric <null> numeric 2555910
+-                item_columns_initial_table 4 d true item_columns_list <null> item_columns_list -1
+-                item_columns_initial_table 5 e true item_columns_record <null> item_columns_record -1
+-                item_columns_initial_table 6 f true "timestamp without time zone" <null> timestamp 3
+-                item_columns_initial_table 7 g true integer[] <null> _int4 -1
+-                item_columns_initial_table 8 i true integer <null> int4 -1
+-                item_columns_initial_view 1 a false integer <null> int4 -1
+-                item_columns_initial_view 2 b true text <null> text -1
+-                item_columns_initial_view 3 c1 true numeric <null> numeric -1
+-                item_columns_initial_view 4 d true item_columns_list <null> item_columns_list -1
+-                item_columns_initial_view 5 e true item_columns_record <null> item_columns_record -1
+-                item_columns_initial_view 6 f true "timestamp without time zone" <null> timestamp 3
+-                item_columns_initial_view 7 g true integer[] <null> _int4 -1
+-                item_columns_middle_mv 1 a true integer <null> int4 -1
+-                item_columns_middle_mv 2 b true item_columns_list <null> item_columns_list -1
+-                item_columns_middle_table 1 a true integer <null> int4 -1
+-                item_columns_middle_table 2 b true item_columns_list <null> item_columns_list -1
+-                item_columns_middle_table 3 c true text <null> text -1
+-
+                 > SELECT i.name, ic.index_position, ic.on_position, ic.on_expression, ic.nullable
+                   FROM mz_index_columns ic
+                   JOIN mz_indexes i ON i.id = ic.index_id
+```
+
+**File**: `src/catalog-decode/src/create_sql.rs` (modified, +15/-9)
+```diff
+@@ -275,9 +275,12 @@ pub fn item_details(a: &str) -> Result<serde_json::Value, String> {
+                             _ => None,
+                         })
+                         .filter(|expr| !is_null_literal(expr))
+-                        .map_or(serde_json::Value::Null, |expr| {
+-                            json!(expr.to_ast_string_stable())
+-                        })
++                        // A column without a default reads as the string NULL. Clients compare
++                        // against that string, and the Terraform provider replaces a table whose
++                        // column default reads as SQL NULL (SQL-839).
++                        // TODO(DEX-197): Switch to SQL NULL once released providers read it as
++                        // no default.
++                        .map_or_else(|| json!("NULL"), |expr| json!(expr.to_ast_string_stable()))
+                 })
+                 .collect();
+             info.insert("column_defaults", json!(column_defaults));
+@@ -2031,7 +2034,10 @@ mod tests {
+ 
+         let plain = super::item_details("CREATE TABLE \"materialize\".\"public\".\"t\" (a int4)")
+             .expect("ok");
+-        assert_eq!(plain, json!({ "type": "table", "column_defaults": [null] }));
++        assert_eq!(
++            plain,
++            json!({ "type": "table", "column_defaults": ["NULL"] })
++        );
+ 
+         let webhook = super::item_details(
+             "CREATE TABLE \"materialize\".\"public\".\"wht\" FROM WEBHOOK BODY FORMAT JSON",
+@@ -2044,20 +2050,20 @@ mod tests {
+     fn item_details_reports_column_defaults() {
+         let sql = r#"CREATE TABLE "materialize"."public"."t" ("a" [s20 AS "pg_catalog"."int4"] DEFAULT 1 + 1, "b" [s46 AS "pg_catalog"."text"] NOT NULL, "c" [s46 AS "pg_catalog"."text"] VERSION ADDED 1)"#;
+         let out = super::item_details(sql).expect("ok");
+-        assert_eq!(out["column_defaults"], json!(["1 + 1", null, null]));
++        assert_eq!(out["column_defaults"], json!(["1 + 1", "NULL", "NULL"]));
+ 
+-        // A bare NULL literal is no default, a cast of one is an expression.
++        // A bare NULL literal reads as no default, a cast of one as an expression.
+         let sql = r#"CREATE TABLE "materialize"."public"."t" ("a" [s46 AS "pg_catalog"."text"] DEFAULT NULL, "b" [s46 AS "pg_catalog"."text"] DEFAULT (NULL), "c" [s46 AS "pg_catalog"."text"] DEFAULT NULL::[s46 AS "pg_catalog"."text"])"#;
+         let out = super::item_details(sql).expect("ok");
+         assert_eq!(
+             out["column_defaults"],
+-            json!([null, null, "NULL::[s46 AS \"pg_catalog\".\"text\"]"])
++            json!(["NULL", "NULL", "NULL::[s46 AS \"pg_catalog\".\"text\"]"])
+         );
+ 
+         // The last of several defaults applies, even when it is a bare NULL.
+         let sql = r#"CREATE TABLE "materialize"."public"."t" ("a" [s20 AS "pg_catalog"."int4"] DEFAULT 1 DEFAULT 2, "b" [s20 AS "pg_catalog"."int4"] DEFAULT 5 DEFAULT NULL)"#;
+         let out = super::item_details(sql).expect("ok");
+-        assert_eq!(out["column_defaults"], json!(["2", null]));
++        assert_eq!(out["column_defaults"], json!(["2", "NULL"]));
+ 
+         let sql =
+             r#"CREATE TABLE "t" FROM SOURCE [u1 AS "materialize"."public"."s"] (REFERENCE = "t")"#;
+@@ -2069,7 +2075,7 @@ mod tests {
+     fn item_details_packs_as_jsonb_for_any_column_name() {
+         let sql = r#"CREATE TABLE "materialize"."public"."t" ("$serde_json::private::Number" [s20 AS "pg_catalog"."int4"] DEFAULT 5, "b" [s46 AS "pg_catalog"."text"])"#;
+         let out = super::item_details(sql).expect("ok");
+-        assert_eq!(out["column_defaults"], json!(["5", null]));
++        assert_eq!(out["column_defaults"], json!(["5", "NULL"]));
+         mz_repr::adt::jsonb::Jsonb::from_serde_json(out).expect("packs as jsonb");
+     }
+ 
+```
+
+**File**: `src/catalog/src/builtin/builtin.rs` (modified, +13/-10)
+```diff
+@@ -575,15 +575,17 @@ fn make_builtin_columns_sql(
+     generated: [&BuiltinView; 7],
+     columns: &mut BuiltinView,
+ ) {
+-    // Map to (schema, relation, desc)
++    // Map to (schema, relation, desc, is_table)
+     let relations = builtin_items
+         .iter()
+         .filter_map(|b| match b {
+-            Builtin::Table(t) => Some((t.schema, t.name, Cow::Borrowed(&t.desc))),
+-            Builtin::Source(s) => Some((s.schema, s.name, Cow::Borrowed(&s.desc))),
+-            Builtin::Log(l) => Some((l.schema, l.name, Cow::Owned(l.variant.desc()))),
+-            Builtin::View(v) => Some((v.schema, v.name, Cow::Borrowed(&v.desc))),
+-            Builtin::MaterializedView(mv) => Some((mv.schema, mv.name, Cow::Borrowed(&mv.desc))),
++            Builtin::Table(t) => Some((t.schema, t.name, Cow::Borrowed(&t.desc), true)),
++            Builtin::Source(s) => Some((s.schema, s.name, Cow::Borrowed(&s.desc), false)),
++            Builtin::Log(l) => Some((l.schema, l.name, Cow::Owned(l.variant.desc()), false)),
++            Builtin::View(v) => Some((v.schema, v.name, Cow::Borrowed(&v.desc), false)),
++            Builtin::MaterializedView(mv) => {
++                Some((mv.schema, mv.name, Cow::Borrowed(&mv.desc), false))
++            }
+             Builtin::Type(_) | Builtin::Func(_) | Builtin::Index(_) | Builtin::Connection(_) => {
+                 None
+             }
+@@ -593,10 +595,10 @@ fn make_builtin_columns_sql(
+                 .iter()
+                 .copied()
+                 .chain([&*columns])
+-                .map(|v| (v.schema, v.name, Cow::Borrowed(&v.desc))),
++                .map(|v| (v.schema, v.name, Cow::Borrowed(&v.desc), false)),
+         );
+     let values = relations
+-        .flat_map(|(schema, relation, desc)| {
++        .flat_map(|(schema, relation, desc, is_table)| {
+             let schema = escaped_string_literal(schema);
+             let relation = escaped_string_literal(relation);
+             desc.iter()
+@@ -611,8 +613,9 @@ fn make_builtin_columns_sql(
+                         i + 1,
+                         typ.nullable,
+                         escaped_string_literal(pg_type.name()),
+-                        // No builtin relation has column defaults.
+-                        "NULL",
++                        // A builtin table's columns have no defaults, which reads as the
++                        // string NULL, see the `default` column of `mz_columns`.
++                        if is_table { "'NULL'" } else { "NULL" },
+                         pg_type.oid(),
+                         pg_type.typmod(),
+                     )
+```
+
+**File**: `src/catalog/src/builtin/information_schema.rs` (modified, +2/-1)
+```diff
+@@ -71,7 +71,8 @@ SELECT
+     o.name AS table_name,
+     c.name AS column_name,
+     c.position::int8 AS ordinal_position,
+-    c.default AS column_default,
++    -- The string NULL is a table column without a default.
++    nullif(c.default, 'NULL') AS column_default,
+     CASE WHEN c.nullable THEN 'YES' ELSE 'NO' END AS is_nullable,
+     c.type AS data_type,
+     NULL::pg_catalog.int4 AS character_maximum_length,
+```
+
+**File**: `src/catalog/src/builtin/mz_catalog.rs` (modified, +1/-1)
+```diff
+@@ -764,7 +764,7 @@ SELECT * FROM builtin_columns",
+             ("type", "The data type of the column."),
+             (
+                 "default",
+-                "The default expression of the column, or `NULL` if it has none.",
++                "The default expression of the column. A table column without one reads as the string `NULL`.",
+             ),
+             (
+                 "type_oid",
+```
+
+**File**: `src/catalog/src/builtin/mz_internal.rs` (modified, +4/-2)
+```diff
+@@ -5079,7 +5079,8 @@ SELECT
+     -- https://github.com/MaterializeInc/materialize/pull/34649#issuecomment-3714291409
+     0::int2 as attndims,
+     NOT nullable as attnotnull,
+-    mz_columns.default IS NOT NULL as atthasdef,
++    -- The string NULL is a table column without a default.
++    coalesce(mz_columns.default <> 'NULL', false) as atthasdef,
+     ''::pg_catalog.\"char\" as attidentity,
+     -- MZ doesn't support generated columns so attgenerated is filled with ''
+     ''::pg_catalog.\"char\" as attgenerated,
+@@ -5144,7 +5145,8 @@ SELECT
+     mz_columns.default AS adsrc
+ FROM mz_catalog.mz_columns
+     JOIN mz_catalog.mz_objects ON mz_columns.id = mz_objects.id
+-WHERE default IS NOT NULL",
++-- The string NULL is a table column without a default, see mz_columns.
++WHERE default <> 'NULL'",
+     access: vec![PUBLIC_SELECT],
+     ontology: None,
+ });
+```
+
+**File**: `test/sqllogictest/autogenerated/mz_catalog.slt` (modified, +1/-1)
+```diff
+@@ -114,7 +114,7 @@ name  text  The␠name␠of␠the␠column.
+ position  uint8  The␠1-indexed␠position␠of␠the␠column␠in␠its␠containing␠table,␠source,␠or␠view.
+ nullable  boolean  Can␠the␠column␠contain␠a␠`NULL`␠value?
+ type  text  The␠data␠type␠of␠the␠column.
+-default  text  The␠default␠expression␠of␠the␠column,␠or␠`NULL`␠if␠it␠has␠none.
++default  text  The␠default␠expression␠of␠the␠column.␠A␠table␠column␠without␠one␠reads␠as␠the␠string␠`NULL`.
+ type_oid  oid  The␠OID␠of␠the␠type␠of␠the␠column␠(references␠`mz_types`).
+ type_mod  integer  The␠packed␠type␠identifier␠of␠the␠column.
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40303** (2026-10-28): race condition test: Make load generator tables, not just sources (@def-)
-- **PR #40302** (2026-10-28): ci: Detect another incremental build failure and handle it (@def-)
-- **PR #40301** (2026-10-28): Fix duplicate source-map-js yarn.lock entry (@def-)
-- **PR #40299** (closed): ci: bump pg8000 to 1.31.6 for scramp 1.5.0 (@antiguru)
-- **PR #40298** (2026-10-28): build(deps): bump the simple group across 2 directories with 18 updates (@dependabot[bot])
-- **PR #40297** (2026-10-28): build(deps): bump certifi from 2025.10.5 to 2026.10.18 in /misc/mcp-materialize-agents (@dependabot[bot])
+- **PR #40358** (2026-10-29): adapter: don't force a group commit when a session ends (@leedqin)
+- **PR #40356** (2026-10-29): ci: Ignore CLA for devin bot (@def-)
+- **PR #40349** (2026-10-29): build(deps): Downgrade psycopg to 3.3.3 in ci/builder (@def-)
+- **PR #40348** (2026-10-29): ci: check the system parameter catalog in cargo test (@antiguru)
+- **PR #40347** (2026-10-29): orchestratord: Add PodDisruptionBudgets for balancerd and console (@alex-hunt-materialize)
+- **PR #40345** (2026-10-29): ci: Nightly fixes (2026-10-29) (@def-)
 
 ---
 
@@ -1307,36 +1482,28 @@ overridden. (High severity, GHSA-8988-9cw3-xx77)</li>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump axios from 1.18.1 to 1.20.0 in /console (#40292)
+## X. build(deps): bump anthropics/claude-code-action from 1.0.262 to 1.0.263 in the s
 
 **RULE**:
-When implementing operations in `console/yarn.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/claude.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7b42d3bc`: build(deps): bump axios from 1.18.1 to 1.20.0 in /console (#40292). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2f061db0`: build(deps): bump anthropics/claude-code-action from 1.0.262 to 1.0.263 in the simple group (#40340). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `console/yarn.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/claude.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  version: 1.20.0
-  resolution: "axios@npm:1.20.0"
-    form-data: "npm:^4.0.6"
-  checksum: 10c0/976088acf532286356f4c2e65df1ef47ba7da3936d83e928d0d64357bbf5370456abd3eb5826c15df322335fcb1fe200d4a84b4fcf20ffccdd63b40d80fa495c
-"form-data@npm:^4.0.6":
+        uses: anthropics/claude-code-action@8041f1d17e0e7d2f2cfe35002962e9f26237c0bb # v1.0.263
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  version: 1.18.1
-  resolution: "axios@npm:1.18.1"
-    form-data: "npm:^4.0.5"
-  checksum: 10c0/9d9378a3af0d0ad730a52ad9d15ec7201f3926ad6e7e8bbffc5ae21ca2835ad11d1d9598698f5dd9718917486039f55ea1d7dc23d8e44fa827a55cc3262c02fc
-"form-data@npm:^4.0.5":
+        uses: anthropics/claude-code-action@925afb53776cf1a2b738c6bdbed37b4d4000ef13 # v1.0.262
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7b42d3bc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2f061db0` are properly handled with clean fallback behavior.

@@ -4694,3 +4694,7 @@ https://github.com/Jakeschincariol/arena-skill
 # --- Automatically Discovered by AI Scout Engine [2026-10-29T22:06:47.383Z] ---
 # [HUGGINGFACE-AI-MODELS] Diffuspace/Clover-35B-A3B-Preview (2420 score) - Verified Hugging Face Model: Diffuspace/Clover-35B-A3B-Preview (139 likes, 1030 
 https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-29T22:19:00.511Z] ---
+# [AI-AGENTS] CherryHQ/cherry-studio (28436 score) - Your AI workspace for models, agents, and productivity.
+https://github.com/CherryHQ/cherry-studio

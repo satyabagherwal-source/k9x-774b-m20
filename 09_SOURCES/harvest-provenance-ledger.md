@@ -6070,3 +6070,6 @@ Every entry in this ledger must capture:
 | `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `a0468502` | Multi-dimensional audit evidence | 2026-10-29T17:40:32.349Z |
 | `learn-github-maziyarpanahi-openmed` | `https://github.com/maziyarpanahi/openmed` | `d554f264` | Multi-dimensional audit evidence | 2026-10-29T17:40:37.842Z |
 | `learn-huggingface-diffuspace-clover-35b-a3b-preview` | `https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview` | `hf-diffusp` | Multi-dimensional audit evidence | 2026-10-29T22:11:49.875Z |
+| `learn-github-cherryhq-cherry-studio` | `https://github.com/CherryHQ/cherry-studio` | `d6a221e6` | Multi-dimensional audit evidence | 2026-10-29T22:19:06.343Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `6880db1c` | Multi-dimensional audit evidence | 2026-10-29T22:19:21.371Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `820c7511` | Multi-dimensional audit evidence | 2026-10-29T22:19:23.509Z |

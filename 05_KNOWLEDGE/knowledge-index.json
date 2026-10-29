@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T22:11:49.796Z",
-  "total_verified_learnings": 1168,
+  "last_updated": "2026-10-29T22:19:23.432Z",
+  "total_verified_learnings": 1169,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -36369,8 +36369,8 @@
       "slug": "materializeinc-materialize",
       "platform": "github",
       "source_url": "https://github.com/MaterializeInc/materialize",
-      "source_version": "ed0467e4",
-      "content_hash": "822a6f5037bd8758176642827c8bc03a7bb956f316701670ca366e9701ca5f6c",
+      "source_version": "820c7511",
+      "content_hash": "2be09102bb4777b21b89fe57ee0525dc3354c5c02ac80e3c41f27a17c263508f",
       "dossier_path": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "promoted_rules": [
@@ -36423,6 +36423,11 @@
           "number": 5294,
           "title": "build(deps): bump axios from 1.18.1 to 1.20.0 in /console (#40292)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5542,
+          "title": "build(deps): bump anthropics/claude-code-action from 1.0.262 to 1.0.263 in the s",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36430,7 +36435,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T13:30:22.129Z",
+      "verified_at": "2026-10-29T22:19:23.413Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40683,8 +40688,8 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "081a4090",
-      "content_hash": "b32a4b83d89b0bc7e79b63ec6b18d4969d5dc0bafc7ee6feac0eeac76f996353",
+      "source_version": "6880db1c",
+      "content_hash": "dd1117eaa358836c8f551cea68a6d6ad633c71c57d82e17a58dfbc8c0c242430",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
@@ -40742,6 +40747,11 @@
           "number": 5297,
           "title": "sandbox): detect Landlock ABI up to V9, keep enforcement at V6 (#2217)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5541,
+          "title": "proxy): redeem phantoms inside Basic credentials on token endpoints (#2225)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40749,7 +40759,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T13:43:44.344Z",
+      "verified_at": "2026-10-29T22:19:21.274Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -149124,6 +149134,81 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T22:11:49.777Z"
+    },
+    "learn-github-cherryhq-cherry-studio": {
+      "learning_id": "learn-github-cherryhq-cherry-studio",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "CherryHQ/cherry-studio",
+      "repository": "CherryHQ/cherry-studio",
+      "slug": "cherryhq-cherry-studio",
+      "platform": "github",
+      "source_url": "https://github.com/CherryHQ/cherry-studio",
+      "source_version": "d6a221e6",
+      "content_hash": "7dfd98f02d01c2f39f46ec92bc770b04016b8ee7082438a975d64686a3715d17",
+      "dossier_path": "07_PROJECT_LEARNING/cherryhq-cherry-studio-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/cherryhq-cherry-studio-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 5540,
+          "title": "mermaid): render diagrams with Merman in a worker and preview Mermaid files (#23",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-29T22:19:06.248Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-5540": {
+      "learning_id": "rule-5540",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5540,
+      "title": "mermaid): render diagrams with Merman in a worker and preview Mermaid files (#23",
+      "source_url": "https://github.com/CherryHQ/cherry-studio",
+      "source_version": "d6a221e6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T22:19:06.248Z"
+    },
+    "rule-5541": {
+      "learning_id": "rule-5541",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5541,
+      "title": "proxy): redeem phantoms inside Basic credentials on token endpoints (#2225)",
+      "source_url": "https://github.com/nolabs-ai/nono",
+      "source_version": "6880db1c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T22:19:21.274Z"
+    },
+    "rule-5542": {
+      "learning_id": "rule-5542",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5542,
+      "title": "build(deps): bump anthropics/claude-code-action from 1.0.262 to 1.0.263 in the s",
+      "source_url": "https://github.com/MaterializeInc/materialize",
+      "source_version": "820c7511",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T22:19:23.413Z"
     }
   },
   "aliases": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source**: github ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
-> **Source Version**: `081a4090`  
+> **Source Version**: `6880db1c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T13:43:44.020Z  
+> **Timestamp**: 2026-10-29T22:19:20.719Z  
 > **Learning ID**: `learn-github-nolabs-ai-nono`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T13:43:44.013Z  
+> **Harvest Timestamp**: 2026-10-29T22:19:19.451Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: agent runtime security - zero trust, zero setup, zero latency agent sandboxing
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4717 stars
+- **Stars / Engagement**: 4755 stars
 
 ---
 
@@ -636,6 +636,7 @@ impl Drop for EnvFileGuard {
 use crate::capability_ext::new_exact_path_capability;
 use nono::{
     AccessMode, CapabilitySet, CapabilitySource, FsCapability, NonoError, ResourceLimits, Result,
+    SocketScope, UnixSocketCapability,
 };
 use serde::{Deserialize, Serialize};
 use std::fs::OpenOptions;
@@ -651,6 +652,13 @@ use std::os::unix::fs::OpenOptionsExt;
 pub struct SandboxState {
     /// Filesystem capabilities
     pub fs: Vec<FsCapState>,
+    /// Pathname AF_UNIX socket capabilities in effect for this sandbox.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub unix_sockets: Vec<UnixSocketCapability>,
+    /// OS enforcement mode for pathname AF_UNIX sockets. `None` means the
+    /// state was written by an older build and cannot answer socket queries.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub pathname_socket_enforcement: Option<PathnameSocketEnforcement>,
     /// Whether network is blocked
     pub net_blocked: bool,
     /// Commands explicitly allowed
@@ -683,6 +691,44 @@ pub struct SandboxState {
     /// nono builds; `#[serde(default)]` keeps those loadable.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub resource_limits: Option<ResourceLimits>,
+}
+
+/// Enforcement applied to pathname AF_UNIX operations for a running sandbox.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum PathnameSocketEnforcement {
+    /// Linux seccomp pathname mediation is disabled.
+    LinuxUnmediated,
+    /// Linux seccomp pathname mediation enforces explicit socket grants.
+    LinuxAllowlist,
+    /// macOS Seatbelt enforces pathname socket policy directly.
+    MacosSeatbelt,
+}
+
+/// Resolve the platform enforcement mode from the Linux mediation setting.
+/// The argument is ignored on macOS, where Seatbelt is always the backend.
+#[must_use]
+pub fn pathname_socket_enforcement(
+    linux_mediation_enabled: bool,
+) -> Option<PathnameSocketEnforcement> {
+    #[cfg(target_os = "linux")]
+    {
+        Some(if linux_mediation_enabled {
+            PathnameSocketEnforcement::LinuxAllowlist
+        } else {
+            PathnameSocketEnforcement::LinuxUnmediated
+        })
+    }
+    #[cfg(target_os = "macos")]
+    {
+        let _ = linux_mediation_enabled;
+        Some(PathnameSocketEnforcement::MacosSeatbelt)
+    }
+    #[cfg(not(any(target_os = "linux", target_os = "macos")))]
+    {
+        let _ = linux_mediation_enabled;
+        None
+    }
 }
 
 /// Serializable domain endpoint restriction state
@@ -799,6 +845,8 @@ impl SandboxState {
                     }
                 })
                 .collect(),
+            unix_sockets: caps.unix_socket_capabilities().to_vec(),
+            pathname_socket_enforcement: None,
             net_blocked: caps.is_network_blocked(),
             allowed_commands: caps.allowed_commands().to_vec(),
             blocked_commands: caps.blocked_commands().to_vec(),
@@ -824,56 +872,7 @@ impl SandboxState {
     /// On Linux, paths or direct symlinks that resolve to or via /proc/self/*
     /// are ignored since these are process specific (e.g. /dev/stdin ->
     /// /proc/self/fd/0 -> /dev/pts/7). In all cases, the reconstructed
-    /// canonical path must match the path serialized in the state file.
-    ///
-    /// Returns an error if a stored grant fails validation or if the current
-    /// filesystem state no longer matches the serialized grant.
-    pub fn to_caps(&self) -> Result<CapabilitySet> {
-        let mut caps = CapabilitySet::new();
-
-        for fs_cap in &self.fs {
-            let access = parse_access_mode(&fs_cap.access)?;
-            let source = parse_capability_source(fs_cap.source.as_deref())?;
-
-            let cap = if fs_cap.is_file {
-                restore_exact_path_capability(fs_cap, access, &source)?
-            } else {
-                restore_directory_capability(fs_cap, access, &source)?
-            };
-            caps.add_fs(cap);
-        }
-
-        if !self.allowed_domains.is_empty() {
-            caps.set_network_mode_mut(nono::NetworkMode::ProxyOnly {
-                port: 0,
-                bind_ports: vec![],
-            });
-        } else {
-            caps.set_network_blocked(self.net_blocked);
-        }
-        for cmd in &self.allowed_commands {
-            caps.add_allowed_command(cmd.clone());
-        }
-        for cmd in &self.blocked_commands {
-            caps.add_blocked_command(cmd.clone());
-        }
-
-        if let Some(limits) = self.resource_limits {
-            caps = caps.with_resource_limits(limits);
-        }
-
-        Ok(caps)
-    }
-
-    /// Write sandbox state to a file with secure permissions
-    ///
-    /// # Security
-    /// This function implements multiple defenses against temp file attacks:
-    /// - Uses `create_new(true)` to fail if file exists (prevents symlink attacks)
-    /// - Sets `mode(0o600)` for owner-only read/write permissions (Unix)
-    /// - Atomic write operation (no TOCTOU window)
-    pub fn write_to_file(&self, path: &std::path::Path) -> Result<()> {
-        let json = serde_json::to_string_pretty(self).map_err(|e|
+    /// canonical path must
 ```
 
 ### Core Architecture Module: `crates/nono-cli/src/state_paths.rs`
@@ -2946,15 +2945,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2216** (2026-10-27): **fix(proxy): prevent UTF-8 nonce parsing panic**
-  *Symptoms*:    ## Summary  Use checked string slicing when parsing credential nonces so malformed multibyte input cannot abort the proxy. Add regression coverage and document the remaining audit durability limitation as planned future work.  <!-- Briefly describe what this PR does and why. -->  <!-- ## Agent Disclosure (if applicable)  If this PR is generated by an AI agent, per AGENTS.md you must include: - A statement that the contributor is an agent. - References to relevant files or sections consulted. - Explicit confirmation of compliance with repository requirements. -->  ## Test Plan  <!-- How was this tested? Include relevant commands, test cases, or manual verification steps. -->  ## Checklist  - [ ] An issue exists and is linked above, or this is maintainer-directed routine work - [ ] All commits are signed-off, using [DCO](https://en.wikipedia.org/wiki/Developer_Certificate_of_Origin) - [ ] Code changes follow the project's coding standards ([AGENTS.md](../AGENTS.md)) and have appropriate test coverage - [ ] Public-facing changes are paired with documentation updates - [ ] If this PR implements a major feature, capability, or security-relevant change, a corresponding accepted NEP is linked  <!-- ## Agent Compliance Check (Required for AI/Automated PRs) - [ ] I am not prohibited from contributing under this policy - [ ] An issue exists and I disclosed that I am an agent, my intent, and approach in its discussion, or this is directly maintainer-directed work - [ ] I reviewed rep
-  **Post-Mortem & Fix Analysis**:
-  > <!-- pr-review-summary -->  ## PR Review Summary  ### Size  | Metric | Value | |--------|-------| | Lines added | +34 | | Lines removed | -4 | | Total changed | 38 | | **Classification** | **Small (< 50 lines)** |  ### Affected crates  - **crates/nono-proxy** — **downstream consumers depend on this crate**. API or behaviour changes will affect external callers; treat any breaking change with extra scrutiny.  ### Blast radius — Contained  This PR touches: **source code**  --- <sub>Updated automatically on each push to this PR.</sub>
+- **Issue #2225** (2026-10-29): **fix(proxy): redeem phantoms inside Basic credentials on token endpoints**
+  *Symptoms*: ## Linked Issue  Closes #2224  ## Summary  An `oauth_capture` provider that phantomizes a client secret breaks DCR clients that authenticate with `client_secret_basic`: the phantom travels inside `Authorization: Basic base64(client_id:client_secret)` (RFC 6749 §2.3.1), the marker scan cannot see through the base64, and the issuer answers `401 invalid_client`.  The proxy now decodes Basic credentials on configured token endpoints and redeems the phantom in the password slot, as it already does for bearer headers and `request_nonce_fields` bodies.  | Case | Behaviour | | --- | --- | | Phantom in the password slot | Redeemed; recomposed with the secret form-urlencoded per RFC 6749 §2.3.1 (`%20` for space, `%2B` for a literal `+`), username bytes verbatim | | Real credentials, no phantom | Pass through byte-identical | | Phantom in the username, cross-provider phantom, provider without `client_secret` redemption, malformed credentials | Fail closed with a credential error | | Basic-hidden phantom off a token endpoint | `403`, audited as `ManagedCredentialUnavailable`, never forwarded |  The fix is already deployed downstream, where a live credential suite exercises the DCR flow end to end.  ## Agent Disclosure  <details> <summary>Written by an AI agent (OpenCode, GLM) at the direction of James Carnegie, who reviewed and approved each step.</summary>  Consulted `AGENTS.md`, `CONTRIBUTING.md`, RFC 6749 §2.3.1, RFC 7591, `crates/nono-proxy/src/oauth_capture/` and `crates/nono-proxy/
 
-- **Issue #2215** (2026-10-27): **fix(sandbox): deny io_uring during AF_UNIX mediation**
-  *Symptoms*:   ## Summary  Return EPERM for io_uring setup, enter, and register operations when pathname socket filtering is active. Add regression coverage for both seccomp filter paths.  <!-- Briefly describe what this PR does and why. -->  <!-- ## Agent Disclosure (if applicable)  If this PR is generated by an AI agent, per AGENTS.md you must include: - A statement that the contributor is an agent. - References to relevant files or sections consulted. - Explicit confirmation of compliance with repository requirements. -->  ## Test Plan  <!-- How was this tested? Include relevant commands, test cases, or manual verification steps. -->  ## Checklist  - [ ] An issue exists and is linked above, or this is maintainer-directed routine work - [ ] All commits are signed-off, using [DCO](https://en.wikipedia.org/wiki/Developer_Certificate_of_Origin) - [ ] Code changes follow the project's coding standards ([AGENTS.md](../AGENTS.md)) and have appropriate test coverage - [ ] Public-facing changes are paired with documentation updates - [ ] If this PR implements a major feature, capability, or security-relevant change, a corresponding accepted NEP is linked  <!-- ## Agent Compliance Check (Required for AI/Automated PRs) - [ ] I am not prohibited from contributing under this policy - [ ] An issue exists and I disclosed that I am an agent, my intent, and approach in its discussion, or this is directly maintainer-directed work - [ ] I reviewed repository coding and security rules for the affected are
-  **Post-Mortem & Fix Analysis**:
-  > <!-- pr-review-summary -->  ## PR Review Summary  ### Size  | Metric | Value | |--------|-------| | Lines added | +212 | | Lines removed | -122 | | Total changed | 334 | | **Classification** | **Large (> 300 lines)** |  ### Affected crates  - **crates/nono** (core library) — **careful review required**. This is the security-critical sandbox primitive. A bug here bypasses OS-level isolation for every downstream user.  ### Blast radius — Contained  This PR touches: **source code**  --- <sub>Updated automatically on each push to this PR.</sub>
+- **Issue #2224** (2026-10-29): **oauth_capture: phantoms inside Authorization: Basic are not redeemed on token endpoints**
+  *Symptoms*: [What happened?]  An oauth_capture provider that phantomizes a client secret cannot authenticate that client on its own token endpoint when the client uses HTTP Basic credentials. The client registers dynamically (RFC 7591) and oauth_capture replaces the client_secret in the register response with a phantom nonce, per the endpoint's response_fields. The client then sends that phantom inside Authorization: Basic base64(client_id:client_secret) (RFC 6749 §2.3.1, token_endpoint_auth_method: client_secret_basic). The proxy resolves phantoms in bearer headers and in request_nonce_fields bodies, but the Basic header is opaque base64 to the marker scan, so the phantom is forwarded upstream verbatim and the issuer answers 401 invalid_client.  The real secret never leaves the sandbox, but the client can never use it either: a phantom is non-functional outside the mediator.  [What did you expect to happen?]  The proxy resolves the phantom inside the Basic credentials on configured token endpoints before forwarding, as it already does for bearer headers and request_nonce_fields bodies.  [Steps to reproduce]  1. Configure an oauth_capture provider whose token_endpoints cover the    issuer's register and token endpoints, with client_secret in the    register endpoint's response_fields (profile fragment below). 2. Inside the sandbox, register a client dynamically; the response    carries a nono_... phantom in client_secret. 3. In the same nono run (the credential broker is per-process), re
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2971,256 +2966,1114 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `081a4090` (2026-10-28)
-**Commit Message**: feat(sandbox): detect Landlock ABI up to V9, keep enforcement at V6 (#2217)
+### Incident Patch 1: `be579e79` (2026-10-29)
+**Commit Message**: fix(proxy): redeem phantoms inside Basic credentials on token endpoints (#2225)
 
-* feat(sandbox): detect Landlock ABI up to V9, keep enforcement at V6
+* fix(proxy): redeem phantoms inside Basic credentials on token endpoints
 
-Detection now checks the kernel from V9 down to V1, but the access rights
-and scopes nono applies stay capped at MAX_ENFORCED_ABI (V6). If nono
-enforced the detected ABI directly, a V9 kernel would apply
-LANDLOCK_ACCESS_FS_RESOLVE_UNIX with no rules allowing it, and every
-pathname UNIX socket connect would fail with EACCES.
+handle_inner_request's OAuth-capture header rewrite only recognized
+Bearer-shaped phantoms. An RFC 6749 2.3.1 client (dynamic client
+registration) sends its client_secret as base64(client_id:secret) in the
+password slot of Authorization: Basic, and the phantom marker scan cannot
+see through standard base64, so a phantomized DCR client_secret reached
+the token endpoint verbatim and every token request was answered 401
+invalid_client.
 
-- Bump landlock to 0.4.7 (the first release that defines ABI V7-V9)
-- Add DetectedAbi::enforced_abi() and use it in both enforcement paths
-- Add kernel_abi_version() to report the raw kernel ABI, so kernels
-  newer than the crate (V10+) can be named; diagnostics only
-- Fix has_execute() returning false on kernels at V7 and above
-- Add has_audit_log_flags/has_tsync/has_resolve_unix; nono setup shows
-  them as detected but not yet enforced
-- Tests: a check that fails when a crate upgrade adds an ABI nono
-  doesn't list, the enforcement cap, and a pathname UNIX socket
-  connect regression test
+Add rewrite_request_basic_authorization, which decodes the Basic
+credentials on configured token endpoints, redeems a provider-admitted
+phantom in the password slot, and re-encodes the header with the
+form-urlencoded real secret per RFC 6749 §2.3.1: space becomes %20 and a
+literal + becomes %2B, so both form-decoding and percent-only-decoding
+issuers recover the same secret. The client's username bytes are
+preserved verbatim, because only the bytes this rewrite replaces get an
+encoding convention. Redemption is provider-granular, not
+field-granular: any phantom the provider minted resolves in the pa
 
-Signed-off-by: Luke Hinds <[REDACTED_EMAIL]>
-
-* fix(sandbox): bound Landlock ABI detection by kernel version
-
-Kernel Landlock 
-
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `crates/nono-proxy/src/oauth_capture/rewrite.rs` (modified, +491/-0)
 ```diff
-@@ -49,7 +49,7 @@ globset = "0.4"
+@@ -4,9 +4,11 @@ use crate::config::OAuthTokenRequestBodyFormat;
+ use crate::error::{ProxyError, Result};
+ use crate::jwt_phantom::jwt_shaped_phantom;
+ use crate::token::NonceResolver;
++use base64::Engine as _;
+ use serde_json::Value;
+ use std::collections::HashSet;
+ use tracing::debug;
++use zeroize::Zeroizing;
  
- # Shared system dependencies
- nix = "0.31.3"
--landlock = "0.4"
-+landlock = "0.4.7"
- url = "2"
- idna = "1"
- getrandom = "0.4"
-```
-
-**File**: `crates/nono-cli/src/setup.rs` (modified, +12/-0)
-```diff
-@@ -189,6 +189,18 @@ impl SetupRunner {
-         println!("  * Landlock enabled (syscall probe)");
+ impl OAuthCaptureStore {
+     /// Resolve an OAuth-capture phantom in a token endpoint request header
+@@ -21,6 +23,103 @@ impl OAuthCaptureStore {
+         self.rewrite_header_value(value, &consumer)
+     }
  
-         println!("  * {}", detected);
-+        if let Some(kernel) = nono::kernel_abi_version()
-+            && kernel > detected.abi as u32
-+        {
-+            println!(
-+                "  * Kernel reports Landlock ABI V{kernel}; this nono build recognises up to {}",
-+                detected.version_string()
-+            );
-+        }
-+        println!(
-+            "  * Enforcing Landlock {} access rights and scopes",
-+            detected.enforced_version_string()
++    /// Resolve a phantom in the password slot of `Authorization: Basic`
++    /// credentials (RFC 6749 §2.3.1); base64 hides it from the marker scan.
++    pub fn rewrite_request_basic_authorization(
++        &self,
++        endpoint: &LoadedOAuthEndpoint,
++        value: &str,
++    ) -> Result<Option<String>> {
++        let Some(credentials) = basic_scheme_payload(value) else {
++            return Ok(None);
++        };
++        let decoded = Zeroizing::new(
++            base64::engine::general_purpose::STANDARD
++                .decode(credentials)
++                .map_err(|_| {
++                    ProxyError::Credential(format!(
++                        "Basic credentials on token endpoint for provider '{}' are not standard \
++                         padded base64",
++                        endpoint.provider
++                    ))
++                })?,
 +        );
-         println!("  * Available features:");
- 
-         for feature in detected.feature_names() {
-```
-
-**File**: `crates/nono/src/lib.rs` (modified, +2/-2)
-```diff
-@@ -95,8 +95,8 @@ pub use path::try_canonicalize;
- pub use resource::ResourceLimits;
- #[cfg(target_os = "linux")]
- pub use sandbox::{
--    DetectedAbi, LandlockScopePolicy, NamespaceProbe, NamespaceProbeStage, NamespaceSpec,
--    SeccompOpts, detect_abi, is_wsl2, landlock_scope_policy,
-+    DetectedAbi, LandlockScopePolicy, MAX_ENFORCED_ABI, NamespaceProbe, NamespaceProbeStage,
-+    NamespaceSpec, SeccompOpts, detect_abi, is_wsl2, kernel_abi_version, landlock_scope_policy,
- };
- pub use sandbox::{Sandbox, SupportInfo};
- pub use scrub::{
-```
-
-**File**: `crates/nono/src/sandbox/linux.rs` (modified, +319/-19)
-```diff
-@@ -323,7 +323,7 @@ impl DetectedAbi {
-     /// Whether execute access control is supported strongly enough for command sandbox execution.
-     #[must_use]
-     pub fn has_execute(&self) -> bool {
--        matches!(self.abi, ABI::V3 | ABI::V4 | ABI::V5 | ABI::V6)
-+        self.abi >= ABI::V3
-     }
- 
-     /// Whether TCP network filtering is supported (V4+).
-@@ -344,18 +344,44 @@ impl DetectedAbi {
-         !Scope::from_all(self.abi).is_empty()
-     }
- 
-+    /// Whether audit logging control flags for `landlock_restrict_self` are supported (V7+).
-+    #[must_use]
-+    pub fn has_audit_log_flags(&self) -> bool {
-+        self.abi >= ABI::V7
-+    }
++        let decoded = std::str::from_utf8(&decoded).map_err(|_| {
++            ProxyError::Credential(format!(
++                "Basic credentials on token endpoint for provider '{}' are not UTF-8",
++                endpoint.provider
++            ))
++        })?;
++        let (username, password) = decoded.split_once(':').ok_or_else(|| {
++            ProxyError::Credential(format!(
++                "Basic credentials on token endpoint for provider '{}' contain no ':' separator",
++                endpoint.provider
++            ))
++        })?;
 +
-+    /// Whether enforcing a ruleset on all threads at once (TSYNC) is supported (V8+).
-+    #[must_use]
-+    pub fn has_tsync(&self) -> bool {
-+        self.abi >= ABI::V8
-+    }
-+
-+    /// Whether pathname UNIX socket connect control is supported (V9+).
-+    #[must_use]
-+    pub fn has_resolve_unix(&self) -> bool {
-+        AccessFs::from_all(self.abi).contains(AccessFs::ResolveUnix)
-+    }
-+
-+    /// The ABI whose access rights and scopes nono enforces on this kernel.
-+    ///
-+    /// This is the detected ABI clamped to [`MAX_ENFORCED_ABI`]. Detection may
-+    /// report a newer ABI, but its features are not handled until nono
-+    /// integrates them.
-+    #[must_use]
-+    pub fn enforced_abi(&self) -> ABI {
-+        self.abi.min(MAX_ENFORCED_ABI)
-+    }
-+
-     /// Return a human-readable version string (e.g., "V4").
-     #[must_use]
-     pub fn version_string(&self) -> &'static str {
--        match self.abi {
--            ABI::V1 => "V1",
--            ABI::V2 => "V2",
--            ABI::V3 => "V3",
--            ABI::V4 => "V4",
--            ABI::V5 => "V5",
--            ABI::V6 => "V6",
--            _ => "unknown",
--        }
-+        abi_version_string(self.abi)
-+    }
-+
-+    /// Return the version string of [`DetectedAbi::enforced_abi`].
-+    #[must_use]
-+    pub fn enforced_version_string(&self) -> &'static str {
-+        abi_version_string(self.enforced_abi())
-     }
- 
-     /// Return a list of available feature names at this ABI level.
-@@ -380,10 +406,39 @@ impl DetectedAbi {
-         if self.has_scoping() {
-             features.push("Signal and abstract UNIX socket scoping".to_string());
-         }
-+        if self.has_audit_log_flags() {
-+            features.push(format!("Audit logging flags {NOT_YET_ENFORCED}"));
++        let username_carries_phantom = self.contains_phantom(username.as_bytes());
++        let password_carries_phantom = self.contains_phantom(password.as_bytes());
++        if !username_carries_phantom && !password_carries_phantom {
++            return Ok(None);
 +        }
-+        if self.has_tsync() {
-+            features.push(format!("All-thread enforcement (TSYNC) {NOT_YET_ENFORCED}"));
++        if username_carries_phantom {
++            // Only the password slot carries a redeemable secret.
++            return Err(ProxyError::Credential(format!(
++                "Basic credentials on token endpoint for provider '{}' carry a phantom in the \
++                 username",
++                endpoint.provider
++            )));
 +        }
-+        if self.has_resolve_unix() {
-+            features.push(format!(
-+                "Pathname UNIX socket control (ResolveUnix) {NOT_YET_ENFORCED}"
-+            ));
++        if !endpoint
++            .request_nonce_fields
++            .iter()
++            .any(|field| field == "client_secret")
++        {
++            return Err(ProxyError::Credential(format!(
++                "Basic credentials on token endpoint for provider '{}' carry a phantom, but \
++                 the provider does not redeem client_secret",
++                endpoint.provider
++            )));
 +        }
-         features
++        // `resolve` admits only exact provider-minted phantoms.
++        let real = self
++            .resolve(password, &provider_consumer(&endpoint.provider))
++            .ok_or_else(|| {
++                ProxyError::Credential(format!(
++                    "Basic credentials on token endpoint for provider '{}' carry an invalid or \
++                     unadmitted phantom",
++                    endpoint.provider
++                ))
++            })?;
++        // Only the replaced secret is form-encoded; the username stays verbatim.
++        let encoded_secret = basic_credentials_form_urlencode(&real);
++        let mut combined = Zeroizing::new(Vec::with_capacity(
++            username.len() + encoded_secret.len() + 1,
++        ));
++        combined.extend_from_slice(username.as_bytes());
++        combined.push(b':');
++        combined.extend_from_slice(&encoded_secret);
++        Ok(Some(format!(
++            "Basic {}",
++            base64::engine::general_purpose::STANDARD.encode(combined.as_slice())
++        )))
++    }
++
++    /// Whether decoded Basic credentials carry a phantom, which the raw
++    /// marker scan cannot see through base64; callers must reject, not forward.
++    pub fn basic_authorization_hides_phantom(&self, value: &str) -> bool {
++        let Some(credentials) = basic_scheme_payload(value) else {
++            return false;
++        };
++        let Ok(decoded) = base64::engine::general_purpose::STANDARD
++            .decode(credentials)
++            .map(Zeroizing::new)
++        else {
++            return false;
++        };
++        self.contains_phantom(&decoded)
++    }
++
+     pub fn rewrite_request_body(
+         &self,
+         endpoint: &LoadedOAuthEndpoint,
+@@ -600,6 +699,35 @@ fn mint_response_phantom(
      }
  }
  
-+/// Suffix for detected kernel features above [`MAX_ENFORCED_ABI`].
-+const NOT_YET_ENFORCED: &str = "[detected, not yet enforced by nono]";
++/// The credentials payload of an `Authorization: Basic` value, per RFC 7235.
++fn basic_scheme_payload(value: &str) -> Option<&str> {
++    let (scheme, rest) = value.split_once(char::is_whitespace)?;
++    if !sche
+```
+
+**File**: `crates/nono-proxy/src/tls_intercept/handle.rs` (modified, +421/-3)
+```diff
+@@ -1331,7 +1331,7 @@ where
+         {
+             continue;
+         }
+-        let resolved_value = nonce_consumer
++        let mut resolved_value = nonce_consumer
+             .as_deref()
+             .and_then(|consumer| {
+                 ctx.nonce_resolver.as_deref().and_then(|resolver| {
+@@ -1345,8 +1345,52 @@ where
+                     ctx.oauth_capture_store
+                         .rewrite_request_header_value(endpoint, value)
+                 })
+-            })
+-            .unwrap_or_else(|| value.clone());
++            });
++        // A DCR client sends its phantom client_secret inside Basic
++        // credentials, where the raw marker scan cannot see it.
++        if resolved_value.is_none() && name.eq_ignore_ascii_case("authorization") {
++            let basic = if let Some(endpoint) = oauth_endpoint {
++                ctx.oauth_capture_store
++                    .rewrite_request_basic_authorization(endpoint, value)
++            } else if ctx
++                .oauth_capture_store
++                .basic_authorization_hides_phantom(value)
++            {
++                // Off the token endpoint there is nothing to redeem
++                // against, so reject rather than forward the phantom.
++                Err(ProxyError::Credential(
++                    "Basic authorization carries a phantom with no token endpoint \
++                     to redeem it"
++                        .to_string(),
++                ))
++            } else {
++                Ok(None)
++            };
++            match basic {
++                Ok(Some(rewritten)) => resolved_value = Some(rewritten),
++                Ok(None) => {}
++                Err(error) => {
++                    warn!("tls_intercept: {}", error);
++                    audit::log_denied(
++                        ctx.audit_log,
++                        audit::ProxyMode::ConnectIntercept,
++                        &audit::EventContext {
++                            route_id: service,
++                            denial_category: Some(
++                                nono::undo::NetworkAuditDenialCategory::ManagedCredentialUnavailable,
++                            ),
++                            ..audit::EventContext::default()
++                        },
++                        ctx.host,
++                        ctx.port,
++                        &error.to_string(),
++                    );
++                    reverse::send_error_generic(tls_stream, 403, "Forbidden").await?;
++                    return Ok(());
++                }
++            }
++        }
++        let resolved_value = resolved_value.unwrap_or_else(|| value.clone());
+         request.push_str(&format!("{}: {}\r\n", name, resolved_value));
+     }
+     request.push_str("Connection: close\r\n");
+@@ -4145,4 +4189,378 @@ mod tests {
+             "the new upstream token must not reach the client, got: {response}"
+         );
+     }
 +
-+fn abi_version_string(abi: ABI) -> &'static str {
-+    match abi {
-+        ABI::V1 => "V1",
-+        ABI::V2 => "V2",
-+        ABI::V3 => "V3",
-+        ABI::V4 => "V4",
-+        ABI::V5 => "V5",
-+        ABI::V6 => "V6",
-+        ABI::V7 => "V7",
-+        ABI::V8 => "V8",
-+        ABI::V9 => "V9",
-+        _ => "unknown",
++    // --- Authorization: Basic phantoms on token endpoints (DCR) ---
++
++    /// DCR shape: registration mints the client_secret phantom; the token
++    /// endpoint receives it inside Basic credentials.
++    fn dcr_oauth_capture_configs(port: u16) -> Vec<crate::config::OAuthCaptureConfig> {
++        use crate::config::{
++            OAuthCaptureConfig, OAuthTokenEndpointConfig, OAuthTokenRequestBodyFormat,
++            OAuthTokenResponseFieldConfig, OAuthTokenResponseFieldKind,
++        };
++
++        vec![OAuthCaptureConfig {
++            provider: "example_mcp".to_string(),
++            token_endpoints: vec![
++                OAuthTokenEndpointConfig {
++                    host: format!("https://localhost:{port}"),
++                    path: "/oauth/register".to_string(),
++                    response_fields: vec![OAuthTokenResponseFieldConfig {
++                        path: "client_secret".to_string(),
++                        kind: OAuthTokenResponseFieldKind::Opaque,
++                        format: None,
++                    }],
++                    request_body: OAuthTokenRequestBodyFormat::Json,
++                    response_body: OAuthTokenRequestBodyFormat::Json,
++                    request_nonce_fields: vec!["client_secret".to_string()],
++                },
++                OAuthTokenEndpointConfig {
++                    host: format!("https://localhost:{port}"),
++                    path: "/oauth/token".to_string(),
++                    response_fields: vec![OAuthTokenResponseFieldConfig {
++                        path: "access_token".to_string(),
++                        kind: OAuthTokenResponseFieldKind::Opaque,
++                        format: None,
++                    }],
++                    request_body: OAuthTokenRequestBodyFormat::Form,
++                    response_body: OAuthTokenRequestBodyFormat::Json,
++                    request_nonce_fields: vec![
++                        "refresh_token".to_string(),
++                        "client_secret".to_string(),
++                    ],
++                },
++            ],
++            adm
+```
+
+---
+
+### Incident Patch 2: `6880db1c` (2026-10-29)
+**Commit Message**: chore(nix): update prebuilt hashes for v0.81.0 (#2230)
+
+Co-authored-by: SequeI <[REDACTED_EMAIL]>
+
+**File**: `flake.nix` (modified, +4/-4)
+```diff
+@@ -57,10 +57,10 @@
+     # Auto-updated by the `update-nix-hashes` job in release.yml
+     # after each release — no manual maintenance needed.
+     prebuiltHashes = {
+-      "x86_64-linux" = "sha256-baZlthmZVwwQ3/x9p4go/h+388rFMxnlBc6+yu8XA38=";
+-      "aarch64-linux" = "sha256-0qJMjDdxT4XIKbVYb/2B/CrPM2yVNy2IG6YhQIhPIss=";
+-      "x86_64-darwin" = "sha256-s1TmdOa0ZDrVxXLRSK42e7DFwQNBD7wikjxVk6b30LI=";
+-      "aarch64-darwin" = "sha256-roJBZ7PZBTG4MEKbqSt3gTebHC15+bEf3Yiw/SZ+TjI=";
++      "x86_64-linux" = "sha256-fswz/5w0m9+oS0SW56dVX2e8wz8eElx9+e+2U8bE5Wk=";
++      "aarch64-linux" = "sha256-pNh92wkX75YiS8xBolhzGNfQ6SRB5/9FRpblmAyfeSQ=";
++      "x86_64-darwin" = "sha256-95WqiPqvdZdf/GAOuHDnyfK1K6IDXfUIfslyoCUq/UA=";
++      "aarch64-darwin" = "sha256-cosd7vv2OQybdPyYLvve0eHEs3uZ3N76Lgcmbf702ek=";
+     };
+ 
+     prebuiltFor = system: let pkgs = pkgsFor system; in pkgs.stdenv.mkDerivation {
+```
+
+---
+
+### Incident Patch 3: `c8125f4f` (2026-10-29)
+**Commit Message**: fix(why): add pathname Unix socket policy diagnostics (#2220)
+
+Add explicit Unix socket queries, persist enforcement state for self inspection, distinguish unmediated configurations, and clarify Linux and macOS behavior in documentation.
+
+Signed-off-by: Aleksy Siek <[REDACTED_EMAIL]>
+
+**File**: `crates/nono-cli/data/profile-authoring-guide.md` (modified, +8/-2)
+```diff
+@@ -221,7 +221,7 @@ Command-policy denials are not filesystem-policy denials. A message like:
+ nono: command policy denied gh: Command 'gh' is blocked: agents may read issues but not comment on them
+ ```
+ 
+-means the command policy blocked the resolved command invocation. `nono why --path ...` only explains filesystem-policy grants and denials, and `nono why --host ...` only explains network-policy reachability. For command-policy denials, query the command edge directly:
++means the command policy blocked the resolved command invocation. `nono why --path ...` only explains filesystem-policy grants and denials, `nono why --unix-socket ...` explains pathname socket operations, and `nono why --host ...` only explains network-policy reachability. For command-policy denials, query the command edge directly:
+ 
+ ```sh
+ nono why --profile <profile> --command gh -- issue comment 1052
+@@ -435,7 +435,7 @@ Here `read` only ever matches `.ts`/`.tsx` files, so it can never overlap `.env`
+ 
+ | Field                   | Type                              | Default  | Description |
+ |-------------------------|-----------------------------------|----------|-------------|
+-| `block`                 | boolean                           | `false`  | Block all network access. |
++| `block`                 | boolean                           | `false`  | Block outbound IP network access. |
+ | `allow_http2`           | boolean                           | `false`  | Allow HTTP/2 to upstream servers via ALPN negotiation. Default is HTTP/1.1 with keep-alive. Equivalent to `--allow-http2`. |
+ | `network_profile`       | string or null                    | inherit  | Name from `network-policy.json` for proxy filtering. Set to `null` to clear inherited value. |
+ | `allow_domain`          | array of string or object         | `[]`     | Additional domains to allow through the proxy. Entries can be plain strings (CONNECT tunnel) or objects with endpoint rules (TLS-intercepted L7 filtering). Supports wildcard subdomains (`*.googleapis.com`) and a whole-label wildcard in a non-leading position (`jenkins.*.ci.example.com`, matching exactly one label there). |
+@@ -1179,6 +1179,12 @@ With no `filesystem.unix_socket` entries, every AF_UNIX pathname connect and bin
+ }
+ ```
+ 
++Access to a container runtime socket grants the authority of the daemon behind
++it. A rootful Docker daemon runs outside nono's process sandbox and usually has
++root access to the host. For sensitive workloads that require Docker, use a
++separate container or MicroVM with its own daemon; mounting the host's rootful
++Docker socket preserves the same host authority.
++
+ #### Deprecation note
+ 
+ `commands.deny` is deprecated startup-only gating — it blocks the command from launching but does not enforce socket access and should not be relied on as enforcement. It remains visible in `nono profile show` under the commands section for compatibility.
+```
+
+**File**: `crates/nono-cli/src/cli.rs` (modified, +119/-1)
+```diff
+@@ -185,7 +185,7 @@ pub enum Commands {
+     Wrap(Box<WrapArgs>),
+ 
+     // ── Exploration & debugging ─────────────────────────────────────────
+-    /// Check why filesystem, network, scope, or command access would be allowed or denied
++    /// Check why filesystem, Unix socket, network, scope, or command access would be allowed or denied
+     #[command(help_template = "\
+ {about}
+ 
+@@ -198,6 +198,7 @@ pub enum Commands {
+   nono why --path ~/.ssh --op read             # Check if ~/.ssh is readable
+   nono why --path ./src --op write --allow .   # Check with capability context
+   nono why --json --path ~/.aws --op read      # JSON output for agents
++  nono why --unix-socket /run/docker.sock      # Query pathname Unix socket connect access
+   nono why --host api.openai.com --port 443    # Query network access
+   nono why --self --path /var --op write       # Inside sandbox, query own capabilities
+   nono why --profile gh --command gh -- issue comment 1052
+@@ -2247,6 +2248,25 @@ pub struct WhyArgs {
+     #[arg(long, help_heading = "QUERY")]
+     pub path: Option<PathBuf>,
+ 
++    /// Pathname AF_UNIX socket to check
++    #[arg(
++        long,
++        value_name = "PATH",
++        conflicts_with_all = ["command", "path", "host", "scope"],
++        help_heading = "QUERY"
++    )]
++    pub unix_socket: Option<PathBuf>,
++
++    /// Unix socket operation to check (default: connect)
++    #[arg(
++        long,
++        value_enum,
++        value_name = "OP",
++        requires = "unix_socket",
++        help_heading = "QUERY"
++    )]
++    pub socket_op: Option<WhySocketOp>,
++
+     /// Match absolute literal paths against profile rules without resolving them on this host
+     #[arg(long, requires_all = ["path", "profile"], help_heading = "QUERY")]
+     pub lexical_profile_path: bool,
+@@ -2312,6 +2332,30 @@ pub struct WhyArgs {
+     #[arg(long, value_name = "FILE", help_heading = "CONTEXT")]
+     pub write_file: Vec<PathBuf>,
+ 
++    /// Exact pathname Unix sockets to allow connect access (for query context)
++    #[arg(long, value_name = "SOCKET", help_heading = "CONTEXT")]
++    pub allow_unix_socket: Vec<PathBuf>,
++
++    /// Exact pathname Unix sockets to allow connect and bind (for query context)
++    #[arg(long, value_name = "SOCKET", help_heading = "CONTEXT")]
++    pub allow_unix_socket_bind: Vec<PathBuf>,
++
++    /// Direct-child pathname Unix sockets to allow in a directory (for query context)
++    #[arg(long, value_name = "DIR", help_heading = "CONTEXT")]
++    pub allow_unix_socket_dir: Vec<PathBuf>,
++
++    /// Direct-child pathname Unix sockets to allow connect and bind (for query context)
++    #[arg(long, value_name = "DIR", help_heading = "CONTEXT")]
++    pub allow_unix_socket_dir_bind: Vec<PathBuf>,
++
++    /// Descendant pathname Unix sockets to allow in a subtree (for query context)
++    #[arg(long, value_name = "DIR", help_heading = "CONTEXT")]
++    pub allow_unix_socket_subtree: Vec<PathBuf>,
++
++    /// Descendant pathname Unix sockets to allow connect and bind (for query context)
++    #[arg(long, value_name = "DIR", help_heading = "CONTEXT")]
++    pub allow_unix_socket_subtree_bind: Vec<PathBuf>,
++
+     /// Block network access (for query context)
+     #[arg(long = "block-net", help_heading = "CONTEXT")]
+     pub block_net: bool,
+@@ -2350,6 +2394,15 @@ pub enum WhyOp {
+     ReadWrite,
+ }
+ 
++/// Pathname Unix socket operation type for why command
++#[derive(Clone, Copy, Debug, ValueEnum)]
++pub enum WhySocketOp {
++    /// Connect to an existing socket
++    Connect,
++    /// Bind and create a socket at this path
++    Bind,
++}
++
+ /// Landlock scope type for why command
+ #[derive(Clone, Debug, ValueEnum)]
+ pub enum WhyScope {
+@@ -3075,6 +3128,71 @@ mod tests {
+     use super::*;
+     use clap::CommandFactory;
+ 
++    #[test]
++    fn test_why_unix_socket_defaults_to_connect() {
++        let cli = Cli::parse_from(["nono", "why", "--unix-socket", "/run/example.sock"]);
++        let Commands::Why(args) = cli.command else {
++            panic!("expected why command");
++        };
++        assert_eq!(args.unix_socket, Some(PathBuf::from("/run/example.sock")));
++        assert!(args.socket_op.is_none());
++    }
++
++    #[test]
++    fn test_why_unix_socket_bind_parses() {
++        let cli = Cli::parse_from([
++            "nono",
++            "why",
++            "--unix-socket",
++            "/run/example.sock",
++            "--socket-op",
++            "bind",
++        ]);
++        let Commands::Why(args) = cli.command else {
++            panic!("expected why command");
++        };
++        assert!(matches!(args.socket_op, Some(WhySocketOp::Bind)));
++    }
++
++    #[test]
++    fn test_why_unix_socket_context_grant_parses() {
++        let cli = Cli::parse_from([
++            "nono",
++            "why",
++            "--unix-socket",
++            "/run/example.sock",
++            "--allow-unix-socket",
++            "/run/example.sock",
++        ]);
++        let Commands::Why(args) = cli.command else {
++            panic!("expect
+```
+
+**File**: `crates/nono-cli/src/exec_strategy.rs` (modified, +2/-0)
+```diff
+@@ -1941,6 +1941,8 @@ fn build_policy_explanations(
+             }
+             Ok(crate::query_ext::QueryResult::NotSandboxed { .. })
+             | Ok(crate::query_ext::QueryResult::ApprovalRequired { .. })
++            | Ok(crate::query_ext::QueryResult::Unmediated { .. })
++            | Ok(crate::query_ext::QueryResult::Unknown { .. })
+             | Ok(crate::query_ext::QueryResult::Scope { .. })
+             | Err(_) => {}
+         }
+```
+
+**File**: `crates/nono-cli/src/execution_runtime.rs` (modified, +12/-6)
+```diff
+@@ -1,7 +1,7 @@
+ use crate::audit_attestation::prepare_audit_signer;
+ #[cfg(unix)]
+ use crate::hook_runtime;
+-use crate::launch_runtime::{LaunchPlan, select_threading_context};
++use crate::launch_runtime::{ExecutionFlags, LaunchPlan, select_threading_context};
+ use crate::proxy_runtime::start_proxy_runtime;
+ use crate::supervised_runtime::{SupervisedRuntimeContext, execute_supervised_runtime};
+ use crate::{
+@@ -365,7 +365,7 @@ pub(crate) fn execute_sandboxed(plan: LaunchPlan) -> Result<()> {
+         &allowed_domain_strs,
+         &denied_domain_strs,
+         &domain_endpoints,
+-        flags.silent,
++        &flags,
+     );
+     let cap_file_path = cap_file.unwrap_or_else(|| std::path::PathBuf::from("/dev/null"));
+     if cap_file_path != Path::new("/dev/null") {
+@@ -882,16 +882,22 @@ fn write_capability_state_file(
+     allowed_domains: &[String],
+     denied_domains: &[String],
+     domain_endpoints: &[sandbox_state::DomainEndpointState],
+-    silent: bool,
++    flags: &ExecutionFlags,
+ ) -> Option<std::path::PathBuf> {
+-    let state = sandbox_state::SandboxState::from_caps_with_denies(
++    let mut state = sandbox_state::SandboxState::from_caps_with_denies(
+         caps,
+         bypass_protection_paths,
+         deny_paths,
+         allowed_domains,
+         denied_domains,
+         domain_endpoints,
+     );
++    #[cfg(target_os = "linux")]
++    let linux_af_unix_mediation = flags.af_unix_mediation.is_pathname();
++    #[cfg(not(target_os = "linux"))]
++    let linux_af_unix_mediation = false;
++    state.pathname_socket_enforcement =
++        sandbox_state::pathname_socket_enforcement(linux_af_unix_mediation);
+ 
+     for _ in 0..8 {
+         let cap_file = next_capability_state_file_path();
+@@ -908,7 +914,7 @@ fn write_capability_state_file(
+                      Sandboxed processes will not be able to query their own capabilities using 'nono why --self'.",
+                     e
+                 );
+-                if !silent {
++                if !flags.silent {
+                     eprintln!(
+                         "  WARNING: Capability state file could not be written.\n  \
+                          The sandbox is active, but 'nono why --self' will not work inside this sandbox."
+@@ -923,7 +929,7 @@ fn write_capability_state_file(
+         "Failed to allocate a unique capability state file after repeated collisions. \
+          Sandboxed processes will not be able to query their own capabilities using 'nono why --self'."
+     );
+-    if !silent {
++    if !flags.silent {
+         eprintln!(
+             "  WARNING: Capability state file could not be written.\n  \
+              The sandbox is active, but 'nono why --self' will not work inside this sandbox."
+```
+
+**File**: `crates/nono-cli/src/query_ext.rs` (modified, +261/-1)
+```diff
+@@ -4,6 +4,7 @@
+ //! `nono why` command.
+ 
+ use crate::config;
++use crate::sandbox_state::PathnameSocketEnforcement;
+ use colored::Colorize;
+ use nono::{AccessMode, CapabilitySet, Result, try_canonicalize};
+ use serde::{Deserialize, Serialize};
+@@ -84,6 +85,24 @@ pub enum QueryResult {
+         #[serde(skip_serializing_if = "Option::is_none")]
+         policy_source: Option<String>,
+     },
++    /// nono is not mediating this operation on the active platform/configuration.
++    #[serde(rename = "unmediated")]
++    Unmediated {
++        surface: String,
++        operation: String,
++        path: String,
++        reason: String,
++        details: String,
++    },
++    /// The persisted state predates the information needed to answer safely.
++    #[serde(rename = "unknown")]
++    Unknown {
++        surface: String,
++        operation: String,
++        path: String,
++        reason: String,
++        details: String,
++    },
+     /// Not running inside a sandbox
+     #[serde(rename = "not_sandboxed")]
+     NotSandboxed { message: String },
+@@ -212,6 +231,102 @@ pub fn query_path(
+     })
+ }
+ 
++/// Query nono's effective policy for a pathname AF_UNIX operation.
++///
++/// `denied_by_filesystem_policy` matters on macOS because nono translates a
++/// filesystem deny for a socket path into a Seatbelt `network-outbound` deny.
++/// Linux Landlock filesystem denies do not mediate AF_UNIX operations.
++pub fn query_unix_socket(
++    path: &Path,
++    op: nono::UnixSocketOp,
++    caps: &CapabilitySet,
++    enforcement: Option<PathnameSocketEnforcement>,
++    denied_by_filesystem_policy: bool,
++) -> QueryResult {
++    let resolved = try_canonicalize(path);
++    let surface = "pathname_unix_socket".to_string();
++    let operation = op.to_string();
++    let display_path = resolved.display().to_string();
++
++    let Some(enforcement) = enforcement else {
++        return QueryResult::Unknown {
++            surface,
++            operation,
++            path: display_path,
++            reason: "socket_enforcement_state_unavailable".to_string(),
++            details: "The sandbox state was written without pathname Unix socket enforcement metadata. Start a new sandbox with the current nono version and query again."
++                .to_string(),
++        };
++    };
++
++    if enforcement == PathnameSocketEnforcement::LinuxUnmediated {
++        return QueryResult::Unmediated {
++            surface,
++            operation,
++            path: display_path,
++            reason: "linux_af_unix_mediation_off".to_string(),
++            details: "nono does not restrict pathname Unix socket operations in this configuration. Host permissions or an outer sandbox may still deny the operation. Enable linux.af_unix_mediation = \"pathname\" to enforce explicit socket grants."
++                .to_string(),
++        };
++    }
++
++    if enforcement == PathnameSocketEnforcement::MacosSeatbelt && denied_by_filesystem_policy {
++        return QueryResult::Denied {
++            reason: "filesystem_deny".to_string(),
++            details: Some(format!(
++                "Seatbelt blocks {} on the denied socket path {}",
++                op,
++                resolved.display()
++            )),
++            policy_source: Some("filesystem.deny".to_string()),
++            matching_capability: None,
++            suggested_flag: None,
++            endpoint_rules: None,
++        };
++    }
++
++    if enforcement == PathnameSocketEnforcement::MacosSeatbelt
++        && matches!(caps.network_mode(), nono::NetworkMode::AllowAll)
++    {
++        return QueryResult::Allowed {
++            reason: "macos_socket_unrestricted".to_string(),
++            granted_path: None,
++            access: Some(op.to_string()),
++            source: Some("default network policy".to_string()),
++            endpoint_rules: None,
++            warning: None,
++        };
++    }
++
++    if let Some(cap) = caps.matching_unix_socket(&resolved, op) {
++        return QueryResult::Allowed {
++            reason: "unix_socket_granted".to_string(),
++            granted_path: Some(cap.resolved.display().to_string()),
++            access: Some(cap.mode.to_string()),
++            source: Some(cap.source.to_string()),
++            endpoint_rules: None,
++            warning: None,
++        };
++    }
++
++    let suggested_flag = match op {
++        nono::UnixSocketOp::Connect | nono::UnixSocketOp::Send => "--allow-unix-socket",
++        nono::UnixSocketOp::Bind => "--allow-unix-socket-bind",
++    };
++    QueryResult::Denied {
++        reason: "unix_socket_not_granted".to_string(),
++        details: Some(format!(
++            "No pathname Unix socket capability permits {} on {}",
++            op,
++            resolved.display()
++        )),
++        policy_source: None,
++        matching_capability: None,
++        suggested_flag: Some(format!("{suggested_flag} {}", resolved.display())),
++        endpoint_rules: None,
 +    }
 +}
 +
- /// Report the Landlock scope policy that would be applied for these capabilities.
- ///
- /// # Errors
-@@ -422,13 +477,61 @@ impl std::fmt::Display for DetectedAbi {
+ /// Check host:port then bare host against the deny list, so a port-scoped
+ /// `d
+```
+
+**File**: `crates/nono-cli/src/sandbox_state.rs` (modified, +138/-0)
+```diff
+@@ -8,6 +8,7 @@
+ use crate::capability_ext::new_exact_path_capability;
+ use nono::{
+     AccessMode, CapabilitySet, CapabilitySource, FsCapability, NonoError, ResourceLimits, Result,
++    SocketScope, UnixSocketCapability,
+ };
+ use serde::{Deserialize, Serialize};
+ use std::fs::OpenOptions;
+@@ -23,6 +24,13 @@ use std::os::unix::fs::OpenOptionsExt;
+ pub struct SandboxState {
+     /// Filesystem capabilities
+     pub fs: Vec<FsCapState>,
++    /// Pathname AF_UNIX socket capabilities in effect for this sandbox.
++    #[serde(default, skip_serializing_if = "Vec::is_empty")]
++    pub unix_sockets: Vec<UnixSocketCapability>,
++    /// OS enforcement mode for pathname AF_UNIX sockets. `None` means the
++    /// state was written by an older build and cannot answer socket queries.
++    #[serde(default, skip_serializing_if = "Option::is_none")]
++    pub pathname_socket_enforcement: Option<PathnameSocketEnforcement>,
+     /// Whether network is blocked
+     pub net_blocked: bool,
+     /// Commands explicitly allowed
+@@ -57,6 +65,44 @@ pub struct SandboxState {
+     pub resource_limits: Option<ResourceLimits>,
+ }
+ 
++/// Enforcement applied to pathname AF_UNIX operations for a running sandbox.
++#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
++#[serde(rename_all = "snake_case")]
++pub enum PathnameSocketEnforcement {
++    /// Linux seccomp pathname mediation is disabled.
++    LinuxUnmediated,
++    /// Linux seccomp pathname mediation enforces explicit socket grants.
++    LinuxAllowlist,
++    /// macOS Seatbelt enforces pathname socket policy directly.
++    MacosSeatbelt,
++}
++
++/// Resolve the platform enforcement mode from the Linux mediation setting.
++/// The argument is ignored on macOS, where Seatbelt is always the backend.
++#[must_use]
++pub fn pathname_socket_enforcement(
++    linux_mediation_enabled: bool,
++) -> Option<PathnameSocketEnforcement> {
++    #[cfg(target_os = "linux")]
++    {
++        Some(if linux_mediation_enabled {
++            PathnameSocketEnforcement::LinuxAllowlist
++        } else {
++            PathnameSocketEnforcement::LinuxUnmediated
++        })
++    }
++    #[cfg(target_os = "macos")]
++    {
++        let _ = linux_mediation_enabled;
++        Some(PathnameSocketEnforcement::MacosSeatbelt)
++    }
++    #[cfg(not(any(target_os = "linux", target_os = "macos")))]
++    {
++        let _ = linux_mediation_enabled;
++        None
++    }
++}
++
+ /// Serializable domain endpoint restriction state
+ #[derive(Debug, Clone, Serialize, Deserialize)]
+ pub struct DomainEndpointState {
+@@ -171,6 +217,8 @@ impl SandboxState {
+                     }
+                 })
+                 .collect(),
++            unix_sockets: caps.unix_socket_capabilities().to_vec(),
++            pathname_socket_enforcement: None,
+             net_blocked: caps.is_network_blocked(),
+             allowed_commands: caps.allowed_commands().to_vec(),
+             blocked_commands: caps.blocked_commands().to_vec(),
+@@ -215,6 +263,10 @@ impl SandboxState {
+             caps.add_fs(cap);
+         }
+ 
++        for stored in &self.unix_sockets {
++            caps.add_unix_socket(restore_unix_socket_capability(stored)?);
++        }
++
+         if !self.allowed_domains.is_empty() {
+             caps.set_network_mode_mut(nono::NetworkMode::ProxyOnly {
+                 port: 0,
+@@ -281,6 +333,25 @@ impl SandboxState {
      }
  }
  
-+/// Highest Landlock ABI whose access rights and scopes nono enforces.
-+///
-+/// Detection reports the kernel's ABI up to the newest the `landlock` crate
-+/// knows, but handled access rights are derived from this cap. A newer ABI can
-+/// add rights that are denied by default once handled: V9's
-+/// `LANDLOCK_ACCESS_FS_RESOLVE_UNIX` would block every pathname UNIX socket
-+/// connect unless nono also emits allow rules for it. Raise this only together
-+/// with the capability and rule mapping for the new ABI's features.
-+pub const MAX_ENFORCED_ABI: ABI = ABI::V6;
++fn restore_unix_socket_capability(stored: &UnixSocketCapability) -> Result<UnixSocketCapability> {
++    let mut restored = match stored.scope {
++        SocketScope::File => UnixSocketCapability::new_file(&stored.original, stored.mode)?,
++        SocketScope::DirChildren => UnixSocketCapability::new_dir(&stored.original, stored.mode)?,
++        SocketScope::DirSubtree => {
++            UnixSocketCapability::new_dir_subtree(&stored.original, stored.mode)?
++        }
++    };
++    if restored.resolved != stored.resolved {
++        return Err(NonoError::ConfigParse(format!(
++            "unix socket grant canonical path drifted at state reload: serialized resolved={}, actual resolved={}",
++            stored.resolved.display(),
++            restored.resolved.display(),
++        )));
++    }
++    restored.source = stored.source.clone();
++    Ok(restored)
++}
 +
- /// ABI probe order: highest to lowest.
--const ABI_PROBE_ORDER: [ABI; 6] = [ABI::V6, ABI::V5, ABI::V4, ABI::V3, ABI::V2, ABI::V1];
-+const ABI_PROBE_ORDER: [ABI; 9] = [
-+    ABI::V9,
-+    ABI::V8,
-+    ABI::V7,
-+    ABI::V6,
-+    ABI::V5,
-+    ABI::V4,
-+    ABI::V3,
-+    ABI::V2,
-+    ABI::V1,
-+];
-+
-+/// `landlock_create_ruleset` flag that returns the kernel's ABI version.
-+const LANDLOCK_CREATE_RULESET_VERSION: u32 = 1 << 0;
-+
-+/// Return the raw Landlock ABI version reported by the kernel.
-+///
-+/// Unlike [`detect_abi`], this is not limited to ABIs the `landlock` crate
-+/// knows, so it identifies kernels newer than nono recognises. Detection uses
-+/// it only as an upper bound on probed candidates; it never selects enforced
-+/// access rights, which stay capped at [`MAX_ENFORCED_ABI`].
-+///
-+/// Returns `None` if Landlock is unavailable.
-+#[must_use]
-+pub fn kernel_abi_version() -> Option<u32> {
-+    // SAFETY: with a NULL attr pointer, zero size, and the VERSION flag, the
-+   
+ fn parse_access_mode(access: &str) -> Result<AccessMode> {
+     match access {
+         "read" => Ok(AccessMode::Read),
+@@ -673,6 +744,8 @@ pub fn cleanup_stale_state_files() {
+ mod tests {
+     use super::*;
+     use nono::CapabilitySource;
++    #[cfg(unix)]
++    use std::os::unix::net::UnixListener;
+     use tempfile::tempdir;
+ 
+     #[test]
+@@ -691,6 +764,69 @@ mod tests {
+         assert_eq!(restored.allowed_commands(), vec!["pip"]);
+     }
+ 
++    #[test]
++    #[cfg(unix)]
++    fn test_sandbox_state_roundtrip_preserves_unix_socket_policy() {
++        let dir = tempdir().expect("tempdir");
++        let socket_path = dir.path().join("service.sock");
++        let _listener = UnixListener::bind(&socket_path).expect("bind socket");
++        let mut socket =
+
 ```
 
-**File**: `crates/nono/src/sandbox/mod.rs` (modified, +2/-1)
+**File**: `crates/nono-cli/src/why_runtime.rs` (modified, +125/-26)
 ```diff
-@@ -23,7 +23,8 @@ pub use macos::{extension_consume, extension_issue_file, extension_release};
- // Re-export Linux Landlock ABI detection and scope policy reporting
- #[cfg(target_os = "linux")]
- pub use linux::{
--    DetectedAbi, LandlockScopePolicy, detect_abi, landlock_scope_policy, restrict_execute,
-+    DetectedAbi, LandlockScopePolicy, MAX_ENFORCED_ABI, detect_abi, kernel_abi_version,
-+    landlock_scope_policy, restrict_execute,
+@@ -1,5 +1,5 @@
+ use crate::capability_ext::CapabilitySetExt;
+-use crate::cli::{SandboxArgs, WhyArgs, WhyOp, WhyScope};
++use crate::cli::{SandboxArgs, WhyArgs, WhyOp, WhyScope, WhySocketOp};
+ use crate::command_policy::{
+     CommandFromConfig, CommandPoliciesConfig, CommandSandboxConfig, InvocationPolicyConfig,
  };
+@@ -10,6 +10,7 @@ use nono::{AccessMode, CapabilitySet, NonoError, Result};
+ struct WhyContext {
+     caps: CapabilitySet,
+     deny_policy: policy::EffectiveDenyPolicy,
++    pathname_socket_enforcement: Option<sandbox_state::PathnameSocketEnforcement>,
+     allowed_domains: Vec<String>,
+     denied_domains: Vec<String>,
+     domain_endpoints: Vec<sandbox_state::DomainEndpointState>,
+@@ -114,6 +115,26 @@ fn resolve_domain_endpoints(profile: &profile::Profile) -> Vec<sandbox_state::Do
+         .collect()
+ }
  
- // Re-export Linux opt-in namespace isolation mechanism (NEP-0004)
++fn sandbox_args_from_why(args: &WhyArgs) -> SandboxArgs {
++    SandboxArgs {
++        allow: args.allow.clone(),
++        read: args.read.clone(),
++        write: args.write.clone(),
++        allow_file: args.allow_file.clone(),
++        read_file: args.read_file.clone(),
++        write_file: args.write_file.clone(),
++        allow_unix_socket: args.allow_unix_socket.clone(),
++        allow_unix_socket_bind: args.allow_unix_socket_bind.clone(),
++        allow_unix_socket_dir: args.allow_unix_socket_dir.clone(),
++        allow_unix_socket_dir_bind: args.allow_unix_socket_dir_bind.clone(),
++        allow_unix_socket_subtree: args.allow_unix_socket_subtree.clone(),
++        allow_unix_socket_subtree_bind: args.allow_unix_socket_subtree_bind.clone(),
++        block_net: args.block_net,
++        workdir: args.workdir.clone(),
++        ..SandboxArgs::default()
++    }
++}
++
+ pub(crate) fn run_why(args: WhyArgs) -> Result<()> {
+     use query_ext::{QueryResult, print_result, query_network, query_path, query_scope};
+     use sandbox_state::load_sandbox_state;
+@@ -167,12 +188,14 @@ pub(crate) fn run_why(args: WhyArgs) -> Result<()> {
+         match sandbox_state {
+             Some(state) => {
+                 let domain_endpoints = state.domain_endpoints.clone();
++                let pathname_socket_enforcement = state.pathname_socket_enforcement;
+                 WhyContext {
+                     caps: state.to_caps()?,
+                     deny_policy: policy::EffectiveDenyPolicy::from_applied_bypasses(
+                         &state.deny_paths_as_paths(),
+                         &state.applied_bypasses,
+                     ),
++                    pathname_socket_enforcement,
+                     allowed_domains: state.allowed_domains.clone(),
+                     denied_domains: state.denied_domains.clone(),
+                     domain_endpoints,
+@@ -202,24 +225,21 @@ pub(crate) fn run_why(args: WhyArgs) -> Result<()> {
+             .or_else(|| std::env::current_dir().ok())
+             .unwrap_or_else(|| std::path::PathBuf::from("."));
+ 
+-        let sandbox_args = SandboxArgs {
+-            allow: args.allow.clone(),
+-            read: args.read.clone(),
+-            write: args.write.clone(),
+-            allow_file: args.allow_file.clone(),
+-            read_file: args.read_file.clone(),
+-            write_file: args.write_file.clone(),
+-            block_net: args.block_net,
+-            workdir: args.workdir.clone(),
+-            ..SandboxArgs::default()
+-        };
++        let sandbox_args = sandbox_args_from_why(&args);
+ 
+         let allowed_domains =
+             merge_cli_allow_domains(resolve_allowed_domains(&profile)?, &args.allow_proxy)?;
+         let denied_domains =
+             merge_cli_deny_domains(resolve_denied_domains(&profile)?, &args.deny_proxy)?;
+         let domain_endpoints = resolve_domain_endpoints(&profile);
+         let command_policies = profile.command_policies.clone();
++        let pathname_socket_enforcement = sandbox_state::pathname_socket_enforcement(
++            profile
++                .linux
++                .af_unix_mediation
++                .unwrap_or_default()
++                .is_pathname(),
++        );
+ 
+         let prepared = CapabilitySet::from_profile(&profile, &workdir, &sandbox_args)?;
+         let mut caps = prepared.caps;
+@@ -232,23 +252,14 @@ pub(crate) fn run_why(args: WhyArgs) -> Result<()> {
+                 &prepared.deny_paths,
+                 &prepared.applied_bypass_paths,
+             ),
++            pathname_socket_enforcement,
+             allowed_domains,
+             denied_domains,
+             domain_endpoints,
+             command_policies,
+         }
+     } else {
+-        let sandbox_args = SandboxArgs {
+-            allow: args.allow.clone(),
+-            read: args.read.clone(),
+-            write: args.write.clone(),
+-            allow_file: args.allow_file.clone(),
+-            read_file: args.read_file.clone(),
+-            write_file: args.write_file.clone(),
+-            block_net: args.block_net,
+-            workdir: args.workdir.clone(),
+-            ..SandboxArgs::default()
+-        };
++        let sandbox_arg
+```
+
+**File**: `crates/nono-cli/tests/why_socket.rs` (added, +152/-0)
+```diff
+@@ -0,0 +1,152 @@
++//! End-to-end coverage for pathname Unix socket policy queries.
++
++#![cfg(unix)]
++
++use serde_json::Value;
++#[cfg(target_os = "linux")]
++use std::fs;
++use std::os::unix::net::UnixListener;
++#[cfg(target_os = "linux")]
++use std::path::Path;
++use std::path::PathBuf;
++use std::process::{Command, Output};
++
++fn fixture() -> (tempfile::TempDir, PathBuf, UnixListener) {
++    // Keep the path below sockaddr_un::sun_path limits on both platforms.
++    let dir = tempfile::Builder::new()
++        .prefix("nono-why-sock-")
++        .tempdir_in("/tmp")
++        .expect("tempdir");
++    let socket = dir.path().join("s.sock");
++    let listener = UnixListener::bind(&socket).expect("bind socket");
++    (dir, socket, listener)
++}
++
++fn run_why(args: &[&str]) -> Output {
++    Command::new(env!("CARGO_BIN_EXE_nono"))
++        .arg("why")
++        .args(args)
++        .output()
++        .expect("run nono why")
++}
++
++fn json_output(output: &Output) -> Value {
++    assert!(
++        output.status.success(),
++        "nono why failed: {}",
++        String::from_utf8_lossy(&output.stderr)
++    );
++    serde_json::from_slice(&output.stdout).expect("JSON output")
++}
++
++#[cfg(target_os = "linux")]
++fn write_profile(dir: &Path, name: &str, value: Value) -> PathBuf {
++    let path = dir.join(format!("{name}.json"));
++    fs::write(
++        &path,
++        serde_json::to_vec_pretty(&value).expect("serialize profile"),
++    )
++    .expect("write profile");
++    path
++}
++
++#[test]
++fn path_query_on_socket_points_to_socket_query() {
++    let (_dir, socket, _listener) = fixture();
++    let output = run_why(&[
++        "--path",
++        socket.to_str().expect("socket path"),
++        "--op",
++        "read",
++    ]);
++    assert!(output.status.success());
++    let stdout = String::from_utf8_lossy(&output.stdout);
++    assert!(stdout.contains("filesystem access only"), "{stdout}");
++    assert!(stdout.contains("nono why --unix-socket"), "{stdout}");
++}
++
++#[test]
++#[cfg(target_os = "linux")]
++fn linux_default_reports_unmediated_even_with_block_net() {
++    let (_dir, socket, _listener) = fixture();
++    let output = run_why(&[
++        "--json",
++        "--block-net",
++        "--unix-socket",
++        socket.to_str().expect("socket path"),
++    ]);
++    let value = json_output(&output);
++    assert_eq!(value["status"], "unmediated");
++    assert_eq!(value["reason"], "linux_af_unix_mediation_off");
++}
++
++#[test]
++#[cfg(target_os = "linux")]
++fn linux_mediation_reports_granted_and_ungranted_sockets() {
++    let (dir, socket, _listener) = fixture();
++    let denied_profile = write_profile(
++        dir.path(),
++        "deny",
++        serde_json::json!({
++            "meta": {"name": "deny"},
++            "linux": {"af_unix_mediation": "pathname"}
++        }),
++    );
++    let allowed_profile = write_profile(
++        dir.path(),
++        "allow",
++        serde_json::json!({
++            "meta": {"name": "allow"},
++            "linux": {"af_unix_mediation": "pathname"},
++            "filesystem": {"unix_socket": [socket]}
++        }),
++    );
++    let socket = socket.to_str().expect("socket path");
++
++    let denied = json_output(&run_why(&[
++        "--json",
++        "--profile",
++        denied_profile.to_str().expect("profile path"),
++        "--unix-socket",
++        socket,
++    ]));
++    assert_eq!(denied["status"], "denied");
++    assert_eq!(denied["reason"], "unix_socket_not_granted");
++
++    let allowed = json_output(&run_why(&[
++        "--json",
++        "--profile",
++        allowed_profile.to_str().expect("profile path"),
++        "--unix-socket",
++        socket,
++    ]));
++    assert_eq!(allowed["status"], "allowed");
++    assert_eq!(allowed["reason"], "unix_socket_granted");
++}
++
++#[test]
++#[cfg(target_os = "macos")]
++fn macos_blocked_network_requires_explicit_socket_grant() {
++    let (_dir, socket, _listener) = fixture();
++    let socket = socket.to_str().expect("socket path");
++
++    let denied = json_output(&run_why(&[
++        "--json",
++        "--block-net",
++        "--unix-socket",
++        socket,
++    ]));
++    assert_eq!(denied["status"], "denied");
++    assert_eq!(denied["reason"], "unix_socket_not_granted");
++
++    let allowed = json_output(&run_why(&[
++        "--json",
++        "--block-net",
++        "--unix-socket",
++        socket,
++        "--allow-unix-socket",
++        socket,
++    ]));
++    assert_eq!(allowed["status"], "allowed");
++    assert_eq!(allowed["reason"], "unix_socket_granted");
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2217** (2026-10-28): feat(sandbox): detect Landlock ABI up to V9, keep enforcement at V6 (@lukehinds)
-- **PR #2216** (2026-10-27): fix(proxy): prevent UTF-8 nonce parsing panic (@SequeI)
-- **PR #2215** (2026-10-27): fix(sandbox): deny io_uring during AF_UNIX mediation (@SequeI)
-- **PR #2212** (2026-10-27): chore(deps): bump the routine-rust group across 1 directory with 9 updates (@dependabot[bot])
-- **PR #2210** (2026-10-27): chore: clean up workspace dependencies and build configuration (@SequeI)
-- **PR #2206** (2026-10-27): chore(deps): bump vt100 from 0.16.2 to 0.18.1 (@dependabot[bot])
+- **PR #2230** (2026-10-29): chore(nix): update prebuilt hashes for v0.81.0 (@github-actions[bot])
+- **PR #2229** (2026-10-29): chore: release v0.81.0 (@SequeI)
+- **PR #2227** (2026-10-29): docs: document safe Codex app server isolation (@SequeI)
+- **PR #2225** (2026-10-29): fix(proxy): redeem phantoms inside Basic credentials on token endpoints (@kipz)
+- **PR #2223** (2026-10-29): docs(neps): add nep-0008 session flight recorder proposal (@lukehinds)
+- **PR #2220** (2026-10-29): fix(why): add pathname Unix socket policy diagnostics (@SequeI)
 
 ---
 
@@ -3240,28 +4093,57 @@ Kernel Landlock
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sandbox): detect Landlock ABI up to V9, keep enforcement at V6 (#2217)
+## X. proxy): redeem phantoms inside Basic credentials on token endpoints (#2225)
 
 **RULE**:
-When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/nono-proxy/src/oauth_capture/rewrite.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `081a4090`: sandbox): detect Landlock ABI up to V9, keep enforcement at V6 (#2217). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `be579e79`: proxy): redeem phantoms inside Basic credentials on token endpoints (#2225). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-proxy/src/oauth_capture/rewrite.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-landlock = "0.4.7"
+use base64::Engine as _;
+use zeroize::Zeroizing;
+    /// Resolve a phantom in the password slot of `Authorization: Basic`
+    /// credentials (RFC 6749 §2.3.1); base64 hides it from the marker scan.
+    pub fn rewrite_request_basic_authorization(
+        &self,
+        endpoint: &LoadedOAuthEndpoint,
+        value: &str,
+    ) -> Result<Option<String>> {
+        let Some(credentials) = basic_scheme_payload(value) else {
+            return Ok(None);
+        };
+        let decoded = Zeroizing::new(
+            base64::engine::general_purpose::STANDARD
+                .decode(credentials)
+                .map_err(|_| {
+                    ProxyError::Credential(format!(
+                        "Basic credentials on token endpoint for provider '{}' are not standard \
+                         padded base64",
+                        endpoint.provider
+                    ))
+                })?,
+        );
+        let decoded = std::str::from_utf8(&decoded).map_err(|_| {
+            ProxyError::Credential(format!(
+                "Basic credentials on token endpoint for provider '{}' are not UTF-8",
+                endpoint.provider
+            ))
+        })?;
+        let (username, passwo
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-landlock = "0.4"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `081a4090` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `be579e79` are properly handled with clean fallback behavior.
