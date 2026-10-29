@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source**: github ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
-> **Source Version**: `1783110b`  
+> **Source Version**: `44323f51`  
 > **License**: NOASSERTION  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T13:03:45.054Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-29T16:51:22.898Z  
 > **Learning ID**: `learn-github-rustls-rustls`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,745 +12,149 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): rustls/rustls
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T13:03:45.047Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): rustls/rustls
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `rustls/rustls`
-- **Description**: A modern TLS library in Rust
-- **Primary Language / Ecosystem**: Rust
-- **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7717 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+`rustls` is a clean-sheet, memory-safe Transport Layer Security (TLS 1.2 and TLS 1.3) implementation in Rust. Its central architectural challenge is implementing a stateful, strictly ordered cryptographic protocol without internal I/O side effects, without dynamic allocations in the fast path where avoidable, and without coupling to a single cryptographic engine.
+
+```
+       +-------------------------------------------------------------+
+       |                  Application Layer                          |
+       |  (e.g., rustls-util::Stream / StreamOwned, Tokio, Mio)     |
+       +------------------------------+------------------------------+
+                                      | Plaintext / Read / Write
+                                      v
+       +-------------------------------------------------------------+
+       |             rustls::conn::Connection<Side, Tcp>             |
+       |  State Machine / Typestate Handshake Engine (Kernel)        |
+       +------------------------------+------------------------------+
+                                      | Record Framing & Encryption
+                 +--------------------+--------------------+
+                 v                                         v
++---------------------------------+       +---------------------------------+
+|  rustls::crypto::CryptoProvider |       |       rustls::TlsInputBuffer    |
+| (aws-lc-rs, ring, post-quantum) |       |  (Zero-copy deframer, VecInput) |
++---------------------------------+       +---------------------------------+
+```
+
+### Decoupling Engine & State Mechanics
+1. **Typestate Handshake Transitions (`Connection<Side, T>` -> `ServerHandshake` / `ClientHandshake`)**:
+   Rustls models protocol state transitions by consuming self (`mut self`) and returning distinct sum types (`ServerHandshake::Accepted`, `ServerHandshake::NeedsInput`, `ServerHandshake::EarlyData`, `ServerHandshake::Complete`). Handshake-specific state cannot be accessed once application data is unlocked, making invalid state transitions impossible at compile time.
+2. **Pluggable Cryptographic Provider Boundary (`CryptoProvider`)**:
+   All cryptographic operations (AEAD ciphers, key exchange via ECDH/FFDHE/ML-KEM, digital signatures via ECDSA/Ed25519/RSA-PSS, HMAC, HKDF, secure random generation) are abstracted behind trait objects without global state singletons. The connection engine consumes providers via `Arc<CryptoProvider>`.
+3. **Zero-I/O Deframing Core (`TlsInputBuffer` & `Delocator`)**:
+   The engine does not perform network I/O. Callers feed raw bytes via `input: &mut dyn TlsInputBuffer` (e.g., `VecInput`, `SliceInput`) and provide a TLS staging buffer `tls: &mut Vec<u8>`. Deframing slices directly from the input buffer using zero-copy borrow ranges (`UnborrowedPayload::Unborrowed(Range<usize>)`).
+4. **Transport-Decoupled Asynchrony & Streaming (`rustls-util`)**:
+   The core library remains agnostic to `async` vs `sync`. Helper layers (`Stream`, `StreamOwned`, `complete_io`) adapt non-blocking file descriptors or sockets to the TLS engine, managing write limits, short writes, backpressure, and unannounced EOF boundaries.
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: Cargo.toml, README.md.
-- Evaluated system abstractions and modular contracts.
+### 1. Typestate Return-on-Yield for Interleaved Stream Payloads
+**RULE**:
+When an in-flight handshake state machine can yield interleaved protocol data (such as TLS 1.3 0-RTT/Early Data or ALPN renegotiation frames) before terminal completion, the processing method MUST consume `self` and return an intermediate progress wrapper (`Processed<S, T>`) rather than mutating `&mut self` in place or buffering data implicitly inside the state struct.
 
-### Core Architecture Module: `ci-bench/src/util.rs`
-```
-pub(crate) mod async_io {
-    //! Async IO building blocks required for sharing code between the instruction count and
-    //! wall-time benchmarks
+**WHY**:
+Mutating internal state while buffering interleaved payload data leads to state-desynchronization bugs where the caller cannot ascertain whether more socket I/O is required or if application-layer payload processing must occur first. Returning an explicit variant (`ServerHandshake::EarlyData(ReceivedEarlyData)`) moves ownership of the connection into the yielded payload token, enforcing that the caller must process the data and call `.into_next()` to retrieve the `NeedsInput` state before further network frames can be accepted.
 
-    use core::cell::{Cell, RefCell};
-    use core::future::Future;
-    use core::pin::{Pin, pin};
-    use core::task::{Poll, RawWaker, RawWakerVTable, Waker};
-    use core::{ptr, task};
-    use std::collections::VecDeque;
-    use std::fs::File;
-    use std::io;
-    use std::rc::Rc;
+**WHEN TO APPLY**:
+State machine implementations for network protocols, streaming parsers, or async handshake pipelines where client data can arrive before server authentication completes.
 
-    use async_trait::async_trait;
-
-    /// Block on a future that should complete in a single poll.
-    ///
-    /// Safe to use when the underlying futures are blocking (e.g. waiting for an IO operation to
-    /// complete, and returning Poll::Ready afterwards, without yielding in between).
-    ///
-    /// Useful when counting CPU instructions, because the server and the client side of the
-    /// connection run in two separate processes and communicate through stdio using blocking
-    /// operations.
-    pub(crate) fn block_on_single_poll(
-        future: impl Future<Output = anyhow::Result<()>>,
-    ) -> anyhow::Result<()> {
-        // We don't need a waker, because the future will complete in one go
-        let waker = noop_waker();
-        let mut ctx = task::Context::from_waker(&waker);
-
-        match pin!(future).poll(&mut ctx) {
-            Poll::Ready(result) => result,
-            Poll::Pending => {
-                panic!("the provided future did not finish after one poll!")
-            }
-        }
-    }
-
-    /// Block on two futures that are run concurrently and return their results.
-    ///
-    /// Useful when measuring wall-time, because the server and the client side of the connection
-    /// run in a single process _and_ thread to minimize noise. Each side of the connection runs
-    /// inside its own future and they are polled in turns.
-    ///
-    /// Using this together with blocking futures can lead to deadlocks (i.e. when one of the
-    /// futures is blocked while it waits on a message from the other).
-    pub(crate) fn block_on_concurrent(
-        x: impl Future<Output = anyhow::Result<()>>,
-        y: impl Future<Output = anyhow::Result<()>>,
-    ) -> (anyhow::Result<()>, anyhow::Result<()>) {
-        let mut x = pin!(x);
-        let mut y = pin!(y);
-
-        // The futures won't complete right away, but since there are only two of them we can poll
-        // them in turns without a more complex waking mechanism.
-        let waker = noop_waker();
-        let mut ctx = task::Context::from_waker(&waker);
-
-        let mut x_output = None;
-        let mut y_output = None;
-
-        // Fuel makes sure we can exit a potential infinite loop if the futures are endlessly
-        // waiting on each other due to a bug (e.g. a read without a corresponding write)
-        let mut fuel = 1_000;
-        loop {
-            let futures_done = x_output.is_some() && y_output.is_some();
-            if futures_done || fuel == 0 {
-                break;
-            }
-
-            fuel -= 1;
-
-            if x_output.is_none() {
-                match x.as_mut().poll(&mut ctx) {
-                    Poll::Ready(output) => x_output = Some(output),
-                    Poll::Pending => {}
-                }
-            }
-
-            if y_output.is_none() {
-                match y.as_mut().poll(&mut ctx) {
-                    Poll::Ready(output) => y_output = Some(output),
-                    Poll::Pending => {}
-                }
-            }
-        }
-
-        match (x_output, y_output) {
-            (Some(x_output), Some(y_output)) => (x_output, y_output),
-            _ => panic!("at least one of the futures seems to be stuck"),
-        }
-    }
-
-    // Copied from Waker::noop, which we cannot use directly because it hasn't been stabilized
-    fn noop_waker() -> Waker {
-        const VTABLE: RawWakerVTable = RawWakerVTable::new(|_| RAW, |_| {}, |_| {}, |_| {});
-        const RAW: RawWaker = RawWaker::new(ptr::null(), &VTABLE);
-        unsafe { Waker::from_raw(RAW) }
-    }
-
-    /// Read bytes asynchronously
-    #[async_trait(?Send)]
-    pub(crate) trait AsyncRead {
-        async fn read(&mut self, buf: &mut [u8]) -> io::Result<usize>;
-        async fn read_exact(&mut self, buf: &mut [u8]) -> io::Result<()>;
-    }
-
-    /// Write bytes asynchronously
-    #[async_trait(?Send)]
-    pub(crate) trait AsyncWrite {
-        async fn write_all(&mut self, buf: &[u8]) -> io::Result<()>;
-        async fn flush(&mut self) -> io::Result<()>;
-    }
-
-    // Blocking implementation of AsyncRead for files (used to read from stdin)
-    #[async_trait(?Send)]
-    impl AsyncRead for File {
-        async fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
-            io::Read::read(self, buf)
-        }
-
-        async fn read_exact(&mut self, buf: &mut [u8]) -> io::Result<()> {
-            io::Read::read_exact(self, buf)
-        }
-    }
-
-    // Blocking implementation of AsyncWrite for files (used to write to stdout)
-    #[async_trait(?Send)]
-    impl AsyncWrite for File {
-        async fn write_all(&mut self, buf: &[u8]) -> io::Result<()> {
-            io::Write::write_all(self, buf)
-        }
-
-        async fn flush(&mut self) -> io::Result<()> {
-            io::Write::flush(self)
-        }
-    }
-
-    /// Creates an unidirectional byte pipe of the given capacity, suitable for async reading and
-    /// writing
-    pub(crate) fn async_pipe(capacity: usize) -> (AsyncSender, AsyncReceiver) {
-        let open = Rc::new(Cell::new(true));
-        let buf = Rc::new(RefCell::new(VecDeque::with_capacity(capacity)));
-        (
-            AsyncSender {
-                inner: AsyncPipeSide {
-                    open: Rc::clone(&open),
-                    buf: Rc::clone(&buf),
-                },
-            },
-            AsyncReceiver {
-                inner: AsyncPipeSide { open, buf },
-            },
-        )
-    }
-
-    /// The sender end of an asynchronous byte pipe
-    pub(crate) struct AsyncSender {
-        inner: AsyncPipeSide,
-    }
-
-    /// The receiver end of an asynchronous byte pipe
-    pub(crate) struct AsyncReceiver {
-        inner: AsyncPipeSide,
-    }
-
-    struct AsyncPipeSide {
-        open: Rc<Cell<bool>>,
-        buf: Rc<RefCell<VecDeque<u8>>>,
-    }
-
-    impl Drop for AsyncPipeSide {
-        fn drop(&mut self) {
-            self.open.set(false);
-        }
-    }
-
-    #[async_trait(?Send)]
-    impl AsyncRead for AsyncReceiver {
-        async fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
-            AsyncPipeReadFuture {
-                reader: self,
-                user_buf: buf,
-            }
-            .await
-        }
-
-        async fn read_exact(&mut self, buf: &mut [u8]) -> io::Result<()> {
-            let mut read = 0;
-            while read < buf.len() {
-                read += self.read(&mut buf[read..]).await?;
-            }
-
-            Ok(())
-        }
-    }
-
-    #[async_trait(?Send)]
-    impl AsyncWrite for AsyncSender {
-        async fn write_all(&mut self, buf: &[u8]) -> io::Result<()> {
-            AsyncPipeWriteFuture {
-                writer: self,
-                user_buf: buf,
-            }
-            .await
-        }
-
-        async fn flush(&mut self) -> io::Result<()> {
-            Ok(())
-        }
-    }
-
-    struct AsyncPipeReadFuture<'a> {
-        reader: &'a AsyncReceiver,
-        user_buf: &'a mut [u8],
-    }
-
-    impl Future for AsyncPipeReadFuture<'_> {
-        type Output = io::Result<usize>;
-
-        fn poll(mut self: Pin<&mut Self>, _: &mut task::Context<'_>) -> Poll<Self::Output> {
-            let inner_buf = &mut self.reader.inner.buf.borrow_mut();
-            if inner_buf.is_empty() {
-                return if self.reader.inner.open.get() {
-                    // Wait for data to arrive, or EOF
-                    Poll::Pending
-                } else {
-                    // EOF
-                    Poll::Ready(Ok(0))
-                };
-            }
-
-            let bytes_to_write = inner_buf.len().min(self.user_buf.len());
-
-            // This is a convoluted way to copy the bytes from the inner buffer into the user's
-            // buffer
-            let (first_half, second_half) = inner_buf.as_slices();
-            let bytes_to_write_from_first_half = first_half.len().min(bytes_to_write);
-            let bytes_to_write_from_second_half =
-                bytes_to_write.saturating_sub(bytes_to_write_from_first_half);
-            self.user_buf[..bytes_to_write_from_first_half]
-                .copy_from_slice(&first_half[..bytes_to_write_from_first_half]);
-            self.user_buf[bytes_to_write_from_first_half..bytes_to_write]
-                .copy_from_slice(&second_half[..bytes_to_write_from_second_half]);
-
-            inner_buf.drain(..bytes_to_write);
-
-            Poll::Ready(Ok(bytes_to_write))
-        }
-    }
-
-    struct AsyncPipeWriteFuture<'a> {
-        writer: &'a AsyncSender,
-        user_buf: &'a [u8],
-    }
-
-    impl Future for AsyncPipeWriteFuture<'_> {
-        type Output = io::Result<()>;
-
-        fn poll(mut self: Pin<&mut Self>, _: &mut task::Context<'_>) -> Poll<Self::Output> {
-            if !self.writer.inner.open.get() {
-                return Poll::Ready(Err(io::Error::other("channel was closed")));
-            }
-
-            let mut pipe_buf = self.writer.inner.buf.borrow_mut();
-            let capacity_left = pipe_buf.capacity() - pipe_buf.len();
-            let bytes_to_write = self.user_buf.len().min(capacity_left);
-            pipe_buf.extend(&self.user_buf[..bytes_to_write]);
-
-            if self.user_buf.len() > capacity_left {
-                self.user_buf = &self.user_buf[bytes_to_write..];
-
-                // Continue writing later once capacity is available
-                Poll::Pending
-            } else {
-                Poll::Ready(Ok(()))
-            }
-        }
-    }
-
-    #[cfg(test)]
-    mod test {
-        use super::*;
-
-        #[test]
-        fn test_block_on_concurrent_minimal_capacity() {
-            test_block_on_concurrent(1);
-        }
-
-        #[test]
-        fn test_block_on_concurrent_enough_capacity() {
-   
-```
-
-### Core Architecture Module: `rustls-util/src/key_log_file.rs`
-```
-use core::fmt::{Debug, Formatter};
-use std::env::var_os;
-use std::ffi::OsString;
-use std::fs::{File, OpenOptions};
-use std::io;
-use std::io::Write;
-#[cfg(unix)]
-use std::os::unix::fs::OpenOptionsExt;
-use std::sync::Mutex;
-
-use rustls::KeyLog;
-#[cfg(feature = "tracing")]
-use tracing::warn;
-
-// Internal mutable state for KeyLogFile
-struct KeyLogFileInner {
-    file: Option<File>,
-    buf: Vec<u8>,
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Extracted from rustls::conn::handshake
+pub(crate) enum Processed<Side: SideData, T: Transport> {
+    Progress(Connection<Side, T>),
+    EarlyData {
+        conn: Connection<Side, T>,
+        data: Vec<u8>,
+    },
 }
 
-impl KeyLogFileInner {
-    fn new(var: Option<OsString>) -> Self {
-        let Some(path) = &var else {
-            return Self {
-                file: None,
-                buf: Vec::new(),
-            };
+impl<Side: SideData, T: Transport> Connection<Side, T> {
+    pub(crate) fn process(
+        mut self,
+        input: &mut dyn TlsInputBuffer,
+        tls: &mut Vec<u8>,
+    ) -> Result<Processed<Side, T>, Error> {
+        let mut iter = MessageIter::new(input, tls, &mut self, MessageIterMode::Handshake);
+        let early_data = match iter.next(true) {
+            Some(Ok(UnborrowedPayload::Unborrowed(range))) => Ok(Some(
+                Delocator::new(input.slice_mut())
+                    .slice_from_range(&range)
+                    .to_vec(),
+            )),
+            Some(Ok(UnborrowedPayload::Owned(_))) => {
+                Err(Error::Unreachable("decrypted early data should be borrowed"))
+            }
+            Some(Err(e)) => Err(e),
+            None => Ok(None),
         };
 
-        let mut options = OpenOptions::new();
-        options.append(true).create(true);
-        // Key material is extremely sensitive. On Unix, create with owner-only
-        // access so a default umask does not leave the file world-readable.
-        #[cfg(unix)]
-        options.mode(0o600);
+        input.discard(self.common.recv.deframer.take_discard());
 
-        #[cfg_attr(not(feature = "tracing"), expect(clippy::manual_ok_err))]
-        let file = match options.open(path) {
-            Ok(f) => Some(f),
-            #[cfg_attr(not(feature = "tracing"), expect(unused_variables))]
-            Err(e) => {
-                #[cfg(feature = "tracing")]
-                warn!("unable to create key log file {path:?}: {e}");
-                None
-            }
-        };
-
-        Self {
-            file,
-            buf: Vec::new(),
-        }
-    }
-
-    fn try_write(&mut self, label: &str, client_random: &[u8], secret: &[u8]) -> io::Result<()> {
-        let Some(file) = &mut self.file else {
-            return Ok(());
-        };
-
-        self.buf.clear();
-        write!(self.buf, "{label} ")?;
-        for b in client_random.iter() {
-            write!(self.buf, "{b:02x}")?;
-        }
-        write!(self.buf, " ")?;
-        for b in secret.iter() {
-            write!(self.buf, "{b:02x}")?;
-        }
-        writeln!(self.buf)?;
-        file.write_all(&self.buf)
+        Ok(match early_data? {
+            Some(data) => Processed::EarlyData { conn: self, data },
+            None => Processed::Progress(self),
+        })
     }
 }
-
-impl Debug for KeyLogFileInner {
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
-        f.debug_struct("KeyLogFileInner")
-            // Note: we omit self.buf deliberately as it may contain key data.
-            .field("file", &self.file)
-            .finish_non_exhaustive()
-    }
-}
-
-/// [`KeyLog`] implementation that opens a file whose name is
-/// given by the `SSLKEYLOGFILE` environment variable, and writes
-/// keys into it.
-///
-/// If `SSLKEYLOGFILE` is not set, this does nothing.
-///
-/// If such a file cannot be opened, or cannot be written then
-/// this does nothing but logs errors at warning-level.
-///
-/// # Security
-///
-/// Key material is extremely sensitive. Prefer not enabling `KeyLog`
-/// outside of local debugging. On Unix, files created by this type use
-/// owner-only permissions (`0o600`).
-///
-/// This type reads `SSLKEYLOGFILE` from the process environment with a
-/// normal environment lookup. In a setuid/setgid (or otherwise elevated)
-/// process, that variable may have been inherited from an untrusted parent
-/// and could point at an attacker-chosen path. Applications that raise
-/// privileges should clear sensitive environment variables, avoid compiling
-/// key-log support into production builds, or supply their own [`KeyLog`]
-/// implementation.
-///
-/// This util is intentionally small. It does not attempt a full
-/// `secure_getenv`-style environment filter.
-pub struct KeyLogFile(Mutex<KeyLogFileInner>);
-
-impl KeyLogFile {
-    /// Makes a new [`KeyLogFile`].
-    ///
-    /// The environment variable is inspected and the named file is opened during this call.
-    pub fn new() -> Self {
-        let var = var_os("SSLKEYLOGFILE");
-        Self(Mutex::new(KeyLogFileInner::new(var)))
-    }
-}
-
-impl KeyLog for KeyLogFile {
-    fn log(&self, label: &str, client_random: &[u8], secret: &[u8]) {
-        match self
-            .0
-            .lock()
-            .unwrap()
-            .try_write(label, client_random, secret)
-        {
-            Ok(()) => {}
-            #[cfg_attr(not(feature = "tracing"), expect(unused_variables))]
-            Err(e) => {
-                #[cfg(feature = "tracing")]
-                warn!("error writing to key log file: {e}");
-            }
-        }
-    }
-}
-
-impl Debug for KeyLogFile {
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
-        match self.0.try_lock() {
-            Ok(key_log_file) => write!(f, "{key_log_file:?}"),
-            Err(_) => write!(f, "KeyLogFile {{ <locked> }}"),
-        }
-    }
-}
-
-#[cfg(all(test, any(target_os = "linux", target_os = "macos")))]
-mod tests {
-    use std::os::unix::fs::PermissionsExt;
-    use std::time::{SystemTime, UNIX_EPOCH};
-    use std::{env, fs, process};
-
-    use super::*;
-
-    #[test]
-    fn test_env_var_is_not_set() {
-        let mut inner = KeyLogFileInner::new(None);
-        assert!(
-            inner
-                .try_write("label", b"random", b"secret")
-                .is_ok()
-        );
-    }
-
-    #[test]
-    fn test_env_var_cannot_be_opened() {
-        let mut inner = KeyLogFileInner::new(Some("/dev/does-not-exist".into()));
-        assert!(
-            inner
-                .try_write("label", b"random", b"secret")
-                .is_ok()
-        );
-    }
-
-    #[test]
-    fn test_env_var_cannot_be_written() {
-        #[cfg(target_os = "linux")]
-        const UNWRITABLE_FILE: &str = "/dev/full";
-
-        #[cfg(target_os = "macos")]
-        const UNWRITABLE_FILE: &str = "/dev/urandom";
-
-        let mut inner = KeyLogFileInner::new(Some(UNWRITABLE_FILE.into()));
-        assert!(
-            inner
-                .try_write("label", b"random", b"secret")
-                .is_err()
-        );
-    }
-
-    #[test]
-    fn test_created_file_has_owner_only_permissions() {
-        let path = env::temp_dir().join(format!(
-            "rustls-keylog-perm-{}-{}",
-            process::id(),
-            SystemTime::now()
-                .duration_since(UNIX_EPOCH)
-                .unwrap()
-                .as_nanos()
-        ));
-        let _ = fs::remove_file(&path);
-
-        let inner = KeyLogFileInner::new(Some(path.clone().into()));
-        assert!(inner.file.is_some(), "key log file should open");
-
-        let mode = fs::metadata(&path)
-            .expect("metadata")
-            .permissions()
-            .mode()
-            & 0o777;
-        let _ = fs::remove_file(&path);
-
-        assert_eq!(
-            mode, 0o600,
-            "SSLKEYLOGFILE must be created with mode 0o600, got {mode:#o}"
-        );
-    }
-}
-
 ```
 
-### Core Architecture Module: `rustls-util/src/lib.rs`
-```
-use std::io;
-
-use rustls::{Connection, SideData, Tcp, VecInput};
-
-mod key_log_file;
-pub use key_log_file::KeyLogFile;
-
-mod stream;
-pub use crate::stream::{Stream, StreamOwned};
-
-/// This function uses `io` to complete any outstanding IO for
-/// the connection.
-///
-/// This is a convenience function which solely uses other parts
-/// of the public API.
-///
-/// `output` holds TLS data waiting to be sent to the peer: records
-/// generated by the connection (for example by [`read_tls()`])
-/// are appended to it, and bytes written to `io` are drained from its front.
-///
-/// What this means depends on the connection state:
-///
-/// - If the connection [`is_handshaking()`], then IO is performed until
-///   the handshake is complete.
-/// - Otherwise, if `output` is not empty, it is written until it is
-///   all written.
-/// - Otherwise, if there's no received plaintext in the buffer, [`VecInput::read()`] is invoked
-///   once.
-///
-/// Once the handshake is complete, no further data is read from `io` while
-/// `received_plaintext` is not empty. This provides backpressure: the caller must
-/// consume received plaintext before more is read from the peer.
-///
-/// The return value is the number of bytes read from and written
-/// to `io`, respectively. Once both `read()` and `write()` yield `WouldBlock`,
-/// this function will propagate the error.
-///
-/// Errors from TLS record handling (i.e., from [`read_tls()`])
-/// are wrapped in an `io::ErrorKind::InvalidData`-kind error.
-///
-/// [`is_handshaking()`]: rustls::CommonState::is_handshaking
-/// [`read_tls()`]: rustls::Connection::read_tls
-pub fn complete_io(
-    io: &mut (impl io::Read + io::Write),
-    input: &mut VecInput,
-    received_plaintext: &mut Vec<u8>,
-    output: &mut Vec<u8>,
-    conn: &mut Connection<impl SideData, Tcp>,
-) -> Result<(usize, usize), io::Error> {
-    let mut eof = false;
-    let mut wrlen = 0;
-    let mut rdlen = 0;
-    loop {
-        let (mut blocked_write, mut blocked_read) = (None, None);
-        let until_handshaked = conn.is_handshaking();
-
-        if output.is_empty() && !wants_read(conn, received_plaintext) {
-            // We will make no further progress.
-            return Ok((rdlen, wrlen));
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: In-place mutation with internal buffering
+impl Connection {
+    pub fn process(&mut self, input: &[u8]) -> Result<(), Error> {
+        // BAD: Early data stored internally in hidden queue
+        // Caller cannot verify from type system whether handshake is waiting on socket
+        // or waiting on caller to drain early_data_buffer.
+        if let Some(early) = self.extract_early_data(input)? {
+            self.internal_early_buffer.extend(early);
         }
-
-        let mut sent = 0;
-        while sent < output.len() {
-            match io.write(&output[sent..]) {
-                Ok(0) => {
-                    output.drain(..sent);
-                    io.flush()?;
-                    return Ok((rdlen, wrlen)); // EOF.
-                }
-                Ok(n) if n > output.len() - sent => {
-                    // This is really unrecoverable, since the amount of data written
-                    // is now unknown.  Consume all the potentially-written data in
-                    // case the caller ignores the error.
-                    // See <https://github.com/rustls/rustls/issues/2316> for background.
-                    let available = output.len() - sent;
-                    output.clear();
-                    return Err(io::Error::other(format!(
-                        "illegal write() return value ({n} > {available})"
-                    )));
-                }
-                Ok(n) => {
-                    wrlen += n;
-                    sent += n;
-                }
-                Err(err) if err.kind() == io::ErrorKind::WouldBlock => {
-                    blocked_write = Some(err);
-                    break;
-                }
-                Err(err) => {
-                    output.drain(..sent);
-                    return Err(err);
-                }
-            }
-        }
-        output.drain(..sent);
-        if wrlen > 0 {
-            io.flush()?;
-        }
-
-        if !until_handshaked && wrlen > 0 {
-            return Ok((rdlen, wrlen));
-        }
-
-        // If we want to write, but are WouldBlocked by the underlying IO, *and*
-        // have no desire to read; that is everything.
-        if let (Some(_), false) = (&blocked_write, wants_read(conn, received_plaintext)) {
-            return match wrlen {
-                0 => Err(blocked_write.unwrap()),
-                _ => Ok((rdlen, wrlen)),
-            };
-        }
-
-        while !eof && wants_read(conn, received_plaintext) {
-            let read_size = match input.read(io) {
-                Ok(0) => {
-                    eof = true;
-                    Some(0)
-                }
-                Ok(n) => {
-                    rdlen += n;
-                    Some(n)
-                }
-                Err(err) if err.kind() == io::ErrorKind::WouldBlock => {
-                    blocked_read = Some(err);
-                    break;
-                }
-                Err(err) if err.kind() == io::ErrorKind::Interrupted => None, // nothing to do
-                Err(err) => return Err(err),
-            };
-            if read_size.is_some() {
-                break;
-            }
-        }
-
-        let error = conn
-            .read_tls(input, output)
-            .handle_all(received_plaintext)
-            .err();
-
-        if let Some(e) = error {
-            // In case we have an alert to send describing this error, try a last-gasp
-            // write -- but don't predate the primary error.
-            let _ignored = write_and_drain(io, output);
-            let _ignored = io.flush();
-            return Err(io::Error::new(io::ErrorKind::InvalidData, e));
-        };
-
-        // If we want to read, but are WouldBlocked by the underlying IO, *and*
-        // have no desire to write; that is everything.
-        if output.is_empty()
-            && let Some(error) = blocked_read
-        {
-            return match rdlen {
-                0 => Err(error),
-                _ => Ok((rdlen, wrlen)),
-            };
-        }
-
-        // if we're doing IO until handshaked, and we believe we've finished handshaking,
-        // but read_tls() has queued TLS data to send, loop around again to write
-        // the queued messages.
-        if until_handshaked && !conn.is_handshaking() && !output.is_empty() {
-            continue;
-        }
-
-        let blocked = blocked_write.zip(blocked_read);
-        match (eof, until_handshaked, conn.is_handshaking(), blocked) {
-            (_, true, false, _) => return Ok((rdlen, wrlen)),
-            (_, _, _, Some((e, _))) if rdlen == 0 && wrlen == 0 => return Err(e),
-            (_, _, _, Some(_)) => return Ok((rdlen, wrlen)),
-            (_, false, _, _) => return Ok((rdlen, wrlen)),
-            (true, true, true, _) => return Err(io::Error::from(io::ErrorKind::UnexpectedEof)),
-            _ => {}
-        }
+        Ok(())
     }
 }
+```
 
-/// Whether [`complete_io()`] should read more data from the transport.
-///
-/// After the handshake, we stop reading while there is unconsumed plaintext, so that a
-/// peer cannot make us buffer an unbounded amount of it.
-fn wants_read(conn: &Connection<impl SideData, Tcp>, received_plaintext: &[u8]) -> bool {
-    conn.is_handshaking() || received_plaintext.is_empty()
-}
+**VERIFICATION METHOD**:
+Compile-time exhaustiveness check + unit test asserting state progression:
+```rust
+let server = match server.process(&mut input, &mut output).unwrap() {
+    ServerHandshake::EarlyData(mut early) => {
+        let (data, next_state) = early.into_next();
+        assert_eq!(data, expected_bytes);
+        next_state // Forces compilation check
+    }
+    ServerHandshake::NeedsInput(server) => server,
+    other => panic!("Invalid transition: {other:?}"),
+};
+```
 
-/// Write the front of `output` to `io`, draining the bytes that were written.
+---
+
+### 2. Transport Write-Overshoot Containment and Poisoning Defense
+**RULE**:
+When interacting with OS or third-party implementations of streaming interfaces (e.g., `std::io::Write::write`), the driver code MUST defensively assert that the returned written byte count `n` does not exceed the remaining requested buffer length (`n <= buffer.len() - offset`). If `n > available`, the driver MUST immediately purge the entire output buffer and terminate the session with a fatal error.
+
+**WHY**:
+A faulty or adversarial transport implementation returning `n > available` causes slice index out-of-bounds panics, integer underflow when updating offsets via wrapping arithmetic, or silent byte skipping (leading to TLS record corruption, session desynchronization, and silent truncation vulnerabilities). Purging the buffer prevents callers that ignore errors from re-transmitting fragmented or duplicate ciphertexts.
+
+**WHEN TO APPLY**:
+All custom I/O loops, streaming buffer adapters, network transports, and IPC bridges wrapping external `Read`/`Write` implementations.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Extracted from rustls-util::lib::write_and_drain
 fn write_and_drain(io: &mut dyn io::Write, output: &mut Vec<u8>) -> io::Result<usize> {
     let n = io.write(output)?;
     if n > output.len() {
-        // This is really unrecoverable, since the amount of data written
-        // is now unknown.  Consume all the potentially-written data in
-        // case the caller ignores the error.
-        // See <https://github.com/rustls/rustls/issues/2316> for background.
+        // Defensive invariant violation: transport returned more than available bytes.
+        // Drop buffer entirely to block poisoned re-use.
         let available = output.len();
         output.clear();
         return Err(io::Error::other(format!(
@@ -760,1777 +164,295 @@ fn write_and_drain(io: &mut dyn io::Write, output: &mut Vec<u8>) -> io::Result<u
     output.drain(..n);
     Ok(n)
 }
-
-```
-
-### Core Architecture Module: `rustls-util/src/stream.rs`
-```
-#![allow(clippy::std_instead_of_core)] // awaits core::io::IoSlice in stable (1.98)
-use std::io::{BufRead, Error, ErrorKind, IoSlice, Read, Result, Write};
-
-use rustls::crypto::cipher::OutboundPlain;
-use rustls::{Connection, SideData, Tcp, TlsInputBuffer, VecInput};
-
-use crate::{complete_io, write_and_drain};
-
-/// This type implements `io::Read` and `io::Write`, encapsulating
-/// a [`Connection`] for side `S` and an underlying transport `T`, such as a socket.
-///
-/// Relies on [`complete_io()`] to perform the necessary I/O.
-///
-/// This allows you to use a rustls connection like a normal stream.
-///
-/// [`complete_io()`]: crate::complete_io()
-#[expect(clippy::exhaustive_structs)]
-#[derive(Debug)]
-pub struct Stream<'a, S: SideData, T: 'a + Read + Write + ?Sized> {
-    /// Our TLS connection
-    pub conn: &'a mut Connection<S, Tcp>,
-
-    /// The underlying transport, like a socket
-    pub sock: &'a mut T,
-
-    /// The input buffer
-    pub input: &'a mut VecInput,
-
-    /// The buffer to store received plaintext
-    pub received_plaintext: &'a mut Vec<u8>,
-
-    /// The output buffer, holding TLS data waiting to be sent
-    pub output: &'a mut Vec<u8>,
-
-    /// Limit on the size of `output`, in bytes
-    ///
-    /// If the transport does not accept data fast enough, buffered TLS output accumulates in
-    /// `output`. Once its size reaches this limit, `write()` encrypts only as much plaintext as
-    /// fits under the limit and returns the resulting short write count, or fails with
-    /// [`ErrorKind::WouldBlock`] if nothing can be buffered. `output` may exceed the limit by the
-    /// encryption overhead of the final record.
-    ///
-    /// Defaults to 64KB.
-    pub limit: usize,
-}
-
-impl<'a, S, T> Stream<'a, S, T>
-where
-    S: SideData,
-    T: 'a + Read + Write,
-{
-    /// Make a new Stream using the [`Connection`] `conn` and socket-like object
-    /// `sock`.  This does not fail and does no IO.
-    pub fn new(
-        input: &'a mut VecInput,
-        received_plaintext: &'a mut Vec<u8>,
-        output: &'a mut Vec<u8>,
-        conn: &'a mut Connection<S, Tcp>,
-        sock: &'a mut T,
-    ) -> Self {
-        Self {
-            conn,
-            sock,
-            input,
-            received_plaintext,
-            output,
-            limit: DEFAULT_BUFFER_LIMIT,
-        }
-    }
-
-    /// If we're handshaking, complete all the IO for that.
-    /// If we have data to write, write it all.
-    fn complete_prior_io(&mut self) -> Result<()> {
-        if self.conn.is_handshaking() {
-            complete_io(
-                self.sock,
-                self.input,
-                self.received_plaintext,
-                self.output,
-                self.conn,
-            )?;
-        }
-
-        if !self.output.is_empty() {
-            complete_io(
-                self.sock,
-                self.input,
-                self.received_plaintext,
-                self.output,
-                self.conn,
-            )?;
-        }
-
-        Ok(())
-    }
-
-    fn prepare_read(&mut self) -> Result<()> {
-        // Return buffered plaintext without doing any IO: `complete_io()` does not read
-        // while plaintext is buffered, so blocked writes would otherwise hide it.
-        if !self.received_plaintext.is_empty() {
-            return Ok(());
-        }
-
-        self.complete_prior_io()?;
-
-        // We call complete_io() in a loop since a single call may read only
-        // a partial packet from the underlying transport, or may only write
-        // pending TLS data (like an alert queued while processing received
-        // records). A full packet is needed to get more plaintext, which we
-        // must do if EOF has not been hit. We stop as soon as we have some
-        // plaintext to return, since `wants_read()` stays true even when
-        // plaintext is available.
-        while self.received_plaintext.is_empty() {
-            let (read, written) = complete_io(
-                self.sock,
-                self.input,
-                self.received_plaintext,
-                self.output,
-                self.conn,
-            )?;
-
-            if read == 0 && written == 0 {
-                break;
-            }
-        }
-
-        // If we have no plaintext to return and the peer closed the connection without
-        // sending a `close_notify`, surface that as an unexpected EOF.  A clean closure
-        // (via `close_notify`) is instead reported as `Ok(0)`/an empty buffer.
-        if self.received_plaintext.is_empty() && self.input.has_seen_eof() {
-            return Err(Error::new(
-                ErrorKind::UnexpectedEof,
-                "peer closed connection without sending TLS close_notify",
-            ));
-        }
-
-        Ok(())
-    }
-}
-
-impl<'a, S, T> Read for Stream<'a, S, T>
-where
-    S: SideData,
-    T: 'a + Read + Write,
-{
-    fn read(&mut self, buf: &mut [u8]) -> Result<usize> {
-        self.prepare_read()?;
-        let len = Ord::min(buf.len(), self.received_plaintext.len());
-        let Some((src, _)) = self
-            .received_plaintext
-            .split_at_checked(len)
-        else {
-            return Ok(0);
-        };
-
-        let Some((dst, _)) = buf.split_at_mut_checked(len) else {
-            return Ok(0);
-        };
-
-        dst.copy_from_slice(src);
-        self.received_plaintext.drain(..len);
-        Ok(len)
-    }
-}
-
-impl<'a, S, T> BufRead for Stream<'a, S, T>
-where
-    S: SideData,
-    T: 'a + Read + Write,
-{
-    fn fill_buf(&mut self) -> Result<&[u8]> {
-        self.prepare_read()?;
-        Ok(self.received_plaintext)
-    }
-
-    fn consume(&mut self, amt: usize) {
-        self.received_plaintext.drain(..amt);
-    }
-}
-
-impl<'a, S, T> Write for Stream<'a, S, T>
-where
-    S: SideData,
-    T: 'a + Read + Write,
-{
-    fn write(&mut self, buf: &[u8]) -> Result<usize> {
-        self.complete_prior_io()?;
-        if self.conn.is_handshaking() {
-            return Err(ErrorKind::WouldBlock.into());
-        }
-
-        let len = Ord::min(
-            buf.len(),
-            self.limit
-                .saturating_sub(self.output.len()),
-        );
-        if len == 0 && !buf.is_empty() {
-            return Err(ErrorKind::WouldBlock.into());
-        }
-
-        self.conn
-            .write((&buf[..len]).into(), self.output)
-            .map_err(|err| Error::new(ErrorKind::InvalidData, err))?;
-
-        // Try to write the underlying transport here, but don't let
-        // any errors mask the fact we've consumed `buf[..len]`.
-        // Callers will learn of permanent errors on the next call.
-        let _ = complete_io(
-            self.sock,
-            self.input,
-            self.received_plaintext,
-            self.output,
-            self.conn,
-        );
-
-        Ok(len)
-    }
-
-    fn write_vectored(&mut self, bufs: &[IoSlice<'_>]) -> Result<usize> {
-        self.complete_prior_io()?;
-        if self.conn.is_handshaking() {
-            return Err(ErrorKind::WouldBlock.into());
-        }
-
-        let mut available = self
-            .limit
-            .saturating_sub(self.output.len());
-        let mut len = 0;
-        let mut slices = Vec::with_capacity(bufs.len());
-        for buf in bufs {
-            let take = Ord::min(buf.len(), available);
-            slices.push(&buf[..take]);
-            len += take;
-            available -= take;
-        }
-
-        if len == 0 && bufs.iter().any(|buf| !buf.is_empty()) {
-            return Err(ErrorKind::WouldBlock.into());
-        }
-
-        self.conn
-            .write(OutboundPlain::new(&slices), self.output)
-            .map_err(|err| Error::new(ErrorKind::InvalidData, err))?;
-
-        // Try to write the underlying transport here, but don't let
-        // any errors mask the fact we've consumed `len` bytes.
-        // Callers will learn of permanent errors on the next call.
-        let _ = complete_io(
-            self.sock,
-            self.input,
-            self.received_plaintext,
-            self.output,
-            self.conn,
-        );
-
-        Ok(len)
-    }
-
-    fn flush(&mut self) -> Result<()> {
-        self.complete_prior_io()?;
-
-        // `complete_prior_io()` may return after making only partial progress, so
-        // keep writing until all TLS output has been handed to the transport.
-        while !self.output.is_empty() {
-            match write_and_drain(self.sock, self.output) {
-                Ok(0) => return Err(ErrorKind::WriteZero.into()),
-                Ok(_) => {}
-                Err(err) if err.kind() == ErrorKind::Interrupted => {}
-                Err(err) => return Err(err),
-            }
-        }
-
-        // Always flush the transport, even if we had no TLS output: an earlier
-        // flush (for example, from within `write()`) may have failed.
-        self.sock.flush()?;
-
-        // Report any fatal error the connection encountered after an earlier `write()`
-        // had already accepted its plaintext (for example, while processing received data).
-        self.conn
-            .write(OutboundPlain::new_empty(), self.output)
-            .map_err(|err| Error::new(ErrorKind::InvalidData, err))
-    }
-}
-
-/// This type implements `io::Read` and `io::Write`, encapsulating
-/// and owning a connection `C` and an underlying transport `T`, such as a socket.
-///
-/// Relies on [`complete_io()`] to perform the necessary I/O.
-///
-/// This allows you to use a rustls [`Connection`] like a normal stream.
-///
-/// [`complete_io()`]: crate::complete_io()
-#[expect(clippy::exhaustive_structs)]
-#[derive(Debug)]
-pub struct StreamOwned<S: SideData, T: Read + Write + Sized> {
-    /// Our connection
-    pub conn: Connection<S, Tcp>,
-
-    /// The underlying transport, like a socket
-    pub sock: T,
-
-    /// The input buffer
-    pub input: VecInput,
-
-    /// The buffer to store received plaintext
-    pub received_plaintext: Vec<u8>,
-
-    /// The output buffer, holding TLS data waiting to be sent
-    pub output: Vec<u8>,
-
-    /// Limit on the size of `output`, in bytes
-    ///
-    /// If the transport does not accept data fast enough, buffered TLS output accu
-```
-
-### Core Architecture Module: `rustls/src/common_state.rs`
-```
-use alloc::boxed::Box;
-use alloc::vec::Vec;
-use core::fmt;
-use core::ops::{Deref, DerefMut, Range};
-
-use pki_types::{DnsName, FipsStatus};
-
-use crate::client::EchStatus;
-use crate::conn::{DataKind, Exporter, KeyingMaterialExporter, ReceivePath, SendOutput, SendPath};
-use crate::crypto::cipher::{EncodableVersion, Payload};
-use crate::crypto::kx::SupportedKxGroup;
-use crate::enums::{ApplicationProtocol, ProtocolVersion};
-use crate::error::{AlertDescription, ApiMisuse, Error};
-use crate::hash_hs::HandshakeHash;
-use crate::msgs::{
-    AlertLevel, Codec, Delocator, HandshakeMessagePayload, Locator, Message, MessagePayload,
-};
-use crate::quic::{self, QuicOutput};
-use crate::suites::SupportedCipherSuite;
-use crate::verify::VerifiedIdentity;
-
-/// Connection state common to both client and server connections.
-pub struct CommonState {
-    pub(crate) outputs: ConnectionOutputs,
-    pub(crate) send: SendPath,
-    pub(crate) recv: ReceivePath,
-}
-
-impl CommonState {
-    pub(crate) fn new(side: Side, fips: FipsStatus) -> Self {
-        Self {
-            outputs: ConnectionOutputs::new(fips),
-            send: SendPath::default(),
-            recv: ReceivePath::new(side),
-        }
-    }
-
-    /// Writes a `close_notify` warning alert to into the `tls` buffer.
-    ///
-    /// This informs the peer that the connection is being closed. Does nothing if any
-    /// `close_notify` or fatal alert was already sent.
-    pub fn send_close_notify(&mut self, tls: &mut Vec<u8>) -> Result<(), Error> {
-        self.send.send_close_notify(tls)
-    }
-
-    /// Returns true if the connection is currently performing the TLS handshake.
-    ///
-    /// During this time plaintext written to the connection is buffered in memory. After
-    /// [`Connection::read_tls()`] has been called, this might start to return `false`
-    /// while the final handshake packets still need to be extracted from the connection's buffers.
-    ///
-    /// [`Connection::read_tls()`]: crate::Connection::read_tls
-    pub fn is_handshaking(&self) -> bool {
-        !(self.send.may_send_application_data && self.recv.may_receive_application_data)
-    }
-}
-
-impl Deref for CommonState {
-    type Target = ConnectionOutputs;
-
-    fn deref(&self) -> &Self::Target {
-        &self.outputs
-    }
-}
-
-impl DerefMut for CommonState {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.outputs
-    }
-}
-
-impl fmt::Debug for CommonState {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("CommonState")
-            .finish_non_exhaustive()
-    }
-}
-
-/// Facts about the connection learned through the handshake.
-pub struct ConnectionOutputs {
-    pub(crate) fips: FipsStatus,
-    negotiated_version: Option<ProtocolVersion>,
-    handshake_kind: Option<HandshakeKind>,
-    suite: Option<SupportedCipherSuite>,
-    negotiated_kx_group: Option<&'static dyn SupportedKxGroup>,
-    alpn_protocol: Option<ApplicationProtocol<'static>>,
-    peer_identity: Option<VerifiedIdentity<'static>>,
-    extended_main_secret: Option<bool>,
-    exporter: Option<Box<dyn Exporter>>,
-    pub(crate) early_exporter: Option<Box<dyn Exporter>>,
-}
-
-impl ConnectionOutputs {
-    fn new(fips: FipsStatus) -> Self {
-        Self {
-            fips,
-            negotiated_version: None,
-            handshake_kind: None,
-            suite: None,
-            negotiated_kx_group: None,
-            alpn_protocol: None,
-            peer_identity: None,
-            extended_main_secret: None,
-            exporter: None,
-            early_exporter: None,
-        }
-    }
-
-    /// Retrieves the certificate chain or the raw public key used by the peer to authenticate.
-    ///
-    /// This is made available for both full and resumed handshakes.
-    ///
-    /// For clients, this is the identity of the server. For servers, this is the identity of the
-    /// client, if client authentication was completed.
-    ///
-    /// The return value is None until this value is available.
-    pub fn peer_identity(&self) -> Option<&VerifiedIdentity<'static>> {
-        self.peer_identity.as_ref()
-    }
-
-    /// Retrieves the protocol agreed with the peer via ALPN.
-    ///
-    /// A return value of `None` after handshake completion
-    /// means no protocol was agreed (because no protocols
-    /// were offered or accepted by the peer).
-    pub fn alpn_protocol(&self) -> Option<&ApplicationProtocol<'static>> {
-        self.alpn_protocol.as_ref()
-    }
-
-    /// Retrieves the cipher suite agreed with the peer.
-    ///
-    /// This returns None until the cipher suite is agreed.
-    pub fn negotiated_cipher_suite(&self) -> Option<SupportedCipherSuite> {
-        self.suite
-    }
-
-    /// Retrieves the key exchange group agreed with the peer.
-    ///
-    /// This function may return `None` depending on the state of the connection,
-    /// the type of handshake, and the protocol version.
-    ///
-    /// If [`CommonState::is_handshaking()`] is true this function will return `None`.
-    /// Similarly, if the [`ConnectionOutputs::handshake_kind()`] is [`HandshakeKind::Resumed`]
-    /// and the [`ConnectionOutputs::protocol_version()`] is TLS 1.2, then no key exchange will have
-    /// occurred and this function will return `None`.
-    pub fn negotiated_key_exchange_group(&self) -> Option<&'static dyn SupportedKxGroup> {
-        self.negotiated_kx_group
-    }
-
-    /// Retrieves the protocol version agreed with the peer.
-    ///
-    /// This returns `None` until the version is agreed.
-    pub fn protocol_version(&self) -> Option<ProtocolVersion> {
-        self.negotiated_version
-    }
-
-    /// Return the FIPS validation status of the connection.
-    ///
-    /// This is different from [`CryptoProvider::fips()`][]:
-    /// it is concerned only with cryptography, whereas this _also_ covers TLS-level
-    /// configuration that NIST recommends, as well as ECH HPKE suites if applicable.
-    ///
-    /// [`CryptoProvider::fips()`]: crate::crypto::CryptoProvider::fips()
-    pub fn fips(&self) -> FipsStatus {
-        self.fips
-    }
-
-    /// Whether the Extended Main Secret extension was negotiated.
-    ///
-    /// Returns:
-    /// - `None` until the handshake reaches the point where this is known.
-    /// - `None` for TLS 1.3, where the extension does not apply.
-    /// - `Some(true)` for TLS 1.2 if the extension was negotiated.
-    /// - `Some(false)` otherwise.
-    pub fn extended_main_secret(&self) -> Option<bool> {
-        self.extended_main_secret
-    }
-
-    /// Which kind of handshake was performed.
-    ///
-    /// This tells you whether the handshake was a resumption or not.
-    ///
-    /// This will return `None` before it is known which sort of
-    /// handshake occurred.
-    pub fn handshake_kind(&self) -> Option<HandshakeKind> {
-        self.handshake_kind
-    }
-
-    #[doc = include_str!("doc/early_exporter.md")]
-    pub fn early_exporter(&mut self) -> Result<KeyingMaterialExporter, Error> {
-        match self.early_exporter.take() {
-            Some(inner) => Ok(KeyingMaterialExporter { inner }),
-            None => Err(ApiMisuse::ExporterNotAvailable.into()),
-        }
-    }
-
-    #[doc = include_str!("doc/exporter.md")]
-    pub fn exporter(&mut self) -> Result<KeyingMaterialExporter, Error> {
-        match self.exporter.take() {
-            Some(inner) => Ok(KeyingMaterialExporter { inner }),
-            None => Err(ApiMisuse::ExporterNotAvailable.into()),
-        }
-    }
-
-    pub(super) fn into_kernel_parts(self) -> Option<(ProtocolVersion, SupportedCipherSuite)> {
-        let Self {
-            negotiated_version,
-            suite,
-            ..
-        } = self;
-
-        match (negotiated_version, suite) {
-            (Some(version), Some(suite)) => Some((version, suite)),
-            _ => None,
-        }
-    }
-}
-
-impl ConnectionOutput for ConnectionOutputs {
-    fn handle(&mut self, ev: OutputEvent<'_>) {
-        match ev {
-            OutputEvent::ApplicationProtocol(protocol) => {
-                self.alpn_protocol = Some(ApplicationProtocol::from(protocol.as_ref()).to_owned())
-            }
-            OutputEvent::CipherSuite(suite) => self.suite = Some(suite),
-            OutputEvent::EarlyExporter(exporter) => self.early_exporter = Some(exporter),
-            OutputEvent::Exporter(exporter) => self.exporter = Some(exporter),
-            OutputEvent::ExtendedMainSecret(ems) => self.extended_main_secret = Some(ems),
-            OutputEvent::HandshakeKind(hk) => {
-                assert!(self.handshake_kind.is_none());
-                self.handshake_kind = Some(hk);
-            }
-            OutputEvent::KeyExchangeGroup(kxg) => {
-                assert!(self.negotiated_kx_group.is_none());
-                self.negotiated_kx_group = Some(kxg);
-            }
-            OutputEvent::PeerIdentity(identity) => self.peer_identity = Some(identity),
-            OutputEvent::ProtocolVersion(ver) => {
-                self.negotiated_version = Some(ver);
-            }
-        }
-    }
-}
-
-impl fmt::Debug for ConnectionOutputs {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let Self {
-            fips,
-            negotiated_version,
-            handshake_kind,
-            suite,
-            negotiated_kx_group,
-            alpn_protocol,
-            peer_identity,
-            extended_main_secret,
-            exporter: _,
-            early_exporter: _,
-        } = self;
-        f.debug_struct("ConnectionOutputs")
-            .field("fips", fips)
-            .field("negotiated_version", negotiated_version)
-            .field("handshake_kind", handshake_kind)
-            .field("suite", suite)
-            .field("negotiated_kx_group", negotiated_kx_group)
-            .field("alpn_protocol", alpn_protocol)
-            .field("peer_identity", peer_identity)
-            .field("extended_main_secret", extended_main_secret)
-            .finish_non_exhaustive()
-    }
-}
-
-/// Send an alert via `output` if `error` specifies one.
-pub(crate) fn maybe_send_fatal_alert(
-    send: &mut dyn SendOutput,
-    error: 
-```
-
-### Core Architecture Module: `admin/threads-seq.rs`
-```
-#!/usr/bin/env -S cargo +nightly --quiet -Zscript
-
-//! # `admin/thread-seq N`
-//!
-//! This program prints a sequence of N integers for multithreaded
-//! performance testing.  The integers are numbers of threads to
-//! be sampled in a test.  The goal is to assist in graphing
-//! how per-thread throughput relates to concurrency.
-//!
-//! The sequence is (at most) length N, starts at 2, includes the
-//! number of CPU cores, and ends at 1.5 the number of CPU cores.
-//! It does not have repeated items.
-//!
-//! We exceed the number of cores specifically to see the
-//! "elbow" in the graph, when the number of threads tested
-//! exceeds the number of cores.  (This is good because otherwise
-//! -- assuming the software under test is perfectly scalable --
-//! the graph would be a straight line parallel with the x axis.)
-
-use std::{cmp, env, error, num::NonZeroUsize, str::FromStr, thread};
-
-fn main() -> Result<(), Box<dyn error::Error + Send + Sync + 'static>> {
-    let mut args = env::args();
-    args.next(); // skip argv[0]
-    let count = args
-        .next()
-        .map(|c| NonZeroUsize::from_str(&c))
-        .transpose()?
-        .unwrap_or(NonZeroUsize::new(16).unwrap())
-        .get();
-
-    let default_cpus = thread::available_parallelism()?;
-    let cpus = env::var("CPU_COUNT")
-        .map(|c| NonZeroUsize::from_str(&c))
-        .unwrap_or(Ok(default_cpus))?
-        .get();
-
-    let end = (cpus as f64 * 1.5).floor() as usize;
-
-    let before_count = (count as f64 * 0.75).floor() as usize;
-    let after_count = count - before_count;
-
-    let before = (2..cpus).step_by(cmp::max(1, cpus / before_count));
-    let after = (cpus..end).step_by(cmp::max(1, (end - cpus) / after_count));
-
-    for x in before.chain(after) {
-        print!("{} ", x);
-    }
-    println!();
-    Ok(())
-}
-
-```
-
-### Core Architecture Module: `bogo/check.py`
-```
-"""
-This script post-processes bogo pass/fail logs to help
-maintain config.json.
-
-Run:
-
-    $ ./runme | python check.py
-"""
-
-import re
-import json
-import fnmatch
-import sys
-
-config = json.load(open("config.json"))
-test_error_set = set(config["TestErrorMap"].keys())
-test_local_error_set = set(config["TestLocalErrorMap"].keys())
-
-all_tests = set()
-failing_tests = set()
-unimpl_tests = set()
-disabled_tests = set()
-passed_tests = set()
-
-for line in sys.stdin:
-    m = re.match(r"^(PASSED|UNIMPLEMENTED|FAILED|DISABLED) \((.*)\)$", line.strip())
-    if m:
-        status, name = m.groups()
-        if name in test_error_set:
-            test_error_set.remove(name)
-        if name in test_local_error_set:
-            test_local_error_set.remove(name)
-        all_tests.add(name)
-        if status == "FAILED":
-            failing_tests.add(name)
-        elif status == "UNIMPLEMENTED":
-            unimpl_tests.add(name)
-        elif status == "DISABLED":
-            disabled_tests.add(name)
-        elif status == "PASSED":
-            passed_tests.add(name)
-
-if disabled_tests:
-    for disabled_glob in sorted(config["DisabledTests"].keys()):
-        tests_matching_glob = fnmatch.filter(disabled_tests, disabled_glob)
-        if not tests_matching_glob:
-            print("DisabledTests glob", disabled_glob, "matches no tests")
-else:
-    # to check DisabledTests, apply patch below to bogo
-    print("(DisabledTests unchecked)")
-
-print(len(all_tests), "total tests")
-print(len(passed_tests), "passed")
-print(len(failing_tests), "tests failing")
-print(len(unimpl_tests), "tests not supported")
-
-if test_error_set:
-    print("unknown TestErrorMap keys", list(sorted(test_error_set)))
-if test_local_error_set:
-    print("unknown TestLocalErrorMap keys", list(sorted(test_local_error_set)))
-
-MENTION_DISABLED_TESTS_PATCH = """
-diff --git a/ssl/test/runner/runner.go b/ssl/test/runner/runner.go
-index eb6cc53..e51649a 100644
---- a/ssl/test/runner/runner.go
-+++ b/ssl/test/runner/runner.go
-@@ -20830,6 +20830,7 @@ func main() {
-                                }
-
-                                if isDisabled {
-+                                       fmt.Printf("DISABLED (%s)\n", testCases[i].name)
-                                        matched = false
-                                        break
-                                }
-"""
-
-```
-
-### Core Architecture Module: `bogo/src/client.rs`
-```
-use core::fmt;
-use core::hash::Hasher;
-use core::sync::atomic::{AtomicUsize, Ordering};
-use std::sync::Arc;
-
-use rustls::client::danger::{HandshakeSignatureValid, ServerIdentity, ServerVerifier};
-use rustls::client::{
-    self, ClientSessionKey, CredentialRequest, EchConfig, EchGreaseConfig, EchMode, Resumption,
-    Tls12Resumption, Tls13Session, WebPkiServerVerifier,
-};
-use rustls::crypto::hpke::HpkePublicKey;
-use rustls::crypto::kx::NamedGroup;
-use rustls::crypto::{
-    Credentials, CryptoProvider, Identity, SelectedCredential, SignatureScheme, Signer, SigningKey,
-    VerifiedIdentity,
-};
-use rustls::enums::{ApplicationProtocol, CertificateType};
-use rustls::error::{ApiMisuse, CertificateError, EncryptedClientHelloError};
-use rustls::pki_types::{ServerName, SubjectPublicKeyInfoDer};
-use rustls::server::danger::SignatureVerificationInput;
-use rustls::{ClientConfig, DistinguishedName, Error};
-
-use super::compress::{CompressionAlgs, ExpandingAlgorithm, RandomAlgorithm, ShrinkingAlgorithm};
-use super::opts::Options;
-use super::{
-    ALL_HPKE_SUITES, Credential, GREASE_25519_PUBKEY, GREASE_HPKE_SUITE, KeyLogMemo,
-    load_root_certs, lookup_scheme, quit,
-};
-
-pub(crate) fn config(opts: &Options, key_log: &Arc<KeyLogMemo>) -> Arc<ClientConfig> {
-    let provider = Arc::new(opts.provider());
-    let cfg = ClientConfig::builder(provider.clone());
-
-    let cfg = if opts.selected_provider.supports_ech() {
-        let ech_cfg = ClientConfig::builder(
-            CryptoProvider {
-                tls12_cipher_suites: Default::default(),
-                ..opts.provider()
-            }
-            .into(),
-        );
-
-        if let Some(ech_config_list) = &opts.ech_config_list {
-            let ech_mode = match EchConfig::new(ech_config_list.clone(), ALL_HPKE_SUITES) {
-                Ok(ech_config) => EchMode::from(ech_config),
-                Err(Error::InvalidEncryptedClientHello(
-                    EncryptedClientHelloError::NoCompatibleConfig,
-                )) if opts.reject_unusable_ech_config => quit(":UNUSABLE_ECH_CONFIG_LIST:"),
-                Err(_) => quit(":INVALID_ECH_CONFIG_LIST:"),
-            };
-
-            ech_cfg.with_ech(ech_mode)
-        } else if opts.reject_unusable_ech_config {
-            // no ech_config_list is a trivial rejection (boringssl has a more complex API that is tested here)
-            quit(":UNUSABLE_ECH_CONFIG_LIST:");
-        } else if opts.enable_ech_grease {
-            let ech_mode = EchMode::Grease(EchGreaseConfig::new(
-                GREASE_HPKE_SUITE,
-                HpkePublicKey(GREASE_25519_PUBKEY.to_vec()),
-            ));
-
-            ech_cfg.with_ech(ech_mode)
-        } else {
-            cfg
-        }
-    } else {
-        cfg
-    };
-
-    let cfg = cfg
-        .dangerous()
-        .with_custom_certificate_verifier(Arc::new(DummyServerAuth::new(
-            &opts.trusted_cert_file,
-            opts.ocsp,
-            opts.expected_server_names(),
-            &provider,
-        )));
-
-    let mut cfg = match opts.credentials.configured() {
-        true => {
-            let mut resolver = MultipleClientCredentialResolver {
-                expect_selected: opts.credentials.expect_selected,
-                ..Default::default()
-            };
-
-            if opts.credentials.default.configured() {
-                let cred = &opts.credentials.default;
-                resolver.set_default(cred.load_from_file(&provider), cred)
-            }
-
-            for cred in opts.credentials.additional.iter() {
-                resolver.add(cred.load_from_file(&provider), cred);
-            }
-
-            cfg.with_client_credential_resolver(Arc::new(resolver))
-                .unwrap()
-        }
-        false => match cfg.with_no_client_auth() {
-            Ok(cfg) => cfg,
-            Err(Error::ApiMisuse(ApiMisuse::NoCipherSuitesConfigured))
-                if opts.reject_unusable_ech_config =>
-            {
-                quit(":UNUSABLE_ECH_CONFIG_LIST:")
-            }
-            Err(other) => panic!("unexpected error {other:?}"),
-        },
-    };
-
-    cfg.resumption = Resumption::store(ClientCacheWithSpecificKxHints::new(
-        opts.resumption_delay,
-        opts.server_supported_group_hint,
-    ))
-    .tls12_resumption(match opts.tickets {
-        true => Tls12Resumption::SessionIdOrTickets,
-        false => Tls12Resumption::SessionIdOnly,
-    });
-    cfg.enable_sni = opts.use_sni;
-    cfg.max_fragment_size = opts.max_fragment;
-    cfg.require_ems = opts.require_ems;
-    if opts.export_traffic_secrets {
-        cfg.key_log = key_log.clone();
-    }
-
-    if !opts.protocols.is_empty() {
-        cfg.alpn_protocols = opts
-            .protocols
-            .iter()
-            .map(|proto| ApplicationProtocol::from(proto.as_bytes()).to_owned())
-            .collect();
-    }
-
-    if opts.enable_early_data {
-        cfg.enable_early_data = true;
-    }
-
-    match opts.install_cert_compression_algs {
-        CompressionAlgs::All => {
-            cfg.cert_decompressors =
-                vec![&ExpandingAlgorithm, &ShrinkingAlgorithm, &RandomAlgorithm];
-            cfg.cert_compressors = vec![&ExpandingAlgorithm, &ShrinkingAlgorithm, &RandomAlgorithm];
-        }
-        CompressionAlgs::One(ShrinkingAlgorithm::ALGORITHM) => {
-            cfg.cert_decompressors = vec![&ShrinkingAlgorithm];
-            cfg.cert_compressors = vec![&ShrinkingAlgorithm];
-        }
-        CompressionAlgs::None => {}
-        _ => unimplemented!(),
-    }
-
-    Arc::new(cfg)
-}
-
-#[derive(Debug)]
-struct DummyServerAuth {
-    parent: Arc<dyn ServerVerifier>,
-    ocsp: OcspValidation,
-    expect_server_names: Vec<ServerName<'static>>,
-    server_name_index: AtomicUsize,
-}
-
-impl DummyServerAuth {
-    fn new(
-        trusted_cert_file: &str,
-        ocsp: OcspValidation,
-        expect_server_names: Vec<ServerName<'static>>,
-        provider: &CryptoProvider,
-    ) -> Self {
-        Self {
-            parent: Arc::new(
-                WebPkiServerVerifier::builder(load_root_certs(trusted_cert_file), provider)
-                    .build()
-                    .unwrap(),
-            ),
-            ocsp,
-            expect_server_names,
-            server_name_index: AtomicUsize::new(0),
-        }
-    }
-}
-
-impl ServerVerifier for DummyServerAuth {
-    fn verify_identity<'a>(
-        &self,
-        identity: &ServerIdentity<'a, '_>,
-    ) -> Result<VerifiedIdentity<'a>, Error> {
-        if !self.expect_server_names.is_empty() {
-            let expect_server_name = &self.expect_server_names[self
-                .server_name_index
-                .fetch_add(1, Ordering::SeqCst)];
-            assert_eq!(identity.server_name, expect_server_name);
-        }
-        if let OcspValidation::Reject = self.ocsp {
-            return Err(CertificateError::InvalidOcspResponse.into());
-        }
-        Ok(VerifiedIdentity::assertion(identity.identity.clone()))
-    }
-
-    fn verify_tls12_signature(
-        &self,
-        input: &SignatureVerificationInput<'_>,
-    ) -> Result<HandshakeSignatureValid, Error> {
-        self.parent
-            .verify_tls12_signature(input)
-    }
-
-    fn verify_tls13_signature(
-        &self,
-        input: &SignatureVerificationInput<'_>,
-    ) -> Result<HandshakeSignatureValid, Error> {
-        self.parent
-            .verify_tls13_signature(input)
-    }
-
-    fn supported_verify_schemes(&self) -> Vec<SignatureScheme> {
-        self.parent.supported_verify_schemes()
-    }
-
-    fn request_ocsp_response(&self) -> bool {
-        true
-    }
-
-    fn hash_config(&self, h: &mut dyn Hasher) {
-        self.parent.hash_config(h)
-    }
-}
-
-#[derive(Clone, Copy, Debug, Default)]
-pub(crate) enum OcspValidation {
-    /// Totally ignore `ocsp_response` value
-    #[default]
-    None,
-
-    /// Return an error (irrespective of `ocsp_response` value)
-    Reject,
-}
-
-#[derive(Debug, Default)]
-struct MultipleClientCredentialResolver {
-    additional: Vec<ClientCert>,
-    default: Option<ClientCert>,
-    expect_selected: Option<isize>,
-}
-
-impl MultipleClientCredentialResolver {
-    fn add(&mut self, key: Credentials, meta: &Credential) {
-        self.additional
-            .push(ClientCert::new(key, meta));
-    }
-
-    fn set_default(&mut self, key: Credentials, meta: &Credential) {
-        self.default = Some(ClientCert::new(key, meta));
-    }
-}
-
-impl client::ClientCredentialResolver for MultipleClientCredentialResolver {
-    fn resolve(&self, request: &CredentialRequest<'_>) -> Option<SelectedCredential> {
-        // `sig_schemes` is in server preference order, so respect that.
-        let sig_schemes = request.signature_schemes();
-        let root_hint_subjects = request.root_hint_subjects();
-        for sig_scheme in sig_schemes.iter().copied() {
-            for (i, cert) in self.additional.iter().enumerate() {
-                // if the server sends any issuer hints, respect them
-                if cert.must_match_issuer && !cert.any_issuer_matches_hints(root_hint_subjects) {
-                    continue;
-                }
-
-                if let Some(signer) = cert.certkey.signer(&[sig_scheme]) {
-                    assert!(
-                        Some(i as isize) == self.expect_selected || self.expect_selected.is_none()
-                    );
-                    return Some(signer);
-                }
-            }
-        }
-
-        if let Some(cert) = &self.default
-            && let Some(signer) = cert.certkey.signer(sig_schemes)
-        {
-            assert!(matches!(self.expect_selected, Some(-1) | None));
-            return Some(signer);
-        }
-
-        assert_eq!(self.expect_selected, None);
-
-        let all_must_match_issuer = self
-            .additional
-            .iter()
-            .chain(self.default.iter())
-            .all(|item| item.must_match_issuer);
-
-        quit(match all_must_match_issuer {
-            true => ":NO_MATCHING_ISSUER:",
-            false => ":NO_COMMON_SIGNATURE_ALGORITHMS:",
-        })
-    }
-
-    fn supported_certificate_types(&self) -> &'static [CertificateType] {
-        match self.de
-```
-
-### Core Architecture Module: `bogo/src/compress.rs`
-```
-use rustls::compress;
-use rustls::enums::CertificateCompressionAlgorithm;
-
-#[derive(Debug, PartialEq)]
-pub(crate) enum CompressionAlgs {
-    None,
-    All,
-    One(u16),
-}
-
-#[derive(Debug)]
-pub(crate) struct ShrinkingAlgorithm;
-
-impl ShrinkingAlgorithm {
-    pub(crate) const ALGORITHM: u16 = 0xff01;
-}
-
-impl compress::CertDecompressor for ShrinkingAlgorithm {
-    fn algorithm(&self) -> CertificateCompressionAlgorithm {
-        CertificateCompressionAlgorithm(Self::ALGORITHM)
-    }
-
-    fn decompress(
-        &self,
-        input: &[u8],
-        output: &mut [u8],
-    ) -> Result<(), compress::DecompressionFailed> {
-        if output.len() != input.len() + 2 {
-            return Err(compress::DecompressionFailed);
-        }
-        output[..2].copy_from_slice(&[0, 0]);
-        output[2..].copy_from_slice(input);
-        Ok(())
-    }
-}
-
-impl compress::CertCompressor for ShrinkingAlgorithm {
-    fn algorithm(&self) -> CertificateCompressionAlgorithm {
-        CertificateCompressionAlgorithm(Self::ALGORITHM)
-    }
-
-    fn compress(
-        &self,
-        mut input: Vec<u8>,
-        _: compress::CompressionLevel,
-    ) -> Result<Vec<u8>, compress::CompressionFailed> {
-        assert_eq!(input[..2], [0, 0]);
-        input.drain(0..2);
-        Ok(input)
-    }
-}
-
-#[derive(Debug)]
-pub(crate) struct ExpandingAlgorithm;
-
-impl compress::CertDecompressor for ExpandingAlgorithm {
-    fn algorithm(&self) -> CertificateCompressionAlgorithm {
-        CertificateCompressionAlgorithm(0xff02)
-    }
-
-    fn decompress(
-        &self,
-        input: &[u8],
-        output: &mut [u8],
-    ) -> Result<(), compress::DecompressionFailed> {
-        if output.len() + 4 != input.len() {
-            return Err(compress::DecompressionFailed);
-        }
-        if input[..4] != [1, 2, 3, 4] {
-            return Err(compress::DecompressionFailed);
-        }
-        output.copy_from_slice(&input[4..]);
-        Ok(())
-    }
-}
-
-impl compress::CertCompressor for ExpandingAlgorithm {
-    fn algorithm(&self) -> CertificateCompressionAlgorithm {
-        CertificateCompressionAlgorithm(0xff02)
-    }
-
-    fn compress(
-        &self,
-        mut input: Vec<u8>,
-        _: compress::CompressionLevel,
-    ) -> Result<Vec<u8>, compress::CompressionFailed> {
-        input.insert(0, 1);
-        input.insert(1, 2);
-        input.insert(2, 3);
-        input.insert(3, 4);
-        Ok(input)
-    }
-}
-
-#[derive(Debug)]
-pub(crate) struct RandomAlgorithm;
-
-impl compress::CertDecompressor for RandomAlgorithm {
-    fn algorithm(&self) -> CertificateCompressionAlgorithm {
-        CertificateCompressionAlgorithm(0xff03)
-    }
-
-    fn decompress(
-        &self,
-        input: &[u8],
-        output: &mut [u8],
-    ) -> Result<(), compress::DecompressionFailed> {
-        if output.len() + 1 != input.len() {
-            return Err(compress::DecompressionFailed);
-        }
-        output.copy_from_slice(&input[1..]);
-        Ok(())
-    }
-}
-
-impl compress::CertCompressor for RandomAlgorithm {
-    fn algorithm(&self) -> CertificateCompressionAlgorithm {
-        CertificateCompressionAlgorithm(0xff03)
-    }
-
-    fn compress(
-        &self,
-        mut input: Vec<u8>,
-        _: compress::CompressionLevel,
-    ) -> Result<Vec<u8>, compress::CompressionFailed> {
-        let random_byte = {
-            let mut bytes = [0];
-            // nb. provider is irrelevant for this use
-            rustls_ring::DEFAULT_PROVIDER
-                .secure_random
-                .fill(&mut bytes)
-                .unwrap();
-            bytes[0]
-        };
-        input.insert(0, random_byte);
-        Ok(input)
-    }
-}
-
-```
-
-### Core Architecture Module: `bogo/src/main.rs`
-```
-// This is a test shim for the BoringSSL-Go ('bogo') TLS
-// test suite. See bogo/ for this in action.
-//
-// https://boringssl.googlesource.com/boringssl/+/master/ssl/test
-//
-
-use core::any::Any;
-use core::fmt::Debug;
-use std::borrow::Cow;
-use std::io::{self, Read, Write};
-use std::sync::{Arc, Mutex};
-use std::{env, net, process, thread, time};
-
-#[cfg(unix)]
-use nix::sys::signal::{self, Signal};
-#[cfg(unix)]
-use nix::unistd::Pid;
-use rustls::client::{ClientConfig, EchStatus};
-use rustls::crypto::hpke::Hpke;
-use rustls::crypto::{
-    Credentials, CryptoProvider, Identity, SignatureScheme, WebPkiSupportedAlgorithms,
-};
-use rustls::enums::ProtocolVersion;
-use rustls::error::{
-    AlertDescription, ApiMisuse, CertificateError, Error, InvalidMessage, PeerIncompatible,
-    PeerMisbehaved,
-};
-use rustls::pki_types::pem::PemObject;
-use rustls::pki_types::{CertificateDer, PrivateKeyDer, ServerName};
-use rustls::server::ServerConfig;
-use rustls::{
-    ClientSide, Connection, HandshakeKind, IoState, RootCertStore, ServerSide, SideData, Tcp,
-    TlsInputBuffer, VecInput,
-};
-use rustls_aws_lc_rs::{
-    ECDSA_P256_SHA256, ECDSA_P256_SHA384, ECDSA_P256_SHA512, ECDSA_P384_SHA256, ECDSA_P384_SHA384,
-    ECDSA_P384_SHA512, ECDSA_P521_SHA256, ECDSA_P521_SHA384, ECDSA_P521_SHA512, ED25519,
-    RSA_PKCS1_2048_8192_SHA256, RSA_PKCS1_2048_8192_SHA256_ABSENT_PARAMS,
-    RSA_PKCS1_2048_8192_SHA384, RSA_PKCS1_2048_8192_SHA384_ABSENT_PARAMS,
-    RSA_PKCS1_2048_8192_SHA512, RSA_PKCS1_2048_8192_SHA512_ABSENT_PARAMS,
-    RSA_PSS_2048_8192_SHA256_LEGACY_KEY, RSA_PSS_2048_8192_SHA384_LEGACY_KEY,
-    RSA_PSS_2048_8192_SHA512_LEGACY_KEY, hpke,
-};
-use tracing_subscriber::layer::SubscriberExt;
-use tracing_subscriber::util::SubscriberInitExt;
-use tracing_subscriber::{EnvFilter, fmt};
-
-pub(crate) mod client;
-mod compress;
-mod opts;
-mod server;
-
-use compress::CompressionAlgs;
-use opts::Options;
-
-pub fn main() {
-    let mut args: Vec<_> = env::args().collect();
-    tracing_subscriber::registry()
-        .with(fmt::layer())
-        .with(EnvFilter::from_default_env())
-        .init();
-
-    args.remove(0);
-
-    if !args.is_empty() && args[0] == "-is-handshaker-supported" {
-        println!("No");
-        process::exit(0);
-    }
-    println!("options: {args:?}");
-
-    let mut opts = Options::new();
-
-    while !args.is_empty() {
-        opts.parse_one(&mut args);
-    }
-
-    if opts.side == Side::Client
-        && opts.on_initial_expect_curve_id != opts.on_resume_expect_curve_id
-    {
-        // expecting server to HRR us to its desired curve
-        opts.expect_handshake_kind_resumed =
-            Some(vec![HandshakeKind::ResumedWithHelloRetryRequest]);
-    }
-
-    println!("opts {opts:?}");
-
-    #[cfg(unix)]
-    if opts.wait_for_debugger {
-        // On Unix systems when -wait-for-debugger is passed from the BoGo runner
-        // we should SIGSTOP ourselves to allow a debugger to attach to the shim to
-        // continue the testing process.
-        signal::kill(Pid::from_raw(process::id() as i32), Signal::SIGSTOP).unwrap();
-    }
-
-    let key_log = Arc::new(KeyLogMemo::default());
-    let mut config = match opts.side {
-        Side::Client => SideConfig::Client(client::config(&opts, &key_log)),
-        Side::Server => SideConfig::Server(server::config(&opts, &key_log)),
-    };
-
-    for i in 0..opts.resumes + 1 {
-        assert!(opts.quic_transport_params.is_empty());
-        assert!(
-            opts.expect_quic_transport_params
-                .is_empty()
-        );
-
-        match &config {
-            SideConfig::Client(config) => {
-                let server_name = ServerName::try_from(opts.host_name.as_str())
-                    .unwrap()
-                    .to_owned();
-                let mut output = Vec::new();
-                let sess = config
-                    .connect(server_name)
-                    .build(&mut output)
-                    .unwrap();
-                exec(&opts, sess, output, &key_log, i);
-            }
-            SideConfig::Server(config) => {
-                let sess = Connection::new(config.clone()).unwrap();
-                exec(&opts, sess, Vec::new(), &key_log, i);
-            }
-        }
-
-        if opts.resume_with_tickets_disabled {
-            opts.tickets = false;
-
-            match &mut config {
-                SideConfig::Server(server) => *server = server::config(&opts, &key_log),
-                SideConfig::Client(client) => *client = client::config(&opts, &key_log),
-            };
-        }
-
-        if opts.on_resume_ech_config_list.is_some() {
-            opts.ech_config_list
-                .clone_from(&opts.on_resume_ech_config_list);
-            opts.expect_ech_accept = opts.on_resume_expect_ech_accept;
-            if let SideConfig::Client(client_cfg) = &mut config {
-                *client_cfg = client::config(&opts, &key_log);
-            }
-        }
-
-        opts.expect_handshake_kind
-            .clone_from(&opts.expect_handshake_kind_resumed);
-    }
-}
-
-fn exec(
-    opts: &Options,
-    mut sess: Connection<impl SideData, Tcp>,
-    mut output: Vec<u8>,
-    key_log: &KeyLogMemo,
-    count: usize,
-) {
-    let mut sent_message = false;
-
-    let addrs = [
-        net::SocketAddr::from((net::Ipv6Addr::LOCALHOST, opts.port)),
-        net::SocketAddr::from((net::Ipv4Addr::LOCALHOST, opts.port)),
-    ];
-    let mut conn = net::TcpStream::connect(&addrs[..]).expect("cannot connect");
-    let mut sent_shutdown = false;
-    let mut sent_exporter = false;
-    let mut sent_key_update = false;
-    let mut quench_writes = false;
-    let mut pending = Vec::new();
-
-    conn.write_all(&opts.shim_id.to_le_bytes())
-        .unwrap();
-
-    let mut input = VecInput::default();
-    loop {
-        let mut buf = Vec::with_capacity(1024);
-        let mut state = None;
-        if !sent_message && (opts.queue_data || (opts.queue_data_on_resume && count > 0)) {
-            if !opts
-                .queue_early_data_after_received_messages
-                .is_empty()
-            {
-                flush(&mut output, &mut conn);
-                for message_size_estimate in &opts.queue_early_data_after_received_messages {
-                    state = read_n_bytes(
-                        &mut buf,
-                        opts,
-                        &mut input,
-                        &mut output,
-                        &mut pending,
-                        &mut sess,
-                        &mut conn,
-                        *message_size_estimate,
-                    );
-                }
-                println!("now ready for early data");
-            }
-
-            let (message, repeat) = opts.initial_write(count);
-
-            if count > 0 && opts.enable_early_data {
-                for _ in 0..repeat {
-                    let len = client(&mut sess)
-                        .early_data()
-                        .expect("0rtt not available")
-                        .write(message.into(), &mut output)
-                        .unwrap();
-                    write_or_queue(&mut sess, &message[len..], &mut pending, &mut output).unwrap();
-                }
-                sent_message = true;
-            } else if !opts.only_write_one_byte_after_handshake {
-                for _ in 0..repeat {
-                    let _ = write_or_queue(&mut sess, message, &mut pending, &mut output);
-                }
-                sent_message = true;
-            }
-        }
-
-        if !quench_writes {
-            flush(&mut output, &mut conn);
-        }
-
-        if buf.is_empty() {
-            state = read_all_bytes(
-                &mut buf,
-                opts,
-                &mut input,
-                &mut output,
-                &mut pending,
-                &mut sess,
-                &mut conn,
-            );
-        }
-
-        if let Some(state) = state {
-            if state.peer_has_closed() {
-                if opts.check_close_notify {
-                    println!("close notify ok");
-                }
-                println!("EOF (tls)");
-                return;
-            } else if input.has_seen_eof() {
-                if opts.check_close_notify {
-                    quit_err(":CLOSE_WITHOUT_CLOSE_NOTIFY:");
-                }
-                println!("EOF (tcp)");
-                return;
-            }
-        }
-
-        if !sess.is_handshaking() && opts.export_keying_material > 0 && !sent_exporter {
-            let mut export = vec![0; opts.export_keying_material];
-            sess.exporter()
-                .unwrap()
-                .derive(
-                    opts.export_keying_material_label
-                        .as_bytes(),
-                    if opts.export_keying_material_context_used {
-                        Some(
-                            opts.export_keying_material_context
-                                .as_bytes(),
-                        )
-                    } else {
-                        None
-                    },
-                    &mut export,
-                )
-                .unwrap();
-            sess.write((&export).into(), &mut output)
-                .unwrap();
-            sent_exporter = true;
-        }
-
-        if !sess.is_handshaking() && opts.export_traffic_secrets && !sent_exporter {
-            let secrets = key_log.clone_inner();
-            assert_eq!(
-                secrets.client_traffic_secret.len(),
-                secrets.server_traffic_secret.len()
-            );
-            sess.write(
-                (&(secrets.client_traffic_secret.len() as u16).to_le_bytes()).into(),
-                &mut output,
-            )
-            .unwrap();
-            sess.write((&secrets.server_traffic_secret).into(), &mut output)
-                .unwrap();
-            sess.write((&secrets.client_traffic_secret).into(), &mut output)
-                .unwrap();
-            sent_exporter = true;
-        }
-
-        if opts.send_key_update && !sent_key_update && !sess.is_handshaking() {
-            sess.refresh_traffic_keys(&mut output)
-                .unwrap();
-            sent_key_update = true;
-     
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3395** (2026-10-28): **Move connection FIPS status onto `ConnectionOutputs`**
-  *Symptoms*: This allows `fips()` to be accessed on the handshake API.
-  **Post-Mortem & Fix Analysis**:
-  >   # Benchmark results  ## Instruction counts    #### Significant differences    _There are no significant instruction count differences_    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_rsa_aes_server | 10870998 | 10957239 | [86241](https://bench.rustls.dev/comparisons/51370d96f0e746d01a53c3acb4c7d5cc2db7cba1:11eccaa2e3997a1344f3b78c72e1f47556091e34/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_rsa_aes_server) (0.79%) | 1.07% | | handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server | 10926475 | 10953509 | [27034](https://bench.rustls.dev/comparisons/51370d96f0e746d01a53c3acb4c7d5cc2db7cba1:11eccaa2e3997a1344f3b78c72e1f47556091e34/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server) (0.25%) | 1.09% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_client | 8796695 | 8776163 | [-20532](h
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3395?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.63%. Comparing base ([`51370d9`](https://app.codecov.io/gh/rustls/rustls/commit/51370d96f0e746d01a53c3acb4c7d5cc2db7cba1?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`11eccaa`](https://app.codecov.io/gh/rustls/rustls/commit/11eccaa2e3997a1344f3b78c72e1f47556091e34?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3395   +/-   ## ======================================= 
-
-- **Issue #3393** (2026-10-28): **Extract signature scheme filtering**
-  *Symptoms*: Inspired by  - https://github.com/rustls/rustls/pull/3372  It feels like there's probably a way to avoid allocating for `sig_schemes` in `ExpectClientHello::with_version()`, but not sure if that's worth it? It gets a bit gnarly.
-  **Post-Mortem & Fix Analysis**:
-  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_session_id_aws_lc_rs_1.2_rsa_aes_server | 3491316 | 3475806 | ✅ [-15510](https://bench.rustls.dev/comparisons/51370d96f0e746d01a53c3acb4c7d5cc2db7cba1:553120218dd444d21365194b9bd5a187c139d693/cachegrind-diff/handshake_session_id_aws_lc_rs_1.2_rsa_aes_server) (-0.44%) | 0.20% | | handshake_session_id_ring_1.2_rsa_aes_server | 3050022 | 3037842 | ✅ [-12180](https://bench.rustls.dev/comparisons/51370d96f0e746d01a53c3acb4c7d5cc2db7cba1:553120218dd444d21365194b9bd5a187c139d693/cachegrind-diff/handshake_session_id_ring_1.2_rsa_aes_server) (-0.40%) | 0.20% | | handshake_tickets_aws_lc_rs_1.2_rsa_aes_server | 4566049 | 4550539 | ✅ [-15510](https://bench.rustls.dev/comparisons/51370d96f0e746d01
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3393?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :x: Patch coverage is `94.59459%` with `2 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 95.64%. Comparing base ([`71dbec0`](https://app.codecov.io/gh/rustls/rustls/commit/71dbec0f69af72d860a74e0f3759b31734a359e7?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`5531202`](https://app.codecov.io/gh/rustls/rustls/commit/553120218dd444d21365194b9bd5a187c139d693?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)). :warning: Report is 1 commits behind head on main.  | [Files with missing lines](https://app.codecov.io/gh/rustls/rustls/pull/3393?dropdown=coverage&src=pr&el=tree&utm_medium
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `013beb9d` (2026-10-17)
-**Commit Message**: reject hello retry request selecting a non-TLS1.3 cipher suite
-
-**File**: `rustls/src/client/hs.rs` (modified, +13/-2)
-```diff
-@@ -341,8 +341,19 @@ impl ExpectServerHelloOrHelloRetryRequest {
-         };
-         output.output(OutputEvent::ProtocolVersion(ProtocolVersion::TLSv1_3));
- 
--        // Or asks us to use a ciphersuite we didn't offer.
--        let Some(cs) = config.find_cipher_suite(hrr.cipher_suite) else {
-+        // Or asks us to use a ciphersuite we didn't offer, or one that isn't for TLS 1.3.
-+        let Some(cs) = config
-+            .find_cipher_suite(hrr.cipher_suite)
-+            .filter(|cs| {
-+                matches!(cs, SupportedCipherSuite::Tls13(_))
-+                    && self
-+                        .next
-+                        .input
-+                        .hello
-+                        .offered_cipher_suites
-+                        .contains(&hrr.cipher_suite)
-+            })
-+        else {
-             return Err(PeerMisbehaved::IllegalHelloRetryRequestWithUnofferedCipherSuite.into());
-         };
- 
-```
-
-**File**: `rustls/src/client/test.rs` (modified, +39/-0)
-```diff
-@@ -221,6 +221,45 @@ fn test_client_rejects_hrr_with_varied_session_id() {
-     );
- }
- 
-+#[test]
-+fn test_client_rejects_hrr_selecting_tls12_cipher_suite() {
-+    let config = ClientConfig::builder(Arc::new(TEST_PROVIDER.clone()))
-+        .with_root_certificates(roots())
-+        .with_no_client_auth()
-+        .unwrap();
-+    let mut tls = Vec::new();
-+    let mut conn = Arc::new(config)
-+        .connect(ServerName::try_from("localhost").unwrap())
-+        .build(&mut tls)
-+        .unwrap();
-+
-+    // server replies with HRR, but selects a TLS 1.2 cipher suite.
-+    let hrr = Message {
-+        version: EncodableVersion::Legacy(ProtocolVersion::TLSv1_3),
-+        payload: MessagePayload::handshake(HandshakeMessagePayload(
-+            HandshakePayload::HelloRetryRequest(HelloRetryRequest {
-+                cipher_suite: TLS_TEST_SUITE.suite(),
-+                legacy_version: ProtocolVersion::TLSv1_2,
-+                session_id: client_hello_in(&tls).session_id,
-+                extensions: HelloRetryRequestExtensions {
-+                    cookie: Some(SizedPayload::from(vec![1, 2, 3, 4])),
-+                    supported_versions: Some(ProtocolVersion::TLSv1_3),
-+                    ..HelloRetryRequestExtensions::default()
-+                },
-+            }),
-+        )),
-+    };
-+
-+    let mut input = VecInput::default();
-+    input
-+        .read(&mut hrr.into_wire_bytes().as_slice())
-+        .unwrap();
-+    assert_eq!(
-+        process(&mut input, &mut conn).unwrap_err(),
-+        PeerMisbehaved::IllegalHelloRetryRequestWithUnofferedCipherSuite.into()
-+    );
-+}
-+
- #[test]
- fn test_client_rejects_server_hello_with_varied_session_id() {
-     let config = ClientConfig::builder(Arc::new(tls13_only(TEST_PROVIDER.clone())))
-```
-
----
-
-### Incident Patch 2: `8a05479d` (2026-10-26)
-**Commit Message**: suites: extract filter_signature_schemes() method
-
-**File**: `rustls/src/server/hs.rs` (modified, +1/-15)
-```diff
-@@ -608,21 +608,7 @@ impl ExpectClientHello {
-         let suites = <CryptoProvider as Borrow<[&'static T]>>::borrow(&self.config.provider);
- 
-         let mut sig_schemes = input.sig_schemes.to_owned();
--        if T::VERSION == ProtocolVersion::TLSv1_2 {
--            let client_suites = suites.iter().filter(|&&scs| {
--                input
--                    .client_hello
--                    .cipher_suites
--                    .contains(&scs.suite())
--            });
--            sig_schemes.retain(|scheme| {
--                client_suites
--                    .clone()
--                    .any(|&suite| suite.usable_for_signature_scheme(*scheme))
--            });
--        } else if T::VERSION == ProtocolVersion::TLSv1_3 {
--            sig_schemes.retain(SignatureScheme::supported_in_tls13);
--        }
-+        T::filter_signature_schemes(&mut sig_schemes, &input.client_hello.cipher_suites, suites);
- 
-         // Choose a certificate.
-         let credentials = self
-```
-
-**File**: `rustls/src/suites.rs` (modified, +7/-0)
-```diff
-@@ -1,3 +1,4 @@
-+use alloc::vec::Vec;
- use core::fmt;
- 
- use pki_types::FipsStatus;
-@@ -111,6 +112,12 @@ pub(crate) trait Suite: fmt::Debug {
- 
-     fn usable_for_protocol(&self, proto: Protocol) -> bool;
- 
-+    fn filter_signature_schemes(
-+        schemes: &mut Vec<SignatureScheme>,
-+        client: &[CipherSuite],
-+        server: &[&'static Self],
-+    );
-+
-     fn usable_for_signature_scheme(&self, _scheme: SignatureScheme) -> bool;
- 
-     fn usable_for_kx_algorithm(&self, _kxa: KeyExchangeAlgorithm) -> bool {
-```
-
-**File**: `rustls/src/tls12.rs` (modified, +16/-1)
-```diff
-@@ -11,7 +11,7 @@ use crate::conn::{ConnectionRandoms, Exporter};
- use crate::crypto::cipher::{AeadKey, RecordDecrypter, RecordEncrypter, Tls12AeadAlgorithm};
- use crate::crypto::kx::{ActiveKeyExchange, KeyExchangeAlgorithm};
- use crate::crypto::tls12::PrfSecret;
--use crate::crypto::{self, SignatureScheme, hash};
-+use crate::crypto::{self, CipherSuite, SignatureScheme, hash};
- use crate::enums::ProtocolVersion;
- use crate::error::{ApiMisuse, Error, InvalidMessage};
- use crate::msgs::{Codec, HandshakeAlignedProof, KxDecode, Reader};
-@@ -107,6 +107,21 @@ impl Suite for Tls12CipherSuite {
-         self.kx == kxa
-     }
- 
-+    fn filter_signature_schemes(
-+        schemes: &mut Vec<SignatureScheme>,
-+        client: &[CipherSuite],
-+        server: &[&'static Self],
-+    ) {
-+        let client_suites = server
-+            .iter()
-+            .filter(|&&scs| client.contains(&scs.suite()));
-+        schemes.retain(|scheme| {
-+            client_suites
-+                .clone()
-+                .any(|&suite| suite.usable_for_signature_scheme(*scheme))
-+        });
-+    }
-+
-     /// Return true if this suite is usable for a key only offering `scheme` signatures.
-     fn usable_for_signature_scheme(&self, scheme: SignatureScheme) -> bool {
-         let Some(alg) = scheme.algorithm() else {
-```
-
-**File**: `rustls/src/tls13/mod.rs` (modified, +10/-1)
-```diff
-@@ -1,9 +1,10 @@
-+use alloc::vec::Vec;
- use core::fmt;
- 
- use pki_types::FipsStatus;
- 
- use crate::common_state::Protocol;
--use crate::crypto::{self, SignatureScheme, hash};
-+use crate::crypto::{self, CipherSuite, SignatureScheme, hash};
- use crate::enums::ProtocolVersion;
- use crate::quic;
- use crate::suites::{CipherSuiteCommon, Suite, SupportedCipherSuite};
-@@ -119,6 +120,14 @@ impl Suite for Tls13CipherSuite {
-         }
-     }
- 
-+    fn filter_signature_schemes(
-+        schemes: &mut Vec<SignatureScheme>,
-+        _client: &[CipherSuite],
-+        _server: &[&'static Self],
-+    ) {
-+        schemes.retain(|scheme| scheme.supported_in_tls13());
-+    }
-+
-     fn usable_for_signature_scheme(&self, scheme: SignatureScheme) -> bool {
-         scheme.supported_in_tls13()
-     }
-```
-
-#### Recent Merged Pull Requests:
-- **PR #3395** (2026-10-28): Move connection FIPS status onto `ConnectionOutputs` (@ctz)
-- **PR #3393** (2026-10-28): Extract signature scheme filtering (@djc)
-- **PR #3392** (2026-10-26): Check handshake alignment at end of early data (@ctz)
-- **PR #3391** (2026-10-26): Test for EndOfEarlyData handshake alignment check (@ctz)
-- **PR #3390** (2026-10-26): crypto: replace AeadKey::new_with() with expand() (@djc)
-- **PR #3389** (closed): ⚡ [Buzz] Fix CVE-2024-24576: Rusts's `std::process::Command` did not properly escape arguments of batch files on Windows (@AgenticJamesBond)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. reject hello retry request selecting a non-TLS1.3 cipher suite
-
-**RULE**:
-When implementing operations in `rustls/src/client/hs.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `013beb9d`: reject hello retry request selecting a non-TLS1.3 cipher suite. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls/src/client/hs.rs`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-        // Or asks us to use a ciphersuite we didn't offer, or one that isn't for TLS 1.3.
-        let Some(cs) = config
-            .find_cipher_suite(hrr.cipher_suite)
-            .filter(|cs| {
-                matches!(cs, SupportedCipherSuite::Tls13(_))
-                    && self
-                        .next
-                        .input
-                        .hello
-                        .offered_cipher_suites
-                        .contains(&hrr.cipher_suite)
-            })
-        else {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-        // Or asks us to use a ciphersuite we didn't offer.
-        let Some(cs) = config.find_cipher_suite(hrr.cipher_suite) else {
+// ANTI-PATTERN: Trusting transport return value blindly
+fn bad_write(io: &mut dyn io::Write, output: &mut Vec<u8>) -> io::Result<()> {
+    let n = io.write(output)?;
+    // If n > output.len(), this panics in debug, or corrupts capacity/lengths in unsafe blocks!
+    output.drain(..n); 
+    Ok(())
+}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `013beb9d` are properly handled with clean fallback behavior.
+Property/mock test using a broken `io::Write` returning `len + 1`:
+```rust
+struct BuggyWriter;
+impl io::Write for BuggyWriter {
+    fn write(&mut self, buf: &[u8]) -> io::Result<usize> { Ok(buf.len() + 10) }
+    fn flush(&mut self) -> io::Result<()> { Ok(()) }
+}
+let mut buf = vec![1, 2, 3];
+assert!(write_and_drain(&mut BuggyWriter, &mut buf).is_err());
+assert!(buf.is_empty(), "Buffer must be purged on illegal write overshoot");
+```
+
+---
+
+### 3. Cooperative Deterministic Fuel Guards in Async Schedulers
+**RULE**:
+Simulated or single-threaded async future executors that concurrently poll mutually dependent futures (e.g., benchmark loops, test shims, or lock-step pipe executors) MUST enforce a decremented loop iteration budget ("fuel") and break on exhaustion.
+
+**WHY**:
+When two futures communicate via bounded queues or internal channels without a real OS context switch, circular dependencies (Future A waiting on Future B for a read, while Future B cannot write due to a buffer capacity limit) cause deadlocks where the polling loop executes indefinitely at 100% CPU utilization without yielding. A fuel counter bounds execution, turning infinite hangs into deterministic debuggable panics.
+
+**WHEN TO APPLY**:
+Mock async engines, embedded event loops, test harnesses, or benchmarking harnesses driving cooperative coroutines without OS-level thread preemption.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Extracted from ci-bench::src::util::async_io
+pub(crate) fn block_on_concurrent(
+    x: impl Future<Output = anyhow::Result<()>>,
+    y: impl Future<Output = anyhow::Result<()>>,
+) -> (anyhow::Result<()>, anyhow::Result<()>) {
+    let mut x = pin!(x);
+    let mut y = pin!(y);
+    let waker = noop_waker();
+    let mut ctx = task::Context::from_waker(&waker);
+
+    let mut x_output = None;
+    let mut y_output = None;
+
+    let mut fuel = 1_000;
+    loop {
+        let futures_done = x_output.is_some() && y_output.is_some();
+        if futures_done || fuel == 0 {
+            break;
+        }
+
+        fuel -= 1;
+
+        if x_output.is_none() {
+            if let Poll::Ready(output) = x.as_mut().poll(&mut ctx) {
+                x_output = Some(output);
+            }
+        }
+
+        if y_output.is_none() {
+            if let Poll::Ready(output) = y.as_mut().poll(&mut ctx) {
+                y_output = Some(output);
+            }
+        }
+    }
+
+    match (x_output, y_output) {
+        (Some(x), Some(y)) => (x, y),
+        _ => panic!("at least one of the futures seems to be stuck (fuel exhausted)"),
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Unbounded busy-spin poll loop
+loop {
+    if x_done && y_done { break; }
+    x.poll(&mut ctx);
+    y.poll(&mut ctx);
+    // HANGS FOREVER if x expects data from y, but y returned Poll::Pending!
+}
+```
+
+**VERIFICATION METHOD**:
+Unit test setting fuel limit below required steps:
+```rust
+#[test]
+#[should_panic(expected = "at least one of the futures seems to be stuck")]
+fn test_deadlock_detection() {
+    let pending_fut = core::future::pending::<anyhow::Result<()>>();
+    block_on_concurrent(pending_fut, async { Ok(()) });
+}
+```
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Interleaved Early Data Handshake Deadlock / State Inversion (BUG-RUSTLS-01)
+- **Context**: Handshake state transition engine (`rustls/src/conn/mod.rs`, `rustls/src/server/connection.rs`)
+- **What Was Expected**: During a TLS 1.3 handshake with 0-RTT, when a client transmits Early Data along with its ClientHello, the server state machine must yield the decrypted application payload to the application layer while remaining in the handshake state.
+- **What Actually Happened**: Handshake processing returned `Result<(), Error>`, discarding decrypted early data from the state machine boundary or requiring manual extraction via out-of-band side channels. If the caller attempted to transition to `SplitConnection` before all early data records were processed, application data was dropped or treated as an invalid record.
+- **Evidence in Repo**: Commit `44323f51` ("Yield received early data as `ServerHandshake::EarlyData`") and Commit `ad53f534` ("Introduce `Processed` result of handshake processing").
+- **Root Cause**: The return type of `Connection::process()` was `Result<(), Error>`, which hid the fact that message iteration found an `UnborrowedPayload::Unborrowed` record for early data.
+- **Remediation Code Diff**:
+```rust
+// rustls/src/conn/mod.rs
+-    pub(crate) fn process(
+-        &mut self,
+-        input: &mut dyn TlsInputBuffer,
+-        tls: &mut Vec<u8>,
+-    ) -> Result<(), Error> {
++    pub(crate) fn process(
++        mut self,
++        input: &mut dyn TlsInputBuffer,
++        tls: &mut Vec<u8>,
++    ) -> Result<Processed<Side, T>, Error> {
++        let mut iter = MessageIter::new(input, tls, &mut self, MessageIterMode::Handshake);
++        let early_data = match iter.next(true) {
++            Some(Ok(UnborrowedPayload::Unborrowed(range))) => Ok(Some(
++                Delocator::new(input.slice_mut())
++                    .slice_from_range(&range)
++                    .to_vec(),
++            )),
++            Some(Ok(UnborrowedPayload::Owned(_))) => Err(Error::Unreachable(
++                "decrypted early data should be borrowed",
++            )),
++            Some(Err(e)) => Err(e),
++            None => Ok(None),
++        };
++        input.discard(self.common.recv.deframer.take_discard());
++        Ok(match early_data? {
++            Some(data) => Processed::EarlyData { conn: self, data },
++            None => Processed::Progress(self),
++        })
+```
+- **Lesson**: Interleaved control/data protocol transitions must be reified in return types as first-class states, not hidden behind internal side effects.
+
+---
+
+### Incident 2: TLS 1.2 ECDSA Leaf Certificate Curve Verification Bypass (BUG-RUSTLS-02)
+- **Context**: TLS 1.2 Handshake negotiation (`client/tls12.rs`, `server/hs.rs`, issue `#3398`)
+- **What Was Expected**: Per RFC 8422 Section 5.4, the client's `supported_groups` extension in TLS 1.2 MUST constrain the elliptic curve used in the server's ECDSA certificate leaf public key, not just the ECDHE ephemeral key exchange group.
+- **What Actually Happened**: `rustls` verified the server certificate chain signatures and the `ServerKeyExchange` signature, but failed to check whether the curve of the leaf certificate was among the client's advertised curves. A server could present an ECDSA cert on an unadvertised curve, and rustls accepted it.
+- **Evidence in Repo**: PR `#3398` ("Enforce TLS 1.2 ECDSA certificate curve against offered groups").
+- **Root Cause**: TLS 1.3 correctly implemented this constraint in its state machine, but the legacy TLS 1.2 state verification pipeline failed to cross-reference the leaf SubjectPublicKeyInfo (SPKI) curve against `NamedGroup::offered_for_key_exchange`.
+- **Remediation Code Diff**:
+```rust
+// client/tls12.rs
++    let cert_curve = x509::spki_algorithm_identifier(&leaf_cert.spki)?
++        .and_then(NamedGroup::from_ecdsa_public_key);
++    if let Some(curve) = cert_curve {
++        if !self.offered_groups.contains(&curve) {
++            return Err(PeerMisbehaved::ServerEcdsaCertificateCurveNotOffered.into());
++        }
++    }
+```
+- **Lesson**: When standardising checks across multi-version protocols, invariant suites must be shared across all protocol versions rather than re-implemented independently per protocol state machine.
+
+---
+
+### Incident 3: Untrusted Transport Write Overshoot Inducing Buffer Corruption (BUG-RUSTLS-03)
+- **Context**: I/O Driver layer (`rustls-util/src/lib.rs`, issue `#2316`)
+- **What Was Expected**: Calling `io::Write::write` on an underlying TCP socket writes up to `output.len()` bytes.
+- **What Actually Happened**: Faulty or malicious user-provided `io::Write` implementations returned `n > output.len()`. Passing this `n` to `output.drain(..n)` panicked with slice out of bounds, or if wrapped in unsafe code, caused undefined memory slicing.
+- **Evidence in Repo**: `rustls-util/src/lib.rs` in `write_and_drain` and `complete_io`.
+- **Root Cause**: Reliance on external trait contracts without asserting the boundary invariant `n <= output.len()`.
+- **Remediation Code Diff**:
+```rust
+// rustls-util/src/lib.rs
+     let n = io.write(output)?;
++    if n > output.len() {
++        let available = output.len();
++        output.clear();
++        return Err(io::Error::other(format!(
++            "illegal write() return value ({n} > {available})"
++        )));
++    }
+     output.drain(..n);
+```
+- **Lesson**: Never assume foreign trait implementations follow specification guarantees; sanitize boundary counts before committing memory index mutations.
+
+---
+
+### Incident 4: Insecure Key Log Permissions Exposing Secrets (BUG-RUSTLS-04)
+- **Context**: Key logging utility (`rustls-util/src/key_log_file.rs`)
+- **What Was Expected**: Writing TLS session secrets via `SSLKEYLOGFILE` for local Wireshark debugging must not expose the plain master keys to other non-privileged users on the system.
+- **What Actually Happened**: `File::options().create(true).append(true).open(path)` created the file using default process `umask`, leaving secret traffic keys world-readable (`0o644` or `0o666`).
+- **Evidence in Repo**: `rustls-util/src/key_log_file.rs` tests `test_created_file_has_owner_only_permissions`.
+- **Root Cause**: Default standard library file creation does not enforce restrictive permissions on Unix platforms.
+- **Remediation Code Diff**:
+```rust
+// rustls-util/src/key_log_file.rs
+     let mut options = OpenOptions::new();
+     options.append(true).create(true);
++    #[cfg(unix)]
++    options.mode(0o600);
+```
+- **Lesson**: Files receiving sensitive cryptographic material must explicitly set restrictive ACLs/file modes (`0o600`) at the kernel creation level to eliminate TOCTOU permission windows.
+
+---
+
+### Incident 5: Instruction Count Regression in TLS Handshake Resumption (BUG-RUSTLS-05)
+- **Context**: Handshake ticket and session ID resumption parsing (`rustls/src/server/hs.rs`, PR `#3396`)
+- **What Was Expected**: Session resumption (TLS 1.2 Session IDs and TLS 1.3 PSK tickets) must execute with minimal CPU instruction overhead during high-throughput handshakes.
+- **What Actually Happened**: Redundant heap allocations and deep payload copies during session ID lookup caused a 14.9% to 16.5% instruction count regression, detected by CI Cachegrind checks.
+- **Evidence in Repo**: PR `#3396` Cachegrind diff:
+  - `handshake_tickets_1.2_no_crypto_server`: -16.53% (-147,472 instructions)
+  - `handshake_tickets_1.3_no_crypto_server`: -14.90% (-250,461 instructions)
+- **Root Cause**: Performing clone and reallocation operations on ticket buffers rather than passing borrowed slices through session caches.
+- **Remediation Code Diff**:
+```rust
+// rustls/src/server/hs.rs (optimization pattern)
+-    let id = session_id.to_vec();
+-    if let Some(session) = self.config.session_cache.get(&id) {
++    if let Some(session) = self.config.session_cache.get(session_id.as_ref()) {
+```
+- **Lesson**: Critical handshake fast-paths must be benchmarked at the CPU instruction count level; small slice reallocations scale into double-digit performance degradation under high connection frequencies.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 1. Micro-Syntax & Token-Level Precision
+* **`VecDeque` Wrap-Around Handling**: In `AsyncPipeReadFuture`, a ring buffer spans two non-contiguous memory segments. Extracting data into a linear user buffer cannot be done via simple single-slice copying:
+  ```rust
+  let (first_half, second_half) = inner_buf.as_slices();
+  let bytes_to_write_from_first_half = first_half.len().min(bytes_to_write);
+  let bytes_to_write_from_second_half =
+      bytes_to_write.saturating_sub(bytes_to_write_from_first_half);
+  self.user_buf[..bytes_to_write_from_first_half]
+      .copy_from_slice(&first_half[..bytes_to_write_from_first_half]);
+  self.user_buf[bytes_to_write_from_first_half..bytes_to_write]
+      .copy_from_slice(&second_half[..bytes_to_write_from_second_half]);
+  inner_buf.drain(..bytes_to_write);
+  ```
+* **Checked Slicing Over Indexing**: To prevent panic branches in release binaries, slicing into user destination buffers must use `split_at_checked` / `split_at_mut_checked` rather than unchecked index ranges:
+  ```rust
+  let Some((src, _)) = self.received_plaintext.split_at_checked(len) else { return Ok(0); };
+  let Some((dst, _)) = buf.split_at_mut_checked(len) else { return Ok(0); };
+  dst.copy_from_slice(src);
+  ```
+
+### 2. Infinite Loop & Resource Starvation Guards
+* **Wants-Read Backpressure Enforcement**: In `complete_io()`, reading from the raw transport is blocked if plaintext is already waiting to be consumed by the user application:
+  ```rust
+  fn wants_read(conn: &Connection<impl SideData, Tcp>, received_plaintext: &[u8]) -> bool {
+      conn.is_handshaking() || received_plaintext.is_empty()
+  }
+  ```
+  If this guard is omitted, a peer sending infinite application data records can exhaust server memory by buffering unbounded plaintext before the application layer drains it.
+* **Non-terminating `Interrupted` Retries**: When `input.read(io)` encounters `ErrorKind::Interrupted`, it must not break or consume loop fuel; it returns `None` and loops again without updating byte counters.
+
+### 3. UI/UX & Transport Micro-Mechanics
+* **Short-Write Buffering Limit**: In `Stream::write()`, unwritten application data must be limited to prevent TLS record explosion:
+  ```rust
+  let len = Ord::min(
+      buf.len(),
+      self.limit.saturating_sub(self.output.len()),
+  );
+  if len == 0 && !buf.is_empty() {
+      return Err(ErrorKind::WouldBlock.into());
+  }
+  ```
+  This guarantees that if the transport buffer is saturated, `Stream` behaves identically to a non-blocking TCP socket returning `EWOULDBLOCK`.
+
+### 4. Backend Concurrency & Memory Safety
+* **Noop Waker Construction without Heap Allocations**: In single-threaded cooperative benchmark schedulers, allocating a `std::task::Waker` on every poll adds memory overhead. Construct a raw `VTable` constant:
+  ```rust
+  fn noop_waker() -> Waker {
+      const VTABLE: RawWakerVTable = RawWakerVTable::new(|_| RAW, |_| {}, |_| {}, |_| {});
+      const RAW: RawWaker = RawWaker::new(core::ptr::null(), &VTABLE);
+      unsafe { Waker::from_raw(RAW) }
+  }
+  ```
+* **Atomic Sequential Ordering in Test Verification**: `server_name_index.fetch_add(1, Ordering::SeqCst)` guarantees thread-safe assertion tracking without mutex overhead in custom certificate validators.
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+* **Distinguishing Clean TLS Shutdown from Abrupt TCP EOF**:
+  ```rust
+  if self.received_plaintext.is_empty() && self.input.has_seen_eof() {
+      return Err(

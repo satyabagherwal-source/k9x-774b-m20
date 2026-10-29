@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T16:36:47.052Z",
-  "total_verified_learnings": 1166,
+  "last_updated": "2026-10-29T16:51:23.793Z",
+  "total_verified_learnings": 1167,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -8532,8 +8532,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "6ea1cb4c",
-      "content_hash": "52b116edca0f183dc8f86b91cf4d86dd0190851e9a01ec65ec6827c130aa712b",
+      "source_version": "c0e32115",
+      "content_hash": "4cde4727500ffa8ec734b3d993d88b44a3745f394e007746ca30ca76172c02bc",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -8811,6 +8811,11 @@
           "number": 5511,
           "title": "ci: pin third-party actions to SHAs, fix bench shell injection, drop unused MCP",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5519,
+          "title": "bench: move benchmarks.sh to hyperfine 2.0, record peak memory, quarantine suspe",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8818,7 +8823,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T12:19:52.834Z",
+      "verified_at": "2026-10-29T16:48:25.977Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47086,8 +47091,8 @@
       "slug": "rustls-rustls",
       "platform": "github",
       "source_url": "https://github.com/rustls/rustls",
-      "source_version": "1783110b",
-      "content_hash": "a615eb3512908e4815143021d1b70b179422d0e153c8d07ec77055d1b98a0dc7",
+      "source_version": "44323f51",
+      "content_hash": "c93536ae72a820ecaa4be7cc730ab7414d909f08746ff72ba52ee2b9d637317a",
       "dossier_path": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "promoted_rules": [
@@ -47125,6 +47130,21 @@
           "number": 5286,
           "title": "reject hello retry request selecting a non-TLS1.3 cipher suite",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5523,
+          "title": "Typestate Return-on-Yield for Interleaved Stream Payloads",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5524,
+          "title": "Transport Write-Overshoot Containment and Poisoning Defense",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5525,
+          "title": "Cooperative Deterministic Fuel Guards in Async Schedulers",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47132,7 +47152,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T13:03:45.507Z",
+      "verified_at": "2026-10-29T16:51:23.781Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -148669,6 +148689,147 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T16:36:47.025Z"
+    },
+    "rule-5519": {
+      "learning_id": "rule-5519",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5519,
+      "title": "bench: move benchmarks.sh to hyperfine 2.0, record peak memory, quarantine suspe",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "c0e32115",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T16:48:25.977Z"
+    },
+    "learn-github-jakeschincariol-arena-skill": {
+      "learning_id": "learn-github-jakeschincariol-arena-skill",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Jakeschincariol/arena-skill",
+      "repository": "Jakeschincariol/arena-skill",
+      "slug": "jakeschincariol-arena-skill",
+      "platform": "github",
+      "source_url": "https://github.com/Jakeschincariol/arena-skill",
+      "source_version": "df07b8e5",
+      "content_hash": "eeb19dbf8ec3e3d6395e8aea81e71779c8f67643c0449f8d2b3a8e8313ab7ed3",
+      "dossier_path": "07_PROJECT_LEARNING/jakeschincariol-arena-skill-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/jakeschincariol-arena-skill-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 5520,
+          "title": "Invariant State Externalization for Context-Compacted LLM Orchestrators",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5521,
+          "title": "Balanced Strategy Diversity via Bipartite Edge-Coloring",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5522,
+          "title": "Fail-Safe Sub-Agent Fault Isolation with Conservative Fallback",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-29T16:51:00.566Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-5520": {
+      "learning_id": "rule-5520",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5520,
+      "title": "Invariant State Externalization for Context-Compacted LLM Orchestrators",
+      "source_url": "https://github.com/Jakeschincariol/arena-skill",
+      "source_version": "df07b8e5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T16:51:00.566Z"
+    },
+    "rule-5521": {
+      "learning_id": "rule-5521",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5521,
+      "title": "Balanced Strategy Diversity via Bipartite Edge-Coloring",
+      "source_url": "https://github.com/Jakeschincariol/arena-skill",
+      "source_version": "df07b8e5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T16:51:00.566Z"
+    },
+    "rule-5522": {
+      "learning_id": "rule-5522",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5522,
+      "title": "Fail-Safe Sub-Agent Fault Isolation with Conservative Fallback",
+      "source_url": "https://github.com/Jakeschincariol/arena-skill",
+      "source_version": "df07b8e5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T16:51:00.566Z"
+    },
+    "rule-5523": {
+      "learning_id": "rule-5523",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5523,
+      "title": "Typestate Return-on-Yield for Interleaved Stream Payloads",
+      "source_url": "https://github.com/rustls/rustls",
+      "source_version": "44323f51",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T16:51:23.781Z"
+    },
+    "rule-5524": {
+      "learning_id": "rule-5524",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5524,
+      "title": "Transport Write-Overshoot Containment and Poisoning Defense",
+      "source_url": "https://github.com/rustls/rustls",
+      "source_version": "44323f51",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T16:51:23.781Z"
+    },
+    "rule-5525": {
+      "learning_id": "rule-5525",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5525,
+      "title": "Cooperative Deterministic Fuel Guards in Async Schedulers",
+      "source_url": "https://github.com/rustls/rustls",
+      "source_version": "44323f51",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T16:51:23.781Z"
     }
   },
   "aliases": {

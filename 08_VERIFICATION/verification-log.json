@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-TQL1",
-    "timestamp": "2026-10-27T21:18:34.453Z",
-    "repository": "mui/base-ui",
-    "learningId": "learn-github-mui-base-ui",
-    "contentHash": "09ab3184c97e6f78011893ed314ffe081456d8bb1ffcccd55a01d44919fc7e10",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-TV9N",
-    "timestamp": "2026-10-27T21:18:40.523Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "ec4182434da72188e7dae0b864fbaf72a8cb99cd4aa349876734704ee8971807",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-YKN9",
-    "timestamp": "2026-10-27T21:22:20.037Z",
-    "repository": "max-sixty/worktrunk",
-    "learningId": "learn-github-max-sixty-worktrunk",
-    "contentHash": "33022b5a66cf8bebeffaf32081260a898005df4efc5c5772a8f31d246dc1ca55",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-YQI8",
     "timestamp": "2026-10-27T21:22:27.632Z",
     "repository": "autogluon/chronos-2",
@@ -7490,6 +7445,51 @@
     "repository": "mistralai/Mistral-Large-4-1T-A52B",
     "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
     "contentHash": "cbd4bc23066f9da24561958bad582c88a3e9ceb1f2bf0a9eda39ea9409285ce4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-21F9",
+    "timestamp": "2026-10-29T16:48:26.037Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "4cde4727500ffa8ec734b3d993d88b44a3745f394e007746ca30ca76172c02bc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-5CQ5",
+    "timestamp": "2026-10-29T16:51:00.653Z",
+    "repository": "Jakeschincariol/arena-skill",
+    "learningId": "learn-github-jakeschincariol-arena-skill",
+    "contentHash": "eeb19dbf8ec3e3d6395e8aea81e71779c8f67643c0449f8d2b3a8e8313ab7ed3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-5UMT",
+    "timestamp": "2026-10-29T16:51:23.861Z",
+    "repository": "rustls/rustls",
+    "learningId": "learn-github-rustls-rustls",
+    "contentHash": "c93536ae72a820ecaa4be7cc730ab7414d909f08746ff72ba52ee2b9d637317a",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

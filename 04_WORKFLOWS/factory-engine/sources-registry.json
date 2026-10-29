@@ -1,21 +1,20 @@
 {
   "rustls-rustls": {
-    "name": "rustls",
+    "name": "rustls/rustls",
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T23:43:04.238Z",
-    "lastVerified": "2026-10-28T23:43:04.238Z",
+    "lastChecked": "2026-10-29T16:48:19.350Z",
+    "lastVerified": "2026-10-29T16:48:19.350Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
-    "contentHash": "a615eb3512908e4815143021d1b70b179422d0e153c8d07ec77055d1b98a0dc7",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "contentHash": "c93536ae72a820ecaa4be7cc730ab7414d909f08746ff72ba52ee2b9d637317a",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "1783110b"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tanstack-router": {
     "name": "TanStack/router",
@@ -39,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-29T16:36:49.679Z",
-    "lastVerified": "2026-10-29T16:36:49.679Z",
+    "lastChecked": "2026-10-29T16:51:26.410Z",
+    "lastVerified": "2026-10-29T16:51:26.410Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -224,14 +223,14 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T12:19:51.984Z",
-    "lastVerified": "2026-10-29T12:19:51.984Z",
+    "lastChecked": "2026-10-29T16:48:24.607Z",
+    "lastVerified": "2026-10-29T16:48:24.607Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "52b116edca0f183dc8f86b91cf4d86dd0190851e9a01ec65ec6827c130aa712b",
+    "contentHash": "4cde4727500ffa8ec734b3d993d88b44a3745f394e007746ca30ca76172c02bc",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3475,9 +3474,9 @@
   "dingodb-dingo": {
     "name": "dingo",
     "officialUrl": "https://github.com/dingodb/dingo",
-    "lastChecked": "2026-10-28T12:46:39.152Z",
+    "lastChecked": "2026-10-29T16:48:17.418Z",
     "revisionIdentifier": "bb96a741",
-    "lastVerified": "2026-10-28T12:46:39.153Z"
+    "lastVerified": "2026-10-29T16:48:17.418Z"
   },
   "timvisee-ffsend": {
     "name": "ffsend",
@@ -3843,9 +3842,9 @@
   "sealerio-sealer": {
     "name": "sealer",
     "officialUrl": "https://github.com/sealerio/sealer",
-    "lastChecked": "2026-10-28T13:36:45.479Z",
+    "lastChecked": "2026-10-29T16:48:12.413Z",
     "revisionIdentifier": "e426153a",
-    "lastVerified": "2026-10-28T13:36:45.479Z"
+    "lastVerified": "2026-10-29T16:48:12.413Z"
   },
   "helixdb-helix-db": {
     "name": "helix-db",
@@ -8310,6 +8309,37 @@
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ildrm-northstar-seo": {
+    "name": "northstar-seo",
+    "officialUrl": "https://github.com/ildrm/northstar-seo",
+    "lastChecked": "2026-10-29T16:48:07.301Z",
+    "revisionIdentifier": "5ec9c7dc23",
+    "lastVerified": "2026-10-29T16:48:07.301Z"
+  },
+  "nsh07-tomato": {
+    "name": "Tomato",
+    "officialUrl": "https://github.com/nsh07/Tomato",
+    "lastChecked": "2026-10-29T16:48:09.578Z",
+    "revisionIdentifier": "98fa69ed",
+    "lastVerified": "2026-10-29T16:48:09.578Z"
+  },
+  "jakeschincariol-arena-skill": {
+    "name": "Jakeschincariol/arena-skill",
+    "officialUrl": "https://github.com/Jakeschincariol/arena-skill",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-29T16:48:02.343Z",
+    "lastVerified": "2026-10-29T16:48:02.343Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-jakeschincariol-arena-skill",
+    "contentHash": "eeb19dbf8ec3e3d6395e8aea81e71779c8f67643c0449f8d2b3a8e8313ab7ed3",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

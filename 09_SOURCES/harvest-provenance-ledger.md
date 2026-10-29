@@ -6055,3 +6055,6 @@ Every entry in this ledger must capture:
 | `learn-github-liketrek-trek` | `https://github.com/liketrek/TREK` | `a0943f82` | Multi-dimensional audit evidence | 2026-10-29T16:36:36.732Z |
 | `learn-github-vinceglb-filekit` | `https://github.com/vinceglb/FileKit` | `ddc09b4a` | Multi-dimensional audit evidence | 2026-10-29T16:36:46.083Z |
 | `learn-huggingface-mistralai-mistral-large-4-1t-a52b` | `https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B` | `hf-mistral` | Multi-dimensional audit evidence | 2026-10-29T16:36:47.138Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `c0e32115` | Multi-dimensional audit evidence | 2026-10-29T16:48:26.040Z |
+| `learn-github-jakeschincariol-arena-skill` | `https://github.com/Jakeschincariol/arena-skill` | `df07b8e5` | Multi-dimensional audit evidence | 2026-10-29T16:51:00.656Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `44323f51` | Multi-dimensional audit evidence | 2026-10-29T16:51:23.864Z |

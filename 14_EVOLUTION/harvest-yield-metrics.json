@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-29T16:36:47.144Z",
-  "total_cycles_completed": 6023,
-  "total_learnings_persisted": 6023,
-  "total_rules_promoted": 5483,
+  "last_updated": "2026-10-29T16:51:23.868Z",
+  "total_cycles_completed": 6026,
+  "total_learnings_persisted": 6026,
+  "total_rules_promoted": 5490,
   "history": [
-    {
-      "timestamp": "2026-10-28T16:33:53.377Z",
-      "repository": "StarRocks/starrocks",
-      "learningId": "learn-github-starrocks-starrocks",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T16:45:14.827Z",
-      "repository": "FacebookAI/xlm-roberta-base",
-      "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T16:52:00.486Z",
-      "repository": "openai-community/gpt2",
-      "learningId": "learn-huggingface-openai-community-gpt2",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T16:52:05.268Z",
       "repository": "yugabyte/yugabyte-db",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-29T16:36:47.144Z",
       "repository": "mistralai/Mistral-Large-4-1T-A52B",
       "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T16:48:26.044Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T16:51:00.660Z",
+      "repository": "Jakeschincariol/arena-skill",
+      "learningId": "learn-github-jakeschincariol-arena-skill",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T16:51:23.868Z",
+      "repository": "rustls/rustls",
+      "learningId": "learn-github-rustls-rustls",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

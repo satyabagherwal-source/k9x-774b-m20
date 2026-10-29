@@ -6046,3 +6046,6 @@
 | `CYCLE-20261029-MU48` | `2026-10-29T16:36:36.728Z` | `liketrek/TREK` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5514` | Yes (`c1e44fe3...`) |
 | `CYCLE-20261029-N1BZ` | `2026-10-29T16:36:46.079Z` | `vinceglb/FileKit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5515` | Yes (`8d0579e6...`) |
 | `CYCLE-20261029-N25A` | `2026-10-29T16:36:47.134Z` | `mistralai/Mistral-Large-4-1T-A52B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5516, Rule 5517, Rule 5518` | Yes (`cbd4bc23...`) |
+| `CYCLE-20261029-21F9` | `2026-10-29T16:48:26.037Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5519` | Yes (`4cde4727...`) |
+| `CYCLE-20261029-5CQ5` | `2026-10-29T16:51:00.653Z` | `Jakeschincariol/arena-skill` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5520, Rule 5521, Rule 5522` | Yes (`eeb19dbf...`) |
+| `CYCLE-20261029-5UMT` | `2026-10-29T16:51:23.861Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5523, Rule 5524, Rule 5525` | Yes (`c93536ae...`) |

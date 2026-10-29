@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "6ea1cb4c",
+    "sourceVersion": "c0e32115",
     "license": "NOASSERTION",
-    "contentHash": "52b116edca0f183dc8f86b91cf4d86dd0190851e9a01ec65ec6827c130aa712b",
-    "lastHarvestedAt": "2026-10-29T12:19:52.897Z",
+    "contentHash": "4cde4727500ffa8ec734b3d993d88b44a3745f394e007746ca30ca76172c02bc",
+    "lastHarvestedAt": "2026-10-29T16:48:26.040Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -2693,10 +2693,10 @@
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "1783110b",
+    "sourceVersion": "44323f51",
     "license": "NOASSERTION",
-    "contentHash": "a615eb3512908e4815143021d1b70b179422d0e153c8d07ec77055d1b98a0dc7",
-    "lastHarvestedAt": "2026-10-28T13:03:45.581Z",
+    "contentHash": "c93536ae72a820ecaa4be7cc730ab7414d909f08746ff72ba52ee2b9d637317a",
+    "lastHarvestedAt": "2026-10-29T16:51:23.864Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {
@@ -11488,5 +11488,15 @@
     "contentHash": "cbd4bc23066f9da24561958bad582c88a3e9ceb1f2bf0a9eda39ea9409285ce4",
     "lastHarvestedAt": "2026-10-29T16:36:47.138Z",
     "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b"
+  },
+  "jakeschincariol-arena-skill": {
+    "repository": "Jakeschincariol/arena-skill",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Jakeschincariol/arena-skill",
+    "sourceVersion": "df07b8e5",
+    "license": "MIT",
+    "contentHash": "eeb19dbf8ec3e3d6395e8aea81e71779c8f67643c0449f8d2b3a8e8313ab7ed3",
+    "lastHarvestedAt": "2026-10-29T16:51:00.656Z",
+    "learningId": "learn-github-jakeschincariol-arena-skill"
   }
 }

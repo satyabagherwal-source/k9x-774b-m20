@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `6ea1cb4c`  
+> **Source Version**: `c0e32115`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T12:19:52.465Z  
+> **Timestamp**: 2026-10-29T16:48:25.634Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T12:19:51.984Z  
+> **Harvest Timestamp**: 2026-10-29T16:48:24.607Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3818 stars
+- **Stars / Engagement**: 3815 stars
 
 ---
 
@@ -43,7 +43,7 @@
  * Slot-based concurrency control for MCP tool invocations.
  */
 
-import type { ChildProcess } from "child_process";
+import type { ChildProcess } from "node:child_process";
 import { config } from "./config.js";
 import { KILL_GRACE_PERIOD_MS } from "./tool-constants.js";
 
@@ -285,7 +285,7 @@ export const _testConcurrency = {
  * and timer cleanup shared by executor.ts, duckdb.ts, and parquet-bridge.ts.
  */
 
-import { spawn, type ChildProcess, type StdioOptions } from "child_process";
+import { spawn, type ChildProcess, type StdioOptions } from "node:child_process";
 import { KILL_GRACE_PERIOD_MS, DEFAULT_MAX_OUTPUT_SIZE } from "./tool-constants.js";
 
 /** Options for {@link spawnWithTimeout}. */
@@ -2203,198 +2203,585 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6ea1cb4c` (2026-10-29)
-**Commit Message**: ci: pin third-party actions to SHAs, fix bench shell injection, drop unused MCP code (Codacy) (#4957)
+### Incident Patch 1: `c0e32115` (2026-10-29)
+**Commit Message**: bench: move benchmarks.sh to hyperfine 2.0, record peak memory, quarantine suspect results (#4960)
 
-* ci: pin third-party actions to commit SHAs; route bench inputs via env
+* bench: move benchmarks.sh to hyperfine 2.0, record peak memory, quarantine suspect results
 
-Pin all 93 third-party `uses:` references across 46 workflows to full
-commit SHAs, with the resolved version in a trailing comment (matching
-the existing convention in avx512-bench.yml / rust-linux-arm64.yml).
-Dependabot's github-actions ecosystem keeps SHA pins updated.
+hyperfine 2.0 changed the CSV and JSON exports benchmarks.sh reads: with
+it installed, exit_codes_ok found no "exit_codes" array and every
+benchmark was flagged as failed, so a run recorded nothing.
 
-In bench-qsv-stats-alloc.yml, pass the workflow_dispatch `runs`/`warmup`
-inputs through env vars instead of expanding `${{ }}` directly inside
-`run:` scripts (shell injection).
+- Require hyperfine >= 2.0. Read the timed runs' exit codes from the
+  schema-v2 JSON, and map the v2 CSV (with explicit --metrics) back to the
+  archive's mean/stddev/median/user/system/min/max columns.
+- Record peak_mem_mib (the largest peak RSS of the timed runs) as a new
+  trailing archive column, and hyperfine_version in run_info_history.tsv.
+- Quarantine results that look like the command did not do the work, in
+  results/suspect_results.csv instead of the archive: a timed-run spread
+  over 3x, a mean under 33% or peak memory under 25% of the median of the
+  benchmark's last 3 versions, or a failed `run --verify` output check
+  (count must print the rowcount; joinp must produce rows). Thresholds
+  are env-overridable. Absolute startup floors were rejected: qsv's
+  ~9 ms / ~20 MiB startup i
 
-Addresses Codacy findings: third-party-action-not-pinned-to-commit-sha
-(79) and run-shell-injection (1).
+**File**: `CHANGELOG.md` (modified, +8/-0)
+```diff
+@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - Gallery: the WPRDC 2-1-1 and Boston 311 Data Schematics can now be made **Live Data Schematics**. Each gallery entry has a "Make it a Live Data Schematic" how-to: download the page and the exact data it was rendered from, register it with qsv-clientd, and open it from disk, approving the pairing in a shell or from the qsv-clientd tray app's menu. The two data files too large to commit (`wpa_211_requests.csv`, `boston311-2025.tsv.gz`) are attached to the 27.0.1 release. The WPRDC figure is now rendered from the portal's own 13-column file instead of a reshaped 7-column extract, so Fetch latest returns data of the same shape; every number in its description is unchanged. ([#4952](https://github.com/dathere/qsv/pull/4952))
+ 
+ ### Changed
++- **`scripts/benchmarks.sh` 10.0.0 runs on hyperfine 2.0, records peak memory, and quarantines suspect results** ([#4960](https://github.com/dathere/qsv/pull/4960)).
++  - hyperfine 2.0 changed the exports the script reads, so with it installed every benchmark was flagged as failed and a run recorded nothing. hyperfine 2.0 is now required.
++  - The archive gains a `peak_mem_mib` column, the largest peak RSS of a benchmark's timed runs, so memory regressions show up as well as slowdowns.
++  - A result that looks like the command didn't do the work is kept out of the published results and quarantined in a local `suspect_results.csv` with the reason:
++    - its timed runs differ by more than 3x;
++    - its mean or peak memory falls far below that benchmark's most recent recorded version;
++    - or an opt-in output check fails (`count` must print the row count; the `joinp` benchmarks must produce rows).
++  - These are the failure modes that previously had to be found and pruned by hand. A quarantined result that is real, such as a genuine large speedup, is recorded with `./benchmarks.sh accept <name>`.
+ - Build: Polars is built with its `serde` feature instead of `serde-lazy`. qsv only serializes Polars schemas (the `.pschema.json` cache), which `serde` covers; `serde-lazy` also generated serialization code for Polars' whole query-plan layer, which qsv never uses. A clean `-F all_features` debug build takes about 16% less CPU time. No behavior change. ([#4951](https://github.com/dathere/qsv/pull/4951))
+ 
+ ### Fixed
+```
+
+**File**: `scripts/benchmarks.sh` (modified, +566/-264)
+```diff
+@@ -10,6 +10,8 @@
+ #   archives will be preserved.
+ #  if <argument> is "clean", temporary files will be deleted.
+ #  if <argument> is "setup", setup and install all the required tools.
++#  if <argument> is "accept", the benchmarks named after it (e.g. ./benchmarks.sh accept joinp count)
++#   are moved from results/suspect_results.csv into the results - see suspect_reason below.
+ #  if <argument> is "help", help text is displayed.
+ #
+ # ==============================================================================================
+@@ -42,12 +44,31 @@
+ arg_pat="$1"
+ 
+ # the version of this script
+-bm_version=9.13.0
++bm_version=10.0.0
+ 
+ # runs of a benchmark whose means are within this percentage of each other tie in the rank
+ # column (see the delta & rank comments near the end)
+ rank_tie_pct=2
+ 
++# thresholds of the invalid-benchmark detectors (see suspect_reason). A benchmark that trips
++# one is QUARANTINED in results/suspect_results.csv instead of being recorded; review it and
++# record it with `./benchmarks.sh accept <name>` if the result is real.
++#  QSVBM_SPREAD_MAX: max slowest/fastest timed-run ratio. A larger spread is the signature of a
++#   command that only did its work on some runs (to_sqlite timed its own failure this way).
++#  QSVBM_SPEEDUP_PCT: flag a mean below this % of the benchmark's most recent archived version.
++#  QSVBM_MEM_DROP_PCT: flag a peak memory below this % of its most recent archived peak memory.
++# A failed invocation looks like a huge speedup that also skipped the work's memory. These are
++# relative to each benchmark's OWN history: qsv's startup (~9 ms, ~20 MiB) is also the real
++# cost of many cheap benchmarks (count_index, headers, cached stats), so no absolute floor works.
++spread_max=${QSVBM_SPREAD_MAX:-3}
++speedup_pct=${QSVBM_SPEEDUP_PCT:-33}
++mem_drop_pct=${QSVBM_MEM_DROP_PCT:-25}
++
++# what hyperfine measures. Explicit units pin the CSV export to seconds and MiB, and user/system
++# are only exported when asked for. The archive keeps hyperfine 1.x's column names - see
++# hf_result_row.
++hf_metrics=time_wall_clock:s,time_user:s,time_system:s,memory_peak_resident:MiB
++
+ # CONFIGURABLE VARIABLES ---------------------------------------
+ # change as needed to reflect your environment/workloads
+ 
+@@ -113,6 +134,8 @@ if [[ "$arg_pat" == "help" ]]; then
+   echo "                     historical archive will be preserved."
+   echo "          \"clean\": temporary files will be deleted."
+   echo "          \"setup\": setup and install all the required tools."
++  echo "         \"accept\": accept <name>... records the named benchmarks that the LATEST run"
++  echo "                     quarantined in results/suspect_results.csv, without re-running them."
+   echo "           \"help\": this help text is displayed."
+   echo ""
+   echo "Current configuration:"
+@@ -238,13 +261,13 @@ else
+   sevenz_bin=7z
+ fi
+ 
+-# hyperfine's --conclude (used by the to_sqlite benchmark) was added in v1.19, so that is
+-# our floor. hyperfine_too_old returns 0 (true) ONLY when an installed hyperfine can be
++# hyperfine 2.0 changed its CSV/JSON export formats, which this script reads, so 2.0 is our
++# floor. hyperfine_too_old returns 0 (true) ONLY when an installed hyperfine can be
+ # positively identified as older - an unparseable version string is never treated as too
+ # old, so a future version-string change cannot block the benchmarks. Sets the global
+ # $hyperfine_version for error messages.
+-hyperfine_min_major=1
+-hyperfine_min_minor=19
++hyperfine_min_major=2
++hyperfine_min_minor=0
+ function hyperfine_too_old {
+   local raw major minor
+   raw=$(hyperfine --version 2>/dev/null)
+@@ -276,7 +299,7 @@ if [[ "$arg_pat" == "setup" ]]; then
+     need_sevenz=1
+   fi
+ 
+-  # check if hyperfine is installed, and that it is new enough for --conclude.
++  # check if hyperfine is installed, and that it is new enough (2.0+ export formats).
+   # need_hyperfine=2 means "installed but too old", which needs an upgrade, not an install
+   # - `brew install` on an already-installed formula is a no-op, so without this a 1.18
+   # user would bounce between the version error and a setup run that does nothing.
+@@ -400,15 +423,14 @@ fi
+ # check if hyperfine is installed
+ if ! command -v hyperfine &>/dev/null; then
+   echo "ERROR: hyperfine could not be found"
+-  echo "Please install hyperfine v1.19.0 and above or run \"./benchmarks.sh setup\" to install it."
++  echo "Please install hyperfine v2.0.0 and above or run \"./benchmarks.sh setup\" to install it."
+   exit 1
+ fi
+ 
+-# the to_sqlite benchmark uses hyperfine's --conclude, which was added in 1.19. On an
+-# older hyperfine that benchmark would die on an unknown argument mid-run, so fail fast
+-# with a clear message instead.
++# hyperfine 2.0 changed the CSV and JSON exports this script reads (and added the peak memory
++# measurement), so on 1.x every benchmark would be flagged as failed. Fail fast instead.
+ if hyperfine_too_old; then
+-  echo "ERROR: hyperfine v$hyperfine_versio
+```
+
+**File**: `scripts/results/README.md` (modified, +5/-1)
+```diff
+@@ -3,7 +3,11 @@ These benchmarks are compiled on an Apple Mac Mini 2023 model with an M2 Pro chi
+ It uses the prebuilt, CPU optimized qsv binary variant in aarch64-apple-darwin.zip found at `https://github.com/dathere/qsv/releases/latest`. That binary was also built with profile-guided optimization (PGO) for 21.1.0 through 23.0.1. 24.0.0's was not, because of [#4740](https://github.com/dathere/qsv/issues/4740). The `kind` column of [run_info_history.tsv](run_info_history.tsv) records which runs were PGO (`prebuilt-pgo`) and which were not (`prebuilt`). The benchmarks were performed on a million row, 41 column, 520 MB sample of NYC's 311 data.
+ `https://raw.githubusercontent.com/wiki/dathere/qsv/files/NYC_311_SR_2010-2020-sample-1M.7z`
+ 
+-Each benchmark is executed five times using hyperfine (>= v1.19.0). Two warmup runs followed by three benchmark runs. Records per second is calculated by dividing the number of records that benchmark actually read by the mean of the three benchmark runs. That is the full 1M-row dataset for almost every benchmark, but a few read a smaller prepared subset and are divided by its own row count instead: `geoconvert_csv2geojsonl` (745,305 rows - the dataset filtered to rows having both a Latitude and a Longitude), `to_ods` (500,000 rows - the full dataset overflows the 4GB non-ZIP64 limit), and the `pragmastat_50k*` series (50,000 rows - the full dataset takes ~2 hours per run). All other measurements are in seconds.
++Each benchmark is executed five times using hyperfine (>= v2.0.0). Two warmup runs followed by three benchmark runs. Records per second is calculated by dividing the number of records that benchmark actually read by the mean of the three benchmark runs. That is the full 1M-row dataset for almost every benchmark, but a few read a smaller prepared subset and are divided by its own row count instead: `geoconvert_csv2geojsonl` (745,305 rows - the dataset filtered to rows having both a Latitude and a Longitude), `to_ods` (500,000 rows - the full dataset overflows the 4GB non-ZIP64 limit), and the `pragmastat_50k*` series (50,000 rows - the full dataset takes ~2 hours per run). All other measurements are in seconds.
++
++The `peak_mem_mib` column is the largest peak resident memory (RSS) of a benchmark's timed runs, in MiB. It is recorded from benchmark script v10.0.0 (hyperfine v2.0.0) on, so it is empty for earlier runs.
++
++A result is only recorded when it looks like the command did the work being timed. Besides a check of every timed run's exit code, the benchmark script quarantines a result in `suspect_results.csv` (a local file, not published) instead of recording it when its timed runs differ by more than 3x, when its mean or peak memory drops far below that benchmark's most recent recorded version (under 33% and 25% of it, respectively), or when its output fails a check (for example, `count` must print the dataset's row count). A quarantined result that turns out to be real, such as a genuine large speedup, is recorded with `./benchmarks.sh accept <name>`.
+ 
+ The `delta (%)` column shows how much *faster* a benchmark is versus its previous qsv version, as a percentage of the previous version's mean run time (positive = faster, negative = a regression). It is empty when there is no earlier version to compare against. The `rank` column is the speed rank of a run among all recorded runs of the same benchmark, by mean run time, with runs within 2% of each other counted as ties: a run's rank is 1 + the number of runs more than 2% faster than it, so `1` means within 2% of the fastest run ever recorded. Most benchmarks have dozens of runs within a few percent of each other, so even with the tie band a slip of a few percent can still move a run several places; read `delta (%)` for the size of a change. The `slower than best (%)` column shows how much slower a run is than the fastest run ever recorded for that benchmark (`0` = it is the fastest). Unlike `rank`, it has no cliffs: a run that is 1% slower than another reads about 1% higher.
+ 
+```
+
+---
+
+### Incident Patch 2: `4170210c` (2026-10-29)
+**Commit Message**: refactor(mcp): use node: protocol for all Node.js builtin imports (#4958)
+
+Convert all 109 bare builtin imports in .claude/skills to the explicit
+`node:` protocol (biome style/useNodejsImportProtocol), making the
+codebase consistent (it was split ~50/50) and clearing 99 Codacy
+findings. Node >= 20 is required by package.json engines. No behavior
+change.
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.claude/skills/scripts/clean-bundles.js` (modified, +3/-3)
+```diff
+@@ -2,9 +2,9 @@
+ // Prune historical .mcpb / .plugin bundles, keeping only the current version
+ // (read from package.json). Run from .claude/skills/ as `npm run clean:bundles`.
+ 
+-import { readdirSync, readFileSync, statSync, unlinkSync } from 'fs';
+-import { join, dirname } from 'path';
+-import { fileURLToPath } from 'url';
++import { readdirSync, readFileSync, statSync, unlinkSync } from 'node:fs';
++import { join, dirname } from 'node:path';
++import { fileURLToPath } from 'node:url';
+ 
+ const __dirname = dirname(fileURLToPath(import.meta.url));
+ const rootDir = join(__dirname, '..');
+```
+
+**File**: `.claude/skills/scripts/install-mcp.js` (modified, +8/-8)
+```diff
+@@ -9,14 +9,14 @@
+  * 4. Provides verification steps
+  */
+ 
+-import { exec } from 'child_process';
+-import { promisify } from 'util';
+-import { readFile, writeFile, mkdir } from 'fs/promises';
+-import { existsSync } from 'fs';
+-import { join, dirname, resolve } from 'path';
+-import { fileURLToPath } from 'url';
+-import { homedir, platform } from 'os';
+-import * as readline from 'readline';
++import { exec } from 'node:child_process';
++import { promisify } from 'node:util';
++import { readFile, writeFile, mkdir } from 'node:fs/promises';
++import { existsSync } from 'node:fs';
++import { join, dirname, resolve } from 'node:path';
++import { fileURLToPath } from 'node:url';
++import { homedir, platform } from 'node:os';
++import * as readline from 'node:readline';
+ 
+ const execAsync = promisify(exec);
+ 
+```
+
+**File**: `.claude/skills/scripts/package-mcpb.js` (modified, +4/-4)
+```diff
+@@ -15,11 +15,11 @@
+  * - icon.png (if exists)
+  */
+ 
+-import { createWriteStream, existsSync, rmSync, readFileSync, readdirSync } from 'fs';
+-import { join, dirname } from 'path';
+-import { fileURLToPath } from 'url';
++import { createWriteStream, existsSync, rmSync, readFileSync, readdirSync } from 'node:fs';
++import { join, dirname } from 'node:path';
++import { fileURLToPath } from 'node:url';
+ import { ZipArchive } from 'archiver';
+-import { execSync } from 'child_process';
++import { execSync } from 'node:child_process';
+ 
+ const __filename = fileURLToPath(import.meta.url);
+ const __dirname = dirname(__filename);
+```
+
+**File**: `.claude/skills/scripts/package-plugin.js` (modified, +3/-3)
+```diff
+@@ -21,9 +21,9 @@
+  * The MCP server comes separately from the .mcpb Desktop Extension.
+  */
+ 
+-import { createWriteStream, existsSync, readFileSync, rmSync } from 'fs';
+-import { join, dirname } from 'path';
+-import { fileURLToPath } from 'url';
++import { createWriteStream, existsSync, readFileSync, rmSync } from 'node:fs';
++import { join, dirname } from 'node:path';
++import { fileURLToPath } from 'node:url';
+ import { ZipArchive } from 'archiver';
+ 
+ const __filename = fileURLToPath(import.meta.url);
+```
+
+**File**: `.claude/skills/scripts/run-tests.js` (modified, +5/-5)
+```diff
+@@ -5,11 +5,11 @@
+  * Node 20's --test flag doesn't handle globs as well as 22+, so we expand them first
+  */
+ 
+-import { spawn } from 'child_process';
+-import { readdir } from 'fs/promises';
+-import { join } from 'path';
+-import { fileURLToPath } from 'url';
+-import { dirname } from 'path';
++import { spawn } from 'node:child_process';
++import { readdir } from 'node:fs/promises';
++import { join } from 'node:path';
++import { fileURLToPath } from 'node:url';
++import { dirname } from 'node:path';
+ 
+ const __filename = fileURLToPath(import.meta.url);
+ const __dirname = dirname(__filename);
+```
+
+**File**: `.claude/skills/scripts/verify-bundles.js` (modified, +5/-5)
+```diff
+@@ -19,11 +19,11 @@
+  * Requires `unzip` on PATH.
+  */
+ 
+-import { execFileSync, spawn } from 'child_process';
+-import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync } from 'fs';
+-import { tmpdir } from 'os';
+-import { dirname, join } from 'path';
+-import { fileURLToPath } from 'url';
++import { execFileSync, spawn } from 'node:child_process';
++import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync } from 'node:fs';
++import { tmpdir } from 'node:os';
++import { dirname, join } from 'node:path';
++import { fileURLToPath } from 'node:url';
+ 
+ const rootDir = join(dirname(fileURLToPath(import.meta.url)), '..');
+ const repoRoot = join(rootDir, '..', '..');
+```
+
+**File**: `.claude/skills/src/command-guidance.ts` (modified, +4/-4)
+```diff
+@@ -5,10 +5,10 @@
+  * Call loadCommandGuidance() once at server startup before using getCommandGuidance().
+  */
+ 
+-import { readFile } from "fs/promises";
+-import { join, dirname } from "path";
+-import { fileURLToPath } from "url";
+-import { existsSync } from "fs";
++import { readFile } from "node:fs/promises";
++import { join, dirname } from "node:path";
++import { fileURLToPath } from "node:url";
++import { existsSync } from "node:fs";
+ import { parse as parseYaml } from "yaml";
+ import type { QsvSkill } from "./types.js";
+ import { config } from "./config.js";
+```
+
+**File**: `.claude/skills/src/concurrency.ts` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@
+  * Slot-based concurrency control for MCP tool invocations.
+  */
+ 
+-import type { ChildProcess } from "child_process";
++import type { ChildProcess } from "node:child_process";
+ import { config } from "./config.js";
+ import { KILL_GRACE_PERIOD_MS } from "./tool-constants.js";
+ 
+```
+
+---
+
+### Incident Patch 3: `cb59f10d` (2026-10-29)
+**Commit Message**: fix(viz): name the non-numeric --color/--size column when map/geo keeps no rows (#4959)
+
+* fix(viz): name the non-numeric --color/--size column when map/geo keeps no rows
+
+`viz map`/`viz geo` drop any row whose --color or --size cell isn't
+numeric (both are continuous encodings). With a categorical column such
+as `--color Borough`, every row was dropped and the error blamed
+--lat/--lon ("are --lat/--lon numeric and within valid coordinate
+ranges?") even though the coordinates were fine.
+
+Count coordinate-valid rows and each encoding's numeric cells, and when
+nothing is kept, name the offending column(s) and point to --series for
+categorical coloring (or, in --density mode, which rejects --series,
+explain that the column is the numeric heatmap weight). The --lat/--lon
+message is kept for runs where no row had valid coordinates.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* refactor(mcp): remove unused imports, variables and catch bindings
-
-Clears Biome noUnusedImports / noUnusedVariables findings reported by
-Codacy: drop unused imports, an unused `stdout` destructure, the unused
-`ConvertedFileCache` type alias, and unused catch bindings (`catch {}`).
-No behavior change.
+* docs(changelog): viz map/geo non-numeric --color/--size error (#4959)
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ---------
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EM
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.claude/skills/examples/update-checker-demo.js` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -5,7 +5,7 @@
-  * Demonstrates the auto-update checking functionality
-  */
+@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - Build: Polars is built with its `serde` feature instead of `serde-lazy`. qsv only serializes Polars schemas (the `.pschema.json` cache), which `serde` covers; `serde-lazy` also generated serialization code for Polars' whole query-plan layer, which qsv never uses. A clean `-F all_features` debug build takes about 16% less CPU time. No behavior change. ([#4951](https://github.com/dathere/qsv/pull/4951))
  
--import { UpdateChecker, getUpdateConfigFromEnv } from '../dist/update-checker.js';
-+import { UpdateChecker } from '../dist/update-checker.js';
- 
- async function main() {
-   console.log('QSV MCP Server - Update Checker Demo');
+ ### Fixed
++- `viz map`/`viz geo`: a non-numeric `--color` or `--size` column now gets an error that names it. Both options are numeric encodings, so a categorical column (e.g. `--color Borough`) dropped every row, and the error blamed `--lat`/`--lon` even though the coordinates were valid. The message now names the column and points to `--series` for categorical coloring; in `--density` mode, which rejects `--series`, it explains that the column is the numeric heatmap weight. ([#4959](https://github.com/dathere/qsv/pull/4959))
+ - `viz smart`: clicking a region on a county-name map now keeps the rows whose state is blank. When county names are qualified by a state column, the data viewer filter required one of the state spellings seen for that county, so a row the map had placed without a state (its county name unique on its own) was counted on the map but dropped from the drill-down; a county whose rows all lacked a state showed no rows at all. Blank states now match through the filter's "Empty" condition. Found on the WPRDC 2-1-1 gallery page (#4952). ([#4953](https://github.com/dathere/qsv/pull/4953))
+ - **`viz smart`: a map in a sandboxed iframe now says why it's blank** ([#4947](https://github.com/dathere/qsv/pull/4947), [#4946](https://github.com/dathere/qsv/issues/4946)). Embedded in an `<iframe sandbox>` without `allow-same-origin` (the CKAN Webpage view the wiki recommends), every MapLibre map panel stayed empty with no error: the map library bundled with plotly.js 3.x rejects its own worker's messages when the page's origin is `null`. The schematic now shows a note above each such map telling the viewer to open it in its own tab. Pages opened from a file aren't affected. Rendering the maps there needs a plotly.js upgrade; #4946 tracks it.
+ - `get`: overwriting an existing file with `--output` (`get`, `get cache-fetch`) no longer briefly exposes the new contents: the temp file that replaces it is owner-only (`0600`) while the data is written, and takes the old file's mode only afterwards. It also keeps the old file's group, so a group-readable file isn't handed to a different group; where the group can't be kept, the new file isn't group-readable, and other users get no access the old file denied its group. Setuid/setgid bits aren't carried over, as an in-place overwrite would have cleared them. Follow-up to [#4945](https://github.com/dathere/qsv/pull/4945). ([#4948](https://github.com/dathere/qsv/pull/4948))
 ```
 
-**File**: `.claude/skills/scripts/install-mcp.js` (modified, +2/-2)
+**File**: `src/cmd/viz.rs` (modified, +90/-32)
 ```diff
-@@ -207,7 +207,7 @@ async function getQsvBinaryPath() {
- async function buildTypeScript() {
-   try {
-     info('Building TypeScript...');
--    const { stdout, stderr } = await execAsync('npm run build', {
-+    const { stderr } = await execAsync('npm run build', {
-       cwd: SKILLS_DIR,
-     });
- 
-@@ -268,7 +268,7 @@ async function updateClaudeConfig(envVars) {
-       const content = await readFile(configPath, 'utf-8');
-       config = JSON.parse(content);
-       info('Found existing Claude Desktop config');
--    } catch (err) {
-+    } catch {
-       warning('Could not parse existing config, creating new one');
+@@ -4213,6 +4213,56 @@ fn fit_dims(
      }
-   } else {
-```
-
-**File**: `.claude/skills/scripts/package-mcpb.js` (modified, +2/-2)
-```diff
-@@ -15,7 +15,7 @@
-  * - icon.png (if exists)
-  */
- 
--import { createWriteStream, existsSync, mkdirSync, rmSync, readFileSync, readdirSync } from 'fs';
-+import { createWriteStream, existsSync, rmSync, readFileSync, readdirSync } from 'fs';
- import { join, dirname } from 'path';
- import { fileURLToPath } from 'url';
- import { ZipArchive } from 'archiver';
-@@ -64,7 +64,7 @@ function buildTypeScript() {
-   try {
-     execSync('npm run build', { cwd: rootDir, stdio: 'inherit' });
-     console.log('✅ TypeScript build successful');
--  } catch (error) {
-+  } catch {
-     console.error('❌ TypeScript build failed');
-     process.exit(1);
-   }
-```
-
-**File**: `.claude/skills/src/converted-file-manager.ts` (modified, +0/-5)
-```diff
-@@ -55,11 +55,6 @@ interface ConvertedFileCacheV0 {
-   totalSize: number;
  }
  
--/**
-- * Union type for all cache versions
-- */
--type ConvertedFileCache = ConvertedFileCacheV1 | ConvertedFileCacheV0;
--
- interface ConvertedFileEntry {
-   convertedPath: string;
-   sourcePath: string;
-```
-
-**File**: `.claude/skills/src/mcp-filesystem.ts` (modified, +3/-3)
-```diff
-@@ -5,7 +5,7 @@
-  * Claude Desktop to work with local files without uploading them.
-  */
- 
--import { readdir, stat, readFile, realpath, access } from "fs/promises";
-+import { readdir, stat, realpath, access } from "fs/promises";
- import { realpathSync } from "fs";
- import { join, resolve, relative, basename, dirname, extname, isAbsolute } from "path";
- import { homedir } from "os";
-@@ -343,7 +343,7 @@ export class FilesystemResourceProvider {
-     let canonical: string;
-     try {
-       canonical = await realpath(resolved);
--    } catch (error: unknown) {
-+    } catch {
-       // If file doesn't exist yet (e.g., output file), use resolved path
-       // but still validate the parent directory exists and is allowed
-       const parentDir = join(resolved, "..");
-@@ -650,7 +650,7 @@ export class FilesystemResourceProvider {
-             try {
-               await this.resolvePath(relative(this.workingDir, fullPath));
-               await this.scanDirectory(fullPath, resources, recursive);
--            } catch (error: unknown) {
-+            } catch {
-               // Subdirectory is outside allowed directories or inaccessible
-               console.error(`Skipping unauthorized directory: ${fullPath}`);
-             }
-```
-
-**File**: `.claude/skills/src/tool-handlers.ts` (modified, +1/-1)
-```diff
-@@ -1300,7 +1300,7 @@ export async function handleSearchToolsCall(
-           regex.test(skill.command.subcommand) ||
-           skill.examples?.some((ex) => regex.test(ex.description)),
-       );
--    } catch (regexError) {
-+    } catch {
-       // Invalid regex, fall back to text search (already done above)
-     }
-   }
-```
-
-**File**: `.claude/skills/src/update-checker.ts` (modified, +1/-1)
-```diff
-@@ -146,7 +146,7 @@ export class UpdateChecker {
-         if (skill.version) {
-           return skill.version;
++/// The error for a `map`/`geo` run that kept no rows. When rows had valid coordinates but each
++/// was dropped for a non-numeric `--color`/`--size` cell (e.g. a categorical `--color Borough`),
++/// blaming --lat/--lon would misdiagnose it, so name the offending encoding column(s) instead.
++/// `encodings` holds `(flag, column index, numeric cells seen among coordinate-valid rows)`.
++fn no_mappable_rows_error<T>(
++    coord_rows: usize,
++    headers: &csv::ByteRecord,
++    no_headers: bool,
++    encodings: &[(&str, Option<usize>, usize)],
++    density: bool,
++) -> CliResult<T> {
++    if coord_rows > 0 {
++        let non_numeric: Vec<String> = encodings
++            .iter()
++            .filter_map(|&(flag, idx, numeric)| match idx {
++                Some(i) if numeric == 0 => Some(format!(
++                    "--{flag} column \"{}\"",
++                    col_label(headers, i, no_headers)
++                )),
++                _ => None,
++            })
++            .collect();
++        if !non_numeric.is_empty() {
++            // --density rejects --series, so only point maps get the categorical-coloring hint
++            let hint = if density {
++                "In density mode, the --color/--size column is the numeric heatmap weight."
++            } else {
++                "For categorical coloring, use the --series option instead."
++            };
++            return fail_incorrectusage_clierror!(
++                "No mappable rows found: {} {} no numeric values. --color and --size need numeric \
++                 columns. {hint}",
++                non_numeric.join(" and "),
++                if non_numeric.len() == 1 {
++                    "has"
++                } else {
++                    "have"
++                }
++            );
++        }
++        return fail_clierror!(
++            "No mappable rows found: no row with valid coordinates has a numeric value in every \
++             --color/--size column."
++        );
++    }
++    fail_clierror!(
++        "No mappable rows found (are --lat/--lon numeric and within valid coordinate ranges?)."
++    )
++}
++
+ /// Build the complete `Plot` for `viz map`: a `ScatterMap` point map (optionally with
+ /// `--color`/`--size` marker encodings or `--series` per-category traces) or a `--density`
+ /// `DensityMap` heatmap, on a MapLibre tile basemap framed to the data's bounding box.
+@@ -4254,6 +4304,7 @@ fn build_map_plot(args: &Args, out_format: OutFormat) -> CliResult<Plot> {
+     let mut sizes: Vec<f64> = Vec::new();
+     let mut series: Vec<String> = Vec::new();
+     let mut texts: Vec<String> = Vec::new();
++    let (mut coord_rows, mut color_numeric, mut size_numeric) = (0_usize, 0_usize, 0_usize);
+     let mut record = csv::ByteRecord::new();
+     while rdr.read_byte_record(&mut record)? {
+         let (Some(lat), Some(lon)) = (
+@@ -4265,20 +4316,16 @@ fn build_map_plot(args: &Args, out_format: OutFormat) -> CliResult<Plot> {
+         if !(-90.0..=90.0).contains(&lat) || !(-180.0..=180.0).contains(&lon) {
+             continue;
          }
--      } catch (error: unknown) {
-+      } catch {
-         // Try next file
-         continue;
-       }
+-        let color = match color_idx {
+-            Some(i) => match parse_f64(record.get(i)) {
+-                Some(v) => Some(v),
+-                None => continue,
+-            },
+-            None => None,
+-        };
+-        let size = match size_idx {
+-            Some(i) => match parse_f64(record.get(i)) {
+-                Some(v) => Some(v),
+-                None => continue,
+-            },
+-            None => None,
+-        };
++        coord_rows += 1;
++        // parse both encodings before dropping the row, so each column's numeric count is exact
++        let color = color_idx.map(|i| parse_f64(record.get(i)));
++        let size = size_idx.map(|i| parse_f64(record.get(i)));
++        color_numeric += usize::from(matches!(color, Some(Some(_))));
++        size_numeric += usize::from(matches!(size, Some(Some(_))));
++        if matches!(color, Some(None)) || matches!(size, Some(None)) {
++            continue;
++        }
++        let (color, size) = (color.flatten(), size.flatten());
+         lats.push(lat);
+         lons.push(lon);
+         if let Some(v) = color {
+@@ -4297,8 +4344,15 @@ fn build_map_plot(args: &Args, out_format: OutFormat) -> CliResult<Plot> {
+         }
+     }
+     if lats.is_empty() {
+-        return fail_clierror!(
+-            "No mappable rows found (are --lat/--lon numeric and within valid coordinate ranges?)."
++        return no_mappable_rows_error(
++            coord_rows,
++            &headers,
++            nh,
++            &[
++                ("color", color_idx, color_numeric),
++                ("size", size_idx, size_numeric),
++            ],
++            args.flag_density,
+         );
+     }
+ 
+@@ -4540,6 +4594,7 @@ fn build_geo_plot(args: &Args) -> CliResult<Plot> {
+     let mut sizes: Vec<f64> = Vec::new();
+     let mut series: Vec<String> = Vec::new();
+     let mut texts: Vec<String> = Vec::new();
++    let (mut coord_rows, mut color_n
 ```
 
-**File**: `.claude/skills/tests/mcp-server.test.ts` (modified, +1/-3)
+**File**: `tests/test_viz.rs` (modified, +73/-0)
 ```diff
-@@ -23,7 +23,6 @@ import {
-   createGetWorkingDirTool,
-   handleConfigTool,
-   handleSearchToolsCall,
--  initiateShutdown,
-   killAllProcesses,
-   getActiveProcessCount,
-   getActiveOperationCount,
-@@ -35,9 +34,8 @@ import {
-   coreToolCount,
- } from "../src/tool-constants.js";
- import { SkillLoader } from "../src/loader.js";
--import { SkillExecutor } from "../src/executor.js";
- import { FilesystemResourceProvider } from "../src/mcp-filesystem.js";
--import type { QsvSkill, McpToolDefinition } from "../src/types.js";
-+import type { QsvSkill } from "../src/types.js";
- import { mkdtemp, writeFile, rm } from "node:fs/promises";
- import { join } from "node:path";
- import { tmpdir } from "node:os";
+@@ -24605,6 +24605,79 @@ fn viz_slider_all_blank_frame_cells_is_an_error() {
+     }
+ }
+ 
++#[test]
++fn viz_map_geo_non_numeric_encoding_names_the_column() {
++    // valid coordinates + a categorical --color/--size used to fail with the misleading
++    // "are --lat/--lon numeric ...?" error; the message must name the encoding column instead
++    let wrk = Workdir::new("viz_map_geo_non_numeric_encoding_names_the_column");
++    wrk.create_from_string(
++        "p.csv",
++        "lat,lon,boro,n,a,b\n40.1,-73.9,BROOKLYN,1,1,x\n40.7,-73.98,MANHATTAN,2,y,2\n",
++    );
++    let series_hint = "For categorical coloring, use the --series option instead.";
++    for (args, msgs) in [
++        (
++            vec!["map", "--color", "boro"],
++            vec!["--color column \"boro\" has no numeric values", series_hint],
++        ),
++        (
++            vec!["geo", "--color", "boro"],
++            vec!["--color column \"boro\" has no numeric values", series_hint],
++        ),
++        (
++            vec!["geo", "--size", "boro"],
++            vec!["--size column \"boro\" has no numeric values", series_hint],
++        ),
++        (
++            vec!["map", "--color", "boro", "--size", "boro"],
++            vec![
++                "--color column \"boro\" and --size column \"boro\" have no numeric values",
++                series_hint,
++            ],
++        ),
++        (
++            vec!["map", "--density", "--color", "boro"],
++            vec![
++                "--color column \"boro\" has no numeric values",
++                "In density mode, the --color/--size column is the numeric heatmap weight.",
++            ],
++        ),
++        (
++            // each column is numeric somewhere, but never on the same row
++            vec!["map", "--color", "a", "--size", "b"],
++            vec![
++                "no row with valid coordinates has a numeric value in every --color/--size column",
++            ],
++        ),
++        (
++            // no valid coordinates at all: the original diagnosis still applies
++            vec!["map", "--lat", "boro", "--color", "boro"],
++            vec!["are --lat/--lon numeric and within valid coordinate ranges?"],
++        ),
++    ] {
++        let mut cmd = wrk.command("viz");
++        cmd.arg(args[0]).arg("p.csv");
++        if !args.contains(&"--lat") {
++            cmd.args(["--lat", "lat"]);
++        }
++        cmd.args(["--lon", "lon"]).args(&args[1..]);
++        let stderr = wrk.stderr_on_error(&mut cmd);
++        for msg in msgs {
++            assert!(stderr.contains(msg), "{args:?}: {stderr}");
++        }
++        if args.contains(&"--density") {
++            assert!(!stderr.contains(series_hint), "{args:?}: {stderr}");
++        }
++    }
++
++    // a numeric --color still renders
++    let mut cmd = wrk.command("viz");
++    cmd.args([
++        "map", "p.csv", "--lat", "lat", "--lon", "lon", "--color", "n", "-o", "ok.html",
++    ]);
++    wrk.assert_success(&mut cmd);
++}
++
+ #[test]
+ fn viz_pie_rejects_negative_slice_totals() {
+     // plotly silently drops a negative slice and recomputes every percentage without it
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4960** (2026-10-29): bench: move benchmarks.sh to hyperfine 2.0, record peak memory, quarantine suspect results (@jqnatividad)
+- **PR #4959** (2026-10-29): fix(viz): name the non-numeric --color/--size column when map/geo keeps no rows (@jqnatividad)
+- **PR #4958** (2026-10-29): refactor(mcp): use node: protocol for all Node.js builtin imports (@jqnatividad)
 - **PR #4957** (2026-10-29): ci: pin third-party actions to SHAs, fix bench shell injection, drop unused MCP code (Codacy) (@jqnatividad)
-- **PR #4954** (2026-10-28): docs(viz gallery): offer the qsv-clientd tray in the live how-tos (@jqnatividad)
-- **PR #4953** (2026-10-28): fix(viz): keep blank-qualifier rows in the region-click drill-down (@jqnatividad)
-- **PR #4952** (2026-10-28): docs(viz gallery): make the WPRDC 2-1-1 and Boston 311 Data Schematics live (@jqnatividad)
-- **PR #4951** (2026-10-28): build(polars): use the serde feature instead of serde-lazy (@jqnatividad)
-- **PR #4950** (2026-10-27): docs(benchmarks): regenerate Data Schematic for the 27.0.1 run (@jqnatividad)
+- **PR #4956** (2026-10-29): build(deps): bump @hono/node-server from 2.1.0 to 2.1.5 in /.claude/skills (@dependabot[bot])
+- **PR #4955** (2026-10-29): build(deps): bump anthropics/claude-code-action from 1.0.262 to 1.0.263 (@dependabot[bot])
 
 ---
 
@@ -2414,28 +2801,35 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EM
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: pin third-party actions to SHAs, fix bench shell injection, drop unused MCP 
+## X. bench: move benchmarks.sh to hyperfine 2.0, record peak memory, quarantine suspe
 
 **RULE**:
-When implementing operations in `.claude/skills/examples/update-checker-demo.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6ea1cb4c`: ci: pin third-party actions to SHAs, fix bench shell injection, drop unused MCP code (Codacy) (#4957). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c0e32115`: bench: move benchmarks.sh to hyperfine 2.0, record peak memory, quarantine suspect results (#4960). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/examples/update-checker-demo.js`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-import { UpdateChecker } from '../dist/update-checker.js';
+- **`scripts/benchmarks.sh` 10.0.0 runs on hyperfine 2.0, records peak memory, and quarantines suspect results** ([#4960](https://github.com/dathere/qsv/pull/4960)).
+  - hyperfine 2.0 changed the exports the script reads, so with it installed every benchmark was flagged as failed and a run recorded nothing. hyperfine 2.0 is now required.
+  - The archive gains a `peak_mem_mib` column, the largest peak RSS of a benchmark's timed runs, so memory regressions show up as well as slowdowns.
+  - A result that looks like the command didn't do the work is kept out of the published results and quarantined in a local `suspect_results.csv` with the reason:
+    - its timed runs differ by more than 3x;
+    - its mean or peak memory falls far below that benchmark's most recent recorded version;
+    - or an opt-in output check fails (`count` must print the row count; the `joinp` benchmarks must produce rows).
+  - These are the failure modes that previously had to be found and pruned by hand. A quarantined result that is real, such as a genuine large speedup, is recorded with `./benchmarks.sh accept <name>`.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-import { UpdateChecker, getUpdateConfigFromEnv } from '../dist/update-checker.js';
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6ea1cb4c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c0e32115` are properly handled with clean fallback behavior.
