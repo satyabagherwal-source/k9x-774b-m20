@@ -2483,10 +2483,10 @@
     "repository": "sharkdp/bat",
     "platform": "github",
     "sourceUrl": "https://github.com/sharkdp/bat",
-    "sourceVersion": "a9aa73d2",
+    "sourceVersion": "fe901f50",
     "license": "Apache-2.0",
-    "contentHash": "92a2da3d3219e1be545e1b0a8d3d9fbe5071f400d06a244b8958c698814a9926",
-    "lastHarvestedAt": "2026-10-20T21:27:32.718Z",
+    "contentHash": "85c5eabc7aa3953b01f680db1f71aad330c5bef73dd718aafd6c48f24eb65a07",
+    "lastHarvestedAt": "2026-10-29T01:24:41.853Z",
     "learningId": "learn-github-sharkdp-bat"
   },
   "karakeep-app-karakeep": {
@@ -3333,10 +3333,10 @@
     "repository": "kumahq/kuma",
     "platform": "github",
     "sourceUrl": "https://github.com/kumahq/kuma",
-    "sourceVersion": "1bf742fe",
+    "sourceVersion": "35fa93a9",
     "license": "Apache-2.0",
-    "contentHash": "22dfc13595c22eb1b08cb5013d965f8212d539948ecdf6604b76e47ca854cfeb",
-    "lastHarvestedAt": "2026-10-28T11:12:02.881Z",
+    "contentHash": "8595aef285f42f86b74a33918ae736c61c3c2b3efa106d1f7c8bc3027db8b882",
+    "lastHarvestedAt": "2026-10-29T01:24:49.153Z",
     "learningId": "learn-github-kumahq-kuma"
   },
   "cilium-cilium": {

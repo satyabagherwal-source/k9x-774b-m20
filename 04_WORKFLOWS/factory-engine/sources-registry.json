@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-29T01:17:58.606Z",
-    "lastVerified": "2026-10-29T01:17:58.606Z",
+    "lastChecked": "2026-10-29T01:24:51.705Z",
+    "lastVerified": "2026-10-29T01:24:51.705Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -134,8 +134,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-29T00:29:52.746Z",
-    "lastVerified": "2026-10-29T00:29:52.746Z",
+    "lastChecked": "2026-10-29T01:24:50.619Z",
+    "lastVerified": "2026-10-29T01:24:50.619Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -842,8 +842,8 @@
     "officialUrl": "https://github.com/bee-san/Ciphey",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T21:11:21.002Z",
-    "lastVerified": "2026-10-28T21:11:21.002Z",
+    "lastChecked": "2026-10-29T01:24:45.626Z",
+    "lastVerified": "2026-10-29T01:24:45.626Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bee-san-ciphey",
@@ -1018,11 +1018,21 @@
     "lastVerified": "2026-10-28T21:50:21.338Z"
   },
   "sharkdp-bat": {
-    "name": "bat",
+    "name": "sharkdp/bat",
     "officialUrl": "https://github.com/sharkdp/bat",
-    "lastChecked": "2026-10-28T04:21:36.126Z",
-    "revisionIdentifier": "a9aa73d2",
-    "lastVerified": "2026-10-28T04:21:36.126Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-29T01:24:40.112Z",
+    "lastVerified": "2026-10-29T01:24:40.112Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-sharkdp-bat",
+    "contentHash": "85c5eabc7aa3953b01f680db1f71aad330c5bef73dd718aafd6c48f24eb65a07",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-xingchen-agi-teleocr": {
     "name": "XingChen-AGI/TeleOCR",
@@ -2532,9 +2542,9 @@
   "pinecone-io-examples": {
     "name": "examples",
     "officialUrl": "https://github.com/pinecone-io/examples",
-    "lastChecked": "2026-10-28T08:25:30.937Z",
+    "lastChecked": "2026-10-29T01:24:48.108Z",
     "revisionIdentifier": "db002421",
-    "lastVerified": "2026-10-28T08:25:30.937Z"
+    "lastVerified": "2026-10-29T01:24:48.108Z"
   },
   "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf": {
     "name": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -2882,14 +2892,14 @@
     "officialUrl": "https://github.com/kumahq/kuma",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T11:12:00.430Z",
-    "lastVerified": "2026-10-28T11:12:00.430Z",
+    "lastChecked": "2026-10-29T01:24:48.506Z",
+    "lastVerified": "2026-10-29T01:24:48.506Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kumahq-kuma",
-    "contentHash": "22dfc13595c22eb1b08cb5013d965f8212d539948ecdf6604b76e47ca854cfeb",
+    "contentHash": "8595aef285f42f86b74a33918ae736c61c3c2b3efa106d1f7c8bc3027db8b882",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7898,5 +7908,19 @@
     "lastChecked": "2026-10-29T01:17:48.631Z",
     "revisionIdentifier": "9eca97b8",
     "lastVerified": "2026-10-29T01:17:48.631Z"
+  },
+  "addy0-com-free-open-technical-seo-crawler": {
+    "name": "free-open-technical-SEO-crawler",
+    "officialUrl": "https://github.com/Addy0-com/free-open-technical-SEO-crawler",
+    "lastChecked": "2026-10-29T01:24:38.099Z",
+    "revisionIdentifier": "7e5d3c5",
+    "lastVerified": "2026-10-29T01:24:38.099Z"
+  },
+  "siteline-swiftui-introspect": {
+    "name": "swiftui-introspect",
+    "officialUrl": "https://github.com/siteline/swiftui-introspect",
+    "lastChecked": "2026-10-29T01:24:40.578Z",
+    "revisionIdentifier": "7f32b29d",
+    "lastVerified": "2026-10-29T01:24:40.578Z"
   }
 }

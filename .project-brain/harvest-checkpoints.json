@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-29T01:17:47.338Z",
+  "last_updated": "2026-10-29T01:24:49.163Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3861,14 +3861,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sharkdp-bat",
-      "content_hash": "92a2da3d3219e1be545e1b0a8d3d9fbe5071f400d06a244b8958c698814a9926",
-      "verified_at": "2026-10-20T21:27:32.742Z",
+      "content_hash": "85c5eabc7aa3953b01f680db1f71aad330c5bef73dd718aafd6c48f24eb65a07",
+      "verified_at": "2026-10-29T01:24:41.862Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T21:27:32.742Z"
+      "last_updated": "2026-10-29T01:24:41.862Z"
     },
     "karakeep-app/karakeep": {
       "repository": "karakeep-app/karakeep",
@@ -5121,14 +5121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kumahq-kuma",
-      "content_hash": "22dfc13595c22eb1b08cb5013d965f8212d539948ecdf6604b76e47ca854cfeb",
-      "verified_at": "2026-10-28T11:12:02.889Z",
+      "content_hash": "8595aef285f42f86b74a33918ae736c61c3c2b3efa106d1f7c8bc3027db8b882",
+      "verified_at": "2026-10-29T01:24:49.162Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T11:12:02.889Z"
+      "last_updated": "2026-10-29T01:24:49.162Z"
     },
     "cilium/cilium": {
       "repository": "cilium/cilium",

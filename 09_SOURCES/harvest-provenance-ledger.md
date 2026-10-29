@@ -6021,3 +6021,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-datalab-to-indra-ocr` | `https://huggingface.co/datalab-to/indra-ocr` | `hf-datalab` | Multi-dimensional audit evidence | 2026-10-29T01:09:04.943Z |
 | `learn-huggingface-liquidai-lfm3-omni-2b` | `https://huggingface.co/LiquidAI/LFM3-Omni-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-29T01:11:08.566Z |
 | `learn-huggingface-tencent-hy-memory-30b-a3b` | `https://huggingface.co/tencent/Hy-Memory-30B-A3B` | `hf-tencent` | Multi-dimensional audit evidence | 2026-10-29T01:17:47.323Z |
+| `learn-github-sharkdp-bat` | `https://github.com/sharkdp/bat` | `fe901f50` | Multi-dimensional audit evidence | 2026-10-29T01:24:41.853Z |
+| `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `35fa93a9` | Multi-dimensional audit evidence | 2026-10-29T01:24:49.153Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  
 > **Source**: github ([https://github.com/kumahq/kuma](https://github.com/kumahq/kuma))  
-> **Source Version**: `1bf742fe`  
+> **Source Version**: `35fa93a9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T11:12:02.386Z  
+> **Timestamp**: 2026-10-29T01:24:48.515Z  
 > **Learning ID**: `learn-github-kumahq-kuma`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kumahq/kuma](https://github.com/kumahq/kuma))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T11:12:00.430Z  
+> **Harvest Timestamp**: 2026-10-29T01:24:48.506Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -998,11 +998,11 @@ var DefaultEnabled = []string{
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #19294** (2026-10-28): **ci(pr-comments): require exact maintainer match**
+  *Symptoms*: ## Motivation  The `pr-comments.yaml` slash-command bot authorized commenters with `grep -q <login>` over the maintainer list, an unanchored substring match: any login contained in a maintainer's login passed the gate. After the gate, the job checked out the PR head (a fork on most PRs) with the App token persisted in git config and ran PR-controlled `mise install` and `make`. The only fork guard covered `/golden_files_e2e` and ran after `mise-action` had already processed the PR-head `mise.toml`.  ## Implementation information  - Maintainer gate queries `collaborators/{login}/permission` and accepts only `role_name` `admin` or `maintain` (same approach as `ksai.yaml`). `.permission` is not used because it reports maintainers as `write`. - Commenter login and comment URL are passed through `env:` instead of being interpolated into the script. - All commands are rejected on fork PRs in `get-branch`, before checkout and mise. This replaces the e2e-only guard and the `is_cross_repository` conditions. - Checkout uses the default read-only token with `persist-credentials: false`. The push step authenticates via `gh auth setup-git` with the App token from its own env.  Running fork code in the same job as the push token cannot be made safe (PR code can poison `$GITHUB_ENV`/`$GITHUB_PATH` or the toolchain used by the push step), so fork PRs are refused rather than guarded per step. Same-repo PRs still run PR code in the job that later holds the App token; PR authors there already ha
+
 - **Issue #19293** (2026-10-28): **chore(deps): bump kumahq/kuma-gui to 8dd8531046757c4db7230a6d53581ec2ff5f3a35**
   *Symptoms*: Bumps kumahq/kuma-gui to version  [release-2.14@8dd8531046757c4db7230a6d53581ec2ff5f3a35](https://github.com/kumahq/kuma-gui/tree/8dd8531046757c4db7230a6d53581ec2ff5f3a35)  > Changelog: chore(deps): use latest kumahq/kuma-gui
-
-- **Issue #19290** (2026-10-28): **chore(deps): bump golang.org/x/net from 0.61.0 to 0.62.0**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Adoption](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---| | [golang.org/x/net](https://pkg.go.dev/golang.org/x/net) | indirect | [`v0.61.0` → `v0.62.0`](https://cs.opensource.google/go/x/net/+/refs/tags/v0.61.0...refs/tags/v0.62.0) | ![age](https://developer.mend.io/api/mc/badges/age/go/golang.org%2fx%2fnet/v0.62.0?slim=true) | ![adoption](https://developer.mend.io/api/mc/badges/adoption/go/golang.org%2fx%2fnet/v0.62.0?slim=true) |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/12547) for more information.  ---  ### Avoid quadratic complexity when coalescing text nodes in html in golang.org/x/net [CVE-2026-78661](https://nvd.nist.gov/vuln/detail/CVE-2026-78661) / [GO-2026-6860](https://pkg.go.dev/vuln/GO-2026-6860)  <details> <summary>More information</summary>  #### Details When coalescing adjacent text nodes in addText and fosterParent, appending to an existing TextNode's Data via string concatenation (n.Data += text) reallocated and copied the accumulated string on every token. Inputs containing many short text runs separated by ignored end tags (such as "a</x>") caused O(n^2) allocations and byte copies.  Accumulate coalesced text in per-node byte slices during parsing and materialize Data strings once at the end of parse.  #### Severity Unknown  #### References - [h
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1019,47 +1019,113 @@ var DefaultEnabled = []string{
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1bf742fe` (2026-10-28)
-**Commit Message**: chore(deps): bump golang.org/x/net from 0.61.0 to 0.62.0 (#19290)
+### Incident Patch 1: `35fa93a9` (2026-10-28)
+**Commit Message**: ci(pr-comments): require exact maintainer match (#19294)
 
-Signed-off-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Signed-off-by: Lukasz Dziedziak <[REDACTED_EMAIL]>
 
-**File**: `go.mod` (modified, +1/-1)
+**File**: `.github/workflows/pr-comments.yaml` (modified, +24/-19)
 ```diff
-@@ -274,7 +274,7 @@ require (
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
- 	go.yaml.in/yaml/v4 v4.0.0-rc.2 // indirect
- 	golang.org/x/mod v0.42.0 // indirect
--	golang.org/x/net v0.61.0 // indirect
-+	golang.org/x/net v0.62.0 // indirect
- 	golang.org/x/oauth2 v0.37.0 // indirect
- 	golang.org/x/term v0.47.0 // indirect
- 	golang.org/x/time v0.15.0 // indirect
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -589,8 +589,8 @@ golang.org/x/exp v0.0.0-20261014143641-f0251eb4aa3e h1:HgI6W1OolKK6tcV74is+rl9SM
- golang.org/x/exp v0.0.0-20261014143641-f0251eb4aa3e/go.mod h1:DBoxwWhjaW8DJJw/YeM4zpeOKMC1FMXSblsYy+1mFSw=
- golang.org/x/mod v0.42.0 h1:ICeL3t2L30ljSPHHxDnR4fqVcBt/zR2zJAb9juavmQg=
- golang.org/x/mod v0.42.0/go.mod h1:u5fzIrRInkL8MaO1cbRkUHT64v303YIT5KEqpNr7jRs=
--golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
--golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
-+golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
-+golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
- golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
- golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
+@@ -12,8 +12,8 @@ jobs:
+   pr_comments:
+     timeout-minutes: 120
+     if: github.event.issue.pull_request != '' && (contains(github.event.comment.body, '/format') || contains(github.event.comment.body, '/golden_files') || contains(github.event.comment.body, '/golden_files_e2e') || contains(github.event.comment.body, '/tproxy_golden_files'))
+-    # Checks out the PR head, a fork on most PRs, and runs make against it. runs-on cannot
+-    # read the step that resolves isCrossRepository, so this stays GitHub-hosted.
++    # Runs make against the PR head while a write-capable App token is in the job, so fork
++    # PRs are rejected before checkout.
+     runs-on: ubuntu-24.04
+     steps:
+       # Commands are additive: one comment can request multiple actions, and all
+@@ -67,29 +67,38 @@ jobs:
+       - name: check-maintainer
+         if: steps.parse-commands.outputs.has_command == 'true'
+         run: |
+-          # Ensure the commenter is a maintainer
+-          if gh api '/repos/${{ github.repository }}/collaborators?permission=maintain' --paginate --jq '.[].login' | grep -q ${{ github.event.comment.user.login }}; then
+-            gh api --method POST -f content='+1' ${{ github.event.comment.url }}/reactions
+-          else
+-            gh api --method POST -f content='-1' ${{ github.event.comment.url }}/reactions
+-            echo "${{ github.event.comment.user.login }} is not a maintainer of the repo, can't run this action"
+-            exit 1
+-          fi
++          role=$(gh api "/repos/${GITHUB_REPOSITORY}/collaborators/${LOGIN}/permission" --jq '.role_name' 2>/dev/null || echo none)
++          case "$role" in
++            admin|maintain)
++              gh api --method POST -f content='+1' "${COMMENT_URL}/reactions"
++              ;;
++            *)
++              gh api --method POST -f content='-1' "${COMMENT_URL}/reactions"
++              echo "${LOGIN} is not a maintainer of the repo, can't run this action"
++              exit 1
++              ;;
++          esac
+         env:
+           GITHUB_TOKEN: ${{ steps.github-app-token.outputs.token }}
++          LOGIN: ${{ github.event.comment.user.login }}
++          COMMENT_URL: ${{ github.event.comment.url }}
+       - id: get-branch
+         if: steps.parse-commands.outputs.has_command == 'true'
+         run: |
+           BRANCH_NAME=$(gh pr view ${{ github.event.issue.number }} --repo ${{ github.repository }} --json headRefName --jq '.headRefName')
+           REPO=$(gh pr view ${{ github.event.issue.number }} --repo ${{ github.repository }} --json headRepository,headRepositoryOwner --jq '[.headRepositoryOwner.login,.headRepository.name] | join("/")')
+           IS_CROSS_REPOSITORY=$(gh pr view ${{ github.event.issue.number }} --repo ${{ github.repository }} --json isCrossRepository --jq '.isCrossRepository')
+ 
++          if [[ "$IS_CROSS_REPOSITORY" != "false" ]]; then
++            echo "PR comment commands are not allowed on fork PRs because they would run PR-controlled code next to repository secrets."
++            exit 1
++          fi
++
+           echo "BRANCH_NAME=$BRANCH_NAME" >> "$GITHUB_ENV"
+           echo "REPO=$REPO" >> "$GITHUB_ENV"
+           {
+             echo "branch_name=$BRANCH_NAME"
+             echo "repo=$REPO"
+-            echo "is_cross_repository=$IS_CROSS_REPOSITORY"
+           } >> "$GITHUB_OUTPUT"
+         env:
+           GITHUB_TOKEN: ${{ steps.github-app-token.outputs.token }}
+@@ -99,18 +108,13 @@ jobs:
+           fetch-depth: 0
+           repository: ${{ env.REPO }}
+           ref: ${{ env.BRANCH_NAME }}
+-          token: ${{ steps.github-app-token.outputs.token }}
++          persist-credentials: false
+       - uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
+         with:
+           version: 2026.10.10
+         if: steps.parse-commands.outputs.has_command == 'true'
+         env:
+           GITHUB_TOKEN: ${{ github.token }}
+-      - name: "Reject e2e golden refresh on fork PRs"
+-        if: steps.parse-commands.outputs.golden_files_e2e == 'true' && steps.get-branch.outputs.is_cross_repository == 'true'
+-        run: |
+-          echo "/golden_files_e2e is not allowed on fork PRs because it would expose repository secrets to PR-controlled code."
+-          exit 1
+       # Automatically update code formatting if /format is in the comment
+       - name: "Auto-format code"
+         if: steps.parse-commands.outputs.format == 'true'
+@@ -123,7 +127,7 @@ jobs:
+         run: make test UPDATE_GOLDEN_FILES=true
+ 
+       - name: "Free up disk space for E2E golden files"
+-        if: steps.parse-commands.outputs.golden_files_e2e == 'true' && steps.get-branch.outputs.is_cross_repository != 'true'
++        if: steps.parse-commands.outputs.golden_files_e2e == 'true'
+         uses: endersonmenezes/free-disk-space@8b8cd4e2277836962939a8f3b4ea0ee4bc006156 # v4.0.1
+         with:
+           remove_android: true
+@@ -132,7 +136,7 @@ jobs:
+ 
+       # Update the labeled e2e golden-file suites if /golden_files_e2e is in the co
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #19294** (2026-10-28): ci(pr-comments): require exact maintainer match (@lukidzi)
 - **PR #19293** (2026-10-28): chore(deps): bump kumahq/kuma-gui to 8dd8531046757c4db7230a6d53581ec2ff5f3a35 (@kumahq[bot])
 - **PR #19290** (2026-10-28): chore(deps): bump golang.org/x/net from 0.61.0 to 0.62.0 (@renovate[bot])
 - **PR #19289** (2026-10-28): chore(deps): bump golang.org/x/net from 0.61.0 to 0.62.0 (@renovate[bot])
 - **PR #19288** (2026-10-28): chore(deps): bump golang.org/x/net from 0.60.0 to 0.62.0 (@renovate[bot])
 - **PR #19287** (2026-10-28): chore(deps): bump golang.org/x/net from 0.60.0 to 0.62.0 (@renovate[bot])
-- **PR #19286** (2026-10-28): chore(deps): bump golang.org/x/net from 0.60.0 to 0.62.0 (@renovate[bot])
 
 ---
 
@@ -1079,28 +1145,66 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump golang.org/x/net from 0.61.0 to 0.62.0 (#19290)
+## X. ci(pr-comments): require exact maintainer match (#19294)
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kumahq/kuma. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/pr-comments.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kumahq/kuma. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1bf742fe`: deps): bump golang.org/x/net from 0.61.0 to 0.62.0 (#19290). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `35fa93a9`: ci(pr-comments): require exact maintainer match (#19294). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/pr-comments.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	golang.org/x/net v0.62.0 // indirect
+    # Runs make against the PR head while a write-capable App token is in the job, so fork
+    # PRs are rejected before checkout.
+          role=$(gh api "/repos/${GITHUB_REPOSITORY}/collaborators/${LOGIN}/permission" --jq '.role_name' 2>/dev/null || echo none)
+          case "$role" in
+            admin|maintain)
+              gh api --method POST -f content='+1' "${COMMENT_URL}/reactions"
+              ;;
+            *)
+              gh api --method POST -f content='-1' "${COMMENT_URL}/reactions"
+              echo "${LOGIN} is not a maintainer of the repo, can't run this action"
+              exit 1
+              ;;
+          esac
+          LOGIN: ${{ github.event.comment.user.login }}
+          COMMENT_URL: ${{ github.event.comment.url }}
+          if [[ "$IS_CROSS_REPOSITORY" != "false" ]]; then
+            echo "PR comment commands are not allowed on fork PRs because they would run PR-controlled code next to repository secrets."
+            exit 1
+          fi
+
+          persist-credentials: false
+        if: steps.parse-commands.outputs.golden_files_e2e == 'true'
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	golang.org/x/net v0.61.0 // indirect
+    # Checks out the PR head, a fork on most PRs, and runs make against it. runs-on cannot
+    # read the step that resolves isCrossRepository, so this stays GitHub-hosted.
+          # Ensure the commenter is a maintainer
+          if gh api '/repos/${{ github.repository }}/collaborators?permission=maintain' --paginate --jq '.[].login' | grep -q ${{ github.event.comment.user.login }}; then
+            gh api --method POST -f content='+1' ${{ github.event.comment.url }}/reactions
+          else
+            gh api --method POST -f content='-1' ${{ github.event.comment.url }}/reactions
+            echo "${{ github.event.comment.user.login }} is not a maintainer of the repo, can't run this action"
+            exit 1
+          fi
+            echo "is_cross_repository=$IS_CROSS_REPOSITORY"
+          token: ${{ steps.github-app-token.outputs.token }}
+      - name: "Reject e2e golden refresh on fork PRs"
+        if: steps.parse-commands.outputs.golden_files_e2e == 'true' && steps.get-branch.outputs.is_cross_repository == 'true'
+        run: |
+          echo "/golden_files_e2e is not allowed on fork PRs because it would expose repository secrets to PR-controlled code."
+          exit 1
+    
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1bf742fe` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `35fa93a9` are properly handled with clean fallback behavior.

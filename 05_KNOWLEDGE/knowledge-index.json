@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T01:17:47.240Z",
+  "last_updated": "2026-10-29T01:24:49.072Z",
   "total_verified_learnings": 1161,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -34268,8 +34268,8 @@
       "slug": "kumahq-kuma",
       "platform": "github",
       "source_url": "https://github.com/kumahq/kuma",
-      "source_version": "1bf742fe",
-      "content_hash": "22dfc13595c22eb1b08cb5013d965f8212d539948ecdf6604b76e47ca854cfeb",
+      "source_version": "35fa93a9",
+      "content_hash": "8595aef285f42f86b74a33918ae736c61c3c2b3efa106d1f7c8bc3027db8b882",
       "dossier_path": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "promoted_rules": [
@@ -34302,6 +34302,11 @@
           "number": 5256,
           "title": "deps): bump golang.org/x/net from 0.61.0 to 0.62.0 (#19290)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5483,
+          "title": "ci(pr-comments): require exact maintainer match (#19294)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34309,7 +34314,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T11:12:02.801Z",
+      "verified_at": "2026-10-29T01:24:49.053Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48007,8 +48012,8 @@
       "slug": "sharkdp-bat",
       "platform": "github",
       "source_url": "https://github.com/sharkdp/bat",
-      "source_version": "a9aa73d2",
-      "content_hash": "92a2da3d3219e1be545e1b0a8d3d9fbe5071f400d06a244b8958c698814a9926",
+      "source_version": "fe901f50",
+      "content_hash": "85c5eabc7aa3953b01f680db1f71aad330c5bef73dd718aafd6c48f24eb65a07",
       "dossier_path": "07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
       "promoted_rules": [
@@ -48021,6 +48026,11 @@
           "number": 3390,
           "title": "Merge pull request #4091 from NavpreetSSidhu/fix-js-block-comment-hang",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5482,
+          "title": "docs: link the i686 runner fix in changelog",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48028,7 +48038,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T21:27:32.651Z",
+      "verified_at": "2026-10-29T01:24:41.750Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -147827,6 +147837,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T01:11:08.469Z"
+    },
+    "rule-5482": {
+      "learning_id": "rule-5482",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5482,
+      "title": "docs: link the i686 runner fix in changelog",
+      "source_url": "https://github.com/sharkdp/bat",
+      "source_version": "fe901f50",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T01:24:41.750Z"
+    },
+    "rule-5483": {
+      "learning_id": "rule-5483",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5483,
+      "title": "ci(pr-comments): require exact maintainer match (#19294)",
+      "source_url": "https://github.com/kumahq/kuma",
+      "source_version": "35fa93a9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T01:24:49.053Z"
     }
   },
   "aliases": {

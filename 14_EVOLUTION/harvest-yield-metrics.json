@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-29T01:17:47.334Z",
-  "total_cycles_completed": 5989,
-  "total_learnings_persisted": 5989,
-  "total_rules_promoted": 5445,
+  "last_updated": "2026-10-29T01:24:49.159Z",
+  "total_cycles_completed": 5991,
+  "total_learnings_persisted": 5991,
+  "total_rules_promoted": 5447,
   "history": [
-    {
-      "timestamp": "2026-10-28T15:03:19.465Z",
-      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-      "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T15:09:41.231Z",
-      "repository": "meta-llama/Llama-2-7b",
-      "learningId": "learn-huggingface-meta-llama-llama-2-7b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T15:16:36.633Z",
       "repository": "crossplane/crossplane",
@@ -1403,6 +1389,20 @@
       "repository": "tencent/Hy-Memory-30B-A3B",
       "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T01:24:41.858Z",
+      "repository": "sharkdp/bat",
+      "learningId": "learn-github-sharkdp-bat",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T01:24:49.159Z",
+      "repository": "kumahq/kuma",
+      "learningId": "learn-github-kumahq-kuma",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
