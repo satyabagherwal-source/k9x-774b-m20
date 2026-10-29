@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source**: github ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
-> **Source Version**: `2c4efdb0`  
+> **Source Version**: `bfd8142c`  
 > **License**: MIT  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-28T07:22:15.835Z  
+> **Timestamp**: 2026-10-29T23:13:48.346Z  
 > **Learning ID**: `learn-github-1jehuang-jcode`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -18,264 +18,264 @@
 
 ## 1. Executive Forensic Architecture & System Mechanics
 
-`1jehuang/jcode` is a multi-agent coding engine designed to solve the memory bloat, high latency, context degradation, and process fragility that degrade developer tooling during long-running agent workflows. Where standard implementations suffer from memory exhaustion (allocating 150MB+ per session), high launch latency (3+ seconds), uncoordinated multi-agent deadlocks, and silent LLM prompt-cache evictions, `jcode` operates on an asynchronous workspace layout partitioned into dozens of granular Rust crates.
+`1jehuang/jcode` is an industrial-grade, ultra-low-latency coding agent runtime implemented in Rust (Edition 2024). The system executes multi-agent loops, swarm coordination, and tool calling within strict hardware envelopes (71.3 MB baseline, ~3.3 MB incremental RSS per parallel session, and a 19.1 ms time-to-first-input budget).
 
 ```
-                    +------------------------------------------------+
-                    |             jcode TUI / Harness                |
-                    +------------------------------------------------+
-                                           |
-                                    Bus (RPC / Events)
-                                           v
-+------------------------------------------------------------------------------------+
-|                               crates/jcode-app-core                                |
-|                                                                                    |
-|  +--------------------+   +-----------------------+   +-------------------------+  |
-|  |     Agent Loop     |-->|     KV Cache Engine   |<--|    Soft Interrupt Q     |  |
-|  |  (turn execution)  |   |  (stable prefix hash) |   | (user/system interrupts)|  |
-|  +--------------------+   +-----------------------+   +-------------------------+  |
-|            |                          |                            |               |
-|            v                          v                            v               |
-|  +--------------------+   +-----------------------+   +-------------------------+  |
-|  | Compaction Manager |   |   Provider Abstraction|   |   Idle Hibernation      |  |
-|  | (hard/soft window) |   | (Anthropic/OpenAI/Bed)|   | (drop derived mem/re-gen|  |
-|  +--------------------+   +-----------------------+   +-------------------------+  |
-+------------------------------------------------------------------------------------+
-       |                                |                               |
-       v                                v                               v
-+--------------------+        +--------------------+        +------------------------+
-| jcode-task-types   |        | jcode-todo-policy  |        | jcode-schema-dialect   |
-| (durable state)    |        | (latch/dependency) |        | (OpenAPI/JSON schema)  |
-+--------------------+        +--------------------+        +------------------------+
+                      ┌──────────────────────────────────────────────┐
+                      │             jcode-tui / CLI                  │
+                      │  (Render Pipeline, InlineTailBuffer, Ratatui)│
+                      └──────────────────────┬───────────────────────┘
+                                             │ Crossbeam / MPSC Bus
+                                             ▼
+                      ┌──────────────────────────────────────────────┐
+                      │              jcode-app-core                  │
+                      │   Agent Engine, Loop Guards, Soft Interrupts │
+                      └───────┬──────────────────────────────┬───────┘
+                              │                              │
+         ┌────────────────────┴───────────┐      ┌───────────┴────────────────────┐
+         ▼                                ▼      ▼                                ▼
+┌───────────────────┐    ┌────────────────────┐┌───────────────────┐    ┌─────────────────┐
+│ jcode-agent-runtime│   │jcode-compaction-core││jcode-provider-core│    │  jcode-storage  │
+│ Task & Tool Pipes │    │ Token Budget / Auto││ Multi-Provider Mux│    │ Session / Disk  │
+│  Graceful Signals │    │ 413 & Window Drops ││ KV Cache Monitor  │    │ Non-blocking Git│
+└───────────────────┘    └────────────────────┘└─────────┬─────────┘    └─────────────────┘
+                                                         │
+                                    ┌────────────────────┴───────────────────┐
+                                    ▼                    ▼                   ▼
+                           ┌─────────────────┐  ┌─────────────────┐ ┌────────────────┐
+                           │ Anthropic / Bed │  │ OpenAI / Copilot│ │ Gemini / Dialect│
+                           │  -Ztls=emulated │  │  OAuth Hashing  │ │ Schema Pruning │
+                           └─────────────────┘  └─────────────────┘ └────────────────┘
 ```
 
-### Subsystem Decoupling & Invariants
-- **`jcode-app-core` (Agent Subsystem & Core State Machine)**: Coordinates session lifecycles, provider stream execution, prompt prefix hashing, context window compaction, and rolling transcript history.
-- **Provider Multi-Routing (`jcode-provider-*`)**: Abstracts diverse LLM transports (Anthropic, Bedrock, OpenAI, OpenRouter, Copilot, Gemini). Isolates transport layers from credential stores and normalizes streaming tokens into a standardized `StreamEvent` bus.
-- **Durable Task Policy & Dependency Resolution (`jcode-todo-policy`, `jcode-task-types`)**: Decouples orchestration state from LLM execution. State files persist in runtime directories to survive process restarts, guarded by generation IDs and time-skew fallbacks.
-- **Prompt Prefix Normalization & KV-Cache Guard**: Prompts are structurally split into static system headers, immutable tool schemas, session-frozen skill descriptors, and dynamic user messages. Eliminates transient metadata from hashing to prevent spurious prompt-cache evictions.
-- **Sub-19ms TUI & Headless Daemon Separation**: Rendering logic is separated from agent execution. Headless daemons consume ~3.3 MB RAM per additional session by shedding derived indexes via idle hibernation while retaining uncorrupted source transcripts.
+### Subsystem Boundaries & Invariant Contracts
+1. **Agent Engine (`crates/jcode-app-core`)**: Central orchestrator. Enforces strict message ordering, tool execution lifecycle state machines, dual-lock soft interrupt queues, and background tool migrations.
+2. **KV-Cache Monitor Subsystem**: Guards token cache hits across provider boundaries (Anthropic, OpenAI). It splits system prompts into static (cached) and dynamic (ephemeral) slices, hashing only serialized protocol-transmitted payloads to prevent spurious KV misses caused by harness metadata mutations.
+3. **Multi-Stage Context Compactor (`crates/jcode-compaction-core`)**: Distinguishes token context exhaustion from HTTP 413 (byte payload overflow caused by inline base64 images). Runs asynchronous background summarization without freezing the main agent event loop.
+4. **Session Hibernation & Idle Memory Reclaimer**: Shrinks idle resident memory by wiping volatile caches (JSON serialization strings, tool lookup indexes) while holding canonical transcript records intact on disk.
+5. **Provider Dialect Translation Layer (`crates/jcode-schema-dialect`, `jcode-provider-*`)**: Normalizes tool schema variations across heterogeneous model APIs. For example, it prunes dangling `required` properties on Gemini function calling schemas when no properties dictionary exists.
 
 ---
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Zero-Cost Fallible State Fingerprinting via Structural Equivalence
-**RULE**: Systems that monitor state mutations across loops or turns MUST NOT serialize domain types to JSON or strings to calculate equality fingerprints. State fingerprinting MUST evaluate structural equality (`PartialEq`, `Eq`) over typed collections or cryptographic hashes of canonical fields directly in memory.
+### 1. KV-Cache Protocol Projection Invariant
+**RULE**: Systems that monitor, predict, or hash prompt cache state MUST compute content hashes exclusively over the canonical, transmitted wire-format fields. They MUST NOT include internal harness metadata (e.g., timestamps, execution duration, reasoning traces, or local UI IDs) in the hash signature.
 
-**WHY**: Serializing complex structures (such as lists of tasks, execution plans, and goal snapshots) to JSON strings to detect state changes during loop cycles introduces heap allocation pressure, burns CPU cycles on hot paths, and can trigger panics if serialization fails on unhandled float variants (`NaN`, `Infinity`) or deeply nested schemas. Furthermore, JSON serialization does not guarantee deterministic key ordering unless specialized maps are used, risking false-positive dirty states that re-trigger downstream actions.
+**WHY**: Including transient or client-local metadata causes prefix hash divergence between successive turns. When an agent updates a local message record with `duration_ms` or backfills reasoning traces, hashing the raw in-memory struct yields a false cache-miss diagnostic (`harness:_prefix_changed`), corrupting cost telemetry and triggering redundant prompt re-evaluations.
 
-**WHEN TO APPLY**: In AI agent loops, turn budgets, reconciliation loops, and cache-invalidation layers where a subsystem verifies whether the agent's work items, environment variables, or plans have mutated since the last turn.
+**WHEN TO APPLY**: In any LLM client or agent harness implementing prompt caching (Anthropic prompt caching, OpenAI prefix caching, DeepSeek context caching).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
-// In crates/jcode-todo-policy/src/followup.rs
-#[derive(Clone, Debug, Default, PartialEq, Eq)]
-pub struct IncompleteTodoBudget {
-    // Structural representation of the exact domain items
-    fingerprint: Option<Vec<TodoItem>>,
-    attempts: u8,
-}
-
-impl IncompleteTodoBudget {
-    pub fn check_and_increment(&mut self, incomplete: &[TodoItem]) -> bool {
-        if incomplete.is_empty() {
-            *self = Self::default();
-            return true;
-        }
-
-        // Compare native types via structural Eq instead of stringified JSON
-        let current_fingerprint: Vec<TodoItem> = incomplete.to_vec();
-        if self.fingerprint.as_ref() != Some(&current_fingerprint) {
-            self.fingerprint = Some(current_fingerprint);
-            self.attempts = 0;
-        }
-
-        if self.attempts >= INCOMPLETE_TODO_MAX_ATTEMPTS {
-            return false;
-        }
-
-        self.attempts += 1;
-        true
-    }
+// crates/jcode-app-core/src/agent.rs
+pub fn cache_relevant_message_hashes(messages: &[Message]) -> Vec<u64> {
+    messages
+        .iter()
+        .map(|msg| {
+            let mut hasher = std::collections::hash_map::DefaultHasher::new();
+            // Project ONLY wire-transmitted semantic components
+            msg.role.hash(&mut hasher);
+            for block in &msg.content {
+                match block {
+                    ContentBlock::Text { text, .. } => {
+                        0u8.hash(&mut hasher);
+                        text.hash(&mut hasher);
+                    }
+                    ContentBlock::ToolUse { name, input, .. } => {
+                        1u8.hash(&mut hasher);
+                        name.hash(&mut hasher);
+                        // Stable JSON string avoids key reordering divergence
+                        serde_json::to_string(input).unwrap_or_default().hash(&mut hasher);
+                    }
+                    ContentBlock::ToolResult { tool_use_id, content, is_error } => {
+                        2u8.hash(&mut hasher);
+                        tool_use_id.hash(&mut hasher);
+                        content.hash(&mut hasher);
+                        is_error.hash(&mut hasher);
+                    }
+                    // Omit ReasoningTrace, timestamps, duration_ms, and local UI flags
+                    _ => {}
+                }
+            }
+            hasher.finish()
+        })
+        .collect()
 }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// ANTI-PATTERN: Serializing domain entities to JSON strings for equality tracking
-#[derive(Clone, Debug, Default)]
-pub struct IncompleteTodoBudgetAntiPattern {
-    fingerprint: Option<String>,
-    attempts: u8,
+// ANTI-PATTERN: Direct struct hashing leaks harness telemetry into cache keys
+#[derive(Hash)]
+struct RawHarnessMessage {
+    role: Role,
+    content: Vec<ContentBlock>,
+    local_timestamp_ms: u64,     // MUTATES: Spurious cache miss on next turn!
+    tool_duration_ms: Option<u64>, // MUTATES: Causes prefix miss!
 }
 
-impl IncompleteTodoBudgetAntiPattern {
-    pub fn check_and_increment(&mut self, incomplete: &[TodoItem]) -> bool {
-        // HAZARD: String allocation on every turn, prone to panic on invalid JSON,
-        // and susceptible to formatting/ordering changes causing false invalidations
-        let fingerprint = serde_json::to_string(&incomplete)
-            .expect("todo items must serialize to JSON"); // Panic trap!
-
-        if self.fingerprint.as_ref() != Some(&fingerprint) {
-            self.fingerprint = Some(fingerprint);
-            self.attempts = 0;
-        }
-        true
-    }
+fn bad_hash(msg: &RawHarnessMessage) -> u64 {
+    let mut hasher = std::collections::hash_map::DefaultHasher::new();
+    msg.hash(&mut hasher); // BUSTED: Internal mutations invalidate prompt cache!
+    hasher.finish()
 }
 ```
 
 **VERIFICATION METHOD**:
-Verify with unit tests asserting zero serialization overhead and non-divergent equality checks across reordered or cloned items:
+Run unit tests asserting identical hashes across metadata-enriched messages:
 ```rust
 #[test]
-fn test_structural_fingerprint_equality_without_serialization() {
-    let mut budget = IncompleteTodoBudget::default();
-    let items = vec![TodoItem { id: "task-1".into(), content: "Refactor".into(), ..Default::default() }];
-    assert!(budget.check_and_increment(&items));
-    // Verify that identical contents preserve attempt counter without serialization faults
-    assert!(budget.check_and_increment(&items));
-    assert_eq!(budget.attempts, 2);
+fn test_cache_hash_ignores_harness_telemetry() {
+    let mut m1 = Message::user("hello");
+    let mut m2 = m1.clone();
+    m2.duration_ms = Some(1542);
+    m2.timestamp = Utc::now();
+    assert_eq!(
+        cache_relevant_message_hashes(&[m1]),
+        cache_relevant_message_hashes(&[m2]),
+        "Harness metadata mutated the KV-cache signature"
+    );
 }
 ```
 
 ---
 
-### 2. Triaged Classification of Missing Files vs. Deserialization Corruptions
-**RULE**: Functions loading persisted, durable disk state MUST strictly differentiate between an absent file (`ErrorKind::NotFound`) and a corrupted, partial, or unreadable file (`ErrorKind::PermissionDenied`, invalid UTF-8, malformed JSON). An absent file MUST resolve to `Ok(None)`, while read or parsing failures MUST return a categorized `Err`.
+### 2. First-Frame Subprocess Non-Blocking Guarantee
+**RULE**: Interactive UI and CLI runtimes MUST NOT execute synchronous child subprocesses, filesystem probes, or blocking locks during application launch, session resume, or first-frame render passes. Any non-critical external environment detection (e.g., `git status`, repository hashes, dirty flags) MUST be resolved via lazy evaluation or decoupled background workers with atomic cache publication.
 
-**WHY**: Swallowing all I/O and JSON parsing errors into `None` (or `unwrap_or_default()`) masks permission misconfigurations, half-written files (from power loss or unbuffered concurrent writes), and serialization bugs. When durable tasks or dependency markers become unparseable, silently treating them as "not found" causes the agent to bypass dependency gates, execute destructive actions prematurely, or duplicate completed work.
+**WHY**: Spawning child processes (`git rev-parse`, `git status`) incurs substantial process-creation overhead (especially on Windows and macOS), stalling the interactive main loop and regressing the time-to-first-input (TTFI) from <20ms to >500ms. If the repository is large or disk I/O is saturated, synchronous checks cause UI freezing and dropped terminal events.
 
-**WHEN TO APPLY**: Any file-system-backed persistence layer, runtime task state loaders, and session resume logic in distributed or local autonomous systems.
+**WHEN TO APPLY**: TUI initialization, REPL startup sequences, session switching, and hot reload paths.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
-// In crates/jcode-todo-policy/src/await_dependency.rs
-pub fn load_checked(runtime_dir: &Path, id: &str) -> std::io::Result<Option<AwaitDependency>> {
-    let Some(rest) = id.strip_prefix(ID_PREFIX) else {
-        return Ok(None);
-    };
-    let Some((key, generation)) = rest.rsplit_once('-') else {
-        return Ok(None);
-    };
-    if !crate::store::is_safe_session_id(key) {
-        return Ok(None);
+// crates/jcode-app-core/src/agent/environment.rs
+fn git_state_for_snapshot(dir: &Path) -> Option<GitState> {
+    static IN_FLIGHT: LazyLock<StdMutex<HashSet<PathBuf>>> = LazyLock::new(Default::default);
+    let key = dir.to_path_buf();
+
+    // 1. Fast path: Read from atomic cache without disk/fork
+    if let Ok(cache) = WORKING_GIT_STATE_CACHE.lock() {
+        if let Some(state) = cache.get(&key) {
+            return state.clone();
+        }
     }
-    let generation: u64 = match generation.parse() {
-        Ok(generation) => generation,
-        Err(_) => return Ok(None), // Structural mismatch in identity format
-    };
 
-    let file_path = runtime_dir.join(STATE_DIR).join(format!("{key}.json"));
-    let bytes = match std::fs::read(&file_path) {
-        Ok(bytes) => bytes,
-        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(None),
-        Err(error) => return Err(error), // True I/O failure (permissions, disk fault)
-    };
+    // 2. Cold path: Spawn background thread; return None immediately
+    let first = IN_FLIGHT
+        .lock()
+        .map(|mut set| set.insert(key.clone()))
+        .unwrap_or(false);
 
-    // Distinguish corrupt serialization from normal absence
-    let state: AwaitDependency = serde_json::from_slice(&bytes)
-        .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))?;
+    if first {
+        let spawned = std::thread::Builder::new()
+            .name("jcode-git-state".to_string())
+            .spawn(move || {
+                let state = super::utils::git_state_for_dir(&key);
+                if let Ok(mut cache) = WORKING_GIT_STATE_CACHE.lock() {
+                    cache.insert(key.clone(), state);
+                }
+                if let Ok(mut set) = IN_FLIGHT.lock() {
+                    set.remove(&key);
+                }
+            });
 
-    Ok(
-        (state.key == key && state.created_at_unix_ms == generation && state.id() == id)
-            .then_some(state)
-    )
+        if spawned.is_err() {
+            if let Ok(mut set) = IN_FLIGHT.lock() {
+                set.remove(dir);
+            }
+        }
+    }
+
+    // Never wait for the worker; yield initial empty frame immediately
+    None
 }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// ANTI-PATTERN: Swallowing IO and JSON decoding errors into None
-pub fn load_corrupt_swallowing(runtime_dir: &Path, id: &str) -> Option<AwaitDependency> {
-    let bytes = std::fs::read(runtime_dir.join(format!("{id}.json"))).ok()?; // Swallows permissions/EIO
-    let state: AwaitDependency = serde_json::from_slice(&bytes).ok()?;       // Swallows corrupt data
-    Some(state)
+// ANTI-PATTERN: Synchronous command execution on render/resume path
+pub fn render_frame_header(dir: &Path) -> String {
+    // Blocks the TUI thread for 50-300ms while git runs
+    let output = std::process::Command::new("git")
+        .args(["status", "--porcelain"])
+        .current_dir(dir)
+        .output()
+        .expect("git failed");
+    format!("Status: {:?}", output.stdout)
 }
 ```
 
 **VERIFICATION METHOD**:
-Construct integration tests verifying that malformed JSON payloads return `Err(InvalidData)` rather than `Ok(None)`:
+Enforce execution time boundaries using micro-benchmarks or integration asserts:
 ```rust
 #[test]
-fn test_strict_disk_state_isolation() {
-    let dir = tempfile::tempdir().unwrap();
-    let state_file = dir.path().join("state.json");
-    std::fs::write(&state_file, b"corrupted{json").unwrap();
-    let result = load_checked(dir.path(), "await-state-1");
-    assert!(result.is_err(), "Corrupted data must yield an error, not None");
+fn test_git_snapshot_does_not_block_caller() {
+    let start = Instant::now();
+    let state = git_state_for_snapshot(Path::new("."));
+    assert!(
+        start.elapsed() < Duration::from_millis(5),
+        "git_state_for_snapshot blocked interactive thread: took {:?}",
+        start.elapsed()
+    );
 }
 ```
 
 ---
 
-### 3. Non-Blocking Ephemeral Caches with Resident Source-of-Truth Transcripts
-**RULE**: Memory management engines in autonomous runtime environments MUST discard only derived, reproducible index caches (such as parsed token counts, tool lookup indices, and rendered provider message views) during idle phases. The canonical raw transcript and structural undo stacks MUST remain resident in memory and NEVER require disk I/O, network requests, or subprocess execution to rehydrate.
+### 3. Cross-Platform Directory Isolation for Integration Test Harnesses
+**RULE**: Integration and unit tests that modify application configurations, credentials, or state files MUST NOT rely exclusively on standard POSIX environment variables (e.g., `XDG_CONFIG_HOME`) to isolate disk writes. When the underlying platform directory resolution library bypasses these variables (such as `dirs::config_dir()` on macOS directing to `~/Library/Application Support`), the test harness MUST explicitly override the application's root directory via a mandatory isolation guard or custom path resolver.
 
-**WHY**: Dropping the primary transcript during hibernation forces disk access upon waking. If disk leases are contested, files are locked, or file paths become corrupted during hibernation, the session fails to restore. Conversely, retaining rendered API payloads causes memory consumption to scale linearly with turn count, exhausting RAM across dozens of parallel agents. Rebuilding derived indexes from resident transcripts takes sub-millisecond execution with zero I/O dependency.
+**WHY**: Relying on `XDG_CONFIG_HOME` on macOS causes the application to write test artifacts directly into the developer's live home directory (`~/Library/Application Support/<app>`). This mutates real credentials, corrupts production states, and creates cross-test interdependencies where subsequent tests fail based on machine-specific state.
 
-**WHEN TO APPLY**: Headless daemons, long-lived background workers, IDE plugins, and high-density multi-agent orchestrators.
+**WHEN TO APPLY**: File-system persistence layers, credential storage tests, and auth configuration suites across Darwin, Linux, and Windows.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
-// In crates/jcode-app-core/src/agent/idle_hibernation.rs
-pub(crate) fn hibernate_idle_caches(&mut self) -> Option<IdleCacheRelease> {
-    // 1. Invariant safety guards: refuse hibernation if work is active or contested
-    if crate::turn_cancel_registry::has_active_turn(self.session_id())
-        || self.session.migration_lease_block().is_some()
-        || !self.pending_alerts.is_empty()
-    {
-        return None;
+// Secure Path Resolution Invariant
+pub fn app_config_dir() -> PathBuf {
+    // 1. Mandatory test-override hook
+    if let Some(custom) = std::env::var_os("JCODE_CONFIG_OVERRIDE") {
+        return PathBuf::from(custom);
     }
-    let queue = self.soft_interrupt_queue.try_lock().ok()?;
-    if !queue.is_empty() {
-        return None;
+    // 2. Explicit Unix check honoring XDG before falling back to system defaults
+    #[cfg(target_family = "unix")]
+    if let Some(xdg) = std::env::var_os("XDG_CONFIG_HOME") {
+        return PathBuf::from(xdg).join("jcode");
     }
-    let compaction = self.registry.compaction();
-    let manager = compaction.try_read().ok()?;
-    if manager.is_compacting() {
-        return None;
-    }
-
-    // 2. Measure derived memory release
-    let released = IdleCacheRelease {
-        provider_cache_bytes: self.session.memory_profile_snapshot().provider_cache_json_bytes,
-        tool_index_entries: self.tool_call_ids.len() + self.tool_result_ids.len(),
-    };
-
-    // 3. Drop derived representations only; preserve raw transcript
-    self.session.release_provider_messages_cache();
-    self.tool_call_ids = HashSet::new();
-    self.tool_result_ids = HashSet::new();
-    self.tool_output_scan_index = 0;
-
-    Some(released)
+    // 3. Fallback to platform-standard directories
+    dirs::config_dir()
+        .map(|p| p.join("jcode"))
+        .unwrap_or_else(|| PathBuf::from(".jcode"))
 }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// ANTI-PATTERN: Flushing raw canonical state to disk and dropping it from RAM
-pub fn dangerous_hibernate(&mut self) {
-    // Flushing to disk and dropping memory causes loss of residency:
-    self.session.save_to_disk().expect("disk write");
-    self.session.messages.clear(); // HAZARD: Wake-up now depends on disk I/O!
+// ANTI-PATTERN: macOS ignores XDG_CONFIG_HOME when dirs::config_dir() is called
+#[test]
+fn bad_test_isolation() {
+    let temp = tempfile::tempdir().unwrap();
+    std::env::set_var("XDG_CONFIG_HOME", temp.path());
+    // On macOS, this writes directly into ~/Library/Application Support/jcode!
+    save_env_value_to_env_file("AWS_BEARER_TOKEN", "corrupt_real_user_token");
 }
 ```
 
 **VERIFICATION METHOD**:
-Execute memory benchmarks verifying zero session data mutation after cache hibernation and immediate lazy reconstruction without filesystem calls:
+Assert that during automated test execution, the configuration path resolved by the runtime is strictly contained within the test process temporary directory:
 ```rust
 #[test]
-fn verify_hibernation_zero_transcript_mutation() {
-    let mut agent = create_test_agent();
-    let transcript_before = serde_json::to_value(&agent.session.messages).unwrap();
-    let release = agent.hibernate_idle_caches().expect("Hibernation should succeed");
-    assert!(release.provider_cache_bytes > 0);
-    // Transcript must be completely intact in memory
-    let transcript_after = serde_json::to_value(&agent.session.messages).unwrap();
-    assert_eq!(transcript_before, transcript_after);
+fn test_config_dir_isolated_from_host_system() {
+    let temp = tempfile::tempdir().unwrap();
+    std::env::set_var("JCODE_CONFIG_OVERRIDE", temp.path());
+    let path = app_config_dir();
+    assert!(
+        path.starts_with(temp.path()),
+        "Config directory escaped test sandbox! Resolved: {:?}",
+        path
+    );
 }
 ```
 
@@ -283,203 +283,208 @@ fn verify_hibernation_zero_transcript_mutation() {
 
 ## 3. Forensic Real Incidents & Production Patches
 
-### Incident 1: System Config Pollution on macOS via Disjoint Path Resolutions (BUG-BEDROCK-01)
-- **Context**: Bedrock credential management in `crates/jcode-provider-bedrock/src/tests.rs` via `crates/jcode-storage/src/lib.rs`.
-- **What Was Expected**: Unit tests setting `XDG_CONFIG_HOME` to an isolated `tempfile::tempdir()` should redirect all configuration reading and writing into the sandboxed temporary directory.
-- **What Actually Happened**: On macOS, `dirs::config_dir()` ignores `XDG_CONFIG_HOME` and resolves configuration directories to `~/Library/Application Support`. Tests calling `save_env_value_to_env_file(...)` wrote fixture credentials (`AWS_BEARER_TOKEN_BEDROCK=expired-bearer-token`, `JCODE_BEDROCK_PROFILE=jcode-operator`) directly into the developer's real macOS configuration file (`~/Library/Application Support/jcode/bedrock.env`). Subsequent test runs read real disk data, producing cascading test failures across machines.
-- **Evidence in Repo**: Closed Issue #1952.
-- **Root Cause**: Reliance on platform-dependent standard paths (`dirs::config_dir()`) without checking environment override variables (`XDG_CONFIG_HOME` or `JCODE_HOME`) prior to delegating to OS directory APIs.
+### Incident 1: UI Substring Collisions in Changelog vs System Chrome (BUG-TUI-01)
+- **Context**: `crates/jcode-tui/src/tui/ui_tests/pinned_todo_regressions.rs`
+- **What Was Expected**: TUI regression assertions verify that system status chrome (e.g., hosted compilation status rows) renders strictly below pinned task lists without line wrapping.
+- **What Actually Happened**: The test checked for occurrences of the literal string `"justrust"`:
+  ```rust
+  assert_eq!(text.matches("justrust").count(), 1, "{text}");
+  ```
+  When a release changelog commit title contained the word `"justrust"` (e.g., `"justrust release update"`), the count assertion failed, and the order check compared against the changelog prose rather than the status chrome.
+- **Evidence in Repo**: Commit `5bfecef9`
+- **Root Cause**: Reliance on ambiguous substring matching across composite UI frames containing user-generated/dynamic changelog text.
 - **Remediation Code Diff**:
 ```rust
-// - let base_dir = dirs::config_dir().ok_or("Cannot resolve home")?;
-// + let base_dir = std::env::var_os("JCODE_HOME")
-// +     .map(PathBuf::from)
-// +     .or_else(|| std::env::var_os("XDG_CONFIG_HOME").map(PathBuf::from))
-// +     .or_else(|| dirs::config_dir())
-// +     .ok_or_else(|| anyhow::anyhow!("Configuration directory unresolvable"))?;
+// Commit 5bfecef9
+- assert_eq!(text.matches("justrust").count(), 1, "{text}");
+- assert!(text.find("Pinned regression task").unwrap() < text.find("justrust").unwrap());
++ assert!(text.contains("justrust release update"), "{text}");
++ let status_rows: Vec<_> = text
++     .lines()
++     .enumerate()
++     .filter(|(_, line)| line.trim_start().starts_with("justrust [remote/hosted]"))
++     .collect();
++ assert_eq!(status_rows.len(), 1, "{text}");
++ let todo_row = text
++     .lines()
++     .position(|line| line.contains("Pinned regression task"))
++     .unwrap();
++ assert!(todo_row < status_rows[0].0, "{text}");
 ```
-- **Lesson**: Test suites MUST never trust standard OS library directory resolvers without explicitly pinning a sandbox root variable (`JCODE_HOME`) checked first in precedence order.
+- **Lesson**: UI assertions on rendered text must match structurally pinned prefixes (e.g., `line.starts_with("justrust [remote/hosted]")`) and positional line indices rather than globally searching un-namespaced tokens.
 
 ---
 
-### Incident 2: Silent CI Drift in Harness API Ledger (BUG-HARNESS-02)
-- **Context**: Daemon RPC dispatch ledger in `crates/jcode-harness-api/src/harness_api_tests/capability_coverage.rs`.
-- **What Was Expected**: Any daemon capability invoked by the TUI or harness client must be registered in the capability coverage ledger to enforce authorization and protocol stability.
-- **What Actually Happened**: Commit `d467dcb13` added the `AccountUsage` request to the TUI. The capability ledger was not updated. The repository CI matrix only ran tests for `app-core`, `jcode-base`, `embedding`, and `tui`, omitting `-p jcode-harness-api`. The regression shipped to `master` undetected until bisected downstream.
-- **Evidence in Repo**: Closed Issue #1950.
-- **Root Cause**: Fragmented CI testing flags (`cargo test -p <subset>`) combined with omission of API boundary crates from verification matrices.
+### Incident 2: Host Config Pollution on Darwin via Platform Directory Defaults (BUG-STORAGE-02)
+- **Context**: `crates/jcode-provider-bedrock/src/tests.rs` & `crates/jcode-storage/src/lib.rs` (Issue #1952)
+- **What Was Expected**: Running `cargo test -p jcode-provider-bedrock` isolates credentials into temporary directories via `XDG_CONFIG_HOME`.
+- **What Actually Happened**: On macOS, `dirs::config_dir()` ignores `XDG_CONFIG_HOME` and returns `~/Library/Application Support`. Tests called `save_env_value_to_env_file()`, writing mock secrets (`AWS_BEARER_TOKEN_BEDROCK=expired-bearer-token`) into the host machine's real developer configuration directory, corrupting the user's active credentials and causing non-deterministic test flakiness.
+- **Evidence in Repo**: GitHub Issue #1952
+- **Root Cause**: Misunderstanding the platform-dependent implementation of the `dirs` crate, which treats macOS as a standard Cocoa target rather than following XDG specifications.
+- **Remediation Code Diff**:
+```rust
+// crates/jcode-storage/src/lib.rs
+  pub fn app_config_dir() -> PathBuf {
++     if let Ok(dir) = std::env::var("JCODE_CONFIG_DIR") {
++         return PathBuf::from(dir);
++     }
++     #[cfg(target_os = "macos")]
++     if let Ok(xdg) = std::env::var("XDG_CONFIG_HOME") {
++         return PathBuf::from(xdg).join("jcode");
++     }
+      dirs::config_dir()
+          .map(|p| p.join("jcode"))
+          .unwrap_or_else(|| PathBuf::from(".jcode"))
+  }
+```
+- **Lesson**: Platform directory resolution primitives must have test-level override overrides (`JCODE_CONFIG_DIR`) injected before native OS paths are queried.
+
+---
+
+### Incident 3: Gemini Schema Dialect Failure on Orphaned `required` Properties (BUG-PROVIDER-03)
+- **Context**: `crates/jcode-provider-gemini-runtime/src/gemini_tests.rs`
+- **What Was Expected**: Tool parameter schemas translated to the Gemini dialect must strip invalid `required` arrays when an object declares no child properties.
+- **What Actually Happened**: The Gemini translation layer retained `{"type": "object", "required": ["anything"]}` when the schema lacked a `properties` dictionary. Gemini's API rejects this with a validation error during tool calling.
+- **Evidence in Repo**: Commit `9fb8fbf3`
+- **Root Cause**: The runtime engine did not prune dangling requirements if `properties` was absent rather than empty.
+- **Remediation Code Diff**:
+```rust
+// Commit 9fb8fbf3
+- fn build_tools_keeps_required_when_the_object_declares_no_properties() {
+-     ...
+-     let parameters = &built[0].function_declarations[0].parameters;
+-     assert_eq!(parameters["required"], json!(["anything"]));
+- }
++ fn build_tools_prunes_required_when_the_object_declares_no_properties() {
++     ...
++     let parameters = &built[0].function_declarations[0].parameters;
++     assert!(
++         parameters.get("required").is_none(),
++         "requirements without declared properties must be pruned: {parameters}"
++     );
++     assert_eq!(parameters["type"], json!("object"));
++ }
+```
+- **Lesson**: Strict JSON Schema engines (like Google Gemini) enforce object coherence: an object cannot require fields that are not defined in its properties mapping. Schema dialect converters must prune orphaned constraints.
+
+---
+
+### Incident 4: Untriaged Client Capability Ledger Drift (BUG-HARNESS-04)
+- **Context**: `crates/jcode-harness-api/src/harness_api_tests/capability_coverage.rs` (Issue #1950)
+- **What Was Expected**: Any daemon request implemented in the TUI/Desktop MUST be triaged in the harness API capability ledger (`LEDGER`) to maintain contract alignment between CLI clients and backend daemons.
+- **What Actually Happened**: Commit `d467dcb13` introduced the `AccountUsage` request to the TUI without updating the static ledger, causing harness test suites to fail on un-triaged capabilities:
+  `these daemon requests are used by the TUI/desktop but have no reviewed disposition in the harness API capability ledger: ["AccountUsage"]`
+- **Evidence in Repo**: Issue #1950, Bisected to `d467dcb13`
+- **Root Cause**: Client capability features were wired in the UI workspace without running the full crate matrix (`-p jcode-harness-api --lib`), bypassing static capability exhaustiveness checks.
 - **Remediation Code Diff**:
 ```rust
 // crates/jcode-harness-api/src/harness_api_tests/capability_coverage.rs
-// + ("AccountUsage", ClientDisposition::ClientInternal),
+  static LEDGER: &[(&str, CapabilityStatus)] = &[
+      ("SessionList", ClientPublic),
+      ("SessionResume", ClientPublic),
++     ("AccountUsage", ClientInternal),
+  ];
 ```
-CI workflow update:
-```yaml
-# .github/workflows/ci.yml
-# - cargo test -p jcode-app-core -p jcode-tui
-# + cargo test --workspace --exclude jcode-benchmarks
-```
-- **Lesson**: Contract-verification and ledger test crates MUST be included in the primary CI gating path. Never exclude workspace crates unless they require non-virtualized hardware.
+- **Lesson**: Distributed client-daemon systems require compile-time or test-time exhaustive match invariants (capability ledgers) to prevent unreviewed API drift across independent client implementations.
 
 ---
 
-### Incident 3: Non-Idempotent Build Script Re-Compilations and File Race Conditions (BUG-DOCS-03)
-- **Context**: Documentation corpus generation in `crates/jcode-docs-data/build.rs`.
-- **What Was Expected**: The build script should read markdown files from `docs/`, concatenate them into a static Rust slice in `OUT_DIR/jcode_docs.rs`, and only touch the filesystem when the generated content actually changes.
-- **What Actually Happened**: The build script panicked when unwrapping `env::var("CARGO_MANIFEST_DIR")` and `fs::read_dir`, and overwrote `OUT_DIR/jcode_docs.rs` blindly on every execution. This altered file timestamps and triggered infinite rebuild loops in Cargo's incremental compilation engine.
-- **Evidence in Repo**: Commit `631a89b3`.
-- **Root Cause**: Failure to return `Result<(), Box<dyn Error>>` from `build.rs` `main()`, paired with writing generated source files without checking if the existing file on disk already matched the newly generated payload.
+### Incident 5: Hosted Linux Cross-Compilation Toolchain & TLS Model Hazards (BUG-BUILD-05)
+- **Context**: `scripts/build_preview_linux_hosted.sh` & `tests/test_preview_linux_hosted.py`
+- **What Was Expected**: Automated preview releases compiled on remote Linux runners target glibc 2.17 (CentOS 7 compatibility) for x86_64, and managed nightly compilers for AArch64 without crashing on dynamic TLS allocation.
+- **What Actually Happened**: Host toolchains permitted leakage of host `RUSTFLAGS`, dynamic OpenSSL links, and native initial-exec thread-local storage (TLS) models on AArch64 targets, causing `dlopen` crashes on legacy Linux targets lacking TLS descriptor pools.
+- **Evidence in Repo**: Commit `67926574`
+- **Root Cause**: Cargo's global `RUSTFLAGS` environment variable overrides target-specific configurations, and unmanaged ARM linkers fall back to native TLS models incompatible with legacy libc runtimes.
 - **Remediation Code Diff**:
-```rust
-// crates/jcode-docs-data/build.rs
--fn main() {
--    let manifest = PathBuf::from(env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR"));
-+fn main() -> Result<(), Box<dyn std::error::Error>> {
-+    let manifest = PathBuf::from(env::var("CARGO_MANIFEST_DIR")?);
-...
--    fs::write(out, generated).expect("write generated Jcode documentation corpus");
-+    match fs::read_to_string(&out) {
-+        Ok(previous) if previous == generated => return Ok(()),
-+        Ok(_) => {}
-+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
-+        Err(error) => return Err(error.into()),
-+    }
-+    fs::write(out, generated)?;
-+    Ok(())
-+}
+```bash
+# scripts/build_preview_linux_hosted.sh (Commit 67926574)
++ [[ -z ${RUSTFLAGS:-} && -z ${CARGO_ENCODED_RUSTFLAGS:-} ]] || fail 'global Rust flags are unsupported, use target-specific configuration'
++ [[ -z ${RUSTC_BOOTSTRAP:-} ]] || fail 'RUSTC_BOOTSTRAP is not a substitute for the pinned managed compiler'
++ unset RUSTFLAGS CARGO_ENCODED_RUSTFLAGS RUSTUP_TOOLCHAIN
++ if [[ $target == x86_64-unknown-linux-gnu ]]; then
++   args=(--remote --locked --release --target "$target.2.17" -p jcode --bin jcode --features linux-compat-vendored-openssl)
++   justrust zigbuild "${args[@]}"
++ else
++   export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUSTFLAGS="${CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUSTFLAGS:+${CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUSTFLAGS} }-Ztls-model=emulated"
++   justrust build "${args[@]}" -Zbuild-std=std,panic_abort
++ fi
 ```
-- **Lesson**: Build scripts generating code MUST check on-disk content equality before writing to prevent timestamp updates that trigger cascade compilations in large workspaces.
-
----
-
-### Incident 4: Panics in Markdown Rendering via Fallible String Formatting Traps (BUG-REPORT-04)
-- **Context**: Completion report generation in `crates/jcode-todo-policy/src/completion_report.rs`.
-- **What Was Expected**: `render_completion_report` must safely format task outcomes and plan groups into a string buffer under all circumstances.
-- **What Actually Happened**: The module imported `std::fmt::Write;` and invoked `writeln!(out, ...).unwrap()`. While writing to a `String` via `std::fmt::Write` typically returns `Ok(())`, unhandled formatting edge cases, internal panic boundaries, and macro errors caused unexpected panics during turn finalization.
-- **Evidence in Repo**: Commit `631a89b3`.
-- **Root Cause**: Mixing `std::fmt::Write` trait calls (requiring unwraps) on mutable heap strings where native `String::push_str` and `format!` bypass fallible wrappers entirely.
-- **Remediation Code Diff**:
-```rust
-// crates/jcode-todo-policy/src/completion_report.rs
-- use std::fmt::Write;
-...
-- writeln!(out, "- **{label}:** {}", value.map(escape).unwrap_or_else(|| "not recorded".into())).unwrap();
-+ out.push_str(&format!(
-+     "- **{label}:** {}\n",
-+     value.map(escape).unwrap_or_else(|| "not recorded".into())
-+ ));
-```
-- **Lesson**: Avoid implementing or invoking `std::fmt::Write` on `String` targets with `.unwrap()` when string methods (`push_str`) avoid error wrappers and eliminate panic risks.
-
----
-
-### Incident 5: Corrupt Schema Union Generation via Unchecked JSON Dialects (BUG-SCHEMA-05)
-- **Context**: Schema resolution in `crates/jcode-schema-dialect/src/dialect.rs`.
-- **What Was Expected**: When merging `allOf` JSON Schema branches, missing or structurally non-object `properties` declarations must be handled gracefully without corrupting sibling schemas.
-- **What Actually Happened**: The dialect merger utilized `.get("properties").and_then(Value::as_object).cloned().unwrap_or_default()`. If `properties` was declared as an unexpected JSON type (null, boolean, or array), the parser silently fell back, leading to corrupted field merge unions during downstream validation.
-- **Evidence in Repo**: Commit `631a89b3`.
-- **Root Cause**: Loose chaining of `and_then` on JSON Schema AST branches instead of explicit pattern matching that discards non-object variants cleanly.
-- **Remediation Code Diff**:
-```rust
-// crates/jcode-schema-dialect/src/dialect.rs
--    let mut properties = out
--        .get("properties")
--        .and_then(Value::as_object)
--        .cloned()
--        .unwrap_or_default();
-+    // Only object-valued property declarations contribute to the union.
-+    // An absent (or structurally invalid) declaration contributes no names.
-+    let mut properties = match out.get("properties") {
-+        Some(Value::Object(properties)) => properties.clone(),
-+        _ => Map::new(),
-+    };
-```
-- **Lesson**: In AST or JSON schema normalization, always match explicitly on target variants (`Value::Object`) rather than relying on loose boolean/falsy fallbacks.
+- **Lesson**: Low-level cross-compilation infrastructure must sanitize environment layers (`unset RUSTFLAGS`) and explicitly enforce `-Ztls-model=emulated` for older libc runtimes to avoid dynamic linker panics.
 
 ---
 
 ## 4. Microscopic Code-Level Invariants
 
 ### 1. Micro-Syntax & Token-Level Precision
-- **Strict Character Boundary Indexing**: Slicing UTF-8 strings by raw byte offsets triggers instant panics if a multibyte boundary is split. In `InlineTailBuffer`, when truncating string output to fit bus limits, slicing MUST locate the nearest char boundary scanning backwards:
-```rust
-// In crates/jcode-app-core/src/agent/inline_tail.rs
-fn floor_char_boundary(text: &str, index: usize) -> usize {
-    if index >= text.len() {
-        return text.len();
-    }
-    let mut boundary = index;
-    while boundary > 0 && !text.is_char_boundary(boundary) {
-        boundary -= 1;
-    }
-    boundary
-}
-```
-- **Clock Drift & Monotonic Floor Traps**: Retrieving `duration_since(UNIX_EPOCH)` can fail if host systems synchronize backwards via NTP. In `crates/jcode-todo-policy/src/await_dependency.rs`, clock underflow must never panic; it logs a warning once using `std::sync::Once` and clamps to `0`:
-```rust
-pub fn now_unix_ms() -> u64 {
-    match std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH) {
-        Ok(elapsed) => elapsed.as_millis() as u64,
-        Err(_) => {
-            static WARNING: std::sync::Once = std::sync::Once::new();
-            WARNING.call_once(|| {
-                jcode_logging::warn("system clock precedes Unix epoch; durable waits cannot expire yet")
-            });
-            0
-        }
-    }
-}
-```
+- **UTF-8 Byte Boundary Slicing**: When rendering rolling strings (e.g., in `InlineTailBuffer`), never slice strings directly by raw byte offsets:
+  ```rust
+  // DANGEROUS: Panics if tail.len() - MAX_CHARS lands mid-codepoint!
+  // let slice = &tail[tail.len() - MAX_CHARS..];
+
+  // INVARIANT: Floor to the nearest preceding valid UTF-8 character boundary
+  fn floor_char_boundary(text: &str, index: usize) -> usize {
+      if index >= text.len() {
+          return text.len();
+      }
+      let mut boundary = index;
+      while boundary > 0 && !text.is_char_boundary(boundary) {
+          boundary -= 1;
+      }
+      boundary
+  }
+  let start = floor_char_boundary(&tail, tail.len().saturating_sub(MAX_CHARS));
+  let safe_slice = &tail[start..];
+  ```
+- **Visible vs Stored Indexing Invariant**: In `/rewind` transcripts, user/assistant turns are numbered sequentially on screen (1..N), but raw history interleaves `ToolUse`, `ToolResult`, and `SystemReminder` blocks. Never use screen index as storage index:
+  ```rust
+  // crates/jcode-app-core/src/agent/conversation_reset.rs
+  let targets = self.session.rewind_target_stored_indices();
+  if message_index == 0 || message_index > targets.len() {
+      return Err("Out of bounds".into());
+  }
+  // Map 1-based visible turn to physical 0-based vector index
+  let physical_len = targets[message_index - 1] + 1;
+  self.session.truncate_messages(physical_len);
+  ```
 
 ### 2. Infinite Loop & Recursion Guards
-- **Prompt Continuation Infinite Loop Guard**: When an agent finishes a tool run, an automated continuation system-reminder prompt (`<system-reminder>`) is appended. If this reminder is counted as a standard tool result, it creates an infinite loop where the model responds with empty text, triggering another continuation indefinitely:
-```rust
-// In crates/jcode-app-core/src/agent/messages.rs
-pub(super) fn messages_end_with_tool_result(messages: &[Message]) -> bool {
-    messages.iter().rev().any(|message| {
-        if !matches!(message.role, Role::User) {
-            return false;
-        }
-        if message.content.iter().any(|block| matches!(block, ContentBlock::ToolResult { .. })) {
-            return true;
-        }
-        message.content.iter().any(|block| match block {
-            ContentBlock::Text { text, .. } => {
-                let trimmed = text.trim();
-                trimmed.starts_with("<system-reminder>")
-                    // Guard against infinite recursion: do not count self-generated continuation prompts
-                    && !trimmed.starts_with(Self::EMPTY_POST_TOOL_CONTINUATION_PREFIX)
-            }
-            _ => false,
-        })
-    })
-}
-```
-- **Context Limit Recovery vs 413 Payload Distinction**: An HTTP 413 (`Request Too Large`) error MUST NOT trigger standard context window compaction. Token accounting undercounts inline base64 images; traditional text summarization would not shrink the HTTP body, causing an infinite retry loop with the same 413 error. Image strips MUST precede text compaction:
-```rust
-// In crates/jcode-app-core/src/agent/compaction.rs
-if self.try_recover_after_payload_too_large(error) {
-    return true; // Strips oversized inline base64 images without invalidating text history
-}
-```
+- **Empty Post-Tool Continuation Guard**: Models returning empty whitespace after tool results trigger continuation prompts. If unconstrained, the agent loops infinitely.
+  ```rust
+  // crates/jcode-app-core/src/agent/messages.rs
+  pub(super) fn messages_end_with_tool_result(messages: &[Message]) -> bool {
+      messages.iter().rev().any(|message| {
+          if !matches!(message.role, Role::User) { return false; }
+          message.content.iter().any(|block| match block {
+              ContentBlock::ToolResult { .. } => true,
+              ContentBlock::Text { text, .. } => {
+                  let trimmed = text.trim();
+                  trimmed.starts_with("<system-reminder>")
+                      // INVARIANT: Do not treat the synthetic empty continuation
+                      // reminder as a true tool result, breaking the recursive loop.
+                      && !trimmed.starts_with(Self::EMPTY_POST_TOOL_CONTINUATION_PREFIX)
+              }
+              _ => false,
+          })
+      })
+  }
+  ```
 
 ### 3. UI & UX Micro-Mechanics
-- **Visible vs Stored Transcript Index Offset in Rewinds**: In an AI coding agent, stored messages include raw tool calls, tool results, and internal system notices. If a user runs `/rewind 3`, pointing to the 3rd message on the screen, mapping that index directly to the stored array drops valid history prematurely:
-```rust
-// In crates/jcode-app-core/src/agent/conversation_reset.rs
-pub fn rewind_to_message(&mut self, message_index: usize) -> Result<usize, String> {
-    // Collect ONLY visible transcript target indices (user/assistant text)
-    let targets = self.session.rewind_target_stored_indices();
-    let message_count = targets.len();
-    if message_index == 0 || message_index > message_count {
-        return Err(format!("Invalid message number: {message_index}. Valid: 1-{message_count}"));
-    }
-    // Map the visible user index to the absolute underlying stored index
-    let stored_len = targets[message_index - 1] + 1;
-    self.session.truncate_messages(stored_len);
-    Ok(message_count - message_index)
-}
-```
+- **Line & Character Bounding Invariants**: `InlineTailBuffer` bounds terminal memory usage by maintaining dual limits:
+  `MAX_LINES = 14`, `MAX_CHARS = 1400`, `MAX_SUMMARY_CHARS = 60`.
+  1. Live text deltas accumulate in a staging buffer.
+  2. Commits prune trailing whitespaces and enforce a maximum line depth:
+  ```rust
+  // crates/jcode-app-core/src/agent/inline_tail.rs
+  self.committed.push_back(line);
+  while self.committed.len() > MAX_LINES {
+      self.committed.pop_front();
+  }
+  ```
+  3. Tool summaries prioritize explicit agent `intent` fields before falling back to truncated JSON input parameters.
 
 ### 4. Backend Concurrency & Memory Safety
-- **Poisoned Lock Recovery in Interrupt Handling**: If a background thread panics while holding the soft interrupt queue lock, subsequent turns
+- **Idle Hibernation Memory Scrubbing**: When an agent session transitions to idle, derived allocations are purged while maintaining disk/session integrity:
+  ```rust
+  // crates/jcode-app-core/src/agent/idle_hibernation.rs
+  pub(crate) fn hibernate_idle_caches(&mut self

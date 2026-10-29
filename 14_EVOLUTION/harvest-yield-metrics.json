@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-29T22:48:58.446Z",
-  "total_cycles_completed": 6047,
-  "total_learnings_persisted": 6047,
-  "total_rules_promoted": 5513,
+  "last_updated": "2026-10-29T23:13:49.768Z",
+  "total_cycles_completed": 6049,
+  "total_learnings_persisted": 6049,
+  "total_rules_promoted": 5517,
   "history": [
-    {
-      "timestamp": "2026-10-28T18:04:44.725Z",
-      "repository": "open-policy-agent/opa",
-      "learningId": "learn-github-open-policy-agent-opa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T18:04:50.196Z",
-      "repository": "MariaDB/server",
-      "learningId": "learn-github-mariadb-server",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T18:13:58.855Z",
       "repository": "Bingsu/adetailer",
@@ -1403,6 +1389,20 @@
       "repository": "trailbaseio/trailbase",
       "learningId": "learn-github-trailbaseio-trailbase",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T23:09:34.802Z",
+      "repository": "pulumi/pulumi",
+      "learningId": "learn-github-pulumi-pulumi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T23:13:49.768Z",
+      "repository": "1jehuang/jcode",
+      "learningId": "learn-github-1jehuang-jcode",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

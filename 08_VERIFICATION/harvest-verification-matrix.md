@@ -6070,3 +6070,5 @@
 | `CYCLE-20261029-72X8` | `2026-10-29T22:28:16.652Z` | `buresdv/Cork` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5546` | Yes (`13f985b4...`) |
 | `CYCLE-20261029-XK49` | `2026-10-29T22:48:51.993Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5547` | Yes (`0ebc2b3c...`) |
 | `CYCLE-20261029-XP3C` | `2026-10-29T22:48:58.440Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5548` | Yes (`e0c4c6bb...`) |
+| `CYCLE-20261029-O72G` | `2026-10-29T23:09:34.792Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5549` | Yes (`6261def5...`) |
+| `CYCLE-20261029-TNSV` | `2026-10-29T23:13:49.759Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5550, Rule 5551, Rule 5552` | Yes (`0ea49685...`) |

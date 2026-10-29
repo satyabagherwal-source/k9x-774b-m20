@@ -3613,10 +3613,10 @@
     "repository": "1jehuang/jcode",
     "platform": "github",
     "sourceUrl": "https://github.com/1jehuang/jcode",
-    "sourceVersion": "2c4efdb0",
+    "sourceVersion": "bfd8142c",
     "license": "MIT",
-    "contentHash": "7763c7900f7c37eed469c789d592e2475159302437737e56cd246b9fcd04455c",
-    "lastHarvestedAt": "2026-10-28T07:22:17.170Z",
+    "contentHash": "0ea49685dfab461fdf31cb065d4d8f061f0854ce74b8099d79dc5e14df796e10",
+    "lastHarvestedAt": "2026-10-29T23:13:49.763Z",
     "learningId": "learn-github-1jehuang-jcode"
   },
   "wix-detox": {
@@ -4713,10 +4713,10 @@
     "repository": "pulumi/pulumi",
     "platform": "github",
     "sourceUrl": "https://github.com/pulumi/pulumi",
-    "sourceVersion": "a790c218",
+    "sourceVersion": "20664124",
     "license": "Apache-2.0",
-    "contentHash": "a27e64fa6707f20a4659e64ae1671c5e906857e2798f8cb15a4681fd2ccc39b4",
-    "lastHarvestedAt": "2026-10-28T14:42:50.616Z",
+    "contentHash": "6261def5365527f71f48f854716dee9862be4bbbf92d0f819fcf4dc3550bf165",
+    "lastHarvestedAt": "2026-10-29T23:09:34.796Z",
     "learningId": "learn-github-pulumi-pulumi"
   },
   "sqlpage-sqlpage": {

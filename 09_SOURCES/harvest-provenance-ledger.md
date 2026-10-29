@@ -6079,3 +6079,5 @@ Every entry in this ledger must capture:
 | `learn-github-buresdv-cork` | `https://github.com/buresdv/Cork` | `01177307` | Multi-dimensional audit evidence | 2026-10-29T22:28:16.656Z |
 | `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `6ec0da29` | Multi-dimensional audit evidence | 2026-10-29T22:48:51.996Z |
 | `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `bcd3fde0` | Multi-dimensional audit evidence | 2026-10-29T22:48:58.443Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `20664124` | Multi-dimensional audit evidence | 2026-10-29T23:09:34.796Z |
+| `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `bfd8142c` | Multi-dimensional audit evidence | 2026-10-29T23:13:49.763Z |

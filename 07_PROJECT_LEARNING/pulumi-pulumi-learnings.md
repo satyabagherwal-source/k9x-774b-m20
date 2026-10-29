@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source**: github ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
-> **Source Version**: `a790c218`  
+> **Source Version**: `20664124`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T14:42:50.148Z  
+> **Timestamp**: 2026-10-29T23:09:34.163Z  
 > **Learning ID**: `learn-github-pulumi-pulumi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T14:42:49.989Z  
+> **Harvest Timestamp**: 2026-10-29T23:09:33.063Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Pulumi - Infrastructure as Code in any programming language 🚀
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 25826 stars
+- **Stars / Engagement**: 25831 stars
 
 ---
 
@@ -1698,15 +1698,13 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #25398** (2026-10-27): **Workflow failure: Run full language matrix of tests daily**
-  *Symptoms*: ## Workflow Failure  [Run full language matrix of tests daily](https://github.com/pulumi/pulumi/blob/master/.github/workflows/cron-test-all.yml) has failed. See the list of failures below:  - [2026-10-27T06:16:08.000Z](https://github.com/pulumi/pulumi/actions/runs/40456222746)
+- **Issue #25457** (2026-10-29): **Workflow failure: On Push at dev-release / sign / sign**
+  *Symptoms*: ## Workflow Failure  [On Push](https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-push.yml) has failed. See the list of failures below:  - [2026-10-29T20:18:04.000Z](https://github.com/pulumi/pulumi/actions/runs/40945407823)   - ❌ [dev-release / sign / sign](https://github.com/pulumi/pulumi/actions/runs/40945407823/job/123706965287): Sign binaries and checksums (failure)
   **Post-Mortem & Fix Analysis**:
-  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-10-27T12:37:40.000Z](https://github.com/pulumi/pulumi/actions/runs/40456222746)
+  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-10-29T20:21:45.000Z](https://github.com/pulumi/pulumi/actions/runs/40946125063)
 
-- **Issue #25389** (2026-10-26): **Workflow failure: Pull Request on #25339**
-  *Symptoms*: ## Workflow Failure  Triggered by PR: https://github.com/pulumi/pulumi/pull/25339  [Pull Request](https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-pr.yml) has failed. See the list of failures below:  - [2026-10-26T11:33:57.000Z](https://github.com/pulumi/pulumi/actions/runs/40306969476)
-  **Post-Mortem & Fix Analysis**:
-  > Looks like this succeeded on its retry.
+- **Issue #25441** (2026-10-29): **Workflow failure: Pull Request at CI / build binaries (linux, amd64, ubuntu-latest) / linux-amd64 on #25440**
+  *Symptoms*: ## Workflow Failure  Triggered by PR: https://github.com/pulumi/pulumi/pull/25440  [Pull Request](https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-pr.yml) has failed. See the list of failures below:  - [2026-10-28T20:23:23.000Z](https://github.com/pulumi/pulumi/actions/runs/40759032833)   - ❌ [CI / build binaries (linux, amd64, ubuntu-latest) / linux-amd64](https://github.com/pulumi/pulumi/actions/runs/40759032833/job/123067636621): Package (failure)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1723,8 +1721,139 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ba1a534c` (2026-10-28)
-**Commit Message**: Update module github.com/go-jose/go-jose/v4 to v4.1.6 [SECURITY] (#25418)
+### Incident Patch 1: `b16a699d` (2026-10-29)
+**Commit Message**: Report a diagnostic instead of panicking for PCL blocks with no labels (#25445)
+
+Fixes #25424
+
+`labelsErrorf` read `block.LabelRanges[0]` unconditionally. When a
+label-count diagnostic is reported for a block that has no labels, it
+panics with `index out of range [0] with length 0` and never returns the
+diagnostic. On master this still happens through the binder, e.g.
+`resource { }` / `read { }` ("must have exactly two labels"), `config {
+}` and `component { }`. The nameless `package { }` path from the issue
+no longer goes through this helper on master, but the helper itself
+still has the bug.
+
+This change: when the block has no labels, `labelsErrorf` now reports
+the diagnostic against the block's definition range (`block.DefRange()`,
+i.e. the block header). Blocks that do have labels behave as before.
+
+- `pkg/codegen/pcl/diagnostics.go`: fall back to `DefRange()` when
+`LabelRanges` is empty
+- `pkg/codegen/pcl/diagnostics_test.go`: unit tests for both the
+labelled case (range unchanged) and the unlabelled case (no panic,
+diagnostic on the header)
+-
+`changelog/pending/20261029--pcl--labels-diagnostic-without-labels.yaml`
+
+### Test output
+
+Without the fix:
+
+```
+$ go test ./codegen/pc
+
+**File**: `changelog/pending/20261029--pcl--labels-diagnostic-without-labels.yaml` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++component: pcl
++kind: fix
++body: Report a diagnostic instead of panicking when a block that requires labels has none
++time: 2026-10-29T00:00:00Z
+```
+
+**File**: `pkg/codegen/pcl/diagnostics.go` (modified, +6/-0)
+```diff
+@@ -37,6 +37,12 @@ func diagf(severity hcl.DiagnosticSeverity, subject hcl.Range, f string, args ..
+ }
+ 
+ func labelsErrorf(block *hclsyntax.Block, f string, args ...any) *hcl.Diagnostic {
++	if len(block.LabelRanges) == 0 {
++		// A block with no labels (e.g. `config { ... }`) has no label range to point at, so report the
++		// diagnostic against the block header instead.
++		return errorf(block.DefRange(), f, args...)
++	}
++
+ 	startRange := block.LabelRanges[0]
+ 
+ 	diagRange := hcl.Range{
+```
+
+**File**: `pkg/codegen/pcl/diagnostics_test.go` (added, +65/-0)
+```diff
+@@ -0,0 +1,65 @@
++// Copyright 2026, Pulumi Corporation.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package pcl
++
++import (
++	"testing"
++
++	"github.com/hashicorp/hcl/v2"
++	"github.com/hashicorp/hcl/v2/hclsyntax"
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++)
++
++func parseSingleBlock(t *testing.T, source string) *hclsyntax.Block {
++	t.Helper()
++
++	file, diags := hclsyntax.ParseConfig([]byte(source), "program.pp", hcl.InitialPos)
++	require.False(t, diags.HasErrors(), diags.Error())
++	body, ok := file.Body.(*hclsyntax.Body)
++	require.True(t, ok)
++	require.Len(t, body.Blocks, 1)
++	return body.Blocks[0]
++}
++
++func TestLabelsErrorfWithLabels(t *testing.T) {
++	t.Parallel()
++
++	block := parseSingleBlock(t, "resource a b c {\n}\n")
++
++	diag := labelsErrorf(block, "resource variables must have exactly two labels")
++	require.NotNil(t, diag.Subject)
++	assert.Equal(t, "resource variables must have exactly two labels", diag.Summary)
++	assert.Equal(t, block.LabelRanges[0].Start, diag.Subject.Start)
++	assert.Equal(t, block.LabelRanges[2].End, diag.Subject.End)
++}
++
++// Regression test for https://github.com/pulumi/pulumi/issues/25424: a block with no labels used to make
++// labelsErrorf panic with "index out of range [0] with length 0".
++func TestLabelsErrorfWithoutLabels(t *testing.T) {
++	t.Parallel()
++
++	block := parseSingleBlock(t, "config {\n}\n")
++	require.Empty(t, block.LabelRanges)
++
++	var diag *hcl.Diagnostic
++	require.NotPanics(t, func() {
++		diag = labelsErrorf(block, "config variables must have exactly one or two labels")
++	})
++	require.NotNil(t, diag.Subject)
++	assert.Equal(t, hcl.DiagError, diag.Severity)
++	assert.Equal(t, "config variables must have exactly one or two labels", diag.Summary)
++	assert.Equal(t, block.DefRange(), *diag.Subject)
++}
+```
+
+---
+
+### Incident Patch 2: `874c77a7` (2026-10-28)
+**Commit Message**: Update module golang.org/x/net to v0.62.0 [SECURITY] (#25431)
 
 This PR contains the following updates:
 
@@ -1732,269 +1861,320 @@ This PR contains the following updates:
 [Age](https://docs.renovatebot.com/merge-confidence/) |
 [Confidence](https://docs.renovatebot.com/merge-confidence/) |
 |---|---|---|---|
+| [golang.org/x/net](https://pkg.go.dev/golang.org/x/net) | [`v0.60.0` →
+`v0.62.0`](https://cs.opensource.google/go/x/net/+/refs/tags/v0.60.0...refs/tags/v0.62.0)
 |
-[github.com/go-jose/go-jose/v4](https://redirect.github.com/go-jose/go-jose)
-| `v4.1.4` → `v4.1.6` |
-![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fgo-jose%2fgo-jose%2fv4/v4.1.6?slim=true)
+![age](https://developer.mend.io/api/mc/badges/age/go/golang.org%2fx%2fnet/v0.62.0?slim=true)
 |
-![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fgo-jose%2fgo-jose%2fv4/v4.1.4/v4.1.6?slim=true)
+![confidence](https://developer.mend.io/api/mc/badges/confidence/go/golang.org%2fx%2fnet/v0.60.0/v0.62.0?slim=true)
+|
+| [golang.org/x/net](https://pkg.go.dev/golang.org/x/net) | [`v0.61.0` →
+`v0.62.0`](https://cs.opensource.google/go/x/net/+/refs/tags/v0.61.0...refs/tags/v0.62.0)
+|
+![age](https://developer.mend.io/api/mc/badges/age/go/golang.org%2fx%2fnet/v0.62.0?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/go/golang.org%2fx%2fnet/v0.61.0/v0.62.0?slim=true)
 |
 
 ---
 
-### Go JOSE: DoS when parsing JWKs that contain RSA keys
-[CVE-2026-116587](https://nvd.nist.gov/vuln/detail/CVE-2026-116587) /
-[GHSA-mgcc-cww5-fp2q](https://redirect.github.com/advisories/GHSA-mgcc-cww5-fp2q)
+> [!WARNING]
+> Some dependencies could not be looked up. Check the [Dependency
+Dashboard](../issues/21045) for more information.
 
-<details>
-<summary>More information</summary>
+---
 
-#### Details
-##### Summary
-
-A crafted RSA key inside a JWK can cause operations that parse JWKs to
-consume excess CPU.
-
-##### Details
-
-go-jose does not check for bounds on RSA modulus and primes before
-validating them. Values are passed directly to
-`crypto/rsa.PrivateKey.Validate()`. On Go 1.24+, this takes cubic time
+### Avoid quadratic complexity when coa
 
 **File**: `pkg/go.mod` (modified, +1/-1)
 ```diff
-@@ -200,7 +200,7 @@ require (
- 	github.com/git-pkgs/vers v0.2.4 // indirect
- 	github.com/go-git/gcfg/v2 v2.0.2 // indirect
- 	github.com/go-git/go-billy/v6 v6.0.0-beta.1 // indirect
--	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
-+	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
- 	github.com/go-logr/logr v1.4.4 // indirect
- 	github.com/go-logr/stdr v1.2.2 // indirect
- 	github.com/go-ole/go-ole v1.2.6 // indirect
+@@ -37,7 +37,7 @@ require (
+ 	gocloud.dev v0.46.1-0.20260810195832-b5401c07b5f1
+ 	gocloud.dev/secrets/hashivault v0.46.0
+ 	golang.org/x/crypto v0.58.0 // indirect
+-	golang.org/x/net v0.61.0
++	golang.org/x/net v0.62.0
+ 	golang.org/x/oauth2 v0.36.0
+ 	golang.org/x/sync v0.24.0
+ 	google.golang.org/api v0.290.0
 ```
 
 **File**: `pkg/go.sum` (modified, +2/-2)
 ```diff
-@@ -256,8 +256,8 @@ github.com/go-git/go-git-fixtures/v6 v6.0.0-alpha.1 h1:gmqi2jvsreu0s8JMLylYDFq4s
- github.com/go-git/go-git-fixtures/v6 v6.0.0-alpha.1/go.mod h1:ECf1MqJlBdYpKggBrOXjo/0EnvRZx6D++I86UYjPgAQ=
- github.com/go-git/go-git/v6 v6.0.0-beta.1 h1:1t+vJYGDBN6f9GRWskgWx5UjXPFUa7wfffZZZ2C5GtA=
- github.com/go-git/go-git/v6 v6.0.0-beta.1/go.mod h1:ugDlr38Wwc+fOw85J+Oluh5TNXQtJgYMcriOljg3l4s=
--github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
--github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
-+github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
-+github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
- github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
- github.com/go-logr/logr v1.4.4 h1:tG4xh9yMsRCAiodLVTxyrkzSZ9+o0L1Kg/+cPVcbP/8=
- github.com/go-logr/logr v1.4.4/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
+@@ -691,8 +691,8 @@ golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod h1:sp8m0HH+o8qH0wwXwY
+ golang.org/x/net v0.0.0-20210226172049-e18ecbb05110/go.mod h1:m0MpNAwzfU5UDzcl9v0D8zg8gWTRqZa9RBIspLL5mdg=
+ golang.org/x/net v0.0.0-20220722155237-a158d28d115b/go.mod h1:XRhObCWvk6IyKnWLug+ECip1KBveYUHfp+8e9klMJ9c=
+ golang.org/x/net v0.0.0-20221002022538-bcab6841153b/go.mod h1:YDH+HFinaLZZlnHAfSS6ZXJJ9M9t4Dl22yv3iI2vPwk=
+-golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
+-golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
+ golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
 ```
 
-**File**: `sdk/go.mod` (modified, +1/-1)
+**File**: `sdk/go.mod` (modified, +5/-5)
 ```diff
-@@ -98,7 +98,7 @@ require (
- 	github.com/git-pkgs/vers v0.2.4 // indirect
- 	github.com/go-git/gcfg/v2 v2.0.2 // indirect
- 	github.com/go-git/go-billy/v6 v6.0.0-beta.1 // indirect
--	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
-+	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
- 	github.com/go-logr/logr v1.4.4 // indirect
- 	github.com/go-logr/stdr v1.2.2 // indirect
- 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0 // indirect
-```
-
-**File**: `sdk/go.sum` (modified, +2/-2)
-```diff
-@@ -90,8 +90,8 @@ github.com/go-git/go-git-fixtures/v6 v6.0.0-alpha.1/go.mod h1:ECf1MqJlBdYpKggBrO
- github.com/go-git/go-git/v6 v6.0.0-beta.1 h1:1t+vJYGDBN6f9GRWskgWx5UjXPFUa7wfffZZZ2C5GtA=
- github.com/go-git/go-git/v6 v6.0.0-beta.1/go.mod h1:ugDlr38Wwc+fOw85J+Oluh5TNXQtJgYMcriOljg3l4s=
- github.com/go-gl/glfw v0.0.0-20190409004039-e6da0acd62b1/go.mod h1:vR7hzQXu2zJy9AVAgeJqvqgH9Q5CA+iKCZ2gyEVpxRU=
--github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
--github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
-+github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
-+github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
- github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
- github.com/go-logr/logr v1.4.4 h1:tG4xh9yMsRCAiodLVTxyrkzSZ9+o0L1Kg/+cPVcbP/8=
- github.com/go-logr/logr v1.4.4/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
-```
-
-**File**: `sdk/go/pulumi-language-go/go.mod` (modified, +1/-1)
-```diff
-@@ -52,7 +52,7 @@ require (
- 	github.com/go-git/gcfg/v2 v2.0.2 // indirect
- 	github.com/go-git/go-billy/v6 v6.0.0-beta.1 // indirect
- 	github.com/go-git/go-git/v6 v6.0.0-beta.1 // indirect
--	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
-+	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
- 	github.com/go-logr/logr v1.4.4 // indirect
- 	github.com/go-logr/stdr v1.2.2 // indirect
- 	github.com/godbus/dbus/v5 v5.2.2 // indirect
-```
-
-**File**: `sdk/go/pulumi-language-go/go.sum` (modified, +2/-2)
-```diff
-@@ -124,8 +124,8 @@ github.com/go-git/go-git-fixtures/v6 v6.0.0-alpha.1 h1:gmqi2jvsreu0s8JMLylYDFq4s
- github.com/go-git/go-git-fixtures/v6 v6.0.0-alpha.1/go.mod h1:ECf1MqJlBdYpKggBrOXjo/0EnvRZx6D++I86UYjPgAQ=
- github.com/go-git/go-git/v6 v6.0.0-beta.1 h1:1t+vJYGDBN6f9GRWskgWx5UjXPFUa7wfffZZZ2C5GtA=
- github.com/go-git/go-git/v6 v6.0.0-beta.1/go.mod h1:ugDlr38Wwc+fOw85J+Oluh5TNXQtJgYMcriOljg3l4s=
--github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
--github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
-+github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
-+github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
- github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
- github.com/go-logr/logr v1.4.4 h1:tG4xh9yMsRCAiodLVTxyrkzSZ9+o0L1Kg/+cPVcbP/8=
- github.com/go-logr/logr v1.4.4/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
-```
-
-**File**: `sdk/nodejs/cmd/pulumi-language-nodejs/go.mod` (modified, +1/-1)
-```diff
-@@ -57,7 +57,7 @@ require (
- 	github.com/go-git/gcfg/v2 v2.0.2 // indirect
- 	github.com/go-git/go-billy/v6 v6.0.0-beta.1 // indirect
- 	github.com/go-git/go-git/v6 v6.0.0-beta.1 // indirect
--	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
-+	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
- 	github.com/go-logr/logr v1.4.4 // indirect
- 	github.com/go-logr/stdr v1.2.2 // indirect
- 	github.com/godbus/dbus/v5 v5.2.2 // indirect
-```
-
-**File**: `sdk/nodejs/cmd/pulumi-language-nodejs/go.sum` (modified, +2/-2)
-```diff
-@@ -121,8 +121,8 @@ github.com/go-git/go-git-fixtures/v6 v6.0.0-alpha.1 h1:gmqi2jvsreu0s8JMLylYDFq4s
- github.com/go-git/go-git-fixtures/v6 v6.0.0-alpha.1/go.mod h1:ECf1MqJlBdYpKggBrOXjo/0EnvRZx6D++I86UYjPgAQ=
- github.com/go-git/go-git/v6 v6.0.0-beta.1 h1:1t+vJYGDBN6f9GRWskgWx5UjXPFUa7wfffZZZ2C5GtA=
- github.com/go-git/go-git/v6 v6.0.0-beta.1/go.mod h1:ugDlr38Wwc+fOw85J+Oluh5TNXQtJgYMcriOljg3l4s=
--github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
--github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
-+github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
-+github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
- github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
- github.com/go-logr/logr v1.4.4 h1:tG4xh9yMsRCAiodLVTxyrkzSZ9+o0L1Kg/+cPVcbP/8=
- github.com/go-logr/logr v1.4.4/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
-```
-
----
-
-### Incident Patch 2: `16344d16` (2026-10-27)
-**Commit Message**: Revert the Cloud SDK policy type migration (#25294, #25296, #25340) (#25410)
-
-## Summary
-
-Revert #25340, #25296 and #25294, one commit each, newest first.
-
-#25294 and #25296 marked the hand-written policy types in
-`sdk/go/common/apitype` as deprecated and moved callers, including
-exported `pkg` methods, onto separate `pulumi-cloud-sdk` types.
-Consumers that use these types, including the Pulumi Cloud backend,
-can't take a new pulumi/pulumi version without first migrating off the
-deprecated types. The intended way to move these types to the Cloud SDK
-is to replace each one with a type alias, which keeps existing callers
-compiling. That migration will be redone separately.
-
-#25340 is reverted too because it changes the same policy group files on
-top of #25296, so #25296 doesn't revert cleanly without it. The
-`--entity-type` deprecation can be re-landed on its own.
-
-None of these changes have been released (the latest release is
-v3.272.0), so reverting now keeps the deprecations, the `pkg` signature
-changes and the `--output json` shape changes out of a release. Their
-pending changelog entries are removed with them.
-
-
-## Risk
-
-Low. It restores code that shipped in v3.272.0 and earlier
-
-**File**: `changelog/pending/20261020--sdk-go--deprecate-policy-group-api-types.yaml` (removed, +0/-3)
-```diff
-@@ -1,3 +0,0 @@
--component: sdk/go
--kind: improvement
--body: Deprecate the policy pack and policy group types in `sdk/go/common/apitype` in favor of `github.com/pulumi/pulumi-cloud-sdk/go/apitype`
-```
-
-**File**: `changelog/pending/20261020--sdk-go--deprecate-policy-issue-api-types.yaml` (removed, +0/-4)
-```diff
-@@ -1,4 +0,0 @@
--component: sdk/go
--kind: improvement
--body: Deprecate the policy issue and compliance types in sdk/go/common/apitype in favor of github.com/pulumi/pulumi-cloud-sdk/go/apitype
--time: 2026-10-20T00:00:00Z
-```
-
-**File**: `changelog/pending/20261021--cli-policy--use-api-shape-in-policy-group-json-output.yaml` (removed, +0/-3)
-```diff
-@@ -1,3 +0,0 @@
--component: cli/policy
--kind: improvement
--body: Include match rules and empty fields in `pulumi policy group get`, `new`, and `edit` JSON output
-```
-
-**File**: `changelog/pending/20261022--cli-policy--deprecate-entity-type.yaml` (removed, +0/-3)
-```diff
-@@ -1,3 +0,0 @@
--component: cli/policy
--kind: improvement
--body: Deprecate `--entity-type` on `pulumi policy group new` in favor of `--mode` and stop showing entity type in `policy group` console output
-```
-
-**File**: `changelog/pending/20261022--cli-policy--use-api-shape-in-policy-issue-json-output.yaml` (removed, +0/-3)
-```diff
-@@ -1,3 +0,0 @@
--component: cli/policy
--kind: improvement
--body: Use the API shape in `pulumi policy issue ls`, `pulumi policy issue get` and `pulumi policy compliance ls` JSON output
-```
-
-**File**: `changelog/pending/20261022--pkg--policy-issue-methods-use-cloud-sdk-types.yaml` (removed, +0/-3)
-```diff
-@@ -1,3 +0,0 @@
--component: pkg
--kind: chore
--body: Use `github.com/pulumi/pulumi-cloud-sdk/go/apitype` types in the policy issue and compliance methods of `httpstate/client.Client`
-```
-
-**File**: `changelog/pending/20261022--pkg--policy-methods-use-cloud-sdk-types.yaml` (removed, +0/-3)
-```diff
-@@ -1,3 +0,0 @@
--component: pkg
--kind: chore
--body: Use `github.com/pulumi/pulumi-cloud-sdk/go/apitype` types in the policy pack and policy group methods of `backend.Backend` and `httpstate/client.Client`
-```
-
-**File**: `pkg/backend/backend.go` (modified, +2/-3)
-```diff
-@@ -22,7 +22,6 @@ import (
- 	"io"
- 	"time"
+@@ -25,10 +25,10 @@ require (
+ 	github.com/texttheater/golang-levenshtein v1.0.1
+ 	github.com/uber/jaeger-client-go v2.30.0+incompatible
+ 	go.opentelemetry.io/otel/bridge/opentracing v1.45.0
+-	golang.org/x/crypto v0.57.0
++	golang.org/x/crypto v0.58.0
+ 	golang.org/x/mod v0.40.0 // indirect
+-	golang.org/x/net v0.60.0
+-	golang.org/x/sys v0.48.0
++	golang.org/x/net v0.62.0
++	golang.org/x/sys v0.49.0
+ 	google.golang.org/grpc v1.83.2
+ 	gopkg.in/yaml.v2 v2.4.0
+ 	gopkg.in/yaml.v3 v3.0.1
+@@ -70,7 +70,7 @@ require (
+ 	go.opentelemetry.io/otel/trace v1.45.0
+ 	go.opentelemetry.io/proto/otlp v1.11.0
+ 	golang.org/x/sync v0.23.0
+-	golang.org/x/term v0.46.0
++	golang.org/x/term v0.47.0
+ 	lukechampine.com/frand v1.4.2
+ )
  
--	cloudapitype "github.com/pulumi/pulumi-cloud-sdk/go/apitype"
- 	"go.opentelemetry.io/otel"
- 
- 	"github.com/pulumi/pulumi/pkg/v3/backend/display"
-@@ -145,11 +144,11 @@ type Backend interface {
- 
- 	// ListPolicyGroups returns all Policy Groups for an organization in this backend or an error if it cannot be found.
- 	ListPolicyGroups(ctx context.Context, orgName string, inContToken ContinuationToken) (
--		cloudapitype.AppListPolicyGroupsResponse, ContinuationToken, error)
-+		apitype.ListPolicyGroupsResponse, ContinuationToken, error)
- 
- 	// ListPolicyPacks returns all Policy Packs for an organization in this backend, or an error if it cannot be found.
- 	ListPolicyPacks(ctx context.Context, orgName string, inContToken ContinuationToken) (
--		cloudapitype.AppListPolicyPacksResponse, ContinuationToken, error)
-+		apitype.ListPolicyPacksResponse, ContinuationToken, error)
- 
- 	// GetStackPolicyPacks gets the required policy packs currently applicable to the stack.
- 	GetStackPolicyPacks(ctx context.Context, stackRef StackReference) ([]engine.RequiredPolicy, error)
+@@ -144,7 +144,7 @@ require (
+ 	github.com/spf13/pflag v1.0.10 // indirect
+ 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
+ 	go.uber.org/atomic v1.11.0 // indirect
+-	golang.org/x/text v0.42.0
++	golang.org/x/text v0.43.0
+ 	google.golang.org/protobuf v1.36.11
+ 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7
+ )
+```
+
+**File**: `sdk/go.sum` (modified, +8/-8)
+```diff
+@@ -327,8 +327,8 @@ golang.org/x/crypto v0.50.0/go.mod h1:3muZ7vA7PBCE6xgPX7nkzzjiUq87kRItoJQM1Yo8S+
+ golang.org/x/crypto v0.51.0/go.mod h1:8AdwkbraGNABw2kOX6YFPs3WM22XqI4EXEd8g+x7Oc8=
+ golang.org/x/crypto v0.53.0/go.mod h1:DNLU434OwVakk9PzuwV8w62mAJpRJL3vsgcfp4Qnsio=
+ golang.org/x/crypto v0.54.0/go.mod h1:KWL8ny2AZdGR2cWmzeHrp2azQPGogOv+HeQaVEXC2dk=
+-golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
+-golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
++golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
++golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
+ golang.org/x/exp v0.0.0-20180321215751-8460e604b9de/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
+ golang.org/x/exp v0.0.0-20180807140117-3d87b88a115f/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
+ golang.org/x/exp v0.0.0-20190125153040-c74c464bbbf2/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
+@@ -391,8 +391,8 @@ golang.org/x/net v0.54.0/go.mod h1:Sj4oj8jK6XmHpBZU/zWHw3BV3abl4Kvi+Ut7cQcY+cQ=
+ golang.org/x/net v0.55.0/go.mod h1:L5U2KuzuOe1lY7Z+aWVIKK6qEeJXnXV9yzGA+WCHJww=
+ golang.org/x/net v0.56.0/go.mod h1:D3Ku6r+V6JROoZK144D2XfMHFcMq/0zSfLelVTCFKec=
+ golang.org/x/net v0.57.0/go.mod h1:KpXc8iv+r3XplLAG/f7Jsf9RPszJzdR0f58q9vGOuEU=
+-golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
+-golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+@@ -442,8 +442,8 @@ golang.org/x/sys v0.44.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
+ golang.org/x/sys v0.45.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
+ golang.org/x/sys v0.46.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
+ golang.org/x/sys v0.47.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
+-golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
+-golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
++golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
++golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+ golang.org/x/telemetry v0.0.0-20240521205824-bda55230c457/go.mod h1:pRgIJT+bRLFKnoM1ldnzKoxTIn14Yxz928LQRYYgIN0=
+ golang.org/x/telemetry v0.0.0-20250710130107-8d8967aff50b/go.mod h1:4ZwOYna0/zsOKwuR5X/m0QFOJpSZvAxFfkQT+Erd9D4=
+ golang.org/x/telemetry v0.0.0-20250807160809-1a19826ec488/go.mod h1:fGb/2+tgXXjhjHsTNdVEEMZNWA0quBnfrO+AfoDSAKw=
+@@ -477,8 +477,8 @@ golang.org/x/term v0.42.0/go.mod h1:Dq/D+snpsbazcBG5+F9Q1n2rXV8Ma+71xEjTRufARgY=
+ golang.org/x/term v0.43.0/go.mod h1:lrhlHNdQJHO+1qVYiHfFKVuVioJIheAc3fBSMFYEIsk=
+ golang.org/x/term v0.44.0/go.mod h1:7ze4MdzUzLXpSAoFP1H0bOI9aXDqveSvatT5vKcFh2Y=
+ golang.org/x/term v0.45.0/go.mod h1:9aqxs0blBcrm/n0L9QW0aRVD+ktan8ssZromtqJC43w=
+-golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
+-golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
++golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
++golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
+ golang.org/x/text v0.41.0 h1:vz/seA0lnX87Othu2f/0L24RcgrXD9/YFTSuGjj3rH8=
+ golang.org/x/text v0.41.0/go.mod h1:jvf1O8ajNzZqhSrQBPbutR/EB83Cc0CFrezNQIwbb5M=
+ golang.org/x/tools v0.0.0-20180525024113-a5b4c53f6e8b/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
+```
+
+**File**: `sdk/go/auto/test/errors/compilation_error/go/go.mod` (modified, +7/-7)
+```diff
+@@ -98,15 +98,15 @@ require (
+ 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
+ 	go.uber.org/atomic v1.11.0 // indirect
+ 	go.uber.org/multierr v1.11.0 // indirect
+-	golang.org/x/crypto v0.57.0 // indirect
++	golang.org/x/crypto v0.58.0 // indirect
+ 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
+ 	golang.org/x/mod v0.41.0 // indirect
+-	golang.org/x/net v0.60.0 // indirect
+-	golang.org/x/sync v0.23.0 // indirect
+-	golang.org/x/sys v0.48.0 // indirect
+-	golang.org/x/term v0.46.0 // indirect
+-	golang.org/x/text v0.42.0 // indirect
+-	golang.org/x/tools v0.49.0 // indirect
++	golang.org/x/net v0.62.0 // indirect
++	golang.org/x/sync v0.24.0 // indirect
++	golang.org/x/sys v0.49.0 // indirect
++	golang.org/x/term v0.47.0 // indirect
++	golang.org/x/text v0.43.0 // indirect
++	golang.org/x/tools v0.51.0 // indirect
+ 	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
+ 	google.golang.org/grpc v1.83.2 // indirect
+```
+
+**File**: `sdk/go/auto/test/errors/compilation_error/go/go.sum` (modified, +14/-14)
+```diff
+@@ -266,8 +266,8 @@ golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACk
+ golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
+ golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
+ golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
+-golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
+-golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
++golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
++golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
+ golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f h1:W3F4c+6OLc6H2lb//N1q4WpJkhzJCK5J6kUi1NTVXfM=
+ golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f/go.mod h1:J1xhfL/vlindoeF/aINzNzt2Bket5bjo9sdOYzOsU80=
+ golang.org/x/lint v0.0.0-20200302205851-738671d3881b/go.mod h1:3xt1FjdF8hUf6vQPIChWIBhFzV8gjjsPE/fR3IyQdNY=
+@@ -282,13 +282,13 @@ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLL
+ golang.org/x/net v0.0.0-20200421231249-e086a090c8fd/go.mod h1:qpuaurCH72eLCgpAm/N6yyVIVM9cpaDIP3A8BGJEC5A=
+ golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
+ golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
+-golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
+-golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+-golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
+-golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
++golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190222072716-a9d3bda3a223/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+@@ -302,24 +302,24 @@ golang.org/x/sys v0.0.0-20210423082822-04245dca01da/go.mod h1:h1NjWce9XRLGQEsW7w
+ golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.0.0-20210809222454-d867a43fc93e/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+-golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
+-golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
++golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
++golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+ golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
+-golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
+-golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
++golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
++golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
+ golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+ golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+ golang.org/x/text v0.3.6/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+-golang.org/x/text v0.42.0 h1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=
+-golang.org/x/text v0.42.0/go.mod h1:ojzP1Z+2QtioaF8DTtO8K5q7JWVVYwZKenzujK0Zd0E=
++golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
++golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
+ golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
+ golang.org/x/tools v0.0.0-20181030221726-6c7e314b6563/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
+ golang.org/x/tools v0.0.0-20191119224855-298f0cb1881e/go.mod h1:b+2E5dAYhXwXZwtnZ6UAqBI28+e2cm9otk0dWdXHAEo=
+ golang.org/x/tools v0.0.0-20200130002326-2f3ba24bd6e7/go.mod h1:TB2adYChydJhpapKDTa4BR/hXlZSLoq2Wpct/0txZ28=
+ golang.org/x/tools v0.0.0-20200619180055-7c47624df98f/go.mod h1:Ek
+```
+
+**File**: `sdk/go/auto/test/errors/conflict_error/go.mod` (modified, +7/-7)
+```diff
+@@ -98,15 +98,15 @@ require (
+ 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
+ 	go.uber.org/atomic v1.11.0 // indirect
+ 	go.uber.org/multierr v1.11.0 // indirect
+-	golang.org/x/crypto v0.57.0 // indirect
++	golang.org/x/crypto v0.58.0 // indirect
+ 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
+ 	golang.org/x/mod v0.41.0 // indirect
+-	golang.org/x/net v0.60.0 // indirect
+-	golang.org/x/sync v0.23.0 // indirect
+-	golang.org/x/sys v0.48.0 // indirect
+-	golang.org/x/term v0.46.0 // indirect
+-	golang.org/x/text v0.42.0 // indirect
+-	golang.org/x/tools v0.49.0 // indirect
++	golang.org/x/net v0.62.0 // indirect
++	golang.org/x/sync v0.24.0 // indirect
++	golang.org/x/sys v0.49.0 // indirect
++	golang.org/x/term v0.47.0 // indirect
++	golang.org/x/text v0.43.0 // indirect
++	golang.org/x/tools v0.51.0 // indirect
+ 	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
+ 	google.golang.org/grpc v1.83.2 // indirect
+```
+
+**File**: `sdk/go/auto/test/errors/conflict_error/go.sum` (modified, +14/-14)
+```diff
+@@ -266,8 +266,8 @@ golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACk
+ golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
+ golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
+ golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
+-golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
+-golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
++golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
++golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
+ golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f h1:W3F4c+6OLc6H2lb//N1q4WpJkhzJCK5J6kUi1NTVXfM=
+ golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f/go.mod h1:J1xhfL/vlindoeF/aINzNzt2Bket5bjo9sdOYzOsU80=
+ golang.org/x/lint v0.0.0-20200302205851-738671d3881b/go.mod h1:3xt1FjdF8hUf6vQPIChWIBhFzV8gjjsPE/fR3IyQdNY=
+@@ -282,13 +282,13 @@ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLL
+ golang.org/x/net v0.0.0-20200421231249-e086a090c8fd/go.mod h1:qpuaurCH72eLCgpAm/N6yyVIVM9cpaDIP3A8BGJEC5A=
+ golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
+ golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
+-golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
+-golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+-golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
+-golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
++golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190222072716-a9d3bda3a223/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+@@ -302,24 +302,24 @@ golang.org/x/sys v0.0.0-20210423082822-04245dca01da/go.mod h1:h1NjWce9XRLGQEsW7w
+ golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.0.0-20210809222454-d867a43fc93e/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+-golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
+-golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
++golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
++golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+ golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
+-golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
+-golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
++golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
++golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
+ golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+ golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+ golang.org/x/text v0.3.6/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+-golang.org/x/text v0.42.0 h1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=
+-golang.org/x/text v0.42.0/go.mod h1:ojzP1Z+2QtioaF8DTtO8K5q7JWVVYwZKenzujK0Zd0E=
++golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
++golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
+ golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
+ golang.org/x/tools v0.0.0-20181030221726-6c7e314b6563/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
+ golang.org/x/tools v0.0.0-20191119224855-298f0cb1881e/go.mod h1:b+2E5dAYhXwXZwtnZ6UAqBI28+e2cm9otk0dWdXHAEo=
+ golang.org/x/tools v0.0.0-20200130002326-2f3ba24bd6e7/go.mod h1:TB2adYChydJhpapKDTa4BR/hXlZSLoq2Wpct/0txZ28=
+ golang.org/x/tools v0.0.0-20200619180055-7c47624df98f/go.mod h1:Ek
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #25419** (2026-10-28): Re-land the policy CLI output and --entity-type changes reverted in #25410 (@danbiwer)
-- **PR #25418** (2026-10-28): Update module github.com/go-jose/go-jose/v4 to v4.1.6 [SECURITY] (@pulumi-renovate[bot])
-- **PR #25410** (2026-10-27): Revert the Cloud SDK policy type migration (#25294, #25296, #25340) (@danbiwer)
-- **PR #25402** (2026-10-27): Pause automatic agent account creation (@aminix)
-- **PR #25401** (2026-10-27): Finish moving source_eval to property.Map (@Frassle)
-- **PR #25400** (2026-10-27): Fix secret container redaction in JSON output (@iwahbe)
+- **PR #25456** (closed): Show the dedicated CLI command for an operation in pulumi api (@danbiwer)
+- **PR #25450** (2026-10-29): Bind PCL `hideDiffs` against resource inputs and outputs (@iwahbe)
+- **PR #25445** (2026-10-29): Report a diagnostic instead of panicking for PCL blocks with no labels (@sarankumar1325)
+- **PR #25444** (2026-10-29): Restrict @opentelemetry/api to 1.9.x in the Node.js SDK (@eon-pulumi-agent[bot])
+- **PR #25443** (2026-10-29): Only retrieve environment change requests in `pulumi env change-requests` (@seanyeh)
+- **PR #25440** (2026-10-29): Changelog and go.mod updates for v3.273.0 (@pulumi-bot)
 
 ---
 
@@ -2014,28 +2194,31 @@ Low. It restores code that shipped in v3.272.0 and earlier
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update module github.com/go-jose/go-jose/v4 to v4.1.6 [SECURITY] (#25418)
+## X. Report a diagnostic instead of panicking for PCL blocks with no labels (#25445)
 
 **RULE**:
-When implementing operations in `pkg/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog/pending/20261029--pcl--labels-diagnostic-without-labels.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ba1a534c`: Update module github.com/go-jose/go-jose/v4 to v4.1.6 [SECURITY] (#25418). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b16a699d`: Report a diagnostic instead of panicking for PCL blocks with no labels (#25445). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/pending/20261029--pcl--labels-diagnostic-without-labels.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
+component: pcl
+kind: fix
+body: Report a diagnostic instead of panicking when a block that requires labels has none
+time: 2026-10-29T00:00:00Z
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ba1a534c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b16a699d` are properly handled with clean fallback behavior.

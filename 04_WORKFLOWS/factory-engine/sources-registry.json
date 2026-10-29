@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-29T22:49:00.976Z",
-    "lastVerified": "2026-10-29T22:49:00.976Z",
+    "lastChecked": "2026-10-29T23:13:52.320Z",
+    "lastVerified": "2026-10-29T23:13:52.320Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -330,9 +330,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-29T22:07:07.735Z",
+    "lastChecked": "2026-10-29T23:09:35.862Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-29T22:07:07.735Z"
+    "lastVerified": "2026-10-29T23:09:35.862Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -784,9 +784,9 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-10-29T01:17:53.582Z",
+    "lastChecked": "2026-10-29T23:09:30.819Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-10-29T01:17:53.582Z"
+    "lastVerified": "2026-10-29T23:09:30.819Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
@@ -2396,14 +2396,14 @@
     "officialUrl": "https://github.com/1jehuang/jcode",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T07:17:53.947Z",
-    "lastVerified": "2026-10-28T07:17:53.947Z",
+    "lastChecked": "2026-10-29T23:09:24.311Z",
+    "lastVerified": "2026-10-29T23:09:24.311Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-1jehuang-jcode",
-    "contentHash": "7763c7900f7c37eed469c789d592e2475159302437737e56cd246b9fcd04455c",
+    "contentHash": "0ea49685dfab461fdf31cb065d4d8f061f0854ce74b8099d79dc5e14df796e10",
     "promotedRulesCount": 3,
-    "recentFixesCount": 17,
+    "recentFixesCount": 18,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4039,9 +4039,9 @@
   "malisper-pgrust": {
     "name": "pgrust",
     "officialUrl": "https://github.com/malisper/pgrust",
-    "lastChecked": "2026-10-28T13:50:02.814Z",
+    "lastChecked": "2026-10-29T23:09:33.315Z",
     "revisionIdentifier": "38634b40",
-    "lastVerified": "2026-10-28T13:50:02.814Z"
+    "lastVerified": "2026-10-29T23:09:33.315Z"
   },
   "gitui-org-gitui": {
     "name": "gitui",
@@ -4419,12 +4419,12 @@
     "officialUrl": "https://github.com/pulumi/pulumi",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T14:42:49.989Z",
-    "lastVerified": "2026-10-28T14:42:49.989Z",
+    "lastChecked": "2026-10-29T23:09:33.063Z",
+    "lastVerified": "2026-10-29T23:09:33.063Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pulumi-pulumi",
-    "contentHash": "a27e64fa6707f20a4659e64ae1671c5e906857e2798f8cb15a4681fd2ccc39b4",
+    "contentHash": "6261def5365527f71f48f854716dee9862be4bbbf92d0f819fcf4dc3550bf165",
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
@@ -8588,5 +8588,19 @@
     "lastChecked": "2026-10-29T22:48:45.021Z",
     "revisionIdentifier": "6157c77e",
     "lastVerified": "2026-10-29T22:48:45.021Z"
+  },
+  "kaiopiola-seocheck": {
+    "name": "SEOCheck",
+    "officialUrl": "https://github.com/kaiopiola/SEOCheck",
+    "lastChecked": "2026-10-29T23:09:23.334Z",
+    "revisionIdentifier": "a1e13f715f",
+    "lastVerified": "2026-10-29T23:09:23.334Z"
+  },
+  "kudoleh-ios-clean-architecture-mvvm": {
+    "name": "iOS-Clean-Architecture-MVVM",
+    "officialUrl": "https://github.com/kudoleh/iOS-Clean-Architecture-MVVM",
+    "lastChecked": "2026-10-29T23:09:26.027Z",
+    "revisionIdentifier": "a68da3e3",
+    "lastVerified": "2026-10-29T23:09:26.027Z"
   }
 }

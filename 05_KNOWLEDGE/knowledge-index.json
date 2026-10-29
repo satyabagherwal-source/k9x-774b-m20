@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T22:48:58.396Z",
+  "last_updated": "2026-10-29T23:13:49.684Z",
   "total_verified_learnings": 1169,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -92,8 +92,8 @@
       "slug": "1jehuang-jcode",
       "platform": "github",
       "source_url": "https://github.com/1jehuang/jcode",
-      "source_version": "2c4efdb0",
-      "content_hash": "7763c7900f7c37eed469c789d592e2475159302437737e56cd246b9fcd04455c",
+      "source_version": "bfd8142c",
+      "content_hash": "0ea49685dfab461fdf31cb065d4d8f061f0854ce74b8099d79dc5e14df796e10",
       "dossier_path": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "promoted_rules": [
@@ -161,6 +161,21 @@
           "number": 5221,
           "title": "Non-Blocking Ephemeral Caches with Resident Source-of-Truth Transcripts",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5550,
+          "title": "KV-Cache Protocol Projection Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5551,
+          "title": "First-Frame Subprocess Non-Blocking Guarantee",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5552,
+          "title": "Cross-Platform Directory Isolation for Integration Test Harnesses",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -168,7 +183,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T07:22:17.077Z",
+      "verified_at": "2026-10-29T23:13:49.666Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44866,8 +44881,8 @@
       "slug": "pulumi-pulumi",
       "platform": "github",
       "source_url": "https://github.com/pulumi/pulumi",
-      "source_version": "a790c218",
-      "content_hash": "a27e64fa6707f20a4659e64ae1671c5e906857e2798f8cb15a4681fd2ccc39b4",
+      "source_version": "20664124",
+      "content_hash": "6261def5365527f71f48f854716dee9862be4bbbf92d0f819fcf4dc3550bf165",
       "dossier_path": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "promoted_rules": [
@@ -44930,6 +44945,11 @@
           "number": 5311,
           "title": "Update module github.com/go-jose/go-jose/v4 to v4.1.6 [SECURITY] (#25418)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5549,
+          "title": "Report a diagnostic instead of panicking for PCL blocks with no labels (#25445)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44937,7 +44957,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T14:42:50.535Z",
+      "verified_at": "2026-10-29T23:09:34.702Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -149323,6 +149343,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T22:48:58.384Z"
+    },
+    "rule-5549": {
+      "learning_id": "rule-5549",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5549,
+      "title": "Report a diagnostic instead of panicking for PCL blocks with no labels (#25445)",
+      "source_url": "https://github.com/pulumi/pulumi",
+      "source_version": "20664124",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T23:09:34.702Z"
+    },
+    "rule-5550": {
+      "learning_id": "rule-5550",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5550,
+      "title": "KV-Cache Protocol Projection Invariant",
+      "source_url": "https://github.com/1jehuang/jcode",
+      "source_version": "bfd8142c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T23:13:49.666Z"
+    },
+    "rule-5551": {
+      "learning_id": "rule-5551",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5551,
+      "title": "First-Frame Subprocess Non-Blocking Guarantee",
+      "source_url": "https://github.com/1jehuang/jcode",
+      "source_version": "bfd8142c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T23:13:49.666Z"
+    },
+    "rule-5552": {
+      "learning_id": "rule-5552",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5552,
+      "title": "Cross-Platform Directory Isolation for Integration Test Harnesses",
+      "source_url": "https://github.com/1jehuang/jcode",
+      "source_version": "bfd8142c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T23:13:49.666Z"
     }
   },
   "aliases": {

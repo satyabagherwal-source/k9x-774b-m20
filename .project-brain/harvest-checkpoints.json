@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-29T22:48:58.449Z",
+  "last_updated": "2026-10-29T23:13:49.772Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5541,14 +5541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-1jehuang-jcode",
-      "content_hash": "7763c7900f7c37eed469c789d592e2475159302437737e56cd246b9fcd04455c",
-      "verified_at": "2026-10-28T07:22:17.179Z",
+      "content_hash": "0ea49685dfab461fdf31cb065d4d8f061f0854ce74b8099d79dc5e14df796e10",
+      "verified_at": "2026-10-29T23:13:49.771Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T07:22:17.179Z"
+      "last_updated": "2026-10-29T23:13:49.771Z"
     },
     "wix/Detox": {
       "repository": "wix/Detox",
@@ -7191,14 +7191,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pulumi-pulumi",
-      "content_hash": "a27e64fa6707f20a4659e64ae1671c5e906857e2798f8cb15a4681fd2ccc39b4",
-      "verified_at": "2026-10-28T14:42:50.625Z",
+      "content_hash": "6261def5365527f71f48f854716dee9862be4bbbf92d0f819fcf4dc3550bf165",
+      "verified_at": "2026-10-29T23:09:34.807Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T14:42:50.625Z"
+      "last_updated": "2026-10-29T23:09:34.807Z"
     },
     "sqlpage/SQLPage": {
       "repository": "sqlpage/SQLPage",
