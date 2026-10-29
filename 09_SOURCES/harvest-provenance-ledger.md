@@ -6077,3 +6077,5 @@ Every entry in this ledger must capture:
 | `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `42946e05` | Multi-dimensional audit evidence | 2026-10-29T22:26:12.753Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `04bc81f1` | Multi-dimensional audit evidence | 2026-10-29T22:26:15.424Z |
 | `learn-github-buresdv-cork` | `https://github.com/buresdv/Cork` | `01177307` | Multi-dimensional audit evidence | 2026-10-29T22:28:16.656Z |
+| `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `6ec0da29` | Multi-dimensional audit evidence | 2026-10-29T22:48:51.996Z |
+| `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `bcd3fde0` | Multi-dimensional audit evidence | 2026-10-29T22:48:58.443Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T22:28:16.580Z",
+  "last_updated": "2026-10-29T22:48:58.396Z",
   "total_verified_learnings": 1169,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2736,8 +2736,8 @@
       "slug": "aquasecurity-trivy",
       "platform": "github",
       "source_url": "https://github.com/aquasecurity/trivy",
-      "source_version": "4cdb2db6",
-      "content_hash": "299e51335ae96f5dd4c20f7105f6ad4d7f7a2dd264c8d2752e2a89398fd6919d",
+      "source_version": "6ec0da29",
+      "content_hash": "0ebc2b3c1bc04ded2fb800eee0496ac5d2168c6bb7df51504d9ac037b9c71038",
       "dossier_path": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "promoted_rules": [
@@ -2785,6 +2785,11 @@
           "number": 5310,
           "title": "crypto): show findings in table output (#11395)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5547,
+          "title": "crypto): report the EC-P-192 algorithm for P-192 keys and certificates (#11431)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2792,7 +2797,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T14:36:03.737Z",
+      "verified_at": "2026-10-29T22:48:51.933Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53215,8 +53220,8 @@
       "slug": "trailbaseio-trailbase",
       "platform": "github",
       "source_url": "https://github.com/trailbaseio/trailbase",
-      "source_version": "aca78520",
-      "content_hash": "24f5f8ab3087723efbbf775ae4e23fac2ebc3ecd11bfbf33faebbd4557996a82",
+      "source_version": "bcd3fde0",
+      "content_hash": "e0c4c6bbea9f7bd2034a52b85704714cf92100d866204268cb4702fc55f4f377",
       "dossier_path": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
       "promoted_rules": [
@@ -53239,6 +53244,11 @@
           "number": 5009,
           "title": "Update Rust and JavaScript dependencies. Ignore zstd-safe security advisory as a",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5548,
+          "title": "Rust client's test harness.",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53246,7 +53256,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T21:01:44.878Z",
+      "verified_at": "2026-10-29T22:48:58.384Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -149285,6 +149295,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T22:28:16.562Z"
+    },
+    "rule-5547": {
+      "learning_id": "rule-5547",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5547,
+      "title": "crypto): report the EC-P-192 algorithm for P-192 keys and certificates (#11431)",
+      "source_url": "https://github.com/aquasecurity/trivy",
+      "source_version": "6ec0da29",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T22:48:51.933Z"
+    },
+    "rule-5548": {
+      "learning_id": "rule-5548",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5548,
+      "title": "Rust client's test harness.",
+      "source_url": "https://github.com/trailbaseio/trailbase",
+      "source_version": "bcd3fde0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T22:48:58.384Z"
     }
   },
   "aliases": {

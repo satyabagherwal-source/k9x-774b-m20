@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-29T22:28:16.661Z",
-  "total_cycles_completed": 6045,
-  "total_learnings_persisted": 6045,
-  "total_rules_promoted": 5511,
+  "last_updated": "2026-10-29T22:48:58.446Z",
+  "total_cycles_completed": 6047,
+  "total_learnings_persisted": 6047,
+  "total_rules_promoted": 5513,
   "history": [
-    {
-      "timestamp": "2026-10-28T17:56:33.458Z",
-      "repository": "google/gemma-4-31B-it",
-      "learningId": "learn-huggingface-google-gemma-4-31b-it",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T18:04:43.633Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T18:04:44.725Z",
       "repository": "open-policy-agent/opa",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-29T22:28:16.661Z",
       "repository": "buresdv/Cork",
       "learningId": "learn-github-buresdv-cork",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T22:48:52.000Z",
+      "repository": "aquasecurity/trivy",
+      "learningId": "learn-github-aquasecurity-trivy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T22:48:58.446Z",
+      "repository": "trailbaseio/trailbase",
+      "learningId": "learn-github-trailbaseio-trailbase",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

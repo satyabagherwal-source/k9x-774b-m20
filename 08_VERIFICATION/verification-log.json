@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-TZ7E",
-    "timestamp": "2026-10-27T22:42:44.474Z",
-    "repository": "slatedb/slatedb",
-    "learningId": "learn-github-slatedb-slatedb",
-    "contentHash": "2915d00f220b37724de1a9943ac21faf64e1abe939b060a708fda6298b670c30",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-355N",
-    "timestamp": "2026-10-27T22:49:52.091Z",
-    "repository": "lysine-dev/okio",
-    "learningId": "learn-github-lysine-dev-okio",
-    "contentHash": "6fa84d1f7b6c76c28639b425ee987c529f91bfa784a13b741200c170a89095ef",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-36QF",
     "timestamp": "2026-10-27T22:49:54.135Z",
     "repository": "loft-sh/vcluster",
@@ -7490,6 +7460,36 @@
     "repository": "buresdv/Cork",
     "learningId": "learn-github-buresdv-cork",
     "contentHash": "13f985b45dd5939437606aa330efd6eb03fc01fe887006ece96e69af68a2e59a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-XK49",
+    "timestamp": "2026-10-29T22:48:51.993Z",
+    "repository": "aquasecurity/trivy",
+    "learningId": "learn-github-aquasecurity-trivy",
+    "contentHash": "0ebc2b3c1bc04ded2fb800eee0496ac5d2168c6bb7df51504d9ac037b9c71038",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-XP3C",
+    "timestamp": "2026-10-29T22:48:58.440Z",
+    "repository": "trailbaseio/trailbase",
+    "learningId": "learn-github-trailbaseio-trailbase",
+    "contentHash": "e0c4c6bbea9f7bd2034a52b85704714cf92100d866204268cb4702fc55f4f377",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

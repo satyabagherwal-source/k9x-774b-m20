@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source**: github ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
-> **Source Version**: `4cdb2db6`  
+> **Source Version**: `6ec0da29`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T14:36:03.379Z  
+> **Timestamp**: 2026-10-29T22:48:51.575Z  
 > **Learning ID**: `learn-github-aquasecurity-trivy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T14:36:03.372Z  
+> **Harvest Timestamp**: 2026-10-29T22:48:51.573Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find vulnerabilities, misconfigurations, secrets, SBOM in containers, Kubernetes, code repositories, clouds and more
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38810 stars
+- **Stars / Engagement**: 38838 stars
 
 ---
 
@@ -1002,209 +1002,543 @@ type TracingConfiguration struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4cdb2db6` (2026-10-28)
-**Commit Message**: feat(crypto): show findings in table output (#11395)
+### Incident Patch 1: `6ec0da29` (2026-10-29)
+**Commit Message**: feat(crypto): report the EC-P-192 algorithm for P-192 keys and certificates (#11431)
 
-**File**: `docs/guide/configuration/others.md` (modified, +1/-0)
+**File**: `docs/guide/scanner/crypto.md` (modified, +4/-2)
 ```diff
-@@ -24,6 +24,7 @@ $ trivy image --scanners vuln alpine:3.15
- | Misconfiguration |     ✓     |
- |      Secret      |     ✓     |
- |     License      |     ✓     |
-+|      Crypto      |     ✓     |
+@@ -49,7 +49,7 @@ The levels are estimates for an algorithm and its parameters, taken from NIST an
+ | Algorithm | Classical security level (bits) | NIST quantum security level |
+ | --- | --- | --- |
+ | RSA, key size 1024 / 2048 / 3072 / 4096 / 6144 / 8192 bits | 80 / 112 / 128 / 152 / 176 / 200 | 0 |
+-| EC, curve P-224 / P-256 / P-384 / P-521 | 112 / 128 / 192 / 256 | 0 |
++| EC, curve P-192 / P-224 / P-256 / P-384 / P-521 | 80 / 112 / 128 / 192 / 256 | 0 |
+ | DSA, (L, N) of (1024, 160) / (2048, 224) / (2048, 256) / (3072, 256) | 80 / 112 / 112 / 128 | 0 |
+ | Ed25519 / Ed448 | 128 / 224 | 0 |
+ | ML-DSA-44 / ML-DSA-65 / ML-DSA-87 | - | 2 / 3 / 5 |
+@@ -60,7 +60,7 @@ A dash means that the level is left out of the report.
+ The levels come from these publications:
  
- By default, `Trivy` exits with code 0 even when security issues are detected.
- Use the `--exit-code` option if you want to exit with a non-zero exit code.
-```
-
-**File**: `docs/guide/configuration/reporting.md` (modified, +1/-0)
-```diff
-@@ -18,6 +18,7 @@ Trivy supports the following formats:
- | Misconfiguration |     ✓     |
- |      Secret      |     ✓     |
- |     License      |     ✓     |
-+|      Crypto      |     ✓     |
+ - RSA with a key size of 2048 bits and above takes the approximate maximum strengths in Appendix D, Table 4 of [NIST SP 800-56B Rev. 2](https://csrc.nist.gov/pubs/sp/800/56/b/r2/final). RSA with a key size of 1024 bits takes the nominal maximum of 80 from Table 2 of [NIST SP 800-57 Part 1 Rev. 5](https://csrc.nist.gov/pubs/sp/800/57/pt1/r5/final), whose row for a 1024-bit modulus states at most 80 bits.
+-- EC takes the ECC strength ranges in Table 2 of NIST SP 800-57 Part 1 Rev. 5.
++- EC takes the ECC strength ranges in Table 2 of NIST SP 800-57 Part 1 Rev. 5. The curve P-192 takes the nominal maximum of 80 from the Table 2 row that states at most 80 bits.
+ - DSA takes the FFC entries in Table 2 of NIST SP 800-57 Part 1 Rev. 5 and the DSA strengths in Section 3 of [NIST SP 800-131A Rev. 2](https://csrc.nist.gov/pubs/sp/800/131/a/r2/final). The (1024, 160) pair takes the nominal maximum of 80 from the Table 2 row that states at most 80 bits.
+ - Ed25519 and Ed448 take their strengths from [RFC 8032, Section 8.5](https://datatracker.ietf.org/doc/html/rfc8032#section-8.5).
+ - ML-DSA takes its categories from [FIPS 204](https://csrc.nist.gov/pubs/fips/204/final).
+@@ -225,6 +225,8 @@ Files larger than 10 MB are skipped, because a file of that size with one of the
  
- ```bash
- $ trivy image -f table golang:1.22.11-alpine3.20
-```
-
-**File**: `docs/guide/references/configuration/cli/trivy_convert.md` (modified, +7/-1)
-```diff
-@@ -41,7 +41,13 @@ trivy convert [flags] RESULT_JSON
-   -o, --output string              output file name
-       --output-plugin-arg string   [EXPERIMENTAL] output plugin arguments
-       --report string              specify a report format for the output (allowed values: all,summary) (default "all")
--      --scanners strings           List of scanners included when generating the json report. Used only for rendering the summary table. (allowed values: vuln,misconfig,secret,license)
-+      --scanners strings           List of scanners included when generating the json report. Used only for rendering the summary table.
-+                                   Allowed values:
-+                                     - vuln
-+                                     - misconfig
-+                                     - secret
-+                                     - license
-+                                     - crypto
-   -s, --severity strings           severities of security issues to be displayed
-                                    Allowed values:
-                                      - UNKNOWN
-```
-
-**File**: `docs/guide/scanner/crypto.md` (modified, +25/-5)
-```diff
-@@ -3,13 +3,12 @@
- !!! warning "EXPERIMENTAL"
-     This feature might change without preserving backwards compatibility.
+ Some objects are recognized and skipped. Certificate signing requests, CRLs and PKCS#7 bundles are not part of the inventory. OpenSSH keys, JKS and JCEKS keystores and OpenPGP keyrings are not covered yet. A certificate or key that uses an EC key with explicit curve parameters instead of a named curve cannot be parsed and is skipped as well. Private keys of X25519, X448 and Ed448 are skipped, although their public keys are reported.
  
--Trivy inventories the cryptographic material it finds in a container image and reports it as a CBOM (Cryptography Bill of Materials). The CBOM lists the certificates and keys themselves and the algorithms they use. The result is part of the CycloneDX report, next to the software components. In JSON output Trivy also reports [weak assets](#findings) found by built-in checks.
-+Trivy inventories the cryptographic material it finds in a container image and reports it as a CBOM (Cryptography Bill of Materials). The CBOM lists the certificates and keys themselves and the algorithms they use. The result is part of the CycloneDX report, next to the software components. In JSON and table output Trivy also reports [weak assets](#findings) found by built-in checks.
- 
--The scanner is off by default. Enable it with `--scanners crypto` together with `--format cyclonedx` or `--format json`.
-+The scanner is off by default. Enable it with `--scanners crypto` together with `--format cyclonedx`, `--format json` or `--format table`.
- 
- ```shell
- $ trivy image --scanners crypto --format cyclonedx --output result.cdx.json myimage:1.0.0
--$ trivy image --scanners crypto --format json --output result.json myimage:1.0.0
- ```
- 
- Trivy rejects `--scanners crypto` with other report formats.
-@@ -114,7 +113,7 @@ The parameters of an algorithm are stored in `algorithmProperties`. The key size
- 
- ## Findings
- 
--Trivy runs built-in checks to find weak cryptographic assets and reports the findings in JSON output. Trivy does not determine whether any software uses these assets.
-+Trivy runs built-in checks to find weak cryptographic assets and reports the findings in JSON and table output. Trivy does not determine whether any software uses these assets.
- 
- | Rule ID | Title | Asset | Condition | Severity |
- | --- | --- | --- | --- | --- |
-@@ -167,7 +166,28 @@ Every entry of `CryptoAssets` in JSON output has an `AssetID`, and a finding ref
- | `CRYPTO-0003` | `Curve`, `ClassicalSecurityLevel` |
- | `CRYPTO-0004` | `NotAfter` |
- 
--Findings are evaluated only for JSON output, so they do not affect the exit code of CycloneDX output. `trivy convert` keeps the findings of a JSON report only when converting to JSON, and keeps the cryptographic assets for any format.
-+Table output shows the findings without the inventory. Identical rows are merged and the asset name ends with their number, such as `x2`. `Total` counts every finding, and JSON output tells the assets apart.
++From certificates and keys on the curve P-192, only the `EC-P-192` algorithm is extracted.
 +
-+```
-+example:latest (crypto)
-+=======================
-+Total: 4 (UNKNOWN: 0, LOW: 0, MEDIUM: 1, HIGH: 3, CRITICAL: 0)
-+
-+┌──────────┬─────────────┬───────────────────────────────────┬──────────────────────┬─────────────────────────────────────────────┐
-+│ Severity │   Rule ID   │               Asset               │         File         │                   Message                   │
-+├──────────┼─────────────┼───────────────────────────────────┼──────────────────────┼─────────────────────────────────────────────┤
-+│ HIGH     │ CRYPTO-0002 │ RSA-1024 private key (PKCS#8)     │ app/certs/legacy.key │ RSA key is 1024 bits, less than 2048        │
-+│          │             │                                   │                      │ https://avd.aquasec.com/crypto/crypto-0002/ │
-+│          │             ├───────────────────────────────────┼──────────────────────┤                                             │
-+│          │             │ RSA-1024 public key (PKIX) x2     │ app/certs/legacy.pem │                                             │
-+│          │             │                                   │                      │                                             │
-+├──────────┼─────────────┼───────────────────────────────────┤                      ├─────────────────────────────────────────────┤
-+│ MEDIUM   │ CRYPTO-0004 │ CN=legacy.example.com certificate │                      │ Certificate expired on 2024-03-01           │
-+│          │             │                                   │                      │ https://avd.aquasec.com/crypto/crypto-0004/ │
-+└──────────┴─────────────┴───────────────────────────────────┴──────────────────────┴─────────────────────────────────────────────┘
-+```
-+
-+Findings are evaluated only for JSON and table output, so they do not affect the exit code of CycloneDX output. `trivy convert` keeps the findings of a JSON report only when converting to JSON or table, and keeps the cryptographic assets for any format.
+ Trivy does not decrypt PKCS#12 keystores and does not report their private keys, so it reads only the certificates stored without encryption. keytool, OpenSSL and .NET encrypt the certificates unless encryption is turned off explicitly, such as with `-certpbe NONE` in OpenSSL or `-J-Dkeystore.pkcs12.certProtectionAlgorithm=NONE` in keytool. OpenSSL encrypts them even with an empty password. The `cacerts` trust store that ships with JDK 18 and later has no password and is read in full.
  
- A rule ID in an [ignore file](../configuration/filtering.md#by-finding-ids) suppresses its findings, and the `crypto` section of `.trivyignore.yaml` can limit that to some file paths. The assets of suppressed findings stay in the inventory. `--ignore-policy` and `--show-suppressed` do not apply to crypto findings.
- 
+ The `cacerts` of JDK 17 and earlier is a JKS keystore and is skipped. A PKCS#12 keystore protected by a public-key signature instead of a password-based MAC is not read. Parts of a keystore encoded in BER rather than DER are skipped. Trivy reads at most 10000 bags from one keystore.
 ```
 
-**File**: `docs/guide/target/container_image.md` (modified, +1/-1)
+**File**: `integration/testdata/crypto.cdx.json.golden` (modified, +35/-0)
 ```diff
-@@ -89,7 +89,7 @@ $ trivy image --scanners license [YOUR_IMAGE_NAME]
- 
- ### Cryptographic assets
- It is experimental and disabled by default.
--It requires the CycloneDX or JSON format.
-+It requires the CycloneDX, JSON or table format.
- See [here](../scanner/crypto.md) for the detail.
- 
- ```shell
+@@ -102,6 +102,37 @@
+         "oid": "1.2.840.10040.4.3"
+       }
+     },
++    {
++      "bom-ref": "crypto:algorithm:oid:1.2.840.10045.2.1:curve%3DP-192",
++      "type": "cryptographic-asset",
++      "name": "EC-P-192",
++      "evidence": {
++        "occurrences": [
++          {
++            "location": "etc/ssl/certs/p192.pem",
++            "additionalContext": "aquasecurity:trivy:LayerDiffID=sha256:8be4950119af3d5904781c15c5ba7e01951daf465a3567077b031a9c58d5275f"
++          },
++          {
++            "location": "etc/ssl/private/p192.key",
++            "additionalContext": "aquasecurity:trivy:LayerDiffID=sha256:8be4950119af3d5904781c15c5ba7e01951daf465a3567077b031a9c58d5275f"
++          },
++          {
++            "location": "etc/ssl/public/p192.pem",
++            "additionalContext": "aquasecurity:trivy:LayerDiffID=sha256:8be4950119af3d5904781c15c5ba7e01951daf465a3567077b031a9c58d5275f"
++          }
++        ]
++      },
++      "cryptoProperties": {
++        "assetType": "algorithm",
++        "algorithmProperties": {
++          "primitive": "unknown",
++          "ellipticCurve": "nist/P-192",
++          "classicalSecurityLevel": 80,
++          "nistQuantumSecurityLevel": 0
++        },
++        "oid": "1.2.840.10045.2.1"
++      }
++    },
+     {
+       "bom-ref": "crypto:algorithm:oid:1.2.840.10045.2.1:curve%3DP-256",
+       "type": "cryptographic-asset",
+@@ -1773,6 +1804,10 @@
+       "ref": "crypto:algorithm:oid:1.2.840.10040.4.3",
+       "dependsOn": []
+     },
++    {
++      "ref": "crypto:algorithm:oid:1.2.840.10045.2.1:curve%3DP-192",
++      "dependsOn": []
++    },
+     {
+       "ref": "crypto:algorithm:oid:1.2.840.10045.2.1:curve%3DP-256",
+       "dependsOn": []
 ```
 
-**File**: `pkg/commands/app.go` (modified, +1/-0)
+**File**: `integration/testdata/crypto.json.golden` (modified, +90/-0)
 ```diff
-@@ -546,6 +546,7 @@ func NewConvertCommand(globalFlags *flag.GlobalFlagGroup) *cobra.Command {
- 		Scanners: flag.ScannersFlag.Clone(),
+@@ -107,6 +107,66 @@
+             "DiffID": "sha256:8be4950119af3d5904781c15c5ba7e01951daf465a3567077b031a9c58d5275f"
+           }
+         },
++        {
++          "AssetID": "b8ababf0115fb157",
++          "Kind": "algorithm",
++          "Identity": {
++            "Method": "oid",
++            "Value": "1.2.840.10045.2.1",
++            "Parameters": "curve=P-192"
++          },
++          "Name": "EC-P-192",
++          "Algorithm": {
++            "Primitive": "unknown",
++            "ClassicalSecurityLevel": 80,
++            "NISTQuantumSecurityLevel": 0
++          },
++          "FilePath": "etc/ssl/certs/p192.pem",
++          "Layer": {
++            "Digest": "sha256:e7d05081011beef8ab3c013bab7b9110aaa546f789473ec203c5a88b56800fc3",
++            "DiffID": "sha256:8be4950119af3d5904781c15c5ba7e01951daf465a3567077b031a9c58d5275f"
++          }
++        },
++        {
++          "AssetID": "ba912ff4a9c6b357",
++          "Kind": "algorithm",
++          "Identity": {
++            "Method": "oid",
++            "Value": "1.2.840.10045.2.1",
++            "Parameters": "curve=P-192"
++          },
++          "Name": "EC-P-192",
++          "Algorithm": {
++            "Primitive": "unknown",
++            "ClassicalSecurityLevel": 80,
++            "NISTQuantumSecurityLevel": 0
++          },
++          "FilePath": "etc/ssl/private/p192.key",
++          "Layer": {
++            "Digest": "sha256:e7d05081011beef8ab3c013bab7b9110aaa546f789473ec203c5a88b56800fc3",
++            "DiffID": "sha256:8be4950119af3d5904781c15c5ba7e01951daf465a3567077b031a9c58d5275f"
++          }
++        },
++        {
++          "AssetID": "362831e38706a08f",
++          "Kind": "algorithm",
++          "Identity": {
++            "Method": "oid",
++            "Value": "1.2.840.10045.2.1",
++            "Parameters": "curve=P-192"
++          },
++          "Name": "EC-P-192",
++          "Algorithm": {
++            "Primitive": "unknown",
++            "ClassicalSecurityLevel": 80,
++            "NISTQuantumSecurityLevel": 0
++          },
++          "FilePath": "etc/ssl/public/p192.pem",
++          "Layer": {
++            "Digest": "sha256:e7d05081011beef8ab3c013bab7b9110aaa546f789473ec203c5a88b56800fc3",
++            "DiffID": "sha256:8be4950119af3d5904781c15c5ba7e01951daf465a3567077b031a9c58d5275f"
++          }
++        },
+         {
+           "AssetID": "10bb9f843a9330d1",
+           "Kind": "algorithm",
+@@ -2409,6 +2469,16 @@
+             "SignatureAlgorithmOID": "1.2.840.10045.4.1"
+           }
+         },
++        {
++          "RuleID": "CRYPTO-0003",
++          "Title": "Weak elliptic curve",
++          "Severity": "HIGH",
++          "AssetID": "b8ababf0115fb157",
++          "Evidence": {
++            "Curve": "P-192",
++            "ClassicalSecurityLevel": 80
++          }
++        },
+         {
+           "RuleID": "CRYPTO-0001",
+           "Title": "SHA-1 certificate signature",
+@@ -2446,6 +2516,16 @@
+             "NotAfter": "2020-01-01T00:00:00Z"
+           }
+         },
++        {
++          "RuleID": "CRYPTO-0003",
++          "Title": "Weak elliptic curve",
++          "Severity": "HIGH",
++          "AssetID": "ba912ff4a9c6b357",
++          "Evidence": {
++            "Curve": "P-192",
++            "ClassicalSecurityLevel": 80
++          }
++        },
+         {
+           "RuleID": "CRYPTO-0002",
+           "Title": "Small RSA key",
+@@ -2455,6 +2535,16 @@
+             "KeySize": 1024
+           }
+         },
++        {
++          "RuleID": "CRYPTO-0003",
++          "Title": "Weak elliptic curve",
++          "Severity": "HIGH",
++          "AssetID": "362831e38706a08f",
++          "Evidence": {
++            "Curve": "P-192",
++            "ClassicalSecurityLevel": 80
++          }
++        },
+         {
+           "RuleID": "CRYPTO-0001",
+           "Title": "SHA-1 certificate signature",
+```
+
+**File**: `pkg/crypto/check/check_test.go` (modified, +3/-3)
+```diff
+@@ -203,13 +203,13 @@ func TestEvaluate(t *testing.T) {
+ 		},
+ 		{
+ 			name:   "EC strength below 112 bits",
+-			assets: []ftypes.CryptoAsset{algorithm("key.pem", oidECPublicKey, "curve=P-192", new(96))},
++			assets: []ftypes.CryptoAsset{algorithm("key.pem", oidECPublicKey, "curve=P-192", new(80))},
+ 			want: []types.CryptoFinding{
+ 				finding("CRYPTO-0003", "Weak elliptic curve", "HIGH",
+-					algorithm("key.pem", oidECPublicKey, "curve=P-192", new(96)),
++					algorithm("key.pem", oidECPublicKey, "curve=P-192", new(80)),
+ 					types.CryptoEvidence{
+ 						Curve:                  "P-192",
+-						ClassicalSecurityLevel: new(96),
++						ClassicalSecurityLevel: new(80),
+ 					}),
+ 			},
+ 		},
+```
+
+**File**: `pkg/crypto/parser/x509/asset.go` (modified, +5/-1)
+```diff
+@@ -26,6 +26,10 @@ func objectToAssets(obj object) ([]ftypes.CryptoAsset, error) {
+ 		return describeStandaloneKey(obj, ftypes.CryptoKeyTypePrivate)
+ 	case objectEncryptedPrivateKey:
+ 		return describeEncryptedPrivateKey(obj)
++	case objectECAlgorithm:
++		algorithm := crypto.DescribeAlgorithm(oidECPublicKey.String(), 0, 0, obj.curve)
++		// An algorithm has no format or encoding.
++		return []ftypes.CryptoAsset{{CryptoAssetInfo: algorithm}}, nil
+ 	default:
+ 		return nil, xerrors.Errorf("object kind %d has no description", obj.kind)
  	}
- 	scanFlagGroup.Scanners.Default = nil // disable default scanners
-+	scanFlagGroup.Scanners.Values = append(scanFlagGroup.Scanners.Values, string(types.CryptoScanner))
- 	scanFlagGroup.Scanners.Usage = "List of scanners included when generating the json report. Used only for rendering the summary table."
- 
- 	convertFlags := flag.Flags{
+@@ -126,7 +130,7 @@ func describeStandaloneKey(obj object, keyType ftypes.CryptoKeyType) ([]ftypes.C
+ 			Format:          obj.keyFormat,
+ 			Encoding:        obj.encoding,
+ 		},
+-		// The algorithm is derived and has no encoded form.
++		// An algorithm has no format or encoding.
+ 		{CryptoAssetInfo: keyAlgorithm},
+ 	}, nil
+ }
 ```
 
-**File**: `pkg/commands/convert/run.go` (modified, +3/-2)
+**File**: `pkg/crypto/parser/x509/export_test.go` (modified, +9/-0)
 ```diff
-@@ -41,10 +41,11 @@ func Run(ctx context.Context, opts flag.Options) (err error) {
- 	}
+@@ -14,5 +14,14 @@ type PKCS1AdditionalPrime = pkcs1AdditionalPrime
+ // PKCS8PrivateKey exports pkcs8PrivateKey for testing.
+ type PKCS8PrivateKey = pkcs8PrivateKey
  
- 	compat(&r)
--	// Only JSON output shows crypto findings
--	if opts.Format != types.FormatJSON {
++// ECPrivateKey exports ecPrivateKey for testing.
++type ECPrivateKey = ecPrivateKey
 +
-+	if !slices.Contains(types.CryptoFindingsFormats, opts.Format) {
- 		r.Results.DropCryptoFindings()
- 	}
+ // OIDRSAEncryption exports oidRSAEncryption for testing.
+ var OIDRSAEncryption = oidRSAEncryption
 +
- 	if err = result.Filter(ctx, r, opts.FilterOpts()); err != nil {
- 		return xerrors.Errorf("unable to filter results: %w", err)
- 	}
++// OIDECPublicKey exports oidECPublicKey for testing.
++var OIDECPublicKey = oidECPublicKey
++
++// OIDNamedCurveP192 exports oidNamedCurveP192 for testing.
++var OIDNamedCurveP192 = oidNamedCurveP192
 ```
 
-**File**: `pkg/crypto/check/check.go` (modified, +13/-0)
+**File**: `pkg/crypto/parser/x509/parser.go` (modified, +165/-6)
 ```diff
-@@ -20,6 +20,19 @@ type rule struct {
- 	// match reports whether the asset fails the rule and returns the evidence.
- 	// Unknown asset values never match.
- 	match func(asset ftypes.CryptoAsset, now time.Time) (types.CryptoEvidence, bool)
-+	// message describes the failed check by its evidence.
-+	message func(evidence types.CryptoEvidence) string
-+}
-+
-+// Message returns the text that describes why the finding was reported.
-+// It is empty for a finding of an unknown rule or a rule without a description.
-+func Message(finding types.CryptoFinding) string {
-+	for _, r := range rules {
-+		if r.id == finding.RuleID && r.message != nil {
-+			return r.message(finding.Evidence)
-+		}
-+	}
-+	return ""
+@@ -35,6 +35,9 @@ const (
+ 	objectPublicKey
+ 	// objectEncryptedPrivateKey identifies an opaque encrypted private key.
+ 	objectEncryptedPrivateKey
++	// objectECAlgorithm identifies a certificate or key on an EC curve crypto/x509 does
++	// not support. Only its algorithm is read.
++	objectECAlgorithm
+ )
+ 
+ // encryptionFormat identifies the container format of an encrypted private key.
+@@ -69,6 +72,8 @@ type object struct {
+ 	encrypted []byte
+ 	// encryption identifies the encrypted private-key container format.
+ 	encryption encryptionFormat
++	// curve names the curve of objectECAlgorithm.
++	curve string
+ 	// encoding identifies the source encoding.
+ 	encoding ftypes.CryptoEncoding
+ 	// keystore identifies the keystore the object is stored in.
+@@ -107,8 +112,48 @@ type pkcs8PrivateKey struct {
+ 	PrivateKey []byte
  }
  
- // match is a finding together with the asset it refers to.
++// ecPrivateKey is an EC private key in SEC 1, as defined in RFC 5915.
++type ecPrivateKey struct {
++	Version       int
++	PrivateKey    []byte
++	NamedCurveOID asn1.ObjectIdentifier `asn1:"optional,explicit,tag:0"`
++	PublicKey     asn1.BitString        `asn1:"optional,explicit,tag:1"`
++}
++
++// rawCertificate is an X.509 certificate without the TBSCertificate fields after
++// SubjectPublicKeyInfo. Only SubjectPublicKeyInfo is read. The other fields are not checked
++// and stand in their places, so that a certificate without a signature fails to parse.
++type rawCertificate struct {
++	TBSCertificate struct {
++		Version              int `asn1:"optional,explicit,default:0,tag:0"`
++		SerialNumber         asn1.RawValue
++		Signature            asn1.RawValue
++		Issuer               asn1.RawValue
++		Validity             asn1.RawValue
++		Subject              asn1.RawValue
++		SubjectPublicKeyInfo asn1.RawValue
++	}
++	SignatureAlgorithm asn1.RawValue
++	SignatureValue     asn1.BitString
++}
++
+ var oidRSAEncryption = asn1.ObjectIdentifier{1, 2, 840, 113549, 1, 1, 1}
+ 
++// oidECPublicKey identifies an EC public key, defined by RFC 5480 section 2.1.1.
++// See https://www.rfc-editor.org/rfc/rfc5480#section-2.1.1
++var oidECPublicKey = asn1.ObjectIdentifier{1, 2, 840, 10045, 2, 1}
++
++// oidNamedCurveP192 identifies the curve P-192, which RFC 5480 section 2.1.1.1 names secp192r1.
++// See https://www.rfc-editor.org/rfc/rfc5480#section-2.1.1.1
++var oidNamedCurveP192 = asn1.ObjectIdentifier{1, 2, 840, 10045, 3, 1, 1}
++
++// p192Size is the length in bytes of a P-192 field element and of a P-192 private key.
++const p192Size = 24
++
++// p192Order is the order of the base point of P-192, given in SEC 2 section 2.2.2.
++// See https://www.secg.org/sec2-v2.pdf
++var p192Order, _ = new(big.Int).SetString("FFFFFFFFFFFFFFFFFFFFFFFF99DEF836146BC9B1B4D22831", 16)
++
+ var (
+ 	errNotCryptographic  = errors.New("not cryptographic")
+ 	errUnsupportedCrypto = errors.New("unsupported cryptographic object")
+@@ -289,7 +334,7 @@ func parsePEMObject(label string, der []byte) (object, error) {
+ 	case "RSA PRIVATE KEY":
+ 		return rsaPrivateKeyObject(der, ftypes.CryptoKeyFormatPKCS1)
+ 	case "EC PRIVATE KEY":
+-		return privateKeyObject(der, ftypes.CryptoKeyFormatSEC1, stdx509.ParseECPrivateKey)
++		return ecPrivateKeyObject(der)
+ 	case "PUBLIC KEY":
+ 		return publicKeyObject(der)
+ 	case "ENCRYPTED PRIVATE KEY":
+@@ -332,14 +377,122 @@ func privateKeyObject[K any](der []byte, format ftypes.CryptoKeyFormat, parseKey
+ }
+ 
+ // pkcs8PrivateKeyObject parses a private key in PKCS#8 and projects it to its public key.
++// A key on P-192 is described by its algorithm alone.
+ func pkcs8PrivateKeyObject(der []byte) (object, error) {
+ 	var key pkcs8PrivateKey
+-	if _, err := asn1.Unmarshal(der, &key); err == nil && key.Algo.Algorithm.Equal(oidRSAEncryption) {
+-		return rsaPrivateKeyObject(key.PrivateKey, ftypes.CryptoKeyFormatPKCS8)
++	if _, err := asn1.Unmarshal(der, &key); err == nil {
++		switch {
++		case key.Algo.Algorithm.Equal(oidRSAEncryption):
++			return rsaPrivateKeyObject(key.PrivateKey, ftypes.CryptoKeyFormatPKCS8)
++		case key.Algo.Algorithm.Equal(oidECPublicKey) && isP192(key.Algo.Parameters.FullBytes):
++			// The curve is stored in the outer AlgorithmIdentifier, so the key may omit it.
++			if _, ok := parseP192PrivateKey(key.PrivateKey); !ok {
++				return object{}, errMalformedCrypto
++			}
++			return p192AlgorithmObject(), nil
++		}
+ 	}
+ 	return privateKeyObject(der, ftypes.CryptoKeyFormatPKCS8, stdx509.ParsePKCS8PrivateKey)
+ }
+ 
++// ecPrivateKeyObject parses an EC private key in SEC 1 and projects it to its public key.
++// A key on P-192 is described by its algorithm alone.
++func ecPrivateKeyObject(der []byte) (object, error) {
++	obj, err := privateKeyObject(der, ftypes.CryptoKeyFormatSEC1, stdx509.ParseECPrivateKey)
++	if !errors.Is(err, errMalformedCrypto) {
++		return obj, err
++	}
++	// Bare SEC 1 must name the curve.
++	if key, ok := parseP192PrivateKey(der); ok && key.NamedCurveOID != nil {
++		return p192AlgorithmObject(), nil
++	}
++	return object{}, errMalformedCrypto
++}
++
++// parseP192PrivateKey parses a SEC 1 EC private key and reports whether it can be
 ```
 
----
-
-### Incident Patch 2: `948767f8` (2026-10-28)
-**Commit Message**: chore(deps): bump golang.org/x/net from 0.61.0 to 0.62.0 (#11489)
-
-**File**: `go.mod` (modified, +1/-1)
+**File**: `pkg/crypto/parser/x509/parser_test.go` (modified, +252/-2)
 ```diff
-@@ -114,7 +114,7 @@ require (
- 	go.etcd.io/bbolt v1.5.0
- 	golang.org/x/crypto v0.58.0
- 	golang.org/x/mod v0.42.0
--	golang.org/x/net v0.61.0
-+	golang.org/x/net v0.62.0
- 	golang.org/x/sync v0.24.0
- 	golang.org/x/term v0.47.0
- 	golang.org/x/text v0.43.0
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -1119,8 +1119,8 @@ golang.org/x/net v0.0.0-20190603091049-60506f45cf65/go.mod h1:HSz+uSET+XFnRR8LxR
- golang.org/x/net v0.0.0-20200301022130-244492dfa37a/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
- golang.org/x/net v0.0.0-20210226172049-e18ecbb05110/go.mod h1:m0MpNAwzfU5UDzcl9v0D8zg8gWTRqZa9RBIspLL5mdg=
- golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
--golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
--golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
-+golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
-+golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
- golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
- golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
+@@ -95,6 +95,46 @@ wPyCQoe49bPiUWB8/x06gL27PLIqu2ZglEe/VC6SRV+0yHcrlalqxtq7s67IbH2k
+ -----END CERTIFICATE-----
+ `
+ 
++// The P-192 fixtures are a self-signed certificate and its key in every form the parser
++// reads. crypto/x509 does not support P-192, so they come from OpenSSL:
++//
++//	docker run --rm alpine:3.22 sh -c '
++//	  apk add -q openssl &&
++//	  openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:P-192 -nodes -keyout key.pem -subj /CN=p192 -days 36500 &&
++//	  cat key.pem &&
++//	  openssl ec -in key.pem &&
++//	  openssl pkey -in key.pem -pubout'
++const (
++	p192CertificatePEM = `-----BEGIN CERTIFICATE-----
++MIIBVTCCAQugAwIBAgIUYOyOWGD1O9UuPc8l8IFxG8v67NEwCgYIKoZIzj0EAwIw
++DzENMAsGA1UEAwwEcDE5MjAgFw0yNjEwMTYxMjQ5MTNaGA8yMTI2MDkyMjEyNDkx
++M1owDzENMAsGA1UEAwwEcDE5MjBJMBMGByqGSM49AgEGCCqGSM49AwEBAzIABBYq
++XHGsm8w7kRzKfRouJTjxdzufi3eLlJChrD0hWN8VQkeSZqmnFSTPxLLDWbnGN6NT
++MFEwHQYDVR0OBBYEFPjzRjRj0sLkKoupN9gJiDZ1CLFbMB8GA1UdIwQYMBaAFPjz
++RjRj0sLkKoupN9gJiDZ1CLFbMA8GA1UdEwEB/wQFMAMBAf8wCgYIKoZIzj0EAwID
++OAAwNQIZAO/H03Gm8vN/34wxNd0vju0uSM+Shr7SzgIYIVZ+alM5dclVBAXpBhJX
++GKh8LkK0kF4z
++-----END CERTIFICATE-----
++`
++	p192PKCS8PrivateKeyPEM = `-----BEGIN PRIVATE KEY-----
++MG8CAQAwEwYHKoZIzj0CAQYIKoZIzj0DAQEEVTBTAgEBBBgQW7hyOKagpDHl65RX
++R+R18SRA2nYcse6hNAMyAAQWKlxxrJvMO5Ecyn0aLiU48Xc7n4t3i5SQoaw9IVjf
++FUJHkmappxUkz8Syw1m5xjc=
++-----END PRIVATE KEY-----
++`
++	p192SEC1PrivateKeyPEM = `-----BEGIN EC PRIVATE KEY-----
++MF8CAQEEGBBbuHI4pqCkMeXrlFdH5HXxJEDadhyx7qAKBggqhkjOPQMBAaE0AzIA
++BBYqXHGsm8w7kRzKfRouJTjxdzufi3eLlJChrD0hWN8VQkeSZqmnFSTPxLLDWbnG
++Nw==
++-----END EC PRIVATE KEY-----
++`
++	p192PublicKeyPEM = `-----BEGIN PUBLIC KEY-----
++MEkwEwYHKoZIzj0CAQYIKoZIzj0DAQEDMgAEFipccaybzDuRHMp9Gi4lOPF3O5+L
++d4uUkKGsPSFY3xVCR5JmqacVJM/EssNZucY3
++-----END PUBLIC KEY-----
++`
++)
++
+ // rsaPrivateKeyDER encodes a structurally valid 2048-bit RSA key in PKCS#1 after applying
+ // mutate to it. Its values are not consistent with each other.
+ func rsaPrivateKeyDER(t *testing.T, mutate func(*cryptox509.PKCS1PrivateKey)) []byte {
+@@ -661,6 +701,25 @@ func TestParseAssets(t *testing.T) {
+ 			Primitive: ftypes.CryptoPrimitiveUnknown,
+ 		},
+ 	}
++	p192Algorithm := ftypes.CryptoAssetInfo{
++		Kind: ftypes.CryptoKindAlgorithm,
++		Identity: ftypes.CryptoIdentity{
++			Method:     ftypes.CryptoMethodOID,
++			Value:      "1.2.840.10045.2.1",
++			Parameters: "curve=P-192",
++		},
++		Name: "EC-P-192",
++		Algorithm: &ftypes.CryptoAlgorithm{
++			Primitive: ftypes.CryptoPrimitiveUnknown,
++		},
++	}
++	var p192Certificate struct {
++		TBSCertificate asn1.RawValue
++	}
++	_, err := asn1.Unmarshal(decodePEM(t, p192CertificatePEM), &p192Certificate)
++	require.NoError(t, err)
++	p192UnsignedCertificate, err := asn1.Marshal(p192Certificate)
++	require.NoError(t, err)
+ 	ecSignatureAlgorithm := ftypes.CryptoAssetInfo{
+ 		Kind: ftypes.CryptoKindAlgorithm,
+ 		Identity: ftypes.CryptoIdentity{
+@@ -1124,6 +1183,137 @@ func TestParseAssets(t *testing.T) {
+ 				at(x25519Algorithm),
+ 			},
+ 		},
++		{
++			// crypto/x509 does not support P-192, so only the algorithm of the key is described.
++			name:  "P-192 certificate PEM",
++			input: []byte(p192CertificatePEM),
++			want:  []ftypes.CryptoAsset{at(p192Algorithm)},
++		},
++		{
++			name:  "P-192 certificate DER",
++			input: decodePEM(t, p192CertificatePEM),
++			want:  []ftypes.CryptoAsset{at(p192Algorithm)},
++		},
++		{
++			name:  "P-192 public key",
++			input: []byte(p192PublicKeyPEM),
++			want:  []ftypes.CryptoAsset{at(p192Algorithm)},
++		},
++		{
++			name:  "P-192 PKCS#8 private key",
++			input: []byte(p192PKCS8PrivateKeyPEM),
++			want:  []ftypes.CryptoAsset{at(p192Algorithm)},
++		},
++		{
++			name:  "P-192 SEC 1 private key PEM",
++			input: []byte(p192SEC1PrivateKeyPEM),
++			want:  []ftypes.CryptoAsset{at(p192Algorithm)},
++		},
++		{
++			name:  "P-192 SEC 1 private key DER",
++			input: decodePEM(t, p192SEC1PrivateKeyPEM),
++			want:  []ftypes.CryptoAsset{at(p192Algorithm)},
++		},
++		{
++			// The algorithm is reported once per file.
++			name:  "P-192 certificate and keys",
++			input: []byte(p192CertificatePEM + p192PublicKeyPEM + p192PKCS8PrivateKeyPEM + p192SEC1PrivateKeyPEM),
++			want:  []ftypes.CryptoAsset{at(p192Algorithm)},
++		},
++		{
++			name:  "P-192 public key DER",
++			input: decodePEM(t, p192PublicKeyPEM),
++			want:  []ftypes.CryptoAsset{at(p192Algorithm)},
++		},
++		{
++			name:  "P-192 PKCS#8 private key DER",
++			input: decodePEM(t, p192PKCS8PrivateKeyPEM),
++			want:  []ftypes.CryptoAsset{at(p192Algorithm)},
++		},
++		{
++			name: "P-192 public key with a compressed point",
++			input: pem.EncodeToMemory(&pem.Block{
++				Type:  "PUBLIC KEY",
++				Bytes: p192PublicKeyDER(t, append([]byte{2}, make([]byte, 24)...)),
++			}),
++			want: []ftypes.CryptoAsset{at(p192Algorithm)},
++		},
++		{
++			name: "P-192 public key with a short point",
++			input: pem.EncodeToMemory(&pem.Block{
++				Type:  "PUBLIC KEY",
++				Bytes: p192PublicKeyDER(t, []byte{4, 1, 2}),
++			}),
++		},
++		{
++			name:  "P-192 certificate without a signature",
++			in
 ```
 
 #### Recent Merged Pull Requests:
@@ -1233,28 +1567,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. crypto): show findings in table output (#11395)
+## X. crypto): report the EC-P-192 algorithm for P-192 keys and certificates (#11431)
 
 **RULE**:
-When implementing operations in `docs/guide/configuration/others.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/guide/scanner/crypto.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4cdb2db6`: crypto): show findings in table output (#11395). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6ec0da29`: crypto): report the EC-P-192 algorithm for P-192 keys and certificates (#11431). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guide/configuration/others.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guide/scanner/crypto.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-|      Crypto      |     ✓     |
+| EC, curve P-192 / P-224 / P-256 / P-384 / P-521 | 80 / 112 / 128 / 192 / 256 | 0 |
+- EC takes the ECC strength ranges in Table 2 of NIST SP 800-57 Part 1 Rev. 5. The curve P-192 takes the nominal maximum of 80 from the Table 2 row that states at most 80 bits.
+From certificates and keys on the curve P-192, only the `EC-P-192` algorithm is extracted.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+| EC, curve P-224 / P-256 / P-384 / P-521 | 112 / 128 / 192 / 256 | 0 |
+- EC takes the ECC strength ranges in Table 2 of NIST SP 800-57 Part 1 Rev. 5.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4cdb2db6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6ec0da29` are properly handled with clean fallback behavior.

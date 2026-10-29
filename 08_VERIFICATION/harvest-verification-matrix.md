@@ -6068,3 +6068,5 @@
 | `CYCLE-20261029-4FBI` | `2026-10-29T22:26:12.750Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5544` | Yes (`d37fee1f...`) |
 | `CYCLE-20261029-4HDP` | `2026-10-29T22:26:15.421Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5545` | Yes (`96be4910...`) |
 | `CYCLE-20261029-72X8` | `2026-10-29T22:28:16.652Z` | `buresdv/Cork` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5546` | Yes (`13f985b4...`) |
+| `CYCLE-20261029-XK49` | `2026-10-29T22:48:51.993Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5547` | Yes (`0ebc2b3c...`) |
+| `CYCLE-20261029-XP3C` | `2026-10-29T22:48:58.440Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5548` | Yes (`e0c4c6bb...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-29T22:28:16.665Z",
+  "last_updated": "2026-10-29T22:48:58.449Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6156,14 +6156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trailbaseio-trailbase",
-      "content_hash": "24f5f8ab3087723efbbf775ae4e23fac2ebc3ecd11bfbf33faebbd4557996a82",
-      "verified_at": "2026-10-27T21:01:44.959Z",
+      "content_hash": "e0c4c6bbea9f7bd2034a52b85704714cf92100d866204268cb4702fc55f4f377",
+      "verified_at": "2026-10-29T22:48:58.449Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T21:01:44.959Z"
+      "last_updated": "2026-10-29T22:48:58.449Z"
     },
     "tremorlabs/tremor-npm": {
       "repository": "tremorlabs/tremor-npm",
@@ -7116,14 +7116,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aquasecurity-trivy",
-      "content_hash": "299e51335ae96f5dd4c20f7105f6ad4d7f7a2dd264c8d2752e2a89398fd6919d",
-      "verified_at": "2026-10-28T14:36:03.825Z",
+      "content_hash": "0ebc2b3c1bc04ded2fb800eee0496ac5d2168c6bb7df51504d9ac037b9c71038",
+      "verified_at": "2026-10-29T22:48:52.002Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T14:36:03.825Z"
+      "last_updated": "2026-10-29T22:48:52.002Z"
     },
     "sfu-db/connector-x": {
       "repository": "sfu-db/connector-x",

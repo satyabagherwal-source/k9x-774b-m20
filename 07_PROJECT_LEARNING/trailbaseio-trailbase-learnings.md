@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md`  
 > **Source**: github ([https://github.com/trailbaseio/trailbase](https://github.com/trailbaseio/trailbase))  
-> **Source Version**: `aca78520`  
+> **Source Version**: `bcd3fde0`  
 > **License**: OSL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T21:01:44.518Z  
+> **Timestamp**: 2026-10-29T22:48:57.996Z  
 > **Learning ID**: `learn-github-trailbaseio-trailbase`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trailbaseio/trailbase](https://github.com/trailbaseio/trailbase))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T21:01:43.929Z  
+> **Harvest Timestamp**: 2026-10-29T22:48:56.956Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open, sub-millisecond, single-executable Firebase alternative with type-safe APIs, built-in WebAssembly runtime, realtime subscriptions, auth, MCP and admin UI built on Rust, SQLite (PG) & Wasmtime.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5733 stars
+- **Stars / Engagement**: 5739 stars
 
 ---
 
@@ -951,740 +951,225 @@ pub async fn test_email_handler(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eb34079d` (2026-10-26)
-**Commit Message**: Update Rust and JavaScript dependencies. Ignore zstd-safe security advisory as a dev-only dependency.
+### Incident Patch 1: `d01fd7e4` (2026-10-28)
+**Commit Message**: Fix Rust client's test harness.
 
-**File**: `Cargo.lock` (modified, +34/-37)
+**File**: `crates/client/tests/client_integration_test.rs` (modified, +1/-1)
 ```diff
-@@ -156,7 +156,7 @@ version = "1.1.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "40c48f72fd53cd289104fc64099abca73db4166ad86ea0b4341abe65af83dadc"
- dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.60.2",
- ]
+@@ -87,7 +87,7 @@ fn block_on<F: std::future::Future<Output = ()>>(fut: F) -> Result<(), Failed> {
+     .build()
+     .unwrap();
  
- [[package]]
-@@ -167,7 +167,7 @@ checksum = "291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d"
- dependencies = [
-  "anstyle",
-  "once_cell_polyfill",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.60.2",
- ]
+-  rt.block_on(async { fut });
++  rt.block_on(fut);
  
- [[package]]
-@@ -789,7 +789,7 @@ dependencies = [
-  "regex",
-  "rustc-hash",
-  "shlex 2.0.1",
-- "syn 3.0.9",
-+ "syn 2.0.119",
- ]
- 
- [[package]]
-@@ -1033,7 +1033,7 @@ dependencies = [
-  "cap-primitives",
-  "cap-std",
-  "io-lifetimes 3.0.1",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.60.2",
- ]
- 
- [[package]]
-@@ -1050,7 +1050,7 @@ dependencies = [
-  "maybe-owned",
-  "rustix",
-  "rustix-linux-procfs",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.60.2",
-  "winx",
- ]
- 
-@@ -1829,9 +1829,9 @@ dependencies = [
- 
- [[package]]
- name = "crypto-bigint"
--version = "0.7.8"
-+version = "0.7.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d726facc8b27e604391b232b970cdc19b5468c69f08b466b9734c759216c7415"
-+checksum = "9c035cb64cba03dad2fb921f3e218785e8cf9a41790da5eb3a1400f62fa2be11"
- dependencies = [
-  "cpubits",
-  "ctutils",
-@@ -1868,7 +1868,7 @@ version = "0.7.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "3633a51a39c69ebbaa4feaa694bd83d241e4093901c84a0963b19d9bb3f0cf8f"
- dependencies = [
-- "crypto-bigint 0.7.8",
-+ "crypto-bigint 0.7.10",
-  "rand_core 0.10.1",
- ]
- 
-@@ -1904,9 +1904,9 @@ dependencies = [
- 
- [[package]]
- name = "ctutils"
--version = "0.4.5"
-+version = "0.4.6"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "38d28fb6aa7dd680b3ffd1a3e64e115c177bdba63c0ae7f9cd48129ff05c4fa0"
-+checksum = "fe3e9d21d39e6f39ff46e03d5b621424f88ee23d8a1672c6bfc9ccc7f2da4f6a"
- dependencies = [
-  "cmov",
- ]
-@@ -2183,9 +2183,9 @@ dependencies = [
- 
- [[package]]
- name = "der"
--version = "0.8.2"
-+version = "0.8.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "a878c850e9e421b20262e9b41f9c860e4785fa07541c266b62ff9d1ef998a80a"
-+checksum = "6a996a108feb8b427a6e12fcf6af4aa83409b79d72c15337d7741368131ee004"
- dependencies = [
-  "const-oid 0.10.2",
-  "pem-rfc7468 1.0.0",
-@@ -2324,7 +2324,7 @@ dependencies = [
-  "libc",
-  "option-ext",
-  "redox_users 0.5.3",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.59.0",
- ]
- 
- [[package]]
-@@ -2632,7 +2632,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -3946,7 +3946,7 @@ version = "1.0.6"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "82cb6a9f675da968c63b6208c641b9dca58fc0133ae53375736b1767b0cab8bd"
- dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.59.0",
- ]
- 
- [[package]]
-@@ -4936,7 +4936,7 @@ version = "0.50.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5"
- dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.59.0",
- ]
- 
- [[package]]
-@@ -5764,7 +5764,7 @@ version = "0.8.0-rc.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "f485dbafe293ea6ccaa7d82bc591651a796eb8a9aec3df040b057b706073dbc3"
- dependencies = [
-- "der 0.8.2",
-+ "der 0.8.3",
-  "spki 0.8.1",
- ]
- 
-@@ -5784,7 +5784,7 @@ version = "0.11.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "451913da69c775a56034ea8d9003d27ee8948e12443eae7c038ba100a4f21cb7"
- dependencies = [
-- "der 0.8.2",
-+ "der 0.8.3",
-  "spki 0.8.1",
- ]
- 
-@@ -6314,7 +6314,7 @@ dependencies = [
-  "once_cell",
-  "socket2",
-  "tracing",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -6970,7 +6970,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "33405e321e16ef941ca66e254f6904c3aafd3c7ff001fb88bf11c73eb75c2b85"
- dependencies = [
-  "const-oid 0.10.2",
-- "crypto-bigint 0.7.8",
-+ "crypto-bigint 0.7.10",
-  "crypto-primes",
-  "digest 0.11.3",
-  "pkcs1 0.8.0-rc.5",
-@@ -6983,11 +6983,10 @@ dependencies = [
- 
- [[package]]
- name = "rsqlite-vfs"
--version = "0.1.1"
-+version = "0.2.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "c51c9ae4df8a7fba42103df5c621fa3c37eccf3a3c650879e90fc48b11cc192c"
-+checksum = "353b74f9810d5b085b6c42c9d86a5f0fdb795553235cdd48753b32e3809d18a7"
- dependencies = [
-- "hashbrown 0.16.1",
-  "thiserror 2.0.21",
- ]
- 
-@@ -7186,7 +7185,7 @@ dependencies = [
-  "errno",
-  "libc",
-  "linux-raw-sys",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -7255,7 +7254,7 @@ dependencies = [
-  "security-framework",
-  "security-framework-sys",
-  "webpki-root-certs",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0
-```
-
-**File**: `client/testfixture/guests/typescript/package.json` (modified, +6/-6)
-```diff
-@@ -16,13 +16,13 @@
-     "trailbase-wasm": "workspace:*"
-   },
-   "devDependencies": {
--    "@bytecodealliance/jco": "^1.35.0",
-+    "@bytecodealliance/jco": "^1.39.0",
-     "@eslint/js": "^10.0.1",
--    "@types/node": "^26.6.3",
--    "eslint": "^10.11.0",
--    "prettier": "^3.9.9",
-+    "@types/node": "^26.6.5",
-+    "eslint": "^10.13.0",
-+    "prettier": "^3.9.10",
-     "typescript": "^6.0.3",
--    "typescript-eslint": "^8.71.0",
--    "vite": "^8.3.1"
-+    "typescript-eslint": "^8.72.0",
-+    "vite": "^8.3.5"
-   }
+   return Ok(());
  }
-```
-
-**File**: `crates/assets/js/admin/package.json` (modified, +22/-22)
-```diff
-@@ -16,11 +16,11 @@
-   "dependencies": {
-     "@antv/x6": "^3.1.8",
-     "@bufbuild/protobuf": "^2.16.0",
--    "@codemirror/autocomplete": "^6.20.3",
-+    "@codemirror/autocomplete": "^6.20.4",
-     "@codemirror/lang-sql": "^6.10.0",
--    "@codemirror/language": "^6.12.4",
-+    "@codemirror/language": "^6.13.1",
-     "@codemirror/state": "^6.7.6",
--    "@codemirror/view": "^6.43.13",
-+    "@codemirror/view": "^6.43.15",
-     "@corvu/resizable": "^0.2.5",
-     "@kobalte/core": "^0.13.14",
-     "@kobalte/tailwindcss": "^0.9.0",
-@@ -32,55 +32,55 @@
-     "@solid-primitives/memo": "^1.5.1",
-     "@solidjs/router": "^1.0.0",
-     "@tanstack/solid-form": "^1.33.5",
--    "@tanstack/solid-query": "^5.104.0",
--    "@tanstack/solid-table": "^9.2.4",
--    "@tanstack/table-core": "^9.2.4",
-+    "@tanstack/solid-query": "^5.104.5",
-+    "@tanstack/solid-table": "^9.3.1",
-+    "@tanstack/table-core": "^9.3.1",
-     "@tiledb-inc/wkx": "github:TileDB-Inc/wkx",
--    "chart.js": "^4.5.1",
-+    "chart.js": "^4.6.1",
-     "class-variance-authority": "^0.7.1",
-     "clsx": "^2.1.1",
-     "codemirror": "^6.0.2",
-     "geojson": "^0.5.0",
-     "i18n-iso-countries": "^7.14.0",
-     "long": "^5.3.2",
--    "maplibre-gl": "^6.11.2",
--    "nanostores": "^1.5.4",
-+    "maplibre-gl": "^6.15.0",
-+    "nanostores": "^1.5.5",
-     "rapidoc": "^9.3.8",
-     "solid-icons": "^1.2.0",
--    "solid-js": "^1.9.15",
-+    "solid-js": "^1.9.17",
-     "tailwind-merge": "^3.7.0",
-     "trailbase": "file:../client",
--    "uuid": "^14.0.2"
-+    "uuid": "^14.0.3"
-   },
-   "devDependencies": {
-     "@eslint/js": "^10.0.1",
--    "@iconify-json/tabler": "^1.2.41",
-+    "@iconify-json/tabler": "^1.2.42",
-     "@solidjs/testing-library": "^0.8.10",
-     "@tailwindcss/typography": "^0.5.20",
-     "@tailwindcss/vite": "^4.3.3",
-     "@testing-library/jest-dom": "^7.0.1",
--    "@testing-library/user-event": "^14.6.7",
-+    "@testing-library/user-event": "^14.6.8",
-     "@types/geojson": "^7946.0.16",
-     "@types/wicg-file-system-access": "^2023.10.7",
-     "autoprefixer": "^10.6.1",
--    "eslint": "^10.11.0",
--    "eslint-plugin-better-tailwindcss": "^4.7.0",
--    "eslint-plugin-solid": "^0.18.0",
-+    "eslint": "^10.13.0",
-+    "eslint-plugin-better-tailwindcss": "^4.10.0",
-+    "eslint-plugin-solid": "^0.18.1",
-     "globals": "^17.13.0",
--    "jsdom": "^30.1.1",
--    "prettier": "^3.9.9",
-+    "jsdom": "^30.1.3",
-+    "prettier": "^3.9.10",
-     "prettier-plugin-tailwindcss": "^0.8.1",
-     "tailwindcss": "^4.3.3",
-     "tailwindcss-animate": "^1.0.7",
-     "trailbase-bindings": "file:../bindings",
--    "ts-proto": "^2.12.4",
-+    "ts-proto": "^2.18.3",
-     "tw-animate-css": "^1.4.0",
-     "typescript": "^6.0.3",
--    "typescript-eslint": "^8.71.0",
--    "vite": "^8.3.1",
-+    "typescript-eslint": "^8.72.0",
-+    "vite": "^8.3.5",
-     "vite-plugin-csp-guard": "^4.0.1",
-     "vite-plugin-solid": "^2.11.14",
-     "vite-tsconfig-paths": "6.1.1",
--    "vitest": "^4.1.11"
-+    "vitest": "^4.1.12"
-   }
- }
-```
-
-**File**: `crates/assets/js/bindings/package.json` (modified, +3/-3)
-```diff
-@@ -9,10 +9,10 @@
-     "build": "barrelize && vite build"
-   },
-   "devDependencies": {
--    "@microsoft/api-extractor": "^7.59.3",
-+    "@microsoft/api-extractor": "^7.59.4",
-     "barrelize": "^1.9.2",
-     "typescript": "=6.0.3",
--    "vite": "^8.3.1",
--    "vite-plugin-dts": "^5.1.1"
-+    "vite": "^8.3.5",
-+    "vite-plugin-dts": "^5.1.2"
-   }
- }
-```
-
-**File**: `crates/assets/js/client/package.json` (modified, +10/-10)
-```diff
-@@ -38,27 +38,27 @@
-     "@ungap/raw-json": "0.4.4",
-     "geojson": "^0.5.0",
-     "jwt-decode": "^4.0.0",
--    "uuid": "^14.0.2"
-+    "uuid": "^14.0.3"
-   },
-   "devDependencies": {
-     "@eslint/js": "^10.0.1",
--    "@microsoft/api-extractor": "^7.59.3",
-+    "@microsoft/api-extractor": "^7.59.4",
-     "@types/geojson": "^7946.0.16",
--    "eslint": "^10.11.0",
-+    "eslint": "^10.13.0",
-     "globals": "^17.13.0",
-     "http-status": "^2.1.0",
--    "jsdom": "^30.1.1",
-+    "jsdom": "^30.1.3",
-     "nano-spawn": "^2.1.0",
-     "oauth2-mock-server": "^8.2.3",
-     "otplib": "^13.5.0",
--    "prettier": "^3.9.9",
--    "tinybench": "^6.2.0",
-+    "prettier": "^3.9.10",
-+    "tinybench": "^6.2.2",
-     "trailbase-bindings": "file:../bindings",
-     "typescript": "^6.0.3",
--    "typescript-eslint": "^8.71.0",
--    "vite": "^8.3.1",
-+    "typescript-eslint": "^8.72.0",
-+    "vite": "^8.3.5",
-     "vite-node": "^6.0.0",
--    "vite-plugin-dts": "^5.1.1",
--    "vitest": "^4.1.11"
-+    "vite-plugin-dts": "^5.1.2",
-+    "vitest": "^4.1.12"
-   }
- }
-```
-
-**File**: `crates/auth-ui/ui/package.json` (modified, +12/-12)
-```diff
-@@ -13,40 +13,40 @@
-     "format": "prettier -w ."
-   },
-   "dependencies": {
--    "@astrojs/check": "^0.9.10",
--    "@astrojs/solid-js": "^7.0.2",
-+    "@astrojs/check": "^0.9.12",
-+    "@astrojs/solid-js": "^7.1.1",
-     "@kobalte/core": "^0.13.14",
-     "@nanostores/persistent": "^1.3.5",
-     "@nanostores/solid": "^1.1.1",
--    "astro": "^7.3.5",
-+    "astro": "^7.4.2",
-     "astro-icon": "^1.2.0",
-     "class-variance-authority": "^0.7.1",
-     "clsx": "^2.1.1",
--    "nanostores": "^1.5.4",
-+    "nanostores": "^1.5.5",
-     "solid-icons": "^1.2.0",
--    "solid-js": "^1.9.15",
-+    "solid-js": "^1.9.17",
-     "tailwind-merge": "^3.7.0",
-     "tailwindcss-animate": "^1.0.7",
-     "trailbase": "file:../../assets/js/client"
-   },
-   "devDependencies": {
-     "@eslint/js": "^10.0.1",
--    "@iconify-json/tabler": "^1.2.41",
-+    "@iconify-json/tabler": "^1.2.42",
-     "@kobalte/tailwindcss": "^0.9.0",
-     "@tailwindcss/typography": "^0.5.20",
-     "@tailwindcss/vite": "^4.3.3",
--    "eslint": "^10.11.0",
-+    "eslint": "^10.13.0",
-     "eslint-plugin-astro": "^3.2.1",
--    "eslint-plugin-better-tailwindcss": "^4.7.0",
--    "eslint-plugin-solid": "^0.18.0",
-+    "eslint-plugin-better-tailwindcss": "^4.10.0",
-+    "eslint-plugin-solid": "^0.18.1",
-     "globals": "^17.13.0",
--    "prettier": "^3.9.9",
--    "prettier-plugin-astro": "^1.1.0",
-+    "prettier": "^3.9.10",
-+    "prettier-plugin-astro": "^1.1.2",
-     "prettier-plugin-tailwindcss": "^0.8.1",
-     "sharp": "^0.35.5",
-     "tailwindcss": "^4.3.3",
-     "tw-animate-css": "^1.4.0",
-     "typescript": "^6.0.3",
--    "typescript-eslint": "^8.71.0"
-+    "typescript-eslint": "^8.72.0"
-   }
- }
-```
-
-**File**: `crates/wasm-component-repo/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -18,7 +18,7 @@ trailbase-build = { workspace = true }
- trailbase-wasm-common = { workspace = true }
- url = "2.5.8"
- wit-component = "0.262.0"
--zip = { version = "9.1.0", default-features = false, features = ["deflate"] }
-+zip = { version = "9.1.2", default-features = false, features = ["deflate"] }
- 
- [build-dependencies]
- trailbase-build = { workspace = true }
-```
-
-**File**: `deny.toml` (modified, +3/-0)
-```diff
-@@ -4,6 +4,9 @@ ignore = [
-   { id = "RUSTSEC-2023-0071", reason = "rsa: no safe upgrade available and only used for Signin-with-Apple pub-key RSA" },
-   { id = "RUSTSEC-2026-0344", reason = "pinned by wasmtime" },
-   { id = "RUSTSEC-2026-0387", reason = "pinned by jsonwebtoken" },
-+  { id = "RUSTSEC-2026-0398", reason = "zstd/zstd-safe are dev-only dependecy pulled in by oliphaunt" },
-+  { id = "RUSTSEC-2026-0391", reason = "zstd/zstd-safe are dev-only dependecy pulled in by oliphaunt" },
-+  { id = "RUSTSEC-2026-0403", reason = "zstd/zstd-safe are dev-only dependecy pulled in by oliphaunt" },
- ]
- 
- [sources]
 ```
 
 ---
 
-### Incident Patch 2: `960610fa` (2026-10-26)
-**Commit Message**: Update node runtime v22 => v24 for builds and CI.
+### Incident Patch 2: `d4784c94` (2026-10-28)
+**Commit Message**: Remove unused `StoreBuilder` abstraction.
 
-**File**: `.github/actions/setup_pnpm/action.yml` (modified, +2/-2)
+**File**: `crates/core/src/app_state.rs` (modified, +1/-1)
 ```diff
-@@ -6,8 +6,8 @@ runs:
-   steps:
-     - uses: pnpm/setup@v2
-       with:
--        runtime: node@22
--        version: "^12.0.0"
-+        runtime: node@24
-+        version: "^12.4.2"
- 
-     - name: Get pnpm store directory
-       shell: bash
+@@ -134,7 +134,7 @@ impl AppState {
+             args.dev,
+           )
+           .await
+-          .map_err(|err| InitError::ScriptError(err))?
++          .map_err(InitError::ScriptError)?
+         }
+         _ => vec![],
+       },
 ```
 
-**File**: `Dockerfile` (modified, +2/-2)
+**File**: `crates/core/src/server/mod.rs` (modified, +1/-1)
 ```diff
-@@ -26,7 +26,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
- 
- # Install node
- ENV PATH=/usr/local/node/bin:$PATH
--ENV NODE_VERSION=22.13.1
-+ENV NODE_VERSION=24.22.0
- 
- RUN curl -sL https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz -C /tmp/ && \
-     /tmp/node-build-master/bin/node-build "${NODE_VERSION}" /usr/local/node && \
-@@ -41,7 +41,7 @@ COPY . .
- # Start by installing all JS dependencies upfront. This is to avoid
- # `node_modules` collisions due to parallel installs later-on while building
- # packages for various crates.
--RUN pnpm -r install --frozen-lockfile
-+RUN pnpm -r install --prefer-frozen-lockfile
- 
- 
- FROM base-builder AS auth-ui-builder
+@@ -129,7 +129,7 @@ impl Server {
+         .wasm()
+         .install_routes_and_jobs(state.version(), &state.jobs())
+         .await
+-        .map_err(|err| InitError::ScriptError(err))?
++        .map_err(InitError::ScriptError)?
+       {
+         if let Some((wasm_router, has_wasm_root)) = result.router {
+           has_root |= has_wasm_root;
 ```
 
-**File**: `Dockerfile.ci` (modified, +1/-1)
+**File**: `crates/wasm-runtime-host/src/functions.rs` (modified, +1/-1)
 ```diff
-@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
- 
- # Install node
- ENV PATH=/usr/local/node/bin:$PATH
--ENV NODE_VERSION=22.13.1
-+ENV NODE_VERSION=24.22.0
- 
- RUN curl -sL https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz -C /tmp/ && \
-     /tmp/node-build-master/bin/node-build "${NODE_VERSION}" /usr/local/node && \
+@@ -24,7 +24,7 @@ impl SqliteStore {
+     // Create re-usable shared store, i.e. runtime state, to minimize per-call overhead. Note that
+     // only Rust guests currently support interleaving, which means JS guests providing SQLite
+     // functions will not work with this integration.
+-    let store = SqliteStore::new(&runtime).await?;
++    let store = SqliteStore::new(runtime).await?;
+     let functions = store
+       .initialize_sqlite_functions(InitArgs { version })
+       .await?;
 ```
 
----
-
-### Incident Patch 3: `c818aa90` (2026-10-26)
-**Commit Message**: Add tests for `Connection::close` to clean up auxiliary files.
-
-**File**: `Cargo.lock` (modified, +1/-0)
+**File**: `crates/wasm-runtime-host/src/host.rs` (modified, +1/-1)
 ```diff
-@@ -9089,6 +9089,7 @@ dependencies = [
-  "tempfile",
-  "thiserror 2.0.21",
-  "tokio",
-+ "trailbase-extension",
-  "triomphe",
-  "uuid",
- ]
+@@ -64,7 +64,7 @@ pub use self::trailbase::database::sqlite::{Transaction, TxError, Value};
+ pub struct SharedState {
+   pub conn: Option<trailbase_sqlite::Connection>,
+   pub kv_store: trailbase_wasi_keyvalue::Store,
+-  // Path from where to attach databases, i.e.: <depot>/data/.
++  /// Path from where to attach databases, i.e.: <depot>/data/.
+   pub db_path: PathBuf,
+   pub fs_root_path: Option<PathBuf>,
+ }
 ```
 
-**File**: `crates/core/src/connection.rs` (modified, +70/-0)
+**File**: `crates/wasm-runtime-host/src/lib.rs` (modified, +48/-36)
 ```diff
-@@ -666,3 +666,73 @@ pub(crate) fn connect_rusqlite_without_default_extensions_and_schemas(
+@@ -59,37 +59,42 @@ pub struct RuntimeOptions {
+   pub tokio_runtime: Option<tokio::runtime::Handle>,
  }
  
- const PREPARED_STATEMENT_CACHE_CAPACITY: usize = 256;
+-pub trait StoreBuilder<S> {
+-  fn new_store(&self, engine: &Engine, wasm_source_file: PathBuf) -> Result<Store<S>, Error>;
+-}
+-
+ // NOTE: Tentatively generic to maybe split state between HttpStore and SqliteStore in the future
+ // :shrug:.
+-struct RuntimeInternal<T: StoreBuilder<State>> {
+-  engine: Engine,
+-  linker: Linker<State>,
+-
++struct RuntimeInternal {
+   /// Path to original .wasm component file.
+   component_path: PathBuf,
+-  component: Component,
+ 
+-  store_builder: T,
++  /// Wasmtime props.
++  engine: Engine,
++  linker: Linker<State>,
++  component: Component,
+ 
++  /// Our props
++  shared_state: Arc<SharedState>,
+   rt_handle: tokio::runtime::Handle,
 +
-+#[cfg(test)]
-+mod tests {
-+  use super::*;
-+
-+  #[tokio::test]
-+  async fn sqlite_cleans_up_auxiliary_files_on_close() {
-+    let tmp_dir = temp_dir::TempDir::new().unwrap();
-+    let data_dir = DataDir(tmp_dir.path().to_path_buf());
-+    data_dir.ensure_directory_structure().await.unwrap();
-+
-+    let json_schema_registry = Arc::new(
-+      trailbase_schema::json_schema::registry::build_json_schema_registry(vec![]).unwrap(),
-+    );
-+
-+    let (conn, _metadata, new_db) = init_db_sqlite(InitDbOptions {
-+      data_path: Some(&data_dir.main_db_path()),
-+      migration_path: Some(&data_dir.migrations_path()),
-+      is_main_db: true,
-+      json_registry: &json_schema_registry,
-+      runtimes: &vec![],
-+      attach: vec![AttachedDatabase {
-+        schema_name: "foo".to_string(),
-+        path: data_dir.data_path().join("foo.db"),
-+      }],
-+      num_threads: None,
-+      read_only: None,
-+    })
-+    .await
-+    .unwrap();
-+
-+    assert!(new_db);
-+
-+    conn
-+      .execute(
-+        "CREATE TABLE 'test' (id INTEGER PRIMARY KEY, value INTEGER)",
-+        (),
-+      )
-+      .await
-+      .unwrap();
-+
-+    const N: usize = 100;
-+    for i in 0..N {
-+      conn
-+        .execute("INSERT INTO 'test' (value) VALUES ($1);", (i as i64,))
-+        .await
-+        .unwrap();
-+    }
-+
-+    assert_eq!(
-+      N,
-+      conn
-+        .read_query_rows("SELECT * FROM 'test'", ())
-+        .await
-+        .unwrap()
-+        .len()
-+    );
-+
-+    assert!(conn.close().await.is_ok());
-+
-+    // Make sure there are no auxiliary files left (i.e. -wal, -shm).
-+    let contents: Vec<_> = std::fs::read_dir(data_dir.data_path())
-+      .unwrap()
-+      .into_iter()
-+      .map(|entry| entry.unwrap().path())
-+      .collect();
-+
-+    assert_eq!(2, contents.len(), "{contents:?}");
++  /// In-flight number of requests.
+   local_in_flight: AtomicUsize,
+ }
+ 
++impl Drop for RuntimeInternal {
++  fn drop(&mut self) {
++    log::debug!("Dropped WASM runtime: {:?}", self.component_path);
 +  }
 +}
-```
-
-**File**: `crates/sqlite/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -53,4 +53,5 @@ itertools = { workspace = true }
- oliphaunt-pgwire-server = { workspace = true }
- rand = { workspace = true }
- tempfile = "3.27.0"
-+trailbase-extension = { workspace = true }
- uuid = { workspace = true }
-```
-
-**File**: `crates/sqlite/src/lib.rs` (modified, +0/-4)
-```diff
-@@ -76,7 +76,3 @@ macro_rules! named_params {
-         [$(($param_name as &str, Into::<$crate::to_sql::ToSqlProxy>::into($param_val))),+]
-     };
- }
--
--#[cfg(test)]
--#[path = "tests.rs"]
--mod tests;
-```
-
-**File**: `crates/sqlite/src/sqlite/mod.rs` (modified, +3/-0)
-```diff
-@@ -9,3 +9,6 @@ pub(super) mod value;
- 
- pub use batch::execute_batch;
- pub use util::{extract_record_values, extract_row_id, from_rows};
 +
-+#[cfg(test)]
-+mod tests;
-```
-
-**File**: `crates/sqlite/src/sqlite/tests.rs` (renamed, +35/-17)
-```diff
-@@ -6,6 +6,7 @@ use std::borrow::Cow;
- use crate::sqlite::connection::{Connection, Options};
- use crate::sqlite::extract_row_id;
- use crate::{Database, Error, SyncConnectionTrait, Value, ValueType};
-+use crate::{named_params, params};
+ /// Holds everything one needs to instantiate state for a component and run it, e.g. wasmtime
+ /// engine, linker, compiled component, state/store builder, etc.
+ #[derive(Clone)]
+ pub struct Runtime {
+-  state: Arc<RuntimeInternal<Arc<SharedState>>>,
++  state: Arc<RuntimeInternal>,
+ }
  
- #[tokio::test]
- async fn open_in_memory_test() {
-@@ -57,10 +58,14 @@ async fn call_failure_test() {
- #[tokio::test]
- async fn close_success_test() {
-   let tmp_dir = tempfile::TempDir::new().unwrap();
--  let db_path = tmp_dir.path().join("main.sqlite");
-+  let db_path = tmp_dir.path().join("main.db");
+ impl Runtime {
+   pub fn init(
+     wasm_source_file: PathBuf,
+-    store_builder: Arc<SharedState>,
++    shared_state: Arc<SharedState>,
+     opts: RuntimeOptions,
+   ) -> Result<Self, Error> {
+     let engine = {
+@@ -151,7 +156,7 @@ impl Runtime {
+       linker,
+       component_path: wasm_source_file,
+       component,
+-      store_builder,
++      shared_state,
+       rt_handle,
+       local_in_flight: AtomicUsize::new(0),
+     });
+@@ -164,10 +169,11 @@ impl Runtime {
+   }
  
-   let conn = Connection::with_opts(
--    move || rusqlite::Connection::open(&db_path).map_err(Error::Rusqlite),
-+    move || -> Result<_, Error> {
-+      let conn = rusqlite::Connection::open(&db_path)?;
-+      trailbase_extension::apply_default_pragmas(&conn)?;
-+      return Ok(conn);
+   async fn new_bindings(&self) -> Result<(Store<State>, crate::host::Interfaces), Error> {
+-    let mut store = self
+-      .state
+-      .store_builder
+-      .new_store(&self.state.engine, self.component_path().to_path_buf())?;
++    let mut store = build_new_store(
++      &self.state.engine,
++      &self.state.shared_state,
++      self.component_path().to_path_buf(),
++    )?;
+ 
+     let instance_pre = self
+       .state
+@@ -208,8 +214,12 @@ pub struct InitArgs {
+   pub version: Option<String>,
+ }
+ 
+-impl StoreBuilder<State> for Arc<SharedState> {
+-  fn new_store(&self, engine: &Engine, wasm_source_file: PathBuf) -> Result<Store<State>, Error> {
++fn build_new_store(
++  engine: &Engine,
++  shared_state: &Arc<SharedState>,
++  wasm_source_file: PathBuf,
++) -> Result<Store<State>, Error> {
++  let wasi_ctx = {
+     let mut wasi_ctx = WasiCtxBuilder::new();
+     wasi_ctx.inherit_stdio();
+     wasi_ctx.stdin(wasmtime_wasi::p2::pipe::ClosedInputStream);
+@@ -221,29 +231,31 @@ impl StoreBuilder<State> for Arc<SharedState> {
+     wasi_ctx.allow_udp(false);
+     wasi_ctx.allow_ip_name_lookup(true);
+ 
+-    if let Some(ref path) = self.fs_root_path {
++    if let Some(ref path) = shared_state.fs_root_path {
+       wasi_ctx
+         .preopened_dir(path, "/", FsPerms::ReadOnly)
+         .map_err(|err| Error::Other(err.to_string()))?;
+     }
+ 
+-    return Ok(Store::new(
+-      engine,
+-      State {
+-        resource_table: ResourceTable::new(),
+-        wasi_ctx: wasi_ctx.build(),
+-        http_ctx: WasiHttpCtx::new(),
+-        hooks: host::Hooks {
+-          shared: self.clone(),
+-          wasm_source_file,
+-        },
+-        kv: WasiKeyValueCtx::new(self.kv_store.clone()),
+-        #[allow(deprecated)]
+-        tx: tokio::sync::Mutex::new(TransactionImpl::default()),
+-        shared: self.clone(),
++    wasi_ctx.build()
++  };
++
++  return Ok(Store::new(
++    engine,
++    State {
++      resource_table: ResourceTable::new(),
++      wasi_ctx,
++      http_ctx: WasiHttpCtx::new(),
++      hooks: host::Hooks {
++        shared: shared_state.clone(),
++        wasm_source_file,
+       },
+-    ));
+-  }
++      kv: WasiKeyValueCtx::new(shared_state.kv_store.clone()),
++      #[allow(deprecated)]
++      tx: tokio::sync::Mutex::new(TransactionImpl::default()),
++      shared: shared_state.clone(),
 +    },
-     Options {
-       num_threads: Some(3),
-       ..Default::default()
-@@ -71,27 +76,40 @@ async fn close_success_test() {
-   assert_eq!(3, conn.threads());
- 
-   conn
--    .execute("CREATE TABLE 'test' (id INTEGER PRIMARY KEY)", ())
--    .await
--    .unwrap();
--  conn
--    .execute_batch(
--      r#"
--        INSERT INTO 'test' (id) VALUES (1);
--        INSERT INTO 'test' (id) VALUES (2);
--      "#,
-+    .execute(
-+      "CREATE TABLE 'test' (id INTEGER PRIMARY KEY, value INTEGER)",
-+      (),
-     )
-     .await
-     .unwrap();
- 
--  let rows = conn
--    .read_query_rows("SELECT * FROM 'test'", ())
--    .await
--    .unwrap();
-+  const N: usize = 100;
-+  for i in 0..N {
-+    conn
-+      .execute("INSERT INTO 'test' (value) VALUES ($1);", params!(i as i64))
-+      .await
-+      .unwrap();
-+  }
- 
--  assert_eq!(rows.len(), 2);
-+  assert_eq!(
-+    N,
-+    conn
-+      .read_query_rows("SELECT * FROM 'test'", ())
-+      .await
-+      .unwrap()
-+      .len()
-+  );
- 
-   assert!(conn.close().await.is_ok());
-+
-+  // Make sure there are no auxiliary files left (i.e. -wal, -shm).
-+  let contents: Vec<_> = std::fs::read_dir(tmp_dir.path())
-+    .unwrap()
-+    .into_iter()
-+    .map(|entry| entry.unwrap().path())
-+    .collect();
-+
-+  assert_eq!(1, contents.len(), "{contents:?}");
++  ));
  }
  
- #[tokio::test]
-@@ -570,7 +588,7 @@ fn test_busy() {
-     .unwrap();
- 
-   let tmp_dir = tempfile::TempDir::new().unwrap();
--  let db_path = tmp_dir.path().join("main.sqlite");
-+  let db_path = tmp_dir.path().join("main.db");
- 
-   let conn = Connection::with_opts(
-     move || -> Result<_, Error> {
+ struct StoreAndBindings {
 ```
 
 #### Recent Merged Pull Requests:
@@ -1713,75 +1198,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update Rust and JavaScript dependencies. Ignore zstd-safe security advisory as a
+## X. Rust client's test harness.
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trailbaseio/trailbase. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/client/tests/client_integration_test.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trailbaseio/trailbase. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eb34079d`: Update Rust and JavaScript dependencies. Ignore zstd-safe security advisory as a dev-only dependency.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d01fd7e4`: Rust client's test harness.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/client/tests/client_integration_test.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "windows-sys 0.60.2",
- "windows-sys 0.60.2",
- "syn 2.0.119",
- "windows-sys 0.60.2",
- "windows-sys 0.60.2",
-version = "0.7.10"
-checksum = "9c035cb64cba03dad2fb921f3e218785e8cf9a41790da5eb3a1400f62fa2be11"
- "crypto-bigint 0.7.10",
-version = "0.4.6"
-checksum = "fe3e9d21d39e6f39ff46e03d5b621424f88ee23d8a1672c6bfc9ccc7f2da4f6a"
-version = "0.8.3"
-checksum = "6a996a108feb8b427a6e12fcf6af4aa83409b79d72c15337d7741368131ee004"
- "windows-sys 0.59.0",
- "windows-sys 0.52.0",
- "windows-sys 0.59.0",
- "windows-sys 0.59.0",
- "der 0.8.3",
- "der 0.8.3",
- "windows-sys 0.52.0",
- "crypto-bigint 0.7.10",
-version = "0.2.0"
-checksum = "353b74f9810d5b085b6c42c9d86a5f0fdb795553235cdd48753b32e3809d18a7"
- "windows-sys 0.52.0",
- "windows-sys 0.52.0
+  rt.block_on(fut);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "syn 3.0.9",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
-version = "0.7.8"
-checksum = "d726facc8b27e604391b232b970cdc19b5468c69f08b466b9734c759216c7415"
- "crypto-bigint 0.7.8",
-version = "0.4.5"
-checksum = "38d28fb6aa7dd680b3ffd1a3e64e115c177bdba63c0ae7f9cd48129ff05c4fa0"
-version = "0.8.2"
-checksum = "a878c850e9e421b20262e9b41f9c860e4785fa07541c266b62ff9d1ef998a80a"
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "der 0.8.2",
- "der 0.8.2",
- "windows-sys 0.61.2",
- "crypto-bigint 0.7.8",
-version = "0.1.1"
-checksum = "c51c9ae4df8a7fba42103df5c621fa3c37eccf3a3c650879e90fc48b11cc192c"
- "hashbrown 0.16.1",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
+  rt.block_on(async { fut });
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eb34079d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d01fd7e4` are properly handled with clean fallback behavior.

@@ -4023,10 +4023,10 @@
     "repository": "trailbaseio/trailbase",
     "platform": "github",
     "sourceUrl": "https://github.com/trailbaseio/trailbase",
-    "sourceVersion": "aca78520",
+    "sourceVersion": "bcd3fde0",
     "license": "OSL-3.0",
-    "contentHash": "24f5f8ab3087723efbbf775ae4e23fac2ebc3ecd11bfbf33faebbd4557996a82",
-    "lastHarvestedAt": "2026-10-27T21:01:44.951Z",
+    "contentHash": "e0c4c6bbea9f7bd2034a52b85704714cf92100d866204268cb4702fc55f4f377",
+    "lastHarvestedAt": "2026-10-29T22:48:58.443Z",
     "learningId": "learn-github-trailbaseio-trailbase"
   },
   "tremorlabs-tremor-npm": {
@@ -4663,10 +4663,10 @@
     "repository": "aquasecurity/trivy",
     "platform": "github",
     "sourceUrl": "https://github.com/aquasecurity/trivy",
-    "sourceVersion": "4cdb2db6",
+    "sourceVersion": "6ec0da29",
     "license": "Apache-2.0",
-    "contentHash": "299e51335ae96f5dd4c20f7105f6ad4d7f7a2dd264c8d2752e2a89398fd6919d",
-    "lastHarvestedAt": "2026-10-28T14:36:03.814Z",
+    "contentHash": "0ebc2b3c1bc04ded2fb800eee0496ac5d2168c6bb7df51504d9ac037b9c71038",
+    "lastHarvestedAt": "2026-10-29T22:48:51.996Z",
     "learningId": "learn-github-aquasecurity-trivy"
   },
   "sfu-db-connector-x": {
