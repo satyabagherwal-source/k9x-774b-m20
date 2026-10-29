@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-IBWE",
-    "timestamp": "2026-10-27T23:01:40.670Z",
-    "repository": "siderolabs/talos",
-    "learningId": "learn-github-siderolabs-talos",
-    "contentHash": "1be2e4c0791d0b24686cc80789d1d32c2313eb0d589b8cb7aab00c923e7b50de",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-KHMY",
-    "timestamp": "2026-10-27T23:03:21.418Z",
-    "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
-    "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
-    "contentHash": "097b839eb8a58e973d5804eb9f87ca3280d2f40ac4301ccb8c0e480efc123c7a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-T8DI",
-    "timestamp": "2026-10-27T23:10:09.318Z",
-    "repository": "FalkorDB/FalkorDB",
-    "learningId": "learn-github-falkordb-falkordb",
-    "contentHash": "bfe4ea994114de6c6c3d3886a1a066a88387bcd477835ca6c40f5e03186461f7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-TFRT",
     "timestamp": "2026-10-27T23:10:18.905Z",
     "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
@@ -7490,6 +7445,51 @@
     "repository": "typedb/typedb",
     "learningId": "learn-github-typedb-typedb",
     "contentHash": "f7d1bb581b3c908c7f0117d11b0664b6eebd928560f2e713b02a67ac3ed56b2a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-KOLM",
+    "timestamp": "2026-10-29T23:34:50.506Z",
+    "repository": "Orange-OpenSource/hurl",
+    "learningId": "learn-github-orange-opensource-hurl",
+    "contentHash": "e07e3b206f809e79e52f59ae80aff0c5517eb056ac8ac2ab8e50deff8eff4b32",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-KV2M",
+    "timestamp": "2026-10-29T23:34:58.894Z",
+    "repository": "aws/aws-cdk",
+    "learningId": "learn-github-aws-aws-cdk",
+    "contentHash": "6ecc4d2c1558085832dc5bd570735697570110e986456e20513da06da236f1d1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-KZJE",
+    "timestamp": "2026-10-29T23:35:04.682Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "ef0ec7224579129c5b110deaa9fa3ec80dfb5710286c641d3075ad23ac3cde2f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

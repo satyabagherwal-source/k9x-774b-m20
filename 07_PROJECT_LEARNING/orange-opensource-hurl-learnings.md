@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source**: github ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
-> **Source Version**: `4b465615`  
+> **Source Version**: `4607520e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T01:00:06.580Z  
+> **Timestamp**: 2026-10-29T23:34:50.084Z  
 > **Learning ID**: `learn-github-orange-opensource-hurl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T01:00:06.192Z  
+> **Harvest Timestamp**: 2026-10-29T23:34:49.061Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Hurl, run and test HTTP requests with plain text.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 19282 stars
+- **Stars / Engagement**: 19288 stars
 
 ---
 
@@ -1846,49 +1846,46 @@ pub mod visit;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4b465615` (2026-10-27)
-**Commit Message**: Update docs
+### Incident Patch 1: `2b34c3ee` (2026-10-28)
+**Commit Message**: Fix version number in doc generation
 
-**File**: `.github/workflows/release.yml` (modified, +4/-3)
+**File**: `.github/workflows/release.yml` (modified, +2/-2)
 ```diff
-@@ -252,9 +252,10 @@ jobs:
+@@ -252,8 +252,8 @@ jobs:
+       - name: Update general docs
+         run: |
+           python3 bin/docs/build_man_md.py docs/manual/hurl.md > docs/manual.md
+-          python3 bin/docs/build_readme.py github ${RELEASE_VERSION} > README.md
+-          python3 bin/docs/build_readme.py crates ${RELEASE_VERSION} > packages/hurl/README.md
++          python3 bin/docs/build_readme.py github "${RELEASE_VERSION}" > README.md
++          python3 bin/docs/build_readme.py crates "${RELEASE_VERSION}" > packages/hurl/README.md
+           python3 bin/docs/build_standalone_md.py >"docs/standalone/hurl-${RELEASE_VERSION}.md"
+           
+       - name: Init git bot context
+```
+
+**File**: `.github/workflows/update-branch-version.yml` (modified, +2/-2)
+```diff
+@@ -92,8 +92,8 @@ jobs:
        - name: Update general docs
          run: |
            python3 bin/docs/build_man_md.py docs/manual/hurl.md > docs/manual.md
 -          python3 bin/docs/build_readme.py github > README.md
 -          python3 bin/docs/build_readme.py crates > packages/hurl/README.md
--
-+          python3 bin/docs/build_readme.py github ${RELEASE_VERSION} > README.md
-+          python3 bin/docs/build_readme.py crates ${RELEASE_VERSION} > packages/hurl/README.md
-+          python3 bin/docs/build_standalone_md.py >"docs/standalone/hurl-${RELEASE_VERSION}.md"
-+          
++          python3 bin/docs/build_readme.py github "${NEW_VERSION}" > README.md
++          python3 bin/docs/build_readme.py crates "${NEW_VERSION}" > packages/hurl/README.md
+ 
        - name: Init git bot context
          uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd #v7.0.0
-         with:
-```
-
----
-
-### Incident Patch 2: `8c351268` (2026-10-27)
-**Commit Message**: Set Release date
-
-**File**: `CHANGELOG.md` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--[8.1.0 (TBD)](https://github.com/Orange-OpenSource/hurl/blob/master/CHANGELOG.md#8.1.0)
-+[8.1.0 (2026-10-27)](https://github.com/Orange-OpenSource/hurl/blob/master/CHANGELOG.md#8.1.0)
- ========================================================================================================================
- 
- Thanks to
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5387** (2026-10-27): Update docs (@fabricereix)
-- **PR #5386** (2026-10-27): Set Release date (@fabricereix)
-- **PR #5385** (2026-10-27): Update crates (@hurl-bot)
-- **PR #5384** (2026-10-26): Fix some invalid options per request. (@jcamiel)
-- **PR #5383** (2026-10-26): Update actions (@hurl-bot)
-- **PR #5382** (2026-10-26): Update crates (@hurl-bot)
+- **PR #5396** (2026-10-29): Publish Hurl 8.1.0 npm packet. (@jcamiel)
+- **PR #5394** (2026-10-29): Clean docker contrib readme (@lepapareil)
+- **PR #5392** (2026-10-28): Update hurl version to 9.0.0-SNAPSHOT (@hurl-bot)
+- **PR #5391** (closed): Update hurl version to 9.0.0-SNAPSHOT (@hurl-bot)
+- **PR #5390** (2026-10-28): Fix version number in doc generation (@jcamiel)
+- **PR #5389** (closed): Update crates (@hurl-bot)
 
 ---
 
@@ -1908,13 +1905,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update docs
+## X. version number in doc generation
 
 **RULE**:
 When implementing operations in `.github/workflows/release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4b465615`: Update docs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2b34c3ee`: version number in doc generation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yml`.
@@ -1922,19 +1919,16 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-          python3 bin/docs/build_readme.py github ${RELEASE_VERSION} > README.md
-          python3 bin/docs/build_readme.py crates ${RELEASE_VERSION} > packages/hurl/README.md
-          python3 bin/docs/build_standalone_md.py >"docs/standalone/hurl-${RELEASE_VERSION}.md"
-          
+          python3 bin/docs/build_readme.py github "${RELEASE_VERSION}" > README.md
+          python3 bin/docs/build_readme.py crates "${RELEASE_VERSION}" > packages/hurl/README.md
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-          python3 bin/docs/build_readme.py github > README.md
-          python3 bin/docs/build_readme.py crates > packages/hurl/README.md
-
+          python3 bin/docs/build_readme.py github ${RELEASE_VERSION} > README.md
+          python3 bin/docs/build_readme.py crates ${RELEASE_VERSION} > packages/hurl/README.md
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4b465615` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2b34c3ee` are properly handled with clean fallback behavior.

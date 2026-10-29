@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T23:28:42.397Z",
+  "last_updated": "2026-10-29T23:35:04.630Z",
   "total_verified_learnings": 1169,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4030,8 +4030,8 @@
       "slug": "aws-aws-cdk",
       "platform": "github",
       "source_url": "https://github.com/aws/aws-cdk",
-      "source_version": "b57c621c",
-      "content_hash": "76982cdb5dccee116f72b90bdc98fbc3af9e28be7fbe37f3c688bd15ff2ae5c2",
+      "source_version": "21f38da0",
+      "content_hash": "6ecc4d2c1558085832dc5bd570735697570110e986456e20513da06da236f1d1",
       "dossier_path": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "promoted_rules": [
@@ -4074,6 +4074,11 @@
           "number": 5320,
           "title": "fix repository NX config (#39518)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5556,
+          "title": "redshift-alpha): align qualified table names (#39304)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4081,7 +4086,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T14:56:38.931Z",
+      "verified_at": "2026-10-29T23:34:58.837Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -4700,8 +4705,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "04bc81f1",
-      "content_hash": "96be491081376668b181a5f9ff8ddf05c4c90dad203f072cfce29d82471f00c3",
+      "source_version": "f9ac780a",
+      "content_hash": "ef0ec7224579129c5b110deaa9fa3ec80dfb5710286c641d3075ad23ac3cde2f",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -4799,6 +4804,11 @@
           "number": 5545,
           "title": "memory): default evidence telemetry to shadow mode (#328)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5557,
+          "title": "memory): PLAN-59 Phase 1 pilot harness (forked consolidation arms) (#329)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4806,7 +4816,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T22:26:15.330Z",
+      "verified_at": "2026-10-29T23:35:04.618Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42793,8 +42803,8 @@
       "slug": "orange-opensource-hurl",
       "platform": "github",
       "source_url": "https://github.com/Orange-OpenSource/hurl",
-      "source_version": "4b465615",
-      "content_hash": "3587a635561a965c3e8d5a682fdec4fb1369cda765fad7caa2f215b630d5c35d",
+      "source_version": "4607520e",
+      "content_hash": "e07e3b206f809e79e52f59ae80aff0c5517eb056ac8ac2ab8e50deff8eff4b32",
       "dossier_path": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "promoted_rules": [
@@ -42832,6 +42842,11 @@
           "number": 5084,
           "title": "Update docs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5555,
+          "title": "version number in doc generation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42839,7 +42854,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T01:00:07.007Z",
+      "verified_at": "2026-10-29T23:34:50.445Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -149437,6 +149452,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T23:28:42.379Z"
+    },
+    "rule-5555": {
+      "learning_id": "rule-5555",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5555,
+      "title": "version number in doc generation",
+      "source_url": "https://github.com/Orange-OpenSource/hurl",
+      "source_version": "4607520e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T23:34:50.446Z"
+    },
+    "rule-5556": {
+      "learning_id": "rule-5556",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5556,
+      "title": "redshift-alpha): align qualified table names (#39304)",
+      "source_url": "https://github.com/aws/aws-cdk",
+      "source_version": "21f38da0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T23:34:58.837Z"
+    },
+    "rule-5557": {
+      "learning_id": "rule-5557",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5557,
+      "title": "memory): PLAN-59 Phase 1 pilot harness (forked consolidation arms) (#329)",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "f9ac780a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T23:35:04.618Z"
     }
   },
   "aliases": {

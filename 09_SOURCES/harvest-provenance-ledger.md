@@ -6083,3 +6083,6 @@ Every entry in this ledger must capture:
 | `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `bfd8142c` | Multi-dimensional audit evidence | 2026-10-29T23:13:49.763Z |
 | `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `7ee1f136` | Multi-dimensional audit evidence | 2026-10-29T23:28:39.416Z |
 | `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `77d1bd0e` | Multi-dimensional audit evidence | 2026-10-29T23:28:42.471Z |
+| `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `4607520e` | Multi-dimensional audit evidence | 2026-10-29T23:34:50.509Z |
+| `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `21f38da0` | Multi-dimensional audit evidence | 2026-10-29T23:34:58.896Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `f9ac780a` | Multi-dimensional audit evidence | 2026-10-29T23:35:04.688Z |

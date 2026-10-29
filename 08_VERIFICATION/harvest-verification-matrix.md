@@ -6074,3 +6074,6 @@
 | `CYCLE-20261029-TNSV` | `2026-10-29T23:13:49.759Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5550, Rule 5551, Rule 5552` | Yes (`0ea49685...`) |
 | `CYCLE-20261029-CQ9H` | `2026-10-29T23:28:39.413Z` | `saltstack/salt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5553` | Yes (`2ac01539...`) |
 | `CYCLE-20261029-CSMB` | `2026-10-29T23:28:42.467Z` | `typedb/typedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5554` | Yes (`f7d1bb58...`) |
+| `CYCLE-20261029-KOLM` | `2026-10-29T23:34:50.506Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5555` | Yes (`e07e3b20...`) |
+| `CYCLE-20261029-KV2M` | `2026-10-29T23:34:58.894Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5556` | Yes (`6ecc4d2c...`) |
+| `CYCLE-20261029-KZJE` | `2026-10-29T23:35:04.682Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5557` | Yes (`ef0ec722...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-29T23:28:42.481Z",
+  "last_updated": "2026-10-29T23:35:04.696Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "96be491081376668b181a5f9ff8ddf05c4c90dad203f072cfce29d82471f00c3",
-      "verified_at": "2026-10-29T22:26:15.433Z",
+      "content_hash": "ef0ec7224579129c5b110deaa9fa3ec80dfb5710286c641d3075ad23ac3cde2f",
+      "verified_at": "2026-10-29T23:35:04.695Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T22:26:15.433Z"
+      "last_updated": "2026-10-29T23:35:04.695Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -5721,14 +5721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-orange-opensource-hurl",
-      "content_hash": "3587a635561a965c3e8d5a682fdec4fb1369cda765fad7caa2f215b630d5c35d",
-      "verified_at": "2026-10-28T01:00:07.100Z",
+      "content_hash": "e07e3b206f809e79e52f59ae80aff0c5517eb056ac8ac2ab8e50deff8eff4b32",
+      "verified_at": "2026-10-29T23:34:50.516Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T01:00:07.100Z"
+      "last_updated": "2026-10-29T23:34:50.516Z"
     },
     "gregberge/svgr": {
       "repository": "gregberge/svgr",
@@ -7326,14 +7326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aws-aws-cdk",
-      "content_hash": "76982cdb5dccee116f72b90bdc98fbc3af9e28be7fbe37f3c688bd15ff2ae5c2",
-      "verified_at": "2026-10-28T14:56:39.024Z",
+      "content_hash": "6ecc4d2c1558085832dc5bd570735697570110e986456e20513da06da236f1d1",
+      "verified_at": "2026-10-29T23:34:58.903Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T14:56:39.024Z"
+      "last_updated": "2026-10-29T23:34:58.903Z"
     },
     "cockroachdb/cockroach": {
       "repository": "cockroachdb/cockroach",

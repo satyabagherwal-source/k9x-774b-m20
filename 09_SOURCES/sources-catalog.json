@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "04bc81f1",
+    "sourceVersion": "f9ac780a",
     "license": "MIT",
-    "contentHash": "96be491081376668b181a5f9ff8ddf05c4c90dad203f072cfce29d82471f00c3",
-    "lastHarvestedAt": "2026-10-29T22:26:15.424Z",
+    "contentHash": "ef0ec7224579129c5b110deaa9fa3ec80dfb5710286c641d3075ad23ac3cde2f",
+    "lastHarvestedAt": "2026-10-29T23:35:04.688Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -3733,10 +3733,10 @@
     "repository": "Orange-OpenSource/hurl",
     "platform": "github",
     "sourceUrl": "https://github.com/Orange-OpenSource/hurl",
-    "sourceVersion": "4b465615",
+    "sourceVersion": "4607520e",
     "license": "Apache-2.0",
-    "contentHash": "3587a635561a965c3e8d5a682fdec4fb1369cda765fad7caa2f215b630d5c35d",
-    "lastHarvestedAt": "2026-10-28T01:00:07.093Z",
+    "contentHash": "e07e3b206f809e79e52f59ae80aff0c5517eb056ac8ac2ab8e50deff8eff4b32",
+    "lastHarvestedAt": "2026-10-29T23:34:50.509Z",
     "learningId": "learn-github-orange-opensource-hurl"
   },
   "gregberge-svgr": {
@@ -4803,10 +4803,10 @@
     "repository": "aws/aws-cdk",
     "platform": "github",
     "sourceUrl": "https://github.com/aws/aws-cdk",
-    "sourceVersion": "b57c621c",
+    "sourceVersion": "21f38da0",
     "license": "Apache-2.0",
-    "contentHash": "76982cdb5dccee116f72b90bdc98fbc3af9e28be7fbe37f3c688bd15ff2ae5c2",
-    "lastHarvestedAt": "2026-10-28T14:56:39.015Z",
+    "contentHash": "6ecc4d2c1558085832dc5bd570735697570110e986456e20513da06da236f1d1",
+    "lastHarvestedAt": "2026-10-29T23:34:58.896Z",
     "learningId": "learn-github-aws-aws-cdk"
   },
   "cockroachdb-cockroach": {

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-29T23:28:42.476Z",
-  "total_cycles_completed": 6051,
-  "total_learnings_persisted": 6051,
-  "total_rules_promoted": 5519,
+  "last_updated": "2026-10-29T23:35:04.693Z",
+  "total_cycles_completed": 6054,
+  "total_learnings_persisted": 6054,
+  "total_rules_promoted": 5522,
   "history": [
-    {
-      "timestamp": "2026-10-28T18:27:20.773Z",
-      "repository": "lilylilith/QI_2.1_AnyAngle",
-      "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T18:27:21.116Z",
-      "repository": "domcyrus/rustnet",
-      "learningId": "learn-github-domcyrus-rustnet",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T18:27:31.006Z",
-      "repository": "linkerd/linkerd2",
-      "learningId": "learn-github-linkerd-linkerd2",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T18:34:31.744Z",
       "repository": "BAAI/bge-large-en-v1.5",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-29T23:28:42.476Z",
       "repository": "typedb/typedb",
       "learningId": "learn-github-typedb-typedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T23:34:50.513Z",
+      "repository": "Orange-OpenSource/hurl",
+      "learningId": "learn-github-orange-opensource-hurl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T23:34:58.900Z",
+      "repository": "aws/aws-cdk",
+      "learningId": "learn-github-aws-aws-cdk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T23:35:04.693Z",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

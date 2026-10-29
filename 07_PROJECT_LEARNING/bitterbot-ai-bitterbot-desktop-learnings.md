@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `04bc81f1`  
+> **Source Version**: `f9ac780a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T22:26:14.803Z  
+> **Timestamp**: 2026-10-29T23:35:04.254Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T22:26:14.795Z  
+> **Harvest Timestamp**: 2026-10-29T23:35:04.249Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,152 +1799,944 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `04bc81f1` (2026-10-29)
-**Commit Message**: feat(memory): default evidence telemetry to shadow mode (#328)
+### Incident Patch 1: `f9ac780a` (2026-10-29)
+**Commit Message**: feat(memory): PLAN-59 Phase 1 pilot harness (forked consolidation arms) (#329)
 
-Shadow mode writes the dream-engine decision traces (seed rank and mode
-selection with and without the GCCRF term) next to the retrieval hits and
-surfacing events that observe mode already records. Those traces are the
-evidence for the pending decision on whether GCCRF stays a live ranking
-term or is retired to a diagnostic, and they only accumulate if nodes run
-in shadow mode. Shadow changes no behaviour and adds a few rows per dream
-cycle, so it becomes the default; a mode typo now falls back to shadow.
+Build the first PLAN-59 mechanism pilot: gain x need selection of bounded,
+reversible memory operations compared against recency and random selection,
+every arm on its own VACUUM INTO fork of a sealed snapshot, scored on a
+family-partitioned question set with the live-recall method.
 
-Tests pin the new default; docs and the configuration reference updated.
+benchmarks/plan59-phase1/
+- snapshot.mts seals a read-only VACUUM INTO copy with a hashed manifest and
+  refuses any output under ~/.bitterbot
+- partition.ts/.mts cut questions 50/25/25 by family (chunk path) under a
+  seed; the final split is refused unless --final --freeze names a protocol
+  file marked status: frozen (implemented, unused)
+- operations.ts: consolidate_cluster (connected components over
+  near_merge_hints >= 0.85, co-surfacing qualification, one joined parent
+  chunk, members demoted with parent_id, lifecycle consolidated,
+  hygiene_done and index rows removed, never deleted) and bound_validity
+  (valid_time_end from superseded canonical facts); re-embed reported as
+  inapplicable from the data; quoted and realised costs
+- estimate.ts: need per family (decayed access prior, development top-5
+  demand, unsu
 
-Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-**File**: `docs/gateway/configuration-reference.md` (modified, +1/-1)
+**File**: `.gitignore` (modified, +2/-0)
 ```diff
-@@ -1954,7 +1954,7 @@ The memory subsystems (`memory.dream`, `memory.consolidation`, `memory.curiosity
-   memory: {
-     curiosity: {
-       evidence: {
--        mode: "observe", // "off" | "observe" | "shadow" (default "observe")
-+        mode: "shadow", // "off" | "observe" | "shadow" (default "shadow")
-         retentionDays: 90, // prune rows older than this on the consolidation tick
-         topK: 10, // retrieval rows kept per search
-       },
+@@ -216,6 +216,8 @@ keys/
+ 
+ # Research / planning playground (internal only)
+ research/
++# PLAN-59 phase reports are published documentation, not the playground.
++!docs/research/
+ 
+ # Wallet seed data (should never be in repo)
+ wallet-data.json
 ```
 
-**File**: `docs/memory/curiosity-and-search.md` (modified, +1/-1)
+**File**: `benchmarks/plan59-phase1/README.md` (added, +176/-0)
 ```diff
-@@ -112,7 +112,7 @@ Maximum active targets: 10 (configurable). Expired targets are cleaned up during
- 
- Budget: `maxPerDay` (10) questions per UTC day, +2 when dopamine > 0.65, −2 when cortisol > 0.65 (cortisol also raises the confidence floor by 0.1). Pause state lives in `memory_meta`.
- 
--Use ledger (`src/memory/curiosity-use.ts`): memory search and proactive recall call `recordCuriosityUse` for any self-learned chunk they return; `curiosityRoiByRegion` feeds step 1. Evidence layer (`memory.curiosity.evidence`, default `observe`): every owner search writes its top-K chunk ids under a keyed query digest, every voiced finding, proactive-recall fact and dream brief writes a `delivered` row, and a dismiss labels it `explicit`; see [Evidence telemetry](/memory/evidence-telemetry). RPCs: `curiosity.status`, `curiosity.list`, `curiosity.pause`, `curiosity.resume`, `curiosity.dismiss`, `curiosity.ask`, `curiosity.runNow`; the same from the terminal as [`bitterbot curiosity`](/cli/curiosity).
-+Use ledger (`src/memory/curiosity-use.ts`): memory search and proactive recall call `recordCuriosityUse` for any self-learned chunk they return; `curiosityRoiByRegion` feeds step 1. Evidence layer (`memory.curiosity.evidence`, default `shadow`): every owner search writes its top-K chunk ids under a keyed query digest, every voiced finding, proactive-recall fact and dream brief writes a `delivered` row, and a dismiss labels it `explicit`; see [Evidence telemetry](/memory/evidence-telemetry). RPCs: `curiosity.status`, `curiosity.list`, `curiosity.pause`, `curiosity.resume`, `curiosity.dismiss`, `curiosity.ask`, `curiosity.runNow`; the same from the terminal as [`bitterbot curiosity`](/cli/curiosity).
- 
- Private names come from the knowledge graph's `person`, `organization` and `project` entities. A "person" that is not a name ("here", "commands", a peer id) is filed as a `concept` at write time (`looksLikePersonName`) and migration v75 reclassified existing rows, so the filter blocks people, not ordinary words.
- 
+@@ -0,0 +1,176 @@
++# PLAN-59 Phase 1 pilot: gain x need consolidation on forked stores
++
++A development and qualification pilot for the first PLAN-59 mechanism:
++selecting bounded, reversible memory operations by estimated future benefit
++and comparing that selection against the same operations chosen by recency or
++at random, every arm on its own fork of one sealed snapshot of a node's real
++memory store. The live store is never written. The pilot fixes the sample
++size for a later, separately frozen collection; it is not that collection and
++was not externally preregistered.
++
++The result of the run on 2026-10-29 is in `docs/research/plan59-phase1-pilot.md`
++and in `results/`: a negative pilot. One of 130 candidate clusters co-surfaced
++for the development questions at the lowered bar, below the floor of five, so
++the arm run stopped by rule and no contrast was computed.
++
++## What the harness does
++
++1. **Snapshot** (`snapshot.mts`). `--copy-from` opens the live store READ-ONLY
++   and takes a `VACUUM INTO` copy into scratch; `--db` copies an existing copy.
++   The manifest beside it records SHA-256, chunk count, lifecycle counts,
++   created time and commit. Output anywhere under `~/.bitterbot` is refused.
++2. **Questions**. `benchmarks/live-recall/make-questions.mts` writes one
++   question per sampled chunk (the chunk id is the gold label) under a fixed
++   seed. The file paraphrases private memory: it lives under
++   `~/.bitterbot/benchmarks/live-recall/` with mode 0600, is never committed,
++   and only its hash and counts appear here.
++3. **Partition** (`partition.mts`, `partition.ts`). A family is the gold
++   chunk's `path` (one session transcript or memory file). Families are ordered
++   by `sha256(seed:path)` and cut 50 / 25 / 25 into development,
++   qualification and final; every question of a family lands in one split.
++   `<questions>.partition.json` holds chunk ids, family hashes, seed and counts
++   only. The final split is never read by estimation or selection; the runner
++   refuses to score it unless `--final --freeze <sha256>` names a protocol file
++   that contains `status: frozen` and hashes to that value. The path is
++   implemented and tested and the pilot does not use it.
++4. **Operations** (`operations.ts`), applied on forks only:
++   - `consolidate_cluster`: connected components over `near_merge_hints`
++     pairs at `base_similarity >= 0.85` among live chunks (lifecycle
++     `generated` or `activated`, `parent_id` null), capped at six members by
++     weighted degree. A cluster qualifies when at least two members sit in
++     the fused top 5 of at least three development queries (two when fewer
++     than eight clusters qualify; the runner records which bar it used).
++     Applying it inserts one new chunk whose text is the members' texts joined
++     by a separator (no LLM rewriting), embedded with the normal provider,
++     `parent_id` null, importance = max over members, access_count = sum,
++     lifecycle `generated`. Members get `parent_id` = the new id, lifecycle
++     `consolidated`, `hygiene_done` = 1, importance halved, and their rows are
++     removed from `chunks_vec` and `chunks_fts`. Members are never deleted;
++     their text and embedding stay in `chunks`, so the operation is reversible.
++   - `bound_validity`: for each canonical fact with `superseded_by` and
++     `valid_until` set, set `valid_time_end = valid_until` on the chunks in
++     its `evidence_chunk_ids` where it is null. No text changes; reversible.
++   - Re-embedding does not apply on this store: every indexed chunk carries
++     `text-embedding-3-small` and the live provider is that model, so there is
++     no model or index change to re-embed after. `describeReembed` reports this
++     from the data and the result file records it.
++   - Every operation returns a quoted cost (chunks touched, embedding calls,
++     estimated ms) and the apply step records the realised one. Dollars,
++     seconds and calls are reported separately in the result file.
++5. **Estimation** (`estimate.ts`), development partition only:
++   - need(k) per family = sum over chunks of `access_count` decayed from
++     `last_accessed_at` with a 30-day half-life, plus the number of development
++     queries with a chunk of k in the fused top 5, plus 1 per development query
++     whose gold is in k and whose fused rank is above 10 or missing. Phase 0
++     `retrieval_hits` are added, decayed the same way, when the table exists
++     and has rows; on this snapshot it is empty, so the access prior carries.
++     The plan's first-order session-transition term is deferred: it needs
++     stable topic ids and real session boundaries from the Phase 0 telemetry,
++     which has not yet run in a deployed build.
++   - gain(op | k) = mean change in parent-mapped reciprocal rank over the
++     development queries affected by the operation (gold in a touched family,
++     or a touched chunk in the baseline top 10) whose gold is in k, measured
 ```
 
-**File**: `docs/memory/evidence-telemetry.md` (modified, +4/-4)
+**File**: `benchmarks/plan59-phase1/arms.test.ts` (added, +111/-0)
 ```diff
-@@ -13,7 +13,7 @@ Code: `src/memory/evidence-telemetry.ts` (writer), migration v79 in `src/memory/
-   memory: {
-     curiosity: {
-       evidence: {
--        mode: "observe", // "off" | "observe" | "shadow"; default "observe"
-+        mode: "shadow", // "off" | "observe" | "shadow"; default "shadow"
-         retentionDays: 90, // rows older than this are pruned on the consolidation tick
-         topK: 10, // at most this many retrieval rows per search
-       },
-@@ -23,10 +23,10 @@ Code: `src/memory/evidence-telemetry.ts` (writer), migration v79 in `src/memory/
- ```
- 
- - `off`: nothing is written. The tables still exist (the migration creates them) and old rows are still pruned.
--- `observe` (default): retrieval hits and surfacing events.
--- `shadow`: observe plus decision traces from the dream engine.
-+- `observe`: retrieval hits and surfacing events.
-+- `shadow` (default): observe plus decision traces from the dream engine. Shadow is the default so the divergence traces that decide whether GCCRF stays a live ranking term or becomes a diagnostic accumulate on every node; the traces are a few rows per dream cycle and change nothing the engine does.
- 
--A mode that is not one of the three falls back to `observe` with a warning; a non-positive `retentionDays` or `topK` falls back to the default. The layer works whether or not `memory.curiosity.enabled` is on; `evidence.mode: "off"` is its own switch.
-+A mode that is not one of the three falls back to `shadow` with a warning; a non-positive `retentionDays` or `topK` falls back to the default. The layer works whether or not `memory.curiosity.enabled` is on; `evidence.mode: "off"` is its own switch.
- 
- ## The three tables
- 
+@@ -0,0 +1,111 @@
++import { describe, expect, it } from "vitest";
++import {
++  buildArms,
++  chooseK,
++  selectPrioritised,
++  selectRandom,
++  selectRecency,
++  shuffledBatch,
++  ZERO_SELECTION_COST,
++} from "./arms.js";
++import type { PriorityRow } from "./estimate.js";
++import type { Operation } from "./operations.js";
++
++const op = (id: string, lastAccessedAt: number | null): Operation => ({
++  kind: "bound_validity",
++  id,
++  factId: id,
++  validUntil: 1,
++  chunkIds: [`${id}-c`],
++  families: [`fam-${id}`],
++  lastAccessedAt,
++});
++const pool = [op("a", 5), op("b", null), op("c", 9), op("d", 9), op("e", 1), op("f", 3)];
++const row = (opId: string, priority: number, need = 1): PriorityRow => ({
++  opId,
++  need,
++  benefit: priority,
++  cost: 1,
++  priority,
++  affectedQueries: 1,
++  gain: {},
++});
++
++describe("arm selection", () => {
++  it("picks K as 20 or the candidate count when fewer", () => {
++    expect(chooseK(82)).toBe(20);
++    expect(chooseK(7)).toBe(7);
++    expect(chooseK(0)).toBe(0);
++    expect(chooseK(50, 5)).toBe(5);
++  });
++
++  it("recency takes the most recently accessed first, ties by id, never-accessed last", () => {
++    expect(selectRecency(pool, 4).map((o) => o.id)).toEqual(["c", "d", "a", "f"]);
++    expect(selectRecency(pool, 6).map((o) => o.id)).toEqual(["c", "d", "a", "f", "e", "b"]);
++  });
++
++  it("random is uniform without replacement and reproducible under the seed", () => {
++    const r1 = selectRandom(pool, 3, "59");
++    const r2 = selectRandom(pool, 3, "59");
++    expect(r1.map((o) => o.id)).toEqual(r2.map((o) => o.id));
++    expect(new Set(r1.map((o) => o.id)).size).toBe(3);
++    const r3 = selectRandom(pool, 6, "other");
++    expect(r3.map((o) => o.id).toSorted()).toEqual(["a", "b", "c", "d", "e", "f"]);
++    expect(r3.map((o) => o.id)).not.toEqual(selectRandom(pool, 6, "59").map((o) => o.id));
++  });
++
++  it("prioritised orders by priority, then need, then id, with unestimated candidates last", () => {
++    const rows = new Map([
++      ["a", row("a", 0.5)],
++      ["b", row("b", 0.9)],
++      ["c", row("c", 0.5, 7)],
++      ["d", row("d", 0)],
++    ]);
++    const needOf = (o: Operation) => (o.id === "e" ? 10 : 2);
++    expect(selectPrioritised(pool, 6, rows, needOf).map((o) => o.id)).toEqual([
++      "b",
++      "c",
++      "a",
++      "d",
++      "e",
++      "f",
++    ]);
++    expect(selectPrioritised(pool, 2, rows, needOf).map((o) => o.id)).toEqual(["b", "c"]);
++  });
++
++  it("shuffled batch is the same set in a seeded order", () => {
++    const selected = selectRecency(pool, 6);
++    const s1 = shuffledBatch(selected, "59");
++    expect(s1.map((o) => o.id).toSorted()).toEqual(selected.map((o) => o.id).toSorted());
++    expect(s1).toEqual(shuffledBatch(selected, "59"));
++    expect(s1.map((o) => o.id)).not.toEqual(selected.map((o) => o.id));
++  });
++
++  it("buildArms gives every arm K operations, charges estimation only to prioritised arms", () => {
++    const rows = new Map([
++      ["a", row("a", 0.5)],
++      ["b", row("b", 0.9)],
++    ]);
++    const cost = { forks: 2, searches: 30, embeddingCalls: 2, seconds: 12 };
++    const arms = buildArms({
++      candidates: pool,
++      k: 4,
++      seed: "59",
++      priorities: rows,
++      needOf: () => 0,
++      estimationCost: cost,
++    });
++    expect(arms.unchanged.operations).toEqual([]);
++    for (const name of ["recency", "random", "prioritised", "shuffled_batch"] as const) {
++      expect(arms[name].operations).toHaveLength(4);
++    }
++    expect(arms.prioritised.operations.slice(0, 2).map((o) => o.id)).toEqual(["b", "a"]);
++    expect(arms.shuffled_batch.operations.map((o) => o.id).toSorted()).toEqual(
++      arms.prioritised.operations.map((o) => o.id).toSorted(),
++    );
++    expect(arms.prioritised.selectionCost).toEqual(cost);
++    expect(arms.shuffled_batch.selectionCost).toEqual(cost);
++    expect(arms.recency.selectionCost).toEqual(ZERO_SELECTION_COST);
++    expect(arms.random.selectionCost).toEqual(ZERO_SELECTION_COST);
++  });
++});
 ```
 
-**File**: `src/memory/curiosity-types.ts` (modified, +5/-2)
+**File**: `benchmarks/plan59-phase1/arms.ts` (added, +137/-0)
 ```diff
-@@ -107,7 +107,10 @@ export type CuriosityWeights = {
- export type CuriosityEvidenceMode = "off" | "observe" | "shadow";
- 
- export type CuriosityEvidenceConfig = {
--  /** Default: "observe". */
-+  /**
-+   * Default: "shadow" (every tier of evidence, so the GCCRF retirement decision
-+   * in PLAN-59 section 7 can be evaluated on any node without a config change).
-+   */
-   mode?: CuriosityEvidenceMode;
-   /** Rows older than this are pruned on the consolidation tick. Default: 90. */
-   retentionDays?: number;
-@@ -155,7 +158,7 @@ export type CuriosityConfig = {
-    * what the agent proactively surfaced to the owner and what came of it,
-    * and (shadow mode only) what a GCCRF-as-diagnostic routing would have
-    * decided next to what the legacy routing did. Observation changes no
--   * behaviour in any mode. Default mode `observe`.
-+   * behaviour in any mode. Default mode `shadow`.
-    */
-   evidence?: CuriosityEvidenceConfig;
-   /** GCCRF reward function configuration. When provided, GCCRF replaces heuristic scoring. */
+@@ -0,0 +1,137 @@
++/**
++ * PLAN-59 Phase 1: arm construction.
++ *
++ * Every arm is a list of operations applied, in order, to its own fork of the
++ * sealed snapshot. K is 20 or the number of qualifying candidates when fewer,
++ * the same K for every arm.
++ *
++ *   unchanged       no operations
++ *   recency         the K candidates whose chunks were most recently accessed
++ *   random          K drawn uniformly without replacement under a recorded seed
++ *   prioritised     top K by priority (estimate.ts)
++ *   shuffled_batch  the prioritised arm's exact set in a seeded random order,
++ *                   charged the prioritised arm's selection cost
++ */
++import { seededShuffle } from "./common.js";
++import type { PriorityRow } from "./estimate.js";
++import type { Operation } from "./operations.js";
++
++export type ArmName = "unchanged" | "recency" | "random" | "prioritised" | "shuffled_batch";
++export const ARMS: readonly ArmName[] = [
++  "unchanged",
++  "recency",
++  "random",
++  "prioritised",
++  "shuffled_batch",
++];
++
++export const DEFAULT_K = 20;
++
++export function chooseK(candidateCount: number, kMax = DEFAULT_K): number {
++  return Math.max(0, Math.min(kMax, candidateCount));
++}
++
++const byId = (a: Operation, b: Operation) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
++
++export function selectRecency(candidates: readonly Operation[], k: number): Operation[] {
++  return [...candidates]
++    .toSorted((a, b) => {
++      const ta = a.lastAccessedAt ?? Number.NEGATIVE_INFINITY;
++      const tb = b.lastAccessedAt ?? Number.NEGATIVE_INFINITY;
++      return tb - ta || byId(a, b);
++    })
++    .slice(0, k);
++}
++
++export function selectRandom(
++  candidates: readonly Operation[],
++  k: number,
++  seed: string,
++): Operation[] {
++  return seededShuffle([...candidates].toSorted(byId), `${seed}:random`).slice(0, k);
++}
++
++/**
++ * Top K by priority. Candidates without a priority row (outside the gain
++ * estimation cap) rank below every estimated one, by need then id, so the arm
++ * is still filled when fewer than K candidates were estimated.
++ */
++export function selectPrioritised(
++  candidates: readonly Operation[],
++  k: number,
++  rows: ReadonlyMap<string, PriorityRow>,
++  needOf: (op: Operation) => number,
++): Operation[] {
++  return [...candidates]
++    .toSorted((a, b) => {
++      const ra = rows.get(a.id);
++      const rb = rows.get(b.id);
++      if (ra && rb) {
++        return rb.priority - ra.priority || rb.need - ra.need || byId(a, b);
++      }
++      if (ra) return -1;
++      if (rb) return 1;
++      return needOf(b) - needOf(a) || byId(a, b);
++    })
++    .slice(0, k);
++}
++
++export function shuffledBatch(selected: readonly Operation[], seed: string): Operation[] {
++  return seededShuffle(selected, `${seed}:shuffled_batch`);
++}
++
++export type SelectionCost = {
++  forks: number;
++  searches: number;
++  embeddingCalls: number;
++  seconds: number;
++};
++
++export const ZERO_SELECTION_COST: SelectionCost = {
++  forks: 0,
++  searches: 0,
++  embeddingCalls: 0,
++  seconds: 0,
++};
++
++export type ArmPlan = { arm: ArmName; operations: Operation[]; selectionCost: SelectionCost };
++
++export function buildArms(params: {
++  candidates: readonly Operation[];
++  k: number;
++  seed: string;
++  priorities: ReadonlyMap<string, PriorityRow>;
++  needOf: (op: Operation) => number;
++  /** what estimating priorities cost: forks, searches, embedding calls, seconds */
++  estimationCost: SelectionCost;
++}): Record<ArmName, ArmPlan> {
++  const prioritised = selectPrioritised(
++    params.candidates,
++    params.k,
++    params.priorities,
++    params.needOf,
++  );
++  return {
++    unchanged: { arm: "unchanged", operations: [], selectionCost: ZERO_SELECTION_COST },
++    recency: {
++      arm: "recency",
++      operations: selectRecency(params.candidates, params.k),
++      selectionCost: ZERO_SELECTION_COST,
++    },
++    random: {
++      arm: "random",
++      operations: selectRandom(params.candidates, params.k, params.seed),
++      selectionCost: ZERO_SELECTION_COST,
++    },
++    prioritised: {
++      arm: "prioritised",
++      operations: prioritised,
++      selectionCost: params.estimationCost,
++    },
++    shuffled_batch: {
++      arm: "shuffled_batch",
++      operations: shuffledBatch(prioritised, params.seed),
++      selectionCost: params.estimationCost,
++    },
++  };
++}
 ```
 
-**File**: `src/memory/evidence-telemetry.test.ts` (modified, +3/-2)
+**File**: `benchmarks/plan59-phase1/common.ts` (added, +176/-0)
 ```diff
-@@ -61,7 +61,8 @@ afterEach(async () => {
- });
- 
- describe("resolveEvidenceConfig", () => {
--  it("defaults to observe / 90 days / topK 10", () => {
-+  it("defaults to shadow / 90 days / topK 10", () => {
-+    expect(EVIDENCE_DEFAULTS).toEqual({ mode: "shadow", retentionDays: 90, topK: 10 });
-     expect(resolveEvidenceConfig(undefined, quiet)).toEqual(EVIDENCE_DEFAULTS);
-     expect(resolveEvidenceConfig({}, quiet)).toEqual(EVIDENCE_DEFAULTS);
-   });
-@@ -80,7 +81,7 @@ describe("resolveEvidenceConfig", () => {
-   it("falls back to the default on a mode typo, retention 0 and garbage numbers", () => {
-     const warned: string[] = [];
-     const log = { debug: () => {}, warn: (m: string) => warned.push(m) };
--    expect(resolveEvidenceConfig({ mode: "shadwo" }, log).mode).toBe("observe");
-+    expect(resolveEvidenceConfig({ mode: "shadwo" }, log).mode).toBe("shadow");
-     expect(warned).toHaveLength(1);
-     expect(resolveEvidenceConfig({ retentionDays: 0 }, quiet).retentionDays).toBe(90);
-     expect(resolveEvidenceConfig({ retentionDays: -3 }, quiet).retentionDays).toBe(90);
+@@ -0,0 +1,176 @@
++/**
++ * PLAN-59 Phase 1 pilot: shared helpers.
++ *
++ * Everything here is pure or touches only the paths it is handed. The one
++ * safety rule every entry point shares lives here: nothing under ~/.bitterbot
++ * is ever written except the private question/partition files that the
++ * live-recall tooling already keeps there with mode 0600.
++ */
++import { execSync } from "node:child_process";
++import { createHash } from "node:crypto";
++import { existsSync, readFileSync, rmSync, statSync } from "node:fs";
++import { homedir } from "node:os";
++import { join, resolve } from "node:path";
++import { DatabaseSync } from "node:sqlite";
++
++export const sha256 = (s: string | Buffer | Uint8Array): string =>
++  createHash("sha256").update(s).digest("hex");
++
++export const sha256File = (path: string): string => sha256(readFileSync(path));
++
++/** One generated question, exactly as benchmarks/live-recall/make-questions.mts writes it. */
++export type Question = {
++  chunkId: string;
++  path: string;
++  source: string;
++  startLine: number;
++  endLine: number;
++  textSha256?: string;
++  question: string;
++};
++
++/** The family a question belongs to: the gold chunk's file path. */
++export const familyOf = (q: Pick<Question, "path">): string => q.path;
++
++export function loadQuestions(path: string): { questions: Question[]; raw: string } {
++  const raw = readFileSync(path, "utf-8");
++  const questions = raw
++    .split("\n")
++    .filter((l) => l.trim())
++    .map((l) => JSON.parse(l) as Question);
++  return { questions, raw };
++}
++
++// ── ~/.bitterbot guard ───────────────────────────────────────────────────────
++
++export function bitterbotHome(): string {
++  return resolve(join(homedir(), ".bitterbot"));
++}
++
++export function isUnderBitterbotHome(p: string, home = bitterbotHome()): boolean {
++  const r = resolve(p);
++  return r === home || r.startsWith(`${home}/`);
++}
++
++/** The one directory under ~/.bitterbot a private question or partition file may land in. */
++export function isPrivateBenchmarkPath(p: string, home = bitterbotHome()): boolean {
++  const allowed = join(home, "benchmarks", "live-recall");
++  const r = resolve(p);
++  return r.startsWith(`${allowed}/`);
++}
++
++export function refuseUnderBitterbotHome(p: string, what: string): void {
++  if (isUnderBitterbotHome(p)) {
++    throw new Error(`refusing to write ${what} under ~/.bitterbot: ${p}`);
++  }
++}
++
++// ── snapshots and forks ──────────────────────────────────────────────────────
++
++/**
++ * Copy a SQLite file with `VACUUM INTO` through a READ-ONLY connection. The
++ * source is never modified (no WAL is created on a read-only open); the
++ * destination must not exist and must not be under ~/.bitterbot.
++ */
++export function vacuumInto(src: string, dest: string): { ms: number; bytes: number } {
++  refuseUnderBitterbotHome(dest, "a database copy");
++  if (existsSync(dest)) {
++    throw new Error(`destination exists: ${dest}`);
++  }
++  const t0 = performance.now();
++  const ro = new DatabaseSync(resolve(src), { readOnly: true });
++  try {
++    // The copy is a scratch fork; syncing every page to disk made a 370 MB
++    // VACUUM INTO take 40 s on the pilot box against 7 s without.
++    ro.exec("PRAGMA synchronous = OFF");
++    ro.exec(`VACUUM INTO '${resolve(dest).replace(/'/g, "''")}'`);
++  } finally {
++    ro.close();
++  }
++  return { ms: performance.now() - t0, bytes: statSync(dest).size };
++}
++
++/** Remove a database copy and its WAL/SHM side files. */
++export function removeDbFiles(path: string): void {
++  refuseUnderBitterbotHome(path, "a delete");
++  for (const suffix of ["", "-wal", "-shm", "-journal"]) {
++    rmSync(`${path}${suffix}`, { force: true });
++  }
++}
++
++/** Size of a database including any WAL that has not been checkpointed. */
++export function dbBytes(path: string): number {
++  let total = 0;
++  for (const suffix of ["", "-wal"]) {
++    try {
++      total += statSync(`${path}${suffix}`).size;
++    } catch {
++      // absent side file
++    }
++  }
++  return total;
++}
++
++export function gitCommit(cwd?: string): string | null {
++  try {
++    const head = execSync("git rev-parse --short HEAD", { encoding: "utf-8", cwd }).trim();
++    const dirty = execSync("git status --porcelain --untracked-files=no", {
++      encoding: "utf-8",
++      cwd,
++    }).trim();
++    return dirty ? `${head}+dirty` : head;
++  } catch {
++    return null;
++  }
++}
++
++// ── seeded randomness ────────────────────────────────────────────────────────
++
++/**
++ * Deterministic PRNG (sfc32) seeded from a string through SHA-256. Every
++ * random choice in the pilot (random arm, shuffled batch, bootstrap resamples)
++ * goes through one of these so a run is reproducible from its recorded seed.
++ */
++export function seededRandom(seed: string): () => number {
++  const h = createHash("sha256").update(seed).digest();
++  let a = h.readUInt32LE(0);
++  let b = h.readUInt32LE(4);
++  let c = h.readUInt32LE(8);
++  let d = h.readUInt32LE(12);
++  const next = () => {
++    a >>>= 
 ```
 
-**File**: `src/memory/evidence-telemetry.ts` (modified, +2/-3)
+**File**: `benchmarks/plan59-phase1/estimate.test.ts` (added, +148/-0)
 ```diff
-@@ -44,7 +44,7 @@ export type ResolvedEvidenceConfig = {
- };
- 
- export const EVIDENCE_DEFAULTS: ResolvedEvidenceConfig = {
--  mode: "observe",
-+  mode: "shadow",
-   retentionDays: 90,
-   topK: 10,
- };
-@@ -57,8 +57,7 @@ const DAY_MS = 24 * 60 * 60 * 1000;
- /**
-  * Coerce the raw `memory.curiosity.evidence` value. The config schema keeps
-  * `memory` passthrough, so anything can arrive here: a typo in `mode` falls
-- * back to the default (observe) rather than silently disabling or enabling the
-- * shadow traces; non-positive or non-numeric retention/topK fall back too.
-+ * back to the default (shadow) rather than silently disabling the traces; non-positive or non-numeric retention/topK fall back too.
-  */
- export function resolveEvidenceConfig(
-   raw: unknown,
+@@ -0,0 +1,148 @@
++import { describe, expect, it } from "vitest";
++import { DAY_MS } from "./common.js";
++import {
++  affectedQueries,
++  costScalar,
++  decayFactor,
++  type DevBaseline,
++  estimatedBenefit,
++  gainByFamily,
++  needByFamily,
++  operationNeed,
++  priority,
++  priorityRow,
++} from "./estimate.js";
++import type { ClusterCandidate } from "./operations.js";
++
++const NOW = 1_800_000_000_000;
++
++describe("need", () => {
++  it("decays access counts with a 30-day half-life", () => {
++    expect(decayFactor(NOW, NOW)).toBe(1);
++    expect(decayFactor(NOW - 30 * DAY_MS, NOW)).toBeCloseTo(0.5, 10);
++    expect(decayFactor(NOW - 60 * DAY_MS, NOW)).toBeCloseTo(0.25, 10);
++    expect(decayFactor(NOW - 15 * DAY_MS, NOW, 15)).toBeCloseTo(0.5, 10);
++    expect(decayFactor(null, NOW)).toBe(0);
++    // a timestamp in the future counts as fresh, never above 1
++    expect(decayFactor(NOW + DAY_MS, NOW)).toBe(1);
++  });
++
++  it("sums the access prior, top-5 demand and unsuccessful retrievals per family", () => {
++    const chunks = [
++      { id: "a1", path: "A", accessCount: 4, lastAccessedAt: NOW - 30 * DAY_MS, createdAt: 0 },
++      { id: "a2", path: "A", accessCount: 2, lastAccessedAt: null, createdAt: NOW },
++      { id: "b1", path: "B", accessCount: 0, lastAccessedAt: null, createdAt: null },
++      { id: "c1", path: "C", accessCount: 10, lastAccessedAt: NOW, createdAt: 0 },
++    ];
++    const dev: DevBaseline[] = [
++      { chunkId: "a1", family: "A", fusedRank: 1, topTenIds: ["a1", "c1", "x", "y", "z", "b1"] },
++      { chunkId: "b1", family: "B", fusedRank: null, topTenIds: ["c1", "a2"] },
++      { chunkId: "c1", family: "C", fusedRank: 12, topTenIds: ["c1"] },
++    ];
++    const chunkFamily = new Map(chunks.map((c) => [c.id, c.path]));
++    const need = needByFamily({ chunks, devBaseline: dev, chunkFamily, now: NOW });
++    // A: 4 * 0.5 (30 days) + 2 * 1 (no timestamp, decays from created_at = now) = 4;
++    //    top-5 demand: a1 (q1) + a2 (q2) = 2; no unsuccessful
++    expect(need.get("A")!.accessPrior).toBeCloseTo(4, 10);
++    expect(need.get("A")!.topFiveDemand).toBe(2);
++    expect(need.get("A")!.unsuccessful).toBe(0);
++    expect(need.get("A")!.total).toBeCloseTo(6, 10);
++    // B: no accesses, b1 sits at position 6 (outside top 5), gold missing -> 1
++    expect(need.get("B")!.total).toBe(1);
++    // C: 10 fresh accesses, in top 5 of q1, q2, q3 = 3, rank 12 -> unsuccessful 1
++    expect(need.get("C")!.total).toBeCloseTo(14, 10);
++  });
++
++  it("uses retrieval_hits when present and leaves them at zero otherwise", () => {
++    const chunks = [{ id: "a1", path: "A", accessCount: 0, lastAccessedAt: null, createdAt: 0 }];
++    const chunkFamily = new Map([["a1", "A"]]);
++    const without = needByFamily({ chunks, devBaseline: [], chunkFamily, now: NOW });
++    expect(without.get("A")).toBeUndefined();
++    const withHits = needByFamily({
++      chunks,
++      devBaseline: [],
++      chunkFamily,
++      now: NOW,
++      retrievalHits: [
++        { chunkId: "a1", createdAt: NOW },
++        { chunkId: "a1", createdAt: NOW - 30 * DAY_MS },
++      ],
++    });
++    expect(withHits.get("A")!.retrievalHits).toBeCloseTo(1.5, 10);
++    expect(withHits.get("A")!.total).toBeCloseTo(1.5, 10);
++  });
++});
++
++const cluster: ClusterCandidate = {
++  kind: "consolidate_cluster",
++  id: "cc_1",
++  families: ["A"],
++  memberIds: ["a1", "a2"],
++  pairCount: 1,
++  minSimilarity: 0.9,
++  lastAccessedAt: null,
++};
++
++describe("priority", () => {
++  it("prices cost as 1 + chunks + 2 * embedding calls", () => {
++    expect(costScalar({ chunksTouched: 3, embeddingCalls: 1 })).toBe(6);
++    expect(costScalar({ chunksTouched: 0, embeddingCalls: 0 })).toBe(1);
++  });
++
++  it("guards a zero or invalid cost instead of dividing by it", () => {
++    expect(priority(2, 4)).toBe(0.5);
++    expect(priority(2, 0)).toBe(2);
++    expect(priority(2, -3)).toBe(2);
++    expect(priority(2, Number.NaN)).toBe(2);
++    expect(Number.isFinite(priority(2, 0))).toBe(true);
++  });
++
++  it("weights gain by need and divides by cost", () => {
++    const need = new Map([
++      ["A", { total: 6, accessPrior: 6, topFiveDemand: 0, unsuccessful: 0, retrievalHits: 0 }],
++      ["B", { total: 2, accessPrior: 2, topFiveDemand: 0, unsuccessful: 0, retrievalHits: 0 }],
++    ]);
++    const gain = new Map([
++      ["A", 0.5],
++      ["B", -0.25],
++    ]);
++    expect(estimatedBenefit(gain, need)).toBeCloseTo(2.5, 10);
++    expect(operationNeed(cluster, need)).toBe(6);
++    const row = priorityRow({
++      op: cluster,
++      need,
++      gain,
++      cost: { chunksTouched: 3, embeddingCalls: 1, estimatedMs: 0 },
++      affectedQueries: 4,
++    });
++    expect(row.cost).toBe(6);
++    expect(row.priority).toBeCloseTo(2.5 / 6, 10);
++  });
++});
++
++describe("gain", () => {
++  const dev: DevBaseline[] = [
++    { chunkId: "q1", family: "A", fusedRank: 2, topTenIds: ["x"] },
++    { chunkId: "q2", family: "B", fusedRank: 4, topTenIds: ["a1", "y"] },
++    { chunkId: "q3", fa
+```
+
+**File**: `benchmarks/plan59-phase1/estimate.ts` (added, +205/-0)
+```diff
+@@ -0,0 +1,205 @@
++/**
++ * PLAN-59 Phase 1: need, gain and priority. Development partition only.
++ *
++ * need(k) for a family k (a chunk path) is the sum of
++ *   1. the access prior: each chunk's access_count decayed from its
++ *      last_accessed_at with a 30-day half-life (a chunk with accesses but no
++ *      timestamp decays from created_at);
++ *   2. development demand: the number of development queries whose fused top 5
++ *      contains a chunk of k;
++ *   3. unsuccessful retrievals: 1 per development query whose gold is in k and
++ *      whose fused rank is above 10 or missing;
++ *   4. `retrieval_hits` (PLAN-59 Phase 0) decayed the same way, when the table
++ *      exists and has rows. It is empty on the pilot snapshot, so the access
++ *      prior carries.
++ * The plan's first-order session-transition term is deferred (see README).
++ *
++ * gain(op | k) is the mean change in parent-mapped reciprocal rank over the
++ * development queries affected by the operation whose gold is in k, measured
++ * by applying only that operation on a fork. Queries are affected when their
++ * gold is in a family the operation touches or when their baseline top 10
++ * contains a chunk the operation touches.
++ *
++ * priority(op) = sum_k need(k) * gain(op | k) / cost(op),
++ * cost(op) = 1 + chunksTouched + 2 * embeddingCalls (weights fixed here).
++ */
++import { DAY_MS } from "./common.js";
++import { type Operation, type OperationCost, affectedChunkIds } from "./operations.js";
++
++export const COST_WEIGHTS = { base: 1, perChunk: 1, perEmbeddingCall: 2 } as const;
++export const NEED_HALF_LIFE_DAYS = 30;
++
++export function costScalar(cost: Pick<OperationCost, "chunksTouched" | "embeddingCalls">): number {
++  return (
++    COST_WEIGHTS.base +
++    COST_WEIGHTS.perChunk * Math.max(0, cost.chunksTouched) +
++    COST_WEIGHTS.perEmbeddingCall * Math.max(0, cost.embeddingCalls)
++  );
++}
++
++/**
++ * benefit / cost with a zero-cost guard: a non-positive or non-finite cost is
++ * treated as the base cost (1) rather than producing Infinity or NaN.
++ */
++export function priority(benefit: number, cost: number): number {
++  const c = Number.isFinite(cost) && cost > 0 ? cost : COST_WEIGHTS.base;
++  return benefit / c;
++}
++
++export function decayFactor(
++  lastAt: number | null,
++  now: number,
++  halfLifeDays = NEED_HALF_LIFE_DAYS,
++): number {
++  if (lastAt === null || !Number.isFinite(lastAt)) {
++    return 0;
++  }
++  const ageDays = Math.max(0, (now - lastAt) / DAY_MS);
++  return Math.pow(0.5, ageDays / halfLifeDays);
++}
++
++export type ChunkNeedRow = {
++  id: string;
++  path: string;
++  accessCount: number;
++  lastAccessedAt: number | null;
++  createdAt: number | null;
++};
++
++/** What the estimator needs from one development query's baseline run. */
++export type DevBaseline = {
++  chunkId: string;
++  family: string;
++  /** parent-mapped fused rank on the unchanged fork, null when missing */
++  fusedRank: number | null;
++  /** chunk ids of the fused top 10, in order */
++  topTenIds: string[];
++};
++
++export type NeedBreakdown = {
++  total: number;
++  accessPrior: number;
++  topFiveDemand: number;
++  unsuccessful: number;
++  retrievalHits: number;
++};
++
++export function needByFamily(params: {
++  chunks: readonly ChunkNeedRow[];
++  devBaseline: readonly DevBaseline[];
++  chunkFamily: ReadonlyMap<string, string>;
++  now: number;
++  halfLifeDays?: number;
++  retrievalHits?: ReadonlyArray<{ chunkId: string; createdAt: number }>;
++}): Map<string, NeedBreakdown> {
++  const half = params.halfLifeDays ?? NEED_HALF_LIFE_DAYS;
++  const out = new Map<string, NeedBreakdown>();
++  const get = (fam: string) => {
++    let b = out.get(fam);
++    if (!b) {
++      b = { total: 0, accessPrior: 0, topFiveDemand: 0, unsuccessful: 0, retrievalHits: 0 };
++      out.set(fam, b);
++    }
++    return b;
++  };
++  for (const c of params.chunks) {
++    if (c.accessCount <= 0) continue;
++    const at = c.lastAccessedAt ?? c.createdAt;
++    get(c.path).accessPrior += c.accessCount * decayFactor(at, params.now, half);
++  }
++  for (const q of params.devBaseline) {
++    for (const id of q.topTenIds.slice(0, 5)) {
++      const fam = params.chunkFamily.get(id);
++      if (fam !== undefined) get(fam).topFiveDemand += 1;
++    }
++    if (q.fusedRank === null || q.fusedRank > 10) {
++      get(q.family).unsuccessful += 1;
++    }
++  }
++  for (const h of params.retrievalHits ?? []) {
++    const fam = params.chunkFamily.get(h.chunkId);
++    if (fam !== undefined) get(fam).retrievalHits += decayFactor(h.createdAt, params.now, half);
++  }
++  for (const b of out.values()) {
++    b.total = b.accessPrior + b.topFiveDemand + b.unsuccessful + b.retrievalHits;
++  }
++  return out;
++}
++
++/** Sum of need over the families an operation touches (its own ranking key for the gain cap). */
++export function operationNeed(op: Operation, need: ReadonlyMap<string, NeedBreakdown>): number {
++  return op.families.reduce((s, f) => s + (need.get(f)?.total ?? 0), 0);
++}
++
++/** Development queries whose out
+```
+
+**File**: `benchmarks/plan59-phase1/harness.ts` (added, +237/-0)
+```diff
+@@ -0,0 +1,237 @@
++/**
++ * PLAN-59 Phase 1: the manager-side harness.
++ *
++ * Opens a fork through the normal MemoryIndexManager under the frozen scoring
++ * settings benchmarks/live-recall/evidence-gate.mts established (every
++ * background engine off, recency boost off, hormonal state off, evidence
++ * telemetry off, wall clock frozen for the duration of a query batch) and
++ * turns each search into a QueryOutcome. Query embeddings are memoised
++ * in-process by text, so every arm scores the same question with the same
++ * vector and the embedding bill is one call per distinct question.
++ */
++import { mkdirSync, writeFileSync } from "node:fs";
++import { join } from "node:path";
++import { DatabaseSync } from "node:sqlite";
++import type { BitterbotConfig } from "../../src/config/config.js";
++import { createEmbeddingProvider, type EmbeddingProvider } from "../../src/memory/embeddings.js";
++import { MemoryIndexManager } from "../../src/memory/manager.js";
++import type { MemorySearchResult } from "../../src/memory/types.js";
++import { type Question, sha256 } from "./common.js";
++import type { EmbedFn } from "./operations.js";
++import { channelRanks, type QueryOutcome, type RankedResult, rankOf } from "./scoring.js";
++
++export const EMBEDDING_MODEL = "text-embedding-3-small";
++
++/** In-process memo shared by every manager and by the operation embedder. */
++export class EmbeddingMemo {
++  private readonly cache = new Map<string, Promise<number[]>>();
++  calls = 0;
++  /** characters sent to the provider (cache misses only), for the token estimate */
++  chars = 0;
++  wrap(embed: (text: string) => Promise<number[]>): (text: string) => Promise<number[]> {
++    return (text: string) => {
++      const hit = this.cache.get(text);
++      if (hit) return hit;
++      this.calls += 1;
++      this.chars += text.length;
++      const p = embed(text).catch((err: unknown) => {
++        this.cache.delete(text);
++        throw err;
++      });
++      this.cache.set(text, p);
++      return p;
++    };
++  }
++  get size(): number {
++    return this.cache.size;
++  }
++}
++
++export async function makeEmbedder(params: {
++  liveConfig: BitterbotConfig;
++  apiKey: string;
++  memo: EmbeddingMemo;
++}): Promise<EmbedFn> {
++  const result = await createEmbeddingProvider({
++    config: params.liveConfig,
++    provider: "openai",
++    remote: { apiKey: params.apiKey },
++    model: EMBEDDING_MODEL,
++    fallback: "none",
++  });
++  const provider = result.provider;
++  return params.memo.wrap((text) => provider.embedQuery(text, { feature: "plan59-phase1" }));
++}
++
++export function frozenConfig(params: {
++  storePath: string;
++  workspaceDir: string;
++  agentId: string;
++  apiKey: string;
++  maxResults: number;
++}): BitterbotConfig {
++  return {
++    agents: {
++      defaults: {
++        workspace: params.workspaceDir,
++        memorySearch: {
++          enabled: true,
++          provider: "openai",
++          model: EMBEDDING_MODEL,
++          remote: { apiKey: params.apiKey },
++          sources: ["memory", "sessions"],
++          store: { path: params.storePath, vector: { enabled: true } },
++          sync: {
++            intervalMinutes: 0,
++            onSearch: false,
++            onStartup: false,
++            watch: false,
++            onSessionStart: false,
++          },
++          query: {
++            maxResults: params.maxResults,
++            minScore: 0,
++            hybrid: { enabled: true, mergeStrategy: "rrf", candidateMultiplier: 5 },
++            recency: { enabled: false },
++          },
++        },
++      },
++      list: [{ id: params.agentId, default: false, workspace: params.workspaceDir }],
++    },
++    memory: {
++      dream: { enabled: false },
++      consolidation: { enabled: false },
++      curiosity: { enabled: false, evidence: { mode: "off" } },
++      emotional: { enabled: false, hormonal: { enabled: false } },
++      healthSweep: { enabled: false },
++      coverageDiagnostics: { enabled: false },
++    },
++  } as unknown as BitterbotConfig;
++}
++
++export type OpenStore = {
++  manager: MemoryIndexManager;
++  close: () => Promise<void>;
++};
++
++export async function openFrozenStore(params: {
++  storePath: string;
++  workDir: string;
++  agentId: string;
++  apiKey: string;
++  maxResults: number;
++  memo: EmbeddingMemo;
++}): Promise<OpenStore> {
++  const workspaceDir = join(params.workDir, "workspace", params.agentId);
++  mkdirSync(join(workspaceDir, "memory"), { recursive: true });
++  writeFileSync(join(workspaceDir, "memory", "MEMORY.md"), "# plan59 phase 1\n");
++  const manager = await MemoryIndexManager.get({
++    cfg: frozenConfig({ ...params, workspaceDir }),
++    agentId: params.agentId,
++  });
++  if (!manager) {
++    throw new Error("MemoryIndexManager.get returned null");
++  }
++  // Route this manager's query embeddings through the shared memo.
++  const inner = manager as unknown as { provider: EmbeddingProvider };
++  const original = inner.provider.embedQuery.bind(inner.provider);
++  inner.provider.embedQuery = params
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #329** (2026-10-29): feat(memory): PLAN-59 Phase 1 pilot harness (forked consolidation arms) (@VGIL77)
 - **PR #328** (2026-10-29): feat(memory): default evidence telemetry to shadow mode (@VGIL77)
 - **PR #322** (2026-10-29): feat(memory): evidence telemetry and shadow decision traces (PLAN-59 Phase 0) (@VGIL77)
 - **PR #321** (2026-10-28): fix(memory): GCCRF and curiosity-target defects (@VGIL77)
 - **PR #320** (2026-10-28): fix(p2p): fail-closed skill ingest and publish gates (@VGIL77)
 - **PR #318** (2026-10-28): feat(benchmarks): LongMemEval runner on the official protocol (@VGIL77)
-- **PR #317** (2026-10-27): bench(live-recall): replay the agent's real memory_search queries under each boost scale (@VGIL77)
 
 ---
 
@@ -1964,28 +2756,29 @@ Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. memory): default evidence telemetry to shadow mode (#328)
+## X. memory): PLAN-59 Phase 1 pilot harness (forked consolidation arms) (#329)
 
 **RULE**:
-When implementing operations in `docs/gateway/configuration-reference.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.gitignore`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `04bc81f1`: memory): default evidence telemetry to shadow mode (#328). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f9ac780a`: memory): PLAN-59 Phase 1 pilot harness (forked consolidation arms) (#329). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/gateway/configuration-reference.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.gitignore`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        mode: "shadow", // "off" | "observe" | "shadow" (default "shadow")
+# PLAN-59 phase reports are published documentation, not the playground.
+!docs/research/
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-        mode: "observe", // "off" | "observe" | "shadow" (default "observe")
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `04bc81f1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f9ac780a` are properly handled with clean fallback behavior.

@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-29T23:28:45.011Z",
-    "lastVerified": "2026-10-29T23:28:45.011Z",
+    "lastChecked": "2026-10-29T23:35:07.235Z",
+    "lastVerified": "2026-10-29T23:35:07.235Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -143,12 +143,12 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-29T22:26:14.795Z",
-    "lastVerified": "2026-10-29T22:26:14.795Z",
+    "lastChecked": "2026-10-29T23:35:04.249Z",
+    "lastVerified": "2026-10-29T23:35:04.249Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "96be491081376668b181a5f9ff8ddf05c4c90dad203f072cfce29d82471f00c3",
+    "contentHash": "ef0ec7224579129c5b110deaa9fa3ec80dfb5710286c641d3075ad23ac3cde2f",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -939,9 +939,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-10-29T01:43:14.886Z",
+    "lastChecked": "2026-10-29T23:34:54.715Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-10-29T01:43:14.886Z"
+    "lastVerified": "2026-10-29T23:34:54.715Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -2523,11 +2523,21 @@
     "lastVerified": "2026-10-29T01:09:02.050Z"
   },
   "orange-opensource-hurl": {
-    "name": "hurl",
+    "name": "Orange-OpenSource/hurl",
     "officialUrl": "https://github.com/Orange-OpenSource/hurl",
-    "lastChecked": "2026-10-28T08:05:48.746Z",
-    "revisionIdentifier": "4b465615",
-    "lastVerified": "2026-10-28T08:05:48.746Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-29T23:34:49.061Z",
+    "lastVerified": "2026-10-29T23:34:49.061Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-orange-opensource-hurl",
+    "contentHash": "e07e3b206f809e79e52f59ae80aff0c5517eb056ac8ac2ab8e50deff8eff4b32",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-unsloth-qwen-image-2.1-gguf": {
     "name": "unsloth/Qwen-Image-2.1-GGUF",
@@ -4159,9 +4169,9 @@
   "qovery-replibyte": {
     "name": "Replibyte",
     "officialUrl": "https://github.com/Qovery/Replibyte",
-    "lastChecked": "2026-10-28T14:08:44.364Z",
+    "lastChecked": "2026-10-29T23:34:57.170Z",
     "revisionIdentifier": "5504db91",
-    "lastVerified": "2026-10-28T14:08:44.364Z"
+    "lastVerified": "2026-10-29T23:34:57.170Z"
   },
   "grpc-grpc-rust": {
     "name": "grpc/grpc-rust",
@@ -4559,14 +4569,14 @@
     "officialUrl": "https://github.com/aws/aws-cdk",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-28T14:56:38.548Z",
-    "lastVerified": "2026-10-28T14:56:38.548Z",
+    "lastChecked": "2026-10-29T23:34:58.213Z",
+    "lastVerified": "2026-10-29T23:34:58.213Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aws-aws-cdk",
-    "contentHash": "76982cdb5dccee116f72b90bdc98fbc3af9e28be7fbe37f3c688bd15ff2ae5c2",
+    "contentHash": "6ecc4d2c1558085832dc5bd570735697570110e986456e20513da06da236f1d1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8626,5 +8636,19 @@
     "lastChecked": "2026-10-29T23:28:28.959Z",
     "revisionIdentifier": "1b4b1dda",
     "lastVerified": "2026-10-29T23:28:28.959Z"
+  },
+  "codetot-web-schema-test": {
+    "name": "schema-test",
+    "officialUrl": "https://github.com/codetot-web/schema-test",
+    "lastChecked": "2026-10-29T23:34:47.130Z",
+    "revisionIdentifier": "f395034cc2",
+    "lastVerified": "2026-10-29T23:34:47.130Z"
+  },
+  "swiftwebui-swiftwebui": {
+    "name": "SwiftWebUI",
+    "officialUrl": "https://github.com/SwiftWebUI/SwiftWebUI",
+    "lastChecked": "2026-10-29T23:34:49.625Z",
+    "revisionIdentifier": "2a5fe83a",
+    "lastVerified": "2026-10-29T23:34:49.625Z"
   }
 }
