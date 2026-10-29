@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-29T00:34:50.188Z",
-  "total_cycles_completed": 5983,
-  "total_learnings_persisted": 5983,
-  "total_rules_promoted": 5440,
+  "last_updated": "2026-10-29T00:41:38.062Z",
+  "total_cycles_completed": 5985,
+  "total_learnings_persisted": 5985,
+  "total_rules_promoted": 5441,
   "history": [
-    {
-      "timestamp": "2026-10-28T14:49:49.259Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T14:56:28.654Z",
-      "repository": "meta-llama/Llama-2-7b-chat-hf",
-      "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T14:56:30.191Z",
       "repository": "salvo-rs/salvo",
@@ -1403,6 +1389,20 @@
       "repository": "OpenMOSS-Team/MOSS-Image-SFT",
       "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T00:41:23.072Z",
+      "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T00:41:38.062Z",
+      "repository": "Ontos-AI/knowhere",
+      "learningId": "learn-github-ontos-ai-knowhere",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

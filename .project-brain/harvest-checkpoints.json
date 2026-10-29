@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-29T00:34:50.192Z",
+  "last_updated": "2026-10-29T00:41:38.066Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2676,14 +2676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
-      "content_hash": "a59b993dd2a9dcfef612e1bba0cda6f39edbb066a8b28be066472ed88d42bc6e",
-      "verified_at": "2026-10-25T17:36:31.837Z",
+      "content_hash": "d7d19825ef8ad4c7e1902b368cde8c3c5565937c3563efa7b0d3283f7414fdc8",
+      "verified_at": "2026-10-29T00:41:23.076Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T17:36:31.837Z"
+      "last_updated": "2026-10-29T00:41:23.076Z"
     },
     "tw93/Pake": {
       "repository": "tw93/Pake",
@@ -3576,14 +3576,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ontos-ai-knowhere",
-      "content_hash": "bd8dbcf028e3e669538ed8664b388c3456844d0a9bd51f073671b74eab62601b",
-      "verified_at": "2026-10-28T07:20:51.364Z",
+      "content_hash": "37d18e9c08967cd76e0fb7720e42fdccb5e9b8199773661989964ca46ce70090",
+      "verified_at": "2026-10-29T00:41:38.066Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T07:20:51.364Z"
+      "last_updated": "2026-10-29T00:41:38.066Z"
     },
     "Bitterbot-AI/bitterbot-desktop": {
       "repository": "Bitterbot-AI/bitterbot-desktop",

@@ -6015,3 +6015,5 @@ Every entry in this ledger must capture:
 | `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `16d52e58` | Multi-dimensional audit evidence | 2026-10-29T00:29:42.232Z |
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `792f7eb0` | Multi-dimensional audit evidence | 2026-10-29T00:29:54.064Z |
 | `learn-huggingface-openmoss-team-moss-image-sft` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT` | `hf-openmos` | Multi-dimensional audit evidence | 2026-10-29T00:34:50.183Z |
+| `learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-29T00:41:23.062Z |
+| `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `d1b31339` | Multi-dimensional audit evidence | 2026-10-29T00:41:38.056Z |

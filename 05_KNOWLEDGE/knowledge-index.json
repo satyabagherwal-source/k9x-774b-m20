@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T00:34:50.109Z",
+  "last_updated": "2026-10-29T00:41:37.982Z",
   "total_verified_learnings": 1160,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -41761,8 +41761,8 @@
       "slug": "ontos-ai-knowhere",
       "platform": "github",
       "source_url": "https://github.com/Ontos-AI/knowhere",
-      "source_version": "23ab68c2",
-      "content_hash": "bd8dbcf028e3e669538ed8664b388c3456844d0a9bd51f073671b74eab62601b",
+      "source_version": "d1b31339",
+      "content_hash": "37d18e9c08967cd76e0fb7720e42fdccb5e9b8199773661989964ca46ce70090",
       "dossier_path": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "promoted_rules": [
@@ -41800,6 +41800,11 @@
           "number": 5218,
           "title": "Pure ASGI Middleware for Request Context & Header Mutation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5477,
+          "title": "Upload coarse artifacts from the document workspace, not a random sibling render",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41807,7 +41812,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T07:20:51.262Z",
+      "verified_at": "2026-10-29T00:41:37.963Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -66435,7 +66440,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017",
       "source_version": "hf-deepseek-ai-deepseek-v4.1-flash-1017",
-      "content_hash": "a59b993dd2a9dcfef612e1bba0cda6f39edbb066a8b28be066472ed88d42bc6e",
+      "content_hash": "d7d19825ef8ad4c7e1902b368cde8c3c5565937c3563efa7b0d3283f7414fdc8",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md",
       "promoted_rules": [
@@ -66460,7 +66465,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T17:36:31.771Z",
+      "verified_at": "2026-10-29T00:41:22.961Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -147704,6 +147709,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T00:34:50.091Z"
+    },
+    "rule-5477": {
+      "learning_id": "rule-5477",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5477,
+      "title": "Upload coarse artifacts from the document workspace, not a random sibling render",
+      "source_url": "https://github.com/Ontos-AI/knowhere",
+      "source_version": "d1b31339",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T00:41:37.963Z"
     }
   },
   "aliases": {

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-N09M",
-    "timestamp": "2026-10-27T19:49:21.562Z",
-    "repository": "zed-industries/zed",
-    "learningId": "learn-github-zed-industries-zed",
-    "contentHash": "fd171d0a74303e7532a09ee2691b1181d433d99ebbee0f24750378ddfac9941b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-N50G",
-    "timestamp": "2026-10-27T19:49:27.712Z",
-    "repository": "opentofu/opentofu",
-    "learningId": "learn-github-opentofu-opentofu",
-    "contentHash": "83388a491f352ff66d59df4d85d16d47f469733f33d3851c76e31f6d0c1f5a51",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-N6UO",
     "timestamp": "2026-10-27T19:49:30.096Z",
     "repository": "freenet/freenet-core",
@@ -7492,6 +7462,36 @@
     "contentHash": "6aeef3881ecb283bbc6ba1234f37192bd8b965c94bbcd301b2478e604875c103",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-IELU",
+    "timestamp": "2026-10-29T00:41:23.058Z",
+    "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
+    "contentHash": "d7d19825ef8ad4c7e1902b368cde8c3c5565937c3563efa7b0d3283f7414fdc8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-IQ6D",
+    "timestamp": "2026-10-29T00:41:38.053Z",
+    "repository": "Ontos-AI/knowhere",
+    "learningId": "learn-github-ontos-ai-knowhere",
+    "contentHash": "37d18e9c08967cd76e0fb7720e42fdccb5e9b8199773661989964ca46ce70090",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

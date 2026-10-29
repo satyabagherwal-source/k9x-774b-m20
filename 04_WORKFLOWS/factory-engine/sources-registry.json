@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-29T00:34:52.723Z",
-    "lastVerified": "2026-10-29T00:34:52.723Z",
+    "lastChecked": "2026-10-29T00:41:40.596Z",
+    "lastVerified": "2026-10-29T00:41:40.596Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -224,8 +224,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T00:09:19.916Z",
-    "lastVerified": "2026-10-29T00:09:19.916Z",
+    "lastChecked": "2026-10-29T00:41:34.357Z",
+    "lastVerified": "2026-10-29T00:41:34.357Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -613,9 +613,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-10-28T20:50:51.289Z",
+    "lastChecked": "2026-10-29T00:41:29.344Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-10-28T20:50:51.289Z"
+    "lastVerified": "2026-10-29T00:41:29.344Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -875,9 +875,9 @@
   "ducaale-xh": {
     "name": "xh",
     "officialUrl": "https://github.com/ducaale/xh",
-    "lastChecked": "2026-10-28T04:03:34.238Z",
+    "lastChecked": "2026-10-29T00:41:19.242Z",
     "revisionIdentifier": "309b1359",
-    "lastVerified": "2026-10-28T04:03:34.238Z"
+    "lastVerified": "2026-10-29T00:41:19.242Z"
   },
   "hf-stabilityai-stable-diffusion-xl-base-1.0": {
     "name": "stabilityai/stable-diffusion-xl-base-1.0",
@@ -2358,13 +2358,13 @@
     "officialUrl": "https://github.com/Ontos-AI/knowhere",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-28T07:18:06.909Z",
-    "lastVerified": "2026-10-28T07:18:06.909Z",
+    "lastChecked": "2026-10-29T00:41:37.406Z",
+    "lastVerified": "2026-10-29T00:41:37.406Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ontos-ai-knowhere",
-    "contentHash": "bd8dbcf028e3e669538ed8664b388c3456844d0a9bd51f073671b74eab62601b",
-    "promotedRulesCount": 3,
+    "contentHash": "37d18e9c08967cd76e0fb7720e42fdccb5e9b8199773661989964ca46ce70090",
+    "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -2735,9 +2735,9 @@
   "sorintlab-stolon": {
     "name": "stolon",
     "officialUrl": "https://github.com/sorintlab/stolon",
-    "lastChecked": "2026-10-28T10:17:51.080Z",
+    "lastChecked": "2026-10-29T00:41:26.760Z",
     "revisionIdentifier": "bcea7a75",
-    "lastVerified": "2026-10-28T10:17:51.080Z"
+    "lastVerified": "2026-10-29T00:41:26.760Z"
   },
   "milvus-io-bootcamp": {
     "name": "bootcamp",
@@ -7799,5 +7799,29 @@
     "lastChecked": "2026-10-29T00:29:42.814Z",
     "revisionIdentifier": "98098b9c",
     "lastVerified": "2026-10-29T00:29:42.814Z"
+  },
+  "hf-deepseek-ai-deepseek-v4.1-flash-1017": {
+    "name": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+    "officialUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-29T00:41:22.148Z",
+    "lastVerified": "2026-10-29T00:41:22.148Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
+    "contentHash": "d7d19825ef8ad4c7e1902b368cde8c3c5565937c3563efa7b0d3283f7414fdc8",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "milanvarady-applite": {
+    "name": "Applite",
+    "officialUrl": "https://github.com/milanvarady/Applite",
+    "lastChecked": "2026-10-29T00:41:24.269Z",
+    "revisionIdentifier": "cf9712ae",
+    "lastVerified": "2026-10-29T00:41:24.269Z"
   }
 }
