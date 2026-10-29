@@ -6053,3 +6053,5 @@
 | `CYCLE-20261029-LL3Y` | `2026-10-29T17:03:38.014Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5527` | Yes (`9f4a7db4...`) |
 | `CYCLE-20261029-LLF0` | `2026-10-29T17:03:38.412Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5528` | Yes (`e3f9828f...`) |
 | `CYCLE-20261029-MTXK` | `2026-10-29T17:04:36.104Z` | `flox/flox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5529` | Yes (`3ad8e210...`) |
+| `CYCLE-20261029-2CE4` | `2026-10-29T17:16:39.868Z` | `tach-org/tach` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5530` | Yes (`56887a81...`) |
+| `CYCLE-20261029-2K7I` | `2026-10-29T17:16:49.998Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5531` | Yes (`cff5d829...`) |

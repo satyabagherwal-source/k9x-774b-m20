@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-29T17:04:38.659Z",
-    "lastVerified": "2026-10-29T17:04:38.659Z",
+    "lastChecked": "2026-10-29T17:16:52.544Z",
+    "lastVerified": "2026-10-29T17:16:52.544Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -207,9 +207,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-10-29T00:02:31.964Z",
+    "lastChecked": "2026-10-29T17:16:40.833Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-10-29T00:02:31.964Z"
+    "lastVerified": "2026-10-29T17:16:40.833Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch/meilisearch",
@@ -398,12 +398,12 @@
     "lastVerified": "2026-10-28T20:37:50.893Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T16:13:45.373Z",
-    "lastVerified": "2026-10-29T16:13:45.373Z",
+    "lastChecked": "2026-10-29T17:16:45.823Z",
+    "lastVerified": "2026-10-29T17:16:45.823Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -412,7 +412,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "0550f8b3"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -2087,11 +2088,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "tach-org-tach": {
-    "name": "tach",
+    "name": "tach-org/tach",
     "officialUrl": "https://github.com/tach-org/tach",
-    "lastChecked": "2026-10-28T06:18:21.566Z",
-    "revisionIdentifier": "bc92d715",
-    "lastVerified": "2026-10-28T06:18:21.566Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-29T17:16:35.784Z",
+    "lastVerified": "2026-10-29T17:16:35.784Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-tach-org-tach",
+    "contentHash": "56887a8126ce6b4255851ee9e3c14a9b69a8904d98806aa70b05f47ff1be3fb9",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-taichuai-zdtaichu5.0-9b": {
     "name": "TaichuAI/ZDTaichu5.0-9B",
@@ -3592,11 +3603,21 @@
     "lastVerified": "2026-10-29T12:13:22.935Z"
   },
   "pixeltable-pixeltable": {
-    "name": "pixeltable",
+    "name": "pixeltable/pixeltable",
     "officialUrl": "https://github.com/pixeltable/pixeltable",
-    "lastChecked": "2026-10-28T13:03:40.339Z",
-    "revisionIdentifier": "cb995107",
-    "lastVerified": "2026-10-28T13:03:40.339Z"
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-29T17:16:49.005Z",
+    "lastVerified": "2026-10-29T17:16:49.005Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-pixeltable-pixeltable",
+    "contentHash": "cff5d829548d8e0e8d388732cef157791e2cbe56246d398596b2ba010adbfe2c",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 4,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "pimalaya-himalaya": {
     "name": "pimalaya/himalaya",
@@ -3982,9 +4003,9 @@
   "gocrane-crane": {
     "name": "crane",
     "officialUrl": "https://github.com/gocrane/crane",
-    "lastChecked": "2026-10-28T13:49:57.917Z",
+    "lastChecked": "2026-10-29T17:16:38.277Z",
     "revisionIdentifier": "2b0ddae8",
-    "lastVerified": "2026-10-28T13:49:57.917Z"
+    "lastVerified": "2026-10-29T17:16:38.277Z"
   },
   "malisper-pgrust": {
     "name": "pgrust",
@@ -8386,5 +8407,19 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "turbopress-x-seo-auditing-software": {
+    "name": "seo-auditing-software",
+    "officialUrl": "https://github.com/TurboPress-X/seo-auditing-software",
+    "lastChecked": "2026-10-29T17:16:33.322Z",
+    "revisionIdentifier": "68d4a606db",
+    "lastVerified": "2026-10-29T17:16:33.322Z"
+  },
+  "ivanvorobei-swiftui": {
+    "name": "SwiftUI",
+    "officialUrl": "https://github.com/ivanvorobei/SwiftUI",
+    "lastChecked": "2026-10-29T17:16:35.775Z",
+    "revisionIdentifier": "b6cfb6d0",
+    "lastVerified": "2026-10-29T17:16:35.775Z"
   }
 }

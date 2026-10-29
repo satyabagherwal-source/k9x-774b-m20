@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-29T17:04:36.113Z",
-  "total_cycles_completed": 6030,
-  "total_learnings_persisted": 6030,
-  "total_rules_promoted": 5494,
+  "last_updated": "2026-10-29T17:16:50.008Z",
+  "total_cycles_completed": 6032,
+  "total_learnings_persisted": 6032,
+  "total_rules_promoted": 5496,
   "history": [
-    {
-      "timestamp": "2026-10-28T17:05:45.389Z",
-      "repository": "Ataraxy-Labs/sem",
-      "learningId": "learn-github-ataraxy-labs-sem",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T17:05:52.747Z",
-      "repository": "kcl-lang/kcl",
-      "learningId": "learn-github-kcl-lang-kcl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T17:06:00.802Z",
       "repository": "ydb-platform/ydb",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-29T17:04:36.113Z",
       "repository": "flox/flox",
       "learningId": "learn-github-flox-flox",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T17:16:39.877Z",
+      "repository": "tach-org/tach",
+      "learningId": "learn-github-tach-org-tach",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T17:16:50.008Z",
+      "repository": "pixeltable/pixeltable",
+      "learningId": "learn-github-pixeltable-pixeltable",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

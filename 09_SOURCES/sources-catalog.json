@@ -3313,10 +3313,10 @@
     "repository": "tach-org/tach",
     "platform": "github",
     "sourceUrl": "https://github.com/tach-org/tach",
-    "sourceVersion": "bc92d715",
+    "sourceVersion": "7c27c816",
     "license": "MIT",
-    "contentHash": "1fd79fa2dcaf1dcc325210a0f193de2bb65c2bbaf989da0de9e671793b7c448f",
-    "lastHarvestedAt": "2026-10-18T23:08:16.604Z",
+    "contentHash": "56887a8126ce6b4255851ee9e3c14a9b69a8904d98806aa70b05f47ff1be3fb9",
+    "lastHarvestedAt": "2026-10-29T17:16:39.872Z",
     "learningId": "learn-github-tach-org-tach"
   },
   "openreplay-openreplay": {
@@ -3713,10 +3713,10 @@
     "repository": "pixeltable/pixeltable",
     "platform": "github",
     "sourceUrl": "https://github.com/pixeltable/pixeltable",
-    "sourceVersion": "cb995107",
+    "sourceVersion": "e1ee0571",
     "license": "Apache-2.0",
-    "contentHash": "cdfb59edd8a185e971e489543217dce77f71473d5b4ee47bb8ee3f8cb7b0c033",
-    "lastHarvestedAt": "2026-10-27T20:11:40.999Z",
+    "contentHash": "cff5d829548d8e0e8d388732cef157791e2cbe56246d398596b2ba010adbfe2c",
+    "lastHarvestedAt": "2026-10-29T17:16:50.002Z",
     "learningId": "learn-github-pixeltable-pixeltable"
   },
   "honojs-hono": {

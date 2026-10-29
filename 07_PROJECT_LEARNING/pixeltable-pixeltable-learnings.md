@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source**: github ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
-> **Source Version**: `cb995107`  
+> **Source Version**: `e1ee0571`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T20:11:40.555Z  
+> **Timestamp**: 2026-10-29T17:16:49.345Z  
 > **Learning ID**: `learn-github-pixeltable-pixeltable`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T20:11:39.026Z  
+> **Harvest Timestamp**: 2026-10-29T17:16:49.005Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1459,11 +1459,13 @@ def check_udf_references(bases: list[model.TableModelMeta]) -> list[str]:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1845** (2026-10-27): **Remove the Devin Review configuration**
-  *Symptoms*: Removes `.devin/`, the Devin Review configuration. The team no longer uses Devin Review.  `.devin/REVIEW.md` held its review instructions: a copy of the `challenge-the-design` skill with a scope gate. The Claude review already vendors that skill in `.claude/skills/challenge-the-design/`. Nothing else in the repository configures Devin.  To stop Devin from reviewing PRs, an org admin also needs to uninstall or disable the Devin GitHub App; this PR only removes its configuration.  The same change is in pixeltable/pixeltable-cloud#551.
+- **Issue #1863** (2026-10-29): **Rename SERVICE_BUSY to JOB_REFUSED, and send Retry-After with every error that has a retry_after**
+  *Symptoms*: Follow-up to #1861, which merged before Marcel's review was addressed.  ## Summary - **`SERVICE_BUSY` becomes `JOB_REFUSED`** (6002, 503, retryable). A draining instance is not busy, and the refusal comes from one router on one instance, not a whole service. The code is in no release yet: 0.7.21 shipped on 10-26, before #1861 merged. - **`ServiceUnavailableError`'s docstring**: "Database, store, service instance or other infrastructure is temporarily unavailable." - **One conversion from `pxt.Error` to `HTTPException`**: `_http_exception()` is used by `_run_endpoint_op()` and by both refusals in `_submit_job()`, and `refusal` is an `HTTPException` again. It sets `Retry-After` whenever `retry_after` is set, rounded up to whole seconds. Behavior change: a synchronous error with a `retry_after` now sends `Retry-After` too. On a route that is a Cloud or proxy error, such as an unreachable hosted database. An error a UDF raises is rebuilt by `raise_from_expr_eval_err()` without its `retry_after`, so it still sends none. - **Serving guide**: "Each router accepts at most 64 unfinished background jobs per service instance, running jobs included." The retry example is gone. It retried only a 503 with `Retry-After`, which disagreed with the guide's rule (retry when `detail.retryable` is true) and gave up on the gateway's retryable "service is not running" 503. The paragraph now points to that rule. - **Tests**: the drain test compares the whole `detail`. A new test goes through an inse
+  **Post-Mortem & Fix Analysis**:
+  > agents review
 
-- **Issue #1844** (2026-10-26): **PXT-1704: Fix drop_table deleting media files before concurrent readers finish**
-  *Symptoms*: <!-- CURSOR_AGENT_PR_BODY_BEGIN --> Fixes a real race in `drop_table` that fails the scheduled `stress-tests` workflow (job `random-ops (--read-only)`). Tracked as [PXT-1704](https://pixeltable.atlassian.net/browse/PXT-1704).  This is not a flake. Two scheduled runs on main hit the same missing-media failure while a concurrent worker was still reading the table being dropped.  ## Evidence  - [Run 40256550424](https://github.com/pixeltable/pixeltable/actions/runs/40256550424) (2026-10-25): Worker 06 `t.sample(n).collect()` on `tbl_3` raised `FileNotFoundError` in `CellReconstructionNode._reconstruct_array` -> `open_file` for a file under `~/.pixeltable/media/<tbl_id>/...`, 9 ms before Worker 00 logged `Dropped table 'tbl_3'`. - [Run 39708054252](https://github.com/pixeltable/pixeltable/actions/runs/39708054252) (2026-10-22): same race via `DataRow.__getitem__` -> `PIL.Image.open` on a `.jpeg`.  ## Root cause  Queries take no Pixeltable table lock (`Query._collect` -> `begin_xact(for_write=False)`). `Catalog._drop_tbl` commits metadata plus pending ops from `TableVersion.drop_ops()` in order `DeleteTableMediaFilesOp`, `DropStoreTableOp`, `DeleteTableMdOp`. `_roll_forward` runs `DeleteTableMediaFilesOp` first, deleting media with no Postgres lock while an in-flight reader still holds its transaction.  `DROP TABLE` needs `ACCESS EXCLUSIVE` and would wait for readers holding `ACCESS SHARE`, but media was deleted before that wait.  ## Fix  In `TableVersion.drop_ops()`, run `DropSto
+- **Issue #1862** (2026-10-29): **Expect EXIT_REFUSED when pxt db update refuses a capacity cut**
+  *Symptoms*: `TestCloudDb::test_capacity` lowers a hosted database's memory without `--allow-destructive` and expects the refusal to exit 1 (`EXIT_ERROR`). Since #1780 the CLI exits 3 (`EXIT_REFUSED`) for that refusal (`refuse_destructive()` in `pixeltable_cli/client/utils.py`), as the schema, service and smoke tests already expect.  `TestCloudDb` runs only in Pixeltable Cloud's e2e workflow, so core's CI never ran it. It failed there at core 8edc24319 ([pixeltable-cloud run 40744612742](https://github.com/pixeltable/pixeltable-cloud/actions/runs/40744612742)):  ``` assert refused.returncode == EXIT_ERROR AssertionError: assert 3 == 1 stderr: pxt db update: refusing to apply 1 destructive operation(s) without --allow-destructive ```  The other 753 cloud tests in that run passed.  Not run locally: the test needs a hosted database. It runs in Cloud's e2e once Cloud's pin includes this commit. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1480,409 +1482,598 @@ def check_udf_references(bases: list[model.TableModelMeta]) -> list[str]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `08d65e1b` (2026-10-26)
-**Commit Message**: fix: handle ARRAY column in EmbeddingIndex get_metadata and describe (#1699)
+### Incident Patch 1: `e1ee0571` (2026-10-29)
+**Commit Message**: [PXT-1570] Retry throttled Bedrock calls; classify Pixeltable errors by error code (#1809)
 
-Fixes #1577
+## Summary
 
-### Summary
-When an \EmbeddingIndex\ is defined on an \ARRAY\ column (which already
-contains precomputed embeddings), \idx.embeddings\ does not contain a
-mapping for \Type.ARRAY\. Calling \get_metadata()\ or \describe()\ (via
-\_index_descriptor()\) attempted to look up
-\info.idx.embeddings[info.col.col_type._type](col_ref)\, raising
-\KeyError: <Type.ARRAY: 6>\.
+Bedrock UDFs had no resource pool, so a throttled call (for example
+`ThrottlingException` from `StartAsyncInvoke`, as in
+[PXT-1570](https://pixeltable.atlassian.net/browse/PXT-1570)) failed the
+row with no retry. This PR puts them on the standard
+`RequestRateScheduler`, makes the retry classifier read AWS error codes,
+and gives the scheduler its own rule for which Pixeltable errors it
+retries.
 
-Similarly, in \EmbeddingIndex.as_fn_call()\ on declarative \TableModel\
-classes, referencing an array column without an explicit embedding
-function previously raised a schema validation error.
+The nightly flake in PXT-1570 itself was already addressed by #1769,
+which removed the live Bedrock tests from the nightly and added a
+`@rerun` on `ThrottlingException`. This PR is the product follow-up
+suggested in the ticket: users get backoff instead of a hard failure. It
+supersedes #1773.
 
-### Changes
-- In \LocalTable._get_metadata()\: check
-\info.col.col_type.is_array_type()\. If true, report \str(col_ref)\ as
-the embedding expression without subscripting \info.idx.embeddings\.
-- In \LocalTable._index_descriptor()\: handle
-\info.col.col_type.is_array_type()\ by using \str(col_ref)\ instead of
-looking up \info.idx.embeddings\.
-- In \EmbeddingIndex.as_fn_call()\ (\catalog/model/definition.py\):
-return \self.column\ directly if the column is an array type.
-- Added \ est_array_embedding_index_metadata\ in \ ests/test_index.py\
-verif
+## Changes
 
-**File**: `pixeltable/catalog/local_table.py` (modified, +3/-6)
+**Bedrock scheduling** (`functions/bedrock.py`)
+- `invoke_model()`, `converse()` and `embed()` use a per-model pool,
+`request-rate:bedrock:<model_id>`. Bedrock returns no rate-limit headers
+and its quotas are per model and shared by InvokeModel and Converse, so
+this follows the other header-less providers (fal, runwayml, together,
+...). The limit is configured in `[bedrock.rate_limits]`, 
+
+**File**: `docs/release/platform/configuration.mdx` (modified, +8/-2)
 ```diff
-@@ -152,16 +152,15 @@ def _get_metadata(self) -> TableMetadata:
-                 continue
-             if isinstance(info.idx, index.EmbeddingIndex):
-                 indexed_col_md = self._tbl_version_path.get_column_md(QColumnId(info.col.tbl_handle.id, info.col.id))
--                col_ref = ColumnRef(indexed_col_md)
--                embedding_fncall = info.idx.embeddings[info.col.col_type._type](col_ref)
-+                embedding_str = str(info.idx.create_value_expr(indexed_col_md))
-                 index_info[info.name] = IndexMetadata(
-                     name=info.name,
-                     columns=[info.col.name],
-                     index_type='embedding',
-                     parameters=EmbeddingIndexParams(
-                         metric=info.idx.metric.name.lower(),  # type: ignore[typeddict-item]
-                         precision=info.idx.precision.name.lower(),  # type: ignore[typeddict-item]
--                        embedding=str(embedding_fncall),
-+                        embedding=embedding_str,
-                         embedding_functions=[str(fn) for fn in info.idx.embeddings.values()],
-                     ),
-                 )
-@@ -448,10 +447,8 @@ def _index_descriptor(self, columns: list[str] | None = None) -> pd.DataFrame:
-                 continue
-             if isinstance(info.idx, index.EmbeddingIndex):
-                 col_md = self._tbl_version_path.get_column_md(QColumnId(info.col.tbl_handle.id, info.col.id))
--                col_ref = ColumnRef(col_md)
--                embedding = info.idx.embeddings[info.col.col_type._type](col_ref)
-                 row['Metric'] = str(info.idx.metric.name.lower())
--                row['Embedding'] = str(embedding)
-+                row['Embedding'] = str(info.idx.create_value_expr(col_md))
-             else:
-                 row['Metric'] = ''
-                 row['Embedding'] = ''
-```
-
-**File**: `pixeltable/catalog/model/definition.py` (modified, +3/-1)
-```diff
-@@ -167,10 +167,12 @@ def resolved_embeddings(self) -> dict[ts.ColumnType.Type, func.Function]:
-             self.embedding, self.string_embed, self.image_embed, self.audio_embed, self.video_embed, self.document_embed
-         )
+@@ -162,10 +162,16 @@ tts-1 = 50
+ dall-e-3 = 10
  
--    def as_fn_call(self) -> exprs.FunctionCall:
-+    def as_fn_call(self) -> exprs.Expr:
-         """The embedding call for the indexed column's own type, which is what the index materializes."""
-         assert isinstance(self.column, exprs.ColumnRefByName)
-         col_type = self.column.col_type
-+        if col_type.is_array_type():
-+            return self.column
-         embeddings = self.resolved_embeddings()
-         if col_type._type not in embeddings:
-             raise excs.RequestError(
+ [gemini.rate_limits]
+-gemini-2.5-flash = 600
+-gemini-2.5-pro = 300
++"gemini-2.5-flash" = 600
++"gemini-2.5-pro" = 300
++
++[bedrock.rate_limits]
++"anthropic.claude-sonnet-4-5-20250929-v1:0" = 200
++"luma.ray-v2:0" = 2
+ ```
+ 
++Quote a model id that contains `.` or `:`. Otherwise TOML reads `.` as a nested key, and `:` is a syntax error.
++
+ If no rate limit is configured, Pixeltable uses a default of 600 requests per minute.
+ 
+ ## Configuration best practices
 ```
 
-**File**: `tests/test_index.py` (modified, +32/-0)
+**File**: `pixeltable/config.py` (modified, +1/-0)
 ```diff
-@@ -1,5 +1,6 @@
- import datetime
- import random
-+import re
- import string
- import sys
- from typing import Any, Callable, Literal
-@@ -1656,3 +1657,34 @@ def test_oversized_index_key(self, db_root: DatabaseRoot) -> None:
-             pxt.ErrorCode.CONSTRAINT_VIOLATION, match="Value too large for the btree index on column 'c_str'"
-         ):
-             tbl.add_btree_index('c_str')
+@@ -991,6 +991,7 @@ def describe_setting(self, section: str, key: str) -> str:
+         'temp_location': 'S3 URI for temporary storage used by Bedrock async model invocations',
+         'performance_config_latency': 'Performance setting for supported models (standard or optimized)',
+         'service_tier': 'Processing tier for requests (priority, default, flex, or reserved)',
++        'rate_limits': 'Per-model rate limits for Bedrock API requests',
+     },
+     'bfl': {'api_key': 'Black Forest Labs (BFL) API key', 'rate_limit': 'Rate limit for BFL API requests'},
+     'deepseek': {'api_key': 'Deepseek API key', 'rate_limit': 'Rate limit for Deepseek API requests'},
+```
+
+**File**: `pixeltable/exceptions.py` (modified, +13/-0)
+```diff
+@@ -18,6 +18,8 @@ class ErrorCode(enum.Enum):
+     """
+ 
+     http_status: int
++    # Tells the caller whether re-running the failed operation might succeed. Pixeltable's own internal retries follow
++    # separate rules.
+     is_retryable: bool
+ 
+     def __new__(cls, value: int, http_status: int, is_retryable: bool) -> Self:
+@@ -80,6 +82,7 @@ def __new__(cls, value: int, http_status: int, is_retryable: bool) -> Self:
+     PROVIDER_BAD_REQUEST = 5003, 400, False
+     PROVIDER_TIMEOUT = 5004, 504, True
+     PROVIDER_OVERLOADED = 5005, 503, True
++    PROVIDER_UNEXPECTED_RESPONSE = 5006, 502, False
+ 
+     # ServiceUnavailableError (6xxx)
+     DATABASE_UNAVAILABLE = 6000, 503, True
+@@ -125,6 +128,10 @@ def message(self) -> str:
+     def __str__(self) -> str:
+         return self.message if self.detail is None else f'{self.message}\n{self.detail}'
+ 
++    def __reduce__(self) -> tuple[Any, ...]:
++        """Supports copy and pickle, which would otherwise call __init__() with only the message."""
++        return _restore_error, (type(self), self.args), self.__dict__
 +
-+    def test_array_embedding_index_metadata(self, db_root: DatabaseRoot) -> None:
-+        p = db_root.make_catalog_path
-+        t = pxt.create_table(p('array_emb_tbl'), {'vec': pxt.Array[(10,), pxt.Float]})
-+        t.add_embedding_index('vec', idx_name='vec_idx', metric='cosine')
+     @property
+     def http_status(self) -> int:
+         return self.error_code.http_status
+@@ -134,6 +141,8 @@ def is_retryable(self) -> bool:
+         """
+         If False, re-running the operation that caused this error without any changes is guaranteed to fail with the
+         same error. If True, the error might be transient and the operation might succeed if retried.
 +
-+        md = t.get_metadata()
-+        assert 'vec_idx' in md['indexes']
-+        idx_md = md['indexes']['vec_idx']
-+        assert idx_md['index_type'] == 'embedding'
-+        assert idx_md['columns'] == ['vec']
-+        assert idx_md['parameters']['embedding'] == 'vec'
-+        assert idx_md['parameters']['embedding_functions'] == []
-+        assert idx_md['parameters']['metric'] == 'cosine'
++        This is guidance for the user. Pixeltable's own automatic retries follow separate rules.
+         """
+         return self.error_code.is_retryable
+ 
+@@ -174,6 +183,10 @@ def _reconstruct(cls, error_code: ErrorCode, d: dict[str, Any]) -> 'Error':
+         return err
+ 
+ 
++def _restore_error(cls: type[Error], args: tuple[Any, ...]) -> Error:
++    return cls.__new__(cls, *args)
 +
-+        assert re.search(r'^\s*vec_idx\s+vec\s+cosine\s+vec\s*$', repr(t), re.MULTILINE)
 +
-+        table_model = pxt.model_base()
+ class InternalError(Error):
+     """A Pixeltable-internal invalid state."""
+ 
+```
+
+**File**: `pixeltable/exec/expr_eval/schedulers.py` (modified, +21/-4)
+```diff
+@@ -21,6 +21,23 @@
+ 
+ __all__ = ['RateLimitsScheduler', 'RequestRateScheduler']
+ 
++_RETRYABLE_PXT_ERROR_CODES = frozenset(
++    (excs.ErrorCode.PROVIDER_ERROR, excs.ErrorCode.RATE_LIMITED, excs.ErrorCode.PROVIDER_OVERLOADED)
++)
 +
-+        class ArrayModel(table_model, name='array_model'):
-+            id: pxt.Int
-+            vec: pxt.Array[(10,), pxt.Float]
-+            vec2: pxt.Array[(10,), pxt.Float]
-+            __indexes__ = [  # noqa: RUF012
-+                pxt.EmbeddingIndex(vec, name='vec_idx', metric='cosine'),  # noqa: F821
-+                pxt.EmbeddingIndex(vec2, metric='l2'),  # noqa: F821
-+            ]
 +
-+        root = p('')
-+        table_model.create_all(root)
-+        assert table_model.get_model_diff(root)['array_model'].resolution == 'up_to_date'
++def _is_retryable_udf_error(exc: Exception) -> tuple[bool, float | None]:
++    """Returns whether a scheduler should retry a failed UDF call, and the suggested retry delay."""
++    if isinstance(exc, excs.Error):
++        # exc.is_retryable is for users. Since schedulers retry automatically, they do it only for a subset of error
++        # codes.
++        if exc.error_code == excs.ErrorCode.PROVIDER_ERROR and isinstance(exc.__cause__, Exception):
++            return _is_retryable_udf_error(exc.__cause__)
++        if exc.error_code in _RETRYABLE_PXT_ERROR_CODES:
++            return True, exc.retry_after
++        return False, None
++    return is_retryable_error(exc)
++
+ 
+ class RateLimitsScheduler(Scheduler):
+     """
+@@ -254,7 +271,7 @@ async def _exec(self, request: FnCallArgs, exec_ctx: ExprEvalCtx, num_retries: i
+                     if retry_delay is None:
+                         # The resource pool did not recognize it as a retriable error. Try our generic best-effort logic
+                         # before giving up.
+-                        is_retriable, retry_delay = is_retryable_error(exc)
++                        is_retriable, retry_delay = _is_retryable_udf_error(exc)
+                         if is_retriable:
+                             retry_delay = retry_delay or exponential_backoff(num_retries)
+                     if retry_delay is not None:
+@@ -324,8 +341,8 @@ def __init__(self, resource_pool: str, dispatcher: Dispatcher):
+         self.total_retried = 0
+         self.total_errors = 0
+ 
+-        # try to get the rate limit from the config
+-        elems = resource_pool.split(':')
++        # model name can contain `:`, e.g. 'amazon.nova-pro-v1:0'
++        elems = resource_pool.split(':', maxsplit=2)
+         section: str
+         key: str
+         if len(elems) == 2:
+@@ -423,7 +440,7 @@ async def _exec(self, request: FnCallArgs, exec_ctx: ExprEvalCtx, num_retries: i
+             _logger.exception(f'exception for {self.resource_pool}: type={type(exc)}\n{exc}')
+             if hasattr(exc, 'response') and hasattr(exc.response, 'headers'):
+                 _logger.debug(f'scheduler {self.resource_pool}: exception headers: {exc.response.headers}')
+-            is_retriable, retry_after = is_retryable_error(exc)
++            is_retriable, retry_after = _is_retryable_udf_error(exc)
+             if is_retriable and num_retries < self.MAX_RETRIES:
+                 retry_delay = self._compute_retry_delay(num_retries, retry_after)
+                 _logger.debug(f'scheduler {self.resource_pool}: retrying after {retry_delay}')
+```
+
+**File**: `pixeltable/functions/bedrock.py` (modified, +64/-34)
+```diff
+@@ -9,7 +9,9 @@
+ import base64
+ import io
+ import json
++import logging
+ import mimetypes
++import time
+ from contextlib import asynccontextmanager
+ from pathlib import Path
+ from typing import TYPE_CHECKING, Any, AsyncIterator, Callable
+@@ -24,6 +26,7 @@
+ from pixeltable.func import Tools
+ from pixeltable.runtime import get_runtime
+ from pixeltable.utils.code import local_public_names
++from pixeltable.utils.http import is_retryable_error
+ from pixeltable.utils.image import default_format, to_base64, to_bytes
+ from pixeltable.utils.local_store import TempStore
+ from pixeltable.utils.object_stores import ObjectOps, ObjectPath, StorageObjectAddress
+@@ -32,6 +35,9 @@
+     from botocore.client import BaseClient
+ 
+     from pixeltable.utils.s3_store import S3Store
++
++_logger = logging.getLogger(__name__)
++
+ _ASYNC_INVOCATION_POLL_INTERVAL_SECS = 5.0
+ 
+ _ASYNC_INVOCATION_TIMEOUT_SECS = 600.0
+@@ -249,22 +255,27 @@ async def _bedrock_async_invocation(
+     invocation_arn: str = response['invocationArn']
+     invocation_id: str = invocation_arn.rsplit('/', maxsplit=1)[-1]
+ 
+-    elapsed = 0.0
++    deadline = time.monotonic() + _ASYNC_INVOCATION_TIMEOUT_SECS
+     result_prefix = f'{soa.prefix}{invocation_id}/'
+     keys: list[str] = []
+     try:
+         while True:
+             await asyncio.sleep(_ASYNC_INVOCATION_POLL_INTERVAL_SECS)
+-            elapsed += _ASYNC_INVOCATION_POLL_INTERVAL_SECS
+-            if elapsed > _ASYNC_INVOCATION_TIMEOUT_SECS:
++            if time.monotonic() > deadline:
+                 raise pxt.ExternalServiceError(
+                     pxt.ErrorCode.PROVIDER_TIMEOUT,
+                     f'Async invocation {invocation_id} timed out after {_ASYNC_INVOCATION_TIMEOUT_SECS}s',
+                     provider='bedrock',
+                 )
+-            job: dict[str, Any] = await asyncio.to_thread(
+-                _bedrock_client().get_async_invoke, invocationArn=invocation_arn
+-            )
++            try:
++                job: dict[str, Any] = await asyncio.to_thread(
++                    _bedrock_client().get_async_invoke, invocationArn=invocation_arn
++                )
++            except Exception as exc:
++                if is_retryable_error(exc)[0]:
++                    _logger.debug(f'Polling async invocation {invocation_id} failed, will poll again: {exc}')
++                    continue
++                raise
+             status: str = job['status']
+             if status == 'Completed':
+                 break
+@@ -279,15 +290,15 @@ async def _bedrock_async_invocation(
+         keys = [obj['Key'] for obj in listed.get('Contents', [])]
+         if not keys:
+             raise pxt.ExternalServiceError(
+-                pxt.ErrorCode.PROVIDER_ERROR,
++                pxt.ErrorCode.PROVIDER_UNEXPECTED_RESPONSE,
+                 f'No output found at {output_location}/{invocation_id} after job {invocation_id} completed',
+                 provider='bedrock',
+             )
+ 
+         result_key = next((k for k in keys if not k.endswith('manifest.json')), None)
+         if result_key is None:
+             raise pxt.ExternalServiceError(
+-                pxt.ErrorCode.PROVIDER_ERROR,
++                pxt.ErrorCode.PROVIDER_UNEXPECTED_RESPONSE,
+                 f'No output file (only manifest) found for job {invocation_id}',
+                 provider='bedrock',
+             )
+@@ -340,6 +351,10 @@ async def invoke_model(body: dict, *, model_id: str) -> pxt.Json:
+     (set environment variable `BEDROCK_TEMP_LOCATION` or add `temp_location` to the `[bedrock]` section of
+     your Pixeltable configuration file).
+ 
++    Request throttling:
++    Applies the rate limit set in the config (section `bedrock.rate_limits`; use the model id as the key). If no rate
++    limit is configured, uses a default of 600 RPM.
++
+     Args:
+         body: The prompt and inference parameters as a dictionary.
+         model_id: The model identifier to invoke.
+@@ -510,6 +525,10 @@ async def converse(
+     PIL images and media file paths in `messages[*].content[*].(image|video|audio).source.bytes`
+     are converted to raw bytes automatically.
+ 
++    Request throttling:
++    Applies the rate limit set in the config (section `bedrock.rate_limits`; use the model id as the key). If no rate
++    limit is configured, uses a default of 600 RPM.
++
+     Args:
+         messages: Input messages.
+         model_id: The model that will complete your prompt.
+@@ -594,6 +613,10 @@ async def embed(text: str, *, model_id: str, dimensions: int | None = None) -> p
+     <https://docs.aws.amazon.com/nova/latest/userguide/modality-embedding.html>
+     <https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters-embed.html>
+ 
++    Request throttling:
++    Applies the rate limit set in the config (section `bedrock.rate_limits`; use the model id as the key). If no rate
++    limit is configured, uses a default of 600 RPM.
++
+     Args:
+         text: Input text to embed.
+         model_id: The embedding model identifier. Supported models:
+@@
+```
+
+**File**: `pixeltable/functions/gemini.py` (modified, +3/-3)
+```diff
+@@ -575,7 +575,7 @@ async def generate_speech(text: str, *, model: str, voice: str, config: dict | N
+         data = response.candidates[0].content.parts[0].inline_data.data
+     except (IndexError, AttributeError, TypeError) as exc:
+         raise excs.ExternalServiceError(
+-            excs.ErrorCode.PROVIDER_ERROR,
++            excs.ErrorCode.PROVIDER_UNEXPECTED_RESPONSE,
+             f'Gemini TTS returned unexpected response structure for model {model}.',
+             provider='gemini',
+         ) from exc
+@@ -646,7 +646,7 @@ async def _(text: str, *, model: str, voices: dict[str, str], config: dict | Non
+         data = response.candidates[0].content.parts[0].inline_data.data
+     except (IndexError, AttributeError, TypeError) as exc:
+         raise excs.ExternalServiceError(
+-            excs.ErrorCode.PROVIDER_ERROR,
++            excs.ErrorCode.PROVIDER_UNEXPECTED_RESPONSE,
+             f'Gemini multi-speaker TTS returned unexpected response structure for model {model}.',
+             provider='gemini',
+         ) from exc
+@@ -869,7 +869,7 @@ async def _embed_content(
+     result = await client.aio.models.embed_content(model=model, contents=contents_, config=config_)
+     if len(result.embeddings) != len(contents):
+         raise excs.ExternalServiceError(
+-            excs.ErrorCode.PROVIDER_ERROR,
++            excs.ErrorCode.PROVIDER_UNEXPECTED_RESPONSE,
+             f'Unexpected response from Gemini server: number of embeddings returned ({len(result.embeddings)}) '
+             f'does not match request batch size ({len(contents)}).',
+             provider='gemini',
+```
+
+**File**: `pixeltable/functions/openai.py` (modified, +5/-3)
+```diff
+@@ -360,7 +360,7 @@ def _create_audio_response(cls: type[_AudioResponseT], result: Any, response_for
+             out = {'vtt': result}
+         else:
+             raise excs.ExternalServiceError(
+-                excs.ErrorCode.PROVIDER_ERROR,
++                excs.ErrorCode.PROVIDER_UNEXPECTED_RESPONSE,
+                 f'Unexpected string response from audio API (response_format={response_format!r})',
+                 provider='openai',
+             )
+@@ -971,13 +971,15 @@ def _decode_image_response(result: dict) -> dict:
+     data = result.get('data')
+     if data is None or len(data) == 0:
+         raise excs.ExternalServiceError(
+-            excs.ErrorCode.PROVIDER_ERROR, 'No image content in the response.', provider='openai'
++            excs.ErrorCode.PROVIDER_UNEXPECTED_RESPONSE, 'No image content in the response.', provider='openai'
+         )
+     for i in range(len(data)):
+         b64_str = data[i].get('b64_json')
+         if b64_str is None:
+             raise excs.ExternalServiceError(
+-                excs.ErrorCode.PROVIDER_ERROR, 'Image content is missing in the response.', provider='openai'
++                excs.ErrorCode.PROVIDER_UNEXPECTED_RESPONSE,
++                'Image content is missing in the response.',
++                provider='openai',
+             )
+         b64_bytes = base64.b64decode(b64_str)
+         img = PIL.Image.open(io.BytesIO(b64_bytes))
+```
+
+**File**: `pixeltable/functions/together.py` (modified, +1/-1)
+```diff
+@@ -235,7 +235,7 @@ async def image_generations(prompt: str, *, model: str, model_kwargs: dict[str,
+                 provider='together',
+             ) from exc
+     raise excs.ExternalServiceError(
+-        excs.ErrorCode.PROVIDER_ERROR, 'Response does not contain a generated image.', provider='together'
++        excs.ErrorCode.PROVIDER_UNEXPECTED_RESPONSE, 'Response does not contain a generated image.', provider='together'
+     )
+ 
+ 
 ```
 
 ---
 
-### Incident Patch 2: `3a9dbe1f` (2026-10-26)
-**Commit Message**: PXT-1283: view propagation bugs for update/delete (#1842)
+### Incident Patch 2: `f3d572cd` (2026-10-28)
+**Commit Message**: docs: launch QA fixes for RAG extras, SqlExport, and preview labels (#1857)
 
-**File**: `pixeltable/catalog/table_version.py` (modified, +31/-8)
+<!-- CURSOR_AGENT_PR_BODY_BEGIN -->
+Pierre approved these launch-QA docs fixes. Draft only. Do not merge.
+
+An earlier attempt landed on the wrong repo
+([pixeltable/pixeltable-docs-www#7](https://github.com/pixeltable/pixeltable-docs-www/pull/7),
+closed). This PR applies the equivalent source edits in
+`pixeltable/pixeltable`. Mintlify at docs.pixeltable.com is built from
+`docs/release/` (hand-written MDX, notebooks, `docs.json`) plus SDK
+pages and the changelog generated at build time by
+`pixeltable-doctools`.
+
+## Fixes
+
+1. **RAG / multimodal backend**
+([/use-cases/multimodal-backend](https://docs.pixeltable.com/use-cases/multimodal-backend))
+`pip install sentence-transformers tiktoken` sits above the code. CPU
+torch wheel is called out so pip does not fetch CUDA by default. Upload
+example is `curl -F document=@handbook.pdf $URL/docs` (route `/docs`,
+field `document`, matching `uploadfile_inputs=[Docs.document]`). No
+`report.pdf` the reader does not have. Extra packages per format,
+checked against `pixeltable/utils/documents.py` and `pyproject.toml`:
+- PDF / HTML / XML / `.txt`: already in the Pixeltable in
+
+**File**: `docs/release/cloud.mdx` (modified, +1/-1)
 ```diff
-@@ -1374,7 +1374,9 @@ def _insert(
-             with telemetry.span(
-                 'pixeltable.view_load', set_current=telemetry.current_span() is not None, view=view.get().name
-             ):
--                view_plan = Planner.create_view_load_plan(view.get().path, propagates_insert=True)
-+                view_plan = Planner.create_view_load_plan(
-+                    view.get().path, created_at_current_version=view.get().path.get_bases()
-+                )
-                 status = view.get()._insert(view_plan, timestamp, print_stats=print_stats)
-             result += status.to_cascade()
+@@ -104,7 +104,7 @@ After `pxt login`, create a key from the CLI:
+ pxt key create my-app
+ ```
  
-@@ -1663,6 +1665,8 @@ def _propagate_update(
+-The CLI prints the secret once. `pxt key list` shows key names, and cannot show their secrets again. A key created without `--grant` acts as you. [Scoped service keys](/platform/cli#pxt-key) are in preview. You can also create a key under **API Keys** in the [Cloud dashboard](https://www.pixeltable.com/dashboard).
++The CLI prints the secret once. `pxt key list` shows key names, and cannot show their secrets again. A key created without `--grant` acts as you. Keys with `--grant` belong to the organization; see [Scoped service keys](/platform/cli#pxt-key). You can also create a key under **API Keys** in the [Cloud dashboard](https://www.pixeltable.com/dashboard).
  
-         plans: insert plans to execute. If plans is not empty, the caller is expected to have already bumped self's
-         version. Also if plans is not empty, this will write self's metadata in the end.
-+        base_versions: the new version of each base, nearest first, or None for a base without a new version; ends
-+            at the table where the update started
-         base_membership_change: True if the update may have added rows to this table's base; a row appearing in the
-             base is a row this view needs to add, whether or not it has a predicate of its own
-         """
-@@ -1718,19 +1722,34 @@ def _propagate_update(
-                     and len(exprs.Expr.get_refd_column_ids(view_tv.predicate.as_dict()) & changed_qids) > 0
-                 )
+ ### Call the hosted service
  
-+                updated_bases = [b for b, v in zip(view_tv.path.get_bases(), base_versions) if v is not None]
-+                assert len(updated_bases) > 0  # the table where the update started always has a plan
-+
-                 view_plans: list[exec.ExecNode] = []
-                 if needs_iterator_reload or (membership_change and view_tv.is_component_view):
--                    view_plans.append(Planner.create_view_load_plan(view_tv.path, propagates_insert=True))
-+                    view_plans.append(
-+                        Planner.create_view_load_plan(view_tv.path, created_at_current_version=updated_bases)
-+                    )
-                 elif membership_change:
-                     # rows already in the view that still satisfy the predicate; their stored columns that aren't
-                     # recomputed carry over from the row that was just soft-deleted
--                    view_plans.append(Planner.create_view_update_plan(view_tv.path, recompute_targets=recomputed_cols))
-+                    view_plans.append(
-+                        Planner.create_view_update_plan(
-+                            view_tv.path, recompute_targets=recomputed_cols, created_at_current_version=updated_bases
-+                        )
-+                    )
-                     # rows that satisfy the predicate now and weren't in the view; nothing to carry over
-                     view_plans.append(
--                        Planner.create_view_load_plan(view_tv.path, propagates_insert=True, exclude_existing_rows=True)
-+                        Planner.create_view_load_plan(
-+                            view_tv.path, created_at_current_version=updated_bases, exclude_existing_rows=True
-+                        )
-                     )
-                 elif len(recomputed_cols) > 0:
--                    view_plans.append(Planner.create_view_update_plan(view_tv.path, recompute_targets=recomputed_cols))
-+                    view_plans.append(
-+                        Planner.create_view_update_plan(
-+                            view_tv.path, recompute_targets=recomputed_cols, created_at_current_version=updated_bases
-+                        )
-+                    )
- 
-                 if len(view_plans) > 0:
-                     view_tv.bump_version(timestamp, bump_schema_version=False)
-@@ -1791,18 +1810,22 @@ def propagate_delete(
-             del_rows = self.store_tbl.delete_rows(where_clause=sql_where_clause)
-         row_counts = RowCountStats(del_rows=del_rows)  # delete
-         result = UpdateStatus(row_count_stats=row_counts)
--        if del_rows > 0 and self.is_data_versioned:
-+        if del_rows == 0:
-+            # self.version belongs to an earlier operation, and the views would match that operation's retired rows
-+            return result
-+
-+        if self.is_data_versioned:
-             # we're creating a new version
-             self.bump_version(timestamp, bump_schema_version=False)
-         for view in self.mutable_views:
-             status = view.get().propagate_delete(
-                 where=None, base_versions=[self.version, *base_versions], timestamp=timestamp
-             )
-             result += status.to_cascade()
--
--        if del_rows > 0 and self.is_data_versioned:
-+        if self.is_data_versioned:
-             self.set_version_update_status(result)
-             self._write_md(new_version=True, new_schema_version=False)
-+
-         return result
- 
-     def revert(self) -> None:
 ```
 
-**File**: `pixeltable/plan.py` (modified, +18/-12)
+**File**: `docs/release/docs.json` (modified, +4/-0)
 ```diff
-@@ -945,19 +945,24 @@ def is_sql_expr(e: exprs.Expr) -> bool:
- 
-     @classmethod
-     def create_view_update_plan(
--        cls, view: catalog.TableVersionPath, recompute_targets: list[catalog.Column]
-+        cls,
-+        view: catalog.TableVersionPath,
-+        recompute_targets: list[catalog.Column],
-+        created_at_current_version: list[catalog.TableVersionHandle],
-     ) -> exec.ExecNode:
-         """Creates a plan to materialize updated rows for a view, given that the base table has been updated.
-         The plan:
--        - retrieves rows that are visible at the current version of the table and satisfy the view predicate
-+        - retrieves the view rows that were deleted at its current version and satisfy the view predicate
-         - materializes all stored columns and the update targets
- 
-         TODO: unify with create_view_load_plan()
- 
-+        Args:
-+            created_at_current_version: bases restricted to the rows created at their current version; the plan
-+                reads every other base at its visible rows
-+
-         Returns:
--            - root node of the plan
--            - list of qualified column names that are getting updated
--            - list of columns that are being recomputed
-+            root node of the plan
-         """
-         assert isinstance(view, catalog.TableVersionPath)
-         assert view.is_view
-@@ -978,7 +983,7 @@ def create_view_update_plan(
-             select_list,
-             where_clause=target.predicate,
-             ignore_errors=True,
--            created_at_current_version=view.get_bases(),
-+            created_at_current_version=created_at_current_version,
-             deleted_at_current_version=[view.tbl_version],
-         )
-         # Register output columns with the row builder
-@@ -992,13 +997,17 @@ def create_view_update_plan(
- 
-     @classmethod
-     def create_view_load_plan(
--        cls, view: catalog.TableVersionPath, propagates_insert: bool = False, exclude_existing_rows: bool = False
-+        cls,
-+        view: catalog.TableVersionPath,
-+        created_at_current_version: list[catalog.TableVersionHandle] | None = None,
-+        exclude_existing_rows: bool = False,
-     ) -> exec.ExecNode:
-         """Creates a query plan for populating a view.
- 
-         Args:
-             view: the view to populate
--            propagates_insert: if True, we're propagating a base update to this view
-+            created_at_current_version: bases restricted to the rows created at their current version; the plan
-+                reads every other base at its visible rows
-             exclude_existing_rows: if True, skip base rows for which the view already has a row that was deleted at
-                 the view's current version
- 
-@@ -1026,7 +1035,6 @@ def create_view_load_plan(
-         )
-         row_builder = exprs.RowBuilder(base_analyzer.all_exprs, stored_cols, [], target, for_view_load=True)
- 
--        # if we're propagating an insert, we only want to see those base rows that were created for the current version
-         # execution plan:
-         # 1. materialize exprs computed from the base that are needed for stored view columns
-         # 2. if it's an iterator view, expand the base rows into component rows
-@@ -1049,7 +1057,7 @@ def create_view_load_plan(
-             analyzer=base_analyzer,
-             eval_ctx=base_eval_ctx,
-             with_pk=True,
--            created_at_current_version=view.get_bases() if propagates_insert else [],
-+            created_at_current_version=created_at_current_version,
-             exclude_deleted_at_current_version=view.tbl_version if exclude_existing_rows else None,
-         )
-         exec_ctx = plan.ctx
-@@ -1168,7 +1176,6 @@ def create_query_plan(
-         - materializes cell values of 'columns' (and their cellmd, if applicable) into DataRow.cell_vals/cell_md
- 
-         Updates 'select_list' in place to make it executable.
--        TODO: make created_at_current_version a flag and use the versions from tbl
-         """
-         if select_list is None:
-             select_list = []
-@@ -1255,7 +1262,6 @@ def _create_query_plan(
-         Args:
-             plan_target: if not None, generate a plan that materializes only expression that can be evaluted
-                 in the context of that table version (eg, if 'tbl' is a view, 'plan_target' might be the base)
--        TODO: make created_at_current_version a flag and use the versions from tbl
-         """
-         if columns is None:
-             columns = []
+@@ -477,6 +477,10 @@
+     }
+   },
+   "redirects": [
++    {
++      "source": "/sdk/latest/pixeltable/serving/SqlExport",
++      "destination": "/sdk/latest/sqlexport"
++    },
+     {
+       "source": "/overview/from-your-stack",
+       "destination": "/howto/coming-from"
 ```
 
-**File**: `tests/test_view.py` (modified, +63/-0)
+**File**: `docs/release/howto/deployment/serving.mdx` (modified, +1/-1)
 ```diff
-@@ -11,6 +11,7 @@
- from pixeltable.func import Batch
- from pixeltable.types import ColumnSpec
+@@ -210,7 +210,7 @@ A Pixeltable insert with `method='update'` is allowed: append-only here, current
  
-+from .test_iterator import simple_iterator
- from .utils import (
-     DatabaseRoot,
-     ReloadTester,
-@@ -1644,3 +1645,65 @@ def test_view_column_comment(self, db_root: DatabaseRoot, do_reload_catalog: boo
-                 t,
-                 additional_columns={'v1': {'type': pxt.Int | None, 'comment': {'comment': 'This is a test column.'}}},  # type: ignore[dict-item]
-             )
+ `export_sql=` cannot combine with `return_fileresponse=True`. It works with `background=True` (the SQL write runs in the worker).
+ 
+-[`SqlExport`](https://docs.pixeltable.com/sdk/latest/pixeltable/serving/SqlExport)
++[`SqlExport`](/sdk/latest/sqlexport)
+ 
+ <Warning>
+ A connection string with an embedded password is plaintext in the application file. Pull credentials from the environment, a `.pgpass`-style file, or `pxt secret set`.
+```
+
+**File**: `docs/release/platform/cli.mdx` (modified, +3/-3)
+```diff
+@@ -885,8 +885,8 @@ already know. With grants it belongs to the organization instead, and reaches on
+ granted, so a service you deploy has no more authority than its job needs.
+ 
+ <Note>
+-Keys with grants are a preview. Until they are enabled for your organization, Pixeltable Cloud
+-refuses `pxt key create --grant` with "Keys with grants are not available yet".
++Until grants are enabled for your organization, Pixeltable Cloud refuses `pxt key create --grant`
++with "Keys with grants are not available yet".
+ </Note>
+ 
+ A grant is a verb on a resource, never a bare resource: a service on its own does not say whether
+@@ -1294,7 +1294,7 @@ Show the organization's name, ID, and default database.
+ 
+ ```bash
+ pxt key create NAME                       # a key that acts as you
+-pxt key create NAME --grant VERB:URI      # a scoped key that belongs to the org (preview); repeatable
++pxt key create NAME --grant VERB:URI      # a scoped key that belongs to the org; repeatable
+ pxt key list                              # every key in the org, and who created it
+ pxt key update NAME --grant VERB:URI      # add a grant
+ pxt key update NAME --revoke VERB:URI     # remove one
+```
+
+**File**: `docs/release/tutorials/tables-and-data-operations.ipynb` (modified, +1/-1)
+```diff
+@@ -973,7 +973,7 @@
+     "</div>\n",
+     "\n",
+     "<div class=\"alert alert-block alert-info\">\n",
+-    "Pixeltable's <code>create_table()</code> function with the <code>source</code> parameter can import data from various formats including CSV, Excel, and Hugging Face datasets. You can also use <code>source</code> to import from a Pandas dataframe. For more details, see the <a href=\"https://docs.pixeltable.com/sdk/latest/io/\">pixeltable.io package reference</a>.\n",
++    "Pixeltable's <code>create_table()</code> function with the <code>source</code> parameter can import data from various formats including CSV, Excel, and Hugging Face datasets. You can also use <code>source</code> to import from a Pandas dataframe. For more details, see the <a href=\"https://docs.pixeltable.com/sdk/latest/io\">pixeltable.io package reference</a>.\n",
+     "</div>\n",
+     "\n",
+     "Let's have a peek at our new dataset. The dataset contains 1823 rows, and we probably don't want to display them all at once. We can limit our query to fewer rows with the `limit()` method."
+```
+
+**File**: `docs/release/use-cases/multimodal-backend.mdx` (modified, +34/-2)
+```diff
+@@ -8,6 +8,15 @@ Insert a document. The iterator explodes it into chunks. The embedding index sta
+ 
+ Create the tables with `pxt schema update app.py my_app`, then open them with `t = pxt.get_table('my_app.docs')`. Cookbooks on this topic use `pxt.create_table()` so you can run cells without a project. An app puts the same columns on a `TableModel` in `app.py` and creates the tables with `pxt schema update`.
+ 
++This file uses `sentence_transformer` and `document_splitter(..., separators='token_limit')`, so install those packages before `pxt schema update`. `sentence-transformers` pulls in PyTorch. On a machine without a GPU, install the CPU wheel first, or pip fetches a CUDA build that can be several gigabytes:
 +
-+    def test_noop_delete_of_base(self, db_root: DatabaseRoot) -> None:
-+        """A base delete that matches no rows leaves the views on top of it alone."""
-+        p = db_root.make_catalog_path
-+        t = pxt.create_table(p('tbl'), {'n': pxt.Int})
-+        t.insert([{'n': 1}])
-+        # no columns and no filter of its own: an update of t leaves v untouched, so it stays at its old version
-+        v = pxt.create_view(p('v'), t)
++```bash
++pip install torch --index-url https://download.pytorch.org/whl/cpu
++pip install sentence-transformers tiktoken
++```
 +
-+        t.update({'n': 2})
-+        t.delete(where=t.n == 999)
-+        assert v.select(v.n).collect()['n'] == [2]
++Skip the torch line if you already have a GPU build of PyTorch.
 +
-+        # a delete that does match still propagates
-+        t.delete(where=t.n == 2)
-+        assert v.select(v.n).collect()['n'] == []
+ ```python
+ import pixeltable as pxt
+ import pixeltable.functions as pxtf
+@@ -57,12 +66,35 @@ pxt schema update app.py my_app
+ pxt service update app.py my_app
+ ```
+ 
++`pxt service list` prints the service URL. POST `/docs` as multipart form data. The field name is `document`, the column in `uploadfile_inputs`. Point `curl` at a PDF, HTML, or `.txt` file on your machine. This page does not ship a sample file:
 +
-+    def test_base_update_propagation(self, db_root: DatabaseRoot) -> None:
-+        """Updating a base column reaches every view two levels below it, even when the view in between is
-+        unchanged."""
-+        p = db_root.make_catalog_path
-+        t = pxt.create_table(p('tbl'), {'n': pxt.Int, 'm': pxt.Int, 'k': pxt.Int})
-+        t.insert([{'n': 1, 'm': 1, 'k': 1}, {'n': 2, 'm': 2, 'k': 2}, {'n': 3, 'm': 3, 'k': 3}])
-+        # an update of m leaves v1 untouched
-+        v1 = pxt.create_view(p('v1'), t, additional_columns={'k2': t.k * 2})
-+        v2 = pxt.create_view(p('v2'), v1, additional_columns={'m2': v1.m * 3})
-+        fv = pxt.create_view(p('fv'), v1.where(v1.m > 10), additional_columns={'m2': v1.m * 3})
-+        cv = pxt.create_view(p('cv'), v1, iterator=simple_iterator(v1.m))
-+        assert len(fv.collect()) == 0
++```bash
++# Set URL to the rag service URL from pxt service list
++export URL=<rag-service-url>
++curl -F document=@handbook.pdf $URL/docs
++```
 +
-+        # give v1 a version after its initial load
-+        t.update({'k': 100}, where=t.n == 2)
++Search is JSON on `/search`:
 +
-+        t.update({'m': 50}, where=t.n == 3)
-+        assert list(v2.select(v2.n, v2.k2, v2.m2).order_by(v2.n).collect()) == [
-+            {'n': 1, 'k2': 2, 'm2': 3},
-+            {'n': 2, 'k2': 200, 'm2': 6},
-+            {'n': 3, 'k2': 6, 'm2': 150},
-+        ]
-+        assert list(fv.select(fv.n, fv.m2).collect()) == [{'n': 3, 'm2': 150}]
-+        assert cv.select(cv.n).order_by(cv.n).collect()['n'] == [1] + [2] * 2 + [3] * 50
++```bash
++curl -X POST $URL/search \
++  -H 'Content-Type: application/json' \
++  -d '{"query_text": "handbook"}'
++```
 +
-+        # and out of fv again
-+        t.update({'m': 0}, where=t.n == 3)
-+        assert len(fv.collect()) == 0
++From Python, insert the same local path (or a URL Pixeltable can fetch):
 +
-+    def test_view_update_propagation(self, db_root: DatabaseRoot) -> None:
-+        """An update of a view's own column reaches the views on top of it."""
-+        p = db_root.make_catalog_path
-+        t = pxt.create_table(p('tbl'), {'n': pxt.Int})
-+        t.insert([{'n': i} for i in (1, 2, 3)])
-+        # rows 1-3 predate t's current version
-+        t.insert([{'n': 4}])
-+        v1 = pxt.create_view(p('v1'), t, additional_columns={'x': pxt.Int | None})
-+        v2 = pxt.create_view(p('v2'), v1.where(v1.x > 0), additional_columns={'x2': v1.x * 10})
-+        v3 = pxt.create_view(p('v3'), v1, additional_columns={'x3': v1.x * 10})
-+        cv = pxt.create_view(p('cv'), v1, iterator=simple_iterator(v1.x))
+ ```python
+ docs = pxt.get_table('my_app.docs')
+-docs.insert([{'document': 'report.pdf'}])
++docs.insert([{'document': 'handbook.pdf'}])
+ ```
+ 
+-`pxt service list` prints the URL. POST `/docs` to insert. POST `/search` with `{"query_text": "..."}` to rank chunks.
++PDF, HTML, and XML use packages Pixeltable already installs (`pypdfium2`, `beautifulsoup4`, `lxml`), and `.txt` needs none. The other extensions need the packages in this table. Without them, or for an extension not in the table, the insert returns HTTP 422 `INVALID_DATA_FORMAT`:
 +
-+        v1.where(v1.n <= 2).update({'x': 7})
-+        assert v2.select(v2.x2).order_by(v2.n).collect()['x2'] == [70, 70]
-+        assert v3.select(v3.x3).order_by(v3.n).collect()['x3'] == [70, 70, None, None]
-+        assert cv.select(cv.n).order_by(cv.n).collect()['n'] == [1] * 7 + [2] * 7
++| Extension | Extra packages |
++| --- | --- |
++| `.md` | `pip install mistune` |
++| `.docx`, `.pptx`, `.xlsx` | `pip install mistune 'markitdown[pptx,docx,xlsx]'` |
+ 
+ On Cloud, sign in with `pxt login`, or set `PIXELTABLE_API_KEY`. `pxt org create` provisions `main`. Then run `pxt db update`, `pxt schema update`, and `pxt service update` against `pxt://org:main`. [Pixeltable Cloud](/cloud).
+ 
+```
+
+**File**: `pixeltable_cli/client/commands/key.py` (modified, +1/-1)
+```diff
+@@ -47,7 +47,7 @@
+ across both kinds, so a name always identifies one key. Every member of the organization sees every
+ key, can change any runtime key's grants, and can delete any key.
+ 
+-Keys with grants are a preview: Pixeltable Cloud refuses them until they are enabled for your
++Keys with grants: Pixeltable Cloud refuses them until they are enabled for your
+ organization.
+ 
+ The secret is printed once, by `create`, and cannot be retrieved afterwards. `update` edits grants
+```
+
+---
+
+### Incident Patch 3: `804891a4` (2026-10-28)
+**Commit Message**: docs: say that a provider's package goes in requirements.txt beside its secret (#1849)
+
+The Cloud page's "Add provider secrets" section sets `OPENAI_API_KEY`
+but never says the image also needs the `openai` package. With no
+lockfile, the image holds Pixeltable only, so a user who follows the
+section gets the key and an `ImportError`. This adds one sentence: put
+`openai` in `requirements.txt` (with a `uv.lock`, `uv add openai`) and
+run `pxt db update`.
+
+It matches what "What the database runs" already says further down the
+page, and the dashboard quick start, which now writes a
+`requirements.txt` naming `pixeltable[serve]`
+(pixeltable/pixeltable-cloud#552).
+
+---------
+
+Co-authored-by: Claude Haiku 5.5 <[REDACTED_EMAIL]>
+
+**File**: `docs/release/cloud.mdx` (modified, +3/-1)
+```diff
+@@ -135,6 +135,8 @@ pxt service restart pxt://org:main/ingest
+ 
+ The restarts let running table and service processes read the new value. You can also set secrets in the [Cloud dashboard](https://www.pixeltable.com/dashboard). [CLI secret commands](/platform/cli#pxt-secret).
+ 
++The secret supplies the key, not the package. For OpenAI, add `openai` to `requirements.txt` (with a `uv.lock`, run `uv add openai`), then run `pxt db update pxt://org:main` and `pxt service update app.py pxt://org:main`. A running service keeps its old image until `pxt service update` moves it.
++
+ ## What the database runs
+ 
+ A hosted database runs three things that come from your project, and they move independently.
+@@ -158,7 +160,7 @@ The image gets its packages from `uv.lock` or `requirements.txt`. Without either
+ |---|---|
+ | A UDF body, a route, any `.py` the entry selects | `pxt db update pxt://org:main`, then `pxt service update app.py pxt://org:main` to move running services onto it |
+ | A column or a table in `app.py` | `pxt db update pxt://org:main`, then `pxt schema update app.py pxt://org:main`, then `pxt service update app.py pxt://org:main` |
+-| A dependency, the Python version, a system package | `pxt db update pxt://org:main`: the image rebuilds |
++| A dependency, the Python version, a system package | `pxt db update pxt://org:main`, then `pxt service update app.py pxt://org:main`: the image rebuilds |
+ | A setting in `pixeltable.toml` | `pxt db update pxt://org:main`, then `pxt service update app.py pxt://org:main` |
+ | `cpu`, `memory_mb`, `disk_gb`, or `workers` | `pxt db update pxt://org:main`: one resize, pods restart once |
+ | A service's `cpu`, `memory_mb`, `file_cache_gb`, or `workers` | `pxt service update app.py pxt://org:main`: a `workers` change adds or removes pods, any other change restarts them |
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1845** (2026-10-27): Remove the Devin Review configuration (@pierrebrunelle)
-- **PR #1844** (closed): PXT-1704: Fix drop_table deleting media files before concurrent readers finish (@pierrebrunelle)
-- **PR #1842** (2026-10-26): PXT-1283: view propagation bugs for update/delete (@mkornacker)
-- **PR #1841** (2026-10-25): Keep /pxt-address and point it at the posted review (@pierrebrunelle)
-- **PR #1840** (2026-10-25): Restore the Claude review publisher from before the fixed-source host (@pierrebrunelle)
-- **PR #1839** (2026-10-25): Post findings on unchanged lines and stop a maintenance note from failing the review (@pierrebrunelle)
+- **PR #1863** (2026-10-29): Rename SERVICE_BUSY to JOB_REFUSED, and send Retry-After with every error that has a retry_after (@pierrebrunelle)
+- **PR #1862** (2026-10-29): Expect EXIT_REFUSED when pxt db update refuses a capacity cut (@pierrebrunelle)
+- **PR #1861** (2026-10-28): Answer a refused background job submit with SERVICE_BUSY (@pierrebrunelle)
+- **PR #1860** (closed): PXT-1715: Don't hang dropping a video table on Windows when its media file is still open (@pierrebrunelle)
+- **PR #1858** (2026-10-29): PXT-1714: Pin pytest below 9.2 until pytest-benchmark supports it (@pierrebrunelle)
+- **PR #1857** (2026-10-29): docs: launch QA fixes for RAG extras, SqlExport, and preview labels (@pierrebrunelle)
 
 ---
 
@@ -1902,35 +2093,36 @@ verif
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. handle ARRAY column in EmbeddingIndex get_metadata and describe (#1699)
+## X. [PXT-1570] Retry throttled Bedrock calls; classify Pixeltable errors by error co
 
 **RULE**:
-When implementing operations in `pixeltable/catalog/local_table.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/release/platform/configuration.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `08d65e1b`: handle ARRAY column in EmbeddingIndex get_metadata and describe (#1699). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e1ee0571`: [PXT-1570] Retry throttled Bedrock calls; classify Pixeltable errors by error code (#1809). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixeltable/catalog/local_table.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/release/platform/configuration.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-                embedding_str = str(info.idx.create_value_expr(indexed_col_md))
-                        embedding=embedding_str,
-                row['Embedding'] = str(info.idx.create_value_expr(col_md))
+"gemini-2.5-flash" = 600
+"gemini-2.5-pro" = 300
+
+[bedrock.rate_limits]
+"anthropic.claude-sonnet-4-5-20250929-v1:0" = 200
+"luma.ray-v2:0" = 2
+Quote a model id that contains `.` or `:`. Otherwise TOML reads `.` as a nested key, and `:` is a syntax error.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-                col_ref = ColumnRef(indexed_col_md)
-                embedding_fncall = info.idx.embeddings[info.col.col_type._type](col_ref)
-                        embedding=str(embedding_fncall),
-                col_ref = ColumnRef(col_md)
-                embedding = info.idx.embeddings[info.col.col_type._type](col_ref)
-                row['Embedding'] = str(embedding)
+gemini-2.5-flash = 600
+gemini-2.5-pro = 300
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `08d65e1b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e1ee0571` are properly handled with clean fallback behavior.

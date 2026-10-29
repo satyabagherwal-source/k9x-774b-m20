@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-29T17:04:36.118Z",
+  "last_updated": "2026-10-29T17:16:50.012Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5091,14 +5091,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tach-org-tach",
-      "content_hash": "1fd79fa2dcaf1dcc325210a0f193de2bb65c2bbaf989da0de9e671793b7c448f",
-      "verified_at": "2026-10-18T23:08:16.607Z",
+      "content_hash": "56887a8126ce6b4255851ee9e3c14a9b69a8904d98806aa70b05f47ff1be3fb9",
+      "verified_at": "2026-10-29T17:16:39.882Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:08:16.607Z"
+      "last_updated": "2026-10-29T17:16:39.882Z"
     },
     "openreplay/openreplay": {
       "repository": "openreplay/openreplay",
@@ -5691,14 +5691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pixeltable-pixeltable",
-      "content_hash": "cdfb59edd8a185e971e489543217dce77f71473d5b4ee47bb8ee3f8cb7b0c033",
-      "verified_at": "2026-10-27T20:11:41.006Z",
+      "content_hash": "cff5d829548d8e0e8d388732cef157791e2cbe56246d398596b2ba010adbfe2c",
+      "verified_at": "2026-10-29T17:16:50.011Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T20:11:41.007Z"
+      "last_updated": "2026-10-29T17:16:50.011Z"
     },
     "honojs/hono": {
       "repository": "honojs/hono",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T17:04:36.030Z",
+  "last_updated": "2026-10-29T17:16:49.921Z",
   "total_verified_learnings": 1167,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -43966,8 +43966,8 @@
       "slug": "pixeltable-pixeltable",
       "platform": "github",
       "source_url": "https://github.com/pixeltable/pixeltable",
-      "source_version": "cb995107",
-      "content_hash": "cdfb59edd8a185e971e489543217dce77f71473d5b4ee47bb8ee3f8cb7b0c033",
+      "source_version": "e1ee0571",
+      "content_hash": "cff5d829548d8e0e8d388732cef157791e2cbe56246d398596b2ba010adbfe2c",
       "dossier_path": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "promoted_rules": [
@@ -43990,6 +43990,11 @@
           "number": 4983,
           "title": "handle ARRAY column in EmbeddingIndex get_metadata and describe (#1699)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5531,
+          "title": "[PXT-1570] Retry throttled Bedrock calls; classify Pixeltable errors by error co",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43997,7 +44002,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T20:11:40.905Z",
+      "verified_at": "2026-10-29T17:16:49.902Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51321,14 +51326,19 @@
       "slug": "tach-org-tach",
       "platform": "github",
       "source_url": "https://github.com/tach-org/tach",
-      "source_version": "bc92d715",
-      "content_hash": "1fd79fa2dcaf1dcc325210a0f193de2bb65c2bbaf989da0de9e671793b7c448f",
+      "source_version": "7c27c816",
+      "content_hash": "56887a8126ce6b4255851ee9e3c14a9b69a8904d98806aa70b05f47ff1be3fb9",
       "dossier_path": "07_PROJECT_LEARNING/tach-org-tach-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tach-org-tach-learnings.md",
       "promoted_rules": [
         {
           "number": 1823,
           "title": "report syntax errors as errors, not warnings (#931)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5530,
+          "title": "pre-commit install command in getting started docs",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -51337,7 +51347,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:08:16.548Z",
+      "verified_at": "2026-10-29T17:16:39.747Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -148906,6 +148916,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T17:04:36.011Z"
+    },
+    "rule-5530": {
+      "learning_id": "rule-5530",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5530,
+      "title": "pre-commit install command in getting started docs",
+      "source_url": "https://github.com/tach-org/tach",
+      "source_version": "7c27c816",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T17:16:39.747Z"
+    },
+    "rule-5531": {
+      "learning_id": "rule-5531",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5531,
+      "title": "[PXT-1570] Retry throttled Bedrock calls; classify Pixeltable errors by error co",
+      "source_url": "https://github.com/pixeltable/pixeltable",
+      "source_version": "e1ee0571",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T17:16:49.902Z"
     }
   },
   "aliases": {

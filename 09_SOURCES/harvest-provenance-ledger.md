@@ -6062,3 +6062,5 @@ Every entry in this ledger must capture:
 | `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `1d7a8b20` | Multi-dimensional audit evidence | 2026-10-29T17:03:38.019Z |
 | `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `0a8dba49` | Multi-dimensional audit evidence | 2026-10-29T17:03:38.416Z |
 | `learn-github-flox-flox` | `https://github.com/flox/flox` | `55536b5d` | Multi-dimensional audit evidence | 2026-10-29T17:04:36.108Z |
+| `learn-github-tach-org-tach` | `https://github.com/tach-org/tach` | `7c27c816` | Multi-dimensional audit evidence | 2026-10-29T17:16:39.872Z |
+| `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `e1ee0571` | Multi-dimensional audit evidence | 2026-10-29T17:16:50.002Z |
