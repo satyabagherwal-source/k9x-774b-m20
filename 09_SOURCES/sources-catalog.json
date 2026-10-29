@@ -1665,8 +1665,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local",
     "sourceVersion": "hf-nvidia-qwen3.8-flash-next-fp4-local",
     "license": "Open-Source",
-    "contentHash": "a170f5aa4f27d6a6a8638426c50cbf70fe0f8e7fb43228da51e5b33d95abc986",
-    "lastHarvestedAt": "2026-10-25T18:47:17.544Z",
+    "contentHash": "a3b384d813eba24c1ed5c2d2fae3059716c729d794a5985419c9f90ea2ea2dd0",
+    "lastHarvestedAt": "2026-10-29T00:16:02.165Z",
     "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local"
   },
   "hf-openmoss-team-moss-image-base": {
@@ -2173,10 +2173,10 @@
     "repository": "iii-hq/iii",
     "platform": "github",
     "sourceUrl": "https://github.com/iii-hq/iii",
-    "sourceVersion": "8dd73dfc",
+    "sourceVersion": "b0b86fd3",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "b5e66c44870e7ad4f7aa2e75d3070180deb2f7ae16324143ae0ffd512060e696",
-    "lastHarvestedAt": "2026-10-27T21:08:23.167Z",
+    "contentHash": "92a5cf3f6a2572cfa82090d1d82deb8728c7448ceeef06375e4b2d840f06ec3e",
+    "lastHarvestedAt": "2026-10-29T00:16:03.231Z",
     "learningId": "learn-github-iii-hq-iii"
   },
   "crawlseo-crawlseo": {

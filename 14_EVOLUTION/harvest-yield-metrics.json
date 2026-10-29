@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-29T00:09:08.331Z",
-  "total_cycles_completed": 5975,
-  "total_learnings_persisted": 5975,
-  "total_rules_promoted": 5433,
+  "last_updated": "2026-10-29T00:16:03.236Z",
+  "total_cycles_completed": 5977,
+  "total_learnings_persisted": 5977,
+  "total_rules_promoted": 5434,
   "history": [
-    {
-      "timestamp": "2026-10-28T14:29:21.653Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T14:35:54.964Z",
-      "repository": "openai/gpt-oss-20b",
-      "learningId": "learn-huggingface-openai-gpt-oss-20b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T14:36:03.820Z",
       "repository": "aquasecurity/trivy",
@@ -1403,6 +1389,20 @@
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
       "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T00:16:02.175Z",
+      "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
+      "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T00:16:03.236Z",
+      "repository": "iii-hq/iii",
+      "learningId": "learn-github-iii-hq-iii",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

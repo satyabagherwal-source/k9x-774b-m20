@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-29T00:09:19.925Z",
-    "lastVerified": "2026-10-29T00:09:19.925Z",
+    "lastChecked": "2026-10-29T00:16:13.294Z",
+    "lastVerified": "2026-10-29T00:16:13.294Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -323,9 +323,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-28T23:43:09.174Z",
+    "lastChecked": "2026-10-29T00:16:13.284Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-28T23:43:09.174Z"
+    "lastVerified": "2026-10-29T00:16:13.284Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -378,9 +378,9 @@
   "openziti-zrok": {
     "name": "zrok",
     "officialUrl": "https://github.com/openziti/zrok",
-    "lastChecked": "2026-10-28T20:22:17.080Z",
+    "lastChecked": "2026-10-29T00:16:08.318Z",
     "revisionIdentifier": "09ed814e",
-    "lastVerified": "2026-10-28T20:22:17.080Z"
+    "lastVerified": "2026-10-29T00:16:08.318Z"
   },
   "run-llama-llama_index": {
     "name": "llama_index",
@@ -543,11 +543,21 @@
     "lastVerified": "2026-10-28T20:57:44.574Z"
   },
   "iii-hq-iii": {
-    "name": "iii",
+    "name": "iii-hq/iii",
     "officialUrl": "https://github.com/iii-hq/iii",
-    "lastChecked": "2026-10-28T03:31:18.305Z",
-    "revisionIdentifier": "8dd73dfc",
-    "lastVerified": "2026-10-28T03:31:18.305Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-29T00:16:02.589Z",
+    "lastVerified": "2026-10-29T00:16:02.589Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-iii-hq-iii",
+    "contentHash": "92a5cf3f6a2572cfa82090d1d82deb8728c7448ceeef06375e4b2d840f06ec3e",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-qwen-qwen3.8-27b": {
     "name": "Qwen/Qwen3.8-27B",
@@ -2171,9 +2181,9 @@
   "infiniflow-infinity": {
     "name": "infinity",
     "officialUrl": "https://github.com/infiniflow/infinity",
-    "lastChecked": "2026-10-28T06:31:14.844Z",
+    "lastChecked": "2026-10-29T00:16:10.815Z",
     "revisionIdentifier": "6e4ce04b",
-    "lastVerified": "2026-10-28T06:31:14.844Z"
+    "lastVerified": "2026-10-29T00:16:10.815Z"
   },
   "sharkdp-hyperfine": {
     "name": "hyperfine",
@@ -2543,9 +2553,9 @@
   "openkruise-kruise": {
     "name": "kruise",
     "officialUrl": "https://github.com/openkruise/kruise",
-    "lastChecked": "2026-10-28T08:44:05.593Z",
+    "lastChecked": "2026-10-29T00:16:05.878Z",
     "revisionIdentifier": "4fdf516e",
-    "lastVerified": "2026-10-28T08:44:05.593Z"
+    "lastVerified": "2026-10-29T00:16:05.878Z"
   },
   "pingcap-autoflow": {
     "name": "autoflow",
@@ -7707,5 +7717,29 @@
     "lastChecked": "2026-10-29T00:09:09.785Z",
     "revisionIdentifier": "c0ff6c65",
     "lastVerified": "2026-10-29T00:09:09.785Z"
+  },
+  "hf-nvidia-qwen3.8-flash-next-fp4-local": {
+    "name": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
+    "officialUrl": "https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-29T00:16:00.960Z",
+    "lastVerified": "2026-10-29T00:16:00.960Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
+    "contentHash": "a3b384d813eba24c1ed5c2d2fae3059716c729d794a5985419c9f90ea2ea2dd0",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "parthjadhav-app-store-screenshots": {
+    "name": "app-store-screenshots",
+    "officialUrl": "https://github.com/ParthJadhav/app-store-screenshots",
+    "lastChecked": "2026-10-29T00:16:03.360Z",
+    "revisionIdentifier": "5386f227",
+    "lastVerified": "2026-10-29T00:16:03.360Z"
   }
 }

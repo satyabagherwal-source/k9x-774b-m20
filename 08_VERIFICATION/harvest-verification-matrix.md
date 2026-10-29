@@ -5998,3 +5998,5 @@
 | `CYCLE-20261029-4JYA` | `2026-10-29T00:02:37.186Z` | `black-forest-labs/flux-3-image-klein-comfy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5466, Rule 5467, Rule 5468` | Yes (`f0a48978...`) |
 | `CYCLE-20261029-4M3R` | `2026-10-29T00:02:39.975Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5469` | Yes (`ed801206...`) |
 | `CYCLE-20261029-CXR2` | `2026-10-29T00:09:08.318Z` | `openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md` | Yes (`fcb0563f...`) |
+| `CYCLE-20261029-LT2Q` | `2026-10-29T00:16:02.162Z` | `nvidia/Qwen3.8-Flash-Next-FP4-Local` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md` | Yes (`a3b384d8...`) |
+| `CYCLE-20261029-LTWC` | `2026-10-29T00:16:03.228Z` | `iii-hq/iii` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5470` | Yes (`92a5cf3f...`) |

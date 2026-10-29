@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source**: github ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
-> **Source Version**: `8dd73dfc`  
+> **Source Version**: `b0b86fd3`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T21:08:22.620Z  
+> **Timestamp**: 2026-10-29T00:16:02.597Z  
 > **Learning ID**: `learn-github-iii-hq-iii`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T21:08:21.250Z  
+> **Harvest Timestamp**: 2026-10-29T00:16:02.589Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Effortlessly compose, extend, and observe every service in real-time for the first time ever.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 18865 stars
+- **Stars / Engagement**: 18872 stars
 
 ---
 
@@ -2419,432 +2419,221 @@ pub async fn download_locked_binary_archive(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c7c3154c` (2026-10-26)
-**Commit Message**: fix(sdk): patch happy-dom and zod security advisories (#2400)
+### Incident Patch 1: `b0b86fd3` (2026-10-28)
+**Commit Message**: fix(compose): skip executable integrity marker when selecting worker binary (#2424)
 
 Co-authored-by: iii harness (codex/gpt-6-astra) <[REDACTED_EMAIL]>
 
-**File**: `pnpm-lock.yaml` (modified, +19/-19)
+**File**: `crates/iii-compose/src/registry.rs` (modified, +48/-0)
 ```diff
-@@ -105,7 +105,7 @@ importers:
-         version: 5.9.3
-       vitest:
-         specifier: ^4.1.12
--        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@24.11.0)(@vitest/coverage-v8@4.1.12)(happy-dom@20.14.5)(vite@7.3.7(@types/node@24.11.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
-+        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@24.11.0)(@vitest/coverage-v8@4.1.12)(happy-dom@21.0.4)(vite@7.3.7(@types/node@24.11.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
+@@ -1350,6 +1350,11 @@ fn installed_binary(install_dir: &Path) -> Option<PathBuf> {
+         entries.sort_by_key(|entry| entry.file_name());
  
-   sdk/packages/node/iii:
-     dependencies:
-@@ -145,16 +145,16 @@ importers:
-         version: 5.9.3
-       vitest:
-         specifier: ^4.1.12
--        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.12)(happy-dom@20.14.5)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
-+        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.12)(happy-dom@21.0.4)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
- 
-   sdk/packages/node/iii-browser:
-     devDependencies:
-       '@types/ws':
-         specifier: ^8.18.1
-         version: 8.18.1
-       happy-dom:
--        specifier: ^20.14.5
--        version: 20.14.5
-+        specifier: ^21.0.4
-+        version: 21.0.4
-       tsdown:
-         specifier: ^0.21.4
-         version: 0.21.10(synckit@0.11.12)(typescript@5.9.3)
-@@ -166,7 +166,7 @@ importers:
-         version: 5.9.3
-       vitest:
-         specifier: ^4.1.12
--        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.12)(happy-dom@20.14.5)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
-+        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.12)(happy-dom@21.0.4)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
-       ws:
-         specifier: ^8.21.0
-         version: 8.21.3
-@@ -180,8 +180,8 @@ importers:
-         specifier: workspace:*
-         version: link:../iii
-       zod:
--        specifier: ^4.3.6
--        version: 4.3.6
-+        specifier: ^4.6.6
-+        version: 4.6.6
-     devDependencies:
-       '@types/node':
-         specifier: ^24.10.1
-@@ -207,7 +207,7 @@ importers:
-         version: 5.9.3
-       vitest:
-         specifier: ^4.1.12
--        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.12)(happy-dom@20.14.5)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
-+        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.12)(happy-dom@21.0.4)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
- 
-   website:
-     dependencies:
-@@ -2551,8 +2551,8 @@ packages:
-   hachure-fill@0.5.2:
-     resolution: {integrity: sha512-3GKBOn+m2LX9iq+JC1064cSFprJY4jL1jCXTcpnfER5HYE2l/4EfWSGzkPa/ZDBmYI0ZOEj5VHV/eKnPGkHuOg==}
- 
--  happy-dom@20.14.5:
--    resolution: {integrity: sha512-x/RzkpWO40bTjIoT30iQtt64FLLmH/iRcUCN2X//bLx7H3ifkdfPXyqsro/OYtqzIAhiLMMA7mmiOR9C3NOKjQ==}
-+  happy-dom@21.0.4:
-+    resolution: {integrity: sha512-tFm+GaLBgo6o0awHnvHaNoraVo27qJ+2tZEtZ+cIa08hXbeitrxAJajLI05hsUy/2/YTKcUjQYzHe5mCcraLBw==}
-     engines: {node: '>=20.0.0'}
- 
-   has-flag@4.0.0:
-@@ -4242,8 +4242,8 @@ packages:
-   zod@3.25.76:
-     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
- 
--  zod@4.3.6:
--    resolution: {integrity: sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==}
-+  zod@4.6.6:
-+    resolution: {integrity: sha512-4UmzQUF5fxvfcYHlbjBmejU+w+hbDnWFx4aS8kBx7nPBHcO2SqPbpAG8snbdg+Xse4pRefR98hgjFgIMCI/UhA==}
- 
-   zwitch@2.0.4:
-     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
-@@ -5541,7 +5541,7 @@ snapshots:
-       obug: 2.2.1
-       std-env: 4.2.0
-       tinyrainbow: 3.1.1
--      vitest: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@24.11.0)(@vitest/coverage-v8@4.1.12)(happy-dom@20.14.5)(vite@7.3.7(@types/node@24.11.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
-+      vitest: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@24.11.0)(@vitest/coverage-v8@4.1.12)(happy-dom@21.0.4)(vite@7.3.7(@types/node@24.11.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
- 
-   '@vitest/expect@4.1.12':
-     dependencies:
-@@ -6400,7 +6400,7 @@ snapshots:
- 
-   hachure-fill@0.5.2: {}
- 
--  happy-dom@20.14.5:
-+  happy-dom@21.0.4:
-     dependencies:
-       '@types/node': 25.9.4
-       '@types/whatwg-mimetype': 3.0.2
-@@ -8247,7 +8247,7 @@ snapshots:
-      
-```
-
-**File**: `sdk/packages/node/iii-browser/package.json` (modified, +1/-1)
-```diff
-@@ -47,7 +47,7 @@
-   },
-   "devDependencies": {
-     "@types/ws": "^8.18.1",
--    "happy-dom": "^20.14.5",
-+    "happy-dom": "^21.0.4",
-     "tsdown": "^0.21.4",
-     "typedoc": "^0.28.20",
-     "typescript": "^5.9.3",
-```
-
-**File**: `sdk/packages/node/iii-example/package.json` (modified, +1/-1)
-```diff
-@@ -9,7 +9,7 @@
-   "dependencies": {
-     "@iii-dev/helpers": "workspace:*",
-     "iii-sdk": "workspace:*",
--    "zod": "^4.3.6"
-+    "zod": "^4.6.6"
-   },
-   "devDependencies": {
-     "@types/node": "^24.10.1",
-```
-
----
-
-### Incident Patch 2: `d1276eea` (2026-10-26)
-**Commit Message**: fix(rust): keep Logger lines under concurrency and close the connection on shutdown (#2404)
-
-**File**: `sdk/packages/rust/helpers/src/observability/telemetry/mod.rs` (modified, +65/-8)
-```diff
-@@ -15,7 +15,7 @@ pub mod types;
- pub mod worker_metrics;
- 
- use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
--use std::sync::{Arc, OnceLock};
-+use std::sync::{Arc, OnceLock, PoisonError, RwLock};
- 
- use opentelemetry::propagation::TextMapCompositePropagator;
- use opentelemetry::trace::{SpanKind, Status, TraceContextExt, Tracer};
-@@ -50,10 +50,22 @@ static OTEL_INITIALIZED: AtomicBool = AtomicBool::new(false);
- /// tears down the global state when this reaches zero.
- static OTEL_REF_COUNT: AtomicUsize = AtomicUsize::new(0);
- 
-+/// The logger provider of `OTEL_STATE`, read by every `Logger` call. It lives
-+/// apart from `OTEL_STATE` because a log line cannot wait for that lock and
-+/// must not be dropped when it is taken: init, flush and shutdown hold it
-+/// across awaits, and loggers on other threads take it too.
-+static LOGGER_PROVIDER: RwLock<Option<SdkLoggerProvider>> = RwLock::new(None);
-+
- fn get_otel_lock() -> &'static Mutex<Option<OtelState>> {
-     OTEL_STATE.get_or_init(|| Mutex::new(None))
- }
- 
-+fn set_logger_provider(provider: Option<SdkLoggerProvider>) {
-+    *LOGGER_PROVIDER
-+        .write()
-+        .unwrap_or_else(PoisonError::into_inner) = provider;
-+}
-+
- /// Normalize an engine WebSocket URL into the dedicated OTEL endpoint.
- ///
- /// The engine exposes `/otel` for telemetry-only WS connections. Appending
-@@ -419,6 +431,7 @@ pub async fn init_otel(config: OtelConfig) -> bool {
-     let shutdown_timeout =
-         std::time::Duration::from_millis(config.shutdown_timeout_ms.unwrap_or(10_000));
- 
-+    set_logger_provider(logger_provider.clone());
-     let otel_state = OtelState {
-         tracer_provider,
-         meter_provider,
-@@ -461,6 +474,7 @@ pub async fn shutdown_otel() {
- 
-     if let Some(otel) = state.take() {
-         OTEL_INITIALIZED.store(false, Ordering::Release);
-+        set_logger_provider(None);
- 
-         let timeout_duration = otel.shutdown_timeout;
- 
-@@ -632,13 +646,10 @@ pub fn is_initialized() -> bool {
- /// This is used by the SDK logger to emit OTel LogRecords alongside the
- /// engine invoker calls.
- pub fn get_logger_provider() -> Option<SdkLoggerProvider> {
--    if !is_initialized() {
--        return None;
--    }
--    // Try to acquire the lock without blocking. If contended, skip emission.
--    let lock = get_otel_lock();
--    let state = lock.try_lock().ok()?;
--    state.as_ref()?.logger_provider.clone()
-+    LOGGER_PROVIDER
-+        .read()
-+        .unwrap_or_else(PoisonError::into_inner)
-+        .clone()
- }
- 
- #[cfg(test)]
-@@ -766,4 +777,50 @@ mod tests {
-             "successful span should not have an exception event"
-         );
-     }
-+
-+    #[test]
-+    #[serial_test::serial]
-+    fn the_logger_provider_is_read_while_the_otel_state_is_locked() {
-+        use opentelemetry_sdk::logs::SdkLoggerProvider;
-+
-+        super::set_logger_provider(Some(SdkLoggerProvider::builder().build()));
-+        // init, flush and shutdown hold this lock across awaits
-+        let held = super::get_otel_lock().try_lock().expect("unlocked");
-+        assert!(super::get_logger_provider().is_some());
-+        drop(held);
-+
-+        super::set_logger_provider(None);
-+        assert!(super::get_logger_provider().is_none());
-+    }
-+
-+    #[test]
-+    #[serial_test::serial]
-+    fn loggers_on_many_threads_emit_every_line() {
-+        use opentelemetry_sdk::logs::{InMemoryLogExporter, SdkLoggerProvider};
-+
-+        let exporter = InMemoryLogExporter::default();
-+        let provider = SdkLoggerProvider::builder()
-+            .with_simple_exporter(exporter.clone())
-+            .build();
-+        super::set_logger_provider(Some(provider));
-+
-+        let threads: Vec<_> = (0..16)
-+            .map(|t| {
-+                std::thread::spawn(move || {
-+                    let logger = crate::observability::Logger::new();
-+                    for i in 0..200 {
-+                        logger.info(&format!("thread {t} line {i}"), None);
-+                    }
-+                })
-+            })
-+            .collect();
-+        for thread in threads {
-+            thread.join().unwrap();
-+        }
-+        // Counted before the provider goes: its shutdown clears the exporter.
-+        let emitted = exporter.get_emitted_logs().unwrap().len();
-+        super::set_logger_provider(None);
-+
-+        assert_eq!(emitted, 16 * 200);
-+    }
- }
-```
-
-**File**: `sdk/packages/rust/iii/src/iii.rs` (modified, +61/-0)
-```diff
-@@ -1437,6 +1437,9 @@ type PendingInvocation = oneshot::Sender<Result<Value, Error>>;
- // WebSocket transmitter type alias
- type WsTx = futures_util::stream::SplitSink<WsStream, WsMessage>;
- 
-+/// How long a stopping worker waits to send its close frame.
-+const CLOSE_TIMEOUT: Duration = Duration::from_secs(1);
-+
- /// An `invokefunction` received from the engine.
- struct InboundInvocation {
-     invocation_id: Option<Uuid>,
-@@ -3275,6 +3278,7 @@ impl IIIClient {
-                     if shutdown {
-                         self.inner.running.store(false, Ordering::SeqCst);
-                         self.abandon_reports(&mut queue, &mut reports, &mut rx);
-+                        Self::close_ws(&mut ws_tx).await;
-                         return;
-                     }
-                     self.hold_observe_frames(&mut queue, &mut reports);
-@@ -3319,11 +3323,13 @@ impl IIIClient {
-                                     Some(Outbound::Shutdown) => {
-                                         self.inner.running.store(false, Ordering::SeqCst);
-                                         self.abandon_reports(&mut queue, &mut reports, &mut rx);
-+                                        Self::close_ws(&mut ws_tx).await;
-                                         return;
-                                     }
-                                     None => {
-                                         self.inner.running.store(false, Ordering::SeqCst);
-                                         self.abandon_reports(&mut queue, &mut reports, &mut rx);
-+                                        Self::close_ws(&mut ws_tx).await;
-                                         return;
-                                     }
-                                 }
-@@ -3622,6 +3628,13 @@ impl IIIClient {
-         Ok(())
-     }
- 
-+    /// Ends the connection of a worker that is stopping with a close frame,
-+    /// so the engine sees it leave instead of a connection reset. Bounded:
-+    /// a dead link must not hold up shutdown.
-+    async fn close_ws(ws_tx: &mut WsTx) {
-+        let _ = tokio::time::timeout(CLOSE_TIMEOUT, ws_tx.close()).await;
-+    }
-+
-     async fn send_ws_frame(
-         &self,
-         ws_tx: &mut WsTx,
-@@ -4579,6 +4592,54 @@ mod tests {
-         assert_eq!(n, 1, "healthy pinged connection must not be torn down");
-     }
- 
-+    /// WS server that reports how each connection ended: `true` for a close
-+    /// frame, `false` for a socket that went away without one.
-+    async fn spawn_close_recorder() -> (std::net::SocketAddr, mpsc::UnboundedReceiver<bool>) {
-+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-+        let addr = listener.local_addr().unwrap();
-+        let (tx, rx) = mpsc::unbounded_channel();
-+        tokio::spawn(async move {
-+            while let Ok((sock, _)) = listener.accept().await {
-+                let tx = tx.clone();
-+                tokio::spawn(async move {
-+                    let Ok(mut ws) = tokio_tungstenite::accept_async(sock).await else {
-+                        return;
-+                    };
-+                    let closed = loop {
-+                        match ws.next().await {
-+                            Some(Ok(WsMessage::Close(_))) => break true,
-+                            Some(Ok(_)) => {}
-+                            Some(Err(_)) | None => break false,
-+                        }
-+                    };
-+                    let _ = tx.send(closed);
-+                });
+         for entry in &entries {
++            // Inherited ACLs can make the integrity marker executable, but it
++            // is cache metadata, never the worker program.
++            if entry.file_name() == INTEGRITY_FILE {
++                continue;
 +            }
-+        });
-+        (addr, rx)
-+    }
-+
-+    #[tokio::test]
-+    async fn shutdown_closes_the_connection_with_a_close_frame() {
-+        let (addr, mut ends) = spawn_close_recorder().await;
-+        let iii = client_with_timings(addr, ConnTimings::default());
-+        let deadline = Instant::now() + Duration::from_secs(5);
-+        while iii.get_connection_state() != IIIConnectionState::Connected {
-+            assert!(Instant::now() < deadline, "never connected");
-+            sleep(Duration::from_millis(10)).await;
-+        }
-+
-+        iii.shutdown_async().await;
-+
-+        // Without one the engine logs a reset ("Connection reset without
-+        // closing handshake") for every worker that stops.
-+        let closed = tokio::time::timeout(Duration::from_secs(5), ends.recv())
-+            .await
-+            .expect("the connection never ended")
-+            .unwrap();
-+        assert!(closed, "a stopping worker must send a close frame");
-+    }
-+
-     type Handshake = (String, tokio_tungstenite::tungstenite::http::HeaderMap);
+             let path = entry.path();
+             if path.is_file() && is_executable(&path) {
+                 return Some(path);
+@@ -2068,6 +2073,49 @@ mod tests {
+         assert_eq!(installed_binary(tmp.path()), Some(binary));
+     }
  
-     /// WS server that reports each handshake's request URI and headers.
++    #[cfg(unix)]
++    #[test]
++    fn executable_integrity_marker_does_not_hide_worker_binary() {
++        use std::os::unix::fs::PermissionsExt;
++
++        for layout in ["", "bin"] {
++            let tmp = tempfile::tempdir().unwrap();
++            let binary_dir = tmp.path().join(layout);
++            std::fs::create_dir_all(&binary_dir).unwrap();
++            let binary = binary_dir.join("state");
++            std::fs::write(&binary, "#!/bin/sh\nexit 0\n").unwrap();
++            std::fs::set_permissions(&binary, std::fs::Permissions::from_mode(0o755)).unwrap();
++            let cancel = crate::shutdown::BlockingCancellation::default();
++            let digest = "a".repeat(64);
++            write_integrity_marker(tmp.path(), &digest, &cancel).unwrap();
++
++            // Simulate inherited execute permission without requiring ZFS.
++            let marker = tmp.path().join(INTEGRITY_FILE);
++            std::fs::set_permissions(&marker, std::fs::Permissions::from_mode(0o770)).unwrap();
++
++            assert!(cache_matches(tmp.path(), &digest, &cancel).unwrap());
++            assert_eq!(
++                installed_binary(tmp.path()),
++                Some(binary),
++                "layout={layout:?}"
++            );
++        }
++    }
++
++    #[cfg(unix)]
++    #[test]
++    fn executable_integrity_marker_alone_is_not_a_worker_binary() {
++        use std::os::unix::fs::PermissionsExt;
++
++        let tmp = tempfile::tempdir().unwrap();
++        let cancel = crate::shutdown::BlockingCancellation::default();
++        write_integrity_marker(tmp.path(), &"a".repeat(64), &cancel).unwrap();
++        let marker = tmp.path().join(INTEGRITY_FILE);
++        std::fs::set_permissions(&marker, std::fs::Permissions::from_mode(0o770)).unwrap();
++
++        assert_eq!(installed_binary(tmp.path()), None);
++    }
++
+     #[test]
+     fn an_empty_install_directory_has_no_binary() {
+         let tmp = tempfile::tempdir().unwrap();
+```
+
+**File**: `crates/iii-worker/src/cli/firmware/download.rs` (modified, +25/-11)
+```diff
+@@ -348,18 +348,32 @@ mod tests {
+     }
+ 
+     #[tokio::test]
+-    async fn test_ensure_libkrunfw_errors_when_not_embedded_and_not_installed() {
+-        let result = ensure_libkrunfw().await;
+-        if super::super::libkrunfw_bytes::LIBKRUNFW_BYTES.is_empty() {
+-            if resolve_libkrunfw_dir().is_none() {
+-                // Without embedded bytes and no local install, the function attempts
+-                // a download which will fail in test environments (no matching release).
+-                // It should error with either a download failure or a connection error.
+-                assert!(
+-                    result.is_err(),
+-                    "should error when not embedded and not installed"
+-                );
++    async fn test_ensure_libkrunfw_uses_local_firmware_override() {
++        let _home = crate::cli::test_support::lock_home();
++        let tmp = tempfile::tempdir().unwrap();
++        let firmware = tmp.path().join(libkrunfw_filename());
++        std::fs::write(&firmware, b"test firmware").unwrap();
++
++        struct RestoreFirmwarePath(Option<std::ffi::OsString>);
++        impl Drop for RestoreFirmwarePath {
++            fn drop(&mut self) {
++                // SAFETY: the shared environment lock is held until restoration.
++                unsafe {
++                    match &self.0 {
++                        Some(value) => std::env::set_var("III_LIBKRUNFW_PATH", value),
++                        None => std::env::remove_var("III_LIBKRUNFW_PATH"),
++                    }
++                }
+             }
+         }
++        let _restore = RestoreFirmwarePath(std::env::var_os("III_LIBKRUNFW_PATH"));
++        // SAFETY: this test holds the shared lock for environment readers/writers.
++        unsafe { std::env::set_var("III_LIBKRUNFW_PATH", &firmware) };
++
++        // A missing local install can legitimately download a published release.
++        // Use a local fixture instead of depending on GitHub or the user's cache.
++        let resolved = ensure_libkrunfw().await.unwrap();
++        assert_eq!(resolved, tmp.path());
++        assert_eq!(std::fs::read(firmware).unwrap(), b"test firmware");
+     }
+ }
 ```
 
 ---
 
-### Incident Patch 3: `70ee84b5` (2026-10-27)
-**Commit Message**: fix(website): replace the wrong iii logo everywhere it is drawn (#2418)
+### Incident Patch 2: `f7fd6b4c` (2026-10-28)
+**Commit Message**: test(go-sdk): fix synchronization race in telemetry reconnect test (#2429)
 
-**File**: `docs/0-12-0/assets/favicon.svg` (modified, +14/-1)
-```diff
-@@ -1 +1,14 @@
--<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000"><g clip-path="url(#SvgjsClipPath1045)"><rect width="1000" height="1000" fill="#ffffff"></rect><g transform="matrix(1.335113484646195,0,0,1.335113484646195,0.6675567423230859,0)"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="748" height="749" viewBox="0 0 748 749"><image width="748" height="749" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAuwAAALtCAYAAABzfDFZAAABYGlDQ1BJQ0MgUHJvZmlsZQAAKJFtkLFLw1AQxr+0kWKtYEEEwaFOolSpqSguQq2iYodQFdNuaVJba1sfSUTc3MRddHYR/Qu6dHB2EoQK4uDgIK5CFi3xXqOmVe9x3I+P+967d4AvpDJWFgFUqpaRXpqPKJlsJPAKH7rRCxF+VTNZQpZT1ILv2hl2AwKvd+P8rvPw8WAj+6gMh16uFHHV+NvfEUE9b2pUPygljRkWIMSI5X2LcT4k7jdoKOITzgWXLznnXK63etbTSeJb4j6tqOrET8TRXJteaONKeU/7moFPH8pXN9aoDlAOYQGLSNGJQIaEGUxiFsu0o/89Uy1PErtgOICBbRRQhEXuBCkMZeSJV1CFhglEiSXEKKf5rn/v0NP0IyA+Rk8FPa30DNTPgPCNp43s0HfmgOsMUw31Z7OCLZpbccnlnhrQdeo4b5tAYBRo3jvOe81xmheA/4G89icAvWGUjfhnmwAAMHRJREFUeAHt2jGq33UaxeGbwTauK+AGtLBKYT0MWA2IMNXAMDsQtBLEDYguSV1AhDthigNvmyaf/+W51fstQs59zq84hLx6fv/z5IcAAQIECBAgQIAAgaTA35KphCJAgAABAgQIECBA4P8CBrsPgQABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQKfICDwyALf/PPbR47/orJ/+69vHv738T11KvQ9dbp4CUlewvf0EnrwO3y4wKvn9z8f/sf9SQIfT+D77354evvV248XwN98BP569+68H+3x048/P33x5eePFvvF5n307+nXX357evPZmxfbz6P9Yn/+/sfT609fP1pseQlMwH+JGYWD
-```
+Co-authored-by: iii harness (codex/gpt-6-astra) <[REDACTED_EMAIL]>
 
-**File**: `docs/0-13-0/assets/favicon.svg` (modified, +14/-1)
+**File**: `sdk/packages/go/iii/internal/telemetry/connection_test.go` (modified, +28/-28)
 ```diff
-@@ -1 +1,14 @@
--<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000"><g clip-path="url(#SvgjsClipPath1045)"><rect width="1000" height="1000" fill="#ffffff"></rect><g transform="matrix(1.335113484646195,0,0,1.335113484646195,0.6675567423230859,0)"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="748" height="749" viewBox="0 0 748 749"><image width="748" height="749" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAuwAAALtCAYAAABzfDFZAAABYGlDQ1BJQ0MgUHJvZmlsZQAAKJFtkLFLw1AQxr+0kWKtYEEEwaFOolSpqSguQq2iYodQFdNuaVJba1sfSUTc3MRddHYR/Qu6dHB2EoQK4uDgIK5CFi3xXqOmVe9x3I+P+967d4AvpDJWFgFUqpaRXpqPKJlsJPAKH7rRCxF+VTNZQpZT1ILv2hl2AwKvd+P8rvPw8WAj+6gMh16uFHHV+NvfEUE9b2pUPygljRkWIMSI5X2LcT4k7jdoKOITzgWXLznnXK63etbTSeJb4j6tqOrET8TRXJteaONKeU/7moFPH8pXN9aoDlAOYQGLSNGJQIaEGUxiFsu0o/89Uy1PErtgOICBbRRQhEXuBCkMZeSJV1CFhglEiSXEKKf5rn/v0NP0IyA+Rk8FPa30DNTPgPCNp43s0HfmgOsMUw31Z7OCLZpbccnlnhrQdeo4b5tAYBRo3jvOe81xmheA/4G89icAvWGUjfhnmwAAMHRJREFUeAHt2jGq33UaxeGbwTauK+AGtLBKYT0MWA2IMNXAMDsQtBLEDYguSV1AhDthigNvmyaf/+W51fstQs59zq84hLx6fv/z5IcAAQIECBAgQIAAgaTA35KphCJAgAABAgQIECBA4P8CBrsPgQABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQKfICDwyALf/PPbR47/orJ/+69vHv738T11KvQ9dbp4CUlewvf0EnrwO3y4wKvn9z8f/sf9SQIfT+D77354evvV248XwN98BP569+68H+3x048/P33x5eePFvvF5n307+nXX357evPZmxfbz6P9Yn/+/sfT609fP1pseQlMwH+JGYWD
-```
-
-**File**: `docs/0-16-0/assets/favicon.svg` (modified, +14/-1)
-```diff
-@@ -1 +1,14 @@
--<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000"><g clip-path="url(#SvgjsClipPath1045)"><rect width="1000" height="1000" fill="#ffffff"></rect><g transform="matrix(1.335113484646195,0,0,1.335113484646195,0.6675567423230859,0)"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="748" height="749" viewBox="0 0 748 749"><image width="748" height="749" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAuwAAALtCAYAAABzfDFZAAABYGlDQ1BJQ0MgUHJvZmlsZQAAKJFtkLFLw1AQxr+0kWKtYEEEwaFOolSpqSguQq2iYodQFdNuaVJba1sfSUTc3MRddHYR/Qu6dHB2EoQK4uDgIK5CFi3xXqOmVe9x3I+P+967d4AvpDJWFgFUqpaRXpqPKJlsJPAKH7rRCxF+VTNZQpZT1ILv2hl2AwKvd+P8rvPw8WAj+6gMh16uFHHV+NvfEUE9b2pUPygljRkWIMSI5X2LcT4k7jdoKOITzgWXLznnXK63etbTSeJb4j6tqOrET8TRXJteaONKeU/7moFPH8pXN9aoDlAOYQGLSNGJQIaEGUxiFsu0o/89Uy1PErtgOICBbRRQhEXuBCkMZeSJV1CFhglEiSXEKKf5rn/v0NP0IyA+Rk8FPa30DNTPgPCNp43s0HfmgOsMUw31Z7OCLZpbccnlnhrQdeo4b5tAYBRo3jvOe81xmheA/4G89icAvWGUjfhnmwAAMHRJREFUeAHt2jGq33UaxeGbwTauK+AGtLBKYT0MWA2IMNXAMDsQtBLEDYguSV1AhDthigNvmyaf/+W51fstQs59zq84hLx6fv/z5IcAAQIECBAgQIAAgaTA35KphCJAgAABAgQIECBA4P8CBrsPgQABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQKfICDwyALf/PPbR47/orJ/+69vHv738T11KvQ9dbp4CUlewvf0EnrwO3y4wKvn9z8f/sf9SQIfT+D77354evvV248XwN98BP569+68H+3x048/P33x5eePFvvF5n307+nXX357evPZmxfbz6P9Yn/+/sfT609fP1pseQlMwH+JGYWD
-```
-
-**File**: `docs/0-17-0/assets/favicon.svg` (modified, +14/-1)
-```diff
-@@ -1 +1,14 @@
--<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000"><g clip-path="url(#SvgjsClipPath1045)"><rect width="1000" height="1000" fill="#ffffff"></rect><g transform="matrix(1.335113484646195,0,0,1.335113484646195,0.6675567423230859,0)"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="748" height="749" viewBox="0 0 748 749"><image width="748" height="749" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAuwAAALtCAYAAABzfDFZAAABYGlDQ1BJQ0MgUHJvZmlsZQAAKJFtkLFLw1AQxr+0kWKtYEEEwaFOolSpqSguQq2iYodQFdNuaVJba1sfSUTc3MRddHYR/Qu6dHB2EoQK4uDgIK5CFi3xXqOmVe9x3I+P+967d4AvpDJWFgFUqpaRXpqPKJlsJPAKH7rRCxF+VTNZQpZT1ILv2hl2AwKvd+P8rvPw8WAj+6gMh16uFHHV+NvfEUE9b2pUPygljRkWIMSI5X2LcT4k7jdoKOITzgWXLznnXK63etbTSeJb4j6tqOrET8TRXJteaONKeU/7moFPH8pXN9aoDlAOYQGLSNGJQIaEGUxiFsu0o/89Uy1PErtgOICBbRRQhEXuBCkMZeSJV1CFhglEiSXEKKf5rn/v0NP0IyA+Rk8FPa30DNTPgPCNp43s0HfmgOsMUw31Z7OCLZpbccnlnhrQdeo4b5tAYBRo3jvOe81xmheA/4G89icAvWGUjfhnmwAAMHRJREFUeAHt2jGq33UaxeGbwTauK+AGtLBKYT0MWA2IMNXAMDsQtBLEDYguSV1AhDthigNvmyaf/+W51fstQs59zq84hLx6fv/z5IcAAQIECBAgQIAAgaTA35KphCJAgAABAgQIECBA4P8CBrsPgQABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQKfICDwyALf/PPbR47/orJ/+69vHv738T11KvQ9dbp4CUlewvf0EnrwO3y4wKvn9z8f/sf9SQIfT+D77354evvV248XwN98BP569+68H+3x048/P33x5eePFvvF5n307+nXX357evPZmxfbz6P9Yn/+/sfT609fP1pseQlMwH+JGYWD
-```
-
-**File**: `docs/0-18-0/assets/favicon.svg` (modified, +14/-1)
-```diff
-@@ -1 +1,14 @@
--<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000"><g clip-path="url(#SvgjsClipPath1045)"><rect width="1000" height="1000" fill="#ffffff"></rect><g transform="matrix(1.335113484646195,0,0,1.335113484646195,0.6675567423230859,0)"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="748" height="749" viewBox="0 0 748 749"><image width="748" height="749" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAuwAAALtCAYAAABzfDFZAAABYGlDQ1BJQ0MgUHJvZmlsZQAAKJFtkLFLw1AQxr+0kWKtYEEEwaFOolSpqSguQq2iYodQFdNuaVJba1sfSUTc3MRddHYR/Qu6dHB2EoQK4uDgIK5CFi3xXqOmVe9x3I+P+967d4AvpDJWFgFUqpaRXpqPKJlsJPAKH7rRCxF+VTNZQpZT1ILv2hl2AwKvd+P8rvPw8WAj+6gMh16uFHHV+NvfEUE9b2pUPygljRkWIMSI5X2LcT4k7jdoKOITzgWXLznnXK63etbTSeJb4j6tqOrET8TRXJteaONKeU/7moFPH8pXN9aoDlAOYQGLSNGJQIaEGUxiFsu0o/89Uy1PErtgOICBbRRQhEXuBCkMZeSJV1CFhglEiSXEKKf5rn/v0NP0IyA+Rk8FPa30DNTPgPCNp43s0HfmgOsMUw31Z7OCLZpbccnlnhrQdeo4b5tAYBRo3jvOe81xmheA/4G89icAvWGUjfhnmwAAMHRJREFUeAHt2jGq33UaxeGbwTauK+AGtLBKYT0MWA2IMNXAMDsQtBLEDYguSV1AhDthigNvmyaf/+W51fstQs59zq84hLx6fv/z5IcAAQIECBAgQIAAgaTA35KphCJAgAABAgQIECBA4P8CBrsPgQABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQKfICDwyALf/PPbR47/orJ/+69vHv738T11KvQ9dbp4CUlewvf0EnrwO3y4wKvn9z8f/sf9SQIfT+D77354evvV248XwN98BP569+68H+3x048/P33x5eePFvvF5n307+nXX357evPZmxfbz6P9Yn/+/sfT609fP1pseQlMwH+JGYWD
-```
-
-**File**: `docs/0-19-0/assets/favicon.svg` (modified, +14/-1)
-```diff
-@@ -1 +1,14 @@
--<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000"><g clip-path="url(#SvgjsClipPath1045)"><rect width="1000" height="1000" fill="#ffffff"></rect><g transform="matrix(1.335113484646195,0,0,1.335113484646195,0.6675567423230859,0)"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="748" height="749" viewBox="0 0 748 749"><image width="748" height="749" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAuwAAALtCAYAAABzfDFZAAABYGlDQ1BJQ0MgUHJvZmlsZQAAKJFtkLFLw1AQxr+0kWKtYEEEwaFOolSpqSguQq2iYodQFdNuaVJba1sfSUTc3MRddHYR/Qu6dHB2EoQK4uDgIK5CFi3xXqOmVe9x3I+P+967d4AvpDJWFgFUqpaRXpqPKJlsJPAKH7rRCxF+VTNZQpZT1ILv2hl2AwKvd+P8rvPw8WAj+6gMh16uFHHV+NvfEUE9b2pUPygljRkWIMSI5X2LcT4k7jdoKOITzgWXLznnXK63etbTSeJb4j6tqOrET8TRXJteaONKeU/7moFPH8pXN9aoDlAOYQGLSNGJQIaEGUxiFsu0o/89Uy1PErtgOICBbRRQhEXuBCkMZeSJV1CFhglEiSXEKKf5rn/v0NP0IyA+Rk8FPa30DNTPgPCNp43s0HfmgOsMUw31Z7OCLZpbccnlnhrQdeo4b5tAYBRo3jvOe81xmheA/4G89icAvWGUjfhnmwAAMHRJREFUeAHt2jGq33UaxeGbwTauK+AGtLBKYT0MWA2IMNXAMDsQtBLEDYguSV1AhDthigNvmyaf/+W51fstQs59zq84hLx6fv/z5IcAAQIECBAgQIAAgaTA35KphCJAgAABAgQIECBA4P8CBrsPgQABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQKfICDwyALf/PPbR47/orJ/+69vHv738T11KvQ9dbp4CUlewvf0EnrwO3y4wKvn9z8f/sf9SQIfT+D77354evvV248XwN98BP569+68H+3x048/P33x5eePFvvF5n307+nXX357evPZmxfbz6P9Yn/+/sfT609fP1pseQlMwH+JGYWD
-```
-
-**File**: `docs/0-20-0/assets/favicon.svg` (modified, +14/-1)
-```diff
-@@ -1 +1,14 @@
--<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000"><g clip-path="url(#SvgjsClipPath1045)"><rect width="1000" height="1000" fill="#ffffff"></rect><g transform="matrix(1.335113484646195,0,0,1.335113484646195,0.6675567423230859,0)"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="748" height="749" viewBox="0 0 748 749"><image width="748" height="749" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAuwAAALtCAYAAABzfDFZAAABYGlDQ1BJQ0MgUHJvZmlsZQAAKJFtkLFLw1AQxr+0kWKtYEEEwaFOolSpqSguQq2iYodQFdNuaVJba1sfSUTc3MRddHYR/Qu6dHB2EoQK4uDgIK5CFi3xXqOmVe9x3I+P+967d4AvpDJWFgFUqpaRXpqPKJlsJPAKH7rRCxF+VTNZQpZT1ILv2hl2AwKvd+P8rvPw8WAj+6gMh16uFHHV+NvfEUE9b2pUPygljRkWIMSI5X2LcT4k7jdoKOITzgWXLznnXK63etbTSeJb4j6tqOrET8TRXJteaONKeU/7moFPH8pXN9aoDlAOYQGLSNGJQIaEGUxiFsu0o/89Uy1PErtgOICBbRRQhEXuBCkMZeSJV1CFhglEiSXEKKf5rn/v0NP0IyA+Rk8FPa30DNTPgPCNp43s0HfmgOsMUw31Z7OCLZpbccnlnhrQdeo4b5tAYBRo3jvOe81xmheA/4G89icAvWGUjfhnmwAAMHRJREFUeAHt2jGq33UaxeGbwTauK+AGtLBKYT0MWA2IMNXAMDsQtBLEDYguSV1AhDthigNvmyaf/+W51fstQs59zq84hLx6fv/z5IcAAQIECBAgQIAAgaTA35KphCJAgAABAgQIECBA4P8CBrsPgQABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQKfICDwyALf/PPbR47/orJ/+69vHv738T11KvQ9dbp4CUlewvf0EnrwO3y4wKvn9z8f/sf9SQIfT+D77354evvV248XwN98BP569+68H+3x048/P33x5eePFvvF5n307+nXX357evPZmxfbz6P9Yn/+/sfT609fP1pseQlMwH+JGYWD
-```
-
-**File**: `docs/0-21-0/assets/favicon.svg` (modified, +14/-1)
-```diff
-@@ -1 +1,14 @@
--<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000"><g clip-path="url(#SvgjsClipPath1045)"><rect width="1000" height="1000" fill="#ffffff"></rect><g transform="matrix(1.335113484646195,0,0,1.335113484646195,0.6675567423230859,0)"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="748" height="749" viewBox="0 0 748 749"><image width="748" height="749" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAuwAAALtCAYAAABzfDFZAAABYGlDQ1BJQ0MgUHJvZmlsZQAAKJFtkLFLw1AQxr+0kWKtYEEEwaFOolSpqSguQq2iYodQFdNuaVJba1sfSUTc3MRddHYR/Qu6dHB2EoQK4uDgIK5CFi3xXqOmVe9x3I+P+967d4AvpDJWFgFUqpaRXpqPKJlsJPAKH7rRCxF+VTNZQpZT1ILv2hl2AwKvd+P8rvPw8WAj+6gMh16uFHHV+NvfEUE9b2pUPygljRkWIMSI5X2LcT4k7jdoKOITzgWXLznnXK63etbTSeJb4j6tqOrET8TRXJteaONKeU/7moFPH8pXN9aoDlAOYQGLSNGJQIaEGUxiFsu0o/89Uy1PErtgOICBbRRQhEXuBCkMZeSJV1CFhglEiSXEKKf5rn/v0NP0IyA+Rk8FPa30DNTPgPCNp43s0HfmgOsMUw31Z7OCLZpbccnlnhrQdeo4b5tAYBRo3jvOe81xmheA/4G89icAvWGUjfhnmwAAMHRJREFUeAHt2jGq33UaxeGbwTauK+AGtLBKYT0MWA2IMNXAMDsQtBLEDYguSV1AhDthigNvmyaf/+W51fstQs59zq84hLx6fv/z5IcAAQIECBAgQIAAgaTA35KphCJAgAABAgQIECBA4P8CBrsPgQABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQKfICDwyALf/PPbR47/orJ/+69vHv738T11KvQ9dbp4CUlewvf0EnrwO3y4wKvn9z8f/sf9SQIfT+D77354evvV248XwN98BP569+68H+3x048/P33x5eePFvvF5n307+nXX357evPZmxfbz6P9Yn/+/sfT609fP1pseQlMwH+JGYWD
+@@ -309,49 +309,49 @@ func TestConnectionShutdownClosesSocket(t *testing.T) {
+ // The connection reconnects after the engine drops it.
+ func TestConnectionReconnects(t *testing.T) {
+ 	silence(t)
+-	var mu sync.Mutex
+-	var conns []*websocket.Conn
++	accepted := make(chan *websocket.Conn, 2)
+ 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+ 		conn, err := websocket.Accept(w, r, nil)
+ 		if err != nil {
+ 			return
+ 		}
+-		mu.Lock()
+-		conns = append(conns, conn)
+-		mu.Unlock()
++		accepted <- conn
+ 		_, _, _ = conn.Read(context.Background())
+ 	}))
+ 	defer srv.Close()
+ 	c := NewConnection("ws"+strings.TrimPrefix(srv.URL, "http"), nil, fastReconnect(-1))
+ 	defer func() { _ = c.Shutdown(context.Background()) }()
+-	connected := 0
++	connected := make(chan struct{}, 1)
+ 	c.OnConnected(func() {
+-		mu.Lock()
+-		connected++
+-		mu.Unlock()
++		select {
++		case connected <- struct{}{}:
++		default:
++		}
+ 	})
+-	waitState(t, c, StateConnected)
+-	mu.Lock()
+-	_ = conns[0].CloseNow()
+-	mu.Unlock()
+-	deadline := time.Now().Add(5 * time.Second)
+-	for {
+-		mu.Lock()
+-		n := len(conns)
+-		mu.Unlock()
+-		if n == 2 && c.State() == StateConnected {
+-			break
++
++	waitConnected := func() *websocket.Conn {
++		t.Helper()
++		timer := time.NewTimer(5 * time.Second)
++		defer timer.Stop()
++		var conn *websocket.Conn
++		// Client-side StateConnected does not mean the server handler has
++		// published its socket yet. Synchronize with both sides explicitly.
++		select {
++		case conn = <-accepted:
++		case <-timer.C:
++			t.Fatal("timed out waiting for the server to accept a connection")
+ 		}
+-		if time.Now().After(deadline) {
+-			t.Fatalf("no reconnection: %d connections, state %v", n, c.State())
++		select {
++		case <-connected:
++		case <-timer.C:
++			t.Fatal("timed out waiting for OnConnected")
+ 		}
+-		time.Sleep(time.Millisecond)
+-	}
+-	mu.Lock()
+-	defer mu.Unlock()
+-	if connected < 1 {
+-		t.Errorf("OnConnected ran %d times", connected)
++		return conn
+ 	}
++
++	first := waitConnected()
++	_ = first.CloseNow()
++	_ = waitConnected()
+ }
+ 
+ // engineRefusal is the text frame the engine's /otel handler sends before closing a
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2429** (2026-10-28): test(go-sdk): fix synchronization race in telemetry reconnect test (@guibeira)
+- **PR #2427** (2026-10-28): feat(website): Contributors section on the landing page (@arihantcodes)
+- **PR #2426** (closed): feat(website): Contributors section on the landing page (@arihantcodes)
+- **PR #2424** (2026-10-28): fix(compose): skip executable integrity marker when selecting worker binary (@guibeira)
 - **PR #2419** (2026-10-27): fix(website): name Motia LLC as the legal entity in site metadata (@arihantcodes)
 - **PR #2418** (2026-10-27): fix(website): replace the wrong iii logo everywhere it is drawn (@arihantcodes)
-- **PR #2409** (2026-10-27): fix(engine): handle trigger teardown races and cancellation (@guibeira)
-- **PR #2408** (2026-10-27): clarify CLI licensing (@anthonyiscoding)
-- **PR #2404** (2026-10-26): fix(rust): keep Logger lines under concurrency and close the connection on shutdown (@sergiofilhowz)
-- **PR #2402** (2026-10-26): docs: move Upgrading group to bottom of sidebar (@anthonyiscoding)
 
 ---
 
@@ -2864,50 +2653,51 @@ Co-authored-by: iii harness (codex/gpt-6-astra) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sdk): patch happy-dom and zod security advisories (#2400)
+## X. compose): skip executable integrity marker when selecting worker binary (#2424)
 
 **RULE**:
-When implementing operations in `pnpm-lock.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/iii-compose/src/registry.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c7c3154c`: sdk): patch happy-dom and zod security advisories (#2400). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b0b86fd3`: compose): skip executable integrity marker when selecting worker binary (#2424). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `pnpm-lock.yaml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/iii-compose/src/registry.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@24.11.0)(@vitest/coverage-v8@4.1.12)(happy-dom@21.0.4)(vite@7.3.7(@types/node@24.11.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
-        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.12)(happy-dom@21.0.4)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
-        specifier: ^21.0.4
-        version: 21.0.4
-        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.12)(happy-dom@21.0.4)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
-        specifier: ^4.6.6
-        version: 4.6.6
-        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.12)(happy-dom@21.0.4)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
-  happy-dom@21.0.4:
-    resolution: {integrity: sha512-tFm+GaLBgo6o0awHnvHaNoraVo27qJ+2tZEtZ+cIa08hXbeitrxAJajLI05hsUy/2/YTKcUjQYzHe5mCcraLBw==}
-  zod@4.6.6:
-    resolution: {integri
+            // Inherited ACLs can make the integrity marker executable, but it
+            // is cache metadata, never the worker program.
+            if entry.file_name() == INTEGRITY_FILE {
+                continue;
+            }
+    #[cfg(unix)]
+    #[test]
+    fn executable_integrity_marker_does_not_hide_worker_binary() {
+        use std::os::unix::fs::PermissionsExt;
+
+        for layout in ["", "bin"] {
+            let tmp = tempfile::tempdir().unwrap();
+            let binary_dir = tmp.path().join(layout);
+            std::fs::create_dir_all(&binary_dir).unwrap();
+            let binary = binary_dir.join("state");
+            std::fs::write(&binary, "#!/bin/sh\nexit 0\n").unwrap();
+            std::fs::set_permissions(&binary, std::fs::Permissions::from_mode(0o755)).unwrap();
+            let cancel = crate::shutdown::BlockingCancellation::default();
+            let digest = "a".repeat(64);
+            write_integrity_marker(tmp.path(), &digest, &cancel).unwrap();
+
+            // Simulate inherited execute permission without requiring ZFS.
+            let marker = tmp.path().join(INTEGRITY_FILE);
+            std::fs::set_permissions(&marker, std::fs::Permissions::from_mode(0o7
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@24.11.0)(@vitest/coverage-v8@4.1.12)(happy-dom@20.14.5)(vite@7.3.7(@types/node@24.11.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
-        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.12)(happy-dom@20.14.5)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
-        specifier: ^20.14.5
-        version: 20.14.5
-        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.12)(happy-dom@20.14.5)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
-        specifier: ^4.3.6
-        version: 4.3.6
-        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.12)(happy-dom@20.14.5)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
-  happy-dom@20.14.5:
-    resolution: {integrity: sha512-x/RzkpWO40bTjIoT30iQtt64FLLmH/iRcUCN2X//bLx7H3ifkdfPXyqsro/OYtqzIAhiLMMA7mmiOR9C3NOKjQ==}
-  zod@4.3.6:
-    resolution: {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c7c3154c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b0b86fd3` are properly handled with clean fallback behavior.

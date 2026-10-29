@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-0NJ7",
-    "timestamp": "2026-10-27T19:31:58.627Z",
-    "repository": "scrapinghub/scrapy-poet",
-    "learningId": "learn-github-scrapinghub-scrapy-poet",
-    "contentHash": "54392d6bcef66081a17f01052bbaafce076ecca83f2cda8742612401c4a2a549",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-0PQ3",
-    "timestamp": "2026-10-27T19:32:01.467Z",
-    "repository": "react/metro",
-    "learningId": "learn-github-react-metro",
-    "contentHash": "24bba216d8fc133eb2d3280177f96ed789bf77476144c6b5fee731f17989ed23",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-0SAZ",
     "timestamp": "2026-10-27T19:32:04.811Z",
     "repository": "envoyproxy/envoy",
@@ -7492,6 +7462,36 @@
     "contentHash": "fcb0563f9b22bce7ee765c7fd479ad864e1bfeac70a899629b13e640c8c67f91",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-LT2Q",
+    "timestamp": "2026-10-29T00:16:02.162Z",
+    "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
+    "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
+    "contentHash": "a3b384d813eba24c1ed5c2d2fae3059716c729d794a5985419c9f90ea2ea2dd0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-LTWC",
+    "timestamp": "2026-10-29T00:16:03.228Z",
+    "repository": "iii-hq/iii",
+    "learningId": "learn-github-iii-hq-iii",
+    "contentHash": "92a5cf3f6a2572cfa82090d1d82deb8728c7448ceeef06375e4b2d840f06ec3e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
