@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T01:49:59.346Z",
+  "last_updated": "2026-10-29T02:00:19.782Z",
   "total_verified_learnings": 1161,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -55827,8 +55827,8 @@
       "slug": "xerj-org-xerj",
       "platform": "github",
       "source_url": "https://github.com/xerj-org/xerj",
-      "source_version": "5b46a142",
-      "content_hash": "d7c4faa87db4867788c77a391bb09022f2a842fc5d8ec120c8ec9ab41020ff38",
+      "source_version": "d9409618",
+      "content_hash": "a94372a32ade6d89ee52f6f28fde64068370606bc907046330b3bce93f80a823",
       "dossier_path": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "promoted_rules": [
@@ -55886,6 +55886,11 @@
           "number": 4934,
           "title": "code): show the matching window of a long definition, not its head (#2464) (#247",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5488,
+          "title": "mcp): split xerj_search's union-typed `query` into `query` and `query_dsl`",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -55893,7 +55898,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T10:03:16.700Z",
+      "verified_at": "2026-10-29T02:00:19.767Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -147941,6 +147946,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T01:49:59.327Z"
+    },
+    "rule-5488": {
+      "learning_id": "rule-5488",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5488,
+      "title": "mcp): split xerj_search's union-typed `query` into `query` and `query_dsl`",
+      "source_url": "https://github.com/xerj-org/xerj",
+      "source_version": "d9409618",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T02:00:19.767Z"
     }
   },
   "aliases": {

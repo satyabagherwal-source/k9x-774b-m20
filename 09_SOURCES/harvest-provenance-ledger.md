@@ -6028,3 +6028,4 @@ Every entry in this ledger must capture:
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `a998f06c` | Multi-dimensional audit evidence | 2026-10-29T01:49:55.104Z |
 | `learn-github-tableproapp-tablepro` | `https://github.com/TableProApp/TablePro` | `dcbce8af` | Multi-dimensional audit evidence | 2026-10-29T01:49:56.948Z |
 | `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `75f7d7b4` | Multi-dimensional audit evidence | 2026-10-29T01:49:59.422Z |
+| `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `d9409618` | Multi-dimensional audit evidence | 2026-10-29T02:00:19.845Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source**: github ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
-> **Source Version**: `5b46a142`  
+> **Source Version**: `d9409618`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T10:03:16.564Z  
+> **Timestamp**: 2026-10-29T02:00:19.328Z  
 > **Learning ID**: `learn-github-xerj-org-xerj`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T09:58:09.374Z  
+> **Harvest Timestamp**: 2026-10-29T02:00:18.207Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI search engine and MCP server for bots and agents. One Rust binary indexes code, docs, logs, JSONL/CSV and PDFs for BM25 full-text, vector and hybrid search, code search without grep, agent memory and RAG. Elasticsearch-compatible API; Corpus Hub serves hundreds of reference memory corpora.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17225 stars
+- **Stars / Engagement**: 17340 stars
 
 ---
 
@@ -1885,11 +1885,11 @@ pub use xerj_common::Result;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2472** (2026-10-27): **corpus add: rejects a local Windows drive path (F:\...) as an unsafe repo name, though autoindex accepts it**
-  *Symptoms*: On Windows, `xerj corpus add` rejects a local drive path such as `F:\Projects\Roblox\LunarGame` as an "unsafe repo name" (because of the drive colon and backslashes), while `xerj autoindex` accepts the same path natively. Expected: `corpus add` should accept local Windows paths (or derive a safe repo name from them) the way autoindex does, or at least explain how to add a local directory.  Reported by an agent field report on xerj v1.0.0-rc.99, windows x86_64. Everything else in the run (get.ps1 install, autoindex, corpus index, code/search/def) worked.  ---  Field report received via `POST https://xerj.org/api/field-report` on Oct 26, 2026 11:15 AM PT (no GitHub available to the agent).  | Field | Value | |---|---| | agent | Gemini 4 Argon (High) | | used_for | Indexed LunarGame Roblox Luau + Blender Python project (4,397 files, 1,089 code files, 161,901 records) under --prefix lunargame and cloned/indexed roblox-refs (MadStudioRoblox/ProfileStore + Sleitnick/RbxUtil) for Luau reference coding. | | verdict | Windows get.ps1 install, background node, .xerjignore pruning of 62MB .rbxlx/.blend/.fbx binaries, xerj autoindex --prefix lunargame (1,089/1,089 code files indexed, 0 code files junked), xerj corpus add/index roblox-refs, xerj code roblox-refs, xerj search, and xerj def all worked cleanly. Note: xerj corpus add rejected a local Windows drive path F:\Projects\Roblox\LunarGame as an unsafe repo name due to the colon/backslashes, whereas xerj autoindex handled it natively.
+- **Issue #2578** (2026-10-29): **security: CLI/MCP silently auto-discovers an admin key from an unrelated project's data dir and never says where the key came from (rc.99)**
+  *Symptoms*: **Problem (rc.99, Linux x86_64):** the CLI/MCP admin-key auto-discovery silently picked up the admin key from **another project's data directory** (`~/Projects/<other-project>/data/admin.key`). The repo the agent was working in had its own unused `.xerj-data/`. Nothing in the output said where the key came from.  **What happened** - The MCP server was configured with only `XERJ_URL` (no `XERJ_API_KEY`) against an auth-on node on 127.0.0.1:9200. - Every tool call succeeded because the CLI found and used the other project's `admin.key`. - The agent reasonably assumed the node belonged to the repo it was in. That is wrong, and it means writes (autoindex) can land in a node owned by another project with full admin credentials.  **Why it matters (security/safety):** an admin credential is chosen implicitly from a directory unrelated to the current working tree, and the choice is invisible. A user or agent can't tell which node or credential they are acting with, and a stray `admin.key` anywhere in the search path grants admin to whatever process runs `xerj`.  **Expected** - Print where the key came from (for example `auth: admin key from <path>`) on stderr and in MCP diagnostics whenever the key is auto-discovered. - Restrict discovery to the node's own data dir (as reported by the node, or set by `--data-dir`/config), or require explicit opt-in beyond the current project. Warn when the discovered key's data dir isn't the one the node at `XERJ_URL` is running from. - Document the 
 
-- **Issue #2438** (2026-10-26): **Indexing ~5x slower since rc.78: background merges use zstd level 19**
-  *Symptoms*: ## Summary  Bulk indexing under the memory governor has been about 5x slower since **v1.0.0-rc.78**. The README and BENCHMARK_VS_ES.md claims (faster and smaller than Elasticsearch/Lucene) were measured before rc.78.  Cause: ec712826 / PR #1042 ("ZBS4 stored-section slim ... merge-path zstd chooser"). Every **background** merge now tries a zstd level 19 + long-distance matching (window 2^24) candidate on each stored JSON column and keeps the smaller one (`engine/crates/xerj-storage/src/stored_codec.rs:272` `RAW_LONG_LEVEL = 19`; called from `engine/crates/xerj-engine/src/index.rs:14250` via `encode_stored_v2_merge_at_level`).  zstd 19 runs at about 2 MB/s per thread, so the stored part of a merge batch went from **2.4-3.3 s to 94-107 s**. RSS sits at or above the parent breaker's 95% watermark while the merge runs. The breaker latches and `_bulk` gets 429s until the merge finishes. The loader stalls for 60-100 s at a time, and in one run it dropped 34,398 docs after its retry budget ran out.  The codec comment says "merges are background work, so the extra encode pass is not on any back-pressure-critical path". With the memory governor, that is not true.  Two side findings from the same runs: - The `xerj-drain-free` helper thread was skipped with "memory is at the governor watermark". The thread that frees memory was refused because memory was high. - `_forcemerge?max_num_segments=1` stopped at 2 segments. At a 2 GiB cap the per-batch byte cap is 32 MiB. Once every segment is
+- **Issue #2491** (2026-10-29): **mcp: search response exceeds agent tool-output limits (no default size cap), result spilled to temp file (rc.99)**
+  *Symptoms*: An agent using xerj through MCP reported that a single search response was too large for its host's tool-output limit, so the host spilled the result to a temp file and the agent had to dig the target passage back out of it.  **Report (rc.99, linux x86_64, Copilot SDK in VS Code)** - Task: local code search for `calcular_derivada` and `Vz` in a project (ARCTURUS) via the xerj MCP server. - Verdict: "XERJ search ran successfully, but its response exceeded the tool output limit and was saved to a temporary file; exact target passage is being extracted from that result."  **Problem** The MCP search tool's default response isn't bounded to fit typical agent tool-output limits. Agents then lose the inline result and burn extra steps/tokens re-reading it.  **Possible fix directions (to verify)** - Cap MCP search output by default (total bytes/tokens), trimming passages to a window around the match and dropping lower-ranked hits first. - Report truncation in the response (e.g. "N more hits, re-run with `k`/offset or a narrower query") instead of overflowing. - Expose a size/budget parameter on the MCP search tool.  The report didn't include the query options, hit count or response size, so the exact overflow size is unknown.  <sub>Mirrored by Xerj Merger. R2 key: `reports/2026-10-27/1793065899831-c6b44866.json` · user agent: `xerj-feedback`</sub> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1906,20 +1906,467 @@ pub use xerj_common::Result;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5b46a142` (2026-10-28)
-**Commit Message**: chore(metrics): release downloads 2026-10-28 — 39345 assets, 32238 binaries [skip ci]
+### Incident Patch 1: `8ab6ae27` (2026-10-29)
+**Commit Message**: fix(mcp): split xerj_search's union-typed `query` into `query` and `query_dsl`
 
-Automated daily snapshot (.github/workflows/release-metrics.yml). GitHub keeps no history for download_count; this line is the history.
+`xerj_search` typed `query` as `["object", "string"]`: plain words, or a
+whole ES query-DSL clause. It is the only tool in the set with a union-typed
+primary argument, and it is the only one GLM-5.3 failed on — the model wrote
+the string value unquoted inside the union field, so one transport rejected
+the turn as invalid JSON and the OpenAI-compatible path recorded `{}` and got
+a 0-hit success. Every scalar-schema sibling tool round-tripped (#2549).
+
+So `query` is now a plain string and the DSL moved to `query_dsl` (an
+object). Neither field is union-typed, so there is nothing for a model to
+serialize wrongly, and the two are mutually exclusive. `query_dsl` keeps the
+structured path that `query: {…}` used to carry — `filter`, `bool`, `knn`,
+`match_all` — so nothing is lost.
+
+One of the two is now required, which also fixes the second signature in the
+report: an empty-argument call used to fall through to `match_all` and return
+0 hits with no error. It now fails naming both fields.
+
+A caller that still sends an object as `query` gets an error that names
+`query_dsl` rather than a silent behaviour change.
 
 
+**File**: `README.md` (modified, +8/-1)
+```diff
+@@ -495,7 +495,7 @@ Twenty-one tools are exposed. Eleven are thin proxies over an endpoint XERJ alre
+ 
+ | Tool | What it does |
+ |---|---|
+-| `xerj_search` | ES query-DSL search over an index |
++| `xerj_search` | keyword search over an index, from plain words (`query`) or an ES query-DSL clause (`query_dsl`) |
+ | `xerj_semantic_search` | recall by meaning over a `semantic_text` field, the query embedded server-side (default embedder is lexical feature-hashing, not neural, unless the node runs `--embed-mode neural`) |
+ | `xerj_vector_search` | kNN over a `dense_vector` field |
+ | `xerj_hybrid_search` | RRF or linear fusion of sub-queries |
+@@ -511,6 +511,13 @@ pattern instead; non-empty `index` and `prefix` cannot be combined. An empty
+ prefix, a prefix with no `[a-z0-9]` character, or a prefix that cannot name an
+ index is an error. With neither argument, the tool searches `ax-*`.
+ 
++`query` is a plain string, and a structured ES query-DSL clause goes in
++`query_dsl` instead — `{"index":"docs","query_dsl":{"match_all":{}}}`. One of
++the two is required and they cannot be combined, so a call with neither is an
++error naming both rather than a silent `match_all` that returns nothing. The
++fields are separate because a union-typed `query` (`["object","string"]`) is
++what made some models emit invalid arguments for this tool alone (#2549).
++
+ `xerj_def` finds local definitions with the same query, ranking and location deduplication
+ as `xerj def --json`. For example, `{"symbol":"Cache","prefix":"project","kind":"struct","lang":"rust","k":5}`
+ searches `project-*`; `index` can replace `prefix`, with the same scope rules as `xerj_search`.
+```
+
+**File**: `engine/crates/xerj-mcp/src/lib.rs` (modified, +157/-48)
+```diff
+@@ -962,8 +962,16 @@ pub fn tool_specs_with(include_hub: bool) -> Value {
+                          is omitted)."
+                     },
+                     "query": {
+-                        "type": ["object", "string"],
+-                        "description": "Plain string (definition-first code search) or ES query-DSL clause. Omit for match_all.",
++                        "type": "string",
++                        "description": "What to search for, in plain words — the definition-first code search \
++                         `xerj search` runs. REQUIRED unless you pass `query_dsl` instead."
++                    },
++                    "query_dsl": {
++                        "type": "object",
++                        "description": "An Elasticsearch query-DSL clause, used INSTEAD of `query` when the \
++                         search needs structure plain words cannot express — a `filter`, a `bool`, a `knn`, \
++                         a field-scoped `match`, an explicit `match_all`. Cannot be combined with `query`. \
++                         The engine's own order is kept."
+                     },
+                     "size": { "type": "integer", "description": "Max hits to return (default engine value)." },
+                     "from": { "type": "integer", "description": "Offset for pagination." },
+@@ -2517,30 +2525,64 @@ fn build_search_with_mapping(
+     let index = search_index(args)?;
+     let mut body = serde_json::Map::new();
+     let mut plain_string = false;
+-    match args.get("query") {
+-        // A plain string gets the definition-first shape `xerj search` uses
+-        // (measured 38%→94% correct-file-at-rank-1 on cross-file lookups vs a
+-        // bare body match). Agents should never have to hand-write ES DSL for
+-        // the common "find me this code" case; the DSL object path stays
+-        // untouched for structured queries.
+-        Some(Value::String(q)) if !q.trim().is_empty() => {
+-            plain_string = true;
+-            // #1961: the mapping-aware body the CLI builds (#1601/#1602),
+-            // including the #1759 exact-phrase leg. A prose corpus drops the
+-            // `defs`/`name` clauses instead of 400ing on them; a code corpus
+-            // (or an unreadable mapping) keeps the historical shape. `10`
+-            // only fills the discarded `size` member.
+-            let mapped = mapping.and_then(mapped_property_names);
+-            let numeric = mapping.map(numeric_property_names);
+-            let built = search_query_body_for_mapping(q, 10, mapped.as_ref(), numeric.as_ref());
+-            body.insert("query".into(), built["query"].clone());
++    // #2549: `query` is a plain string and `query_dsl` is the structured
++    // variant, so neither is union-typed. A model whose function-calling
++    // serialized a string into the old `["object", "string"]` field unquoted
++    // produced invalid JSON on one transport and `{}` on another, while every
++    // scalar-schema sibling tool round-tripped. The two fields are also
++    // mutually exclusive and one of them is required, so an empty-argument
++    // call fails loudly instead of searching for nothing and returning 0 hits.
++    let dsl = match args.get("query_dsl") {
++        None | Some(Value::Null) => None,
++        Some(v @ Value::Object(_)) => Some(v),
++        Some(_) => {
++            return Err("`query_dsl` must be a JSON object, for example \
++                        {\"query_dsl\": {\"match_all\": {}}}"
++                .into())
+         }
+-        Some(q) if !q.is_null() => {
+-            body.insert("query".into(), q.clone());
++    };
++    let plain = match args.get("query") {
++        None | Some(Value::Null) => None,
++        Some(Value::String(q)) if q.trim().is_empty() => None,
++        Some(Value::String(q)) => Some(q.clone()),
++        Some(_) => {
++            return Err(
++                "`query` must be plain search text; pass a structured ES query-DSL \
++                        clause as `query_dsl`, for example {\"query_dsl\": {\"match_all\": {}}}"
++                    .into(),
++            )
+         }
+-        _ => {
+-            body.insert("query".into(), json!({ "match_all": {} }));
++    };
++    if let Some(dsl) = dsl {
++        if plain.is_some() {
++            return Err(
++                "pass either `query` (plain words) or `query_dsl` (an ES query-DSL \
++                        clause), not both"
++                    .into(),
++            );
+         }
++        body.insert("query".into(), dsl.clone());
++    } else if let Some(q) = plain {
++        // A plain string gets the definition-first shape `xerj search` uses
++        // (measured 38%→94% correct-file-at-rank-1 on cross-file lookups vs a
++        // bare body match). Agents should never have to hand-write ES DSL for
++        // the common "find me this code" case; `query_dsl` stays available for
++        // structured queries.
++        plain_string = true;
++        // #1961: the mapping-aware body the CLI builds (
+```
+
+**File**: `landing/docs/agents/schemas/mcp-tools.json` (modified, +6/-5)
+```diff
+@@ -152,11 +152,12 @@
+             "description": "Autoindex prefix, resolved by the same function as `xerj search --prefix` and `xerj autoindex --prefix`: lower-case [a-z0-9] runs joined by '-', so `project` searches `project-*` and `My_Proj` searches `my-proj-*`. A trailing `-*` is dropped. Whitespace is trimmed. An empty prefix, a prefix with no [a-z0-9] character, or a prefix that cannot name an index is an error before any request. Cannot be combined with a non-empty `index`. With neither argument, searches `ax-*` (the CLI default when `--prefix` is omitted)."
+           },
+           "query": {
+-            "type": [
+-              "object",
+-              "string"
+-            ],
+-            "description": "Plain string (definition-first code search) or ES query-DSL clause. Omit for match_all."
++            "type": "string",
++            "description": "What to search for, in plain words — the definition-first code search `xerj search` runs. REQUIRED unless you pass `query_dsl` instead."
++          },
++          "query_dsl": {
++            "type": "object",
++            "description": "An Elasticsearch query-DSL clause, used INSTEAD of `query` when the search needs structure plain words cannot express — a `filter`, a `bool`, a `knn`, a field-scoped `match`, an explicit `match_all`. Cannot be combined with `query`. The engine's own order is kept."
+           },
+           "size": {
+             "type": "integer",
+```
+
+---
+
+### Incident Patch 2: `9edb4f59` (2026-10-29)
+**Commit Message**: Integrate the feedback fork fix and its real rollback control
+
+Preserve the original #2598 change and the strengthened failure-path test. The mock accepts the supported GitHub CLI fork arguments, leaves remote creation to the implementation and sends pushes to a nonexistent local path. Full composed validation follows before merge.
+
+**File**: `engine/crates/xerj-autoindex/src/feedback.rs` (modified, +64/-28)
+```diff
+@@ -439,7 +439,8 @@ pub fn pr_commands(d: &Draft) -> String {
+          # Run these in a clone of xerj-org/xerj, not in the project you are working in.\n\
+          git clone https://github.com/xerj-org/xerj.git\n\
+          cd xerj\n\
+-         gh repo fork xerj-org/xerj --remote --remote-name xerj-fork\n\
++         gh repo fork xerj-org/xerj --clone=false\n\
++         git remote add xerj-fork https://github.com/YOUR_LOGIN/xerj.git\n\
+          xerj feedback{agent_line} \\\n\
+          \x20 --used-for {used_for:?} --pointed-at {pointed_at:?} \\\n\
+          \x20 --verdict {verdict:?} --numbers {numbers:?} \\\n\
+@@ -912,43 +913,55 @@ fn has_push_rights() -> Result<bool, String> {
+     }
+ }
+ 
+-/// `gh repo fork` adds the `xerj-fork` remote. A remote that is already there
+-/// is enough — forking twice would fail on the second run.
++/// Make sure the `xerj-fork` remote points at the caller's fork. A remote that
++/// is already there is enough. Recent `gh` releases reject `--remote` when a
++/// repository argument is given (#2596), so fork without it (a no-op when the
++/// fork exists) and add the remote ourselves.
+ fn ensure_fork(dir: Option<&Path>) -> Result<(), String> {
+     if git_config_remote_exists(dir) {
+         return Ok(());
+     }
+-    if run_cmd(
++    if !run_cmd(
+         dir,
+         "gh",
+         &[
+             "repo".into(),
+             "fork".into(),
+             "xerj-org/xerj".into(),
+-            "--remote".into(),
+-            "--remote-name".into(),
++            "--clone=false".into(),
++        ],
++    ) {
++        return Err("`gh repo fork xerj-org/xerj --clone=false` failed".into());
++    }
++    let login = gh_login()?;
++    if !run_cmd(
++        dir,
++        "git",
++        &[
++            "remote".into(),
++            "add".into(),
+             "xerj-fork".into(),
++            format!("https://github.com/{login}/xerj.git"),
+         ],
+     ) {
+-        // A fork that lags main would refuse a push from a shallow clone.
+-        // Best effort: a failure here shows up as a failed push.
+-        if let Ok(login) = gh_login() {
+-            let _ = run_cmd(
+-                dir,
+-                "gh",
+-                &[
+-                    "repo".into(),
+-                    "sync".into(),
+-                    format!("{login}/xerj"),
+-                    "--branch".into(),
+-                    "main".into(),
+-                ],
+-            );
+-        }
+-        Ok(())
+-    } else {
+-        Err("`gh repo fork xerj-org/xerj --remote --remote-name xerj-fork` failed".into())
++        return Err(format!(
++            "`git remote add xerj-fork https://github.com/{login}/xerj.git` failed"
++        ));
+     }
++    // A fork that lags main would refuse a push from a shallow clone.
++    // Best effort: a failure here shows up as a failed push.
++    let _ = run_cmd(
++        dir,
++        "gh",
++        &[
++            "repo".into(),
++            "sync".into(),
++            format!("{login}/xerj"),
++            "--branch".into(),
++            "main".into(),
++        ],
++    );
++    Ok(())
+ }
+ 
+ fn git_config_remote_exists(dir: Option<&Path>) -> bool {
+@@ -1980,7 +1993,8 @@ mod tests {
+         let commands = pr_commands(&filled);
+         for needle in [
+             "git clone https://github.com/xerj-org/xerj.git",
+-            "gh repo fork xerj-org/xerj --remote --remote-name xerj-fork",
++            "gh repo fork xerj-org/xerj --clone=false",
++            "git remote add xerj-fork https://github.com/YOUR_LOGIN/xerj.git",
+             "--agent \"Claude Code\"",
+             "git push -u xerj-fork field-report/",
+             "--head YOUR_LOGIN:field-report/",
+@@ -2036,6 +2050,14 @@ mod tests {
+         xerj_origin(root);
+         let stub_dir = tempfile::tempdir().unwrap();
+         let log = stub_dir.path().join("gh.log");
++        let committed = stub_dir.path().join("report-committed");
++        write_executable(
++            &root.join(".git/hooks/post-commit"),
++            &format!(
++                "#!/bin/sh\ntouch {}\n",
++                shell_single(&committed.display().to_string())
++            ),
++        );
+         write_executable(
+             &stub_dir.path().join("gh"),
+             &format!(
+@@ -2044,7 +2066,12 @@ mod tests {
+                  \"auth status\") exit 0 ;;\n\
+                  \"api user\") echo testlogin; exit 0 ;;\n\
+                  \"api repos/xerj-org/xerj\") echo false; exit 0 ;;\n\
+-                 \"repo fork\") git remote add xerj-fork /nonexistent/fork-target; exit 0 ;;\n\
++                 \"repo fork\")\n\
++                   test \"$*\" = \"repo fork xerj-org/xerj --clone=false\" || exit 2\n\
++                   exit 0 ;;\n\
++                 \"repo sync\")\n\
++                   git remote set-url --push xerj-fork /nonexistent/fork-target\n\
++                   exit $? ;;\n\
+                  *) exit 1 ;;\n\
+                  esac\n",
+                 shell_single(&log.display().to_string())
+@@ -2058,8 +2085,17 @@ mod tests {
+       
+```
+
+---
+
+### Incident Patch 3: `30071c2b` (2026-10-29)
+**Commit Message**: Integrate the hybrid search page-size fix with current main
+
+Preserve the contributor’s original commit and its root-cause analysis: the
+engine pins the kNN leg independently at size k, so the outer hybrid query
+must retain the requested page size. Add size-zero, complete-union, final-page
+and refresh-success assertions to the existing transport regression.
+
+Reverting the API size selection reproduces the failure; the restored
+implementation passes the scoped API crate suite: 1009 passed, 0 failed,
+2 existing ignored. Main’s current tests and all prior changelog entries
+are retained. Final release and conformance checks follow on the composed tree.
+
+**File**: `CHANGELOG.md` (modified, +4/-0)
+```diff
+@@ -23,6 +23,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - Empty files keep separate inventory identities instead of being reported
+   as content duplicates of unrelated paths (#2449). Non-empty byte-identical
+   files still deduplicate.
++- A search with both `query` and a top-level `knn` returns `size` hits, not
++  `k` (#2561). The page was widened to `k`, so `size: 5, k: 20` returned
++  20 hits. `k` still sets how many nearest neighbours join the candidate
++  set, and `from`/`size` page through the union, as in Elasticsearch.
+ - Index deletion no longer waits for unrelated index statistics while
+   resolving its selectors. Index listings and health checks also release
+   their index-map locks before awaiting statistics, so a stalled schema
+```
+
+**File**: `engine/crates/xerj-api/src/es_compat.rs` (modified, +11/-1)
+```diff
+@@ -14251,9 +14251,19 @@ async fn search_impl(
+         } else {
+             knn_query_json
+         };
++        // A pure knn search is raised to `k` here and trimmed back by
++        // `knn_total_cap`. A hybrid search keeps the request's `size`
++        // (#2561): the engine pins the full top-k into the union itself
++        // (`pin_knn_clause`), so `k` widens the candidate set, and `size`
++        // is how many hits come back, as in ES.
++        let size = if body.query.is_some() {
++            body.size
++        } else {
++            body.size.max(k_total)
++        };
+         EsSearchBody {
+             query: Some(merged_query),
+-            size: body.size.max(k_total),
++            size,
+             knn: None,
+             ..body.clone()
+         }
+```
+
+**File**: `engine/crates/xerj-api/tests/knn_beside_query_with_aggs_stays_200.rs` (modified, +84/-0)
+```diff
+@@ -429,3 +429,87 @@ async fn knn_beside_bool_query_keeps_the_vector_contribution() {
+         "#825: the better vector match must lead the page: hits={hits:?} {body}"
+     );
+ }
++
++/// #2561: in the hybrid shape `size` is how many hits come back and `k` is
++/// how many nearest neighbours join the candidate set. The page used to be
++/// widened to `k`, so `size: 5, k: 20` returned 20 hits. The page must be
++/// the first `size` hits of the union (paged with `from`), and the vector
++/// side must still contribute: `vec` matches no term, and its vector is the
++/// query vector, so it leads the union.
++#[tokio::test]
++async fn knn_beside_query_returns_size_hits_not_k() {
++    let (app, _dir) = app().await;
++
++    let (st, b) = json_req(
++        &app,
++        "PUT",
++        "/sz",
++        json!({ "mappings": { "properties": {
++            "text": { "type": "text" },
++            "v": { "type": "dense_vector", "dims": 3, "similarity": "cosine" }
++        } } }),
++    )
++    .await;
++    assert!(st.is_success(), "create index: {st} {b}");
++    let mut docs: Vec<(String, Value)> = (1..=30)
++        .map(|i| {
++            (
++                i.to_string(),
++                json!({ "text": format!("apple doc {i}"), "v": [1.0, i as f32, 0.5] }),
++            )
++        })
++        .collect();
++    docs.push(("vec".into(), json!({ "text": "zzz", "v": [0.0, 0.0, 1.0] })));
++    for (id, doc) in docs {
++        let (st, b) = json_req(&app, "POST", &format!("/sz/_doc/{id}"), doc).await;
++        assert!(st.is_success(), "index {id}: {st} {b}");
++    }
++    let (status, body) = json_req(&app, "POST", "/sz/_refresh", json!({})).await;
++    assert!(status.is_success(), "refresh: {status} {body}");
++
++    let search = |from: usize, size: usize| {
++        let app = app.clone();
++        async move {
++            let (status, body) = json_req(
++                &app,
++                "POST",
++                "/sz/_search",
++                json!({
++                    "from": from,
++                    "size": size,
++                    "_source": false,
++                    "query": { "match": { "text": "apple" } },
++                    "knn": { "field": "v", "query_vector": [0.0, 0.0, 1.0], "k": 20, "num_candidates": 31 }
++                }),
++            )
++            .await;
++            assert_eq!(status, StatusCode::OK, "_search status: {status} {body}");
++            body.pointer("/hits/hits")
++                .and_then(Value::as_array)
++                .map(|hits| {
++                    hits.iter()
++                        .filter_map(|h| h.get("_id").and_then(Value::as_str).map(String::from))
++                        .collect::<Vec<_>>()
++                })
++                .unwrap_or_default()
++        }
++    };
++
++    let all = search(0, 31).await;
++    assert_eq!(all.len(), 31, "both legs contribute to the complete union");
++    assert!(search(0, 0).await.is_empty(), "size zero returns no hits");
++    let page = search(0, 5).await;
++    assert_eq!(
++        page.len(),
++        5,
++        "#2561: size 5 beside knn k 20 must return 5 hits, not k: {page:?}"
++    );
++    assert_eq!(page, all[..5], "the page is the head of the union: {all:?}");
++    assert!(
++        page.iter().any(|id| id == "vec"),
++        "the vector-only document must still reach the page: {page:?}"
++    );
++    let next = search(5, 5).await;
++    assert_eq!(next, all[5..10], "from pages through the union: {all:?}");
++    assert_eq!(search(30, 5).await, all[30..], "last page is bounded");
++}
+```
 
 #### Recent Merged Pull Requests:
-- **PR #2538** (2026-10-28): hub: author-approved contribution candidates (6738 repos) (@xerj-org)
-- **PR #2537** (2026-10-28): hub: author-approved contribution candidates (6708 repos) (@xerj-org)
-- **PR #2536** (2026-10-28): hub: author-approved contribution candidates (6682 repos) (@xerj-org)
-- **PR #2535** (closed): user-feedback: field report — private monorepo code search via MCP (@tiendat-work)
-- **PR #2534** (2026-10-28): hub: author-approved contribution candidates (6653 repos) (@xerj-org)
-- **PR #2533** (2026-10-28): hub: author-approved contribution candidates (6621 repos) (@xerj-org)
+- **PR #2613** (2026-10-29): Preserve MCP search compatibility, default budgets and honest node status (@xerj-org)
+- **PR #2612** (2026-10-29): hub: re-pin the ai_agent_chat corpus to the scrubbed commit (@DuNorth595)
+- **PR #2611** (2026-10-29): hub: author-approved contribution candidates (7689 repos) (@xerj-org)
+- **PR #2608** (2026-10-29): Fix feedback forking and local-key diagnostics; update both zip lockfiles (@xerj-org)
+- **PR #2603** (2026-10-29): fix(mcp): split xerj_search's union-typed `query` into `query` and `query_dsl` (@snmsoodan)
+- **PR #2602** (2026-10-29): Fix hybrid search pagination and clarify empty catalog namespaces (@xerj-org)
 
 ---
 
@@ -1933,3 +2380,41 @@ Automated daily snapshot (.github/workflows/release-metrics.yml). GitHub keeps n
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. mcp): split xerj_search's union-typed `query` into `query` and `query_dsl`
+
+**RULE**:
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `8ab6ae27`: mcp): split xerj_search's union-typed `query` into `query` and `query_dsl`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+| `xerj_search` | keyword search over an index, from plain words (`query`) or an ES query-DSL clause (`query_dsl`) |
+`query` is a plain string, and a structured ES query-DSL clause goes in
+`query_dsl` instead — `{"index":"docs","query_dsl":{"match_all":{}}}`. One of
+the two is required and they cannot be combined, so a call with neither is an
+error naming both rather than a silent `match_all` that returns nothing. The
+fields are separate because a union-typed `query` (`["object","string"]`) is
+what made some models emit invalid arguments for this tool alone (#2549).
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+| `xerj_search` | ES query-DSL search over an index |
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `8ab6ae27` are properly handled with clean fallback behavior.

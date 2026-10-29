@@ -2763,10 +2763,10 @@
     "repository": "xerj-org/xerj",
     "platform": "github",
     "sourceUrl": "https://github.com/xerj-org/xerj",
-    "sourceVersion": "5b46a142",
+    "sourceVersion": "d9409618",
     "license": "Apache-2.0",
-    "contentHash": "d7c4faa87db4867788c77a391bb09022f2a842fc5d8ec120c8ec9ab41020ff38",
-    "lastHarvestedAt": "2026-10-28T10:03:16.797Z",
+    "contentHash": "a94372a32ade6d89ee52f6f28fde64068370606bc907046330b3bce93f80a823",
+    "lastHarvestedAt": "2026-10-29T02:00:19.845Z",
     "learningId": "learn-github-xerj-org-xerj"
   },
   "markmead-hyperui": {
