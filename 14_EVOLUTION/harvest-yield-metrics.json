@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-29T11:01:48.003Z",
-  "total_cycles_completed": 6002,
-  "total_learnings_persisted": 6002,
+  "last_updated": "2026-10-29T11:29:28.128Z",
+  "total_cycles_completed": 6003,
+  "total_learnings_persisted": 6003,
   "total_rules_promoted": 5460,
   "history": [
-    {
-      "timestamp": "2026-10-28T15:43:14.401Z",
-      "repository": "openbmb/MiniCPM-OCR-1.0",
-      "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T15:43:25.912Z",
       "repository": "apache/shardingsphere",
@@ -1403,6 +1396,13 @@
       "repository": "fabio-rovai/open-ontologies",
       "learningId": "learn-github-fabio-rovai-open-ontologies",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T11:29:28.128Z",
+      "repository": "LiquidAI/LFM3-VL-2B",
+      "learningId": "learn-huggingface-liquidai-lfm3-vl-2b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

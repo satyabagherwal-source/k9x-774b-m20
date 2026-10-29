@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-29T10:58:55.795Z",
+  "lastUpdated": "2026-10-29T11:28:58.100Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -188,7 +188,7 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-29T10:58:50.542Z",
+        "lastActiveAt": "2026-10-29T11:28:55.269Z",
         "lastHarvestedAt": "2026-10-27T23:52:34.710Z",
         "totalHarvested": 1130,
         "lastError": null
@@ -198,7 +198,7 @@
         "domain": "fullstack-ui",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-29T10:58:53.077Z",
+        "lastActiveAt": "2026-10-29T11:28:57.794Z",
         "lastHarvestedAt": "2026-10-28T02:05:00.532Z",
         "totalHarvested": 1434,
         "lastError": null
@@ -208,9 +208,9 @@
         "domain": "high-perf-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-29T11:01:50.550Z",
-        "lastHarvestedAt": "2026-10-29T11:01:50.550Z",
-        "totalHarvested": 1617,
+        "lastActiveAt": "2026-10-29T11:29:30.659Z",
+        "lastHarvestedAt": "2026-10-29T11:29:30.659Z",
+        "totalHarvested": 1618,
         "lastError": null
       },
       {
@@ -218,7 +218,7 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-29T10:58:55.586Z",
+        "lastActiveAt": "2026-10-29T11:29:00.319Z",
         "lastHarvestedAt": "2026-10-29T01:17:49.864Z",
         "totalHarvested": 5392,
         "lastError": null
@@ -228,7 +228,7 @@
         "domain": "mobile-cross-platform",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-29T10:58:58.050Z",
+        "lastActiveAt": "2026-10-29T11:29:02.773Z",
         "lastHarvestedAt": "2026-10-29T02:03:31.945Z",
         "totalHarvested": 1609,
         "lastError": null
@@ -238,7 +238,7 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-29T10:59:00.657Z",
+        "lastActiveAt": "2026-10-29T11:29:05.293Z",
         "lastHarvestedAt": "2026-10-29T02:03:34.055Z",
         "totalHarvested": 1562,
         "lastError": null
@@ -248,7 +248,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-29T10:59:03.235Z",
+        "lastActiveAt": "2026-10-29T11:29:07.786Z",
         "lastHarvestedAt": "2026-10-28T23:05:31.325Z",
         "totalHarvested": 1340,
         "lastError": null
@@ -258,7 +258,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-29T10:59:05.590Z",
+        "lastActiveAt": "2026-10-29T11:29:10.266Z",
         "lastHarvestedAt": "2026-10-29T02:07:33.743Z",
         "totalHarvested": 1599,
         "lastError": null
@@ -268,7 +268,7 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-29T10:59:08.062Z",
+        "lastActiveAt": "2026-10-29T11:29:12.824Z",
         "lastHarvestedAt": "2026-10-28T20:38:00.591Z",
         "totalHarvested": 1212,
         "lastError": null
@@ -294,7 +294,7 @@
     "GITHUB_REST_API": {
       "service": "GITHUB_REST_API",
       "status": "HEALTHY",
-      "remaining": 4988,
+      "remaining": 4986,
       "resetEpoch": 0,
       "resetAt": null,
       "trippedAt": null,
@@ -303,13 +303,14 @@
     },
     "GITHUB_SEARCH_API": {
       "service": "GITHUB_SEARCH_API",
-      "status": "HEALTHY",
-      "remaining": 10,
-      "resetEpoch": 0,
-      "resetAt": null,
-      "trippedAt": null,
-      "reason": null,
-      "consecutiveBlocks": 0
+      "status": "COOLING_DOWN",
+      "remaining": 22,
+      "resetEpoch": 1793273390173,
+      "resetAt": "2026-10-29T11:29:50.173Z",
+      "trippedAt": "2026-10-29T11:28:49.173Z",
+      "reason": "Secondary rate limit or HTTP 403 backoff (Remaining: 21 | Resource: search | URL: https://api.github.com/search/repositories?q=%22agent%20workflow%22%20language%3Atypescript%20stars%3A%3E1000%20sort%3Astars&per_page=15&page=2)",
+      "consecutiveBlocks": 0,
+      "isSecondaryRateLimit": true
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T11:01:47.921Z",
-  "total_verified_learnings": 1162,
+  "last_updated": "2026-10-29T11:29:28.021Z",
+  "total_verified_learnings": 1163,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -148121,6 +148121,33 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T11:01:47.903Z"
+    },
+    "learn-huggingface-liquidai-lfm3-vl-2b": {
+      "learning_id": "learn-huggingface-liquidai-lfm3-vl-2b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "LiquidAI/LFM3-VL-2B",
+      "repository": "LiquidAI/LFM3-VL-2B",
+      "slug": "hf-liquidai-lfm3-vl-2b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/LiquidAI/LFM3-VL-2B",
+      "source_version": "hf-liquidai-lfm3-vl-2b",
+      "content_hash": "a6733be8c58afaae5e9654d0e141c44e0b76842c84f7eae57b344e5c676d81a7",
+      "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm3-vl-2b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-vl-2b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-29T11:29:27.995Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     }
   },
   "aliases": {

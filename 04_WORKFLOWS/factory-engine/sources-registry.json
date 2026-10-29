@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-29T11:01:50.553Z",
-    "lastVerified": "2026-10-29T11:01:50.553Z",
+    "lastChecked": "2026-10-29T11:29:30.662Z",
+    "lastVerified": "2026-10-29T11:29:30.662Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -394,8 +394,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T02:00:17.600Z",
-    "lastVerified": "2026-10-29T02:00:17.600Z",
+    "lastChecked": "2026-10-29T11:29:12.817Z",
+    "lastVerified": "2026-10-29T11:29:12.817Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1357,9 +1357,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-10-28T22:14:05.057Z",
+    "lastChecked": "2026-10-29T11:29:07.778Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-10-28T22:14:05.057Z"
+    "lastVerified": "2026-10-29T11:29:07.778Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -2918,9 +2918,9 @@
   "vasu-devs-justhireme": {
     "name": "JustHireMe",
     "officialUrl": "https://github.com/vasu-devs/JustHireMe",
-    "lastChecked": "2026-10-28T11:11:59.728Z",
+    "lastChecked": "2026-10-29T11:29:10.258Z",
     "revisionIdentifier": "accdcdb5",
-    "lastVerified": "2026-10-28T11:11:59.728Z"
+    "lastVerified": "2026-10-29T11:29:10.258Z"
   },
   "ekzhang-bore": {
     "name": "bore",
@@ -3297,9 +3297,9 @@
   "alibaba-sentinel-golang": {
     "name": "sentinel-golang",
     "officialUrl": "https://github.com/alibaba/sentinel-golang",
-    "lastChecked": "2026-10-28T12:15:35.124Z",
+    "lastChecked": "2026-10-29T11:29:05.285Z",
     "revisionIdentifier": "f7a7f957",
-    "lastVerified": "2026-10-28T12:15:35.124Z"
+    "lastVerified": "2026-10-29T11:29:05.285Z"
   },
   "supervc-stack-vectorchord": {
     "name": "VectorChord",
@@ -8063,6 +8063,37 @@
     "promotedRulesCount": 3,
     "recentFixesCount": 7,
     "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "serpapi-google-search-results-nodejs": {
+    "name": "google-search-results-nodejs",
+    "officialUrl": "https://github.com/serpapi/google-search-results-nodejs",
+    "lastChecked": "2026-10-29T11:29:00.311Z",
+    "revisionIdentifier": "f6d03fc9",
+    "lastVerified": "2026-10-29T11:29:00.311Z"
+  },
+  "apppear-chartview": {
+    "name": "ChartView",
+    "officialUrl": "https://github.com/AppPear/ChartView",
+    "lastChecked": "2026-10-29T11:29:02.765Z",
+    "revisionIdentifier": "df0b2641",
+    "lastVerified": "2026-10-29T11:29:02.765Z"
+  },
+  "hf-liquidai-lfm3-vl-2b": {
+    "name": "LiquidAI/LFM3-VL-2B",
+    "officialUrl": "https://huggingface.co/LiquidAI/LFM3-VL-2B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-29T11:28:58.104Z",
+    "lastVerified": "2026-10-29T11:28:58.104Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-liquidai-lfm3-vl-2b",
+    "contentHash": "a6733be8c58afaae5e9654d0e141c44e0b76842c84f7eae57b344e5c676d81a7",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-5O3U",
-    "timestamp": "2026-10-27T20:31:51.882Z",
-    "repository": "herdrdev/herdr",
-    "learningId": "learn-github-herdrdev-herdr",
-    "contentHash": "81b3a3224ff8ef5d4f16d9b71ed5ba65f1fd994c85736c69081888c458dd4aca",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-5TJD",
     "timestamp": "2026-10-27T20:31:58.921Z",
     "repository": "Comfy-Org/Fibo-2.0",
@@ -7492,6 +7477,21 @@
     "contentHash": "c8f921755d9731df7233374b7534ed9f651be64d9b7caf47326920d494a49662",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-NUIA",
+    "timestamp": "2026-10-29T11:29:28.114Z",
+    "repository": "LiquidAI/LFM3-VL-2B",
+    "learningId": "learn-huggingface-liquidai-lfm3-vl-2b",
+    "contentHash": "a6733be8c58afaae5e9654d0e141c44e0b76842c84f7eae57b344e5c676d81a7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -6034,3 +6034,4 @@ Every entry in this ledger must capture:
 | `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `0d6c556e` | Multi-dimensional audit evidence | 2026-10-29T02:07:19.228Z |
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `9aa1f674` | Multi-dimensional audit evidence | 2026-10-29T02:07:31.197Z |
 | `learn-github-fabio-rovai-open-ontologies` | `https://github.com/fabio-rovai/open-ontologies` | `2ecb50c2` | Multi-dimensional audit evidence | 2026-10-29T11:01:47.998Z |
+| `learn-huggingface-liquidai-lfm3-vl-2b` | `https://huggingface.co/LiquidAI/LFM3-VL-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-29T11:29:28.117Z |
