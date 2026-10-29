@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-29T02:03:34.058Z",
-    "lastVerified": "2026-10-29T02:03:34.058Z",
+    "lastChecked": "2026-10-29T02:07:33.746Z",
+    "lastVerified": "2026-10-29T02:07:33.746Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -224,8 +224,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T01:43:19.847Z",
-    "lastVerified": "2026-10-29T01:43:19.847Z",
+    "lastChecked": "2026-10-29T02:07:29.193Z",
+    "lastVerified": "2026-10-29T02:07:29.193Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1233,9 +1233,9 @@
   "rustcrypto-hashes": {
     "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-10-28T21:56:36.628Z",
+    "lastChecked": "2026-10-29T02:07:24.168Z",
     "revisionIdentifier": "23d8e40e",
-    "lastVerified": "2026-10-28T21:56:36.628Z"
+    "lastVerified": "2026-10-29T02:07:24.168Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -1369,11 +1369,21 @@
     "lastVerified": "2026-10-28T22:33:02.732Z"
   },
   "cachix-devenv": {
-    "name": "devenv",
+    "name": "cachix/devenv",
     "officialUrl": "https://github.com/cachix/devenv",
-    "lastChecked": "2026-10-28T04:54:54.946Z",
-    "revisionIdentifier": "b31d7faa",
-    "lastVerified": "2026-10-28T04:54:54.946Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-29T02:07:17.637Z",
+    "lastVerified": "2026-10-29T02:07:17.637Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-cachix-devenv",
+    "contentHash": "fc98da1b4e4c33fb6bd659b9c373a114e902f703c8159f53ab8b9a924fbcfd0d",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-prism-ml-ternary-bonsai-2-27b-gguf": {
     "name": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -2800,14 +2810,14 @@
     "officialUrl": "https://github.com/lioensky/VCPToolBox",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-10-28T10:43:48.492Z",
-    "lastVerified": "2026-10-28T10:43:48.492Z",
+    "lastChecked": "2026-10-29T02:07:30.572Z",
+    "lastVerified": "2026-10-29T02:07:30.572Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-lioensky-vcptoolbox",
-    "contentHash": "6693cca0ba7e82ce2a553b8d18f5babc40160e5bd9828ccf67c53fe048d4caba",
+    "contentHash": "050b40df3ed00819aa91af1d4a7025af8408528e83d7f5c956a6494dd19b8a9b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3174,12 +3184,12 @@
     "lastVerified": "2026-10-28T12:01:55.601Z"
   },
   "koderover-zadig": {
-    "name": "koderover/zadig",
+    "name": "zadig",
     "officialUrl": "https://github.com/koderover/zadig",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T12:02:03.490Z",
-    "lastVerified": "2026-10-28T12:02:03.490Z",
+    "lastChecked": "2026-10-29T02:07:21.720Z",
+    "lastVerified": "2026-10-29T02:07:21.720Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-koderover-zadig",
@@ -3188,7 +3198,8 @@
     "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "0462edd7"
   },
   "doobidoo-mcp-memory-service": {
     "name": "doobidoo/mcp-memory-service",
@@ -8009,5 +8020,19 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "maatify-seo": {
+    "name": "seo",
+    "officialUrl": "https://github.com/Maatify/seo",
+    "lastChecked": "2026-10-29T02:07:16.678Z",
+    "revisionIdentifier": "47d17d7d",
+    "lastVerified": "2026-10-29T02:07:16.678Z"
+  },
+  "alin23-lunar": {
+    "name": "Lunar",
+    "officialUrl": "https://github.com/alin23/Lunar",
+    "lastChecked": "2026-10-29T02:07:19.151Z",
+    "revisionIdentifier": "06950e25",
+    "lastVerified": "2026-10-29T02:07:19.151Z"
   }
 }

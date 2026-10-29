@@ -6031,3 +6031,5 @@ Every entry in this ledger must capture:
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `d9409618` | Multi-dimensional audit evidence | 2026-10-29T02:00:19.845Z |
 | `learn-github-jacklandrin-onlyswitch` | `https://github.com/jacklandrin/OnlySwitch` | `d1bce595` | Multi-dimensional audit evidence | 2026-10-29T02:03:29.414Z |
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `efa5b45f` | Multi-dimensional audit evidence | 2026-10-29T02:03:31.525Z |
+| `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `0d6c556e` | Multi-dimensional audit evidence | 2026-10-29T02:07:19.228Z |
+| `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `9aa1f674` | Multi-dimensional audit evidence | 2026-10-29T02:07:31.197Z |

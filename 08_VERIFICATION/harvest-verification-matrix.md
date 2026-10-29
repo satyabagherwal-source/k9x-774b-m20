@@ -6022,3 +6022,5 @@
 | `CYCLE-20261029-BXJ6` | `2026-10-29T02:00:19.842Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5488` | Yes (`a94372a3...`) |
 | `CYCLE-20261029-FZSZ` | `2026-10-29T02:03:29.411Z` | `jacklandrin/OnlySwitch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5489` | Yes (`e74a4444...`) |
 | `CYCLE-20261029-G1FM` | `2026-10-29T02:03:31.522Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5490` | Yes (`7a2487ab...`) |
+| `CYCLE-20261029-KX4P` | `2026-10-29T02:07:19.225Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5491` | Yes (`fc98da1b...`) |
+| `CYCLE-20261029-L6D6` | `2026-10-29T02:07:31.194Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5492` | Yes (`050b40df...`) |

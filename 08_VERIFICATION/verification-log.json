@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-QOAX",
-    "timestamp": "2026-10-27T20:20:12.297Z",
-    "repository": "actions/actions-runner-controller",
-    "learningId": "learn-github-actions-actions-runner-controller",
-    "contentHash": "764271afe3bfebf04cf9fc8a7190d7289dc61975c96b630246067dd3bd9d44f1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-QSTA",
-    "timestamp": "2026-10-27T20:20:18.142Z",
-    "repository": "risingwavelabs/risingwave",
-    "learningId": "learn-github-risingwavelabs-risingwave",
-    "contentHash": "78fb211ce3b1d08efa8d41f3b607c1cff8914c6cae76c7d31bb75a932804bfaa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-X5HX",
     "timestamp": "2026-10-27T20:25:14.517Z",
     "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
@@ -7490,6 +7460,36 @@
     "repository": "PeerDB-io/peerdb",
     "learningId": "learn-github-peerdb-io-peerdb",
     "contentHash": "7a2487ab51b47afdbf8487362a7eb54cb1cd775f8e8c229475abe32847760f02",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-KX4P",
+    "timestamp": "2026-10-29T02:07:19.225Z",
+    "repository": "cachix/devenv",
+    "learningId": "learn-github-cachix-devenv",
+    "contentHash": "fc98da1b4e4c33fb6bd659b9c373a114e902f703c8159f53ab8b9a924fbcfd0d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-L6D6",
+    "timestamp": "2026-10-29T02:07:31.194Z",
+    "repository": "lioensky/VCPToolBox",
+    "learningId": "learn-github-lioensky-vcptoolbox",
+    "contentHash": "050b40df3ed00819aa91af1d4a7025af8408528e83d7f5c956a6494dd19b8a9b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

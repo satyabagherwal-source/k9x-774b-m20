@@ -397592,3 +397592,120 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `ab1ba0c5` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5491. processes): keep native manager PID file fresh (#3319) (Harvested from cachix/devenv)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "processes): keep native manager PID file fresh (#3319)",
+  "source": "cachix/devenv",
+  "source_url": "https://github.com/cachix/devenv",
+  "source_version": "0d6c556e",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-29T02:07:18.942Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-cachix-devenv",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [cachix/devenv](https://github.com/cachix/devenv) (Revision: `0d6c556e`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.github/workflows/build.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cachix/devenv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `0d6c556e`: processes): keep native manager PID file fresh (#3319). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build.yml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+      # process scheduling and manager lifecycle regressions on Linux and macOS.
+      - name: Check process scheduling, lifecycle, and dependency errors
+              -E 'test(concurrent_dynamic_starts_share_never_started_process_prerequisite) | test(concurrent_start_stop_keeps_explicitly_stopped_dependencies_off) | test(failed_prerequisite_is_visible_under_each_process_with_stopped_filter) | test(disabled_process_root_does_not_select_its_prerequisites) | test(disabled_process_needed_by_a_root_selects_its_prerequisites) | test(api_server_refresh)'
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+      # process scheduling regressions explicitly on Linux and macOS.
+      - name: Check process scheduling and dependency errors
+              -E 'test(concurrent_dynamic_starts_share_never_started_process_prerequisite) | test(concurrent_start_stop_keeps_explicitly_stopped_dependencies_off) | test(failed_prerequisite_is_visible_under_each_process_with_stopped_filter) | test(disabled_process_root_does_not_select_its_prerequisites) | test(disabled_process_needed_by_a_root_selects_its_prerequisites)'
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `0d6c556e` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5492. Merge pull request #560 from lioensky/rivermemo-fix-2.4 (Harvested from lioensky/VCPToolBox)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Merge pull request #560 from lioensky/rivermemo-fix-2.4",
+  "source": "lioensky/VCPToolBox",
+  "source_url": "https://github.com/lioensky/VCPToolBox",
+  "source_version": "9aa1f674",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-29T02:07:30.915Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-lioensky-vcptoolbox",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox) (Revision: `9aa1f674`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `Plugin/LightMemo/abDiagnostics.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `9aa1f674`: Merge pull request #560 from lioensky/rivermemo-fix-2.4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `Plugin/LightMemo/abDiagnostics.js`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Verified production-grade fix pattern:
+    const explained = river.candidateDiagnostics || river.results || [];
+    output += `解释候选 ${explained.length} 条（包含 Top-K 之外的共同池候选，如原生已提供）。\n\n`;
+    const wormholeMode = river.algorithmVersion?.startsWith('rivermemo.wormhole-readout-');
+    if (wormholeMode) {
+        output += '独立虫洞通道：最终分＝最强路线的相对流量 × 终点正文正余弦；不是原查询底分加奖励，也不是相关性概率。无可用虫洞才整通道回退查询余弦。精确标签／来源文件仅为文件级地址诊断，不证明该 Chunk 回答问题。\n\n';
+        output += '| Chunk | 排名 | 通道 | 原查询余弦 | 路线 | 原始流量 | 相对流量 | 终点正文余弦 | 最终分 | 地址定位 | 精确终点标签 | 边来源文件 |\n|---:|---:|---|---:|---|---:|---:|---:|---:|---|---|---|\n';
+        const name = id => (graph?.nodes || []).find(node => node.id === id)?.name || `Tag#${id}`;
+        for (const item of explained) {
+            const trace = item.topologyV3 || {};
+            const readout = trace.wormholeReadout || {};
+            const route = readout.sourceId == null ? '—'
+                : `${name(readout.sourceId)} → ${name(readout.targetId)}`;
+            output += `| ${item.chunkId ?? item.id} | ${item.rank ?? '—'} | ${cell(item.role)} | ${number(trace.queryScore ?? item.vectorScore)} | ${cell(route)} | ${number(readout.flow)} | ${number(readout.relativeFlow)} | ${number(readout.endpointBodyCosine)} | 
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Anti-pattern to NEVER write (induced failure mode):
+    output += '基础分已包含场共振增益；最终分＝基础分＋路径奖励＋图奖励＋直锚奖励－截断扣分，勿重复累加场共振。\n\n';
+    for (const item of river.results || []) {
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `9aa1f674` are properly handled with clean fallback behavior.

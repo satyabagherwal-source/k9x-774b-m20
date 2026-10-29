@@ -2783,10 +2783,10 @@
     "repository": "cachix/devenv",
     "platform": "github",
     "sourceUrl": "https://github.com/cachix/devenv",
-    "sourceVersion": "b31d7faa",
+    "sourceVersion": "0d6c556e",
     "license": "Apache-2.0",
-    "contentHash": "ebd77dc2c879a739db7ecf8fa1a74000d533111e91fb61aae78eb7f7fbebcb4e",
-    "lastHarvestedAt": "2026-10-27T22:54:47.736Z",
+    "contentHash": "fc98da1b4e4c33fb6bd659b9c373a114e902f703c8159f53ab8b9a924fbcfd0d",
+    "lastHarvestedAt": "2026-10-29T02:07:19.228Z",
     "learningId": "learn-github-cachix-devenv"
   },
   "pubkey-rxdb": {
@@ -2993,10 +2993,10 @@
     "repository": "lioensky/VCPToolBox",
     "platform": "github",
     "sourceUrl": "https://github.com/lioensky/VCPToolBox",
-    "sourceVersion": "e6d9739b",
+    "sourceVersion": "9aa1f674",
     "license": "NOASSERTION",
-    "contentHash": "6693cca0ba7e82ce2a553b8d18f5babc40160e5bd9828ccf67c53fe048d4caba",
-    "lastHarvestedAt": "2026-10-28T10:43:49.323Z",
+    "contentHash": "050b40df3ed00819aa91af1d4a7025af8408528e83d7f5c956a6494dd19b8a9b",
+    "lastHarvestedAt": "2026-10-29T02:07:31.197Z",
     "learningId": "learn-github-lioensky-vcptoolbox"
   },
   "megabit-blazorise": {
