@@ -3073,10 +3073,10 @@
     "repository": "unhappychoice/gitlogue",
     "platform": "github",
     "sourceUrl": "https://github.com/unhappychoice/gitlogue",
-    "sourceVersion": "02474e61",
+    "sourceVersion": "640973f9",
     "license": "ISC",
-    "contentHash": "556ee34f14b01975edb18df61568e000ea7ca890081f83bbefb71e7ccb9e1f51",
-    "lastHarvestedAt": "2026-10-22T19:22:37.606Z",
+    "contentHash": "060e625d675a9e6f41b02c01023ae490ae4dbcb683934656b35c829c3258536e",
+    "lastHarvestedAt": "2026-10-29T12:16:50.145Z",
     "learningId": "learn-github-unhappychoice-gitlogue"
   },
   "faridsafi-react-native-gifted-chat": {
@@ -3293,10 +3293,10 @@
     "repository": "doobidoo/mcp-memory-service",
     "platform": "github",
     "sourceUrl": "https://github.com/doobidoo/mcp-memory-service",
-    "sourceVersion": "52568d90",
+    "sourceVersion": "9d8b9f06",
     "license": "Apache-2.0",
-    "contentHash": "e32d49eac0eda450c831db107b88926aab4db679731651bae826d36a15f3b239",
-    "lastHarvestedAt": "2026-10-28T12:02:08.863Z",
+    "contentHash": "1658218cd321a5145517937f9d3b78194b7f5d67618d92368e606e94c8fa9658",
+    "lastHarvestedAt": "2026-10-29T12:13:33.983Z",
     "learningId": "learn-github-doobidoo-mcp-memory-service"
   },
   "21st-dev-magic-mcp": {
@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "a113cf0d",
+    "sourceVersion": "3ee4f0f4",
     "license": "MIT",
-    "contentHash": "213d8b8ddb98805591a33e58fdf2dd2193a0bb7fd4e4b8b3a5a0426119faf3a7",
-    "lastHarvestedAt": "2026-10-28T19:17:21.267Z",
+    "contentHash": "acba38cb9feda86f8dc1148d8e60774358bc56eab53cd0f17d646ef448753e3c",
+    "lastHarvestedAt": "2026-10-29T12:13:31.042Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {

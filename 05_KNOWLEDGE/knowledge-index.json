@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T12:08:56.177Z",
+  "last_updated": "2026-10-29T12:16:50.064Z",
   "total_verified_learnings": 1163,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9845,8 +9845,8 @@
       "slug": "doobidoo-mcp-memory-service",
       "platform": "github",
       "source_url": "https://github.com/doobidoo/mcp-memory-service",
-      "source_version": "52568d90",
-      "content_hash": "e32d49eac0eda450c831db107b88926aab4db679731651bae826d36a15f3b239",
+      "source_version": "9d8b9f06",
+      "content_hash": "1658218cd321a5145517937f9d3b78194b7f5d67618d92368e606e94c8fa9658",
       "dossier_path": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "promoted_rules": [
@@ -9899,6 +9899,11 @@
           "number": 5278,
           "title": "deps): bump the uv group with 7 updates (#1700)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5505,
+          "title": "ci(prove-fix): give Milvus tests a real verdict (#1709) (#1710)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9906,7 +9911,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T12:02:08.759Z",
+      "verified_at": "2026-10-29T12:13:33.889Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44489,8 +44494,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "a113cf0d",
-      "content_hash": "213d8b8ddb98805591a33e58fdf2dd2193a0bb7fd4e4b8b3a5a0426119faf3a7",
+      "source_version": "3ee4f0f4",
+      "content_hash": "acba38cb9feda86f8dc1148d8e60774358bc56eab53cd0f17d646ef448753e3c",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -44570,7 +44575,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T19:17:21.173Z",
+      "verified_at": "2026-10-29T12:13:30.916Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54127,8 +54132,8 @@
       "slug": "unhappychoice-gitlogue",
       "platform": "github",
       "source_url": "https://github.com/unhappychoice/gitlogue",
-      "source_version": "02474e61",
-      "content_hash": "556ee34f14b01975edb18df61568e000ea7ca890081f83bbefb71e7ccb9e1f51",
+      "source_version": "640973f9",
+      "content_hash": "060e625d675a9e6f41b02c01023ae490ae4dbcb683934656b35c829c3258536e",
       "dossier_path": "07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
       "promoted_rules": [
@@ -54141,6 +54146,21 @@
           "number": 3711,
           "title": "Merge pull request #252 from unhappychoice/dependabot/cargo/tree-sitter-scala-0.",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5506,
+          "title": "Dual-Horizon Syntax Interpolation for Live Text Synthesis",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5507,
+          "title": "Multi-Tier Thread-Safe Configuration Overrides with Document-Preserving Serialization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5508,
+          "title": "Absolute Separation of Grapheme Cluster Count and Display Column Width in TUI Layouts",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54148,7 +54168,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T19:22:37.552Z",
+      "verified_at": "2026-10-29T12:16:50.045Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -148319,6 +148339,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T12:08:56.162Z"
+    },
+    "rule-5505": {
+      "learning_id": "rule-5505",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5505,
+      "title": "ci(prove-fix): give Milvus tests a real verdict (#1709) (#1710)",
+      "source_url": "https://github.com/doobidoo/mcp-memory-service",
+      "source_version": "9d8b9f06",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T12:13:33.889Z"
+    },
+    "rule-5506": {
+      "learning_id": "rule-5506",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5506,
+      "title": "Dual-Horizon Syntax Interpolation for Live Text Synthesis",
+      "source_url": "https://github.com/unhappychoice/gitlogue",
+      "source_version": "640973f9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T12:16:50.045Z"
+    },
+    "rule-5507": {
+      "learning_id": "rule-5507",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5507,
+      "title": "Multi-Tier Thread-Safe Configuration Overrides with Document-Preserving Serialization",
+      "source_url": "https://github.com/unhappychoice/gitlogue",
+      "source_version": "640973f9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T12:16:50.045Z"
+    },
+    "rule-5508": {
+      "learning_id": "rule-5508",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5508,
+      "title": "Absolute Separation of Grapheme Cluster Count and Display Column Width in TUI Layouts",
+      "source_url": "https://github.com/unhappychoice/gitlogue",
+      "source_version": "640973f9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T12:16:50.045Z"
     }
   },
   "aliases": {

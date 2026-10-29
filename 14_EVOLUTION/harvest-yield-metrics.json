@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-29T12:08:56.243Z",
-  "total_cycles_completed": 6012,
-  "total_learnings_persisted": 6012,
-  "total_rules_promoted": 5469,
+  "last_updated": "2026-10-29T12:16:50.151Z",
+  "total_cycles_completed": 6015,
+  "total_learnings_persisted": 6015,
+  "total_rules_promoted": 5473,
   "history": [
-    {
-      "timestamp": "2026-10-28T16:05:27.596Z",
-      "repository": "arangodb/arangodb",
-      "learningId": "learn-github-arangodb-arangodb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T16:12:19.026Z",
-      "repository": "openai/clip-vit-base-patch32",
-      "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T16:12:35.092Z",
-      "repository": "trinodb/trino",
-      "learningId": "learn-github-trinodb-trino",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T16:19:20.615Z",
       "repository": "u-root/u-root",
@@ -1403,6 +1382,27 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T12:13:31.050Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T12:13:33.989Z",
+      "repository": "doobidoo/mcp-memory-service",
+      "learningId": "learn-github-doobidoo-mcp-memory-service",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T12:16:50.151Z",
+      "repository": "unhappychoice/gitlogue",
+      "learningId": "learn-github-unhappychoice-gitlogue",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

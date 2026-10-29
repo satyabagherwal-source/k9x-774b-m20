@@ -1,16 +1,16 @@
 {
   "domains": {
     "ai-agents": {
-      "queryIndex": 7,
+      "queryIndex": 1,
       "page": 5
     },
     "fullstack-ui": {
-      "queryIndex": 4,
+      "queryIndex": 3,
       "page": 3
     },
     "high-perf-systems": {
-      "queryIndex": 1,
-      "page": 4
+      "queryIndex": 3,
+      "page": 2
     },
     "huggingface-ai-models": {
       "queryIndex": 0,
@@ -38,9 +38,9 @@
     }
   },
   "huggingFace": {
-    "sortIndex": 2,
+    "sortIndex": 0,
     "page": 1
   },
   "totalAutoDiscovered": 205,
-  "lastReplenishedAt": "2026-10-29T12:08:30.097Z"
+  "lastReplenishedAt": "2026-10-29T12:13:09.916Z"
 }

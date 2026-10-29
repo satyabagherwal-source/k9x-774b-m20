@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-WNQR",
-    "timestamp": "2026-10-27T20:52:51.123Z",
-    "repository": "shoutem/ui",
-    "learningId": "learn-github-shoutem-ui",
-    "contentHash": "188c0abdc7d97bcd1122ef4ea2272b81d3aa9f81f09f647bc6a059d865529f88",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-WQO9",
-    "timestamp": "2026-10-27T20:52:54.921Z",
-    "repository": "projectcontour/contour",
-    "learningId": "learn-github-projectcontour-contour",
-    "contentHash": "d3e6cc5f8143db64147ec0c717c27dd45c870bead03fc500db2d410221b43481",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-WUYR",
-    "timestamp": "2026-10-27T20:53:00.483Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "98fcef47f7d480d0e9b2fa577076d242e5bd1fcaa2bb6b642e66ab0103300643",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-Z8RP",
     "timestamp": "2026-10-27T20:54:51.685Z",
     "repository": "microsoft/fluentui",
@@ -7492,6 +7447,51 @@
     "contentHash": "4b554aa73d9ace51ae6474332af790fbb1a9b3a404a2dba7a98e8a2d32152bfe",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-8HSV",
+    "timestamp": "2026-10-29T12:13:31.039Z",
+    "repository": "projectdiscovery/nuclei",
+    "learningId": "learn-github-projectdiscovery-nuclei",
+    "contentHash": "acba38cb9feda86f8dc1148d8e60774358bc56eab53cd0f17d646ef448753e3c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-8K2K",
+    "timestamp": "2026-10-29T12:13:33.980Z",
+    "repository": "doobidoo/mcp-memory-service",
+    "learningId": "learn-github-doobidoo-mcp-memory-service",
+    "contentHash": "1658218cd321a5145517937f9d3b78194b7f5d67618d92368e606e94c8fa9658",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-CRFH",
+    "timestamp": "2026-10-29T12:16:50.141Z",
+    "repository": "unhappychoice/gitlogue",
+    "learningId": "learn-github-unhappychoice-gitlogue",
+    "contentHash": "060e625d675a9e6f41b02c01023ae490ae4dbcb683934656b35c829c3258536e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

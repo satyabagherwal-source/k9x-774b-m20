@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T22:01:34.826Z",
+  "last_updated": "2026-10-29T12:13:31.048Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3258,6 +3258,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-astral-sh-ruff"
+    },
+    {
+      "id": "CD-8HT4",
+      "directive_title": "refresh security context (#7693)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "projectdiscovery/nuclei",
+      "source_commit": "3ee4f0f4",
+      "date_staged": "2026-10-29",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **VERIFICATION METHOD** automated verification protocol",
+      "learning_id": "learn-github-projectdiscovery-nuclei"
     }
   ]
 }

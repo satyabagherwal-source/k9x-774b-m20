@@ -6044,3 +6044,6 @@ Every entry in this ledger must capture:
 | `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `1cd28b29` | Multi-dimensional audit evidence | 2026-10-29T12:08:42.819Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `e5827d55` | Multi-dimensional audit evidence | 2026-10-29T12:08:54.465Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `0c9e11ad` | Multi-dimensional audit evidence | 2026-10-29T12:08:56.238Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `3ee4f0f4` | Multi-dimensional audit evidence | 2026-10-29T12:13:31.042Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `9d8b9f06` | Multi-dimensional audit evidence | 2026-10-29T12:13:33.983Z |
+| `learn-github-unhappychoice-gitlogue` | `https://github.com/unhappychoice/gitlogue` | `640973f9` | Multi-dimensional audit evidence | 2026-10-29T12:16:50.145Z |

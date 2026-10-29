@@ -6035,3 +6035,6 @@
 | `CYCLE-20261029-2BEO` | `2026-10-29T12:08:42.816Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5502` | Yes (`ab89e548...`) |
 | `CYCLE-20261029-2KE6` | `2026-10-29T12:08:54.462Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5503` | Yes (`c17c3265...`) |
 | `CYCLE-20261029-2LRF` | `2026-10-29T12:08:56.235Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5504` | Yes (`4b554aa7...`) |
+| `CYCLE-20261029-8HSV` | `2026-10-29T12:13:31.039Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md` | Yes (`acba38cb...`) |
+| `CYCLE-20261029-8K2K` | `2026-10-29T12:13:33.980Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5505` | Yes (`1658218c...`) |
+| `CYCLE-20261029-CRFH` | `2026-10-29T12:16:50.141Z` | `unhappychoice/gitlogue` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5506, Rule 5507, Rule 5508` | Yes (`060e625d...`) |

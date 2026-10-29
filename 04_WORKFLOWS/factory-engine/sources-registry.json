@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-29T12:08:58.771Z",
-    "lastVerified": "2026-10-29T12:08:58.771Z",
+    "lastChecked": "2026-10-29T12:16:52.702Z",
+    "lastVerified": "2026-10-29T12:16:52.702Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -130,12 +130,12 @@
     "revisionIdentifier": "0941fb03"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "Bitterbot-AI/bitterbot-desktop",
+    "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-29T11:44:03.262Z",
-    "lastVerified": "2026-10-29T11:44:03.262Z",
+    "lastChecked": "2026-10-29T12:13:30.423Z",
+    "lastVerified": "2026-10-29T12:13:30.423Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -144,7 +144,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ecc86c07"
   },
   "sxyazi-yazi": {
     "name": "sxyazi/yazi",
@@ -1743,22 +1744,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "projectdiscovery-nuclei": {
-    "name": "nuclei",
+    "name": "projectdiscovery/nuclei",
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T22:52:17.797Z",
-    "lastVerified": "2026-10-28T22:52:17.797Z",
+    "lastChecked": "2026-10-29T12:13:29.784Z",
+    "lastVerified": "2026-10-29T12:13:29.784Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "213d8b8ddb98805591a33e58fdf2dd2193a0bb7fd4e4b8b3a5a0426119faf3a7",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "contentHash": "acba38cb9feda86f8dc1148d8e60774358bc56eab53cd0f17d646ef448753e3c",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "a113cf0d"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "zilliztech-claude-context": {
     "name": "claude-context",
@@ -1768,11 +1768,21 @@
     "lastVerified": "2026-10-28T23:05:26.808Z"
   },
   "unhappychoice-gitlogue": {
-    "name": "gitlogue",
+    "name": "unhappychoice/gitlogue",
     "officialUrl": "https://github.com/unhappychoice/gitlogue",
-    "lastChecked": "2026-10-28T05:42:07.511Z",
-    "revisionIdentifier": "02474e61",
-    "lastVerified": "2026-10-28T05:42:07.511Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-29T12:13:20.644Z",
+    "lastVerified": "2026-10-29T12:13:20.644Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-unhappychoice-gitlogue",
+    "contentHash": "060e625d675a9e6f41b02c01023ae490ae4dbcb683934656b35c829c3258536e",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-fastino-gliner2.5-decide": {
     "name": "fastino/GLiNER2.5-Decide",
@@ -3222,14 +3232,14 @@
     "officialUrl": "https://github.com/doobidoo/mcp-memory-service",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-28T12:02:07.843Z",
-    "lastVerified": "2026-10-28T12:02:07.843Z",
+    "lastChecked": "2026-10-29T12:13:32.478Z",
+    "lastVerified": "2026-10-29T12:13:32.478Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-doobidoo-mcp-memory-service",
-    "contentHash": "e32d49eac0eda450c831db107b88926aab4db679731651bae826d36a15f3b239",
+    "contentHash": "1658218cd321a5145517937f9d3b78194b7f5d67618d92368e606e94c8fa9658",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3548,9 +3558,9 @@
   "krakend-krakend-ce": {
     "name": "krakend-ce",
     "officialUrl": "https://github.com/krakend/krakend-ce",
-    "lastChecked": "2026-10-28T13:03:35.230Z",
+    "lastChecked": "2026-10-29T12:13:22.935Z",
     "revisionIdentifier": "0ecf3bf0",
-    "lastVerified": "2026-10-28T13:03:35.230Z"
+    "lastVerified": "2026-10-29T12:13:22.935Z"
   },
   "pixeltable-pixeltable": {
     "name": "pixeltable",
@@ -8168,5 +8178,19 @@
     "lastChecked": "2026-10-29T12:08:40.663Z",
     "revisionIdentifier": "077d6624",
     "lastVerified": "2026-10-29T12:08:40.663Z"
+  },
+  "jeffli1993-seo-audit-skill": {
+    "name": "seo-audit-skill",
+    "officialUrl": "https://github.com/JeffLi1993/seo-audit-skill",
+    "lastChecked": "2026-10-29T12:13:17.894Z",
+    "revisionIdentifier": "523bdfb2",
+    "lastVerified": "2026-10-29T12:13:17.894Z"
+  },
+  "mohamedrejeb-calf": {
+    "name": "Calf",
+    "officialUrl": "https://github.com/MohamedRejeb/Calf",
+    "lastChecked": "2026-10-29T12:13:20.476Z",
+    "revisionIdentifier": "af388bd3",
+    "lastVerified": "2026-10-29T12:13:20.476Z"
   }
 }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source**: github ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
-> **Source Version**: `52568d90`  
+> **Source Version**: `9d8b9f06`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T12:02:08.252Z  
+> **Timestamp**: 2026-10-29T12:13:33.366Z  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T12:02:07.843Z  
+> **Harvest Timestamp**: 2026-10-29T12:13:32.478Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2052 stars
+- **Stars / Engagement**: 2054 stars
 
 ---
 
@@ -2911,11 +2911,11 @@ Commands:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1703** (2026-10-29): **[Bug]: Milvus: delete leaves graph edges, entity linking then links new memories to deleted ones**
+  *Symptoms*: ### Bug Description  Milvus delete paths (`delete()`, `delete_by_tag(s)()`, timeframe deletes, `delete_untagged_memories()`) remove memory rows but not their edges in `<collection>_graph`. SQLite cascades since #633; `_prune_orphaned_graph_edges()` (#632) is SQLite-only.  With `MCP_ENTITY_LINKING_ENABLED=true`, the leftover `has_entity` edge makes `find_memories_by_entity()` return the deleted memory, and `EntityLinker` links new memories to it. Since the lookup is capped at 20 before any liveness check, deleted memories also crowd out live ones (from the code, not reproduced).  ### Steps to Reproduce  Milvus Lite, stubbed embeddings, entity linking on:  1. Store A and B with tag `shared-x` — edge A↔B is created. 2. Delete A. 3. Store C with tag `shared-x`.  ### Expected Behavior  No edges touching A after step 2; C is linked to B only.  ### Actual Behavior  After step 2: 3 edges touching A remain (`has_entity`, `shares_entity`). After step 3: 2 `shares_entity` edges C↔A.  ### Storage Backend  milvus (community-maintained)  ### Operating System  macOS  ### Python Version  3.14.7  ### MCP Memory Service Version  `main` at 52568d90 (12.4.0)  ### Installation Method  Source (git clone)  ### Additional Context  Proposed fix: in the Milvus delete paths, also delete graph rows whose `source_hash` or `target_hash` is a deleted hash (best-effort, like the access-collection cleanup in `delete()`), plus Milvus Lite regression tests. I'd like to implement it once the approach is agreed 
+
 - **Issue #1628** (2026-10-21): **cli: memory migrate still stops at migration 008 on a pre-v8.7 database**
   *Symptoms*: ## What happens  #1626 fixed #1622 for the service: `SqliteVecMemoryStorage.initialize()` now creates the `metadata` table before it runs the schema migrations. The `memory migrate` command does not go through `initialize()`, so on a sqlite-vec database from before v8.7.0 it still fails the same way: migration 008 stops with `no such table: metadata`, and nothing after it applies.  ## Why  `memory migrate` (`cli/main.py:411`) opens the file with a plain `sqlite3.connect(db_path)` (`:429`) and calls `MigrationRunner.run_pending(conn)` directly (`:431`). `run_pending()` (`storage/migration_runner.py:211`) creates its own registry table (`_ensure_registry_table`, `:37`) but not `metadata`, where it keeps `schema_version`. Credit to @Clannad47, who pointed this out in the #1626 description.  ## Suggested fix  Create `metadata` inside `MigrationRunner` itself, next to `_ensure_registry_table()` and with the same definition the storage uses (`CREATE TABLE IF NOT EXISTS metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL)`). Then every caller of `run_pending()` is covered, the CLI and `initialize()` alike, and the separate guard from #1626 becomes redundant but harmless. Keep the `--dry-run` path read-only: with `dry_run=True` nothing may be created.  ## For whoever picks this up  - The test goes in `tests/storage/`, next to `test_1622_legacy_metadata_table.py`, whose pre-v8.7 database setup you can reuse. Drive it through the real code path: build that database under `temp_db_path`
-
-- **Issue #1622** (2026-10-21): **storage: a pre-v8.7 sqlite-vec database never finishes its schema upgrade, so search returns nothing**
-  *Symptoms*: ## What happens  A sqlite-vec database created before v8.7.0, and not opened by any version since, does not upgrade when a current release opens it. The service starts and `count` is right, but semantic search and tag search fail:  ``` Schema migration warning: Migration 008_add_graph_table failed: no such table: metadata Failed to retrieve memories: no such column: m.embedding_pending Failed to search by tags: no such column: embedding_pending ```  The data is intact, but every search comes back empty, and the only sign in the log is a warning.  ## Why  `SqliteVecMemoryStorage.initialize()` in `storage/mixins/migrations.py` has two paths. For a new database, `_apply_pragmas_and_create_tables` creates the `metadata` table (`:395`) before the schema migrations run (`:515`). For an existing database, the branch starting at `:119` calls `_run_schema_migrations` (`:333`) without creating it. `MigrationRunner` keeps `schema_version` in `metadata`, so on a database that predates the table, the first pending migration fails, the runner stops, and everything after it (017 adds `embedding_pending`) never applies.  The table has been created since v8.7.0 (66152de5, 2025-10-26), so this hits only databases from before that, and only when they skip every version in between. In practice that means installs left untouched for a year, and anyone migrating off ChromaDB with v7.6.0 (tag `chromadb-legacy-final`, see #1621).  ## Reproduced  1. Install v7.6.0 from the tag in a throwaway venv, cr
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2932,217 +2932,539 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `52568d90` (2026-10-28)
-**Commit Message**: chore(deps): bump the uv group with 7 updates (#1700)
+### Incident Patch 1: `9d8b9f06` (2026-10-29)
+**Commit Message**: ci(prove-fix): give Milvus tests a real verdict (#1709) (#1710)
 
-Bumps the uv group with 7 updates:
+* ci(prove-fix): give Milvus tests a real verdict
 
-| Package | From | To |
-| --- | --- | --- |
-| [certifi](https://github.com/certifi/python-certifi) | `2026.10.19` | `2026.10.23` |
-| [fastapi](https://github.com/fastapi/fastapi) | `0.143.3` | `0.162.0` |
-| [sse-starlette](https://github.com/sysid/sse-starlette) | `3.5.0` | `3.5.1` |
-| [ruff](https://github.com/astral-sh/ruff) | `0.17.1` | `0.17.2` |
-| [sentence-transformers](https://github.com/huggingface/sentence-transformers) | `6.1.0` | `6.2.0` |
-| [transformers](https://github.com/huggingface/transformers) | `5.20.1` | `5.20.2` |
-| [huggingface-hub](https://github.com/huggingface/huggingface_hub) | `1.33.0` | `2.3.0` |
+tests-prove-fix installs only the dev and sqlite extras. Milvus test files
+importorskip pymilvus, so on the base side pytest skipped the whole module,
+exited 5, and the check reported "no tests collected" for every Milvus fix,
+#1706 included.
+
+The job now installs pymilvus, milvus-lite and setuptools at the uv.lock
+versions when a changed test imports pymilvus. The full milvus extra also
+pulls torch, so it stays out of this job.
+
+A test module that still skips at collection now fails with the name of the
+missing module instead of "no tests collected", and CONTRIBUTING.md says
+what to do about it.
+
+Fixes #1709
+
+* ci(prove-fix): pin Milvus deps to the lock, quote custom skip reasons
+
+The Milvus install now passes the whole locked export as constraints, so
+grpcio, pandas, protobuf and the rest land at the uv.lock versions instead
+of whatever resolves on the day. Still only three packages are requested,
+so torch stays out.
+
+importorskip(..., reason=...) drops the module name from the skip line, and
+those modules fell back to "no tests collected". The check now quotes the
 
 
-Updates `certifi` from 2026.10.19 to 2026.10.23
-- [Commits](https://github.com/certifi/python-certifi/compare/2026.10.19...2026.10.23)
-
-Updates `fastapi` from 0.143.3 to 0.162.0
-- [Release notes](https://github.com/fastapi/fastapi/releases)
-- [Commits](https://github.com/fastapi/fastapi/compare/0.143.3...0.162.0)
-
-Updates `sse-starlette` from 3.5.0 to 3.5.1
-- [Release notes](https://github.com/sysid/sse-starlette/releases)
-- [Commits](https://github.com/sysid/sse-starlet
-
-**File**: `uv.lock` (modified, +159/-41)
+**File**: `.github/workflows/ci.yml` (modified, +16/-0)
 ```diff
-@@ -396,11 +396,11 @@ wheels = [
+@@ -239,6 +239,8 @@ jobs:
  
- [[package]]
- name = "certifi"
--version = "2026.10.19"
-+version = "2026.10.23"
- source = { registry = "https://pypi.org/simple" }
--sdist = { url = "https://files.pythonhosted.org/packages/a6/bd/1436c50cc46699de0230fbaacc1d1de7bfec413176099949e9d5112e88f2/certifi-2026.10.19.tar.gz", hash = "sha256:035c1e85572b141bf1c3a3eff0e33a8eb74917522f2559075ff8d2fea780a1ae", size = 137598, upload-time = "2026-10-20T02:24:16.604Z" }
-+sdist = { url = "https://files.pythonhosted.org/packages/fd/11/b524cbd9bbdaca58608e4cf4053fd463417549e1959fa8d3aa18319f9555/certifi-2026.10.23.tar.gz", hash = "sha256:a9895e6e2758b371e0545e321a3a8fd1fcfd9829ada8824a936dfb16aaaf36cd", size = 136225, upload-time = "2026-10-23T11:36:16.478Z" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/c4/51/29046e48f693c54e5b7412216d447a1d8362c9653148d98c02cdf65fa733/certifi-2026.10.19-py3-none-any.whl", hash = "sha256:42d35340cc5b9ba78e818ddbff0c5b1c2b779de448a340fd1b989f5fa8670e1b", size = 136464, upload-time = "2026-10-20T02:24:15.072Z" },
-+    { url = "https://files.pythonhosted.org/packages/32/d1/a3652fe2c19134d0d15922177821d863cbd7e842d53a21bbe7e8e3a1b5ac/certifi-2026.10.23-py3-none-any.whl", hash = "sha256:e9b54de76e530bb6cf0ccd036787103acb58fd42ba930ea8bf948ddbaa2f61d1", size = 135082, upload-time = "2026-10-23T11:36:14.763Z" },
- ]
+     # Installs from uv.lock, like `test`: see there.
+     - name: Install dependencies
++      env:
++        BASE_REF: ${{ github.base_ref }}
+       run: |
+         sudo apt-get update
+         sudo apt-get install -y --only-upgrade ca-certificates
+@@ -247,6 +249,20 @@ jobs:
+         echo "$HOME/venv/bin" >> "$GITHUB_PATH"
+         export UV_PROJECT_ENVIRONMENT="$HOME/venv"
+         python3 -m uv sync --frozen --python python3 --extra dev --extra sqlite
++        # Milvus tests importorskip pymilvus, so without it they skip at collection
++        # and the check cannot give a verdict (#1709). Add the Milvus client only
++        # when a changed test needs it. The full extra also pulls torch, so only
++        # three packages are installed, and the whole locked export is passed as
++        # constraints: their dependencies land at the uv.lock versions too, and
++        # the cap and setuptools<82 stay defined in pyproject.toml alone. Tests
++        # that importorskip sentence_transformers still skip here.
++        mapfile -t changed_tests < <(git diff --name-only --diff-filter=AM "origin/$BASE_REF...HEAD" -- tests/ | grep -E '(^|/)test_[^/]*\.py$' || true)
++        if [ "${#changed_tests[@]}" -gt 0 ] && grep -lq -e pymilvus -- "${changed_tests[@]}"; then
++          python3 -m uv export --frozen --extra milvus --no-hashes --no-emit-project > "$RUNNER_TEMP/milvus-lock.txt"
++          grep -E '^(pymilvus|milvus-lite|setuptools)==' "$RUNNER_TEMP/milvus-lock.txt" > "$RUNNER_TEMP/milvus-reqs.txt"
++          python3 -m uv pip install --python "$HOME/venv/bin/python" \
++            -r "$RUNNER_TEMP/milvus-reqs.txt" -c "$RUNNER_TEMP/milvus-lock.txt"
++        fi
  
- [[package]]
-@@ -969,7 +969,7 @@ wheels = [
+     - name: Run the changed tests against the base branch
+       env:
+```
+
+**File**: `CONTRIBUTING.md` (modified, +5/-0)
+```diff
+@@ -313,6 +313,11 @@ except StorageError as e:
+   git stash -- src/ && .venv/bin/pytest tests/<your file> -q; git stash pop   # must fail
+   .venv/bin/pytest tests/<your file> -q                                        # must pass
+   ```
++  The check installs `pymilvus` and Milvus Lite when a changed test imports
++  `pymilvus`, but no other optional extra. A test that skips itself without one
++  (`pytest.importorskip("sentence_transformers")`, for example) gets a failure
++  naming the missing module; paste your local runs and a maintainer sets
++  `skip-prove-fix`.
+ - Drive the real code path. Use the sqlite-vec storage through the `temp_db_path`
+   fixture, the real tool registry, the real handler. Mock only network and
+   external services (Cloudflare, Groq, Gemini). A mock of the function under test
+```
+
+**File**: `scripts/ci/check_tests_prove_fix.sh` (modified, +31/-4)
+```diff
+@@ -62,7 +62,7 @@ tests_changed="$(git diff --name-only --diff-filter=AM "$base" HEAD -- 'tests/'
+ if [ -z "$tests_changed" ]; then
+     echo "FAIL - src/ changed but no test was added or modified"
+     echo "Changed under src/:"
+-    printf '  %s\n' $src_changed
++    printf '%s\n' "$src_changed" | sed 's/^/  /'
+     echo "A behavior change needs a test that fails without it. See CONTRIBUTING.md,"
+     echo "'Testing Requirements'. Maintainers can exempt a PR with the skip-prove-fix label."
+     exit 1
+@@ -86,10 +86,19 @@ done
+ git checkout -q "$base" -- 'src/'
+ find src -type d -name __pycache__ -prune -exec rm -rf {} +
  
- [[package]]
- name = "fastapi"
--version = "0.143.3"
-+version = "0.162.0"
- source = { registry = "https://pypi.org/simple" }
- dependencies = [
-     { name = "annotated-doc" },
-@@ -979,9 +979,9 @@ dependencies = [
-     { name = "typing-extensions" },
-     { name = "typing-inspection" },
- ]
--sdist = { url = "https://files.pythonhosted.org/packages/38/d5/b0aeb0b303650ac87b0411de4aaf3f901b06042dcc3fb00f30b97b7ff585/fastapi-0.143.3.tar.gz", hash = "sha256:b9ab567ee57afb4454004ce04c889f8f0160ac47946b99795887cd6e88484848", size = 469834, upload-time = "2026-10-16T14:14:13.31Z" }
-+sdist = { url = "https://files.pythonhosted.org/packages/e9/eb/2cf8c80abf09b2800aef0a83b41066fbfda8ee5495b7a08b9d1af40f7046/fastapi-0.162.0.tar.gz", hash = "sha256:6a22c1e2e6e32e0633ee7e170f00009a29b8228b16feb219ee42f32fd8d88a8f", size = 527867, upload-time = "2026-10-23T18:47:33.264Z" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/2c/1a/03d246befcf307219bb2161c97d8c5d314f84125bf7dd245730a28589828/fastapi-0.143.3-py3-none-any.whl", hash = "sha256:75e8bd68e2f52f77d29b2879749c257d64de2d85282d25270caf2bfccce5efe5", size = 144849, upload-time = "2026-10-16T14:14:11.763Z" },
-+    { url = "https://files.pythonhosted.org/packages/b4/4f/3f2c25c9b43970b5e9a08beb5e04776247edea684ddc0930f4f02f0bb6cb/fastapi-0.162.0-py3-none-any.whl", hash = "sha256:3785963de305dd09912426cb81f2d230fce98ab3521cdfe97265c8d14983128c", size = 148912, upload-time = "2026-10-23T18:47:31.734Z" },
- ]
- 
- [[package]]
-@@ -1255,6 +1255,50 @@ wheels = [
-     { url = "https://files.pythonhosted.org/packages/7e/f5/f66802a942d491edb555dd61e3a9961140fd64c90bce1eafd741609d334d/httpcore-1.0.9-py3-none-any.whl", hash = "sha256:2d400746a40668fc9dec9810239072b40b4484b640a8c38fd654a024c7a1bf55", size = 78784, upload-time = "2025-04-24T22:06:20.566Z" },
- ]
- 
-+[[package]]
-+name = "httpcore2"
-+version = "2.14.0"
-+source = { registry = "https://pypi.org/simple" }
-+resolution-markers = [
-+    "python_full_version < '3.11' and sys_platform == 'linux'",
-+    "python_full_version < '3.11' and sys_platform != 'linux'",
-+]
-+dependencies = [
-+    { name = "h11" },
-+    { name = "truststore" },
-+]
-+sdist = { url = "https://files.pythonhosted.org/packages/30/ff/b53af1b49bb2cb5fa97c92215614b173ca5c1a99ded80e2d52f15a94fa6d/httpcore2-2.14.0.tar.gz", hash = "sha256:4f57a1a8249fe6af589d935cfd456f1d13bbdcb0f0fc72af9142368fc94811d7", size = 69096, upload-time = "2026-10-18T16:29:21.898Z" }
-+wheels = [
-+    { url = "https://files.pythonhosted.org/packages/02/06/a8d6a8f90d11b76d9086242b6bb0ee4b503473bfc8be34c2d5b067275c22/httpcore2-2.14.0-py3-none-any.whl", hash = "sha256:4c4f64f4b544afeb778c42c0ffb5941b29e671157e90ed3f6dc787c4bca90cd1", size = 84291, upload-time = "2026-10-18T16:29:19.743Z" },
-+]
++# One array element per path, so a space or a glob character in a file name
++# stays part of that name (bash 3.2 has no mapfile).
++test_files=()
++while IFS= read -r t; do
++    test_files+=("$t")
++done <<<"$tests_changed"
 +
-+[[package]]
-+name = "httpcore2"
-+version = "2.16.0"
-+source = { registry = "https://pypi.org/simple" }
-+resolution-markers = [
-+    "python_full_version >= '3.14' and sys_platform == 'linux'",
-+    "python_full_version >= '3.14' and sys_platform == 'win32'",
-+    "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
-+    "python_full_version == '3.13.*' and sys_platform == 'linux'",
-+    "python_full_version == '3.13.*' and sys_platform == 'win32'",
-+    "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
-+    "python_full_version == '3.12.*' and sys_platform == 'linux'",
-+    "python_full_version == '3.12.*' and sys_platform == 'win32'",
-+    "python_full_version == '3.1
+ echo "Running the changed tests against src/ at ${base:0:8}:"
+-printf '  %s\n' $tests_changed
+-"$PYTHON" -m pytest $tests_changed -q -p no:cacheprovider -m "not benchmark" --timeout=120
++printf '  %s\n' "${test_files[@]}"
++# -rs lists skip reasons, so a module that skipped itself at collection can be named.
++out="$("$PYTHON" -m pytest "${test_files[@]}" -q -rs -p no:cacheprovider -m "not benchmark" --timeout=120 2>&1)"
+ rc=$?
++printf '%s\n' "$out"
+ 
+ case "$rc" in
+     1|2)
+@@ -103,7 +112,25 @@ case "$rc" in
+         exit 1
+         ;;
+     5)
+-        echo "FAIL - no tests collected from the changed files"
++        # An importorskip at module top skips the whole file at collection, which
++        # pytest reports as nothing collected. Say which module was missing: the
++        # test is not wrong, this job lacks the optional extra it needs (#1709).
++        # importorskip(..., reason=...) replaces the module name with the reason,
++        # so fall back to listing the skip reasons themselves.
++        skips="$(printf '%s\n' "$out" | grep '^SKIPPED ')"
++        missing="$(printf '%s\n' "$skips" | sed -n "s/^SKIPPED .*could not import '\([^']*\)'.*/\1/p" | sort -u | paste -sd ' ' -)"
++        if [ -n "$skips" ]; then
++            if [ -n "$missing" ]; then
++                echo "FAIL - the changed tests skipped at collection; not installed in this job: $missing"
++            else
++                echo "FAIL - the changed tests skipped at collection:"
++                printf '%s\n' "$skips" | sed 's/^/  /'
++            fi
++            echo "Paste your local red/green runs into the PR. A maintainer can exempt it with"
++            echo "the skip-prove-fix label (push a commit afterwards; a re-run keeps the old labels)."
++        else
++            echo "FAIL - no tests collected from the changed files"
++        fi
+         exit 1
+         ;;
+     *)
+```
+
+**File**: `tests/ci/test_check_tests_prove_fix.sh` (modified, +40/-0)
+```diff
+@@ -110,6 +110,12 @@ printf 'def extra():\n    return 1\n' > "$d/src/mcp_memory_service/extra.py"
+ printf 'from mcp_memory_service.extra import extra\n\n\ndef test_extra():\n    assert extra() == 1\n' > "$d/tests/test_extra.py"
+ run_case "new module with new test passes via collection error" 0 "$d"
+ 
++# A space in a test path must not split it into two pytest arguments.
++d="$TMP/spaced"; new_repo "$d"
++sed -i.bak 's/return 41/return 42/' "$d/src/mcp_memory_service/__init__.py" && rm "$d/src/mcp_memory_service/__init__.py.bak"
++printf 'from mcp_memory_service import answer\n\n\ndef test_answer():\n    assert answer() == 42\n' > "$d/tests/test_spaced answer.py"
++run_case "test path with a space is passed whole" 0 "$d"
++
+ # Interpreter that does not import this tree: refuse rather than report a verdict.
+ d="$TMP/wrongenv"; new_repo "$d"
+ sed -i.bak 's/return 41/return 42/' "$d/src/mcp_memory_service/__init__.py" && rm "$d/src/mcp_memory_service/__init__.py.bak"
+@@ -125,6 +131,40 @@ else
+     failures=$((failures + 1))
+ fi
+ 
++# A test module that skips itself at collection (importorskip of an optional extra
++# the job does not install): still a failure, but the message names the module
++# instead of claiming nothing was collected. The exit code is 1 either way, so the
++# case checks the output (#1709).
++d="$TMP/modskip"; new_repo "$d"
++sed -i.bak 's/return 41/return 42/' "$d/src/mcp_memory_service/__init__.py" && rm "$d/src/mcp_memory_service/__init__.py.bak"
++printf 'import pytest\n\npytest.importorskip("no_such_module_1709")\n\n\ndef test_answer():\n    assert True\n' > "$d/tests/test_answer.py"
++git_c -C "$d" add -A && git_c -C "$d" commit -q -m pr
++out="$(cd "$d" && env PYTHONPATH="$d/src" PYTHON="$PY" bash "$SCRIPT" main 2>&1)"
++actual=$?
++if [ "$actual" -eq 1 ] && grep -q "not installed in this job: no_such_module_1709" <<<"$out"; then
++    echo "PASS - module skipped at collection fails and names the module"
++else
++    echo "FAIL - module skipped at collection fails and names the module (got exit $actual)"
++    echo "$out" | sed 's/^/    /'
++    failures=$((failures + 1))
++fi
++
++# Same, with importorskip(reason=...): the module name is gone from the skip line,
++# so the failure quotes the reason instead of claiming nothing was collected.
++d="$TMP/modskipreason"; new_repo "$d"
++sed -i.bak 's/return 41/return 42/' "$d/src/mcp_memory_service/__init__.py" && rm "$d/src/mcp_memory_service/__init__.py.bak"
++printf 'import pytest\n\npytest.importorskip("no_such_module_1709", reason="needs the 1709 extra")\n\n\ndef test_answer():\n    assert True\n' > "$d/tests/test_answer.py"
++git_c -C "$d" add -A && git_c -C "$d" commit -q -m pr
++out="$(cd "$d" && env PYTHONPATH="$d/src" PYTHON="$PY" bash "$SCRIPT" main 2>&1)"
++actual=$?
++if [ "$actual" -eq 1 ] && grep -q "needs the 1709 extra" <<<"$out" && ! grep -q "no tests collected" <<<"$out"; then
++    echo "PASS - module skipped with a custom reason fails and quotes the reason"
++else
++    echo "FAIL - module skipped with a custom reason fails and quotes the reason (got exit $actual)"
++    echo "$out" | sed 's/^/    /'
++    failures=$((failures + 1))
++fi
++
+ if [ "$failures" -gt 0 ]; then
+     echo "$failures test(s) failed"
+     exit 1
 ```
 
 ---
 
-### Incident Patch 2: `f7fafb6d` (2026-10-28)
-**Commit Message**: chore(deps): bump filelock to 4.2.4 (GHSA-v4x8-3wr5-3wq8) (#1702)
+### Incident Patch 2: `7363f466` (2026-10-29)
+**Commit Message**: fix(milvus): delete graph edges together with deleted memories (#1706)
 
-* chore(deps): bump filelock to 4.2.4 (GHSA-v4x8-3wr5-3wq8)
+* test(milvus): reproduce graph edges surviving delete (#1703)
 
-Dependabot alerts 223-225 flag filelock 3.24.3. 4.2.1 is the first fixed
-release, but it requires Python 3.11, so the 3.10 resolution only moves to
-4.1.0 and stays inside the advisory range. Nothing in src/ or scripts/ imports
-filelock; it arrives through torch and huggingface-hub.
+Fails on main: after delete() the memory's has_entity/shares_entity
+edges remain, and a new memory sharing an entity is linked to the
+deleted one. Becomes the regression test for the fix.
 
-* docs(changelog): fragment for the filelock bump
+* test(milvus): cover bulk delete and entity linking after delete (#1703)
 
----------
+Store A and B with a shared tag, delete A, store C: C must link to B only. Add delete_by_tags() as the bulk path, and check that delete() still succeeds when the graph cleanup fails.
 
-Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
+* fix(milvus): delete graph edges together with deleted memories (#1703)
 
-**File**: `changelog.d/1702.internal.md` (added, +6/-0)
+Milvus delete paths removed memory rows but left their rows in <collection>_graph, so a deleted memory's has_entity edge kept answering find_memories_by_entity() and EntityLinker linked new memories to it. All six delete paths now call one best-effort helper that removes every edge whose source or target is a deleted hash; a failure is logged and does not fail the delete.
+
+* test(milvus): cover graph cleanup when a bulk delete fails part-way (#1703)
+
+With one hash per chunk and the second memory delete failing, delete_by_tags() and dele
+
+**File**: `changelog.d/1703.fixed.md` (added, +7/-0)
 ```diff
-@@ -0,0 +1,6 @@
-+- **filelock moved off 3.24.3 (#1702).** Dependabot flagged three filelock advisories
-+  (GHSA-v4x8-3wr5-3wq8 high, GHSA-567q-5qvw-pf92 and GHSA-9vhv-jxww-xfm5 low), all
-+  in `ReadWriteLock` and `SoftFileLock`, neither of which this project calls; filelock
-+  only arrives through torch and huggingface-hub. Python 3.11 and up now resolve to
-+  4.2.4. The fix requires Python 3.11, so the 3.10 resolution stops at 4.1.0, which is
-+  still inside the advisory range.
+@@ -0,0 +1,7 @@
++- **Milvus: deleting a memory left its graph edges behind, and entity linking kept linking new memories to it (#1703, andrunio).**
++  Every Milvus delete path removed the memory rows but not their rows in
++  `<collection>_graph`, so the dead memory's `has_entity` edge still answered
++  `find_memories_by_entity()` and `EntityLinker` connected new memories to it.
++  `delete()`, `delete_by_tag()`, `delete_by_tags()`, `delete_by_timeframe()`,
++  `delete_before_date()` and `delete_untagged_memories()` now remove the edges of
++  the memories they deleted, best-effort and logged, the way SQLite cascades them.
 ```
 
-**File**: `uv.lock` (modified, +89/-56)
+**File**: `src/mcp_memory_service/storage/milvus.py` (modified, +59/-30)
 ```diff
-@@ -1,5 +1,5 @@
- version = 1
--revision = 5
-+revision = 3
- requires-python = ">=3.10"
- resolution-markers = [
-     "python_full_version >= '3.14' and sys_platform == 'linux'",
-@@ -622,7 +622,7 @@ name = "coloredlogs"
- version = "15.0.1"
- source = { registry = "https://pypi.org/simple" }
- dependencies = [
--    { name = "humanfriendly" },
-+    { name = "humanfriendly", marker = "python_full_version < '3.11'" },
- ]
- sdist = { url = "https://files.pythonhosted.org/packages/cc/c7/eed8f27100517e8c0e6b923d5f0845d0cb99763da6fdee00478f91db7325/coloredlogs-15.0.1.tar.gz", hash = "sha256:7c991aa71a4577af2f82600d8f8f3a89f936baeaf9b50a9c197da014e5bf16b0", size = 278520, upload-time = "2021-06-11T10:22:45.202Z" }
- wheels = [
-@@ -822,7 +822,7 @@ name = "cuda-bindings"
- version = "13.3.1"
- source = { registry = "https://pypi.org/simple" }
- dependencies = [
--    { name = "cuda-pathfinder" },
-+    { name = "cuda-pathfinder", marker = "sys_platform == 'linux'" },
- ]
- wheels = [
-     { url = "https://files.pythonhosted.org/packages/a9/21/8464d133752951c154feafb3b65c297e7d80f301183d220bec4c830f1441/cuda_bindings-13.3.1-cp310-cp310-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:120fcc53d57903df529c3486962c56528cba5b7d6c57c99537320ed9922c8b86", size = 6073403, upload-time = "2026-05-29T23:11:36.22Z" },
-@@ -857,43 +857,43 @@ wheels = [
+@@ -979,6 +979,25 @@ async def _get_graph_storage(self):
+             self._graph_storage = graph
+             return graph
  
- [package.optional-dependencies]
- cublas = [
--    { name = "nvidia-cublas", marker = "platform_machine == 'aarch64' or platform_machine == 'x86_64'" },
--    { name = "nvidia-cuda-nvrtc", marker = "platform_machine == 'aarch64' or platform_machine == 'x86_64'" },
-+    { name = "nvidia-cublas", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
-+    { name = "nvidia-cuda-nvrtc", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
- ]
- cudart = [
--    { name = "nvidia-cuda-runtime", marker = "platform_machine == 'aarch64' or platform_machine == 'x86_64'" },
-+    { name = "nvidia-cuda-runtime", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
- ]
- cufft = [
--    { name = "nvidia-cufft", marker = "platform_machine == 'aarch64' or platform_machine == 'x86_64'" },
--    { name = "nvidia-nvjitlink", marker = "platform_machine == 'aarch64' or platform_machine == 'x86_64'" },
-+    { name = "nvidia-cufft", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
-+    { name = "nvidia-nvjitlink", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
- ]
- cufile = [
--    { name = "nvidia-cufile", marker = "platform_machine == 'aarch64' or platform_machine == 'x86_64'" },
-+    { name = "nvidia-cufile", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
- ]
- cupti = [
--    { name = "nvidia-cuda-cupti", marker = "platform_machine == 'aarch64' or platform_machine == 'x86_64'" },
-+    { name = "nvidia-cuda-cupti", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
- ]
- curand = [
--    { name = "nvidia-curand", marker = "platform_machine == 'aarch64' or platform_machine == 'x86_64'" },
-+    { name = "nvidia-curand", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
- ]
- cusolver = [
--    { name = "nvidia-cublas", marker = "platform_machine == 'aarch64' or platform_machine == 'x86_64'" },
--    { name = "nvidia-cusolver", marker = "platform_machine == 'aarch64' or platform_machine == 'x86_64'" },
--    { name = "nvidia-cusparse", marker = "platform_machine == 'aarch64' or platform_machine == 'x86_64'" },
--    { name = "nvidia-nvjitlink", marker = "platform_machine == 'aarch64' or platform_machine == 'x86_64'" },
-+    { name = "nvidia-cublas", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
-+    { name = "nvidia-cusolver", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
-+    { name = "nvidia-cusparse", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
-+    { name = "nvidia-nvjitlink", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
- ]
- cusparse = [
--    { name = "nvidia-cusparse", marker = "platform_machine == 'aarch64' or platform_machine == 'x86_64'" },
--    { name = "nvidia-nvjitlink", marker = "platfo
++    async def _delete_graph_edges(self, content_hashes: List[str]) -> None:
++        """Best-effort removal of graph edges touching deleted memories (#1703).
++
++        SQLite cascades these on delete; here the edges live in a separate
++        collection and would otherwise survive, so entity linking kept
++        linking new memories to deleted ones. A failure is logged and does
++        not fail the delete, which has already happened.
++        """
++        if not content_hashes:
++            return
++        try:
++            graph = await self._get_graph_storage()
++            await graph.delete_edges_for_memories(content_hashes)
++        except Exception as exc:  # noqa: BLE001
++            logger.warning(
++                "Failed to delete graph edges for %d deleted memories (non-fatal): %s",
++                len(content_hashes), _sanitize_log_value(exc),
++            )
++
+     async def _detect_conflicts(
+         self, new_hash: str, new_content: str, embedding: List[float]
+     ) -> List[Dict[str, Any]]:
+@@ -1832,6 +1851,7 @@ async def delete(self, content_hash: str, store: Optional[str] = None) -> Tuple[
+                 )
+             except Exception:  # noqa: BLE001
+                 pass  # non-fatal
++        await self._delete_graph_edges([content_hash])
+         return True, f"Successfully deleted memory {content_hash}"
+ 
+     async def delete_memory(self, content_hash: str) -> bool:
+@@ -1874,32 +1894,35 @@ async def delete_by_tags(self, tags: List[str], store: Optional[str] = None) ->
+             return 0, f"No memories found matching any of the {len(tags)} tags", []
+ 
+         deleted_hashes: List[str] = []
+-        for start in range(0, len(hashes), self._GET_BY_ID_CHUNK):
+-            chunk = hashes[start:start + self._GET_BY_ID_CHUNK]
+-            try:
+-                await self._call_client(
+-                    "delete",
+-                    collection_name=self.collection_name,
+-                    ids=chunk,
+-                )
+-            except Exception as exc:  # noqa: BLE001
+-                logger.error(
+-                    "delete_by_tags failed after %d/%d memories: %s",
+-                    len(deleted_hashes),
+-                    len(hashes),
+-                    _sanitize_log_value(exc),
+-                )
+-                if deleted_hashes:
++        try:
++            for start in range(0, len(hashes), self._GET_BY_ID_CHUNK):
++                chunk = hashes[start:start + self._GET_BY_ID_CHUNK]
++                try:
++                    await self._call_client(
++                        "delete",
++                        collection_name=self.collection_name,
++                        ids=chunk,
++                    )
++                except Exception as exc:  # noqa: BLE001
++                    logger.error(
++                        "delete_by_tags failed after %d/%d memories: %s",
++                        len(deleted_hashes),
++                        len(hashes),
++                        _sanitize_log_value(exc),
++                    )
++                    if deleted_hashes:
++                        raise MilvusDeleteError(
++                            f"Deleted {len(deleted_hashes)} of {len(hashes)} memories "
++                            f"before deletion failed: {_sanitize_log_value(exc)}",
++                            deleted_count=len(deleted_hashes),
++                            deleted_hashes=deleted_hashes,
++                        ) from exc
+                     raise MilvusDeleteError(
+-                        f"Deleted {len(deleted_hashes)} of {len(hashes)} memories "
+-                        f"before deletion failed: {_sanitize_log_value(exc)}",
+-                        deleted_count=len(deleted_hashes),
+-                        deleted_hashes=deleted_hashes,
++                        f"Deletion failed: {_sanitize_log_value(exc)}",
+                     ) from exc
+-                raise MilvusDeleteError(
+-                    f"Deletion failed: {_sanitize_log_value(exc)}",
+-                ) from exc
+-            deleted_hashes.extend(chunk)
++                deleted_hashes.extend(chunk)
++        finally:
++            await self._delete_graph_edges(deleted_hashes)
+ 
+         return (
+             len(deleted_hashes),
+@@ -1992,12 +2015,18 @@ async def _delete_matching_parts(
+         )
+         if not hashes:
+             return 0, []
+-        for start in range(0, len(hashes), self._GET_BY_ID_CHUNK):
+-            await self._call_client(
+-                "delete",
+-                collection_name=self.collection_name,
+-                ids=hashes[start:start + self._GET_BY_ID_CHUNK],
+-            )
++        deleted: List[str] = []
++        try:
++            for start in range(0, len(hashes), self._GET_BY_ID_CHUNK):
++                chunk = hashes[start:start + self._GET_BY_ID_CHUNK]
++                await self._call_client(
++               
+```
+
+**File**: `src/mcp_memory_service/storage/milvus_graph.py` (modified, +20/-0)
+```diff
+@@ -55,6 +55,9 @@
+ # Milvus per-call result limit ceiling.
+ _MILVUS_MAX_LIMIT = 16384
+ 
++# Hashes per delete_edges_for_memories() filter; each hash appears in it twice.
++_DELETE_EDGES_CHUNK = 200
++
+ # Dimension for the dummy vector field required by Zilliz Cloud / remote Milvus.
+ # Zilliz Cloud rejects collections without at least one vector field.
+ _DUMMY_VEC_DIM = 2
+@@ -838,6 +841,23 @@ async def delete_association(
+             logger.error("Failed to delete association: %s", exc)
+             return False
+ 
++    async def delete_edges_for_memories(self, memory_hashes: List[str]) -> None:
++        """Delete every edge from or to ``memory_hashes``. Errors propagate."""
++        if not self._ensure_ready():
++            return
++
++        hashes = [h for h in memory_hashes if h]
++        for start in range(0, len(hashes), _DELETE_EDGES_CHUNK):
++            quoted = ", ".join(
++                f'"{escape_expr_value(h)}"'
++                for h in hashes[start:start + _DELETE_EDGES_CHUNK]
++            )
++            await self._call_client(
++                "delete",
++                collection_name=self.collection_name,
++                filter=f"source_hash in [{quoted}] or target_hash in [{quoted}]",
++            )
++
+     async def get_association_count(self, memory_hash: str) -> int:
+         """Get count of direct associations for a memory."""
+         if not self._ensure_ready():
+```
+
+**File**: `tests/storage/test_milvus_delete_graph_edges.py` (added, +181/-0)
+```diff
+@@ -0,0 +1,181 @@
++"""Milvus delete must remove the memory's graph edges (#1703).
++
++SQLite cascades graph edges on delete since #633. On Milvus the edges in
++``<collection>_graph`` survived, so with entity linking enabled a new memory
++sharing an entity was linked to the deleted one.
++
++Runs against a real Milvus Lite file; only the embedding is stubbed.
++
++Run: pytest tests/storage/test_milvus_delete_graph_edges.py -v
++"""
++
++import hashlib
++import uuid
++
++import numpy as np
++import pytest
++import pytest_asyncio
++
++pytest.importorskip("pymilvus")
++pytest.importorskip("milvus_lite")
++
++from mcp_memory_service.services.memory_service import MemoryService  # noqa: E402
++from mcp_memory_service.storage.milvus import MilvusMemoryStorage  # noqa: E402
++import mcp_memory_service.server.handlers.graph as graph_handlers  # noqa: E402
++
++_DIM = 64
++
++
++class _StubEncoder:
++    """Deterministic, near-orthogonal vectors, so semantic dedup never merges the test memories."""
++
++    def encode(self, texts, convert_to_numpy=True, **kwargs):
++        return np.array([
++            np.random.default_rng(int(hashlib.sha256(t.encode()).hexdigest()[:8], 16))
++            .standard_normal(_DIM).astype(np.float32)
++            for t in texts
++        ])
++
++
++@pytest_asyncio.fixture
++async def service(tmp_path, monkeypatch):
++    async def _stub_init_embedding(self):
++        self.embedding_model = _StubEncoder()
++        self.embedding_dimension = _DIM
++
++    monkeypatch.setattr(MilvusMemoryStorage, "_initialize_embedding_model", _stub_init_embedding)
++    monkeypatch.setenv("MCP_ENTITY_LINKING_ENABLED", "true")
++    storage = MilvusMemoryStorage(
++        uri=str(tmp_path / "milvus.db"),
++        collection_name=f"mcp_delgraph_{uuid.uuid4().hex[:12]}",
++        embedding_model="stub",
++    )
++    await storage.initialize()
++
++    async def _graph():
++        return await storage._get_graph_storage()
++
++    monkeypatch.setattr(graph_handlers, "get_graph_storage", _graph)
++    try:
++        yield MemoryService(storage), storage
++    finally:
++        await storage.close()
++
++
++async def _edges_touching(graph, content_hash):
++    return await graph._drain_edges(
++        f'source_hash == "{content_hash}" or target_hash == "{content_hash}"',
++        ["source_hash", "target_hash", "relationship_type"],
++    )
++
++
++async def test_delete_removes_graph_edges(service):
++    svc, storage = service
++    graph = await storage._get_graph_storage()
++
++    a = await svc.store_memory("alpha note about module-x", tags=["shared-x"])
++    b = await svc.store_memory("beta note about module-x", tags=["shared-x"])
++    assert a["success"] and b["success"], (a, b)
++    hash_a = a["memory"]["content_hash"]
++    assert any(e["relationship_type"] == "shares_entity" for e in await _edges_touching(graph, hash_a))
++
++    result = await svc.delete_memory(hash_a)
++    assert result["success"], result
++    assert await storage.get_by_hash(hash_a) is None
++
++    assert await _edges_touching(graph, hash_a) == []
++
++
++async def test_new_memory_is_not_linked_to_deleted(service):
++    svc, storage = service
++    graph = await storage._get_graph_storage()
++
++    a = await svc.store_memory("alpha note about module-y", tags=["shared-y"])
++    b = await svc.store_memory("beta note about module-y", tags=["shared-y"])
++    assert a["success"] and b["success"], (a, b)
++    hash_a = a["memory"]["content_hash"]
++    hash_b = b["memory"]["content_hash"]
++    assert (await svc.delete_memory(hash_a))["success"]
++
++    c = await svc.store_memory("gamma note about module-y", tags=["shared-y"])
++    assert c["success"], c
++    hash_c = c["memory"]["content_hash"]
++    linked = {
++        e["target_hash"] if e["source_hash"] == hash_c else e["source_hash"]
++        for e in await _edges_touching(graph, hash_c)
++        if e["relationship_type"] == "shares_entity"
++    }
++    assert linked == {hash_b}
++
++
++async def test_delete_by_tags_removes_graph_edges(service):
++    svc, storage = service
++    graph = await storage._get_graph_storage()
++
++    a = await svc.store_memory("alpha note about module-z", tags=["shared-z", "drop-me"])
++    b = await svc.store_memory("beta note about module-z", tags=["shared-z", "drop-me"])
++    k = await svc.store_memory("kappa note about module-z", tags=["shared-z"])
++    assert a["success"] and b["success"] and k["success"], (a, b, k)
++    hash_a, hash_b, hash_k = (r["memory"]["content_hash"] for r in (a, b, k))
++    assert await _edges_touching(graph, hash_a)
++
++    count, _, deleted = await storage.delete_by_tags(["drop-me"])
++    assert count == 2 and set(deleted) == {hash_a, hash_b}
++
++    assert await _edges_touching(graph, hash_a) == []
++    assert await _edges_touching(graph, hash_b) == []
++    assert any(e["relationship_type"] == "has_entity" for e in await _edges_touching(graph, hash_k))
++
++
++@pytest.mark.parametrize(
++    "bulk_delete",
++    [lambda s: s.delete_by_tags(["drop-p"]), lambda s: s.delete_by_tag("drop-p")],
++    ids=["delete_
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1711** (closed): fix(storage): purge graph edges together with purged tombstones (@bfs2021)
+- **PR #1710** (2026-10-29): ci(prove-fix): give Milvus tests a real verdict (#1709) (@doobidoo)
+- **PR #1706** (2026-10-29): fix(milvus): delete graph edges together with deleted memories (@andrunio)
 - **PR #1702** (2026-10-28): chore(deps): bump filelock to 4.2.4 (GHSA-v4x8-3wr5-3wq8) (@doobidoo)
 - **PR #1700** (2026-10-28): chore(deps): bump the uv group with 7 updates (@dependabot[bot])
 - **PR #1699** (2026-10-28): chore(deps): bump the actions group with 3 updates (@dependabot[bot])
-- **PR #1698** (2026-10-27): fix(reasoning): clear four reasoning modules of unsanitised log calls (#1146) (@massimiliano1991)
-- **PR #1697** (2026-10-27): bench: rerank the negation pairs from #1674 (+24.0 p.p. pairwise over cosine, implicit negation still below chance) (@filhocf)
-- **PR #1696** (2026-10-26): bench: measure resonance search against cosine retrieval (#1674) (@doobidoo)
 
 ---
 
@@ -3162,38 +3484,42 @@ Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump the uv group with 7 updates (#1700)
+## X. ci(prove-fix): give Milvus tests a real verdict (#1709) (#1710)
 
 **RULE**:
-When implementing operations in `uv.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `52568d90`: deps): bump the uv group with 7 updates (#1700). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9d8b9f06`: ci(prove-fix): give Milvus tests a real verdict (#1709) (#1710). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `uv.lock`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-version = "2026.10.23"
-sdist = { url = "https://files.pythonhosted.org/packages/fd/11/b524cbd9bbdaca58608e4cf4053fd463417549e1959fa8d3aa18319f9555/certifi-2026.10.23.tar.gz", hash = "sha256:a9895e6e2758b371e0545e321a3a8fd1fcfd9829ada8824a936dfb16aaaf36cd", size = 136225, upload-time = "2026-10-23T11:36:16.478Z" }
-    { url = "https://files.pythonhosted.org/packages/32/d1/a3652fe2c19134d0d15922177821d863cbd7e842d53a21bbe7e8e3a1b5ac/certifi-2026.10.23-py3-none-any.whl", hash = "sha256:e9b54de76e530bb6cf0ccd036787103acb58fd42ba930ea8bf948ddbaa2f61d1", size = 135082, upload-time = "2026-10-23T11:36:14.763Z" },
-version = "0.162.0"
-sdist = { url = "https://files.pythonhosted.org/packages/e9/eb/2cf8c80abf09b2800aef0a83b41066fbfda8ee5495b7a08b9d1af40f7046/fastapi-0.162.0.tar.gz", hash = "sha256:6a22c1e2e6e32e0633ee7e170f00009a29b8228b16feb219ee42f32fd8d88a8f", size = 527867, upload-time = "2026-10-23T18:47:33.264Z" }
-    { url = "https://files.pythonhosted.org/packages/b4/4f/3f2c25c9b43970b5e9a08beb5e04776247edea684ddc0930f4f02f0bb6cb/fastapi-0.162.0-py3-none-any.whl", hash = "sha256:3785963de305dd09912426cb81f2d230fce98ab3521cdfe97265c8d14983128c", size = 148912, upload-time = "2026-10-23
+      env:
+        BASE_REF: ${{ github.base_ref }}
+        # Milvus tests importorskip pymilvus, so without it they skip at collection
+        # and the check cannot give a verdict (#1709). Add the Milvus client only
+        # when a changed test needs it. The full extra also pulls torch, so only
+        # three packages are installed, and the whole locked export is passed as
+        # constraints: their dependencies land at the uv.lock versions too, and
+        # the cap and setuptools<82 stay defined in pyproject.toml alone. Tests
+        # that importorskip sentence_transformers still skip here.
+        mapfile -t changed_tests < <(git diff --name-only --diff-filter=AM "origin/$BASE_REF...HEAD" -- tests/ | grep -E '(^|/)test_[^/]*\.py$' || true)
+        if [ "${#changed_tests[@]}" -gt 0 ] && grep -lq -e pymilvus -- "${changed_tests[@]}"; then
+          python3 -m uv export --frozen --extra milvus --no-hashes --no-emit-project > "$RUNNER_TEMP/milvus-lock.txt"
+          grep -E '^(pymilvus|milvus-lite|setuptools)==' "$RUNNER_TEMP/milvus-lock.txt" > "$RUNNER_TEMP/milvus-reqs.txt"
+          python3 -m uv pip install --python "$HOME/venv/bin/python" \
+            -r "$RUNNER_TEMP/mi
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-version = "2026.10.19"
-sdist = { url = "https://files.pythonhosted.org/packages/a6/bd/1436c50cc46699de0230fbaacc1d1de7bfec413176099949e9d5112e88f2/certifi-2026.10.19.tar.gz", hash = "sha256:035c1e85572b141bf1c3a3eff0e33a8eb74917522f2559075ff8d2fea780a1ae", size = 137598, upload-time = "2026-10-20T02:24:16.604Z" }
-    { url = "https://files.pythonhosted.org/packages/c4/51/29046e48f693c54e5b7412216d447a1d8362c9653148d98c02cdf65fa733/certifi-2026.10.19-py3-none-any.whl", hash = "sha256:42d35340cc5b9ba78e818ddbff0c5b1c2b779de448a340fd1b989f5fa8670e1b", size = 136464, upload-time = "2026-10-20T02:24:15.072Z" },
-version = "0.143.3"
-sdist = { url = "https://files.pythonhosted.org/packages/38/d5/b0aeb0b303650ac87b0411de4aaf3f901b06042dcc3fb00f30b97b7ff585/fastapi-0.143.3.tar.gz", hash = "sha256:b9ab567ee57afb4454004ce04c889f8f0160ac47946b99795887cd6e88484848", size = 469834, upload-time = "2026-10-16T14:14:13.31Z" }
-    { url = "https://files.pythonhosted.org/packages/2c/1a/03d246befcf307219bb2161c97d8c5d314f84125bf7dd245730a28589828/fastapi-0.143.3-py3-none-any.whl", hash = "sha256:75e8bd68e2f52f77d29b2879749c257d64de2d85282d25270caf2bfccce5efe5", size = 144849, upload-time = "2026-10-16T
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `52568d90` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9d8b9f06` are properly handled with clean fallback behavior.

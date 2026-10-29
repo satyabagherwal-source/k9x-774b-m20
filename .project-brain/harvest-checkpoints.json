@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-29T12:08:56.246Z",
+  "last_updated": "2026-10-29T12:16:50.155Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4731,14 +4731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-unhappychoice-gitlogue",
-      "content_hash": "556ee34f14b01975edb18df61568e000ea7ca890081f83bbefb71e7ccb9e1f51",
-      "verified_at": "2026-10-22T19:22:37.618Z",
+      "content_hash": "060e625d675a9e6f41b02c01023ae490ae4dbcb683934656b35c829c3258536e",
+      "verified_at": "2026-10-29T12:16:50.154Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T19:22:37.618Z"
+      "last_updated": "2026-10-29T12:16:50.154Z"
     },
     "FaridSafi/react-native-gifted-chat": {
       "repository": "FaridSafi/react-native-gifted-chat",
@@ -5061,14 +5061,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-doobidoo-mcp-memory-service",
-      "content_hash": "e32d49eac0eda450c831db107b88926aab4db679731651bae826d36a15f3b239",
-      "verified_at": "2026-10-28T12:02:08.873Z",
+      "content_hash": "1658218cd321a5145517937f9d3b78194b7f5d67618d92368e606e94c8fa9658",
+      "verified_at": "2026-10-29T12:13:33.992Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T12:02:08.873Z"
+      "last_updated": "2026-10-29T12:13:33.992Z"
     },
     "21st-dev/magic-mcp": {
       "repository": "21st-dev/magic-mcp",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "213d8b8ddb98805591a33e58fdf2dd2193a0bb7fd4e4b8b3a5a0426119faf3a7",
-      "verified_at": "2026-10-28T19:17:21.278Z",
+      "content_hash": "acba38cb9feda86f8dc1148d8e60774358bc56eab53cd0f17d646ef448753e3c",
+      "verified_at": "2026-10-29T12:13:31.053Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T19:17:21.278Z"
+      "last_updated": "2026-10-29T12:13:31.053Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
