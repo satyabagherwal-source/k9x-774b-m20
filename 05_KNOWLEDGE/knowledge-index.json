@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T12:19:52.847Z",
+  "last_updated": "2026-10-29T12:26:02.727Z",
   "total_verified_learnings": 1164,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12068,8 +12068,8 @@
       "slug": "fallow-rs-fallow",
       "platform": "github",
       "source_url": "https://github.com/fallow-rs/fallow",
-      "source_version": "52965b80",
-      "content_hash": "a38fda494c5ecf862828cc02db489dcf81c2f2352f69232a4a8d27c67f28e862",
+      "source_version": "40e3eb97",
+      "content_hash": "d7d4c713c2d9bd5c80d34f25a39f739af72016df2cada716b837e3eb1b661fc8",
       "dossier_path": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "promoted_rules": [
@@ -12117,6 +12117,11 @@
           "number": 5063,
           "title": "security): trust module-relative path bases and check every path segment (#3926)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5512,
+          "title": "config): correct local-binding config reads after the multi-config change (#3987",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12124,7 +12129,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T23:59:19.182Z",
+      "verified_at": "2026-10-29T12:26:02.715Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -148480,6 +148485,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T12:19:52.834Z"
+    },
+    "rule-5512": {
+      "learning_id": "rule-5512",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5512,
+      "title": "config): correct local-binding config reads after the multi-config change (#3987",
+      "source_url": "https://github.com/fallow-rs/fallow",
+      "source_version": "40e3eb97",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T12:26:02.715Z"
     }
   },
   "aliases": {

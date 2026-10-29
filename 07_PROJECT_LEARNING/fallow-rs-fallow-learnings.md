@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source**: github ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
-> **Source Version**: `52965b80`  
+> **Source Version**: `40e3eb97`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T23:59:18.747Z  
+> **Timestamp**: 2026-10-29T12:26:02.209Z  
 > **Learning ID**: `learn-github-fallow-rs-fallow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T23:59:17.505Z  
+> **Harvest Timestamp**: 2026-10-29T12:26:00.475Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Codebase intelligence for TypeScript and JavaScript. Health, complexity hotspots, duplication, architecture boundaries, circular dependencies, design-system drift, and unused code, from one graph. CLI, GitHub Action, LSP, MCP, and VS Code. Rust, MIT licensed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5261 stars
+- **Stars / Engagement**: 5269 stars
 
 ---
 
@@ -344,11 +344,27 @@ export const installChildHooks = ({ active, beforeEach, afterEach, report }) => 
 ### Core Architecture Module: `crates/api/src/mutation/companion/runtime/overlay-hook.mjs`
 ```
 // Generated from tools/mutation-runner/src/runtime/overlay-hook.mjs. Do not edit.
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { registerHooks } from "node:module";
 import { fileURLToPath } from "node:url";
 
 import { realPath } from "./child.mjs";
+
+const SCRIPT_FORMATS = new Set(["module", "commonjs", "module-typescript", "commonjs-typescript"]);
+const digest = (bytes) => createHash("sha256").update(bytes).digest("hex");
+
+const indexSources = (overlay) => {
+  const index = new Map();
+  for (const [path, entry] of overlay) {
+    const bytes = readFileSync(path);
+    const key = digest(bytes);
+    const matches = index.get(key) ?? [];
+    matches.push({ bytes, entry });
+    index.set(key, matches);
+  }
+  return index;
+};
 
 /**
  * Serves the instrumented file of each overlay entry in place of its source
@@ -358,15 +374,29 @@ import { realPath } from "./child.mjs";
  * the format of the original file, so Node strips the types of a TypeScript
  * file as it does without the overlay.
  */
-export const registerOverlayHook = (overlay, onLoad = () => {}) => {
-  const overlayEntry = (url) => {
+export const registerOverlayHook = (overlay, onLoad, onIncomplete) => {
+  let sources;
+  const overlayEntry = (url, result) => {
     if (!url.startsWith("file:")) return undefined;
-    return overlay.get(realPath(fileURLToPath(url)));
+    const path = realPath(fileURLToPath(url));
+    const direct = overlay.get(path);
+    if (direct !== undefined) return direct;
+    if (!SCRIPT_FORMATS.has(result.format) || result.source == null) return undefined;
+    sources ??= indexSources(overlay);
+    const bytes = ArrayBuffer.isView(result.source)
+      ? Buffer.from(result.source.buffer, result.source.byteOffset, result.source.byteLength)
+      : Buffer.from(result.source);
+    const matches = (sources.get(digest(bytes)) ?? []).filter((match) => match.bytes.equals(bytes));
+    if (matches.length > 1) {
+      const candidates = matches.map(({ entry }) => entry.source).join(", ");
+      onIncomplete(`Ambiguous copied-source execution at ${path}: matches ${candidates}`);
+    }
+    return matches.length === 1 ? matches[0].entry : undefined;
   };
   registerHooks({
     load(url, context, nextLoad) {
       const result = nextLoad(url, context);
-      const entry = overlayEntry(url);
+      const entry = overlayEntry(url, result);
       if (entry === undefined) return result;
       onLoad(entry);
       return { ...result, source: readFileSync(entry.target, "utf8"), shortCircuit: true };
@@ -1263,11 +1293,11 @@ pub fn run_setup_hooks_with_label(opts: &SetupHooksOptions<'_>, command_label: &
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #3950** (2026-10-29): **mutation: temporary copies bypass the Node child-process overlay**
+  *Symptoms*: A selected `node:test` case can run an unchanged temporary copy of a planned source file and produce a false survivor. The child inherits `NODE_OPTIONS`; the preload works when the child executes the original path.  Reproduced on main `ef1617dd4924c86829bef25deafeabef3743cb7f` (3.36.0), Node 22.23.3.  `src/cli.mjs`:  ```js export const value = () => { return 1; }; if (import.meta.main) {   console.log(value()); } ```  `test/runner.test.mjs`:  ```js import assert from "node:assert/strict"; import { spawnSync } from "node:child_process"; import { copyFileSync, mkdtempSync, rmSync } from "node:fs"; import { tmpdir } from "node:os"; import { join } from "node:path"; import { test } from "node:test"; import { fileURLToPath } from "node:url"; import { value } from "../src/cli.mjs";  test("the library and CLI return the same value", (t) => {   assert.equal(value(), 1);   const directory = mkdtempSync(join(tmpdir(), "copied-cli-repro-"));   t.after(() => rmSync(directory, { recursive: true, force: true }));   const original = fileURLToPath(new URL("../src/cli.mjs", import.meta.url));   const copied = join(directory, "cli.mjs");   copyFileSync(original, copied);   const child = spawnSync(process.execPath, [copied], {     encoding: "utf8", env: process.env, timeout: 10000,   });   assert.equal(child.status, 0, child.stderr);   assert.equal(child.stdout, "1\n"); }); ```  Configure `entry: ["src/cli.mjs", "test/*.test.mjs"]`, `mutation.runner: "node-test"`, and `test: "node --test test/*
+
 - **Issue #3886** (2026-10-27): **unused-dependencies: inspect literal local shell helpers invoked by package scripts**
   *Symptoms*: Package command analysis credits direct binaries and discovers JavaScript or TypeScript helper files, but does not read an invoked shell helper's contents.  For example:  ```json { "scripts": { "build": "bash scripts/build.sh" } } ```  ```sh # scripts/build.sh report-cli --format json ```  If an installed local package declares the `report-cli` binary and the helper is its only usage, command analysis does not discover that usage. A useful regression fixture would declare an otherwise unused package as a negative control.  The [command analysis entry point](https://github.com/fallow-rs/fallow/blob/9c6fc8a2bb1e8a207441ec5f7a5d7b361a34b180/crates/core/src/scripts/mod.rs#L1383) processes supplied command strings. [Command accumulation](https://github.com/fallow-rs/fallow/blob/9c6fc8a2bb1e8a207441ec5f7a5d7b361a34b180/crates/core/src/scripts/mod.rs#L1464) collects binary and file information without reading invoked shell files. There is already separate [shell-content reading for hook directories](https://github.com/fallow-rs/fallow/blob/9c6fc8a2bb1e8a207441ec5f7a5d7b361a34b180/crates/core/src/scripts/hooks.rs#L144).  ## Requested behavior  Read statically named, project-local shell helpers without executing them, and feed supported commands into the existing binary-to-package analysis. Bound recursion and detect cycles. Respect working-directory changes or expose unresolved context rather than assuming a package is unused.  Cover `bash scripts/build.sh`, a directly invoked execut
-
-- **Issue #3885** (2026-10-27): **audit: align API and MCP base-worktree cleanup with the CLI snapshot lifecycle**
-  *Symptoms*: The CLI deregisters its detached base snapshot before publishing the snapshot as ready. Programmatic audit uses a separate `TemporaryBaseWorktree` implementation, which keeps the worktree registered until `Drop`.  That makes internal base worktrees visible to Git-aware tools throughout API and MCP analysis. If the host process terminates before `Drop`, its registered worktree can remain behind. Normal return and cooperative cancellation do perform cleanup.  ## Current routes  - [Programmatic audit creates TemporaryBaseWorktree](https://github.com/fallow-rs/fallow/blob/9c6fc8a2bb1e8a207441ec5f7a5d7b361a34b180/crates/api/src/runtime/audit.rs#L194). - [Supported MCP audit requests use the typed API](https://github.com/fallow-rs/fallow/blob/9c6fc8a2bb1e8a207441ec5f7a5d7b361a34b180/crates/mcp/src/tools/audit.rs#L36). - [Temporary worktree creation](https://github.com/fallow-rs/fallow/blob/9c6fc8a2bb1e8a207441ec5f7a5d7b361a34b180/crates/engine/src/repo_refs.rs#L107) and [Drop cleanup](https://github.com/fallow-rs/fallow/blob/9c6fc8a2bb1e8a207441ec5f7a5d7b361a34b180/crates/engine/src/repo_refs.rs#L1197). - [Decision-surface base analysis](https://github.com/fallow-rs/fallow/blob/9c6fc8a2bb1e8a207441ec5f7a5d7b361a34b180/crates/api/src/runtime/decision_surface.rs#L264) uses the same implementation. - [CLI deregistration before readiness](https://github.com/fallow-rs/fallow/blob/9c6fc8a2bb1e8a207441ec5f7a5d7b361a34b180/crates/cli/src/base_worktree.rs#L120) provides the existing compari
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1284,1030 +1314,1497 @@ pub fn run_setup_hooks_with_label(opts: &SetupHooksOptions<'_>, command_label: &
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `de0b6fe7` (2026-10-27)
-**Commit Message**: fix(security): trust module-relative path bases and check every path segment (#3926)
+### Incident Patch 1: `255f50fe` (2026-10-28)
+**Commit Message**: fix(config): correct local-binding config reads after the multi-config change (#3987)
 
-* fix(security): trust module-relative path bases and check every path segment
+* fix(config): correct the review findings of the config local inlining
 
-A path that starts from import.meta.url, import.meta.dirname,
-import.meta.filename, __dirname, __filename or process.cwd() and adds only
-literal segments cannot carry caller input. Sink capture now treats such an
-argument like a literal. A module-scope const that holds such a path is
-also trusted. fileURLToPath(value) and new URL(value, import.meta.url) stay
-candidates when value is not known.
+This change follows up #3981.
 
-The path.join and path.resolve matcher checked only the first argument.
-The row is now variadic: it checks every argument and keeps one candidate
-for each call. It prefers a source-backed argument. A path.relative
-containment guard now clears every argument of the guarded call.
+- Module Federation `exposes` in a webpack, rspack or rsbuild config
+  array use the base directory only when all configs declare the same
+  one. Before, they used the base directory of the first config, also
+  when the plugin call was in a different config.
+- A top-level `return config` is inlined unless a branch `return` gives
+  an object after the inlining. A returned array is always inlined.
+- The local pass follows `module.exports = config` to the callback of
+  one top-level binding.
+- The local pass inlines a returned top-level constant also when the
+  callback has no locals.
+- A loop binding, an array or object literal and a destructuring
+  assignment that hold a binding are aliases of it. A call that gets an
+  object or an array as an argument changes it, unless the callee only
+  reads its arguments.
+- The multi-config reader reads up to 64 configs and writes a debug
+  message when an array has more.
+- The stable-local filter uses a hash set.
+- A new test checks that the inlined AST sta
 
-Closes #3711
-Closes #3712
-
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
-* fix(extract): bump the extraction cache version for path-traversal facts
-
-The cached security sinks and sanitized sink arguments change meaning in
-this branch. Trusted module-relative paths are no longer sinks. A
-path.relative guard now covers every argument, not only argume
-
-**File**: `changelog.d/fix-path-traversal-trusted-bases-3711.md` (added, +6/-0)
+**File**: `changelog.d/fix-webpack-function-config-local-aliases.md` (modified, +5/-4)
 ```diff
-@@ -0,0 +1,6 @@
-+### Fixed
-+
-+- **`fallow security` no longer reports module-relative paths as path-traversal candidates.** A path that starts from `import.meta.url`, `import.meta.dirname`, `import.meta.filename`, `__dirname`, `__filename` or `process.cwd()` and adds only literal segments cannot carry caller input. Examples are `path.resolve(fileURLToPath(new URL(".", import.meta.url)), "..")` and `fs.readFileSync(path.join(__dirname, "template.html"))`. A module-scope `const` that holds such a path is also trusted. The rule applies to every sink argument, so `res.sendFile(path.join(__dirname, "index.html"))` is also clear. `fileURLToPath(value)` and `new URL(value, import.meta.url)` stay candidates when `value` is not known.
-+  (Closes [#3711](https://github.com/fallow-rs/fallow/issues/3711))
-+- **`fallow security` now checks every `path.join` and `path.resolve` segment.** Before, the path-traversal matcher checked only the first argument, so `path.resolve(".", input)` and `path.join(".", input)` gave no candidate. The matcher now checks each argument and reports one candidate for each call. A `path.relative` containment guard on the result still clears the call.
-+  (Closes [#3712](https://github.com/fallow-rs/fallow/issues/3712))
+@@ -1,7 +1,8 @@
+ ### Fixed
+ 
+ - **`fallow dead-code` now reads a config that a function builds from local bindings.** Before, fallow reported the entries and alias targets of such a config as unused files. An example is a webpack config that exports `(env, argv) => { const common = {...}; const web = { ...common, entry: {...} }; return [bg, web]; }`. Fallow does not run the config code. The changes are:
+-  - Fallow reads a local `const` or `let` binding with a literal value in the returned value of a config function. This applies to a returned identifier, an array element, a property value and an object spread such as `...common` or `...common.resolve`. When a spread and a key set the same property, the last value wins.
+-  - Fallow also reads a spread of a stable top-level constant, such as `export default { ...base, test }`. These two changes apply to all plugins that read a JavaScript or TypeScript config, for example Vite, Vitest, Playwright and Electron.
+-  - For webpack and rspack, fallow reads each config of an exported array, also when a function returns the array. Each config resolves its entries against its own `context`. Fallow collects the loaders, the `plugins` requires and the `externals` of all configs. For webpack, fallow also collects the aliases of all configs.
+-  - Fallow does not read a binding that the config can change. This includes a write, a method such as `push`, a call such as `Object.assign`, and a change through an alias such as `const { resolve } = common`. Fallow also does not read a `var` binding, a destructured binding or the result of a call.
++  - Fallow reads a local `const` or `let` binding with a literal value in the returned value of a config function. This applies to a returned identifier, an array element, a property value and an object spread such as `...common` or `...common.resolve`. When a spread and a key set the same property, the last value wins. This also applies to a function that the file exports through a binding, such as `const config = (env) => {...}; module.exports = config;`.
++  - Fallow also reads a spread of a stable top-level constant, such as `export default { ...base, test }`, and a top-level constant that a config function returns, such as `module.exports = () => base;`. These changes apply to all plugins that read a JavaScript or TypeScript config, for example Vite, Vitest, Playwright and Electron.
++  - A top-level `return config` gives the config also when a branch `return` gives no object, such as `if (!env) return null;` or `return mergeConfig(config, overrides);`. When a branch `return` gives an object, fallow reads that object, as before. A returned array always gives the configs of the array.
++  - For webpack and rspack, fallow reads up to 64 configs of an exported array, also when a function returns the array. Each config resolves its entries against its own `context`. Module Federation `exposes` resolve against the `context` only when all configs declare the same `context`, because fallow does not know which config holds the plugin call. Fallow collects the loaders, the `plugins` requires and the `externals` of all configs. For webpack, fallow also collects the aliases of all configs.
++  - Fallow does not read a binding that the config can change. This includes a write, a method such as `push`, a call such as `Object.assign`, and a change through an alias such as `const { resolve } = common`, `({ resolve: r } = common)`, `const list = [common]` or `for (const c of [common])`. An object literal such as `const config = { mode, entry }` changes `entry` only through the `entry` key, as in `config.entry.admin = x`, not through `config.devtool = x` or `config.plugins.push(x)`. An alias keeps that key path, so `const plugins = config.plugins; plugins.push(x)` does not change `entry` either. A call to a function of the same file changes its argument only when the body of that function changes its parameter, also under the same key path. A call to an imported or unknown function, such as `addAnalyzer(config)` with `addAnalyzer` from `require`, does not count as a change, because fallow does not see what the function does. Fallow also does not read a `var` binding, a destructured binding or the result of a call.
 ```
 
-**File**: `crates/core/src/analyze/security/tainted_sink.rs` (modified, +24/-3)
+**File**: `crates/core/src/plugins/config_parser.rs` (modified, +1/-3)
 ```diff
-@@ -295,7 +295,7 @@ type TaintedSinkSource<'a> = (&'a str, &'a str, Option<u32>);
- 
- fn matcher_admits_sink(matcher: &Matcher, sink: &SinkSite, source: Option<(&str, &str)>) -> bool {
-     matcher.sink_shape == sink.sink_shape
--        && matcher.arg_index == sink.arg_index
-+        && matcher.admits_arg_index(sink.arg_index)
-         && (sink.arg_is_non_literal || matcher.is_literal_aware())
-         && matcher.admits_arg_kind(sink.arg_kind)
-         && matcher.literal_value_satisfied(sink.arg_literal.as_ref())
-@@ -645,6 +645,11 @@ fn collect_module_tainted_sinks(
-         run.context.request_receivers,
-     );
- 
-+    // A variadic row (`path.join` segments, #3712) can admit several arguments
-+    // of one call. Keep one candidate per call and row, and prefer a
-+    // source-backed argument over a source-free one.
-+    let mut variadic_calls: FxHashMap<(u32, *const Matcher), usize> = FxHashMap::default();
-+
-     for sink in &module.security_sinks {
-         let Some((matcher, source)) = match_tainted_sink(run, module, sink, &tainted_locals) else {
-             continue;
-@@ -663,15 +668,31 @@ fn collect_module_tainted_sinks(
-             continue;
-         }
- 
--        findings.push(build_tainted_sink_finding(&TaintedSinkFindingInput {
-+        let finding = build_tainted_sink_finding(&TaintedSinkFindingInput {
-             matcher,
-             sink,
-             node,
-             source,
-             sink_line_col: (line, col),
-             line_offsets_by_file: run.line_offsets_by_file,
-             file_id,
--        }));
-+        });
-+        if !matcher.variadic {
-+            findings.push(finding);
-+            continue;
-+        }
-+        match variadic_calls.entry((sink.span_start, std::ptr::from_ref(matcher))) {
-+            std::collections::hash_map::Entry::Occupied(slot) => {
-+                let existing = &mut findings[*slot.get()];
-+                if finding.source_backed && !existing.source_backed {
-+                    *existing = finding;
-+                }
-+            }
-+            std::collections::hash_map::Entry::Vacant(slot) => {
-+                slot.insert(findings.len());
-+                findings.push(finding);
-+            }
-+        }
-     }
+@@ -1206,9 +1206,7 @@ pub(crate) fn extract_from_source<T: Send>(
+     fallow_extract::parse_bounded(source, || {
+         let allocator = oxc_allocator::Allocator::default();
+         let mut parsed = oxc_parser::Parser::new(&allocator, source, source_type).parse();
+-        const_inline::inline_value_constants(&allocator, &mut parsed.program, source.len());
+-        local_inline::inline_callback_locals(&allocator, &mut parsed.program, source.len());
+-        extractor(&parsed.program)
++        const_inline::with_inlined_program(&allocator, &mut parsed.program, source.len(), extractor)
+     })
+     .flatten()
  }
- 
 ```
 
-**File**: `crates/core/tests/integration_test/security_catalogue_categories.rs` (modified, +60/-0)
+**File**: `crates/core/src/plugins/config_parser_const_inline.rs` (modified, +130/-142)
 ```diff
-@@ -637,6 +637,66 @@ fn path_traversal_url_guard_still_fires() {
-     assert_candidate(&results, "src/url-guard.ts", "path-traversal", 22);
- }
+@@ -7,13 +7,18 @@
+ //! identifier in a property value or an array element with a copy of the
+ //! constant's literal value, so that every walker reads it without change.
  
-+#[test]
-+fn path_traversal_trusted_module_relative_base_does_not_fire() {
-+    let results = analyze_with_security_sink("security-path-traversal");
-+    let module_root: Vec<_> = results
-+        .security_findings
-+        .iter()
-+        .filter(|f| {
-+            f.path
-+                .to_string_lossy()
-+                .replace('\\', "/")
-+                .ends_with("src/module-root.ts")
-+        })
-+        .map(|f| (f.line, f.category.clone()))
-+        .collect();
-+    assert!(
-+        module_root.is_empty(),
-+        "module-relative paths from trusted bases and literal segments must not be flagged: {module_root:?}"
-+    );
-+}
++use std::cell::RefCell;
++use std::rc::Rc;
 +
-+#[test]
-+fn path_traversal_untrusted_url_against_module_base_still_fires() {
-+    let results = analyze_with_security_sink("security-path-traversal");
-+    assert_candidate(
-+        &results,
-+        "src/module-root-url-input.ts",
-+        "path-traversal",
-+        22,
-+    );
-+    assert_candidate(
-+        &results,
-+        "src/module-root-file-url.ts",
-+        "path-traversal",
-+        22,
-+    );
-+}
-+
-+#[test]
-+fn path_traversal_dynamic_later_segment_fires() {
-+    let results = analyze_with_security_sink("security-path-traversal");
-+    assert_candidate(
-+        &results,
-+        "src/later-segment-resolve.ts",
-+        "path-traversal",
-+        22,
-+    );
-+    assert_candidate(&results, "src/later-segment-join.ts", "path-traversal", 22);
-+    assert_candidate(&results, "src/trusted-base-input.ts", "path-traversal", 22);
-+}
-+
-+#[test]
-+fn path_traversal_reports_one_candidate_per_call() {
-+    let results = analyze_with_security_sink("security-path-traversal");
-+    assert_eq!(
-+        anchored_count(&results, "src/multi-dynamic.ts"),
-+        1,
-+        "two dynamic segments in one path.join call must produce one candidate"
-+    );
-+}
-+
- // ── open-redirect (CWE-601), ungated (broad tier) ────────────────────────────
- 
- #[test]
-```
-
-**File**: `crates/extract/src/cache/types.rs` (modified, +1/-1)
-```diff
-@@ -10,7 +10,7 @@ use crate::MemberKind;
- /// extraction semantics change, and give the reason in the commit message and
- /// the CHANGELOG. A stale version serves old extraction results from a warm
- /// cache. The `assert_cached_type_size!` guards below catch shape changes.
--pub(super) const CACHE_VERSION: u32 = 389;
-+pub(super) const CACHE_VERSION: u32 = 390;
- 
- /// Duplication token cache version. Bump it when duplicate tokenization,
- /// normalization, or the on-disk token cache schema changes, and give the
-```
-
-**File**: `crates/extract/src/visitor/mod.rs` (modified, +5/-5)
-```diff
-@@ -1124,12 +1124,12 @@ pub(crate) struct ModuleInfoExtractor {
-     module_sanitizer_bindings: FxHashMap<String, Option<SanitizerScope>>,
-     /// Nested lexical sanitizer binding stack for functions and blocks.
-     sanitizer_binding_stack: Vec<FxHashMap<String, Option<SanitizerScope>>>,
--    /// Module-scope literal-backed string allowlists. `false` means the name
--    /// shadows an outer allowlist but is not trusted itself.
-+    /// Module-scope literal-backed string allowlists; `false` shadows without trust.
-     module_literal_allowlist_bindings: FxHashMap<String, bool>,
--    /// Module-scope literal constants that can be propagated into security sink
--    /// argument classification.
-+    /// Module-scope literal constants for security sink argument classification.
-     module_static_sink_literals: FxHashMap<String, SinkLiteralValue>,
-+    /// Module-scope `const` locals bound to a trusted module-relative path.
-+    module_trusted_path_bindings: FxHashSet<String>,
-     /// Nested lexical literal allowlist bindings.
-     literal_allowlist_binding_stack: Vec<FxHashMap<String, bool>>,
-     /// Module-scope locals initialized from risky literal regex patterns.
-@@ -1332,7 +1332,7 @@ pub(crate) struct PendingTypedReactProps {
- #[derive(Debug, Clone, Copy)]
- pub(crate) struct SecurityPathSinkBinding {
-     span_start: u32,
--    arg_index: u32,
-+    arg_count: u32,
- }
- 
- impl ModuleInfoExtractor {
-```
-
-**File**: `crates/extract/src/visitor/visit_impl_scope_bindings.rs` (modified, +7/-0)
-```diff
-@@ -351,8 +351,15 @@ impl ModuleInfoExtractor {
-         }
-         if decl.kind != VariableDeclarationKind::Const {
-             self.module_static_sink_literals.remove(id.name.as_str());
-+            self.module_trusted_path_bindings.remove(id.name.as_str());
-             return;
-         }
-+        if self.is_trusted_static_path_expr(init) {
-+            self.module_trusted_path_bindings
-+                .insert(id.name.to_string());
-+        } else {
-+            self.module_trusted_path_bindings.remove(id.name.as_str());
-+        }
-         if let Some(value) = self.static_sink_literal_value(init) {
-             self.module_static_sink_literals
-                 .insert(id.name.to_string(), value);
-```
-
-**File**: `crates/extract/src/visitor/visit_impl_security_sanitizers.rs` (modified, +13/-7)
-```diff
-@@ -15,6 +15,9 @@ use super::{
- };
- use crate::js_text::JsText;
- 
-+#[path = "visit_impl_trusted_paths.rs"]
-+mod trusted_paths;
-+
- fn statement_exits_current_flow(stmt: &Statement<'_>) -> bool {
-     match stmt {
-         Statement::ReturnStatement(_) | Statement::ThrowStatement(_) => true,
-@@ -416,11 +419,14 @@ impl ModuleInfoExtractor {
-         let Some(binding) = self.path_sink_binding(local) else {
-             return;
-         };
--        self.sanitized_sink_args.push(SanitizedSinkArg {
--            span_start: binding.span_start,
--            arg_index: binding.arg_index,
--            scope: SanitizerScope::Path,
--        });
-+        // The guard checks the call result, so it covers every path segment.
-+        for arg_index in 0..binding.arg_count {
-+            self.sanitized_sink_args.push(SanitizedSinkArg {
-+                span_start: binding.span_start,
-+                arg_index,
-+                scope: SanitizerScope::Path,
-+            });
-+        }
-     }
- 
-     pub(super) fn record_fail_closed_guard_after_statement(&mut self, stmt: &Statement<'_>) {
-@@ -500,7 +506,7 @@ impl ModuleInfoExtractor {
-         Some(rel.name.as_str())
-     }
- 
--    fn is_node_path_method_call(&self, call: &CallExpression<'_>, method: &str) -> bool {
-+    pub(super) fn is_node_path_method_call(&self, call: &CallExpression<'_>, method: &str) -> bool {
-         let Expression::StaticMemberExpression(member) = &call.callee else {
-             return false;
-         };
-@@ -530,7 +536,7 @@ impl ModuleInfoExtractor {
-         }
-         Some(SecurityPathSinkBinding {
-             span_start: call.span.start,
--            arg_index: 0,
-+            arg_count: u32::try_from(call.arguments.len()).unwrap_or(u32::MAX),
-         })
-     }
- 
-```
-
-**File**: `crates/extract/src/visitor/visit_impl_security_sinks.rs` (modified, +5/-1)
-```diff
-@@ -617,7 +617,11 @@ impl ModuleInfoExtractor {
-             span,
-         } = input;
-         let arg_literal = self.static_sink_literal_value(arg_expr);
--        let arg_is_non_literal = arg_literal.is_none() && is_non_literal_arg(arg_expr);
-+        // A path built only from trusted module-relative bases and literal
-+        // segments is treated like a literal (issue #3711).
-+        let arg_is_non_literal = arg_literal.is_none()
-+            && is_non_literal_arg(arg_expr)
-+            && !self.is_trusted_static_path_expr(arg_expr);
-         if arg_is_non_literal
-             && should_skip_clamped_resource_amplification_arg(
-                 callee_path,
-```
-
----
-
-### Incident Patch 2: `b63c5f04` (2026-10-27)
-**Commit Message**: fix(api): deregister the programmatic base snapshot before analysis (#3941)
-
-The API, MCP and decision-surface base snapshot is now removed from Git registration before analysis, as the CLI already did. The cleanup of snapshots from stopped processes moves into the engine and runs for every snapshot. It keeps a snapshot whose owner is alive or cannot be inspected, and a snapshot younger than 60 seconds. Every Git command that Fallow starts now runs through one wrapper, which blocks repository discovery inside a snapshot and refuses an implicitly discovered bare repository.
-
-Fixes #3885
-
-**File**: `.github/workflows/ci.yml` (modified, +1/-0)
-```diff
-@@ -172,6 +172,7 @@ jobs:
-               - 'crates/engine/src/changed_files.rs'
-               - 'crates/engine/src/churn.rs'
-               - 'crates/engine/src/repo_refs.rs'
-+              - 'crates/engine/src/base_worktree_orphans.rs'
-               - 'crates/engine/src/shell_quote.rs'
-               - 'crates/engine/src/write_guard.rs'
-               - 'crates/engine/Cargo.toml'
-```
-
-**File**: `Cargo.lock` (modified, +2/-0)
-```diff
-@@ -1326,6 +1326,7 @@ dependencies = [
-  "fallow-graph",
-  "fallow-mutation",
-  "fallow-output",
-+ "fallow-process",
-  "fallow-security",
-  "fallow-types",
-  "globset",
-@@ -1351,6 +1352,7 @@ dependencies = [
-  "tracing",
-  "tracing-subscriber",
-  "url",
-+ "windows-sys 0.61.2",
-  "xxhash-rust",
- ]
- 
-```
-
-**File**: `changelog.d/fix-api-base-worktree-lifecycle-3885.md` (added, +22/-0)
-```diff
-@@ -0,0 +1,22 @@
-+### Fixed
-+
-+- **Programmatic and MCP audits no longer show their base snapshot in `git worktree list`.**
-+  The API, the MCP `audit` tool, and the decision surface now remove the Git
-+  registration of the base snapshot before the base analysis starts, as
-+  `fallow audit` does. They also remove the snapshots that a stopped process
-+  left behind. A snapshot stays when its owner process can still run, when
-+  Fallow cannot inspect that process, or when the snapshot is younger than one
-+  minute.
-+  (Closes [#3885](https://github.com/fallow-rs/fallow/issues/3885))
-+
-+### Security
-+
-+- **Git commands in an audit base snapshot no longer read a repository from the base commit.**
-+  The `.git` file of a base snapshot pointed at a relative path. A base commit
-+  could supply a directory at that path, or a directory shaped as a bare
-+  repository, and Git then read its config. That config can run commands, for
-+  example through `core.fsmonitor`. The `.git` file now names an absolute path
-+  that cannot exist, and each Git command that Fallow runs inside a snapshot
-+  gets a `GIT_DIR` that does not exist. Every Git command that Fallow starts
-+  also sets `safe.bareRepository=explicit`, so Git does not use a directory
-+  shaped as a bare repository that it finds on its own.
-```
-
-**File**: `crates/api/src/audit_run/base_files.rs` (modified, +1/-5)
-```diff
-@@ -3,9 +3,7 @@
- 
- use std::io::Write as _;
- use std::path::{Path, PathBuf};
--use std::process::Command;
- 
--use fallow_engine::changed_files::clear_ambient_git_env;
+ use oxc_allocator::{Allocator, CloneIn};
+ #[allow(clippy::wildcard_imports, reason = "many AST types used")]
+ use oxc_ast::ast::*;
+ use oxc_ast_visit::{Visit, VisitMut, walk, walk_mut};
  use rustc_hash::{FxHashMap, FxHashSet};
  
- /// Whether the head run can stand in for the base snapshot.
-@@ -147,14 +145,12 @@ impl BaseFileReader {
-     /// available. The caller then treats the files as not reusable.
-     #[must_use]
-     pub fn spawn(root: &Path) -> Option<Self> {
--        let mut command = Command::new("git");
-+        let mut command = fallow_engine::changed_files::git_command_in(root);
-         command
-             .args(["cat-file", "--batch"])
--            .current_dir(root)
-             .stdin(std::process::Stdio::piped())
-             .stdout(std::process::Stdio::piped())
-             .stderr(std::process::Stdio::null());
--        clear_ambient_git_env(&mut command);
-         let mut child = fallow_process::ScopedChild::spawn(&mut command).ok()?;
-         let stdin = child.take_stdin()?;
-         let stdout = child.take_stdout()?;
-```
-
-**File**: `crates/api/src/diff_risk/mod.rs` (modified, +1/-4)
-```diff
-@@ -20,7 +20,6 @@ pub mod clones;
- pub mod text;
+ use super::top_level_variable_declarations;
++#[path = "config_parser_value_changes.rs"]
++mod value_changes;
  
- use std::path::{Path, PathBuf};
--use std::process::Command;
- 
- use fallow_config::{ResolvedConfig, RulesConfig, Severity};
- use fallow_engine::changed_files::RenamedFile;
-@@ -176,12 +175,10 @@ impl BaseSource {
- /// resolve one. The changed-file list uses the merge base too, so a base
- /// branch that moved on does not read as a change of this branch.
- pub(crate) fn merge_base(root: &Path, base_ref: &str) -> String {
--    let mut command = Command::new("git");
-+    let mut command = fallow_engine::changed_files::git_command_in(root);
-     command
-         .args(["merge-base", "--end-of-options", base_ref, "HEAD"])
--        .current_dir(root)
-         .stderr(std::process::Stdio::null());
--    fallow_engine::changed_files::clear_ambient_git_env(&mut command);
-     command
-         .output()
-         .ok()
-```
-
-**File**: `crates/api/src/mutation/worktree.rs` (modified, +6/-7)
-```diff
-@@ -13,11 +13,8 @@
- 
- use std::collections::BTreeMap;
- use std::path::{Path, PathBuf};
--use std::process::{Command, Stdio};
- 
--use fallow_engine::changed_files::{
--    ChangedFilesError, clear_ambient_git_env, resolve_git_toplevel,
--};
-+use fallow_engine::changed_files::{ChangedFilesError, resolve_git_toplevel};
- use sha2::{Digest, Sha256};
- 
- /// The most ignored files that a start snapshot fingerprints. The run checks
-@@ -211,7 +208,7 @@ pub fn snapshot(
-         Err(ChangedFilesError::NotARepository) => return Ok(None),
-         Err(error) => return Err(error.describe()),
-     };
--    let mut command = Command::new("git");
-+    let mut command = fallow_engine::changed_files::git_command_in(&toplevel);
-     command.args([
-         "status",
-         "--porcelain=v1",
-@@ -222,8 +219,6 @@ pub fn snapshot(
-     if start.is_none() {
-         command.arg("--ignored=matching");
+ /// The maximum number of constants that one inlined value can pass through,
+ /// as in `const A = {...}; const B = [A]; export default { x: B }`.
+@@ -59,12 +64,7 @@ pub(super) fn constant_values<'a>(
+     if candidates.is_empty() {
+         return FxHashMap::default();
      }
--    command.current_dir(&toplevel).stdin(Stdio::null());
--    clear_ambient_git_env(&mut command);
-     let output = fallow_process::output(&mut command)
-         .map_err(|error| format!("cannot run git status: {error}"))?;
-     if !output.status.success() {
-@@ -260,6 +255,10 @@ pub fn snapshot(
- 
- #[cfg(test)]
- mod tests {
-+    use std::process::Command;
+-    let stable = stable_bindings(
+-        program,
+-        candidates.iter().map(|(name, _)| *name),
+-        false,
+-        true,
+-    );
++    let stable = stable_values(program, candidates.iter().copied(), true);
+     candidates
+         .into_iter()
+         .filter(|(name, _)| stable.contains(name))
+@@ -397,28 +397,105 @@ pub(super) fn stable_bindings<'n>(
+     allow_mutating_calls: bool,
+     require_top_level: bool,
+ ) -> FxHashSet<&'n str> {
++    binding_counts(program, names, require_top_level)
++        .into_iter()
++        .filter(|(_, count)| count.is_stable(allow_mutating_calls))
++        .map(|(name, _)| name)
++        .collect()
++}
 +
-+    use fallow_engine::changed_files::clear_ambient_git_env;
++/// The subset of the named literal values that [`stable_bindings`] accepts
++/// with no mutating calls.
++pub(super) fn stable_values<'n, 'e, 'a: 'e>(
++    program: &Program<'_>,
++    candidates: impl IntoIterator<Item = (&'n str, &'e Expression<'a>)>,
++    require_top_level: bool,
++) -> FxHashSet<&'n str> {
++    stable_bindings(
++        program,
++        candidates.into_iter().map(|(name, _)| name),
++        false,
++        require_top_level,
++    )
++}
 +
-     use super::*;
- 
-     fn git(root: &Path, args: &[&str]) {
-```
-
-**File**: `crates/api/src/runtime/audit.rs` (modified, +234/-0)
-```diff
-@@ -1701,4 +1701,238 @@ mod tests {
-             Some("merge-base with origin/main")
-         );
++/// The [`NameCount`] of each name, with the changes through aliases and
++/// through calls to local functions added as mutating calls.
++fn binding_counts<'n>(
++    program: &Program<'_>,
++    names: impl IntoIterator<Item = &'n str>,
++    require_top_level: bool,
++) -> FxHashMap<&'n str, NameCount> {
+     let mut usage = NameUsage::new(
+         names
+             .into_iter()
+             .filter(|name| !require_top_level || declares_top_level_const_or_let(program, name)),
+     );
+     if usage.counts.is_empty() {
+-        return FxHashSet::default();
++        return FxHashMap::default();
      }
+     usage.visit_program(program);
+-    for name in changed_alias_names(program) {
+-        usage.count_mutation(&name);
++    for name in changed_names(program).iter() {
++        usage.count_mutation(name);
+     }
+-    usage
+-        .counts
+-        .into_iter()
+-        .filter(|(_, count)| {
+-            count.bindings == 1
+-                && count.writes == 0
+-                && (allow_mutating_calls || count.mutating_calls == 0)
+-        })
+-        .map(|(name, _)| name)
+-        .collect()
++    usage.counts
++}
 +
-+    fn registered_worktree_count(root: &Path) -> usize {
-+        let output = fallow_engine::changed_files::clear_ambient_git_env(&mut Command::new("git"))
-+            .args(["worktree", "list", "--porcelain"])
-+            .current_dir(root)
-+            .output()
-+            .expect("git worktree list");
-+        assert!(output.status.success(), "git worktree list failed");
-+        String::from_utf8_lossy(&output.stdout)
-+            .lines()
-+            .filter(|line| line.starts_with("worktree "))
-+            .count()
++/// The identity of one parsed program: its address, its source text and its
++/// number of statements.
++type ProgramKey = (usize, usize, usize, usize);
++
++thread_local! {
++    /// The changed names of the last program that [`changed_names`] read.
++    /// [`with_inlined_program`] clears it each time the program changes.
++    static CHANGED_NAMES: RefCell<Option<(ProgramKey, Rc<FxHashSet<String>>)>> =
++        const { RefCell::new(None) };
++}
++
++fn program_key(program: &Program<'_>) -> ProgramKey {
++    (
++        std::ptr::from_ref(program) as usize,
++        program.source_text.as_ptr() as usize,
++        program.source_text.len(),
++        program.body.len(),
++    )
++}
++
++/// The names that the program changes through an alias or a local call,
++/// computed once for each state of the program. A config parse asks for each
++/// stable binding, so one analysis serves all of them.
++fn changed_names(program: &Program<'_>) -> Rc<FxHashSet<String>> {
++    let key = program_key(program);
++    if let Some(names) = CHANGED_NAMES.with_borrow(|cached| {
++        cached
++            .as_ref()
++            .filter(|(cached_key, _)| *cached_key == key)
++            .map(|(_, names)| Rc::clone(names))
++    }) {
++        return names;
 +    }
++    let names = Rc::new(value_changes::changed_names(program));
++    CHANGED_NAMES.set(Some((key, Rc::clone(&names))));
++    names
++}
 +
-+    /// #3885: the base snapshot of the programmatic audit, which MCP also
-+    /// uses, is not registered with Git while the base analysis reads it.
-+    #[test]
-+    fn programmatic_base_snapshot_is_unregistered_during_base_analysis() {
-+        use crate::audit_run::AuditBackend as _;
-+
-+        let project = tempfile::tempdir().expect("temp dir");
-+        let root = project.path();
-+        std::fs::write(
-+            root.join("package.json"),
-+            r#"{"name":"base-snapshot","main":"index.ts"}"#,
-+        )
-+        .expect("write manifest");
-+        std::fs::write(root.join("index.ts"), "export const used = 1;\n").expect("write entry");
-+        git(root, &["init", "-b", "main"]);
-+        git(root, &["add", "."]);
-+        git(
-+            root,
-+            &[
-+                "-c",
-+                "user.email=test@example.com",
-+                "-c",
-+                "user.name=Test",
-+                "-c",
-+                "commit.gpgsign=false",
-+                "commit",
-+                "-m",
-+                "initial",
-+            ],
-+        );
-+        let options = AuditOptions {
-+            analysis: AnalysisOptions {
-+                root: Some(root.to_path_buf()),
-+                ..AnalysisOptions::default()
-+            },
-+            ..AuditOptions::default()
-+        };
-+        let analysis = analysis_options_for_audit(&options, "HEAD");
-+        let resolved = audit_section_context(&analysis).expect("context resolves");
-+        let config = load_programmatic_audit_config(&resolved).expect("config loads");
-+        let backend = ProgrammaticAuditBackend {
-+            options: &options,
-+            analysis: &analysis,
-+            resolved: &resolved,
-+            config: &config,
-+        };
-+
-+        let checkout = backend
-+            .create_base_checkout("HEAD", None)
-+            .unwrap_or_else(|_| panic!("base checkout is created"));
-+        assert_eq!(
-+            registered_worktree_count(root),
-+            1,
-+            "only the main worktree may be registered while the base analysis runs"
-+        );
-+        let base = backend
-+            .run_base(checkout.path(), None)
-+            .unwrap_or_else(|_| panic!("base analysis runs on the unregistered snapshot"));
-+        assert!(base.subanalyses.dead_code.is_some());
-+        assert_eq!(registered_worktree_count(root), 1);
-+
-+        let path = checkout.path().to_path_buf();
-+        drop(checkout);
-+        assert!(!path.exists(), "the base snapshot is removed on drop");
-+        assert_eq!(registered_worktree_count(root), 1);
-+    }
-+
-+    #[cfg(unix)]
-+    fn commit_all(root: &Path, message: &str) {
-+        git(root, &["add", "-f", "."]);
-+        git(
-+            root,
-+            &[
-+                "-c",
-+                "user.email=test@example.com",
-+                "-c",
-+                "user.name=Test",
-+                "-c",
-+                "commit.gpgsign=false",
-+                "commit",
-+                "-m",
-+                message,
-+            ],
-+        );
-+    }
-+
-+    /// The base commit is untrusted. A gitdir that it commits under the name
-+    /// of the snapshot stub, or as a nested bare repository, must not run its
-+    /// config during the audit.
-+    #[cfg(unix)]
-+    #[test]
-+    fn audit_never_runs_a_git_config_from_the_base_commit() {
-+        let project = tempfile::tempdir().expect("temp dir");
-+        let root = project.path().join("repo");
-+        let marker = project.path().join("fsmonitor-ran");
-+        std::fs::create_dir_all(&root).expect("create repo");
-+        std::fs::write(
-+            root.join("package.json"),
-+            r#"{"name":"crafted-base","main":"index.ts"}"#,
-+        )
-+        .expect("write manifest");
-+        std::fs::write(root.join("index.ts"), "export const used = 1;\n").expect("write entry");
-+        for dir in ["fallow-audit-unregistered", "pkg"] {
-+            let gitdir = root.join(dir);
-+            std::fs::create_dir_all(gitdir.join("objects")).expect("create objects");
-+            std::fs::create_dir_all(gitdir.join("refs")).expect("create refs");
-+            std::fs::write(gitdir.join("objects/.keep"), "").expect("write keep");
-+            std::fs::write(gitdir.join("refs/.keep"), "").expect("write keep");
-+            std::fs::write(gitdir.join("HEAD"), "ref: refs/h
++/// Run both inline passes on `program`, then `read` it. The cache of
++/// [`changed_names`] is cleared before and after each step, because each
++/// inline pass changes the program.
++pub(super) fn with_inlined_program<'a, R>(
++    allocator: &'a Allocator,
++    program: &mut Program<'a>,
++    source_len: usize,
++    read: impl FnOnce(&Program<'a>) -> R,
++) -> R {
++    CHANGED_NAMES.set(None);
++    inline_value_constants(allocator, program, source_len);
++    CHANGED_NAMES.set(None);
++    super::local_inline::inline_c
 ```
 
-**File**: `crates/cli/src/agent_install/mcp.rs` (modified, +1/-2)
+**File**: `crates/core/src/plugins/config_parser_local_inline.rs` (modified, +386/-61)
 ```diff
-@@ -922,9 +922,8 @@ pub fn merge_codex(
+@@ -15,10 +15,13 @@
+ use oxc_allocator::{Allocator, CloneIn};
+ #[allow(clippy::wildcard_imports, reason = "many AST types used")]
+ use oxc_ast::ast::*;
+-use rustc_hash::FxHashMap;
++use rustc_hash::{FxHashMap, FxHashSet};
+ 
+-use super::const_inline::{Inliner, constant_values, literal_value, stable_bindings};
+-use super::{MAX_CONFIG_BRANCH_DEPTH, MAX_CONFIG_WRAPPER_DEPTH, is_module_exports_target};
++use super::const_inline::{Inliner, constant_values, literal_value, stable_values};
++use super::{
++    MAX_CONFIG_BRANCH_DEPTH, MAX_CONFIG_WRAPPER_DEPTH, extract_object_from_expression,
++    is_module_exports_target,
++};
+ 
+ /// The budget of the local pass, as a multiple of the source size. A config
+ /// that spreads one shared local into two configs copies that local twice.
+@@ -29,40 +32,46 @@ const LOCAL_BUDGET_FACTOR: usize = 2;
+ ///
+ /// A local qualifies when a `const` or `let` statement at the callback body's
+ /// own level declares it with an object, array or string literal, and it is
+-/// the only binding of its name in the program, with no writes and no mutating
+-/// calls. The stable top-level constants are available too. The copied AST
++/// the only binding of its name in the program, with no writes, no mutating
++/// calls and no call that can change it. The stable top-level constants are
++/// available too. The copied AST
+ /// nodes stay at or below `LOCAL_BUDGET_FACTOR` times `source_len`.
+ pub(super) fn inline_callback_locals<'a>(
+     allocator: &'a Allocator,
+     program: &mut Program<'a>,
+     source_len: usize,
+ ) {
+-    let mut values = callback_locals(allocator, program);
+-    if values.is_empty() {
++    let Some(mut values) = callback_locals(allocator, program) else {
+         return;
+-    }
++    };
+     for (name, value) in constant_values(allocator, program) {
+         values.entry(name).or_insert(value);
+     }
++    if values.is_empty() {
++        return;
++    }
+     let mut inliner = Inliner::new(
+         allocator,
+         &values,
+         source_len.saturating_mul(LOCAL_BUDGET_FACTOR),
+     );
+     for callback in config_callbacks(program) {
+-        for value in callback.returned_values() {
+-            inliner.inline_value(value);
+-        }
++        callback.inline_returns(&mut inliner, &values);
+     }
  }
  
- fn is_git_tracked(root: &Path, relative: &str) -> bool {
--    Command::new("git")
-+    fallow_engine::changed_files::git_command_in(root)
-         .args(["ls-files", "--error-unmatch", relative])
--        .current_dir(root)
-         .output()
-         .is_ok_and(|output| output.status.success())
+ /// A copy of the literal value of each stable local of the config callbacks.
++/// Returns `None` when the program exports no config callback.
+ fn callback_locals<'a>(
+     allocator: &'a Allocator,
+     program: &mut Program<'a>,
+-) -> FxHashMap<String, Expression<'a>> {
++) -> Option<FxHashMap<String, Expression<'a>>> {
++    let callbacks = config_callbacks(program);
++    if callbacks.is_empty() {
++        return None;
++    }
+     let mut candidates: Vec<(String, Expression<'a>)> = Vec::new();
+-    for callback in config_callbacks(program) {
++    for callback in callbacks {
+         let Callback::Body(body) = callback else {
+             continue;
+         };
+@@ -87,19 +96,24 @@ fn callback_locals<'a>(
+         }
+     }
+     if candidates.is_empty() {
+-        return FxHashMap::default();
++        return Some(FxHashMap::default());
+     }
+-    let stable = stable_bindings(
++    let stable: FxHashSet<String> = stable_values(
+         program,
+-        candidates.iter().map(|(name, _)| name.as_str()),
++        candidates
++            .iter()
++            .map(|(name, value)| (name.as_str(), value)),
+         false,
+-        false,
+-    );
+-    let stable: Vec<String> = stable.into_iter().map(str::to_string).collect();
+-    candidates
+-        .into_iter()
+-        .filter(|(name, _)| stable.contains(name))
+-        .collect()
++    )
++    .into_iter()
++    .map(str::to_string)
++    .collect();
++    Some(
++        candidates
++            .into_iter()
++            .filter(|(name, _)| stable.contains(name))
++            .collect(),
++    )
  }
+ 
+ /// The body of a config callback: a function body, or the expression body of
+@@ -109,52 +123,72 @@ enum Callback<'p, 'a> {
+     Expression(&'p mut Expression<'a>),
+ }
+ 
+-impl<'p, 'a> Callback<'p, 'a> {
+-    /// The values that `find_config_object` can read as the returned config:
+-    /// the expression body of an arrow, or the argument of each `return` at the
+-    /// body's own level or in the bounded branch search. Returns of nested
+-    /// functions belong to those functions and stay out.
++impl<'a> Callback<'_, 'a> {
++    /// Inline the values that `find_config_object` and the multi-config reader
++    /// can read as the returned config: the expression body of an arrow, or the
++    /// argument of each `return` at the body's own level or in the bounded
++    /// branch search. Returns of nested functions belong to those functions and
++    /// stay out.
+     ///
+     /// `find_config_object` prefers an object that a top-level `return` gives
+     /// over a branch return. A top-level `return base;` gave no object before
+-    /// this pass, so the search used the first branch return. To keep that
+-    /// result, a returned identifier at t
+```
+
+**File**: `crates/core/src/plugins/config_parser_multi_config.rs` (modified, +25/-12)
+```diff
+@@ -20,7 +20,9 @@ use super::{
+ };
+ 
+ /// The maximum number of configs read from one exported array, in source order.
+-const MAX_MULTI_CONFIGS: usize = 16;
++/// A build can export one config per locale or per target. The work for each
++/// config is linear in its size, and the inline budget bounds the copies.
++const MAX_MULTI_CONFIGS: usize = 64;
+ 
+ /// The config objects of a program: the one object that `find_config_object`
+ /// finds, or else each object element of an exported config array. Elements
+@@ -29,16 +31,23 @@ pub fn find_config_objects<'a>(program: &'a Program<'a>) -> Vec<&'a ObjectExpres
+     if let Some(object) = find_config_object(program) {
+         return vec![object];
+     }
+-    find_default_export_array(program)
+-        .map(|array| {
+-            array
+-                .elements
+-                .iter()
+-                .filter_map(|element| element.as_expression().and_then(object_expression))
+-                .take(MAX_MULTI_CONFIGS)
+-                .collect()
+-        })
+-        .unwrap_or_default()
++    let Some(array) = find_default_export_array(program) else {
++        return Vec::new();
++    };
++    let mut objects: Vec<_> = array
++        .elements
++        .iter()
++        .filter_map(|element| element.as_expression().and_then(object_expression))
++        .collect();
++    if objects.len() > MAX_MULTI_CONFIGS {
++        tracing::debug!(
++            configs = objects.len(),
++            read = MAX_MULTI_CONFIGS,
++            "config array is longer than the limit, later configs are not read"
++        );
++        objects.truncate(MAX_MULTI_CONFIGS);
++    }
++    objects
+ }
+ 
+ /// Run `read` on each config object of the source and collect the results in
+@@ -261,8 +270,12 @@ mod tests {
+ 
+     #[test]
+     fn exported_array_count_is_bounded() {
++        // A build that emits one config per locale or per target can export
++        // more than 16 configs.
+         let elements = vec!["{ entry: 'a' }"; 40].join(", ");
+-        assert_eq!(count(&format!("module.exports = [{elements}];")), 16);
++        assert_eq!(count(&format!("module.exports = [{elements}];")), 40);
++        let elements = vec!["{ entry: 'a' }"; 100].join(", ");
++        assert_eq!(count(&format!("module.exports = [{elements}];")), 64);
+     }
+ 
+     #[test]
+```
+
+**File**: `crates/core/src/plugins/config_parser_value_changes.rs` (added, +859/-0)
+```diff
+@@ -0,0 +1,859 @@
++//! Find the names whose value the program changes through another name.
++//!
++//! A config can change a value through an alias: `const r = common.resolve;
++//! r.alias.a = x` changes `common`, and `const config = { entry };
++//! config.entry.admin = x` changes `entry`. This module follows each change
++//! along a key path, so `config.devtool = x` or `config.plugins.push(x)` does
++//! not change `entry`.
++//!
++//! Only a change that the file shows counts: a write, a known mutating call
++//! such as `push` or `Object.assign`, and a call to a function of the same
++//! file whose body changes its parameter. A call to an imported or unknown
++//! function does not count. A missed change can only hide an unused file, but
++//! a change that is not real reports a used file as unused.
++
++#[allow(clippy::wildcard_imports, reason = "many AST types used")]
++use oxc_ast::ast::*;
++use oxc_ast_visit::{Visit, walk};
++use oxc_syntax::scope::ScopeFlags;
++use rustc_hash::{FxHashMap, FxHashSet};
++
++use super::mutated_target;
++
++/// The keys of a member chain after its root name, in source order. `None`
++/// stands for a computed key, which can be any key.
++type Chain = Vec<Option<String>>;
++
++/// The maximum number of steps that one analysis takes: each change that it
++/// records and each alias that it follows counts as one step.
++const MAX_STEPS: usize = 200_000;
++
++/// The maximum number of aliases that one analysis collects.
++const MAX_EDGES: usize = 20_000;
++
++/// A change of the value that a name holds.
++type NamedChange = (String, Change);
++
++/// One change of a value, with the key chain under the changed name.
++#[derive(Clone, PartialEq, Eq, Hash)]
++enum Change {
++    /// A write to a member, such as `x.a.b = 1` (chain `[a, b]`).
++    Write(Chain),
++    /// A mutating call on the value at the chain, such as `x.a.push(1)`.
++    Mutation(Chain),
++}
++
++impl Change {
++    /// The same change with the first `keep` keys of its chain.
++    fn cut(self, keep: usize) -> Self {
++        match self {
++            Change::Write(mut chain) => {
++                chain.truncate(keep);
++                Change::Write(chain)
++            }
++            Change::Mutation(mut chain) => {
++                chain.truncate(keep);
++                Change::Mutation(chain)
++            }
++        }
++    }
++}
++
++/// One step of the way that an object or array literal holds a value.
++#[derive(Clone)]
++enum Hold {
++    /// A property with a static key, as `entry` in `{ entry }`.
++    Key(String),
++    /// An array element or a computed key, which can be any key.
++    Any,
++    /// A spread, as in `{ ...common }`. The copy has the same keys, but a
++    /// write to a key of the copy does not change the spread value. The list
++    /// holds the static keys that the same literal sets after the spread, as
++    /// `plugins` in `{ ...common, plugins: [] }`: the copy does not share the
++    /// value of such a key with the spread value.
++    Spread(Vec<String>),
++}
++
++/// A name that holds the value of `root`, or a part of it. A change of `name`
++/// with chain `c` is a change of the value at `prefix ++ c`. That value holds
++/// the root value under `holds`, and `part` is the member chain from the root
++/// value, as `[plugins]` in `const p = config.plugins`.
++struct Edge {
++    name: String,
++    root: String,
++    prefix: Chain,
++    holds: Vec<Hold>,
++    part: Chain,
++}
++
++impl Edge {
++    /// The change of `root` that a change of `name` makes, if any. The
++    /// result keeps the first `keep` keys of its chain.
++    fn translate(&self, change: &Change, keep: usize) -> Option<Change> {
++        let (chain, is_write) = match change {
++            Change::Write(chain) => (chain, true),
++            Change::Mutation(chain) => (chain, false),
++        };
++        let full: Chain = self.prefix.iter().chain(chain).cloned().collect();
++        let mut index = 0;
++        let mut shallow = 0;
++        for hold in &self.holds {
++            match hold {
++                Hold::Key(key) => {
++                    let found = full.get(index)?;
++                    if found.as_ref().is_some_and(|found| found != key) {
++                        return None;
++                    }
++                    index += 1;
++                }
++                Hold::Any => {
++                    full.get(index)?;
++                    index += 1;
++                }
++                Hold::Spread(overridden) => {
++                    let first = full.get(index)?;
++                    if first
++                        .as_ref()
++                        .is_some_and(|key| overridden.iter().any(|own| own == key))
++                    {
++                        return None;
++                    }
++                    shallow = 1;
++                }
++            }
++        }
++        let rest = &full[index..];
++        let needed = if is_write { 1 + shallow } else { shallow };
++        if rest.len() < needed {
++            return None;
++        }
++        let chain: C
+```
+
+**File**: `crates/core/src/plugins/webpack.rs` (modified, +503/-11)
+```diff
+@@ -278,9 +278,14 @@ pub(super) struct ConfigFile<'a> {
+ /// Webpack and rspack name the base directory `context`, and rsbuild names it
+ /// `root`. A relative entry resolves against it, not against the config file.
+ /// In a multi-config export, each config resolves its entries against its own
+-/// base directory. Returns the project-relative base directory of the first
+-/// config, so the Module Federation reader can resolve `exposes` targets the
+-/// same way.
++/// base directory.
++///
++/// Returns the project-relative base directory that all configs share, so the
++/// Module Federation reader can resolve `exposes` targets the same way. The
++/// Federation reader reads the plugin calls of the whole file and does not
++/// know which config holds a call. When the configs declare different base
++/// directories, this returns `None`, and the reader resolves `exposes`
++/// against the config directory.
+ pub(super) fn apply_entries(
+     result: &mut PluginResult,
+     source: &str,
+@@ -289,11 +294,9 @@ pub(super) fn apply_entries(
+     base_key: &str,
+ ) -> Option<PathBuf> {
+     let ConfigFile { path, root } = config;
+-    let mut first_base = None;
+-    for (index, (entries, raw_base)) in
++    let mut bases = Vec::new();
++    for (entries, raw_base) in
+         config_parser::extract_each_config_entries(source, path, entry_key, base_key)
+-            .into_iter()
+-            .enumerate()
+     {
+         let base = raw_base
+             .and_then(|raw| config_parser::normalize_filesystem_config_path_buf(&raw, path, root));
+@@ -302,11 +305,19 @@ pub(super) fn apply_entries(
+                 .map(|base| normalize_context_entry(&entry, base, path, root))
+                 .unwrap_or(entry)
+         });
+-        if index == 0 {
+-            first_base = base;
+-        }
++        bases.push(base);
+     }
+-    first_base
++    shared_base(bases)
++}
++
++/// The one base directory of all configs, or `None` when the configs declare
++/// different base directories.
++fn shared_base(bases: Vec<Option<PathBuf>>) -> Option<PathBuf> {
++    let mut bases = bases.into_iter();
++    let first = bases.next()??;
++    bases
++        .all(|base| base.as_ref() == Some(&first))
++        .then_some(first)
+ }
+ 
+ /// The project-relative package directory of a config that sits in a config
+@@ -966,6 +977,487 @@ mod tests {
+         assert_eq!(result.entry_patterns, vec!["app/src/B.tsx"]);
+     }
+ 
++    /// A config whose inlined values nest much deeper than the source does.
++    /// Two top-level constants name each other at the leaf, so the first pass
++    /// stacks their copies. Two callback locals do the same and also name the
++    /// constants, so the second pass stacks copies of values that already
++    /// hold copies of the first pass.
++    fn deep_inline_source(open: &str, close: &str, depth: usize) -> String {
++        let deep = |leaf: &str| format!("{}{leaf}{}", open.repeat(depth), close.repeat(depth));
++        format!(
++            "const A = {a};\nconst B = {b};\nmodule.exports = () => {{\n\
++             const l1 = {l1};\nconst l2 = {l2};\n\
++             return {{ entry: \"./src/a.ts\", resolve: {{ alias: l1 }}, plugins: [l1, l2],\n\
++             externals: l2, module: {{ rules: [l1] }}, other: [l1, l2, A, B] }};\n}};\n",
++            a = deep("B"),
++            b = deep("A"),
++            l1 = deep("[l2, A]"),
++            l2 = deep("[l1, B]"),
++        )
++    }
++
++    /// The shape of [`deep_inline_source`] with one constant and one local
++    /// that each name themselves, which gives the deepest AST per source byte.
++    fn self_inline_source(open: &str, close: &str, depth: usize) -> String {
++        let deep = |leaf: &str| format!("{}{leaf}{}", open.repeat(depth), close.repeat(depth));
++        format!(
++            "const A = {a};\nmodule.exports = () => {{\nconst l = {l};\n\
++             return {{ entry: \"./src/a.ts\", resolve: {{ alias: l }}, plugins: [l],\n\
++             externals: l, module: {{ rules: [l] }}, other: [l, A] }};\n}};\n",
++            a = deep("A"),
++            l = deep("[l, A]"),
++        )
++    }
++
++    #[test]
++    fn deep_inlined_values_stay_within_the_parse_stack() {
++        // Each parse runs on a stack that `parse_bounded` sizes from the source
++        // length and the source bracket depth. The inline passes can make the
++        // AST deeper than the source. This test fails with a stack overflow
++        // when the walks over the inlined AST need more stack than that.
++        // A probe measured about 1.1 AST levels per source byte for the
++        // self-naming array shape, against about 0.12 levels per byte for the
++        // source alone.
++        for (open, close) in [("[", "]"), ("{a:", "}"), ("{a:[", "]}")] {
++            for source in [
++                deep_inline_source(open, close, 480),
++                self_inline_source(open, close, 480),
++            ] {
++                let result = WebpackPlugin.resolve_config(
++                    std::path::Path::new("/proje
 ```
 
 ---
 
-### Incident Patch 3: `0299785a` (2026-10-27)
-**Commit Message**: fix(resolve): escape the tsconfig directory in include globs (#3951)
+### Incident Patch 2: `24a3e24b` (2026-10-28)
+**Commit Message**: fix(config): read configs that a function builds from local bindings (#3981)
 
-* fix(resolve): escape the tsconfig directory in include globs
+* fix(config): read configs that a function builds from local bindings
 
-Fallow built each tsconfig `include` and `exclude` glob from the full
-joined path. Glob syntax in the tsconfig directory, such as `app/[id]`,
-`{a,b}`, `*` or `?`, then changed the pattern. The pattern did not
-match the files of that directory, so a referenced config could drop
-out of the chain and its `paths` aliases did not apply.
+Fallow did not read a config whose exported function builds its value from
+local bindings, such as a webpack config that returns
+`[{ ...common, entry }, { ...common, entry }]`. The entries and the alias
+targets of such a config were reported as unused files.
 
-The tsconfig directory and the entry segments before the first
-wildcard are now escaped literal text. In the entry, only `*` and `?`
-are wildcards, the same as tsc, so brackets and braces are literal. A
-tsconfig in the file system root no longer gets a double `/`.
+- A config function now resolves its body-level `const` and `let` bindings
+  with literal values in the value that it returns. This includes a returned
+  identifier, array elements, property values and object spreads such as
+  `...common` and `...common.resolve`. The last value of a key wins.
+- A spread of a stable top-level constant now resolves too, for every plugin
+  that reads a JavaScript or TypeScript config.
+- Webpack and rspack read each config of an exported array, also when a
+  function returns the array. Each config resolves its entries against its
+  own context. Webpack also collects the aliases of each config.
+- A binding that the program can change is not read: a write, a mutating
+  method, a call such as Object.assign or Reflect.set, or a write or a
+  mutating call
 
-The matching code moves to `tsconfig_scope.rs`, because
-`specifier.rs` must not grow.
-
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
-* test(resolve): replace the invalid glob test with a literal bracket test
-
-A stray bracket in a tsconfig entry is now literal text, so it no longer builds an invalid glob. The old test then made a file system call, which Miri isolation blocks. The new test keeps a wildcard in the entry and checks that the bracket matches on
-
-**File**: `changelog.d/fix-tsconfig-glob-directory-escape.md` (added, +3/-0)
+**File**: `changelog.d/fix-webpack-function-config-local-aliases.md` (added, +7/-0)
 ```diff
-@@ -0,0 +1,3 @@
+@@ -0,0 +1,7 @@
 +### Fixed
 +
-+- **A tsconfig in a directory whose name holds glob characters now applies to its files.** Fallow matched the `include` and `exclude` patterns of a tsconfig with the directory of that tsconfig as part of the glob. A directory such as `app/[id]`, `{a,b}`, `*` or `?` then changed the meaning of the pattern, so the pattern did not match the files in that directory. Fallow then could drop a referenced config, and its `paths` aliases did not apply. Fallow now treats the tsconfig directory as literal text. In the entry itself, Fallow reads only `*` and `?` as wildcards, the same as `tsc`, so an entry such as `app/[id]/**/*` matches the `[id]` directory.
++- **`fallow dead-code` now reads a config that a function builds from local bindings.** Before, fallow reported the entries and alias targets of such a config as unused files. An example is a webpack config that exports `(env, argv) => { const common = {...}; const web = { ...common, entry: {...} }; return [bg, web]; }`. Fallow does not run the config code. The changes are:
++  - Fallow reads a local `const` or `let` binding with a literal value in the returned value of a config function. This applies to a returned identifier, an array element, a property value and an object spread such as `...common` or `...common.resolve`. When a spread and a key set the same property, the last value wins.
++  - Fallow also reads a spread of a stable top-level constant, such as `export default { ...base, test }`. These two changes apply to all plugins that read a JavaScript or TypeScript config, for example Vite, Vitest, Playwright and Electron.
++  - For webpack and rspack, fallow reads each config of an exported array, also when a function returns the array. Each config resolves its entries against its own `context`. Fallow collects the loaders, the `plugins` requires and the `externals` of all configs. For webpack, fallow also collects the aliases of all configs.
++  - Fallow does not read a binding that the config can change. This includes a write, a method such as `push`, a call such as `Object.assign`, and a change through an alias such as `const { resolve } = common`. Fallow also does not read a `var` binding, a destructured binding or the result of a call.
 ```
 
-**File**: `crates/graph/src/resolve/mod.rs` (modified, +1/-0)
+**File**: `crates/core/src/plugins/config_parser.rs` (modified, +13/-79)
 ```diff
-@@ -31,6 +31,7 @@ mod specifier;
- mod static_imports;
- #[cfg(test)]
- mod tests;
-+mod tsconfig_scope;
- mod types;
- mod upgrades;
- mod work;
-```
-
-**File**: `crates/graph/src/resolve/specifier.rs` (modified, +8/-75)
-```diff
-@@ -5,7 +5,6 @@ use std::fs;
- use std::path::{Path, PathBuf};
- use std::sync::Arc;
- 
--use globset::{Glob, GlobSetBuilder};
- use oxc_resolver::{Resolution, ResolveError, ResolveOptions, Resolver};
- use serde_json::Value;
- 
-@@ -28,6 +27,7 @@ use super::path_info::{
-     normalize_npm_specifier,
- };
- use super::react_native::{build_condition_names, build_extensions};
-+use super::tsconfig_scope::{glob_values_match, resolve_tsconfig_relative_path};
- use super::types::{DenoImportMapEntry, ResolveContext, ResolveResult};
- use super::workspace_alias::{
-     resolve_failed_bare_package_specifier, try_aliased_workspace_package_fallback,
-@@ -566,38 +566,6 @@ fn tsconfig_applies_to_file(
-         .is_some_and(|exclude| glob_values_match(tsconfig_dir, exclude, from_file))
+@@ -13,6 +13,15 @@ use rustc_hash::FxHashSet;
+ #[path = "config_parser_const_inline.rs"]
+ mod const_inline;
+ use const_inline::holds_one_stable_object;
++#[path = "config_parser_local_inline.rs"]
++mod local_inline;
++#[path = "config_parser_multi_config.rs"]
++mod multi_config;
++use multi_config::find_default_export_array;
++pub(crate) use multi_config::{
++    extract_each_config_entries, extract_each_config_path_aliases,
++    extract_each_config_require_strings, extract_each_config_shallow_strings, find_config_objects,
++};
+ #[path = "config_parser_vite_plugin_call.rs"]
+ mod vite_plugin_call;
+ pub(crate) use vite_plugin_call::extract_vite_plugin_call_option_path;
+@@ -1174,6 +1183,9 @@ pub(crate) fn parent_relative_config_path(
+ /// Before the extraction, a JavaScript or TypeScript program gets the literal
+ /// value of each stable same-file constant in the property values and array
+ /// elements that name it, so `projects: [UNIT]` reads like an inline object.
++/// An object spread of such a constant gets its properties. The values that an
++/// exported config callback returns also get the literal value of the stable
++/// locals of that callback, so `return { ...common, entry }` reads the same way.
+ pub(crate) fn extract_from_source<T: Send>(
+     source: &str,
+     path: &Path,
+@@ -1193,6 +1205,7 @@ pub(crate) fn extract_from_source<T: Send>(
+         let allocator = oxc_allocator::Allocator::default();
+         let mut parsed = oxc_parser::Parser::new(&allocator, source, source_type).parse();
+         const_inline::inline_value_constants(&allocator, &mut parsed.program, source.len());
++        local_inline::inline_callback_locals(&allocator, &mut parsed.program, source.len());
+         extractor(&parsed.program)
+     })
+     .flatten()
+@@ -2597,85 +2610,6 @@ pub(crate) fn resolve_sibling_module(
+     None
  }
  
--fn glob_values_match(base_dir: &Path, values: &[Value], path: &Path) -> bool {
--    let mut builder = GlobSetBuilder::new();
--    let mut has_patterns = false;
--    for value in values.iter().filter_map(Value::as_str) {
--        let mut pattern = resolve_tsconfig_relative_path(base_dir, value);
--        if !has_glob_meta(value) && pattern.is_dir() {
--            pattern = pattern.join("**/*");
+-/// Find a default-exported array config, the `defineWorkspace([...])` /
+-/// `vitest.workspace.{ts,js}` shape. Handles `export default [...]` and
+-/// `export default defineWorkspace([...])` / `defineConfig([...])` (the array as
+-/// the call's first argument), function configs with a static array return, and
+-/// parenthesised / `as` wrappers.
+-fn find_default_export_array<'a>(program: &'a Program<'a>) -> Option<&'a ArrayExpression<'a>> {
+-    for stmt in &program.body {
+-        if let Statement::ExportDefaultDeclaration(decl) = stmt {
+-            if let ExportDefaultDeclarationKind::FunctionDeclaration(function) = &decl.declaration {
+-                if function.generator {
+-                    return None;
+-                }
+-                return function.body.as_ref().and_then(|body| returned_array(body));
+-            }
+-            return decl
+-                .declaration
+-                .as_expression()
+-                .and_then(array_from_config_expression);
 -        }
--        let Some(pattern) = pattern.to_str() else {
--            continue;
--        };
--        let Ok(glob) = Glob::new(pattern) else {
--            continue;
--        };
--        builder.add(glob);
--        has_patterns = true;
 -    }
--    has_patterns && builder.build().is_ok_and(|set| set.is_match(path))
+-    None
 -}
 -
--fn has_glob_meta(value: &str) -> bool {
--    value
--        .bytes()
--        .any(|byte| matches!(byte, b'*' | b'?' | b'[' | b']' | b'{'))
+-/// Read only returns belonging to this callback, never nested helper functions.
+-fn returned_array<'a>(body: &'a FunctionBody<'a>) -> Option<&'a ArrayExpression<'a>> {
+-    body.statements
+-        .iter()
+-        .find_map(|statement| match statement {
+-            Statement::ReturnStatement(returned) => Some(returned),
+-            _ => None,
+-        })
+-        .and_then(|returned| returned.argument.as_ref())
+-        .and_then(array_from_expression)
 -}
 -
--/// Join a tsconfig `files`, `include` or `exclude` entry to its directory
--/// without `./` and `..`, as the globs match path text (issue #3946).
--fn resolve_tsconfig_relative_path(base_dir: &Path, path: &str) -> PathBuf {
--    normalize_path_lexically(&base_dir.join(path))
+-/// A config provider invokes its callback once; returned callbacks are values.
+-fn array_from_config_expression<'a>(expr: &'a Expression<'a>) -> Option<&'a ArrayExpression<'a>> {
+-    match expr {
+-        Expression::ArrowFunctionExpression(arrow) => match &arrow.body {
+-            ArrowFunctionBody::FunctionBody(body) => returned_array(body),
+-            body => body.as_expression().and_then(array_from_expression),
+-        },
+-        Expression::FunctionExpression(function) => {
+-            if function.generator {
+-                return None;
+-            }
+-            function.body.as_ref().and_then(|body| returned_array(body))
+-        }
+-        Expression::ParenthesizedExpression(paren) => {
+-            array_from_config_expression(&paren.expression)
+-        }
+-        Expression::TSAsExpression(ts_as) => array_from_config_expression(&ts_as.expression),
+-        Expression::TSSatisfiesExpression(ts_sat) => {
+-            array_from_config_expression(&ts_sat.expression)
+-        }
+-        Expression::CallExpression(call) => call
+-            .arguments
+-            .first()
+-            .and_then(Argument::as_expression)
+-            .and_then(array_from_config_expression),
+-        _ => array_from_expression(expr),
+-    }
 -}
 -
- fn same_path(left: &Path, right: &Path) -> bool {
-     if left == right {
-         return true;
-@@ -2205,7 +2173,7 @@ mod tests {
- 
-     use super::super::package_credit::package_usage_name_for_resolved_package;
-     use super::{
--        SpecifierNormalization, extension_alias_matches, glob_values_match, has_glob_meta,
-+        SpecifierNormalization, extension_alias_matches, glob_values_match,
-         is_bare_style_package_reference, is_bare_style_subpath, is_js_ts_extension,
-         is_node_modules_path, is_plain_css_file, is_relative_tsconfig_extends,
-         is_safe_static_dir_relative_path, is_style_file, is_tsconfig_error,
-@@ -2784,33 +2752,6 @@ mod tests {
-         assert_eq!(result, None);
-     }
- 
--    // ---- has_glob_meta (lines 370-374) ----
--
--    #[test]
--    fn has_glob_meta_detects_star_wildcard() {
--        assert!(has_glob_meta("src/**/*.ts"));
--    }
--
--    #[test]
--    fn has_glob_meta_detects_question_mark() {
--        assert!(has_glob_meta("src/?.ts"));
--    }
--
--    #[test]
--    fn has_glob_meta_detects_bracket_group() {
--        assert!(has_glob_meta("src/[abc].ts"));
--    }
--
--    #[test]
--    fn has_glob_meta_detects_brace_group() {
--        assert!(has_glob_meta("src/{a,b}.ts"));
--    }
--
--    #[test]
--    fn has_glob_meta_plain_path_returns_false() {
--        assert!(!has_glob_meta("src/components"));
--    }
--
-     // ---- path_alias_specificity (lines 734-738) ----
- 
-     #[test]
-@@ -3086,17 +3027,16 @@ mod tests {
-         );
-     }
- 
--    // ---- glob_values_match: invalid glob is skipped (line 362) ----
-+    // ---- glob_values_match: a stray bracket is literal text ----
- 
-     #[test]
--    fn glob_values_match_invalid_glob_pattern_is_skipped() {
-+    fn glob_values_match_stray_bracket_is_literal_text() {
-         let base = Path::new("/project");
-+        let values = [serde_json::json!("[invalid/*")];
-         let source = Path::new("/project/src/index.ts");
--        let result = glob_values_match(base, &[serde_json::json!("[invalid")], source);
--        assert!(
--            !result,
--            "an invalid glob pattern must not accidentally match"
--        );
-+        assert!(!glob_values_match(base, &values, source));
-+        let literal = Path::new("/project/[invalid/index.ts");
-+        assert!(glob_values_match(base, &values, literal));
-     }
- 
-     // ---- glob_values_match: no patterns at all returns false ----
-@@ -3184,13 +3124,6 @@ mod tests {
-         assert!(is_bare_style_subpath("antd/lib/style/index.less"));
-     }
- 
--    // ---- has_glob_meta: closing brace or bracket alone ----
--
--    #[test]
--    fn has_glob_meta_closing_bracket_detected() {
--        assert!(has_glob_meta("src/[a-z]"));
--    }
--
-     // ---- path_alias_specificity: wildcard-only pattern ----
- 
-     #[test]
+-fn array_from_expression<'a>(expr: &'a Expression<'a>) -> Option<&'a ArrayExpression<'a>> {
+-    match expr {
+-        Expression::ArrayExpression(arr) => Some(arr),
+-        Expression::ParenthesizedExpression(paren) => array_from_expression(&paren.expression),
+-        Expression::TSAsExpression(ts_as) => array_from_expression(&ts_as.expression),
+-        Expression::TSSatisfiesExpression(ts_sat) => 
 ```
 
-**File**: `crates/graph/src/resolve/specifier_tsconfig_include_tests.rs` (modified, +136/-0)
+**File**: `crates/core/src/plugins/config_parser_const_inline.rs` (modified, +507/-36)
 ```diff
-@@ -1,6 +1,7 @@
- //! Tests for the scope of `include` patterns in a referenced tsconfig.
+@@ -11,23 +11,24 @@ use oxc_allocator::{Allocator, CloneIn};
+ #[allow(clippy::wildcard_imports, reason = "many AST types used")]
+ use oxc_ast::ast::*;
+ use oxc_ast_visit::{Visit, VisitMut, walk, walk_mut};
+-use oxc_span::GetSpan;
+ use rustc_hash::{FxHashMap, FxHashSet};
  
- use std::fs;
-+use std::path::Path;
+ use super::top_level_variable_declarations;
  
- use tempfile::tempdir;
+ /// The maximum number of constants that one inlined value can pass through,
+ /// as in `const A = {...}; const B = [A]; export default { x: B }`.
+-const MAX_INLINE_NESTING: usize = 4;
++pub(super) const MAX_INLINE_NESTING: usize = 4;
  
-@@ -50,3 +51,138 @@ fn referenced_tsconfig_paths_alias_resolves_existing_asset_file() {
-         );
-     });
+ /// Replace each identifier in a property value or an array element that names
+-/// a stable top-level constant with a literal value.
++/// a stable top-level constant with a literal value, and replace each object
++/// spread of such a constant with the properties of the constant.
+ ///
+ /// A constant qualifies when one top-level `const` or `let` is the only
+ /// binding of its name, no expression writes to it, and its value is an
+ /// object, array or string literal.
+-/// The copied source bytes stay at or below `source_len`, so the AST grows at
+-/// most to two times the size of the parsed source.
++/// The copied AST nodes stay at or below `source_len`, and each node of the
++/// parsed source spans at least one byte, so the AST grows at most to two
++/// times its parsed size.
+ pub(super) fn inline_value_constants<'a>(
+     allocator: &'a Allocator,
+     program: &mut Program<'a>,
+@@ -37,17 +38,11 @@ pub(super) fn inline_value_constants<'a>(
+     if values.is_empty() {
+         return;
+     }
+-    let mut inliner = Inliner {
+-        allocator,
+-        values: &values,
+-        nesting: 0,
+-        budget: source_len,
+-    };
+-    inliner.visit_program(program);
++    Inliner::new(allocator, &values, source_len).visit_program(program);
  }
-+
-+/// A referenced tsconfig in a directory whose name holds glob syntax, such
-+/// as a Next.js `[id]` route segment, applies to its files. The directory is
-+/// literal text, so the config stays in the chain and its `paths` apply.
-+#[test]
-+#[cfg_attr(miri, ignore = "tempdir is blocked by Miri isolation")]
-+fn referenced_tsconfig_in_glob_syntax_directory_applies_to_its_files() {
-+    let temp = tempdir().unwrap();
-+    let root = temp.path();
-+    let app = root.join("app/[id]");
-+    fs::create_dir_all(app.join("src")).unwrap();
-+    fs::write(app.join("src/index.ts"), "").unwrap();
-+    fs::write(
-+        root.join("tsconfig.json"),
-+        r#"{"files":[],"references":[{"path":"./app/[id]/tsconfig.app.json"}]}"#,
-+    )
-+    .unwrap();
-+    fs::write(
-+        app.join("tsconfig.app.json"),
-+        r#"{"compilerOptions":{"paths":{"@lib/*":["./src/*"]}},"include":["./src/**/*"]}"#,
-+    )
-+    .unwrap();
-+    let from_file = app.join("src/index.ts");
-+
-+    with_ctx_at_root(root, |ctx| {
-+        let chain = super::local_tsconfig_chain(ctx, &from_file);
-+        assert!(
-+            chain
-+                .iter()
-+                .any(|path| path.ends_with("[id]/tsconfig.app.json")),
-+            "the referenced config must stay in the chain, got {chain:?}"
-+        );
-+        assert!(super::matches_nearest_tsconfig_path_alias(
-+            ctx,
-+            &from_file,
-+            "@lib/util"
-+        ));
-+    });
-+}
-+
-+/// Glob syntax in the tsconfig directory matches only that literal
-+/// directory, while a wildcard in the entry keeps its glob meaning.
-+#[test]
-+fn glob_values_match_treats_tsconfig_directory_as_literal() {
-+    let include = [serde_json::json!("src/**/*.ts")];
-+    for dir in ["[id]", "{a,b}", "*", "?"] {
-+        let base = Path::new("/repo").join(dir);
-+        assert!(
-+            super::glob_values_match(&base, &include, &base.join("src/index.ts")),
-+            "a file under `{dir}` must match"
-+        );
+ 
+ /// A copy of the literal value of each stable top-level constant, by name.
+-fn constant_values<'a>(
++pub(super) fn constant_values<'a>(
+     allocator: &'a Allocator,
+     program: &Program<'a>,
+ ) -> FxHashMap<String, Expression<'a>> {
+@@ -64,7 +59,12 @@ fn constant_values<'a>(
+     if candidates.is_empty() {
+         return FxHashMap::default();
+     }
+-    let stable = stable_bindings(program, candidates.iter().map(|(name, _)| *name), false);
++    let stable = stable_bindings(
++        program,
++        candidates.iter().map(|(name, _)| *name),
++        false,
++        true,
++    );
+     candidates
+         .into_iter()
+         .filter(|(name, _)| stable.contains(name))
+@@ -78,7 +78,7 @@ fn constant_values<'a>(
+ /// The value can hold functions and writes. A copy of one adds a binding or a
+ /// write only for a name that the source already binds or writes inside it, so
+ /// a later stable-binding check of the same program gives the same answer.
+-fn literal_value<'e, 'a>(init: &'e Expression<'a>) -> Option<&'e Expression<'a>> {
++pub(super) fn literal_value<'e, 'a>(init: &'e Expression<'a>) -> Option<&'e Expression<'a>> {
+     match init {
+         Expression::ParenthesizedExpression(paren) => literal_value(&paren.expression),
+         Expression::TSAsExpression(ts_as) => literal_value(&ts_as.expression),
+@@ -91,14 +91,74 @@ fn literal_value<'e, 'a>(init: &'e Expression<'a>) -> Option<&'e Expression<'a>>
+     }
+ }
+ 
+-struct Inliner<'a, 'v> {
++/// Copies literal values into the positions that name them. Each copy charges
++/// its number of AST nodes to `budget`, and a copy inside a copy adds one to
++/// `nesting`. A value can hold copies from an earlier pass, so its source span
++/// can be much smaller than the copy.
++pub(super) struct Inliner<'a, 'v> {
+     allocator: &'a Allocator,
+     values: &'v FxHashMap<String, Expression<'a>>,
+     nesting: usize,
+     budget: usize,
++    /// The node count of each value or object that was copied, by address.
++    /// The values do not change during a pass, so each count is computed once.
++    node_counts: FxHashMap<usize, usize>,
+ }
+ 
+-impl<'a> Inliner<'a, '_> {
++impl<'a, 'v> Inliner<'a, 'v> {
++    pub(super) fn new(
++        allocator: &'a Allocator,
++        values: &'v FxHashMap<String, Expression<'a>>,
++        budget: usize,
++    ) -> Self {
++        Self {
++            allocator,
++            values,
++            nesting: 0,
++            budget,
++            node_counts: FxHashMap::default(),
++        }
 +    }
-+    let base = Path::new("/repo/[id]");
-+    assert!(!super::glob_values_match(
-+        base,
-+        &include,
-+        Path::new("/repo/i/src/index.ts")
-+    ));
-+    let base = Path::new("/repo/{a,b}");
-+    assert!(!super::glob_values_match(
-+        base,
-+        &include,
-+        Path::new("/repo/a/src/index.ts")
-+    ));
-+    let base = Path::new("/repo/*");
-+    assert!(!super::glob_values_match(
-+        base,
-+        &include,
-+        Path::new("/repo/other/src/index.ts")
-+    ));
-+    assert!(!super::glob_values_match(
-+        base,
-+        &include,
-+        Path::new("/repo/*/src/index.js")
-+    ));
-+}
 +
-+/// A `..` entry leaves the tsconfig directory before glob syntax starts.
-+#[test]
-+fn glob_values_match_resolves_parent_segments_before_the_glob() {
-+    let include = [serde_json::json!("../shared/**/*.ts")];
-+    let base = Path::new("/repo/[id]/app");
-+    assert!(super::glob_values_match(
-+        base,
-+        &include,
-+        Path::new("/repo/[id]/shared/util.ts")
-+    ));
-+    assert!(!super::glob_values_match(
-+        base,
-+        &include,
-+        Path::new("/repo/[id]/app/shared/util.ts")
-+    ));
-+}
++    /// Charge the node count of a value to the budget. Returns `None` when
++    /// the budget is too small.
++    fn charge_value(&mut self, value: &Expression<'a>) -> Option<()> {
++        let key = std::ptr::from_ref(value) as usize;
++        let count = *self.node_counts.entry(key).or_insert_with(|| {
++            let mut counter = NodeCounter::default();
++            counter.visit_expression(value);
++            counter.count
++        });
++        self.budget = self.budget.checked_sub(count)?;
++        Some(())
++    }
 +
-+/// A tsconfig in the file system root joins its entries without a second `/`.
-+#[test]
-+fn glob_values_match_handles_tsconfig_in_root_directory() {
-+    let include = [serde_json::json!("**/*")];
-+    assert!(super::glob_values_match(
-+        Path::new("/"),
-+        &include,
-+        Path::new("/a/b.ts")
-+    ));
-+}
-+
-+/// tsc reads only `*` and `?` as wildcards, so brackets and braces in an
-+/// entry, such as a Next.js `app/[id]` route segment, are literal text.
-+#[test]
-+fn glob_values_match_treats_brackets_and_braces_in_entry_as_literal() {
-+    let include = [
-+        serde_json::json!("app/[id]/**/*"),
-+        serde_json::json!("lib/{a,b}/*.ts"),
-+    ];
-+    let base = Path::new("/repo");
-+    assert!(super::glob_values_match(
-+        base,
-+        &include,
-+        Path::new("/repo/app/[id]/page.ts")
-+    ));
-+    assert!(!super::glob_values_match(
-+        base,
-+        &include,
-+        Path::new("/repo/app/i/page.ts")
-+    ));
-+    assert!(super::glob_values_match(
-+        base,
-+        &include,
-+        Path::new("/repo/lib/{a,b}/x.ts")
-+    ));
-+    assert!(!super::glob_values_match(
-+        base,
-+        &include,
-+        Path::new("/repo/lib/a/x.ts")
-+    ));
-+}
++    /// Charge the node count of an object literal to the budget. Returns
++    /// `None` when the budget is too small.
++    fn charge_objec
 ```
 
-**File**: `crates/graph/src/resolve/tsconfig_scope.rs` (added, +57/-0)
+**File**: `crates/core/src/plugins/config_parser_local_inline.rs` (added, +567/-0)
 ```diff
-@@ -0,0 +1,57 @@
-+//! Match file paths against the `files`, `include` and `exclude` entries of a
-+//! tsconfig, relative to the directory of that tsconfig.
+@@ -0,0 +1,567 @@
++//! Put the value of a local binding of a config callback in the values that
++//! the callback returns.
++//!
++//! A config file can export a function that builds its value in local
++//! bindings: `const common = {...}; const web = { ...common, entry }; return
++//! [web];`. The config walkers read literal objects only. This pass replaces
++//! each returned identifier, each array element and property value that names
++//! a local, and each object spread of a local with a copy of the literal value
++//! of that local. It never runs the code of the config.
++//!
++//! The pass ignores the order of the statements. A returned value that names a
++//! local declared after the `return` fails at run time, but this pass reads the
++//! value of the local.
++
++use oxc_allocator::{Allocator, CloneIn};
++#[allow(clippy::wildcard_imports, reason = "many AST types used")]
++use oxc_ast::ast::*;
++use rustc_hash::FxHashMap;
++
++use super::const_inline::{Inliner, constant_values, literal_value, stable_bindings};
++use super::{MAX_CONFIG_BRANCH_DEPTH, MAX_CONFIG_WRAPPER_DEPTH, is_module_exports_target};
++
++/// The budget of the local pass, as a multiple of the source size. A config
++/// that spreads one shared local into two configs copies that local twice.
++const LOCAL_BUDGET_FACTOR: usize = 2;
++
++/// Inline the stable locals of each exported config callback into the values
++/// that the callback returns.
++///
++/// A local qualifies when a `const` or `let` statement at the callback body's
++/// own level declares it with an object, array or string literal, and it is
++/// the only binding of its name in the program, with no writes and no mutating
++/// calls. The stable top-level constants are available too. The copied AST
++/// nodes stay at or below `LOCAL_BUDGET_FACTOR` times `source_len`.
++pub(super) fn inline_callback_locals<'a>(
++    allocator: &'a Allocator,
++    program: &mut Program<'a>,
++    source_len: usize,
++) {
++    let mut values = callback_locals(allocator, program);
++    if values.is_empty() {
++        return;
++    }
++    for (name, value) in constant_values(allocator, program) {
++        values.entry(name).or_insert(value);
++    }
++    let mut inliner = Inliner::new(
++        allocator,
++        &values,
++        source_len.saturating_mul(LOCAL_BUDGET_FACTOR),
++    );
++    for callback in config_callbacks(program) {
++        for value in callback.returned_values() {
++            inliner.inline_value(value);
++        }
++    }
++}
++
++/// A copy of the literal value of each stable local of the config callbacks.
++fn callback_locals<'a>(
++    allocator: &'a Allocator,
++    program: &mut Program<'a>,
++) -> FxHashMap<String, Expression<'a>> {
++    let mut candidates: Vec<(String, Expression<'a>)> = Vec::new();
++    for callback in config_callbacks(program) {
++        let Callback::Body(body) = callback else {
++            continue;
++        };
++        for statement in &body.statements {
++            let Statement::VariableDeclaration(decl) = statement else {
++                continue;
++            };
++            if !matches!(
++                decl.kind,
++                VariableDeclarationKind::Const | VariableDeclarationKind::Let
++            ) {
++                continue;
++            }
++            for declarator in &decl.declarations {
++                let BindingPattern::BindingIdentifier(id) = &declarator.id else {
++                    continue;
++                };
++                if let Some(value) = declarator.init.as_ref().and_then(literal_value) {
++                    candidates.push((id.name.to_string(), value.clone_in(allocator)));
++                }
++            }
++        }
++    }
++    if candidates.is_empty() {
++        return FxHashMap::default();
++    }
++    let stable = stable_bindings(
++        program,
++        candidates.iter().map(|(name, _)| name.as_str()),
++        false,
++        false,
++    );
++    let stable: Vec<String> = stable.into_iter().map(str::to_string).collect();
++    candidates
++        .into_iter()
++        .filter(|(name, _)| stable.contains(name))
++        .collect()
++}
++
++/// The body of a config callback: a function body, or the expression body of
++/// an arrow.
++enum Callback<'p, 'a> {
++    Body(&'p mut FunctionBody<'a>),
++    Expression(&'p mut Expression<'a>),
++}
++
++impl<'p, 'a> Callback<'p, 'a> {
++    /// The values that `find_config_object` can read as the returned config:
++    /// the expression body of an arrow, or the argument of each `return` at the
++    /// body's own level or in the bounded branch search. Returns of nested
++    /// functions belong to those functions and stay out.
++    ///
++    /// `find_config_object` prefers an object that a top-level `return` gives
++    /// over a branch return. A top-level `return base;` gave no object before
++    /// this pass, so the search used the first branch return. To keep that
++    /// result, a returned identifier at the top level stays when a branch
++    /// return exists.
++    fn returned_values(self) -> Ve
+```
+
+**File**: `crates/core/src/plugins/config_parser_multi_config.rs` (added, +275/-0)
+```diff
+@@ -0,0 +1,275 @@
++//! Read each config of a config file that exports more than one.
++//!
++//! Webpack and rspack build every config of an exported array, as in
++//! `module.exports = [configA, configB]` or a function that returns such an
++//! array. `find_config_object` keeps its contract and returns `None` for an
++//! array export, because other tools read an array export in their own way.
++//! The readers here are for the tools that build each element.
 +
 +use std::path::{Path, PathBuf};
 +
-+use globset::{Glob, GlobSetBuilder};
-+use serde_json::Value;
++#[allow(clippy::wildcard_imports, reason = "many AST types used")]
++use oxc_ast::ast::*;
++use rustc_hash::FxHashSet;
 +
-+use super::fallbacks::normalize_path_lexically;
++use super::{
++    PathScope, collect_require_sources, collect_shallow_string_values, expression_to_path,
++    extract_from_source, find_config_object, find_property, get_nested_expression,
++    get_nested_string_or_array, is_module_exports_target, object_expression,
++    path_from_config_string, resolve_alias_pairs_kinded,
++};
 +
-+pub(super) fn glob_values_match(base_dir: &Path, values: &[Value], path: &Path) -> bool {
-+    let mut builder = GlobSetBuilder::new();
-+    let mut has_patterns = false;
-+    for value in values.iter().filter_map(Value::as_str) {
-+        let Ok(glob) = Glob::new(&tsconfig_entry_glob(base_dir, value)) else {
-+            continue;
-+        };
-+        builder.add(glob);
-+        has_patterns = true;
++/// The maximum number of configs read from one exported array, in source order.
++const MAX_MULTI_CONFIGS: usize = 16;
++
++/// The config objects of a program: the one object that `find_config_object`
++/// finds, or else each object element of an exported config array. Elements
++/// that are not object literals, such as `merge(a, b)` or a spread, are skipped.
++pub fn find_config_objects<'a>(program: &'a Program<'a>) -> Vec<&'a ObjectExpression<'a>> {
++    if let Some(object) = find_config_object(program) {
++        return vec![object];
 +    }
-+    has_patterns && builder.build().is_ok_and(|set| set.is_match(path))
++    find_default_export_array(program)
++        .map(|array| {
++            array
++                .elements
++                .iter()
++                .filter_map(|element| element.as_expression().and_then(object_expression))
++                .take(MAX_MULTI_CONFIGS)
++                .collect()
++        })
++        .unwrap_or_default()
 +}
 +
-+/// Build the glob for one `include` or `exclude` entry. tsc reads only `*`
-+/// and `?` as wildcards, so the tsconfig directory, the entry segments before
-+/// the first wildcard and any bracket or brace are literal path text. A
-+/// directory such as `app/[id]` then matches only itself.
-+fn tsconfig_entry_glob(base_dir: &Path, value: &str) -> String {
-+    let glob_start = value
-+        .find(['*', '?'])
-+        .map(|wildcard| value[..wildcard].rfind('/').map_or(0, |slash| slash + 1));
-+    let (literal, rest) = value.split_at(glob_start.unwrap_or(value.len()));
-+    let literal = resolve_tsconfig_relative_path(base_dir, literal);
-+    let rest = if glob_start.is_none() && literal.is_dir() {
-+        "**/*"
-+    } else {
-+        rest
-+    };
-+    let mut glob = globset::escape(&literal.to_string_lossy().replace('\\', "/"));
-+    if !rest.is_empty() && !glob.ends_with('/') {
-+        glob.push('/');
++/// Run `read` on each config object of the source and collect the results in
++/// source order.
++fn extract_each_config<T: Send>(
++    source: &str,
++    path: &Path,
++    read: impl Fn(&Program<'_>, &ObjectExpression<'_>) -> Vec<T> + Send + Sync,
++) -> Vec<T> {
++    extract_from_source(source, path, |program| {
++        Some(
++            find_config_objects(program)
++                .into_iter()
++                .flat_map(|object| read(program, object))
++                .collect(),
++        )
++    })
++    .unwrap_or_default()
++}
++
++/// The entries of each config, with the base directory path that the same
++/// config declares under `base_key`.
++pub fn extract_each_config_entries(
++    source: &str,
++    path: &Path,
++    entry_key: &[&str],
++    base_key: &str,
++) -> Vec<(Vec<String>, Option<PathBuf>)> {
++    extract_each_config(source, path, |program, object| {
++        let entries = get_nested_string_or_array(object, entry_key, PathScope::Program(program))
++            .unwrap_or_default();
++        let base = get_nested_expression(object, &[base_key]).and_then(expression_to_path);
++        vec![(entries, base)]
++    })
++}
++
++/// The path aliases of all configs, without duplicate pairs.
++pub fn extract_each_config_path_aliases(
++    source: &str,
++    path: &Path,
++    prop_path: &[&str],
++) -> Vec<(String, PathBuf)> {
++    let pairs = extract_each_config(source, path, |program, object| {
++        let Some(expr) = get_nested_expression(object, prop_path) else {
++            return Vec::new();
++        };
++        let mut visited = FxHashSet::default();
++        resolve_alias_pairs_kinded(program, path, expr, &mut visited, 0)
++    });
++    let mut seen = FxHashSet::default();
++    pairs
++        .into_iter()
++        .filter(|(find, replacement, _)| seen.insert((find.clone(), replacement.clone())))
++        .map(|(find, replacement, _)| (find, path_from_config_string(&replacement)))
++        .collect()
++}
++
++/// The `require('...')` sources in the `key` property of all configs.
++pub fn extract_each_config_require_strings(source: &str, path: &Path, key: &str) -> Vec<String> {
++    dedup(extract_each_config(source, path, |_, object| {
++        find_property(object, key)
++            .map(|prop| collect_require_sources(&prop.value))
++            .unwrap_or_default()
++    }))
++}
++
++/// The top-level string values of the `key` property of all configs.
++pub fn extract_each_config_shallow_strings(source: &str, path: &Path, key: &str) -> Vec<String> {
++    dedup(extract_each_config(source, path, |_, object| {
++        find_property(object, key)
++            .map(|prop| collect_shallow_string_values(&prop.value))
++            .unwrap_or_default()
++    }))
++}
++
++fn dedup(values: Vec<String>) -> Vec<String> {
++    let mut seen = FxHashSet::default();
++    values
++        .into_iter()
++        .filter(|value| seen.insert(value.clone()))
++        .collect()
++}
++
++/// Find an exported array config, the `defineWorkspace([...])` /
++/// `vitest.workspace.{ts,js}` shape and the webpack multi-config shape. Handles
++/// `export default [...]`, `module.exports = [...]` and
++/// `export default defineWorkspace([...])`
+```
+
+**File**: `crates/core/src/plugins/electron.rs` (modified, +15/-0)
+```diff
+@@ -574,6 +574,21 @@ mod tests {
+         }
+     }
+ 
++    #[test]
++    fn resolve_config_reads_sections_through_a_spread_of_a_local_constant() {
++        let source = r#"
++            const base = { main: { build: { lib: { entry: "src/main/app.ts" } } } };
++            const shared = { build: {} };
++            export default { ...base, preload: { ...shared } };
++        "#;
++        let result = ElectronPlugin.resolve_config(&config_path(), source, Path::new("/project"));
++        assert!(result.replace_entry_patterns);
++        assert_eq!(
++            entry_strings(&result),
++            vec!["src/main/app.ts".to_string(), PRELOAD_DEFAULT.to_string()]
++        );
 +    }
-+    for symbol in rest.chars() {
-+        if matches!(symbol, '[' | ']' | '{' | '}') {
-+            glob.extend(['[', symbol, ']']);
-+        } else {
-+            glob.push(symbol);
++
+     #[test]
+     fn resolve_config_without_node_sections_keeps_static_entries() {
+         let source = r#"export default { renderer: { build: { rollupOptions: { input: "src/renderer/index.html" } } } };"#;
+```
+
+**File**: `crates/core/src/plugins/playwright.rs` (modified, +10/-0)
+```diff
+@@ -1324,6 +1324,16 @@ mod tests {
+                 "ui/live.pw.ts",
+                 "outside/live.pw.ts",
+             ),
++            (
++                "const shared = { testDir: './wrong', testMatch: '*.pw.ts' }; export default { ...shared, testDir: './ui' };",
++                "ui/live.pw.ts",
++                "wrong/live.pw.ts",
++            ),
++            (
++                "const shared = { testDir: './ui', testMatch: '*.pw.ts' }; export default { testDir: './wrong', ...shared };",
++                "ui/live.pw.ts",
++                "wrong/live.pw.ts",
++            ),
+             (
+                 "export default { testDir:'./ui', [key]:'./tests', testMatch:'*.pw.ts', projects:[{name:'chromium'}] };",
+                 "tests/live.pw.ts",
+```
+
+**File**: `crates/core/src/plugins/rspack.rs` (modified, +24/-2)
+```diff
+@@ -55,15 +55,15 @@ define_plugin! {
+         );
+ 
+         let require_deps =
+-            config_parser::extract_config_require_strings(source, config_path, "plugins");
++            config_parser::extract_each_config_require_strings(source, config_path, "plugins");
+         for dep in &require_deps {
+             result
+                 .referenced_dependencies
+                 .push(crate::resolve::extract_package_name(dep));
+         }
+ 
+         let externals =
+-            config_parser::extract_config_shallow_strings(source, config_path, "externals");
++            config_parser::extract_each_config_shallow_strings(source, config_path, "externals");
+         for ext in &externals {
+             result
+                 .referenced_dependencies
+@@ -92,6 +92,28 @@ define_plugin! {
+ mod tests {
+     use super::*;
+ 
++    #[test]
++    fn resolve_config_reads_plugins_and_externals_of_each_config() {
++        let source = r#"
++            module.exports = [
++                { entry: "./src/a.js", externals: ["lodash"] },
++                { entry: "./src/b.js", plugins: [require("my-plugin")] },
++            ];
++        "#;
++        let result = RspackPlugin.resolve_config(
++            std::path::Path::new("/project/rspack.config.js"),
++            source,
++            std::path::Path::new("/project"),
++        );
++        assert_eq!(result.entry_patterns, vec!["src/a.js", "src/b.js"]);
++        for dep in ["lodash", "my-plugin"] {
++            assert!(
++                result.referenced_dependencies.contains(&dep.to_string()),
++                "{dep}"
++            );
 +        }
 +    }
-+    glob
++
+     #[test]
+     fn resolve_config_entry_string() {
+         let source = r#"module.exports = { entry: "./src/app.tsx" };"#;
+```
+
+---
+
+### Incident Patch 3: `a2d1a3e2` (2026-10-28)
+**Commit Message**: fix(vitest): credit exports of a replacement file for a relative alias key (#3969)
+
+* fix(vitest): credit exports of a replacement file for a relative alias key
+
+A Vitest or Vite alias with a relative key, such as ./clock.js, swaps the original file for a stub. The resolver resolves the relative import to the original file and never applies the alias, so the stub had no consumer. With includeEntryExports, fallow reported the exports of the stub as unused.
+
+The shared alias helper now credits every export of the replacement file when the alias key is a relative or absolute path. Aliases with a bare or a path-alias key keep the current behavior, because the resolver routes their imports to the replacement file.
+
+Closes #3963
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+* docs(changelog): limit the #3963 entry to Vitest
+
+The top-level resolve.alias of a Vite config does not use the shared alias helper, so the credit does not apply there.
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+**File**: `changelog.d/fix-vitest-alias-replacement-exports-3963.md` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++### Fixed
++
++- **`fallow dead-code` no longer reports the exports of a Vitest alias replacement file that stands in for a relative import.** An entry such as `{ find: "./clock.js", replacement: "./test/stubs/clock.ts" }` swaps the original file for a stub. Fallow resolves the relative import to the original file, so the stub had no consumer. With `includeEntryExports`, fallow reported the exports of the stub as unused. Fallow now credits every export of a replacement file when the alias key is a relative or absolute path. Thanks @Smrtnyk for the report.
++  (Closes [#3963](https://github.com/fallow-rs/fallow/issues/3963))
+```
+
+**File**: `crates/core/src/plugins/test_alias.rs` (modified, +56/-0)
+```diff
+@@ -30,6 +30,13 @@ fn alias_target_is_source_file(normalized: &str) -> bool {
+         .is_some_and(|ext| ALIAS_SOURCE_EXTENSIONS.contains(&ext))
+ }
+ 
++/// True when an alias key is a relative or absolute file specifier, such as
++/// `./clock.js`. An import with such a specifier resolves to a file on disk, so
++/// the path-alias fallback of the resolver never routes it to the replacement.
++fn is_path_specifier(find: &str) -> bool {
++    find.starts_with("./") || find.starts_with("../") || find.starts_with('/')
 +}
 +
-+/// Join a tsconfig `files`, `include` or `exclude` entry to its directory
-+/// without `./` and `..`, as the globs match path text (issue #3946).
-+pub(super) fn resolve_tsconfig_relative_path(base_dir: &Path, path: &str) -> PathBuf {
-+    normalize_path_lexically(&base_dir.join(path))
+ /// Apply one alias entry to the plugin result.
+ ///
+ /// Path aliases feed `path_aliases`, source-file targets seed setup files, and
+@@ -65,6 +72,13 @@ pub(super) fn process_test_alias(
+         .path_aliases
+         .push((find.to_owned(), normalized.clone()));
+     if alias_target_is_source_file(&normalized) {
++        if is_path_specifier(find) {
++            // The resolver resolves a relative or absolute import to the
++            // original file and never applies the alias. The import of the
++            // original file is then the only consumer, so credit every export
++            // of the replacement file (issue #3963).
++            result.push_entry_export_credit(normalized.clone(), ["*"]);
++        }
+         result.setup_files.push(root.join(&normalized));
+     }
+     if find_is_pkg {
+@@ -148,6 +162,48 @@ mod tests {
+         std::path::PathBuf::from("/project")
+     }
+ 
++    #[test]
++    fn path_specifier_key_credits_every_replacement_export() {
++        for find in ["./clock.js", "../src/clock", "/abs/clock.js"] {
++            let mut result = PluginResult::default();
++            process_test_alias(
++                &mut result,
++                find,
++                "./test/stubs/clock.ts",
++                false,
++                &cfg(),
++                &root(),
++            );
++            assert_eq!(
++                result.entry_export_credits,
++                vec![crate::plugins::UsedExportRule::new(
++                    "test/stubs/clock.ts",
++                    ["*"]
++                )],
++                "key `{find}` must credit the replacement exports"
++            );
++        }
++    }
++
++    #[test]
++    fn bare_or_directory_alias_adds_no_entry_export_credit() {
++        let mut result = PluginResult::default();
++        process_test_alias(
++            &mut result,
++            "vscode",
++            "./mock/vscode.ts",
++            false,
++            &cfg(),
++            &root(),
++        );
++        process_test_alias(&mut result, "@", "src", false, &cfg(), &root());
++        assert!(
++            result.entry_export_credits.is_empty(),
++            "the resolver routes these imports through the alias: {:?}",
++            result.entry_export_credits
++        );
++    }
++
+     #[test]
+     fn package_to_package_credits_both_no_path_alias() {
+         let mut result = PluginResult::default();
+```
+
+**File**: `crates/core/tests/integration_test/issue_601_vitest_test_alias.rs` (modified, +75/-0)
+```diff
+@@ -482,3 +482,78 @@ fn vitest_workspace_array_file_aliases_resolve() {
+         "workspace-array alias-resolved module must not be unlisted, found: {unlisted:?}"
+     );
+ }
++
++/// Issue #3963: a `resolve.alias` entry swaps a relative import for a stub
++/// file. The resolver resolves `./clock.js` to the original file, so the stub
++/// has no graph consumer. With `includeEntryExports`, the exports of the stub
++/// must stay credited. Exports of the original file stay reportable.
++#[test]
++fn relative_alias_replacement_exports_are_used_with_include_entry_exports() {
++    let dir = tempfile::tempdir().expect("temp dir");
++    let root = dir.path();
++
++    write(
++        &root.join("package.json"),
++        r#"{
++            "name": "repro",
++            "private": true,
++            "type": "module",
++            "main": "src/index.ts",
++            "scripts": { "test": "vitest" },
++            "devDependencies": { "vitest": "4.0.0" }
++        }"#,
++    );
++    write(
++        &root.join("node_modules/vitest/package.json"),
++        r#"{ "name": "vitest", "version": "4.0.0", "bin": { "vitest": "vitest.mjs" } }"#,
++    );
++    write(
++        &root.join("vitest.config.ts"),
++        r#"
++            export default {
++                resolve: {
++                    alias: [{ find: "./clock.js", replacement: new URL("./test/stubs/clock.ts", import.meta.url).pathname }],
++                },
++            };
++        "#,
++    );
++    write(
++        &root.join("src/clock.ts"),
++        "export function now(): number { return Date.now(); }\nexport function unusedClock(): number { return 1; }\n",
++    );
++    write(
++        &root.join("src/index.ts"),
++        "import { now } from \"./clock.js\";\n\nexport function stamp(): number {\n    return now();\n}\n",
++    );
++    write(
++        &root.join("test/stubs/clock.ts"),
++        "export function now(): number { return 0; }\n",
++    );
++    write(
++        &root.join("test/index.spec.ts"),
++        "import { stamp } from \"../src/index.js\";\n\nif (stamp() !== 0) {\n    throw new Error(\"stamp\");\n}\n",
++    );
++
++    let mut config = create_config(root.to_path_buf());
++    config.include_entry_exports = true;
++    let results = fallow_core::analyze(&config).expect("analysis should succeed");
++
++    let unused: Vec<String> = results
++        .unused_exports
++        .iter()
++        .map(|e| {
++            let path = e.export.path.strip_prefix(root).unwrap_or(&e.export.path);
++            format!(
++                "{}:{}",
++                path.to_string_lossy().replace('\\', "/"),
++                e.export.export_name
++            )
++        })
++        .collect();
++
++    assert_eq!(
++        unused,
++        vec!["src/clock.ts:unusedClock".to_string()],
++        "only the unused export of the original file stays reportable"
++    );
 +}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3966** (2026-10-27): chore(docker): pin FALLOW_VERSION 3.37.0 with refreshed checksums (@BartWaardenburg)
-- **PR #3965** (2026-10-27): fix(extract): name a function assigned to a declared variable in the inventory (@BartWaardenburg)
-- **PR #3964** (2026-10-27): chore(napi): sync package.json / package-lock / index.js to v3.37.0 (@BartWaardenburg)
-- **PR #3959** (2026-10-27): chore: release v3.37.0 (@BartWaardenburg)
-- **PR #3958** (2026-10-27): chore: release v3.37.0 (@BartWaardenburg)
-- **PR #3957** (2026-10-27): test(engine): make the cancelled parse test independent of runner speed (@BartWaardenburg)
+- **PR #3994** (2026-10-29): fix(mutation): instrument copied Node sources (@BartWaardenburg)
+- **PR #3991** (2026-10-29): fix(coverage): share the served line starts cases with Fallow Cloud (@BartWaardenburg)
+- **PR #3990** (2026-10-28): feat(coverage): record the line starts of each generated script at map upload (@BartWaardenburg)
+- **PR #3989** (2026-10-28): fix(scripts): fail when a curated Key Flags cell misses a new seed flag (@BartWaardenburg)
+- **PR #3988** (2026-10-28): docs(skills): list --max-file-lines in the health flags (@BartWaardenburg)
+- **PR #3987** (2026-10-28): fix(config): correct the review findings of the config local inlining (@BartWaardenburg)
 
 ---
 
@@ -2327,33 +2824,34 @@ A stray bracket in a tsconfig entry is now literal text, so it no longer builds 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. security): trust module-relative path bases and check every path segment (#3926)
+## X. config): correct local-binding config reads after the multi-config change (#3987
 
 **RULE**:
-When implementing operations in `changelog.d/fix-path-traversal-trusted-bases-3711.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/fix-webpack-function-config-local-aliases.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `de0b6fe7`: security): trust module-relative path bases and check every path segment (#3926). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `255f50fe`: config): correct local-binding config reads after the multi-config change (#3987). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/fix-path-traversal-trusted-bases-3711.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/fix-webpack-function-config-local-aliases.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-### Fixed
-
-- **`fallow security` no longer reports module-relative paths as path-traversal candidates.** A path that starts from `import.meta.url`, `import.meta.dirname`, `import.meta.filename`, `__dirname`, `__filename` or `process.cwd()` and adds only literal segments cannot carry caller input. Examples are `path.resolve(fileURLToPath(new URL(".", import.meta.url)), "..")` and `fs.readFileSync(path.join(__dirname, "template.html"))`. A module-scope `const` that holds such a path is also trusted. The rule applies to every sink argument, so `res.sendFile(path.join(__dirname, "index.html"))` is also clear. `fileURLToPath(value)` and `new URL(value, import.meta.url)` stay candidates when `value` is not known.
-  (Closes [#3711](https://github.com/fallow-rs/fallow/issues/3711))
-- **`fallow security` now checks every `path.join` and `path.resolve` segment.** Before, the path-traversal matcher checked only the first argument, so `path.resolve(".", input)` and `path.join(".", input)` gave no candidate. The matcher now checks each argument and reports one candidate for each call. A `path.relative` containment guard on the result still clears the call.
-  (Closes [#3712](https://github.com/f
+  - Fallow reads a local `const` or `let` binding with a literal value in the returned value of a config function. This applies to a returned identifier, an array element, a property value and an object spread such as `...common` or `...common.resolve`. When a spread and a key set the same property, the last value wins. This also applies to a function that the file exports through a binding, such as `const config = (env) => {...}; module.exports = config;`.
+  - Fallow also reads a spread of a stable top-level constant, such as `export default { ...base, test }`, and a top-level constant that a config function returns, such as `module.exports = () => base;`. These changes apply to all plugins that read a JavaScript or TypeScript config, for example Vite, Vitest, Playwright and Electron.
+  - A top-level `return config` gives the config also when a branch `return` gives no object, such as `if (!env) return null;` or `return mergeConfig(config, overrides);`. When a branch `return` gives an object, fallow reads that object, as before. A returned array always gives the configs of the array.
+  - For webpack and rspack, fallow reads up to 64 configs of an exported array, also when a functi
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  - Fallow reads a local `const` or `let` binding with a literal value in the returned value of a config function. This applies to a returned identifier, an array element, a property value and an object spread such as `...common` or `...common.resolve`. When a spread and a key set the same property, the last value wins.
+  - Fallow also reads a spread of a stable top-level constant, such as `export default { ...base, test }`. These two changes apply to all plugins that read a JavaScript or TypeScript config, for example Vite, Vitest, Playwright and Electron.
+  - For webpack and rspack, fallow reads each config of an exported array, also when a function returns the array. Each config resolves its entries against its own `context`. Fallow collects the loaders, the `plugins` requires and the `externals` of all configs. For webpack, fallow also collects the aliases of all configs.
+  - Fallow does not read a binding that the config can change. This includes a write, a method such as `push`, a call such as `Object.assign`, and a change through an alias such as `const { resolve } = common`. Fallow also does not read a `var` binding, a destructured binding or the result of a call.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `de0b6fe7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `255f50fe` are properly handled with clean fallback behavior.

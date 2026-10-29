@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-29T12:19:52.901Z",
-  "total_cycles_completed": 6018,
-  "total_learnings_persisted": 6018,
-  "total_rules_promoted": 5476,
+  "last_updated": "2026-10-29T12:26:02.781Z",
+  "total_cycles_completed": 6019,
+  "total_learnings_persisted": 6019,
+  "total_rules_promoted": 5477,
   "history": [
-    {
-      "timestamp": "2026-10-28T16:27:14.897Z",
-      "repository": "BAAI/bge-reranker-v2-m3",
-      "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T16:27:16.866Z",
       "repository": "kubearmor/KubeArmor",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-29T12:19:52.901Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T12:26:02.781Z",
+      "repository": "fallow-rs/fallow",
+      "learningId": "learn-github-fallow-rs-fallow",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -6050,3 +6050,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf` | `https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-29T12:19:43.264Z |
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `87adc84b` | Multi-dimensional audit evidence | 2026-10-29T12:19:47.454Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `6ea1cb4c` | Multi-dimensional audit evidence | 2026-10-29T12:19:52.897Z |
+| `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `40e3eb97` | Multi-dimensional audit evidence | 2026-10-29T12:26:02.778Z |

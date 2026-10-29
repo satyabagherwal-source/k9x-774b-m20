@@ -6041,3 +6041,4 @@
 | `CYCLE-20261029-GH0D` | `2026-10-29T12:19:43.261Z` | `unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5509, Rule 5510` | Yes (`7eee5847...`) |
 | `CYCLE-20261029-GK8R` | `2026-10-29T12:19:47.451Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md` | Yes (`4fbdccf5...`) |
 | `CYCLE-20261029-GOFY` | `2026-10-29T12:19:52.894Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5511` | Yes (`52b116ed...`) |
+| `CYCLE-20261029-OLUF` | `2026-10-29T12:26:02.775Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5512` | Yes (`d7d4c713...`) |

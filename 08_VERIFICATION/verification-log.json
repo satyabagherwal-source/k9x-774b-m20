@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-7Y9E",
-    "timestamp": "2026-10-27T21:01:37.970Z",
-    "repository": "callstack/agent-device",
-    "learningId": "learn-github-callstack-agent-device",
-    "contentHash": "d74e8b5090e398011f2026f94a86aa80c98fb5e04d7d9771d59b47d0cbee2950",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-83N7",
     "timestamp": "2026-10-27T21:01:44.947Z",
     "repository": "trailbaseio/trailbase",
@@ -7490,6 +7475,21 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "52b116edca0f183dc8f86b91cf4d86dd0190851e9a01ec65ec6827c130aa712b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-OLUF",
+    "timestamp": "2026-10-29T12:26:02.775Z",
+    "repository": "fallow-rs/fallow",
+    "learningId": "learn-github-fallow-rs-fallow",
+    "contentHash": "d7d4c713c2d9bd5c80d34f25a39f739af72016df2cada716b837e3eb1b661fc8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
