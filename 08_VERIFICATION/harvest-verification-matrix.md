@@ -6011,3 +6011,4 @@
 | `CYCLE-20261029-HVWN` | `2026-10-29T01:08:58.439Z` | `momenbasel/PureMac` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md` | Yes (`6c791711...`) |
 | `CYCLE-20261029-I0X7` | `2026-10-29T01:09:04.939Z` | `datalab-to/indra-ocr` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5478, Rule 5479` | Yes (`9c0ec0ee...`) |
 | `CYCLE-20261029-KOB6` | `2026-10-29T01:11:08.562Z` | `LiquidAI/LFM3-Omni-2B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5480, Rule 5481` | Yes (`bd786a3e...`) |
+| `CYCLE-20261029-T7ZR` | `2026-10-29T01:17:47.319Z` | `tencent/Hy-Memory-30B-A3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md` | Yes (`6937b035...`) |

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-29T01:11:08.572Z",
-  "total_cycles_completed": 5988,
-  "total_learnings_persisted": 5988,
+  "last_updated": "2026-10-29T01:17:47.334Z",
+  "total_cycles_completed": 5989,
+  "total_learnings_persisted": 5989,
   "total_rules_promoted": 5445,
   "history": [
-    {
-      "timestamp": "2026-10-28T14:56:45.114Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T15:03:19.465Z",
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -1403,6 +1396,13 @@
       "repository": "LiquidAI/LFM3-Omni-2B",
       "learningId": "learn-huggingface-liquidai-lfm3-omni-2b",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T01:17:47.334Z",
+      "repository": "tencent/Hy-Memory-30B-A3B",
+      "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
