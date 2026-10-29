@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T00:41:37.982Z",
-  "total_verified_learnings": 1160,
+  "last_updated": "2026-10-29T01:11:08.488Z",
+  "total_verified_learnings": 1161,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -39043,8 +39043,8 @@
       "slug": "momenbasel-puremac",
       "platform": "github",
       "source_url": "https://github.com/momenbasel/PureMac",
-      "source_version": "317f1bb1",
-      "content_hash": "13ee0bbaa4acae66ce5940755e95f69e099103c11cdea8dae72d07ab9d5fe4a5",
+      "source_version": "046e5c5b",
+      "content_hash": "6c791711449d949592f27959aa806fcb88fe760988e8c86dd1d2893da33094cc",
       "dossier_path": "07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
       "promoted_rules": [
@@ -39069,7 +39069,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T17:14:33.053Z",
+      "verified_at": "2026-10-29T01:08:58.308Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -66541,7 +66541,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/datalab-to/indra-ocr",
       "source_version": "hf-datalab-to-indra-ocr",
-      "content_hash": "bd34cb5eda857f45f6e4fd4870756269909a2eb2dee5ba0ae58e46b5de8273a2",
+      "content_hash": "9c0ec0ee282c320c3274c74db69e22318ae58917d27e676018ecbe1ea829365c",
       "dossier_path": "07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md",
       "promoted_rules": [
@@ -66559,6 +66559,16 @@
           "number": 3473,
           "title": "CPU-Only ONNX Runtime Optimization for High-Throughput OCR",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5478,
+          "title": "The Multi-Graph Routing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5479,
+          "title": "The N-Gram Post-Processing Correction Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -66566,7 +66576,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T21:02:04.766Z",
+      "verified_at": "2026-10-29T01:09:04.843Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -147723,6 +147733,100 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T00:41:37.963Z"
+    },
+    "rule-5478": {
+      "learning_id": "rule-5478",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5478,
+      "title": "The Multi-Graph Routing Invariant",
+      "source_url": "https://huggingface.co/datalab-to/indra-ocr",
+      "source_version": "hf-datalab-to-indra-ocr",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T01:09:04.843Z"
+    },
+    "rule-5479": {
+      "learning_id": "rule-5479",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5479,
+      "title": "The N-Gram Post-Processing Correction Invariant",
+      "source_url": "https://huggingface.co/datalab-to/indra-ocr",
+      "source_version": "hf-datalab-to-indra-ocr",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T01:09:04.843Z"
+    },
+    "learn-huggingface-liquidai-lfm3-omni-2b": {
+      "learning_id": "learn-huggingface-liquidai-lfm3-omni-2b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "LiquidAI/LFM3-Omni-2B",
+      "repository": "LiquidAI/LFM3-Omni-2B",
+      "slug": "hf-liquidai-lfm3-omni-2b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/LiquidAI/LFM3-Omni-2B",
+      "source_version": "hf-liquidai-lfm3-omni-2b",
+      "content_hash": "bd786a3e6aa6e87e506424a43277e5eda85a1b8b7a668d6377386a83855c7cec",
+      "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm3-omni-2b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-omni-2b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 5480,
+          "title": "Dual-Stream Multimodal Token Generation and Codebook Termination Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5481,
+          "title": "Bounded Convolution-Attention Cache Coherence Under Sliding Windows",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-29T01:11:08.469Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-5480": {
+      "learning_id": "rule-5480",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5480,
+      "title": "Dual-Stream Multimodal Token Generation and Codebook Termination Invariant",
+      "source_url": "https://huggingface.co/LiquidAI/LFM3-Omni-2B",
+      "source_version": "hf-liquidai-lfm3-omni-2b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T01:11:08.469Z"
+    },
+    "rule-5481": {
+      "learning_id": "rule-5481",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5481,
+      "title": "Bounded Convolution-Attention Cache Coherence Under Sliding Windows",
+      "source_url": "https://huggingface.co/LiquidAI/LFM3-Omni-2B",
+      "source_version": "hf-liquidai-lfm3-omni-2b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T01:11:08.469Z"
     }
   },
   "aliases": {

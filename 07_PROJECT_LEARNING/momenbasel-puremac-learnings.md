@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md`  
 > **Source**: github ([https://github.com/momenbasel/PureMac](https://github.com/momenbasel/PureMac))  
-> **Source Version**: `317f1bb1`  
+> **Source Version**: `046e5c5b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T17:14:32.712Z  
+> **Timestamp**: 2026-10-29T01:08:58.157Z  
 > **Learning ID**: `learn-github-momenbasel-puremac`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/momenbasel/PureMac](https://github.com/momenbasel/PureMac))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T17:14:32.705Z  
+> **Harvest Timestamp**: 2026-10-29T01:08:58.045Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Free, open-source macOS cleaner. CleanMyMac alternative with zero telemetry. Native SwiftUI, scheduled auto-cleaning, Xcode/Homebrew/system cache cleanup. MIT licensed.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7402 stars
+- **Stars / Engagement**: 7458 stars
 
 ---
 
@@ -1257,629 +1257,52 @@ actor ScanEngine {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b4e28d22` (2026-10-24)
-**Commit Message**: Release 3.2.0 with Apple feature guides and safer cleanup
+### Incident Patch 1: `046e5c5b` (2026-10-28)
+**Commit Message**: chore: refresh star history
 
-**File**: `.github/workflows/release.yml` (modified, +7/-0)
+**File**: `assets/star-history-dark.svg` (modified, +10/-10)
 ```diff
-@@ -350,6 +350,13 @@ jobs:
-                 echo "- XcodeBuildMCP and MobileBuildMCP DerivedData in Xcode Junk, opt-in and Trash-only (#162)."
-                 echo "- The Protection check recognizes the firewall's block-all mode (#183), and the Homebrew cask no longer warns about postflight (#182)."
-                 echo ""
-+              elif [[ "${VERSION}" == "3.2.0" ]]; then
-+                echo "- Added Apple Features with shortcuts and instructions for Siri, Apple Intelligence, image generation, Writing Tools, ChatGPT, summaries, and privacy settings. Changes are completed manually in macOS."
-+                echo "- Inspect Apple model, screen saver, music content, and device backup storage. Protected models and system apps are not removed."
-+                echo "- Review individual iPhone and iPad backups and move selected completed backups to Trash after confirmation and fresh checks."
-+                echo "- Fixed Ollama and LM Studio cleanup with strict path checks and user-level removal; downloaded models remain excluded."
-+                echo "- Simplified Overview and navigation, reduced decoration, and added full paths and removal methods to category cleanup confirmation."
-+                echo ""
-               elif [[ "${VERSION}" == "2.9.8" ]]; then
-                 echo "### What changed"
-                 echo ""
+@@ -23,17 +23,17 @@
+   <line x1="62" y1="58" x2="736" y2="58" stroke="#21262d" stroke-width="1"/>
+   <text x="52" y="62" fill="#8b949e" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" text-anchor="end">8k</text>
+ 
+-  <path d="M62 367.96 L65.58 366.64 L67.37 365.33 L72.48 364.01 L73.86 362.69 L74.28 361.37 L74.7 360.1 L75.07 358.78 L75.41 357.46 L75.88 356.14 L76.59 354.83 L77.07 353.51 L77.71 352.19 L78.09 350.87 L78.3 349.56 L78.48 348.24 L78.66 346.96 L78.84 345.64 L79.02 344.32 L79.12 343.01 L79.23 341.69 L79.38 340.37 L79.53 339.05 L79.65 337.74 L79.82 336.42 L80.06 335.1 L80.18 333.78 L80.27 332.51 L80.42 331.19 L80.52 329.87 L80.64 328.55 L80.74 327.24 L80.83 325.92 L80.94 324.6 L81.07 323.28 L81.26 321.97 L81.39 320.65 L81.51 319.37 L81.69 318.05 L81.89 316.73 L82.18 315.42 L82.49 314.1 L82.97 312.78 L83.41 311.46 L83.89 310.15 L84.28 308.83 L84.59 307.51 L84.98 306.23 L85.26 304.92 L85.59 303.6 L86.53 302.28 L87.25 300.96 L87.66 299.65 L87.93 298.33 L88.41 297.01 L88.92 295.69 L89.71 294.38 L90.31 293.06 L90.5 291.78 L90.7 290.46 L90.85 289.14 L90.97 287.83 L91.06 286.51 L91.24 285.19 L91.39 283.87 L91.54 282.56 L91.67 281.24 L91.83 279.92 L92 278.64 L92.2 277.33 L92.41 276.01 L92.65 274.69 L92.92 273.37 L93.26 272.06 L93.68 270.74 L94.25 269.42 L94.67 268.1 L95.08 266.78 L95.6 265.47 L96.65 264.19 L98.13 262.87 L99.73 261.55 L100.79 260.24 L101.62 258.92 L102.9 257.6 L104.54 256.28 L106.09 254.97 L107.98 253.65 L108.49 252.33 L108.99 251.05 L110.23 249.74 L110.87 248.42 L111.87 247.1 L112.56 245.78 L113.8 244.46 L115.23 243.15 L118.32 241.83 L119.48 240.51 L121.53 239.2 L123.57 237.88 L124.52 236.6 L125.99 235.28 L128.26 233.96 L131.75 232.65 L135.18 231.33 L139.32 230.01 L143.89 228.69 L149.69 227.38 L154.83 226.06 L157.35 224.74 L158.06 223.46 L159.38 222.15 L161.61 220.83 L164.62 219.51 L168.4 218.19 L169.25 216.88 L170.47 215.56 L171.52 214.24 L173.04 212.92 L174.01 211.61 L174.82 210.33 L175.79 209.01 L181.1 207.69 L185.12 206.37 L189.26 205.06 L194.58 203.74 L199.42 202.42 L202.24 201.1 L209.18 199.79 L214.85 198.47 L220.95 197.15 L224.91 195.87 L229.41 194.56 L236.75 193.24 L245.8 191.92 L255.91 190.6 L266.38 189.29 L273.19 187.97 L281.38 186.65 L291.93 185.33 L299.93 184.02 L310.55 182.74 L320.27 181.42 L329.96 180.1 L338.84 178.78 L340.47 177.47 L349.58 176.15 L358.86 174.83 L365.17 173.51 L376.54 172.2 L385.68 170.88 L396.37 169.56 L399.14 168.28 L400.58 166.97 L403.62 165.65 L406.7 164.33 L410.78 163.01 L417.57 161.7 L424.67 160.38 L430.64 159.06 L439.78 157.74 L448.41 156.43 L452.98 155.15 L458.85 153.83 L465.83 152.51 L471.3 151.19 L479.25 149.88 L485.64 148.56 L493.44 147.24 L499.68 145.92 L502.42 144.61 L506.06 143.29 L506.98 141.97 L507.82 140.69 L509.18 139.38 L513.34 138.06 L517.88 136.74 L523.35 135.42 L530.3 134.11 L537.04 132.79 L546.59 131.47 L555.49 130.15 L564.93 128.84 L566.14 127.56 L569.4 126.24 L574.74 124.92 L582.68 123.6 L587.58 122.29 L592.25 120.97 L595.72 119.65 L598.86 118.33 L603.26 117.02 L608.33 115.7 L614.51 114.42 L620.45 113.1 L621.38 111.78 L624.17 110.47 L626.82 109.15 L629.78 107.83 L636.65 106.51 L642.72 105.2 L649.3 103.88 L657.58 102.56 L662.77 101.25 L667.21 99.97 L672.2 98.65 L677.4 97.33 L683.61 96.01 L688.29 94.7 L694.56 93.38 L699.57 92.06 L702.45 90.74 L706.99 89.43 L710.66 88.11 L715.95 86.83 L719.81 85.51 L723.69 84.2 L724.92 82.88 L730.2 81.56 L736 80.24 L736 368 L62 368 Z" fill="url(#fill-starhistorydarksvg)"/>
+-  <path d="M62 367.96 L65.58 366.64 L67.37 365.33 L72.48 364.01 L73.86 362.69 L74.28 361.37 L74.7 360.1 L75.07 358.78 L75.41 357.46 L75.88 356.14 L76.59 354.83 L77.07 353.51 L77.71 352.19 L78.09 350.87 L78.3 349.56 L78.48 348.24 L78.66 346.96 L78.84 345.64 L79.02 344.32 L79.12 343.01 L79.23 341.69 L79.38 340.37 L79.53 339.05 L79.65 337.74 L79.82 336.42 L80.06 335.1 L80.18 333.78 L80.27 332.51 L80.42 331.19 L80.52 329.87 L80.64 328.55 L80.74 327.24 L80.83 325.92 L80.94 324.6 L81.07 323.28 L81.26 321.97 L81.39 320.65 L81.51 319.37 L81.69 318.05 L81.89 316.73 L82.18 315.42 L82.49 314.1 L82.97 312.78 L83.41 311.46 L83.89 310.15 L84.28 308.83 L84.59 307.51 L84.98 306.23 L85.26 304.92 L85.59 303.6 L86.53 302.28 L87.25 300.96 L87.66 299.65 L87.93 298.33 L88.41 297.01 L88.92 295.69 L89.71 294.38 L90.31 293.06 L90.5 291.78 L90.7 290.46 L90.85 289.14 L90.97 287.83 L91.06 286.51 L91.24 285.19 L91.39 283.87 L91.54 282.56 L91.67 281.24 L91.83 279.92 L92 278.64 L92.2 277.33 L92.41 276.01 L92.65 274.69 L92.92 273.37 L93.26 272.06 L93.68 270.74 L94.25 269.42 L94.67 268.1 L95.08 266.78 L95.6 265.47 L96.65 264.19 L98.13 262.87 L99.73 261.55 L100.79 260.24 L101.62 258.92 L102.9 257.6 L104.54 256.28 L106.09 254.97 L107.98 253.65 L108.49 252.33 L108.99 251.05 L110.23 249.74 L110.87 248.42 L111.87 247.1 L112.56 245.78 L113.8 244.46 L115.23 243.15 L118.32 241.83 L119.48 240.51 L121.53 239.2 L123.57 237.88 L124.52 236.6 L125.99 235.28 L128.26 233.96 L131.75 232.65 L135.18 231.33 L139.32 230.01 L143.89 2
 ```
 
-**File**: `PureMac.xcodeproj/project.pbxproj` (modified, +40/-4)
+**File**: `assets/star-history.svg` (modified, +10/-10)
 ```diff
-@@ -19,6 +19,8 @@
- 		27673871ECFD189E98548956 /* UpdateServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90D25BB11E61105B8764009E /* UpdateServiceTests.swift */; };
- 		27F449EDD1B082FE11FEC9DF /* SchedulerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28181F034530331A550C6A3D /* SchedulerService.swift */; };
- 		2BCDC53C5E3AB58442C8E4B0 /* CleaningEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B679C0120F1E3DDCB27FE2 /* CleaningEngineTests.swift */; };
-+		2C3AD1E4511D0F07C8C7C9D1 /* DeviceBackupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D7ABF3991A1C11BC5728FC6 /* DeviceBackupService.swift */; };
-+		30D4A73B94B245DB4EB21B6B /* AppleStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F9E767232924C819946DAAC /* AppleStorageService.swift */; };
- 		340E424F759ACCDE7372F99F /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5ADDC35F31E40780FB5D017 /* Theme.swift */; };
- 		39BEE5E2BEC526CCADFC9DDD /* ServicesMenu.strings in Resources */ = {isa = PBXBuildFile; fileRef = 57FBBF8C7EF27C8E09126ED5 /* ServicesMenu.strings */; };
- 		41B27CACD7C6C7471EFD03F9 /* UpdateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 022D0EAEE2B6E54069FC2CBE /* UpdateService.swift */; };
-@@ -32,20 +34,25 @@
- 		5882104828B9C5A5E06B2AFB /* PerformanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84FB753A60BE6BF54D5126A /* PerformanceView.swift */; };
- 		59B3096E2AE8ED0397B16798 /* AppLanguagePreferencesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491771F923C93FD61A263893 /* AppLanguagePreferencesTests.swift */; };
- 		5ED9C7AA76D850363CDC127C /* SimilarPhotosView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3C3342D6386FBB6DE3D18BC /* SimilarPhotosView.swift */; };
-+		5FF5942BC279628276CF6543 /* DeviceBackupServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D0D0E67A3C5B3740B858AD8 /* DeviceBackupServiceTests.swift */; };
- 		61D285E96DED76FDCD54570F /* PermissionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069AAE87E3F9EDE5593AD8B3 /* PermissionSheet.swift */; };
-+		668F6FC8967E338CC49D27D0 /* AppleFeaturesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DCCE76F044F71BCBD8CE0C /* AppleFeaturesView.swift */; };
- 		6753946A301B2EB2FEF6998B /* SimulatorRuntimeSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74E66594478F53363BCB0F9 /* SimulatorRuntimeSupport.swift */; };
- 		68F9CE5ED4908F674D673FB2 /* BinaryThinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69B24B648B82186FC3B6EF2B /* BinaryThinner.swift */; };
- 		6BCC5E3773DF2E9189F75A6B /* CleanupReviewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6116C5E9B68F439F6B2E42E5 /* CleanupReviewTests.swift */; };
- 		6D36632DFF74F26035204CE2 /* PerformanceInspectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 043F28E28FB7B2D9E39E5F70 /* PerformanceInspectorTests.swift */; };
- 		6D449325D54B9850FC6C119F /* UniversalBinaryScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95EC878D25C244BF94D0094C /* UniversalBinaryScanner.swift */; };
- 		6E296DC4405F5912A76EFF68 /* ProcessResourcesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48F804C73B6DD4F8619B25B5 /* ProcessResourcesView.swift */; };
- 		6E72022A661CBB41331A442C /* PermissionCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9DCBD97CC88D77AE8DB01A4 /* PermissionCoordinator.swift */; };
-+		7026A36B071FDFE87CF5B1BD /* AppleFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98831CC736A3839B67CA47D1 /* AppleFeature.swift */; };
- 		74175B10C464D245E99BA6DB /* DuplicateFinderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1343918E4CD9C8DA99EFA588 /* DuplicateFinderView.swift */; };
- 		75B5F0401D37F2872B1AD85A /* AppListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E6BC61614B27C065BB18C9 /* AppListView.swift */; };
- 		76B132F9C499225D33E0D075 /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424F7B28624C271620E13BBC /* EmptyStateView.swift */; };
- 		7796BCD9AB92D1A644C28AF3 /* StorageExplorer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF68B6BB9ED70387DF56728 /* StorageExplorer.swift */; };
-+		7E881F4DEEE1E4B0FA44BEB2 /* AIAppsCleanupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1104B86347C5671A5FC64BA /* AIAppsCleanupTests.swift */; };
- 		826A750D2D7EC14C2AE306A3 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3667D46D8E2004EB4D73835A /* Models.swift */; };
- 		8947F0CE448791BD50EECF46 /* Conditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB94E06E145558123BB5BFB3 /* Conditions.swift */; };
-+		89D5B9A5B4F25EA729B5B08B /* DeviceBackupCoordinationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BA1FC37E3821117365707CD /* DeviceBackupCoordinationTests.swift */; };
- 		8B541441926847072DC5B75B /* DashboardCharts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08C60E04A0CA3F227816DB
+@@ -23,17 +23,17 @@
+   <line x1="62" y1="58" x2="736" y2="58" stroke="#e6eaef" stroke-width="1"/>
+   <text x="52" y="62" fill="#59636e" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" text-anchor="end">8k</text>
+ 
+-  <path d="M62 367.96 L65.58 366.64 L67.37 365.33 L72.48 364.01 L73.86 362.69 L74.28 361.37 L74.7 360.1 L75.07 358.78 L75.41 357.46 L75.88 356.14 L76.59 354.83 L77.07 353.51 L77.71 352.19 L78.09 350.87 L78.3 349.56 L78.48 348.24 L78.66 346.96 L78.84 345.64 L79.02 344.32 L79.12 343.01 L79.23 341.69 L79.38 340.37 L79.53 339.05 L79.65 337.74 L79.82 336.42 L80.06 335.1 L80.18 333.78 L80.27 332.51 L80.42 331.19 L80.52 329.87 L80.64 328.55 L80.74 327.24 L80.83 325.92 L80.94 324.6 L81.07 323.28 L81.26 321.97 L81.39 320.65 L81.51 319.37 L81.69 318.05 L81.89 316.73 L82.18 315.42 L82.49 314.1 L82.97 312.78 L83.41 311.46 L83.89 310.15 L84.28 308.83 L84.59 307.51 L84.98 306.23 L85.26 304.92 L85.59 303.6 L86.53 302.28 L87.25 300.96 L87.66 299.65 L87.93 298.33 L88.41 297.01 L88.92 295.69 L89.71 294.38 L90.31 293.06 L90.5 291.78 L90.7 290.46 L90.85 289.14 L90.97 287.83 L91.06 286.51 L91.24 285.19 L91.39 283.87 L91.54 282.56 L91.67 281.24 L91.83 279.92 L92 278.64 L92.2 277.33 L92.41 276.01 L92.65 274.69 L92.92 273.37 L93.26 272.06 L93.68 270.74 L94.25 269.42 L94.67 268.1 L95.08 266.78 L95.6 265.47 L96.65 264.19 L98.13 262.87 L99.73 261.55 L100.79 260.24 L101.62 258.92 L102.9 257.6 L104.54 256.28 L106.09 254.97 L107.98 253.65 L108.49 252.33 L108.99 251.05 L110.23 249.74 L110.87 248.42 L111.87 247.1 L112.56 245.78 L113.8 244.46 L115.23 243.15 L118.32 241.83 L119.48 240.51 L121.53 239.2 L123.57 237.88 L124.52 236.6 L125.99 235.28 L128.26 233.96 L131.75 232.65 L135.18 231.33 L139.32 230.01 L143.89 228.69 L149.69 227.38 L154.83 226.06 L157.35 224.74 L158.06 223.46 L159.38 222.15 L161.61 220.83 L164.62 219.51 L168.4 218.19 L169.25 216.88 L170.47 215.56 L171.52 214.24 L173.04 212.92 L174.01 211.61 L174.82 210.33 L175.79 209.01 L181.1 207.69 L185.12 206.37 L189.26 205.06 L194.58 203.74 L199.42 202.42 L202.24 201.1 L209.18 199.79 L214.85 198.47 L220.95 197.15 L224.91 195.87 L229.41 194.56 L236.75 193.24 L245.8 191.92 L255.91 190.6 L266.38 189.29 L273.19 187.97 L281.38 186.65 L291.93 185.33 L299.93 184.02 L310.55 182.74 L320.27 181.42 L329.96 180.1 L338.84 178.78 L340.47 177.47 L349.58 176.15 L358.86 174.83 L365.17 173.51 L376.54 172.2 L385.68 170.88 L396.37 169.56 L399.14 168.28 L400.58 166.97 L403.62 165.65 L406.7 164.33 L410.78 163.01 L417.57 161.7 L424.67 160.38 L430.64 159.06 L439.78 157.74 L448.41 156.43 L452.98 155.15 L458.85 153.83 L465.83 152.51 L471.3 151.19 L479.25 149.88 L485.64 148.56 L493.44 147.24 L499.68 145.92 L502.42 144.61 L506.06 143.29 L506.98 141.97 L507.82 140.69 L509.18 139.38 L513.34 138.06 L517.88 136.74 L523.35 135.42 L530.3 134.11 L537.04 132.79 L546.59 131.47 L555.49 130.15 L564.93 128.84 L566.14 127.56 L569.4 126.24 L574.74 124.92 L582.68 123.6 L587.58 122.29 L592.25 120.97 L595.72 119.65 L598.86 118.33 L603.26 117.02 L608.33 115.7 L614.51 114.42 L620.45 113.1 L621.38 111.78 L624.17 110.47 L626.82 109.15 L629.78 107.83 L636.65 106.51 L642.72 105.2 L649.3 103.88 L657.58 102.56 L662.77 101.25 L667.21 99.97 L672.2 98.65 L677.4 97.33 L683.61 96.01 L688.29 94.7 L694.56 93.38 L699.57 92.06 L702.45 90.74 L706.99 89.43 L710.66 88.11 L715.95 86.83 L719.81 85.51 L723.69 84.2 L724.92 82.88 L730.2 81.56 L736 80.24 L736 368 L62 368 Z" fill="url(#fill-starhistorysvg)"/>
+-  <path d="M62 367.96 L65.58 366.64 L67.37 365.33 L72.48 364.01 L73.86 362.69 L74.28 361.37 L74.7 360.1 L75.07 358.78 L75.41 357.46 L75.88 356.14 L76.59 354.83 L77.07 353.51 L77.71 352.19 L78.09 350.87 L78.3 349.56 L78.48 348.24 L78.66 346.96 L78.84 345.64 L79.02 344.32 L79.12 343.01 L79.23 341.69 L79.38 340.37 L79.53 339.05 L79.65 337.74 L79.82 336.42 L80.06 335.1 L80.18 333.78 L80.27 332.51 L80.42 331.19 L80.52 329.87 L80.64 328.55 L80.74 327.24 L80.83 325.92 L80.94 324.6 L81.07 323.28 L81.26 321.97 L81.39 320.65 L81.51 319.37 L81.69 318.05 L81.89 316.73 L82.18 315.42 L82.49 314.1 L82.97 312.78 L83.41 311.46 L83.89 310.15 L84.28 308.83 L84.59 307.51 L84.98 306.23 L85.26 304.92 L85.59 303.6 L86.53 302.28 L87.25 300.96 L87.66 299.65 L87.93 298.33 L88.41 297.01 L88.92 295.69 L89.71 294.38 L90.31 293.06 L90.5 291.78 L90.7 290.46 L90.85 289.14 L90.97 287.83 L91.06 286.51 L91.24 285.19 L91.39 283.87 L91.54 282.56 L91.67 281.24 L91.83 279.92 L92 278.64 L92.2 277.33 L92.41 276.01 L92.65 274.69 L92.92 273.37 L93.26 272.06 L93.68 270.74 L94.25 269.42 L94.67 268.1 L95.08 266.78 L95.6 265.47 L96.65 264.19 L98.13 262.87 L99.73 261.55 L100.79 260.24 L101.62 258.92 L102.9 257.6 L104.54 256.28 L106.09 254.97 L107.98 253.65 L108.49 252.33 L108.99 251.05 L110.23 249.74 L110.87 248.42 L111.87 247.1 L112.56 245.78 L113.8 244.46 L115.23 243.15 L118.32 241.83 L119.48 240.51 L121.53 239.2 L123.57 237.88 L124.52 236.6 L125.99 235.28 L128.26 233.96 L131.75 232.65 L135.18 231.33 L139.32 230.01 L143.89 228.6
 ```
 
-**File**: `PureMac/Models/AppleFeature.swift` (added, +71/-0)
+---
+
+### Incident Patch 2: `13ef307d` (2026-10-27)
+**Commit Message**: chore: refresh star history
+
+**File**: `assets/star-history-dark.svg` (modified, +10/-10)
 ```diff
-@@ -0,0 +1,71 @@
-+import Foundation
-+
-+struct AppleFeature: Identifiable {
-+    let id: String
-+    let title: String
-+    let summary: String
-+    let steps: String
-+    let destination: String
-+    let guide: URL
-+    let minimumVersion: OperatingSystemVersion
-+
-+    func isAvailable(on version: OperatingSystemVersion) -> Bool {
-+        let actual = [version.majorVersion, version.minorVersion, version.patchVersion]
-+        let required = [minimumVersion.majorVersion, minimumVersion.minorVersion, minimumVersion.patchVersion]
-+        return !actual.lexicographicallyPrecedes(required)
-+    }
-+}
-+
-+enum AppleFeatureCatalog {
-+    static func features(for version: OperatingSystemVersion) -> [AppleFeature] {
-+        let modern = version.majorVersion >= 27
-+        let legacyGuideVersion = version.majorVersion < 26 ? "15.0/mac/15.0" : "26/mac/26"
-+        let siriPane = "com.apple.Siri-Settings.extension"
-+        let screenTime = "com.apple.Screen-Time-Settings.extension"
-+        let restrictionsGuide = modern ? "z25xrnykpuln/mac" : "mchlb2e44f94/\(legacyGuideVersion)"
-+        let restrictions = modern
-+            ? "Open Screen Time > Content & Privacy Restrictions. Enable All Restrictions, then open Siri. These restrictions may apply across devices using your Apple Account."
-+            : "Open Screen Time > Content & Privacy. Enable Content & Privacy restrictions, then open Intelligence & Siri."
-+        func feature(_ id: String, _ title: String, _ summary: String, _ steps: String, _ destination: String, _ guide: String, _ major: Int = 13, _ minor: Int = 0) -> AppleFeature {
-+            AppleFeature(id: id, title: title, summary: summary, steps: steps, destination: destination,
-+                         guide: URL(string: "https://support.apple.com/guide/mac-help/\(guide)")!,
-+                         minimumVersion: OperatingSystemVersion(majorVersion: major, minorVersion: minor, patchVersion: 0))
-+        }
-+        var items = [
-+            feature("siri", "Siri", "Turn off the assistant and its activation controls.",
-+                    modern ? "Open Siri and choose Turn Off Siri. Confirm the change. Screen Time also offers Don't Allow Siri."
-+                        : "Open Siri or Apple Intelligence & Siri and turn off Ask Siri. On versions that show a Siri section, open it to find the control.",
-+                    siriPane, modern ? "mchl3fd7fc15/mac" : "mchl3fd7fc15/26/mac/26"),
-+            feature("intelligence", "Apple Intelligence", "Review Apple's writing, image and summary features.",
-+                    modern ? "macOS 27 uses separate Siri, Screen Time and app controls. Review the individual features below. Turning off Siri does not establish that all Apple Intelligence features are off."
-+                        : "Open Apple Intelligence & Siri, turn off Apple Intelligence and confirm. macOS manages downloaded models; PureMac does not promise that this immediately recovers their storage.",
-+                    siriPane, modern ? "mchlb2e44f94/mac" : "mchl46361784/\(legacyGuideVersion)", 15, 1),
-+            feature("images", "Image Playground & Genmoji", "Restrict image generation using Screen Time.",
-+                    restrictions + (modern ? " Set Image Creation to Blocked where available." : " Turn off Image Creation." ) + " This restricts access; it does not uninstall the protected app or erase images you created.",
-+                    screenTime, restrictionsGuide, 15, 2),
-+            feature("writing", modern ? "Writing Assistance" : "Writing Tools", "Restrict Apple's generated writing features.",
-+                    restrictions + (modern ? " Set Writing Assistance to Blocked where available." : " Turn off Writing Tools."),
-+                    screenTime, restrictionsGuide, 15, 1),
-+            feature("summaries", "Notification summaries", "Read original notification text without generated summaries.",
-+                    "Open Notifications > Summarize Notifications and turn it off, or choose which apps can use summaries.",
-+                    "com.apple.Notifications-Settings.extension", "mchlb2e44f94/mac", 15, 1),
-+            feature("mail", "Mail summaries", "Turn off generated previews in Apple Mail.",
-+                    "In Mail, choose Mail > Settings > Viewing, then turn off Summarize Message Previews. The button opens Mail; finish the change in its settings.",
-+                    "application:com.apple.mail", "mchlb2e44f94/mac", 15, 1),
-+            feature("predictions", "Inline text predictions", "Stop suggested completions appearing as you type.",
-+                    "Open Keyboard > Text Input > Edit and turn off Show inline predictive text. This setting is separate from Apple Intelligence.",
-+                    "com.apple.Keyboard-Settings.extension", "mchlp2299/mac", 14),
-+            feature("analytics", "Analytics & Siri recordings", "Review diagnostic and voice-recording sharing with Apple.",
-+                    "Open Privacy & Secur
+@@ -23,17 +23,17 @@
+   <line x1="62" y1="58" x2="736" y2="58" stroke="#21262d" stroke-width="1"/>
+   <text x="52" y="62" fill="#8b949e" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" text-anchor="end">8k</text>
+ 
+-  <path d="M62 367.96 L65.6 366.64 L67.39 365.33 L72.19 364.05 L73.9 362.73 L74.33 361.41 L74.76 360.1 L75.13 358.78 L75.48 357.46 L75.94 356.18 L76.59 354.86 L77.12 353.55 L77.78 352.23 L78.15 350.91 L78.36 349.59 L78.55 348.32 L78.74 347 L78.92 345.68 L79.1 344.36 L79.19 343.05 L79.31 341.77 L79.46 340.45 L79.6 339.13 L79.73 337.81 L79.89 336.5 L80.14 335.18 L80.26 333.9 L80.36 332.58 L80.5 331.27 L80.6 329.95 L80.72 328.63 L80.81 327.35 L80.92 326.03 L81.03 324.72 L81.15 323.4 L81.34 322.08 L81.47 320.76 L81.6 319.49 L81.77 318.17 L81.97 316.85 L82.26 315.53 L82.57 314.22 L83.06 312.9 L83.48 311.62 L83.91 310.3 L84.36 308.98 L84.69 307.67 L85.07 306.35 L85.34 305.07 L85.66 303.75 L86.44 302.44 L87.33 301.12 L87.76 299.8 L88.03 298.48 L88.48 297.2 L88.96 295.89 L89.79 294.57 L90.4 293.25 L90.62 291.93 L90.82 290.65 L90.97 289.34 L91.08 288.02 L91.18 286.7 L91.34 285.39 L91.53 284.07 L91.65 282.79 L91.8 281.47 L91.95 280.15 L92.11 278.84 L92.32 277.52 L92.52 276.2 L92.74 274.92 L93.02 273.61 L93.3 272.29 L93.75 270.97 L94.32 269.65 L94.74 268.37 L95.1 267.06 L95.61 265.74 L96.66 264.42 L98.15 263.1 L99.52 261.79 L100.63 260.51 L101.61 259.19 L102.78 257.87 L104.51 256.56 L106 255.24 L108.12 253.92 L108.53 252.64 L109.07 251.32 L110.34 250.01 L111.03 248.69 L111.86 247.37 L112.43 246.09 L113.91 244.77 L114.96 243.46 L118.47 242.14 L119.39 240.82 L121.57 239.51 L122.97 238.23 L124.56 236.91 L125.65 235.59 L128.06 234.27 L131.42 232.96 L134.87 231.68 L139.06 230.36 L142.47 229.04 L148.48 227.73 L154.34 226.41 L157.75 225.09 L158.24 223.81 L159.32 222.49 L161.76 221.18 L164.52 219.86 L168.22 218.54 L169.48 217.22 L170.64 215.95 L171.75 214.63 L173.02 213.31 L174.15 211.99 L175.14 210.68 L176.03 209.4 L179.31 208.08 L184.56 206.76 L188.64 205.44 L193.25 204.13 L198.95 202.81 L201.87 201.53 L205.8 200.21 L213.31 198.9 L218.9 197.58 L224.94 196.26 L228.33 194.98 L234.32 193.66 L243.75 192.35 L254.28 191.03 L264.56 189.71 L272.91 188.39 L279.19 187.11 L289.25 185.8 L298.94 184.48 L309.13 183.16 L317.9 181.85 L327.48 180.53 L338.22 179.25 L341.01 177.93 L347.06 176.61 L357.9 175.3 L365.07 173.98 L371.55 172.7 L384.28 171.38 L393.03 170.07 L400.46 168.75 L401.5 167.43 L403.92 166.11 L407.46 164.83 L410.84 163.52 L415.92 162.2 L423.48 160.88 L430.14 159.56 L438 158.25 L447.04 156.97 L454.45 155.65 L458 154.33 L465.11 153.01 L471.27 151.7 L478.04 150.42 L484.38 149.1 L491.68 147.78 L500.58 146.47 L503.45 145.15 L506.98 143.83 L508.67 142.55 L509.49 141.23 L510.87 139.92 L513.2 138.6 L518.49 137.28 L522.99 136 L529.39 134.69 L536.65 133.37 L545.88 132.05 L554.49 130.73 L565.53 129.42 L568.23 128.14 L569.56 126.82 L574.66 125.5 L581.17 124.19 L587.59 122.87 L593.1 121.55 L596.3 120.27 L599.76 118.95 L602.98 117.64 L608.97 116.32 L615.82 115 L622.39 113.72 L623.46 112.41 L625.2 111.09 L628.67 109.77 L631.08 108.45 L635.81 107.14 L641.85 105.86 L648.01 104.54 L659.71 103.22 L663.44 101.9 L668.7 100.59 L672.64 99.31 L678.84 97.99 L684.48 96.67 L689.12 95.36 L693.7 94.04 L701.02 92.72 L703.58 91.44 L707.31 90.12 L711.62 88.81 L715.84 87.49 L720.4 86.17 L725.57 84.85 L727.19 83.57 L730.41 82.26 L736 80.94 L736 368 L62 368 Z" fill="url(#fill-starhistorydarksvg)"/>
+-  <path d="M62 367.96 L65.6 366.64 L67.39 365.33 L72.19 364.05 L73.9 362.73 L74.33 361.41 L74.76 360.1 L75.13 358.78 L75.48 357.46 L75.94 356.18 L76.59 354.86 L77.12 353.55 L77.78 352.23 L78.15 350.91 L78.36 349.59 L78.55 348.32 L78.74 347 L78.92 345.68 L79.1 344.36 L79.19 343.05 L79.31 341.77 L79.46 340.45 L79.6 339.13 L79.73 337.81 L79.89 336.5 L80.14 335.18 L80.26 333.9 L80.36 332.58 L80.5 331.27 L80.6 329.95 L80.72 328.63 L80.81 327.35 L80.92 326.03 L81.03 324.72 L81.15 323.4 L81.34 322.08 L81.47 320.76 L81.6 319.49 L81.77 318.17 L81.97 316.85 L82.26 315.53 L82.57 314.22 L83.06 312.9 L83.48 311.62 L83.91 310.3 L84.36 308.98 L84.69 307.67 L85.07 306.35 L85.34 305.07 L85.66 303.75 L86.44 302.44 L87.33 301.12 L87.76 299.8 L88.03 298.48 L88.48 297.2 L88.96 295.89 L89.79 294.57 L90.4 293.25 L90.62 291.93 L90.82 290.65 L90.97 289.34 L91.08 288.02 L91.18 286.7 L91.34 285.39 L91.53 284.07 L91.65 282.79 L91.8 281.47 L91.95 280.15 L92.11 278.84 L92.32 277.52 L92.52 276.2 L92.74 274.92 L93.02 273.61 L93.3 272.29 L93.75 270.97 L94.32 269.65 L94.74 268.37 L95.1 267.06 L95.61 265.74 L96.66 264.42 L98.15 263.1 L99.52 261.79 L100.63 260.51 L101.61 259.19 L102.78 257.87 L104.51 256.56 L106 255.24 L108.12 253.92 L108.53 252.64 L109.07 251.32 L110.34 250.01 L111.03 248.69 L111.86 247.37 L112.43 246.09 L113.91 244.77 L114.96 243.46 L118.47 242.14 L119.39 240.82 L121.57 239.51 L122.97 238.23 L124.56 236.91 L125.65 235.59 L128.06 234.27 L131.42 232.96 L134.87 231.68 L139.06 230.36 L142.47 229.04 L148.48 227.73 L154.
 ```
 
-**File**: `PureMac/Services/AppleStorageService.swift` (added, +205/-0)
+**File**: `assets/star-history.svg` (modified, +10/-10)
 ```diff
-@@ -0,0 +1,205 @@
-+import Darwin
-+import Foundation
-+
-+enum AppleStorageKind: String, Sendable {
-+    case intelligenceModels
-+    case screenSavers
-+    case garageBand
-+    case appleLoops
-+    case deviceBackups
-+
-+    var title: String {
-+        switch self {
-+        case .intelligenceModels: return String(localized: "Apple Intelligence models")
-+        case .screenSavers: return String(localized: "Downloaded screen savers")
-+        case .garageBand: return String(localized: "GarageBand support files")
-+        case .appleLoops: return String(localized: "Apple Loops")
-+        case .deviceBackups: return String(localized: "iPhone and iPad backups")
-+        }
-+    }
-+
-+    var detail: String {
-+        switch self {
-+        case .intelligenceModels:
-+            return String(localized: "The known generative-model folder. macOS manages these assets; this size is not a promise of space you can recover.")
-+        case .screenSavers:
-+            return String(localized: "Downloaded Apple aerial assets. Change the selected wallpaper or screen saver in System Settings.")
-+        case .garageBand:
-+            return String(localized: "Sound libraries and support files may be shared with music apps. Review Music Creation in Storage settings.")
-+        case .appleLoops:
-+            return String(localized: "Loops used by GarageBand and Logic Pro. Review Music Creation in Storage settings before removing sounds.")
-+        case .deviceBackups:
-+            return String(localized: "Local device backups can contain your only restore copy. Review individual backups below or use Finder's Manage Backups.")
-+        }
-+    }
-+}
-+
-+struct AppleStorageLocation: Sendable {
-+    let kind: AppleStorageKind
-+    let url: URL
-+}
-+
-+struct AppleStorageItem: Identifiable, Sendable {
-+    enum Status: String, Sendable {
-+        case complete
-+        case partial
-+        case unavailable
-+        case notPresent
-+    }
-+
-+    let kind: AppleStorageKind
-+    let url: URL
-+    let allocatedBytes: Int64?
-+    let status: Status
-+    let scannedCount: Int
-+    let skippedCount: Int
-+    let inaccessibleCount: Int
-+    let reachedLimit: Bool
-+
-+    var id: URL { url }
-+    var title: String { kind.title }
-+    var detail: String { kind.detail }
-+    var path: String { url.path }
-+}
-+
-+enum AppleStorageService {
-+    static func standardLocations(homeDirectory: URL = FileManager.default.homeDirectoryForCurrentUser) -> [AppleStorageLocation] {
-+        [
-+            AppleStorageLocation(kind: .intelligenceModels, url: URL(fileURLWithPath: "/System/Library/AssetsV2/com_apple_MobileAsset_UAF_FM_GenerativeModels")),
-+            AppleStorageLocation(kind: .screenSavers, url: URL(fileURLWithPath: "/Library/Application Support/com.apple.idleassetsd")),
-+            AppleStorageLocation(kind: .garageBand, url: URL(fileURLWithPath: "/Library/Application Support/GarageBand")),
-+            AppleStorageLocation(kind: .appleLoops, url: URL(fileURLWithPath: "/Library/Audio/Apple Loops")),
-+            AppleStorageLocation(kind: .deviceBackups, url: homeDirectory.appendingPathComponent("Library/Application Support/MobileSync/Backup", isDirectory: true))
-+        ]
-+    }
-+
-+    static func scan(
-+        locations: [AppleStorageLocation] = standardLocations(),
-+        maxEntriesPerLocation: Int = 100_000
-+    ) async throws -> [AppleStorageItem] {
-+        let task = Task.detached(priority: .utility) {
-+            try locations.map { location in
-+                try Task.checkCancellation()
-+                return try measure(location, limit: max(1, min(maxEntriesPerLocation, 100_000)))
-+            }
-+        }
-+        return try await withTaskCancellationHandler {
-+            try Task.checkCancellation()
-+            return try await task.value
-+        } onCancel: {
-+            task.cancel()
-+        }
-+    }
-+
-+    private struct Identity: Hashable {
-+        let device: dev_t
-+        let inode: ino_t
-+    }
-+
-+    private static let resourceKeys: Set<URLResourceKey> = [
-+        .isPackageKey, .isUbiquitousItemKey, .ubiquitousItemDownloadingStatusKey
-+    ]
-+
-+    private static func measure(_ location: AppleStorageLocation, limit: Int) throws -> AppleStorageItem {
-+        let root = location.url.standardizedFileURL
-+        var bytes: Int64 = 0
-+        var count = 0
-+        var skipped = 0
-+        var inaccessible = 0
-+        var reachedLimit = false
-+        var seen: Set<Identity> = []
-+
-+        func result(_ status: AppleStorageItem.Status, bytes: Int64?) -> AppleStorageItem {
-+            AppleStorageItem(kind: location.kind, url: root, allocatedBytes: bytes, status: status,
-+                             scannedCount: count, skippedCount: skipped, inaccessibleCount: inaccessible,
-+                             reachedLimit: reachedLimit)
-+        }
-+
-+        var ancestor = URL(fileURLWithPath: "/", isDirectory: true)
-+        for component in root.pathComponents.dropFirst() {
-+            try Task.checkCancell
-```
-
-**File**: `PureMac/Services/CleaningEngine.swift` (modified, +33/-0)
-```diff
-@@ -47,6 +47,11 @@ actor CleaningEngine {
-                 continue
-             }
+@@ -23,17 +23,17 @@
+   <line x1="62" y1="58" x2="736" y2="58" stroke="#e6eaef" stroke-width="1"/>
+   <text x="52" y="62" fill="#59636e" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" text-anchor="end">8k</text>
  
-+            if item.category == .aiApps, !isSupportedAIAppPath(item.path) {
-+                result.errors.append("Unsupported AI app cleanup path: \(item.path)")
-+                continue
-+            }
-+
-             if item.category == .purgeableSpace {
-                 let purged = await purgePurgeableSpace()
-                 result.freedSpace += purged
-@@ -220,6 +225,12 @@ actor CleaningEngine {
-                     (nsError.domain == NSPOSIXErrorDomain &&
-                         (nsError.code == Int(EACCES) || nsError.code == Int(EPERM)))
-                 if isPermissionDenied {
-+                    if item.category == .aiApps {
-+                        let detail = "AI app cleanup requires access as the current user: \(item.path)"
-+                        result.errors.append(detail)
-+                        Logger.shared.log(detail, level: .warning)
-+                        continue
-+                    }
-                     if XcodeBuildMCPDerivedDataSupport.isManagedDerivedDataPath(
-                         item.path,
-                         homeDirectory: homeDirectory
-@@ -274,6 +285,10 @@ actor CleaningEngine {
-         // refuses to escalate.
-         let exclusions = CleanupExclusions.paths()
-         let validated: [(item: CleanableItem, resolved: String)] = items.compactMap { item in
-+            guard item.category != .aiApps else {
-+                result.errors.append("Administrator cleanup is unavailable for AI app data: \(item.name)")
-+                return nil
-+            }
-             guard !CleanupExclusions.excludes(item.path, paths: exclusions) else { return nil }
-             guard !hasUnexpectedSymlink(in: item.path) else {
-                 Logger.shared.log("Refusing admin escalation for symlinked path: \(item.path)", level: .warning)
-@@ -562,6 +577,9 @@ actor CleaningEngine {
-         resolvedPath: String,
-         includeUninstallPaths: Bool = false
-     ) -> Bool {
-+        if item.category == .aiApps {
-+            return item.path == resolvedPath && isSupportedAIAppPath(resolvedPath)
-+        }
-         let originalIsManaged = XcodeBuildMCPDerivedDataSupport.isManagedDerivedDataPath(
-             item.path,
-             homeDirectory: homeDirectory
-@@ -586,6 +604,21 @@ actor CleaningEngine {
-             || (includeUninstallPaths && isSafeUninstallEscalationPath(resolvedPath))
-     }
- 
-+    private func isSupportedAIAppPath(_ path: String) -> Bool {
-+        guard !path.utf8.contains(0), path == (path as NSString).standardizingPath else { return false }
-+        let home = homeDirectory.path
-+        return [
-+            "\(home)/.ollama/logs",
-+            "\(home)/.ollama/history",
-+            "\(home)/.lmstudio/server-logs",
-+            "\(home)/.lmstudio/conversations",
-+            "\(home)/Library/Caches/ollama",
-+            "\(home)/Library/Caches/com.electron.ollama",
-+            "\(home)/Library/WebKit/com.electron.ollama",
-+            "\(home)/Library/Saved Application State/com.electron.ollama.savedState",
-+        ].contains(path)
-+    }
-+
-     /// Validates that a resolved path is safe to delete.
-     /// Prevents symlink attacks where a link in ~/Library/Caches points to ~/.ssh.
-     /// Downloads, Documents, and Desktop are intentionally NOT whole-subtree
-```
-
-**File**: `PureMac/Services/DeviceBackupService.swift` (added, +281/-0)
-```diff
-@@ -0,0 +1,281 @@
-+import CryptoKit
-+import Darwin
-+import Foundation
-+
-+struct DeviceBackup: Identifiable, Hashable, Sendable {
-+    let url: URL
-+    let allocatedSize: Int64
-+    let modifiedAt: Date
-+    fileprivate let fingerprint: String
-+    fileprivate let ancestors: [UInt64]
-+
-+    var id: URL { url }
-+    var name: String { url.lastPathComponent }
-+}
-+
-+struct DeviceBackupScanResult: Sendable {
-+    let backups: [DeviceBackup]
-+    let issues: [String]
-+}
-+
-+struct DeviceBackupRemovalResult: Sendable {
-+    let removedPaths: [String]
-+    let errors: [String]
-+}
-+
-+actor DeviceBackupService {
-+    private struct Measurement {
-+        var hasher = SHA256()
-+        var allocatedSize: Int64 = 0
-+        var count = 0
-+        var seenFiles: Set<String> = []
-+        var rootIdentity = ""
-+    }
-+
-+    private let root: URL
-+    private let trashHandler: (URL) throws -> Void
-+    private let exclusions: () -> [String]
-+    private let maxEntries: Int
-+
-+    init(
-+        homeDirectory: URL = FileManager.default.homeDirectoryForCurrentUser,
-+        trashHandler: ((URL) throws -> Void)? = nil,
-+        exclusions: @escaping () -> [String] = { CleanupExclusions.paths() },
-+        maxEntries: Int = 500_000
-+    ) {
-+        root = homeDirectory.appendingPathComponent("Library/Application Support/MobileSync/Backup", isDirectory: true)
-+        self.trashHandler = trashHandler ?? { url in
-+            var destination: NSURL?
-+            try FileManager.default.trashItem(at: url, resultingItemURL: &destination)
-+        }
-+        self.exclusions = exclusions
-+        self.maxEntries = max(1, min(maxEntries, 500_000))
-+    }
-+
-+    func scan() throws -> DeviceBackupScanResult {
-+        try Task.checkCancellation()
-+        let opened: (descriptor: Int32, identities: [UInt64])
-+        do {
-+            opened = try openRoot()
-+        } catch is CancellationError {
-+            throw CancellationError()
-+        } catch let error as POSIXError where error.code == .ENOENT {
-+            return DeviceBackupScanResult(backups: [], issues: [])
-+        } catch {
-+            return DeviceBackupScanResult(backups: [], issues: [error.localizedDescription])
-+        }
-+        defer { close(opened.descriptor) }
-+        var backups: [DeviceBackup] = []
-+        var issues: [String] = []
-+        for name in try names(in: opened.descriptor) {
-+            try Task.checkCancellation()
-+            let url = root.appendingPathComponent(name, isDirectory: true)
-+            do {
-+                let info = try metadata(name, in: opened.descriptor)
-+                guard info.st_mode & S_IFMT != S_IFLNK else { throw failure("Symbolic links are excluded", url) }
-+                guard info.st_mode & S_IFMT == S_IFDIR else { continue }
-+                guard !CleanupExclusions.excludes(url.path, paths: exclusions()) else {
-+                    throw failure("Excluded from cleanup", url)
-+                }
-+                let measure = try measureBackup(name, in: opened.descriptor)
-+                backups.append(DeviceBackup(
-+                    url: url,
-+                    allocatedSize: measure.allocatedSize,
-+                    modifiedAt: Date(timeIntervalSince1970: TimeInterval(info.st_mtimespec.tv_sec)),
-+                    fingerprint: measure.hasher.finalize().map { String(format: "%02x", $0) }.joined(),
-+                    ancestors: opened.identities
-+                ))
-+            } catch is CancellationError {
-+                throw CancellationError()
-+            } catch {
-+                issues.append("\(name): \(error.localizedDescription)")
-+            }
-+        }
-+        return DeviceBackupScanResult(
-+            backups: backups.sorted { $0.allocatedSize > $1.allocatedSize },
-+            issues: issues
-+        )
-+    }
-+
-+    func trash(_ backups: [DeviceBackup]) throws -> DeviceBackupRemovalResult {
-+        var removed: [String] = []
-+        var errors: [String] = []
-+        var seen: Set<URL> = []
-+        for backup in backups where seen.insert(backup.url).inserted {
-+            do {
-+                try Task.checkCancellation()
-+                guard backup.url.deletingLastPathComponent().path == root.path,
-+                      backup.url.standardizedFileURL.path == backup.url.path,
-+                      !backup.url.path.utf8.contains(0),
-+                      backup.url.path != root.path else {
-+                    throw failure("Only individual device backup folders can be moved to Trash", backup.url)
-+                }
-+                guard !CleanupExclusions.excludes(backup.url.path, paths: exclusions()) else {
-+                    throw failure("Excluded from cleanup", backup.url)
-+                }
-+                let opened = try openRoot()
-+                defer { close(opened.descriptor) }
-+                guard opened.identities == backup.ancestors else {
-+                    throw failure("The backup location changed. Scan again", backup.url)
-+             
-```
-
-**File**: `PureMac/ViewModels/AppState.swift` (modified, +15/-6)
-```diff
-@@ -13,6 +13,7 @@ enum AppSection: Hashable {
-     case similarPhotos
-     case protection
-     case performance
-+    case appleFeatures
-     case appUpdates
-     case settings
-     case cleaning(CleaningCategory)
-@@ -51,6 +52,11 @@ final class AppState: ObservableObject {
-     let languageAtLaunch = AppLanguage.current
-     @Published var settingsNeedLanguageRestart = false
-     @Published var showUpdateSettings = false
-+    @Published var deviceBackupRemovalInProgress = false
-+    @Published var deviceBackupRemovalResult: DeviceBackupRemovalResult?
-+    var canRemoveDeviceBackups: Bool {
-+        !scanState.isActive && !deviceBackupRemovalInProgress
-+    }
-     typealias AppFileScanner = @MainActor (
-         _ app: InstalledApp,
-         _ locations: Locations,
-@@ -808,7 +814,7 @@ final class AppState: ObservableObject {
-     }
- 
-     private func retryCleanItems(_ items: [CleanableItem]) async {
--        guard !scanState.isActive else { return }
-+        guard !scanState.isActive, !deviceBackupRemovalInProgress else { return }
-         let generation = UUID()
-         cleanupGeneration = generation
-         scanState = .cleaning(progress: 0)
-@@ -874,12 +880,13 @@ final class AppState: ObservableObject {
-     // MARK: - Scanning
- 
-     func startSmartScan() {
--        guard !scanState.isActive else { return }
-+        guard !scanState.isActive, !deviceBackupRemovalInProgress else { return }
-         beginScan(categories: CleaningCategory.scannable, replacingResults: true)
-     }
- 
-     func scanSingleCategory(_ category: CleaningCategory) {
--        guard !scanState.isActive, CleaningCategory.scannable.contains(category) else { return }
-+        guard !scanState.isActive, !deviceBackupRemovalInProgress,
-+              CleaningCategory.scannable.contains(category) else { return }
-         beginScan(categories: [category], replacingResults: false)
-     }
- 
-@@ -935,7 +942,7 @@ final class AppState: ObservableObject {
-     // MARK: - Cleaning
- 
-     func cleanAll(itemIDs: Set<UUID>? = nil, scheduled: Bool = false) {
--        guard !scanState.isActive else { return }
-+        guard !scanState.isActive, !deviceBackupRemovalInProgress else { return }
- 
-         let itemsToClean = allResults.flatMap { $0.items }.filter { item in
-             guard itemIDs?.contains(item.id) ?? true else { return false }
-@@ -1007,7 +1014,8 @@ final class AppState: ObservableObject {
-     }
- 
-     func cleanCategory(_ category: CleaningCategory, itemIDs: Set<UUID>? = nil) {
--        guard let result = categoryResults[category], !scanState.isActive else { return }
-+        guard let result = categoryResults[category], !scanState.isActive,
-+              !deviceBackupRemovalInProgress else { return }
- 
-         let selectedItems = result.items.filter { isItemSelected($0) && (itemIDs?.contains($0.id) ?? true) }
-         guard !selectedItems.isEmpty else { return }
-@@ -1131,7 +1139,8 @@ final class AppState: ObservableObject {
-     func canRunScheduledScan(isAppActive: Bool) -> Bool {
-         !scanState.isActive && !(scanState == .completed && isAppActive)
-             && !showCleanConfirmation && !isScanningAppFiles && !isRemovingAppFiles
--            && !isSearchingOrphans && !PermissionCoordinator.shared.isRequesting
-+            && !isSearchingOrphans && !deviceBackupRemovalInProgress
-+            && !PermissionCoordinator.shared.isRequesting
-     }
- 
-     func runScheduledScan() async {
-```
-
-**File**: `PureMac/Views/CategoryDetailView.swift` (modified, +90/-20)
-```diff
-@@ -1,13 +1,17 @@
- import SwiftUI
- 
- struct CategoryDetailView: View {
-+    private struct CleanupSelection: Identifiable {
-+        let id = UUID()
-+        let items: [CleanableItem]
-+    }
-+
-     @EnvironmentObject var appState: AppState
-     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-     let category: CleaningCategory
- 
-     @State private var filter = CleanupReviewFilter()
--    @State private var showConfirmation = false
--    @State private var pendingItems: [CleanableItem] = []
-+    @State private var pendingReview: CleanupSelection?
- 
-     private var result: CategoryResult? { appState.categoryResults[category] }
-     private var visibleItems: [CleanableItem] { filter.apply(to: result?.items ?? []) }
-@@ -52,19 +56,12 @@ struct CategoryDetailView: View {
-             }
-         }
-         .navigationTitle(Text(LocalizedStringKey(category.rawValue)))
--        .confirmationDialog("Remove selected files?", isPresented: $showConfirmation, titleVisibility: .visible) {
--            Button("Permanently remove \(pendingItems.count) items", role: .destructive) {
--                appState.cleanCategory(category, itemIDs: Set(pendingItems.map(\.id)))
--                pendingItems = []
--            }
--            Button("Cancel", role: .cancel) { pendingItems = [] }
--        } message: {
--            Text(confirmationMessage)
-+        .sheet(item: $pendingReview) { selection in
-+            removalReview(items: selection.items)
-         }
-         .onChange(of: category) { _ in
-             filter = CleanupReviewFilter()
--            pendingItems = []
--            showConfirmation = false
-+            pendingReview = nil
-         }
-     }
- 
-@@ -154,9 +151,14 @@ struct CategoryDetailView: View {
-                 Text("\(selectedItems.count) selected · \(ByteCountFormatter.string(fromByteCount: selectedSize, countStyle: .file))")
-                     .font(.system(size: 13, weight: .semibold))
-                     .monospacedDigit()
--                Text(hiddenCount > 0 ? "Includes \(hiddenCount) selected items hidden by filters." : "Selected cleanup items are permanently removed.")
-+                Text("Cleanup permanently removes files unless marked Move to Trash.")
-                     .font(.caption)
-                     .foregroundStyle(.secondary)
-+                if hiddenCount > 0 {
-+                    Text("Includes \(hiddenCount) selected items hidden by filters.")
-+                        .font(.caption)
-+                        .foregroundStyle(.secondary)
-+                }
-             }
-             Spacer(minLength: 8)
-             if !selectedItems.isEmpty {
-@@ -165,8 +167,7 @@ struct CategoryDetailView: View {
-                     .disabled(appState.scanState.isActive)
-             }
-             Button {
--                pendingItems = selectedItems
--                showConfirmation = true
-+                pendingReview = CleanupSelection(items: selectedItems)
-             } label: {
-                 Label("Review removal", systemImage: "trash")
-                     .font(.system(size: 13, weight: .semibold))
-@@ -182,11 +183,80 @@ struct CategoryDetailView: View {
-         .overlay(alignment: .top) { Divider() }
-     }
- 
--    private var confirmationMessage: String {
--        let size = ByteCountFormatter.string(fromByteCount: pendingItems.reduce(0) { $0 + $1.size }, countStyle: .file)
--        let names = pendingItems.prefix(5).map(\.name).joined(separator: "\n")
--        let more = pendingItems.count > 5 ? String(localized: "\nAnd \(pendingItems.count - 5) more.") : ""
--        return String(localized: "\(size) selected. This permanently removes the selected files or runs the listed cleanup actions. It cannot be undone.") + "\n\n" + names + more
-+    private func removalReview(items: [CleanableItem]) -> some View {
-+        VStack(alignment: .leading, spacing: 16) {
-+            VStack(alignment: .leading, spacing: 6) {
-+                Text("Review removal")
-+                    .font(.title2.weight(.semibold))
-+                Text("\(items.count) items · \(ByteCountFormatter.string(fromByteCount: items.reduce(0) { $0 + $1.size }, countStyle: .file))")
-+                    .monospacedDigit()
-+                    .foregroundStyle(.secondary)
-+                Text("Files and cleanup actions marked Permanent cannot be undone. Items marked Move to Trash can be recovered until the Trash is emptied.")
-+                    .font(.callout)
-+                    .foregroundStyle(.secondary)
-+                    .fixedSize(horizontal: false, vertical: true)
-+            }
-+            Divider()
-+            ScrollView {
-+                LazyVStack(alignment: .leading, spacing: 0) {
-+                    ForEach(items) { item in
-+                        VStack(alignment: .leading, spacing: 5) {
-+                            HStack(alignment: .firstTextBaseline, spacing: 12) {
-+                                Text(item.name)
-+                                    .font(.body.weight(
+-  <path d="M62 367.96 L65.6 366.64 L67.39 365.33 L72.19 364.05 L73.9 362.73 L74.33 361.41 L74.76 360.1 L75.13 358.78 L75.48 357.46 L75.94 356.18 L76.59 354.86 L77.12 353.55 L77.78 352.23 L78.15 350.91 L78.36 349.59 L78.55 348.32 L78.74 347 L78.92 345.68 L79.1 344.36 L79.19 343.05 L79.31 341.77 L79.46 340.45 L79.6 339.13 L79.73 337.81 L79.89 336.5 L80.14 335.18 L80.26 333.9 L80.36 332.58 L80.5 331.27 L80.6 329.95 L80.72 328.63 L80.81 327.35 L80.92 326.03 L81.03 324.72 L81.15 323.4 L81.34 322.08 L81.47 320.76 L81.6 319.49 L81.77 318.17 L81.97 316.85 L82.26 315.53 L82.57 314.22 L83.06 312.9 L83.48 311.62 L83.91 310.3 L84.36 308.98 L84.69 307.67 L85.07 306.35 L85.34 305.07 L85.66 303.75 L86.44 302.44 L87.33 301.12 L87.76 299.8 L88.03 298.48 L88.48 297.2 L88.96 295.89 L89.79 294.57 L90.4 293.25 L90.62 291.93 L90.82 290.65 L90.97 289.34 L91.08 288.02 L91.18 286.7 L91.34 285.39 L91.53 284.07 L91.65 282.79 L91.8 281.47 L91.95 280.15 L92.11 278.84 L92.32 277.52 L92.52 276.2 L92.74 274.92 L93.02 273.61 L93.3 272.29 L93.75 270.97 L94.32 269.65 L94.74 268.37 L95.1 267.06 L95.61 265.74 L96.66 264.42 L98.15 263.1 L99.52 261.79 L100.63 260.51 L101.61 259.19 L102.78 257.87 L104.51 256.56 L106 255.24 L108.12 253.92 L108.53 252.64 L109.07 251.32 L110.34 250.01 L111.03 248.69 L111.86 247.37 L112.43 246.09 L113.91 244.77 L114.96 243.46 L118.47 242.14 L119.39 240.82 L121.57 239.51 L122.97 238.23 L124.56 236.91 L125.65 235.59 L128.06 234.27 L131.42 232.96 L134.87 231.68 L139.06 230.36 L142.47 229.04 L148.48 227.73 L154.34 226.41 L157.75 225.09 L158.24 223.81 L159.32 222.49 L161.76 221.18 L164.52 219.86 L168.22 218.54 L169.48 217.22 L170.64 215.95 L171.75 214.63 L173.02 213.31 L174.15 211.99 L175.14 210.68 L176.03 209.4 L179.31 208.08 L184.56 206.76 L188.64 205.44 L193.25 204.13 L198.95 202.81 L201.87 201.53 L205.8 200.21 L213.31 198.9 L218.9 197.58 L224.94 196.26 L228.33 194.98 L234.32 193.66 L243.75 192.35 L254.28 191.03 L264.56 189.71 L272.91 188.39 L279.19 187.11 L289.25 185.8 L298.94 184.48 L309.13 183.16 L317.9 181.85 L327.48 180.53 L338.22 179.25 L341.01 177.93 L347.06 176.61 L357.9 175.3 L365.07 173.98 L371.55 172.7 L384.28 171.38 L393.03 170.07 L400.46 168.75 L401.5 167.43 L403.92 166.11 L407.46 164.83 L410.84 163.52 L415.92 162.2 L423.48 160.88 L430.14 159.56 L438 158.25 L447.04 156.97 L454.45 155.65 L458 154.33 L465.11 153.01 L471.27 151.7 L478.04 150.42 L484.38 149.1 L491.68 147.78 L500.58 146.47 L503.45 145.15 L506.98 143.83 L508.67 142.55 L509.49 141.23 L510.87 139.92 L513.2 138.6 L518.49 137.28 L522.99 136 L529.39 134.69 L536.65 133.37 L545.88 132.05 L554.49 130.73 L565.53 129.42 L568.23 128.14 L569.56 126.82 L574.66 125.5 L581.17 124.19 L587.59 122.87 L593.1 121.55 L596.3 120.27 L599.76 118.95 L602.98 117.64 L608.97 116.32 L615.82 115 L622.39 113.72 L623.46 112.41 L625.2 111.09 L628.67 109.77 L631.08 108.45 L635.81 107.14 L641.85 105.86 L648.01 104.54 L659.71 103.22 L663.44 101.9 L668.7 100.59 L672.64 99.31 L678.84 97.99 L684.48 96.67 L689.12 95.36 L693.7 94.04 L701.02 92.72 L703.58 91.44 L707.31 90.12 L711.62 88.81 L715.84 87.49 L720.4 86.17 L725.57 84.85 L727.19 83.57 L730.41 82.26 L736 80.94 L736 368 L62 368 Z" fill="url(#fill-starhistorysvg)"/>
+-  <path d="M62 367.96 L65.6 366.64 L67.39 365.33 L72.19 364.05 L73.9 362.73 L74.33 361.41 L74.76 360.1 L75.13 358.78 L75.48 357.46 L75.94 356.18 L76.59 354.86 L77.12 353.55 L77.78 352.23 L78.15 350.91 L78.36 349.59 L78.55 348.32 L78.74 347 L78.92 345.68 L79.1 344.36 L79.19 343.05 L79.31 341.77 L79.46 340.45 L79.6 339.13 L79.73 337.81 L79.89 336.5 L80.14 335.18 L80.26 333.9 L80.36 332.58 L80.5 331.27 L80.6 329.95 L80.72 328.63 L80.81 327.35 L80.92 326.03 L81.03 324.72 L81.15 323.4 L81.34 322.08 L81.47 320.76 L81.6 319.49 L81.77 318.17 L81.97 316.85 L82.26 315.53 L82.57 314.22 L83.06 312.9 L83.48 311.62 L83.91 310.3 L84.36 308.98 L84.69 307.67 L85.07 306.35 L85.34 305.07 L85.66 303.75 L86.44 302.44 L87.33 301.12 L87.76 299.8 L88.03 298.48 L88.48 297.2 L88.96 295.89 L89.79 294.57 L90.4 293.25 L90.62 291.93 L90.82 290.65 L90.97 289.34 L91.08 288.02 L91.18 286.7 L91.34 285.39 L91.53 284.07 L91.65 282.79 L91.8 281.47 L91.95 280.15 L92.11 278.84 L92.32 277.52 L92.52 276.2 L92.74 274.92 L93.02 273.61 L93.3 272.29 L93.75 270.97 L94.32 269.65 L94.74 268.37 L95.1 267.06 L95.61 265.74 L96.66 264.42 L98.15 263.1 L99.52 261.79 L100.63 260.51 L101.61 259.19 L102.78 257.87 L104.51 256.56 L106 255.24 L108.12 253.92 L108.53 252.64 L109.07 251.32 L110.34 250.01 L111.03 248.69 L111.86 247.37 L112.43 246.09 L113.91 244.77 L114.96 243.46 L118.47 242.14 L119.39 240.82 L121.57 239.51 L122.97 238.23 L124.56 236.91 L125.65 235.59 L128.06 234.27 L131.42 232.96 L134.87 231.68 L139.06 230.36 L142.47 229.04 L148.48 227.73 L154.34 2
 ```
 
 #### Recent Merged Pull Requests:
@@ -1902,40 +1325,3 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Release 3.2.0 with Apple feature guides and safer cleanup
-
-**RULE**:
-When implementing operations in `.github/workflows/release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in momenbasel/PureMac. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `b4e28d22`: Release 3.2.0 with Apple feature guides and safer cleanup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yml`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```swift
-// Verified production-grade fix pattern:
-              elif [[ "${VERSION}" == "3.2.0" ]]; then
-                echo "- Added Apple Features with shortcuts and instructions for Siri, Apple Intelligence, image generation, Writing Tools, ChatGPT, summaries, and privacy settings. Changes are completed manually in macOS."
-                echo "- Inspect Apple model, screen saver, music content, and device backup storage. Protected models and system apps are not removed."
-                echo "- Review individual iPhone and iPad backups and move selected completed backups to Trash after confirmation and fresh checks."
-                echo "- Fixed Ollama and LM Studio cleanup with strict path checks and user-level removal; downloaded models remain excluded."
-                echo "- Simplified Overview and navigation, reduced decoration, and added full paths and removal methods to category cleanup confirmation."
-                echo ""
-```
-
-**NEGATIVE CONSTRAINT**:
-```swift
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b4e28d22` are properly handled with clean fallback behavior.

@@ -19675,5 +19675,17 @@
     "downloads": 338,
     "qualityScore": 1808,
     "discoveredAt": "2026-10-28T20:55:17.981Z"
+  },
+  {
+    "name": "LiquidAI/LFM3-Omni-2B",
+    "fullName": "LiquidAI/LFM3-Omni-2B",
+    "url": "https://huggingface.co/LiquidAI/LFM3-Omni-2B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: LiquidAI/LFM3-Omni-2B (144 likes, 714 downloads)",
+    "likes": 144,
+    "downloads": 714,
+    "qualityScore": 2154,
+    "discoveredAt": "2026-10-29T01:06:36.090Z"
   }
 ]

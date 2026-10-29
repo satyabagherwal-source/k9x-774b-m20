@@ -6008,3 +6008,6 @@
 | `CYCLE-20261029-9ZGJ` | `2026-10-29T00:34:50.179Z` | `OpenMOSS-Team/MOSS-Image-SFT` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5475, Rule 5476` | Yes (`6aeef388...`) |
 | `CYCLE-20261029-IELU` | `2026-10-29T00:41:23.058Z` | `deepseek-ai/DeepSeek-V4.1-Flash-1017` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md` | Yes (`d7d19825...`) |
 | `CYCLE-20261029-IQ6D` | `2026-10-29T00:41:38.053Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5477` | Yes (`37d18e9c...`) |
+| `CYCLE-20261029-HVWN` | `2026-10-29T01:08:58.439Z` | `momenbasel/PureMac` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md` | Yes (`6c791711...`) |
+| `CYCLE-20261029-I0X7` | `2026-10-29T01:09:04.939Z` | `datalab-to/indra-ocr` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5478, Rule 5479` | Yes (`9c0ec0ee...`) |
+| `CYCLE-20261029-KOB6` | `2026-10-29T01:11:08.562Z` | `LiquidAI/LFM3-Omni-2B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5480, Rule 5481` | Yes (`bd786a3e...`) |

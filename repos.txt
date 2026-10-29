@@ -4664,3 +4664,7 @@ https://huggingface.co/openbmb/MiniCPM-OCR-1.0
 # --- Automatically Discovered by AI Scout Engine [2026-10-28T20:57:26.323Z] ---
 # [HUGGINGFACE-AI-MODELS] nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B (1808 score) - Verified Hugging Face Model: nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B (147 
 https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-29T01:08:44.092Z] ---
+# [HUGGINGFACE-AI-MODELS] LiquidAI/LFM3-Omni-2B (2154 score) - Verified Hugging Face Model: LiquidAI/LFM3-Omni-2B (144 likes, 714 downloads)
+https://huggingface.co/LiquidAI/LFM3-Omni-2B

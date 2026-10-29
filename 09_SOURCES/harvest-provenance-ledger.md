@@ -6017,3 +6017,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openmoss-team-moss-image-sft` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT` | `hf-openmos` | Multi-dimensional audit evidence | 2026-10-29T00:34:50.183Z |
 | `learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-29T00:41:23.062Z |
 | `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `d1b31339` | Multi-dimensional audit evidence | 2026-10-29T00:41:38.056Z |
+| `learn-github-momenbasel-puremac` | `https://github.com/momenbasel/PureMac` | `046e5c5b` | Multi-dimensional audit evidence | 2026-10-29T01:08:58.443Z |
+| `learn-huggingface-datalab-to-indra-ocr` | `https://huggingface.co/datalab-to/indra-ocr` | `hf-datalab` | Multi-dimensional audit evidence | 2026-10-29T01:09:04.943Z |
+| `learn-huggingface-liquidai-lfm3-omni-2b` | `https://huggingface.co/LiquidAI/LFM3-Omni-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-29T01:11:08.566Z |

@@ -1715,8 +1715,8 @@
     "sourceUrl": "https://huggingface.co/datalab-to/indra-ocr",
     "sourceVersion": "hf-datalab-to-indra-ocr",
     "license": "Open-Source",
-    "contentHash": "bd34cb5eda857f45f6e4fd4870756269909a2eb2dee5ba0ae58e46b5de8273a2",
-    "lastHarvestedAt": "2026-10-25T21:02:04.831Z",
+    "contentHash": "9c0ec0ee282c320c3274c74db69e22318ae58917d27e676018ecbe1ea829365c",
+    "lastHarvestedAt": "2026-10-29T01:09:04.943Z",
     "learningId": "learn-huggingface-datalab-to-indra-ocr"
   },
   "chrisryugj-kordoc": {
@@ -8003,10 +8003,10 @@
     "repository": "momenbasel/PureMac",
     "platform": "github",
     "sourceUrl": "https://github.com/momenbasel/PureMac",
-    "sourceVersion": "317f1bb1",
+    "sourceVersion": "046e5c5b",
     "license": "MIT",
-    "contentHash": "13ee0bbaa4acae66ce5940755e95f69e099103c11cdea8dae72d07ab9d5fe4a5",
-    "lastHarvestedAt": "2026-10-25T17:14:33.127Z",
+    "contentHash": "6c791711449d949592f27959aa806fcb88fe760988e8c86dd1d2893da33094cc",
+    "lastHarvestedAt": "2026-10-29T01:08:58.443Z",
     "learningId": "learn-github-momenbasel-puremac"
   },
   "nalexn-clean-architecture-swiftui": {
@@ -11428,5 +11428,15 @@
     "contentHash": "f3c5f7de3c9aced73076d2de6d58ec2309d6cd9a81e5973b1ef9573e3c8474b7",
     "lastHarvestedAt": "2026-10-28T20:57:33.311Z",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b"
+  },
+  "hf-liquidai-lfm3-omni-2b": {
+    "repository": "LiquidAI/LFM3-Omni-2B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/LiquidAI/LFM3-Omni-2B",
+    "sourceVersion": "hf-liquidai-lfm3-omni-2b",
+    "license": "Open-Source",
+    "contentHash": "bd786a3e6aa6e87e506424a43277e5eda85a1b8b7a668d6377386a83855c7cec",
+    "lastHarvestedAt": "2026-10-29T01:11:08.566Z",
+    "learningId": "learn-huggingface-liquidai-lfm3-omni-2b"
   }
 }

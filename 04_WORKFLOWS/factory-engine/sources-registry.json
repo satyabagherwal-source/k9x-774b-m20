@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-29T00:41:40.596Z",
-    "lastVerified": "2026-10-29T00:41:40.596Z",
+    "lastChecked": "2026-10-29T01:11:11.111Z",
+    "lastVerified": "2026-10-29T01:11:11.111Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -323,9 +323,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-29T00:16:13.284Z",
+    "lastChecked": "2026-10-29T01:09:04.558Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-29T00:16:13.284Z"
+    "lastVerified": "2026-10-29T01:09:04.558Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -670,8 +670,8 @@
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T20:57:41.883Z",
-    "lastVerified": "2026-10-28T20:57:41.883Z",
+    "lastChecked": "2026-10-29T01:08:59.675Z",
+    "lastVerified": "2026-10-29T01:08:59.675Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -2432,9 +2432,9 @@
   "giancarloerra-socraticode": {
     "name": "SocratiCode",
     "officialUrl": "https://github.com/giancarloerra/SocratiCode",
-    "lastChecked": "2026-10-28T07:31:38.583Z",
+    "lastChecked": "2026-10-29T01:09:02.050Z",
     "revisionIdentifier": "dae6d3a0",
-    "lastVerified": "2026-10-28T07:31:38.583Z"
+    "lastVerified": "2026-10-29T01:09:02.050Z"
   },
   "orange-opensource-hurl": {
     "name": "hurl",
@@ -2780,9 +2780,9 @@
   "cdk-team-cdk": {
     "name": "CDK",
     "officialUrl": "https://github.com/cdk-team/CDK",
-    "lastChecked": "2026-10-28T10:43:36.226Z",
+    "lastChecked": "2026-10-29T01:08:57.228Z",
     "revisionIdentifier": "69da22ad",
-    "lastVerified": "2026-10-28T10:43:36.226Z"
+    "lastVerified": "2026-10-29T01:08:57.228Z"
   },
   "lioensky-vcptoolbox": {
     "name": "lioensky/VCPToolBox",
@@ -7823,5 +7823,56 @@
     "lastChecked": "2026-10-29T00:41:24.269Z",
     "revisionIdentifier": "cf9712ae",
     "lastVerified": "2026-10-29T00:41:24.269Z"
+  },
+  "hf-datalab-to-indra-ocr": {
+    "name": "datalab-to/indra-ocr",
+    "officialUrl": "https://huggingface.co/datalab-to/indra-ocr",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-29T01:08:52.190Z",
+    "lastVerified": "2026-10-29T01:08:52.190Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-datalab-to-indra-ocr",
+    "contentHash": "9c0ec0ee282c320c3274c74db69e22318ae58917d27e676018ecbe1ea829365c",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "momenbasel-puremac": {
+    "name": "momenbasel/PureMac",
+    "officialUrl": "https://github.com/momenbasel/PureMac",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-29T01:08:58.045Z",
+    "lastVerified": "2026-10-29T01:08:58.045Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-momenbasel-puremac",
+    "contentHash": "6c791711449d949592f27959aa806fcb88fe760988e8c86dd1d2893da33094cc",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-liquidai-lfm3-omni-2b": {
+    "name": "LiquidAI/LFM3-Omni-2B",
+    "officialUrl": "https://huggingface.co/LiquidAI/LFM3-Omni-2B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-29T01:08:49.561Z",
+    "lastVerified": "2026-10-29T01:08:49.561Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-liquidai-lfm3-omni-2b",
+    "contentHash": "bd786a3e6aa6e87e506424a43277e5eda85a1b8b7a668d6377386a83855c7cec",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
