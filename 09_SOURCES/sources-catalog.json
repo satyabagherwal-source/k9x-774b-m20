@@ -2543,10 +2543,10 @@
     "repository": "sharkdp/fd",
     "platform": "github",
     "sourceUrl": "https://github.com/sharkdp/fd",
-    "sourceVersion": "afcefdd4",
+    "sourceVersion": "b7a0a29d",
     "license": "Apache-2.0",
-    "contentHash": "4e6e5c4ea814b063cb79937a421fc70e95c307db0d5e1561c174d59b2e10d863",
-    "lastHarvestedAt": "2026-10-28T04:28:19.322Z",
+    "contentHash": "269d75418535dfb1bb6217b57ea04dc502a40613796e48fdb892c0b42f25bc4a",
+    "lastHarvestedAt": "2026-10-29T01:43:11.957Z",
     "learningId": "learn-github-sharkdp-fd"
   },
   "maotoumao-musicfree": {
@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "868e06fa",
+    "sourceVersion": "456aea76",
     "license": "Apache-2.0",
-    "contentHash": "0ffa9a7ba0a6f216b6d8ed1d6a5dc4d86aa3306060a28a6f7ec74ab9412700f3",
-    "lastHarvestedAt": "2026-10-28T11:23:51.182Z",
+    "contentHash": "a01cf617bae4484ec002ec43a764bc702b99270f9d28144d618bb0c9cdba59bd",
+    "lastHarvestedAt": "2026-10-29T01:43:16.155Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {

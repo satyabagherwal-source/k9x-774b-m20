@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-29T01:24:49.159Z",
-  "total_cycles_completed": 5991,
-  "total_learnings_persisted": 5991,
-  "total_rules_promoted": 5447,
+  "last_updated": "2026-10-29T01:43:16.160Z",
+  "total_cycles_completed": 5993,
+  "total_learnings_persisted": 5993,
+  "total_rules_promoted": 5449,
   "history": [
-    {
-      "timestamp": "2026-10-28T15:16:36.633Z",
-      "repository": "crossplane/crossplane",
-      "learningId": "learn-github-crossplane-crossplane",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T15:16:38.779Z",
-      "repository": "deepseek-ai/DeepSeek-V3",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T15:22:46.078Z",
       "repository": "baidu/Unlimited-OCR",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-29T01:24:49.159Z",
       "repository": "kumahq/kuma",
       "learningId": "learn-github-kumahq-kuma",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T01:43:11.962Z",
+      "repository": "sharkdp/fd",
+      "learningId": "learn-github-sharkdp-fd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T01:43:16.160Z",
+      "repository": "skyhook-io/radar",
+      "learningId": "learn-github-skyhook-io-radar",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

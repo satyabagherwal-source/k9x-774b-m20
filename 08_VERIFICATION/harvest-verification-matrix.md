@@ -6014,3 +6014,5 @@
 | `CYCLE-20261029-T7ZR` | `2026-10-29T01:17:47.319Z` | `tencent/Hy-Memory-30B-A3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md` | Yes (`6937b035...`) |
 | `CYCLE-20261029-23UH` | `2026-10-29T01:24:41.849Z` | `sharkdp/bat` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5482` | Yes (`85c5eabc...`) |
 | `CYCLE-20261029-29H9` | `2026-10-29T01:24:49.149Z` | `kumahq/kuma` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5483` | Yes (`8595aef2...`) |
+| `CYCLE-20261029-PWEQ` | `2026-10-29T01:43:11.954Z` | `sharkdp/fd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5484` | Yes (`269d7541...`) |
+| `CYCLE-20261029-PZNB` | `2026-10-29T01:43:16.151Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5485` | Yes (`a01cf617...`) |

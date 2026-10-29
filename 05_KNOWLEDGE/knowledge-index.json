@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T01:24:49.072Z",
+  "last_updated": "2026-10-29T01:43:16.077Z",
   "total_verified_learnings": 1161,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -48055,8 +48055,8 @@
       "slug": "sharkdp-fd",
       "platform": "github",
       "source_url": "https://github.com/sharkdp/fd",
-      "source_version": "afcefdd4",
-      "content_hash": "4e6e5c4ea814b063cb79937a421fc70e95c307db0d5e1561c174d59b2e10d863",
+      "source_version": "b7a0a29d",
+      "content_hash": "269d75418535dfb1bb6217b57ea04dc502a40613796e48fdb892c0b42f25bc4a",
       "dossier_path": "07_PROJECT_LEARNING/sharkdp-fd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sharkdp-fd-learnings.md",
       "promoted_rules": [
@@ -48089,6 +48089,11 @@
           "number": 5171,
           "title": "docs: move --size overflow changelog entry to Unreleased section",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5484,
+          "title": "Merge pull request #2203 from tmccombs/changelog-fix",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48096,7 +48101,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T04:28:19.237Z",
+      "verified_at": "2026-10-29T01:43:11.863Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49022,8 +49027,8 @@
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "868e06fa",
-      "content_hash": "0ffa9a7ba0a6f216b6d8ed1d6a5dc4d86aa3306060a28a6f7ec74ab9412700f3",
+      "source_version": "456aea76",
+      "content_hash": "a01cf617bae4484ec002ec43a764bc702b99270f9d28144d618bb0c9cdba59bd",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "promoted_rules": [
@@ -49076,6 +49081,11 @@
           "number": 5259,
           "title": "Windows desktop in-app updates (checksum format and relaunch) (#2415)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5485,
+          "title": "Tidy two lines of investigation copy (#2426)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49083,7 +49093,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T11:23:51.090Z",
+      "verified_at": "2026-10-29T01:43:16.058Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -147865,6 +147875,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T01:24:49.053Z"
+    },
+    "rule-5484": {
+      "learning_id": "rule-5484",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5484,
+      "title": "Merge pull request #2203 from tmccombs/changelog-fix",
+      "source_url": "https://github.com/sharkdp/fd",
+      "source_version": "b7a0a29d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T01:43:11.863Z"
+    },
+    "rule-5485": {
+      "learning_id": "rule-5485",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5485,
+      "title": "Tidy two lines of investigation copy (#2426)",
+      "source_url": "https://github.com/skyhook-io/radar",
+      "source_version": "456aea76",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T01:43:16.058Z"
     }
   },
   "aliases": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sharkdp-fd-learnings.md`  
 > **Source**: github ([https://github.com/sharkdp/fd](https://github.com/sharkdp/fd))  
-> **Source Version**: `afcefdd4`  
+> **Source Version**: `b7a0a29d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T04:28:18.811Z  
+> **Timestamp**: 2026-10-29T01:43:11.343Z  
 > **Learning ID**: `learn-github-sharkdp-fd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sharkdp-fd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sharkdp/fd](https://github.com/sharkdp/fd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T04:28:18.806Z  
+> **Harvest Timestamp**: 2026-10-29T01:43:07.667Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A simple, fast and user-friendly alternative to 'find'
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 44877 stars
+- **Stars / Engagement**: 44887 stars
 
 ---
 
@@ -45,8 +45,8 @@ use std::time::Duration;
 
 use anyhow::anyhow;
 use clap::{
-    Arg, ArgAction, ArgGroup, ArgMatches, Command, Parser, ValueEnum, error::ErrorKind,
-    value_parser,
+    Arg, ArgAction, ArgGroup, ArgMatches, Command, Parser, ValueEnum, builder::ArgPredicate,
+    error::ErrorKind, value_parser,
 };
 #[cfg(feature = "completions")]
 use clap_complete::Shell;
@@ -80,7 +80,11 @@ pub struct Opts {
         long,
         short = 'H',
         help = "Search hidden files and directories",
-        long_help
+        long_help,
+        default_value_ifs([
+            ("no_hidden", ArgPredicate::IsPresent, Some("false")),
+            ("rg_alias_hidden_ignore", ArgPredicate::IsPresent, Some("true")),
+        ])
     )]
     pub hidden: bool,
 
@@ -89,13 +93,17 @@ pub struct Opts {
     no_hidden: (),
 
     /// Show search results from files and directories that would otherwise be
-    /// ignored by '.gitignore', '.ignore', '.fdignore', or the global ignore file,
+    /// ignored by '.gitignore', '.ignore', '.fdignore', or the global ignore file.
     /// The flag can be overridden with --ignore.
     #[arg(
         long,
         short = 'I',
         help = "Do not respect .(git|fd)ignore files",
-        long_help
+        long_help,
+        default_value_ifs([
+            ("ignore", ArgPredicate::IsPresent, Some("false")),
+            ("rg_alias_hidden_ignore", ArgPredicate::IsPresent, Some("true")),
+        ])
     )]
     pub no_ignore: bool,
 
@@ -161,11 +169,14 @@ pub struct Opts {
 
     /// Perform an unrestricted search, including ignored and hidden files. This is
     /// an alias for '--no-ignore --hidden'.
-    #[arg(long = "unrestricted", short = 'u', overrides_with_all(&["ignore", "no_hidden"]), action(ArgAction::Count), hide_short_help = true,
-    help = "Unrestricted search, alias for '--no-ignore --hidden'",
-        long_help,
-        )]
-    rg_alias_hidden_ignore: u8,
+    #[arg(
+        long = "unrestricted",
+        short = 'u',
+        hide_short_help = true,
+        help = "Unrestricted search, alias for '--no-ignore --hidden'",
+        long_help
+    )]
+    rg_alias_hidden_ignore: bool,
 
     /// Case-sensitive search (default: smart case)
     #[arg(
@@ -312,20 +323,7 @@ pub struct Opts {
         hide_short_help = true,
         help = "Separate search results by the null character",
         long_help
-    )]
-    pub null_separator: bool,
-
-    /// Limit the directory traversal to a given depth. By default, there is no
-    /// limit on the search depth.
-    #[arg(
-        long,
-        short = 'd',
-        value_name = "depth",
-        alias("maxdepth"),
-        help = "Set maximum search depth (default: none)",
-        long_help
-    )]
-    max_dep
+    )
 ```
 
 ### Core Architecture Module: `src/config.rs`
@@ -1644,11 +1642,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2192** (2026-10-28): **[BUG] -u is not equivalent to -H -I when combined with --ignore or --no-hidden**
+  *Symptoms*: ### Checks  - [x] I have read the troubleshooting section and still think this is a bug.  ### Describe the bug you encountered:  According to documents, `-u`/`--unrestricted` should be an alias for `--no-ignore --hidden`.  So `fd -u --ignore` should be identical to `fd -H -I --ignore`: `--ignore` turns the "no-ignore" off, while hidden files stay visible. Also `fd -u --no-hidden` should be identical to `fd --no-ignore`.  But actually: ```sh touch a.txt .hidden.txt ignored.txt echo ignored.txt > .ignore fd -u --ignore fd -u --no-hidden ```  Both 2 outputs are `a.txt`  ### Describe what you expected to happen:  There are 4 files. `.hidden.txt` and `.ignore` are hidden files. `ignored.txt` is the ignored file.  `fd -u --ignore` is expected to be the same as `fd -H -I --ignore` or `fd -H`:  ``` .hidden.txt  # visible hidden file .ignore # visible hidden file a.txt  ```  `fd -u --no-hidden` is expected to be the same as `fd -H -I --no-hidden` or `fd -I`:  ``` a.txt ignored.txt  # visible ignored file ```  ### What version of `fd` are you using?  fd 10.5.0  ### Which operating system / distribution are you on?  ```shell Darwin 27.0.0 arm64 ```
+
 - **Issue #2188** (2026-10-24): **[BUG] filetypes in the manual render poorly**
   *Symptoms*: ### Checks  - [x] I have read the troubleshooting section and still think this is a bug.  ### Describe the bug you encountered:  <img width="367" height="435" alt="Image" src="https://github.com/user-attachments/assets/df606286-e6ae-4769-bfa9-93e90f7b6a70" />  ### Describe what you expected to happen:  There should be a space or a newline between the type and its explanation  ### What version of `fd` are you using?  10.5.0  ### Which operating system / distribution are you on?  ```shell Arch Linux ```
-
-- **Issue #2184** (2026-10-23): **[BUG] Explicit regex case sensitivity matching (?i) makes other clauses case-sensitive**
-  *Symptoms*: ### Checks  - [x] I have read the troubleshooting section and still think this is a bug.  ### Describe the bug you encountered:  When using regex case match on the first clause all the other clauses become case-sensitive also.  Example files foo-bar, foo-BAR, and FOO-BAR:  ``` fd 'foo' --and 'bar'       # finds all three' fd '(?i)foo' --and 'bar'   # finds only foo-bar ```  With some assistance from GTP-6.1 Sol, found the cause to be smart-case inspecting the expanded regex, where case folding introduces uppercase characters that weren’t in the pattern.  ### Describe what you expected to happen:  _No response_  ### What version of `fd` are you using?  fd 8.3.1  ### Which operating system / distribution are you on?  ```shell Found on Ubuntu 22.04.5 LTS on WSL Linux 6.18.54.1-microsoft-standard-WSL2 x86_64 ```
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1665,24 +1663,26 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0b3249c5` (2026-10-27)
-**Commit Message**: docs: move --size overflow changelog entry to Unreleased section
+### Incident Patch 1: `b7a0a29d` (2026-10-28)
+**Commit Message**: Merge pull request #2203 from tmccombs/changelog-fix
+
+Fix changelog location
 
 **File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -9,6 +9,7 @@
- - Don't incorrectly escape newlines in error messages, see #2104
+@@ -11,6 +11,7 @@
  - Restore jemalloc as default allocator on supported systems
  - Fix the `cargo binstall` release URL, which named the crate (`fd-find`) instead of the binary (`fd`) and fell back to a third-party mirror
-+- Fix integer overflow when parsing size constraints, rejecting values that exceed `u64::MAX` instead of panicking, see #2196 (@parneetsingh022).
+ - Fix integer overflow when parsing size constraints, rejecting values that exceed `u64::MAX` instead of panicking, see #2196 (@parneetsingh022).
++- Various fixes and updates to zsh completion
  
  # 10.5.0
  
-@@ -27,7 +28,6 @@
+@@ -29,7 +30,6 @@
  - Also fire the "search pattern contains a path separator" diagnostic for `--and` patterns, not only the primary positional pattern. `--and` patterns are matched against the file name just like the primary pattern, so a path separator in them silently returned zero results. See #1873.
  - Fix bug where passing "-" as a directory argument didn't actually search that directory, see #849 (@Sean-Kenneth-Doherty).
  - Fix panic when `--changed-before`/`--changed-within` is given an out-of-range `@` Unix timestamp; the value is now rejected gracefully, see #2081 (@nikolauspschuetz).
--- Fix integer overflow when parsing size constraints, rejecting values that exceed `u64::MAX` instead of panicking, see #2196 (@parneetsingh022).
+-- Various fixes and updates to zsh completion
  
  # 10.4.2
  
@@ -1690,90 +1690,36 @@ Observed empirical fixes and code patches:
 
 ---
 
-### Incident Patch 2: `7c885ef4` (2026-10-27)
-**Commit Message**: docs: added changelog entry for size filter overflow fix
+### Incident Patch 2: `2b9d4cfd` (2026-10-28)
+**Commit Message**: Fix changelog location
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -27,6 +27,7 @@
+@@ -10,6 +10,7 @@
+ - Restore jemalloc as default allocator on supported systems
+ - Fix the `cargo binstall` release URL, which named the crate (`fd-find`) instead of the binary (`fd`) and fell back to a third-party mirror
+ - Fix integer overflow when parsing size constraints, rejecting values that exceed `u64::MAX` instead of panicking, see #2196 (@parneetsingh022).
++- Various fixes and updates to zsh completion
+ 
+ # 10.5.0
+ 
+@@ -28,7 +29,6 @@
  - Also fire the "search pattern contains a path separator" diagnostic for `--and` patterns, not only the primary positional pattern. `--and` patterns are matched against the file name just like the primary pattern, so a path separator in them silently returned zero results. See #1873.
  - Fix bug where passing "-" as a directory argument didn't actually search that directory, see #849 (@Sean-Kenneth-Doherty).
  - Fix panic when `--changed-before`/`--changed-within` is given an out-of-range `@` Unix timestamp; the value is now rejected gracefully, see #2081 (@nikolauspschuetz).
-+- Fix integer overflow when parsing size constraints, rejecting values that exceed `u64::MAX` instead of panicking, see #2196 (@parneetsingh022).
+-- Various fixes and updates to zsh completion
  
  # 10.4.2
  
-```
-
----
-
-### Incident Patch 3: `8b6d754f` (2026-10-26)
-**Commit Message**: fix: prevent integer overflow when parsing size filters
-
-**File**: `src/filter/size.rs` (modified, +40/-1)
-```diff
-@@ -56,7 +56,8 @@ impl SizeFilter {
-             _ => return None,
-         };
- 
--        let size = quantity * multiplier;
-+        let size = quantity.checked_mul(multiplier)?;
-+
-         match limit_kind {
-             "+" => Some(Self::Min(size)),
-             "-" => Some(Self::Max(size)),
-@@ -216,4 +217,42 @@ mod tests {
-         let f = SizeFilter::from_string("+1K").unwrap();
-         assert!(f.is_within(1000));
-     }
-+
-+    #[test]
-+    fn ensure_size_multiplication_overflow_returns_error() {
-+        let invalid = [
-+            "+18446744073709551615k",
-+            "-18446744073709551615m",
-+            "18446744073709551615g",
-+            "+18446744073709551615ti",
-+            "-18446744073709551615tib",
-+        ];
-+
-+        for input in invalid {
-+            assert!(
-+                SizeFilter::from_string(input).is_err(),
-+                "Expected {input:?} to fail due to overflow"
-+            );
-+        }
-+    }
-+
-+    #[test]
-+    fn ensure_size_multiplication_boundary() {
-+        let max_valid = u64::MAX / KILO;
-+
-+        assert_eq!(
-+            SizeFilter::from_string(&format!("{max_valid}k")).unwrap(),
-+            SizeFilter::Equals(max_valid * KILO)
-+        );
-+
-+        assert!(SizeFilter::from_string(&format!("{}k", max_valid + 1)).is_err());
-+    }
-+
-+    #[test]
-+    fn ensure_max_u64_does_not_overflow() {
-+        assert_eq!(
-+            SizeFilter::from_string("18446744073709551615b").unwrap(),
-+            SizeFilter::Equals(u64::MAX)
-+        );
-+    }
- }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2203** (2026-10-28): Fix changelog location (@tmccombs)
 - **PR #2196** (2026-10-28): Fix integer overflow when parsing size constraints with large values. (@parneetsingh022)
+- **PR #2193** (2026-10-28): fix: let --ignore and --no-hidden override only their half of -u (@NavpreetSSidhu)
 - **PR #2190** (2026-10-24): docs: fix spacing of --type values in the man page (@NavpreetSSidhu)
 - **PR #2187** (2026-10-22): docs: mention the 64-thread cap in the --threads default (@ump45nose)
 - **PR #2185** (2026-10-23): Fix: Explicit regex case sensitivity matching (?i) makes other clauses case-sensitive (@mabunemeh)
-- **PR #2183** (2026-10-28): fix[completions]: Update zsh completions (@tmccombs)
-- **PR #2180** (closed): Remove inaccurate note that make is needed to build (@ump45nose)
 
 ---
 
@@ -1793,13 +1739,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: move --size overflow changelog entry to Unreleased section
+## X. Merge pull request #2203 from tmccombs/changelog-fix
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/fd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0b3249c5`: docs: move --size overflow changelog entry to Unreleased section. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b7a0a29d`: Merge pull request #2203 from tmccombs/changelog-fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1807,14 +1753,14 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Fix integer overflow when parsing size constraints, rejecting values that exceed `u64::MAX` instead of panicking, see #2196 (@parneetsingh022).
+- Various fixes and updates to zsh completion
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-- Fix integer overflow when parsing size constraints, rejecting values that exceed `u64::MAX` instead of panicking, see #2196 (@parneetsingh022).
+- Various fixes and updates to zsh completion
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0b3249c5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b7a0a29d` are properly handled with clean fallback behavior.

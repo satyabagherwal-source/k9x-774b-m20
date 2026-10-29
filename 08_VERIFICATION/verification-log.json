@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-2AO6",
-    "timestamp": "2026-10-27T20:01:14.886Z",
-    "repository": "alikon-art/DeterminFlow",
-    "learningId": "learn-github-alikon-art-determinflow",
-    "contentHash": "4f7c98535a182d9a3526f45edc1213cce37ffa724afa20d254c9af4461829e3f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-2CB0",
-    "timestamp": "2026-10-27T20:01:17.004Z",
-    "repository": "sunbigfly/ppt-agent-skills",
-    "learningId": "learn-github-sunbigfly-ppt-agent-skills",
-    "contentHash": "1391df14235017a42a1aa6db922a0acfdd8a9b8e422b0d0d6af20fce9079e592",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-2H4K",
     "timestamp": "2026-10-27T20:01:23.252Z",
     "repository": "temporalio/temporal",
@@ -7490,6 +7460,36 @@
     "repository": "kumahq/kuma",
     "learningId": "learn-github-kumahq-kuma",
     "contentHash": "8595aef285f42f86b74a33918ae736c61c3c2b3efa106d1f7c8bc3027db8b882",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-PWEQ",
+    "timestamp": "2026-10-29T01:43:11.954Z",
+    "repository": "sharkdp/fd",
+    "learningId": "learn-github-sharkdp-fd",
+    "contentHash": "269d75418535dfb1bb6217b57ea04dc502a40613796e48fdb892c0b42f25bc4a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-PZNB",
+    "timestamp": "2026-10-29T01:43:16.151Z",
+    "repository": "skyhook-io/radar",
+    "learningId": "learn-github-skyhook-io-radar",
+    "contentHash": "a01cf617bae4484ec002ec43a764bc702b99270f9d28144d618bb0c9cdba59bd",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

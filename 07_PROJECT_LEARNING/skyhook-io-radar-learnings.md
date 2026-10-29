@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
-> **Source Version**: `868e06fa`  
+> **Source Version**: `456aea76`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T11:23:50.588Z  
+> **Timestamp**: 2026-10-29T01:43:15.538Z  
 > **Learning ID**: `learn-github-skyhook-io-radar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T11:23:50.392Z  
+> **Harvest Timestamp**: 2026-10-29T01:43:15.530Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3933 stars
+- **Stars / Engagement**: 3940 stars
 
 ---
 
@@ -2228,187 +2228,344 @@ export function AWSMachineRenderer({ data }: Props) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `868e06fa` (2026-10-28)
-**Commit Message**: Fix Windows desktop in-app updates (checksum format and relaunch) (#2415)
+### Incident Patch 1: `456aea76` (2026-10-29)
+**Commit Message**: Tidy two lines of investigation copy (#2426)
 
-Fixes #2411. Radar Desktop on Windows has never been able to update
-itself: "Check for updates" fails with `checksum verification: no
-checksum found for radar-desktop_vX_windows_amd64.zip`.
+Two lines of investigation copy that read wrong on live runs.
 
-## Why
+- **Next steps conditions.** A step's condition is the agent's own
+sentence, shown after "Only if". The agent capitalises it, so steps read
+"Only if You know the keys/values checkout needs". An ordinary
+capitalized first word now loses its capital ("Only if you know…");
+names with more capitals stay as written ("Only if ConfigMap…", "Only if
+API traffic…", "Only if OOMKilled…").
+- **Inconclusive verdict hint.** The line under a "couldn't determine"
+verdict said "…or investigate again after addressing any errors shown in
+Activity" on every such verdict, including the ones that hit no errors.
+It now reads "Try a follow-up with more context, or investigate again."
 
-`sha256sum` on the Windows release runner writes binary mode, `<hash>
-*<name>`. On the Windows line:
+Testing: `vitest run src/components/diagnose` (48 files, 881 tests), tsc
+and eslint pass. Copy-only, so no new tests.
 
-```
-b70493e9…f8e13 *radar-desktop_v1.18.2_windows_amd64.zip
-```
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
-`VerifyChecksum` matches the name exactly, so it never finds
-`radar-desktop_v1.18.2_windows_amd64.zip`. The hash itself is right
-(checked against the published v1.18.2 zip). macOS and Linux lines use
-the two-space form and work.
-
-## What changes
-
-- **Release workflow:** the Windows checksum is written as `<hash>
-<name>`. Installed builds download the latest release's
-`checksums-desktop.txt` and run the old parser, so this is what lets
-every existing Windows install update in-app to the next release.
-- **Release guard:** before upload, the merge step fails the release
-unless every line is in the two-space form, each `radar-desktop_*` asset
-is listed exactly once, and `sha256sum --check --strict` passes.
-Exercised on fixtures with GNU tools: a good fi
-
-**File**: `.github/workflows/release-desktop.yml` (modified, +17/-1)
+**File**: `web/src/components/diagnose/AssessmentCard.tsx` (modified, +8/-5)
 ```diff
-@@ -202,7 +202,9 @@ jobs:
-         shell: bash
-         run: |
-           VERSION="${GITHUB_REF_NAME}"
--          sha256sum "radar-desktop_${VERSION}_windows_amd64.zip" >> checksums-windows.txt
-+          # sha256sum on Windows marks binary files with "*" before the name.
-+          # Installed Radar Desktop builds may only read the two-space form.
-+          sha256sum "radar-desktop_${VERSION}_windows_amd64.zip" | sed 's/ \*/  /' >> checksums-windows.txt
- 
-       - name: Upload artifact
-         uses: actions/upload-artifact@v7
-@@ -362,6 +364,20 @@ jobs:
-           rm -f checksums-darwin.txt checksums-windows.txt checksums-linux.txt
-           echo "=== Desktop checksums ==="
-           cat checksums-desktop.txt
-+          # Every installed Radar Desktop verifies its update against this file,
-+          # and some builds accept only "<sha256>  <name>". Check the format,
-+          # that each uploaded asset is listed once, and the hashes.
-+          if grep -vqE '^[0-9a-f]{64}  radar-desktop_[^ *]+$' checksums-desktop.txt; then
-+            echo "::error::checksums-desktop.txt has a line older Radar Desktop builds cannot read"
-+            exit 1
-+          fi
-+          for f in radar-desktop_*; do
-+            if [ "$(awk -v f="$f" '$2 == f' checksums-desktop.txt | wc -l)" -ne 1 ]; then
-+              echo "::error::$f is not listed exactly once in checksums-desktop.txt"
-+              exit 1
-+            fi
-+          done
-+          sha256sum --check --strict checksums-desktop.txt
- 
-       - name: Wait for GitHub Release to exist
-         env:
+@@ -1076,7 +1076,13 @@ function DiagnosisResult({
+                 data-step-precondition
+                 className="mb-1.5 text-[13px] leading-snug text-warning-text"
+               >
+-                Only if {step.precondition.replace(/^(if|when|once)\s+/i, "")}
++                {/* The agent writes a full sentence; after "Only if" its first
++                    capital drops when it is an ordinary word ("You"), never
++                    for a name with more capitals (API, ConfigMap). */}
++                Only if{" "}
++                {step.precondition
++                  .replace(/^(if|when|once)\s+/i, "")
++                  .replace(/^[A-Z](?=[a-z]+\b)/, (c) => c.toLowerCase())}
+               </p>
+             ) : null}
+             {isRec && diagnosis.recommendedReason && (
+@@ -1567,10 +1573,7 @@ export function InconclusiveCard({
+       </div>
+       <div className="flex items-start gap-1 px-0.5 text-[11px] text-theme-text-tertiary">
+         <ShieldCheck className="mt-0.5 h-3 w-3 shrink-0" />
+-        <span>
+-          Try a follow-up with more context, or investigate again after
+-          addressing any errors shown in Activity.
+-        </span>
++        <span>Try a follow-up with more context, or investigate again.</span>
+       </div>
+       <AssessmentDetails
+         diagnosis={diagnosis}
 ```
 
-**File**: `internal/updater/apply_windows.go` (modified, +4/-1)
-```diff
-@@ -85,7 +85,10 @@ func Relaunch() error {
- 	}
- 
- 	log.Printf("[updater] Executing trampoline: %s", bat)
--	cmd := exec.Command("cmd", "/C", "start", "/MIN", bat)
-+	// start reads its first quoted argument as the window title, and the
-+	// path is quoted whenever TEMP has a space (as under C:\Users\Jane Doe),
-+	// so give it an empty title first.
-+	cmd := exec.Command("cmd", "/C", "start", "", "/MIN", bat)
- 	if err := cmd.Start(); err != nil {
- 		return fmt.Errorf("start trampoline: %w", err)
- 	}
-```
+---
 
-**File**: `internal/version/download.go` (modified, +20/-16)
+### Incident Patch 2: `7194ce5a` (2026-10-29)
+**Commit Message**: Offer typed Omnibar words as an investigation question (#2398)
+
+Stacked on #2397. Review that one first.
+
+## Summary
+
+People already type into the Omnibar. When what they type is a symptom
+("web times out") rather than a resource name, there was nowhere for it
+to go. When the investigation backend accepts questions, the Omnibar now
+ends its list with **Investigate "…" as a question**, naming where it
+will start. Selecting it opens the question composer with those words
+and that scope, so where and since when stay visible before anything
+runs.
+
+![Omnibar investigate
+row](https://github.com/user-attachments/assets/6850938f-5ae0-4334-aadf-173767e26f35)
+
+## What changed
+
+- `Omnibar` takes an optional `onInvestigateQuery({ text, namespaces
+})`. When it's set and there's free text, a row tails the list after
+every resource, command and "See all" row. Matches always come first,
+and the row is only the top choice when nothing else matched. While
+search results for the current words are still loading, Enter doesn't
+pick the row, so typing a resource name and pressing Enter quickly
+doesn't turn it into a question. The row runs on click, so keyboard and
+screen-reader activation work. Any `ns:
+
+**File**: `web/src/components/ui/Omnibar.investigate.test.tsx` (added, +105/-0)
 ```diff
-@@ -152,6 +152,23 @@ func DownloadAsset(ctx context.Context, url string, dest string, progress Progre
- 	return nil
- }
- 
-+// checksumFor reads sha256sum output ("hash  name", or "hash *name" in binary
-+// mode, which is what sha256sum writes on Windows) and returns the hash for
-+// assetName.
-+func checksumFor(r io.Reader, assetName string) (string, error) {
-+	scanner := bufio.NewScanner(r)
-+	for scanner.Scan() {
-+		parts := strings.Fields(scanner.Text())
-+		if len(parts) == 2 && strings.TrimPrefix(parts[1], "*") == assetName {
-+			return parts[0], nil
-+		}
-+	}
-+	if err := scanner.Err(); err != nil {
-+		return "", fmt.Errorf("read checksums: %w", err)
-+	}
-+	return "", fmt.Errorf("no checksum found for %s", assetName)
+@@ -0,0 +1,105 @@
++// @vitest-environment jsdom
++import { act } from 'react'
++import { createRoot, type Root } from 'react-dom/client'
++import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
++import { Omnibar } from './Omnibar'
++import type { SearchHit } from '../../api/client'
++
++vi.mock('../../api/usage-data', () => ({ recordUsageEvent: vi.fn() }))
++
++Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true })
++let root: Root
++let host: HTMLDivElement
++
++beforeEach(() => {
++  vi.useFakeTimers()
++  Element.prototype.scrollIntoView = vi.fn()
++  host = document.createElement('div')
++  document.body.appendChild(host)
++  root = createRoot(host)
++})
++
++afterEach(() => {
++  act(() => root.unmount())
++  host.remove()
++  document.body.innerHTML = ''
++  vi.useRealTimers()
++})
++
++function render(onInvestigateQuery: ((query: { text: string; namespaces: string[] }) => void) | undefined, hits: SearchHit[] = []) {
++  act(() => {
++    root.render(<Omnibar onOpenResource={vi.fn()} commandItems={[]} searchData={{ hits }} onInvestigateQuery={onInvestigateQuery} />)
++  })
 +}
 +
- // VerifyChecksum downloads the checksums file from the release and verifies
- // that the given asset matches its expected SHA256 hash.
- func VerifyChecksum(ctx context.Context, release *githubReleaseWithAssets, assetPath string, assetName string) error {
-@@ -185,22 +202,9 @@ func VerifyChecksum(ctx context.Context, release *githubReleaseWithAssets, asset
- 		return fmt.Errorf("checksums download returned HTTP %d", resp.StatusCode)
- 	}
- 
--	// Parse checksum file (format: "sha256hash  filename")
--	var expectedHash string
--	scanner := bufio.NewScanner(resp.Body)
--	for scanner.Scan() {
--		line := scanner.Text()
--		parts := strings.Fields(line)
--		if len(parts) == 2 && parts[1] == assetName {
--			expectedHash = parts[0]
--			break
--		}
--	}
--	if err := scanner.Err(); err != nil {
--		return fmt.Errorf("read checksums: %w", err)
--	}
--	if expectedHash == "" {
--		return fmt.Errorf("no checksum found for %s", assetName)
-+	expectedHash, err := checksumFor(resp.Body, assetName)
-+	if err != nil {
-+		return err
- 	}
- 
- 	// Hash the downloaded file
++function typeQuery(text: string) {
++  const input = host.querySelector('input')!
++  act(() => input.focus())
++  act(() => {
++    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(input, text)
++    input.dispatchEvent(new Event('input', { bubbles: true }))
++  })
++  act(() => { vi.advanceTimersByTime(200) })
++}
++
++const investigateButton = () =>
++  [...document.body.querySelectorAll('button')].find((b) => b.textContent?.startsWith('Investigate “'))
++
++describe('Omnibar investigate row', () => {
++  it('hands the typed words to the host as a question', () => {
++    const onInvestigate = vi.fn()
++    render(onInvestigate)
++    typeQuery('checkout returns 502s')
++    const row = investigateButton()
++    expect(row?.textContent).toContain('Investigate “checkout returns 502s”')
++    act(() => { row!.click() })
++    expect(onInvestigate).toHaveBeenCalledWith({ text: 'checkout returns 502s', namespaces: [] })
++  })
++
++  it('comes after a resource match', () => {
++    render(vi.fn(), [{ score: 1, kind: 'Deployment', group: 'apps', namespace: 'shop', name: 'checkout' }])
++    typeQuery('checkout')
++    const rows = [...document.body.querySelectorAll('[data-selected]')]
++    expect(rows.at(-1)?.textContent).toContain('Investigate “checkout”')
++    expect(rows[0]?.textContent).not.toContain('Investigate')
++  })
++
++  it('waits for search results before Enter can ask', () => {
++    const onInvestigate = vi.fn()
++    act(() => {
++      root.render(<Omnibar onOpenResource={vi.fn()} commandItems={[]} searchData={{ hits: [] }} isFetching onInvestigateQuery={onInvestigate} />)
++    })
++    typeQuery('checkout')
++    act(() => {
++      host.querySelector('input')!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }))
++    })
++    expect(onInvestigate).not.toHaveBeenCalled()
++  })
++
++  it('is absent when the host has no question entry', () => {
++    render(undefined)
++    typeQuery('checkout returns 502s')
++    expect(investigateButton()).toBeUndefined()
++  })
++
++  it('carries ns: modifiers as where to start', () => {
++    const onInvestigate = vi.fn()
++    act(() => {
++      root.render(<Omnibar onOpenResource={vi.fn()} commandItems={[]} searchData={{ hits: [] }} seedNamespaces={['payments']} onInvestigateQuery={onInvestigate} />)
++    })
++    typeQuery('slow checkout')
++    expect(investigateButton()?.textContent).toContain('as a question · in payments')
++    act(() => { investigateButton()!.click() })
++    expect(onInvestigate).toHaveBeenCalledWith({ text: 'slow checkout', namespaces: ['payments'] })
++  })
++
++  it('counts a long namespace list instead of naming it', () => {
++    const namespaces = Array.from({ length: 25 }, (_, i) => `ns-${i}`)
++    act(() => {
++      root.render(<Omnibar onOpenResource={vi.fn()} commandItems={[]} searchData={{ hits: [] }} seedNamespaces={namespaces} onInvestigateQuery={vi.fn()} />)
++    })
++    typeQuery('pods keep restarting')
++    expect(investigateButton()?.textContent).toContain('Investigate “pods keep restarting”')
++    expect(investigateButton()?.textContent).toContain('as a question · in 25 namespaces')
++  })
++})
 ```
 
-**File**: `internal/version/download_test.go` (added, +31/-0)
+**File**: `web/src/components/ui/Omnibar.tsx` (modified, +47/-3)
 ```diff
-@@ -0,0 +1,31 @@
-+package version
-+
-+import (
-+	"strings"
-+	"testing"
-+)
-+
-+// The desktop checksums for v1.18.2 as published: sha256sum on the Windows
-+// runner wrote the binary-mode "*" before the zip's name.
-+const publishedDesktopChecksums = `647bba90b20ad52e7110fe855cb00d3cc8bcf7645581a9bd7e3774c5a875c44d  radar-desktop_v1.18.2_darwin_universal.zip
-+b70493e93022c42fde4db0a037cd5ccee6025602972af46851438d3d718f8e13 *radar-desktop_v1.18.2_windows_amd64.zip
-+64e1ec60c2bba88c08252bfa00698ce96f0cab8b4e5d3912fcfb78165eb5356b  radar-desktop_v1.18.2_linux_amd64.tar.gz
-+`
-+
-+func TestChecksumForReadsBothSha256sumForms(t *testing.T) {
-+	for name, want := range map[string]string{
-+		"radar-desktop_v1.18.2_windows_amd64.zip":    "b70493e93022c42fde4db0a037cd5ccee6025602972af46851438d3d718f8e13",
-+		"radar-desktop_v1.18.2_darwin_universal.zip": "647bba90b20ad52e7110fe855cb00d3cc8bcf7645581a9bd7e3774c5a875c44d",
-+	} {
-+		got, err := checksumFor(strings.NewReader(publishedDesktopChecksums), name)
-+		if err != nil || got != want {
-+			t.Errorf("checksumFor(%s) = %q, %v; want %q", name, got, err, want)
-+		}
-+	}
-+}
-+
-+func TestChecksumForMissingAsset(t *testing.T) {
-+	if _, err := checksumFor(strings.NewReader(publishedDesktopChecksums), "radar-desktop_v1.18.2_linux_amd64.deb"); err == nil {
-+		t.Error("expected an error for an asset the file doesn't list")
-+	}
-+}
+@@ -1,6 +1,6 @@
+ import { useState, useMemo, useRef, useEffect, useCallback, forwardRef, useImperativeHandle, type ReactNode } from 'react'
+ import { createPortal } from 'react-dom'
+-import { Search, CornerDownLeft, Loader2, AlertTriangle, Info } from 'lucide-react'
++import { Search, CornerDownLeft, Loader2, AlertTriangle, Info, Sparkles } from 'lucide-react'
+ import { clsx } from 'clsx'
+ import { useAnimatedUnmount } from '../../hooks/useAnimatedUnmount'
+ import { TRANSITION_BACKDROP, TRANSITION_MENU, TW_EASE_UI, overlayExitMs, overlayTransitionStyle } from '../../utils/animation'
+@@ -136,6 +136,11 @@ export interface OmnibarProps {
+    *  searching, handing the full (uncapped) query off to the host's dedicated
+    *  search surface. Omit to keep the omnibar a pure launcher. */
+   onViewAllResults?: (query: string) => void
++  /** When set, an "Investigate" row tails the list while there is free text,
++   *  handing the words, and any `ns:` modifiers as where to start, to the
++   *  host's AI investigation composer as a question. It is last so a
++   *  resource or command match always comes first. */
++  onInvestigateQuery?: (query: { text: string; namespaces: string[] }) => void
+   /** Empty-launcher content. `true` (default) lists Views + Actions — the
+    *  cmd-K menu. `false` shows only Actions so recents/search lead and views
+    *  surface on type (use when the views are already always-visible, e.g. a
+@@ -153,6 +158,7 @@ type Row =
+   | { id: string; kind: 'resource'; hit: SearchHit; recent?: boolean }
+   | { id: string; kind: 'command'; command: CommandItem }
+   | { id: string; kind: 'viewAll'; query: string; count: number }
++  | { id: string; kind: 'investigate'; text: string; namespaces: string[] }
+ 
+ const COMMAND_CATEGORY_ORDER = ['Views', 'Resource Kinds', 'Namespaces', 'Clusters', 'Actions']
+ const PAGE = 8
+@@ -184,6 +190,7 @@ export const Omnibar = forwardRef<OmnibarHandle, OmnibarProps>(function Omnibar(
+     loadRecents,
+     recordRecent,
+     onViewAllResults,
++    onInvestigateQuery,
+     launcherShowsViews = true,
+     placeholder = 'Search resources & commands…',
+     size = 'default',
+@@ -330,9 +337,18 @@ export const Omnibar = forwardRef<OmnibarHandle, OmnibarProps>(function Omnibar(
+     if (onViewAllResults && searchActive && resourceRows.length > 0) {
+       out.push({ id: 'view-all', kind: 'viewAll', query: queryString, count: searchData?.total_matched ?? resourceRows.length })
+     }
++    if (onInvestigateQuery && freeText) {
++      out.push({
++        id: 'investigate',
++        kind: 'investigate',
++        text: freeText,
++        namespaces: pills.filter((pill) => pill.key === 'ns').map((pill) => pill.value),
++      })
++    }
+     return out
+-  }, [recentRows, leadingKinds, resourceRows, commandGroups, freeText, pills.length, searchActive, onViewAllResults, queryString, searchData])
++  }, [recentRows, leadingKinds, resourceRows, commandGroups, freeText, pills, searchActive, onViewAllResults, onInvestigateQuery, queryString, searchData])
+   const viewAllRow = rows.find((r): r is Extract<Row, { kind: 'viewAll' }> => r.kind === 'viewAll')
++  const investigateRow = rows.find((r): r is Extract<Row, { kind: 'investigate' }> => r.kind === 'investigate')
+ 
+   // Selection tracked by stable id (not array index) so Enter can never fire a
+   // stale row when the set shifts. Auto-follows the TOP result until the user
+@@ -385,13 +401,15 @@ export const Omnibar = forwardRef<OmnibarHandle, OmnibarProps>(function Omnibar(
+       row.command.action()
+     } else if (row.kind === 'viewAll') {
+       onViewAllResults?.(row.query)
++    } else if (row.kind === 'investigate') {
++      onInvestigateQuery?.({ text: row.text, namespaces: row.namespaces })
+     } else {
+       const h = row.hit
+       recordRecent?.({ kind: h.kind, group: h.group, namespace: h.namespace, name: h.name, cluster: h.cluster, clusterName: h.clusterName })
+       onOpenResource(h)
+     }
+     close()
+-  }, [onOpenResource, recordRecent, onViewAllResults, close])
++  }, [onOpenResource, recordRecent, onViewAllResults, onInvestigateQuery, close])
+ 
+   // The resources shown don't (yet) belong to the current query: the debounce
+   // hasn't fired, the data is React Query placeholder, or results haven't landed.
+@@ -412,6 +430,9 @@ export const Omnibar = forwardRef<OmnibarHandle, OmnibarProps>(function Omnibar(
+       const row = rows[selectedIndex]
+       if (row) {
+         if (row.kind === 'resource' && resourcesStale) return
++        // Investigate sits first only until results land; an Enter before
++        // then is someone looking for a resource, not asking a question.
++        if (row.kind === 'investigate' && resourcesStale && !userMovedRef.current) return
+         execute(row)
+         return
+       }
+@@ -567,6 +588,29 @@ export const Omnibar = forwardRef<OmnibarHandle, OmnibarProps>(function Omnibar(
+                 <CornerDownLeft className="w-3 h-3 ml-auto shrink-0 text-theme-text-tertiary" />
+               </but
+```
+
+**File**: `web/src/components/ui/RadarOmnibar.test.tsx` (modified, +1/-0)
+```diff
+@@ -7,6 +7,7 @@ import type { SearchCoverageEntry } from './searchCoverageNote'
+ import { coverageOf } from './searchCoverage.fixtures'
+ 
+ vi.mock('../../api/usage-data', () => ({ recordUsageEvent: vi.fn() }))
++vi.mock('../diagnose/DiagnoseContext', () => ({ useDiagnose: () => ({ available: false, questions: false, openQuestion: vi.fn() }) }))
+ vi.mock('../../hooks/useRecentResources', () => ({ loadRecentResources: () => [], recordRecentResource: vi.fn() }))
+ vi.mock('../../api/apiResources', async (importOriginal) => ({ ...(await importOriginal<object>()), useAPIResources: () => ({ data: [] }) }))
+ vi.mock('./command-items', async (importOriginal) => ({ ...(await importOriginal<object>()), useCommandItems: () => [] }))
+```
+
+**File**: `web/src/components/ui/RadarOmnibar.tsx` (modified, +11/-0)
+```diff
+@@ -5,6 +5,7 @@ import { useAPIResources } from '../../api/apiResources'
+ import { loadRecentResources, recordRecentResource } from '../../hooks/useRecentResources'
+ import { useCommandItems, type CommandItemCallbacks } from './command-items'
+ import { PENDING_RETRY_BUDGET_MS, PENDING_RETRY_MS, searchCoverageNote } from './searchCoverageNote'
++import { useDiagnose } from '../diagnose/DiagnoseContext'
+ 
+ interface RadarOmnibarProps extends CommandItemCallbacks {
+   onOpenResource: (hit: SearchHit) => void
+@@ -55,6 +56,15 @@ export const RadarOmnibar = forwardRef<OmnibarHandle, RadarOmnibarProps>(functio
+   }), [nsScope, apiResources])
+ 
+   const commandItems = useCommandItems(callbacks)
++  // Words that find nothing (or more than a lookup) can become a question;
++  // the composer opens with them so where and since when stay visible.
++  const diagnose = useDiagnose()
++  const onInvestigateQuery = diagnose.available && diagnose.questions
++    ? // The omnibar seeds its ns: pills from the namespace picker, so no pill
++      // means the engineer cleared the scope: start across the cluster.
++      ({ text, namespaces }: { text: string; namespaces: string[] }) =>
++        diagnose.openQuestion({ text, namespaces })
++    : undefined
+   const { onNavigateKind } = callbacks
+   const note = searchCoverageNote(searchData?.coverage, {
+     hits: searchData?.hits,
+@@ -80,6 +90,7 @@ export const RadarOmnibar = forwardRef<OmnibarHandle, RadarOmnibarProps>(functio
+       note={note}
+       modifierOptions={modifierOptions}
+       seedNamespaces={nsScope?.actives}
++      onInvestigateQuery={onInvestigateQuery}
+       loadRecents={() => loadRecentResources(contextKey)}
+       recordRecent={(r) => recordRecentResource(r, contextKey)}
+     />
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2415** (2026-10-28): Fix Windows desktop in-app updates (checksum format and relaunch) (@nadaverell)
-- **PR #2400** (2026-10-28): Run the settings browser journeys in parallel on two workers (@nadaverell)
-- **PR #2399** (2026-10-28): Stop more slow Go tests waiting on production timers (@nadaverell)
-- **PR #2395** (2026-10-28): Stop the slowest internal/server tests waiting on production timers (@nadaverell)
-- **PR #2394** (2026-10-28): Fold Radar's routine read limits beneath Still open in investigation findings (@nadaverell)
-- **PR #2390** (closed): [temporary] Benchmark web test isolation — do not merge (@nadaverell)
+- **PR #2426** (2026-10-29): Tidy two lines of investigation copy (@nadaverell)
+- **PR #2425** (2026-10-29): Reuse dynamic observation views across ownership searches (@nadaverell)
+- **PR #2424** (2026-10-29): Reuse served-version selection within ownership sessions (@nadaverell)
+- **PR #2423** (2026-10-29): Reuse coverage bookkeeping across ownership searches (@nadaverell)
+- **PR #2422** (2026-10-28): Avoid repeated map allocation when sorting GitOps trees (@nadaverell)
+- **PR #2421** (2026-10-28): README: Product Hunt badge for today's launch (@nadaverell)
 
 ---
 
@@ -2428,44 +2585,39 @@ Exercised on fixtures with GNU tools: a good fi
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Windows desktop in-app updates (checksum format and relaunch) (#2415)
+## X. Tidy two lines of investigation copy (#2426)
 
 **RULE**:
-When implementing operations in `.github/workflows/release-desktop.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `web/src/components/diagnose/AssessmentCard.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `868e06fa`: Windows desktop in-app updates (checksum format and relaunch) (#2415). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `456aea76`: Tidy two lines of investigation copy (#2426). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release-desktop.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `web/src/components/diagnose/AssessmentCard.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-          # sha256sum on Windows marks binary files with "*" before the name.
-          # Installed Radar Desktop builds may only read the two-space form.
-          sha256sum "radar-desktop_${VERSION}_windows_amd64.zip" | sed 's/ \*/  /' >> checksums-windows.txt
-          # Every installed Radar Desktop verifies its update against this file,
-          # and some builds accept only "<sha256>  <name>". Check the format,
-          # that each uploaded asset is listed once, and the hashes.
-          if grep -vqE '^[0-9a-f]{64}  radar-desktop_[^ *]+$' checksums-desktop.txt; then
-            echo "::error::checksums-desktop.txt has a line older Radar Desktop builds cannot read"
-            exit 1
-          fi
-          for f in radar-desktop_*; do
-            if [ "$(awk -v f="$f" '$2 == f' checksums-desktop.txt | wc -l)" -ne 1 ]; then
-              echo "::error::$f is not listed exactly once in checksums-desktop.txt"
-              exit 1
-            fi
-          done
-          sha256sum --check --strict checksums-desktop.txt
+                {/* The agent writes a full sentence; after "Only if" its first
+                    capital drops when it is an ordinary word ("You"), never
+                    for a name with more capitals (API, ConfigMap). */}
+                Only if{" "}
+                {step.precondition
+                  .replace(/^(if|when|once)\s+/i, "")
+                  .replace(/^[A-Z](?=[a-z]+\b)/, (c) => c.toLowerCase())}
+        <span>Try a follow-up with more context, or investigate again.</span>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-          sha256sum "radar-desktop_${VERSION}_windows_amd64.zip" >> checksums-windows.txt
+                Only if {step.precondition.replace(/^(if|when|once)\s+/i, "")}
+        <span>
+          Try a follow-up with more context, or investigate again after
+          addressing any errors shown in Activity.
+        </span>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `868e06fa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `456aea76` are properly handled with clean fallback behavior.
