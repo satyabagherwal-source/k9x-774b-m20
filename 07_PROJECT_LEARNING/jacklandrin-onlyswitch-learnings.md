@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md`  
 > **Source**: github ([https://github.com/jacklandrin/OnlySwitch](https://github.com/jacklandrin/OnlySwitch))  
-> **Source Version**: `abbde3ce`  
+> **Source Version**: `d1bce595`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T17:59:17.129Z  
+> **Timestamp**: 2026-10-29T02:03:28.946Z  
 > **Learning ID**: `learn-github-jacklandrin-onlyswitch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/jacklandrin/OnlySwitch](https://github.com/jacklandrin/OnlySwitch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T17:59:17.122Z  
+> **Harvest Timestamp**: 2026-10-29T02:03:28.285Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 👑 The all-in-one macOS menu bar companion: customizable controls, system monitor, AI Agent, Shortcuts, widgets, remote control, and more.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6014 stars
+- **Stars / Engagement**: 6020 stars
 
 ---
 
@@ -153,6 +153,7 @@ public struct ControlItemViewState: Equatable, Hashable, Identifiable {
     public var id: String
     public var title: String
     public var subtitle: String?
+    public var copyableSubtitle: Bool
     public var detail: ControlItemDetail?
     public var weight: Int
     public var unitType: UnitType
@@ -165,6 +166,7 @@ public struct ControlItemViewState: Equatable, Hashable, Identifiable {
         id: String,
         title: String,
         subtitle: String? = nil,
+        copyableSubtitle: Bool = false,
         detail: ControlItemDetail? = nil,
         iconData: Data,
         controlType: ControlType,
@@ -175,6 +177,7 @@ public struct ControlItemViewState: Equatable, Hashable, Identifiable {
         self.id = id
         self.title = title
         self.subtitle = subtitle
+        self.copyableSubtitle = copyableSubtitle
         self.detail = detail
         self.iconData = iconData
         self.controlType = controlType
@@ -840,493 +843,29 @@ public struct RemoteControlStatus: Codable, Equatable, Identifiable, Sendable {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `abbde3ce` (2026-10-23)
-**Commit Message**: Fix radio audio packet callback race
+### Incident Patch 1: `393accc6` (2026-10-27)
+**Commit Message**: Fix Czech empty switch subtitles
 
-**File**: `OnlySwitch/Player/CommonPlayer/AudioStreamer/Parse/Parser+Packets.swift` (modified, +3/-5)
+**File**: `Localization/Localizable.xcstrings` (modified, +1/-1)
 ```diff
-@@ -10,8 +10,6 @@ import Foundation
- import AVFoundation
- import os.log
- 
--let parserQueue = DispatchQueue(label: "com.fastlearner.streamer.parser",attributes: .concurrent)
--
- func ParserPacketCallback(_ context: UnsafeMutableRawPointer, _ byteCount: UInt32, _ packetCount: UInt32, _ data: UnsafeRawPointer, _ packetDescriptions: UnsafeMutablePointer<AudioStreamPacketDescription>) {
-     let decriptions:UnsafeMutablePointer<AudioStreamPacketDescription>? = packetDescriptions
-     ParserPacketCallback(context, byteCount, packetCount, data, decriptions)
-@@ -29,15 +27,15 @@ func ParserPacketCallback(_ context: UnsafeMutableRawPointer, _ byteCount: UInt3
-     }
-     
-     
--    parserQueue.sync {
-+    parser.withPackets { packets in
-         /// Iterate through the packets and store the data appropriately
-         if isCompressed {
-             for i in 0 ..< Int(packetCount) {
-                 let packetDescription = packetDescriptions![i]
-                 let packetStart = Int(packetDescription.mStartOffset)
-                 let packetSize = Int(packetDescription.mDataByteSize)
-                 let packetData = Data(bytes: data.advanced(by: packetStart), count: packetSize)
--                parser.packets.append((packetData, packetDescription))
-+                packets.append((packetData, packetDescription))
-             }
-         } else {
-             let format = dataFormat.streamDescription.pointee
-@@ -46,7 +44,7 @@ func ParserPacketCallback(_ context: UnsafeMutableRawPointer, _ byteCount: UInt3
-                 let packetStart = i * bytesPerPacket
-                 let packetSize = bytesPerPacket
-                 let packetData = Data(bytes: data.advanced(by: packetStart), count: packetSize)
--                parser.packets.append((packetData, nil))
-+                packets.append((packetData, nil))
-             }
+@@ -5881,7 +5881,7 @@
+         "cs" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "(Empty string)"
++            "value" : ""
+           }
          }
-         
-```
-
-**File**: `OnlySwitch/Player/CommonPlayer/AudioStreamer/Parse/Parser+PropertyListener.swift` (modified, +3/-1)
-```diff
-@@ -25,7 +25,9 @@ func ParserPropertyChangeCallback(_ context: UnsafeMutableRawPointer,
-         os_log("Data format: %@", log: Parser.loggerPropertyListenerCallback, type: .debug, String(describing: parser.dataFormat))
-         
-     case kAudioFileStreamProperty_AudioDataPacketCount:
--        GetPropertyValue(&parser.packetCount, streamID, propertyID)
-+        var packetCount: UInt64 = 0
-+        GetPropertyValue(&packetCount, streamID, propertyID)
-+        parser.packetCount = packetCount
-         os_log("Packet count: %i", log: Parser.loggerPropertyListenerCallback, type: .debug, parser.packetCount)
- 
-     default:
-```
-
-**File**: `OnlySwitch/Player/CommonPlayer/AudioStreamer/Parse/Parser.swift` (modified, +43/-8)
-```diff
-@@ -18,23 +18,51 @@ public class Parser: Parsing {
-     
-     // MARK: - Parsing props
-     
--    public internal(set) var dataFormat: AVAudioFormat?
--    public var packets = [(Data, AudioStreamPacketDescription?)]()
-+    // Protect packet storage and parser metadata on the download and playback threads.
-+    private let stateLock = NSLock()
-+    private let parseLock = NSLock()
-+    private var storedDataFormat: AVAudioFormat?
-+    private var storedPackets = [(Data, AudioStreamPacketDescription?)]()
-+    private var storedFrameCount: UInt64 = 0
-+    private var storedPacketCount: UInt64 = 0
-+
-+    private func withState<Result>(_ body: () -> Result) -> Result {
-+        stateLock.lock()
-+        defer { stateLock.unlock() }
-+        return body()
-+    }
-+
-+    public internal(set) var dataFormat: AVAudioFormat? {
-+        get { withState { storedDataFormat } }
-+        set { withState { storedDataFormat = newValue } }
-+    }
-+    public var packets: [(Data, AudioStreamPacketDescription?)] {
-+        get { withState { storedPackets } }
-+        set { withState { storedPackets = newValue } }
-+    }
-+    public func withPackets<Result>(_ body: (inout [(Data, AudioStreamPacketDescription?)]) -> Result) -> Result {
-+        withState { body(&storedPackets) }
-+    }
-     public var totalPacketCount: AVAudioPacketCount? {
--        guard let _ = dataFormat else {
--            return nil
-+        withState {
-+            guard storedDataFormat != nil else { return nil }
-+            return max(AVAudioPacketCount(storedPacketCount), AVAudioPacketCount(storedPackets.count))
-         }
--        
--        return max(AVAudioPacketCount(packetCount), AVAudioPacketCount(packets.count))
-     }
-     
-     // MARK: - Properties
-     
-     /// A `UInt64` corresponding to the total frame count parsed by the Audio File Stream Services
--    public internal(set) var frameCount: UInt64 = 0
-+    public internal(set) var frameCount: UInt64 {
-+        get { withState { storedFrameCount } }
-+        set { withState { storedFrameCount = newValue } }
-+    }
-     
-     /// A `UInt64` corresponding to the total packet count parsed by the Audio File Stream Services
--    public internal(set) var packetCount: UInt64 = 0
-+    public internal(set) var packetCount: UInt64 {
-+        get { withState { storedPacketCount } }
-+        set { withState { storedPacketCount = newValue } }
-+    }
-     
-     /// The `AudioFileStreamID` used by the Audio File Stream Services for converting the binary data into audio packets
-     fileprivate var streamID: AudioFileStreamID?
-@@ -50,10 +78,17 @@ public class Parser: Parsing {
-             throw ParserError.streamCouldNotOpen
-         }
-     }
-+
-+    deinit {
-+        if let streamID { AudioFileStreamClose(streamID) }
-+    }
-     
-     // MARK: - Methods
-     
-     public func parse(data: Data) throws {
-+        guard !data.isEmpty else { return }
-+        parseLock.lock()
-+        defer { parseLock.unlock() }
- //        os_log("%@ - %d", log: Parser.logger, type: .debug, #function, #line)
-         
-         let streamID = self.streamID!
-```
-
-**File**: `OnlySwitch/Player/CommonPlayer/AudioStreamer/Parse/Parsing.swift` (modified, +9/-0)
-```diff
-@@ -25,6 +25,11 @@ public protocol Parsing: AnyObject {
-     
-     /// An array of duples, each index presenting a parsed audio packet. For compressed formats each packet of data should contain a `AudioStreamPacketDescription`, which describes the start offset and length of the audio data)
-     var packets: [(Data, AudioStreamPacketDescription?)] { get set }
-+
-+    /// Access or mutate the packet buffer as one operation. Concurrent parsers must
-+    /// synchronize this operation with packet production and buffer clearing.
-+    /// The body must not access the parser's packet properties recursively.
-+    func withPackets<Result>(_ body: (inout [(Data, AudioStreamPacketDescription?)]) -> Result) -> Result
-     
-     /// The total number of frames (expressed in the data format)
-     var totalFrameCount: AVAudioFrameCount? { get }
-@@ -61,6 +66,10 @@ public protocol Parsing: AnyObject {
- 
- // Usually these methods are gonna be calculated using the same way everytime so here are the default implementations that should work 99% of the time relative to the properties defined. 
- extension Parsing {
-+
-+    public func withPackets<Result>(_ body: (inout [(Data, AudioStreamPacketDescription?)]) -> Result) -> Result {
-+        body(&packets)
-+    }
-     
-     public var duration: TimeInterval? {
-         guard let sampleRate = dataFormat?.sampleRate else {
-```
-
-**File**: `OnlySwitch/Player/CommonPlayer/AudioStreamer/Read/Reader+Converter.swift` (modified, +44/-76)
-```diff
-@@ -11,95 +11,63 @@ import AVFoundation
- import AudioToolbox
- import os.log
- 
--// MARK: - Errors
--
--
--// MARK: -
--nonisolated(unsafe) var packetDescs:[UnsafeMutablePointer<AudioStreamPacketDescription>?] = []
--nonisolated(unsafe) var packetDatas:[UnsafeMutableRawPointer?] = []
--
-+/// Input storage belongs to the reader and remains valid until the converter's next
-+/// input callback, including across AudioConverterFillComplexBuffer calls.
- func ReaderConverterCallback(_ converter: AudioConverterRef,
-                              _ packetCount: UnsafeMutablePointer<UInt32>,
-                              _ ioData: UnsafeMutablePointer<AudioBufferList>,
-                              _ outPacketDescriptions: UnsafeMutablePointer<UnsafeMutablePointer<AudioStreamPacketDescription>?>?,
-                              _ context: UnsafeMutableRawPointer?) -> OSStatus {
-     let reader = Unmanaged<Reader>.fromOpaque(context!).takeUnretainedValue()
--    
--    //
--    // Make sure we have a valid source format so we know the data format of the parser's audio packets
--    //
-+    reader.releaseConverterInput()
-+    packetCount.pointee = 0
-+    outPacketDescriptions?.pointee = nil
-+    ioData.pointee.mBuffers.mData = nil
-+    ioData.pointee.mBuffers.mDataByteSize = 0
-+
-     guard let sourceFormat = reader.parser.dataFormat else {
-         return ReaderMissingSourceFormatError
-     }
--    
--    //
--    // Check if we've reached the end of the packets. We have two scenarios:
--    //     1. We've reached the end of the packet data and the file has been completely parsed
--    //     2. We've reached the end of the data we currently have downloaded, but not the file
--    //
--    let packetIndex = Int(reader.currentPacket)
--    let packets = reader.parser.packets
--    let isEndOfData = packetIndex >= packets.count - 1
--    if isEndOfData {
--        if reader.parser.isParsingComplete {
--            packetCount.pointee = 0
--            return ReaderReachedEndOfDataError
--        } else {
--            return ReaderNotEnoughDataError
-+
-+    let isParsingComplete = reader.parser.isParsingComplete
-+    let packet = reader.parser.withPackets { packets -> (Data, AudioStreamPacketDescription?)? in
-+        let packetIndex = Int(reader.currentPacket)
-+        guard packetIndex < packets.count else { return nil }
-+        let packet = packets[packetIndex]
-+        reader.currentPacket += 1
-+        if packetIndex >= 256 {
-+            packets.removeFirst(256)
-+            reader.currentPacket -= 256
-         }
-+        return packet
-     }
--    
--    //
--    // Copy data over (note we've only processing a single packet of data at a time)
--    //
--    let packet = packets[packetIndex]
--    var data = packet.0
--    let dataCount = data.count
--    ioData.pointee.mNumberBuffers = 1
--    ioData.pointee.mBuffers.mData = UnsafeMutableRawPointer.allocate(byteCount: dataCount, alignment: 0)
--    data.withUnsafeMutableBytes { rawMutableBufferPointer in
--        let bufferPointer = rawMutableBufferPointer.bindMemory(to: UInt8.self)
--        if let address = bufferPointer.baseAddress {
--            memcpy((ioData.pointee.mBuffers.mData?.assumingMemoryBound(to: UInt8.self))!, address, dataCount)
--        }
--        
-+    guard let packet else {
-+        return isParsingComplete ? ReaderReachedEndOfDataError : ReaderNotEnoughDataError
-     }
--    ioData.pointee.mBuffers.mDataByteSize = UInt32(dataCount)
--    packetDatas.append(ioData.pointee.mBuffers.mData)
--    
--    //
--    // Handle packet descriptions for compressed formats (MP3, AAC, etc)
--    //
--    let sourceFormatDescription = sourceFormat.streamDescription.pointee
--    if sourceFormatDescription.mFormatID != kAudioFormatLinearPCM {
--        if outPacketDescriptions?.pointee == nil {
--            outPacketDescriptions?.pointee = UnsafeMutablePointer<AudioStreamPacketDescription>.allocate(capacity: 1)
--        }
--        outPacketDescriptions?.pointee?.pointee.mDataByteSize = UInt32(dataCount)
--        outPacketDescriptions?.pointee?.pointee.mStartOffset = 0
--        outPacketDescriptions?.pointee?.pointee.mVariableFramesInPacket = 0
--        packetDescs.append(outPacketDescriptions?.pointee)
--    }
--    packetCount.pointee = 1
--    reader.currentPacket = reader.currentPacket + 1
--    
--    parserQueue.sync {
--        if packetIndex >= 256 {
--            reader.parser.packets.removeSubrange(0...255)
--            reader.currentPacket = 1
-+
-+    let data = packet.0
-+    let inputData = UnsafeMutableRawPointer.allocate(byteCount: max(data.count, 1), alignment: MemoryLayout<UInt8>.alignment)
-+    data.withUnsafeBytes { bytes in
-+        if let address = bytes.baseAddress {
-+            inputData.copyMemory(from: address, byteCount: data.count)
-         }
-     }
--    
--//    print("packets count:\(reader.parser.packets.count)")
--//    print("current packet:\(reader.currentPacket)")
--    return noErr;
--}
-+    reader.converterInputData = inputData
-+    ioData.pointee.mNumberBuffers = 1
-+    ioData.poin
-```
-
-**File**: `OnlySwitch/Player/CommonPlayer/AudioStreamer/Read/Reader.swift` (modified, +15/-6)
-```diff
-@@ -30,15 +30,27 @@ public class Reader: Reading {
-     /// A `DispatchQueue` used to ensure any operations we do changing the current packet index is thread-safe
-     private let queue = DispatchQueue(label: "com.fastlearner.streamer")
-     
-+    // Accessed only on the reader queue (or by its synchronous converter callback).
-+    var converterInputData: UnsafeMutableRawPointer?
-+    var converterInputDescription: UnsafeMutablePointer<AudioStreamPacketDescription>?
-+
-+    func releaseConverterInput() {
-+        converterInputData?.deallocate()
-+        converterInputData = nil
-+        converterInputDescription?.deinitialize(count: 1)
-+        converterInputDescription?.deallocate()
-+        converterInputDescription = nil
-+    }
-+
-     // MARK: - Lifecycle
-     
-     deinit {
--        guard AudioConverterDispose(converter!) == noErr else {
-+        if let converter, AudioConverterDispose(converter) != noErr {
-             os_log("Failed to dispose of audio converter", log: Reader.logger, type: .error)
--            return
-         }
-+        releaseConverterInput()
-     }
--    
-+
-     public required init(parser: Parsing, readFormat: AVAudioFormat) throws {
-         self.parser = parser
-         
-@@ -73,9 +85,6 @@ public class Reader: Reading {
-         try queue.sync {
-             let context = unsafeBitCast(self, to: UnsafeMutableRawPointer.self)
-             let status = AudioConverterFillComplexBuffer(converter!, ReaderConverterCallback, context, &packets, buffer.mutableAudioBufferList, nil)
--            if #unavailable(macOS 13) {
--                cleanupConverterGarbage()
--            }
-             
-             guard status == noErr else {
- //                AudioConverterReset(self.converter!);
-```
-
-**File**: `OnlySwitch/Player/CommonPlayer/AudioStreamer/Stream/Streamer.swift` (modified, +2/-2)
-```diff
-@@ -214,7 +214,7 @@ class Streamer: Streaming, @unchecked Sendable {
-         downloader.stop()
-         playerNode.stop()
-         engine.stop()
--        reader?.parser.packets.removeAll()
-+        reader?.parser.withPackets { $0.removeAll() }
-         // Update the state
-         state = .stopped
-     }
-@@ -293,7 +293,7 @@ class Streamer: Streaming, @unchecked Sendable {
-             return
-         }
- 
--        guard (parser?.packets.count)! > 512 else {
-+        guard reader.parser.withPackets({ $0.count }) > 512 else {
-             return
-         }
-         
-```
-
-**File**: `OnlySwitchTests/AudioStreamingTests.swift` (added, +171/-0)
-```diff
-@@ -0,0 +1,171 @@
-+import AVFoundation
-+import Foundation
-+import Testing
-+@testable import OnlySwitch
-+
-+struct AudioStreamingTests {
-+    private func makeParser() throws -> Parser {
-+        let parser = try Parser()
-+        parser.dataFormat = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: 44_100, channels: 1, interleaved: true)!
-+        return parser
-+    }
-+
-+    private func append(_ value: Float, to parser: Parser) {
-+        var value = value
-+        withUnsafePointer(to: &value) {
-+            ParserPacketCallback(Unmanaged.passUnretained(parser).toOpaque(), 4, 1, $0, nil)
-+        }
-+    }
-+
-+    @Test("The converter consumes the only packet and reports zero packets on exhaustion")
-+    func consumesLastPacket() throws {
-+        let parser = try makeParser()
-+        append(0.25, to: parser)
-+        let reader = try Reader(parser: parser, readFormat: #require(parser.dataFormat))
-+        let buffer = try reader.read(1)
-+        #expect(buffer.floatChannelData?[0][0] == 0.25)
-+        #expect(reader.currentPacket == 1)
-+
-+        var count: UInt32 = 99
-+        var list = AudioBufferList()
-+        let status = ReaderConverterCallback(try #require(reader.converter), &count, &list, nil, Unmanaged.passUnretained(reader).toOpaque())
-+        #expect(status == ReaderReachedEndOfDataError)
-+        #expect(count == 0)
-+    }
-+
-+    @Test("An empty incomplete stream returns no input without indexing the array")
-+    func emptyIncompleteStream() throws {
-+        let parser = try makeParser()
-+        parser.packetCount = 10
-+        let reader = try Reader(parser: parser, readFormat: #require(parser.dataFormat))
-+        var count: UInt32 = 99
-+        var list = AudioBufferList()
-+        let status = ReaderConverterCallback(try #require(reader.converter), &count, &list, nil, Unmanaged.passUnretained(reader).toOpaque())
-+        #expect(status == ReaderNotEnoughDataError)
-+        #expect(count == 0)
-+        #expect(reader.currentPacket == 0)
-+    }
-+
-+    @Test("Trimming at 256 packets preserves the next packet and final sample")
-+    func trimsConsumedPackets() throws {
-+        let parser = try makeParser()
-+        for value in 0..<600 { append(Float(value), to: parser) }
-+        let reader = try Reader(parser: parser, readFormat: #require(parser.dataFormat))
-+        for value in 0..<600 {
-+            let buffer = try reader.read(1)
-+            #expect(buffer.floatChannelData?[0][0] == Float(value))
-+        }
-+        #expect(parser.withPackets { $0.count } == 88)
-+        #expect(reader.currentPacket == 88)
-+    }
-+
-+    @Test("Input storage stays valid across reads and belongs to each reader")
-+    func converterInputOwnership() throws {
-+        let firstParser = try makeParser()
-+        let secondParser = try makeParser()
-+        for value in 0..<100 {
-+            append(Float(value), to: firstParser)
-+            append(Float(value + 100), to: secondParser)
-+        }
-+        let first = try Reader(parser: firstParser, readFormat: #require(firstParser.dataFormat))
-+        let second = try Reader(parser: secondParser, readFormat: #require(secondParser.dataFormat))
-+        for value in 0..<100 {
-+            _ = try first.read(1)
-+            let firstInput = try #require(first.converterInputData)
-+            #expect(firstInput.load(as: Float.self) == Float(value))
-+            _ = try second.read(1)
-+            #expect(firstInput.load(as: Float.self) == Float(value))
-+            #expect(first.converterInputData != second.converterInputData)
-+        }
-+    }
-+
-+    @Test("Concurrent packet callbacks and consumption preserve every packet")
-+    func concurrentProductionAndConsumption() throws {
-+        let shared = try SharedParser(parser: makeParser())
-+        DispatchQueue.concurrentPerform(iterations: 2_000) { index in
-+            var value = Float(index)
-+            withUnsafePointer(to: &value) {
-+                ParserPacketCallback(Unmanaged.passUnretained(shared.parser).toOpaque(), 4, 1, $0, nil)
-+            }
-+            let packet = shared.parser.withPackets { packets -> Data? in
-+                packets.isEmpty ? nil : packets.removeFirst().0
-+            }
-+            if let packet { shared.record(packet) }
-+        }
-+        let remaining = shared.parser.withPackets { $0.map(\.0) }
-+        let values = (shared.consumed + remaining).map { $0.withUnsafeBytes { $0.loadUnaligned(as: Float.self) } }
-+        #expect(values.count == 2_000)
-+        #expect(Set(values) == Set((0..<2_000).map(Float.init)))
-+    }
-+
-+    @Test("Compressed packet descriptions have reader-owned storage and preserve frame counts")
-+    func compressedInputOwnership() throws {
-+        let parser = try makeParser()
-+        let output = try #require(parser.dataFormat)
-+        let first = try Reader(parser: parser, readFormat: output)
-+        let second = try Reader(parser: parser, readFormat: output)
-+        // Exercise the input callback directly, without requesting a
-```
-
----
-
-### Incident Patch 2: `d628de57` (2026-10-21)
-**Commit Message**: bump build version
-
-**File**: `Config/Versions/OnlySwitch.xcconfig` (modified, +1/-1)
-```diff
-@@ -1,2 +1,2 @@
- // Shared build number for the macOS app and its embedded components.
--CURRENT_PROJECT_VERSION = 290
-+CURRENT_PROJECT_VERSION = 291
+       }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #229** (2026-10-28): Add option to turn off Keep Awake after manual sleep (@oecer)
 - **PR #221** (2026-09-24): Add settings export/import (Backup section) (@oecer)
 - **PR #219** (2026-09-19): Revise OnlyRemote section in README.md (@jacklandrin)
 - **PR #217** (2026-09-15): docs: explain how to restore the OnlySwitch menu bar icon (@mvanhorn)
 - **PR #215** (2026-08-11): Fix Show List shortcut being treated as a right-click (@EhsanAzish80)
 - **PR #213** (2026-08-10): feat: add a per-app sound mixer switch (@lou1s19)
-- **PR #211** (2026-07-13): Add Desktop Pet feature information to README (@jacklandrin)
 
 ---
 
@@ -1346,34 +885,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. radio audio packet callback race
+## X. Czech empty switch subtitles
 
 **RULE**:
-When implementing operations in `OnlySwitch/Player/CommonPlayer/AudioStreamer/Parse/Parser+Packets.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jacklandrin/OnlySwitch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Localization/Localizable.xcstrings`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jacklandrin/OnlySwitch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `abbde3ce`: radio audio packet callback race. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `393accc6`: Czech empty switch subtitles. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `OnlySwitch/Player/CommonPlayer/AudioStreamer/Parse/Parser+Packets.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Localization/Localizable.xcstrings`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    parser.withPackets { packets in
-                packets.append((packetData, packetDescription))
-                packets.append((packetData, nil))
+            "value" : ""
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-let parserQueue = DispatchQueue(label: "com.fastlearner.streamer.parser",attributes: .concurrent)
-
-    parserQueue.sync {
-                parser.packets.append((packetData, packetDescription))
-                parser.packets.append((packetData, nil))
+            "value" : "(Empty string)"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `abbde3ce` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `393accc6` are properly handled with clean fallback behavior.

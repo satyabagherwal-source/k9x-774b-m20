@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-29T02:00:22.387Z",
-    "lastVerified": "2026-10-29T02:00:22.387Z",
+    "lastChecked": "2026-10-29T02:03:34.058Z",
+    "lastVerified": "2026-10-29T02:03:34.058Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -134,8 +134,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-29T01:24:50.619Z",
-    "lastVerified": "2026-10-29T01:24:50.619Z",
+    "lastChecked": "2026-10-29T02:03:34.034Z",
+    "lastVerified": "2026-10-29T02:03:34.034Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1161,9 +1161,9 @@
   "cryfs-cryfs": {
     "name": "cryfs",
     "officialUrl": "https://github.com/cryfs/cryfs",
-    "lastChecked": "2026-10-28T21:50:18.737Z",
+    "lastChecked": "2026-10-29T02:03:29.002Z",
     "revisionIdentifier": "ad1f72d5",
-    "lastVerified": "2026-10-28T21:50:18.737Z"
+    "lastVerified": "2026-10-29T02:03:29.002Z"
   },
   "tursodatabase-turso": {
     "name": "tursodatabase/turso",
@@ -1319,9 +1319,9 @@
   "googleworkspace-cli": {
     "name": "cli",
     "officialUrl": "https://github.com/googleworkspace/cli",
-    "lastChecked": "2026-10-28T04:48:28.285Z",
+    "lastChecked": "2026-10-29T02:03:19.010Z",
     "revisionIdentifier": "a3768d0e",
-    "lastVerified": "2026-10-28T04:48:28.285Z"
+    "lastVerified": "2026-10-29T02:03:19.010Z"
   },
   "hf-lightricks-ltx-2.5": {
     "name": "Lightricks/LTX-2.5",
@@ -2753,9 +2753,9 @@
   "milvus-io-bootcamp": {
     "name": "bootcamp",
     "officialUrl": "https://github.com/milvus-io/bootcamp",
-    "lastChecked": "2026-10-28T10:17:56.080Z",
+    "lastChecked": "2026-10-29T02:03:31.604Z",
     "revisionIdentifier": "b2be8cc8",
-    "lastVerified": "2026-10-28T10:17:56.080Z"
+    "lastVerified": "2026-10-29T02:03:31.604Z"
   },
   "o2sh-onefetch": {
     "name": "onefetch",
@@ -3109,11 +3109,21 @@
     "lastVerified": "2026-10-28T11:52:33.344Z"
   },
   "peerdb-io-peerdb": {
-    "name": "peerdb",
+    "name": "PeerDB-io/peerdb",
     "officialUrl": "https://github.com/PeerDB-io/peerdb",
-    "lastChecked": "2026-10-28T11:52:35.823Z",
-    "revisionIdentifier": "65ce26b8",
-    "lastVerified": "2026-10-28T11:52:35.823Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-29T02:03:31.056Z",
+    "lastVerified": "2026-10-29T02:03:31.056Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-peerdb-io-peerdb",
+    "contentHash": "7a2487ab51b47afdbf8487362a7eb54cb1cd775f8e8c229475abe32847760f02",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "featureform-featureform": {
     "name": "featureform",
@@ -7975,5 +7985,29 @@
     "lastChecked": "2026-10-29T02:00:07.623Z",
     "revisionIdentifier": "1764564f",
     "lastVerified": "2026-10-29T02:00:07.623Z"
+  },
+  "hartemyaakoub-seo-toolkit": {
+    "name": "seo-toolkit",
+    "officialUrl": "https://github.com/hartemyaakoub/seo-toolkit",
+    "lastChecked": "2026-10-29T02:03:21.509Z",
+    "revisionIdentifier": "e1126c75",
+    "lastVerified": "2026-10-29T02:03:21.509Z"
+  },
+  "jacklandrin-onlyswitch": {
+    "name": "jacklandrin/OnlySwitch",
+    "officialUrl": "https://github.com/jacklandrin/OnlySwitch",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-29T02:03:28.285Z",
+    "lastVerified": "2026-10-29T02:03:28.285Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-jacklandrin-onlyswitch",
+    "contentHash": "e74a4444dfed54730990f795e6e3edc1197c9ef3fe1fc45b9868c7843143098a",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

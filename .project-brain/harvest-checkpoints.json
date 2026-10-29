@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-29T02:00:19.853Z",
+  "last_updated": "2026-10-29T02:03:31.531Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5481,14 +5481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-peerdb-io-peerdb",
-      "content_hash": "ead50e198a79458088b5bdcb46610eb458c45be64538e6c31ac9f3f874631696",
-      "verified_at": "2026-10-27T13:35:14.811Z",
+      "content_hash": "7a2487ab51b47afdbf8487362a7eb54cb1cd775f8e8c229475abe32847760f02",
+      "verified_at": "2026-10-29T02:03:31.531Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:35:14.811Z"
+      "last_updated": "2026-10-29T02:03:31.531Z"
     },
     "tailscale/tailscale": {
       "repository": "tailscale/tailscale",
@@ -12126,14 +12126,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-jacklandrin-onlyswitch",
-      "content_hash": "cc77505eb24fd0b77cb261bf36bfcd44aa3a52c5a61a834c1b72d33a89ebcbb7",
-      "verified_at": "2026-10-25T17:59:17.510Z",
+      "content_hash": "e74a4444dfed54730990f795e6e3edc1197c9ef3fe1fc45b9868c7843143098a",
+      "verified_at": "2026-10-29T02:03:29.420Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T17:59:17.510Z"
+      "last_updated": "2026-10-29T02:03:29.420Z"
     },
     "alin23/Lunar": {
       "repository": "alin23/Lunar",

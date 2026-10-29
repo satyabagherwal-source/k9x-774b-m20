@@ -6020,3 +6020,5 @@
 | `CYCLE-20261029-YKWG` | `2026-10-29T01:49:56.944Z` | `TableProApp/TablePro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5486` | Yes (`b6054ad5...`) |
 | `CYCLE-20261029-YMT6` | `2026-10-29T01:49:59.418Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5487` | Yes (`3978f573...`) |
 | `CYCLE-20261029-BXJ6` | `2026-10-29T02:00:19.842Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5488` | Yes (`a94372a3...`) |
+| `CYCLE-20261029-FZSZ` | `2026-10-29T02:03:29.411Z` | `jacklandrin/OnlySwitch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5489` | Yes (`e74a4444...`) |
+| `CYCLE-20261029-G1FM` | `2026-10-29T02:03:31.522Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5490` | Yes (`7a2487ab...`) |

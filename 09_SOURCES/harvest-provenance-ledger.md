@@ -6029,3 +6029,5 @@ Every entry in this ledger must capture:
 | `learn-github-tableproapp-tablepro` | `https://github.com/TableProApp/TablePro` | `dcbce8af` | Multi-dimensional audit evidence | 2026-10-29T01:49:56.948Z |
 | `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `75f7d7b4` | Multi-dimensional audit evidence | 2026-10-29T01:49:59.422Z |
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `d9409618` | Multi-dimensional audit evidence | 2026-10-29T02:00:19.845Z |
+| `learn-github-jacklandrin-onlyswitch` | `https://github.com/jacklandrin/OnlySwitch` | `d1bce595` | Multi-dimensional audit evidence | 2026-10-29T02:03:29.414Z |
+| `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `efa5b45f` | Multi-dimensional audit evidence | 2026-10-29T02:03:31.525Z |

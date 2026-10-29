@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T02:00:19.782Z",
+  "last_updated": "2026-10-29T02:03:31.445Z",
   "total_verified_learnings": 1161,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -31552,8 +31552,8 @@
       "slug": "jacklandrin-onlyswitch",
       "platform": "github",
       "source_url": "https://github.com/jacklandrin/OnlySwitch",
-      "source_version": "abbde3ce",
-      "content_hash": "cc77505eb24fd0b77cb261bf36bfcd44aa3a52c5a61a834c1b72d33a89ebcbb7",
+      "source_version": "d1bce595",
+      "content_hash": "e74a4444dfed54730990f795e6e3edc1197c9ef3fe1fc45b9868c7843143098a",
       "dossier_path": "07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md",
       "promoted_rules": [
@@ -31571,6 +31571,11 @@
           "number": 4402,
           "title": "radio audio packet callback race",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5489,
+          "title": "Czech empty switch subtitles",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31578,7 +31583,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T17:59:17.434Z",
+      "verified_at": "2026-10-29T02:03:29.319Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43420,8 +43425,8 @@
       "slug": "peerdb-io-peerdb",
       "platform": "github",
       "source_url": "https://github.com/PeerDB-io/peerdb",
-      "source_version": "65ce26b8",
-      "content_hash": "ead50e198a79458088b5bdcb46610eb458c45be64538e6c31ac9f3f874631696",
+      "source_version": "efa5b45f",
+      "content_hash": "7a2487ab51b47afdbf8487362a7eb54cb1cd775f8e8c229475abe32847760f02",
       "dossier_path": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "promoted_rules": [
@@ -43464,6 +43469,11 @@
           "number": 4811,
           "title": "deps): update gomod dependencies (#4891)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5490,
+          "title": "deps): update gomod dependencies (#4984)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43471,7 +43481,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:35:14.730Z",
+      "verified_at": "2026-10-29T02:03:31.433Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -147960,6 +147970,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T02:00:19.767Z"
+    },
+    "rule-5489": {
+      "learning_id": "rule-5489",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5489,
+      "title": "Czech empty switch subtitles",
+      "source_url": "https://github.com/jacklandrin/OnlySwitch",
+      "source_version": "d1bce595",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T02:03:29.319Z"
+    },
+    "rule-5490": {
+      "learning_id": "rule-5490",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5490,
+      "title": "deps): update gomod dependencies (#4984)",
+      "source_url": "https://github.com/PeerDB-io/peerdb",
+      "source_version": "efa5b45f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T02:03:31.433Z"
     }
   },
   "aliases": {

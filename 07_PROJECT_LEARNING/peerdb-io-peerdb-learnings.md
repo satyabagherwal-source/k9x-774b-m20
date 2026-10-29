@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source**: github ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
-> **Source Version**: `65ce26b8`  
+> **Source Version**: `efa5b45f`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T13:35:14.357Z  
+> **Timestamp**: 2026-10-29T02:03:31.061Z  
 > **Learning ID**: `learn-github-peerdb-io-peerdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T13:35:13.531Z  
+> **Harvest Timestamp**: 2026-10-29T02:03:31.056Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1860,822 +1860,548 @@ func getChainedRoleSessionName() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6048edfc` (2026-10-26)
-**Commit Message**: fix(deps): update gomod dependencies (#4891)
-
-> [!NOTE]
-> This PR body was truncated due to platform limits.
+### Incident Patch 1: `ab1ba0c5` (2026-10-28)
+**Commit Message**: fix(deps): update gomod dependencies (#4984)
 
 This PR contains the following updates:
 
 | Package | Change |
 [Age](https://docs.renovatebot.com/merge-confidence/) |
-[Confidence](https://docs.renovatebot.com/merge-confidence/) | Type |
-Update | Pending |
-|---|---|---|---|---|---|---|
+[Confidence](https://docs.renovatebot.com/merge-confidence/) |
+|---|---|---|---|
 |
-[cloud.google.com/go/cloudsqlconn](https://redirect.github.com/googlecloudplatform/cloud-sql-go-connector)
-| `v1.22.1` → `v1.25.4` |
-![age](https://developer.mend.io/api/mc/badges/age/go/cloud.google.com%2fgo%2fcloudsqlconn/v1.25.4?slim=true)
+[github.com/ClickHouse/ch-go](https://redirect.github.com/ClickHouse/ch-go)
+| `v0.74.0` → `v0.75.0` |
+![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fClickHouse%2fch-go/v0.75.0?slim=true)
 |
-![confidence](https://developer.mend.io/api/mc/badges/confidence/go/cloud.google.com%2fgo%2fcloudsqlconn/v1.22.1/v1.25.4?slim=true)
-| require | minor | |
+![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fClickHouse%2fch-go/v0.74.0/v0.75.0?slim=true)
 |
-[cloud.google.com/go/compute/metadata](https://redirect.github.com/googleapis/google-cloud-go)
-| `v0.9.0` → `v0.10.0` |
-![age](https://developer.mend.io/api/mc/badges/age/go/cloud.google.com%2fgo%2fcompute%2fmetadata/v0.10.0?slim=true)
 |
-![confidence](https://developer.mend.io/api/mc/badges/confidence/go/cloud.google.com%2fgo%2fcompute%2fmetadata/v0.9.0/v0.10.0?slim=true)
-| require | minor | |
+[github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager](https://redirect.github.com/aws/aws-sdk-go-v2)
+| `v0.4.16` → `v0.4.18` |
+![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2faws%2faws-sdk-go-v2%2ffeature%2fs3%2ftransfermanager/v0.4.18?slim=true)
 |
-[cloud.google.com/go/kms](https://redirect.github.c
+![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2faws%2faws-sdk-go-v2%2ffeature%2fs3%2ftransfermanager/v0.4.16/v0.4.18?slim=true)
+|
+|
+[github.com/aws/aws-sdk-go-v2/service/kms](https://redirect.github.com/aws/aws-sdk-go-v2)
+| `v1.61.4` → `v1.61.5` |
+![age](https://developer.mend.io/api/mc/badges/age/go/github
 
-**File**: `e2e_cleanup/go.mod` (modified, +1/-1)
+**File**: `flow/go.mod` (modified, +8/-8)
+```diff
+@@ -14,7 +14,7 @@ require (
+ 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.15.0
+ 	github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs/v2 v2.0.2
+ 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/eventhub/armeventhub v1.3.0
+-	github.com/ClickHouse/ch-go v0.74.0
++	github.com/ClickHouse/ch-go v0.75.0
+ 	github.com/ClickHouse/clickhouse-go/v2 v2.49.0
+ 	github.com/PeerDB-io/glua64 v1.0.1
+ 	github.com/PeerDB-io/gluabit32 v1.0.2
+@@ -28,12 +28,12 @@ require (
+ 	github.com/aws/aws-sdk-go-v2/config v1.33.9
+ 	github.com/aws/aws-sdk-go-v2/credentials v1.20.9
+ 	github.com/aws/aws-sdk-go-v2/feature/rds/auth v1.7.6
+-	github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager v0.4.16
+-	github.com/aws/aws-sdk-go-v2/service/kms v1.61.4
+-	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.3
++	github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager v0.4.18
++	github.com/aws/aws-sdk-go-v2/service/kms v1.61.5
++	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.4
+ 	github.com/aws/aws-sdk-go-v2/service/ses v1.42.4
+ 	github.com/aws/aws-sdk-go-v2/service/sts v1.51.4
+-	github.com/aws/smithy-go v1.28.5
++	github.com/aws/smithy-go v1.28.6
+ 	github.com/cockroachdb/pebble/v2 v2.1.7
+ 	github.com/elastic/go-elasticsearch/v8 v8.19.7
+ 	github.com/go-logr/logr v1.4.4
+@@ -61,7 +61,7 @@ require (
+ 	github.com/pressly/goose/v3 v3.29.0
+ 	github.com/quasilyte/go-ruleguard/dsl v0.3.23
+ 	github.com/robfig/cron/v3 v3.0.1
+-	github.com/shopspring/decimal v1.5.0
++	github.com/shopspring/decimal v1.6.0
+ 	github.com/slack-go/slack v0.30.1
+ 	github.com/snowflakedb/gosnowflake/v2 v2.3.0
+ 	github.com/stretchr/testify v1.12.1
+@@ -84,7 +84,7 @@ require (
+ 	go.opentelemetry.io/otel/sdk v1.47.0
+ 	go.opentelemetry.io/otel/sdk/metric v1.47.0
+ 	go.opentelemetry.io/otel/trace v1.47.0
+-	go.temporal.io/api v1.63.7
++	go.temporal.io/api v1.64.0
+ 	go.temporal.io/sdk v1.50.0
+ 	go.temporal.io/sdk/contrib/opentelemetry v0.8.1
+ 	go.uber.org/automaxprocs v1.6.0
+@@ -132,7 +132,7 @@ require (
+ 	github.com/andybalholm/brotli v1.2.6 // indirect
+ 	github.com/apache/arrow/go/v15 v15.0.2 // indirect
+ 	github.com/apache/thrift v0.24.0 // indirect
+-	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.22 // indirect
++	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.23 // indirect
+ 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3 // indirect
+ 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.6 // indirect
+ 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.6 // indirect
+```
+
+**File**: `flow/go.sum` (modified, +16/-16)
+```diff
+@@ -76,8 +76,8 @@ github.com/AzureAD/microsoft-authentication-library-for-go v1.10.1/go.mod h1:xdY
+ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
+ github.com/BurntSushi/toml v1.6.0 h1:dRaEfpa2VI55EwlIW72hMRHdWouJeRF7TPYhI+AUQjk=
+ github.com/BurntSushi/toml v1.6.0/go.mod h1:ukJfTF/6rtPPRCnwkur4qwRxa8vTRFBF0uk2lLoLwho=
+-github.com/ClickHouse/ch-go v0.74.0 h1:uYs2m4wIt0ZHSM1E72rg0maCfzhR2V3xWb/vZEgpeWE=
+-github.com/ClickHouse/ch-go v0.74.0/go.mod h1:sZ/r+8ttZMjyrP9PuFbgoVbth1ywIu2LIQNA2vgko6M=
++github.com/ClickHouse/ch-go v0.75.0 h1:GZ3gyLVK8VsgU5M3tjXthUqefgNf9dPAfosx1k+EJ0g=
++github.com/ClickHouse/ch-go v0.75.0/go.mod h1:ON7yTiWA2F/xQ5cxb7h9ef/nv8ziLNLKTs0B9CDuZsc=
+ github.com/ClickHouse/clickhouse-go/v2 v2.49.0 h1:HgiLTraLGgMe8kYivQ6RzMHDUkU/uFUpsWEAuhVk34Q=
+ github.com/ClickHouse/clickhouse-go/v2 v2.49.0/go.mod h1:o8dSgGJGxY7CeWFNiKusF9a5RnLpgzuo7OaNyH0NQPE=
+ github.com/DataDog/zstd v1.5.7 h1:ybO8RBeh29qrxIhCA9E8gKY6xfONU9T6G6aP9DTKfLE=
+@@ -135,8 +135,8 @@ github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 h1:DklsrG3d
+ github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2/go.mod h1:WaHUgvxTVq04UNunO+XhnAqY/wQc+bxr74GqbsZ/Jqw=
+ github.com/aws/aws-sdk-go-v2 v1.47.3 h1:HRoT/MkNi3bjO5xF4dCzLzvVmkvRGHj3/cLINDnJejk=
+ github.com/aws/aws-sdk-go-v2 v1.47.3/go.mod h1:xSl+OSI5ZUw6bSMupWc218zE5Pl+65MCCu3ySWFY99A=
+-github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.22 h1:oiEmPz/YMMeh/JvAE8xSxNCIsvWE6lpFe4ZPlyFykQI=
+-github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.22/go.mod h1:QWUDuRi9PFjBHIU2iH1Pkldbe7zqLfXJC4wWLbF8nuQ=
++github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.23 h1:/fGPpKrXTjzkhsDXExBgNT2cGwxiF9rLrQXh8RlXMhI=
++github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.23/go.mod h1:QWUDuRi9PFjBHIU2iH1Pkldbe7zqLfXJC4wWLbF8nuQ=
+ github.com/aws/aws-sdk-go-v2/config v1.33.9 h1:Hv6bcQUJVnmuWaKjqD6Ot8sE75NrWsWV20oGT5aWle0=
+ github.com/aws/aws-sdk-go-v2/config v1.33.9/go.mod h1:ivowmrZNfBQLcg4QkaItgi5wae4Bzot9RzIdbY1hfTg=
+ github.com/aws/aws-sdk-go-v2/credentials v1.20.9 h1:SNO55PnWhaDafsOcv16lCA0kdoFMl/YlegWoVsU02s0=
+@@ -145,8 +145,8 @@ github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3 h1:gr3b87OLB29jymWPzp/CAyX
+ github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3/go.mod h1:BRjf4L/Yx2hY54o+ZibPbLJyMMeSwqYQXwcJfqW66a8=
+ github.com/aws/aws-sdk-go-v2/feature/rds/auth v1.7.6 h1:oc0NI/Uegp+9UeEEkQrfHhBpLeFKVjB+4CkA5KTFAOY=
+ github.com/aws/aws-sdk-go-v2/feature/rds/auth v1.7.6/go.mod h1:X/KPhoB0miTAnZFuC0p6M7++TZExuZwiCmDXGlv6dLQ=
+-github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager v0.4.16 h1:q9YuNkYR/7lxflWCcEv3C0cecUt3Zvrh2hn9ZNxieNA=
+-github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager v0.4.16/go.mod h1:3BSeJQF55QQI+dDFHx4WTIjTvX/Lvtk8Jaaf/SGAnBM=
++github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager v0.4.18 h1:Ejz+9J40AOXRev/3FD19AStv4nJbBIbCb8vwz/DXhKg=
++github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager v0.4.18/go.mod h1:TX4kyX8cShpnWdM5QUYL+nyL3ujOcF1HMekEVLGms8U=
+ github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.6 h1:CqL8NN3p4I0JTwwV5MEoatIl4Y2amZ2X9dRD+0hbRL0=
+ github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.6/go.mod h1:exdJ32hMqXl0Wyo6NwqEC5yIhtua3+PDaKE8P29m4qE=
+ github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.6 h1:FpBq24TG6WVSObTNhQOv7Q0088rounUUlwn3zlNItkM=
+@@ -161,10 +161,10 @@ github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.6 h1:LHHdobjo5
+ github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.6/go.mod h1:CBGB0evAiaMD3Lk4wPO7LQCcCZLuhzL5Qf/wfEUHQ5w=
+ github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.6 h1:mYViDr2azcgxOpRrObZOl631bvavqILoE/L+Kxgbwys=
+ github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.6/go.mod h1:OXVdAo9jNhggB+hJRGOyy7WolGTKB6Rg7IIulDeSzPM=
+-github.com/aws/aws-sdk-go-v2/service/kms v1.61.4 h1:vW7497x7W6ucLJAqDt96jIdO4+IWLMB3p98UubwjdqM=
+-github.com/aws/aws-sdk-go-v2/service/kms v1.61.4/go.mod h1:Vz59N7x42VGLXZ5dGL9b10QhrU4GQv7MqnO7wc8bl9U=
+-github.com/aws/aws-sdk-go-v2/service/s3 v1.114.3 h1:NyeuyXkZL476uoAowNActm4XJO1QPKf7aassgXHpiqA=
+-github.com/aws/aws-sdk-go-v2/service/s3 v1.114.3/go.mod h1:GfoBeKMDJecgRUsGf/0RGdx0NJAh81ObTd922h8pQys=
++github.com/aws/aws-sdk-go-v2/service/kms v1.61.5 h1:c5rky/FkXXEiY4OhecCH4Q6MeYgSpAVFlrZrsrlSkUE=
++github.com/aws/aws-sdk-go-v2/service/kms v1.61.5/go.mod h1:Vz59N7x42VGLXZ5dGL9b10QhrU4GQv7MqnO7wc8bl9U=
++github.com/aws/aws-sdk-go-v2/service/s3 v1.114.4 h1:MrkWRB58Qw5TEkb51QVooVLjlM3IevO2iVXEz74B8pg=
++github.com/aws/aws-sdk-go-v2/service/s3 v1.114.4/go.mod h1:yfIxaKRHasvfy6tNEm3/LpqKsupMzQjMaWj9Y0jMVbo=
+ github.com/aws/aws-sdk-go-v2/service/ses v1.42.4 h1:7opEzfGDeDZ1PUL8oOi7nHo8xqwxFkBSW256tI0zZOA=
+ github.com/aws/aws-sdk-go-v2/service/ses v1.42.4/go.mod h1:qdmebzqxnVatb4c8zI7rNfDcopz9wxreNiGUo0YuXV8=
+ github.com/aws/aws-sdk-go-v2/service/signin v1.10.4 h1:tvpDjuUvgKURf3Yk4hOaGbZ4QdY+070OWcA5d6LUv2A=
+@@ -175,8 +175,8 @@ github.com/aws/aws-sdk-go-v2/service/ss
+```
+
+**File**: `flow/pkg/go.mod` (modified, +17/-16)
 ```diff
 @@ -5,7 +5,7 @@ go 1.26.0
  require (
  	cloud.google.com/go/bigquery v1.74.0
- 	cloud.google.com/go/pubsub/v2 v2.3.0
--	github.com/snowflakedb/gosnowflake/v2 v2.2.0
-+	github.com/snowflakedb/gosnowflake/v2 v2.3.0
- 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78
- 	google.golang.org/api v0.279.0
- )
-```
-
-**File**: `e2e_cleanup/go.sum` (modified, +2/-2)
-```diff
-@@ -209,8 +209,8 @@ github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2/go.mod h1:iKH
- github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod h1:xMI15A0UPsDsEKsMN9yxemIoYk6Tm2C1GtYGdfGttqA=
- github.com/rogpeppe/go-internal v1.14.1 h1:UQB4HGPB6osV0SQTLymcB4TgvyWu6ZyliaW0tI/otEQ=
- github.com/rogpeppe/go-internal v1.14.1/go.mod h1:MaRKkUm5W0goXpeCfT7UZI6fk/L7L7so1lCWt35ZSgc=
--github.com/snowflakedb/gosnowflake/v2 v2.2.0 h1:zm0fhoAknhZ+DZ9crMGbIrTxFZhS2yVlPbJ6EqjyWdE=
--github.com/snowflakedb/gosnowflake/v2 v2.2.0/go.mod h1:poUMAfesYFh8piXMqKVPW304tekACzv1cfskxMdpikY=
-+github.com/snowflakedb/gosnowflake/v2 v2.3.0 h1:uYELDDyjm2A/hrv+Lfc/ZPbohgcN5k8o72V1qtlCoVc=
-+github.com/snowflakedb/gosnowflake/v2 v2.3.0/go.mod h1:poUMAfesYFh8piXMqKVPW304tekACzv1cfskxMdpikY=
- github.com/spiffe/go-spiffe/v2 v2.6.0 h1:l+DolpxNWYgruGQVV0xsfeya3CsC7m8iBzDnMpsbLuo=
- github.com/spiffe/go-spiffe/v2 v2.6.0/go.mod h1:gm2SeUoMZEtpnzPNs2Csc0D/gX33k1xIx7lEzqblHEs=
- github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
-```
-
-**File**: `flow/connectors/snowflake/snowflake.go` (modified, +3/-0)
-```diff
-@@ -99,6 +99,9 @@ func NewSnowflakeConnector(
- 		Warehouse:      snowflakeProtoConfig.Warehouse,
- 		Role:           snowflakeProtoConfig.Role,
- 		RequestTimeout: time.Duration(snowflakeProtoConfig.QueryTimeout), //nolint:staticcheck // deprecated upstream, no replacement
-+		// Preserve OCSP fail-open checking now that the driver defaults to off.
-+		// TODO: when upstream defaulting CRL checking to on, switch to that
-+		OCSPFailOpen: gosnowflake.OCSPFailOpenTrue,
- 		Params: map[string]*string{
- 			"CLIENT_SESSION_KEEP_ALIVE": new("true"),
- 			"CLIENT_TELEMETRY_ENABLED":  new("false"),
-```
-
-**File**: `flow/go.mod` (modified, +112/-111)
-```diff
-@@ -4,52 +4,52 @@ go 1.27.0
- 
- require (
- 	cloud.google.com/go v0.123.0
--	cloud.google.com/go/auth v0.20.0
--	cloud.google.com/go/bigquery v1.74.0
-+	cloud.google.com/go/auth v0.24.1
-+	cloud.google.com/go/bigquery v1.85.0
- 	cloud.google.com/go/cloudsqlconn v1.22.1
--	cloud.google.com/go/compute/metadata v0.9.0
--	cloud.google.com/go/kms v1.33.0
-+	cloud.google.com/go/compute/metadata v0.10.0
-+	cloud.google.com/go/kms v1.35.0
- 	cloud.google.com/go/pubsub/v2 v2.3.0
--	cloud.google.com/go/storage v1.62.1
--	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.14.1
-+	cloud.google.com/go/storage v1.62.3
-+	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.15.0
- 	github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs/v2 v2.0.2
- 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/eventhub/armeventhub v1.3.0
- 	github.com/ClickHouse/ch-go v0.74.0
--	github.com/ClickHouse/clickhouse-go/v2 v2.48.0
-+	github.com/ClickHouse/clickhouse-go/v2 v2.49.0
- 	github.com/PeerDB-io/glua64 v1.0.1
- 	github.com/PeerDB-io/gluabit32 v1.0.2
- 	github.com/PeerDB-io/gluajson v1.0.2
- 	github.com/PeerDB-io/gluamsgpack v1.0.5
- 	github.com/PeerDB-io/gluautf8 v1.0.0
- 	github.com/PeerDB-io/peerdb/flow/pkg v0.0.0
--	github.com/Shopify/toxiproxy/v2 v2.12.0
-+	github.com/Shopify/toxiproxy/v2 v2.13.0
- 	github.com/apache/arrow-go/v18 v18.8.0
--	github.com/aws/aws-sdk-go-v2 v1.47.0
--	github.com/aws/aws-sdk-go-v2/config v1.33.5
--	github.com/aws/aws-sdk-go-v2/credentials v1.20.5
--	github.com/aws/aws-sdk-go-v2/feature/rds/auth v1.7.3
--	github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager v0.4.7
--	github.com/aws/aws-sdk-go-v2/service/kms v1.60.0
--	github.com/aws/aws-sdk-go-v2/service/s3 v1.113.1
--	github.com/aws/aws-sdk-go-v2/service/ses v1.42.0
--	github.com/aws/aws-sdk-go-v2/service/sts v1.51.0
--	github.com/aws/smithy-go v1.28.1
-+	github.com/aws/aws-sdk-go-v2 v1.47.3
-+	github.com/aws/aws-sdk-go-v2/config v1.33.9
-+	github.com/aws/aws-sdk-go-v2/credentials v1.20.9
-+	github.com/aws/aws-sdk-go-v2/feature/rds/auth v1.7.6
-+	github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager v0.4.16
-+	github.com/aws/aws-sdk-go-v2/service/kms v1.61.4
-+	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.3
-+	github.com/aws/aws-sdk-go-v2/service/ses v1.42.4
-+	github.com/aws/aws-sdk-go-v2/service/sts v1.51.4
-+	github.com/aws/smithy-go v1.28.5
- 	github.com/cockroachdb/pebble/v2 v2.1.7
- 	github.com/elastic/go-elasticsearch/v8 v8.19.7
- 	github.com/go-logr/logr v1.4.4
- 	github.com/go-mysql-org/go-mysql v1.15.1-0.20260701093637-35ca5c6ee8c8
- 	github.com/gogo/googleapis v1.4.1
- 	github.com/google/uuid v1.6.0
- 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.4
--	github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0
-+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.32.0
- 	github.com/hamba/avro/v2 v2.31.0
- 	github.com/jackc/pgerrcode v0.0.0-20250907135507-afb5586c32a6
- 	github.com/jackc/pglogrepl v0.0.0-20261003132456-662581bb6bb6
- 	github.com/jackc/pgx/v5 v5.10.0
- 	github.com/json-iterator/go v1.1.12
- 	github.com/lestrrat-go/httprc/v3 v3.0.6
- 	github.com/lestrrat-go/jwx/v3 v3.3.0
--	github.com/moby/moby/api v1.56.0
-+	github.com/moby/moby/api v1.56.1
- 	github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee
- 	github.com/nickbruun/pgsplit v0.0.0-20240103043353-43e6c2dddfad
- 	github.com/orcaman/concurrent-map/v2 v2.0.1
-@@ -62,88 +62,87 @@ require (
- 	github.com/quasilyte/go-ruleguard/dsl v0.3.23
- 	github.com/robfig/cron/v3 v3.0.1
- 	github.com/shopspring/decimal v1.4.0
--	github.com/slack-go/slack v0.29.0
--	github.com/snowflakedb/gosnowflake/v2 v2.2.0
-+	github.com/slack-go/slack v0.30.1
-+	github.com/snowflakedb/gosnowflake/v2 v2.3.0
- 	github.com/stretchr/testify v1.12.1
- 	github.com/testcontainers/testcontainers-go v0.44.0
--	github.com/twmb/franz-go v1.21.7
--	github.com/twmb/franz-go/pkg/kadm v1.18.0
-+	github.com/twmb/franz-go v1.22.2
-+	github.com/twmb/franz-go/pkg/kadm v1.19.0
- 	github.com/twmb/franz-go/plugin/kslog v1.0.0
--	github.com/twpayne/go-geos v0.22.0
--	github.com/urfave/cli/v3 v3.12.0
-+	github.com/twpayne/go-geos v0.23.0
-+	github.com/urfave/cli/v3 v3.14.0
- 	github.com/xdg-go/scram v1.2.0
- 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78
- 	github.com/yuin/gopher-lua v1.1.2
--	go.mongodb.org/mongo-driver/v2 v2.9.1
--	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.71.0
--	go.opentelemetry.io/otel v1.46.0
--	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.46.0
--	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.46.0
--	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.46.0
--	go.opentelemetry.io/otel/metric v1.46.0
--	go.opentelemetry.io/otel/sdk v1.46.0
--	go.opentelemetry.io/otel/sdk/metric v1.46.0
--	go.opentelemetry.io/otel/trace v1.46.0
--	go.temporal.io/api v1.63.5
--	go.temporal.io/sdk v1.49.0
-+	go.mongodb.org/mongo-driver/v2 v2.9.2
-+	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.72.0
-+	go.opentelemetry.io/otel v1.47.0
-+	go.opentelemetry.io/otel/exporter
-```
-
-**File**: `flow/go.sum` (modified, +253/-245)
-```diff
-@@ -3,34 +3,34 @@ cel.dev/expr v0.25.2/go.mod h1:hrXvqGP6G6gyx8UAHSHJ5RGk//1Oj5nXQ2NI02Nrsg4=
- cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
- cloud.google.com/go v0.123.0 h1:2NAUJwPR47q+E35uaJeYoNhuNEM9kM8SjgRgdeOJUSE=
- cloud.google.com/go v0.123.0/go.mod h1:xBoMV08QcqUGuPW65Qfm1o9Y4zKZBpGS+7bImXLTAZU=
--cloud.google.com/go/auth v0.20.0 h1:kXTssoVb4azsVDoUiF8KvxAqrsQcQtB53DcSgta74CA=
--cloud.google.com/go/auth v0.20.0/go.mod h1:942/yi/itH1SsmpyrbnTMDgGfdy2BUqIKyd0cyYLc5Q=
--cloud.google.com/go/auth/oauth2adapt v0.2.8 h1:keo8NaayQZ6wimpNSmW5OPc283g65QNIiLpZnkHRbnc=
--cloud.google.com/go/auth/oauth2adapt v0.2.8/go.mod h1:XQ9y31RkqZCcwJWNSx2Xvric3RrU88hAYYbjDWYDL+c=
--cloud.google.com/go/bigquery v1.74.0 h1:Q6bAMv+eyvufOpIrfrYxhM46qq1D3ZQTdgUDQqKS+n8=
--cloud.google.com/go/bigquery v1.74.0/go.mod h1:iViO7Cx3A/cRKcHNRsHB3yqGAMInFBswrE9Pxazsc90=
-+cloud.google.com/go/auth v0.24.1 h1:NTmd2iJb4DsGIav0KiqFMYI88nMshA2wnFMBatRmoCs=
-+cloud.google.com/go/auth v0.24.1/go.mod h1:1dmBXa9xfBvBr39ZnDUDkaaA91ccq9CcqENDgJA4d7c=
-+cloud.google.com/go/auth/oauth2adapt v0.3.0 h1:FY8oSZpCYoUNv6QxVODuMjQz4IlSOVeiQtZ08vLPz88=
-+cloud.google.com/go/auth/oauth2adapt v0.3.0/go.mod h1:7+2uCm7++XFO+/lN06c2HXpDXb/NMNn2/UwyBPbTnkk=
-+cloud.google.com/go/bigquery v1.85.0 h1:zsFsa8jOVkU4c7CWE1cbrfsemtNbM3YRUmtFRYXYN58=
-+cloud.google.com/go/bigquery v1.85.0/go.mod h1:oBma1P5/b1Jtd8xRLKoyTeNIMlACGHbSMLudzxHGHgc=
- cloud.google.com/go/cloudsqlconn v1.22.1 h1:c4HkWMSV4pDL8kJid+nIuF+6iE07pR5Mn/sRVY17wf4=
- cloud.google.com/go/cloudsqlconn v1.22.1/go.mod h1:p7l+u0ThOzSvC5a4fkywi1hEyD8S709X1zEqux9tsq0=
--cloud.google.com/go/compute/metadata v0.9.0 h1:pDUj4QMoPejqq20dK0Pg2N4yG9zIkYGdBtwLoEkH9Zs=
--cloud.google.com/go/compute/metadata v0.9.0/go.mod h1:E0bWwX5wTnLPedCKqk3pJmVgCBSM6qQI1yTBdEb3C10=
--cloud.google.com/go/datacatalog v1.26.1 h1:bCRKA8uSQN8wGW3Tw0gwko4E9a64GRmbW1nCblhgC2k=
--cloud.google.com/go/datacatalog v1.26.1/go.mod h1:2Qcq8vsHNxMDgjgadRFmFG47Y+uuIVsyEGUrlrKEdrg=
--cloud.google.com/go/iam v1.11.0 h1:KieQ9Pb+LLPak1O3Rv3GgCxhnmkYf7Xyh0P5HfF1jFM=
--cloud.google.com/go/iam v1.11.0/go.mod h1:KP+nKGugNJW4LcLx1uEZcq1ok5sQHFaQehQNl4QDgV4=
--cloud.google.com/go/kms v1.33.0 h1:pG0X78m212b2pv9N4fdMoUO69LuZGQ9kSvn8sHBOFAo=
--cloud.google.com/go/kms v1.33.0/go.mod h1:CSGvW6GnMQbY+1nOHcIzhMtHSbExXlOmCKjWtYVjcpA=
--cloud.google.com/go/logging v1.13.2 h1:qqlHCBvieJT9Cdq4QqYx1KPadCQ2noD4FK02eNqHAjA=
--cloud.google.com/go/logging v1.13.2/go.mod h1:zaybliM3yun1J8mU2dVQ1/qDzjbOqEijZCn6hSBtKak=
--cloud.google.com/go/longrunning v1.2.0 h1:WjYH3YHBGCxGJP9M4dWGHBfXr/cFIjMkNgWcJj7/iMM=
--cloud.google.com/go/longrunning v1.2.0/go.mod h1:5KMQALFGOCtFoi2xSOA1u3H7WKlhmckgiyFw7+LGQp0=
-+cloud.google.com/go/compute/metadata v0.10.0 h1:pyKMUQSwchgkIBBJGdILqQbs/BNJXqwSA7Ej6LAvvtY=
-+cloud.google.com/go/compute/metadata v0.10.0/go.mod h1:rGFHRrIif570kSibjFTMbt6/4/tzgJWFGI/HVol4GIk=
-+cloud.google.com/go/datacatalog v1.32.0 h1:fyYn8ODkGil5y3zTIqgIhOfzTu1ACaU2o+C750CO6Ac=
-+cloud.google.com/go/datacatalog v1.32.0/go.mod h1:DE272tynQUwheJeQAyVfV+nO8yrdkuDyOgH2LtOrkWM=
-+cloud.google.com/go/iam v1.14.0 h1:YRIB1/4xxwJ+NfI6RQr1WaOoHHeV0MizJEj940nBXJA=
-+cloud.google.com/go/iam v1.14.0/go.mod h1:JTPZfbHdGXJrOYREtkRoFzCDGaBdbA7ILLKO/DDuav0=
-+cloud.google.com/go/kms v1.35.0 h1:nJ/ktaqspx1nPM9vIcO0SHbhqCAm8nvAxL1siuVgKm0=
-+cloud.google.com/go/kms v1.35.0/go.mod h1:0++71pIHvJL+GmMa8K4jOWFq7gNOX3jm2PRMSJwTKJw=
-+cloud.google.com/go/logging v1.20.0 h1:l7yzCB8/JSY5PHT9RsaqdT1jaBGbM6KlSJDX210HlXM=
-+cloud.google.com/go/logging v1.20.0/go.mod h1:ALUaJQZM691Eeujy9kFx0xREq3AMPuGd+pTRZuTYv+w=
-+cloud.google.com/go/longrunning v1.3.0 h1:lZ6c8SJJBmILp/Wnr3vGnBLa0q+cYfSHRCcUfVI2hpI=
-+cloud.google.com/go/longrunning v1.3.0/go.mod h1:wpgLxCn+UA3/TZ1bj/fW39mfDpwVlMPu1xKJyoMt7V0=
- cloud.google.com/go/monitoring v1.24.3 h1:dde+gMNc0UhPZD1Azu6at2e79bfdztVDS5lvhOdsgaE=
- cloud.google.com/go/monitoring v1.24.3/go.mod h1:nYP6W0tm3N9H/bOw8am7t62YTzZY+zUeQ+Bi6+2eonI=
- cloud.google.com/go/pubsub/v2 v2.3.0 h1:DgAN907x+sP0nScYfBzneRiIhWoXcpCD8ZAut8WX9vs=
- cloud.google.com/go/pubsub/v2 v2.3.0/go.mod h1:O5f0KHG9zDheZAd3z5rlCRhxt2JQtB+t/IYLKK3Bpvw=
--cloud.google.com/go/storage v1.62.1 h1:Os0G3XbUbjZumkpDUf2Y0rLoXJTCF1kU2kWUujKYXD8=
--cloud.google.com/go/storage v1.62.1/go.mod h1:cpYz/kRVZ+UQAF1uHeea10/9ewcRbxGoGNKsS9daSXA=
--cloud.google.com/go/trace v1.11.7 h1:kDNDX8JkaAG3R2nq1lIdkb7FCSi1rCmsEtKVsty7p+U=
--cloud.google.com/go/trace v1.11.7/go.mod h1:TNn9d5V3fQVf6s4SCveVMIBS2LJUqo73GACmq/Tky0s=
-+cloud.google.com/go/storage v1.62.3 h1:SZq1t23NCI+e96dH77Dg3PEfsNNEjqO8zE5AnD8gVD0=
-+cloud.google.com/go/storage v1.62.3/go.mod h1:cpYz/kRVZ+UQAF1uHeea10/9ewcRbxGoGNKsS9daSXA=
-+cloud.google.com/go/trace v1.11.6 h1:2O2zjPzqPYAHrn3OKl029qlqG6W8ZdYaOWRyr8NgMT4=
-+cloud.google.com/go/trace v1.11.6/go.mod h1:GA855OeDEBiBMzcckLPE2kDunIpC72N+Pq8WFieFjnI=
- dario.cat/mergo v1.0.2 h1:85+piFYR1tMbRrLcDwR18y4UKJ3aH1Tbzi24VRW1TK8=
- dario.cat/mergo v1.0.2/go.mod h1:E/hbnu0NxMFBjpMIE34DRGLWqDy0g5FuKDhCb31ngxA=
- filippo.io/edwards
-```
-
-**File**: `flow/pkg/go.mod` (modified, +9/-9)
-```diff
-@@ -6,15 +6,15 @@ require (
- 	cloud.google.com/go/bigquery v1.74.0
  	cloud.google.com/go/storage v1.62.1
- 	github.com/ClickHouse/ch-go v0.74.0
--	github.com/ClickHouse/clickhouse-go/v2 v2.48.0
-+	github.com/ClickHouse/clickhouse-go/v2 v2.49.0
+-	github.com/ClickHouse/ch-go v0.74.0
++	github.com/ClickHouse/ch-go v0.75.0
+ 	github.com/ClickHouse/clickhouse-go/v2 v2.49.0
  	github.com/go-mysql-org/go-mysql v1.15.0
- 	github.com/jackc/pgx/v5 v5.10.0
- 	github.com/joho/godotenv v1.5.1
- 	github.com/json-iterator/go v1.1.12
- 	github.com/robfig/cron/v3 v3.0.1
- 	github.com/stretchr/testify v1.12.1
--	go.mongodb.org/mongo-driver/v2 v2.9.1
--	go.temporal.io/sdk v1.49.0
-+	go.mongodb.org/mongo-driver/v2 v2.9.2
-+	go.temporal.io/sdk v1.50.0
- 	google.golang.org/api v0.287.1
- )
- 
-@@ -30,19 +30,19 @@ require (
- 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.33.0 // indirect
- 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.55.0 // indirect
- 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.55.0 // indirect
--	github.com/andybalholm/brotli v1.2.2 // indirect
-+	github.com/andybalholm/brotli v1.2.6 // indirect
- 	github.com/apache/arrow/go/v15 v15.0.2 // indirect
- 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
- 	github.com/cncf/xds/go v0.0.0-20260202195803-dba9d589def2 // indirect
- 	github.com/coreos/go-semver v0.3.1 // indirect
- 	github.com/envoyproxy/go-control-plane/envoy v1.37.0 // indirect
- 	github.com/envoyproxy/protoc-gen-validate v1.3.3 // indirect
+ 	github.com/jackc/pgx/v5 v5.11.0
+@@ -40,7 +40,7 @@ require (
  	github.com/facebookgo/clock v0.0.0-20150410010913-600d898af40a // indirect
--	github.com/felixge/httpsnoop v1.0.4 // indirect
-+	github.com/felixge/httpsnoop v1.1.0 // indirect
+ 	github.com/felixge/httpsnoop v1.1.0 // indirect
  	github.com/go-faster/city v1.0.1 // indirect
- 	github.com/go-faster/errors v0.7.1 // indirect
+-	github.com/go-faster/errors v0.7.1 // indirect
++	github.com/go-faster/errors v0.8.0 // indirect
  	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
--	github.com/go-logr/logr v1.4.3 // indirect
-+	github.com/go-logr/logr v1.4.4 // indirect
+ 	github.com/go-logr/logr v1.4.4 // indirect
  	github.com/go-logr/stdr v1.2.2 // indirect
- 	github.com/goccy/go-json v0.10.6 // indirect
- 	github.com/gogo/protobuf v1.3.2 // indirect
-@@ -82,11 +82,11 @@ require (
+@@ -56,14 +56,14 @@ require (
+ 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.22.0 // indirect
+ 	github.com/jackc/pgpassfile v1.0.0 // indirect
+ 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
+-	github.com/klauspost/compress v1.19.2 // indirect
++	github.com/klauspost/compress v1.20.3 // indirect
+ 	github.com/klauspost/cpuid/v2 v2.2.5 // indirect
+ 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+ 	github.com/modern-go/reflect2 v1.0.2 // indirect
+ 	github.com/nexus-rpc/nexus-proto-annotations v0.1.0 // indirect
+ 	github.com/nexus-rpc/sdk-go v0.7.0 // indirect
+ 	github.com/paulmach/orb v0.13.0 // indirect
+-	github.com/pierrec/lz4/v4 v4.1.27 // indirect
++	github.com/pierrec/lz4/v4 v4.1.33 // indirect
+ 	github.com/pingcap/errors v0.11.5-0.20260310054046-9c8b3586e4b2 // indirect
+ 	github.com/pingcap/log v1.1.1-0.20260227082333-572e590d08f1 // indirect
+ 	github.com/pingcap/tidb/pkg/parser v0.0.0-20260504140133-511dba1dbe17 // indirect
+@@ -82,27 +82,28 @@ require (
  	go.opentelemetry.io/contrib/detectors/gcp v1.44.0 // indirect
  	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.67.0 // indirect
  	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 // indirect
--	go.opentelemetry.io/otel v1.44.0 // indirect
--	go.opentelemetry.io/otel/metric v1.44.0 // indirect
-+	go.opentelemetry.io/otel v1.46.0 // indirect
-+	go.opentelemetry.io/otel/metric v1.46.0 // indirect
- 	go.opentelemetry.io/otel/sdk v1.44.0 // indirect
- 	go.opentelemetry.io/otel/sdk/metric v1.44.0 // indirect
--	go.opentelemetry.io/otel/trace v1.44.0 // indirect
-+	go.opentelemetry.io/otel/trace v1.46.0 // indirect
+-	go.opentelemetry.io/otel v1.46.0 // indirect
+-	go.opentelemetry.io/otel/metric v1.46.0 // indirect
+-	go.opentelemetry.io/otel/sdk v1.44.0 // indirect
+-	go.opentelemetry.io/otel/sdk/metric v1.44.0 // indirect
+-	go.opentelemetry.io/otel/trace v1.46.0 // indirect
++	go.opentelemetry.io/otel v1.47.0 // indirect
++	go.opentelemetry.io/otel/log v1.47.0 // indirect
++	go.opentelemetry.io/otel/metric v1.47.0 // indirect
++	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
++	go.opentelemetry.io/otel/sdk/metric v1.47.0 // indirect
++	go.opentelemetry.io/otel/trace v1.47.0 // indirect
  	go.temporal.io/api v1.63.5 // indirect
  	go.uber.org/atomic v1.11.0 // indirect
  	go.uber.org/multierr v1.11.0 // indirect
+ 	go.uber.org/zap v1.28.0 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.5 // indirect
+-	golang.org/x/crypto v0.55.0 // indirect
++	golang.org/x/crypto v0.57.0 // indirect
+ 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56 // indirect
+-	golang.org/x/mod v0.38.0 // indirect
++	golang.org/x/mod v0.41.0 // indirect
+ 	golang.org/x/net v0.58.0 // indirect
+ 	golang.org/x/oauth2 v0.36.0 // indirect
+-	golang.org/x/sync v0.22.0 // indirect
+-	golang.org/x/sys v0.47.0 // indirect
+-	golang.org/x/telemetry v0.0.0-20260708182218-49f421fb7959 // indirect
+-	golang.org/x/text v0.41.0 // indirect
++	golang.org/x/sync v0.23.0 // indirect
++	golang.org/x/sys v0.48.0 // indirect
++	golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5 // indirect
++	golang.org/x/text v0.42.0 // indirect
+ 	golang.org/x/time v0.15.0 // indirect
+-	golang.org/x/tools v0.48.0 // indirect
++	golang.org/x/tools v0.49.0 // indirect
+ 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
+ 	google.golang.org/genproto v0.0.0-20260319201613-d00831a3d3e7 // indirect
+ 	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa // indirect
 ```
 
-**File**: `flow/pkg/go.sum` (modified, +18/-18)
+**File**: `flow/pkg/go.sum` (modified, +36/-34)
 ```diff
-@@ -28,8 +28,8 @@ filippo.io/edwards25519 v1.2.0 h1:crnVqOiS4jqYleHd9vaKZ+HKtHfllngJIiOpNpoJsjo=
+@@ -26,8 +26,8 @@ cloud.google.com/go/trace v1.11.7 h1:kDNDX8JkaAG3R2nq1lIdkb7FCSi1rCmsEtKVsty7p+U
+ cloud.google.com/go/trace v1.11.7/go.mod h1:TNn9d5V3fQVf6s4SCveVMIBS2LJUqo73GACmq/Tky0s=
+ filippo.io/edwards25519 v1.2.0 h1:crnVqOiS4jqYleHd9vaKZ+HKtHfllngJIiOpNpoJsjo=
  filippo.io/edwards25519 v1.2.0/go.mod h1:xzAOLCNug/yB62zG1bQ8uziwrIqIuxhctzJT18Q77mc=
- github.com/ClickHouse/ch-go v0.74.0 h1:uYs2m4wIt0ZHSM1E72rg0maCfzhR2V3xWb/vZEgpeWE=
- github.com/ClickHouse/ch-go v0.74.0/go.mod h1:sZ/r+8ttZMjyrP9PuFbgoVbth1ywIu2LIQNA2vgko6M=
--github.com/ClickHouse/clickhouse-go/v2 v2.48.0 h1:auzd4VkapQYhQF8F2Gog7s3x78Bi1JZmByxGbrw3C+4=
--github.com/ClickHouse/clickhouse-go/v2 v2.48.0/go.mod h1:lBjUCPRG6RpRQdMbkXq+JV8rY0/O5lw+Z7jShgReFjM=
-+github.com/ClickHouse/clickhouse-go/v2 v2.49.0 h1:HgiLTraLGgMe8kYivQ6RzMHDUkU/uFUpsWEAuhVk34Q=
-+github.com/ClickHouse/clickhouse-go/v2 v2.49.0/go.mod h1:o8dSgGJGxY7CeWFNiKusF9a5RnLpgzuo7OaNyH0NQPE=
+-github.com/ClickHouse/ch-go v0.74.0 h1:uYs2m4wIt0ZHSM1E72rg0maCfzhR2V3xWb/vZEgpeWE=
+-github.com/ClickHouse/ch-go v0.74.0/go.mod h1:sZ/r+8ttZMjyrP9PuFbgoVbth1ywIu2LIQNA2vgko6M=
++github.com/ClickHouse/ch-go v0.75.0 h1:GZ3gyLVK8VsgU5M3tjXthUqefgNf9dPAfosx1k+EJ0g=
++github.com/ClickHouse/ch-go v0.75.0/go.mod h1:ON7yTiWA2F/xQ5cxb7h9ef/nv8ziLNLKTs0B9CDuZsc=
+ github.com/ClickHouse/clickhouse-go/v2 v2.49.0 h1:HgiLTraLGgMe8kYivQ6RzMHDUkU/uFUpsWEAuhVk34Q=
+ github.com/ClickHouse/clickhouse-go/v2 v2.49.0/go.mod h1:o8dSgGJGxY7CeWFNiKusF9a5RnLpgzuo7OaNyH0NQPE=
  github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.33.0 h1:l7+6kwRMJNwdCvYdDl7Eax+wzEYHSnNY7zrrfbhDdTA=
- github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.33.0/go.mod h1:pJTkW8hEUIIi3Pf65lPZOnn4Y81yCllX6IWk2jNXdkM=
- github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.55.0 h1:UnDZ/zFfG1JhH/DqxIZYU/1CUAlTUScoXD/LcM2Ykk8=
-@@ -38,8 +38,8 @@ github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/cloudmock v0
- github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/cloudmock v0.55.0/go.mod h1:vB2GH9GAYYJTO3mEn8oYwzEdhlayZIdQz6zdzgUIRvA=
- github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.55.0 h1:0s6TxfCu2KHkkZPnBfsQ2y5qia0jl3MMrmBhu3nCOYk=
- github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.55.0/go.mod h1:Mf6O40IAyB9zR/1J8nGDDPirZQQPbYJni8Yisy7NTMc=
--github.com/andybalholm/brotli v1.2.2 h1:HzTuoo2ErYQqf5qvcJInB8uvqSVxRttzkFexPWtnceM=
--github.com/andybalholm/brotli v1.2.2/go.mod h1:rzTDkvFWvIrjDXZHkuS16NPggd91W3kUSvPlQ1pLaKY=
-+github.com/andybalholm/brotli v1.2.6 h1:ftYnfj6usCp+UGV5kSJ3+chpMQgU+gJf/AxsUQ52REI=
-+github.com/andybalholm/brotli v1.2.6/go.mod h1:rzTDkvFWvIrjDXZHkuS16NPggd91W3kUSvPlQ1pLaKY=
- github.com/apache/arrow/go/v15 v15.0.2 h1:60IliRbiyTWCWjERBCkO1W4Qun9svcYoZrSLcyOsMLE=
- github.com/apache/arrow/go/v15 v15.0.2/go.mod h1:DGXsR3ajT524njufqf95822i+KTh+yea1jass9YXgjA=
- github.com/cespare/xxhash/v2 v2.3.0 h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=
-@@ -62,17 +62,17 @@ github.com/envoyproxy/protoc-gen-validate v1.3.3 h1:MVQghNeW+LZcmXe7SY1V36Z+WFMD
- github.com/envoyproxy/protoc-gen-validate v1.3.3/go.mod h1:TsndJ/ngyIdQRhMcVVGDDHINPLWB7C82oDArY51KfB0=
- github.com/facebookgo/clock v0.0.0-20150410010913-600d898af40a h1:yDWHCSQ40h88yih2JAcL6Ls/kVkSE8GFACTGVnMPruw=
- github.com/facebookgo/clock v0.0.0-20150410010913-600d898af40a/go.mod h1:7Ga40egUymuWXxAe151lTNnCv97MddSOVsjpPPkityA=
--github.com/felixge/httpsnoop v1.0.4 h1:NFTV2Zj1bL4mc9sqWACXbQFVBBg2W3GPvqp8/ESS2Wg=
--github.com/felixge/httpsnoop v1.0.4/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
-+github.com/felixge/httpsnoop v1.1.0 h1:3YtUj32ZZkqZtt3sZZsClsymw/QDuVfpNhoA31zeORc=
-+github.com/felixge/httpsnoop v1.1.0/go.mod h1:Zqxgdd+1Rkcz8euOqdr7lqgCRJztwr5hp9vDSi5UZCE=
+@@ -66,8 +66,8 @@ github.com/felixge/httpsnoop v1.1.0 h1:3YtUj32ZZkqZtt3sZZsClsymw/QDuVfpNhoA31zeO
+ github.com/felixge/httpsnoop v1.1.0/go.mod h1:Zqxgdd+1Rkcz8euOqdr7lqgCRJztwr5hp9vDSi5UZCE=
  github.com/go-faster/city v1.0.1 h1:4WAxSZ3V2Ws4QRDrscLEDcibJY8uf41H6AhXDrNDcGw=
  github.com/go-faster/city v1.0.1/go.mod h1:jKcUJId49qdW3L1qKHH/3wPeUstCVpVSXTM6vO3VcTw=
- github.com/go-faster/errors v0.7.1 h1:MkJTnDoEdi9pDabt1dpWf7AA8/BaSYZqibYyhZ20AYg=
- github.com/go-faster/errors v0.7.1/go.mod h1:5ySTjWFiphBs07IKuiL69nxdfd5+fzh1u7FPGZP2quo=
+-github.com/go-faster/errors v0.7.1 h1:MkJTnDoEdi9pDabt1dpWf7AA8/BaSYZqibYyhZ20AYg=
+-github.com/go-faster/errors v0.7.1/go.mod h1:5ySTjWFiphBs07IKuiL69nxdfd5+fzh1u7FPGZP2quo=
++github.com/go-faster/errors v0.8.0 h1:9T9eJrM+72dFk7n4DfhuaDDe6cyuFCSW2oNUkN77Yqc=
++github.com/go-faster/errors v0.8.0/go.mod h1:5ySTjWFiphBs07IKuiL69nxdfd5+fzh1u7FPGZP2quo=
  github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
  github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
  github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
--github.com/go-logr/logr v1.4.3 h1:CjnDlHq8ikf6E492q6eKboGOC0T8CDaOvkHCIg8idEI=
--github.com/go-logr/logr v1.4.3/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
-+github.com/go-logr/logr v1.4.4 h1:tG4xh9yMsRCAiodLVTxyrkzSZ9+o0L1Kg/+cPVcbP/8=
-+github.com/go-logr/logr v1.4.4/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
- github.com/go-logr/stdr v1.2.2 h1:hSWxHoqTgW2S2qGc0LTAI563KZ5YKYRhT3MFKZMbjag=
- github.com/go-logr/stdr v1.2.2/go.mod h1:mMo/vtBO5dYbehREoey6XUKy/eSumjCCveDpRre4VKE=
- github.com/go-mysql-org/go-mysql v1.15.0 h1:bZeRUc9yNVbFEyote79Q4j8SV+q8Ls32AYXRl2QjUoc=
-@@ -186,8 +186,8 @@ github.com/zeebo/assert v1.3.0 h1:g7C04CbJuIDKNPFHmsk4hwZDO5O+kntRxzaUoNXj+IQ=
- github.com/zeebo/assert v1.3.0/go.mod h1:Pq9JiuJQpG8JLJdtkwrJESF0Foym2/D9XMU5ciN/wJ0=
- github.com/zeebo/xxh3 v1.0.2 h1:xZmwmqxHZA8AI603jOQ0tMqmBr9lPeFwGg6d+xy9DC0=
- github.com/zeebo/xxh3 v1.0.2/go.mod h1:5NWz9Sef7zIDm2JHfFlcQvNekmcEl9ekUZQQKCYaDcA=
--go.mongodb.org/mongo-driver/v2 v2.9.1 h1:jewiFs2m1/VOQp8qhFshX6hWZ+EAXDhZHXExAUMcOgQ=
--go.mongodb.org/mongo-driver/v2 v2.9.1/go.mod h1:SHKN0IWkKmEVGHLjXnni6s4wPKX4v86FTgOeJJFuXcA=
-+go.mongodb.org/mongo-driver/v2 v2.9.2 h1:OCAdjI37pC/SVxucz/9CM8zD4jCdegtsY5QcKzYFCgE=
-+go.mongodb.org/mongo-driver/v2 v2.9.2/go.mod h1:SHKN0IWkKmEVGHLjXnni6s4wPK
+@@ -118,8 +118,8 @@ github.com/json-iterator/go v1.1.12 h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnr
+ github.com/json-iterator/go v1.1.12/go.mod h1:e30LSqwooZae/UwlEbR2852Gd8hjQvJoHmT4TnhNGBo=
+ github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
+ github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
+-github.com/klauspost/compress v1.19.2 h1:hMRETovs/pu/dVWN7zIT1PGG8t509MwT6bO7XSi26R8=
+-github.com/klauspost/compress v1.19.2/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
++github.com/klauspost/compress v1.20.3 h1:zWNoFqq/lSuYQRim3dUXlXeA0IqwuZGicdG5ZTfY5j4=
++github.com/klauspost/compress v1.20.3/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
+ github.com/klauspost/cpuid/v2 v2.2.5 h1:0E5MSMDEoAulmXNFquVs//DdoomxaoTY1kUhbc/qbZg=
+ github.com/klauspost/cpuid/v2 v2.2.5/go.mod h1:Lcz8mBdAVJIBVzewtcLocK12l3Y+JytZYpaMropDUws=
+ github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421/go.mod h1:6dJC0mAP4ikYIbvyc7fijjWJddQyLn8Ig3JB5CqoB9Q=
+@@ -133,8 +133,8 @@ github.com/nexus-rpc/sdk-go v0.7.0 h1:38NrfY5rLnZAiMMs2ZfCKI/CSDzdfJG+27iAgfA8bU
+ github.com/nexus-rpc/sdk-go v0.7.0/go.mod h1:FHdPfVQwRuJFZFTF0Y2GOAxCrbIBNrcPna9slkGKPYk=
+ github.com/paulmach/orb v0.13.0 h1:r7n7mQGGF+cj/CbcivEj9J3HGK+XR+yXnvzRdq9saIw=
+ github.com/paulmach/orb v0.13.0/go.mod h1:6scRWINywA2Jf05dcjOfLfxrUIMECvTSG2MVbRLxu/k=
+-github.com/pierrec/lz4/v4 v4.1.27 h1:+PhzhWDrjRj89TH2sw43nE3+4+W8lSxIuQadEHZyjUk=
+-github.com/pierrec/lz4/v4 v4.1.27/go.mod h1:EoQMVJgeeEOMsCqCzqFm2O0cJvljX2nGZjcRIPL34O4=
++github.com/pierrec/lz4/v4 v4.1.33 h1:GjG1TJ1V4IzKP8L96muuuDNpTwd7D+l2ccXrjAbe014=
++github.com/pierrec/lz4/v4 v4.1.33/go.mod h1:7SE9MC2STkNtL4PIwGhjmyVwvILaGI9/COYQNBhKM/c=
+ github.com/pingcap/errors v0.11.5-0.20260310054046-9c8b3586e4b2 h1:cLgCk5mwDG9lDH+dPK8TmEliTjyGJwwKN0qevWAl8IY=
+ github.com/pingcap/errors v0.11.5-0.20260310054046-9c8b3586e4b2/go.mod h1:ktAJCA9lxrHHjVyVl2pKJFvzBnq2eZbb+CUOjBRPlXo=
+ github.com/pingcap/log v1.1.1-0.20260227082333-572e590d08f1 h1:A2bEfgSb7hLwR9mxDszgGKweF+xY9YoTDG+8RjdFjDE=
+@@ -196,20 +196,22 @@ go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.6
+ go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.67.0/go.mod h1:NoUCKYWK+3ecatC4HjkRktREheMeEtrXoQxrqYFeHSc=
+ go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 h1:8tvICD4vSTOOsNrsI4Ljf6C+6UKvpTEH5XY3JMoyPoo=
+ go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0/go.mod h1:z9+yiacE0IHRqM4qFfkbt/JYlmYXgss8GY/jXoNuPJI=
+-go.opentelemetry.io/otel v1.46.0 h1:FHt5/CDyVxi/8IM1CH7VE/rRgq3kLHa2mSTVMO8AWyc=
+-go.opentelemetry.io/otel v1.46.0/go.mod h1:Gj3SEScelsNC45tp4nSxRYlS+f5iez7W8XPMCt905kE=
++go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
++go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
+ go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.43.0 h1:
 ```
 
 ---
 
-### Incident Patch 2: `b33fafc2` (2026-10-26)
-**Commit Message**: Mongodb sampling-based objectid range fix (#4970)
+### Incident Patch 2: `efa5b45f` (2026-10-28)
+**Commit Message**: fix(deps): update npm dependencies (#4982)
 
-sampling-based snapshot partitioning for Object ID builds partitions
-from quantile boundaries of a sample, using MongoDB's `$sample`
-function. This is already supported for string type, extend to ObjectID
-and make it the default option. Object ids are rarely spread evenly over
-the keyspace as insert rates change over time. So a few outlier
-timestampings far from the rest can leave very skewed partitions. Fall
-back to the previous uniform ObjectID division if sampling fails.
+This PR contains the following updates:
 
-Once stabilizes, we can assess removing the dynamic config altogether. 
+| Package | Change |
+[Age](https://docs.renovatebot.com/merge-confidence/) |
+[Confidence](https://docs.renovatebot.com/merge-confidence/) |
+|---|---|---|---|
+| [@radix-ui/react-form](https://radix-ui.com/primitives)
+([source](https://redirect.github.com/radix-ui/primitives/tree/HEAD/packages/react/form))
+| [`^0.1.4` →
+`^0.3.0`](https://renovatebot.com/diffs/npm/@radix-ui%2freact-form/0.1.16/0.3.0)
+|
+![age](https://developer.mend.io/api/mc/badges/age/npm/@radix-ui%2freact-form/0.3.0?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@radix-ui%2freact-form/0.1.16/0.3.0?slim=true)
+|
+| [material-symbols](https://marella.github.io/material-symbols/demo/)
+([source](https://redirect.github.com/marella/material-symbols/tree/HEAD/material-symbols))
+| [`^0.47.0` →
+`^0.48.0`](https://renovatebot.com/diffs/npm/material-symbols/0.47.6/0.48.1)
+|
+![age](https://developer.mend.io/api/mc/badges/age/npm/material-symbols/0.48.1?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/material-symbols/0.47.6/0.48.1?slim=true)
+|
 
-Fixes: DBI-1266
+---
 
----------
+### Release Notes
 
-Co-authored-by: Tanya Whyte <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+<details>
 
-**File**: `flow/connectors/mongo/qrep.go` (modified, +7/-1)
+
+**File**: `ui/package-lock.json` (modified, +16/-119)
 ```diff
-@@ -13,6 +13,7 @@ import (
- 
- 	"github.com/PeerDB-io/peerdb/flow/connectors/utils"
- 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
-+	"github.com/PeerDB-io/peerdb/flow/internal"
- 	"github.com/PeerDB-io/peerdb/flow/model"
- 	"github.com/PeerDB-io/peerdb/flow/otel_metrics"
- 	"github.com/PeerDB-io/peerdb/flow/pkg/common"
-@@ -65,7 +66,12 @@ func (c *MongoConnector) GetQRepPartitions(
- 		return utils.FullTablePartition(), nil
- 	}
- 
--	return c.buildPartitions(ctx, collection, adjustedPartitions.AdjustedNumPartitions)
-+	sampleObjectIDs, err := internal.PeerDBMongoDBSampledObjectIDPartitioning(ctx, config.Env)
-+	if err != nil {
-+		return nil, fmt.Errorf("failed to get sampled ObjectID partitioning setting: %w", err)
-+	}
-+
-+	return c.buildPartitions(ctx, collection, adjustedPartitions.AdjustedNumPartitions, sampleObjectIDs)
- }
- 
- func (c *MongoConnector) GetDefaultPartitionKeyForTables(
+@@ -14,7 +14,7 @@
+         "@radix-ui/react-collapsible": "^1.1.8",
+         "@radix-ui/react-dialog": "^1.1.11",
+         "@radix-ui/react-dropdown-menu": "^2.1.12",
+-        "@radix-ui/react-form": "^0.1.4",
++        "@radix-ui/react-form": "^0.3.0",
+         "@radix-ui/react-icons": "^1.3.2",
+         "@radix-ui/react-popover": "^1.1.11",
+         "@radix-ui/react-progress": "^1.1.4",
+@@ -31,7 +31,7 @@
+         "chart.js": "^4.5.1",
+         "classnames": "^2.5.1",
+         "date-fns": "^4.1.0",
+-        "material-symbols": "^0.47.0",
++        "material-symbols": "^0.48.0",
+         "moment": "^2.30.1",
+         "moment-timezone": "^0.6.0",
+         "next": "^16.0.7",
+@@ -1921,61 +1921,17 @@
+       }
+     },
+     "node_modules/@radix-ui/react-form": {
+-      "version": "0.1.16",
+-      "resolved": "https://registry.npmjs.org/@radix-ui/react-form/-/react-form-0.1.16.tgz",
+-      "integrity": "sha512-Q4TLEn2A7TAypxwmd6R9EwrlXDvkfYSDMrq9/887AXAGh+G1rH+kYJKSTv+Si9Y0JPKTwKYv6PviAJosysNimA==",
++      "version": "0.3.0",
++      "resolved": "https://registry.npmjs.org/@radix-ui/react-form/-/react-form-0.3.0.tgz",
++      "integrity": "sha512-KnmrCM27m7Jo1R8S6cFDPrEeq20Jfn5dqde0SZrJr2lVXlj6/QZSUCyFoYh1d8ti0uUrMNK5Lx6dUDuINT+f4Q==",
+       "license": "MIT",
+       "dependencies": {
+-        "@radix-ui/primitive": "1.1.7",
++        "@radix-ui/primitive": "1.2.0",
+         "@radix-ui/react-compose-refs": "1.1.5",
+-        "@radix-ui/react-context": "1.2.2",
++        "@radix-ui/react-context": "1.3.0",
+         "@radix-ui/react-id": "1.1.4",
+-        "@radix-ui/react-label": "2.1.15",
+-        "@radix-ui/react-primitive": "2.1.10"
+-      },
+-      "peerDependencies": {
+-        "@types/react": "*",
+-        "@types/react-dom": "*",
+-        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
+-        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
+-      },
+-      "peerDependenciesMeta": {
+-        "@types/react": {
+-          "optional": true
+-        },
+-        "@types/react-dom": {
+-          "optional": true
+-        }
+-      }
+-    },
+-    "node_modules/@radix-ui/react-form/node_modules/@radix-ui/primitive": {
+-      "version": "1.1.7",
+-      "resolved": "https://registry.npmjs.org/@radix-ui/primitive/-/primitive-1.1.7.tgz",
+-      "integrity": "sha512-rqWnm76nYT8HoNNqEjpgJ7Pw/DrBj5iBTrmEPo6HTX5+VJyBNOqTdv4g89G63HuR5g0AaENoAcH7Is5fF2kZ8Q==",
+-      "license": "MIT"
+-    },
+-    "node_modules/@radix-ui/react-form/node_modules/@radix-ui/react-context": {
+-      "version": "1.2.2",
+-      "resolved": "https://registry.npmjs.org/@radix-ui/react-context/-/react-context-1.2.2.tgz",
+-      "integrity": "sha512-RHCUGwKHDr0hDGg4X7ma4JG4/+12qxw8rkh5QKdDldlCvtja6nUx1Ef/8HVrJze81lEsgLQlqjzjGNHantgnQA==",
+-      "license": "MIT",
+-      "peerDependencies": {
+-        "@types/react": "*",
+-        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
+-      },
+-      "peerDependenciesMeta": {
+-        "@types/react": {
+-          "optional": true
+-        }
+-      }
+-    },
+-    "node_modules/@radix-ui/react-form/node_modules/@radix-ui/react-primitive": {
+-      "version": "2.1.10",
+-      "resolved": "https://registry.npmjs.org/@radix-ui/react-primitive/-/react-primitive-2.1.10.tgz",
+-      "integrity": "sha512-MucOnzh6hR5mid6VpkbglRAMYMjKLqRnGBbjXkzjK52fuQDd1qbkx78a5P40mkcnVXJdEVxm26E9OPAiUq7nBg==",
+-      "license": "MIT",
+-      "dependencies": {
+-        "@radix-ui/react-slot": "1.3.3"
++        "@radix-ui/react-label": "2.1.17",
++        "@radix-ui/react-primitive": "2.2.0"
+       },
+       "peerDependencies": {
+         "@types/react": "*",
+@@ -1992,24 +1948,6 @@
+         }
+       }
+     },
+-    "node_modules/@radix-ui/react-form/node_modules/@radix-ui/react-slot": {
+-      "version": "1.3.3",
+-      "resolved": "https://registry.npmjs.org/@radix-ui/react-slot/-/react-slot-1.3.3.tgz",
+-      "integrity": "sha512-qx7oqnYbxnK9kYI9m317qmFmEgo6ywqWvbTogdj7cL9p3/yx4M48p7Rnw5z3H890cL/ow/EeWJsuTykeZVXP5Q==",
+-      "license": "MIT",
+-      "dependencies": {
+-        "@radix-ui/react-compose-refs": "1.1.5"
+-      },
+-      "peerDependencies": {
+-        "@types/react": "*",
+-        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
+-      },
+-      "peerDependenciesMeta": {
+-        "@types/react": {
+-          "optional": true
+-        }
+-      }
+-    },
+     "node_modules/@radix-ui/react-icons": {
+       "version": "1.3.2",
+       "resolved": "https://registry.npmjs.org/@radix-ui/react-icons/-/react-icons-1.3.2.tgz",
+@@ -2038,35 +1976,12 @@
+       }
+     },
+     "node_modules/@radix-ui/react-label": {
+-      "version": "2.1.15",
+-      "resolved": "https://registry.npmjs.org/@radix-ui/react-label/-/react-label-2.1.15.tgz",
+-      "integrity": "sha512-o/rdYEwZTTo5tjknnPeyQFU45kUC4i/XyeDPP+HGyi6XqpOP6Zf5Ya5vh/Yfe9Id5JiuWnnAx2XqIeD3UYZt0g==",
+-      "license": "MIT",
+-      "dependencies": {
+-        "@radix-ui/react-primitive": "2.1.10"
+-      },
+-      "peerDependencies": {
+-        "@types/re
 ```
 
-**File**: `flow/connectors/mongo/qrep_partition.go` (modified, +161/-35)
+**File**: `ui/package.json` (modified, +2/-2)
 ```diff
-@@ -1,10 +1,12 @@
- package connmongo
- 
- import (
-+	"bytes"
- 	"context"
- 	"fmt"
- 	"log/slog"
- 	"math/big"
-+	"slices"
- 
- 	"github.com/google/uuid"
- 	"go.mongodb.org/mongo-driver/v2/bson"
-@@ -17,16 +19,17 @@ import (
- )
- 
- const (
--	// stringSampleOversample draws more samples than partitions so quantile
-+	// partitionSampleOversample draws more samples than partitions so quantile
- 	// boundaries are well distributed even with clustered keys.
--	stringSampleOversample = 20
--	// stringSampleMaxSize caps sampling cost on very large collections.
--	stringSampleMaxSize = 100000
-+	partitionSampleOversample = 20
-+	// partitionSampleMaxSize caps sampling cost on very large collections.
-+	partitionSampleMaxSize = 100000
- )
- 
- // buildPartitions reads the collection's min and max _id (cheap, leverages the
- // default _id index) and dispatches to a type-specific partitioner:
--//   - ObjectID  -> uniform division of the 12-byte ObjectID keyspace
-+//   - ObjectID  -> sampling-based quantile boundaries when sampleObjectIDs is set (default),
-+//     or uniform division of the 12-byte ObjectID keyspace
- //   - Int32/64  -> uniform division of the numeric range
- //   - String    -> sampling-based quantile boundaries
- //
-@@ -35,6 +38,7 @@ func (c *MongoConnector) buildPartitions(
- 	ctx context.Context,
- 	collection *mongo.Collection,
- 	numPartitions int64,
-+	sampleObjectIDs bool,
- ) ([]*protos.QRepPartition, error) {
- 	minRaw, err := findBoundaryID(ctx, collection, Lower, c.config.ReadPreference)
- 	if err != nil {
-@@ -55,7 +59,10 @@ func (c *MongoConnector) buildPartitions(
- 
- 	switch {
- 	case minRaw.Type == bson.TypeObjectID && maxRaw.Type == bson.TypeObjectID:
--		return c.objectIDPartitions(minRaw.ObjectID(), maxRaw.ObjectID(), numPartitions)
-+		if sampleObjectIDs {
-+			return c.sampledObjectIDPartitions(ctx, collection, minRaw.ObjectID(), maxRaw.ObjectID(), numPartitions)
-+		}
-+		return c.uniformObjectIDPartitions(minRaw.ObjectID(), maxRaw.ObjectID(), numPartitions)
- 	case isNumericIDType(minRaw.Type) && isNumericIDType(maxRaw.Type):
- 		minVal, _ := rawValueToInt64(minRaw)
- 		maxVal, _ := rawValueToInt64(maxRaw)
-@@ -70,10 +77,10 @@ func (c *MongoConnector) buildPartitions(
- 	}
- }
- 
--// objectIDPartitions divides the ObjectID keyspace uniformly using integer
-+// uniformObjectIDPartitions divides the ObjectID keyspace uniformly using integer
- // arithmetic on the full 12-byte value. Since the leading 4-byte timestamp is the
- // most significant component, this naturally partitions by insertion time.
--func (c *MongoConnector) objectIDPartitions(
-+func (c *MongoConnector) uniformObjectIDPartitions(
- 	minID bson.ObjectID,
- 	maxID bson.ObjectID,
- 	numPartitions int64,
-@@ -125,6 +132,71 @@ func (c *MongoConnector) objectIDPartitions(
- 	return partitions, nil
- }
- 
-+// sampledObjectIDPartitions builds partitions for an ObjectID _id collection from
-+// quantile boundaries of a sample, because _ids are rarely spread evenly over the
-+// keyspace: insert rates change over time, and a few outlying timestamps far from
-+// the rest leave nearly all documents in a handful of uniform partitions. If sampling
-+// fails, it falls back to the uniform ObjectID division; if it yields too few
-+// boundaries, there are too few documents to split, so it uses a full table partition.
-+func (c *MongoConnector) sampledObjectIDPartitions(
-+	ctx context.Context,
-+	collection *mongo.Collection,
-+	minID bson.ObjectID,
-+	maxID bson.ObjectID,
-+	numPartitions int64,
-+) ([]*protos.QRepPartition, error) {
-+	if compareObjectIDs(minID, maxID) >= 0 {
-+		c.logger.Info("[mongo] ObjectID range is non-positive, falling back to full table partition")
-+		return utils.FullTablePartition(), nil
-+	}
-+
-+	rawSamples, err := c.sampleIDs(ctx, collection, numPartitions)
-+	if err != nil {
-+		c.logger.Warn("[mongo] failed to sample ObjectID _ids, falling back to uniform ObjectID partitioning",
-+			slog.Any("error", err))
-+		return c.uniformObjectIDPartitions(minID, maxID, numPartitions)
-+	}
-+	samples := make([]bson.ObjectID, 0, len(rawSamples))
-+	for _, rv := range rawSamples {
-+		if rv.Type == bson.TypeObjectID {
-+			samples = append(samples, rv.ObjectID())
-+		}
-+	}
-+
-+	ranges, err := computeObjectIDBoundaries(minID, maxID, samples, numPartitions)
-+	if err != nil {
-+		return nil, err
-+	}
-+	if len(ranges) < 2 {
-+		c.logger.Info("[mongo] insufficient ObjectID boundaries from sampling, falling back to full table partition",
-+			slog.Int("sampleCount", len(samples)))
-+		return utils.FullTablePartition(), nil
-+	}
-+
-+	c.logger.Info("[mongo] using sampled ObjectID partitioning",
-+		slog.String("minID", minID.Hex()),
-+		slog.String("maxID", maxID.Hex()),
-+		slog.Int("numPartitions", len(ranges)),
-+		slog.Int("sampleCount", len(samples)))
-+
-+	partitions := make([]*protos.QRepPartition, 0, len(ranges))
-+	for _, rng := range ranges {
-+		partitions = append(partitions, &protos.QRepPartition{
-+			PartitionId: uuid.NewString(),
-+			Range: &protos.PartitionRange{
-+				Range: &protos.PartitionRange
-```
-
-**File**: `flow/connectors/mongo/qrep_partition_test.go` (modified, +143/-0)
-```diff
-@@ -1,7 +1,13 @@
- package connmongo
- 
- import (
-+	"encoding/binary"
-+	"math"
-+	"math/big"
-+	"math/rand/v2"
-+	"slices"
- 	"testing"
-+	"time"
- 
- 	"github.com/stretchr/testify/require"
- 	"go.mongodb.org/mongo-driver/v2/bson"
-@@ -118,6 +124,143 @@ func TestComputeStringBoundaries(t *testing.T) {
- 	})
- }
- 
-+// objectIDFromParts builds an ObjectID from a leading 4-byte timestamp and a
-+// trailing 8-byte counter, so tests control both ordering and uniqueness.
-+func objectIDFromParts(ts uint32, counter uint64) bson.ObjectID {
-+	var oid bson.ObjectID
-+	binary.BigEndian.PutUint32(oid[:4], ts)
-+	binary.BigEndian.PutUint64(oid[4:], counter)
-+	return oid
-+}
-+
-+// assertObjectIDRangesContiguous verifies the closed ranges form a gap-free,
-+// non-overlapping cover of [min, max]: first start == min, last end == max, and
-+// each range ends exactly one before the next range starts.
-+func assertObjectIDRangesContiguous(t *testing.T, ranges [][2]bson.ObjectID, minID, maxID bson.ObjectID) {
-+	t.Helper()
-+	require.NotEmpty(t, ranges)
-+	require.Equal(t, minID, ranges[0][0], "first partition must start at min")
-+	require.Equal(t, maxID, ranges[len(ranges)-1][1], "last partition must end at max")
-+	for i := range ranges {
-+		require.LessOrEqual(t, compareObjectIDs(ranges[i][0], ranges[i][1]), 0, "range start must be <= end")
-+		if i+1 < len(ranges) {
-+			afterEnd := new(big.Int).Add(new(big.Int).SetBytes(ranges[i][1][:]), big.NewInt(1))
-+			require.Zerof(t, afterEnd.Cmp(new(big.Int).SetBytes(ranges[i+1][0][:])),
-+				"range %d must end one before range %d starts; a gap would skip documents and an overlap would read them twice",
-+				i, i+1)
-+		}
-+	}
-+}
-+
-+func TestComputeObjectIDBoundaries(t *testing.T) {
-+	minID := objectIDFromParts(1_000, 0)
-+	maxID := objectIDFromParts(2_000, 0)
-+	mid := objectIDFromParts(1_500, 0)
-+
-+	t.Run("even distribution", func(t *testing.T) {
-+		samples := make([]bson.ObjectID, 0, 9)
-+		for ts := uint32(1_100); ts < 2_000; ts += 100 {
-+			samples = append(samples, objectIDFromParts(ts, 0))
-+		}
-+		ranges, err := computeObjectIDBoundaries(minID, maxID, samples, 4)
-+		require.NoError(t, err)
-+		require.Len(t, ranges, 4)
-+		assertObjectIDRangesContiguous(t, ranges, minID, maxID)
-+	})
-+
-+	t.Run("unsorted samples give the same ranges as sorted", func(t *testing.T) {
-+		sorted := []bson.ObjectID{objectIDFromParts(1_200, 0), mid, objectIDFromParts(1_800, 0)}
-+		unsorted := []bson.ObjectID{objectIDFromParts(1_800, 0), objectIDFromParts(1_200, 0), mid}
-+		want, err := computeObjectIDBoundaries(minID, maxID, sorted, 4)
-+		require.NoError(t, err)
-+		got, err := computeObjectIDBoundaries(minID, maxID, unsorted, 4)
-+		require.NoError(t, err)
-+		require.Equal(t, want, got, "boundaries must not depend on the order samples arrive in")
-+	})
-+
-+	t.Run("fewer distinct samples than partitions", func(t *testing.T) {
-+		ranges, err := computeObjectIDBoundaries(minID, maxID, []bson.ObjectID{mid}, 4)
-+		require.NoError(t, err)
-+		require.Len(t, ranges, 2) // one interior boundary -> two partitions
-+		assertObjectIDRangesContiguous(t, ranges, minID, maxID)
-+		require.Equal(t, mid, ranges[1][0])
-+	})
-+
-+	t.Run("duplicate samples deduplicated", func(t *testing.T) {
-+		ranges, err := computeObjectIDBoundaries(minID, maxID, []bson.ObjectID{mid, mid, mid, mid}, 4)
-+		require.NoError(t, err)
-+		require.Len(t, ranges, 2)
-+		assertObjectIDRangesContiguous(t, ranges, minID, maxID)
-+	})
-+
-+	t.Run("samples at or outside min and max ignored", func(t *testing.T) {
-+		// min and max would create zero-width partitions; samples outside the bounds
-+		// come from documents inserted after the bounds were read.
-+		samples := []bson.ObjectID{objectIDFromParts(900, 0), minID, mid, maxID, objectIDFromParts(2_100, 0)}
-+		ranges, err := computeObjectIDBoundaries(minID, maxID, samples, 4)
-+		require.NoError(t, err)
-+		require.Len(t, ranges, 2)
-+		assertObjectIDRangesContiguous(t, ranges, minID, maxID)
-+		require.Equal(t, mid, ranges[1][0])
-+	})
-+
-+	t.Run("no usable samples yields single range", func(t *testing.T) {
-+		ranges, err := computeObjectIDBoundaries(minID, maxID, nil, 4)
-+		require.NoError(t, err)
-+		require.Equal(t, [][2]bson.ObjectID{{minID, maxID}}, ranges) // caller treats <2 as a fallback
-+	})
-+
-+	t.Run("range end borrows across bytes", func(t *testing.T) {
-+		// mid's trailing bytes are all zero, so mid-1 must borrow from the timestamp.
-+		ranges, err := computeObjectIDBoundaries(minID, maxID, []bson.ObjectID{mid}, 2)
-+		require.NoError(t, err)
-+		require.Equal(t, objectIDFromParts(1_499, math.MaxUint64), ranges[0][1])
-+	})
-+
-+	t.Run("skewed _ids still give balanced ranges", func(t *testing.T) {
-+		// Mirrors the collection that motivated sampling: a thin spread of _ids across
-+		// the whole keyspace (1970 to 2106 timestamps) plus most documents inside a few
-+		// hours. An even split of [min, max] puts nearly every document in one range.
-+		const background, dense, numPartitions = 2_000, 98_000, 100
-+		population := make([]bson.ObjectID
-```
-
-**File**: `flow/e2e/mongo_clickhouse/mongo_test.go` (modified, +62/-1)
-```diff
-@@ -1255,7 +1255,7 @@ func (s MongoClickhouseSuite) Test_Delete_Preimage_Validation() {
- 	require.NoError(t, err)
- }
- 
--func (s MongoClickhouseSuite) Test_Simple_Flow_Partitioned() {
-+func (s MongoClickhouseSuite) Test_Simple_Flow_Partitioned_ObjectID_Uniform() {
- 	t := s.T()
- 	srcDatabase := e2e.GetTestDatabase(s.Suffix())
- 	srcTable := "test_simple_partitioned"
-@@ -1269,6 +1269,7 @@ func (s MongoClickhouseSuite) Test_Simple_Flow_Partitioned() {
- 	flowConnConfig := s.generateFlowConnectionConfigsDefaultEnv(connectionGen)
- 	flowConnConfig.DoInitialSnapshot = true
- 	flowConnConfig.SnapshotNumRowsPerPartition = 10
-+	flowConnConfig.Env["PEERDB_MONGODB_SAMPLED_OBJECTID_PARTITIONING"] = "false"
- 
- 	adminClient := s.Source().(*e2e.MongoSource).AdminClient()
- 	collection := adminClient.Database(srcDatabase).Collection(srcTable)
-@@ -1316,6 +1317,66 @@ func (s MongoClickhouseSuite) Test_Simple_Flow_Partitioned() {
- 	e2e.RequireEnvCanceled(t, env)
- }
- 
-+func (s MongoClickhouseSuite) Test_Simple_Flow_Partitioned_ObjectID_Sample() {
-+	t := s.T()
-+	srcDatabase := e2e.GetTestDatabase(s.Suffix())
-+	srcTable := "test_partitioned_sampled_skewed"
-+	dstTable := "test_partitioned_sampled_skewed_dst"
-+
-+	connectionGen := e2e.FlowConnectionGenerationConfig{
-+		FlowJobName:   e2e.AddSuffix(s, srcTable),
-+		TableMappings: e2e.TableMappings(s, srcTable, dstTable),
-+		Destination:   s.Peer().Name,
-+	}
-+	flowConnConfig := s.generateFlowConnectionConfigsDefaultEnv(connectionGen)
-+	flowConnConfig.DoInitialSnapshot = true
-+	flowConnConfig.SnapshotNumRowsPerPartition = 1000
-+
-+	adminClient := s.Source().(*e2e.MongoSource).AdminClient()
-+	collection := adminClient.Database(srcDatabase).Collection(srcTable)
-+
-+	// Mimics the likely $sample path in production: MongoDB uses a random cursor only when the
-+	// sample is under 5% of the collection and the collection has more than 100 documents;
-+	// otherwise scans the whole collection and sorts it randomly. 5,002 documents at
-+	// 1,000 rows per partition give 6 partitions and a 120-document sample (6 x 20, 2.4%).
-+	const clustered = 5_000
-+	docs := make([]any, 0, clustered+2)
-+	baseTime := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
-+	for i := range clustered {
-+		docs = append(docs, bson.D{
-+			{Key: "_id", Value: bson.NewObjectIDFromTimestamp(baseTime.Add(time.Duration(i) * time.Second))},
-+			{Key: "key", Value: fmt.Sprintf("value_%d", i)},
-+		})
-+	}
-+	docs = append(docs,
-+		bson.D{{Key: "_id", Value: bson.NewObjectIDFromTimestamp(time.Unix(1, 0))}, {Key: "outlier", Value: "min"}},
-+		bson.D{{Key: "_id", Value: bson.NewObjectIDFromTimestamp(time.Unix(math.MaxUint32-1, 0))}, {Key: "outlier", Value: "max"}},
-+	)
-+	_, err := collection.InsertMany(t.Context(), docs)
-+	require.NoError(t, err)
-+
-+	tc := e2e.NewTemporalClient(t)
-+	env := e2e.ExecutePeerflow(t, tc, flowConnConfig)
-+
-+	e2e.EnvWaitForEqualTablesWithNames(env, s, "initial load to match", srcTable, dstTable, "_id,doc")
-+
-+	catalogPool, err := internal.GetCatalogConnectionPoolFromEnv(t.Context())
-+	require.NoError(t, err)
-+	var partitionCount int
-+	var maxRowsInPartition int64
-+	require.NoError(t, catalogPool.QueryRow(t.Context(),
-+		`SELECT COUNT(*), COALESCE(MAX(rows_in_partition), 0) FROM peerdb_stats.qrep_partitions WHERE parent_mirror_name = $1`,
-+		flowConnConfig.FlowJobName).Scan(&partitionCount, &maxRowsInPartition))
-+	require.Greaterf(t, partitionCount, 1, "expected a parallel snapshot, got %d partition(s)", partitionCount)
-+	// allow 3x the target since the random cursor gives different boundaries on every run.
-+	require.LessOrEqualf(t, maxRowsInPartition, int64(3_000),
-+		"largest of %d partitions held %d of 5,002 documents; sampling should spread the clustered _ids",
-+		partitionCount, maxRowsInPartition)
-+
-+	env.Cancel(t.Context())
-+	e2e.RequireEnvCanceled(t, env)
-+}
-+
- func (s MongoClickhouseSuite) Test_Simple_Flow_Partitioned_StringID() {
- 	t := s.T()
- 	srcDatabase := e2e.GetTestDatabase(s.Suffix())
-```
-
-**File**: `flow/internal/dynamicconf.go` (modified, +13/-0)
-```diff
-@@ -587,6 +587,15 @@ var DynamicSettings = [...]*protos.DynamicSetting{
- 		ApplyMode:        protos.DynconfApplyMode_APPLY_MODE_AFTER_RESUME,
- 		TargetForSetting: protos.DynconfTarget_ALL,
- 	},
-+	{
-+		Name: "PEERDB_MONGODB_SAMPLED_OBJECTID_PARTITIONING",
-+		Description: "Controls whether MongoDB ObjectID _id snapshot partitions use sampled boundaries instead of " +
-+			"an even split of the min-max _id range",
-+		DefaultValue:     "true",
-+		ValueType:        protos.DynconfValueType_BOOL,
-+		ApplyMode:        protos.DynconfApplyMode_APPLY_MODE_IMMEDIATE,
-+		TargetForSetting: protos.DynconfTarget_ALL,
-+	},
- 	{
- 		Name: "PEERDB_POSTGRES_RAW_BATCH_CLEANUP_THRESHOLD",
- 		Description: "Number of normalized batches to retain in raw table. After normalize, batches older " +
-@@ -1123,6 +1132,10 @@ func PeerDBMongoDBExcludedOperationTypes(ctx context.Context, env map[string]str
- 	return ops, nil
- }
- 
-+func PeerDBMongoDBSampledObjectIDPartitioning(ctx context.Context, env map[string]string) (bool, error) {
-+	return dynamicConfBool(ctx, env, "PEERDB_MONGODB_SAMPLED_OBJECTID_PARTITIONING")
-+}
-+
- func PeerDBPostgresRawBatchCleanupThreshold(ctx context.Context, env map[string]string) (int64, error) {
- 	return dynamicConfSigned[int64](ctx, env, "PEERDB_POSTGRES_RAW_BATCH_CLEANUP_THRESHOLD")
- }
+@@ -17,7 +17,7 @@
+     "@radix-ui/react-collapsible": "^1.1.8",
+     "@radix-ui/react-dialog": "^1.1.11",
+     "@radix-ui/react-dropdown-menu": "^2.1.12",
+-    "@radix-ui/react-form": "^0.1.4",
++    "@radix-ui/react-form": "^0.3.0",
+     "@radix-ui/react-icons": "^1.3.2",
+     "@radix-ui/react-popover": "^1.1.11",
+     "@radix-ui/react-progress": "^1.1.4",
+@@ -34,7 +34,7 @@
+     "chart.js": "^4.5.1",
+     "classnames": "^2.5.1",
+     "date-fns": "^4.1.0",
+-    "material-symbols": "^0.47.0",
++    "material-symbols": "^0.48.0",
+     "moment": "^2.30.1",
+     "moment-timezone": "^0.6.0",
+     "next": "^16.0.7",
 ```
 
 ---
 
-### Incident Patch 3: `0b59f34e` (2026-10-26)
-**Commit Message**: Fix ClickHouse JSON test readback with flattened serialization (#4978)
+### Incident Patch 3: `3d9a5ca4` (2026-10-28)
+**Commit Message**: chore(deps): update temporalio/ui docker tag to v2.56.0 (#4981)
 
-ClickHouse 26.10+ native JSON output makes clickhouse-go and our test
-helper fail when reading the synced e2e values and breaks CI. Pass a
-setting to restore the old format.
+This PR contains the following updates:
 
-**File**: `flow/e2e/clickhouse.go` (modified, +4/-1)
+| Package | Update | Change |
+|---|---|---|
+| [temporalio/ui](https://redirect.github.com/temporalio/ui-server) |
+minor | `2.54.1` → `2.57.0` |
+
+---
+
+### Release Notes
+
+<details>
+<summary>temporalio/ui-server (temporalio/ui)</summary>
+
+###
+[`v2.57.0`](https://redirect.github.com/temporalio/ui-server/releases/tag/v2.57.0)
+
+[Compare
+Source](https://redirect.github.com/temporalio/ui-server/compare/v2.56.0...v2.57.0)
+
+Release synced from
+[ui@v2.57.0](https://redirect.github.com/temporalio/ui/releases/tag/v2.57.0)
+
+#### What's Changed
+
+- Read Node, pnpm, and Go versions from the synced UI by
+[@&#8203;rossnelson](https://redirect.github.com/rossnelson) in
+[#&#8203;343](https://redirect.github.com/temporalio/ui-server/pull/343)
+
+**Full Changelog**:
+<https://github.com/temporalio/ui-server/compare/v2.56.0...v2.57.0>
+
+###
+[`v2.56.0`](https://redirect.github.com/temporalio/ui-server/releases/tag/v2.56.0)
+
+[Compare
+Source](https://redirect.github.com/temporalio/ui-server/compare/v2.55.0...v2.56.0)
+
+Release synced from
+[ui@v2.56.0](https://redirect.github.com/temporalio/ui/releases/tag/v2.
+
+**File**: `docker-compose-dev.yml` (modified, +1/-1)
 ```diff
-@@ -176,8 +176,11 @@ func (s ClickHouseSuite) GetRows(table string, cols string) (*model.QRecordBatch
- 	if strings.HasPrefix(table, "_peerdb_raw") {
- 		rows, rowsErr = s.queryRawTable(ch, table, cols)
- 	} else {
-+		// Remove this setting once clickhouse-go supports ClickHouse 26.10+ native JSON serialization.
- 		rows, rowsErr = ch.Query(
--			s.t.Context(),
-+			clickhouse.Context(s.t.Context(), clickhouse.WithSettings(clickhouse.Settings{
-+				"output_format_native_use_flattened_dynamic_and_json_serialization": 1,
-+			})),
- 			fmt.Sprintf(`SELECT %s FROM "%s" FINAL WHERE _peerdb_is_deleted = 0 ORDER BY 1 SETTINGS use_query_cache = false`, cols, table),
- 		)
- 	}
+@@ -144,7 +144,7 @@ services:
+       - TEMPORAL_ADDRESS=temporal:7233
+       - TEMPORAL_CORS_ORIGINS=http://localhost:3030
+       - TEMPORAL_CSRF_COOKIE_INSECURE=true
+-    image: temporalio/ui:2.54.1@sha256:ff0943fe532b8e33c46cd28b29e81e0ce0b6f55b9ee50a38ef1b437cc4de3fa5
++    image: temporalio/ui:2.57.0@sha256:d944f959d0923c35cd991a17a0edbe087770eff843724b181933e0cfdd563ab2
+     ports:
+       - *temporal-ui-port
+ 
+```
+
+**File**: `docker-compose.yml` (modified, +1/-1)
+```diff
+@@ -108,7 +108,7 @@ services:
+       - TEMPORAL_ADDRESS=temporal:7233
+       - TEMPORAL_CORS_ORIGINS=http://localhost:3000
+       - TEMPORAL_CSRF_COOKIE_INSECURE=true
+-    image: temporalio/ui:2.54.1@sha256:ff0943fe532b8e33c46cd28b29e81e0ce0b6f55b9ee50a38ef1b437cc4de3fa5
++    image: temporalio/ui:2.57.0@sha256:d944f959d0923c35cd991a17a0edbe087770eff843724b181933e0cfdd563ab2
+     ports:
+       - 8085:8080
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4988** (closed): perf(avro): replace hamba/avro with twmb/avro (@pfcoperez)
+- **PR #4984** (2026-10-28): fix(deps): update gomod dependencies (@renovate[bot])
+- **PR #4982** (2026-10-28): fix(deps): update npm dependencies (@renovate[bot])
+- **PR #4981** (2026-10-28): chore(deps): update temporalio/ui docker tag to v2.57.0 (@renovate[bot])
 - **PR #4978** (2026-10-26): Fix ClickHouse JSON test readback with flattened serialization (@ilidemi)
 - **PR #4976** (2026-10-27): Update decimal to v1.5.0 and preserve large numeric values (@ilidemi)
-- **PR #4973** (2026-10-24): security: pin UI Node image to fixed 24.22.1 (CVE-2026-111497 / Node2Shell) (@motsc)
-- **PR #4971** (2026-10-25): refactor(clickhouse): reuse table mapping and column setting lookups (@dtunikov)
-- **PR #4970** (2026-10-26): Mongodb sampling-based objectid range fix (@jgao54)
-- **PR #4968** (2026-10-23): fix(query-cdc): only catch up when the poll window was capped (@dtunikov)
 
 ---
 
@@ -2695,28 +2421,42 @@ setting to restore the old format.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update gomod dependencies (#4891)
+## X. deps): update gomod dependencies (#4984)
 
 **RULE**:
-When implementing operations in `e2e_cleanup/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `flow/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6048edfc`: deps): update gomod dependencies (#4891). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ab1ba0c5`: deps): update gomod dependencies (#4984). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e_cleanup/go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/snowflakedb/gosnowflake/v2 v2.3.0
+	github.com/ClickHouse/ch-go v0.75.0
+	github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager v0.4.18
+	github.com/aws/aws-sdk-go-v2/service/kms v1.61.5
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.4
+	github.com/aws/smithy-go v1.28.6
+	github.com/shopspring/decimal v1.6.0
+	go.temporal.io/api v1.64.0
+	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.23 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/snowflakedb/gosnowflake/v2 v2.2.0
+	github.com/ClickHouse/ch-go v0.74.0
+	github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager v0.4.16
+	github.com/aws/aws-sdk-go-v2/service/kms v1.61.4
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.3
+	github.com/aws/smithy-go v1.28.5
+	github.com/shopspring/decimal v1.5.0
+	go.temporal.io/api v1.63.7
+	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.22 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6048edfc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ab1ba0c5` are properly handled with clean fallback behavior.

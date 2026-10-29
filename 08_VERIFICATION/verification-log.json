@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-FPS3",
-    "timestamp": "2026-10-27T20:11:40.995Z",
-    "repository": "pixeltable/pixeltable",
-    "learningId": "learn-github-pixeltable-pixeltable",
-    "contentHash": "cdfb59edd8a185e971e489543217dce77f71473d5b4ee47bb8ee3f8cb7b0c033",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-FQG5",
-    "timestamp": "2026-10-27T20:11:41.861Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "ef973ae5ed53d005ea72d39c611fc33312fa495285a7da565243ecb37c3c9545",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-QOAX",
     "timestamp": "2026-10-27T20:20:12.297Z",
     "repository": "actions/actions-runner-controller",
@@ -7490,6 +7460,36 @@
     "repository": "xerj-org/xerj",
     "learningId": "learn-github-xerj-org-xerj",
     "contentHash": "a94372a32ade6d89ee52f6f28fde64068370606bc907046330b3bce93f80a823",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-FZSZ",
+    "timestamp": "2026-10-29T02:03:29.411Z",
+    "repository": "jacklandrin/OnlySwitch",
+    "learningId": "learn-github-jacklandrin-onlyswitch",
+    "contentHash": "e74a4444dfed54730990f795e6e3edc1197c9ef3fe1fc45b9868c7843143098a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-G1FM",
+    "timestamp": "2026-10-29T02:03:31.522Z",
+    "repository": "PeerDB-io/peerdb",
+    "learningId": "learn-github-peerdb-io-peerdb",
+    "contentHash": "7a2487ab51b47afdbf8487362a7eb54cb1cd775f8e8c229475abe32847760f02",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

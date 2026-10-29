@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-29T02:00:19.849Z",
-  "total_cycles_completed": 5997,
-  "total_learnings_persisted": 5997,
-  "total_rules_promoted": 5453,
+  "last_updated": "2026-10-29T02:03:31.528Z",
+  "total_cycles_completed": 5999,
+  "total_learnings_persisted": 5999,
+  "total_rules_promoted": 5455,
   "history": [
-    {
-      "timestamp": "2026-10-28T15:29:46.748Z",
-      "repository": "Aleph-Alpha/Kolibri-1",
-      "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T15:29:50.120Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T15:29:51.450Z",
       "repository": "etcd-io/etcd",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-29T02:00:19.849Z",
       "repository": "xerj-org/xerj",
       "learningId": "learn-github-xerj-org-xerj",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T02:03:29.418Z",
+      "repository": "jacklandrin/OnlySwitch",
+      "learningId": "learn-github-jacklandrin-onlyswitch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T02:03:31.528Z",
+      "repository": "PeerDB-io/peerdb",
+      "learningId": "learn-github-peerdb-io-peerdb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

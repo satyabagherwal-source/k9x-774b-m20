@@ -3573,10 +3573,10 @@
     "repository": "PeerDB-io/peerdb",
     "platform": "github",
     "sourceUrl": "https://github.com/PeerDB-io/peerdb",
-    "sourceVersion": "65ce26b8",
+    "sourceVersion": "efa5b45f",
     "license": "AGPL-3.0",
-    "contentHash": "ead50e198a79458088b5bdcb46610eb458c45be64538e6c31ac9f3f874631696",
-    "lastHarvestedAt": "2026-10-27T13:35:14.802Z",
+    "contentHash": "7a2487ab51b47afdbf8487362a7eb54cb1cd775f8e8c229475abe32847760f02",
+    "lastHarvestedAt": "2026-10-29T02:03:31.525Z",
     "learningId": "learn-github-peerdb-io-peerdb"
   },
   "tailscale-tailscale": {
@@ -8063,10 +8063,10 @@
     "repository": "jacklandrin/OnlySwitch",
     "platform": "github",
     "sourceUrl": "https://github.com/jacklandrin/OnlySwitch",
-    "sourceVersion": "abbde3ce",
+    "sourceVersion": "d1bce595",
     "license": "MIT",
-    "contentHash": "cc77505eb24fd0b77cb261bf36bfcd44aa3a52c5a61a834c1b72d33a89ebcbb7",
-    "lastHarvestedAt": "2026-10-25T17:59:17.502Z",
+    "contentHash": "e74a4444dfed54730990f795e6e3edc1197c9ef3fe1fc45b9868c7843143098a",
+    "lastHarvestedAt": "2026-10-29T02:03:29.414Z",
     "learningId": "learn-github-jacklandrin-onlyswitch"
   },
   "alin23-lunar": {
