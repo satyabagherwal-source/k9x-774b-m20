@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-29T23:13:49.768Z",
-  "total_cycles_completed": 6049,
-  "total_learnings_persisted": 6049,
-  "total_rules_promoted": 5517,
+  "last_updated": "2026-10-29T23:28:42.476Z",
+  "total_cycles_completed": 6051,
+  "total_learnings_persisted": 6051,
+  "total_rules_promoted": 5519,
   "history": [
-    {
-      "timestamp": "2026-10-28T18:13:58.855Z",
-      "repository": "Bingsu/adetailer",
-      "learningId": "learn-huggingface-bingsu-adetailer",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T18:14:10.047Z",
-      "repository": "vespa-engine/vespa",
-      "learningId": "learn-github-vespa-engine-vespa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T18:27:20.773Z",
       "repository": "lilylilith/QI_2.1_AnyAngle",
@@ -1403,6 +1389,20 @@
       "repository": "1jehuang/jcode",
       "learningId": "learn-github-1jehuang-jcode",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T23:28:39.421Z",
+      "repository": "saltstack/salt",
+      "learningId": "learn-github-saltstack-salt",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T23:28:42.476Z",
+      "repository": "typedb/typedb",
+      "learningId": "learn-github-typedb-typedb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

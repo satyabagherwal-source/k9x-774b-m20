@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/saltstack-salt-learnings.md`  
 > **Source**: github ([https://github.com/saltstack/salt](https://github.com/saltstack/salt))  
-> **Source Version**: `401a8531`  
+> **Source Version**: `7ee1f136`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T14:49:41.691Z  
+> **Timestamp**: 2026-10-29T23:28:38.781Z  
 > **Learning ID**: `learn-github-saltstack-salt`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/saltstack-salt-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/saltstack/salt](https://github.com/saltstack/salt))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T14:49:41.683Z  
+> **Harvest Timestamp**: 2026-10-29T23:28:37.183Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Software to automate the management and configuration of infrastructure and applications at scale.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 15726 stars
+- **Stars / Engagement**: 15727 stars
 
 ---
 
@@ -1955,15 +1955,13 @@ def start(grains=False, grain_keys=None, pillar=False, pillar_keys=None):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #70456** (2026-10-23): **[Bug]: 47818**
-  *Symptoms*: ### What happened?  47818  ### Type of salt install  Official deb  ### Major version  3006.x  ### What supported OS are you seeing the problem on? Can select multiple. (If bug appears on an unsupported OS, please open a GitHub Discussion instead)  debian-11  ### salt --versions-report output  ```shell 3006.x ```
+- **Issue #70590** (2026-10-28): **[Bug]: ResourceWarning emitted after calling destroy() on MasterMinion**
+  *Symptoms*: ### What happened?  `MasterMinion.__del__` [checks](https://github.com/saltstack/salt/blob/3008.x/salt/minion.py#L1746) whether the object leaked by comparing certain attributes with `None`. However, in [`destroy`](https://github.com/saltstack/salt/blob/3008.x/salt/minion.py#L1662), `{}` is assigned to object instead of `None`. So, this is always `False` and false-positive warnings are appearing in the logs.  ### Type of salt install  pip (pypi)  ### Major version  3008.x  ### What supported OS are you seeing the problem on? Can select multiple. (If bug appears on an unsupported OS, please open a GitHub Discussion instead)  ubuntu-24.04  ### salt --versions-report output  ```shell Salt Version:           Salt: 3008.3-1   Python Version:         Python: 3.14.7 (main, Sep 30 2026, 03:35:11) [GCC 11.2.0]   Dependency Versions:           cffi: 2.0.0       cherrypy: 18.10.0   cryptography: 50.0.1       dateutil: 2.9.0.post0      docker-py: Not Installed          gitdb: 4.0.12      gitpython: 3.2.0         Jinja2: 3.1.6        libgit2: Not Installed   looseversion: 1.3.0       M2Crypto: Not Installed           Mako: Not Installed        msgpack: 1.2.1   msgpack-pure: Not Installed   mysql-python: Not Installed      packaging: 24.0      pycparser: 3.00       pycrypto: Not Installed   pycryptodome: 3.23.0         pygit2: Not Installed   python-gnupg: 0.5.6         PyYAML: 6.0.3          PyZMQ: 27.1.0         relenv: 0.22.27          smmap: 5.0.2        timelib: 0.3.0        Tornado: 
   **Post-Mortem & Fix Analysis**:
-  > Closing as part of a backlog cleanup — this issue was filed without a Salt versions-report, so there's no explicit version attached to compare against.  **If you (or anyone else) can still reproduce this on 3008.3 or later, please comment with:**  - A fresh reproduction - The output of `salt --versions-report`  and the issue will be reopened. The original reporter can also reopen directly.
+  > Sorry, already fixed in fd30146e77
 
-- **Issue #70455** (2026-10-23): **[Bug]: 47816**
-  *Symptoms*: ### What happened?  47816  ### Type of salt install  Official deb  ### Major version  3006.x  ### What supported OS are you seeing the problem on? Can select multiple. (If bug appears on an unsupported OS, please open a GitHub Discussion instead)  debian-11  ### salt --versions-report output  ```shell 3006.x ```
-  **Post-Mortem & Fix Analysis**:
-  > Closing as part of a backlog cleanup — this issue was filed without a Salt versions-report, so there's no explicit version attached to compare against.  **If you (or anyone else) can still reproduce this on 3008.3 or later, please comment with:**  - A fresh reproduction - The output of `salt --versions-report`  and the issue will be reopened. The original reporter can also reopen directly.
+- **Issue #70561** (2026-10-28): **[Bug]: Master cluster peers leak sockets**
+  *Symptoms*: ### What happened?  In [`salt/cluster/consensus/peer.py`](https://github.com/saltstack/salt/blob/3008.x/salt/cluster/consensus/peer.py#L100), the publishers are meant to be reused. However it happens only when the connect succeeds. In case of exception, the publisher is not closed. If one peer is temporarily down, a connection leaks on each election attempt. Fixes for #70175 partially improved this by adding a garbage collector, but (a) it now floods the logs with warnings and (b) it's still better not to allow leaks in the first place.  Also [`pusher` in `salt/channel/server.py`](https://github.com/saltstack/salt/blob/3008.x/salt/channel/server.py#L3256) has three callers: - [`_send_state_sync_chunks`](https://github.com/saltstack/salt/blob/3008.x/salt/channel/server.py#L26080) - [cluster/peer/join in `_publish_daemon`](https://github.com/saltstack/salt/blob/3008.x/salt/channel/server.py#L3844) - [cluster/peer/discover in  `_publish_daemon`](https://github.com/saltstack/salt/blob/3008.x/salt/channel/server.py#L3976),  neither of which closes the corresponding publisher and its socket.  ### Type of salt install  pip (pypi)  ### Major version  3008.x  ### What supported OS are you seeing the problem on? Can select multiple. (If bug appears on an unsupported OS, please open a GitHub Discussion instead)  ubuntu-24.04  ### salt --versions-report output  ```shell Salt Version:           Salt: 3008.3-1   Python Version:         Python: 3.14.7 (main, Sep 30 2026, 03:35:11) [GCC 11.2
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1980,206 +1978,299 @@ def start(grains=False, grain_keys=None, pillar=False, pillar_keys=None):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `401a8531` (2026-10-28)
-**Commit Message**: [master] Fix MySQL cache entry enumeration output (#66103)
+### Incident Patch 1: `02b2fa06` (2026-10-28)
+**Commit Message**: #Issue63469 Update documentation to include performance impact warnings and workaround (#63610)
 
-* Fix entry enumeration output
+* #Issue63469 update Docs
 
-* Add changelog
+* #63610 Suggested changes
 
-* pre-commit suggested fixes
+* Fix warning wording and rST formatting in salt-key.rst
 
-* Address result correctly
+- Replace broken English and duplicated 'degradation' phrase in all 4
+  warning blocks with accurate, idiomatic text
+- Fix markdown link syntax to rST hyperlink syntax so Sphinx renders
+  clickable links
+- Add blank line before each .. warning:: directive so Sphinx parses
+  the admonition correctly
+- Tailor each warning to its specific operation: reject vs reject-all,
+  delete vs delete-all (per twangboy review 2025-04-02)
+- Wrap long lines in intro_scale.rst to fit within 80 characters
 
-* Fix mysql_cache.ls() to return both direct keys and sub-bank names
+Fixes #63469
 
-The original PR #66103 fix (SELECT bank LIKE 'bank/%') correctly enumerated
-sub-banks (fixing manage.present) but dropped direct keys (SELECT etcd_key
-WHERE bank=exact), breaking the cross-backend cache contract exercised by
-tests/pytests/functional/cache/helpers.py::run_common_cache_tests.
+* Add changelog entry for PR #63610
 
-Replace with two queries whose results are union'd:
-1. SELECT etcd_key WHERE bank=<bank>  — direct keys at this bank level
-2. SELECT DISTINCT SUBSTRING_INDEX(SUBSTR(bank, N), '/', 1) WHERE bank LIKE
-   '<bank>/%'  — first-level sub-bank names (MySQL SUBSTR is 1-indexed)
+---------
 
-Add three unit tests covering direct keys, sub-bank enumeration, and
-combined results.
+Co-authored-by: Daniel A. Wozniak <[REDACTED_EMAIL]>
+Co-authored-by: Daniel A. Wozniak <[REDACTED_EMAIL]>
 
-Fixes #66102
+**File**: `changelog/63610.changed.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++Add performance impact warnings to ``salt-key`` documentation for reject and delete operations that trigger AES key regeneration and mass minion re-authentication.
+```
+
+**File**: `doc/ref/cli/salt-key.rst` (modified, +30/-0)
+```diff
+@@ -105,10 +105,25 @@ Actions
+     Reject the specified public key (use --include-all to match accepted keys
+     in addition to pending keys). Globs are supported.
+ 
++    .. warning::
++        Rejecting a minion key causes the Salt master to generate a new AES key,
++        which triggers all connected minions to re-authenticate simultaneously.
++        This may degrade Salt master performance. See the
++        `performance guide <https://docs.saltproject.io/en/latest/topics/tutorials/intro_scale.html#too-many-minions-re-authing>`_
++        for details on performance impacts and possible workarounds.
++
+ .. option:: -R, --reject-all
+ 
+     Rejects all pending keys.
+ 
++    .. warning::
++        Rejecting many minion keys simultaneously causes the Salt master to
++        generate a new AES key for each rejection, which triggers all connected
++        minions to re-authenticate. This may degrade Salt master performance.
++        See the
++        `performance guide <https://docs.saltproject.io/en/latest/topics/tutorials/intro_scale.html#too-many-minions-re-authing>`_
++        for details on performance impacts and possible workarounds.
++
+ .. option:: --include-all
+ 
+     Include non-pending keys when accepting/rejecting.
+@@ -125,10 +140,25 @@ Actions
+ 
+     Delete the specified key. Globs are supported.
+ 
++    .. warning::
++        Deleting a minion key causes the Salt master to generate a new AES key,
++        which triggers all connected minions to re-authenticate simultaneously.
++        This may degrade Salt master performance. See the
++        `performance guide <https://docs.saltproject.io/en/latest/topics/tutorials/intro_scale.html#too-many-minions-re-authing>`_
++        for details on performance impacts and possible workarounds.
++
+ .. option:: -D, --delete-all
+ 
+     Delete all keys.
+ 
++    .. warning::
++        Deleting many minion keys simultaneously causes the Salt master to
++        generate a new AES key for each deletion, which triggers all connected
++        minions to re-authenticate. This may degrade Salt master performance.
++        See the
++        `performance guide <https://docs.saltproject.io/en/latest/topics/tutorials/intro_scale.html#too-many-minions-re-authing>`_
++        for details on performance impacts and possible workarounds.
++
+ .. option:: -f FINGER, --finger=FINGER
+ 
+     Print the specified key's fingerprint.
+```
+
+**File**: `doc/topics/tutorials/intro_scale.rst` (modified, +5/-4)
+```diff
+@@ -76,10 +76,11 @@ and parameters are frequently changed in the Salt Master's configuration
+ file(s).
+ 
+ The Salt Master generates a new AES key to encrypt its publications at certain
+-events such as a Master restart or the removal of a Minion key.  If you are
+-encountering this problem of too many minions re-authing against the Master,
+-you will need to recalibrate your setup to reduce the rate of events like a
+-Master restart or Minion key removal (``salt-key -d``).
++events, such as a Master restart or the removal/rejection of a Minion key. If
++you are encountering a problem where too many minions are re-authorizing
++against the Master, you need to recalibrate your setup. Try reducing the rate
++of re-authorizing events, such as a Master restart, Minion key removal
++(``salt-key -d``) or Minion key rejection (``salt-key -r``).
+ 
+ When the Master generates a new AES key, the minions aren't notified of this
+ but will discover it on the next pub job they receive. When the Minion
+```
+
+---
+
+### Incident Patch 2: `f900218a` (2026-10-28)
+**Commit Message**: [master] fix ephemeral interface addition (#64584)
+
+* fix ephemeral interface addition
+
+* Add changelog and test for ephemeral interface KeyError fix
+
+Add changelog fragment 64584.fixed.md and unit test
+test_ephemeral_interface_no_keyerror() covering the case where a network
+interface appears after LAST_STATS initialization, verifying no KeyError
+is raised and the new interface fires a beacon event.
 
 ---------
 
 Co-authored-by: Daniel A. Wozniak <[REDACTED_EMAIL]>
 
-**File**: `changelog/66102.fixed.md` (added, +1/-0)
+**File**: `changelog/64584.fixed.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+Fix MySQL cache driver ls results which fixes salt-run manage.present
++Fix ``KeyError`` in the ``network_settings`` beacon when a new network interface appears after beacon initialization.
 ```
 
-**File**: `salt/cache/mysql_cache.py` (modified, +29/-2)
+**File**: `salt/beacons/network_settings.py` (modified, +2/-0)
 ```diff
-@@ -319,13 +319,40 @@ def ls(bank):
-     bank.
-     """
-     _init_client()
-+    # Return both direct keys in this bank AND first-level sub-bank names.
-+    # MySQL stores entries flat; a "sub-bank" is a row whose bank column
-+    # starts with <bank>/.  Direct keys have bank == <bank> exactly.
-+    out = set()
-+
-+    # Query 1: direct keys (etcd_key) for rows whose bank exactly matches.
-     query = "SELECT etcd_key FROM {} WHERE bank=%s".format(
-         __context__["mysql_table_name"]
-     )
-     cur, _ = run_query(__context__.get("mysql_client"), query, args=(bank,))
--    out = [row[0] for row in cur.fetchall()]
-+    for row in cur.fetchall():
-+        out.add(row[0])
-+    cur.close()
-+
-+    # Query 2: first-level sub-bank names for rows nested below this bank.
-+    bank_path = bank + "/"
-+    # SUBSTR(bank, N) strips the "<bank>/" prefix (MySQL SUBSTR is 1-indexed);
-+    # SUBSTRING_INDEX(..., '/', 1) keeps only the first path component so
-+    # deeper nesting doesn't leak through.
-+    prefix_len = len(bank_path) + 1
-+    query = (
-+        "SELECT DISTINCT SUBSTRING_INDEX(SUBSTR(bank, %s), '/', 1)"
-+        " FROM {} WHERE bank LIKE %s".format(__context__["mysql_table_name"])
-+    )
-+    cur, _ = run_query(
-+        __context__.get("mysql_client"),
-+        query,
-+        args=(prefix_len, bank_path + "%"),
-+    )
-+    for row in cur.fetchall():
-+        out.add(row[0])
-     cur.close()
--    return out
-+
-+    return list(out)
- 
- 
- def contains(bank, key):
+@@ -221,6 +221,8 @@ def beacon(config):
+     log.debug("interfaces %s", interfaces)
+     for interface in interfaces:
+         _send_event = False
++        if interface not in LAST_STATS:
++            LAST_STATS[interface] = set()
+         _diff_stats = _stats[interface] - LAST_STATS[interface]
+         _ret_diff = {}
+         interface_config = _config["interfaces"][interface]
 ```
 
-**File**: `tests/pytests/unit/cache/test_mysql_cache.py` (modified, +97/-0)
+**File**: `tests/pytests/unit/beacons/test_network_settings.py` (modified, +46/-0)
 ```diff
-@@ -197,6 +197,103 @@ def test_init_client():
-             assert mysql_cache.__context__["mysql_fresh_connection"]
+@@ -151,6 +151,52 @@ def test_wildcard_interface():
+         assert ret == _expected
  
  
-+def test_ls_direct_keys():
++def test_ephemeral_interface_no_keyerror():
 +    """
-+    Tests that ls() returns direct keys stored under exactly the given bank.
++    Beacon must not raise KeyError when a new interface appears between calls.
 +
-+    After store(bank='fnord/kevin/stuart', key='roscivs', data=...) the
-+    contract requires cache.list('fnord/kevin/stuart') == ['roscivs'].
-+    Query 1 (SELECT etcd_key WHERE bank=<bank>) must return the key.
++    LAST_STATS is seeded from the first beacon() call. If an interface comes
++    up afterwards (ephemeral bridge, WireGuard tunnel, hotplug NIC), it will
++    be present in _stats but absent from LAST_STATS. Without the guard added
++    in #64584 the set-difference ``_stats[iface] - LAST_STATS[iface]`` raises
++    a KeyError.
 +    """
-+    mock_connect_client = MagicMock()
-+    # Q1 (exact match) returns the key; Q2 (sub-banks LIKE) returns nothing.
-+    q1_cursor = MagicMock()
-+    q1_cursor.fetchall.return_value = [("roscivs",)]
-+    q2_cursor = MagicMock()
-+    q2_cursor.fetchall.return_value = []
++    config = [{"interfaces": {"eth*": {"promiscuity": None}}}]
 +
-+    with patch.object(mysql_cache, "_init_client"):
-+        with patch.dict(
-+            mysql_cache.__context__,
-+            {
-+                "mysql_table_name": "salt",
-+                "mysql_client": mock_connect_client,
-+            },
-+        ):
-+            with patch.object(mysql_cache, "run_query") as mock_run_query:
-+                mock_run_query.side_effect = [
-+                    (q1_cursor, 1),
-+                    (q2_cursor, 0),
-+                ]
-+                result = mysql_cache.ls(bank="fnord/kevin/stuart")
++    # First call: only eth0 exists.
++    INITIAL_STATS = network_settings._copy_interfaces_info(
++        {"eth0": {"family": "0", "promiscuity": "0", "group": "0"}}
++    )
++    # Second call: eth1 has appeared (ephemeral addition).
++    AFTER_STATS = network_settings._copy_interfaces_info(
++        {
++            "eth0": {"family": "0", "promiscuity": "0", "group": "0"},
++            "eth1": {"family": "0", "promiscuity": "0", "group": "0"},
++        }
++    )
 +
-+    assert sorted(result) == ["roscivs"]
++    ret = network_settings.validate(config)
++    assert ret == (True, "Valid beacon configuration")
 +
++    with patch.object(network_settings, "LAST_STATS", {}), patch.object(
++        network_settings, "IP", MockIPClass
++    ), patch(
++        "salt.beacons.network_settings._copy_interfaces_info",
++        MagicMock(side_effect=[INITIAL_STATS, AFTER_STATS]),
++    ):
++        # First call seeds LAST_STATS with eth0 only; no events expected.
++        ret = network_settings.beacon(config)
++        assert ret == []
 +
-+def test_ls_subbanks_for_manage_present():
-+    """
-+    Tests that ls() returns sub-bank names when data is stored under nested
-+    banks — the manage.present use case.
-+
-+    Minion data is stored as store(bank='minions/<id>', key='data', ...).
-+    cache.list('minions') must return the minion IDs.  Query 2
-+    (SUBSTRING_INDEX(SUBSTR(bank, N), '/', 1) WHERE bank LIKE 'minions/%')
-+    must return the IDs.
-+    """
-+    mock_connect_client = MagicMock()
-+    # Q1 (exact match on 'minions') returns nothing; Q2 (sub-banks) returns ids.
-+    q1_cursor = MagicMock()
-+    q1_cursor.fetchall.return_value = []
-+    q2_cursor = MagicMock()
-+    q2_cursor.fetchall.return_value = [("minion1",), ("minion2",)]
-+
-+    with patch.object(mysql_cache, "_init_client"):
-+        with patch.dict(
-+            mysql_cache.__context__,
-+            {
-+                "mysql_table_name": "salt",
-+                "mysql_client": mock_connect_client,
-+            },
-+        ):
-+            with patch.object(mysql_cache, "run_query") as mock_run_query:
-+                mock_run_query.side_effect = [
-+                    (q1_cursor, 0),
-+                    (q2_cursor, 2),
-+                ]
-+                result = mysql_cache.ls(bank="minions")
-+
-+    assert sorted(result) == ["minion1", "minion2"]
++        # Second call: eth1 is new — must not raise KeyError; eth1 fires an
++        # event because all of its attrs are "new" relative to the empty seed.
++        ret = network_settings.beacon(config)
++        assert isinstance(ret, list)
++        assert not any(isinstance(item, Exception) for item in ret)
++        tags = [item["tag"] for item in ret]
++        assert "eth1" in tags
 +
 +
-+def test_ls_combined_direct_and_subbanks():
-+    """
-+    Tests that ls() returns both direct keys AND sub-bank names when both are
-+    present, deduplicating via a set so no entry appears twice.
-+    """
-+    mock_connect_client = MagicMock()
-+    q1_cursor = MagicMock()
-+    q1_cursor.fetchall.return_value = [("key1",), ("key2",)]
-+    q2_cursor = MagicMock()
-+    q2_cursor.fetchall.return_value = [("child",)]
+ @pytest.mark.skipif(HAS_IPDB is False, reason="pyroute2.IPDB not available, skipping")
+ def test_interface_dict_fields_old():
+     with IPDB() as ipdb:
+```
+
+---
+
+### Incident Patch 3: `5837d334` (2026-10-29)
+**Commit Message**: Merge pull request #70586 from dwoz/dwoz/fix/46336-enable-legacy-startup-events-default-false-master
+
+Flip enable_legacy_startup_events default to False
+
+**File**: `changelog/46336.changed.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++Changed the default of `enable_legacy_startup_events` from `True` to `False`. The legacy `minion_start` / `syndic_start` events are no longer emitted by default; the namespaced `salt/minion/<minion_id>/start` and `salt/syndic/<minion_id>/start` events continue to fire. Set `enable_legacy_startup_events: True` in the minion config to restore the legacy events.
+```
+
+**File**: `doc/ref/configuration/minion.rst` (modified, +9/-6)
+```diff
+@@ -237,20 +237,23 @@ minion event bus. The value is expressed in bytes.
+ 
+ .. versionadded:: 2019.2.0
+ 
+-Default: ``True``
++.. versionchanged:: 3009.0
 +
-+    with patch.object(mysql_cache, "_init_client"):
-+        with patch.dict(
-+            mysql_cache.__context__,
-+            {
-+                "mysql_table_name": "salt",
-+                "mysql_client": mock_connect_client,
-+            },
-+        ):
-+            with patch.object(mysql_cache, "run_query") as mock_run_query:
-+                mock_run_query.side_effect = [
-+                    (q1_cursor, 2),
-+                    (q2_cursor, 1),
-+                ]
-+                result = mysql_cache.ls(bank="somebank")
++    Default changed from ``True`` to ``False``.
 +
-+    assert sorted(result) == ["child", "key1", "key2"]
-+
-+
- def test_create_table():
-     """
-     Tests that the _create_table
++Default: ``False``
+ 
+ When a minion starts up it sends a notification on the event bus with a tag
+ that looks like this: ``salt/minion/<minion_id>/start``. For historical reasons
+ the minion also sends a similar event with an event tag like this:
+ ``minion_start``. This duplication can cause a lot of clutter on the event bus
+-when there are many minions. Set ``enable_legacy_startup_events: False`` in the
+-minion config to ensure only the ``salt/minion/<minion_id>/start`` events are
+-sent. Beginning with the ``3001`` Salt release this option will default to
+-``False``.
++when there are many minions. Set ``enable_legacy_startup_events: True`` in the
++minion config to restore the legacy ``minion_start`` events in addition to the
++``salt/minion/<minion_id>/start`` events.
+ 
+ .. code-block:: yaml
+ 
+-    enable_legacy_startup_events: True
++    enable_legacy_startup_events: False
+ 
+ .. conf_minion:: master_failback
+ 
+```
+
+**File**: `salt/config/__init__.py` (modified, +1/-1)
+```diff
+@@ -1366,7 +1366,7 @@ def _gather_buffer_space():
+         "log_rotate_max_bytes": 0,
+         "log_rotate_backup_count": 0,
+         "max_event_size": 1048576,
+-        "enable_legacy_startup_events": True,
++        "enable_legacy_startup_events": False,
+         "test": False,
+         "ext_job_cache": "",
+         "cython_enable": False,
+```
+
+**File**: `salt/minion.py` (modified, +2/-2)
+```diff
+@@ -4145,7 +4145,7 @@ async def _fire_master_minion_start(self):
+             include_grains = True
+         # Send an event to the master that the minion is live
+         if self.opts["enable_legacy_startup_events"]:
+-            # Old style event. Defaults to False in 3001 release.
++            # Old style event. Default flipped to False in 3009.0 release.
+             await self._fire_master_main(
+                 "Minion {} started at {}".format(self.opts["id"], time.asctime()),
+                 "minion_start",
+@@ -5872,7 +5872,7 @@ async def _send_req_async(self, load, timeout):
+     def fire_master_syndic_start(self):
+         # Send an event to the master that the minion is live
+         if self.opts["enable_legacy_startup_events"]:
+-            # Old style event. Defaults to false in 3001 release.
++            # Old style event. Default flipped to False in 3009.0 release.
+             self._fire_master(
+                 "Syndic {} started at {}".format(self.opts["id"], time.asctime()),
+                 "syndic_start",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #70572** (2026-10-27): Address dropped merge forward commits (@dwoz)
-- **PR #70562** (2026-10-27): Close the publishers to prevent leaks (@nsychev)
-- **PR #70560** (2026-10-28): Address cluster peers correctly on IPv6 (@nsychev)
-- **PR #70558** (2026-10-28): Pass extra and sinfo to their own makeRecord slots (@nsychev)
-- **PR #70556** (2026-10-28): Restore (accidentally?) deleted Saltclass pillar module. (@dhs-rec)
-- **PR #70546** (2026-10-23): Loosen packaging pin from == to >= on 3007.15-patch (@dwoz)
+- **PR #70597** (2026-10-29): Wait for SSH banner in test_ssh_setup to kill kex_exchange_identification race (@dwoz)
+- **PR #70596** (2026-10-29): Stabilize minion blackout scenario tests (@dwoz)
+- **PR #70595** (2026-10-29): Re-enable ssh tests skipped for old Python compat (#66545) (@dwoz)
+- **PR #70594** (2026-10-29): Re-enable tests/pytests/functional/utils/test_process.py (#66551) (@dwoz)
+- **PR #70593** (closed): Propose the synchronous boundary for the asyncio migration (@charzl)
+- **PR #70591** (closed): Recover the event stream after missing peer key exchange (@nsychev)
 
 ---
 
@@ -2199,21 +2290,21 @@ Co-authored-by: Daniel A. Wozniak <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [master] Fix MySQL cache entry enumeration output (#66103)
+## X. #Issue63469 Update documentation to include performance impact warnings and work
 
 **RULE**:
-When implementing operations in `changelog/66102.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in saltstack/salt. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog/63610.changed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in saltstack/salt. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `401a8531`: [master] Fix MySQL cache entry enumeration output (#66103). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `02b2fa06`: #Issue63469 Update documentation to include performance impact warnings and workaround (#63610). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/66102.fixed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/63610.changed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-Fix MySQL cache driver ls results which fixes salt-run manage.present
+Add performance impact warnings to ``salt-key`` documentation for reject and delete operations that trigger AES key regeneration and mass minion re-authentication.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2223,4 +2314,4 @@ Fix MySQL cache driver ls results which fixes salt-run manage.present
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `401a8531` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `02b2fa06` are properly handled with clean fallback behavior.

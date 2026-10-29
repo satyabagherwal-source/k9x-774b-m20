@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-9H9X",
-    "timestamp": "2026-10-27T22:54:47.733Z",
-    "repository": "cachix/devenv",
-    "learningId": "learn-github-cachix-devenv",
-    "contentHash": "ebd77dc2c879a739db7ecf8fa1a74000d533111e91fb61aae78eb7f7fbebcb4e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-I9DI",
-    "timestamp": "2026-10-27T23:01:37.398Z",
-    "repository": "sqldelight/sqldelight",
-    "learningId": "learn-github-sqldelight-sqldelight",
-    "contentHash": "bddd721293a6aef30c5c0873c0a9762b63514b5cc54b27466defaed9e8ac7264",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-IBWE",
     "timestamp": "2026-10-27T23:01:40.670Z",
     "repository": "siderolabs/talos",
@@ -7492,6 +7462,36 @@
     "contentHash": "0ea49685dfab461fdf31cb065d4d8f061f0854ce74b8099d79dc5e14df796e10",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-CQ9H",
+    "timestamp": "2026-10-29T23:28:39.413Z",
+    "repository": "saltstack/salt",
+    "learningId": "learn-github-saltstack-salt",
+    "contentHash": "2ac01539a60836dae1901fa8e27e6b13e6fd17d9751b0097fee9e9e024697a53",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-CSMB",
+    "timestamp": "2026-10-29T23:28:42.467Z",
+    "repository": "typedb/typedb",
+    "learningId": "learn-github-typedb-typedb",
+    "contentHash": "f7d1bb581b3c908c7f0117d11b0664b6eebd928560f2e713b02a67ac3ed56b2a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

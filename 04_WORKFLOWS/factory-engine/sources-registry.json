@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-29T23:13:52.320Z",
-    "lastVerified": "2026-10-29T23:13:52.320Z",
+    "lastChecked": "2026-10-29T23:28:45.011Z",
+    "lastVerified": "2026-10-29T23:28:45.011Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -401,8 +401,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T22:19:20.850Z",
-    "lastVerified": "2026-10-29T22:19:20.850Z",
+    "lastChecked": "2026-10-29T23:28:38.967Z",
+    "lastVerified": "2026-10-29T23:28:38.967Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -848,8 +848,8 @@
     "officialUrl": "https://github.com/bee-san/Ciphey",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T01:24:45.626Z",
-    "lastVerified": "2026-10-29T01:24:45.626Z",
+    "lastChecked": "2026-10-29T23:28:34.034Z",
+    "lastVerified": "2026-10-29T23:28:34.034Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bee-san-ciphey",
@@ -2459,9 +2459,9 @@
   "rigellute-spotify-tui": {
     "name": "spotify-tui",
     "officialUrl": "https://github.com/Rigellute/spotify-tui",
-    "lastChecked": "2026-10-28T07:31:26.043Z",
+    "lastChecked": "2026-10-29T23:28:24.005Z",
     "revisionIdentifier": "c4dcf6b9",
-    "lastVerified": "2026-10-28T07:31:26.043Z"
+    "lastVerified": "2026-10-29T23:28:24.005Z"
   },
   "hf-akatz-ai-minimax-h3-character-swap-lora": {
     "name": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -4092,11 +4092,21 @@
     "lastVerified": "2026-10-29T17:23:33.602Z"
   },
   "typedb-typedb": {
-    "name": "typedb",
+    "name": "typedb/typedb",
     "officialUrl": "https://github.com/typedb/typedb",
-    "lastChecked": "2026-10-28T13:56:55.373Z",
-    "revisionIdentifier": "2879ce4f",
-    "lastVerified": "2026-10-28T13:56:55.373Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-29T23:28:41.815Z",
+    "lastVerified": "2026-10-29T23:28:41.815Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-typedb-typedb",
+    "contentHash": "f7d1bb581b3c908c7f0117d11b0664b6eebd928560f2e713b02a67ac3ed56b2a",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "transact-rs-sqlx": {
     "name": "transact-rs/sqlx",
@@ -4474,14 +4484,14 @@
     "officialUrl": "https://github.com/saltstack/salt",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-28T14:49:41.683Z",
-    "lastVerified": "2026-10-28T14:49:41.683Z",
+    "lastChecked": "2026-10-29T23:28:37.183Z",
+    "lastVerified": "2026-10-29T23:28:37.183Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-saltstack-salt",
-    "contentHash": "91980244a1fefa48a5337747907e9d02382effd51a21b50b859414c8dda5d544",
+    "contentHash": "2ac01539a60836dae1901fa8e27e6b13e6fd17d9751b0097fee9e9e024697a53",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8602,5 +8612,19 @@
     "lastChecked": "2026-10-29T23:09:26.027Z",
     "revisionIdentifier": "a68da3e3",
     "lastVerified": "2026-10-29T23:09:26.027Z"
+  },
+  "chris-c-thomas-oxideseo": {
+    "name": "OxideSEO",
+    "officialUrl": "https://github.com/chris-c-thomas/OxideSEO",
+    "lastChecked": "2026-10-29T23:28:26.515Z",
+    "revisionIdentifier": "88feb867f5",
+    "lastVerified": "2026-10-29T23:28:26.515Z"
+  },
+  "emergetools-pow": {
+    "name": "Pow",
+    "officialUrl": "https://github.com/EmergeTools/Pow",
+    "lastChecked": "2026-10-29T23:28:28.959Z",
+    "revisionIdentifier": "1b4b1dda",
+    "lastVerified": "2026-10-29T23:28:28.959Z"
   }
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-29T23:13:49.772Z",
+  "last_updated": "2026-10-29T23:28:42.481Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6606,14 +6606,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-typedb-typedb",
-      "content_hash": "9a6b00afd894561c4e42a3146c5bb55b2d6ab92b3be6ccaec498ab3bbfb37c73",
-      "verified_at": "2026-10-27T21:45:15.386Z",
+      "content_hash": "f7d1bb581b3c908c7f0117d11b0664b6eebd928560f2e713b02a67ac3ed56b2a",
+      "verified_at": "2026-10-29T23:28:42.480Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T21:45:15.386Z"
+      "last_updated": "2026-10-29T23:28:42.480Z"
     },
     "mfontanini/presenterm": {
       "repository": "mfontanini/presenterm",
@@ -7266,14 +7266,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-saltstack-salt",
-      "content_hash": "91980244a1fefa48a5337747907e9d02382effd51a21b50b859414c8dda5d544",
-      "verified_at": "2026-10-28T14:49:42.137Z",
+      "content_hash": "2ac01539a60836dae1901fa8e27e6b13e6fd17d9751b0097fee9e9e024697a53",
+      "verified_at": "2026-10-29T23:28:39.425Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T14:49:42.137Z"
+      "last_updated": "2026-10-29T23:28:39.425Z"
     },
     "etcd-io/etcd": {
       "repository": "etcd-io/etcd",

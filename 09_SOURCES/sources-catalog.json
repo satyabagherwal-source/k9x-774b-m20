@@ -4323,10 +4323,10 @@
     "repository": "typedb/typedb",
     "platform": "github",
     "sourceUrl": "https://github.com/typedb/typedb",
-    "sourceVersion": "2879ce4f",
+    "sourceVersion": "77d1bd0e",
     "license": "MPL-2.0",
-    "contentHash": "9a6b00afd894561c4e42a3146c5bb55b2d6ab92b3be6ccaec498ab3bbfb37c73",
-    "lastHarvestedAt": "2026-10-27T21:45:15.377Z",
+    "contentHash": "f7d1bb581b3c908c7f0117d11b0664b6eebd928560f2e713b02a67ac3ed56b2a",
+    "lastHarvestedAt": "2026-10-29T23:28:42.471Z",
     "learningId": "learn-github-typedb-typedb"
   },
   "mfontanini-presenterm": {
@@ -4763,10 +4763,10 @@
     "repository": "saltstack/salt",
     "platform": "github",
     "sourceUrl": "https://github.com/saltstack/salt",
-    "sourceVersion": "401a8531",
+    "sourceVersion": "7ee1f136",
     "license": "Apache-2.0",
-    "contentHash": "91980244a1fefa48a5337747907e9d02382effd51a21b50b859414c8dda5d544",
-    "lastHarvestedAt": "2026-10-28T14:49:42.129Z",
+    "contentHash": "2ac01539a60836dae1901fa8e27e6b13e6fd17d9751b0097fee9e9e024697a53",
+    "lastHarvestedAt": "2026-10-29T23:28:39.416Z",
     "learningId": "learn-github-saltstack-salt"
   },
   "etcd-io-etcd": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T23:13:49.684Z",
+  "last_updated": "2026-10-29T23:28:42.397Z",
   "total_verified_learnings": 1169,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -47390,8 +47390,8 @@
       "slug": "saltstack-salt",
       "platform": "github",
       "source_url": "https://github.com/saltstack/salt",
-      "source_version": "401a8531",
-      "content_hash": "91980244a1fefa48a5337747907e9d02382effd51a21b50b859414c8dda5d544",
+      "source_version": "7ee1f136",
+      "content_hash": "2ac01539a60836dae1901fa8e27e6b13e6fd17d9751b0097fee9e9e024697a53",
       "dossier_path": "07_PROJECT_LEARNING/saltstack-salt-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/saltstack-salt-learnings.md",
       "promoted_rules": [
@@ -47414,6 +47414,11 @@
           "number": 5316,
           "title": "[master] Fix MySQL cache entry enumeration output (#66103)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5553,
+          "title": "#Issue63469 Update documentation to include performance impact warnings and work",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47421,7 +47426,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T14:49:42.051Z",
+      "verified_at": "2026-10-29T23:28:39.314Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54004,8 +54009,8 @@
       "slug": "typedb-typedb",
       "platform": "github",
       "source_url": "https://github.com/typedb/typedb",
-      "source_version": "2879ce4f",
-      "content_hash": "9a6b00afd894561c4e42a3146c5bb55b2d6ab92b3be6ccaec498ab3bbfb37c73",
+      "source_version": "77d1bd0e",
+      "content_hash": "f7d1bb581b3c908c7f0117d11b0664b6eebd928560f2e713b02a67ac3ed56b2a",
       "dossier_path": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
       "promoted_rules": [
@@ -54048,6 +54053,11 @@
           "number": 5032,
           "title": "Add concurrent workers for import (#8029)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5554,
+          "title": "Don't let transaction services excessively hold query manager refs (#8040)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54055,7 +54065,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T21:45:15.288Z",
+      "verified_at": "2026-10-29T23:28:42.379Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -149399,6 +149409,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T23:13:49.666Z"
+    },
+    "rule-5553": {
+      "learning_id": "rule-5553",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5553,
+      "title": "#Issue63469 Update documentation to include performance impact warnings and work",
+      "source_url": "https://github.com/saltstack/salt",
+      "source_version": "7ee1f136",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T23:28:39.314Z"
+    },
+    "rule-5554": {
+      "learning_id": "rule-5554",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5554,
+      "title": "Don't let transaction services excessively hold query manager refs (#8040)",
+      "source_url": "https://github.com/typedb/typedb",
+      "source_version": "77d1bd0e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T23:28:42.379Z"
     }
   },
   "aliases": {
