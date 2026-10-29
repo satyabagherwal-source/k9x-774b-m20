@@ -6067,3 +6067,5 @@ Every entry in this ledger must capture:
 | `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `1b58f5dd` | Multi-dimensional audit evidence | 2026-10-29T17:23:31.862Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `e14fe198` | Multi-dimensional audit evidence | 2026-10-29T17:23:41.699Z |
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `8197b045` | Multi-dimensional audit evidence | 2026-10-29T17:23:45.549Z |
+| `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `a0468502` | Multi-dimensional audit evidence | 2026-10-29T17:40:32.349Z |
+| `learn-github-maziyarpanahi-openmed` | `https://github.com/maziyarpanahi/openmed` | `d554f264` | Multi-dimensional audit evidence | 2026-10-29T17:40:37.842Z |

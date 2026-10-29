@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-29T17:23:48.101Z",
-    "lastVerified": "2026-10-29T17:23:48.101Z",
+    "lastChecked": "2026-10-29T17:40:40.398Z",
+    "lastVerified": "2026-10-29T17:40:40.398Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -229,12 +229,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T16:48:24.607Z",
-    "lastVerified": "2026-10-29T16:48:24.607Z",
+    "lastChecked": "2026-10-29T17:35:40.693Z",
+    "lastVerified": "2026-10-29T17:35:40.693Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -243,7 +243,8 @@
     "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c0e32115"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -385,9 +386,9 @@
   "openziti-zrok": {
     "name": "zrok",
     "officialUrl": "https://github.com/openziti/zrok",
-    "lastChecked": "2026-10-29T00:16:08.318Z",
+    "lastChecked": "2026-10-29T17:35:35.822Z",
     "revisionIdentifier": "09ed814e",
-    "lastVerified": "2026-10-29T00:16:08.318Z"
+    "lastVerified": "2026-10-29T17:35:35.822Z"
   },
   "run-llama-llama_index": {
     "name": "llama_index",
@@ -2227,11 +2228,21 @@
     "lastVerified": "2026-10-29T00:09:17.279Z"
   },
   "zeronsh-zeron": {
-    "name": "zeron",
+    "name": "zeronsh/zeron",
     "officialUrl": "https://github.com/zeronsh/zeron",
-    "lastChecked": "2026-10-28T06:31:02.364Z",
-    "revisionIdentifier": "ab189159",
-    "lastVerified": "2026-10-28T06:31:02.364Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-29T17:35:30.359Z",
+    "lastVerified": "2026-10-29T17:35:30.359Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-zeronsh-zeron",
+    "contentHash": "342873094fea829810ca14d26135a21864698eb9c7e54c447d64c100bd612ba3",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-akhilaaa3-jev-omni": {
     "name": "akhilaaa3/Jev-Omni",
@@ -3744,9 +3755,9 @@
   "spacejam-sled": {
     "name": "sled",
     "officialUrl": "https://github.com/spacejam/sled",
-    "lastChecked": "2026-10-28T13:16:44.426Z",
+    "lastChecked": "2026-10-29T17:35:38.078Z",
     "revisionIdentifier": "e449d171",
-    "lastVerified": "2026-10-28T13:16:44.426Z"
+    "lastVerified": "2026-10-29T17:35:38.078Z"
   },
   "aome510-spotify-player": {
     "name": "spotify-player",
@@ -4112,9 +4123,9 @@
   "nitrictech-nitric": {
     "name": "nitric",
     "officialUrl": "https://github.com/nitrictech/nitric",
-    "lastChecked": "2026-10-28T14:08:39.415Z",
+    "lastChecked": "2026-10-29T17:35:33.108Z",
     "revisionIdentifier": "8b1be250",
-    "lastVerified": "2026-10-28T14:08:39.415Z"
+    "lastVerified": "2026-10-29T17:35:33.108Z"
   },
   "qovery-replibyte": {
     "name": "Replibyte",
@@ -8434,5 +8445,29 @@
     "lastChecked": "2026-10-29T17:23:31.026Z",
     "revisionIdentifier": "d8192c12",
     "lastVerified": "2026-10-29T17:23:31.026Z"
+  },
+  "iaincollins-structured-data-testing-tool": {
+    "name": "structured-data-testing-tool",
+    "officialUrl": "https://github.com/iaincollins/structured-data-testing-tool",
+    "lastChecked": "2026-10-29T17:35:28.108Z",
+    "revisionIdentifier": "8300079044",
+    "lastVerified": "2026-10-29T17:35:28.108Z"
+  },
+  "maziyarpanahi-openmed": {
+    "name": "maziyarpanahi/openmed",
+    "officialUrl": "https://github.com/maziyarpanahi/openmed",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-29T17:35:35.381Z",
+    "lastVerified": "2026-10-29T17:35:35.381Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-maziyarpanahi-openmed",
+    "contentHash": "3d43cd24350eaa6b6c12f33eb64fc0cb6323d5a502424182b48c75fcd7caff76",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

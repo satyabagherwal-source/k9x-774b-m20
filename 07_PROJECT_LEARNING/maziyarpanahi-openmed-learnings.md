@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md`  
 > **Source**: github ([https://github.com/maziyarpanahi/openmed](https://github.com/maziyarpanahi/openmed))  
-> **Source Version**: `00e9efd7`  
+> **Source Version**: `d554f264`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T19:51:41.455Z  
+> **Timestamp**: 2026-10-29T17:40:37.149Z  
 > **Learning ID**: `learn-github-maziyarpanahi-openmed`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/maziyarpanahi/openmed](https://github.com/maziyarpanahi/openmed))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T19:51:41.250Z  
+> **Harvest Timestamp**: 2026-10-29T17:35:35.381Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Local-first healthcare AI: clinical NER and HIPAA PII de-identification on hardware you control. 2,200+ medical models, 35 model-backed PII languages, and Python, MLX, Android and browser runtimes. Apache-2.0 SDK.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5711 stars
+- **Stars / Engagement**: 5724 stars
 
 ---
 
@@ -2325,515 +2325,396 @@ def _check_element(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `00e9efd7` (2026-10-23)
-**Commit Message**: fix: require patched GitPython for the docs profile
+### Incident Patch 1: `b25cbc5c` (2026-10-26)
+**Commit Message**: fix: repair docs deep links and dependency security gates
 
-The vulnerability scan now blocks GitPython 3.1.62 for the HIGH
-CVE-2026-114145, fixed in 3.2.1. Raise the docs extra floor and the
-lock constraint, and cover it in the published-floor regression table.
-The strict Pages build passes with GitPython 3.2.1.
-
-**File**: `CHANGELOG.md` (modified, +3/-2)
+**File**: `Dockerfile` (modified, +1/-1)
 ```diff
-@@ -381,8 +381,9 @@ clinical efficacy. Package publication remains a separate release action.
- ### Security
+@@ -40,7 +40,7 @@ COPY eval/redteam/corpus/adversarial_phi.jsonl /app/eval/redteam/corpus/
  
- - Require patched OpenTelemetry API 1.45.1 in the optional `dev`, `otel` and
--  `service` profiles, and lock patched virtualenv 21.14.13, Brotli 1.2.1 and
--  graphql-core 3.2.12. A lock-only packaging override lifts Prefect 3.7's
-+  `service` profiles and GitPython 3.2.1 in the `docs` profile, and lock
-+  patched virtualenv 21.14.13, Brotli 1.2.1 and graphql-core 3.2.12. A
-+  lock-only packaging override lifts Prefect 3.7's
-   `packaging<26.3` cap so the lock keeps Airflow on patched 3.3.2; the base
-   SDK's dependency set is unchanged.
- - Refresh the service image's exact Debian forky pins for ca-certificates,
+ RUN python -m pip install --no-cache-dir --upgrade \
+         "pip==26.2.0" \
+-        "setuptools==83.0.0" \
++        "setuptools==84.1.0" \
+         "wheel==0.47.0" \
+         "jaraco.context==6.1.2" \
+     && pip install --no-cache-dir --index-url https://download.pytorch.org/whl/cpu "torch>=2.13.0,<3" \
 ```
 
-**File**: `pyproject.toml` (modified, +2/-1)
+**File**: `Dockerfile.mcp` (modified, +1/-1)
 ```diff
-@@ -501,7 +501,7 @@ docs = [
-   "mkdocs-minify-plugin>=0.8.0",
-   "mkdocs-static-i18n>=1.3,<2",
-   "pymdown-extensions>=11.0.1,<12",
--  "gitpython>=3.1.60,<4",
-+  "gitpython>=3.2.1,<4",
-   "mkdocstrings[python]",
-   "griffe",
- ]
-@@ -542,6 +542,7 @@ constraint-dependencies = [
+@@ -11,7 +11,7 @@ COPY . /app
+ 
+ RUN python -m pip install --no-cache-dir --upgrade \
+         "pip==26.1.2" \
+-        "setuptools==83.0.0" \
++        "setuptools==84.1.0" \
+         "wheel==0.47.0" \
+         "jaraco.context==6.1.2" \
+     && pip install --no-cache-dir --index-url https://download.pytorch.org/whl/cpu torch \
+```
+
+**File**: `deploy/docker/Dockerfile` (modified, +1/-1)
+```diff
+@@ -46,7 +46,7 @@ COPY eval/redteam/corpus/adversarial_phi.jsonl /app/eval/redteam/corpus/
+ 
+ RUN python -m pip install --no-cache-dir --upgrade \
+         "pip==26.2.0" \
+-        "setuptools==83.0.0" \
++        "setuptools==84.1.0" \
+         "wheel==0.47.0" \
+         "jaraco.context==6.1.2" \
+     && pip install --no-cache-dir --index-url https://download.pytorch.org/whl/cpu "torch>=2.13.0,<3" \
+```
+
+**File**: `docs/security/dependency-policy.md` (modified, +24/-27)
+```diff
+@@ -37,33 +37,30 @@ project overrides. Other runners and image transforms need separate validation.
+ Brand checks retain generator-version provenance, master bytes, derivative
+ pixels and committed hashes; upgrades do not authorize image drift.
+ 
+-## Optional storage dependencies
+-
+-The v3.1 release review raises the existing optional dependency closures to
+-`aiohttp>=3.14.4`, `banks>=2.5.1`, `mako>=1.4.2`, `multidict>=6.9.1` and
+-`tinytag>=2.3.0` for the fixes reported by the October 20 lockfile scan.
+-Each affected extra publishes its minimum version, and the universal lock
+-uses the same floors. No package is added to the core install; AWQ retains
+-its Linux-only markers. The unpatched NLTK finding is evaluated separately
+-under the [time-limited dependency review](dependency-risk.md).
+-
+-Every optional profile that resolves `fsspec` requires `fsspec>=2026.6.0` in
+-published package metadata as well as the frozen dependency graph. The same
+-profiles require `jinja2>=3.1.6`, since an older sandbox can still admit
+-[private traversal through the attr/format filter](https://github.com/pallets/jinja/security/advisories/GHSA-cpwx-vrp4-4pq7).
+-This includes
+-model and orchestration profiles that reach filesystem support transitively;
+-the base SDK still does not install it. The AWQ floor retains its Linux-only
+-marker. The frozen cloud profile pairs fsspec 2026.6.0 with s3fs 2026.6.0 to
+-respect the datasets and S3 adapter version bounds.
+-
+-The floor addresses
+-[reference-template code execution](https://github.com/fsspec/filesystem_spec/security/advisories/GHSA-27vj-qcqg-25rc).
+-Synthetic regressions cover all three reference-template paths, rejecting
+-private attribute traversal and indirect format access while retaining ordinary
+-variable interpolation.
+-Filesystem initialization happens before downstream protocol checks, so those
+-checks are not a substitute for installing the patched dependency.
++## Optional storage and locking dependencies
++
++Affected extras publish the October 20 security floors: `aiohttp>=3.14.4`,
++`banks>=2.5.1`, `mako>=1.4.2`, `multidict>=6.9.1` and `tinytag>=2.3.0`.
++The frozen lock agrees; core dependencies and AWQ's Linux-only boundary remain
++unchanged. NLTK has a separate [time-limited review](dependency-risk.md).
++
++Filesystem profiles require `fsspec>=2026.6.0` and `jinja2>=3.1.6` for
++[reference-template execution](https://github.com/fsspec/filesystem_spec/security/advisories/GHSA-27vj-qcqg-25rc)
++and [attr/format traversal](https://github.com/pallets/jinja/security/advisories/GHSA-cpwx-vrp4-4pq7).
++Tests reject both traversal forms across all three template paths while retaining
++variable interpolation. Downstream protocol checks occur too late to replace
++these fixes. The cloud lock pairs fsspec and s3fs 2026.6.0.
++
++Locking profiles use `filelock>=4.2.1` on Python 3.11+ and exactly 3.20.3 on
++Python 3.10, before the vulnerable code was introduced. Pre-commit runs on
++3.11+; core and Hub tests still run on 3.10. Setuptools-backed profiles and
++container recipes require 84.1.0 for the namespace-file path fix.
++
++Snowflake 4.x still caps filelock below 4. The repository overrides that cap;
++its cache persistence, lock contention and local Snowpark UDF tests validate the
++combination. Use `uv sync --frozen --extra snowflake` from this checkout.
++Ordinary pip cannot resolve the secure Snowflake extra on Python 3.11+ until
++upstream lifts its cap. Live Snowflake sessions require separate validation.
+ 
+ ## Optional graph and Beam dependencies
+ 
+```
+
+**File**: `docs/security/license-inventory.md` (modified, +2/-0)
+```diff
+@@ -50,6 +50,7 @@ a dependency also declared in another extra.
+ | `extract-msg` | `email-msg-gpl` | `GPL-3.0-only` |
+ | `faker` | `default` | `MIT` |
+ | `fastapi` | `service` | `MIT` |
++| `filelock` | Optional locking profiles; 3.20.3 uses Unlicense, 4.x MIT | `MIT OR Unlicense` |
+ | `fsspec` | `agents`, `airflow`, `awq`, `cloud`, `coreml`, `dagster`, `dask`, `edge-sbc`, `gliner`, `gptq`, `hf`, `journey`, `llamaindex`, `mlx`, `multimodal`, `onnx`, `onnx-runtime`, `openvino`, `prefect`, `ray`, `triton`, `zh-hanlp` | `BSD-3-Clause` |
+ | `jinja2` | Same optional profiles as `fsspec`; never part of the base SDK | `BSD-3-Clause` |
+ | `langgraph-sdk` | `agents, langgraph` | `MIT` |
+@@ -131,6 +132,7 @@ a dependency also declared in another extra.
+ | `safetensors` | `mlx` | `Apache-2.0` |
+ | `scispacy` | `scispacy` | `Apache-2.0` |
+ | `scrubadub` | `scrubadub` | `Apache-2.0` |
++| `setuptools` | Optional integration tooling; not core | `MIT` |
+ | `snowflake-snowpark-python` | `snowflake` | `Apache-2.0` |
+ | `spacy` | `spacy` | `MIT` |
+ | `sqlalchemy` | `sqlalchemy` | `MIT` |
+```
+
+**File**: `docs/snowflake-udf.md` (modified, +6/-2)
+```diff
+@@ -5,12 +5,16 @@ Snowflake warehouse. The handler is a plain Python callable, while Snowpark is
+ an optional dependency: importing `openmed` or `openmed.interop` does not
+ import Snowpark.
+ 
+-Install the optional extra in the environment that creates the registration:
++From the current OpenMed checkout, install the frozen registration environment:
+ 
+ ```bash
+-pip install "openmed[snowflake]"
++uv sync --frozen --extra snowflake --python 3.11
+ ```
+ 
++Snowflake's filelock cap needs the repository's tested security override.
++Ordinary pip cannot resolve this extra on Python 3.11+; see the
++[dependency policy](security/dependency-policy.md#optional-storage-and-locking-dependencies).
++
+ ## Register with Snowpark
+ 
+ ```python
+```
+
+**File**: `examples/openhim-mediator/Dockerfile` (modified, +1/-1)
+```diff
+@@ -17,7 +17,7 @@ COPY examples/openhim-mediator/mediator-config.json /etc/openmed/mediator-config
+ 
+ RUN python -m pip install --no-cache-dir --upgrade \
+         "pip==26.1.2" \
+-        "setuptools==83.0.0" \
++        "setuptools==84.1.0" \
+         "wheel==0.47.0" \
+         "jaraco.context==6.1.2" \
+     && pip install --no-cache-dir ".[service]"
+```
+
+**File**: `examples/warehouse-remote-function/Dockerfile` (modified, +1/-1)
+```diff
+@@ -11,7 +11,7 @@ COPY openmed /app/openmed
+ 
+ RUN python -m pip install --no-cache-dir --upgrade \
+         "pip==26.1.2" \
+-        "setuptools==83.0.0" \
++        "setuptools==84.1.0" \
+         "wheel==0.47.0" \
+         "jaraco.context==6.1.2" \
+     && pip install --no-cache-dir --index-url https://download.pytorch.org/whl/cpu torch \
+```
+
+---
+
+### Incident Patch 2: `b8d2a3e8` (2026-10-27)
+**Commit Message**: fix: require the patched Brotli CFFI decoder
+
+**File**: `pyproject.toml` (modified, +1/-0)
+```diff
+@@ -622,6 +622,7 @@ constraint-dependencies = [
+   "urllib3>=2.8.0",
+   "virtualenv>=21.14.9",
    "brotli>=1.2.1",
++  "brotlicffi>=1.2.1.0",
    "graphql-core>=3.2.12",
    "opentelemetry-api>=1.45.1",
-+  "gitpython>=3.2.1",
-   "betterproto==2.0.0b6; python_version >= '3.11'",
-   "pyjwt>=2.14.0",
- ]
+   "gitpython>=3.2.1",
 ```
 
 **File**: `tests/unit/security/test_pip_audit_gate.py` (modified, +1/-0)
 ```diff
-@@ -407,6 +407,7 @@ def test_awq_torch_floor_keeps_the_existing_linux_only_boundary() -> None:
-         ("banks", "2.5.0", "2.5.1", ("agents", "llamaindex")),
-         ("datasets", "5.0.0", "5.0.1", ("awq", "gptq")),
-         ("fsspec", "2026.4.0", "2026.6.0", ("dev", "cloud", "journey")),
-+        ("gitpython", "3.1.62", "3.2.1", ("docs",)),
-         ("h2", "4.3.0", "4.4.1", ("beam", "prefect")),
-         ("langgraph-sdk", "0.4.3", "0.4.4", ("agents", "langgraph")),
-         ("mcp", "1.29.1", "1.30.0", ("dev", "mcp")),
-```
-
-**File**: `uv.lock` (modified, +5/-4)
-```diff
-@@ -680,6 +680,7 @@ constraints = [
-     { name = "certifi", specifier = ">=2026.10.19" },
-     { name = "datasets", specifier = ">=5.0.1" },
-     { name = "fsspec", specifier = ">=2026.6.0" },
-+    { name = "gitpython", specifier = ">=3.2.1" },
-     { name = "graphql-core", specifier = ">=3.2.12" },
-     { name = "h2", specifier = ">=4.4.1" },
-     { name = "jinja2", specifier = ">=3.1.6" },
-@@ -5895,14 +5896,14 @@ wheels = [
- 
- [[package]]
- name = "gitpython"
--version = "3.1.62"
-+version = "3.2.1"
- source = { registry = "https://pypi.org/simple" }
- dependencies = [
-     { name = "gitdb" },
- ]
--sdist = { url = "https://files.pythonhosted.org/packages/e0/db/3ca813cbacb23ab6fe46ff38a9b5ef8e73e970c8051f2ce903aacafe0446/gitpython-3.1.62.tar.gz", hash = "sha256:1791de66309bc0c7cfca40bf8d2e3de7ca091cbf94e6051be1ad0722c61062af", size = 231728, upload-time = "2026-09-07T02:57:21.155Z" }
-+sdist = { url = "https://files.pythonhosted.org/packages/c0/ff/fee293f1ec3e1b64db6eb270e00964f29c086d769201474cedb8d1608930/gitpython-3.2.1.tar.gz", hash = "sha256:0f1229ec5c057bdabdeeda8bda4f17bda679ab33dbccc00f24e6a480553c8613", size = 241688, upload-time = "2026-10-14T12:20:20.589Z" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/d6/0b/29d7965215f8ef830a7ca1f42997fe13e5693d85e9edb18f938d063ef5f2/gitpython-3.1.62-py3-none-any.whl", hash = "sha256:7002251225e10e29d2e1f49e6532613fe5d5d9f0b6f1f02997a52b38fe56899e", size = 222753, upload-time = "2026-09-07T02:57:19.762Z" },
-+    { url = "https://files.pythonhosted.org/packages/6b/50/2a923c4dc02522ff9567f07c67ed1deca6d5fa9474f4708168b8088dfa37/gitpython-3.2.1-py3-none-any.whl", hash = "sha256:d66b0832aa8755c1a84892937282df0befb16c97e5a64aeebd68be9c5e323f53", size = 231548, upload-time = "2026-10-14T12:20:18.844Z" },
- ]
- 
- [[package]]
-@@ -12172,7 +12173,7 @@ requires-dist = [
-     { name = "fsspec", marker = "extra == 'triton'", specifier = ">=2026.6.0" },
-     { name = "fsspec", marker = "extra == 'zh-hanlp'", specifier = ">=2026.6.0" },
-     { name = "gcsfs", marker = "extra == 'cloud'", specifier = ">=2025.9.0" },
--    { name = "gitpython", marker = "extra == 'docs'", specifier = ">=3.1.60,<4" },
-+    { name = "gitpython", marker = "extra == 'docs'", specifier = ">=3.2.1,<4" },
-     { name = "gliner", extras = ["tokenizers"], marker = "extra == 'gliner'", specifier = ">=0.2.0" },
-     { name = "griffe", marker = "extra == 'docs'" },
-     { name = "grpcio", marker = "extra == 'dev'", specifier = ">=1.64" },
-```
-
----
-
-### Incident Patch 2: `09596618` (2026-10-23)
-**Commit Message**: fix: patch audited dependencies and container pins for v3.1
-
-The CI security gate failed on fixable virtualenv advisories, and newer
-advisories now cover Brotli, graphql-core and the OpenTelemetry API.
-Raise the lock constraints to the patched releases and raise the
-OpenTelemetry API floor in the dev, otel and service extras.
-
-Patched virtualenv needs packaging 26.3, which Prefect 3.7 excludes.
-Newer Prefect needs FastAPI releases that Airflow 3.3 excludes, so the
-resolver would otherwise drop Airflow to an advisory-laden 3.2.2. A
-lock-only packaging override keeps Airflow on patched 3.3.2.
-
-Debian forky retired the pinned ca-certificates, liblzma5 and tzdata
-versions, which broke the service image build used by Image SBOM and
-the load-test SLO job.
-
-**File**: `CHANGELOG.md` (modified, +7/-0)
-```diff
-@@ -380,6 +380,13 @@ clinical efficacy. Package publication remains a separate release action.
- 
- ### Security
- 
-+- Require patched OpenTelemetry API 1.45.1 in the optional `dev`, `otel` and
-+  `service` profiles, and lock patched virtualenv 21.14.13, Brotli 1.2.1 and
-+  graphql-core 3.2.12. A lock-only packaging override lifts Prefect 3.7's
-+  `packaging<26.3` cap so the lock keeps Airflow on patched 3.3.2; the base
-+  SDK's dependency set is unchanged.
-+- Refresh the service image's exact Debian forky pins for ca-certificates,
-+  liblzma5 and tzdata after the archive retired the previous versions.
- - Renew the maintainer-reviewed exception for unpatched NLTK
-   `CVE-2026-81726` in the universal lockfile through 2026-11-03. NLTK remains
-   optional and absent from the core closure and service image. The exception
-```
-
-**File**: `Dockerfile` (modified, +3/-3)
-```diff
-@@ -13,11 +13,11 @@ WORKDIR /app
- # release. Runtime libraries stay exact and come from one Debian suite.
- RUN apt-get update \
-     && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
--        "ca-certificates=20260816" \
-+        "ca-certificates=20260816+nmu1" \
-         "libbz2-1.0=1.0.8-6+b2" \
-         "libffi8=3.8.0-2" \
-         "libgdbm6t64=1.26-1+b2" \
--        "liblzma5=5.8.3-1" \
-+        "liblzma5=5.8.4-1" \
-         "libncursesw6=6.6+20260608-2" \
-         "libreadline8t64=8.3-4" \
-         "libsqlite3-0=3.53.4-2" \
-@@ -27,7 +27,7 @@ RUN apt-get update \
-         "openssl=3.6.5-1" \
-         "openssl-provider-legacy=3.6.5-1" \
-         "readline-common=8.3-4" \
--        "tzdata=2026c-1" \
-+        "tzdata=2026e-1" \
-         "zlib1g=1:1.3.dfsg+really1.3.2-3" \
-     && rm -rf /var/lib/apt/lists/*
- 
-```
-
-**File**: `deploy/docker/Dockerfile` (modified, +3/-3)
-```diff
-@@ -19,11 +19,11 @@ WORKDIR /app
- # release. Runtime libraries stay exact and come from one Debian suite.
- RUN apt-get update \
-     && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
--        "ca-certificates=20260816" \
-+        "ca-certificates=20260816+nmu1" \
-         "libbz2-1.0=1.0.8-6+b2" \
-         "libffi8=3.8.0-2" \
-         "libgdbm6t64=1.26-1+b2" \
--        "liblzma5=5.8.3-1" \
-+        "liblzma5=5.8.4-1" \
-         "libncursesw6=6.6+20260608-2" \
-         "libreadline8t64=8.3-4" \
-         "libsqlite3-0=3.53.4-2" \
-@@ -33,7 +33,7 @@ RUN apt-get update \
-         "openssl=3.6.5-1" \
-         "openssl-provider-legacy=3.6.5-1" \
-         "readline-common=8.3-4" \
--        "tzdata=2026c-1" \
-+        "tzdata=2026e-1" \
-         "zlib1g=1:1.3.dfsg+really1.3.2-3" \
-     && rm -rf /var/lib/apt/lists/*
- 
-```
-
-**File**: `pyproject.toml` (modified, +10/-4)
-```diff
-@@ -70,7 +70,7 @@ dev = [
-   "fastapi>=0.110",
-   "httpx>=0.27",
-   "dask[dataframe]>=2024.8",
--  "opentelemetry-api>=1.26,<2",
-+  "opentelemetry-api>=1.45.1,<2",
-   "opentelemetry-exporter-otlp-proto-http>=1.26,<2",
-   "opentelemetry-sdk>=1.26,<2",
-   "pandas>=2.0",
-@@ -391,7 +391,7 @@ hf = [
- # Core pipeline observability. The SDK enables caller-owned in-process
- # providers and test exporters; no network exporter is included or configured.
- otel = [
--  "opentelemetry-api>=1.26,<2",
-+  "opentelemetry-api>=1.45.1,<2",
-   "opentelemetry-sdk>=1.26,<2",
- ]
- 
-@@ -400,7 +400,7 @@ service = [
-   "fastapi>=0.110",
-   "grpcio>=1.64",
-   "httpx>=0.27",
--  "opentelemetry-api>=1.26,<2",
-+  "opentelemetry-api>=1.45.1,<2",
-   "opentelemetry-exporter-otlp-proto-http>=1.26,<2",
-   "opentelemetry-sdk>=1.26,<2",
-   "protobuf>=5.26,<7",
-@@ -538,7 +538,10 @@ constraint-dependencies = [
-   "torch>=2.13.0",
-   "tornado>=6.5.9",
-   "urllib3>=2.8.0",
--  "virtualenv>=21.7.13",
-+  "virtualenv>=21.14.9",
-+  "brotli>=1.2.1",
-+  "graphql-core>=3.2.12",
-+  "opentelemetry-api>=1.45.1",
-   "betterproto==2.0.0b6; python_version >= '3.11'",
-   "pyjwt>=2.14.0",
- ]
-@@ -549,6 +552,9 @@ override-dependencies = [
-   "httplib2>=0.32",
-   # Beam also caps Pillow below the patched release on Python 3.11+.
-   "Pillow>=13.0.0; python_version >= '3.11'",
-+  # Prefect 3.7 caps packaging below the release patched virtualenv needs, and
-+  # newer Prefect requires FastAPI releases that Airflow 3.3 excludes.
-+  "packaging>=26.3,<27",
- ]
- conflicts = [
-   [
-```
-
-**File**: `tests/unit/core/test_pipeline_telemetry.py` (modified, +1/-1)
-```diff
-@@ -297,7 +297,7 @@ def test_otel_extra_contains_no_network_exporter() -> None:
-         dependencies = tomllib.load(handle)["project"]["optional-dependencies"]
- 
-     assert dependencies["otel"] == [
--        "opentelemetry-api>=1.26,<2",
-+        "opentelemetry-api>=1.45.1,<2",
-         "opentelemetry-sdk>=1.26,<2",
-     ]
-     assert all("exporter" not in dependency for dependency in dependencies["otel"])
-```
-
-**File**: `tests/unit/security/test_pip_audit_gate.py` (modified, +26/-0)
-```diff
-@@ -418,6 +418,7 @@ def test_awq_torch_floor_keeps_the_existing_linux_only_boundary() -> None:
-             ("agents", "awq", "beam", "cloud", "gptq", "llamaindex", "operator"),
-         ),
-         ("oauthlib", "3.3.1", "4.0.0", ("cloud", "prefect")),
-+        ("opentelemetry-api", "1.43.0", "1.45.1", ("dev", "otel", "service")),
-         ("pymongo", "4.18.1", "4.18.2", ("beam",)),
-         ("tinytag", "2.2.1", "2.3.0", ("agents", "llamaindex")),
+@@ -625,6 +625,7 @@ def test_filelock_refuses_symlink_without_modifying_target(
+     ("package", "unsafe", "fixed"),
+     [
+         ("brotli", "1.2.0", "1.2.1"),
++        ("brotlicffi", "1.2.0.1", "1.2.1.0"),
+         ("graphql-core", "3.2.11", "3.2.12"),
+         ("virtualenv", "21.14.5", "21.14.9"),
      ],
-@@ -512,6 +513,31 @@ def test_certificate_bundle_lock_uses_patched_release() -> None:
-     assert "2026.10.19" in floor.specifier
- 
- 
-+@pytest.mark.parametrize(
-+    ("package", "unsafe", "fixed"),
-+    [
-+        ("brotli", "1.2.0", "1.2.1"),
-+        ("graphql-core", "3.2.11", "3.2.12"),
-+        ("virtualenv", "21.14.5", "21.14.9"),
-+    ],
-+)
-+def test_transitive_dependency_lock_uses_patched_release(
-+    package: str, unsafe: str, fixed: str
-+) -> None:
-+    project, lock = _model_dependency_metadata()
-+    resolved = [item for item in lock["package"] if item["name"] == package]
-+    assert resolved
-+    assert all(Version(item["version"]) >= Version(fixed) for item in resolved)
-+    floor = next(
-+        requirement
-+        for value in project["tool"]["uv"]["constraint-dependencies"]
-+        for requirement in [Requirement(value)]
-+        if requirement.name == package
-+    )
-+    assert unsafe not in floor.specifier
-+    assert fixed in floor.specifier
-+
-+
- def test_awq_dataset_floor_retains_linux_only_installation() -> None:
-     project, _ = _model_dependency_metadata()
-     floor = next(
 ```
 
-**File**: `uv.lock` (modified, +176/-102)
+**File**: `uv.lock` (modified, +22/-17)
 ```diff
-@@ -676,28 +676,32 @@ constraints = [
-     { name = "aiohttp", specifier = ">=3.14.4" },
+@@ -1116,6 +1116,7 @@ constraints = [
      { name = "banks", specifier = ">=2.5.1" },
      { name = "betterproto", marker = "python_full_version >= '3.11'", specifier = "==2.0.0b6" },
-+    { name = "brotli", specifier = ">=1.2.1" },
+     { name = "brotli", specifier = ">=1.2.1" },
++    { name = "brotlicffi", specifier = ">=1.2.1.0" },
      { name = "certifi", specifier = ">=2026.10.19" },
      { name = "datasets", specifier = ">=5.0.1" },
-     { name = "fsspec", specifier = ">=2026.6.0" },
-+    { name = "graphql-core", specifier = ">=3.2.12" },
-     { name = "h2", specifier = ">=4.4.1" },
-     { name = "jinja2", specifier = ">=3.1.6" },
-     { name = "langgraph-sdk", specifier = ">=0.4.4" },
-     { name = "mako", specifier = ">=1.4.2" },
-     { name = "mcp", specifier = ">=1.30,<2" },
-     { name = "multidict", specifier = ">=6.9.1" },
-     { name = "oauthlib", specifier = ">=4.0.0" },
-+    { name = "opentelemetry-api", specifier = ">=1.45.1" },
-     { name = "pillow", marker = "python_full_version >= '3.11'", specifier = ">=13.0.0" },
-     { name = "pyjwt", specifier = ">=2.14.0" },
-     { name = "pymongo", specifier = ">=4.18.2" },
-     { name = "tinytag", specifier = ">=2.3.0" },
-     { name = "torch", specifier = ">=2.13.0" },
-     { name = "tornado", specifier = ">=6.5.9" },
-     { name = "urllib3", specifier = ">=2.8.0" },
--    { name = "virtualenv", specifier = ">=21.7.13" },
-+    { name = "virtualenv", specifier = ">=21.14.9" },
- ]
- overrides = [
-     { name = "cryptography", specifier = ">=50,<51" },
-     { name = "httplib2", specifier = ">=0.32" },
-+    { name = "packaging", specifier = ">=26.3,<27" },
-     { name = "pillow", marker = "python_full_version >= '3.11'", specifier = ">=13.0.0" },
- ]
- 
-@@ -1113,20 +1117,20 @@ wheels = [
+     { name = "filelock", marker = "python_full_version < '3.11'", specifier = "==3.20.3" },
+@@ -3494,27 +3495,31 @@ wheels = [
  
  [[package]]
- name = "apache-airflow"
--version = "3.3.1"
-+version = "3.3.2"
+ name = "brotlicffi"
+-version = "1.2.0.1"
++version = "1.2.1.0"
  source = { registry = "https://pypi.org/simple" }
  dependencies = [
-     { name = "apache-airflow-core" },
-     { name = "apache-airflow-task-sdk" },
+     { name = "cffi" },
  ]
--sdist = { url = "https://files.pythonhosted.org/packages/05/f4/025fc6e41878ae075bfd50136542071abaac5ead6a967b53a878b4efbca8/apache_airflow-3.3.1.tar.gz", hash = "sha256:a62ee9c46b7b8c919a46a88ee9346e0b36bc4ff10d6f9ac7cde5a6165da52164", size = 31054, upload-time = "2026-08-12T08:10:24.808Z" }
-+sdist = { url = "https://files.pythonhosted.org/packages/e9/9e/148e8d9211c57689af9a8aafa228ff4d9b23bf23c203e973cd2fed9f1353/apache_airflow-3.3.2.tar.gz", hash = "sha256:cdbe0dcd47ff2e9ab267fcc050bc6e4fa6e40fb86bf3671e05d9672206da59bb", size = 31774, upload-time = "2026-09-17T08:39:00.645Z" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/46/a5/018810c3fe96f9d57377a7d5ca303c51231fe367bf16c34402fb1eb91e55/apache_airflow-3.3.1-py3-none-any.whl", hash = "sha256:0c047c0a0415b100d2966b35d0f0c191013dc996e7645023178c770296ce8602", size = 13048, upload-time = "2026-08-12T08:10:18.204Z" },
-+    { url = "https://files.pythonhosted.org/packages/72/0f/835c3e3d7a09ce377a1ebc475718f404a2f6c976cb2662f84c6fcb7aaa96/apache_airflow-3.3.2-py3-none-any.whl", hash = "sha256:c1fd40a00cfc50e7ef8d0aa07a1418b059f22db03ad25c2793bb030b176dc085", size = 13331, upload-time = "2026-09-17T08:38:26.148Z" },
- ]
- 
- [[package]]
- name = "apache-airflow-core"
--version = "3.3.1"
-+version = "3.3.2"
- source = { registry = "https://pypi.org/simple" }
- dependencies = [
-     { name = "a2wsgi" },
-@@ -1195,9 +1199,9 @@ dependencies = [
-     { name = "uuid6" },
-     { name = "uvicorn" },
- ]
--sdist = { url = "https://files.pythonhosted.org/packages/37/42/d1d5f2e6172398ed4b5864a3f262eddd89008f8445678934c94eabdcee9d/apache_airflow_core-3.3.1.tar.gz", hash = "sha256:0c4ae4f3aea72dc2087b615305ea97ff0247b266bf6fa6661877ce1e1d9a951b", size = 7373613, upload-time = "2026-08-12T08:10:26.454Z" }
-+sdist = { url = "https://files.pythonhosted.org/packages/45/47/bcf1e5ebc134c6a39f06fe00534a8981ea195e7191ea2d60dabb7af0428e/apache_airflow_core-3.3.2.tar.gz", hash = "sha256:53f38e7749a2689a1d67c6e661284ecddaa687c1f7f3cae2d76b2eca7758210f", size = 7442317, upload-time = "2026-09-17T08:39:34.987Z" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/2f/e4/910a68502da13948877c91d6b605ea5f0988962792b0b3191025eb8d4423/apache_airflow_core-3.3.1-py3-none-any.whl", hash = "sha256:28c6aa88bdd47a4401436f1bfefbc979236de16fa4962d408218c67b8f9a00b8", size = 6875541, upload-time = "2026-08-12T08:10:22.343Z" },
-+    { url = "https://files.pythonhosted.org/packages/54/b9/1ee2db2eeda6411ce2611e7ce800f57a4b9d22920f5c4ccaed908f7664a1/apache_airflow_core-3.3.2-py3-none-any.whl", hash = "sha256:99258922bccec15be4700ff89f3c942b8acd93407e263c287ce863e671bb3c50", size = 6921273, upload-time = "2026-09-17T08:38:58.61Z" },
- ]
- 
- [[package]]
-@@ -1271,7 +1275,7 @@ wheels = [
- 
- [[package]]
- name = "apache-airflow-task-sdk"
--version = "1.3.1"
-+version = "1.3.2"
- source = { registry = "https://pypi.org/simple" }
- dependencies = [
-     { name = "apache-airflow-core" },
-@@ -1301,9 +1305,9 @@ dependencies = [
-     { name = "tenacity" },
-     { name = "typing-extensio
+-sdist = { url = "https://files.pythonhosted.org/packages/8a/b6/017dc5f852ed9b8735af77774509271acbf1de02d238377667145fcee01d/brotlicffi-1.2.0.1.tar.gz", hash = "sha256:c20d5c596278307ad06414a6d95a892377ea274a5c6b790c2548c009385d621c", size = 478156, upload-time = "2026-03-05T19:54:11.547Z" }
+-wheels = [
+-    { url = "https://files.pythonhosted.org/packages/ef/f9/dfa56316837fa798eac19358351e974de8e1e2ca9475af4cb90293cd6576/brotlicffi-1.2.0.1-cp314-cp314t-macosx_11_0_arm64.whl", hash = "sha256:2c85e65913cf2b79c57a3fdd05b98d9731d9255dc0cb696b09376cc091b9cddd", size = 433046, upload-time = "2026-03-05T19:53:46.209Z" },
+-    { url = "https://files.pythonhosted.org/packages/4a/f5/f8f492158c76b0d940388801f04f747028971ad5774287bded5f1e53f08d/brotlicffi-1.2.0.1-cp314-cp314t-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:535f2d05d0273408abc13fc0eebb467afac17b0ad85090c8913690d40207dac5", size = 1541126, upload-time = "2026-03-05T19:53:48.248Z" },
+-    { url = "https://files.pythonhosted.org/packages/3b/e1/ff87af10ac419600c63e9287a0649c673673ae6b4f2bcf48e96cb2f89f60/brotlicffi-1.2.0.1-cp314-cp314t-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:ce17eb798ca59ecec67a9bb3fd7a4304e120d1cd02953ce522d959b9a84d58ac", size = 1541983, upload-time = "2026-03-05T19:53:50.317Z" },
+-    { url = "https://files.pythonhosted.org/packages/47/c0/80ecd9bd45776109fab14040e478bf63e456967c9ddee2353d8330ed8de1/brotlicffi-1.2.0.1-cp314-cp314t-win32.whl", hash = "sha256:3c9544f83cb715d95d7eab3af4adbbef8b2093ad6382288a83b3a25feb1a57ec", size = 349047, upload-time = "2026-03-05T19:53:52.215Z" },
+-    { url = "https://files.pythonhosted.org/packages/ab/98/13e5b250236a281b6cd9e92a01ee1ae231029fa78faee932ef3766e1cb24/brotlicffi-1.2.0.1-cp314-cp314t-win_amd64.whl", hash = "sha256:625f8115d32ae9c0740d01ea51518437c3fbaa3e78d41cb18459f6f7ac326000", size = 385652, upload-time = "2026-03-05T19:53:53.892Z" },
+-    { url = "https://files.pythonhosted.org/packages/9a/9f/b98dcd4af47994cee97aebac866996a006a2e5fc1fd1e2b82a8ad95cf09c/brotlicffi-1.2.0.1-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:91ba5f0ccc040f6ff8f7efaf839f797723d03ed46acb8ae9408f99ffd2572cf4", size = 432608, upload-time = "2026-03-05T19:53:56.736Z" },
+-    { url = "https://files.pythonhosted.org/packages/b1/7a/ac4ee56595a061e3718a6d1ea7e921f4df156894acffb28ed88a1fd52022/brotlicffi-1.2.0.1-cp38-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:be9a670c6811af30a4bd42d7116dc5895d3b41beaa8ed8a89050447a0181f5ce", size = 1534257, upload-time = "2026-03-05T19:53:58.667Z" },
+-    { url = "https://files.pythonhosted.org/packages/99/39/e7410db7f6f56de57744ea52a115084ceb2735f4d44973f349bb92136586/brotlicffi-1.2.0.1-cp38-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:6f3314a3476f59e5443f9f72a6dff16edc0c3463c9b318feaef04ae3e4683f5a", size = 1536838, upload-time = "2026-03-05T19:54:00.705Z" },
+-    { url = "https://files.pythonhosted.org/packages/a6/75/6e7977d1935fc3fbb201cbd619be8f2c7aea25d40a096967132854b34708/brotlicffi-1.2.0.1-cp38-abi3-win32.whl", hash = "sha256:82ea52e2b5d3145b6c406ebd3efb0d55db718b7ad996bd70c62cec0439de1187", size = 343337, upload-time = "2026-03-05T19:54:02.446Z" },
+-    { url = "https://files.pythonhosted.org/packages/d8/ef/e7e485ce5e4ba3843a0a92feb767c7b6098fd6e65ce752918074d175ae71/brotlicffi-1.2.0.1-cp38-abi3-win_amd64.whl", hash = "sha256:da2e82a08e7778b8bc539d27ca03cdd684113e81394bfaaad8d0dfc6a17ddede", size = 379026, upload-time = "2026-03-05T19:54:04.322Z" },
+-    { url = "https://files.pythonhosted.org/packages/7f/53/6262c2256513e6f530d81642477cb19367270922063eaa2d7b781d8c723d/brotlicffi-1.2.0.1-pp311-pypy311_pp73-macosx_11_0_arm64.whl", hash = "sha256:e015af99584c6db1490a69a210c765953e473e63adc2d891ac3062a737c9e851", size = 402265, upload-time = "2026-03-05T19:54:05.858Z" },
+-    { url = "https://files.pythonhosted.org/packages/1f/d9/d5340b43cf5fbe7fe5a083d237e5338cc1caa73bea523be1c5e452c26290/brotlicffi-1.2.0.1-pp311-pypy311_pp73-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:37cb587d32bf7168e2218c455e22e409ad1f3157c6c71945879a311f3e6b6abf", size = 406710, upload-time = "2026-03
 ```
 
 ---
 
-### Incident Patch 3: `387640bf` (2026-10-23)
-**Commit Message**: fix: fail closed on unserializable redacted email headers
+### Incident Patch 3: `f720d515` (2026-10-26)
+**Commit Message**: fix: publish npm releases with GitHub OIDC
 
-Format-parser fuzzing found that a header containing a vertical tab
-parses, but newer CPython patch releases refuse to serialize it with
-HeaderWriteError. That escaped redact_email as an unhandled error.
-
-Wrap MIME serialization so it raises UnsupportedDocumentError, as other
-unsupported inputs do. The stdlib error embeds raw header bytes, so it
-is not chained onto the rejection.
-
-**File**: `CHANGELOG.md` (modified, +3/-0)
+**File**: `.github/workflows/publish.yml` (modified, +1/-12)
 ```diff
-@@ -431,6 +431,9 @@ clinical efficacy. Package publication remains a separate release action.
+@@ -227,22 +227,11 @@ jobs:
+           echo "Matching openmed@$npm_version is already published; skipping npm upload."
+           echo "exists=true" >> "$GITHUB_OUTPUT"
  
- ### Fixed
- 
-+- Reject emails whose redacted headers cannot be serialized as clean MIME
-+  with `UnsupportedDocumentError` instead of an unhandled stdlib error. The
-+  rejection omits the stdlib error, which embeds raw header bytes.
- - Handle decoding failures through both batch readers' per-file error paths,
-   continue later files in permissive mode, and retain strict propagation
-   without including decoder details in error reports (#4201).
+-      - name: Verify npm credentials
+-        if: steps.npm-release.outputs.exists != 'true'
+-        env:
+-          NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
+-        run: |
+-          if [ -z "$NODE_AUTH_TOKEN" ]; then
+-            echo "NPM_ACCESS_TOKEN is not configured in the npm environment."
+-            exit 1
+-          fi
+-
+       - name: Publish npm package with provenance
+         if: steps.npm-release.outputs.exists != 'true'
+         working-directory: js/openmedkit-web
++        # npm exchanges this job's GitHub OIDC identity with the trusted publisher.
+         run: npm publish --ignore-scripts --access public --provenance
+-        env:
+-          NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
+   evidence:
+     name: Sign and attach release evidence
+     needs: [provenance, publish]
 ```
 
-**File**: `openmed/multimodal/email.py` (modified, +13/-3)
+**File**: `docs/release/trusted-publishing.md` (modified, +31/-12)
 ```diff
-@@ -21,7 +21,7 @@
- from difflib import SequenceMatcher
- from email import encoders
- from email import policy as email_policy
--from email.errors import HeaderParseError
-+from email.errors import HeaderParseError, MessageError
- from email.header import decode_header
- from email.message import Message
- from email.parser import BytesParser
-@@ -441,7 +441,7 @@ def redact_email(
-     body_redactions = _redact_body_parts(message, processor, cid_map=cid_map)
-     _sanitize_mime_metadata(message)
+@@ -8,8 +8,8 @@ manual dispatch exists only to recover an existing immutable tag after a
+ workflow-only failure.
  
--    email_bytes = message.as_bytes(policy=email_policy.SMTP)
-+    email_bytes = _serialize_message(message)
-     resolved_output = _write_email_output(output_path, email_bytes)
-     redacted_message = _parse_eml(email_bytes)
-     document = _document_from_message(
-@@ -501,6 +501,16 @@ def _parse_eml(payload: bytes) -> Message:
-     return BytesParser(policy=email_policy.default).parsebytes(payload)
+ The current PyPI path uses the project-scoped `PYPI_API_TOKEN` GitHub secret.
+-The npm path uses the short-lived `NPM_ACCESS_TOKEN` secret from the GitHub
+-`npm` environment and publishes with Sigstore provenance.
++The npm path uses GitHub Actions OIDC Trusted Publishing in the `npm`
++environment, with Sigstore provenance and no stored publishing token.
  
+ PyPI Trusted Publishing is the preferred future path, but it must not be used
+ until the PyPI `openmed` project has a trusted publisher that exactly matches
+@@ -73,13 +73,14 @@ under the existing unscoped npm name `openmed`.
+ - PyPI and npm publication both depend on the Python provenance job and the npm
+   verification job.
+ - The `npm-publish` job attaches the `npm` GitHub environment, grants
+-  `contents: read` and `id-token: write`, and reads only the environment-scoped
+-  `NPM_ACCESS_TOKEN` secret.
+-- The publish job builds before exposing the token, then
++  `contents: read` and `id-token: write`, and runs on a GitHub-hosted runner.
++  npm exchanges that job's identity for a short-lived publishing credential;
++  no `NPM_ACCESS_TOKEN` or `NODE_AUTH_TOKEN` is required.
++- The publish job builds first, then
+   `npm publish --ignore-scripts --access public --provenance` uploads the package
+   without running lifecycle hooks in the credential-bearing step. Provenance
+   links the package to the tag workflow and source commit.
+-- Recovery dispatches query an existing npm version before accessing the token.
++- Recovery dispatches query an existing npm version before publishing.
+   An existing package is skipped only when its registry `gitHead` matches the
+   immutable tag and its downloaded tarball contents match a fresh tag build;
+   any mismatch fails closed.
+@@ -89,6 +90,26 @@ Do not publish `@openmed/openmedkit-web`; the public package name is `openmed`.
+ Do not add another npm publishing workflow or place a plaintext npm token in an
+ `.npmrc` file.
  
-+def _serialize_message(message: Message) -> bytes:
-+    try:
-+        return message.as_bytes(policy=email_policy.SMTP)
-+    except MessageError:
-+        # The stdlib error embeds raw header bytes, so do not chain it.
-+        raise UnsupportedDocumentError(
-+            "This email has headers that cannot be serialized as clean MIME."
-+        ) from None
++### npm trusted publisher setup and recovery
 +
++In the npm `openmed` package settings, configure a GitHub Actions trusted
++publisher for user `maziyarpanahi`, repository `openmed`, workflow filename
++`publish.yml` (without a directory), and environment `npm`. Enable direct
++`npm publish`; separate dist-tag management permission is not needed. Keep
++these values aligned with the workflow. npm requires Node.js 22.14.0+ and
++npm 11.5.1+; the workflow uses Node.js 24 with a compatible bundled npm CLI.
 +
- def _raw_header_values(message: Message, header_name: str) -> tuple[Any, ...]:
-     """Return header values without invoking strict structured-header parsing."""
++If PyPI has already published and only npm failed, retry the failed npm job
++after correcting the trusted publisher. Use `gh run rerun RUN_ID --repo
++maziyarpanahi/openmed --job NPM_JOB_ID` so the successful PyPI job is not
++repeated. For an older tagged workflow that still checks a nonempty npm secret,
++retain that secret until recovery completes: compatible npm versions try OIDC
++before falling back to token authentication. Remove the obsolete secret only
++after a successful OIDC publication. Do not move the existing tag.
++
++See [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers/) for
++the provider setup and supported runner requirements.
++
+ ## v1.8.0 Incident Lessons
  
-@@ -930,7 +940,7 @@ def _attachment_payload(part: Message) -> bytes | None:
-     if part.get_content_type().lower() == "message/rfc822":
-         nested = part.get_payload()
-         if isinstance(nested, list) and nested and isinstance(nested[0], Message):
--            return nested[0].as_bytes(policy=email_policy.SMTP)
-+            return _serialize_message(nested[0])
-     return None
+ On 2026-07-09, the first `v1.8.0` PyPI publish failed because the release
+@@ -197,9 +218,7 @@ succeeds through the tokenless path, retire the token path:
+   ever required, create a short-lived project-scoped token outside the normal CI
+   path and revoke it immediately after use.
  
- 
+-Keep `NPM_ACCESS_TOKEN` scoped to the npm `openmed` package with publish access,
+-store it only in the GitHub `npm` environment, and rotate it before its 90-day
+-expiry. The package already exists, so npm Trusted Publishing can replace the
+-token without a bootstrap release. When migrating, configure npm for owner
+-`maziyarpanahi`, repository `openmed`, workflow `publish.yml`, and environment
+-`npm`; then remove `NODE_AUTH_TOKEN` from the publish step and delete the secret.
++npm uses OIDC Trusted Publishing, so publishing-token rotation is unnecessary.
++After the first successful OIDC publication and any older tagged-run recovery,
++delete the obsolete `NPM_ACCESS_TOKEN` GitHub environment secret. Future tags
++use the workflow identity automatically; do not restore a stored npm token.
 ```
 
-**File**: `tests/unit/multimodal/test_email.py` (modified, +25/-0)
+**File**: `tests/unit/test_publish_workflow_version.py` (modified, +4/-7)
 ```diff
-@@ -7,6 +7,7 @@
- import sys
- import zipfile
- from email import policy as email_policy
-+from email.errors import MessageError
- from email.message import EmailMessage
- from email.parser import BytesParser
- from io import BytesIO
-@@ -467,6 +468,30 @@ def test_unsupported_attachment_fails_closed_without_echoing_filename():
-     assert "Alice Patient" not in str(excinfo.value)
+@@ -297,11 +297,6 @@ def test_publish_workflow_verifies_and_publishes_npm_package():
+         for step in npm_publish["steps"]
+         if step.get("name") == "Check for an existing matching npm release"
+     )
+-    credential_step = next(
+-        step
+-        for step in npm_publish["steps"]
+-        if step.get("name") == "Verify npm credentials"
+-    )
  
+     assert npm_verify["permissions"] == {"contents": "read"}
+     assert npm_verify["steps"][0]["with"]["ref"] == ("${{ inputs.tag || github.ref }}")
+@@ -322,6 +317,9 @@ def test_publish_workflow_verifies_and_publishes_npm_package():
+         "contents": "read",
+         "id-token": "write",
+     }
++    assert npm_publish["runs-on"] == "ubuntu-latest"
++    assert "NPM_ACCESS_TOKEN" not in content
++    assert "NODE_AUTH_TOKEN" not in content
+     assert publish_step["run"] == (
+         "npm publish --ignore-scripts --access public --provenance"
+     )
+@@ -331,9 +329,8 @@ def test_publish_workflow_verifies_and_publishes_npm_package():
+     assert "registry_content_digest" in existing_release_step["run"]
+     assert "diff --recursive --brief --no-dereference" in existing_release_step["run"]
+     assert 'echo "exists=true" >> "$GITHUB_OUTPUT"' in existing_release_step["run"]
+-    assert credential_step["if"] == "steps.npm-release.outputs.exists != 'true'"
+     assert publish_step["if"] == "steps.npm-release.outputs.exists != 'true'"
+-    assert publish_step["env"]["NODE_AUTH_TOKEN"] == ("${{ secrets.NPM_ACCESS_TOKEN }}")
++    assert "env" not in publish_step
+     assert npm_publish["steps"][0]["with"]["ref"] == ("${{ inputs.tag || github.ref }}")
+     assert sbom["needs"] == ["publish", "npm-publish"]
  
-+def test_unserializable_redacted_headers_fail_closed_without_header_text(
-+    monkeypatch,
-+):
-+    payload = (
-+        b"From: Synthetic Clinic <clinic@example.test>\n"
-+        b"MIME-Version: 1.0\x0bContent-Type: text/plain\n"
-+        b"\n"
-+        b"Synthetic body PATIENT-001.\n"
-+    )
-+
-+    def reject_headers(_message, *args, **kwargs):
-+        raise MessageError(f"folded header contains newline: {payload!r}")
-+
-+    monkeypatch.setattr(EmailMessage, "as_bytes", reject_headers)
-+
-+    with pytest.raises(UnsupportedDocumentError) as excinfo:
-+        redact_email(payload, models=lambda text, **_: text)
-+
-+    assert "cannot be serialized" in str(excinfo.value)
-+    assert "PATIENT-001" not in str(excinfo.value)
-+    assert excinfo.value.__cause__ is None
-+    assert excinfo.value.__suppress_context__ is True
-+
-+
- def test_named_memory_stream_dispatches_eml_without_multimodal_extra(monkeypatch):
-     monkeypatch.setattr(
-         base,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4330** (2026-10-27): feat: support native GLiFormer and current GLiNER2 NER models (@maziyarpanahi)
+- **PR #4327** (closed): fix: stop intermittent CI failures in Nix, throttle tests and install smoke checks (@maziyarpanahi)
 - **PR #4284** (closed): feat: bridge text decision requests to a loopback System One server (#4257) (@maziyarpanahi)
 - **PR #4275** (closed): feat: export privacy-safe native reviewer packets (#2864) (@maziyarpanahi)
 - **PR #4251** (closed): Add a local MedDecider NLI runtime (@AleksanderObuchowski)
 - **PR #4237** (2026-10-21): fix: stabilize Windows release checks and update vulnerable dependencies (@maziyarpanahi)
-- **PR #4236** (2026-10-20): release: prepare OpenMed v3.1.0 (@maziyarpanahi)
-- **PR #4223** (2026-10-17): fix: read JSONL records without splitting Unicode inside strings (#4205) (@Bembaby)
 
 ---
 
@@ -2853,31 +2734,28 @@ is not chained onto the rejection.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. require patched GitPython for the docs profile
+## X. repair docs deep links and dependency security gates
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in maziyarpanahi/openmed. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in maziyarpanahi/openmed. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `00e9efd7`: require patched GitPython for the docs profile. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b25cbc5c`: repair docs deep links and dependency security gates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-  `service` profiles and GitPython 3.2.1 in the `docs` profile, and lock
-  patched virtualenv 21.14.13, Brotli 1.2.1 and graphql-core 3.2.12. A
-  lock-only packaging override lifts Prefect 3.7's
+        "setuptools==84.1.0" \
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-  `service` profiles, and lock patched virtualenv 21.14.13, Brotli 1.2.1 and
-  graphql-core 3.2.12. A lock-only packaging override lifts Prefect 3.7's
+        "setuptools==83.0.0" \
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `00e9efd7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b25cbc5c` are properly handled with clean fallback behavior.

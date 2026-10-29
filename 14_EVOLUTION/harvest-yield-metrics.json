@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-29T17:23:45.555Z",
-  "total_cycles_completed": 6035,
-  "total_learnings_persisted": 6035,
-  "total_rules_promoted": 5499,
+  "last_updated": "2026-10-29T17:40:37.848Z",
+  "total_cycles_completed": 6037,
+  "total_learnings_persisted": 6037,
+  "total_rules_promoted": 5501,
   "history": [
-    {
-      "timestamp": "2026-10-28T17:28:12.531Z",
-      "repository": "argmaxinc/whisperkit-coreml",
-      "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T17:28:16.680Z",
-      "repository": "bee-san/Ciphey",
-      "learningId": "learn-github-bee-san-ciphey",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T17:35:08.907Z",
       "repository": "Qwen/Qwen3-8B",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-29T17:23:45.555Z",
       "repository": "risingwavelabs/risingwave",
       "learningId": "learn-github-risingwavelabs-risingwave",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T17:40:32.355Z",
+      "repository": "zeronsh/zeron",
+      "learningId": "learn-github-zeronsh-zeron",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T17:40:37.848Z",
+      "repository": "maziyarpanahi/openmed",
+      "learningId": "learn-github-maziyarpanahi-openmed",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

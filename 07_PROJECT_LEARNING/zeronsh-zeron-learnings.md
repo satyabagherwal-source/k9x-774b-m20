@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source**: github ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
-> **Source Version**: `ab189159`  
+> **Source Version**: `a0468502`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T00:26:17.897Z  
+> **Timestamp**: 2026-10-29T17:40:31.661Z  
 > **Learning ID**: `learn-github-zeronsh-zeron`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T00:26:16.371Z  
+> **Harvest Timestamp**: 2026-10-29T17:35:30.359Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A native control plane for Claude Code, Codex, Cursor, Devin and other coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3402 stars
+- **Stars / Engagement**: 3419 stars
 
 ---
 
@@ -1621,1085 +1621,721 @@ enum TextEngine {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c31124aa` (2026-10-27)
-**Commit Message**: Linux browser: WPE WebKit at the display's rate, frames shared with GPUI as dma-bufs (#1039)
+### Incident Patch 1: `a0468502` (2026-10-29)
+**Commit Message**: Edge: record every WorkOS user from webhooks
 
-* Linux browser: WPE WebKit at the display's rate, frames shared with GPUI as dma-bufs
+A UserDirectory Durable Object (users1) keeps each WorkOS user's name,
+email, profile picture and join date. POST /workos/webhook takes signed
+user.created/updated/deleted events (WORKOS_WEBHOOK_SECRET); out-of-order
+deliveries keep the newest profile, and a delete clears the profile and
+leaves a tombstone. GET /admin/users[?format=csv] reads it back behind
+ADMIN_TOKEN.
 
-The sidebar browser on Linux ran WebKitGTK in an offscreen window: every
-frame went through the CPU, over a pipe, into a new GPUI image, so pages
-topped out near 60 fps whatever the display, and large ones fell well below.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
 
-Zeron now carries its own WPE WebKit platform (browser/linux/wpe.c) and runs
-it in the helper when the build and the system have WPE WebKit 2.50+:
-
-- WebKit renders on the GPU GPUI draws with, into dma-bufs in a DRM format
-  modifier GPUI's Vulkan device imports. GPUI copies only each frame's
-  damaged regions into the page's atlas tile, on the GPU (zeronsh/zui#18).
-- Where the driver renders no layout Vulkan imports, the helper reads frames
-  back with OpenGL ES into a sealed memfd. Without a GPU, WebKit renders on
-  the CPU into shared memory. Both update the tile in place.
-- GPUI's frame callbacks are the pages' vblank: WebKit hears a frame is on
-  screen at most once per display refresh, so pages run at 60, 144 or 240 Hz
-  and never render frames the display won't show. Hidden pa
-
-**File**: `Cargo.lock` (modified, +22/-21)
+**File**: `edge/src/cloud/billing.ts` (modified, +11/-6)
 ```diff
-@@ -1650,7 +1650,7 @@ dependencies = [
- [[package]]
- name = "collections"
- version = "0.1.0"
--source = "git+https://github.com/zeronsh/zui?rev=0dc69aa254841738b1e84ac743fa0aa435ad71b1#0dc69aa254841738b1e84ac743fa0aa435ad71b1"
-+source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
- dependencies = [
-  "gpui_util",
-  "indexmap",
-@@ -2454,7 +2454,7 @@ dependencies = [
- [[package]]
- name = "derive_refineable"
- version = "0.1.0"
--source = "git+https://github.com/zeronsh/zui?rev=0dc69aa254841738b1e84ac743fa0aa435ad71b1#0dc69aa254841738b1e84ac743fa0aa435ad71b1"
-+source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
- dependencies = [
-  "proc-macro2",
-  "quote",
-@@ -3839,7 +3839,7 @@ dependencies = [
- [[package]]
- name = "gpui"
- version = "0.2.2"
--source = "git+https://github.com/zeronsh/zui?rev=0dc69aa254841738b1e84ac743fa0aa435ad71b1#0dc69aa254841738b1e84ac743fa0aa435ad71b1"
-+source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
- dependencies = [
-  "accesskit",
-  "anyhow",
-@@ -3925,7 +3925,7 @@ dependencies = [
- [[package]]
- name = "gpui-base"
- version = "0.5.2"
--source = "git+https://github.com/zeronsh/gpui-component?rev=6ffe5e575bd0db31d69764773a823cdeb8913d8e#6ffe5e575bd0db31d69764773a823cdeb8913d8e"
-+source = "git+https://github.com/zeronsh/gpui-component?rev=59f89243cea79dd70eb7a619b3930c374ef6958a#59f89243cea79dd70eb7a619b3930c374ef6958a"
- dependencies = [
-  "aho-corasick",
-  "anyhow",
-@@ -3955,7 +3955,7 @@ dependencies = [
- [[package]]
- name = "gpui_linux"
- version = "0.1.0"
--source = "git+https://github.com/zeronsh/zui?rev=0dc69aa254841738b1e84ac743fa0aa435ad71b1#0dc69aa254841738b1e84ac743fa0aa435ad71b1"
-+source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
- dependencies = [
-  "accesskit",
-  "accesskit_unix",
-@@ -4007,7 +4007,7 @@ dependencies = [
- [[package]]
- name = "gpui_macos"
- version = "0.1.0"
--source = "git+https://github.com/zeronsh/zui?rev=0dc69aa254841738b1e84ac743fa0aa435ad71b1#0dc69aa254841738b1e84ac743fa0aa435ad71b1"
-+source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
- dependencies = [
-  "accesskit",
-  "accesskit_macos",
-@@ -4056,7 +4056,7 @@ dependencies = [
- [[package]]
- name = "gpui_macros"
- version = "0.1.0"
--source = "git+https://github.com/zeronsh/zui?rev=0dc69aa254841738b1e84ac743fa0aa435ad71b1#0dc69aa254841738b1e84ac743fa0aa435ad71b1"
-+source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
- dependencies = [
-  "heck 0.5.0",
-  "proc-macro2",
-@@ -4067,7 +4067,7 @@ dependencies = [
- [[package]]
- name = "gpui_platform"
- version = "0.1.0"
--source = "git+https://github.com/zeronsh/zui?rev=0dc69aa254841738b1e84ac743fa0aa435ad71b1#0dc69aa254841738b1e84ac743fa0aa435ad71b1"
-+source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
- dependencies = [
-  "console_error_panic_hook",
-  "gpui",
-@@ -4080,7 +4080,7 @@ dependencies = [
- [[package]]
- name = "gpui_shared_string"
- version = "0.1.0"
--source = "git+https://github.com/zeronsh/zui?rev=0dc69aa254841738b1e84ac743fa0aa435ad71b1#0dc69aa254841738b1e84ac743fa0aa435ad71b1"
-+source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
- dependencies = [
-  "schemars",
-  "serde",
-@@ -4090,7 +4090,7 @@ dependencies = [
- [[package]]
- name = "gpui_tokio"
- version = "0.1.0"
--source = "git+https://github.com/zeronsh/zui?rev=0dc69aa254841738b1e84ac743fa0aa435ad71b1#0dc69aa254841738b1e84ac743fa0aa435ad71b1"
-+source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
- dependencies = [
-  "anyhow",
-  "gpui",
-@@ -4101,7 +4101,7 @@ dependencies = [
- [[package]]
- name = "gpui_util"
- version = "0.1.0"
--source = "git+https://github.com/zeronsh/zui?rev=0dc69aa254841738b1e84ac743fa0aa435ad71b1#0dc69aa254841738b1e84ac743fa0aa435ad71b1"
-+source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
- dependencies = [
-  "anyhow",
-  "log",
-@@ -4111,7 +4111,7 @@ dependencies = [
- [[package]]
- name = "gpui_web"
- version = "0.1.0"
--source = "git+https://github.com/zeronsh/zui?rev=0dc69aa254841738b1e84ac743fa0aa435ad71b1#0dc69aa254841738b1e84ac743fa0aa435ad71b1"
-+source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
- dependencies = [
-  "anyhow",
-  "console_error_panic_hook",
-@@ -4135,9 +4135,10 @@ dependencies = [
- [[package]]
- name = "gpui_wgpu"
- version = "0.1
-```
-
-**File**: `Cargo.toml` (modified, +7/-4)
-```diff
-@@ -102,15 +102,18 @@ loro-protocol = "0.3"
- # translucent compositing, plus blur-aware scene batching (#10).
- # Per-pixel rounded clipping (`Window::with_rounded_clip`, 361ff20).
- # Drags need the button held and 4px of travel (0dc69aa).
--gpui = { git = "https://github.com/zeronsh/zui", rev = "0dc69aa254841738b1e84ac743fa0aa435ad71b1" }
--gpui_platform = { git = "https://github.com/zeronsh/zui", rev = "0dc69aa254841738b1e84ac743fa0aa435ad71b1", features = [
-+# Atlas tiles updated in place from pixels or imported dma-bufs, display-rate
-+# frame callbacks in inactive windows, and Wayland frames that no longer stop
-+# after a forced draw (b564a34, zeronsh/zui#18).
-+gpui = { git = "https://github.com/zeronsh/zui", rev = "b564a34413bb7ef1da04121c4a287758f94993d9" }
-+gpui_platform = { git = "https://github.com/zeronsh/zui", rev = "b564a34413bb7ef1da04121c4a287758f94993d9", features = [
-     "wayland",
-     "x11",
-     "font-kit",
-     "runtime_shaders",
- ] }
--gpui_tokio = { git = "https://github.com/zeronsh/zui", rev = "0dc69aa254841738b1e84ac743fa0aa435ad71b1" }
--gpui-base = { git = "https://github.com/zeronsh/gpui-component", rev = "6ffe5e575bd0db31d69764773a823cdeb8913d8e" }
-+gpui_tokio = { git = "https://github.com/zeronsh/zui", rev = "b564a34413bb7ef1da04121c4a287758f94993d9" }
-+gpui-base = { git = "https://github.com/zeronsh/gpui-component", rev = "59f89243cea79dd70eb7a619b3930c374ef6958a" }
- 
- # diffs
- similar = "2"
-```
-
-**File**: `crates/ui/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -174,6 +174,7 @@ foreign-types = "0.5"
- block = "0.1"
- 
- [target.'cfg(target_os = "linux")'.dependencies]
-+libc.workspace = true
- ashpd = { version = "0.13.13", default-features = false, features = ["async-io", "global_shortcuts", "screenshot", "settings"] }
- atspi = { version = "0.30.0", features = ["zbus"] }
- async-io = "2"
-```
-
-**File**: `crates/ui/build.rs` (modified, +60/-0)
-```diff
-@@ -28,9 +28,13 @@ fn main() {
-     }
- 
-     println!("cargo:rerun-if-changed=src/browser/linux/helper.c");
-+    println!("cargo:rerun-if-changed=src/browser/linux/wpe.c");
-+    println!("cargo:rerun-if-env-changed=ZERON_WPE");
-+    println!("cargo:rerun-if-env-changed=PKG_CONFIG_PATH");
-     if env::var("CARGO_CFG_TARGET_OS").as_deref() != Ok("linux") {
-         return;
-     }
-+    build_wpe_helper();
-     let output = PathBuf::from(env::var_os("OUT_DIR").unwrap()).join("zeron-webkit");
-     let flags = Command::new("pkg-config")
-         .args(["--cflags", "--libs", "webkit2gtk-4.1", "json-glib-1.0"])
-@@ -59,3 +63,59 @@ fn main() {
-         .expect("C compiler is required to build the Linux browser helper");
-     assert!(status.success(), "Linux browser helper compilation failed");
- }
-+
-+/// The WPE WebKit helper is optional: without WPE WebKit 2.50+ development
-+/// files, with ones it does not compile against (an older GBM), or with
-+/// `ZERON_WPE=0`, the build embeds an empty helper and the browser uses
-+/// WebKitGTK.
-+fn build_wpe_helper() {
-+    let output = PathBuf::from(env::var_os("OUT_DIR").unwrap()).join("zeron-wpe");
-+    let packages = [
-+        "wpe-webkit-2.0 >= 2.50",
-+        "wpe-platform-2.0",
-+        "json-glib-1.0",
-+        "gbm",
-+        "egl",
-+        "glesv2",
-+        "xkbcommon",
-+    ];
-+    let flags = (env::var("ZERON_WPE").as_deref() != Ok("0"))
-+        .then(|| {
-+            Command::new("pkg-config")
-+                .arg("--cflags")
-+                .arg("--libs")
-+                .args(packages)
-+                .output()
-+                .ok()
-+        })
-+        .flatten()
-+        .filter(|flags| flags.status.success());
-+    let Some(flags) = flags else {
-+        println!(
-+            "cargo:warning=WPE WebKit 2.50+ development files not found; the Linux browser will use WebKitGTK"
-+        );
-+        std::fs::write(&output, []).unwrap();
-+        return;
-+    };
-+    let status = Command::new(env::var("CC").unwrap_or_else(|_| "cc".into()))
-+        .args([
-+            "-std=gnu11",
-+            "-O2",
-+            "-Wall",
-+            "-Wextra",
-+            "-Wno-unused-parameter",
-+            "src/browser/linux/wpe.c",
-+            "-o",
-+        ])
-+        .arg(&output)
-+        .args(String::from_utf8(flags.stdout).unwrap().split_whitespace())
-+        .arg("-lm")
-+        .status()
-+        .expect("C compiler is required to build the Linux browser helper");
-+    if !status.success() {
-+        println!(
-+            "cargo:warning=WPE WebKit helper compilation failed; the Linux browser will use WebKitGTK"
-+        );
-+        std::fs::write(&output, []).unwrap();
-+    }
-+}
-```
-
-**File**: `crates/ui/examples/browser-fixture.rs` (modified, +21/-1)
-```diff
-@@ -37,8 +37,11 @@ fn capture(directory: &std::path::Path, name: &str) -> anyhow::Result<()> {
-             .arg(&path)
-             .status()?
-     };
-+    // A nested Wayland compositor whose only output is this window: `grim`.
-     #[cfg(not(target_os = "macos"))]
--    let status = {
-+    let status = if let Ok(command) = std::env::var("ZERON_BROWSER_CAPTURE_COMMAND") {
-+        std::process::Command::new(command).arg(&path).status()?
-+    } else {
-         let capture_window = std::env::var("ZERON_BROWSER_CAPTURE_WINDOW").ok();
-         let windows = std::process::Command::new("xdotool")
-             .args([
-@@ -170,6 +173,18 @@ fn main() -> anyhow::Result<()> {
-             let mut request = [0; 4096];
-             let n = stream.read(&mut request).unwrap_or(0);
-             let request = String::from_utf8_lossy(&request[..n]);
-+            // The bench's video, from `ZERON_BROWSER_BENCH_VIDEO`.
-+            if request.starts_with("GET /bench.mp4 ")
-+                && let Some(video) = std::env::var_os("ZERON_BROWSER_BENCH_VIDEO").and_then(|path| std::fs::read(path).ok())
-+            {
-+                let _ = write!(
-+                    stream,
-+                    "HTTP/1.1 200 OK\r\nContent-Type: video/mp4\r\nContent-Length: {}\r\nConnection: close\r\n\r\n",
-+                    video.len()
-+                );
-+                let _ = stream.write_all(&video);
-+                continue;
-+            }
-             let (title, html) = if request.starts_with("GET /two ") {
-                 (
-                     "Details",
-@@ -222,6 +237,7 @@ fn main() -> anyhow::Result<()> {
-             window_bounds: Some(WindowBounds::Windowed(Bounds::new(gpui::point(px(12.),px(30.)), size(px(1000.),px(680.))))),
-             titlebar: Some(gpui::TitlebarOptions { title: None, appears_transparent: true, traffic_light_position: Some(gpui::point(px(14.),px(14.))) }),
-             app_owns_titlebar_drag: true,
-+            app_id: Some("zeron-browser-fixture".into()),
-             ..Default::default()
-         }, |_, cx| cx.new(|cx| shell::Shell::new(state.clone(), boot, cx))).unwrap();
-         state.update(cx, |_, cx| cx.notify());
-@@ -258,6 +274,10 @@ fn main() -> anyhow::Result<()> {
-                         pause(cx, 50).await;
-                     }
-                     pause(cx, 500).await;
-+                    #[cfg(target_os = "linux")]
-+                    if let Some(seconds) = std::env::var("ZERON_BROWSER_BENCH").ok().and_then(|s| s.parse().ok()) {
-+                        return linux::bench(window, first.clone(), &_origin, &output, seconds, cx).await;
-+                    }
-                     capture_frame(window, &output, "browser-preview-dark", cx).await?;
-                     // Real DOM click, native navigation and history.
-                     first.read_with(cx, |b, _| b.fixture_eval("document.getElementById('details').click()"));
-```
-
-**File**: `crates/ui/examples/browser-fixture/linux.rs` (modified, +512/-45)
-```diff
-@@ -8,8 +8,11 @@ use zeron_ui::browser::BrowserSurface;
- /// initial pause on a loaded runner. Yield to GPUI until X11 maps the window;
- /// blocking this thread would prevent the frame we're waiting for.
- pub(super) async fn wait_for_visible_window(cx: &mut AsyncApp) -> anyhow::Result<()> {
--    // Wayland captures the already-mapped nested compositor's X11 window.
--    if std::env::var("ZERON_BROWSER_CAPTURE_WINDOW").is_ok_and(|id| !id.is_empty()) {
-+    // Wayland captures the already-mapped nested compositor's X11 window or
-+    // its only output.
-+    if std::env::var("ZERON_BROWSER_CAPTURE_WINDOW").is_ok_and(|id| !id.is_empty())
-+        || std::env::var_os("ZERON_BROWSER_CAPTURE_COMMAND").is_some()
-+    {
-         return Ok(());
-     }
-     let deadline = std::time::Instant::now() + Duration::from_secs(10);
-@@ -134,6 +137,431 @@ fn click(
-         cx,
-     )
- }
-+/// A page that repaints its whole viewport every frame: a canvas of moving
-+/// shapes under a CSS-animated card. `window.benchFrames` counts its frames.
-+const BENCH_CANVAS: &str = "document.body.innerHTML='';document.body.style.margin='0';\
-+let c=document.createElement('canvas');c.style='position:fixed;inset:0;width:100vw;height:100vh';\
-+let card=document.createElement('div');card.textContent='Zeron';\
-+card.style='position:fixed;left:40%;top:40%;padding:24px 48px;font:600 32px system-ui;color:#fff;background:#29483bcc;border-radius:16px;box-shadow:0 12px 40px #0008;animation:spin 2s linear infinite';\
-+let style=document.createElement('style');style.textContent='@keyframes spin{to{transform:rotate(360deg)}}';\
-+document.head.append(style);document.body.append(c,card);let g=c.getContext('2d');window.benchFrames=0;\
-+function frame(t){let w=innerWidth*devicePixelRatio,h=innerHeight*devicePixelRatio;\
-+if(c.width!==w||c.height!==h){c.width=w;c.height=h}g.fillStyle='#10201a';g.fillRect(0,0,w,h);\
-+for(let i=0;i<1500;i++){let a=t/900+i*0.37;g.fillStyle='hsl('+(i*7+t/20)%360+' 70% 60%)';\
-+g.fillRect((Math.sin(a)*0.45+0.5)*w,(Math.cos(a*1.3)*0.45+0.5)*h,14,14)}\
-+window.benchFrames++;requestAnimationFrame(frame)}requestAnimationFrame(frame);true";
-+
-+/// A still page of text with one CSS spinner: the rest of the viewport never
-+/// changes. No script runs per frame.
-+const BENCH_CSS: &str = "document.body.innerHTML='';\
-+let style=document.createElement('style');style.textContent='@keyframes spin{to{transform:rotate(360deg)}}\
-+body{margin:0;padding:32px;font:16px/1.6 system-ui;color:#d8e2dc;background:#10201a}\
-+.spinner{position:fixed;left:48px;top:48px;width:160px;height:160px;border-radius:24px;\
-+background:conic-gradient(#3fa36b,#f5f0df,#3fa36b);animation:spin 1s linear infinite}';\
-+document.head.append(style);let s=document.createElement('div');s.className='spinner';document.body.append(s);\
-+for(let i=0;i<60;i++){let p=document.createElement('p');\
-+p.textContent='Paragraph '+i+': the rest of this page stays still while the spinner turns.';document.body.append(p)}true";
-+
-+/// A long article the script scrolls at 600 CSS px/s, whatever the frame
-+/// rate: every frame moves the whole viewport.
-+const BENCH_SCROLL: &str = "document.body.innerHTML='';\
-+let style=document.createElement('style');style.textContent='body{margin:0;font:16px/1.6 system-ui;color:#d8e2dc;background:#10201a}\
-+article{max-width:760px;margin:0 auto;padding:24px}h2{color:#7fd1a3}\
-+.box{height:120px;border-radius:12px;margin:16px 0;background:linear-gradient(90deg,#29483b,#3fa36b)}';\
-+document.head.append(style);let a=document.createElement('article');let text='Lorem ipsum dolor sit amet, consectetur \
-+adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '.repeat(4);\
-+for(let i=0;i<300;i++){a.insertAdjacentHTML('beforeend','<h2>Section '+i+'</h2><p>'+text+'</p>'+(i%3?'':'<div class=box></div>'))}\
-+document.body.append(a);window.benchFrames=0;let start=null;\
-+function frame(t){if(start===null)start=t;let max=document.documentElement.scrollHeight-innerHeight;\
-+window.scrollTo(0,((t-start)*0.6)%max);window.benchFrames++;requestAnimationFrame(frame)}requestAnimationFrame(frame);true";
-+
-+/// WebGL 2 clearing the whole viewport and drawing a turning triangle.
-+/// `benchInfo()` also clears a WebGL 1 context and reads a pixel back.
-+const BENCH_WEBGL: &str = "document.body.innerHTML='';document.body.style.margin='0';\
-+let c=document.createElement('canvas');c.style='position:fixed;inset:0;width:100vw;height:100vh';document.body.append(c);\
-+let gl=c.getContext('webgl2');window.benchFrames=0;window.benchError=gl?null:'no WebGL 2 context';\
-+if(gl){let shader=(type,source)=>{let s=gl.createShader(type);gl.shaderSource(s,source);gl.compileShader(s);return s};\
-+let p=gl.createProgram();\
-+gl.attachShader(p,shader(gl.VERTEX_SHADER,'#version 300 es\\nuniform float t;in vec2 v;void main(){float c=cos(t),s=sin(t);gl_Position=vec4(mat2(c,-s,s,c)*v,0,1);}'));\
-+gl.attachShader(p,shader(gl.FRAGMENT_SHADER,'#version 300 es\\nprecision medium
-```
-
-**File**: `crates/ui/src/browser/linux/helper.c` (modified, +34/-0)
-```diff
-@@ -333,9 +333,41 @@ static Page *new_page(guint id) {
-     g_signal_connect(p->web, "context-menu", G_CALLBACK(context_menu), p);
-     g_signal_connect(p->web, "show-option-menu", G_CALLBACK(option_menu), p);
-     gtk_widget_show_all(p->window);
-+    // WebKit read the scale factor while the view had no window, when GTK falls
-+    // back to the first monitor's (2 on a 1.5x Wayland output): it rendered 4x
-+    // the pixels and GTK downscaled them. Re-read it from the offscreen window.
-+    g_object_notify(G_OBJECT(p->web), "scale-factor");
-     g_hash_table_insert(pages, GUINT_TO_POINTER(id), p);
-     return p;
- }
-+// Cairo's ARGB32 is BGRA in memory on little-endian hosts, GPUI's atlas order,
-+// and WebKit paints an opaque background, so the surface is sent as-is.
-+// Converting through GdkPixbuf took most of the helper's CPU and held large
-+// pages well under 60 fps. Returns FALSE when only that path can read it (X11).
-+static gboolean send_surface(Page *p) {
-+    cairo_surface_t *surface = gtk_offscreen_window_get_surface(GTK_OFFSCREEN_WINDOW(p->window));
-+    if (G_BYTE_ORDER != G_LITTLE_ENDIAN || !surface ||
-+        cairo_surface_get_type(surface) != CAIRO_SURFACE_TYPE_IMAGE ||
-+        cairo_image_surface_get_format(surface) != CAIRO_FORMAT_ARGB32)
-+        return FALSE;
-+    guint w = cairo_image_surface_get_width(surface), h = cairo_image_surface_get_height(surface);
-+    if (cairo_image_surface_get_stride(surface) != (int)(w * 4))
-+        return FALSE;
-+    if (w != p->width || h != p->height) {
-+        p->dirty = TRUE;
-+        return TRUE;
-+    }
-+    cairo_surface_flush(surface);
-+    float scale = p->scale;
-+    guint32 scale_bits;
-+    memcpy(&scale_bits, &scale, 4);
-+    guint32 prefix[3] = {GUINT32_TO_LE(w), GUINT32_TO_LE(h), GUINT32_TO_LE(scale_bits)};
-+    guint32 header[2] = {GUINT32_TO_LE(p->id), GUINT32_TO_LE(sizeof prefix + w * h * 4)};
-+    char kind = 'F';
-+    if (write_all(&kind, 1) && write_all(header, sizeof header) && write_all(prefix, sizeof prefix))
-+        write_all(cairo_image_surface_get_data(surface), (size_t)w * h * 4);
-+    return TRUE;
-+}
- static gboolean render_frames(gpointer unused) {
-     GHashTableIter it;
-     gpointer value;
-@@ -345,6 +377,8 @@ static gboolean render_frames(gpointer unused) {
-         if (!p->visible || !p->dirty)
-             continue;
-         p->dirty = FALSE;
-+        if (send_surface(p))
-+            continue;
-         GdkPixbuf *pix = gtk_offscreen_window_get_pixbuf(GTK_OFFSCREEN_WINDOW(p->window));
-         if (!pix)
-             continue;
-```
-
-**File**: `crates/ui/src/browser/linux/mod.rs` (modified, +717/-176)
-```diff
-@@ -1,5 +1,7 @@
--//! WebKitGTK renders offscreen in an isolated helper process. GPUI composites
--//! its frames, so browser content uses the same clipping and blur as other UI.
-+//! Web pages render in an isolated helper process and GPUI composites their
-+//! frames, so browser content uses the same clipping and blur as other UI. WPE
-+//! WebKit renders on GPUI's GPU at the display's refresh rate (`wpe.rs`); the
-+//! WebKitGTK helper remains for systems without WPE WebKit.
- use super::model::{PageState, Presentation};
- use gpui::{Bounds, Pixels, RenderImage};
- use serde_json::{Value, json};
-@@ -10,11 +12,13 @@ use std::{
-     process::{Child, ChildStdin, Command, Stdio},
-     sync::{
-         Arc, Mutex, Weak,
--        atomic::{AtomicU32, Ordering},
-+        atomic::{AtomicBool, AtomicU32, Ordering},
-     },
+@@ -135,6 +135,16 @@ export const usageCsv = (data: UsageExport): string => {
+   return `${lines.join("\n")}\n`;
  };
- use tokio::sync::mpsc::Sender;
  
-+mod wpe;
++/** Whether the request carries the operator's `ADMIN_TOKEN` bearer. */
++export const adminAuthorized = async (request: Request, adminToken: string): Promise<boolean> => {
++  // Header only (never `?token=`: query strings end up in logs).
++  const header = request.headers.get("authorization") ?? "";
++  const token = header.toLowerCase().startsWith("bearer ") ? header.slice(7).trim() : "";
++  // Compare digests so neither the content nor the length leaks via timing.
++  const [given, expected] = await Promise.all([sha256B64url(token), sha256B64url(adminToken)]);
++  return token !== "" && constantTimeEqual(given, expected);
++};
 +
- #[derive(Clone, Debug)]
- pub enum NativeEvent {
-     Changed,
-@@ -24,6 +28,35 @@ pub enum NativeEvent {
-     Menu(Value),
-     /// A script's string result (`None` for any other value or a failure).
-     Evaluated(Option<String>),
-+    /// WebKit started or stopped wanting vblanks; see `Surface::vsync`.
-+    Vsync,
-+    /// The page's pointer changed; see `Surface::cursor`.
-+    Cursor,
+ /** `/admin/cloud/usage`, `/admin/cloud/credits`, `/admin/cloud/machine` and
+  * `/admin/cloud/limits` — undefined when not one of them. */
+ export const handleAdminRoute = async (
+@@ -144,12 +154,7 @@ export const handleAdminRoute = async (
+ ): Promise<Response | undefined> => {
+   if (!ADMIN_PATHS.has(url.pathname)) return undefined;
+   if (!env.ADMIN_TOKEN) return json({ error: "not_found" }, 404);
+-  // Header only (never `?token=`: query strings end up in logs).
+-  const header = request.headers.get("authorization") ?? "";
+-  const token = header.toLowerCase().startsWith("bearer ") ? header.slice(7).trim() : "";
+-  // Compare digests so neither the content nor the length leaks via timing.
+-  const [given, expected] = await Promise.all([sha256B64url(token), sha256B64url(env.ADMIN_TOKEN)]);
+-  if (!token || !constantTimeEqual(given, expected)) {
++  if (!(await adminAuthorized(request, env.ADMIN_TOKEN))) {
+     return jsonError(401, "unauthenticated", "Admin token required.");
+   }
+   if (url.pathname === "/admin/cloud/credits") return grantCredits(request, env);
+```
+
+**File**: `edge/src/env.ts` (modified, +6/-0)
+```diff
+@@ -26,6 +26,12 @@ export interface Env {
+    * routes (code exchange, refresh, orgs). Unset ⇒ those routes answer 501,
+    * matching the old apps/server dev-mode behavior. */
+   WORKOS_API_KEY?: string;
++  /** Signing secret of the WorkOS webhook endpoint `https://<edge>/workos/webhook`
++   * (wrangler secret), subscribed to user.created/updated/deleted. Unset ⇒
++   * that route answers 503 and WorkOS retries. */
++  WORKOS_WEBHOOK_SECRET?: string;
++  /** Every WorkOS user's profile and join date (`users1`; user-directory.ts). */
++  USER_DIRECTORY?: DurableObjectNamespace<import("./user-directory").UserDirectory>;
+   /** APNs auth key (contents of AuthKey_XXXX.p8, wrangler secret) and its
+    * key id. Unset ⇒ session notifications are decided and logged, not sent. */
+   APNS_KEY_P8?: string;
+```
+
+**File**: `edge/src/index.ts` (modified, +8/-1)
+```diff
+@@ -47,6 +47,10 @@
+  *   POST /admin/cloud/machine           — ADMIN_TOKEN (a user's machine size)
+  *   POST /admin/cloud/limits            — ADMIN_TOKEN (a user's awake/chat caps)
+  *   POST /stripe/webhook | GET /billing/done — pre-bearer billing (Stripe-signed / static page)
++ *
++ * User directory (user-directory.ts):
++ *   POST /workos/webhook                — pre-bearer, WorkOS-signed user.* events
++ *   GET  /admin/users[?format=csv]      — ADMIN_TOKEN (every user's profile + join date)
+  */
+ import { authenticate } from "./auth";
+ import { chatRoute } from "./chat-route";
+@@ -75,9 +79,10 @@ import { FakeProvider } from "./cloud/providers/fake";
+ import { runnerChatGate, runnerDeviceGate } from "./runner-access";
+ import { runnerRefusal } from "./runner-policy";
+ import { handleVaultRoute } from "./vault-routes";
++import { handleUserDirectoryRoute, UserDirectory } from "./user-directory";
+ import installSh from "./install.sh";
+ 
+-export { SessionRoom, DeviceRoom, RegistryRoom, ChatRoom, PreviewRoom, CloudAccount, CloudIndex };
++export { SessionRoom, DeviceRoom, RegistryRoom, ChatRoom, PreviewRoom, CloudAccount, CloudIndex, UserDirectory };
+ export { ProvisionWorkflow, WakeWorkflow, SleepWorkflow, DeleteWorkflow };
+ 
+ const ID_RE = /^[A-Za-z0-9_-]{1,128}$/;
+@@ -137,6 +142,8 @@ export default {
+     if (billingRouted) return billingRouted;
+     const runnerRouted = await handleRunnerPublicRoute(request, env, url);
+     if (runnerRouted) return runnerRouted;
++    const usersRouted = await handleUserDirectoryRoute(request, env, url);
++    if (usersRouted) return usersRouted;
+ 
+     const auth = await authenticate(env, request);
+     if (!auth) return json({ error: "unauthenticated" }, 401);
+```
+
+**File**: `edge/src/user-directory.ts` (added, +265/-0)
+```diff
+@@ -0,0 +1,265 @@
++/**
++ * UserDirectory — ONE Durable Object (`users1`) recording every WorkOS user:
++ * name, email, profile picture and when they joined (WorkOS `created_at`).
++ *
++ * Fed by WorkOS webhooks (`user.created`, `user.updated`, `user.deleted`) at
++ * `POST /workos/webhook`, signed with the endpoint's secret
++ * (`WORKOS_WEBHOOK_SECRET`). Deliveries can arrive out of order and retry,
++ * so a write lands only when its `updated_at` is at least the stored one;
++ * a delete leaves a tombstone (id, joined, deleted) with the profile cleared,
++ * and nothing revives it.
++ *
++ * `GET /admin/users[?format=csv]` (ADMIN_TOKEN) reads the table back.
++ *
++ * Writes are one row per sign-up or profile change, so a single instance is
++ * not a hotspot.
++ */
++import { DurableObject } from "cloudflare:workers";
++import type { Env } from "./env";
++import { json, jsonError } from "./http";
++import { adminAuthorized } from "./cloud/billing";
++
++export const USER_DIRECTORY_NAME = "users1";
++
++/** The fields of a WorkOS user object this directory keeps (wire names). */
++export interface WorkOsUser {
++  readonly id: string;
++  readonly email: string;
++  readonly first_name: string | null;
++  readonly last_name: string | null;
++  readonly profile_picture_url: string | null;
++  readonly created_at: string;
++  readonly updated_at: string;
 +}
 +
-+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-+pub(super) enum Engine {
-+    Gtk,
-+    Wpe,
++export interface DirectoryUser {
++  readonly userId: string;
++  readonly email: string | null;
++  readonly name: string | null;
++  readonly firstName: string | null;
++  readonly lastName: string | null;
++  readonly profilePictureUrl: string | null;
++  /** ISO 8601, WorkOS `created_at`. */
++  readonly joinedAt: string;
++  readonly updatedAt: string;
++  readonly deletedAt: string | null;
 +}
 +
-+/// Set once WPE WebKit failed to start in this process: later helpers go
-+/// straight to WebKitGTK instead of failing the same way again.
-+static WPE_FAILED: AtomicBool = AtomicBool::new(false);
++export class UserDirectory extends DurableObject<Env> {
++  constructor(ctx: DurableObjectState, env: Env) {
++    super(ctx, env);
++    this.ctx.storage.sql.exec(`CREATE TABLE IF NOT EXISTS users (
++      user_id TEXT PRIMARY KEY, email TEXT, first_name TEXT, last_name TEXT,
++      profile_picture_url TEXT, created_at TEXT NOT NULL, updated_at TEXT NOT NULL,
++      deleted_at TEXT, recorded_at INTEGER NOT NULL)`);
++  }
 +
-+impl Engine {
-+    /// `ZERON_BROWSER_ENGINE=gtk|wpe` overrides the default, WPE WebKit when
-+    /// this build embeds its helper.
-+    fn preferred() -> (Self, bool) {
-+        match std::env::var("ZERON_BROWSER_ENGINE").as_deref() {
-+            Ok("gtk") => (Self::Gtk, true),
-+            Ok("wpe") => (Self::Wpe, true),
-+            _ if wpe::HELPER.is_empty() || WPE_FAILED.load(Ordering::Relaxed) => {
-+                (Self::Gtk, false)
-+            }
-+            _ => (Self::Wpe, false),
-+        }
-+    }
- }
- 
- #[derive(Clone, Default)]
-@@ -32,20 +65,37 @@ pub struct BrowserData {
-     profile: Option<super::profile::BrowserProfile>,
-     #[cfg(test)]
-     helper_override: Option<std::path::PathBuf>,
-+    #[cfg(test)]
-+    engine_override: Option<Engine>,
- }
- 
- struct Worker {
-+    engine: Engine,
-     child: Mutex<Child>,
--    stdin: Mutex<Option<ChildStdin>>,
-+    link: Link,
-     routes: Arc<Mutex<HashMap<u32, Weak<Route>>>>,
-+    /// Its frames reader stopped: pages can no longer hear from the helper.
-+    stopped: Arc<AtomicBool>,
-     next_id: AtomicU32,
-+    /// What the helper reported when it started.
-+    #[cfg(test)]
-+    ready: Value,
++  /** Record a user's current profile; stale or post-delete writes are no-ops.
++   * Answers whether the row changed. */
++  upsert(user: WorkOsUser): boolean {
++    const cursor = this.ctx.storage.sql.exec(
++      `INSERT INTO users (user_id, email, first_name, last_name, profile_picture_url, created_at, updated_at, recorded_at)
++       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
++       ON CONFLICT (user_id) DO UPDATE SET
++         email = excluded.email, first_name = excluded.first_name, last_name = excluded.last_name,
++         profile_picture_url = excluded.profile_picture_url, created_at = excluded.created_at,
++         updated_at = excluded.updated_at, recorded_at = excluded.recorded_at
++       WHERE users.deleted_at IS NULL AND excluded.updated_at >= users.updated_at`,
++      user.id,
++      user.email,
++      user.first_name,
++      user.last_name,
++      user.profile_picture_url,
++      user.created_at,
++      user.updated_at,
++      Date.now()
++    );
++    return cursor.rowsWritten > 0;
++  }
++
++  /** Tombstone a deleted user: keep id + joined date, drop the profile. */
++  remove(user: WorkOsUser, deletedAt: string): void {
++    this.ctx.storage.sql.exec(
++      `INSERT INTO users (user_id, created_at, updated_at, deleted_at, recorded_at) VALUES (?, ?, ?, ?, ?)
++       ON CONFLICT (user_id) DO UPDATE SET
++         email = NULL, first_name = NULL, last_name = NULL, profile_picture_url = NULL,
++         deleted_at = excluded.deleted_at, recorded_at = excluded.recorded_at`,
++      user.id,
++      user.created_at,
++      user.updated_at,
++      deletedAt,
++      Date.now()
++    );
++  }
++
++  list(): DirectoryUser[] {
++    return [...this.ctx.storage.sql.exec("SELECT * FROM users ORDER BY created_at")].map((row) => {
++      const first = row.first_name as string | null;
++      const last = row.last_name as string | null;
++      const name = [first, last].filter(Boolean).join(" ");
++      return {
++        userId: row.user_id as string,
++        email: row.email as string | null,
++        name: name || null,
++        firstName: first,
++        lastName: last,
++        profilePictureUrl: row.profile_picture_url as string | null,
++        joinedAt: row.created_at as string,
++        updatedAt: row.updated_at as string,
++        deletedAt: row.deleted_at as string | null
++      };
++    });
++  }
 +}
-+enum Link {
-+    Pipe(Mutex<Option<ChildStdin>>),
-+    Socket(wpe::Outbox),
- }
- impl Drop for Worker {
-     fn drop(&mut self) {
-         // EOF asks the helper to drain pending work. Closing the pipe cannot
-         // block on a hung helper, unlike writing another command to a full pipe.
--        if let Ok(stdin) = self.stdin.get_mut() {
--            stdin.take();
-+        match &mut self.link {
-+            Link::Pipe(stdin) => {
-+                if let Ok(stdin) = stdin.get_mut() {
-+                    stdin.take();
-+                }
-+            }
-+            Link::Socket(outbox) => outbox.close(),
-         }
-         if let Ok(child) = self.child.get_mut() {
-             let deadline = std::time::Instant::now() + std::time::Duration::from_secs(3);
-@@ -68,31 +118,45 @@ struct Route {
-     tx: Sender<NativeEvent>,
-     state: Mutex<PageState>,
-     frame: Mutex<Option<(Arc<RenderImage>, f32)>>,
-+    surface: Mutex<wpe::Surface>,
-     input: Mutex<Value>,
-     #[cfg(feature = "browser-fixture")]
-     evaluation: Mutex<Option<Value>>,
- }
- 
--fn helper_path() -> Result<std::path::PathBuf, String> {
-+const GTK_HELPER: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/zeron-webkit"));
 +
-+fn helper_path(engine: Engine) -> Result<std::path::PathBuf, String> {
-     let root = std::env::var_os("XDG_CACHE_HOME")
-         .map(std::path::PathBuf::from)
-         .or_else(|| std::env::var_os("HOME").map(|p| std::path::PathBuf::from(p).join(".cache")))
-         .ok_or("Could not locate the browser cache directory")?
-         .join("zeron/browser");
--    extract_helper(&root)
-+    // Development builds can run a helper built on its own, e.g. instrumented.
-+    #[cfg(debug_assertions)]
-+    if let (Engine::Wpe, Some(path)) = (engine, std::env::var_os("ZERON_WPE_HELPER")) {
-+        return Ok(path.into());
-+    }
-+    match engine {
-+        Engine::Gtk => extract_helper(&root, "webkit", GTK_HELPER),
-+        Engine::Wpe => extract_helper(&root, "wpe", wpe::HELPER),
-+    }
- }
++export const userDirectoryStub = (env: Pick<Env, "USER_DIRECTORY">) =>
++  env.USER_DIRECTORY ? env.USER_DIRECTORY.get(env.USER_DIRECTORY.idFromName(USER_DIRECTORY_NAME)) : undefined;
++
++// ── webhook signature ───────────────────────────────────────────────────────
++
++/** How far a webhook's signed timestamp may drift (the WorkOS SDK default). */
++export const WORKOS_SIGNATURE_TOLERANCE_MS = 180_000;
++
++const hex = (bytes: ArrayBuffer): string =>
++  [...new Uint8Array(bytes)].map((b) => b.to
+```
+
+**File**: `edge/test/workerd/fixture.ts` (modified, +4/-0)
+```diff
+@@ -15,12 +15,14 @@ import { previewRoute } from "../../src/preview-route";
+ import { releaseRoute } from "../../src/releases";
+ import { runnerRefusal } from "../../src/runner-policy";
+ import { handleVaultRoute } from "../../src/vault-routes";
++import { handleUserDirectoryRoute } from "../../src/user-directory";
+ export { DeviceRoom } from "../../src/device-room";
+ export { ChatRoom } from "../../src/chat-room";
+ export { PreviewRoom } from "../../src/preview-room";
+ export { RegistryRoom } from "../../src/registry-room";
+ export { CloudAccount } from "../../src/cloud/cloud-account";
+ export { CloudIndex } from "../../src/cloud/cloud-index";
++export { UserDirectory } from "../../src/user-directory";
+ export { DeleteWorkflow, ProvisionWorkflow, SleepWorkflow, WakeWorkflow } from "../../src/cloud/workflows";
  
--fn extract_helper(root: &std::path::Path) -> Result<std::path::PathBuf, String> {
-+fn extract_helper(
-+    root: &std::path::Path,
-+    name: &str,
-+    helper: &[u8],
-+) -> Result<std::path::PathBuf, String> {
-     use sha2::{Digest, Sha256};
--    const HELP
+ /** Bare SQLite-backed DO; tests reach its real `ctx.storage.sql` via
+@@ -117,6 +119,8 @@ export default {
+     if (billing) return billing;
+     const runner = await handleRunnerPublicRoute(request, env, url);
+     if (runner) return runner;
++    const users = await handleUserDirectoryRoute(request, env, url);
++    if (users) return users;
+     const auth = await authenticate(env, request);
+     if (!auth) return new Response("Unauthorized", { status: 401 });
+     const refused = runnerRefusal(auth, request.method, url);
+```
+
+**File**: `edge/test/workerd/user-directory.workerd.test.ts` (added, +103/-0)
+```diff
+@@ -0,0 +1,103 @@
++import { SELF } from "cloudflare:test";
++import { describe, expect, it } from "vitest";
++import { signWorkOsPayload, verifyWorkOsSignature } from "../../src/user-directory";
++
++const SECRET = "workos_whsec_test";
++
++const user = (id: string, overrides: Record<string, unknown> = {}) => ({
++  object: "user",
++  id,
++  email: `${id}@example.com`,
++  first_name: "Ada",
++  last_name: "Lovelace",
++  profile_picture_url: "https://workoscdn.com/images/v1/abc",
++  email_verified: true,
++  created_at: "2026-10-01T10:00:00.000Z",
++  updated_at: "2026-10-01T10:00:00.000Z",
++  ...overrides
++});
++
++/** POST a WorkOS-signed webhook (or a badly signed one). */
++const webhook = async (event: string, data: Record<string, unknown>, opts: { secret?: string; t?: number } = {}) => {
++  const payload = JSON.stringify({ id: `event_${crypto.randomUUID()}`, event, data, created_at: new Date().toISOString() });
++  const t = opts.t ?? Date.now();
++  const v1 = await signWorkOsPayload(opts.secret ?? SECRET, t, payload);
++  return SELF.fetch("https://edge.test/workos/webhook", {
++    method: "POST",
++    headers: { "content-type": "application/json", "workos-signature": `t=${t}, v1=${v1}` },
++    body: payload
++  });
++};
++
++type Listed = {
++  count: number;
++  users: { userId: string; email: string | null; name: string | null; profilePictureUrl: string | null; joinedAt: string; deletedAt: string | null }[];
++};
++
++const listUsers = async (token = "test-admin-token") =>
++  SELF.fetch("https://edge.test/admin/users", { headers: { authorization: `Bearer ${token}` } });
++
++const find = async (id: string) => ((await (await listUsers()).json()) as Listed).users.find((u) => u.userId === id);
++
++describe("user directory", () => {
++  it("verifies WorkOS signatures within tolerance only", async () => {
++    const payload = '{"id":"event_1"}';
++    const t = 1_800_000_000_000;
++    const v1 = await signWorkOsPayload("s", t, payload);
++    expect(await verifyWorkOsSignature("s", `t=${t}, v1=${v1}`, payload, t + 1000)).toBe(true);
++    expect(await verifyWorkOsSignature("s", `t=${t}, v1=${v1}`, `${payload} `, t)).toBe(false);
++    expect(await verifyWorkOsSignature("other", `t=${t}, v1=${v1}`, payload, t)).toBe(false);
++    expect(await verifyWorkOsSignature("s", `t=${t}, v1=${v1}`, payload, t + 181_000)).toBe(false);
++    expect(await verifyWorkOsSignature("s", null, payload, t)).toBe(false);
++  });
++
++  it("records a new user's name, email, picture and join date", async () => {
++    const res = await webhook("user.created", user("user_created1"));
++    expect(res.status).toBe(200);
++    expect(await res.json()).toEqual({ received: true, applied: true });
++    expect(await find("user_created1")).toMatchObject({
++      email: "user_created1@example.com",
++      name: "Ada Lovelace",
++      profilePictureUrl: "https://workoscdn.com/images/v1/abc",
++      joinedAt: "2026-10-01T10:00:00.000Z",
++      deletedAt: null
++    });
++  });
++
++  it("rejects bad signatures and stale timestamps", async () => {
++    expect((await webhook("user.created", user("user_forged"), { secret: "wrong" })).status).toBe(400);
++    expect((await webhook("user.created", user("user_forged"), { t: Date.now() - 10 * 60_000 })).status).toBe(400);
++    expect(await find("user_forged")).toBeUndefined();
++  });
++
++  it("keeps the newest profile when deliveries arrive out of order", async () => {
++    await webhook("user.updated", user("user_order", { first_name: "New", updated_at: "2026-10-02T00:00:00.000Z" }));
++    const stale = await webhook("user.created", user("user_order", { first_name: "Old" }));
++    expect(await stale.json()).toEqual({ received: true, applied: false });
++    expect((await find("user_order"))?.name).toBe("New Lovelace");
++  });
++
++  it("clears a deleted user's profile and never revives it", async () => {
++    await webhook("user.created", user("user_gone"));
++    await webhook("user.deleted", user("user_gone"));
++    await webhook("user.updated", user("user_gone", { updated_at: "2026-10-09T00:00:00.000Z" }));
++    const gone = await find("user_gone");
++    expect(gone).toMatchObject({ email: null, name: null, profilePictureUrl: null, joinedAt: "2026-10-01T10:00:00.000Z" });
++    expect(gone?.deletedAt).toBeTruthy();
++  });
++
++  it("acknowledges events it doesn't track", async () => {
++    const res = await webhook("organization.created", { id: "org_1" });
++    expect(await res.json()).toEqual({ received: true });
++  });
++
++  it("lists users only with the admin token, as JSON or CSV", async () => {
++    expect((await listUsers("nope")).status).toBe(401);
++    await webhook("user.created", user("user_csv", { first_name: "Grace, Jr.", last_name: null }));
++    const csv = await (
++      await SELF.fetch("https://edge.test/admin/users?format=csv", { headers: { authorization: "Bearer test-admin-token" } })
++    ).text();
++    expect(csv.split("\n")[0]).toBe("user_id,email,name,first_name,last_name,profile_picture_url,joined_at,updated_at,deleted_
+```
+
+**File**: `edge/vitest.workerd.config.ts` (modified, +3/-1)
+```diff
+@@ -46,7 +46,8 @@ export default defineConfig({
+           PREVIEW_ROOMS: { className: "PreviewRoom", useSQLite: true },
+           REGISTRY_ROOMS: { className: "RegistryRoom", useSQLite: true },
+           CLOUD_ACCOUNTS: { className: "CloudAccount", useSQLite: true },
+-          CLOUD_INDEX: { className: "CloudIndex", useSQLite: true }
++          CLOUD_INDEX: { className: "CloudIndex", useSQLite: true },
++          USER_DIRECTORY: { className: "UserDirectory", useSQLite: true }
+         },
+         workflows: {
+           CLOUD_PROVISION: { name: "test-cloud-provision", className: "ProvisionWorkflow" },
+@@ -76,6 +77,7 @@ export default defineConfig({
+           STRIPE_API_URL: "https://stripe.test",
+           CLOUD_MAX_AWAKE: "2",
+           ADMIN_TOKEN: "test-admin-token",
++          WORKOS_WEBHOOK_SECRET: "workos_whsec_test",
+           RUNNER_JWT_PRIVATE_KEY: JSON.stringify(runnerKeys.privateKey.export({ format: "jwk" })),
+           RUNNER_JWT_PUBLIC_KEY: JSON.stringify(runnerKeys.publicKey.export({ format: "jwk" }))
+         },
+```
+
+**File**: `edge/wrangler.jsonc` (modified, +12/-5)
+```diff
+@@ -49,7 +49,9 @@
+       // session's machine (own sandbox, runner key, lifecycle), usage meter.
+       { "name": "CLOUD_ACCOUNTS", "class_name": "CloudAccount" },
+       // index1 — every user who ever had Cloud (billing walk list).
+-      { "name": "CLOUD_INDEX", "class_name": "CloudIndex" }
++      { "name": "CLOUD_INDEX", "class_name": "CloudIndex" },
++      // users1 — every WorkOS user's profile + join date (user-directory.ts).
++      { "name": "USER_DIRECTORY", "class_name": "UserDirectory" }
+     ]
+   },
+   "migrations": [
+@@ -70,7 +72,8 @@
+       "new_sqlite_classes": ["ChatRoom"]
+     },
+     { "tag": "v4", "new_sqlite_classes": ["PreviewRoom"] },
+-    { "tag": "v5", "new_sqlite_classes": ["CloudAccount", "CloudIndex"] }
++    { "tag": "v5", "new_sqlite_classes": ["CloudAccount", "CloudIndex"] },
++    { "tag": "v6", "new_sqlite_classes": ["UserDirectory"] }
+   ],
+   // Cloud device lifecycle (src/cloud/workflows.ts). Workflow names are
+   // account-wide: the dev/test wrangler configs must never reuse them.
+@@ -123,8 +126,11 @@
+     //   CLOUD_ACCESS            who Cloud is offered to: "everyone", or WorkOS
+     //                           user/org ids (comma or space separated). Unset ⇒
+     //                           nobody. A secret so it changes without a deploy.
+-    //   ADMIN_TOKEN             operator bearer for GET /admin/cloud/usage
+-    //                           (unset ⇒ that route 404s)
++    //   ADMIN_TOKEN             operator bearer for GET /admin/cloud/usage and
++    //                           GET /admin/users (unset ⇒ those routes 404)
++    //   WORKOS_WEBHOOK_SECRET   signing secret of the WorkOS webhook endpoint
++    //                           https://<edge>/workos/webhook, subscribed to
++    //                           user.created, user.updated, user.deleted
+     //   STRIPE_SECRET_KEY       Stripe API key (billing; src/cloud/stripe.ts)
+     //   STRIPE_WEBHOOK_SECRET   signing secret of the webhook endpoint
+     //                           https://<edge>/stripe/webhook, subscribed to
+@@ -192,7 +198,8 @@
+           { "name": "REGISTRY_ROOMS", "class_name": "RegistryRoom" },
+           { "name": "CHAT_ROOMS", "class_name": "ChatRoom" },
+           { "name": "CLOUD_ACCOUNTS", "class_name": "CloudAccount" },
+-          { "name": "CLOUD_INDEX", "class_name": "CloudIndex" }
++          { "name": "CLOUD_INDEX", "class_name": "CloudIndex" },
++          { "name": "USER_DIRECTORY", "class_name": "UserDirectory" }
+         ]
+       },
+       "workflows": [
 ```
 
 ---
 
-### Incident Patch 2: `46d4e42b` (2026-10-27)
-**Commit Message**: Render Markdown in user messages and the rail's preview card (#1067)
+### Incident Patch 2: `8b7afb30` (2026-10-28)
+**Commit Message**: Bump version to v0.2.129
 
-User bubbles now render their Markdown the way replies do: strong,
-emphasis, inline code, lists, and fences with highlighting and copy.
-Newlines the person typed stay line breaks (a new `parse_message` mode).
-Prompts that read the same as typed, and prompts carrying file chips,
-keep the plain bubble.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-The rail's hover card shows `Message from [mark] Chat` over an
-agent-sent prompt instead of its raw routing header, and renders the
-prompt and the reply's opening as styled prose clamped to a few lines,
-with inline code on its wash. Only prose shows: fences, quotes, tables,
-display formulas and rules would spend the card's few lines on their
-least telling part, so they are left out, and a message of nothing but
-a fence shows its first line. The sender's title and mark come from the
-same lookup as the transcript's chat captions.
-
-Co-authored-by: Wing <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
-
-**File**: `crates/markdown/src/lib.rs` (modified, +4/-1)
+**File**: `Cargo.lock` (modified, +30/-30)
 ```diff
-@@ -9,4 +9,7 @@
- pub mod mend;
- pub mod parser;
+@@ -13319,7 +13319,7 @@ dependencies = [
  
--pub use parser::{Block, BlockTree, IncrementalParser, InlineRun, InlineStyle, TopBlock, parse_full};
-+pub use parser::{
-+    Block, BlockTree, IncrementalParser, InlineRun, InlineStyle, TopBlock, parse_full,
-+    parse_message,
-+};
+ [[package]]
+ name = "zatex"
+-version = "0.2.128"
++version = "0.2.129"
+ dependencies = [
+  "tiny-skia",
+  "ttf-parser",
+@@ -13570,7 +13570,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron"
+-version = "0.2.128"
++version = "0.2.129"
+ dependencies = [
+  "anyhow",
+  "clap",
+@@ -13593,7 +13593,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-audio"
+-version = "0.2.128"
++version = "0.2.129"
+ dependencies = [
+  "base64 0.22.1",
+  "cpal 0.18.2",
+@@ -13605,7 +13605,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-client"
+-version = "0.2.128"
++version = "0.2.129"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -13636,7 +13636,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-doc"
+-version = "0.2.128"
++version = "0.2.129"
+ dependencies = [
+  "chrono",
+  "loro",
+@@ -13650,7 +13650,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-engine"
+-version = "0.2.128"
++version = "0.2.129"
+ dependencies = [
+  "alacritty_terminal",
+  "anyhow",
+@@ -13701,7 +13701,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-harness"
+-version = "0.2.128"
++version = "0.2.129"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -13731,14 +13731,14 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-markdown"
+-version = "0.2.128"
++version = "0.2.129"
+ dependencies = [
+  "pulldown-cmark",
+ ]
+ 
+ [[package]]
+ name = "zeron-mcp"
+-version = "0.2.128"
++version = "0.2.129"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -13759,7 +13759,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-mobile"
+-version = "0.2.128"
++version = "0.2.129"
+ dependencies = [
+  "async-trait",
+  "serde",
+@@ -13786,26 +13786,26 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-mobile-bindgen"
+-version = "0.2.128"
++version = "0.2.129"
+ dependencies = [
+  "uniffi",
+ ]
+ 
+ [[package]]
+ name = "zeron-notify"
+-version = "0.2.128"
++version = "0.2.129"
+ dependencies = [
+  "objc",
+  "tracing",
+ ]
+ 
+ [[package]]
+ name = "zeron-orb"
+-version = "0.2.128"
++version = "0.2.129"
+ 
+ [[package]]
+ name = "zeron-preview"
+-version = "0.2.128"
++version = "0.2.129"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -13833,7 +13833,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-proto"
+-version = "0.2.128"
++version = "0.2.129"
+ dependencies = [
+  "chrono",
+  "pulldown-cmark",
+@@ -13844,7 +13844,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-rpc"
+-version = "0.2.128"
++version = "0.2.129"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -13865,7 +13865,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-sync"
+-version = "0.2.128"
++version = "0.2.129"
+ dependencies = [
+  "block2 0.6.2",
+  "chrono",
+@@ -13888,7 +13888,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-syntax"
+-version = "0.2.128"
++version = "0.2.129"
+ dependencies = [
+  "thiserror 2.0.20",
+  "tree-sitter",
+@@ -13923,14 +13923,14 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-term"
+-version = "0.2.128"
++version = "0.2.129"
+ dependencies = [
+  "alacritty_terminal",
+ ]
+ 
+ [[package]]
+ name = "zeron-term-link"
+-version = "0.2.128"
++version = "0.2.129"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -13947,7 +13947,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-text"
+-version = "0.2.128"
++version = "0.2.129"
+ dependencies = [
+  "core-foundation 0.10.1",
+  "core-graphics 0.24.0",
+@@ -13964,7 +13964,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-theme"
+-version = "0.2.128"
++version = "0.2.129"
+ dependencies = [
+  "anyhow",
+  "clap",
+@@ -13979,7 +13979,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-ui"
+-version = "0.2.128"
++version = "0.2.129"
+ dependencies = [
+  "alacritty_terminal",
+  "anyhow",
+@@ -14062,7 +14062,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-update"
+-version = "0.2.128"
++version = "0.2.129"
+ dependencies = [
+  "anyhow",
+  "futures",
+@@ -14078,11 +14078,11 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-veil"
+-version = "0.2.128"
++version = "0.2.129"
+ 
+ [[package]]
+ name = "zeron-visual"
+-version = "0.2.128"
++version = "0.2.129"
+ dependencies = [
+  "base64 0.22.1",
+  "gltf",
+@@ -14094,7 +14094,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-visual-gpu"
+-version = "0.2.128"
++version = "0.2.129"
+ dependencies = [
+  "image",
+  "pollster 0.4.0",
+@@ -14105,7 +14105,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-voice"
+-version = "0.2.128"
++version = "0.2.129"
+ dependencies = [
+  "anyhow",
+  "cpal 0.17.3",
+@@ -14122,7 +14122,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-voice-media"
+-version = "0.2.128"
++version = "0.2.129"
+ dependencies = [
+  "async-trait",
+  "semver",
+@@ -14137,7 +14137,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-voice-session"
+-version = "0.2.128"
++version = "0.2.129"
+ dependencies = [
+  "async-trait",
+  "futures",
 ```
 
-**File**: `crates/markdown/src/parser.rs` (modified, +43/-3)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -151,16 +151,27 @@ pub fn parse_full(source: &str) -> BlockTree {
-     parse_at(source, 0)
- }
+@@ -34,7 +34,7 @@ members = [
+ ]
  
-+/// Parse a message a person typed: like [`parse_full`], but every newline
-+/// inside a paragraph is a line break (GFM comments' `breaks`), so a prompt
-+/// keeps the lines it was written in.
-+pub fn parse_message(source: &str) -> BlockTree {
-+    parse_breaking(source, 0, options(), true)
-+}
-+
- fn parse_at(source: &str, offset: usize) -> BlockTree {
-     parse_with(source, offset, options())
- }
- 
- fn parse_with(source: &str, offset: usize, options: Options) -> BlockTree {
-+    parse_breaking(source, offset, options, false)
-+}
-+
-+fn parse_breaking(source: &str, offset: usize, options: Options, breaks: bool) -> BlockTree {
-     // pulldown-cmark 0.12 can panic on some malformed input (a slice index
-     // in its first pass); a message must never take the app down with it.
-     // Such a source renders as its plain text.
-     std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
--        parse_rewritten(source, offset, options)
-+        parse_rewritten(source, offset, options, breaks)
-     }))
-     .unwrap_or_else(|_| BlockTree {
-         blocks: vec![Arc::new(TopBlock {
-@@ -199,7 +210,7 @@ impl Skip {
- /// text, placed the way the innermost kept container takes children.
- const MAX_NESTING: usize = 32;
- 
--fn parse_rewritten(source: &str, offset: usize, options: Options) -> BlockTree {
-+fn parse_rewritten(source: &str, offset: usize, options: Options, breaks: bool) -> BlockTree {
-     let mut skip = Skip::default();
-     // Every rewrite is checked against the parse it produced: a dollar pair
-     // or a `\(…\)` pair must come out as exactly one formula, a destination
-@@ -256,7 +267,10 @@ fn parse_rewritten(source: &str, offset: usize, options: Options) -> BlockTree {
-         }
-         let events: Vec<(Event, Range<usize>)> = Parser::new_ext(&text, options)
-             .into_offset_iter()
--            .map(|(event, range)| (event, to_source(&maps, range)))
-+            .map(|(event, range)| match event {
-+                Event::SoftBreak if breaks => (Event::HardBreak, to_source(&maps, range)),
-+                event => (event, to_source(&maps, range)),
-+            })
-             .collect();
-         let failed = if skip.all {
-             Vec::new()
-@@ -3096,6 +3110,32 @@ mod math_tests {
-         Block::Paragraph { runs }
-     }
- 
-+    #[test]
-+    fn message_newlines_are_line_breaks() {
-+        let blocks = |tree: BlockTree| -> Vec<Block> {
-+            tree.blocks.iter().map(|top| top.block.clone()).collect()
-+        };
-+        assert_eq!(
-+            blocks(parse_message("one\ntwo\n\nthree")),
-+            [
-+                paragraph(vec![plain("one\ntwo")]),
-+                paragraph(vec![plain("three")]),
-+            ]
-+        );
-+        assert_eq!(
-+            blocks(parse_full("one\ntwo")),
-+            [paragraph(vec![plain("one two")])]
-+        );
-+        // Fences keep their own newlines either way.
-+        assert_eq!(
-+            blocks(parse_message("```\na\nb\n```")),
-+            [Block::CodeBlock {
-+                language: None,
-+                code: "a\nb".into(),
-+            }]
-+        );
-+    }
-+
-     #[test]
-     fn inline_math_is_an_atomic_run() {
-         assert_eq!(para("a $x^2$ b"), [plain("a "), math("x^2"), plain(" b")]);
-```
-
-**File**: `crates/ui/Cargo.toml` (modified, +4/-0)
-```diff
-@@ -88,6 +88,10 @@ required-features = ["appshots-fixture"]
- name = "message-captions-fixture"
- required-features = ["appshots-fixture"]
- 
-+[[example]]
-+name = "message-markdown-fixture"
-+required-features = ["appshots-fixture"]
-+
- [[example]]
- name = "sidebar-fixture"
- required-features = ["project-palette-fixture"]
-```
-
-**File**: `crates/ui/examples/message-markdown-fixture.rs` (added, +109/-0)
-```diff
-@@ -0,0 +1,109 @@
-+//! Message Markdown review fixture: a chat whose prompts are written in
-+//! Markdown, one of them sent by another chat through Zeron's
-+//! `send_message`, in an isolated, offline shell. It shows the user bubbles
-+//! and the prompt rail; hover a rail tick for its preview card.
-+//! ZERON_PALETTE_LIGHT=1 renders the light theme.
-+use gpui::{AppContext, Bounds, WindowBounds, WindowOptions, px, size};
-+use serde_json::json;
-+use zeron_ui::*;
-+
-+const SENDER_ID: &str = "c563133c-2825-4056-8d1e-4b2a18c210ae";
-+
-+async fn pause(cx: &mut gpui::AsyncApp, ms: u64) {
-+    cx.background_executor()
-+        .timer(std::time::Duration::from_millis(ms))
-+        .await;
-+}
-+
-+fn entries() -> serde_json::Value {
-+    let at = |minutes: i64| 1_788_900_000_000_i64 + minutes * 60_000;
-+    let text = |id: &str, role: &str, minutes: i64, text: &str| {
-+        json!({"id": id, "role": role, "createdAt": at(minutes), "deviceId": "local", "status": "complete",
-+            "parts": [{"id": "t", "kind": "text", "text": text}]})
-+    };
-+    let routed = format!(
-+        "[Message from Zeron chat Harden Orbit For Production (c563133c). Reply to it with the Zeron `send_message` tool, chat {SENDER_ID}.]\n\n\
-+         You own the **heavyforge** soak. Start with `slow-DO`, then:\n\
-+         1. two replicas on `10069f6`\n\
-+         2. the foundation chat's queue"
-+    );
-+    json!([
-+        text("u0", "user", 0, "Profile the render loop on **Linux** and *Windows*.\nKeep `layout` and `paint` separate, and skip the ~~old~~ harness."),
-+        text("a0", "assistant", 1, "Linux is done: **layout** is 61% of the frame, `paint` 22%. I've asked the soak chat to take the queue."),
-+        text("u1", "user", 2, "Draft the summary:\n- one row per platform\n- frame time in `ms`"),
-+        text("a1", "assistant", 3, "Here's the **Linux** half; the Windows column fills in when its results arrive."),
-+        text("u2", "user", 4, &routed),
-+        text("a2", "assistant", 5, "I'll check the **managed queue**, completed reports and free disk first, then resume without repeating the finished `10069f6` pair. The remaining order is *slow-DO*, two replicas, then the foundation chat's queue."),
-+        text("u3", "user", 6, "Then run:\n```sh\ncargo test -p zeron-ui\n```"),
-+        text("a3", "assistant", 7, "Ran the **zeron-ui** tests:\n\n```\ntest result: ok. 1931 passed\n```\n\n> One ignored, as on main.\n\nAll green, so the summary is ready."),
-+    ])
-+}
-+
-+fn main() -> anyhow::Result<()> {
-+    let runtime = tokio::runtime::Runtime::new()?;
-+    let _guard = runtime.enter();
-+    tracing_subscriber::fmt().with_env_filter("warn").init();
-+    let temp = tempfile::tempdir()?;
-+    let data = temp.path().to_path_buf();
-+    let entries = entries();
-+    gpui_platform::application().with_assets(icons::Assets).run(move |cx| {
-+        gpui_tokio::init(cx);
-+        gpui_base::init(cx);
-+        let mut settings = settings::UiSettings::default();
-+        settings.sidebar_width = 260.0;
-+        settings.save(&data).unwrap();
-+        settings::init(settings.clone(), data.clone(), cx);
-+        let fonts = typography::register_fonts(cx);
-+        typography::init(settings.ui_font_family.clone(), settings.ui_font_size, settings.terminal_font_family.clone(), settings.terminal_font_size, settings.code_font_family.clone(), settings.code_font_size, fonts, cx);
-+        theme_library::init(data.clone(), cx);
-+        let mode = if std::env::var_os("ZERON_PALETTE_LIGHT").is_some() { appearance::AppearanceMode::Light } else { appearance::AppearanceMode::Dark };
-+        appearance::init(mode, settings.theme_selection, settings.accent, settings.surface, cx);
-+        history::init(settings.git_history_columns, settings.git_history_column_widths, settings.git_history_column_order, settings.git_history_author_display, cx);
-+        composer::init(cx, settings.composer_send_behavior);
-+        terminal::panel::init(cx);
-+        app_menus::init(cx);
-+        let chat = |id: &str, title: &str, harness: &str, model: &str| {
-+            serde_json::from_value(json!({"id": id, "deviceId": "local", "title": title, "archived": false, "createdAt": "2026-10-25T00:00:00Z",
-+                "config": {"harness": harness, "model": model, "reasoning": null, "sandbox": "workspace-write"}})).unwrap()
-+        };
-+        let state = cx.new(|_| {
-+            let mut s = state::AppState::new();
-+            s.connection = zeron_proto::view::ConnectionStatus::Ready;
-+            s.workspace_scope = Some(zeron_proto::WorkspaceScope::Local);
-+            s.local_device_id = Some("local".into());
-+            s.devices = vec![serde_json::from_value(json!({"id":"local","name":"This device","platform":std::env::consts::OS,"lastSeenAt":null})).unwrap()];
-+            s.chats = vec![
-+                chat("markdown", "Render loop profiling", "claude-code", "claude-opus-5-5"),
-+                chat(SENDER_ID, "Harden Orbit For Production", "codex", "gpt-5.
-```
-
-**File**: `crates/ui/src/markdown/mod.rs` (modified, +3/-1)
-```diff
-@@ -25,7 +25,9 @@ pub mod render;
- pub mod selection;
- pub mod veil;
- 
--pub use parser::{Block, BlockTree, IncrementalParser, InlineRun, InlineStyle, parse_full};
-+pub use parser::{
-+    Block, BlockTree, IncrementalParser, InlineRun, InlineStyle, parse_full, parse_message,
-+};
- 
- pub mod mermaid;
- pub(crate) mod mermaid_cache;
-```
-
-**File**: `crates/ui/src/rail.rs` (modified, +301/-42)
-```diff
-@@ -10,17 +10,18 @@
- //! extension since the rail shares the transcript's rows and `ListState`.
- 
- use gpui::{
--    AnyElement, ClickEvent, Context, ListOffset, MouseMoveEvent, Pixels, SharedString, canvas, div,
--    prelude::*, px,
-+    AnyElement, ClickEvent, Context, ListOffset, MouseMoveEvent, Pixels, SharedString, StyledText,
-+    canvas, div, prelude::*, px,
- };
- use std::time::{Duration, Instant};
- 
- use zeron_doc::{MessagePart, MessageRole, SessionMessageEntry};
- 
-+use crate::markdown::{Block, InlineRun, InlineStyle};
- use crate::motion;
- use crate::popover;
- use crate::theme::Theme;
--use crate::transcript::Transcript;
-+use crate::transcript::{AgentSender, ChatIdentity, Transcript};
- 
- /// 48rem — the container width below which the rail (and wide gutters) collapse.
- pub const RAIL_MIN_CONTAINER_WIDTH: f32 = 768.0;
-@@ -29,20 +30,25 @@ pub fn rail_visible(container_width: f32) -> bool {
-     container_width >= RAIL_MIN_CONTAINER_WIDTH
- }
- 
--/// Preview text caps (grapheme-unaware char cut is fine for a preview card).
--pub const PREVIEW_PROMPT_CHARS: usize = 160;
--pub const PREVIEW_REPLY_CHARS: usize = 200;
-+/// Preview line caps: the prompt and the reply's opening clamp to these.
-+pub const PREVIEW_PROMPT_LINES: usize = 3;
-+pub const PREVIEW_REPLY_LINES: usize = 4;
-+/// Source a preview parses at most; the clamp shows far less of it.
-+const PREVIEW_SOURCE_BYTES: usize = 2048;
- 
- /// One rail tick: a user prompt and the opening of the reply that followed.
- #[derive(Debug, Clone, PartialEq)]
- pub struct RailTick {
-     /// Message id — equals the user row's id in the transcript row model.
-     pub message_id: String,
-     pub prompt: String,
-+    /// The chat that sent the prompt through Zeron's `send_message`; its
-+    /// routing header is off `prompt`, as in the transcript.
-+    pub sender: Option<AgentSender>,
-     pub reply: Option<String>,
- }
- 
--fn user_text(entry: &SessionMessageEntry) -> String {
-+fn user_text(entry: &SessionMessageEntry) -> (String, Option<AgentSender>) {
-     let raw = entry
-         .parts
-         .iter()
-@@ -55,7 +61,13 @@ fn user_text(entry: &SessionMessageEntry) -> String {
-     // Attachment refs ride the message text — the rail shows the visible
-     // prompt, or "Attached image(s)" for image-only sends
-     // (message-attachments.ts `userMessageRailText`).
--    crate::attachments::user_message_rail_text(&zeron_proto::annotation::annotation_display(&raw))
-+    let text = crate::attachments::user_message_rail_text(
-+        &zeron_proto::annotation::annotation_display(&raw),
-+    );
-+    match crate::transcript::agent_message_sender(&text) {
-+        Some((sender, body)) => (body.to_owned(), Some(sender)),
-+        None => (text, None),
-+    }
- }
- 
- fn first_reply_text(entries: &[SessionMessageEntry]) -> Option<String> {
-@@ -85,17 +97,21 @@ pub fn rail_ticks(
-         if entry.role != MessageRole::User {
-             continue;
-         }
-+        let (prompt, sender) = user_text(entry);
-         ticks.push(RailTick {
-             message_id: entry.id.clone(),
--            prompt: user_text(entry),
-+            prompt,
-+            sender,
-             reply: first_reply_text(&entries[ix + 1..]),
-         });
-     }
-     for echo in echoes {
-         if echo.role == MessageRole::User && !ticks.iter().any(|t| t.message_id == echo.id) {
-+            let (prompt, sender) = user_text(echo);
-             ticks.push(RailTick {
-                 message_id: echo.id.clone(),
--                prompt: user_text(echo),
-+                prompt,
-+                sender,
-                 reply: None,
-             });
-         }
-@@ -207,16 +223,162 @@ pub fn tick_width(distance: Option<usize>) -> f32 {
-     }
- }
- 
--/// Char-cap a preview with an ellipsis. Whitespace runs (including newlines —
--/// prompts and replies are free text) collapse to single spaces first: the
--/// preview card's title is a one-line surface (message-rail.tsx line-clamp-1).
--pub fn truncate_preview(text: &str, max_chars: usize) -> String {
--    let flat = crate::transcript::single_line(text);
--    if flat.chars().count() <= max_chars {
--        return flat;
-+/// A preview's Markdown as one run of prose: the styling stays (strong,
-+/// emphasis, code, links), while block structure, which the card's few lines
-+/// have no room for, flattens to spaces. Only prose shows (paragraphs,
-+/// headings, list items): a fence, quote, table or display formula would
-+/// spend those lines on its least telling part, so it is left out, and a
-+/// message of nothing else shows its first fence's opening line. Inline math
-+/// and images show their source.
-+pub fn preview_runs(source: &str) -> Vec<InlineRun> {
-+    let mut end = source.len().min(PREVIEW_SOURCE_BYTES);
-+    while !source.is_char_boundary(end) {
-+        end -= 1;
-+    }
-+    let tree = crate::markdown::parse_full(&source[..end]);
-+    let mut runs = Vec::new();
-+    for top in &tree.blocks {
-+        push_block_runs(&top.block, &mut runs);
-+    }
-+    if runs.iter
-```
-
-**File**: `crates/ui/src/transcript.rs` (modified, +318/-168)
-```diff
-@@ -1069,6 +1069,10 @@ pub enum RowKind {
-         /// once per entry change in [`rows_for_entry`] (rows are cached by
-         /// fingerprint), never per frame. Empty for ordinary prompts.
-         mentions: Arc<Vec<crate::composer::SentMentionSpan>>,
-+        /// `text` parsed as Markdown, when it uses any and carries no chips
-+        /// (their pills paint over `text`'s own layout). `None` shows `text`
-+        /// as typed.
-+        markdown: Option<Arc<BlockTree>>,
-         /// Image refs parsed out of the message text (message-attachments.ts):
-         /// thumbnails load from the owning device via ReadAttachmentChunk.
-         attachments: Arc<Vec<crate::attachments::UserImageAttachment>>,
-@@ -1426,6 +1430,11 @@ pub fn rows_for_entry(
-                     .iter()
-                     .any(|chip| crate::attachments::chip_names_attachment(chip, &att.path))
-         });
-+        let markdown = mentions
-+            .is_empty()
-+            .then(|| crate::markdown::parse_message(&text))
-+            .filter(|tree| !plain_markdown(tree))
-+            .map(Arc::new);
-         let copy_text = (!text.trim().is_empty()).then(|| SharedString::from(text.clone()));
-         return vec![Row {
-             id: entry.id.clone().into(),
-@@ -1434,6 +1443,7 @@ pub fn rows_for_entry(
-             kind: RowKind::User {
-                 text: text.into(),
-                 mentions: Arc::new(mentions),
-+                markdown,
-                 attachments: Arc::new(attachments),
-                 badges: Arc::new(badges),
-                 sender,
-@@ -1529,8 +1539,7 @@ pub fn rows_for_entry(
-                 // A message to another chat reads as one line naming the
-                 // recipient, one per recipient, out of the tool fold (compact
-                 // mode folds it with the rest of the work).
--                if !compact
--                    && let Some(sent) = zeron_proto::agent_messages::outgoing_messages(call)
-+                if !compact && let Some(sent) = zeron_proto::agent_messages::outgoing_messages(call)
-                 {
-                     flush_group(
-                         &mut rows,
-@@ -6628,6 +6637,7 @@ impl Transcript {
-         row_ix: usize,
-         text: SharedString,
-         mentions: Arc<Vec<crate::composer::SentMentionSpan>>,
-+        markdown: Option<Arc<BlockTree>>,
-         theme: &Theme,
-         window: &Window,
-         cx: &mut Context<Self>,
-@@ -6697,18 +6707,23 @@ impl Transcript {
-                     this.cancel_user_hold();
-                 }))
-             })
--            .child(user_bubble_text(
--                row_id,
--                text,
--                mentions,
--                theme,
--                measured_h.clone(),
--                cx.entity_id(),
--                chip_overlays,
--                Rc::new(cx.listener(|this, path: &SharedString, window, cx| {
--                    this.open_chip_image(path, window, cx);
--                })),
--            ));
-+            .child(match markdown {
-+                Some(tree) => {
-+                    self.render_user_markdown(row_id, &tree, measured_h.clone(), theme, window, cx)
-+                }
-+                None => user_bubble_text(
-+                    row_id,
-+                    text,
-+                    mentions,
-+                    theme,
-+                    measured_h.clone(),
-+                    cx.entity_id(),
-+                    chip_overlays,
-+                    Rc::new(cx.listener(|this, path: &SharedString, window, cx| {
-+                        this.open_chip_image(path, window, cx);
-+                    })),
-+                ),
-+            });
-         // Height motion uses the same ease-out curve as sidebars, tool folds,
-         // and pane transitions, with duration scaled to travel distance. The
-         // full text remains laid out behind the clip; only the viewport over it
-@@ -6761,6 +6776,77 @@ impl Transcript {
-             .into_any_element()
-     }
- 
-+    /// The chat's checkout, which tells a workspace-file link from a web one.
-+    fn workspace_root(&self, cx: &gpui::App) -> Option<SharedString> {
-+        let state = self.state.read(cx);
-+        self.chat_id
-+            .as_deref()
-+            .and_then(|chat_id| state.chats.iter().find(|chat| chat.id == chat_id))
-+            .or_else(|| state.selected_chat_row())
-+            .and_then(|chat| chat.cwd.as_deref())
-+            .map(SharedString::from)
-+    }
-+
-+    /// A prompt's Markdown, rendered like a reply's at the bubble's size: its
-+    /// own selection keys, links and fences. The canvas behind it records the
-+    /// full height for the fold, as [`user_bubble_text`] does for plain text.
-+    fn render_user_markdown(
-+        &mut self,
-+        row_id: &SharedString,
-+        tree: &Arc<BlockTree>,
-+        measured_h: Rc<Cell<f32>>,
-+        theme: &Theme,
-+        window: &Window,
-+        cx: &mut Context<Self>,
-+    ) -> AnyElement {
-+        let row_key: SharedString = format!("{row_id}:u").into();
-+
-```
-
-**File**: `docs/screenshots/message-markdown/README.md` (added, +19/-0)
-```diff
-@@ -0,0 +1,19 @@
-+# Message Markdown runtime evidence
-+
-+Captured on 2026-10-26 on Linux (X11, Mesa software Vulkan) from `message-markdown-fixture`: an offline shell with one chat whose prompts are written in Markdown, one of them sent by another chat through Zeron's `send_message`. The `before-*` captures run the fixture against `main` `962a3207`, from before its last reply gained the fence and quote that `*-blocks.png` shows.
-+
-+Build and run: `cargo run -p zeron-ui --features appshots-fixture --example message-markdown-fixture` (ZERON_PALETTE_LIGHT=1 for the light theme). The window was captured from the X display with `import`, and the rail tick of the agent-sent prompt hovered with `xdotool`.
-+
-+- User bubbles render their Markdown like a reply does (strong, emphasis, inline code, lists, fences with highlighting and copy); typed newlines stay line breaks. Prompts that read the same as typed, and prompts carrying file chips, keep the plain bubble.
-+- The rail's preview card shows `Message from [provider mark] Chat` over an agent-sent prompt instead of its routing header, and renders the prompt and the reply's opening as styled prose clamped to a few lines (`*-hover.png`). Only prose shows: fences, quotes, tables, display formulas and rules are left out (`*-blocks.png`: `Then run:` without its fence, the reply without its output block and quote); a message of nothing but a fence shows its first line.
-+
-+- `before-dark.png`: SHA256 `626f43fb6a4692f4bab80a5c175e1cc2db746a20c9abcc3e5872eb99e46096ba`
-+- `after-dark.png`: SHA256 `e815818513b55641511a5848bb1ab85c1b78fc9cd5b545579e6b388edf0024b7`
-+- `before-light.png`: SHA256 `78461d24621a64fbc5e765e8f73fa32e0246e601a91635ce4b7480a98aa876c8`
-+- `after-light.png`: SHA256 `770b1568917e173d300779da3731e0eb0bea5fbdd235c9fd9a68da3e5331448a`
-+- `before-dark-hover.png`: SHA256 `d65c58111f27b3973601d135aefefd93d6451e04c23242ba7ccf4f6d65db8365`
-+- `after-dark-hover.png`: SHA256 `01fedfe83f754643b8e40fdf72c359ea137bf9d598b05a8c00350c7133b5f6e1`
-+- `before-light-hover.png`: SHA256 `d2ead849acd730b391f3ac9729c5283cf90cd1be9b46f0349d5cf63c0573e135`
-+- `after-light-hover.png`: SHA256 `2a29d117f976f649693d636a8076b874ddb5ff2be91af339a78511445242cb2c`
-+- `after-dark-blocks.png`: SHA256 `e0e89408675e998228337d1326bbc62a99581c987bf7de5566a988800b3ec9e5`
-+- `after-light-blocks.png`: SHA256 `599b9c5914c27b55534d20dafcc8870f29424bc3e4e8d6138785c73db4c73685`
+ [workspace.package]
+-version = "0.2.128"
++version = "0.2.129"
+ edition = "2024"
+ license = "MIT"
+ publish = false
 ```
 
 #### Recent Merged Pull Requests:
@@ -2728,46 +2364,43 @@ Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Linux browser: WPE WebKit at the display's rate, frames shared with GPUI as dma-
+## X. Edge: record every WorkOS user from webhooks
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `edge/src/cloud/billing.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c31124aa`: Linux browser: WPE WebKit at the display's rate, frames shared with GPUI as dma-bufs (#1039). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a0468502`: Edge: record every WorkOS user from webhooks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `edge/src/cloud/billing.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
-source = "git+https://github.com/zeronsh/gpui-component?rev=59f89243cea79dd70eb7a619b3930c374ef6958a#59f89243cea79dd70eb7a619b3930c374ef6958a"
-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
-s
+/** Whether the request carries the operator's `ADMIN_TOKEN` bearer. */
+export const adminAuthorized = async (request: Request, adminToken: string): Promise<boolean> => {
+  // Header only (never `?token=`: query strings end up in logs).
+  const header = request.headers.get("authorization") ?? "";
+  const token = header.toLowerCase().startsWith("bearer ") ? header.slice(7).trim() : "";
+  // Compare digests so neither the content nor the length leaks via timing.
+  const [given, expected] = await Promise.all([sha256B64url(token), sha256B64url(adminToken)]);
+  return token !== "" && constantTimeEqual(given, expected);
+};
+
+  if (!(await adminAuthorized(request, env.ADMIN_TOKEN))) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-source = "git+https://github.com/zeronsh/zui?rev=0dc69aa254841738b1e84ac743fa0aa435ad71b1#0dc69aa254841738b1e84ac743fa0aa435ad71b1"
-source = "git+https://github.com/zeronsh/zui?rev=0dc69aa254841738b1e84ac743fa0aa435ad71b1#0dc69aa254841738b1e84ac743fa0aa435ad71b1"
-source = "git+https://github.com/zeronsh/zui?rev=0dc69aa254841738b1e84ac743fa0aa435ad71b1#0dc69aa254841738b1e84ac743fa0aa435ad71b1"
-source = "git+https://github.com/zeronsh/gpui-component?rev=6ffe5e575bd0db31d69764773a823cdeb8913d8e#6ffe5e575bd0db31d69764773a823cdeb8913d8e"
-source = "git+https://github.com/zeronsh/zui?rev=0dc69aa254841738b1e84ac743fa0aa435ad71b1#0dc69aa254841738b1e84ac743fa0aa435ad71b1"
-source = "git+https://github.com/zeronsh/zui?rev=0dc69aa254841738b1e84ac743fa0aa435ad71b1#0dc69aa254841738b1e84ac743fa0aa435ad71b1"
-source = "git+https://github.com/zeronsh/zui?rev=0dc69aa254841738b1e84ac743fa0aa435ad71b1#0dc69aa254841738b1e84ac743fa0aa435ad71b1"
-source = "git+https://github.com/zeronsh/zui?rev=0dc69aa254841738b1e84ac743fa0aa435ad71b1#0dc69aa254841738b1e84ac743fa0aa435ad71b1"
-source = "git+https://github.com/zeronsh/zui?rev=0dc69aa254841738b1e84ac743fa0aa435ad71b1#0dc69aa254841738b1e84ac743fa0aa435ad71b1"
-s
+  // Header only (never `?token=`: query strings end up in logs).
+  const header = request.headers.get("authorization") ?? "";
+  const token = header.toLowerCase().startsWith("bearer ") ? header.slice(7).trim() : "";
+  // Compare digests so neither the content nor the length leaks via timing.
+  const [given, expected] = await Promise.all([sha256B64url(token), sha256B64url(env.ADMIN_TOKEN)]);
+  if (!token || !constantTimeEqual(given, expected)) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c31124aa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a0468502` are properly handled with clean fallback behavior.

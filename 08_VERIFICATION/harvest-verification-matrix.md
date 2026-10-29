@@ -6058,3 +6058,5 @@
 | `CYCLE-20261029-B6AA` | `2026-10-29T17:23:31.858Z` | `Kuddev/pebrel` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5532` | Yes (`cdf93f8a...`) |
 | `CYCLE-20261029-BDVJ` | `2026-10-29T17:23:41.695Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5533` | Yes (`a0193d8e...`) |
 | `CYCLE-20261029-BGUI` | `2026-10-29T17:23:45.546Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5534` | Yes (`a789a2bc...`) |
+| `CYCLE-20261029-X1P5` | `2026-10-29T17:40:32.345Z` | `zeronsh/zeron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5535` | Yes (`34287309...`) |
+| `CYCLE-20261029-X5XR` | `2026-10-29T17:40:37.839Z` | `maziyarpanahi/openmed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5536` | Yes (`3d43cd24...`) |

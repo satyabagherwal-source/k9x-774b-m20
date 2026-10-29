@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-RR0C",
-    "timestamp": "2026-10-27T21:45:01.308Z",
-    "repository": "BurntSushi/ripgrep",
-    "learningId": "learn-github-burntsushi-ripgrep",
-    "contentHash": "24001c43f51c33e1dd15181accb5f89edd4d3c774e9d0872f23976624c8592ba",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-RVD2",
-    "timestamp": "2026-10-27T21:45:06.951Z",
-    "repository": "komi-store/komi-store",
-    "learningId": "learn-github-komi-store-komi-store",
-    "contentHash": "ad10acc605a3ce37ea7eee84b5823b6167ad161cea9741d6186059df724d06a9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-RXXF",
     "timestamp": "2026-10-27T21:45:10.275Z",
     "repository": "pingcap/tidb",
@@ -7490,6 +7460,36 @@
     "repository": "risingwavelabs/risingwave",
     "learningId": "learn-github-risingwavelabs-risingwave",
     "contentHash": "a789a2bca8d1587335dfa6016cb271ea0b0edfc6c7f45490602fc2dc9896ca6a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-X1P5",
+    "timestamp": "2026-10-29T17:40:32.345Z",
+    "repository": "zeronsh/zeron",
+    "learningId": "learn-github-zeronsh-zeron",
+    "contentHash": "342873094fea829810ca14d26135a21864698eb9c7e54c447d64c100bd612ba3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-X5XR",
+    "timestamp": "2026-10-29T17:40:37.839Z",
+    "repository": "maziyarpanahi/openmed",
+    "learningId": "learn-github-maziyarpanahi-openmed",
+    "contentHash": "3d43cd24350eaa6b6c12f33eb64fc0cb6323d5a502424182b48c75fcd7caff76",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
