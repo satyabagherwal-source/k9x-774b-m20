@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/flox-flox-learnings.md`  
 > **Source**: github ([https://github.com/flox/flox](https://github.com/flox/flox))  
-> **Source Version**: `339bbab0`  
+> **Source Version**: `55536b5d`  
 > **License**: GPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T00:05:51.275Z  
+> **Timestamp**: 2026-10-29T17:04:35.458Z  
 > **Learning ID**: `learn-github-flox-flox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/flox-flox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/flox/flox](https://github.com/flox/flox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T00:05:50.224Z  
+> **Harvest Timestamp**: 2026-10-29T17:03:28.141Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Deterministic Foundation for your SDLC
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4187 stars
+- **Stars / Engagement**: 4189 stars
 
 ---
 
@@ -1445,372 +1445,782 @@ impl ActivateEnvironmentRef {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fe309f1a` (2026-10-26)
-**Commit Message**: fix(nix): link bundled nix and git against brotli 1.2.1
+### Incident Patch 1: `55536b5d` (2026-10-29)
+**Commit Message**: feat(auth): compile the default FloxHub authn mode into the build (#4580)
 
-brotli < 1.2.1 is affected by CVE-2026-111497, an out-of-bounds write in
-the decoder. The bundled nix 2.31.6 links it directly (`libnixutil`) and
-through curl, and the git that Flox bakes in (`GIT_PKG`) links it
-through curl. Only nixpkgs `staging` has 1.2.1 so far, and moving our
-nixpkgs pin is out of scope for a fix we want to ship now.
+## Problem
 
-Add `brotli-fixed` (1.2.1, the same source as nixpkgs staging) along
-with a `curl` and `gitMinimal` built against it. Thread them into the
-`nixComponents_2_31` scope and into the `callPackage` scope of
-`overlays.flox`. nix's `aws-sdk-cpp` is rebuilt against the fixed curl
-starting from `nixDependencies.aws-sdk-cpp`, which is trimmed to the
-APIs nix uses. The top-level attribute builds the whole SDK.
-flox-installers' container can take the fixed `curl` and `gitMinimal`
-from `pkgsFor`.
+When `floxhub_authn_mode` is unset, authentication always falls back to
+token mode. Builds cannot select Kerberos as their default
+authentication mode.
 
-The runtime closure of the built `flox` and `nix` now holds a single
-brotli, the patched one:
+## Changes
 
-    $ nix path-info -r $flox $nix | grep -E -- '-(brotli|curl|git|git-minimal|aws-sdk-cpp)-[0-9]'
-    /nix/store/s7s8jdfjqy3inq1l2r3qr3fhyhqar1bs-brotli-1.2.1-lib
-    /nix/store/0xixbxsj2i0a8bz19s9l188lw36jlvz8-curl-
+- Add the optional `defaultAuthnMode` Nix package argument (`"token"` or
+`"kerberos"`), compiled into `AuthnMode::default()` through
+`FLOX_DEFAULT_AUTHN_MODE`.
+- Share authentication-mode resolution between the CLI and
+`nef-lock-catalog`: explicit configuration wins; otherwise hosted
+FloxHub uses token authentication and other FloxHub URLs use the build
+default.
+- Use one hosted-host match for URL routing and authentication-mode
+resolution.
+- Reject invalid Nix argument values before building; invalid values
+supplied directly to Cargo fail when the default is evaluated.
 
-**File**: `flake.nix` (modified, +22/-0)
+## Validation
+
+- Rebased onto `main` and compared the patches before publication.
+- Passed 109 `flox-config` and `flox-core` unit tests, plus the
+authentication-resolution test with `FLOX_DEFAULT_AUTHN_MODE=kerberos`.
+- Passed the three CLI authentication-context tests.
+- Passed workspace Clippy for all targets with warnings denied, Rust/Nix
+formatting, and the reposi
+
+**File**: `cli/flox-config/src/config.rs` (modified, +69/-0)
 ```diff
-@@ -83,6 +83,26 @@
-             '';
-           });
+@@ -7,6 +7,7 @@ use anyhow::Result;
+ use flox_core::activate::context::AutoActivateFishMode;
+ use flox_core::data::environment_ref::RemoteEnvironmentRef;
+ use flox_core::features::Features;
++use flox_core::floxhub::Floxhub;
+ use glob::{MatchOptions, Pattern};
+ use serde::{Deserialize, Serialize};
+ use toml_edit::Key;
+@@ -39,6 +40,27 @@ pub enum AuthnMode {
+     Kerberos,
+ }
  
-+          # brotli < 1.2.1 is affected by CVE-2026-111497 (OOB write in the
-+          # decoder). Overriding `brotli` itself would rebuild everything that
-+          # links curl or uses python3Packages (rustc, cargo, urllib3, ...),
-+          # so the fixed brotli is only threaded through the runtime closure:
-+          # nix (pkgs/nix) and the git that Flox packages bake in (overlays.flox).
-+          # flox-installers' container takes `curl-brotli-fixed` and
-+          # `gitMinimal-brotli-fixed` from `pkgsFor`.
-+          # TODO: remove once flox/nixpkgs `stable` carries brotli >= 1.2.1.
-+          brotli-fixed = prev.brotli.overrideAttrs (_: rec {
-+            version = "1.2.1";
-+            src = final.fetchFromGitHub {
-+              owner = "google";
-+              repo = "brotli";
-+              tag = "v${version}";
-+              hash = "sha256-llY72cYffDv0ugsH0p89xIPEbElV4L8u7U/Fe8hT3gI=";
-+            };
-+          });
-+          curl-brotli-fixed = prev.curl.override { brotli = final.brotli-fixed; };
-+          gitMinimal-brotli-fixed = prev.gitMinimal.override { curl = final.curl-brotli-fixed; };
-+
-         })
-         inputs.fenix.overlays.default
-       ];
-@@ -97,6 +117,8 @@
-               inherit inputs; # passing in inputs... beware
-               inherit (inputs) self;
-               pkgsFor = final;
-+              # Flox packages bake git into their runtime closure.
-+              gitMinimal = final.gitMinimal-brotli-fixed;
-             }
-           );
-           nixpkgsInputLockedURL =
-```
-
-**File**: `pkgs/nix/default.nix` (modified, +24/-9)
-```diff
-@@ -17,7 +17,10 @@
- # ---------------------------------------------------------------------------- #
- {
-   nixVersions,
-+  nixDependencies,
-   fetchFromGitHub,
-+  brotli-fixed,
-+  curl-brotli-fixed,
- }:
- let
-   nixVersion = "stable";
-@@ -36,15 +39,27 @@ in
- # likely on account of <https://github.com/NixOS/nix/issues/14751>.
- (nixVersions.extend (
-   final: prev: {
--    nixComponents_2_31 = prev.nixComponents_2_31.override {
--      version = "2.31.6";
--      src = fetchFromGitHub {
--        owner = "NixOS";
--        repo = "nix";
--        tag = "2.31.6";
--        hash = "sha256-yAvNBedw4FB+Z5myhfGsnRT8F1QqeEoXGbm7EmTW/Og=";
--      };
--    };
-+    nixComponents_2_31 =
-+      let
-+        nixComponents = prev.nixComponents_2_31.override {
-+          version = "2.31.6";
-+          src = fetchFromGitHub {
-+            owner = "NixOS";
-+            repo = "nix";
-+            tag = "2.31.6";
-+            hash = "sha256-yAvNBedw4FB+Z5myhfGsnRT8F1QqeEoXGbm7EmTW/Og=";
-+          };
-+        };
-+      in
-+      # CVE-2026-111497: see `brotli-fixed` in flake.nix.
-+      nixComponents.overrideScope (
-+        _: _: {
-+          brotli = brotli-fixed;
-+          curl = curl-brotli-fixed;
-+          # nixDependencies' aws-sdk-cpp is trimmed to the APIs nix uses.
-+          aws-sdk-cpp = nixDependencies.aws-sdk-cpp.override { curl = curl-brotli-fixed; };
++impl Default for AuthnMode {
++    /// Default authentication mode compiled into this build, set via the
++    /// `FLOX_DEFAULT_AUTHN_MODE` build-time environment variable
++    /// ("token" or "kerberos"; unset means "token").
++    ///
++    /// [`Config::effective_authn_mode`] applies explicit configuration and
++    /// the hosted FloxHub's token-authentication fallback before this default.
++    ///
++    /// The Nix interface (`defaultAuthnMode` on `pkgs/flox-cli`) rejects
++    /// invalid values before invoking Cargo; a direct Cargo build with an
++    /// invalid value fails here on first use instead of silently falling
++    /// back to token auth.
++    fn default() -> Self {
++        match option_env!("FLOX_DEFAULT_AUTHN_MODE") {
++            Some("kerberos") => Self::Kerberos,
++            Some("token") | None => Self::Token,
++            Some(mode) => panic!("invalid FLOX_DEFAULT_AUTHN_MODE: {mode}"),
 +        }
-+      );
- 
-   }
- )).
-```
-
----
-
-### Incident Patch 2: `2cf88fe0` (2026-10-26)
-**Commit Message**: fix(nix): scope the cacert distrust override to flox's packages
-
-Overlaying `cacert` in `overlays.deps` gave every nixpkgs package that
-depends on it a new store path, so the devShell rebuilt fish, harfbuzz,
-matplotlib, commitizen and others from source. Some of their test
-suites fail on developer machines, and CI only builds the devShell, and
-pushes it to the R2 cache, on x86_64-linux and aarch64-darwin.
-
-The override can't simply go away yet: the pinned nixpkgs `cacert`
-(NSS 3.121) still trusts the three emSign roots, which NSS 3.131.1
-drops. nixpkgs' `cacert` trusts "Comodo AAA Services root" only for
-email, and listing it removes that too. So build the distrusting
-`cacert` in `overlays.flox` and pass it only to the packages that
-compile a bundle path in through `NIXPKGS_CACERT_BUNDLE_CRT`.
-Everything else keeps stock `cacert` and its cache.nixos.org paths.
-
-`pkgsFor` carries the same `cacert`, because flox-installers takes
-`pkgs.cacert` from `flox.passthru.pkgsFor` for the wrappers and the
-nix-daemon, and the CLI requires that bundle to be the one it was
-compiled with.
-
-The new `cacert-distrust` check pins this down: every consumer and
-`pkgsFor` agree on one bundle, the package
-
-**File**: `.github/workflows/ci.yml` (modified, +1/-1)
-```diff
-@@ -417,7 +417,7 @@ jobs:
-           export AWS_SESSION_TOKEN
-           export NIX_SUBSTITUTER_KEY
- 
--          for package in 'packages.${{ matrix.system }}.flox-nix-plugins' 'packages.${{ matrix.system }}.flox-cli' 'packages.${{ matrix.system }}.flox' 'packages.${{ matrix.system }}.flox-cli-tests'; do
-+          for package in 'checks.${{ matrix.system }}.cacert-distrust' 'packages.${{ matrix.system }}.flox-nix-plugins' 'packages.${{ matrix.system }}.flox-cli' 'packages.${{ matrix.system }}.flox' 'packages.${{ matrix.system }}.flox-cli-tests'; do
-             echo "::group::Building $package"
-             ./.github/scripts/remote-execute-nix-build.sh "$package" "$NIX_SUBSTITUTER"
-             echo "::endgroup::"
-```
-
-**File**: `checks/cacert-distrust.nix` (added, +97/-0)
-```diff
-@@ -0,0 +1,97 @@
-+# Checks the CA bundle that flox's binaries compile in:
-+#
-+# - Every package that sets `NIXPKGS_CACERT_BUNDLE_CRT`, and the installers'
-+#   `pkgsFor.cacert`, use the same bundle, because the CLI compares the bundle
-+#   it was built with against the one its wrapper sets. Add new packages that
-+#   set it to `bundles`.
-+# - The package set's `cacert` is the stock one, so nixpkgs packages that
-+#   depend on it are still substituted.
-+# - The bundle doesn't trust the distrusted roots for TLS servers, but does
-+#   trust a control root, so the check can't pass by matching nothing.
-+{
-+  lib,
-+  runCommand,
-+  openssl,
-+  cacert,
-+  stockCacert,
-+  flox,
-+  flox-cli,
-+  flox-activations,
-+  nef-lock-catalog,
-+  rust-internal-deps,
-+  crate2nix-builds,
-+}:
-+let
-+  # nixpkgs' cacert already doesn't trust Comodo AAA Services root for TLS
-+  # servers, so its entry guards against nixpkgs trusting it again rather than
-+  # against it being dropped from the blacklist.
-+  distrusted = [
-+    "Comodo AAA Services root"
-+    "emSign ECC Root CA - G3"
-+    "emSign Root CA - C1"
-+    "emSign ECC Root CA - C3"
-+  ];
-+  control = "ISRG Root X1";
++    }
++}
 +
-+  bundles = {
-+    flox-cli = flox-cli.envs.NIXPKGS_CACERT_BUNDLE_CRT;
-+    flox-activations = flox-activations.devEnvs.NIXPKGS_CACERT_BUNDLE_CRT;
-+    nef-lock-catalog = nef-lock-catalog.devEnvs.NIXPKGS_CACERT_BUNDLE_CRT;
-+    rust-internal-deps = rust-internal-deps.envs.NIXPKGS_CACERT_BUNDLE_CRT;
-+    crate2nix-flox-core = crate2nix-builds.crateEnvs.flox-core.NIXPKGS_CACERT_BUNDLE_CRT;
-+    installers = flox.passthru.pkgsFor.cacert.outPath + "/etc/ssl/certs/ca-bundle.crt";
-+  };
-+in
-+assert lib.assertMsg (lib.length (lib.unique (lib.attrValues bundles)) == 1) ''
-+  flox's packages compile in different CA bundles:
-+  ${lib.generators.toPretty { } bundles}'';
-+assert lib.assertMsg (cacert.outPath == stockCacert.outPath) ''
-+  The package set's cacert is not the stock nixpkgs one, so every package that depends on it is rebuilt:
-+    package set: ${cacert.outPath}
-+    nixpkgs:     ${stockCacert.outPath}'';
-+runCommand "cacert-distrust"
-+  {
-+    nativeBuildInputs = [ openssl ];
-+    bundle = bundles.flox-cli;
-+    stock = stockCacert.unbundled;
-+  }
-+  ''
-+    # List the fingerprints of the certificates that the bundle trusts for TLS
-+    # servers: plain certificates, and certificates with trust settings that
-+    # list TLS server authentication.
-+    mkdir certs
-+    awk '/^-----BEGIN/ { f = "certs/" ++n ".pem" } f { print > f }' "$bundle"
-+    for cert in certs/*.pem; do
-+      text=$(openssl x509 -in "$cert" -noout -text)
-+      if grep -q 'BEGIN CERTIFICATE' "$cert" || grep -A1 '^Trusted Uses:' <<<"$text" | grep -q 'TLS Web Server'; then
-+        openssl x509 -in "$cert" -noout -fingerprint -sha256
-+      fi
-+    done > trusted
-+
-+    # trusts <label>: whether the bundle trusts the stock certificate with this
-+    # label. The stock unbundled output names each certificate after its label.
-+    trusts() {
-+      local files=("$stock/etc/ssl/certs/''${1// /_}:"*.crt)
-+      if [[ ''${#files[@]} -ne 1 || ! -f ''${files[0]} ]]; then
-+        echo "nixpkgs' cacert has no single certificate labeled '$1'." >&2
-+        echo "If it no longer ships it, remove it from the blacklist in flake.nix and from this check." >&2
-+        exit 1
-+      fi
-+      grep -qxF "$(openssl x509 -in "''${files[0]}" -noout -fingerprint -sha256)" trusted
+ /// Where `flox auth login` stores the FloxHub token.
+ #[derive(Clone, Copy, Debug, Default, Deserialize, Serialize, PartialEq, Eq)]
+ #[serde(rename_all = "lowercase")]
+@@ -326,6 +348,19 @@ impl Display for InstallerChannel {
+ }
+ 
+ impl Config {
++    /// The authn mode to use against `floxhub`.
++    ///
++    /// An explicit `floxhub_authn_mode` always wins. When it is unset, the
++    /// hosted FloxHub authenticates via token (it supports nothing else);
++    /// other deployments get the default compiled into this build.
++    pub fn effective_authn_mode(&self, floxhub: &Floxhub) -> AuthnMode {
++        match &self.flox.floxhub_authn_mode {
++            Some(mode) => mode.clone(),
++            None if floxhub.is_hosted() => AuthnMode::Token,
++            None => AuthnMode::default(),
++        }
 +    }
 +
-+    status=0
-+    for label in ${lib.escapeShellArgs distrusted}; do
-+      if trusts "$label"; then
-+        echo "The bundle trusts '$label', but it should be distrusted." >&2
-+        status=1
-+      fi
-+    done
-+    if ! trusts ${lib.escapeShellArg control}; then
-+      echo "The bundle doesn't trust the control root '${control}'." >&2
-+      status=1
-+    fi
-+    [[ $status -eq 0 ]]
+     /// Creates a [Config] from the environment and config files
+     pub fn parse() -> Result<Config> {
+         load::parse()
+@@ -385,6 +420,40 @@ mod tests {
+         }
+     }
+ 
++    /// An explicit mode wins everywhere, the hosted FloxHub is token-only,
++    /// and only other deployments see the compiled-in default.
++    #[test]
++    fn effective_authn_mode_resolution_order() {
++        let hosted = Floxhub::new("https://hub.flox.dev".parse().unwrap(), None, None).unwrap();
++        let on_prem = Floxhub::new(
++            "https://floxhub.example.internal".parse().unwrap(),
++            None,
++            None,
++        )
++        .unwrap();
++        let explicit = |mode: AuthnMode| {
++            let mut config = Config::default();
++            config.flox.floxhub_authn_mode = Some(mode);
++            config
++        };
++        let unset = Config::default();
 +
-+    touch "$out"
-+  ''
++        assert_eq!(
++            [
++                explicit(AuthnMode::Kerberos).effective_authn_mode(&hosted),
++                explicit(AuthnMode::Token).effective_authn_mode(&on_prem),
++                unset.effective_authn_mode(&hosted),
++                unset.effective_authn_mode(&on_prem),
++            ],
++            [
++                AuthnMode::Kerberos,
++                AuthnMode::Token,
++                AuthnMode::Token,
++                AuthnMode::default(),
++            ]
++        );
++    }
++
+     fn preferences(
+         entries: &[(&str, AutoActivationPreference)],
+     ) -> HashMap<PathBuf, AutoActivationPreference> {
 ```
 
-**File**: `flake.nix` (modified, +24/-11)
+**File**: `cli/flox-core/src/floxhub.rs` (modified, +66/-24)
 ```diff
-@@ -60,16 +60,6 @@
+@@ -68,6 +68,18 @@ pub struct Floxhub {
+     git_url_overridden: bool,
+ }
  
-           process-compose = final.callPackage ./pkgs/process-compose { inherit (prev) process-compose; };
++/// The labels between `hub` and `flox.dev` when `host` has the hosted (SaaS)
++/// shape `hub.<...>.flox.dev`, and `None` for any other host.
++///
++/// The single definition of "hosted", so URL routing and
++/// [`Floxhub::is_hosted`] cannot disagree.
++fn hosted_intermediate_labels(host: &str) -> Option<Vec<&str>> {
++    match host.split('.').collect::<Vec<_>>().as_slice() {
++        ["hub", intermediate @ .., "flox", "dev"] => Some(intermediate.to_vec()),
++        _ => None,
++    }
++}
++
+ impl Floxhub {
+     pub fn new(
+         base_url: Url,
+@@ -118,31 +130,28 @@ impl Floxhub {
+             return Ok(url_override);
+         }
  
--          # TODO: remove this override once the upstream nixpkgs cacert distrusts these roots.
--          cacert = prev.cacert.override {
--            blacklist = [
--              "Comodo AAA Services root"
--              "emSign ECC Root CA - G3"
--              "emSign Root CA - C1"
--              "emSign ECC Root CA - C3"
--            ];
--          };
+-        let host_components = base_url
++        let host = base_url
+             .host_str()
+-            .ok_or(FloxhubError::CannotBeABase(base_url.to_string()))?
+-            .split(".")
+-            .collect::<Vec<_>>();
+-        match host_components.as_slice() {
+-            ["hub", intermediate @ .., "flox", "dev"] => {
+-                let host: String = [&[transform.saas_prefix], intermediate, &["flox", "dev"]]
+-                    .into_iter()
+-                    .flatten()
+-                    .join(".");
 -
-           # The cacert override above changes fish's build inputs, so fish is
-           # built from source instead of substituted. Its
-           # test_replace_home_directory_with_tilde test sets the global HOME
-@@ -111,12 +101,32 @@
-       overlays.flox =
-         final: prev:
-         let
-+          # Scoped to flox's packages instead of overlaid on the package set, so
-+          # nixpkgs packages that depend on cacert keep their cache.nixos.org paths.
-+          # Only packages built with this overlay's callPackage receive it.
-+          # nixpkgs' cacert trusts Comodo AAA Services root only for email, and
-+          # listing it removes that too.
-+          # TODO: drop the emSign roots once nixpkgs' cacert is NSS >= 3.131.1,
-+          # which no longer ships them.
-+          cacert = prev.cacert.override {
-+            blacklist = [
-+              "Comodo AAA Services root"
-+              "emSign ECC Root CA - G3"
-+              "emSign Root CA - C1"
-+              "emSign ECC Root CA - C3"
-+            ];
-+          };
-+          # Installers built from flox.passthru.pkgsFor take its cacert, which must
-+          # match the bundle compiled into flox.
-+          pkgsFor = final // {
-+            inherit cacert;
-+          };
-           callPackage = final.lib.callPackageWith (
-             final
-             // {
-               inherit inputs; # passing in inputs... beware
-               inherit (inputs) self;
--              pkgsFor = final;
-+              inherit cacert pkgsFor;
-               # Flox packages bake git into their runtime closure.
-               gitMinimal = final.gitMinimal-brotli-fixed;
-             }
-@@ -256,6 +266,9 @@
-           inherit pkgs nixpkgs;
-           module = import ./modules/nixos pkgsContext;
-         };
-+        cacert-distrust = pkgs.callPackage ./checks/cacert-distrust.nix {
-+          stockCacert = nixpkgs.legacyPackages.${system}.cacert;
+-                let mut url = base_url.clone();
+-                url.set_host(Some(&host)).unwrap();
+-                url.set_path(transform.saas_path);
+-
+-                debug!(%base_url, transformed=%url, "Transformed Flox SaaS url");
+-                Ok(url)
+-            },
+-            _ => {
+-                let url = Self::route_url(base_url, transform.path)?;
+-                debug!(%base_url, transformed=%url, "Transformed Flox Enterprise url");
+-                Ok(url)
+-            },
+-        }
++            .ok_or(FloxhubError::CannotBeABase(base_url.to_string()))?;
++        let Some(intermediate) = hosted_intermediate_labels(host) else {
++            let url = Self::route_url(base_url, transform.path)?;
++            debug!(%base_url, transformed=%url, "Transformed Flox Enterprise url");
++            return Ok(url);
 +        };
-       }) pkgsContext;
++
++        let host = [&[transform.saas_prefix], intermediate.as_slice(), &[
++            "flox", "dev",
++        ]]
++        .into_iter()
++        .flatten()
++        .join(".");
++
++        let mut url = base_url.clone();
++        url.set_host(Some(&host)).unwrap();
++        url.set_path(transform.saas_path);
++
++        debug!(%base_url, transformed=%url, "Transformed Flox SaaS url");
++        Ok(url)
+     }
  
-       # ------------------------------------------------------------------------ #
+     /// Return the base url of the FloxHub instance
+@@ -151,6 +160,17 @@ impl Floxhub {
+         &self.base_url
+     }
+ 
++    /// Whether this FloxHub is the hosted (SaaS) deployment.
++    ///
++    /// Staging and preview bases count as hosted; enterprise / on-premise
++    /// deployments never match.
++    pub fn is_hosted(&self) -> bool {
++        self.base_url
++            .host_str()
++            .and_then(hosted_intermediate_labels)
++            .is_some()
++    }
++
+     /// Return the url of the FloxHub api endpoint
+     ///
+     /// If the environment variable `FLOX_CATALOG_URL` is set,
+@@ -275,6 +295,28 @@ mod tests {
+         }
+     }
+ 
++    #[test]
++    fn is_hosted_keys_on_saas_host_shape() {
++        // Hosted bases match the anchored `hub.<...>.flox.dev` shape,
++        // including staging/preview intermediates; anything else — enterprise
++        // hosts and near-misses on either anchor — is not hosted.
++        for (host, hosted) in [
++            ("hub.flox.dev", true),
++            ("hub.staging.flox.dev", true),
++            ("nothub.flox.dev", false),
++            ("hub.flox.example.com", false),
++            ("floxhub.example.internal", false),
++        ] {
++            let floxhub = Floxhub::new(
++                Url::from_str(&format!("https://{host}")).unwrap(),
++                None,
++                None,
++            )
++            .unwrap();
++            assert_eq!(floxhub.is_hosted(), hosted, "host: {host}");
++        }
++    }
++
+     #[test]
+     fn resolve_effective_url_other_base_routes_off_base() {
+         assert_eq!(
+```
+
+**File**: `cli/flox/src/commands/mod.rs` (modified, +11/-17)
+```diff
+@@ -382,10 +382,8 @@ impl FloxArgs {
+             &config.flox.config_dir,
+             &config.flox.cache_dir,
+         );
+-        let uses_token_auth = !matches!(
+-            config.flox.floxhub_authn_mode,
+-            Some(flox_config::AuthnMode::Kerberos)
+-        );
++        let authn_mode = config.effective_authn_mode(&floxhub);
++        let uses_token_auth = matches!(authn_mode, flox_config::AuthnMode::Token);
+         let should_store_credentials = uses_token_auth && !self.is_prompt_hook_flow();
+         let credential = if should_store_credentials {
+             let resolved = stores.resolve(&config);
+@@ -401,7 +399,7 @@ impl FloxArgs {
+             }
+             resolved.context
+         } else {
+-            auth_context_from_config(&config)
++            auth_context_from_config(&config, &authn_mode)
+         };
+ 
+         self.warn_if_logged_out(&config, &credential);
+@@ -643,7 +641,8 @@ impl FloxArgs {
+     }
+ }
+ 
+-/// The credential named by the already-merged config.
++/// The credential named by the already-merged config and the effective
++/// authn mode.
+ ///
+ /// Kerberos ignores the FloxHub token entirely and resolves a principal from
+ /// the ccache instead; every other mode routes the merged `floxhub_token` by
+@@ -655,8 +654,8 @@ impl FloxArgs {
+ /// it from the environment or a config file — so there is nothing to defer;
+ /// the keyring is the expensive case and it is handled by
+ /// [CredentialStores::resolve].
+-fn auth_context_from_config(config: &Config) -> AuthContext {
+-    if let Some(flox_config::AuthnMode::Kerberos) = config.flox.floxhub_authn_mode {
++fn auth_context_from_config(config: &Config, authn_mode: &flox_config::AuthnMode) -> AuthContext {
++    if let flox_config::AuthnMode::Kerberos = authn_mode {
+         return AuthContext::new_kerberos();
+     }
+     AuthContext::new_from_token(
+@@ -2322,18 +2321,13 @@ mod auth_context_from_config_tests {
+ 
+     use super::*;
+ 
+-    fn kerberos_config() -> Config {
+-        let mut config = Config::default();
+-        config.flox.floxhub_authn_mode = Some(flox_config::AuthnMode::Kerberos);
+-        config
+-    }
+-
+     /// Kerberos answers every startup question without a ticket, so the GSSAPI
+     /// acquire must not happen until something needs a SPNEGO token. Reaching
+     /// the ccache here would also make the test depend on a Kerberized host.
+     #[test]
+     fn kerberos_defers_the_ccache_read() {
+-        let credential = auth_context_from_config(&kerberos_config());
++        let credential =
++            auth_context_from_config(&Config::default(), &flox_config::AuthnMode::Kerberos);
+ 
+         assert_eq!(credential.cached_facts(), CachedFacts {
+             logged_in: false,
+@@ -2360,7 +2354,7 @@ mod auth_context_from_config_tests {
+         let mut config = Config::default();
+         config.flox.floxhub_token = Some("flox_pat_config-token".to_string());
+ 
+-        let credential = auth_context_from_config(&config);
++        let credential = auth_context_from_config(&config, &flox_config::AuthnMode::Token);
+ 
+         assert_eq!(credential.token_secret(), Some("flox_pat_config-token"));
+     }
+@@ -2372,7 +2366,7 @@ mod auth_context_from_config_tests {
+         let mut config = Config::default();
+         config.flox.floxhub_token = Some(String::new());
+ 
+-        let credential = auth_context_from_config(&config);
++        let credential = auth_context_from_config(&config, &flox_config::AuthnMode::Token);
+ 
+         assert!(!credential.cached_facts().logged_in);
+         assert!(credential.is_unauthenticated());
+```
+
+**File**: `cli/nef-lock-catalog/src/bin/lock.rs` (modified, +3/-3)
+```diff
+@@ -205,9 +205,9 @@ fn build_client(config: &Config, floxhub_token: Option<String>) -> Result<Floxhu
+         "configured catalog client",
+     );
+ 
+-    let auth_context = match config.flox.floxhub_authn_mode {
+-        Some(flox_config::AuthnMode::Kerberos) => AuthContext::new_kerberos(),
+-        _ => AuthContext::new_from_token(floxhub_token.as_deref()),
++    let auth_context = match config.effective_authn_mode(&floxhub) {
++        flox_config::AuthnMode::Kerberos => AuthContext::new_kerberos(),
++        flox_config::AuthnMode::Token => AuthContext::new_from_token(floxhub_token.as_deref()),
+     };
+ 
+     let config = FloxhubClientConfig {
+```
+
+**File**: `pkgs/flox-cli/default.nix` (modified, +14/-0)
+```diff
+@@ -18,6 +18,10 @@
+   rust-toolchain,
+   rustfmt ? rust-toolchain.rustfmt,
+   stdenv,
++  # Default FloxHub authentication mode compiled into the binary
++  # ("token" or "kerberos"). Kerberos-authenticated on-premise deployments
++  # build with "kerberos"; the hosted FloxHub always uses Auth0 regardless.
++  defaultAuthnMode ? null,
+ }:
+ let
+   FLOX_VERSION = lib.fileContents "${flox-src}/VERSION";
+@@ -70,8 +74,18 @@ let
+     // lib.optionalAttrs stdenv.hostPlatform.isLinux {
+       LOCALE_ARCHIVE = "${glibcLocalesUtf8}/lib/locale/locale-archive";
+     }
++    // lib.optionalAttrs (defaultAuthnMode != null) {
++      FLOX_DEFAULT_AUTHN_MODE = defaultAuthnMode;
++    }
+     // rust-internal-deps.passthru.envs;
+ in
++assert lib.assertMsg (
++  defaultAuthnMode == null
++  || builtins.elem defaultAuthnMode [
++    "token"
++    "kerberos"
++  ]
++) "defaultAuthnMode must be null, \"token\", or \"kerberos\"";
+ craneLib.buildPackage (
+   {
+     pname = "flox";
 ```
 
 ---
 
-### Incident Patch 3: `87d93138` (2026-10-26)
-**Commit Message**: fix(nix): skip AWS SDK unit tests on Intel macOS
+### Incident Patch 2: `54f6fab2` (2026-10-28)
+**Commit Message**: feat(auth): compile the default FloxHub authn mode into the build
 
-**File**: `pkgs/nix/default.nix` (modified, +11/-1)
+Allow the Nix package to select token or Kerberos as the build default.
+Explicit configuration takes precedence; hosted FloxHub URLs retain token
+authentication when the mode is unset.
+
+Share authentication-mode resolution between the CLI and nef-lock-catalog,
+and share hosted-host detection with URL routing. Validate the Nix argument
+before building and cover authentication precedence and hosted host matching.
+
+Co-authored-by: Michael Brantley <[REDACTED_EMAIL]>
+
+**File**: `cli/flox-config/src/config.rs` (modified, +69/-0)
 ```diff
-@@ -16,6 +16,8 @@
- #
- # ---------------------------------------------------------------------------- #
- {
-+  lib,
-+  stdenv,
-   nixVersions,
-   nixDependencies,
-   fetchFromGitHub,
-@@ -57,7 +59,15 @@ in
-           brotli = brotli-fixed;
-           curl = curl-brotli-fixed;
-           # nixDependencies' aws-sdk-cpp is trimmed to the APIs nix uses.
--          aws-sdk-cpp = nixDependencies.aws-sdk-cpp.override { curl = curl-brotli-fixed; };
-+          aws-sdk-cpp = (nixDependencies.aws-sdk-cpp.override { curl = curl-brotli-fixed; }).overrideAttrs (
-+            old:
-+            lib.optionalAttrs (stdenv.hostPlatform.system == "x86_64-darwin") {
-+              # STS credential tests repeatedly fail on Intel macOS builds:
-+              # https://github.com/NixOS/nixpkgs/issues/340087
-+              # They run during compilation, so doCheck does not disable them.
-+              cmakeFlags = old.cmakeFlags ++ [ "-DAUTORUN_UNIT_TESTS=OFF" ];
-+            }
-+          );
-         }
-       );
+@@ -7,6 +7,7 @@ use anyhow::Result;
+ use flox_core::activate::context::AutoActivateFishMode;
+ use flox_core::data::environment_ref::RemoteEnvironmentRef;
+ use flox_core::features::Features;
++use flox_core::floxhub::Floxhub;
+ use glob::{MatchOptions, Pattern};
+ use serde::{Deserialize, Serialize};
+ use toml_edit::Key;
+@@ -39,6 +40,27 @@ pub enum AuthnMode {
+     Kerberos,
+ }
  
++impl Default for AuthnMode {
++    /// Default authentication mode compiled into this build, set via the
++    /// `FLOX_DEFAULT_AUTHN_MODE` build-time environment variable
++    /// ("token" or "kerberos"; unset means "token").
++    ///
++    /// [`Config::effective_authn_mode`] applies explicit configuration and
++    /// the hosted FloxHub's token-authentication fallback before this default.
++    ///
++    /// The Nix interface (`defaultAuthnMode` on `pkgs/flox-cli`) rejects
++    /// invalid values before invoking Cargo; a direct Cargo build with an
++    /// invalid value fails here on first use instead of silently falling
++    /// back to token auth.
++    fn default() -> Self {
++        match option_env!("FLOX_DEFAULT_AUTHN_MODE") {
++            Some("kerberos") => Self::Kerberos,
++            Some("token") | None => Self::Token,
++            Some(mode) => panic!("invalid FLOX_DEFAULT_AUTHN_MODE: {mode}"),
++        }
++    }
++}
++
+ /// Where `flox auth login` stores the FloxHub token.
+ #[derive(Clone, Copy, Debug, Default, Deserialize, Serialize, PartialEq, Eq)]
+ #[serde(rename_all = "lowercase")]
+@@ -326,6 +348,19 @@ impl Display for InstallerChannel {
+ }
+ 
+ impl Config {
++    /// The authn mode to use against `floxhub`.
++    ///
++    /// An explicit `floxhub_authn_mode` always wins. When it is unset, the
++    /// hosted FloxHub authenticates via token (it supports nothing else);
++    /// other deployments get the default compiled into this build.
++    pub fn effective_authn_mode(&self, floxhub: &Floxhub) -> AuthnMode {
++        match &self.flox.floxhub_authn_mode {
++            Some(mode) => mode.clone(),
++            None if floxhub.is_hosted() => AuthnMode::Token,
++            None => AuthnMode::default(),
++        }
++    }
++
+     /// Creates a [Config] from the environment and config files
+     pub fn parse() -> Result<Config> {
+         load::parse()
+@@ -385,6 +420,40 @@ mod tests {
+         }
+     }
+ 
++    /// An explicit mode wins everywhere, the hosted FloxHub is token-only,
++    /// and only other deployments see the compiled-in default.
++    #[test]
++    fn effective_authn_mode_resolution_order() {
++        let hosted = Floxhub::new("https://hub.flox.dev".parse().unwrap(), None, None).unwrap();
++        let on_prem = Floxhub::new(
++            "https://floxhub.example.internal".parse().unwrap(),
++            None,
++            None,
++        )
++        .unwrap();
++        let explicit = |mode: AuthnMode| {
++            let mut config = Config::default();
++            config.flox.floxhub_authn_mode = Some(mode);
++            config
++        };
++        let unset = Config::default();
++
++        assert_eq!(
++            [
++                explicit(AuthnMode::Kerberos).effective_authn_mode(&hosted),
++                explicit(AuthnMode::Token).effective_authn_mode(&on_prem),
++                unset.effective_authn_mode(&hosted),
++                unset.effective_authn_mode(&on_prem),
++            ],
++            [
++                AuthnMode::Kerberos,
++                AuthnMode::Token,
++                AuthnMode::Token,
++                AuthnMode::default(),
++            ]
++        );
++    }
++
+     fn preferences(
+         entries: &[(&str, AutoActivationPreference)],
+     ) -> HashMap<PathBuf, AutoActivationPreference> {
+```
+
+**File**: `cli/flox-core/src/floxhub.rs` (modified, +66/-24)
+```diff
+@@ -68,6 +68,18 @@ pub struct Floxhub {
+     git_url_overridden: bool,
+ }
+ 
++/// The labels between `hub` and `flox.dev` when `host` has the hosted (SaaS)
++/// shape `hub.<...>.flox.dev`, and `None` for any other host.
++///
++/// The single definition of "hosted", so URL routing and
++/// [`Floxhub::is_hosted`] cannot disagree.
++fn hosted_intermediate_labels(host: &str) -> Option<Vec<&str>> {
++    match host.split('.').collect::<Vec<_>>().as_slice() {
++        ["hub", intermediate @ .., "flox", "dev"] => Some(intermediate.to_vec()),
++        _ => None,
++    }
++}
++
+ impl Floxhub {
+     pub fn new(
+         base_url: Url,
+@@ -118,31 +130,28 @@ impl Floxhub {
+             return Ok(url_override);
+         }
+ 
+-        let host_components = base_url
++        let host = base_url
+             .host_str()
+-            .ok_or(FloxhubError::CannotBeABase(base_url.to_string()))?
+-            .split(".")
+-            .collect::<Vec<_>>();
+-        match host_components.as_slice() {
+-            ["hub", intermediate @ .., "flox", "dev"] => {
+-                let host: String = [&[transform.saas_prefix], intermediate, &["flox", "dev"]]
+-                    .into_iter()
+-                    .flatten()
+-                    .join(".");
+-
+-                let mut url = base_url.clone();
+-                url.set_host(Some(&host)).unwrap();
+-                url.set_path(transform.saas_path);
+-
+-                debug!(%base_url, transformed=%url, "Transformed Flox SaaS url");
+-                Ok(url)
+-            },
+-            _ => {
+-                let url = Self::route_url(base_url, transform.path)?;
+-                debug!(%base_url, transformed=%url, "Transformed Flox Enterprise url");
+-                Ok(url)
+-            },
+-        }
++            .ok_or(FloxhubError::CannotBeABase(base_url.to_string()))?;
++        let Some(intermediate) = hosted_intermediate_labels(host) else {
++            let url = Self::route_url(base_url, transform.path)?;
++            debug!(%base_url, transformed=%url, "Transformed Flox Enterprise url");
++            return Ok(url);
++        };
++
++        let host = [&[transform.saas_prefix], intermediate.as_slice(), &[
++            "flox", "dev",
++        ]]
++        .into_iter()
++        .flatten()
++        .join(".");
++
++        let mut url = base_url.clone();
++        url.set_host(Some(&host)).unwrap();
++        url.set_path(transform.saas_path);
++
++        debug!(%base_url, transformed=%url, "Transformed Flox SaaS url");
++        Ok(url)
+     }
+ 
+     /// Return the base url of the FloxHub instance
+@@ -151,6 +160,17 @@ impl Floxhub {
+         &self.base_url
+     }
+ 
++    /// Whether this FloxHub is the hosted (SaaS) deployment.
++    ///
++    /// Staging and preview bases count as hosted; enterprise / on-premise
++    /// deployments never match.
++    pub fn is_hosted(&self) -> bool {
++        self.base_url
++            .host_str()
++            .and_then(hosted_intermediate_labels)
++            .is_some()
++    }
++
+     /// Return the url of the FloxHub api endpoint
+     ///
+     /// If the environment variable `FLOX_CATALOG_URL` is set,
+@@ -275,6 +295,28 @@ mod tests {
+         }
+     }
+ 
++    #[test]
++    fn is_hosted_keys_on_saas_host_shape() {
++        // Hosted bases match the anchored `hub.<...>.flox.dev` shape,
++        // including staging/preview intermediates; anything else — enterprise
++        // hosts and near-misses on either anchor — is not hosted.
++        for (host, hosted) in [
++            ("hub.flox.dev", true),
++            ("hub.staging.flox.dev", true),
++            ("nothub.flox.dev", false),
++            ("hub.flox.example.com", false),
++            ("floxhub.example.internal", false),
++        ] {
++            let floxhub = Floxhub::new(
++                Url::from_str(&format!("https://{host}")).unwrap(),
++                None,
++                None,
++            )
++            .unwrap();
++            assert_eq!(floxhub.is_hosted(), hosted, "host: {host}");
++        }
++    }
++
+     #[test]
+     fn resolve_effective_url_other_base_routes_off_base() {
+         assert_eq!(
+```
+
+**File**: `cli/flox/src/commands/mod.rs` (modified, +11/-17)
+```diff
+@@ -382,10 +382,8 @@ impl FloxArgs {
+             &config.flox.config_dir,
+             &config.flox.cache_dir,
+         );
+-        let uses_token_auth = !matches!(
+-            config.flox.floxhub_authn_mode,
+-            Some(flox_config::AuthnMode::Kerberos)
+-        );
++        let authn_mode = config.effective_authn_mode(&floxhub);
++        let uses_token_auth = matches!(authn_mode, flox_config::AuthnMode::Token);
+         let should_store_credentials = uses_token_auth && !self.is_prompt_hook_flow();
+         let credential = if should_store_credentials {
+             let resolved = stores.resolve(&config);
+@@ -401,7 +399,7 @@ impl FloxArgs {
+             }
+             resolved.context
+         } else {
+-            auth_context_from_config(&config)
++            auth_context_from_config(&config, &authn_mode)
+         };
+ 
+         self.warn_if_logged_out(&config, &credential);
+@@ -643,7 +641,8 @@ impl FloxArgs {
+     }
+ }
+ 
+-/// The credential named by the already-merged config.
++/// The credential named by the already-merged config and the effective
++/// authn mode.
+ ///
+ /// Kerberos ignores the FloxHub token entirely and resolves a principal from
+ /// the ccache instead; every other mode routes the merged `floxhub_token` by
+@@ -655,8 +654,8 @@ impl FloxArgs {
+ /// it from the environment or a config file — so there is nothing to defer;
+ /// the keyring is the expensive case and it is handled by
+ /// [CredentialStores::resolve].
+-fn auth_context_from_config(config: &Config) -> AuthContext {
+-    if let Some(flox_config::AuthnMode::Kerberos) = config.flox.floxhub_authn_mode {
++fn auth_context_from_config(config: &Config, authn_mode: &flox_config::AuthnMode) -> AuthContext {
++    if let flox_config::AuthnMode::Kerberos = authn_mode {
+         return AuthContext::new_kerberos();
+     }
+     AuthContext::new_from_token(
+@@ -2322,18 +2321,13 @@ mod auth_context_from_config_tests {
+ 
+     use super::*;
+ 
+-    fn kerberos_config() -> Config {
+-        let mut config = Config::default();
+-        config.flox.floxhub_authn_mode = Some(flox_config::AuthnMode::Kerberos);
+-        config
+-    }
+-
+     /// Kerberos answers every startup question without a ticket, so the GSSAPI
+     /// acquire must not happen until something needs a SPNEGO token. Reaching
+     /// the ccache here would also make the test depend on a Kerberized host.
+     #[test]
+     fn kerberos_defers_the_ccache_read() {
+-        let credential = auth_context_from_config(&kerberos_config());
++        let credential =
++            auth_context_from_config(&Config::default(), &flox_config::AuthnMode::Kerberos);
+ 
+         assert_eq!(credential.cached_facts(), CachedFacts {
+             logged_in: false,
+@@ -2360,7 +2354,7 @@ mod auth_context_from_config_tests {
+         let mut config = Config::default();
+         config.flox.floxhub_token = Some("flox_pat_config-token".to_string());
+ 
+-        let credential = auth_context_from_config(&config);
++        let credential = auth_context_from_config(&config, &flox_config::AuthnMode::Token);
+ 
+         assert_eq!(credential.token_secret(), Some("flox_pat_config-token"));
+     }
+@@ -2372,7 +2366,7 @@ mod auth_context_from_config_tests {
+         let mut config = Config::default();
+         config.flox.floxhub_token = Some(String::new());
+ 
+-        let credential = auth_context_from_config(&config);
++        let credential = auth_context_from_config(&config, &flox_config::AuthnMode::Token);
+ 
+         assert!(!credential.cached_facts().logged_in);
+         assert!(credential.is_unauthenticated());
+```
+
+**File**: `cli/nef-lock-catalog/src/bin/lock.rs` (modified, +3/-3)
+```diff
+@@ -205,9 +205,9 @@ fn build_client(config: &Config, floxhub_token: Option<String>) -> Result<Floxhu
+         "configured catalog client",
+     );
+ 
+-    let auth_context = match config.flox.floxhub_authn_mode {
+-        Some(flox_config::AuthnMode::Kerberos) => AuthContext::new_kerberos(),
+-        _ => AuthContext::new_from_token(floxhub_token.as_deref()),
++    let auth_context = match config.effective_authn_mode(&floxhub) {
++        flox_config::AuthnMode::Kerberos => AuthContext::new_kerberos(),
++        flox_config::AuthnMode::Token => AuthContext::new_from_token(floxhub_token.as_deref()),
+     };
+ 
+     let config = FloxhubClientConfig {
+```
+
+**File**: `pkgs/flox-cli/default.nix` (modified, +14/-0)
+```diff
+@@ -18,6 +18,10 @@
+   rust-toolchain,
+   rustfmt ? rust-toolchain.rustfmt,
+   stdenv,
++  # Default FloxHub authentication mode compiled into the binary
++  # ("token" or "kerberos"). Kerberos-authenticated on-premise deployments
++  # build with "kerberos"; the hosted FloxHub always uses Auth0 regardless.
++  defaultAuthnMode ? null,
+ }:
+ let
+   FLOX_VERSION = lib.fileContents "${flox-src}/VERSION";
+@@ -70,8 +74,18 @@ let
+     // lib.optionalAttrs stdenv.hostPlatform.isLinux {
+       LOCALE_ARCHIVE = "${glibcLocalesUtf8}/lib/locale/locale-archive";
+     }
++    // lib.optionalAttrs (defaultAuthnMode != null) {
++      FLOX_DEFAULT_AUTHN_MODE = defaultAuthnMode;
++    }
+     // rust-internal-deps.passthru.envs;
+ in
++assert lib.assertMsg (
++  defaultAuthnMode == null
++  || builtins.elem defaultAuthnMode [
++    "token"
++    "kerberos"
++  ]
++) "defaultAuthnMode must be null, \"token\", or \"kerberos\"";
+ craneLib.buildPackage (
+   {
+     pname = "flox";
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4851** (2026-10-28): chore: Release 1.19.3 (@mkenigs)
 - **PR #4843** (2026-10-26): fix(nix): skip AWS SDK unit tests on Intel macOS (@mkenigs)
 - **PR #4842** (2026-10-27): docs(readme): point AI agent links at flox-skills (@imkarrer)
 - **PR #4841** (2026-10-26): chore: merge tag v1.19.1 (@mkenigs)
 - **PR #4840** (2026-10-27): chore: Release 1.19.2 (@mkenigs)
 - **PR #4839** (2026-10-26): fix(nix): scope the cacert distrust override to flox's packages (@dcarley)
-- **PR #4838** (2026-10-26): fix(nix): link bundled nix and git against brotli 1.2.1 (@dcarley)
 
 ---
 
@@ -1830,42 +2240,47 @@ The new `cacert-distrust` check pins this down: every consumer and
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. nix): link bundled nix and git against brotli 1.2.1
+## X. auth): compile the default FloxHub authn mode into the build (#4580)
 
 **RULE**:
-When implementing operations in `flake.nix`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flox/flox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cli/flox-config/src/config.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flox/flox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fe309f1a`: nix): link bundled nix and git against brotli 1.2.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `55536b5d`: auth): compile the default FloxHub authn mode into the build (#4580). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `flake.nix`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/flox-config/src/config.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-          # brotli < 1.2.1 is affected by CVE-2026-111497 (OOB write in the
-          # decoder). Overriding `brotli` itself would rebuild everything that
-          # links curl or uses python3Packages (rustc, cargo, urllib3, ...),
-          # so the fixed brotli is only threaded through the runtime closure:
-          # nix (pkgs/nix) and the git that Flox packages bake in (overlays.flox).
-          # flox-installers' container takes `curl-brotli-fixed` and
-          # `gitMinimal-brotli-fixed` from `pkgsFor`.
-          # TODO: remove once flox/nixpkgs `stable` carries brotli >= 1.2.1.
-          brotli-fixed = prev.brotli.overrideAttrs (_: rec {
-            version = "1.2.1";
-            src = final.fetchFromGitHub {
-              owner = "google";
-              repo = "brotli";
-              tag = "v${version}";
-              hash = "sha256-llY72cYffDv0ugsH0p89xIPEbElV4L8u7U/Fe8hT3gI=";
-            };
-          });
-          curl-brotli-fixed = prev.curl.override { brotli = final.brotli-fixed; };
-          gitMinimal-brotli-fixed = prev.gitMinimal.override { curl = final.curl-brotli-fixed; };
+use flox_core::floxhub::Floxhub;
+impl Default for AuthnMode {
+    /// Default authentication mode compiled into this build, set via the
+    /// `FLOX_DEFAULT_AUTHN_MODE` build-time environment variable
+    /// ("token" or "kerberos"; unset means "token").
+    ///
+    /// [`Config::effective_authn_mode`] applies explicit configuration and
+    /// the hosted FloxHub's token-authentication fallback before this default.
+    ///
+    /// The Nix interface (`defaultAuthnMode` on `pkgs/flox-cli`) rejects
+    /// invalid values before invoking Cargo; a direct Cargo build with an
+    /// invalid value fails here on first use instead of silently falling
+    /// back to token auth.
+    fn default() -> Self {
+        match option_env!("FLOX_DEFAULT_AUTHN_MODE") {
+            Some("kerberos") => Self::Kerberos,
+            Some("token") | None => Self::Token,
+            Some(mode) => panic!("invalid FLOX_DEFAULT_AUTHN_MODE: {mode}"),
+        }
+    }
+}
 
-              # Flox packages bake git into their runtime closure.
-              gitMini
+    /// The authn mode to use against `floxhub`.
+    ///
+    /// An explicit `floxhub_authn_mode` always wins. When it is unset, the
+    /// hosted FloxHub authenticates via token (it supports nothing else);
+    /// other deployments get the defa
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1875,4 +2290,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fe309f1a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `55536b5d` are properly handled with clean fallback behavior.

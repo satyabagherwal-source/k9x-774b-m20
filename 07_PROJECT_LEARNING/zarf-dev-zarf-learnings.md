@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source**: github ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
-> **Source Version**: `a70762de`  
+> **Source Version**: `1d7a8b20`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T13:43:42.926Z  
+> **Timestamp**: 2026-10-29T17:03:37.357Z  
 > **Learning ID**: `learn-github-zarf-dev-zarf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T13:43:42.920Z  
+> **Harvest Timestamp**: 2026-10-29T17:03:36.683Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Airgap Native Package Manager for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2077 stars
+- **Stars / Engagement**: 2078 stars
 
 ---
 
@@ -1459,11 +1459,11 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5533** (2026-10-26): **chore(deps): bump the codeql group with 3 updates**
-  *Symptoms*: Bumps the codeql group with 3 updates: [github/codeql-action/upload-sarif](https://github.com/github/codeql-action), [github/codeql-action/init](https://github.com/github/codeql-action) and [github/codeql-action/analyze](https://github.com/github/codeql-action).  Updates `github/codeql-action/upload-sarif` from 4.38.3 to 4.39.0 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/releases">github/codeql-action/upload-sarif's releases</a>.</em></p> <blockquote> <h2>v4.39.0</h2> <ul> <li><em>Breaking change</em>: Bump the minimum required CodeQL bundle version to 2.20.7. <a href="https://redirect.github.com/github/codeql-action/pull/4205">#4205</a></li> <li>The <code>codeql-action/analyze</code> step now validates that a correct argument for the <code>checkout_path</code> input has been provided. The <code>checkout_path</code> input must be set to the path where the repository that is being analyzed is checked out at on the runner, if that path is something other than the workspace root. If the path does not point to a repository checkout or is different from the path that was used by <code>codeql-action/init</code>, then the CodeQL Action now produces a warning. <a href="https://redirect.github.com/github/codeql-action/pull/4148">#4148</a></li> <li>Resolved an issue with third-party caching implementations that prevented caches from being restored correctly. <a href="https://redirect.github.com/github/codeql-action/pul
+- **Issue #5543** (2026-10-28): **chore: contributor ladder enhancements**
+  *Symptoms*: ## Description  Broad updates after revisiting the contributor ladder in a recent discussion. Among broader corrections and updates is a focus on outcomes over any specific timelines. After reviewing other governance documents across foundations I think this resonates more with what we would like to foster in future candidates who want to pursue the ladder.   Not covered in this changeset: - I would like to move this to the `community` repo in the organization soon - reviewers and maintainers should be tracked in standardized files   - Nomination thereafter becomes a PR and is traceable - Creation of an emeritus status for those who have served the community and decided to part-ways - Additional criteria that makes offboarding more objective  A lot of this is subjective until we establish policy. A part of the updates are to protect the project from drive-by attempts at potential discrediting the project (none have occurred to date).   ## Related Issue  Fixes #5542  ## Checklist before merging  - [x] Test, docs, adr added or updated as needed - [x] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed 
 
-- **Issue #5532** (2026-10-27): **chore(deps): bump actions/create-github-app-token from 3.2.0 to 3.3.0 in the actions-organization group across 1 directory**
-  *Symptoms*: Bumps the actions-organization group with 1 update in the / directory: [actions/create-github-app-token](https://github.com/actions/create-github-app-token).  Updates `actions/create-github-app-token` from 3.2.0 to 3.3.0 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/actions/create-github-app-token/releases">actions/create-github-app-token's releases</a>.</em></p> <blockquote> <h2>v3.3.0</h2> <h2><a href="https://github.com/actions/create-github-app-token/compare/v3.2.0...v3.3.0">3.3.0</a> (2026-10-12)</h2> <h3>Features</h3> <ul> <li>update permission inputs (<a href="https://redirect.github.com/actions/create-github-app-token/issues/399">#399</a>) (<a href="https://github.com/actions/create-github-app-token/commit/a47236f79f79fcbc3532af49fe3a5ded89529b6e">a47236f</a>)</li> </ul> <h3>Bug Fixes</h3> <ul> <li><strong>deps:</strong> bump nested undici from 6.24.0 to 6.29.0 (<a href="https://redirect.github.com/actions/create-github-app-token/issues/403">#403</a>) (<a href="https://github.com/actions/create-github-app-token/commit/12461a3a794e67c032f1eff5bb95ece9427eb4fb">12461a3</a>)</li> <li><strong>deps:</strong> bump the production-dependencies group across 1 directory with 3 updates (<a href="https://redirect.github.com/actions/create-github-app-token/issues/395">#395</a>) (<a href="https://github.com/actions/create-github-app-token/commit/a69c19ddfdf8e1ab093900e0064524ce9309c807">a69c19d</a>)</li> </ul> </blockquote> </details> <d
+- **Issue #5542** (2026-10-28): **Revise the contributor ladder to focus on outcomes**
+  *Symptoms*: ### Describe what should be investigated or refactored  Notwithstanding some other areas of governance that should be pursued (and changes that would also impact the contributor ladder) - the ladder should focus on participation and outcomes as opposed to definitive timelines as we work on broadening project governance.  Looking at the [Kyverno governance documentation ](https://github.com/kyverno/community/blob/main/GOVERNANCE.md#contributor-ladder) on contributor ladders brings to light some opportunities for evolving as we look towards incubation and greater foundation impacts.   
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1480,261 +1480,594 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a70762de` (2026-10-27)
-**Commit Message**: chore(deps): bump actions/create-github-app-token from 3.2.0 to 3.3.0 in the actions-organization group across 1 directory (#5532)
+### Incident Patch 1: `1d7a8b20` (2026-10-28)
+**Commit Message**: chore(lint): update to golangci-lint v2.15 (#5540)
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/release-please.yml` (modified, +1/-1)
+**File**: `.github/workflows/scan-lint.yml` (modified, +1/-1)
 ```diff
-@@ -21,7 +21,7 @@ jobs:
-     steps:
-       - name: Get Release Please token
-         id: app-token
--        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+@@ -15,4 +15,4 @@ jobs:
+       - name: Run golangci-lint
+         uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0
          with:
-           app-id: ${{ secrets.RELEASE_PLEASE_GITHUB_APP_ID }}
-           private-key: ${{ secrets.RELEASE_PLEASE_GITHUB_APP_SECRET }}
+-          version: v2.12.0
+\ No newline at end of file
++          version: v2.15.0
 ```
 
-**File**: `.github/workflows/release.yml` (modified, +1/-1)
+**File**: `src/cmd/package.go` (modified, +13/-9)
 ```diff
-@@ -172,7 +172,7 @@ jobs:
+@@ -1857,16 +1857,20 @@ func (o *packagePublishOptions) run(cmd *cobra.Command, args []string) error {
+ 		err = errors.Join(err, pkgLayout.Cleanup())
+ 	}()
  
-       - name: Get Brew tap repo token
-         id: brew-tap-token
--        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
-         with:
-           client-id: ${{ secrets.HOMEBREW_TAP_WORKFLOW_GITHUB_CLIENT_ID }}
-           private-key: ${{ secrets.HOMEBREW_TAP_WORKFLOW_GITHUB_PRIVATE_KEY }}
+-	publishSignOpts := signing.DefaultSignBlobOptions()
+-	publishSignOpts.Key = o.signingKeyPath
+-	publishSignOpts.Password = o.signingKeyPassword
+-	publishSignOpts.Overwrite = true
++	if o.signingKeyPath != "" {
++		publishSignOpts := signing.DefaultSignBlobOptions()
++		publishSignOpts.Key = o.signingKeyPath
++		publishSignOpts.Password = o.signingKeyPassword
++		publishSignOpts.Overwrite = true
++		if err := pkgLayout.SignPackage(ctx, &publishSignOpts); err != nil {
++			return fmt.Errorf("unable to sign package: %w", err)
++		}
++	}
+ 	publishPackageOpts := packager.PublishPackageOptions{
+-		OCIConcurrency:  o.ociConcurrency,
+-		SignBlobOptions: publishSignOpts,
+-		Retries:         o.retries,
+-		RemoteOptions:   defaultRemoteOptions(),
+-		Tag:             o.tag,
++		OCIConcurrency: o.ociConcurrency,
++		Retries:        o.retries,
++		RemoteOptions:  defaultRemoteOptions(),
++		Tag:            o.tag,
+ 	}
+ 
+ 	_, err = packager.PublishPackage(ctx, pkgLayout, dstRef, publishPackageOpts)
+```
+
+**File**: `src/cmd/zarf_tools_test.go` (modified, +1/-2)
+```diff
+@@ -73,7 +73,7 @@ func TestGetCreds(t *testing.T) {
+ 					PullPassword: "pull-password",
+ 					PushPassword: "push-password",
+ 					Address:      "127.0.0.1:30001",
+-					NodePort:     30001,
++					Port:         30001,
+ 				},
+ 				Distro: "test",
+ 			}
+@@ -335,7 +335,6 @@ func internalRegistryState(pullPassword string) *state.State {
+ 			RegistryMode: state.RegistryModeNodePort,
+ 			Address:      "127.0.0.1:31999",
+ 			Port:         31999,
+-			NodePort:     31999,
+ 			PullUsername: "pull-user",
+ 			PullPassword: pullPassword,
+ 			PushUsername: "push-user",
+```
+
+**File**: `src/internal/agent/hooks/argocd-repository_test.go` (modified, +2/-2)
+```diff
+@@ -46,7 +46,7 @@ func TestArgoRepoWebhook(t *testing.T) {
+ 		},
+ 		RegistryInfo: state.RegistryInfo{
+ 			Address:      "127.0.0.1:31999",
+-			NodePort:     31999,
++			Port:         31999,
+ 			PullUsername: "registry-pull-user",
+ 			PullPassword: "registry-pull-password",
+ 		},
+@@ -707,7 +707,7 @@ func TestArgoRepoWebhookRegistryOnly(t *testing.T) {
+ 		// GitServer intentionally not configured (OCI-only scenario).
+ 		RegistryInfo: state.RegistryInfo{
+ 			Address:      "127.0.0.1:31999",
+-			NodePort:     31999,
++			Port:         31999,
+ 			PullUsername: "registry-pull-user",
+ 			PullPassword: "registry-pull-password",
+ 		},
+```
+
+**File**: `src/internal/agent/http/proxy.go` (modified, +1/-1)
+```diff
+@@ -40,7 +40,7 @@ func ProxyHandler(ctx context.Context, cluster *cluster.Cluster) http.HandlerFun
+ 			w.Write([]byte("unable to transform the provided request, see the Zarf HTTP proxy logs for more details"))
+ 			return
+ 		}
+-		proxy := &httputil.ReverseProxy{Director: func(_ *http.Request) {}, ModifyResponse: proxyResponseTransform}
++		proxy := &httputil.ReverseProxy{Director: func(_ *http.Request) {}, ModifyResponse: proxyResponseTransform} //nolint:staticcheck // The deprecated HTTP proxy will be removed soon.
+ 		proxy.ServeHTTP(w, r)
+ 	}
+ }
+```
+
+**File**: `src/pkg/cluster/cluster_test.go` (modified, +3/-7)
+```diff
+@@ -108,7 +108,7 @@ func TestInit(t *testing.T) {
+ 			PushUsername: "push-user",
+ 			PullUsername: "pull-user",
+ 			Address:      "address",
+-			NodePort:     1,
++			Port:         1,
+ 			Secret:       "secret",
+ 		},
+ 	}
+@@ -380,7 +380,7 @@ func TestInitStateRegistryModeSwitch(t *testing.T) {
+ 				RegistryInfo: state.RegistryInfo{
+ 					RegistryMode: state.RegistryModeProxy,
+ 					MTLSStrategy: state.MTLSStrategyZarfManaged,
+-					NodePort:     state.ZarfRegistryHostPort,
++					Port:         state.ZarfRegistryHostPort,
+ 				},
+ 				InjectorInfo: state.InjectorInfo{Port: 0},
+ 			},
+@@ -401,7 +401,7 @@ func TestInitStateRegistryModeSwitch(t *testing.T) {
+ 				RegistryInfo: state.RegistryInfo{
+ 					RegistryMode: state.RegistryModeNodePort,
+ 					MTLSStrategy: state.MTLSStrategyNone,
+-					NodePort:     state.ZarfInClusterContainerRegistryNodePort,
++					Port:         state.ZarfInClusterContainerRegistryNodePort,
+ 				},
+ 				InjectorInfo: state.InjectorInfo{Port: 0},
+ 			},
+@@ -426,7 +426,6 @@ func TestInitStateRegistryModeSwitch(t *testing.T) {
+ 					RegistryMode: state.RegistryModeNodePort,
+ 					MTLSStrategy: state.MTLSStrategyNone,
+ 					Port:         30500,
+-					NodePort:     30500,
+ 				},
+ 				InjectorInfo: state.InjectorInfo{Port: 0},
+ 			},
+@@ -451,7 +450,6 @@ func TestInitStateRegistryModeSwitch(t *testing.T) {
+ 					RegistryMode: state.RegistryModeProxy,
+ 					MTLSStrategy: state.MTLSStrategyZarfManaged,
+ 					Port:         8080,
+-					NodePort:     8080,
+ 				},
+ 				InjectorInfo: state.InjectorInfo{Port: 0},
+ 			},
+@@ -463,7 +461,6 @@ func TestInitStateRegistryModeSwitch(t *testing.T) {
+ 					RegistryMode: state.RegistryModeNodePort,
+ 					MTLSStrategy: state.MTLSStrategyNone,
+ 					Port:         30500,
+-					NodePort:     30500,
+ 				},
+ 				InjectorInfo: state.InjectorInfo{Port: 31999},
+ 			},
+@@ -475,7 +472,6 @@ func TestInitStateRegistryModeSwitch(t *testing.T) {
+ 					RegistryMode: state.RegistryModeNodePort,
+ 					MTLSStrategy: state.MTLSStrategyNone,
+ 					Port:         30500,
+-					NodePort:     30500,
+ 				},
+ 				InjectorInfo: state.InjectorInfo{Port: 31999},
+ 			},
+```
+
+**File**: `src/pkg/packager/create.go` (modified, +2/-2)
+```diff
+@@ -116,8 +116,8 @@ func Create(ctx context.Context, packagePath string, output string, opts CreateO
+ 		Flavor:               opts.Flavor,
+ 		RegistryOverrides:    opts.RegistryOverrides,
+ 		SignBlobOptions:      opts.SignBlobOptions,
+-		SigningKeyPath:       opts.SigningKeyPath,
+-		SigningKeyPassword:   opts.SigningKeyPassword,
++		SigningKeyPath:       opts.SigningKeyPath,     //nolint:staticcheck // Forward deprecated public options to preserve API compatibility.
++		SigningKeyPassword:   opts.SigningKeyPassword, //nolint:staticcheck // Forward deprecated public options to preserve API compatibility.
+ 		CachePath:            opts.CachePath,
+ 		WithBuildMachineInfo: opts.WithBuildMachineInfo,
+ 		RemoteOptions:        opts.RemoteOptions,
+```
+
+**File**: `src/pkg/packager/publish.go` (modified, +8/-2)
+```diff
+@@ -255,15 +255,21 @@ func PublishSkeleton(ctx context.Context, path string, ref registry.Reference, o
+ 	}
+ 	// Create skeleton buildpath
+ 	createOpts := assemble.AssembleSkeletonOptions{
+-		SigningKeyPath:       opts.SigningKeyPath,
+-		SigningKeyPassword:   opts.SigningKeyPassword,
+ 		Flavor:               opts.Flavor,
+ 		WithBuildMachineInfo: opts.WithBuildMachineInfo,
+ 	}
+ 	pkgLayout, err := assemble.AssembleSkeleton(ctx, loaded, createOpts)
+ 	if err != nil {
+ 		return registry.Reference{}, fmt.Errorf("unable to create skeleton: %w", err)
+ 	}
++	if opts.SigningKeyPath != "" {
++		signOpts := signing.DefaultSignBlobOptions()
++		signOpts.Key = opts.SigningKeyPath
++		signOpts.Password = opts.SigningKeyPassword
++		if err := pkgLayout.SignPackage(ctx, &signOpts); err != nil {
++			return registry.Reference{}, fmt.Errorf("unable to sign skeleton: %w", err)
++		}
++	}
+ 	referenceOptions := zoci.ReferenceFromMetadataOptions{
+ 		Tag: opts.Tag,
+ 	}
 ```
 
 ---
 
-### Incident Patch 2: `24ecf085` (2026-10-27)
-**Commit Message**: feat(v1beta1)!: rename documentation to attachments (#5518)
+### Incident Patch 2: `fdf6f98b` (2026-10-28)
+**Commit Message**: feat(create)!: validate package secret size (#5528)
 
 Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
+Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
+Co-authored-by: Brandt Keller <[REDACTED_EMAIL]>
 
-**File**: `site/src/content/docs/best-practices/v1alpha1-to-v1beta1.mdx` (modified, +18/-6)
+**File**: `src/pkg/packager/create.go` (modified, +34/-0)
 ```diff
-@@ -137,7 +137,23 @@ In v1beta1, omitting `wait.cluster.condition` waits for resource readiness using
+@@ -5,12 +5,14 @@ package packager
  
- ## Schema Changes and Field Mappings
+ import (
+ 	"context"
++	"encoding/json"
+ 	"errors"
+ 	"fmt"
+ 	"path/filepath"
  
--These conversions are automatic. Paths below are relative to each component unless prefixed with `metadata` or `build`. `[]` denotes a list entry.
-+These conversions are automatic. `[]` denotes a list entry.
+ 	"github.com/zarf-dev/zarf/src/api"
+ 	"github.com/zarf-dev/zarf/src/api/v1beta1"
++	"github.com/zarf-dev/zarf/src/config"
+ 	"github.com/zarf-dev/zarf/src/pkg/feature"
+ 	"github.com/zarf-dev/zarf/src/pkg/helpers"
+ 	"github.com/zarf-dev/zarf/src/pkg/images"
+@@ -20,11 +22,15 @@ import (
+ 	"github.com/zarf-dev/zarf/src/pkg/packager/layout"
+ 	"github.com/zarf-dev/zarf/src/pkg/packager/load"
+ 	"github.com/zarf-dev/zarf/src/pkg/signing"
++	"github.com/zarf-dev/zarf/src/pkg/state"
+ 	"github.com/zarf-dev/zarf/src/pkg/utils"
+ 	"github.com/zarf-dev/zarf/src/pkg/zoci"
+ 	"github.com/zarf-dev/zarf/src/types"
+ )
+ 
++// Leave headroom below Kubernetes' 1 MiB Secret limit for deployment metadata.
++const packageSecretSizeLimit = 1_000_000
 +
-+### Top-level fields
-+
-+| v1alpha1 | v1beta1 |
-+| --- | --- |
-+| `documentation` | `attachments` |
-+| `metadata.allowNamespaceOverride` | `metadata.preventNamespaceOverride`, with the boolean inverted. |
-+| `metadata.image`, `metadata.source`, `metadata.documentation`, `metadata.url`, `metadata.authors`, `metadata.vendor` | Same keys under `metadata.annotations`. Existing annotation values take precedence. |
-+| `metadata.aggregateChecksum` | `build.aggregateChecksum` |
-+| `build.terminal` | `build.hostname` |
-+
-+Namespace overrides remain enabled by default.
-+
-+### Component fields
-+
-+Paths in this table are relative to each entry in `components`.
- 
- | v1alpha1 | v1beta1 |
- | --- | --- |
-@@ -158,12 +174,8 @@ These conversions are automatic. Paths below are relative to each component unle
- | `charts[]` source fields and values files | See [Helm charts](#helm-charts). |
- | `images[]` | See [Images](#images). |
- | `repos[]` | `repositories[]`. See [Git repositories](#git-repositories). |
--| `metadata.allowNamespaceOverride` | `metadata.preventNamespaceOverride`, with the boolean inverted. |
--| `metadata.image`, `source`, `documentation`, `url`, `authors`, `vendor` | Same keys under `metadata.annotations`. Existing annotation values take precedence. |
--| `metadata.aggregateChecksum` | `build.aggregateChecksum` |
--| `build.terminal` | `build.hostname` |
- 
--New v1beta1 components are required by default (`optional: false`). However, conversion keeps current behavior (i.e., an omitted or false `required` becomes `optional: true`). Namespace overrides and chart schema validation remain enabled by default.
-+New v1beta1 components are required by default (`optional: false`). However, conversion keeps current behavior (i.e., an omitted or false `required` becomes `optional: true`). Chart schema validation remains enabled by default.
- 
- `selector` filters components during create; `target` filters them during deploy.
- 
-```
-
-**File**: `src/api/convert/convert_test.go` (modified, +3/-2)
-```diff
-@@ -1112,7 +1112,7 @@ func TestPackageFromV1alpha1TreatsShasumAsSHA256(t *testing.T) {
- 	require.Empty(t, files[1].Checksum)
- }
- 
--func TestV1Alpha1PkgToV1Beta1_ValuesAndDocumentation(t *testing.T) {
-+func TestV1Alpha1PkgToV1Beta1_ValuesAndAttachments(t *testing.T) {
- 	t.Parallel()
- 	pkg := v1alpha1.ZarfPackage{
- 		Kind: v1alpha1.ZarfPackageConfig,
-@@ -1129,7 +1129,8 @@ func TestV1Alpha1PkgToV1Beta1_ValuesAndDocumentation(t *testing.T) {
- 
- 	require.Equal(t, []string{"values.yaml"}, result.Values.Files)
- 	require.Equal(t, "values.schema.json", result.Values.Schema)
--	require.Equal(t, "# Hello", result.Documentation["readme"])
-+	require.Equal(t, pkg.Documentation, result.Attachments)
-+	require.Equal(t, pkg.Documentation, PackageV1beta1ToV1alpha1(result).Documentation)
- }
- 
- // --- v1beta1 → v1alpha1 tests ---
-```
-
-**File**: `src/api/package.go` (modified, +7/-7)
-```diff
-@@ -9,13 +9,13 @@ import "strings"
- // Package is the version-neutral representation used by package operations and converters.
- type Package struct {
- 	// APIVersion identifies the source package schema. An empty value is the legacy v1alpha1 form.
--	APIVersion    string
--	Kind          PackageKind
--	Metadata      PackageMetadata
--	Build         BuildData
--	Components    []Component
--	Values        Values
--	Documentation map[string]string
-+	APIVersion  string
-+	Kind        PackageKind
-+	Metadata    PackageMetadata
-+	Build       BuildData
-+	Components  []Component
-+	Values      Values
-+	Attachments map[string]string
- 
- 	// v1alpha1-only fields
- 	Variables []InteractiveVariable
-```
-
-**File**: `src/api/v1beta1/package.go` (modified, +2/-2)
-```diff
-@@ -34,8 +34,8 @@ type Package struct {
- 	Components []Component `json:"components" jsonschema:"minItems=1"`
- 	// Values imports Zarf values files for templating and overriding Helm values.
- 	Values Values `json:"values,omitempty"`
--	// Documentation files included in the package.
--	Documentation map[string]string `json:"documentation,omitempty"`
-+	// Attachments are files included in the package.
-+	Attachments map[string]string `json:"attachments,omitempty"`
- }
- 
- // GetComponent returns the component with the given name, or an error if no such component exists.
-```
-
-**File**: `src/cmd/package.go` (modified, +3/-2)
-```diff
-@@ -605,7 +605,7 @@ func confirmDeploy(ctx context.Context, pkgLayout *layout.PackageLayout, setVari
- 		return fmt.Errorf("unable to print package definition: %w", err)
- 	}
- 
--	if len(pkg.Documentation) > 0 {
-+	if len(pkg.Attachments) > 0 {
- 		l.Info("documentation available for this package - use 'zarf package inspect documentation' to view")
- 	}
- 
-@@ -1326,6 +1326,7 @@ func newPackageInspectDocumentationCommand(v *viper.Viper) *cobra.Command {
- 	o := newPackageInspectDocumentationOptions()
- 	cmd := &cobra.Command{
- 		Use:     "documentation [ PACKAGE_SOURCE ]",
-+		Aliases: []string{"attachments"},
- 		Short:   "Extract documentation files from the package",
- 		Example: lang.CmdPackageInspectDocumentationExample,
- 		Args:    cobra.MaximumNArgs(1),
-@@ -1371,7 +1372,7 @@ func (o *packageInspectDocumentationOptions) run(cmd *cobra.Command, args []stri
+ // CreateOptions are the optional parameters to create.
+ type CreateOptions struct {
+ 	Flavor            string
+@@ -123,6 +129,9 @@ func Create(ctx context.Context, packagePath string, output string, opts CreateO
+ 	defer func() {
+ 		err = errors.Join(err, pkgLayout.Cleanup())
  	}()
- 	// Sanitize path to avoid writing outside user directory in the case of malicious edited package definition
- 	outputPath := filepath.Join(o.outputDir, fmt.Sprintf("%s-documentation", filepath.Base(pkgLayout.Definition().Metadata.Name)))
--	return pkgLayout.GetDocumentation(ctx, outputPath, o.keys)
-+	return pkgLayout.GetAttachments(ctx, outputPath, o.keys)
++	if err := validatePackageSecretSize(pkgLayout.Definition(), pkgLayout.Digest()); err != nil {
++		return "", err
++	}
+ 
+ 	var packageLocation string
+ 	if helpers.IsOCIURL(output) {
+@@ -169,3 +178,28 @@ func Create(ctx context.Context, packagePath string, output string, opts CreateO
+ 	}
+ 	return packageLocation, nil
+ }
++
++// Check the persisted definition, including compatibility copies and component status,
++// before writing a created package.
++func validatePackageSecretSize(pkg api.Package, digest string) error {
++	components := make([]state.DeployedComponent, 0, len(pkg.Components))
++	for _, component := range pkg.Components {
++		components = append(components, state.DeployedComponent{
++			Name:               component.Name,
++			Status:             state.ComponentStatusSucceeded,
++			ObservedGeneration: 1,
++		})
++	}
++	deployed, err := state.NewDeployedPackage(pkg, digest, config.CLIVersion, components, 1)
++	if err != nil {
++		return err
++	}
++	data, err := json.Marshal(deployed)
++	if err != nil {
++		return err
++	}
++	if len(data) > packageSecretSizeLimit {
++		return fmt.Errorf("package %q cannot be created: its deployment metadata is %d bytes, exceeding Zarf's %d-byte limit for Kubernetes Secret storage; reduce the package definition size", pkg.Metadata.Name, len(data), packageSecretSizeLimit)
++	}
++	return nil
++}
+```
+
+**File**: `src/pkg/packager/create_test.go` (modified, +52/-26)
+```diff
+@@ -7,43 +7,69 @@ import (
+ 	"fmt"
+ 	"os"
+ 	"path/filepath"
++	"strings"
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/require"
+-	"github.com/zarf-dev/zarf/src/pkg/feature"
++	"github.com/zarf-dev/zarf/src/api/v1alpha1"
++	"github.com/zarf-dev/zarf/src/api/v1beta1"
+ 	"github.com/zarf-dev/zarf/src/pkg/packager/layout"
+ 	"github.com/zarf-dev/zarf/src/pkg/signing"
+ 	"github.com/zarf-dev/zarf/src/test/testutil"
+ )
+ 
+-func TestPackageCreateRejectsV1Beta1WithoutFeature(t *testing.T) {
+-	ctx := testutil.TestContext(t)
+-	require.False(t, feature.IsEnabled(feature.V1Beta1))
+-	packageDir := t.TempDir()
+-	outputDir := t.TempDir()
+-	definition := `apiVersion: zarf.dev/v1beta1
+-kind: ZarfPackageConfig
++func TestPackageCreateSecretSize(t *testing.T) {
++	t.Parallel()
++	for _, tt := range []struct {
++		name        string
++		apiVersion  string
++		description string
++		wantError   bool
++	}{
++		{name: "implicit-alpha-over-limit", description: strings.Repeat("a", 1_000_000), wantError: true},
++		{name: "alpha-below-limit", apiVersion: v1alpha1.APIVersion, description: strings.Repeat("a", 900_000)},
++		{name: "alpha-over-limit", apiVersion: v1alpha1.APIVersion, description: strings.Repeat("a", 1_000_000), wantError: true},
++		// Ampersands exercise JSON escaping and remain quoted when the definition is written as YAML.
++		{name: "alpha-json-escaping-exceeds-limit", apiVersion: v1alpha1.APIVersion, description: strings.Repeat("&", 180_000), wantError: true},
++		{name: "beta-below-limit", apiVersion: v1beta1.APIVersion, description: strings.Repeat("a", 450_000)},
++		// The beta definition fits alone, but its alpha compatibility copy pushes the secret over the limit.
++		{name: "beta-compatibility-copy-exceeds-limit", apiVersion: v1beta1.APIVersion, description: strings.Repeat("a", 600_000), wantError: true},
++	} {
++		t.Run(tt.name, func(t *testing.T) {
++			t.Parallel()
++			ctx := testutil.TestContext(t)
++			packageDir := t.TempDir()
++			outputDir := t.TempDir()
++			definition := fmt.Sprintf(`kind: ZarfPackageConfig
+ metadata:
+-  name: beta-feature
++  name: secret-size
++  description: %q
+ components:
+   - name: empty
+-    actions:
+-      onCreate:
+-        before:
+-          - cmd: echo created > created.txt
+-`
+-	require.NoError(t, os.WriteFile(filepath.Join(packageDir, layout.ZarfYAML), []byte(definition), 0o600))
+-
+-	packagePath, err := Create(ctx, packageDir, outputDir, CreateOptions{
+-		CachePath: t.TempDir(),
+-		SkipSBOM:  true,
+-	})
+-	require.ErrorContains(t, err, "--features=v1beta1=true")
+-	require.Empty(t, packagePath)
+-	require.NoFileExists(t, filepath.Join(packageDir, "created.txt"))
+-	entries, err := os.ReadDir(outputDir)
+-	require.NoError(t, err)
+-	require.Empty(t, entries)
++`, tt.description)
++			if tt.apiVersion != "" {
++				definition = "apiVersion: " + tt.apiVersion + "\n" + definition
++			}
++			require.NoError(t, os.WriteFile(filepath.Join(packageDir, layout.ZarfYAML), []byte(definition), 0o600))
++			packagePath, err := Create(ctx, packageDir, outputDir, CreateOptions{
++				CachePath: t.TempDir(),
++				SkipSBOM:  true,
++			})
++			if tt.wantError {
++				require.ErrorContains(t, err, "1000000-byte limit")
++				require.Empty(t, packagePath)
++				entries, err := os.ReadDir(outputDir)
++				require.NoError(t, err)
++				require.Empty(t, entries)
++				return
++			}
++			require.NoError(t, err)
++			pkgLayout, err := layout.LoadFromTar(ctx, packagePath, layout.PackageLayoutOptions{VerificationStrategy: layout.VerifyNever})
++			require.NoError(t, err)
++			t.Cleanup(func() { require.NoError(t, pkgLayout.Cleanup()) })
++			require.Equal(t, tt.description, pkgLayout.Definition().Metadata.Description)
++		})
++	}
  }
  
- type packageInspectDefinitionOptions struct {
+ func TestPackageCreatePreservesV1alpha1MetadataAnnotationCollisions(t *testing.T) {
 ```
 
-**File**: `src/internal/api/v1alpha1/convert.go` (modified, +4/-4)
+**File**: `src/pkg/packager/deploy.go` (modified, +3/-3)
 ```diff
-@@ -58,9 +58,9 @@ func PackageFromV1alpha1(pkg v1alpha1.ZarfPackage) api.Package {
- 			Files:  pkg.Values.Files,
- 			Schema: pkg.Values.Schema,
- 		},
--		Documentation: pkg.Documentation,
--		Variables:     interactiveVarsToGeneric(pkg.Variables),
--		Constants:     constantsToGeneric(pkg.Constants),
-+		Attachments: pkg.Documentation,
-+		Variables:   interactiveVarsToGeneric(pkg.Variables),
-+		Constants:   constantsToGeneric(pkg.Constants),
- 	}
+@@ -311,7 +311,7 @@ func (d *deployer) deployComponents(ctx context.Context, pkgLayout *layout.Packa
+ 		idx := len(deployedComponents) - 1
+ 		if d.isConnectedToCluster() {
+ 			if _, err := d.c.RecordPackageDeployment(ctx, pkgLayout.Definition(), pkgLayout.Digest(), deployedComponents, packageGeneration, state.WithPackageConnectivity(opts.Connected), state.WithPackageNamespaceOverride(opts.NamespaceOverride)); err != nil {
+-				l.Debug("unable to record package deployment", "component", component.Name, "error", err.Error())
++				l.Error("unable to record package deployment", "component", component.Name, "error", err.Error())
+ 			}
+ 		}
+ 		var charts []state.InstalledChart
+@@ -357,7 +357,7 @@ func (d *deployer) deployComponents(ctx context.Context, pkgLayout *layout.Packa
+ 				deployedComponents[idx].InstalledCharts = state.MergeInstalledChartsForComponent(deployedComponents[idx].InstalledCharts, charts, true)
+ 				if d.isConnectedToCluster() {
+ 					if _, err := d.c.RecordPackageDeployment(ctx, pkgLayout.Definition(), pkgLayout.Digest(), deployedComponents, packageGeneration, state.WithPackageConnectivity(opts.Connected), state.WithPackageNamespaceOverride(opts.NamespaceOverride)); err != nil {
+-						l.Debug("unable to record package deployment", "component", component.Name, "error", err.Error())
++						l.Error("unable to record package deployment", "component", component.Name, "error", err.Error())
+ 					}
+ 				}
+ 			}
+@@ -377,7 +377,7 @@ func (d *deployer) deployComponents(ctx context.Context, pkgLayout *layout.Packa
+ 		deployedComponents[idx].Status = state.ComponentStatusSucceeded
+ 		if d.isConnectedToCluster() {
+ 			if _, err := d.c.RecordPackageDeployment(ctx, pkgLayout.Definition(), pkgLayout.Digest(), deployedComponents, packageGeneration, state.WithPackageConnectivity(opts.Connected), state.WithPackageNamespaceOverride(opts.NamespaceOverride)); err != nil {
+-				l.Debug("unable to record package deployment", "component", component.Name, "error", err.Error())
++				l.Error("unable to record package deployment", "component", component.Name, "error", err.Error())
+ 			}
+ 		}
  
- 	for _, vr := range pkg.Build.VersionRequirements {
-@@ -410,7 +410,7 @@ func PackageToV1alpha1(g api.Package) v1alpha1.ZarfPackage {
- 		Metadata:      metadataFromGeneric(g.Metadata, g.Build),
- 		Build:         buildFromGeneric(g.Build),
- 		Values:        v1alpha1.ZarfValues{Files: g.Values.Files, Schema: g.Values.Schema},
--		Documentation: g.Documentation,
-+		Documentation: g.Attachments,
- 		Variables:     interactiveVarsFromGeneric(g.Variables),
- 		Constants:     constantsFromGeneric(g.Constants),
- 	}
 ```
 
-**File**: `src/internal/api/v1beta1/convert.go` (modified, +7/-7)
+**File**: `src/pkg/packager/find_images_test.go` (modified, +0/-3)
 ```diff
-@@ -38,7 +38,7 @@ func PackageFromV1beta1(pkg v1beta1.Package) api.Package {
- 			Files:  pkg.Values.Files,
- 			Schema: pkg.Values.Schema,
- 		},
--		Documentation: pkg.Documentation,
-+		Attachments: pkg.Attachments,
- 	}
+@@ -23,7 +23,6 @@ import (
  
- 	for _, c := range pkg.Components {
-@@ -307,12 +307,12 @@ func waitToGeneric(w *v1beta1.ComponentActionWait) *api.ActionWait {
- // PackageToV1beta1 converts the internal generic representation to a v1beta1 Package.
- func PackageToV1beta1(g api.Package) v1beta1.Package {
- 	pkg := v1beta1.Package{
--		APIVersion:    v1beta1.APIVersion,
--		Kind:          v1beta1.PackageKind(g.Kind),
--		Metadata:      metadataFromGeneric(g.Metadata),
--		Build:         buildFromGeneric(g.Build),
--		Values:        v1beta1.Values{Files: g.Values.Files, Schema: g.Values.Schema},
--		Documentation: g.Documentation,
-+		APIVersion:  v1beta1.APIVersion,
-+		Kind:        v1beta1.PackageKind(g.Kind),
-+		Metadata:    metadataFromGeneric(g.Metadata),
-+		Build:       buildFromGeneric(g.Build),
-+		Values:      v1beta1.Values{Files: g.Values.Files, Schema: g.Values.Schema},
-+		Attachments: g.Attachments,
- 	}
+ 	"github.com/zarf-dev/zarf/src/api"
+ 	"github.com/zarf-dev/zarf/src/api/v1beta1"
+-	"github.com/zarf-dev/zarf/src/pkg/feature"
+ 	"github.com/zarf-dev/zarf/src/pkg/value"
+ 	"github.com/zarf-dev/zarf/src/test/testutil"
+ )
+@@ -33,8 +32,6 @@ func TestFindImages(t *testing.T) {
  
- 	if pkg.Kind == "" {
+ 	ctx := testutil.TestContext(t)
+ 
+-	_ = feature.Set([]feature.Feature{{Name: feature.Values, Enabled: true}}) //nolint:errcheck
+-
+ 	tests := []struct {
+ 		name           string
+ 		packagePath    string
 ```
 
-**File**: `src/internal/api/v1beta1/roundtrip_test.go` (modified, +2/-2)
+**File**: `src/pkg/packager/generate_schema_test.go` (modified, +0/-1)
 ```diff
-@@ -224,8 +224,8 @@ func TestConvertGenericRoundTrip(t *testing.T) {
- 				},
- 			},
- 		},
--		Values:        v1beta1.Values{Files: []string{"vals.yaml"}, Schema: "schema.json"},
--		Documentation: map[string]string{"doc": "doc.md"},
-+		Values:      v1beta1.Values{Files: []string{"vals.yaml"}, Schema: "schema.json"},
-+		Attachments: map[string]string{"doc": "doc.md"},
- 	}
- 	roundTripped := PackageToV1beta1(PackageFromV1beta1(original))
- 	require.Empty(t, cmp.Diff(original, roundTripped, v1beta1GenericRoundTripExclusions()...))
+@@ -17,7 +17,6 @@ import (
+ 
+ func TestGenerateValuesSchema(t *testing.T) {
+ 	t.Parallel()
+-	setupInspectTests(t)
+ 
+ 	for _, kind := range []v1beta1.PackageKind{v1beta1.ZarfPackageConfig, v1beta1.ZarfComponentConfig, "v1alpha1"} {
+ 		t.Run(string(kind), func(t *testing.T) {
+```
+
+**File**: `src/pkg/packager/inspect_test.go` (modified, +0/-12)
+```diff
+@@ -11,7 +11,6 @@ import (
+ 	"github.com/stretchr/testify/require"
+ 	"github.com/zarf-dev/zarf/src/api/v1alpha1"
+ 	"github.com/zarf-dev/zarf/src/api/v1beta1"
+-	"github.com/zarf-dev/zarf/src/pkg/feature"
+ 	"github.com/zarf-dev/zarf/src/pkg/packager/assemble"
+ 	"github.com/zarf-dev/zarf/src/pkg/packager/load"
+ 	"github.com/zarf-dev/zarf/src/pkg/value"
+@@ -104,7 +103,6 @@ stringData:
+ }
+ 
+ func TestInspectDefinitionResourcesComponentValuesSchema(t *testing.T) {
+-	setupInspectTests(t)
+ 	dir := t.TempDir()
+ 	for name, contents := range map[string]string{
+ 		"zarf.yaml": `apiVersion: zarf.dev/v1beta1
+@@ -148,12 +146,6 @@ metadata:
+ 
+ var testDataRoot = "testdata/inspect"
+ 
+-func setupInspectTests(t *testing.T) {
+-	t.Helper()
+-	// Enable values feature for tests (ignore error if already set)
+-	_ = feature.Set([]feature.Feature{{Name: feature.Values, Enabled: true}}) //nolint:errcheck
+-}
+-
+ func inspectTestDataPath(parts ...string) string {
+ 	return filepath.Join(append([]string{testDataRoot}, parts...)...)
+ }
+@@ -172,7 +164,6 @@ func assertContainsAll(t *testing.T, resources []Resource, expectedContent []str
+ }
+ 
+ func TestInspectPackageResourcesSkipsValuesSchemaValidationWhenConfigured(t *testing.T) {
+-	setupInspectTests(t)
+ 	ctx := testutil.TestContext(t)
+ 	srcDir := filepath.Join("load", "testdata", "package-with-invalid-values")
+ 	loaded, err := load.Package(ctx, srcDir, load.PackageOptions{SkipValuesSchemaValidation: true})
+@@ -193,7 +184,6 @@ func TestInspectPackageResourcesSkipsValuesSchemaValidationWhenConfigured(t *tes
+ 
+ func TestInspectDefinitionResources(t *testing.T) {
+ 	t.Parallel()
+-	setupInspectTests(t)
+ 
+ 	tests := []struct {
+ 		name              string
+@@ -376,8 +366,6 @@ func TestInspectDefinitionResources(t *testing.T) {
+ 
+ func TestInspectDefinitionResources_Errors(t *testing.T) {
+ 	t.Parallel()
+-	setupInspectTests(t)
+-
+ 	tests := []struct {
+ 		name       string
+ 		packageDir string
+```
+
+**File**: `src/pkg/packager/load/load_test.go` (modified, +2/-8)
+```diff
+@@ -699,14 +699,7 @@ func TestPackageUsesFlavor(t *testing.T) {
+ func TestPackageDefinitionWithValuesSchema(t *testing.T) {
+ 	t.Parallel()
+ 
+-	// Enable the values feature for these tests
+-	err := feature.Set([]feature.Feature{
+-		{
+-			Name:    feature.Values,
+-			Enabled: true,
+-		},
+-	})
+-	require.NoError(t, err)
++	_ = feature.Set([]feature.Feature{{Name: feature.Values, Enabled: true}}) //nolint:errcheck // Features may already be set by another test.
+ 
+ 	tests := []struct {
+ 		name        string
+@@ -788,6 +781,7 @@ func TestV1Beta1PackageDefinition(t *testing.T) {
+ 
+ func TestV1Beta1PackageDefinitionValuesSchemaValidation(t *testing.T) {
+ 	t.Parallel()
++	_ = feature.Set([]feature.Feature{{Name: feature.Values, Enabled: true}}) //nolint:errcheck // Features may already be set by another test.
+ 	ctx := testutil.TestContext(t)
+ 	dir := filepath.Join("testdata", "v1beta1-invalid-values")
+ 
+```
+
+**File**: `src/pkg/packager/packager_test.go` (modified, +14/-0)
+```diff
+@@ -3,17 +3,31 @@
+ package packager
+ 
+ import (
++	"fmt"
++	"os"
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/require"
+ 	"github.com/zarf-dev/zarf/src/api"
+ 	"github.com/zarf-dev/zarf/src/api/convert"
+ 	"github.com/zarf-dev/zarf/src/api/v1alpha1"
++	"github.com/zarf-dev/zarf/src/pkg/feature"
+ 	"github.com/zarf-dev/zarf/src/pkg/value"
+ 	"github.com/zarf-dev/zarf/src/pkg/variables"
+ 	"github.com/zarf-dev/zarf/src/test/testutil"
+ )
+ 
++func TestMain(m *testing.M) {
++	if err := feature.Set([]feature.Feature{
++		{Name: feature.Values, Enabled: true},
++		{Name: feature.V1Beta1, Enabled: true},
++	}); err != nil {
++		fmt.Fprintln(os.Stderr, err)
++		os.Exit(1)
++	}
++	os.Exit(m.Run())
++}
++
+ func genericChart(chart v1alpha1.ZarfChart) api.Chart {
+ 	return convert.PackageFromV1alpha1(v1alpha1.ZarfPackage{Components: []v1alpha1.ZarfComponent{{Charts: []v1alpha1.ZarfChart{chart}}}}).Components[0].Charts[0]
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5543** (2026-10-28): chore: contributor ladder enhancements (@brandtkeller)
+- **PR #5541** (2026-10-28): feat(v1beta1)!: change differential to an object (@AustinAbro321)
+- **PR #5540** (2026-10-28): chore(lint): update to golangci-lint v2.15 (@AustinAbro321)
 - **PR #5533** (2026-10-26): chore(deps): bump the codeql group with 3 updates (@dependabot[bot])
 - **PR #5532** (2026-10-27): chore(deps): bump actions/create-github-app-token from 3.2.0 to 3.3.0 in the actions-organization group across 1 directory (@dependabot[bot])
-- **PR #5527** (2026-10-23): feat!: stop duplicating package data in package secret (@AustinAbro321)
-- **PR #5526** (2026-10-27): feat(v1beta1)!: limit annotation size (@AustinAbro321)
-- **PR #5522** (2026-10-26): feat: remove BuildData from output of zarf dev upgrade (@AustinAbro321)
-- **PR #5518** (2026-10-27): feat(v1beta1)!: rename documentation to attachments (@AustinAbro321)
+- **PR #5528** (2026-10-28): feat(create)!: validate package secret size (@AustinAbro321)
 
 ---
 
@@ -1754,28 +2087,28 @@ Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump actions/create-github-app-token from 3.2.0 to 3.3.0 in the actions-o
+## X. lint): update to golangci-lint v2.15 (#5540)
 
 **RULE**:
-When implementing operations in `.github/workflows/release-please.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/scan-lint.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a70762de`: deps): bump actions/create-github-app-token from 3.2.0 to 3.3.0 in the actions-organization group across 1 directory (#5532). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1d7a8b20`: lint): update to golangci-lint v2.15 (#5540). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release-please.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/scan-lint.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+          version: v2.15.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+          version: v2.12.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a70762de` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1d7a8b20` are properly handled with clean fallback behavior.

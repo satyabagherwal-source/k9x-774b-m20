@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T16:51:23.793Z",
+  "last_updated": "2026-10-29T17:04:36.030Z",
   "total_verified_learnings": 1167,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12751,8 +12751,8 @@
       "slug": "flox-flox",
       "platform": "github",
       "source_url": "https://github.com/flox/flox",
-      "source_version": "339bbab0",
-      "content_hash": "d215a78f59ea570b54eb7f3732aa8b83ed0207fc0c3f1dcfeac0d37f98c79863",
+      "source_version": "55536b5d",
+      "content_hash": "3ad8e2109a4cbad7402c9241951798d84973b764ddf8b9c6bf85dc4f6d2f3dce",
       "dossier_path": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "promoted_rules": [
@@ -12775,6 +12775,11 @@
           "number": 5065,
           "title": "nix): link bundled nix and git against brotli 1.2.1",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5529,
+          "title": "auth): compile the default FloxHub authn mode into the build (#4580)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12782,7 +12787,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T00:05:51.578Z",
+      "verified_at": "2026-10-29T17:04:36.011Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14821,8 +14826,8 @@
       "slug": "gravitl-netmaker",
       "platform": "github",
       "source_url": "https://github.com/gravitl/netmaker",
-      "source_version": "f20acf34",
-      "content_hash": "88700fa9445c680a202626394a741a43542246bf52757bb537c551153e0fe717",
+      "source_version": "0a8dba49",
+      "content_hash": "e3f9828f89ae79739709ca3391861d2aba7b27c4804637c0c6d3afbc625b867d",
       "dossier_path": "07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
       "promoted_rules": [
@@ -14855,6 +14860,11 @@
           "number": 4509,
           "title": "NM-356: keep AllowAll when both default ACL policies are open  (#4200)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5528,
+          "title": "List Auto Relayed Peers for a Node API (#4208)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14862,7 +14872,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T00:48:33.948Z",
+      "verified_at": "2026-10-29T17:03:38.320Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38829,8 +38839,8 @@
       "slug": "modelcontextprotocol-kotlin-sdk",
       "platform": "github",
       "source_url": "https://github.com/modelcontextprotocol/kotlin-sdk",
-      "source_version": "a3909eff",
-      "content_hash": "78d75c280b29e172b239f3c776898f0df8ba88f558deb8a042d834a9a4b74e1f",
+      "source_version": "2a028188",
+      "content_hash": "5e5afead30bfc1ea32e077703517c2113b0151210953b046eca57886dfebc6ed",
       "dossier_path": "07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
       "promoted_rules": [
@@ -38843,6 +38853,11 @@
           "number": 4425,
           "title": "deps): bump hono from 4.13.7 to 4.13.13 in /integration-test/src/jvmTest/typescr",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5526,
+          "title": "server)!: return a protocol error for unknown tools (#1120)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38850,7 +38865,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T19:32:03.441Z",
+      "verified_at": "2026-10-29T17:03:35.171Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57011,8 +57026,8 @@
       "slug": "zarf-dev-zarf",
       "platform": "github",
       "source_url": "https://github.com/zarf-dev/zarf",
-      "source_version": "a70762de",
-      "content_hash": "1cbbb380e3a3fd1dabf7c08626a95fc79da906b6b28342f2fbe0a695ab6581bf",
+      "source_version": "1d7a8b20",
+      "content_hash": "9f4a7db456feb71de7733276dadb1356488e0858a89b5edb1765fe8c8eabf62e",
       "dossier_path": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "promoted_rules": [
@@ -57055,6 +57070,11 @@
           "number": 5296,
           "title": "deps): bump actions/create-github-app-token from 3.2.0 to 3.3.0 in the actions-o",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5527,
+          "title": "lint): update to golangci-lint v2.15 (#5540)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -57062,7 +57082,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T13:43:43.226Z",
+      "verified_at": "2026-10-29T17:03:37.898Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -148830,6 +148850,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T16:51:23.781Z"
+    },
+    "rule-5526": {
+      "learning_id": "rule-5526",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5526,
+      "title": "server)!: return a protocol error for unknown tools (#1120)",
+      "source_url": "https://github.com/modelcontextprotocol/kotlin-sdk",
+      "source_version": "2a028188",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T17:03:35.171Z"
+    },
+    "rule-5527": {
+      "learning_id": "rule-5527",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5527,
+      "title": "lint): update to golangci-lint v2.15 (#5540)",
+      "source_url": "https://github.com/zarf-dev/zarf",
+      "source_version": "1d7a8b20",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T17:03:37.898Z"
+    },
+    "rule-5528": {
+      "learning_id": "rule-5528",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5528,
+      "title": "List Auto Relayed Peers for a Node API (#4208)",
+      "source_url": "https://github.com/gravitl/netmaker",
+      "source_version": "0a8dba49",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T17:03:38.320Z"
+    },
+    "rule-5529": {
+      "learning_id": "rule-5529",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5529,
+      "title": "auth): compile the default FloxHub authn mode into the build (#4580)",
+      "source_url": "https://github.com/flox/flox",
+      "source_version": "55536b5d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T17:04:36.011Z"
     }
   },
   "aliases": {

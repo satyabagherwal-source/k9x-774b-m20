@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source**: github ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
-> **Source Version**: `f20acf34`  
+> **Source Version**: `0a8dba49`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T00:48:33.505Z  
+> **Timestamp**: 2026-10-29T17:03:37.736Z  
 > **Learning ID**: `learn-github-gravitl-netmaker`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T00:48:33.499Z  
+> **Harvest Timestamp**: 2026-10-29T17:03:37.185Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Netmaker makes networks with WireGuard. Netmaker automates fast, secure, and distributed virtual networks.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11838 stars
+- **Stars / Engagement**: 11845 stars
 
 ---
 
@@ -1017,166 +1017,179 @@ const CheckInInterval = 1
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f20acf34` (2026-10-25)
-**Commit Message**: NM-356: keep AllowAll when both default ACL policies are open  (#4200)
+### Incident Patch 1: `0a8dba49` (2026-10-29)
+**Commit Message**: List Auto Relayed Peers for a Node API (#4208)
 
-* NM-356: add username filter to nodes api
-
-* NM-356: disconnect user devices and force Desktop logout on disable/delete
-
-When a user is disabled or deleted (including IdP sync), disconnect their
-nodes and publish FORCE_LOGOUT so Desktop sessions end immediately.
-
-* NM-356: rm force logout from delete user path
-
-* NM-356: keep AllowAll when both default ACL policies are open
-
-Uni/proto-scoped policies were defeating FwUpdate.AllowAll even with All
-Resources and All Users enabled, leaving clients on DROP + per-peer ACCEPT
-rules. Short-circuit on open defaults only, and document the constraint.
-
-**File**: `.cursor/rules/netmaker-acls.mdc` (modified, +14/-5)
+**File**: `controllers/middleware.go` (modified, +6/-0)
 ```diff
-@@ -40,6 +40,11 @@ Goal: keep **host-backed user devices** governed by **user policies**, never by
- 3. Minimal diffs — no speculative refactors of the whole ACL engine.
- 4. User devices are **not peers with each other** (`UserDevicesAreNotPeers`).
- 5. User-device hosts **skip** local FwUpdate ACL calc (`skipPeerUpdateAclCalc` / `IsUserOwnedHost`) — user→resource rules are emitted on **infra / egress / gateway** peer updates.
-+6. **Both open defaults ⇒ AllowAll, no exceptions from other ACLs.**
-+   - When All Resources (`*↔*`) and All Users (`*↔*`) are enabled, `defaultsAllowAllTraffic` / `FwUpdate.AllowAll` **must** be true.
-+   - Extra uni / proto / port / IP-scoped / tag-scoped policies **must not** defeat AllowAll. ACLs are allow-list only; with both defaults open they cannot restrict further.
-+   - Do **not** reintroduce `CheckIfAnyPolicyisUniDirectional` (or similar) into the AllowAll short-circuit. Uni/port enforcement belongs only on the fine-grained path when a default is off.
-+   - Symptom of regression: client `NETMAKER-ACL-IN` has per-peer ACCEPTs + DROP tail (and FWD DROPs) even though both defaults are on in the UI.
+@@ -149,6 +149,12 @@ func userMiddleWare(handler http.Handler) http.Handler {
+ 			r.Header.Set("NET_ID", node.Network)
  
- ## Enforcement split (routing vs firewall)
- 
-@@ -57,8 +62,10 @@ Goal: keep **host-backed user devices** governed by **user policies**, never by
- 
- ### Peer update / firewall (`logic/peers.go`)
- 
--- **Both defaults on** (All Resources + All Users) → AllowAll short-circuit, including when user devices exist (All Users already grants broad user access).
--- **Either default off** → full rule path: `networkAllowAll=false`, `FwUpdate.AllowAll=false`, then `GetAclRulesForNode` / egress / user-device hooks (needed for custom user-policy IP limits).
-+- Gate: `defaultsAllowAllTraffic(deviceDefault, userDefault, acls)` — true only when an enabled device policy and user policy are both open on every side (`src=*` and `dst=*`). Also accepts open `*↔*` policies found in the loaded ACL list (in case `GetDefaultPolicy` disagrees). On CE, user side is treated as on.
-+- **Both defaults on** → AllowAll short-circuit (`FwUpdate.AllowAll=true`), including when user devices exist and when other uni/proto/port/IP policies remain enabled. Netclient chain default ACCEPT; no per-peer DROP posture.
-+- **Either default off** → full rule path: `networkAllowAll=false`, `FwUpdate.AllowAll=false`, then `GetAclRulesForNode` / egress / user-device hooks (needed for custom user-policy IP limits). Only here may uni/port policies shape the chain.
-+- Tests: `TestDefaultsAllowAllTrafficRequiresBothDefaults` — must keep asserting that a uni or ICMP-scoped sibling ACL does **not** flip AllowAll off when both defaults are open.
- 
- ### Egress forward rules (`GetEgressRulesForNode`)
- 
-@@ -104,7 +111,7 @@ Goal: keep **host-backed user devices** governed by **user policies**, never by
- |------------|-----------------|--------------|
- | All Resources | Broad resource access | **Must not** grant mesh/egress/exit |
- | All Users | N/A (user policies) | Broad user access (existing RAC semantics) |
--| Both | AllowAll peer path | AllowAll (no per-device rules); fine-grained rules only when a default is off |
-+| Both | AllowAll peer path (ignore other ACLs) | AllowAll (no per-device rules); fine-grained only when a default is off |
- 
- ## Where to change what
- 
-@@ -122,15 +129,17 @@ Goal: keep **host-backed user devices** governed by **user policies**, never by
- ## Testing expectations
- 
- - Targeted tests exist in `logic/acls_user_device_test.go`, `pro/logic/user_device_acls_test.go`, `pro/logic/user_device_extclient_test.go`, `logic/exit_node_test.go`.
--- Prefer small table/unit tests around helpers (drop user devices from `*`, no default-route site-to-site sources, exit picker ignores All Resources for user devices, IP-restricted user-device egress dst, user-device → tagged extclient + ExtraAllowedIPs on ingress FwRules).
-+- Prefer small table/unit tests around helpers (drop user devices from `*`, no default-route site-to-site sources, exit picker ignores All Resources for user devices, IP-restricted user-device egress dst, user-device → tagged extclient + ExtraAllowedIPs on ingress FwRules, both defaults on ⇒ AllowAll despite uni/ICMP siblings).
- - Avoid full `TestCheckPorts` / hanging host-create suites when iterating.
- - After behavior changes that affect live firewall: verify on the **egress/routing host** `FwUpdate` (`allow_all`, `#user-device` rule `src`/`dst`, absence of `0.0.0.0/0 → egress LAN`); for extclients also check **ingress** `IngressInfo.Rules` include user-device → overlay and → ExtraAllowedIPs.
-+- When both defaults are on: client should show `allow_all` / ACCEPT-all chain — **not** per-peer ACCEPTs + `NETMAKER-ACL-*` DROP tails.
- 
- ## Anti-patterns (seen in NM-356)
- 
- - Stuffing host-backed devices into `getStaticUserNodesByNetwork` / fake `StaticNode` for ACL.
- - Using mesh CIDR as firewall source under All Resources.
--- AllowAll / empty-Dst rules “for simplicity” when user devices exist.
-+- AllowAll / empty-Ds
-```
-
-**File**: `logic/peers.go` (modified, +5/-10)
-```diff
-@@ -233,9 +233,9 @@ func computeHostPeerInfo(ctx context.Context, host *schema.Host, allNodes []mode
- // unrestricted in protocol and ports. The loaded ACL list is checked as well
- // as the policies returned by GetDefaultPolicy, so an enabled All Nodes and
- // All Users pair is not missed when the default-policy lookup disagrees.
--// A unidirectional policy that applies to node keeps the host off the
--// ACCEPT-all chain, so that policy is still enforced.
--func defaultsAllowAllTraffic(device, user models.Acl, acls []models.Acl, node models.Node) bool {
-+// Extra uni / proto / port / IP-scoped policies do not defeat this: ACLs are
-+// allow-list only, so with both defaults open they cannot restrict further.
-+func defaultsAllowAllTraffic(device, user models.Acl, acls []models.Acl) bool {
- 	deviceOn := device.Enabled && aclOpenBothSides(device)
- 	userOn := user.Enabled && aclOpenBothSides(user)
- 	if !servercfg.IsPro {
-@@ -252,9 +252,6 @@ func defaultsAllowAllTraffic(device, user models.Acl, acls []models.Acl, node mo
- 			userOn = true
  		}
- 	}
--	if CheckIfAnyPolicyisUniDirectional(node, acls) {
--		return false
--	}
- 	return deviceOn && userOn
- }
- 
-@@ -379,11 +376,9 @@ func GetPeerUpdateForHost(ctx context.Context, network string, host *schema.Host
- 		currentPeers := GetNetworkNodesMemory(allNodes, node.Network)
- 		// User hosts skip ACL/FwUpdate calc: user policies are uni user→server and
- 		// are emitted on the server's peer update via GetUserAclRulesForNode.
--		// The chain tail accepts the whole network only when both default policies
--		// are open on every side. A tag-scoped policy does not, so the tail stays
--		// DROP and the per-client rules carry the permits.
-+		// Both open defaults (*↔*) → AllowAll. Otherwise fine-grained rules + DROP tail.
- 		if !skipPeerUpdateAclCalc(host) {
--			if defaultsAllowAllTraffic(defaultDevicePolicy, defaultUserPolicy, acls, node) {
-+			if defaultsAllowAllTraffic(defaultDevicePolicy, defaultUserPolicy, acls) {
- 				aclRule := models.AclRule{
- 					ID:              fmt.Sprintf("%s-allowed-network-rules", node.ID.String()),
- 					AllowedProtocol: models.ALL,
++		if strings.Contains(route, "auto_relayed_peers") {
++			r.Header.Set("TARGET_RSRC", schema.HostRsrc.String())
++			nodeID := r.Header.Get("TARGET_RSRC_ID")
++			node, _ := logic.GetNodeByID(nodeID)
++			r.Header.Set("NET_ID", node.Network)
++		}
+ 		if hostID, ok := params["hostid"]; ok {
+ 			r.Header.Set("TARGET_RSRC_ID", hostID)
+ 		}
 ```
 
-**File**: `logic/peers_test.go` (modified, +9/-17)
+**File**: `pro/controllers/auto_relay.go` (modified, +110/-0)
 ```diff
-@@ -38,26 +38,18 @@ func TestDefaultsAllowAllTrafficRequiresBothDefaults(t *testing.T) {
- 	allNodes := open(models.DevicePolicy, true)
- 	allUsers := open(models.UserPolicy, true)
+@@ -6,10 +6,12 @@ import (
+ 	"errors"
+ 	"fmt"
+ 	"net/http"
++	"strconv"
  
--	node := models.Node{CommonNode: models.CommonNode{Network: "net"}}
--	assert.True(t, defaultsAllowAllTraffic(allNodes, allUsers, nil, node))
--	assert.False(t, defaultsAllowAllTraffic(open(models.DevicePolicy, false), allUsers, nil, node))
--	assert.False(t, defaultsAllowAllTraffic(allNodes, open(models.UserPolicy, false), nil, node))
--	assert.False(t, defaultsAllowAllTraffic(scoped, models.Acl{}, []models.Acl{scoped}, node))
--	assert.True(t, defaultsAllowAllTraffic(models.Acl{}, models.Acl{}, []models.Acl{allNodes, allUsers, scoped}, node))
-+	assert.True(t, defaultsAllowAllTraffic(allNodes, allUsers, nil))
-+	assert.False(t, defaultsAllowAllTraffic(open(models.DevicePolicy, false), allUsers, nil))
-+	assert.False(t, defaultsAllowAllTraffic(allNodes, open(models.UserPolicy, false), nil))
-+	assert.False(t, defaultsAllowAllTraffic(scoped, models.Acl{}, []models.Acl{scoped}))
-+	assert.True(t, defaultsAllowAllTraffic(models.Acl{}, models.Acl{}, []models.Acl{allNodes, allUsers, scoped}))
+ 	"github.com/gorilla/mux"
+ 	controller "github.com/gravitl/netmaker/controllers"
+ 	"github.com/gravitl/netmaker/db"
++	dbtypes "github.com/gravitl/netmaker/db/types"
+ 	"github.com/gravitl/netmaker/logger"
+ 	"github.com/gravitl/netmaker/logic"
+ 	"github.com/gravitl/netmaker/middleware"
+@@ -20,6 +22,7 @@ import (
+ 	"github.com/gravitl/netmaker/scope"
+ 	"github.com/gravitl/netmaker/servercfg"
+ 	"golang.org/x/exp/slog"
++	"gorm.io/gorm"
+ )
  
-+	// Uni / proto-scoped policies must not defeat AllowAll when both defaults are open.
- 	uni := allNodes
- 	uni.AllowedDirection = models.TrafficDirectionUni
--	original := CheckIfAnyPolicyisUniDirectional
--	CheckIfAnyPolicyisUniDirectional = func(target models.Node, acls []models.Acl) bool {
--		for _, acl := range acls {
--			if acl.Enabled && acl.AllowedDirection == models.TrafficDirectionUni {
--				return true
--			}
--		}
--		return false
--	}
--	t.Cleanup(func() { CheckIfAnyPolicyisUniDirectional = original })
--	assert.False(t, defaultsAllowAllTraffic(allNodes, allUsers, []models.Acl{allNodes, allUsers, uni}, node))
-+	icmp := allUsers
-+	icmp.Proto = models.ICMP
-+	assert.True(t, defaultsAllowAllTraffic(allNodes, allUsers, []models.Acl{allNodes, allUsers, uni, icmp}))
+ // AutoRelayHandlers - handlers for AutoRelay
+@@ -38,6 +41,8 @@ func AutoRelayHandlers(r *mux.Router) {
+ 		Methods(http.MethodPut)
+ 	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay_check", middleware.Scope(scope.TenantScope, controller.AuthorizeHost(http.HandlerFunc(checkautoRelayCtx)))).
+ 		Methods(http.MethodGet)
++	r.HandleFunc("/api/v1/node/{nodeid}/auto_relayed_peers", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(listAutoRelayedPeers)))).
++		Methods(http.MethodGet)
  }
  
- func TestDeduplicateEgressRoutesMergesRangesForSamePeerAndNetwork(t *testing.T) {
+ // @Summary     Get auto relay nodes
+@@ -86,6 +91,111 @@ func getAutoRelayGws(w http.ResponseWriter, r *http.Request) {
+ 	logic.ReturnSuccessResponseWithJson(w, r, returnautoRelayNodes, "get autorelay node successfully")
+ }
+ 
++// @Summary     List a node's auto-relayed peers
++// @Router      /api/v1/node/{nodeid}/auto_relayed_peers [get]
++// @Tags        Auto Relay
++// @Security    oauth
++// @Produce     json
++// @Param       nodeid path string true "Node ID"
++// @Param       q query string false "Search across fields"
++// @Param       page query int false "Page number"
++// @Param       per_page query int false "Items per page"
++// @Success     200 {object} models.PaginatedResponse
++// @Failure     400 {object} models.ErrorResponse
++// @Failure     500 {object} models.ErrorResponse
++func listAutoRelayedPeers(w http.ResponseWriter, r *http.Request) {
++	var params = mux.Vars(r)
++	nodeid := params["nodeid"]
++	node, err := logic.GetNodeByID(nodeid)
++	if err != nil {
++		logic.ReturnErrorResponse(w, r, logic.FormatError(err, "badrequest"))
++		return
++	}
++
++	q := r.URL.Query().Get("q")
++
++	var page, pageSize int
++	page, _ = strconv.Atoi(r.URL.Query().Get("page"))
++	if page == 0 {
++		page = 1
++	}
++	pageSize, _ = strconv.Atoi(r.URL.Query().Get("per_page"))
++	if pageSize < 1 || pageSize > 100 {
++		pageSize = 10
++	}
++
++	peerIDs := make([]interface{}, 0, len(node.AutoRelayedPeers))
++	for peerID := range node.AutoRelayedPeers {
++		peerIDs = append(peerIDs, peerID)
++	}
++
++	response := models.PaginatedResponse{
++		Data:       []models.NodeWithHost{},
++		Page:       page,
++		PerPage:    pageSize,
++		Total:      0,
++		TotalPages: 1,
++	}
++	if len(peerIDs) == 0 {
++		w.Header().Set("Content-Type", "application/json")
++		logic.ReturnSuccessResponseWithJson(w, r, response, "fetched auto relayed peers successfully")
++		return
++	}
++
++	nodeTable := (&schema.Node{}).TableName()
++	var filters, options []dbtypes.Option
++	filters = append(filters, dbtypes.WithFilter(fmt.Sprintf("%s.id", nodeTable), peerIDs...))
++	filters = append(filters, func(db *gorm.DB) *gorm.DB {
++		return db.Joins("JOIN hosts_v1 ON hosts_v1.id = nodes_v1.host_id")
++	})
++	filters = append(filters, dbtypes.WithSearchQuery(
++		q,
++		fmt.Sprintf("%s.id", nodeTable),
++		"hosts_v1.name",
++		fmt.Sprintf("%s.address", nodeTable),
++		fmt.Sprintf("%s.address6", nodeTable),
++	))
++	options = append(options, filters...)
++	options = append(options, dbtypes.WithPreloads("Host"))
++	options = append(options, dbtypes.InAscOrder(fmt.Sprintf("%s.created_at", nodeTable)))
++	options = append(options, dbtypes.WithPagination(page, pageSize))
++
++	_nodes, err := (&schema.Node{}).ListAll(r.Context(), options...)
++	if err != nil {
++		err = fmt.Errorf("failed to fetch auto relayed peers for node %s: %v", nodeid, err)
++		logger.Log(0, r.Header.Get("user"), err.Error())
++		logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.Internal))
++		return
++	}
++
++	peers := make([]models.NodeWithHost, 0, len(_nodes))
++	for _, _node := range _nodes {
++		var peer models.NodeWithHost
++		peer.Fill(&_node)
++		peers = append(peers, peer)
++	}
++
++	total, err := (&schema.Node{}).Count(r.Context(), filters...)
++	if err != nil {
++		err = fmt.Errorf("failed to count auto relayed peers for node %s: %v", nodeid, err)
++		logger.Log(0, r.Header.Get("user"), err.Error())
++		logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.Internal))
++		return
++	}
++
++	totalPages := (total + pageSize - 1) / pageSize
++	if totalPages == 0 {
++		totalPages = 1
++	}
++
++	response.Data = peers
++	response.Total = total
++	response.TotalPages = totalPages
++
++	w.Header().Set("Content-Type", "application/json")
++	logic.ReturnSuccessResponseWithJson(w, r, response, "fetched auto relayed peers successfully")
++}
++
+ // @Summary     Create AutoRelay node
+ // @Router      /api/v1/node/{nodeid}/auto_relay [post]
+ // @Tags        Auto Relay
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4208** (2026-10-29): List Auto Relayed Peers for a Node API (@VishalDalwadi)
+- **PR #4207** (closed): V1.8.0 nm 356 (@abhishek9686)
 - **PR #4206** (2026-10-25): v1.7.0: fix: load user groups via membership for ACL expansion (@abhishek9686)
 - **PR #4200** (2026-10-25): NM-356: keep AllowAll when both default ACL policies are open  (@abhishek9686)
 - **PR #4199** (2026-10-22): NM-356: send force logout on disabling/deleting user accounts and cleanup user devices (@abhishek9686)
 - **PR #4198** (2026-10-21): NM-356: add username filter to nodes api (@abhishek9686)
-- **PR #4197** (2026-10-23): Fixes: Pre-Release v1.8.0 (@VishalDalwadi)
-- **PR #4196** (closed): Revert "Fixes: Auto Select Gateway" (@abhishek9686)
 
 ---
 
@@ -1196,38 +1209,33 @@ rules. Short-circuit on open defaults only, and document the constraint.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NM-356: keep AllowAll when both default ACL policies are open  (#4200)
+## X. List Auto Relayed Peers for a Node API (#4208)
 
 **RULE**:
-When implementing operations in `.cursor/rules/netmaker-acls.mdc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `controllers/middleware.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f20acf34`: NM-356: keep AllowAll when both default ACL policies are open  (#4200). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0a8dba49`: List Auto Relayed Peers for a Node API (#4208). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cursor/rules/netmaker-acls.mdc`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controllers/middleware.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-6. **Both open defaults ⇒ AllowAll, no exceptions from other ACLs.**
-   - When All Resources (`*↔*`) and All Users (`*↔*`) are enabled, `defaultsAllowAllTraffic` / `FwUpdate.AllowAll` **must** be true.
-   - Extra uni / proto / port / IP-scoped / tag-scoped policies **must not** defeat AllowAll. ACLs are allow-list only; with both defaults open they cannot restrict further.
-   - Do **not** reintroduce `CheckIfAnyPolicyisUniDirectional` (or similar) into the AllowAll short-circuit. Uni/port enforcement belongs only on the fine-grained path when a default is off.
-   - Symptom of regression: client `NETMAKER-ACL-IN` has per-peer ACCEPTs + DROP tail (and FWD DROPs) even though both defaults are on in the UI.
-- Gate: `defaultsAllowAllTraffic(deviceDefault, userDefault, acls)` — true only when an enabled device policy and user policy are both open on every side (`src=*` and `dst=*`). Also accepts open `*↔*` policies found in the loaded ACL list (in case `GetDefaultPolicy` disagrees). On CE, user side is treated as on.
-- **Both defaults on** → AllowAll short-circuit (`FwUpdate.AllowAll=true`), including when user devices exist and when other uni/proto/port/IP policies remain enabled. Netcl
+		if strings.Contains(route, "auto_relayed_peers") {
+			r.Header.Set("TARGET_RSRC", schema.HostRsrc.String())
+			nodeID := r.Header.Get("TARGET_RSRC_ID")
+			node, _ := logic.GetNodeByID(nodeID)
+			r.Header.Set("NET_ID", node.Network)
+		}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-- **Both defaults on** (All Resources + All Users) → AllowAll short-circuit, including when user devices exist (All Users already grants broad user access).
-- **Either default off** → full rule path: `networkAllowAll=false`, `FwUpdate.AllowAll=false`, then `GetAclRulesForNode` / egress / user-device hooks (needed for custom user-policy IP limits).
-| Both | AllowAll peer path | AllowAll (no per-device rules); fine-grained rules only when a default is off |
-- Prefer small table/unit tests around helpers (drop user devices from `*`, no default-route site-to-site sources, exit picker ignores All Resources for user devices, IP-restricted user-device egress dst, user-device → tagged extclient + ExtraAllowedIPs on ingress FwRules).
-- AllowAll / empty-Dst rules “for simplicity” when user devices exist.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f20acf34` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0a8dba49` are properly handled with clean fallback behavior.

@@ -6058,3 +6058,7 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `c0e32115` | Multi-dimensional audit evidence | 2026-10-29T16:48:26.040Z |
 | `learn-github-jakeschincariol-arena-skill` | `https://github.com/Jakeschincariol/arena-skill` | `df07b8e5` | Multi-dimensional audit evidence | 2026-10-29T16:51:00.656Z |
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `44323f51` | Multi-dimensional audit evidence | 2026-10-29T16:51:23.864Z |
+| `learn-github-modelcontextprotocol-kotlin-sdk` | `https://github.com/modelcontextprotocol/kotlin-sdk` | `2a028188` | Multi-dimensional audit evidence | 2026-10-29T17:03:35.268Z |
+| `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `1d7a8b20` | Multi-dimensional audit evidence | 2026-10-29T17:03:38.019Z |
+| `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `0a8dba49` | Multi-dimensional audit evidence | 2026-10-29T17:03:38.416Z |
+| `learn-github-flox-flox` | `https://github.com/flox/flox` | `55536b5d` | Multi-dimensional audit evidence | 2026-10-29T17:04:36.108Z |

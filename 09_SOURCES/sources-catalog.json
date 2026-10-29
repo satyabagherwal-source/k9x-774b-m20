@@ -3253,10 +3253,10 @@
     "repository": "flox/flox",
     "platform": "github",
     "sourceUrl": "https://github.com/flox/flox",
-    "sourceVersion": "339bbab0",
+    "sourceVersion": "55536b5d",
     "license": "GPL-2.0",
-    "contentHash": "d215a78f59ea570b54eb7f3732aa8b83ed0207fc0c3f1dcfeac0d37f98c79863",
-    "lastHarvestedAt": "2026-10-28T00:05:51.639Z",
+    "contentHash": "3ad8e2109a4cbad7402c9241951798d84973b764ddf8b9c6bf85dc4f6d2f3dce",
+    "lastHarvestedAt": "2026-10-29T17:04:36.108Z",
     "learningId": "learn-github-flox-flox"
   },
   "wix-react-native-navigation": {
@@ -3703,10 +3703,10 @@
     "repository": "gravitl/netmaker",
     "platform": "github",
     "sourceUrl": "https://github.com/gravitl/netmaker",
-    "sourceVersion": "f20acf34",
+    "sourceVersion": "0a8dba49",
     "license": "NOASSERTION",
-    "contentHash": "88700fa9445c680a202626394a741a43542246bf52757bb537c551153e0fe717",
-    "lastHarvestedAt": "2026-10-26T00:48:34.042Z",
+    "contentHash": "e3f9828f89ae79739709ca3391861d2aba7b27c4804637c0c6d3afbc625b867d",
+    "lastHarvestedAt": "2026-10-29T17:03:38.416Z",
     "learningId": "learn-github-gravitl-netmaker"
   },
   "pixeltable-pixeltable": {
@@ -4463,10 +4463,10 @@
     "repository": "zarf-dev/zarf",
     "platform": "github",
     "sourceUrl": "https://github.com/zarf-dev/zarf",
-    "sourceVersion": "a70762de",
+    "sourceVersion": "1d7a8b20",
     "license": "Apache-2.0",
-    "contentHash": "1cbbb380e3a3fd1dabf7c08626a95fc79da906b6b28342f2fbe0a695ab6581bf",
-    "lastHarvestedAt": "2026-10-28T13:43:43.290Z",
+    "contentHash": "9f4a7db456feb71de7733276dadb1356488e0858a89b5edb1765fe8c8eabf62e",
+    "lastHarvestedAt": "2026-10-29T17:03:38.019Z",
     "learningId": "learn-github-zarf-dev-zarf"
   },
   "vlcn-io-cr-sqlite": {
@@ -8203,10 +8203,10 @@
     "repository": "modelcontextprotocol/kotlin-sdk",
     "platform": "github",
     "sourceUrl": "https://github.com/modelcontextprotocol/kotlin-sdk",
-    "sourceVersion": "a3909eff",
+    "sourceVersion": "2a028188",
     "license": "NOASSERTION",
-    "contentHash": "78d75c280b29e172b239f3c776898f0df8ba88f558deb8a042d834a9a4b74e1f",
-    "lastHarvestedAt": "2026-10-25T19:32:03.517Z",
+    "contentHash": "5e5afead30bfc1ea32e077703517c2113b0151210953b046eca57886dfebc6ed",
+    "lastHarvestedAt": "2026-10-29T17:03:35.268Z",
     "learningId": "learn-github-modelcontextprotocol-kotlin-sdk"
   },
   "ivanvorobei-swiftui": {

@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-29T16:51:26.410Z",
-    "lastVerified": "2026-10-29T16:51:26.410Z",
+    "lastChecked": "2026-10-29T17:04:38.659Z",
+    "lastVerified": "2026-10-29T17:04:38.659Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -104,11 +104,21 @@
     "lastVerified": "2026-10-28T19:24:28.885Z"
   },
   "gravitl-netmaker": {
-    "name": "netmaker",
+    "name": "gravitl/netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
-    "lastChecked": "2026-10-28T23:52:13.294Z",
-    "revisionIdentifier": "f20acf34",
-    "lastVerified": "2026-10-28T23:52:13.294Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-29T17:03:37.185Z",
+    "lastVerified": "2026-10-29T17:03:37.185Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-gravitl-netmaker",
+    "contentHash": "e3f9828f89ae79739709ca3391861d2aba7b27c4804637c0c6d3afbc625b867d",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "mintplex-labs-anything-llm": {
     "name": "anything-llm",
@@ -321,9 +331,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-29T12:26:09.494Z",
+    "lastChecked": "2026-10-29T17:03:38.272Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-29T12:26:09.494Z"
+    "lastVerified": "2026-10-29T17:03:38.272Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1994,11 +2004,21 @@
     "lastVerified": "2026-10-28T23:43:06.747Z"
   },
   "flox-flox": {
-    "name": "flox",
+    "name": "flox/flox",
     "officialUrl": "https://github.com/flox/flox",
-    "lastChecked": "2026-10-28T06:11:36.038Z",
-    "revisionIdentifier": "339bbab0",
-    "lastVerified": "2026-10-28T06:11:36.038Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-29T17:03:28.141Z",
+    "lastVerified": "2026-10-29T17:03:28.141Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-flox-flox",
+    "contentHash": "3ad8e2109a4cbad7402c9241951798d84973b764ddf8b9c6bf85dc4f6d2f3dce",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-orcarouter-orcasaq-2-27b": {
     "name": "orcarouter/OrcaSAQ-2-27B",
@@ -3529,9 +3549,9 @@
   "neural-maze-ava-whatsapp-agent-course": {
     "name": "ava-whatsapp-agent-course",
     "officialUrl": "https://github.com/neural-maze/ava-whatsapp-agent-course",
-    "lastChecked": "2026-10-28T12:57:06.515Z",
+    "lastChecked": "2026-10-29T17:03:35.806Z",
     "revisionIdentifier": "338fd687",
-    "lastVerified": "2026-10-28T12:57:06.515Z"
+    "lastVerified": "2026-10-29T17:03:35.806Z"
   },
   "chmln-sd": {
     "name": "sd",
@@ -3899,12 +3919,12 @@
     "officialUrl": "https://github.com/zarf-dev/zarf",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T13:43:42.920Z",
-    "lastVerified": "2026-10-28T13:43:42.920Z",
+    "lastChecked": "2026-10-29T17:03:36.683Z",
+    "lastVerified": "2026-10-29T17:03:36.683Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zarf-dev-zarf",
-    "contentHash": "1cbbb380e3a3fd1dabf7c08626a95fc79da906b6b28342f2fbe0a695ab6581bf",
+    "contentHash": "9f4a7db456feb71de7733276dadb1356488e0858a89b5edb1765fe8c8eabf62e",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -8339,6 +8359,30 @@
     "contentHash": "eeb19dbf8ec3e3d6395e8aea81e71779c8f67643c0449f8d2b3a8e8313ab7ed3",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "booltools-booltools-seo-crawler": {
+    "name": "booltools-seo-crawler",
+    "officialUrl": "https://github.com/booltools/booltools-seo-crawler",
+    "lastChecked": "2026-10-29T17:03:25.761Z",
+    "revisionIdentifier": "e5394ed024",
+    "lastVerified": "2026-10-29T17:03:25.761Z"
+  },
+  "modelcontextprotocol-kotlin-sdk": {
+    "name": "modelcontextprotocol/kotlin-sdk",
+    "officialUrl": "https://github.com/modelcontextprotocol/kotlin-sdk",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-10-29T17:03:33.378Z",
+    "lastVerified": "2026-10-29T17:03:33.378Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
+    "contentHash": "5e5afead30bfc1ea32e077703517c2113b0151210953b046eca57886dfebc6ed",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

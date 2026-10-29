@@ -6049,3 +6049,7 @@
 | `CYCLE-20261029-21F9` | `2026-10-29T16:48:26.037Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5519` | Yes (`4cde4727...`) |
 | `CYCLE-20261029-5CQ5` | `2026-10-29T16:51:00.653Z` | `Jakeschincariol/arena-skill` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5520, Rule 5521, Rule 5522` | Yes (`eeb19dbf...`) |
 | `CYCLE-20261029-5UMT` | `2026-10-29T16:51:23.861Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5523, Rule 5524, Rule 5525` | Yes (`c93536ae...`) |
+| `CYCLE-20261029-LIZK` | `2026-10-29T17:03:35.264Z` | `modelcontextprotocol/kotlin-sdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5526` | Yes (`5e5afead...`) |
+| `CYCLE-20261029-LL3Y` | `2026-10-29T17:03:38.014Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5527` | Yes (`9f4a7db4...`) |
+| `CYCLE-20261029-LLF0` | `2026-10-29T17:03:38.412Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5528` | Yes (`e3f9828f...`) |
+| `CYCLE-20261029-MTXK` | `2026-10-29T17:04:36.104Z` | `flox/flox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5529` | Yes (`3ad8e210...`) |

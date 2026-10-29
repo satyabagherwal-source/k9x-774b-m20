@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-29T16:51:23.871Z",
+  "last_updated": "2026-10-29T17:04:36.118Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5001,14 +5001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-flox-flox",
-      "content_hash": "d215a78f59ea570b54eb7f3732aa8b83ed0207fc0c3f1dcfeac0d37f98c79863",
-      "verified_at": "2026-10-28T00:05:51.646Z",
+      "content_hash": "3ad8e2109a4cbad7402c9241951798d84973b764ddf8b9c6bf85dc4f6d2f3dce",
+      "verified_at": "2026-10-29T17:04:36.117Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T00:05:51.646Z"
+      "last_updated": "2026-10-29T17:04:36.117Z"
     },
     "wix/react-native-navigation": {
       "repository": "wix/react-native-navigation",
@@ -5676,14 +5676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gravitl-netmaker",
-      "content_hash": "88700fa9445c680a202626394a741a43542246bf52757bb537c551153e0fe717",
-      "verified_at": "2026-10-26T00:48:34.050Z",
+      "content_hash": "e3f9828f89ae79739709ca3391861d2aba7b27c4804637c0c6d3afbc625b867d",
+      "verified_at": "2026-10-29T17:03:38.425Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T00:48:34.050Z"
+      "last_updated": "2026-10-29T17:03:38.425Z"
     },
     "pixeltable/pixeltable": {
       "repository": "pixeltable/pixeltable",
@@ -6816,14 +6816,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zarf-dev-zarf",
-      "content_hash": "1cbbb380e3a3fd1dabf7c08626a95fc79da906b6b28342f2fbe0a695ab6581bf",
-      "verified_at": "2026-10-28T13:43:43.297Z",
+      "content_hash": "9f4a7db456feb71de7733276dadb1356488e0858a89b5edb1765fe8c8eabf62e",
+      "verified_at": "2026-10-29T17:03:38.033Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T13:43:43.297Z"
+      "last_updated": "2026-10-29T17:03:38.033Z"
     },
     "vlcn-io/cr-sqlite": {
       "repository": "vlcn-io/cr-sqlite",
@@ -12336,14 +12336,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-modelcontextprotocol-kotlin-sdk",
-      "content_hash": "78d75c280b29e172b239f3c776898f0df8ba88f558deb8a042d834a9a4b74e1f",
-      "verified_at": "2026-10-25T19:32:03.526Z",
+      "content_hash": "5e5afead30bfc1ea32e077703517c2113b0151210953b046eca57886dfebc6ed",
+      "verified_at": "2026-10-29T17:03:35.277Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T19:32:03.526Z"
+      "last_updated": "2026-10-29T17:03:35.277Z"
     },
     "ivanvorobei/SwiftUI": {
       "repository": "ivanvorobei/SwiftUI",

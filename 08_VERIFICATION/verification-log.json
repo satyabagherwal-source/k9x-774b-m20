@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-YQI8",
-    "timestamp": "2026-10-27T21:22:27.632Z",
-    "repository": "autogluon/chronos-2",
-    "learningId": "learn-huggingface-autogluon-chronos-2",
-    "contentHash": "e22938979b5255c547bb3c3dd8e3fb3dd6a878bd3667df982b251229a5d59c4c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-72LA",
-    "timestamp": "2026-10-27T21:28:56.542Z",
-    "repository": "xotahal/react-native-material-ui",
-    "learningId": "learn-github-xotahal-react-native-material-ui",
-    "contentHash": "d2bedebab578666b720eaaf6ee76b451a9828368d070a24376e32f1af5aa714d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-74P9",
-    "timestamp": "2026-10-27T21:28:59.277Z",
-    "repository": "kirillzyusko/react-native-keyboard-controller",
-    "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller",
-    "contentHash": "ed0f89b375ed7814ee805ec043984d174d45af697fd5dae4cbee84664aeefa2d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-7692",
-    "timestamp": "2026-10-27T21:29:01.286Z",
-    "repository": "open-ani/animeko",
-    "learningId": "learn-github-open-ani-animeko",
-    "contentHash": "db219afde42961d75b3f7f06240141fc7ddb0494547bd2a950aae396f9628127",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-77CA",
     "timestamp": "2026-10-27T21:29:02.698Z",
     "repository": "flux-iac/tofu-controller",
@@ -7492,6 +7432,66 @@
     "contentHash": "c93536ae72a820ecaa4be7cc730ab7414d909f08746ff72ba52ee2b9d637317a",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-LIZK",
+    "timestamp": "2026-10-29T17:03:35.264Z",
+    "repository": "modelcontextprotocol/kotlin-sdk",
+    "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
+    "contentHash": "5e5afead30bfc1ea32e077703517c2113b0151210953b046eca57886dfebc6ed",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-LL3Y",
+    "timestamp": "2026-10-29T17:03:38.014Z",
+    "repository": "zarf-dev/zarf",
+    "learningId": "learn-github-zarf-dev-zarf",
+    "contentHash": "9f4a7db456feb71de7733276dadb1356488e0858a89b5edb1765fe8c8eabf62e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-LLF0",
+    "timestamp": "2026-10-29T17:03:38.412Z",
+    "repository": "gravitl/netmaker",
+    "learningId": "learn-github-gravitl-netmaker",
+    "contentHash": "e3f9828f89ae79739709ca3391861d2aba7b27c4804637c0c6d3afbc625b867d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-MTXK",
+    "timestamp": "2026-10-29T17:04:36.104Z",
+    "repository": "flox/flox",
+    "learningId": "learn-github-flox-flox",
+    "contentHash": "3ad8e2109a4cbad7402c9241951798d84973b764ddf8b9c6bf85dc4f6d2f3dce",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

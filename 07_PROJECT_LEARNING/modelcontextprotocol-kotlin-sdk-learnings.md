@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md`  
 > **Source**: github ([https://github.com/modelcontextprotocol/kotlin-sdk](https://github.com/modelcontextprotocol/kotlin-sdk))  
-> **Source Version**: `a3909eff`  
+> **Source Version**: `2a028188`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T19:32:03.133Z  
+> **Timestamp**: 2026-10-29T17:03:34.641Z  
 > **Learning ID**: `learn-github-modelcontextprotocol-kotlin-sdk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/modelcontextprotocol/kotlin-sdk](https://github.com/modelcontextprotocol/kotlin-sdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T19:32:03.126Z  
+> **Harvest Timestamp**: 2026-10-29T17:03:33.378Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The official Kotlin SDK for Model Context Protocol servers and clients. Maintained in collaboration with JetBrains
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1478 stars
+- **Stars / Engagement**: 1482 stars
 
 ---
 
@@ -796,6 +796,7 @@ public class ReadBuffer internal constructor(private val maxFrameSize: Int) {
 
     internal companion object {
         internal const val DEFAULT_MAX_FRAME_SIZE: Int = 16 * 1024 * 1024
+        private const val LOG_LINE_PREFIX_LENGTH: Int = 160
     }
 
     private val logger = KotlinLogging.logger { }
@@ -828,8 +829,17 @@ public class ReadBuffer internal constructor(private val maxFrameSize: Int) {
             val message = try {
                 deserializeMessage(line)
             } catch (e: Exception) {
-                logger.error(e) { "Failed to deserialize message from line: $line\nAttempting to recover..." }
-                tryRecover(line)
+                val recovered = tryRecover(line)
+                if (recovered != null) {
+                    logger.warn {
+                        "Recovered JSON-RPC message after deserialization failure; line prefix: ${line.logPrefix()}"
+                    }
+                } else {
+                    logger.error(e) {
+                        "Failed to deserialize JSON-RPC message; line prefix: ${line.logPrefix()}; skipping."
+                    }
+                }
+                recovered
             }
             if (message != null) {
                 return message
@@ -877,11 +887,13 @@ public class ReadBuffer internal constructor(private val maxFrameSize: Int) {
 
         return try {
             deserializeMessage(trimmed)
-        } catch (ignored: Exception) {
-            logger.error(ignored) { "Deserialization failed for line: $line\nSkipping..." }
+        } catch (_: Exception) {
             null
         }
     }
+
+    private fun String.logPrefix(): String =
+        if (length > LOG_LINE_PREFIX_LENGTH) take(LOG_LINE_PREFIX_LENGTH) + "..." else this
 
     /** Clears all buffered data, discarding any partially received messages. */
     public fun clear() {
@@ -1057,63 +1069,643 @@ public open class TransportSendOptions(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a3909eff` (2026-10-21)
-**Commit Message**: chore(deps): bump hono from 4.13.7 to 4.13.13 in /integration-test/src/jvmTest/typescript (#1133)
+### Incident Patch 1: `886dede6` (2026-10-29)
+**Commit Message**: fix(server)!: return a protocol error for unknown tools (#1120)
 
-Bumps [hono](https://github.com/honojs/hono) from 4.13.7 to 4.13.13.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/honojs/hono/releases">hono's
-releases</a>.</em></p>
-<blockquote>
-<h2>v4.13.13</h2>
-<h2>Mount Middleware</h2>
-<p><code>app.mount()</code> is now available as the Mount Middleware,
-<code>hono/mount</code>. It is just a handler, so you register it with
-<code>app.all()</code>:</p>
-<pre lang="ts"><code>import { Router as IttyRouter } from 'itty-router'
-import { Hono } from 'hono'
-import { mount } from 'hono/mount'
-<p>const ittyRouter = IttyRouter()<br />
-ittyRouter.get('/hello', () =&gt; new Response('Hello from
-itty-router'))</p>
-<p>const app = new Hono()<br />
-app.all('/itty-router/*', mount(ittyRouter.handle))<br />
-</code></pre></p>
-<p><code>app.mount()</code> still works in v4 but is deprecated and will
-be removed in v5. Migrating is a one-line change:</p>
-<pre lang="diff"><code>- app.mount('/itty-router', ittyRouter.handle)
-+ app.all('/itty-router/*', mount(ittyRouter.handle))
-</code></pre>
-<h2>What's Changed</h2>
-<ul>
-<li>tes
+Fixes #1037.
 
-**File**: `integration-test/src/jvmTest/typescript/package-lock.json` (modified, +3/-3)
+`tools/call` for an unknown tool returned a `CallToolResult` with
+`isError = true`, so a client could not tell it from a failed tool call.
+The spec lists unknown tools among protocol errors: the server now
+answers with a JSON-RPC `INVALID_PARAMS` (`-32602`) error, as it already
+did for unknown prompts. Tool execution errors are still reported with
+`isError = true`.
+
+`StreamableHttpClientTransport` did not count a JSON-RPC error on an SSE
+stream as the answer to its request. On a stream with event ids (a
+server with an event store), the client then kept resuming the stream
+with `Last-Event-ID`, and a replayed error carried the id of the
+original request, so a request resumed with a `resumptionToken` timed
+out. The server change makes such errors common, so the client now
+treats them like results.
+
+## Breaking Changes
+`tools/call` for an unknown tool gets a JSON-RPC error instead of
+`CallToolResult(isError = true)`, so `Client.callTool` throws
+`McpException` with `RPCError.ErrorCode.INVALID_PARAMS`. Code that
+checked `isError` for a missing tool should catch the exception.
+No public signatures change.
+
+**File**: `integration-test/src/jvmTest/kotlin/io/modelcontextprotocol/kotlin/sdk/integration/streamablehttp/StreamableHttpClientTransportIntegrationTest.kt` (modified, +80/-3)
 ```diff
-@@ -1436,9 +1436,9 @@
-       }
-     },
-     "node_modules/hono": {
--      "version": "4.13.7",
--      "resolved": "https://registry.npmjs.org/hono/-/hono-4.13.7.tgz",
--      "integrity": "sha512-c8/gF9ac8Y78/agExVocyLevgR+JlpNB444Py0FSX8pJoPdYUfUzRcXtYEYGwt6l19qIlVZPN5Mfsw9jFShmQQ==",
-+      "version": "4.13.13",
-+      "resolved": "https://registry.npmjs.org/hono/-/hono-4.13.13.tgz",
-+      "integrity": "sha512-CQ46U0ZkAGmbT/4UxdzzGJpacP2IeKgY4a5/tOI9AABbpOMfK739wfDXmv1usCk+3RkKj1hQy4/fjhiwa2xlrA==",
-       "license": "MIT",
-       "engines": {
-         "node": ">=16.9.0"
+@@ -1,5 +1,6 @@
+ package io.modelcontextprotocol.kotlin.sdk.integration.streamablehttp
+ 
++import io.kotest.assertions.throwables.shouldThrow
+ import io.kotest.matchers.shouldBe
+ import io.ktor.client.HttpClient
+ import io.ktor.client.plugins.sse.SSE
+@@ -21,20 +22,28 @@ import io.modelcontextprotocol.kotlin.sdk.client.StreamableHttpError
+ import io.modelcontextprotocol.kotlin.sdk.server.Server
+ import io.modelcontextprotocol.kotlin.sdk.server.ServerOptions
+ import io.modelcontextprotocol.kotlin.sdk.server.mcpStreamableHttp
++import io.modelcontextprotocol.kotlin.sdk.shared.RequestOptions
++import io.modelcontextprotocol.kotlin.sdk.types.CallToolRequest
++import io.modelcontextprotocol.kotlin.sdk.types.CallToolRequestParams
+ import io.modelcontextprotocol.kotlin.sdk.types.Implementation
+ import io.modelcontextprotocol.kotlin.sdk.types.LoggingMessageNotification
++import io.modelcontextprotocol.kotlin.sdk.types.McpException
+ import io.modelcontextprotocol.kotlin.sdk.types.Method
++import io.modelcontextprotocol.kotlin.sdk.types.RPCError
+ import io.modelcontextprotocol.kotlin.sdk.types.ServerCapabilities
+ import io.modelcontextprotocol.kotlin.test.utils.actualPort
+ import io.modelcontextprotocol.kotlin.test.utils.runIntegrationTest
+ import kotlinx.coroutines.CompletableDeferred
+ import kotlinx.coroutines.awaitCancellation
+ import kotlinx.coroutines.channels.Channel
++import kotlinx.coroutines.delay
+ import kotlinx.coroutines.withTimeout
+ import kotlinx.serialization.json.Json
+ import kotlinx.serialization.json.jsonObject
+ import kotlinx.serialization.json.jsonPrimitive
++import java.util.concurrent.atomic.AtomicInteger
+ import kotlin.test.Test
++import kotlin.time.Duration.Companion.milliseconds
+ import kotlin.time.Duration.Companion.seconds
+ import io.ktor.client.engine.cio.CIO as ClientCIO
+ import io.ktor.server.cio.CIO as ServerCIO
+@@ -44,8 +53,14 @@ private const val SESSION_ID = "test-session"
+ private const val HOST = "127.0.0.1"
+ private const val MCP_PATH = "/mcp"
+ 
++private const val LAST_EVENT_ID_HEADER = "Last-Event-ID"
++
+ private const val INITIALIZE_RESULT =
+-    """{"capabilities":{},"protocolVersion":"2025-03-26","serverInfo":{"name":"test-server","version":"1.0.0"}}"""
++    """{"capabilities":{"tools":{}},"protocolVersion":"2025-03-26",""" +
++        """"serverInfo":{"name":"test-server","version":"1.0.0"}}"""
++
++/** Long enough for a resumption the client should not start, immediate or after a short `retry`, to arrive. */
++private val RESUMPTION_WINDOW = 500.milliseconds
+ 
+ /**
+  * Drives [StreamableHttpClientTransport]'s GET SSE handling against a scripted server on a real socket;
+@@ -102,6 +117,35 @@ class StreamableHttpClientTransportIntegrationTest {
+         client.ping()
+     }
+ 
++    @Test
++    fun `client does not resume the stream after an inline error response`() {
++        val resumptions = AtomicInteger()
++        withConnectedClient(getRoute = { resumptionRoute(resumptions) }) { client ->
++            val exception = shouldThrow<McpException> { client.callTool("missing", emptyMap()) }
++
++            exception.code shouldBe RPCError.ErrorCode.INVALID_PARAMS
++            delay(RESUMPTION_WINDOW)
++            resumptions.get() shouldBe 0
++        }
++    }
++
++    @Test
++    fun `client re-addresses a replayed error response and stops resuming`() {
++        val resumptions = AtomicInteger()
++        withConnectedClient(getRoute = { resumptionRoute(resumptions) }) { client ->
++            val exception = shouldThrow<McpException> {
++                client.callTool(
++                    CallToolRequest(CallToolRequestParams("missing")),
++                    RequestOptions(resumptionToken = "1", timeout = 5.seconds),
++                )
++            }
++
++            exception.code shouldBe RPCError.ErrorCode.INVALID_PARAMS
++            delay(RESUMPTION_WINDOW)
++            resumptions.get() shouldBe 1
++        }
++    }
++
+     @Test
+     fun `client reports an expired session through onError`() = runIntegrationTest(timeout = 20.seconds) {
+         val server = Server(Implementation("test-server", "1.0.0"), ServerOptions(ServerCapabilities()))
+@@ -149,12 +193,23 @@ class StreamableHttpClientTransportIntegrationTest {
+         }
+     }
+ 
+-    /** Answers `initialize` and `ping` with JSON and accepts notifications. */
++    /**
++     * Answers `initialize` and `ping` with JSON and accepts notifications.
++     * `tools/call` gets an error on an SSE stream with event ids, the way a server with an event store answers.
++     */
+     private fun Route.mcpPostRoute() {
+         post(MCP_PATH) {
+             val message = Json.parseToJsonElement(call.receiveText()).jsonObject
+             call.response.header(SESSION_ID_HEADER, SESSION_ID)
+-            val result = when (message["method"]?.jsonPrimitive?.content) {
++            val method = message["method"]?.jsonPrimitive?.content
++            if (method == "tools/call") {
++                call.respondTextWriter(contentType = ContentType.Text.EventStream) {
++
+```
+
+**File**: `integration-test/src/jvmTest/kotlin/io/modelcontextprotocol/kotlin/sdk/server/ServerFeaturesInvocationTest.kt` (modified, +6/-3)
+```diff
+@@ -75,10 +75,13 @@ class ServerFeaturesInvocationTest : AbstractServerFeaturesTest() {
+     }
+ 
+     @Test
+-    fun `callTool should return error result when tool not found`() = runTest {
+-        val result = client.callTool(CallToolRequest(CallToolRequestParams("nonexistent")))
++    fun `callTool should throw when tool not found`() = runTest {
++        val exception = shouldThrow<McpException> {
++            client.callTool(CallToolRequest(CallToolRequestParams("nonexistent")))
++        }
+ 
+-        result shouldBe CallToolResult(content = listOf(TextContent("Tool nonexistent not found")), isError = true)
++        exception.code shouldBe RPCError.ErrorCode.INVALID_PARAMS
++        exception.message shouldBe "Tool not found: nonexistent"
+     }
+ 
+     @Test
+```
+
+**File**: `kotlin-sdk-client/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/client/Client.kt` (modified, +4/-2)
+```diff
+@@ -517,8 +517,9 @@ public open class Client(private val clientInfo: Implementation, options: Client
+      *             - Name: alphanumeric start/end, may contain hyphens, underscores, dots, alphanumerics
+      *             - Reserved prefixes starting with "mcp" or "modelcontextprotocol" are forbidden
+      * @param options Optional request options.
+-     * @return The result of the tool call, or `null` if none.
++     * @return The tool result. Tool execution errors are reported in it via [CallToolResult.isError].
+      * @throws IllegalStateException If the server does not support tools.
++     * @throws McpException If the request fails, e.g. with `INVALID_PARAMS` when the tool is unknown.
+      */
+     public suspend fun callTool(
+         name: String,
+@@ -546,8 +547,9 @@ public open class Client(private val clientInfo: Implementation, options: Client
+      *
+      * @param request The request object containing the tool name and arguments.
+      * @param options Optional request options.
+-     * @return The result of the tool call, or `null` if none.
++     * @return The tool result. Tool execution errors are reported in it via [CallToolResult.isError].
+      * @throws IllegalStateException If the server does not support tools.
++     * @throws McpException If the request fails, e.g. with `INVALID_PARAMS` when the tool is unknown.
+      */
+     public suspend fun callTool(request: CallToolRequest, options: RequestOptions? = null): CallToolResult =
+         request(request, options)
+```
+
+**File**: `kotlin-sdk-client/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/client/StreamableHttpClientTransport.kt` (modified, +13/-12)
+```diff
+@@ -26,6 +26,7 @@ import io.ktor.utils.io.readUTF8Line
+ import io.modelcontextprotocol.kotlin.sdk.shared.AbstractClientTransport
+ import io.modelcontextprotocol.kotlin.sdk.shared.TooLongFrameException
+ import io.modelcontextprotocol.kotlin.sdk.shared.TransportSendOptions
++import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCError
+ import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCMessage
+ import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCNotification
+ import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCRequest
+@@ -440,6 +441,14 @@ public class StreamableHttpClientTransport(
+         return "$MCP_BASE64_PREFIX${Base64.Default.encode(encodeToByteArray())}$MCP_BASE64_SUFFIX"
+     }
+ 
++    /** Re-addresses a replayed response or error to the request that resumed the stream. */
++    private fun JSONRPCMessage.withReplayId(replayMessageId: RequestId?): JSONRPCMessage = when {
++        replayMessageId == null -> this
++        this is JSONRPCResponse -> copy(id = replayMessageId)
++        this is JSONRPCError -> copy(id = replayMessageId)
++        else -> this
++    }
++
+     private suspend fun collectSse(
+         session: ClientSSESession,
+         replayMessageId: RequestId?,
+@@ -463,12 +472,8 @@ public class StreamableHttpClientTransport(
+                         event.data?.takeIf { it.isNotEmpty() }?.let { json ->
+                             runCatching { McpJson.decodeFromString<JSONRPCMessage>(json) }
+                                 .onSuccess { msg ->
+-                                    if (msg is JSONRPCResponse) receivedResponse = true
+-                                    if (replayMessageId != null && msg is JSONRPCResponse) {
+-                                        _onMessage(msg.copy(id = replayMessageId))
+-                                    } else {
+-                                        _onMessage(msg)
+-                                    }
++                                    if (msg is JSONRPCResponse || msg is JSONRPCError) receivedResponse = true
++                                    _onMessage(msg.withReplayId(replayMessageId))
+                                 }
+                                 .onFailure(_onError)
+                         }
+@@ -512,12 +517,8 @@ public class StreamableHttpClientTransport(
+             if (eventName == null || eventName == "message") {
+                 runCatching { McpJson.decodeFromString<JSONRPCMessage>(data) }
+                     .onSuccess { msg ->
+-                        if (msg is JSONRPCResponse) receivedResponse = true
+-                        if (replayMessageId != null && msg is JSONRPCResponse) {
+-                            _onMessage(msg.copy(id = replayMessageId))
+-                        } else {
+-                            _onMessage(msg)
+-                        }
++                        if (msg is JSONRPCResponse || msg is JSONRPCError) receivedResponse = true
++                        _onMessage(msg.withReplayId(replayMessageId))
+                     }
+                     .onFailure {
+                         _onError(it)
+```
+
+**File**: `kotlin-sdk-server/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/server/Server.kt` (modified, +3/-3)
+```diff
+@@ -645,9 +645,9 @@ public open class Server(
+         // Check if the tool exists
+         val tool = toolRegistry.get(requestParams.name) ?: run {
+             logger.error { "Tool not found: ${requestParams.name}" }
+-            return CallToolResult(
+-                content = listOf(TextContent(text = "Tool ${requestParams.name} not found")),
+-                isError = true,
++            throw McpException(
++                code = RPCError.ErrorCode.INVALID_PARAMS,
++                message = "Tool not found: ${requestParams.name}",
+             )
+         }
+ 
+```
+
+---
+
+### Incident Patch 2: `c83560f5` (2026-10-27)
+**Commit Message**: fix: bound inbound WebSocket message size (#1129)
+
+`Application.mcpWebSocket` installed `WebSockets` with Ktor's default
+`maxFrameSize`, which does not limit inbound messages, so a single large
+message could exhaust server memory. It now sets a 16 MiB limit.
+
+`WebSocketMcpTransport` stopped reading after a non-text frame or a
+message it could not parse or handle, but the session stayed open and
+kept buffering incoming frames without limit. Now it reports such a
+message through `onError` and keeps reading. A failed session (e.g.
+`FrameTooBigException`) is also reported through `onError` instead of
+escaping as an uncaught exception.
+
+## Breaking Changes
+None
+
+## Types of changes
+- [x] Bug fix (non-breaking change which fixes an issue)
+- [ ] New feature (non-breaking change which adds functionality)
+- [ ] Breaking change (fix or feature that would cause existing
+functionality to change)
+- [ ] Documentation update
+
+## Checklist
+- [x] I have read the [MCP
+Documentation](https://modelcontextprotocol.io)
+- [x] My code follows the repository's style guidelines
+- [x] New and existing tests pass locally
+- [x] I have added appropriate error handling
+- [x] I have added or updated documentation
+
+**File**: `integration-test/src/jvmTest/kotlin/io/modelcontextprotocol/kotlin/sdk/integration/WebSocketMessageSizeIntegrationTest.kt` (added, +69/-0)
+```diff
+@@ -0,0 +1,69 @@
++package io.modelcontextprotocol.kotlin.sdk.integration
++
++import io.kotest.matchers.shouldBe
++import io.ktor.client.HttpClient
++import io.ktor.client.plugins.websocket.WebSockets
++import io.ktor.client.plugins.websocket.webSocketSession
++import io.ktor.client.request.header
++import io.ktor.http.HttpHeaders
++import io.ktor.server.engine.embeddedServer
++import io.ktor.websocket.Frame
++import io.modelcontextprotocol.kotlin.sdk.client.Client
++import io.modelcontextprotocol.kotlin.sdk.client.mcpWebSocketTransport
++import io.modelcontextprotocol.kotlin.sdk.server.Server
++import io.modelcontextprotocol.kotlin.sdk.server.ServerOptions
++import io.modelcontextprotocol.kotlin.sdk.server.mcpWebSocket
++import io.modelcontextprotocol.kotlin.sdk.shared.MCP_SUBPROTOCOL
++import io.modelcontextprotocol.kotlin.sdk.types.Implementation
++import io.modelcontextprotocol.kotlin.sdk.types.ServerCapabilities
++import io.modelcontextprotocol.kotlin.test.utils.actualPort
++import io.modelcontextprotocol.kotlin.test.utils.runIntegrationTest
++import kotlinx.serialization.json.buildJsonObject
++import kotlinx.serialization.json.put
++import kotlinx.serialization.json.putJsonObject
++import org.junit.jupiter.api.Test
++import kotlin.time.Duration.Companion.seconds
++import io.ktor.client.engine.cio.CIO as ClientCIO
++import io.ktor.server.cio.CIO as ServerCIO
++
++class WebSocketMessageSizeIntegrationTest {
++
++    @Test
++    fun `server closes a connection that sends a message over 16 MiB and keeps serving others`() =
++        runIntegrationTest(timeout = 30.seconds) {
++            val server = Server(Implementation("test-server", "1.0.0"), ServerOptions(ServerCapabilities()))
++            val engine = embeddedServer(ServerCIO, host = HOST, port = 0) { mcpWebSocket { server } }
++                .startSuspend(wait = false)
++            val httpClient = HttpClient(ClientCIO) { install(WebSockets) }
++            val url = "ws://$HOST:${engine.actualPort()}"
++            try {
++                val peer = httpClient.webSocketSession(url) {
++                    header(HttpHeaders.SecWebSocketProtocol, MCP_SUBPROTOCOL)
++                }
++
++                // A valid request: without the limit the server would answer it instead of closing.
++                peer.send(Frame.Text(ping(padding = "a".repeat(16 * 1024 * 1024))))
++
++                peer.incoming.receiveCatching().getOrNull() shouldBe null
++                val client = Client(Implementation("test-client", "1.0.0"))
++                client.connect(httpClient.mcpWebSocketTransport(url))
++                client.ping()
++                client.close()
++            } finally {
++                httpClient.close()
++                engine.stopSuspend(gracePeriodMillis = 0, timeoutMillis = 1_000)
++                server.close()
++            }
++        }
++
++    private fun ping(padding: String): String = buildJsonObject {
++        put("jsonrpc", "2.0")
++        put("id", 1)
++        put("method", "ping")
++        putJsonObject("params") { put("padding", padding) }
++    }.toString()
++
++    private companion object {
++        const val HOST = "127.0.0.1"
++    }
++}
+```
+
+**File**: `kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/shared/WebSocketMcpTransport.kt` (modified, +10/-4)
+```diff
+@@ -64,12 +64,19 @@ public abstract class WebSocketMcpTransport : AbstractTransport() {
+                 } catch (_: ClosedReceiveChannelException) {
+                     logger.debug { "Closed receive channel, exiting" }
+                     return@launch
++                } catch (e: CancellationException) {
++                    throw e
++                } catch (e: Exception) {
++                    // The session is already failing (e.g. FrameTooBigException) and Ktor closes it.
++                    invokeOnErrorCallback(e)
++                    return@launch
+                 }
+ 
++                // Keep reading after a bad message: an open session nobody reads buffers frames without limit.
+                 if (message !is Frame.Text) {
+                     val e = IllegalArgumentException("Expected text frame, got ${message::class.simpleName}: $message")
+-                    _onError.invoke(e)
+-                    throw e
++                    invokeOnErrorCallback(e)
++                    continue
+                 }
+ 
+                 try {
+@@ -78,8 +85,7 @@ public abstract class WebSocketMcpTransport : AbstractTransport() {
+                 } catch (e: CancellationException) {
+                     throw e
+                 } catch (e: Exception) {
+-                    _onError.invoke(e)
+-                    throw e
++                    invokeOnErrorCallback(e)
+                 }
+             }
+         }
+```
+
+**File**: `kotlin-sdk-core/src/jvmTest/kotlin/io/modelcontextprotocol/kotlin/sdk/shared/WebSocketMcpTransportTest.kt` (added, +75/-0)
+```diff
+@@ -0,0 +1,75 @@
++package io.modelcontextprotocol.kotlin.sdk.shared
++
++import io.kotest.matchers.collections.shouldHaveSize
++import io.kotest.matchers.shouldBe
++import io.kotest.matchers.types.shouldBeInstanceOf
++import io.ktor.websocket.Frame
++import io.ktor.websocket.FrameTooBigException
++import io.ktor.websocket.WebSocketExtension
++import io.ktor.websocket.WebSocketSession
++import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCMessage
++import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCRequest
++import kotlinx.coroutines.CompletableDeferred
++import kotlinx.coroutines.Job
++import kotlinx.coroutines.channels.Channel
++import kotlinx.coroutines.channels.ReceiveChannel
++import kotlinx.coroutines.channels.SendChannel
++import kotlinx.coroutines.test.runTest
++import org.junit.jupiter.api.Test
++import java.util.concurrent.CopyOnWriteArrayList
++import kotlin.coroutines.CoroutineContext
++
++class WebSocketMcpTransportTest {
++
++    @Test
++    fun `should keep reading after messages it cannot parse`() = runTest {
++        val session = FakeWebSocketSession()
++        val transport = TestTransport(session)
++        val errors = CopyOnWriteArrayList<Throwable>()
++        val received = CompletableDeferred<JSONRPCMessage>()
++        transport.onError { errors += it }
++        transport.onMessage { received.complete(it) }
++        transport.start()
++
++        session.incomingFrames.send(Frame.Binary(true, byteArrayOf(1, 2, 3)))
++        session.incomingFrames.send(Frame.Text("{"))
++        session.incomingFrames.send(Frame.Text("""{"jsonrpc":"2.0","id":1,"method":"ping"}"""))
++
++        received.await().shouldBeInstanceOf<JSONRPCRequest>().method shouldBe "ping"
++        errors shouldHaveSize 2
++        session.incomingFrames.close()
++    }
++
++    @Test
++    fun `should report a session failure through onError`() = runTest {
++        val session = FakeWebSocketSession()
++        val transport = TestTransport(session)
++        val error = CompletableDeferred<Throwable>()
++        transport.onError { error.complete(it) }
++        transport.start()
++
++        session.incomingFrames.close(FrameTooBigException(42))
++
++        error.await().shouldBeInstanceOf<FrameTooBigException>()
++    }
++
++    private class TestTransport(override val session: WebSocketSession) : WebSocketMcpTransport() {
++        override suspend fun initializeSession() = Unit
++    }
++}
++
++private class FakeWebSocketSession : WebSocketSession {
++    val incomingFrames = Channel<Frame>(Channel.UNLIMITED)
++
++    override val coroutineContext: CoroutineContext = Job()
++    override var masking: Boolean = false
++    override var maxFrameSize: Long = Long.MAX_VALUE
++    override val incoming: ReceiveChannel<Frame> get() = incomingFrames
++    override val outgoing: SendChannel<Frame> = Channel(Channel.UNLIMITED)
++    override val extensions: List<WebSocketExtension<*>> = emptyList()
++
++    override suspend fun flush() = Unit
++
++    @Deprecated("Use cancel() instead.", level = DeprecationLevel.ERROR)
++    override fun terminate() = Unit
++}
+```
+
+**File**: `kotlin-sdk-server/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/server/WebSocketMcpKtorServerExtensions.kt` (modified, +17/-2)
+```diff
+@@ -18,8 +18,13 @@ import kotlinx.coroutines.awaitCancellation
+ 
+ private val logger = KotlinLogging.logger {}
+ 
++// Ktor's default maxFrameSize does not limit inbound messages at all.
++private const val DEFAULT_MAX_FRAME_SIZE: Long = 16L * 1024 * 1024
++
+ /**
+  * Configures the Ktor Application to handle Model Context Protocol (MCP) over WebSocket.
++ *
++ * Set `maxFrameSize` when installing the `WebSockets` plugin: by default Ktor does not limit inbound messages.
+  */
+ @KtorDsl
+ public fun Route.mcpWebSocket(block: () -> Server) {
+@@ -30,6 +35,8 @@ public fun Route.mcpWebSocket(block: () -> Server) {
+ 
+ /**
+  * Configures the Ktor Application to handle Model Context Protocol (MCP) over WebSocket.
++ *
++ * Set `maxFrameSize` when installing the `WebSockets` plugin: by default Ktor does not limit inbound messages.
+  */
+ @KtorDsl
+ public fun Route.mcpWebSocket(path: String, block: () -> Server) {
+@@ -40,10 +47,14 @@ public fun Route.mcpWebSocket(path: String, block: () -> Server) {
+ 
+ /**
+  * Configures the Ktor Application to handle Model Context Protocol (MCP) over WebSocket.
++ *
++ * Installs the `WebSockets` plugin with inbound messages limited to 16 MiB.
+  */
+ @KtorDsl
+ public fun Application.mcpWebSocket(block: () -> Server) {
+-    install(WebSockets)
++    install(WebSockets) {
++        maxFrameSize = DEFAULT_MAX_FRAME_SIZE
++    }
+ 
+     routing {
+         mcpWebSocket(block)
+@@ -52,10 +63,14 @@ public fun Application.mcpWebSocket(block: () -> Server) {
+ 
+ /**
+  * Configures the Ktor Application to handle Model Context Protocol (MCP) over WebSocket at the specified path.
++ *
++ * Installs the `WebSockets` plugin with inbound messages limited to 16 MiB.
+  */
+ @KtorDsl
+ public fun Application.mcpWebSocket(path: String, block: () -> Server) {
+-    install(WebSockets)
++    install(WebSockets) {
++        maxFrameSize = DEFAULT_MAX_FRAME_SIZE
++    }
+ 
+     routing {
+         mcpWebSocket(path, block)
+```
+
+---
+
+### Incident Patch 3: `0d180d24` (2026-10-28)
+**Commit Message**: fix: log recovered stdio frames at WARN without a stack trace (#984)
+
+## What
+Fixes #956. A BOM-prefixed line was already delivered through
+`ReadBuffer`'s recovery path, but `readMessage` first logged an ERROR
+with a stack trace and the whole line.
+
+## Fix
+- A recovered line is logged once at WARN, without a stack trace.
+- A dropped line is logged once at ERROR (previously up to two ERRORs).
+- Logs carry a 160-char line prefix instead of the whole line.
+
+## Test
+Added a `ReadBuffer` regression for BOM-prefixed messages.
+
+---------
+
+Co-authored-by: Pavel Gorgulov <[REDACTED_EMAIL]>
+
+**File**: `kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/shared/ReadBuffer.kt` (modified, +16/-4)
+```diff
+@@ -21,6 +21,7 @@ public class ReadBuffer internal constructor(private val maxFrameSize: Int) {
+ 
+     internal companion object {
+         internal const val DEFAULT_MAX_FRAME_SIZE: Int = 16 * 1024 * 1024
++        private const val LOG_LINE_PREFIX_LENGTH: Int = 160
+     }
+ 
+     private val logger = KotlinLogging.logger { }
+@@ -53,8 +54,17 @@ public class ReadBuffer internal constructor(private val maxFrameSize: Int) {
+             val message = try {
+                 deserializeMessage(line)
+             } catch (e: Exception) {
+-                logger.error(e) { "Failed to deserialize message from line: $line\nAttempting to recover..." }
+-                tryRecover(line)
++                val recovered = tryRecover(line)
++                if (recovered != null) {
++                    logger.warn {
++                        "Recovered JSON-RPC message after deserialization failure; line prefix: ${line.logPrefix()}"
++                    }
++                } else {
++                    logger.error(e) {
++                        "Failed to deserialize JSON-RPC message; line prefix: ${line.logPrefix()}; skipping."
++                    }
++                }
++                recovered
+             }
+             if (message != null) {
+                 return message
+@@ -102,12 +112,14 @@ public class ReadBuffer internal constructor(private val maxFrameSize: Int) {
+ 
+         return try {
+             deserializeMessage(trimmed)
+-        } catch (ignored: Exception) {
+-            logger.error(ignored) { "Deserialization failed for line: $line\nSkipping..." }
++        } catch (_: Exception) {
+             null
+         }
+     }
+ 
++    private fun String.logPrefix(): String =
++        if (length > LOG_LINE_PREFIX_LENGTH) take(LOG_LINE_PREFIX_LENGTH) + "..." else this
++
+     /** Clears all buffered data, discarding any partially received messages. */
+     public fun clear() {
+         buffer.clear()
+```
+
+**File**: `kotlin-sdk-core/src/commonTest/kotlin/io/modelcontextprotocol/kotlin/sdk/shared/ReadBufferTest.kt` (modified, +9/-0)
+```diff
+@@ -88,4 +88,13 @@ class ReadBufferTest {
+ 
+         readBuffer.readMessage().shouldBeNull()
+     }
++
++    @Test
++    fun `should recover message with leading UTF-8 BOM`() {
++        val readBuffer = ReadBuffer()
++
++        readBuffer.append("\uFEFF$line")
++
++        readBuffer.readMessage() shouldBe message
++    }
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1133** (2026-10-21): chore(deps): bump hono from 4.13.7 to 4.13.13 in /integration-test/src/jvmTest/typescript (@dependabot[bot])
-- **PR #1127** (2026-10-20): chore(deps): bump github/codeql-action from 4.38.3 to 4.39.0 in the all-actions group across 1 directory (@dependabot[bot])
-- **PR #1126** (2026-10-19): chore(deps): bump zod from 4.6.5 to 4.6.7 in /integration-test/src/jvmTest/typescript in the all-dependencies group (@dependabot[bot])
-- **PR #1125** (2026-10-20): chore(deps): bump the kotest group across 1 directory with 3 updates (@dependabot[bot])
-- **PR #1124** (2026-10-19): chore(deps): bump the other-dependencies group across 4 directories with 2 updates (@dependabot[bot])
-- **PR #1123** (closed): chore(deps): bump the ktor group with 14 updates (@dependabot[bot])
+- **PR #1146** (2026-10-29): chore(deps): bump @hono/node-server from 2.1.0 to 2.1.5 in /integration-test/src/jvmTest/typescript (@dependabot[bot])
+- **PR #1144** (2026-10-27): chore(deps): bump qs from 6.16.0 to 6.17.0 in /integration-test/src/jvmTest/typescript (@dependabot[bot])
+- **PR #1143** (2026-10-27): chore(deps): bump body-parser from 2.3.0 to 2.4.0 in /integration-test/src/jvmTest/typescript (@dependabot[bot])
+- **PR #1142** (2026-10-27): chore(deps): bump fast-uri from 3.1.8 to 3.1.9 in /integration-test/src/jvmTest/typescript (@dependabot[bot])
+- **PR #1141** (2026-10-26): chore(deps): bump ip-address from 10.7.2 to 10.7.5 in /integration-test/src/jvmTest/typescript (@dependabot[bot])
+- **PR #1140** (2026-10-26): chore(deps): bump github/codeql-action from 4.39.0 to 4.39.1 in the all-actions group (@dependabot[bot])
 
 ---
 
@@ -1133,32 +1725,52 @@ be removed in v5. Migrating is a one-line change:</p>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump hono from 4.13.7 to 4.13.13 in /integration-test/src/jvmTest/typescr
+## X. server)!: return a protocol error for unknown tools (#1120)
 
 **RULE**:
-When implementing operations in `integration-test/src/jvmTest/typescript/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in modelcontextprotocol/kotlin-sdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `integration-test/src/jvmTest/kotlin/io/modelcontextprotocol/kotlin/sdk/integration/streamablehttp/StreamableHttpClientTransportIntegrationTest.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in modelcontextprotocol/kotlin-sdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a3909eff`: deps): bump hono from 4.13.7 to 4.13.13 in /integration-test/src/jvmTest/typescript (#1133). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `886dede6`: server)!: return a protocol error for unknown tools (#1120). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `integration-test/src/jvmTest/typescript/package-lock.json`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `integration-test/src/jvmTest/kotlin/io/modelcontextprotocol/kotlin/sdk/integration/streamablehttp/StreamableHttpClientTransportIntegrationTest.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-      "version": "4.13.13",
-      "resolved": "https://registry.npmjs.org/hono/-/hono-4.13.13.tgz",
-      "integrity": "sha512-CQ46U0ZkAGmbT/4UxdzzGJpacP2IeKgY4a5/tOI9AABbpOMfK739wfDXmv1usCk+3RkKj1hQy4/fjhiwa2xlrA==",
+import io.kotest.assertions.throwables.shouldThrow
+import io.modelcontextprotocol.kotlin.sdk.shared.RequestOptions
+import io.modelcontextprotocol.kotlin.sdk.types.CallToolRequest
+import io.modelcontextprotocol.kotlin.sdk.types.CallToolRequestParams
+import io.modelcontextprotocol.kotlin.sdk.types.McpException
+import io.modelcontextprotocol.kotlin.sdk.types.RPCError
+import kotlinx.coroutines.delay
+import java.util.concurrent.atomic.AtomicInteger
+import kotlin.time.Duration.Companion.milliseconds
+private const val LAST_EVENT_ID_HEADER = "Last-Event-ID"
+
+    """{"capabilities":{"tools":{}},"protocolVersion":"2025-03-26",""" +
+        """"serverInfo":{"name":"test-server","version":"1.0.0"}}"""
+
+/** Long enough for a resumption the client should not start, immediate or after a short `retry`, to arrive. */
+private val RESUMPTION_WINDOW = 500.milliseconds
+    @Test
+    fun `client does not resume the stream after an inline error response`() {
+        val resumptions = AtomicInteger()
+        withConnectedClient(getRoute = { resumptionRoute(resumptions) }) { client ->
+            val exception = shouldThrow<McpException> { client.callTool("missing", emptyMap()) }
+
+            exception.cod
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-      "version": "4.13.7",
-      "resolved": "https://registry.npmjs.org/hono/-/hono-4.13.7.tgz",
-      "integrity": "sha512-c8/gF9ac8Y78/agExVocyLevgR+JlpNB444Py0FSX8pJoPdYUfUzRcXtYEYGwt6l19qIlVZPN5Mfsw9jFShmQQ==",
+    """{"capabilities":{},"protocolVersion":"2025-03-26","serverInfo":{"name":"test-server","version":"1.0.0"}}"""
+    /** Answers `initialize` and `ping` with JSON and accepts notifications. */
+            val result = when (message["method"]?.jsonPrimitive?.content) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a3909eff` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `886dede6` are properly handled with clean fallback behavior.

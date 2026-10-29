@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-29T16:51:23.868Z",
-  "total_cycles_completed": 6026,
-  "total_learnings_persisted": 6026,
-  "total_rules_promoted": 5490,
+  "last_updated": "2026-10-29T17:04:36.113Z",
+  "total_cycles_completed": 6030,
+  "total_learnings_persisted": 6030,
+  "total_rules_promoted": 5494,
   "history": [
-    {
-      "timestamp": "2026-10-28T16:52:05.268Z",
-      "repository": "yugabyte/yugabyte-db",
-      "learningId": "learn-github-yugabyte-yugabyte-db",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T16:58:44.075Z",
-      "repository": "Qwen/Qwen3-VL-8B-Instruct",
-      "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T16:58:59.330Z",
-      "repository": "GreptimeTeam/greptimedb",
-      "learningId": "learn-github-greptimeteam-greptimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T17:05:43.078Z",
-      "repository": "nomic-ai/nomic-embed-text-v1.5",
-      "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T17:05:45.389Z",
       "repository": "Ataraxy-Labs/sem",
@@ -1403,6 +1375,34 @@
       "repository": "rustls/rustls",
       "learningId": "learn-github-rustls-rustls",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T17:03:35.274Z",
+      "repository": "modelcontextprotocol/kotlin-sdk",
+      "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T17:03:38.028Z",
+      "repository": "zarf-dev/zarf",
+      "learningId": "learn-github-zarf-dev-zarf",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T17:03:38.422Z",
+      "repository": "gravitl/netmaker",
+      "learningId": "learn-github-gravitl-netmaker",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T17:04:36.113Z",
+      "repository": "flox/flox",
+      "learningId": "learn-github-flox-flox",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
