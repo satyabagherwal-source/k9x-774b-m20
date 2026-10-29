@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T23:56:15.367Z",
-  "total_cycles_completed": 5971,
-  "total_learnings_persisted": 5971,
-  "total_rules_promoted": 5428,
+  "last_updated": "2026-10-29T00:02:39.982Z",
+  "total_cycles_completed": 5974,
+  "total_learnings_persisted": 5974,
+  "total_rules_promoted": 5433,
   "history": [
-    {
-      "timestamp": "2026-10-28T14:22:26.411Z",
-      "repository": "embassy-rs/embassy",
-      "learningId": "learn-github-embassy-rs-embassy",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T14:22:31.576Z",
-      "repository": "ZSeven-W/openpencil",
-      "learningId": "learn-github-zseven-w-openpencil",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T14:29:11.309Z",
-      "repository": "zai-org/GLM-5.2",
-      "learningId": "learn-huggingface-zai-org-glm-5-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T14:29:14.621Z",
       "repository": "hashicorp/terraform",
@@ -1403,6 +1382,27 @@
       "repository": "meta-models/Muse-Spark-Open-816B-A42B",
       "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T00:02:34.493Z",
+      "repository": "kgateway-dev/kgateway",
+      "learningId": "learn-github-kgateway-dev-kgateway",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T00:02:37.193Z",
+      "repository": "black-forest-labs/flux-3-image-klein-comfy",
+      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T00:02:39.982Z",
+      "repository": "paradedb/paradedb",
+      "learningId": "learn-github-paradedb-paradedb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

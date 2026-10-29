@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source**: github ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
-> **Source Version**: `22ae5780`  
+> **Source Version**: `2dbf3197`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T06:18:38.354Z  
+> **Timestamp**: 2026-10-29T00:02:39.544Z  
 > **Learning ID**: `learn-github-paradedb-paradedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T06:18:38.225Z  
+> **Harvest Timestamp**: 2026-10-29T00:02:39.361Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: One Postgres for your application data, full-text search, vector retrieval, and aggregations. Home of the pg_search extension.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9453 stars
+- **Stars / Engagement**: 9455 stars
 
 ---
 
@@ -770,7 +770,7 @@ impl LazyWeight {
         )
     }
 
-    fn get(&self) -> &dyn Weight {
+    pub(super) fn get(&self) -> &dyn Weight {
         self.weight
             .get_or_init(|| {
                 self.query
@@ -2322,1041 +2322,554 @@ static mut PREV_PLANNER_HOOK: pg_sys::planner_hook_type = None;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `22ae5780` (2026-10-28)
-**Commit Message**: ci: restore Cohere index build metrics in baselines and comments (#7061)
-
-Restore Cohere index build time and size in the published 1M/10M
-benchmark comparisons. Use the existing pinned `pdbench build` command
-with the existing index SQL, then map its JSON report into the shared
-publisher's metric format. pdbench records build duration, pre-vacuum
-index size, and segment diagnostics; no custom measurement script is
-needed.
-
-The queued publisher carries the two metrics into a separate index-build
-history and the existing benchmark comparison. Main runs update the
-baseline; PR runs only compare. Keep the recall rounding fix as a single
-tolerance check. Remove every test added by this PR; existing tests are
-unchanged.
-
-Validation: all five existing Cohere tests and commit hooks pass.
-Verified the metric conversion against a saved pdbench build report and
-checked the pinned CLI/source, workflow shell syntax, and YAML.
-Actionlint passes for the changed workflow; checking the entire PR
-requires ignoring the pre-existing unsupported `concurrency.queue`
-field. The full CI benchmark has not been rerun after switching to
-pdbench build.
-
-**File**: `.github/actions/publish-benchmarker-results/action.yml` (modified, +44/-6)
-```diff
-@@ -23,6 +23,10 @@ inputs:
-     description: "Optional Markdown context to include above the benchmark comparison"
-     required: false
-     default: ""
-+  index_metrics_file:
-+    description: "Optional JSON metrics for index build time and size"
-+    required: false
-+    default: ""
- 
- runs:
-   using: composite
-@@ -45,12 +49,18 @@ runs:
-         RESULTS_DIR: benchmarker/results
-         METRICS_FILE: benchmarker/benchmarker_metrics.json
-         THROUGHPUT_METRICS_FILE: benchmarker/benchmarker_throughput_metrics.json
-+        INDEX_METRICS_FILE: ${{ inputs.index_metrics_file }}
-       run: |
-         set -euo pipefail
-         shopt -s nullglob
-         mkdir -p _metrics
-         printf '{}\n' > _latency_baseline.json
-         printf '{}\n' > _throughput_baseline.json
-+        printf '{}\n' > _index_baseline.json
-+        printf '[]\n' > _index_metrics.json
-+        if [ -n "$INDEX_METRICS_FILE" ]; then
-+          cp "$INDEX_METRICS_FILE" _index_metrics.json
-+        fi
-         for j in "${RESULTS_DIR}"/*.json; do
-           case "$(basename "$j")" in
-             benchmarker_*.json) continue ;;
-@@ -154,6 +164,29 @@ runs:
-         sed '1s/^window.BENCHMARK_DATA = //' "${{ steps.publish_throughput.outputs.comparison_file }}" |
-           jq --arg suite "benchmarker ${DATASET} (throughput)" '.entries[$suite][-2] // {}' > _throughput_baseline.json
- 
-+    - name: Publish Index Build Metrics
-+      id: publish_index
-+      if: inputs.index_metrics_file != ''
-+      uses: ./.github/actions/publish-benchmark-results
-+      with:
-+        publication_id: ${{ env.BENCHMARK_PUBLICATION_ID }}-index
-+        name: "benchmarker ${{ inputs.dataset }} (index build)"
-+        ref: ${{ inputs.ref }}
-+        metrics_file: _index_metrics.json
-+        github_token: ${{ inputs.github_token }}
-+        pages_directory: benchmarker
-+        publish_baseline: ${{ inputs.publish_baseline == 'true' }}
-+        comment_on_regression: ${{ inputs.pr_number == '' }}
-+
-+    - name: Read Index Build Baseline
-+      if: inputs.pr_number != '' && steps.publish_index.outcome == 'success'
-+      shell: bash
-+      env:
-+        DATASET: ${{ inputs.dataset }}
-+      run: |
-+        sed '1s/^window.BENCHMARK_DATA = //' "${{ steps.publish_index.outputs.comparison_file }}" |
-+          jq --arg suite "benchmarker ${DATASET} (index build)" '.entries[$suite][-2] // {}' > _index_baseline.json
-+
-     - name: Stage Dashboards (HTML Only) for gh-pages
-       shell: bash
-       env:
-@@ -181,7 +214,7 @@ runs:
-         commit_message: "benchmarker dashboards for ${{ inputs.ref }} (${{ inputs.dataset }})"
- 
-     - name: Comment Benchmark Comparison and Dashboard Links
--      if: inputs.pr_number != '' && (hashFiles('_ghpages_html/*.html') != '' || inputs.context_file != '')
-+      if: inputs.pr_number != '' && (hashFiles('_ghpages_html/*.html') != '' || inputs.context_file != '' || inputs.index_metrics_file != '')
-       shell: bash
-       env:
-         GH_TOKEN: ${{ inputs.github_token }}
-@@ -208,18 +241,23 @@ runs:
-             cat "$CONTEXT_FILE"
-             printf '\n'
-           fi
--          jq -nr --slurpfile latency _latency_baseline.json --slurpfile throughput _throughput_baseline.json '
--            "Baselines: latency `\(($latency[0].commit.id // "n/a") | .[0:7])`, QPS `\(($throughput[0].commit.id // "n/a") | .[0:7])`.\n"
-+          jq -nr --slurpfile latency _latency_baseline.json --slurpfile throughput _throughput_baseline.json \
-+            --slurpfile index _index_baseline.json --slurpfile index_metrics _index_metrics.json '
-+            "Baselines: latency `\(($latency[0].commit.id // "n/a") | .[0:7])`, QPS `\(($throughput[0].commit.id // "n/a") | .[0:7])`" +
-+            (if ($index_metrics[0] | length) > 0 then ", index build `\(($index[0].commit.id // "n/a") | .[0:7])`" else "" end) + ".\n"
-           '
-           printf '| Benchmark | Current | Previous | Ratio |\n|---|---:|---:|---:|\n'
-           jq -nr \
-             --slurpfile latency "${METRICS_FILE}" \
-             --slurpfile throughput "${THROUGHPUT_METRICS_FILE}" \
-             --slurpfile latency_baseline _latency_baseline.json \
-+            --slurpfile index _index_metrics.json \
-+            --slurpfile index_baseline _index_baseline.json \
-             --slurpfile throughput_baseline _throughput_baseline.json '
-             def display: "\(.value * 1000 | round / 1000) \(.unit)";
-             (($latency[0] | map(. + {baseline: $latency_baseline[0]})) +
--             ($throughput[0] | map(. + {baseline: $throughput_baseline[0]})))
-+             ($throughput[0] | map(. + {baseline: $throughput_baseline[0]})) +
-+             ($index[0] | map(. + {baseline: $index_baseline[0]})))
-             | sort_by((.name | sub(" (p[0-9]+ latency|QPS)$"; "")), .unit == "queries/s", .name)
-             | .[] as $current
-             | ([$current.baseline.benches[]? | select(.name == $current.name)][0]) as $previous
-@@ -233,11 +271,11 @@ runs:
-                end) as $ratio_text
-    
-```
-
-**File**: `.github/actions/stage-benchmark-results/action.yml` (modified, +1/-0)
-```diff
-@@ -46,5 +46,6 @@ runs:
-           _benchmark_publish/metadata.json
-           ${{ steps.publication-inputs.outputs.results_path }}
-           ${{ fromJSON(inputs.metadata).context_file }}
-+          ${{ fromJSON(inputs.metadata).index_metrics_file }}
-         retention-days: 30
-         if-no-files-found: error
-```
-
-**File**: `.github/workflows/benchmark-pg_search-benchmarker-cohere.yml` (modified, +12/-7)
-```diff
-@@ -188,15 +188,19 @@ jobs:
-                                'parallel_leader_participation', 'paradedb.global_target_segment_count')
-                 ORDER BY name;" \
-             | tee benchmark-artifacts/index-build-settings.log
-+          cp benchmarks/datasets/cohere/indexes/pg_search.sql benchmarks/cohere/assets/cohere/index.sql
-+          pdbench build --url "$PARADEDB_URL" --config "benchmarks/cohere/${COHERE_SIZE}.toml" \
-+            --assets-dir benchmarks/cohere/assets --runs-dir benchmark-artifacts/search \
-+            --force-rebuild \
-+            | tee benchmark-artifacts/index-build.log
-+          jq '.data | [
-+            {name: (.index.name + " build time"), unit: "min", value: (.build_seconds / 60)},
-+            {name: (.index.name + " index size"), unit: "MiB", value: (.index.size_bytes / 1048576)}
-+          ]' benchmark-artifacts/search/"${COHERE_SIZE}"/*_build.json > benchmark-artifacts/index-metrics.json
-           psql "$PARADEDB_URL" -X -v ON_ERROR_STOP=1 -c '\timing on' \
--            -f benchmarks/datasets/cohere/indexes/pg_search.sql \
--            -c "SELECT pg_relation_size('cohere_wiki_bm25_idx') AS index_bytes,
--                       pg_relation_size('cohere_wiki_bm25_idx') / (1024 * 1024) AS index_mb,
--                       count(*) AS segments, sum(num_docs) AS indexed_docs
--                FROM paradedb.index_info('cohere_wiki_bm25_idx');" \
-             -f benchmarks/datasets/cohere/after_create_index.sql \
-             -c 'VACUUM FULL ANALYZE;' -c 'VACUUM ANALYZE;' \
--            | tee benchmark-artifacts/index-build.log
-+            | tee benchmark-artifacts/index-vacuum.log
- 
-       - name: Install fixture reader
-         uses: paradedb/actions/apt-install@v14
-@@ -292,7 +296,8 @@ jobs:
-             {"dataset":"cohere-${{ matrix.size }}",
-              "ref":"${{ steps.commit_info.outputs.commit_sha }}","pr_number":"${{ github.event.pull_request.number }}",
-              "publish_baseline":"${{ github.ref == 'refs/heads/main' && (github.event_name != 'workflow_dispatch' || inputs.publish_baseline) }}",
--             "context_file":"benchmark-artifacts/operating_points.md"}
-+             "context_file":"benchmark-artifacts/operating_points.md",
-+             "index_metrics_file":"benchmark-artifacts/index-metrics.json"}
- 
-       - name: Upload index, recall, and buffer diagnostics
-         if: always()
-```
-
-**File**: `.github/workflows/publish-benchmark-results.yml` (modified, +1/-0)
-```diff
-@@ -109,6 +109,7 @@ jobs:
-           github_token: ${{ steps.app-token.outputs.token }}
-           pr_number: ${{ fromJSON(steps.metadata.outputs.json).pr_number }}
-           context_file: ${{ fromJSON(steps.metadata.outputs.json).context_file || '' }}
-+          index_metrics_file: ${{ fromJSON(steps.metadata.outputs.json).index_metrics_file || '' }}
-           publish_baseline: ${{ fromJSON(steps.metadata.outputs.json).publish_baseline }}
- 
-       - name: Publish Query Results
-```
-
-**File**: `benchmarks/cohere/README.md` (modified, +13/-9)
-```diff
-@@ -12,7 +12,8 @@ eight segments, a 0.32 training sample ratio, and English stemming/stopwords on
- workers. Both tools use the same database and index throughout a run.
- 
- 1. Restore the existing Cohere heap snapshot, refresh the installed pg_search
--   extension, build `datasets/cohere/indexes/pg_search.sql`, and vacuum as before.
-+   extension, and run `pdbench build` with `datasets/cohere/indexes/pg_search.sql`.
-+   pdbench records build time, index size, and segment diagnostics before vacuum.
-    Snapshot generation continues to use `datasets/cohere/config.toml` and
-    `create_tables.sql`.
- 2. Import the published ground-truth Parquets into pdbench's fixture table.
-@@ -29,10 +30,11 @@ workers. Both tools use the same database and index throughout a run.
-    selected max_probe and all fixed search settings apply to every connection.
-    CI verifies the parameterized plans and filter pushdown before measuring.
- 5. Results and recall context enter the shared publication queue. The
--   Wikipedia/StackExchange publisher posts p50/p95/p99 and QPS with baseline
--   comparisons and dashboard links. Recall, max_probe, and mean
--   whole-query shared buffer hits/reads appear above those results. Buffer
--   diagnostics come from pdbench's separate EXPLAIN pass over all 100 vectors.
-+   Wikipedia/StackExchange publisher posts p50/p95/p99, QPS, index build time,
-+   and index size with baseline comparisons and dashboard links. Recall,
-+   max_probe, and mean whole-query shared buffer hits/reads appear above those
-+   results. Buffer diagnostics come from pdbench's separate EXPLAIN pass over all
-+   100 vectors.
- 
- The workflow runs on main and via `benchmarks`, `benchmark-cohere-pg_search`, or
- `benchmark-benchmarker-cohere`. Manual runs can select a size, pg_search commit,
-@@ -44,11 +46,13 @@ from its snapshot.
- 
- Results begin new `benchmarker cohere-1m` and `benchmarker cohere-10m` histories.
- The old server-time samples are not comparable to k6's client-observed latency
--and throughput. PR runs compare with main and do not update its baseline.
-+and throughput. Index build time (minutes) and size (MiB) have a separate
-+`benchmarker cohere-<size> (index build)` history. Its first run has no previous
-+baseline; subsequent PR runs compare with main and do not update its baseline.
- 
--Artifacts retain index-build logs, complete pdbench search reports (including all
--sweep points, recall and buffer diagnostics), selected operating points, query
--vectors, checked plans, and k6 JSON/HTML dashboards. The full workload is opt-in
-+Artifacts retain index-build logs, pdbench build and search reports (including
-+all sweep points, recall and buffer diagnostics), selected operating points,
-+query vectors, checked plans, and k6 JSON/HTML dashboards. The full workload is opt-in
- on PRs; the small handoff tests can be run with:
- 
- ```sh
-```
-
-**File**: `benchmarks/cohere/prepare_k6.py` (modified, +1/-1)
-```diff
-@@ -44,7 +44,7 @@ def operating_points(reports):
-                 metrics = measured[selected["value"]] if selected else None
-                 if selected and (
-                     not 0 < float(selected["value"]) <= 1
--                    or not target <= selected["recall"] <= 1
-+                    or not target - 1e-12 <= selected["recall"] <= 1
-                     or metrics["recall"]["recall"] != selected["recall"]
-                 ):
-                     raise ValueError(f"{query}: invalid selected point for {target}")
-```
-
----
-
-### Incident Patch 2: `f17a06fb` (2026-10-28)
-**Commit Message**: fix: stop `NOT (field @@@ NULL)` from matching every row (#6998)
-
-# Ticket(s) Closed
-
-- Closes #6928
+### Incident Patch 1: `e5995dd2` (2026-10-28)
+**Commit Message**: fix: debug-build panics in filtered Top K queries (#6793)
 
 ## What
 
-`NOT (field @@@ <expr>)` returned every row when `<expr>` evaluated to
-NULL. A deferred right-hand side becomes
-`SearchQueryInput::PostgresExpression`; when it evaluated to NULL,
-`solve_postgres_expressions_no_reset` replaced it with `Empty`. `Empty`
-inside `must_not` means "exclude nothing", so the boolean matched the
-whole table.
+Pins Tantivy to the commit that fixes two panics in debug builds for Top
+K queries with a filter.
 
 ## Why
 
-NULL and `Empty` differ under negation: `NOT (a query that matches
-nothing)` is true, while `NOT NULL` is NULL, and a filter keeps only
-true rows. Collapsing the two made the negation of an unknown predicate
-match everything.
+In a Top K query such as:
+
+```sql
+SELECT id FROM t WHERE body === 'alpha' AND n >= 100 AND m >= 150
+ORDER BY pdb.score(id) DESC LIMIT 10;
+```
+
+Block-WAND asked the filter about the first row containing `alpha`, even
+when the filter's first match was a later row. Two filters fail on that
+in debug builds:
+
+- two range conditions: `ERROR:  attempt to subtract with overflow`
+- a constant-score phrase, such as `tag ### 'red apple'::pdb.const(1)`:
+`ERROR: target (0) should be greater than or equal to doc (150)`
+
+Release builds return correct results. See paradedb/tantivy#316 for the
+cause.
 
 ## How
 
-Add `SearchQueryInput::Null` for the NULL case. It matches nothing in a
-positive position, and a `Boolean` with a direct `Null` in `must_not`
-builds an empty query. The planning fold, basescan predicate detection,
-EXPLAIN leaf handling, the sequential-scan match set, and segment
-pruning treat it as matching nothing.
+The pin moves from `ff6099c7`, Tantivy `main` on Oct 27, to `7abd03c1`,
+the squash merge of paradedb/tantivy#316 and the current head of Tantivy
+`main`. Between the two it also carries paradedb/tantivy#341 (faster
+TermSet filter lookups) and paradedb/tantivy#349, which turned
+`TopDocsByVectorSimilarity` into a builder. The five vector collector
+call sites in `pg_search/src/index/reader/index.rs` now finish with
+`build()`.
 
-A wrapped or nested NULL is not reachable from SQL because every
-`SearchQueryInput` builder is `STRICT`, so the `must_not` rule only
-needs to handle a direct `Null` child.
-
-## Tests
-
-Added `pg
-
-**File**: `docs/project/changelog/unreleased/6998.bugfix.mdx` (added, +5/-0)
+**File**: `Cargo.lock` (modified, +10/-10)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+header: stability
-+---
-+
-+- `NOT (field @@@ <expr>)` no longer returns every row when `<expr>` evaluates to NULL.
+@@ -4948,7 +4948,7 @@ dependencies = [
+ [[package]]
+ name = "ownedbytes"
+ version = "0.9.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
++source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
+ dependencies = [
+  "stable_deref_trait",
+ ]
+@@ -7128,7 +7128,7 @@ checksum = "7b2093cf4c8eb1e67749a6762251bc9cd836b6fc171623bd0a9d324d37af2417"
+ [[package]]
+ name = "tantivy"
+ version = "0.27.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
++source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
+ dependencies = [
+  "aho-corasick",
+  "arc-swap",
+@@ -7187,15 +7187,15 @@ dependencies = [
+ [[package]]
+ name = "tantivy-bitpacker"
+ version = "0.10.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
++source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
+ dependencies = [
+  "bitpacking",
+ ]
+ 
+ [[package]]
+ name = "tantivy-columnar"
+ version = "0.7.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
++source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
+ dependencies = [
+  "downcast-rs",
+  "fastdivide",
+@@ -7210,7 +7210,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-common"
+ version = "0.11.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
++source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
+ dependencies = [
+  "async-trait",
+  "byteorder",
+@@ -7243,7 +7243,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-quant"
+ version = "0.1.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
++source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
+ dependencies = [
+  "rand_chacha 0.3.1",
+  "rand_core 0.6.4",
+@@ -7252,7 +7252,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-query-grammar"
+ version = "0.26.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
++source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
+ dependencies = [
+  "fnv",
+  "nom 7.1.3",
+@@ -7264,7 +7264,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-sstable"
+ version = "0.7.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
++source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
+ dependencies = [
+  "futures-util",
+  "itertools 0.14.0",
+@@ -7277,7 +7277,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-stacker"
+ version = "0.7.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
++source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
+ dependencies = [
+  "fixedbitset",
+  "murmurhash32",
+@@ -7314,7 +7314,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-tokenizer-api"
+ version = "0.7.0"
+-source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
++source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
+ dependencies = [
+  "serde",
+ ]
 ```
 
-**File**: `pg_search/src/postgres/customscan/basescan/mod.rs` (modified, +1/-0)
+**File**: `Cargo.toml` (modified, +4/-4)
 ```diff
-@@ -3063,6 +3063,7 @@ fn base_query_has_search_predicates(
-         SearchQueryInput::All => false,
-         SearchQueryInput::Uninitialized => false,
-         SearchQueryInput::Empty => false,
-+        SearchQueryInput::Null => false,
+@@ -70,7 +70,7 @@ pgrx-tests = "=0.19.3"
  
-         SearchQueryInput::WithIndex { oid, query } => {
-             // Only consider search predicates for the current table's index
+ # Keep the Git revisions for `tantivy`, `tantivy-common`, and the crates.io
+ # patches in sync.
+-tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "3d304727a314e654c7c28402965fae90d330bdc2", features = [
++tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "7abd03c193fd06b488f13e8781a2daa77a5941be", features = [
+   "columnar-zstd-compression",
+   "lz4-compression",
+   "paradedb",
+@@ -79,12 +79,12 @@ tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy"
+   "stemmer",
+   "stopwords",
+ ], default-features = false }
+-tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "3d304727a314e654c7c28402965fae90d330bdc2" }
++tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "7abd03c193fd06b488f13e8781a2daa77a5941be" }
+ tantivy-jieba = "0.20.0"
+ 
+ [patch.crates-io]
+-tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "3d304727a314e654c7c28402965fae90d330bdc2" }
+-tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "3d304727a314e654c7c28402965fae90d330bdc2" }
++tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "7abd03c193fd06b488f13e8781a2daa77a5941be" }
++tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "7abd03c193fd06b488f13e8781a2daa77a5941be" }
+ 
+ [workspace.lints.clippy]
+ large_futures = "warn"
 ```
 
-**File**: `pg_search/src/postgres/customscan/explain.rs` (modified, +1/-0)
+**File**: `nix/pg_search.nix` (modified, +1/-1)
 ```diff
-@@ -232,6 +232,7 @@ fn inject_estimates_into_json(
-         // Leaf query types - no children to process
-         SearchQueryInput::All
-         | SearchQueryInput::Empty
-+        | SearchQueryInput::Null
-         | SearchQueryInput::MoreLikeThis { .. }
-         | SearchQueryInput::Parse { .. }
-         | SearchQueryInput::TermSet { .. }
+@@ -65,7 +65,7 @@ buildPgrxExtension (finalAttrs: {
+   # If maintainers forget to do so, Nix will throw an error message that begins
+   # like this and then provides the correct new hash:
+   # error: hash mismatch in fixed-output derivation '...'
+-  cargoHash = "sha256-wWfEnPN5l/ncNUgWBwMkcHPooKiyyWi44gZXQAgXTNM=";
++  cargoHash = "sha256-gfoo7ED9iDaAZ1YBzS4U4m6l5d4rwaigo926dCrUDdU=";
+ 
+   inherit cargo-pgrx postgresql;
+ 
 ```
 
-**File**: `pg_search/src/postgres/customscan/solve_expr.rs` (modified, +7/-5)
+**File**: `pg_search/src/index/reader/index.rs` (modified, +7/-5)
 ```diff
-@@ -232,8 +232,9 @@ impl SearchQueryInput {
-             };
-             assert_eq!(unsafe { (*c).consttype }, sqi_typoid);
-             let value = unsafe { SearchQueryInput::from_datum((*c).constvalue, (*c).constisnull) };
--            // NULL matches nothing at execution too (see `solve_postgres_expressions`).
--            *sqi = value.unwrap_or(SearchQueryInput::Empty);
-+            // A NULL estimate means the predicate is NULL, so fold it to `Null`
-+            // (see `solve_postgres_expressions`).
-+            *sqi = value.unwrap_or(SearchQueryInput::Null);
-         });
-         all_folded.then_some(folded)
-     }
-@@ -279,13 +280,14 @@ impl SearchQueryInput {
-                         if let Some(resolved_sqi) = expr.solve(expr_context, sqi_typoid) {
-                             *sqi = resolved_sqi;
-                         } else {
--                            // PostgresExpression evaluated to NULL (e.g., subquery returned no results)
--                            // Replace with a query that matches nothing
-+                            // PostgresExpression evaluated to NULL (e.g., subquery returned no results).
-+                            // Keep NULL distinct from `Empty` so a negation can treat `NOT NULL` as
-+                            // NULL, which matches nothing, while `NOT Empty` matches every row.
-                             pgrx::debug1!(
-                                 "PostgresExpression evaluated to NULL for expression: {}",
-                                 pgrx::node_to_string(expr.node()).unwrap_or("unknown")
-                             );
--                            *sqi = SearchQueryInput::Empty;
-+                            *sqi = SearchQueryInput::Null;
-                         }
-                     }
-                     SearchQueryInput::HeapFilter {
+@@ -2353,31 +2353,33 @@ impl SearchIndexReader {
+                     0 => self.collect_maybe_auxiliary(
+                         readers,
+                         partition_bounds,
+-                        collector,
++                        collector.build(),
+                         aux_collector,
+                     ),
+                     1 => self.collect_maybe_auxiliary(
+                         readers,
+                         partition_bounds,
+-                        collector.with_tie_break(next()),
++                        collector.with_tie_break(next()).build(),
+                         aux_collector,
+                     ),
+                     2 => self.collect_maybe_auxiliary(
+                         readers,
+                         partition_bounds,
+-                        collector.with_tie_break((next(), next())),
++                        collector.with_tie_break((next(), next())).build(),
+                         aux_collector,
+                     ),
+                     3 => self.collect_maybe_auxiliary(
+                         readers,
+                         partition_bounds,
+-                        collector.with_tie_break((next(), next(), next())),
++                        collector.with_tie_break((next(), next(), next())).build(),
+                         aux_collector,
+                     ),
+                     4 => self.collect_maybe_auxiliary(
+                         readers,
+                         partition_bounds,
+-                        collector.with_tie_break((next(), next(), next(), next())),
++                        collector
++                            .with_tie_break((next(), next(), next(), next()))
++                            .build(),
+                         aux_collector,
+                     ),
+                     x => panic!(
 ```
 
-**File**: `pg_search/src/postgres/sequentialscan/mod.rs` (modified, +5/-1)
+**File**: `pg_search/tests/pg_regress/expected/filtered_topk_late_filter.out` (added, +42/-0)
 ```diff
-@@ -280,7 +280,11 @@ fn search_with_query_input_impl(
-         let search_query_input = unsafe { deserialize_query(query_datum) };
- 
-         // `empty()` cannot match any index document, including for a partial index.
--        if matches!(&search_query_input, SearchQueryInput::Empty) {
-+        // A NULL predicate likewise matches nothing.
-+        if matches!(
-+            &search_query_input,
-+            SearchQueryInput::Empty | SearchQueryInput::Null
-+        ) {
-             return QueryCacheEntry {
-                 matches: KeySet::None,
-                 missing_values: None,
-```
-
-**File**: `pg_search/src/query/mod.rs` (modified, +52/-0)
-```diff
-@@ -111,6 +111,18 @@ pub enum SearchQueryInput {
-         tie_breaker: Option<f32>,
-     },
-     Empty,
-+    /// A deferred expression that evaluated to SQL NULL (unknown). A filter
-+    /// keeps a row only when its predicate is true, so NULL matches nothing,
-+    /// the same as `Empty`. The two differ under negation: `NOT NULL` is NULL,
-+    /// which also matches nothing, while `NOT Empty` matches every row. The
-+    /// query builder therefore turns a boolean with `Null` in `must_not` into a
-+    /// query that matches nothing.
-+    ///
-+    /// Only a direct `Null` child of `must_not` is handled this way. SQL query
-+    /// wrappers such as `boost` and `const_score` are STRICT, so a SQL NULL
-+    /// argument makes the entire wrapper NULL. The boolean builder instead
-+    /// omits optional SQL NULL arguments; it does not embed them as `Null`.
-+    Null,
-     MoreLikeThis {
-         #[serde(flatten)]
-         options: MoreLikeThisOptions,
-@@ -211,6 +223,7 @@ macro_rules! visit_search_query_input {
-             SearchQueryInput::Uninitialized
-             | SearchQueryInput::All
-             | SearchQueryInput::Empty
-+            | SearchQueryInput::Null
-             | SearchQueryInput::MoreLikeThis { .. }
-             | SearchQueryInput::Parse { .. }
-             | SearchQueryInput::TermSet { .. }
-@@ -557,6 +570,9 @@ impl SearchQueryInput {
-                 Self::is_full_scan_query(indexed_query)
-             }
- 
-+            // A NULL predicate matches no row, so it can never be a full scan.
-+            SearchQueryInput::Null => false,
-+
-             // All other variants are not full scans
-             _ => false,
-         }
-@@ -567,6 +583,7 @@ impl SearchQueryInput {
-             SearchQueryInput::Uninitialized
-             | SearchQueryInput::All
-             | SearchQueryInput::Empty
-+            | SearchQueryInput::Null
-             | SearchQueryInput::TermSet { .. }
-             | SearchQueryInput::PostgresExpression { .. } => false,
- 
-@@ -868,6 +885,7 @@ impl SearchQueryInput {
-                 Self::Uninitialized
-                 | Self::All
-                 | Self::Empty
-+                | Self::Null
-                 | Self::Boolean { .. }
-                 | Self::Boost { .. }
-                 | Self::ConstScore { .. }
-@@ -1377,6 +1395,22 @@ impl SearchQueryInput {
-                 must_not,
-                 minimum_should_match,
-             } => {
-+                // `NOT NULL` is NULL, and a filter keeps a row only when the
-+                // predicate is true, so a NULL under `must_not` makes the whole
-+                // boolean match nothing. `must_not: [Empty]` is different: it
-+                // excludes nothing, so the boolean can still match rows.
-+                if must_not
-+                    .iter()
-+                    .any(|input| matches!(input, SearchQueryInput::Null))
-+                {
-+                    let query = Box::new(EmptyQuery);
-+                    return Ok(builder.build_leaf(
-+                        query,
-+                        || "Null Boolean Query".to_string(),
-+                        cloned_for_estimate,
-+                    ));
-+                }
-+
-                 // ---------------------------------
-                 // We use B::split_for_parent() to avoid cloning for QueryOnlyBuilder.
-                 //
-@@ -1576,6 +1610,10 @@ impl SearchQueryInput {
-                 let query = Box::new(EmptyQuery);
-                 Ok(builder.build_leaf(query, || "Empty Query".to_string(), cloned_for_estimate))
-             }
-+            SearchQueryInput::Null => {
-+                let query = Box::new(EmptyQuery);
-+                Ok(builder.build_leaf(query, || "Null Query".to_string(), cloned_for_estimate))
-+            }
-             SearchQueryInput::MoreLikeThis { options, document } => {
-                 let mlt_builder = MoreLikeThisQueryBuilder::new(options, index_created_by_version);
-                 let mut fields_map = HashMap::default();
-@@ -2224,6 +2262,9 @@ mod tests {
-         // Empty query is not a full scan
-         assert!(!SearchQueryInput::Empty.is_full_scan_query());
- 
-+        // Null matches no row, so it is not a full scan
-+        assert!(!SearchQueryInput::Null.is_full_scan_query());
-+
-         // Uninitialized is not a full scan
-         assert!(!SearchQueryInput::Uninitialized.is_full_scan_query());
- 
-@@ -2382,6 +2423,17 @@ mod tests {
-             }
-             .is_full_scan_query()
-         );
-+
-+        // Must with All, MustNot with Null → not full scan (NOT NULL matches nothing)
-+        assert!(
-+            !SearchQueryInput::Boolean {
-+                must: vec![SearchQueryInput::All],
-+                should: vec![],
-+                must_not: vec![SearchQueryInput::Null],
-+                minimum_should_match: None,
-+            }
-+            .is_full_scan_query()
-+        );
-     }
- 
-     #[pg_test]
-```
-
-**File**: `pg_search/src/query/segment_pruning.rs` (modified, +4/-0)
-```diff
-@@ -267,6 +267,8 @@ impl<'a> SegmentPruner<'a> {
-         match query {
-             SearchQueryInput::All => true,
-             SearchQueryInput::Empty => false,
-+            // A NULL predicate matches no document.
-+            SearchQueryInput::Null => false,
-             SearchQueryInput::FieldedQuery { field, query } => {
-                 self.field_can_match(segment, field, query)
-             }
-@@ -311,6 +313,8 @@ impl<'a> SegmentPruner<'a> {
-         match query {
-             SearchQueryInput::All => true,
-             SearchQueryInput::Empty => false,
-+            // A NULL predicate matches no document.
-+            SearchQueryInput::Null => false,
-             SearchQueryInput::FieldedQuery { field, query } => {
-                 self.field_matches_all(segment, field, query)
-             }
-```
-
-**File**: `pg_search/tests/pg_regress/expected/issue_6928.out` (added, +144/-0)
-```diff
-@@ -0,0 +1,144 @@
-+\i common/common_setup.sql
+@@ -0,0 +1,42 @@
++-- Top K with a filter whose first match is after the first row of the text clause.
++-- Debug builds panicked: two range filters overflowed in RangeDocSet, and a
++-- constant-score phrase failed an assert in PhraseScorer (paradedb/tantivy#316).
 +CREATE EXTENSION IF NOT EXISTS pg_search;
-+-- Disable parallel workers to avoid differences in plans
-+SET max_parallel_workers_per_gather = 0;
-+SET enable_indexscan to OFF;
-+SET paradedb.enable_columnar_exec = true;
-+SET paradedb.enable_custom_scan = on;
-+SET paradedb.enable_filter_pushdown = on;
-+-- The issue is about the Base Scan; `count(*)` would otherwise plan as the Aggregate Scan.
-+SET paradedb.enable_aggregate_custom_scan = off;
-+CREATE TABLE issue_6928_docs (
-+    id bigint PRIMARY KEY,
-+    body text
-+);
-+INSERT INTO issue_6928_docs
-+SELECT i, 'search document ' || i
-+FROM generate_series(1, 100) AS i;
-+CREATE INDEX issue_6928_docs_idx ON issue_6928_docs USING paradedb (id, body);
-+-- The lookup stays empty, so the scalar subquery evaluates to NULL while the
-+-- query runs. A literal `(SELECT NULL::paradedb.searchqueryinput)` would instead
-+-- be folded to a NULL Const and rejected earlier by qual inspection.
-+CREATE TABLE issue_6928_lookup (q paradedb.searchqueryinput);
-+-- Control: the index matches every row.
-+SELECT count(*) FROM issue_6928_docs WHERE body @@@ 'document';
-+ count 
-+-------
-+   100
++SET max_parallel_maintenance_workers TO 0;
++SET paradedb.planner_warnings = 'off';
++CREATE TABLE filtered_topk_late_filter (id INT PRIMARY KEY, body TEXT, tag TEXT, n INT, m INT);
++INSERT INTO filtered_topk_late_filter
++SELECT i, 'alpha', CASE WHEN i >= 150 AND i % 10 = 0 THEN 'red apple' ELSE 'apple red' END, i, i
++FROM generate_series(0, 299) i;
++CREATE INDEX filtered_topk_late_filter_idx ON filtered_topk_late_filter
++USING paradedb (id, body, tag, n, m)
++WITH (target_segment_count = 1);
++-- Two range filters: the first row in both ranges is 150.
++SELECT count(*) AS row_count, min(id) AS min_id
++FROM (
++    SELECT id FROM filtered_topk_late_filter
++    WHERE body === 'alpha' AND n >= 100 AND m >= 150
++    ORDER BY pdb.score(id) DESC
++    LIMIT 10
++) top;
++ row_count | min_id 
++-----------+--------
++        10 |    150
 +(1 row)
 +
-+-- `@@@ NULL` matches nothing.
-+SELECT count(*) FROM issue_6928_docs
-+WHERE body @@@ (SELECT q FROM issue_6928_lookup);
-+ count 
-+-------
-+     0
++-- A constant-score phrase: its first match is row 150.
++SELECT count(*) AS row_count, min(id) AS min_id
++FROM (
++    SELECT id FROM filtered_topk_late_filter
++    WHERE body === 'alpha' AND tag ### 'red apple'::pdb.const(1)
++    ORDER BY pdb.score(id) DESC
++    LIMIT 10
++) top;
++ row_count | min_id 
++-----------+--------
++        10 |    150
 +(1 row)
 +
-+-- `NOT (... @@@ NULL)` is NULL, which also matches nothing. Before the fix this
-+-- returned all 100 rows.
-+EXPLAIN (COSTS OFF)
-+SELECT count(*) FROM issue_6928_docs
-+WHERE NOT (body @@@ (SELECT q FROM issue_6928_lookup));
-+                                                                                 QUERY PLAN                                                                                 
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-+ Aggregate
-+   InitPlan 1
-+     ->  Seq Scan on issue_6928_lookup
-+   ->  Custom Scan (ParadeDB Base Scan) on issue_6928_docs
-+         Table: issue_6928_docs
-+         Index: issue_6928_docs_idx
-+         Exec Method: NormalScanExecState
-+         Scores: false
-+         Tantivy Query: {"boolean":{"must":["all"],"must_not":[{"postgres_expression":{"expr":{"expr_desc":"paradedb.with_index('issue_6928_docs_idx'::regclass, $1)"}}}]}}
-+(9 rows)
++RESET paradedb.planner_warnings;
++RESET max_parallel_maintenance_workers;
++DROP TABLE filtered_topk_late_filter;
+```
+
+**File**: `pg_search/tests/pg_regress/sql/filtered_topk_late_filter.sql` (added, +37/-0)
+```diff
+@@ -0,0 +1,37 @@
++-- Top K with a filter whose first match is after the first row of the text clause.
++-- Debug builds panicked: two range filters overflowed in RangeDocSet, and a
++-- constant-score phrase failed an assert in PhraseScorer (paradedb/tantivy#316).
++CREATE EXTENSION IF NOT EXISTS pg_search;
++SET max_parallel_maintenance_workers TO 0;
++SET paradedb.planner_warnings = 'off';
 +
-+SELECT count(*) FROM issue_6928_docs
-+WHERE NOT (body @@@ (SELECT q FROM issue_6928_lookup));
-+ count 
-+-------
-+     0
-+(1 row)
++CREATE TABLE filtered_topk_late_filter (id INT PRIMARY KEY, body TEXT, tag TEXT, n INT, m INT);
++INSERT INTO filtered_topk_late_filter
++SELECT i, 'alpha', CASE WHEN i >= 150 AND i % 10 = 0 THEN 'red apple' ELSE 'apple red' END, i, i
++FROM generate_series(0, 299) i;
 +
-+-- NULL AND true is NULL; NULL OR true is true.
-+SELECT count(*) FROM issue_6928_docs
-+WHERE body @@@ (SELECT q FROM issue_6928_lookup) AND body @@@ 'document';
-+ count 
-+-------
-+     0
-+(1 row)
++CREATE INDEX filtered_topk_late_filter_idx ON filtered_topk_late_filter
++USING paradedb (id, body, tag, n, m)
++WITH (target_segment_count = 1);
 +
-+SELECT count(*) FROM issue_6928_docs
-+WHERE body @@@ (SELECT q FROM issue_6928_lookup) OR body @@@ 'document';
-+ count 
-+-------
-+   100
-+(1 row)
++-- Two range filters: the first row in both ranges is 150.
++SELECT count(*) AS row_count, min(id) AS min_id
++FROM (
++    SELECT id FROM filtered_topk_late_filter
++    WHERE body === 'alpha' AND n >= 100 AND m >= 150
++    ORDER BY pdb.score(id) DESC
++    LIMIT 10
++) top;
 +
-+-- A negated NULL must not admit rows through AND or OR.
-+SELECT count(*) FROM issue_6928_docs
-+WHERE NOT (body @@@ (SELECT q FROM issue_6928_lookup)) AND body @@@ 'document';
-+ count 
-+-------
-+     0
-+(1 row)
++-- A constant-score phrase: its first match is row 150.
++SELECT count(*) AS row_count, min(id) AS min_id
++FROM (
++    SELECT id FROM filtered_topk_late_filter
++    WHERE body === 'alpha' AND tag ### 'red apple'::pdb.const(1)
++    ORDER BY pdb.score(id) DESC
++    LIMIT 10
++) top;
 +
-+SELECT count(*) FROM issue_6928_docs
-+WHERE NOT (body @@@ (SELECT q FROM issue_6928_lookup)) OR body @@@ 'missing';
-+ count 
-+-------
-+     0
-+(1 row)
-+
-+-- Negating compound predicates must preserve SQL three-valued logic.
-+SELECT count(*) FROM issue_6928_docs
-+WHERE NOT (body @@@ (SELECT q FROM issue_6928_lookup) AND body @@@ 'document');
-+ count 
-+-------
-+     0
-+(1 row)
-+
-+SELECT count(*) FROM issue_6928_docs
-+WHERE NOT (body @@@ (SELECT q FROM issue_6928_lookup) OR body @@@ 'missing');
-+ count 
-+-------
-+     0
-+(1 row)
-+
-+SELECT count(*) FROM issue_6928_docs
-+WHERE NOT (body @@@ (SELECT q FROM issue_6928_lookup)) OR body @@@ 'document';
-+ count 
-+-------
-+   100
-+(1 row)
-+
-+-- A NULL parameter reaches the same `Null` query, through the planner's estimate
-+-- fold for a generic plan.
-+SET plan_cache_mode = force_generic_plan;
-+PREPARE issue_6928_positive(paradedb.searchqueryinput) AS
-+SELECT count(*) FROM issue_6928_docs WHERE body @@@ $1;
-+EXECUTE issue_6928_positive(NULL);
-+ count 
-+-------
-+     0
-+(1 row)
-+
-+EXECUTE issue_6928_positive(paradedb.all());
-+ count 
-+-------
-+   100
-+(1 row)
-+
-+DEALLOCATE issue_6928_positive;
-+PREPARE issue_6928_negated(paradedb.searchqueryinput) AS
-+SELECT count(*) FROM issue_6928_docs WHERE NOT (body @@@ $1);
-+EXECUTE issue_6928_negated(NULL);
-+ count 
-+-------
-+     0
-+(1 row)
-+
-+DEALLOCATE issue_6928_negated;
-+RESET plan_cache_mode;
-+DROP TABLE issue_6928_lookup;
-+DROP TABLE issue_6928_docs;
++RESET paradedb.planner_warnings;
++RESET max_parallel_maintenance_workers;
++DROP TABLE filtered_topk_late_filter;
 ```
 
 ---
 
-### Incident Patch 3: `43e55167` (2026-10-27)
-**Commit Message**: fix: return system columns from JoinScan heap tuples (#6887)
+### Incident Patch 2: `29e8638d` (2026-10-28)
+**Commit Message**: fix(tokenizers): avoid quadratic Lindera token consumption (#7066)
 
 # Ticket(s) Closed
 
-- Closes #6630
+- Closes #7065
 
 ## What
 
-JoinScan returns the fetched row's `ctid`, `tableoid`, `xmin`, `cmin`,
-`xmax`, and `cmax` when they appear in the select list. Both sides of a
-join use their own heap tuple. An unmatched outer-join side still
-returns NULL.
+Consume Lindera tokens in linear time for the Chinese, Japanese, and
+Korean tokenizers.
 
 ## Why
 
-There were two places that lost system columns. `JoinSource::has_attno`
-accepted only `ctid` among the negative attribute numbers, so the other
-system columns were marked as pruned. `build_result_tuple` then returned
-NULL for every nonpositive attribute number, including `ctid`, even
-after it had fetched the row.
+`LinderaTokenStream::advance()` removes element zero from a `Vec` for
+every token, shifting the remaining elements each time. Large text
+fields therefore incur quadratic token-movement overhead after
+segmentation.
+
+On the synthetic release-mode benchmark in #7065, consuming 40,000
+tokens took 1,440.572 ms before this change and 0.557 ms after it. These
+are representative single-run measurements of token consumption, with
+dictionary loading excluded and segmentation timed separately; they do
+not represent end-to-end SQL latency.
 
 ## How
 
-- Accept PostgreSQL's valid system attribute numbers when resolving a
-source.
-- Read negative attributes through `slot_getsysattr` on the source's
-existing `BufferHeapTuple` slot. Read ordinary columns through
-`slot_getattr` as before.
-- Keep the null-extension check before either accessor, so an unmatched
-source cannot reuse the previous row's metadata.
+- Store the token vector as `std::vec::IntoIter` and advance it with
+`next()`.
+- Preserve token order, text, byte offsets, positions, and position
+lengths.
+- Add CJK metadata and partial-stream reuse regression tests, a manually
+invoked scaling benchmark, and a performance changelog fragment.
+
+The change is limited to the Lindera adapter and its tests; it adds no
+dependencies, SQL migrations, or index-format changes.
 
 ## Tests
 
-`tests/tests/joinscan_system_columns.rs` runs each query with JoinScan
-on and then off. It compares every returned column byte for byte: all
-six system columns from each
+- `cargo test -
 
-**File**: `docs/project/changelog/unreleased/6887.stability.mdx` (added, +5/-0)
+**File**: `docs/project/changelog/unreleased/7066.performance.mdx` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+header: stability
++header: performance
 +---
 +
-+Fixed JoinScan returning `NULL` for selected system columns (`ctid`, `tableoid`, `xmin`, `cmin`, `xmax`, and `cmax`). Matched rows now return the system attributes of the fetched heap tuple; unmatched outer-join rows still return `NULL`.
++- Avoid quadratic token consumption for Chinese, Japanese, and Korean Lindera tokenizers on large text fields.
 ```
 
-**File**: `pg_search/src/postgres/customscan/joinscan/build.rs` (modified, +1/-4)
+**File**: `tokenizers/src/lindera.rs` (modified, +98/-7)
 ```diff
-@@ -574,11 +574,8 @@ impl JoinSource {
-         if attno == 0 {
-             return true;
-         }
--        if attno == pg_sys::SelfItemPointerAttributeNumber as pg_sys::AttrNumber {
--            return true;
+@@ -37,6 +37,7 @@ use lindera_analysis::token_filter::korean_reading_form::KoreanReadingFormTokenF
+ use lindera_analysis::tokenizer::Tokenizer as LinderaTokenizer;
+ use once_cell::sync::{Lazy, OnceCell};
+ use std::sync::Arc;
++use std::vec::IntoIter;
+ use tantivy::tokenizer::{Token, TokenStream, Tokenizer};
+ 
+ /// The set of configurable options that distinguish one cached Lindera
+@@ -226,7 +227,8 @@ impl Tokenizer for LinderaChineseTokenizer {
+         let lindera_token_stream = LinderaTokenStream {
+             tokens: tokenizer
+                 .tokenize(text)
+-                .expect("Lindera Chinese tokenizer failed"),
++                .expect("Lindera Chinese tokenizer failed")
++                .into_iter(),
+             token: &mut self.token,
+         };
+ 
+@@ -247,7 +249,8 @@ impl Tokenizer for LinderaJapaneseTokenizer {
+         let lindera_token_stream = LinderaTokenStream {
+             tokens: tokenizer
+                 .tokenize(text)
+-                .expect("Lindera Japanese tokenizer failed"),
++                .expect("Lindera Japanese tokenizer failed")
++                .into_iter(),
+             token: &mut self.token,
+         };
+ 
+@@ -268,7 +271,8 @@ impl Tokenizer for LinderaKoreanTokenizer {
+         let lindera_token_stream = LinderaTokenStream {
+             tokens: tokenizer
+                 .tokenize(text)
+-                .expect("Lindera Korean tokenizer failed"),
++                .expect("Lindera Korean tokenizer failed")
++                .into_iter(),
+             token: &mut self.token,
+         };
+ 
+@@ -282,7 +286,7 @@ pub enum MultiLanguageTokenStream<'a> {
+ }
+ 
+ pub struct LinderaTokenStream<'a> {
+-    pub tokens: Vec<LinderaToken<'a>>,
++    pub tokens: IntoIter<LinderaToken<'a>>,
+     pub token: &'a mut Token,
+ }
+ 
+@@ -315,10 +319,9 @@ impl TokenStream for MultiLanguageTokenStream<'_> {
+ 
+ impl TokenStream for LinderaTokenStream<'_> {
+     fn advance(&mut self) -> bool {
+-        if self.tokens.is_empty() {
++        let Some(token) = self.tokens.next() else {
+             return false;
 -        }
-         if attno < 0 {
--            return false;
-+            return attno > pg_sys::FirstLowInvalidHeapAttributeNumber as pg_sys::AttrNumber;
-         }
-         let heaprel = PgSearchRelation::open(self.scan_info.heaprelid);
-         let tupdesc = heaprel.tuple_desc();
+-        let token = self.tokens.remove(0);
++        };
+         self.token.text = token.surface.to_string();
+         self.token.offset_from = token.byte_start;
+         self.token.offset_to = token.byte_end;
+@@ -352,6 +355,94 @@ mod tests {
+         tokens
+     }
+ 
++    #[rstest]
++    #[case::chinese(
++        LinderaChineseTokenizer::new,
++        chinese_tokenizer,
++        "北京 上海，搜索引擎。"
++    )]
++    #[case::japanese(
++        LinderaJapaneseTokenizer::new,
++        japanese_tokenizer,
++        "東京 大阪、検索エンジン。"
++    )]
++    #[case::korean(LinderaKoreanTokenizer::new, korean_tokenizer, "서울 부산, 검색 엔진.")]
++    fn test_lindera_token_stream_preserves_metadata<T: Tokenizer>(
++        #[case] make_tokenizer: fn(bool) -> T,
++        #[case] source: fn(LinderaOptions) -> &'static Arc<LinderaTokenizer>,
++        #[case] text: &str,
++        #[values(false, true)] keep_whitespace: bool,
++    ) {
++        let expected = source(LinderaOptions::new(keep_whitespace, false, false))
++            .tokenize(text)
++            .unwrap();
++        let mut tokenizer = make_tokenizer(keep_whitespace);
++        let mut stream = tokenizer.token_stream(text);
++
++        for expected_token in &expected {
++            assert!(stream.advance());
++            let actual = stream.token();
++            assert_eq!(actual.text, expected_token.surface.as_ref());
++            assert_eq!(actual.offset_from, expected_token.byte_start);
++            assert_eq!(actual.offset_to, expected_token.byte_end);
++            assert_eq!(actual.position, expected_token.position);
++            assert_eq!(actual.position_length, expected_token.position_length);
++        }
++        assert!(!stream.advance());
++        assert!(!stream.advance());
++    }
++
++    #[rstest]
++    #[case::chinese(LinderaChineseTokenizer::default(), "北京 上海。")]
++    #[case::japanese(LinderaJapaneseTokenizer::default(), "東京 大阪。")]
++    #[case::korean(LinderaKoreanTokenizer::default(), "서울 부산.")]
++    fn test_lindera_tokenizer_reuse_after_partial_stream<T: Tokenizer + Clone>(
++        #[case] mut tokenizer: T,
++        #[case] text: &str,
++    ) {
++        let expected = test_helper(&mut tokenizer.clone(), text);
++        let partial_text = text.repeat(2);
++        assert!(test_helper(&mut tokenizer.clone(), &partial_text).len() > 5);
++        {
++            let mut stream = tokenizer.token_stream(&partial_text);
++            for _ in 0..5 {
++                assert!(stream.advance());
++            }
++        }
++        assert!(test_helper(&mut tokenizer, " \t\n").is_empty());
++        assert_eq!(test_helper(&mut tokenizer, text), expected);
++    }
++
++    // Run explicitly to compare token-stream consumption independently of
++    // dictionary loading and segmentation. Avoid a wall-clock assertion in CI.
++    #[test]
++    #[ignore = "manual token-stream scaling benchmark; run with --release --ignored --nocapture"]
++    fn benchmark_lindera_token_stream_scalin
 ```
 
-**File**: `pg_search/src/postgres/customscan/joinscan/mod.rs` (modified, +6/-3)
-```diff
-@@ -2838,15 +2838,18 @@ impl JoinScan {
-                     }
-                     let rel_state = state.custom_state().relations.get(plan_position)?;
-                     let source_slot = rel_state.fetch_slot;
--                    if *original_attno <= 0
-+                    if *original_attno == 0
-                         || *original_attno > (*(*source_slot).tts_tupleDescriptor).natts as i16
-                     {
-                         *nulls.add(i) = true;
-                         continue;
-                     }
-                     let mut is_null = false;
--                    *datums.add(i) =
--                        pg_sys::slot_getattr(source_slot, *original_attno as i32, &mut is_null);
-+                    *datums.add(i) = if *original_attno < 0 {
-+                        pg_sys::slot_getsysattr(source_slot, *original_attno as i32, &mut is_null)
-+                    } else {
-+                        pg_sys::slot_getattr(source_slot, *original_attno as i32, &mut is_null)
-+                    };
-                     *nulls.add(i) = is_null;
-                 }
-                 privdat::OutputColumnInfo::WindowAgg { agg_index } => {
-```
+---
 
-**File**: `pg_search/tests/pg_regress/expected/join_system_columns.out` (added, +99/-0)
-```diff
-@@ -0,0 +1,99 @@
-+-- System columns must come from each source's fetched heap tuple (#6630).
-+-- tests/tests/joinscan_system_columns.rs compares all six system columns with
-+-- the PostgreSQL join. This file shows the plan and the values that do not
-+-- depend on transaction IDs or table OIDs.
-+CREATE EXTENSION IF NOT EXISTS pg_search;
-+SET max_parallel_workers_per_gather = 0;
-+SET paradedb.enable_join_custom_scan = on;
-+CREATE TABLE system_columns_a (id int PRIMARY KEY, next_id int, val text, note text);
-+CREATE TABLE system_columns_b (id int PRIMARY KEY, a_id int, val text);
-+INSERT INTO system_columns_a SELECT i, i + 1, 'val ' || i, 'original' FROM generate_series(1, 5) i;
-+-- The reverse insertion order gives the two sources different CTIDs.
-+INSERT INTO system_columns_b VALUES (14, 99, 'val 14'), (13, 3, 'val 13'), (12, 2, 'val 12'), (11, 1, 'val 11');
-+CREATE INDEX system_columns_a_idx ON system_columns_a USING paradedb (id, next_id, val);
-+CREATE INDEX system_columns_b_idx ON system_columns_b USING paradedb (id, a_id, val);
-+ANALYZE system_columns_a;
-+ANALYZE system_columns_b;
-+-- Each row's CTIDs must be its own tuples' CTIDs, not NULL.
-+EXPLAIN (COSTS OFF, VERBOSE)
-+SELECT a.id, b.id AS b_id,
-+       a.ctid AS a_ctid, a.cmin AS a_cmin, a.xmax AS a_xmax, a.cmax AS a_cmax,
-+       b.ctid AS b_ctid, b.cmin AS b_cmin, b.xmax AS b_xmax, b.cmax AS b_cmax
-+FROM system_columns_a a JOIN system_columns_b b ON a.id = b.a_id
-+WHERE a.val ||| 'val'
-+ORDER BY a.id LIMIT 3;
-+                                                                                                                     QUERY PLAN                                                                                                                     
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-+ Custom Scan (ParadeDB Join Scan)
-+   Output: a.id, b.id, a.ctid, a.cmin, a.xmax, a.cmax, b.ctid, b.cmin, b.xmax, b.cmax
-+   Relation Tree: a INNER b
-+   Join Cond: a.id = b.a_id
-+   Limit: 3
-+   Order By: a.id asc
-+   DataFusion Physical Plan: 
-+     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, ctid_0@0 as col_3, NULL as col_4, NULL as col_5, NULL as col_6, ctid_1@2 as col_7, NULL as col_8, NULL as col_9, NULL as col_10, ctid_0@0 as ctid_0, ctid_1@2 as ctid_1]
-+     :   SortExec: TopK(fetch=3), expr=[id@1 ASC NULLS LAST], preserve_partitioning=[false]
-+     :     VisibilityFilterExec: tables=[a, b]
-+     :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(a_id@1, id@1)], projection=[ctid_0@2, id@3, ctid_1@0]
-+     :         CooperativeExec
-+     :           PgSearchScan: table=b, segments=1, query="all"
-+     :         CooperativeExec
-+     :           PgSearchScan: table=a, segments=1, dynamic_filters=2, query={"with_index":{"query":{"match":{"field":"val","value":"val","tokenizer":null,"distance":null,"transposition_cost_one":null,"prefix":null,"conjunction_mode":false}}}}
-+(15 rows)
-+
-+SELECT a.id, b.id AS b_id,
-+       a.ctid AS a_ctid, a.cmin AS a_cmin, a.xmax AS a_xmax, a.cmax AS a_cmax,
-+       b.ctid AS b_ctid, b.cmin AS b_cmin, b.xmax AS b_xmax, b.cmax AS b_cmax
-+FROM system_columns_a a JOIN system_columns_b b ON a.id = b.a_id
-+WHERE a.val ||| 'val'
-+ORDER BY a.id LIMIT 3;
-+ id | b_id | a_ctid | a_cmin | a_xmax | a_cmax | b_ctid | b_cmin | b_xmax | b_cmax 
-+----+------+--------+--------+--------+--------+--------+--------+--------+--------
-+  1 |   11 | (0,1)  |      0 |      0 |      0 | (0,4)  |      0 |      0 |      0
-+  2 |   12 | (0,2)  |      0 |      0 |      0 | (0,3)  |      0 |      0 |      0
-+  3 |   13 | (0,3)  |      0 |      0 |      0 | (0,2)  |      0 |      0 |      0
-+(3 rows)
-+
-+-- b.id 14 has no match, so its a system columns must be NULL.
-+EXPLAIN (COSTS OFF, VERBOSE)
-+SELECT b.id, a.id AS a_id,
-+       a.ctid AS a_ctid, a.xmax AS a_xmax,
-+       b.ctid AS b_ctid, b.xmax AS b_xmax
-+FROM system_columns_b b LEFT JOIN system_columns_a a ON a.id = b.a_id
-+WHERE b.val ||| 'val'
-+ORDER BY b.id LIMIT 10;
-+                                                                                                                     QUERY PLAN                                                                                                                     
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-+ Custom Scan (ParadeDB Join Scan)
-+   Output: b.id, a.id, a.ctid, a.xmax, b.ctid, b.xmax
-+   Relation Tree: b LEFT a
-+   Join Cond: a.id = b.a_id
-+   Limit: 10
-+   Order By: b.id asc
-+   DataFusion Physical Plan: 
-+     : ProjectionExec: expr=[id@1 as col_1, id@3 as col_2, ctid_1@2 as col_3, NULL as col_4, ctid_0@0 as col_5, NULL as
-```
+### Incident Patch 3: `416da5d0` (2026-10-28)
+**Commit Message**: fix: allow vacuum delete assertion to remain unreachable (#7078)
 
-**File**: `pg_search/tests/pg_regress/sql/join_system_columns.sql` (added, +52/-0)
-```diff
-@@ -0,0 +1,52 @@
-+-- System columns must come from each source's fetched heap tuple (#6630).
-+-- tests/tests/joinscan_system_columns.rs compares all six system columns with
-+-- the PostgreSQL join. This file shows the plan and the values that do not
-+-- depend on transaction IDs or table OIDs.
-+CREATE EXTENSION IF NOT EXISTS pg_search;
-+SET max_parallel_workers_per_gather = 0;
-+SET paradedb.enable_join_custom_scan = on;
-+
-+CREATE TABLE system_columns_a (id int PRIMARY KEY, next_id int, val text, note text);
-+CREATE TABLE system_columns_b (id int PRIMARY KEY, a_id int, val text);
-+INSERT INTO system_columns_a SELECT i, i + 1, 'val ' || i, 'original' FROM generate_series(1, 5) i;
-+-- The reverse insertion order gives the two sources different CTIDs.
-+INSERT INTO system_columns_b VALUES (14, 99, 'val 14'), (13, 3, 'val 13'), (12, 2, 'val 12'), (11, 1, 'val 11');
-+CREATE INDEX system_columns_a_idx ON system_columns_a USING paradedb (id, next_id, val);
-+CREATE INDEX system_columns_b_idx ON system_columns_b USING paradedb (id, a_id, val);
-+ANALYZE system_columns_a;
-+ANALYZE system_columns_b;
-+
-+-- Each row's CTIDs must be its own tuples' CTIDs, not NULL.
-+EXPLAIN (COSTS OFF, VERBOSE)
-+SELECT a.id, b.id AS b_id,
-+       a.ctid AS a_ctid, a.cmin AS a_cmin, a.xmax AS a_xmax, a.cmax AS a_cmax,
-+       b.ctid AS b_ctid, b.cmin AS b_cmin, b.xmax AS b_xmax, b.cmax AS b_cmax
-+FROM system_columns_a a JOIN system_columns_b b ON a.id = b.a_id
-+WHERE a.val ||| 'val'
-+ORDER BY a.id LIMIT 3;
-+
-+SELECT a.id, b.id AS b_id,
-+       a.ctid AS a_ctid, a.cmin AS a_cmin, a.xmax AS a_xmax, a.cmax AS a_cmax,
-+       b.ctid AS b_ctid, b.cmin AS b_cmin, b.xmax AS b_xmax, b.cmax AS b_cmax
-+FROM system_columns_a a JOIN system_columns_b b ON a.id = b.a_id
-+WHERE a.val ||| 'val'
-+ORDER BY a.id LIMIT 3;
-+
-+-- b.id 14 has no match, so its a system columns must be NULL.
-+EXPLAIN (COSTS OFF, VERBOSE)
-+SELECT b.id, a.id AS a_id,
-+       a.ctid AS a_ctid, a.xmax AS a_xmax,
-+       b.ctid AS b_ctid, b.xmax AS b_xmax
-+FROM system_columns_b b LEFT JOIN system_columns_a a ON a.id = b.a_id
-+WHERE b.val ||| 'val'
-+ORDER BY b.id LIMIT 10;
-+
-+SELECT b.id, a.id AS a_id,
-+       a.ctid AS a_ctid, a.xmax AS a_xmax,
-+       b.ctid AS b_ctid, b.xmax AS b_xmax
-+FROM system_columns_b b LEFT JOIN system_columns_a a ON a.id = b.a_id
-+WHERE b.val ||| 'val'
-+ORDER BY b.id LIMIT 10;
-+
-+DROP TABLE system_columns_a, system_columns_b;
-+RESET paradedb.enable_join_custom_scan;
-```
+## What
 
-**File**: `tests/tests/joinscan_system_columns.rs` (added, +174/-0)
+Use `assert_always_or_unreachable!` for the immutable VACUUM
+delete-count invariant.
+
+## Why
+
+Antithesis reported this property as failed with no examples in the
+October 28 Enterprise run. Reaching this assertion requires partially
+deleting an immutable segment. A run may validly delete nothing, remove
+whole segments, or only flush mutable segments.
+
+## How
+
+Allow the assertion site to remain unvisited while preserving every
+existing invariant check whenever it executes. Document why reachability
+is optional. Existing Stressgres workloads are unchanged.
+
+## Tests
+
+`git diff --check` passed. No runtime tests added or run for this
+assertion classification change. Antithesis validation remains pending a
+subsequent run.
+
+**File**: `pg_search/src/postgres/delete.rs` (modified, +3/-1)
 ```diff
-@@ -0,0 +1,174 @@
-+// Copyright (c) 2023-2026 ParadeDB, Inc.
-+//
-+// This file is part of ParadeDB - Postgres for Search and Analytics
-+//
-+// This program is free software: you can redistribute it and/or modify
-+// it under the terms of the GNU Affero General Public License as published by
-+// the Free Software Foundation, either version 3 of the License, or
-+// (at your option) any later version.
-+//
-+// This program is distributed in the hope that it will be useful
-+// but WITHOUT ANY WARRANTY; without even the implied warranty of
-+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-+// GNU Affero General Public License for more details.
-+//
-+// You should have received a copy of the GNU Affero General Public License
-+// along with this program. If not, see <http://www.gnu.org/licenses/>.
-+
-+//! JoinScan must return system columns from each source's fetched heap tuple
-+//! (issue #6630). Each query must return the same rows with JoinScan on and
-+//! off, for all six system columns of both sources.
-+
-+use rstest::*;
-+use sqlx::{PgConnection, Row};
-+use tests::fixtures::*;
-+
-+const JOIN_SCAN: &str = "Custom Scan (ParadeDB Join Scan)";
-+
-+const SYSTEM_COLUMNS: &str = r#"
-+    a.ctid AS a_ctid, a.tableoid AS a_tableoid, a.xmin AS a_xmin,
-+    a.cmin AS a_cmin, a.xmax AS a_xmax, a.cmax AS a_cmax,
-+    b.ctid AS b_ctid, b.tableoid AS b_tableoid, b.xmin AS b_xmin,
-+    b.cmin AS b_cmin, b.xmax AS b_xmax, b.cmax AS b_cmax
-+"#;
-+
-+fn setup(conn: &mut PgConnection) {
-+    r#"
-+    SET max_parallel_workers_per_gather = 0;
-+
-+    CREATE TABLE system_columns_a (id int PRIMARY KEY, next_id int, val text, note text);
-+    CREATE TABLE system_columns_b (id int PRIMARY KEY, a_id int, val text);
-+    INSERT INTO system_columns_a SELECT i, i + 1, 'val ' || i, 'original' FROM generate_series(1, 5) i;
-+    -- The reverse insertion order gives the two sources different CTIDs.
-+    INSERT INTO system_columns_b VALUES (14, 99, 'val 14'), (13, 3, 'val 13'), (12, 2, 'val 12'), (11, 1, 'val 11');
-+
-+    CREATE INDEX system_columns_a_idx ON system_columns_a USING paradedb (id, next_id, val);
-+    CREATE INDEX system_columns_b_idx ON system_columns_b USING paradedb (id, a_id, val);
-+    ANALYZE system_columns_a;
-+    ANALYZE system_columns_b;
-+    "#
-+    .execute(conn);
-+}
-+
-+/// Rows as raw column values. sqlx cannot decode `tid`, `xid` or `cid`, and
-+/// the comparison only needs equal bytes.
-+fn fetch_raw(query: &str, conn: &mut PgConnection) -> Vec<Vec<Option<Vec<u8>>>> {
-+    query
-+        .fetch_dynamic(conn)
-+        .iter()
-+        .map(|row| {
-+            (0..row.len())
-+                .map(|i| {
-+                    let value = row.try_get_raw(i).expect("column should exist");
-+                    // `as_bytes` fails only for NULL.
-+                    value.as_bytes().ok().map(<[u8]>::to_vec)
-+                })
-+                .collect()
-+        })
-+        .collect()
-+}
-+
-+#[derive(Clone, Copy)]
-+enum SystemColumnsCase {
-+    InnerJoin,
-+    LeftJoinUnmatchedRow,
-+    SelfJoin,
-+    OnlySystemColumns,
-+    UpdatedTuple,
-+}
-+
-+#[rstest]
-+#[case::inner_join(SystemColumnsCase::InnerJoin)]
-+#[case::left_join_unmatched_row(SystemColumnsCase::LeftJoinUnmatchedRow)]
-+#[case::self_join(SystemColumnsCase::SelfJoin)]
-+#[case::only_system_columns(SystemColumnsCase::OnlySystemColumns)]
-+#[case::updated_tuple(SystemColumnsCase::UpdatedTuple)]
-+fn joinscan_system_columns_match_postgres(#[case] case: SystemColumnsCase, mut conn: PgConnection) {
-+    setup(&mut conn);
-+
-+    let (query, expected_rows) = match case {
-+        SystemColumnsCase::InnerJoin => (
-+            format!(
-+                r#"
-+                SELECT a.id, b.id AS b_id, a.note, {SYSTEM_COLUMNS}
-+                FROM system_columns_a a JOIN system_columns_b b ON a.id = b.a_id
-+                WHERE a.val ||| 'val'
-+                ORDER BY a.id LIMIT 3
-+                "#
-+            ),
-+            3,
-+        ),
-+        SystemColumnsCase::LeftJoinUnmatchedRow => (
-+            // b.id 14 has no match, so its `a` system columns must be NULL and
-+            // must not repeat the previous row's values.
-+            format!(
-+                r#"
-+                SELECT b.id, a.id AS a_id, {SYSTEM_COLUMNS}
-+                FROM system_columns_b b LEFT JOIN system_columns_a a ON a.id = b.a_id
-+                WHERE b.val ||| 'val'
-+                ORDER BY b.id LIMIT 10
-+                "#
-+            ),
-+            4,
-+        ),
-+        SystemColumnsCase::SelfJoin => (
-+            // Both sources read the same table, but each row pairs two
-+            // different tuples.
-+            format!(
-+                r#"
-+                SELECT a.id, b.id AS b_id, {SYSTEM_COLUMNS}
-+                FROM system_columns_a a JOIN system_columns_a b ON a.next_id = b.id
-+                WHERE a.val ||| 'val'
-+                ORDER BY a.id LIMIT 3
-+                "#
-+            ),
-+            3,
-+        ),
-+        SystemColumnsCase::OnlySystemCol
+@@ -341,6 +341,8 @@ impl SegmentDeleter {
+         // file), and (b) never resurrect a deleted doc -- num_deleted only grows and live docs
+         // only shrink. A violation means the atomic swap would pair mismatched segments or
+         // un-delete already-dead rows (wrong results / resurrected tuples).
++        // Partial immutable-segment deletes need not occur in every run: VACUUM may
++        // delete nothing, remove whole segments, or only flush mutable segments.
+         dst::observe!(|| {
+             let old_segment_id = old_meta.id();
+             let new_segment_id = new_meta.id();
+@@ -350,7 +352,7 @@ impl SegmentDeleter {
+             let new_num_deleted_docs = new_meta.num_deleted_docs();
+             let old_num_docs = old_meta.num_docs();
+             let new_num_docs = new_meta.num_docs();
+-            dst::assert_always!(
++            dst::assert_always_or_unreachable!(
+                 new_segment_id == old_segment_id
+                     && new_max_doc == old_max_doc
+                     && new_num_deleted_docs >= old_num_deleted_docs
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7063** (2026-10-27): chore: Remove `postgres_early_topk.sql`. (@stuhood)
-- **PR #7061** (2026-10-28): ci: restore Cohere index build metrics in baselines and comments (@rebasedming)
-- **PR #7060** (2026-10-27): chore: update datafusion-distributed version (@paradedb-github-bot[bot])
-- **PR #7059** (2026-10-27): chore: update datafusion-distributed version (@barbarj)
-- **PR #7058** (closed): chore: Noop (@stuhood)
-- **PR #7057** (closed): ci: benchmark Cohere with one target segment (@rebasedming)
+- **PR #7086** (2026-10-28): test: reduce Stressgres bootstrap data for Antithesis (@philippemnoel)
+- **PR #7078** (2026-10-28): fix: allow vacuum delete assertion to remain unreachable (@philippemnoel)
+- **PR #7077** (2026-10-28): perf: pin Tantivy main tip and share vector bounds (@walter-woodall)
+- **PR #7076** (closed): perf: pin Tantivy main with member patience (@walter-woodall)
+- **PR #7074** (2026-10-28): chore: Break out a lazy sorted scan. (@paradedb-github-bot[bot])
+- **PR #7073** (2026-10-28): fix(tokenizers): avoid quadratic Lindera token consumption (@paradedb-github-bot[bot])
 
 ---
 
@@ -3376,61 +2889,44 @@ six system columns from each
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: restore Cohere index build metrics in baselines and comments (#7061)
+## X. debug-build panics in filtered Top K queries (#6793)
 
 **RULE**:
-When implementing operations in `.github/actions/publish-benchmarker-results/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `22ae5780`: ci: restore Cohere index build metrics in baselines and comments (#7061). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e5995dd2`: debug-build panics in filtered Top K queries (#6793). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/publish-benchmarker-results/action.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  index_metrics_file:
-    description: "Optional JSON metrics for index build time and size"
-    required: false
-    default: ""
-        INDEX_METRICS_FILE: ${{ inputs.index_metrics_file }}
-        printf '{}\n' > _index_baseline.json
-        printf '[]\n' > _index_metrics.json
-        if [ -n "$INDEX_METRICS_FILE" ]; then
-          cp "$INDEX_METRICS_FILE" _index_metrics.json
-        fi
-    - name: Publish Index Build Metrics
-      id: publish_index
-      if: inputs.index_metrics_file != ''
-      uses: ./.github/actions/publish-benchmark-results
-      with:
-        publication_id: ${{ env.BENCHMARK_PUBLICATION_ID }}-index
-        name: "benchmarker ${{ inputs.dataset }} (index build)"
-        ref: ${{ inputs.ref }}
-        metrics_file: _index_metrics.json
-        github_token: ${{ inputs.github_token }}
-        pages_directory: benchmarker
-        publish_baseline: ${{ inputs.publish_baseline == 'true' }}
-        comment_on_regression: ${{ inputs.pr_number == '' }}
-
-    - name: Read Index Build Baseline
-      if: inputs.pr_number != '' && steps.publish_index.outcome == 'success'
-      shell: bash
-      env:
-        DATASET: ${{ inputs.dataset }}
-      run: |
-        sed '1s/^wind
+source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
+source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
+source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
+source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
+source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
+source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
+source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
+source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
+source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-      if: inputs.pr_number != '' && (hashFiles('_ghpages_html/*.html') != '' || inputs.context_file != '')
-          jq -nr --slurpfile latency _latency_baseline.json --slurpfile throughput _throughput_baseline.json '
-            "Baselines: latency `\(($latency[0].commit.id // "n/a") | .[0:7])`, QPS `\(($throughput[0].commit.id // "n/a") | .[0:7])`.\n"
-             ($throughput[0] | map(. + {baseline: $throughput_baseline[0]})))
+source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
+source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
+source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
+source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
+source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
+source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
+source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
+source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
+source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e6
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `22ae5780` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e5995dd2` are properly handled with clean fallback behavior.

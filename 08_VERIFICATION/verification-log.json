@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-LLSR",
-    "timestamp": "2026-10-27T19:20:16.539Z",
-    "repository": "linkerd/linkerd2",
-    "learningId": "learn-github-linkerd-linkerd2",
-    "contentHash": "6808ebc735012f497031e5c8e906070606f1a545d03067ab9bb3df5b39877a88",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-LOPF",
-    "timestamp": "2026-10-27T19:20:20.307Z",
-    "repository": "rmax/scrapy-redis",
-    "learningId": "learn-github-rmax-scrapy-redis",
-    "contentHash": "3307e5982c4b255ef3af5adce349bf2e6ea6bcd95534a6fe6a3d1fa5f6ea8a7c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-LQ4R",
-    "timestamp": "2026-10-27T19:20:22.155Z",
-    "repository": "doobidoo/mcp-memory-service",
-    "learningId": "learn-github-doobidoo-mcp-memory-service",
-    "contentHash": "ec7265a317ca5543a7564a5219a0367bb1a3cd43c9c07ee851af2a75e01311cf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-0N8Y",
     "timestamp": "2026-10-27T19:31:58.258Z",
     "repository": "pola-rs/polars",
@@ -7492,6 +7447,51 @@
     "contentHash": "03502bd94cfee37a4fb9fa9cdbc86af7fd2671b9e92fdf7b29137e982079fab9",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-4HVA",
+    "timestamp": "2026-10-29T00:02:34.486Z",
+    "repository": "kgateway-dev/kgateway",
+    "learningId": "learn-github-kgateway-dev-kgateway",
+    "contentHash": "c5a25da1dd15f9f42e0ebb8dd994894a60a4dcdc11b8fc47c896fc502938994e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-4JYA",
+    "timestamp": "2026-10-29T00:02:37.186Z",
+    "repository": "black-forest-labs/flux-3-image-klein-comfy",
+    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
+    "contentHash": "f0a489788880cc9b33e146dd437fd122f7c10d6abc743b110553e8c5dfa5b0da",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-4M3R",
+    "timestamp": "2026-10-29T00:02:39.975Z",
+    "repository": "paradedb/paradedb",
+    "learningId": "learn-github-paradedb-paradedb",
+    "contentHash": "ed801206cb804f7affad6744c14ddef452555d225adb73f47b2f4d4384e013b4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T23:56:17.900Z",
-    "lastVerified": "2026-10-28T23:56:17.900Z",
+    "lastChecked": "2026-10-29T00:02:42.510Z",
+    "lastVerified": "2026-10-29T00:02:42.510Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -134,8 +134,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-28T23:18:54.388Z",
-    "lastVerified": "2026-10-28T23:18:54.388Z",
+    "lastChecked": "2026-10-29T00:02:37.005Z",
+    "lastVerified": "2026-10-29T00:02:37.005Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -198,9 +198,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-10-28T20:08:43.521Z",
+    "lastChecked": "2026-10-29T00:02:31.964Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-10-28T20:08:43.521Z"
+    "lastVerified": "2026-10-29T00:02:31.964Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch/meilisearch",
@@ -329,9 +329,9 @@
   "lapce-lapce": {
     "name": "lapce",
     "officialUrl": "https://github.com/lapce/lapce",
-    "lastChecked": "2026-10-28T03:11:13.350Z",
+    "lastChecked": "2026-10-29T00:02:22.038Z",
     "revisionIdentifier": "f66ffaa9",
-    "lastVerified": "2026-10-28T03:11:13.350Z"
+    "lastVerified": "2026-10-29T00:02:22.038Z"
   },
   "hf-sentence-transformers-all-minilm-l6-v2": {
     "name": "sentence-transformers/all-MiniLM-L6-v2",
@@ -2042,14 +2042,14 @@
     "officialUrl": "https://github.com/paradedb/paradedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T06:18:38.225Z",
-    "lastVerified": "2026-10-28T06:18:38.225Z",
+    "lastChecked": "2026-10-29T00:02:39.361Z",
+    "lastVerified": "2026-10-29T00:02:39.361Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-paradedb-paradedb",
-    "contentHash": "d9c88797b866f855097487e2d538bb254baccac0945149b961deeb276069dda3",
+    "contentHash": "ed801206cb804f7affad6744c14ddef452555d225adb73f47b2f4d4384e013b4",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2447,11 +2447,21 @@
     "lastVerified": "2026-10-28T08:05:53.700Z"
   },
   "kgateway-dev-kgateway": {
-    "name": "kgateway",
+    "name": "kgateway-dev/kgateway",
     "officialUrl": "https://github.com/kgateway-dev/kgateway",
-    "lastChecked": "2026-10-28T08:05:56.236Z",
-    "revisionIdentifier": "e8e3d347",
-    "lastVerified": "2026-10-28T08:05:56.236Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-29T00:02:33.908Z",
+    "lastVerified": "2026-10-29T00:02:33.908Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-kgateway-dev-kgateway",
+    "contentHash": "c5a25da1dd15f9f42e0ebb8dd994894a60a4dcdc11b8fc47c896fc502938994e",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "zilliztech-attu": {
     "name": "attu",
@@ -7648,5 +7658,29 @@
     "lastChecked": "2026-10-28T23:52:08.108Z",
     "revisionIdentifier": "3a99044b",
     "lastVerified": "2026-10-28T23:52:08.108Z"
+  },
+  "hf-black-forest-labs-flux-3-image-klein-comfy": {
+    "name": "black-forest-labs/flux-3-image-klein-comfy",
+    "officialUrl": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-29T00:02:24.606Z",
+    "lastVerified": "2026-10-29T00:02:24.606Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
+    "contentHash": "f0a489788880cc9b33e146dd437fd122f7c10d6abc743b110553e8c5dfa5b0da",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mochidiffusion-mochidiffusion": {
+    "name": "MochiDiffusion",
+    "officialUrl": "https://github.com/MochiDiffusion/MochiDiffusion",
+    "lastChecked": "2026-10-29T00:02:27.000Z",
+    "revisionIdentifier": "5e978c69",
+    "lastVerified": "2026-10-29T00:02:27.000Z"
   }
 }

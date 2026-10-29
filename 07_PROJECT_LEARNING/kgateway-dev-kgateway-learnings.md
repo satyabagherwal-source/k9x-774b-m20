@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md`  
 > **Source**: github ([https://github.com/kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway))  
-> **Source Version**: `e8e3d347`  
+> **Source Version**: `643f50b3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T00:53:36.658Z  
+> **Timestamp**: 2026-10-29T00:02:34.057Z  
 > **Learning ID**: `learn-github-kgateway-dev-kgateway`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T00:53:36.309Z  
+> **Harvest Timestamp**: 2026-10-29T00:02:33.908Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Cloud-Native API Gateway and AI Gateway
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 5726 stars
+- **Stars / Engagement**: 5727 stars
 
 ---
 
@@ -930,11 +930,11 @@ func FileDataSource(s string) *envoycorev3.DataSource {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14924** (2026-10-27): **e2e: terminate istioctl uninstall output with a newline**
-  *Symptoms*: # Description  istioctl uninstall ends its output with "✔ Uninstall complete" and no trailing newline. UninstallIstio streams that straight to the test binary's stdout, so the next "--- PASS: <Test>" line is appended to it. test2json only recognizes result lines at the start of a line, so it loses the results and gotestsum reports passing tests as failures (e.g. "DONE 27 tests, 25 failures") even though go test exits 0.  Print a newline after istioctl exits so the following result line starts on its own line.  <!-- Thanks for opening a PR! Please delete any sections that don’t apply. -->   <!-- A concise explanation of the change. You may include: - **Motivation:** why this change is needed - **What changed:** key implementation details - **Related issues:** e.g., `Fixes #123` -->  # Change Type /kind cleanup /kind test  <!-- Select one or more of the following by including the corresponding slash-command.  If you pick more than one, the release note is filed under whichever appears first here (manual reordering does not have any effect): ``` /kind breaking_change /kind feature /kind fix /kind deprecation /kind documentation /kind cleanup /kind install /kind bump (the following kinds are not included in release notes) /kind design /kind flake /kind test ``` -->  # Changelog  <!-- Provide the exact line to appear in the release notes for this PR.  A PR gets one release note, filed under the highest-precedence /kind above. If this change needs no release note, write "NONE" in t
+- **Issue #14938** (2026-10-28): **ci: rebalance e2e shards after the TCPRoute/TLSRoute speedup**
+  *Symptoms*: # Description  **Motivation:** after #14890, `TLSRouteServices` (cluster-one) and `TCPRouteServices` (cluster-six) take about 17–19s each instead of ~220–240s. That leaves cluster-one and cluster-six light, while cluster-three (~820s) and cluster-five (~790s) gate every e2e run.  **What changed:** two suites move between shards that already run `TestKgateway`, so neither shard gains an install:  | Suite | From | To | |---|---|---| | `TestKgateway/Deployer` (~160s) | cluster-five | cluster-one | | `TestKgateway/ListenerPolicy` (~190s) | cluster-three | cluster-eight |  No suite is added or dropped  **Expected effect** (modelled from the 5 merge-queue runs between the waypoint removal and #14890, with #14890's suite times substituted):  | Shard | Before | After | |---|---|---| | cluster-three | ~819s | ~626s | | cluster-five | ~787s | ~627s | | cluster-one | ~403s | ~564s | | cluster-eight | ~386s | ~579s | | slowest shard | ~819s (three) | ~637s (four) |  Shard times vary by up to ~200s between runs, so these are estimates.  # Change Type  /kind test  # Changelog  ```release-note NONE ```  # Additional Notes  Lambda and EC2 stay on cluster-three (localstack). cluster-seven (ordered ADS disabled), ipv6, dual-stack, upgrade and multi-install keep their suites because of their special setup. 
 
-- **Issue #14917** (2026-10-27): **Fail closed on backendRef-level policy errors**
-  *Symptoms*: # Description  **Motivation:** A TrafficPolicy attached to an HTTPRoute backendRef via an `ExtensionRef` filter failed open. If the policy had construction errors (e.g. ext-auth referencing a missing GatewayExtension, an RBAC CEL error, JWT/API-key/basic-auth secret resolution failures), or the referenced policy did not exist at all, the route was still programmed to the backend cluster without the per-route config and kept reporting `Programmed=True`. The same policy attached at rule level or via `targetRefs` replaces the route with a 500.  **What changed:** - `runBackendPolicies` skips policies with `Errors` (the same guard `runRoutePlugins` has) and returns the wrapped policy errors. - `translateRouteAction` returns backendRef policy errors instead of only logging them, and `envoyRoutes` joins them into `routeProcessingErr`, so `finalizeRoute` replaces the route with a direct 500 and sets `kgateway.dev/Programmed=False` / `RouteRuleReplaced`. - `getBackends` no longer discards `getExtensionRefs` errors; they are joined into the rule's `Err`, the same as a missing rule-level `ExtensionRef`.  New golden test `traffic-policy/backendref-policy-errors.yaml` covers a backendRef policy with a missing GatewayExtension, a backendRef ExtensionRef to a nonexistent policy, and a valid backendRef policy (still forwarded with its ext-auth config).  # Change Type  /kind fix  # Changelog  ```release-note A policy attached to an HTTPRoute backendRef through an ExtensionRe
+- **Issue #14934** (2026-10-28): **Gate new tests on API version**
+  *Symptoms*: <!-- Thanks for opening a PR! Please delete any sections that don’t apply. -->  # Description Gate session persistence tests on GW API version to fix nightlies.    Passing run in fork: https://github.com/sheidkamp/kgateway/actions/runs/40729970827  # Change Type  ``` /kind cleanup /kind test ```   # Changelog    ```release-note NONE ```  # Additional Notes  <!-- Any extra context or edge cases for reviewers. --> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -951,36 +951,322 @@ func FileDataSource(s string) *envoycorev3.DataSource {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e8e3d347` (2026-10-27)
-**Commit Message**: e2e: terminate istioctl uninstall output with a newline (#14924)
+### Incident Patch 1: `a650e169` (2026-10-28)
+**Commit Message**: e2e: share one Gateway per TCPRoute/TLSRoute suite (#14890)
 
-Signed-off-by: David L. Chandler <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: omar <[REDACTED_EMAIL]>
+Co-authored-by: David Jumani <[REDACTED_EMAIL]>
 
-**File**: `test/e2e/testutils/cluster/istio.go` (modified, +5/-1)
+**File**: `test/e2e/features/services/tcproute/suite.go` (modified, +49/-131)
 ```diff
-@@ -203,7 +203,11 @@ func UninstallIstio(istioctlBinary, kubeContext string) error {
- 	cmd := exec.Command("sh", "-c", fmt.Sprintf("yes | %s uninstall --purge --context '%s'", istioctlBinary, kubeContext)) //nolint:gosec // G204: controlled istioctl uninstall command in tests
- 	cmd.Stdout = os.Stdout
- 	cmd.Stderr = os.Stderr
--	if err := cmd.Run(); err != nil {
-+	err := cmd.Run()
-+	// istioctl ends with "✔ Uninstall complete" and no trailing newline. Terminate it so the
-+	// next "--- PASS"/"--- FAIL" line starts its own line; otherwise test2json drops the results.
-+	fmt.Fprintln(os.Stdout)
-+	if err != nil {
- 		return fmt.Errorf("istioctl uninstall failed: %w", err)
+@@ -6,8 +6,6 @@ import (
+ 	"context"
+ 
+ 	"github.com/stretchr/testify/suite"
+-	appsv1 "k8s.io/api/apps/v1"
+-	corev1 "k8s.io/api/core/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	gwv1 "sigs.k8s.io/gateway-api/apis/v1"
+ 
+@@ -48,24 +46,24 @@ func (s *testingSuite) SetupSuite() {
+ }
+ 
+ var (
+-	setup = base.TestCase{}
++	// setup holds the Gateway and curl client shared by every subtest. Each subtest
++	// attaches to its own listener, so it only creates and deletes routes and backends.
++	setup = base.TestCase{
++		Manifests: []string{setupManifest},
++	}
+ 
+ 	testCases = map[string]*base.TestCase{
+ 		"TestConfigureTCPRouteBackingDestinations": {},
  	}
- 	return nil
+ )
+ 
+ type tcpRouteTestCase struct {
+-	name                string
+-	nsManifest          string
+-	gtwName             string
+-	gtwNs               string
+-	gtwManifest         string
+-	svcManifest         string
+-	tcpRouteManifest    string
+-	preGatewayManifests []string
+-	proxyService        *corev1.Service
+-	proxyDeployment     *appsv1.Deployment
++	name string
++	// namespaceManifests create the namespaces the subtest owns. Deleting them
++	// removes everything else the subtest applied.
++	namespaceManifests  []string
++	manifests           []string
++	routeNs             string
+ 	expectedResponses   []*matchers.HttpResponse
+ 	expectedErrorCode   int
+ 	ports               []int
+@@ -78,15 +76,10 @@ type tcpRouteTestCase struct {
+ func (s *testingSuite) TestConfigureTCPRouteBackingDestinations() {
+ 	testCases := []tcpRouteTestCase{
+ 		{
+-			name:             "SingleServiceTCPRoute",
+-			nsManifest:       singleSvcNsManifest,
+-			gtwName:          singleSvcGatewayName,
+-			gtwNs:            singleSvcNsName,
+-			gtwManifest:      singleSvcGatewayAndClientManifest,
+-			svcManifest:      singleSvcBackendManifest,
+-			tcpRouteManifest: singleSvcTcpRouteManifest,
+-			proxyService:     singleSvcProxyService,
+-			proxyDeployment:  singleSvcProxyDeployment,
++			name:               "SingleServiceTCPRoute",
++			namespaceManifests: []string{singleSvcNsManifest},
++			manifests:          []string{singleSvcBackendManifest, singleSvcTcpRouteManifest},
++			routeNs:            singleSvcNsName,
+ 			expectedResponses: []*matchers.HttpResponse{
+ 				expectedSingleSvcResp,
+ 			},
+@@ -98,15 +91,10 @@ func (s *testingSuite) TestConfigureTCPRouteBackingDestinations() {
+ 			tcpRouteNames:       []string{singleSvcTCPRouteName},
+ 		},
+ 		{
+-			name:             "MultiServicesTCPRoute",
+-			nsManifest:       multiSvcNsManifest,
+-			gtwName:          multiSvcGatewayName,
+-			gtwNs:            multiSvcNsName,
+-			gtwManifest:      multiSvcGatewayAndClientManifest,
+-			svcManifest:      multiSvcBackendManifest,
+-			tcpRouteManifest: multiSvcTcpRouteManifest,
+-			proxyService:     multiProxyService,
+-			proxyDeployment:  multiProxyDeployment,
++			name:               "MultiServicesTCPRoute",
++			namespaceManifests: []string{multiSvcNsManifest},
++			manifests:          []string{multiSvcBackendManifest, multiSvcTcpRouteManifest},
++			routeNs:            multiSvcNsName,
+ 			expectedResponses: []*matchers.HttpResponse{
+ 				expectedMultiSvc1Resp,
+ 				expectedMultiSvc2Resp,
+@@ -120,18 +108,10 @@ func (s *testingSuite) TestConfigureTCPRouteBackingDestinations() {
+ 			tcpRouteNames:       []string{multiSvcTCPRouteName1, multiSvcTCPRouteName2},
+ 		},
+ 		{
+-			name:             tlsListenerSameNsTestName,
+-			nsManifest:       tlsListenerNsManifest,
+-			gtwName:          tlsListenerGatewayName,
+-			gtwNs:            tlsListenerNsName,
+-			gtwManifest:      tlsListenerGatewayAndClientManifest,
+-			svcManifest:      tlsListenerBackendManifest,
+-			tcpRouteManifest: tlsListenerTcpRouteManifest,
+-			preGatewayManifests: []string{
+-				tlsListenerTlsSecretManifest,
+-			},
+-			proxyService:    tlsListenerProxyService,
+-			proxyDeployment: tlsListenerProxyDeployment,
++			name:               tlsListenerSameNsTestName,
++			namespaceManifests: []string{tlsListenerNsManifest},
++			manifests:          []string{tlsListenerBackendManifest, tlsListenerTcpRouteManifest},
++			routeNs:            tlsListenerNsName,
+ 			expectedResponses: []*matchers.HttpResponse{
+ 				expectedTlsListenerResp,
+ 			},
+@@ -148,15 +128,10 @@ func (s *testingSuite) TestConfigureTCPRouteBackingDestinations() {
+ 			},
+ 		},
+ 		{
+-			name:             crossNsTestName,
+-			nsManifest:       crossNsClientNsManifest,
+-			gtwName:          crossNsGatewayName,
+-			gtwNs:            crossNsClientName,
+-			gtwManifest:      crossNsGatewayManifest,
+-			svcManifest:      crossNsBackendSvcManifest,
+-			tcpRouteManifest: crossNsTCPRouteManifest,
+-			proxyService:     crossNsProxyService,
+-			proxyDeployment:  crossNsProxyDeployment,
++			name:               crossNsTestName,
++			namespaceManifests: []string{crossNsClientNsManifest, crossNsBackendNsManifest},
++			manifests:          []string{crossNsBackendSvcManifest, crossNsRefGrantManifest, crossNsTCPRouteManifest},
++			routeNs:            crossNsClientName,
+ 			expectedResponses: []*matchers.HttpResponse{
+ 			
+```
+
+**File**: `test/e2e/features/services/tcproute/testdata/cross-ns-backend-service.yaml` (modified, +2/-0)
+```diff
+@@ -2,6 +2,7 @@ apiVersion: v1
+ kind: Service
+ metadata:
+   name: backend-svc
++  namespace: cross-namespace-allowed-backend-ns
+ spec:
+   selector:
+     app: backend-svc
+@@ -14,6 +15,7 @@ apiVersion: apps/v1
+ kind: Deployment
+ metadata:
+   name: backend-svc
++  namespace: cross-namespace-allowed-backend-ns
+   labels:
+     app: backend-svc
+ spec:
+```
+
+**File**: `test/e2e/features/services/tcproute/testdata/cross-ns-gateway-and-client.yaml` (removed, +0/-37)
+```diff
+@@ -1,37 +0,0 @@
+-apiVersion: gateway.networking.k8s.io/v1
+-kind: Gateway
+-metadata:
+-  name: gateway
+-spec:
+-  gatewayClassName: kgateway
+-  listeners:
+-    - name: listener-8080
+-      port: 8080
+-      protocol: TCP
+----
+-# Immutable pod spec fields should be consistent with test/e2e/defaults/testdata/curl_pod.yaml
+-# due to https://github.com/kgateway-dev/kgateway/issues/13408.
+-apiVersion: v1
+-kind: Pod
+-metadata:
+-  name: curl
+-  labels:
+-    app: curl
+-    version: v1
+-spec:
+-  terminationGracePeriodSeconds: 0
+-  containers:
+-    - name: curl
+-      image: ghcr.io/kgateway-dev/curl:8.20.0
+-      imagePullPolicy: IfNotPresent
+-      command:
+-        - "tail"
+-        - "-f"
+-        - "/dev/null"
+-      resources:
+-        requests:
+-          cpu: "100m"
+-          memory: "64Mi"
+-        limits:
+-          cpu: "200m"
+-          memory: "128Mi"
+```
+
+**File**: `test/e2e/features/services/tcproute/testdata/cross-ns-no-refgrant-backend-service.yaml` (modified, +2/-0)
+```diff
+@@ -2,6 +2,7 @@ apiVersion: v1
+ kind: Service
+ metadata:
+   name: backend-svc
++  namespace: backend-ns-no-refgrant
+ spec:
+   selector:
+     app: backend-svc
+@@ -14,6 +15,7 @@ apiVersion: apps/v1
+ kind: Deployment
+ metadata:
+   name: backend-svc
++  namespace: backend-ns-no-refgrant
+   labels:
+     app: backend-svc
+ spec:
+```
+
+**File**: `test/e2e/features/services/tcproute/testdata/cross-ns-no-refgrant-gateway-and-client.yaml` (removed, +0/-37)
+```diff
+@@ -1,37 +0,0 @@
+-apiVersion: gateway.networking.k8s.io/v1
+-kind: Gateway
+-metadata:
+-  name: gateway
+-spec:
+-  gatewayClassName: kgateway
+-  listeners:
+-    - name: listener-8080
+-      port: 8080
+-      protocol: TCP
+----
+-# Immutable pod spec fields should be consistent with test/e2e/defaults/testdata/curl_pod.yaml
+-# due to https://github.com/kgateway-dev/kgateway/issues/13408.
+-apiVersion: v1
+-kind: Pod
+-metadata:
+-  name: curl
+-  labels:
+-    app: curl
+-    version: v1
+-spec:
+-  terminationGracePeriodSeconds: 0
+-  containers:
+-    - name: curl
+-      image: ghcr.io/kgateway-dev/curl:8.20.0
+-      imagePullPolicy: IfNotPresent
+-      command:
+-        - "tail"
+-        - "-f"
+-        - "/dev/null"
+-      resources:
+-        requests:
+-          cpu: "100m"
+-          memory: "64Mi"
+-        limits:
+-          cpu: "200m"
+-          memory: "128Mi"
+```
+
+**File**: `test/e2e/features/services/tcproute/testdata/cross-ns-no-refgrant-tcproute.yaml` (modified, +4/-1)
+```diff
+@@ -2,9 +2,12 @@ apiVersion: gateway.networking.k8s.io/v1
+ kind: TCPRoute
+ metadata:
+   name: tcp-route
++  namespace: client-ns-no-refgrant
+ spec:
+   parentRefs:
+-    - name: gateway
++    - name: tcp-gateway
++      namespace: tcp-route
++      sectionName: listener-8081
+   rules:
+     - backendRefs:
+         - name: backend-svc
+```
+
+**File**: `test/e2e/features/services/tcproute/testdata/cross-ns-referencegrant.yaml` (modified, +1/-0)
+```diff
+@@ -2,6 +2,7 @@ apiVersion: gateway.networking.k8s.io/v1beta1
+ kind: ReferenceGrant
+ metadata:
+   name: reference-grant
++  namespace: cross-namespace-allowed-backend-ns
+ spec:
+   from:
+     - group: gateway.networking.k8s.io
+```
+
+**File**: `test/e2e/features/services/tcproute/testdata/cross-ns-tcproute.yaml` (modified, +4/-1)
+```diff
+@@ -2,9 +2,12 @@ apiVersion: gateway.networking.k8s.io/v1
+ kind: TCPRoute
+ metadata:
+   name: tcp-route
++  namespace: cross-namespace-allowed-client-ns
+ spec:
+   parentRefs:
+-    - name: gateway
++    - name: tcp-gateway
++      namespace: tcp-route
++      sectionName: listener-8080
+   rules:
+     - backendRefs:
+         - name: backend-svc
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14938** (2026-10-28): ci: rebalance e2e shards after the TCPRoute/TLSRoute speedup (@puertomontt)
+- **PR #14934** (2026-10-28): Gate new tests on API version (@sheidkamp)
 - **PR #14924** (2026-10-27): e2e: terminate istioctl uninstall output with a newline (@chandler-solo)
 - **PR #14917** (closed): Fail closed on backendRef-level policy errors (@puertomontt)
 - **PR #14913** (2026-10-26): Rename xDS scoping metrics and settings (@chandler-solo)
 - **PR #14912** (closed): fix: keep ServiceEntry protocol HTTP on ALPN for BackendTLSPolicy (@puertomontt)
-- **PR #14910** (2026-10-26): Expose xDS scoping Helm values and rename the scoping mode (@chandler-solo)
-- **PR #14909** (closed): Link fixes (@kristin-kronstain-brown)
 
 ---
 
@@ -1000,32 +1286,83 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. e2e: terminate istioctl uninstall output with a newline (#14924)
+## X. e2e: share one Gateway per TCPRoute/TLSRoute suite (#14890)
 
 **RULE**:
-When implementing operations in `test/e2e/testutils/cluster/istio.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `test/e2e/features/services/tcproute/suite.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e8e3d347`: e2e: terminate istioctl uninstall output with a newline (#14924). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a650e169`: e2e: share one Gateway per TCPRoute/TLSRoute suite (#14890). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/e2e/testutils/cluster/istio.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/e2e/features/services/tcproute/suite.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	err := cmd.Run()
-	// istioctl ends with "✔ Uninstall complete" and no trailing newline. Terminate it so the
-	// next "--- PASS"/"--- FAIL" line starts its own line; otherwise test2json drops the results.
-	fmt.Fprintln(os.Stdout)
-	if err != nil {
+	// setup holds the Gateway and curl client shared by every subtest. Each subtest
+	// attaches to its own listener, so it only creates and deletes routes and backends.
+	setup = base.TestCase{
+		Manifests: []string{setupManifest},
+	}
+	name string
+	// namespaceManifests create the namespaces the subtest owns. Deleting them
+	// removes everything else the subtest applied.
+	namespaceManifests  []string
+	manifests           []string
+	routeNs             string
+			name:               "SingleServiceTCPRoute",
+			namespaceManifests: []string{singleSvcNsManifest},
+			manifests:          []string{singleSvcBackendManifest, singleSvcTcpRouteManifest},
+			routeNs:            singleSvcNsName,
+			name:               "MultiServicesTCPRoute",
+			namespaceManifests: []string{multiSvcNsManifest},
+			manifests:          []string{multiSvcBackendManifest, multiSvcTcpRouteManifest},
+			routeNs:            multiSvcNsName,
+			name:               tlsListenerSameNsTestName,
+			namespaceManifests: []string{tlsListenerNsManifest},
+			manifests:          []string{tlsListenerBackendManifest, tlsListenerTcpRouteManifest},
+			routeNs:            tlsListenerNsName,
+			name:               crossNsTestName,
+			namespa
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	if err := cmd.Run(); err != nil {
+	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
+	setup = base.TestCase{}
+	name                string
+	nsManifest          string
+	gtwName             string
+	gtwNs               string
+	gtwManifest         string
+	svcManifest         string
+	tcpRouteManifest    string
+	preGatewayManifests []string
+	proxyService        *corev1.Service
+	proxyDeployment     *appsv1.Deployment
+			name:             "SingleServiceTCPRoute",
+			nsManifest:       singleSvcNsManifest,
+			gtwName:          singleSvcGatewayName,
+			gtwNs:            singleSvcNsName,
+			gtwManifest:      singleSvcGatewayAndClientManifest,
+			svcManifest:      singleSvcBackendManifest,
+			tcpRouteManifest: singleSvcTcpRouteManifest,
+			proxyService:     singleSvcProxyService,
+			proxyDeployment:  singleSvcProxyDeployment,
+			name:             "MultiServicesTCPRoute",
+			nsManifest:       multiSvcNsManifest,
+			gtwName:          multiSvcGatewayName,
+			gtwNs:            multiSvcNsName,
+			gtwManifest:      multiSvcGatewayAndClientManifest,
+			svcManifest:      multiSvcBackendManifest,
+			tcpRouteManifest: multiSvcTcpRouteManifest,
+			proxyService:     multiProxyService,
+			proxyDeployment:  multiProxyDeployment,
+			nam
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e8e3d347` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a650e169` are properly handled with clean fallback behavior.

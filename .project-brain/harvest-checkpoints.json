@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T23:56:15.371Z",
+  "last_updated": "2026-10-29T00:02:39.984Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2436,14 +2436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
-      "content_hash": "6107085beac8487edcbdc9dfee6869d532c44fb7377302c47c2b87c452f14553",
-      "verified_at": "2026-10-25T06:25:51.575Z",
+      "content_hash": "f0a489788880cc9b33e146dd437fd122f7c10d6abc743b110553e8c5dfa5b0da",
+      "verified_at": "2026-10-29T00:02:37.196Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T06:25:51.575Z"
+      "last_updated": "2026-10-29T00:02:37.196Z"
     },
     "roseyco-management-seo-resources": {
       "status": "VERIFIED_LEARNING",
@@ -4401,14 +4401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kgateway-dev-kgateway",
-      "content_hash": "b53713c26878430f379ec0ba72080961201ebce86a5591f83966af5711eee711",
-      "verified_at": "2026-10-28T00:53:37.225Z",
+      "content_hash": "c5a25da1dd15f9f42e0ebb8dd994894a60a4dcdc11b8fc47c896fc502938994e",
+      "verified_at": "2026-10-29T00:02:34.496Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T00:53:37.225Z"
+      "last_updated": "2026-10-29T00:02:34.496Z"
     },
     "freenet/freenet-core": {
       "repository": "freenet/freenet-core",
@@ -11361,14 +11361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-paradedb-paradedb",
-      "content_hash": "d9c88797b866f855097487e2d538bb254baccac0945149b961deeb276069dda3",
-      "verified_at": "2026-10-28T06:18:38.804Z",
+      "content_hash": "ed801206cb804f7affad6744c14ddef452555d225adb73f47b2f4d4384e013b4",
+      "verified_at": "2026-10-29T00:02:39.984Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T06:18:38.804Z"
+      "last_updated": "2026-10-29T00:02:39.984Z"
     },
     "imsnif/diskonaut": {
       "repository": "imsnif/diskonaut",

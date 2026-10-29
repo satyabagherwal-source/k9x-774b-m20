@@ -6003,3 +6003,6 @@ Every entry in this ledger must capture:
 | `learn-github-herdrdev-herdr` | `https://github.com/herdrdev/herdr` | `bc8c2898` | Multi-dimensional audit evidence | 2026-10-28T23:52:10.875Z |
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `48758c8c` | Multi-dimensional audit evidence | 2026-10-28T23:52:22.242Z |
 | `learn-huggingface-meta-models-muse-spark-open-816b-a42b` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-10-28T23:56:15.362Z |
+| `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `643f50b3` | Multi-dimensional audit evidence | 2026-10-29T00:02:34.489Z |
+| `learn-huggingface-black-forest-labs-flux-3-image-klein-comfy` | `https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-29T00:02:37.189Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `2dbf3197` | Multi-dimensional audit evidence | 2026-10-29T00:02:39.978Z |

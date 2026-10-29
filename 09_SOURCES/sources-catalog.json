@@ -1575,8 +1575,8 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
     "sourceVersion": "hf-black-forest-labs-flux-3-image-klein-comfy",
     "license": "Open-Source",
-    "contentHash": "6107085beac8487edcbdc9dfee6869d532c44fb7377302c47c2b87c452f14553",
-    "lastHarvestedAt": "2026-10-25T06:25:51.564Z",
+    "contentHash": "f0a489788880cc9b33e146dd437fd122f7c10d6abc743b110553e8c5dfa5b0da",
+    "lastHarvestedAt": "2026-10-29T00:02:37.189Z",
     "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy"
   },
   "dayuanjiang-next-ai-draw-io": {
@@ -2843,10 +2843,10 @@
     "repository": "kgateway-dev/kgateway",
     "platform": "github",
     "sourceUrl": "https://github.com/kgateway-dev/kgateway",
-    "sourceVersion": "e8e3d347",
+    "sourceVersion": "643f50b3",
     "license": "Apache-2.0",
-    "contentHash": "b53713c26878430f379ec0ba72080961201ebce86a5591f83966af5711eee711",
-    "lastHarvestedAt": "2026-10-28T00:53:37.216Z",
+    "contentHash": "c5a25da1dd15f9f42e0ebb8dd994894a60a4dcdc11b8fc47c896fc502938994e",
+    "lastHarvestedAt": "2026-10-29T00:02:34.489Z",
     "learningId": "learn-github-kgateway-dev-kgateway"
   },
   "freenet-freenet-core": {
@@ -7543,10 +7543,10 @@
     "repository": "paradedb/paradedb",
     "platform": "github",
     "sourceUrl": "https://github.com/paradedb/paradedb",
-    "sourceVersion": "22ae5780",
+    "sourceVersion": "2dbf3197",
     "license": "AGPL-3.0",
-    "contentHash": "d9c88797b866f855097487e2d538bb254baccac0945149b961deeb276069dda3",
-    "lastHarvestedAt": "2026-10-28T06:18:38.796Z",
+    "contentHash": "ed801206cb804f7affad6744c14ddef452555d225adb73f47b2f4d4384e013b4",
+    "lastHarvestedAt": "2026-10-29T00:02:39.978Z",
     "learningId": "learn-github-paradedb-paradedb"
   },
   "imsnif-diskonaut": {

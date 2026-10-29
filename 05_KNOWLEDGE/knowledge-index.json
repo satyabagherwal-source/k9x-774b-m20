@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T23:56:15.285Z",
+  "last_updated": "2026-10-29T00:02:39.931Z",
   "total_verified_learnings": 1160,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -33008,8 +33008,8 @@
       "slug": "kgateway-dev-kgateway",
       "platform": "github",
       "source_url": "https://github.com/kgateway-dev/kgateway",
-      "source_version": "e8e3d347",
-      "content_hash": "b53713c26878430f379ec0ba72080961201ebce86a5591f83966af5711eee711",
+      "source_version": "643f50b3",
+      "content_hash": "c5a25da1dd15f9f42e0ebb8dd994894a60a4dcdc11b8fc47c896fc502938994e",
       "dossier_path": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "promoted_rules": [
@@ -33052,6 +33052,11 @@
           "number": 5082,
           "title": "e2e: terminate istioctl uninstall output with a newline (#14924)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5465,
+          "title": "e2e: share one Gateway per TCPRoute/TLSRoute suite (#14890)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33059,7 +33064,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T00:53:37.120Z",
+      "verified_at": "2026-10-29T00:02:34.425Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43126,8 +43131,8 @@
       "slug": "paradedb-paradedb",
       "platform": "github",
       "source_url": "https://github.com/paradedb/paradedb",
-      "source_version": "22ae5780",
-      "content_hash": "d9c88797b866f855097487e2d538bb254baccac0945149b961deeb276069dda3",
+      "source_version": "2dbf3197",
+      "content_hash": "ed801206cb804f7affad6744c14ddef452555d225adb73f47b2f4d4384e013b4",
       "dossier_path": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "promoted_rules": [
@@ -43170,6 +43175,11 @@
           "number": 5206,
           "title": "ci: restore Cohere index build metrics in baselines and comments (#7061)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5469,
+          "title": "debug-build panics in filtered Top K queries (#6793)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43177,7 +43187,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T06:18:38.718Z",
+      "verified_at": "2026-10-29T00:02:39.920Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64860,7 +64870,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
       "source_version": "hf-black-forest-labs-flux-3-image-klein-comfy",
-      "content_hash": "6107085beac8487edcbdc9dfee6869d532c44fb7377302c47c2b87c452f14553",
+      "content_hash": "f0a489788880cc9b33e146dd437fd122f7c10d6abc743b110553e8c5dfa5b0da",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md",
       "promoted_rules": [
@@ -64933,6 +64943,21 @@
           "number": 4107,
           "title": "Asymmetric FP8 Quantization Scale De-quantization Isolation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5466,
+          "title": "VRAM-Aware Tensor Offloading & Dtype Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5467,
+          "title": "ComfyUI Node Input Type Validation & Tensor Shape Invariants",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5468,
+          "title": "Safe Deserialization of Safetensors with Metadata Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -64940,7 +64965,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T06:25:51.495Z",
+      "verified_at": "2026-10-29T00:02:37.127Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -147476,6 +147501,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T23:56:15.269Z"
+    },
+    "rule-5465": {
+      "learning_id": "rule-5465",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5465,
+      "title": "e2e: share one Gateway per TCPRoute/TLSRoute suite (#14890)",
+      "source_url": "https://github.com/kgateway-dev/kgateway",
+      "source_version": "643f50b3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T00:02:34.425Z"
+    },
+    "rule-5466": {
+      "learning_id": "rule-5466",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5466,
+      "title": "VRAM-Aware Tensor Offloading & Dtype Consistency",
+      "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
+      "source_version": "hf-black-forest-labs-flux-3-image-klein-comfy",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T00:02:37.127Z"
+    },
+    "rule-5467": {
+      "learning_id": "rule-5467",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5467,
+      "title": "ComfyUI Node Input Type Validation & Tensor Shape Invariants",
+      "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
+      "source_version": "hf-black-forest-labs-flux-3-image-klein-comfy",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T00:02:37.127Z"
+    },
+    "rule-5468": {
+      "learning_id": "rule-5468",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5468,
+      "title": "Safe Deserialization of Safetensors with Metadata Integrity",
+      "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
+      "source_version": "hf-black-forest-labs-flux-3-image-klein-comfy",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T00:02:37.127Z"
+    },
+    "rule-5469": {
+      "learning_id": "rule-5469",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5469,
+      "title": "debug-build panics in filtered Top K queries (#6793)",
+      "source_url": "https://github.com/paradedb/paradedb",
+      "source_version": "2dbf3197",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T00:02:39.920Z"
     }
   },
   "aliases": {

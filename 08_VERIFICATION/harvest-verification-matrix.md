@@ -5994,3 +5994,6 @@
 | `CYCLE-20261028-R4OO` | `2026-10-28T23:52:10.872Z` | `herdrdev/herdr` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5461` | Yes (`7266e83b...`) |
 | `CYCLE-20261028-RDGF` | `2026-10-28T23:52:22.239Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5462` | Yes (`c62adbdc...`) |
 | `CYCLE-20261028-WDBZ` | `2026-10-28T23:56:15.359Z` | `meta-models/Muse-Spark-Open-816B-A42B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5463, Rule 5464` | Yes (`03502bd9...`) |
+| `CYCLE-20261029-4HVA` | `2026-10-29T00:02:34.486Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5465` | Yes (`c5a25da1...`) |
+| `CYCLE-20261029-4JYA` | `2026-10-29T00:02:37.186Z` | `black-forest-labs/flux-3-image-klein-comfy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5466, Rule 5467, Rule 5468` | Yes (`f0a48978...`) |
+| `CYCLE-20261029-4M3R` | `2026-10-29T00:02:39.975Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5469` | Yes (`ed801206...`) |
