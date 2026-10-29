@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-29T00:16:13.294Z",
-    "lastVerified": "2026-10-29T00:16:13.294Z",
+    "lastChecked": "2026-10-29T00:23:02.776Z",
+    "lastVerified": "2026-10-29T00:23:02.776Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -394,8 +394,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T23:52:18.136Z",
-    "lastVerified": "2026-10-28T23:52:18.136Z",
+    "lastChecked": "2026-10-29T00:23:01.737Z",
+    "lastVerified": "2026-10-29T00:23:01.737Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -458,9 +458,9 @@
   "smallstep-cli": {
     "name": "cli",
     "officialUrl": "https://github.com/smallstep/cli",
-    "lastChecked": "2026-10-28T20:37:48.289Z",
+    "lastChecked": "2026-10-29T00:22:56.728Z",
     "revisionIdentifier": "824bfd6b",
-    "lastVerified": "2026-10-28T20:37:48.289Z"
+    "lastVerified": "2026-10-29T00:22:56.728Z"
   },
   "milvus-io-milvus": {
     "name": "milvus-io/milvus",
@@ -712,14 +712,14 @@
     "officialUrl": "https://github.com/Automattic/harper",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T03:49:34.739Z",
-    "lastVerified": "2026-10-28T03:49:34.739Z",
+    "lastChecked": "2026-10-29T00:22:51.444Z",
+    "lastVerified": "2026-10-29T00:22:51.444Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-automattic-harper",
-    "contentHash": "9ef98ae24257670048fb24428afa2e0230eae069a7d96ce0e2a931e2e273eac7",
+    "contentHash": "f193789674e7813406a29d133f5f834849339b82c23d4a5af0706c9c5c6ac724",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2226,9 +2226,9 @@
   "caviraoss-longmemory": {
     "name": "LongMemory",
     "officialUrl": "https://github.com/CaviraOSS/LongMemory",
-    "lastChecked": "2026-10-28T06:42:09.434Z",
+    "lastChecked": "2026-10-29T00:22:59.189Z",
     "revisionIdentifier": "8badf44d48d0d72a07e1ea3daf1ecbd76ae1a357",
-    "lastVerified": "2026-10-28T06:42:09.434Z"
+    "lastVerified": "2026-10-29T00:22:59.189Z"
   },
   "ratatui-ratatui": {
     "name": "ratatui/ratatui",
@@ -2617,14 +2617,14 @@
     "officialUrl": "https://github.com/beclab/Olares",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T09:25:20.814Z",
-    "lastVerified": "2026-10-28T09:25:20.814Z",
+    "lastChecked": "2026-10-29T00:22:59.614Z",
+    "lastVerified": "2026-10-29T00:22:59.614Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-beclab-olares",
-    "contentHash": "2f455bb066fa1d37a27c4589c3e79fa89e0e18f40faaa541e07d9b38feecd0c4",
+    "contentHash": "5ceb7cca1bfa79a95aebb25ec1055d5d2680ef584d6572b6e67a6c9542e016eb",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7741,5 +7741,29 @@
     "lastChecked": "2026-10-29T00:16:03.360Z",
     "revisionIdentifier": "5386f227",
     "lastVerified": "2026-10-29T00:16:03.360Z"
+  },
+  "hf-openmoss-team-moss-image-base": {
+    "name": "OpenMOSS-Team/MOSS-Image-Base",
+    "officialUrl": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-29T00:22:49.423Z",
+    "lastVerified": "2026-10-29T00:22:49.423Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-openmoss-team-moss-image-base",
+    "contentHash": "4993d4b620a80d3cfa8353fd8c07310161784aadd09198cde9a6386b41655d50",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "juanpe-about-swiftui": {
+    "name": "About-SwiftUI",
+    "officialUrl": "https://github.com/Juanpe/About-SwiftUI",
+    "lastChecked": "2026-10-29T00:22:51.734Z",
+    "revisionIdentifier": "59a740fc",
+    "lastVerified": "2026-10-29T00:22:51.734Z"
   }
 }

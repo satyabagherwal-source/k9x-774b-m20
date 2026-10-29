@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-29T00:16:03.240Z",
+  "last_updated": "2026-10-29T00:23:00.235Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2646,14 +2646,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openmoss-team-moss-image-base",
-      "content_hash": "5821491fadf5d2f489d06db013eabcb4bffe4f1726680ea356db5d8232926368",
-      "verified_at": "2026-10-28T01:42:42.369Z",
+      "content_hash": "4993d4b620a80d3cfa8353fd8c07310161784aadd09198cde9a6386b41655d50",
+      "verified_at": "2026-10-29T00:22:50.536Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T01:42:42.369Z"
+      "last_updated": "2026-10-29T00:22:50.536Z"
     },
     "OpenMOSS-Team/MOSS-Image-SFT": {
       "repository": "OpenMOSS-Team/MOSS-Image-SFT",
@@ -3516,14 +3516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-automattic-harper",
-      "content_hash": "9ef98ae24257670048fb24428afa2e0230eae069a7d96ce0e2a931e2e273eac7",
-      "verified_at": "2026-10-28T03:49:35.211Z",
+      "content_hash": "f193789674e7813406a29d133f5f834849339b82c23d4a5af0706c9c5c6ac724",
+      "verified_at": "2026-10-29T00:22:52.082Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T03:49:35.211Z"
+      "last_updated": "2026-10-29T00:22:52.082Z"
     },
     "sudheerj/reactjs-interview-questions": {
       "repository": "sudheerj/reactjs-interview-questions",
@@ -4581,14 +4581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-beclab-olares",
-      "content_hash": "2f455bb066fa1d37a27c4589c3e79fa89e0e18f40faaa541e07d9b38feecd0c4",
-      "verified_at": "2026-10-28T09:30:41.317Z",
+      "content_hash": "5ceb7cca1bfa79a95aebb25ec1055d5d2680ef584d6572b6e67a6c9542e016eb",
+      "verified_at": "2026-10-29T00:23:00.234Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T09:30:41.317Z"
+      "last_updated": "2026-10-29T00:23:00.234Z"
     },
     "cryfs/cryfs": {
       "repository": "cryfs/cryfs",

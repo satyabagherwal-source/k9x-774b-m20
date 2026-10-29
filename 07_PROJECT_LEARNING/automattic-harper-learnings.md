@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source**: github ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
-> **Source Version**: `29200660`  
+> **Source Version**: `2d7635f7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T03:49:34.747Z  
+> **Timestamp**: 2026-10-29T00:22:51.452Z  
 > **Learning ID**: `learn-github-automattic-harper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T03:49:34.739Z  
+> **Harvest Timestamp**: 2026-10-29T00:22:51.444Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 17203 stars
+- **Stars / Engagement**: 17237 stars
 
 ---
 
@@ -1429,100 +1429,311 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `29200660` (2026-10-28)
-**Commit Message**: build(deps): bump tree-sitter-haskell from 0.23.1 to 0.24.1 (#4720)
+### Incident Patch 1: `f4826935` (2026-10-28)
+**Commit Message**: build(deps): bump rustls in /harper-desktop/src-tauri (#4724)
 
-Bumps [tree-sitter-haskell](https://github.com/tree-sitter/tree-sitter-haskell) from 0.23.1 to 0.24.1.
-- [Release notes](https://github.com/tree-sitter/tree-sitter-haskell/releases)
-- [Commits](https://github.com/tree-sitter/tree-sitter-haskell/compare/v0.23.1...v0.24.1)
+Bumps [rustls](https://github.com/rustls/rustls) from 0.23.45 to 0.23.46.
+- [Release notes](https://github.com/rustls/rustls/releases)
+- [Changelog](https://github.com/rustls/rustls/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/rustls/rustls/compare/v/0.23.45...v/0.23.46)
 
 ---
 updated-dependencies:
-- dependency-name: tree-sitter-haskell
-  dependency-version: 0.24.1
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
+- dependency-name: rustls
+  dependency-version: 0.23.46
+  dependency-type: indirect
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `harper-desktop/src-tauri/Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -5903,9 +5903,9 @@ dependencies = [
+@@ -6846,9 +6846,9 @@ dependencies = [
  
  [[package]]
- name = "tree-sitter-haskell"
--version = "0.23.1"
-+version = "0.24.1"
+ name = "rustls"
+-version = "0.23.45"
++version = "0.23.46"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "977c51e504548cba13fc27cb5a2edab2124cf6716a1934915d07ab99523b05a4"
-+checksum = "781de30e0d1ec8e6db4ed799d36ce1cedaf4684374dada45ebe2a8ea44c3f814"
+-checksum = "0d41d731c7d2f962d1ccc364cec258de3c0e93b38c2fb3ba97ac74513048d634"
++checksum = "48e13bd8c0e9365c43cfa5c9e8f9ad49d3c8444926c9aac819e0e4dc503c8fdf"
  dependencies = [
-  "cc",
-  "tree-sitter-language",
-```
-
-**File**: `harper-comments/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -21,7 +21,7 @@ tree-sitter-c-sharp = "0.23.5"
- tree-sitter-elixir = "0.3.5"
- tree-sitter-go = "0.25.0"
- tree-sitter-groovy = "0.1.2"
--tree-sitter-haskell = "0.23.1"
-+tree-sitter-haskell = "0.24.1"
- tree-sitter-java = "0.23.5"
- tree-sitter-javascript = "0.25.0"
- tree-sitter-kotlin-ng = "1.1.0"
+  "once_cell",
+  "ring",
 ```
 
 ---
 
-### Incident Patch 2: `0aba8ebd` (2026-10-27)
-**Commit Message**: fix(desktop): remove useless setting (#4718)
+### Incident Patch 2: `ba5f0cce` (2026-10-28)
+**Commit Message**: fix(web): broken dark mode (#4727)
 
-Co-authored-by: Elijah Potter <[REDACTED_EMAIL]>
+* fix(web): stop dark mode from disappearing randomly
 
-**File**: `harper-desktop/src/lib/settings/pages/GeneralPage.svelte` (modified, +0/-15)
+* fix(components): some logos in dark mode
+
+* feat(components): add dark mode to the slide deck
+
+* feat(components): add dark mode to storybook
+
+* fix(web): make the logo backgrounds dark too
+
+**File**: `packages/components/.storybook/main.ts` (modified, +1/-0)
 ```diff
-@@ -13,7 +13,6 @@ const DialectValue = {
- 	Indian: 4,
- } as const;
- 
--let menuBar = true;
- let launchAtStartup = false;
- let autoUpdate = true;
- let dialect = 'american';
-@@ -274,20 +273,6 @@ function settingsValueToDialect(value: string): Dialect {
-           <div class="eyebrow">General</div>
-           <div class="rows">
-             <SettingRow top>
--              <strong>Keep Harper in the menu bar</strong>
--              <p>Shows the Harper icon so you can open settings without opening the main app.</p>
--              <Checkbox
--                slot="control"
--                appearance="settings"
--                checked={menuBar}
--                disabled
--                title="Not wired yet"
--              >
--                {#if menuBar}<CheckIcon className="control-icon" />{/if}
--              </Checkbox>
--            </SettingRow>
+@@ -3,6 +3,7 @@ import type { StorybookConfig } from '@storybook/sveltekit';
+ const config: StorybookConfig = {
+ 	stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|ts|svelte)'],
+ 	addons: [
++		'@vueless/storybook-dark-mode',
+ 		'@storybook/addon-svelte-csf',
+ 		'@chromatic-com/storybook',
+ 		'@storybook/addon-vitest',
+```
+
+**File**: `packages/components/.storybook/preview.ts` (modified, +5/-1)
+```diff
+@@ -10,7 +10,11 @@ const preview: Preview = {
+ 				date: /Date$/i,
+ 			},
+ 		},
 -
--            <SettingRow>
-               <strong>Launch Harper at startup</strong>
-               <p>Harper will start silently when you log in.</p>
-               <Checkbox
++		darkMode: {
++			darkClass: 'dark',
++			lightClass: [],
++			stylePreview: true,
++		},
+ 		a11y: {
+ 			// 'todo' - show a11y violations in the test UI only
+ 			// 'error' - fail CI on a11y violations
+```
+
+**File**: `packages/components/package.json` (modified, +12/-11)
+```diff
+@@ -40,30 +40,31 @@
+ 		"flowbite-svelte": "^0.44.24"
+ 	},
+ 	"devDependencies": {
++		"@chromatic-com/storybook": "latest",
++		"@storybook/addon-a11y": "^10.6.3",
++		"@storybook/addon-docs": "^10.6.3",
++		"@storybook/addon-svelte-csf": "latest",
++		"@storybook/addon-vitest": "^10.6.3",
++		"@storybook/sveltekit": "^10.6.3",
+ 		"@sveltejs/adapter-auto": "^7.0.0",
+ 		"@sveltejs/kit": "^2.47.1",
+ 		"@sveltejs/package": "^2.5.4",
+ 		"@sveltejs/vite-plugin-svelte": "^6.2.1",
+ 		"@tailwindcss/cli": "^4.1.16",
+ 		"@tailwindcss/vite": "^4.1.14",
++		"@vitest/browser-playwright": "latest",
++		"@vitest/coverage-v8": "latest",
++		"@vueless/storybook-dark-mode": "^10.0.8",
+ 		"flowbite": "^3.1.2",
++		"playwright": "1.60.0",
+ 		"publint": "^0.3.14",
++		"storybook": "^10.6.3",
+ 		"svelte": "^5.41.0",
+ 		"svelte-check": "^4.3.3",
+ 		"tailwindcss": "^4.1.14",
+ 		"typescript": "catalog:",
+ 		"vite": "^7.1.10",
+-		"storybook": "^10.6.3",
+-		"@storybook/sveltekit": "^10.6.3",
+-		"@storybook/addon-svelte-csf": "latest",
+-		"@chromatic-com/storybook": "latest",
+-		"@storybook/addon-vitest": "^10.6.3",
+-		"@storybook/addon-a11y": "^10.6.3",
+-		"@storybook/addon-docs": "^10.6.3",
+-		"vitest": "latest",
+-		"@vitest/browser-playwright": "latest",
+-		"@vitest/coverage-v8": "latest",
+-		"playwright": "1.60.0"
++		"vitest": "latest"
+ 	},
+ 	"keywords": [
+ 		"svelte"
+```
+
+**File**: `packages/components/src/lib/SlideDeck.svelte` (modified, +9/-7)
+```diff
+@@ -15,6 +15,8 @@ import Panel from './Panel.svelte';
+  * `nextDisabled` blocks forward navigation through both the button and keyboard
+  * shortcuts without preventing users from going back. Forward navigation plays a
+  * diagonal flash across the slide content unless the user prefers reduced motion.
++ * The deck switches to its dark palette under a `.dark` ancestor through
++ * Tailwind `dark:` variants.
+  */
+ export let title: string;
+ export let lede: string;
+@@ -90,12 +92,12 @@ function handleKeydown(event: KeyboardEvent) {
+ }
+ </script>
+ 
+-<main class="grid h-dvh grid-cols-1 place-items-center overflow-y-auto bg-[#f1ede5] px-6 py-6 text-[var(--marketing-ink)] scheme-light [scrollbar-gutter:stable_both-edges] sm:py-12">
++<main class="grid h-dvh grid-cols-1 place-items-center overflow-y-auto bg-[#f1ede5] px-6 py-6 text-[var(--marketing-ink)] scheme-light [scrollbar-gutter:stable_both-edges] sm:py-12 dark:bg-stone-950 dark:text-stone-100 dark:scheme-dark">
+ 	<!-- Viewport-based width keeps the panel unchanged when reserving scrollbar gutters. -->
+ 	<div class="relative w-[calc(100vw-3rem)] max-w-[64rem]">
+-		<div class="overflow-hidden rounded-lg border border-black/15 bg-[#fbfaf7] shadow-sm">
++		<div class="overflow-hidden rounded-lg border border-black/15 bg-[#fbfaf7] shadow-sm dark:border-white/15 dark:bg-stone-900">
+ 			<div
+-				class="h-1 bg-black/5"
++				class="h-1 bg-black/5 dark:bg-white/10"
+ 				role="progressbar"
+ 				aria-label="Slide deck progress"
+ 				aria-valuemin={0}
+@@ -109,7 +111,7 @@ function handleKeydown(event: KeyboardEvent) {
+ 			</div>
+ 
+ 			<div class="relative overflow-hidden p-3 sm:p-6">
+-				<Panel class="border-black/10! shadow-sm">
++				<Panel class="border-black/10! shadow-sm dark:border-white/10! dark:bg-stone-800!">
+ 					<div class="grid min-h-112 p-6 sm:p-10">
+ 						{#key slideProgress}
+ 							<div class={showAside ? 'grid items-center gap-10 md:grid-cols-[minmax(0,1fr)_minmax(0,16rem)]' : ''}>
+@@ -123,7 +125,7 @@ function handleKeydown(event: KeyboardEvent) {
+ 									>
+ 										{title}
+ 									</svelte:element>
+-									<p class="mx-0! mb-0! font-[family-name:Domine,serif] font-medium leading-relaxed! text-pretty text-[var(--marketing-ink-2)] max-w-2xl text-lg sm:text-xl mt-6!">{lede}</p>
++									<p class="mx-0! mb-0! font-[family-name:Domine,serif] font-medium leading-relaxed! text-pretty text-[var(--marketing-ink-2)] max-w-2xl dark:text-stone-300 text-lg sm:text-xl mt-6!">{lede}</p>
+ 									<slot />
+ 								</div>
+ 								{#if showAside}
+@@ -143,9 +145,9 @@ function handleKeydown(event: KeyboardEvent) {
+ 				{/key}
+ 			</div>
+ 
+-			<div class="flex items-center justify-end gap-2 border-t border-black/10 bg-[#fbfaf7] px-6 pt-3 pb-4">
++			<div class="flex items-center justify-end gap-2 border-t border-black/10 bg-[#fbfaf7] px-6 pt-3 pb-4 dark:border-white/10 dark:bg-stone-900">
+ 				{#if slideProgress > 0}
+-					<Button size="md" color="white" class="bg-white! text-gray-900! hover:bg-gray-100! motion-reduce:transition-none" aria-label="Back" on:click={() => changeStep(-1)}>
++					<Button size="md" color="white" class="bg-white! text-gray-900! hover:bg-gray-100! motion-reduce:transition-none dark:border-white/15! dark:bg-stone-800! dark:text-stone-100! dark:hover:bg-stone-700!" aria-label="Back" on:click={() => changeStep(-1)}>
+ 						<ChevronLeftIcon className="size-4" />
+ 					</Button>
+ 				{/if}
+```
+
+**File**: `packages/components/src/lib/logos/IMessageLogo.svelte` (modified, +1/-1)
+```diff
+@@ -3,4 +3,4 @@ export let width = '100%';
+ export let height = '100%';
+ </script>
+ 
+-<svg {width} {height} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#34DA51" d="M5.285 0A5.273 5.273 0 0 0 0 5.285v13.43A5.273 5.273 0 0 0 5.285 24h13.43A5.273 5.273 0 0 0 24 18.715V5.285A5.273 5.273 0 0 0 18.715 0ZM12 4.154a8.809 7.337 0 0 1 8.809 7.338A8.809 7.337 0 0 1 12 18.828a8.809 7.337 0 0 1-2.492-.303A8.656 7.337 0 0 1 5.93 19.93a9.929 7.337 0 0 0 1.54-2.155a8.809 7.337 0 0 1-4.279-6.283A8.809 7.337 0 0 1 12 4.154"></path></svg>
++<svg {width} {height} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#fff" d="M12 4.154a8.809 7.337 0 0 1 8.809 7.338A8.809 7.337 0 0 1 12 18.828a8.809 7.337 0 0 1-2.492-.303A8.656 7.337 0 0 1 5.93 19.93a9.929 7.337 0 0 0 1.54-2.155a8.809 7.337 0 0 1-4.279-6.283A8.809 7.337 0 0 1 12 4.154Z"></path><path fill="#34DA51" d="M5.285 0A5.273 5.273 0 0 0 0 5.285v13.43A5.273 5.273 0 0 0 5.285 24h13.43A5.273 5.273 0 0 0 24 18.715V5.285A5.273 5.273 0 0 0 18.715 0ZM12 4.154a8.809 7.337 0 0 1 8.809 7.338A8.809 7.337 0 0 1 12 18.828a8.809 7.337 0 0 1-2.492-.303A8.656 7.337 0 0 1 5.93 19.93a9.929 7.337 0 0 0 1.54-2.155a8.809 7.337 0 0 1-4.279-6.283A8.809 7.337 0 0 1 12 4.154"></path></svg>
+```
+
+**File**: `packages/components/src/lib/logos/LinearLogo.svelte` (modified, +1/-1)
+```diff
+@@ -3,4 +3,4 @@ export let width = '100%';
+ export let height = '100%';
+ </script>
+ 
+-<svg {width} {height} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path fill="#222326" d="m8.174 102.613l145.213 145.213c2.12 2.12 1.097 5.72-1.85 6.27a128 128 0 0 1-15.02 1.896a3.78 3.78 0 0 1-2.92-1.109L1.117 122.403a3.78 3.78 0 0 1-1.109-2.92c.34-5.095.978-10.107 1.896-15.02c.55-2.947 4.15-3.97 6.27-1.85m-4.092 58.796c-.97-3.614 3.3-5.894 5.946-3.248l87.81 87.811c2.647 2.646.367 6.915-3.247 5.946c-44.03-11.805-78.704-46.478-90.51-90.509m12.727-97.245c1.233-2.135 4.147-2.463 5.89-.719L192.556 233.3c1.744 1.744 1.417 4.658-.72 5.891a128 128 0 0 1-11.1 5.705c-1.43.65-3.11.322-4.22-.79L11.893 79.487c-1.111-1.112-1.439-2.79-.79-4.221a128 128 0 0 1 5.706-11.1M127.86 0C198.63 0 256 57.37 256 128.14c0 37.57-16.168 71.362-41.926 94.8c-1.487 1.354-3.768 1.264-5.19-.157L33.217 47.116c-1.421-1.422-1.51-3.703-.158-5.19C56.498 16.168 90.291 0 127.86 0"></path></svg>
++<svg class="text-[#222326] dark:text-white" {width} {height} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path fill="currentColor" d="m8.174 102.613l145.213 145.213c2.12 2.12 1.097 5.72-1.85 6.27a128 128 0 0 1-15.02 1.896a3.78 3.78 0 0 1-2.92-1.109L1.117 122.403a3.78 3.78 0 0 1-1.109-2.92c.34-5.095.978-10.107 1.896-15.02c.55-2.947 4.15-3.97 6.27-1.85m-4.092 58.796c-.97-3.614 3.3-5.894 5.946-3.248l87.81 87.811c2.647 2.646.367 6.915-3.247 5.946c-44.03-11.805-78.704-46.478-90.51-90.509m12.727-97.245c1.233-2.135 4.147-2.463 5.89-.719L192.556 233.3c1.744 1.744 1.417 4.658-.72 5.891a128 128 0 0 1-11.1 5.705c-1.43.65-3.11.322-4.22-.79L11.893 79.487c-1.111-1.112-1.439-2.79-.79-4.221a128 128 0 0 1 5.706-11.1M127.86 0C198.63 0 256 57.37 256 128.14c0 37.57-16.168 71.362-41.926 94.8c-1.487 1.354-3.768 1.264-5.19-.157L33.217 47.116c-1.421-1.422-1.51-3.703-.158-5.19C56.498 16.168 90.291 0 127.86 0"></path></svg>
+```
+
+**File**: `packages/components/src/lib/logos/ZedLogo.svelte` (modified, +1/-1)
+```diff
+@@ -4,7 +4,7 @@ export let height = '100%';
+ </script>
+ 
+ <svg
+-	class="block text-black"
++	class="block text-black dark:text-white"
+ 	{width}
+ 	{height}
+ 	viewBox="0 0 90 90"
+```
+
+**File**: `packages/web/src/app.html` (modified, +3/-2)
+```diff
+@@ -82,8 +82,9 @@
+ 
+   <script>
+     (() => {
+-      var stored = localStorage.getItem('theme');
+-      if (stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
++      var stored = localStorage.getItem('SVELTEPRESS_DARK_MODE') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'on' : 'off');
++      localStorage.setItem('SVELTEPRESS_DARK_MODE', stored);
++      if (stored === 'on') {
+         document.documentElement.classList.add('dark');
+       }
+     })();
+```
+
+---
+
+### Incident Patch 3: `2d7635f7` (2026-10-28)
+**Commit Message**: fix(web): install-browser-extension page dark mode quirks (#4733)
+
+**File**: `packages/web/src/routes/install-browser-extension/+page.svelte` (modified, +8/-8)
+```diff
+@@ -79,11 +79,11 @@ let demoText =
+ 		<Textarea
+ 			rows={7}
+ 			bind:value={demoText}
+-			class="mt-[1.1rem] block box-border w-full resize-y rounded-[6px]! border-[0.5px]! border-[rgba(28,26,22,0.14)]! bg-[#fbfaf7]! px-4 py-[0.9rem] font-[family-name:Atkinson_Hyperlegible,sans-serif] text-[1.05rem] leading-[1.6] text-[var(--marketing-ink)]! [box-shadow:inset_0_1px_2px_rgba(28,26,22,0.05)]! focus:border-[#2a6bd8]! focus:outline-2! focus:outline-solid! focus:outline-[rgba(42,107,216,0.35)]! motion-reduce:transition-none"
++			class="mt-[1.1rem] block box-border w-full resize-y rounded-[6px]! border-[0.5px]! border-[rgba(28,26,22,0.14)]! bg-[#fbfaf7]! px-4 py-[0.9rem] font-[family-name:Atkinson_Hyperlegible,sans-serif] text-[1.05rem] leading-[1.6] text-[var(--marketing-ink)]! [box-shadow:inset_0_1px_2px_rgba(28,26,22,0.05)]! focus:border-[#2a6bd8]! focus:outline-2! focus:outline-solid! focus:outline-[rgba(42,107,216,0.35)]! motion-reduce:transition-none dark:border-white/15! dark:bg-stone-900! dark:text-stone-100!"
+ 			aria-label="Try Harper here"
+ 		/>
+ 
+-		<div class="mt-[1.2rem] overflow-hidden rounded-[6px] border-[0.5px] border-[rgba(28,26,22,0.09)] bg-[#faf8f3]">
++		<div class="mt-[1.2rem] overflow-hidden rounded-[6px] border-[0.5px] border-[rgba(28,26,22,0.09)] bg-[#faf8f3] text-[var(--marketing-ink)] dark:border-white/15 dark:bg-stone-900 dark:text-stone-100">
+ 			<button
+ 				type="button"
+ 				id="troubleshooting-toggle"
+@@ -93,7 +93,7 @@ let demoText =
+ 				on:click={() => (drawerOpen = !drawerOpen)}
+ 			>
+ 				<span class="whitespace-nowrap">Nothing is Happening?</span>
+-				<span class="font-[family-name:JetBrains_Mono,monospace] text-[0.95rem] font-normal text-[var(--marketing-amber)]" aria-hidden="true">{drawerOpen ? '−' : '+'}</span>
++				<span class="font-[family-name:JetBrains_Mono,monospace] text-[0.95rem] font-normal text-[var(--marketing-amber)] dark:text-primary-300" aria-hidden="true">{drawerOpen ? '−' : '+'}</span>
+ 			</button>
+ 		</div>
+ 	{:else if step === 5}
+@@ -104,7 +104,7 @@ let demoText =
+ 					target="_blank"
+ 					rel="noopener noreferrer"
+ 					aria-label={`${link.label} (opens in a new tab)`}
+-					class="flex items-center gap-3 rounded-[6px] border-[0.5px] border-[rgba(28,26,22,0.09)] bg-[#faf8f3] px-4 py-3 text-base font-bold text-[var(--marketing-ink)]! transition-colors hover:bg-[#f1ede5] hover:no-underline! focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-[#2a6bd8] motion-reduce:transition-none [&>span:first-child]:bg-[#fff]!"
++					class="flex items-center gap-3 rounded-[6px] border-[0.5px] border-[rgba(28,26,22,0.09)] bg-[#faf8f3] px-4 py-3 text-base font-bold text-[var(--marketing-ink)]! transition-colors hover:bg-[#f1ede5] hover:no-underline! focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-[#2a6bd8] motion-reduce:transition-none [&>span:first-child]:bg-[#fff]! dark:border-white/15 dark:bg-stone-900 dark:text-stone-100! dark:hover:bg-stone-800"
+ 				>
+ 					<AppLogoTile id={link.id} size={36} />
+ 					<span>{link.label}</span>
+@@ -121,19 +121,19 @@ let demoText =
+ 					<div
+ 						role="region"
+ 						aria-labelledby="troubleshooting-toggle"
+-						class="grid items-start gap-5 rounded-[6px] border-[0.5px] border-[rgba(28,26,22,0.09)] bg-[#fff] p-[0.9rem] sm:grid-cols-[minmax(0,1fr)_minmax(10rem,13rem)]"
++						class="grid items-start gap-5 rounded-[6px] border-[0.5px] border-[rgba(28,26,22,0.09)] bg-[#fff] p-[0.9rem] sm:grid-cols-[minmax(0,1fr)_minmax(10rem,13rem)] dark:border-white/15 dark:bg-stone-900"
+ 					>
+-						<p class="m-0! text-[0.9rem] leading-[1.6]! text-[var(--marketing-ink-2)]">
++						<p class="m-0! text-[0.9rem] leading-[1.6]! text-[var(--marketing-ink-2)] dark:text-stone-300">
+ 							Harper will only enable itself automatically on sites we've tested before.
+ 							<br /><br />
+ 							If you work somewhere that isn't on our list of supported sites, you can enable the extension anyway by opening the Harper extension popup and clicking the power button.
+ 							<br /><br />
+-							Alternatively, <Link class="text-[var(--marketing-amber)]! hover:text-[var(--marketing-ink)]!" href="/request-browser-support">let us know</Link> which sites you want us to support and we'll add it as soon as we can.
++							Alternatively, <Link class="text-primary-700! hover:text-[var(--marketing-ink)]! dark:text-primary-300! dark:hover:text-primary-200!" href="/request-browser-support">let us know</Link> which sites you want us to support and we'll add it as soon as we can.
+ 						</p>
+ 						<img
+ 							src="/images/chrome_extension_popup.png"
+ 							alt="The Chrome extension's popup page"
+-							class="h-auto w-full rounded-[6px] border-[0.5px] border-[rgba(28,26,22,0.14)] object-contain"
++							class="h-auto w-full rounded-[6px] border-[0.5px] border-[rgba(28,26,22,0.14)] object-contain dark:border-white/15"
+ 						/>
+ 					</div>
+ 				{/if}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4720** (2026-10-28): build(deps): bump tree-sitter-haskell from 0.23.1 to 0.24.1 (@dependabot[bot])
-- **PR #4719** (2026-10-27): feat(desktop): redesign icon to be more easily visible in both light and dark modes (@elijah-potter)
-- **PR #4718** (2026-10-27): fix(desktop): remove useless setting (@elijah-potter)
-- **PR #4717** (2026-10-27): feat(web): restyle the "uninstall-browser-extension" page (@elijah-potter)
-- **PR #4715** (2026-10-27): test(core): prove that #4692 is fixed (@elijah-potter)
-- **PR #4713** (2026-10-27): fix(chrome-ext): remove distracting visual elements from the popup (@elijah-potter)
+- **PR #4733** (2026-10-28): fix(web): install-browser-extension page dark mode quirks (@elijah-potter)
+- **PR #4729** (2026-10-28): feat(harper-editor): add a dark mode (@elijah-potter)
+- **PR #4728** (2026-10-28): feat(harper-editor): add storybook (@elijah-potter)
+- **PR #4727** (2026-10-28): fix(web): broken dark mode (@elijah-potter)
+- **PR #4726** (2026-10-28): fix: wrong variants of "an arm and a leg" (@hippietrail)
+- **PR #4725** (2026-10-28): feat: clown one's judgment → cloud one's judgement (@hippietrail)
 
 ---
 
@@ -1542,30 +1753,30 @@ Co-authored-by: Elijah Potter <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump tree-sitter-haskell from 0.23.1 to 0.24.1 (#4720)
+## X. build(deps): bump rustls in /harper-desktop/src-tauri (#4724)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `harper-desktop/src-tauri/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `29200660`: build(deps): bump tree-sitter-haskell from 0.23.1 to 0.24.1 (#4720). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f4826935`: build(deps): bump rustls in /harper-desktop/src-tauri (#4724). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-desktop/src-tauri/Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.24.1"
-checksum = "781de30e0d1ec8e6db4ed799d36ce1cedaf4684374dada45ebe2a8ea44c3f814"
+version = "0.23.46"
+checksum = "48e13bd8c0e9365c43cfa5c9e8f9ad49d3c8444926c9aac819e0e4dc503c8fdf"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.23.1"
-checksum = "977c51e504548cba13fc27cb5a2edab2124cf6716a1934915d07ab99523b05a4"
+version = "0.23.45"
+checksum = "0d41d731c7d2f962d1ccc364cec258de3c0e93b38c2fb3ba97ac74513048d634"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `29200660` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f4826935` are properly handled with clean fallback behavior.

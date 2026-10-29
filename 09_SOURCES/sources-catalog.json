@@ -1675,8 +1675,8 @@
     "sourceUrl": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
     "sourceVersion": "hf-openmoss-team-moss-image-base",
     "license": "Open-Source",
-    "contentHash": "5821491fadf5d2f489d06db013eabcb4bffe4f1726680ea356db5d8232926368",
-    "lastHarvestedAt": "2026-10-28T01:42:42.360Z",
+    "contentHash": "4993d4b620a80d3cfa8353fd8c07310161784aadd09198cde9a6386b41655d50",
+    "lastHarvestedAt": "2026-10-29T00:22:50.523Z",
     "learningId": "learn-huggingface-openmoss-team-moss-image-base"
   },
   "hf-openmoss-team-moss-image-sft": {
@@ -2253,10 +2253,10 @@
     "repository": "Automattic/harper",
     "platform": "github",
     "sourceUrl": "https://github.com/Automattic/harper",
-    "sourceVersion": "29200660",
+    "sourceVersion": "2d7635f7",
     "license": "Apache-2.0",
-    "contentHash": "9ef98ae24257670048fb24428afa2e0230eae069a7d96ce0e2a931e2e273eac7",
-    "lastHarvestedAt": "2026-10-28T03:49:35.203Z",
+    "contentHash": "f193789674e7813406a29d133f5f834849339b82c23d4a5af0706c9c5c6ac724",
+    "lastHarvestedAt": "2026-10-29T00:22:52.073Z",
     "learningId": "learn-github-automattic-harper"
   },
   "sudheerj-reactjs-interview-questions": {
@@ -2973,10 +2973,10 @@
     "repository": "beclab/Olares",
     "platform": "github",
     "sourceUrl": "https://github.com/beclab/Olares",
-    "sourceVersion": "8a2f5940",
+    "sourceVersion": "3a1a0fb1",
     "license": "AGPL-3.0",
-    "contentHash": "2f455bb066fa1d37a27c4589c3e79fa89e0e18f40faaa541e07d9b38feecd0c4",
-    "lastHarvestedAt": "2026-10-28T09:30:41.308Z",
+    "contentHash": "5ceb7cca1bfa79a95aebb25ec1055d5d2680ef584d6572b6e67a6c9542e016eb",
+    "lastHarvestedAt": "2026-10-29T00:23:00.226Z",
     "learningId": "learn-github-beclab-olares"
   },
   "cryfs-cryfs": {

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-29T00:16:03.236Z",
-  "total_cycles_completed": 5977,
-  "total_learnings_persisted": 5977,
-  "total_rules_promoted": 5434,
+  "last_updated": "2026-10-29T00:23:00.231Z",
+  "total_cycles_completed": 5980,
+  "total_learnings_persisted": 5980,
+  "total_rules_promoted": 5436,
   "history": [
-    {
-      "timestamp": "2026-10-28T14:36:03.820Z",
-      "repository": "aquasecurity/trivy",
-      "learningId": "learn-github-aquasecurity-trivy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T14:42:50.621Z",
-      "repository": "pulumi/pulumi",
-      "learningId": "learn-github-pulumi-pulumi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T14:42:51.370Z",
-      "repository": "bigscience/bloom",
-      "learningId": "learn-huggingface-bigscience-bloom",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T14:42:55.134Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-29T00:16:03.236Z",
       "repository": "iii-hq/iii",
       "learningId": "learn-github-iii-hq-iii",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T00:22:50.532Z",
+      "repository": "OpenMOSS-Team/MOSS-Image-Base",
+      "learningId": "learn-huggingface-openmoss-team-moss-image-base",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T00:22:52.079Z",
+      "repository": "Automattic/harper",
+      "learningId": "learn-github-automattic-harper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T00:23:00.231Z",
+      "repository": "beclab/Olares",
+      "learningId": "learn-github-beclab-olares",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

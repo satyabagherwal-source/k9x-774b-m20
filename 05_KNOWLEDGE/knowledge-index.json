@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T00:16:03.155Z",
+  "last_updated": "2026-10-29T00:23:00.150Z",
   "total_verified_learnings": 1160,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3857,8 +3857,8 @@
       "slug": "automattic-harper",
       "platform": "github",
       "source_url": "https://github.com/Automattic/harper",
-      "source_version": "29200660",
-      "content_hash": "9ef98ae24257670048fb24428afa2e0230eae069a7d96ce0e2a931e2e273eac7",
+      "source_version": "2d7635f7",
+      "content_hash": "f193789674e7813406a29d133f5f834849339b82c23d4a5af0706c9c5c6ac724",
       "dossier_path": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "promoted_rules": [
@@ -3906,6 +3906,11 @@
           "number": 5164,
           "title": "build(deps): bump tree-sitter-haskell from 0.23.1 to 0.24.1 (#4720)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5471,
+          "title": "build(deps): bump rustls in /harper-desktop/src-tauri (#4724)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3913,7 +3918,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T03:49:35.126Z",
+      "verified_at": "2026-10-29T00:22:51.978Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -4199,8 +4204,8 @@
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "8a2f5940",
-      "content_hash": "2f455bb066fa1d37a27c4589c3e79fa89e0e18f40faaa541e07d9b38feecd0c4",
+      "source_version": "3a1a0fb1",
+      "content_hash": "5ceb7cca1bfa79a95aebb25ec1055d5d2680ef584d6572b6e67a6c9542e016eb",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "promoted_rules": [
@@ -4273,6 +4278,11 @@
           "number": 5244,
           "title": "daemon): coordinate staged cluster upgrades (#3987)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5472,
+          "title": "docs: add bilingual Immich NAS upload storage guide (#4312)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4280,7 +4290,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T09:30:41.226Z",
+      "verified_at": "2026-10-29T00:23:00.132Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -66264,7 +66274,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
       "source_version": "hf-openmoss-team-moss-image-base",
-      "content_hash": "5821491fadf5d2f489d06db013eabcb4bffe4f1726680ea356db5d8232926368",
+      "content_hash": "4993d4b620a80d3cfa8353fd8c07310161784aadd09198cde9a6386b41655d50",
       "dossier_path": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md",
       "promoted_rules": [
@@ -66314,7 +66324,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T01:42:42.284Z",
+      "verified_at": "2026-10-29T00:22:50.422Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -147590,6 +147600,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T00:16:03.137Z"
+    },
+    "rule-5471": {
+      "learning_id": "rule-5471",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5471,
+      "title": "build(deps): bump rustls in /harper-desktop/src-tauri (#4724)",
+      "source_url": "https://github.com/Automattic/harper",
+      "source_version": "2d7635f7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T00:22:51.978Z"
+    },
+    "rule-5472": {
+      "learning_id": "rule-5472",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5472,
+      "title": "docs: add bilingual Immich NAS upload storage guide (#4312)",
+      "source_url": "https://github.com/beclab/Olares",
+      "source_version": "3a1a0fb1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T00:23:00.132Z"
     }
   },
   "aliases": {

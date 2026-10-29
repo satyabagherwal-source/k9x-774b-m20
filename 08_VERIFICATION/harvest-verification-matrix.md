@@ -6000,3 +6000,6 @@
 | `CYCLE-20261029-CXR2` | `2026-10-29T00:09:08.318Z` | `openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md` | Yes (`fcb0563f...`) |
 | `CYCLE-20261029-LT2Q` | `2026-10-29T00:16:02.162Z` | `nvidia/Qwen3.8-Flash-Next-FP4-Local` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md` | Yes (`a3b384d8...`) |
 | `CYCLE-20261029-LTWC` | `2026-10-29T00:16:03.228Z` | `iii-hq/iii` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5470` | Yes (`92a5cf3f...`) |
+| `CYCLE-20261029-UK5Z` | `2026-10-29T00:22:50.519Z` | `OpenMOSS-Team/MOSS-Image-Base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md` | Yes (`4993d4b6...`) |
+| `CYCLE-20261029-ULD2` | `2026-10-29T00:22:52.070Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5471` | Yes (`f1937896...`) |
+| `CYCLE-20261029-URNI` | `2026-10-29T00:23:00.222Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5472` | Yes (`5ceb7cca...`) |

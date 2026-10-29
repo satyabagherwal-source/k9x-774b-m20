@@ -6009,3 +6009,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-29T00:09:08.321Z |
 | `learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local` | `https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-29T00:16:02.165Z |
 | `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `b0b86fd3` | Multi-dimensional audit evidence | 2026-10-29T00:16:03.231Z |
+| `learn-huggingface-openmoss-team-moss-image-base` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base` | `hf-openmos` | Multi-dimensional audit evidence | 2026-10-29T00:22:50.523Z |
+| `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `2d7635f7` | Multi-dimensional audit evidence | 2026-10-29T00:22:52.073Z |
+| `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `3a1a0fb1` | Multi-dimensional audit evidence | 2026-10-29T00:23:00.226Z |
