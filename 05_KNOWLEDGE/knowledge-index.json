@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T00:23:00.150Z",
+  "last_updated": "2026-10-29T00:34:50.109Z",
   "total_verified_learnings": 1160,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7673,8 +7673,8 @@
       "slug": "crate-crate",
       "platform": "github",
       "source_url": "https://github.com/crate/crate",
-      "source_version": "c273f2a5",
-      "content_hash": "9dc98a70b57751aac921ab5ca7e59fa152a2c9b1002d9bfc2cc6b9fc39a95ab2",
+      "source_version": "792f7eb0",
+      "content_hash": "bb8f0a5abb5523801bee05550e02ebca2e8b01507b0db9067feabd9a0f4570b2",
       "dossier_path": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "promoted_rules": [
@@ -7717,6 +7717,11 @@
           "number": 5215,
           "title": "logical replication stopping when publisher transport is not ready after restart",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5474,
+          "title": "Add link to CVE for COPY FROM fix",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7724,7 +7729,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T06:52:52.012Z",
+      "verified_at": "2026-10-29T00:29:53.971Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36483,8 +36488,8 @@
       "slug": "max-sixty-worktrunk",
       "platform": "github",
       "source_url": "https://github.com/max-sixty/worktrunk",
-      "source_version": "bc8ad63e",
-      "content_hash": "33022b5a66cf8bebeffaf32081260a898005df4efc5c5772a8f31d246dc1ca55",
+      "source_version": "16d52e58",
+      "content_hash": "f7a3e7e2a72b7a5bc030ed89b840f4a1ce97667b45634214f845b4cdb3e42c26",
       "dossier_path": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "promoted_rules": [
@@ -36522,6 +36527,11 @@
           "number": 5015,
           "title": "support slash-named remotes in branch inventory (#4271)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5473,
+          "title": "list): restore task progress in the loading footer (#4620)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36529,7 +36539,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T21:22:19.967Z",
+      "verified_at": "2026-10-29T00:29:42.139Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -66342,7 +66352,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
       "source_version": "hf-openmoss-team-moss-image-sft",
-      "content_hash": "45c7eb344ff66e9bcc49f3a2a7f965896fc3f8245f24b452be4600551121941c",
+      "content_hash": "6aeef3881ecb283bbc6ba1234f37192bd8b965c94bbcd301b2478e604875c103",
       "dossier_path": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md",
       "promoted_rules": [
@@ -66390,6 +66400,16 @@
           "number": 4230,
           "title": "License & Provenance Chain Enforcement",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5475,
+          "title": "Model Artifact Provenance & Lineage Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5476,
+          "title": "Deterministic Inference Reproducibility via Seed & Scheduler Locking",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -66397,7 +66417,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T10:10:52.030Z",
+      "verified_at": "2026-10-29T00:34:50.091Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -147628,6 +147648,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T00:23:00.132Z"
+    },
+    "rule-5473": {
+      "learning_id": "rule-5473",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5473,
+      "title": "list): restore task progress in the loading footer (#4620)",
+      "source_url": "https://github.com/max-sixty/worktrunk",
+      "source_version": "16d52e58",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T00:29:42.139Z"
+    },
+    "rule-5474": {
+      "learning_id": "rule-5474",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5474,
+      "title": "Add link to CVE for COPY FROM fix",
+      "source_url": "https://github.com/crate/crate",
+      "source_version": "792f7eb0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T00:29:53.971Z"
+    },
+    "rule-5475": {
+      "learning_id": "rule-5475",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5475,
+      "title": "Model Artifact Provenance & Lineage Integrity",
+      "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
+      "source_version": "hf-openmoss-team-moss-image-sft",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T00:34:50.091Z"
+    },
+    "rule-5476": {
+      "learning_id": "rule-5476",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5476,
+      "title": "Deterministic Inference Reproducibility via Seed & Scheduler Locking",
+      "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
+      "source_version": "hf-openmoss-team-moss-image-sft",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T00:34:50.091Z"
     }
   },
   "aliases": {

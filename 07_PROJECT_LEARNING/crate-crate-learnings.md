@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source**: github ([https://github.com/crate/crate](https://github.com/crate/crate))  
-> **Source Version**: `c273f2a5`  
+> **Source Version**: `792f7eb0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T06:52:51.512Z  
+> **Timestamp**: 2026-10-29T00:29:53.455Z  
 > **Learning ID**: `learn-github-crate-crate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crate/crate](https://github.com/crate/crate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T06:52:51.426Z  
+> **Harvest Timestamp**: 2026-10-29T00:29:53.448Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -555,166 +555,285 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dc06f6b2` (2026-10-21)
-**Commit Message**: Fix logical replication stopping when publisher transport is not ready after restart
+### Incident Patch 1: `792f7eb0` (2026-10-28)
+**Commit Message**: Add link to CVE for COPY FROM fix
 
-**File**: `docs/appendices/release-notes/6.4.7.rst` (modified, +4/-0)
+Follows: #20070
+
+**File**: `docs/appendices/release-notes/6.5.0.rst` (modified, +2/-1)
 ```diff
-@@ -70,6 +70,10 @@ Fixes
-   :ref:`pg_tunnel mode <sql-create-subscription-conn-info>` for logical
-   replication.
+@@ -88,7 +88,8 @@ Breaking Changes
+ - Added :ref:`copy_from.http.redirects` and :ref:`copy_from.http.blocked_hosts`
+   settings to allow CrateDB administrators to prevent users from accessing HTTP
+   resources from hosts reachable on an internal network or other arbitrary hosts
+-  using :ref:`COPY FROM <sql-copy-from>`.
++  using :ref:`COPY FROM <sql-copy-from>`. For more information see the relevant
++  `security advisory <https://github.com/crate/crate/security/advisories/GHSA-pfv7-m2fh-6g4v>`__.
  
-+- Fixed an issue where a logical replication subscription could enter a failed
-+  state and stop replicating after a publisher restart if the subscriber sent
-+  requests before the publisher's transport service was ready to handle them.
-+
- - Fixed an issue which caused the ``optimizer_eliminate_cross_join`` rule to
-   drop non-equality filters (e.g., a greater-than condition) that are combined
-   with an equality filter over the same two tables. The issue also caused
+   The ``crate.yml`` shipped with the CrateDB tarball sets the blocked hosts to
+   ``_local_,_site_,_link_`` and disables redirects by default. On new
 ```
 
-**File**: `docs/appendices/release-notes/6.5.1.rst` (modified, +4/-0)
+---
+
+### Incident Patch 2: `0431aeb7` (2026-10-28)
+**Commit Message**: Support streaming of UUID values within UncheckedObjectType
+
+The `collect_set` aggregation uses the unchecked object type as partial
+type and that couldn't handle uuid values.
+
+This additionally also extends the `AggregationTestCase` to add a
+streaming roundtrip for the state to cover serialization as part of
+aggregation unit tests. (Unless `randomExtraStates` is false - that's
+set for cases like percentile where the extra state compression would
+lead to slightly different results, breaking tests)
+
+No changes because `count(distinct uuid)` support without group by
+rewrite is new on 6.6
+
+**File**: `server/src/main/java/org/elasticsearch/common/io/stream/StreamInput.java` (modified, +2/-0)
 ```diff
-@@ -75,6 +75,10 @@ Fixes
-   :ref:`pg_tunnel mode <sql-create-subscription-conn-info>` for logical
-   replication.
- 
-+- Fixed an issue where a logical replication subscription could enter a failed
-+  state and stop replicating after a publisher restart if the subscriber sent
-+  requests before the publisher's transport service was ready to handle them.
-+
- - Fixed an issue which caused the ``optimizer_eliminate_cross_join`` rule to
-   drop non-equality filters (e.g., a greater-than condition) that are combined
-   with an equality filter over the same two tables. The issue also caused
+@@ -707,6 +707,8 @@ public Object readGenericValue() throws IOException {
+                 return new PointImpl(readDouble(), readDouble(), JtsSpatialContext.GEO);
+             case 28:
+                 return new BitString(BitSet.valueOf(readByteArray()), readVInt());
++            case 29:
++                return readUUID();
+             default:
+                 throw new IOException("Can't read unknown type [" + type + "]");
+         }
 ```
 
-**File**: `server/src/main/java/io/crate/exceptions/SQLExceptions.java` (modified, +5/-0)
+**File**: `server/src/main/java/org/elasticsearch/common/io/stream/StreamOutput.java` (modified, +4/-0)
 ```diff
-@@ -167,6 +167,11 @@ public static boolean maybeTemporary(Throwable t) {
-         return maybeTemporaryNetworkError(t)
-             || isShardNotAvailable(t)
-             || t instanceof ClusterBlockException
-+            || t instanceof TransportNotReady
-+            // Older nodes cannot serialize TransportNotReady and send a wrapper instead.
-+            // TODO: remove 'NotSerializableExceptionWrapper' handling when the minimum compatible publisher version >= 6.6.0
-+            || (t instanceof NotSerializableExceptionWrapper wrapper
-+                && wrapper.getExceptionName().equals(TransportNotReady.class.getSimpleName()))
-             || t instanceof ElasticsearchTimeoutException;
+@@ -715,6 +715,10 @@ public final void writeOptionalInstant(@Nullable Instant instant) throws IOExcep
+             BitString bs = (BitString) v;
+             o.writeByteArray(bs.bitSet().toByteArray());
+             o.writeVInt(bs.length());
++        }),
++        Map.entry(UUID.class, (o, v) -> {
++            o.writeByte((byte) 29);
++            o.writeUUID((UUID) v);
+         })
+     );
+ 
+```
+
+**File**: `server/src/test/java/io/crate/execution/engine/aggregation/impl/AverageAggregationTest.java` (modified, +3/-3)
+```diff
+@@ -185,7 +185,7 @@ public void testUnsupportedType() throws Exception {
      }
  
-```
-
-**File**: `server/src/main/java/io/crate/exceptions/TransportNotReady.java` (modified, +10/-1)
-```diff
-@@ -21,12 +21,21 @@
- 
- package io.crate.exceptions;
- 
--public class TransportNotReady extends RuntimeException {
-+import java.io.IOException;
-+
-+import org.elasticsearch.ElasticsearchException;
-+import org.elasticsearch.common.io.stream.StreamInput;
-+
-+public class TransportNotReady extends ElasticsearchException {
- 
-     public TransportNotReady() {
-         super("transport not ready yet to handle incoming requests");
+     @Test
+-    public void test_avg_numeric_on_long_non_doc_values_does_not_overflow() {
++    public void test_avg_numeric_on_long_non_doc_values_does_not_overflow() throws Exception {
+         Version minNodeVersion = randomBoolean()
+             ? Version.CURRENT
+             : Version.V_4_0_9;
+@@ -215,7 +215,7 @@ public void test_numeric_with_doc_values() throws Exception {
      }
  
-+    public TransportNotReady(StreamInput in) throws IOException {
-+        super(in);
-+    }
-+
-     @Override
-     public synchronized Throwable fillInStackTrace() {
-         return this;
-```
-
-**File**: `server/src/main/java/org/elasticsearch/ElasticsearchException.java` (modified, +6/-0)
-```diff
-@@ -768,6 +768,12 @@ private enum ElasticsearchExceptionHandle {
-             IncompatibleSchemaForRestoreException::new,
-             187,
-             Version.V_6_3_3
-+        ),
-+        TRANSPORT_NOT_READY(
-+            io.crate.exceptions.TransportNotReady.class,
-+            io.crate.exceptions.TransportNotReady::new,
-+            188,
-+            Version.V_6_6_0
-         );
- 
-         final Class<? extends ElasticsearchException> exceptionClass;
-```
-
-**File**: `server/src/main/java/org/elasticsearch/common/io/stream/NotSerializableExceptionWrapper.java` (modified, +1/-1)
-```diff
-@@ -71,7 +71,7 @@ public void writeTo(StreamOutput out) throws IOException {
+     @Test
+-    public void test_avg_numeric_on_double_non_doc_values() {
++    public void test_avg_numeric_on_double_non_doc_values() throws Exception {
+         Version minNodeVersion = randomBoolean()
+             ? Version.CURRENT
+             : Version.V_4_0_9;
+@@ -232,7 +232,7 @@ public void test_avg_numeric_on_double_non_doc_values() {
      }
  
-     @Override
--    protected String getExceptionName() {
-+    public String getExceptionName() {
-         return name;
-     }
- }
+     @Test
+-    public void test_avg_numeric_with_precision_and_scale_on_double_non_doc_values() {
++    public void test_avg_numeric_with_precision_and_scale_on_double_non_doc_values() throws Exception {
+         var type = new NumericType(16, 2);
+         var expected = type.implicitCast(12.4357);
+         assertThat(expected).hasToString("12.44");
 ```
 
-**File**: `server/src/test/java/io/crate/exceptions/SQLExceptionsTest.java` (modified, +27/-0)
+**File**: `server/src/test/java/io/crate/execution/engine/aggregation/impl/SumAggregationTest.java` (modified, +5/-5)
 ```diff
-@@ -27,8 +27,12 @@
- import java.util.concurrent.ExecutionException;
+@@ -179,7 +179,7 @@ public void testByte() throws Exception {
+     }
  
- import org.apache.lucene.index.CorruptIndexException;
-+import org.elasticsearch.Version;
- import org.elasticsearch.action.UnavailableShardsException;
- import org.elasticsearch.common.UUIDs;
-+import org.elasticsearch.common.io.stream.BytesStreamOutput;
-+import org.elasticsearch.common.io.stream.NotSerializableExceptionWrapper;
-+import org.elasticsearch.common.io.stream.StreamInput;
- import org.elasticsearch.index.shard.ShardId;
+     @Test
+-    public void testInterval() {
++    public void testInterval() throws Exception {
+         assertThat(execPartialAggregationWithoutDocValues(
+                 (IntervalSumAggregation) nodeCtx.functions().getQualified(
+                         Signature.builder(IntervalSumAggregation.NAME, FunctionType.AGGREGATE)
+@@ -210,7 +210,7 @@ public void testUnsupportedType() throws Exception {
+     }
+ 
+     @Test
+-    public void test_sum_numeric_on_long_non_doc_values_field() {
++    public void test_sum_numeric_on_long_non_doc_values_field() throws Exception {
+         Version minNodeVersion = randomBoolean()
+             ? Version.CURRENT
+             : Version.V_4_0_9;
+@@ -228,7 +228,7 @@ public void test_sum_numeric_on_long_non_doc_values_field() {
+     }
+ 
+     @Test
+-    public void test_sum_numeric_on_long_non_doc_values_field_with_overflow() {
++    public void test_sum_numeric_on_long_non_doc_values_field_with_overflow() throws Exception {
+         Version minNodeVersion = randomBoolean()
+             ? Version.CURRENT
+             : Version.V_4_0_9;
+@@ -245,7 +245,7 @@ public void test_sum_numeric_on_long_non_doc_values_field_with_overflow() {
+     }
+ 
+     @Test
+-    public void test_sum_numeric_on_floating_point_non_doc_values_field() {
++    public void test_sum_numeric_on_floating_point_non_doc_values_field() throws Exception {
+         Version minNodeVersion = randomBoolean()
+             ? Version.CURRENT
+             : Version.V_4_0_9;
+@@ -262,7 +262,7 @@ public void test_sum_numeric_on_floating_point_non_doc_values_field() {
+     }
+ 
+     @Test
+-    public void test_sum_numeric_with_precision_and_scale_on_double_non_doc_values_field() {
++    public void test_sum_numeric_with_precision_and_scale_on_double_non_doc_values_field() throws Exception {
+         var type = new NumericType(16, 2);
+         var expected = type.implicitCast(12.4357);
+         assertThat(expected.toString()).isEqualTo("12.44");
+```
+
+**File**: `server/src/test/java/io/crate/types/UncheckedObjectTypeTest.java` (modified, +12/-1)
+```diff
+@@ -25,12 +25,17 @@
+ 
+ import java.io.IOException;
+ import java.util.Map;
++import java.util.function.Supplier;
+ 
+ import org.elasticsearch.common.io.stream.BytesStreamOutput;
+ import org.elasticsearch.common.io.stream.StreamInput;
+ import org.elasticsearch.test.ESTestCase;
  import org.junit.Test;
  
-@@ -37,6 +41,29 @@
- 
- public class SQLExceptionsTest {
- 
-+    @Test
-+    public void test_transport_not_ready_is_temporary() throws Exception {
-+        TransportNotReady error = new TransportNotReady();
-+        assertThat(SQLExceptions.maybeTemporary(error)).isTrue();
++import com.carrotsearch.randomizedtesting.generators.RandomPicks;
 +
-+        for (Version version : new Version[] { Version.V_6_5_0, Version.V_6_6_0 }) {
-+            try (BytesStreamOutput out = new BytesStreamOutput()) {
-+                out.setVersion(version);
-+                out.writeException(error);
-+                try (StreamInput in = out.bytes().streamInput()) {
-+                    in.setVersion(version);
-+                    Exception deserialized = in.readException();
-+                    if (version.before(Version.V_6_6_0)) {
-+                        assertThat(deserialized).isExactlyInstanceOf(NotSerializableExceptionWrapper.class);
-+                    } else {
-+                        assertThat(deserialized).isExactlyInstanceOf(TransportNotReady.class);
++import io.crate.testing.DataTypeTesting;
++
+ public class UncheckedObjectTypeTest extends ESTestCase {
+ 
+     UncheckedObjectType uncheckedObjectType = UncheckedObjectType.INSTANCE;
+@@ -41,7 +46,13 @@ public void testStreamingMap() throws IOException {
+         int[] arrayValue = {2, 3};
+         String stringKey = "string_key";
+         int intValue = 42;
+-        Map<Object, Object> genericValues = Map.of(longKey, arrayValue, stringKey, intValue);
++        DataType<?> type = RandomPicks.randomFrom(random(), DataTypes.PRIMITIVE_TYPES);
++        Supplier<?> dataGenerator = DataTypeTesting.getDataGenerator(type);
++        Map<Object, Object> genericValues = Map.of(
++            longKey, arrayValue,
++            stringKey, intValue,
++            "type_" + type.getName(), dataGenerator.get()
++        );
+ 
+         BytesStreamOutput out = new BytesStreamOutput();
+         uncheckedObjectType.writeValueTo(out, genericValues);
+```
+
+**File**: `server/src/testFixtures/java/io/crate/operation/aggregation/AggregationTestCase.java` (modified, +17/-3)
+```diff
+@@ -55,6 +55,7 @@
+ import org.elasticsearch.cluster.routing.ShardRoutingState;
+ import org.elasticsearch.cluster.routing.TestShardRouting;
+ import org.elasticsearch.common.UUIDs;
++import org.elasticsearch.common.io.stream.BytesStreamOutput;
+ import org.elasticsearch.common.lucene.uid.Versions;
+ import org.elasticsearch.common.settings.Settings;
+ import org.elasticsearch.common.util.BigArrays;
+@@ -84,6 +85,7 @@
+ import org.elasticsearch.threadpool.ThreadPool;
+ import org.jspecify.annotations.Nullable;
+ 
++import io.crate.Streamer;
+ import io.crate.analyze.WhereClause;
+ import io.crate.common.collections.Lists;
+ import io.crate.common.io.IOUtils;
+@@ -304,7 +306,7 @@ private void assertResultIsOrderInsensitive(AggregationFunction aggregationFunct
+                                                 AggregationFunction terminatePartialAggFunction,
+                                                 Object[][] data,
+                                                 boolean randomExtraStates,
+-                                                Object expectedResult) {
++                                                Object expectedResult) throws Exception {
+         List<Object[]> shuffledRows = new ArrayList<>(Arrays.asList(data));
+         Collections.shuffle(shuffledRows, random());
+         Object[][] shuffledData = shuffledRows.toArray(new Object[0][]);
+@@ -330,14 +332,15 @@ private void assertResultIsOrderInsensitive(AggregationFunction aggregationFunct
+     protected Object execPartialAggregationWithoutDocValues(AggregationFunction function,
+                                                             Object[][] data,
+                                                             boolean randomExtraStates,
+-                                                            Version minNodeVersion) {
++                                                            Version minNodeVersion) throws Exception {
+         var argumentsSize = function.signature().getArgumentTypes().size();
+         RowCollectExpression[] inputs = new RowCollectExpression[argumentsSize];
+         for (int i = 0; i < argumentsSize; i++) {
+             inputs[i] = new RowCollectExpression(i);
+         }
+ 
+         ArrayList<Object> states = new ArrayList<>();
++        boolean streamState = randomBoolean();
+         states.add(function.newState(RAM_ACCOUNTING, minNodeVersion, memoryManager));
+         for (Row row : new ArrayBucket(data)) {
+             for (RowCollectExpression input : inputs) {
+@@ -347,7 +350,18 @@ protected Object execPartialAggregationWithoutDocValues(AggregationFunction func
+                 states.add(function.newState(RAM_ACCOUNTING, minNodeVersion, memoryManager));
+             }
+             int idx = states.size() - 1;
+-            states.set(idx, function.iterate(RAM_ACCOUNTING, memoryManager, states.get(idx), inputs));
++            Object newState = function.iterate(RAM_ACCOUNTING, memoryManager, states.get(idx), inputs);
++            if (streamState && randomExtraStates) {
++                streamState = false;
++                Streamer streamer = function.partialType().streamer();
++                try (var out = new BytesStreamOutput()) {
++                    streamer.writeValueTo(out, newState);
++                    try (var in = out.bytes().streamInput()) {
++                        newState = streamer.readValueFrom(in);
 +                    }
-+                    assertThat(SQLExceptions.maybeTemporary(deserialized)).isTrue();
 +                }
 +            }
-+        }
-+    }
++            states.set(idx, newState);
+         }
+         Object state = states.get(0);
+         for (int i = 1; i < states.size(); i++) {
+```
+
+---
+
+### Incident Patch 3: `914ab442` (2026-10-28)
+**Commit Message**: Fix blackbox fdw tests
+
+Drop server (and the table) with cascade
+
+Follows: #20182
+
+**File**: `docs/admin/fdw.rst` (modified, +5/-0)
+```diff
+@@ -189,6 +189,11 @@ Usage::
+   +------------+-----------------+----------+------+
+   SELECT 6 rows in set (... sec)
+ 
++.. hide:
 +
-     @Test
-     public void test_unavailable_shard_exception_is_shard_failure() throws Exception {
-         ShardId shardId = new ShardId("idx1", UUIDs.randomBase64UUID(), 0);
++  cr> DROP SERVER my_parquet CASCADE;
++  DROP OK, 1 row affected (... sec)
++
+ .. note::
+ 
+    In order to query :ref:`Object column with dynamic column policy <type-object-columns-dynamic>`,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20481** (2026-10-28): Reserve ports for LR tests to prevent interference from concurrent tests (@jeeminso)
-- **PR #20480** (2026-10-27): Test: add assertBusy to wait for replication state changes (backport #20470) (@mergify[bot])
-- **PR #20479** (2026-10-27): Test: add assertBusy to wait for replication state changes (backport #20470) (@mergify[bot])
-- **PR #20477** (2026-10-28): Revert "Remove LR integration test retries added to suppress flakiness" (@jeeminso)
-- **PR #20474** (2026-10-27): Extend `collect_set` tests to cover all registered types (@mfussenegger)
-- **PR #20473** (2026-10-27): Ensure bulk execution via http or test waits for all individual results (@mfussenegger)
+- **PR #20502** (2026-10-28): Add link to CVE for COPY FROM fix (backport #20497) (@mergify[bot])
+- **PR #20501** (2026-10-28): Fix blackbox fdw tests (@matriv)
+- **PR #20499** (2026-10-28): Fail CREATE FUNCTION when creating a function with the same signature (backport #20494) (@mergify[bot])
+- **PR #20498** (2026-10-28): Fail CREATE FUNCTION when creating a function with the same signature (backport #20494) (@mergify[bot])
+- **PR #20497** (2026-10-28): Add link to CVE for COPY FROM fix (@matriv)
+- **PR #20496** (2026-10-28): Compress percentile state only on terminatePartial (backport #20488) (@mergify[bot])
 
 ---
 
@@ -734,31 +853,29 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. logical replication stopping when publisher transport is not ready after restart
+## X. Add link to CVE for COPY FROM fix
 
 **RULE**:
-When implementing operations in `docs/appendices/release-notes/6.4.7.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/appendices/release-notes/6.5.0.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dc06f6b2`: logical replication stopping when publisher transport is not ready after restart. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `792f7eb0`: Add link to CVE for COPY FROM fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/appendices/release-notes/6.4.7.rst`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/appendices/release-notes/6.5.0.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-- Fixed an issue where a logical replication subscription could enter a failed
-  state and stop replicating after a publisher restart if the subscriber sent
-  requests before the publisher's transport service was ready to handle them.
-
+  using :ref:`COPY FROM <sql-copy-from>`. For more information see the relevant
+  `security advisory <https://github.com/crate/crate/security/advisories/GHSA-pfv7-m2fh-6g4v>`__.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  using :ref:`COPY FROM <sql-copy-from>`.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dc06f6b2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `792f7eb0` are properly handled with clean fallback behavior.

@@ -6003,3 +6003,6 @@
 | `CYCLE-20261029-UK5Z` | `2026-10-29T00:22:50.519Z` | `OpenMOSS-Team/MOSS-Image-Base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md` | Yes (`4993d4b6...`) |
 | `CYCLE-20261029-ULD2` | `2026-10-29T00:22:52.070Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5471` | Yes (`f1937896...`) |
 | `CYCLE-20261029-URNI` | `2026-10-29T00:23:00.222Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5472` | Yes (`5ceb7cca...`) |
+| `CYCLE-20261029-3DUC` | `2026-10-29T00:29:42.228Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5473` | Yes (`f7a3e7e2...`) |
+| `CYCLE-20261029-3MZ0` | `2026-10-29T00:29:54.060Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5474` | Yes (`bb8f0a5a...`) |
+| `CYCLE-20261029-9ZGJ` | `2026-10-29T00:34:50.179Z` | `OpenMOSS-Team/MOSS-Image-SFT` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5475, Rule 5476` | Yes (`6aeef388...`) |

@@ -6012,3 +6012,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openmoss-team-moss-image-base` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base` | `hf-openmos` | Multi-dimensional audit evidence | 2026-10-29T00:22:50.523Z |
 | `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `2d7635f7` | Multi-dimensional audit evidence | 2026-10-29T00:22:52.073Z |
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `3a1a0fb1` | Multi-dimensional audit evidence | 2026-10-29T00:23:00.226Z |
+| `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `16d52e58` | Multi-dimensional audit evidence | 2026-10-29T00:29:42.232Z |
+| `learn-github-crate-crate` | `https://github.com/crate/crate` | `792f7eb0` | Multi-dimensional audit evidence | 2026-10-29T00:29:54.064Z |
+| `learn-huggingface-openmoss-team-moss-image-sft` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT` | `hf-openmos` | Multi-dimensional audit evidence | 2026-10-29T00:34:50.183Z |

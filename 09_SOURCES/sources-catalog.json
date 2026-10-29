@@ -1685,8 +1685,8 @@
     "sourceUrl": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
     "sourceVersion": "hf-openmoss-team-moss-image-sft",
     "license": "Open-Source",
-    "contentHash": "45c7eb344ff66e9bcc49f3a2a7f965896fc3f8245f24b452be4600551121941c",
-    "lastHarvestedAt": "2026-10-25T10:10:52.085Z",
+    "contentHash": "6aeef3881ecb283bbc6ba1234f37192bd8b965c94bbcd301b2478e604875c103",
+    "lastHarvestedAt": "2026-10-29T00:34:50.183Z",
     "learningId": "learn-huggingface-openmoss-team-moss-image-sft"
   },
   "hf-deepseek-ai-deepseek-v4.1-flash-1017": {
@@ -2223,10 +2223,10 @@
     "repository": "crate/crate",
     "platform": "github",
     "sourceUrl": "https://github.com/crate/crate",
-    "sourceVersion": "c273f2a5",
+    "sourceVersion": "792f7eb0",
     "license": "Apache-2.0",
-    "contentHash": "9dc98a70b57751aac921ab5ca7e59fa152a2c9b1002d9bfc2cc6b9fc39a95ab2",
-    "lastHarvestedAt": "2026-10-28T06:52:52.106Z",
+    "contentHash": "bb8f0a5abb5523801bee05550e02ebca2e8b01507b0db9067feabd9a0f4570b2",
+    "lastHarvestedAt": "2026-10-29T00:29:54.064Z",
     "learningId": "learn-github-crate-crate"
   },
   "nucleoidai-nucleoid": {
@@ -2323,10 +2323,10 @@
     "repository": "max-sixty/worktrunk",
     "platform": "github",
     "sourceUrl": "https://github.com/max-sixty/worktrunk",
-    "sourceVersion": "bc8ad63e",
+    "sourceVersion": "16d52e58",
     "license": "NOASSERTION",
-    "contentHash": "33022b5a66cf8bebeffaf32081260a898005df4efc5c5772a8f31d246dc1ca55",
-    "lastHarvestedAt": "2026-10-27T21:22:20.040Z",
+    "contentHash": "f7a3e7e2a72b7a5bc030ed89b840f4a1ce97667b45634214f845b4cdb3e42c26",
+    "lastHarvestedAt": "2026-10-29T00:29:42.232Z",
     "learningId": "learn-github-max-sixty-worktrunk"
   },
   "mattermost-mattermost": {

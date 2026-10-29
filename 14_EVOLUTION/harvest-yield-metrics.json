@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-29T00:23:00.231Z",
-  "total_cycles_completed": 5980,
-  "total_learnings_persisted": 5980,
-  "total_rules_promoted": 5436,
+  "last_updated": "2026-10-29T00:34:50.188Z",
+  "total_cycles_completed": 5983,
+  "total_learnings_persisted": 5983,
+  "total_rules_promoted": 5440,
   "history": [
-    {
-      "timestamp": "2026-10-28T14:42:55.134Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T14:49:33.587Z",
-      "repository": "stabilityai/stable-diffusion-3-medium",
-      "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T14:49:42.134Z",
-      "repository": "saltstack/salt",
-      "learningId": "learn-github-saltstack-salt",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T14:49:49.259Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -1403,6 +1382,27 @@
       "repository": "beclab/Olares",
       "learningId": "learn-github-beclab-olares",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T00:29:42.237Z",
+      "repository": "max-sixty/worktrunk",
+      "learningId": "learn-github-max-sixty-worktrunk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T00:29:54.069Z",
+      "repository": "crate/crate",
+      "learningId": "learn-github-crate-crate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T00:34:50.188Z",
+      "repository": "OpenMOSS-Team/MOSS-Image-SFT",
+      "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
